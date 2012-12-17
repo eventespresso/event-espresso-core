@@ -521,15 +521,21 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 							<br />
 							<span class="description">
 								<?php _e('makes URLs look like:', 'event_espresso'); ?>
-								"<b><?php echo espresso_get_reg_page_full_url(); ?>your-event-name</b>"<br/>
-								instead of: "<b><?php echo espresso_get_reg_page_full_url(); ?>?ee=12</b>"<br/>
+								"<b><?php echo home_url(); ?><?php _e('/event-registration/your-event-name', 'event_espresso'); ?></b>" 
+								<?php _e('instead of:', 'event_espresso'); ?> "<b><?php echo home_url(); ?>?page_id=4&ee=12</b>"<br/>
 								<span class="important">
 									<?php _e('Must have', 'event_espresso'); ?>
 									<a style="color:#d54e21;" href="<?php echo home_url('/'); ?>wp-admin/options-permalink.php">
 										<?php _e('WordPress Permalinks', 'event_espresso'); ?>
 									</a>
 									<?php _e('turned on, and mod_rewrite (or similar) active on server', 'event_espresso'); ?>
-								</span> </span> </label>
+								</span> 
+								<br/>
+								<span class="important">
+									<?php _e('If your permalinks stop working and/or get disrupted for some reason (by other plugins, etc), then simply return to this page and they will be automagically reset.', 'event_espresso'); ?>
+								</span> 
+							</span> 
+						</label>
 					</fieldset></td>
 			</tr>
 			</tbody>

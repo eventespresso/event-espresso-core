@@ -31,8 +31,6 @@ function espresso_ticket_selector($event) {
 	
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	
-	global $espresso_notices;
-
 	add_action( 'wp_footer', 'espresso_load_tckt_slctr_js' );
 
 	$template_args = array();
@@ -236,8 +234,7 @@ function espresso_process_event_prices($prices, $currency_symbol, $surcharge_typ
 	 * 		@return		array  or FALSE
 	 */	
 	function espresso_process_ticket_selections( $registration_url = FALSE, $return = FALSE ) {
-	
-		global $espresso_notices;
+
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		//echo printr($_POST, '$_POST' );
 		//$event_queue_request = ( isset( $_REQUEST['e_reg'] ) && $_REQUEST['e_reg'] == 'event_queue' ) ? TRUE : FALSE;
@@ -259,7 +256,8 @@ function espresso_process_event_prices($prices, $currency_symbol, $surcharge_typ
 				$singular = 'The registration limit for this event is %s ticket per registration, therefore the total number of tickets you may purchase at a time can not exceed %s.';
 				$plural = 'The registration limit for this event is %s tickets per registration, therefore the total number of tickets you may purchase at a time can not exceed %s.';
 				$limit_error_2 = sprintf(_n($singular, $plural, $valid['atndz'], 'event_espresso'), $valid['atndz'], $valid['atndz']);
-				$espresso_notices['errors'][] = $limit_error_1 . '<br/>' . $limit_error_2;
+				$error_msg = $limit_error_1 . '<br/>' . $limit_error_2;
+				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 				
 			} else {
 				
@@ -311,36 +309,39 @@ function espresso_process_event_prices($prices, $currency_symbol, $surcharge_typ
 						}
 					} else {
 						// nothing added to cart
-						$espresso_notices['errors'][] = __( 'An error occured. No tickets were added for the event.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
+						$error_msg = __( 'An error occured. No tickets were added for the event.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
+						EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 					}
 
 				} else {
 					// no ticket quantities were selected
-					$espresso_notices['errors'][] = __( 'You need to select a ticket quantity before you can proceed.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
+					$error_msg = __( 'You need to select a ticket quantity before you can proceed.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
+					EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 				}				
 			}
 
 			if ( isset( $_POST['tkt-slctr-return-url-'.$valid_data['id']] )) {
-				$return_url = add_query_arg( espresso_get_notices( FALSE, TRUE ), $_POST['tkt-slctr-return-url-'.$valid_data['id']] );
+				$return_url = add_query_arg( EE_Error::get_notices( FALSE, TRUE ), $_POST['tkt-slctr-return-url-'.$valid_data['id']] );
 				wp_safe_redirect( $return_url );
 				exit();
 			} elseif ( isset( $_SERVER['HTTP_REFERER'] )) {
-				$return_url = add_query_arg( espresso_get_notices( FALSE, TRUE ), $_SERVER['HTTP_REFERER'] );
+				$return_url = add_query_arg( EE_Error::get_notices( FALSE, TRUE ), $_SERVER['HTTP_REFERER'] );
 				wp_safe_redirect( $return_url );
 				exit();
 			} else {
-				echo espresso_get_notices();			
+				echo EE_Error::get_notices();			
 			}
 			
 			
 		} /*else {
 			// $_POST['tkt-slctr-event-id'] was not set ?!?!?!?
-			$espresso_notices['errors'][] = __( 'An error occured. An event id was not provided or was not received.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
+			$error_msg = __( 'An error occured. An event id was not provided or was not received.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
+			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			
 		}	
 
 		if ( isset( $_SERVER['HTTP_REFERER'] )) {
-			$return_url = add_query_arg(  espresso_get_notices( FALSE, TRUE ), $_SERVER['HTTP_REFERER'] );
+			$return_url = add_query_arg(  EE_Error::get_notices( FALSE, TRUE ), $_SERVER['HTTP_REFERER'] );
 			wp_safe_redirect( $return_url );
 			exit();
 		}	*/
@@ -361,7 +362,6 @@ function espresso_process_event_prices($prices, $currency_symbol, $surcharge_typ
 	function espresso_validate_post_data() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		
-		global $espresso_notices;
 		// start with an empty array()
 		$valid_data = array();
 
@@ -509,7 +509,8 @@ function espresso_process_event_prices($prices, $currency_symbol, $surcharge_typ
 				}
 			}
 		} else {
-			$espresso_notices['errors'][] = 'An error occured. The event id provided was not valid';
+			$error_msg = 'An error occured. The event id provided was not valid';
+			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -532,11 +533,17 @@ function espresso_process_event_prices($prices, $currency_symbol, $surcharge_typ
 	
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		
-		global $espresso_notices, $EE_Cart; 
+		global $EE_Cart; 
 		// check that an event has been passed
 		if (!$event or !is_array($event) or empty($event)) {
-			$espresso_notices['errors'][] = 'An error occured. No event details were submitted. Could not add to cart';
+			$error_msg = 'An error occured. No event details were submitted. Could not add to cart';
+			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
+		}
+		// make sure cart is loaded
+		if (!defined('ESPRESSO_CART')) {
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Cart.class.php');
+			$EE_Cart = EE_Cart::instance();
 		}
 
 		$event['options'] = isset($event['options']) ? $event['options'] : '';
@@ -580,12 +587,14 @@ function espresso_process_event_prices($prices, $currency_symbol, $surcharge_typ
 			// event is full
 			if ($available_spaces > 0) {
 				// add error messaging - we're using the _n function that will generate the appropriate singular or plural message based on the number of $available_spaces
-				$espresso_notices['errors'][] = sprintf(_n(
+				$error_msg = sprintf(_n(
 												'We\'re sorry, but there is only %s available space left for this event. Please go back and select a different number of tickets.', 'We\'re sorry, but there are only %s available spaces left for this event. Please go back and select a different number of tickets.', $available_spaces, 'event_espresso'
 								), $available_spaces
 				);
+				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			} else {
-				$espresso_notices['errors'][] = __('We\'re sorry, but there are no available spaces left for this event', 'event_espresso');
+				$error_msg = __('We\'re sorry, but there are no available spaces left for this event', 'event_espresso');
+				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
 			return FALSE;
 		}
@@ -620,13 +629,11 @@ function espresso_process_event_prices($prices, $currency_symbol, $surcharge_typ
 		$SQL = "SELECT reg_limit FROM " . EVENTS_DETAIL_TABLE . " WHERE id=%d";
 
 		$reg_limit = $wpdb->get_var($wpdb->prepare($SQL, $event_id));
-		return $reg_limit;
+		//return $reg_limit;  <<< check this
 
 		// then determine how many spaces are left
-		//if ( $reg_limit > $nmbr_attendees ) {
 		$available_spaces = $reg_limit - $nmbr_attendees;
-		//}
-
+		$available_spaces = max( $available_spaces, 0 );
 		return $available_spaces;
 	}
 

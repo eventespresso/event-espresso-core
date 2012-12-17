@@ -4,19 +4,19 @@
 
 //Function to add a question to the database
 function event_espresso_form_builder_insert() {
-	global $wpdb, $espresso_wp_user, $espresso_notices;
+	global $wpdb, $espresso_wp_user;
 	//$wpdb->show_errors();
 
 	if (check_admin_referer('espresso_form_check', 'add_new_question')) {
-		$question = $_POST['question'];
-		$question_type = $_POST['question_type'];
-		$question_values = empty($_POST['values']) ? '' : $_POST['values'];
-		$required = !empty($_POST['required']) ? $_POST['required'] : false;
-		$admin_only = !empty($_POST['admin_only']) ? $_POST['admin_only'] : false;
-		$sequence = $_POST['sequence'] ? $_POST['sequence'] : '0';
+		$question = sanitize_text_field( $_POST['question'] );
+		$question_type = sanitize_text_field( $_POST['question_type'] );
+		$question_values = sanitize_text_field( $_POST['values'] );
+		$required = ! empty($_POST['required']) ? absint( $_POST['required'] ) : FALSE;
+		$admin_only = !empty($_POST['admin_only']) ? absint( $_POST['admin_only'] ) : FALSE;
+		$sequence = $_POST['sequence'] ? absint( $_POST['sequence'] ) : 0;
 	}
 
-	$sql = array(
+	$data = array(
 			'question_type' => $question_type,
 			'question' => $question,
 			'response' => $question_values,
@@ -25,11 +25,13 @@ function event_espresso_form_builder_insert() {
 			'sequence' => $sequence,
 			'wp_user' => $espresso_wp_user
 	);
-
-	$sql_data = array('%s', '%s', '%s', '%s', '%s', '%d', '%d');
-	if ($wpdb->insert(EVENTS_QUESTION_TABLE, $sql, $sql_data)) {
-		$espresso_notices['success'][] = __('The question ', 'event_espresso') . $question . __(' has been added', 'event_espresso');
+	$format = array('%s', '%s', '%s', '%s', '%s', '%d', '%d');
+	
+	if ($wpdb->insert(EVENTS_QUESTION_TABLE, $data, $format)) {
+		$msg = sprintf( __( 'The question %s has been added.', 'event_espresso' ), $question );
+		EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 	} else {
-		$espresso_notices['errors'][] = __('The question', 'event_espresso') . $question . __(' was not saved!', 'event_espresso');
+		$msg = sprintf( __( 'The question %s was not saved!', 'event_espresso' ), $question );
+		EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 	}
 }

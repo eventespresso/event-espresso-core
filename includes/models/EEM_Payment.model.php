@@ -186,8 +186,8 @@ class EEM_Payment extends EEM_Base {
 	public function get_payments_for_transaction( $TXN_ID = FALSE ) {
 
 		if ( ! $TXN_ID ) {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = __('No Transaction ID was supplied.', 'event_espresso') . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __('No Transaction ID was supplied.', 'event_espresso');
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ ); 
 			return FALSE;
 		}
 
@@ -215,9 +215,9 @@ class EEM_Payment extends EEM_Base {
 	*/
 	public function update_payment_transaction( EE_Payment $payment, $what ) {
 
-		global $espresso_notices;
 		if ( ! is_object( $payment ) && ! $payment->ID() ) {
-			$espresso_notices['errors'][] = __('A vaild payment object was not supplied.', 'event_espresso') . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __('A vaild payment object was not supplied.', 'event_espresso');
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ ); 
 			return FALSE;
 		}
 
@@ -234,13 +234,13 @@ class EEM_Payment extends EEM_Base {
 		if ( $total_paid == $transaction->total() || $transaction->total() == 0 ) {
 			$transaction->set_status('TCM');
 		} else {
-			$transaction->set_status('TOP');
+			$transaction->set_status('TPN');
 		}
 
 		// update transaction and return results
 		if ( $transaction->update() ) {
-			$espresso_notices['success'] = array();
-			$espresso_notices['success'][] = __('The payment has been ' . $what . ' succesfully.', 'event_espresso');
+			$msg = sprintf( __('The payment has been %s succesfully.', 'event_espresso'), $what );
+			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return array( 
 									'amount' => $payment->amount(), 
 									'total_paid' => $transaction->paid(), 
@@ -248,7 +248,8 @@ class EEM_Payment extends EEM_Base {
 									'pay_status' => $payment->STS_ID() 
 								);
 		} else {
-			$espresso_notices['errors'][] = __('An error occured. The payment was ' . $what . ' succesfully but the amount paid for the transaction was not updated.', 'event_espresso') . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = sprintf( __( 'An error occured. The payment was %s succesfully but the amount paid for the transaction was not updated.', 'event_espresso'), $what );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -267,8 +268,8 @@ class EEM_Payment extends EEM_Base {
 	public function recalculate_total_payments_for_transaction( $TXN_ID = FALSE ) {
 
 		if ( ! $TXN_ID ) {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = 'No Transaction ID was supplied.' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'No Transaction ID was supplied.', 'event_espresso');
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -295,9 +296,9 @@ class EEM_Payment extends EEM_Base {
 	*/
 	public function delete_payment( $PAY_ID ) {
 
-		global $espresso_notices;
 		if ( ! $PAY_ID ) {
-			$espresso_notices['errors'][] = __('No Payment ID was supplied.', 'event_espresso') . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __('No Payment ID was supplied.', 'event_espresso');
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		
@@ -308,14 +309,14 @@ class EEM_Payment extends EEM_Base {
 				return $this->update_payment_transaction( $payment, 'deleted' );
 				
 			} else {
-				$espresso_notices['errors'][] = __('An error occured. The payment has not been deleted succesfully.', 'event_espresso') . 
-																	espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+				$msg = __('An error occured. The payment has not been deleted succesfully.', 'event_espresso');
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return FALSE;
 			}
 			
 		} else {
-			$espresso_notices['errors'][] = __('An error occured. The database record for the payment could not be located for deletion.', 'event_espresso') . 
-																espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __('An error occured. The database record for the payment could not be located for deletion.', 'event_espresso');
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		

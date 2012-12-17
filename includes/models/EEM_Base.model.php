@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-abstract class EEM_Base {
+abstract class EEM_Base extends EE_Base {
 
   	// private instance of the Espresso_model object
 	//private static $_instance = NULL;
@@ -210,11 +210,10 @@ abstract class EEM_Base {
 	 */
 	private function _select_all (  $em_table_name=FALSE, $orderby = FALSE, $sort = 'ASC', $output = 'OBJECT_K' )	{
 
-		global $espresso_notices;
-
 		// what?? no table name ??? Get outta here!!!
 		if ( ! $em_table_name ) {
-			$espresso_notices['errors'][] = 'No table has been specified. ' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'No table has been specified.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -253,12 +252,11 @@ abstract class EEM_Base {
 	 *		@return mixed (object, array)
 	 */
 	private function _select_all_where ( $em_table_name=FALSE, $em_table_data_types=array(), $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $output = 'OBJECT_K' ) {
-
-		global $espresso_notices;
-
+	
 		// what?? no table name ??? Get outta here!!!
 		if ( ! $em_table_name ) {
-			$espresso_notices['errors'][] = 'No table has been specified. ' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'No table has been specified.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -306,11 +304,10 @@ abstract class EEM_Base {
 	 */
 	private function _select_row_where ( $em_table_name=FALSE, $em_table_data_types=array(), $where_cols_n_values=FALSE, $operator = '=', $output = 'OBJECT_K' ) {
 
-		global $espresso_notices;
-
 		// what?? no table name ??? Get outta here!!!
 		if ( ! $em_table_name ) {
-			$espresso_notices['errors'][] = 'No table has been specified. ' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'No table has been specified.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -350,18 +347,17 @@ abstract class EEM_Base {
 	 */
 	private function _select_value_where ( $em_table_name=FALSE, $em_table_data_types=array(), $select=FALSE, $where_cols_n_values=FALSE, $operator = '=' ) {
 
-		global $espresso_notices;
-
 		// what?? no table name ??? Get outta here!!!
 		if ( ! $em_table_name ) {
-			//return array( 'type' =>  'error', 'msg' => 'No table has been specified', 'rows' => FALSE );
-			$espresso_notices['errors'][] = 'No table has been specified. ' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'No table has been specified.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
 		// ya gotta let us know what you want!!!
 		if ( ! $select ) {
-			$espresso_notices['errors'][] = 'No column name has been specified for the SELECT clause. ' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'No column name has been specified for the SELECT clause.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -415,17 +411,17 @@ abstract class EEM_Base {
 	 */
 	private function _get_key_value_array ( $em_table_name=FALSE, $em_table_data_types=array(), $key=FALSE, $value=FALSE, $orderby = FALSE, $sort = 'ASC', $output = 'OBJECT_K' ) {
 
-		global $espresso_notices;
-
 		// what?? no table name ??? Get outta here!!!
 		if ( ! $em_table_name ) {
-			$espresso_notices['errors'][] = 'No table has been specified. ' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'No table has been specified.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
 		// ya gotta let us know what you want!!!
 		if ( ! $key or ! $value ) {
-			$espresso_notices['errors'][] = 'Column names for both the "key" and "value" need to be provided. ' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'Column names for both the "key" and "value" need to be provided.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -478,17 +474,17 @@ abstract class EEM_Base {
 	 */
 	private function _get_key_value_array_where( $em_table_name=FALSE, $em_table_data_types=array(), $key=FALSE, $value=FALSE, $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $output = 'OBJECT_K' ) {
 
-		global $espresso_notices;
-
 		// what?? no table name ??? Get outta here!!!
 		if ( ! $em_table_name ) {
-			$espresso_notices['errors'][] = 'No table has been specified. ' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'No table has been specified.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
 		// ya gotta let us know what you want!!!
 		if ( ! $key or ! $value ) {
-			$espresso_notices['errors'][] = 'Column names for both the "key" and "value" need to be provided. ' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'Column names for both the "key" and "value" need to be provided.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -543,17 +539,17 @@ abstract class EEM_Base {
 	 */
 	protected function _insert( $em_table_name=FALSE, $em_table_data_types=array(), $set_cols_n_values=array() ) {
 
-		global $espresso_notices;
-
 		// if any of the supplied data is empty or missing - send them back with an error
 		if ( ! $em_table_name or empty($em_table_data_types) or empty($set_cols_n_values) ) {
-			$espresso_notices['errors'][] = 'The insert can not be performed because of missing data. ' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'The insert can not be performed because of missing data.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
 		// if any of the supplied data arrays are not arrays - send them back with an error
 		if ( ! is_array($em_table_data_types) or ! is_array($set_cols_n_values) ) {
-			$espresso_notices['errors'][] = 'The insert can not be performed because the supplied data is of the wrong type. ' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'The insert can not be performed because the supplied data is of the wrong type.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -570,8 +566,8 @@ abstract class EEM_Base {
 				// and set it's data type
 				$em_upformat[] = $em_table_data_types[$column];
 			} else {
-				//return array( 'type' =>  'error', 'msg' => 'The column name '. $column .' does not exist.', 'rows' => FALSE );
-				$espresso_notices['errors'][] = 'The column name '. $column .' does not exist. ' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+				$msg = sprintf( __( 'The table column %s does not exist.', 'event_espresso' ), $column );
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return FALSE;
 			}
 		}
@@ -588,19 +584,19 @@ abstract class EEM_Base {
 		// set generic success / error mesasges
 		if ( $row_results == 1 ) {
 			// one row was successfully updated
-			$espresso_notices['success'][] = $this->singlular_item . ' details have been successfully saved to the database.';
-//			$update_results = array( 'type' =>  'updated', 'msg' => 'The record has been successfully created.', 'rows' => $row_results );
+			$msg = sprintf( __( '%s  details have been successfully saved to the database.', 'event_espresso' ), $this->singlular_item );
+			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			$update_results['new-ID'] = $wpdb->insert_id;
 		}
 		elseif ( $row_results > 1 ) {
 			// multiple rows were successfully updated
-			$espresso_notices['success'][] = 'Details for '.$results.' ' . $this->plual_item . ' have been successfully saved to the database.';
-//			$update_results = array( 'type' =>  'updated', 'msg' => $results.' records have been successfully created.', 'rows' => $row_results );
+			$msg = sprintf( __( 'Details for %d %s have been successfully saved to the database.', 'event_espresso' ), $results, $this->plual_item );
+			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			$update_results = TRUE;
 		} else {
 			// no result means an error occured
-			$espresso_notices['errors'][] = 'An error occured and the ' . $this->singlular_item . ' has not been saved to the database. ' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
-//			$update_results = array( 'type' =>  'error', 'msg' => 'An error occured and the record was not created.', 'rows' => 0 );
+			$msg = sprintf( __( 'An error occured and the %s has not been saved to the database.', 'event_espresso' ), $this->singlular_item );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			$update_results = FALSE;
 		}
 
@@ -631,17 +627,17 @@ abstract class EEM_Base {
 
 		//$this->display_vars( __FUNCTION__, array( 'em_table_data_types' => $em_table_data_types, '$set_cols_n_values' => $set_cols_n_values, '$where_cols_n_values' => $where_cols_n_values ) );
 
-		global $espresso_notices;
-
 		// if any of the supplied data is empty or missing - send them back with an error
 		if ( ! $em_table_name or empty($em_table_data_types) or empty($set_cols_n_values) or empty($where_cols_n_values) ) {
-			$espresso_notices['errors'][] = 'The update can not be performed because of missing data. ' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'The update can not be performed because of missing data.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
 		// if any of the supplied data arrays are not arrays - send them back with an error
 		if ( ! is_array($em_table_data_types) or ! is_array($set_cols_n_values) or ! is_array($where_cols_n_values) ) {
-			$espresso_notices['errors'][] = 'The update can not be performed because the supplied data is of the wrong type. ' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'The update can not be performed because the supplied data is of the wrong type.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -663,8 +659,8 @@ abstract class EEM_Base {
 				// and set it's data type
 				$em_upformat[] = $em_table_data_types[$column];
 			} else {
-				//return array( 'type' =>  'error', 'msg' => 'The column name '. $column .' does not exist.' );
-				$espresso_notices['errors'][] = 'The column name '. $column .' does not exist. ' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+				$msg = sprintf( __( 'The table column %s does not exist.', 'event_espresso' ), $column );
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return FALSE;
 			}
 		}
@@ -677,7 +673,8 @@ abstract class EEM_Base {
 				// and set it's data type
 				$em_where_format[] = $em_table_data_types[$column];
 			} else {
-				$espresso_notices['errors'][] = 'The column name '. $column .' used in the WHERE clause, does not exist. ' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+				$msg = sprintf( __( 'The table column %s used in the WHERE clause, does not exist.', 'event_espresso' ), $column );
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return FALSE;
 			}
 		}
@@ -689,22 +686,20 @@ abstract class EEM_Base {
 		$row_results = $wpdb->update( $em_table_name, $em_updata, $em_where, $em_upformat, $em_where_format);
 
 		// set generic success / error mesasges
-		if ( $row_results > 1 ) {
+		if ( $row_results === 1 ) {
 			// multiple rows were successfully updated
-			//$update_results = array( 'type' =>  'updated', 'msg' => 'Details for ' . $results . ' ' . $this->plual_item . ' have been successfully updated.', 'rows' => $row_results );
-			$espresso_notices['success'][] = 'Details for ' . $row_results . ' ' . $this->plual_item . ' have been successfully updated.';
+			$msg = sprintf( __( '%s details have been successfully updated.', 'event_espresso' ), $this->singlular_item );
+			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			
-		} elseif ( $row_results === 1 ) {
+		} elseif ( $row_results > 1 ) {
 			// one row was successfully updated
-			// $update_results = array( 'type' =>  'updated', 'msg' => $this->singlular_item . ' details have been successfully updated.', 'rows' => $row_results );
-			$espresso_notices['success'][] = $this->singlular_item . ' details have been successfully updated.';
+			$msg = sprintf( __( 'Details for %d %s have been successfully updated.', 'event_espresso' ), $results, $this->plual_item );
+			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			
 		} elseif ( $row_results === 0 ) {
-			// zero row updated means that the data was identical to the existing record so no update occured
-			//changing this to return 1 becuz returning zero appears as an error
+			// zero rows updated means that the data was identical to the existing record so no update occured
+			//changing this to return 1 becuz returning zero appears as an error, but no notifications will be shown
 			$row_results = 1;
-			//	$update_results = array( 'type' =>  'error', 'msg' => 'The submitted record was identical to existing data, no so update was performed.', 'rows' => 0 );
-			//$espresso_notices['success'][] = 'The submitted record was identical to existing data, no so update was performed.';
 
 		} else {
 			// an actual error occured!
@@ -724,9 +719,9 @@ abstract class EEM_Base {
 			
 			$error = $db_error[0];	
 			
-//			$update_results = array( 'type' =>  'error', 'msg' => "The following error occured and the record was not updated : \n" . $error, 'rows' => FALSE );
-			$espresso_notices['errors'][] = "The following error occured and the record was not updated : \n" . $error;
-			
+			$msg = __( 'The following error occured and the record was not updated : ', 'event_espresso' ) . "\n" . $error;;
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+				
 		}
 
 		return $row_results;
@@ -753,11 +748,10 @@ abstract class EEM_Base {
 	 */
 	private function _delete ( $em_table_name=FALSE, $em_table_data_types=array(), $where_cols_n_values=FALSE, $operator = '=' ) {
 
-		global $espresso_notices;
-
 		// what?? no table name ??? Get outta here!!!
 		if ( ! $em_table_name ) {
-			$espresso_notices['errors'][] = 'No table has been specified. ' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'No table has been specified.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -768,7 +762,8 @@ abstract class EEM_Base {
 			$SQL .= $prepped['where'];
 			$VAL = $prepped['value'];
 		} else {
-			$espresso_notices['errors'][] = 'At least one column name and value has to be specified in order to delete data. ' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'At least one column name and value has to be specified in order to delete data.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -801,19 +796,20 @@ abstract class EEM_Base {
 	 */
 	protected function _prepare_where ( $where_cols_n_values=FALSE, $em_table_data_types=FALSE, $operator = '=' ) {
 
-		global $espresso_notices;
 //		echo printr( $where_cols_n_values, '$where_cols_n_values' );
 //		echo printr( $em_table_data_types, '$em_table_data_types' );
 
 		// what??? no WHERE clause??? get outta here!!
 		if ( ! $where_cols_n_values ) {
-			$espresso_notices['errors'][] = 'No coulmn name was provided for the WHERE clause. ' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'No coulmn name was provided for the WHERE clause.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
 		// what??? no table data types??? get outta here!!
 		if ( ! $em_table_data_types ) {
-			$espresso_notices['errors'][] = 'The table data types array is missing. ' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'The table data types array is missing.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -893,122 +889,6 @@ abstract class EEM_Base {
 
 
 
-
-
-
-
-
-
-	/**
-	 *		This function generates a CSV list from an array
-	 *
-	 *		@access private
-	 *		@param array - $array
-	 *		@return string
-	 */
-	private function _array_to_csv ($array=array()) {
-
-		global $espresso_notices;
-
-		if ( empty($array)) {
-			$espresso_notices['errors'][] = 'The supplied array was empty. ' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-
-		// change array into csv list
-		$csv = '';
-		foreach ($array as $value) {
-			$csv .= $value . ',';
-		}
-
-		// delete last comma
-		$csv = substr($csv, 0, -1);
-
-		return $csv;
-
-	}
-
-
-		public function how_to_use_insert() {
-			echo '
-<h2>Cut and paste the following into your code:</h2>
-<pre>
-	// array of column names and values for the SQL INSERT... VALUES clause
-	$set_column_values = array(
-					\'key\' => \'value\',
-					\'key\' => $value,
-				);
-	// model function to perform error checking and then run update
-	$results = $attendee_model->insert ($set_column_values);
-</pre>
-';
-			die();
-		}
-
-
-
-
-
-		public function how_to_use_update() {
-			echo '
-<h2>Cut and paste the following into your code:</h2>
-<pre>
-	// array of column names and values for the SQL SET clause
-	$set_column_values = array(
-					\'key\' => \'value\',
-					\'key\' => $value,
-				);
-	// array of column names and values for the SQL WHERE clause
-	$where = array(
-					\'key\' => \'value\',
-					\'key\' => $value,
-				);
-	// model function to perform error checking and then run update
-	$results = $attendee_model->update ($set_column_values, $where);
-</pre>
-';
-			die();
-		}
-
-
-
-
-
-
-
-
-
-
-
-
-	protected function display_vars( $method, $vars_array ) {
-
-		echo '<h1>Class: '.get_class($this).'</h1>';
-		echo '<h2>Method: '.$method.'</h2>';
-		echo '<h3>TABLE : ' . $this->table_name . '</h3>';
-
-		foreach ( $vars_array as $var => $var_array ) {
-			echo '<h4> ' . $this->table_name . ' ' . $var.'</h4>';
-			echo '<pre>';
-			echo print_r($var_array);
-			echo '</pre>';
-		}
-		die();
-	}
-
-
-
-	/**
-	 *		@ override magic methods
-	 *		@ return void
-	 */
-	public function __get($a) { return FALSE; }
-	public function __set($a,$b) { return FALSE; }
-	public function __unset($a) { return FALSE; }
-	public function __clone() { return FALSE; }
-	public function __wakeup() { return FALSE; }
-
 }
 /* End of file EEM_Base.model.php */
-/* Location: /ee-mvc/models/EEM_Base.model.php */
-?>
+/* Location: /includes/models/EEM_Base.model.php */

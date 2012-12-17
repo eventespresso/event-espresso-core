@@ -125,7 +125,7 @@ function espresso_display_reg_page($data) {
 					<?php
 				}
 
-				if ($data['show_ee_gmap_no_shortcode'] && $data['event_meta']['enable_for_gmap']) {
+				if ($data['show_ee_gmap_no_shortcode'] && $data['event_meta']['enable_for_gmap'] && isset($data['ee_gmap_location'])) {
 					echo ee_gmap_display($data['ee_gmap_location'], $data['event_id']);
 				}
 

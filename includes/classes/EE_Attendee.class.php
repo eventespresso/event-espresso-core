@@ -156,6 +156,15 @@ class EE_Attendee {
 	private $_ATT_notes = NULL;
 
 
+    /**
+    *	Whether this Attendee has been moved to the trash
+	* 
+	*	@access	private
+    *	@var boolean	
+    */
+	private $_ATT_deleted = FALSE;
+
+
 
 
 
@@ -176,23 +185,25 @@ class EE_Attendee {
 	* @param 		string		 		$ATT_social 				Attendee Social Networking details
 	* @param 		string		 		$ATT_comments 		Attendee Comments (by the attendee)
 	* @param 		string		 		$ATT_notes					Attendee Notes (about the attendee)
+	* @param 		string		 		$ATT_deleted					Whether this Attendee has been moved to the trash
 	* @param 		int 					$ATT_ID 						Attendee ID
 	*/
-	public function __construct( $ATT_fname='', $ATT_lname='', $ATT_address=NULL, $ATT_address2=NULL, $ATT_city=NULL, $STA_ID=NULL,$CNT_ISO=NULL,$ATT_zip=NULL,$ATT_email=NULL,$ATT_phone=NULL,$ATT_social=NULL,$ATT_comments=NULL,$ATT_notes=NULL,$ATT_ID=FALSE ) {
-		$this->_ATT_ID 					= $ATT_ID;
-		$this->_ATT_fname 			= $ATT_fname;
-		$this->_ATT_lname 			= $ATT_lname;
-		$this->_ATT_address			= $ATT_address;
-		$this->_ATT_address2		= $ATT_address2;
-		$this->_ATT_city				= $ATT_city;
-		$this->_STA_ID					= $STA_ID;
-		$this->_CNT_ISO				= $CNT_ISO;
-		$this->_ATT_zip					= $ATT_zip;
-		$this->_ATT_email				= $ATT_email;
-		$this->_ATT_phone			= $ATT_phone;
-		$this->_ATT_social				= $ATT_social;
-		$this->_ATT_comments	= $ATT_comments;
-		$this->_ATT_notes				= $ATT_notes;
+	public function __construct( $ATT_fname='', $ATT_lname='', $ATT_address=NULL, $ATT_address2=NULL, $ATT_city=NULL, $STA_ID=NULL, $CNT_ISO=NULL, $ATT_zip=NULL, $ATT_email=NULL, $ATT_phone=NULL, $ATT_social=NULL, $ATT_comments=NULL, $ATT_notes=NULL, $ATT_deleted=FALSE,$ATT_ID=FALSE ) {
+		$this->_ATT_ID 					= absint( $ATT_ID );
+		$this->_ATT_fname 			= 	htmlentities( wp_strip_all_tags( $ATT_fname ), ENT_QUOTES, 'UTF-8' ); 
+		$this->_ATT_lname 			= htmlentities( wp_strip_all_tags( $ATT_lname ), ENT_QUOTES, 'UTF-8' );
+		$this->_ATT_address			= htmlentities( wp_strip_all_tags( $ATT_address ), ENT_QUOTES, 'UTF-8' );
+		$this->_ATT_address2		= htmlentities( wp_strip_all_tags( $ATT_address2 ), ENT_QUOTES, 'UTF-8' );
+		$this->_ATT_city				= htmlentities( wp_strip_all_tags( $ATT_city ), ENT_QUOTES, 'UTF-8' );
+		$this->_STA_ID					= wp_strip_all_tags( $STA_ID );
+		$this->_CNT_ISO				= wp_strip_all_tags( $CNT_ISO );
+		$this->_ATT_zip					= wp_strip_all_tags( $ATT_zip );
+		$this->_ATT_email				= sanitize_email( $ATT_email );
+		$this->_ATT_phone			= htmlentities( wp_strip_all_tags( $ATT_phone ), ENT_QUOTES, 'UTF-8' );
+		$this->_ATT_social				= htmlentities( wp_strip_all_tags( $ATT_social ), ENT_QUOTES, 'UTF-8' );
+		$this->_ATT_comments	= htmlentities( wp_strip_all_tags( $ATT_comments ), ENT_QUOTES, 'UTF-8' );
+		$this->_ATT_notes				= htmlentities( wp_strip_all_tags( $ATT_notes ), ENT_QUOTES, 'UTF-8' );
+		$this->_ATT_deleted			= absint( $ATT_deleted ) === 1 ? TRUE : FALSE;
 	}
 
 
@@ -208,9 +219,9 @@ class EE_Attendee {
 	*/	
 	public function set_fname( $fname = FALSE ) {
 		
-		global $espresso_notices;
 		if ( ! $fname ) {
-			$espresso_notices['errors'][] = 'No first name was supplied.';
+			$msg = __( 'No first name was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		$this->_ATT_fname = wp_strip_all_tags( $fname );
@@ -229,9 +240,9 @@ class EE_Attendee {
 	*/	
 	public function set_lname( $lname = FALSE ) {
 		
-		global $espresso_notices;
 		if ( ! $lname ) {
-			$espresso_notices['errors'][] = 'No last name was supplied.';
+			$msg = __( 'No last name was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		$this->_ATT_lname = wp_strip_all_tags( $lname );
@@ -250,9 +261,9 @@ class EE_Attendee {
 	*/	
 	public function set_address( $address = FALSE ) {
 		
-		global $espresso_notices;
 		if ( ! $lname ) {
-			$espresso_notices['errors'][] = 'No address was supplied.';
+			$msg = __( 'No address was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		$this->_ATT_address = wp_strip_all_tags( $address );
@@ -271,9 +282,9 @@ class EE_Attendee {
 	*/	
 	public function set_address2( $address2 = FALSE ) {
 		
-		global $espresso_notices;
 		if ( ! $address2 ) {
-			$espresso_notices['errors'][] = 'No address was supplied.';
+			$msg = __( 'No second address was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		$this->_ATT_address2 = wp_strip_all_tags( $address2 );
@@ -292,9 +303,9 @@ class EE_Attendee {
 	*/	
 	public function set_city( $city = FALSE ) {
 		
-		global $espresso_notices;
 		if ( ! $city ) {
-			$espresso_notices['errors'][] = 'No city was supplied.';
+			$msg = __( 'No city was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		$this->_ATT_city = wp_strip_all_tags( $city );
@@ -313,9 +324,9 @@ class EE_Attendee {
 	*/	
 	public function set_state( $STA_ID = FALSE ) {
 		
-		global $espresso_notices;
 		if ( ! $STA_ID ) {
-			$espresso_notices['errors'][] = 'No state ID was supplied.';
+			$msg = __( 'No state ID was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		$this->_STA_ID = absint( $STA_ID );
@@ -334,9 +345,9 @@ class EE_Attendee {
 	*/	
 	public function set_country( $CNT_ISO = FALSE ) {
 		
-		global $espresso_notices;
 		if ( ! $CNT_ISO ) {
-			$espresso_notices['errors'][] = 'No country ISO code was supplied.';
+			$msg = __( 'No country ISO code was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		$this->_CNT_ISO = wp_strip_all_tags( $CNT_ISO );
@@ -355,9 +366,9 @@ class EE_Attendee {
 	*/	
 	public function set_zip( $zip = FALSE ) {
 		
-		global $espresso_notices;
 		if ( ! $zip ) {
-			$espresso_notices['errors'][] = 'No zip/postal code was supplied.';
+			$msg = __( 'No zip/postal code was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		$this->_ATT_zip = wp_strip_all_tags( $zip );
@@ -376,9 +387,9 @@ class EE_Attendee {
 	*/	
 	public function set_email( $email = FALSE ) {
 		
-		global $espresso_notices;
 		if ( ! $email ) {
-			$espresso_notices['errors'][] = 'No email address was supplied.';
+			$msg = __( 'No email address was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		$this->_ATT_email = sanitize_email( $email );
@@ -397,9 +408,9 @@ class EE_Attendee {
 	*/	
 	public function set_phone( $phone = FALSE ) {
 		
-		global $espresso_notices;
 		if ( ! $phone ) {
-			$espresso_notices['errors'][] = 'No phone number was supplied.';
+			$msg = __( 'No phone number was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		$this->_ATT_phone = wp_strip_all_tags( $phone );
@@ -418,9 +429,9 @@ class EE_Attendee {
 	*/	
 	public function set_social( $social = FALSE ) {
 		
-		global $espresso_notices;
 		if ( ! $social ) {
-			$espresso_notices['errors'][] = 'No social networking details were supplied.';
+			$msg = __( 'No social networking details were supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		$this->_ATT_phone = wp_kses_data( $social );
@@ -439,9 +450,9 @@ class EE_Attendee {
 	*/	
 	public function set_comments( $comments = FALSE ) {
 		
-		global $espresso_notices;
 		if ( ! $comments ) {
-			$espresso_notices['errors'][] = 'No comments were supplied.';
+			$msg = __( 'No comments were supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		$this->_ATT_phone = wp_strip_all_tags( $comments );
@@ -460,15 +471,35 @@ class EE_Attendee {
 	*/	
 	public function set_notes( $notes = FALSE ) {
 		
-		global $espresso_notices;
 		if ( ! $notes ) {
-			$espresso_notices['errors'][] = 'No notes were supplied.';
+			$msg = __( 'No notes were supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		$this->_ATT_notes = wp_strip_all_tags( $notes );
 		return TRUE;
 	}
 
+
+
+
+
+	/**
+	*		set deleted
+	* 
+	* 		@access		public
+	*		@param		bool		ATT_deleted
+	*/
+	public function set_deleted( $ATT_deleted = NULL ) {
+
+		if ( $ATT_deleted == NULL ) {
+			$msg = __( 'No deleted boolean flag was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}
+		$this->_ATT_deleted = (bool)absint( $ATT_deleted );
+		return TRUE;
+	}
 
 
 
@@ -497,7 +528,8 @@ class EE_Attendee {
 				'ATT_phone'			=> $this->_ATT_phone,
 				'ATT_social'				=> $this->_ATT_social,
 				'ATT_comments'		=> $this->_ATT_comments,
-				'ATT_notes'				=> $this->_ATT_notes
+				'ATT_notes'				=> $this->_ATT_notes,
+				'ATT_deleted'			=> $this->_ATT_deleted
 		);
 
 		if ( $where_cols_n_values ){
@@ -607,7 +639,7 @@ class EE_Attendee {
 	* 		@access		public
 	*/	
 	public function state_ID() {
-		return $this->_STA_ID;
+		return ! empty( $this->_STA_ID ) ? $this->_STA_ID : '';
 	}
 
 
@@ -681,49 +713,17 @@ class EE_Attendee {
 	}
 
 
-
-
-
-
 	/**
-	*		Search for an existing DB record for this Attendee
-	* 		@access		public
-	*/	
-//	public function find_existing_attendee( $where_cols_n_values = FALSE ) {
-//		// load model
-//		$MODEL = EEM_Attendee::instance();
-//		// no search params means attendee object already exists
-//		if ( ! $where_cols_n_values ) {
-//			// search by combo of first and last names plus the email address
-//			$where_cols_n_values = array( 'ATT_fname' => $this->_ATT_fname, 'ATT_lname' => $this->_ATT_lname, 'ATT_email' => $this->_ATT_email );  	 
-//		}
-//		
-//		if ( $attendee = $MODEL->get_attendee( $where_cols_n_values )) {
-//			return $attendee;
-//		} else {
-//			return FALSE;
-//		}
-//
-//	}
+	*	get deleted
+	* 	@access		public
+	* 	@return 		bool
+	*/
+	public function deleted() {
+		return $this->_ATT_deleted;
+	}
 
 
 
-
-
-
-
-
-
-
-	/**
-	 *		@ override magic methods
-	 *		@ return void
-	 */	
-	public function __get($a) { return FALSE; }
-	public function __set($a,$b) { return FALSE; }
-	public function __unset($a) { return FALSE; }
-	public function __clone() { return FALSE; }
-	public function __wakeup() { return FALSE; }
 
 
 }

@@ -5,37 +5,53 @@
 	// clear firefox and safari cache
 	$(window).unload( function() {}); 
 
-	function wheres_the_top() {
-		// window width
-		wnd_width = parseInt( $(window).width() );
-		// window height
-		wnd_height = parseInt( $(window).height() );
-		// how far down the page the use has scrolled
-		var st = $('html').scrollTop();
-		var top_adjust = wnd_height / 4.6;
-		// where message boxes will appear
-		if ( st > top_adjust ) {
-			var msg_top = st - (wnd_height/4.6);
-		} else {
-			var msg_top = st;
+
+	// move notifications from top of reg form to just before closing body tag
+	// so that notifications can easily be centered on screen regardless of resolution or scroll position
+	var notifications = $('#multi-event-registration-notifications').html();
+	$('#multi-event-registration-notifications').html('');
+	$('body').append( notifications );
+	
+
+	
+	// add jQuery function to center elements on screen
+	$.fn.center = function () {
+		this.css({ 'position' : 'absolute' });
+		var element_top = Math.max( 0, ((( $(window).height() / 2 ) - this.outerHeight() ) / 2 )  + $(window).scrollTop() );
+		var element_left = Math.max( 0, (( $(window).width() - this.outerWidth() ) / 2 ) + $(window).scrollLeft() );
+		this.css({ 'top' : element_top + 'px' });
+		this.css({ 'left' : element_left + 'px' });
+		if ( $(window).width() > 600 ) {
+			this.css({ 'max-width' : '600px' });
 		}
-		
-		
-		return msg_top;
+		return this;
 	}
+
+
 
 	$('.show-if-js').css({ 'display' : 'inline-block' });
 	$('.hide-if-no-js').removeClass( 'hide-if-no-js' );
+
+
 	
-	
-	$('#mer-reg-page-apply-coupon-btn').click(function() {
+	//close btn for notifications
+	$('.close-event-queue-msg').on( 'click', function(){
+		$(this).parent().hide();
+	});
+
+
+
+	// apply coupon button
+	$('#mer-reg-page-apply-coupon-btn').on( 'click', function() {
 		var error_msg = "We're sorry but that coupon code does not appear to be vaild. If this is incorrect, please contact the site administrator.";
 		show_event_queue_ajax_error_msg( error_msg );
 		return false;
 	});
 
 
-	$('#display-more-attendee-copy-options').click(function() {
+
+	// Step 1 - "more options" link in the "Use Attendee #1's information for ALL attendees" box
+	$('#display-more-attendee-copy-options').on( 'click', function() {
 		if ( $('#mer-reg-page-copy-all-attendee-chk').prop('checked', true) ) {
 			$('#mer-reg-page-copy-all-attendee-chk').trigger('click');
 			//$('.mer-reg-page-copy-attendee-chk').trigger('click');
@@ -43,95 +59,29 @@
 	});
 
 
+
 	/**
 	*		trigger click event on all checkboxes if the Copy All option is selected
 	*/
-	$('#mer-reg-page-copy-all-attendee-chk').click(function() {
+	$('#mer-reg-page-copy-all-attendee-chk').on( 'click', function() {
 		$('.mer-reg-page-copy-attendee-chk').each(function(index) {
 			if ( $(this).prop('checked') != $('#mer-reg-page-copy-all-attendee-chk').prop('checked') ) {
 				$(this).trigger('click');
 			}
 			//$('.mer-reg-page-copy-attendee-chk').trigger('click');
 		});
-		verify_all_questions_answered('#mer-registration-frm-1');
+		var good_to_go = verify_all_questions_answered('#mer-registration-frm-1');
+		
+		if ( good_to_go != true && good_to_go != '' ) {
+			show_event_queue_ajax_error_msg( good_to_go );
+		}
 	});
 	
-		
-	
-	/**
-	*		do_before_event_queue_ajax
-	*/	
-	function do_before_event_queue_ajax() {
-		// stop any message alerts that are in progress	
-		$('.event-queue-msg').stop();
-		// spinny things pacify the masses
-		var st = $('html').scrollTop();
-		var po = $('#mer-ajax-loading').parent().offset();
-		
-		var wh = $(window).height();
-		var mal_top = ( st+(wh/2)-po.top ) - 15;
-
-		var ww = $('#mer-ajax-loading').parent().width();
-		var mal_left = ( ww/2 ) -15;
-		
-		$('#mer-ajax-loading').css({ 'top' : mal_top, 'left' : mal_left }).show();
-		
-	}	
 
 	
-	/**
-	*		show event queue ajax success msg
-	*/	
-	function show_event_queue_ajax_success_msg( success_msg ) {
-		
-		if ( success_msg != undefined && success_msg != '' )  {
-		
-			if ( success_msg.success != undefined ) {
-				success_msg = success_msg.success;
-			}		
-			//alert( 'success_msg'+success_msg);
-			msg_top = wheres_the_top();
-			$('#mer-success-msg').css({ 'top' : msg_top });	
-			$('#mer-success-msg > .msg').html( success_msg );
-			$('#mer-ajax-loading').fadeOut('fast');
-			$('#mer-success-msg').removeClass('hidden').show().delay(4000).fadeOut();			
-		} else {
-			$('#mer-ajax-loading').fadeOut('fast');
-		}	
-	}	
 	
-		
-	/**
-	*		show event queue ajax error msg
-	*/	
-	function show_event_queue_ajax_error_msg( error_msg ) {
-			
-		if ( error_msg != undefined && error_msg != '' ) {
-		
-			if ( error_msg.error != undefined ) {
-				error_msg = error_msg.error;
-			} 
-			//alert( 'error_msg'+ error_msg);
-			msg_top = wheres_the_top();
-			$('#mer-error-msg').stop().css({ 'top' : msg_top });				
-			$('#mer-error-msg > .msg').html( error_msg );
-			$('#mer-ajax-loading').fadeOut('fast');
-			$('#mer-error-msg').removeClass('hidden').show().delay(8000).fadeOut();
-
-		} else {
-			$('#mer-ajax-loading').fadeOut('fast');
-		}
-	}
-	
-	
-	$('input[type="text"]').focusout(function() {   
-		if ( $.trim(this.value) != '' ){
-			$(this).removeClass('requires-value');
-		}
-	});	
-	
-		
-	$('.mer-reg-page-copy-attendee-chk').click(function() { 
+	// in
+	$('.mer-reg-page-copy-attendee-chk').on( 'click', function() { 
 
 		// the checkbox that was clicked
 		var clicked_checkbox = $(this);
@@ -177,7 +127,7 @@
 					var lbl = $(this).prev('label');
 					// grab it's text
 					var lbl_txt = $(lbl).html();
-					alert(lbl_txt);
+					//alert(lbl_txt);
 					// remove "<em>*</em>" from end
 					lbl_txt = lbl_txt.substring(0, lbl_txt.length - 10);
 					// show an error msg
@@ -207,10 +157,75 @@
 			}
 
 		});		
-	});	
+	});		
 	
+		
+	
+	/**
+	*		do_before_event_queue_ajax
+	*/	
+	function do_before_event_queue_ajax() {
+		// stop any message alerts that are in progress	
+		$('.event-queue-msg').stop();
+		$('#mer-ajax-loading').center().show();		
+	}
 
+
+
+	/**
+	*		show event queue ajax success msg
+	*/	
+	function show_event_queue_ajax_success_msg( success_msg ) {
+		
+		if ( success_msg != undefined && success_msg != '' )  {
+		
+			if ( success_msg.success != undefined ) {
+				success_msg = success_msg.success;
+			}		
+			//alert( 'success_msg'+success_msg);
+
+			$('#mer-success-msg').center();	
+			$('#mer-success-msg > .msg').html( success_msg );
+			$('#mer-ajax-loading').fadeOut('fast');
+			$('#mer-success-msg').removeClass('hidden').show().delay(4000).fadeOut();			
+		} else {
+			$('#mer-ajax-loading').fadeOut('fast');
+		}	
+	}	
+
+
+
+	/**
+	*		show event queue ajax error msg
+	*/	
+	function show_event_queue_ajax_error_msg( error_msg ) {
+			
+		if ( error_msg != undefined && error_msg != '' ) {
+		
+			if ( error_msg.error != undefined ) {
+				error_msg = error_msg.error;
+			} 
+			//alert( 'show_event_queue_ajax_error_msg = '+ error_msg);
+						
+			$('#mer-error-msg').center();				
+			$('#mer-error-msg > .msg').html( error_msg );
+			$('#mer-ajax-loading').fadeOut('fast');
+			$('#mer-error-msg').removeClass('hidden').show().delay(8000).fadeOut();
+
+		} else {
+			$('#mer-ajax-loading').fadeOut('fast');
+		}
+	}
 	
+	// remove "requires-value" class if field is no longer empty
+	$('input[type="text"]').focusout(function() {   
+		if ( $.trim(this.value) != '' ){
+			$(this).removeClass('requires-value');
+		}
+	});	
+
+
+
 	function scroll_to_top_of_form( msg ) {
 		//alert('scroll_to_top_of_form');
 		var top_of_form = $('#mer-reg-page-steps-display-dv').offset();
@@ -223,6 +238,8 @@
 			}
 		});
 	}	
+
+
 
 	// Registration Steps
 
@@ -264,7 +281,6 @@
 
 
 
-
 	// go to step 2
 	function mer_reg_page_go_to_step_2( msg ) {	
 
@@ -273,7 +289,7 @@
 		}
 		$('.reg-page-billing-info-dv').addClass('hidden');
 		$('.reg-page-payment-option-lnk').removeClass('hidden');
-		//	$('.mer-reg-page-go-to-step-2').click(function() {
+		//	$('.mer-reg-page-go-to-step-2').on( 'click', function() {
 		$('#mer-reg-page-step-2-dv').css({ 'display' : 'none' }).removeClass('hidden');
 		// set step 2 back to auto height 
 		$('#mer-reg-page-step-2-dv').css( 'height', 'auto' );
@@ -296,30 +312,21 @@
 			msg ='';
 		}
 
-//		var selected_gateway = $('#reg-page-selected-gateway').val();
-			
-//		if ( verify_all_questions_answered('#mer-registration-frm-2')) {
-//		if ( verify_all_questions_answered( selected_gateway )) {
-			$('#mer-reg-page-step-3-dv').css({ 'display' : 'none' }).removeClass('hidden');		
-			// set step 3 back to auto height 
-			$('#mer-reg-page-step-3-dv').css( 'height', 'auto' );	
-			// if step 1 is expanded
-			if ( $('#mer-reg-page-step-1-dv').height() > 0 ) {
-				// hide step 1		
-				hide_step_goto( 1, 3, msg );	
-			} else {
-				// must be step 2 that is expanded
-				hide_step_goto( 2, 3, msg );	
-			}	
-			
-//		} else {
-//			msg = new Object();
-//			msg.error = 'Sorry, but you need to answer all required questions before you may proceed.';		
-//			scroll_to_top_of_form( msg );			
-//		}
+		$('#mer-reg-page-step-3-dv').css({ 'display' : 'none' }).removeClass('hidden');		
+		// set step 3 back to auto height 
+		$('#mer-reg-page-step-3-dv').css( 'height', 'auto' );	
+		// if step 1 is expanded
+		if ( $('#mer-reg-page-step-1-dv').height() > 0 ) {
+			// hide step 1		
+			hide_step_goto( 1, 3, msg );	
+		} else {
+			// must be step 2 that is expanded
+			hide_step_goto( 2, 3, msg );	
+		}	
 
 	}
-	
+
+
 
 	// go to step 4
 	function mer_reg_page_go_to_step_4( msg ) {
@@ -327,20 +334,21 @@
 	}	
 
 
+
 	// go to step 1 via edit link
-	$('.mer-reg-page-go-to-step-1').click(function() {
+	$('.mer-reg-page-go-to-step-1').on( 'click', function() {
 		mer_reg_page_go_to_step_1('');
 		return false;
 	});
 	
 	// go to step 2 via edit link
-	$('.mer-reg-page-go-to-step-2').click(function() {
+	$('.mer-reg-page-go-to-step-2').on( 'click', function() {
 		mer_reg_page_go_to_step_2('');
 		return false;
 	});
 
 	// go to step 3 via edit link
-	$('.mer-reg-page-go-to-step-3').click(function() {
+	$('.mer-reg-page-go-to-step-3').on( 'click', function() {
 		selected_gateway_dv = process_selected_gateway();		
 		process_reg_step ( 2, selected_gateway_dv );
 		return false;
@@ -348,20 +356,20 @@
 
 	
 	// submit Step 1 of registraion form
-	$('#mer-reg-page-go-to-step-2-btn').click(function() {	
+	$('#mer-reg-page-go-to-step-2-btn').on( 'click', function() {	
 		process_reg_step ( 1 );
 	});
 		
 	
 	// submit Step 2 of registraion form
-	$('#mer-reg-page-go-to-step-3-btn').click(function() {	
+	$('#mer-reg-page-go-to-step-3-btn').on( 'click', function() {	
 		selected_gateway_dv = process_selected_gateway();
 		process_reg_step ( 2, selected_gateway_dv );
 	});
 		
 	
 	// submit Step 3 of registraion form
-	$('#mer-reg-page-confirm-reg-btn').click(function() {	
+	$('#mer-reg-page-confirm-reg-btn').on( 'click', function() {	
 
 		off_site_payment = $('#reg-page-off-site-gateway').val();
 		if ( off_site_payment == 1 ) {
@@ -371,8 +379,9 @@
 		}		
 		
 	});
-	
-	
+
+
+
 	function process_selected_gateway() {
 		
 		var selected_gateway = $('#reg-page-selected-gateway').val();
@@ -380,6 +389,7 @@
 		var off_site_payment = $( off_site_gateway ).val(); 
 		var selected_gateway_dv = '#reg-page-billing-info-'+selected_gateway+'-dv';
 		//alert( 'selected_gateway : ' + selected_gateway + '\n' + 'off_site_gateway : ' + off_site_gateway + '\n' + 'off_site_payment : ' + off_site_payment + '\n' + 'selected_gateway_dv : ' + selected_gateway_dv );
+		
 		// set off-site-gateway status
 		if ( off_site_payment == 1 ) {
 			$('#reg-page-off-site-gateway').val( 1 );
@@ -388,9 +398,9 @@
 		}
 		return selected_gateway_dv;
 	}
-	
-	
-	
+
+
+
 	function mer_reg_page_go_to( step, response ) {
 	
 		if ( response.error != '' && response.error != undefined ) {
@@ -406,9 +416,10 @@
 		}	
 
 	}
-	
-	
-		/**
+
+
+
+	/**
 	*		submit a step of registraion form
 	*/	
 	function process_reg_step ( step, form_to_check ) { //, off_site_payment
@@ -417,9 +428,13 @@
 			form_to_check = '#mer-registration-frm-'+step;
 		}
 		
-		if ( verify_all_questions_answered( form_to_check )) {
+		var good_to_go = verify_all_questions_answered( form_to_check );
+		//alert( 'good_to_go = ' + good_to_go );
+
+		if ( good_to_go === true ) {
 
 			$('#mer-reg-page-step-'+step+'-ajax').val(1);
+			$('#mer-reg-page-step-'+step+'-noheader').val('true');
 			$('#mer-reg-page-step-'+step+'-action').attr( 'name', 'action' );		
 			var form_data = $('#mer-registration-frm-'+step).serialize();
 //alert	(form_data);
@@ -453,18 +468,17 @@
 				});	
 
 		} else {
-			msg = new Object();
-			msg.error = 'You need to answer all required questions before you can proceed.';		
+			
+			// validation errors 
 			$( form_to_check ).slideDown();
-			scroll_to_top_of_form( msg );
+			scroll_to_top_of_form( good_to_go );
+			return false;
+			
 		}
 		
-		
 		return false;
-		
+				
 	}
-
-
 
 
 
@@ -491,6 +505,14 @@
 
 
 
+	/**
+	*		validate_email_address
+	*/
+	function validate_email_address (email) {
+		var regex = /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+		return regex.test(email);
+	}
+
 
 
 	/**
@@ -505,39 +527,78 @@
 		 if ( whch_form == '' ){
 			whch_form = '#mer-registration-frm-1';
 		}
-
 		//alert( 'whch_form = '+whch_form );
 		
 		var good_to_go = true;
-		$( whch_form + ' .required' ).each(function(index) {
+		
+		$( whch_form + ' .required' ).each( function(index) {
 			//alert( $(this).attr('id') );
+			
+			// empty field
 			if ( $(this).val() == '' ) {
-				good_to_go = false;
+			
+				// set error messages
+				if ( good_to_go === true ) {
+					good_to_go = 'You need to answer all required questions before you can proceed.';
+				} else if ( good_to_go == 'You must enter a valid email address.' ) {
+					good_to_go = 'You must enter a valid email address and answer all other required questions before you can proceed.';
+				} 
+				
 				$(this).addClass('requires-value');
+				
 			} else {
-				$(this).removeClass('requires-value');
+				
+				// is this field an email address ?
+				if ( $(this).prev().attr('for') == 'email' ) {
+					// grab the addy
+					var email_address = $(this).val();
+					// send addy for validation
+					if ( validate_email_address( email_address ) ) {
+						// good email addy
+						$(this).removeClass('requires-value');
+					} else {
+						// bad email addy
+						$(this).addClass('requires-value');
+						// set error messages
+						if ( good_to_go === true ) {
+							good_to_go = 'You must enter a valid email address.';
+						} else if ( good_to_go == 'You need to answer all required questions before you can proceed.' ) {
+							good_to_go = 'You must enter a valid email address and answer all other required questions before you can proceed.';
+						} 						
+					}								
+							
+				} else {
+					$(this).removeClass('requires-value');
+				}			
+				
 			}	
 		});
-		
-		if ( good_to_go && $('#mer-reg-page-copy-all-attendee-chk').prop('checked') ) {
+			
+		if ( good_to_go === true && $('#mer-reg-page-copy-all-attendee-chk').prop('checked') ) {
 			$('.event_questions').slideUp();
 			$('#mer-reg-page-copy-attendee-dv').slideUp();
 			$('#mer-reg-page-display-event-questions-lnk').removeClass('hidden');
+		} else if ( good_to_go != '' ) {
+			msg = new Object();
+			msg.error = good_to_go;
+			good_to_go = msg;
 		}
+		//alert( 'good_to_go = ' + good_to_go );
 		return good_to_go;
 				
 	}
-	
 
-	$('#mer-reg-page-display-event-questions-lnk').click(function() {
+
+
+	// show event questions
+	$('#mer-reg-page-display-event-questions-lnk').on( 'click', function() {
 		$('.event_questions').slideDown();
 		$('#mer-reg-page-copy-attendee-dv').slideDown();
 		$(this).addClass('hidden');
 	});
 
-		
-	
-	
+
+
 	/**
 	*		show reg page copy attendee error msg
 	*/	
@@ -548,45 +609,10 @@
 		$('#mer-error-msg-' + event_id ).show().delay(8000).fadeOut();
 	
 	}
-	
-	
-	
-	
-/*	// generic click event for displaying and giving focus to an element and hiding control 
-	$('.display-the-hidden').click(function() {
-		// get target element from "this" (the control element's) "rel" attribute
-		var item_to_display = $(this).attr("rel"); 
-		// hide the control element
-		$(this).addClass('hidden');  
-		// display the target's div container - use slideToggle or removeClass
-		$('#'+item_to_display+'-dv').slideToggle(500, function() {
-			// display the target div's hide link
-			$('#hide-'+item_to_display).removeClass('hidden'); 
-			// if hiding/showing a form input, then id of the form input must = item_to_display
-			//$('#'+item_to_display).focus(); // add focus to the target
-		}); 
-		return false;
-	});
 
-	// generic click event for re-hiding an element and displaying it's display control 
-	$('.hide-the-displayed').click(function() {
-		// get target element from "this" (the control element's) "rel" attribute
-		var item_to_hide = $(this).attr("rel"); 
-		// hide the control element
-		$(this).addClass('hidden');  
-		// hide the target's div container - use slideToggle or addClass
-		$('#'+item_to_hide+'-dv').slideToggle(500, function() {
-			//$('#'+item_to_hide+'-dv').delay(250).addClass('hidden'); 
-			// display the control element that toggles display of this element
-			$('#display-'+item_to_hide).removeClass('hidden');  
-		}); 
-		return false;
-	});	*/
-	
-	
-	
 
-	$('.reg-page-payment-option-lnk').click(function() {
+
+	$('.reg-page-payment-option-lnk').on( 'click', function() {
 	
 		var selected_payment_option = $(this);
 		var selected_gateway = $(this).attr('id');
@@ -612,19 +638,20 @@
 		return false;
 		
 	});
-	
-	
-	
+
+
+
 	$('#reg-page-select-other-gateway-lnk').on( 'click', function() {
 		selected_gateway = '#' + $(this).attr('rel');
 		$(this).attr('rel', '');
 		$( selected_gateway ).trigger('click');
 		return false;
 	});
-	
-	
+
+
+
 	// generic click event for displaying and giving focus to an element and hiding control 
-	$('.display-the-hidden').click(function() {
+	$('.display-the-hidden').on( 'click', function() {
 		// get target element from "this" (the control element's) "rel" attribute
 		var item_to_display = $(this).attr("rel"); 
 		var control = $(this);
@@ -642,7 +669,7 @@
 	});
 
 	// generic click event for re-hiding an element and displaying it's display control 
-	$('.hide-the-displayed').click(function() {
+	$('.hide-the-displayed').on( 'click', function() {
 		// get target element from "this" (the control element's) "rel" attribute
 		var item_to_hide = $(this).attr("rel"); 
 		var control = $(this);

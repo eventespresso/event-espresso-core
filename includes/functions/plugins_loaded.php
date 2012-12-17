@@ -1,6 +1,4 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-
-
 /**
  * 		define all event espresso db table names plus directory and url paths
  *
@@ -16,11 +14,11 @@ function espresso_define_tables_and_paths() {
 	
 	// add ESPRESSO directories to include_path
 	set_include_path(
-		dirname( __FILE__ ) . DS . 'includes' . DS . 'core' . DS . PS .
-		dirname( __FILE__ ) . DS . 'includes' . DS . 'models' . DS . PS .
-		dirname( __FILE__ ) . DS . 'includes' . DS . 'classes' . DS . PS .
-		dirname( __FILE__ ) . DS . 'includes' . DS . 'functions' . DS . PS .
-		dirname( __FILE__ ) . DS . 'gateways' . DS . PS .
+		dirname( espresso_main_file() ) . DS . 'includes' . DS . 'core' . DS . PS .
+		dirname( espresso_main_file() ) . DS . 'includes' . DS . 'models' . DS . PS .
+		dirname( espresso_main_file() ) . DS . 'includes' . DS . 'classes' . DS . PS .
+		dirname( espresso_main_file() ) . DS . 'includes' . DS . 'functions' . DS . PS .
+		dirname( espresso_main_file() ) . DS . 'gateways' . DS . PS .
 		get_include_path()
 	);
 	
@@ -89,18 +87,6 @@ function espresso_define_tables_and_paths() {
 
 
 
-
-/**
- * 		initialize and globalize espresso messages array
- *
- * 		@access public
- * 		@return void
- */
-function espresso_setup_notices() {
-	// global error notices
-	global $espresso_notices;
-	$espresso_notices	= array( 'success' => FALSE, 'errors' => FALSE );
-}
 
 
 /**
@@ -215,28 +201,40 @@ body {
 
 
 
-
+/**
+ * 		get WP user id for currently logged in user 
+ *
+ * 		@access public
+ * 		@return void
+ */
 function espresso_get_user_id() {
 	global $current_user, $espresso_wp_user;
-
 	$espresso_wp_user = 1;
-
 	$espresso_wp_user = apply_filters('filter_hook_espresso_get_user_id', $espresso_wp_user);
-
 	return $espresso_wp_user;
 }
 
 
 
 
-
+/**
+ * 		load EE organization options and begin EE logging
+ *
+ * 		@access public
+ * 		@return void
+ */
 function espresso_load_org_options() {
 	global $org_options, $espresso_wp_user;
 	$org_options = get_user_meta($espresso_wp_user, 'events_organization_settings', true);
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Log.class.php');
+	//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Log.class.php');
+	require_once( 'EE_Log.class.php' );
+	do_action('action_hook_espresso_debug_file');
+	$req_vars = '';
+	foreach ( $_REQUEST as $k => $v ){
+		$req_vars .= "\n" . $k . ' = ' . $v;
+	}
+	do_action('action_hook_espresso_log', '', '', '$_REQUEST = ' . $req_vars );	
 }
-
-
 
 
 
@@ -250,20 +248,12 @@ function espresso_load_org_options() {
  */
 function espresso_EE_Session() {
 	global $EE_Session;
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Session.class.php');
+	//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Session.class.php');
+	require_once( 'EE_Session.class.php' );
 	// instantiate !!!
 	$EE_Session = EE_Session::instance();
 	if (!empty($_POST['clear_cart'])) {
-		$EE_Session->reset_data(array(
-				'cart',
-				'gateway_data', 
-				'transaction', 
-				'registration',
-				'primary_attendee',
-				'tax_totals',
-				'taxes',
-				'billing_info'
-				));
+		espresso_clear_session();
 	}
 }
 
@@ -271,16 +261,80 @@ function espresso_EE_Session() {
 
 
 
+/**
+ * 		Clear EE_Session data
+ *
+ * 		@access public
+ * 		@return void
+ */
+function espresso_clear_session() {
+	global $EE_Session;
+	$EE_Session->reset_data( 
+			array(
+						'cart',
+						'gateway_data', 
+						'transaction', 
+						'registration',
+						'primary_attendee',
+						'tax_totals',
+						'taxes',
+						'billing_info',
+						'txn_results'
+					));
+																
+	$EE_Session->set_session_data(
+			array(
+						'_events_in_cart' => array(),
+						'_cart_grand_total_qty' => 0,
+						'_cart_grand_total_amount' => 0
+					),
+					'session_data'
+	);
+
+}
+add_action( 'action_hook_espresso_before_event_list', 'espresso_clear_session' );
+
+
+
+
+
+/**
+ * 		print_r EE_Session object at bottom of page after everything else has happened
+ *
+ * 		@access public
+ * 		@return void
+ */
+function espresso_printr_session() {
+	$user = wp_get_current_user();
+	$wp_user_id = isset( $user->data->ID ) ? $user->data->ID : NULL;
+	if ( isset( $_REQUEST['ee_session'] ) && $wp_user_id <= 1 ) {	
+		global $EE_Session;
+		echo '<pre style="height:auto;border:2px solid lightblue;">';
+		echo print_r( $EE_Session, TRUE );
+		echo '</pre><br /><span style="font-size:10px;font-weight:normal;">';
+		echo __FILE__ . '<br />line no: ' . __LINE__ . '</span>';	
+	}
+}
+add_action( 'shutdown', 'espresso_printr_session' );
+
+
+
+
+
+/**
+ * 		Event Espresso Initialization
+ *
+ * 		@access public
+ * 		@return void
+ */
 function espresso_init() {
 
-//	echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-//	echo '<pre style="height:auto;border:2px solid #FF6600;">' . print_r( $_REQUEST, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
-
-	do_action('action_hook_espresso_debug_file');
 	//Globals used throughout the site
-	global $espresso_premium, $is_UI_request;
+	global $espresso_premium, $is_UI_request, $is_ajax_request;
 	// is this request for UI or backend 
 	$is_UI_request = ( ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' ) ? TRUE : FALSE;
+	$is_ajax_request = ( isset( $_REQUEST['espresso_ajax'] ) && $_REQUEST['espresso_ajax'] == 1 ) ? TRUE : FALSE;
+
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, 'is_UI_request = ' . $is_UI_request );
 
 	//Set the default time zone
@@ -303,24 +357,30 @@ function espresso_init() {
 //	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php';
 //	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Venue.class.php';
 	
+	$espresso_premium = apply_filters('filter_hook_espresso_systems_check', false);
+	
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . "functions/main.php");
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/pricing.php');
+//	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/pricing.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/time_date.php');
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/actions.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');
 
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Single_Page_Checkout.class.php');
-	global $Single_Page_Checkout;
-	$Single_Page_Checkout = EE_Single_Page_Checkout::instance();	
-	$espresso_premium = apply_filters('filter_hook_espresso_systems_check', false);
 
 	do_action('action_hook_espresso_coupon_codes');
 }
 
 
 
-function espresso_systems_check($check) {
+
+
+/**
+ * 		perform system check and load additional files
+ *
+ * 		@access public
+ * 		@return void
+ */
+function espresso_systems_check( $check = FALSE ) {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/misc_functions.php')) {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/misc_functions.php');
@@ -333,8 +393,9 @@ function espresso_systems_check($check) {
 	}
 	return $check;
 }
-
 add_filter('filter_hook_espresso_systems_check', 'espresso_systems_check');
+
+
 
 
 
@@ -355,6 +416,10 @@ function espresso_check_for_export() {
 	}
 }
 
+
+
+
+
 /**
  * 		Handles importing of csv files
  *
@@ -373,20 +438,84 @@ function espresso_check_for_import() {
 }
 
 
+
+
+
+/**
+ * 		Test if current page pertains to event registrationand load appropriate files
+ *
+ * 		@access public
+ * 		@return void
+ */
 function espresso_load_reg_page_files() {
 
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-	define("ESPRESSO_REG_PAGE_FILES_LOADED", "true");
+	global $org_options, $current_ee_page;
+	
+	$current_ee_page = isset( $current_ee_page ) ? $current_ee_page : $org_options['event_page_id'];
+	
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '$current_ee_page = ' . $current_ee_page );
 
-//Process email confirmations
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/email.php');
+	$reg_pages = array(
+		$org_options['event_page_id']	 => 'event_page_id',
+		$org_options['return_url']	 => 'return_url',
+		$org_options['cancel_return'] => 'cancel_return',
+		$org_options['notify_url']	 => 'notify_url'
+	);
+	
+	if ( isset( $reg_pages[ $current_ee_page ] )) {
+		switch( $reg_pages[ $current_ee_page ] ){
+		
+			case 'event_page_id' :
 
-//Various attendee functions
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/attendee_functions.php');
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/thank_you_page.php');
-	event_espresso_require_gateway('PaymentGateway.php');
+					$load_SPCO = FALSE;
+					
+					$e_reg_pages = array( 
+									'register', 
+									'process_reg_step_1', 
+									'process_reg_step_2', 
+									'process_reg_step_3', 
+									'event_queue'
+							);
+					$load_SPCO = isset( $_REQUEST['e_reg'] ) && ( in_array( $_REQUEST['e_reg'], $e_reg_pages )) ? TRUE : $load_SPCO;
+						
+					$e_reg_ajax_actions = array( 
+									'espresso_process_registration_step_1', 
+									'espresso_process_registration_step_2', 
+									'espresso_process_registration_step_3'
+							);
+					$load_SPCO = isset( $_REQUEST['action'] ) && ( in_array( $_REQUEST['action'], $e_reg_ajax_actions )) ? TRUE : $load_SPCO;
+							
+					if ( $load_SPCO ) {
+						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Single_Page_Checkout.class.php');
+						global $Single_Page_Checkout;
+						$Single_Page_Checkout = EE_Single_Page_Checkout::instance();	
+						//Process email confirmations
+						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/email.php');
+						define("ESPRESSO_REG_PAGE_FILES_LOADED", "true");
+					}
+
+				break;
+			
+			case 'return_url' :
+					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/pricing.php');
+					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/thank_you_page.php');
+					event_espresso_require_gateway('PaymentGateway.php');
+				break;
+			
+			case 'cancel_return' :
+				break;
+			
+			case 'notify_url' :
+				break;
+		}
+
+	}
+	
+
 }
 add_action('action_hook_espresso_load_reg_page_files', 'espresso_load_reg_page_files');
+
+
 
 
 
@@ -455,6 +584,7 @@ function event_espresso_run_install($table_name, $table_version, $sql, $engine =
  */
 function espresso_admin_pages() {
 
+	//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 	define( 'EE_CORE_ADMIN', EE_CORE . 'admin' . DS );
@@ -462,7 +592,10 @@ function espresso_admin_pages() {
 	define( 'WP_AJAX_URL', get_bloginfo('url') . '/wp-admin/admin-ajax.php' );
 	define( 'JQPLOT_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/' );
 	
-	global $is_UI_request;
+	global $is_UI_request, $is_ajax_request;
+	
+//	echo '<h4>$is_UI_request : ' . $is_UI_request . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//	echo '<h4>$is_ajax_request : ' . $is_ajax_request . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
 	// load admin page factory files
 	require_once( EE_CORE_ADMIN . 'EE_Admin_Page_Init.core.php' );
@@ -471,15 +604,18 @@ function espresso_admin_pages() {
 	$load_admin = TRUE;
 	// grab page request
 	$page_request = ! empty( $_REQUEST['page'] ) ? sanitize_key( $_REQUEST['page'] ) : FALSE;
+	//echo '<h4>$page_request : ' . $page_request . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+	do_action('action_hook_espresso_log', 'admin page request = ' . $page_request, '$is_UI_request = ' . $is_UI_request, '$is_ajax_request = ' . $is_ajax_request );
 
 	// are we just doing some backend processing or runnning the whole shebang?
-	if ( ! $is_UI_request ) {
+	if ( $page_request && ! $is_UI_request ) {
 		//echo '<h4>load admin page : ' . $page_request . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		do_action('action_hook_espresso_load_reg_page_files');
 		// if the page_request doesn't load here for some reason then load the entire admin
 		$load_admin = ! espresso_load_admin_page( $page_request, $page_request ) ? TRUE : FALSE;
 	}
 	
-	if ( $load_admin ) {
+	if ( $load_admin && ! $is_ajax_request ) {
 		//echo '<h4>load all admin pages  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		// start with an empty array
 		$admin_pages = array();
@@ -523,6 +659,8 @@ function espresso_admin_pages() {
  * 		@return void
  */
 function espresso_load_admin_page( $admin_page, $page_request ) {
+	
+//	echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 
 	$admin_page = strtolower( $admin_page );
 	$page_name = ucwords(  str_replace( '_', ' ', $admin_page ));
@@ -541,3 +679,4 @@ function espresso_load_admin_page( $admin_page, $page_request ) {
 		return FALSE;
 	}
 }
+

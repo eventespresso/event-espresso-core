@@ -21,9 +21,9 @@ interface Admin_Page_Interface {
 /**
  * EE_Admin_Page class
  *
- * @package			Event Espresso
+ * @package		Event Espresso
  * @subpackage		includes/core/admin/EE_Admin_Page.core.php
- * @author				Brent Christensen
+ * @author		Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -86,11 +86,14 @@ class EE_Admin_Page {
 	 */
 	protected function _init() {
 
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$this->_check_user_access();
 
-		$this->_AJAX = isset($_POST['espresso_ajax']) && $_POST['espresso_ajax'] == 1  ? TRUE : FALSE;
+		global $is_ajax_request;
+		$this->_AJAX = $is_ajax_request;
+		//$this->_AJAX = isset($_POST['espresso_ajax']) && $_POST['espresso_ajax'] == 1  ? TRUE : FALSE;
+		//echo '<h4>AJAX : ' . $this->_AJAX . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
 		// becuz WP List tables have two duplicate select inputs for choosing bulk actions, we need to copy the action from the second to the first
 		if ( isset( $_REQUEST['action2'] ) && $_REQUEST['action'] == -1 ) {
@@ -206,7 +209,7 @@ class EE_Admin_Page {
 	*/
 	public function display_espresso_notices() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		echo espresso_get_notices();
+		echo EE_Error::get_notices();
 	}
 
 
@@ -221,53 +224,88 @@ class EE_Admin_Page {
 	public function route_admin_request() {			
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
+//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+//		echo '<h4>$this->_req_action : ' . $this->_req_action . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$this->_req_nonce : ' . $this->_req_nonce . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		printr( $_REQUEST, '$_REQUEST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
 		if ( $this->_req_action != 'default' ) {
 			wp_verify_nonce( $this->_req_nonce );
 		}		
 
-		global $espresso_notices;
-		
-		// check that the page_routes array is not empty
-		if ( empty( $this->_page_routes )) {
-			$error_msg = __('No page routes have been set for the ' . $this->admin_page_title . ' admin page.', 'event_espresso');
-			$espresso_notices['errors'][] = $error_msg . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__ );			
-			$this->display_espresso_notices();
-			exit();
-		} 
-		// and that a default route exists
-		if ( ! array_key_exists( 'default', $this->_page_routes )) {
-			$error_msg =  __('A default page route has not been set for the ' . $this->admin_page_title . ' admin page.', 'event_espresso');
-			$espresso_notices['errors'][] = $error_msg . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__ );			
-			$this->display_espresso_notices();
-			exit();
-		}
-		// and that the requested page route exists 
-		if ( array_key_exists( $this->_req_action, $this->_page_routes )) {
-			$route = $this->_page_routes[ $this->_req_action ];
-		} else {
-			$error_msg =  __('The requested page route does not exist for the ' . $this->admin_page_title . ' admin page.', 'event_espresso');
-			$espresso_notices['errors'][] = $error_msg . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__ );			
-			$this->display_espresso_notices();
-			exit();
-		}
-		// check if callback has args
-		if ( is_array( $route )) {
-			$func = $route['func'];
-			$args = $route['args'];
-		} else {
-			$func = $route;
-			$args = array();	
-		}
+		$route = FALSE;
+		$func = FALSE;
+		$args = array();	
 
-		if ( call_user_func_array( array( $this, &$func  ), $args ) === FALSE ) {
-			$error_msg =  __('An error occured and the  ' . $func . ' page route could not be called.', 'event_espresso');
-			$espresso_notices['errors'][] = $error_msg . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__ );
-			$this->display_espresso_notices();
-			exit();
-		}
+		try {		
+			// check that the page_routes array is not empty
+			if ( empty( $this->_page_routes )) {
+				// user error msg
+				$error_msg = __('No page routes have been set for the ' . $this->admin_page_title . ' admin page.', 'event_espresso');
+				// developer error msg
+				$error_msg .=  '||' . $error_msg . __( ' Make sure the "set_page_routes()" method exists, and is seting the "_page_routes" array properlly.', 'event_espresso' );
+				throw new EE_Error( $error_msg );
+			} 			
+		} catch ( EE_Error $e ) {
+			$e->get_error();
+		}					
 
-	}
+		try {		
+			// and that the requested page route exists 
+			if ( array_key_exists( $this->_req_action, $this->_page_routes )) {
+				$route = $this->_page_routes[ $this->_req_action ];
+			} else {
+				// user error msg
+				$error_msg =  __('The requested page route does not exist for the ' . $this->admin_page_title . ' admin page.', 'event_espresso');
+				// developer error msg
+				$error_msg .=  '||' . $error_msg . __( ' Create a key in the "_page_routes" array named "'.$this->_req_action.'" and set it\'s value to the appropriate method.', 'event_espresso' );
+				throw new EE_Error( $error_msg );
+			}
+		} catch ( EE_Error $e ) {
+			$e->get_error();
+		}					
+
+		try {		
+			// and that a default route exists
+			if ( ! array_key_exists( 'default', $this->_page_routes )) {
+				// user error msg
+				$error_msg = __('A default page route has not been set for the ' . $this->admin_page_title . ' admin page.', 'event_espresso');
+				// developer error msg
+				$error_msg .=  '||' . $error_msg . __( ' Create a key in the "_page_routes" array named "default" and set it\'s value to your default page method.', 'event_espresso' );
+				throw new EE_Error( $error_msg );
+			}
+		} catch ( EE_Error $e ) {
+			$e->get_error();
+		}					
+
+		try {		
+			// check if callback has args
+			if ( is_array( $route )) {
+				$func = $route['func'];
+				$args = $route['args'];
+			} else {
+				$func = $route;
+			}
+		} catch ( EE_Error $e ) {
+			$e->get_error();
+		}
+			
+		if ( $func ) {
+			try {		
+				// and finally,  try to access page route
+				if ( call_user_func_array( array( $this, &$func  ), $args ) === FALSE ) {
+					// user error msg
+					$error_msg =  __( 'An error occured. The  requested page route could not be found.', 'event_espresso' );
+					// developer error msg
+					$error_msg .= '||' . __( 'Page route "' . $func . '" could not be called. Check that the spelling for method names and actions in the "_page_routes" array are all correct.', 'event_espresso' );
+					throw new EE_Error( $error_msg );
+				}	
+						
+			} catch ( EE_Error $e ) {
+				$e->get_error();
+			}			
+		}
 
 
 
@@ -550,7 +588,7 @@ class EE_Admin_Page {
 			$template_path = EE_CORE_ADMIN . 'admin_details_wrapper_pre_34.template.php';
 		}
 
-		$this->template_args['post_body_content'] = $this->template_args['admin_page_content'];
+		$this->template_args['post_body_content'] = isset( $this->template_args['admin_page_content'] ) ? $this->template_args['admin_page_content'] : NULL;
 		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE );
 
 		//display any espresso_notices (generated from metaboxes)
@@ -608,7 +646,7 @@ class EE_Admin_Page {
 		$this->template_args['admin_page_title'] = $this->admin_page_title;
 		
 		// grab messages at the last second
-		//$this->template_args['notices'] = espresso_get_notices();
+		$this->template_args['notices'] = EE_Error::get_notices();
 		
 		// load settings page wrapper template
 		$template_path = EE_CORE_ADMIN . 'admin_wrapper.template.php';

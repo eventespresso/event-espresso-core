@@ -1,12 +1,12 @@
-<?php
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
+
 
 function espresso_plugin_activation() {
 
-	global $wpdb;
-	$SQL = 'SELECT * FROM '. $wpdb->prefix ."options WHERE option_value LIKE '%event_espresso%'";		// event_espresso		 // Chris Loves Miley Cyrus
-	$results = $wpdb->query($SQL);
-	// WHAT?!?!?! Trying to install this on an existing EE site???
-	if ( $results > 0 ) {
+	$prev_version = get_option( 'events_detail_tbl_version' );
+	if ( $prev_version && version_compare( $prev_version, '3.2.0', '<' )) {
+	
 		wp_die( '
 		<h2 style="color:red; font-size:2em; text-align:center;">' . __( 'Warning!', 'event_espresso' ) . '</h2>
 		<p style="font-size:1.4em; text-align:center;">
@@ -32,6 +32,7 @@ function espresso_plugin_activation() {
 }
 
 function espresso_widget() {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	espresso_require_template('init.php');
 	require(espresso_get_widget_template());
 	//The widget can be over-ridden with the custom files addon
@@ -51,14 +52,14 @@ function add_espresso_stylesheet() {
 	if (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] ==true) {
 
 		//Load custom style sheet if available
-		if (!empty($org_options['style_settings']['use_grid_layout']) && $org_options['style_settings']['use_grid_layout'] == true) {
-			if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'css/grid_layout.css')) {
-				wp_register_style('espresso_grid_layout', EVENT_ESPRESSO_UPLOAD_URL . 'css/grid_layout.css');
-			} else {
-				wp_register_style('espresso_grid_layout', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/css/grid_layout.css');
-			}
-			wp_enqueue_style('espresso_grid_layout');
-		}
+//		if (!empty($org_options['style_settings']['use_grid_layout']) && $org_options['style_settings']['use_grid_layout'] == true) {
+//			if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'css/grid_layout.css')) {
+//				wp_register_style('espresso_grid_layout', EVENT_ESPRESSO_UPLOAD_URL . 'css/grid_layout.css');
+//			} else {
+//				wp_register_style('espresso_grid_layout', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/css/grid_layout.css');
+//			}
+//			wp_enqueue_style('espresso_grid_layout');
+//		}
 
 		//Define the path to the ThemeRoller files
 		if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "themeroller/index.php")) {
@@ -95,15 +96,22 @@ function add_espresso_stylesheet() {
 			wp_enqueue_style('espresso_themeroller');
 		}
 	}
+
+	if ( ! isset( $_REQUEST['e_reg'] ) && ! is_admin() ) {
+		wp_register_style('ticket_selector', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/ticket_selector/ticket_selector.css');
+		wp_enqueue_style('ticket_selector');
+	}
+		
 }
 
 function espresso_load_javascript_files() {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	global $load_espresso_scripts;
 
 	if (!$load_espresso_scripts)
 		return;
-	wp_register_script('reCopy', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/reCopy.js"), false, '1.1.0');
-	wp_print_scripts('reCopy');
+//	wp_register_script('reCopy', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/reCopy.js"), false, '1.1.0');
+//	wp_print_scripts('reCopy');
 
 	wp_register_script('jquery.validate.js', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.min.js"), false, '1.8.1');
 	wp_print_scripts('jquery.validate.js');
@@ -114,6 +122,7 @@ function espresso_load_javascript_files() {
 
 function espresso_toolbar_items($admin_bar) {
 
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$events_page = get_admin_url() . 'admin.php?page=events';
 	$registrations_page = get_admin_url() . 'admin.php?page=attendees';
 	$menu_class = 'espresso_menu_item_class';
@@ -326,13 +335,17 @@ function espresso_toolbar_items($admin_bar) {
 }
 
 function espresso_add_query_vars($query_vars) {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$query_vars[] = 'event_slug';
 	$query_vars[] = 'ee';
+	$query_vars[] = 'e_reg';
+	//printr( $query_vars );
 	return $query_vars;
 }
 
 function espresso_buffer_headers() {
-	ob_start();
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	//ob_start();
 }
 
 /**
@@ -346,6 +359,7 @@ function espresso_buffer_headers() {
  * Usage: event_espresso_require_template('shopping_cart.php')
  */
 function espresso_require_template($template_file_name, $must_exist = true, $as_require_once = true) {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	event_espresso_require_file($template_file_name, EVENT_ESPRESSO_TEMPLATE_DIR, EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/', $must_exist, $as_require_once);
 }
 add_action('action_hook_espresso_require_template', 'espresso_require_template');

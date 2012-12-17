@@ -548,9 +548,10 @@ class EE_Registration {
 	* 		@access		private
 	*/	
 	private function _check_for( $var = FALSE, $var_name ) {
-		global $espresso_notices;
+
 		if ( ! $var ) {
-			$espresso_notices['errors'][] = 'No value for '.$var_name.' was supplied.';
+			$msg = sprintf( __( 'No value for %s was supplied.', 'event_espresso' ), $var_name );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		} else {
 			return TRUE;
@@ -582,6 +583,21 @@ class EE_Registration {
 	*/	
 	public function event_ID() {
 		return $this->_EVT_ID;
+	}
+
+
+
+	/**
+	*		get Event ID
+	* 		@access		public
+	*/	
+	public function event_name() {
+		if ( empty( $this->_EVT_ID )) {
+			return FALSE;
+		}
+		global $wpdb;
+		$SQL = 'SELECT event_name, slug FROM ' . $wpdb->prefix . 'events_detail WHERE id = %d';
+		return $wpdb->get_var( $wpdb->prepare( $SQL, $this->_EVT_ID ));
 	}
 
 
@@ -718,56 +734,8 @@ class EE_Registration {
 
 
 
-	/**
-	 *		@ override magic methods
-	 *		@ return void
-	 */	
-	public function __get($a) { return FALSE; }
-	public function __set($a,$b) { return FALSE; }
-	public function __unset($a) { return FALSE; }
-	public function __clone() { return FALSE; }
-	public function __wakeup() { return FALSE; }
-
-
-
 }
-
-
-/*
-	EXAMPLE USAGE
-
-	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
-	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
-	$REG = EEM_Registration::instance();	
-
-	// we'll need the PHP Session ID  so let's add the EE Session
-	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Session.class.php' );
-	$SSN = EE_Session::instance();	
-	
-	//$EVT_ID, $ATT_ID, $TXN_ID, $REG_session, $REG_code, $REG_is_primary, $REG_is_group_reg, $STS_ID, $REG_date, $PRC_ID, $REG_att_is_going, $REG_att_checked_in
-	$reg_1 = new EE_Registration( 1, 45, 32, $SSN->id(), '4e7962a15f3b72.67409710', 1, 1, 'RPN', time(), 77, 0, 0 );
-	$results = $reg_1->insert();
-	
-	$reg_2 = new EE_Registration( 1, 46, 32, $SSN->id(), '4e79639b777514.18231129', 0, 1, 'RPN', time(), 77, 0, 0 );
-	$results = $reg_2->insert();
-	
-	$transactions = $REG->get_all_registrations();
-	echo printr( $transactions, 'get all registrations' );
-
-	$where_cols_n_values = array( 'REG_is_primary' => 1 );
-	$transactions = $REG->get_all_registrations( $where_cols_n_values );
-	echo printr( $transactions, 'get primary attendee registrations' );
-
-	$registrations = $REG->get_registration( 1 );
-	echo printr( $registrations, 'get_registration( 1 )' );
-
-	$registrations = $REG->get_registration( 2 );
-	echo printr( $registrations, 'get_registration( 2 )' );
-
-
-*/
 
 
 /* End of file EE_Registration.class.php */
 /* Location: includes/classes/EE_Registration.class.php */	
-	

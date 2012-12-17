@@ -1,10 +1,12 @@
-<?php
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 
 abstract class EE_Offsite_Gateway extends EE_Gateway {
 
 	protected $_gatewayUrl = NULL;
 	
 	protected function __construct(EEM_Gateways &$model) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		parent::__construct($model);
 	}
 	
@@ -14,8 +16,9 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 	 * 		@return 	mixed	array on success or FALSE on fail
 	 */
 	public function process_gateway_selection() {	
-		global $espresso_notices;
-		$espresso_notices['success'][] = __('Off-site gateway selected', 'event_espresso');
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		$msg = __( 'Off-site gateway selected.', 'event_espresso' );
+		EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );		
 	}
 
 	/**
@@ -25,6 +28,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 	 * 		@return array
 	 */
 	public function set_billing_info_for_confirmation( $billing_info ) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$confirm_data = array();
 		$confirm_data['gateway'] = $this->_EEM_Gateways->display_name();
 		return $confirm_data;
@@ -38,7 +42,8 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 	 * 		@return 	mixed	void or echo
 	 */
 	public function redirect_after_reg_step_3() {
-		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	
 		if ( $this->_EEM_Gateways->ajax() ) {
@@ -58,47 +63,50 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 	}
 
 	/**
-		 * Adds a key=>value pair to the fields array
-		 *
-		 * @param string key of field
-		 * @param string value of field
-		 * @return
-		 */
-		public function addField($field, $value) {
-			$this->fields["$field"] = $value;
-		}
+	 * Adds a key=>value pair to the fields array
+	 *
+	 * @param string key of field
+	 * @param string value of field
+	 * @return
+	 */
+	public function addField($field, $value) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		$this->fields["$field"] = $value;
+	}
 
 	/**
-		 * Submit Payment Request (redirect)
-		 *
-		 * Generates a form with hidden elements from the fields array
-		 * and submits it to the payment gateway URL. The user is presented
-		 * a redirecting message along with a button to click.
-		 *
-		 * @param string value of buttn text
-		 * @return void
-		 */
-		public function submitPayment() {
-			$pre_form = "<html>\n";
-			$pre_form .= "<head><title>Processing Payment...</title></head>\n";
-			$pre_form .= "<body>\n";
-			$form = "<h2 style=\"margin:2em auto; line-height:2em; text-align:center;\">Please wait...<br/>your order is being processed and you will be redirected to the payment website.</h2>";
-			$form .= "<form method=\"POST\" name=\"gateway_form\" ";
-			$form .= "action=\"" . $this->_gatewayUrl . "\">\n";
-			$form .= $this->_output_inputs();
-			$form .= "<p style=\"text-align:center;\"><br/>If you are not automatically redirected to ";
-			$form .= "the payment website within 10 seconds...<br/><br/>\n";
-			$form .= "<input type=\"submit\" value=\"Click Here\"></p>\n";
-			$form .= "</form>\n";
-			$post_form = "</body></html>\n";
-			return array('pre-form' => $pre_form, 'form' => $form, 'post-form' => $post_form);
+	 * Submit Payment Request (redirect)
+	 *
+	 * Generates a form with hidden elements from the fields array
+	 * and submits it to the payment gateway URL. The user is presented
+	 * a redirecting message along with a button to click.
+	 *
+	 * @param string value of buttn text
+	 * @return void
+	 */
+	public function submitPayment() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		$pre_form = "<html>\n";
+		$pre_form .= "<head><title>Processing Payment...</title></head>\n";
+		$pre_form .= "<body>\n";
+		$form = "<h2 style=\"margin:2em auto; line-height:2em; text-align:center;\">Please wait...<br/>your order is being processed and you will be redirected to the payment website.</h2>";
+		$form .= "<form method=\"POST\" name=\"gateway_form\" ";
+		$form .= "action=\"" . $this->_gatewayUrl . "\">\n";
+		$form .= $this->_output_inputs();
+		$form .= "<p style=\"text-align:center;\"><br/>If you are not automatically redirected to ";
+		$form .= "the payment website within 10 seconds...<br/><br/>\n";
+		$form .= "<input type=\"submit\" value=\"Click Here\"></p>\n";
+		$form .= "</form>\n";
+		$post_form = "</body></html>\n";
+		return array('pre-form' => $pre_form, 'form' => $form, 'post-form' => $post_form);
+	}
+	
+	protected function _output_inputs() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		$output = '';
+		foreach ($this->fields as $name => $value) {
+			$output .= "<input type=\"hidden\" name=\"$name\" value=\"$value\"/>\n";
 		}
-		
-		protected function _output_inputs() {
-			$output = '';
-			foreach ($this->fields as $name => $value) {
-				$output .= "<input type=\"hidden\" name=\"$name\" value=\"$value\"/>\n";
-			}
-			return $output;
-		}
+		return $output;
+	}
 }

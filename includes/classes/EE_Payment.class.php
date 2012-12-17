@@ -181,6 +181,13 @@ class EE_Payment {
 														$PAY_details = NULL, 
 														$PAY_ID = FALSE 
 													) {
+													
+		// filter out unwanted junk from Pay_details
+		if ( is_array( $PAY_details )) {
+			array_walk_recursive( $PAY_details, array( $this, '_strip_all_tags_within_array' ));
+		} else {
+			$PAY_details =  wp_strip_all_tags( $PAY_details );
+		}
 
 		$this->_PAY_ID 								= absint( $PAY_ID );
 		$this->_TXN_ID 								= absint( $TXN_ID );
@@ -194,7 +201,7 @@ class EE_Payment {
 		$this->_PAY_po_number				= sanitize_key( $PAY_po_number );
 		$this->_PAY_extra_accntng			= wp_strip_all_tags( $PAY_extra_accntng );
 		$this->_PAY_via_admin				= absint( $PAY_via_admin ) ? TRUE : FALSE;
-		$this->_PAY_details						= maybe_serialize( wp_strip_all_tags( $PAY_details ));
+		$this->_PAY_details						= maybe_serialize( $PAY_details );
 	}
 
 
@@ -209,9 +216,9 @@ class EE_Payment {
 	*/
 	public function set_transaction( $TXN_ID = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $TXN_ID ) {
-			$espresso_notices['errors'][] = 'No Transaction ID was supplied.';
+			$msg = __( 'No Transaction ID was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_TXN_ID = absint( $TXN_ID );
@@ -231,9 +238,9 @@ class EE_Payment {
 	*/
 	public function set_status( $STS_ID = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $STS_ID ) {
-			$espresso_notices['errors'][] = 'No Status was supplied.';
+			$msg = __( 'No Status was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_STS_ID = strtoupper( wp_strip_all_tags( $STS_ID ));
@@ -252,9 +259,9 @@ class EE_Payment {
 	*/
 	public function set_timestamp( $timestamp = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $timestamp ) {
-			$espresso_notices['errors'][] = 'No Timestamp was supplied.';
+			$msg = __( 'No Timestamp was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PAY_timestamp = absint( $timestamp );
@@ -273,9 +280,9 @@ class EE_Payment {
 	*/
 	public function set__method( $pay_method = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $pay_method ) {
-			$espresso_notices['errors'][] = 'No Payment Method was supplied.';
+			$msg = __( 'No Payment Method was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PAY_method = wp_strip_all_tags( $pay_method );
@@ -294,9 +301,9 @@ class EE_Payment {
 	*/
 	public function set_amount( $amount = FALSE ) {
 
-		global $espresso_notices;
 		if (  $amount === FALSE || ! is_numeric( $amount ) ) {
-			$espresso_notices['errors'][] = 'No Payment Amount or an invalid Payment Amount was supplied.';
+			$msg = __( 'No Payment Amount or an invalid Payment Amount was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		// change commas to decimals
@@ -318,9 +325,9 @@ class EE_Payment {
 	*/
 	public function set_gateway( $gateway = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $gateway ) {
-			$espresso_notices['errors'][] = 'No Payment Gateway was supplied.';
+			$msg = __( 'No Payment Gateway was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PAY_gateway = wp_strip_all_tags( $gateway );
@@ -339,9 +346,9 @@ class EE_Payment {
 	*/
 	public function set_gateway_response( $gateway_response = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $gateway_response ) {
-			$espresso_notices['errors'][] = 'No Payment Gateway Response was supplied.';
+			$msg = __( 'No Payment Gateway Response was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PAY_gateway_response = htmlentities( wp_strip_all_tags( $gateway_response ), ENT_QUOTES, 'UTF-8' );
@@ -360,9 +367,9 @@ class EE_Payment {
 	*/
 	public function set_txn_id_chq_nmbr( $txn_id_chq_nmbr = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $txn_id_chq_nmbr ) {
-			$espresso_notices['errors'][] = 'No Gateway Transaction ID or Cheque # was supplied.';
+			$msg = __( 'No Gateway Transaction ID or Cheque # was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PAY_txn_id_chq_nmbr = wp_strip_all_tags( $txn_id_chq_nmbr );
@@ -380,9 +387,9 @@ class EE_Payment {
 	*/
 	public function set_po_number( $po_number = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $po_number ) {
-			$espresso_notices['errors'][] = 'No Purchase Order Number info was supplied.';
+			$msg = __( 'No Purchase Order Number info was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PAY_po_number = wp_strip_all_tags( $po_number );
@@ -401,9 +408,9 @@ class EE_Payment {
 	*/
 	public function set_extra_accntng( $extra_accntng = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $extra_accntng ) {
-			$espresso_notices['errors'][] = 'No Notes or Extra Accounting Field info was supplied.';
+			$msg = __( 'No Notes or Extra Accounting Field info was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PAY_extra_accntng = wp_strip_all_tags( $extra_accntng );
@@ -422,9 +429,9 @@ class EE_Payment {
 	*/
 	public function set_payment_made_via_admin( $via_admin = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! is_bool( $via_admin )) {
-			$espresso_notices['errors'][] = 'The supplied value for the "payment made via admin" flag was not a boolean.';
+			$msg = __( 'The supplied value for the "payment made via admin" flag was not a boolean.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PAY_via_admin = (bool)absint( $via_admin );
@@ -443,9 +450,9 @@ class EE_Payment {
 	*/
 	public function set_details( $details = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $details ) {
-			$espresso_notices['errors'][] = 'No Payment Details were supplied.';
+			$msg = __( 'No Payment Details were supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PAY_details = wp_strip_all_tags( $details );
@@ -611,7 +618,7 @@ class EE_Payment {
 	* 		@access		public
 	*/
 	public function gateway_response() {
-		return $this->_PAY_gateway_response ? html_entity_decode( $this->_PAY_gateway_response, ENT_QUOTES, 'UTF-8' ) : '';
+		return $this->_PAY_gateway_response ? stripslashes( html_entity_decode( $this->_PAY_gateway_response, ENT_QUOTES, 'UTF-8' )) : '';
 	}
 
 
@@ -675,8 +682,6 @@ class EE_Payment {
 	*/
 	public function apply_payment_to_transaction( $via_admin = FALSE ) {
 
-		global $espresso_notices;
-		
 		// is this an existing payment ?			
 		if ( $this->_PAY_ID ) {
 			$payment_made = $this->update();
@@ -695,7 +700,8 @@ class EE_Payment {
 		} else {
 		
 			if ( $via_admin ) {
-				$espresso_notices['errors'][] = __('An error occured. The payment has not been processed succesfully.', 'event_espresso');
+				$msg = __( 'An error occured. The payment has not been processed succesfully.', 'event_espresso' );
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return FALSE;
 			} else {
 				return __('There was a problem inserting your payment into our records. Do not attempt the transaction again. Please contact support.', 'event_espresso');
@@ -708,30 +714,17 @@ class EE_Payment {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	/**
-	 *		@ override magic methods
-	 *		@ return void
-	 */
-	public function __get($a) { return FALSE; }
-	public function __set($a,$b) { return FALSE; }
-	public function __unset($a) { return FALSE; }
-	public function __clone() { return FALSE; }
-	public function __wakeup() { return FALSE; }
+	*		apply wp_strip_all_tags to all elements within an array
+	*
+	* 		@access		private
+	*		@param		mixed		$item
+	*		@param		mixed		$key
+	*/
+	private function _strip_all_tags_within_array( &$item, $key ){
+	        wp_strip_all_tags( $item );
+	}
+
 
 
 }

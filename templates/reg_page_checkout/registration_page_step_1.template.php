@@ -4,8 +4,7 @@
 		<?php _e('Step 1 -  Attendee Information', 'event_espresso'); ?>
 		<a id="mer-reg-page-edit-step-1-lnk" class="mer-reg-page-go-to-step-1 mer-reg-page-edit-step-lnk <?php echo $step_1_edit_lnk_class; ?>"  href="<?php echo $reg_page_step_1_url; ?>"><?php _e('edit', 'event_espresso'); ?></a>
 	</h2>
-        <?php do_action('after_mer-reg-page-step-title-1-hdr'); ?>
-	
+	<?php do_action('after_mer-reg-page-step-title-1-hdr')?>
 	<div id="mer-reg-page-step-1-dv" class="mer-reg-page-step-dv <?php echo $step_1_dv_class; ?>">
 		
 		<p id="mer-reg-page-step-1-pg" class="mer-reg-page-steps-pg small-text drk-grey-text"><?php _e(' In order to process your registration, we ask you to provide the following information.<br/>
@@ -15,6 +14,7 @@
 	
 			<input type="hidden" id="mer-reg-page-step-1-action" name="ajax_action" value="espresso_process_registration_step_1" />		
 			<input type="hidden" id="mer-reg-page-step-1-ajax" name="espresso_ajax" value="0" />		
+			<input type="hidden" id="mer-reg-page-step-1-noheader" name="noheader" value="" />		
 						
 <?php
 	global $css_class;

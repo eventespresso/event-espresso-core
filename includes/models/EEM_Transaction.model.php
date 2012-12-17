@@ -250,7 +250,6 @@ class EEM_Transaction extends EEM_Base {
 
 
 
-
 	/**
 	*		retreive  all transactions from db between two dates
 	* 
@@ -283,7 +282,7 @@ class EEM_Transaction extends EEM_Base {
 
 		global $wpdb;
 		
-		$SQL = 'SELECT att.ATT_fname, att.ATT_lname, att.ATT_email, evt.id, evt.event_name, evt.slug, reg.REG_ID, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.TXN_paid, txn.STS_ID, txn.TXN_details ';		
+		$SQL = 'SELECT att.ATT_ID, att.ATT_fname, att.ATT_lname, att.ATT_email, evt.id, evt.event_name, evt.slug, reg.REG_ID, reg.REG_url_link, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.TXN_paid, txn.STS_ID, txn.TXN_details ';		
 
 		$SQL .= 'FROM ' . $wpdb->prefix . 'esp_registration reg ';
 		$SQL .= 'LEFT JOIN ' . $wpdb->prefix . 'esp_attendee att ON reg.ATT_ID = att.ATT_ID ';
@@ -303,8 +302,7 @@ class EEM_Transaction extends EEM_Base {
 			}
 			return $transactions;
 		} else {
-//			global $espresso_notices;
-//			$espresso_notices['errors'][] = $wpdb->print_error();
+//			EE_Error::add_error( $wpdb->print_error(), __FILE__, __FUNCTION__, __LINE__ ); print_error echos immediately  >:()
 			return FALSE;
 		}
 
@@ -323,10 +321,9 @@ class EEM_Transaction extends EEM_Base {
 	*/	
 	public function get_transaction_for_admin_page( $TXN_ID = FALSE ) { 
 
-		global $espresso_notices;
-
 		if ( ! $TXN_ID ) {
-			$espresso_notices['errors'][] = 'No Transaction ID was received.';
+			$msg = __( 'No Transaction ID was received.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		
@@ -346,7 +343,7 @@ class EEM_Transaction extends EEM_Base {
 //			echo printr( $payments );
 			return $transaction;
 		} else {
-			$espresso_notices['errors'][] = $wpdb->print_error();
+//			EE_Error::add_error( $wpdb->print_error(), __FILE__, __FUNCTION__, __LINE__ ); print_error echos immediately  >:()
 			return FALSE;
 		}
 

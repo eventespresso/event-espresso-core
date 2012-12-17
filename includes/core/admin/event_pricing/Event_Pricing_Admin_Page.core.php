@@ -301,7 +301,6 @@ class Event_Pricing_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 	protected function _edit_event_price_details() {		
 	
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-		global $espresso_notices;
 		
 		$PRC_ID = isset( $_REQUEST['id'] ) && ! empty( $_REQUEST['id'] ) ? absint( $_REQUEST['id'] ) : FALSE;
 
@@ -334,7 +333,8 @@ class Event_Pricing_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 		$PRT = EEM_Price_Type::instance();
 		
 		if (empty($PRT->type)) {
-			$espresso_notices['errors'][] = __('You have no price types defined. Please add a price type before adding a price.', 'event_espresso');
+			$msg = __( 'You have no price types defined. Please add a price type before adding a price.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			exit();
 		} else {
 			foreach ($PRT->type as $type) {
@@ -662,7 +662,6 @@ class Event_Pricing_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 	protected function _edit_event_price_type_details() {		
 	
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-		global $espresso_notices;
 
 		$PRT_ID = isset( $_REQUEST['id'] ) && ! empty( $_REQUEST['id'] ) ? absint( $_REQUEST['id'] ) : FALSE;
 
@@ -983,16 +982,18 @@ class Event_Pricing_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 	
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );		
-		global $espresso_notices;
 		// overwrite default success messages
-		$espresso_notices['success'] = array();
+		EE_Error::overwrite_success();
 		// how many records affected ? more than one record ? or just one ?
 		if ( $success == 2 ) {
 			// set plural msg
-			$espresso_notices['success'][] = __('The ' . $what . ' have been successfully ' . $action_desc . '.', 'event_espresso');
+			$msg = sprintf( __( 'The %s have been successfully %s.', 'event_espresso' ), $what, $action_desc );
+			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
+
 		} else if ( $success == 1 ) {
 			// set singular msg
-			$espresso_notices['success'][] = __('The ' . $what . ' has been successfully ' . $action_desc . '.', 'event_espresso');
+			$msg = sprintf( __( 'The %s has been successfully %s.', 'event_espresso' ), $what, $action_desc );
+			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 
 		// check that $query_args isn't something crazy
@@ -1000,7 +1001,7 @@ class Event_Pricing_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 			$query_args = array();
 		}
 		// grab messages
-		$notices = espresso_get_notices( FALSE, TRUE, TRUE, FALSE );
+		$notices = EE_Error::get_notices( FALSE, TRUE, TRUE, FALSE );
 		//combine $query_args and $notices
 		$query_args = array_merge( $query_args, $notices );
 		// generate redirect url

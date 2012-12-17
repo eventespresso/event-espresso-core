@@ -1,4 +1,5 @@
-<?php
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 
 abstract class EE_Onsite_Gateway extends EE_Gateway {
 
@@ -12,12 +13,14 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 	abstract public function espresso_reg_page_billing_inputs();
 
 	protected function __construct(EEM_Gateways &$model) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		// this filter allows whatever function is processing the registration page to know what inputs to expect
 		add_filter('filter_hook_espresso_reg_page_billing_inputs', array(&$this, 'espresso_reg_page_billing_inputs'));
 		parent::__construct($model);
 	}
 	
 	protected function _set_default_properties() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		parent::_set_default_properties();
 		// list of fields required for capturing the billing address 
 		$this->_billing_info_address_fields = array(
@@ -51,6 +54,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 	 */
 	protected function _generate_billing_info_form_fields($billing_inputs = array(), $section = FALSE) {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if (empty($billing_inputs) || !$section) {
 			return;
 		}
@@ -146,7 +150,8 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 	 */
 	public function process_gateway_selection() {
 	
-		global $EE_Session, $espresso_notices;
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		global $EE_Session;
 		// set  billing inputs in the individual gateways plz
 		$reg_page_billing_inputs = array();
 		// allow others to edit post input array
@@ -163,7 +168,8 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 		if ($reg_page_billing_inputs) {
 			// add billing info to the session
 			if ($EE_Session->set_session_data(array('billing_info' => $reg_page_billing_inputs), $section = 'session_data')) {
-				$espresso_notices['success'][] = __('Billing information submitted successfully', 'event_espresso');
+				$msg = __( 'Billing information submitted successfully.', 'event_espresso' );
+				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			} 
 		}
 
@@ -179,6 +185,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 	 * 		@return array
 	 */
 	public function set_billing_info_for_confirmation( $billing_info ) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$confirm_inputs = array(
 				'first name'=>'fname',
 				'last name'=>'lname',

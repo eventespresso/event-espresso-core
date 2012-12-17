@@ -1,8 +1,10 @@
-<?php
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 
 //Functions that deal with pricing should be placed here
 
 function event_espresso_paid_status_icon($payment_status = '') {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	switch ($payment_status) {
 		case 'Checkedin':
 			echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/accept.png" width="16" height="16" alt="' . __('Checked-in', 'event_espresso') . '" title="' . __('Checked-in', 'event_espresso') . '" />';
@@ -189,6 +191,7 @@ if (!function_exists('early_discount_amount')) {
 }
 
 function espresso_price_selection($event, $attendee) {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	global $org_options;
 	$prices = $event->get_prices();
 	$multiple_quantity = !($event->get_number_of_available_spaces() == 1 || !$event->is_allow_multiple());
@@ -261,6 +264,7 @@ if (!function_exists('event_espresso_price_dropdown')) {
 	 * @return string
 	 */
 	function event_espresso_price_dropdown($event_id, $atts = array()) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		global $org_options;
 		if (!empty($atts)) {
 			extract($atts);
@@ -348,6 +352,7 @@ function espresso_get_price_id($event_id) {
 if (!function_exists('espresso_payment_type')) {
 
 	function espresso_payment_type($type) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		switch ($type) {
 			case 'web_accept':
 			case 'cart':
@@ -382,6 +387,7 @@ if (!function_exists('espresso_payment_type')) {
  * @return float|null  the price paid for an event by attendee id or the registration id, if information not found then it will return null
  */
 function espresso_attendee_price($atts) {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	global $wpdb;
 	isset($atts) ? extract($atts) : '';
 

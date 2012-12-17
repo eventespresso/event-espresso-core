@@ -430,6 +430,7 @@ function events_data_tables_install() {
 					ATT_social text,
 					ATT_comments mediumtext,
 					ATT_notes mediumtext,
+					ATT_deleted tinyint(1) unsigned NOT NULL DEFAULT '0',
 						PRIMARY KEY  (ATT_ID),
 							KEY ATT_fname (ATT_fname),
 							KEY ATT_lname (ATT_lname),

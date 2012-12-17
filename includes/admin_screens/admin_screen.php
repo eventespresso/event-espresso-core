@@ -54,6 +54,7 @@ function espresso_add_meta_boxes() {
 			}
 			break;
 		case 'event-espresso_page_payment_gateways':
+			add_meta_box('espresso_affiliate_settings', __('Affiliate Settings', 'event_espresso'), 'espresso_affiliate_settings_meta_box',  $screen_id);
 			if ($espresso_premium) {
 				add_meta_box('espresso_optional_settings', __("Developers Section", 'event_espresso'), 'espresso_gateway_developer_meta_box', $screen_id);
 			}

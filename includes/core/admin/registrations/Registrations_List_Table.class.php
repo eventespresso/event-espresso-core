@@ -48,7 +48,7 @@ class EE_Admin_Registrations_List_Table extends WP_List_Table {
         //Set parent defaults
         parent::__construct( array(
             	'singular'  	=> 'Registration',     //singular name of the listed records
-           	'plural'   	 	=> 'Registrations',    //plural name of the listed records
+           		'plural'   	 	=> 'Registrations',    //plural name of the listed records
             	'ajax'      		=> FALSE        //does this table support ajax?
 		) );
 
@@ -164,7 +164,6 @@ class EE_Admin_Registrations_List_Table extends WP_List_Table {
    	function column_default($item, $column_name){
  		switch( $column_name ) {
 
-			case 'REG_date' :
 			case 'DTT_EVT_start' :
 				return date( 'D M j, Y  g:i a',	$item->$column_name );
 			break;
@@ -192,6 +191,18 @@ class EE_Admin_Registrations_List_Table extends WP_List_Table {
 
 
 	/**
+	 * 		REG_date
+	*/
+	function column_REG_date($item){
+		$view_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL ), 'view_registration_nonce' );	
+		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . date( 'D M j, Y  g:i a',	$item->REG_date ) . '</a>';	
+		return $REG_date;	
+	}
+
+
+
+
+	/**
 	 * 		column_Reg_status
 	*/
    	function column_Reg_status($item){
@@ -205,7 +216,9 @@ class EE_Admin_Registrations_List_Table extends WP_List_Table {
 	 * 		column_ATT_fname
 	*/
    	function column_ATT_fname($item){
-		return '' . ucwords( $item->ATT_fname ) . ' ' . ucwords( $item->ATT_lname ) . '';
+		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item->ATT_ID ), ATT_ADMIN_URL ), 'edit_attendee_nonce' );
+		return '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . ucwords( $item->ATT_fname . ' ' . $item->ATT_lname ) . '</a>';
+		//return '' . ucwords( $item->ATT_fname ) . ' ' . ucwords( $item->ATT_lname ) . '';
 	}
 
 
@@ -231,6 +244,7 @@ class EE_Admin_Registrations_List_Table extends WP_List_Table {
 	function column_REG_att_checked_in($item){
 		 return ( $item->REG_att_checked_in ) ? event_espresso_paid_status_icon('Checkedin') : '-' /*event_espresso_paid_status_icon('NotCheckedin')*/; 
 	}
+
 
 
 
@@ -268,7 +282,7 @@ class EE_Admin_Registrations_List_Table extends WP_List_Table {
 
 	        //Build row actions
 		$view_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL ), 'view_registration_nonce' );
-		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'att'=>$item->ATT_ID ), REG_ADMIN_URL ), 'edit_attendee_nonce' );
+		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item->ATT_ID ), ATT_ADMIN_URL ), 'edit_attendee_nonce' );
 		
 		// page=attendees&event_admin_reports=resend_email&registration_id=43653465634&event_id=2&form_action=resend_email
 		//$resend_reg_lnk_url_params = array( 'action'=>'resend_registration', 'reg'=>$item->REG_ID );

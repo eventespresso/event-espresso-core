@@ -56,7 +56,6 @@ Class EE_Firstdata extends EE_Gateway {
 
 	protected function _update_settings() {
 		if (isset($_POST['update_authnet_aim']) && check_admin_referer('espresso_form_check', 'add_authnet_aim_settings')) {
-			global $espresso_notices;
 			$this->_payment_settings['authnet_aim_login_id'] = $_POST['authnet_aim_login_id'];
 			$this->_payment_settings['authnet_aim_transaction_key'] = $_POST['authnet_aim_transaction_key'];
 			$this->_payment_settings['test_transactions'] = $_POST['test_transactions'];
