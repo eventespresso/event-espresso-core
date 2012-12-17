@@ -188,3 +188,16 @@ if ( is_admin() ) {
  */
 //echo get_option('plugin_error');
 //delete_option('plugin_error');
+
+
+class EE_BASE {
+	/**
+	 *		@ override magic methods
+	 *		@ return void
+	 */	
+	public function __get($a) { return FALSE; }
+	public function __set($a,$b) { return FALSE; }
+	public function __unset($a) { return FALSE; }
+	public function __clone() { return FALSE; }
+	public function __wakeup() { return FALSE; }	
+}

@@ -67,7 +67,8 @@ function event_espresso_get_event_details($attributes) {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/event_details.helper.php');
-	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Price.class.php' );
+//	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Price.class.php' );
+	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Prices.class.php' );
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
 	$DTM_MDL = EEM_Datetime::instance();
 
@@ -186,7 +187,7 @@ function event_espresso_get_event_details($attributes) {
 			// use the venue id  from the attributes
 			$events = $wpdb->get_results($wpdb->prepare($SQL, $venue_id));
 		} else {
-			$events = $wpdb->get_results($wpdb->prepare($SQL));
+			$events = $wpdb->get_results( $SQL );
 		}
 			
 		// save the newly created transient value
@@ -296,8 +297,10 @@ function event_espresso_get_event_details($attributes) {
 
 // EVENT PRICING
 		// let's start with an empty array'
-		$EVT_Prices = new EE_Event_Prices( $event->id );
-		$event->prices = $EVT_Prices->get_final_event_prices();
+//		$EVT_Prices = new EE_Event_Prices( $event->id );
+//		$event->prices = $EVT_Prices->get_final_event_prices();
+		//echo printr($event->prices, 'EVENT PRICES <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
+		$event->prices = new EE_Ticket_Prices( $event->id );
 		//echo printr($event->prices, 'EVENT PRICES <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
 
 		//echo $display_event_prices;
