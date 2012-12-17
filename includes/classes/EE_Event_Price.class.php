@@ -146,8 +146,7 @@ class EE_Event_Price {
 	* 	@return 		float
 	 */
 	public function apply_price_modifier( $price_modifier ) {
-		global $espresso_notices;
-		
+	
 		if ( ! is_object( $price_modifier )) {
 			$espresso_notices['errors'][] = 'A valid price modifier was not supplied.';
 			return FALSE;

@@ -149,9 +149,9 @@ class EE_Price_Type {
 	*/
 	public function set_name( $PRT_name = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $PRT_name ) {
-			$espresso_notices['errors'][] = 'No name was supplied.';
+			$msg = __( 'No name was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRT_name = wp_strip_all_tags( $PRT_name );
@@ -170,9 +170,9 @@ class EE_Price_Type {
 	*/
 	public function set_is_member( $PRT_is_member = NULL ) {
 
-		global $espresso_notices;
 		if (!is_bool($PRT_is_member)) {
-			$espresso_notices['errors'][] = 'No member flag was supplied.';
+			$msg = __( 'No member flag was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRT_is_member = $PRT_is_member;
@@ -191,9 +191,9 @@ class EE_Price_Type {
 	*/
 	public function set_is_discount( $PRT_is_discount = NULL ) {
 
-		global $espresso_notices;
 		if (!is_bool($PRT_is_discount)) {
-			$espresso_notices['errors'][] = 'No discount flag was supplied.';
+			$msg = __( 'No discount flag was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRT_is_discount = $PRT_is_discount;
@@ -212,9 +212,9 @@ class EE_Price_Type {
 	*/
 	public function set_is_tax( $PRT_is_tax = NULL ) {
 
-		global $espresso_notices;
 		if (!is_bool($PRT_is_tax)) {
-			$espresso_notices['errors'][] = 'No tax flag was supplied.';
+			$msg = __( 'No tax flag was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRT_is_tax = $PRT_is_tax;
@@ -233,9 +233,9 @@ class EE_Price_Type {
 	*/
 	public function set_is_percent( $PRT_is_percent = NULL ) {
 
-		global $espresso_notices;
 		if (!is_bool($PRT_is_percent)) {
-			$espresso_notices['errors'][] = 'No percent flag was supplied.';
+			$msg = __( 'No percent flag was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRT_is_percent = $PRT_is_percent;
@@ -254,9 +254,9 @@ class EE_Price_Type {
 	*/
 	public function set_is_global ( $PRT_is_global = NULL ) {
 
-		global $espresso_notices;
 		if (!is_bool($PRT_is_global)) {
-			$espresso_notices['errors'][] = 'No percent flag was supplied.';
+			$msg = __( 'No global flag was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRT_is_global = $PRT_is_global;
@@ -275,9 +275,9 @@ class EE_Price_Type {
 	*/
 	public function set_order( $PRT_order = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $PRT_order ) {
-			$espresso_notices['errors'][] = 'No order was supplied.';
+			$msg = __( 'No order was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRT_order = absint( $PRT_order );
@@ -451,7 +451,6 @@ class EE_Price_Type {
 		}
 
 	}
-
 
 
 }

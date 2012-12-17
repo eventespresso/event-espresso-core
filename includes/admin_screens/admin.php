@@ -192,7 +192,7 @@ function espresso_add_postbox_toggles_for_payment_gateways() {
 <?php	
 }
 
-//Text formatting function for the_editor.
+//Text formatting function for wp_editor.
 //This should fix all of the formatting issues of text output from the database.
 function espresso_admin_format_content($content = '') {
 	return wpautop(stripslashes_deep(html_entity_decode($content, ENT_QUOTES, "UTF-8")));
@@ -235,7 +235,7 @@ if (!function_exists('event_espresso_delete_event')) {
 
 	function event_espresso_delete_event( $event_id = 'NULL' ) {
 	
-		global $wpdb, $espresso_notices;	
+		global $wpdb;	
 		
 		if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete') {
 		
@@ -246,16 +246,24 @@ if (!function_exists('event_espresso_delete_event')) {
 			$where_format = array('%s');
 
 			if( $wpdb->update( EVENTS_DETAIL_TABLE, $data_cols_and_vals, $where_cols_and_vals, $where_format, array('%d'))) {
+
 				$sql = 'SELECT event_name FROM ' . EVENTS_DETAIL_TABLE . ' WHERE id  = %d';
 				$event = $wpdb->get_row($wpdb->prepare($sql, $event_id));
-				$event_name = stripslashes( html_entity_decode( $event->event_name, ENT_QUOTES, 'UTF-8' ));
-				$espresso_notices['success'][] = $event_name . __(' has been successfully deleted.', 'event_espresso');
+				
+				$msg = sprintf( 
+						__( '%s has been successfully deleted.', 'event_espresso' ), 
+						stripslashes( html_entity_decode( $event->event_name, ENT_QUOTES, 'UTF-8' ))
+				);
+				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				do_action( 'action_hook_espresso_event_moved_to_trash' );
+				
 			} else {
-				$espresso_notices['errors'][] = __('An error occured. The event could not be moved to the trash.', 'event_espresso');
+				$msg = __( 'An error occured. The event could not be moved to the trash.', 'event_espresso' );
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}			
 		} else {
-			$espresso_notices['errors'][] = __('An error occured. The event could not be moved to the trash because a valid event ID was not not supplied', 'event_espresso');
+			$msg = __( 'An error occured. The event could not be moved to the trash because a valid event ID was not not supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
 
@@ -266,7 +274,7 @@ if (!function_exists('event_espresso_delete_event')) {
 //This will delete everything that is related to the events that have been deleted
 function event_espresso_empty_event_trash($event_id) {
 
-	global $wpdb, $espresso_notices;
+	global $wpdb;
 
 	$sql = 'SELECT post_id, event_name FROM ' . EVENTS_DETAIL_TABLE . ' WHERE id  = %d';
 	$event = $wpdb->get_row($wpdb->prepare($sql, $event_id));
@@ -276,15 +284,16 @@ function event_espresso_empty_event_trash($event_id) {
 	$sql = 'SELECT * FROM ' . $wpdb->prefix . 'esp_registration WHERE EVT_ID = %d';
 	
 	if ( $results = $wpdb->query($wpdb->prepare($sql, $event_id))) {
-		$espresso_notices['errors'][] = $event_name . __(' could not be deleted because Registration information exists for this event and doing so would corrupt your records.', 'event_espresso');
+		$msg = sprintf( __( '%s could not be deleted because Registration information exists for this event and doing so would corrupt your records.', 'event_espresso' ), $event_name );
+		EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 	} else {
 	
 		do_action( 'action_hook_espresso_event_permanently_deleted' );
-
 		// remove CPT
 		wp_delete_post($event->post_id);
 
-		$espresso_notices['success'][] = $event_name . __(' has been successfully deleted.', 'event_espresso');
+		$msg = sprintf( __( '%s has been successfully deleted.', 'event_espresso' ), $event_name );
+		EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 	
 		//Remove the event
 		$sql = 'DELETE FROM ' . EVENTS_DETAIL_TABLE . ' WHERE id = %d';

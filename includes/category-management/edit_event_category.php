@@ -51,7 +51,10 @@ function edit_event_category(){
 						</tr>
 						<tr>
 							<td colspan="2"><div class="postbox">
-									<?php the_editor(espresso_admin_format_content($category_desc), $id = 'category_desc', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
+									<?php 
+										$args = array("textarea_rows" => 5, "textarea_name" => "category_desc", "editor_class" => "my_editor_custom");
+										wp_editor( espresso_admin_format_content($category_desc), "category_desc", $args);
+									?>
 									<table id="cat-descr-add-form" cellspacing="0">
 										<tbody>
 											<tr>

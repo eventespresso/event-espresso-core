@@ -293,9 +293,10 @@ class EE_Price {
 	*		@param		int			$PRT_ID
 	*/
 	public function set_type( $PRT_ID = FALSE ) {
-		global $espresso_notices;
+
 		if ( ! $PRT_ID ) {
-			$espresso_notices['errors'][] = 'No price type was supplied.';
+			$msg = __( 'No price type was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRT_ID = absint( $PRT_ID );
@@ -314,9 +315,9 @@ class EE_Price {
 	*/
 	public function set_amount( $PRC_amount = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $PRC_amount ) {
-			$espresso_notices['errors'][] = 'No amount was supplied.';
+			$msg = __( 'No amount was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRC_amount = abs( $PRC_amount );
@@ -335,9 +336,9 @@ class EE_Price {
 	*/
 	public function set_name( $PRC_name = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $PRC_name ) {
-			$espresso_notices['errors'][] = 'No name was supplied.';
+			$msg = __( 'No name was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRC_name = wp_strip_all_tags( $PRC_name );
@@ -356,9 +357,9 @@ class EE_Price {
 	*/
 	public function set_description( $PRC_desc = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $PRC_desc ) {
-			$espresso_notices['errors'][] = 'No description was supplied.';
+			$msg = __( 'No description was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRC_desc = wp_strip_all_tags( $PRC_desc );
@@ -377,9 +378,9 @@ class EE_Price {
 	*/
 	public function set_reg_limit( $PRC_reg_limit = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $PRC_reg_limit ) {
-			$espresso_notices['errors'][] = 'No registration limit was supplied.';
+			$msg = __( 'No registration limit was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRC_reg_limit = absint( $PRC_reg_limit );
@@ -398,9 +399,9 @@ class EE_Price {
 	*/
 	public function set_tckts_left( $PRC_tckts_left = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $PRC_tckts_left ) {
-			$espresso_notices['errors'][] = 'No tickets left quantity was supplied.';
+			$msg = __( 'No tickets left quantity was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRC_tckts_left = absint( $PRC_tckts_left );
@@ -419,9 +420,9 @@ class EE_Price {
 	*/
 	public function set_use_dates( $PRC_use_dates = NULL ) {
 
-		global $espresso_notices;
 		if ( ! is_bool( $PRC_use_dates )) {
-			$espresso_notices['errors'][] = 'No use dates boolean flag was supplied.';
+			$msg = __( 'No use dates boolean flag was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRC_use_dates = (bool)absint( $PRC_use_dates );
@@ -440,9 +441,9 @@ class EE_Price {
 	*/
 	public function set_start_date( $PRC_start_date = NULL ) {
 
-		global $espresso_notices;
 		if ( ! $PRC_start_date ) {
-			$espresso_notices['errors'][] = 'No start date was supplied.';
+			$msg = __( 'No start date was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		
@@ -462,9 +463,9 @@ class EE_Price {
 	*/
 	public function set_end_date( $PRC_end_date = NULL ) {
 
-		global $espresso_notices;
 		if ( ! $PRC_end_date ) {
-			$espresso_notices['errors'][] = 'No end date was supplied.';
+			$msg = __( 'No end date was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		
@@ -484,9 +485,9 @@ class EE_Price {
 	*/
 	public function set_disc_code( $PRC_disc_code = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $PRC_disc_code ) {
-			$espresso_notices['errors'][] = 'No discount code was supplied.';
+			$msg = __( 'No discount code was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRC_disc_code = wp_strip_all_tags( $PRC_disc_code );
@@ -505,9 +506,9 @@ class EE_Price {
 	*/
 	public function set_disc_limit_qty( $PRC_disc_limit_qty = NULL ) {
 
-		global $espresso_notices;
 		if ( ! is_bool( $PRC_disc_limit_qty )) {
-			$espresso_notices['errors'][] = 'No discount limit qty boolean flag was supplied.';
+			$msg = __( 'No discount limit qty boolean flag was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRC_disc_limit_qty = (bool)absint( $PRC_disc_limit_qty );
@@ -526,9 +527,9 @@ class EE_Price {
 	*/
 	public function set_disc_qty( $PRC_disc_qty = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $PRC_disc_qty ) {
-			$espresso_notices['errors'][] = 'No discount qty was supplied.';
+			$msg = __( 'No discount qty was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRC_disc_qty = absint( $PRC_disc_qty );
@@ -547,9 +548,9 @@ class EE_Price {
 	*/
 	public function set_disc_apply_all( $PRC_disc_apply_all = NULL ) {
 
-		global $espresso_notices;
 		if ( ! is_bool( $PRC_disc_apply_all )) {
-			$espresso_notices['errors'][] = 'No disc_apply_all was supplied.';
+			$msg = __( 'No price was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRC_disc_apply_all = (bool)absint( $PRC_disc_apply_all );
@@ -568,9 +569,9 @@ class EE_Price {
 	*/
 	public function set_disc_wp_user( $PRC_disc_wp_user = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $PRC_disc_wp_user ) {
-			$espresso_notices['errors'][] = 'No WP user id was supplied.';
+			$msg = __( 'No price was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRC_disc_wp_user = absint( $PRC_disc_wp_user );
@@ -589,12 +590,33 @@ class EE_Price {
 	*/
 	public function set_globally_active( $PRC_is_active = NULL ) {
 
-		global $espresso_notices;
 		if ( ! is_bool( $PRC_is_active )) {
-			$espresso_notices['errors'][] = 'No globally active boolean flag was supplied.';
+			$msg = __( 'No globally active boolean flag was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRC_is_active = (bool)absint( $PRC_is_active );
+		return TRUE;
+	}
+
+
+
+
+
+	/**
+	*		set deleted
+	* 
+	* 		@access		public
+	*		@param		bool		PRC_deleted
+	*/
+	public function set_deleted( $PRC_deleted = NULL ) {
+
+		if ( $PRC_deleted == NULL ) {
+			$msg = __( 'No deleted boolean flag was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}
+		$this->_PRC_deleted = (bool)absint( $PRC_deleted );
 		return TRUE;
 	}
 
@@ -884,8 +906,6 @@ class EE_Price {
 	public function deleted() {
 		return $this->_PRC_deleted;
 	}
-
-
 
 
 

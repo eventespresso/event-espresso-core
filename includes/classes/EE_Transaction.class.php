@@ -196,8 +196,8 @@ class EE_Transaction {
 	public function set_total( $total = FALSE ) {
 		
 		if ( $total === FALSE || ! is_numeric( $total )) {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = 'No total or an invalid total was supplied.';
+			$msg = __( 'No total or an invalid total was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		// change commas to decimals
@@ -221,8 +221,8 @@ class EE_Transaction {
 	public function set_paid( $total_paid = FALSE ) {
 		
 		if ( $total_paid === FALSE || ! is_numeric( $total_paid )) {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = 'No payment amount or an invalid payment amount was supplied.';
+			$msg = __( 'No payment amount or an invalid payment amount was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		// change commas to decimals
@@ -246,8 +246,8 @@ class EE_Transaction {
 	public function set_status( $status = FALSE ) {
 		
 		if ( ! $status ) {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = 'No status was supplied.';
+			$msg = __( 'No status was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		$this->_STS_ID = wp_strip_all_tags( $status );
@@ -268,8 +268,8 @@ class EE_Transaction {
 	public function set_details( $details = FALSE ) {
 		
 		if ( ! $details ) {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = 'No details were supplied.';
+			$msg = __( 'No details were supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_TXN_details = $details;
@@ -282,16 +282,16 @@ class EE_Transaction {
 
 
 	/**
-	*		Set session data
+	*		Set session data within the TXN object
 	* 
 	* 		@access		public		
 	*		@param		string		$details 		dump off the entire session object 
 	*/	
-	public function set_session_data( $session_data = FALSE ) {
+	public function set_txn_session_data( $session_data = FALSE ) {
 		
 		if ( ! $session_data ) {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = 'No session data was supplied.';
+			$msg = __( 'No session data was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		$this->_TXN_session_data = $session_data;
@@ -311,8 +311,8 @@ class EE_Transaction {
 	public function set_hash_salt( $hash_salt = FALSE ) {
 		
 		if ( ! $hash_salt ) {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = 'No hash salt was supplied.';
+			$msg = __( 'No hash salt was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		$this->_TXN_hash_salt = wp_strip_all_tags( $hash_salt );
@@ -333,8 +333,8 @@ class EE_Transaction {
 	public function set_tax_data( $tax_data = FALSE ) {
 		
 		if ( ! $tax_data ) {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = 'No session data was supplied.';
+			$msg = __( 'No tax data was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		$this->_TXN_tax_data = $tax_data; 
@@ -522,49 +522,11 @@ class EE_Transaction {
 	}	
 	
 	
-	
-
-
-	/**
-	 *		@ override magic methods
-	 *		@ return void
-	 */	
-	public function __get($a) { return FALSE; }
-	public function __set($a,$b) { return FALSE; }
-	public function __unset($a) { return FALSE; }
-	public function __clone() { return FALSE; }
-	public function __wakeup() { return FALSE; }
-
 
 
 }
 
 
-/*
-	EXAMPLE USAGE
-
-	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
-	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
-	$TXN = EEM_Transaction::instance();	
-
-	$txn_1 = new EE_Transaction( '80.00', 'TPN', 'some txn details', array('session-data'), md5('some hash salt'),'some tax details' );
-	$results = $txn_1->insert();
-	
-	$txn_2 = new EE_Transaction( '400.00', 'TPN', 'some more txn details', array('different session data'), md5('some other hash salt'),'some other tax details' );
-	$results = $txn_2->insert();
-	
-	$transactions = $TXN->get_all_transactions();
-	echo printr( $transactions, 'get_all_transactions' );
-
-	$transaction = $TXN->get_transaction( 1 );
-	echo printr( $transaction, 'get_transaction( 1 )' );
-
-	$transaction = $TXN->get_transaction( 2 );
-	echo printr( $transaction, 'get_transaction( 2 )' );
-	
-*/
-
 
 /* End of file EE_Transaction.class.php */
-/* Location: includes/classes/EE_Transaction.class.php */	
-	
+/* Location: includes/classes/EE_Transaction.class.php */		

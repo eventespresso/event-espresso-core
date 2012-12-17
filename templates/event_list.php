@@ -1,4 +1,5 @@
-<?php
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 
 //This is a template file for displaying a list of events on a page. These functions are used with the [ESPRESSO_EVENTS] shortcode.
 //This is an group of functions for querying all of the events in your databse.
@@ -65,7 +66,9 @@ function event_espresso_get_event_details($attributes) {
 	global $wpdb, $org_options, $events_in_session, $ee_gmaps_opts, $EE_Cart;
 
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action( 'action_hook_espresso_before_event_list' );
 
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/gmap_incl.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/event_details.helper.php');
 //	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Price.class.php' );
 	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Prices.class.php' );
@@ -205,7 +208,7 @@ function event_espresso_get_event_details($attributes) {
 <div id="mer-ajax-loading" style="display:none;">
 	<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/ajax-loader-grey.gif" /><span>loading...</span>
 </div>
-' . espresso_get_notices() . '
+' . EE_Error::get_notices() . '
 <input id="event-queue-poll-server" type="hidden" value="1" name="event-queue-poll-server">
 
 ';

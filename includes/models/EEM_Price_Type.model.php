@@ -261,8 +261,8 @@ class EEM_Price_Type extends EEM_Base {
 		$PRC = EEM_Price::instance();
 		//check if any prices use this price type
 		if ( $prices = $PRC->get_all_prices_that_are_type($ID)) {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = __('The Price Type could not be deleted because there are existing Prices that currently use this Price Type.  If you still wish to delete this Price Type, then either delete those Prices or change them to use other Price Types.', 'event_espresso');
+			$msg = __('The Price Type could not be deleted because there are existing Prices that currently use this Price Type.  If you still wish to delete this Price Type, then either delete those Prices or change them to use other Price Types.', 'event_espresso');
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ ); 
 			return FALSE;
 		} 
 		

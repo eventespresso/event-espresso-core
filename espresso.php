@@ -62,17 +62,22 @@ function espresso_main_file() {
  * For a complete list see:
  * http://codex.wordpress.org/Plugin_API/Action_Reference
  */
+require_once(dirname(__FILE__) . '/includes/classes/EE_Exceptions.class.php');
 require_once(dirname(__FILE__) . '/includes/functions/plugins_loaded.php');
 require_once(dirname(__FILE__) . '/includes/functions/init.php');
 require_once(dirname(__FILE__) . '/includes/functions/wp_hooks.php');
 
+
+
+
 add_action('plugins_loaded', 'espresso_define_tables_and_paths', 1);
-add_action('plugins_loaded', 'espresso_setup_notices', 2);
-add_action('plugins_loaded', 'espresso_autoload', 3);
-add_action('plugins_loaded', 'espresso_get_user_id', 4);
-add_action('plugins_loaded', 'espresso_load_org_options', 5);
-add_action('plugins_loaded', 'espresso_EE_Session', 6);
+add_action('plugins_loaded', 'espresso_autoload', 2);
+add_action('plugins_loaded', 'espresso_get_user_id', 3);
+add_action('plugins_loaded', 'espresso_load_org_options', 4);
+add_action('plugins_loaded', 'espresso_EE_Session', 5);
 add_action('plugins_loaded', 'espresso_init', 25);
+add_action('init', 'espresso_add_rewrite_rules');
+add_filter('query_vars', 'espresso_add_query_vars');
 
 if ( is_admin() ) {
 
@@ -83,6 +88,7 @@ if ( is_admin() ) {
 	add_action('admin_bar_menu', 'espresso_toolbar_items', 100);
 	add_action('init', 'espresso_admin_init', 25);
 	add_action('init', 'espresso_load_admin_ajax_callbacks', 25);
+	add_action('init', 'espresso_flush_rewrite_rules', 41);
 	add_filter('plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2);
 	
 } else {
@@ -91,11 +97,8 @@ if ( is_admin() ) {
 	add_action('init', 'espresso_export_invoice', 30);
 	add_action('init', 'espresso_export_ticket', 30);
 
-	add_filter('query_vars', 'espresso_add_query_vars');
 	add_action('init', 'espresso_load_jquery', 10);
 	add_action('init', 'espresso_frontend_init', 25);
-	add_action('init', 'espresso_add_rewrite_rules', 40);
-	add_action('init', 'espresso_flush_rewrite_rules', 41);
 	add_action('widgets_init', 'espresso_widget');
 	add_action('wp_head', 'espresso_info_header');
 	add_action('wp_print_styles', 'add_espresso_stylesheet', 20);

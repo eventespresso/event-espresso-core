@@ -38,7 +38,10 @@ function add_new_event_email(){
 						<tr>
 							<td colspan="2"><div id="descriptiondivrich" class="postarea">
 									<div class="postbox">
-										<?php the_editor('', $id = 'email_text', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
+										<?php
+											$args = array("textarea_rows" => 10, "textarea_name" => "email_text", "editor_class" => "my_editor_custom");
+											wp_editor('', "email_text", $args);
+										?>
 										<table id="manage-event-email-form" cellspacing="0">
 											<tbody>
 												<tr>

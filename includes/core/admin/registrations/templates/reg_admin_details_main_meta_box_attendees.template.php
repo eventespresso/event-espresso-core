@@ -11,7 +11,7 @@
 					<th class="jst-rght"><?php _e( 'Price Paid', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Email', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Address', 'event_espresso' );?></th>
-					<th class="jst-cntr"><?php _e( 'Actions', 'event_espresso' );?></th>
+					<!--<th class="jst-cntr"><?php _e( 'Actions', 'event_espresso' );?></th>-->
 				</tr>
 			</thead>
 			<tbody>
@@ -21,11 +21,15 @@
 				<tr>
 					<td class="jst-left"><?php echo$att_nmbr;?></td>
 					<td class="jst-left"><?php echo $event_name;?></td>
-					<td class="jst-left"><?php echo $attendee['fname'] . ' ' . $attendee['lname'];?></td>
+					<td class="jst-left">
+						<a href="<?php echo $attendee['att_link']; ?>" title="<?php _e( 'View details for this attendee', 'event_espresso' );?>">
+							<?php echo $attendee['fname'] . ' ' . $attendee['lname'];?>
+						</a>
+					</td>
 					<td class="jst-rght"><?php echo $currency_sign . ' ' . number_format( $attendee['final_price'], 2 );?></td>
 					<td class="jst-left"><?php echo $attendee['email'];?></td>
 					<td class="jst-left"><?php echo $attendee['address'];?></td>
-					<th class="jst-cntr"><a href="<?php echo $attendee['view_link']; ?>" title="View details for this attendee">view</a></th>
+					<!--<th class="jst-cntr">view</th>-->
 				</tr>
 				
 			<?php endforeach; // $attendees?>

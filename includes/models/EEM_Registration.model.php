@@ -181,6 +181,85 @@ class EEM_Registration extends EEM_Base {
 
 
 	/**
+	*		retreive ALL registrations for a particular Attendee from db
+	* 		@access		public
+	* 		@param		int		$ATT_ID
+	*		@return 		mixed		array on success, FALSE on fail
+	*/
+	public function get_all_registrations_for_attendee( $ATT_ID = FALSE ) {
+
+		if ( ! $ATT_ID ) {
+			return FALSE;
+		}
+		if ( $registrations = $this->get_all_registrations( array( 'ATT_ID' => $ATT_ID ))) {
+			return $registrations;
+		} else {
+			return FALSE;
+		}
+	}
+
+
+
+
+	/**
+	*		retreive ALL registrations for a specific transaction from db
+	* 
+	* 		@access		public
+	* 		@param		$TXN_ID		
+	*		@return 		mixed		array on success, FALSE on fail
+	*/	
+	public function get_all_registrations_for_transaction( $TXN_ID = FALSE ) {
+	
+		if ( ! $TXN_ID ) {
+			return FALSE;
+		}
+		// retreive all registrations	
+		if ( $registrations = $this->select_all_where ( array( 'TXN_ID' => $TXN_ID ), 'REG_ID' )) {
+			return $this->_create_objects( $registrations );
+		} else {
+			return FALSE;
+		}
+		
+	}
+
+
+
+
+	/**
+	*		retreive registration for a specific transaction attendee from db
+	* 
+	* 		@access		public
+	* 		@param		$TXN_ID
+	* 		@param		$ATT_ID
+	* 		@param		$att_nmbr 	in case the ATT_ID is the same for multiple registrations (same details used) then the attendee number is required
+	*		@return 		mixed		array on success, FALSE on fail
+	*/
+	public function get_registration_for_transaction_attendee( $TXN_ID = FALSE, $ATT_ID = FALSE, $att_nmbr = FALSE ) {
+
+		if ( ! $TXN_ID && ! $ATT_ID && ! $att_nmbr ) {
+			return FALSE;
+		}
+		// retreive all registrations
+		if ( $registrations = $this->select_all_where ( array( 'TXN_ID' => $TXN_ID, 'ATT_ID' => $ATT_ID ), 'REG_ID' )) {
+			$registrations = $this->_create_objects( $registrations );
+			// need to reduce $att_nmbr which starts at 1 to match array keys that start at 0
+			$att_nmbr--;
+			// just grab 1 element from array starting at $att_nmbr
+			$registration = array_slice( $registrations, $att_nmbr, 1 );
+			//printr( $registration );
+			return isset( $registration[0] ) ? $registration[0] : $registration;
+		} else {
+			return FALSE;
+		}
+
+	}
+
+
+
+
+
+
+	/**
 	*		Search for an existing registration record in the DB using SQL LIKE clause - so go ahead - get wildcards !
 	* 		@access		public
 	* 		@param		string		$REG_code

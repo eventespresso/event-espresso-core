@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-/**
+do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
  *
  * Event Espresso
  *
@@ -94,14 +94,16 @@
 	 *		@access private
 	 *		@return void
 	 */
-  private function __construct() {
+	private function __construct() {
+
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
 		define( 'ESPRESSO_SESSION', TRUE );
+		global $EE_Session, $org_options, $notices;
 
 		// remove the default espresso session init
 		remove_action( 'plugins_loaded', 'espresso_init_session', 1 );
 
-		global $EE_Session, $org_options, $notices;
 		$this->_notices = $notices;
 
 		// retreive session options from db
@@ -154,7 +156,6 @@
 		// once everything is all said and done,
 		add_action( 'shutdown', array( &$this, '_update_espresso_session' ), 100);
 
-
 	}
 
 
@@ -185,6 +186,7 @@
 	 */
 	public function get_session_data( $key = FALSE, $section = FALSE ) {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		if ( $section != FALSE && $key != FALSE ) {
@@ -217,6 +219,7 @@
 	 */
 	public function set_session_data( $data, $section = 'cart' ) {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		// nothing ??? go home!
@@ -250,6 +253,7 @@
 	 */
 	private function _espresso_session() {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		// starts a new session if one doesn't already exist, or reinitiates an existing one
 		if (isset($_GET['session_id'])) {
 			session_id(sanitize_key($_GET['session_id']));
@@ -331,6 +335,7 @@
 	 */
 	public function _update_espresso_session( $new_session = FALSE ) {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		foreach ( $this->_session_data as $key => $value ) {
@@ -377,24 +382,20 @@
 
 		}
 
+		// current user if logged in
+		$session_data['user_id'] = $this->_wp_user_id();
+
+		$this->_session_data = $session_data;
+
 		// creating a new session does not require saving to the db just yet
 		if ( ! $new_session ) {
-
-			// current user if logged in
-			$session_data['user_id'] = $this->_wp_user_id();
-
-			$this->_session_data = $session_data;
-
 			// ready? let's save
 			if ( $this->_save_session_to_db() ) {
 				return TRUE;
 			} else {
 				return FALSE;
 			}
-
-		} else {
-			$this->_session_data = $session_data;
-		}
+		} 
 
 		// meh, why not?
 		return TRUE;
@@ -412,6 +413,7 @@
 	 */
 	private function _create_espresso_session( ) {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		// use the update function for now with $new_session arg set to TRUE
@@ -430,18 +432,21 @@
 	 */
 	private function _save_session_to_db() {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 //		echo printr( $this->_session_data, 'session_data' );
 
-		// are we are we using encryption?
+		// first serialize all of our session data
+		$session_data = serialize( $this->_session_data );
+
+		// encrypt it if we are using encryption
 		if ( $this->_use_encryption ) {
-			// first serialize all of our session data
-			$session_data = serialize( $this->_session_data );
-			// now we'll encrypt it
 			$session_data = $this->encryption->encrypt( $session_data );
 		}
 
 		// we're using the Transient API for storing session data, cuz it's so damn simple -> set_transient(  transient ID, data, expiry )
+		set_transient( $this->_sid, $session_data, $this->_expiration );
+		die();
 		return set_transient( $this->_sid, $session_data, $this->_expiration ) ? TRUE : FALSE;
 
 	}
@@ -457,6 +462,7 @@
 	 */
 	private function _visitor_ip() {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		$visitor_ip = '0:0:0:0';
@@ -488,7 +494,7 @@
 			} elseif ( $ip_bits[$i] < 1 ) {
 				// less than 1?
 				$ip_bits[$i] = 0;
-			}
+			} 
 
 		}
 
@@ -510,6 +516,7 @@
 	 */
 	public function _get_page_visit() {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		$page_visit = home_url('/') . 'wp-admin/admin-ajax.php';
 		
@@ -583,6 +590,7 @@
 		// if I need to explain the following lines of code, then you shouldn't be looking at this!
 		$user = wp_get_current_user();
 		$this->_wp_user_id = isset( $user->data->ID ) ? $user->data->ID : NULL;
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, ' wp_user_id = ' . $this->_wp_user_id );
 		return $this->_wp_user_id;
 	}
 
@@ -597,6 +605,7 @@
 	 */
 	public function reset_data( $data_to_reset = FALSE ) {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		// nothing ??? go home!
@@ -650,6 +659,7 @@
 	 */
 	private function _session_time() {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 ////		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		// what time is it Mr Wolf?

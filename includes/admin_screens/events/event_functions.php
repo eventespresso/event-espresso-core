@@ -197,27 +197,13 @@ function espresso_event_editor_desc_div($event) {
 	?>
 	<div id="postdivrich" class="postarea">
 		<?php
-		if (function_exists('wp_editor')) {
 			$args = array("textarea_rows" => 5, "textarea_name" => "event_desc", "editor_class" => "my_editor_custom");
 			wp_editor(espresso_admin_format_content($event->event_desc), "event_desc", $args);
-		} else {
-			/*
-			  This is the editor used by WordPress. It is very very hard to find documentation for this thing, so I pasted everything I could find below.
-			  param: string $content Textarea content.
-			  param: string $id Optional, default is 'content'. HTML ID attribute value.
-			  param: string $prev_id Optional, default is 'title'. HTML ID name for switching back and forth between visual editors.
-			  param: bool $media_buttons Optional, default is true. Whether to display media buttons.
-			  param: int $tab_index Optional, default is 2. Tabindex for textarea element.
-			 */
-			//the_editor($content, $id = 'content', $prev_id = 'title', $media_buttons = true, $tab_index = 2)
-			//the_editor(espresso_admin_format_content($event_desc), $id = 'event_desc'/* , $prev_id = 'title', $media_buttons = true, $tab_index = 3 */);
-			wp_editor(espresso_admin_format_content($event->event_desc), 'event_desc');
-		}
 		?>
 		<table id="post-status-info" cellspacing="0">
 			<tbody>
 				<tr>
-					<td id="wp-word-count"> Word count: <span class="word-count"></span></td>
+					<td id="wp-word-count"><?php echo __('Word count:', 'event_espresso') ?> <span class="word-count"></span></td>
 					<td class="autosave-info"><span class="autosave-message"></span><span id="last-edit"></span></td>
 				</tr>
 			</tbody>

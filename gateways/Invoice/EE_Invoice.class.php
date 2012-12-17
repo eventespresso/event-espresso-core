@@ -222,8 +222,11 @@ Class EE_Invoice extends EE_Offline_Gateway {
 
 
 	public function thank_you_page() {
+	
 		global $EE_Session;
 		$session_data = $EE_Session->get_session_data();
+		//printr( $session_data, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 
+		
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Registration.class.php' );
 		$registration = $session_data['registration'][$session_data['primary_attendee']['line_item_id']];
 		$this->set_transaction_details();
@@ -260,6 +263,8 @@ Class EE_Invoice extends EE_Offline_Gateway {
 			?>
 		</div>
 		<?php
+		//$this->_EEM_Gateways->reset_session_data();
+		
 	}
 
 	public function espresso_display_payment_gateways() {

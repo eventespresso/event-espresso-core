@@ -1,7 +1,8 @@
 <?php
 
 function event_espresso_insert_group() {
-	global $wpdb, $espresso_wp_user, $espresso_notices;
+	global $wpdb, $espresso_wp_user;
+	$error = FALSE;
 
 	if (check_admin_referer('espresso_form_check', 'add_new_group')) {
 		$wpdb->show_errors();
@@ -25,7 +26,7 @@ function event_espresso_insert_group() {
 
 	$sql_data = array('%s', '%s', '%s', '%d', '%d', '%d', '%d');
 	if (!$wpdb->insert(EVENTS_QST_GROUP_TABLE, $sql, $sql_data)) {
-		$error = true;
+		$error = TRUE;
 	}
 
 	$last_group_id = $wpdb->insert_id;
@@ -36,15 +37,17 @@ function event_espresso_insert_group() {
 				$sql_qst_grp = "INSERT INTO " . EVENTS_QST_GROUP_REL_TABLE . " (group_id, question_id) VALUES ('" . $last_group_id . "', '" . $v . "')";
 				//echo "$sql3 <br>";
 				if (!$wpdb->query($sql_qst_grp)) {
-					$error = true;
+					$error = TRUE;
 				}
 			}
 		}
 	}
 
-	if (!empty($error)) {
-		$espresso_notices['errors'][] = __('There was an error in your submission for group ', 'event_espresso') . $group_name . __(' The group was not added!', 'event_espresso');
+	if ( $error ) {
+		$msg = sprintf( __( 'An error occured and the %s group has not been saved to the database.', 'event_espresso' ), $group_name );
+		EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 	} else {
-		$espresso_notices['success'][] = __('The group ', 'event_esptresso') . $group_name . __(' has been added.', 'event_espresso');
+		$msg = sprintf( __( 'Details for the group %s have been successfully saved to the database.', 'event_espresso' ), $group_name );
+		EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 	}
 }

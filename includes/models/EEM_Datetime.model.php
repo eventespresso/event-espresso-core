@@ -108,8 +108,8 @@ class EEM_Datetime extends EEM_Base {
 	private function _get_event_datetimes( $EVT_ID = FALSE, $primary = FALSE ) {
 
 		if ( ! $EVT_ID ) {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = 'No Event datetimes could be retreived because no event ID was received. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'No Event datetimes could be retreived because no event ID was received.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -429,7 +429,7 @@ class EEM_Datetime extends EEM_Base {
 
 		}
 
-		echo espresso_get_notices();
+		echo EE_Error::get_notices();
 
 	}
 

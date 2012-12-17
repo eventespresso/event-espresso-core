@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-/**
+do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
  *
  * Event Espresso
  *
@@ -98,6 +98,7 @@
 	 */	
   private function __construct() {
  
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';		
 
 		if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
@@ -162,6 +163,7 @@
 	 */	
 	private function default_cart() {
 		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$extra_default_empty_cart_vars = array();
 		// filter hook allows outside functions/classes/plugins to change default empty cart
 		$extra_default_empty_cart_vars = apply_filters( 'filter_hook_espresso_default_empty_cart', $extra_default_empty_cart_vars );		
@@ -181,6 +183,7 @@
 	 */	
 	private function initialize_cart() {
 		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';	
 		global $EE_Session;
 		
@@ -224,6 +227,7 @@
 	 */	
 	public function add_to_cart( $which_cart = 'REG', $items = FALSE ) {
 			
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		$save_cart = FALSE;
 
@@ -272,6 +276,7 @@
 	 */	
 	private function _add_item( $which_cart = 'REG', $item ) {
 		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		// check that the passed properties are valid
 		$this->_verify_cart_properties ( array( 'which_cart' => $which_cart, 'item' => $item )); 
@@ -361,6 +366,7 @@
 	 */	
 	public function calculate_cart_totals( $which_cart ) {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		// check that the passed properties are valid
 		$this->_verify_cart_properties ( array( 'which_cart' => $which_cart )); 
 		
@@ -416,6 +422,7 @@
 	 */	
 	public function calculate_cart_grand_total( ) {
 	
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$this->_cart_grand_total_qty = 0;
 		$this->_cart_grand_total_amount = 0;
 		
@@ -445,6 +452,7 @@
 	 */	
 	public function get_cart_grand_totals() {
 	
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$this->calculate_cart_grand_total();
 
 		$cart_grand_totals = array();
@@ -468,6 +476,7 @@
 	 */	
 	public function edit_qty( $which_cart = FALSE, $line_item_id = FALSE, $new_qty = FALSE ) {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$updates = 0;
 
 		// check for a valid cart properties
@@ -525,6 +534,7 @@
 	 */	
 	public function remove_from_cart( $which_cart = FALSE, $line_item_ids = FALSE ) {
 		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		// check that the passed properties are valid
 		$this->_verify_cart_properties ( array( 'which_cart' => $which_cart, 'line_item_ids' => $line_item_ids )); 
@@ -568,6 +578,7 @@
 	 */	
 	public function remove_event_from_cart( $which_cart = FALSE, $line_item_ids = FALSE ) {
 	
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		// check that the passed properties are valid
 		$this->_verify_cart_properties ( array( 'which_cart' => $which_cart, 'line_item_ids' => $line_item_ids )); 	
 	
@@ -623,6 +634,7 @@
 	 */	
 	public function empty_cart( $return_url = FALSE, $which_cart = 'REG' ) {
 		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		//echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		// check that the passed properties are valid
 		$this->_verify_cart_properties ( array( 'which_cart' => $which_cart )); 
@@ -688,6 +700,7 @@
 	 */	
 	public function is_event_in_cart( $event_id, $which_cart = 'REG', $section = 'espresso' ) {
 		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 //		$session_data =  $this->get_session_data($which_cart);
 //		$events_in_cart = $session_data['event_id_list'];
 		
@@ -717,6 +730,7 @@
 	 */	
 	public function is_in_cart( $item_id, $which_cart = 'REG', $section = 'espresso'  ) {
 	
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		// check that the passed properties are valid
 		$this->_verify_cart_properties ( array( 'which_cart' => $which_cart )); 
 		
@@ -774,6 +788,7 @@
 	 */	
 	public function whats_in_the_cart( $which_cart = 'REG', $line_item_id = FALSE ) {
 		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		// check that the passed properties are valid
 		$this->_verify_cart_properties ( array( 'which_cart' => $which_cart, 'line_item_id' => $line_item_id )); 
@@ -797,6 +812,7 @@
 	 */	
 	public function _save_cart() {
 	
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';		
 		//echo $this->session->pre_r($this->cart);
 		global $EE_Session;
@@ -832,6 +848,7 @@
 	 */	
 	private function _clean_cart() {
 		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		foreach ( $this->cart as $which_cart => $cart ) {
 		if ( isset( $cart['items'] ) && ! empty( $cart['items'] ) ) {
 				foreach ( $cart['items'] as $items ) {
@@ -876,11 +893,12 @@
 	*/	
 	private function _verify_cart_properties ( $properties = array() ) {
 
-		global $espresso_notices;
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		
 		// WHAT?!?!! check the validity of properties before you validate them ?!?!? geez... my head hurts
 		if ( ! isset( $properties ) or ! is_array( $properties ) or empty( $properties )) {
-			$espresso_notices[] = 'An error occured. No cart properties were submitted for verification .';
+			$msg = __( 'An error occured. No cart properties were submitted for verification.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		
@@ -890,7 +908,8 @@
 				case 'which_cart' :
 						// check for a valid cart
 						if ( ! $property or ! isset( $this->cart[ $property ] )) {
-							$espresso_notices[] = 'An error occured. No cart or an invalid cart was specified.';
+							$msg = __( 'An error occured. No cart or an invalid cart was specified.', 'event_espresso' );
+							EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 							return FALSE;
 						}
 				break;
@@ -898,7 +917,8 @@
 				case 'line_item_ids' :
 						//check for a line item id(s)
 						if ( ! $property ) {
-							$espresso_notices[] = 'An error occured. No item was specified.';
+							$msg = __( 'An error occured. No item was specified.', 'event_espresso' );
+							EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 							return FALSE;
 						}
 				break;
@@ -906,7 +926,8 @@
 				case 'line_item_id' :
 						// check for a line item id(s)
 						if ( ! $property or ! isset( $this->cart[ $properties['which_cart'] ]['items'][ $property ] )) {
-							$espresso_notices[] = 'An error occured. No item was specified.';
+							$msg = __( 'An error occured. No item was specified.', 'event_espresso' );
+							EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 							return FALSE;
 						}						
 				break;
@@ -914,7 +935,8 @@
 				case 'new_qty' :
 						//check for a new_qty
 						if ( ! $property or ! is_int( $property )) {
-							$espresso_notices[] = 'An error occured. Either no item quantity, or an invalid item quantity was specified.';
+							$msg = __( 'An error occured. Either no item quantity, or an invalid item quantity was specified.', 'event_espresso' );
+							EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 							return FALSE;
 						}
 				break;
@@ -926,7 +948,8 @@
 						foreach ( $required_keys as $required_key ) {
 							// check that item has required property
 							if ( ! isset ( $property[ $required_key ] )) { 
-								$espresso_notices[] = 'An error occured. Items passed to the cart must possess a valid ' . $required_key . '.';
+								$msg = sprintf( __( 'An error occured. Items passed to the cart must possess a valid %s.', 'event_espresso' ), $required_key );
+								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 								return FALSE;
 							}
 						}
@@ -934,7 +957,8 @@
 				
 				case 'items' :
 						if ( ! is_array( $property ) or empty( $property ) ) {
-							$espresso_notices[] = 'An error occured. The data passed to the cart was invalid. No items could be added to the cart.';
+							$msg = __( 'An error occured. The data passed to the cart was invalid. No items could be added to the cart.', 'event_espresso' );
+							EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 							return FALSE;
 						}
 				break;
@@ -942,7 +966,8 @@
 				case 'event_id' :
 						// check $event_id 
 						if ( ! $property or ! is_int( $property )) {
-							$espresso_notices[] = 'An error occured. An invalid or missing event id was submitted and therefore could not be added to the events in cart list.';
+							$msg = __( 'An error occured. An invalid or missing event id was submitted and therefore could not be added to the events in cart list.', 'event_espresso' );
+							EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 							return FALSE;
 						}						
 				break;
@@ -968,6 +993,7 @@
 	*/	
 	public function get_item_id( $line_item_id = FALSE, $which_cart = 'REG' ) {
 	
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if ( ! $this->_verify_cart_properties ( array( 'line_item_id' => $line_item_id , 'which_cart' => 'REG' ))) {
 			return FALSE;
 		}
@@ -987,6 +1013,7 @@
 	*/	
 	public function get_cart_event_id_list( $which_cart = 'REG' ) {
 	
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if ( ! $this->_verify_cart_properties ( array( 'which_cart' => 'REG' ))) {
 			return FALSE;
 		}
@@ -1006,6 +1033,7 @@
 	*/	
 	public function add_to_cart_event_id_list( $which_cart = 'REG', $event_id = FALSE ) {
 		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if ( ! $this->_verify_cart_properties ( array( 'which_cart' => 'REG', 'event_id' => $event_id ))) {
 			return FALSE;
 		}
@@ -1025,18 +1053,19 @@
 	*/	
 	public function remove_from_cart_event_id_list( $which_cart = 'REG', $event_id = FALSE ) {
 		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if ( ! $this->_verify_cart_properties ( array( 'which_cart' => 'REG', 'event_id' => $event_id ))) {
 			return FALSE;
 		}
 		
-		global $espresso_notices;		
 		// first check that the event id exists
 		if ( isset( $this->cart[$which_cart]['event_id_list'][ $event_id ] )) {
 			// found it? now kill it!
 			unset( $this->cart[$which_cart]['event_id_list'][ $event_id ] );
 			return TRUE;
 		} else {
-			$espresso_notices[] = 'An error occured. The submitted event id was not found in the events in cart list.';
+			$msg = __( 'An error occured. The submitted event id was not found in the events in cart list.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}		
 				
@@ -1070,6 +1099,7 @@
 	*/	
 	public function set_events_in_cart_list( $event_id = FALSE ) {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		// check $event_id 
 		if ( ! $this->_verify_cart_properties ( array( 'event_id' => $event_id ))) {
 			return FALSE;
@@ -1094,10 +1124,12 @@
 	*/	
 	public function unset_events_in_cart_list( $event_id = FALSE ) {
 
-		global $espresso_notices;		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
 		// check $event_id 
 		if ( ! $event_id or ! is_int( $event_id )) {
-			$espresso_notices[] = 'An error occured. An invalid or missing event id was submitted and therefore could not be removed from the events in cart list.';
+			$msg = __( 'An error occured. An invalid or missing event id was submitted and therefore could not be removed from the events in cart list.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		
@@ -1107,7 +1139,8 @@
 			unset( $this->_events_in_cart[ $event_id ]);
 			return TRUE;
 		} else {
-			$espresso_notices[] = 'An error occured. The submitted event id was not found in the events in cart list.';
+			$msg = __( 'An error occured. The submitted event id was not found in the events in cart list.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}		
 	
@@ -1154,11 +1187,12 @@
 	*/	
 	public function set_line_item_details( $extra_details = FALSE, $line_item_id = FALSE, $which_cart = 'REG'  ) {
 
-		global $espresso_notices;		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 		// check $extra_details
 		if ( ! $extra_details or ! is_array( $extra_details ) or empty( $extra_details )) {
-			$espresso_notices[] = 'An error occured. An invalid or missing set of details was submitted and therefore could not be added to the cart item.';
+			$msg = __( 'An error occured. An invalid or missing set of details was submitted and therefore could not be added to the cart item.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -1175,13 +1209,6 @@
 	}
 
 }
-
-
-
-// create global var
-//global $EE_Cart;
-// instantiate !!!
-//$EE_Cart = EE_Cart::instance();
 
 
 /* End of file EE_Cart.class.php */
