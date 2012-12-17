@@ -4,7 +4,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 
 function event_espresso_edit_list() {
 
-	global $wpdb, $espresso_notices;
+	global $wpdb;
 	
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$wpdb->show_errors();
@@ -33,7 +33,7 @@ function event_espresso_edit_list() {
 		}
 	}
 	
-	echo espresso_get_notices();
+	echo EE_Error::get_notices();
 
 	require_once('queries.php');
 

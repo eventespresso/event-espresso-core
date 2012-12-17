@@ -111,10 +111,10 @@ class EE_Final_Price {
 	 *	@param $adj_amount;
 	 */
 	public function add_adjustment( $adj_ID=FALSE, $adj_name = FALSE, $adj_is_percent = NULL, $adj_amount = FALSE ) {
-		global $espresso_notices;
 		
 		if ( ! $adj_ID || ! $adj_name || ! is_bool($adj_is_percent) || ! $adj_amount  ) {
-			$espresso_notices['errors'][] = 'A valid price adjustment was not supplied.';
+			$msg = __( 'A valid price adjustment was not supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 

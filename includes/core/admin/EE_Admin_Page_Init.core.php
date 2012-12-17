@@ -63,7 +63,7 @@ class EE_Admin_Page_Init {
 	 */
 	protected function _init( $page_slug, $page_name, $dir_name, $page_request ) { 
 		
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $is_UI_request;
 		// is this request for UI or backend 

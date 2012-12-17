@@ -62,17 +62,19 @@ function espresso_main_file() {
  * For a complete list see:
  * http://codex.wordpress.org/Plugin_API/Action_Reference
  */
+require_once(dirname(__FILE__) . '/includes/classes/EE_Exceptions.class.php');
 require_once(dirname(__FILE__) . '/includes/functions/plugins_loaded.php');
 require_once(dirname(__FILE__) . '/includes/functions/init.php');
 require_once(dirname(__FILE__) . '/includes/functions/wp_hooks.php');
 
 
+
+
 add_action('plugins_loaded', 'espresso_define_tables_and_paths', 1);
-add_action('plugins_loaded', 'espresso_setup_notices', 2);
-add_action('plugins_loaded', 'espresso_autoload', 3);
-add_action('plugins_loaded', 'espresso_get_user_id', 4);
-add_action('plugins_loaded', 'espresso_load_org_options', 5);
-add_action('plugins_loaded', 'espresso_EE_Session', 6);
+add_action('plugins_loaded', 'espresso_autoload', 2);
+add_action('plugins_loaded', 'espresso_get_user_id', 3);
+add_action('plugins_loaded', 'espresso_load_org_options', 4);
+add_action('plugins_loaded', 'espresso_EE_Session', 5);
 add_action('plugins_loaded', 'espresso_init', 25);
 add_action('init', 'espresso_add_rewrite_rules');
 add_filter('query_vars', 'espresso_add_query_vars');
@@ -189,3 +191,16 @@ if ( is_admin() ) {
  */
 //echo get_option('plugin_error');
 //delete_option('plugin_error');
+
+
+class EE_BASE {
+	/**
+	 *		@ override magic methods
+	 *		@ return void
+	 */	
+	public function __get($a) { return FALSE; }
+	public function __set($a,$b) { return FALSE; }
+	public function __unset($a) { return FALSE; }
+	public function __clone() { return FALSE; }
+	public function __wakeup() { return FALSE; }	
+}

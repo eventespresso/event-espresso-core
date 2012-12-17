@@ -273,8 +273,8 @@ class EEM_Attendee extends EEM_Base {
 		$REG_MDL = EEM_Registration::instance();
 		//check if the attendee is associated with any registrations
 		if ( $registrations = $REG_MDL->get_all_registrations_for_attendee( $ATT_ID )) {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = __('The Attendee could not be deleted because there are existing Registrations associated with this Attendee.', 'event_espresso');
+			$msg = __( 'The Attendee could not be deleted because there are existing Registrations associated with this Attendee.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		} 
 				

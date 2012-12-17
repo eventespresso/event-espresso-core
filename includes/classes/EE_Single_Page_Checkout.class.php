@@ -258,7 +258,7 @@ class EE_Single_Page_Checkout {
 
 
 		// retreive all success and error messages
-		$notices = espresso_get_notices(FALSE);
+		$notices = EE_Error::get_notices(FALSE);
 		// success messages
 		$template_args['success_msg'] = empty($notices['success']) ? '' : $notices['success'];
 		$template_args['success_msg_class'] = empty($notices['success']) ? ' ui-helper-hidden' : ' fade-away';
@@ -820,7 +820,7 @@ class EE_Single_Page_Checkout {
 			foreach ($attendees as $line_item_id => $line_item) {
 				foreach ($line_item as $event_id => $attendees_data) {
 					if (!$this->cart->set_line_item_details($attendees_data, $line_item_id)) {
-						$notices = espresso_get_notices(FALSE);
+						$notices = EE_Error::get_notices(FALSE);
 						$error_msg = $notices['errors'];
 					}
 				}
@@ -858,7 +858,7 @@ class EE_Single_Page_Checkout {
 	public function process_registration_step_2() {
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $EE_Session, $espresso_notices;
+		global $EE_Session;
 
 		$success_msg = FALSE;
 		$error_msg = FALSE;
@@ -869,7 +869,8 @@ class EE_Single_Page_Checkout {
 		if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
 			// FREE EVENT !!! YEAH : )
 			if ($EE_Session->set_session_data(array('billing_info' => 'no payment required'), $section = 'session_data')) {
-				$espresso_notices['success'][] = __('Registration Step 2 completed', 'event_espresso');
+				$msg = __( 'Registration Step 2 completed.', 'event_espresso' );
+				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );	
 			} 
 
 		} else { 
@@ -878,7 +879,7 @@ class EE_Single_Page_Checkout {
 			$this->gateways->process_gateway_selection();
 			
 			//grab notices
-			$notices = espresso_get_notices(FALSE);
+			$notices = EE_Error::get_notices(FALSE);
 			$success_msg = isset( $notices['success'] ) ? $notices['success'] : '';
 			$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : '';
 
@@ -1277,7 +1278,7 @@ class EE_Single_Page_Checkout {
 	public function send_ajax_response($success_msg = FALSE, $error_msg = FALSE, $callback = FALSE, $callback_param = FALSE) {
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $espresso_notices;
+
 		$valid_callback = FALSE;
 		// check for valid callback function
 		if ($callback != FALSE && $callback != '' && !function_exists($callback)) {
@@ -1297,7 +1298,7 @@ class EE_Single_Page_Checkout {
 				die();
 			} else {
 				// not ajax
-				$espresso_notices['success'][] = $success_msg;
+				EE_Error::add_success( $success_msg, __FILE__, __FUNCTION__, __LINE__ );
 				// return true to advance to next step
 				return TRUE;
 			}
@@ -1307,7 +1308,7 @@ class EE_Single_Page_Checkout {
 				echo json_encode(array('error' => $error_msg));
 				die();
 			} else {
-				$espresso_notices['errors'][] = $error_msg;
+				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 				// return false to return to retry step
 				return FALSE;
 			}

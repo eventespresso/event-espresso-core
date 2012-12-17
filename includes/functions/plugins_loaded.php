@@ -88,21 +88,6 @@ function espresso_define_tables_and_paths() {
 
 
 
-/**
- * 		initialize and globalize espresso messages array
- *
- * 		@access public
- * 		@return void
- */
-function espresso_setup_notices() {
-	// global error notices
-	global $espresso_notices;
-	$espresso_notices	= array( 'success' => FALSE, 'errors' => FALSE );
-}
-
-
-
-
 
 /**
  * 		Automagically load non-singleton class files - no need to include or require
@@ -604,6 +589,8 @@ function espresso_admin_pages() {
  * 		@return void
  */
 function espresso_load_admin_page( $admin_page, $page_request ) {
+	
+//	echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 
 	$admin_page = strtolower( $admin_page );
 	$page_name = ucwords(  str_replace( '_', ' ', $admin_page ));

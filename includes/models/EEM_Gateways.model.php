@@ -156,9 +156,10 @@ Class EEM_Gateways {
 		if (is_admin() && !empty($_GET['page']) && $_GET['page'] == 'payment_gateways') {
 			$this->_load_all_gateway_files();
 		} else {
-			if (!is_array($this->_active_gateways)) {	// if something went wrong, fail gracefully
-				//global $espresso_notices;
-				//$espresso_notices['errors'][] = 'No Active Event Espresso Payment Gateways';
+			// if something went wrong, fail gracefully
+			if ( ! is_array($this->_active_gateways)) {	
+				$msg = __( 'There are no active payment gateways. Please configure at least one gateway in the Event Espresso Payment settings page.', 'event_espresso'); 
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return;
 			}
 			foreach ($this->_active_gateways as $gateway => $in_uploads) {
@@ -197,7 +198,7 @@ Class EEM_Gateways {
 	 */
 	private function _load_all_gateway_files() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $espresso_notices;
+		
 		$gateways = array();
 		$upload_gateways = array();
 		$gateways_glob = glob(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways" . DS . "*", GLOB_ONLYDIR);
@@ -225,12 +226,23 @@ Class EEM_Gateways {
 				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename)) {
 					require_once(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename);
 				} else {
-					$espresso_notices['errors'][] = 'The file : <b>' . $filename . '</b> could not be located in either : <b>' . EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . '</b>';
+					$msg = sprintf(
+							__( 'The file : %s could not be located in : %s', 'event_espresso'), 
+							'<b>' . $filename . '</b>',
+							'<b>' . EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . '</b>' 
+					);
+					EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				}
 			} else if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . $filename)) {
 				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . $filename);
 			} else {
-				$espresso_notices['errors'][] = 'The file : <b>' . $filename . '</b> could not be located in either : <b>' . EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . '</b> or <b>' . EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . '</b>';
+				$msg = sprintf(
+						__( 'The file : %s could not be located in either : %s or %s', 'event_espresso'), 
+						'<b>' . $filename . '</b>',
+						'<b>' . EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . '</b>',
+						'<b>' . EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . '</b>'
+				);
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
 
 			if (class_exists($classname)) {
@@ -274,13 +286,15 @@ Class EEM_Gateways {
 		}
 		$this->_payment_settings[$gateway] = $settings;
 
-		global $espresso_wp_user, $espresso_notices;
+		global $espresso_wp_user;
 
 		if (update_user_meta($espresso_wp_user, 'payment_settings', $this->_payment_settings)) {
-			$espresso_notices['success'][] = __('Payment Settings Updated!', 'event_espresso');
+			$msg = __('Payment Settings Updated!', 'event_espresso');
+			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return TRUE;
 		} else {
-			$espresso_notices['errors'][] = __('Payment Settings were not saved! ', 'event_espresso');
+			$msg = __('Payment Settings were not saved! ', 'event_espresso');
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 	}
@@ -340,12 +354,14 @@ Class EEM_Gateways {
 		}
 		if (array_key_exists($gateway, $this->_all_gateways)) {
 			$this->_active_gateways[$gateway] = $this->_all_gateways[$gateway];
-			global $espresso_wp_user, $espresso_notices;
+			global $espresso_wp_user;
 			if (update_user_meta($espresso_wp_user, 'active_gateways', $this->_active_gateways)) {
-				$espresso_notices['success'][] = $gateway . __(' Gateway Activated!', 'event_espresso');
+				$msg = $gateway . __(' Gateway Activated!', 'event_espresso');
+				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return TRUE;
 			} else {
-				$espresso_notices['errors'][] = $gateway . __(' Gateway Not Activated! ', 'event_espresso');
+				$msg = $gateway . __(' Gateway Not Activated! ', 'event_espresso');
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return FALSE;
 			}
 		} else {
@@ -368,12 +384,14 @@ Class EEM_Gateways {
 		}
 		if (array_key_exists($gateway, $this->_active_gateways)) {
 			unset($this->_active_gateways[$gateway]);
-			global $espresso_wp_user, $espresso_notices;
+			global $espresso_wp_user;
 			if (update_user_meta($espresso_wp_user, 'active_gateways', $this->_active_gateways)) {
-				$espresso_notices['success'][] =$gateway .  __('Gateway Deactivated!', 'event_espresso');
+				$msg =$gateway .  __('Gateway Deactivated!', 'event_espresso');
+				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return TRUE;
 			} else {
-				$espresso_notices['errors'][] = $gateway . __('Gateway Not Deactivated! ', 'event_espresso');
+				$msg = $gateway . __('Gateway Not Deactivated! ', 'event_espresso');
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return FALSE;
 			}
 		} else {
@@ -642,8 +660,13 @@ Class EEM_Gateways {
 		} else if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . $filename)) {
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . $filename);
 		} else {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = 'The file : <b>' . $filename . '</b> could not be located in either : <b>' . EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . '</b> or <b>' . EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . '</b>';
+			$msg = sprintf(
+					__( 'The file : %s could not be located in either : %s or %s', 'event_espresso'), 
+					'<b>' . $filename . '</b>',
+					'<b>' . EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . '</b>',
+					'<b>' . EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . '</b>'
+			);
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );	
 		}
 
 		if (class_exists($classname)) {
@@ -666,12 +689,12 @@ Class EEM_Gateways {
 	 */
 	public function process_gateway_selection() {	
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $espresso_notices;
 		// check for off site payment
 		if ( isset( $_POST['selected_gateway'] ) && ! empty( $_POST['selected_gateway'] )) {
 			$this->set_selected_gateway(sanitize_text_field( $_POST['selected_gateway'] ));
 		} else {
-			$espresso_notices['errors'][] =  __( 'Please select a method of payment in order to continue.', 'event_espresso' );
+			$msg =  __( 'Please select a method of payment in order to continue.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_gateway_instances[ $this->_selected_gateway ]->process_gateway_selection();		
