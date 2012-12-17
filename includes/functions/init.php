@@ -141,6 +141,8 @@ function espresso_admin_init() {
 
 
 					case 'payment_gateways' :
+						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
+						$EEM_Gateways = EEM_Gateways::instance();
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/payment_gateways.php');
 						if ($espresso_premium) {
 							require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/gateway_developer.php');
