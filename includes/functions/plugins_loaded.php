@@ -529,6 +529,7 @@ function event_espresso_run_install($table_name, $table_version, $sql, $engine =
  */
 function espresso_admin_pages() {
 
+	//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 	define( 'EE_CORE_ADMIN', EE_CORE . 'admin' . DS );
@@ -537,6 +538,9 @@ function espresso_admin_pages() {
 	define( 'JQPLOT_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/' );
 	
 	global $is_UI_request, $is_ajax_request;
+	
+//	echo '<h4>$is_UI_request : ' . $is_UI_request . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//	echo '<h4>$is_ajax_request : ' . $is_ajax_request . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
 	// load admin page factory files
 	require_once( EE_CORE_ADMIN . 'EE_Admin_Page_Init.core.php' );
@@ -545,11 +549,11 @@ function espresso_admin_pages() {
 	$load_admin = TRUE;
 	// grab page request
 	$page_request = ! empty( $_REQUEST['page'] ) ? sanitize_key( $_REQUEST['page'] ) : FALSE;
-
+	//echo '<h4>$page_request : ' . $page_request . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 	do_action('action_hook_espresso_log', 'admin page request = ' . $page_request, '$is_UI_request = ' . $is_UI_request, '$is_ajax_request = ' . $is_ajax_request );
 
 	// are we just doing some backend processing or runnning the whole shebang?
-	if ( ! $is_UI_request ) {
+	if ( $page_request && ! $is_UI_request ) {
 		//echo '<h4>load admin page : ' . $page_request . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		do_action('action_hook_espresso_load_reg_page_files');
 		// if the page_request doesn't load here for some reason then load the entire admin

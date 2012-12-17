@@ -71,7 +71,6 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 	public function set_page_routes() {			
 
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 		$this->_page_routes = array(
@@ -325,31 +324,34 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 		$exclude = array( 'attendees' );
 		
 		$this->template_args['REG_code'] = $this->_transaction->REG_code;
-
-		foreach ( $cart_items as $line_item_ID => $item ) {
-			foreach ( $item as $key => $value ) {
-				if ( ! in_array( $key, $exclude )) {
-					if ( $key == 'options' ) {
-						$options = $value;
-						foreach ( $options as $opt => $option ) {
-							if ( $opt == 'date' ) {
-								$option = strtotime( $option );
-							} else if  ( $opt == 'time' ) {
-								$ampm = ( (float)$option > 11.59 ) ? (( (float)$option == 24.00 ) ? 'am' : 'pm' ) : 'am';
-								$option = strtotime( $option . ' ' . $ampm );
+		
+		if ( ! empty( $cart_items )) {
+			foreach ( $cart_items as $line_item_ID => $item ) {
+				foreach ( $item as $key => $value ) {
+					if ( ! in_array( $key, $exclude )) {
+						if ( $key == 'options' ) {
+							$options = $value;
+							foreach ( $options as $opt => $option ) {
+								if ( $opt == 'date' ) {
+									$option = strtotime( $option );
+								} else if  ( $opt == 'time' ) {
+									$ampm = ( (float)$option > 11.59 ) ? (( (float)$option == 24.00 ) ? 'am' : 'pm' ) : 'am';
+									$option = strtotime( $option . ' ' . $ampm );
+								}
+								$this->template_args['items'][ $item['name'] ][ $opt ] = $option;
 							}
-							$this->template_args['items'][ $item['name'] ][ $opt ] = $option;
-						}
-					} elseif ( $key == 'line_item' ) {
-						$this->template_args['items'][ $item['name'] ][ $key ] = '<a title="' . $value . '" style="color:#333;">' . substr( $value, 0, 6 ) . '...</a>';
-					} else {
-						$this->template_args['items'][ $item['name'] ][ $key ] = $value;
-					}					
-				} /*else {
-					$this->template_args['event_attendees'][ $item['name'] ][ $key ] = $value;
-				}*/
-			}
+						} elseif ( $key == 'line_item' ) {
+							$this->template_args['items'][ $item['name'] ][ $key ] = '<a title="' . $value . '" style="color:#333;">' . substr( $value, 0, 6 ) . '...</a>';
+						} else {
+							$this->template_args['items'][ $item['name'] ][ $key ] = $value;
+						}					
+					} /*else {
+						$this->template_args['event_attendees'][ $item['name'] ][ $key ] = $value;
+					}*/
+				}
+			}		
 		}
+
 		
 		// process taxes
 		if ( $taxes = maybe_unserialize( $this->_transaction->TXN_tax_data )) {
@@ -475,33 +477,37 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 		// process items in cart
 		$cart_items = $this->_session['cart']['REG']['items'];
 		$this->template_args['items'] = array();
-		foreach ( $cart_items as $line_item_ID => $item ) {
-			$event_name_and_price_option = $item['name'] . ' - ' . $item['options']['price_desc'];
-			//printr( $item, '$item' );
-			foreach ( $item['attendees'] as $att_nmbr => $attendee ) {
-				// check for attendee object
-				$attendee['att_obj'] = isset( $attendee['att_obj'] ) && is_object( $attendee['att_obj'] ) ? $attendee['att_obj'] : FALSE;
-				if ( ! $attendee['att_obj'] ) {
-					$where_cols_n_values = array( 'ATT_fname' => $attendee['fname'], 'ATT_lname' => $attendee['lname'], 'ATT_email' => $attendee['email'] );
-				    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php' );
-				    $ATT_MDL = EEM_Attendee::instance();
-					if ( ! $attendee['att_obj'] = $ATT_MDL->find_existing_attendee( $where_cols_n_values )) {
-						$attendee['att_obj'] = new EE_Attendee;
-					}	 
-				}
-				// check for reg object
-				$attendee['reg_obj'] = isset( $attendee['reg_obj'] ) && is_object( $attendee['reg_obj'] ) ? $attendee['reg_obj'] : FALSE;		
-				if ( ! $attendee['reg_obj'] ) {
-					$where_cols_n_values = array( 'ATT_fname' => $attendee['fname'], 'ATT_lname' => $attendee['lname'], 'ATT_email' => $attendee['email'] );
-				    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
-				    $REG_MDL = EEM_Registration::instance();
-					if ( ! $attendee['reg_obj'] = $REG_MDL->get_registration_for_transaction_attendee( $TXN_ID, $attendee['att_obj']->ID(), $att_nmbr )) {
-						$attendee['reg_obj'] = new EE_Registration;
-					}	 
-				}
-				
-				foreach ( $attendee as $key => $value ) {
-					$this->template_args['event_attendees'][ $event_name_and_price_option ][ $att_nmbr ][ $key ] = maybe_unserialize( $value );
+		$this->template_args['event_attendees'] = array();
+		
+		if ( ! empty( $cart_items )) {
+			foreach ( $cart_items as $line_item_ID => $item ) {
+				$event_name_and_price_option = $item['name'] . ' - ' . $item['options']['price_desc'];
+				//printr( $item, '$item' );
+				foreach ( $item['attendees'] as $att_nmbr => $attendee ) {
+					// check for attendee object
+					$attendee['att_obj'] = isset( $attendee['att_obj'] ) && is_object( $attendee['att_obj'] ) ? $attendee['att_obj'] : FALSE;
+					if ( ! $attendee['att_obj'] ) {
+						$where_cols_n_values = array( 'ATT_fname' => $attendee['fname'], 'ATT_lname' => $attendee['lname'], 'ATT_email' => $attendee['email'] );
+					    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php' );
+					    $ATT_MDL = EEM_Attendee::instance();
+						if ( ! $attendee['att_obj'] = $ATT_MDL->find_existing_attendee( $where_cols_n_values )) {
+							$attendee['att_obj'] = new EE_Attendee;
+						}	 
+					}
+					// check for reg object
+					$attendee['reg_obj'] = isset( $attendee['reg_obj'] ) && is_object( $attendee['reg_obj'] ) ? $attendee['reg_obj'] : FALSE;		
+					if ( ! $attendee['reg_obj'] ) {
+						$where_cols_n_values = array( 'ATT_fname' => $attendee['fname'], 'ATT_lname' => $attendee['lname'], 'ATT_email' => $attendee['email'] );
+					    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
+					    $REG_MDL = EEM_Registration::instance();
+						if ( ! $attendee['reg_obj'] = $REG_MDL->get_registration_for_transaction_attendee( $TXN_ID, $attendee['att_obj']->ID(), $att_nmbr )) {
+							$attendee['reg_obj'] = new EE_Registration;
+						}	 
+					}
+					
+					foreach ( $attendee as $key => $value ) {
+						$this->template_args['event_attendees'][ $event_name_and_price_option ][ $att_nmbr ][ $key ] = maybe_unserialize( $value );
+					}
 				}
 			}
 		}
@@ -560,7 +566,7 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 	function _txn_billing_info_side_meta_box() {
 	
 		$billing_info = $this->_session['billing_info'];		
-		//printr( $billing_info, '$billing_info' );
+		//printr( $billing_info, '$billing_info  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		if ( is_array( $billing_info )) {
 		
@@ -609,6 +615,25 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 			}
 			
 		} else {
+
+
+			$this->template_args['fname']['value'] = '';
+			$this->template_args['fname']['label'] =  __( 'First Name', 'event_espresso' );
+			$this->template_args['lname']['value'] =  '';
+			$this->template_args['lname']['label'] = __( 'Last Name', 'event_espresso' );
+			$this->template_args['email']['value'] = '';
+			$this->template_args['email']['label'] = __( 'Email', 'event_espresso' );
+			$this->template_args['address']['value'] = '';
+			$this->template_args['address']['label'] = __( 'Address', 'event_espresso' );
+			$this->template_args['city']['value'] = '';
+			$this->template_args['city']['label'] = __( 'City', 'event_espresso' );
+			$this->template_args['state']['value'] = '';
+			$this->template_args['state']['label'] =  __( 'State', 'event_espresso' );
+			$this->template_args['country']['value'] = '';
+			$this->template_args['country']['label'] = __( 'Country', 'event_espresso' );
+			$this->template_args['zip']['value'] = '';
+			$this->template_args['zip']['label'] = __( 'Zip Code', 'event_espresso' );
+			$this->template_args['credit_card_info'] = FALSE;
 
 			$this->template_args['free_event'] = $billing_info; 
 			
@@ -754,9 +779,8 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 			$espresso_notices['errors'][] = __('An error occured. The payment form data could not be loaded.', 'event_espresso');
 		}
 		$notices = espresso_get_notices( FALSE, FALSE, FALSE );
-//		printr( $notices, '$notices' );
-//		printr( $return_data, '$return_data' ); 
-//		die();
+//		printr( $notices, '$notices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $return_data, '$return_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		echo json_encode( array( 'return_data' => $return_data, 'success' => $notices['success'], 'errors' => $notices['errors'] ));
 		die();		
 	}

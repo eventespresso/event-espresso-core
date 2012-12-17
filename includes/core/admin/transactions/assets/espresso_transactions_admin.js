@@ -312,13 +312,14 @@ jQuery(document).ready(function($) {
 		var formURL = $('#txn-admin-delete-payment-form-url-inp').val();
 		var PAY_ID = $(this).attr('rel');
 		//alert( 'formURL = ' + formURL + '\n' + 'PAY_ID = ' + PAY_ID );
+		console.log( 'formURL = ' + formURL + '\n' + 'PAY_ID = ' + PAY_ID );
 		var delBtn = $( this );
 
 		
 		$.ajax({
 					type: "POST",
 					url:  formURL,
-					data: { ID : PAY_ID, espresso_ajax : 1 },
+					data: { ID : PAY_ID, espresso_ajax : 1, noheader : 'true' },
 					dataType: "json",
 					beforeSend: function() {
 						do_before_admin_page_ajax();

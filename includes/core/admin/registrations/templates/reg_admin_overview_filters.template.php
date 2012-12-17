@@ -43,7 +43,7 @@
 				<input type="submit" class="button-secondary" value="Filter Status" id="post-query-submit">
 			</li>
 			<li>
-				<a class="button-secondary" href="<?php echo $reg_overview_filters_frm_url ?>" style=" width:40px; display:inline">
+				<a class="button-secondary" href="<?php echo $reg_overview_filters_frm_url ?>">
 				<?php _e('Reset Filters', 'event_espresso'); ?>
 				</a>
 			</li>
