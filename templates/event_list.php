@@ -185,10 +185,10 @@ function event_espresso_get_event_details($attributes) {
 		// no transient, so let's run the query
 		if ($category) {
 			// use the category id from the attributes
-			$events = $wpdb->get_results($wpdb->prepare($SQL, $category->id));
+			$events = $wpdb->get_results( $wpdb->prepare( $SQL, $category->id ));
 		} elseif ($venue_id) {
 			// use the venue id  from the attributes
-			$events = $wpdb->get_results($wpdb->prepare($SQL, $venue_id));
+			$events = $wpdb->get_results( $wpdb->prepare( $SQL, $venue_id ));
 		} else {
 			$events = $wpdb->get_results( $SQL );
 		}
