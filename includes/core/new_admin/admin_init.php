@@ -198,7 +198,7 @@ abstract class EE_Admin_core_example {
 
 	private function _set_defaults() {
 		$this->_doing_AJAX = FALSE; //this will be set to true by the called ajax method in our child classes
-		$this->_admin_base_url = $this->_current_screen = $this->_admin_page_title = $this->_page_slug = $this->_wp_page_slug -> $this->_req_action = $this->_req_nonce = NULL;
+		$this->_admin_base_url = $this->_current_screen = $this->_admin_page_title = $this->_page_slug = $this->_wp_page_slug = $this->_req_action = $this->_req_nonce = NULL;
 
 		$this->_nav_tabs = $this->_template_args = $this_views = $this->_page_routes = array();
 
