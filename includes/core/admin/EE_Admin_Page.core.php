@@ -307,7 +307,7 @@ class EE_Admin_Page {
 			}			
 		}
 
-
+	}
 
 
 
