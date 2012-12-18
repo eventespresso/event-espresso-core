@@ -116,15 +116,11 @@ class EE_Error extends Exception {
 		self::$_all_exceptions[ $x_time ]['string'] 	= $this->getTraceAsString();
 		self::$_error_count++;
 
-		//$this->_display_errors();
-		if ( ! self::$_action_added ) {
-			add_action( 'shutdown', array( $this, 'display_errors' ));
-			self::$_action_added = TRUE;
-		}		
+		
+		//add_action( 'shutdown', array( $this, 'display_errors' ));
+		$this->display_errors();
 		
 	}
-
-
 
 
 
@@ -136,36 +132,6 @@ class EE_Error extends Exception {
     public function display_errors(){		
 		
 		$trace_details = '';
-		
-		if ( ! self::$_js_loaded ) {
-?>
-<script>
-	jQuery(document).ready(function($) {
-	
-		var message = $('#message');
-		var target;
-		
-		$('#message').remove();
-		if ( $('#content').size() ) {
-			target = $('#content');
-		} else if ( $('#screen-meta-links').size() ) {
-			target = $('#screen-meta-links');
-		} else if ( $('#wpbody-content').size() ) {
-			target = $('#wpbody-content');
-		}		
-		
-		$( target ).after( message );
-			
-		$('body').on( 'click', '.display-ee-error-trace-lnk', function(e) {
-			e.preventDefault();
-			var traceTable = '#' + $(this).attr('rel');
-			$( traceTable ).slideToggle();
-		});
-	});
-</script>
-<?php
-			self::$_js_loaded = TRUE;
-		}
 
 		$ouput = '
 <div id="message" class="error">';
@@ -260,7 +226,7 @@ class EE_Error extends Exception {
 				<span class="big-text">"' . trim( $ex['msg'] ) . '"</span><br />
 				'.$ex['file'].' &nbsp; ( line no: '.$ex['line'].' ) &nbsp; <a class="display-ee-error-trace-lnk" rel="ee-error-trace-' . self::$_error_count . $time . '">' . __( 'click to view backtrace and class/method details', 'event_espresso' ) . '</a>
 			</p>
-			<div id="ee-error-trace-' . self::$_error_count . $time . '" class="ee-error-trace-dv" style="display:none;">
+			<div id="ee-error-trace-' . self::$_error_count . $time . '" class="ee-error-trace-dv">
 				' . $trace_details;
 				
 				if ( ! empty( $class )) {

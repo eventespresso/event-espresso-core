@@ -78,6 +78,7 @@ add_action('plugins_loaded', 'espresso_EE_Session', 5);
 add_action('plugins_loaded', 'espresso_init', 25);
 add_action('init', 'espresso_add_rewrite_rules');
 add_filter('query_vars', 'espresso_add_query_vars');
+add_action( 'admin_enqueue_scripts', 'espresso_load_scripts_styles' );
 
 if ( is_admin() ) {
 

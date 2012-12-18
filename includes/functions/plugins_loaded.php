@@ -80,8 +80,10 @@ function espresso_define_tables_and_paths() {
 	define("EVENT_ESPRESSO_GATEWAY_DIR", $uploads['basedir'] . DS . 'espresso' . DS . 'gateways' . DS);
 	define("EVENT_ESPRESSO_GATEWAY_URL", $uploads['baseurl'] . DS . 'espresso' . DS . 'gateways' . DS);
 	
-
-	
+	/**
+	 * test demonstration for new admin system
+	 */
+	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'core/new_admin/admin_init.php';
 }
 
 
@@ -608,5 +610,10 @@ function espresso_load_admin_page( $admin_page, $page_request ) {
 	} else {
 		return FALSE;
 	}
+}
+
+function espresso_load_scripts_styles() {
+	wp_register_script('ee_error_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/EE_Error.js', array('jquery'), EVENT_ESPRESSO_VERSION, false);
+	wp_enqueue_script('ee_error_js');
 }
 
