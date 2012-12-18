@@ -1,12 +1,11 @@
 <?php
 
 //load admin settings pages
-//This basically sets up the initial EE_Admin_Menu and submenu pages.
-//
-//todo: setup a Admin Menu controller that sets up the admin system
-//
+/**
+ * This is a demonstration of what the new admin system for EE can be.  Of course, things will be broken out into their own files but for demonstration purposes I kept this very simple by including everything in this one file.
+ */
 
-//todo:  basically I think what we'd do is load relevant javascript/css and other things needing loaded in init based on the request variables (handled by controller?) and set via static method in the various admin classes (i.e. EE_Messages_Admin::load_scripts_styles).  Then we loop through the installed admin classes and add them into the menu/submenu system.  The big thing I need to find out is how the "lines" are being added in the menu.
+
 
 
 function ee_init_admin_pages() {
