@@ -145,20 +145,27 @@ class EE_Ticket_Prices extends EE_BASE {
 		// start with a few clean slates
 		$base_prices = array();
 		$price_modifiers = array();
+		$today = time();
 		// grab array of price types
 		$types = $this->_PRT_MDL->type;
 		// cycle thru events
 		foreach ( $this->_all_event_prices as $event_price ) {
-			// separate ticket prices ( order = 0 ) from adjuestments ( order > 0 )
-			if ( $event_price->order() == 0 ) {
-				$base_prices[ $event_price->ID() ] = new EE_Base_Price( new EE_Price_Composite( $event_price, $types[ $event_price->type() ] ));
-			} else {
-				$price_modifiers[ $event_price->ID() ] = new EE_Price_Composite( $event_price, $types[ $event_price->type() ] );
+			// if members only, then check for login, OR let anybody in for non-member pricing
+			if (( $types[ $event_price->type() ]->is_member() && is_user_logged_in() ) || ! $types[ $event_price->type() ]->is_member() ) {
+				// if calendar controlled pricing, then check date, OR let anybody in for regular pricing
+				if (( $event_price->use_dates() && ( $event_price->start_date() <= $today && $event_price->end_date() >= $today )) || ! $event_price->use_dates() ) {
+					// separate ticket prices ( order = 0 ) from adjuestments ( order > 0 )
+					if ( $types[ $event_price->type() ]->order() == 0 ) {
+						$base_prices[ $event_price->ID() ] = new EE_Base_Price( new EE_Price_Composite( $event_price, $types[ $event_price->type() ] ));					
+					} else {
+						$price_modifiers[ $event_price->order() ][ $event_price->ID() ] = new EE_Price_Composite( $event_price, $types[ $event_price->type() ] );
+					}
+				}
 			}
 		}
 		
-//		printr( $base_prices, '$base_prices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( $price_modifiers, '$price_modifiers  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		printr( $base_prices, '$base_prices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		printr( $price_modifiers, '$price_modifiers  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
 		$this->_apply_modifiers_to_ticket_prices( $base_prices, $price_modifiers );
 		
@@ -184,27 +191,26 @@ class EE_Ticket_Prices extends EE_BASE {
 		if ( ! $price_modifiers ) {
 			return $base_prices;
 		}
-		
+
 		// start with a few clean slates
 		$ticket_prices = array();
-		$key =0;
+		$counter =0;
 		// cycle thru ticket prices and apply price modifiers
-		foreach( $base_prices as $base_price ) {
-//			printr( $base_price, '$base_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-			foreach( $price_modifiers as $price_modifier ) {
-//				printr( $price_modifier, '$price_modifier  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-				$prev_obj = $key == 0 ? $base_price : $ticket_prices[ $key ];
-				$key++;
-				$ticket_prices[ $key ] = new EE_Ticket_Price_Modifier( $prev_obj, $price_modifier );
+		foreach( $base_prices as $ticket_price ) {
+//			printr( $ticket_price, '$ticket_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			foreach( $price_modifiers as $order => $modifiers ) {
+				foreach( $modifiers as $price_modifier ) {
+	//				printr( $price_modifier, '$price_modifier  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+					$ticket_price = new EE_Ticket_Price_Modifier( $ticket_price, $price_modifier );
+				}
 			}
-		}
-		printr( $ticket_prices, '$ticket_prices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		foreach ( $ticket_prices as $ticket_price ) {
-//			echo '<h4>price : ' . $ticket_price->price() . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>'; 
-//			printr( $ticket_price->price_history(), 'price_history  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			$ticket_prices[] = $ticket_price;
 		}
 		
-//		printr( $ticket_prices, '$ticket_prices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		foreach ( $ticket_prices as $ticket_price ) {
+			printr( $ticket_price, '$ticket_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		}
+		
 		$this->_all_event_prices = $ticket_prices;
 	}
 
@@ -259,16 +265,18 @@ abstract class EE_Ticket_Price extends EE_BASE {
 	* @var array
 	*/
 	protected $_order_totals = array();
+	protected $_order_levels = array();
 
 
 	
 	// public methods
 	abstract public function price();
 	abstract public function price_history();
+	abstract public function order_totals();
+	abstract public function order_levels();
 	// protected methods
-	abstract protected function order_totals();
 
-	
+
 }
 
 
@@ -291,11 +299,17 @@ class EE_Base_Price extends EE_Ticket_Price {
 	protected $_ticket_price;
 	
 	function __construct( EE_Price_Composite $base_price ) {
+		global $org_options;
 		$this->_ticket_price = $base_price;
 		$this->_price = $base_price->amount();
-		$this->_price_history = $base_price->name() . '  ' . $base_price->amount();
+		$this->_price_history[] = $base_price->name() . ': ' . $org_options['currency_symbol'] . number_format( max( $base_price->amount(), 0 ), 2, '.', ',' );
 		$this->_order_totals[ $this->_ticket_price->order() ] = $this->price();
+		if ( ! in_array( $this->_ticket_price->order(), $this->_order_levels )) {
+			$this->_order_levels[] = $this->_ticket_price->order();
+		}		
 	}
+
+
 
 	/**
 	* 	get the price for the ticket
@@ -304,7 +318,7 @@ class EE_Base_Price extends EE_Ticket_Price {
 	* 	@return 		float
 	*/
 	public function price() {
-		return $this->_price;
+		return number_format( max( $this->_price, 0 ), 2, '.', ',' );
 	}
 
 	/**
@@ -321,14 +335,24 @@ class EE_Base_Price extends EE_Ticket_Price {
 	/**
 	* 	price totals for each order level
 	* 
-	* 	@access 		protected
+	* 	@access 		public
 	* 	@return 		array
 	*/
-	protected function order_totals() {
+	public function order_totals() {
 		return $this->_order_totals;
 	}
 
 
+	/**
+	* 	order levels
+	* 
+	* 	@access 		public
+	* 	@return 		array
+	*/
+	public function order_levels() {
+		return $this->_order_levels;
+	}
+		
 }
 
 
@@ -351,10 +375,27 @@ abstract class EE_Price_Modifier extends EE_Ticket_Price {
 
 	protected $_ticket_price;
 	protected $_price_mod;
+	protected $_price = 0.00;
+	protected $_price_history = array();
+	protected $_order_totals = array();
+	protected $_order_levels = array();
 
+	
 	function __construct( EE_Ticket_Price $ticket_price, EE_Price_Composite $price_mod ) {
 		$this->_ticket_price = $ticket_price;
 		$this->_price_mod = $price_mod;
+		// copy elements
+		$this->_price = $this->_ticket_price->price();
+//		$this->_price = end( $this->_ticket_price->order_totals() );
+		$this->_price_history = $this->_ticket_price->price_history();
+		$this->_order_totals = $this->_ticket_price->order_totals();
+		$this->_order_levels = $this->_ticket_price->order_levels();
+		if ( ! in_array( $this->_price_mod->order(), $this->_order_levels )) {
+			$this->_order_levels[] = $this->_price_mod->order();
+		}
+		$this->_set_price();
+		$this->_set_price_history();
+		$this->_set_order_totals();
 	}
 
 }
@@ -376,17 +417,17 @@ abstract class EE_Price_Modifier extends EE_Ticket_Price {
 */
 class EE_Ticket_Price_Modifier extends EE_Price_Modifier {
 
-
 	/**
-	* 	get the price for the ticket
+	* 	set get the price for the ticket
 	* 
-	* 	@access 		public
+	* 	@access 		protected
 	* 	@return 		float
 	*/
-	public function price() {
-		$mod_amount = $this->_calculate_mod_amount();	
-		return $this->_price +$mod_amount;
+	protected function _set_price() {
+		$this->_price = $this->_price + $this->_calculate_mod_amount();
+		$this->_price = number_format( max( $this->_price, 0 ), 2, '.', ',' );
 	}
+
 
 	/**
 	* 	_calculate_mod_amount
@@ -395,16 +436,55 @@ class EE_Ticket_Price_Modifier extends EE_Price_Modifier {
 	* 	@return 		float
 	*/
 	private function _calculate_mod_amount() {
-//		printr( $this->_price_mod, '$this->_price_mod  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		
+		$price = end( $this->_order_totals );
+
 		if ( $this->_price_mod->is_percent() ) {
-			$mod_amount = $this->price() * $this->_price_mod->amount() / 100;
+//			$mod_amount = $this->_ticket_price->price() * $this->_price_mod->amount() / 100;
+			$mod_amount = $price * $this->_price_mod->amount() / 100;
 		} else {
 			$mod_amount = $this->_price_mod->amount();
 		}
 		// if base type is discount, then multiply $mod_amount by -1 to make it negative, so that it actually gets subtracted
 		$mod_amount = ( $this->_price_mod->base_type() == 2 ? -1 : 1 ) * $mod_amount;
-		return $mod_amount;
+		return number_format( $mod_amount, 2, '.', ',' );
 	}
+
+
+	/**
+	* 	set get the price history for the ticket
+	* 
+	* 	@access 		protected
+	* 	@return 		array
+	*/
+	protected function _set_price_history() {
+		global $org_options;
+		$plus_or_minus = $this->_price_mod->base_type() == 3 ? ' +' : ' ';
+		$mod_amount = $this->_calculate_mod_amount();	
+		$this->_price_history[] = $this->_price_mod->name() . ':' . $plus_or_minus . $mod_amount . ' = ' . $org_options['currency_symbol'] . $this->price();
+	}
+
+
+	/**
+	* 	set price totals for each order level
+	* 
+	* 	@access 		protected
+	* 	@return 		array
+	*/
+	protected function _set_order_totals() {
+		$this->_order_totals[ $this->_price_mod->order() ] = $this->price();
+	}	
+
+	/**
+	* 	get the price for the ticket
+	* 
+	* 	@access 		public
+	* 	@return 		float
+	*/
+	public function price() {
+		return $this->_price;
+	}
+
 
 	/**
 	* 	get the price history for the ticket
@@ -413,10 +493,6 @@ class EE_Ticket_Price_Modifier extends EE_Price_Modifier {
 	* 	@return 		array
 	*/
 	public function price_history() {
-		// if base type is a surcharge, show a plus sign. Discounts will be negative and will already show 
-		$plus_or_minus = $this->_price_mod->base_type() == 3 ? ' +' : ' ';
-		$mod_amount = $this->_calculate_mod_amount();	
-		$this->_price_history[] = $this->_price_mod->name() . $plus_or_minus . $mod_amount;
 		return $this->_price_history;
 	}
 
@@ -427,9 +503,19 @@ class EE_Ticket_Price_Modifier extends EE_Price_Modifier {
 	* 	@access 		protected
 	* 	@return 		array
 	*/
-	protected function order_totals() {
-		$this->_order_totals[ $this->_price_mod->order() ] = $this->price();
+	public function order_totals() {
 		return $this->_order_totals;
+	}	
+
+
+	/**
+	* 	order levels
+	* 
+	* 	@access 		public
+	* 	@return 		array
+	*/
+	public function order_levels() {
+		return $this->_order_levels;
 	}
 
 
