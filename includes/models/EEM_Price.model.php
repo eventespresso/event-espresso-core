@@ -362,10 +362,10 @@ class EEM_Price extends EEM_Base {
 	 */
 	public function get_all_event_default_prices() {
 		return $this->_select_all_prices_where( 
-				array( 'prc.EVT_ID' =>0, 'prc.PRC_is_active' => TRUE, 'prt.PBT_ID' => 4 ), 
+				array( 'prc.EVT_ID' =>0, 'prc.PRC_is_active' => TRUE, 'prc.PRC_deleted' => FALSE, 'prt.PBT_ID' => 4 ), 
 				array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' ), 
 				'ASC', 
-				array( 'prc.EVT_ID' =>'=', 'prc.PRC_is_active' => '=', 'prt.PBT_ID' => '!=' )
+				array( 'prc.EVT_ID' =>'=', 'prc.PRC_is_active' => '=', 'prc.PRC_deleted' => '=', 'prt.PBT_ID' => '!=' )
 		);
 	}
 
@@ -510,7 +510,7 @@ class EEM_Price extends EEM_Base {
 					array( 'prc.EVT_ID' => 0, 'prt.PRT_is_global' => TRUE, 'prt.PBT_ID' => 4, 'prc.PRC_is_active'=>TRUE ), 
 					array( 'PRC_start_date' ), 
 					array( 'DESC' ),
-					array( 'prc.EVT_ID' =>'=', 'prc.PRT_is_global' => '=', 'prt.PBT_ID' => '!=', 'prc.PRC_is_active'=>'=' )
+					array( 'prc.EVT_ID' =>'=', 'prt.PRT_is_global' => '=', 'prt.PBT_ID' => '!=', 'prc.PRC_is_active'=>'=' )
 			);
 			if ( $prices ) {
 				$array_of_is_active_and_price_objects = array();
@@ -528,7 +528,7 @@ class EEM_Price extends EEM_Base {
 				array( 'prc.EVT_ID' => 0, 'prt.PRT_is_global' => TRUE, 'prt.PBT_ID' => 4, 'prc.PRC_is_active'=>TRUE ), 
 				array( 'PRC_start_date' ), 
 				array( 'DESC' ),
-				array( 'prc.EVT_ID' =>'=', 'prc.PRT_is_global' => '=', 'prt.PBT_ID' => '!=', 'prc.PRC_is_active'=>'=' )
+				array( 'prc.EVT_ID' =>'=', 'prt.PRT_is_global' => '=', 'prt.PBT_ID' => '!=', 'prc.PRC_is_active'=>'=' )
 		);
 		if ( ! $globals ) {
 			$globals = array();
