@@ -70,8 +70,8 @@ class EE_Admin_Page_init_eg {
 	}
 
 	private function _sort_pages($a, $b) {
-		$apo = $a::get_page_order();
-		$bpo = $b::get_page_order();
+		$apo = $a::get_menu_order();
+		$bpo = $b::get_menu_order();
 		if ( $apo == $bpo ) {
 			return 0;
 		}
@@ -91,6 +91,7 @@ abstract class EE_Admin_core_example {
 	public $menu_slug;
 
 	//protected
+	protected $_menu_order; //this is for setting the order this page displays on the admin menu.
 	protected $_default_nav_tab_name;
 	protected $_is_UI_request;
 	protected $_doing_AJAX;
@@ -295,6 +296,14 @@ abstract class EE_Admin_core_example {
 		}
 	}
 
+	/**
+	 * This returns what menu order this page should be in the event_espresso menu.
+	 * @return int number indicating the order (higher number is closer to bottom)
+	 */
+	public static function get_menu_order() {
+		return $this->_menu_order;
+	}
+
 	
 
 }// end class EE_Admin_core_example
@@ -311,6 +320,7 @@ class EE_Admin_example extends EE_Admin_core_example {
 		$this->menu_label = __('EE Admin Page Test', 'event_espresso');
 		$this->capability = 'administrator';
 		$this->menu_slug = 'ee_admin_test_example';
+		$this->_menu_order = 1;
 	}
 
 	protected function _ajax_hooks() {
