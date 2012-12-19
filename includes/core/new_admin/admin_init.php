@@ -52,7 +52,7 @@ class EE_Admin_Page_init_eg {
 
 	private function _get_installed_pages() {
 		//we'd do the typical glob here to get everything admin screens in core directly but I'll just manually set the example of one page for the purpose of our example. We'd also do our require_once() in here for each page.
-		$this->_installed_pages = array('EE_Admin_example');
+		$this->_installed_pages = array('EE_Admin_example', 'EE_Admin_example_two');
 	}
 
 	private function _set_menus() {
@@ -350,3 +350,50 @@ class EE_Admin_example extends EE_Admin_core_example {
 	}
 
 } //end class EE_Admin_example
+
+class EE_Admin_example_two extends EE_Admin_core_example {
+	public function __construct() {
+		parent::__construct();
+	}
+
+	protected function _set_init_properties() {
+
+		$this->label = __('EE Admin Core Example Two', 'event_espresso');
+		$this->menu_label = __('EE Admin Page Test Two', 'event_espresso');
+		$this->capability = 'administrator';
+		$this->menu_slug = 'ee_admin_test_example_two';
+		$this->_menu_order = 2;
+	}
+
+	protected function _ajax_hooks() {
+		//demonstration, so no need to set this right now.
+	}
+
+	protected function _define_page_props() {
+		$this->admin_page_title = $this->label;
+		//demonstration, so we're not going to do this here.
+	}
+
+	protected function _add_screen_options() {
+		//demonstration, so we're not going to do this here.
+	}
+
+	protected function _add_help_tabs() {
+		//demonstration, so we're not going to do this here.
+	}
+
+	protected function _set_page_routes() {
+		//gonna leave as an empty array for now (which will result in exceptions but that's the whole idea!)
+		$this->_page_routes = array(
+			'default' => '_an_example_page'
+			);
+	}
+
+	protected function _an_example_page() {
+		echo 'made it here';
+	}
+
+	public function load_scripts_styles() {
+		//demonstration, so empty for now. but in real world this would include your wp_enqueue_scripts(), wp_enqueue_styles() etc. needed for this particular admin page subset.
+	}
+}
