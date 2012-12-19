@@ -28,16 +28,18 @@
  */
 abstract class EE_Admin_Page_Init extends EE_BASE {
 	
-	//identity properties
+	//identity properties (set in _set_defaults and _set_init_properties)
 	public $label;
 	public $menu_label;
 	public $capability;
 	public $menu_slug;
 	public $show_on_menu;
 
-	//set in define_init_props
+	//set in _set_defaults
 	protected $_dir_name;
 	protected $_wp_page_slug;
+
+	//will hold page object.
 	protected $_loaded_page_object;
 
 

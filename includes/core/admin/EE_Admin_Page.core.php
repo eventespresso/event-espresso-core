@@ -26,13 +26,7 @@
  *
  * ------------------------------------------------------------------------
  */
-abstract class EE_Admin_Page {
-
-	//identity properties
-	public $label; //rem: = $admin_page_title
-	public $menu_label; 
-	public $capability;
-	public $menu_slug; //rem: $page_slug
+abstract class EE_Admin_Page extends EE_BASE {
 
 	//set in define_page_props()
 	protected $_admin_base_url;
@@ -81,9 +75,6 @@ abstract class EE_Admin_Page {
 	 * 		@return void
 	 */
 	public function __construct() {
-
-		//set properties that are always available with objects.
-		$this->_set_init_properties();
 
 		//set global defaults
 		$this->_set_defaults();
@@ -215,20 +206,6 @@ abstract class EE_Admin_Page {
 
 
 
-	/**
-	 * get_menu_map is a static function that child classes use to indicate the details of their placement on the map.
-	 * The map is in an associative array with the following properties.
-	 * array(
-	 * 		'group' => 'what "group" this page should be listed with (see EE_Admin_Page_init for list of available groups',
-	 * 		'menu_order' => 'what order the this page will appear in the list for that group - just a regular int value please'
-	 * )
-	 * @abstract
-	 * @static
-	 * @access public 
-	 * @return array see above description for format.
-	 */
-	abstract public static function get_menu_map();
-
 
 	/**
 	 * admin_init
@@ -337,7 +314,42 @@ abstract class EE_Admin_Page {
 	private function _add_global_screen_options() {}
 	private function _add_global_help_tabs() {}
 	private function _add_global_feature_pointers() {}
-	public function load_global_scripts_styles() {}
+
+
+
+
+
+	/**
+	 * load_global_scripts_styles
+	 * The scripts and styles enqueued in here will be loaded on every EE Admin page
+	 * @return void 
+	 */
+	public function load_global_scripts_styles() {
+		
+		/** STYLES **/
+		// add debugging styles
+		if ( WP_DEBUG ) {
+			add_action('admin_head', array( &$this, 'add_xdebug_style' ));
+		}
+		wp_enqueue_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css');
+
+
+		/** SCRIPTS **/
+
+	}
+
+
+	
+
+	/**
+	*		load enhanced xdebug styles for ppl with failing eyesight
+	* 
+	*		@access 		public
+	*		@return 		void
+	*/	
+	public function add_xdebug_style() {
+		echo '<style>.xdebug-error { font-size:1.5em; }</style>';
+	}
 
 
 	/**
