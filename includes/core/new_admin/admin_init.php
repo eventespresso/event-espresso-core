@@ -57,7 +57,7 @@ class EE_Admin_Page_init_eg {
 
 	private function _set_menus() {
 		//we can do some things for setting the order of the installed pages ie a usort or something utilizing a static EE_Admin_example::get_page_order(), something like
-		//usort( $this->_installed_pages, array($this, _sort_pages) )
+		usort( $this->_installed_pages, array($this, '_sort_pages' ) );
 		//I know we need to work this into the existing setup and it's easy enough to do (just hook into the relevant filter.  Once everything is converted to the new system we can use static properties in the admin page classes to indicate if they are main or not (and we'd have to loop and sort accordingly..ie. all main pages would have to be added first).I'm assuming here that the MAIN eventespresso admin page has already been set.  
 
 		foreach ( $this->_installed_pages as $installed_page ) {
@@ -91,7 +91,6 @@ abstract class EE_Admin_core_example {
 	public $menu_slug;
 
 	//protected
-	protected $_menu_order; //this is for setting the order this page displays on the admin menu.
 	protected $_default_nav_tab_name;
 	protected $_is_UI_request;
 	protected $_doing_AJAX;
@@ -133,6 +132,7 @@ abstract class EE_Admin_core_example {
 	abstract protected function _add_screen_options();
 	abstract protected function _add_help_tabs();
 	abstract public function load_scripts_styles();
+	abstract public static function get_menu_order();
 
 	/**
 	 * we really don't want child classes overriding this.
@@ -296,16 +296,6 @@ abstract class EE_Admin_core_example {
 		}
 	}
 
-	/**
-	 * This returns what menu order this page should be in the event_espresso menu.
-	 * @return int number indicating the order (higher number is closer to bottom)
-	 */
-	public static function get_menu_order() {
-		return $this->_menu_order;
-	}
-
-	
-
 }// end class EE_Admin_core_example
 
 class EE_Admin_example extends EE_Admin_core_example {
@@ -320,7 +310,6 @@ class EE_Admin_example extends EE_Admin_core_example {
 		$this->menu_label = __('EE Admin Page Test', 'event_espresso');
 		$this->capability = 'administrator';
 		$this->menu_slug = 'ee_admin_test_example';
-		$this->_menu_order = 1;
 	}
 
 	protected function _ajax_hooks() {
@@ -349,6 +338,14 @@ class EE_Admin_example extends EE_Admin_core_example {
 		//demonstration, so empty for now. but in real world this would include your wp_enqueue_scripts(), wp_enqueue_styles() etc. needed for this particular admin page subset.
 	}
 
+	/**
+	 * This returns what menu order this page should be in the event_espresso menu.
+	 * @return int number indicating the order (higher number is closer to bottom)
+	 */
+	public static function get_menu_order() {
+		return 2;
+	}
+
 } //end class EE_Admin_example
 
 class EE_Admin_example_two extends EE_Admin_core_example {
@@ -362,7 +359,7 @@ class EE_Admin_example_two extends EE_Admin_core_example {
 		$this->menu_label = __('EE Admin Page Test Two', 'event_espresso');
 		$this->capability = 'administrator';
 		$this->menu_slug = 'ee_admin_test_example_two';
-		$this->_menu_order = 2;
+		$this->_menu_order = 1;
 	}
 
 	protected function _ajax_hooks() {
@@ -395,5 +392,13 @@ class EE_Admin_example_two extends EE_Admin_core_example {
 
 	public function load_scripts_styles() {
 		//demonstration, so empty for now. but in real world this would include your wp_enqueue_scripts(), wp_enqueue_styles() etc. needed for this particular admin page subset.
+	}
+
+	/**
+	 * This returns what menu order this page should be in the event_espresso menu.
+	 * @return int number indicating the order (higher number is closer to bottom)
+	 */
+	public static function get_menu_order() {
+		return 1;
 	}
 }
