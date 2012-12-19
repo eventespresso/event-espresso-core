@@ -40,7 +40,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	protected $_wp_page_slug;
 	protected $_loaded_page_object;
 
-	
+
 
 
 	/**
@@ -138,12 +138,22 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		// define requested admin page class name then load the file and instantiate
 		$path_to_file = str_replace( array( '\\', '/' ), DS, EE_CORE_ADMIN . $this->menu_slug . DS . $admin_page . '.core.php' );
 		if ( is_readable( $path_to_file )) {					
+			
+			/**
+			 * This is a place where EE plugins can hook in to make sure their own files are required in the appropriate place
+			 */
+			do_action( 'action_hook_espresso_before_initialize_admin_page' );
+			do_action( 'action_hook_espresso_before_initialize_admin_page_' . $this->menu_slug );
+
 			require_once( $path_to_file );
 			$a = new ReflectionClass( $admin_page );
 			$this->_loaded_page_object = $a->newInstance();						
 			$this->_loaded_page_object->set_wp_page_slug( $this->_wp_page_slug );
 			$this->_loaded_page_object->route_admin_request();
 		}
+
+		do_action( 'action_hook_espresso_after_initialize_admin_page' );
+		do_action( 'action_hook_espresso_after_initialize_admin_page_' . $this->menu_slug );
 	}
 
 
