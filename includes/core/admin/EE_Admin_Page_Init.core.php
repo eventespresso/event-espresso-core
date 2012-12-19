@@ -13,37 +13,34 @@
  *
  * ------------------------------------------------------------------------   
  */
-interface Admin_Page_Init_Interface {
-	function load_css();
-	function load_js();
-	function get_admin_menu_filter_name();
-	function get_admin_menu_order();
-	function get_page_access_capability();
-}
+
 /**
- * EE_Admin_Page_Init_Interface 
+ * EE_Admin_Page_Init
  * 
  * This is utilizes by all Admin_Page_Init child classes in order to define their require methods
  *
  * @package			Event Espresso
+ * @abstract
  * @subpackage		includes/core/admin/EE_Admin_Page_Init.core.php
- * @author				Brent Christensen 
+ * @author			Brent Christensen, Darren Ethier 
  *
  * ------------------------------------------------------------------------
  */
-class EE_Admin_Page_Init {
+abstract class EE_Admin_Page_Init extends EE_BASE {
 	
-	protected $page_name = NULL;
-	protected $page_slug = NULL;
-	protected $dir_name = NULL;
-	protected $capability = 'espresso_manager_general';
-	protected $admin_page = NULL;
-	protected $is_biz_reports_tab = FALSE;
-	// denotes that current request is for a UI (web facing page) - gets set to false when performing data updates, inserts, deletions etc, so that unecessary resources don't get loaded
-	protected $_is_UI_request = TRUE;
+	//identity properties
+	public $label;
+	public $menu_label;
+	public $capability;
+	public $menu_slug;
+	public $show_on_menu;
 
+	//set in define_init_props
+	protected $_dir_name;
+	protected $_wp_page_slug;
+	protected $_loaded_page_object;
 
-
+	
 
 
 	/**
@@ -51,182 +48,118 @@ class EE_Admin_Page_Init {
 	 * 		@access public
 	 * 		@return void
 	 */
-	private function __construct() {}
+	public function __construct() {
+		//set global defaults
+		$this->_set_defaults();
 
-
-
-	/**
-	 * 		_init
-	 *		do some stuff upon instantiation 
-	 * 		@access protected
-	 * 		@return void
-	 */
-	protected function _init( $page_slug, $page_name, $dir_name, $page_request ) { 
-		
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $is_UI_request;
-		// is this request for UI or backend 
-		$this->_is_UI_request = $is_UI_request;
-		// is the current request for a business reports tab ?
-		$this->is_biz_reports_tab = ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'reports' ) ? TRUE : FALSE;
-		// set some more vars and initialize admin page for current request
-		$this->initialize_admin_page( $page_slug, $page_name, $dir_name, $page_request );	
+		//set properties that are always available with objects.
+		$this->_set_init_properties();
 	}
 
 
 
 
+	/**
+	 * _set_init_properties
+	 * Child classes use to set the following properties:
+	 * $label, $menu_label, $capability, $menu_slug, $show_on_menu
+	 *
+	 * @abstract
+	 * @access protected
+	 * @return void
+	 */
+	abstract protected function _set_init_properties();
+
+
+
+
+
 
 	/**
-	*		instantiates page init files, adds admin menu filter, and instantiates requested page class
-	*		@return void
-	*/
-	public function initialize_admin_page( $page_slug, $page_name, $dir_name, $page_request ) {
+	 * get_menu_map is a static function that child classes use to indicate the details of their placement on the menu (or even if they show up on the menu).
+	 * The map is in an associative array with the following properties.
+	 * array(
+	 * 		'group' => 'what "group" this page should be listed with (see EE_Admin_Page_init for list of available groups',
+	 * 		'menu_order' => 'what order the this page will appear in the list for that group - just a regular int value please'
+	 * 		'show_on_menu' => 'bool indicating whether this page will appear in the EE admin navigation menu.'
+	 * )
+	 * @abstract
+	 * @static
+	 * @access public 
+	 * @return array see above description for format.
+	 */
+	abstract public static function get_menu_map();
 
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		
-		$this->page_slug = $page_slug;
-		$this->page_name = $page_name;
+
+
+
+
+
+	/**
+	 * this sets default properties (might be overridden in _set_init_properties);
+	 *
+	 * @access private
+	 * @return  void
+	 */
+	private function _set_defaults() {
+		$this->dir_name = $this->_wp_page_slug = NULL;
+		$this->show_on_menu = TRUE;
+		$this->capability = 'administrator';
+	}
+
+
+
+
+	/**
+	 * initialize_admin_page
+	 * This method is what executes the loading of the specific page class for the given dir_name as called by the EE_Admin_Init class.
+	 *
+	 * @access  public
+	 * @uses   _initialize_admin_page()	
+	 * @param  string $dir_name directory name for specific admin_page being loaded.
+	 * @return void         
+	 */
+	public function initialize_admin_page( $dir_name ) {
+		$this->_initialize_admin_page( $dir_name );
+	}
+
+
+
+
+	/**
+	 * _initialize_admin_page
+	 * @see  initialize_admin_page() for info
+	 */
+	protected function _initialize_admin_page( $dir_name ) {
 		$this->dir_name = $dir_name;
 
-		// now hook into admin menu to add settings page for this page
-		add_filter( $this->get_admin_menu_filter_name(), array( &$this, 'create_admin_menu_subpage' ), $this->get_admin_menu_order(), 2 );
-		
-		if ( $this->page_slug == $page_request ) {				
-			$admin_page = $this->dir_name . '_Admin_Page';
-			// define requested admin page class name then load the file and instantiate
-			$path_to_file = str_replace( array( '\\', '/' ), DS, EE_CORE_ADMIN . $this->page_slug . DS . $admin_page . '.core.php' );
-			if ( file_exists( $path_to_file )) {
-				//echo '<h2>$path_to_file : ' . $path_to_file . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h2>';						
-				require_once( $path_to_file );
-				$a = new ReflectionClass( $admin_page );
-				$this->admin_page = $a->newInstance( $this->_is_UI_request );						
-			}
-			if ( $this->_is_UI_request ) {
-				add_action( 'admin_init', array( &$this, 'add_assets' ));
-			}
+		//we don't need to do a page_request check here because it's only called via WP menu system.
+		$admin_page = $this->dir_name . '_Admin_Page';
+		// define requested admin page class name then load the file and instantiate
+		$path_to_file = str_replace( array( '\\', '/' ), DS, EE_CORE_ADMIN . $this->menu_slug . DS . $admin_page . '.core.php' );
+		if ( is_readable( $path_to_file )) {					
+			require_once( $path_to_file );
+			$a = new ReflectionClass( $admin_page );
+			$this->_loaded_page_object = $a->newInstance();						
+			$this->_loaded_page_object->set_wp_page_slug( $this->_wp_page_slug );
+			$this->_loaded_page_object->route_admin_request();
 		}
-
 	}
-
 
 
 
 
 	/**
-	*		create subpage within existing Event Espresso main menu 
-	*		@access public
-	*		@return void
-	*/		
-	public function create_admin_menu_subpage( $menu_section, $espresso_manager ) {
-			
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		$class = ! is_null( $this->admin_page ) ? $this->admin_page : $this->dir_name . '_Admin_Page';
-
-		$menu_section[$this->page_slug] = array(
-					TRUE,
-					'events',
-					__( 'Event Espresso - ' . $this->page_name, 'event_espresso' ),
-					__( $this->page_name, 'event_espresso' ),
-					apply_filters( 
-											'filter_hook_espresso_management_capability', 
-											'administrator', 
-											$espresso_manager[ $this->get_page_access_capability() ] 
-										),
-					$this->page_slug,
-					array( &$class, 'route_admin_request' )
-				);
-				
-		return $menu_section;
-
+	 * set_wp_page_slug
+	 * sets the wp_page_slug ( as defined via add_submenu_page or add_menu_page ).
+	 *
+	 * @access  public
+	 * @param string $slug this is the slug wp uses internally to identify the page.
+	 * @return void
+	 */
+	public function set_wp_page_slug( $slug ) {
+		$this->_wp_page_slug = $slug;
 	}
-
-
-
-
-
-
-	/**
-	*		load css and javascript
-	* 
-	*		@access 		public
-	*		@return 		void
-	*/	
-	public function add_assets() {
-	
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-
-		//global $ee_admin_page;
-
-		// add debugging styles
-		if ( WP_DEBUG ) {
-			add_action('admin_head', array( &$this, 'add_xdebug_style' ));
-		}
-		// add some style
-		add_action( 'admin_print_styles', array( &$this, 'load_core_admin_css' ));
-		//add_action( 'admin_print_styles-' . $ee_admin_page[$this->page_slug], array( &$this, 'load_css' ), 20);
-		add_action( 'admin_print_styles-event-espresso_page_' . $this->page_slug, array( &$this, 'load_css' ), 20);
-		// and make it dance
-		add_action( 'admin_print_scripts', array( &$this, 'load_core_admin_js' ));			
-		//add_action( 'admin_print_scripts-' . $ee_admin_page[$this->page_slug], array( &$this, 'load_js' ), 20);
-		add_action( 'admin_print_scripts-event-espresso_page_' . $this->page_slug, array( &$this, 'load_js' ), 20);
-
-	}
-
-
-
-
-
-	/**
-	*		load enhanced xdebug styles for ppl like me with failing eyesight
-	* 
-	*		@access 		public
-	*		@return 		void
-	*/	
-	public function add_xdebug_style() {
-		echo '<style>.xdebug-error { font-size:1.5em; }</style>';
-	}
-
-
-
-
-
-	/**
-	*		load core admin css - styles that apply to all admin pages
-	* 
-	*		@access 		public
-	*		@return 		void
-	*/	
-	public function load_core_admin_css() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		wp_enqueue_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css');
-	}
-
-
-
-
-
-	/**
-	*		load core admin js - scripts that apply to all admin pages
-	* 
-	*		@access 		public
-	*		@return 		void
-	*/	
-	public function load_core_admin_js() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		wp_enqueue_script('jquery-ui-core');
-		wp_enqueue_script('jquery-ui-tabs');
-		wp_enqueue_script('common');
-		wp_enqueue_script('wp-lists');
-		wp_enqueue_script('postbox');	
-	}
-	
-	
-	function __clone() {}
-	function __set( $a, $b ) {}
-	function __get( $a ) {}
 	
 
 }
