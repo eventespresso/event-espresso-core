@@ -380,7 +380,6 @@ class EE_Admin_example_two extends EE_Admin_core_example {
 	}
 
 	protected function _set_page_routes() {
-		//gonna leave as an empty array for now (which will result in exceptions but that's the whole idea!)
 		$this->_page_routes = array(
 			'default' => '_an_example_page'
 			);
