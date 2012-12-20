@@ -122,6 +122,10 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	 * @return void         
 	 */
 	public function initialize_admin_page( $dir_name ) {
+		//let's check user access first
+		$this->_check_user_access();
+
+		//all is good. keep going then.
 		$this->_initialize_admin_page( $dir_name );
 	}
 
@@ -156,6 +160,27 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 		do_action( 'action_hook_espresso_after_initialize_admin_page' );
 		do_action( 'action_hook_espresso_after_initialize_admin_page_' . $this->menu_slug );
+	}
+
+
+
+
+
+
+	/**
+	 * _check_user_access
+	 * verifies user access for this admin page.  If no user access is available then let's gracefully exit with a WordPress die message.
+	 * @return bool|die true if pass (or admin) wp_die if fail
+	 */
+	private function _check_user_access() {
+		//note we want to make sure we never lock out administrators.
+		if ( current_user_can( 'administrator' ) ) {
+			return true;
+		} elseif (!current_user_can( $this->capability ) ) {
+			wp_die( __('You don\'t have access to this page.'), '', array( 'back_link' => true ) );
+		}
+
+		return true;
 	}
 
 
