@@ -1047,7 +1047,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 	/**
-	*		spinny things pacify the masses
+	*		spinny things pacify the masses don't they?
 	*		@access public
 	*		@return void
 	*/		
