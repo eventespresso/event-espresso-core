@@ -28,6 +28,10 @@
  */
 abstract class EE_Admin_Page extends EE_BASE {
 
+	//set in _init_page_props()
+	public $page_slug;
+	public $page_label;
+
 	//set in define_page_props()
 	protected $_admin_base_url;
 	protected $_admin_page_title;
@@ -76,6 +80,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	public function __construct() {
 
+		//set initial page props (child method)
+		$this->_init_page_props();
+
 		//set global defaults
 		$this->_set_defaults();
 
@@ -86,15 +93,15 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	
 	/**
-	 * _set_init_properties
-	 * Child classes use to set the following properties:
-	 * $label, $menu_label, $capability, $menu_slug
+	 * _init_page_props
+	 * Child classes use to set at least the following properties:
+	 * $page_slug, $page_label (localized)
 	 *
 	 * @abstract
 	 * @access protected
 	 * @return void
 	 */
-	abstract protected function _set_init_properties();
+	abstract protected function _init_page_props();
 
 
 
@@ -209,13 +216,42 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	/**
 	 * admin_init
-	 * Anything that should be set/executed at 'admin_init' WP hook runtime should be put in here.  This will apply to all pages/views loaded by class.
+	 * Anything that should be set/executed at 'admin_init' WP hook runtime should be put in here.  This will apply to all pages/views loaded by child class.
 	 *
 	 * @abstract
 	 * @access public
 	 * @return void
 	 */
 	abstract public function admin_init();
+
+
+
+
+	/**
+	 * admin_notices
+	 * Anything triggered by the 'admin_notices' WP hook should be put in here.  This particular method will apply to all pages/views loaded by child class.
+	 *
+	 * @abstract
+	 * @access public
+	 * @return void
+	 */
+	abstract public function admin_notices();
+
+
+
+
+	/**
+	 * admin_footer_scripts
+	 * Anything triggered by the 'admin_print_footer_scripts' WP hook should be put in here. This particular method will apply to all pages/views loaded by child class.
+	 *
+	 * @access public
+	 * @return void 
+	 */
+	abstract public function admin_footer_scripts();
+
+
+
+
 
 
 
@@ -286,20 +322,32 @@ abstract class EE_Admin_Page extends EE_BASE {
 		);
 			
 		
-		//load admin_notices
-		
+		//load admin_notices - global, page class, and view specific
+		add_action( 'admin_notices', array( $this, 'admin_notices_global'), 5 );
+		add_action( 'admin_notices', array( $this, 'admin_notices' ), 10 );
+		add_action( 'admin_notices', array( $this, 'admin_notices_' . $this->_current_view ), 15 );
 
-		//add screen options - global, page class, and view specific
+		//setup list table properties
+		$this->_set_list_table_views();
+		$this->_set_list_table_view();
+
+		//setup search attributes
+		$this->_set_search_attributes();
+
+		//global metaboxes
+		$this->_add_espresso_meta_boxes();
+
+		//add screen options - global, page child class, and view specific
 		$this->_add_global_screen_options();
 		$this->_add_screen_options();
 		call_user_func( array( $this, '_add_screen_options_' . $this->_current_view ) );
 
-		//add help tab(s) - global, page class, and view specific
+		//add help tab(s) - global, page child class, and view specific
 		$this->_add_help_tabs();
 		$this->_add_global_help_tabs();
 		call_user_func( array( $this, '_add_help_tabs_' . $this->_current_view ) );
 
-		//add feature_pointers - global, page class, and view specific
+		//add feature_pointers - global, page child class, and view specific
 		$this->_add_feature_pointers();
 		$this->_add_global_feature_pointers();
 		call_user_func( array( $this, '_add_feature_pointers_' . $this->_current_view ) );
@@ -308,11 +356,250 @@ abstract class EE_Admin_Page extends EE_BASE {
 		add_action('admin_enqueue_scripts', array($this, 'load_global_scripts_styles'), 5 );
 		add_action('admin_enqueue_scripts', array($this, 'load_scripts_styles'), 10 );
 		add_action('admin_enqueue_scripts', array($this, 'load_scripts_styles_' . $this->_current_view ), 15 );
+
+		//admin_print_footer_scripts - global, page child class, and view specific.  NOTE, despite the name, whenever possible, scripts should NOT be loaded using this.  In most cases that's doing_it_wrong().  But adding hidden container elements etc. is a good use case. Notice the late priority we're giving these. 
+		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_global', 99 ) );
+		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts', 100 ) );
+		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_' . $this->_current_view ), 101 );
 	}
 
-	private function admin_init_global() {}
+	
+
+
+
+	/**
+	 * _set_defaults
+	 * This sets some global defaults for class properties.
+	 */
+	private function _set_defaults() {
+		$this->_doing_AJAX = FALSE; //this will be set to true by the called ajax method in our child classes
+		$this->_admin_base_url = $this->_current_screen = $this->_admin_page_title = $this->page_slug = $this->page_label = $this->_wp_page_slug = $this->_req_action = $this->_req_nonce = NULL;
+
+		$this->_nav_tabs = $this->_template_args = $this_views = $this->_page_routes = array();
+
+		$this->default_nav_tab_name = 'overview';
+	}
+
+
+	
+
+	/**
+	 * route_admin_request
+	 * 
+	 * @see _route_admin_request()
+	 * @access public
+	 * @return void|exception error
+	 */
+	public function route_admin_request() {
+		try {
+			$this->_route_admin_request();
+		} catch ( EE_Error $e ) {
+			$e->get_error();
+		}
+	}
+
+	
+
+
+
+	/**
+	 * _route_admin_request()
+	 * Meat and potatoes of the class.  Basically, this dude checks out what's being requested and sees if theres are some doodads to work the magic and handle the flingjangy.
+	 * Translation:  Checks if the requested action is listed in the page routes and then will try to load the corresponding method.
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _route_admin_request() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
+		if ( !$this->_current_page && !$this->_doing_AJAX ) return FALSE;
+
+		if ( $this->_req_action != 'default' ) {
+			wp_verify_nonce( $this->_req_nonce );
+		}		
+
+		$route = FALSE;
+		$func = FALSE;
+		$args = array();	
+		
+		// check that the page_routes array is not empty
+		if ( empty( $this->_page_routes )) {
+			// user error msg
+			$error_msg = sprintf( __('No page routes have been set for the % admin page.', 'event_espresso'), $this->_admin_page_title );
+			// developer error msg
+			$error_msg .=  '||' . $error_msg . __( ' Make sure the "set_page_routes()" method exists, and is seting the "_page_routes" array properly.', 'event_espresso' );
+			throw new EE_Error( $error_msg );
+		} 							
+	
+		// and that the requested page route exists 
+		if ( array_key_exists( $this->_req_action, $this->_page_routes )) {
+			$route = $this->_page_routes[ $this->_req_action ];
+		} else {
+			// user error msg
+			$error_msg =  sprintf( __( 'The requested page route does not exist for the %s admin page.', 'event_espresso' ), $this->_admin_page_title );
+			// developer error msg
+			$error_msg .=  '||' . $error_msg . sprintf( __( ' Create a key in the "_page_routes" array named "%s" and set it\'s value to the appropriate method.', 'event_espresso' ), $this->_req_action );
+			throw new EE_Error( $error_msg );
+		}
+
+		// and that a default route exists
+		if ( ! array_key_exists( 'default', $this->_page_routes )) {
+			// user error msg
+			$error_msg = sprintf( __( 'A default page route has not been set for the % admin page.', 'event_espresso' ), $this->_admin_page_title );
+			// developer error msg
+			$error_msg .=  '||' . $error_msg . __( ' Create a key in the "_page_routes" array named "default" and set it\'s value to your default page method.', 'event_espresso' );
+			throw new EE_Error( $error_msg );
+		}					
+		
+		// check if callback has args
+		if ( is_array( $route )) {
+			$func = $route['func'];
+			$args = $route['args'];
+		} else {
+			$func = $route;
+		}
+			
+		if ( $func ) {		
+			// and finally,  try to access page route
+			if ( call_user_func_array( array( $this, &$func  ), $args ) === FALSE ) {
+				// user error msg
+				$error_msg =  __( 'An error occured. The  requested page route could not be found.', 'event_espresso' );
+				// developer error msg
+				$error_msg .= '||' . sprintf( __( 'Page route "%s" could not be called. Check that the spelling for method names and actions in the "_page_routes" array are all correct.', 'event_espresso' ), $func );
+				throw new EE_Error( $error_msg );
+			}				
+		}
+	}
+
+
+
+
+
+
+	/**
+	 * this sets the wp_page_slug (passed through via EE_Admin_Init), with this we can do other nifty stuff.
+	 *
+	 * @access public
+	 * @param void
+	 */
+	public function set_wp_page_slug($slug) {
+		$this->_wp_page_slug = $slug;
+	}
+
+
+
+
+
+
+	/**
+	 * 		verifies user access for this admin page
+	*		@access 		private
+	*		@return 		void
+	*/
+	private function _check_user_access() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		if ( ! function_exists( 'is_admin' ) or  ! current_user_can( 'manage_options' )) {
+			wp_redirect( home_url('/') . 'wp-admin/' );
+		}
+	}
+
+
+
+
+
+	/**
+	 * admin_init_global
+	 * This runs all the code that we want executed within the WP admin_init hook.
+	 * This method executes for ALL EE Admin pages.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function admin_init_global() {}
+
+
+
+
+
+
+	/**
+	 * admin_notices
+	 * Anything triggered by the 'admin_notices' WP hook should be put in here.  This particular method will apply on ALL EE_Admin pages.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function admin_notices_global() {
+		$this->_display_no_javascript_warning();
+		$this->_display_espresso_notices();
+	}
+
+
+
+	
+	/**
+	 * admin_footer_scripts_global
+	 * Anything triggered by the 'admin_print_footer_scripts' WP hook should be put in here. This particular method will apply on ALL EE_Admin pages.
+	 *
+	 * @access public
+	 * @return void 
+	 */
+	public function admin_footer_scripts_global() {
+		$this->_add_admin_page_ajax_loading_img();
+		$this->_add_admin_page_overlay();
+	}
+
+	
+
+
+	/**
+	 * _add_global_screen_options
+	 * Add any extra wp_screen_options within this method using built-in WP functions/methods for doing so.
+	 * This particular method will add_screen_options on ALL EE_Admin Pages
+	 * @link http://chrismarslender.com/wp-tutorials/wordpress-screen-options-tutorial/
+	 * see also WP_Screen object documents...
+	 * @link http://codex.wordpress.org/Class_Reference/WP_Screen
+	 *
+	 * @abstract
+	 * @access private
+	 * @return void
+	 */
 	private function _add_global_screen_options() {}
+
+
+
+
+
+	/**
+	 * _add_global_help_tabs
+	 *  Adds any help_tabs within this method using built-in WP functions/methods for doing so.
+	 * This particular method will add help tabs for ALL EE_Admin pages
+	 * @link http://codex.wordpress.org/Function_Reference/add_help_tab
+	 *
+	 * @abstract
+	 * @access private
+	 * @return void
+	 */
 	private function _add_global_help_tabs() {}
+
+
+
+
+
+
+	/**
+	 * _add_global_feature_pointers
+	 * This method is used for implementing any "feature pointers" (using built-in WP styling js).
+	 * This particular method will implement feature pointers for ALL EE_Admin pages.
+	 * Note: this is just a placeholder for now.  Implementation will come down the road
+	 * @see WP_Internal_Pointers class in wp-admin/includes/template.php for example (its a final class so can't be extended) also see:
+	 * @link http://eamann.com/tech/wordpress-portland/
+	 *
+	 * @abstract
+	 * @access protected
+	 * @return void
+	 */
 	private function _add_global_feature_pointers() {}
 
 
@@ -352,225 +639,28 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 
-	/**
-	 * 		_init
-	 *		do some stuff upon instantiation 
-	 * 		@access protected
-	 * 		@return void
-	 */
-	protected function _init() {
-
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		$this->_check_user_access();
-
-		global $is_ajax_request;
-		$this->_AJAX = $is_ajax_request;
-		//$this->_AJAX = isset($_POST['espresso_ajax']) && $_POST['espresso_ajax'] == 1  ? TRUE : FALSE;
-		//echo '<h4>AJAX : ' . $this->_AJAX . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-
-		// becuz WP List tables have two duplicate select inputs for choosing bulk actions, we need to copy the action from the second to the first
-		if ( isset( $_REQUEST['action2'] ) && $_REQUEST['action'] == -1 ) {
-			$_REQUEST['action'] = ! empty( $_REQUEST['action2'] ) && $_REQUEST['action2'] != -1 ? $_REQUEST['action2'] : $_REQUEST['action'];
-		}
-		// then set blank or -1 action values to 'default'
-		$this->_req_action = isset( $_REQUEST['action'] ) && ! empty( $_REQUEST['action'] ) && $_REQUEST['action'] != -1 ? sanitize_key( $_REQUEST['action'] ) : 'default';
-		$this->_req_nonce = $this->_req_action . '_nonce';
-
-		$this->wp_page_slug = 'event-espresso_page_' . $this->page_slug;
-
-		$this->define_page_vars();
-		$this->set_page_routes();
-
-
-		if ( $this->_is_UI_request ) {
-
-			$this->template_args = array(
-					'admin_page_header' => NULL,
-					'admin_page_content' => NULL,
-					'post_body_content' => NULL
-			);
-
-			add_action( 'admin_init', array( &$this, '_set_list_table_views' ), 8 );
-			add_action( 'admin_init', array( &$this, '_set_list_table_view' ), 9 );
-			add_action( 'admin_init', array( &$this, '_set_search_attributes' ));
-			add_action( 'admin_init', array( &$this, '_add_espresso_meta_boxes' ));
-			add_action( 'admin_notices', array( &$this, 'display_no_javascript_warning' ));
-			add_action( 'admin_notices', array( &$this, 'display_espresso_notices' ));
-			add_action('admin_footer', 'espresso_admin_page_footer');
-			add_action( 'admin_print_footer_scripts', array( &$this, 'add_admin_page_ajax_loading_img' ), 99 );
-			add_action( 'admin_print_footer_scripts', array( &$this, 'add_admin_page_overlay' ), 100 );
-		}
-	}
-
-
-
-
 
 	/**
-	 * 		verifies user access for this admin page
-	*		@access 		private
-	*		@return 		void
-	*/
-	private function _check_user_access() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		if ( ! function_exists( 'is_admin' ) or  ! current_user_can( 'manage_options' )) {
-			wp_redirect( home_url('/') . 'wp-admin/' );
-		}
-	}
-
-
-
-
-
-	/**
-	 * 		displays an error message to ppl who have javascript disabled
-	*		@access 		public
-	*		@return 		void
-	*/
-	public function display_no_javascript_warning() {
-		echo '
-<noscript>
-	<div id="no-js-message" class="error">
-		<p style="font-size:1.3em;">
-			<span style="color:red;">' . __( 'Warning!', 'event_espresso' ) . '</span>
-			' . __( 'Javascript is currently turned off for your browser. Javascript must be enabled in order for all of the features on this page to function properly. Please turn your javascript back on.', 'event_espresso' ) . '
-		</p>
-	</div>
-</noscript>';
-	}
-
-
-
-
-
-	/**
-	 * 		displays espresso success and/or errror notices
-	*		@access 		public
-	*		@return 		void
-	*/
-	public function display_espresso_notices() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		echo EE_Error::get_notices();
-	}
-
-
-
-
-
-	/**
-	 * 		grab url requests and route them
-	*		@access private
+	 * 		set views array for List Table
+	*		@access public
 	*		@return void
 	*/
-	public function route_admin_request() {			
-
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-//		echo '<h4>$this->_req_action : ' . $this->_req_action . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$this->_req_nonce : ' . $this->_req_nonce . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		printr( $_REQUEST, '$_REQUEST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		
-		if ( $this->_req_action != 'default' ) {
-			wp_verify_nonce( $this->_req_nonce );
-		}		
-
-		$route = FALSE;
-		$func = FALSE;
-		$args = array();	
-
-		try {		
-			// check that the page_routes array is not empty
-			if ( empty( $this->_page_routes )) {
-				// user error msg
-				$error_msg = __('No page routes have been set for the ' . $this->admin_page_title . ' admin page.', 'event_espresso');
-				// developer error msg
-				$error_msg .=  '||' . $error_msg . __( ' Make sure the "set_page_routes()" method exists, and is seting the "_page_routes" array properlly.', 'event_espresso' );
-				throw new EE_Error( $error_msg );
-			} 			
-		} catch ( EE_Error $e ) {
-			$e->get_error();
-		}					
-
-		try {		
-			// and that the requested page route exists 
-			if ( array_key_exists( $this->_req_action, $this->_page_routes )) {
-				$route = $this->_page_routes[ $this->_req_action ];
-			} else {
-				// user error msg
-				$error_msg =  __('The requested page route does not exist for the ' . $this->admin_page_title . ' admin page.', 'event_espresso');
-				// developer error msg
-				$error_msg .=  '||' . $error_msg . __( ' Create a key in the "_page_routes" array named "'.$this->_req_action.'" and set it\'s value to the appropriate method.', 'event_espresso' );
-				throw new EE_Error( $error_msg );
-			}
-		} catch ( EE_Error $e ) {
-			$e->get_error();
-		}					
-
-		try {		
-			// and that a default route exists
-			if ( ! array_key_exists( 'default', $this->_page_routes )) {
-				// user error msg
-				$error_msg = __('A default page route has not been set for the ' . $this->admin_page_title . ' admin page.', 'event_espresso');
-				// developer error msg
-				$error_msg .=  '||' . $error_msg . __( ' Create a key in the "_page_routes" array named "default" and set it\'s value to your default page method.', 'event_espresso' );
-				throw new EE_Error( $error_msg );
-			}
-		} catch ( EE_Error $e ) {
-			$e->get_error();
-		}					
-
-		try {		
-			// check if callback has args
-			if ( is_array( $route )) {
-				$func = $route['func'];
-				$args = $route['args'];
-			} else {
-				$func = $route;
-			}
-		} catch ( EE_Error $e ) {
-			$e->get_error();
-		}
-			
-		if ( $func ) {
-			try {		
-				// and finally,  try to access page route
-				if ( call_user_func_array( array( $this, &$func  ), $args ) === FALSE ) {
-					// user error msg
-					$error_msg =  __( 'An error occured. The  requested page route could not be found.', 'event_espresso' );
-					// developer error msg
-					$error_msg .= '||' . __( 'Page route "' . $func . '" could not be called. Check that the spelling for method names and actions in the "_page_routes" array are all correct.', 'event_espresso' );
-					throw new EE_Error( $error_msg );
-				}	
-						
-			} catch ( EE_Error $e ) {
-				$e->get_error();
-			}			
-		}
-
+	protected function _set_list_table_views() {
+		$this->_views = array(			
+			'in_use' => array(
+					'slug' => 'in_use',
+					'label' => 'In Use',
+					'count' => 0,
+					'bulk_action' => array()
+			),
+			'trashed' => array(
+					'slug' => 'trashed',
+					'label' => 'Trash',
+					'count' => 0,
+					'bulk_action' => array()
+			)
+		);		
 	}
-
-
-
-
-
-	/**
-	 * 		_add_espresso_meta_boxes
-	*		@access public
-	*		@return array
-	*/
-	public function _add_espresso_meta_boxes() {	
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $espresso_premium;	
-		add_meta_box('espresso_news_post_box', __('New @ Event Espresso', 'event_espresso'), 'espresso_news_post_box', $this->wp_page_slug, 'side');
-		add_meta_box('espresso_links_post_box', __('Helpful Plugin Links', 'event_espresso'), 'espresso_links_post_box', $this->wp_page_slug, 'side');
-		if ( ! $espresso_premium ) {
-			add_meta_box('espresso_sponsors_post_box', __('Sponsors', 'event_espresso'), 'espresso_sponsors_post_box', $this->wp_page_slug, 'side');
-		}
-	}
-
-
 
 
 
@@ -579,7 +669,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@access public
 	*		@return array
 	*/
-	public function _set_list_table_view() {		
+	protected function _set_list_table_view() {		
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		// looking at active items or dumpster diving ?
 		if ( ! isset( $_REQUEST['status'] ) || ! array_key_exists( $_REQUEST['status'], $this->_views )) {
@@ -594,30 +684,117 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 	/**
-	 * 		set views array for List Table
-	*		@access public
-	*		@return array
+	 * 		_set_search_attributes
+	*		@access 		protected
+	*		@return 		void
 	*/
-	public function _set_list_table_views() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		// active and trashed prices
-		$this->_views = array(			
-				'in_use' => array(
-						'slug' => 'in_use',
-						'label' => 'In Use',
-						'count' => 0,
-						'bulk_action' => array()
-				),
-				'trashed' => array(
-						'slug' => 'trashed',
-						'label' => 'Trash',
-						'count' => 0,
-						'bulk_action' => array()
-				)
-		);			
+	public function _set_search_attributes( $max_entries = FALSE ) {
+		$this->template_args['search']['btn_label'] = sprintf( __( 'Search %s', 'event_espresso' ), $this->page_label );
+		$this->template_args['search']['callback'] = 'search_' . $this->page_slug;
 	}
 
+
+
+	/**
+	 * 		_add_espresso_meta_boxes
+	 * 		add in default metaboxes for pages.
+	 *
+	 * @link http://codex.wordpress.org/Function_Reference/add_meta_box
+	 * @access private
+	 * @return void
+	*/
+	private function _add_espresso_meta_boxes() {	
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		global $espresso_premium;	
+		add_meta_box('espresso_news_post_box', __('New @ Event Espresso', 'event_espresso'), 'espresso_news_post_box', $this->_wp_page_slug, 'side');
+		add_meta_box('espresso_links_post_box', __('Helpful Plugin Links', 'event_espresso'), 'espresso_links_post_box', $this->_wp_page_slug, 'side');
+		if ( ! $espresso_premium ) {
+			add_meta_box('espresso_sponsors_post_box', __('Sponsors', 'event_espresso'), 'espresso_sponsors_post_box', $this->_wp_page_slug, 'side');
+		}
+	}
+
+
+
+
+	/**
+	 * remove_espresso_meta_boxes
+	 * Child classes can call this method if they wish to remove the default espresso meta-boxes.  Just remember that it needs to be called AFTER _add_espresso_meta_boxes has executed.
+	 *
+	 * @link http://codex.wordpress.org/Function_Reference/remove_meta_box
+	 * @access private
+	 * @return void
+	 */
+	private function _remove_espresso_meta_boxes() {
+		remove_meta_box( 'espresso_news_post_box', $this->_wp_page_slug, 'side');
+		remove_meta_box( 'espresso_links_post_box', $this->_wp_page_slug, 'side');
+	}
+
+
+
+
+	/**
+	 * 		displays an error message to ppl who have javascript disabled
+	*		@access 		private
+	*		@return 		string  
+	*/
+	private function _display_no_javascript_warning() {
+		?>
+		<noscript>
+			<div id="no-js-message" class="error">
+				<p style="font-size:1.3em;">
+					<span style="color:red;"><php _e( 'Warning!', 'event_espresso' ); ?></span>
+					<?php _e( 'Javascript is currently turned off for your browser. Javascript must be enabled in order for all of the features on this page to function properly. Please turn your javascript back on.', 'event_espresso' ); ?>
+				</p>
+			</div>
+		</noscript>';
+		<?php
+	}
+
+
+
+
+
+	/**
+	 * 		displays espresso success and/or error notices
+	*		@access 		private
+	*		@return 		string
+	*/
+	private function _display_espresso_notices() {
+		echo EE_Error::get_notices();
+	}
+
+
+
+
+
+
+	/**
+	*		spinny things pacify the masses
+	*		@access private
+	*		@return string
+	*/		
+	private function add_admin_page_ajax_loading_img() {
+		?>
+			<div id="espresso-admin-page-ajax-loading" class="hidden">
+				<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL; ?>images/ajax-loader-grey.gif" /><span><?php _e('loading...', 'event_espresso'); ?>'</span>
+			</div>
+		<?php
+	}
+
+
+
+
+
+	/**
+	*		add admin page overlay for modal boxes
+	*		@access private
+	*		@return string
+	*/		
+	private function add_admin_page_overlay() {
+		?>
+		<div id="espresso-admin-page-overlay-dv" class=""></div>
+		<?php
+	}
 
 
 
@@ -635,6 +812,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( empty( $this->_views )) {
 			$this->_set_list_table_views();
 		}
+
 		// cycle thru views
 		foreach ( $this->_views as $key => $view ) {
 			// check for current view
@@ -648,51 +826,20 @@ abstract class EE_Admin_Page extends EE_BASE {
 				$query_args['_wpnonce'] = wp_create_nonce( $query_args['action'] . '_nonce' );
 			}
 			$query_args['status'] = $view['slug'];
-			$this->_views[ $key ]['url'] = add_query_arg( $query_args, $this->admin_base_url );
+			$this->_views[ $key ]['url'] = add_query_arg( $query_args, $this->_admin_base_url );
 		}
-		//printr( $this->_views, '$this->_views  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		return $this->_views;
 		
+		return $this->_views;
 	}
 
 
-
-
-
 	/**
-	*		generates  HTML wrapper for an admin details page
-	*		@access public
-	*		@return void
-	*/		
-	public function _set_wp_page_slug(  ) {	
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $ee_admin_page;
-		$this->wp_page_slug = $ee_admin_page[ $this->page_slug ];
-	}
-
-
-
-
-
-	/**
-	 * 		_set_search_attributes
-	*		@access 		public
-	*		@return 		void
-	*/
-	public function _set_search_attributes( $max_entries = FALSE ) {
-		$this->template_args['search']['btn_label'] = __( 'Search ' . ucwords( str_replace( '_', ' ', $this->page_slug )), 'event_espresso' );
-		$this->template_args['search']['callback'] = 'search_' . $this->page_slug;
-	}
-
-
-
-
-
-	/**
-	 * 		generates a drop down box for selecting the number of visiable rows in an admin page list table
-	*		@access 		protected
-	* 		@param		int 			$max_entries 		total number of rows in the table
-	*		@return 		string
+	 * _entries_per_page_dropdown
+	 * generates a drop down box for selecting the number of visiable rows in an admin page list table
+	 * @todo: Note: ideally this should be added to the screen options dropdown as that would be consistent with how WP does it.
+	 * @access protected
+	 * @param int $max_entries total number of rows in the table
+	 * @return string
 	*/
 	protected function _entries_per_page_dropdown( $max_entries = FALSE ) {
 		
@@ -729,11 +876,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 				</label>
 				<input id="entries-per-page-btn" class="button-secondary" type="submit" value="Go" >
 			</div>
-';			
+		';			
 		return $entries_per_page_dropdown;
-
 	}
-
+	
 
 
 
@@ -930,8 +1076,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 ';
 	}
 	
-	
-
 
 }
 
