@@ -81,16 +81,15 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	 * get_menu_map is a static function that child classes use to indicate the details of their placement on the menu (or even if they show up on the menu).
 	 * The map is in an associative array with the following properties.
 	 * array(
-	 * 		'group' => 'what "group" this page should be listed with (see EE_Admin_Page_init for list of available groups',
+	 * 		'group' => 'what "group" this page should be listed with (see EE_Admin_Page_load for list of available groups',
 	 * 		'menu_order' => 'what order the this page will appear in the list for that group - just a regular int value please'
 	 * 		'show_on_menu' => 'bool indicating whether this page will appear in the EE admin navigation menu.'
 	 * )
 	 * @abstract
-	 * @static
 	 * @access public 
 	 * @return array see above description for format.
 	 */
-	abstract public static function get_menu_map();
+	abstract public function get_menu_map();
 
 
 
