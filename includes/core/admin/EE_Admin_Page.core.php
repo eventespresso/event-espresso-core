@@ -1043,40 +1043,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 
-
-
-
-	/**
-	*		spinny things pacify the masses don't they?
-	*		@access public
-	*		@return void
-	*/		
-	public function add_admin_page_ajax_loading_img() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		echo '
-	<div id="espresso-admin-page-ajax-loading" class="hidden">
-		<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/ajax-loader-grey.gif" /><span>' . __('loading...', 'event_espresso') . '</span>
-	</div>
-';
-	}
-
-
-
-
-
-	/**
-	*		add admin page overlay for modal boxes
-	*		@access public
-	*		@return void
-	*/		
-	public function add_admin_page_overlay() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		echo '
-	<div id="espresso-admin-page-overlay-dv" class=""></div>
-';
-	}
-	
-
 }
 
 
