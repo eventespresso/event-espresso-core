@@ -426,7 +426,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		// check that the page_routes array is not empty
 		if ( empty( $this->_page_routes )) {
 			// user error msg
-			$error_msg = sprintf( __('No page routes have been set for the % admin page.', 'event_espresso'), $this->_admin_page_title );
+			$error_msg = sprintf( __('No page routes have been set for the %s admin page.', 'event_espresso'), $this->_admin_page_title );
 			// developer error msg
 			$error_msg .=  '||' . $error_msg . __( ' Make sure the "set_page_routes()" method exists, and is seting the "_page_routes" array properly.', 'event_espresso' );
 			throw new EE_Error( $error_msg );
