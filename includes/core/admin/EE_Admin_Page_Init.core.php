@@ -120,12 +120,12 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	 * @param  string $dir_name directory name for specific admin_page being loaded.
 	 * @return void         
 	 */
-	public function initialize_admin_page( $dir_name ) {
+	public function initialize_admin_page() {
 		//let's check user access first
 		$this->_check_user_access();
 
 		//all is good. keep going then.
-		$this->_initialize_admin_page( $dir_name );
+		$this->_initialize_admin_page();
 	}
 
 
@@ -135,8 +135,9 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	 * _initialize_admin_page
 	 * @see  initialize_admin_page() for info
 	 */
-	protected function _initialize_admin_page( $dir_name ) {
-		$this->dir_name = $dir_name;
+	protected function _initialize_admin_page() {
+		$this->dir_name = ucwords( str_replace('_', ' ', $this->menu_slug) );
+		$this->dir_name = str_replace(' ', '_', $this->dir_name);
 
 		//we don't need to do a page_request check here because it's only called via WP menu system.
 		$admin_page = $this->dir_name . '_Admin_Page';
