@@ -116,23 +116,33 @@ class EE_Admin_Page_load {
 		$groups = array(
 			'main' => array(
 				'title' => __('Main', 'event_espresso'),
-				'show_heading' => FALSE
+				'show_heading' => FALSE,
+				'slug' => 'main',
+				'capability' => 'administrator'
 				),
 			'management' => array(
 				'title' => __('Management', 'event_espresso'),
-				'show_heading' => TRUE
+				'show_heading' => TRUE,
+				'slug' => 'management',
+				'capability' => 'administrator'
 				),
 			'settings' => array(
 				'title' => __('Settings', 'event_espresso'),
-				'show_heading' => TRUE
+				'show_heading' => TRUE,
+				'slug' => 'settings',
+				'capability' => 'administrator'
 				),
 			'templates' => array(
 				'title' => __('Templates', 'event_espresso'),
-				'show_heading' => TRUE
+				'show_heading' => TRUE,
+				'slug' => 'templates',
+				'capability' => 'administrator'
 				),
 			'extras' => array(
 				'title' => __('Extras', 'event_espresso'),
-				'show_heading' => TRUE
+				'show_heading' => TRUE,
+				'slug' => 'extras',
+				'capability' => 'administrator'
 				)
 			);
 
@@ -209,15 +219,45 @@ class EE_Admin_Page_load {
 	private function _set_menus() {
 		//prep the pages (sort, group, set if display etc.)
 		$this->_prep_pages();
-		
-		//todo: We need to setup the initial main menu (which will be based off of the initial item in the _prepped_installed_pages property.  Then for each subsequent page we need to add the submenu item. NOTE, if the value of the _prepped_installed_pages is an array, then that means this is a header, not an object so handle accordingly.
+		$parent_slug = 'events';
 
-		foreach ( $this->_installed_pages as $installed_page ) {
-			$a = new ReflectionClass( $installed_page );
-			$EE_Admin = $a->newInstance(); //note this won't load everything if there is not page request.  In that case it just sets the properties we need here. However, if it IS a page request (and the page request matches the slug for the page then the object will load everything - including js, screen_options etc.).
-			$parent_slug = 'events';
-			$wp_page_slug = add_submenu_page( $parent_slug, $EE_Admin->label, $EE_Admin->menu_label, $EE_Admin->capability, $EE_Admin->menu_slug, array($EE_Admin, 'route_admin_request') );
-			$EE_Admin->set_wp_page_slug($wp_page_slug);
+
+		//loop through prepped pages and hook into WP's menu functions
+		$i=0;
+		foreach ( $this->_prepped_installed_pages as $installed_page ) {
+			if ( $i === 0 ) {
+				//if initial menu item is a header let's temporarily store and continue.
+				if ( is_array($installed_page) ) {
+					$temp_ref = $installed_page;
+					continue;
+				} else {
+					$add_main_menu = true;
+				}
+			}
+
+			//if we've got $add_main_menu || $temp_ref then we need to add_menu_page on current item
+			if ( isset($temp_ref) || isset($add_main_menu) ) {
+				$title = __('Event Espresso', 'event_espresso');
+					$wp_main_page_slug = add_menu_page( $title, $title, apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']), $parent_slug, array($installed_page, 'initialize_admin_page'), EVENT_ESPRESSO_PLUGINFULLURL . 'images/events_icon_16.png');
+					$installed_page->set_wp_page_slug($wp_main_page_slug);
+				
+				//make sure we add initial header if present
+				if ( isset($temp_ref) ) {
+					$wp_page_slug = add_submenu_page( $parent_slug, $temp_ref['title'], '<span class="ee_menu_group"  onclick="return false;">' . $temp_ref['title'] . '</span>', $temp_ref['capability'], $temp_ref['slug'], array($this, '_default_header_link') );
+				}
+			}
+
+			//let's setup the submenu items
+			$label = is_array($installed_page) ? $installed_page['title'] : $installed_page->label;
+			$menu_label = is_array($installed_page) ? '<span class="ee_menu_group"  onclick="return false;">' . $installed_page['title'] . '</span>' : $installed_page->menu_label;
+			$capability = is_array($installed_page) ? $installed_page['capability'] : $installed_page->capability;
+			$menu_slug = is_array($installed_page) ? $installed_page['slug'] : $installed_page->menu_slug;
+			$menu_func = is_array($installed_page) ? array($this, '_default_header_link') : array($installed_page, 'initialize_admin_page');
+			
+			
+			$wp_page_slug = add_submenu_page( $parent_slug, $label, $menu_label, $capability, $menu_slug, $menu_func );
+			if ( !is_array($installed_page) ) $installed_page->set_wp_page_slug($wp_page_slug);
+			$i++;
 		}
 	}
 
@@ -296,6 +336,16 @@ class EE_Admin_Page_load {
 			return 0;
 		}
 		return ( $apo['menu_order'] < $bpo['menu_order'] ) ? -1 : 1;
+	}
+
+
+	/**
+	 * _default_header_link
+	 * This is just a dummy method to use with header submenu items
+	 * @return bool false
+	 */
+	public function _default_header_link() {
+		return false;
 	}
 
 
