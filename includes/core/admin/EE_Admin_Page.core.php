@@ -30,7 +30,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	//set in _init_page_props()
 	public $page_slug;
-	public $page_label;
 
 	//set in define_page_props()
 	protected $_admin_base_url;
@@ -95,7 +94,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	/**
 	 * _init_page_props
 	 * Child classes use to set at least the following properties:
-	 * $page_slug, $page_label (localized)
+	 * $page_slug.
 	 *
 	 * @abstract
 	 * @access protected
