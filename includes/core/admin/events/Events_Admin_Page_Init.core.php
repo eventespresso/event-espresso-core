@@ -29,6 +29,10 @@
 class Events_Admin_Page_Init extends EE_Admin_Page_Init {
 
 	public function __construct() {
+		global $wpdb;
+		//define some events related constants
+		define( 'EVENTS_ADMIN_URL', admin_url('admin.php?page=events') );
+
 		parent::__construct();
 	}
 
