@@ -56,6 +56,9 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 		//set properties that are always available with objects.
 		$this->_set_init_properties();
+
+		//set default capability
+		$this->_set_capability();
 	}
 
 
@@ -105,7 +108,12 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	private function _set_defaults() {
 		$this->dir_name = $this->_wp_page_slug = NULL;
 		$this->show_on_menu = TRUE;
-		$this->capability = 'administrator';
+	}
+
+
+
+	protected function _set_capability() {
+		$this->capability = apply_filters('filter_hook_espresso_' . $this->menu_slug . '_capability', 'administrator');
 	}
 
 
