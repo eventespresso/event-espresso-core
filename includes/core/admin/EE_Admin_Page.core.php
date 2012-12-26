@@ -1042,6 +1042,134 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 
+
+
+
+
+
+	/**
+	 * 	generates HTML for the forms used on admin pages
+	 * 	@access protected
+	 * 	@param	array $input_vars - array of input field details
+	 * 	@param	array $id - used for defining unique identifiers for the form.
+	 * 	@return string
+	 * 	@uses EE_Form_Fields::get_form_fields (/helper/EE_Form_Fields.helper.php)
+	 */
+	protected function _generate_admin_form_fields($input_vars = array(), $id = FALSE) {
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
+		$content = EE_Form_Fields::get_form_fields($input_vars, $id);
+
+		if ( is_wp_error($content) )
+			return $content;
+
+		return $content;
+	}
+
+	
+
+
+
+
+
+
+
+	/**
+	 * generates the "Save" and "Save & Close" buttons for edit forms
+	 *
+	 * @access protected
+	 * @param bool $both if true then both buttons will be generated.  If false then just the "Save & Close" button.
+	 * @param array $text if included, generator will use the given text for the buttons ( array([0] => 'Save', [1] => 'save & close')
+	 * @param array $actions if included allows us to set the actions that each button will carry out (i.e. via the "name" value in the button).  We can also use this to just dump default actions by submitting some other value.
+	 */
+	protected function _set_save_buttons($both = TRUE, $text = array(), $actions = array() ) {
+		//make sure $text and $actions are in an array
+		$text = (array) $text;
+		$actions = (array) $actions;
+
+		$button_text = !empty($text) ? $text : array( __('Save', 'event_espresso'), __('Save and Close', 'event_espresso') );
+		$default_names = array( 'save', 'save_and_close' );
+		$init_div = '<div id="event_editor_major_buttons_wrapper">';
+		$alt_div = '<div id="event-editor-floating-save-btns" class="hidden">';
+
+		$this->template_args['save_buttons'] = '<div class="publishing-action">';
+		//add in a hidden index for the current page (so save and close redirects properly)
+		$this->template_args['save_buttons'] .= empty($actions) ? '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="' . $_SERVER['REQUEST_URI'] .'" />' : '';
+
+		foreach ( $button_text as $key => $button ) {
+			$ref = $default_names[$key];
+			$name = !empty($action) ? $actions[$key] : $ref;
+			$this->template_args['save_buttons'] .= '<input type="submit" class="button-primary" value="' . $button . '" name="' . $name . '" id="' . $ref . '" />';
+			if ( !$both ) break;
+		}
+		$this->template_args['save_buttons'] .= '</div><br class="clear" /></div>';
+		$alt_buttons = $alt_div . $this->template_args['save_buttons'];
+		$this->template_args['save_buttons'] = $init_div . $this->template_args['save_buttons'] . $alt_buttons;
+	}
+
+
+
+
+
+
+
+
+	/**
+	 * 	_redirect_after_action
+	 *	@param int 		$success 	- whether success was for two or more records, or just one, or none
+	 *	@param string 	$what 		- what the action was performed on
+	 *	@param string 	$action_desc 	- what was done ie: updated, deleted, etc
+	 *	@param int 		$query_args		- an array of query_args to be added to the URL to redirect to after the admin action is completed
+	 *	@access protected
+	 *	@return void
+	 */
+	protected function _redirect_after_action( $success = FALSE, $what = 'item', $action_desc = 'processed', $query_args = array() ) {
+		global $espresso_notices;
+
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+
+		// overwrite default success messages
+		$espresso_notices['success'] = array();
+		$redirect_url = $this->admin_base_url;
+
+		// how many records affected ? more than one record ? or just one ?
+		if ( $success == 2 ) {
+			// set plural msg
+			$espresso_notices['success'][] = sprintf( __('The %s have been successfully %s.', 'event_espresso'), $what, $action_desc );
+		} else if ( $success == 1 ) {
+			// set singular msg
+			$espresso_notices['success'][] = sprintf( __('The %s has been successfully %s.', 'event_espresso'), $what, $action_desc);
+		}
+
+		// check that $query_args isn't something crazy
+		if ( ! is_array( $query_args )) {
+			$query_args = array();
+		}
+
+		//calculate where we're going (if we have a "save and close" button pushed)
+		if ( isset($_REQUEST['save'] ) && isset($_REQUEST['save_and_close_referrer'] ) ) {
+			$redirect_url = $_REQUEST['save_and_close_referrer'];
+		}
+		
+		// grab messages
+		$notices = espresso_get_notices( FALSE, TRUE, TRUE, FALSE );
+		//combine $query_args and $notices
+		$query_args = array_merge( $query_args, $notices );
+		// generate redirect url
+
+		// if redirecting to anything other than the main page, add a nonce
+		if ( isset( $query_args['action'] )) {
+			// manually generate wp_nonce
+			$nonce = array( '_wpnonce' => wp_create_nonce( $query_args['action'] . '_nonce' ));
+			// and merge that with the query vars becuz the wp_nonce_url function wrecks havoc on some vars
+			$query_args = array_merge( $query_args, $nonce );
+		} 
+
+		$redirect_url = add_query_arg( $query_args, $redirect_url ); 
+
+		wp_safe_redirect( $redirect_url );	
+		exit();		
+	}
+
 }
 
 
