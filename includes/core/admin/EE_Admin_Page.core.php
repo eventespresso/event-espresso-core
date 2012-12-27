@@ -529,6 +529,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//now let's sort the tabs according to order
 		usort( $this->_nav_tabs, array($this, '_sort_nav_tabs' ));
+
+		//let's generate the html using the EE_Tabbed_Content helper
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Tabbed_Content.helper.php' ;
+		$this->_nav_tabs = EE_Tabbed_Content::display_admin_nav_tabs($this->_nav_tabs);
 	}
 
 
