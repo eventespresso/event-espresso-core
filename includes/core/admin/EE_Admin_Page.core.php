@@ -136,13 +136,30 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	/**
 	 * _set_page_routes
-	 * child classes use this to define the page routes for all subpages handled by the class.  Page routes are assigned to a action => method pairs in an array and to the $_page_routes property
+	 * child classes use this to define the page routes for all subpages handled by the class.  Page routes are assigned to a action => method pairs in an array and to the $_page_routes property. Note that the _page_routes array is also used to define which routes have corresponding nav tabs.  Each page route must also have a 'default' route. Here's the format
+	 * $this->_page_routes = array(
+	 * 		'default' => array(
+	 * 			'func' => '_default_method_handling_route',
+	 * 			'args' => array('array','of','args'),
+	 * 			'nav' => array(
+	 * 				'label' => __('Label for Tab', 'event_espresso').
+	 *     			'url' => 'http://someurl', //automatically generated UNLESS you define
+	 *     			'css_class' => 'css-class', //automatically generated UNLESS you define
+	 *     			'order' => 10 //required to indicate tab position.
+	 * 			)
+	 * 		),
+	 * 		'insert_item' => '_method_for_handling_insert_item' //this can be used if all we need to have is a handling method.  'nav' defaults to false and 'args' defaults to empty.  If nav is false, no nav tab is generated.
+	 * 		)
+	 * 		
+	 * )
+	 *
 	 *
 	 * @abstract
 	 * @access protected
 	 * @return void
 	 */
 	abstract protected function _set_page_routes();
+
 
 
 
@@ -449,12 +466,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 			// developer error msg
 			$error_msg .=  '||' . $error_msg . __( ' Create a key in the "_page_routes" array named "default" and set it\'s value to your default page method.', 'event_espresso' );
 			throw new EE_Error( $error_msg );
-		}					
+		}
+
+
+		$this->_set_nav_tabs(); //set the nav_tabs array	
+
 		
 		// check if callback has args
 		if ( is_array( $route )) {
 			$func = $route['func'];
-			$args = $route['args'];
+			$args = isset( $route['args'] ) ?  $route['args'] : array();
 		} else {
 			$func = $route;
 		}
@@ -469,6 +490,45 @@ abstract class EE_Admin_Page extends EE_BASE {
 				throw new EE_Error( $error_msg );
 			}				
 		}
+	}
+
+
+
+
+	/**
+	 * _set_nav_tabs
+	 * This sets up the nav tabs from the page_routes array.  This method can be overwritten by child classes if you wish to add additional tabs or modify accordingly.
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function _set_nav_tabs() {
+		$i = 0;
+		foreach ( $this->_page_routes as $slug => $route ) {
+			if ( !is_array( $route ) || ( isset($route['nav']) && !$route['nav']  ) ) 
+				continue; //no nav tab for this route
+			$css_class = isset( $route['css_class'] ) ? $route['css_class'] . ' ' : '';
+			$this->_nav_tabs[$slug] = array(
+				'url' => isset($route['nav']['url']) ? $route['nav']['url'] : wp_nonce_url( add_query_arg( array( 'action'=>$slug ), $this->_admin_base_url), $slug . '_nonce'),
+				'link_text' => isset( $route['label'] ) ? $route['label'] : ucwords(str_replace('_', ' ', $route['label'] ) ),
+				'css_class' => $this->_req_action == $slug ? $css_class . 'nav-tab-active' : $css_class,
+				'order' => isset( $route['order'] ) ? $route['order'] : $i
+				); 
+			$i++;
+		}
+
+		//if $this->_nav_tabs is empty then lets set the default
+		if ( empty( $this->_nav_tabs ) ) {
+			$this->_nav_tabs[$this->default_nav_tab_name] = array(
+				'url' => $this->admin_base_url,
+				'link_text' => ucwords( str_replace( '_', ' ', $this->default_nav_tab_name ) ),
+				'css_class' => 'nav-tab-active',
+				'order' => 10
+				);
+		}
+
+		//now let's sort the tabs according to order
+		usort( $this->_nav_tabs, array($this, '_sort_nav_tabs' ));
 	}
 
 
@@ -951,37 +1011,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*/		
 	public function admin_page_wrapper(  ) {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		// tab urls
-		$this->nav_tabs[ $this->default_nav_tab_name ]['url'] = $this->admin_base_url;  
-		$this->nav_tabs[ $this->default_nav_tab_name ]['link_text'] = __( ucwords( str_replace( '_', ' ', $this->default_nav_tab_name )), 'event_espresso' );
-		$this->nav_tabs[ $this->default_nav_tab_name ]['css_class'] = ' nav-tab-active';
-		$this->nav_tabs[ $this->default_nav_tab_name ]['order'] = 10;
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');	
 
-		$this->nav_tabs['reports']['url'] = wp_nonce_url( add_query_arg( array( 'action'=>'reports' ), $this->admin_base_url ), 'reports_nonce' );  
-		$this->nav_tabs['reports']['link_text'] = __( 'Reports', 'event_espresso' );
-		$this->nav_tabs['reports']['css_class'] = '';
-		$this->nav_tabs['reports']['order'] = 20;
-
-		$this->nav_tabs['settings']['url'] = wp_nonce_url( add_query_arg( array( 'action'=>'settings' ), $this->admin_base_url ), 'settings_nonce' );  
-		$this->nav_tabs['settings']['link_text'] = __( 'Settings', 'event_espresso' );
-		$this->nav_tabs['settings']['css_class'] = '';
-		$this->nav_tabs['settings']['order'] = 30;
-
-		$this->nav_tabs = apply_filters( 'filter_hook_espresso_admin_page_nav_tabs', $this->nav_tabs );
-
-		if( $this->_req_action != 'default' ) {
-			$this->nav_tabs[ $this->default_nav_tab_name ]['css_class'] = '';	
-			if ( isset( $this->nav_tabs[ $this->_req_action ] )) {
-				$this->nav_tabs[ $this->_req_action ]['css_class'] = ' nav-tab-active';
-			}			
-		}		
-
-		usort( $this->nav_tabs, array($this, '_sort_nav_tabs' ));
-		//	printr( $this->nav_tabs, '$this->nav_tabs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		$this->template_args['nav_tabs'] = $this->nav_tabs;
-		$this->template_args['admin_page_title'] = $this->admin_page_title;
+		$this->template_args['nav_tabs'] = $this->_nav_tabs;
+		$this->template_args['admin_page_title'] = $this->_admin_page_title;
 		
 		// grab messages at the last second
 		$this->template_args['notices'] = EE_Error::get_notices();
@@ -1008,39 +1041,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	    }
 	    return ($a['order'] < $b['order']) ? -1 : 1;
 	}
-
-
-
-
-
-	/**
-	 * 		remove reports tab from admin_page_nav_tabs
-	*		@access private
-	*		@param array	$nav_tabs
-	*		@return array
-	*/
-	public function _remove_reports_from_admin_page_nav_tabs( $nav_tabs = array() ) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		unset ( $nav_tabs['reports'] );	
-		return $nav_tabs;		
-	}
-
-
-
-
-
-	/**
-	 * 		remove settings tab from admin_page_nav_tabs
-	*		@access private
-	*		@param array	$nav_tabs
-	*		@return array
-	*/
-	public function _remove_settings_from_admin_page_nav_tabs( $nav_tabs = array() ) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		unset ( $nav_tabs['settings'] );	
-		return $nav_tabs;		
-	}
-
 
 
 
