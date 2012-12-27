@@ -44,7 +44,7 @@ class EE_Tabbed_Content {
 	 * @param  array $tabs_content an array of the content for each tab [required]
 	 * @return string               the assembled html string containing the tabbed content for display.
 	 */
-	static public function display($tabs_contents, $tabs_names = array(), $small_tabs = true, $tabs_content = TRUE ) {
+	public static function display($tabs_contents, $tabs_names = array(), $small_tabs = true, $tabs_content = TRUE ) {
 
 		//first check if $tabs_names is not empty then the count must match the count of $tabs_content otherwise we've got a problem houston
 		if ( !empty( $tabs_names) && ( count( (array) $tabs_names) != count( (array) $tabs_content) ) ) {
@@ -119,7 +119,7 @@ class EE_Tabbed_Content {
 	 * @param bool|string $css If string given then the generated tab will include that as the class.
 	 * @return string          html for tab
 	 */
-	static private function tab($name, $active = false, $nice_name = FALSE, $url = FALSE, $css = FALSE ) {
+	private static function tab($name, $active = false, $nice_name = FALSE, $url = FALSE, $css = FALSE ) {
 		$name = str_replace(' ', '-', $name);
 		$class = $active ? 'nav-tab nav-tab-active' : 'nav-tab';
 		$class = $css ? $class . ' ' . $css : $class;
@@ -135,7 +135,7 @@ class EE_Tabbed_Content {
 	 * @param  string $content content of tab
 	 * @return string          html for content area
 	 */
-	static private function tab_content($name, $tab_content, $active = false) {
+	private static function tab_content($name, $tab_content, $active = false) {
 		$class = $active ? 'nav-tab-content' : 'nav-tab-content hidden';
 		$name = str_replace( ' ', '-', $name);
 		$content = "\t" . '<div class="'. $class . '" id="ee-tab-' . $name . '">' . "\n";
