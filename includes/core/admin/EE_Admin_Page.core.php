@@ -57,6 +57,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	//set via request page and action args.
 	protected $_current_page;
 	protected $_current_view;
+	protected $_current_page_view_url;
 
 	//sanitized request action (and nonce)
 	protected $_req_action;
@@ -305,6 +306,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_current_view = $this->_req_action;
 		$this->_req_nonce = $this->_req_action . '_nonce';
 		$this->_define_page_props();
+
+		$this->_current_page_view_url = add_query_arg( array( 'page' => $this->_current_page, 'action' => $this->_current_view ),  $this->_admin_base_url );
+
 		$this->_set_page_routes();
 
 		if ( $this->_is_UI_request ) {
