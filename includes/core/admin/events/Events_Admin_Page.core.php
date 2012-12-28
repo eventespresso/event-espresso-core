@@ -62,7 +62,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
-			'default' => '_events_overview_list_table',
+			'default' => array(
+				'func' => '_events_overview_list_table',
+				'nav' => array(
+					'label' => __('Overview', 'event_espresso'),
+					'order' => 10
+					)
+				),
+			'overview'=> '_events_overview_list_table',
 			'edit_event' => array(
 				'func' => '_event_details',
 				'args' => array('edit')
@@ -88,7 +95,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'func' => '_trash_or_restore_event',
 				'args' => array('trash' => FALSE )
 				),
-			'view_report' => '_events_report'
+			'view_report' => array(
+				'func' => '_events_report',
+				'nav' => array(
+					'label' => __('Report', 'event_espresso'),
+					'order' => 20
+					)
+				)
 			);
 	}
 
