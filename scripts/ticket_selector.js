@@ -1,6 +1,7 @@
 (function($) {
 
-	$('.show-if-js').css({ 'display' : 'inline-block' });
+//	$('.show-if-js').css({ 'display' : 'inline-block' });
+	$('.show-if-js').show();
 	$('.hide-if-no-js').removeClass( 'hide-if-no-js' );
 
 	// submit form

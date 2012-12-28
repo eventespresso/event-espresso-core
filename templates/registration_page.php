@@ -351,9 +351,11 @@ if (!function_exists('event_registration')) {
 					$event->datetimes = $DTM_MDL->get_all_event_dates($event->id);
 //						echo printr($event->times, 'EVENT TIMES <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
 
-					require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Price.class.php' );
-					$EVT_Prices = new EE_Event_Prices($event->id);
-					$event->prices = $EVT_Prices->get_final_event_prices();
+//					require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Price.class.php' );
+//					$EVT_Prices = new EE_Event_Prices($event->id);
+//					$event->prices = $EVT_Prices->get_final_event_prices();
+					require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Prices.class.php' );
+					$event->prices = new EE_Ticket_Prices( $event->id );
 					//echo printr($event->prices, 'EVENT PRICES <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
 
 					$event->currency_symbol = $org_options['currency_symbol'];

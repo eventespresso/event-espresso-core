@@ -70,8 +70,8 @@ function event_espresso_get_event_details($attributes) {
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/gmap_incl.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/event_details.helper.php');
-//	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Price.class.php' );
 	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Prices.class.php' );
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Selector.class.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
 	$DTM_MDL = EEM_Datetime::instance();
 
@@ -303,10 +303,9 @@ function event_espresso_get_event_details($attributes) {
 //		$EVT_Prices = new EE_Event_Prices( $event->id );
 //		$event->prices = $EVT_Prices->get_final_event_prices();
 		//echo printr($event->prices, 'EVENT PRICES <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
-		$event->prices = new EE_Ticket_Prices( $event->id );
-		//echo printr($event->prices, 'EVENT PRICES <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
-
-		//echo $display_event_prices;
+		$TKT_PRCs = new EE_Ticket_Prices( $event->id );
+		$event->prices = $TKT_PRCs->get_all_final_event_prices();
+//		echo printr($event->prices, 'EVENT PRICES <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
 
 		$event->currency_symbol = $org_options['currency_symbol'];
 
@@ -528,11 +527,12 @@ function event_espresso_get_event_details($attributes) {
 				$event->reg_btn['extra_attributes'] = '';
 				$event->reg_btn['reg_limit'] = $event->reg_limit;
 				$event->reg_btn['additional_limit'] = $event->additional_limit;
-				//$event->reg_btn['event_cost'] = $event->event_cost;
+				$event->reg_btn['event_cost'] = $event->event_cost;
 				$event->reg_btn['prices'] = $event->prices;
 				$event->reg_btn['require_pre_approval'] = $event->require_pre_approval;
 				//$event->reg_btn['all_meta'] = $all_meta;
 
+				$ticket_selector = new EE_Ticket_Selector( $event );
 
 
 				$event->reg_btn = apply_filters( 'filter_hook_espresso_event_reg_btn', $event->reg_btn );
@@ -547,7 +547,7 @@ function event_espresso_get_event_details($attributes) {
 					' . __('Register Now', 'event_espresso') . '
 				</a>
 			</p>';
-
+				
 				$event_reg_link = apply_filters( 'filter_hook_espresso_event_reg_link', $event_reg_link, $event->reg_btn );
 
 				// END OF if ( in_array( $event_status, $open_event_status_list ))

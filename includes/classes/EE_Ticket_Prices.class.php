@@ -76,10 +76,21 @@ class EE_Ticket_Prices extends EE_BASE {
 		$this->_PRT_MDL = EEM_Price_Type::instance();
 		
 		$this->_get_all_event_prices_and_modifiers( $EVT_ID );
-		$this->_get_final_event_ticket_prices();
 		
-		return $this->_all_event_prices;
+	}
 
+
+
+
+	/**
+	* 	Get all final event prices
+	* 	@access 		public
+	* 	@return 		array
+	*/
+	public function get_all_final_event_prices() {
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+		//printr( $this->_all_event_prices, '$this->_all_event_prices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		return $this->_all_event_prices;				
 	}
 
 
@@ -92,6 +103,7 @@ class EE_Ticket_Prices extends EE_BASE {
 	* 	@return 		array
 	*/
 	private function _get_all_event_prices_and_modifiers( $EVT_ID = FALSE ) {
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		// get event specific prices and modifiers
 		if ( ! $event_prices = $this->_PRC_MDL->get_all_event_prices( $EVT_ID )) {
 			$event_prices = array();
@@ -102,6 +114,7 @@ class EE_Ticket_Prices extends EE_BASE {
 		}
 		// merge price lists
 		$this->_remove_overridden_defaults( $event_prices, $default_prices );
+		$this->_get_final_event_ticket_prices();
 	}
 
 
@@ -116,6 +129,7 @@ class EE_Ticket_Prices extends EE_BASE {
 	* 	@return 		array
 	*/
 	private function _remove_overridden_defaults( $event_prices, $default_prices ) {
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		// grab IDs for default prices (globals))
 		$default_price_IDs = array_keys( $default_prices );
 		// cycle thru events
@@ -142,6 +156,7 @@ class EE_Ticket_Prices extends EE_BASE {
 	* 	@return 		array
 	*/
 	private function _get_final_event_ticket_prices() {
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		// start with a few clean slates
 		$base_prices = array();
 		$price_modifiers = array();
@@ -164,8 +179,8 @@ class EE_Ticket_Prices extends EE_BASE {
 			}
 		}
 		
-//		printr( $base_prices, '$base_prices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( $price_modifiers, '$price_modifiers  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//printr( $base_prices, '$base_prices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//printr( $price_modifiers, '$price_modifiers  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
 		$this->_apply_modifiers_to_ticket_prices( $base_prices, $price_modifiers );
 		
@@ -183,13 +198,15 @@ class EE_Ticket_Prices extends EE_BASE {
 	* @return array
 	*/
 	private function _apply_modifiers_to_ticket_prices ( $base_prices=FALSE, $price_modifiers=FALSE ) {
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	
 		if ( ! $base_prices ) {
 			return FALSE;
 		}
 		
-		if ( ! $price_modifiers ) {
-			return $base_prices;
+		if ( ! $price_modifiers || empty( $price_modifiers )) {
+			$this->_all_event_prices = $base_prices;
+			return;
 		}
 
 		// start with a few clean slates
@@ -212,6 +229,20 @@ class EE_Ticket_Prices extends EE_BASE {
 //		}
 		
 		$this->_all_event_prices = $ticket_prices;
+	}
+
+
+
+
+
+	/**
+	*	undo obfuscation of price object
+	* 
+	* @param string $obfuscatedString
+	* @return string
+	*/
+	public static function unobfuscate ( $obfuscatedString = '' ) {
+		return unserialize( gzinflate( base64_decode( $obfuscatedString )));
 	}
 
 
@@ -247,6 +278,22 @@ abstract class EE_Ticket_Price extends EE_BASE {
 	protected $_price = 0.00;
 
 	/**
+	* the name for the FINAL Ticket Price
+	*
+	* @access protected
+	* @var string
+	*/
+	protected $_name = '';
+
+	/**
+	* list of price IDs
+	*
+	* @access protected
+	* @var array
+	*/
+	protected $_ID_list = array();
+
+	/**
 	* an array of ALL Prices and Price Modifiers employed to acheive the final Ticket Price
 	*
 	* @access protected
@@ -271,9 +318,12 @@ abstract class EE_Ticket_Price extends EE_BASE {
 	
 	// public methods
 	abstract public function price();
+	abstract public function name();
+	abstract public function ID_list();
 	abstract public function price_history();
 	abstract public function order_totals();
 	abstract public function order_levels();
+	abstract public function obfuscate();
 	// protected methods
 
 
@@ -297,13 +347,14 @@ abstract class EE_Ticket_Price extends EE_BASE {
 class EE_Base_Price extends EE_Ticket_Price {
 
 	protected $_ticket_price;
-	var $name;
+	protected $_name;
 	
 	function __construct( EE_Price_Composite $base_price ) {
 		global $org_options;
 		$this->_ticket_price = $base_price;
 		$this->_price = $base_price->amount();
-		$this->name = $base_price->name();
+		$this->_name = $base_price->name();
+		$this->_ID_list[] = $base_price->ID();
 		$this->_price_history[] = $base_price->name() . ': ' . $org_options['currency_symbol'] . number_format( max( $base_price->amount(), 0 ), 2, '.', ',' );
 		$this->_order_totals[ $this->_ticket_price->order() ] = $this->price();
 		if ( ! in_array( $this->_ticket_price->order(), $this->_order_levels )) {
@@ -322,6 +373,29 @@ class EE_Base_Price extends EE_Ticket_Price {
 	public function price() {
 		return number_format( max( $this->_price, 0 ), 2, '.', ',' );
 	}
+
+
+	/**
+	* 	get the name for the ticket price
+	* 
+	* 	@access 		public
+	* 	@return 		array
+	*/
+	public function name() {
+		return $this->_name;
+	}
+
+
+	/**
+	* 	get the list of price IDs
+	* 
+	* 	@access 		public
+	* 	@return 		array
+	*/
+	public function ID_list() {
+		return $this->_ID_list;
+	}
+
 
 	/**
 	* 	get the price history for the ticket
@@ -354,6 +428,20 @@ class EE_Base_Price extends EE_Ticket_Price {
 	public function order_levels() {
 		return $this->_order_levels;
 	}
+
+
+	/**
+	* 	serialize and encode object for use in forms, etc.
+	* 
+	* 	@access 		public
+	* 	@return 		string
+	*/
+	public function obfuscate() {
+		// use the following to unencode price objects:
+		// unserialize( gzinflate( base64_decode( $obfuscatedString )))
+		// OR call EE_Ticket_Price::unobfuscate( $obfuscatedString );		
+		return base64_encode( gzdeflate( serialize( $this )));
+	}
 		
 }
 
@@ -378,6 +466,8 @@ abstract class EE_Price_Modifier extends EE_Ticket_Price {
 	protected $_ticket_price;
 	protected $_price_mod;
 	protected $_price = 0.00;
+	protected $_name = '';	
+	protected $_ID_list = array();
 	protected $_mod_amount = 0.00;
 	protected $_price_history = array();
 	protected $_order_totals = array();
@@ -389,6 +479,9 @@ abstract class EE_Price_Modifier extends EE_Ticket_Price {
 		$this->_price_mod = $price_mod;
 		// copy elements
 		$this->_price = $this->_ticket_price->price();
+		$this->_name = $this->_ticket_price->name();
+		$this->_ID_list = $this->_ticket_price->ID_list();
+		$this->_ID_list[] = $price_mod->ID();
 		$this->_price_history = $this->_ticket_price->price_history();
 		$this->_order_totals = $this->_ticket_price->order_totals();
 		$this->_order_levels = $this->_ticket_price->order_levels();
@@ -400,6 +493,7 @@ abstract class EE_Price_Modifier extends EE_Ticket_Price {
 		$this->_set_price_history();
 		$this->_set_order_totals();
 	}
+
 
 }
 
@@ -511,6 +605,28 @@ class EE_Ticket_Price_Modifier extends EE_Price_Modifier {
 
 
 	/**
+	* 	get the name for the ticket price
+	* 
+	* 	@access 		public
+	* 	@return 		array
+	*/
+	public function name() {
+		return $this->_ticket_price->name();
+	}
+
+
+	/**
+	* 	get the list of price IDs
+	* 
+	* 	@access 		public
+	* 	@return 		array
+	*/
+	public function ID_list() {
+		return $this->_ID_list;
+	}
+
+
+	/**
 	* 	get the price history for the ticket
 	* 
 	* 	@access 		public
@@ -540,6 +656,20 @@ class EE_Ticket_Price_Modifier extends EE_Price_Modifier {
 	*/
 	public function order_levels() {
 		return $this->_order_levels;
+	}
+
+
+	/**
+	* 	serialize and encode object for use in forms, etc.
+	* 
+	* 	@access 		public
+	* 	@return 		string
+	*/
+	public function obfuscate() {
+		// use the following to unencode price objects:
+		// unserialize( gzinflate( base64_decode( $obfuscatedString )))
+		// OR call EE_Ticket_Price::unobfuscate( $obfuscatedString );		
+		return base64_encode( gzdeflate( serialize( $this )));
 	}
 
 
