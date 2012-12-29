@@ -1236,6 +1236,47 @@ abstract class EE_Admin_Page extends EE_BASE {
 		exit();		
 	}
 
+
+
+	
+
+	/**
+	 * _get_action_link_or_button
+	 * returns the button html for adding, editing, or deleting an item (depending on given type) 
+	 * 
+	 * @access  protected
+	 *
+	 * @param string $action use this to indicate which action the url is generated with.
+	 * @param string $type accepted strings must be defined in the $_labels['button'] array(as the key) property.
+	 * @param array $extra_request if the button requires extra params you can include them in $key=>$value pairs.  
+	 * @param string $class Use this to give the class for the button. Defaults to 'button-primary'	
+	 * @param string $base_url If this is not provided the _admin_base_url will be used as the default for the button base_url.  Otherwise this value will be used.	
+	 * @return string html for button
+	 */
+	protected function _get_action_link_or_button($action, $type = 'add', $extra_request = array(), $class = 'button-primary', $base_url = FALSE) {
+		//first let's validate the action (if $base_url is FALSE otherwise validation will happen further along)
+		if ( !isset($this->_page_routes[$action]) && !$base_url )
+			throw new EE_Error( sprintf( __('There is no page route for given action for the button.  This action was given: %s', 'event_espresso'), $action) );
+
+		if ( !isset( $this->_labels['buttons'][$type] ) )
+			throw new EE_Error( sprintf( __('There is no label for the given button type (%s)', 'event_esprsso'), $type) );
+
+		$_base_url = !$base_url ? $this->_admin_base_url : $base_url;
+
+		$query_args = array(
+			'action' => $action );
+
+		//merge extra_request args but make sure our original action takes precedence and doesn't get overwritten.
+		if ( !empty($extra_request) )
+			$query_args = array_merge( $extra_request, $query_args );
+
+		$url = wp_nonce_url( add_query_arg( $query_args, $_base_url), $action . '_nonce');
+
+		$button = '<a href="' . $url . '" class="' . $class . '">' . $this->_labels['buttons'][$type] . '</a>';
+
+		return $button;
+	}
+
 }
 
 
