@@ -34,6 +34,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	//set in define_page_props()
 	protected $_admin_base_url;
 	protected $_admin_page_title;
+	protected $_labels;
+	
+	//set early within EE_Admin_Init
 	protected $_wp_page_slug;
 
 	//navtabs
@@ -123,7 +126,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 	/**
 	 * _define_page_props
 	 * child classes define page properties in here.  Must include at least:
-	 * $_admin_base_url, $_admin_page_title, $_wp_page_slug
+	 * $_admin_base_url = base_url for all admin pages
+	 * $_admin_page_title = default admin_page_title for admin pages
+	 * $_labels = array of default labels for various automatically generated elements:
+	 * 	array(
+	 * 		'buttons' => array(
+	 * 			'add' => __('label for add new button'),
+	 * 	 		'edit' => __('label for edit button'),
+	 * 	  		'delete' => __('label for delete button')
+	 * 	  	 	)
+	 * 	  	)
 	 *
 	 * @abstract
 	 * @access protected
@@ -141,6 +153,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * $this->_page_routes = array(
 	 * 		'default' => array(
 	 * 			'func' => '_default_method_handling_route',
+	 * 			'labels' => array(
+	 * 				'buttons' => array(
+	 * 					'add' => __('label for adding item'),
+	 * 				 	'edit' => __('label for editing item'),
+	 * 				  	'delete' => __('label for deleting item')
+	 * 			    )
+	 * 			), //optional an array of custom labels for various automatically generated elements to use on the page. If this isn't present then the defaults will be used as set for the $this->_labels in _define_page_props() method
 	 * 			'args' => array('array','of','args'),
 	 * 			'nav' => array(
 	 * 				'label' => __('Label for Tab', 'event_espresso').
@@ -473,7 +492,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 
-		$this->_set_nav_tabs(); //set the nav_tabs array	
+		$this->_set_nav_tabs(); //set the nav_tabs array
+		$this->_set_current_labels($route);	
 
 		
 		// check if callback has args
@@ -538,6 +558,29 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+
+
+	/**
+	 * _set_current_labels
+	 * This method modifies the _labels property with any optional specific labels indicated in the _page_routes property array
+	 *
+	 * @access private
+	 * @param array $route The array for the current route request
+	 * @return void
+	 */
+	private function _set_current_labels($route) {
+		if ( isset($route['labels']) ) {
+			foreach ( $route['labels'] as $label => $text ) {
+				if ( is_array($text) ) {
+					foreach ( $text as $sublabel => $subtext ) {
+						$this->_labels[$label][$sublabel] = $subtext;
+					}
+				} else {
+					$this->_labels[$label] = $text;
+				}
+			}
+		}
+	}
 
 
 
@@ -703,6 +746,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 
+	/************************/
+	/** LIST TABLE METHODS **/
+	/************************/
+
 
 	/**
 	 * 		set views array for List Table
@@ -728,6 +775,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+
+
+
+
 	/**
 	 * 		set current view for List Table
 	*		@access public
@@ -746,6 +797,89 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+	/**
+	 * 		get_list_table_view_RLs - get it? View RL ?? URL ??
+	*		@access protected
+	*		@return array
+	*/
+	protected function get_list_table_view_RLs() {
+	
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		$query_args = array();
+
+		if ( empty( $this->_views )) {
+			$this->_set_list_table_views();
+		}
+
+		// cycle thru views
+		foreach ( $this->_views as $key => $view ) {
+			// check for current view
+			if ( $this->_view == $view['slug']) {
+				$this->_views[ $key ]['class'] = 'current';
+			} else {
+				$this->_views[ $key ]['class'] = '';
+			}
+			if ( $this->_req_action != 'default' ) {
+				$query_args['action'] = $this->_req_action;
+				$query_args['_wpnonce'] = wp_create_nonce( $query_args['action'] . '_nonce' );
+			}
+			$query_args['status'] = $view['slug'];
+			$this->_views[ $key ]['url'] = add_query_arg( $query_args, $this->_admin_base_url );
+		}
+		
+		return $this->_views;
+	}
+
+
+	/**
+	 * _entries_per_page_dropdown
+	 * generates a drop down box for selecting the number of visiable rows in an admin page list table
+	 * @todo: Note: ideally this should be added to the screen options dropdown as that would be consistent with how WP does it.
+	 * @access protected
+	 * @param int $max_entries total number of rows in the table
+	 * @return string
+	*/
+	protected function _entries_per_page_dropdown( $max_entries = FALSE ) {
+		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		$values = array( 10, 25, 50, 100 );
+		$per_page = ( ! empty( $_REQUEST['per_page'] )) ? absint( $_REQUEST['per_page'] ) : 10;
+		
+		if ( $max_entries ) {
+			$values[] = $max_entries;
+			sort( $values );
+		}
+	
+		$entries_per_page_dropdown = '
+			<div id="entries-per-page-dv" class="alignleft actions">
+				<label class="hide-if-no-js">
+					Show
+					<select id="entries-per-page-slct" name="entries-per-page-slct">';
+		
+		foreach ( $values as $value ) {
+			if ( $value < $max_entries ) {			
+				$selected = $value == $per_page ?  ' selected="' . $per_page . '"' : '';
+				$entries_per_page_dropdown .= '
+						<option value="'.$value.'"'.$selected.'>'.$value.'&nbsp;&nbsp;</option>';
+			}
+		}
+
+		$selected = $max_entries == $per_page ?  ' selected="' . $per_page . '"' : '';
+		$entries_per_page_dropdown .= '
+						<option value="'.$max_entries.'"'.$selected.'>All&nbsp;&nbsp;</option>';
+						
+		$entries_per_page_dropdown .= '
+					</select>
+					entries
+				</label>
+				<input id="entries-per-page-btn" class="button-secondary" type="submit" value="Go" >
+			</div>
+		';			
+		return $entries_per_page_dropdown;
+	}
+
+
+
 
 	/**
 	 * 		_set_search_attributes
@@ -756,6 +890,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->template_args['search']['btn_label'] = sprintf( __( 'Search %s', 'event_espresso' ), $this->page_label );
 		$this->template_args['search']['callback'] = 'search_' . $this->page_slug;
 	}
+
+	/*** END LIST TABLE METHODS **/
+	/*****************************/
+
+
 
 
 
@@ -860,89 +999,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		<?php
 	}
 
-
-
-
-	/**
-	 * 		get_list_table_view_RLs - get it? View RL ?? URL ??
-	*		@access protected
-	*		@return array
-	*/
-	protected function get_list_table_view_RLs() {
-	
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		$query_args = array();
-
-		if ( empty( $this->_views )) {
-			$this->_set_list_table_views();
-		}
-
-		// cycle thru views
-		foreach ( $this->_views as $key => $view ) {
-			// check for current view
-			if ( $this->_view == $view['slug']) {
-				$this->_views[ $key ]['class'] = 'current';
-			} else {
-				$this->_views[ $key ]['class'] = '';
-			}
-			if ( $this->_req_action != 'default' ) {
-				$query_args['action'] = $this->_req_action;
-				$query_args['_wpnonce'] = wp_create_nonce( $query_args['action'] . '_nonce' );
-			}
-			$query_args['status'] = $view['slug'];
-			$this->_views[ $key ]['url'] = add_query_arg( $query_args, $this->_admin_base_url );
-		}
-		
-		return $this->_views;
-	}
-
-
-	/**
-	 * _entries_per_page_dropdown
-	 * generates a drop down box for selecting the number of visiable rows in an admin page list table
-	 * @todo: Note: ideally this should be added to the screen options dropdown as that would be consistent with how WP does it.
-	 * @access protected
-	 * @param int $max_entries total number of rows in the table
-	 * @return string
-	*/
-	protected function _entries_per_page_dropdown( $max_entries = FALSE ) {
-		
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		$values = array( 10, 25, 50, 100 );
-		$per_page = ( ! empty( $_REQUEST['per_page'] )) ? absint( $_REQUEST['per_page'] ) : 10;
-		
-		if ( $max_entries ) {
-			$values[] = $max_entries;
-			sort( $values );
-		}
-	
-		$entries_per_page_dropdown = '
-			<div id="entries-per-page-dv" class="alignleft actions">
-				<label class="hide-if-no-js">
-					Show
-					<select id="entries-per-page-slct" name="entries-per-page-slct">';
-		
-		foreach ( $values as $value ) {
-			if ( $value < $max_entries ) {			
-				$selected = $value == $per_page ?  ' selected="' . $per_page . '"' : '';
-				$entries_per_page_dropdown .= '
-						<option value="'.$value.'"'.$selected.'>'.$value.'&nbsp;&nbsp;</option>';
-			}
-		}
-
-		$selected = $max_entries == $per_page ?  ' selected="' . $per_page . '"' : '';
-		$entries_per_page_dropdown .= '
-						<option value="'.$max_entries.'"'.$selected.'>All&nbsp;&nbsp;</option>';
-						
-		$entries_per_page_dropdown .= '
-					</select>
-					entries
-				</label>
-				<input id="entries-per-page-btn" class="button-secondary" type="submit" value="Go" >
-			</div>
-		';			
-		return $entries_per_page_dropdown;
-	}
 	
 
 
