@@ -18,7 +18,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * Events_Admin_Page
  *
- * This contains the logic for setting up the Events related pages.  All inline docs with parent class.
+ * This contains the logic for setting up the Events related pages.  Any methods without phpdoc comments have inline docs with parent class. 
  *
  * NOTE:  TODO: This is a straight conversion from the legacy 3.1 events related pages.  It is NOT optimized and will need modification to fully use the new system (and also will need adjusted when Events model is setup)
  *
@@ -54,7 +54,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 	protected function _define_page_props() {
 		$this->_admin_base_url = EVENTS_ADMIN_URL;
-		$this->admin_page_title = __('Events', 'event_espresso');
+		$this->_admin_page_title = __('Events', 'event_espresso');
+		$this->_labels = array(
+			'buttons' => array(
+				'add' => __('Add New Event', 'event_espresso'),
+				'edit' => __('Edit Event', 'event_espresso'),
+				'delete' => __('Delete Event', 'event_espresso')
+			)
+		);
 	}
 
 
@@ -78,7 +85,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'func' => '_event_details',
 				'args' => array('add')
 				),
-			'delete_event' => '_delete_event',
+			'delete_events' => '_delete_events',
 			'insert_event' => array(
 				'func' => '_insert_or_update_event',
 				'args' => array('new_event' => TRUE)
@@ -87,12 +94,12 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'func' => '_insert_or_update_event',
 				'args' => array('new_event' => FALSE )
 				),
-			'trash_event' => array(
-				'func' => '_trash_or_restore_event',
+			'trash_events' => array(
+				'func' => '_trash_or_restore_events',
 				'args' => array('trash' => TRUE )
 				),
-			'restore_event' => array(
-				'func' => '_trash_or_restore_event',
+			'restore_events' => array(
+				'func' => '_trash_or_restore_events',
 				'args' => array('trash' => FALSE )
 				),
 			'view_report' => array(
@@ -112,6 +119,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 	}
 
 
+	protected function _add_screen_options_default() {
+		$this->_add_screen_options_overview();
+	}
+
+
+	protected function _add_screen_options_overview() {
+		$this->_per_page_screen_option();
+	}
 
 
 
@@ -145,6 +160,36 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 
+	protected function _set_list_table_views() {
+		$this->_views = array(
+			'all' => array(
+				'slug' => 'all',
+				'label' => __('View All Events', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'delete_events' => __('Delete Permanently', 'event_espresso')
+					)
+				),
+			'today' => array(
+				'slug' => 'today',
+				'label' => __('Today', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'delete_events' => __('Delete Permanently', 'event_espresso')
+					)
+				),
+			'month' => array(
+				'slug' => 'month',
+				'label' => __('This Month', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'delete_events' => __('Delete Permanently', 'event_espresso')
+					)
+				)
+			);
+	}
+
+
 
 
 	/**
@@ -154,7 +199,16 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * @access private
 	 * @return string html for generated table
 	 */
-	private function _events_overview_list_table() {}
+	private function _events_overview_list_table() {
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+
+		$this->_admin_page_title .= $this->_get_action_link_or_button('add_event', 'add', array(), 'button add-new-h2');
+		//todo when initializing the wp_list_table for events.  Let's just send $this along as the $data parameter so we can use the methods in this object for retrieval of events (with paging and view etc).
+
+	}
+
+
+
 
 
 
@@ -218,4 +272,34 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * @return string html for the report page
 	 */
 	private function _view_report() {}
+
+
+
+
+	/**
+	 * _get_events()
+	 * This method simply returns all the events (for the given _view and paging)
+	 *
+	 * @access  private
+	 *
+	 * @param bool $count if TRUE then we just return a count of ALL events matching the given _view.  If FALSE then we return an array of event objects that match the given _view and paging parameters.
+	 * @return array an array of event objects.
+	 */
+	private function _get_events($count = FALSE) {
+
+	}
+
+
+
+
+	/**
+	 * _get_events_count
+	 * This method just returns a count of events for the given $which value (i.e. 'all', 'today', 'month')
+	 * @param  string $which indicate what we're using to filter the event count.
+	 * @return [type]        [description]
+	 */
+	private function _get_events_count($which) {
+
+	}
+
 } //end class Events_Admin_Page
