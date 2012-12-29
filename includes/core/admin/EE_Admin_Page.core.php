@@ -1277,8 +1277,31 @@ abstract class EE_Admin_Page extends EE_BASE {
 		return $button;
 	}
 
-}
+	/**
+	 * get_views
+	 * just return the _views property value
+	 * 
+	 * @access public
+	 * @return array contents of _views property
+	 */
+	public function get_views() {
+		return $this->_views;
+	}
 
+
+
+
+	/**
+	 * get_view
+	 *
+	 * @access public
+	 * @return string content of _view property
+	 */
+	public function get_view() {
+		return $this->_view;
+	}
+
+}
 
 	
 // end of file:  includes/core/admin/EE_Admin_Page.core.php

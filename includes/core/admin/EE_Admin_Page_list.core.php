@@ -21,6 +21,8 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * Base list table class for EE_Admin_Page list tables.  The various child classes would just have to extend this class to add their own columns etc.
  *
+ * A good resource for implementing WP_List_Table api is: @link http://wpengineer.com/2426/wp_list_table-a-step-by-step-guide/
+ *
  * @package		EE_Admin_Page_list
  * @subpackage	includes/core/admin/EE_Admin_Page_list.core.php
  * @abstract
@@ -39,7 +41,6 @@ abstract class EE_Admin_Page_list extends WP_List_Table {
 	protected $_view;
 	protected $_views;
 	protected $_wp_list_args;
-	protected $_entries_per_page_dropdown;
 	protected $_columns;
 	protected $_sortable_columns;
 	protected $_per_page;
@@ -51,12 +52,13 @@ abstract class EE_Admin_Page_list extends WP_List_Table {
 	 * @param array  $data  passed in data for showing in table
 	 * @param string $view  current view 
 	 * @param array $views possible views[keys], view links[values]
+	 * @todo MODIFY THIS so all we get in here is the EE_Admin_Page type object.  We can get our values from the object ;)
 	 */
-	public function __construct( $data = array(), $view = NULL, $views = NULL, $entries_per_page_dropdown ) {
-		$this->_data = $data;
-		$this->_view = $view;
-		$this->_views = $views;
-		$this->_entries_per_page_dropdown = $entries_per_page_dropdown;
+	public function __construct( EE_Admin_Page $admin_page ) {
+		$this->_data = $this->_get_data();
+		$this->_view = $admin_page->get_view();
+		$this->_views = $admin_page->get_views();
+
 		$this->_nonce_action_ref = $this->_view;
 
 		$this->_set_properties();
@@ -67,10 +69,18 @@ abstract class EE_Admin_Page_list extends WP_List_Table {
 		$this->prepare_items();
 	}
 
+
+	/**
+	 * _get_data
+	 * this method is used to retrieve the data for the given $view and 
+	 * @return [type] [description]
+	 */
+	abstract protected function _get_data();
+
 	/**
 	 * set the properties that this class needs to be able to execute wp_list_table properly
 	 * properties set:
-	 * _wp_list_args = 
+	 * _wp_list_args = what the arguments required for the parent _wp_list_table.
 	 * _columns = set the columns in an array.
 	 * _sortable_columns = colums that are sortable (array).
 	 * @abstract
