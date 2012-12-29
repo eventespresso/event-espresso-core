@@ -623,7 +623,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @access public
 	 * @return void
 	 */
-	public function admin_init_global() {}
+	public function admin_init_global() {
+		//this will save any per_page screen options if they are present
+		add_filter('set-screen-option', array($this, 'set_per_page_screen_option'), 10, 3);
+	}
 
 
 
@@ -1277,6 +1280,45 @@ abstract class EE_Admin_Page extends EE_BASE {
 		return $button;
 	}
 
+
+
+
+
+	/**
+	 * _per_page_screen_option
+	 * Utility function for adding in a per_page_option in the screen_options_dropdown.
+	 * @return void
+	 */
+	protected function _per_page_screen_option() {
+		$option = 'per_page';
+		$args = array(
+			'label' => $this->_admin_page_title,
+			'default' => 10,
+			'option' => $this->_current_page . $this->_current_view . '_per_page'
+			);
+		add_screen_option( $option, $args );
+	}
+
+
+
+	
+	/**
+	 * set_per_page_screen_option
+	 * All this does is make sure that WordPress saves any per_page screen options (if set) for the current page.
+	 * (for params definition @see WordPress set-screen-option filter)
+	 * 
+	 * @access public
+	 * @return int per_page value
+	 */
+	public function set_per_page_screen_option($status, $option, $value) {
+		if ( $this->_current_page . $this->_current_view . '_per_page' ==  $option )
+			return $value;
+	}
+
+
+
+
+
 	/**
 	 * get_views
 	 * just return the _views property value
@@ -1300,6 +1342,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	public function get_view() {
 		return $this->_view;
 	}
+
 
 }
 
