@@ -163,6 +163,7 @@ abstract class EE_Admin_Page_list extends WP_List_Table {
 	/**
 	 * _setup_data
 	 * this method is used to setup the $_data and $_all_data_count properties 
+	 * @uses $this->_admin_page
 	 * @return void
 	 */
 	abstract protected function _setup_data();
@@ -247,7 +248,20 @@ abstract class EE_Admin_Page_list extends WP_List_Table {
 		return $this->_views;
 	}
 
-	public function views
+	public function display_views() {
+		$views = $this->get_views();
+		$views = apply_filters( 'views_' . $this->screen->id, $views );
+
+		if ( empty( $views ) )
+			return;
+
+		echo "<ul class='subsubsub'>\n";
+		foreach ( $views as $view ) {
+			$views[ $view['slug'] ] = "\t<li class='" . $view['class'] . "'>" . $view['url'];
+		}
+		echo implode( " |</li>\n", $views ) . "</li>\n";
+		echo "</ul>";
+	}
 
 	public function get_sortable_columns() {
 		return $this->_sortable_columns;
