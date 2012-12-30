@@ -79,11 +79,6 @@ function espresso_define_tables_and_paths() {
 	//Define the gateway directory and url
 	define("EVENT_ESPRESSO_GATEWAY_DIR", $uploads['basedir'] . DS . 'espresso' . DS . 'gateways' . DS);
 	define("EVENT_ESPRESSO_GATEWAY_URL", $uploads['baseurl'] . DS . 'espresso' . DS . 'gateways' . DS);
-	
-	/**
-	 * test demonstration for new admin system
-	 */
-	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'core/new_admin/admin_init.php';
 }
 
 
@@ -93,7 +88,7 @@ function espresso_define_tables_and_paths() {
 
 /**
  * 		Automagically load non-singleton class files - no need to include or require
- * 		ONLY woks with class objects created via  "new"  ie: $object = new SomeClassName();
+ * 		ONLY works with class objects created via  "new"  ie: $object = new SomeClassName();
  *
  * 		@access 		public
 * 		@param		$class		path and name of the class file to be loaded

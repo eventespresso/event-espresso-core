@@ -166,7 +166,7 @@ class EE_Admin_Page_load {
 		if ( $admin_screens = glob( EE_CORE_ADMIN . '*' ) ) {
 			foreach( $admin_screens as $admin_screen ) {
 				// files and anything in the exclude array need not apply
-				if ( is_dir( $admin_screen ) && !in_array( $admin_screen, $exclude )) {
+				if ( is_dir( $admin_screen ) && !in_array( basename($admin_screen), $exclude )) {
 					// these folders represent the different EE admin pages
 					$installed_refs[] = basename( $admin_screen );
 				}
@@ -218,10 +218,10 @@ class EE_Admin_Page_load {
 	 * @return void
 	 */
 	private function _set_menus() {
+		global $espresso_manager;
 		//prep the pages (sort, group, set if display etc.)
 		$this->_prep_pages();
 		$parent_slug = 'events';
-
 
 		//loop through prepped pages and hook into WP's menu functions
 		$i=0;
@@ -292,6 +292,7 @@ class EE_Admin_Page_load {
 		if ( empty( $pages_array ) )
 			throw new EE_Error(__('Something went wrong when prepping the admin pages', 'event_espresso') );
 
+
 		//let's sort the groups, make sure it's a valid group, add header (if to show), then 
 		foreach ( $pages_array as $group => $pages ) {
 			//valid group?
@@ -301,6 +302,7 @@ class EE_Admin_Page_load {
 			//first sort
 			usort( $pages, array($this, '_sort_pages' ) );
 
+
 			//prepend header but only if header is to show.
 			if ( $this->_admin_menu_groups[$group]['show_heading'] ) {
 				array_unshift( $pages, $this->_admin_menu_groups[$group] );
@@ -308,11 +310,14 @@ class EE_Admin_Page_load {
 
 			//reset $pages_array with prepped data
 			$pages_array[$group] = $pages;
+
 		}
 
+
 		//now let's setup the _prepped_installed_pages property
-		foreach ( $this->_admin_menu_groups as $group ) {
-			array_push($this->_prepped_installed_pages, $pages_array[$group]);
+		foreach ( $this->_admin_menu_groups as $group => $details ) {
+			if ( isset($pages_array[$group] ) )
+				$this->_prepped_installed_pages = array_merge($this->_prepped_installed_pages , $pages_array[$group]);
 		}
 
 		
