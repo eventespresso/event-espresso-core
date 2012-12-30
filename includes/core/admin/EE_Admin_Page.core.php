@@ -1008,14 +1008,30 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 	/**
-	*		_add_admin_page_meta_box - facade for add_meta_box
-	*		@access public
-	* 		@param		int 			$max_entries 		total number of rows in the table
-	*		@return void
-	*/		
-	public function _add_admin_page_meta_box( $action, $title, $callback, $callback_args ) {	
+	 * facade for add_meta_box
+	 * @param string  $action        where the metabox get's displayed
+	 * @param string  $title         Title of Metabox (output in metabox header)		
+	 * @param string  $callback      If not empty and $create_fun is set to false then we'll use a custom callback instead of the one created in here.
+	 * @param array  $callback_args an array of args supplied for the metabox
+	 * @param string  $column        what metabox column
+	 * @param string  $priority      give this metabox a priority (using accepted priorities for wp meta boxes)
+	 * @param boolean $create_func   default is true.  Basically we can say we don't WANT to have the runtime function created but just set our own callback for wp's add_meta_box.
+	 */
+	public function _add_admin_page_meta_box( $action, $title, $callback, $callback_args, $column = 'normal', $priority = 'high', $create_func = true ) {	
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $callback );
-		add_meta_box( str_replace( '_', '-', $action ) . '-mbox', $title, array( $this, $callback . '_meta_box' ), $this->wp_page_slug, 'normal', 'high', $callback_args );
+
+		//if we have empty callback args and we want to automatically create the metabox callback then we need to make sure the callback args are generated.
+		if ( empty( $callback_args ) && $create_func ) {
+			$callback_args = array(
+				'template_path' => $this->_template_path,
+				'template_args' => $this->template_args,
+				);
+		}
+
+		//if $create_func is true (default) then we automatically create the function for displaying the actual meta box.  If false then we take the $callback reference passed through and use it instead (so callers can define their own callback function/method if they wish)
+		$call_back_func = $create_func ? create_function('$post, $metabox', 'do_action( "action_hook_espresso_log", __FILE__, __FUNCTION__, ""); echo espresso_display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );') : $callback;
+
+		add_meta_box( str_replace( '_', '-', $action ) . '-mbox', $title, $call_back_func, $this->wp_page_slug, $column, $priority, $callback_args );
 	}
 
 
@@ -1023,15 +1039,27 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 	/**
-	*		_add_admin_page_sidebar_meta_box - facade for add_meta_box
-	*		@access public
-	* 		@param		int 			$max_entries 		total number of rows in the table
-	*		@return void
-	*/		
-	public function _add_admin_page_sidebar_meta_box( $action, $title, $callback, $callback_args ) {	
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $callback );
-		add_meta_box( str_replace( '_', '-', $action ) . '-sidebar-mbox', $title, array( $this, $callback . '_sidebar_meta_box' ), $this->wp_page_slug, 'side', 'high', $callback_args );
+	 * generates HTML wrapper for and admin details page that contains metaboxes in columns
+	 * @return [type] [description]
+	 */
+	public function display_admin_page_with_metabox_columns() {
+		$screen = get_current_screen();
+		$this->template_args['current_screen_widget_class'] = 'columns-' . 
+		$screen->get_columns();
+		$this->template_args['current_page'] = $this->wp_page_slug;
+		$template_path = EE_CORE_ADMIN . 'admin_details_metabox_column_wrapper.template.php';
+
+		$this->template_args['screen'] = $screen;
+		$this->template_args['post_body_content'] = $this->template_args['admin_page_content'];
+		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE);
+
+		//display any espresso_notices (generated from metaboxes)
+		$this->display_espresso_notices();
+
+		//the final wrapper
+		$this->admin_page_wrapper();
 	}
+
 
 
 
