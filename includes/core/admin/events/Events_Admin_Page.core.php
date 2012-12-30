@@ -209,7 +209,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_event', 'add', array(), 'button add-new-h2');
-	
+		$this->template_args['list_table'] = new Events_Admin_List_Table(&$this);
+		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
 
@@ -285,27 +286,98 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * _get_events()
 	 * This method simply returns all the events (for the given _view and paging)
 	 *
-	 * @access  protected
+	 * @access public
 	 *
+	 * @param int $per_page count of items per page (20 default);
+	 * @param int $current_page what is the current page being viewed.
 	 * @param bool $count if TRUE then we just return a count of ALL events matching the given _view.  If FALSE then we return an array of event objects that match the given _view and paging parameters.
 	 * @return array an array of event objects.
 	 */
-	protected function _get_events($count = FALSE) {
+	public function get_events($per_page = 20, $current_page = 1, $count = FALSE) {
+		global $wpdb, $org_options;
 
+		$offset = ($current_page-1)*$per_page; 
+		$limit = $count ? '' : ' LIMIT ' . $per_page . ',' . $offset;
+		$orderby = isset($_REQUEST['orderby']) ? " ORDER BY e." . $_REQUEST['orderby'] : " ORDER BY e.event_name";
+		$order = isset($_REQUEST['order']) ? " ORDER " . $_REQUEST['order'] : " ORDER desc";
+
+		if (isset($_REQUEST['month_range'])) {
+			$pieces = explode('-', $_REQUEST['month_range'], 3);
+			$year_r = !empty($pieces[0]) ? $pieces[0] : '';
+			$month_r = !empty($pieces[1]) ? $pieces[1] : '';
+		}
+		
+		$sql = '';
+		$sql = $count ? "SELECT COUNT(e.id) " : "SELECT e.id as event_id, e.event_name, e.slug, e.event_identifier, e.reg_limit, e.is_active, e.recurrence_id, e.event_meta, e.event_status, dtt.*";
+
+		if ( !$count ) {
+
+			//venue information
+			if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] ) {
+				$sql .= ", v.name AS venue_title, v.address AS venue_address, v.address2 AS venue_address2, v.city AS venue_city, v.state AS venue_state, v.zip AS venue_zip, v.country AS venue_country ";
+			} else {
+				$sql .= ", e.venue_title, e.phone, e.address, e.address2, e.city, e.state, e.zip, e.country ";
+			}
+
+			$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
+			$sql .= " LEFT JOIN " . ESP_DATETIME . " dtt ON dtt.EVT_ID = e.id ";
+
+			if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager']) {
+				$sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " vr ON vr.event_id = e.id ";
+				$sql .= " LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = vr.venue_id ";
+			}
+
+		}
+
+		if ( isset($_REQUEST['category_id']) && $_REQUEST['category_id'] != '') {
+			$sql .= " LEFT JOIN " . EVENTS_CATEGORY_REL_TABLE . " cr ON cr.event_id = e.id ";
+			$sql .= " LEFT JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = cr.cat_id ";
+		}
+
+		$sql .= ' WHERE ';
+
+		if ( !$count ) {
+			$sql .= "dtt.DTT_is_primary = '1' ";
+		}
+
+		$sql .= ( isset($_REQUEST['event_status']) && ($_REQUEST['event_status'] != '' && $_REQUEST['event_status'] != 'IA')) ? " AND e.event_status = '" . $_REQUEST['event_status'] . "' " : " AND e.event_status != 'D' ";
+		$sql .= $_REQUEST['category_id'] != '' ? " AND c.id = '" . $_REQUEST['category_id'] . "' " : '';
+
+		if ($_REQUEST['month_range'] != '' && $_REQUEST['month_range'] > 0) {
+			$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime($year_r . '-' . $month_r . '-01') . "' AND '" . strtotime($year_r . '-' . $month_r . '-31') . "' ";
+		} elseif (isset($_REQUEST['today']) && $_REQUEST['today'] == 'true') {
+			$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime(date('Y-m-d') . ' 0:00:00') . "' AND '" . strtotime(date('Y-m-d') . ' 23:59:59') . "' ";
+		} elseif (isset($_REQUEST['this_month']) && $_REQUEST['this_month'] == 'true') {
+			$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime($this_year_r . '-' . $this_month_r . '-01') . "' AND '" . strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month) . "' ";
+		}
+
+		$sql .= " GROUP BY e.id " . $orderby . $order . $limit;
+
+		//todo: This needs to be prepared to protect agains injection attacks... but really the whole stinking query could probably be better layed out.
+		
+		if ( $count ) {
+			$events = $wpdb->get_var( $sql );
+		} else {
+			$events = $wpdb->get_results( $sql );
+		}
+
+		return $events;
 	}
 
 
 
 
+
+
 	/**
-	 * _get_events_count
+	 * _get_filter_events_count
 	 * This method just returns a count of events for the given $which value (i.e. 'all', 'today', 'month')
 	 *
 	 * @access  protected
 	 * @param  string $which indicate what we're using to filter the event count.
-	 * @return [type]        [description]
+	 * @return int   return count
 	 */
-	protected function _get_events_count($which) {
+	public function get_filter_events_count($which = 'all') {
 
 	}
 

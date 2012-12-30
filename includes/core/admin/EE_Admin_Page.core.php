@@ -76,6 +76,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+
 	/**
 	 * 		@Constructor
 	 * 		@access public
@@ -1143,7 +1144,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->template_args['current_page'] = $this->_wp_page_slug;
 		$template_path = EE_CORE_ADMIN . 'admin_list_wrapper.template.php';
 
-		$this->template_args['list_table'] = isset( $this->template_args['list_table'] ) ? $this->template_args['list_table'] : NULL;
+		$this->template_args['table_url'] = add_query_arg( array( 'noheader' => 'true', $this->_admin_base_url) );
+
 		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE );
 
 		// the final template wrapper
@@ -1382,7 +1384,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$args = array(
 			'label' => $this->_admin_page_title,
 			'default' => 10,
-			'option' => $this->_current_page . $this->_current_view . '_per_page'
+			'option' => $this->_current_page . '_' . $this->_current_view . '_per_page'
 			);
 		add_screen_option( $option, $args );
 	}
@@ -1414,6 +1416,32 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	public function get_view() {
 		return $this->_view;
+	}
+
+
+
+
+	/**
+	 * get_current_page
+	 *
+	 * @access public
+	 * @return string _current_page property value
+	 */
+	public function get_current_page() {
+		return $this->_current_page;
+	}
+
+
+
+
+	/**
+	 * get_current_view
+	 *
+	 * @access public
+	 * @return string _current_view property value
+	 */
+	public function get_current_view() {
+		return $this->_current_view;
 	}
 
 

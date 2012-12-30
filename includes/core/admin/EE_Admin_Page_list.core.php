@@ -35,7 +35,7 @@ if ( ! class_exists( 'WP_List_Table' )) {
     require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 }
 
-abstract class EE_Admin_Page_list extends WP_List_Table {
+abstract class EE_Admin_List_Table extends WP_List_Table {
 
 	/**
 	 * $_data
@@ -51,6 +51,15 @@ abstract class EE_Admin_Page_list extends WP_List_Table {
 	 * @var int
 	 */
 	protected $_all_data_count;
+
+
+
+	/**
+	 * _screen
+	 * This is what will be referenced as the slug for the current screen
+	 * @var string
+	 */
+	protected $_screen
 
 
 
@@ -123,12 +132,39 @@ abstract class EE_Admin_Page_list extends WP_List_Table {
 	 */
 	protected $_sortable_columns;
 
+
+
+	/**
+	 * _hidden_columns
+	 * An array of hidden columns (if needed)
+	 * @var array  array('internal-name', 'internal-name')
+	 */
+	protected $_hidden_columns;
+
+
+
+
+
 	/**
 	 * _per_page
 	 * holds the per_page value
 	 * @var int
 	 */
 	protected $_per_page;
+
+
+
+
+	/**
+	 * _current_page
+	 * holds what page number is currently being viewed
+	 * @var int
+	 */
+	protected $_current_page;
+
+
+
+
 
 
 	/**
@@ -147,6 +183,8 @@ abstract class EE_Admin_Page_list extends WP_List_Table {
 	public function __construct( EE_Admin_Page $admin_page ) {
 		$this->_view = $admin_page->get_view();
 		$this->_admin_page = $admin_page;
+		$this->_current_page = $this->get_pagenum();
+		$this->_screen = $this->_admin_page->get_current_page() . '_' . $this->_admin_page->get_current_screen()
 		$this->_setup_data();
 
 		$this->_nonce_action_ref = $this->_view;
@@ -162,7 +200,7 @@ abstract class EE_Admin_Page_list extends WP_List_Table {
 
 	/**
 	 * _setup_data
-	 * this method is used to setup the $_data and $_all_data_count properties 
+	 * this method is used to setup the $_data, $_all_data_count, and _per_page properties 
 	 * @uses $this->_admin_page
 	 * @return void
 	 */
@@ -177,6 +215,7 @@ abstract class EE_Admin_Page_list extends WP_List_Table {
 	 * _wp_list_args = what the arguments required for the parent _wp_list_table.
 	 * _columns = set the columns in an array.
 	 * _sortable_columns = colums that are sortable (array).
+	 * _hidden_columns = columns that are hidden (array)
 	 * _default_orderby = the default orderby for sorting.
 	 * @abstract
 	 * @access protected
@@ -244,13 +283,11 @@ abstract class EE_Admin_Page_list extends WP_List_Table {
 
 	public function prepare_items() {
 
-		$this->_per_page = ( !empty( $_REQUEST['per_page'] ) ) ? absint( $_REQUEST['per_page'] ) : 10;
 		$columns = $this->get_columns();
-		$hidden = array();
+		$hidden = $this->get_hidden_columns();
 		$sortable = $this->get_sortable_columns();
 		$this->_column_headers = array($columns, $hidden, $sortable);
 		$total_items = $this->_all_data_count;
-		$current_page = $this->get_pagenum();
 
 		$this->process_bulk_action();
 
@@ -266,7 +303,7 @@ abstract class EE_Admin_Page_list extends WP_List_Table {
 	}
 
 	public function get_columns() {
-		return $this->_columns;
+		return (array) $this->_columns;
 	}
 
 	public function get_views() {
@@ -290,7 +327,11 @@ abstract class EE_Admin_Page_list extends WP_List_Table {
 	}
 
 	public function get_sortable_columns() {
-		return $this->_sortable_columns;
+		return (array) $this->_sortable_columns;
+	}
+
+	public function get_hidden_columns() {
+		return (array) $this->_get_hidden_columns;
 	}
 
 	public function extra_tablenav( $which ) {
