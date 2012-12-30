@@ -1071,27 +1071,87 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@return void
 	*/		
 	public function display_admin_page_with_sidebar() {		
-		
+		$this->display_admin_page(TRUE);
+	}
+
+
+
+
+	/**
+	*		generates  HTML wrapper for an admin details page (except no sidebar)
+	*		@access public
+	*		@return void
+	*/
+	public function display_admin_page_with_no_sidebar() {
+		$this->display_admin_page();
+	}
+
+
+	/**
+	 * display_admin_page
+	 * contains the code for actually displaying an admin page
+	 *
+	 * @access private
+	 * @param  boolean $sidebar true with sidebar, false without
+	 * @return html           admin_page
+	 */
+	private function _display_admin_page($sidebar = false) {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $wp_version;
 		// set current wp page slug - looks like: event-espresso_page_event_categories
-		$this->template_args['current_page'] = $this->wp_page_slug;
-		if (version_compare($wp_version, '3.3.2', '>')) {
-			// path toWP ver >= 3.4 template
-			$template_path = EE_CORE_ADMIN . 'admin_details_wrapper.template.php';
-		} else {
-			// path toWP ver < 3.4 template
-			$template_path = EE_CORE_ADMIN . 'admin_details_wrapper_pre_34.template.php';
-		}
+		$this->template_args['current_page'] = $this->_wp_page_slug;
+		$template_path = $sidebar ?  EE_CORE_ADMIN . 'admin_details_wrapper.template.php' : EE_CORE_ADMIN . 'admin_details_wrapper_no_sidebar.template.php';
 
 		$this->template_args['post_body_content'] = isset( $this->template_args['admin_page_content'] ) ? $this->template_args['admin_page_content'] : NULL;
 		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE );
 
 		// the final template wrapper
 		$this->admin_page_wrapper();
-
 	}
 
+
+	/**
+	 * display_admin_list_table_page_with_sidebar
+	 * generates HTML wrapper for an admin_page with list_table
+	 *
+	 * @access public
+	 * @return html 
+	 */
+	public function display_admin_list_table_page_with_sidebar() {
+		$this->_display_admin_list_table_page(TRUE);
+	}
+
+	/**
+	 * display_admin_list_table_page_with_no_sidebar
+	 * generates HTML wrapper for an admin_page with list_table (but with no sidebar)
+	 *
+	 * @access public
+	 * @return html 
+	 */
+	public function display_admin_list_table_page_with_no_sidebar() {
+		$this->_display_admin_list_table_page();
+	}
+
+
+
+	/**
+	 * generates html wrapper for an admin_list_table page
+	 * @access private
+	 * @param boolean $sidebar whether to display with sidebar or not.	
+	 * @return html
+	 */
+	private function _display_admin_list_table_page( $sidebar = false ) {
+		$this->template_args['current_page'] = $this->_wp_page_slug;
+		$template_path = EE_CORE_ADMIN . 'admin_list_wrapper.template.php';
+
+		$this->template_args['list_table'] = isset( $this->template_args['list_table'] ) ? $this->template_args['list_table'] : NULL;
+		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE );
+
+		// the final template wrapper
+		if ( $sidebar )
+			$this->display_admin_page_with_sidebar();
+		else
+			$this->display_admin_page_with_no_sidebar();
+	}
 
 
 

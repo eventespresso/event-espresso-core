@@ -213,6 +213,32 @@ abstract class EE_Admin_Page_list extends WP_List_Table {
 
 
 
+	/**
+	 * _get_table_filters
+	 * We use this to assemble and return any filters that are associated with this table that help further refine what get's shown in the table.
+	 * 
+	 * @abstract
+	 * @access protected
+	 * @return html string
+	 */
+	abstract protected function _get_table_filters();
+
+
+
+
+
+	/**
+	 * _get_hidden_fields
+	 * returns a html string of hidden fields so if any table filters are used the current view will be respected.
+	 * @return html string
+	 */
+	protected function _get_hidden_fields() {
+		$field = '<input type="hidden" name="page" value="' . $_REQUEST['page'] . '" />' . "\n";
+		return $field;
+	}
+
+
+
 
 
 
@@ -268,7 +294,12 @@ abstract class EE_Admin_Page_list extends WP_List_Table {
 	}
 
 	public function extra_tablenav( $which ) {
-		echo $this->_entries_per_page_dropdown;
+		if ( $which == 'top' ) {
+			echo $this->_get_table_filters();
+			echo "\n";
+			echo $this->_get_hidden_fields();
+		}
+		//echo $this->_entries_per_page_dropdown;
 	}
 
 	public function get_column_actions($item) {
