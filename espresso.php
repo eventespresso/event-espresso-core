@@ -85,10 +85,10 @@ if ( is_admin() ) {
 	register_activation_hook(__FILE__, 'espresso_plugin_activation');
 	add_action('plugins_loaded', 'espresso_check_for_export');
 	add_action('plugins_loaded', 'espresso_check_for_import');
-	add_action('plugins_loaded', 'espresso_admin_pages', 100);
+	add_action('admin_menu', 'espresso_init_admin_pages', 100);
 	add_action('admin_bar_menu', 'espresso_toolbar_items', 100);
-	add_action('init', 'espresso_admin_init', 25);
-	add_action('init', 'espresso_load_admin_ajax_callbacks', 25);
+	//add_action('init', 'espresso_admin_init', 25);
+	//add_action('init', 'espresso_load_admin_ajax_callbacks', 25);
 	add_action('init', 'espresso_flush_rewrite_rules', 41);
 	add_filter('plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2);
 	
