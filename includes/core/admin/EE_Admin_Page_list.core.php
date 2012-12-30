@@ -37,27 +37,117 @@ if ( ! class_exists( 'WP_List_Table' )) {
 
 abstract class EE_Admin_Page_list extends WP_List_Table {
 
+	/**
+	 * $_data
+	 * holds the data that will be processed for the table
+	 * @var array of objects
+	 */
 	protected $_data;
+
+
+	/**
+	 * _all_data_count
+	 * This holds the value of all the data available for the given view (for all pages).
+	 * @var int
+	 */
+	protected $_all_data_count;
+
+
+
+
+	/**
+	 * _admin_page
+	 * @var object  this is the EE_Admin_Page object
+	 */
+	protected $_admin_page;
+
+
+	/**
+	 * _view
+	 * The current view
+	 * @var string
+	 */
 	protected $_view;
+
+
+
+	/**
+	 * _views
+	 * array of possible views for this table
+	 * @var array
+	 */
 	protected $_views;
+
+
+	/**
+	 * _wp_list_args
+	 * An array of key => value pairs containing information about the current table
+	 * array(
+	 * 		'plural' => 'plural label',
+	 * 		'singular' => 'singular label',
+	 * 		'ajax' => false, //whether to use ajax or not
+	 * 		'screen' => null, //string used to reference what screen this is (WP_List_table converts to screen object)
+	 * )
+	 * @var array
+	 */
 	protected $_wp_list_args;
+
+	/**
+	 * _columns
+	 * an array of column names
+	 * array(
+	 * 	'internal-name' => 'Title'
+	 * )
+	 * @var array
+	 */
 	protected $_columns;
+
+
+
+	/**
+	 * _column_headers
+	 * array of column headers for the columns
+	 * @var array
+	 */
+	protected $_column_headers
+
+
+	/**
+	 * _sortable_columns
+	 * An array of sortable columns
+	 * array(
+	 * 	'internal-name' => 'orderby' //or
+	 * 	'internal-name' => array( 'orderby', true )
+	 * )
+	 * @var array
+	 */
 	protected $_sortable_columns;
+
+	/**
+	 * _per_page
+	 * holds the per_page value
+	 * @var int
+	 */
 	protected $_per_page;
+
+
+	/**
+	 * _nonce_action_ref
+	 * the reference string for the nonce_action
+	 * 
+	 * @var string
+	 */
 	protected $_nonce_action_ref;
 
 
 	/**
 	 * constructor
-	 * @param array  $data  passed in data for showing in table
-	 * @param string $view  current view 
-	 * @param array $views possible views[keys], view links[values]
-	 * @todo MODIFY THIS so all we get in here is the EE_Admin_Page type object.  We can get our values from the object ;)
+	 * @param EE_Admin_Page object $admin_page we use this for obtaining everything we need in the list table.
 	 */
 	public function __construct( EE_Admin_Page $admin_page ) {
-		$this->_data = $this->_get_data();
 		$this->_view = $admin_page->get_view();
-		$this->_views = $admin_page->get_views();
+		$this->_admin_page = $admin_page;
+		$this->_setup_data();
 
 		$this->_nonce_action_ref = $this->_view;
 
@@ -71,11 +161,14 @@ abstract class EE_Admin_Page_list extends WP_List_Table {
 
 
 	/**
-	 * _get_data
-	 * this method is used to retrieve the data for the given $view and 
-	 * @return [type] [description]
+	 * _setup_data
+	 * this method is used to setup the $_data and $_all_data_count properties 
+	 * @return void
 	 */
-	abstract protected function _get_data();
+	abstract protected function _setup_data();
+
+
+
 
 	/**
 	 * set the properties that this class needs to be able to execute wp_list_table properly
@@ -83,6 +176,7 @@ abstract class EE_Admin_Page_list extends WP_List_Table {
 	 * _wp_list_args = what the arguments required for the parent _wp_list_table.
 	 * _columns = set the columns in an array.
 	 * _sortable_columns = colums that are sortable (array).
+	 * _default_orderby = the default orderby for sorting.
 	 * @abstract
 	 * @access protected
 	 * @return void
@@ -121,38 +215,17 @@ abstract class EE_Admin_Page_list extends WP_List_Table {
 
 
 
-	function prepare_items() {
+	public function prepare_items() {
 
 		$this->_per_page = ( !empty( $_REQUEST['per_page'] ) ) ? absint( $_REQUEST['per_page'] ) : 10;
 		$columns = $this->get_columns();
 		$hidden = array();
 		$sortable = $this->get_sortable_columns();
 		$this->_column_headers = array($columns, $hidden, $sortable);
-		$total_items = count($this->_data);
+		$total_items = $this->_all_data_count;
 		$current_page = $this->get_pagenum();
 
 		$this->process_bulk_action();
-
-		function usort_reorder($a,$b){
-            $orderby = (!empty($_REQUEST['orderby'])) ? wp_strip_all_tags( $_REQUEST['orderby'] ) : 'REG_date'; // If no sort, default to titletimestamp
-            $order = (!empty($_REQUEST['order'])) ? wp_strip_all_tags( $_REQUEST['order'] ) : 'desc'; // If no order, default to desc
-
-			if ( is_numeric( $a->$orderby ) && is_numeric( $b->$orderby )) {
-				$result = ( $a->$orderby == $b->$orderby ) ? 0 : ( $a->$orderby < $b->$orderby ) ? -1 : 1;
-			} else {
-				$result = strcasecmp($a->$orderby, $b->$orderby); // Determine sort order for strings
-			}
-
-           	return ($order==='asc') ? $result : -$result; // Send final sort direction to usort
-        }
-
-        // can't sort one item
-        if ( $total_items > 1 ) {
-        	usort($this->_data, 'usort_reorder');
-        }
-
-		if ( is_array( $this->_data) )
-			$this->_data = array_slice( $this->_data, (( $current_page-1 ) * $this->_per_page ) , $this->_per_page );
 
 		$this->items = $this->_data;
 
@@ -165,31 +238,34 @@ abstract class EE_Admin_Page_list extends WP_List_Table {
 		);
 	}
 
-	function get_columns() {
+	public function get_columns() {
 		return $this->_columns;
 	}
 
-	function get_views() {
+	public function get_views() {
+		$this->_views = $admin_page->get_list_table_view_RLs();
 		return $this->_views;
 	}
 
-	function get_sortable_columns() {
+	public function views
+
+	public function get_sortable_columns() {
 		return $this->_sortable_columns;
 	}
 
-	function extra_tablenav( $which ) {
+	public function extra_tablenav( $which ) {
 		echo $this->_entries_per_page_dropdown;
 	}
 
-	function get_column_actions($item) {
+	public function get_column_actions($item) {
 		return $this->_get_column_actions($item);
 	}
 
-	function get_bulk_actions() {
+	public function get_bulk_actions() {
 		return $this->_get_bulk_actions();
 	}
 
-	function process_bulk_action() {
+	public function process_bulk_action() {
 		//this is not used it is handled by the child EE_Admin_Page class (routes).  However, including here for reference in case there is a case where it gets used.
 	}
 }

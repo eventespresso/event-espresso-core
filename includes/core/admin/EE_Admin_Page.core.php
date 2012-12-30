@@ -802,10 +802,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	/**
 	 * 		get_list_table_view_RLs - get it? View RL ?? URL ??
-	*		@access protected
+	*		@access public
 	*		@return array
 	*/
-	protected function get_list_table_view_RLs() {
+	public function get_list_table_view_RLs() {
 	
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$query_args = array();
@@ -1313,21 +1313,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	public function set_per_page_screen_option($status, $option, $value) {
 		if ( $this->_current_page . $this->_current_view . '_per_page' ==  $option )
 			return $value;
-	}
-
-
-
-
-
-	/**
-	 * get_views
-	 * just return the _views property value
-	 * 
-	 * @access public
-	 * @return array contents of _views property
-	 */
-	public function get_views() {
-		return $this->_views;
 	}
 
 
