@@ -161,11 +161,12 @@ class EE_Admin_Page_load {
 	 */
 	private function _get_installed_pages() {
 		$installed_refs = array();
+		$exclude = array('attendees', 'event_pricing', 'registrations', 'transactions');
 		// grab everything in the  admin core directory
 		if ( $admin_screens = glob( EE_CORE_ADMIN . '*' ) ) {
 			foreach( $admin_screens as $admin_screen ) {
 				// files and anything in the exclude array need not apply
-				if ( is_dir( $admin_screen ) && ! in_array( $admin_screen, $exclude )) {
+				if ( is_dir( $admin_screen ) && !in_array( $admin_screen, $exclude )) {
 					// these folders represent the different EE admin pages
 					$installed_refs[] = basename( $admin_screen );
 				}
@@ -196,7 +197,7 @@ class EE_Admin_Page_load {
 	 */
 	private function _load_admin_page( $page ) {
 		$page = strtolower( $page );
-		$class_name = $page . '_Admin_Page_Init';
+		$class_name = ucwords($page) . '_Admin_Page_Init';
 
 		if ( !class_exists($class_name ) ) {
 			$error_msg = sprintf( __('Something went wrong with loading the %s admin page.', 'event_espresso' ), $page);
@@ -204,7 +205,7 @@ class EE_Admin_Page_load {
 			throw new EE_Error($error_msg);
 		}
 
-		$a = new ReflectionClass($page_class);
+		$a = new ReflectionClass($class_name);
 		$p_obj = $a->newInstance();
 		return $p_obj;
 	}	

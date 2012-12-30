@@ -158,6 +158,7 @@ function espresso_core_admin_autoload($className) {
 	//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
 	$dir_ref = array(
 		'root' => array('core', 'class', 'controller'),
+		'events/' => array('core','class'),
 		'event_pricing/' => array('core','class'),
 		'messages/' => array('core', 'class'),
 		'registrations/' => array('core','class'),

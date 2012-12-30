@@ -42,7 +42,7 @@ class Events_Admin_Page_Init extends EE_Admin_Page_Init {
 		$this->menu_slug = 'events';
 	}
 
-	protected function get_menu_map() {
+	public function get_menu_map() {
 		$map = array(
 			'group' => 'main',
 			'menu_order' => 1,
