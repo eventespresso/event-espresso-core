@@ -529,14 +529,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected function _set_nav_tabs() {
 		$i = 0;
 		foreach ( $this->_page_routes as $slug => $route ) {
-			if ( !is_array( $route ) || ( isset($route['nav']) && !$route['nav']  ) ) 
+			if ( !is_array( $route ) || ( is_array($route) && isset($route['nav']) && !$route['nav']  ) ) 
 				continue; //no nav tab for this route
 			$css_class = isset( $route['css_class'] ) ? $route['css_class'] . ' ' : '';
 			$this->_nav_tabs[$slug] = array(
 				'url' => isset($route['nav']['url']) ? $route['nav']['url'] : wp_nonce_url( add_query_arg( array( 'action'=>$slug ), $this->_admin_base_url), $slug . '_nonce'),
-				'link_text' => isset( $route['label'] ) ? $route['label'] : ucwords(str_replace('_', ' ', $route['label'] ) ),
+				'link_text' => isset( $route['nav']['label'] ) ? $route['nav']['label'] : ucwords(str_replace('_', ' ', $slug ) ),
 				'css_class' => $this->_req_action == $slug ? $css_class . 'nav-tab-active' : $css_class,
-				'order' => isset( $route['order'] ) ? $route['order'] : $i
+				'order' => isset( $route['nav']['order'] ) ? $route['nav']['order'] : $i
 				); 
 			$i++;
 		}
@@ -569,7 +569,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	private function _set_current_labels($route) {
-		if ( isset($route['labels']) ) {
+		if ( is_array($route) && isset($route['labels']) ) {
 			foreach ( $route['labels'] as $label => $text ) {
 				if ( is_array($text) ) {
 					foreach ( $text as $sublabel => $subtext ) {

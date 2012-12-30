@@ -144,11 +144,11 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	 * @see  initialize_admin_page() for info
 	 */
 	protected function _initialize_admin_page() {
-		$this->dir_name = ucwords( str_replace('_', ' ', $this->menu_slug) );
-		$this->dir_name = str_replace(' ', '_', $this->dir_name);
+		$this->_dir_name = ucwords( str_replace('_', ' ', $this->menu_slug) );
+		$this->_dir_name = str_replace(' ', '_', $this->_dir_name);
 
 		//we don't need to do a page_request check here because it's only called via WP menu system.
-		$admin_page = $this->dir_name . '_Admin_Page';
+		$admin_page = $this->_dir_name . '_Admin_Page';
 		// define requested admin page class name then load the file and instantiate
 		$path_to_file = str_replace( array( '\\', '/' ), DS, EE_CORE_ADMIN . $this->menu_slug . DS . $admin_page . '.core.php' );
 		if ( is_readable( $path_to_file )) {					

@@ -76,7 +76,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 					'order' => 10
 					)
 				),
-			'overview'=> '_events_overview_list_table',
+			'overview'=> array(
+				'func' => '_events_overview_list_table',
+				'nav' => array(
+					'label' => __('Overview', 'event_espresso'),
+					'order' => 10
+					)
+				),
 			'edit_event' => array(
 				'func' => '_event_details',
 				'args' => array('edit')
@@ -196,14 +202,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * _events_overview_list_table
 	 * This contains the logic for showing the events_overview list
 	 *
-	 * @access private
+	 * @access protected
 	 * @return string html for generated table
 	 */
-	private function _events_overview_list_table() {
+	protected function _events_overview_list_table() {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_event', 'add', array(), 'button add-new-h2');
-
+	
 	}
 
 
@@ -214,11 +220,11 @@ class Events_Admin_Page extends EE_Admin_Page {
 	/**
 	 * _event_details
 	 * Depending on the given argument, this will display the event_details page (add or edit)	
-	 * @access private
+	 * @access protected
 	 * @param  string $view add or edit
 	 * @return string     html for event_details page.
 	 */
-	private function _event_details($view) {}
+	protected function _event_details($view) {}
 
 
 
@@ -228,10 +234,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * _delete_event
 	 * deletes a given event
 	 *
-	 * @access private
+	 * @access protected
 	 * @return void 
 	 */
-	private function _delete_event() {}
+	protected function _delete_event() {}
 
 
 
@@ -241,11 +247,11 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * _insert_or_update_event
 	 * depending on argument, will handling inserting or updating event
 	 *
-	 * @access private
+	 * @access protected
 	 * @param  bool $new_event true = insert, false = update
 	 * @return void
 	 */
-	private function _insert_or_update_event($new_event) {}
+	protected function _insert_or_update_event($new_event) {}
 
 
 
@@ -254,12 +260,12 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * _trash_or_restore_event
 	 * depending on argument, will handle trashing or restoring event
 	 *
-	 * @access private
+	 * @access protected
 	 * @param  bool $trash TRUE = trash, FALSE = restore
 	 * @return void
 	 * @todo: Currently the events table doesn't allow for trash/restore.  When we move to new events model we'll allow for it.
 	 */
-	private function _trash_or_restore_event($trash) {}
+	protected function _trash_or_restore_event($trash) {}
 
 
 
@@ -270,7 +276,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * Shows the report page for events
 	 * @return string html for the report page
 	 */
-	private function _view_report() {}
+	protected function _view_report() {}
 
 
 
@@ -279,12 +285,12 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * _get_events()
 	 * This method simply returns all the events (for the given _view and paging)
 	 *
-	 * @access  private
+	 * @access  protected
 	 *
 	 * @param bool $count if TRUE then we just return a count of ALL events matching the given _view.  If FALSE then we return an array of event objects that match the given _view and paging parameters.
 	 * @return array an array of event objects.
 	 */
-	private function _get_events($count = FALSE) {
+	protected function _get_events($count = FALSE) {
 
 	}
 
@@ -294,10 +300,12 @@ class Events_Admin_Page extends EE_Admin_Page {
 	/**
 	 * _get_events_count
 	 * This method just returns a count of events for the given $which value (i.e. 'all', 'today', 'month')
+	 *
+	 * @access  protected
 	 * @param  string $which indicate what we're using to filter the event count.
 	 * @return [type]        [description]
 	 */
-	private function _get_events_count($which) {
+	protected function _get_events_count($which) {
 
 	}
 
