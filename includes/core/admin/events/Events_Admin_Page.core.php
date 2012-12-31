@@ -209,7 +209,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_event', 'add', array(), 'button add-new-h2');
-		$this->template_args['list_table'] = new Events_Admin_List_Table(&$this);
+		$this->template_args['list_table'] = new Events_Admin_List_Table($this);
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
