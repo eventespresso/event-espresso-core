@@ -532,9 +532,6 @@ function event_espresso_get_event_details($attributes) {
 				$event->reg_btn['require_pre_approval'] = $event->require_pre_approval;
 				//$event->reg_btn['all_meta'] = $all_meta;
 
-				$ticket_selector = new EE_Ticket_Selector( $event );
-
-
 				$event->reg_btn = apply_filters( 'filter_hook_espresso_event_reg_btn', $event->reg_btn );
 
 				$event_reg_link = '

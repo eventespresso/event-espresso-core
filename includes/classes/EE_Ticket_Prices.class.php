@@ -171,7 +171,7 @@ class EE_Ticket_Prices extends EE_BASE {
 				if (( $event_price->use_dates() && ( $event_price->start_date( FALSE ) <= $today && $event_price->end_date( FALSE ) >= $today )) || ! $event_price->use_dates() ) {
 					// separate ticket prices ( order = 0 ) from adjuestments ( order > 0 )
 					if ( $types[ $event_price->type() ]->order() == 0 ) {
-						$base_prices[ $event_price->ID() ] = new EE_Base_Price( new EE_Price_Composite( $event_price, $types[ $event_price->type() ] ));					
+						$base_prices[ $event_price->ID() ] = new EE_Ticket_Price_Base( new EE_Price_Composite( $event_price, $types[ $event_price->type() ] ));					
 					} else {
 						$price_modifiers[ $event_price->order() ][ $event_price->ID() ] = new EE_Price_Composite( $event_price, $types[ $event_price->type() ] );
 					}
@@ -344,7 +344,7 @@ abstract class EE_Ticket_Price extends EE_BASE {
 *
 * ------------------------------------------------------------------------
 */
-class EE_Base_Price extends EE_Ticket_Price {
+class EE_Ticket_Price_Base extends EE_Ticket_Price {
 
 	protected $_ticket_price;
 	protected $_name;

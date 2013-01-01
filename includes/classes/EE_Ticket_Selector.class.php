@@ -40,11 +40,39 @@ class EE_Ticket_Selector extends EE_BASE {
 
 	/**
 	* 	@Constructor
-	* 	@access 		public
-	* 	@param		object 			$event  
-	* 	@return 		void
+	* 	@access 	public
+	* 	@param	object 			$event  
+	* 	@return 	void
 	*/
 	public function __construct( $event = FALSE ) {
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+		
+		if ( ! $event ) {
+			$user_msg = __( 'An error has occured. No Event was not supplied.', 'event_espresso' );
+			$dev_msg = $user_msg . __( 'In order to generate a ticket selector, please ensure you are passing an event object to the EE_Ticket_Selector class constructor.', 'event_espresso' );
+			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );	
+			return FALSE;
+		}
+		
+		$this->_event = $event;
+		$this->load_tckt_slctr_js();
+		$this->_display_ticket_selector();
+
+	}
+
+
+
+
+
+	/**
+	* 	gets the ball rolling
+	*
+	*	@access 	public
+	* 	@param	object 			$event  
+	* 	@return 	void	
+	*/
+	public static function init( $event = FALSE ) {	
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	
 		if ( ! $event ) {
 			$user_msg = __( 'An error has occured. No Event was not supplied.', 'event_espresso' );
@@ -53,11 +81,7 @@ class EE_Ticket_Selector extends EE_BASE {
 			return FALSE;
 		}
 	
-		$this->_event = $event;
-//		add_action( 'wp_print_footer_scripts', array( $this, 'load_tckt_slctr_js' ));
-		$this->load_tckt_slctr_js();
-		return;	
-
+		new self( $event );
 	}
 
 
@@ -67,29 +91,24 @@ class EE_Ticket_Selector extends EE_BASE {
 	/**
 	* 	creates buttons for selecting number of attendees for an event
 	*
-	*	@access public
+	*	@access private
 	* 	@return 	string	
 	*/
-	public function init() {
+	private function _display_ticket_selector() {
 		
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');		
 
 		$template_args = array();
-//		printr( $this->_event, '$this->_event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//printr( $this->_event, '$this->_event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
-		if (!isset($this->_event->additional_limit) or $this->_event->additional_limit == '') {
+		if ( ! isset( $this->_event->additional_limit ) or $this->_event->additional_limit == '' ) {
 			$this->_event->additional_limit = $this->_event->reg_limit;
 		}
 
 		// make it at least 1
 		$this->_event->additional_limit = ( $this->_event->additional_limit == 0 ) ? 1 : $this->_event->additional_limit;
-
 		// let's make the max amount of attendees somebody can select a little more reasonable
-		if ($this->_event->additional_limit > 16) {
-			$max_atndz = 16;
-		} else {
-			$max_atndz = $this->_event->additional_limit;
-		}
+		$max_atndz = $this->_event->additional_limit > 16 ? 16 : $this->_event->additional_limit;
 		
 		$template_args['event_id'] = $this->_event->id;
 		$template_args['event_name'] = $this->_event->event_name;
@@ -284,9 +303,8 @@ class EE_Ticket_Selector extends EE_BASE {
 		if ( isset($_POST['tkt-slctr-event-id'] )) {
 		
 			// validate/sanitize data
-//			$valid = $this->_validate_post_data('add_event_to_cart');
 			$valid = self::_validate_post_data('add_event_to_cart');
-//			echo printr($valid, '$valid' );
+			//printr( $valid, '$valid  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
 			//check total tickets oredered vs max number of attendees that can register
 			if ($valid['total_tickets'] > $valid['atndz']) {
@@ -320,19 +338,20 @@ class EE_Ticket_Selector extends EE_BASE {
 								'name' => $valid['name'],
 								'price' => $valid['price'][$x],
 								'price_id' => $valid['price_id'][$x],
-								'qty' => $valid['qty'][$x],
 								'price_obj' => $valid['price_obj'][$x],
+								'qty' => $valid['qty'][$x],
+								'meta_keys' => $valid['meta_keys'],
+								'meta_values' => $valid['meta_values'],
 								'options' => array(
 										'date' => $valid['date'][$x],
 										'time' => $valid['time'][$x],
 										'dtt_id' => $valid['dtt_id'][$x],
 										'price_desc' => $valid['price_desc'][$x],
 										'pre_approval' => $valid['pre_approval']
-								),
-								'meta_keys' => $valid['meta_keys'][$x],
-								'meta_values' => $valid['meta_values'][$x],
+								)
 						);
-						//echo printr($event_to_add);die();
+						//printr( $event_to_add, '$event_to_add  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+						
 						// then add event
 						if ( self::_add_event_to_cart( $event_to_add )) {
 							$success = TRUE;
@@ -411,7 +430,7 @@ class EE_Ticket_Selector extends EE_BASE {
 		$valid_data = array();
 
 		//if event id is valid
-		if ($id = absint($_POST['tkt-slctr-event-id'])) {
+		if ( $id = absint( $_POST['tkt-slctr-event-id'] )) {
 
 			$valid_data['id'] = $id;
 			// grab and sanatize return-url
@@ -451,7 +470,6 @@ class EE_Ticket_Selector extends EE_BASE {
 						break;
 
 					// arrays of integers
-					case 'price_id':
 					case 'dtt_id':
 					case 'time':
 					case 'qty':
@@ -492,18 +510,6 @@ class EE_Ticket_Selector extends EE_BASE {
 						break;
 
 					// string
-/*					case 'time':
-						// grab the array
-						$times = $_POST[$input_to_clean . $id];
-						// cycle thru values
-						foreach ($times as $time) {
-							// sanitize as date with digits and :
-							$valid_var = trim(preg_replace('/[^0-9:+$]/', '', $time));
-							$valid_data[$what][] = number_format((float) $valid_var, 2, '.', '');
-						}
-						break;*/
-
-					// string
 					case 'date':
 						// grab the array
 						$dates = $_POST[$input_to_clean . $id];
@@ -525,6 +531,7 @@ class EE_Ticket_Selector extends EE_BASE {
 						break;
 
 					// arrays of string
+					case 'price_id':
 					case 'meta_keys':
 					case 'meta_values':
 						$value_array = array();
@@ -535,7 +542,7 @@ class EE_Ticket_Selector extends EE_BASE {
 							// allow only numbers, letters,  spaces, commas and dashes
 							$value_array[$key] = wp_strip_all_tags($value);
 						}
-						$valid_data[$what][] = $value_array;
+						$valid_data[$what] = $value_array;
 						break;
 						
 					case 'price_desc':
@@ -544,21 +551,26 @@ class EE_Ticket_Selector extends EE_BASE {
 						// cycle thru values
 						foreach ($descs as $desc) {
 							// allow safe html
-							//$allowed = array( 'span' => array( 'class' => array() ));
-							//$valid_data[ $what ][] = wp_kses( $desc, $allowed );
 							$valid_data[ $what ][] = wp_kses_data( $desc );
-							//$valid_data[$what][] = $desc;
 						}
 						break;
 						
 					case 'price_obj':
-						$valid_data[$what][] = sanitize_text_field( $_POST[$input_to_clean . $id] );
+						// grab the array
+						$values = $_POST[$input_to_clean . $id];
+						// cycle thru values
+						foreach ($values as $key=>$value) {
+							// allow only numbers, letters,  spaces, commas and dashes
+							$valid_data[$what][] = $value;
+						}
 						break;
 						
 					case 'return-url' :
 						break;
-				}
-			}
+						
+				} 	// end switch $what
+			} 	// end foreach $inputs_to_clean 
+			
 		} else {
 			$error_msg = 'An error occured. The event id provided was not valid';
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );

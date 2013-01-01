@@ -65,8 +65,8 @@ class EE_Single_Page_Checkout {
 			$this->_ajax = 1;
 		} else {
 			 $this->_ajax = 0;
-		}
-
+		}		
+//		echo '<h4>$this->_ajax : ' . $this->_ajax . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
 		if ( $this->_ajax ) {
 
@@ -228,15 +228,11 @@ class EE_Single_Page_Checkout {
 
 				default :
 					// empty cart or else items build up indefinately
-					// $cart_total = $this->cart->get_cart_grand_totals();
-					//	if ( $cart_total['grand_total_qty'] != 0 && ! MER_ACTIVE ){
-					if (!defined('MER_ACTIVE')) {
+					if ( ! defined( 'MER_ACTIVE' )) {
 						$this->cart->empty_cart('AJAX');
 					}
 			}
-		} else {
-
-		}
+		} 
 	}
 
 	/**
@@ -248,14 +244,11 @@ class EE_Single_Page_Checkout {
 	public function _event_reg_single_page_checkout() {
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		//echo '<h1>FUNCTION: '.__FUNCTION__.'  ( line no: '. __LINE__ .' )</h1>';
-		//echo printr( $this->cart->whats_in_the_cart(), 'whats_in_the_cart' );
+//		printr( $this->cart->whats_in_the_cart(), 'whats_in_the_cart  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		global $org_options, $espresso_wp_user, $EE_Session;
 
-
 		$template_args = array();
-
 
 		// retreive all success and error messages
 		$notices = EE_Error::get_notices(FALSE);
@@ -316,6 +309,8 @@ class EE_Single_Page_Checkout {
 				$template_args['step_2_edit_lnk_class'] = '';
 				$template_args['step_3_dv_class'] = '';
 				$template_args['step_3_edit_lnk_class'] = 'hidden';
+				
+				echo '<h1>STEP 3</h1>';
 
 				$template_args['confirmation_data'] = $this->display_data_for_confirmation();
 
@@ -631,8 +626,8 @@ class EE_Single_Page_Checkout {
 				// add tax to grand total
 				$grand_total = $grand_total + $tax_tier_total;
 			}
-				// add tax data to session
-				$EE_Session->set_session_data(array('_cart_grand_total_amount' => $grand_total, 'taxes' => $template_args['taxes'], 'tax_totals' => $tax_totals), 'session_data');
+			// add tax data to session
+			$EE_Session->set_session_data(array('_cart_grand_total_amount' => $grand_total, 'taxes' => $template_args['taxes'], 'tax_totals' => $tax_totals), 'session_data');
 		}
 		//		}
 
@@ -691,7 +686,7 @@ class EE_Single_Page_Checkout {
 
 		$template_args['registration_steps'] = $registration_page_step_1 . $registration_page_step_2 . $registration_page_step_3;
 
-		//echo printr( $EE_Session->get_session_data(), __FUNCTION__ );
+//		printr( $EE_Session->get_session_data(), '$EE_Session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		espresso_display_template($this->_templates['registration_page_wrapper'], $template_args);
 	}
@@ -733,7 +728,7 @@ class EE_Single_Page_Checkout {
 	 * 		@return 		int
 	 */
 	public function process_registration_step_1() {
-
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $EE_Session;
 
@@ -856,7 +851,7 @@ class EE_Single_Page_Checkout {
 	 * 		@return 		void
 	 */
 	public function process_registration_step_2() {
-
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $EE_Session;
 
@@ -936,12 +931,12 @@ class EE_Single_Page_Checkout {
 	 * 		@return 		string
 	 */
 	public function display_data_for_confirmation() {
-
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $org_options, $EE_Session;
 
 		$session_data = $EE_Session->get_session_data();
-		//printr( $session_data, '$session_data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' );
+		//printr( $session_data, '$session_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		$billing_info = $session_data['billing_info'];
 		$reg_info = $session_data['cart']['REG'];
@@ -1020,6 +1015,7 @@ class EE_Single_Page_Checkout {
 	public function process_registration_step_3() {
 		// Sidney is watching me...   { : \
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 
 		global $org_options;
 
@@ -1063,7 +1059,7 @@ class EE_Single_Page_Checkout {
 
 			// grab session data
 			$session = $EE_Session->get_session_data();
-//			printr( $session, '$session ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
+			//printr( $session, '$session ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
 
 			$reg_items = $session['cart']['REG']['items'];
 
@@ -1276,7 +1272,7 @@ class EE_Single_Page_Checkout {
 	 *   @return void
 	 */
 	public function send_ajax_response($success_msg = FALSE, $error_msg = FALSE, $callback = FALSE, $callback_param = FALSE) {
-
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 		$valid_callback = FALSE;

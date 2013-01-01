@@ -91,8 +91,7 @@
 					}
 				} else {
 					// event is not sold out
-					//do_action('action_hook_espresso_ticket_selector', $event);
-					$ticket_selector->init();
+					do_action( 'action_hook_espresso_ticket_selector', $event );
 					echo $event_reg_link;
 				}
 			} else {	// end if $can_register_for_event

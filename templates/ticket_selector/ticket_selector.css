@@ -125,3 +125,5 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 #message.success { border-color:#B9D147; }
 #message.error { border-color:#EB574D; }
 #message p { margin:0; }
+
+.espresso-paid-status-icon-img { box-shadow: none !important; box-radius: 0 !important;  }
