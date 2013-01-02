@@ -59,7 +59,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * This is what will be referenced as the slug for the current screen
 	 * @var string
 	 */
-	protected $_screen
+	protected $_screen;
 
 
 
@@ -118,7 +118,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * array of column headers for the columns
 	 * @var array
 	 */
-	protected $_column_headers
+	protected $_column_headers;
 
 
 	/**
@@ -184,7 +184,8 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		$this->_view = $admin_page->get_view();
 		$this->_admin_page = $admin_page;
 		$this->_current_page = $this->get_pagenum();
-		$this->_screen = $this->_admin_page->get_current_page() . '_' . $this->_admin_page->get_current_screen()
+		$this->_screen = $this->_admin_page->get_current_page() . '_' . $this->_admin_page->get_current_screen();
+		
 		$this->_setup_data();
 
 		$this->_nonce_action_ref = $this->_view;
