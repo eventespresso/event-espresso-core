@@ -226,18 +226,6 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	
 
 
-	/**
-	 * _get_column_actions
-	 * this is a wrapper called by WP_List_Table::get_column_actions
-	 *
-	 * @abstract
-	 * @access protected
-	 * @param  string $item the item displayed in the row
-	 * @return string       html for column actions of the given column
-	 */
-	abstract protected function _get_column_actions($item);
-
-
 
 
 	/**

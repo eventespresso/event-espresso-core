@@ -78,9 +78,6 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$this->_hidden_columns = array();
 	}
 
-	protected function _get_column_actions($item) {
-		//todo
-	}
 
 	protected function _get_bulk_actions($item) {
 		//todo
