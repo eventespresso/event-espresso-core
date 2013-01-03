@@ -1181,6 +1181,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$template_path = EE_CORE_ADMIN . 'admin_list_wrapper.template.php';
 
 		$this->_template_args['table_url'] = add_query_arg( array( 'noheader' => 'true', $this->_admin_base_url) );
+		$this->_template_args['list_table'] = $this->_list_table_object;
 
 		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
 
