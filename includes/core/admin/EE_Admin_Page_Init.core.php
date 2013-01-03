@@ -57,8 +57,14 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		//set properties that are always available with objects.
 		$this->_set_init_properties();
 
+		//set _wp_page_slug();
+		$this->_set_wp_page_slug();
+
 		//set default capability
 		$this->_set_capability();
+
+		//load initial stuff.
+		$this->_initialize_admin_page();
 	}
 
 
@@ -87,6 +93,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	 * 		'group' => 'what "group" this page should be listed with (see EE_Admin_Page_load for list of available groups',
 	 * 		'menu_order' => 'what order the this page will appear in the list for that group - just a regular int value please'
 	 * 		'show_on_menu' => 'bool indicating whether this page will appear in the EE admin navigation menu.'
+	 * 		'parent_slug' => 'the_slug_for_the_parent_menu_item'
 	 * )
 	 * @abstract
 	 * @access public 
@@ -131,9 +138,8 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	public function initialize_admin_page() {
 		//let's check user access first
 		$this->_check_user_access();
-
-		//all is good. keep going then.
-		$this->_initialize_admin_page();
+		$this->_loaded_page_object->route_admin_request();
+		return;
 	}
 
 
@@ -144,6 +150,10 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	 * @see  initialize_admin_page() for info
 	 */
 	protected function _initialize_admin_page() {
+		//JUST CHECK WE'RE ON RIGHT PAGE.
+		if ( !isset( $_REQUEST['page'] ) || $_REQUEST['page'] != $this->menu_slug )
+			return; //not on the right page so let's get out.
+
 		$this->_dir_name = ucwords( str_replace('_', ' ', $this->menu_slug) );
 		$this->_dir_name = str_replace(' ', '_', $this->_dir_name);
 
@@ -158,12 +168,9 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 			 */
 			do_action( 'action_hook_espresso_before_initialize_admin_page' );
 			do_action( 'action_hook_espresso_before_initialize_admin_page_' . $this->menu_slug );
-
 			require_once( $path_to_file );
 			$a = new ReflectionClass( $admin_page );
-			$this->_loaded_page_object = $a->newInstance();						
-			$this->_loaded_page_object->set_wp_page_slug( $this->_wp_page_slug );
-			$this->_loaded_page_object->route_admin_request();
+			$this->_loaded_page_object = $a->newInstance($this->_wp_page_slug);				
 		}
 
 		do_action( 'action_hook_espresso_after_initialize_admin_page' );
@@ -195,15 +202,28 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 
 	/**
-	 * set_wp_page_slug
+	 * _set_wp_page_slug
 	 * sets the wp_page_slug ( as defined via add_submenu_page or add_menu_page ).
 	 *
-	 * @access  public
-	 * @param string $slug this is the slug wp uses internally to identify the page.
+	 * @access  protected
 	 * @return void
 	 */
-	public function set_wp_page_slug( $slug ) {
-		$this->_wp_page_slug = $slug;
+	protected function _set_wp_page_slug() {
+		global $_wp_real_parent_file;
+
+		$menu_map = $this->get_menu_map();
+
+		$menu_slug = plugin_basename( $this->menu_slug );
+		$parent_slug = plugin_basename( $menu_map['parent_slug'] );
+
+		if ( isset( $_wp_real_parent_file[$parent_slug] ) )
+			$parent_slug = $_wp_real_parent_file[$parent_slug];
+
+
+		$this->_wp_page_slug = get_plugin_page_hookname( $menu_slug, $parent_slug );
+
+		if ( $parent_slug == $menu_slug )
+			$this->_wp_page_slug = str_replace('admin', 'toplevel', $this->_wp_page_slug);
 	}
 	
 

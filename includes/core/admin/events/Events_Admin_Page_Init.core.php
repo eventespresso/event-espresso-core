@@ -46,7 +46,8 @@ class Events_Admin_Page_Init extends EE_Admin_Page_Init {
 		$map = array(
 			'group' => 'main',
 			'menu_order' => 1,
-			'show_on_menu' => TRUE
+			'show_on_menu' => TRUE,
+			'parent_slug' => 'events'
 			);
 		return $map;
 	}

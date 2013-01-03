@@ -46,6 +46,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	//template variables (used by templates)
 	protected $_template_args;
 
+	//this will hold the list table object for a given view.
+	protected $_list_table_object;
+
 	//bools
 	protected $_is_UI_request;
 	protected $_doing_AJAX;
@@ -56,6 +59,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	//action => method pairs used for routing incoming requests
 	protected $_page_routes;
+
+	//the current page route
+	protected $_route;
 
 	//set via request page and action args.
 	protected $_current_page;
@@ -82,7 +88,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 		@access public
 	 * 		@return void
 	 */
-	public function __construct() {
+	public function __construct($_wp_page_slug) {
+
+		//init _wp_page_slug property
+		$this->_wp_page_slug = $_wp_page_slug;
 
 		//set initial page props (child method)
 		$this->_init_page_props();
@@ -167,6 +176,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *     			'url' => 'http://someurl', //automatically generated UNLESS you define
 	 *     			'css_class' => 'css-class', //automatically generated UNLESS you define
 	 *     			'order' => 10 //required to indicate tab position.
+	 *     		'list_table' => 'name_of_list_table'
 	 * 			)
 	 * 		),
 	 * 		'insert_item' => '_method_for_handling_insert_item' //this can be used if all we need to have is a handling method.  'nav' defaults to false and 'args' defaults to empty.  If nav is false, no nav tab is generated.
@@ -336,71 +346,87 @@ abstract class EE_Admin_Page extends EE_BASE {
 			//admin_init stuff - global, all views for this page class, specific view
 			add_action( 'admin_init', array( $this, 'admin_init_global' ), 5 );
 			add_action( 'admin_init', array( $this, 'admin_init' ), 10 );
-			add_action( 'admin_init', array( $this, 'admin_init_' . $this->_current_view ), 15 );
+			if ( method_exists( $this, 'admin_init_' . $this->_current_view ) )
+				add_action( 'admin_init', array( $this, 'admin_init_' . $this->_current_view ), 15 );
 
+			$page_hook = 'load-' . $this->_wp_page_slug;
 			//hook into page load hook so all page specific stuff get's loaded.
 			if ( !empty($this->_wp_page_slug) )
-				add_action('load-' . $this->_wp_page_slug, array($this, '_load_page_dependencies') );
+				add_action($page_hook, array($this, 'load_page_dependencies') );
 		}
 	}
 
 
 	/**
-	 * _load_page_dependencies
+	 * load_page_dependencies
 	 * loads things specific to this page class when its loaded.  Really helps with efficiency.
-	 * @access private
+	 * @access public
 	 * @return void
 	 */
-	private function _load_page_dependencies() {
+	public function load_page_dependencies() {
+
+		//verify routes
+		$this->_verify_routes();
+
 		$this->_current_screen = get_current_screen();
-		
+
 		//init template args
 		$this->_template_args = array(
-			'admin_page_header' => NULL,
-			'admin_page_content' => NULL,
-			'post_body_content' => NULL
+			'admin_page_header' => '',
+			'admin_page_content' => '',
+			'post_body_content' => ''
 		);
 			
 		
 		//load admin_notices - global, page class, and view specific
 		add_action( 'admin_notices', array( $this, 'admin_notices_global'), 5 );
 		add_action( 'admin_notices', array( $this, 'admin_notices' ), 10 );
-		add_action( 'admin_notices', array( $this, 'admin_notices_' . $this->_current_view ), 15 );
+		if ( method_exists( $this, 'admin_notices_' . $this->_current_view ) )
+			add_action( 'admin_notices', array( $this, 'admin_notices_' . $this->_current_view ), 15 );
+
+		//this will save any per_page screen options if they are present 
+		$this->_set_per_page_screen_options();
 
 		//setup list table properties
 		$this->_set_list_table_views();
 		$this->_set_list_table_view();
+		$this->_set_list_table_object();
 
 		//setup search attributes
 		$this->_set_search_attributes();
 
-		//global metaboxes
+
 		$this->_add_espresso_meta_boxes();
 
 		//add screen options - global, page child class, and view specific
 		$this->_add_global_screen_options();
 		$this->_add_screen_options();
-		call_user_func( array( $this, '_add_screen_options_' . $this->_current_view ) );
+		if ( method_exists( $this, '_add_screen_options_' . $this->_current_view ) )
+			call_user_func( array( $this, '_add_screen_options_' . $this->_current_view ) );
 
 		//add help tab(s) - global, page child class, and view specific
 		$this->_add_help_tabs();
 		$this->_add_global_help_tabs();
-		call_user_func( array( $this, '_add_help_tabs_' . $this->_current_view ) );
+		if ( method_exists( $this, '_add_help_tabs_' . $this->_current_view ) )
+			call_user_func( array( $this, '_add_help_tabs_' . $this->_current_view ) );
 
 		//add feature_pointers - global, page child class, and view specific
 		$this->_add_feature_pointers();
 		$this->_add_global_feature_pointers();
-		call_user_func( array( $this, '_add_feature_pointers_' . $this->_current_view ) );
+		if ( method_exists( $this, '_add_help_tabs_' . $this->_current_view ) )
+			call_user_func( array( $this, '_add_help_tabs_' . $this->_current_view ) );
 
 		//enqueue scripts/styles - global, page class, and view specific
 		add_action('admin_enqueue_scripts', array($this, 'load_global_scripts_styles'), 5 );
 		add_action('admin_enqueue_scripts', array($this, 'load_scripts_styles'), 10 );
-		add_action('admin_enqueue_scripts', array($this, 'load_scripts_styles_' . $this->_current_view ), 15 );
+		if ( method_exists( $this, 'load_scripts_styles_' . $this->_current_view ) )
+			add_action('admin_enqueue_scripts', array($this, 'load_scripts_styles_' . $this->_current_view ), 15 );
 
 		//admin_print_footer_scripts - global, page child class, and view specific.  NOTE, despite the name, whenever possible, scripts should NOT be loaded using this.  In most cases that's doing_it_wrong().  But adding hidden container elements etc. is a good use case. Notice the late priority we're giving these. 
-		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_global', 99 ) );
-		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts', 100 ) );
-		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_' . $this->_current_view ), 101 );
+		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_global' ), 99 );
+		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts' ), 100 );
+		if ( method_exists( $this, 'admin_footer_scripts_' . $this->_current_view ) )
+			add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_' . $this->_current_view ), 101 );
 	}
 
 	
@@ -413,9 +439,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	private function _set_defaults() {
 		$this->_doing_AJAX = FALSE; //this will be set to true by the called ajax method in our child classes
-		$this->_admin_base_url = $this->_current_screen = $this->_admin_page_title = $this->page_slug = $this->page_label = $this->_wp_page_slug = $this->_req_action = $this->_req_nonce = NULL;
+		$this->_admin_base_url = $this->_current_screen = $this->_admin_page_title = $this->page_slug = $this->page_label = $this->_req_action = $this->_req_nonce = NULL;
 
-		$this->_nav_tabs = $this->_template_args = $this_views = $this->_page_routes = array();
+		$this->_nav_tabs = $this_views = $this->_page_routes = array();
 
 		$this->default_nav_tab_name = 'overview';
 	}
@@ -441,25 +467,19 @@ abstract class EE_Admin_Page extends EE_BASE {
 	
 
 
-
 	/**
-	 * _route_admin_request()
-	 * Meat and potatoes of the class.  Basically, this dude checks out what's being requested and sees if theres are some doodads to work the magic and handle the flingjangy.
-	 * Translation:  Checks if the requested action is listed in the page routes and then will try to load the corresponding method.
+	 * _verify_routes
+	 * All this method does is verify the incoming request and make sure that routes exist for it.  We do this early so we know if we need to drop out.
 	 *
-	 * @access private
-	 * @return void
+	 * @
+	 * @return [type] [description]
 	 */
-	private function _route_admin_request() {
+	private function _verify_routes() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 		if ( !$this->_current_page && !$this->_doing_AJAX ) return FALSE;
 
-		if ( $this->_req_action != 'default' ) {
-			wp_verify_nonce( $this->_req_nonce );
-		}		
-
-		$route = FALSE;
+		$this->_route = FALSE;
 		$func = FALSE;
 		$args = array();	
 		
@@ -474,7 +494,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	
 		// and that the requested page route exists 
 		if ( array_key_exists( $this->_req_action, $this->_page_routes )) {
-			$route = $this->_page_routes[ $this->_req_action ];
+			$this->_route = $this->_page_routes[ $this->_req_action ];
 		} else {
 			// user error msg
 			$error_msg =  sprintf( __( 'The requested page route does not exist for the %s admin page.', 'event_espresso' ), $this->_admin_page_title );
@@ -491,18 +511,35 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$error_msg .=  '||' . $error_msg . __( ' Create a key in the "_page_routes" array named "default" and set it\'s value to your default page method.', 'event_espresso' );
 			throw new EE_Error( $error_msg );
 		}
+	}
 
+
+
+
+	/**
+	 * _route_admin_request()
+	 * Meat and potatoes of the class.  Basically, this dude checks out what's being requested and sees if theres are some doodads to work the magic and handle the flingjangy.
+	 * Translation:  Checks if the requested action is listed in the page routes and then will try to load the corresponding method.
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _route_admin_request() {
+
+		if ( $this->_req_action != 'default' ) {
+			wp_verify_nonce( $this->_req_nonce );
+		}		
 
 		$this->_set_nav_tabs(); //set the nav_tabs array
-		$this->_set_current_labels($route);	
+		$this->_set_current_labels();	
 
 		
 		// check if callback has args
-		if ( is_array( $route )) {
-			$func = $route['func'];
-			$args = isset( $route['args'] ) ?  $route['args'] : array();
+		if ( is_array( $this->_route )) {
+			$func = $this->_route['func'];
+			$args = isset( $this->_route['args'] ) ?  $this->_route['args'] : array();
 		} else {
-			$func = $route;
+			$func = $this->_route;
 		}
 			
 		if ( $func ) {		
@@ -530,7 +567,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected function _set_nav_tabs() {
 		$i = 0;
 		foreach ( $this->_page_routes as $slug => $route ) {
-			if ( !is_array( $route ) || ( is_array($route) && isset($route['nav']) && !$route['nav']  ) ) 
+			if ( !is_array( $route ) || ( is_array($route) && (isset($route['nav']) && !$route['nav'] ) || !isset($route['nav'] ) ) ) 
 				continue; //no nav tab for this route
 			$css_class = isset( $route['css_class'] ) ? $route['css_class'] . ' ' : '';
 			$this->_nav_tabs[$slug] = array(
@@ -566,12 +603,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * This method modifies the _labels property with any optional specific labels indicated in the _page_routes property array
 	 *
 	 * @access private
-	 * @param array $route The array for the current route request
 	 * @return void
 	 */
-	private function _set_current_labels($route) {
-		if ( is_array($route) && isset($route['labels']) ) {
-			foreach ( $route['labels'] as $label => $text ) {
+	private function _set_current_labels() {
+		if ( is_array($this->_route) && isset($this->_route['labels']) ) {
+			foreach ( $this->_route['labels'] as $label => $text ) {
 				if ( is_array($text) ) {
 					foreach ( $text as $sublabel => $subtext ) {
 						$this->_labels[$label][$sublabel] = $subtext;
@@ -581,18 +617,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 				}
 			}
 		}
-	}
-
-
-
-	/**
-	 * this sets the wp_page_slug (passed through via EE_Admin_Init), with this we can do other nifty stuff.
-	 *
-	 * @access public
-	 * @param void
-	 */
-	public function set_wp_page_slug($slug) {
-		$this->_wp_page_slug = $slug;
 	}
 
 
@@ -625,8 +649,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	public function admin_init_global() {
-		//this will save any per_page screen options if they are present
-		add_filter('set-screen-option', array($this, 'set_per_page_screen_option'), 10, 3);
 	}
 
 
@@ -727,7 +749,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		/** STYLES **/
 		// add debugging styles
 		if ( WP_DEBUG ) {
-			add_action('admin_head', array( &$this, 'add_xdebug_style' ));
+			add_action('admin_head', array( $this, 'add_xdebug_style' ));
 		}
 		wp_enqueue_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css');
 
@@ -792,14 +814,24 @@ abstract class EE_Admin_Page extends EE_BASE {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		// looking at active items or dumpster diving ?
 		if ( ! isset( $_REQUEST['status'] ) || ! array_key_exists( $_REQUEST['status'], $this->_views )) {
-			$this->_view = $this->_views['in_use']['slug'];
+			$this->_view = 'in_use';
 		} else {
 			$this->_view = sanitize_key( $_REQUEST['status'] );
 		}
 	}
 
 
-
+	
+	/**
+	 * _set_list_table_object
+	 * WP_List_Table objects need to be loaded fairly early so automatic stuff WP does is taken care of.
+	 */
+	protected function _set_list_table_object() {
+		if ( isset($this->_route['list_table'] ) ) {
+			$a = new ReflectionClass($this->_route['list_table']);
+			$this->_list_table_object = $a->newInstance(&$this);
+		}
+	}
 
 	/**
 	 * 		get_list_table_view_RLs - get it? View RL ?? URL ??
@@ -891,8 +923,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@return 		void
 	*/
 	public function _set_search_attributes( $max_entries = FALSE ) {
-		$this->template_args['search']['btn_label'] = sprintf( __( 'Search %s', 'event_espresso' ), $this->page_label );
-		$this->template_args['search']['callback'] = 'search_' . $this->page_slug;
+		$this->_template_args['search']['btn_label'] = sprintf( __( 'Search %s', 'event_espresso' ), $this->page_label );
+		$this->_template_args['search']['callback'] = 'search_' . $this->page_slug;
 	}
 
 	/*** END LIST TABLE METHODS **/
@@ -913,10 +945,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 	private function _add_espresso_meta_boxes() {	
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $espresso_premium;	
-		add_meta_box('espresso_news_post_box', __('New @ Event Espresso', 'event_espresso'), 'espresso_news_post_box', $this->_wp_page_slug, 'side');
-		add_meta_box('espresso_links_post_box', __('Helpful Plugin Links', 'event_espresso'), 'espresso_links_post_box', $this->_wp_page_slug, 'side');
-		if ( ! $espresso_premium ) {
-			add_meta_box('espresso_sponsors_post_box', __('Sponsors', 'event_espresso'), 'espresso_sponsors_post_box', $this->_wp_page_slug, 'side');
+
+		//we only add meta boxes if the page_route calls for it
+		if ( is_array($this->_route) && isset( $this->_route['global_metaboxes'] ) ) {
+			add_meta_box('espresso_news_post_box', __('New @ Event Espresso', 'event_espresso'), 'espresso_news_post_box', $this->_wp_page_slug, 'side');
+			add_meta_box('espresso_links_post_box', __('Helpful Plugin Links', 'event_espresso'), 'espresso_links_post_box', $this->_wp_page_slug, 'side');
+			if ( ! $espresso_premium ) {
+				add_meta_box('espresso_sponsors_post_box', __('Sponsors', 'event_espresso'), 'espresso_sponsors_post_box', $this->_wp_page_slug, 'side');
+			}
 		}
 	}
 
@@ -953,7 +989,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 					<?php _e( 'Javascript is currently turned off for your browser. Javascript must be enabled in order for all of the features on this page to function properly. Please turn your javascript back on.', 'event_espresso' ); ?>
 				</p>
 			</div>
-		</noscript>';
+		</noscript>
 		<?php
 	}
 
@@ -980,7 +1016,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@access private
 	*		@return string
 	*/		
-	private function add_admin_page_ajax_loading_img() {
+	private function _add_admin_page_ajax_loading_img() {
 		?>
 			<div id="espresso-admin-page-ajax-loading" class="hidden">
 				<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL; ?>images/ajax-loader-grey.gif" /><span><?php _e('loading...', 'event_espresso'); ?>'</span>
@@ -997,7 +1033,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@access private
 	*		@return string
 	*/		
-	private function add_admin_page_overlay() {
+	private function _add_admin_page_overlay() {
 		?>
 		<div id="espresso-admin-page-overlay-dv" class=""></div>
 		<?php
@@ -1072,7 +1108,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@return void
 	*/		
 	public function display_admin_page_with_sidebar() {		
-		$this->display_admin_page(TRUE);
+		$this->_display_admin_page(TRUE);
 	}
 
 
@@ -1084,7 +1120,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@return void
 	*/
 	public function display_admin_page_with_no_sidebar() {
-		$this->display_admin_page();
+		$this->_display_admin_page();
 	}
 
 
@@ -1099,11 +1135,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 	private function _display_admin_page($sidebar = false) {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		// set current wp page slug - looks like: event-espresso_page_event_categories
-		$this->template_args['current_page'] = $this->_wp_page_slug;
+		$this->_template_args['current_page'] = $this->_wp_page_slug;
 		$template_path = $sidebar ?  EE_CORE_ADMIN . 'admin_details_wrapper.template.php' : EE_CORE_ADMIN . 'admin_details_wrapper_no_sidebar.template.php';
 
-		$this->template_args['post_body_content'] = isset( $this->template_args['admin_page_content'] ) ? $this->template_args['admin_page_content'] : NULL;
-		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE );
+		$this->_template_args['post_body_content'] = isset( $this->_template_args['admin_page_content'] ) ? $this->_template_args['admin_page_content'] : NULL;
+		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
 
 		// the final template wrapper
 		$this->admin_page_wrapper();
@@ -1141,12 +1177,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return html
 	 */
 	private function _display_admin_list_table_page( $sidebar = false ) {
-		$this->template_args['current_page'] = $this->_wp_page_slug;
+		$this->_template_args['current_page'] = $this->_wp_page_slug;
 		$template_path = EE_CORE_ADMIN . 'admin_list_wrapper.template.php';
 
-		$this->template_args['table_url'] = add_query_arg( array( 'noheader' => 'true', $this->_admin_base_url) );
+		$this->_template_args['table_url'] = add_query_arg( array( 'noheader' => 'true', $this->_admin_base_url) );
 
-		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE );
+		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
 
 		// the final template wrapper
 		if ( $sidebar )
@@ -1172,15 +1208,15 @@ abstract class EE_Admin_Page extends EE_BASE {
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Tabbed_Content.helper.php' ;
 		$this->_nav_tabs = EE_Tabbed_Content::display_admin_nav_tabs($this->_nav_tabs);
 
-		$this->template_args['nav_tabs'] = $this->_nav_tabs;
-		$this->template_args['admin_page_title'] = $this->_admin_page_title;
+		$this->_template_args['nav_tabs'] = $this->_nav_tabs;
+		$this->_template_args['admin_page_title'] = $this->_admin_page_title;
 		
 		// grab messages at the last second
-		$this->template_args['notices'] = EE_Error::get_notices();
+		$this->_template_args['notices'] = EE_Error::get_notices();
 		
 		// load settings page wrapper template
 		$template_path = EE_CORE_ADMIN . 'admin_wrapper.template.php';
-		espresso_display_template( $template_path, $this->template_args );
+		espresso_display_template( $template_path, $this->_template_args );
 
 	}
 
@@ -1250,19 +1286,19 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$init_div = '<div id="event_editor_major_buttons_wrapper">';
 		$alt_div = '<div id="event-editor-floating-save-btns" class="hidden">';
 
-		$this->template_args['save_buttons'] = '<div class="publishing-action">';
+		$this->_template_args['save_buttons'] = '<div class="publishing-action">';
 		//add in a hidden index for the current page (so save and close redirects properly)
-		$this->template_args['save_buttons'] .= empty($actions) ? '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="' . $_SERVER['REQUEST_URI'] .'" />' : '';
+		$this->_template_args['save_buttons'] .= empty($actions) ? '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="' . $_SERVER['REQUEST_URI'] .'" />' : '';
 
 		foreach ( $button_text as $key => $button ) {
 			$ref = $default_names[$key];
 			$name = !empty($action) ? $actions[$key] : $ref;
-			$this->template_args['save_buttons'] .= '<input type="submit" class="button-primary" value="' . $button . '" name="' . $name . '" id="' . $ref . '" />';
+			$this->_template_args['save_buttons'] .= '<input type="submit" class="button-primary" value="' . $button . '" name="' . $name . '" id="' . $ref . '" />';
 			if ( !$both ) break;
 		}
-		$this->template_args['save_buttons'] .= '</div><br class="clear" /></div>';
-		$alt_buttons = $alt_div . $this->template_args['save_buttons'];
-		$this->template_args['save_buttons'] = $init_div . $this->template_args['save_buttons'] . $alt_buttons;
+		$this->_template_args['save_buttons'] .= '</div><br class="clear" /></div>';
+		$alt_buttons = $alt_div . $this->_template_args['save_buttons'];
+		$this->_template_args['save_buttons'] = $init_div . $this->_template_args['save_buttons'] . $alt_buttons;
 	}
 
 
@@ -1395,14 +1431,44 @@ abstract class EE_Admin_Page extends EE_BASE {
 	/**
 	 * set_per_page_screen_option
 	 * All this does is make sure that WordPress saves any per_page screen options (if set) for the current page.
-	 * (for params definition @see WordPress set-screen-option filter)
+	 * we have to do this rather than running inside the 'set-screen-options' hook because it runs earlier than admin_menu.
 	 * 
-	 * @access public
-	 * @return int per_page value
+	 * @access private
+	 * @return void
 	 */
-	public function set_per_page_screen_option($status, $option, $value) {
-		if ( $this->_current_page . $this->_current_view . '_per_page' ==  $option )
-			return $value;
+	private function _set_per_page_screen_options() {
+		if ( isset($_POST['wp_screen_options']) && is_array($_POST['wp_screen_options']) ) {
+			check_admin_referer( 'screen-options-nonce', 'screenoptionnonce' );
+
+			if ( !$user = wp_get_current_user() )
+			return;
+			$option = $_POST['wp_screen_options']['option'];
+			$value = $_POST['wp_screen_options']['value'];
+
+			if ( $option != sanitize_key( $option ) )
+				return;
+
+			$map_option = $option;
+
+			$option = str_replace('-', '_', $option);
+
+			switch ( $map_option ) {
+				case $this->_current_page . '_' .  $this->_current_view . '_per_page':
+					$value = (int) $value;
+					if ( $value < 1 || $value > 100 )
+						return;
+					break;
+				default:
+					$value = apply_filters('filter_hook_espresso_set-screen-option', false, $option, $value);
+					if ( false === $value )
+						return;
+					break;
+			}
+
+			update_user_meta($user->ID, $option, $value);
+			wp_safe_redirect( remove_query_arg( array('pagenum', 'apage', 'paged'), wp_get_referer() ) );
+			exit;
+		}
 	}
 
 
@@ -1445,6 +1511,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 
+
+	/**
+	 * get_current_screen
+	 *
+	 * @access public
+	 * @return object The current WP_Screen object
+	 */
+	public function get_current_screen() {
+		return $this->_current_screen;
+	}
 
 }
 

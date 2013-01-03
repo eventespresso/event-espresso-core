@@ -240,7 +240,6 @@ class EE_Admin_Page_load {
 			if ( isset($temp_ref) || isset($add_main_menu) ) {
 				$title = __('Event Espresso', 'event_espresso');
 					$wp_main_page_slug = add_menu_page( $title, $title, apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']), $parent_slug, array($installed_page, 'initialize_admin_page'), EVENT_ESPRESSO_PLUGINFULLURL . 'images/events_icon_16.png');
-					$installed_page->set_wp_page_slug($wp_main_page_slug);
 				
 				//make sure we add initial header if present
 				if ( isset($temp_ref) ) {
@@ -257,7 +256,6 @@ class EE_Admin_Page_load {
 			
 			
 			$wp_page_slug = add_submenu_page( $parent_slug, $label, $menu_label, $capability, $menu_slug, $menu_func );
-			if ( !is_array($installed_page) ) $installed_page->set_wp_page_slug($wp_page_slug);
 			$i++;
 		}
 	}

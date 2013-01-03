@@ -48,12 +48,13 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'singular' => __('event', 'event_espresso'),
 			'plural' => __('events', 'event_espresso'),
 			'ajax' => false, //for now
-			'screen' => $this->_screen
+			'screen' => $this->_admin_page->get_current_screen()->id
 			);
 
 
 		$this->_columns = array(
-			'id' => __('ID', 'event_espresso'),
+			'cb' => '<input type="checkbox" />',
+			'default' => __('ID', 'event_espresso'),
 			'name' => __('Name', 'event_espresso'),
 			'venue' => __('Venue', 'event_espresso'),
 			'start_date' => __('Start Date', 'event_espresso'),
@@ -66,7 +67,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 		$this->_sortable_columns = array(
-			'id' => array( 'e.id' => true ),
+			'default' => array( 'e.id' => true ),
 			'name' => array( 'e.event_name' => false ),
 			'venue' => array( 'v.name' => false ),
 			'start_date' => array('dtt.DTT_EVT_start' => false),
@@ -79,7 +80,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	}
 
 
-	protected function _get_bulk_actions($item) {
+	protected function _get_bulk_actions() {
 		//todo
 	}
 
@@ -87,14 +88,185 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		//todo
 	}
 
-	public function get_column_id($item) {}
-	public function get_column_name($item) {}
-	public function get_column_venue($item) {}
-	public function get_column_start_date($item) {}
-	public function get_column_start_time($item) {}
-	public function get_column_reg_begins($item) {}
-	public function get_column_status($item) {}
-	public function get_column_attendees($item) {}
-	public function get_column_actions($item) {}
+
+	function column_cb($item) {
+        return sprintf(
+            '<input type="checkbox" name="EVT_ID[]" value="%s" />', $item->event_id
+        );    
+    }
+
+
+
+	public function column_default($item) {
+		return $item->event_id;
+	}
+
+
+
+
+	public function column_name($item) {
+		//todo: remove when attendees is active
+		if ( !defined('ATT_ADMIN_URL') )
+			define('ATT_ADMIN_URL', EVENTS_ADMIN_URL);
+
+		$edit_query_args = array(
+				'action' => 'edit_event',
+				'EVT_ID' => $item->event_id
+			);
+
+		$delete_query_args = array(
+				'action' => 'delete_events',
+				'EVT_ID' => $item->event_id
+			);
+
+		$attendees_query_args = array(
+				'action' => 'default',
+				'EVT_ID' => $item->event_id
+			);
+
+		$export_query_args = array(
+				'action' => 'export_events',
+				'EVT_ID' => $item->event_id
+			);
+
+
+		$edit_link = wp_nonce_url( add_query_arg( $edit_query_args, EVENTS_ADMIN_URL ), 'edit_event_nonce');
+		$view_link = espresso_reg_url( $item->event_id, $item->slug );
+		$delete_link = wp_nonce_url( add_query_arg( $delete_query_args, EVENTS_ADMIN_URL ), 'delete_events_nonce' );
+		$attendees_link = wp_nonce_url( add_query_arg( $attendees_query_args, ATT_ADMIN_URL ), 'default_nonce' );
+		$export_event_link = wp_nonce_url( add_query_arg( $export_query_args, EVENTS_ADMIN_URL), 'export_events_nonce' );
+
+		$actions = array(
+			'view' => '<a href="' . $view_link . '" title="' . __('View Event', 'event_espresso') . '">' . __('View', 'event_espresso') . '</a>',
+			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>',
+			'delete' => '<a href="' . $delete_link . '" title="' . __('Delete Event', 'event_espresso') . '">' . __('Delete', 'event_espresso') . '</a>',
+			'attendees' => '<a href="' . $attendees_link . '" title="' . __('View Attendees', 'event_espresso') . '">' . __('Attendees', 'event_espresso') . '</a>',
+			'export' => '<a href="' . $export_event_link . '" title="' . __('Export Event', 'event_espresso') . '">' . __('Export', 'event_espresso') . '</a>'
+			);
+
+		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . stripslashes_deep($item->event_name) . '</a></strong>';
+		$content .= $this->row_actions($actions);
+		return $content;
+
+	}
+
+
+
+	
+	public function column_venue($item) {
+		return $item->venue_title;
+	}
+
+
+
+
+	public function column_start_date($item) {
+		return date( 'D, M d, Y', $item->DTT_EVT_start );
+	}
+
+
+
+
+	public function column_start_time($item) {
+		return date( get_option('time_format'), $item->DTT_EVT_start );
+	}
+
+
+
+
+	public function column_reg_begins($item) {
+		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php' );
+		$DTM = EEM_Datetime::instance();
+
+		// grab reg times
+		$reg_time = array_shift( $DTM->get_primary_reg_date_for_event( $item->event_id ));
+		$reg_start = $reg_time->reg_start();
+		$reg_end = $reg_time->reg_end();
+
+		$registration_start = isset($reg_start) ? $reg_start : '';
+		return date('D, M d, Y @ g:i a', $registration_start);
+	}
+
+
+
+
+	public function column_status($item) {
+		$status = array();
+		$status = event_espresso_get_is_active($item->event_id);
+		return $status['display'] == 'OPEN' ? '<span style="color:green;"><b>' . $status['display'] . '</b></span>' : $status['display'];
+	}
+
+
+
+
+	public function column_attendees($item) {
+		$attendees_query_args = array(
+				'action' => 'default',
+				'EVT_ID' => $item->event_id
+			);
+		$attendees_link = wp_nonce_url( add_query_arg( $attendees_query_args, ATT_ADMIN_URL ), 'default_nonce' );
+
+		return '<a href="' . $attendees_link . '">' . get_number_of_attendees_reg_limit($item->event_id, 'num_attendees_slash_reg_limit' ) . '</a>';
+	}
+
+
+
+	public function column_actions($item) {
+		//todo: remove when attendees is active
+		if ( !defined('ATT_ADMIN_URL') )
+			define('ATT_ADMIN_URL', EVENTS_ADMIN_URL);
+
+		$edit_query_args = array(
+				'action' => 'edit_event',
+				'EVT_ID' => $item->event_id
+			);
+
+		$delete_query_args = array(
+				'action' => 'delete_events',
+				'EVT_ID' => $item->event_id
+			);
+
+		$attendees_query_args = array(
+				'action' => 'default',
+				'EVT_ID' => $item->event_id
+			);
+
+		$reports_query_args = array(
+				'action' => 'view_report',
+				'EVT_ID' => $item->event_id
+			);
+
+		$export_query_args = array(
+				'action' => 'export_events',
+				'EVT_ID' => $item->event_id
+			);
+
+
+		$edit_link = wp_nonce_url( add_query_arg( $edit_query_args, EVENTS_ADMIN_URL ), 'edit_event_nonce');
+		$view_link = espresso_reg_url( $item->event_id, $item->slug );
+		$delete_link = wp_nonce_url( add_query_arg( $delete_query_args, EVENTS_ADMIN_URL ), 'delete_events_nonce' );
+		$attendees_link = wp_nonce_url( add_query_arg( $attendees_query_args, ATT_ADMIN_URL ), 'default_nonce' );
+		$reports_link = wp_nonce_url( add_query_arg( $reports_query_args, EVENTS_ADMIN_URL ), 'view_report_nonce' );
+		$export_event_link = wp_nonce_url( add_query_arg( $export_query_args, EVENTS_ADMIN_URL), 'export_events_nonce' );
+		
+		$content = '<div style="width:180px;">' . "\n\t";
+		$content .= '<a href="' .  $view_link . '" title="' . __('View Event', 'event_espresso') . '" target="_blank">' . "\n\t";
+		$content .= '<div class="view_btn"></div></a>' . "\n\t";
+		$content .= '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '"><div class="edit_btn"></div></a>' . "\n\t";
+		$content .= '<a href="' . $attendees_link . '" title="' . __('View Attendees', 'event_espresso') . '"><div class="complete_btn"></div></a>' . "\n\t";
+		$content .= '<a href="' . $export_event_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="reports_btn"></div></a>' . "\n\t";
+		$content .= '<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=unique_id_info_' . $item->event_id  . '" title="' . __('Get Short URL/Shortcode', 'event_espresso') . '"><div class="shortcode_btn"></div></a>' . "\n\t";
+		$content .= '<a href="#" onclick="window.location=\'' . $export_event_link . '\'" title="' . __('Export to Excel', 'event_espresso') . '"><div class="excel_exp_btn"></div></a>' . "\n\t";
+		$content .= '<a href="#" onclick="window.location=\'' . $reports_link . '\'" title="' . __('Export to CSV', 'event_espresso') . '"><div class="csv_exp_btn"></div>
+			</a>' . "\n";
+		//todo: we need to put back in a email attendees link via the new messages system
+		$content .= '</div>' . "\n";
+		$content .= '<div id="unique_id_info_' . $item->event_id . '" style="display:none">' . "\n\t";
+		$content .= sprintf( __('<h2>Short URL/Shortcode</h2><p>This is the short URL to this event:</p><p><span  class="updated fade">%s</span></p><p>This will show the registration form for this event just about anywhere. Copy and paste the following shortcode into any page or post.</p><p><span  class="updated fade">[SINGLEEVENT single_event_id="%s"]</span></p> <p class="red_text"> Do not use in place of the main events page that is set in the Organization Settings page.', 'event_espresso'), $view_link, stripslashes_deep($item->event_identifier) );
+		$content .= "\n";
+		$content .= '</div>';
+		return $content;
+	}
+
 
 }

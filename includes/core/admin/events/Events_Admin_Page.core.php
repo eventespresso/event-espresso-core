@@ -30,8 +30,8 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class Events_Admin_Page extends EE_Admin_Page {
 
-	public function __construct() {
-		parent::__construct();
+	public function __construct($wp_page_slug) {
+		parent::__construct($wp_page_slug);
 	}
 
 
@@ -74,14 +74,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'nav' => array(
 					'label' => __('Overview', 'event_espresso'),
 					'order' => 10
-					)
-				),
-			'overview'=> array(
-				'func' => '_events_overview_list_table',
-				'nav' => array(
-					'label' => __('Overview', 'event_espresso'),
-					'order' => 10
-					)
+					),
+				'list_table' => 'Events_Admin_List_Table'
 				),
 			'edit_event' => array(
 				'func' => '_event_details',
@@ -109,11 +103,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'args' => array('trash' => FALSE )
 				),
 			'view_report' => array(
-				'func' => '_events_report',
+				'func' => '_view_report',
 				'nav' => array(
 					'label' => __('Report', 'event_espresso'),
 					'order' => 20
 					)
+				),
+			'export_events' => array(
+				'func' => '_events_export'
 				)
 			);
 	}
@@ -209,7 +206,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_event', 'add', array(), 'button add-new-h2');
-		$this->template_args['list_table'] = new Events_Admin_List_Table($this);
+		$this->_template_args['list_table'] = $this->_list_table_object;
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
@@ -277,7 +274,23 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * Shows the report page for events
 	 * @return string html for the report page
 	 */
-	protected function _view_report() {}
+	protected function _view_report() {
+		echo 'in here';
+	}
+
+
+
+
+
+
+	/**
+	 * _events_export
+	 * Will export all (or just the given event) to a Excel compatible file.
+	 * 
+	 * @access protected
+	 * @return file 
+	 */
+	protected function _events_export() {}
 
 
 
@@ -293,13 +306,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * @param bool $count if TRUE then we just return a count of ALL events matching the given _view.  If FALSE then we return an array of event objects that match the given _view and paging parameters.
 	 * @return array an array of event objects.
 	 */
-	public function get_events($per_page = 20, $current_page = 1, $count = FALSE) {
+	public function get_events($per_page = 10, $current_page = 1, $count = FALSE) {
 		global $wpdb, $org_options;
 
 		$offset = ($current_page-1)*$per_page; 
-		$limit = $count ? '' : ' LIMIT ' . $per_page . ',' . $offset;
-		$orderby = isset($_REQUEST['orderby']) ? " ORDER BY e." . $_REQUEST['orderby'] : " ORDER BY e.event_name";
-		$order = isset($_REQUEST['order']) ? " ORDER " . $_REQUEST['order'] : " ORDER desc";
+		$limit = $count ? '' : ' LIMIT ' . $offset . ',' . $per_page;
+		$orderby = isset($_REQUEST['orderby']) ? " ORDER BY " . $_REQUEST['orderby'] : " ORDER BY e.event_name";
+		$order = isset($_REQUEST['order']) ? " " . $_REQUEST['order'] : " DESC";
 
 		if (isset($_REQUEST['month_range'])) {
 			$pieces = explode('-', $_REQUEST['month_range'], 3);
@@ -318,16 +331,19 @@ class Events_Admin_Page extends EE_Admin_Page {
 			} else {
 				$sql .= ", e.venue_title, e.phone, e.address, e.address2, e.city, e.state, e.zip, e.country ";
 			}
+		}
 
 			$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
+
+		if ( !$count ) {
 			$sql .= " LEFT JOIN " . ESP_DATETIME . " dtt ON dtt.EVT_ID = e.id ";
 
 			if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager']) {
 				$sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " vr ON vr.event_id = e.id ";
 				$sql .= " LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = vr.venue_id ";
 			}
-
 		}
+
 
 		if ( isset($_REQUEST['category_id']) && $_REQUEST['category_id'] != '') {
 			$sql .= " LEFT JOIN " . EVENTS_CATEGORY_REL_TABLE . " cr ON cr.event_id = e.id ";
@@ -337,13 +353,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$sql .= ' WHERE ';
 
 		if ( !$count ) {
-			$sql .= "dtt.DTT_is_primary = '1' ";
+			$sql .= "dtt.DTT_is_primary = '1' AND ";
 		}
 
-		$sql .= ( isset($_REQUEST['event_status']) && ($_REQUEST['event_status'] != '' && $_REQUEST['event_status'] != 'IA')) ? " AND e.event_status = '" . $_REQUEST['event_status'] . "' " : " AND e.event_status != 'D' ";
-		$sql .= $_REQUEST['category_id'] != '' ? " AND c.id = '" . $_REQUEST['category_id'] . "' " : '';
+		$sql .= ( isset($_REQUEST['event_status']) && ($_REQUEST['event_status'] != '' && $_REQUEST['event_status'] != 'IA')) ? "e.event_status = '" . $_REQUEST['event_status'] . "' " : "e.event_status != 'D' ";
+		$sql .= isset($_REQUEST['category_id']) && $_REQUEST['category_id'] != '' ? " AND c.id = '" . $_REQUEST['category_id'] . "' " : '';
 
-		if ($_REQUEST['month_range'] != '' && $_REQUEST['month_range'] > 0) {
+		if ( isset($_REQUEST['month_range']) && $_REQUEST['month_range'] != '' && $_REQUEST['month_range'] > 0) {
 			$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime($year_r . '-' . $month_r . '-01') . "' AND '" . strtotime($year_r . '-' . $month_r . '-31') . "' ";
 		} elseif (isset($_REQUEST['today']) && $_REQUEST['today'] == 'true') {
 			$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime(date('Y-m-d') . ' 0:00:00') . "' AND '" . strtotime(date('Y-m-d') . ' 23:59:59') . "' ";
@@ -351,7 +367,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime($this_year_r . '-' . $this_month_r . '-01') . "' AND '" . strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month) . "' ";
 		}
 
-		$sql .= " GROUP BY e.id " . $orderby . $order . $limit;
+		$sql .= !$count ? " GROUP BY e.id " . $orderby . $order . $limit : '';
 
 		//todo: This needs to be prepared to protect agains injection attacks... but really the whole stinking query could probably be better layed out.
 		

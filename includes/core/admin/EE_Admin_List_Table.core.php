@@ -184,7 +184,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		$this->_view = $admin_page->get_view();
 		$this->_admin_page = $admin_page;
 		$this->_current_page = $this->get_pagenum();
-		$this->_screen = $this->_admin_page->get_current_page() . '_' . $this->_admin_page->get_current_screen();
+		$this->_screen = $this->_admin_page->get_current_page() . '_' . $this->_admin_page->get_current_view();
 		
 		$this->_setup_data();
 
@@ -267,15 +267,49 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 
 
+	/**
+	 * _set_column_info
+	 * we're using this to set the column headers property.
+	 *
+	 * @access protected
+	 * @return void 
+	 */
+	protected function _set_column_info() {
+		$columns = $this->get_columns();
+		$hidden = $this->get_hidden_columns();
+		$_sortable = $this->get_sortable_columns();
+
+		$sortable = array();
+		foreach ( $_sortable as $id => $data ) {
+			if ( empty( $data ) )
+				continue;
+
+			//fix for offset errors with WP_List_Table default get_columninfo()
+			if ( is_array($data) ) {
+				$_data[0] = key($data);
+				$_data[1] = isset($data[1]) ? $data[1] : false;
+			} else {
+				$_data[0] = $data;
+			}
+
+			$data = (array) $data;
+
+			if ( !isset( $data[1] ) )
+				$_data[1] = false;
+
+
+			$sortable[$id] = $_data;
+		}
+		$this->_column_headers = array( $columns, $hidden, $sortable );
+	}
+
+
 
 
 
 	public function prepare_items() {
 
-		$columns = $this->get_columns();
-		$hidden = $this->get_hidden_columns();
-		$sortable = $this->get_sortable_columns();
-		$this->_column_headers = array($columns, $hidden, $sortable);
+		$this->_set_column_info();
 		$total_items = $this->_all_data_count;
 
 		$this->process_bulk_action();
@@ -296,7 +330,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	}
 
 	public function get_views() {
-		$this->_views = $admin_page->get_list_table_view_RLs();
+		$this->_views = $this->_admin_page->get_list_table_view_RLs();
 		return $this->_views;
 	}
 
@@ -309,8 +343,9 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 		echo "<ul class='subsubsub'>\n";
 		foreach ( $views as $view ) {
-			$views[ $view['slug'] ] = "\t<li class='" . $view['class'] . "'>" . $view['url'];
+			$views[ $view['slug'] ] = "\t<li class='" . $view['class'] . "'>" . '<a href="' . $view['url'] . '">' . $view['label'] . '</a>';
 		}
+		//todo: add count to views
 		echo implode( " |</li>\n", $views ) . "</li>\n";
 		echo "</ul>";
 	}
@@ -320,7 +355,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	}
 
 	public function get_hidden_columns() {
-		return (array) $this->_get_hidden_columns;
+		return (array) $this->_hidden_columns;
 	}
 
 	public function extra_tablenav( $which ) {
@@ -337,7 +372,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	}
 
 	public function get_bulk_actions() {
-		return $this->_get_bulk_actions();
+		return (array) $this->_get_bulk_actions();
 	}
 
 	public function process_bulk_action() {

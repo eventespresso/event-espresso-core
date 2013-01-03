@@ -104,7 +104,7 @@ class EE_Tabbed_Content {
 
 		$all_tabs = '<h2 class="nav-tab-wrapper">' . "\n";
 		foreach ( $nav_tabs as $slug => $tab ) {
-			$all_tabs .= $this->tab($slug, false, $tab['link_text'], $tab['url'], $tab['css_class']);
+			$all_tabs .= self::tab($slug, false, $tab['link_text'], $tab['url'], $tab['css_class']);
 		}
 		$all_tabs .= '</h2>';
 		return $all_tabs;
