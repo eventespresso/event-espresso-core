@@ -336,7 +336,7 @@ abstract class EE_Ticket_Price extends EE_BASE {
 /*
 * ------------------------------------------------------------------------
 *
-* Base Price class
+* Ticket Price Base class
 *
 * @package		Event Espresso
 * @subpackage	includes/classes/EE_Ticket_Price.class.php
@@ -363,7 +363,7 @@ class EE_Ticket_Price_Base extends EE_Ticket_Price {
 	}
 
 
-
+	
 	/**
 	* 	get the price for the ticket
 	* 
@@ -371,6 +371,7 @@ class EE_Ticket_Price_Base extends EE_Ticket_Price {
 	* 	@return 		float
 	*/
 	public function price() {
+		//return $this->_price;
 		return number_format( max( $this->_price, 0 ), 2, '.', ',' );
 	}
 
@@ -411,12 +412,12 @@ class EE_Ticket_Price_Base extends EE_Ticket_Price {
 	/**
 	* 	price totals for each order level
 	* 
-	* 	@access 		public
+	* 	@access 		protected
 	* 	@return 		array
 	*/
 	public function order_totals() {
 		return $this->_order_totals;
-	}
+	}	
 
 
 	/**
@@ -442,6 +443,8 @@ class EE_Ticket_Price_Base extends EE_Ticket_Price {
 		// OR call EE_Ticket_Price::unobfuscate( $obfuscatedString );		
 		return base64_encode( gzdeflate( serialize( $this )));
 	}
+
+
 		
 }
 
@@ -485,8 +488,10 @@ abstract class EE_Price_Modifier extends EE_Ticket_Price {
 		$this->_price_history = $this->_ticket_price->price_history();
 		$this->_order_totals = $this->_ticket_price->order_totals();
 		$this->_order_levels = $this->_ticket_price->order_levels();
-		if ( ! in_array( $this->_price_mod->order(), $this->_order_levels )) {
-			$this->_order_levels[] = $this->_price_mod->order();
+		// if order equals zero, then we'll use the order from the price type (which will still be zero for base ticket prices)
+		$mod_order = $this->_price_mod->order() == 0 ? $this->_price_mod->type_order() : $this->_price_mod->order();
+		if ( ! in_array( $mod_order, $this->_order_levels )) {
+			$this->_order_levels[] = $mod_order;
 		}
 		$this->_calculate_mod_amount();
 		$this->_set_price();
@@ -534,7 +539,7 @@ class EE_Ticket_Price_Modifier extends EE_Price_Modifier {
 	*/
 	protected function _calculate_mod_amount() {
 		
-//		echo '<h4>base_price : ' . $this->_ticket_price->name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>base_price : ' . $this->_ticket_price->name() . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>price_mod : ' . $this->_price_mod->name() . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>price : ' . $this->_price . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		printr( $this->_order_levels, '_order_levels  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -549,20 +554,16 @@ class EE_Ticket_Price_Modifier extends EE_Price_Modifier {
 //		echo '<h4>$last_order : ' . $last_order . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
 		$price_mod_order_key = array_search( $this->_price_mod->order(), $this->_order_levels );
-//		echo '<h4>$prev_price_mod_order : ' . $prev_price_mod_order . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$price_mod_order_key : ' . $price_mod_order_key . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		$prev_price_mod_order = $price_mod_order_key != 0 ? $price_mod_order_key - 1 : $last_order_level_key;
 //		echo '<h4>$prev_price_mod_order : ' . $prev_price_mod_order . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
 		$price = isset( $this->_order_totals[ $prev_price_mod_order ] ) ? $this->_order_totals[ $prev_price_mod_order ] : $this->_price ;
 //		echo '<h4>calculate_mod_from : ' . $price . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
-		if ( $this->_price_mod->is_percent() ) {
-//			$mod_amount = $this->_ticket_price->price() * $this->_price_mod->amount() / 100;
-			$mod_amount = $price * $this->_price_mod->amount() / 100;
-		} else {
-			$mod_amount = $this->_price_mod->amount();
-		}
-		// if base type is discount, then multiply $mod_amount by -1 to make it negative, so that it actually gets subtracted
+		$mod_amount = $this->_price_mod->is_percent() ? ( $price * $this->_price_mod->amount() / 100 ) : $this->_price_mod->amount();
+
+		// if base type is discount, then multiply $mod_amount by -1 to make it negative, so that it actually gets subtracted when it's added
 		$mod_amount = ( $this->_price_mod->base_type() == 2 ? -1 : 1 ) * $mod_amount;
 		$mod_amount = number_format( $mod_amount, 2, '.', ',' );
 //		echo '<h4>$mod_amount : ' . $mod_amount . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4><br/><br/>';
@@ -593,6 +594,17 @@ class EE_Ticket_Price_Modifier extends EE_Price_Modifier {
 		$this->_order_totals[ $this->_price_mod->order() ] = $this->price();
 	}	
 
+
+	/**
+	* 	get the mod_amount for the ticket
+	* 
+	* 	@access 		public
+	* 	@return 		float
+	*/
+	public function mod_amount() {
+		return $this->_mod_amount;
+	}
+	
 	/**
 	* 	get the price for the ticket
 	* 
@@ -675,9 +687,6 @@ class EE_Ticket_Price_Modifier extends EE_Price_Modifier {
 
 
 }
-
-
-
 
 
 
@@ -792,7 +801,8 @@ class EE_Price_Composite {
 		return $this->_PRC->overrides(); 
 	}
 	public function order() { 
-		return $this->_PRC->order(); 
+		$order = $this->_PRC->order() == 0 ? $this->_PRT->order() : $this->_PRC->order();
+		return $order; 
 	}
 	public function deleted() { 
 		return $this->_PRC->deleted(); 

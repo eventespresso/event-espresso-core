@@ -423,7 +423,7 @@ class EEM_Price extends EEM_Base {
 	 */
 	public function get_all_prices_that_are_taxes() {
 		$all_taxes = $this->_select_all_prices_where( 
-				array( 'prt.PBT_ID' => 4, 'prc.PRC_deleted' => FALSE )	
+				array( 'prt.PBT_ID' => 4, 'prc.PRC_is_active' => TRUE, 'prc.PRC_deleted' => FALSE )	
 		);
 		$taxes = array();
 		foreach ( $all_taxes as $tax ) {
@@ -434,10 +434,10 @@ class EEM_Price extends EEM_Base {
 
 	public function get_all_prices_that_are_not_taxes() {
 		return $this->_select_all_prices_where(
-				array( 'prt.PBT_ID' => 4, 'prc.PRC_deleted' => FALSE ), 
+				array( 'prt.PBT_ID' => 4, 'prc.PRC_is_active' => TRUE, 'prc.PRC_deleted' => FALSE ), 
 				array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' ), 
 				'ASC', 
-				array( 'prt.PBT_ID' => '!=', 'prc.PRC_deleted' => '=' )
+				array( 'prt.PBT_ID' => '!=', 'prc.PRC_is_active' => '=', 'prc.PRC_deleted' => '=' )
 		);
 	}
 

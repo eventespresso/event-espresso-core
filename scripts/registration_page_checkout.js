@@ -201,12 +201,12 @@
 	function show_event_queue_ajax_error_msg( error_msg ) {
 			
 		if ( error_msg != undefined && error_msg != '' ) {
-				alert( 'typeof( error_msg ) = '+ typeof( error_msg ) );
+			//alert( 'typeof( error_msg ) = '+ typeof( error_msg ) );
 			
 			if ( typeof( error_msg ) === 'object' && error_msg.error != undefined && error_msg.error != '' ) {
 				error_msg = error_msg.error;				
 			} 
-			alert( '209) show_event_queue_ajax_error_msg = '+ error_msg);
+			//alert( '209) show_event_queue_ajax_error_msg = '+ error_msg);
 						
 			$('#mer-error-msg').center();				
 			$('#mer-error-msg > .msg').html( error_msg );
