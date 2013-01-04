@@ -285,8 +285,8 @@ function espresso_process_event_prices($prices, $currency_symbol, $surcharge_typ
 										'price_desc' => $valid['price_desc'][$x],
 										'pre_approval' => $valid['pre_approval']
 								),
-								'meta_keys' => $valid['meta_keys'][$x],
-								'meta_values' => $valid['meta_values'][$x],
+								'meta_keys' => array_key_exists($x,$valid['meta_keys'])?($valid['meta_keys'][$x]):array(),
+								'meta_values' => array_key_exists($x,$valid['meta_values'])?($valid['meta_values'][$x]):array(),
 						);
 						//echo printr($event_to_add);die();
 						// then add event
