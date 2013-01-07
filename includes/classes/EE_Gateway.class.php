@@ -317,9 +317,11 @@ abstract class EE_Gateway {
 	protected function _generate_payment_gateway_selection_button() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		return '
-		<a id="payment-gateway-button-' . $this->_gateway . '" class="reg-page-payment-option-lnk' . $this->_css_link_class . '" rel="' . $this->_gateway . '" href="' . $this->_form_url . '" >
-			<img src="' . $this->_payment_settings['button_url'] . '" alt="Pay using ' . $this->_payment_settings['display_name'] . '" />
-		</a>
+		 <div id="' . $this->_gateway . '-payment-option-dv" class="'. $this->_payment_settings['type'] .'-payment-gateway reg-page-payment-option-dv' . $this->_css_link_class . '">
+			<a id="payment-gateway-button-' . $this->_gateway . '" class="reg-page-payment-option-lnk" rel="' . $this->_gateway . '" href="' . $this->_form_url . '" >
+				<img src="' . $this->_payment_settings['button_url'] . '" alt="Pay using ' . $this->_payment_settings['display_name'] . '" />
+			</a>
+		</div>
 ';
 	}
 	

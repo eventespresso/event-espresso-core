@@ -53,9 +53,10 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 
 	protected function __construct(EEM_Gateways &$model) {
 		$this->_gateway = 'Authnet';
-		$this->_button_base = 'btn_cc_vmad.gif';
+		$this->_button_base = 'authnet-logo.png';
 		$this->_path = str_replace('\\', '/', __FILE__);
 		$this->_gatewayUrl = 'https://secure.authorize.net/gateway/transact.dll';
+		$this->_btn_img = is_readable( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 	}
 
@@ -70,6 +71,7 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 		$this->_payment_settings['type'] = 'off-site';
 		$this->_payment_settings['display_name'] = 'Authorize.net SIM';
 		$this->_payment_settings['current_path'] = '';
+		$this->_payment_settings['button_url'] = $this->_btn_img;
 	}
 
 	protected function _update_settings() {
@@ -113,6 +115,7 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 					<?php _e('Button Image URL: ', 'event_espresso'); ?>
 					<?php echo apply_filters('filter_hook_espresso_help', 'authnet_button_url_info') ?>
 				</label></th>
+				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
 			<td><input class="regular-text" type="text" name="button_url" id="sim_button_url" value="<?php echo $this->_payment_settings['button_url']; ?>" />
 				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <br />
 				<span class="description">
@@ -121,7 +124,7 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 		</tr>
 		<tr>
 			<th><label for="sim_image_url">
-					<?php _e('Image URL: ', 'event_espresso'); ?>
+					<?php _e('Your Logo Image URL: ', 'event_espresso'); ?>
 					<?php echo apply_filters('filter_hook_espresso_help', 'authnet_image_url_info') ?>
 				</label></th>
 			<td><input class="regular-text" type="text" name="image_url" id="sim_image_url" value="<?php echo $this->_payment_settings['image_url']; ?>" />

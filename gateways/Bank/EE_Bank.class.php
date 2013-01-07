@@ -39,8 +39,9 @@ Class EE_Bank extends EE_Offline_Gateway {
 
 	protected function __construct(EEM_Gateways &$model) {
 		$this->_gateway = 'Bank';
-		$this->_button_base = 'bank.png';
+		$this->_button_base = 'bank-logo.png';
 		$this->_path = str_replace('\\', '/', __FILE__);
+		$this->_btn_img = is_readable( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 	}
 
@@ -55,7 +56,8 @@ Class EE_Bank extends EE_Offline_Gateway {
 			'bank_address' => '',
 			'display_name' => 'Bank Draft',
 			'type' => 'off-line',
-			'current_path' => ''
+			'current_path' => '',
+			'button_url' => $this->_btn_img
 		);
 	}
 
@@ -107,6 +109,18 @@ Class EE_Bank extends EE_Offline_Gateway {
 				</label></th>
 			<td><textarea name="bank_address" cols="30" rows="5"><?php echo $this->_payment_settings['bank_address']; ?></textarea></td>
 		</tr>
+		<tr>
+			<th>
+				<label for="<?php echo $this->_gateway; ?>_button_url">
+					<?php _e('Button Image URL', 'event_espresso'); ?>
+				</label>
+			</th>
+			<td>
+				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
+				<input class="regular-text" type="text" name="<?php echo $this->_gateway; ?>_button_url" id="<?php echo $this->_gateway; ?>_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
+				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
+			</td>
+		</tr>
 		<?php
 	}
 
@@ -118,7 +132,7 @@ Class EE_Bank extends EE_Offline_Gateway {
 		$this->set_transaction_details();
 		?>
 		<div class="event-display-boxes">
-			<h4 id="page_title" class="payment_type_title section-heading"><?php echo stripslashes_deep(empty($this->_payment_settings['page_title']) ? '' : $this->_payment_settings['page_title']) ?></h3>
+			<h4 id="page_title" class="payment_type_title section-heading"><?php echo stripslashes_deep(empty($this->_payment_settings['page_title']) ? '' : $this->_payment_settings['page_title']) ?></h4>
 				<p class="instruct"><?php echo stripslashes_deep(empty($this->_payment_settings['bank_instructions']) ? '' : $this->_payment_settings['bank_instructions'] ); ?></p>
 				<p><span class="section-title"><?php _e('Name on Account:', 'event_espresso'); ?></span>
 					<?php echo stripslashes_deep(empty($this->_payment_settings['account_name']) ? '' : '<span class="highlight">' . $this->_payment_settings['account_name']) . '</span>'; ?></p>

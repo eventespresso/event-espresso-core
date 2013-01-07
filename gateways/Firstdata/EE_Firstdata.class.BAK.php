@@ -41,6 +41,7 @@ Class EE_Firstdata extends EE_Gateway {
 		$this->_gateway = 'Firstdata';
 		$this->_button_base = 'logo-Firstdata.png';
 		$this->_path = str_replace( '\\', '/', __FILE__ );
+		$this->_btn_img = file_exists( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 	}
 
@@ -52,6 +53,7 @@ Class EE_Firstdata extends EE_Gateway {
 		$this->_payment_settings['type'] = 'on-site';
 		$this->_payment_settings['display_name'] = 'First Data';
 		$this->_payment_settings['current_path'] = '';
+		$this->_payment_settings['button_url'] = $this->_btn_img;
 	}
 
 	protected function _update_settings() {
@@ -112,6 +114,7 @@ Class EE_Firstdata extends EE_Gateway {
 					<?php echo apply_filters('filter_hook_espresso_help', 'aim_button_image'); ?>
 				</label></th>
 			<td>
+				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
 				<input class="regular-text" type="text" name="button_url" id="aim_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
 				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
 			</td>
