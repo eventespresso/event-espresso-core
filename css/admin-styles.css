@@ -328,6 +328,10 @@ div.tablenav {
 	width: 100px;
 }
 
+.button.add-new-h2 {
+	margin-left: 15px;
+}
+
 /*** Add new events / Edit events ***/
 
 #event_editor_major_buttons_wrapper{
