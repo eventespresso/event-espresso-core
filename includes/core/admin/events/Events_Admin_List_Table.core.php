@@ -54,7 +54,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 		$this->_columns = array(
 			'cb' => '<input type="checkbox" />',
-			'default' => __('ID', 'event_espresso'),
+			'id' => __('ID', 'event_espresso'),
 			'name' => __('Name', 'event_espresso'),
 			'venue' => __('Venue', 'event_espresso'),
 			'start_date' => __('Start Date', 'event_espresso'),
@@ -67,7 +67,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 		$this->_sortable_columns = array(
-			'default' => array( 'e.id' => true ),
+			'id' => array( 'e.id' => true ),
 			'name' => array( 'e.event_name' => false ),
 			'venue' => array( 'v.name' => false ),
 			'start_date' => array('dtt.DTT_EVT_start' => false),
@@ -98,9 +98,15 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_default($item) {
-		return $item->event_id;
+		return '';
 	}
 
+
+
+
+	public function column_id($item) {
+		return $item->event_id;
+	}
 
 
 

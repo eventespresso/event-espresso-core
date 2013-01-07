@@ -315,6 +315,20 @@ div.tablenav {
 	min-height: 30px;
 	height: auto;
 }
+
+.manage-column.column-id {
+	width: 30px;
+}
+
+.manage-column.column-status {
+	width: 80px;
+}
+
+
+.manage-column.column-attendees {
+	width: 100px;
+}
+
 /*** Add new events / Edit events ***/
 
 #event_editor_major_buttons_wrapper{

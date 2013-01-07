@@ -752,6 +752,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			add_action('admin_head', array( $this, 'add_xdebug_style' ));
 		}
 		wp_enqueue_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css');
+		wp_enqueue_style('event_espresso', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-styles.css');
 
 
 		/** SCRIPTS **/
