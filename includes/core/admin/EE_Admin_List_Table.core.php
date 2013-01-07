@@ -181,8 +181,9 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * @param EE_Admin_Page object $admin_page we use this for obtaining everything we need in the list table.
 	 */
 	public function __construct( EE_Admin_Page &$admin_page ) {
-		$this->_view = $admin_page->get_view();
 		$this->_admin_page = $admin_page;
+		$this->_view = $this->_admin_page->get_view();
+		$this->_views = $this->_admin_page->get_list_table_view_RLs();
 		$this->_current_page = $this->get_pagenum();
 		$this->_screen = $this->_admin_page->get_current_page() . '_' . $this->_admin_page->get_current_view();
 		
@@ -225,19 +226,6 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	abstract protected function _set_properties();
 
 	
-
-
-
-
-	/**
-	 * _get_bulk_actions
-	 * This is a wrapper called by WP_List_Table::get_bulk_actions()
-	 *
-	 * @abstract
-	 * @access protected
-	 * @return string html for bulk_actions
-	 */
-	abstract protected function _get_bulk_actions();
 
 
 
@@ -306,6 +294,26 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 
 
+	/**
+	 * _get_bulk_actions
+	 * This is a wrapper called by WP_List_Table::get_bulk_actions()
+	 *
+	 * @access protected
+	 * @return array bulk_actions
+	 */
+	protected function _get_bulk_actions() {
+		$actions = array();
+		//the _views property should have the bulk_actions, so let's go through and extract them into a properly formatted array for the wp_list_table();
+		foreach ( $this->_views as $view ) {
+			if ( isset( $view['bulk_action']) && is_array($view['bulk_action']) )
+				$actions = array_merge($actions, $view['bulk_action']);
+		}
+		return $actions;
+	}
+
+
+
+
 
 	public function prepare_items() {
 
@@ -325,12 +333,15 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		);
 	}
 
+
+
+
+
 	public function get_columns() {
 		return (array) $this->_columns;
 	}
 
 	public function get_views() {
-		$this->_views = $this->_admin_page->get_list_table_view_RLs();
 		return $this->_views;
 	}
 
