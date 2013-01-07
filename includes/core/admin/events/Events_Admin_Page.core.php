@@ -359,7 +359,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			$sql .= "dtt.DTT_is_primary = '1' AND ";
 		}
 
-		$sql .= ( isset($_REQUEST['event_status']) && ($_REQUEST['event_status'] != '' && $_REQUEST['event_status'] != 'IA')) ? "e.event_status = '" . $_REQUEST['event_status'] . "' " : "e.event_status != 'D' ";
+		$sql .= ( isset($_REQUEST['event_status']) && ($_REQUEST['event_status'] != '') ) ? "e.event_status = '" . $_REQUEST['event_status'] . "' " : "e.event_status != 'D' ";
 		$sql .= isset($_REQUEST['category_id']) && $_REQUEST['category_id'] != '' ? " AND c.id = '" . $_REQUEST['category_id'] . "' " : '';
 
 		if ( isset($_REQUEST['month_range']) && $_REQUEST['month_range'] != '' ) {
@@ -389,13 +389,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * espresso_attendees_by_month_dropdown			
+	 * espresso_event_months_dropdown			
 	 * This is copied (and slightly modified) from the same named function in EE core legacy.
 	 * 
 	 * @param  string $current_value current month range value
 	 * @return string                dropdown listing month/year selections for events.
 	 */
-	public function espresso_attendees_by_month_dropdown($current_value = '') {
+	public function espresso_event_months_dropdown($current_value = '') {
 		global $wpdb;
 		$SQL = "SELECT DTT_EVT_start as e_date FROM " . $wpdb->prefix . "esp_datetime GROUP BY YEAR(FROM_UNIXTIME(DTT_EVT_start)), MONTH(FROM_UNIXTIME(DTT_EVT_start))";
 
