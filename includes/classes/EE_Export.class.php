@@ -158,16 +158,18 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 	 *			@return void
 	 */	
 	function export_event() {
+		if ( !isset( $_REQUEST['event_id'] ) )
+			throw new EE_Error(__('We need an event_id to export events.', 'event_espresso') );
+		$event_ids = is_array($_REQUEST['event_id']) ? $_REQUEST['event_id'] : (array) $_REQUEST['event_id'];
 
-		if ( isset( $_REQUEST['event_id'] )) {
-			$this->event_id = $_REQUEST['event_id'];
-		}
-		$table_data = $this->espresso_event_export($this->_event_name);
-		$filename = $_REQUEST['all_events'] == "true"? __('all-events', 'event_espresso') :	sanitize_title_with_dashes($this->_event_name);
-		$filename .= "-" . $this->today ;
-		if ( ! $this->EE_CSV->export_array_to_csv( FALSE, $table_data, $filename )) {
-			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Event details could not be exported from the database.';
-			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
+		foreach ( $event_ids as $this->_event_id ) {
+			$table_data = $this->espresso_event_export();
+			$filename = $_REQUEST['all_events'] == "true"? __('all-events', 'event_espresso') :	sanitize_title_with_dashes($this->_event_name);
+			$filename .= "-" . $this->today ;
+			if ( ! $this->EE_CSV->export_array_to_csv( FALSE, $table_data, $filename )) {
+				$this->EE_CSV->_notices['errors'][] = 'An error occured and the Event details could not be exported from the database.';
+				add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
+			}
 		}
 	}
 
@@ -262,7 +264,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 	 *		  @access private 
 	 *			@return void
 	 */	
-	private function espresso_event_export($ename){
+	private function espresso_event_export(){
 	
 		$this->build_basic_header();
 
@@ -581,6 +583,11 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 	private function build_basic_header() {
 
 		global $wpdb;
+
+		if ( !isset($_REQUEST['event_id'] ) )
+			throw new EE_Error( __('We need an event_id to do anything with the export', 'event_espresso') );
+
+		$this->event_id = !empty($this->_event_id) ? $this->_event_id : $_REQUEST['event_id'];
 
 		if ( isset( $_REQUEST['event_id'] )) {
 			$this->event_id = $_REQUEST['event_id'];

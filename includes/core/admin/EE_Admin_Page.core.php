@@ -1324,17 +1324,15 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
-		// overwrite default success messages
-		$espresso_notices['success'] = array();
 		$redirect_url = $this->admin_base_url;
 
 		// how many records affected ? more than one record ? or just one ?
 		if ( $success == 2 ) {
 			// set plural msg
-			$espresso_notices['success'][] = sprintf( __('The %s have been successfully %s.', 'event_espresso'), $what, $action_desc );
+			EE_Error::add_success( sprintf( __('The %s have been successfully %s.', 'event_espresso'), $what, $action_desc ), __FILE__, __FUNCTION__, __LINE__);
 		} else if ( $success == 1 ) {
 			// set singular msg
-			$espresso_notices['success'][] = sprintf( __('The %s has been successfully %s.', 'event_espresso'), $what, $action_desc);
+			EE_Error::add_success( sprintf( __('The %s has been successfully %s.', 'event_espresso'), $what, $action_desc), __FILE__, __FUNCTION__, __LINE );
 		}
 
 		// check that $query_args isn't something crazy
@@ -1348,7 +1346,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 		
 		// grab messages
-		$notices = espresso_get_notices( FALSE, TRUE, TRUE, FALSE );
+		$notices = EE_Error::get_notices( false, true );
 		//combine $query_args and $notices
 		$query_args = array_merge( $query_args, $notices );
 		// generate redirect url

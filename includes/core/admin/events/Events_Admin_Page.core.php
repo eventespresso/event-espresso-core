@@ -110,11 +110,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 					)
 				),
 			'export_events' => array(
-				'func' => '_events_export',
-				'nav' => array(
-					'label' => __('Export', 'event_espresso'),
-					'order' => 30
-					)
+				'func' => '_events_export'
+				),
+			'export_payments' => array(
+				'func' => '_payment_export'
 				)
 			);
 	}
@@ -174,7 +173,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'label' => __('View All Events', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'delete_events' => __('Delete Permanently', 'event_espresso')
+					'delete_events' => __('Delete Permanently', 'event_espresso'),
+					'export_events' => __('Export Events', 'event_espresso'),
+					'export_payments' => __('Export Payments', 'event_espresso')
 					)
 				),
 			'today' => array(
@@ -182,7 +183,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'label' => __('Today', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'delete_events' => __('Delete Permanently', 'event_espresso')
+					'delete_events' => __('Delete Permanently', 'event_espresso'),
+					'export_events' => __('Export Events', 'event_espresso'),
+					'export_payments' => __('Export Payments', 'event_espresso')
 					)
 				),
 			'month' => array(
@@ -190,7 +193,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'label' => __('This Month', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'delete_events' => __('Delete Permanently', 'event_espresso')
+					'delete_events' => __('Delete Permanently', 'event_espresso'),
+					'export_events' => __('Export Events', 'event_espresso'),
+					'export_payments' => __('Export Payments', 'event_espresso')
 					)
 				)
 			);
@@ -293,7 +298,30 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * @access protected
 	 * @return file 
 	 */
-	protected function _events_export() {}
+	protected function _events_export() {
+
+		//todo: I don't like doing this but we'll do until we modify EE_Export Class.
+		$_REQUEST = array(
+			'export' => 'report',
+			'action' => 'event',
+			'event_id' => $_REQUEST['EVT_ID'],
+			);
+		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php')) {
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
+			$EE_Export = EE_Export::instance();
+			$EE_Export->export();
+		}
+	}
+
+
+
+
+	/**
+	 * _payment_export
+	 * Will export payments for events to an excel file (or for given events)
+	 * @return [type] [description]
+	 */
+	protected function _payment_export() {}
 
 
 
