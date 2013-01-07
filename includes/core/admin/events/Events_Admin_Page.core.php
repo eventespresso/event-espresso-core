@@ -319,9 +319,24 @@ class Events_Admin_Page extends EE_Admin_Page {
 	/**
 	 * _payment_export
 	 * Will export payments for events to an excel file (or for given events)
-	 * @return [type] [description]
+	 * @return file?
 	 */
-	protected function _payment_export() {}
+	protected function _payment_export() {
+
+		//todo: I don't like doing this but we'll do until we modify EE_Export Class.
+		$_REQUEST = array(
+			'export' => 'report',
+			'action' => 'payment',
+			'type' => 'excel'
+			'event_id' => $_REQUEST['EVT_ID'],
+			);
+		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php')) {
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
+			$EE_Export = EE_Export::instance();
+			$EE_Export->export();
+		}
+
+	}
 
 
 

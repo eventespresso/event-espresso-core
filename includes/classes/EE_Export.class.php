@@ -161,15 +161,16 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 		if ( !isset( $_REQUEST['event_id'] ) )
 			throw new EE_Error(__('We need an event_id to export events.', 'event_espresso') );
 		$event_ids = is_array($_REQUEST['event_id']) ? $_REQUEST['event_id'] : (array) $_REQUEST['event_id'];
-
+		$filename = sanitize_title_with_dashes($this->_event_name);
 		foreach ( $event_ids as $this->_event_id ) {
-			$table_data = $this->espresso_event_export();
-			$filename = $_REQUEST['all_events'] == "true"? __('all-events', 'event_espresso') :	sanitize_title_with_dashes($this->_event_name);
-			$filename .= "-" . $this->today ;
-			if ( ! $this->EE_CSV->export_array_to_csv( FALSE, $table_data, $filename )) {
-				$this->EE_CSV->_notices['errors'][] = 'An error occured and the Event details could not be exported from the database.';
-				add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
-			}
+			$table_data[] = $this->espresso_event_export();
+		}
+
+		$filename = $_REQUEST['all_events'] == "true" || count($event_ids) > 1 ? __('multiple-events', 'event_espresso') :	$filename;
+		$filename .= "-" . $this->today ;
+		if ( ! $this->EE_CSV->export_array_to_csv( FALSE, $table_data, $filename )) {
+			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Event details could not be exported from the database.';
+			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 		}
 	}
 
