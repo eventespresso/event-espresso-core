@@ -385,4 +385,35 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 
+	
+
+
+	/**
+	 * espresso_attendees_by_month_dropdown			
+	 * This is copied (and slightly modified) from the same named function in EE core legacy.
+	 * 
+	 * @param  string $current_value current month range value
+	 * @return string                dropdown listing month/year selections for events.
+	 */
+	public function espresso_attendees_by_month_dropdown($current_value = '') {
+		global $wpdb;
+		$SQL = "SELECT REG_date as e_date FROM " . $wpdb->prefix . "esp_registration GROUP BY YEAR(FROM_UNIXTIME(REG_date)), MONTH(FROM_UNIXTIME(REG_date))";
+
+		$dates = $wpdb->get_results($SQL);
+
+		if ($wpdb->num_rows > 0) {
+			echo '<select name="month_range" class="wide">';
+			echo '<option value="">' . __('Select a Month/Year', 'event_espresso') . '</option>';
+			foreach ($dates as $row) {
+				$option_date = date_i18n( 'M Y', $row->e_date );
+				echo '<option value="' . $option_date . '"';
+				echo $option_date == $current_value ? ' selected="selected=selected"' : '';
+				echo '>' . $option_date . '</option>' . "\n";
+			}
+			echo "</select>";
+		} else {
+			_e('No Results', 'event_espresso');
+		}
+	}
+
 } //end class Events_Admin_Page

@@ -87,7 +87,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		require_once EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin.php';
 
 		//first month/year filters
-		$filters[] = espresso_attendees_by_month_dropdown( isset($_REQUEST['month_range']) ? $_REQUEST['month_range'] : '' );
+		$filters[] = $this->_admin_page->espresso_attendees_by_month_dropdown( isset($_REQUEST['month_range']) ? $_REQUEST['month_range'] : '' );
 
 		//category filter
 		$filters[] = espresso_category_dropdown( isset($_REQUEST['category_id']) ? $_REQUEST['category_id'] : '' );
