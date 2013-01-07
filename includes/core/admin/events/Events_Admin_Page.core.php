@@ -385,19 +385,4 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 
-
-
-
-	/**
-	 * _get_filter_events_count
-	 * This method just returns a count of events for the given $which value (i.e. 'all', 'today', 'month')
-	 *
-	 * @access  protected
-	 * @param  string $which indicate what we're using to filter the event count.
-	 * @return int   return count
-	 */
-	public function get_filter_events_count($which = 'all') {
-
-	}
-
 } //end class Events_Admin_Page
