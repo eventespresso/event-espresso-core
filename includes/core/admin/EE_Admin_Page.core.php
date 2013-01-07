@@ -1524,6 +1524,17 @@ abstract class EE_Admin_Page extends EE_BASE {
 		return $this->_current_screen;
 	}
 
+
+	/**
+	 * get_current_page_view_url
+	 *
+	 * @access public
+	 * @return string This returns the url for the current_page_view.
+	 */
+	public function get_current_page_view_url() {
+		return $this->_current_page_view_url;
+	}
+
 }
 
 	

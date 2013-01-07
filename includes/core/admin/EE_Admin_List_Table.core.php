@@ -312,6 +312,29 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	}
 
 
+	/**
+	 * _filters
+	 * This receives the filters array from children _get_table_filters() and assembles the string including the filter button.
+	 *
+	 * @access private
+	 * @return string html showing filters
+	 */
+	private function _filters() {
+		$filters = (array) $this->_get_table_filters();
+		
+		if ( empty($filters) )
+			return;
+
+		foreach ( $filters as $filter ) {
+			echo $filter;
+		}
+
+		//add filter button at end
+		echo '<input type="submit" class="button-secondary" value="' . __('Filter', 'event_espresso') . '" id="post-query-submit" />';
+
+		//add reset filters button at end
+		echo '<a class="button button-secondary"  href="' . $this->_admin_page->get_current_page_view_url() . '" style="display:inline-block">' . __('Reset Filters', 'event_espresso') . '</a>';
+	}
 
 
 
@@ -332,8 +355,6 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 			)
 		);
 	}
-
-
 
 
 
@@ -371,7 +392,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 	public function extra_tablenav( $which ) {
 		if ( $which == 'top' ) {
-			echo $this->_get_table_filters();
+			$this->_filters();
 			echo "\n";
 			echo $this->_get_hidden_fields();
 		}

@@ -81,7 +81,22 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _get_table_filters() {
-		//todo
+		$filters = array();
+
+		//todo we're currently using old functions here. We need to move things into the Events_Admin_Page() class as methods.
+		require_once EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin.php';
+
+		//first month/year filters
+		$filters[] = espresso_attendees_by_month_dropdown( isset($_REQUEST['month_range']) ? $_REQUEST['month_range'] : '' );
+
+		//category filter
+		$filters[] = espresso_category_dropdown( isset($_REQUEST['category_id']) ? $_REQUEST['category_id'] : '' );
+
+		//status dropdown
+		$status = array(array('id' => '', 'text' => __('Show All Completed/Incomplete', 'event_espresso')), array('id' => 'Completed', 'text' => __('Completed', 'event_espresso')), array('id' => 'Pending', 'text' => __('Pending', 'event_espresso')), array('id' => 'Incomplete', 'text' => __('Incomplete', 'event_espresso')), array('id' => 'Payment Declined', 'text' => __('Payment Declined', 'event_espresso')));
+
+		$filters[] = select_input('payment_status', $status, isset($_REQUEST['payment_status']) ? $_REQUEST['payment_status'] : '');
+		return $filters;	
 	}
 
 

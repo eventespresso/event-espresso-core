@@ -332,6 +332,10 @@ div.tablenav {
 	margin-left: 15px;
 }
 
+select.wide {
+	margin-right: 10px;
+}
+
 /*** Add new events / Edit events ***/
 
 #event_editor_major_buttons_wrapper{
