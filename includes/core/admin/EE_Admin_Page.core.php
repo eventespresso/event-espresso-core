@@ -1084,7 +1084,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$screen = get_current_screen();
 		$this->template_args['current_screen_widget_class'] = 'columns-' . 
 		$screen->get_columns();
-		$this->template_args['current_page'] = $this->wp_page_slug;
+		$this->template_args['current_page'] = $this->_wp_page_slug;
 		$template_path = EE_CORE_ADMIN . 'admin_details_metabox_column_wrapper.template.php';
 
 		$this->template_args['screen'] = $screen;
@@ -1181,7 +1181,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args['current_page'] = $this->_wp_page_slug;
 		$template_path = EE_CORE_ADMIN . 'admin_list_wrapper.template.php';
 
-		$this->_template_args['table_url'] = add_query_arg( array( 'noheader' => 'true', $this->_admin_base_url) );
+		$this->_template_args['table_url'] = $this->_doing_AJAX ? add_query_arg( array( 'noheader' => 'true'), $this->_admin_base_url ) : $this->_admin_base_url;
 		$this->_template_args['list_table'] = $this->_list_table_object;
 
 		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );

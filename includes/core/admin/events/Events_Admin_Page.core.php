@@ -318,9 +318,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$order = isset($_REQUEST['order']) ? " " . $_REQUEST['order'] : " DESC";
 
 		if (isset($_REQUEST['month_range'])) {
-			$pieces = explode('-', $_REQUEST['month_range'], 3);
-			$year_r = !empty($pieces[0]) ? $pieces[0] : '';
-			$month_r = !empty($pieces[1]) ? $pieces[1] : '';
+			$pieces = explode(' ', $_REQUEST['month_range'], 3);
+			$month_r = !empty($pieces[0]) ? $pieces[0] : '';
+			$year_r = !empty($pieces[1]) ? $pieces[1] : '';
 		}
 		
 		$sql = '';
@@ -336,16 +336,16 @@ class Events_Admin_Page extends EE_Admin_Page {
 			}
 		}
 
-			$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
+		$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
 
-		if ( !$count ) {
-			$sql .= " LEFT JOIN " . ESP_DATETIME . " dtt ON dtt.EVT_ID = e.id ";
+	
+		$sql .= " LEFT JOIN " . ESP_DATETIME . " dtt ON dtt.EVT_ID = e.id ";
 
-			if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager']) {
-				$sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " vr ON vr.event_id = e.id ";
-				$sql .= " LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = vr.venue_id ";
-			}
+		if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager']) {
+			$sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " vr ON vr.event_id = e.id ";
+			$sql .= " LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = vr.venue_id ";
 		}
+		
 
 
 		if ( isset($_REQUEST['category_id']) && $_REQUEST['category_id'] != '') {
@@ -362,7 +362,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$sql .= ( isset($_REQUEST['event_status']) && ($_REQUEST['event_status'] != '' && $_REQUEST['event_status'] != 'IA')) ? "e.event_status = '" . $_REQUEST['event_status'] . "' " : "e.event_status != 'D' ";
 		$sql .= isset($_REQUEST['category_id']) && $_REQUEST['category_id'] != '' ? " AND c.id = '" . $_REQUEST['category_id'] . "' " : '';
 
-		if ( isset($_REQUEST['month_range']) && $_REQUEST['month_range'] != '' && $_REQUEST['month_range'] > 0) {
+		if ( isset($_REQUEST['month_range']) && $_REQUEST['month_range'] != '' ) {
 			$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime($year_r . '-' . $month_r . '-01') . "' AND '" . strtotime($year_r . '-' . $month_r . '-31') . "' ";
 		} elseif (isset($_REQUEST['today']) && $_REQUEST['today'] == 'true') {
 			$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime(date('Y-m-d') . ' 0:00:00') . "' AND '" . strtotime(date('Y-m-d') . ' 23:59:59') . "' ";
@@ -397,7 +397,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 */
 	public function espresso_attendees_by_month_dropdown($current_value = '') {
 		global $wpdb;
-		$SQL = "SELECT REG_date as e_date FROM " . $wpdb->prefix . "esp_registration GROUP BY YEAR(FROM_UNIXTIME(REG_date)), MONTH(FROM_UNIXTIME(REG_date))";
+		$SQL = "SELECT DTT_EVT_start as e_date FROM " . $wpdb->prefix . "esp_datetime GROUP BY YEAR(FROM_UNIXTIME(DTT_EVT_start)), MONTH(FROM_UNIXTIME(DTT_EVT_start))";
 
 		$dates = $wpdb->get_results($SQL);
 
