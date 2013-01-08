@@ -59,9 +59,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	//action => method pairs used for routing incoming requests
 	protected $_page_routes;
+	protected $_page_config;
 
-	//the current page route
+	//the current page route and route config
 	protected $_route;
+	protected $_route_config;
 
 	//set via request page and action args.
 	protected $_current_page;
@@ -159,27 +161,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	/**
 	 * _set_page_routes
-	 * child classes use this to define the page routes for all subpages handled by the class.  Page routes are assigned to a action => method pairs in an array and to the $_page_routes property. Note that the _page_routes array is also used to define which routes have corresponding nav tabs.  Each page route must also have a 'default' route. Here's the format
+	 * child classes use this to define the page routes for all subpages handled by the class.  Page routes are assigned to a action => method pairs in an array and to the $_page_routes property.  Each page route must also have a 'default' route. Here's the format
 	 * $this->_page_routes = array(
 	 * 		'default' => array(
 	 * 			'func' => '_default_method_handling_route',
-	 * 			'labels' => array(
-	 * 				'buttons' => array(
-	 * 					'add' => __('label for adding item'),
-	 * 				 	'edit' => __('label for editing item'),
-	 * 				  	'delete' => __('label for deleting item')
-	 * 			    )
-	 * 			), //optional an array of custom labels for various automatically generated elements to use on the page. If this isn't present then the defaults will be used as set for the $this->_labels in _define_page_props() method
-	 * 			'args' => array('array','of','args'),
-	 * 			'nav' => array(
-	 * 				'label' => __('Label for Tab', 'event_espresso').
-	 *     			'url' => 'http://someurl', //automatically generated UNLESS you define
-	 *     			'css_class' => 'css-class', //automatically generated UNLESS you define
-	 *     			'order' => 10 //required to indicate tab position.
-	 *     		'list_table' => 'name_of_list_table'
-	 * 			)
+	 * 			'args' => array('array','of','args')
 	 * 		),
-	 * 		'insert_item' => '_method_for_handling_insert_item' //this can be used if all we need to have is a handling method.  'nav' defaults to false and 'args' defaults to empty.  If nav is false, no nav tab is generated.
+	 * 		'insert_item' => '_method_for_handling_insert_item' //this can be used if all we need to have is a handling method. 
 	 * 		)
 	 * 		
 	 * )
@@ -190,6 +178,41 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	abstract protected function _set_page_routes();
+
+
+
+
+
+
+	/**
+	 * _set_page_config
+	 * child classes use this to define the _page_config array for all subpages handled by the class. Each key in the array corresponds to the page_route for the loaded page.
+	 * Format:
+	 * $this->_page_config = array(
+	 * 		'default' => array(
+	 * 			'labels' => array(
+	 * 				'buttons' => array(
+	 * 					'add' => __('label for adding item'),
+	 * 				 	'edit' => __('label for editing item'),
+	 * 				  	'delete' => __('label for deleting item')
+	 * 			    )
+	 * 			), //optional an array of custom labels for various automatically generated elements to use on the page. If this isn't present then the defaults will be used as set for the $this->_labels in _define_page_props() method
+	 * 			'nav' => array(
+	 * 				'label' => __('Label for Tab', 'event_espresso').
+	 *     			'url' => 'http://someurl', //automatically generated UNLESS you define
+	 *     			'css_class' => 'css-class', //automatically generated UNLESS you define
+	 *     			'order' => 10 //required to indicate tab position.
+	 *     		'list_table' => 'name_of_list_table' //string for list table class to be loaded for this admin_page.
+	 *     		'metaboxes' => array('metabox1', 'metabox2') //if present this key indicates we want to load metaboxes set for eventespresso admin pages. 
+	 * 			
+	 * )
+	 * 
+	 *
+	 * @abstract
+	 * @access protected
+	 * @return void
+	 */
+	abstract protected function _set_page_config();
 
 
 
@@ -340,6 +363,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_current_page_view_url = add_query_arg( array( 'page' => $this->_current_page, 'action' => $this->_current_view ),  $this->_admin_base_url );
 
 		$this->_set_page_routes();
+		$this->_set_page_config();
 
 		if ( $this->_is_UI_request ) {
 			
@@ -441,7 +465,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_doing_AJAX = FALSE; //this will be set to true by the called ajax method in our child classes
 		$this->_admin_base_url = $this->_current_screen = $this->_admin_page_title = $this->page_slug = $this->page_label = $this->_req_action = $this->_req_nonce = NULL;
 
-		$this->_nav_tabs = $this_views = $this->_page_routes = array();
+		$this->_nav_tabs = $this_views = $this->_page_routes = $this->_page_config = array();
 
 		$this->default_nav_tab_name = 'overview';
 	}
@@ -495,6 +519,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		// and that the requested page route exists 
 		if ( array_key_exists( $this->_req_action, $this->_page_routes )) {
 			$this->_route = $this->_page_routes[ $this->_req_action ];
+			$this->_route_config = isset($this->_page_config[$this->_req_action]) ? $this->_page_config[$this->_req_action] : array();
 		} else {
 			// user error msg
 			$error_msg =  sprintf( __( 'The requested page route does not exist for the %s admin page.', 'event_espresso' ), $this->_admin_page_title );
@@ -531,7 +556,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}		
 
 		$this->_set_nav_tabs(); //set the nav_tabs array
-		$this->_set_current_labels();	
+		$this->_set_current_labels();
+		$args = array();	
 
 		
 		// check if callback has args
@@ -566,15 +592,15 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	protected function _set_nav_tabs() {
 		$i = 0;
-		foreach ( $this->_page_routes as $slug => $route ) {
-			if ( !is_array( $route ) || ( is_array($route) && (isset($route['nav']) && !$route['nav'] ) || !isset($route['nav'] ) ) ) 
-				continue; //no nav tab for this route
-			$css_class = isset( $route['css_class'] ) ? $route['css_class'] . ' ' : '';
+		foreach ( $this->_page_config as $slug => $config ) {
+			if ( !is_array( $config ) || ( is_array($config) && (isset($config['nav']) && !$config['nav'] ) || !isset($config['nav'] ) ) ) 
+				continue; //no nav tab for this config
+			$css_class = isset( $config['css_class'] ) ? $config['css_class'] . ' ' : '';
 			$this->_nav_tabs[$slug] = array(
-				'url' => isset($route['nav']['url']) ? $route['nav']['url'] : wp_nonce_url( add_query_arg( array( 'action'=>$slug ), $this->_admin_base_url), $slug . '_nonce'),
-				'link_text' => isset( $route['nav']['label'] ) ? $route['nav']['label'] : ucwords(str_replace('_', ' ', $slug ) ),
+				'url' => isset($config['nav']['url']) ? $config['nav']['url'] : wp_nonce_url( add_query_arg( array( 'action'=>$slug ), $this->_admin_base_url), $slug . '_nonce'),
+				'link_text' => isset( $config['nav']['label'] ) ? $config['nav']['label'] : ucwords(str_replace('_', ' ', $slug ) ),
 				'css_class' => $this->_req_action == $slug ? $css_class . 'nav-tab-active' : $css_class,
-				'order' => isset( $route['nav']['order'] ) ? $route['nav']['order'] : $i
+				'order' => isset( $config['nav']['order'] ) ? $config['nav']['order'] : $i
 				); 
 			$i++;
 		}
@@ -606,8 +632,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	private function _set_current_labels() {
-		if ( is_array($this->_route) && isset($this->_route['labels']) ) {
-			foreach ( $this->_route['labels'] as $label => $text ) {
+		if ( is_array($this->_route_config) && isset($this->_route_config['labels']) ) {
+			foreach ( $this->_route_config['labels'] as $label => $text ) {
 				if ( is_array($text) ) {
 					foreach ( $text as $sublabel => $subtext ) {
 						$this->_labels[$label][$sublabel] = $subtext;
@@ -828,8 +854,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * WP_List_Table objects need to be loaded fairly early so automatic stuff WP does is taken care of.
 	 */
 	protected function _set_list_table_object() {
-		if ( isset($this->_route['list_table'] ) ) {
-			$a = new ReflectionClass($this->_route['list_table']);
+		if ( isset($this->_route_config['list_table'] ) ) {
+			$a = new ReflectionClass($this->_route_config['list_table']);
 			$this->_list_table_object = $a->newInstance(&$this);
 		}
 	}
@@ -948,7 +974,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		global $espresso_premium;	
 
 		//we only add meta boxes if the page_route calls for it
-		if ( is_array($this->_route) && isset( $this->_route['global_metaboxes'] ) ) {
+		if ( is_array($this->_route_config) && isset( $this->_route_config['global_metaboxes'] ) ) {
 			add_meta_box('espresso_news_post_box', __('New @ Event Espresso', 'event_espresso'), 'espresso_news_post_box', $this->_wp_page_slug, 'side');
 			add_meta_box('espresso_links_post_box', __('Helpful Plugin Links', 'event_espresso'), 'espresso_links_post_box', $this->_wp_page_slug, 'side');
 			if ( ! $espresso_premium ) {
@@ -1388,7 +1414,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			throw new EE_Error( sprintf( __('There is no page route for given action for the button.  This action was given: %s', 'event_espresso'), $action) );
 
 		if ( !isset( $this->_labels['buttons'][$type] ) )
-			throw new EE_Error( sprintf( __('There is no label for the given button type (%s)', 'event_esprsso'), $type) );
+			throw new EE_Error( sprintf( __('There is no label for the given button type (%s). Labels are set in the <code>_page_config</code> property.', 'event_espresso'), $type) );
 
 		$_base_url = !$base_url ? $this->_admin_base_url : $base_url;
 

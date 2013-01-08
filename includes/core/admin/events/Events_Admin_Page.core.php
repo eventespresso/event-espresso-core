@@ -69,14 +69,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
-			'default' => array(
-				'func' => '_events_overview_list_table',
-				'nav' => array(
-					'label' => __('Overview', 'event_espresso'),
-					'order' => 10
-					),
-				'list_table' => 'Events_Admin_List_Table'
-				),
+			'default' => '_events_overview_list_table',
 			'edit_event' => array(
 				'func' => '_event_details',
 				'args' => array('edit')
@@ -102,18 +95,37 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'func' => '_trash_or_restore_events',
 				'args' => array('trash' => FALSE )
 				),
+			'view_report' => '_view_report',
+			'export_events' => '_events_export',
+			'export_payments' => '_payment_export',
+			'import_events' => '_import_events',
+			);
+	}
+
+
+
+
+	protected function _set_page_config() {
+		$this->_page_config = array(
+			'default' => array(
+				'nav' => array(
+					'label' => __('Overview', 'event_espresso'),
+					'order' => 10
+					),
+				'list_table' => 'Events_Admin_List_Table'
+				),
 			'view_report' => array(
-				'func' => '_view_report',
 				'nav' => array(
 					'label' => __('Report', 'event_espresso'),
 					'order' => 20
 					)
 				),
-			'export_events' => array(
-				'func' => '_events_export'
-				),
-			'export_payments' => array(
-				'func' => '_payment_export'
+			'import_events' => array(
+				'nav' => array(
+					'label' => __('Import', 'event_esprsso'),
+					'order' => 30
+					),
+				'global_metaboxes' => true
 				)
 			);
 	}
@@ -327,7 +339,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$_REQUEST = array(
 			'export' => 'report',
 			'action' => 'payment',
-			'type' => 'excel'
+			'type' => 'excel',
 			'event_id' => $_REQUEST['EVT_ID'],
 			);
 		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php')) {
@@ -336,6 +348,26 @@ class Events_Admin_Page extends EE_Admin_Page {
 			$EE_Export->export();
 		}
 
+	}
+
+
+
+	/**
+	 * _import_events
+	 * This handles displaying the screen and running imports for importing events.
+	 * 	
+	 * @return string html
+	 */
+	protected function _import_events() {
+
+		include( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/csv_uploader.php' );
+		$import_what = 'Event Details';
+		$import_intro = 'If you have a previously exported list of Event Details in a Comma Separated Value (CSV) file format, you can upload the file here: ';
+		$page = 'events';
+		$content = espresso_csv_uploader($import_what, $import_intro, $page);
+
+		$this->_template_args['admin_page_content'] = $content;
+		$this->display_admin_page_with_sidebar();
 	}
 
 
