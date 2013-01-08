@@ -312,12 +312,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _events_export() {
 
-		//todo: I don't like doing this but we'll do until we modify EE_Export Class.
-		$_REQUEST = array(
+		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
+		$new_request_args = array(
 			'export' => 'report',
 			'action' => 'event',
 			'event_id' => $_REQUEST['EVT_ID'],
 			);
+		$_REQUEST = array_merge( $_REQUEST, $new_request_args);
 		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php')) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
 			$EE_Export = EE_Export::instance();
@@ -335,13 +336,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _payment_export() {
 
-		//todo: I don't like doing this but we'll do until we modify EE_Export Class.
-		$_REQUEST = array(
+		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
+		$new_request_args = array(
 			'export' => 'report',
 			'action' => 'payment',
 			'type' => 'excel',
 			'event_id' => $_REQUEST['EVT_ID'],
 			);
+		$_REQUEST = array_merge( $_REQUEST, $new_request_args );
 		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php')) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
 			$EE_Export = EE_Export::instance();
