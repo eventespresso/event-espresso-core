@@ -128,13 +128,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
 				)
-			'import' => array(
-				'nav' => array(
-					'label' => __('Import', 'event_esprsso'),
-					'order' => 30
-					),
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
-				)
 			);
 	}
 
@@ -303,7 +296,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * @return string html for the report page
 	 */
 	protected function _view_report() {
-		echo 'in here';
+		$this->_admin_page_title .= $this->_get_action_link_or_button('add_event', 'add', array(), 'button add-new-h2');
+		$this->_template_args['admin_page_content'] = 'in here';
+		$this->display_admin_page_with_sidebar();
 	}
 
 
@@ -385,7 +380,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$page = 'events';
 		$content = espresso_csv_uploader($import_what, $import_intro, $page);
 
-		$this->_template_args['admin_page_content'] = $content;
+		$this->_admin_page_title .= $this->_get_action_link_or_button('add_event', 'add', array(), 'button add-new-h2');
+		$this->_template_args['admin_page_content'] = $content;	
 		$this->display_admin_page_with_sidebar();
 	}
 
