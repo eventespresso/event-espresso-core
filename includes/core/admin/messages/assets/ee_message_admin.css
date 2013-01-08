@@ -1,0 +1,33 @@
+.activate_messages_on_off_toggle_container {
+	float:right;
+}
+
+.on-off-inactive, .on-off-active {
+	background-image: url('off-toggle.png');
+	display: block;
+	float: right;
+	width: 54px;
+	height: 24px;
+}
+
+.on-off-active {
+	background-image: url('on-toggle.png');
+}
+
+.active, .inactive, .editing {
+	float: right;
+	font-size: 12px; 
+	padding: 2px;
+}
+
+.active {
+	background-color: #96e285;
+}
+
+.editing {
+	background-color: yellow;
+}
+
+.ee-msg-switcher-container {
+	margin-top: 15px;
+}
