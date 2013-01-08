@@ -320,8 +320,8 @@ function espresso_process_event_prices($prices, $currency_symbol, $surcharge_typ
 				}				
 			}
 
-			if ( isset( $_POST['tkt-slctr-return-url-'.$valid_data['id']] )) {
-				$return_url = add_query_arg( EE_Error::get_notices( FALSE, TRUE ), $_POST['tkt-slctr-return-url-'.$valid_data['id']] );
+			if ( isset( $_POST['tkt-slctr-return-url-'.$valid['id']] )) {
+				$return_url = add_query_arg( EE_Error::get_notices( FALSE, TRUE ), $_POST['tkt-slctr-return-url-'.$valid['id']] );
 				wp_safe_redirect( $return_url );
 				exit();
 			} elseif ( isset( $_SERVER['HTTP_REFERER'] )) {
