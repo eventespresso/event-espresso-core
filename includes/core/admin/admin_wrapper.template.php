@@ -10,7 +10,9 @@
 
 <?php 
 	do_action( 'action_hook_espresso_before_admin_page_content' );
+	echo $before_admin_page_content;
 	echo $admin_page_content; 
+	echo $after_admin_page_content;
 	do_action( 'action_hook_espresso_after_admin_page_content' );
 ?>
 
