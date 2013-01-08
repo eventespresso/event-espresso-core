@@ -69,6 +69,7 @@ Class EE_Bank extends EE_Offline_Gateway {
 		$this->_payment_settings['bank_name'] = strip_tags($_POST['bank_name'], $allowable_tags);
 		$this->_payment_settings['account_number'] = strip_tags($_POST['account_number'], $allowable_tags);
 		$this->_payment_settings['bank_address'] = strip_tags($_POST['bank_address'], $allowable_tags);
+		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';
 	}
 
 	protected function _display_settings() {
@@ -83,32 +84,37 @@ Class EE_Bank extends EE_Offline_Gateway {
 			<th><label for="bank_instructions">
 					<?php _e('Payment Instructions', 'event_espresso'); ?>
 				</label></th>
-			<td><textarea name="bank_instructions" cols="30" rows="5"><?php echo $this->_payment_settings['bank_instructions']; ?></textarea></td>
+			<td><textarea name="bank_instructions" cols="50" rows="5"><?php echo $this->_payment_settings['bank_instructions']; ?></textarea></td>
 		</tr>
+		
 		<tr>
 			<th><label for="account_name">
 					<?php _e('Name on Account', 'event_espresso'); ?>
 				</label></th>
 			<td><input class="regular-text" type="text" name="account_name" id="account_name" size="30" value="<?php echo trim($this->_payment_settings['account_name']); ?>" /></td>
 		</tr>
+		
 		<tr>
 			<th><label for="account_number">
 					<?php _e('Bank Account #', 'event_espresso'); ?>
 				</label></th>
 			<td><input class="regular-text" type="text" name="account_number" id="account_number" size="30" value="<?php echo trim($this->_payment_settings['account_number']); ?>" /></td>
 		</tr>
+		
 		<tr>
 			<th><label for="bank_name">
 					<?php _e('Bank Name', 'event_espresso'); ?>
 				</label></th>
 			<td><input class="regular-text" type="text" name="bank_name" id="bank_name" size="30" value="<?php echo trim($this->_payment_settings['bank_name']); ?>" /></td>
 		</tr>
+		
 		<tr>
 			<th><label for="bank_address">
 					<?php _e('Bank Address', 'event_espresso'); ?>
 				</label></th>
-			<td><textarea name="bank_address" cols="30" rows="5"><?php echo $this->_payment_settings['bank_address']; ?></textarea></td>
+			<td><textarea name="bank_address" cols="50" rows="5"><?php echo $this->_payment_settings['bank_address']; ?></textarea></td>
 		</tr>
+		
 		<tr>
 			<th>
 				<label for="<?php echo $this->_gateway; ?>_button_url">
@@ -117,7 +123,7 @@ Class EE_Bank extends EE_Offline_Gateway {
 			</th>
 			<td>
 				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
-				<input class="regular-text" type="text" name="<?php echo $this->_gateway; ?>_button_url" id="<?php echo $this->_gateway; ?>_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
+				<input class="regular-text" type="text" name="button_url" id="<?php echo $this->_gateway; ?>_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
 				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
 			</td>
 		</tr>

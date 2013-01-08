@@ -97,8 +97,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 		$this->_payment_settings['authnet_aim_transaction_key'] = $_POST['authnet_aim_transaction_key'];
 		$this->_payment_settings['test_transactions'] = $_POST['test_transactions'];
 		$this->_payment_settings['use_sandbox'] = $_POST['use_sandbox'];
-		$this->_payment_settings['button_url'] = $_POST['button_url'];
-	}
+		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';	}
 
 	protected function _display_settings() {
 		?>
@@ -152,9 +151,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 	protected function _display_settings_help() {
 		?>
-		<p><strong style="color:#F00">
-				<?php _e('WARNING!', 'event_espresso'); ?>
-			</strong><?php _e('You are responsible for your own security and PCI compliance.', 'event_espresso'); ?></p>
+
 		<div id="authnet_aim_sandbox" style="display:none">
 			<h2>
 				<?php _e('Authorize.net AIM Test Mode', 'event_espresso'); ?>

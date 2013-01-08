@@ -64,8 +64,7 @@ Class EE_Eway extends EE_Offsite_Gateway {
 		$this->_payment_settings['currency_format'] = $_POST['currency_format'];
 		$this->_payment_settings['region'] = $_POST['region'];
 		$this->_payment_settings['use_sandbox'] = empty($_POST['use_sandbox']) ? '' : $_POST['use_sandbox'];
-		$this->_payment_settings['button_url'] = $_POST['button_url'];
-		$this->_payment_settings['image_url'] = $_POST['image_url'];
+		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';		$this->_payment_settings['image_url'] = $_POST['image_url'];
 	}
 
 	protected function _display_settings() {
@@ -78,6 +77,7 @@ Class EE_Eway extends EE_Offsite_Gateway {
 				<br />
 				<?php _e('(Typically 87654321)', 'event_espresso'); ?></td>
 		</tr>
+		
 		<tr>
 			<th><label for="eway_username">
 					<?php _e('eway username', 'event_espresso'); ?>
@@ -86,6 +86,7 @@ Class EE_Eway extends EE_Offsite_Gateway {
 				<br />
 				<?php _e('(Typically TestAccount)', 'event_espresso'); ?></td>
 		</tr>
+		
 		<tr>
 			<th><label for="button_url">
 					<?php _e('Button Image URL: ', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'eway_button_image'); ?>
@@ -96,6 +97,7 @@ Class EE_Eway extends EE_Offsite_Gateway {
 				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
 			</td>
 		</tr>
+		
 		<tr>
 			<th><label for="image_url">
 					<?php _e('Image URL (logo for payment page):', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'eway_image_url_info'); ?>
@@ -109,6 +111,7 @@ Class EE_Eway extends EE_Offsite_Gateway {
 				?>
 			</td>
 		</tr>
+		
 		<tr>
 			<th><label for="currency_format">
 					<?php _e('Select the currency for your country: ', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'eway_currency_info') ?>
@@ -127,6 +130,7 @@ Class EE_Eway extends EE_Offsite_Gateway {
 					</option>
 				</select></td>
 		</tr>
+		
 		<tr>
 			<th><label for="region">
 					<?php _e('Select the region where you want to use eWay:', 'event_espresso'); ?>
@@ -144,6 +148,7 @@ Class EE_Eway extends EE_Offsite_Gateway {
 					</option>
 				</select></td>
 		</tr>
+		
 		<tr>
 			<th><label for="use_sandbox">
 					<?php _e('Use the Debugging Feature and the eway Sandbox?', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'eway_sandbox_info'); ?>
@@ -151,6 +156,19 @@ Class EE_Eway extends EE_Offsite_Gateway {
 		<td><?php
 			echo select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']);
 					?></td>
+		</tr>
+
+		<tr>
+			<th>
+				<label for="<?php echo $this->_gateway; ?>_button_url">
+					<?php _e('Button Image URL', 'event_espresso'); ?>
+				</label>
+			</th>
+			<td>
+				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
+				<input class="regular-text" type="text" name="button_url" id="<?php echo $this->_gateway; ?>_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
+				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
+			</td>
 		</tr>
 		<?php
 	}

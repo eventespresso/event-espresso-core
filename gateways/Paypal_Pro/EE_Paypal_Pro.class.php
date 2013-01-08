@@ -48,8 +48,9 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 	 */
 	protected function __construct(EEM_Gateways &$model) {
 		$this->_gateway = 'Paypal_Pro';
-		$this->_button_base = 'logo-paypal_pro.png';
+		$this->_button_base = 'paypal_pro-logo.png';
 		$this->_path = str_replace('\\', '/', __FILE__);
+		$this->_btn_img = file_exists( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 	}
 
@@ -69,7 +70,8 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 				'use_sandbox' => false,
 				'type' => 'on-site',
 				'display_name' => 'PayPal Pro',
-				'current_path' => ''
+				'current_path' => '',
+				'button_url' => $this->_btn_img	
 		);
 	}
 
@@ -87,6 +89,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 		//$this->_payment_settings['credit_cards'] = implode(",", empty($_POST['credit_cards']) ? array() : $_POST['credit_cards']);
 		$this->_payment_settings['credit_cards'] = empty($_POST['credit_cards']) ? array() : $_POST['credit_cards'];
 		$this->_payment_settings['use_sandbox'] = empty($_POST['use_sandbox']) ? '' : $_POST['use_sandbox'];
+		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';
 	}
 
 	/**
@@ -267,6 +270,19 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 				<span class="description">
 					<?php _e('Make sure you enter the sandbox credentials above.', 'event_espresso'); ?>
 				</span>
+			</td>
+		</tr>
+		
+		<tr>
+			<th>
+				<label for="<?php echo $this->_gateway; ?>_button_url">
+					<?php _e('Button Image URL', 'event_espresso'); ?>
+				</label>
+			</th>
+			<td>
+				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
+				<input class="regular-text" type="text" name="button_url" id="<?php echo $this->_gateway; ?>_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
+				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
 			</td>
 		</tr>
 		<?php
@@ -760,14 +776,14 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 					<h2 class="section-title"><?php _e('PayPal Sandbox Mode', 'event_espreso'); ?></h2>
 					<h3 style="color:#ff0000;"><?php _e('Debug Mode Is Turned On. Payments will not be processed', 'event_espresso'); ?></h3>
 
-					<p class="test-credit-cards-info-pg">
+					<p class="test-credit-cards-info-pg" style="margin-bottom:0;">
 						<strong><?php _e('Testing Guidelines', 'event_espreso'); ?></strong>
-					<ul>
-						<li><?php _e('While testing, use only the credit card numbers listed below. Other numbers will produce an error.', 'event_espreso'); ?></li>
-						<li><?php _e('Expiry Date must be a valid date in the future', 'event_espreso'); ?></li>
+					</p>
+					<ul style="margin:1em 2em 1.5em; line-height:1.2em;">
+						<li><?php _e('While testing, use the credit card number listed below. Other numbers will produce an error.', 'event_espreso'); ?></li>
+						<li><?php _e('Expiry Date can be any valid date in the future', 'event_espreso'); ?></li>
 						<li><?php _e('CVV2 can be any 3 digits', 'event_espreso'); ?></li>
 					</ul>
-					</p>
 
 					<p class="test-credit-cards-info-pg">
 						<strong><?php _e('Credit Card Numbers Used for Testing', 'event_espreso'); ?></strong><br/>
@@ -789,10 +805,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 								</tr>
 							</tbody>
 						</table>	
-					</div>
-					<p class="test-credit-cards-info-pg">
-						<span class="smaller-text light-grey-text">* <?php _e('Even though this number has a different character count than the other test numbers, it is the correct and functional number.', 'event_espreso'); ?></span>
-					</p>
+					</div><br/>
 
 					<p class="test-credit-cards-info-pg">
 						<strong><?php _e('Testing Result Code Responses', 'event_espreso'); ?></strong><br/>

@@ -81,8 +81,8 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 		$this->_payment_settings['use_sandbox'] = empty($_POST['use_sandbox']) ? FALSE : TRUE;
 		$this->_payment_settings['use_md5'] = empty($_POST['use_md5']) ? false : true;
 		$this->_payment_settings['authnet_md5_value'] = $_POST['authnet_md5_value'];
-		$this->_payment_settings['button_url'] = sanitize_text_field($_POST['button_url']);
-		$this->_payment_settings['image_url'] = sanitize_text_field($_POST['image_url']);
+		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';
+		$this->_payment_settings['image_url'] = isset( $_POST['image_url'] ) ? esc_url_raw( $_POST['image_url'] ) : '';
 	}
 
 	protected function _display_settings() {
@@ -99,6 +99,7 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 					<?php _e('Please enter your Authorize.net Login ID', 'event_espresso'); ?>
 				</span></td>
 		</tr>
+		
 		<tr>
 			<th><label for="authnet_transaction_key">
 					<?php _e('Authorize.net Transaction Key', 'event_espresso'); ?>
@@ -110,18 +111,7 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 					<?php _e('Please enter your Authorize.net Transaction Key.', 'event_espresso'); ?>
 				</span></td>
 		</tr>
-		<tr>
-			<th><label for="sim_button_url">
-					<?php _e('Button Image URL: ', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'authnet_button_url_info') ?>
-				</label></th>
-				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
-			<td><input class="regular-text" type="text" name="button_url" id="sim_button_url" value="<?php echo $this->_payment_settings['button_url']; ?>" />
-				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <br />
-				<span class="description">
-					<?php _e('URL to the payment button.', 'event_espresso'); ?>
-				</span></td>
-		</tr>
+		
 		<tr>
 			<th><label for="sim_image_url">
 					<?php _e('Your Logo Image URL: ', 'event_espresso'); ?>
@@ -137,6 +127,7 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 					?>
 				</span></td>
 		</tr>
+		
 		<tr>
 			<th><label>
 					<?php _e('Relay Response URL: ', 'event_espresso'); ?>
@@ -147,6 +138,7 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 					<?php _e('URL to the transaction page.', 'event_espresso'); ?>
 				</span></td>
 		</tr>
+		
 		<tr>
 			<th><label for="use_sandbox">
 					<?php _e('Is this an account on the Authorize.net development server? ', 'event_espresso'); ?>
@@ -154,6 +146,7 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 				</label></th>
 			<td><?php echo select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
 		</tr>
+		
 		<tr>
 			<th><label for="test_transactions">
 					<?php _e('Do you want to submit a test transaction? ', 'event_espresso'); ?>
@@ -161,6 +154,7 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 				</label></th>
 			<td><?php echo select_input('test_transactions', $this->_yes_no_options, $this->_payment_settings['test_transactions']); ?></td>
 		</tr>
+		
 		<tr>
 			<th><label for="use_md5">
 					<?php _e('Use md5 check to secure payment response', 'event_espresso'); ?>
@@ -168,6 +162,7 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 				</label></th>
 			<td><?php echo select_input('use_md5', $this->_yes_no_options, $this->_payment_settings['use_md5']); ?></td>
 		</tr>
+		
 		<tr>
 			<th><label for="authnet_md5_value">
 					<?php _e('Authorize.net MD5 Hash value', 'event_espresso'); ?>
@@ -176,6 +171,19 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 			<td><input class="regular-text" type="text" name="authnet_md5_value" id="authnet_md5_value" size="35" value="<?php echo $this->_payment_settings['authnet_md5_value']; ?>"></td>
 		</tr>
 
+		<tr>
+			<th><label for="sim_button_url">
+					<?php _e('Button Image URL: ', 'event_espresso'); ?>
+					<?php echo apply_filters('filter_hook_espresso_help', 'authnet_button_url_info') ?>
+				</label></th>
+				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
+			<td><input class="regular-text" type="text" name="button_url" id="sim_button_url" value="<?php echo $this->_payment_settings['button_url']; ?>" />
+				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <br />
+				<span class="description">
+					<?php _e('URL to the payment button.', 'event_espresso'); ?>
+				</span></td>
+		</tr>
+		
 		<?php
 	}
 

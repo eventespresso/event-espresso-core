@@ -72,24 +72,51 @@ Class EE_Check extends EE_Offline_Gateway {
 		$this->_payment_settings['check_instructions'] = strip_tags($_POST['check_instructions'], $allowable_tags);
 		$this->_payment_settings['payable_to'] = strip_tags($_POST['payable_to'], $allowable_tags);
 		$this->_payment_settings['payment_address'] = strip_tags($_POST['payment_address'], $allowable_tags);
+		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';
 	}
 
 	protected function _display_settings() {
 		?>
 		<tr>
-			<td valign="top"><ul><li><label for="check_title"><?php _e('Title:', 'event_espresso'); ?></label><br />
-						<input class="regular-text" type="text" name="check_title" size="30" value="<?php echo stripslashes_deep($this->_payment_settings['check_title']); ?>" />
-					</li>
-					<li><label for="check_instructions"><?php _e('Payment Instructions:', 'event_espresso'); ?></label><br />
-						<textarea name="check_instructions" cols="30" rows="5"><?php echo stripslashes_deep($this->_payment_settings['check_instructions']); ?></textarea>
-					</li></ul></td>
-			<td valign="top"><ul><li><label for="payable_to"><?php _e('Payable To:', 'event_espresso'); ?></label><br />
-						<input class="regular-text" type="text" name="payable_to" size="30" value="<?php echo stripslashes_deep($this->_payment_settings['payable_to']); ?>" />
-					</li>
-					<li><label for="payment_address"><?php _e('Address to Send Payment:', 'event_espresso'); ?></label><br />
-						<textarea name="payment_address" cols="30" rows="5"><?php echo $this->_payment_settings['payment_address']; ?></textarea>
-					</li></ul></td>
+			<th>
+				<label for="check_title">
+					<?php _e('Title:', 'event_espresso'); ?>
+				</label>
+			</th>
+			<td>
+				<input class="regular-text" type="text" name="check_title" size="30" value="<?php echo stripslashes_deep($this->_payment_settings['check_title']); ?>" />
+			</td>
 		</tr>
+		
+		<tr>
+			<th>
+				<label for="check_instructions">
+					<?php _e('Payment Instructions:', 'event_espresso'); ?>
+				</label>
+			</th>
+			<td>
+				<textarea name="check_instructions" cols="50" rows="5"><?php echo stripslashes_deep($this->_payment_settings['check_instructions']); ?></textarea>
+			</td>
+		</tr>
+		
+		<tr>
+			<th>
+				<label for="payable_to"><?php _e('Payable To:', 'event_espresso'); ?></label>
+			</th>
+			<td>
+				<input class="regular-text" type="text" name="payable_to" size="30" value="<?php echo stripslashes_deep($this->_payment_settings['payable_to']); ?>" />
+			</td>
+		</tr>
+		
+		<tr>
+			<th>
+				<label for="payment_address"><?php _e('Address to Send Payment:', 'event_espresso'); ?></label>
+			</th>
+			<td>
+				<textarea name="payment_address" cols="50" rows="5"><?php echo $this->_payment_settings['payment_address']; ?></textarea>
+			</td>
+		</tr>
+		
 		<tr>
 			<th>
 				<label for="<?php echo $this->_gateway; ?>_button_url">

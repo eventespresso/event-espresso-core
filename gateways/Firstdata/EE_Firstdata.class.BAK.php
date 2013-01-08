@@ -62,8 +62,7 @@ Class EE_Firstdata extends EE_Gateway {
 			$this->_payment_settings['authnet_aim_transaction_key'] = $_POST['authnet_aim_transaction_key'];
 			$this->_payment_settings['test_transactions'] = $_POST['test_transactions'];
 			$this->_payment_settings['use_sandbox'] = $_POST['use_sandbox'];
-			$this->_payment_settings['button_url'] = $_POST['button_url'];
-
+			$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';
 			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
 				$espresso_notices['success'][] = __('Authorize AIM Payment Settings Updated!', 'event_espresso');
 			} else {
@@ -108,14 +107,16 @@ Class EE_Firstdata extends EE_Gateway {
 				</label></th>
 			<td><?php echo select_input('test_transactions', $this->_yes_no_options, $this->_payment_settings['test_transactions']); ?></td>
 		</tr>
+		
 		<tr>
-			<th><label for="aim_button_url">
+			<th>
+				<label for="<?php echo $this->_gateway; ?>_button_url">
 					<?php _e('Button Image URL', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'aim_button_image'); ?>
-				</label></th>
+				</label>
+			</th>
 			<td>
 				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
-				<input class="regular-text" type="text" name="button_url" id="aim_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
+				<input class="regular-text" type="text" name="button_url" id="<?php echo $this->_gateway; ?>_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
 				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
 			</td>
 		</tr>
