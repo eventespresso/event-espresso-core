@@ -99,6 +99,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			'export_events' => '_events_export',
 			'export_payments' => '_payment_export',
 			'import_events' => '_import_events',
+			'import' => '_import_events'
 			);
 	}
 
@@ -121,6 +122,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 					)
 				),
 			'import_events' => array(
+				'nav' => array(
+					'label' => __('Import', 'event_esprsso'),
+					'order' => 30
+					),
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
+				)
+			'import' => array(
 				'nav' => array(
 					'label' => __('Import', 'event_esprsso'),
 					'order' => 30
@@ -362,7 +370,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _import_events() {
 
-		//todo: we need to handle incoming imports via the submitted form.
+		//first check if we've got an incoming import
+		if (isset($_REQUEST['import'])) {
+			if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php')) {
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php');
+				$EE_Import = EE_Import::instance();
+				$EE_Import->import();
+			}
+		}
 
 		include( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/csv_uploader.php' );
 		$import_what = 'Event Details';
