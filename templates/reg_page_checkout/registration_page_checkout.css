@@ -25,6 +25,7 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 }
 
 #mer-ajax-loading { display:none; position:absolute; top:18px; left:50%; margin-left:-15px; padding:0; z-index:1000; }
+.espresso-paid-status-icon-img,
 #mer-ajax-loading img { box-shadow: none !important; box-radius: 0 !important;  }
 #mer-ajax-loading span { display:none; }
 
@@ -40,9 +41,9 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 #mer-error-msg, .mer-reg-page-copy-error-msg { border-color:#EB574D; }
 
 .close-event-queue-msg {
-	position: absolute; top:-10px; right:-10px; width:14px; height:14px; padding:3px 4px 5px; border:1px solid #666;
+	position: absolute; top:-8px; right:-8px; width:12px; height:12px; padding:1px 3px 4.5px; border:1px solid #787878;
 	background:#fff;
-	font-weight: bold; font-size:14px; line-height:14px; color: #666 !important; cursor: pointer; text-align: center;
+	font-weight: bold; font-size:12px; line-height:12px; color: #787878 !important; cursor: pointer; text-align: center;
 	-moz-border-radius: 1000px; -webkit-border-radius:1000px; border-radius:1000px;
 	-webkit-box-shadow: 4px 1px 15px -3px rgba(0,0,0,.3), -2px -1px 5px rgba(0,0,0,.1); 
 	-moz-box-shadow:4px 1px 15px -3px rgba(0,0,0,.3), -2px -1px 5px rgba(0,0,0,.1); 

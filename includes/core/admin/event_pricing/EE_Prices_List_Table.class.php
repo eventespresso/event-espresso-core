@@ -141,9 +141,9 @@ class EE_Prices_List_Table extends WP_List_Table {
 	function column_amount($item) {
 		global $org_options;
 		if ($this->_PRT->type[$item->type()]->is_percent()) {
-			return number_format($item->amount(), 1) . '%';
+			return '<div class="pad-amnt-rght">' . number_format($item->amount(), 1) . '%</div>';
 		} else {
-			return $org_options['currency_symbol'] . number_format($item->amount(), 2);
+			return '<div class="pad-amnt-rght">' . $org_options['currency_symbol'] . number_format($item->amount(), 2) . '</div>';
 		}
 	}
 
@@ -151,8 +151,9 @@ class EE_Prices_List_Table extends WP_List_Table {
 
 
 
-	function column_date($item) {
-		return $item->use_dates() ? 'Yes' : '';
+	function column_price_date($item) {
+		$uses_date = $item->use_dates() ? 'Yes' : '';
+		return '<div class="jst-cntr">' . $uses_date . '</div>';
 	}
 
 
@@ -160,7 +161,8 @@ class EE_Prices_List_Table extends WP_List_Table {
 
 
 	function column_active($item) {
-		return $item->is_active() ? 'Yes' : '';
+		$active = $item->is_active() ? 'Yes' : '';
+		return '<div class="jst-cntr">' . $active . '</div>';
 	}
 
 
@@ -174,7 +176,8 @@ class EE_Prices_List_Table extends WP_List_Table {
 				'type' => 'Price Type',
 				'description' => 'Description',
 				'amount' => 'Amount',
-				'date' => 'Triggered by Date',
+//				'date' => 'Triggered by Date',
+				'price_date' => 'Date Control',
 				'active' => 'Active?'
 		);
 		return $columns;

@@ -1194,8 +1194,9 @@ function event_espresso_run() {
 
 		case 'process_ticket_selections' :
 			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, ' e_reg = process_ticket_selections'  );
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/ticket_selector.php');
-			espresso_process_ticket_selections();
+//			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/ticket_selector.php');
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Selector.class.php');
+			EE_Ticket_Selector::process_ticket_selections();
 			break;
 
 		case 'register' :

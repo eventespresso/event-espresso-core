@@ -543,7 +543,7 @@ function espresso_admin_pages() {
 		do_action('action_hook_espresso_load_reg_page_files');
 		// if the page_request doesn't load here for some reason then load the entire admin
 		$load_admin = ! espresso_load_admin_page( $page_request, $page_request ) ? TRUE : FALSE;
-	}
+	} 
 	
 	if ( $load_admin && ! $is_ajax_request ) {
 		//echo '<h4>load all admin pages  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
@@ -574,6 +574,10 @@ function espresso_admin_pages() {
 		foreach ( $admin_pages as $admin_page ) {
 			espresso_load_admin_page( $admin_page, $page_request );
 		}
+		
+	} else {
+		// frontend AJAX request, prolly for SPCO
+		do_action('action_hook_espresso_load_reg_page_files');
 	}
 	
 }

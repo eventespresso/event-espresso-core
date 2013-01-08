@@ -14,10 +14,13 @@ function espresso_thank_you_page() {
 		//printr( $session_data);
 		$grand_total = $session_data['_cart_grand_total_amount'];
 
-		$taxes = $session_data['tax_totals'];
-		foreach ( $taxes as $tax ) {
-			$grand_total += $tax;
+		// add taxes
+		if (isset($session_data['tax_totals'])) {
+			foreach ($session_data['tax_totals'] as $taxes) {
+				$grand_total += $taxes;
+			}
 		}
+			
 		$data = array(
 			'events' => array(),
 			'fname' => $session_data['primary_attendee']['fname'],

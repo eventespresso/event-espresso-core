@@ -40,7 +40,8 @@
 						<span class="description"><?php _e('Whether this Price Type will <b>only</b> be available to members that are logged into the site.', 'event_espresso'); ?></span>
 					</td>
 				</tr>
-				<tr>
+<?php
+/*				<tr>
 					<th>
 						<label><?php _e('Raise or Lower Price?', 'event_espresso'); ?></label>
 					</th>
@@ -58,6 +59,7 @@
 						</span>
 					</td>
 				</tr>
+
 				<tr>
 					<th>
 						<label><?php _e('Is this a Tax?', 'event_espresso'); ?></label>
@@ -74,6 +76,7 @@
 						<span class="description"><?php _e('Taxes are different from other prices that raise the final price in that they will be applied at the final stage of the registration process.', 'event_espresso'); ?></span>
 					</td>
 				</tr>
+*/?>
 				<tr>
 					<th>
 						<label><?php _e('Percentage or Dollar Amount?', 'event_espresso'); ?></label>

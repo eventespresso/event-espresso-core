@@ -132,17 +132,25 @@ class EE_Price_Types_List_Table extends WP_List_Table {
 
 
 
-	function column_discount($item) {
-		return '<div class="jst-cntr">' . (($item->is_discount()) ? 'Yes' : '') . '</div>';
+	function column_base_type($item) {
+		return '<div class="jst-cntr">' . EEM_Price_Type::$base_types[ $item->base_type() ] . '</div>';
 	}
 
 
 
 
 
-	function column_tax($item) {
-		return '<div class="jst-cntr">' . (($item->is_tax()) ? 'Yes' : '') . '</div>';
-	}
+//	function column_discount($item) {
+//		return '<div class="jst-cntr">' . (($item->is_discount()) ? 'Yes' : '') . '</div>';
+//	}
+//
+//
+//
+//
+//
+//	function column_tax($item) {
+//		return '<div class="jst-cntr">' . (($item->is_tax()) ? 'Yes' : '') . '</div>';
+//	}
 
 
 
@@ -177,9 +185,10 @@ class EE_Price_Types_List_Table extends WP_List_Table {
 		$columns = array(
 				'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
 				'name' => __('Name', 'event_espresso'),
+				'base_type' => '<div class="jst-cntr">' . __('Base Type', 'event_espresso') . '</div>',
 				'member' => '<div class="jst-cntr">' . __('Members', 'event_espresso') . '<br/>' . __('Only?', 'event_espresso') . '</div>',
-				'discount' => '<div class="jst-cntr">' . __('Discount', 'event_espresso') . '<br/><span class="smaller-text">(' . __('reduces price', 'event_espresso') . ')</span>' . '</div>',
-				'tax' => '<div class="jst-cntr">' . __('Applied', 'event_espresso') . '<br/>' . __('as a Tax', 'event_espresso') . '</div>',
+//				'discount' => '<div class="jst-cntr">' . __('Discount', 'event_espresso') . '<br/><span class="smaller-text">(' . __('reduces price', 'event_espresso') . ')</span>' . '</div>',
+//				'tax' => '<div class="jst-cntr">' . __('Applied', 'event_espresso') . '<br/>' . __('as a Tax', 'event_espresso') . '</div>',
 				'percent' => '<div class="jst-cntr">' . __('Applied', 'event_espresso') . '<br/>' . __('as ', 'event_espresso') . '<span class="big-text">' . __('%', 'event_espresso') . '</span>' . __(' or ', 'event_espresso') . '<span class="big-text">' . __('$', 'event_espresso') . '</span></div>',
 				'global' => '<div class="jst-cntr">' . __('Add as a Default', 'event_espresso') . '<br/>' . __('Price to New Events?', 'event_espresso') . '</div>',
 				'order' => '<div class="jst-cntr">' . __('Order of', 'event_espresso') . '<br/>' . __('Application', 'event_espresso') . '</div>'

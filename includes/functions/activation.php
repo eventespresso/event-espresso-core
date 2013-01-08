@@ -509,12 +509,13 @@ function events_data_tables_install() {
 	$table_name = "esp_price_type";
 	$sql = "PRT_ID tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
 			  PRT_name VARCHAR(45) NOT NULL ,
+			  PBT_ID tinyint(3) unsigned NOT NULL DEFAULT '1',
 			  PRT_is_member tinyint(1) NOT NULL DEFAULT '0',
-			  PRT_is_discount tinyint(1) NOT NULL DEFAULT '0',
-			  PRT_is_tax tinyint(1) NOT NULL DEFAULT '0',
+			  PRT_is_discount tinyint(1) NULL,
+			  PRT_is_tax tinyint(1) NULL,
 			  PRT_is_percent tinyint(1) NOT NULL DEFAULT '0',
 			  PRT_is_global tinyint(1) NOT NULL DEFAULT '0',
-			  PRT_order tinyint(1) UNSIGNED NULL ,
+			  PRT_order tinyint(1) UNSIGNED NULL,
 			  PRT_deleted tinyint(1) NOT NULL DEFAULT '0',
 			  UNIQUE KEY PRT_name_UNIQUE (PRT_name),
 			  PRIMARY KEY  (PRT_ID)";
@@ -1342,15 +1343,15 @@ function espresso_default_prices() {
 		$sql = 'DELETE FROM ' . ESP_PRICE_TYPE . ' WHERE PRT_ID < 9';
 		$wpdb->query($sql);
 	
-		$sql = "INSERT INTO " . ESP_PRICE_TYPE . " (PRT_ID, PRT_name, PRT_is_member, PRT_is_discount, PRT_is_tax, PRT_is_percent, PRT_is_global, PRT_order) VALUES
-					(1, 'Default Event Price', 0, 0, 0, 0, 1, 0),
-					(2, 'Event Price', 0, 0, 0, 0, 0, 0),
-					(3, 'Default Member % Discount', 1, 1, 0, 1, 1, 10),
-					(4, 'Default Early Bird % Discount', 0, 1, 0, 1, 1, 20),
-					(5, 'Promo Code Discount', 0, 1, 0, 0, 1, 10),
-					(6, 'Default Surcharge', 0, 0, 0, 0, 1, 30),
-					(7, 'Regional Tax', 0, 0, 1, 1, 1, 40),
-					(8, 'Federal Tax', 0, 0, 1, 1, 1, 50);";
+		$sql = "INSERT INTO " . ESP_PRICE_TYPE . " ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_is_global, PRT_order ) VALUES
+					(1, 'Default Event Price', 1, 0, 0, 1, 0),
+					(2, 'Event Price', 1, 0, 0, 0, 0),
+					(3, 'Default Member % Discount', 2, 1, 1, 1, 10),
+					(4, 'Default Early Bird % Discount', 2, 0, 1, 1, 20),
+					(5, 'Promo Code Discount', 2, 0, 0, 1, 10),
+					(6, 'Default Surcharge', 3, 0, 0, 1, 30),
+					(7, 'Regional Tax', 4, 0, 1, 1, 40),
+					(8, 'Federal Tax', 4, 0, 1, 1, 50);";
 		$wpdb->query($sql);	
 	}
 

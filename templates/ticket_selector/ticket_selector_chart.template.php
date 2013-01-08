@@ -118,6 +118,10 @@
 									name="tkt-slctr-price-desc-<?php echo $event_id; ?>[]"
 									value="<?php echo esc_attr( $price['option'] ); ?>"
 							/>
+						<input type="hidden"
+									name="tkt-slctr-price-obj-<?php echo $event_id; ?>[]"
+									value="<?php echo $price['obj']; ?>"
+							/>
 
 					</td>
 				</tr>

@@ -337,6 +337,7 @@ function espresso_frontend_init() {
 
 	global $espresso_reg_page;
 	$espresso_reg_page = espresso_test_for_reg_page();
+	//echo '<h4>$espresso_reg_page : ' . $espresso_reg_page . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
 	if ($espresso_reg_page) {
 		do_action('action_hook_espresso_load_reg_page_files');

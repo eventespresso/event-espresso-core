@@ -15,9 +15,9 @@
  *
  * Price Type Model
  *
- * @package				Event Espresso
+ * @package			Event Espresso
  * @subpackage		includes/models/
- * @author				Sidney Harrell
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -30,6 +30,13 @@ class EEM_Price_Type extends EEM_Base {
 	// An array of the price type objects
 	public $type = NULL;
 
+	/**
+	*	Price Base types
+	*
+	*	@access	private
+	*	@var int
+	*/
+	public static $base_types = array( 1 => 'Event Price', 2 => 'Discount', 3 => 'Surcharge', 4 => 'Tax' );
 
 
 
@@ -51,6 +58,7 @@ class EEM_Price_Type extends EEM_Base {
 		$this->table_data_types = array(
 				'PRT_ID' 					=> '%d',
 				'PRT_name' 			=> '%s',
+				'PBT_ID' 					=> '%d',
 				'PRT_is_member' 	=> '%d',
 				'PRT_is_discount' 	=> '%d',
 				'PRT_is_tax' 			=> '%d',
@@ -107,9 +115,8 @@ class EEM_Price_Type extends EEM_Base {
 		foreach ($price_types as $price_type) {
 			$array_of_objects[$price_type->PRT_ID] = new EE_Price_Type(
 											$price_type->PRT_name,
+											$price_type->PBT_ID,
 											$price_type->PRT_is_member,
-											$price_type->PRT_is_discount,
-											$price_type->PRT_is_tax,
 											$price_type->PRT_is_percent,
 											$price_type->PRT_is_global,
 											$price_type->PRT_order,
@@ -131,7 +138,7 @@ class EEM_Price_Type extends EEM_Base {
 	 * 		@return		mixed		array on success, FALSE on fail
 	 */
 	public function get_new_price_type() {
-		return new EE_Price_Type( '', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,0 );
+		return new EE_Price_Type( '', 1, FALSE, FALSE, FALSE, 0, FALSE );
 	}
 
 

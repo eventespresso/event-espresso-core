@@ -73,11 +73,11 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 .ui-button {
 		display: inline-block; position: relative; padding: 0.4em .75em .45em;
 		border:1px solid #ccc;
-		font-family: "Helvetica Neue", "Helvetica", Arial, Verdana, sans-serif;
+		font-family: "Helvetica Neue", "Helvetica", Arial, Verdana, sans-serif; text-decoration:none;
 		text-align: center; font-weight: bold; line-height: 1; cursor: pointer;
 		-moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px;
 }
-.ui-button:hover { text-decoration:none; }
+.ui-button:hover { border-color:#999; }
 
 .ui-button-big { padding: 0.95em 1em .95em; margin:2em 0 1em; }
 
@@ -125,3 +125,5 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 #message.success { border-color:#B9D147; }
 #message.error { border-color:#EB574D; }
 #message p { margin:0; }
+
+.espresso-paid-status-icon-img { box-shadow: none !important; box-radius: 0 !important;  }

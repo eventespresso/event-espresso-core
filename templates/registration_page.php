@@ -351,9 +351,14 @@ if (!function_exists('event_registration')) {
 					$event->datetimes = $DTM_MDL->get_all_event_dates($event->id);
 //						echo printr($event->times, 'EVENT TIMES <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
 
-					require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Price.class.php' );
-					$EVT_Prices = new EE_Event_Prices($event->id);
-					$event->prices = $EVT_Prices->get_final_event_prices();
+//					require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Price.class.php' );
+//					$EVT_Prices = new EE_Event_Prices($event->id);
+//					$event->prices = $EVT_Prices->get_final_event_prices();
+					require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Prices.class.php' );
+					//$event->prices = new EE_Ticket_Prices( $event->id );
+					$TKT_PRCs = new EE_Ticket_Prices( $event->id );
+					$event->prices = $TKT_PRCs->get_all_final_event_prices();
+					
 					//echo printr($event->prices, 'EVENT PRICES <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
 
 					$event->currency_symbol = $org_options['currency_symbol'];
@@ -362,8 +367,8 @@ if (!function_exists('event_registration')) {
 					$event->available_spaces = get_number_of_attendees_reg_limit($event_id, 'available_spaces');
 
 					// ticket selector
-					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/ticket_selector.php');
-					add_action('action_hook_espresso_ticket_selector', 'espresso_ticket_selector', 10, 1);
+					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Selector.class.php');
+					add_action( 'action_hook_espresso_ticket_selector', array( 'EE_Ticket_Selector', 'init' ), 10, 1 );		
 
 					$registration_url = add_query_arg(array('e_reg' => 'process_ticket_selections'), espresso_get_reg_page_full_url());
 

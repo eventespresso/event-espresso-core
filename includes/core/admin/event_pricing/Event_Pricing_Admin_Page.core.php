@@ -374,7 +374,7 @@ class Event_Pricing_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 	
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
-		$_REQUEST['PRC_name'] = ucwords(strtolower($_REQUEST['PRC_name']));
+		//$_REQUEST['PRC_name'] = ucwords(strtolower($_REQUEST['PRC_name']));
 		$_REQUEST['PRC_name'] = htmlentities(wp_strip_all_tags($_REQUEST['PRC_name']), ENT_QUOTES, 'UTF-8');
 	
 		$set_column_values = array(
@@ -788,7 +788,7 @@ class Event_Pricing_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 				break;
 		}
 	
-		$_REQUEST['PRT_name'] = ucwords(strtolower($_REQUEST['PRT_name']));
+		//$_REQUEST['PRT_name'] = ucwords(strtolower($_REQUEST['PRT_name']));
 		$_REQUEST['PRT_name'] = htmlentities($_REQUEST['PRT_name'], ENT_QUOTES, 'UTF-8');
 	
 		$set_column_values = array(
