@@ -419,8 +419,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//setup search attributes
 		$this->_set_search_attributes();
 
-
-		$this->_add_espresso_meta_boxes();
+		// child classes can "register" a metabox to be automatically handled via the _page_config array property.  However in some cases the metaboxes will need to be added within a route handling callback.
+		$this->_add_registered_meta_boxes();
 
 		//add screen options - global, page child class, and view specific
 		$this->_add_global_screen_options();
@@ -771,7 +771,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void 
 	 */
 	public function load_global_scripts_styles() {
-		
 		/** STYLES **/
 		// add debugging styles
 		if ( WP_DEBUG ) {
@@ -782,6 +781,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		/** SCRIPTS **/
+		//are we loading metaboxes?
+		if ( isset($this->_route_config['metaboxes'] ) ) {
+			wp_enqueue_script('dashboard');
+		}
 
 	}
 
@@ -962,30 +965,101 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 	/**
-	 * 		_add_espresso_meta_boxes
-	 * 		add in default metaboxes for pages.
+	 * 		_add_registered_metaboxes
+	 * 		this loads any registered metaboxes via the 'metaboxes' index in the _page_config property array.
 	 *
 	 * @link http://codex.wordpress.org/Function_Reference/add_meta_box
 	 * @access private
 	 * @return void
 	*/
-	private function _add_espresso_meta_boxes() {	
+	private function _add_registered_meta_boxes() {	
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $espresso_premium;	
 
 		//we only add meta boxes if the page_route calls for it
-		if ( is_array($this->_route_config) && isset( $this->_route_config['global_metaboxes'] ) ) {
-			add_meta_box('espresso_news_post_box', __('New @ Event Espresso', 'event_espresso'), 'espresso_news_post_box', $this->_wp_page_slug, 'side');
-			add_meta_box('espresso_links_post_box', __('Helpful Plugin Links', 'event_espresso'), 'espresso_links_post_box', $this->_wp_page_slug, 'side');
-			if ( ! $espresso_premium ) {
-				add_meta_box('espresso_sponsors_post_box', __('Sponsors', 'event_espresso'), 'espresso_sponsors_post_box', $this->_wp_page_slug, 'side');
+		if ( is_array($this->_route_config) && isset( $this->_route_config['metaboxes'] ) && is_array($this->_route_config['metaboxes']) ) {
+		
+
+			//this simply loops through the callbacks provided and checks if there is a corresponding callback registered by the child - if there is then we go ahead and process the metabox loader.
+			foreach ( $this->_route_config['metaboxes'] as $metabox_callback ) {
+				if ( call_user_func( array($this, &$metabox_callback) ) === FALSE ) {
+					// user error msg
+				$error_msg =  __( 'An error occured. The  requested metabox could not be found.', 'event_espresso' );
+				// developer error msg
+				$error_msg .= '||' . sprintf( __( 'The metabox with the string "%s" could not be called. Check that the spelling for method names and actions in the "_page_config[\'metaboxes\']" array are all correct.', 'event_espresso' ), $metabox_callback );
+				throw new EE_Error( $error_msg );
+				}
 			}
 		}
 	}
 
 
 
+	/**********************************/
+	/** GLOBALLY AVAILABLE METABOXES **/
 
+	/**
+	 * In this section we put any globally available EE metaboxes for all EE Admin pages.  They are called by simply referencing the callback in the _page_config array property.  This way you can be very specific about what pages these get loaded on.
+	 */
+
+	private function _espresso_news_post_box() {
+		function espresso_news_post_box() {
+			?>
+			<div class="padding">
+				<div class="infolinks">
+					<?php
+					echo '<h2 style="margin:0">' . __('From the Blog', 'event_espresso') . '</h2>';
+
+					// Get RSS Feed(s)
+					@wp_widget_rss_output('http://eventespresso.com/feed/', array('show_date' => 0, 'items' => 6));
+
+					echo '<h2 style="margin:0">' . __('From the Forums', 'event_espresso') . '</h2>';
+
+					@wp_widget_rss_output('http://eventespresso.com/forums/feed/', array('show_date' => 0, 'items' => 4));
+					?>
+				</div>
+			</div>
+			<?php
+		}
+		add_meta_box('espresso_news_post_box', __('New @ Event Espresso', 'event_espresso'), 'espresso_news_post_box', $this->_wp_page_slug, 'side');
+	}
+
+
+	private function _espresso_links_post_box() {
+		function espresso_links_post_box() {
+			?>
+			<div class="padding">
+				<ul class="infolinks">
+					<li><a href="http://eventespresso.com/support/installation/" target="_blank">
+							<?php _e('Installation &amp; Usage Guide', 'event_espresso'); ?>
+						</a></li>
+					<li><a href="http://eventespresso.com/forums/2010/09/css-classes/" target="_blank">
+							<?php _e('Customization Forums', 'event_espresso'); ?>
+						</a></li>
+					<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/" target="_blank">
+							<?php _e('Plugin Support Forums', 'event_espresso'); ?>
+						</a></li>
+					<li><a href="http://eventespresso.com/forums/category/general/features-requests/" target="_blank">
+							<?php _e('Feature Request Forums', 'event_espresso'); ?>
+						</a></li>
+					<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/bug-reports/" target="_blank">
+							<?php _e('Bug Submission Forums', 'event_espresso'); ?>
+						</a></li>
+					<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/news-and-updates/changelogs/" target="_blank">
+							<?php _e('Changelog', 'event_espresso'); ?>
+						</a></li>
+					<li><a href="http://eventespresso.com/download/plugins-and-addons/">
+							<?php _e('Plugins and Addons', 'event_espresso'); ?>
+						</a></li>
+				</ul>
+			</div>
+			<?php
+		}
+		add_meta_box('espresso_links_post_box', __('Helpful Plugin Links', 'event_espresso'), 'espresso_links_post_box', $this->_wp_page_slug, 'side');
+	}
+
+
+	/** end of globally available metaboxes section **/
+	/*************************************************/
 
 	/**
 	 * 		displays an error message to ppl who have javascript disabled

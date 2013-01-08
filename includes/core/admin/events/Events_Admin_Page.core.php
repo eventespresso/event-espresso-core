@@ -125,7 +125,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 					'label' => __('Import', 'event_esprsso'),
 					'order' => 30
 					),
-				'global_metaboxes' => true
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
 				)
 			);
 	}
@@ -359,6 +359,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * @return string html
 	 */
 	protected function _import_events() {
+
+		//todo: we need to handle incoming imports via the submitted form.
 
 		include( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/csv_uploader.php' );
 		$import_what = 'Event Details';
