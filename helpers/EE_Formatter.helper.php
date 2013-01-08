@@ -46,4 +46,68 @@ class EE_Formatter {
 		return wpautop(stripslashes_deep(html_entity_decode($content, ENT_QUOTES, "UTF-8")));
 	}
 
+
+
+
+	/**
+	 * ee_tep_output_string
+	 * todo: we need a description for this.
+	 *
+	 * @static
+	 * @access public	
+	 * @param  string  $string    string to handle
+	 * @param  boolean $translate //todo what is this for?
+	 * @param  boolean $protected true then we run htmlspecialchars and return
+	 * @return string 
+	 */
+	static public function ee_tep_output_string($string, $translate = false, $protected = false) {
+		if ($protected == true) {
+			return htmlspecialchars($string);
+		} else {
+			if ($translate == false) {
+				return self::ee_tep_parse_input_field_data($string, array('"' => '&quot;'));
+			} else {
+				return self::ee_tep_parse_input_field_data($string, $translate);
+			}
+		}
+	}
+
+	
+
+	/**
+	 * ee_tep_parse_input_field_data
+	 * //todo this needs filled out.
+	 * 
+	 * @param  [type] $data  [description]
+	 * @param  [type] $parse [description]
+	 * @return [type]        [description]
+	 */
+	static public	function ee_tep_parse_input_field_data($data, $parse) {
+		return strtr(trim($data), $parse);
+	}
+
+
+
+
+	/**
+	 * [ee_tep_not_null description]
+	 * @param  [type] $value [description]
+	 * @return [type]        [description]
+	 */
+	static public function ee_tep_not_null($value) {
+	if (is_array($value)) {
+		if (sizeof($value) > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		if (($value != '') && (strtolower($value) != 'null') && (strlen(trim($value)) > 0)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+}
+
 }//end class EE_Form_Fields

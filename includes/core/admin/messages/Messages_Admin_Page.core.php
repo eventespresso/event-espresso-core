@@ -342,6 +342,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			$button_both = FALSE;
 			$button_text = array( __( 'Save','event_espresso') );
 			$button_actions = array('something_different');
+			$referrer = FALSE;
 			$edit_message_template_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
 		} else {
 			$message_template = $MTP->get_message_template_by_ID($GRP_ID);
@@ -349,6 +350,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			$button_both = TRUE;
 			$button_text = array();
 			$button_actions = array();
+			$referrer = NULL;
 			$edit_message_template_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
 		}
 
@@ -610,7 +612,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		);
 		$this->_set_context_switcher($message_template, $context_switcher_args);
 
-		$this->_set_save_buttons($button_both, $button_text, $button_actions);
+		$this->_set_save_buttons($button_both, $button_text, $button_actions, $referrer);
 
 		//sidebar box
 		$this->template_args['sidebar_content'] = $sidebar_fields . $this->template_args['save_buttons'];

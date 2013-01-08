@@ -201,7 +201,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 				'label' => __('Label for Tab', 'event_espresso').
 	 *     			'url' => 'http://someurl', //automatically generated UNLESS you define
 	 *     			'css_class' => 'css-class', //automatically generated UNLESS you define
-	 *     			'order' => 10 //required to indicate tab position.
+	 *     			'order' => 10, //required to indicate tab position.
+	 *     			'persistent' => false //if you want the nav tab to ONLY display when the specific route is displayed then add this parameter.
 	 *     		'list_table' => 'name_of_list_table' //string for list table class to be loaded for this admin_page.
 	 *     		'metaboxes' => array('metabox1', 'metabox2'), //if present this key indicates we want to load metaboxes set for eventespresso admin pages. 
 	 *     		'has_metaboxes' => true //this boolean flag can simply be used to indicate if the route will have metaboxes.  Typically this is used if the 'metaboxes' index is not used because metaboxes are added later.  We just use this flag to make sure the necessary js gets enqueued on page load.
@@ -464,7 +465,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	private function _set_defaults() {
 		$this->_doing_AJAX = FALSE; //this will be set to true by the called ajax method in our child classes
-		$this->_admin_base_url = $this->_current_screen = $this->_admin_page_title = $this->page_slug = $this->page_label = $this->_req_action = $this->_req_nonce = NULL;
+		$this->_admin_base_url = $this->_current_screen = $this->_admin_page_title = $this->page_slug = $this->page_label = $this->_req_action = $this->_req_nonce = $this->_event = NULL;
 
 		$this->_nav_tabs = $this_views = $this->_page_routes = $this->_page_config = array();
 
@@ -596,6 +597,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 		foreach ( $this->_page_config as $slug => $config ) {
 			if ( !is_array( $config ) || ( is_array($config) && (isset($config['nav']) && !$config['nav'] ) || !isset($config['nav'] ) ) ) 
 				continue; //no nav tab for this config
+
+			//check for persistent flag
+			if ( isset( $config['nav']['persistent']) && !$config['nav']['persistent'] && $slug !== $this->_req_action )
+				continue; //nav tab is only to appear when route requested.
+
 			$css_class = isset( $config['css_class'] ) ? $config['css_class'] . ' ' : '';
 			$this->_nav_tabs[$slug] = array(
 				'url' => isset($config['nav']['url']) ? $config['nav']['url'] : wp_nonce_url( add_query_arg( array( 'action'=>$slug ), $this->_admin_base_url), $slug . '_nonce'),
@@ -1343,16 +1349,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 	@access protected
 	 * 	@param	array $input_vars - array of input field details
 	 * 	@param	array $id - used for defining unique identifiers for the form.
+	 * 	@param string $generator (options are 'string' or 'array', basically use this to indicate which generator to use)
 	 * 	@return string
 	 * 	@uses EE_Form_Fields::get_form_fields (/helper/EE_Form_Fields.helper.php)
+	 * 	@uses EE_Form_Fields::get_form_fields_array (/helper/EE_Form_Fields.helper.php)
 	 */
-	protected function _generate_admin_form_fields($input_vars = array(), $id = FALSE) {
+	protected function _generate_admin_form_fields($input_vars = array(), $generator = 'string', $id = FALSE) {
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
-		$content = EE_Form_Fields::get_form_fields($input_vars, $id);
-
-		if ( is_wp_error($content) )
-			return $content;
-
+		$content = $generator == 'string' ? EE_Form_Fields::get_form_fields($input_vars, $id) : EE_Form_Fields::get_form_fields_array($input_vars);
 		return $content;
 	}
 
@@ -1371,11 +1375,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @param bool $both if true then both buttons will be generated.  If false then just the "Save & Close" button.
 	 * @param array $text if included, generator will use the given text for the buttons ( array([0] => 'Save', [1] => 'save & close')
 	 * @param array $actions if included allows us to set the actions that each button will carry out (i.e. via the "name" value in the button).  We can also use this to just dump default actions by submitting some other value.
+	 * @param bool|string|null $referrer if false then we just do the default action on save and close.  Other wise it will use the $referrer string. IF null, then we don't do ANYTHING on save and close (normal form handling).
 	 */
-	protected function _set_save_buttons($both = TRUE, $text = array(), $actions = array() ) {
+	protected function _set_save_buttons($both = TRUE, $text = array(), $actions = array(), $referrer = NULL ) {
 		//make sure $text and $actions are in an array
 		$text = (array) $text;
 		$actions = (array) $actions;
+		$referrer_url = empty($referrer) ? '' : $referrer;
+		$referrer_url = !$referrer ? '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="' . $_SERVER['REQUEST_URI'] .'" />' : '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="' . $referrer .'" />';
 
 		$button_text = !empty($text) ? $text : array( __('Save', 'event_espresso'), __('Save and Close', 'event_espresso') );
 		$default_names = array( 'save', 'save_and_close' );
@@ -1384,11 +1391,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		$this->_template_args['save_buttons'] = '<div class="publishing-action">';
 		//add in a hidden index for the current page (so save and close redirects properly)
-		$this->_template_args['save_buttons'] .= empty($actions) ? '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="' . $_SERVER['REQUEST_URI'] .'" />' : '';
+		$this->_template_args['save_buttons'] .= $referrer_url;
 
 		foreach ( $button_text as $key => $button ) {
 			$ref = $default_names[$key];
-			$name = !empty($action) ? $actions[$key] : $ref;
+			$name = !empty($actions) ? $actions[$key] : $ref;
 			$this->_template_args['save_buttons'] .= '<input type="submit" class="button-primary" value="' . $button . '" name="' . $name . '" id="' . $ref . '" />';
 			if ( !$both ) break;
 		}

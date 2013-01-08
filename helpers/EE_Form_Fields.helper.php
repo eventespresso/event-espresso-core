@@ -277,4 +277,63 @@ class EE_Form_Fields {
 		return $form_fields;
 	}
 
+
+
+
+
+
+	/**
+	 * select_input
+	 * Turns an array into a select fields
+	 *
+	 * @static
+	 * @access public
+	 * @param  string  $name       field name
+	 * @param  array  $values     option values
+	 * @param  string  $default    default value
+	 * @param  string  $parameters extra paramaters
+	 * @param  string  $class      css class
+	 * @param  boolean $autosize   whether to autosize the select or not
+	 * @return string              html string for the select input
+	 */
+	static public function select_input($name, $values, $default = '', $parameters = '', $class = '', $autosize = true) {
+
+		//load formatter helper
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
+
+		$field = '<select name="' . EE_Formatter::ee_tep_output_string($name) . '"';
+		//Debug
+		//echo "<pre>".print_r($values,true)."</pre>";
+		if ( EE_Formatter::ee_tep_not_null($parameters))
+			$field .= ' ' . $parameters;
+		if ($autosize) {
+			$size = 'med';
+			for ($ii = 0, $ni = sizeof($values); $ii < $ni; $ii++) {
+				if ($values[$ii]['text']) {
+					if (strlen($values[$ii]['text']) > 5)
+						$size = 'wide';
+				}
+			}
+		} else
+			$size = '';
+
+		$field .= ' class="' . $class . ' ' . $size . '">';
+
+		if (empty($default) && isset($GLOBALS[$name]))
+			$default = stripslashes($GLOBALS[$name]);
+
+
+		for ($i = 0, $n = sizeof($values); $i < $n; $i++) {
+			$field .= '<option value="' . $values[$i]['id'] . '"';
+			if ($default == $values[$i]['id']) {
+				$field .= 'selected = "selected"';
+			}
+
+			$field .= '>' . $values[$i]['text'] . '</option>';
+		}
+		$field .= '</select>';
+
+		return $field;
+	}
+
 }//end class EE_Form_Fields
