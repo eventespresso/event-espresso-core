@@ -708,6 +708,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 	public function admin_footer_scripts_global() {
 		$this->_add_admin_page_ajax_loading_img();
 		$this->_add_admin_page_overlay();
+
+		//if metaboxes are present we need to add the nonce field
+		if ( isset($this->_route_config['metaboxes']) || ( isset($this->_route_config['has_metaboxes']) && $this->_route_config['has_metaboxes'] ) ) {
+			wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false);
+			wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false);
+		}
 	}
 
 	
