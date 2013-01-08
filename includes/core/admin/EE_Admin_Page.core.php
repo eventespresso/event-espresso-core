@@ -203,7 +203,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *     			'css_class' => 'css-class', //automatically generated UNLESS you define
 	 *     			'order' => 10 //required to indicate tab position.
 	 *     		'list_table' => 'name_of_list_table' //string for list table class to be loaded for this admin_page.
-	 *     		'metaboxes' => array('metabox1', 'metabox2') //if present this key indicates we want to load metaboxes set for eventespresso admin pages. 
+	 *     		'metaboxes' => array('metabox1', 'metabox2'), //if present this key indicates we want to load metaboxes set for eventespresso admin pages. 
+	 *     		'has_metaboxes' => true //this boolean flag can simply be used to indicate if the route will have metaboxes.  Typically this is used if the 'metaboxes' index is not used because metaboxes are added later.  We just use this flag to make sure the necessary js gets enqueued on page load.
 	 * 			
 	 * )
 	 * 
@@ -782,7 +783,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		/** SCRIPTS **/
 		//are we loading metaboxes?
-		if ( isset($this->_route_config['metaboxes'] ) ) {
+		if ( isset($this->_route_config['metaboxes'] ) || isset($this->_route_config['has_metaboxes']) ) {
 			wp_enqueue_script('dashboard');
 		}
 
