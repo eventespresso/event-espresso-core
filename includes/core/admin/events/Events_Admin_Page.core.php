@@ -92,23 +92,33 @@ class Events_Admin_Page extends EE_Admin_Page {
 			'delete_events' => '_delete_events',
 			'insert_event' => array(
 				'func' => '_insert_or_update_event',
-				'args' => array('new_event' => TRUE)
+				'args' => array('new_event' => TRUE),
+				'noheader' => TRUE
 				 ),
 			'update_event' => array(
 				'func' => '_insert_or_update_event',
-				'args' => array('new_event' => FALSE )
+				'args' => array('new_event' => FALSE ), 
+				'noheader' => true
 				),
 			'trash_events' => array(
 				'func' => '_trash_or_restore_events',
-				'args' => array('trash' => TRUE )
+				'args' => array('trash' => TRUE ),
+				'noheader' => true
 				),
 			'restore_events' => array(
 				'func' => '_trash_or_restore_events',
-				'args' => array('trash' => FALSE )
+				'args' => array('trash' => FALSE ),
+				'noheader' => true
 				),
 			'view_report' => '_view_report',
-			'export_events' => '_events_export',
-			'export_payments' => '_payment_export',
+			'export_events' => array(
+				'func' => '_events_export',
+				'noheader' => true
+				),
+			'export_payments' => array(
+				'func' => '_payment_export',
+				'noheader' => true
+				),
 			'import_events' => '_import_events',
 			'import' => '_import_events'
 			);

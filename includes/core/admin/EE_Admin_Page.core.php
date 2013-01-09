@@ -166,6 +166,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 		'default' => array(
 	 * 			'func' => '_default_method_handling_route',
 	 * 			'args' => array('array','of','args')
+	 * 			'noheader' => true //add this in if this page route is processed before any headers are loaded (i.e. ajax request, backend processing)
 	 * 		),
 	 * 		'insert_item' => '_method_for_handling_insert_item' //this can be used if all we need to have is a handling method. 
 	 * 		)
@@ -349,8 +350,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//next let's just check user_access and kill if no access
 		$this->_check_user_access();
 
-		//next let's set if this is a UI request or not.
-		$this->_is_UI_request = ( ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' ) ? TRUE : FALSE;
 		
 		// becuz WP List tables have two duplicate select inputs for choosing bulk actions, we need to copy the action from the second to the first
 		if ( isset( $_REQUEST['action2'] ) && $_REQUEST['action'] == -1 ) {
@@ -364,8 +363,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		$this->_current_page_view_url = add_query_arg( array( 'page' => $this->_current_page, 'action' => $this->_current_view ),  $this->_admin_base_url );
 
+		//set page configs
 		$this->_set_page_routes();
 		$this->_set_page_config();
+
+		//next verify routes
+		$this->_verify_routes();
+
 
 		if ( $this->_is_UI_request ) {
 			
@@ -379,6 +383,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 			//hook into page load hook so all page specific stuff get's loaded.
 			if ( !empty($this->_wp_page_slug) )
 				add_action($page_hook, array($this, 'load_page_dependencies') );
+		} else {
+			//hijack regular WP loading and route admin request immediately
+			$this->_route_admin_request();
 		}
 	}
 
@@ -391,8 +398,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	public function load_page_dependencies() {
 
-		//verify routes
-		$this->_verify_routes();
 
 		$this->_current_screen = get_current_screen();
 
@@ -538,6 +543,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$error_msg .=  '||' . $error_msg . __( ' Create a key in the "_page_routes" array named "default" and set it\'s value to your default page method.', 'event_espresso' );
 			throw new EE_Error( $error_msg );
 		}
+
+		//lets set if this is a UI request or not.
+		$this->_is_UI_request = ( ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' ) ? TRUE : FALSE;
+
+
+		//wait a minute... we might have a noheader in the route array
+		$this->_is_UI_request = is_array($this->_route) && isset($this->_route['noheader'] ) && $this->_route['noheader'] ? FALSE : $this->_is_UI_request;
+
 	}
 
 
@@ -1465,7 +1478,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			EE_Error::add_success( sprintf( __('The %s have been successfully %s.', 'event_espresso'), $what, $action_desc ), __FILE__, __FUNCTION__, __LINE__);
 		} else if ( $success == 1 ) {
 			// set singular msg
-			EE_Error::add_success( sprintf( __('The %s has been successfully %s.', 'event_espresso'), $what, $action_desc), __FILE__, __FUNCTION__, __LINE );
+			EE_Error::add_success( sprintf( __('The %s has been successfully %s.', 'event_espresso'), $what, $action_desc), __FILE__, __FUNCTION__, __LINE__ );
 		}
 
 		// check that $query_args isn't something crazy
