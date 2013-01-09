@@ -804,6 +804,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			wp_enqueue_script('dashboard');
 		}
 
+		wp_enqueue_script('post');
 		wp_enqueue_script('jquery-ui-datepicker');
 		wp_enqueue_script('jquery-ui-slider');
 		wp_enqueue_script('jquery-ui-timepicker-addon', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker'), EVENT_ESPRESSO_VERSION, true );
@@ -817,6 +818,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 			'image_confirm' => __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso')
 			);
 		wp_localize_script( 'event_editor_js', 'EE_EDIT_VARS', $js_args );
+
+
+		/** remove filters **/
+		remove_all_filters('mce_external_plugins');
 	}
 
 
