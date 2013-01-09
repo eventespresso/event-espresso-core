@@ -588,7 +588,7 @@
 			$('.event_questions').slideUp(); 
 			$('#mer-reg-page-copy-attendee-dv').slideUp();
 			$('#mer-reg-page-display-event-questions-lnk').removeClass('hidden');
-		} else if ( good_to_go != '' ) {
+		} else if ( good_to_go != '' && good_to_go!==true ) {
 			msg = new Object();
 			msg.error = good_to_go;
 			good_to_go = msg;
