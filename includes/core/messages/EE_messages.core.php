@@ -912,6 +912,7 @@ abstract class EE_messenger {
 		$event_template_set = array();
 		$event_template_trashed = array();
 		$event_group_id = array();
+		$new_event = empty($event_id) ? true : false;
 
 		//todo: this should be replaced by EE_MSG_ADMIN_URL constant when we have access to it.
 		$ee_msg_admin_url = defined('EE_MSG_ADMIN_URL') ? EE_MSG_ADMIN_URL : admin_url('admin.php?page=messages');
@@ -940,6 +941,8 @@ abstract class EE_messenger {
 		
 		
 		$content = '<div id="message-templates-' . $this->name . '" class="message-templates-container">' . "\n\t";
+		
+
 		foreach ( $this->active_templates as $template ) {
 			$et_set = isset($event_template_set[$template->message_type()]) && !empty($event_template_set[$template->message_type()]) ? true : false;
 			$et_trashed = isset($event_template_trashed[$template->message_type()]) ? true : false;
@@ -947,6 +950,10 @@ abstract class EE_messenger {
 			
 			//check for existence of Event Template and if present AND the current template in the loop is the event template (or the current template in the loop is a DIFFERENT event template) let's skip (we'll delay until we get to global)
 			if ( $et_set && !$template->is_global() ) continue;
+
+			//if this is a new event then we ONLY want to show ONE option.
+			$template_type = $template->message_type();
+			if ( $new_event && ( isset($old_template_type) && $old_template_type == $template_type ) ) continue;
 
 
 			//setup current button
@@ -966,6 +973,8 @@ abstract class EE_messenger {
 			$content .= '<p>';
 			$content .= sprintf( __('This event will use the %s for <span class="message-type-text">%s %s</span> messages. %s.', 'event_espresso'), $main_button, str_replace('_', ' ',$template->message_type()), str_replace('_', ' ', $this->name), $switch_button);
 			$content .= '</p>' . "\n" . '</div>';
+
+			$old_template_type = $template_type;
 		}
 
 		$content .= '</div>';

@@ -1980,6 +1980,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			$tabs[$name] = $messenger->get_messenger_admin_page_content('events', 'edit', array('event' => $this->_event) );
 		}
 
+
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Tabbed_Content.helper.php';
 		//we want this to be tabbed content so let's use the EE_Tabbed_Content::display helper.
 		$tabbed_content = EE_Tabbed_Content::display($tabs);
