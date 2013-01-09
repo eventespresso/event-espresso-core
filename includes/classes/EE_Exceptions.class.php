@@ -353,7 +353,7 @@ class EE_Error extends Exception {
 	* 	@return 		void
 	*/
 	public static function add_success( $msg = NULL, $file = NULL, $func = NULL, $line = NULL ) {
-		self::_add_notice ( 'success', $msg, $file, $func, $line );
+		self::_add_notice ( 'success', $msg );
 	}
 
 
@@ -372,8 +372,8 @@ class EE_Error extends Exception {
 	* 	@return 		void
 	*/
 	private static function _add_notice( $type = 'success', $msg = NULL, $file = NULL, $func = NULL, $line = NULL ) {
-		// get error code
-		$error_code = self::generate_error_code ( $file, $func, $line );
+		// get error code only on error
+		$error_code = $type == 'error' ? self::generate_error_code ( $file, $func, $line ) : '';
 		// get separate user and developer messages if they exist		
 		$msg = explode( '||', $msg );
 		$user_msg = $msg[0];
