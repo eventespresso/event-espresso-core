@@ -89,7 +89,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'func' => '_event_details',
 				'args' => array('add')
 				),
-			'delete_events' => '_delete_events',
+			'delete_events' => array(
+				'func' => '_delete_events', //coming from overview page
+				'noheader' => true
+				),
+			'delete_event' => array(
+				'func' => '_delete_events', //coming from edit page.
+				'noheader' => true
+				),
 			'insert_event' => array(
 				'func' => '_insert_or_update_event',
 				'args' => array('new_event' => TRUE),
@@ -2236,13 +2243,76 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * _delete_event
-	 * deletes a given event
+	 * _delete_events
+	 * deletes a given event(s)
 	 *
 	 * @access protected
 	 * @return void 
 	 */
-	protected function _delete_event() {}
+	protected function _delete_events() {
+		
+		//determine the event id and set to array.
+		$event_ids = isset( $_REQUEST['EVT_ID'] ) ? (array) $_REQUEST['EVT_ID'] : (array) $_REQUEST['event_id'];
+
+		foreach ( $event_ids as $event_id ) {
+			$this->_delete_event($event_id);
+		}
+
+		//doesn't matter what page we're coming from... we're going to the same place after delete.
+		$query_args = array(
+			'action' => 'default'
+			);
+		$this->_redirect_after_action(0,'','',$query_args);
+
+	}
+
+
+
+
+
+
+	/**
+	 * processes event deletes
+	 *
+	 * @access  private
+	 * @param  int $event_id 
+	 * @return void
+	 */
+	private function _delete_event($event_id) {
+		$event_id = absint( $event_id );
+
+		global $wpdb;	
+		
+		if ( !empty($event_id) ) {
+		
+			$data_cols_and_vals = array('event_status' => 'D');
+			$where_cols_and_vals = array('id' => $event_id);
+			$where_format = array('%s');
+
+			if( $wpdb->update( EVENTS_DETAIL_TABLE, $data_cols_and_vals, $where_cols_and_vals, $where_format, array('%d'))) {
+
+				$sql = 'SELECT event_name FROM ' . EVENTS_DETAIL_TABLE . ' WHERE id  = %d';
+				$event = $wpdb->get_row($wpdb->prepare($sql, $event_id));
+				
+				$msg = sprintf( 
+						__( '%s has been successfully deleted.', 'event_espresso' ), 
+						stripslashes( html_entity_decode( $event->event_name, ENT_QUOTES, 'UTF-8' ))
+				);
+				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
+				do_action( 'action_hook_espresso_event_moved_to_trash' );
+				
+				} else {
+					$msg = __( 'An error occured. The event could not be moved to the trash.', 'event_espresso' );
+					EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+				}			
+		} else {
+			
+			$msg = __( 'An error occured. The event could not be moved to the trash because a valid event ID was not not supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+		}
+		
+	}
+
 
 
 
@@ -2260,8 +2330,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 		if ( $new_event ) {
 			$_SESSION['event_id'] = $event_id = $this->_insert_event();
 			$success = 0; //we already have a success message so lets not send another.
-			$what = __('event', 'event_espresso');
-			$action_desc = __('added', 'event_espresso');
 			$query_args = array(
 				'action' => 'edit_event',
 				'EVT_ID' => $event_id
@@ -2269,15 +2337,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 		} else {
 			$_SESSION['event_id'] = $event_id = $this->_update_event();
 			$success = 0; //we already have a success message so lets not send another.
-			$what = __('event', 'event_espresso');
-			$action_desc = __('updated', 'event_espresso');
 			$query_args = array(
 				'action' => 'edit_event',
 				'EVT_ID' => $event_id
 				);
 		}
 
-		$this->_redirect_after_action( $success, $what, $action_desc, $query_args );
+		$this->_redirect_after_action( $success, '', '', $query_args );
 	}
 
 
