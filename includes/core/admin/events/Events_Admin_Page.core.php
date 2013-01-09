@@ -279,7 +279,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
 
 		//set _event property
-		$this->_set_event_object($view);
+		$this->_set_event_object();
 
 		//any specific javascript here.
 		//todo: this needs to be done properly via an enqueue and wp_localize_scripts() for vars
@@ -442,14 +442,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * @access private
 	 * @return void
 	 */
-	private function _set_event_object($type = 'add') {
+	private function _set_event_object() {
 		if ( is_object($this->_event) )
 			return; //get out we've already set the object
 		
-		if ( $type == 'add' ) {
-			$this->_set_add_event_object();
-		} else {
+		if ( isset($_REQUEST['EVT_ID']) ) {
 			$this->_set_edit_event_object();
+		} else {
+			$this->_set_add_event_object();
 		}
 	}
 
@@ -620,6 +620,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * @return [type] [description]
 	 */
 	protected function _register_event_editor_meta_boxes() {
+		
 		$this->_set_event_object();
 
 		$this->_set_save_buttons(TRUE, array(), array(), EVENTS_ADMIN_URL);
