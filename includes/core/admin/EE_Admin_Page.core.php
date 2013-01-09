@@ -1358,8 +1358,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args['nav_tabs'] = $this->_nav_tabs;
 		$this->_template_args['admin_page_title'] = $this->_admin_page_title;
 		
-		// grab messages at the last second
-		$this->_template_args['notices'] = EE_Error::get_notices();
 		
 		// load settings page wrapper template
 		$template_path = EE_CORE_ADMIN . 'admin_wrapper.template.php';
@@ -1466,7 +1464,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *	@return void
 	 */
 	protected function _redirect_after_action( $success = FALSE, $what = 'item', $action_desc = 'processed', $query_args = array() ) {
-		global $espresso_notices;
 
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
@@ -1487,12 +1484,15 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		//calculate where we're going (if we have a "save and close" button pushed)
-		if ( isset($_REQUEST['save'] ) && isset($_REQUEST['save_and_close_referrer'] ) ) {
+		if ( isset($_REQUEST['save_and_close'] ) && isset($_REQUEST['save_and_close_referrer'] ) ) {
+			//dump query_args (becaus ethe save_and_close referrer should be setup)
+			$query_args = array();
 			$redirect_url = $_REQUEST['save_and_close_referrer'];
 		}
 		
 		// grab messages
 		$notices = EE_Error::get_notices( false, true );
+
 		//combine $query_args and $notices
 		$query_args = array_merge( $query_args, $notices );
 		// generate redirect url

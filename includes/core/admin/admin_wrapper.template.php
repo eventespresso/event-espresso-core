@@ -4,7 +4,6 @@
 		
 	<h2><?php esc_attr_e( 'Event Espresso', 'event_espresso' );?>&nbsp;-&nbsp;<?php  echo $admin_page_title; ?></h2>
 	
-	<?php echo $notices; ?>
 	<?php echo $nav_tabs; ?>
 
 
