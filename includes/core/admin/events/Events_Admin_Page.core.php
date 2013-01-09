@@ -2096,10 +2096,16 @@ class Events_Admin_Page extends EE_Admin_Page {
 						<?php _e('Delete all events in this series', 'event_espresso'); ?>
 					</a>
 				<?php else:*/ ?>
-					<a class="submitdelete deletion" href="admin.php?page=events&amp;action=delete&event_id=<?php echo $event->id ?>" onclick="return confirm('<?php _e('Are you sure you want to delete ' . $event->event_name . '?', 'event_espresso'); ?>')">
+					<a class="submitdelete deletion" href="admin.php?page=events&amp;action=delete&event_id=<?php echo $this->_event->id ?>" onclick="return confirm('<?php _e('Are you sure you want to delete ' . $event->event_name . '?', 'event_espresso'); ?>')">
 						<?php _e('Delete Event', 'event_espresso'); ?>
 					</a>
 				<?php //endif; ?>
+			</div>
+			<div class="hidden-fields">
+				<!-- any hidden fields -->
+				<?php if ( isset ($this->_event->id) ) : ?>
+					<input type="hidden" name="event_id" value="<?php echo $this->_event->id; ?>" />
+				<?php endif; ?>
 			</div>
 			<br/>
 			<?php
@@ -2250,7 +2256,1216 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * @param  bool $new_event true = insert, false = update
 	 * @return void
 	 */
-	protected function _insert_or_update_event($new_event) {}
+	protected function _insert_or_update_event($new_event) {
+		if ( $new_event ) {
+			$_SESSION['event_id'] = $event_id = $this->_insert_event();
+			$success = 0; //we already have a success message so lets not send another.
+			$what = __('event', 'event_espresso');
+			$action_desc = __('added', 'event_espresso');
+			$query_args = array(
+				'action' => 'edit_event',
+				'EVT_ID' => $event_id
+				);
+		} else {
+			$_SESSION['event_id'] = $event_id = $this->_update_event();
+			$success = 0; //we already have a success message so lets not send another.
+			$what = __('event', 'event_espresso');
+			$action_desc = __('updated', 'event_espresso');
+			$query_args = array(
+				'action' => 'edit_event',
+				'EVT_ID' => $event_id
+				);
+		}
+
+		$this->_redirect_after_action( $success, $what, $action_desc, $query_args );
+	}
+
+
+
+
+
+	private function _insert_event() {
+		//Delete the transients that may be set
+		$this->_espresso_reset_cache();
+
+	/* @var $espresso_wp_user type array*/
+		global $wpdb, $espresso_wp_user, $espresso_premium;
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
+		$wpdb->show_errors();
+
+		$event_meta = array(); //will be used to hold event meta data
+		//If the Espresso Facebook Events is installed, add the event to Facebook
+		//$fb = new FacebookEvents();
+		//echo $fb->espresso_createevent();
+		//echo $_POST['event'];
+		$wp_user_id = empty($_REQUEST['wp_user']) ? $espresso_wp_user : $_REQUEST['wp_user'][0];
+		if ($wp_user_id == 0) {
+			$wp_user_id = 1;
+		}
+
+		$event_desc = $_REQUEST['event_desc'];
+		$display_desc = $_REQUEST['display_desc'];
+		$display_reg_form = $_REQUEST['display_reg_form'];
+
+		$address = empty($_REQUEST['address']) ? '' : esc_html($_REQUEST['address']);
+		$address2 = empty($_REQUEST['address2']) ? '' : esc_html($_REQUEST['address2']);
+		$city = empty($_REQUEST['city']) ? '' : esc_html($_REQUEST['city']);
+		$state = empty($_REQUEST['state']) ? '' : esc_html($_REQUEST['state']);
+		$zip = empty($_REQUEST['zip']) ? '' : esc_html($_REQUEST['zip']);
+		$country = empty($_REQUEST['country']) ? '' : esc_html($_REQUEST['country']);
+		$phone = esc_html($_REQUEST['phone']);
+		$externalURL = esc_html($_REQUEST['externalURL']);
+
+		$post_type = $_REQUEST['post_type'];
+
+		// thumbnail image options
+		$event_meta['event_thumbnail_url'] = $_REQUEST['upload_image'];
+		$event_meta['display_thumb_in_lists'] = $_REQUEST['show_thumb_in_lists'];
+		$event_meta['display_thumb_in_regpage'] = $_REQUEST['show_thumb_in_regpage'];
+		if (function_exists('espresso_calendar_config_mnu') && $espresso_premium == true) {
+			$event_meta['display_thumb_in_calendar'] = $_REQUEST['show_on_calendar'];
+		}
+
+		// enable event address for Gmaps
+		if (!empty($_REQUEST['venue_id'][0]) || !empty($_REQUEST['zip']) || !empty($_REQUEST['city']) || !empty($_REQUEST['state'])) {
+			$event_meta['enable_for_gmap'] = $_REQUEST['enable_for_gmap'];
+		} else {
+			$event_meta['enable_for_gmap'] = false;
+		}
+
+		//$event_location = $address . ' ' . $city . ', ' . $state . ' ' . $zip;
+		$event_location = ($address != '' ? $address . ' ' : '') . ($address2 != '' ? '<br />' . $address2 : '') . ($city != '' ? '<br />' . $city : '') . ($state != '' ? ', ' . $state : '') . ($zip != '' ? '<br />' . $zip : '') . ($country != '' ? '<br />' . $country : '');
+		$reg_limit = $_REQUEST['reg_limit'];
+		$allow_multiple = $_REQUEST['allow_multiple'];
+		$additional_limit = $_REQUEST['additional_limit'];
+		$member_only = isset($_REQUEST['member_only']) ? $_REQUEST['member_only'] : '';
+		$is_active = $_REQUEST['is_active'];
+		$event_status = $_REQUEST['new_event_status'];
+		$ticket_id = empty($_REQUEST['ticket_id']) ? '' : $_REQUEST['ticket_id'];
+		$certificate_id = empty($_REQUEST['certificate_id']) ? '' : $_REQUEST['certificate_id'];
+
+		//Early discounts
+		$early_disc = $_REQUEST['early_disc'];
+		$early_disc_date = $_REQUEST['early_disc_date'];
+		$early_disc_percentage = $_REQUEST['early_disc_percentage'];
+
+		$use_coupon_code = $_REQUEST['use_coupon_code'];
+		$alt_email = $_REQUEST['alt_email'];
+
+		$confirmation_email_id = isset( $_REQUEST['confirmation_email_id'] ) ? $_REQUEST['confirmation_email_id'] : null;
+		$payment_email_id = isset( $_REQUEST['payment_email_id'] ) ? $_REQUEST['payment_email_id'] : null;
+		//Venue Information
+		$venue_title = empty($_REQUEST['venue_title']) ? '' : $_REQUEST['venue_title'];
+		$venue_url = empty($_REQUEST['venue_url']) ? '' : $_REQUEST['venue_url'];
+		$venue_phone = empty($_REQUEST['venue_phone']) ? '' : $_REQUEST['venue_phone'];
+		$venue_image = empty($_REQUEST['venue_image']) ? '' : $_REQUEST['venue_image'];
+
+		//Virtual location
+		$virtual_url = $_REQUEST['virtual_url'];
+		$virtual_phone = $_REQUEST['virtual_phone'];
+
+		if ($reg_limit == '') {
+			$reg_limit = 999;
+		}
+
+		$question_groups = empty($_REQUEST['question_groups']) ? '' : serialize($_REQUEST['question_groups']);
+		$add_attendee_question_groups = empty($_REQUEST['add_attendee_question_groups']) ? '' : serialize($_REQUEST['add_attendee_question_groups']);
+
+		$event_meta['venue_id'] = isset($_REQUEST['venue_id']) ? $_REQUEST['venue_id'][0] : '';
+		$event_meta['additional_attendee_reg_info'] = $_REQUEST['additional_attendee_reg_info'];
+		$event_meta['add_attendee_question_groups'] = $add_attendee_question_groups;
+		$event_meta['date_submitted'] = date("Y-m-d H:i:s");
+		$event_meta['originally_submitted_by'] = $espresso_wp_user;
+		$event_meta['default_payment_status'] = $_REQUEST['default_payment_status'];
+
+		if ($_REQUEST['emeta'] != '') {
+			foreach ($_REQUEST['emeta'] as $k => $v) {
+				$event_meta[$v] = strlen(trim($_REQUEST['emetad'][$k])) > 0 ? $_REQUEST['emetad'][$k] : '';
+			}
+		}
+		//echo strlen(trim($_REQUEST['emetad'][$k]));
+		//print_r($_REQUEST['emeta'] );
+
+		$event_meta = serialize($event_meta);
+
+		############ Added by wp-developers ######################
+		$require_pre_approval = 0;
+		if (isset($_REQUEST['require_pre_approval'])) {
+			$require_pre_approval = $_REQUEST['require_pre_approval'];
+		}
+		################# END #################
+		//Event name
+		$event_name = empty($_REQUEST['event']) ? uniqid($espresso_wp_user . '-') : htmlentities( wp_strip_all_tags( $_REQUEST['event'] ), ENT_QUOTES, 'UTF-8');
+
+		//Create the event code and prefix it with the user id
+		$event_code = uniqid($espresso_wp_user . '-');
+
+		//Create the event identifier with the event code appended to the end
+		$event_identifier = (empty($_REQUEST['event_identifier'])) ? $event_identifier = sanitize_title_with_dashes($event_name . '-' . $event_code) : $event_identifier = sanitize_title_with_dashes($_REQUEST['event_identifier']) . $event_code;
+
+		//Create the event slug
+		$event_slug = ($_REQUEST['slug'] == '') ? sanitize_title_with_dashes($event_name) : sanitize_title_with_dashes($_REQUEST['slug']);
+
+		//When adding colums to the following arrays, be sure both arrays have equal values.
+		$sql = array(
+				'event_code' => $event_code,
+				'event_name' => $event_name,
+				'event_desc' => $event_desc,
+				'display_desc' => $display_desc,
+				'display_reg_form' => $display_reg_form,
+				'event_identifier' => $event_identifier,
+				'slug' => $event_slug,
+				'address' => $address,
+				'address2' => $address2,
+				'city' => $city,
+				'state' => $state,
+				'zip' => $zip,
+				'country' => $country,
+				'phone' => $phone,
+				'virtual_url' => $virtual_url,
+				'virtual_phone' => $virtual_phone,
+				'venue_title' => $venue_title,
+				'venue_url' => $venue_url,
+				'venue_phone' => $venue_phone,
+				'venue_image' => $venue_image,
+				'allow_multiple' => $allow_multiple,
+				'is_active' => $is_active,
+				'event_status' => $event_status,
+				'use_coupon_code' => $use_coupon_code,
+				'member_only' => $member_only,
+				'externalURL' => $externalURL,
+				'early_disc' => $early_disc,
+				'early_disc_date' => $early_disc_date,
+				'early_disc_percentage' => $early_disc_percentage,
+				'alt_email' => $alt_email,
+				'question_groups' => $question_groups,
+				'event_meta' => $event_meta,
+				'require_pre_approval' => $require_pre_approval,
+				'submitted' => date('Y-m-d H:i:s', time()),
+				'reg_limit' => $reg_limit,
+				'additional_limit' => $additional_limit,
+				'wp_user' => $wp_user_id,
+				'ticket_id' => $ticket_id,
+				'certificate_id' => $certificate_id,
+				'confirmation_email_id' => $confirmation_email_id,
+				'payment_email_id' => $payment_email_id
+		);
+
+		$sql_data = array(
+				'%s', '%s', '%s', '%s', '%s',
+				'%s', '%s', '%s', '%s', '%s',
+				'%s', '%s', '%s', '%s', '%s',
+				'%s', '%s', '%s', '%s', '%s',
+				'%s', '%s', '%s', '%s', '%s',
+				'%s', '%s', '%s', '%s', '%s',
+				'%s', '%s', '%s', '%s', '%s',
+				'%s', '%s', '%s', '%s', '%s',
+				'%s', '%d', '%d', '%d', '%d',
+				'%d', '%d', '%d'
+		);
+
+		//Add groupon reference if installed
+		if (function_exists('event_espresso_add_event_to_db_groupon')) {
+			$sql = event_espresso_add_event_to_db_groupon($sql, $_REQUEST['use_groupon_code']);
+			//print count ($sql);
+			$sql_data = array_merge((array) $sql_data, (array) '%s');
+			//print count($sql_data);
+			if ( FALSE === $wpdb->insert(EVENTS_DETAIL_TABLE, $sql, $sql_data)) {
+				$error = true;
+			}
+		} else {
+			if (FALSE === $wpdb->insert(EVENTS_DETAIL_TABLE, $sql, $sql_data)) {
+				$error = true;
+			}
+		}
+
+		$last_event_id = $wpdb->insert_id;
+
+		do_action('action_hook_espresso_insert_event_add_ons');
+		############# MailChimp Integration ##############
+		if (get_option('event_mailchimp_active') == 'true' && $espresso_premium == true) {
+			MailChimpController::add_event_list_rel($last_event_id);
+		}
+
+		/*
+		 * Added for seating chart addon
+		 */
+		if (isset($_REQUEST['seating_chart_id'])) {
+			$cls_seating_chart = new seating_chart();
+			$cls_seating_chart->associate_event_seating_chart($_REQUEST['seating_chart_id'], $last_event_id);
+		}
+		/*
+		 * End
+		 */
+
+		//Add event to a category
+		if (isset($_REQUEST['event_category']) && $_REQUEST['event_category'] != '') {
+			foreach ($_REQUEST['event_category'] as $k => $v) {
+				if ($v != '') {
+					$sql_cat = "INSERT INTO " . EVENTS_CATEGORY_REL_TABLE . " (event_id, cat_id) VALUES ('" . $last_event_id . "', '" . $v . "')";
+					//echo "$sql3 <br>";
+					if ( FALSE === $wpdb->query($sql_cat)) {
+						$error = true;
+					}
+				}
+			}
+		}
+
+		if (!empty($_REQUEST['event_person'])) {
+			foreach ($_REQUEST['event_person'] as $k => $v) {
+				if ($v != '') {
+					$sql_ppl = "INSERT INTO " . EVENTS_PERSONNEL_REL_TABLE . " (event_id, person_id) VALUES ('" . $last_event_id . "', '" . $v . "')";
+					//echo "$sql_ppl <br>";
+					if ( FALSE === $wpdb->query($sql_ppl) )
+						$error = true;
+				}
+			}
+		}
+
+		if (!empty($_REQUEST['venue_id'])) {
+			foreach ($_REQUEST['venue_id'] as $k => $v) {
+				if ($v != '' && $v != 0) {
+					$sql_venues = "INSERT INTO " . EVENTS_VENUE_REL_TABLE . " (event_id, venue_id) VALUES ('" . $last_event_id . "', '" . $v . "')";
+					//echo "$sql_venues <br>";
+					if ( FALSE === $wpdb->query($sql_venues) )
+						$error = true;
+				}
+			}
+		}
+
+		if (!empty($_REQUEST['event_discount'])) {
+			foreach ($_REQUEST['event_discount'] as $k => $v) {
+				if ($v != '') {
+					$sql_cat = "INSERT INTO " . EVENTS_DISCOUNT_REL_TABLE . " (event_id, discount_id) VALUES ('" . $last_event_id . "', '" . $v . "')";
+					//echo "$sql3 <br>";
+					if ( FALSE === $wpdb->query($sql_cat)) {
+						$error = true;
+					}
+				}
+			}
+		}
+
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
+		$DTM = EEM_Datetime::instance();
+
+//		printr( $_REQUEST['event_datetimes'] ); die();
+
+		$q = 1;
+		foreach ($_REQUEST['event_datetimes'] as $event_datetime) {
+		
+			$event_datetime['evt_end'] = ( isset($event_datetime['evt_end']) && $event_datetime['evt_end'] != '' ) ? $event_datetime['evt_end'] : $event_datetime['evt_start'];
+			$event_datetime['reg_end'] = ( isset($event_datetime['reg_end']) && $event_datetime['reg_end'] != '' ) ? $event_datetime['reg_end'] : $event_datetime['reg_start'];
+						
+			$insert = array(
+							'EVT_ID'					=> $last_event_id,
+							'DTT_EVT_start'		=> strtotime( $event_datetime['evt_start'] ),
+							'DTT_EVT_end' 		=> strtotime( $event_datetime['evt_end'] ),
+							'DTT_REG_start' 		=> strtotime( $event_datetime['reg_start'] ),
+							'DTT_REG_end' 		=> strtotime( $event_datetime['reg_end'] ),
+							'DTT_is_primary' 	=> $q == 1 ? TRUE : FALSE,							
+							/* DO NOT DELETE - NEW FEATURE IN PROGRESS 
+							'DTT_reg_limit' 		=>( isset( $event_datetime['reg_limit'] ) && $event_datetime['reg_limit'] != 0 ) ? $event_datetime['reg_limit'] : NULL,
+							'DTT_tckts_left' 	=>( isset( $event_datetime['tckts_left'] ) && $event_datetime['tckts_left'] != 0 ) ? $event_datetime['tckts_left'] : NULL,*/
+					);
+
+			$DTM->insert($insert);
+			
+			if ( $q == 1 ) {
+				$evt_date = date( 'F j, Y  g:i a', strtotime( $event_datetime['evt_start'] ));	
+			}			
+			
+			$q++;
+		}
+
+
+
+
+		
+		/************************************   PRICING   ******************************************* */
+		
+		$ticket_prices_to_save = array();
+		$quick_edit_ticket_price = isset($_POST['quick_edit_ticket_price']) ? $_POST['quick_edit_ticket_price'] : array();
+//			echo printr( $quick_edit_ticket_price, '$quick_edit_ticket_price' );
+
+		// grab list of edited ticket prices
+		if ($edited_ticket_price_IDs = isset($_POST['edited_ticket_price_IDs']) ? $_POST['edited_ticket_price_IDs'] : FALSE) {
+			// remove last comma
+			$edited_ticket_price_IDs = trim($edited_ticket_price_IDs, ',');
+			// create array of edited ticket prices
+			$edited_ticket_price_IDs = explode(',', $edited_ticket_price_IDs);
+			// flipper once
+			$edited_ticket_price_IDs = array_flip($edited_ticket_price_IDs);
+			// flipper twice - hey!?!?! where did all the duplicate entries go???
+			$edited_ticket_price_IDs = array_flip($edited_ticket_price_IDs);
+//				echo printr( $edited_ticket_price_IDs, '$edited_ticket_price_IDs' );
+			// grab existing ticket price data
+			if ($edited_ticket_prices = isset($_POST['edit_ticket_price']) ? $_POST['edit_ticket_price'] : FALSE) {
+//					echo printr( $edited_ticket_prices, '$edited_ticket_prices' );
+				// cycle thru list                    
+				foreach ($edited_ticket_prices as $PRC_ID => $edited_ticket_price) {
+//						echo printr( $edited_ticket_price, '$edited_ticket_price' );	
+					// add edited ticket prices to list of ticket prices to save
+					if (in_array($PRC_ID, $edited_ticket_price_IDs)) {
+//							echo printr( $quick_edit_ticket_price[$PRC_ID], '$quick_edit_ticket_price[$PRC_ID]' );
+						if ( isset( $quick_edit_ticket_price[$PRC_ID] ) && is_array( $quick_edit_ticket_price[$PRC_ID] )) {
+							$edited_ticket_price = array_merge( $edited_ticket_price, $quick_edit_ticket_price[$PRC_ID] );
+//								echo printr( $edited_ticket_price, '$edited_ticket_price' );	
+						}
+						$ticket_prices_to_save[$PRC_ID] = $edited_ticket_price;
+					}
+				}
+			}
+		}
+		
+//			echo printr( $ticket_prices_to_save, '$ticket_prices_to_save' );	
+
+		// add new tickets if any
+		if ($new_ticket_price = isset($_POST['new_ticket_price']) ? $_POST['new_ticket_price'] : array('PRC_name' => NULL)) {
+			if (!empty($new_ticket_price['PRC_name'])) {
+				$ticket_prices_to_save[0] = $new_ticket_price;
+			}
+		}
+
+		// and now we actually save the ticket prices
+		if (!empty($ticket_prices_to_save)) {
+
+			//echo printr( $new_ticket_price, '$new_ticket_price' );
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
+			$PRC = EEM_Price::instance();
+
+			global $current_user;
+			get_currentuserinfo();
+
+			foreach ($ticket_prices_to_save as $PRC_ID => $ticket_price) {
+
+				//determine whether this price overrides an existing global or not
+				$overrides = absint($ticket_price['PRT_is_global']) ? $PRC_ID : NULL;
+//echo '<br/><br/><h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+				// or whether it was already overriding a global from before
+				$overrides = $ticket_price['PRC_overrides'] ? absint($ticket_price['PRC_overrides']) : $overrides;
+//echo '<h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+				// create ticket object
+				$new_price = new EE_Price(
+												$ticket_price['PRT_ID'],
+												absint($last_event_id),
+												$ticket_price['PRC_amount'],
+												$ticket_price['PRC_name'],
+												$ticket_price['PRC_desc'],
+												 /* DO NOT DELETE - NEW FEATURE IN PROGRESS 
+												$ticket_price['PRC_reg_limit'],
+												*/
+												$ticket_price['PRC_use_dates'] ? TRUE : FALSE,
+												$ticket_price['PRC_start_date'],
+												$ticket_price['PRC_end_date'],
+												FALSE,
+												FALSE,
+												0,
+												TRUE,
+												$current_user->ID,
+												$ticket_price['PRC_is_active'] ? TRUE : FALSE,
+												$overrides,
+												$ticket_price['PRT_ID'] < 3 ? 0 : $ticket_price['PRC_order'],
+												$ticket_price['PRC_deleted']
+				);
+
+//                    echo printr( $ticket_price, '$ticket_price' );
+//                    echo printr( $new_price, '$new_price' );
+
+				$results = $new_price->insert();
+
+			}
+		}
+
+		
+		
+		
+
+		/// Create Event Post Code Here
+		if ( isset( $_REQUEST['create_post'] ) && $_REQUEST['create_post'] == 1 ) {
+
+			$post_type = $_REQUEST['post_type'];
+			
+			
+			if ($post_type == 'post') {
+				if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php") || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/event_post.php")) {
+					// Load message from template into message post variable
+					ob_start();
+					if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php")) {
+						require_once(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php");
+					} else {
+						require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/event_post.php");
+					}
+					$post_content = ob_get_contents();
+					ob_end_clean();
+				} else {
+					_e('There was error finding a post template. Please verify your post templates are available.', 'event_espresso');
+				}
+				
+			} elseif ($post_type == 'espresso_event') {
+				ob_start();
+				echo $event_desc;
+				$post_content = ob_get_contents();
+				ob_end_clean();
+			}
+			
+			$my_post = array();
+
+			$my_post['post_title'] = esc_html($_REQUEST['event']);
+			$my_post['post_content'] = $post_content;
+			$my_post['post_status'] = 'publish';
+			$my_post['post_author'] = $_REQUEST['user'];
+			$my_post['post_category'] = $_REQUEST['post_category'];
+			$my_post['tags_input'] = $_REQUEST['post_tags'];
+			$my_post['post_type'] = $post_type;
+			//print_r($my_post);
+			// Insert the post into the database
+			$post_id = wp_insert_post($my_post);
+			// Store the POST ID so it can be displayed on the edit page
+			$sql = array('post_id' => $post_id, 'post_type' => $post_type);
+
+			add_post_meta($post_id, 'event_id', $last_event_id);
+			add_post_meta($post_id, 'event_identifier', $event_identifier);
+			add_post_meta($post_id, 'slug', $event_slug);
+			add_post_meta($post_id, 'event_start_date', $_REQUEST['start_date']);
+			add_post_meta($post_id, 'event_end_date', $_REQUEST['end_date']);
+			add_post_meta($post_id, 'event_location', $event_location);
+			add_post_meta($post_id, 'virtual_url', $virtual_url);
+			add_post_meta($post_id, 'virtual_phone', $virtual_phone);
+			add_post_meta($post_id, 'event_address', $address);
+			add_post_meta($post_id, 'event_address2', $address2);
+			add_post_meta($post_id, 'event_city', $city);
+			add_post_meta($post_id, 'event_state', $state);
+			add_post_meta($post_id, 'event_country', $country);
+			add_post_meta($post_id, 'event_phone', $phone);
+			add_post_meta($post_id, 'venue_title', $venue_title);
+			add_post_meta($post_id, 'venue_url', $venue_url);
+			add_post_meta($post_id, 'venue_phone', $venue_phone);
+			add_post_meta($post_id, 'venue_image', $venue_image);
+			add_post_meta($post_id, 'event_externalURL', $externalURL);
+			add_post_meta($post_id, 'event_reg_limit', $reg_limit);
+
+			$sql_data = array('%d', '%s');
+			$update_id = array('id' => $last_event_id);
+			if ( FALSE === $wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d')) )
+				$error = true;
+		}
+
+		
+		if (empty($error)) {	
+			
+			// overwrite default success messages
+			EE_Error::overwrite_success();
+			//$edit_event_link = add_query_arg(array('action' => 'edit_event', 'event_id' => $last_event_id ), EVENTS_ADMIN_URL);
+			
+			$msg = sprintf( 
+					__( 'The event %s has been added for %s.', 'event_espresso' ), 
+					'<a href="' . espresso_reg_url($last_event_id) . '">' . stripslashes_deep($_REQUEST['event']) . '</a>', 
+					$evt_date 
+			);
+			EE_Error::add_success( $msg );
+
+		} else { 		
+
+			$msg = sprintf( 
+					__( 'An error occured and the event %s has not been saved to the database.', 'event_espresso' ), 
+					'<a href="' . espresso_reg_url($last_event_id) . '">' . stripslashes_deep($_REQUEST['event']) . '</a>' 
+			);
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			
+		}
+
+		return $last_event_id;
+		// end nonce check
+	}
+
+
+
+
+
+	private function _update_event() {
+		//print_r($_REQUEST);
+
+		global $wpdb, $espresso_wp_user, $espresso_premium;
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
+		$wpdb->show_errors();
+
+		$event_meta = array(); //will be used to hold event meta data
+		$wp_user_id = empty($_REQUEST['wp_user']) ? $espresso_wp_user : $_REQUEST['wp_user'][0];
+		$event_id = isset( $_REQUEST['event_id'] )? absint( $_REQUEST['event_id'] ) : null;
+		$event_name = htmlentities( wp_strip_all_tags( $_REQUEST['event'] ), ENT_QUOTES, 'UTF-8' );
+		$event_slug = ($_REQUEST['slug'] == '') ? sanitize_title_with_dashes($event_name . '-' . $event_id) : sanitize_title_with_dashes($_REQUEST['slug']);
+		$event_desc = $_REQUEST['event_desc'];
+		$display_desc = $_REQUEST['display_desc'];
+		$display_reg_form = $_REQUEST['display_reg_form'];
+		$reg_limit = absint( $_REQUEST['reg_limit'] );
+		$allow_multiple = $_REQUEST['allow_multiple'];
+		$ticket_id = empty($_REQUEST['ticket_id']) ? '' : $_REQUEST['ticket_id'];
+		$certificate_id = empty($_REQUEST['certificate_id']) ? '' : $_REQUEST['certificate_id'];
+
+		$allow_overflow = empty($_REQUEST['allow_overflow']) ? false : $_REQUEST['allow_overflow'];
+
+		$additional_limit = $_REQUEST['additional_limit'];
+		//$member_only=$_REQUEST['member_only'];
+		$member_only = empty($_REQUEST['member_only']) ? false : $_REQUEST['member_only'];
+
+		$is_active = $_REQUEST['is_active'];
+		$event_status = $_REQUEST['new_event_status'];
+
+		$address = !empty($_REQUEST['address']) ? esc_html($_REQUEST['address']) : '';
+		$address2 = !empty($_REQUEST['address2']) ? esc_html($_REQUEST['address2']) : '';
+		$city = !empty($_REQUEST['city']) ? esc_html($_REQUEST['city']) : '';
+		$state = !empty($_REQUEST['state']) ? esc_html($_REQUEST['state']) : '';
+		$zip = !empty($_REQUEST['zip']) ? esc_html($_REQUEST['zip']) : '';
+		$country = !empty($_REQUEST['country']) ? esc_html($_REQUEST['country']) : '';
+		$phone = !empty($_REQUEST['phone']) ? esc_html($_REQUEST['phone']) : '';
+		$externalURL = !empty($_REQUEST['externalURL']) ? esc_html($_REQUEST['externalURL']) : '';
+
+		//$event_location = $address . ' ' . $city . ', ' . $state . ' ' . $zip;
+		$event_location = ($address != '' ? $address . ' ' : '') . ($city != '' ? '<br />' . $city : '') . ($state != '' ? ', ' . $state : '') . ($zip != '' ? '<br />' . $zip : '') . ($country != '' ? '<br />' . $country : '');
+
+		//Get the first instance of the start and end times
+		//$start_time = $_REQUEST['start_time'][0];
+		//$end_time = $_REQUEST['end_time'][0];
+		// Add registration times
+		//$registration_startT = event_date_display($_REQUEST['registration_startT'], 'H:i');
+		//$registration_endT = event_date_display($_REQUEST['registration_endT'], 'H:i');
+		//Add timezone
+		$timezone_string = empty($_REQUEST['timezone_string']) ? '' : $_REQUEST['timezone_string'];
+
+		//Early discounts
+		$early_disc = $_REQUEST['early_disc'];
+		$early_disc_date = $_REQUEST['early_disc_date'];
+		$early_disc_percentage = $_REQUEST['early_disc_percentage'];
+
+		$use_coupon_code = $_REQUEST['use_coupon_code'];
+		$alt_email = $_REQUEST['alt_email'];
+
+		$confirmation_email_id = isset( $_REQUEST['confirmation_email_id'] ) ? $_REQUEST['confirmation_email_id']  : NULL;
+		$payment_email_id = isset( $_REQUEST['payment_email_id'] ) ? $_REQUEST['payment_email_id'] : NULL;
+
+
+		//Venue Information
+		$venue_title = isset($_REQUEST['venue_title']) ? $_REQUEST['venue_title'] : '';
+		$venue_url = isset($_REQUEST['venue_url']) ? $_REQUEST['venue_url'] : '';
+		$venue_phone = isset($_REQUEST['venue_phone']) ? $_REQUEST['venue_phone'] : '';
+		$venue_image = isset($_REQUEST['venue_image']) ? $_REQUEST['venue_image'] : '';
+
+
+		//Virtual location
+		$virtual_url = isset($_REQUEST['virtual_url']) ? $_REQUEST['virtual_url'] : '';
+		$virtual_phone = isset($_REQUEST['virtual_phone']) ? $_REQUEST['virtual_phone'] : '';
+
+		if (isset($reg_limit) && $reg_limit == '') {
+			$reg_limit = 999999;
+		}
+
+		$question_groups = serialize($_REQUEST['question_groups']);
+
+		$event_meta['default_payment_status'] = $_REQUEST['default_payment_status'];
+		$event_meta['venue_id'] = empty($_REQUEST['venue_id']) ? '' : $_REQUEST['venue_id'][0];
+		$event_meta['additional_attendee_reg_info'] = $_REQUEST['additional_attendee_reg_info'];
+		$event_meta['add_attendee_question_groups'] = empty($_REQUEST['add_attendee_question_groups']) ? '' : $_REQUEST['add_attendee_question_groups'];
+		$event_meta['date_submitted'] = isset( $_REQUEST['date_submitted'] ) ? $_REQUEST['date_submitted'] : NULL;
+		$event_meta['originally_submitted_by'] = isset( $_REQUEST['originally_submitted_by'] ) ? $_REQUEST['originally_submitted_by'] : NULL;
+
+		if (isset($espresso_wp_user) && $espresso_wp_user != $event_meta['originally_submitted_by']) {
+			$event_meta['orig_event_staff'] = !empty($_REQUEST['event_person']) ? serialize($_REQUEST['event_person']) : '';
+		}
+		//print_r($event_meta['orig_event_staff']);
+		//Thumbnails
+		$event_meta['event_thumbnail_url'] = !empty($_REQUEST['upload_image']) ? $_REQUEST['upload_image'] : '';
+		$event_meta['display_thumb_in_lists'] = !empty($_REQUEST['show_thumb_in_lists']) ? $_REQUEST['show_thumb_in_lists'] : '';
+		$event_meta['display_thumb_in_regpage'] = !empty($_REQUEST['show_thumb_in_regpage']) ? $_REQUEST['show_thumb_in_regpage'] : '';
+		$event_meta['display_thumb_in_calendar'] = !empty($_REQUEST['show_on_calendar']) ? $_REQUEST['show_on_calendar'] : '';
+
+		if (!empty($_REQUEST['venue_id'][0]) || !empty($_REQUEST['zip']) || !empty($_REQUEST['city']) || !empty($_REQUEST['state'])) {
+			$event_meta['enable_for_gmap'] = $_REQUEST['enable_for_gmap'];
+		} else {
+			$event_meta['enable_for_gmap'] = false;
+		}
+
+		/*
+		 * Added for seating chart addon
+		 */
+		if (isset($_REQUEST['seating_chart_id'])) {
+			$cls_seating_chart = new seating_chart();
+			$seating_chart_result = $cls_seating_chart->associate_event_seating_chart($_REQUEST['seating_chart_id'], $event_id);
+			$tmp_seating_chart_id = $_REQUEST['seating_chart_id'];
+			if ($tmp_seating_chart_id > 0) {
+				if ($seating_chart_result === false) {
+					$tmp_seating_chart_row = $wpdb->get_row("select seating_chart_id from " . EVENTS_SEATING_CHART_EVENT_TABLE . " where event_id = $event_id");
+					if ($tmp_seating_chart_row !== NULL) {
+						$tmp_seating_chart_id = $tmp_seating_chart_row->seating_chart_id;
+					} else {
+						$tmp_seating_chart_id = 0;
+					}
+				}
+
+				if ($_REQUEST['allow_multiple'] == 'true' && isset($_REQUEST['seating_chart_id']) && $tmp_seating_chart_id > 0) {
+
+					$event_meta['additional_attendee_reg_info'] = 3;
+				}
+			}
+		}
+		/*
+		 * End
+		 */
+
+
+		if ( $_REQUEST['emeta'] != '' ) {
+			foreach ($_REQUEST['emeta'] as $k => $v) {
+				$event_meta[$v] = $_REQUEST['emetad'][$k];
+			}
+		}
+		$event_meta = serialize($event_meta);
+		############ Added by wp-developers ######################
+		$require_pre_approval = 0;
+		if (isset($_REQUEST['require_pre_approval'])) {
+			$require_pre_approval = $_REQUEST['require_pre_approval'];
+		}
+
+		################# END #################
+		//When adding colums to the following arrays, be sure both arrays have equal values.
+		$sql = array(
+				'event_name' => $event_name,
+				'event_desc' => $event_desc,
+				'display_desc' => $display_desc,
+				'display_reg_form' => $display_reg_form,
+				'slug' => $event_slug,
+				'address' => $address,
+				'address2' => $address2,
+				'city' => $city,
+				'state' => $state,
+				'zip' => $zip,
+				'country' => $country,
+				'phone' => $phone,
+				'virtual_url' => $virtual_url,
+				'virtual_phone' => $virtual_phone,
+				'venue_title' => $venue_title,
+				'venue_url' => $venue_url,
+				'venue_phone' => $venue_phone,
+				'venue_image' => $venue_image,
+
+				'allow_multiple' => $allow_multiple,
+				'is_active' => $is_active,
+				'event_status' => $event_status,
+				'use_coupon_code' => $use_coupon_code,
+				'member_only' => $member_only,
+				'externalURL' => $externalURL,
+				'early_disc' => $early_disc,
+				'early_disc_date' => $early_disc_date,
+				'early_disc_percentage' => $early_disc_percentage,
+				'alt_email' => $alt_email,
+				'question_groups' => $question_groups,
+				'allow_overflow' => $allow_overflow,
+
+				'event_meta' => $event_meta,
+				'require_pre_approval' => $require_pre_approval,
+				'timezone_string' => $timezone_string,
+				'reg_limit' => $reg_limit,
+				'additional_limit' => $additional_limit,
+				'wp_user' => $wp_user_id,
+				'ticket_id' => $ticket_id,
+				'certificate_id' => $certificate_id,
+				'confirmation_email_id' => $confirmation_email_id,
+				'payment_email_id' => $payment_email_id
+		);
+
+
+
+		$sql_data = array(
+				'%s', '%s', '%s', '%s', '%s',
+				'%s', '%s', '%s', '%s', '%s',
+				'%s', '%s', '%s', '%s', '%s',
+				'%s', '%s', '%s', '%s', '%s', 
+				'%s', '%s', '%s', '%s', '%s', 
+				'%s', '%s', '%s', '%s', '%s', 
+				'%s', '%s', '%s',  '%d', '%d', 
+				'%d', '%d', '%d', '%d', '%d'
+		);
+
+		$update_id = array('id' => $event_id);
+
+
+		if (function_exists('event_espresso_add_event_to_db_groupon')) {
+			$sql = event_espresso_add_event_to_db_groupon($sql, $_REQUEST['use_groupon_code']);
+			///print count ($sql);
+			$sql_data = array_merge((array) $sql_data, (array) '%s');
+			//print count($sql_data);
+			if ( FALSE === $wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d')) ) {
+				$error = true;
+			}
+			
+		} else {
+			if ( FALSE === $wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d')) ) {
+				$error = true;
+			}
+			
+		}
+
+		$del_cats = "DELETE FROM " . EVENTS_CATEGORY_REL_TABLE . " WHERE event_id = '" . $event_id . "'";
+		if ( FALSE === $wpdb->query($del_cats) ) {
+			$error = true;
+		}
+
+		if (!empty($_REQUEST['event_category'])) {
+			foreach ($_REQUEST['event_category'] as $k => $v) {
+				if ($v != '') {
+					$sql_cat = "INSERT INTO " . EVENTS_CATEGORY_REL_TABLE . " (event_id, cat_id) VALUES ('" . $event_id . "', '" . $v . "')";
+					//echo "$sql_cat <br>";
+					if ( FALSE === $wpdb->query($sql_cat) )
+						$error = true;
+				}
+			}
+		}
+
+		$del_ppl = "DELETE FROM " . EVENTS_PERSONNEL_REL_TABLE . " WHERE event_id = '" . $event_id . "'";
+		if ( FALSE === $wpdb->query($del_ppl) )
+			$error = true;
+
+		if (!empty($_REQUEST['event_person'])) {
+			foreach ($_REQUEST['event_person'] as $k => $v) {
+				if ($v != '') {
+					$sql_ppl = "INSERT INTO " . EVENTS_PERSONNEL_REL_TABLE . " (event_id, person_id) VALUES ('" . $event_id . "', '" . $v . "')";
+					//echo "$sql_ppl <br>";
+					if ( FALSE === $wpdb->query($sql_ppl) )
+						$error = true;
+				}
+			}
+		}
+
+		$del_venues = "DELETE FROM " . EVENTS_VENUE_REL_TABLE . " WHERE event_id = '" . $event_id . "'";
+		if ( FALSE === $wpdb->query($del_venues) )
+			$error = true;
+
+		if (!empty($_REQUEST['venue_id'])) {
+			foreach ($_REQUEST['venue_id'] as $k => $v) {
+				if ($v != '' && $v != 0) {
+					$sql_venues = "INSERT INTO " . EVENTS_VENUE_REL_TABLE . " (event_id, venue_id) VALUES ('" . $event_id . "', '" . $v . "')";
+					//echo "$sql_venues <br>";
+					if ( FALSE === $wpdb->query($sql_venues) )
+						$error = true;
+				}
+			}
+		}
+
+		$del_discounts = "DELETE FROM " . EVENTS_DISCOUNT_REL_TABLE . " WHERE event_id = '" . $event_id . "'";
+		if ( FALSE === $wpdb->query($del_discounts) )
+			$error = true;
+
+		if (!empty($_REQUEST['event_discount'])) {
+			foreach ($_REQUEST['event_discount'] as $k => $v) {
+				if ($v != '') {
+					$sql_discount = "INSERT INTO " . EVENTS_DISCOUNT_REL_TABLE . " (event_id, discount_id) VALUES ('" . $event_id . "', '" . $v . "')";
+					//echo "$sql_discount <br>";
+					if ( FALSE === $wpdb->query($sql_discount) )
+						$error = true;
+				}
+			}
+		}
+
+
+		/*			 * ***********************************   DATE TIME   ******************************************* */
+
+		
+
+//			if (isset($_POST['process_datetimes']) && $_POST['process_datetimes']) {
+
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Datetime.class.php');
+			$DTM = EEM_Datetime::instance();
+
+			// grab list of all datetime ID's we are processing
+			if (isset($_POST['datetime_IDs'])) {
+				$datetime_IDs = unserialize( $_POST['datetime_IDs'] );
+				array_walk( $datetime_IDs, 'absint');
+				$datetime_IDs = array_flip($datetime_IDs);
+			} else {
+				$datetime_IDs = array();
+			}
+			
+			$event_datetimes = isset($_POST['event_datetimes']) ? $_POST['event_datetimes'] : array();
+			// add hook so addons can manipulate event datetimes prior to saving			
+			$event_datetimes = apply_filters( 'filter_hook_espresso_update_event_datetimes', $event_datetimes );
+
+			if ( $event_datetimes ) {			
+
+				ksort($_POST['event_datetimes']);
+
+				foreach ($_POST['event_datetimes'] as $dtm) {
+
+//						echo printr( $dtm, '$dtm' );
+
+					$dtm['evt_end'] = ( isset($dtm['evt_end']) && $dtm['evt_end'] != '' ) ? $dtm['evt_end'] : $dtm['evt_start'];
+					$dtm['reg_end'] = ( isset($dtm['reg_end']) && $dtm['reg_end'] != '' ) ? $dtm['reg_end'] : $dtm['reg_start'];
+
+//echo '<h4>evt_start : ' . $dtm['evt_start'] . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>evt_end : ' . $dtm['evt_end'] . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>reg_start : ' . $dtm['reg_start'] . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>reg_end : ' . $dtm['reg_end'] . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+
+
+					//	EVT_ID 	DTT_is_primary 	DTT_EVT_start 	DTT_EVT_end 	DTT_REG_start 	DTT_REG_end 	DTT_event_or_reg 	DTT_reg_limit 	DTT_tckts_left 	 DTT_ID
+					$new_event_date = new EE_Datetime(
+													$event_id,
+													$dtm['is_primary'],
+													$dtm['evt_start'],
+													$dtm['evt_end'],
+													$dtm['reg_start'],
+													$dtm['reg_end'],
+													/* DO NOT DELETE - NEW FEATURE IN PROGRESS 
+													$dtm['reg_limit'],
+													$dtm['tckts_left'],
+													DO NOT DELETE - NEW FEATURE IN PROGRESS   */
+													isset( $dtm['ID'] ) ? $dtm['ID'] : NULL
+					);
+					
+					// copy primary datetime info for event post
+					if ( $new_event_date->is_primary() ) {
+						$start_date = $new_event_date->start_date();
+						$end_date = $new_event_date->end_date();
+						$start_time = $new_event_date->start_time();
+						$end_time = $new_event_date->end_time();
+						$registration_start = $new_event_date->reg_start_date();
+						$registration_end = $new_event_date->reg_end_date();
+						$registration_startT =$new_event_date->reg_start_time() ;
+						$registration_endT = $new_event_date->reg_end_time();
+					}
+				
+				
+//						echo printr( $new_event_date, '$new_event_date' );	
+
+//echo '<h4>start_date_and_time : ' . $new_event_date->start_date_and_time() . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>end_date_and_time : ' . $new_event_date->end_date_and_time() . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>reg_start_date_and_time : ' . $new_event_date->reg_start_date_and_time() . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>reg_end_date_and_time : ' . $new_event_date->reg_end_date_and_time() . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+
+					// if an ID exists then update
+					if ($new_event_date->ID()) {
+						// remove this ID from list of datetime IDs - any remainders will get deleted afterwards
+						if (array_key_exists($new_event_date->ID(), $datetime_IDs)) {
+							unset($datetime_IDs[$new_event_date->ID()]);
+						}
+						$update = $new_event_date->update();
+					} else {
+						$insert = $new_event_date->insert();
+					}
+				}
+			}
+
+			// delete any Datetimes that are not being resaved
+			foreach ($datetime_IDs as $datetime_ID => $bunk) {
+				$DTM->delete_datetime($datetime_ID);
+			}
+//			}	// end if process_datetimes
+
+
+		/************************************   PRICING   ******************************************* */
+		
+		$ticket_prices_to_save = array();
+		$quick_edit_ticket_price = isset($_POST['quick_edit_ticket_price']) ? $_POST['quick_edit_ticket_price'] : array();
+//			echo printr( $quick_edit_ticket_price, '$quick_edit_ticket_price' );
+
+		// grab list of edited ticket prices
+		if ($edited_ticket_price_IDs = isset($_POST['edited_ticket_price_IDs']) ? $_POST['edited_ticket_price_IDs'] : FALSE) {
+			// remove last comma
+			$edited_ticket_price_IDs = trim($edited_ticket_price_IDs, ',');
+			// create array of edited ticket prices
+			$edited_ticket_price_IDs = explode(',', $edited_ticket_price_IDs);
+			// flipper once
+			$edited_ticket_price_IDs = array_flip($edited_ticket_price_IDs);
+			// flipper twice - hey!?!?! where did all the duplicate entries go???
+			$edited_ticket_price_IDs = array_flip($edited_ticket_price_IDs);
+//				echo printr( $edited_ticket_price_IDs, '$edited_ticket_price_IDs' );
+			// grab existing ticket price data
+			if ( $edited_ticket_prices = isset($_POST['edit_ticket_price']) ? $_POST['edit_ticket_price'] : array() ) {
+//					echo printr( $edited_ticket_prices, '$edited_ticket_prices' );
+				// cycle thru list                    
+				foreach ($edited_ticket_prices as $PRC_ID => $edited_ticket_price) {
+//						echo printr( $edited_ticket_price, '$edited_ticket_price' );	
+					// add edited ticket prices to list of ticket prices to save
+					if (in_array($PRC_ID, $edited_ticket_price_IDs)) {
+//							echo printr( $quick_edit_ticket_price[$PRC_ID], '$quick_edit_ticket_price[$PRC_ID]' );
+						if ( is_array( $quick_edit_ticket_price[$PRC_ID] )) {
+							$edited_ticket_price = array_merge( $quick_edit_ticket_price[$PRC_ID], $edited_ticket_price );
+//								echo printr( $edited_ticket_price, '$edited_ticket_price' );	
+						}
+						$ticket_prices_to_save[$PRC_ID] = $edited_ticket_price;
+					}
+				}
+			}
+		}
+		
+//			echo printr( $ticket_prices_to_save, '$ticket_prices_to_save' );	
+
+		// add new tickets if any
+		if ($new_ticket_price = isset($_POST['new_ticket_price']) ? $_POST['new_ticket_price'] : array('PRC_name' => NULL)) {
+			if (!empty($new_ticket_price['PRC_name'])) {
+				$ticket_prices_to_save[0] = $new_ticket_price;
+			}
+		}
+		
+		// add hook so addons can manipulate event ticket prices prior to saving			
+		$ticket_prices_to_save = apply_filters( 'filter_hook_espresso_update_event_ticket_prices', $ticket_prices_to_save );
+
+		// and now we actually save the ticket prices
+		if (!empty($ticket_prices_to_save)) {
+
+			//echo printr( $new_ticket_price, '$new_ticket_price' );
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
+			$PRC = EEM_Price::instance();
+
+			global $current_user;
+			get_currentuserinfo();
+
+			foreach ($ticket_prices_to_save as $PRC_ID => $ticket_price) {
+				//printr( $ticket_price, '$ticket_price' );
+				//determine whether this price overrides an existing global or not
+				$overrides = absint($ticket_price['PRT_is_global']) ? $PRC_ID : NULL;
+//echo '<br/><br/><h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+				// or whether it was already overriding a global from before
+				$overrides = $ticket_price['PRC_overrides'] ? absint($ticket_price['PRC_overrides']) : $overrides;
+//echo '<h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+				// create ticket object
+				$new_price = new EE_Price(
+												$ticket_price['PRT_ID'],
+												absint($event_id),
+												$ticket_price['PRC_amount'],
+												$ticket_price['PRC_name'],
+												$ticket_price['PRC_desc'],
+												/* DO NOT DELETE - NEW FEATURE IN PROGRESS   
+												$ticket_price['PRC_reg_limit'],
+												$ticket_price['PRC_tckts_left'],
+												*/
+												$ticket_price['PRC_use_dates'] ? TRUE : FALSE,
+												$ticket_price['PRC_start_date'],
+												$ticket_price['PRC_end_date'],
+												FALSE,
+												FALSE,
+												0,
+												TRUE,
+												$current_user->ID,
+												$ticket_price['PRC_is_active'] ? TRUE : FALSE,
+												$overrides,
+												$ticket_price['PRT_ID'] < 3 ? 0 : $ticket_price['PRC_order'],
+												$ticket_price['PRC_deleted'],
+												(( $ticket_price['PRT_is_global'] == 1 ) && ( ! isset ( $PRC_ID ))) ? 0 : $PRC_ID
+				);
+
+//                    echo printr( $ticket_price, '$ticket_price' );
+//                    echo printr( $new_price, '$new_price' );
+
+				if (!$new_price->ID()) {
+//echo '<h1>insert !!!</h1>';
+//echo '<h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+					$results = $new_price->insert();
+				} else {
+//echo '<h1>update !!!</h1>';
+//echo '<h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+					$results = $new_price->update();
+				}
+			}
+		}
+
+
+//echo printr( $_POST, '$_POST' );	
+//echo EE_Error::get_notices();            
+//die();
+
+
+		############# MailChimp Integration ###############
+		if (get_option('event_mailchimp_active') == 'true' && $espresso_premium == true) {
+			MailChimpController::update_event_list_rel($event_id);
+		}
+
+		/// Create Event Post Code Here
+		if ( isset( $_REQUEST['create_post'] )) {
+		
+			if ( $_REQUEST['create_post'] ) {
+			
+				$post_type = $_REQUEST['post_type'];
+				if ($post_type == 'post') {
+					if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php") || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/event_post.php")) {
+						// Load message from template into message post variable
+						ob_start();
+						if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php")) {
+							require_once(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php");
+						} else {
+							require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/event_post.php");
+						}
+						$post_content = ob_get_contents();
+						ob_end_clean();
+													
+					} else {
+						_e('There was error finding a post template. Please verify your post templates are available.', 'event_espresso');
+					}
+				} elseif ($post_type == 'espresso_event') {
+					ob_start();
+					echo $event_desc;
+					$post_content = ob_get_contents();
+					ob_end_clean();
+				}
+
+				$my_post = array();
+
+				// check for post id in form input first before just hitting the db
+				if ( isset( $_POST['post_id'] ) && ! empty( $_POST['post_id'] )) {
+					$post_id = absint( $_POST['post_id'] );
+				} else {
+					$sql = " SELECT * FROM " . EVENTS_DETAIL_TABLE;
+					$sql .= " WHERE id = '" . $event_id . "' ";
+					$wpdb->get_results($sql);
+					$post_id = $wpdb->last_result[0]->post_id;
+				}
+
+				$post_type = $_REQUEST['post_type'];
+
+				if ($post_id > 0)
+					$my_post['ID'] = $post_id;
+
+				$my_post['post_title'] = esc_html($_REQUEST['event']);
+				$my_post['post_content'] = $post_content;
+				$my_post['post_status'] = 'publish';
+				$my_post['post_author'] = $_REQUEST['user'];
+				$my_post['post_category'] = $_REQUEST['post_category'];
+				//print_r ($my_post['post_category']);
+				$my_post['tags_input'] = $_REQUEST['post_tags'];
+				$my_post['post_type'] = $post_type;
+				//print_r($my_post);
+				// Insert the post into the database					
+					
+				if ($post_id > 0) {
+					$post_id = wp_update_post($my_post);
+					update_post_meta($post_id, 'event_id', $event_id);
+					update_post_meta($post_id, 'event_identifier', $event_identifier);
+					update_post_meta($post_id, 'slug', $event_slug);
+					update_post_meta($post_id, 'event_start_date', $start_date);
+					update_post_meta($post_id, 'event_end_date', $end_date);
+					update_post_meta($post_id, 'event_location', $event_location);
+					update_post_meta($post_id, 'virtual_url', $virtual_url);
+					update_post_meta($post_id, 'virtual_phone', $virtual_phone);
+					//
+					update_post_meta($post_id, 'event_address', $address);
+					update_post_meta($post_id, 'event_address2', $address2);
+					update_post_meta($post_id, 'event_city', $city);
+					update_post_meta($post_id, 'event_state', $state);
+					update_post_meta($post_id, 'event_country', $country);
+					update_post_meta($post_id, 'event_phone', $phone);
+					update_post_meta($post_id, 'venue_title', $venue_title);
+					update_post_meta($post_id, 'venue_url', $venue_url);
+					update_post_meta($post_id, 'venue_phone', $venue_phone);
+					update_post_meta($post_id, 'venue_image', $venue_image);
+					update_post_meta($post_id, 'event_externalURL', $externalURL);
+					update_post_meta($post_id, 'event_reg_limit', $reg_limit);
+					update_post_meta($post_id, 'event_start_time', time_to_24hr($start_time));
+					update_post_meta($post_id, 'event_end_time', time_to_24hr($end_time));
+					update_post_meta($post_id, 'event_registration_start', $registration_start);
+					update_post_meta($post_id, 'event_registration_end', $registration_end);
+					update_post_meta($post_id, 'event_registration_startT', $registration_startT);
+					update_post_meta($post_id, 'event_registration_endT', $registration_endT);
+					update_post_meta( $post_id, 'timezone_string', $timezone_string );
+				} else {
+					$post_id = wp_insert_post($my_post);
+					add_post_meta($post_id, 'event_id', $event_id);
+					add_post_meta($post_id, 'event_identifier', $event_identifier);
+					add_post_meta($post_id, 'event_start_date', $start_date);
+					add_post_meta($post_id, 'event_end_date', $end_date);
+					add_post_meta($post_id, 'event_location', $event_location);
+					add_post_meta($post_id, 'virtual_url', $virtual_url);
+					add_post_meta($post_id, 'virtual_phone', $virtual_phone);
+					//
+					add_post_meta($post_id, 'event_address', $address);
+					add_post_meta($post_id, 'event_address2', $address2);
+					add_post_meta($post_id, 'event_city', $city);
+					add_post_meta($post_id, 'event_state', $state);
+					add_post_meta($post_id, 'event_country', $country);
+					add_post_meta($post_id, 'event_phone', $phone);
+					add_post_meta($post_id, 'venue_title', $venue_title);
+					add_post_meta($post_id, 'venue_url', $venue_url);
+					add_post_meta($post_id, 'venue_phone', $venue_phone);
+					add_post_meta($post_id, 'venue_image', $venue_image);
+					add_post_meta($post_id, 'event_externalURL', $externalURL);
+					add_post_meta($post_id, 'event_reg_limit', $reg_limit);
+					add_post_meta($post_id, 'event_start_time', time_to_24hr($start_time));
+					add_post_meta($post_id, 'event_end_time', time_to_24hr($end_time));
+					add_post_meta($post_id, 'event_registration_start', $registration_start);
+					add_post_meta($post_id, 'event_registration_end', $registration_end);
+					add_post_meta($post_id, 'event_registration_startT', $registration_startT);
+					add_post_meta($post_id, 'event_registration_endT', $registration_endT);
+					//add_post_meta( $post_id, 'timezone_string', $timezone_string );
+				}
+
+				// Store the POST ID so it can be displayed on the edit page
+				$sql = array('post_id' => $post_id, 'post_type' => $post_type);
+				$sql_data = array('%d', '%s');
+				$update_id = array('id' => $event_id);
+				
+				if ( FALSE === $wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d')) )
+					$error = true;
+				
+			} else {
+			
+				// check for post id in form input first before just hitting the db
+				if ( isset( $_POST['post_id'] ) && ! empty( $_POST['post_id'] )) {
+					$post_id = absint( $_POST['post_id'] );
+				} else {
+					$sql = " SELECT * FROM " . EVENTS_DETAIL_TABLE;
+					$sql .= " WHERE id = '" . $event_id . "' ";
+					$wpdb->get_results($sql);
+					$post_id = $wpdb->last_result[0]->post_id;
+				}
+
+				if ($wpdb->num_rows > 0 && !empty($_REQUEST['delete_post']) && $_REQUEST['delete_post'] == 'true') {
+					$sql = array('post_id' => '', 'post_type' => '');
+					$sql_data = array('%d', '%s');
+					$update_id = array('id' => $event_id);
+					$wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d'));
+					wp_delete_post($post_id, 'true');
+				}
+				
+			}
+		}
+
+		if (empty($error)) {	
+			
+			// overwrite default success messages
+			EE_Error::overwrite_success();
+			//$edit_event_link = add_query_arg(array('action' => 'edit_event', 'event_id' => $last_event_id ), EVENTS_ADMIN_URL);
+			
+			$msg = sprintf( 
+					__( 'The event %s has been updated', 'event_espresso' ), 
+					'<a href="' . espresso_reg_url($event_id) . '">' . stripslashes_deep($_REQUEST['event']) . '</a>'
+			);
+			EE_Error::add_success( $msg );
+
+		} else { 		
+
+			$msg = sprintf( 
+					__( 'An error occured and the event %s has not been updated in the database.', 'event_espresso' ), 
+					'<a href="' . espresso_reg_url($event_id) . '">' . stripslashes_deep($_REQUEST['event']) . '</a>' 
+			);
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			
+		}
+
+		/*
+		 * Added for seating chart addon
+		 */
+		if (isset($seating_chart_result) && $seating_chart_result === false) {
+			?>
+			<p><?php _e('Failed to associate new seating chart with this event. (Seats from current seating chart might have been used by some attendees)', 'event_espresso'); ?></p>
+			<?php
+		}
+
+		//Empty the event cache
+		$this->_espresso_reset_cache($event_id);
+		
+		return $event_id;
+	}
+
+
 
 
 
@@ -2485,5 +3700,26 @@ class Events_Admin_Page extends EE_Admin_Page {
 			_e('No Results', 'event_espresso');
 		}
 	}
+
+
+
+	/**
+	 * flushes the event cache
+	 *
+	 * @access private
+	 * @param  integer $event_id 
+	 * @return void            
+	 */
+	private function _espresso_reset_cache( $event_id = 0 ) {
+		delete_transient('all_espresso_events');
+		delete_transient('all_espresso_calendar_events');
+
+		//Flushes the cache that may be set for an event slug
+		if ($event_id > 0) {
+			delete_transient('espresso_event_slug_' . $event_id);
+			delete_transient('espresso_time_dropdown_' . $event_id);
+		}
+	}
+
 
 } //end class Events_Admin_Page
