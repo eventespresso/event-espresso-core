@@ -385,6 +385,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 				add_action($page_hook, array($this, 'load_page_dependencies') );
 		} else {
 			//hijack regular WP loading and route admin request immediately
+			if ( current_user_can( 'manage_options' ) )
+				@ini_set( 'memory_limit', apply_filters( 'admin_memory_limit', WP_MAX_MEMORY_LIMIT ) );
 			$this->_route_admin_request();
 		}
 	}
