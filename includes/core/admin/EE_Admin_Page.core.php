@@ -781,6 +781,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	/**
 	 * load_global_scripts_styles
 	 * The scripts and styles enqueued in here will be loaded on every EE Admin page
+	 * todo: we need to optimize this. just REGISTER scripts here, then we'll enqueue them only when needed.
 	 * @return void 
 	 */
 	public function load_global_scripts_styles() {
@@ -789,8 +790,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( WP_DEBUG ) {
 			add_action('admin_head', array( $this, 'add_xdebug_style' ));
 		}
-		wp_enqueue_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css');
-		wp_enqueue_style('event_espresso', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-styles.css');
+		
+		wp_enqueue_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css', array(),EVENT_ESPRESSO_VERSION );
+		wp_enqueue_style('event_espresso', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-styles.css', array(), EVENT_ESPRESSO_VERSION);
+		wp_enqueue_style('jquery-ui-style-datepicker-css', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css', array(), EVENT_ESPRESSO_VERSION );
+		wp_enqueue_style('espresso_menu', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-menu-styles.css');
+		wp_enqueue_style('ee-admin-css', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.css', array(), EVENT_ESPRESSO_VERSION);
 
 
 		/** SCRIPTS **/
@@ -799,6 +804,19 @@ abstract class EE_Admin_Page extends EE_BASE {
 			wp_enqueue_script('dashboard');
 		}
 
+		wp_enqueue_script('jquery-ui-datepicker');
+		wp_enqueue_script('jquery-ui-slider');
+		wp_enqueue_script('jquery-ui-timepicker-addon', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker'), EVENT_ESPRESSO_VERSION, true );
+		wp_enqueue_script('event_editor_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_editor.js', array('jquery-ui-timepicker-addon'), EVENT_ESPRESSO_VERSION, true);
+		wp_enqueue_script('event_espresso_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_espresso.js', array('jquery'), EVENT_ESPRESSO_VERSION, true);
+		wp_enqueue_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('jquery'), EVENT_ESPRESSO_VERSION, true );
+
+
+		/** WP_LOCALIZE **/
+		$js_args = array(
+			'image_confirm' => __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso')
+			);
+		wp_localize_script( 'event_editor_js', 'EE_EDIT_VARS', $js_args );
 	}
 
 

@@ -281,6 +281,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 		//set _event property
 		$this->_set_event_object($view);
 
+		//any specific javascript here.
+		//todo: this needs to be done properly via an enqueue and wp_localize_scripts() for vars
+		add_action( 'action_hook_espresso_event_editor_footer', array($this, 'event_editor_footer_js') );
+
 		//take care of form tag and initial hidden fields setup
 		$hidden_action_field_args['action'] = array(
 			'type' => 'hidden',
@@ -303,6 +307,20 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 
+	/**
+	 * [event_editor_footer_js description]
+	 * todo: temporary.  Replace with proper enqueue and wp_localize_script
+	 * @return string
+	 */
+	public function event_editor_footer_js($content) {
+		ob_start();
+		include_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin_screens/events/help.php');
+		$n_content = ob_get_contents();
+		ob_end_clean();
+		$content .= $n_content;
+		return $content;
+	}
+
 
 
 
@@ -316,6 +334,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	private function _event_details_display() {
 		$content = $this->_editor_title_div();
 		$content .= $this->_editor_description_div();
+		$content = apply_filters('action_hook_espresso_event_editor_footer', $content);
 		return $content;
 	}
 
@@ -591,8 +610,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 	/***************/
 	/** METABOXES **/
-
-
 
 
 
@@ -2027,6 +2044,19 @@ class Events_Admin_Page extends EE_Admin_Page {
 				<!-- /misc-publishing-actions -->
 			</div>
 			<!-- /minor-publishing -->
+
+			<div id="delete-action">
+				<?php /*if ($event->recurrence_id > 0) : ?>
+					<a class="submitdelete deletion" href="admin.php?page=events&amp;action=delete_recurrence_series&recurrence_id=<?php echo $event->recurrence_id ?>" onclick="return confirm('<?php _e('Are you sure you want to delete ' . $event->event_name . '?', 'event_espresso'); ?>')">
+						<?php _e('Delete all events in this series', 'event_espresso'); ?>
+					</a>
+				<?php else:*/ ?>
+					<a class="submitdelete deletion" href="admin.php?page=events&amp;action=delete&event_id=<?php echo $event->id ?>" onclick="return confirm('<?php _e('Are you sure you want to delete ' . $event->event_name . '?', 'event_espresso'); ?>')">
+						<?php _e('Delete Event', 'event_espresso'); ?>
+					</a>
+				<?php //endif; ?>
+			</div>
+			<br/>
 			<?php
 				echo $this->_template_args['save_buttons'];
 			?>

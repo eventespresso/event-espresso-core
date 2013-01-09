@@ -18,22 +18,46 @@ jQuery(document).ready(function($) {
 //		$('#ticket-manager-dv').css({ top : 0, opacity : 0 });
 //	});
 	
+	$(".datepicker" ).datepicker({
+		changeMonth: true,
+		changeYear: true,
+		dateFormat: "yy-mm-dd",
+		showButtonPanel: true
+	}); // close doc.ready
 
-	$(window).scroll(function() {
-		var scrollTop = $(this).scrollTop();
-		var offset = $('#event_editor_major_buttons_wrapper').offset();
-		//		alert( 'scrollTop : ' + scrollTop +  '   offset.top : ' +offset.top );
-		if(offset != null) { 
-			if ( (scrollTop+25) > offset.top ) {
-				$('#event-editor-floating-save-btns').removeClass('hidden');
-				$('#event_editor_major_buttons_wrapper .button-primary').addClass('hidden');
-			} else {
-				$('#event-editor-floating-save-btns').addClass('hidden');
-				$('#event_editor_major_buttons_wrapper .button-primary').removeClass('hidden');
-			}
-		}
+	var header_clicked = false;
+	$('#upload_image_button').click(function() {
+		formfield = $('#upload_image').attr('name');
+		tb_show('', 'media-upload.php?type=image&amp;TB_iframe=1');
+		$('p.event-featured-thumb').addClass('old');
+		header_clicked = true;
+		return false;
 	});
-	
+
+	window.original_send_to_editor = window.send_to_editor;
+
+	window.send_to_editor = function(html) {
+		if(header_clicked) {
+		imgurl = $('img',html).attr('src');
+		$('#' + formfield).val(imgurl);
+		$('#featured-image').append("<p id='image-display'><img class='show-selected-image' src='"+imgurl+"' alt='' /></p>");
+		header_clicked = false;
+		tb_remove();
+
+		} else {
+			window.original_send_to_editor(html);
+		}
+	};
+
+	// process the remove link in the metabox
+	$('#remove-image').click(function(){
+		confirm(EE_EDIT_VARS.image_confirm);
+		$("#upload_image").val('');
+		$("p.event-featured-thumb").remove();
+		$("p#image-display").remove();
+		$('#remove-image').remove();
+		$("#show_thumb_in_lists, #show_on_calendar, #show_thumb_in_regpage").val(false);
+	});
 	
 		
 	// set process_datetimes to false
@@ -786,8 +810,6 @@ function parseDate(val) {
 		}
 	return null;
 	}
-
-
 
 });
 
