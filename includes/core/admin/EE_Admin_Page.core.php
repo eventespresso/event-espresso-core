@@ -791,29 +791,38 @@ abstract class EE_Admin_Page extends EE_BASE {
 			add_action('admin_head', array( $this, 'add_xdebug_style' ));
 		}
 		
-		wp_enqueue_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css', array(),EVENT_ESPRESSO_VERSION );
-		wp_enqueue_style('event_espresso', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-styles.css', array(), EVENT_ESPRESSO_VERSION);
-		wp_enqueue_style('jquery-ui-style-datepicker-css', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css', array(), EVENT_ESPRESSO_VERSION );
-		wp_enqueue_style('espresso_menu', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-menu-styles.css');
-		wp_enqueue_style('ee-admin-css', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.css', array(), EVENT_ESPRESSO_VERSION);
+		//register all styles
+		wp_register_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css', array(),EVENT_ESPRESSO_VERSION );
+		wp_register_style('event_espresso', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-styles.css', array(), EVENT_ESPRESSO_VERSION);
+		wp_register_style('jquery-ui-style-datepicker-css', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css', array(), EVENT_ESPRESSO_VERSION );
+		wp_register_style('espresso_menu', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-menu-styles.css');
+		wp_register_style('ee-admin-css', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.css', array(), EVENT_ESPRESSO_VERSION);
+
+		//enqueue global styles
+		wp_enqueue_style('espresso_menu');
+		wp_enqueue_style('event_espresso');
+		wp_enqueue_style('ee-admin-css');
 
 
 		/** SCRIPTS **/
-		//are we loading metaboxes?
+
+		//register all scripts
+		wp_register_script('jquery-ui-timepicker-addon', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker'), EVENT_ESPRESSO_VERSION, true );
+		wp_register_script('event_editor_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_editor.js', array('jquery-ui-slider', 'jquery-ui-timepicker-addon', 'post'), EVENT_ESPRESSO_VERSION, true);
+		wp_register_script('event_espresso_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_espresso.js', array('jquery'), EVENT_ESPRESSO_VERSION, true);
+		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('jquery'), EVENT_ESPRESSO_VERSION, true );
+
+
+		//enqueue global scripts
+
+		//taking care of metaboxes
 		if ( isset($this->_route_config['metaboxes'] ) || isset($this->_route_config['has_metaboxes']) ) {
 			wp_enqueue_script('dashboard');
 		}
-
-		wp_enqueue_script('post');
-		wp_enqueue_script('jquery-ui-datepicker');
-		wp_enqueue_script('jquery-ui-slider');
-		wp_enqueue_script('jquery-ui-timepicker-addon', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker'), EVENT_ESPRESSO_VERSION, true );
-		wp_enqueue_script('event_editor_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_editor.js', array('jquery-ui-timepicker-addon'), EVENT_ESPRESSO_VERSION, true);
-		wp_enqueue_script('event_espresso_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_espresso.js', array('jquery'), EVENT_ESPRESSO_VERSION, true);
-		wp_enqueue_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('jquery'), EVENT_ESPRESSO_VERSION, true );
+		
 
 
-		/** WP_LOCALIZE **/
+		//localizers (for passing variables to js as well)
 		$js_args = array(
 			'image_confirm' => __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso')
 			);

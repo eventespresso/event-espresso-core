@@ -198,6 +198,39 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 
+	/**
+	 * enqueuing scripts and styles specific to this view
+	 * @return void
+	 */
+	public function load_scripts_styles_add_event() {
+		//styles
+		wp_enqueue_style('jquery-ui-style');
+		wp_enqueue_style('jquery-ui-style-datepicker-css');
+
+		//scripts
+		wp_enqueue_script('ee_admin_js');
+		wp_enqueue_script('event_editor_js');
+	}
+
+
+
+
+	/**
+	 * enqueuing scripts and styles specific to this view
+	 * @return void 
+	 */
+	public function load_scripts_styles_edit_event() {
+		//styles
+		wp_enqueue_style('jquery-ui-style');
+		wp_enqueue_style('jquery-ui-style-datepicker-css');
+
+		//scripts
+		wp_enqueue_script('ee_admin_js');
+		wp_enqueue_script('event_editor_js');
+	}
+
+
+
 	//nothing needed for events with these methods.
 	public function admin_init() {}
 	public function admin_notices() {}
