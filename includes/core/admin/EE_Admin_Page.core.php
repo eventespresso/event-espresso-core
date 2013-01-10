@@ -794,7 +794,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	/**
 	 * load_global_scripts_styles
 	 * The scripts and styles enqueued in here will be loaded on every EE Admin page
-	 * todo: we need to optimize this. just REGISTER scripts here, then we'll enqueue them only when needed.
+	 * 
 	 * @return void 
 	 */
 	public function load_global_scripts_styles() {

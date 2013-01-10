@@ -353,7 +353,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * [event_editor_footer_js description]
-	 * todo: temporary.  Replace with proper enqueue and wp_localize_script
 	 * @return string
 	 */
 	public function event_editor_footer_js($content) {
