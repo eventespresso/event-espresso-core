@@ -2,8 +2,12 @@
 do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 
 function espresso_thank_you_page() {
-	global $EE_Session, $EEM_Gateways;
+
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
+	ob_start();
+	global $EE_Session, $EEM_Gateways, $espresso_content;
+	
 	if (!defined('ESPRESSO_GATEWAYS')) {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
 		$EEM_Gateways = EEM_Gateways::instance();
@@ -52,8 +56,12 @@ function espresso_thank_you_page() {
 		</p>';
 
 	}
+	
+	$espresso_content = ob_get_clean();
+	add_shortcode('ESPRESSO_PAYMENTS', 'return_espresso_content');
+//	return $espresso_content;
+		
 }
 
-add_shortcode('ESPRESSO_PAYMENTS', 'espresso_thank_you_page');
 
 
