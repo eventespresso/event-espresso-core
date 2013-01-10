@@ -141,6 +141,8 @@ function espresso_admin_init() {
 
 
 					case 'payment_gateways' :
+						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
+						$EEM_Gateways = EEM_Gateways::instance();
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/payment_gateways.php');
 						if ($espresso_premium) {
 							require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/gateway_developer.php');
@@ -335,6 +337,7 @@ function espresso_frontend_init() {
 
 	global $espresso_reg_page;
 	$espresso_reg_page = espresso_test_for_reg_page();
+	//echo '<h4>$espresso_reg_page : ' . $espresso_reg_page . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
 	if ($espresso_reg_page) {
 		do_action('action_hook_espresso_load_reg_page_files');

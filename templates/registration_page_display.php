@@ -70,7 +70,7 @@ function espresso_display_reg_page($data) {
 						if ($data['display_reg_form']) {
 
 
-							do_action('action_hook_espresso_ticket_selector', $data['event']);
+							do_action( 'action_hook_espresso_ticket_selector', $data['event'] );
 
 							//Added for seating chart addon. Creates a field to select a seat from a popup.
 							do_action('action_hook_espresso_seating_chart_select', $data['event_id']);

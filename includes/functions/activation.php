@@ -509,12 +509,13 @@ function events_data_tables_install() {
 	$table_name = "esp_price_type";
 	$sql = "PRT_ID tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
 			  PRT_name VARCHAR(45) NOT NULL ,
+			  PBT_ID tinyint(3) unsigned NOT NULL DEFAULT '1',
 			  PRT_is_member tinyint(1) NOT NULL DEFAULT '0',
-			  PRT_is_discount tinyint(1) NOT NULL DEFAULT '0',
-			  PRT_is_tax tinyint(1) NOT NULL DEFAULT '0',
+			  PRT_is_discount tinyint(1) NULL,
+			  PRT_is_tax tinyint(1) NULL,
 			  PRT_is_percent tinyint(1) NOT NULL DEFAULT '0',
 			  PRT_is_global tinyint(1) NOT NULL DEFAULT '0',
-			  PRT_order tinyint(1) UNSIGNED NULL ,
+			  PRT_order tinyint(1) UNSIGNED NULL,
 			  PRT_deleted tinyint(1) NOT NULL DEFAULT '0',
 			  UNIQUE KEY PRT_name_UNIQUE (PRT_name),
 			  PRIMARY KEY  (PRT_ID)";
@@ -1342,15 +1343,14 @@ function espresso_default_prices() {
 		$sql = 'DELETE FROM ' . ESP_PRICE_TYPE . ' WHERE PRT_ID < 9';
 		$wpdb->query($sql);
 	
-		$sql = "INSERT INTO " . ESP_PRICE_TYPE . " (PRT_ID, PRT_name, PRT_is_member, PRT_is_discount, PRT_is_tax, PRT_is_percent, PRT_is_global, PRT_order) VALUES
-					(1, 'Default Event Price', 0, 0, 0, 0, 1, 0),
-					(2, 'Event Price', 0, 0, 0, 0, 0, 0),
-					(3, 'Default Member % Discount', 1, 1, 0, 1, 1, 10),
-					(4, 'Default Early Bird % Discount', 0, 1, 0, 1, 1, 20),
-					(5, 'Promo Code Discount', 0, 1, 0, 0, 1, 10),
-					(6, 'Default Surcharge', 0, 0, 0, 0, 1, 30),
-					(7, 'Regional Tax', 0, 0, 1, 1, 1, 40),
-					(8, 'Federal Tax', 0, 0, 1, 1, 1, 50);";
+		$sql = "INSERT INTO " . ESP_PRICE_TYPE . " ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_is_global, PRT_order ) VALUES
+					(1, 'Default Event Price', 1, 0, 0, 1, 0),
+					(2, 'Event Price', 1, 0, 0, 0, 0),
+					(3, 'Default Member % Discount', 2, 1, 1, 1, 10),
+					(4, 'Default Early Bird % Discount', 2, 0, 1, 1, 20),
+					(5, 'Default Surcharge', 3, 0, 0, 1, 30),
+					(6, 'Regional Tax', 4, 0, 1, 1, 40),
+					(7, 'Federal Tax', 4, 0, 1, 1, 50);";
 		$wpdb->query($sql);	
 	}
 
@@ -1364,10 +1364,9 @@ function espresso_default_prices() {
 					(1, 1, 0, '100.00', 'General Admission', 'Regular price for all Events.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 0, 0),
 					(2, 3, 0, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 10, 0),
 					(3, 4, 0, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price.',  1, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 20, 0),
-					(4, 5, 0, '25', 'Super Promo 25', 'The first 50 to enter this Promo Code will receive $25 off of the regular price.', 0, NULL, NULL, 'Sup3rPr0m025', 1, 50, 0, 1, 1, NULL, 10, 0),
-					(5, 6, 0, '7.50', 'Service Fee', 'Covers administrative expenses.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 30, 0),
-					(6, 7, 0, '7.00', 'Sales Tax', 'Locally imposed tax.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 40, 0),
-					(7, 8, 0, '15.00', 'VAT', 'Value Added Tax.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 50, 0);";
+					(4, 6, 0, '7.50', 'Service Fee', 'Covers administrative expenses.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 30, 0),
+					(5, 7, 0, '7.00', 'Sales Tax', 'Locally imposed tax.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 40, 0),
+					(6, 8, 0, '15.00', 'VAT', 'Value Added Tax.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 50, 0);";
 		$wpdb->query($sql);
 	}
 	

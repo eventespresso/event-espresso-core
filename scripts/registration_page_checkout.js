@@ -72,7 +72,7 @@
 		});
 		var good_to_go = verify_all_questions_answered('#mer-registration-frm-1');
 		
-		if ( good_to_go != true && good_to_go != '' ) {
+		if ( good_to_go != true && good_to_go != '' && typeof( error_msg ) === 'object' ) {
 			show_event_queue_ajax_error_msg( good_to_go );
 		}
 	});
@@ -201,11 +201,12 @@
 	function show_event_queue_ajax_error_msg( error_msg ) {
 			
 		if ( error_msg != undefined && error_msg != '' ) {
-		
-			if ( error_msg.error != undefined ) {
-				error_msg = error_msg.error;
+			//alert( 'typeof( error_msg ) = '+ typeof( error_msg ) );
+			
+			if ( typeof( error_msg ) === 'object' && error_msg.error != undefined && error_msg.error != '' ) {
+				error_msg = error_msg.error;				
 			} 
-			//alert( 'show_event_queue_ajax_error_msg = '+ error_msg);
+			//alert( '209) show_event_queue_ajax_error_msg = '+ error_msg);
 						
 			$('#mer-error-msg').center();				
 			$('#mer-error-msg > .msg').html( error_msg );
@@ -288,7 +289,7 @@
 			msg ='';
 		}
 		$('.reg-page-billing-info-dv').addClass('hidden');
-		$('.reg-page-payment-option-lnk').removeClass('hidden');
+		$('.reg-page-payment-option-dv').removeClass('hidden');
 		//	$('.mer-reg-page-go-to-step-2').on( 'click', function() {
 		$('#mer-reg-page-step-2-dv').css({ 'display' : 'none' }).removeClass('hidden');
 		// set step 2 back to auto height 
@@ -429,7 +430,7 @@
 		}
 		
 		var good_to_go = verify_all_questions_answered( form_to_check );
-		//alert( 'good_to_go = ' + good_to_go );
+//		alert( '433) good_to_go = ' + good_to_go );
 
 		if ( good_to_go === true ) {
 
@@ -452,7 +453,7 @@
 						}, 
 						success: function(response){	
 							var next = parseInt(step) + 1;
-//alert( 'step = ' + step + '\n' + 'response.return_data = ' + response.return_data + '\n' + 'response.success = ' + response.success + '\n' + 'response.error = ' + response.error );
+							//alert( 'step = ' + step + '\n' + 'response.return_data = ' + response.return_data + '\n' + 'response.success = ' + response.success + '\n' + 'response.error = ' + response.error );
 							if ( response.return_data != undefined ) {
 								process_return_data( next, response );
 							} else {
@@ -574,16 +575,25 @@
 			}	
 		});
 			
-		if ( good_to_go === true && $('#mer-reg-page-copy-all-attendee-chk').prop('checked') ) {
-			$('.event_questions').slideUp();
+		// does copy all attendees checkbox exist ?
+		if ( $('#mer-reg-page-copy-all-attendee-chk').size() ) {
+			// get value of copy all attendees checkbox
+			var allAttendeesChk = $('#mer-reg-page-copy-all-attendee-chk').prop('checked');
+		} else {
+			// only one attendee, so let's say this is checked
+			var allAttendeesChk = true;
+		}		
+		
+		if ( good_to_go === true && allAttendeesChk ) {
+			$('.event_questions').slideUp(); 
 			$('#mer-reg-page-copy-attendee-dv').slideUp();
 			$('#mer-reg-page-display-event-questions-lnk').removeClass('hidden');
-		} else if ( good_to_go != '' ) {
+		} else if ( good_to_go != '' && good_to_go!==true ) {
 			msg = new Object();
 			msg.error = good_to_go;
 			good_to_go = msg;
 		}
-		//alert( 'good_to_go = ' + good_to_go );
+
 		return good_to_go;
 				
 	}
@@ -612,16 +622,16 @@
 
 
 
-	$('.reg-page-payment-option-lnk').on( 'click', function() {
+	$('.reg-page-payment-option-dv').on( 'click', function() {
 	
-		var selected_payment_option = $(this);
-		var selected_gateway = $(this).attr('id');
+		var selected_payment_option = $(this).find('.reg-page-payment-option-lnk');
+		var selected_gateway = selected_payment_option.attr('id');
 		$('#reg-page-select-other-gateway-lnk').attr( 'rel', selected_gateway );
 		
 		$('#methods-of-payment').slideUp( 250, function() {
 
-			$('.reg-page-payment-option-lnk').each(function() {
-				if ( $(this).attr('id') != selected_gateway ) {
+			$('.reg-page-payment-option-dv').each(function() {
+				if ( $(this).find('.reg-page-payment-option-lnk').attr('id') != selected_gateway ) {
 					$(this).toggleClass( 'hidden' );
 				}			
 			});		

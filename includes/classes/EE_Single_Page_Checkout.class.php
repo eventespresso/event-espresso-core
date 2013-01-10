@@ -65,8 +65,9 @@ class EE_Single_Page_Checkout {
 			$this->_ajax = 1;
 		} else {
 			 $this->_ajax = 0;
-		}
-
+		}		
+//		echo '<h4>$this->_ajax : ' . $this->_ajax . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		printr( $_POST, '$_POST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );						 
 
 		if ( $this->_ajax ) {
 
@@ -110,7 +111,9 @@ class EE_Single_Page_Checkout {
 	 */
 	public function load_classes() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		
 		global $EE_Cart, $EEM_Gateways, $EE_Session;
+		
 		if (!defined('ESPRESSO_CART')) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Cart.class.php');
 			// instantiate the class object
@@ -118,6 +121,7 @@ class EE_Single_Page_Checkout {
 		}
 		// make all cart properties and methods accessible via $this->cart ex: $this->cart->data();
 		$this->cart = $EE_Cart;
+		
 		// load gateways
 		if (!defined('ESPRESSO_GATEWAYS')) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
@@ -125,6 +129,11 @@ class EE_Single_Page_Checkout {
 		}
 		$this->gateways = $EEM_Gateways;
 		$this->gateways->set_ajax( $this->_ajax );
+		
+		//taxes
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Taxes.class.php' );
+		add_filter( 'espresso_filter_hook_calculate_taxes', array( 'EE_Taxes', 'calculate_taxes' ));
+
 	}
 
 	/**
@@ -228,15 +237,11 @@ class EE_Single_Page_Checkout {
 
 				default :
 					// empty cart or else items build up indefinately
-					// $cart_total = $this->cart->get_cart_grand_totals();
-					//	if ( $cart_total['grand_total_qty'] != 0 && ! MER_ACTIVE ){
-					if (!defined('MER_ACTIVE')) {
+					if ( ! defined( 'MER_ACTIVE' )) {
 						$this->cart->empty_cart('AJAX');
 					}
 			}
-		} else {
-
-		}
+		} 
 	}
 
 	/**
@@ -248,14 +253,11 @@ class EE_Single_Page_Checkout {
 	public function _event_reg_single_page_checkout() {
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		//echo '<h1>FUNCTION: '.__FUNCTION__.'  ( line no: '. __LINE__ .' )</h1>';
-		//echo printr( $this->cart->whats_in_the_cart(), 'whats_in_the_cart' );
+//		printr( $this->cart->whats_in_the_cart(), 'whats_in_the_cart  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		global $org_options, $espresso_wp_user, $EE_Session;
 
-
 		$template_args = array();
-
 
 		// retreive all success and error messages
 		$notices = EE_Error::get_notices(FALSE);
@@ -316,6 +318,8 @@ class EE_Single_Page_Checkout {
 				$template_args['step_2_edit_lnk_class'] = '';
 				$template_args['step_3_dv_class'] = '';
 				$template_args['step_3_edit_lnk_class'] = 'hidden';
+				
+				echo '<h1>STEP 3</h1>';
 
 				$template_args['confirmation_data'] = $this->display_data_for_confirmation();
 
@@ -601,42 +605,12 @@ class EE_Single_Page_Checkout {
 		$template_args['empty_cart'] = $total_items < 1 ? TRUE : FALSE;
 
 		$template_args['payment_required'] = $grand_total > 0 ? TRUE : FALSE;
-		$sub_total = $grand_total;
+		$template_args['sub_total'] = number_format( $grand_total, 2, '.', '' );
 
 		$template_args['taxes'] = FALSE;
+		$template_args['taxes'] = EE_Taxes::calculate_taxes( $grand_total );
+		$grand_total = apply_filters( 'espresso_filter_hook_grand_total_after_taxes', $grand_total );
 
-		//		if ( $step == 2 ) {
-		// load and instantiate models
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php' );
-		$PRC = EEM_Price::instance();
-		// retreive all taxes
-		$global_taxes = $PRC->get_all_prices_that_are_taxes();
-		if ($global_taxes) {
-			//echo printr( $global_taxes, '$global_taxes' );
-			$template_args['taxes'] = array();
-			$tax_totals = array();
-			$amnt = 0;
-			foreach ($global_taxes as $taxes) {
-				$tax_tier_total = 0;
-				foreach ($taxes as $tax) {
-					//echo printr( $tax, '$tax' );
-					$prcnt = $tax->amount() / 100;
-					$amnt = number_format($grand_total * $prcnt, 2, '.', '');
-					$prcnt = $prcnt * 100;
-					$template_args['taxes'][$tax->ID()] = array('name' => $tax->name(), 'percent' => $prcnt, 'amount' => $amnt);
-					$tax_totals [$tax->ID()] = $amnt;
-					$tax_tier_total = $tax_tier_total + $amnt;
-				}
-				// add tax to grand total
-				$grand_total = $grand_total + $tax_tier_total;
-			}
-				// add tax data to session
-				$EE_Session->set_session_data(array('_cart_grand_total_amount' => $grand_total, 'taxes' => $template_args['taxes'], 'tax_totals' => $tax_totals), 'session_data');
-		}
-		//		}
-
-		$template_args['sub_total'] = number_format($sub_total, 2, '.', '');
 		$template_args['grand_total'] = number_format($grand_total, 2, '.', '');
 
 		$template_args['event_queue'] = $event_queue;
@@ -691,7 +665,7 @@ class EE_Single_Page_Checkout {
 
 		$template_args['registration_steps'] = $registration_page_step_1 . $registration_page_step_2 . $registration_page_step_3;
 
-		//echo printr( $EE_Session->get_session_data(), __FUNCTION__ );
+//		printr( $EE_Session->get_session_data(), '$EE_Session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		espresso_display_template($this->_templates['registration_page_wrapper'], $template_args);
 	}
@@ -733,7 +707,7 @@ class EE_Single_Page_Checkout {
 	 * 		@return 		int
 	 */
 	public function process_registration_step_1() {
-
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $EE_Session;
 
@@ -865,6 +839,7 @@ class EE_Single_Page_Checkout {
 
 		// don't need these so get rid of them'
 		unset($_POST['action']);
+//		printr( $_POST, '$_POST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
 			// FREE EVENT !!! YEAH : )
@@ -936,12 +911,12 @@ class EE_Single_Page_Checkout {
 	 * 		@return 		string
 	 */
 	public function display_data_for_confirmation() {
-
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $org_options, $EE_Session;
 
 		$session_data = $EE_Session->get_session_data();
-		//printr( $session_data, '$session_data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' );
+		//printr( $session_data, '$session_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		$billing_info = $session_data['billing_info'];
 		$reg_info = $session_data['cart']['REG'];
@@ -990,8 +965,9 @@ class EE_Single_Page_Checkout {
 		} else {
 			// get billing info fields
 			$template_args['billing'] = $this->gateways->set_billing_info_for_confirmation( $billing_info );
-
 			$total = $session_data['_cart_grand_total_amount'];
+
+			// add taxes
 			// add taxes
 			if (isset($session_data['tax_totals'])) {
 				foreach ($session_data['tax_totals'] as $taxes) {
@@ -1020,6 +996,7 @@ class EE_Single_Page_Checkout {
 	public function process_registration_step_3() {
 		// Sidney is watching me...   { : \
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 
 		global $org_options;
 
@@ -1063,7 +1040,7 @@ class EE_Single_Page_Checkout {
 
 			// grab session data
 			$session = $EE_Session->get_session_data();
-//			printr( $session, '$session ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
+			//printr( $session, '$session ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
 
 			$reg_items = $session['cart']['REG']['items'];
 
@@ -1080,10 +1057,11 @@ class EE_Single_Page_Checkout {
 //			printr( $session, '$session ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
 
 			$grand_total = $session['_cart_grand_total_amount'];
-	
-			$taxes = $session['tax_totals'];
-			foreach ( $taxes as $tax ) {
-				$grand_total += $tax;
+			// add taxes
+			if (isset($session['tax_totals'])) {
+				foreach ($session['tax_totals'] as $taxes) {
+					$grand_total += $taxes;
+				}
 			}
 
 			// start the transaction record
@@ -1217,13 +1195,13 @@ class EE_Single_Page_Checkout {
 			$transaction->update();
 			$EE_Session->set_session_data(array( 'registration' => $reg, 'transaction' => $transaction ), 'session_data');
 
-//			printr( $EE_Session, '$EE_Session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
+//			printr( $EE_Session, '$EE_Session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 
 //			die();
 
 			// attempt to perform transaction via payment gateway
-				$response = $this->gateways->process_reg_step_3();
-				$this->_return_page_url = $response['forward_url'];
-				$success_msg = $response['msg']['success'];
+			$response = $this->gateways->process_reg_step_3();
+			$this->_return_page_url = $response['forward_url'];
+			$success_msg = $response['msg']['success'];
 		}
 		
 		$session = $EE_Session->get_session_data();
@@ -1276,7 +1254,7 @@ class EE_Single_Page_Checkout {
 	 *   @return void
 	 */
 	public function send_ajax_response($success_msg = FALSE, $error_msg = FALSE, $callback = FALSE, $callback_param = FALSE) {
-
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 		$valid_callback = FALSE;

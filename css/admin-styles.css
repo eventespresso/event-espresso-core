@@ -63,6 +63,46 @@ dt {font-weight: bold; margin: 15px 0 10px ;}
 .validation-notice-dv { display:none; padding:0; margin:0; color:red; }
 .requires-value { border:1px solid #FE2A00 !important; }
 
+
+/*  
+	standard WP primary button colours
+	colours after arrows are the :hover colours
+	background-color: #21759B;	  =>	278ab7
+    background-image: linear-gradient(to bottom, #2A95C5, #21759B); 	=>	2e9fd2		21759b
+    border-color: #21759B #21759B #1E6A8D;  =>   1b607f
+    box-shadow: 0 1px 0 rgba(120, 200, 230, 0.5) inset;  => no change except opacity = 0.6	
+*/
+
+
+
+.espresso-button-red {
+    background-color: #A32615 !important;
+    background-image: linear-gradient(to bottom, #D22C1A, #A32615) !important;
+    border-color: #A32615 #A32615 #8E2112 !important;
+	box-shadow: 0 1px 0 rgba(230, 116, 103, 0.5) inset !important;
+}
+.espresso-button-red:hover {
+    background-color: #B82818 !important;
+    background-image: linear-gradient(to bottom, #DB2E1B, #A32615) !important;
+    border-color: #7E1D10 !important;
+	box-shadow: 0 1px 0 rgba(230, 116, 103, 0.6) inset !important;
+}
+
+
+.espresso-button-green {
+    background-color: #2f7f0f !important;
+    background-image: linear-gradient(to bottom, #3AA012, #2F7F0F) !important;
+    border-color: #2F7F0F #2F7F0F #286A0C !important;
+	box-shadow: 0 1px 0 rgba(110, 193, 75, 0.5) inset !important;
+} 
+.espresso-button-green:hover {
+    background-color: #399811 !important;
+    background-image: linear-gradient(to bottom, #42AF14, #2f7f0f) !important;
+    border-color: #225A0A !important;
+	box-shadow: 0 1px 0 rgba(110, 193, 75, 0.6) inset !important;
+}
+
+
 /*___ Structure ___*/
 
 /*** 2 columns event admin area ***/

@@ -231,7 +231,7 @@ function espresso_load_org_options() {
 	do_action('action_hook_espresso_debug_file');
 	$req_vars = '';
 	foreach ( $_REQUEST as $k => $v ){
-		$req_vars .= "\n" . $k . ' = ' . $v;
+		$req_vars .= "\n" . $k . ' = ' . (is_array($v))?print_r($v,true):$v;
 	}
 	do_action('action_hook_espresso_log', '', '', '$_REQUEST = ' . $req_vars );	
 }

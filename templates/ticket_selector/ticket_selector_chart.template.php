@@ -1,10 +1,9 @@
 
 	<h4 class="event-list-reg-link-title"><span class="section-title"><?php _e( 'Ticket Options', 'event_espresso' ); ?></span></h4>
 
-		<input type="hidden"
-					name="tkt-slctr-event-id"
-					value="<?php echo $event_id; ?>"
-			/>
+		<input type="hidden" name="noheader" value="true" />
+		
+		<input type="hidden" name="tkt-slctr-event-id" value="<?php echo $event_id; ?>" />
 		
 		<?php
 		foreach ($meta_keys as $key=>$meta_key) {
@@ -117,6 +116,10 @@
 						<input type="hidden"
 									name="tkt-slctr-price-desc-<?php echo $event_id; ?>[]"
 									value="<?php echo esc_attr( $price['option'] ); ?>"
+							/>
+						<input type="hidden"
+									name="tkt-slctr-price-obj-<?php echo $event_id; ?>[]"
+									value="<?php echo $price['obj']; ?>"
 							/>
 
 					</td>

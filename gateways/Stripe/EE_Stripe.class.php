@@ -40,8 +40,9 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 
 	protected function __construct(EEM_Gateways &$model) {
 		$this->_gateway = 'Stripe';
-		$this->_button_base = 'stripe_logo.png';
+		$this->_button_base = 'stripe-logo.png';
 		$this->_path = str_replace( '\\', '/', __FILE__ );
+		$this->_btn_img = file_exists( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 	}
 
@@ -53,7 +54,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 			'stripe_currency_symbol' => 'USD',
 			'stripe_publishable_key' => '',
 			'stripe_secret_key' => '',
-			'button_url' => ''
+			'button_url' =>$this->_btn_img	
 			//no sandbox settings?
 			);
 	}
@@ -63,48 +64,53 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 		$this->_payment_settings['stripe_currency_symbol'] = $_POST['stripe_currency_symbol'];
 		$this->_payment_settings['stripe_publishable_key'] = $_POST['stripe_publishable_key'];
 		$this->_payment_settings['stripe_secret_key'] = $_POST['stripe_secret_key'];
-		$this->_payment_settings['button_url'] = $_POST['stripe_button_url'];
+		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';
 	}
 
 	protected function _display_settings() {
 		?>
-            <tr>
-                <td valign="top">
-                	<ul>
-                        <li>
-                            <label for="stripe_secret_key">
-                            <?php _e('Stripe Secret Key:', 'event_espresso'); ?>
-                            </label>
-                            <br />
-                            <input type="text" name="stripe_secret_key" size="35" value="<?php echo $this->_payment_settings['stripe_secret_key']; ?>"> <?php echo apply_filters('filter_hook_espresso_help', 'stripe_secret_key') ?>
-                        </li>
-                        <li>
-                            <label for="stripe_publishable_key">
-    						<?php _e('Stripe Publishable Key:', 'event_espresso'); ?>
-                            </label>
-                            <br />
-                            <input type="text" name="stripe_publishable_key" size="35" value="<?php echo $this->_payment_settings['stripe_publishable_key']; ?>"> <?php echo apply_filters('filter_hook_espresso_help', 'stripe_publishable_key') ?>
-                        </li>
-                        <li>
-                            <label for="stripe_currency_symbol">
-    						<?php _e('Stripe Currency Symbol (usd):', 'event_espresso'); ?>
-                            </label>
-                            <br />
-                            <input type="text" name="stripe_currency_symbol" size="35" value="<?php echo $this->_payment_settings['stripe_currency_symbol']; ?>"> <?php echo apply_filters('filter_hook_espresso_help', 'stripe_currency_symbol') ?>
-                        </li>
-                    </ul>
-				</td>
-            </tr>
-            <tr>
-			<th><label for="stripe_button_url">
+		<tr>
+			<th>
+				<label for="stripe_secret_key"><?php _e('Stripe Secret Key:', 'event_espresso'); ?></label>
+			</th>
+			<td>
+				<input type="text" name="stripe_secret_key" size="35" value="<?php echo $this->_payment_settings['stripe_secret_key']; ?>"> 
+				<?php echo apply_filters('filter_hook_espresso_help', 'stripe_secret_key') ?>
+			</td>
+		</tr>
+		
+		<tr>
+			<th>
+				<label for="stripe_publishable_key"><?php _e('Stripe Publishable Key:', 'event_espresso'); ?></label>
+			</th>
+			<td>
+				<input type="text" name="stripe_publishable_key" size="35" value="<?php echo $this->_payment_settings['stripe_publishable_key']; ?>"> 
+				<?php echo apply_filters('filter_hook_espresso_help', 'stripe_publishable_key') ?>
+			</td>
+		</tr>
+		
+		<tr>
+			<th>
+				<label for="stripe_currency_symbol"><?php _e('Stripe Currency Symbol (usd):', 'event_espresso'); ?></label>
+			</th>
+			<td>
+				<input type="text" name="stripe_currency_symbol" size="35" value="<?php echo $this->_payment_settings['stripe_currency_symbol']; ?>"> 
+				<?php echo apply_filters('filter_hook_espresso_help', 'stripe_currency_symbol') ?>
+			</td>
+		</tr>
+		
+		<tr>
+			<th>
+				<label for="<?php echo $this->_gateway; ?>_button_url">
 					<?php _e('Button Image URL', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'stripe_button_image'); ?>
-				</label></th>
-				<td><input class="regular-text" type="text" name="stripe_button_url" id="stripe_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" /><br /><span class="description">
-						<?php _e('URL to the payment button.', 'event_espresso'); ?>
-					</span>
-				</td>
-			</tr>
+				</label>
+			</th>
+			<td>
+				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
+				<input class="regular-text" type="text" name="button_url" id="<?php echo $this->_gateway; ?>_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
+				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
+			</td>
+		</tr>
 	    <?php
 	}
 
@@ -443,7 +449,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 						'label' => __('Expiry Date Year', 'event_espresso'),
 						'input' => 'select',
 						'type' => 'int',
-						'sanitize' => 'ccyyyy',
+						'sanitize' => 'ccyy',
 						'required' => TRUE,
 						'validation' => TRUE,
 						'value' => NULL,

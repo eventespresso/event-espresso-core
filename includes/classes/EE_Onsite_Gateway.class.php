@@ -156,12 +156,12 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 		$reg_page_billing_inputs = array();
 		// allow others to edit post input array
 		$reg_page_billing_inputs = apply_filters('filter_hook_espresso_reg_page_billing_inputs', $reg_page_billing_inputs);
-
 		// if EE_Validate_and_Sanitize is not instantiated
 		if (!defined('EE_Validate_and_Sanitize')) {
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_Validate_and_Sanitize.class.php');
 			$EE_VnS = EE_Validate_and_Sanitize::instance();
 		}
+//printr( $reg_page_billing_inputs, '$reg_page_billing_inputs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// validate and sanitize	post data
 		$reg_page_billing_inputs = $EE_VnS->validate_and_sanitize_post_inputs($reg_page_billing_inputs);

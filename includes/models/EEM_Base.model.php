@@ -817,7 +817,7 @@ abstract class EEM_Base extends EE_Base {
 		$WHR = ' WHERE ';
 		$value_parameters = array();
 
-		$single_op = is_array($operator) ? FALSE : TRUE;
+		$single_op = ! is_array($operator) ? TRUE : FALSE;
 
 		foreach ( $where_cols_n_values as $column_name => $value ) {
 
