@@ -40,9 +40,10 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 	}
 
 	protected function __construct(EEM_Gateways &$model) {
-		$this->_gateway = '2checkout';
-		$this->_button_base = 'logo.png';
+		$this->_gateway = '2Checkout';
+		$this->_button_base = '2checkout-logo.png';
 		$this->_path =  str_replace( '\\', '/', __FILE__ );
+		$this->_btn_img = is_readable( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 	}
 
@@ -54,6 +55,7 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 		$this->_payment_settings['type'] = 'off-site';
 		$this->_payment_settings['display_name'] = '2CheckOut';
 		$this->_payment_settings['current_path'] = '';
+		$this->_payment_settings['button_url'] = $this->_btn_img;
 	}
 
 	protected function _update_settings() {
@@ -61,8 +63,7 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 		$this->_payment_settings['2checkout_username'] = $_POST['2checkout_username'];
 		$this->_payment_settings['currency_format'] = $_POST['currency_format'];
 		$this->_payment_settings['use_sandbox'] = $_POST['use_sandbox'];
-		$this->_payment_settings['button_url'] = $_POST['button_url'];
-	}
+		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';	}
 
 	protected function _display_settings() {
 		?>
@@ -76,6 +77,7 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 					<?php _e('(Typically 87654321)', 'event_espresso'); ?>
 				</span></td>
 		</tr>
+		
 		<tr>
 			<th><label for="2checkout_username">
 					<?php _e('2checkout Username', 'event_espresso'); ?>
@@ -86,16 +88,7 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 					<?php _e('(Typically TestAccount)', 'event_espresso'); ?>
 				</span></td>
 		</tr>
-		<tr>
-			<th><label for="2co_button_url">
-					<?php _e('Button Image URL', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', '2co_button_image'); ?>
-				</label></th>
-			<td>
-				<input class="regular-text" type="text" name="button_url" id="2co_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
-				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
-			</td>
-		</tr>
+		
 		<tr>
 			<th><label for="currency_format">
 					<?php _e('Country Currency', 'event_espresso'); ?>
@@ -174,12 +167,29 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 					</option>
 				</select></td>
 		</tr>
+		
 		<tr>
 			<th><label for="2co_use_sandbox">
 					<?php _e('Turn on Debugging Using the 2checkout Sandbox', 'event_espresso'); ?>
 					<?php echo apply_filters('filter_hook_espresso_help', '2co_sandbox_info'); ?>
 				</label></th>
 			<td><?php echo select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
+		</tr>
+		
+		<tr>
+			<th>
+				<label for="2co_button_url">
+					<?php _e('Button Image URL', 'event_espresso'); ?>
+					<?php echo apply_filters('filter_hook_espresso_help', '2co_button_image'); ?>
+				</label>
+			</th>
+			<td>
+				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
+				<input class="regular-text" type="text" name="button_url" id="2co_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
+				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image">
+					<img src="images/media-button-image.gif" alt="Add an Image">
+				</a>
+			</td>
 		</tr>
 		<?php
 	}

@@ -20,12 +20,12 @@ function espresso_thank_you_page() {
 				$grand_total += $taxes;
 			}
 		}
-			
+
 		$data = array(
 			'events' => array(),
 			'fname' => $session_data['primary_attendee']['fname'],
 			'lname' => $session_data['primary_attendee']['lname'],
-			'txn_type' => $session_data['txn_results']['method'],
+			'txn_type' => $session_data['txn_results']['gateway'],
 			'payment_date' => date( 'D M j, Y g:i a' ),
 			'payment_status' => $session_data['txn_results']['status'],
 			'amount_paid' => $session_data['txn_results']['amount'],
@@ -40,8 +40,7 @@ function espresso_thank_you_page() {
 		
 		espresso_require_template('payment_overview.php');
 		do_action('action_hook_espresso_display_payment_overview_template', $data);
-		$EEM_Gateways->reset_session_data();
-		do_action( 'action_hook_espresso_reg_completed' );
+		//$EEM_Gateways->reset_session_data();
 		do_action( 'action_hook_espresso_reg_completed' );
 
 	} else {

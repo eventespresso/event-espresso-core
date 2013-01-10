@@ -67,6 +67,7 @@ class EE_Single_Page_Checkout {
 			 $this->_ajax = 0;
 		}		
 //		echo '<h4>$this->_ajax : ' . $this->_ajax . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		printr( $_POST, '$_POST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );						 
 
 		if ( $this->_ajax ) {
 
@@ -829,7 +830,7 @@ class EE_Single_Page_Checkout {
 	 * 		@return 		void
 	 */
 	public function process_registration_step_2() {
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $EE_Session;
 
@@ -838,6 +839,7 @@ class EE_Single_Page_Checkout {
 
 		// don't need these so get rid of them'
 		unset($_POST['action']);
+//		printr( $_POST, '$_POST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
 			// FREE EVENT !!! YEAH : )

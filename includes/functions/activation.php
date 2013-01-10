@@ -1348,10 +1348,9 @@ function espresso_default_prices() {
 					(2, 'Event Price', 1, 0, 0, 0, 0),
 					(3, 'Default Member % Discount', 2, 1, 1, 1, 10),
 					(4, 'Default Early Bird % Discount', 2, 0, 1, 1, 20),
-					(5, 'Promo Code Discount', 2, 0, 0, 1, 10),
-					(6, 'Default Surcharge', 3, 0, 0, 1, 30),
-					(7, 'Regional Tax', 4, 0, 1, 1, 40),
-					(8, 'Federal Tax', 4, 0, 1, 1, 50);";
+					(5, 'Default Surcharge', 3, 0, 0, 1, 30),
+					(6, 'Regional Tax', 4, 0, 1, 1, 40),
+					(7, 'Federal Tax', 4, 0, 1, 1, 50);";
 		$wpdb->query($sql);	
 	}
 
@@ -1365,10 +1364,9 @@ function espresso_default_prices() {
 					(1, 1, 0, '100.00', 'General Admission', 'Regular price for all Events.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 0, 0),
 					(2, 3, 0, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 10, 0),
 					(3, 4, 0, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price.',  1, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 20, 0),
-					(4, 5, 0, '25', 'Super Promo 25', 'The first 50 to enter this Promo Code will receive $25 off of the regular price.', 0, NULL, NULL, 'Sup3rPr0m025', 1, 50, 0, 1, 1, NULL, 10, 0),
-					(5, 6, 0, '7.50', 'Service Fee', 'Covers administrative expenses.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 30, 0),
-					(6, 7, 0, '7.00', 'Sales Tax', 'Locally imposed tax.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 40, 0),
-					(7, 8, 0, '15.00', 'VAT', 'Value Added Tax.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 50, 0);";
+					(4, 6, 0, '7.50', 'Service Fee', 'Covers administrative expenses.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 30, 0),
+					(5, 7, 0, '7.00', 'Sales Tax', 'Locally imposed tax.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 40, 0),
+					(6, 8, 0, '15.00', 'VAT', 'Value Added Tax.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 50, 0);";
 		$wpdb->query($sql);
 	}
 	
