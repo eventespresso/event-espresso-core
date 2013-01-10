@@ -4052,11 +4052,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		//todo: This needs to be prepared to protect agains injection attacks... but really the whole stinking query could probably be better layed out.
 		
-		if ( $count ) {
-			$events = $wpdb->get_var( $sql );
-		} else {
-			$events = $wpdb->get_results( $sql );
-		}
+		
+		$events = $count ? $wpdb->get_var( $sql ) : $wpdb->get_results( $sql );
+
 
 		return $events;
 	}
