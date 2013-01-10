@@ -161,7 +161,7 @@ class EE_Admin_Page_load {
 	 */
 	private function _get_installed_pages() {
 		$installed_refs = array();
-		$exclude = array('assets', 'attendees', 'event_pricing', 'registrations', 'transactions', 'messages');
+		$exclude = array('assets', 'event_categories', 'attendees', 'event_pricing', 'registrations', 'transactions', 'messages');
 		// grab everything in the  admin core directory
 		if ( $admin_screens = glob( EE_CORE_ADMIN . '*' ) ) {
 			foreach( $admin_screens as $admin_screen ) {
