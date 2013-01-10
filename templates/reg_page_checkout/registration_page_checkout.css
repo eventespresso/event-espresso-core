@@ -190,37 +190,32 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 #mer-reg-page-apply-coupon-btn { position:relative; top:-1px; font-size:.8em; }
 #mer-reg-page-coupon-codes-pg { padding:0 0 2em 155px; }
 
+#mer-reg-page-step-2-dv #methods-of-payment { margin:2em 0; }
+#mer-reg-page-step-2-dv #methods-of-payment h3 { margin:.5em 0; }
 #mer-reg-page-step-2-dv .reg-page-payment-option-dv {
-	display: inline-block; position: relative; max-width:140px; padding:20px; margin:0 0 1em; 
-	border:1px solid #ddd; border-radius:3px;
+	display: inline-block; position: relative; max-width:140px; padding:20px; margin:0 1em 1em 0; 
+	border:1px solid #ddd; border-radius:3px; background:#fff;
 	text-align: center; line-height:1em; vertical-align: middle; cursor:pointer;
 }
 #mer-reg-page-step-2-dv .reg-page-payment-option-dv.hidden { display:none; }
-#mer-reg-page-step-2-dv .reg-page-payment-option-dv img { vertical-align:middle; max-width:100% !important; margin:auto; box-shadow: none !important; box-radius: 0 !important; }
-
-#reg-page-select-other-gateway-lnk {
-	float:right; margin:2em 0 0; cursor:pointer;
+#mer-reg-page-step-2-dv .reg-page-payment-option-dv img { 
+	vertical-align:middle; max-width:140px !important; padding:0; margin:auto; box-shadow: none !important; box-radius: 0 !important; 
 }
-
-/* Payment Page Styles */
-.payment_container, .payment-option-dv { position: relative; margin:0 .25em .25em 0;  }
-.payment-option-closed { display: inline-block !important; }
-
-.payment-option-lnk {
-	display: inline-block; position: relative; max-width:140px; padding:20px; margin:0 0 1em; 
-	border:1px solid #ddd; border-radius:3px;
-	text-align: center; line-height:1em; vertical-align: middle; cursor:pointer;
-
-}
-.payment-option-lnk:hover {
+#mer-reg-page-step-2-dv .reg-page-payment-option-dv:hover {
 	top:-1px; border-color:#d5d5d5; text-decoration:none;
 	-webkit-box-shadow: 4px 10px 15px -3px rgba(0,0,0,.05), 1px 2px 4px -1px rgba(0,0,0,.1), -2px -1px 5px rgba(0,0,0,.025); 
 	-moz-box-shadow:4px 10px 15px -3px rgba(0,0,0,.05), 1px 2px 4px -1px rgba(0,0,0,.1), -2px -1px 5px rgba(0,0,0,.025); 
 	box-shadow:4px 10px 15px -3px rgba(0,0,0,.05), 1px 2px 4px -1px rgba(0,0,0,.1), -2px -1px 5px rgba(0,0,0,.025);	
 }
-.payment-option-lnk img { max-width:140px !important; padding:0; margin:0; }
-.payment-option-lnk.algn-vrt { display: table !important; height:30px; }
-.payment-option-lnk.algn-vrt .vrt-cell { display: table-cell !important; vertical-align: middle; }
+#mer-reg-page-step-2-dv .reg-page-payment-option-dv .algn-vrt { display: table !important; height:30px; }
+#mer-reg-page-step-2-dv .reg-page-payment-option-dv .vrt-cell { display: table-cell !important; vertical-align: middle; }
+
+
+#reg-page-select-other-gateway-lnk {
+	float:right; margin:2em 0 0; cursor:pointer;
+}
+
+
 
 #event_espresso_checkout_form { margin: 5px 0; padding: 5px; }
 
