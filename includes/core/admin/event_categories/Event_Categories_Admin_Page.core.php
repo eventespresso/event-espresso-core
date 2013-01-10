@@ -104,7 +104,8 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 				'func' => '_categories_export',
 				'noheader' => TRUE
 				),
-			'import_categories' => '_import_categories'
+			'import_categories' => '_import_categories',
+			'import' => '_import_categories'
 		);
 	}
 
@@ -229,12 +230,69 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 
 
-	protected function _category_details() {}
+	protected function _category_details($view) {
+
+
+	}
+
+
+
+
+
 	protected function _delete_categories() {}
 	protected function _delete_category() {}
 	protected function _insert_or_update_category($new) {}
-	protected function _categories_export() {}
-	protected function _import_categories() {}
+
+
+
+
+
+	protected function _categories_export() {
+
+		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
+		$new_request_args = array(
+			'export' => 'report',
+			'action' => 'categories',
+			'category_ids' => $_REQUEST['EVT_CAT_ID']
+			);
+
+		$_REQUEST = array_merge( $_REQUEST, $new_request_args );
+
+		if ( file_exists( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php') ) {
+			require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
+			$EE_Export = EE_Export::instance();
+			$EE_Export->export();
+		}
+
+	}
+
+
+
+
+
+	protected function _import_categories() {
+
+		//first check if we've got an incoming import
+		//first check if we've got an incoming import
+		if (isset($_REQUEST['import'])) {
+			if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php')) {
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php');
+				$EE_Import = EE_Import::instance();
+				$EE_Import->import();
+			}
+		}
+
+		include( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/csv_uploader.php' );
+		$import_what = 'Event Categories';
+		$import_intro = 'If you have a previously exported list of Categories in a Comma Separated Value (CSV) file format, you can upload the file here: ';
+		$page = 'event_categories';
+		$content = espresso_csv_uploader($import_what, $import_intro, $page);
+
+		$this->_admin_page_title .= $this->_get_action_link_or_button('add_category', 'add', array(), 'button add-new-h2');
+		$this->_template_args['admin_page_content'] = $content;	
+		$this->display_admin_page_with_sidebar();
+
+	}
 
 
 	/***********/
