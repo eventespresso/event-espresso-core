@@ -23,7 +23,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * note: anywhere there are no php docs it is because the docs are available in the parent class.
  *
  * @package		Events_Admin_List_Table
- * @subpackage	includes/core/admin/events/Events_Admin_List_Table.core.php
+ * @subpackage	includes/core/admin/events/Events_Admin_List_Table.class.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
