@@ -902,7 +902,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
-
 	/**
 	 * 		set current view for List Table
 	*		@access public
@@ -942,8 +941,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$query_args = array();
 
 		if ( empty( $this->_views )) {
-			$this->_set_list_table_views();
+			$this->_views = array();
 		}
+
 
 		// cycle thru views
 		foreach ( $this->_views as $key => $view ) {
@@ -953,10 +953,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 			} else {
 				$this->_views[ $key ]['class'] = '';
 			}
-			if ( $this->_req_action != 'default' ) {
-				$query_args['action'] = $this->_req_action;
-				$query_args['_wpnonce'] = wp_create_nonce( $query_args['action'] . '_nonce' );
-			}
+			
+			$query_args['action'] = $this->_req_action;
+			$query_args['_wpnonce'] = wp_create_nonce( $query_args['action'] . '_nonce' );
 			$query_args['status'] = $view['slug'];
 			$this->_views[ $key ]['url'] = add_query_arg( $query_args, $this->_admin_base_url );
 		}

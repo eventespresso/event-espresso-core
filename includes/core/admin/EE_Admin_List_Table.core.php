@@ -188,6 +188,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		$this->_screen = $this->_admin_page->get_current_page() . '_' . $this->_admin_page->get_current_view();
 		
 		$this->_setup_data();
+		$this->_add_view_counts();
 
 		$this->_nonce_action_ref = $this->_view;
 
@@ -238,6 +239,22 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * @return html string
 	 */
 	abstract protected function _get_table_filters();
+
+
+
+
+
+
+	/**
+	 * this is a method that child class will do to add counts to the views array so when views are displayed the counts of the views is accurate.
+	 *
+	 * @abstract
+	 * @access protected
+	 * @return void
+	 */
+	abstract protected function _add_view_counts();
+
+
 
 
 
@@ -375,9 +392,10 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 		echo "<ul class='subsubsub'>\n";
 		foreach ( $views as $view ) {
-			$views[ $view['slug'] ] = "\t<li class='" . $view['class'] . "'>" . '<a href="' . $view['url'] . '">' . $view['label'] . '</a>';
+			$count = isset($view['count'] ) ? $view['count']  : 0;
+			$views[ $view['slug'] ] = "\t<li class='" . $view['class'] . "'>" . '<a href="' . $view['url'] . '">' . $view['label'] . '</a> <span class="count">(' . $count . ')</span>';
 		}
-		//todo: add count to views
+		
 		echo implode( " |</li>\n", $views ) . "</li>\n";
 		echo "</ul>";
 	}

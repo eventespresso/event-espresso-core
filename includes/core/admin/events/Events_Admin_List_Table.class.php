@@ -100,7 +100,22 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	}
 
 
-	function column_cb($item) {
+
+
+
+	protected function _add_view_counts() {
+		$this->_views['all']['count'] = $this->_admin_page->total_events();
+		$this->_views['today']['count'] = $this->_admin_page->total_events_today();
+		$this->_views['month']['count'] = $this->_admin_page->total_events_this_month();
+	}
+
+
+
+
+
+
+
+	public function column_cb($item) {
         return sprintf(
             '<input type="checkbox" name="EVT_ID[]" value="%s" />', $item->event_id
         );    
