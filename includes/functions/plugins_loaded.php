@@ -260,7 +260,7 @@ add_action( 'shutdown', 'espresso_printr_session' );
 function espresso_init() {
 
 	//Globals used throughout the site
-	global $espresso_premium, $is_UI_request, $is_ajax_request;
+	global $espresso_premium, $is_UI_request, $is_ajax_request, $espresso_content;
 	// is this request for UI or backend 
 	$is_UI_request = ( ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' ) ? TRUE : FALSE;
 	$is_ajax_request = ( isset( $_REQUEST['espresso_ajax'] ) && $_REQUEST['espresso_ajax'] == 1 ) ? TRUE : FALSE;
@@ -436,6 +436,7 @@ function espresso_load_reg_page_files() {
 				break;
 			
 			case 'notify_url' :
+					event_espresso_require_gateway('process_payments.php');
 				break;
 		}
 
@@ -614,3 +615,9 @@ function espresso_load_admin_page( $admin_page, $page_request ) {
 	}
 }
 
+
+
+
+function espresso_clear_output_buffer() {
+	ob_end_clean();
+}
