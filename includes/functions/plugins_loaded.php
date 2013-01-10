@@ -154,6 +154,7 @@ function espresso_core_admin_autoload($className) {
 	$dir_ref = array(
 		'root' => array('core', 'class', 'controller'),
 		'events/' => array('core','class'),
+		'event_categories/' => array('core','class'),
 		'event_pricing/' => array('core','class'),
 		'messages/' => array('core', 'class'),
 		'registrations/' => array('core','class'),

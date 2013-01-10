@@ -57,9 +57,6 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		//set properties that are always available with objects.
 		$this->_set_init_properties();
 
-		//set _wp_page_slug();
-		$this->_set_wp_page_slug();
-
 		//set default capability
 		$this->_set_capability();
 
@@ -154,6 +151,9 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		if ( !isset( $_REQUEST['page'] ) || $_REQUEST['page'] != $this->menu_slug )
 			return; //not on the right page so let's get out.
 
+		//set _wp_page_slug();
+		$this->_set_wp_page_slug();
+
 		$this->_dir_name = ucwords( str_replace('_', ' ', $this->menu_slug) );
 		$this->_dir_name = str_replace(' ', '_', $this->_dir_name);
 
@@ -216,14 +216,14 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		$menu_slug = plugin_basename( $this->menu_slug );
 		$parent_slug = plugin_basename( $menu_map['parent_slug'] );
 
-		if ( isset( $_wp_real_parent_file[$parent_slug] ) )
-			$parent_slug = $_wp_real_parent_file[$parent_slug];
-
 
 		$this->_wp_page_slug = get_plugin_page_hookname( $menu_slug, $parent_slug );
 
-		if ( $parent_slug == $menu_slug )
+		if ( $parent_slug == $menu_slug ) {
 			$this->_wp_page_slug = str_replace('admin', 'toplevel', $this->_wp_page_slug);
+		} else if ( $parent_slug != $menu_slug && $parent_slug == 'events') {
+			$this->_wp_page_slug = str_replace('admin', 'event-espresso', $this->_wp_page_slug);
+		}
 	}
 	
 

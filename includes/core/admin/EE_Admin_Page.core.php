@@ -378,7 +378,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 			add_action( 'admin_init', array( $this, 'admin_init' ), 10 );
 			if ( method_exists( $this, 'admin_init_' . $this->_current_view ) )
 				add_action( 'admin_init', array( $this, 'admin_init_' . $this->_current_view ), 15 );
-
 			$page_hook = 'load-' . $this->_wp_page_slug;
 			//hook into page load hook so all page specific stuff get's loaded.
 			if ( !empty($this->_wp_page_slug) )
@@ -876,7 +875,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	protected function _set_list_table() {
 		//first is this a list_table view?
-		
 		if ( !isset($this->_route_config['list_table']) )
 			return; //not a list_table view so get out.
 
@@ -889,6 +887,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$error_msg .= '||' . sprintf( __('List table views for "%s" route could not be setup. Check that you have the corresponding method, "%s" set up for defining list_table_views for this route.', 'event_espresso' ), $this->_req_action, '_set_list_table_views_' . $this->_req_action );
 			throw new EE_Error( $error_msg );
 		}
+
 
 		$this->_set_list_table_view();
 		$this->_set_list_table_object();

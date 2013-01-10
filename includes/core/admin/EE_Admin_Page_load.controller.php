@@ -161,7 +161,7 @@ class EE_Admin_Page_load {
 	 */
 	private function _get_installed_pages() {
 		$installed_refs = array();
-		$exclude = array('assets', 'event_categories', 'attendees', 'event_pricing', 'registrations', 'transactions', 'messages');
+		$exclude = array('assets', 'attendees', 'event_pricing', 'registrations', 'transactions', 'messages');
 		// grab everything in the  admin core directory
 		if ( $admin_screens = glob( EE_CORE_ADMIN . '*' ) ) {
 			foreach( $admin_screens as $admin_screen ) {
@@ -196,8 +196,8 @@ class EE_Admin_Page_load {
 	 * @return object|bool  return page object if valid, bool false if not.
 	 */
 	private function _load_admin_page( $page ) {
-		$page = strtolower( $page );
-		$class_name = ucwords($page) . '_Admin_Page_Init';
+		$page = str_replace('_', ' ', strtolower( $page ) );
+		$class_name = str_replace(' ', '_', ucwords($page) ) . '_Admin_Page_Init';
 
 		if ( !class_exists($class_name ) ) {
 			$error_msg = sprintf( __('Something went wrong with loading the %s admin page.', 'event_espresso' ), $page);
@@ -222,6 +222,7 @@ class EE_Admin_Page_load {
 		//prep the pages (sort, group, set if display etc.)
 		$this->_prep_pages();
 		$parent_slug = 'events';
+		$add_main_menu = true;
 
 		//loop through prepped pages and hook into WP's menu functions
 		$i=0;
@@ -231,13 +232,11 @@ class EE_Admin_Page_load {
 				if ( is_array($installed_page) ) {
 					$temp_ref = $installed_page;
 					continue;
-				} else {
-					$add_main_menu = true;
 				}
 			}
-
+		
 			//if we've got $add_main_menu || $temp_ref then we need to add_menu_page on current item
-			if ( isset($temp_ref) || isset($add_main_menu) ) {
+			if ( isset($temp_ref) || $add_main_menu ) {
 				$title = __('Event Espresso', 'event_espresso');
 					$wp_main_page_slug = add_menu_page( $title, $title, apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']), $parent_slug, array($installed_page, 'initialize_admin_page'), EVENT_ESPRESSO_PLUGINFULLURL . 'images/events_icon_16.png');
 				
@@ -256,6 +255,7 @@ class EE_Admin_Page_load {
 			
 			
 			$wp_page_slug = add_submenu_page( $parent_slug, $label, $menu_label, $capability, $menu_slug, $menu_func );
+			$add_main_menu = false;
 			$i++;
 		}
 	}
