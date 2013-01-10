@@ -31,6 +31,19 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 
+	/**
+	 * _category
+	 * This will hold the category object for category_details screen.
+	 *
+	 * @access protected
+	 * @var object
+	 */
+	protected $_category;
+
+
+
+
+
 	public function __construct($wp_page_slug) {
 		parent::__construct($wp_page_slug);
 	}
@@ -83,11 +96,11 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 				'args' => array('add')
 				),
 			'delete_categories' => array(
-				'func' => '_delete_categories', //coming from overview page
+				'func' => '_delete_categories', 
 				'noheader' => TRUE 
 				),
 			'delete_category' => array(
-				'func' => '_delete_category', //coming from details page
+				'func' => '_delete_categories', 
 				'noheader' => TRUE
 				),
 			'insert_category' => array(
@@ -127,14 +140,14 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 					'label' => __('Add Category', 'event_espresso'),
 					'order' => 5,
 					'persistent' => false),
-				'metaboxes' => array(),
+				'metaboxes' => array('_editor_metaboxes'),
 				),
 			'edit_category' => array(
 				'nav' => array(
 					'label' => __('Edit Category', 'event_espresso'),
 					'order' => 5,
 					'persistent' => FALSE),
-				'metaboxes' => array()
+				'metaboxes' => array('_editor_metaboxes')
 				),
 			'import_categories' => array(
 				'nav' => array(
@@ -180,21 +193,22 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 
 
-	public function load_scripts_styles_add_event() {
-		$this->load_scripts_styles_edit_event();
+	public function load_scripts_styles_add_category() {
+		$this->load_scripts_styles_edit_category();
 	}
 
 
 
 
 
-	public function load_scripts_styles_edit_event() {
+	public function load_scripts_styles_edit_category() {
 		//styles
 		wp_enqueue_style('jquery-ui-style');
+		wp_enqueue_style('ee_cats_admin_js', EE_CORE_ADMIN_URL . 'event_categories/assets/ee-cat-admin.css', array(), EVENT_ESPRESSO_VERSION );
 
 		//scripts
 		wp_enqueue_script('ee_admin_js');
-		wp_enqueue_script( 'ee_cats_admin_js', EE_CATS_ADMIN_URL . 'assets/ee-cat-admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_enqueue_script( 'ee_cats_admin_js', EE_CORE_ADMIN_URL . 'event_categories/assets/ee-cat-admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 	}
 
 
@@ -233,6 +247,245 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 	protected function _category_details($view) {
 
+		//load formatter helper
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
+
+		//load field generator helper
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
+
+		$hidden_action_field_args['action'] = array(
+			'type' => 'hidden',
+			'value' => $view == 'edit' ? 'update_category' : 'insert_category'
+		);
+		$hidden_action_field = $this->_generate_admin_form_fields($hidden_action_field_args, 'array');
+		$nonce = $view == 'edit' ? wp_nonce_field('update_category_nonce', '_wpnonce', false, false ) : wp_nonce_field('insert_category_nonce', '_wpnonce', false, false );
+		$this->_template_args['before_admin_page_content'] = '<form name="form" method="post" action="' . $this->_admin_base_url . '" id=' . $view . '_event_category_form" >';
+		$this->_template_args['before_admin_page_content'] .= "\n\t" . $nonce;
+		$this->_template_args['before_admin_page_content'] .= "\n\t" . $hidden_action_field['action']['field'];
+		$this->_template_args['after_admin_page_content'] = '</form>';
+
+		//take care of contents
+		$this->_template_args['admin_page_content'] = $view == 'edit' ? $this->_edit_category_content() : $this->_add_category_content();
+		$this->display_admin_page_with_sidebar();
+	}
+
+
+
+	protected function _add_category_content() {
+		$values=array(
+			array('id'=>true,'text'=> __('Yes','event_espresso')),
+			array('id'=>false,'text'=> __('No','event_espresso'))
+		);
+		ob_start();
+		?>
+		<table class="form-table">
+			<tbody>
+				<tr>
+					<th><label for="category_name">
+							<?php _e('Category Name', 'event_espresso'); ?>
+							<em title="<?php _e('This field is required', 'event_espresso') ?>"> *</em></label></th>
+					<td><input id="category_name" type="text" name="category_name" /></td>
+				</tr>
+				<tr>
+					<th><label for="cat_id">
+							<?php _e('Unique ID', 'event_espresso'); ?>
+							<?php echo apply_filters( 'filter_hook_espresso_help', 'unique_id_info'); ?>
+						</label></th>
+					<td><input id="cat_id"  type="text" name="category_identifier" /></td>
+				</tr>
+				<tr>
+					<th><?php _e('Display Category Description in Event Listing?', 'event_espresso'); ?></th>
+					<td><?php echo EE_Form_Fields::select_input('display_desc', $values);?></td>
+				</tr>
+				<tr>
+					<td colspan="2"><h4>
+							<?php _e('Category Description', 'event_espresso'); ?>
+						</h4></td>
+				</tr>
+				<tr>
+					<td colspan="2"><div class="postbox">
+							<?php
+								$args = array("textarea_rows" => 5, "textarea_name" => "category_desc", "editor_class" => "my_editor_custom");
+								wp_editor('', "category_desc", $args);
+							?>
+							<table id="cat-descr-add-form" cellspacing="0">
+								<tbody>
+									<tr>
+										<td class="aer-word-count"></td>
+										<td class="autosave-info"><span>
+											<p></p>
+											</span></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<!-- /.postbox --></td>
+				</tr>
+			</tbody>
+		</table>
+		<?php 
+		$content = ob_get_contents();
+		ob_end_clean();
+		return $content;
+	}
+
+
+
+
+
+
+	protected function _edit_category_content() {
+		$values=array(
+			array('id'=>true,'text'=> __('Yes','event_espresso')),
+			array('id'=>false,'text'=> __('No','event_espresso'))
+		);
+		ob_start();
+		?>
+		<h4><?php echo $this->_category->category_name ?></h4>
+		<table class="form-table">
+			<tbody>
+				<tr>
+					<th><label for="category_name">
+							<?php _e('Category Name', 'event_espresso'); ?>
+							<em title="<?php _e('This field is required', 'event_espresso') ?>"> *</em></label></th>
+					<td><input id="category_name" type="text" name="category_name" value="<?php echo $this->_category->category_name;?>" /></td>
+				</tr>
+				<tr>
+					<th><label for="cat_id">
+							<?php _e('Unique ID', 'event_espresso'); ?>
+							<?php echo apply_filters( 'filter_hook_espresso_help', 'unique_id_info'); ?>
+						</label></th>
+					<td><input id="cat_id"  type="text" name="category_identifier" value="<?php echo $this->_category->category_identifier;?>" /></td>
+				</tr>
+				<tr>
+					<th><?php _e('Display Category Description in Event Listing?', 'event_espresso'); ?></th>
+					<td><?php echo EE_Form_Fields::select_input('display_desc', $values, $this->_category->display_desc);?></td>
+				</tr>
+				<tr>
+					<td colspan="2"><h4>
+						<?php _e('Category Description', 'event_espresso'); ?>
+					</h4></td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<?php 
+							$editor_args['category_desc'] = array(
+									'type' => 'wp_editor',
+									'value' => EE_Formatter::admin_format_content($this->_category->category_desc),
+									'class' => 'my_editor_custom'
+								);
+							$_wp_editor = $this->_generate_admin_form_fields( $editor_args, 'array' );
+						?>
+						<?php echo $_wp_editor['category_desc']['field']; ?>
+						<table id="cat-descr-add-form" cellspacing="0">
+							<tbody>
+								<tr>
+									<td class="aer-word-count"></td>
+									<td class="autosave-info"><span>
+										<p></p>
+										</span></td>
+								</tr>
+							</tbody>
+						</table>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<?php
+		$content = ob_get_contents();
+		ob_end_clean();
+		return $content;
+	}
+
+
+
+
+
+
+	/**
+	 * set the _category property with the category object for the loaded page.
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _set_category_object() {
+		global $wpdb;
+		//only set if we've got an id
+		if ( !isset($_REQUEST['EVT_CAT_ID'] ) ) {
+			$this->_category = null;
+			return;
+		}
+
+		$category_id = absint($_REQUEST['EVT_CAT_ID']);
+		$sql = "SELECT * FROM " . EVENTS_CATEGORY_TABLE . " c WHERE c.id = %d";
+		$this->_category = $wpdb->get_row( $wpdb->prepare( $sql, $category_id), OBJECT );
+
+		$this->_category->category_name = stripslashes( $this->_category->category_name );
+		$this->_category->category_identifier = stripslashes( $this->_category->category_identifier );
+		$this->_category->category_desc = stripslashes( $this->_category->category_desc );
+	}
+
+
+
+
+
+	/** METABOXES **/
+	/***************/
+
+
+	protected function _editor_metaboxes() {
+
+		$this->_set_category_object();
+
+		$this->_set_save_buttons(TRUE, array(), array(), EE_CATS_ADMIN_URL);
+
+		add_meta_box('espresso_event_category_editor_overview', __('Publish', 'event_espresso'), array( $this, 'editor_overview' ), $this->_current_screen->id, 'side', 'high');
+	}
+
+
+
+
+
+
+	public function editor_overview() {
+		?>
+		<div class="submitbox" id="submitpost">
+			<div id="delete-action">
+					<a class="submitdelete deletion" href="admin.php?page=event_categories&amp;action=delete_category&category_id=<?php echo $this->_category->id ?>" onclick="return confirm('<?php _e('Are you sure you want to delete ' . $this->_category->category_name . '?', 'event_espresso'); ?>')">
+						<?php _e('Delete Category', 'event_espresso'); ?>
+					</a>
+			</div>
+			<div class="hidden-fields">
+				<!-- any hidden fields -->
+				<?php if ( isset ($this->_category->id) ) : ?>
+					<input type="hidden" name="category_id" value="<?php echo $this->_category->id; ?>" />
+				<?php endif; ?>
+			</div>
+			<br/>
+			<?php
+				echo $this->_template_args['save_buttons'];
+			?>
+		</div> <!-- end #submitpost -->
+		<?php
+	}
+
+
+
+
+
+
+	protected function _delete_categories() {
+		$cat_ids = isset( $_REQUEST['EVT_CAT_ID'] ) ? (array) $_REQUEST['EVT_CAT_ID'] : (array) $_REQUEST['category_id'];
+
+		foreach ( $cat_ids as $cat_id ) {
+			$this->_delete_category($cat_id);
+		}
+
+		//doesn't matter what page we're coming from... we're going to the same place after delete.
+		$query_args = array(
+			'action' => 'default'
+			);
+		$this->_redirect_after_action(0,'','',$query_args);
 
 	}
 
@@ -240,9 +493,105 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 
 
-	protected function _delete_categories() {}
-	protected function _delete_category() {}
-	protected function _insert_or_update_category($new) {}
+	protected function _delete_category($cat_id) {
+		global $wpdb;
+		$cat_id = absint( $cat_id );
+		$sql = "DELETE FROM " . EVENTS_CATEGORY_TABLE . " WHERE id='%d'";
+		$wpdb->query( $wpdb->prepare( $sql, $cat_id ) );
+
+		$sql = "DELETE FROM " . EVENTS_CATEGORY_REL_TABLE . " WHERE cat_id='%d'";
+		$wpdb->query( $wpdb->prepare( $sql, $cat_id ) );
+	}
+	
+
+
+
+	protected function _insert_or_update_category($new_category) {
+
+		if ( $new_category ) {
+			$cat_id = $this->_insert_category();
+			$success = 0; //we already have a success message so lets not send another.
+			$query_args = array(
+				'action' => 'edit_category', 
+				'EVT_CAT_ID' => $cat_id
+			);
+		} else {
+			$cat_id = $this->_update_category();
+			$success = 0;
+			$query_args = array(
+				'action' => 'edit_category',
+				'EVT_CAT_ID' => $cat_id
+			);
+		}
+
+		$this->_redirect_after_action( $success, '','', $query_args );
+
+	}
+
+
+
+	private function _insert_category() {
+		global $wpdb, $espresso_wp_user;
+		$cat_id = '';
+		$category_name= esc_html($_REQUEST['category_name']);
+		$category_identifier = ($_REQUEST['category_identifier'] == '') ? $category_identifier = sanitize_title_with_dashes($category_name.'-'.time()) : $category_identifier = sanitize_title_with_dashes($_REQUEST['category_identifier']);
+		$category_desc= esc_html($_REQUEST['category_desc']); 
+		$display_category_desc=$_REQUEST['display_desc'];
+	
+		$sql=array(
+			'category_name'=>$category_name, 
+			'category_identifier'=>$category_identifier, 
+			'category_desc'=>$category_desc, 
+			'display_desc'=>$display_category_desc, 
+			'wp_user'=>$espresso_wp_user
+		);
+		
+		$sql_data = array('%s','%s','%s','%s','%d');
+
+		if ( FALSE === $wpdb->insert ( EVENTS_CATEGORY_TABLE, $sql, $sql_data ) ) {
+			$msg = __( 'An error occured and the category has not been saved to the database.', 'event_espresso', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+		} else {
+			$cat_id = $wpdb->insert_id;
+			$msg = sprintf ( __('The category %s was successfuly created', 'event_espresso'), $category_name );
+			EE_Error::add_success( $msg );
+		}
+		
+		return $cat_id;
+	}
+
+
+
+
+	private function _update_category() {
+		global $wpdb;
+		$category_id= $_REQUEST['category_id'];
+		$category_name= esc_html($_REQUEST['category_name']);
+		$category_identifier = ($_REQUEST['category_identifier'] == '') ? $category_identifier = sanitize_title_with_dashes($category_name.'-'.time()) : $category_identifier = sanitize_title_with_dashes($_REQUEST['category_identifier']);
+		$category_desc= esc_html($_REQUEST['category_desc']); 
+		$display_category_desc=$_REQUEST['display_desc'];
+			
+		$sql=array(
+			'category_name'=>$category_name,
+			'category_identifier'=>$category_identifier,
+			'category_desc'=>$category_desc,
+			'display_desc'=>$display_category_desc
+		); 
+			
+		$update_id = array('id'=> $category_id);
+			
+		$sql_data = array('%s','%s','%s','%s');
+		
+		if ( $wpdb->update( get_option('events_category_detail_tbl'), $sql, $update_id, $sql_data, array( '%d' ) ) ){
+			$msg = sprintf( __('The category %s has been updated.', 'event_espresso'), $category_name );
+			EE_Error::add_success($msg);
+		}else { 
+			$msg = sprintf( __('The category %s has not been updated', 'event_espresso'), $category_name );
+			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__ );
+		}
+
+		return $category_id;
+	}
 
 
 

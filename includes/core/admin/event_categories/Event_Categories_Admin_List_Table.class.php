@@ -135,7 +135,7 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table {
 		$delete_link = wp_nonce_url( add_query_arg( $delete_query_args, EE_CATS_ADMIN_URL ), 'delete_category_nonce' );
 
 		$actions = array(
-			'edit' => '<a href="' . $edit_link . '" title="' . __('View Category', 'event_espresso') . '">' . __('View', 'event_espresso') . '</a>',
+			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Category', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>',
 			'delete' => '<a href="' . $edit_link . '" title="' . __('Delete Category', 'event_espresso') . '">' . __('Delete', 'event_espresso') . '</a>'
 			);
 

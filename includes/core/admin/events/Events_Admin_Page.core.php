@@ -35,10 +35,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * _event
 	 * This will hold the event object for event_details screen.
 	 *
-	 * @access private
+	 * @access protected
 	 * @var object
 	 */
-	private $_event;
+	protected $_event;
 
 
 	public function __construct($wp_page_slug) {
@@ -337,7 +337,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			);
 
 		$hidden_action_field = $this->_generate_admin_form_fields($hidden_action_field_args, 'array');
-		$nonce = $view == 'edit' ? wp_nonce_field('update_event_nonce', '_wpnonce', false, false ) : wp_nonce_field('add_event_nonce', '_wpnonce', false, false ) ;
+		$nonce = $view == 'edit' ? wp_nonce_field('update_event_nonce', '_wpnonce', false, false ) : wp_nonce_field('insert_event_nonce', '_wpnonce', false, false ) ;
 		$this->_template_args['before_admin_page_content'] = '<form name="form" method="post" action="' . $this->_admin_base_url. '" id="' . $view . '_event_form" >';
 		$this->_template_args['before_admin_page_content'] .= "\n\t" . $nonce;
 		$this->_template_args['before_admin_page_content'] .= "\n\t" . $hidden_action_field['action']['field'];
