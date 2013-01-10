@@ -365,9 +365,10 @@ Class EE_Firstdata extends EE_Gateway {
 		<?php
 	}
 
-	public function espresso_reg_page_billing_inputs_aim() {
+	public function espresso_reg_page_billing_inputs_firstdata() {
 
 		$reg_page_billing_inputs = array(
+		
 				'type' => 'onsite',
 				'gateway' => 'Authorize.Net AIM',
 				'reg-page-billing-fname' => array(
@@ -458,18 +459,6 @@ Class EE_Firstdata extends EE_Gateway {
 						'value' => NULL,
 						'format' => '%d'
 				),
-				/* 						'reg-page-billing-card-exp-date' => array(
-				  'db-col' =>'exp-date',
-				  'label' => __( 'Expiry Date', 'event_espresso' ),
-				  'input' =>'text',
-				  'type' =>'string',
-				  'sanitize' => 'mm/yy',
-				  'required' => TRUE,
-				  'validation' => TRUE,
-				  'value' => NULL,
-				  'format' => '%s'
-				  ), */
-
 				'reg-page-billing-card-exp-date-mnth' => array(
 						'db-col' => 'exp-date-mnth',
 						'label' => __('Expiry Date Month', 'event_espresso'),

@@ -449,7 +449,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 						'label' => __('Expiry Date Year', 'event_espresso'),
 						'input' => 'select',
 						'type' => 'int',
-						'sanitize' => 'ccyyyy',
+						'sanitize' => 'ccyy',
 						'required' => TRUE,
 						'validation' => TRUE,
 						'value' => NULL,
