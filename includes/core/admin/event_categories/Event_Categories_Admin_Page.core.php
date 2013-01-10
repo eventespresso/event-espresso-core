@@ -194,6 +194,7 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 		//scripts
 		wp_enqueue_script('ee_admin_js');
+		wp_enqueue_script( 'ee_cats_admin_js', EE_CATS_ADMIN_URL . 'assets/ee-cat-admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 	}
 
 
