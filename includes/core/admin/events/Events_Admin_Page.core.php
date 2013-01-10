@@ -187,13 +187,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _add_screen_options_default() {
-		$this->_add_screen_options_overview();
-	}
-
-
-	protected function _add_screen_options_overview() {
 		$this->_per_page_screen_option();
 	}
+
 
 
 
