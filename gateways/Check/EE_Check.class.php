@@ -39,8 +39,9 @@ Class EE_Check extends EE_Offline_Gateway {
 
 	protected function __construct(EEM_Gateways &$model) {
 		$this->_gateway = 'Check';
-		$this->_button_base = 'check.png';
+		$this->_button_base = 'check-logo.png';
 		$this->_path = str_replace('\\', '/', __FILE__);
+		$this->_btn_img = is_readable( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 	}
 
@@ -60,7 +61,8 @@ Class EE_Check extends EE_Offline_Gateway {
 				'payment_address' => $default_address,
 				'display_name' => 'Check',
 				'type' => 'off-line',
-				'current_path' => ''
+				'current_path' => '',
+				'button_url' => $this->_btn_img
 		);
 	}
 
@@ -70,23 +72,62 @@ Class EE_Check extends EE_Offline_Gateway {
 		$this->_payment_settings['check_instructions'] = strip_tags($_POST['check_instructions'], $allowable_tags);
 		$this->_payment_settings['payable_to'] = strip_tags($_POST['payable_to'], $allowable_tags);
 		$this->_payment_settings['payment_address'] = strip_tags($_POST['payment_address'], $allowable_tags);
+		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';
 	}
 
 	protected function _display_settings() {
 		?>
 		<tr>
-			<td valign="top"><ul><li><label for="check_title"><?php _e('Title:', 'event_espresso'); ?></label><br />
-						<input class="regular-text" type="text" name="check_title" size="30" value="<?php echo stripslashes_deep($this->_payment_settings['check_title']); ?>" />
-					</li>
-					<li><label for="check_instructions"><?php _e('Payment Instructions:', 'event_espresso'); ?></label><br />
-						<textarea name="check_instructions" cols="30" rows="5"><?php echo stripslashes_deep($this->_payment_settings['check_instructions']); ?></textarea>
-					</li></ul></td>
-			<td valign="top"><ul><li><label for="payable_to"><?php _e('Payable To:', 'event_espresso'); ?></label><br />
-						<input class="regular-text" type="text" name="payable_to" size="30" value="<?php echo stripslashes_deep($this->_payment_settings['payable_to']); ?>" />
-					</li>
-					<li><label for="payment_address"><?php _e('Address to Send Payment:', 'event_espresso'); ?></label><br />
-						<textarea name="payment_address" cols="30" rows="5"><?php echo $this->_payment_settings['payment_address']; ?></textarea>
-					</li></ul></td>
+			<th>
+				<label for="check_title">
+					<?php _e('Title:', 'event_espresso'); ?>
+				</label>
+			</th>
+			<td>
+				<input class="regular-text" type="text" name="check_title" size="30" value="<?php echo stripslashes_deep($this->_payment_settings['check_title']); ?>" />
+			</td>
+		</tr>
+		
+		<tr>
+			<th>
+				<label for="check_instructions">
+					<?php _e('Payment Instructions:', 'event_espresso'); ?>
+				</label>
+			</th>
+			<td>
+				<textarea name="check_instructions" cols="50" rows="5"><?php echo stripslashes_deep($this->_payment_settings['check_instructions']); ?></textarea>
+			</td>
+		</tr>
+		
+		<tr>
+			<th>
+				<label for="payable_to"><?php _e('Payable To:', 'event_espresso'); ?></label>
+			</th>
+			<td>
+				<input class="regular-text" type="text" name="payable_to" size="30" value="<?php echo stripslashes_deep($this->_payment_settings['payable_to']); ?>" />
+			</td>
+		</tr>
+		
+		<tr>
+			<th>
+				<label for="payment_address"><?php _e('Address to Send Payment:', 'event_espresso'); ?></label>
+			</th>
+			<td>
+				<textarea name="payment_address" cols="50" rows="5"><?php echo $this->_payment_settings['payment_address']; ?></textarea>
+			</td>
+		</tr>
+		
+		<tr>
+			<th>
+				<label for="<?php echo $this->_gateway; ?>_button_url">
+					<?php _e('Button Image URL', 'event_espresso'); ?>
+				</label>
+			</th>
+			<td>
+				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
+				<input class="regular-text" type="text" name="<?php echo $this->_gateway; ?>_button_url" id="<?php echo $this->_gateway; ?>_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
+				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
+			</td>
 		</tr>
 		<?php
 	}

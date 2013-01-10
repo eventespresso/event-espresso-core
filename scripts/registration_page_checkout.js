@@ -289,7 +289,7 @@
 			msg ='';
 		}
 		$('.reg-page-billing-info-dv').addClass('hidden');
-		$('.reg-page-payment-option-lnk').removeClass('hidden');
+		$('.reg-page-payment-option-dv').removeClass('hidden');
 		//	$('.mer-reg-page-go-to-step-2').on( 'click', function() {
 		$('#mer-reg-page-step-2-dv').css({ 'display' : 'none' }).removeClass('hidden');
 		// set step 2 back to auto height 
@@ -588,7 +588,7 @@
 			$('.event_questions').slideUp(); 
 			$('#mer-reg-page-copy-attendee-dv').slideUp();
 			$('#mer-reg-page-display-event-questions-lnk').removeClass('hidden');
-		} else if ( good_to_go != '' ) {
+		} else if ( good_to_go != '' && good_to_go!==true ) {
 			msg = new Object();
 			msg.error = good_to_go;
 			good_to_go = msg;
@@ -622,16 +622,16 @@
 
 
 
-	$('.reg-page-payment-option-lnk').on( 'click', function() {
+	$('.reg-page-payment-option-dv').on( 'click', function() {
 	
-		var selected_payment_option = $(this);
-		var selected_gateway = $(this).attr('id');
+		var selected_payment_option = $(this).find('.reg-page-payment-option-lnk');
+		var selected_gateway = selected_payment_option.attr('id');
 		$('#reg-page-select-other-gateway-lnk').attr( 'rel', selected_gateway );
 		
 		$('#methods-of-payment').slideUp( 250, function() {
 
-			$('.reg-page-payment-option-lnk').each(function() {
-				if ( $(this).attr('id') != selected_gateway ) {
+			$('.reg-page-payment-option-dv').each(function() {
+				if ( $(this).find('.reg-page-payment-option-lnk').attr('id') != selected_gateway ) {
 					$(this).toggleClass( 'hidden' );
 				}			
 			});		
