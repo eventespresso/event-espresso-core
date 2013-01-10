@@ -50,6 +50,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 	protected function _init_page_props() {
 		$this->page_slug = 'events';
+		$this->page_label = __('Events', 'event_espresso');
 	}
 
 

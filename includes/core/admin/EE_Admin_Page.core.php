@@ -30,6 +30,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	//set in _init_page_props()
 	public $page_slug;
+	public $page_label;
 
 	//set in define_page_props()
 	protected $_admin_base_url;
@@ -469,7 +470,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	private function _set_defaults() {
 		$this->_doing_AJAX = FALSE; //this will be set to true by the called ajax method in our child classes
-		$this->_admin_base_url = $this->_current_screen = $this->_admin_page_title = $this->page_slug = $this->page_label = $this->_req_action = $this->_req_nonce = $this->_event = NULL;
+		$this->_admin_base_url = $this->_current_screen = $this->_admin_page_title = $this->_req_action = $this->_req_nonce = $this->_event = NULL;
 
 		$this->_nav_tabs = $this_views = $this->_page_routes = $this->_page_config = array();
 
@@ -1018,7 +1019,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@access 		protected
 	*		@return 		void
 	*/
-	public function _set_search_attributes( $max_entries = FALSE ) {
+	public function _set_search_attributes() {
 		$this->_template_args['search']['btn_label'] = sprintf( __( 'Search %s', 'event_espresso' ), $this->page_label );
 		$this->_template_args['search']['callback'] = 'search_' . $this->page_slug;
 	}
