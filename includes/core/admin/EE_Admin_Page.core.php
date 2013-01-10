@@ -421,10 +421,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_set_per_page_screen_options();
 
 		//setup list table properties
-		$this->_set_list_table_views();
-		$this->_set_list_table_view();
-		$this->_set_list_table_object();
-
+		$this->_set_list_table();
+		
 		//setup search attributes
 		$this->_set_search_attributes();
 
@@ -867,27 +865,37 @@ abstract class EE_Admin_Page extends EE_BASE {
 	/************************/
 
 
+
+
+
 	/**
-	 * 		set views array for List Table
-	*		@access public
-	*		@return void
-	*/
-	protected function _set_list_table_views() {
-		$this->_views = array(			
-			'in_use' => array(
-					'slug' => 'in_use',
-					'label' => 'In Use',
-					'count' => 0,
-					'bulk_action' => array()
-			),
-			'trashed' => array(
-					'slug' => 'trashed',
-					'label' => 'Trash',
-					'count' => 0,
-					'bulk_action' => array()
-			)
-		);		
+	 * this sets up the list table if the current view requires it.
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function _set_list_table() {
+		//first is this a list_table view?
+		
+		if ( !isset($this->_route_config['list_table']) )
+			return; //not a list_table view so get out.
+
+		//list table functions are per view specific (because some admin pages might have more than one listtable!)
+		
+		if ( call_user_func( array( $this, '_set_list_table_views_' . $this->_req_action ) ) === FALSE ) {
+			//user error msg
+			$error_msg = __('An error occured. The requested list table views could not be found.', 'event_espresso' );
+			//developer error msg
+			$error_msg .= '||' . sprintf( __('List table views for "%s" route could not be setup. Check that you have the corresponding method, "%s" set up for defining list_table_views for this route.', 'event_espresso' ), $this->_req_action, '_set_list_table_views_' . $this->_req_action );
+			throw new EE_Error( $error_msg );
+		}
+
+		$this->_set_list_table_view();
+		$this->_set_list_table_object();
+
 	}
+
+
 
 
 

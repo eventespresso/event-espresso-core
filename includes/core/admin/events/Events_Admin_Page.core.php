@@ -250,7 +250,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 
-	protected function _set_list_table_views() {
+	protected function _set_list_table_views_default() {
 		$this->_views = array(
 			'all' => array(
 				'slug' => 'all',
