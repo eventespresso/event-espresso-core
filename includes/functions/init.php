@@ -249,12 +249,15 @@ function espresso_admin_init() {
 						|| !in_array($org_options['cancel_return'], $page_ids)) {
 			espresso_create_default_pages();
 		}
-		$ee_pages = array($org_options['event_page_id'] => array(get_page($org_options['event_page_id']), '[ESPRESSO_EVENTS]'),
+		$ee_pages = array(
+				$org_options['event_page_id'] => array(get_page($org_options['event_page_id']), '[ESPRESSO_EVENTS]'),
 				$org_options['return_url'] => array(get_page($org_options['return_url']), '[ESPRESSO_PAYMENTS]'),
 				$org_options['notify_url'] => array(get_page($org_options['notify_url']), '[ESPRESSO_TXN_PAGE]'),
-				$org_options['cancel_return'] => array(get_page($org_options['cancel_return']), 'ESPRESSO_CANCELLED'));
+				$org_options['cancel_return'] => array(get_page($org_options['cancel_return']), 'ESPRESSO_CANCELLED')
+			);
+
 		foreach ($ee_pages as $ee_page) {
-			if ($ee_page[0]->post_status != 'publish' or strpos($ee_page[0]->post_content, $ee_page[1]) === false) {
+			if ( ! isset($ee_page[0]->post_status) || $ee_page[0]->post_status != 'publish' || strpos( $ee_page[0]->post_content, $ee_page[1] ) === false) {
 				add_action('admin_notices', 'espresso_page_problems');
 			}
 		}

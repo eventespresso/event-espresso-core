@@ -7,8 +7,14 @@
  * 		@ return void
  */
 function organization_config_mnu() {
+
 	global $wpdb, $notices, $org_options, $espresso_premium, $espresso_wp_user;
-	if (!empty($_GET['anchor']) and $_GET['anchor'] == 'page_settings') {
+	
+	if ( ! isset( $org_options['event_page_id'] ) || ! isset( $org_options['return_url'] ) || ! isset( $org_options['cancel_return'] ) || ! isset( $org_options['notify_url'] )) {
+		espresso_create_default_pages();
+	}
+	
+	if ( ! empty( $_GET['anchor'] ) and $_GET['anchor'] == 'page_settings' ) {
 		if ($closed_post_boxes = get_user_meta($espresso_wp_user, 'closedpostboxes_event-espresso_page_event_espresso', true)
 						and $key = array_search('espresso_page_settings', $closed_post_boxes)) {
 			unset($closed_post_boxes[$key]);
@@ -311,17 +317,34 @@ function espresso_org_settings_meta_box() {
 
 function espresso_page_settings_meta_box() {
 	global $org_options;
-	$ee_pages = array($org_options['event_page_id'] => array(get_page($org_options['event_page_id']), '[ESPRESSO_EVENTS]'),
+
+	if ( 
+		empty( $org_options['event_page_id'] )
+		|| empty($org_options['return_url'])
+		|| empty($org_options['notify_url'])
+		|| empty($org_options['cancel_return'])
+	) {
+		espresso_create_default_pages();
+	}
+	
+	$ee_pages = array(
+			$org_options['event_page_id'] => array(get_page($org_options['event_page_id']), '[ESPRESSO_EVENTS]'),
 			$org_options['return_url'] => array(get_page($org_options['return_url']), '[ESPRESSO_PAYMENTS]'),
 			$org_options['notify_url'] => array(get_page($org_options['notify_url']), '[ESPRESSO_TXN_PAGE]'),
-			$org_options['cancel_return'] => array(get_page($org_options['cancel_return']), 'ESPRESSO_CANCELLED'));
+			$org_options['cancel_return'] => array(get_page($org_options['cancel_return']), 'ESPRESSO_CANCELLED')
+		);
+
+	//printr( $org_options, '$org_options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		
 	?>
-	<div class="padding"> <a name="page_settings" id="page_settings"></a>
-		<p>
-			<?php _e('The following shortcodes and page settings are required for Event Espresso to function properly. These shortcodes should not be replaced with any other shortcodes. Please view <a href="admin.php?page=support#shortcodes">this page</a> for a list of optional shortcodes.', 'event_espresso'); ?>
-		</p>
-		<table class="form-table">
-			<tbody>
+<div class="padding"> <a name="page_settings" id="page_settings"></a>
+	<p>
+		<?php _e('The following shortcodes and page settings are required for Event Espresso to function properly. These shortcodes should not be replaced with any other shortcodes. Please view <a href="admin.php?page=support#shortcodes">this page</a> for a list of optional shortcodes.', 'event_espresso'); ?>
+	</p>
+		
+	<table class="form-table">
+		<tbody>
+			
 				<?php
 				//Check to see if we are using the deprecated SSL option. If we are, recommend updating to WordPress HTTPS (SSL).
 				if (isset($org_options['event_ssl_active'])) {
@@ -334,180 +357,205 @@ function espresso_page_settings_meta_box() {
 						<?php _e('Turn off this message?', 'event_espresso'); ?>
 					</label>
 					<br />
-					<?php
-					echo select_input('event_ssl_active', $values, empty($org_options['event_ssl_active']) ? false : $org_options['event_ssl_active']);
-					echo '</div></td></tr>';
+			<?php
+						echo select_input('event_ssl_active', $values, empty($org_options['event_ssl_active']) ? false : $org_options['event_ssl_active']);
+						echo '</div></td></tr>';
+					}
 				}
-			}
 			?>
+		
 			<tr>
-				<th><label for="event_page_id">
-						<?php _e('Main registration page', 'event_espresso'); ?>
+				<th>
+					<label for="event_page_id">
+						<b><?php _e('Event Registration page', 'event_espresso'); ?></b>
 						<?php echo apply_filters('filter_hook_espresso_help', 'registration_page_info'); ?><br />
 						<a href="<?php echo home_url(); ?>/wp-admin/post.php?post=<?php echo $org_options['event_page_id']; ?>&action=edit" >
 							<?php _e('Edit', 'event_espresso'); ?>
 						</a> | <a href="<?php echo home_url(); ?>/?page_id=<?php echo $org_options['event_page_id']; ?>" >
 							<?php _e('View', 'event_espresso'); ?>
-						</a> </label>
-			<p>
-				<?php if ($ee_pages[$org_options['event_page_id']][0]->post_status != 'publish') { ?>
-					<span style="color:red">
-						<?php _e('Not Published', 'event_espresso'); ?>
-					</span>
-				<?php } else { ?>
-					<span style="color:green">
-						<?php _e('Published', 'event_espresso'); ?>
-					</span>
-				<?php } ?>
-			</p>
-			<p>
-				<?php if (strpos($ee_pages[$org_options['event_page_id']][0]->post_content, $ee_pages[$org_options['event_page_id']][1]) === false) { ?>
-					<span style="color:red">
-						<?php _e('Shortcode Problem', 'event_espresso'); ?>
-					</span>
-				<?php } else { ?>
-					<span style="color:green">
-						<?php _e('Shortcode OK', 'event_espresso'); ?>
-					</span>
-				<?php } ?>
-			</p>
-			</th>
-			<td><select name="event_page_id" data-placeholder="Choose a page..." class="chzn-select wide">
-					<option value="0">
-						<?php _e('Main page', 'event_espresso'); ?>
-					</option>
-					<?php parent_dropdown($default = $org_options['event_page_id']); ?>
-				</select>
-				<br />
-				<span class="description"><?php echo sprintf(__("This page can be hidden from navigation if desired, <br />but should always contain the %s shortcode.", 'event_espresso'), '<span class="highlight">[ESPRESSO_EVENTS]</span>'); ?></span></td>
+						</a> 
+					</label>
+					<p>
+						<?php if ( $ee_pages[$org_options['event_page_id']][0]->post_status != 'publish') { ?>
+							<span style="color:red">
+								<?php _e('Not Published', 'event_espresso'); ?>
+							</span>
+						<?php } else { ?>
+							<span style="color:green">
+								<?php _e('Published', 'event_espresso'); ?>
+							</span>
+						<?php } ?>
+					</p>
+					<p>
+						<?php if ( strpos( $ee_pages[$org_options['event_page_id']][0]->post_content, $ee_pages[$org_options['event_page_id']][1] ) === false ) { ?>
+							<span style="color:red">
+								<?php _e('Shortcode Problem', 'event_espresso'); ?>
+							</span>
+						<?php } else { ?>
+							<span style="color:green">
+								<?php _e('Shortcode OK', 'event_espresso'); ?>
+							</span>
+						<?php } ?>
+					</p>
+				</th>
+				<td>
+					<select name="event_page_id" data-placeholder="Choose a page..." class="chzn-select wide">
+						<option value="0">
+							<?php _e('Main page', 'event_espresso'); ?>
+						</option>
+						<?php espresso_parent_dropdown( $org_options['event_page_id'] ); ?>
+					</select>
+					<br />
+					<span class="description"><?php echo sprintf(__("This page can be hidden from navigation if desired, <br />but should always contain the %s shortcode.", 'event_espresso'), '<span class="highlight">[ESPRESSO_EVENTS]</span>'); ?></span>
+				</td>
 			</tr>
+		
 			<tr>
-				<th><label for="return_url">
-						<?php _e('Auto Return URL', 'event_espresso'); ?>
+				<th>
+					<label for="return_url">
+						<b><?php _e('Thank You page', 'event_espresso'); ?></b>
 						<?php echo apply_filters('filter_hook_espresso_help', 'return_url_info'); ?><br />
 						<a href="<?php echo home_url(); ?>/wp-admin/post.php?post=<?php echo $org_options['return_url']; ?>&action=edit" >
 							<?php _e('Edit', 'event_espresso'); ?>
 						</a> | <a href="<?php echo home_url(); ?>/?page_id=<?php echo $org_options['return_url']; ?>" >
 							<?php _e('View', 'event_espresso'); ?>
-						</a> </label>
-			<p>
-				<?php if ($ee_pages[$org_options['return_url']][0]->post_status != 'publish') { ?>
-					<span style="color:red">
-						<?php _e('Not Published', 'event_espresso'); ?>
-					</span>
-				<?php } else { ?>
-					<span style="color:green">
-						<?php _e('Published', 'event_espresso'); ?>
-					</span>
-				<?php } ?>
-			</p>
-			<p>
-				<?php if (strpos($ee_pages[$org_options['return_url']][0]->post_content, $ee_pages[$org_options['return_url']][1]) === false) { ?>
-					<span style="color:red">
-						<?php _e('Shortcode Problem', 'event_espresso'); ?>
-					</span>
-				<?php } else { ?>
-					<span style="color:green">
-						<?php _e('Shortcode OK', 'event_espresso'); ?>
-					</span>
-				<?php } ?>
-			</p></th>
-			<td><select name="return_url" data-placeholder="Choose a page..." class="chzn-select wide">
-					<option value="0">
-						<?php _e('Main page', 'event_espresso'); ?>
-					</option>
-					<?php parent_dropdown($default = $org_options['return_url']); ?>
-				</select>
-				<br />
-				<span class="description"><?php echo sprintf(__("This page should hidden from your navigation,<br />but still viewable to the public (not password protected),<br />
-and should always contain the %s shortcode.", 'event_espresso'), '<span class="highlight">[ESPRESSO_PAYMENTS]</span>'); ?> </span></td>
+						</a> 
+					</label>
+					<p>
+						<?php if ($ee_pages[$org_options['return_url']][0]->post_status != 'publish') { ?>
+							<span style="color:red">
+								<?php _e('Not Published', 'event_espresso'); ?>
+							</span>
+						<?php } else { ?>
+							<span style="color:green">
+								<?php _e('Published', 'event_espresso'); ?>
+							</span>
+						<?php } ?>
+					</p>
+					<p>
+						<?php if (strpos($ee_pages[$org_options['return_url']][0]->post_content, $ee_pages[$org_options['return_url']][1]) === false) { ?>
+							<span style="color:red">
+								<?php _e('Shortcode Problem', 'event_espresso'); ?>
+							</span>
+						<?php } else { ?>
+							<span style="color:green">
+								<?php _e('Shortcode OK', 'event_espresso'); ?>
+							</span>
+						<?php } ?>
+					</p>
+				</th>
+				<td>
+					<select name="return_url" data-placeholder="Choose a page..." class="chzn-select wide">
+						<option value="0">
+							<?php _e('Main page', 'event_espresso'); ?>
+						</option>
+						<?php espresso_parent_dropdown( $org_options['return_url'] ); ?>
+					</select>
+					<br />
+					<span class="description"><?php echo sprintf(__("This page should hidden from your navigation,<br />but still viewable to the public (not password protected),<br />
+	and should always contain the %s shortcode.", 'event_espresso'), '<span class="highlight">[ESPRESSO_PAYMENTS]</span>'); ?> </span>
+				</td>
 			</tr>
+		
 			<tr>
-				<th><label for="notify_url">
-						<?php _e('Payment Notification URL', 'event_espresso'); ?>
+				<th>
+					<label for="notify_url">
+						<b><?php _e('Transactions page', 'event_espresso'); ?></b>
 						<?php echo apply_filters('filter_hook_espresso_help', 'notify_url_info'); ?><br />
 						<a href="<?php echo home_url(); ?>/wp-admin/post.php?post=<?php echo $org_options['notify_url']; ?>&action=edit" >
 							<?php _e('Edit', 'event_espresso'); ?>
 						</a> | <a href="<?php echo home_url(); ?>/?page_id=<?php echo $org_options['notify_url']; ?>" >
 							<?php _e('View', 'event_espresso'); ?>
-						</a> </label>
-			<p>
-				<?php if ($ee_pages[$org_options['notify_url']][0]->post_status != 'publish') { ?>
-					<span style="color:red">
-						<?php _e('Not Published', 'event_espresso'); ?>
-					</span>
-				<?php } else { ?>
-					<span style="color:green">
-						<?php _e('Published', 'event_espresso'); ?>
-					</span>
-				<?php } ?>
-			</p>
-			<p>
-				<?php if (strpos($ee_pages[$org_options['notify_url']][0]->post_content, $ee_pages[$org_options['notify_url']][1]) === false) { ?>
-					<span style="color:red">
-						<?php _e('Shortcode Problem', 'event_espresso'); ?>
-					</span>
-				<?php } else { ?>
-					<span style="color:green">
-						<?php _e('Shortcode OK', 'event_espresso'); ?>
-					</span>
-				<?php } ?>
-			</p></th>
-			<td><select name="notify_url" data-placeholder="Choose a page..." class="chzn-select wide">
-					<option value="0">
-						<?php _e('Main page', 'event_espresso'); ?>
-					</option>
-					<?php parent_dropdown($default = $org_options['notify_url']); ?>
-				</select>
-				<br />
-				<span class="description"><?php echo sprintf(__("This page should hidden from your navigation, <br />but still viewable to the public (not password protected),<br /> and should always contain the %s shortcode.", 'event_espresso'), '<span class="highlight">[ESPRESSO_TXN_PAGE]</span>'); ?></span></td>
+						</a>
+					</label>
+					<p>
+						<?php if ($ee_pages[$org_options['notify_url']][0]->post_status != 'publish') { ?>
+							<span style="color:red">
+								<?php _e('Not Published', 'event_espresso'); ?>
+							</span>
+						<?php } else { ?>
+							<span style="color:green">
+								<?php _e('Published', 'event_espresso'); ?>
+							</span>
+						<?php } ?>
+					</p>
+					<p>
+						<?php if (strpos($ee_pages[$org_options['notify_url']][0]->post_content, $ee_pages[$org_options['notify_url']][1]) === false) { ?>
+							<span style="color:red">
+								<?php _e('Shortcode Problem', 'event_espresso'); ?>
+							</span>
+						<?php } else { ?>
+							<span style="color:green">
+								<?php _e('Shortcode OK', 'event_espresso'); ?>
+							</span>
+						<?php } ?>
+					</p>
+				</th>				
+				<td>
+					<select name="notify_url" data-placeholder="Choose a page..." class="chzn-select wide">
+						<option value="0">
+							<?php _e('Main page', 'event_espresso'); ?>
+						</option>
+						<?php espresso_parent_dropdown( $org_options['notify_url'] ); ?>
+					</select>
+					<br />
+					<span class="description"><?php echo sprintf(__("This page should hidden from your navigation, <br />but still viewable to the public (not password protected),<br /> and should always contain the %s shortcode.", 'event_espresso'), '<span class="highlight">[ESPRESSO_TXN_PAGE]</span>'); ?></span>
+				</td>
 			</tr>
+			
 			<tr>
-				<th><label for="cancel_return">
-						<?php _e('Cancel Return URL', 'event_espresso'); ?>
+				<th>
+					<label for="cancel_return">
+						<b><?php _e('Registration Cancelled page', 'event_espresso'); ?></b>
 						<?php echo apply_filters('filter_hook_espresso_help', 'cancel_return_info'); ?><br />
 						<a href="<?php echo home_url(); ?>/wp-admin/post.php?post=<?php echo $org_options['cancel_return']; ?>&action=edit" >
 							<?php _e('Edit', 'event_espresso'); ?>
 						</a> | <a href="<?php echo home_url(); ?>/?page_id=<?php echo $org_options['cancel_return']; ?>" >
 							<?php _e('View', 'event_espresso'); ?>
-						</a> </label>
-			<p>
-				<?php if ($ee_pages[$org_options['cancel_return']][0]->post_status != 'publish') { ?>
-					<span style="color:red">
-						<?php _e('Not Published', 'event_espresso'); ?>
-					</span>
-				<?php } else { ?>
-					<span style="color:green">
-						<?php _e('Published', 'event_espresso'); ?>
-					</span>
-				<?php } ?>
-			</p>
-			<p>
-				<?php if (strpos($ee_pages[$org_options['cancel_return']][0]->post_content, $ee_pages[$org_options['cancel_return']][1]) === false) { ?>
-					<span style="color:red">
-						<?php _e('Shortcode Problem', 'event_espresso'); ?>
-					</span>
-				<?php } else { ?>
-					<span style="color:green">
-						<?php _e('Shortcode OK', 'event_espresso'); ?>
-					</span>
-				<?php } ?>
-			</p></th>
-			<td><select name="cancel_return" data-placeholder="Choose a page..." class="chzn-select wide">
-					<option value="0">
-						<?php _e('Main page', 'event_espresso'); ?>
-					</option>
-					<?php parent_dropdown($default = $org_options['cancel_return']); ?>
-				</select>
-				<br />
-				<span class="description"> <?php echo sprintf(__("This should be a page on your website that contains a cancelled message %s and the %s shortcode. This page should hidden %s from your navigation, but still viewable to the public (not password protected.)", 'event_espresso'), '<br />', '<span class="highlight">[ESPRESSO_CANCELLED]</span>', '<br />'); ?> </span></td>
+						</a> 
+					</label>
+					<p>
+						<?php if ($ee_pages[$org_options['cancel_return']][0]->post_status != 'publish') { ?>
+							<span style="color:red">
+								<?php _e('Not Published', 'event_espresso'); ?>
+							</span>
+						<?php } else { ?>
+							<span style="color:green">
+								<?php _e('Published', 'event_espresso'); ?>
+							</span>
+						<?php } ?>
+					</p>
+					<p>
+						<?php if (strpos($ee_pages[$org_options['cancel_return']][0]->post_content, $ee_pages[$org_options['cancel_return']][1]) === false) { ?>
+							<span style="color:red">
+								<?php _e('Shortcode Problem', 'event_espresso'); ?>
+							</span>
+						<?php } else { ?>
+							<span style="color:green">
+								<?php _e('Shortcode OK', 'event_espresso'); ?>
+							</span>
+						<?php } ?>
+					</p>
+				</th>
+				<td>
+					<select name="cancel_return" data-placeholder="Choose a page..." class="chzn-select wide">
+						<option value="0">
+							<?php _e('Main page', 'event_espresso'); ?>
+						</option>
+						<?php espresso_parent_dropdown( $org_options['cancel_return'] ); ?>
+					</select>
+					<br />
+					<span class="description"> <?php echo sprintf(__("This should be a page on your website that contains a cancelled message %s and the %s shortcode. This page should hidden %s from your navigation, but still viewable to the public (not password protected.)", 'event_espresso'), '<br />', '<span class="highlight">[ESPRESSO_CANCELLED]</span>', '<br />'); ?> </span>
+				</td>
 			</tr>
+			
 			<tr valign="top">
 				<th scope="row"><?php _e('Pretty Permalinks', 'event_espresso'); ?></th>
-				<td><fieldset>
-						<legend class="screen-reader-text"><span>
-								<?php _e('Pretty Permalinks', 'event_espresso'); ?>
-							</span></legend>
+				<td>
+					<fieldset>
+						<legend class="screen-reader-text">
+							<span><?php _e('Pretty Permalinks', 'event_espresso'); ?></span>
+						</legend>
 						<label>
 							<?php
 							if (isset($org_options['espresso_url_rewrite_activated'])) {
@@ -536,15 +584,18 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 								</span> 
 							</span> 
 						</label>
-					</fieldset></td>
+					</fieldset>
+				</td>
 			</tr>
-			</tbody>
-
-		</table>
-		<p>
-			<input class="button-primary" type="submit" name="Submit_2" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_2" />
-		</p>
-	</div>
+			
+		</tbody>
+	</table>
+		
+	<p>
+		<input class="button-primary" type="submit" name="Submit_2" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_2" />
+	</p>
+		
+</div>
 	<?php
 }
 
@@ -645,3 +696,33 @@ function espresso_free_optional_settings_meta_box() {
 	<?php
 }
 
+
+/**
+ * {@internal Missing Short Description}}
+ *
+ * @since 1.5.0
+ *
+ * @param unknown_type $default
+ * @param unknown_type $parent
+ * @param unknown_type $level
+ * @return unknown
+ */
+function espresso_parent_dropdown( $default = 0, $parent = 0, $level = 0 ) {
+	global $wpdb;
+	$items = $wpdb->get_results( $wpdb->prepare("SELECT ID, post_parent, post_title FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'page' AND post_status != 'trash' ORDER BY menu_order", $parent) );
+
+	if ( $items ) {
+		foreach ( $items as $item ) {
+			$pad = str_repeat( '&nbsp;', $level * 3 );
+			if ( $item->ID == $default)
+				$current = ' selected="selected"';
+			else
+				$current = '';
+
+			echo "\n\t<option class='level-$level' value='$item->ID'$current>$pad " . esc_html($item->post_title) . "</option>";
+			parent_dropdown( $default, $item->ID, $level +1 );
+		}
+	} else {
+		return false;
+	}
+}

@@ -619,18 +619,35 @@ function event_espresso_verify_attendee_data() {
 
 //This function installs the required pages
 function espresso_create_default_pages() {
+
+	//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	global $wpdb, $org_options, $espresso_wp_user;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	$default_pages = array('Event Registration', 'Thank You', 'Registration Cancelled', 'Transactions');
+	
+	$required_pages = array( 
+			'event_page_id' 	=> 'Event Registration', 
+			'return_url' 			=> 'Thank You', 
+			'cancel_return'	=> 'Registration Cancelled', 
+			'notify_url'			=> 'Transactions' 
+		);
+				
 	$existing_pages = get_pages();
-	$temp = array();
-	foreach ($existing_pages as $page) {
-		$temp[] = $page->post_title;
+	foreach ( $existing_pages as $page ) {
+		// does page already exist ?
+		if ( in_array( $page->post_title, $required_pages )) {
+			//make sure it's ID is set properlly, but first we'll need the right org_option key
+			$key = array_search( $page->post_title, $required_pages );
+			$org_options[ $key ] = $page->ID;
+			// now remove it from required pages list since we already have it
+			unset( $required_pages[ $page->post_title ] );
+		} 
 	}
-	$pages_to_create = array_diff($default_pages, $temp);
+	
+	//printr( $required_pages, '$required_pages  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+	
 	$updated_flag = false;
 	$page_ids = get_all_page_ids();
-	foreach ($pages_to_create as $new_page_title) {
+	foreach ( $required_pages as $new_page_title ) {
 
 		// Create post object
 		$my_post = array();
@@ -642,37 +659,37 @@ function espresso_create_default_pages() {
 		// Insert the post into the database
 		//$result = wp_insert_post( $my_post );
 
-		switch ($new_page_title) {
+		switch ( $new_page_title ) {
+		
 			case 'Event Registration':
-				if (empty($org_options['event_page_id'])
-								|| !in_array($org_options['event_page_id'], $page_ids)) {
+				if ( empty( $org_options['event_page_id'] ) || ! in_array( $org_options['event_page_id'], $page_ids )) {
 					$my_post['post_content'] = '[ESPRESSO_EVENTS]';
 					$event_page_id = wp_insert_post($my_post);
 					$org_options['event_page_id'] = $event_page_id;
 					$updated_flag = true;
 				}
 				break;
+				
 			case 'Thank You':
-				if (empty($org_options['return_url'])
-								|| !in_array($org_options['return_url'], $page_ids)) {
+				if ( empty( $org_options['return_url'] ) || ! in_array( $org_options['return_url'], $page_ids )) {
 					$my_post['post_content'] = '[ESPRESSO_PAYMENTS]';
 					$return_url = wp_insert_post($my_post);
 					$org_options['return_url'] = $return_url;
 					$updated_flag = true;
 				}
 				break;
+				
 			case 'Registration Cancelled':
-				if (empty($org_options['cancel_return'])
-								|| !in_array($org_options['cancel_return'], $page_ids)) {
+				if ( empty( $org_options['cancel_return'] ) || ! in_array( $org_options['cancel_return'], $page_ids )) {
 					$my_post['post_content'] = 'You have cancelled your registration.<br />[ESPRESSO_CANCELLED]';
 					$cancel_return = wp_insert_post($my_post);
 					$org_options['cancel_return'] = $cancel_return;
 					$updated_flag = true;
 				}
 				break;
+				
 			case 'Transactions':
-				if (empty($org_options['notify_url'])
-								|| !in_array($org_options['notify_url'], $page_ids)) {
+				if ( empty( $org_options['notify_url'] ) || ! in_array( $org_options['notify_url'], $page_ids )) {
 					$my_post['post_content'] = '[ESPRESSO_TXN_PAGE]';
 					$notify_url = wp_insert_post($my_post);
 					$org_options['notify_url'] = $notify_url;
@@ -681,8 +698,8 @@ function espresso_create_default_pages() {
 				break;
 		}
 	}
-	update_user_meta($espresso_wp_user, 'events_organization_settings', $org_options);
-	if ($updated_flag)
+	update_user_meta( $espresso_wp_user, 'events_organization_settings', $org_options );
+	if ( $updated_flag )
 		add_action('admin_notices', 'espresso_updated_pages');
 }
 
