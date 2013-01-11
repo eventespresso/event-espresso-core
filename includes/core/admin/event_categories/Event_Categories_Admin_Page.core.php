@@ -140,14 +140,14 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 					'label' => __('Add Category', 'event_espresso'),
 					'order' => 5,
 					'persistent' => false),
-				'metaboxes' => array('_editor_metaboxes'),
+				'metaboxes' => array('_publish_post_box')
 				),
 			'edit_category' => array(
 				'nav' => array(
 					'label' => __('Edit Category', 'event_espresso'),
 					'order' => 5,
 					'persistent' => FALSE),
-				'metaboxes' => array('_editor_metaboxes')
+				'metaboxes' => array('_publish_post_box')
 				),
 			'import_categories' => array(
 				'nav' => array(
@@ -251,16 +251,13 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 		//load field generator helper
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
 
-		$hidden_action_field_args['action'] = array(
-			'type' => 'hidden',
-			'value' => $view == 'edit' ? 'update_category' : 'insert_category'
-		);
-		$hidden_action_field = $this->_generate_admin_form_fields($hidden_action_field_args, 'array');
-		$nonce = $view == 'edit' ? wp_nonce_field('update_category_nonce', '_wpnonce', false, false ) : wp_nonce_field('insert_category_nonce', '_wpnonce', false, false );
-		$this->_template_args['before_admin_page_content'] = '<form name="form" method="post" action="' . $this->_admin_base_url . '" id=' . $view . '_event_category_form" >';
-		$this->_template_args['before_admin_page_content'] .= "\n\t" . $nonce;
-		$this->_template_args['before_admin_page_content'] .= "\n\t" . $hidden_action_field['action']['field'];
-		$this->_template_args['after_admin_page_content'] = '</form>';
+		$route = $view == 'edit' ? 'update_category' : 'insert_category';
+		$this->_set_add_edit_form_tags($route);
+
+		$this->_set_category_object();
+		$id = isset($this->_category->id) ? $this->_category->id : '';
+
+		$this->_set_publish_post_box_vars( 'delete_category', 'category_id', $id );
 
 		//take care of contents
 		$this->_template_args['admin_page_content'] = $view == 'edit' ? $this->_edit_category_content() : $this->_add_category_content();
@@ -409,12 +406,12 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 	private function _set_category_object() {
 		global $wpdb;
 		//only set if we've got an id
-		if ( !isset($_REQUEST['EVT_CAT_ID'] ) ) {
+		if ( !isset($this->_req_data['EVT_CAT_ID'] ) ) {
 			$this->_category = null;
 			return;
 		}
 
-		$category_id = absint($_REQUEST['EVT_CAT_ID']);
+		$category_id = absint($this->_req_data['EVT_CAT_ID']);
 		$sql = "SELECT * FROM " . EVENTS_CATEGORY_TABLE . " c WHERE c.id = %d";
 		$this->_category = $wpdb->get_row( $wpdb->prepare( $sql, $category_id), OBJECT );
 
@@ -427,53 +424,9 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 
 
-	/** METABOXES **/
-	/***************/
-
-
-	protected function _editor_metaboxes() {
-
-		$this->_set_category_object();
-
-		$this->_set_save_buttons(TRUE, array(), array(), EE_CATS_ADMIN_URL);
-
-		add_meta_box('espresso_event_category_editor_overview', __('Publish', 'event_espresso'), array( $this, 'editor_overview' ), $this->_current_screen->id, 'side', 'high');
-	}
-
-
-
-
-
-
-	public function editor_overview() {
-		?>
-		<div class="submitbox" id="submitpost">
-			<div id="delete-action">
-					<a class="submitdelete deletion" href="admin.php?page=event_categories&amp;action=delete_category&category_id=<?php echo $this->_category->id ?>" onclick="return confirm('<?php _e('Are you sure you want to delete ' . $this->_category->category_name . '?', 'event_espresso'); ?>')">
-						<?php _e('Delete Category', 'event_espresso'); ?>
-					</a>
-			</div>
-			<div class="hidden-fields">
-				<!-- any hidden fields -->
-				<?php if ( isset ($this->_category->id) ) : ?>
-					<input type="hidden" name="category_id" value="<?php echo $this->_category->id; ?>" />
-				<?php endif; ?>
-			</div>
-			<br/>
-			<?php
-				echo $this->_template_args['save_buttons'];
-			?>
-		</div> <!-- end #submitpost -->
-		<?php
-	}
-
-
-
-
-
 
 	protected function _delete_categories() {
-		$cat_ids = isset( $_REQUEST['EVT_CAT_ID'] ) ? (array) $_REQUEST['EVT_CAT_ID'] : (array) $_REQUEST['category_id'];
+		$cat_ids = isset( $this->_req_data['EVT_CAT_ID'] ) ? (array) $this->_req_data['EVT_CAT_ID'] : (array) $this->_req_data['category_id'];
 
 		foreach ( $cat_ids as $cat_id ) {
 			$this->_delete_category($cat_id);
@@ -531,10 +484,10 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 	private function _insert_category() {
 		global $wpdb, $espresso_wp_user;
 		$cat_id = '';
-		$category_name= esc_html($_REQUEST['category_name']);
-		$category_identifier = ($_REQUEST['category_identifier'] == '') ? $category_identifier = sanitize_title_with_dashes($category_name.'-'.time()) : $category_identifier = sanitize_title_with_dashes($_REQUEST['category_identifier']);
-		$category_desc= esc_html($_REQUEST['category_desc']); 
-		$display_category_desc=$_REQUEST['display_desc'];
+		$category_name= esc_html($this->_req_data['category_name']);
+		$category_identifier = ($this->_req_data['category_identifier'] == '') ? $category_identifier = sanitize_title_with_dashes($category_name.'-'.time()) : $category_identifier = sanitize_title_with_dashes($this->_req_data['category_identifier']);
+		$category_desc= esc_html($this->_req_data['category_desc']); 
+		$display_category_desc=$this->_req_data['display_desc'];
 	
 		$sql=array(
 			'category_name'=>$category_name, 
@@ -563,11 +516,11 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 	private function _update_category() {
 		global $wpdb;
-		$category_id= $_REQUEST['category_id'];
-		$category_name= esc_html($_REQUEST['category_name']);
-		$category_identifier = ($_REQUEST['category_identifier'] == '') ? $category_identifier = sanitize_title_with_dashes($category_name.'-'.time()) : $category_identifier = sanitize_title_with_dashes($_REQUEST['category_identifier']);
-		$category_desc= esc_html($_REQUEST['category_desc']); 
-		$display_category_desc=$_REQUEST['display_desc'];
+		$category_id= $this->_req_data['category_id'];
+		$category_name= esc_html($this->_req_data['category_name']);
+		$category_identifier = ($this->_req_data['category_identifier'] == '') ? $category_identifier = sanitize_title_with_dashes($category_name.'-'.time()) : $category_identifier = sanitize_title_with_dashes($this->_req_data['category_identifier']);
+		$category_desc= esc_html($this->_req_data['category_desc']); 
+		$display_category_desc=$this->_req_data['display_desc'];
 			
 		$sql=array(
 			'category_name'=>$category_name,
@@ -601,10 +554,10 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 		$new_request_args = array(
 			'export' => 'report',
 			'action' => 'categories',
-			'category_ids' => $_REQUEST['EVT_CAT_ID']
+			'category_ids' => $this->_req_data['EVT_CAT_ID']
 			);
 
-		$_REQUEST = array_merge( $_REQUEST, $new_request_args );
+		$this->_req_data = array_merge( $this->_req_data, $new_request_args );
 
 		if ( file_exists( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php') ) {
 			require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
@@ -622,7 +575,7 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 		//first check if we've got an incoming import
 		//first check if we've got an incoming import
-		if (isset($_REQUEST['import'])) {
+		if (isset($this->_req_data['import'])) {
 			if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php')) {
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php');
 				$EE_Import = EE_Import::instance();
@@ -652,8 +605,8 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 		$offset = ($current_page-1)*$per_page; 
 		$limit = apply_filters('filter_hook_espresso_category_list_limit', $count ? '' : ' LIMIT ' . $offset . ',' . $per_page, $offset, $per_page);
-		$orderby = apply_filters( 'filter_hook_espresso_category_list_orderby', isset($_REQUEST['orderby']) ? " ORDER BY " . $_REQUEST['orderby'] : " ORDER BY c.category_name", $_REQUEST );
-		$order = apply_filters( 'filter_hook_espresso_category_list_order', isset($_REQUEST['order']) ? " " . $_REQUEST['order'] : " DESC", $_REQUEST);
+		$orderby = apply_filters( 'filter_hook_espresso_category_list_orderby', isset($this->_req_data['orderby']) ? " ORDER BY " . $this->_req_data['orderby'] : " ORDER BY c.category_name", $this->_req_data );
+		$order = apply_filters( 'filter_hook_espresso_category_list_order', isset($this->_req_data['order']) ? " " . $this->_req_data['order'] : " DESC", $this->_req_data);
 
 		$sql = $count ? "SELECT COUNT(c.id) FROM " . EVENTS_CATEGORY_TABLE . " c" : "SELECT * FROM " . EVENTS_CATEGORY_TABLE . " c";
 

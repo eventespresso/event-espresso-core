@@ -82,6 +82,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	//for holding current screen object provided by WP
 	protected $_current_screen;
 
+	//for holding incoming request data
+	protected $_req_data;
+
 
 
 
@@ -344,20 +347,23 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_ajax_hooks();
 
 		//first verify if we need to load anything...
-		$this->_current_page = !empty( $_REQUEST['page'] ) ? sanitize_key( $_REQUEST['page'] ) : FALSE;
+		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
 
 		if ( !$this->_current_page && !$this->_doing_AJAX ) return FALSE;
 
 		//next let's just check user_access and kill if no access
 		$this->_check_user_access();
 
+		//set the _req_data property.
+		$this->_req_data = array_merge( $_GET, $_POST );
+
 		
 		// becuz WP List tables have two duplicate select inputs for choosing bulk actions, we need to copy the action from the second to the first
-		if ( isset( $_REQUEST['action2'] ) && $_REQUEST['action'] == -1 ) {
-			$_REQUEST['action'] = ! empty( $_REQUEST['action2'] ) && $_REQUEST['action2'] != -1 ? $_REQUEST['action2'] : $_REQUEST['action'];
+		if ( isset( $this->_req_data['action2'] ) && $this->_req_data['action'] == -1 ) {
+			$this->_req_data['action'] = ! empty( $this->_req_data['action2'] ) && $this->_req_data['action2'] != -1 ? $this->_req_data['action2'] : $this->_req_data['action'];
 		}
 		// then set blank or -1 action values to 'default'
-		$this->_req_action = isset( $_REQUEST['action'] ) && ! empty( $_REQUEST['action'] ) && $_REQUEST['action'] != -1 ? sanitize_key( $_REQUEST['action'] ) : 'default';
+		$this->_req_action = isset( $this->_req_data['action'] ) && ! empty( $this->_req_data['action'] ) && $this->_req_data['action'] != -1 ? sanitize_key( $this->_req_data['action'] ) : 'default';
 		$this->_current_view = $this->_req_action;
 		$this->_req_nonce = $this->_req_action . '_nonce';
 		$this->_define_page_props();
@@ -545,7 +551,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		//lets set if this is a UI request or not.
-		$this->_is_UI_request = ( ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' ) ? TRUE : FALSE;
+		$this->_is_UI_request = ( ! isset( $this->_req_data['noheader'] ) || $this->_req_data['noheader'] != 'true' ) ? TRUE : FALSE;
 
 
 		//wait a minute... we might have a noheader in the route array
@@ -910,10 +916,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected function _set_list_table_view() {		
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		// looking at active items or dumpster diving ?
-		if ( ! isset( $_REQUEST['status'] ) || ! array_key_exists( $_REQUEST['status'], $this->_views )) {
+		if ( ! isset( $this->_req_data['status'] ) || ! array_key_exists( $this->_req_data['status'], $this->_views )) {
 			$this->_view = 'in_use';
 		} else {
-			$this->_view = sanitize_key( $_REQUEST['status'] );
+			$this->_view = sanitize_key( $this->_req_data['status'] );
 		}
 	}
 
@@ -975,7 +981,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$values = array( 10, 25, 50, 100 );
-		$per_page = ( ! empty( $_REQUEST['per_page'] )) ? absint( $_REQUEST['per_page'] ) : 10;
+		$per_page = ( ! empty( $this->_req_data['per_page'] )) ? absint( $this->_req_data['per_page'] ) : 10;
 		
 		if ( $max_entries ) {
 			$values[] = $max_entries;
@@ -1124,8 +1130,63 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 
+
+	private function _publish_post_box() {
+		$meta_box_ref = 'espresso_' . $this->page_slug . '_editor_overview';
+		add_meta_box( $meta_box_ref, __('Publish', 'event_espresso'), array( $this, 'editor_overview' ), $this->_current_screen_id, 'side', 'high' );
+
+	}
+
+
+
+	public function editor_overview() {
+		$template_path = EE_CORE_ADMIN . 'admin_details_publish_metabox.template.php';
+		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
+	}
+
+
 	/** end of globally available metaboxes section **/
 	/*************************************************/
+
+	
+
+
+
+	/**
+	 * Sets the _template_args arguments used by the _publish_post_box shortcut
+	 * @param string $delete_action route for the delete action
+	 * @param string $name          key used for the action ID (i.e. event_id)
+	 * @param int $id               id attached to the item published
+	 */	
+	protected function _set_publish_post_box_vars($delete_action, $name, $id) {
+
+		$this->_set_save_buttons(TRUE, array(), array(), $this->_admin_base_url);
+
+		//if we have extra content set let's add it in if not make sure its empty
+		$this->_template_args['publish_box_extra_content'] = isset( $this->_template_args['publish_box_extra_content'] ) ? $this->_template_args['publish_box_extra_content'] : '';
+
+
+		$delete_link_args = array(
+			$name => $id
+			);
+
+		$delete_link = $this->_get_action_link_or_button( $delete_action, $type = 'delete', $delete_link_args, $class='submitdelete deletion');
+		
+		$this->_template_args['publish_delete_link'] = $delete_link;
+
+		$hidden_field_arr[$name] = array(
+			'type' => 'hidden',
+			'value' => $id
+			);
+
+		$hf = $this->_generate_admin_form_fields($hidden_field_arr, 'array');
+
+		$this->_template_args['publish_hidden_fields'] = $hf[$name]['field'];
+
+	}
+
+
+
 
 	/**
 	 * 		displays an error message to ppl who have javascript disabled
@@ -1144,6 +1205,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		</noscript>
 		<?php
 	}
+
+
+
 
 
 
@@ -1457,8 +1521,26 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+	/**
+	 * set form open and close tags on add/edit pages.
+	 *
+	 * @access protected
+	 * @param string $route the route you want the form to direct to
+	 * @return void
+	 */
+	protected function _set_add_edit_form_tags($route) {
 
-
+		$hidden_action_field_args['action'] = array(
+			'type' => 'hidden',
+			'value' => $route
+			);
+		$hidden_action_field = $this->_generate_admin_form_fields( $hidden_action_field_args, 'array' );
+		$nonce = wp_nonce_field( $route . '_nonce', '_wpnonce', false, false );
+		$this->_template_args['before_admin_page_content'] = '<form name="form" method="post" action="' . $this->_admin_base_url. '" id="' . $route . '_event_form" >';
+		$this->_template_args['before_admin_page_content'] .= "\n\t" . $nonce;
+		$this->_template_args['before_admin_page_content'] .= "\n\t" . $hidden_action_field['action']['field'];
+		$this->_template_args['after_admin_page_content'] = '</form>';
+	}
 
 
 
@@ -1492,10 +1574,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		//calculate where we're going (if we have a "save and close" button pushed)
-		if ( isset($_REQUEST['save_and_close'] ) && isset($_REQUEST['save_and_close_referrer'] ) ) {
+		if ( isset($this->_req_data['save_and_close'] ) && isset($this->_req_data['save_and_close_referrer'] ) ) {
 			//dump query_args (becaus ethe save_and_close referrer should be setup)
 			$query_args = array();
-			$redirect_url = $_REQUEST['save_and_close_referrer'];
+			$redirect_url = $this->_req_data['save_and_close_referrer'];
 		}
 		
 		// grab messages
@@ -1687,6 +1769,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 		return $this->_current_page_view_url;
 	}
 
+
+	
+
+	/**
+	 * just returns the _req_data property
+	 * @return array
+	 */
+	public function get_request_data() {
+		return $this->_req_data;
+	}
 }
 
 	
