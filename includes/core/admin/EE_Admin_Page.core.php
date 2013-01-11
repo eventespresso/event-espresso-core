@@ -1464,8 +1464,26 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+	/**
+	 * set form open and close tags on add/edit pages.
+	 *
+	 * @access protected
+	 * @param string $route the route you want the form to direct to
+	 * @return void
+	 */
+	protected function _set_add_edit_form_tags($route) {
 
-
+		$hidden_action_field_args['action'] = array(
+			'type' => 'hidden',
+			'value' => $route
+			);
+		$hidden_action_field = $this->_generate_admin_form_fields( $hidden_action_field_args, 'array' );
+		$nonce = wp_nonce_field( $route . '_nonce', '_wpnonce', false, false );
+		$this->_template_args['before_admin_page_content'] = '<form name="form" method="post" action="' . $this->_admin_base_url. '" id="' . $route . '_event_form" >';
+		$this->_template_args['before_admin_page_content'] .= "\n\t" . $nonce;
+		$this->_template_args['before_admin_page_content'] .= "\n\t" . $hidden_action_field['action']['field'];
+		$this->_template_args['after_admin_page_content'] = '</form>';
+	}
 
 
 
