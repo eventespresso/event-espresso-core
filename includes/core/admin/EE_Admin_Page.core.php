@@ -1131,8 +1131,63 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 
+
+	private function _publish_post_box() {
+		$meta_box_ref = 'espresso_' . $this->page_slug . '_editor_overview';
+		add_meta_box( $meta_box_ref, __('Publish', 'event_espresso'), array( $this, 'editor_overview' ), $this->_current_screen_id, 'side', 'high' );
+
+	}
+
+
+
+	public function editor_overview() {
+		$template_path = EE_CORE_ADMIN . 'admin_details_publish_metabox.template.php';
+		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
+	}
+
+
 	/** end of globally available metaboxes section **/
 	/*************************************************/
+
+	
+
+
+
+	/**
+	 * Sets the _template_args arguments used by the _publish_post_box shortcut
+	 * @param string $delete_action route for the delete action
+	 * @param string $name          key used for the action ID (i.e. event_id)
+	 * @param int $id               id attached to the item published
+	 */	
+	protected function _set_publish_post_box_vars($delete_action, $name, $id) {
+
+		$this->_set_save_buttons(TRUE, array(), array(), $this->_admin_base_url);
+
+		//if we have extra content set let's add it in if not make sure its empty
+		$this->_template_args['publish_box_extra_content'] = isset( $this->_template_args['publish_box_extra_content'] ) ? $this->_template_args['publish_box_extra_content'] : '';
+
+
+		$delete_link_args = array(
+			$name => $id
+			);
+
+		$delete_link = $this->_get_action_link_or_button( $delete_action, $type = 'delete', $delete_link_args, $class='submitdelete deletion');
+		
+		$this->_template_args['publish_delete_link'] = $delete_link;
+
+		$hidden_field_arr[$name] = array(
+			'type' => 'hidden',
+			'value' => $id
+			);
+
+		$hf = $this->_generate_admin_form_fields($hidden_field_arr, 'array');
+
+		$this->_template_args['publish_hidden_fields'] = $hf[$name]['field'];
+
+	}
+
+
+
 
 	/**
 	 * 		displays an error message to ppl who have javascript disabled
@@ -1151,6 +1206,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		</noscript>
 		<?php
 	}
+
+
+
 
 
 
