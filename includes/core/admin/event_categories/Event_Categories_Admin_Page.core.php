@@ -257,8 +257,9 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 		$this->_set_add_edit_form_tags($route);
 
 		$this->_set_category_object();
+		$id = isset($this->_category->id) ? $this->_category->id : '';
 
-		$this->_set_publish_post_box_vars( 'delete_category', 'category_id', $this->_category->id );
+		$this->_set_publish_post_box_vars( 'delete_category', 'category_id', $id );
 
 		//take care of contents
 		$this->_template_args['admin_page_content'] = $view == 'edit' ? $this->_edit_category_content() : $this->_add_category_content();

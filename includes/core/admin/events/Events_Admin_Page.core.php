@@ -326,6 +326,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 		//set _event property
 		$this->_set_event_object();
 
+		$id = isset($this->_event->id) ? $this->_event->id : '';
+
 		//any specific javascript here.
 		//todo: this needs to be done properly via an enqueue and wp_localize_scripts() for vars
 		add_action( 'action_hook_espresso_event_editor_footer', array($this, 'event_editor_footer_js') );
@@ -333,7 +335,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$route = $view == 'edit' ? 'update_event' : 'insert_event';
 		$this->_set_add_edit_form_tags($route);
 		$this->_template_args['publish_box_extra_content'] = $this->_publish_box_extra_content();
-		$this->_set_publish_post_box_vars('delete_event', 'event_id', $this->_event->id);
+		$this->_set_publish_post_box_vars('delete_event', 'event_id', $id);
 
 		//take care of contents
 		$this->_template_args['admin_page_content'] = $this->_event_details_display();
