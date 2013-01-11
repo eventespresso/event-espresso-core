@@ -50,28 +50,21 @@ class EE_Answer {
 	 * @access private
 	 * @var text 
 	 */
-	private $_ANS_answer=NULL;
+	private $_ANS_value=NULL;
 
 
 
 
-
-	public function __construct(  ) {
-		$this->_ATT_ID 					= absint( $ATT_ID );
-		$this->_ATT_fname 			= 	htmlentities( wp_strip_all_tags( $ATT_fname ), ENT_QUOTES, 'UTF-8' ); 
-		$this->_ATT_lname 			= htmlentities( wp_strip_all_tags( $ATT_lname ), ENT_QUOTES, 'UTF-8' );
-		$this->_ATT_address			= htmlentities( wp_strip_all_tags( $ATT_address ), ENT_QUOTES, 'UTF-8' );
-		$this->_ATT_address2		= htmlentities( wp_strip_all_tags( $ATT_address2 ), ENT_QUOTES, 'UTF-8' );
-		$this->_ATT_city				= htmlentities( wp_strip_all_tags( $ATT_city ), ENT_QUOTES, 'UTF-8' );
-		$this->_STA_ID					= wp_strip_all_tags( $STA_ID );
-		$this->_CNT_ISO				= wp_strip_all_tags( $CNT_ISO );
-		$this->_ATT_zip					= wp_strip_all_tags( $ATT_zip );
-		$this->_ATT_email				= sanitize_email( $ATT_email );
-		$this->_ATT_phone			= htmlentities( wp_strip_all_tags( $ATT_phone ), ENT_QUOTES, 'UTF-8' );
-		$this->_ATT_social				= htmlentities( wp_strip_all_tags( $ATT_social ), ENT_QUOTES, 'UTF-8' );
-		$this->_ATT_comments	= htmlentities( wp_strip_all_tags( $ATT_comments ), ENT_QUOTES, 'UTF-8' );
-		$this->_ATT_notes				= htmlentities( wp_strip_all_tags( $ATT_notes ), ENT_QUOTES, 'UTF-8' );
-		$this->_ATT_deleted			= absint( $ATT_deleted ) === 1 ? TRUE : FALSE;
+	/**
+	 * 
+	 * @param type $REG_ID
+	 * @param type $QST_ID
+	 * @param type $ANS_value
+	 */
+	public function __construct( $REG_ID=NULL, $QST_ID=NULL, $ANS_value='') {
+		$this->_REG_ID 				= absint( $REG_ID );
+		$this->_QST_ID 					= absint( $QST_ID );
+		$this->_ANS_value 			= 	htmlentities( wp_strip_all_tags( $ANS_value ), ENT_QUOTES, 'UTF-8' ); 
 	}
 
 

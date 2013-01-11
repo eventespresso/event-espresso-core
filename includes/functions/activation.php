@@ -418,7 +418,7 @@ function events_data_tables_install() {
 	$sql=" ANS_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 				REG_ID INT UNSIGNED NOT NULL ,
 				QST_ID INT UNSIGNED NOT NULL ,
-				ANS_answer TEXT NOT NULL ,
+				ANS_value TEXT NOT NULL ,
 				PRIMARY KEY  (ANS_ID)";
 	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
 	
@@ -536,6 +536,7 @@ function events_data_tables_install() {
 	$table_name='esp_question';
 	$sql="QST_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 				QST_display_text TEXT NOT NULL ,
+				QST_admin_text TEXT NOT NULL ,
 				QST_system_name VARCHAR(45) NOT NULL ,
 				QST_type VARCHAR(25) NOT NULL DEFAULT 'TEXT' ,
 				QST_required TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
