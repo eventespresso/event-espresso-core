@@ -140,14 +140,14 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 					'label' => __('Add Category', 'event_espresso'),
 					'order' => 5,
 					'persistent' => false),
-				'metaboxes' => array('_editor_metaboxes'),
+				'metaboxes' => array('_publish_post_box')
 				),
 			'edit_category' => array(
 				'nav' => array(
 					'label' => __('Edit Category', 'event_espresso'),
 					'order' => 5,
 					'persistent' => FALSE),
-				'metaboxes' => array('_editor_metaboxes')
+				'metaboxes' => array('_publish_post_box')
 				),
 			'import_categories' => array(
 				'nav' => array(
@@ -255,6 +255,10 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 		$route = $view == 'edit' ? 'update_category' : 'insert_category';
 		$this->_set_add_edit_form_tags($route);
+
+		$this->_set_category_object();
+
+		$this->_set_publish_post_box_vars( 'delete_category', 'category_id', $this->_category->id );
 
 		//take care of contents
 		$this->_template_args['admin_page_content'] = $view == 'edit' ? $this->_edit_category_content() : $this->_add_category_content();
@@ -415,50 +419,6 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 		$this->_category->category_name = stripslashes( $this->_category->category_name );
 		$this->_category->category_identifier = stripslashes( $this->_category->category_identifier );
 		$this->_category->category_desc = stripslashes( $this->_category->category_desc );
-	}
-
-
-
-
-
-	/** METABOXES **/
-	/***************/
-
-
-	protected function _editor_metaboxes() {
-
-		$this->_set_category_object();
-
-		$this->_set_save_buttons(TRUE, array(), array(), EE_CATS_ADMIN_URL);
-
-		add_meta_box('espresso_event_category_editor_overview', __('Publish', 'event_espresso'), array( $this, 'editor_overview' ), $this->_current_screen->id, 'side', 'high');
-	}
-
-
-
-
-
-
-	public function editor_overview() {
-		?>
-		<div class="submitbox" id="submitpost">
-			<div id="delete-action">
-					<a class="submitdelete deletion" href="admin.php?page=event_categories&amp;action=delete_category&category_id=<?php echo $this->_category->id ?>" onclick="return confirm('<?php _e('Are you sure you want to delete ' . $this->_category->category_name . '?', 'event_espresso'); ?>')">
-						<?php _e('Delete Category', 'event_espresso'); ?>
-					</a>
-			</div>
-			<div class="hidden-fields">
-				<!-- any hidden fields -->
-				<?php if ( isset ($this->_category->id) ) : ?>
-					<input type="hidden" name="category_id" value="<?php echo $this->_category->id; ?>" />
-				<?php endif; ?>
-			</div>
-			<br/>
-			<?php
-				echo $this->_template_args['save_buttons'];
-			?>
-		</div> <!-- end #submitpost -->
-		<?php
 	}
 
 
