@@ -937,7 +937,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 	/**
-	 * 		get_list_table_view_RLs - get it? View RL ?? URL ??
+	 * 		get_list_table_view_RLs - get it? View RL ?? VU-RL???  URL ??
 	*		@access public
 	*		@return array
 	*/
@@ -949,7 +949,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( empty( $this->_views )) {
 			$this->_views = array();
 		}
-
 
 		// cycle thru views
 		foreach ( $this->_views as $key => $view ) {
@@ -1199,7 +1198,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		<noscript>
 			<div id="no-js-message" class="error">
 				<p style="font-size:1.3em;">
-					<span style="color:red;"><php _e( 'Warning!', 'event_espresso' ); ?></span>
+					<span style="color:red;"><?php _e( 'Warning!', 'event_espresso' ); ?></span>
 					<?php _e( 'Javascript is currently turned off for your browser. Javascript must be enabled in order for all of the features on this page to function properly. Please turn your javascript back on.', 'event_espresso' ); ?>
 				</p>
 			</div>
