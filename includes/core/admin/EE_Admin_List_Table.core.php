@@ -176,12 +176,24 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	protected $_nonce_action_ref;
 
 
+
+
+
+	/**
+	 * _req_data
+	 * property to hold incoming request data (as set by the admin_page_core)
+	 * @var array
+	 */
+	protected $_req_data;
+
+
 	/**
 	 * constructor
 	 * @param EE_Admin_Page object $admin_page we use this for obtaining everything we need in the list table.
 	 */
 	public function __construct( EE_Admin_Page &$admin_page ) {
 		$this->_admin_page = $admin_page;
+		$this->_req_data = $this->_admin_page->get_request_data();
 		$this->_view = $this->_admin_page->get_view();
 		$this->_views = $this->_admin_page->get_list_table_view_RLs();
 		$this->_current_page = $this->get_pagenum();
@@ -266,7 +278,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * @return html string
 	 */
 	protected function _get_hidden_fields() {
-		$field = '<input type="hidden" name="page" value="' . $_REQUEST['page'] . '" />' . "\n";
+		$field = '<input type="hidden" name="page" value="' . $this->_req_data['page'] . '" />' . "\n";
 		return $field;
 	}
 

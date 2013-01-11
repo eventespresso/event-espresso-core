@@ -47,7 +47,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$this->_wp_list_args = array(
 			'singular' => __('event', 'event_espresso'),
 			'plural' => __('events', 'event_espresso'),
-			'ajax' => false, //for now
+			'ajax' => TRUE, //for now
 			'screen' => $this->_admin_page->get_current_screen()->id
 			);
 
@@ -87,15 +87,15 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		require_once EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin.php';
 
 		//first month/year filters
-		$filters[] = $this->_admin_page->espresso_event_months_dropdown( isset($_REQUEST['month_range']) ? $_REQUEST['month_range'] : '' );
+		$filters[] = $this->_admin_page->espresso_event_months_dropdown( isset($this->_req_data['month_range']) ? $this->_req_data['month_range'] : '' );
 
 		//category filter
-		$filters[] = espresso_category_dropdown( isset($_REQUEST['category_id']) ? $_REQUEST['category_id'] : '' );
+		$filters[] = espresso_category_dropdown( isset($this->_req_data['category_id']) ? $this->_req_data['category_id'] : '' );
 
 		//status dropdown
 		$status = array(array('id' => '', 'text' => __('Show Active/Inactive', 'event_espresso')), array('id' => 'A', 'text' => __('Active', 'event_espresso')), array('id' => 'IA', 'text' => __('Inactive', 'event_espresso')), array('id' => 'P', 'text' => __('Pending', 'event_espresso')), array('id' => 'R', 'text' => __('Draft', 'event_espresso')), array('id' => 'S', 'text' => __('Waitlist', 'event_espresso')), array('id' => 'O', 'text' => __('Ongoing', 'event_espresso')), array('id' => 'X', 'text' => __('Denied', 'event_espresso')), array('id' => 'D', 'text' => __('Deleted', 'event_espresso')));
 
-		$filters[] = select_input('event_status', $status, isset($_REQUEST['event_status']) ? $_REQUEST['event_status'] : '');
+		$filters[] = select_input('event_status', $status, isset($this->_req_data['event_status']) ? $this->_req_data['event_status'] : '');
 		return $filters;	
 	}
 

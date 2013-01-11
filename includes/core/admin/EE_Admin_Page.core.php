@@ -82,6 +82,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	//for holding current screen object provided by WP
 	protected $_current_screen;
 
+	//for holding incoming request data
+	protected $_req_data;
+
 
 
 
@@ -344,20 +347,23 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_ajax_hooks();
 
 		//first verify if we need to load anything...
-		$this->_current_page = !empty( $_REQUEST['page'] ) ? sanitize_key( $_REQUEST['page'] ) : FALSE;
+		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
 
 		if ( !$this->_current_page && !$this->_doing_AJAX ) return FALSE;
 
 		//next let's just check user_access and kill if no access
 		$this->_check_user_access();
 
+		//set the _req_data property.
+		$this->_req_data = array_merge( $_GET, $_POST );
+
 		
 		// becuz WP List tables have two duplicate select inputs for choosing bulk actions, we need to copy the action from the second to the first
-		if ( isset( $_REQUEST['action2'] ) && $_REQUEST['action'] == -1 ) {
-			$_REQUEST['action'] = ! empty( $_REQUEST['action2'] ) && $_REQUEST['action2'] != -1 ? $_REQUEST['action2'] : $_REQUEST['action'];
+		if ( isset( $this->_req_data['action2'] ) && $this->_req_data['action'] == -1 ) {
+			$this->_req_data['action'] = ! empty( $this->_req_data['action2'] ) && $this->_req_data['action2'] != -1 ? $this->_req_data['action2'] : $this->_req_data['action'];
 		}
 		// then set blank or -1 action values to 'default'
-		$this->_req_action = isset( $_REQUEST['action'] ) && ! empty( $_REQUEST['action'] ) && $_REQUEST['action'] != -1 ? sanitize_key( $_REQUEST['action'] ) : 'default';
+		$this->_req_action = isset( $this->_req_data['action'] ) && ! empty( $this->_req_data['action'] ) && $this->_req_data['action'] != -1 ? sanitize_key( $this->_req_data['action'] ) : 'default';
 		$this->_current_view = $this->_req_action;
 		$this->_req_nonce = $this->_req_action . '_nonce';
 		$this->_define_page_props();
@@ -545,7 +551,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		//lets set if this is a UI request or not.
-		$this->_is_UI_request = ( ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' ) ? TRUE : FALSE;
+		$this->_is_UI_request = ( ! isset( $this->_req_data['noheader'] ) || $this->_req_data['noheader'] != 'true' ) ? TRUE : FALSE;
 
 
 		//wait a minute... we might have a noheader in the route array
@@ -910,10 +916,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected function _set_list_table_view() {		
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		// looking at active items or dumpster diving ?
-		if ( ! isset( $_REQUEST['status'] ) || ! array_key_exists( $_REQUEST['status'], $this->_views )) {
+		if ( ! isset( $this->_req_data['status'] ) || ! array_key_exists( $this->_req_data['status'], $this->_views )) {
 			$this->_view = 'in_use';
 		} else {
-			$this->_view = sanitize_key( $_REQUEST['status'] );
+			$this->_view = sanitize_key( $this->_req_data['status'] );
 		}
 	}
 
@@ -976,7 +982,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$values = array( 10, 25, 50, 100 );
-		$per_page = ( ! empty( $_REQUEST['per_page'] )) ? absint( $_REQUEST['per_page'] ) : 10;
+		$per_page = ( ! empty( $this->_req_data['per_page'] )) ? absint( $this->_req_data['per_page'] ) : 10;
 		
 		if ( $max_entries ) {
 			$values[] = $max_entries;
@@ -1493,10 +1499,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		//calculate where we're going (if we have a "save and close" button pushed)
-		if ( isset($_REQUEST['save_and_close'] ) && isset($_REQUEST['save_and_close_referrer'] ) ) {
+		if ( isset($this->_req_data['save_and_close'] ) && isset($this->_req_data['save_and_close_referrer'] ) ) {
 			//dump query_args (becaus ethe save_and_close referrer should be setup)
 			$query_args = array();
-			$redirect_url = $_REQUEST['save_and_close_referrer'];
+			$redirect_url = $this->_req_data['save_and_close_referrer'];
 		}
 		
 		// grab messages
@@ -1688,6 +1694,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 		return $this->_current_page_view_url;
 	}
 
+
+	
+
+	/**
+	 * just returns the _req_data property
+	 * @return array
+	 */
+	public function get_request_data() {
+		return $this->_req_data;
+	}
 }
 
 	

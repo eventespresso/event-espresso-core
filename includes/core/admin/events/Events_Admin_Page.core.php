@@ -490,7 +490,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		if ( is_object($this->_event) )
 			return; //get out we've already set the object
 		
-		if ( isset($_REQUEST['EVT_ID']) ) {
+		if ( isset($this->_req_data['EVT_ID']) ) {
 			$this->_set_edit_event_object();
 		} else {
 			$this->_set_add_event_object();
@@ -597,12 +597,12 @@ class Events_Admin_Page extends EE_Admin_Page {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 		//check if we have an event_id if not then lets setup defaults for adding an event.
-		if ( !isset($_REQUEST['EVT_ID']) ) {
+		if ( !isset($this->_req_data['EVT_ID']) ) {
 			$this->_set_add_event_object();
 			return;
 		}
 
-		$event_id = $_REQUEST['EVT_ID'];
+		$event_id = $this->_req_data['EVT_ID'];
 
 		$sql = "SELECT e.*, ev.id as venue_id
 		FROM " . EVENTS_DETAIL_TABLE . " e
@@ -2246,7 +2246,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	protected function _delete_events() {
 		
 		//determine the event id and set to array.
-		$event_ids = isset( $_REQUEST['EVT_ID'] ) ? (array) $_REQUEST['EVT_ID'] : (array) $_REQUEST['event_id'];
+		$event_ids = isset( $this->_req_data['EVT_ID'] ) ? (array) $this->_req_data['EVT_ID'] : (array) $this->_req_data['event_id'];
 
 		foreach ( $event_ids as $event_id ) {
 			$this->_delete_event($event_id);
@@ -2312,7 +2312,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _copy_events() {
-		$old_id = isset( $_REQUEST['event_id'] ) ? $_REQUEST['event_id'] : null; 
+		$old_id = isset( $this->_req_data['event_id'] ) ? $this->_req_data['event_id'] : null; 
 		$new_id = $this->_duplicate_event();
 		
 		if ( $new_id ) {
@@ -2337,7 +2337,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 	protected function _duplicate_event( $recurrence_arr = array() ) {
 		global $wpdb, $espresso_wp_user;
-		$event_id = array_key_exists('event_id', $recurrence_arr) ? $recurrence_arr['event_id'] : $_REQUEST['event_id'];
+		$event_id = array_key_exists('event_id', $recurrence_arr) ? $recurrence_arr['event_id'] : $this->_req_data['event_id'];
 
 		$results = $wpdb->get_results("SELECT * FROM ". EVENTS_DETAIL_TABLE ." WHERE id ='" . $event_id . "'");
 
@@ -2490,7 +2490,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		
 			//Add groupon reference if installed
 			if (function_exists('event_espresso_add_event_to_db_groupon')) {
-				$sql = event_espresso_add_event_to_db_groupon($sql, $_REQUEST['use_groupon_code']);
+				$sql = event_espresso_add_event_to_db_groupon($sql, $this->_req_data['use_groupon_code']);
 				//print count ($sql);
 				$sql_data = array_merge((array)$sql_data, (array)'%s');
 				//print count($sql_data);
@@ -2688,114 +2688,114 @@ class Events_Admin_Page extends EE_Admin_Page {
 		//If the Espresso Facebook Events is installed, add the event to Facebook
 		//$fb = new FacebookEvents();
 		//echo $fb->espresso_createevent();
-		//echo $_POST['event'];
-		$wp_user_id = empty($_REQUEST['wp_user']) ? $espresso_wp_user : $_REQUEST['wp_user'][0];
+		//echo $this->_req_data['event'];
+		$wp_user_id = empty($this->_req_data['wp_user']) ? $espresso_wp_user : $this->_req_data['wp_user'][0];
 		if ($wp_user_id == 0) {
 			$wp_user_id = 1;
 		}
 
-		$event_desc = $_REQUEST['event_desc'];
-		$display_desc = $_REQUEST['display_desc'];
-		$display_reg_form = $_REQUEST['display_reg_form'];
+		$event_desc = $this->_req_data['event_desc'];
+		$display_desc = $this->_req_data['display_desc'];
+		$display_reg_form = $this->_req_data['display_reg_form'];
 
-		$address = empty($_REQUEST['address']) ? '' : esc_html($_REQUEST['address']);
-		$address2 = empty($_REQUEST['address2']) ? '' : esc_html($_REQUEST['address2']);
-		$city = empty($_REQUEST['city']) ? '' : esc_html($_REQUEST['city']);
-		$state = empty($_REQUEST['state']) ? '' : esc_html($_REQUEST['state']);
-		$zip = empty($_REQUEST['zip']) ? '' : esc_html($_REQUEST['zip']);
-		$country = empty($_REQUEST['country']) ? '' : esc_html($_REQUEST['country']);
-		$phone = esc_html($_REQUEST['phone']);
-		$externalURL = esc_html($_REQUEST['externalURL']);
+		$address = empty($this->_req_data['address']) ? '' : esc_html($this->_req_data['address']);
+		$address2 = empty($this->_req_data['address2']) ? '' : esc_html($this->_req_data['address2']);
+		$city = empty($this->_req_data['city']) ? '' : esc_html($this->_req_data['city']);
+		$state = empty($this->_req_data['state']) ? '' : esc_html($this->_req_data['state']);
+		$zip = empty($this->_req_data['zip']) ? '' : esc_html($this->_req_data['zip']);
+		$country = empty($this->_req_data['country']) ? '' : esc_html($this->_req_data['country']);
+		$phone = esc_html($this->_req_data['phone']);
+		$externalURL = esc_html($this->_req_data['externalURL']);
 
-		$post_type = $_REQUEST['post_type'];
+		$post_type = $this->_req_data['post_type'];
 
 		// thumbnail image options
-		$event_meta['event_thumbnail_url'] = $_REQUEST['upload_image'];
-		$event_meta['display_thumb_in_lists'] = $_REQUEST['show_thumb_in_lists'];
-		$event_meta['display_thumb_in_regpage'] = $_REQUEST['show_thumb_in_regpage'];
+		$event_meta['event_thumbnail_url'] = $this->_req_data['upload_image'];
+		$event_meta['display_thumb_in_lists'] = $this->_req_data['show_thumb_in_lists'];
+		$event_meta['display_thumb_in_regpage'] = $this->_req_data['show_thumb_in_regpage'];
 		if (function_exists('espresso_calendar_config_mnu') && $espresso_premium == true) {
-			$event_meta['display_thumb_in_calendar'] = $_REQUEST['show_on_calendar'];
+			$event_meta['display_thumb_in_calendar'] = $this->_req_data['show_on_calendar'];
 		}
 
 		// enable event address for Gmaps
-		if (!empty($_REQUEST['venue_id'][0]) || !empty($_REQUEST['zip']) || !empty($_REQUEST['city']) || !empty($_REQUEST['state'])) {
-			$event_meta['enable_for_gmap'] = $_REQUEST['enable_for_gmap'];
+		if (!empty($this->_req_data['venue_id'][0]) || !empty($this->_req_data['zip']) || !empty($this->_req_data['city']) || !empty($this->_req_data['state'])) {
+			$event_meta['enable_for_gmap'] = $this->_req_data['enable_for_gmap'];
 		} else {
 			$event_meta['enable_for_gmap'] = false;
 		}
 
 		//$event_location = $address . ' ' . $city . ', ' . $state . ' ' . $zip;
 		$event_location = ($address != '' ? $address . ' ' : '') . ($address2 != '' ? '<br />' . $address2 : '') . ($city != '' ? '<br />' . $city : '') . ($state != '' ? ', ' . $state : '') . ($zip != '' ? '<br />' . $zip : '') . ($country != '' ? '<br />' . $country : '');
-		$reg_limit = $_REQUEST['reg_limit'];
-		$allow_multiple = $_REQUEST['allow_multiple'];
-		$additional_limit = $_REQUEST['additional_limit'];
-		$member_only = isset($_REQUEST['member_only']) ? $_REQUEST['member_only'] : '';
-		$is_active = $_REQUEST['is_active'];
-		$event_status = $_REQUEST['new_event_status'];
-		$ticket_id = empty($_REQUEST['ticket_id']) ? '' : $_REQUEST['ticket_id'];
-		$certificate_id = empty($_REQUEST['certificate_id']) ? '' : $_REQUEST['certificate_id'];
+		$reg_limit = $this->_req_data['reg_limit'];
+		$allow_multiple = $this->_req_data['allow_multiple'];
+		$additional_limit = $this->_req_data['additional_limit'];
+		$member_only = isset($this->_req_data['member_only']) ? $this->_req_data['member_only'] : '';
+		$is_active = $this->_req_data['is_active'];
+		$event_status = $this->_req_data['new_event_status'];
+		$ticket_id = empty($this->_req_data['ticket_id']) ? '' : $this->_req_data['ticket_id'];
+		$certificate_id = empty($this->_req_data['certificate_id']) ? '' : $this->_req_data['certificate_id'];
 
 		//Early discounts
-		$early_disc = $_REQUEST['early_disc'];
-		$early_disc_date = $_REQUEST['early_disc_date'];
-		$early_disc_percentage = $_REQUEST['early_disc_percentage'];
+		$early_disc = $this->_req_data['early_disc'];
+		$early_disc_date = $this->_req_data['early_disc_date'];
+		$early_disc_percentage = $this->_req_data['early_disc_percentage'];
 
-		$use_coupon_code = $_REQUEST['use_coupon_code'];
-		$alt_email = $_REQUEST['alt_email'];
+		$use_coupon_code = $this->_req_data['use_coupon_code'];
+		$alt_email = $this->_req_data['alt_email'];
 
-		$confirmation_email_id = isset( $_REQUEST['confirmation_email_id'] ) ? $_REQUEST['confirmation_email_id'] : null;
-		$payment_email_id = isset( $_REQUEST['payment_email_id'] ) ? $_REQUEST['payment_email_id'] : null;
+		$confirmation_email_id = isset( $this->_req_data['confirmation_email_id'] ) ? $this->_req_data['confirmation_email_id'] : null;
+		$payment_email_id = isset( $this->_req_data['payment_email_id'] ) ? $this->_req_data['payment_email_id'] : null;
 		//Venue Information
-		$venue_title = empty($_REQUEST['venue_title']) ? '' : $_REQUEST['venue_title'];
-		$venue_url = empty($_REQUEST['venue_url']) ? '' : $_REQUEST['venue_url'];
-		$venue_phone = empty($_REQUEST['venue_phone']) ? '' : $_REQUEST['venue_phone'];
-		$venue_image = empty($_REQUEST['venue_image']) ? '' : $_REQUEST['venue_image'];
+		$venue_title = empty($this->_req_data['venue_title']) ? '' : $this->_req_data['venue_title'];
+		$venue_url = empty($this->_req_data['venue_url']) ? '' : $this->_req_data['venue_url'];
+		$venue_phone = empty($this->_req_data['venue_phone']) ? '' : $this->_req_data['venue_phone'];
+		$venue_image = empty($this->_req_data['venue_image']) ? '' : $this->_req_data['venue_image'];
 
 		//Virtual location
-		$virtual_url = $_REQUEST['virtual_url'];
-		$virtual_phone = $_REQUEST['virtual_phone'];
+		$virtual_url = $this->_req_data['virtual_url'];
+		$virtual_phone = $this->_req_data['virtual_phone'];
 
 		if ($reg_limit == '') {
 			$reg_limit = 999;
 		}
 
-		$question_groups = empty($_REQUEST['question_groups']) ? '' : serialize($_REQUEST['question_groups']);
-		$add_attendee_question_groups = empty($_REQUEST['add_attendee_question_groups']) ? '' : serialize($_REQUEST['add_attendee_question_groups']);
+		$question_groups = empty($this->_req_data['question_groups']) ? '' : serialize($this->_req_data['question_groups']);
+		$add_attendee_question_groups = empty($this->_req_data['add_attendee_question_groups']) ? '' : serialize($this->_req_data['add_attendee_question_groups']);
 
-		$event_meta['venue_id'] = isset($_REQUEST['venue_id']) ? $_REQUEST['venue_id'][0] : '';
-		$event_meta['additional_attendee_reg_info'] = $_REQUEST['additional_attendee_reg_info'];
+		$event_meta['venue_id'] = isset($this->_req_data['venue_id']) ? $this->_req_data['venue_id'][0] : '';
+		$event_meta['additional_attendee_reg_info'] = $this->_req_data['additional_attendee_reg_info'];
 		$event_meta['add_attendee_question_groups'] = $add_attendee_question_groups;
 		$event_meta['date_submitted'] = date("Y-m-d H:i:s");
 		$event_meta['originally_submitted_by'] = $espresso_wp_user;
-		$event_meta['default_payment_status'] = $_REQUEST['default_payment_status'];
+		$event_meta['default_payment_status'] = $this->_req_data['default_payment_status'];
 
-		if ($_REQUEST['emeta'] != '') {
-			foreach ($_REQUEST['emeta'] as $k => $v) {
-				$event_meta[$v] = strlen(trim($_REQUEST['emetad'][$k])) > 0 ? $_REQUEST['emetad'][$k] : '';
+		if ($this->_req_data['emeta'] != '') {
+			foreach ($this->_req_data['emeta'] as $k => $v) {
+				$event_meta[$v] = strlen(trim($this->_req_data['emetad'][$k])) > 0 ? $this->_req_data['emetad'][$k] : '';
 			}
 		}
-		//echo strlen(trim($_REQUEST['emetad'][$k]));
-		//print_r($_REQUEST['emeta'] );
+		//echo strlen(trim($this->_req_data['emetad'][$k]));
+		//print_r($this->_req_data['emeta'] );
 
 		$event_meta = serialize($event_meta);
 
 		############ Added by wp-developers ######################
 		$require_pre_approval = 0;
-		if (isset($_REQUEST['require_pre_approval'])) {
-			$require_pre_approval = $_REQUEST['require_pre_approval'];
+		if (isset($this->_req_data['require_pre_approval'])) {
+			$require_pre_approval = $this->_req_data['require_pre_approval'];
 		}
 		################# END #################
 		//Event name
-		$event_name = empty($_REQUEST['event']) ? uniqid($espresso_wp_user . '-') : htmlentities( wp_strip_all_tags( $_REQUEST['event'] ), ENT_QUOTES, 'UTF-8');
+		$event_name = empty($this->_req_data['event']) ? uniqid($espresso_wp_user . '-') : htmlentities( wp_strip_all_tags( $this->_req_data['event'] ), ENT_QUOTES, 'UTF-8');
 
 		//Create the event code and prefix it with the user id
 		$event_code = uniqid($espresso_wp_user . '-');
 
 		//Create the event identifier with the event code appended to the end
-		$event_identifier = (empty($_REQUEST['event_identifier'])) ? $event_identifier = sanitize_title_with_dashes($event_name . '-' . $event_code) : $event_identifier = sanitize_title_with_dashes($_REQUEST['event_identifier']) . $event_code;
+		$event_identifier = (empty($this->_req_data['event_identifier'])) ? $event_identifier = sanitize_title_with_dashes($event_name . '-' . $event_code) : $event_identifier = sanitize_title_with_dashes($this->_req_data['event_identifier']) . $event_code;
 
 		//Create the event slug
-		$event_slug = ($_REQUEST['slug'] == '') ? sanitize_title_with_dashes($event_name) : sanitize_title_with_dashes($_REQUEST['slug']);
+		$event_slug = ($this->_req_data['slug'] == '') ? sanitize_title_with_dashes($event_name) : sanitize_title_with_dashes($this->_req_data['slug']);
 
 		//When adding colums to the following arrays, be sure both arrays have equal values.
 		$sql = array(
@@ -2857,7 +2857,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		//Add groupon reference if installed
 		if (function_exists('event_espresso_add_event_to_db_groupon')) {
-			$sql = event_espresso_add_event_to_db_groupon($sql, $_REQUEST['use_groupon_code']);
+			$sql = event_espresso_add_event_to_db_groupon($sql, $this->_req_data['use_groupon_code']);
 			//print count ($sql);
 			$sql_data = array_merge((array) $sql_data, (array) '%s');
 			//print count($sql_data);
@@ -2881,17 +2881,17 @@ class Events_Admin_Page extends EE_Admin_Page {
 		/*
 		 * Added for seating chart addon
 		 */
-		if (isset($_REQUEST['seating_chart_id'])) {
+		if (isset($this->_req_data['seating_chart_id'])) {
 			$cls_seating_chart = new seating_chart();
-			$cls_seating_chart->associate_event_seating_chart($_REQUEST['seating_chart_id'], $last_event_id);
+			$cls_seating_chart->associate_event_seating_chart($this->_req_data['seating_chart_id'], $last_event_id);
 		}
 		/*
 		 * End
 		 */
 
 		//Add event to a category
-		if (isset($_REQUEST['event_category']) && $_REQUEST['event_category'] != '') {
-			foreach ($_REQUEST['event_category'] as $k => $v) {
+		if (isset($this->_req_data['event_category']) && $this->_req_data['event_category'] != '') {
+			foreach ($this->_req_data['event_category'] as $k => $v) {
 				if ($v != '') {
 					$sql_cat = "INSERT INTO " . EVENTS_CATEGORY_REL_TABLE . " (event_id, cat_id) VALUES ('" . $last_event_id . "', '" . $v . "')";
 					//echo "$sql3 <br>";
@@ -2902,8 +2902,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 			}
 		}
 
-		if (!empty($_REQUEST['event_person'])) {
-			foreach ($_REQUEST['event_person'] as $k => $v) {
+		if (!empty($this->_req_data['event_person'])) {
+			foreach ($this->_req_data['event_person'] as $k => $v) {
 				if ($v != '') {
 					$sql_ppl = "INSERT INTO " . EVENTS_PERSONNEL_REL_TABLE . " (event_id, person_id) VALUES ('" . $last_event_id . "', '" . $v . "')";
 					//echo "$sql_ppl <br>";
@@ -2913,8 +2913,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 			}
 		}
 
-		if (!empty($_REQUEST['venue_id'])) {
-			foreach ($_REQUEST['venue_id'] as $k => $v) {
+		if (!empty($this->_req_data['venue_id'])) {
+			foreach ($this->_req_data['venue_id'] as $k => $v) {
 				if ($v != '' && $v != 0) {
 					$sql_venues = "INSERT INTO " . EVENTS_VENUE_REL_TABLE . " (event_id, venue_id) VALUES ('" . $last_event_id . "', '" . $v . "')";
 					//echo "$sql_venues <br>";
@@ -2924,8 +2924,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 			}
 		}
 
-		if (!empty($_REQUEST['event_discount'])) {
-			foreach ($_REQUEST['event_discount'] as $k => $v) {
+		if (!empty($this->_req_data['event_discount'])) {
+			foreach ($this->_req_data['event_discount'] as $k => $v) {
 				if ($v != '') {
 					$sql_cat = "INSERT INTO " . EVENTS_DISCOUNT_REL_TABLE . " (event_id, discount_id) VALUES ('" . $last_event_id . "', '" . $v . "')";
 					//echo "$sql3 <br>";
@@ -2939,10 +2939,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
 		$DTM = EEM_Datetime::instance();
 
-//		printr( $_REQUEST['event_datetimes'] ); die();
+//		printr( $this->_req_data['event_datetimes'] ); die();
 
 		$q = 1;
-		foreach ($_REQUEST['event_datetimes'] as $event_datetime) {
+		foreach ($this->_req_data['event_datetimes'] as $event_datetime) {
 		
 			$event_datetime['evt_end'] = ( isset($event_datetime['evt_end']) && $event_datetime['evt_end'] != '' ) ? $event_datetime['evt_end'] : $event_datetime['evt_start'];
 			$event_datetime['reg_end'] = ( isset($event_datetime['reg_end']) && $event_datetime['reg_end'] != '' ) ? $event_datetime['reg_end'] : $event_datetime['reg_start'];
@@ -2975,11 +2975,11 @@ class Events_Admin_Page extends EE_Admin_Page {
 		/************************************   PRICING   ******************************************* */
 		
 		$ticket_prices_to_save = array();
-		$quick_edit_ticket_price = isset($_POST['quick_edit_ticket_price']) ? $_POST['quick_edit_ticket_price'] : array();
+		$quick_edit_ticket_price = isset($this->_req_data['quick_edit_ticket_price']) ? $this->_req_data['quick_edit_ticket_price'] : array();
 //			echo printr( $quick_edit_ticket_price, '$quick_edit_ticket_price' );
 
 		// grab list of edited ticket prices
-		if ($edited_ticket_price_IDs = isset($_POST['edited_ticket_price_IDs']) ? $_POST['edited_ticket_price_IDs'] : FALSE) {
+		if ($edited_ticket_price_IDs = isset($this->_req_data['edited_ticket_price_IDs']) ? $this->_req_data['edited_ticket_price_IDs'] : FALSE) {
 			// remove last comma
 			$edited_ticket_price_IDs = trim($edited_ticket_price_IDs, ',');
 			// create array of edited ticket prices
@@ -2990,7 +2990,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			$edited_ticket_price_IDs = array_flip($edited_ticket_price_IDs);
 //				echo printr( $edited_ticket_price_IDs, '$edited_ticket_price_IDs' );
 			// grab existing ticket price data
-			if ($edited_ticket_prices = isset($_POST['edit_ticket_price']) ? $_POST['edit_ticket_price'] : FALSE) {
+			if ($edited_ticket_prices = isset($this->_req_data['edit_ticket_price']) ? $this->_req_data['edit_ticket_price'] : FALSE) {
 //					echo printr( $edited_ticket_prices, '$edited_ticket_prices' );
 				// cycle thru list                    
 				foreach ($edited_ticket_prices as $PRC_ID => $edited_ticket_price) {
@@ -3011,7 +3011,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 //			echo printr( $ticket_prices_to_save, '$ticket_prices_to_save' );	
 
 		// add new tickets if any
-		if ($new_ticket_price = isset($_POST['new_ticket_price']) ? $_POST['new_ticket_price'] : array('PRC_name' => NULL)) {
+		if ($new_ticket_price = isset($this->_req_data['new_ticket_price']) ? $this->_req_data['new_ticket_price'] : array('PRC_name' => NULL)) {
 			if (!empty($new_ticket_price['PRC_name'])) {
 				$ticket_prices_to_save[0] = $new_ticket_price;
 			}
@@ -3072,9 +3072,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 		
 
 		/// Create Event Post Code Here
-		if ( isset( $_REQUEST['create_post'] ) && $_REQUEST['create_post'] == 1 ) {
+		if ( isset( $this->_req_data['create_post'] ) && $this->_req_data['create_post'] == 1 ) {
 
-			$post_type = $_REQUEST['post_type'];
+			$post_type = $this->_req_data['post_type'];
 			
 			
 			if ($post_type == 'post') {
@@ -3101,12 +3101,12 @@ class Events_Admin_Page extends EE_Admin_Page {
 			
 			$my_post = array();
 
-			$my_post['post_title'] = esc_html($_REQUEST['event']);
+			$my_post['post_title'] = esc_html($this->_req_data['event']);
 			$my_post['post_content'] = $post_content;
 			$my_post['post_status'] = 'publish';
-			$my_post['post_author'] = $_REQUEST['user'];
-			$my_post['post_category'] = $_REQUEST['post_category'];
-			$my_post['tags_input'] = $_REQUEST['post_tags'];
+			$my_post['post_author'] = $this->_req_data['user'];
+			$my_post['post_category'] = $this->_req_data['post_category'];
+			$my_post['tags_input'] = $this->_req_data['post_tags'];
 			$my_post['post_type'] = $post_type;
 			//print_r($my_post);
 			// Insert the post into the database
@@ -3117,8 +3117,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 			add_post_meta($post_id, 'event_id', $last_event_id);
 			add_post_meta($post_id, 'event_identifier', $event_identifier);
 			add_post_meta($post_id, 'slug', $event_slug);
-			add_post_meta($post_id, 'event_start_date', $_REQUEST['start_date']);
-			add_post_meta($post_id, 'event_end_date', $_REQUEST['end_date']);
+			add_post_meta($post_id, 'event_start_date', $this->_req_data['start_date']);
+			add_post_meta($post_id, 'event_end_date', $this->_req_data['end_date']);
 			add_post_meta($post_id, 'event_location', $event_location);
 			add_post_meta($post_id, 'virtual_url', $virtual_url);
 			add_post_meta($post_id, 'virtual_phone', $virtual_phone);
@@ -3150,7 +3150,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			
 			$msg = sprintf( 
 					__( 'The event %s has been added for %s.', 'event_espresso' ), 
-					'<a href="' . espresso_reg_url($last_event_id) . '">' . stripslashes_deep($_REQUEST['event']) . '</a>', 
+					'<a href="' . espresso_reg_url($last_event_id) . '">' . stripslashes_deep($this->_req_data['event']) . '</a>', 
 					$evt_date 
 			);
 			EE_Error::add_success( $msg );
@@ -3159,7 +3159,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 			$msg = sprintf( 
 					__( 'An error occured and the event %s has not been saved to the database.', 'event_espresso' ), 
-					'<a href="' . espresso_reg_url($last_event_id) . '">' . stripslashes_deep($_REQUEST['event']) . '</a>' 
+					'<a href="' . espresso_reg_url($last_event_id) . '">' . stripslashes_deep($this->_req_data['event']) . '</a>' 
 			);
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			
@@ -3174,7 +3174,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 	private function _update_event() {
-		//print_r($_REQUEST);
+		//print_r($this->_req_data);
 
 		global $wpdb, $espresso_wp_user, $espresso_premium;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
@@ -3182,96 +3182,96 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$wpdb->show_errors();
 
 		$event_meta = array(); //will be used to hold event meta data
-		$wp_user_id = empty($_REQUEST['wp_user']) ? $espresso_wp_user : $_REQUEST['wp_user'][0];
-		$event_id = isset( $_REQUEST['event_id'] )? absint( $_REQUEST['event_id'] ) : null;
-		$event_name = htmlentities( wp_strip_all_tags( $_REQUEST['event'] ), ENT_QUOTES, 'UTF-8' );
-		$event_slug = ($_REQUEST['slug'] == '') ? sanitize_title_with_dashes($event_name . '-' . $event_id) : sanitize_title_with_dashes($_REQUEST['slug']);
-		$event_desc = $_REQUEST['event_desc'];
-		$display_desc = $_REQUEST['display_desc'];
-		$display_reg_form = $_REQUEST['display_reg_form'];
-		$reg_limit = absint( $_REQUEST['reg_limit'] );
-		$allow_multiple = $_REQUEST['allow_multiple'];
-		$ticket_id = empty($_REQUEST['ticket_id']) ? '' : $_REQUEST['ticket_id'];
-		$certificate_id = empty($_REQUEST['certificate_id']) ? '' : $_REQUEST['certificate_id'];
+		$wp_user_id = empty($this->_req_data['wp_user']) ? $espresso_wp_user : $this->_req_data['wp_user'][0];
+		$event_id = isset( $this->_req_data['event_id'] )? absint( $this->_req_data['event_id'] ) : null;
+		$event_name = htmlentities( wp_strip_all_tags( $this->_req_data['event'] ), ENT_QUOTES, 'UTF-8' );
+		$event_slug = ($this->_req_data['slug'] == '') ? sanitize_title_with_dashes($event_name . '-' . $event_id) : sanitize_title_with_dashes($this->_req_data['slug']);
+		$event_desc = $this->_req_data['event_desc'];
+		$display_desc = $this->_req_data['display_desc'];
+		$display_reg_form = $this->_req_data['display_reg_form'];
+		$reg_limit = absint( $this->_req_data['reg_limit'] );
+		$allow_multiple = $this->_req_data['allow_multiple'];
+		$ticket_id = empty($this->_req_data['ticket_id']) ? '' : $this->_req_data['ticket_id'];
+		$certificate_id = empty($this->_req_data['certificate_id']) ? '' : $this->_req_data['certificate_id'];
 
-		$allow_overflow = empty($_REQUEST['allow_overflow']) ? false : $_REQUEST['allow_overflow'];
+		$allow_overflow = empty($this->_req_data['allow_overflow']) ? false : $this->_req_data['allow_overflow'];
 
-		$additional_limit = $_REQUEST['additional_limit'];
-		//$member_only=$_REQUEST['member_only'];
-		$member_only = empty($_REQUEST['member_only']) ? false : $_REQUEST['member_only'];
+		$additional_limit = $this->_req_data['additional_limit'];
+		//$member_only=$this->_req_data['member_only'];
+		$member_only = empty($this->_req_data['member_only']) ? false : $this->_req_data['member_only'];
 
-		$is_active = $_REQUEST['is_active'];
-		$event_status = $_REQUEST['new_event_status'];
+		$is_active = $this->_req_data['is_active'];
+		$event_status = $this->_req_data['new_event_status'];
 
-		$address = !empty($_REQUEST['address']) ? esc_html($_REQUEST['address']) : '';
-		$address2 = !empty($_REQUEST['address2']) ? esc_html($_REQUEST['address2']) : '';
-		$city = !empty($_REQUEST['city']) ? esc_html($_REQUEST['city']) : '';
-		$state = !empty($_REQUEST['state']) ? esc_html($_REQUEST['state']) : '';
-		$zip = !empty($_REQUEST['zip']) ? esc_html($_REQUEST['zip']) : '';
-		$country = !empty($_REQUEST['country']) ? esc_html($_REQUEST['country']) : '';
-		$phone = !empty($_REQUEST['phone']) ? esc_html($_REQUEST['phone']) : '';
-		$externalURL = !empty($_REQUEST['externalURL']) ? esc_html($_REQUEST['externalURL']) : '';
+		$address = !empty($this->_req_data['address']) ? esc_html($this->_req_data['address']) : '';
+		$address2 = !empty($this->_req_data['address2']) ? esc_html($this->_req_data['address2']) : '';
+		$city = !empty($this->_req_data['city']) ? esc_html($this->_req_data['city']) : '';
+		$state = !empty($this->_req_data['state']) ? esc_html($this->_req_data['state']) : '';
+		$zip = !empty($this->_req_data['zip']) ? esc_html($this->_req_data['zip']) : '';
+		$country = !empty($this->_req_data['country']) ? esc_html($this->_req_data['country']) : '';
+		$phone = !empty($this->_req_data['phone']) ? esc_html($this->_req_data['phone']) : '';
+		$externalURL = !empty($this->_req_data['externalURL']) ? esc_html($this->_req_data['externalURL']) : '';
 
 		//$event_location = $address . ' ' . $city . ', ' . $state . ' ' . $zip;
 		$event_location = ($address != '' ? $address . ' ' : '') . ($city != '' ? '<br />' . $city : '') . ($state != '' ? ', ' . $state : '') . ($zip != '' ? '<br />' . $zip : '') . ($country != '' ? '<br />' . $country : '');
 
 		//Get the first instance of the start and end times
-		//$start_time = $_REQUEST['start_time'][0];
-		//$end_time = $_REQUEST['end_time'][0];
+		//$start_time = $this->_req_data['start_time'][0];
+		//$end_time = $this->_req_data['end_time'][0];
 		// Add registration times
-		//$registration_startT = event_date_display($_REQUEST['registration_startT'], 'H:i');
-		//$registration_endT = event_date_display($_REQUEST['registration_endT'], 'H:i');
+		//$registration_startT = event_date_display($this->_req_data['registration_startT'], 'H:i');
+		//$registration_endT = event_date_display($this->_req_data['registration_endT'], 'H:i');
 		//Add timezone
-		$timezone_string = empty($_REQUEST['timezone_string']) ? '' : $_REQUEST['timezone_string'];
+		$timezone_string = empty($this->_req_data['timezone_string']) ? '' : $this->_req_data['timezone_string'];
 
 		//Early discounts
-		$early_disc = $_REQUEST['early_disc'];
-		$early_disc_date = $_REQUEST['early_disc_date'];
-		$early_disc_percentage = $_REQUEST['early_disc_percentage'];
+		$early_disc = $this->_req_data['early_disc'];
+		$early_disc_date = $this->_req_data['early_disc_date'];
+		$early_disc_percentage = $this->_req_data['early_disc_percentage'];
 
-		$use_coupon_code = $_REQUEST['use_coupon_code'];
-		$alt_email = $_REQUEST['alt_email'];
+		$use_coupon_code = $this->_req_data['use_coupon_code'];
+		$alt_email = $this->_req_data['alt_email'];
 
-		$confirmation_email_id = isset( $_REQUEST['confirmation_email_id'] ) ? $_REQUEST['confirmation_email_id']  : NULL;
-		$payment_email_id = isset( $_REQUEST['payment_email_id'] ) ? $_REQUEST['payment_email_id'] : NULL;
+		$confirmation_email_id = isset( $this->_req_data['confirmation_email_id'] ) ? $this->_req_data['confirmation_email_id']  : NULL;
+		$payment_email_id = isset( $this->_req_data['payment_email_id'] ) ? $this->_req_data['payment_email_id'] : NULL;
 
 
 		//Venue Information
-		$venue_title = isset($_REQUEST['venue_title']) ? $_REQUEST['venue_title'] : '';
-		$venue_url = isset($_REQUEST['venue_url']) ? $_REQUEST['venue_url'] : '';
-		$venue_phone = isset($_REQUEST['venue_phone']) ? $_REQUEST['venue_phone'] : '';
-		$venue_image = isset($_REQUEST['venue_image']) ? $_REQUEST['venue_image'] : '';
+		$venue_title = isset($this->_req_data['venue_title']) ? $this->_req_data['venue_title'] : '';
+		$venue_url = isset($this->_req_data['venue_url']) ? $this->_req_data['venue_url'] : '';
+		$venue_phone = isset($this->_req_data['venue_phone']) ? $this->_req_data['venue_phone'] : '';
+		$venue_image = isset($this->_req_data['venue_image']) ? $this->_req_data['venue_image'] : '';
 
 
 		//Virtual location
-		$virtual_url = isset($_REQUEST['virtual_url']) ? $_REQUEST['virtual_url'] : '';
-		$virtual_phone = isset($_REQUEST['virtual_phone']) ? $_REQUEST['virtual_phone'] : '';
+		$virtual_url = isset($this->_req_data['virtual_url']) ? $this->_req_data['virtual_url'] : '';
+		$virtual_phone = isset($this->_req_data['virtual_phone']) ? $this->_req_data['virtual_phone'] : '';
 
 		if (isset($reg_limit) && $reg_limit == '') {
 			$reg_limit = 999999;
 		}
 
-		$question_groups = serialize($_REQUEST['question_groups']);
+		$question_groups = serialize($this->_req_data['question_groups']);
 
-		$event_meta['default_payment_status'] = $_REQUEST['default_payment_status'];
-		$event_meta['venue_id'] = empty($_REQUEST['venue_id']) ? '' : $_REQUEST['venue_id'][0];
-		$event_meta['additional_attendee_reg_info'] = $_REQUEST['additional_attendee_reg_info'];
-		$event_meta['add_attendee_question_groups'] = empty($_REQUEST['add_attendee_question_groups']) ? '' : $_REQUEST['add_attendee_question_groups'];
-		$event_meta['date_submitted'] = isset( $_REQUEST['date_submitted'] ) ? $_REQUEST['date_submitted'] : NULL;
-		$event_meta['originally_submitted_by'] = isset( $_REQUEST['originally_submitted_by'] ) ? $_REQUEST['originally_submitted_by'] : NULL;
+		$event_meta['default_payment_status'] = $this->_req_data['default_payment_status'];
+		$event_meta['venue_id'] = empty($this->_req_data['venue_id']) ? '' : $this->_req_data['venue_id'][0];
+		$event_meta['additional_attendee_reg_info'] = $this->_req_data['additional_attendee_reg_info'];
+		$event_meta['add_attendee_question_groups'] = empty($this->_req_data['add_attendee_question_groups']) ? '' : $this->_req_data['add_attendee_question_groups'];
+		$event_meta['date_submitted'] = isset( $this->_req_data['date_submitted'] ) ? $this->_req_data['date_submitted'] : NULL;
+		$event_meta['originally_submitted_by'] = isset( $this->_req_data['originally_submitted_by'] ) ? $this->_req_data['originally_submitted_by'] : NULL;
 
 		if (isset($espresso_wp_user) && $espresso_wp_user != $event_meta['originally_submitted_by']) {
-			$event_meta['orig_event_staff'] = !empty($_REQUEST['event_person']) ? serialize($_REQUEST['event_person']) : '';
+			$event_meta['orig_event_staff'] = !empty($this->_req_data['event_person']) ? serialize($this->_req_data['event_person']) : '';
 		}
 		//print_r($event_meta['orig_event_staff']);
 		//Thumbnails
-		$event_meta['event_thumbnail_url'] = !empty($_REQUEST['upload_image']) ? $_REQUEST['upload_image'] : '';
-		$event_meta['display_thumb_in_lists'] = !empty($_REQUEST['show_thumb_in_lists']) ? $_REQUEST['show_thumb_in_lists'] : '';
-		$event_meta['display_thumb_in_regpage'] = !empty($_REQUEST['show_thumb_in_regpage']) ? $_REQUEST['show_thumb_in_regpage'] : '';
-		$event_meta['display_thumb_in_calendar'] = !empty($_REQUEST['show_on_calendar']) ? $_REQUEST['show_on_calendar'] : '';
+		$event_meta['event_thumbnail_url'] = !empty($this->_req_data['upload_image']) ? $this->_req_data['upload_image'] : '';
+		$event_meta['display_thumb_in_lists'] = !empty($this->_req_data['show_thumb_in_lists']) ? $this->_req_data['show_thumb_in_lists'] : '';
+		$event_meta['display_thumb_in_regpage'] = !empty($this->_req_data['show_thumb_in_regpage']) ? $this->_req_data['show_thumb_in_regpage'] : '';
+		$event_meta['display_thumb_in_calendar'] = !empty($this->_req_data['show_on_calendar']) ? $this->_req_data['show_on_calendar'] : '';
 
-		if (!empty($_REQUEST['venue_id'][0]) || !empty($_REQUEST['zip']) || !empty($_REQUEST['city']) || !empty($_REQUEST['state'])) {
-			$event_meta['enable_for_gmap'] = $_REQUEST['enable_for_gmap'];
+		if (!empty($this->_req_data['venue_id'][0]) || !empty($this->_req_data['zip']) || !empty($this->_req_data['city']) || !empty($this->_req_data['state'])) {
+			$event_meta['enable_for_gmap'] = $this->_req_data['enable_for_gmap'];
 		} else {
 			$event_meta['enable_for_gmap'] = false;
 		}
@@ -3279,10 +3279,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 		/*
 		 * Added for seating chart addon
 		 */
-		if (isset($_REQUEST['seating_chart_id'])) {
+		if (isset($this->_req_data['seating_chart_id'])) {
 			$cls_seating_chart = new seating_chart();
-			$seating_chart_result = $cls_seating_chart->associate_event_seating_chart($_REQUEST['seating_chart_id'], $event_id);
-			$tmp_seating_chart_id = $_REQUEST['seating_chart_id'];
+			$seating_chart_result = $cls_seating_chart->associate_event_seating_chart($this->_req_data['seating_chart_id'], $event_id);
+			$tmp_seating_chart_id = $this->_req_data['seating_chart_id'];
 			if ($tmp_seating_chart_id > 0) {
 				if ($seating_chart_result === false) {
 					$tmp_seating_chart_row = $wpdb->get_row("select seating_chart_id from " . EVENTS_SEATING_CHART_EVENT_TABLE . " where event_id = $event_id");
@@ -3293,7 +3293,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 					}
 				}
 
-				if ($_REQUEST['allow_multiple'] == 'true' && isset($_REQUEST['seating_chart_id']) && $tmp_seating_chart_id > 0) {
+				if ($this->_req_data['allow_multiple'] == 'true' && isset($this->_req_data['seating_chart_id']) && $tmp_seating_chart_id > 0) {
 
 					$event_meta['additional_attendee_reg_info'] = 3;
 				}
@@ -3304,16 +3304,16 @@ class Events_Admin_Page extends EE_Admin_Page {
 		 */
 
 
-		if ( $_REQUEST['emeta'] != '' ) {
-			foreach ($_REQUEST['emeta'] as $k => $v) {
-				$event_meta[$v] = $_REQUEST['emetad'][$k];
+		if ( $this->_req_data['emeta'] != '' ) {
+			foreach ($this->_req_data['emeta'] as $k => $v) {
+				$event_meta[$v] = $this->_req_data['emetad'][$k];
 			}
 		}
 		$event_meta = serialize($event_meta);
 		############ Added by wp-developers ######################
 		$require_pre_approval = 0;
-		if (isset($_REQUEST['require_pre_approval'])) {
-			$require_pre_approval = $_REQUEST['require_pre_approval'];
+		if (isset($this->_req_data['require_pre_approval'])) {
+			$require_pre_approval = $this->_req_data['require_pre_approval'];
 		}
 
 		################# END #################
@@ -3380,7 +3380,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 		if (function_exists('event_espresso_add_event_to_db_groupon')) {
-			$sql = event_espresso_add_event_to_db_groupon($sql, $_REQUEST['use_groupon_code']);
+			$sql = event_espresso_add_event_to_db_groupon($sql, $this->_req_data['use_groupon_code']);
 			///print count ($sql);
 			$sql_data = array_merge((array) $sql_data, (array) '%s');
 			//print count($sql_data);
@@ -3400,8 +3400,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 			$error = true;
 		}
 
-		if (!empty($_REQUEST['event_category'])) {
-			foreach ($_REQUEST['event_category'] as $k => $v) {
+		if (!empty($this->_req_data['event_category'])) {
+			foreach ($this->_req_data['event_category'] as $k => $v) {
 				if ($v != '') {
 					$sql_cat = "INSERT INTO " . EVENTS_CATEGORY_REL_TABLE . " (event_id, cat_id) VALUES ('" . $event_id . "', '" . $v . "')";
 					//echo "$sql_cat <br>";
@@ -3415,8 +3415,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 		if ( FALSE === $wpdb->query($del_ppl) )
 			$error = true;
 
-		if (!empty($_REQUEST['event_person'])) {
-			foreach ($_REQUEST['event_person'] as $k => $v) {
+		if (!empty($this->_req_data['event_person'])) {
+			foreach ($this->_req_data['event_person'] as $k => $v) {
 				if ($v != '') {
 					$sql_ppl = "INSERT INTO " . EVENTS_PERSONNEL_REL_TABLE . " (event_id, person_id) VALUES ('" . $event_id . "', '" . $v . "')";
 					//echo "$sql_ppl <br>";
@@ -3430,8 +3430,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 		if ( FALSE === $wpdb->query($del_venues) )
 			$error = true;
 
-		if (!empty($_REQUEST['venue_id'])) {
-			foreach ($_REQUEST['venue_id'] as $k => $v) {
+		if (!empty($this->_req_data['venue_id'])) {
+			foreach ($this->_req_data['venue_id'] as $k => $v) {
 				if ($v != '' && $v != 0) {
 					$sql_venues = "INSERT INTO " . EVENTS_VENUE_REL_TABLE . " (event_id, venue_id) VALUES ('" . $event_id . "', '" . $v . "')";
 					//echo "$sql_venues <br>";
@@ -3445,8 +3445,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 		if ( FALSE === $wpdb->query($del_discounts) )
 			$error = true;
 
-		if (!empty($_REQUEST['event_discount'])) {
-			foreach ($_REQUEST['event_discount'] as $k => $v) {
+		if (!empty($this->_req_data['event_discount'])) {
+			foreach ($this->_req_data['event_discount'] as $k => $v) {
 				if ($v != '') {
 					$sql_discount = "INSERT INTO " . EVENTS_DISCOUNT_REL_TABLE . " (event_id, discount_id) VALUES ('" . $event_id . "', '" . $v . "')";
 					//echo "$sql_discount <br>";
@@ -3461,30 +3461,30 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		
 
-//			if (isset($_POST['process_datetimes']) && $_POST['process_datetimes']) {
+//			if (isset($this->_req_data['process_datetimes']) && $this->_req_data['process_datetimes']) {
 
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Datetime.class.php');
 			$DTM = EEM_Datetime::instance();
 
 			// grab list of all datetime ID's we are processing
-			if (isset($_POST['datetime_IDs'])) {
-				$datetime_IDs = unserialize( $_POST['datetime_IDs'] );
+			if (isset($this->_req_data['datetime_IDs'])) {
+				$datetime_IDs = unserialize( $this->_req_data['datetime_IDs'] );
 				array_walk( $datetime_IDs, 'absint');
 				$datetime_IDs = array_flip($datetime_IDs);
 			} else {
 				$datetime_IDs = array();
 			}
 			
-			$event_datetimes = isset($_POST['event_datetimes']) ? $_POST['event_datetimes'] : array();
+			$event_datetimes = isset($this->_req_data['event_datetimes']) ? $this->_req_data['event_datetimes'] : array();
 			// add hook so addons can manipulate event datetimes prior to saving			
 			$event_datetimes = apply_filters( 'filter_hook_espresso_update_event_datetimes', $event_datetimes );
 
 			if ( $event_datetimes ) {			
 
-				ksort($_POST['event_datetimes']);
+				ksort($this->_req_data['event_datetimes']);
 
-				foreach ($_POST['event_datetimes'] as $dtm) {
+				foreach ($this->_req_data['event_datetimes'] as $dtm) {
 
 //						echo printr( $dtm, '$dtm' );
 
@@ -3555,11 +3555,11 @@ class Events_Admin_Page extends EE_Admin_Page {
 		/************************************   PRICING   ******************************************* */
 		
 		$ticket_prices_to_save = array();
-		$quick_edit_ticket_price = isset($_POST['quick_edit_ticket_price']) ? $_POST['quick_edit_ticket_price'] : array();
+		$quick_edit_ticket_price = isset($this->_req_data['quick_edit_ticket_price']) ? $this->_req_data['quick_edit_ticket_price'] : array();
 //			echo printr( $quick_edit_ticket_price, '$quick_edit_ticket_price' );
 
 		// grab list of edited ticket prices
-		if ($edited_ticket_price_IDs = isset($_POST['edited_ticket_price_IDs']) ? $_POST['edited_ticket_price_IDs'] : FALSE) {
+		if ($edited_ticket_price_IDs = isset($this->_req_data['edited_ticket_price_IDs']) ? $this->_req_data['edited_ticket_price_IDs'] : FALSE) {
 			// remove last comma
 			$edited_ticket_price_IDs = trim($edited_ticket_price_IDs, ',');
 			// create array of edited ticket prices
@@ -3570,7 +3570,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			$edited_ticket_price_IDs = array_flip($edited_ticket_price_IDs);
 //				echo printr( $edited_ticket_price_IDs, '$edited_ticket_price_IDs' );
 			// grab existing ticket price data
-			if ( $edited_ticket_prices = isset($_POST['edit_ticket_price']) ? $_POST['edit_ticket_price'] : array() ) {
+			if ( $edited_ticket_prices = isset($this->_req_data['edit_ticket_price']) ? $this->_req_data['edit_ticket_price'] : array() ) {
 //					echo printr( $edited_ticket_prices, '$edited_ticket_prices' );
 				// cycle thru list                    
 				foreach ($edited_ticket_prices as $PRC_ID => $edited_ticket_price) {
@@ -3591,7 +3591,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 //			echo printr( $ticket_prices_to_save, '$ticket_prices_to_save' );	
 
 		// add new tickets if any
-		if ($new_ticket_price = isset($_POST['new_ticket_price']) ? $_POST['new_ticket_price'] : array('PRC_name' => NULL)) {
+		if ($new_ticket_price = isset($this->_req_data['new_ticket_price']) ? $this->_req_data['new_ticket_price'] : array('PRC_name' => NULL)) {
 			if (!empty($new_ticket_price['PRC_name'])) {
 				$ticket_prices_to_save[0] = $new_ticket_price;
 			}
@@ -3660,7 +3660,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		}
 
 
-//echo printr( $_POST, '$_POST' );	
+//echo printr( $this->_req_data, '$this->_req_data' );	
 //echo EE_Error::get_notices();            
 //die();
 
@@ -3671,11 +3671,11 @@ class Events_Admin_Page extends EE_Admin_Page {
 		}
 
 		/// Create Event Post Code Here
-		if ( isset( $_REQUEST['create_post'] )) {
+		if ( isset( $this->_req_data['create_post'] )) {
 		
-			if ( $_REQUEST['create_post'] ) {
+			if ( $this->_req_data['create_post'] ) {
 			
-				$post_type = $_REQUEST['post_type'];
+				$post_type = $this->_req_data['post_type'];
 				if ($post_type == 'post') {
 					if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php") || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/event_post.php")) {
 						// Load message from template into message post variable
@@ -3701,8 +3701,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 				$my_post = array();
 
 				// check for post id in form input first before just hitting the db
-				if ( isset( $_POST['post_id'] ) && ! empty( $_POST['post_id'] )) {
-					$post_id = absint( $_POST['post_id'] );
+				if ( isset( $this->_req_data['post_id'] ) && ! empty( $this->_req_data['post_id'] )) {
+					$post_id = absint( $this->_req_data['post_id'] );
 				} else {
 					$sql = " SELECT * FROM " . EVENTS_DETAIL_TABLE;
 					$sql .= " WHERE id = '" . $event_id . "' ";
@@ -3710,18 +3710,18 @@ class Events_Admin_Page extends EE_Admin_Page {
 					$post_id = $wpdb->last_result[0]->post_id;
 				}
 
-				$post_type = $_REQUEST['post_type'];
+				$post_type = $this->_req_data['post_type'];
 
 				if ($post_id > 0)
 					$my_post['ID'] = $post_id;
 
-				$my_post['post_title'] = esc_html($_REQUEST['event']);
+				$my_post['post_title'] = esc_html($this->_req_data['event']);
 				$my_post['post_content'] = $post_content;
 				$my_post['post_status'] = 'publish';
-				$my_post['post_author'] = $_REQUEST['user'];
-				$my_post['post_category'] = $_REQUEST['post_category'];
+				$my_post['post_author'] = $this->_req_data['user'];
+				$my_post['post_category'] = $this->_req_data['post_category'];
 				//print_r ($my_post['post_category']);
-				$my_post['tags_input'] = $_REQUEST['post_tags'];
+				$my_post['tags_input'] = $this->_req_data['post_tags'];
 				$my_post['post_type'] = $post_type;
 				//print_r($my_post);
 				// Insert the post into the database					
@@ -3798,8 +3798,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 			} else {
 			
 				// check for post id in form input first before just hitting the db
-				if ( isset( $_POST['post_id'] ) && ! empty( $_POST['post_id'] )) {
-					$post_id = absint( $_POST['post_id'] );
+				if ( isset( $this->_req_data['post_id'] ) && ! empty( $this->_req_data['post_id'] )) {
+					$post_id = absint( $this->_req_data['post_id'] );
 				} else {
 					$sql = " SELECT * FROM " . EVENTS_DETAIL_TABLE;
 					$sql .= " WHERE id = '" . $event_id . "' ";
@@ -3807,7 +3807,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 					$post_id = $wpdb->last_result[0]->post_id;
 				}
 
-				if ($wpdb->num_rows > 0 && !empty($_REQUEST['delete_post']) && $_REQUEST['delete_post'] == 'true') {
+				if ($wpdb->num_rows > 0 && !empty($this->_req_data['delete_post']) && $this->_req_data['delete_post'] == 'true') {
 					$sql = array('post_id' => '', 'post_type' => '');
 					$sql_data = array('%d', '%s');
 					$update_id = array('id' => $event_id);
@@ -3826,7 +3826,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			
 			$msg = sprintf( 
 					__( 'The event %s has been updated', 'event_espresso' ), 
-					'<a href="' . espresso_reg_url($event_id) . '">' . stripslashes_deep($_REQUEST['event']) . '</a>'
+					'<a href="' . espresso_reg_url($event_id) . '">' . stripslashes_deep($this->_req_data['event']) . '</a>'
 			);
 			EE_Error::add_success( $msg );
 
@@ -3834,7 +3834,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 			$msg = sprintf( 
 					__( 'An error occured and the event %s has not been updated in the database.', 'event_espresso' ), 
-					'<a href="' . espresso_reg_url($event_id) . '">' . stripslashes_deep($_REQUEST['event']) . '</a>' 
+					'<a href="' . espresso_reg_url($event_id) . '">' . stripslashes_deep($this->_req_data['event']) . '</a>' 
 			);
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			
@@ -3904,9 +3904,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$new_request_args = array(
 			'export' => 'report',
 			'action' => 'event',
-			'event_id' => $_REQUEST['EVT_ID'],
+			'event_id' => $this->_req_data['EVT_ID'],
 			);
-		$_REQUEST = array_merge( $_REQUEST, $new_request_args);
+		$this->_req_data = array_merge( $this->_req_data, $new_request_args);
 		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php')) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
 			$EE_Export = EE_Export::instance();
@@ -3929,9 +3929,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 			'export' => 'report',
 			'action' => 'payment',
 			'type' => 'excel',
-			'event_id' => $_REQUEST['EVT_ID'],
+			'event_id' => $this->_req_data['EVT_ID'],
 			);
-		$_REQUEST = array_merge( $_REQUEST, $new_request_args );
+		$this->_req_data = array_merge( $this->_req_data, $new_request_args );
 		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php')) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
 			$EE_Export = EE_Export::instance();
@@ -3951,7 +3951,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	protected function _import_events() {
 
 		//first check if we've got an incoming import
-		if (isset($_REQUEST['import'])) {
+		if (isset($this->_req_data['import'])) {
 			if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php')) {
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php');
 				$EE_Import = EE_Import::instance();
@@ -3990,11 +3990,11 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		$offset = ($current_page-1)*$per_page; 
 		$limit = $count ? '' : ' LIMIT ' . $offset . ',' . $per_page;
-		$orderby = isset($_REQUEST['orderby']) ? " ORDER BY " . $_REQUEST['orderby'] : " ORDER BY e.event_name";
-		$order = isset($_REQUEST['order']) ? " " . $_REQUEST['order'] : " DESC";
+		$orderby = isset($this->_req_data['orderby']) ? " ORDER BY " . $this->_req_data['orderby'] : " ORDER BY e.event_name";
+		$order = isset($this->_req_data['order']) ? " " . $this->_req_data['order'] : " DESC";
 
-		if (isset($_REQUEST['month_range'])) {
-			$pieces = explode(' ', $_REQUEST['month_range'], 3);
+		if (isset($this->_req_data['month_range'])) {
+			$pieces = explode(' ', $this->_req_data['month_range'], 3);
 			$month_r = !empty($pieces[0]) ? $pieces[0] : '';
 			$year_r = !empty($pieces[1]) ? $pieces[1] : '';
 		}
@@ -4024,7 +4024,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		
 
 
-		if ( isset($_REQUEST['category_id']) && $_REQUEST['category_id'] != '') {
+		if ( isset($this->_req_data['category_id']) && $this->_req_data['category_id'] != '') {
 			$sql .= " LEFT JOIN " . EVENTS_CATEGORY_REL_TABLE . " cr ON cr.event_id = e.id ";
 			$sql .= " LEFT JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = cr.cat_id ";
 		}
@@ -4035,14 +4035,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 			$sql .= "dtt.DTT_is_primary = '1' AND ";
 		}
 
-		$sql .= ( isset($_REQUEST['event_status']) && ($_REQUEST['event_status'] != '') ) ? "e.event_status = '" . $_REQUEST['event_status'] . "' " : "e.event_status != 'D' ";
-		$sql .= isset($_REQUEST['category_id']) && $_REQUEST['category_id'] != '' ? " AND c.id = '" . $_REQUEST['category_id'] . "' " : '';
+		$sql .= ( isset($this->_req_data['event_status']) && ($this->_req_data['event_status'] != '') ) ? "e.event_status = '" . $this->_req_data['event_status'] . "' " : "e.event_status != 'D' ";
+		$sql .= isset($this->_req_data['category_id']) && $this->_req_data['category_id'] != '' ? " AND c.id = '" . $this->_req_data['category_id'] . "' " : '';
 
-		if ( isset($_REQUEST['month_range']) && $_REQUEST['month_range'] != '' ) {
+		if ( isset($this->_req_data['month_range']) && $this->_req_data['month_range'] != '' ) {
 			$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime($year_r . '-' . $month_r . '-01') . "' AND '" . strtotime($year_r . '-' . $month_r . '-31') . "' ";
-		} elseif (isset($_REQUEST['status']) && $_REQUEST['status'] == 'today') {
+		} elseif (isset($this->_req_data['status']) && $this->_req_data['status'] == 'today') {
 			$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime(date('Y-m-d') . ' 0:00:00') . "' AND '" . strtotime(date('Y-m-d') . ' 23:59:59') . "' ";
-		} elseif (isset($_REQUEST['status']) && $_REQUEST['status'] == 'month') {
+		} elseif (isset($this->_req_data['status']) && $this->_req_data['status'] == 'month') {
 			$this_year_r = date('Y');
 			$this_month_r = date('m');
 			$days_this_month = date('t');
