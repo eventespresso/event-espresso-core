@@ -22,173 +22,41 @@
  * ------------------------------------------------------------------------
  */
 class EE_Answer {
-
-
-    /**
-    *	Transaction ID
-	* 
-	* 	primary key
-	*	
-	* 	@access	private
-    *	@var int	
-    */
-	private $_ATT_ID = FALSE;
-
-
-    /**
-    *	Attendee First Name
-	* 
-	*	@access	private
-    *	@var string	
-    */
-	private $_ATT_fname = NULL;
-
-
-    /**
-    *	Attendee Last Name
-	* 
-	*	@access	private
-    *	@var string	
-    */
-	private $_ATT_lname = NULL;
-
-
-    /**
-    *	Attendee Address
-	* 
-	*	@access	private
-    *	@var string	
-    */
-	private $_ATT_address = NULL;
-
-
-    /**
-    *	Attendee Address 2
-	* 
-	*	@access	private
-    *	@var string	
-    */
-	private $_ATT_address2 = NULL;
-
-
-    /**
-    *	Attendee City
-	* 
-	*	@access	private
-    *	@var string	
-    */
-	private $_ATT_city = NULL;
-
-
-    /**
-    *	State ID
-	* 
-	*	foreign key from state table
-	*  
-	*	@access	private
-    *	@var int	
-    */
-	private $_STA_ID = NULL;
-
-
-    /**
-    *	Country ISO Code
-	* 
-	*	foreign key from country table
-	*  
-	*	@access	private
-    *	@var string	
-    */
-	private $_CNT_ISO = NULL;
-
-
-    /**
-    *	Attendee Zip/Postal Code
-	* 
-	*	@access	private
-    *	@var string	
-    */
-	private $_ATT_zip = NULL;
-
-
-    /**
-    *	Attendee Email Address
-	* 
-	*	@access	private
-    *	@var string	
-    */
-	private $_ATT_email = NULL;
-
-
-    /**
-    *	Attendee Phone
-	* 
-	*	@access	private
-    *	@var string	
-    */
-	private $_ATT_phone = NULL;
-
-
-    /**
-    *	Attendee Social Networking details - links, ID's, etc
-	* 
-	*	@access	private
-    *	@var string	
-    */
-	private $_ATT_social = NULL;
-
-
-    /**
-    *	Attendee Comments (from the attendee)
-	* 
-	*	@access	private
-    *	@var string	
-    */
-	private $_ATT_comments = NULL;
-
-
-    /**
-    *	Attendee Notes (about the attendee)
-	* 
-	*	@access	private
-    *	@var string	
-    */
-	private $_ATT_notes = NULL;
-
-
-    /**
-    *	Whether this Attendee has been moved to the trash
-	* 
-	*	@access	private
-    *	@var boolean	
-    */
-	private $_ATT_deleted = FALSE;
-
-
-
-
-
 	/**
-	*  Attendee constructor
-	*
-	* @access 		public
-	* @param 		string 				$ATT_fname				Attendee First Name
-	* @param 		string				$ATT_lname  				Attendee Last Name
-	* @param 		string 				$ATT_address  			Attendee Address
-	* @param 		string				$ATT_address2 			Attendee Address2
-	* @param 		string				$ATT_city 					Attendee City
-	* @param 		int					$STA_ID		 				Attendee State ID
-	* @param 		string 				$CNT_ISO 					Attendee Country ISO Code
-	* @param 		string 				$ATT_zip 					Attendee Zip/Postal Code
-	* @param 		string 				$ATT_email 				Attendee Email Address
-	* @param 		string 				$ATT_phone 				Attendee Phone #
-	* @param 		string		 		$ATT_social 				Attendee Social Networking details
-	* @param 		string		 		$ATT_comments 		Attendee Comments (by the attendee)
-	* @param 		string		 		$ATT_notes					Attendee Notes (about the attendee)
-	* @param 		string		 		$ATT_deleted					Whether this Attendee has been moved to the trash
-	* @param 		int 					$ATT_ID 						Attendee ID
-	*/
-	public function __construct( $ATT_fname='', $ATT_lname='', $ATT_address=NULL, $ATT_address2=NULL, $ATT_city=NULL, $STA_ID=NULL, $CNT_ISO=NULL, $ATT_zip=NULL, $ATT_email=NULL, $ATT_phone=NULL, $ATT_social=NULL, $ATT_comments=NULL, $ATT_notes=NULL, $ATT_deleted=FALSE,$ATT_ID=FALSE ) {
+	 * Answer ID
+	 * 
+	 * @access private
+	 * @var int
+	 */
+	private $_ANS_ID=FALSE;
+	
+	/**
+	 * ID of the related Registration
+	 * @access private
+	 * @var int 
+	 */
+	private $_REG_ID=NULL;
+	
+	/**
+	 * ID of the related question
+	 * @access private
+	 * @var int
+	 */
+	private $_QST_ID=NULL;
+	
+	/**
+	 * Text of answer. This is obvious for text and textarea typed questions.
+	 * For check
+	 * @access private
+	 * @var text 
+	 */
+	private $_ANS_answer=NULL;
+
+
+
+
+
+	public function __construct(  ) {
 		$this->_ATT_ID 					= absint( $ATT_ID );
 		$this->_ATT_fname 			= 	htmlentities( wp_strip_all_tags( $ATT_fname ), ENT_QUOTES, 'UTF-8' ); 
 		$this->_ATT_lname 			= htmlentities( wp_strip_all_tags( $ATT_lname ), ENT_QUOTES, 'UTF-8' );
