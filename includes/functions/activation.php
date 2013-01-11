@@ -607,7 +607,7 @@ function events_data_tables_install() {
 				UNIQUE INDEX `QST_system_name_UNIQUE` (`QST_system_name` ASC) ";
 	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
 	
-	$table='esp_quesetion_group';
+	$table_name='esp_quesetion_group';
 	$sql="`QSG_ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
 				`QSG_name` varchar(145) NOT NULL,
 				`QSG_identifier` varchar(45) NOT NULL,
@@ -622,14 +622,14 @@ function events_data_tables_install() {
 				UNIQUE KEY `QSG_identifier_UNIQUE` (`QSG_identifier`)";
 	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
 	
-	$table='esp_question_question_group';
+	$table_name='esp_question_question_group';
 	$sql="`QQG_ID` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 				`QSG_ID` INT UNSIGNED NOT NULL ,
 				`QST_ID` INT UNSIGNED NOT NULL ,
 				PRIMARY KEY (`QQG_ID`) ";
 	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
 	
-	$table='esp_question_option';
+	$table_name='esp_question_option';
 	$sql="`QSO_ID` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 				`QSO_name` VARCHAR(45) NOT NULL ,
 				`QSO_value` VARCHAR(45) NOT NULL ,
@@ -637,7 +637,7 @@ function events_data_tables_install() {
 				PRIMARY KEY (`QSO_ID`)";
 	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
 	
-	$table='esp_answer';
+	$table_name='esp_answer';
 	$sql=" `ANS_ID` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 				`REG_ID` INT UNSIGNED NOT NULL ,
 				`QST_ID` INT UNSIGNED NOT NULL ,
@@ -645,7 +645,7 @@ function events_data_tables_install() {
 				PRIMARY KEY (`ANS_ID`)";
 	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
 	
-	$table='esp_event_question_group';
+	$table_name='esp_event_question_group';
 	$sql="`EQG_ID` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 				`EVT_ID` INT UNSIGNED NOT NULL ,
 				`QSG_ID` INT UNSIGNED NOT NULL ,
