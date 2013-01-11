@@ -161,9 +161,9 @@ class EE_Admin_Page_load {
 	 */
 	private function _get_installed_pages() {
 		$installed_refs = array();
-		$exclude = array('assets', 'attendees', 'event_pricing', 'registrations', 'transactions', 'messages');
+		$exclude = array( 'assets', 'attendees', 'caffeinated', 'event_pricing', 'registrations', 'transactions', 'messages', 'pricing_manager' );
 		// grab everything in the  admin core directory
-		if ( $admin_screens = glob( EE_CORE_ADMIN . '*' ) ) {
+		if ( $admin_screens = glob( EE_CORE_ADMIN . '*', GLOB_ONLYDIR )) {
 			foreach( $admin_screens as $admin_screen ) {
 				// files and anything in the exclude array need not apply
 				if ( is_dir( $admin_screen ) && !in_array( basename($admin_screen), $exclude )) {
@@ -174,8 +174,9 @@ class EE_Admin_Page_load {
 		}
 
 		if ( empty( $installed_refs ) ) {
-			$error_msg = __('There are no EE_Admin pages detected, it looks like EE did not install properly', 'event_espresso');
-			throw new EE_Error($error_msg);
+			$error_msg[] = __('There are no EE_Admin pages detected, it looks like EE did not install properly', 'event_espresso');
+			$error_msg[] = $error_msg[0] . "\r\n" . sprintf( __('Check that the %s folder exists and is writable. Maybe try deactivating, then reactivating Event Espresso again.', 'event_espresso'), EE_CORE_ADMIN );
+			throw new EE_Error( implode( '||', $error_msg ));
 		}
 
 		//allow plugins to add in their own pages (note at this point they will need to have an autoloader defined for their class);
@@ -198,11 +199,12 @@ class EE_Admin_Page_load {
 	private function _load_admin_page( $page ) {
 		$page = str_replace('_', ' ', strtolower( $page ) );
 		$class_name = str_replace(' ', '_', ucwords($page) ) . '_Admin_Page_Init';
+		echo '<h4>$class_name : ' . $class_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
-		if ( !class_exists($class_name ) ) {
-			$error_msg = sprintf( __('Something went wrong with loading the %s admin page.', 'event_espresso' ), $page);
-			$error_msg .= '||' . $error_msg . sprintf( __( 'There is no Init class in place for the %s admin page.  Make sure you have <strong>%s</strong> defined. If this is a non-EE-core admin page then you also must have an autoloader in place for your class', 'event_espresso'), $page, $class_name );
-			throw new EE_Error($error_msg);
+		if ( !class_exists($class_name )) {
+			$error_msg[] = sprintf( __('Something went wrong with loading the %s admin page.', 'event_espresso' ), $page);
+			$error_msg[] = $error_msg[0] . "\r\n" . sprintf( __( 'There is no Init class in place for the %s admin page.', 'event_espresso') . '<br />' . __( 'Make sure you have <strong>%s</strong> defined. If this is a non-EE-core admin page then you also must have an autoloader in place for your class', 'event_espresso'), $page, $class_name );
+			throw new EE_Error( implode( '||', $error_msg ));
 		}
 
 		$a = new ReflectionClass($class_name);
@@ -287,9 +289,9 @@ class EE_Admin_Page_load {
 			$pages_array[$page_map['group']][] = $page;
 		}
 
-		if ( empty( $pages_array ) )
+		if ( empty( $pages_array )) {
 			throw new EE_Error(__('Something went wrong when prepping the admin pages', 'event_espresso') );
-
+		}
 
 		//let's sort the groups, make sure it's a valid group, add header (if to show), then 
 		foreach ( $pages_array as $group => $pages ) {

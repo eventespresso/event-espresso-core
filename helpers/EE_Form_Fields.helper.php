@@ -48,9 +48,9 @@ class EE_Form_Fields {
 	 * 		'required' => false, //boolean for whether the field is required
 	 * 		'validation' => true, //boolean, whether to validate the field (todo)
 	 * 		'value' => 'some_value_for_field', //what value is used for field
-	 * 		'format' => '%d', //what format the value is (%d or %s)
+	 * 		'format' => '%d', //what format the value is (%d, %f, or %s)
 	 * 		'db-col' => 'column_in_db' //used to indicate which column the field corresponds with in the db
-	 * 		'options' => optiona, optoinb || array('value' => 'label', '') //if the input type is "select", this allows you to set the args for the different <option> tags.
+	 * 		'options' => optiona, optionb || array('value' => 'label', '') //if the input type is "select", this allows you to set the args for the different <option> tags.
 	 * 	)
 	 * 	@param	array $id - used for defining unique identifiers for the form.
 	 * 	@return string
