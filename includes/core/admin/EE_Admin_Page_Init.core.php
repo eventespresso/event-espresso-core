@@ -110,14 +110,15 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	 * @return  void
 	 */
 	private function _set_defaults() {
-		$this->dir_name = $this->_wp_page_slug = NULL;
+		$this->dir_name = $this->_wp_page_slug = $this->capability = NULL;
 		$this->show_on_menu = TRUE;
 	}
 
 
 
 	protected function _set_capability() {
-		$this->capability = apply_filters('filter_hook_espresso_' . $this->menu_slug . '_capability', 'administrator');
+		$capability = empty($this->capability) ? 'administrator' : $this->capability;
+		$this->capability = apply_filters('filter_hook_espresso_' . $this->menu_slug . '_capability', $capability);
 	}
 
 
