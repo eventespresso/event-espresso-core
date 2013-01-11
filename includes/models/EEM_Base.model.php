@@ -224,7 +224,7 @@ abstract class EEM_Base extends EE_Base {
 			$SQL .= $this->_orderby_n_sort ($orderby, $sort);
 		}
 
-		if ( $limit ) {
+		if ( $limit && is_array($limit) ) {
 			$SQL .=	' LIMIT ' . $limit[0] . ',' . $limit[1];
 		}
 
@@ -280,7 +280,7 @@ abstract class EEM_Base extends EE_Base {
 			$SQL .= $this->_orderby_n_sort ($orderby, $sort);
 		}
 
-		if ( $limit ) {
+		if ( $limit && is_array($limit) ) {
 			$SQL .=	' LIMIT ' . $limit[0] . ',' . $limit[1];
 		}
 
