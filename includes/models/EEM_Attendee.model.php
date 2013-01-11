@@ -133,10 +133,10 @@ class EEM_Attendee extends EEM_Base {
 	* 		@access		public
 	*		@return 		mixed		array on success, FALSE on fail
 	*/	
-	public function get_all_attendees( $orderby = 'ATT_lname', $sort = 'ASC' ) {
+	public function get_all_attendees( $orderby = 'ATT_lname', $sort = 'ASC', $limit = FALSE ) {
 	
 		// retreive all attendees	
-		if ( $attendees = $this->select_all ( $orderby, $sort )) {
+		if ( $attendees = $this->select_all ( $orderby, $sort, $limit )) {
 			return $this->_create_objects( $attendees );
 		} else {
 			return FALSE;
@@ -144,6 +144,10 @@ class EEM_Attendee extends EEM_Base {
 		
 	}
 
+
+
+
+	
 
 
 

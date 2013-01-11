@@ -205,10 +205,11 @@ abstract class EEM_Base extends EE_Base {
 	 *		@param string - $em_table_name -
 	 *		@param mixed (string, array) - $orderby - cloumn names to be used for sorting
 	 *		@param string - $sort - ASC or DESC
+	 *		@param array $limit send along limit offset for paging purposes
 	 *		@param string - $output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N
 	 *		@return mixed (object, array)
 	 */
-	private function _select_all (  $em_table_name=FALSE, $orderby = FALSE, $sort = 'ASC', $output = 'OBJECT_K' )	{
+	private function _select_all (  $em_table_name=FALSE, $orderby = FALSE, $sort = 'ASC', $limit = FALSE, $output = 'OBJECT_K' )	{
 
 		// what?? no table name ??? Get outta here!!!
 		if ( ! $em_table_name ) {
@@ -221,6 +222,10 @@ abstract class EEM_Base extends EE_Base {
 
 		if ( $orderby ) {
 			$SQL .= $this->_orderby_n_sort ($orderby, $sort);
+		}
+
+		if ( $limit ) {
+			$SQL .=	' LIMIT ' . $limit[0] . ',' . $limit[1];
 		}
 
 		global $wpdb;
@@ -248,10 +253,11 @@ abstract class EEM_Base extends EE_Base {
 	 *		@param mixed (string, array) - $orderby - cloumn names to be used for sorting
 	 *		@param string - $sort - ASC or DESC
 	 *		@param mixed (string, array) - $operator -  operator to be used for WHERE clause  > = <
+	 *		@param array $limit send along limit offset for paging purposes
 	 *		@param string - $output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N
 	 *		@return mixed (object, array)
 	 */
-	private function _select_all_where ( $em_table_name=FALSE, $em_table_data_types=array(), $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $output = 'OBJECT_K' ) {
+	private function _select_all_where ( $em_table_name=FALSE, $em_table_data_types=array(), $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $limit = FALSE, $output = 'OBJECT_K' ) {
 	
 		// what?? no table name ??? Get outta here!!!
 		if ( ! $em_table_name ) {
@@ -272,6 +278,10 @@ abstract class EEM_Base extends EE_Base {
 
 		if ( $orderby ) {
 			$SQL .= $this->_orderby_n_sort ($orderby, $sort);
+		}
+
+		if ( $limit ) {
+			$SQL .=	' LIMIT ' . $limit[0] . ',' . $limit[1];
 		}
 
 		global $wpdb;
