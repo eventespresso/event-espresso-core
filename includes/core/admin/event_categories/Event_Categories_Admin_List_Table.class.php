@@ -136,7 +136,7 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table {
 
 		$actions = array(
 			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Category', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>',
-			'delete' => '<a href="' . $edit_link . '" title="' . __('Delete Category', 'event_espresso') . '">' . __('Delete', 'event_espresso') . '</a>'
+			'delete' => '<a href="' . $delete_link . '" title="' . __('Delete Category', 'event_espresso') . '">' . __('Delete', 'event_espresso') . '</a>'
 			);
 
 		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . stripslashes_deep($item->category_name) . '</a></strong>';
