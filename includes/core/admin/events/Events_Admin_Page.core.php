@@ -330,18 +330,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 		//todo: this needs to be done properly via an enqueue and wp_localize_scripts() for vars
 		add_action( 'action_hook_espresso_event_editor_footer', array($this, 'event_editor_footer_js') );
 
-		//take care of form tag and initial hidden fields setup
-		$hidden_action_field_args['action'] = array(
-			'type' => 'hidden',
-			'value' => $view == 'edit' ? 'update_event' : 'insert_event'
-			);
-
-		$hidden_action_field = $this->_generate_admin_form_fields($hidden_action_field_args, 'array');
-		$nonce = $view == 'edit' ? wp_nonce_field('update_event_nonce', '_wpnonce', false, false ) : wp_nonce_field('insert_event_nonce', '_wpnonce', false, false ) ;
-		$this->_template_args['before_admin_page_content'] = '<form name="form" method="post" action="' . $this->_admin_base_url. '" id="' . $view . '_event_form" >';
-		$this->_template_args['before_admin_page_content'] .= "\n\t" . $nonce;
-		$this->_template_args['before_admin_page_content'] .= "\n\t" . $hidden_action_field['action']['field'];
-		$this->_template_args['after_admin_page_content'] = '</form>';
+		$route = $view == 'edit' ? 'update_event' : 'insert_event';
+		$this->_set_add_edit_form_tags($route);
 
 
 		//take care of contents

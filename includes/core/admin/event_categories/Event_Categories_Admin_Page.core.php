@@ -253,16 +253,8 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 		//load field generator helper
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
 
-		$hidden_action_field_args['action'] = array(
-			'type' => 'hidden',
-			'value' => $view == 'edit' ? 'update_category' : 'insert_category'
-		);
-		$hidden_action_field = $this->_generate_admin_form_fields($hidden_action_field_args, 'array');
-		$nonce = $view == 'edit' ? wp_nonce_field('update_category_nonce', '_wpnonce', false, false ) : wp_nonce_field('insert_category_nonce', '_wpnonce', false, false );
-		$this->_template_args['before_admin_page_content'] = '<form name="form" method="post" action="' . $this->_admin_base_url . '" id=' . $view . '_event_category_form" >';
-		$this->_template_args['before_admin_page_content'] .= "\n\t" . $nonce;
-		$this->_template_args['before_admin_page_content'] .= "\n\t" . $hidden_action_field['action']['field'];
-		$this->_template_args['after_admin_page_content'] = '</form>';
+		$route = $view == 'edit' ? 'update_category' : 'insert_category';
+		$this->_set_add_edit_form_tags($route);
 
 		//take care of contents
 		$this->_template_args['admin_page_content'] = $view == 'edit' ? $this->_edit_category_content() : $this->_add_category_content();
