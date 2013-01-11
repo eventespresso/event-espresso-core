@@ -209,7 +209,6 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	public function column_reg_begins($item) {
 		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php' );
 		$DTM = EEM_Datetime::instance();
-
 		// grab reg times
 		$reg_time = array_shift( $DTM->get_primary_reg_date_for_event( $item->event_id ));
 		$reg_start = $reg_time->reg_start();

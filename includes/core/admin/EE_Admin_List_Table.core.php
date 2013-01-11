@@ -279,6 +279,9 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 */
 	protected function _get_hidden_fields() {
 		$field = '<input type="hidden" name="page" value="' . $this->_req_data['page'] . '" />' . "\n";
+
+		$paged = isset($this->_req_data['paged']) ? $this->_req_data['paged'] : 1;
+		$field .= '<input type="hidden" name="paged" value="' . $paged . '" />' . "\n";
 		return $field;
 	}
 
