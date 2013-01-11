@@ -47,7 +47,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$this->_wp_list_args = array(
 			'singular' => __('event', 'event_espresso'),
 			'plural' => __('events', 'event_espresso'),
-			'ajax' => false, //for now
+			'ajax' => TRUE, //for now
 			'screen' => $this->_admin_page->get_current_screen()->id
 			);
 

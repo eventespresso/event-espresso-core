@@ -236,7 +236,6 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 	protected function _overview_list_table() {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_category', 'add', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
@@ -249,7 +248,6 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 		//load formatter helper
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
-
 		//load field generator helper
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
 
