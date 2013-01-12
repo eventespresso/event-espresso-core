@@ -21,8 +21,8 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( 'EEM_Base.model.php' );
-class EE_Answer {
+require_once ( 'EE_Base_Class.class.php' );
+class EE_Answer extends EE_Base_Class{
 	/**
 	 * Answer ID
 	 * 
@@ -57,7 +57,7 @@ class EE_Answer {
 
 
 	/**
-	 * 
+	 * Constructor
 	 * @param type $REG_ID
 	 * @param type $QST_ID
 	 * @param type $ANS_value
@@ -67,10 +67,6 @@ class EE_Answer {
 		$this->_QST_ID 					= absint( $QST_ID );
 		$this->_ANS_value 			= 	htmlentities( wp_strip_all_tags( $ANS_value ), ENT_QUOTES, 'UTF-8' ); 
 	}
-
-
-
-
 
 
 	/**
@@ -113,7 +109,7 @@ class EE_Answer {
 	*/	
 	public function set_value( $ANS_value = FALSE ) {
 		if ( ! $this->_check_for( $ANS_value, 'Value ID' )) { return FALSE; }
-		$this->_ANS_value = absint( $ANS_value );
+		$this->_ANS_value = wp_strip_all_tags( $ANS_value );
 		return TRUE;
 	}
 
