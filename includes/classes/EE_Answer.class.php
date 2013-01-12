@@ -21,6 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
+require_once ( 'EEM_Base.model.php' );
 class EE_Answer {
 	/**
 	 * Answer ID
@@ -73,19 +74,14 @@ class EE_Answer {
 
 
 	/**
-	*		Set Attendee First Name
+	*		Set	Question ID
 	* 
 	* 		@access		public		
-	*		@param		string		$fname
+	*		@param		int		$QST_ID
 	*/	
-	public function set_fname( $fname = FALSE ) {
-		
-		if ( ! $fname ) {
-			$msg = __( 'No first name was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_ATT_fname = wp_strip_all_tags( $fname );
+	public function set_question( $QST_ID = FALSE ) {
+		if ( ! $this->_check_for( $QST_ID, 'Question ID' )) { return FALSE; }
+		$this->_QST_ID = absint( $QST_ID );
 		return TRUE;
 	}
 
@@ -94,19 +90,14 @@ class EE_Answer {
 
 
 	/**
-	*		Set Attendee Last Name
+	*		Set	Registration ID
 	* 
 	* 		@access		public		
-	*		@param		string		$lname
+	*		@param		int		$REG_ID
 	*/	
-	public function set_lname( $lname = FALSE ) {
-		
-		if ( ! $lname ) {
-			$msg = __( 'No last name was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_ATT_lname = wp_strip_all_tags( $lname );
+	public function set_registration( $REG_ID = FALSE ) {
+		if ( ! $this->_check_for( $REG_ID, 'Registration ID' )) { return FALSE; }
+		$this->_REG_ID = absint( $REG_ID );
 		return TRUE;
 	}
 
@@ -115,256 +106,16 @@ class EE_Answer {
 
 
 	/**
-	*		Set Attendee Address
+	*		Set	Answer value
 	* 
 	* 		@access		public		
-	*		@param		string		$address
+	*		@param		int		$ANS_value
 	*/	
-	public function set_address( $address = FALSE ) {
-		
-		if ( ! $lname ) {
-			$msg = __( 'No address was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_ATT_address = wp_strip_all_tags( $address );
+	public function set_value( $ANS_value = FALSE ) {
+		if ( ! $this->_check_for( $ANS_value, 'Value ID' )) { return FALSE; }
+		$this->_ANS_value = absint( $ANS_value );
 		return TRUE;
 	}
-
-
-
-
-
-	/**
-	*		Set Attendee Address2
-	* 
-	* 		@access		public		
-	*		@param		string		$address2
-	*/	
-	public function set_address2( $address2 = FALSE ) {
-		
-		if ( ! $address2 ) {
-			$msg = __( 'No second address was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_ATT_address2 = wp_strip_all_tags( $address2 );
-		return TRUE;
-	}
-
-
-
-
-
-	/**
-	*		Set Attendee City
-	* 
-	* 		@access		public		
-	*		@param		string		$city
-	*/	
-	public function set_city( $city = FALSE ) {
-		
-		if ( ! $city ) {
-			$msg = __( 'No city was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_ATT_city = wp_strip_all_tags( $city );
-		return TRUE;
-	}
-
-
-
-
-
-	/**
-	*		Set Attendee State ID
-	* 
-	* 		@access		public		
-	*		@param		int		$STA_ID
-	*/	
-	public function set_state( $STA_ID = FALSE ) {
-		
-		if ( ! $STA_ID ) {
-			$msg = __( 'No state ID was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_STA_ID = absint( $STA_ID );
-		return TRUE;
-	}
-
-
-
-
-
-	/**
-	*		Set Attendee Country ISO Code
-	* 
-	* 		@access		public		
-	*		@param		string		$CNT_ISO
-	*/	
-	public function set_country( $CNT_ISO = FALSE ) {
-		
-		if ( ! $CNT_ISO ) {
-			$msg = __( 'No country ISO code was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_CNT_ISO = wp_strip_all_tags( $CNT_ISO );
-		return TRUE;
-	}
-
-
-
-
-
-	/**
-	*		Set Attendee Zip/Postal Code
-	* 
-	* 		@access		public		
-	*		@param		string		$zip
-	*/	
-	public function set_zip( $zip = FALSE ) {
-		
-		if ( ! $zip ) {
-			$msg = __( 'No zip/postal code was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_ATT_zip = wp_strip_all_tags( $zip );
-		return TRUE;
-	}
-
-
-
-
-
-	/**
-	*		Set Attendee Email Address
-	* 
-	* 		@access		public		
-	*		@param		string		$email
-	*/	
-	public function set_email( $email = FALSE ) {
-		
-		if ( ! $email ) {
-			$msg = __( 'No email address was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_ATT_email = sanitize_email( $email );
-		return TRUE;
-	}
-
-
-
-
-
-	/**
-	*		Set Attendee Phone
-	* 
-	* 		@access		public		
-	*		@param		string		$phone
-	*/	
-	public function set_phone( $phone = FALSE ) {
-		
-		if ( ! $phone ) {
-			$msg = __( 'No phone number was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_ATT_phone = wp_strip_all_tags( $phone );
-		return TRUE;
-	}
-
-
-
-
-
-	/**
-	*		Set Attendee Social Networking details
-	* 
-	* 		@access		public		
-	*		@param		string		$social
-	*/	
-	public function set_social( $social = FALSE ) {
-		
-		if ( ! $social ) {
-			$msg = __( 'No social networking details were supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_ATT_phone = wp_kses_data( $social );
-		return TRUE;
-	}
-
-
-
-
-
-	/**
-	*		Set Attendee Comments (by the attendee)
-	* 
-	* 		@access		public		
-	*		@param		string		$comments
-	*/	
-	public function set_comments( $comments = FALSE ) {
-		
-		if ( ! $comments ) {
-			$msg = __( 'No comments were supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_ATT_phone = wp_strip_all_tags( $comments );
-		return TRUE;
-	}
-
-
-
-
-
-	/**
-	*		Set Attendee Notes (about the attendee)
-	* 
-	* 		@access		public		
-	*		@param		string		$notes
-	*/	
-	public function set_notes( $notes = FALSE ) {
-		
-		if ( ! $notes ) {
-			$msg = __( 'No notes were supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_ATT_notes = wp_strip_all_tags( $notes );
-		return TRUE;
-	}
-
-
-
-
-
-	/**
-	*		set deleted
-	* 
-	* 		@access		public
-	*		@param		bool		ATT_deleted
-	*/
-	public function set_deleted( $ATT_deleted = NULL ) {
-
-		if ( $ATT_deleted == NULL ) {
-			$msg = __( 'No deleted boolean flag was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_ATT_deleted = (bool)absint( $ATT_deleted );
-		return TRUE;
-	}
-
-
-
-
 
 	/**
 	*		save object to db
@@ -373,24 +124,13 @@ class EE_Answer {
 	* 		@param		array		$where_cols_n_values		
 	*/	
 	private function _save_to_db( $where_cols_n_values = FALSE ) {
-		
-		 $MODEL = EEM_Attendee::instance();
+		//@todo implement saaving of answers to db
+		 $MODEL = EEM_Answer::instance();
 		
 		$set_column_values = array(		
-				'ATT_fname' 			=> $this->_ATT_fname,
-				'ATT_lname' 			=> $this->_ATT_lname,
-				'ATT_address'			=> $this->_ATT_address,
-				'ATT_address2'		=> $this->_ATT_address2,
-				'ATT_city'					=> $this->_ATT_city,
-				'STA_ID'					=> $this->_STA_ID,
-				'CNT_ISO'				=> $this->_CNT_ISO,
-				'ATT_zip'					=> $this->_ATT_zip,
-				'ATT_email'				=> $this->_ATT_email,
-				'ATT_phone'			=> $this->_ATT_phone,
-				'ATT_social'				=> $this->_ATT_social,
-				'ATT_comments'		=> $this->_ATT_comments,
-				'ATT_notes'				=> $this->_ATT_notes,
-				'ATT_deleted'			=> $this->_ATT_deleted
+				'REG_ID'=>$this->_REG_ID,
+				'QST_ID'=>$this->_QST_ID,
+				'ANS_value'=>$this->_ANS_value
 		);
 
 		if ( $where_cols_n_values ){
@@ -413,7 +153,7 @@ class EE_Answer {
 	* 		@access		public
 	*/	
 	public function update() {
-		return $this->_save_to_db( array( 'ATT_ID' => $this->_ATT_ID ));
+		return $this->_save_to_db( array( 'ANS_ID' => $this->_ANS_ID ));
 	}
 
 
@@ -440,7 +180,7 @@ class EE_Answer {
 	* 		@access		public
 	*/	
 	public function ID() {
-		return $this->_ATT_ID;
+		return $this->_ANS_ID;
 	}
 
 
@@ -449,8 +189,8 @@ class EE_Answer {
 	*		get Attendee First Name
 	* 		@access		public
 	*/	
-	public function fname() {
-		return $this->_ATT_fname;
+	public function registration_ID() {
+		return $this->_REG_ID;
 	}
 
 
@@ -459,8 +199,8 @@ class EE_Answer {
 	*		get Attendee Last Name
 	* 		@access		public
 	*/	
-	public function lname() {
-		return $this->_ATT_lname;
+	public function question_ID() {
+		return $this->_QST_ID;
 	}
 
 
@@ -469,125 +209,14 @@ class EE_Answer {
 	*		get Attendee Address
 	* 		@access		public
 	*/	
-	public function address() {
-		return $this->_ATT_address;
+	public function value() {
+		return $this->_ANS_value;
 	}
-
-
-
-	/**
-	*		get Attendee Address2
-	* 		@access		public
-	*/	
-	public function address2() {
-		return $this->_ATT_address2;
-	}
-
-
-
-	/**
-	*		get Attendee City
-	* 		@access		public
-	*/	
-	public function city() {
-		return $this->_ATT_city;
-	}
-
-
-
-	/**
-	*		get Attendee State ID
-	* 		@access		public
-	*/	
-	public function state_ID() {
-		return ! empty( $this->_STA_ID ) ? $this->_STA_ID : '';
-	}
-
-
-
-	/**
-	*		get Attendee Country ISO Code
-	* 		@access		public
-	*/	
-	public function country_ISO() {
-		return $this->_CNT_ISO;
-	}
-
-
-
-	/**
-	*		get Attendee Zip/Postal Code
-	* 		@access		public
-	*/	
-	public function zip() {
-		return $this->_ATT_zip;
-	}
-
-
-
-	/**
-	*		get Attendee Email Address
-	* 		@access		public
-	*/	
-	public function email() {
-		return $this->_ATT_email;
-	}
-
-
-
-	/**
-	*		get Attendee Phone #
-	* 		@access		public
-	*/	
-	public function phone() {
-		return $this->_ATT_phone;
-	}
-
-
-
-	/**
-	*		get Attendee Social Networking details
-	* 		@access		public
-	*/	
-	public function social() {
-		return $this->_ATT_social;
-	}
-
-
-
-	/**
-	*		get Attendee Comments (by the attendee)
-	* 		@access		public
-	*/	
-	public function comments() {
-		return $this->_ATT_comments;
-	}
-
-
-
-	/**
-	*		get Attendee Notes (about the attendee)
-	* 		@access		public
-	*/	
-	public function notes() {
-		return $this->_ATT_notes;
-	}
-
-
-	/**
-	*	get deleted
-	* 	@access		public
-	* 	@return 		bool
-	*/
-	public function deleted() {
-		return $this->_ATT_deleted;
-	}
-
 
 
 
 
 }
 
-/* End of file EE_Attendee.class.php */
-/* Location: /includes/classes/EE_Attendee.class.php */
+/* End of file EE_Answer.class.php */
+/* Location: /includes/classes/EE_Answer.class.php */

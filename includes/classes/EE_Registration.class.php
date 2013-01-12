@@ -21,7 +21,8 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Registration {
+require_once ( 'EEM_Base.model.php' );
+class EE_Registration extends EE_Base_Class{
 	
     /**
     *	Registration ID
@@ -536,36 +537,6 @@ class EE_Registration {
 	public function insert() {
 		return $this->_save_to_db();
 	}
-
-
-
-
-
-
-	/**
-	*		check that var has been passed to method
-	* 
-	* 		@access		private
-	*/	
-	private function _check_for( $var = FALSE, $var_name ) {
-
-		if ( ! $var ) {
-			$msg = sprintf( __( 'No value for %s was supplied.', 'event_espresso' ), $var_name );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		} else {
-			return TRUE;
-		}
-	}
-
-
-
-
-
-
-
-
-
 
 	/**
 	*		get Registration ID
