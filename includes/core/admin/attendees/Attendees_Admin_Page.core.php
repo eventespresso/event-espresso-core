@@ -73,8 +73,8 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 
 	
 	protected function _define_page_props() {
-		$this->admin_base_url = ATT_ADMIN_URL;
-		$this->admin_page_title = __( 'Attendees', 'event_espresso' );
+		$this->_admin_base_url = ATT_ADMIN_URL;
+		$this->_admin_page_title = __( 'Attendees', 'event_espresso' );
 		$this->_labels = array(
 			'buttons' => array(
 				'add' => __('Add New Attendee', 'event_espresso'),
@@ -96,7 +96,7 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 				// attendees
 				'default'	=> '_attendee_overview_list_table',
 				'add_new_attendee'	=> array( 'func' => '_edit_attendee_details', 'args' => array( 'new_attendee' => TRUE )),
-				'edit_attendee'	=> array( 'func' => '_edit_attendee_details', 'args' => array( 'new_attendee' => FALSE )),
+				'edit_attendee'	=> array( 'func' => '_edit_attendee_details'),
 				'insert_attendee'	=> array( 'func' => '_insert_or_update_attendee', 'args' => array( 'new_attendee' => TRUE ), 'noheader' => TRUE ),
 				'update_attendee'	=> array( 'func' => '_insert_or_update_attendee', 'args' => array( 'new_attendee' => FALSE ), 'noheader' => TRUE ),
 				'trash_attendees'	=> array( 'func' => '_trash_or_restore_attendees', 'args' => array( 'trash' => TRUE ), 'noheader' => TRUE ),
@@ -313,7 +313,7 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 	*		@access protected
 	*		@return void
 	*/
-	protected function _edit_attendee_details() {		
+	protected function _edit_attendee_details( $new = FALSE ) {		
 	
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		
@@ -322,7 +322,7 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 		$title = __( ucwords( str_replace( '_', ' ', $this->_req_action )), 'event_espresso' );
 		// add ATT_ID to title if editing 
 		$title = $ATT_ID ? $title . ' # ' . $ATT_ID : $title;
-		
+
 		// get attendees
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
 		$ATT_MDL = EEM_Attendee::instance();
@@ -368,7 +368,8 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 		
 		// generate metabox - you MUST create a callback named __FUNCTION__ . '_meta_box'  ( see "_edit_attendee_details_meta_box" below )
 		$this->_template_path = ATT_TEMPLATE_PATH . 'attendee_details_main_meta_box.template.php';
-		$this->_add_admin_page_meta_box( $action, $title, 'edit_attendee_details', NULL );
+		//$this->_add_admin_page_meta_box( $action, $title, 'edit_attendee_details', NULL );
+		$this->_template_args['admin_page_content'] = espresso_display_template($this->_template_path, $this->_template_args, TRUE);
 
 		$this->_set_publish_post_box_vars( 'delete_attendees', 'id', $ATT_ID );
 
