@@ -61,7 +61,8 @@ abstract class EEM_Base extends EE_Base {
 	 *		@return mixed (object, array)
 	 */
 	protected function select_all ( $orderby=FALSE, $sort=FALSE, $limit = FALSE, $output='OBJECT_K' ) {
-		$results = $this->_select_all ( $this->table_name, $orderby, $sort, $output );
+
+		$results = $this->_select_all ( $this->table_name, $orderby, $sort, $limit, $output );
 		return $results;
 	}
 

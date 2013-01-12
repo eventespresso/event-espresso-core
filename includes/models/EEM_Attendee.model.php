@@ -134,10 +134,10 @@ class EEM_Attendee extends EEM_Base {
 	*		@return 		mixed		array on success, FALSE on fail
 	*/	
 	public function get_all_attendees( $orderby = 'ATT_lname', $sort = 'ASC', $limit = FALSE, $output = 'OBJECT_K' ) {
-	
+		
 		// retreive all attendees	
-		if ( $attendees = $this->select_all ( $orderby, $sort, $limit )) {
-			return $this->_create_objects( $attendees );
+		if ( $attendees = $this->select_all ( $orderby, $sort, $limit, $output )) {
+			return $output != 'COUNT' ? $this->_create_objects( $attendees ) : $attendees;
 		} else {
 			return FALSE;
 		}
@@ -163,7 +163,7 @@ class EEM_Attendee extends EEM_Base {
 		if ( empty($attendees) || $attendees === FALSE || is_wp_error($attendees) )
 			return FALSE;
 
-		return $attendees;
+		return $count ? $attendees : $this->_create_objects( $attendees );
 
 	}
 
