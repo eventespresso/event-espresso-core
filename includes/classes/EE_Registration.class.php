@@ -525,19 +525,6 @@ class EE_Registration extends EE_Base_Class{
 		return $this->_save_to_db( array( 'TXN_ID' => $this->_TXN_ID ));
 	}
 
-
-
-
-
-	/**
-	*		insert new db record
-	* 
-	* 		@access		public
-	*/	
-	public function insert() {
-		return $this->_save_to_db();
-	}
-
 	/**
 	*		get Registration ID
 	* 		@access		public

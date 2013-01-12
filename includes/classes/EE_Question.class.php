@@ -229,4 +229,109 @@ class EE_Question extends EE_Base_Class{
 		$this->_QST_wp_user = wp_strip_all_tags( $QST_wp_user );
 		return TRUE;
 	}
+	
+	/**
+	*		save object to db
+	* 
+	* 		@access		private
+	* 		@param		array		$where_cols_n_values		
+	*/	
+	private function _save_to_db( $where_cols_n_values = FALSE ) {
+		//@todo implement saaving of answers to db
+		 $MODEL = EEM_Question::instance();
+		
+		$set_column_values = array(		
+				'QST_display_text'=>$this->_QST_display_text,
+				'QST_system_name'=>$this->_QST_system_name,
+				'QST_type'=>$this->_QST_type,
+				'QST_required'=>$this->_QST_required,
+				'QST_required_text'=>$this->_QST_required_text,
+				'QST_order'=>$this->_QST_order,
+				'QST_admin_only'=>$this->_QST_admin_only,
+				'QST_wp_user'=>$this->_QST_wp_user
+		);
+
+		if ( $where_cols_n_values ){
+			$results = $MODEL->update ( $set_column_values, $where_cols_n_values );
+		} else {
+			$results = $MODEL->insert ( $set_column_values );
+		}
+		
+		return $results;
+	}
+	
+	/**
+	 * returns the primary id
+	 * @access public
+	 * @return int
+	 */
+	public function ID(){
+		return $this->_QST_ID;
+	}
+	
+	/**
+	 * returns the text for displaying the question to users
+	 * @access public
+	 * @return string
+	 */
+	public function display_text(){
+		return $this->_QST_display_text;
+	}
+	
+	/**
+	 * returns the attendee column name for this question
+	 * @access public
+	 * @return string
+	 */
+	public function system_name(){
+		return $this->_QST_system_name;
+	}
+	
+	/**
+	 * returns either a string of 'text', 'textfield', etc.
+	 * @access public
+	 * @return boolean
+	 */
+	public function required(){
+		return $this->_QST_type;
+	}
+	
+	/**
+	 * returns the text which should be displayed when a user 
+	 * doesn't answer this question in a form
+	 * @access public
+	 * @return string
+	 */
+	public function required_text(){
+		return $this->_QST_required_text;
+	}
+	
+	/**
+	 * returns an integer showing where this questino should
+	 * be placed in a sequence of questions
+	 * @access public
+	 * @return int
+	 */
+	public function order(){
+		return $this->_QST_order;
+	}
+	
+	/**
+	 * returns whether this question should only appears to admins,
+	 * or to everyone
+	 * @access public
+	 * @return boolean
+	 */
+	public function admin_only(){
+		return $this->_QST_admin_only;
+	}
+	
+	/**
+	 * returns the id the wordpress user who created this question
+	 * @access public
+	 * @return int
+	 */
+	public function wp_user(){
+		return $this->_QST_wp_user;
+	}
 }

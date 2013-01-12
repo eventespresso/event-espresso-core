@@ -157,14 +157,7 @@ class EE_Answer extends EE_Base_Class{
 
 
 
-	/**
-	*		insert new db record
-	* 
-	* 		@access		public
-	*/	
-	public function insert() {
-		return $this->_save_to_db();
-	}
+	
 
 
 

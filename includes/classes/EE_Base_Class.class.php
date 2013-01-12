@@ -26,6 +26,15 @@ class EE_Base_Class {
 			return TRUE;
 		}
 	}
+	//@todo remove duplicate insert() functions in subclasses
+	/**
+	*		insert new db record
+	* 
+	* 		@access		public
+	*/	
+	public function insert() {
+		return $this->_save_to_db();
+	}
 }
 
 ?>
