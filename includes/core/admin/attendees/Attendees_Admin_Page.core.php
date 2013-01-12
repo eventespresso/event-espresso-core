@@ -252,7 +252,7 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 	*		@access public
 	*		@return array
 	*/
-	public function get_attendees( $count = FALSE, $trash = FALSE ) {  
+	public function get_attendees( $per_page, $count = FALSE, $trash = FALSE ) {  
 
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		// start with an empty array
@@ -291,7 +291,10 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 		$sort = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
 
 		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
-		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : 10;
+		$per_page = isset( $per_page ) && !empty( $per_page ) ? $per_page : 10;
+		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $per_page;
+
+
 		$offset = ($current_page-1)*$per_page;
 		$limit = array( $offset, $per_page );
 
