@@ -118,7 +118,7 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 					'order' => 10
 					),
 				'list_table' => 'EE_Attendees_List_Table',
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
+				'metaboxes' => array()
 				),
 			'add_new_attendee' => array(
 				'nav' => array(
@@ -126,7 +126,7 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 					'order' => 5,
 					'persistent' => FALSE
 					),
-				'metaboxes' => array('_publish_post_box')
+				'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box')
 				),
 			'edit_attendee' => array(
 				'nav' => array(
@@ -134,7 +134,7 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 					'order' => 5,
 					'persistent' => FALSE
 					),
-				'metaboxes' => array('_publish_post_box')
+				'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box')
 				)
 		);
 	}
@@ -238,7 +238,7 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_new_attendee', 'add', array(), 'button add-new-h2');
-		$this->display_admin_list_table_page_with_sidebar();
+		$this->display_admin_list_table_page_with_no_sidebar();
 		
 	}
 
@@ -298,7 +298,7 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 		if ( $trash )
 			$all_attendees = $count ? $ATT_MDL->get_all_trashed_attendees( $orderby, $sort, $limit, TRUE ) : $ATT_MDL->get_all_trashed_attendees( $orderby, $sort, $limit );
 		else
-			$all_attendees = $count ? $ATT_MDL->get_all_attendees( $orderby, $sort, $limit, 'COUNT' ) : $ATT_MDL->get_all_attendees( $orderby, $sort, $limit );
+			$all_attendees = $count ? $ATT_MDL->get_all_inuse_attendees( $orderby, $sort, $limit, 'COUNT' ) : $ATT_MDL->get_all_inuse_attendees( $orderby, $sort, $limit );
 
 		return $all_attendees;
 	}

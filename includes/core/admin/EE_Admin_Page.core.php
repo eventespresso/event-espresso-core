@@ -1559,7 +1559,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
-		$redirect_url = $this->admin_base_url;
+		$redirect_url = $this->_admin_base_url;
 
 		// how many records affected ? more than one record ? or just one ?
 		if ( $success == 2 ) {

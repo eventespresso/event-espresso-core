@@ -147,6 +147,36 @@ class EEM_Attendee extends EEM_Base {
 
 
 
+
+	/**
+	 * retrieve all "in use" attendees (i.e. non trashed)
+	 * @param  string  $orderby field to orderby
+	 * @param  string  $sort    field to sortby
+	 * @param  mixed $limit   if FALSE no limit other wise limit an array with offset and limit.
+	 * @param  string  $output  WP data type to return OR 'COUNT' to return count.
+	 * @return mixed           FALSE if no data, count or array of attendee objects.
+	 */
+	public function get_all_inuse_attendees( $orderby = 'ATT_lname', $sort = 'ASC', $limit = FALSE, $output = 'OBJECT_K' ) {
+		
+		$where = array(
+			'ATT_deleted' => 0
+			);
+
+		// retreive all attendees	
+		if ( $attendees = $this->select_all_where( $where, $orderby, $sort, '=', $limit, $output )) {
+
+			return $output != 'COUNT' ? $this->_create_objects( $attendees ) : $attendees;
+		} else {
+			return FALSE;
+		}
+		
+	}
+
+
+
+
+
+
 	/**
 	 * retrieve all "trashed" attendees
 	 * @param  boolean $count whether to return the count or not
@@ -155,7 +185,7 @@ class EEM_Attendee extends EEM_Base {
 	public function get_all_trashed_attendees( $orderby, $sort, $limit, $count = FALSE ) {
 
 		$where = array(
-			'ATT_deleted' => TRUE
+			'ATT_deleted' => 1
 			);
 
 		$attendees = $count ? $this->select_all_where(  $where, $orderby, $sort, '=', $limit, 'COUNT') : $this->select_all_where( $where, $orderby, $sort, '=', $limit );

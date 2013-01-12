@@ -84,7 +84,7 @@ abstract class EEM_Base extends EE_Base {
 	 *		@return mixed (object, array)
 	 */
 	protected function select_all_where ( $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $limit = FALSE, $output = 'OBJECT_K' ) {
-		$results = $this->_select_all_where ( $this->table_name, $this->table_data_types, $where_cols_n_values, $orderby, $sort, $operator, $output );
+		$results = $this->_select_all_where ( $this->table_name, $this->table_data_types, $where_cols_n_values, $orderby, $sort, $operator, $limit, $output );
 		return $results;
 	}
 
@@ -270,6 +270,7 @@ abstract class EEM_Base extends EE_Base {
 			return FALSE;
 		}
 
+
 		$SQL = $output == 'COUNT' ? 'SELECT COUNT(*) FROM ' : 'SELECT * FROM ';
 		$SQL .= $em_table_name;
 
@@ -288,7 +289,7 @@ abstract class EEM_Base extends EE_Base {
 		if ( $limit && is_array($limit) && $output != 'COUNT' ) {
 			$SQL .=	' LIMIT ' . $limit[0] . ',' . $limit[1];
 		}
-
+		
 		global $wpdb;
 		$wpdb->show_errors();
 		$results = $output == 'COUNT' ? $wpdb->get_var( $wpdb->prepare( $SQL, $VAL ) ) : $wpdb->get_results( $wpdb->prepare( $SQL, $VAL ), $output );
