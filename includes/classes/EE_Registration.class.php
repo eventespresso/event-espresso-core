@@ -479,7 +479,9 @@ class EE_Registration extends EE_Base_Class{
 	*		save object to db
 	* 
 	* 		@access		private
-	* 		@param		array		$where_cols_n_values		
+	* 		@param		array		$where_cols_n_values
+	*		@return int, 1 on a successful update, the ID of
+	*					the new entry on insert; 0 on failure				
 	*/	
 	private function _save_to_db( $where_cols_n_values = FALSE ) {
 		

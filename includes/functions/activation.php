@@ -544,6 +544,7 @@ function events_data_tables_install() {
 				QST_order TINYINT UNSIGNED NOT NULL DEFAULT 0 ,
 				QST_admin_only TINYINT(1) NOT NULL DEFAULT 0 ,
 				QST_wp_user SMALLINT UNSIGNED NULL ,
+				QST_deleted TINYINT UNSIGNED NOT NULL DEFAULT 0
 				PRIMARY KEY  (QST_ID) ,
 				UNIQUE INDEX QST_system_name_UNIQUE (QST_system_name ASC) ";
 	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');

@@ -102,7 +102,27 @@ class EE_Question extends EE_Base_Class{
 	 */
 	private $_QST_wp_user=NULL;
 	
+	/**
+	 * Boolean to indicate whether this question
+	 * has been deleted or not
+	 * @access private
+	 * @var boolean 
+	 */
+	private $_QST_deleted=NULL;
 	
+	/**
+	 * constructor for questions
+	 * @param string $QST_display_text text for displaying the question (eg, "what is your name?")
+	 * @param string $QST_system_name if this is a system question, it's internal name
+	 * @param string $QST_type one of 'text','textarea',etc.
+	 * @param boolean $QST_required indicates whether this question must be answered
+	 * @param string $QST_required_text text that's displayed if teh question isn't answered
+	 * @param int $QST_order indicates the order in which this question should be displayed relative to others
+	 * @param boolean $QST_admin_only indicates whether this question should only been seen by wp admins
+	 * @param int $QST_wp_user wordpress user id of the question creator
+	 * @param boolean $QST_deleted indicates whether this question has been 'deleted'
+	 * @access public
+	 */
 	public function __construct( 
 			$QST_display_text=NULL, 
 			$QST_system_name=NULL, 
@@ -111,7 +131,8 @@ class EE_Question extends EE_Base_Class{
 			$QST_required_text=NULL,
 			$QST_order=NULL,
 			$QST_admin_only=NULL,
-			$QST_wp_user=NULL){
+			$QST_wp_user=NULL,
+			$QST_deleted=NULL){
 		$this->_QST_display_text=$QST_display_text;
 		$this->_QST_system_name=$QST_system_name;
 		$this->_QST_type=$QST_type;
@@ -120,6 +141,7 @@ class EE_Question extends EE_Base_Class{
 		$this->_QST_order=$QST_order;
 		$this->_QST_admin_only=$QST_admin_only;
 		$this->_QST_wp_user=$QST_wp_user;
+		$this->_QST_deleted=$QST_deleted;
 	}
 	
 	/**
@@ -231,6 +253,23 @@ class EE_Question extends EE_Base_Class{
 	}
 	
 	/**
+	*		Sets whether teh question has been deleted
+	*		(we use this boolean isntead of actually
+			deleting it because when users delete this question
+	*		they really want to remove the question from future
+	*		forms, BUT keep their old answers which depend
+	*		on this record actually existing.
+	* 
+	* 		@access		public		
+	*		@param		int		$QST_wp_user
+	*/	
+	public function set_deleted( $QST_deleted = FALSE ) {
+		if ( ! $this->_check_for( $QST_deleted, 'WP User Id' )) { return FALSE; }
+		$this->_QST_deleted = wp_strip_all_tags( $QST_deleted );
+		return TRUE;
+	}
+	
+	/**
 	*		save object to db
 	* 
 	* 		@access		private
@@ -248,7 +287,8 @@ class EE_Question extends EE_Base_Class{
 				'QST_required_text'=>$this->_QST_required_text,
 				'QST_order'=>$this->_QST_order,
 				'QST_admin_only'=>$this->_QST_admin_only,
-				'QST_wp_user'=>$this->_QST_wp_user
+				'QST_wp_user'=>$this->_QST_wp_user,
+				'QST_deleted'=>$this->_QST_deleted
 		);
 
 		if ( $where_cols_n_values ){
@@ -258,6 +298,15 @@ class EE_Question extends EE_Base_Class{
 		}
 		
 		return $results;
+	}
+	
+	/**
+	*		update existing db record
+	* 
+	* 		@access		public
+	*/	
+	public function update() {
+		return $this->_save_to_db( array( 'QST_ID' => $this->_QST_ID ));
 	}
 	
 	/**
@@ -333,5 +382,14 @@ class EE_Question extends EE_Base_Class{
 	 */
 	public function wp_user(){
 		return $this->_QST_wp_user;
+	}
+	
+	/**
+	 * returns whether this question has been marked as 'deleted'
+	 * @access public
+	 * @return boolean
+	 */
+	public function deleted(){
+		return $this->_QST_deleted;
 	}
 }
