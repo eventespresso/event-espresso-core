@@ -147,6 +147,29 @@ class EEM_Attendee extends EEM_Base {
 
 
 
+	/**
+	 * retrieve all "trashed" attendees
+	 * @param  boolean $count whether to return the count or not
+	 * @return mixed         array (attendee objects) or int (count)  or bool (FALSE on fail)
+	 */
+	public function get_all_trashed_attendees( $orderby, $sort, $limit, $count = FALSE ) {
+
+		$where = array(
+			'ATT_deleted' => TRUE
+			);
+
+		$attendees = $count ? $this->select_all_where(  $where, $orderby, $sort, '=', $limit, 'COUNT') : $this->select_all_where( $where, $orderby, $sort, '=', $limit );
+
+		if ( empty($attendees) || $attendees === FALSE || is_wp_error($attendees) )
+			return FALSE;
+
+		return $attendees;
+
+	}
+
+
+
+
 	
 
 
