@@ -15,13 +15,13 @@
  *
  * Attendees_Admin_Page_Init class
  *
- * @package			Event Espresso
+ * @package		Event Espresso
  * @subpackage	includes/core/admin/attendees/Attendees_Admin_Page_Init.core.php
- * @author				Brent Christensen 
+ * @author		Brent Christensen 
  *
  * ------------------------------------------------------------------------
  */
-class Attendees_Admin_Page_Init extends EE_Admin_Page_Init implements Admin_Page_Init_Interface {
+class Attendees_Admin_Page_Init extends EE_Admin_Page_Init {
 
 
 
@@ -32,7 +32,7 @@ class Attendees_Admin_Page_Init extends EE_Admin_Page_Init implements Admin_Page
 	 * 		@access public
 	 * 		@return void
 	 */
-	public function __construct( $page_slug, $page_name, $dir_name, $page_request ) { 
+	public function __construct() { 
 		
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
@@ -46,86 +46,31 @@ class Attendees_Admin_Page_Init extends EE_Admin_Page_Init implements Admin_Page
 		define( 'ATT_TEMPLATE_PATH', ATT_ADMIN . 'templates' . DS );	
 		define( 'ATT_TEMPLATE_URL', str_replace( '\\', '/', EE_CORE_ADMIN_URL . ATT_PG_SLUG . DS . 'templates' . DS ));
 
-		$this->_init( $page_slug, $page_name, $dir_name, $page_request );
+		parent::__construct();
 
 	}
 
 
 
 
-	
-	/**
-	*		sets vars in parent for creating menu settings page
-	* 		return the name of the filter that should be used for inserting into the EE admin menu
-	* 		filters can be found in /includes/admin_screens/admin_menu.php
-	* 
-	*		@access 		public
-	*		@return 		void
-	*/	
-	public function get_admin_menu_filter_name() {
-		return 'filter_hook_espresso_submenus_main_section';  
+	protected function _set_init_properties() {
+		$this->label = __('Attendees', 'event_espresso');
+		$this->menu_label = __('Attendees', 'event_espresso');
+		$this->menu_slug = 'attendees';
+		$this->capability = 'administrator';
 	}
 
 
 
 
-	
-	/**
-	*		sets vars in parent for creating menu settings page
-	* 
-	*		@access 		public
-	*		@return 		void
-	*/	
-	public function get_admin_menu_order() {
-		return 40;  
-	}
-
-
-
-
-	
-	/**
-	*		sets vars in parent for creating menu settings page
-	* 
-	*		@access 		public
-	*		@return 		void
-	*/	
-	public function get_page_access_capability() {
-		return 'espresso_manager_general';
-	}
-
-
-
-
-
-	/**
-	*		load page specific css
-	* 
-	*		@access 		public
-	*		@return 		void
-	*/	
-	public function load_css() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		wp_register_style('espresso_attendees', ATT_ASSETS_URL . 'espresso_attendees_admin.css' );		
-		wp_enqueue_style('espresso_attendees');
-	}
-
-
-
-
-
-	/**
-	*		load page specific js
-	* 
-	*		@access 		public
-	*		@return 		void
-	*/	
-	public function load_js() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		wp_enqueue_script('jquery-ui-position');
-		wp_enqueue_script('jquery-ui-widget');
-		wp_register_script('espresso_attendees', ATT_ASSETS_URL . 'espresso_attendees_admin.js', array('jquery'), '1.0', TRUE);
-		wp_enqueue_script('espresso_attendees');			
+	public function get_menu_map() {
+		$map = array(
+			'group' => 'main',
+			'menu_order' => 50,
+			'show_on_menu' => TRUE,
+			'parent_slug' => 'events'
+			);
+		return $map;
 	}
 
 

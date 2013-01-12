@@ -45,6 +45,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected $_default_nav_tab_name;
 
 	//template variables (used by templates)
+	protected $_template_path;
 	protected $_template_args;
 
 	//this will hold the list table object for a given view.
@@ -57,6 +58,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	//list table args
 	protected $_view;
 	protected $_views;
+
 
 	//action => method pairs used for routing incoming requests
 	protected $_page_routes;

@@ -405,7 +405,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 		echo "<ul class='subsubsub'>\n";
 		foreach ( $views as $view ) {
-			$count = isset($view['count'] ) ? $view['count']  : 0;
+			$count = isset($view['count'] ) && !empty($view['count']) ? $view['count']  : 0;
 			$views[ $view['slug'] ] = "\t<li class='" . $view['class'] . "'>" . '<a href="' . $view['url'] . '">' . $view['label'] . '</a> <span class="count">(' . $count . ')</span>';
 		}
 		
