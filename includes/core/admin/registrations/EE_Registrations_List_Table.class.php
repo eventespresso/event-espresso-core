@@ -68,7 +68,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 				'Reg_status' => __( 'Reg Status', 'event_espresso' ),
             	'ATT_fname' => __( 'Attendee Name', 'event_espresso' ),
 				'REG_code' => __( 'Registration Code', 'event_espresso' ),
-				'REG_att_checked_in' => __( 'Attended', 'event_espresso' ),
  				'event_name' => __( 'Event Title', 'event_espresso' ),
     	       	'DTT_EVT_start' => __( 'Event Date & Time', 'event_espresso' ),
 				'REG_final_price' => __( 'Price Paid', 'event_espresso' ),
@@ -96,14 +95,16 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 		//todo we're currently using old functions here. We need to move things into the Events_Admin_Page() class as methods.
 		require_once EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin.php';
+		require_once EE_FF_HELPER;
 
 		$filters[] = espresso_event_months_dropdown( isset($this->_req_data['month_range']) ? sanitize_key($this->_req_data['month_range']) : '' );
 		$filters[] = espresso_category_dropdown( isset($this->_req_data['category_id']) ? sanitize_key( $this->_req_data['category_id'] ) : '' );
 		$status = array();
+		$status[] = array( 'id' => 0, 'text' => __('Select Status', 'event_espresso') );
 		foreach ( $this->_status as $key => $value ) {
                 $status[] = array( 'id' => $key, 'text' => $value );
             }
-		$filters[] = select_input('reg_status', $status, isset($this->_req_data['reg_status']) ? sanitize_key( $this->_req_data['reg_status'] ) : '');
+		$filters[] = EE_Form_Fields::select_input('reg_status', $status, isset($this->_req_data['reg_status']) ? strtoupper(sanitize_key( $this->_req_data['reg_status'] ) ): '');
 
 		return $filters;
 	}

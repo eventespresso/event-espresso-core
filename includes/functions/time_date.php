@@ -755,6 +755,7 @@ function espresso_event_months_dropdown( $current_value = FALSE ) {
 	$eemd = '';
 	$current_value = $current_value ? $current_value : 0;
 
+
 	$SQL = "SELECT DATE_FORMAT( FROM_UNIXTIME( REG_date ), '%Y') AS 'YR', DATE_FORMAT( FROM_UNIXTIME( REG_date ), '%M') AS 'MN' FROM {$wpdb->prefix}esp_registration reg LEFT JOIN {$wpdb->prefix}events_detail evt ON evt.id=reg.EVT_ID WHERE event_status != 'D' GROUP BY YR, MN";
 
 	if ( $dates = $wpdb->get_results( $SQL )) {
@@ -763,7 +764,7 @@ function espresso_event_months_dropdown( $current_value = FALSE ) {
 		$eemd .= '<option value="0">' . __('Select a Month/Year', 'event_espresso') . '</option>';
 
 		foreach ($dates as $date) {
-			$option_date =  $date->YR . '-' . $date->MN;
+			$option_date =  $date->YR . '-' . strtolower($date->MN);
 			$eemd .= '<option value="' . $option_date . '"';
 			$eemd .= $option_date == $current_value ? ' selected="selected"' : '';
 			$eemd .= '>' . $date->MN . ' ' . $date->YR . '</option>' . "\n";
