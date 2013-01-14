@@ -655,48 +655,7 @@ Class EEM_Gateways {
 			return FALSE;
 		}
 	}
-
-
-
-
-	/**
-	 * 		process_gateway_selection()
-	 * 		@access public
-	 * 		@return 	mixed	array on success or FALSE on fail
-	 */
-	public function process_gateway_selection() {	
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $espresso_notices;
-		// check for off site payment
-		if ( isset( $_POST['selected_gateway'] ) && ! empty( $_POST['selected_gateway'] )) {
-			$this->set_selected_gateway(sanitize_text_field( $_POST['selected_gateway'] ));
-		} else {
-			$espresso_notices['errors'][] =  __( 'Please select a method of payment in order to continue.', 'event_espresso' );
-			return FALSE;
-		}
-		$this->_gateway_instances[ $this->_selected_gateway ]->process_gateway_selection();		
-	}
-
-
-
-	/**
-	 * 		set_billing_info_for_confirmation
-	 * 		@access public
-	* 		@param	array	$billing_info
-	 * 		@return 	mixed	array on success or FALSE on fail
-	 */
-	public function set_billing_info_for_confirmation( $billing_info = FALSE ) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		if( ! is_array( $billing_info )) {
-			return FALSE;
-		}
-		$confirm_info = $this->_gateway_instances[ $this->_selected_gateway ]->set_billing_info_for_confirmation( $billing_info );
-		$confirm_info['gateway'] = $this->display_name();
-		return $confirm_info;
-	}
-
-
-
+	
 	/**
 	 * 		process_reg_step_3
 	 * 		@access public
@@ -747,7 +706,6 @@ Class EEM_Gateways {
 		return rtrim( get_permalink( $return_page_id ), '/' );
 	}
 
-
 	/**
 	 * Replaces all but the last for digits with x's in the given credit card number
 	 * @param int|string $cc The credit card number to mask
@@ -765,8 +723,6 @@ Class EEM_Gateways {
 		// Return the masked Credit Card #
 		return $cc;
 	}
-	
-	
 	
 	/**
 	 * Add dashes to a credit card number.
@@ -804,9 +760,6 @@ Class EEM_Gateways {
 			$this->_gateway_instances[ $this->_selected_gateway ]->thank_you_page();
 		}
 	}
-
-
-
 
 	/**
 	 * 		get_country_ISO2_codes
@@ -1045,23 +998,24 @@ Class EEM_Gateways {
 	}
 
 
-
-	/**
+/**
 	 * 		process_gateway_selection()
 	 * 		@access public
 	 * 		@return 	mixed	array on success or FALSE on fail
 	 */
 	public function process_gateway_selection() {	
-
-			global $espresso_notices;
-			// check for off site payment
-			if ( isset( $_POST['selected_gateway'] ) && ! empty( $_POST['selected_gateway'] )) {
-				$this->set_selected_gateway(sanitize_text_field( $_POST['selected_gateway'] ));
-			} else {
-				$espresso_notices['errors'][] =  __( 'An error occured. No gateway has been selected.', 'event_espresso' );
-			}
-			$this->_gateway_instances[ $this->_selected_gateway ]->process_gateway_selection();		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		global $espresso_notices;
+		// check for off site payment
+		if ( isset( $_POST['selected_gateway'] ) && ! empty( $_POST['selected_gateway'] )) {
+			$this->set_selected_gateway(sanitize_text_field( $_POST['selected_gateway'] ));
+		} else {
+			$espresso_notices['errors'][] =  __( 'Please select a method of payment in order to continue.', 'event_espresso' );
+			return FALSE;
+		}
+		$this->_gateway_instances[ $this->_selected_gateway ]->process_gateway_selection();		
 	}
+
 
 
 
@@ -1079,115 +1033,6 @@ Class EEM_Gateways {
 		$confirm_info['gateway'] = $this->display_name();
 		return $confirm_info;
 	}
-
-
-
-	/**
-	 * 		process_reg_step_3
-	 * 		@access public
-	* 		@param	int	$id
-	 * 		@return 	mixed	void or FALSE on fail
-	 */
-	public function process_reg_step_3() {
-		global $EE_Session;
-		$return_page_url = $this->_get_return_page_url();
-		// free event?
-		if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
-			// becuz this was a free event we need to generate some pseudo gateway results
-			$txn_results = array(
-					'approved' => TRUE,
-					'response_msg' => __('You\'re registration has been completed successfully.', 'event_espresso'),
-					'status' => 'Approved',
-					'details' => 'free event',
-					'amount' => 0.00,
-					'method' => 'none'
-			);
-			$EE_Session->set_session_data(array('txn_results' => $txn_results), 'session_data');
-			$response = array(
-					'msg' => array('success'=>TRUE),
-					'forward_url' => $this->_get_return_page_url()
-			);
-
-		} else {
-			$response = array(
-				'msg' => $this->_gateway_instances[ $this->_selected_gateway ]->process_reg_step_3(),
-				'forward_url' => $this->_get_return_page_url()
-			);
-		}
-//		$session2 = $EE_Session->get_session_data();
-//		printr( $session2, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
-//		die();
-		return $response;
-	}	
-
-		/**
-	 * 		set_return_page_url
-	 *
-	 * 		@access 		public
-	 * 		@return 		void
-	 */
-	private function _get_return_page_url() {
-		global $org_options;
-		$return_page_id = $org_options['return_url'];
-		// get permalink for thank you page
-		// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
-		return rtrim( get_permalink( $return_page_id ), '/' );
-	}
-
-
-	/**
-	 * Replaces all but the last for digits with x's in the given credit card number
-	 * @param int|string $cc The credit card number to mask
-	 * @return string The masked credit card number
-	 */
-	function MaskCreditCard($cc){
-		// Get the cc Length
-		$cc_length = strlen($cc);
-		// Replace all characters of credit card except the last four and dashes
-		for($i=0; $i<$cc_length-4; $i++){
-			if($cc[$i] == '-'){continue;}
-			$cc[$i] = 'X';
-		}
-		// Return the masked Credit Card #
-		return $cc;
-	}
 	
-	
-	
-	/**
-	 * Add dashes to a credit card number.
-	 * @param int|string $cc The credit card number to format with dashes.
-	 * @return string The credit card with dashes.
-	 */
-	function FormatCreditCard($cc)
-	{
-		// Clean out extra data that might be in the cc
-		$cc = str_replace(array('-',' '),'',$cc);
-		// Get the CC Length
-		$cc_length = strlen($cc);
-		// Initialize the new credit card to contian the last four digits
-		$newCreditCard = substr($cc,-4);
-		// Walk backwards through the credit card number and add a dash after every fourth digit
-		for($i=$cc_length-5;$i>=0;$i--){
-			// If on the fourth character add a dash
-			if((($i+1)-$cc_length)%4 == 0){
-				$newCreditCard = '&nbsp;'.$newCreditCard;
-			}
-			// Add the current character to the new credit card
-			$newCreditCard = $cc[$i].$newCreditCard;
-		}
-		// Return the formatted credit card number
-		return $newCreditCard;
-	}
-		
-	public function thank_you_page() {
-		global $EE_Session;
-		$session_data = $EE_Session->get_session_data();
-		if (empty($session_data['txn_results']['approved'])
-						&& !empty($this->_selected_gateway)
-						&& !empty($this->_gateway_instances[ $this->_selected_gateway ])) {
-			$this->_gateway_instances[ $this->_selected_gateway ]->thank_you_page();
-		}
-	}
 	
 }
