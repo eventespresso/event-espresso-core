@@ -656,23 +656,6 @@ Class EEM_Gateways {
 		}
 	}
 
-	/**
-	 * 		set_billing_info_for_confirmation
-	 * 		@access public
-	* 		@param	array	$billing_info
-	 * 		@return 	mixed	array on success or FALSE on fail
-	 */
-	public function set_billing_info_for_confirmation( $billing_info = FALSE ) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		if( ! is_array( $billing_info )) {
-			return FALSE;
-		}
-		$confirm_info = $this->_gateway_instances[ $this->_selected_gateway ]->set_billing_info_for_confirmation( $billing_info );
-		$confirm_info['gateway'] = $this->display_name();
-		return $confirm_info;
-	}
-
-
 
 	/**
 	 * 		process_reg_step_3
