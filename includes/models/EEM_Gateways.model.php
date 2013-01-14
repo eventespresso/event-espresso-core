@@ -656,29 +656,6 @@ Class EEM_Gateways {
 		}
 	}
 
-
-
-
-	/**
-	 * 		process_gateway_selection()
-	 * 		@access public
-	 * 		@return 	mixed	array on success or FALSE on fail
-	 */
-	public function process_gateway_selection() {	
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $espresso_notices;
-		// check for off site payment
-		if ( isset( $_POST['selected_gateway'] ) && ! empty( $_POST['selected_gateway'] )) {
-			$this->set_selected_gateway(sanitize_text_field( $_POST['selected_gateway'] ));
-		} else {
-			$espresso_notices['errors'][] =  __( 'Please select a method of payment in order to continue.', 'event_espresso' );
-			return FALSE;
-		}
-		$this->_gateway_instances[ $this->_selected_gateway ]->process_gateway_selection();		
-	}
-
-
-
 	/**
 	 * 		set_billing_info_for_confirmation
 	 * 		@access public
@@ -1045,23 +1022,24 @@ Class EEM_Gateways {
 	}
 
 
-
-	/**
+/**
 	 * 		process_gateway_selection()
 	 * 		@access public
 	 * 		@return 	mixed	array on success or FALSE on fail
 	 */
 	public function process_gateway_selection() {	
-
-			global $espresso_notices;
-			// check for off site payment
-			if ( isset( $_POST['selected_gateway'] ) && ! empty( $_POST['selected_gateway'] )) {
-				$this->set_selected_gateway(sanitize_text_field( $_POST['selected_gateway'] ));
-			} else {
-				$espresso_notices['errors'][] =  __( 'An error occured. No gateway has been selected.', 'event_espresso' );
-			}
-			$this->_gateway_instances[ $this->_selected_gateway ]->process_gateway_selection();		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		global $espresso_notices;
+		// check for off site payment
+		if ( isset( $_POST['selected_gateway'] ) && ! empty( $_POST['selected_gateway'] )) {
+			$this->set_selected_gateway(sanitize_text_field( $_POST['selected_gateway'] ));
+		} else {
+			$espresso_notices['errors'][] =  __( 'Please select a method of payment in order to continue.', 'event_espresso' );
+			return FALSE;
+		}
+		$this->_gateway_instances[ $this->_selected_gateway ]->process_gateway_selection();		
 	}
+
 
 
 
