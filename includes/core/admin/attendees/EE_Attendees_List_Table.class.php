@@ -74,6 +74,15 @@ class EE_Attendees_List_Table extends EE_Admin_List_Table {
 
 
 
+
+	function column_default($item) {
+		return isset( $item->$column_name ) ? $item->$column_name : '';
+	}
+
+
+
+
+
 	function column_cb($item) {
 		return sprintf( '<input type="checkbox" name="checkbox[%1$s]" />', /* $1%s */ $item->ID() );
 	}

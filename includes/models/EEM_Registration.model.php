@@ -386,7 +386,7 @@ class EEM_Registration extends EEM_Base {
 	*		return a list of attendees for a specific locale for the Registration Overview Admin page
 	* 		@access		public
 	*/
-	public function get_registrations_for_admin_page( $EVT_ID = FALSE, $CAT_ID = FALSE, $reg_status = FALSE, $month_range = FALSE, $today_a = FALSE, $this_month_a = FALSE, $start_date = FALSE, $end_date = FALSE ) {
+	public function get_registrations_for_admin_page( $EVT_ID = FALSE, $CAT_ID = FALSE, $reg_status = FALSE, $month_range = FALSE, $today_a = FALSE, $this_month_a = FALSE, $start_date = FALSE, $end_date = FALSE, $orderby = 'REG_date', $order = 'DESC', $limit = NULL, $count = FALSE ) {
 
 		global $wpdb;
 
@@ -414,7 +414,7 @@ class EEM_Registration extends EEM_Base {
 				$locales = FALSE;
 			}
 
-			$SQL .= 'SELECT att.*, reg.*, dtt.*, reg.STS_ID REG_status, evt.id event_id, evt.event_name, evt.require_pre_approval, txn.TXN_ID, TXN_timestamp, TXN_total, txn.STS_ID TXN_status, TXN_details, TXN_tax_data, PRC_amount, PRC_name';
+			$SQL .= $count ? "SELECT COUNT(reg.ATT_ID)" : "SELECT att.*, reg.*, dtt.*, reg.STS_ID REG_status, CONCAT(ATT_fname, ' ', ATT_lname) as REG_att_name, evt.id event_id, evt.event_name, evt.require_pre_approval, txn.TXN_ID, TXN_timestamp, TXN_total, txn.STS_ID TXN_status, TXN_details, TXN_tax_data, PRC_amount, PRC_name";
 			$SQL .= ' FROM ' . $wpdb->prefix . 'esp_attendee att';
 			$SQL .= ' JOIN ' . $this->table_name . ' reg ON reg.ATT_ID = att.ATT_ID';
 			$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID ';
@@ -481,7 +481,7 @@ class EEM_Registration extends EEM_Base {
 
 		}
 
-		$SQL .= 'SELECT att.*, reg.*, dtt.*, reg.STS_ID REG_status, evt.id event_id, evt.event_name, evt.require_pre_approval, txn.TXN_ID, TXN_timestamp, TXN_total, txn.STS_ID txn_status, TXN_details, TXN_tax_data, PRC_amount, PRC_name';
+		$SQL .= $count ? "SELECT COUNT(reg.ATT_ID)" : "SELECT att.*, reg.*, dtt.*, reg.STS_ID REG_status, evt.id event_id, evt.event_name, CONCAT(ATT_fname, ' ', ATT_lname) as REG_att_name, evt.require_pre_approval, txn.TXN_ID, TXN_timestamp, TXN_total, txn.STS_ID txn_status, TXN_details, TXN_tax_data, PRC_amount, PRC_name";
 		$SQL .= ' FROM ' . $wpdb->prefix . 'esp_attendee att';
 		$SQL .= ' LEFT JOIN ' . $this->table_name . ' reg ON reg.ATT_ID = att.ATT_ID';
 		$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID';
@@ -537,13 +537,33 @@ class EEM_Registration extends EEM_Base {
 		}
 
 		$SQL .= ' AND evt.event_status != "D" ';
-		$SQL .= ') ORDER BY reg.REG_date DESC, reg.EVT_ID ASC';
 
-		$registrations = $wpdb->get_results( $SQL );
+		//let's setup orderby
+		switch ( $orderby ) {
+			case 'REG_ID':
+				$orderby = 'reg.REG_ID';
+				break;
+			case 'STS_ID':
+				$orderby = 'REG_status';
+				break;
+			case 'REG_att_name':
+				$orderby = 'REG_att_name';
+				break;
+			case 'event_name':
+				$orderby = 'evt.event_name';
+				break;
+			case 'DTT_EVT_start':
+				$orderby = 'dtt.DTT_EVT_start';
+				break;
+			default: //'REG_date'
+				$orderby = 'reg.REG_date';
+		}
 
-// echo '<h4>last_query : ' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-// printr( $registrations, '$registrations' );
-// die();
+		//let's setup limit
+		$limit = !empty($limit) ? 'LIMIT ' . implode(',', $limit) : '';
+		$SQL .= $count ? ')' : ") ORDER BY $orderby $order $limit";
+
+		$registrations = $count ? $wpdb->get_var( $SQL ) : $wpdb->get_results( $SQL );
 
 		return $registrations;
 	}

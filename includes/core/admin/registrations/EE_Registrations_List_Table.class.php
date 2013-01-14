@@ -21,38 +21,22 @@
  *
  * ------------------------------------------------------------------------
  */
-if ( ! class_exists( 'WP_List_Table' )) {
-    require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
-}
 
 
-class EE_Admin_Registrations_List_Table extends WP_List_Table {
+class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
-	private $_data;
-	private $_registrations;
+
+
 	private $_status;
-	private $_entries_per_page_dropdown;
-	private $_ticketing_installed;
+
 
 
 	/**
 	 * 		constructor
 	*/
-	function __construct( $data, $status, $entries_per_page_dropdown, $ticketing_installed ){
-
-		$this->_data = $this->_registrations = $data;
-		$this->_status = $status;
-		$this->_entries_per_page_dropdown = $entries_per_page_dropdown;
-		$this->_ticketing_installed = $ticketing_installed;
-
-        //Set parent defaults
-        parent::__construct( array(
-            	'singular'  	=> 'Registration',     //singular name of the listed records
-           		'plural'   	 	=> 'Registrations',    //plural name of the listed records
-            	'ajax'      		=> FALSE        //does this table support ajax?
-		) );
-
-		$this->prepare_items();
+	function __construct( &$admin_page ){
+        parent::__construct($admin_page);
+        $this->_status = $this->_admin_page->get_registration_status_array();
 
 	}
 
@@ -60,100 +44,83 @@ class EE_Admin_Registrations_List_Table extends WP_List_Table {
 
 
 
-	/**
-	 * 		prepare_items
-	*/
-    function prepare_items() {
-
-        $per_page = ( ! empty( $_REQUEST['per_page'] )) ? absint( $_REQUEST['per_page'] ) : 10;
-        $columns = $this->get_columns();
-        $hidden = array();
-        $sortable = $this->get_sortable_columns();
-        $this->_column_headers = array($columns, $hidden, $sortable);
-
-        $this->process_bulk_action();
-
-        function usort_reorder($a,$b){
-            $orderby = (!empty($_REQUEST['orderby'])) ? wp_strip_all_tags( $_REQUEST['orderby'] ) : 'REG_date'; // If no sort, default to titletimestamp
-            $order = (!empty($_REQUEST['order'])) ? wp_strip_all_tags( $_REQUEST['order'] ) : 'desc'; // If no order, default to desc
-
-			if ( is_numeric( $a->$orderby ) && is_numeric( $b->$orderby )) {
-				$result = ( $a->$orderby == $b->$orderby ) ? 0 : ( $a->$orderby < $b->$orderby ) ? -1 : 1;
-			} else {
-				$result = strcasecmp($a->$orderby, $b->$orderby); // Determine sort order for strings
-			}
-
-           	return ($order==='asc') ? $result : -$result; // Send final sort direction to usort
-        }
-
-		$current_page = $this->get_pagenum();
-		$total_items = count($this->_registrations);
-
-		// can't sort one item
-		if ( $total_items > 1 ) {
-			usort($this->_registrations, 'usort_reorder');
-		}
-
-         if ( is_array( $this->_registrations )) {
-			$this->_registrations = array_slice($this->_registrations,(($current_page-1)*$per_page),$per_page);
-		}
-
-
-        $this->items = $this->_registrations;
-
-        $this->set_pagination_args( array(
-            'total_items' => $total_items,                  //WE have to calculate the total number of items
-            'per_page'    => $per_page,                     //WE have to determine how many items to show on a page
-            'total_pages' => ceil($total_items/$per_page)   //WE have to calculate the total number of pages
-        ) );
-    }
+	protected function _setup_data() {
+		$this->_per_page = $this->get_items_per_page( $this->_screen . '_per_page' );
+		$this->_data = $this->_admin_page->_get_registrations( $this->_per_page );
+		$this->_all_data_count = $this->_admin_page->_get_registrations( $this->_per_page, TRUE );
+	}
 
 
 
 
+	protected function _set_properties() {
+		$this->_wp_list_args = array(
+			'singular' => __('registration', 'event_espresso'),
+			'plural' => __('registrations', 'event_espresso'),
+			'ajax' => TRUE,
+			'screen' => $this->_admin_page->get_current_screen()->id
+			);
 
-
-	/**
-	 * 		get_columns
-	*/
-	function get_columns(){
-		// 	Attendee Name 	Registration Code 	Registration Date 	Event Title 	Event Date & Time 	Price Paid 	Payment 	TXN ID 	Actions
-        $columns = array(
-            	'cb'        						=> '<input type="checkbox" />', //Render a checkbox instead of text
-            	'REG_ID'   					=> __( 'ID', 'event_espresso' ),
-				'REG_date'					=> __( 'Registration Date', 'event_espresso' ),
-				'Reg_status'				=> __( 'Reg Status', 'event_espresso' ),
-            	'ATT_fname'   				=> __( 'Attendee Name', 'event_espresso' ),
-				'REG_code'					=> __( 'Registration Code', 'event_espresso' ),
-				'REG_att_checked_in'	=> __( 'Attended', 'event_espresso' ),
- 				'event_name'				=> __( 'Event Title', 'event_espresso' ),
-    	       	'DTT_EVT_start'			=> __( 'Event Date & Time', 'event_espresso' ),
-				'REG_final_price'			=> __( 'Price Paid', 'event_espresso' ),
-            	'actions'	   					=> __( 'Actions', 'event_espresso' )
+		$this->_columns = array(
+            	'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
+            	'REG_ID' => __( 'ID', 'event_espresso' ),
+				'REG_date' => __( 'Registration Date', 'event_espresso' ),
+				'Reg_status' => __( 'Reg Status', 'event_espresso' ),
+            	'ATT_fname' => __( 'Attendee Name', 'event_espresso' ),
+				'REG_code' => __( 'Registration Code', 'event_espresso' ),
+				'REG_att_checked_in' => __( 'Attended', 'event_espresso' ),
+ 				'event_name' => __( 'Event Title', 'event_espresso' ),
+    	       	'DTT_EVT_start' => __( 'Event Date & Time', 'event_espresso' ),
+				'REG_final_price' => __( 'Price Paid', 'event_espresso' ),
+            	'actions' => __( 'Actions', 'event_espresso' )
         );
-		
-		if ( ! $this->_ticketing_installed ) {
-			unset( $columns['REG_att_checked_in'] );
-		}
-        return $columns;
-    }
 
-
-
-	/**
-	 * 		get_sortable_columns
-	*/
-   	function get_sortable_columns() {
-        $sortable_columns = array(
-          		'REG_date'			=> array( 'REG_date', TRUE ),   //true means its already sorted
-            	'ATT_fname'		=> array( 'ATT_fname', FALSE ),
-            	'event_name'		=> array( 'event_name', FALSE ),
+        $this->_sortable_columns = array(
+          		'REG_date' => array( 'REG_date', TRUE ),   //true means its already sorted
+            	'ATT_fname' => array( 'ATT_fname', FALSE ),
+            	'event_name' => array( 'event_name', FALSE ),
             	'DTT_EVT_start'	=> array( 'DTT_EVT_start', FALSE ),
-            	'Reg_status'		=> array( 'Reg_status', FALSE ),
-				'REG_ID'    			=> array( 'REG_ID', FALSE ),
-        );
-        return $sortable_columns;
-    }
+            	'Reg_status' => array( 'Reg_status', FALSE ),
+				'REG_ID' => array( 'REG_ID', FALSE ),
+        	);
+
+        $this->_hidden_columns = array();
+	}
+
+
+
+
+
+	protected function _get_table_filters() {
+		$filters = array();
+
+		//todo we're currently using old functions here. We need to move things into the Events_Admin_Page() class as methods.
+		require_once EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin.php';
+
+		$filters[] = espresso_event_months_dropdown( isset($this->_req_data['month_range']) ? sanitize_key($this->_req_data['month_range']) : '' );
+		$filters[] = espresso_category_dropdown( isset($this->_req_data['category_id']) ? sanitize_key( $this->_req_data['category_id'] ) : '' );
+		$status = array();
+		foreach ( $this->_status as $key => $value ) {
+                $status[] = array( 'id' => $key, 'text' => $value );
+            }
+		$filters[] = select_input('reg_status', $status, isset($this->_req_data['reg_status']) ? sanitize_key( $this->_req_data['reg_status'] ) : '');
+
+		return $filters;
+	}
+
+
+
+
+	protected function _add_view_counts() {
+		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin_screens/events/queries.php' );
+		$this->_views['all']['count'] = espresso_total_all_attendees();
+		$this->_views['month']['count'] = espresso_total_attendees_this_month();
+		$this->_views['today']['count'] = espresso_total_attendees_today();
+	}
+
+
+
+
 
 
 
@@ -217,8 +184,7 @@ class EE_Admin_Registrations_List_Table extends WP_List_Table {
 	*/
    	function column_ATT_fname($item){
 		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item->ATT_ID ), ATT_ADMIN_URL ), 'edit_attendee_nonce' );
-		return '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . ucwords( $item->ATT_fname . ' ' . $item->ATT_lname ) . '</a>';
-		//return '' . ucwords( $item->ATT_fname ) . ' ' . ucwords( $item->ATT_lname ) . '';
+		return '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . ucwords( $item->REG_att_name ) . '</a>';
 	}
 
 
@@ -240,10 +206,11 @@ class EE_Admin_Registrations_List_Table extends WP_List_Table {
 
 	/**
 	* 		column_REG_att_checked_in
-	*/
-	function column_REG_att_checked_in($item){
-		 return ( $item->REG_att_checked_in ) ? event_espresso_paid_status_icon('Checkedin') : '-' /*event_espresso_paid_status_icon('NotCheckedin')*/; 
-	}
+	* 		//removing this... it can be added via the manage_columns_{} filter inside the ticketing addon.
+	 */
+	/* function column_REG_att_checked_in($item){
+		 return ( $item->REG_att_checked_in ) ? event_espresso_paid_status_icon('Checkedin') : '-'; 
+	} /**/
 
 
 
@@ -338,48 +305,4 @@ class EE_Admin_Registrations_List_Table extends WP_List_Table {
 
 
 
-
-	/**
-	 * 		get_bulk_actions
-	*/
-    function get_bulk_actions() {
-        $actions = array(
-//            'delete'    => 'Delete'
-        );
-        return $actions;
-    }
-
-
-
-	/**
-	 * 		process_bulk_action
-	*/
-    function process_bulk_action() {
-
-        //Detect when a bulk action is being triggered...
-/*        if( $this->current_action() === 'delete' ) {
-			$success = FALSE;
-			foreach ( $_GET['venueseatingchart'] as $ID ) {
-				$success = EE_VSC_Admin::_delete_chart( $ID, TRUE );
-			}
-			if ( $success ) {
-				EE_VSC_Admin::add_notices( array( 'success' => 'All Seating Charts were successfully deleted.' ));
-			} else {
-				EE_VSC_Admin::add_notices( array( 'errors' => 'An error occured. One or more Seating Charts were not deleted.' ));
-			}
-        }*/
-
-    }
-
-	function extra_tablenav( $which ) {
-		echo $this->_entries_per_page_dropdown;
-	}
-
-
-
-
-
 }
-
-
-

@@ -45,7 +45,6 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 		 * some temporary defined constants here b/c other admin pages aren't present
 		 * todo: remove when admin system is fully converted
 		 */
-		if ( !defined('REG_ADMIN_URL') ) define('REG_ADMIN_URL', $this->_admin_base_url);
 		if ( !defined('TXN_ADMIN_URL') ) define('TXN_ADMIN_URL', $this->_admin_base_url);
 	}
 

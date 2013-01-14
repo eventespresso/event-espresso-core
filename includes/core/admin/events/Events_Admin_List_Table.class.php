@@ -124,7 +124,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_default($item) {
-		return '';
+		return isset( $item->$column_name ) ? $item->$column_name : '';
 	}
 
 
