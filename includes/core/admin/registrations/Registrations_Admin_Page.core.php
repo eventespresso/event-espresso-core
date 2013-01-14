@@ -835,8 +835,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$CAT_ID = isset( $this->_req_data['category_id'] ) ? absint( $this->_req_data['category_id'] ) : FALSE;
 		$reg_status = isset( $this->_req_data['reg_status'] ) ? sanitize_text_field( $this->_req_data['reg_status'] ) : FALSE;
 		$month_range = isset( $this->_req_data['month_range'] ) ? sanitize_text_field( $this->_req_data['month_range'] ) : FALSE;
-		$today_a = isset( $this->_req_data['today_a'] ) && $this->_req_data['today_a'] == 'true' ? sanitize_text_field( $this->_req_data['today_a'] ) : FALSE;
-		$this_month_a = isset( $this->_req_data['this_month_a'] ) ? sanitize_text_field( $this->_req_data['this_month_a'] ) : FALSE;
+		$today_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'today' ? TRUE : FALSE;
+		$this_month_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'month' ? TRUE  : FALSE;
 
 		//set orderby
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
