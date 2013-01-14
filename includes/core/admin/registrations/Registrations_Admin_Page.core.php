@@ -702,7 +702,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 //		printr( $page_args, '$page_args' );
 		
 		// the final template wrapper
-		$this->admin_page_wrapper();
+		$this->display_admin_page_with_no_sidebar();
 
 	}
 
