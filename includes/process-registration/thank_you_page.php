@@ -27,15 +27,15 @@ function espresso_thank_you_page() {
 
 		$data = array(
 			'events' => array(),
-			'fname' => $session_data['primary_attendee']['fname'],
-			'lname' => $session_data['primary_attendee']['lname'],
-			'txn_type' => $session_data['txn_results']['gateway'],
+			'fname' => isset( $session_data['primary_attendee']['fname'] ) ? $session_data['primary_attendee']['fname'] : '',
+			'lname' => isset( $session_data['primary_attendee']['lname'] ) ? $session_data['primary_attendee']['lname'] : '',
+			'txn_type' => isset( $session_data['txn_results']['gateway'] ) ? $session_data['txn_results']['gateway'] : '',
 			'payment_date' => date( 'D M j, Y g:i a' ),
-			'payment_status' => $session_data['txn_results']['status'],
-			'amount_paid' => $session_data['txn_results']['amount'],
+			'payment_status' => isset( $session_data['txn_results']['status'] ) ? $session_data['txn_results']['status'] : '',
+			'amount_paid' => isset( $session_data['txn_results']['amount'] ) ? $session_data['txn_results']['amount'] : '',
 			'total_cost' => $grand_total,
-			'registration_id' => $session_data['primary_attendee']['registration_id'],
-			'txn_id' => $session_data['txn_results']['transaction_id']
+			'registration_id' => isset( $session_data['primary_attendee']['registration_id'] ) ? $session_data['primary_attendee']['registration_id'] : '',
+			'txn_id' => isset( $session_data['txn_results']['transaction_id'] ) ? $session_data['txn_results']['transaction_id'] : ''
 		);
 
 		foreach ( $session_data['cart']['REG']['items'] as $item ) {
