@@ -721,18 +721,6 @@ function events_data_tables_install() {
 
 
 
-	$table_name = "events_meta";
-	$sql = "emeta_id bigint(20) NOT NULL AUTO_INCREMENT,
-			  event_id int(11) DEFAULT NULL,
-			  meta_key varchar(255) DEFAULT NULL,
-			  meta_value longtext,
-			  date_added datetime DEFAULT NULL,
-  			  PRIMARY KEY  (emeta_id),
-			  KEY event_id (event_id),
-			  KEY meta_key (meta_key)";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
-
 
 	$table_name = "events_email";
 	$sql = "id int(11) unsigned NOT NULL AUTO_INCREMENT,

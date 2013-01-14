@@ -36,7 +36,6 @@
 																						'wp_events_mailchimp_attendee_rel' =>  array( 'id' ),
 																						'wp_events_mailchimp_event_rel' =>  array( 'id' ),
 																						'wp_events_member_rel' =>  array( 'id' ),
-																						'wp_events_meta' =>  array( 'emeta_id' ),
 																						EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE	=> array( 'primary_registration_id', 'registration_id' ),
 																						EVENTS_PERSONNEL_TABLE	=> array( 'id' ),
 																						EVENTS_PERSONNEL_REL_TABLE	=> array( 'id' ),
