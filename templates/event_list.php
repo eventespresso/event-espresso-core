@@ -189,7 +189,7 @@ function event_espresso_get_event_details($attributes) {
 			// use the venue id  from the attributes
 			$events = $wpdb->get_results($wpdb->prepare($SQL, $venue_id));
 		} else {
-			$events = $wpdb->get_results($wpdb->prepare($SQL));
+			$events = $wpdb->get_results($SQL);
 		}
 			
 		// save the newly created transient value
