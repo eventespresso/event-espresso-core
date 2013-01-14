@@ -146,7 +146,9 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 				'nav' => array(
 					'label' => __('Edit Category', 'event_espresso'),
 					'order' => 5,
-					'persistent' => FALSE),
+					'persistent' => FALSE,
+					'url' => isset($this->_req_data['EVT_CAT_ID']) ? add_query_arg(array('EVT_CAT_ID' => $this->_req_data['EVT_CAT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
+					),
 				'metaboxes' => array('_publish_post_box')
 				),
 			'import_categories' => array(

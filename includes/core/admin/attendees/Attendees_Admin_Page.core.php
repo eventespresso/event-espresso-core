@@ -131,7 +131,8 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 				'nav' => array(
 					'label' => __('Edit Attendee', 'event_espresso'),
 					'order' => 5,
-					'persistent' => FALSE
+					'persistent' => FALSE,
+					'url' => isset($this->_req_data['id']) ? add_query_arg(array('id' => $this->_req_data['id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
 				'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box')
 				)
