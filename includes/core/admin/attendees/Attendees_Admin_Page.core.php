@@ -153,14 +153,14 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 
 
 
+
+
 	public function load_scripts_styles() {
-		//styles for all attendee pages
-		wp_register_style('espresso_attendees', ATT_ASSETS_URL . 'espresso_attendees_admin.css' );		
+		//styles for all attendee pages	
 		wp_enqueue_style('espresso_attendees');
 
 
 		//scripts for all attendee pages
-		wp_register_script('espresso_attendees', ATT_ASSETS_URL . 'espresso_attendees_admin.js', array('jquery'), '1.0', TRUE);
 		wp_enqueue_script('espresso_attendees');
 	}
 

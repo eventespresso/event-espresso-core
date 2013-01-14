@@ -819,6 +819,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_style('espresso_menu', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-menu-styles.css');
 		wp_register_style('ee-admin-css', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.css', array(), EVENT_ESPRESSO_VERSION);
 
+		//attendee style registrations
+		wp_register_style('espresso_attendees', ATT_ASSETS_URL . 'espresso_attendees_admin.css' );	
+
 		//enqueue global styles
 		wp_enqueue_style('espresso_menu');
 		wp_enqueue_style('event_espresso');
@@ -832,6 +835,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script('event_editor_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_editor.js', array('jquery-ui-slider', 'jquery-ui-timepicker-addon', 'post'), EVENT_ESPRESSO_VERSION, true);
 		wp_register_script('event_espresso_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_espresso.js', array('jquery'), EVENT_ESPRESSO_VERSION, true);
 		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('jquery'), EVENT_ESPRESSO_VERSION, true );
+
+		//attendee style registrations
+		wp_register_script('espresso_attendees', ATT_ASSETS_URL . 'espresso_attendees_admin.js', array('jquery'), '1.0', TRUE);
 
 
 		//enqueue global scripts
