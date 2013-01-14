@@ -209,7 +209,8 @@ function espresso_clear_session() {
 						'tax_totals',
 						'taxes',
 						'billing_info',
-						'txn_results'
+						'txn_results',
+						'grand_total_price_object'
 					));
 																
 	$EE_Session->set_session_data(
