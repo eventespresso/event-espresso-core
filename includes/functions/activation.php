@@ -627,15 +627,6 @@ function events_data_tables_install() {
 
 
 
-	$table_name = "events_status";
-	$sql = "id int(3) unsigned NOT NULL AUTO_INCREMENT,
-					  code VARCHAR(45) DEFAULT NULL,
-					  type INT(11) DEFAULT '0',
-					  can_edit BOOLEAN DEFAULT '0',
-					PRIMARY KEY  (id)";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
-
 
 	$table_name = "events_detail";
 	$sql = "id int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -1396,6 +1387,20 @@ function espresso_default_prices() {
 	
 }
 
+
+
+
+
+function espresso_delete_unused_db_tables() {
+	global $wpdb;
+	$wpdb->query( 'DROP TABLE IF EXISTS '. $wpdb->prefix . '"events_meta"' );
+	$wpdb->query( 'DROP TABLE IF EXISTS '. $wpdb->prefix . '"events_status"' );
+}
+
+
+
+
+
 if (!function_exists('save_error')) {
 
 	function save_error() {
@@ -1403,5 +1408,8 @@ if (!function_exists('save_error')) {
 	}
 
 }
+
+
+
 
 //add_action('activated_plugin', 'save_error');

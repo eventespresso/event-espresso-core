@@ -28,6 +28,7 @@ function espresso_plugin_activation() {
 		espresso_fix_org_options();
 		espresso_update_active_gateways();
 		espresso_default_prices();
+		espresso_delete_unused_db_tables();
 	}
 }
 
