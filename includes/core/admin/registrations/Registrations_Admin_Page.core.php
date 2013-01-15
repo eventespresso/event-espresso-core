@@ -37,8 +37,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	 * 		@access public
 	 * 		@return void
 	 */
-	public function __construct($wp_page_slug) {
-		parent::__construct($wp_page_slug);
+	public function __construct() {
+		parent::__construct();
 	}
 
 

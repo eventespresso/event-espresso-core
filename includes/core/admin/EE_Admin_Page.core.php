@@ -96,10 +96,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 		@access public
 	 * 		@return void
 	 */
-	public function __construct($_wp_page_slug) {
-
-		//init _wp_page_slug property
-		$this->_wp_page_slug = $_wp_page_slug;
+	public function __construct() {
 
 		//set initial page props (child method)
 		$this->_init_page_props();
@@ -389,10 +386,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 			add_action( 'admin_init', array( $this, 'admin_init' ), 10 );
 			if ( method_exists( $this, 'admin_init_' . $this->_current_view ) )
 				add_action( 'admin_init', array( $this, 'admin_init_' . $this->_current_view ), 15 );
-			$page_hook = 'load-' . $this->_wp_page_slug;
-			//hook into page load hook so all page specific stuff get's loaded.
-			if ( !empty($this->_wp_page_slug) )
-				add_action($page_hook, array($this, 'load_page_dependencies') );
 		} else {
 			//hijack regular WP loading and route admin request immediately
 			if ( current_user_can( 'manage_options' ) )
@@ -409,8 +402,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	public function load_page_dependencies() {
-
-
+		var_dump('in_here');
 		$this->_current_screen = get_current_screen();
 
 		//init template args
@@ -507,6 +499,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	
 
+	public function set_wp_page_slug($wp_page_slug) {
+		$this->_wp_page_slug = $wp_page_slug;
+	}
 
 	/**
 	 * _verify_routes
