@@ -119,19 +119,20 @@
 			case 'session' : 	$input_source = $_SESSION;	 	break;				
 		}		
 
-//		printr( $_SESSION, '$_SESSION  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		echo '<h4>$input_source : ' . $what . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		printr( $input_array, 'VSC $input_array  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );						 
-//		printr( $input_source, $what .' array  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );						 
-		
-		$gateway = isset( $input_source['selected_gateway'] ) ? $input_source['selected_gateway'] : FALSE;
-		unset( $input_source['espresso_ajax'] );
-		unset( $input_source['noheader'] );
-		unset( $input_source['selected_gateway'] );
-		unset( $input_source['selected_gateway_name'] );
-												
 		// check if any input vars exist
 		if ( isset( $input_source ) && ! empty( $input_source )) {
+		
+//			printr( $_SESSION, '$_SESSION  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//			echo '<h4>$input_source : ' . $what . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//			printr( $input_source, $what .' array  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );						 
+//			printr( $input_array, 'VSC $input_array  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );						 
+			
+			$gateway = isset( $input_source['selected_gateway'] ) ? $input_source['selected_gateway'] : FALSE;
+			unset( $input_source['espresso_ajax'] );
+			unset( $input_source['noheader'] );
+			unset( $input_source['selected_gateway'] );
+			unset( $input_source['selected_gateway_name'] );
+													
 			//cycle thru $_GET vars and check for parameters inside our $input_data array
 			foreach ( $input_source as $key => $value ) {
 				// for some reason WP isn't removing this
@@ -139,9 +140,9 @@
 				//check if processing a reg page by checking for gateway
 				if ( $gateway ) {
 					if ( strpos( $key, $gateway )) {
+//						echo '<h4>'. $key . ': ' . $value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 						// strip gateway name from key
-						$key = str_replace( '-' . $gateway, '', $key );
-						//echo '<h4>'. $key . ': ' . $value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+						//$key = str_replace( '-' . $gateway, '', $key );
 						// start by looking for input name in our array of accetable post inputs, but ONLY grab ones that have the gateway name in them
 	 					if ( array_key_exists( $key, $input_array )) { 		
 						// add it to $valid input array
@@ -361,8 +362,8 @@
 		$required_fields_filled_in = TRUE;				
 		$missing_fields = 0; 
 		$msg = '';
-					
-		// cycle through post inputs						
+
+		// cycle through post inputs
 		foreach ( $post_inputs as $input_name => $post_input ) {
 			// was a post input actually submitted ?
 			if ( empty( $post_input['value'] )) {
@@ -373,7 +374,7 @@
 					// is this the first missing field ?
 					if ( $missing_fields == 0 ) {
 						$msg = '<strong>' . __( 'The following fields are either blank or contain invalid data:', 'event_espresso' ) . '</strong><br />';
-					} 
+					}
 					$label = $post_input['label'] != FALSE ? $post_input['label'] : $input_name;
 					$label = str_replace( ' ', '&nbsp;', $label  );
 					// now add the name of the missing fields

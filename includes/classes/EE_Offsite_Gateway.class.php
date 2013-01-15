@@ -17,7 +17,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 	 */
 	public function process_gateway_selection() {	
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		$msg = __( 'Off-site gateway selected.', 'event_espresso' );
+		$msg = $this->_EEM_Gateways->display_name() . __( ' gateway selected.', 'event_espresso' );
 		EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );		
 	}
 

@@ -245,12 +245,10 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 
 
 	public function espresso_display_payment_gateways() {
-		global $css_class;
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-		// this filter allows whatever function is processing the registration page to know what inputs to expect
-		add_filter('filter_hook_espresso_reg_page_billing_inputs', array(&$this, 'espresso_reg_page_billing_inputs_stripe'));
+		global $css_class;
 		echo $this->_generate_payment_gateway_selection_button();
 		$gw = $this->_gateway;
 		?>
@@ -344,7 +342,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 		<?php
 	}
 
-	public function espresso_reg_page_billing_inputs() {
+	function espresso_reg_page_billing_inputs() {
 		$reg_page_billing_inputs = array(
 				'reg-page-billing-fname-' . $this->_gateway => array(
 						'db-col' => 'fname',

@@ -225,16 +225,16 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 			//start transaction
 			$this->setField('amount', $grand_total);
-			$this->setField('card_num', $billing_info['reg-page-billing-card-nmbr']['value']);
-			$this->setField('exp_date', $billing_info['reg-page-billing-card-exp-date-mnth']['value'] . $billing_info['reg-page-billing-card-exp-date-year']['value']);
-			$this->setField('card_code', $billing_info['reg-page-billing-card-ccv-code']['value']);
-			$this->setField('first_name', $billing_info['reg-page-billing-fname']['value']);
-			$this->setField('last_name', $billing_info['reg-page-billing-lname']['value']);
-			$this->setField('email', $billing_info['reg-page-billing-email']['value']);
-			$this->setField('address', $billing_info['reg-page-billing-address']['value']);
-			$this->setField('city', $billing_info['reg-page-billing-city']['value']);
-			$this->setField('state', $billing_info['reg-page-billing-state']['value']);
-			$this->setField('zip', $billing_info['reg-page-billing-zip']['value']);
+			$this->setField('card_num', $billing_info[ 'reg-page-billing-card-nmbr-' . $this->_gateway ]['value']);
+			$this->setField('exp_date', $billing_info[ 'reg-page-billing-card-exp-date-mnth-' . $this->_gateway ]['value'] . $billing_info['reg-page-billing-card-exp-date-year-' . $this->_gateway ]['value']);
+			$this->setField('card_code', $billing_info[ 'reg-page-billing-card-ccv-code-' . $this->_gateway ]['value']);
+			$this->setField('first_name', $billing_info[ 'reg-page-billing-fname-' . $this->_gateway ]['value']);
+			$this->setField('last_name', $billing_info[ 'reg-page-billing-lname-' . $this->_gateway ]['value']);
+			$this->setField('email', $billing_info[ 'reg-page-billing-email-' . $this->_gateway ]['value']);
+			$this->setField('address', $billing_info[ 'reg-page-billing-address-' . $this->_gateway ]['value']);
+			$this->setField('city', $billing_info[ 'reg-page-billing-city-' . $this->_gateway ]['value']);
+			$this->setField('state', $billing_info[ 'reg-page-billing-state-' . $this->_gateway ]['value']);
+			$this->setField('zip', $billing_info[ 'reg-page-billing-zip-' . $this->_gateway ]['value']);
 			$this->setField('cust_id', $primary_attendee['registration_id']['value']);
 			$this->setField('invoice_num',$EE_Session->id()); 
 
@@ -322,20 +322,11 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 	public function espresso_display_payment_gateways() {
 
-		global $css_class;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-		// this filter allows whatever function is processing the registration page to know what inputs to expect
-		add_filter('filter_hook_espresso_reg_page_billing_inputs', array(&$this, 'espresso_reg_page_billing_inputs'));
-		$use_sandbox = $this->_payment_settings['use_sandbox'] || $this->_payment_settings['test_transactions'];
-		if ($use_sandbox) {
-			$test_creds = '
-		<h4 style="color:#ff0000;" title="Payments will not be processed">' . __('Debug Mode Is Turned On', 'event_espresso') . '</h4>
-		<p style="color:#ff0000;">Test credit card # 4007000000027</p><br/>
-		';
-		} else {
-			$test_creds = '';
-		}
+		global $css_class;
+
+
 		echo $this->_generate_payment_gateway_selection_button();
 		
 		$gw = $this->_gateway;
@@ -344,8 +335,10 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 		<div id="reg-page-billing-info-<?php echo $gw;?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
 
-
-			<?php echo $test_creds; ?>
+		<?php if ( $this->_payment_settings['use_sandbox'] || $this->_payment_settings['test_transactions'] ) : ?>
+		<h4 style="color:#ff0000;" title="Payments will not be processed"><?php _e('Debug Mode Is Turned On', 'event_espresso');?></h4>
+		<p style="color:#ff0000;">Test credit card # 4007000000027</p><br/>
+		<?php endif; ?>
 
 			<h5><strong><?php _e('Billing Address', 'event_espresso'); ?></strong></h5>
 
