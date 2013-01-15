@@ -347,6 +347,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//set early because incoming requests could be ajax related and we need to register those hooks.
 		$this->_ajax_hooks();
+		if ( defined('DOING_AJAX') && DOING_AJAX )
+			$this->_doing_AJAX = TRUE;
 
 		//first verify if we need to load anything...
 		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
@@ -849,7 +851,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
 
 		//transactions script register
-		wp_register_script('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
+		wp_register_script('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.js', array('jquery-ui-datepicker', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
 
 		//jqplot library
 		wp_register_script('jqplot', JQPLOT_URL . 'jquery.jqplot.min.js', array('jquery'), '', FALSE);

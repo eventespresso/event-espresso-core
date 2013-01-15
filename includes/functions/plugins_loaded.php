@@ -159,7 +159,7 @@ function espresso_core_admin_autoload($className) {
 		'event_pricing/' => array('core','class'),
 		'messages/' => array('core', 'class'),
 		'registrations/' => array('core','class'),
-		'transactions/' => array('class', 'class')
+		'transactions/' => array('core', 'class')
 		);
 
 	//assemble a list of filenames
@@ -575,7 +575,8 @@ function event_espresso_run_install($table_name, $table_version, $sql, $engine =
 }
 
 
-
+echo json_encode($_REQUEST);
+		exit();
 
 /**
  * 		loads and instantiates files and objects for EE admin pages
@@ -584,6 +585,7 @@ function event_espresso_run_install($table_name, $table_version, $sql, $engine =
  */
 function espresso_init_admin_pages() {
 	//this loads the controller for the admin pages which will setup routing etc
+	
 	try {
 		$EEAdmin = new EE_Admin_Page_load();
 	} catch ( EE_Error $e ) {

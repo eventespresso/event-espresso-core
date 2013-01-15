@@ -46,7 +46,6 @@ class Transactions_Admin_Page_Init extends EE_Admin_Page_Init {
 		define( 'TXN_TEMPLATE_URL', str_replace( '\\', '/', EE_CORE_ADMIN_URL . TXN_PG_SLUG . DS . 'templates' . DS ));
 
 		parent::__construct();
-		
 	}
 
 

@@ -154,14 +154,16 @@ class EEM_Transaction extends EEM_Base {
 	*		retreive  ALL transactions from db
 	* 
 	* 		@access		public
+	* 		@param bool $count return count or objects
 	*		@return 		mixed		array on success, FALSE on fail
 	*/	
-	public function get_all_transactions() {
+	public function get_all_transactions($count = FALSE) {
 	
 		$orderby = 'TXN_timestamp';
+		$type =  ( $count ) ? 'COUNT' : 'OBJECT_K';
 		// retreive all transactions	
-		if ( $transactions = $this->select_all ( $orderby )) {
-			return $this->_create_objects( $transactions );
+		if ( $transactions = $this->select_all ( $orderby, FALSE, FALSE, $type )) {
+			return !$count ? $this->_create_objects( $transactions ) : $transactions;
 		} else {
 			return FALSE;
 		}
@@ -282,7 +284,7 @@ class EEM_Transaction extends EEM_Base {
 
 		global $wpdb;
 		
-		$SQL = $count ? "SELECT COUNT(txn.TXN_ID) " : "SELECT att.ATT_ID, CONCAT(att.ATT_fname, ' ', att.ATT_lname) as TXN_att_name), att.ATT_email, evt.id, evt.event_name, evt.slug, reg.REG_ID, reg.REG_url_link, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.TXN_paid, txn.STS_ID, txn.TXN_details ";		
+		$SQL = $count ? "SELECT COUNT(txn.TXN_ID) " : "SELECT att.ATT_ID, CONCAT(att.ATT_fname, ' ', att.ATT_lname) as TXN_att_name, att.ATT_email, evt.id, evt.event_name, evt.slug, reg.REG_ID, reg.REG_url_link, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.TXN_paid, txn.STS_ID, txn.TXN_details ";		
 
 		$SQL .= 'FROM ' . $wpdb->prefix . 'esp_registration reg ';
 		$SQL .= 'LEFT JOIN ' . $wpdb->prefix . 'esp_attendee att ON reg.ATT_ID = att.ATT_ID ';
@@ -321,7 +323,7 @@ class EEM_Transaction extends EEM_Base {
 					$transactions[ $transaction['TXN_ID'] ] = $transaction;
 				}
 			} else {
-				$transactions = $count;
+				$transactions = $results;
 			}
 			return $transactions;
 		} else {

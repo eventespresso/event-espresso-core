@@ -199,6 +199,18 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 
 
+	/**
+	 * return the transaction status array for wp_list_table
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public function get_transaction_status_array() {
+		return self::$_txn_status;
+	}
+
+
+
 
 
 	/**
@@ -216,7 +228,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		foreach ( $results as $status ) {
 			self::$_pay_status[ $status->STS_ID ] = __( $status->STS_code, 'event_espresso' );
 		}
-		$this->template_args['payment_status'] = self::$_pay_status;
+		$this->_template_args['payment_status'] = self::$_pay_status;
 			
 	}
 
@@ -235,11 +247,10 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles() {
 		//enqueue style
-		wp_enqueue_style('espresso_txn');
+		wp_enqueue_style('espresso_txn');	
 
-
-		//enqueue script
-		wp_enqueue_script('espresso_txn');		
+		//scripts
+		wp_enqueue_script('espresso_txn');	
 
 
 		//localize scripts (for vars)
@@ -256,8 +267,17 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_style('jquery-ui-style-datepicker-css');
 
 		//scripts
-		wp_enqueue_script('ee_admin_js');
-		wp_enqueue_script('event_editor_js');
+	}
+
+
+
+
+
+	public function load_scripts_styles_default() {
+		//styles
+		wp_enqueue_style('jquery-ui-style');
+		wp_enqueue_style('jquery-ui-style-datepicker-css');
+
 	}
 
 
@@ -351,56 +371,56 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		
 		$this->_get_transaction_status_array();
 
-		$this->template_args = array();		
-		$this->template_args['transactions_page'] = $this->wp_page_slug;  
+		$this->_template_args = array();		
+		$this->_template_args['transactions_page'] = $this->wp_page_slug;  
 
 	    $this->_set_transaction_object();
 
 	
-		$this->template_args['txn_nmbr']['value'] = $this->_transaction->TXN_ID;
-		$this->template_args['txn_nmbr']['label'] = __( 'Transaction Number', 'event_espresso' );
+		$this->_template_args['txn_nmbr']['value'] = $this->_transaction->TXN_ID;
+		$this->_template_args['txn_nmbr']['label'] = __( 'Transaction Number', 'event_espresso' );
 		
-		$this->template_args['txn_datetime']['value'] = date( 'l F j, Y,    g:i:s a', $this->_transaction->TXN_timestamp );
-		$this->template_args['txn_datetime']['label'] = __( 'Date', 'event_espresso' );
+		$this->_template_args['txn_datetime']['value'] = date( 'l F j, Y,    g:i:s a', $this->_transaction->TXN_timestamp );
+		$this->_template_args['txn_datetime']['label'] = __( 'Date', 'event_espresso' );
 
-		$this->template_args['txn_status']['value'] = self::$_txn_status[ $this->_transaction->STS_ID ];
-		$this->template_args['txn_status']['label'] = __( 'Transaction Status', 'event_espresso' );	
-		$this->template_args['txn_status']['class'] = 'status-' . $this->_transaction->STS_ID;
+		$this->_template_args['txn_status']['value'] = self::$_txn_status[ $this->_transaction->STS_ID ];
+		$this->_template_args['txn_status']['label'] = __( 'Transaction Status', 'event_espresso' );	
+		$this->_template_args['txn_status']['class'] = 'status-' . $this->_transaction->STS_ID;
 
-		$this->template_args['grand_total'] = $this->_transaction->TXN_total;
-		$this->template_args['total_paid'] = $this->_transaction->TXN_paid;
+		$this->_template_args['grand_total'] = $this->_transaction->TXN_total;
+		$this->_template_args['total_paid'] = $this->_transaction->TXN_paid;
 		
 		$amount_due = number_format(( $this->_transaction->TXN_total - $this->_transaction->TXN_paid ), 2 );
-		$this->template_args['amount_due'] =  $org_options['currency_symbol'] . ' <span id="txn-admin-total-amount-due">' . $amount_due . '</span>';
-		$this->template_args['amount_due_class'] =  '';	
+		$this->_template_args['amount_due'] =  $org_options['currency_symbol'] . ' <span id="txn-admin-total-amount-due">' . $amount_due . '</span>';
+		$this->_template_args['amount_due_class'] =  '';	
 		
 		if ( $this->_transaction->TXN_paid == $this->_transaction->TXN_total ) {
 			// paid in full
-			$this->template_args['amount_due'] =  FALSE;
+			$this->_template_args['amount_due'] =  FALSE;
 		} elseif ( $this->_transaction->TXN_paid > $this->_transaction->TXN_total ) {
 			// overpaid
-			$this->template_args['amount_due_class'] =  'txn-overview-no-payment-spn';			
+			$this->_template_args['amount_due_class'] =  'txn-overview-no-payment-spn';			
 		} elseif (( $this->_transaction->TXN_total > 0 ) && ( $this->_transaction->TXN_paid > 0 )) {
 			// monies owing
-			$this->template_args['amount_due_class'] =  'txn-overview-part-payment-spn';			
+			$this->_template_args['amount_due_class'] =  'txn-overview-part-payment-spn';			
 		} elseif (( $this->_transaction->TXN_total > 0 ) && ( $this->_transaction->TXN_paid == 0 )) {
 			// no payments made yet
-			$this->template_args['amount_due_class'] =  'txn-overview-no-payment-spn';			
+			$this->_template_args['amount_due_class'] =  'txn-overview-no-payment-spn';			
 		} elseif ( $this->_transaction->TXN_total == 0 ) {
 			// free event 
-			$this->template_args['amount_due'] =  FALSE;
+			$this->_template_args['amount_due'] =  FALSE;
 		}
 
-		$this->template_args['currency_sign'] = $org_options['currency_symbol'];
+		$this->_template_args['currency_sign'] = $org_options['currency_symbol'];
 		// link back to overview
-		$this->template_args['txn_overview_url'] = ! empty ( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : TXN_ADMIN_URL;  
+		$this->_template_args['txn_overview_url'] = ! empty ( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : TXN_ADMIN_URL;  
 		
 
 		// grab messages at the last second
-		$this->template_args['notices'] = EE_Error::get_notices();
+		$this->_template_args['notices'] = EE_Error::get_notices();
 		// path to template 
 		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_header.template.php';
-		$this->template_args['admin_page_header'] = espresso_display_template( $template_path, $this->template_args, TRUE );
+		$this->_template_args['admin_page_header'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
 		
 		// the details template wrapper
 		$this->display_admin_page_with_sidebar();
@@ -443,10 +463,10 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		// process items in cart
 		$cart_items = $this->_session['cart']['REG']['items'];
-		$this->template_args['items'] = array();
+		$this->_template_args['items'] = array();
 		$exclude = array( 'attendees' );
 		
-		$this->template_args['REG_code'] = $this->_transaction->REG_code;
+		$this->_template_args['REG_code'] = $this->_transaction->REG_code;
 		
 		if ( ! empty( $cart_items )) {
 			foreach ( $cart_items as $line_item_ID => $item ) {
@@ -461,12 +481,12 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 									$ampm = ( (float)$option > 11.59 ) ? (( (float)$option == 24.00 ) ? 'am' : 'pm' ) : 'am';
 									$option = strtotime( $option . ' ' . $ampm );
 								}
-								$this->template_args['items'][ $item['name'] ][ $opt ] = $option;
+								$this->_template_args['items'][ $item['name'] ][ $opt ] = $option;
 							}
 						} elseif ( $key == 'line_item' ) {
-							$this->template_args['items'][ $item['name'] ][ $key ] = '<a title="' . $value . '" style="color:#333;">' . substr( $value, 0, 6 ) . '...</a>';
+							$this->_template_args['items'][ $item['name'] ][ $key ] = '<a title="' . $value . '" style="color:#333;">' . substr( $value, 0, 6 ) . '...</a>';
 						} else {
-							$this->template_args['items'][ $item['name'] ][ $key ] = $value;
+							$this->_template_args['items'][ $item['name'] ][ $key ] = $value;
 						}					
 					} 
 				}
@@ -476,15 +496,15 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		
 		// process taxes
 		if ( $taxes = maybe_unserialize( $this->_transaction->TXN_tax_data )) {
-			$this->template_args['taxes'] = $taxes['taxes'];
+			$this->_template_args['taxes'] = $taxes['taxes'];
 		} else {
-			$this->template_args['taxes'] = FALSE;
+			$this->_template_args['taxes'] = FALSE;
 		}
 
-		$this->template_args['grand_total'] = $this->_transaction->TXN_total;
+		$this->_template_args['grand_total'] = $this->_transaction->TXN_total;
 
 
-		$this->template_args['currency_sign'] = $org_options['currency_symbol'];
+		$this->_template_args['currency_sign'] = $org_options['currency_symbol'];
 		$txn_status_class = 'status-' . $this->_transaction->STS_ID;
 		
 		$txn_details = maybe_unserialize( $this->_transaction ->TXN_details );
@@ -492,44 +512,44 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		// process payment details
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php' );
 	    $PAY = EEM_Payment::instance();
-		if ( ! $this->template_args['payments'] = $PAY->get_payments_for_transaction( $this->_transaction->TXN_ID )) {
-			$this->template_args['payments'] = FALSE;
+		if ( ! $this->_template_args['payments'] = $PAY->get_payments_for_transaction( $this->_transaction->TXN_ID )) {
+			$this->_template_args['payments'] = FALSE;
 		}
 		
-		$this->template_args['edit_payment_url'] = add_query_arg( array( 'action' => 'edit_payment'  ), TXN_ADMIN_URL );
-		$this->template_args['delete_payment_url'] = add_query_arg( array( 'action' => 'delete_payment' ), TXN_ADMIN_URL );
+		$this->_template_args['edit_payment_url'] = add_query_arg( array( 'action' => 'edit_payment'  ), TXN_ADMIN_URL );
+		$this->_template_args['delete_payment_url'] = add_query_arg( array( 'action' => 'delete_payment' ), TXN_ADMIN_URL );
 
 		if ( isset( $txn_details['invoice_number'] )) {
-			$this->template_args['txn_details']['invoice_number']['value'] = $txn_details['invoice_number'];
-			$this->template_args['txn_details']['invoice_number']['label'] = __( 'Invoice Number', 'event_espresso' );
-			$this->template_args['txn_details']['invoice_number']['class'] = 'regular-text';
+			$this->_template_args['txn_details']['invoice_number']['value'] = $txn_details['invoice_number'];
+			$this->_template_args['txn_details']['invoice_number']['label'] = __( 'Invoice Number', 'event_espresso' );
+			$this->_template_args['txn_details']['invoice_number']['class'] = 'regular-text';
 		} 
 
-		$this->template_args['txn_details']['registration_session']['value'] = $this->_transaction->REG_session;
-		$this->template_args['txn_details']['registration_session']['label'] = __( 'Registration Session', 'event_espresso' );
-		$this->template_args['txn_details']['registration_session']['class'] = 'regular-text';
+		$this->_template_args['txn_details']['registration_session']['value'] = $this->_transaction->REG_session;
+		$this->_template_args['txn_details']['registration_session']['label'] = __( 'Registration Session', 'event_espresso' );
+		$this->_template_args['txn_details']['registration_session']['class'] = 'regular-text';
 		
-		$this->template_args['txn_details']['ip_address']['value'] = $this->_session['ip_address'];
-		$this->template_args['txn_details']['ip_address']['label'] = __( 'Transaction placed from IP', 'event_espresso' );
-		$this->template_args['txn_details']['ip_address']['class'] = 'regular-text';
+		$this->_template_args['txn_details']['ip_address']['value'] = $this->_session['ip_address'];
+		$this->_template_args['txn_details']['ip_address']['label'] = __( 'Transaction placed from IP', 'event_espresso' );
+		$this->_template_args['txn_details']['ip_address']['class'] = 'regular-text';
 		
-		$this->template_args['txn_details']['user_agent']['value'] = $this->_session['user_agent'];
-		$this->template_args['txn_details']['user_agent']['label'] = __( 'Registrant User Agent', 'event_espresso' );
-		$this->template_args['txn_details']['user_agent']['class'] = 'large-text';
+		$this->_template_args['txn_details']['user_agent']['value'] = $this->_session['user_agent'];
+		$this->_template_args['txn_details']['user_agent']['label'] = __( 'Registrant User Agent', 'event_espresso' );
+		$this->_template_args['txn_details']['user_agent']['class'] = 'large-text';
 
 
 		$this->_get_payment_methods();
 		$this->_get_active_gateways();
 		$this->_get_payment_status_array();
 		
-		$this->template_args['transaction_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'transaction'  ), TXN_ADMIN_URL );
-		$this->template_args['apply_payment_form_url'] = add_query_arg( array( 'page' => 'transactions', 'action' => 'espresso_apply_payment' ), WP_AJAX_URL );
-		$this->template_args['delete_payment_form_url'] = add_query_arg( array( 'page' => 'transactions', 'action' => 'espresso_delete_payment' ), WP_AJAX_URL );
+		$this->_template_args['transaction_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'transaction'  ), TXN_ADMIN_URL );
+		$this->_template_args['apply_payment_form_url'] = add_query_arg( array( 'page' => 'transactions', 'action' => 'espresso_apply_payment' ), WP_AJAX_URL );
+		$this->_template_args['delete_payment_form_url'] = add_query_arg( array( 'page' => 'transactions', 'action' => 'espresso_delete_payment' ), WP_AJAX_URL );
 		
 		// 'espresso_delete_payment_nonce'
 		
 		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_main_meta_box_txn_details.template.php';
-		echo espresso_display_template( $template_path, $this->template_args, TRUE );
+		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
 
 	}
 
@@ -544,14 +564,14 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*/
 	private function _get_active_gateways() {
 		global $espresso_wp_user;
-		$this->template_args['active_gateways'] = array();
+		$this->_template_args['active_gateways'] = array();
 		$payment_options = get_user_meta($espresso_wp_user, 'payment_settings', true);
 		//echo printr( $payment_options, '$payment_options' );
 		if ( $gateways = get_user_meta($espresso_wp_user, 'active_gateways', true)) {
 			//echo printr( $gateways, '$gateways' );
 			foreach ( $gateways as $gw_key => $gateway ) {
 				if ( isset( $payment_options[ $gw_key ]['type'] ) && $payment_options[ $gw_key ]['type'] != 'off-line' && $gw_key != 'paypal' ) {
-					$this->template_args['active_gateways'][ $gw_key ] = $payment_options[ $gw_key ]['display_name'];
+					$this->_template_args['active_gateways'][ $gw_key ] = $payment_options[ $gw_key ]['display_name'];
 				}
 			}
 		}	
@@ -567,7 +587,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	private function _get_payment_methods() {
-		$this->template_args['payment_methods'] = array(
+		$this->_template_args['payment_methods'] = array(
 			'PP' => __( 'PayPal', 'event_espresso' ),
 			'CC' => __( 'Credit Card', 'event_espresso' ),
 			'CHQ' => __( 'Cheque', 'event_espresso' ),
@@ -593,8 +613,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		
 		// process items in cart
 		$cart_items = $this->_session['cart']['REG']['items'];
-		$this->template_args['items'] = array();
-		$this->template_args['event_attendees'] = array();
+		$this->_template_args['items'] = array();
+		$this->_template_args['event_attendees'] = array();
 		
 		if ( ! empty( $cart_items )) {
 			foreach ( $cart_items as $line_item_ID => $item ) {
@@ -623,18 +643,18 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					}
 					
 					foreach ( $attendee as $key => $value ) {
-						$this->template_args['event_attendees'][ $event_name_and_price_option ][ $att_nmbr ][ $key ] = maybe_unserialize( $value );
+						$this->_template_args['event_attendees'][ $event_name_and_price_option ][ $att_nmbr ][ $key ] = maybe_unserialize( $value );
 					}
 				}
 			}
 		}
-		//printr( $this->template_args['event_attendees'], 'event_attendees' );
+		//printr( $this->_template_args['event_attendees'], 'event_attendees' );
 
-		$this->template_args['currency_sign'] = $org_options['currency_symbol'];
-		$this->template_args['transaction_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'attendees'  ), TXN_ADMIN_URL );  
+		$this->_template_args['currency_sign'] = $org_options['currency_symbol'];
+		$this->_template_args['transaction_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'attendees'  ), TXN_ADMIN_URL );  
 		
 		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_main_meta_box_attendees.template.php';
-		echo espresso_display_template( $template_path, $this->template_args, TRUE );
+		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
 
 	}
 
@@ -650,25 +670,25 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*/
 	function _txn_registrant_side_meta_box() {
 	
-		$this->template_args['ATT_ID'] = $this->_transaction->ATT_ID;
-		$this->template_args['prime_reg_fname'] = $this->_transaction->ATT_fname;
-		$this->template_args['prime_reg_lname'] = $this->_transaction->ATT_lname;
-		$this->template_args['prime_reg_email'] = $this->_transaction->ATT_email;
-		$this->template_args['prime_reg_address'] = $this->_transaction->ATT_address;
-		$this->template_args['prime_reg_address2'] = ( ! empty ( $this->_transaction->ATT_address2 )) ? '<br />' . $this->_transaction->ATT_address2 : '';
-		$this->template_args['prime_reg_city'] = ( ! empty ( $this->_transaction->ATT_city )) ? '<br />' . $this->_transaction->ATT_city : '';
-		$this->template_args['prime_reg_state'] = ( ! empty ( $this->_transaction->STA_ID )) ? '<br />' . $this->_transaction->STA_ID . ', ' : '';
-		$this->template_args['prime_reg_country'] = ( ! empty ( $this->_transaction->CNT_ISO )) ? $this->_transaction->CNT_ISO : '';
-		$this->template_args['prime_reg_zip'] = ( ! empty ( $this->_transaction->ATT_zip )) ? '<br />' . $this->_transaction->ATT_zip : '';
-		$this->template_args['prime_reg_phone'] = $this->_transaction->ATT_phone;
-		$this->template_args['prime_reg_social'] = $this->_transaction->ATT_social;
-		$this->template_args['prime_reg_comments'] = $this->_transaction->ATT_comments;
-		$this->template_args['prime_reg_notes'] = $this->_transaction->ATT_notes;
+		$this->_template_args['ATT_ID'] = $this->_transaction->ATT_ID;
+		$this->_template_args['prime_reg_fname'] = $this->_transaction->ATT_fname;
+		$this->_template_args['prime_reg_lname'] = $this->_transaction->ATT_lname;
+		$this->_template_args['prime_reg_email'] = $this->_transaction->ATT_email;
+		$this->_template_args['prime_reg_address'] = $this->_transaction->ATT_address;
+		$this->_template_args['prime_reg_address2'] = ( ! empty ( $this->_transaction->ATT_address2 )) ? '<br />' . $this->_transaction->ATT_address2 : '';
+		$this->_template_args['prime_reg_city'] = ( ! empty ( $this->_transaction->ATT_city )) ? '<br />' . $this->_transaction->ATT_city : '';
+		$this->_template_args['prime_reg_state'] = ( ! empty ( $this->_transaction->STA_ID )) ? '<br />' . $this->_transaction->STA_ID . ', ' : '';
+		$this->_template_args['prime_reg_country'] = ( ! empty ( $this->_transaction->CNT_ISO )) ? $this->_transaction->CNT_ISO : '';
+		$this->_template_args['prime_reg_zip'] = ( ! empty ( $this->_transaction->ATT_zip )) ? '<br />' . $this->_transaction->ATT_zip : '';
+		$this->_template_args['prime_reg_phone'] = $this->_transaction->ATT_phone;
+		$this->_template_args['prime_reg_social'] = $this->_transaction->ATT_social;
+		$this->_template_args['prime_reg_comments'] = $this->_transaction->ATT_comments;
+		$this->_template_args['prime_reg_notes'] = $this->_transaction->ATT_notes;
 		
-		$this->template_args['registrant_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'registrant'  ), TXN_ADMIN_URL );  
+		$this->_template_args['registrant_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'registrant'  ), TXN_ADMIN_URL );  
 
 		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_side_meta_box_registrant.template.php';
-		echo espresso_display_template( $template_path, $this->template_args, TRUE );
+		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
 	}
 
 
@@ -686,80 +706,80 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		if ( is_array( $billing_info )) {
 		
-			$this->template_args['free_event'] = FALSE; 
+			$this->_template_args['free_event'] = FALSE; 
 			
-			$this->template_args['fname']['value'] = ! empty ( $billing_info['reg-page-billing-fname']['value'] ) ? $billing_info['reg-page-billing-fname']['value'] : '';
-			$this->template_args['fname']['label'] = ! empty ( $billing_info['reg-page-billing-fname']['label'] ) ? $billing_info['reg-page-billing-fname']['label'] :  __( 'First Name', 'event_espresso' );
+			$this->_template_args['fname']['value'] = ! empty ( $billing_info['reg-page-billing-fname']['value'] ) ? $billing_info['reg-page-billing-fname']['value'] : '';
+			$this->_template_args['fname']['label'] = ! empty ( $billing_info['reg-page-billing-fname']['label'] ) ? $billing_info['reg-page-billing-fname']['label'] :  __( 'First Name', 'event_espresso' );
 			
-			$this->template_args['lname']['value'] = ! empty ( $billing_info['reg-page-billing-lname']['value'] ) ? $billing_info['reg-page-billing-lname']['value'] : '';
-			$this->template_args['lname']['label'] = ! empty ( $billing_info['reg-page-billing-lname']['label'] ) ? $billing_info['reg-page-billing-lname']['label'] :  __( 'Last Name', 'event_espresso' );
+			$this->_template_args['lname']['value'] = ! empty ( $billing_info['reg-page-billing-lname']['value'] ) ? $billing_info['reg-page-billing-lname']['value'] : '';
+			$this->_template_args['lname']['label'] = ! empty ( $billing_info['reg-page-billing-lname']['label'] ) ? $billing_info['reg-page-billing-lname']['label'] :  __( 'Last Name', 'event_espresso' );
 			
-			$this->template_args['email']['value'] = ! empty ( $billing_info['reg-page-billing-email']['value'] ) ? $billing_info['reg-page-billing-email']['value'] : '';
-			$this->template_args['email']['label'] = __( 'Email', 'event_espresso' );
+			$this->_template_args['email']['value'] = ! empty ( $billing_info['reg-page-billing-email']['value'] ) ? $billing_info['reg-page-billing-email']['value'] : '';
+			$this->_template_args['email']['label'] = __( 'Email', 'event_espresso' );
 			
-			$this->template_args['address']['value'] = ! empty ( $billing_info['reg-page-billing-address']['value'] ) ? $billing_info['reg-page-billing-address']['value'] : '';
-			$this->template_args['address']['label'] = ! empty ( $billing_info['reg-page-billing-address']['label'] ) ? $billing_info['reg-page-billing-address']['label'] :  __( 'Address', 'event_espresso' );
+			$this->_template_args['address']['value'] = ! empty ( $billing_info['reg-page-billing-address']['value'] ) ? $billing_info['reg-page-billing-address']['value'] : '';
+			$this->_template_args['address']['label'] = ! empty ( $billing_info['reg-page-billing-address']['label'] ) ? $billing_info['reg-page-billing-address']['label'] :  __( 'Address', 'event_espresso' );
 			
-			$this->template_args['city']['value'] = ! empty ( $billing_info['reg-page-billing-city']['value'] ) ? $billing_info['reg-page-billing-city']['value'] : '';
-			$this->template_args['city']['label'] = ! empty ( $billing_info['reg-page-billing-city']['label'] ) ? $billing_info['reg-page-billing-city']['label'] :  __( 'City', 'event_espresso' );
+			$this->_template_args['city']['value'] = ! empty ( $billing_info['reg-page-billing-city']['value'] ) ? $billing_info['reg-page-billing-city']['value'] : '';
+			$this->_template_args['city']['label'] = ! empty ( $billing_info['reg-page-billing-city']['label'] ) ? $billing_info['reg-page-billing-city']['label'] :  __( 'City', 'event_espresso' );
 			
-			$this->template_args['state']['value'] = ! empty ( $billing_info['reg-page-billing-state']['value'] ) ? $billing_info['reg-page-billing-state']['value'] : '';
-			$this->template_args['state']['label'] = ! empty ( $billing_info['reg-page-billing-state']['label'] ) ? $billing_info['reg-page-billing-state']['label'] :  __( 'State', 'event_espresso' );
+			$this->_template_args['state']['value'] = ! empty ( $billing_info['reg-page-billing-state']['value'] ) ? $billing_info['reg-page-billing-state']['value'] : '';
+			$this->_template_args['state']['label'] = ! empty ( $billing_info['reg-page-billing-state']['label'] ) ? $billing_info['reg-page-billing-state']['label'] :  __( 'State', 'event_espresso' );
 			
-			$this->template_args['country']['value'] = ! empty ( $billing_info['reg-page-billing-country']['value'] ) ? $billing_info['reg-page-billing-country']['value'] : '';
-			$this->template_args['country']['label'] = ! empty ( $billing_info['reg-page-billing-country']['label'] ) ? $billing_info['reg-page-billing-country']['label'] : __( 'Country', 'event_espresso' );
+			$this->_template_args['country']['value'] = ! empty ( $billing_info['reg-page-billing-country']['value'] ) ? $billing_info['reg-page-billing-country']['value'] : '';
+			$this->_template_args['country']['label'] = ! empty ( $billing_info['reg-page-billing-country']['label'] ) ? $billing_info['reg-page-billing-country']['label'] : __( 'Country', 'event_espresso' );
 			
-			$this->template_args['zip']['value'] = ! empty ( $billing_info['reg-page-billing-zip']['value'] ) ? $billing_info['reg-page-billing-zip']['value'] : '';
-			$this->template_args['zip']['label'] = ! empty ( $billing_info['reg-page-billing-zip']['label'] ) ? $billing_info['reg-page-billing-zip']['label'] :  __( 'Zip Code', 'event_espresso' );
+			$this->_template_args['zip']['value'] = ! empty ( $billing_info['reg-page-billing-zip']['value'] ) ? $billing_info['reg-page-billing-zip']['value'] : '';
+			$this->_template_args['zip']['label'] = ! empty ( $billing_info['reg-page-billing-zip']['label'] ) ? $billing_info['reg-page-billing-zip']['label'] :  __( 'Zip Code', 'event_espresso' );
 			
 			if ( isset( $billing_info['reg-page-billing-card-nmbr'] )) {
 				
-				$this->template_args['credit_card_info'] = TRUE;
+				$this->_template_args['credit_card_info'] = TRUE;
 				
 				$ccard = $billing_info['reg-page-billing-card-nmbr']['value'];
-				$this->template_args['card_nmbr']['value'] = substr( $ccard, 0, 4 ) . ' XXXX XXXX ' . substr( $ccard, -4 );
-				$this->template_args['card_nmbr']['label'] = 'Credit Card';
+				$this->_template_args['card_nmbr']['value'] = substr( $ccard, 0, 4 ) . ' XXXX XXXX ' . substr( $ccard, -4 );
+				$this->_template_args['card_nmbr']['label'] = 'Credit Card';
 		
-				$this->template_args['card_exp_date']['value'] = $billing_info['reg-page-billing-card-exp-date-mnth']['value'] . ' / ' . $billing_info['reg-page-billing-card-exp-date-year']['value'];
-				$this->template_args['card_exp_date']['label'] = 'mm / yy';
+				$this->_template_args['card_exp_date']['value'] = $billing_info['reg-page-billing-card-exp-date-mnth']['value'] . ' / ' . $billing_info['reg-page-billing-card-exp-date-year']['value'];
+				$this->_template_args['card_exp_date']['label'] = 'mm / yy';
 		
-				$this->template_args['card_ccv_code']['value'] = $billing_info['reg-page-billing-card-ccv-code']['value'];
-				$this->template_args['card_ccv_code']['label'] = $billing_info['reg-page-billing-card-ccv-code']['label'];
+				$this->_template_args['card_ccv_code']['value'] = $billing_info['reg-page-billing-card-ccv-code']['value'];
+				$this->_template_args['card_ccv_code']['label'] = $billing_info['reg-page-billing-card-ccv-code']['label'];
 				
 			} else {
-				$this->template_args['credit_card_info'] = FALSE;
+				$this->_template_args['credit_card_info'] = FALSE;
 			}
 			
 		} else {
 
 
-			$this->template_args['fname']['value'] = '';
-			$this->template_args['fname']['label'] =  __( 'First Name', 'event_espresso' );
-			$this->template_args['lname']['value'] =  '';
-			$this->template_args['lname']['label'] = __( 'Last Name', 'event_espresso' );
-			$this->template_args['email']['value'] = '';
-			$this->template_args['email']['label'] = __( 'Email', 'event_espresso' );
-			$this->template_args['address']['value'] = '';
-			$this->template_args['address']['label'] = __( 'Address', 'event_espresso' );
-			$this->template_args['city']['value'] = '';
-			$this->template_args['city']['label'] = __( 'City', 'event_espresso' );
-			$this->template_args['state']['value'] = '';
-			$this->template_args['state']['label'] =  __( 'State', 'event_espresso' );
-			$this->template_args['country']['value'] = '';
-			$this->template_args['country']['label'] = __( 'Country', 'event_espresso' );
-			$this->template_args['zip']['value'] = '';
-			$this->template_args['zip']['label'] = __( 'Zip Code', 'event_espresso' );
-			$this->template_args['credit_card_info'] = FALSE;
-			$this->template_args['free_event'] = $billing_info; 
+			$this->_template_args['fname']['value'] = '';
+			$this->_template_args['fname']['label'] =  __( 'First Name', 'event_espresso' );
+			$this->_template_args['lname']['value'] =  '';
+			$this->_template_args['lname']['label'] = __( 'Last Name', 'event_espresso' );
+			$this->_template_args['email']['value'] = '';
+			$this->_template_args['email']['label'] = __( 'Email', 'event_espresso' );
+			$this->_template_args['address']['value'] = '';
+			$this->_template_args['address']['label'] = __( 'Address', 'event_espresso' );
+			$this->_template_args['city']['value'] = '';
+			$this->_template_args['city']['label'] = __( 'City', 'event_espresso' );
+			$this->_template_args['state']['value'] = '';
+			$this->_template_args['state']['label'] =  __( 'State', 'event_espresso' );
+			$this->_template_args['country']['value'] = '';
+			$this->_template_args['country']['label'] = __( 'Country', 'event_espresso' );
+			$this->_template_args['zip']['value'] = '';
+			$this->_template_args['zip']['label'] = __( 'Zip Code', 'event_espresso' );
+			$this->_template_args['credit_card_info'] = FALSE;
+			$this->_template_args['free_event'] = $billing_info; 
 			
 		}
 	
-		//printr( $this->template_args, 'template_args' );
+		//printr( $this->_template_args, 'template_args' );
 		
-		$this->template_args['billing_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'billing'  ), TXN_ADMIN_URL );  
+		$this->_template_args['billing_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'billing'  ), TXN_ADMIN_URL );  
 
 		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_side_meta_box_billing_info.template.php';
-		echo espresso_display_template( $template_path, $this->template_args, TRUE );
+		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
 	}
 
 
@@ -841,7 +861,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$return_data['date'] = $payment->timestamp( 'D M j, Y' );
 			$return_data['method'] = strtoupper( $payment->method() ) ;
 			$this->_get_active_gateways();
-			$return_data['gateway'] = isset( $this->template_args['active_gateways'][ $payment->gateway() ] ) ? $this->template_args['active_gateways'][ $payment->gateway() ] : $payment->gateway();
+			$return_data['gateway'] = isset( $this->_template_args['active_gateways'][ $payment->gateway() ] ) ? $this->_template_args['active_gateways'][ $payment->gateway() ] : $payment->gateway();
 			$return_data['gateway_response'] = $payment->gateway_response();
 			$return_data['txn_id_chq_nmbr'] = $payment->txn_id_chq_nmbr();
 			$return_data['po_number'] = $payment->po_number();
@@ -919,7 +939,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 //		$page_args['admin_reports'][] = 'chart1';
 		
 		$template_path = EE_CORE_ADMIN . 'admin_reports.template.php';
-		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $page_args, TRUE );
+		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $page_args, TRUE );
 		
 		
 		// the final template wrapper
@@ -1067,52 +1087,19 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$offset = ($current_page-1)*$per_page;
 		$limit = array( $offset, $per_page );
 
-		$transactions =   $TXN->get_transactions_for_admin_page( $this->template_args['start_date'], $this->template_args['end_date'], $orderby, $sort, $limit, $count );
+		$transactions =   $TXN->get_transactions_for_admin_page( $start_date, $end_date, $orderby, $sort, $limit, $count );
+		return $transactions;
 
 	}
 
 
-	/**
-	 * 		generates HTML for main Transactions Admin page
-	*		@access protected
-	*		@return void
-	*/
-	protected function old_transactions_overview_list_table() {
-		
-		global $wpdb;
-
-		$this->_get_transaction_status_array();
-
-	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+	public function get_all_transactions_count() {
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 	    $TXN = EEM_Transaction::instance();
-		require_once( TXN_ADMIN . 'Transactions_List_Table.class.php');
 
-		$this->template_args['start_date'] = isset( $this->_req_data['txn-filter-start-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-start-date'] ) : date( 'D M j, Y', strtotime( '-10 year' ));
-		$this->template_args['end_date'] = isset( $this->_req_data['txn-filter-end-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-end-date'] ) : date( 'D M j, Y' );
-		$this->template_args['end_date'] = ( strtotime( $this->template_args['end_date'] ) < strtotime( $this->template_args['start_date'] )) ? $this->template_args['start_date'] : $this->template_args['end_date'];
-		
-		$transactions = $TXN->get_transactions_for_admin_page( $this->template_args['start_date'], $this->template_args['end_date'] );  
-		//echo printr( $transactions, '$transactions' );
-		$this->template_args['table_rows'] = $wpdb->num_rows;
-		$entries_per_page_dropdown = $this->_entries_per_page_dropdown( $this->template_args['table_rows'] );
-		$this->template_args['list_table'] = new EE_Admin_Transactions_List_Table( $transactions, self::$_txn_status, $entries_per_page_dropdown );
-
-		// link back to here
-		$this->template_args['txn_overview_url'] = TXN_ADMIN_URL;  
-		$this->template_args['view_all_url'] = add_query_arg( array( 'per_page' => $this->template_args['table_rows'] ), TXN_ADMIN_URL );  
-		// grab messages at the last second
-		$this->template_args['notices'] = EE_Error::get_notices();
-		// path to template 
-		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_overview.template.php';
-		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE );
-		
-		// the final template wrapper
-		$this->admin_page_wrapper();		
+	    return $TXN->get_all_transactions(TRUE);
 	}
-
-
-
 
 	
 
