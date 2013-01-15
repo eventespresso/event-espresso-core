@@ -1028,6 +1028,49 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 
 
+	/**
+	 * get transactions for given parameters (used by list table)
+	 * @param  int  $perpage how many transactions displayed per page
+	 * @param  boolean $count   return the count or objects
+	 * @return mixed (int|array)           int = count || array of transaction objects
+	 */
+	public function get_transactions( $perpage, $count = FALSE ) {
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
+	    $TXN = EEM_Transaction::instance();
+
+	    $start_date = isset( $this->_req_data['txn-filter-start-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-start-date'] ) : date( 'D M j, Y', strtotime( '-10 year' ));
+	    $end_date = isset( $this->_req_data['txn-filter-end-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-end-date'] ) : date( 'D M j, Y' );
+
+	    //set orderby
+		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
+
+		switch ( $this->_req_data['orderby'] ) {
+			case 'TXN_ID':
+				$orderby = 'TXN_ID';
+				break;
+			case 'ATT_fname':
+				$orderby = 'TXN_att_name';
+				break;
+			case 'event_name':
+				$orderby = 'event_name';
+				break;
+			default: //'TXN_timestamp'
+				$orderby = 'TXN_timestamp';
+		}
+
+		$sort = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
+		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
+		$per_page = isset( $per_page ) && !empty( $per_page ) ? $per_page : 10;
+		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $per_page;
+
+		$offset = ($current_page-1)*$per_page;
+		$limit = array( $offset, $per_page );
+
+		$transactions =   $TXN->get_transactions_for_admin_page( $this->template_args['start_date'], $this->template_args['end_date'], $orderby, $sort, $limit, $count );
+
+	}
+
 
 	/**
 	 * 		generates HTML for main Transactions Admin page
@@ -1070,6 +1113,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 
 
+
+	
 
 }
 

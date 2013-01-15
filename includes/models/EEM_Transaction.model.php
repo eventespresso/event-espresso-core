@@ -258,7 +258,7 @@ class EEM_Transaction extends EEM_Base {
 	* 		@param		string		$end_date		
 	*		@return 		mixed		array on success, FALSE on fail
 	*/	
-	public function get_transactions_for_admin_page( $start_date = FALSE, $end_date = FALSE ) { 
+	public function get_transactions_for_admin_page( $start_date = FALSE, $end_date = FALSE, $orderby = 'TXN_timestamp', $order = 'DESC', $limit = NULL, $count = FALSE ) { 
 
 		if ( ! $start_date ) {
 			$start_date = date('Y-m-d', strtotime( 'Jan 1, 2010' ));
@@ -282,7 +282,7 @@ class EEM_Transaction extends EEM_Base {
 
 		global $wpdb;
 		
-		$SQL = 'SELECT att.ATT_ID, att.ATT_fname, att.ATT_lname, att.ATT_email, evt.id, evt.event_name, evt.slug, reg.REG_ID, reg.REG_url_link, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.TXN_paid, txn.STS_ID, txn.TXN_details ';		
+		$SQL = $count ? "SELECT COUNT(txn.TXN_ID) " : "SELECT att.ATT_ID, CONCAT(att.ATT_fname, ' ', att.ATT_lname) as TXN_att_name), att.ATT_email, evt.id, evt.event_name, evt.slug, reg.REG_ID, reg.REG_url_link, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.TXN_paid, txn.STS_ID, txn.TXN_details ";		
 
 		$SQL .= 'FROM ' . $wpdb->prefix . 'esp_registration reg ';
 		$SQL .= 'LEFT JOIN ' . $wpdb->prefix . 'esp_attendee att ON reg.ATT_ID = att.ATT_ID ';
@@ -291,18 +291,40 @@ class EEM_Transaction extends EEM_Base {
 		$SQL .= 'WHERE TXN_timestamp >= %d ';
 		$SQL .= 'AND TXN_timestamp <= %d ';
 		$SQL .= 'AND reg.REG_is_primary = 1 ';
-		$SQL .= 'ORDER BY TXN_timestamp DESC';
 
-		if ( $results = $wpdb->get_results( $wpdb->prepare( $SQL, $start_date, $end_date ), ARRAY_A )) {
-//			echo $wpdb->last_query;
-//			echo printr( $payments );
-			$transactions = array();
-			foreach ( $results as $transaction ) {
-				$transactions[ $transaction['TXN_ID'] ] = $transaction;
+		//setup orderby
+		switch ( $orderby ) {
+			case 'TXN_ID':
+				$orderby = 'txn.TXN_ID';
+				break;
+			case 'TXN_att_name':
+				$orderby = 'TXN_att_name';
+				break;
+			case 'event_name':
+				$orderby = 'evt.event_name';
+				break;
+			default: //'TXN_timestamp'
+				$orderby = 'txn.TXN_timestamp';
+		}
+
+
+		//let's set limit
+		$limit = !empty($limit) ? 'LIMIT ' . implode(',', $limit) : '';
+		$SQL .= $count ? '' : "ORDER BY $orderby $order $limit";
+
+		$results = $count ? $wpdb->get_var( $wpdb->prepare( $SQL, $start_date, $end_date ) ) : $wpdb->get_results( $wpdb->prepare( $SQL, $start_date, $end_date ), ARRAY_A );
+
+		if ( $results ) {
+			if ( !$count ) {
+				$transactions = array();
+				foreach ( $results as $transaction ) {
+					$transactions[ $transaction['TXN_ID'] ] = $transaction;
+				}
+			} else {
+				$transactions = $count;
 			}
 			return $transactions;
 		} else {
-//			EE_Error::add_error( $wpdb->print_error(), __FILE__, __FUNCTION__, __LINE__ ); print_error echos immediately  >:()
 			return FALSE;
 		}
 
