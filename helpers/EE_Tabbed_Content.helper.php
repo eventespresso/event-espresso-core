@@ -24,7 +24,6 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * 
  * @package		EE_Tabbed_Content
  * @subpackage	helpers/
- * @abstract
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------

@@ -721,7 +721,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$report_ID = 'reg-admin-registrations-per-day-report-dv';
 		$report_JS = 'espresso_reg_admin_regs_per_day';
 		
-		wp_enqueue_script( $report_JS, REG_ASSETS_URL . $report_JS . '_report.js', array('jquery', 'jqplot'), '1.0', TRUE);
+		wp_enqueue_script( $report_JS, REG_ASSETS_URL . $report_JS . '_report.js', array('jquery', 'jqplot'), EVENT_ESPRESSO_VERSION, TRUE);
 
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
 	    $REG = EEM_Registration::instance();
