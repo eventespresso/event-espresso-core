@@ -42,6 +42,9 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	//will hold page object.
 	protected $_loaded_page_object;
 
+	//load_page?
+	private $_load_page;
+
 
 
 
@@ -116,6 +119,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	private function _set_defaults() {
 		$this->dir_name = $this->_wp_page_slug = $this->capability = NULL;
 		$this->show_on_menu = TRUE;
+		$this->_load_page = FALSE;
 	}
 
 
@@ -140,8 +144,22 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	public function initialize_admin_page() {
 		//let's check user access first
 		$this->_check_user_access();
-		$this->_loaded_page_object->route_admin_request();
+		$this->_loaded_page_object->route_admin_request($this->_wp_page_slug);
 		return;
+	}
+
+
+
+
+
+
+	public function set_page_dependencies($wp_page_slug) {
+		if ( !$this->_load_page ) return;
+		$this->_loaded_page_object->set_wp_page_slug($wp_page_slug);
+		$page_hook = 'load-' . $wp_page_slug;
+		//hook into page load hook so all page specific stuff get's loaded.
+		if ( !empty($wp_page_slug) )
+			add_action($page_hook, array($this->_loaded_page_object, 'load_page_dependencies') );
 	}
 
 
@@ -156,8 +174,8 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		if ( !isset( $_REQUEST['page'] ) || $_REQUEST['page'] != $this->menu_slug )
 			return; //not on the right page so let's get out.
 
-		//set _wp_page_slug();
-		$this->_set_wp_page_slug();
+		$this->_load_page = TRUE;
+
 
 		$this->_dir_name = ucwords( str_replace('_', ' ', $this->menu_slug) );
 		$this->_dir_name = str_replace(' ', '_', $this->_dir_name);
@@ -175,7 +193,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 			do_action( 'action_hook_espresso_before_initialize_admin_page_' . $this->menu_slug );
 			require_once( $path_to_file );
 			$a = new ReflectionClass( $admin_page );
-			$this->_loaded_page_object = $a->newInstance($this->_wp_page_slug);				
+			$this->_loaded_page_object = $a->newInstance();				
 		}
 
 		do_action( 'action_hook_espresso_after_initialize_admin_page' );
@@ -201,34 +219,6 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		}
 
 		return true;
-	}
-
-
-
-
-	/**
-	 * _set_wp_page_slug
-	 * sets the wp_page_slug ( as defined via add_submenu_page or add_menu_page ).
-	 *
-	 * @access  protected
-	 * @return void
-	 */
-	protected function _set_wp_page_slug() {
-		global $_wp_real_parent_file;
-
-		$menu_map = $this->get_menu_map();
-
-		$menu_slug = plugin_basename( $this->menu_slug );
-		$parent_slug = plugin_basename( $menu_map['parent_slug'] );
-
-
-		$this->_wp_page_slug = get_plugin_page_hookname( $menu_slug, $parent_slug );
-
-		if ( $parent_slug == $menu_slug ) {
-			$this->_wp_page_slug = str_replace('admin', 'toplevel', $this->_wp_page_slug);
-		} else if ( $parent_slug != $menu_slug && $parent_slug == 'events') {
-			$this->_wp_page_slug = str_replace('admin', 'event-espresso', $this->_wp_page_slug);
-		}
 	}
 	
 

@@ -41,8 +41,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 	protected $_event;
 
 
-	public function __construct($wp_page_slug) {
-		parent::__construct($wp_page_slug);
+	public function __construct() {
+		parent::__construct();
 	}
 
 
