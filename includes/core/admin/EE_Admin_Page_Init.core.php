@@ -66,6 +66,9 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		//some global constants
 		if ( !defined('EE_FF_HELPER') )
 			define( 'EE_FF_HELPER', EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php');
+
+		if ( !defined('DOING_AJAX') )
+			define('DOING_AJAX', FALSE);
 	}
 
 

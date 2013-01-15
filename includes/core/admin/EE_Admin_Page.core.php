@@ -351,7 +351,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//first verify if we need to load anything...
 		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
 
-		if ( !$this->_current_page && !$this->_doing_AJAX ) return FALSE;
+		if ( !$this->_current_page && !DOING_AJAX ) return FALSE;
 
 		//next let's just check user_access and kill if no access
 		$this->_check_user_access();
@@ -553,11 +553,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		//lets set if this is a UI request or not.
-		$this->_is_UI_request = ( ! isset( $this->_req_data['noheader'] ) || $this->_req_data['noheader'] != 'true' ) ? TRUE : FALSE;
+		$this->_is_UI_request = ( ! isset( $this->_req_data['noheader'] ) || $this->_req_data['noheader'] != 'true' || !DOING_AJAX ) ? TRUE : FALSE;
 
 
 		//wait a minute... we might have a noheader in the route array
-		$this->_is_UI_request = is_array($this->_route) && isset($this->_route['noheader'] ) && $this->_route['noheader'] ? FALSE : $this->_is_UI_request;
+		$this->_is_UI_request = is_array($this->_route) && isset($this->_route['noheader'] ) && $this->_route['noheader'] || DOING_AJAX ? FALSE : $this->_is_UI_request;
 
 	}
 
