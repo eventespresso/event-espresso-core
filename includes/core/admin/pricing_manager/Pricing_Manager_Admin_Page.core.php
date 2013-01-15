@@ -16,7 +16,7 @@
  * Pricing_Manager_Admin_Page class
  *
  * @package			Event Espresso
- * @subpackage		includes/core/admin/event_pricing/Pricing_Manager_Admin_Page.core.php 
+ * @subpackage		includes/core/admin/pricing_manager/Pricing_Manager_Admin_Page.core.php 
  * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
@@ -66,7 +66,7 @@ class Pricing_Manager_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _define_page_props() {
-		$this->_admin_base_url = EVT_PRC_ADMIN_URL;
+		$this->_admin_base_url = PRC_MNGR_ADMIN_URL;
 		$this->_admin_page_title = PRC_MNGR_LABEL;
 		$this->_labels = array(
 			'buttons' => array(
@@ -251,8 +251,8 @@ class Pricing_Manager_Admin_Page extends EE_Admin_Page {
 	public function load_scripts_styles() {
 		//styles
 		wp_enqueue_style('jquery-ui-style');
-		wp_register_style( 'espresso_evt_prc', EE_CORE_ADMIN_URL . 'pricing_manager/assets/espresso_event_pricing_admin.css', array(), EVENT_ESPRESSO_VERSION );		
-		wp_enqueue_style('espresso_evt_prc');
+		wp_register_style( 'espresso_PRC_MNGR', EE_CORE_ADMIN_URL . 'pricing_manager/assets/espresso_event_pricing_admin.css', array(), EVENT_ESPRESSO_VERSION );		
+		wp_enqueue_style('espresso_PRC_MNGR');
 
 		//scripts
 		wp_enqueue_script('ee_admin_js');
@@ -261,8 +261,8 @@ class Pricing_Manager_Admin_Page extends EE_Admin_Page {
 		//wp_enqueue_script('jquery-ui-dialog');
 		//wp_enqueue_script('jquery-ui-draggable');
 		//wp_enqueue_script('jquery-ui-datepicker');
-		wp_register_script( 'espresso_evt_prc', EE_CORE_ADMIN_URL . 'pricing_manager/assets/espresso_event_pricing_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_enqueue_script( 'espresso_evt_prc' );	
+		wp_register_script( 'espresso_PRC_MNGR', EE_CORE_ADMIN_URL . 'pricing_manager/assets/espresso_event_pricing_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_enqueue_script( 'espresso_PRC_MNGR' );	
 	}
 
 
@@ -332,54 +332,11 @@ class Pricing_Manager_Admin_Page extends EE_Admin_Page {
 
 
 
-	/**
-	 * 		_set_bulk_actions
-	*		@access public
-	*		@return void
-	*/
-	public function _set_bulk_actions() {
-	
+
+	protected function _overview_list_table() {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-
-		// lists of bulk actions
-		$price_bulk_actions = array( 'trash_price', 'restore_price', 'delete_price' );
-		$price_type_bulk_actions = array( 'trash_price_type', 'restore_price_type', 'delete_price_type' );
-		
-		if ( $this->_req_action == 'default' ) {
-//			echo '<h1>1 !!!</h1>';
-			$this->_views['in_use']['bulk_action'] = array( 'trash_price' => 'Move to Trash' );
-			$this->_views['trashed']['bulk_action'] = array( 'restore_price' => 'Restore From Trash', 'delete_price' => 'Delete Permanently' );
-		} else if ( $this->_req_action == 'price_types' ) {
-//			echo '<h1>2 !!!</h1>';
-			$this->_views['in_use']['bulk_action'] = array( 'trash_price_type' => 'Move to Trash' );
-			$this->_views['trashed']['bulk_action'] = array( 'restore_price_type' => 'Restore From Trash', 'delete_price_type' => 'Delete Permanently' );
-		} else if ( in_array( $this->_req_action, $price_bulk_actions )) {
-//			echo '<h1>3 !!!</h1>';
-			// POST request
-			if ( ! empty( $_POST )) {
-				// reset requested nonce value - name = 'bulk-' . $this->_args['plural']  ( with spaces removed from $this->_args['plural'] )
-				$this->_req_nonce = 'bulk-prices';				
-			}
-			// set bulk actions
-			$this->_views['in_use']['bulk_action'] = array( 'trash_price' => 'Move to Trash' );
-			$this->_views['trashed']['bulk_action'] = array( 'restore_price' => 'Restore From Trash', 'delete_price' => 'Delete Permanently' );
-		} else if ( in_array( $this->_req_action, $price_type_bulk_actions )) {
-//			echo '<h1>4 !!!</h1>';
-			// POST request
-			if ( ! empty( $_POST )) {
-				// reset requested nonce value - name = 'bulk-' . $this->_args['plural']  ( with spaces removed from $this->_args['plural'] )
-				$this->_req_nonce = 'bulk-pricestypes';
-			}
-			// set bulk actions
-			$this->_views['in_use']['bulk_action'] = array( 'trash_price_type' => 'Move to Trash' );
-			$this->_views['trashed']['bulk_action'] = array( 'restore_price_type' => 'Restore From Trash', 'delete_price_type' => 'Delete Permanently' );
-		} 
-
-//		echo '<h4>$this->_req_action : ' . $this->_req_action . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$this->_req_nonce : ' . $this->_req_nonce . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$this->view : ' . $this->_view . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-
+		$this->_admin_page_title .= $this->_get_action_link_or_button('add_category', 'add', array(), 'button add-new-h2');
+		$this->display_admin_list_table_page_with_sidebar();
 	}
 
 
@@ -396,7 +353,7 @@ class Pricing_Manager_Admin_Page extends EE_Admin_Page {
 
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		//generate URL for Add New Price link
-		$add_new_price_url = wp_nonce_url( add_query_arg( array( 'action' => 'add_new_price' ), EVT_PRC_ADMIN_URL ), 'add_new_price_nonce' );
+		$add_new_price_url = wp_nonce_url( add_query_arg( array( 'action' => 'add_new_price' ), PRC_MNGR_ADMIN_URL ), 'add_new_price_nonce' );
 		// add link to title
 		$this->admin_page_title .= ' <a href="' . $add_new_price_url . '" class="button add-new-h2" style="margin-left: 20px;">' . __('Add New Price', 'event_espresso') . '</a>';
 		$this->admin_page_title .= $this->_learn_more_about_pricing_link();
@@ -409,11 +366,11 @@ class Pricing_Manager_Admin_Page extends EE_Admin_Page {
 		$this->template_args['list_table'] = new EE_Prices_List_Table( $event_pricing, $this->_view, $this->_views, $entries_per_page_dropdown );
 
 		// link back to here
-		$this->template_args['evt_prc_overview_url'] = add_query_arg( array( 'noheader' => 'true' ), EVT_PRC_ADMIN_URL );
+		$this->template_args['PRC_MNGR_overview_url'] = add_query_arg( array( 'noheader' => 'true' ), PRC_MNGR_ADMIN_URL );
 		//$this->template_args['noheader'] = 'true';
 		$this->template_args['status'] = $this->_view;
 		// path to template
-		$template_path = EVT_PRC_TEMPLATE_PATH . 'evt_prc_admin_overview.template.php';
+		$template_path = PRC_MNGR_TEMPLATE_PATH . 'PRC_MNGR_admin_overview.template.php';
 		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE );
 		
 		// the final template wrapper
@@ -436,7 +393,7 @@ class Pricing_Manager_Admin_Page extends EE_Admin_Page {
 		// start with an empty array
 		$event_pricing = array();
 		
-		require_once( EVT_PRC_ADMIN . 'EE_Prices_List_Table.class.php' );
+		require_once( PRC_MNGR_ADMIN . 'EE_Prices_List_Table.class.php' );
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 		$PRC = EEM_Price::instance();
 		
@@ -504,11 +461,11 @@ class Pricing_Manager_Admin_Page extends EE_Admin_Page {
 		if ( $PRC_ID ) {
 			$price = $PRC->get_price_by_ID( $PRC_ID );
 			$action = 'update_price';
-			$edit_price_form_url = add_query_arg( array( 'action' => $action, 'id' => $PRC_ID, 'noheader' => TRUE ), EVT_PRC_ADMIN_URL );
+			$edit_price_form_url = add_query_arg( array( 'action' => $action, 'id' => $PRC_ID, 'noheader' => TRUE ), PRC_MNGR_ADMIN_URL );
 		} else {
 			$price = $PRC->get_new_price();
 			$action = 'insert_price';
-			$edit_price_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), EVT_PRC_ADMIN_URL );
+			$edit_price_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), PRC_MNGR_ADMIN_URL );
 		}
 		
 		$this->template_args['PRC_ID'] = $PRC_ID;
@@ -537,7 +494,7 @@ class Pricing_Manager_Admin_Page extends EE_Admin_Page {
 		$this->template_args['learn_more_about_pricing_link'] = $this->_learn_more_about_pricing_link();
 		
 		// add nav tab for this details page
-		$this->nav_tabs['edit_price']['url'] = wp_nonce_url( add_query_arg( array( 'action'=>$action, 'id' => $PRC_ID ), EVT_PRC_ADMIN_URL ), $action . '_nonce' );  
+		$this->nav_tabs['edit_price']['url'] = wp_nonce_url( add_query_arg( array( 'action'=>$action, 'id' => $PRC_ID ), PRC_MNGR_ADMIN_URL ), $action . '_nonce' );  
 		$this->nav_tabs['edit_price']['link_text'] = $PRC_ID ? __( 'Price Details', 'event_espresso' ) : __( 'Add New Price', 'event_espresso' );
 		$this->nav_tabs['edit_price']['css_class'] = ' nav-tab-active';
 		$this->nav_tabs['edit_price']['order'] = 15;
@@ -601,7 +558,7 @@ class Pricing_Manager_Admin_Page extends EE_Admin_Page {
 	*/
 	public function _edit_price_details_meta_box() {		
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-		$template_path = EVT_PRC_TEMPLATE_PATH . 'evt_prc_details_main_meta_box.template.php';
+		$template_path = PRC_MNGR_TEMPLATE_PATH . 'PRC_MNGR_details_main_meta_box.template.php';
 		echo espresso_display_template( $template_path, $this->template_args, TRUE );		
 	}
 
@@ -759,7 +716,7 @@ class Pricing_Manager_Admin_Page extends EE_Admin_Page {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
 		//generate URL for Add New Price link
-		$add_new_price_type_url = wp_nonce_url( add_query_arg(array('action' => 'add_new_price_type'), EVT_PRC_ADMIN_URL), 'add_new_price_type_nonce' );
+		$add_new_price_type_url = wp_nonce_url( add_query_arg(array('action' => 'add_new_price_type'), PRC_MNGR_ADMIN_URL), 'add_new_price_type_nonce' );
 		// add link to title
 		$this->admin_page_title .= ' <a href="' . $add_new_price_type_url . '" class="button add-new-h2" style="margin: 0 20px;">' . __('Add New Price Type', 'event_espresso') . '</a>';
 		$this->admin_page_title .= $this->_learn_more_about_pricing_link();
@@ -769,11 +726,11 @@ class Pricing_Manager_Admin_Page extends EE_Admin_Page {
 		$this->template_args['table_rows'] = count( $price_types );
 		$entries_per_page_dropdown = $this->_entries_per_page_dropdown( $this->template_args['table_rows'] );
 
-		require_once( EVT_PRC_ADMIN . 'EE_Price_Types_List_Table.class.php' );
+		require_once( PRC_MNGR_ADMIN . 'EE_Price_Types_List_Table.class.php' );
 		$this->template_args['list_table'] = new EE_Price_Types_List_Table( $price_types, $this->_view, $this->_views, $entries_per_page_dropdown );
 
 		// link back to here
-		$this->template_args['evt_prc_overview_url'] = add_query_arg( array( 'noheader' => 'true' ), EVT_PRC_ADMIN_URL );
+		$this->template_args['PRC_MNGR_overview_url'] = add_query_arg( array( 'noheader' => 'true' ), PRC_MNGR_ADMIN_URL );
 		//$this->template_args['noheader'] = 'true';
 		$this->template_args['status'] = $this->_view;
 		$this->template_args['view_RLs'] = $this->get_list_table_view_RLs();
@@ -782,7 +739,7 @@ class Pricing_Manager_Admin_Page extends EE_Admin_Page {
 		$this->template_args['search']['callback'] = 'search_price_types';
 
 		// path to template
-		$template_path = EVT_PRC_TEMPLATE_PATH . 'evt_prc_admin_overview.template.php';
+		$template_path = PRC_MNGR_TEMPLATE_PATH . 'PRC_MNGR_admin_overview.template.php';
 		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE );
 		
 		// the final template wrapper
@@ -863,11 +820,11 @@ class Pricing_Manager_Admin_Page extends EE_Admin_Page {
 		if ( $PRT_ID ) {
 			$price_type = $PRT->get_price_type_by_ID( $PRT_ID );
 			$action = 'update_price_type';
-			$edit_price_type_form_url = add_query_arg( array( 'action' => $action, 'id' => $PRT_ID, 'noheader' => TRUE ), EVT_PRC_ADMIN_URL );
+			$edit_price_type_form_url = add_query_arg( array( 'action' => $action, 'id' => $PRT_ID, 'noheader' => TRUE ), PRC_MNGR_ADMIN_URL );
 		} else {
 			$price_type = $PRT->get_new_price_type();
 			$action = 'insert_price_type';
-			$edit_price_type_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), EVT_PRC_ADMIN_URL );
+			$edit_price_type_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), PRC_MNGR_ADMIN_URL );
 		}
 
 		$this->template_args['PRT_ID'] = $PRT_ID;
@@ -894,7 +851,7 @@ class Pricing_Manager_Admin_Page extends EE_Admin_Page {
 		$this->template_args['learn_more_about_pricing_link'] = $this->_learn_more_about_pricing_link();
 		
 		// add nav tab for this details page
-		$this->nav_tabs['edit_price_type']['url'] = wp_nonce_url( add_query_arg( array( 'action'=>$action, 'id' => $PRT_ID ), EVT_PRC_ADMIN_URL ), $action . '_nonce' );  
+		$this->nav_tabs['edit_price_type']['url'] = wp_nonce_url( add_query_arg( array( 'action'=>$action, 'id' => $PRT_ID ), PRC_MNGR_ADMIN_URL ), $action . '_nonce' );  
 		$this->nav_tabs['edit_price_type']['link_text'] = $PRT_ID ? __( 'Price Type Details', 'event_espresso' ) : __( 'Add New Price Type', 'event_espresso' );
 		$this->nav_tabs['edit_price_type']['css_class'] = ' nav-tab-active';
 		$this->nav_tabs['edit_price_type']['order'] = 25;
@@ -1006,7 +963,7 @@ class Pricing_Manager_Admin_Page extends EE_Admin_Page {
 	*/
 	public function _edit_price_type_details_meta_box() {		
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-		$template_path = EVT_PRC_TEMPLATE_PATH . 'evt_prc_type_details_main_meta_box.template.php';
+		$template_path = PRC_MNGR_TEMPLATE_PATH . 'PRC_MNGR_type_details_main_meta_box.template.php';
 		echo espresso_display_template( $template_path, $this->template_args, TRUE );		
 	}
 
@@ -1203,7 +1160,7 @@ class Pricing_Manager_Admin_Page extends EE_Admin_Page {
 		} 
 		//printr( $query_args, '$query_args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-		$redirect_url = add_query_arg( $query_args, EVT_PRC_ADMIN_URL ); 
+		$redirect_url = add_query_arg( $query_args, PRC_MNGR_ADMIN_URL ); 
 		//echo '<h4>$redirect_url : ' . $redirect_url . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		//die();
 		wp_safe_redirect( $redirect_url );	
@@ -1228,4 +1185,4 @@ class Pricing_Manager_Admin_Page extends EE_Admin_Page {
 
 
 }
-// end of file:  includes/core/admin/event_pricing/Event_Pricing_Admin_Page.core.php
+// end of file:  includes/core/admin/pricing_manager/Pricing_Manager_Admin_Page.core.php
