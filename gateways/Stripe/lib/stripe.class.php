@@ -1,6 +1,6 @@
 <?php
 if(!class_exists("Stripe")) {
-	require_once (dirname(__FILE__).'/stripe-php-1.5.19/lib/Stripe.php');
+	require_once (dirname(__FILE__).'/lib/Stripe.php');
 }
 
 class ClsStripe
