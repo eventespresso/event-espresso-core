@@ -817,7 +817,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	 * @param  boolean $count   return the count or objects
 	 * @return mixed (int|array)  int = count || array of registration objects
 	 */
-	public function _get_registrations( $perpage, $count = FALSE ) {
+	public function get_registrations( $perpage, $count = FALSE ) {
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
 		$REG = EEM_Registration::instance();
