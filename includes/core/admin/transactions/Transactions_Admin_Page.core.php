@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface {
+class Transactions_Admin_Page extends EE_Admin_Page {
 
 	private $_transaction;
 	private $_session;
@@ -37,28 +37,56 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 	 * 		@access public
 	 * 		@return void
 	 */
-	public function __construct() {
-
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-
-		$this->page_slug = TXN_PG_SLUG;
-
-		$this->_init();
-
-		if ( $this->_AJAX ) {
-			add_action('wp_ajax_espresso_apply_payment', array( &$this, 'apply_payments_or_refunds'));
-			add_action('wp_ajax_espresso_apply_refund', array( &$this, 'apply_payments_or_refunds'));
-			add_action('wp_ajax_espresso_delete_payment', array( &$this, 'delete_payment'));
-		}
-		
-		// remove settings tab
-		add_filter( 'filter_hook_espresso_admin_page_nav_tabs', array( &$this, '_remove_settings_from_admin_page_nav_tabs' ), 10 , 1 );
-		// remove espresso_meta_boxes
-		add_action( 'admin_init', array( &$this, '_remove_espresso_meta_boxes' ), 100 );
-
-		
+	public function __construct($wp_page_slug) {
+		parent::__construct($wp_page_slug);
 	}
+
+
+
+
+
+
+
+	protected function _init_page_props() {
+		$this->page_slug = TXN_PG_SLUG;
+		$this->page_label = __('Transactions', 'event_espresso');
+	}
+
+
+
+
+
+
+
+
+	protected function _ajax_hooks() {
+		add_action('wp_ajax_espresso_apply_payment', array( $this, 'apply_payments_or_refunds'));
+		add_action('wp_ajax_espresso_apply_refund', array( $this, 'apply_payments_or_refunds'));
+		add_action('wp_ajax_espresso_delete_payment', array( $this, 'delete_payment'));
+	}
+
+
+
+
+
+
+
+	protected function  _define_page_props() {
+		$this->_admin_base_url = TXN_ADMIN_URL;
+		$this->_admin_page_title = $this->page_label;
+		$this->_labels = array(
+			'buttons' => array(
+				'add' => __('Add New Transaction', 'event_espresso'),
+				'edit' => __('Edit Transaction', 'event_espresso'),
+				'delete' => __('Delete Transaction','event_espresso')
+				)
+			);
+	}
+
+
+
+
+
 
 
 
@@ -68,38 +96,82 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 	*		@access private
 	*		@return void
 	*/
-	public function set_page_routes() {			
+	public function _set_page_routes() {			
 
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		$this->_get_transaction_status_array();
 
 		$this->_page_routes = array(
-				'default'	=> '_transactions_overview_list_table',
-				'view_transaction'	=> '_transaction_details',
-				'send_payment_reminder'	=> '_send_payment_reminder',
-				'delete_registration'	=> '_delete_registration',
-				'reports'	=> '_transaction_reports',
-				'espresso_apply_payment'	=> 'apply_payments_or_refunds',
-				'espresso_apply_refund'	=> 'apply_payments_or_refunds',
-				'espresso_delete_payment'	=> 'delete_payment'
-		);	
+				'default' => '_transactions_overview_list_table',
+				'view_transaction' => '_transaction_details',
+				'send_payment_reminder'	=> array(
+					'func' => '_send_payment_reminder',
+					'noheader' => TRUE
+					),
+				'reports' => '_transaction_reports',
+				'espresso_apply_payment' => array(
+				 	'func' => 'apply_payments_or_refunds',
+				 	'noheader' => TRUE
+				 	),
+				'espresso_apply_refund'	=> array(
+					'func' => 'apply_payments_or_refunds',
+					'noheader' => TRUE
+					),
+				'espresso_delete_payment' => array(
+					'func' => 'delete_payment',
+					'noheader' => TRUE
+					)
+		);
+		
 	}
+
+
+
+
+
+
+
+
+	protected function _set_page_config() {
+		$this->_page_config = array(
+			'default' => array(
+				'nav' => array(
+					'label' => __('Overview', 'event_espresso'),
+					'order' => 10
+					),
+				'list_table' => 'EE_Admin_Transactions_List_Table'
+				),
+			'view_transaction' => array(
+				'nav' => array(
+					'label' => __('View Transaction', 'event_espresso'),
+					'order' => 5,
+					'url' => isset($this->_req_data['txn']) ? add_query_arg(array('txn' => $this->_req_data['txn'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
+					'persistent' => FALSE
+					),
+				'metaboxes' => array('_transaction_details_metaboxes')
+				),
+			'reports' => array(
+				'nav' => array(
+					'label' => __('Reports', 'event_espresso'),
+					'order' => 20
+					)
+				)
+		);
+	}
+
+
 
 
 
 
 	/**
-	 * 		grab url requests and route them
-	*		@access private
-	*		@return void
-	*/
-	public function define_page_vars() {
-		$this->admin_base_url = TXN_ADMIN_URL;
-		$this->admin_page_title = __( 'Transactions', 'event_espresso' );
-	}
-
-
-
+	 * The below methods aren't used by this class currently
+	 */
+	protected function _add_screen_options() {}
+	protected function _add_help_tabs() {}
+	protected function _add_feature_pointers() {}
+	public function admin_init() {}
+	public function admin_notices() {}
+	public function admin_footer_scripts() {}
 
 
 
@@ -121,23 +193,9 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 		foreach ( $results as $status ) {
 			self::$_txn_status[ $status->STS_ID ] = __( $status->STS_code, 'event_espresso' );
 		}
-		// add status array to js available parameters
-		//add_action( 'init', array( &$this, '_set_wp_localize_script_for_txn_status_array'));
-		wp_localize_script('espresso_txn', 'txn_status_array', self::$_txn_status);		
+
 	}
 
-
-
-
-
-	/**
-	 * 		_set_wp_localize_script
-	*		@access public
-	*		@return void
-	*/
-//	public function _set_wp_localize_script_for_txn_status_array() {
-//		wp_localize_script('espresso_txn', 'txn_status_array', self::$_txn_status);		
-//	}
 
 
 
@@ -159,8 +217,80 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 			self::$_pay_status[ $status->STS_ID ] = __( $status->STS_code, 'event_espresso' );
 		}
 		$this->template_args['payment_status'] = self::$_pay_status;
-		// add status array to js available parameters
-		wp_localize_script('espresso_txn', 'pay_status_array', self::$_pay_status);		
+			
+	}
+
+
+
+
+
+
+	protected function _add_screen_options_default() {
+		$this->_per_page_screen_option();
+	}
+
+
+
+
+
+	public function load_scripts_styles() {
+		//enqueue style
+		wp_enqueue_style('espresso_txn');
+
+
+		//enqueue script
+		wp_enqueue_script('espresso_txn');		
+
+
+		//localize scripts (for vars)
+		wp_localize_script('espresso_txn', 'txn_status_array', self::$_txn_status);
+		wp_localize_script('espresso_txn', 'pay_status_array', self::$_pay_status);	
+	}
+
+
+
+
+	public function load_scripts_styles_view_transaction() {
+		//styles
+		wp_enqueue_style('jquery-ui-style');
+		wp_enqueue_style('jquery-ui-style-datepicker-css');
+
+		//scripts
+		wp_enqueue_script('ee_admin_js');
+		wp_enqueue_script('event_editor_js');
+	}
+
+
+
+
+
+
+	public function load_scripts_styles_reports() {
+		//styles
+		wp_enqueue_style('jquery-jqplot-css', JQPLOT_URL . 'jquery.jqplot.min.css', array(), EVENT_ESPRESSO_VERSION);
+
+		//scripts
+		global $is_IE;
+		if ( $is_IE ) {
+			wp_enqueue_script( 'excanvas' , JQPLOT_URL . 'excanvas.min.js', array(), ESPRESSO_E, FALSE);
+		}
+		wp_enqueue_script('jqplot-all');
+	}
+
+
+
+
+
+
+
+	protected function _set_list_table_views_default() {
+		$this->_views = array(
+			'all' => array(
+				'slug' => 'all',
+				'label' => __('View All', 'event_espresso'),
+				'count' => 0
+				)
+			);
 	}
 
 
@@ -169,43 +299,42 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 
 
 	/**
-	 * 		generates HTML for main Transactions Admin page
-	*		@access protected
-	*		@return void
-	*/
-	protected function _transactions_overview_list_table() {
-		
-		global $wpdb;
+	 * This sets the _transaction property for the transaction details screen
+	 */
+	private function _set_transaction_object() {
+		if ( is_object( $this->_transaction) )
+			return; //get out we've already set the object
 
-		$this->_get_transaction_status_array();
-
-	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 	    $TXN = EEM_Transaction::instance();
-		require_once( TXN_ADMIN . 'Transactions_List_Table.class.php');
 
-		$this->template_args['start_date'] = isset( $_POST['txn-filter-start-date'] ) ? wp_strip_all_tags( $_POST['txn-filter-start-date'] ) : date( 'D M j, Y', strtotime( '-10 year' ));
-		$this->template_args['end_date'] = isset( $_POST['txn-filter-end-date'] ) ? wp_strip_all_tags( $_POST['txn-filter-end-date'] ) : date( 'D M j, Y' );
-		$this->template_args['end_date'] = ( strtotime( $this->template_args['end_date'] ) < strtotime( $this->template_args['start_date'] )) ? $this->template_args['start_date'] : $this->template_args['end_date'];
-		
-		$transactions = $TXN->get_transactions_for_admin_page( $this->template_args['start_date'], $this->template_args['end_date'] );  
-		//echo printr( $transactions, '$transactions' );
-		$this->template_args['table_rows'] = $wpdb->num_rows;
-		$entries_per_page_dropdown = $this->_entries_per_page_dropdown( $this->template_args['table_rows'] );
-		$this->template_args['list_table'] = new EE_Admin_Transactions_List_Table( $transactions, self::$_txn_status, $entries_per_page_dropdown );
+	    $TXN_ID = ( ! empty( $_REQUEST['txn'] )) ? absint( $_REQUEST['txn'] ) : FALSE;
 
-		// link back to here
-		$this->template_args['txn_overview_url'] = TXN_ADMIN_URL;  
-		$this->template_args['view_all_url'] = add_query_arg( array( 'per_page' => $this->template_args['table_rows'] ), TXN_ADMIN_URL );  
-		// grab messages at the last second
-		$this->template_args['notices'] = EE_Error::get_notices();
-		// path to template 
-		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_overview.template.php';
-		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE );
-		
-		// the final template wrapper
-		$this->admin_page_wrapper();		
+	    if ( $transaction = $TXN->get_transaction_for_admin_page( $TXN_ID ) ) {
+	    	$this->_transaction = array_shift( $transaction ); 
+			$this->_session = maybe_unserialize( maybe_unserialize( $this->_transaction ->TXN_session_data ));
+	    	return;
+	    } else {
+	    	$error_msg = __('An error occured and the details for Transaction ID #', 'event_espresso') . $TXN_ID .  __(' could not be retreived.', 'event_espresso');
+			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+			$this->_transaction = NULL;
+			$this->_session = NULL;
+	    }
 	}
+
+
+
+
+
+
+	protected function _transactions_overview_list_table() {
+		$this->display_admin_list_table_page_with_no_sidebar();
+	}
+
+
+
+
 
 
 
@@ -218,27 +347,15 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 	*/
 	protected function _transaction_details() {
 
-		global $wpdb, $org_options, $ee_admin_page;
+		global $wpdb, $org_options;
 		
 		$this->_get_transaction_status_array();
 
 		$this->template_args = array();		
-		$this->template_args['transactions_page'] = $ee_admin_page['transactions'];  
+		$this->template_args['transactions_page'] = $this->wp_page_slug;  
 
-	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
-	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
-	    $TXN = EEM_Transaction::instance();
-		
-		$TXN_ID = ( ! empty( $_REQUEST['txn'] )) ? absint( $_REQUEST['txn'] ) : FALSE;		
-		$transaction = $TXN->get_transaction_for_admin_page( $TXN_ID );  
-		$this->_transaction = array_shift( $transaction ); 
-		$this->_session = maybe_unserialize( maybe_unserialize( $this->_transaction ->TXN_session_data ));
+	    $this->_set_transaction_object();
 
-		// add nav tab for this details page
-		$this->nav_tabs['details']['url'] = wp_nonce_url( add_query_arg( array( 'action'=>'view_transaction', 'txn' => $TXN_ID ), TXN_ADMIN_URL ), 'view_transaction' );  
-		$this->nav_tabs['details']['link_text'] = __( 'TXN Details', 'event_espresso' );
-		$this->nav_tabs['details']['css_class'] = ' nav-tab-active';
-		$this->nav_tabs['details']['order'] = 15;
 	
 		$this->template_args['txn_nmbr']['value'] = $this->_transaction->TXN_ID;
 		$this->template_args['txn_nmbr']['label'] = __( 'Transaction Number', 'event_espresso' );
@@ -278,18 +395,6 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 		// link back to overview
 		$this->template_args['txn_overview_url'] = ! empty ( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : TXN_ADMIN_URL;  
 		
-		add_meta_box( 'edit-txn-details-mbox', __( 'Transaction Details', 'event_espresso' ), array( $this, '_txn_details_meta_box' ), $ee_admin_page['transactions'], 'normal', 'high' );
-		add_meta_box( 
-									'edit-txn-attendees-mbox',
-									__( 'Attendees Registered in this Transaction', 'event_espresso' ),
-									array( $this, '_txn_attendees_meta_box' ),
-									$ee_admin_page['transactions'],
-									'normal',
-									'high',
-									array( 'TXN_ID' => $TXN_ID )
-								);
-		add_meta_box( 'edit-txn-registrant-mbox', __( 'Primary Registrant', 'event_espresso' ), array( $this, '_txn_registrant_side_meta_box' ), $ee_admin_page['transactions'], 'side', 'high' );
-		add_meta_box( 'edit-txn-billing-info-mbox', __( 'Billing Information', 'event_espresso' ), array( $this, '_txn_billing_info_side_meta_box' ), $ee_admin_page['transactions'], 'side', 'high' );
 
 		// grab messages at the last second
 		$this->template_args['notices'] = EE_Error::get_notices();
@@ -306,6 +411,27 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 
 
 
+	protected function _transaction_details_metaboxes() {
+
+		$this->_set_transaction_object();
+
+
+		add_meta_box( 'edit-txn-details-mbox', __( 'Transaction Details', 'event_espresso' ), array( $this, '_txn_details_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
+		add_meta_box( 
+			'edit-txn-attendees-mbox',
+			__( 'Attendees Registered in this Transaction', 'event_espresso' ),
+			array( $this, '_txn_attendees_meta_box' ),
+			$this->wp_page_slug,
+			'normal',
+			'high',
+			array( 'TXN_ID' => $this->_transaction->TXN_ID )
+		);
+		add_meta_box( 'edit-txn-registrant-mbox', __( 'Primary Registrant', 'event_espresso' ), array( $this, '_txn_registrant_side_meta_box' ), $this->wp_page_slug, 'side', 'high' );
+		add_meta_box( 'edit-txn-billing-info-mbox', __( 'Billing Information', 'event_espresso' ), array( $this, '_txn_billing_info_side_meta_box' ), $this->wp_page_slug, 'side', 'high' );
+
+	}
+
+
 	/**
 	 * 		generates HTML for the Transaction main meta box
 	*		@access private
@@ -314,9 +440,6 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 	function _txn_details_meta_box() {
 	
 		global $wpdb, $org_options;
-
-//		printr( $this->_session, '$this->_session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( $this->_transaction, '$this->_transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// process items in cart
 		$cart_items = $this->_session['cart']['REG']['items'];
@@ -345,9 +468,7 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 						} else {
 							$this->template_args['items'][ $item['name'] ][ $key ] = $value;
 						}					
-					} /*else {
-						$this->template_args['event_attendees'][ $item['name'] ][ $key ] = $value;
-					}*/
+					} 
 				}
 			}		
 		}
@@ -396,13 +517,9 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 		$this->template_args['txn_details']['user_agent']['label'] = __( 'Registrant User Agent', 'event_espresso' );
 		$this->template_args['txn_details']['user_agent']['class'] = 'large-text';
 
-//		$this->template_args['txn_details']['session_dump']['value'] = '<pre>' . printr ( $this->_session, 'Session Dump', TRUE ) . '</pre>';
-//		$this->template_args['txn_details']['session_dump']['label'] = __( 'Session Dump', 'event_espresso' );
-//		$this->template_args['txn_details']['session_dump']['class'] = 'large-text';
 
 		$this->_get_payment_methods();
 		$this->_get_active_gateways();
-		// printr( $this->template_args['active_gateways'], 'active_gateways' );
 		$this->_get_payment_status_array();
 		
 		$this->template_args['transaction_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'transaction'  ), TXN_ADMIN_URL );
@@ -438,7 +555,6 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 				}
 			}
 		}	
-		 //printr( $this->template_args['active_gateways'], 'active_gateways' );
 	}
 
 
@@ -452,12 +568,14 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 	*/
 	private function _get_payment_methods() {
 		$this->template_args['payment_methods'] = array(
-																						'PP' 		=> __( 'PayPal', 'event_espresso' ),
-																						'CC' 		=> __( 'Credit Card', 'event_espresso' ),
-																						'CHQ' 	=> __( 'Cheque', 'event_espresso' ),
-																						'CSH' 	=> __( 'Cash', 'event_espresso' )
-																					);
+			'PP' => __( 'PayPal', 'event_espresso' ),
+			'CC' => __( 'Credit Card', 'event_espresso' ),
+			'CHQ' => __( 'Cheque', 'event_espresso' ),
+			'CSH' => __( 'Cash', 'event_espresso' )
+		);
 	}
+
+
 
 
 
@@ -472,7 +590,6 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 		global $wpdb, $org_options;
 		
 		extract( $metabox['args'] );		
-		//printr( $metabox['args'] );
 		
 		// process items in cart
 		$cart_items = $this->_session['cart']['REG']['items'];
@@ -566,7 +683,6 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 	function _txn_billing_info_side_meta_box() {
 	
 		$billing_info = $this->_session['billing_info'];		
-		//printr( $billing_info, '$billing_info  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		if ( is_array( $billing_info )) {
 		
@@ -634,7 +750,6 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 			$this->template_args['zip']['value'] = '';
 			$this->template_args['zip']['label'] = __( 'Zip Code', 'event_espresso' );
 			$this->template_args['credit_card_info'] = FALSE;
-
 			$this->template_args['free_event'] = $billing_info; 
 			
 		}
@@ -657,14 +772,12 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 	*		@return void
 	*/
 	public function apply_payments_or_refunds() {
-		
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 
 		$return_data = FALSE;
 
-		if ( isset( $_POST['txn_admin_payment'] )) {
+		if ( isset( $this->_req_data['txn_admin_payment'] )) {
 		
-			$payment = $_POST['txn_admin_payment'];
+			$payment = $this->_req_data['txn_admin_payment'];
 			//printr( $payment, '$payment' );
 
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Payment.class.php');
@@ -702,26 +815,22 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 					break;
 
 			}
-
-			// TXN_ID 	STS_ID 	PAY_timestamp 	PAY_method 	PAY_amount 	PAY_gateway 	PAY_gateway_response 	PAY_txn_id_chq_nmbr 	PAY_extra_accntng 	PAY_details 
+		 
 			$payment = new EE_Payment( 
-																	$payment['TXN_ID'], 
-																	$payment['status'],
-																	$payment['date'], 
-																	$payment['method'], 
-																	$amount,
-																	$payment['gateway'],
-																	$payment['gateway_response'],
-																	$payment['txn_id_chq_nmbr'],
-																	$payment['po_number'], 
-																	$payment['accounting'], 
-																	true, 
-																	$payment,
-																	$payment['PAY_ID']
-																);
-
-//			printr( $payment, '$payment' ); 
-//			die();
+				$payment['TXN_ID'], 
+				$payment['status'],
+				$payment['date'], 
+				$payment['method'], 
+				$amount,
+				$payment['gateway'],
+				$payment['gateway_response'],
+				$payment['txn_id_chq_nmbr'],
+				$payment['po_number'], 
+				$payment['accounting'], 
+				true, 
+				$payment,
+				$payment['PAY_ID']
+			);
 
 			$return_data = $payment->apply_payment_to_transaction( TRUE );	
 																
@@ -743,11 +852,7 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			
 		}
 		
-		$notices = EE_Error::get_notices( FALSE, FALSE, FALSE ); // , TRUE
-		
-//		echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $notices, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
-//		echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $return_data, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
-//		die();
+		$notices = EE_Error::get_notices( FALSE, FALSE, FALSE ); 
 		
 		echo json_encode( array( 'return_data' => $return_data, 'success' => $notices['success'], 'errors' => $notices['errors'] ));
 		die();
@@ -767,8 +872,8 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 	
 		$return_data = FALSE;
 		
-		if ( isset( $_POST['ID'] )) {
-			if ( $PAY_ID = absint( $_POST['ID'] )) {
+		if ( isset( $this->_req_data['ID'] )) {
+			if ( $PAY_ID = absint( $this->_req_data['ID'] )) {
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
 				$PAY_MODEL = EEM_Payment::instance();
 				$return_data = $PAY_MODEL->delete_payment( $PAY_ID );
@@ -779,9 +884,7 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			
 		}
 		$notices = EE_Error::get_notices( FALSE, FALSE, FALSE );
-//		printr( $notices, '$notices' );
-//		printr( $return_data, '$return_data' ); 
-//		die();
+
 		echo json_encode( array( 'return_data' => $return_data, 'success' => $notices['success'], 'errors' => $notices['errors'] ));
 		die();		
 	}
@@ -808,8 +911,6 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 	*		@return void
 	*/
 	protected function _transaction_reports() {
-
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	
 		$page_args = array();
 		
@@ -820,7 +921,6 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 		$template_path = EE_CORE_ADMIN . 'admin_reports.template.php';
 		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $page_args, TRUE );
 		
-		//printr( $page_args, '$page_args' );
 		
 		// the final template wrapper
 		$this->admin_page_wrapper();
@@ -866,15 +966,15 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 			$span = floor( (strtotime($xmax) - strtotime($xmin)) / (60*60*24)) + 1;
 			
 			$report_params = array(
-														'title' 		=> 'Total Revenue per Day',
-														'id' 			=> $report_ID,
-														'revenue' => $revenue,												
-														'xmin' 		=> $xmin,
-														'xmax' 		=> $xmax,
-														//'ymax' 		=> ceil($ymax * 1.25),
-														'span' 		=> $span,
-														'width'		=> ceil(900 / $span)												
-													);
+				'title' 		=> 'Total Revenue per Day',
+				'id' 			=> $report_ID,
+				'revenue' => $revenue,												
+				'xmin' 		=> $xmin,
+				'xmax' 		=> $xmax,
+				//'ymax' 		=> ceil($ymax * 1.25),
+				'span' 		=> $span,
+				'width'		=> ceil(900 / $span)												
+			);
 			wp_localize_script( $report_JS, 'txnRevPerDay', $report_params );
 		}
 												
@@ -913,12 +1013,12 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 			$span = $period == 'week' ? 9 : 33;
 
 			$report_params = array(
-														'title' 		=> 'Total Revenue per Event',
-														'id' 			=> $report_ID,
-														'revenue'	=> $revenue,												
-														'span' 		=> $span,
-														'width'		=> ceil(900 / $span)								
-													);
+				'title' 		=> 'Total Revenue per Event',
+				'id' 			=> $report_ID,
+				'revenue'	=> $revenue,												
+				'span' 		=> $span,
+				'width'		=> ceil(900 / $span)								
+			);
 			wp_localize_script( $report_JS, 'revenuePerEvent', $report_params );		
 		}
 
@@ -930,14 +1030,42 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 
 
 	/**
-	 * 		_remove_espresso_meta_boxes
-	*		@access public
-	*		@return array
+	 * 		generates HTML for main Transactions Admin page
+	*		@access protected
+	*		@return void
 	*/
-	public function _remove_espresso_meta_boxes() {	
-		remove_meta_box('espresso_news_post_box', $this->wp_page_slug, 'side');
-		remove_meta_box('espresso_links_post_box', $this->wp_page_slug, 'side');
-		remove_meta_box('espresso_sponsors_post_box', $this->wp_page_slug, 'side');
+	protected function old_transactions_overview_list_table() {
+		
+		global $wpdb;
+
+		$this->_get_transaction_status_array();
+
+	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
+	    $TXN = EEM_Transaction::instance();
+		require_once( TXN_ADMIN . 'Transactions_List_Table.class.php');
+
+		$this->template_args['start_date'] = isset( $this->_req_data['txn-filter-start-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-start-date'] ) : date( 'D M j, Y', strtotime( '-10 year' ));
+		$this->template_args['end_date'] = isset( $this->_req_data['txn-filter-end-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-end-date'] ) : date( 'D M j, Y' );
+		$this->template_args['end_date'] = ( strtotime( $this->template_args['end_date'] ) < strtotime( $this->template_args['start_date'] )) ? $this->template_args['start_date'] : $this->template_args['end_date'];
+		
+		$transactions = $TXN->get_transactions_for_admin_page( $this->template_args['start_date'], $this->template_args['end_date'] );  
+		//echo printr( $transactions, '$transactions' );
+		$this->template_args['table_rows'] = $wpdb->num_rows;
+		$entries_per_page_dropdown = $this->_entries_per_page_dropdown( $this->template_args['table_rows'] );
+		$this->template_args['list_table'] = new EE_Admin_Transactions_List_Table( $transactions, self::$_txn_status, $entries_per_page_dropdown );
+
+		// link back to here
+		$this->template_args['txn_overview_url'] = TXN_ADMIN_URL;  
+		$this->template_args['view_all_url'] = add_query_arg( array( 'per_page' => $this->template_args['table_rows'] ), TXN_ADMIN_URL );  
+		// grab messages at the last second
+		$this->template_args['notices'] = EE_Error::get_notices();
+		// path to template 
+		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_overview.template.php';
+		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE );
+		
+		// the final template wrapper
+		$this->admin_page_wrapper();		
 	}
 
 

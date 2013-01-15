@@ -825,6 +825,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//registrations style register
 		wp_register_style('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.css', array(), EVENT_ESPRESSO_VERSION );
 
+		//transactions style register
+		wp_register_style( 'espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.css', array(), EVENT_ESPRESSO_VERSION );
+
 		//enqueue global styles
 		wp_enqueue_style('espresso_menu');
 		wp_enqueue_style('event_espresso');
@@ -844,6 +847,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//registrations script register
 		wp_register_script('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
+
+		//transactions script register
+		wp_register_script('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
 
 		//jqplot library
 		wp_register_script('jqplot', JQPLOT_URL . 'jquery.jqplot.min.js', array('jquery'), '', FALSE);

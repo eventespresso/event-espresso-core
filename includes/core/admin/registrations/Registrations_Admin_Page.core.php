@@ -118,7 +118,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				),
 			'view_registration' => array(
 				'nav' => array(
-					'label' => __('REG Details', 'event_espreso'),
+					'label' => __('REG Details', 'event_espresso'),
 					'order' => 5,
 					'url' => isset($this->_req_data['reg']) ? add_query_arg(array('reg' => $this->_req_data['reg'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
 					'persistent' => FALSE
