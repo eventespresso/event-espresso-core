@@ -173,7 +173,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'nav' => array(
 					'label' => __('Edit Event', 'event_espresso'),
 					'order' => 5,
-					'persistent' => false
+					'persistent' => false,
+					'url' => isset($this->_req_data['EVT_ID']) ? add_query_arg(array('EVT_ID' => $this->_req_data['EVT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
 				'metaboxes' => array('_register_event_editor_meta_boxes', '_premium_event_editor_meta_boxes', '_publish_post_box')
 				)

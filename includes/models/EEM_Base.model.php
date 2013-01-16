@@ -56,11 +56,13 @@ abstract class EEM_Base extends EE_Base {
 	 *		@access protected
 	 *		@param mixed (string, array) - $orderby - cloumn names to be used for sorting
 	 *		@param mixed (string, array) - $sort - ASC or DESC
-	 *		@param string - $output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N
+	 *		@param array $limit send along limit offset for paging purposes
+	 *		@param string - $output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N, COUNT ( = count of rows)
 	 *		@return mixed (object, array)
 	 */
-	protected function select_all ( $orderby=FALSE, $sort=FALSE, $output='OBJECT_K' ) {
-		$results = $this->_select_all ( $this->table_name, $orderby, $sort, $output );
+	protected function select_all ( $orderby=FALSE, $sort=FALSE, $limit = FALSE, $output='OBJECT_K' ) {
+
+		$results = $this->_select_all ( $this->table_name, $orderby, $sort, $limit, $output );
 		return $results;
 	}
 
@@ -76,12 +78,13 @@ abstract class EEM_Base extends EE_Base {
 	 *		@param mixed (string, array) 		$where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause
 	 *		@param mixed (string, array)		$orderby - cloumn names to be used for sorting
 	 *		@param string								$sort - ASC or DESC
+	 *		@param array $limit send along limit offset for paging purposes
 	 *		@param mixed (string, array)		$operator -  operator to be used for WHERE clause  > = <
-	 *		@param string								$output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N
+	 *		@param string								$output - WP output types && count - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N, COUNT (=count of rows);
 	 *		@return mixed (object, array)
 	 */
-	protected function select_all_where ( $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $output = 'OBJECT_K' ) {
-		$results = $this->_select_all_where ( $this->table_name, $this->table_data_types, $where_cols_n_values, $orderby, $sort, $operator, $output );
+	protected function select_all_where ( $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $limit = FALSE, $output = 'OBJECT_K' ) {
+		$results = $this->_select_all_where ( $this->table_name, $this->table_data_types, $where_cols_n_values, $orderby, $sort, $operator, $limit, $output );
 		return $results;
 	}
 
@@ -205,10 +208,11 @@ abstract class EEM_Base extends EE_Base {
 	 *		@param string - $em_table_name -
 	 *		@param mixed (string, array) - $orderby - cloumn names to be used for sorting
 	 *		@param string - $sort - ASC or DESC
-	 *		@param string - $output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N
+	 *		@param array $limit send along limit offset for paging purposes
+	 *		@param string - $output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N, COUNT ( - count of rows )
 	 *		@return mixed (object, array)
 	 */
-	private function _select_all (  $em_table_name=FALSE, $orderby = FALSE, $sort = 'ASC', $output = 'OBJECT_K' )	{
+	private function _select_all (  $em_table_name=FALSE, $orderby = FALSE, $sort = 'ASC', $limit = FALSE, $output = 'OBJECT_K' )	{
 
 		// what?? no table name ??? Get outta here!!!
 		if ( ! $em_table_name ) {
@@ -217,14 +221,19 @@ abstract class EEM_Base extends EE_Base {
 			return FALSE;
 		}
 
-		$SQL = 'SELECT * FROM '.$em_table_name;
+		$SQL = $output == 'COUNT' ? 'SELECT COUNT(*) FROM ' : 'SELECT * FROM ';
+		$SQL .= $em_table_name;
 
-		if ( $orderby ) {
+		if ( $orderby && $output != 'COUNT' ) {
 			$SQL .= $this->_orderby_n_sort ($orderby, $sort);
 		}
 
+		if ( $limit && is_array($limit) && $output != 'COUNT' ) {
+			$SQL .=	' LIMIT ' . $limit[0] . ',' . $limit[1];
+		}
+
 		global $wpdb;
-		$results = $wpdb->get_results( $SQL, $output );
+		$results = $output == 'COUNT' ? $wpdb->get_var( $SQL ) : $wpdb->get_results( $SQL, $output );
 		return $results;
 	}
 
@@ -248,10 +257,11 @@ abstract class EEM_Base extends EE_Base {
 	 *		@param mixed (string, array) - $orderby - cloumn names to be used for sorting
 	 *		@param string - $sort - ASC or DESC
 	 *		@param mixed (string, array) - $operator -  operator to be used for WHERE clause  > = <
-	 *		@param string - $output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N
+	 *		@param array $limit send along limit offset for paging purposes
+	 *		@param string - $output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N, COUNT = count of rows
 	 *		@return mixed (object, array)
 	 */
-	private function _select_all_where ( $em_table_name=FALSE, $em_table_data_types=array(), $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $output = 'OBJECT_K' ) {
+	private function _select_all_where ( $em_table_name=FALSE, $em_table_data_types=array(), $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $limit = FALSE, $output = 'OBJECT_K' ) {
 	
 		// what?? no table name ??? Get outta here!!!
 		if ( ! $em_table_name ) {
@@ -260,7 +270,9 @@ abstract class EEM_Base extends EE_Base {
 			return FALSE;
 		}
 
-		$SQL = 'SELECT * FROM '.$em_table_name;
+
+		$SQL = $output == 'COUNT' ? 'SELECT COUNT(*) FROM ' : 'SELECT * FROM ';
+		$SQL .= $em_table_name;
 
 		if ( $where_cols_n_values ) {
 			$prepped = $this->_prepare_where ($where_cols_n_values, $em_table_data_types, $operator);
@@ -270,13 +282,17 @@ abstract class EEM_Base extends EE_Base {
 			$VAL = '';
 		}
 
-		if ( $orderby ) {
+		if ( $orderby && $output != 'COUNT' ) {
 			$SQL .= $this->_orderby_n_sort ($orderby, $sort);
 		}
 
+		if ( $limit && is_array($limit) && $output != 'COUNT' ) {
+			$SQL .=	' LIMIT ' . $limit[0] . ',' . $limit[1];
+		}
+		
 		global $wpdb;
 		$wpdb->show_errors();
-		$results = $wpdb->get_results( $wpdb->prepare( $SQL, $VAL ), $output );
+		$results = $output == 'COUNT' ? $wpdb->get_var( $wpdb->prepare( $SQL, $VAL ) ) : $wpdb->get_results( $wpdb->prepare( $SQL, $VAL ), $output );
 
 		return $results;
 	}

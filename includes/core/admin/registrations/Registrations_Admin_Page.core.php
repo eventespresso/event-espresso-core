@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface {
+class Registrations_Admin_Page extends EE_Admin_Page {
 
 	private $_registration;
 	private $_session;
@@ -37,23 +37,46 @@ class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 	 * 		@access public
 	 * 		@return void
 	 */
-	public function __construct() {
-
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-
-		$this->page_slug = REG_PG_SLUG;
-		
-		$this->_init();
-
-		if ( $this->_AJAX ) {
-		}
-
-		// remove settings tab
-		add_filter( 'filter_hook_espresso_admin_page_nav_tabs', array( &$this, '_remove_settings_from_admin_page_nav_tabs' ), 10 , 1 );
-
+	public function __construct($wp_page_slug) {
+		parent::__construct($wp_page_slug);
 	}
+
+
+
+
+
+
+	protected function _init_page_props() {
+		$this->page_slug = REG_PG_SLUG;
+		$this->page_label = __('Registrations', 'event_espresso');
+	}
+
+
+
+
+
+	protected function _ajax_hooks() {
+		//todo: all hooks for registrations ajax goes in here
+	}
+
+
+
+
+
+	protected function  _define_page_props() {
+		$this->_admin_base_url = REG_ADMIN_URL;
+		$this->_admin_page_title = $this->page_label;
+		$this->_labels = array(
+			'buttons' => array(
+				'add' => __('Add New Registration', 'event_espresso'),
+				'edit' => __('Edit Registration', 'event_espresso'),
+				'delete' => __('Delete Registration','event_espresso')
+				)
+			);
+	}
+
+
+
 
 
 
@@ -63,17 +86,18 @@ class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 	*		@access private
 	*		@return void
 	*/
-	public function set_page_routes() {			
-
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	public function _set_page_routes() {			
 
 		$this->_get_registration_status_array();
 
 		$this->_page_routes = array(
 				'default'	=> '_registrations_overview_list_table',
 				'view_registration'	=> '_registration_details',
-				'edit_registration'	=> array( 'func' => '_registration_details', 'param' => array( 'edit' )),
-				'delete_registration'	=> '_delete_registration',
+				'edit_registration'	=> array( 'func' => '_registration_details', 'param' => array( 'edit' ), 'noheader' => TRUE ),
+				'delete_registration'	=> array(
+					'func' => '_delete_registration',
+					'noheader' => TRUE
+					),
 				'reports'	=> '_registration_reports'
 		);
 		
@@ -83,15 +107,49 @@ class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 
 
 
-	/**
-	 * 		grab url requests and route them
-	*		@access private
-	*		@return void
-	*/
-	public function define_page_vars() {
-		$this->admin_base_url = REG_ADMIN_URL;
-		$this->admin_page_title = __( 'Registrations', 'event_espresso' );
+	protected function _set_page_config() {
+		$this->_page_config = array(
+			'default' => array(
+				'nav' => array(
+					'label' => __('Overview', 'event_espresso'),
+					'order' => 10
+					),
+				'list_table' => 'EE_Registrations_List_Table'
+				),
+			'view_registration' => array(
+				'nav' => array(
+					'label' => __('REG Details', 'event_espreso'),
+					'order' => 5,
+					'url' => isset($this->_req_data['reg']) ? add_query_arg(array('reg' => $this->_req_data['reg'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
+					'persistent' => FALSE
+					),
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_registration_details_metaboxes')
+				),
+			'reports' => array(
+				'nav' => array(
+					'label' => __('Reports', 'event_espresso'),
+					'order' => 20
+					)
+				)
+			);
 	}
+
+
+
+
+
+	/**
+	 * The below methods aren't used by this class currently
+	 */
+	protected function _add_screen_options() {}
+	protected function _add_help_tabs() {}
+	protected function _add_feature_pointers() {}
+	public function admin_init() {}
+	public function admin_notices() {}
+	public function admin_footer_scripts() {}
+
+
+
 
 
 
@@ -118,113 +176,133 @@ class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 
 
 
-	/**
-	 * 		generates HTML for main Registrations Admin page
-	*		@access protected
-	*		@return void
-	*/
-	protected function _registrations_overview_list_table() {
 
-		global $wpdb, $espresso_premium;
-		//$espresso_premium = FALSE;
-		
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
-		$REG = EEM_Registration::instance();
-		require_once( REG_ADMIN . 'Registrations_List_Table.class.php' );
 
-		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin_screens/events/queries.php' );
-		// require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/attendee_functions.php' );
 
-		$EVT_ID = FALSE;
-		$CAT_ID = FALSE;
-		$reg_status = FALSE;
-		$month_range = FALSE;
-		$today_a = FALSE;
-		$this_month_a = FALSE;
-		$start_date = FALSE;
-		$end_date = FALSE;
+	protected function _add_screen_options_default() {
+		$this->_per_page_screen_option();
+	}
 
-		if ( $espresso_premium ) {
 
-			$EVT_ID = isset( $_REQUEST['event_id'] ) ? absint( $_REQUEST['event_id'] ) : FALSE;
-			$CAT_ID = isset( $_REQUEST['category_id'] ) ? absint( $_REQUEST['category_id'] ) : FALSE;
-			$reg_status = isset( $_REQUEST['reg_status'] ) ? sanitize_text_field( $_REQUEST['reg_status'] ) : FALSE;
-			$month_range = isset( $_REQUEST['month_range'] ) ? sanitize_text_field( $_REQUEST['month_range'] ) : FALSE;
-			$today_a = isset( $_REQUEST['today_a'] ) && $_REQUEST['today_a'] == 'true' ? sanitize_text_field( $_REQUEST['today_a'] ) : FALSE;
-			$this_month_a = isset( $_REQUEST['this_month_a'] ) ? sanitize_text_field( $_REQUEST['this_month_a'] ) : FALSE;
 
-			$filter_template_args = array();
-			// base form url for filters
-			$filter_template_args['reg_overview_filters_frm_url'] = REG_ADMIN_URL;
-			// grab filter
-			$filter = isset( $_REQUEST['filter'] ) ? sanitize_key( $_REQUEST['filter'] ) : FALSE;
-			// set current status for filters
-			$filter_template_args['reg_filter_all_class'] = $filter == 'all' ? ' current' : '';
-			$filter_template_args['reg_filter_month_class'] = $filter == 'month' ? ' current' : '';
-			$filter_template_args['reg_filter_today_class'] = $filter == 'today' ? ' current' : '';
-			// filter form urls
-			$filter_template_args['reg_filter_all_url'] = add_query_arg( array( 'filter' => 'all' ), REG_ADMIN_URL );
-			$filter_template_args['reg_filter_month_url'] = add_query_arg( array( 'filter' => 'month' ), REG_ADMIN_URL );
-			$filter_template_args['reg_filter_today_url'] = add_query_arg( array( 'filter' => 'today' ), REG_ADMIN_URL );
-			// filter bt month
-			$month_range = isset($_POST['month_range']) ? sanitize_key( $_REQUEST['month_range'] ) : '';
-			$filter_template_args['reg_overview_filter_select_month'] = espresso_event_months_dropdown( $month_range );
-			// filter by category
-			$event_category = isset($_REQUEST['category_id']) ? sanitize_key( $_REQUEST['category_id'] ) : '';
-			$filter_template_args['reg_overview_filter_select_category'] = espresso_category_dropdown( $event_category );
-			// filter by reg status
-			$reg_status = isset($_REQUEST['reg_status']) ? sanitize_key( $_REQUEST['reg_status'] ) : '';
-			// process array of all possible reg stati
-			$status = array();
-			foreach ( self::$_reg_status as $key => $value ) {
-				$status[] = array( 'id' => $key, 'text' => $value );
-			}
-			$filter_template_args['reg_overview_filter_select_status'] =  select_input('reg_status', $status, $reg_status);
-			// load filter template
-			$template_path = REG_TEMPLATE_PATH . 'reg_admin_overview_filters.template.php';
-			$this->template_args['premium_reg_filters']  =  espresso_display_template( $template_path, $filter_template_args, TRUE );
 
-		} else {
-			// no soup for you !!!
-			$this->template_args['premium_reg_filters'] = FALSE;
-			$start_date = isset( $_POST['reg-filter-start-date'] ) ? wp_strip_all_tags( $_POST['reg-filter-start-date'] ) : date( 'D M j, Y', strtotime( '-1 month' ));
-			$end_date = isset( $_POST['reg-filter-end-date'] ) ? wp_strip_all_tags( $_POST['reg-filter-end-date'] ) : date( 'D M j, Y' );
-			$end_date = ( strtotime( $end_date ) < strtotime( $start_date )) ? $start_date : $end_date;
-			$this->template_args['start_date'] = $start_date;
-			$this->template_args['end_date'] = $end_date;
+
+
+
+	public function load_scripts_styles() {
+		//style
+		wp_enqueue_style('espresso_reg');
+
+		//script
+		wp_enqueue_script('espresso_reg');
+	}
+
+
+
+
+
+
+	public function load_scripts_styles_view_registration() {
+		//styles
+		wp_enqueue_style('jquery-ui-style');
+		wp_enqueue_style('jquery-ui-style-datepicker-css');
+
+		//scripts
+		wp_enqueue_script('ee_admin_js');
+		wp_enqueue_script('event_editor_js');
+	}
+
+
+
+
+
+
+
+	public function load_scripts_styles_reports() {
+		//styles
+		wp_enqueue_style('jquery-jqplot-css', JQPLOT_URL . 'jquery.jqplot.min.css', array(), EVENT_ESPRESSO_VERSION);
+
+		//scripts
+		global $is_IE;
+		if ( $is_IE ) {
+			wp_enqueue_script( 'excanvas' , JQPLOT_URL . 'excanvas.min.js', array(), ESPRESSO_E, FALSE);
 		}
-
-//echo '<h4>$EVT_ID : ' . $EVT_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//echo '<h4>$CAT_ID : ' . $CAT_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//echo '<h4>$reg_status : ' . $reg_status . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//echo '<h4>$month_range : ' . $month_range . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//echo '<h4>$today_a : ' . $today_a . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//echo '<h4>$this_month_a : ' . $this_month_a . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-
-		$registrations = $REG->get_registrations_for_admin_page( $EVT_ID, $CAT_ID, $reg_status, $month_range, $today_a, $this_month_a, $start_date, $end_date );
-		//echo printr( $registrations, '$registrations' );
-		$this->template_args['table_rows'] = $wpdb->num_rows;
-
-		//Ticketing
-		$ticketing_installed = ( file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php") || function_exists('espresso_ticket_launch')) ? TRUE : FALSE;
+		wp_enqueue_script('jqplot-all');
+	}
 
 
-		$entries_per_page_dropdown = $this->_entries_per_page_dropdown( $this->template_args['table_rows'] );
-		$this->template_args['list_table'] = new EE_Admin_Registrations_List_Table( $registrations, self::$_reg_status, $entries_per_page_dropdown, $ticketing_installed );
 
-		// link back to here
-		$this->template_args['reg_overview_url'] = REG_ADMIN_URL;
-		$this->template_args['view_all_url'] = add_query_arg( array( 'per_page' => $this->template_args['table_rows'] ), REG_ADMIN_URL );
-		// grab messages at the last second
-		//$this->template_args['notices'] = EE_Error::get_notices();
-		// path to template
-		$template_path = REG_TEMPLATE_PATH . 'reg_admin_overview.template.php';
-		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE );
 
-		// the final template wrapper
-		$this->admin_page_wrapper();	
- 
+
+
+
+
+	protected function _set_list_table_views_default() {
+		$this->_views = array(
+			'all' => array(
+				'slug' => 'all',
+				'label' => __('All Registrations', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'delete_registration' => __('Delete Registrations', 'event_espresso'),
+					)
+				),
+			'month' => array(
+				'slug' => 'month',
+				'label' => __('This Month', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'delete_registration' => __('Delete Registrations', 'event_espresso'),
+					)
+				),
+			'today' => array(
+				'slug' => 'today',
+				'label' => sprintf( __('Today - %s', 'event_espresso'), date('M d, Y', current_time('timestamp', 0) ) ),
+				'count' => 0,
+				'bulk_action' => array(
+					'delete_registration' => __('Delete Registrations', 'event_espresso'),
+					)
+				)
+			);
+	}
+
+
+
+
+
+
+
+	protected function _registrations_overview_list_table() {
+		$this->display_admin_list_table_page_with_no_sidebar();
+	}
+
+
+
+
+
+	/**
+	 * This sets the _registration property for the registration details screen
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _set_registration_object() {
+		if ( is_object($this->_registration) )
+			return; //get out we've already set the object
+
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
+	    $REG = EEM_Registration::instance();
+
+		$REG_ID = ( ! empty( $this->_req_data['reg'] )) ? absint( $this->_req_data['reg'] ) : FALSE;
+
+		if ( $this->_registration = $REG->get_registration_for_admin_page( $REG_ID ) )
+			return;
+		else {
+			$error_msg = __('An error occured and the details for Registration ID #', 'event_espresso') . $REG_ID .  __(' could not be retreived.', 'event_espresso');
+			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+			$this->_registration = NULL;
+		}
 	}
 
 
@@ -240,62 +318,42 @@ class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 
 		global $wpdb, $org_options;
 		
-		$this->template_args = array();
+		$this->_template_args = array();
 
-	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
-	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
-	    $REG = EEM_Registration::instance();
+		$this->_set_registration_object();
 
-		$REG_ID = ( ! empty( $_REQUEST['reg'] )) ? absint( $_REQUEST['reg'] ) : FALSE;
-		if ( $this->_registration = $REG->get_registration_for_admin_page( $REG_ID )) {
+		if ( is_object( $this->_registration) ) {
 		
 			$this->_session = maybe_unserialize( maybe_unserialize( $this->_registration->TXN_session_data ));
 
-			//printr( $this->_registration, '$this->_registration  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
 			$title = __( ucwords( str_replace( '_', ' ', $this->_req_action )), 'event_espresso' );
 			// add PRC_ID to title if editing 
-			$title = $REG_ID ? $title . ' # ' . $REG_ID : $title;
+			$title = $this->_registration->REG_ID ? $title . ' # ' . $this->_registration->REG_ID : $title;
 
-			// add nav tab for this details page
-			$this->nav_tabs['details']['url'] = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg' => $REG_ID ), REG_ADMIN_URL ), 'view_registration_nonce' );  
-			$this->nav_tabs['details']['link_text'] = __( 'REG Details', 'event_espresso' );
-			$this->nav_tabs['details']['css_class'] = ' nav-tab-active';
-			$this->nav_tabs['details']['order'] = 15;
 
-			$this->template_args['reg_nmbr']['value'] = $this->_registration->REG_ID;
-			$this->template_args['reg_nmbr']['label'] = __( 'Registration Number', 'event_espresso' );
+			$this->_template_args['reg_nmbr']['value'] = $this->_registration->REG_ID;
+			$this->_template_args['reg_nmbr']['label'] = __( 'Registration Number', 'event_espresso' );
 
-			$this->template_args['reg_datetime']['value'] = date( 'l F j, Y,    g:i:s a', $this->_registration->REG_date );
-			$this->template_args['reg_datetime']['label'] = __( 'Date', 'event_espresso' );
+			$this->_template_args['reg_datetime']['value'] = date( 'l F j, Y,    g:i:s a', $this->_registration->REG_date );
+			$this->_template_args['reg_datetime']['label'] = __( 'Date', 'event_espresso' );
 
-			$this->template_args['reg_status']['value'] = self::$_reg_status[ $this->_registration->REG_status ];
-			$this->template_args['reg_status']['label'] = __( 'Registration Status', 'event_espresso' );
-			$this->template_args['reg_status']['class'] = 'status-' . $this->_registration->REG_status;
+			$this->_template_args['reg_status']['value'] = self::$_reg_status[ $this->_registration->REG_status ];
+			$this->_template_args['reg_status']['label'] = __( 'Registration Status', 'event_espresso' );
+			$this->_template_args['reg_status']['class'] = 'status-' . $this->_registration->REG_status;
 
-			$this->template_args['grand_total'] = $this->_registration->TXN_total;
+			$this->_template_args['grand_total'] = $this->_registration->TXN_total;
 
-			$this->template_args['currency_sign'] = $org_options['currency_symbol'];
+			$this->_template_args['currency_sign'] = $org_options['currency_symbol'];
 			// link back to overview
-			$this->template_args['reg_overview_url'] = REG_ADMIN_URL;
-
-			add_meta_box( 'edit-reg-details-mbox', __( 'Registration Details', 'event_espresso' ), array( $this, '_reg_details_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
-			add_meta_box( 'edit-reg-registrant-mbox', __( 'Attendee Details', 'event_espresso' ), array( $this, '_reg_registrant_side_meta_box' ), $this->wp_page_slug, 'side', 'high' );
-
-			if ( $this->_registration->REG_is_group_reg ) {
-				add_meta_box( 'edit-reg-attendees-mbox', __( 'Other Attendees Registered in the Same Transaction', 'event_espresso' ), array( $this, '_reg_attendees_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
-			}
-			
+			$this->_template_args['reg_overview_url'] = REG_ADMIN_URL;	
 
 			// grab header
 			$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_header.template.php';
-			$this->template_args['admin_page_header'] = espresso_display_template( $template_path, $this->template_args, TRUE );
+			$this->_template_args['admin_page_header'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
 						
 		} else {
-
-			$error_msg = __('An error occured and the details for Registration ID #', 'event_espresso') . $REG_ID .  __(' could not be retreived.', 'event_espresso');
-			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			
-			$this->template_args['admin_page_header'] = $this->display_espresso_notices();
+			$this->_template_args['admin_page_header'] = $this->display_espresso_notices();
 
 		}
 
@@ -303,6 +361,21 @@ class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 		$this->display_admin_page_with_sidebar();		
 
 	}
+
+
+
+
+
+
+	protected function _registration_details_metaboxes() {
+		$this->_set_registration_object();
+		add_meta_box( 'edit-reg-details-mbox', __( 'Registration Details', 'event_espresso' ), array( $this, '_reg_details_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
+		add_meta_box( 'edit-reg-registrant-mbox', __( 'Attendee Details', 'event_espresso' ), array( $this, '_reg_registrant_side_meta_box' ), $this->wp_page_slug, 'side', 'high' );
+		if ( $this->_registration->REG_is_group_reg ) {
+			add_meta_box( 'edit-reg-attendees-mbox', __( 'Other Attendees Registered in the Same Transaction', 'event_espresso' ), array( $this, '_reg_attendees_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
+		}
+	}
+
 
 
 
@@ -317,11 +390,10 @@ class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 
 		global $wpdb, $org_options;
 
-		//echo printr( $this->_session, '$this->_session' );
 
 		// process items in cart
 		$cart_items = $this->_session['cart']['REG']['items'];
-		$this->template_args['items'] = array();
+		$this->_template_args['items'] = array();
 		$exclude = array( 'attendees' );
 		
 		if ( ! empty( $cart_items )) {
@@ -337,13 +409,13 @@ class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 									$ampm = ( (float)$option > 11.59 ) ? (( (float)$option == 24.00 ) ? 'am' : 'pm' ) : 'am';
 									$option = strtotime( $option . ' ' . $ampm );
 								}
-								$this->template_args['items'][ $item['name'] ][ $opt ] = $option;
+								$this->_template_args['items'][ $item['name'] ][ $opt ] = $option;
 							}
 						} else {
-							$this->template_args['items'][ $item['name'] ][ $key ] = $value;
+							$this->_template_args['items'][ $item['name'] ][ $key ] = $value;
 						}
 					} else {
-						$this->template_args['event_attendees'][ $item['name'] ][ $key ] = $value;
+						$this->_template_args['event_attendees'][ $item['name'] ][ $key ] = $value;
 					}
 				}
 			}
@@ -352,73 +424,66 @@ class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 
 		// process taxes
 		if ( $taxes = maybe_unserialize( $this->_registration->TXN_tax_data )) {
-			$this->template_args['taxes'] = $taxes['taxes'];
+			$this->_template_args['taxes'] = $taxes['taxes'];
 		} else {
-			$this->template_args['taxes'] = FALSE;
+			$this->_template_args['taxes'] = FALSE;
 		}
 
-		$this->template_args['grand_total'] = $this->_registration->TXN_total;
+		$this->_template_args['grand_total'] = $this->_registration->TXN_total;
 
-		$this->template_args['currency_sign'] = $org_options['currency_symbol'];
+		$this->_template_args['currency_sign'] = $org_options['currency_symbol'];
 		$reg_status_class = 'status-' . $this->_registration->STS_ID;
+		$reg_details = maybe_unserialize( $this->_registration->TXN_details );
 
-		if ( ! $reg_details = maybe_unserialize( $this->_registration ->TXN_details )) {
+
+		if ( !is_array($reg_details) || ( is_array($reg_details) && isset($reg_details['REDO_TXN']) && $reg_details['REDO_TXN'] ) ) {
 			$reg_details = array();
 			$reg_details['method'] = '';
 			$reg_details['response_msg'] = '';
 			$reg_details['registration_id'] = '';
 			$reg_details['invoice_number'] = '';
 		} 
-		//echo printr( $reg_details, '$reg_details' );
+
 
 		$card_type = isset( $reg_details['card_type'] ) ? ' : ' . $reg_details['card_type'] : '';
 		$reg_details['method'] = $reg_details['method'] == 'CC' ? 'Credit Card' . $card_type : $reg_details['method'];
-		$this->template_args['method']['value'] = $reg_details['method'];
-		$this->template_args['method']['label'] = __( 'Payment Method', 'event_espresso' );
-		$this->template_args['method']['class'] = 'regular-text';
+		$this->_template_args['method']['value'] = $reg_details['method'];
+		$this->_template_args['method']['label'] = __( 'Payment Method', 'event_espresso' );
+		$this->_template_args['method']['class'] = 'regular-text';
 
 		$reg_details['response_msg'] = '<span class="' . $reg_status_class . '">' . $reg_details['response_msg'] . '</span>';
-		$this->template_args['gateway_response_msg']['value'] = $reg_details['response_msg'];
-		$this->template_args['gateway_response_msg']['label'] = __( 'Gateway Response Message', 'event_espresso' );
-		$this->template_args['gateway_response_msg']['class'] = 'regular-text';
+		$this->_template_args['gateway_response_msg']['value'] = $reg_details['response_msg'];
+		$this->_template_args['gateway_response_msg']['label'] = __( 'Gateway Response Message', 'event_espresso' );
+		$this->_template_args['gateway_response_msg']['class'] = 'regular-text';
 
 		if ( isset( $reg_details['registration_id'] )) {
-			$this->template_args['reg_details']['registration_id']['value'] = $reg_details['registration_id'];
-			$this->template_args['reg_details']['registration_id']['label'] = __( 'Registration ID', 'event_espresso' );
-			$this->template_args['reg_details']['registration_id']['class'] = 'regular-text';
+			$this->_template_args['reg_details']['registration_id']['value'] = $reg_details['registration_id'];
+			$this->_template_args['reg_details']['registration_id']['label'] = __( 'Registration ID', 'event_espresso' );
+			$this->_template_args['reg_details']['registration_id']['class'] = 'regular-text';
 		}
 
 		if ( isset( $reg_details['invoice_number'] )) {
-			$this->template_args['reg_details']['invoice_number']['value'] = $reg_details['invoice_number'];
-			$this->template_args['reg_details']['invoice_number']['label'] = __( 'Invoice Number', 'event_espresso' );
-			$this->template_args['reg_details']['invoice_number']['class'] = 'regular-text';
+			$this->_template_args['reg_details']['invoice_number']['value'] = $reg_details['invoice_number'];
+			$this->_template_args['reg_details']['invoice_number']['label'] = __( 'Invoice Number', 'event_espresso' );
+			$this->_template_args['reg_details']['invoice_number']['class'] = 'regular-text';
 		}
 					
 
 
-		$this->template_args['reg_details']['registration_session']['value'] = $this->_registration->REG_session;
-		$this->template_args['reg_details']['registration_session']['label'] = __( 'Registration Session', 'event_espresso' );
-		$this->template_args['reg_details']['registration_session']['class'] = 'regular-text';
+		$this->_template_args['reg_details']['registration_session']['value'] = $this->_registration->REG_session;
+		$this->_template_args['reg_details']['registration_session']['label'] = __( 'Registration Session', 'event_espresso' );
+		$this->_template_args['reg_details']['registration_session']['class'] = 'regular-text';
 
-		$this->template_args['reg_details']['ip_address']['value'] = $this->_session['ip_address'];
-		$this->template_args['reg_details']['ip_address']['label'] = __( 'Registration placed from IP', 'event_espresso' );
-		$this->template_args['reg_details']['ip_address']['class'] = 'regular-text';
+		$this->_template_args['reg_details']['ip_address']['value'] = $this->_session['ip_address'];
+		$this->_template_args['reg_details']['ip_address']['label'] = __( 'Registration placed from IP', 'event_espresso' );
+		$this->_template_args['reg_details']['ip_address']['class'] = 'regular-text';
 
-		$this->template_args['reg_details']['user_agent']['value'] = $this->_session['user_agent'];
-		$this->template_args['reg_details']['user_agent']['label'] = __( 'Registrant User Agent', 'event_espresso' );
-		$this->template_args['reg_details']['user_agent']['class'] = 'large-text';
-
-//		$this->template_args['reg_details']['session_dump']['value'] = '<pre>' . printr ( $this->_session, 'Session Dump', TRUE ) . '</pre>';
-//		$this->template_args['reg_details']['session_dump']['label'] = __( 'Session Dump', 'event_espresso' );
-//		$this->template_args['reg_details']['session_dump']['class'] = 'large-text';
-
-		//echo printr( $this->template_args, '$this->template_args' );
-
-
-//			$this->template_args['registration_form_url'] = add_query_arg( array( 'action' => 'edit_registration', 'process' => 'registration'  ), REG_ADMIN_URL );
+		$this->_template_args['reg_details']['user_agent']['value'] = $this->_session['user_agent'];
+		$this->_template_args['reg_details']['user_agent']['label'] = __( 'Registrant User Agent', 'event_espresso' );
+		$this->_template_args['reg_details']['user_agent']['class'] = 'large-text';
 
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_reg_details.template.php';
-		echo espresso_display_template( $template_path, $this->template_args, TRUE );
+		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
 
 	}
 
@@ -436,51 +501,58 @@ class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 		global $wpdb, $org_options;
 
 	    $REG = EEM_Registration::instance();
-		$attendees = $REG->get_registrations_for_transaction( $this->_registration ->TXN_ID, $this->_registration ->REG_ID );
+		$attendees = $REG->get_registrations_for_transaction( $this->_registration->TXN_ID, $this->_registration->REG_ID );
 
-		$this->template_args['attendees'] = array();
+		$this->_template_args['attendees'] = array();
+		$this->_template_args['attendee_notice'] = '';
 
-		$att_nmbr = 1;
-		foreach ( $attendees as $attendee ) {
-		
-			$this->template_args['attendees'][ $att_nmbr ]['fname'] = ( isset( $attendee->ATT_fname ) & ! empty( $attendee->ATT_fname ) ) ? $attendee->ATT_fname : '';
-			$this->template_args['attendees'][ $att_nmbr ]['lname'] = ( isset( $attendee->ATT_lname ) & ! empty( $attendee->ATT_lname ) ) ? $attendee->ATT_lname : '';
-			$this->template_args['attendees'][ $att_nmbr ]['email'] = ( isset( $attendee->ATT_email ) & ! empty( $attendee->ATT_email ) ) ? $attendee->ATT_email : '';
-			$this->template_args['attendees'][ $att_nmbr ]['final_price'] = ( isset( $attendee->REG_final_price ) & ! empty( $attendee->REG_final_price ) ) ? $attendee->REG_final_price : '';
+		if ( empty( $attendees)  || ( is_array($attendees) && empty($attendees[0]) ) ) {
+			EE_Error::add_error( __('There are no attendees attached to this registration. Something may have gone wrong with the registration', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			$this->_template_args['attendee_notice'] = EE_Error::get_notices();
+		} else {
+
+			$att_nmbr = 1;
+			foreach ( $attendees as $attendee ) {
 			
-			$address = array();
-			
-			if ( isset( $attendee->ATT_address ) && ( ! empty( $attendee->ATT_address ))) {
-				$address[] = $attendee->ATT_address;
+				$this->_template_args['attendees'][ $att_nmbr ]['fname'] = ( isset( $attendee->ATT_fname ) & ! empty( $attendee->ATT_fname ) ) ? $attendee->ATT_fname : '';
+				$this->_template_args['attendees'][ $att_nmbr ]['lname'] = ( isset( $attendee->ATT_lname ) & ! empty( $attendee->ATT_lname ) ) ? $attendee->ATT_lname : '';
+				$this->_template_args['attendees'][ $att_nmbr ]['email'] = ( isset( $attendee->ATT_email ) & ! empty( $attendee->ATT_email ) ) ? $attendee->ATT_email : '';
+				$this->_template_args['attendees'][ $att_nmbr ]['final_price'] = ( isset( $attendee->REG_final_price ) & ! empty( $attendee->REG_final_price ) ) ? $attendee->REG_final_price : '';
+				
+				$address = array();
+				
+				if ( isset( $attendee->ATT_address ) && ( ! empty( $attendee->ATT_address ))) {
+					$address[] = $attendee->ATT_address;
+				}
+				if ( isset( $attendee->ATT_address2 ) && ( ! empty( $attendee->ATT_address2 ))) {
+					$address[] = $attendee->ATT_address2;
+				}
+				if ( isset( $attendee->ATT_city ) && ( ! empty( $attendee->ATT_city ))) {
+					$address[] = $attendee->ATT_city;
+				}
+				if ( isset( $attendee->ATT_state ) && ( ! empty( $attendee->ATT_state ))) {
+					$address[] = $attendee->ATT_state;
+				}
+				if ( isset( $attendee->ATT_zip ) && ( ! empty( $attendee->ATT_zip ))) {
+					$address[] = $attendee->ATT_zip;
+				}
+				$this->_template_args['attendees'][ $att_nmbr ]['address'] = implode( ', ', $address );
+				
+				$this->_template_args['attendees'][ $att_nmbr ]['att_link'] = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$attendee->ATT_ID ), ATT_ADMIN_URL ), 'edit_attendee_nonce' );
+				
+				$att_nmbr++;
 			}
-			if ( isset( $attendee->ATT_address2 ) && ( ! empty( $attendee->ATT_address2 ))) {
-				$address[] = $attendee->ATT_address2;
-			}
-			if ( isset( $attendee->ATT_city ) && ( ! empty( $attendee->ATT_city ))) {
-				$address[] = $attendee->ATT_city;
-			}
-			if ( isset( $attendee->ATT_state ) && ( ! empty( $attendee->ATT_state ))) {
-				$address[] = $attendee->ATT_state;
-			}
-			if ( isset( $attendee->ATT_zip ) && ( ! empty( $attendee->ATT_zip ))) {
-				$address[] = $attendee->ATT_zip;
-			}
-			$this->template_args['attendees'][ $att_nmbr ]['address'] = implode( ', ', $address );
-			
-			$this->template_args['attendees'][ $att_nmbr ]['att_link'] = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$attendee->ATT_ID ), ATT_ADMIN_URL ), 'edit_attendee_nonce' );
-			
-			$att_nmbr++;
+
+			//printr( $attendees, '$attendees  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
+
+			$this->_template_args['event_name'] = $this->_registration->event_name;
+			$this->_template_args['currency_sign'] = $org_options['currency_symbol'];
+
+	//			$this->_template_args['registration_form_url'] = add_query_arg( array( 'action' => 'edit_registration', 'process' => 'attendees'  ), REG_ADMIN_URL );
 		}
 
-		//printr( $attendees, '$attendees  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
-
-		$this->template_args['event_name'] = $this->_registration->event_name;
-		$this->template_args['currency_sign'] = $org_options['currency_symbol'];
-
-//			$this->template_args['registration_form_url'] = add_query_arg( array( 'action' => 'edit_registration', 'process' => 'attendees'  ), REG_ADMIN_URL );
-
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_attendees.template.php';
-		echo espresso_display_template( $template_path, $this->template_args, TRUE );
+		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
 
 	}
 
@@ -496,25 +568,23 @@ class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 	*/
 	public function _reg_registrant_side_meta_box() {
 
-		$this->template_args['ATT_ID'] = $this->_registration->ATT_ID;
-		$this->template_args['fname'] = $this->_registration->ATT_fname;
-		$this->template_args['lname'] = $this->_registration->ATT_lname;
-		$this->template_args['email'] = $this->_registration->ATT_email;
-		$this->template_args['address'] = $this->_registration->ATT_address;
-		$this->template_args['address2'] = ( ! empty ( $this->_registration->ATT_address2 )) ? '<br />' . $this->_registration->ATT_address2 : '';
-		$this->template_args['city'] = ( ! empty ( $this->_registration->ATT_city )) ? '<br />' . $this->_registration->ATT_city . ', ' : '';
-		$this->template_args['state'] = ( ! empty ( $this->_registration->STA_ID )) ? '<br />' . $this->_registration->STA_ID . ', ' : '';
-		$this->template_args['country'] = ( ! empty ( $this->_registration->CNT_ISO )) ? $this->_registration->CNT_ISO : '';
-		$this->template_args['zip'] = ( ! empty ( $this->_registration->ATT_zip )) ? '<br />' . $this->_registration->ATT_zip : '';
-		$this->template_args['phone'] = $this->_registration->ATT_phone;
-		$this->template_args['social'] = stripslashes( $this->_registration->ATT_social );
-		$this->template_args['comments'] = stripslashes( $this->_registration->ATT_comments );
-		$this->template_args['notes'] = stripslashes( $this->_registration->ATT_notes );
-
-//			$this->template_args['registrant_form_url'] = add_query_arg( array( 'action' => 'edit_registration', 'process' => 'registrant'  ), REG_ADMIN_URL );
+		$this->_template_args['ATT_ID'] = $this->_registration->ATT_ID;
+		$this->_template_args['fname'] = $this->_registration->ATT_fname;
+		$this->_template_args['lname'] = $this->_registration->ATT_lname;
+		$this->_template_args['email'] = $this->_registration->ATT_email;
+		$this->_template_args['address'] = $this->_registration->ATT_address;
+		$this->_template_args['address2'] = ( ! empty ( $this->_registration->ATT_address2 )) ? '<br />' . $this->_registration->ATT_address2 : '';
+		$this->_template_args['city'] = ( ! empty ( $this->_registration->ATT_city )) ? '<br />' . $this->_registration->ATT_city . ', ' : '';
+		$this->_template_args['state'] = ( ! empty ( $this->_registration->STA_ID )) ? '<br />' . $this->_registration->STA_ID . ', ' : '';
+		$this->_template_args['country'] = ( ! empty ( $this->_registration->CNT_ISO )) ? $this->_registration->CNT_ISO : '';
+		$this->_template_args['zip'] = ( ! empty ( $this->_registration->ATT_zip )) ? '<br />' . $this->_registration->ATT_zip : '';
+		$this->_template_args['phone'] = $this->_registration->ATT_phone;
+		$this->_template_args['social'] = stripslashes( $this->_registration->ATT_social );
+		$this->_template_args['comments'] = stripslashes( $this->_registration->ATT_comments );
+		$this->_template_args['notes'] = stripslashes( $this->_registration->ATT_notes );
 
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_side_meta_box_registrant.template.php';
-		echo espresso_display_template( $template_path, $this->template_args, TRUE );
+		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
 	}
 
 
@@ -533,62 +603,62 @@ class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 
 		if ( is_array( $billing_info )) {
 
-			$this->template_args['free_event'] = FALSE;
+			$this->_template_args['free_event'] = FALSE;
 
-			$this->template_args['fname']['value'] = ! empty ( $billing_info['reg-page-billing-fname']['value'] ) ? $billing_info['reg-page-billing-fname']['value'] : '';
-			$this->template_args['fname']['label'] = ! empty ( $billing_info['reg-page-billing-fname']['label'] ) ? $billing_info['reg-page-billing-fname']['label'] :  __( 'First Name', 'event_espresso' );
+			$this->_template_args['fname']['value'] = ! empty ( $billing_info['reg-page-billing-fname']['value'] ) ? $billing_info['reg-page-billing-fname']['value'] : '';
+			$this->_template_args['fname']['label'] = ! empty ( $billing_info['reg-page-billing-fname']['label'] ) ? $billing_info['reg-page-billing-fname']['label'] :  __( 'First Name', 'event_espresso' );
 			
-			$this->template_args['lname']['value'] = ! empty ( $billing_info['reg-page-billing-lname']['value'] ) ? $billing_info['reg-page-billing-lname']['value'] : '';
-			$this->template_args['lname']['label'] = ! empty ( $billing_info['reg-page-billing-lname']['label'] ) ? $billing_info['reg-page-billing-lname']['label'] :  __( 'Last Name', 'event_espresso' );
+			$this->_template_args['lname']['value'] = ! empty ( $billing_info['reg-page-billing-lname']['value'] ) ? $billing_info['reg-page-billing-lname']['value'] : '';
+			$this->_template_args['lname']['label'] = ! empty ( $billing_info['reg-page-billing-lname']['label'] ) ? $billing_info['reg-page-billing-lname']['label'] :  __( 'Last Name', 'event_espresso' );
 			
-			$this->template_args['email']['value'] = ! empty ( $billing_info['reg-page-billing-email']['value'] ) ? $billing_info['reg-page-billing-email']['value'] : '';
-			$this->template_args['email']['label'] = __( 'Email', 'event_espresso' );
+			$this->_template_args['email']['value'] = ! empty ( $billing_info['reg-page-billing-email']['value'] ) ? $billing_info['reg-page-billing-email']['value'] : '';
+			$this->_template_args['email']['label'] = __( 'Email', 'event_espresso' );
 			
-			$this->template_args['address']['value'] = ! empty ( $billing_info['reg-page-billing-address']['value'] ) ? $billing_info['reg-page-billing-address']['value'] : '';
-			$this->template_args['address']['label'] = ! empty ( $billing_info['reg-page-billing-address']['label'] ) ? $billing_info['reg-page-billing-address']['label'] :  __( 'Address', 'event_espresso' );
+			$this->_template_args['address']['value'] = ! empty ( $billing_info['reg-page-billing-address']['value'] ) ? $billing_info['reg-page-billing-address']['value'] : '';
+			$this->_template_args['address']['label'] = ! empty ( $billing_info['reg-page-billing-address']['label'] ) ? $billing_info['reg-page-billing-address']['label'] :  __( 'Address', 'event_espresso' );
 			
-			$this->template_args['city']['value'] = ! empty ( $billing_info['reg-page-billing-city']['value'] ) ? $billing_info['reg-page-billing-city']['value'] : '';
-			$this->template_args['city']['label'] = ! empty ( $billing_info['reg-page-billing-city']['label'] ) ? $billing_info['reg-page-billing-city']['label'] :  __( 'City', 'event_espresso' );
+			$this->_template_args['city']['value'] = ! empty ( $billing_info['reg-page-billing-city']['value'] ) ? $billing_info['reg-page-billing-city']['value'] : '';
+			$this->_template_args['city']['label'] = ! empty ( $billing_info['reg-page-billing-city']['label'] ) ? $billing_info['reg-page-billing-city']['label'] :  __( 'City', 'event_espresso' );
 			
-			$this->template_args['state']['value'] = ! empty ( $billing_info['reg-page-billing-state']['value'] ) ? $billing_info['reg-page-billing-state']['value'] : '';
-			$this->template_args['state']['label'] = ! empty ( $billing_info['reg-page-billing-state']['label'] ) ? $billing_info['reg-page-billing-state']['label'] :  __( 'State', 'event_espresso' );
+			$this->_template_args['state']['value'] = ! empty ( $billing_info['reg-page-billing-state']['value'] ) ? $billing_info['reg-page-billing-state']['value'] : '';
+			$this->_template_args['state']['label'] = ! empty ( $billing_info['reg-page-billing-state']['label'] ) ? $billing_info['reg-page-billing-state']['label'] :  __( 'State', 'event_espresso' );
 			
-			$this->template_args['country']['value'] = ! empty ( $billing_info['reg-page-billing-country']['value'] ) ? $billing_info['reg-page-billing-country']['value'] : '';
-			$this->template_args['country']['label'] = ! empty ( $billing_info['reg-page-billing-country']['label'] ) ? $billing_info['reg-page-billing-country']['label'] : __( 'Country', 'event_espresso' );
+			$this->_template_args['country']['value'] = ! empty ( $billing_info['reg-page-billing-country']['value'] ) ? $billing_info['reg-page-billing-country']['value'] : '';
+			$this->_template_args['country']['label'] = ! empty ( $billing_info['reg-page-billing-country']['label'] ) ? $billing_info['reg-page-billing-country']['label'] : __( 'Country', 'event_espresso' );
 			
-			$this->template_args['zip']['value'] = ! empty ( $billing_info['reg-page-billing-zip']['value'] ) ? $billing_info['reg-page-billing-zip']['value'] : '';
-			$this->template_args['zip']['label'] = ! empty ( $billing_info['reg-page-billing-zip']['label'] ) ? $billing_info['reg-page-billing-zip']['label'] :  __( 'Zip Code', 'event_espresso' );
+			$this->_template_args['zip']['value'] = ! empty ( $billing_info['reg-page-billing-zip']['value'] ) ? $billing_info['reg-page-billing-zip']['value'] : '';
+			$this->_template_args['zip']['label'] = ! empty ( $billing_info['reg-page-billing-zip']['label'] ) ? $billing_info['reg-page-billing-zip']['label'] :  __( 'Zip Code', 'event_espresso' );
 
 			if ( isset( $billing_info['reg-page-billing-card-nmbr'] )) {
 
-				$this->template_args['credit_card_info'] = TRUE;
+				$this->_template_args['credit_card_info'] = TRUE;
 
 				$ccard = $billing_info['reg-page-billing-card-nmbr']['value'];
-				$this->template_args['card_nmbr']['value'] = substr( $ccard, 0, 4 ) . ' XXXX XXXX ' . substr( $ccard, -4 );
-				$this->template_args['card_nmbr']['label'] = 'Credit Card';
+				$this->_template_args['card_nmbr']['value'] = substr( $ccard, 0, 4 ) . ' XXXX XXXX ' . substr( $ccard, -4 );
+				$this->_template_args['card_nmbr']['label'] = 'Credit Card';
 
-				$this->template_args['card_exp_date']['value'] = $billing_info['reg-page-billing-card-exp-date-mnth']['value'] . ' / ' . $billing_info['reg-page-billing-card-exp-date-year']['value'];
-				$this->template_args['card_exp_date']['label'] = 'mm / yy';
+				$this->_template_args['card_exp_date']['value'] = $billing_info['reg-page-billing-card-exp-date-mnth']['value'] . ' / ' . $billing_info['reg-page-billing-card-exp-date-year']['value'];
+				$this->_template_args['card_exp_date']['label'] = 'mm / yy';
 
-				$this->template_args['card_ccv_code']['value'] = $billing_info['reg-page-billing-card-ccv-code']['value'];
-				$this->template_args['card_ccv_code']['label'] = $billing_info['reg-page-billing-card-ccv-code']['label'];
+				$this->_template_args['card_ccv_code']['value'] = $billing_info['reg-page-billing-card-ccv-code']['value'];
+				$this->_template_args['card_ccv_code']['label'] = $billing_info['reg-page-billing-card-ccv-code']['label'];
 
 			} else {
-				$this->template_args['credit_card_info'] = FALSE;
+				$this->_template_args['credit_card_info'] = FALSE;
 			}
 
 		} else {
 
-			$this->template_args['free_event'] = $billing_info;
+			$this->_template_args['free_event'] = $billing_info;
 
 		}
 
 
-//			$this->template_args['billing_form_url'] = add_query_arg( array( 'action' => 'edit_registration', 'process' => 'billing'  ), REG_ADMIN_URL );
-
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_side_meta_box_box_billing_info.template.php';
-		echo espresso_display_template( $template_path, $this->template_args, TRUE );
+		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
 	}
+
+
 
 
 
@@ -603,7 +673,10 @@ class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 		echo '<h1>OMG !!! You just deleted everything !!!</h1>';
 		echo '<h1>What have you done ?!?!?</h1>';
 		echo '<h1>Timmy\'s gonna be maaaaaad at you !!! </h1>';
+		echo '<h1>This is the long way of saying, "Todo"</h1>';
 	}
+
+
 
 
 
@@ -624,12 +697,12 @@ class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 //		$page_args['admin_reports'][] = 'chart1';
 		
 		$template_path = EE_CORE_ADMIN . 'admin_reports.template.php';
-		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $page_args, TRUE );
+		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $page_args, TRUE );
 		
 //		printr( $page_args, '$page_args' );
 		
 		// the final template wrapper
-		$this->admin_page_wrapper();
+		$this->display_admin_page_with_no_sidebar();
 
 	}
 
@@ -648,7 +721,7 @@ class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 		$report_ID = 'reg-admin-registrations-per-day-report-dv';
 		$report_JS = 'espresso_reg_admin_regs_per_day';
 		
-		wp_enqueue_script( $report_JS, REG_ASSETS_URL . $report_JS . '_report.js', array('jquery', 'jqplot'), '1.0', TRUE);
+		wp_enqueue_script( $report_JS, REG_ASSETS_URL . $report_JS . '_report.js', array('jquery', 'jqplot'), EVENT_ESPRESSO_VERSION, TRUE);
 
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
 	    $REG = EEM_Registration::instance();
@@ -734,6 +807,75 @@ class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 		return $report_ID;
 	}
 
+
+
+
+
+	/**
+	 * get registrations for given parameters (used by list table)
+	 * @param  int  $perpage    how many registrations displayed per page
+	 * @param  boolean $count   return the count or objects
+	 * @return mixed (int|array)  int = count || array of registration objects
+	 */
+	public function _get_registrations( $perpage, $count = FALSE ) {
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
+		$REG = EEM_Registration::instance();
+
+		$EVT_ID = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : FALSE;
+		$CAT_ID = isset( $this->_req_data['category_id'] ) ? absint( $this->_req_data['category_id'] ) : FALSE;
+		$reg_status = isset( $this->_req_data['reg_status'] ) ? sanitize_text_field( $this->_req_data['reg_status'] ) : FALSE;
+		$month_range = isset( $this->_req_data['month_range'] ) ? sanitize_text_field( $this->_req_data['month_range'] ) : FALSE;
+		$today_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'today' ? TRUE : FALSE;
+		$this_month_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'month' ? TRUE  : FALSE;
+		$start_date = FALSE;
+		$end_date = FALSE;
+
+
+		//set orderby
+		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
+
+		switch ( $this->_req_data['orderby'] ) {
+			case 'REG_ID':
+				$orderby = 'REG_ID';
+				break;
+			case 'Reg_status':
+				$orderby = 'STS_ID';
+				break;
+			case 'ATT_fname':
+				$orderby = 'REG_att_name';
+				break;
+			case 'event_name':
+				$orderby = 'event_name';
+				break;
+			case 'DTT_EVT_start':
+				$orderby = 'DTT_EVT_start';
+				break;
+			default: //'REG_date'
+				$orderby = 'REG_date';
+		}
+
+		$sort = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
+		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
+		$per_page = isset( $per_page ) && !empty( $per_page ) ? $per_page : 10;
+		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $per_page;
+
+		$offset = ($current_page-1)*$per_page;
+		$limit = array( $offset, $per_page );
+
+		$registrations = $REG->get_registrations_for_admin_page( $EVT_ID, $CAT_ID, $reg_status, $month_range, $today_a, $this_month_a, $start_date, $end_date, $orderby, $sort, $limit, $count );
+
+		return $registrations;
+	}
+
+
+
+
+
+
+	public function get_registration_status_array() {
+		return self::$_reg_status;
+	}
 
 
 

@@ -96,7 +96,7 @@ class EE_Admin_Page_load {
 	 */
 	private function _define_all_constants() {
 		define( 'EE_CORE_ADMIN', EE_CORE . 'admin' . DS );
-		define( 'EE_CORE_ADMIN_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'includes' . DS . 'core' . DS . 'admin' . DS );
+		define( 'EE_CORE_ADMIN_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'includes/core/admin/' );
 		define( 'WP_AJAX_URL', get_bloginfo('url') . '/wp-admin/admin-ajax.php' );
 		define( 'JQPLOT_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/' );
 	}
@@ -161,7 +161,7 @@ class EE_Admin_Page_load {
 	 */
 	private function _get_installed_pages() {
 		$installed_refs = array();
-		$exclude = array( 'assets', 'attendees', 'caffeinated', 'event_pricing', 'registrations', 'transactions', 'messages'/*, 'pricing_manager'*/ );
+		$exclude = array( 'assets', 'caffeinated', 'event_pricing', 'transactions', 'messages', 'pricing_manager' );
 		// grab everything in the  admin core directory
 		if ( $admin_screens = glob( EE_CORE_ADMIN . '*', GLOB_ONLYDIR )) {
 			foreach( $admin_screens as $admin_screen ) {
@@ -200,7 +200,7 @@ class EE_Admin_Page_load {
 		$page = str_replace('_', ' ', strtolower( $page ) );
 		$class_name = str_replace(' ', '_', ucwords($page) ) . '_Admin_Page_Init';
 		//echo '<h4>$class_name : ' . $class_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-
+ 
 		if ( !class_exists($class_name )) {
 			$error_msg[] = sprintf( __('Something went wrong with loading the %s admin page.', 'event_espresso' ), $page);
 			$error_msg[] = $error_msg[0] . "\r\n" . sprintf( __( 'There is no Init class in place for the %s admin page.', 'event_espresso') . '<br />' . __( 'Make sure you have <strong>%s</strong> defined. If this is a non-EE-core admin page then you also must have an autoloader in place for your class', 'event_espresso'), $page, $class_name );

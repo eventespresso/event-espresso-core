@@ -62,6 +62,10 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 		//load initial stuff.
 		$this->_initialize_admin_page();
+
+		//some global constants
+		if ( !defined('EE_FF_HELPER') )
+			define( 'EE_FF_HELPER', EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php');
 	}
 
 

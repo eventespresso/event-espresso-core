@@ -45,6 +45,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected $_default_nav_tab_name;
 
 	//template variables (used by templates)
+	protected $_template_path;
 	protected $_template_args;
 
 	//this will hold the list table object for a given view.
@@ -57,6 +58,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	//list table args
 	protected $_view;
 	protected $_views;
+
 
 	//action => method pairs used for routing incoming requests
 	protected $_page_routes;
@@ -817,6 +819,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_style('espresso_menu', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-menu-styles.css');
 		wp_register_style('ee-admin-css', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.css', array(), EVENT_ESPRESSO_VERSION);
 
+		//attendee style registrations
+		wp_register_style('espresso_attendees', ATT_ASSETS_URL . 'espresso_attendees_admin.css', array(), EVENT_ESPRESSO_VERSION );	
+
+		//registrations style register
+		wp_register_style('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.css', array(), EVENT_ESPRESSO_VERSION );
+
 		//enqueue global styles
 		wp_enqueue_style('espresso_menu');
 		wp_enqueue_style('event_espresso');
@@ -830,6 +838,23 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script('event_editor_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_editor.js', array('jquery-ui-slider', 'jquery-ui-timepicker-addon', 'post'), EVENT_ESPRESSO_VERSION, true);
 		wp_register_script('event_espresso_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_espresso.js', array('jquery'), EVENT_ESPRESSO_VERSION, true);
 		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('jquery'), EVENT_ESPRESSO_VERSION, true );
+
+		//attendee script registrations
+		wp_register_script('espresso_attendees', ATT_ASSETS_URL . 'espresso_attendees_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
+
+		//registrations script register
+		wp_register_script('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
+
+		//jqplot library
+		wp_register_script('jqplot', JQPLOT_URL . 'jquery.jqplot.min.js', array('jquery'), '', FALSE);
+		wp_register_script('jqplot-barRenderer', JQPLOT_URL . 'plugins/jqplot.barRenderer.min.js', array('jqplot'), '', FALSE);
+		wp_register_script('jqplot-canvasTextRenderer', JQPLOT_URL . 'plugins/jqplot.canvasTextRenderer.min.js', array('jqplot'), '', FALSE);
+		wp_register_script('jqplot-canvasAxisTickRenderer', JQPLOT_URL . 'plugins/jqplot.canvasAxisTickRenderer.min.js', array('jqplot'), '', FALSE);
+		wp_register_script('jqplot-categoryAxisRenderer', JQPLOT_URL . 'plugins/jqplot.categoryAxisRenderer.min.js', array('jqplot'), '', FALSE);
+		wp_register_script('jqplot-dateAxisRenderer', JQPLOT_URL . 'plugins/jqplot.dateAxisRenderer.min.js', array('jqplot'), '', FALSE);
+		wp_register_script('jqplot-highlighter', JQPLOT_URL . 'plugins/jqplot.highlighter.min.js', array('jqplot'), '', FALSE);
+		wp_register_script('jqplot-pointLabels', JQPLOT_URL . 'plugins/jqplot.pointLabels.min.js', array('jqplot'), '', FALSE);
+		wp_register_script('jqplot-all', EE_CORE_ADMIN_URL . 'assets/ee-admin-jqlot-all.js', array('jqplot-pointLabels', 'jqplot-highlighter', 'jqplot-dateAxisRenderer', 'jqplot-categoryAxisRenderer', 'jqplot-canvasAxisTickRenderer', 'jqplot-canvasTextRenderer', 'jqplot-barRenderer'), EVENT_ESPRESSO_VERSION, FALSE );
 
 
 		//enqueue global scripts
@@ -1557,7 +1582,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
-		$redirect_url = $this->admin_base_url;
+		$redirect_url = $this->_admin_base_url;
 
 		// how many records affected ? more than one record ? or just one ?
 		if ( $success == 2 ) {
