@@ -258,7 +258,8 @@ class EE_Admin_Page_load {
 			
 			$wp_page_slug = add_submenu_page( $parent_slug, $label, $menu_label, $capability, $menu_slug, $menu_func );
 
-			$installed_page->set_page_dependencies($wp_page_slug);
+			if ( is_object($installed_page) )
+				$installed_page->set_page_dependencies($wp_page_slug);
 			$add_main_menu = false;
 			$i++;
 		}
