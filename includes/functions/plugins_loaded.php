@@ -575,9 +575,6 @@ function event_espresso_run_install($table_name, $table_version, $sql, $engine =
 }
 
 
-echo json_encode($_REQUEST);
-		exit();
-
 /**
  * 		loads and instantiates files and objects for EE admin pages
  * 		@access public
@@ -585,7 +582,6 @@ echo json_encode($_REQUEST);
  */
 function espresso_init_admin_pages() {
 	//this loads the controller for the admin pages which will setup routing etc
-	
 	try {
 		$EEAdmin = new EE_Admin_Page_load();
 	} catch ( EE_Error $e ) {

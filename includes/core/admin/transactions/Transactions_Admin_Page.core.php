@@ -37,8 +37,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 * 		@access public
 	 * 		@return void
 	 */
-	public function __construct($wp_page_slug) {
-		parent::__construct($wp_page_slug);
+	public function __construct() {
+		parent::__construct();
 	}
 
 
@@ -247,7 +247,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles() {
 		//enqueue style
-		wp_enqueue_style('espresso_txn');	
+		wp_enqueue_style('espresso_txn');
 
 		//scripts
 		wp_enqueue_script('espresso_txn');	
@@ -943,7 +943,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		
 		
 		// the final template wrapper
-		$this->admin_page_wrapper();
+		$this->display_admin_page_with_no_sidebar();
 		
 	}
 

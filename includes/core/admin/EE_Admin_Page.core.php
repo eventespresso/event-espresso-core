@@ -53,7 +53,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	//bools
 	protected $_is_UI_request;
-	protected $_doing_AJAX;
 
 	//list table args
 	protected $_view;
@@ -127,7 +126,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	/**
 	 * _ajax_hooks
 	 * child classes put all their add_action('wp_ajax_{name_of_hook}') hooks in here.
-	 * Note: within the ajax callback methods, child classes should make sure that $this->_doing_AJAX flag is set true.
+	 * Note: within the ajax callback methods.
 	 *
 	 * @abstract
 	 * @access protected
@@ -344,8 +343,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//set early because incoming requests could be ajax related and we need to register those hooks.
 		$this->_ajax_hooks();
-		if ( defined('DOING_AJAX') && DOING_AJAX )
-			$this->_doing_AJAX = TRUE;
 
 		//first verify if we need to load anything...
 		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
@@ -402,7 +399,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	public function load_page_dependencies() {
-		var_dump('in_here');
+
 		$this->_current_screen = get_current_screen();
 
 		//init template args
@@ -471,7 +468,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * This sets some global defaults for class properties.
 	 */
 	private function _set_defaults() {
-		$this->_doing_AJAX = FALSE; //this will be set to true by the called ajax method in our child classes
 		$this->_admin_base_url = $this->_current_screen = $this->_admin_page_title = $this->_req_action = $this->_req_nonce = $this->_event = NULL;
 
 		$this->_nav_tabs = $this_views = $this->_page_routes = $this->_page_config = array();
@@ -513,7 +509,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	private function _verify_routes() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-		if ( !$this->_current_page && !$this->_doing_AJAX ) return FALSE;
+		if ( !$this->_current_page && !DOING_AJAX) return FALSE;
 
 		$this->_route = FALSE;
 		$func = FALSE;
@@ -550,11 +546,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		//lets set if this is a UI request or not.
-		$this->_is_UI_request = ( ! isset( $this->_req_data['noheader'] ) || $this->_req_data['noheader'] != 'true' || !DOING_AJAX ) ? TRUE : FALSE;
+		$this->_is_UI_request = ( ! isset( $this->_req_data['noheader'] ) || $this->_req_data['noheader'] != 'true' ) ? TRUE : FALSE;
 
 
 		//wait a minute... we might have a noheader in the route array
-		$this->_is_UI_request = is_array($this->_route) && isset($this->_route['noheader'] ) && $this->_route['noheader'] || DOING_AJAX ? FALSE : $this->_is_UI_request;
+		$this->_is_UI_request = is_array($this->_route) && isset($this->_route['noheader'] ) && $this->_route['noheader'] ? FALSE : $this->_is_UI_request;
 
 	}
 
@@ -838,6 +834,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script('event_editor_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_editor.js', array('jquery-ui-slider', 'jquery-ui-timepicker-addon', 'post'), EVENT_ESPRESSO_VERSION, true);
 		wp_register_script('event_espresso_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_espresso.js', array('jquery'), EVENT_ESPRESSO_VERSION, true);
 		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('jquery'), EVENT_ESPRESSO_VERSION, true );
+
 
 		//attendee script registrations
 		wp_register_script('espresso_attendees', ATT_ASSETS_URL . 'espresso_attendees_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
@@ -1426,7 +1423,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args['current_page'] = $this->_wp_page_slug;
 		$template_path = EE_CORE_ADMIN . 'admin_list_wrapper.template.php';
 
-		$this->_template_args['table_url'] = $this->_doing_AJAX ? add_query_arg( array( 'noheader' => 'true'), $this->_admin_base_url ) : $this->_admin_base_url;
+		$this->_template_args['table_url'] = DOING_AJAX ? add_query_arg( array( 'noheader' => 'true'), $this->_admin_base_url ) : $this->_admin_base_url;
 		$this->_template_args['list_table'] = $this->_list_table_object;
 
 		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
