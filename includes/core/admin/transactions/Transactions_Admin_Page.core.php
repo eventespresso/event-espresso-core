@@ -290,6 +290,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_style('jquery-jqplot-css', JQPLOT_URL . 'jquery.jqplot.min.css', array(), EVENT_ESPRESSO_VERSION);
 
 		//scripts
+		wp_deregister_script( 'jquery' );
+        wp_register_script( 'jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js');
 		global $is_IE;
 		if ( $is_IE ) {
 			wp_enqueue_script( 'excanvas' , JQPLOT_URL . 'excanvas.min.js', array(), ESPRESSO_E, FALSE);
@@ -934,8 +936,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	
 		$page_args = array();
 		
-		$page_args['admin_reports'][] = $this->_revenue_per_day_report( '-2 month' );  //  option: '-1 week', '-2 weeks' defaults to '-1 month'
-		$page_args['admin_reports'][] = $this->_revenue_per_event_report( '-2 month' ); //  option: '-1 week', '-2 weeks' defaults to '-1 month'
+		$page_args['admin_reports'][] = $this->_revenue_per_day_report( '-8 month' );  //  option: '-1 week', '-2 weeks' defaults to '-1 month'
+		$page_args['admin_reports'][] = $this->_revenue_per_event_report( '-8 month' ); //  option: '-1 week', '-2 weeks' defaults to '-1 month'
 //		$page_args['admin_reports'][] = 'chart1';
 		
 		$template_path = EE_CORE_ADMIN . 'admin_reports.template.php';
@@ -962,12 +964,13 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$report_ID = 'txn-admin-revenue-per-day-report-dv';
 		$report_JS = 'espresso_txn_admin_revenue_per_day';
 		
-		wp_enqueue_script( $report_JS, TXN_ASSETS_URL . $report_JS . '_report.js', array('jquery'), '1.0', TRUE);
+		wp_enqueue_script( $report_JS, TXN_ASSETS_URL . $report_JS . '_report.js', array('jqplot-all'), '1.0', TRUE);
 
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 	    $TXN = EEM_Transaction::instance();
-	 
-		if( $results = $TXN->get_revenue_per_day_report( $period ) ) {		
+	 	
+		if( $results = $TXN->get_revenue_per_day_report( $period ) ) {	
 			//printr( $results, '$registrations_per_day' );
 			$revenue = array();
 			$xmin = date( 'Y-m-d', strtotime( '+1 year' ));
@@ -997,7 +1000,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			);
 			wp_localize_script( $report_JS, 'txnRevPerDay', $report_params );
 		}
-												
+											
 		return $report_ID;
 	}
 
@@ -1016,8 +1019,9 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$report_ID = 'txn-admin-revenue-per-event-report-dv';
 		$report_JS = 'espresso_txn_admin_revenue_per_event';
 		
-		wp_enqueue_script( $report_JS, TXN_ASSETS_URL . $report_JS . '_report.js', array('jquery'), '1.0', TRUE);
+		wp_enqueue_script( $report_JS, TXN_ASSETS_URL . $report_JS . '_report.js', array('jqplot-all'), '1.0', TRUE);
 
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 	    $TXN = EEM_Transaction::instance();
 	 

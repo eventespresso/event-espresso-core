@@ -840,7 +840,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script('espresso_attendees', ATT_ASSETS_URL . 'espresso_attendees_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
 
 		//registrations script register
-		wp_register_script('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
+		wp_register_script('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.js', array('jquery-ui-datepicker', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
 
 		//transactions script register
 		wp_register_script('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.js', array('jquery-ui-datepicker', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
