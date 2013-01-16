@@ -373,7 +373,9 @@ class Forms_Admin_Page extends EE_Admin_Page {
 	/* QUERIES */
 
 	public function get_questions( $perpage, $count = FALSE ) {}
+	public function get_trashed_questions( $perpage, $count = FALSE ) {}
 	public function get_question_groups( $perpage, $count = FALSE ) {}
+	public function get_trashed_question_groups( $perpage, $count = FALSE ) {}
 
 
 } //ends Forms_Admin_Page class
