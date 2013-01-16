@@ -147,7 +147,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	public function initialize_admin_page() {
 		//let's check user access first
 		$this->_check_user_access();
-		$this->_loaded_page_object->route_admin_request($this->_wp_page_slug);
+		$this->_loaded_page_object->route_admin_request();
 		return;
 	}
 
