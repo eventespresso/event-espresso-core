@@ -13,17 +13,17 @@
 *
 * ------------------------------------------------------------------------
 *
-* Pricing_Manager_Admin_Page_Init class
+* Pricing_Admin_Page_Init class
 * 
-* This is the init for the EE Pricing Manager Admin Pages.  See EE_Admin_Page_Init for method inline docs.
+* This is the init for the EE Pricing Admin Pages.  See EE_Admin_Page_Init for method inline docs.
 *
 * @package			Event Espresso
-* @subpackage		includes/core/admin/pricing_manager/Pricing_Manager_Admin_Page_Init.core.php
+* @subpackage		includes/core/admin/pricing/Pricing_Admin_Page_Init.core.php
 * @author				Brent Christensen 
 *
 * ------------------------------------------------------------------------
 */
-class Pricing_Manager_Admin_Page_Init extends EE_Admin_Page_Init  {
+class Pricing_Admin_Page_Init extends EE_Admin_Page_Init  {
 
 
 
@@ -39,15 +39,15 @@ class Pricing_Manager_Admin_Page_Init extends EE_Admin_Page_Init  {
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-		define( 'PRC_MNGR_PG_SLUG', 'pricing_manager' );	
-		define( 'PRC_MNGR_LABEL', __('Pricing Manager', 'event_espresso'));	
-		define( 'PRC_MNGR_PG_NAME', ucwords( str_replace( '_', '', PRC_MNGR_PG_SLUG )));	
-		define( 'PRC_MNGR_ADMIN', EE_CORE_ADMIN . PRC_MNGR_PG_SLUG . DS );	
-		define( 'PRC_MNGR_ADMIN_URL', admin_url( 'admin.php?page=' . PRC_MNGR_PG_SLUG ));	
-		define( 'PRC_MNGR_ASSETS_PATH', PRC_MNGR_ADMIN . 'assets' . DS );		
-		define( 'PRC_MNGR_ASSETS_URL', str_replace( '\\', '/', EE_CORE_ADMIN_URL . PRC_MNGR_PG_SLUG . DS . 'assets' . DS ));	
-		define( 'PRC_MNGR_TEMPLATE_PATH', PRC_MNGR_ADMIN . 'templates' . DS );	
-		define( 'PRC_MNGR_TEMPLATE_URL', str_replace( '\\', '/', EE_CORE_ADMIN_URL . PRC_MNGR_PG_SLUG . DS . 'templates' . DS ));
+		define( 'PRICING_PG_SLUG', 'pricing' );	
+		define( 'PRICING_LABEL', __('Pricing', 'event_espresso'));	
+		define( 'PRICING_PG_NAME', ucwords( str_replace( '_', '', PRICING_PG_SLUG )));	
+		define( 'PRICING_ADMIN', EE_CORE_ADMIN . PRICING_PG_SLUG . DS );	
+		define( 'PRICING_ADMIN_URL', admin_url( 'admin.php?page=' . PRICING_PG_SLUG ));	
+		define( 'PRICING_ASSETS_PATH', PRICING_ADMIN . 'assets' . DS );		
+		define( 'PRICING_ASSETS_URL', EE_CORE_ADMIN_URL . PRICING_PG_SLUG .'/assets/' );	
+		define( 'PRICING_TEMPLATE_PATH', PRICING_ADMIN . 'templates' . DS );	
+		define( 'PRICING_TEMPLATE_URL', EE_CORE_ADMIN_URL . PRICING_PG_SLUG . DS . 'templates/' );
 
 		parent::__construct();
 
@@ -58,9 +58,9 @@ class Pricing_Manager_Admin_Page_Init extends EE_Admin_Page_Init  {
 
 
 	protected function _set_init_properties() {
-		$this->label = PRC_MNGR_LABEL;
-		$this->menu_label = PRC_MNGR_LABEL;
-		$this->menu_slug = PRC_MNGR_PG_SLUG;
+		$this->label = PRICING_LABEL;
+		$this->menu_label = PRICING_LABEL;
+		$this->menu_slug = PRICING_PG_SLUG;
 	}
 
 
@@ -83,4 +83,4 @@ class Pricing_Manager_Admin_Page_Init extends EE_Admin_Page_Init  {
 
 
 }	
-// end of file:	includes/core/admin/pricing_manager/Pricing_Manager_Admin_Page_Init.core.php
+// end of file:	includes/core/admin/pricing/Pricing_Admin_Page_Init.core.php
