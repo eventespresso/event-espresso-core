@@ -575,8 +575,6 @@ function event_espresso_run_install($table_name, $table_version, $sql, $engine =
 }
 
 
-
-
 /**
  * 		loads and instantiates files and objects for EE admin pages
  * 		@access public

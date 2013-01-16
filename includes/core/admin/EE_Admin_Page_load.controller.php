@@ -81,7 +81,7 @@ class EE_Admin_Page_load {
 		$this->_get_installed_pages();
 
 		//set menus (has to be done on every load - we're not actually loading the page just setting the menus and where they point to).
-		$this->_set_menus();
+		add_action('admin_menu', array($this, 'set_menus') );
 
 	}
 
@@ -161,7 +161,7 @@ class EE_Admin_Page_load {
 	 */
 	private function _get_installed_pages() {
 		$installed_refs = array();
-		$exclude = array( 'assets', 'caffeinated', 'event_pricing', 'transactions', 'messages', 'pricing_manager' );
+		$exclude = array( 'assets', 'caffeinated', 'event_pricing', 'messages', 'pricing_manager' );
 		// grab everything in the  admin core directory
 		if ( $admin_screens = glob( EE_CORE_ADMIN . '*', GLOB_ONLYDIR )) {
 			foreach( $admin_screens as $admin_screen ) {
@@ -213,13 +213,13 @@ class EE_Admin_Page_load {
 	}	
 
 	/**
-	 * _set_menus
+	 * set_menus
 	 * This method setsup the menus for EE Admin Pages
 	 *
 	 * @access private
 	 * @return void
 	 */
-	private function _set_menus() {
+	public function set_menus() {
 		global $espresso_manager;
 		//prep the pages (sort, group, set if display etc.)
 		$this->_prep_pages();
@@ -257,6 +257,8 @@ class EE_Admin_Page_load {
 			
 			
 			$wp_page_slug = add_submenu_page( $parent_slug, $label, $menu_label, $capability, $menu_slug, $menu_func );
+
+			$installed_page->set_page_dependencies($wp_page_slug);
 			$add_main_menu = false;
 			$i++;
 		}

@@ -53,7 +53,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	//bools
 	protected $_is_UI_request;
-	protected $_doing_AJAX;
 
 	//list table args
 	protected $_view;
@@ -96,10 +95,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 		@access public
 	 * 		@return void
 	 */
-	public function __construct($_wp_page_slug) {
-
-		//init _wp_page_slug property
-		$this->_wp_page_slug = $_wp_page_slug;
+	public function __construct() {
 
 		//set initial page props (child method)
 		$this->_init_page_props();
@@ -130,7 +126,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	/**
 	 * _ajax_hooks
 	 * child classes put all their add_action('wp_ajax_{name_of_hook}') hooks in here.
-	 * Note: within the ajax callback methods, child classes should make sure that $this->_doing_AJAX flag is set true.
+	 * Note: within the ajax callback methods.
 	 *
 	 * @abstract
 	 * @access protected
@@ -351,7 +347,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//first verify if we need to load anything...
 		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
 
-		if ( !$this->_current_page && !$this->_doing_AJAX ) return FALSE;
+		if ( !$this->_current_page && !DOING_AJAX ) return FALSE;
 
 		//next let's just check user_access and kill if no access
 		$this->_check_user_access();
@@ -387,10 +383,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 			add_action( 'admin_init', array( $this, 'admin_init' ), 10 );
 			if ( method_exists( $this, 'admin_init_' . $this->_current_view ) )
 				add_action( 'admin_init', array( $this, 'admin_init_' . $this->_current_view ), 15 );
-			$page_hook = 'load-' . $this->_wp_page_slug;
-			//hook into page load hook so all page specific stuff get's loaded.
-			if ( !empty($this->_wp_page_slug) )
-				add_action($page_hook, array($this, 'load_page_dependencies') );
 		} else {
 			//hijack regular WP loading and route admin request immediately
 			if ( current_user_can( 'manage_options' ) )
@@ -407,7 +399,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	public function load_page_dependencies() {
-
 
 		$this->_current_screen = get_current_screen();
 
@@ -477,7 +468,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * This sets some global defaults for class properties.
 	 */
 	private function _set_defaults() {
-		$this->_doing_AJAX = FALSE; //this will be set to true by the called ajax method in our child classes
 		$this->_admin_base_url = $this->_current_screen = $this->_admin_page_title = $this->_req_action = $this->_req_nonce = $this->_event = NULL;
 
 		$this->_nav_tabs = $this_views = $this->_page_routes = $this->_page_config = array();
@@ -505,6 +495,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	
 
+	public function set_wp_page_slug($wp_page_slug) {
+		$this->_wp_page_slug = $wp_page_slug;
+	}
 
 	/**
 	 * _verify_routes
@@ -516,7 +509,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	private function _verify_routes() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-		if ( !$this->_current_page && !$this->_doing_AJAX ) return FALSE;
+		if ( !$this->_current_page && !DOING_AJAX) return FALSE;
 
 		$this->_route = FALSE;
 		$func = FALSE;
@@ -825,6 +818,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//registrations style register
 		wp_register_style('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.css', array(), EVENT_ESPRESSO_VERSION );
 
+		//transactions style register
+		wp_register_style( 'espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.css', array(), EVENT_ESPRESSO_VERSION );
+
 		//enqueue global styles
 		wp_enqueue_style('espresso_menu');
 		wp_enqueue_style('event_espresso');
@@ -839,11 +835,15 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script('event_espresso_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_espresso.js', array('jquery'), EVENT_ESPRESSO_VERSION, true);
 		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('jquery'), EVENT_ESPRESSO_VERSION, true );
 
+
 		//attendee script registrations
 		wp_register_script('espresso_attendees', ATT_ASSETS_URL . 'espresso_attendees_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
 
 		//registrations script register
-		wp_register_script('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
+		wp_register_script('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.js', array('jquery-ui-datepicker', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
+
+		//transactions script register
+		wp_register_script('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.js', array('jquery-ui-datepicker', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
 
 		//jqplot library
 		wp_register_script('jqplot', JQPLOT_URL . 'jquery.jqplot.min.js', array('jquery'), '', FALSE);
@@ -1423,7 +1423,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args['current_page'] = $this->_wp_page_slug;
 		$template_path = EE_CORE_ADMIN . 'admin_list_wrapper.template.php';
 
-		$this->_template_args['table_url'] = $this->_doing_AJAX ? add_query_arg( array( 'noheader' => 'true'), $this->_admin_base_url ) : $this->_admin_base_url;
+		$this->_template_args['table_url'] = DOING_AJAX ? add_query_arg( array( 'noheader' => 'true'), $this->_admin_base_url ) : $this->_admin_base_url;
 		$this->_template_args['list_table'] = $this->_list_table_object;
 
 		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );

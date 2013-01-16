@@ -4,12 +4,12 @@
  *
  * Event Registration and Management Plugin for WordPress
  *
- * @ package			Event Espresso
- * @ author				Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
- * @ link					{@link http://www.eventespresso.com}
- * @ since		 		3.2.P
+ * @ package	Event Espresso
+ * @ author		Seth Shoultes
+ * @ copyright	(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ license	{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
+ * @ link		{@link http://www.eventespresso.com}
+ * @ since		3.2.P
  *
  * ------------------------------------------------------------------------
  *
@@ -21,75 +21,102 @@
  *
  * ------------------------------------------------------------------------
  */
-if ( ! class_exists( 'WP_List_Table' )) {
-    require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
-}
 
 
-class EE_Admin_Transactions_List_Table extends WP_List_Table {    
+class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {    
 
-	private $_data;
-	private $_transactions;
 	private $_status;
-	private $_entries_per_page_dropdown;
 
 
 	/**
 	 * 		constructor
 	*/ 
-   function __construct( $data, $status, $entries_per_page_dropdown ){
- 
-		$this->_data = $this->_transactions = $data;
-		$this->_status = $status;
-		$this->_entries_per_page_dropdown = $entries_per_page_dropdown;
-                
-        //Set parent defaults
-        parent::__construct( array(
-            'singular'  => __( 'Transaction', 'event_espresso' ),     //singular name of the listed records
-            'plural'    => __( 'Transactions', 'event_espresso' ),    //plural name of the listed records
-            'ajax'      => FALSE        //does this table support ajax?
-		) );
-	
-		$this->prepare_items();
-    
+   function __construct( &$admin_page ){
+
+   		parent::__construct($admin_page);
+   		$this->_status = $this->_admin_page->get_transaction_status_array();
+   
 	}
 
 
-	/**
-	 * 		get_columns
-	*/ 
-    function get_columns(){
-        $columns = array(
-            'cb'        					=> '<input type="checkbox" />', //Render a checkbox instead of text
-            'TXN_ID'   				=> __( 'ID', 'event_espresso' ),
+
+
+
+	protected function _setup_data() {
+		$this->_per_page = $this->get_items_per_page( $this->_screen . '_per_page' );
+		$this->_data = $this->_admin_page->get_transactions( $this->_per_page );
+		$this->_all_data_count = $this->_admin_page->get_transactions( $this->_per_page, TRUE );
+	}
+
+
+
+
+
+
+
+
+	protected function _set_properties() {
+		$this->_wp_list_args = array(
+			'singular' => __('transaction', 'event_espresso'),
+			'plural' => __('transactions', 'event_espresso'),
+			'ajax' => TRUE,
+			'screen' => $this->_admin_page->get_current_screen()->id
+			);
+
+		$this->_columns = array(
+            'TXN_ID' => __( 'ID', 'event_espresso' ),
 			'TXN_timestamp'	=> __( 'Transaction Date', 'event_espresso' ),
-            'STS_ID'	   				=> __( 'Status', 'event_espresso' ),
-            'TXN_total'	   			=> __( 'Total', 'event_espresso' ),
-            'TXN_paid'	   			=> __( 'Paid', 'event_espresso' ),
-			'ATT_fname'			=> __( 'Primary Registrant', 'event_espresso' ),
-			'ATT_email'				=> __( 'Email Address', 'event_espresso' ),
-			'event_name'			=> __( 'Event', 'event_espresso' ),
-            'actions'	   				=> __( 'Actions', 'event_espresso' )
+            'STS_ID' => __( 'Status', 'event_espresso' ),
+            'TXN_total' => __( 'Total', 'event_espresso' ),
+            'TXN_paid' => __( 'Paid', 'event_espresso' ),
+			'ATT_fname' => __( 'Primary Registrant', 'event_espresso' ),
+			'ATT_email' => __( 'Email Address', 'event_espresso' ),
+			'event_name' => __( 'Event', 'event_espresso' ),
+            'actions' => __( 'Actions', 'event_espresso' )
         );
-        return $columns;
-    }
+
+        $this->_sortable_columns = array(
+          	'TXN_ID' => array( 'TXN_ID', FALSE ),     
+            'STS_ID' => array( 'STS_ID', FALSE ),
+            'event_name' => array( 'event_name', FALSE ),
+            'ATT_fname'	=> array( 'ATT_fname', FALSE ),
+           	'TXN_timestamp'	=> array( 'TXN_timestamp', TRUE ) //true means its already sorted
+        	);
+
+        $this->_hidden_columns = array();
+	}
 
 
 
-	/**
-	 * 		get_sortable_columns
-	*/ 
-    function get_sortable_columns() {
-        $sortable_columns = array(
-			'TXN_ID'    				=> array( 'TXN_ID', FALSE ),     //true means its already sorted
-            'STS_ID'					=> array( 'STS_ID', FALSE ),
-            'event_name'			=> array( 'event_name', FALSE ),
-            'ATT_fname'			=> array( 'ATT_fname', FALSE ),
-           	'TXN_timestamp'	=> array( 'TXN_timestamp', TRUE ),
-      //      'TXN_total'				=> array( 'TXN_total', FALSE ),
-        );
-        return $sortable_columns;
-    }
+
+
+
+	protected function _get_table_filters() {
+		$filters = array();
+		$start_date = isset( $this->_req_data['txn-filter-start-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-start-date'] ) : date( 'D M j, Y', strtotime( '-10 year' ));
+		$end_date = isset( $this->_req_data['txn-filter-end-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-end-date'] ) : date( 'D M j, Y' );
+		ob_start();
+		?>
+		<label for="txn-filter-start-date">Display Transactions from </label>
+		<input id="txn-filter-start-date" class="datepicker" type="text" value="<?php echo $start_date; ?>" name="txn-filter-start-date" size="15"/>	
+		<label for="txn-filter-end-date"> until </label>
+		<input id="txn-filter-end-date" class="datepicker" type="text" value="<?php echo $end_date; ?>" name="txn-filter-end-date" size="15"/>	
+		<?php
+		$filters[] = ob_get_contents();
+		ob_end_clean();
+		return $filters;
+	}
+
+
+
+
+
+	protected function _add_view_counts() {
+		$this->_views['all']['count'] = $this->_all_data_count;
+	}
+
+
+
 
 
 	/**
@@ -126,9 +153,6 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
 	*/ 
     function column_STS_ID($item){
 		return '<span class="status-'. $item['STS_ID'] .'">' . __( $this->_status[ $item['STS_ID'] ], 'event_espresso' ) . '</span>';
-//		$status = ucwords( strtolower( $this->_status[ $item['STS_ID'] ] ));
-//		return event_espresso_paid_status_icon( $status ); 
-
 	}
 
 
@@ -139,8 +163,7 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
 	*/ 
     function column_ATT_fname($item){
 		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item['ATT_ID'] ), ATT_ADMIN_URL ), 'edit_attendee_nonce' );
-		return '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . ucwords( $item['ATT_fname'] . ' ' . $item['ATT_lname'] ) . '</a>';
-		//return '' . $item['ATT_fname'] . ' ' . $item['ATT_lname'] . '';
+		return '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . ucwords( $item['TXN_att_name'] ) . '</a>';
 	}
 
 
@@ -161,7 +184,6 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
 	 * 		column_event_name
 	*/ 
     function column_event_name($item){	
-		//$edit_event_url = add_query_arg( array( 'action'=>'edit', 'event_id'=>$item['id'] ), admin_url( 'admin.php?page=events' ));
 		$edit_event_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_transaction', 'txn' => $item['TXN_ID'] ), TXN_ADMIN_URL ), 'view_transaction' );  
 		$event_name = stripslashes( html_entity_decode( $item['event_name'], ENT_QUOTES, 'UTF-8' ));		
 		return '<a href="' . $edit_event_url . '" title="' . __( 'Edit TXN #', 'event_espresso' ) . $item['TXN_ID'].'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>'; 
@@ -210,10 +232,6 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
 			return '<span class="txn-overview-no-payment-spn txn-pad-rght">' . $org_options['currency_symbol'] . ' ' . number_format( $item['TXN_paid'], 2 ) . '</span>';
 			
 		} else {
-			// free event
-//			$nothing = array( 'nothing', 'nil', 'nada', 'zero', 'zilch', 'zip', 'zippo', 'not a penny', 'boo', 'diddly-squat' );
-//			$rnd = rand( 0, 9 );
-//			return '<span class="txn-overview-free-event-spn">' . __( $nothing[ $rnd ], 'event_espresso' ) . '</span>';
 			return '<span class="txn-overview-free-event-spn">' . $org_options['currency_symbol'] . '0.00</span>';
 		}
 		
@@ -277,105 +295,13 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
 		</li>';
 
 			$actions = '
-	<ul class="txn-overview-actions-ul">' . 
-	$view_lnk . $dl_invoice_lnk . $send_pay_lnk . $view_reg_lnk . '
-	</ul>';
+		<ul class="txn-overview-actions-ul">' . 
+		$view_lnk . $dl_invoice_lnk . $send_pay_lnk . $view_reg_lnk . '
+		</ul>';
 			
 			return $actions;
     }
 
- 
-
-
-	/**
-	 * 		get_bulk_actions
-	*/ 
-    function get_bulk_actions() {
-        $actions = array(
-//            'delete'    => 'Delete'
-        );
-        return $actions;
-    }
- 
-
-
-	/**
-	 * 		process_bulk_action
-	*/ 
-    function process_bulk_action() {
-        
-        //Detect when a bulk action is being triggered...
-/*        if( $this->current_action() === 'delete' ) {
-			$success = FALSE;
-			foreach ( $_GET['venueseatingchart'] as $ID ) {
-				$success = EE_VSC_Admin::_delete_chart( $ID, TRUE );
-			}
-			if ( $success ) {
-				EE_VSC_Admin::add_notices( array( 'success' => 'All Seating Charts were successfully deleted.' ));
-			} else {
-				EE_VSC_Admin::add_notices( array( 'errors' => 'An error occured. One or more Seating Charts were not deleted.' ));
-			}	
-        }*/
-        
-    }
-	
-	function extra_tablenav( $which ) {
-		echo $this->_entries_per_page_dropdown;
-	}
-	
-
-
-
-	/**
-	 * 		prepare_items
-	*/ 
-    function prepare_items() {
-	
-//		global $wpdb;
-		
-        $per_page = ( ! empty( $_REQUEST['per_page'] )) ? absint( $_REQUEST['per_page'] ) : 10;		
-        $columns = $this->get_columns();
-        $hidden = array();
-        $sortable = $this->get_sortable_columns();
-		
-        $this->_column_headers = array($columns, $hidden, $sortable);
-        
-        $this->process_bulk_action();              
-				
-        function usort_reorder($a,$b){
-            $orderby = (!empty($_REQUEST['orderby'])) ? wp_strip_all_tags( $_REQUEST['orderby'] ) : 'TXN_timestamp'; // If no sort, default to titletimestamp
-            $order = (!empty($_REQUEST['order'])) ? wp_strip_all_tags( $_REQUEST['order'] ) : 'desc'; // If no order, default to asc
-			
-			if ( is_numeric( $a[$orderby] ) && is_numeric( $b[$orderby] )) {
-				$result = ( $a[$orderby] == $b[$orderby] ) ? 0 : ( $a[$orderby] < $b[$orderby] ) ? -1 : 1;	
-			} else {
-				$result = strcasecmp($a[$orderby], $b[$orderby]); // Determine sort order for strings
-			}
-			
-           	return ($order==='asc') ? $result : -$result; // Send final sort direction to usort
-        }
-        
-		$current_page = $this->get_pagenum();        
-		$total_items = count($this->_transactions);
-		
-		// can't sort one item
-		if ( $total_items > 1 ) {
-			usort($this->_transactions, 'usort_reorder');
-		}		
-
-         if ( is_array( $this->_transactions )) {
-			$this->_transactions = array_slice($this->_transactions,(($current_page-1)*$per_page),$per_page);
-		}
-        
-        
-        $this->items = $this->_transactions;
-        
-        $this->set_pagination_args( array(
-            'total_items' => $total_items,                  //WE have to calculate the total number of items
-            'per_page'    => $per_page,                     //WE have to determine how many items to show on a page
-            'total_pages' => ceil($total_items/$per_page)   //WE have to calculate the total number of pages
-        ) );
-    }
     
 }
 

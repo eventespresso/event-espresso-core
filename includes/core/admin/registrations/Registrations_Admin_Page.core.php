@@ -37,8 +37,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	 * 		@access public
 	 * 		@return void
 	 */
-	public function __construct($wp_page_slug) {
-		parent::__construct($wp_page_slug);
+	public function __construct() {
+		parent::__construct();
 	}
 
 
@@ -118,7 +118,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				),
 			'view_registration' => array(
 				'nav' => array(
-					'label' => __('REG Details', 'event_espreso'),
+					'label' => __('REG Details', 'event_espresso'),
 					'order' => 5,
 					'url' => isset($this->_req_data['reg']) ? add_query_arg(array('reg' => $this->_req_data['reg'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
 					'persistent' => FALSE
@@ -223,6 +223,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_style('jquery-jqplot-css', JQPLOT_URL . 'jquery.jqplot.min.css', array(), EVENT_ESPRESSO_VERSION);
 
 		//scripts
+		wp_deregister_script( 'jquery' );
+        wp_register_script( 'jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js');
 		global $is_IE;
 		if ( $is_IE ) {
 			wp_enqueue_script( 'excanvas' , JQPLOT_URL . 'excanvas.min.js', array(), ESPRESSO_E, FALSE);
@@ -692,8 +694,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	
 		$page_args = array();
 		
-		$page_args['admin_reports'][] = $this->_registrations_per_day_report( '-3 month' );  //  option: '-1 week', '-2 weeks' defaults to '-1 month'
-		$page_args['admin_reports'][] = $this->_get_registrations_per_event_report( '-3 month' ); //  option: '-1 week', '-2 weeks' defaults to '-1 month'
+		$page_args['admin_reports'][] = $this->_registrations_per_day_report( '-8 month' );  //  option: '-1 week', '-2 weeks' defaults to '-1 month'
+		$page_args['admin_reports'][] = $this->_get_registrations_per_event_report( '-8 month' ); //  option: '-1 week', '-2 weeks' defaults to '-1 month'
 //		$page_args['admin_reports'][] = 'chart1';
 		
 		$template_path = EE_CORE_ADMIN . 'admin_reports.template.php';
@@ -723,6 +725,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		
 		wp_enqueue_script( $report_JS, REG_ASSETS_URL . $report_JS . '_report.js', array('jquery', 'jqplot'), EVENT_ESPRESSO_VERSION, TRUE);
 
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
 	    $REG = EEM_Registration::instance();
 	 
@@ -817,7 +820,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	 * @param  boolean $count   return the count or objects
 	 * @return mixed (int|array)  int = count || array of registration objects
 	 */
-	public function _get_registrations( $perpage, $count = FALSE ) {
+	public function get_registrations( $perpage, $count = FALSE ) {
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
 		$REG = EEM_Registration::instance();
