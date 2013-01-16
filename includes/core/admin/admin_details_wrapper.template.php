@@ -6,10 +6,12 @@
 			</div>
 			<!-- admin-page-header -->
 			
+		<?php if ( ! empty( $post_body_content )) : ?>
 			<div id="post-body-content">
 				<?php echo $post_body_content; ?>
 			</div>
 			<!-- post-body-content -->
+		<?php endif; ?>
 			
 			<div id="postbox-container-1" class="postbox-container">
 				<?php do_meta_boxes( $current_page, 'side', NULL ); ?>
