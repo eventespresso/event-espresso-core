@@ -222,7 +222,7 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 		$this->_views = array(
 			'all' => array(
 				'slug' => 'all',
-				'label' => __('All', 'event_espreso'),
+				'label' => __('All', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
 					'delete_categories' => __('Delete Permanently', 'event_espresso'),
