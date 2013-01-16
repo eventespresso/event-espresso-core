@@ -159,7 +159,8 @@ function espresso_core_admin_autoload($className) {
 		'messages/' => array('core', 'class'),
 		'pricing/' => array('core', 'class'),
 		'registrations/' => array('core','class'),
-		'transactions/' => array('core', 'class')
+		'transactions/' => array('core', 'class'),
+		'forms/' => array('core', 'class')
 		);
 
 	//assemble a list of filenames

@@ -39,6 +39,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	protected $_dir_name;
 	protected $_wp_page_slug;
 
+
 	//will hold page object.
 	protected $_loaded_page_object;
 
@@ -147,6 +148,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	public function initialize_admin_page() {
 		//let's check user access first
 		$this->_check_user_access();
+		if ( !is_object( $this->_loaded_page_object) ) return;
 		$this->_loaded_page_object->route_admin_request();
 		return;
 	}
@@ -158,6 +160,13 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 	public function set_page_dependencies($wp_page_slug) {
 		if ( !$this->_load_page ) return;
+
+		if ( !is_object($this->_loaded_page_object) ) {
+			$msg[] = __('We can\'t load the page because we\'re missing a valid page object that tells us what to load', 'event_espresso');
+			$msg[] = $msg[0] . "\r\n" . sprintf( __('The custom slug you have set for this page is %s. This means we\'re looking for the class %s_Admin_Page (found in %s_Admin_Page.core.php) within your %s directory', 'event_espresso'), $this->_dir_name, $this->_dir_name, $this->_dir_name, $this->menu_label);
+			throw new EE_Error( implode( '||', $msg) );
+		}
+
 		$this->_loaded_page_object->set_wp_page_slug($wp_page_slug);
 		$page_hook = 'load-' . $wp_page_slug;
 		//hook into page load hook so all page specific stuff get's loaded.
@@ -179,14 +188,20 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 		$this->_load_page = TRUE;
 
+		$bt = debug_backtrace();
 
-		$this->_dir_name = ucwords( str_replace('_', ' ', $this->menu_slug) );
+		//we're using this to get the actual folder name of the CALLING class (i.e. the child class that extends this).  Why?  Because $this->menu_slug may be different than the folder name (to avoid conflicts with other plugins)
+		$name = basename(dirname($bt[1]['file']));
+
+		$this->_dir_name = str_replace( 'ee' , 'EE', $name );
+		$this->_dir_name = ucwords( str_replace('_', ' ', $this->_dir_name) );
 		$this->_dir_name = str_replace(' ', '_', $this->_dir_name);
 
 		//we don't need to do a page_request check here because it's only called via WP menu system.
 		$admin_page = $this->_dir_name . '_Admin_Page';
+		
 		// define requested admin page class name then load the file and instantiate
-		$path_to_file = str_replace( array( '\\', '/' ), DS, EE_CORE_ADMIN . $this->menu_slug . DS . $admin_page . '.core.php' );
+		$path_to_file = str_replace( array( '\\', '/' ), DS, EE_CORE_ADMIN . $name . DS . $admin_page . '.core.php' );
 		if ( is_readable( $path_to_file )) {					
 			
 			/**
