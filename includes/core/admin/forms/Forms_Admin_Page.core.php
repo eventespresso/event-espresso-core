@@ -54,7 +54,7 @@ class Forms_Admin_Page extends EE_Admin_Page {
 
 	protected function _init_page_props() {
 		$this->page_slug = 'ee_custom_forms';
-		$this->page_label = __('Events', 'event_espresso');
+		$this->page_label = __('Registration Forms', 'event_espresso');
 	}
 
 
@@ -69,7 +69,7 @@ class Forms_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _define_page_props() {
-		$this->_admin_base_url = EVENTS_ADMIN_URL;
+		$this->_admin_base_url = EE_FORMS_ADMIN_URL;
 		$this->_admin_page_title = __('Registration Forms', 'event_espresso');
 		$this->_labels = array(
 			'buttons' => array(
@@ -170,7 +170,7 @@ class Forms_Admin_Page extends EE_Admin_Page {
 					'label' => __('Questions'),
 					'order' => 10
 					),
-				'list_table' => 'Forms_Questions_Admin_List_Table'
+				'list_table' => 'Forms_Questions_Admin_List_Table',
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
 				),
 			'question_groups' => array(
@@ -178,7 +178,7 @@ class Forms_Admin_Page extends EE_Admin_Page {
 					'label' => __('Question Groups'),
 					'order' => 20
 					),
-				'list_table' => 'Forms_Question_Groups_Admin_List_Table'
+				'list_table' => 'Forms_Question_Groups_Admin_List_Table',
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
 				),
 			'add_question' => array(
@@ -359,11 +359,11 @@ class Forms_Admin_Page extends EE_Admin_Page {
 
 
 	
-	protected function _question_details( $type = 'add' )
+	protected function _question_details( $type = 'add' ) {}
 	protected function _delete_questions() {}
 	protected function _insert_or_update_question($new_question = TRUE) {}
 	protected function _trash_or_restore_questions($trash = TRUE) {}
-	protected function _question_group_details( $type = 'add' )
+	protected function _question_group_details( $type = 'add' ) {}
 	protected function _delete_question_groups() {}
 	protected function _insert_or_update_question_group($new_question_group = TRUE) {}
 	protected function _trash_or_restore_question_groups($trash = TRUE) {}
