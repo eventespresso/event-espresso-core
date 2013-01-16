@@ -1,7 +1,7 @@
 <div style="padding:1em;">	
-	<form id="price-form" method="post" action="<?php echo $edit_event_price_form_url; ?>">
+	<form id="price-form" method="post" action="<?php echo $edit_price_form_url; ?>">
 		<?php wp_nonce_field( $action . '_nonce' ); ?>
-		<?php if ( $action == 'update_event_price' ) : ?>
+		<?php if ( $action == 'update_price' ) : ?>
 		<input type="hidden" name="PRC_ID" value="<?php echo $PRC_ID; ?>">
 		<?php endif; ?>
 		<input type="hidden" name="PRC_disc_code" value="<?php echo $price->disc_code(); ?>">
@@ -15,7 +15,7 @@
 				<tr valign="top">
 					<th><label for="PRT_ID"><?php _e('Type', 'event_espresso'); ?></label></th>
 					<td>
-						<?php echo select_input('PRT_ID', $price_types, $price->type(), 'id="PRT_ID"'); ?>
+						<?php echo EE_Form_Fields::select_input('PRT_ID', $price_types, $price->type(), 'id="PRT_ID"'); ?>
 						<span class="description"><?php _e('Whether this is an Event Price, Discount, Surcharge, or Tax. Default items will apply to ALL new events you create.', 'event_espresso'); ?></span>
 					</td>
 				</tr>
@@ -78,10 +78,10 @@
 			</tbody>
 		</table>
 	
-		<div id="publishing-action">
+<!--		<div id="publishing-action">
 			<?php echo $learn_more_about_pricing_link; ?>
 			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Changes'); ?>" id="add_new_price" />
-		</div>
+		</div>-->
 		<div class="clear"></div>
 	
 	</form>

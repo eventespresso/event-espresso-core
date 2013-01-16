@@ -184,15 +184,16 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'order' => 20,
 							'persistent' => FALSE
 						),
-					'metaboxes' => array('_editor_metaboxes'),
+					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_details_meta_boxes' ),
 				),
 			'edit_price' => array(
 					'nav' => array(
 							'label' => __('Edit Price', 'event_espresso'),
 							'order' => 20,
+							'url' => isset($this->_req_data['id']) ? add_query_arg(array('id' => $this->_req_data['id'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
 							'persistent' => FALSE
 						),
-					'metaboxes' => array('_editor_metaboxes')
+					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_details_meta_boxes' )
 				),
 			'price_types' => array(
 					'nav' => array(
@@ -430,11 +431,11 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			$edit_price_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), PRICING_ADMIN_URL );
 		}
 		
-		$this->template_args['PRC_ID'] = $PRC_ID;
-		$this->template_args['price'] = $price;
+		$this->_template_args['PRC_ID'] = $PRC_ID;
+		$this->_template_args['price'] = $price;
 
-		$this->template_args['action'] = $action;
-		$this->template_args['edit_price_form_url'] = $edit_price_form_url;
+		$this->_template_args['action'] = $action;
+		$this->_template_args['edit_price_form_url'] = $edit_price_form_url;
 	
 		// get price types
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
@@ -452,21 +453,41 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			}
 		}
 
-		$this->template_args['price_types'] = $price_types;
-		$this->template_args['learn_more_about_pricing_link'] = $this->_learn_more_about_pricing_link();
-		
-		// add nav tab for this details page
-		$this->nav_tabs['edit_price']['url'] = wp_nonce_url( add_query_arg( array( 'action'=>$action, 'id' => $PRC_ID ), PRICING_ADMIN_URL ), $action . '_nonce' );  
-		$this->nav_tabs['edit_price']['link_text'] = $PRC_ID ? __( 'Price Details', 'event_espresso' ) : __( 'Add New Price', 'event_espresso' );
-		$this->nav_tabs['edit_price']['css_class'] = ' nav-tab-active';
-		$this->nav_tabs['edit_price']['order'] = 15;
+		$this->_template_args['price_types'] = $price_types;
+		$this->_template_args['learn_more_about_pricing_link'] = $this->_learn_more_about_pricing_link();
 
-		// generate metabox - you MUST create a callback named __FUNCTION__ . '_meta_box'  ( see "_edit_price_details_meta_box" below )
-		$this->_add_admin_page_meta_box( $action, $title, __FUNCTION__, NULL );
-
-		// the final template wrapper
-		$this->display_admin_page_with_sidebar();
+		$this->_set_publish_post_box_vars( 'id', $PRC_ID );
+		// the details template wrapper
+		$this->display_admin_page_with_sidebar();	
 		
+	}
+
+
+
+
+
+
+	/**
+	 * 		declare price details page metaboxes
+	*		@access protected
+	*		@return void
+	*/
+	protected function _price_details_meta_boxes() {		
+		add_meta_box( 'edit-price-details-mbox', $this->page_label . __( ' Details', 'event_espresso' ), array( $this, '_edit_price_details_meta_box' ), $this->wp_page_slug, 'normal', 'high' );		
+	}
+
+
+
+
+
+
+	/**
+	 * 		_edit_price_details_meta_box
+	*		@access public
+	*		@return void
+	*/
+	public function _edit_price_details_meta_box() {		
+		echo espresso_display_template( PRICING_TEMPLATE_PATH . 'PRICING_details_main_meta_box.template.php', $this->_template_args, TRUE );		
 	}
 
 
@@ -509,20 +530,6 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		return $set_column_values;
 	}
 
-
-
-
-
-	/**
-	 * 		_edit_price_details_meta_box
-	*		@access public
-	*		@return void
-	*/
-	public function _edit_price_details_meta_box() {		
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-		$template_path = PRICING_TEMPLATE_PATH . 'PRICING_details_main_meta_box.template.php';
-		echo espresso_display_template( $template_path, $this->template_args, TRUE );		
-	}
 
 
 
@@ -685,24 +692,24 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		// get prices
 		$price_types = $this->_get_price_types();
 		
-		$this->template_args['table_rows'] = count( $price_types );
-		$entries_per_page_dropdown = $this->_entries_per_page_dropdown( $this->template_args['table_rows'] );
+		$this->_template_args['table_rows'] = count( $price_types );
+		$entries_per_page_dropdown = $this->_entries_per_page_dropdown( $this->_template_args['table_rows'] );
 
 		require_once( PRICING_ADMIN . 'EE_Price_Types_List_Table.class.php' );
-		$this->template_args['list_table'] = new EE_Price_Types_List_Table( $price_types, $this->_view, $this->_views, $entries_per_page_dropdown );
+		$this->_template_args['list_table'] = new EE_Price_Types_List_Table( $price_types, $this->_view, $this->_views, $entries_per_page_dropdown );
 
 		// link back to here
-		$this->template_args['PRICING_overview_url'] = add_query_arg( array( 'noheader' => 'true' ), PRICING_ADMIN_URL );
-		//$this->template_args['noheader'] = 'true';
-		$this->template_args['status'] = $this->_view;
-		$this->template_args['view_RLs'] = $this->get_list_table_view_RLs();
+		$this->_template_args['PRICING_overview_url'] = add_query_arg( array( 'noheader' => 'true' ), PRICING_ADMIN_URL );
+		//$this->_template_args['noheader'] = 'true';
+		$this->_template_args['status'] = $this->_view;
+		$this->_template_args['view_RLs'] = $this->get_list_table_view_RLs();
 
-		$this->template_args['search']['btn_label'] = __( 'Search Price Types', 'event_espresso' );
-		$this->template_args['search']['callback'] = 'search_price_types';
+		$this->_template_args['search']['btn_label'] = __( 'Search Price Types', 'event_espresso' );
+		$this->_template_args['search']['callback'] = 'search_price_types';
 
 		// path to template
 		$template_path = PRICING_TEMPLATE_PATH . 'PRICING_admin_overview.template.php';
-		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE );
+		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
 		
 		// the final template wrapper
 		$this->display_admin_page_with_sidebar();	
@@ -789,10 +796,10 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			$edit_price_type_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), PRICING_ADMIN_URL );
 		}
 
-		$this->template_args['PRT_ID'] = $PRT_ID;
-		$this->template_args['price_type'] = $price_type;
-		$this->template_args['action'] = $action;
-		$this->template_args['edit_price_type_form_url'] = $edit_price_type_form_url;
+		$this->_template_args['PRT_ID'] = $PRT_ID;
+		$this->_template_args['price_type'] = $price_type;
+		$this->_template_args['action'] = $action;
+		$this->_template_args['edit_price_type_form_url'] = $edit_price_type_form_url;
 
 		// set base type
 		$values = array(
@@ -809,8 +816,8 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			}
 		}
 		
-		$this->template_args['base_type_select'] = select_input('base_type', $values, $set_value, 'id="price-type-base-type-slct"'); 		
-		$this->template_args['learn_more_about_pricing_link'] = $this->_learn_more_about_pricing_link();
+		$this->_template_args['base_type_select'] = select_input('base_type', $values, $set_value, 'id="price-type-base-type-slct"'); 		
+		$this->_template_args['learn_more_about_pricing_link'] = $this->_learn_more_about_pricing_link();
 		
 		// add nav tab for this details page
 		$this->nav_tabs['edit_price_type']['url'] = wp_nonce_url( add_query_arg( array( 'action'=>$action, 'id' => $PRT_ID ), PRICING_ADMIN_URL ), $action . '_nonce' );  
@@ -926,7 +933,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	public function _edit_price_type_details_meta_box() {		
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		$template_path = PRICING_TEMPLATE_PATH . 'PRICING_type_details_main_meta_box.template.php';
-		echo espresso_display_template( $template_path, $this->template_args, TRUE );		
+		echo espresso_display_template( $template_path, $this->_template_args, TRUE );		
 	}
 
 
