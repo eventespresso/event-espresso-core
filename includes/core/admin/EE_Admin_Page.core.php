@@ -1498,7 +1498,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 	@uses EE_Form_Fields::get_form_fields (/helper/EE_Form_Fields.helper.php)
 	 * 	@uses EE_Form_Fields::get_form_fields_array (/helper/EE_Form_Fields.helper.php)
 	 */
-	protected function _generate_admin_form_fields($input_vars = array(), $generator = 'string', $id = FALSE) {
+	protected function _generate_admin_form_fields( $input_vars = array(), $generator = 'string', $id = FALSE ) {
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
 		$content = $generator == 'string' ? EE_Form_Fields::get_form_fields($input_vars, $id) : EE_Form_Fields::get_form_fields_array($input_vars);
 		return $content;
@@ -1555,20 +1555,37 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *
 	 * @access protected
 	 * @param string $route the route you want the form to direct to
+	 * @param string $additional_hidden_fields any additional hidden fields required in the form header
 	 * @return void
 	 */
-	protected function _set_add_edit_form_tags($route) {
-
-		$hidden_action_field_args['action'] = array(
-			'type' => 'hidden',
-			'value' => $route
-			);
-		$hidden_action_field = $this->_generate_admin_form_fields( $hidden_action_field_args, 'array' );
-		$nonce = wp_nonce_field( $route . '_nonce', '_wpnonce', false, false );
-		$this->_template_args['before_admin_page_content'] = '<form name="form" method="post" action="' . $this->_admin_base_url. '" id="' . $route . '_event_form" >';
+	protected function _set_add_edit_form_tags( $route = FALSE, $additional_hidden_fields = array() ) {
+		
+		if ( ! $route ) {
+			$user_msg = __('An error occurred. No action was set for this page\'s form.', 'event_espresso');
+			$dev_msg = $user_msg . "\n" . sprintf( __('The $route argument is required for the %s->%s method.', 'event_espresso'), __FUNCTION__, __CLASS__ );
+			EE_Error::add_error( $user_msg . '||' . $dev_msg );			
+		}
+		// open form
+		$this->_template_args['before_admin_page_content'] = '<form name="form" method="post" action="' . $this->_admin_base_url . '" id="' . $route . '_event_form" >';
+		// add nonce
+		$nonce = wp_nonce_field( $route . '_nonce', '_wpnonce', FALSE, FALSE );
 		$this->_template_args['before_admin_page_content'] .= "\n\t" . $nonce;
-		$this->_template_args['before_admin_page_content'] .= "\n\t" . $hidden_action_field['action']['field'];
+		// add REQUIRED form action
+		$hidden_fields = array( 
+				'action' => array( 'type' => 'hidden', 'value' => $route ),
+			);
+		// merge arrays
+		$hidden_fields = is_array( $additional_hidden_fields) ? array_merge( $hidden_fields, $additional_hidden_fields ) : $hidden_fields;
+		// generate form fields
+		$form_fields = $this->_generate_admin_form_fields( $hidden_fields, 'array' );
+		// add fields to form
+		foreach ( $form_fields as $field_name => $form_field ) {
+			$this->_template_args['before_admin_page_content'] .= "\n\t" . $form_field['field'];
+		}	
+				
+		// close form
 		$this->_template_args['after_admin_page_content'] = '</form>';
+		
 	}
 
 
