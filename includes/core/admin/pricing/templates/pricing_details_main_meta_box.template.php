@@ -1,9 +1,5 @@
 <div style="padding:1em;">	
-	<form id="price-form" method="post" action="<?php echo $edit_price_form_url; ?>">
-		<?php wp_nonce_field( $action . '_nonce' ); ?>
-		<?php if ( $action == 'update_price' ) : ?>
-		<input type="hidden" name="PRC_ID" value="<?php echo $PRC_ID; ?>">
-		<?php endif; ?>
+
 		<input type="hidden" name="PRC_disc_code" value="<?php echo $price->disc_code(); ?>">
 		<input type="hidden" name="PRC_disc_limit_qty" value="<?php echo $price->disc_limit_qty(); ?>">
 		<input type="hidden" name="PRC_disc_qty" value="<?php echo $price->disc_qty(); ?>">
@@ -84,5 +80,4 @@
 		</div>-->
 		<div class="clear"></div>
 	
-	</form>
 </div>
