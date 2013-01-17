@@ -816,23 +816,14 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * get registrations for given parameters (used by list table)
-	 * @param  int  $perpage    how many registrations displayed per page
+	 * @param  int  $per_page    how many registrations displayed per page
 	 * @param  boolean $count   return the count or objects
 	 * @return mixed (int|array)  int = count || array of registration objects
 	 */
-	public function get_registrations( $perpage, $count = FALSE ) {
+	public function get_registrations( $per_page, $count = FALSE ) {
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
 		$REG = EEM_Registration::instance();
-
-		$EVT_ID = FALSE;
-		$CAT_ID = FALSE;
-		$reg_status = FALSE;
-		$month_range = FALSE;
-		$today_a = FALSE;
-		$this_month_a = FALSE;
-		$start_date = FALSE;
-		$end_date = FALSE;
 
 		$EVT_ID = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$CAT_ID = isset( $this->_req_data['category_id'] ) ? absint( $this->_req_data['category_id'] ) : FALSE;
@@ -840,6 +831,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$month_range = isset( $this->_req_data['month_range'] ) ? sanitize_text_field( $this->_req_data['month_range'] ) : FALSE;
 		$today_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'today' ? TRUE : FALSE;
 		$this_month_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'month' ? TRUE  : FALSE;
+		$start_date = FALSE;
+		$end_date = FALSE;
 
 
 		//set orderby
