@@ -357,7 +357,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	* 	@param  boolean $count   return the count or objects
 	* 	@return mixed (int|array)  int = count || array of price objects
 	*/
-	public function get_prices_overview_data( $perpage, $count = FALSE ) {  
+	public function get_prices_overview_data( $per_page = 10, $count = FALSE ) {  
 
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		// start with an empty array
@@ -387,7 +387,6 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 		$order = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
 		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
-		$per_page = isset( $per_page ) && !empty( $per_page ) ? $per_page : 10;
 		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $per_page;
 
 		$offset = ($current_page-1)*$per_page;
