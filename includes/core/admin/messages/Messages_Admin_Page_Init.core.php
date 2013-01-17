@@ -24,14 +24,14 @@
  *
  * ------------------------------------------------------------------------
  */
-class Messages_Admin_Page_Init extends EE_Admin_Page_Init implements Admin_Page_Init_Interface {
+class Messages_Admin_Page_Init extends EE_Admin_Page_Init  {
 	/**
 	 *constructor
 	 *@Constructor
 	 *@access public
 	 *@return void
 	 */
-	public function __construct( $page_slug, $page_name, $dir_name, $page_request ) { 
+	public function __construct() { 
 		
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
@@ -40,70 +40,35 @@ class Messages_Admin_Page_Init extends EE_Admin_Page_Init implements Admin_Page_
 		define( 'EE_MSG_ADMIN', EE_CORE_ADMIN . 'messages' . DS );	
 		define( 'EE_MSG_ADMIN_URL', admin_url( 'admin.php?page=' . EE_MSG_PG_SLUG ));	
 		define( 'EE_MSG_ASSETS_PATH', EE_MSG_ADMIN . 'assets' . DS );		
-		define( 'EE_MSG_ASSETS_URL', str_replace( '\\', '/', EE_CORE_ADMIN_URL . EE_MSG_PG_SLUG . DS . 'assets' . DS ));	
+		define( 'EE_MSG_ASSETS_URL', EE_CORE_ADMIN_URL . EE_MSG_PG_SLUG . '/assets/' );	
 		define( 'EE_MSG_TEMPLATE_PATH', EE_MSG_ADMIN . 'templates' . DS );	
-		define( 'EE_MSG_TEMPLATE_URL', str_replace( '\\', '/', EE_CORE_ADMIN_URL . EE_MSG_PG_SLUG . DS . 'templates' . DS ));
+		define( 'EE_MSG_TEMPLATE_URL', EE_CORE_ADMIN_URL . EE_MSG_PG_SLUG . '/templates/' );
 
-		$this->_init( $page_slug, $page_name, $dir_name, $page_request );
+		parent::__construct();
 	}
 
-	/**
-	*	sets vars in parent for creating menu settings page
-	* 	return the name of the filter that should be used for inserting into the EE admin menu
-	* 	filters can be found in /includes/admin_screens/admin_menu.php
-	* 
-	*		@access 		public
-	*		@return 		void
-	*/	
-	public function get_admin_menu_filter_name() {
-		//return 'filter_hook_espresso_submenus_management_section';  
-		return 'filter_hook_espresso_submenus_main_section';  
+
+
+
+
+	protected function _set_init_properties() {
+		$this->label = __('Messages System', 'event_espresso');
+		$this->menu_label = __('Messages', 'event_espresso');
+		$this->menu_slug = 'ee_messages';
+		$this->capability = 'administrator';
 	}
 
-	/**
-	*		sets vars in parent for creating menu settings page
-	* 
-	*		@access 		public
-	*		@return 		void
-	*/	
-	public function get_admin_menu_order() {
-		return 15;  
-	}
 
-	/**
-	*		sets vars in parent for creating menu settings page
-	* 
-	*		@access 		public
-	*		@return 		void
-	*/	
-	public function get_page_access_capability() {
-		return 'espresso_manager_events';
-	}
 
-	/**
-	*		load page specific css
-	* 
-	*		@access 		public
-	*		@return 		void
-	*/	
-	public function load_css() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		wp_register_style('espresso_ee_msg', EE_MSG_ASSETS_URL . 'ee_message_admin.css' );		
-		wp_enqueue_style('espresso_ee_msg');
-	}
 
-	/**
-	*		load page specific js
-	* 
-	*		@access 		public
-	*		@return 		void
-	*/	
-	public function load_js() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		wp_enqueue_script('jquery-ui-position');
-		wp_enqueue_script('jquery-ui-widget');
-		wp_register_script('espresso_msg_js', EE_MSG_ASSETS_URL . 'espresso_ee_msg_admin.js', array('jquery'), '1.0', TRUE);
-		wp_enqueue_script('espress_msg_js');			
+	public function get_menu_map() {
+		$map = array(
+			'group' => 'management',
+			'menu_order' => 20,
+			'show_on_menu' => TRUE,
+			'parent_slug' => 'events'
+			);
+		return $map;
 	}
 
 
