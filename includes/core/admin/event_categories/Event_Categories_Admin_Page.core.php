@@ -535,7 +535,7 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 			
 		$sql_data = array('%s','%s','%s','%s');
 		
-		if ( $wpdb->update( get_option('events_category_detail_tbl'), $sql, $update_id, $sql_data, array( '%d' ) ) ){
+		if ( $wpdb->update( EVENTS_CATEGORY_TABLE, $sql, $update_id, $sql_data, array( '%d' ) ) ){
 			$msg = sprintf( __('The category %s has been updated.', 'event_espresso'), $category_name );
 			EE_Error::add_success($msg);
 		}else { 

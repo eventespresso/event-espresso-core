@@ -1192,8 +1192,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 			//user error msg
 			$user_msg = __('An error occured. A required form key or ID was not supplied.', 'event_espresso' );
 			//developer error msg
-			$dev_msg = "\n" . __('In order for the "Save" or "Save and Close" buttons to work, a key name for what it is being saved (ie: event_id), as well as some sort of id for the individual record is required.', 'event_espresso' );
-			throw new EE_Error( $user_msg . '||' . $user_msg . $dev_msg );			
+			$dev_msg = $user_msg . "\n" . __('In order for the "Save" or "Save and Close" buttons to work, a key name for what it is being saved (ie: event_id), as well as some sort of id for the individual record is required.', 'event_espresso' );
+			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );			
 		}
 		
 		$this->_set_save_buttons(TRUE, array(), array(), $this->_admin_base_url);
@@ -1607,9 +1607,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		// how many records affected ? more than one record ? or just one ?
 		if ( $success == 2 ) {
+			// overwrite default success messages
+			EE_Error::overwrite_success();
 			// set plural msg
 			EE_Error::add_success( sprintf( __('The %s have been successfully %s.', 'event_espresso'), $what, $action_desc ), __FILE__, __FUNCTION__, __LINE__);
 		} else if ( $success == 1 ) {
+			// overwrite default success messages
+			EE_Error::overwrite_success();
 			// set singular msg
 			EE_Error::add_success( sprintf( __('The %s has been successfully %s.', 'event_espresso'), $what, $action_desc), __FILE__, __FUNCTION__, __LINE__ );
 		}
@@ -1737,7 +1741,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			switch ( $map_option ) {
 				case $this->_current_page . '_' .  $this->_current_view . '_per_page':
 					$value = (int) $value;
-					if ( $value < 1 || $value > 100 )
+					if ( $value < 1 || $value > 999 )
 						return;
 					break;
 				default:
