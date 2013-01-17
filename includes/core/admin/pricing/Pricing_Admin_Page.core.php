@@ -410,32 +410,32 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	protected function _edit_price_details() {		
 	
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-		
-		$PRC_ID = isset( $_REQUEST['id'] ) && ! empty( $_REQUEST['id'] ) ? absint( $_REQUEST['id'] ) : FALSE;
-
-		$title = __( ucwords( str_replace( '_', ' ', $this->_req_action )), 'event_espresso' );
+		// change page title based on request action
+		$this->_admin_page_title = ucwords( str_replace( '_', ' ', $this->_req_action ));
 		// add PRC_ID to title if editing 
-		$title = $PRC_ID ? $title . ' # ' . $PRC_ID : $title;
+		$this->_admin_page_title = $PRC_ID ? $this->_admin_page_title . ' # ' . $PRC_ID : $this->_admin_page_title;
 		
 		// get prices
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 		$PRC = EEM_Price::instance();
 
+			// grab price ID
+		$PRC_ID = isset( $this->_req_data['id'] ) && ! empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
 		if ( $PRC_ID ) {
 			$price = $PRC->get_price_by_ID( $PRC_ID );
 			$action = 'update_price';
-			$edit_price_form_url = add_query_arg( array( 'action' => $action, 'id' => $PRC_ID, 'noheader' => TRUE ), PRICING_ADMIN_URL );
+			$additional_hidden_fields = array( 
+					'PRC_ID' => array( 'type' => 'hidden', 'value' => $PRC_ID ),
+				);	
 		} else {
 			$price = $PRC->get_new_price();
 			$action = 'insert_price';
-			$edit_price_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), PRICING_ADMIN_URL );
 		}
+		
+		$this->_set_add_edit_form_tags( $action, $additional_hidden_fields );
 		
 		$this->_template_args['PRC_ID'] = $PRC_ID;
 		$this->_template_args['price'] = $price;
-
-		$this->_template_args['action'] = $action;
-		$this->_template_args['edit_price_form_url'] = $edit_price_form_url;
 	
 		// get price types
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
@@ -473,7 +473,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _price_details_meta_boxes() {		
-		add_meta_box( 'edit-price-details-mbox', $this->page_label . __( ' Details', 'event_espresso' ), array( $this, '_edit_price_details_meta_box' ), $this->wp_page_slug, 'normal', 'high' );		
+		add_meta_box( 'edit-price-details-mbox', __( 'Price Details', 'event_espresso' ), array( $this, '_edit_price_details_meta_box' ), $this->wp_page_slug, 'normal', 'high' );		
 	}
 
 
