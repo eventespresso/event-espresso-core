@@ -46,6 +46,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	//template variables (used by templates)
 	protected $_template_path;
+	protected $_column_template_path;
 	protected $_template_args;
 
 	//this will hold the list table object for a given view.
@@ -209,6 +210,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *     		'list_table' => 'name_of_list_table' //string for list table class to be loaded for this admin_page.
 	 *     		'metaboxes' => array('metabox1', 'metabox2'), //if present this key indicates we want to load metaboxes set for eventespresso admin pages. 
 	 *     		'has_metaboxes' => true //this boolean flag can simply be used to indicate if the route will have metaboxes.  Typically this is used if the 'metaboxes' index is not used because metaboxes are added later.  We just use this flag to make sure the necessary js gets enqueued on page load.
+	 *     		'columns' => array(4, 2) //this key triggers the setup of a page that uses columns (metaboxes).  The array indicates the max number of columns (4) and the default number of columns on page load (2).  There is an option in the "screen_options" dropdown that is setup so users can pick what columns they want to display.
 	 * 			
 	 * )
 	 * 
@@ -427,6 +429,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		// child classes can "register" a metabox to be automatically handled via the _page_config array property.  However in some cases the metaboxes will need to be added within a route handling callback.
 		$this->_add_registered_meta_boxes();
+		$this->_add_screen_columns();
 
 		//add screen options - global, page child class, and view specific
 		$this->_add_global_screen_options();
@@ -468,7 +471,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * This sets some global defaults for class properties.
 	 */
 	private function _set_defaults() {
-		$this->_admin_base_url = $this->_current_screen = $this->_admin_page_title = $this->_req_action = $this->_req_nonce = $this->_event = NULL;
+		$this->_admin_base_url = $this->_current_screen = $this->_admin_page_title = $this->_req_action = $this->_req_nonce = $this->_event = $this->_template_path = $this->_column_template_path = NULL;
 
 		$this->_nav_tabs = $this_views = $this->_page_routes = $this->_page_config = array();
 
@@ -1091,6 +1094,25 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+
+	/**
+	 * _add_screen_columns
+	 * This will check the _page_config array and if there is "columns" key index indicated, we'll set the template as the dynamic column template and we'll setup the column options for the page.
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _add_screen_columns() {
+		if ( is_array($this->_route_config) && isset( $this->_route_config['columns'] ) && is_array($this->_route_config['columns']) && count( $this->_route_config['columns'] == 2 ) ) {
+
+			add_screen_option('layout_columns', array('max' => (int) $this->_route_config['columns'][0], 'default' => (int) $this->_route_config['columns'][1] ) );
+			$this->_template_args['num_columns'] = 
+			$this->_column_template_path = EE_CORE_ADMIN . 'admin_details_metabox_column_wrapper.template.php';
+		}
+	}
+
+
+
 	/**********************************/
 	/** GLOBALLY AVAILABLE METABOXES **/
 
@@ -1321,18 +1343,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return [type] [description]
 	 */
 	public function display_admin_page_with_metabox_columns() {
-		$screen = get_current_screen();
+		$screen = $this->_current_screen;
 		$this->template_args['current_screen_widget_class'] = 'columns-' . 
 		$screen->get_columns();
 		$this->template_args['current_page'] = $this->_wp_page_slug;
-		$template_path = EE_CORE_ADMIN . 'admin_details_metabox_column_wrapper.template.php';
-
 		$this->template_args['screen'] = $screen;
 		$this->template_args['post_body_content'] = $this->template_args['admin_page_content'];
-		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE);
-
-		//display any espresso_notices (generated from metaboxes)
-		$this->display_espresso_notices();
+		$this->template_args['admin_page_content'] = espresso_display_template( $this->_column_template_path, $this->template_args, TRUE);
 
 		//the final wrapper
 		$this->admin_page_wrapper();
