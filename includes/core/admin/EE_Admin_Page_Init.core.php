@@ -193,7 +193,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		//we're using this to get the actual folder name of the CALLING class (i.e. the child class that extends this).  Why?  Because $this->menu_slug may be different than the folder name (to avoid conflicts with other plugins)
 		$name = basename(dirname($bt[1]['file']));
 
-		$this->_dir_name = str_replace( 'ee' , 'EE', $name );
+		$this->_dir_name = preg_replace( '/^ee/' , 'EE', $name );
 		$this->_dir_name = ucwords( str_replace('_', ' ', $this->_dir_name) );
 		$this->_dir_name = str_replace(' ', '_', $this->_dir_name);
 
