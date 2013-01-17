@@ -1563,7 +1563,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( ! $route ) {
 			$user_msg = __('An error occurred. No action was set for this page\'s form.', 'event_espresso');
 			$dev_msg = $user_msg . "\n" . sprintf( __('The $route argument is required for the %s->%s method.', 'event_espresso'), __FUNCTION__, __CLASS__ );
-			EE_Error::add_error( $user_msg . '||' . $dev_msg );			
+			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );			
 		}
 		// open form
 		$this->_template_args['before_admin_page_content'] = '<form name="form" method="post" action="' . $this->_admin_base_url . '" id="' . $route . '_event_form" >';
