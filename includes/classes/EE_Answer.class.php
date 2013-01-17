@@ -58,9 +58,9 @@ class EE_Answer extends EE_Base_Class{
 
 	/**
 	 * Constructor
-	 * @param type $REG_ID
-	 * @param type $QST_ID
-	 * @param type $ANS_value
+	 * @param int $REG_ID registration ID
+	 * @param int $QST_ID question ID
+	 * @param string $ANS_value text representing the answer. Could be CSV'd
 	 */
 	public function __construct( $REG_ID=NULL, $QST_ID=NULL, $ANS_value='') {
 		$this->_REG_ID 				= absint( $REG_ID );
@@ -109,7 +109,7 @@ class EE_Answer extends EE_Base_Class{
 	*/	
 	public function set_value( $ANS_value = FALSE ) {
 		if ( ! $this->_check_for( $ANS_value, 'Value ID' )) { return FALSE; }
-		$this->_ANS_value = wp_strip_all_tags( $ANS_value );
+		$this->_ANS_value = htmlentities(wp_strip_all_tags( $ANS_value ));
 		return TRUE;
 	}
 

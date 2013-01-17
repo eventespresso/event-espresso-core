@@ -133,6 +133,7 @@ class EE_Question extends EE_Base_Class{
 			$QST_admin_only=NULL,
 			$QST_wp_user=NULL,
 			$QST_deleted=NULL){
+		
 		$this->_QST_display_text=$QST_display_text;
 		$this->_QST_system_name=$QST_system_name;
 		$this->_QST_type=$QST_type;
