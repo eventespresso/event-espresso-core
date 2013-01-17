@@ -32,7 +32,6 @@ class Prices_List_Table extends EE_Admin_List_Table {
 
 	public function __construct( &$admin_page ) {
 		parent::__construct($admin_page);
-		// Specific to this extension of WP_List_Table
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 		$this->_PRT = EEM_Price_Type::instance();
 	}
@@ -84,8 +83,8 @@ class Prices_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _get_table_filters() {
-		$filters = array();
-		return $filters;
+//		$filters = array();
+//		return $filters;
 	}
 
 
