@@ -733,7 +733,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_add_admin_page_overlay();
 
 		//if metaboxes are present we need to add the nonce field
-		if ( isset($this->_route_config['metaboxes']) || ( isset($this->_route_config['has_metaboxes']) && $this->_route_config['has_metaboxes'] ) ) {
+		if ( isset($this->_route_config['metaboxes']) || ( isset($this->_route_config['has_metaboxes']) && $this->_route_config['has_metaboxes'] ) || isset($this->_route_config['list_table']) ) {
 			wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false);
 			wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false);
 		}
@@ -1733,7 +1733,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			switch ( $map_option ) {
 				case $this->_current_page . '_' .  $this->_current_view . '_per_page':
 					$value = (int) $value;
-					if ( $value < 1 || $value > 100 )
+					if ( $value < 1 || $value > 999 )
 						return;
 					break;
 				default:

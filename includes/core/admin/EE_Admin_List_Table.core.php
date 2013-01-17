@@ -232,6 +232,8 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * _sortable_columns = colums that are sortable (array).
 	 * _hidden_columns = columns that are hidden (array)
 	 * _default_orderby = the default orderby for sorting.
+	 *
+	 * 
 	 * @abstract
 	 * @access protected
 	 * @return void
@@ -296,6 +298,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		$columns = $this->get_columns();
 		$hidden = $this->get_hidden_columns();
 		$_sortable = $this->get_sortable_columns();
+		$_sortable = apply_filters( "filter_hook_espresso_manage_{$this->screen->id}_sortable_columns", $_sortable );
 
 		$sortable = array();
 		foreach ( $_sortable as $id => $data ) {
@@ -371,6 +374,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	public function prepare_items() {
 
 		$this->_set_column_info();
+		//$this->_column_headers = $this->get_column_info();
 		$total_items = $this->_all_data_count;
 
 		$this->process_bulk_action();
@@ -389,7 +393,8 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 
 	public function get_columns() {
-		return (array) $this->_columns;
+		$columns = apply_filters('filter_hook_espresso_manage_'.$this->screen->id.'_columns', $this->_columns);
+		return $this->_columns;
 	}
 
 	public function get_views() {
@@ -398,7 +403,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 	public function display_views() {
 		$views = $this->get_views();
-		$views = apply_filters( 'views_' . $this->screen->id, $views );
+		$views = apply_filters( 'filter_hook_espresso_views_' . $this->screen->id, $views );
 
 		if ( empty( $views ) )
 			return;
@@ -418,7 +423,14 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	}
 
 	public function get_hidden_columns() {
-		return (array) $this->_hidden_columns;
+		$has_default = get_user_option('default'. $this->screen->id . 'columnshidden');
+		if ( empty( $has_default ) && !empty($this->_hidden_columns ) ) {
+			$user_id = get_current_user_id();
+			update_option($user_id, 'default'.$this->screen->id . 'columnshidden', TRUE);
+			update_option($user_id, 'manage' . $this->screen->id . 'columnshidden', $this->_hidden_columns );
+		}
+		$saved_columns = (array) get_user_option( 'manage' . $this->screen->id . 'columnshidden' );
+		return $saved_columns;
 	}
 
 	public function extra_tablenav( $which ) {
