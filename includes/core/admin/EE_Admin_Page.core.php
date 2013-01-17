@@ -1165,6 +1165,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 	public function editor_overview() {
+		//if we have extra content set let's add it in if not make sure its empty
+		$this->_template_args['publish_box_extra_content'] = isset( $this->_template_args['publish_box_extra_content'] ) ? $this->_template_args['publish_box_extra_content'] : '';
 		$template_path = EE_CORE_ADMIN . 'admin_details_publish_metabox.template.php';
 		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
 	}
@@ -1179,35 +1181,37 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	/**
 	 * Sets the _template_args arguments used by the _publish_post_box shortcut
-	 * @param string $delete_action route for the delete action
-	 * @param string $name          key used for the action ID (i.e. event_id)
-	 * @param int $id               id attached to the item published
+	 * 
+	 * @param	string	$name		key used for the action ID (i.e. event_id)
+	 * @param	int		$id			id attached to the item published
+	 * @param	string	$delete	page route callback for the delete action
 	 */	
-	protected function _set_publish_post_box_vars($delete_action, $name, $id) {
+	protected function _set_publish_post_box_vars( $name = NULL, $id = FALSE, $delete = FALSE ) {
 
-		$this->_set_save_buttons(TRUE, array(), array(), $this->_admin_base_url);
-
-		//if we have extra content set let's add it in if not make sure its empty
-		$this->_template_args['publish_box_extra_content'] = isset( $this->_template_args['publish_box_extra_content'] ) ? $this->_template_args['publish_box_extra_content'] : '';
-
-
-		$delete_link_args = array(
-			$name => $id
-			);
-
-		$delete_link = $this->_get_action_link_or_button( $delete_action, $type = 'delete', $delete_link_args, $class='submitdelete deletion');
+		if ( empty( $name ) || ! $id ) {
+			//user error msg
+			$user_msg = __('An error occured. A required form key or ID was not supplied.', 'event_espresso' );
+			//developer error msg
+			$dev_msg = $user_msg . "\n" . __('In order for the "Save" or "Save and Close" buttons to work, a key name for what it is being saved (ie: event_id), as well as some sort of id for the individual record is required.', 'event_espresso' );
+			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );			
+		}
 		
-		$this->_template_args['publish_delete_link'] = $delete_link;
+		$this->_set_save_buttons(TRUE, array(), array(), $this->_admin_base_url);
 
 		$hidden_field_arr[$name] = array(
 			'type' => 'hidden',
 			'value' => $id
 			);
-
 		$hf = $this->_generate_admin_form_fields($hidden_field_arr, 'array');
-
 		$this->_template_args['publish_hidden_fields'] = $hf[$name]['field'];
 
+		if ( $delete ) {
+			$delete_link_args = array( $name => $id );
+			$delete = $this->_get_action_link_or_button( $delete, $type = 'delete', $delete_link_args, $class='submitdelete deletion');
+		} 
+		
+		$this->_template_args['publish_delete_link'] = $delete;	
+		
 	}
 
 
@@ -1494,7 +1498,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 	@uses EE_Form_Fields::get_form_fields (/helper/EE_Form_Fields.helper.php)
 	 * 	@uses EE_Form_Fields::get_form_fields_array (/helper/EE_Form_Fields.helper.php)
 	 */
-	protected function _generate_admin_form_fields($input_vars = array(), $generator = 'string', $id = FALSE) {
+	protected function _generate_admin_form_fields( $input_vars = array(), $generator = 'string', $id = FALSE ) {
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
 		$content = $generator == 'string' ? EE_Form_Fields::get_form_fields($input_vars, $id) : EE_Form_Fields::get_form_fields_array($input_vars);
 		return $content;
@@ -1551,20 +1555,37 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *
 	 * @access protected
 	 * @param string $route the route you want the form to direct to
+	 * @param string $additional_hidden_fields any additional hidden fields required in the form header
 	 * @return void
 	 */
-	protected function _set_add_edit_form_tags($route) {
-
-		$hidden_action_field_args['action'] = array(
-			'type' => 'hidden',
-			'value' => $route
-			);
-		$hidden_action_field = $this->_generate_admin_form_fields( $hidden_action_field_args, 'array' );
-		$nonce = wp_nonce_field( $route . '_nonce', '_wpnonce', false, false );
-		$this->_template_args['before_admin_page_content'] = '<form name="form" method="post" action="' . $this->_admin_base_url. '" id="' . $route . '_event_form" >';
+	protected function _set_add_edit_form_tags( $route = FALSE, $additional_hidden_fields = array() ) {
+		
+		if ( ! $route ) {
+			$user_msg = __('An error occurred. No action was set for this page\'s form.', 'event_espresso');
+			$dev_msg = $user_msg . "\n" . sprintf( __('The $route argument is required for the %s->%s method.', 'event_espresso'), __FUNCTION__, __CLASS__ );
+			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );			
+		}
+		// open form
+		$this->_template_args['before_admin_page_content'] = '<form name="form" method="post" action="' . $this->_admin_base_url . '" id="' . $route . '_event_form" >';
+		// add nonce
+		$nonce = wp_nonce_field( $route . '_nonce', '_wpnonce', FALSE, FALSE );
 		$this->_template_args['before_admin_page_content'] .= "\n\t" . $nonce;
-		$this->_template_args['before_admin_page_content'] .= "\n\t" . $hidden_action_field['action']['field'];
+		// add REQUIRED form action
+		$hidden_fields = array( 
+				'action' => array( 'type' => 'hidden', 'value' => $route ),
+			);
+		// merge arrays
+		$hidden_fields = is_array( $additional_hidden_fields) ? array_merge( $hidden_fields, $additional_hidden_fields ) : $hidden_fields;
+		// generate form fields
+		$form_fields = $this->_generate_admin_form_fields( $hidden_fields, 'array' );
+		// add fields to form
+		foreach ( $form_fields as $field_name => $form_field ) {
+			$this->_template_args['before_admin_page_content'] .= "\n\t" . $form_field['field'];
+		}	
+				
+		// close form
 		$this->_template_args['after_admin_page_content'] = '</form>';
+		
 	}
 
 
@@ -1586,9 +1607,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		// how many records affected ? more than one record ? or just one ?
 		if ( $success == 2 ) {
+			// overwrite default success messages
+			EE_Error::overwrite_success();
 			// set plural msg
 			EE_Error::add_success( sprintf( __('The %s have been successfully %s.', 'event_espresso'), $what, $action_desc ), __FILE__, __FUNCTION__, __LINE__);
 		} else if ( $success == 1 ) {
+			// overwrite default success messages
+			EE_Error::overwrite_success();
 			// set singular msg
 			EE_Error::add_success( sprintf( __('The %s has been successfully %s.', 'event_espresso'), $what, $action_desc), __FILE__, __FUNCTION__, __LINE__ );
 		}
@@ -1716,7 +1741,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			switch ( $map_option ) {
 				case $this->_current_page . '_' .  $this->_current_view . '_per_page':
 					$value = (int) $value;
-					if ( $value < 1 || $value > 100 )
+					if ( $value < 1 || $value > 999 )
 						return;
 					break;
 				default:
