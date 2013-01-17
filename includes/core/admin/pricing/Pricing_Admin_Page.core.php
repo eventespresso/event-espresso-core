@@ -394,6 +394,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 		$prices = EEM_Price::instance()->get_all_prices_that_are_global( $trash, $orderby, $order, $limit, $count );
 		return $prices;
+		
 	}
 
 
