@@ -9,6 +9,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 function event_espresso_txn() {
 
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	add_shortcode('ESPRESSO_TXN_PAGE', 'return_espresso_content');
 
 	ob_start();
 	global $wpdb, $org_options, $espresso_wp_user, $payment_settings, $espresso_content;
@@ -50,7 +51,6 @@ function event_espresso_txn() {
 	
 	$_REQUEST['page_id'] = $org_options['return_url'];
 	$espresso_content = ob_get_clean();
-	add_shortcode('ESPRESSO_TXN_PAGE', 'return_espresso_content');
 
 	espresso_clear_session();
 	
