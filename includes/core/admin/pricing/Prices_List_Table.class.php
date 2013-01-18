@@ -43,6 +43,7 @@ class Prices_List_Table extends EE_Admin_List_Table {
 		$this->_per_page = $this->get_items_per_page( $this->_screen . '_per_page' );
 		$this->_data = $this->_admin_page->get_prices_overview_data( $this->_per_page );
 		$this->_all_data_count = $this->_admin_page->get_prices_overview_data( $this->_per_page, TRUE );
+		$this->_trashed_count = $this->_admin_page->get_prices_overview_data( $this->_per_page, TRUE, TRUE );
 	}	
 
 
@@ -90,7 +91,10 @@ class Prices_List_Table extends EE_Admin_List_Table {
 
 
 
-	protected function _add_view_counts() { }
+	protected function _add_view_counts() {
+		$this->_views['all']['count'] = $this->_all_data_count;		
+		$this->_views['trashed']['count'] = $this->_trashed_count;		
+	}
 
 
 
