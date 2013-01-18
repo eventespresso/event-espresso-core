@@ -353,11 +353,12 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	/**
 	*	retrieve data for Prices List table 
 	*	@access public
-	* 	@param  int  $perpage    how many prices displayed per page
+	* 	@param  int  $per_page    how many prices displayed per page
 	* 	@param  boolean $count   return the count or objects
+	* 	@param  boolean $trashed   whether the current view is of the trash can - eww yuck!
 	* 	@return mixed (int|array)  int = count || array of price objects
 	*/
-	public function get_prices_overview_data( $per_page = 10, $count = FALSE ) {  
+	public function get_prices_overview_data( $per_page = 10, $count = FALSE, $trashed = FALSE ) {  
 
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		// start with an empty array
@@ -380,10 +381,8 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				$orderby = 'prc.PRC_amount';
 				break;
 			default:
-				$orderby = 'prc.PRC_ID';
-		}
-		
-		$trash = $this->_view == 'trash' ? TRUE : FALSE;
+				$orderby = array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' );
+		}		
 
 		$order = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
 		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
@@ -392,7 +391,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$offset = ($current_page-1)*$per_page;
 		$limit = array( $offset, $per_page );
 
-		$prices = EEM_Price::instance()->get_all_prices_that_are_global( $trash, $orderby, $order, $limit, $count );
+		$prices = EEM_Price::instance()->get_all_prices_that_are_global( $trashed, $orderby, $order, $limit, $count );
 		return $prices;
 		
 	}
@@ -410,6 +409,8 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	protected function _edit_price_details() {		
 	
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		// grab price ID
+		$PRC_ID = isset( $this->_req_data['id'] ) && ! empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
 		// change page title based on request action
 		$this->_admin_page_title = ucwords( str_replace( '_', ' ', $this->_req_action ));
 		// add PRC_ID to title if editing 
@@ -419,20 +420,18 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 		$PRC = EEM_Price::instance();
 
-			// grab price ID
-		$PRC_ID = isset( $this->_req_data['id'] ) && ! empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
 		if ( $PRC_ID ) {
 			$price = $PRC->get_price_by_ID( $PRC_ID );
-			$action = 'update_price';
 			$additional_hidden_fields = array( 
-					'PRC_ID' => array( 'type' => 'hidden', 'value' => $PRC_ID ),
-				);	
+					'PRC_ID' => array( 'type' => 'hidden', 'value' => $PRC_ID )
+				);
+			$this->_set_add_edit_form_tags( 'update_price', $additional_hidden_fields );
 		} else {
 			$price = $PRC->get_new_price();
-			$action = 'insert_price';
+			$this->_set_add_edit_form_tags( 'insert_price' );
 		}
 		
-		$this->_set_add_edit_form_tags( $action, $additional_hidden_fields );
+		
 		
 		$this->_template_args['PRC_ID'] = $PRC_ID;
 		$this->_template_args['price'] = $price;
@@ -503,26 +502,26 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
-		//$_REQUEST['PRC_name'] = ucwords(strtolower($_REQUEST['PRC_name']));
-		$_REQUEST['PRC_name'] = htmlentities(wp_strip_all_tags($_REQUEST['PRC_name']), ENT_QUOTES, 'UTF-8');
+		//$this->_req_data['PRC_name'] = ucwords(strtolower($this->_req_data['PRC_name']));
+		$this->_req_data['PRC_name'] = htmlentities(wp_strip_all_tags($this->_req_data['PRC_name']), ENT_QUOTES, 'UTF-8');
 	
 		$set_column_values = array(
-				'PRT_ID' => absint($_REQUEST['PRT_ID']),
+				'PRT_ID' => absint($this->_req_data['PRT_ID']),
 				'EVT_ID' => 0,
-				'PRC_amount' => floatval ($_REQUEST['PRC_amount']),
-				'PRC_name' => $_REQUEST['PRC_name'],
-				'PRC_desc' => htmlentities(wp_strip_all_tags($_REQUEST['PRC_desc']), ENT_QUOTES, 'UTF-8'),
-				'PRC_use_dates' => absint($_REQUEST['PRC_use_dates']),
+				'PRC_amount' => floatval ($this->_req_data['PRC_amount']),
+				'PRC_name' => $this->_req_data['PRC_name'],
+				'PRC_desc' => htmlentities(wp_strip_all_tags($this->_req_data['PRC_desc']), ENT_QUOTES, 'UTF-8'),
+				'PRC_use_dates' => absint($this->_req_data['PRC_use_dates']),
 				'PRC_start_date' => NULL,
 				'PRC_end_date' => NULL,
-				'PRC_disc_code' => ( ! empty( $_REQUEST['PRC_disc_code'] )) ? wp_strip_all_tags($_REQUEST['PRC_disc_code']) : NULL,
-				'PRC_disc_limit_qty' => absint($_REQUEST['PRC_disc_limit_qty']),
-				'PRC_disc_qty' => absint($_REQUEST['PRC_disc_qty']),
-				'PRC_disc_apply_all' => absint($_REQUEST['PRC_disc_apply_all']),
-				'PRC_disc_wp_user' => absint($_REQUEST['PRC_disc_wp_user']),
+				'PRC_disc_code' => ( ! empty( $this->_req_data['PRC_disc_code'] )) ? wp_strip_all_tags($this->_req_data['PRC_disc_code']) : NULL,
+				'PRC_disc_limit_qty' => absint($this->_req_data['PRC_disc_limit_qty']),
+				'PRC_disc_qty' => absint($this->_req_data['PRC_disc_qty']),
+				'PRC_disc_apply_all' => absint($this->_req_data['PRC_disc_apply_all']),
+				'PRC_disc_wp_user' => absint($this->_req_data['PRC_disc_wp_user']),
 				'PRC_overrides' => NULL,
 				'PRC_order' => 0,
-				'PRC_is_active' => absint($_REQUEST['PRC_is_active']),
+				'PRC_is_active' => absint($this->_req_data['PRC_is_active']),
 				'PRC_deleted' => 0,
 				'PRC_reg_limit' => NULL,
 				'PRC_tckts_left' => NULL
@@ -538,11 +537,11 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * 		insert_or_update_price
-	*		@param boolean 		$new_price - whether to insert or update
+	*		@param boolean 		$insert - whether to insert or update
 	*		@access protected
 	*		@return void
 	*/
-	protected function _insert_or_update_price( $new_price = FALSE ) {
+	protected function _insert_or_update_price( $insert = FALSE ) {
 		
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
@@ -555,22 +554,28 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 		$set_column_values = $this->set_price_column_values();
 		// is this a new Price ?
-		if ( $new_price ) {
+		if ( $insert ) {
 			// run the insert
-			if ( $PRC->insert( $set_column_values )) {
+			if ( $results = $PRC->insert( $set_column_values )) {
 				$success = 1;
-			} 
+				$PRC_ID = $results['new-ID'];
+			} else {
+				$PRC_ID = FALSE;
+			}
 			$action_desc = 'created';
 		} else {
+			$PRC_ID = absint( $this->_req_data['PRC_ID'] );
 			// run the update
-			$where_cols_n_values = array( 'PRC_ID' => $_REQUEST['PRC_ID'] );
+			$where_cols_n_values = array( 'PRC_ID' => $PRC_ID );
 			if ( $PRC->update( $set_column_values, $where_cols_n_values )) {
 				$success = 1;
 			}
 			$action_desc = 'updated';
 		}
 		
-		$this->_redirect_after_admin_action( $success, 'Prices', $action_desc, array() );
+		$query_args = array( 'action' => 'edit_price', 'id' => $PRC_ID );
+		
+		$this->_redirect_after_action( $success, 'Prices', $action_desc, $query_args );
 			
 	}
  
@@ -595,11 +600,11 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$success = 1;
 		$PRC_deleted = $trash ? TRUE : FALSE;
 		//Checkboxes
-		if (!empty($_POST['checkbox']) && is_array($_POST['checkbox'])) {
+		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
 			// if array has more than one element than success message should be plural
-			$success = count( $_POST['checkbox'] ) > 1 ? 2 : 1;
+			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
 			// cycle thru checkboxes 
-			while (list( $PRC_ID, $value ) = each($_POST['checkbox'])) {
+			while (list( $PRC_ID, $value ) = each($this->_req_data['checkbox'])) {
 				if ( ! $PRC->update(array('PRC_deleted' => $PRC_deleted), array('PRC_ID' => absint($PRC_ID)))) {
 					$success = 0;
 				}
@@ -607,7 +612,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			
 		} else {
 			// grab single id and delete
-			$PRC_ID = absint($_REQUEST['id']);
+			$PRC_ID = absint($this->_req_data['id']);
 			if ( ! $PRC->update(array('PRC_deleted' => $PRC_deleted), array('PRC_ID' => absint($PRC_ID)))) {
 				$success = 0;
 			}
@@ -615,7 +620,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		}
 		
 		$action_desc = $trash ? 'moved to the trash' : 'restored';
-		$this->_redirect_after_admin_action( $success, 'Prices', $action_desc, array() );
+		$this->_redirect_after_action( $success, 'Prices', $action_desc, array() );
 		
 	}
 
@@ -639,11 +644,11 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		
 		$success = 1;
 		//Checkboxes
-		if (!empty($_POST['checkbox']) && is_array($_POST['checkbox'])) {
+		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
 			// if array has more than one element than success message should be plural
-			$success = count( $_POST['checkbox'] ) > 1 ? 2 : 1;
+			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
 			// cycle thru bulk action checkboxes
-			while (list( $PRC_ID, $value ) = each($_POST['checkbox'])) {
+			while (list( $PRC_ID, $value ) = each($this->_req_data['checkbox'])) {
 				if (!$PRC->delete_by_id(absint($PRC_ID))) {
 					$success = 0;
 				}
@@ -651,14 +656,14 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	
 		} else {
 			// grab single id and delete
-			$PRC_ID = absint($_REQUEST['id']);
+			$PRC_ID = absint($this->_req_data['id']);
 			if ( ! $PRC->delete_by_id($PRC_ID)) {
 				$success = 0;
 			}
 			
 		}
 		
-		$this->_redirect_after_admin_action( $success, 'Prices', 'deleted', array() );
+		$this->_redirect_after_action( $success, 'Prices', 'deleted', array() );
 		
 	}
 
@@ -777,7 +782,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
-		$PRT_ID = isset( $_REQUEST['id'] ) && ! empty( $_REQUEST['id'] ) ? absint( $_REQUEST['id'] ) : FALSE;
+		$PRT_ID = isset( $this->_req_data['id'] ) && ! empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
 
 		$title = __( ucwords( str_replace( '_', ' ', $this->_req_action )), 'event_espresso' );
 		// add PRC_ID to title if editing 
@@ -846,16 +851,16 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
-		$base_type = wp_strip_all_tags( $_REQUEST['base_type'] );
-		$name = ucwords( strtolower( wp_strip_all_tags( $_REQUEST['PRT_name'] )));
+		$base_type = wp_strip_all_tags( $this->_req_data['base_type'] );
+		$name = ucwords( strtolower( wp_strip_all_tags( $this->_req_data['PRT_name'] )));
 	
 		switch ($base_type) {
 	
 			case 'Price' :
-				$_REQUEST['PRT_is_discount'] = 0;
-				$_REQUEST['PRT_is_tax'] = 0;
-				$_REQUEST['PRT_is_percent'] = 0;
-				$_REQUEST['PRT_order'] = 0;
+				$this->_req_data['PRT_is_discount'] = 0;
+				$this->_req_data['PRT_is_tax'] = 0;
+				$this->_req_data['PRT_is_percent'] = 0;
+				$this->_req_data['PRT_order'] = 0;
 	
 				$pos = strpos($name, ' Price');
 				$trunc = strlen($name) - 6;
@@ -863,57 +868,57 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 					$name = substr($name, 0, $trunc);
 				}
 				$name = trim($name) . ' Price';
-				$_REQUEST['PRT_name'] = $name;
+				$this->_req_data['PRT_name'] = $name;
 				break;
 	
 			case 'Discount' :
-				$_REQUEST['PRT_is_discount'] = 1;
+				$this->_req_data['PRT_is_discount'] = 1;
 				$pos = strpos($name, ' Discount');
 				$trunc = strlen($name) - 9;
 				if ($pos == $trunc) {
 					$name = substr($name, 0, $trunc);
 				}
 				$name = trim($name) . ' Discount';
-				$_REQUEST['PRT_name'] = $name;
+				$this->_req_data['PRT_name'] = $name;
 				break;
 	
 			case 'Surcharge' :
-				$_REQUEST['PRT_is_discount'] = 0;
-				$_REQUEST['PRT_is_tax'] = 0;
+				$this->_req_data['PRT_is_discount'] = 0;
+				$this->_req_data['PRT_is_tax'] = 0;
 				$pos = strpos($name, ' Surcharge');
 				$trunc = strlen($name) - 10;
 				if ($pos == $trunc) {
 					$name = substr($name, 0, $trunc);
 				}
 				$name = trim($name) . ' Surcharge';
-				$_REQUEST['PRT_name'] = $name;
+				$this->_req_data['PRT_name'] = $name;
 				break;
 	
 			case 'Tax' :
-				$_REQUEST['PRT_is_discount'] = 0;
-				$_REQUEST['PRT_is_tax'] = 1;
-				$_REQUEST['PRT_is_percent'] = 1;
+				$this->_req_data['PRT_is_discount'] = 0;
+				$this->_req_data['PRT_is_tax'] = 1;
+				$this->_req_data['PRT_is_percent'] = 1;
 				$pos = strpos($name, ' Tax');
 				$trunc = strlen($name) - 4;
 				if ($pos == $trunc) {
 					$name = substr($name, 0, $trunc);
 				}
 				$name = trim($name) . ' Tax';
-				$_REQUEST['PRT_name'] = $name;
+				$this->_req_data['PRT_name'] = $name;
 				break;
 		}
 	
-		//$_REQUEST['PRT_name'] = ucwords(strtolower($_REQUEST['PRT_name']));
-		$_REQUEST['PRT_name'] = htmlentities($_REQUEST['PRT_name'], ENT_QUOTES, 'UTF-8');
+		//$this->_req_data['PRT_name'] = ucwords(strtolower($this->_req_data['PRT_name']));
+		$this->_req_data['PRT_name'] = htmlentities($this->_req_data['PRT_name'], ENT_QUOTES, 'UTF-8');
 	
 		$set_column_values = array(
-				'PRT_name' => $_REQUEST['PRT_name'],
-				'PRT_is_member' => absint($_REQUEST['PRT_is_member']),
-				'PRT_is_discount' => absint($_REQUEST['PRT_is_discount']),
-				'PRT_is_tax' => absint($_REQUEST['PRT_is_tax']),
-				'PRT_is_percent' => absint($_REQUEST['PRT_is_percent']),
-				'PRT_is_global' => absint($_REQUEST['PRT_is_global']),
-				'PRT_order' => absint($_REQUEST['PRT_order'])
+				'PRT_name' => $this->_req_data['PRT_name'],
+				'PRT_is_member' => absint($this->_req_data['PRT_is_member']),
+				'PRT_is_discount' => absint($this->_req_data['PRT_is_discount']),
+				'PRT_is_tax' => absint($this->_req_data['PRT_is_tax']),
+				'PRT_is_percent' => absint($this->_req_data['PRT_is_percent']),
+				'PRT_is_global' => absint($this->_req_data['PRT_is_global']),
+				'PRT_order' => absint($this->_req_data['PRT_order'])
 		);
 	
 		return $set_column_values;
@@ -968,7 +973,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			$action_desc = 'created';
 		} else {
 			// run the update
-			$where_cols_n_values = array('PRT_ID' => absint($_REQUEST['PRT_ID']));
+			$where_cols_n_values = array('PRT_ID' => absint($this->_req_data['PRT_ID']));
 			if ( $PRT->update( $set_column_values, $where_cols_n_values )) {
 				$success = 1;
 			}
@@ -976,7 +981,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		}
 		
 		$query_args = array( 'action'=> 'price_types' );
-		$this->_redirect_after_admin_action( $success, 'Price Type', $action_desc, $query_args );
+		$this->_redirect_after_action( $success, 'Price Type', $action_desc, $query_args );
 			
 	}
  
@@ -1001,12 +1006,12 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$success = 1;
 		$PRT_deleted = $trash ? TRUE : FALSE;
 		//Checkboxes
-		if (!empty($_POST['checkbox']) && is_array($_POST['checkbox'])) {
+		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
 			// if array has more than one element than success message should be plural
-			$success = count( $_POST['checkbox'] ) > 1 ? 2 : 1;
-			$what = count( $_POST['checkbox'] ) > 1 ? 'Price Types' : 'Price Type';
+			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
+			$what = count( $this->_req_data['checkbox'] ) > 1 ? 'Price Types' : 'Price Type';
 			// cycle thru checkboxes 
-			while (list( $PRT_ID, $value ) = each($_POST['checkbox'])) {
+			while (list( $PRT_ID, $value ) = each($this->_req_data['checkbox'])) {
 				if ( ! $PRT->update(array('PRT_deleted' => $PRT_deleted), array('PRT_ID' => absint($PRT_ID)))) {
 					$success = 0;
 				}
@@ -1014,7 +1019,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			
 		} else {
 			// grab single id and delete
-			$PRT_ID = absint($_REQUEST['id']);
+			$PRT_ID = absint($this->_req_data['id']);
 			if ( ! $PRT->update(array('PRT_deleted' => $PRT_deleted), array('PRT_ID' => absint($PRT_ID)))) {
 				$success = 0;
 			}
@@ -1024,7 +1029,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		
 		$action_desc = $trash ? 'moved to the trash' : 'restored';
 		$query_args = array( 'action'=> 'price_types' );
-		$this->_redirect_after_admin_action( $success, $what, $action_desc, $query_args );
+		$this->_redirect_after_action( $success, $what, $action_desc, $query_args );
 		
 	}
 
@@ -1048,12 +1053,12 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		
 		$success = 1;
 		//Checkboxes
-		if (!empty($_POST['checkbox']) && is_array($_POST['checkbox'])) {
+		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
 			// if array has more than one element than success message should be plural
-			$success = count( $_POST['checkbox'] ) > 1 ? 2 : 1;
-			$what = count( $_POST['checkbox'] ) > 1 ? 'Prices' : 'Price';
+			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
+			$what = count( $this->_req_data['checkbox'] ) > 1 ? 'Prices' : 'Price';
 			// cycle thru bulk action checkboxes
-			while (list( $PRT_ID, $value ) = each($_POST['checkbox'])) {
+			while (list( $PRT_ID, $value ) = each($this->_req_data['checkbox'])) {
 				if (!$PRT->delete_by_id(absint($PRT_ID))) {
 					$success = 0;
 				}
@@ -1061,7 +1066,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	
 		} else {
 			// grab single id and delete
-			$PRT_ID = absint($_REQUEST['id']);
+			$PRT_ID = absint($this->_req_data['id']);
 			if ( ! $PRT->delete_by_id($PRT_ID)) {
 				$success = 0;
 			}
@@ -1069,72 +1074,12 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			
 		}
 
-//echo '<h4>$PRT_ID : ' . $PRT_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//echo '<h4>$success : ' . $success . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//echo '<h4>$what : ' . $what . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-
 		
 		$query_args = array( 'action'=> 'price_types' );
-		$this->_redirect_after_admin_action( $success, $what, 'deleted', $query_args );
+		$this->_redirect_after_action( $success, $what, 'deleted', $query_args );
 		
 	}
 
-
-
-
-
-	/**
-	 * 		_redirect_after_admin_action
-	*		@param int 		$success 				- whether success was for two or more records, or just one, or none
-	*		@param string 	$what 					- what the action was performed on
-	*		@param string 	$action_desc 		- what was done ie: updated, deleted, etc
-	*		@param int 		$query_args		- an array of query_args to be added to the URL to redirect to after the admin action is completed
-	*		@access private
-	*		@return void
-	*/
-	private function _redirect_after_admin_action( $success = FALSE, $what = 'item', $action_desc = 'processed',  $query_args = array() ) {		
-	
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );		
-		// overwrite default success messages
-		EE_Error::overwrite_success();
-		// how many records affected ? more than one record ? or just one ?
-		if ( $success == 2 ) {
-			// set plural msg
-			$msg = sprintf( __( 'The %s have been successfully %s.', 'event_espresso' ), $what, $action_desc );
-			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
-
-		} else if ( $success == 1 ) {
-			// set singular msg
-			$msg = sprintf( __( 'The %s has been successfully %s.', 'event_espresso' ), $what, $action_desc );
-			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
-		}
-
-		// check that $query_args isn't something crazy
-		if ( ! is_array( $query_args )) {
-			$query_args = array();
-		}
-		// grab messages
-		$notices = EE_Error::get_notices( FALSE, TRUE, TRUE, FALSE );
-		//combine $query_args and $notices
-		$query_args = array_merge( $query_args, $notices );
-		// generate redirect url
-
-		// if redirecting to anything other than the main page, add a nonce
-		if ( isset( $query_args['action'] )) {
-			// manually generate wp_nonce
-			$nonce = array( '_wpnonce' => wp_create_nonce( $query_args['action'] . '_nonce' ));
-			// and merge that with the query vars becuz the wp_nonce_url function wrecks havoc on some vars
-			$query_args = array_merge( $query_args, $nonce );
-		} 
-		//printr( $query_args, '$query_args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		$redirect_url = add_query_arg( $query_args, PRICING_ADMIN_URL ); 
-		//echo '<h4>$redirect_url : ' . $redirect_url . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		//die();
-		wp_safe_redirect( $redirect_url );	
-		exit();
-	}
 
 
 
