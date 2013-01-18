@@ -318,6 +318,7 @@ class EEM_Price extends EEM_Base {
 		}
 		// get count ? or get data?
 		$results = $count ? $wpdb->get_var( $wpdb->prepare( $SQL, $VAL )) : $wpdb->get_results( $wpdb->prepare( $SQL, $VAL ), 'OBJECT' );
+		//echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		// bad results
 		if ( empty( $results ) || $results === FALSE || is_wp_error( $results )) {
 			return FALSE;
@@ -462,7 +463,7 @@ class EEM_Price extends EEM_Base {
 	 * 	retreive all prices that are global
 	 *
 	 * 	@access		public
-	 * 	@return 		boolean	$show_deleted	return all records or just active non-deleted ones ?
+	 * 	@return 		boolean	$trashed				return deleted records or just active non-deleted ones ?
 	 * 	@return 		string		$orderby				sorting column
 	 * 	@return 		string		$order					sort ASC or DESC ?
 	 * 	@return 		array		$limit					query limit and offset
@@ -470,19 +471,17 @@ class EEM_Price extends EEM_Base {
 	 * 	@return 		array		on success
 	 * 	@return 		boolean	false on fail
 	 */
-	public function get_all_prices_that_are_global( $show_deleted = FALSE, $orderby=array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' ), $order='ASC', $limit = NULL, $count = FALSE ) {
-		if ( ! $show_deleted ) {
-			return $this->_select_all_prices_where( 
-					array( 'prt.PRT_is_global' => TRUE, 'prc.PRC_is_active' => TRUE, 'prc.PRC_deleted' => $show_deleted ),
-					$orderby,
-					$order,
-					'=',
-					$limit, 
-					$count 
-				);
-		} else {
-			return $this->_select_all_prices_where( array( 'prt.PRT_is_global' => TRUE ), $orderby, $order );
-		}
+	public function get_all_prices_that_are_global( $trashed = FALSE, $orderby=array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' ), $order='ASC', $limit = NULL, $count = FALSE ) {
+		
+		return $this->_select_all_prices_where( 
+				array( 'prt.PRT_is_global' => TRUE, 'prc.PRC_deleted' => $trashed ),
+				$orderby,
+				$order,
+				'=',
+				$limit, 
+				$count 
+			);
+
 	}
 
 	public function get_all_prices_that_are_not_global() {
