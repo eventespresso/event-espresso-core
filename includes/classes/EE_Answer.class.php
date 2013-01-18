@@ -23,35 +23,41 @@
  */
 require_once ( 'EE_Base_Class.class.php' );
 class EE_Answer extends EE_Base_Class{
+	
+	static protected $_fieldSettings=array('ANS_ID'=>array('type'=>'primary_key','nullable'=>false,'nicename'=>'Answer ID'),
+						'REG_ID'=>array('type'=>'foreign_key','class'=>'Registration','nullable'=>false,'nicename'=>'Registration ID'),
+						'QST_ID'=>array('type'=>'foreign_key','class'=>'Question','nullable'=>false,'nicename'=>'Question ID'),
+						'ANS_value'=>array('type'=>'string','nullable'=>false,'nicename'=>'Answer Value/Text'));
+			
 	/**
 	 * Answer ID
 	 * 
-	 * @access private
+	 * @access protected
 	 * @var int
 	 */
-	private $_ANS_ID=FALSE;
+	protected $_ANS_ID=FALSE;
 	
 	/**
 	 * ID of the related Registration
-	 * @access private
+	 * @access protected
 	 * @var int 
 	 */
-	private $_REG_ID=NULL;
+	protected $_REG_ID=NULL;
 	
 	/**
 	 * ID of the related question
-	 * @access private
+	 * @access protected
 	 * @var int
 	 */
-	private $_QST_ID=NULL;
+	protected $_QST_ID=NULL;
 	
 	/**
 	 * Text of answer. This is obvious for text and textarea typed questions.
 	 * For check
-	 * @access private
+	 * @access protected
 	 * @var text 
 	 */
-	private $_ANS_value=NULL;
+	protected $_ANS_value=NULL;
 
 
 
