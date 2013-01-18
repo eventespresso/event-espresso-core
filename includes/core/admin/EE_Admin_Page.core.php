@@ -732,6 +732,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_add_admin_page_ajax_loading_img();
 		$this->_add_admin_page_overlay();
 
+
 		//if metaboxes are present we need to add the nonce field
 		if ( isset($this->_route_config['metaboxes']) || ( isset($this->_route_config['has_metaboxes']) && $this->_route_config['has_metaboxes'] ) || isset($this->_route_config['list_table']) ) {
 			wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false);
@@ -834,7 +835,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//register all scripts
 		wp_register_script('jquery-ui-timepicker-addon', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker'), EVENT_ESPRESSO_VERSION, true );
-		wp_register_script('event_editor_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_editor.js', array('jquery-ui-slider', 'jquery-ui-timepicker-addon', 'post'), EVENT_ESPRESSO_VERSION, true);
+		wp_register_script('event_editor_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_editor.js', array('jquery-ui-slider', 'jquery-ui-timepicker-addon'), EVENT_ESPRESSO_VERSION, true);
 		wp_register_script('event_espresso_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_espresso.js', array('jquery'), EVENT_ESPRESSO_VERSION, true);
 		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('jquery'), EVENT_ESPRESSO_VERSION, true );
 
@@ -1106,8 +1107,17 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( is_array($this->_route_config) && isset( $this->_route_config['columns'] ) && is_array($this->_route_config['columns']) && count( $this->_route_config['columns'] == 2 ) ) {
 
 			add_screen_option('layout_columns', array('max' => (int) $this->_route_config['columns'][0], 'default' => (int) $this->_route_config['columns'][1] ) );
-			$this->_template_args['num_columns'] = 
+			$this->_template_args['num_columns'] = $this->_route_config['columns'][0];
+			$screen_id = $this->_current_screen->id;
+			$screen_columns = (int) get_user_option("screen_layout_$screen_id");
+			$total_columns = !empty($screen_columns) ? $screen_columns : $this->_route_config['columns'][1];
+			$this->_template_args['current_screen_widget_class'] = 'columns-' . $total_columns;
+			$this->_template_args['current_page'] = $this->_wp_page_slug;
+			$this->_template_args['screen'] = $this->_current_screen;
 			$this->_column_template_path = EE_CORE_ADMIN . 'admin_details_metabox_column_wrapper.template.php';
+
+			//finally if we don't have has_metaboxes set in the route config let's make sure it IS set other wise the necessary hidden fields for this won't be loaded.
+			$this->_route_config['has_metaboxes'] = TRUE;
 		}
 	}
 
@@ -1217,7 +1227,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$name => $id
 			);
 
-		$delete_link = $this->_get_action_link_or_button( $delete_action, $type = 'delete', $delete_link_args, $class='submitdelete deletion');
+		$delete_link = !empty($delete_action) ? $this->_get_action_link_or_button( $delete_action, $type = 'delete', $delete_link_args, $class='submitdelete deletion') : '';
 		
 		$this->_template_args['publish_delete_link'] = $delete_link;
 
@@ -1343,13 +1353,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return [type] [description]
 	 */
 	public function display_admin_page_with_metabox_columns() {
-		$screen = $this->_current_screen;
-		$this->template_args['current_screen_widget_class'] = 'columns-' . 
-		$screen->get_columns();
-		$this->template_args['current_page'] = $this->_wp_page_slug;
-		$this->template_args['screen'] = $screen;
-		$this->template_args['post_body_content'] = $this->template_args['admin_page_content'];
-		$this->template_args['admin_page_content'] = espresso_display_template( $this->_column_template_path, $this->template_args, TRUE);
+		$this->_template_args['post_body_content'] = $this->_template_args['admin_page_content'];
+		$this->_template_args['admin_page_content'] = espresso_display_template( $this->_column_template_path, $this->_template_args, TRUE);
 
 		//the final wrapper
 		$this->admin_page_wrapper();
@@ -1395,6 +1400,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		// set current wp page slug - looks like: event-espresso_page_event_categories
 		$this->_template_args['current_page'] = $this->_wp_page_slug;
 		$template_path = $sidebar ?  EE_CORE_ADMIN . 'admin_details_wrapper.template.php' : EE_CORE_ADMIN . 'admin_details_wrapper_no_sidebar.template.php';
+		$template_path = !empty($this->_column_template_path) ? $this->_column_template_path : $template_path;
 
 		$this->_template_args['post_body_content'] = isset( $this->_template_args['admin_page_content'] ) ? $this->_template_args['admin_page_content'] : NULL;
 		$this->_template_args['before_admin_page_content'] = isset($this->_template_args['before_admin_page_content']) ? $this->_template_args['before_admin_page_content'] : '';
@@ -1471,6 +1477,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		$this->_template_args['nav_tabs'] = $this->_nav_tabs;
 		$this->_template_args['admin_page_title'] = $this->_admin_page_title;
+
+		$this->_template_args['before_admin_page_content'] = apply_filters( 'filter_hook_espresso_before_admin_page_content' . $this->_current_page . $this->_current_view, isset( $this->_template_args['before_admin_page_content'] ) ? $this->_template_args['before_admin_page_content'] : '');
+		$this->_template_args['after_admin_page_content'] = apply_filters( 'filter_hook_espresso_after_admin_page_content' . $this->_current_page . $this->_current_view, isset( $this->_template_args['after_admin_page_content'] ) ? $this->_template_args['after_admin_page_content'] : '');
+
 		
 		
 		// load settings page wrapper template

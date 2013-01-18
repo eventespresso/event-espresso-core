@@ -10,7 +10,7 @@
 
 		<?php
 		//let's loop through the columns
-		 for ( $i = 0; $i <= $num_columns; $i++ ) {
+		 for ( $i = 1; $i <= $num_columns; $i++ ) {
 		 	$metaref = ( $i === 1 ) ? 'normal' : 'side';
 		 	$metaref = ( $i > 2 ) ? 'column'.$i : $metaref;
 		 ?>

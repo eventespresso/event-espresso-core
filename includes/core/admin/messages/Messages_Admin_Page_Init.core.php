@@ -35,12 +35,12 @@ class Messages_Admin_Page_Init extends EE_Admin_Page_Init  {
 		
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-		define( 'EE_MSG_PG_SLUG', 'messages' );	
+		define( 'EE_MSG_PG_SLUG', 'ee_messages' );	
 		define( 'EE_MSG_PG_NAME', ucwords( str_replace( '_', '', EE_MSG_PG_SLUG )));	
 		define( 'EE_MSG_ADMIN', EE_CORE_ADMIN . 'messages' . DS );	
 		define( 'EE_MSG_ADMIN_URL', admin_url( 'admin.php?page=' . EE_MSG_PG_SLUG ));	
 		define( 'EE_MSG_ASSETS_PATH', EE_MSG_ADMIN . 'assets' . DS );		
-		define( 'EE_MSG_ASSETS_URL', EE_CORE_ADMIN_URL . EE_MSG_PG_SLUG . '/assets/' );	
+		define( 'EE_MSG_ASSETS_URL', EE_CORE_ADMIN_URL  . 'messages/assets/' );	
 		define( 'EE_MSG_TEMPLATE_PATH', EE_MSG_ADMIN . 'templates' . DS );	
 		define( 'EE_MSG_TEMPLATE_URL', EE_CORE_ADMIN_URL . EE_MSG_PG_SLUG . '/templates/' );
 

@@ -7,7 +7,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * Event Registration and Management Plugin for WordPress
  *
- * @package		Evetn Espresso
+ * @package		Event Espresso
  * @author		Seth Shoultes
  * @copyright	(c)2009-2012 Event Espresso All Rights Reserved.
  * @license		http://eventespresso.com/support/terms-conditions/  *see Plugin Licensing *
@@ -18,7 +18,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * Messages_Template_List_Table
  *
- * extends WP_List_Table class
+ * extends EE_Admin_List_Table class
  *
  * @package		Evetn Espresso
  * @subpackage	/includes/core/admin/messages
@@ -27,99 +27,101 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  */
 
-if (!class_exists('WP_List_Table')) {
-	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
-}
-
-class Messages_Template_List_Table extends WP_List_Table {
+class Messages_Template_List_Table extends EE_Admin_List_Table {
 	
-	private $_data;
-	private $_view;
-	private $_views;
-	private $_entries_per_page_dropdown;
-
-	/**
-	 * [__construct description]
-	 * @param array   $data                      message_template data
-	 * @param string  $view                      what is the current view
-	 * @param array|null  $views                     available views
-	 * @param int|boolean $entries_per_page_dropdown how many entries listed per page (if set)
-	 * @todo  make sure that the view is given for the current user. uncertain at this point if the view would be restricted here or when data is sent.
-	 */
-	public function __construct( $data = array(), $view = NULL, $views = NULL, $entries_per_page_dropdown = FALSE ) {
-		
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		//
-		$this->_data = $data;
-		$this->_view = $view;
-		$this->_views = $views;
-		$this->_entries_per_page_dropdown = $entries_per_page_dropdown;
-
+	
+	public function __construct( &$admin_page ) {
 		//Set parent defaults
-		parent::__construct(array(
-			'singular' => 'Message Template Group', //singular name of the listed records
-			'plural' => 'Message Template',
-			'ajax' => false //not yet but will
-		));
-
-		$this->prepare_items();
+		parent::__construct($admin_page);
 	}
 
-	function prepare_items() {
-		$per_page = ( ! empty( $_REQUEST['per_page'] )) ? absint( $_REQUEST['per_page'] ) : 10;
-		$columns = $this->get_columns();
-		$hidden = array();
-		$sortable = $this->get_sortable_columns();
-		$this->_column_headers = array($columns, $hidden, $sortable);
 
-		$current_page = $this->get_pagenum();
-		$total_items = count( $this->_data );
 
-		//$this->process_bulk_action(); //todo: ? is this something in the new system? //don't even think we'll do bulk... yet.
 
-		if ( is_array( $this->_data) )
-			$this->_data = array_slice( $this->_data, (( $current_page-1 ) * $per_page ), $per_page );
-		//printr( $prices, '$prices <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-        $this->items = $this->_data;
-		
-		$this->set_pagination_args(
-				array(
-						'total_items' => $total_items, //WE have to calculate the total number of items
-						'per_page' => $per_page, //WE have to determine how many items to show on a page
-						'total_pages' => ceil($total_items / $per_page) //WE have to calculate the total number of pages
-				)
-		);
+	protected function _setup_data() {
+		$this->_per_page = $this->get_items_per_page( $this->_screen . '_per_page' );
+		$this->_data = $this->_admin_page->get_message_templates( $this->_per_page, $this->_view, FALSE);
+		$this->_all_data_count = $this->_admin_page->get_message_templates( $this->_per_page, $this->_view, TRUE );
 	}
 
-	/**
-	 * get_columns
-	 * @return array array of the columns.
-	 */
-	function get_columns() {
-		$columns = array(
-			/*'cb' => '<input type="checkbox" />', //render checkbox instead of text. */
+
+
+
+
+	protected function _set_properties() {
+		$this->_wp_list_args = array(
+			'singular' => __('Message Template Group', 'event_espresso' ),
+			'plural' => __('Message Template', 'event_espresso' ),
+			'ajax' => TRUE, //for now,
+			'screen' => $this->_admin_page->get_current_screen()->id 
+			);
+
+		$this->_columns = array(
 			'event' => __( 'Event', 'event_espresso'),
 			'messenger' => __( 'Messenger', 'event_espresso'),
 			'message_type' => __('Message Type', 'event_espresso'),
 			'context' => __('Context', 'event_espresso'),
 			'messages_sent' => __( 'Total Sent', 'event_espresso' )
-		);
-		return $columns;
-	}
+			);
 
-	/**
-	 * get_sortable_columns
-	 * @return array of columns that are sortable.
-	 */
-	function get_sortable_columns() {
-		$sortable_columns = array(
+		$this->_sortable_columns = array(
 			'event' => array( 'EVT_ID', FALSE ), //true means it's already sorted.
 			'messenger' => array( 'MTP_messenger', TRUE ),
 			'message_type' => array( 'MTP_message_type', FALSE )
-		);
-		return $sortable_columns;
+			);
+
+		$this->_hidden_columns = array();
 	}
+
+
+
+
+
+
+	
+	protected function _get_table_filters() {
+		$filters = array();
+		require_once EE_FF_HELPER;
+		$messengers = $this->_admin_page->get_active_messengers();
+		$message_types = $this->_admin_page->get_active_message_types();
+
+
+		//setup messengers for selects
+		$i=0;
+		foreach ( $messengers as $messenger => $args ) {
+			$m_values[$i]['id'] = $messenger;
+			$m_values[$i]['text'] = ucwords(str_replace('_', ' ', $messenger) );
+			$i++;
+		}
+		
+		//lets do the same for message types
+		$i=0;
+		foreach ( $message_types as $message_type => $args ) {
+			$mt_values[$i]['id'] = $message_type;
+			$mt_values[$i]['text'] = ucwords( str_replace('_', ' ', $message_type ) );
+			$i++;
+		}
+
+		
+		$filters[] = EE_Form_Fields::select_input('ee_messenger_filter_by', $m_values, isset($this->_req_data['ee_messenger_filter_by']) ? sanitize_key( $this->_req_data['ee_messenger_filter_by']) : '' );
+		$filters[] = EE_Form_Fields::select_input('ee_message_type_filter_by', $mt_values, isset($this->_req_data['ee_message_type_filter_by']) ? sanitize_key( $this->_req_data['ee_message_type_filter_by']) : '');
+		return $filters;
+	}
+
+
+
+
+
+	protected function _add_view_counts() {
+		foreach ( $this->_views as $view => $args )  {
+			$this->_views[$view]['count'] = $this->_admin_page->get_message_templates( $this->_per_page, $view, TRUE, TRUE );
+		}
+	}
+
+
+
+	
+
 
 	/**
 	 * column_default
@@ -136,9 +138,7 @@ class Messages_Template_List_Table extends WP_List_Table {
 		}
 	}
 
-	function extra_tablenav( $which ) {
-		echo $this->_entries_per_page_dropdown;
-	}
+	
 
 	/*function column_cb($item) {
 		return sprintf( '<input type="checkbox" name="checkbox[%1$s]" />', $item->GRP_ID() );
@@ -227,24 +227,7 @@ class Messages_Template_List_Table extends WP_List_Table {
 		return __('feature in progress', 'event_espresso');
 	}
 
-	/**
-	 * get_bulk_actions
-	 * @return array bulk actions
-	 * @todo: not certain if this is needed will verify in testing.
-	 */
-	function get_bulk_actions() {
-		$actions = array();
-		return $actions;
-	}
 
-	/**
-	 * process_bulk_action
-	 * @return void
-	 * @todo: not certain if this is needed will verify in testing
-	 */
-	function process_bulk_action() {
-
-	}
 
 	/**
 	 * [_event_name description]
