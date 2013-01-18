@@ -29,10 +29,8 @@
 class Prices_List_Table extends EE_Admin_List_Table {
 
 	private $_PRT;
-	protected $_view;
 
 	public function __construct( &$admin_page ) {
-		$this->_view = $admin_page->get_view() ;
 		parent::__construct($admin_page);
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 		$this->_PRT = EEM_Price_Type::instance();
@@ -43,7 +41,7 @@ class Prices_List_Table extends EE_Admin_List_Table {
 
 	protected function _setup_data() {
 		$this->_per_page = $this->get_items_per_page( $this->_screen . '_per_page' );
-		$trashed = $this->_view== 'trashed' ? TRUE : FALSE;		
+		$trashed = $this->_admin_page->get_view() == 'trashed' ? TRUE : FALSE;		
 		$this->_data = $this->_admin_page->get_prices_overview_data( $this->_per_page, FALSE, $trashed );
 		$this->_all_data_count = $this->_admin_page->get_prices_overview_data( $this->_per_page, TRUE, FALSE );
 		$this->_trashed_count = $this->_admin_page->get_prices_overview_data( $this->_per_page, TRUE, TRUE );
