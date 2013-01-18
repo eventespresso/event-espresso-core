@@ -881,23 +881,19 @@ abstract class EEM_Base extends EE_Base {
 	 *		@param mixed (string, array) - $sort
 	 *		@return string
 	 */
-	protected function _orderby_n_sort ($orderby=FALSE, $sort=FALSE) {
+	protected function _orderby_n_sort ($orderby=FALSE, $sort='=') {
 		if ( $orderby ) {
 			$OBS = ' ORDER BY ';
 			if ( is_array($orderby) ) {
 				foreach ( $orderby as $key => $order ) {
 					$OBS .= ' ' . $order . ' ';
-					if ( is_array($sort) ) {
-						$OBS .= $sort[$key] . ',';
-					} else {
-						$OBS .= $sort . ',';
-					}
+					$OBS .=  is_array($sort) ? $sort[$key] . ',' : $sort . ',';
 				}
+				// delete last comma
+				$OBS = substr($OBS, 0, -1);
 			} else {
-				$OBS .= $orderby . ' ' . $sort . ',';
+				$OBS .= $orderby . ' ' . $sort;
 			}
-			// delete last comma
-			$OBS = substr($OBS, 0, -1);
 			return $OBS;
 		}
 	}
