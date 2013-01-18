@@ -199,7 +199,7 @@ class EE_Form_Fields {
 				'dimensions' => array('10', '5'),
 				);
 			$_fields = wp_parse_args( $field_atts, $defaults);
-			extract ( $_fields, EXTR_SKIP );
+			extract( $_fields );
 			$label = empty($label) ? '' : '<label for="' . $id . '">' . $label . '</label>';
 			$f_name = !empty($unique_id) ? $field_name . '[' . $unique_id . ']' : $field_name;
 			//we determine what we're building based on the type
