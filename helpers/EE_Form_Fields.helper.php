@@ -201,7 +201,7 @@ class EE_Form_Fields {
 				);
 			// merge defaults with passed arguments
 			$_fields = wp_parse_args( $field_atts, $defaults);
-			extract ( $_fields );
+			extract( $_fields );
 			// generate label
 			$label = empty($label) ? '' : '<label for="' . $id . '">' . $label . '</label>';
 			// generate field name

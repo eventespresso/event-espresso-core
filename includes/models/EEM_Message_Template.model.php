@@ -146,14 +146,24 @@ class EEM_Message_Template extends EEM_Base {
 	 * 	@access	public
 	 * 	@return	mixed array on success, FALSE on fail
 	 */
-	public function get_all_message_templates($orderby = 'GRP_ID', $order = 'ASC') {
+	public function get_all_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE) {
 
-		// retrieve all prices
+		// retrieve all templates
+		// we have to use limit and count later because we're not getting by rows.  So we have to retrieve all templates first.
+		
+
 		if ($templates = $this->select_all($orderby, $order)) {
-			return $this->_create_objects($templates);
+			$r_templates = $this->_create_objects($templates);
 		} else {
 			return FALSE;
 		}
+
+		//now let's select the data to return
+		if ( empty( $limit) || !is_array($limit) )
+			return $count ? count($r_templates) : $r_templates;
+
+		$r_templates = array_slice( $r_templates, $limit[0], $limit[1]);
+		return $count ? count($r_templates) : $r_templates;
 	}
 
 	/**
@@ -163,7 +173,7 @@ class EEM_Message_Template extends EEM_Base {
 	 * 	@param	array	$where_cols_n_values
 	 * 	@return	mixed	array on success, FALSE on fail
 	 */
-	public function get_all_message_templates_where( $where_cols_n_values = FALSE, $orderby = 'GRP_ID', $order = 'ASC' ) {
+	public function get_all_message_templates_where( $where_cols_n_values = FALSE, $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE ) {
 
 		if (!$where_cols_n_values) {
 			return FALSE;
@@ -171,10 +181,17 @@ class EEM_Message_Template extends EEM_Base {
 
 		// retrieve all templates
 		if ($templates = $this->select_all_where( $where_cols_n_values, $orderby, $order )) {
-			return $this->_create_objects($templates);
+			$r_templates = $this->_create_objects($templates);
 		} else {
 			return FALSE;
 		}
+
+		//now let's select the data to return
+		if ( empty( $limit) || !is_array($limit) )
+			return $count ? count($r_templates) : $r_templates;
+
+		$r_templates = array_slice( $r_templates, $limit[0], $limit[1]);
+		return $count ? count($r_templates) : $r_templates;
 	}
 
 	/**
@@ -255,8 +272,8 @@ class EEM_Message_Template extends EEM_Base {
 	 * @access public
 	 * @return array  all active (non_trashed, active) message template objects
 	 */
-	public function get_all_active_message_templates($orderby = 'GRP_ID', $order = 'ASC') {
-		return $this->get_all_message_templates_where( array('MTP_deleted' => FALSE ), $orderby, $order );
+	public function get_all_active_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE ) {
+		return $this->get_all_message_templates_where( array('MTP_deleted' => FALSE ), $orderby, $order, $limit, $count );
 	}
 
 	/**
@@ -317,8 +334,8 @@ class EEM_Message_Template extends EEM_Base {
 	 * @access public
 	 * @return array all message templates that are global (i.e. non-event)
 	 */
-	public function get_all_global_message_templates($orderby = 'GRP_ID', $order = 'ASC' ) {
-		return $this->get_all_message_templates_where( array('MTP_is_global' => TRUE, 'MTP_deleted' => FALSE ), $orderby, $order );
+	public function get_all_global_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE ) {
+		return $this->get_all_message_templates_where( array('MTP_is_global' => TRUE, 'MTP_deleted' => FALSE ), $orderby, $order, $limit, $count );
 	}
 
 	/**
@@ -338,8 +355,8 @@ class EEM_Message_Template extends EEM_Base {
 	 * @access public
 	 * @return array all message templates that are non-global and are event specific
 	 */
-	public function get_all_event_message_templates($orderby = 'GRP_ID', $order = 'ASC' ) {
-		return $this->get_all_message_templates_where( array( 'MTP_is_global' => FALSE, 'MTP_deleted' => FALSE ), $orderby, $order );
+	public function get_all_event_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE ) {
+		return $this->get_all_message_templates_where( array( 'MTP_is_global' => FALSE, 'MTP_deleted' => FALSE ), $orderby, $order, $limit, $count );
 	}
 
 	/**
@@ -348,8 +365,8 @@ class EEM_Message_Template extends EEM_Base {
 	 * @param  int $EVT_ID specific event id
 	 * @return array         message template objects that are attached to a specific event.
 	 */
-	public function get_all_message_templates_by_event($EVT_ID, $orderby = 'GRP_ID', $order = 'ASC') {
-		return $this->get_all_message_templates_where( array( 'EVT_ID' => $EVT_ID, 'MTP_deleted' => FALSE ), $orderby, $order );
+	public function get_all_message_templates_by_event($EVT_ID, $orderby = 'GRP_ID', $order = 'ASC', $limit=NULL, $count = FALSE) {
+		return $this->get_all_message_templates_where( array( 'EVT_ID' => $EVT_ID, 'MTP_deleted' => FALSE ), $orderby, $order, $limit, $count );
 	}
 
 	/**
@@ -358,8 +375,8 @@ class EEM_Message_Template extends EEM_Base {
 	 * @param int $EVT_ID specific event id
 	 * @return array   message template objects that are attached to a specific event.
 	 */
-	public function get_all_trashed_message_templates_by_event($EVT_ID, $orderby = 'GRP_ID', $order = 'ASC') {
-		return $this->get_all_message_templates_where( array( 'EVT_ID' => $EVT_ID, 'MTP_deleted' => TRUE ), $orderby, $order);
+	public function get_all_trashed_message_templates_by_event($EVT_ID, $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE) {
+		return $this->get_all_message_templates_where( array( 'EVT_ID' => $EVT_ID, 'MTP_deleted' => TRUE ), $orderby, $order, $limit=NULL, $count = FALSE);
 	}
 
 	/**
