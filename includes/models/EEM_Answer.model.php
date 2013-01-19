@@ -24,7 +24,11 @@
 require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_TempBase.model.php' );
 
 class EEM_Answer extends EEM_TempBase {
-
+	protected $_fieldsSettings=array('ANS_ID'=>array('type'=>'primary_key','nullable'=>false,'nicename'=>'Answer ID'),
+						'REG_ID'=>array('type'=>'foreign_key','class'=>'Registration','nullable'=>false,'nicename'=>'Registration ID'),
+						'QST_ID'=>array('type'=>'foreign_key','class'=>'Question','nullable'=>false,'nicename'=>'Question ID'),
+						'ANS_value'=>array('type'=>'simplehtml','nullable'=>false,'nicename'=>'Answer Value/Text'));
+	
   	// private instance of the Attendee object
 	private static $_instance = NULL;
 

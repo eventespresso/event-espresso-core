@@ -24,10 +24,6 @@
 require_once ( 'EE_Base_Class.class.php' );
 class EE_Answer extends EE_Base_Class{
 	
-	protected $_fieldsSettings=array('ANS_ID'=>array('type'=>'primary_key','nullable'=>false,'nicename'=>'Answer ID'),
-						'REG_ID'=>array('type'=>'foreign_key','class'=>'Registration','nullable'=>false,'nicename'=>'Registration ID'),
-						'QST_ID'=>array('type'=>'foreign_key','class'=>'Question','nullable'=>false,'nicename'=>'Question ID'),
-						'ANS_value'=>array('type'=>'simplehtml','nullable'=>false,'nicename'=>'Answer Value/Text'));
 	/**
 	 * Answer ID
 	 * 
