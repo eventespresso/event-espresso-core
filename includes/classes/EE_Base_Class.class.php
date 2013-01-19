@@ -12,6 +12,12 @@
  */
 abstract class EE_Base_Class {
 	/**
+	 * Instance of model that corresponds to this class.
+	 * This should be lazy-loaded to avoid recursive loop
+	 * @var type 
+	 */
+	private $_model;
+	/**
 	 * arary for defining all the fields on a model. May not replace all the 
 	 * individual setters and getters, as these are convenient for PHP docs and developing,
 	 * but sets a central place to define all these attributes, rather than repetitively
@@ -21,67 +27,88 @@ abstract class EE_Base_Class {
 	 * Eg: array('ANS_ID'=>array('type'=>'
 	 * @var array 
 	 */
-	static protected $_fieldSettings=null;
-	protected $_fieldValues=null;
+	protected $_fieldsSettings=null;
 	/**
 	 * basic constructor for Event Espresso classes, performs any necessary initialization,
 	 * and verifies it's children play nice
 	 */
-	public function __construct(){
-		$this->verifyFieldSettings();
-		$numArgs=func_num_args();
-		if($numArgs==1){
-			$fieldValues=  func_get_arg(0);
+	public function __construct($fieldValues=null){
+		$this->__verifyFieldSettings();
+		if($fieldValues!=null){
 			foreach($fieldValues as  $fieldName=>$fieldValue){
 				$this->set($fieldName,$fieldValue);
 			}
 		}
+		
 	}
-
+	
+	/**
+	 * Gets the 
+	 * @return type
+	 */
+	protected function _getModel(){
+		if(!$this->_model){
+			//find model for this class
+			$modelName=$this->__getModelName();
+			require_once($modelName.".model.php");
+			//$modelObject=new $modelName;
+			$this->_model=call_user_func($modelName."::instance");
+		}
+		return $this->_model;
+	}
 	/**
 	 * verifies that the fieldSettings array has been initialized properly
 	 * @throws EE_Error
 	 */
-	private static function verifyFieldSettings(){
+	private function __verifyFieldSettings(){
 		//verify $_fieldSettings has been set and is valid
-		if($this->_fieldSettings===null){
-			throw new EE_Error(sprintf("Event Espressso error. _fieldSettings value on %s has nto been set.",get_class($this)),'event_espresso');
+		if($this->_fieldsSettings===null){
+			throw new EE_Error(sprintf("Event Espressso error. _fieldSettings value on %s has nto been set.",'event_espresso'),get_class($this));
 		}
 		
-		foreach($this->_fieldSettings as $fieldName=>$fieldSettings){
+		foreach($this->_fieldsSettings as $fieldName=>$fieldSettings){
 			$requiredFieldSettings=array('type','nullable','nicename');
 			foreach($requiredFieldSettings as $requiredFieldSetting){
-				if(!in_array($requiredFieldSetting,$fieldSettings)){
-					throw new EE_Error(sprintf("Event Espressso error. '%s' settings is missing from %s field on class %s",$requiredFieldSetting,$fieldName,get_class($this)),'event_espresso');
+				if(!array_key_exists($requiredFieldSetting,$fieldSettings)){
+					throw new EE_Error(sprintf(__("Event Espressso error. '%s' settings is missing from %s field on class %s",'event_espresso'),$requiredFieldSetting,$fieldName,get_class($this)));
 				}
 			}
 			if($fieldSettings['type']=='foreign_key'){
-				if(!in_array('class',$fieldSettings)){
-					throw new EE_Error(sprintf("Event Espresso error. Field %s is of type 'foreign_key' on class %s, but is missing the 'class' setting",$fieldName,get_class($this)),'event_espresso');
+				if(!array_key_exists('class',$fieldSettings)){
+					throw new EE_Error(sprintf(__("Event Espresso error. Field %s is of type 'foreign_key' on class %s, but is missing the 'class' setting",'event_espresso'),$fieldName,get_class($this)));
 				}
 				//next verify the class is real
 				$phpFilePath="EE_".$fieldSettings['class'].".class.php";
 				if(file_exists($phpFilePath)){
-					throw new EE_Error(sprintf("Event Espresso error. Class %s on field %s in class %s doesn't have a php file!",$phpFilePath,$fieldName,get_class($this)),'event_espresso');
+					throw new EE_Error(sprintf(__("Event Espresso error. Class %s on field %s in class %s doesn't have a php file!",'event_espresso'),$phpFilePath,$fieldName,get_class($this)));
 				}
+			}
+			//verify the class attribute exists for this var
+			if(!property_exists($this,$this->__getPrivateAttributeName($fieldName))){
+				throw new EE_Error(sprintf(__("Event Espresso error. Class %s's field settings has a field named %s, but no attribute named \$%s",'event_espresso'),get_class($this),$fieldName,$this->__getPrivateAttributeName($fieldName)));
 			}
 		}
 	}
+	/**
+	 * Gets the model's name for this class. Eg, if this class' name is 
+	 * EE_Answer, it will return EEM_Answer.
+	 * @return string
+	 */
+	private function __getModelName(){
+		$className=get_class($this);
+		$modelName=str_replace("EE_","EEM_",$className);
+		return $modelName;
+	}
+	
 	
 	/**
-	*		check that var has been passed to method
-	* 
-	* 		@access		protected
-	*/	
-	protected function _check_for( $var = FALSE, $var_name ) {
-
-		if ( ! $var ) {
-			$msg = sprintf( __( 'No value for %s was supplied.', 'event_espresso' ), $var_name );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		} else {
-			return TRUE;
-		}
+	 * converts a field name to the private attribute's name on teh class.
+	 * Eg, converts "ANS_ID" to "_ANS_ID", which can be used like so $attr="_ANS_ID"; $this->$attr;
+	 * @param string $fieldName
+	 * @return string
+	 */
+	private function __getPrivateAttributeName($fieldName){
+		return "_".$fieldName;
 	}
 	//@todo remove duplicate insert() functions in subclasses
 	/**
@@ -92,6 +119,10 @@ abstract class EE_Base_Class {
 	public function insert() {
 		return $this->_save_to_db();
 	}
+	/**
+	 * update this existing class in the database
+	 */
+	abstract public function update();
 	
 	/**
 	 * gets the field (class attribute) specified by teh given name
@@ -99,9 +130,10 @@ abstract class EE_Base_Class {
 	 * @return mixed
 	 */
 	public function get($fieldName){
-		$privateFieldName="_".$fieldName;
+		$privateFieldName=$this->__getPrivateAttributeName($fieldName);
 		return $this->$privateFieldName;
 	}
+	
 	
 	/**
 	 * Sets the class attribute by the specified name to the value.
@@ -110,7 +142,7 @@ abstract class EE_Base_Class {
 	 * @param type $value
 	 */
 	public function set($fieldName,$value){
-		$fields=$this->getFieldSettings();
+		$fields=$this->_getFieldsSettings();
 		if(!array_key_exists($fieldName, $fields)){
 			throw new EE_Error(sprintf(__("An internal Event Espresso error has occured. Please contact Event Espresso.||The field %s doesnt exist on Event Espresso class %s",'event_espresso'),$fieldName,get_class($this)));
 		}
@@ -127,12 +159,12 @@ abstract class EE_Base_Class {
 			}
 		}else{
 			//verify its of the right type
-			if($this->verifyFieldIsOfCorrectType($value,$fieldSettings)){
+			if($this->_verifyFieldIsOfCorrectType($value,$fieldSettings)){
 				$internalFieldName="_".$fieldName;
-				$this->$internalFieldName=$this->sanitizeFieldInput($value, $fieldSettings);
+				$this->$internalFieldName=$this->_sanitizeFieldInput($value, $fieldSettings);
 				return true;
 			}else{
-				$msg = sprintf( __( 'Event Espresso error setting value on field %s.||In trying to set field %s of class %s to value %s, it was found to not be of type %s', 'event_espresso' ), $fieldName,get_class($this),$value,$fieldSettings['type']);
+				$msg = sprintf( __( 'Event Espresso error setting value on field %s.||In trying to set field %s of class %s to value %s, it was found to not be of type %s', 'event_espresso' ), $fieldName,$fieldName,get_class($this),$value,$fieldSettings['type']);
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return false;
 			}
@@ -146,7 +178,7 @@ abstract class EE_Base_Class {
 	 * @return type
 	 * @throws EE_Error
 	 */
-	protected function sanitizeFieldInput($value,$fieldSettings){
+	protected function _sanitizeFieldInput($value,$fieldSettings){
 		$return=null;
 		switch($fieldSettings['type']){
 			case 'primary_key':
@@ -164,8 +196,10 @@ abstract class EE_Base_Class {
 			case 'simplehtml':
 				global $allowedtags;
 				$return=  htmlentities(wp_kses("$value",$allowedtags),ENT_QUOTES,'UTF-8');
+				break;
 			case 'fullhtml':
-				$reutrn= htmlentities("$value",ENT_QUOTES,'UTF-8');
+				$return= htmlentities("$value",ENT_QUOTES,'UTF-8');
+				break;
 			case 'float':
 				$return=floatval($value);
 				break;
@@ -184,7 +218,7 @@ abstract class EE_Base_Class {
 	 * @return boolean
 	 * @throws EE_Error if fieldSettings is misconfigured
 	 */
-	protected function verifyFieldIsOfCorrectType($value,$fieldSettings){
+	protected function _verifyFieldIsOfCorrectType($value,$fieldSettings){
 		$return=false;
 		switch($fieldSettings['type']){
 			case 'primary_key':
@@ -226,11 +260,100 @@ abstract class EE_Base_Class {
 	 * @return array
 	 * @throws EE_Error
 	 */
-	public static function getFieldSettings(){
-		if(self::_fieldSettings==null){
+	protected function _getFieldsSettings(){
+		if($this->_fieldsSettings==null){
 			throw new EE_Error(sprintf("An unexpected error has occured with Event Espresso.||An Event Espresso class has not been fully implemented. %s does not override the \$_fieldSettings attribute.",get_class($this)),"event_espresso");
 		}
-		return self::_fieldSettings;
+		return $this->_fieldsSettings;
+	}
+	
+	/**
+	*		save object to db
+	* 
+	* 		@access		private
+	* 		@param		array		$where_cols_n_values		
+	*		@return int, 1 on a successful update, the ID of
+	*					the new entry on insert; 0 on failure		
+	
+	*/	
+	public function save( $where_cols_n_values = FALSE ) {
+		if($where_cols_n_values!=FALSE){
+			foreach($where_cols_n_values as $column=>$value){
+				$this->set($column,$value);
+			}
+		}
+		$set_column_values = array();
+		foreach($this->_getFieldsSettings() as $fieldName=>$fieldSettings){
+			$attributeName=$this->__getPrivateAttributeName($fieldName);
+			$set_column_values[$fieldName]=$this->$attributeName;
+		}
+		
+		if ( $set_column_values[$this->__getPrimaryKey()]!=null ){
+			$results = $this->_getModel()->update ( $set_column_values, $where_cols_n_values );
+		} else {
+			unset($set_column_values[$this->__getPrimaryKey()]);
+			$results = $this->_getModel()->insert ( $set_column_values );
+			if($results){//if successful, set the primary key
+				$this->set($this->__getPrimaryKey(),$results);
+			}
+		}
+		
+		return $results;
+	}
+	
+	/**
+	 * gets the name of the field of type 'primary_key' from the fieldsSettings attribute.
+	 * Eg, on EE_Anwer that would be ANS_ID
+	 * @return string
+	 * @throws EE_Error
+	 */
+	private function __getPrimaryKey(){
+		foreach($this->_getFieldsSettings() as $field=>$settings){
+			if($settings['type']=='primary_key'){
+				return $field;
+			}
+		}
+		throw new EE_Error(sprintf(__("Class %s has no primary key set in its fieldsSettings",'event_espresso'),get_class($this)));
+	}
+	
+	/**
+	 * gets the wordpress insertion datatype for each field in fieldsSettings 
+	 * (ie, whether ot use '%s' or '%d').
+	 * @return array like array('ATT_ID'=>'%d','ATT_fname'=>'%s',...)
+	 */
+	public function getTableDataTypes(){
+		$dataTypes=array();
+		foreach($this->_getFieldsSettings() as $fieldName=>$fieldSettings){
+			switch($fieldSettings['type']){
+				case 'primary_key':
+				case 'foreign_key':
+				case 'int':
+				case 'float':
+					$type='%d';
+					break;
+				case 'plaintext':
+				case 'simplehtml':
+				case 'fullhtml':
+				default:
+					$type='%s';
+					break;
+			}
+			$dataTypes[$fieldName]=apply_filters('filter_hook_espresso_getTableDataType',$type,$this->_getFieldsSettings());
+		}
+		return $dataTypes;
+	}
+	
+	/**
+	 * gets the database table name for this 
+	 * @global type $wpdb
+	 * @return string
+	 */
+	public function getTableName(){
+		global $wpdb;
+		$className=get_class($this);
+		$tableNameCapitalized=str_replace("EE_","",$className);
+		$tableName=$wpdb->prefix."esp_".strtolower($tableNameCapitalized);
+		return $tableName;
 	}
 }
 
