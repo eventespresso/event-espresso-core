@@ -349,7 +349,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//first verify if we need to load anything...
 		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
 
-		if ( !$this->_current_page && !DOING_AJAX ) return FALSE;
+		if ( !$this->_current_page && !defined( 'DOING_AJAX') ) return FALSE;
 
 		//next let's just check user_access and kill if no access
 		$this->_check_user_access();
@@ -389,7 +389,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			//hijack regular WP loading and route admin request immediately
 			if ( current_user_can( 'manage_options' ) )
 				@ini_set( 'memory_limit', apply_filters( 'admin_memory_limit', WP_MAX_MEMORY_LIMIT ) );
-			$this->_route_admin_request();
+			$this->route_admin_request();
 		}
 	}
 
@@ -512,7 +512,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	private function _verify_routes() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-		if ( !$this->_current_page && !DOING_AJAX) return FALSE;
+		if ( !$this->_current_page && !defined( 'DOING_AJAX')) return FALSE;
 
 		$this->_route = FALSE;
 		$func = FALSE;
@@ -1457,7 +1457,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args['current_page'] = $this->_wp_page_slug;
 		$template_path = EE_CORE_ADMIN . 'admin_list_wrapper.template.php';
 
-		$this->_template_args['table_url'] = DOING_AJAX ? add_query_arg( array( 'noheader' => 'true'), $this->_admin_base_url ) : $this->_admin_base_url;
+		$this->_template_args['table_url'] = defined( 'DOING_AJAX') ? add_query_arg( array( 'noheader' => 'true'), $this->_admin_base_url ) : $this->_admin_base_url;
 		$this->_template_args['list_table'] = $this->_list_table_object;
 
 		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
