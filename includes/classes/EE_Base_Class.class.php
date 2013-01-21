@@ -10,7 +10,7 @@
  *
  * @author mnelson4
  */
-abstract class EE_Base_Class {
+abstract class EE_Base_Class extends EE_Base{
 	/**
 	 * Instance of model that corresponds to this class.
 	 * This should be lazy-loaded to avoid recursive loop
@@ -106,7 +106,7 @@ abstract class EE_Base_Class {
 		$fieldSettings=$fields[$fieldName];
 		//if this field doesn't allow nulls, check it isn't null
 		if($value===null){
-			if(!$fieldSettings['nullable']){
+			if(!$fieldSettings->nullable){
 				$msg = sprintf( __( 'Event Espresso error setting value on field %s.||Field %s on class %s cannot be null, but you are trying to set it to null!', 'event_espresso' ), $fieldName,$fieldName,get_class($this));
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return false;
@@ -122,7 +122,7 @@ abstract class EE_Base_Class {
 				$this->$internalFieldName=$this->_sanitizeFieldInput($value, $fieldSettings);
 				return true;
 			}else{
-				$msg = sprintf( __( 'Event Espresso error setting value on field %s.||In trying to set field %s of class %s to value %s, it was found to not be of type %s', 'event_espresso' ), $fieldName,$fieldName,get_class($this),print_r($value,true),$fieldSettings['type']);
+				$msg = sprintf( __( 'Event Espresso error setting value on field %s.||In trying to set field %s of class %s to value %s, it was found to not be of type %s', 'event_espresso' ), $fieldName,$fieldName,get_class($this),print_r($value,true),$fieldSettings->type());
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return false;
 			}
@@ -138,7 +138,7 @@ abstract class EE_Base_Class {
 	 */
 	protected function _sanitizeFieldInput($value,$fieldSettings){
 		$return=null;
-		switch($fieldSettings['type']){
+		switch($fieldSettings->type()){
 			case 'primary_key':
 				$return=absint($value);
 				break;
@@ -164,7 +164,7 @@ abstract class EE_Base_Class {
 		}
 		$return=apply_filters('filter_hook_espresso_sanitizeFieldInput',$return,$value,$fieldSettings);//allow to be overridden
 		if(is_null($return)){
-			throw new EE_Error(sprintf(__("Internal Event Espresso error. Field %s on class %s is of type %s","event_espresso"),$fieldSettings['nicename'],get_class($this),$fieldSettings['type']));
+			throw new EE_Error(sprintf(__("Internal Event Espresso error. Field %s on class %s is of type %s","event_espresso"),$fieldSettings->nicename,get_class($this),$fieldSettings->type()));
 		}
 		return $return;
 	}
@@ -172,13 +172,13 @@ abstract class EE_Base_Class {
 	/**
 	 * verifies that the specified field is of the correct type
 	 * @param mixed $value the value to check if it's of the correct type
-	 * @param array $fieldSettings settings for a specific field. ie, should contain indexes 'type','nullable', 
+	 * @param EE_ModelField $fieldSettings settings for a specific field. 
 	 * @return boolean
 	 * @throws EE_Error if fieldSettings is misconfigured
 	 */
-	protected function _verifyFieldIsOfCorrectType($value,$fieldSettings){
+	protected function _verifyFieldIsOfCorrectType($value,  EE_ModelField $fieldSettings){
 		$return=false;
-		switch($fieldSettings['type']){
+		switch($fieldSettings->type()){
 			case 'primary_key':
 				$value=intval($value);
 				if(is_int($value) && $value>0){
@@ -211,7 +211,7 @@ abstract class EE_Base_Class {
 		}
 		$return= apply_filters('filter_hook_espresso_verifyFieldIsOfCorrectType',$return,$value,$fieldSettings);//allow to be overridden
 		if(is_null($return)){
-			throw new EE_Error(sprintf(__("Internal Event Espresso error. Field %s on class %s is of type %s","event_espresso"),$fieldSettings['nicename'],get_class($this),$fieldSettings['type']));
+			throw new EE_Error(sprintf(__("Internal Event Espresso error. Field %s on class %s is of type %s","event_espresso"),$fieldSettings->nicename,get_class($this),$fieldSettings->type()));
 		}
 		return $return;
 	}
@@ -239,7 +239,7 @@ abstract class EE_Base_Class {
 	*/	
 	public function save() {
 		$set_column_values = array();
-		foreach($this->_getFieldsSettings() as $fieldName=>$fieldSettings){
+		foreach(array_keys($this->_getFieldsSettings()) as $fieldName){
 			$attributeName=$this->__getPrivateAttributeName($fieldName);
 			$set_column_values[$fieldName]=$this->$attributeName;
 		}
@@ -269,8 +269,8 @@ abstract class EE_Base_Class {
 	 * @return int
 	 */
 	public function getPrimaryKey(){
-		$pk=$this->getPrimaryKeyName();
-		return $this->$pk;
+		$pk=$this->__getPrimaryKeyName();
+		return $this->$pk;//$pk is the primary key's NAME, so get the attribute with that name and return it
 	}
 	
 	

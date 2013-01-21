@@ -50,22 +50,7 @@ abstract class EEM_TempBase extends EEM_Base{
 		}
 		
 		foreach($this->_fieldsSettings as $fieldName=>$fieldSettings){
-			$requiredFieldSettings=array('type','nullable','nicename');
-			foreach($requiredFieldSettings as $requiredFieldSetting){
-				if(!array_key_exists($requiredFieldSetting,$fieldSettings)){
-					throw new EE_Error(sprintf(__("Event Espressso error. '%s' settings is missing from %s field on class %s",'event_espresso'),$requiredFieldSetting,$fieldName,get_class($this)));
-				}
-			}
-			if($fieldSettings['type']=='foreign_key'){
-				if(!array_key_exists('class',$fieldSettings)){
-					throw new EE_Error(sprintf(__("Event Espresso error. Field %s is of type 'foreign_key' on class %s, but is missing the 'class' setting",'event_espresso'),$fieldName,get_class($this)));
-				}
-				//next verify the class is real
-				$phpFilePath="EE_".$fieldSettings['class'].".class.php";
-				if(file_exists($phpFilePath)){
-					throw new EE_Error(sprintf(__("Event Espresso error. Class %s on field %s in class %s doesn't have a php file!",'event_espresso'),$phpFilePath,$fieldName,get_class($this)));
-				}
-			}
+			
 			//verify the class attribute exists for this var
 			/*if(!property_exists($this,$this->__getPrivateAttributeName($fieldName))){
 				throw new EE_Error(sprintf(__("Event Espresso error. Class %s's field settings has a field named %s, but no attribute named \$%s",'event_espresso'),get_class($this),$fieldName,$this->__getPrivateAttributeName($fieldName)));
@@ -81,16 +66,21 @@ abstract class EEM_TempBase extends EEM_Base{
 	protected function _getTableDataTypes(){
 		$dataTypes=array();
 		foreach($this->getFieldsSettings() as $fieldName=>$fieldSettings){
-			switch($fieldSettings['type']){
+			switch($fieldSettings->type()){
 				case 'primary_key':
 				case 'foreign_key':
 				case 'int':
-				case 'float':
 					$type='%d';
+					break;
+				case 'float':
+					$type='%f';
 					break;
 				case 'plaintext':
 				case 'simplehtml':
 				case 'fullhtml':
+				case 'primary_text_key':
+				case 'foreign_text_key':
+				case 'enum':
 				default:
 					$type='%s';
 					break;
@@ -121,7 +111,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	 */
 	public function getPrimaryKeyName(){
 		foreach($this->getFieldsSettings() as $field=>$settings){
-			if($settings['type']=='primary_key'){
+			if($settings->type()=='primary_key' || $settings->type()=='primary_text_key'){
 				return $field;
 			}
 		}
@@ -135,13 +125,13 @@ abstract class EEM_TempBase extends EEM_Base{
 	* 		@param		array		$attendees		
 	*		@return 		mixed		array on success, FALSE on fail
 	*/	
-	protected function _create_objects( $attendees = FALSE ) {
+	protected function _create_objects( $rows = FALSE ) {
 
-		if ( ! $attendees ) {
+		if ( ! $rows ) {
 			return FALSE;
 		} 		
-		foreach ( $attendees as $attendee ) {
-				$args=get_object_vars($attendee);
+		foreach ( $rows as $row ) {
+				$args=get_object_vars($row);
 				$class=new ReflectionClass($this->_getClassName());
 				$classInstance=$class->newInstanceArgs($args);
 				$array_of_objects[$classInstance->getPrimaryKey()]=$classInstance;
@@ -174,5 +164,137 @@ abstract class EEM_TempBase extends EEM_Base{
 	public function update ($set_column_values, $where_cols_n_values) {
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
 		return $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );	
+	}
+}
+
+/**
+ * Class for representing field on models/columns on database tables.
+ */
+class EE_ModelField{
+	/**
+	 * all the types of ModelFields which are allowed
+	 * @var type 
+	 */
+	private $allowedTypes=array('primary_key','primary_text_field','foreign_key','foreign_text_field','int','float','plaintext','simplehtml','fullhtml','enum');
+	private $nicename;
+	private $type;
+	private $nullable;
+	private $defaultValue;
+	private $allowedEnumValues;
+	private $class;
+	/**
+	 * Constructs basic EE_ModelField.
+	 * @param string $nicename the string that displays this field's name nicely. Eg, "First Name" isntead of "fname"
+	 * @param string $type, allowed values include: 
+	 *				
+	 *				primary_key (only allows positive integer, and is the primary key of the model)
+	 *												
+	 *				primary_text_key (allows strings, and is the primary key of the model),
+	 *						
+					foreign_key (only allows positive integers, and is the primary key of a different Model. $class MUST be set for this type)
+	 * 
+	 *				foreign_text_key (allows strings, and is the primary key of a differnet model. $class MUST be set for this type)
+					
+	 *				int (only allows integers)
+					
+	 *				float (only allows floats)
+					
+	 *				plaintext (allows strings, but filters out all HTML tags)
+					
+	 *				simplehtml (like plaintext, but allows a few basic HTML tags)
+					
+	 *				fullhtml (allows all strings, and does not filter HTML tags at all)
+	 * 
+	 *				enum (allows only a limited set of values. $allowedEnumValues MUST be set for this type)
+	 * @param boolean $nullable whehter this field should be allowed to be null or not. If not, 
+	 * @param mixed $defaultValue optional. When initially creating the object, if this field's value is set to null, this value will be used instead
+	 * @param array $allowedEnumValues array of allowed values. Eg, array('textfield','textarea','checkbox') or array(1,2,3)
+	 * @param string $class required when $type=='foreign_key' or $type=='foreign_text_key'. The name of the related class. Eg, 'Question'
+	 */
+	public function __construct($nicename,$type,$nullable,$defaultValue=null,$allowedEnumValues=array(),$class=null){
+		$this->nicename=$nicename;
+		$this->type=$type;
+		$this->nullable=$nullable;
+		$this->defaultValue=$defaultValue;
+		$this->allowedEnumValues=$allowedEnumValues;
+		$this->class=$class;
+		if(!in_array($type,$this->allowedTypes)){
+			throw new EE_Error(sprintf(__("Event Espresso error. Field %s is of type %s, but only these are the only allowed types %s",'event_espresso'),$nicename,$type,implode(",",$this->allowedTypes)));
+		}
+		if($type=='foreign_key' || $type=='foreign_text_field'){
+			if(!$class){
+				throw new EE_Error(sprintf(__("Event Espresso error. Field %s is of type 'foreign_key' on class %s, but is missing the 'class' setting",'event_espresso'),$nicename));
+			}
+			//next verify the class is real
+			$phpFilePath="EE_".$class.".class.php";
+			if(file_exists($phpFilePath)){
+				throw new EE_Error(sprintf(__("Event Espresso error. Class %s on field %s in class %s doesn't have a php file!",'event_espresso'),$phpFilePath,$nicename));
+			}
+		}
+		if($type=='enum' && !$allowedEnumValues){
+			throw new EE_Error(sprintf(__("Event Espresso error. Field %s is of type 'enum' is missing the \$allowedEnumValues parameter in the constructor.",'event_espresso'),$nicename));
+		}
+	}
+	/**
+	 * Returns the human-readable string of the field's name. Eg, 'First Name' instead of 'fname'
+	 * @return string
+	 */
+	public function nicename(){
+		return $this->nicename;
+	}
+	/**
+	 * Returns teh type of the field. Allowed values include: 
+	 *				
+	 *				primary_key (only allows positive integer, and is the primary key of the model)
+	 *												
+	 *				primary_text_key (allows strings, and is the primary key of the model),
+	 *						
+					foreign_key (only allows positive integers, and is the primary key of a different Model. $class MUST be set for this type)
+	 * 
+	 *				foreign_text_key (allows strings, and is the primary key of a differnet model. $class MUST be set for this type)
+					
+	 *				int (only allows integers)
+					
+	 *				float (only allows floats)
+					
+	 *				plaintext (allows strings, but filters out all HTML tags)
+					
+	 *				simplehtml (like plaintext, but allows a few basic HTML tags)
+					
+	 *				fullhtml (allows all strings, and does not filter HTML tags at all)
+	 * 
+	 *				enum (allows only a limited set of values. $allowedEnumValues MUST be set for this type)
+	 * @return string
+	 */
+	public function type(){
+		return $this->type;
+	}
+	/**
+	 * Returns whether the field may be set to NULL or not
+	 * @return boolean
+	 */
+	public function nullable(){
+		return $this->nullable;
+	}
+	/**
+	 * Returns the default value of the field. Eg, 12 or 'monkey'
+	 * @return mixed
+	 */
+	public function defaultValue(){
+		return $this->defaultValue;
+	}
+	/**
+	 * Returns an array of allowed Enum values, if any has been set.
+	 * @return array
+	 */
+	public function allowedEnumValues(){
+		return $this->allowedEnumValues;
+	}
+	/**
+	 * If the field is 'foreign_key' or 'foreign_text_key', this will return a string of the name of the related model. Eg, 'Question' or 'Attendee'.
+	 * @return string
+	 */
+	public function getClass(){
+		return $this->class;
 	}
 }

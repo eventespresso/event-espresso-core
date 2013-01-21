@@ -24,11 +24,8 @@
 require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_TempBase.model.php' );
 
 class EEM_Answer extends EEM_TempBase {
-	protected $_fieldsSettings=array('ANS_ID'=>array('type'=>'primary_key','nullable'=>false,'nicename'=>'Answer ID'),
-						'REG_ID'=>array('type'=>'foreign_key','class'=>'Registration','nullable'=>false,'nicename'=>'Registration ID'),
-						'QST_ID'=>array('type'=>'foreign_key','class'=>'Question','nullable'=>false,'nicename'=>'Question ID'),
-						'ANS_value'=>array('type'=>'simplehtml','nullable'=>false,'nicename'=>'Answer Value/Text'));
-	
+	protected $_fieldsSettings;
+	//nicename, type, nullable, options(class, enumvalues,
   	// private instance of the Attendee object
 	private static $_instance = NULL;
 
@@ -50,6 +47,10 @@ class EEM_Answer extends EEM_TempBase {
 	}
 
 	protected function __construct(){
+		$this->_fieldsSettings=array('ANS_ID'=>new EE_ModelField('Answer ID', 'primary_key', false),
+									'REG_ID'=>new EE_ModelField('Registration ID', 'foreign_key', false,0,null,'Registration'),
+									'QST_ID'=>new EE_ModelField('Question ID', 'foreign_key', false,0,null,'Question'),
+									'ANS_value'=>new EE_ModelField('Answer Value/Text', 'simplehtml', false,''));
 		parent::__construct();
 	}
 
