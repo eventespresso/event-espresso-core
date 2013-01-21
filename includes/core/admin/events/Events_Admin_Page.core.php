@@ -336,7 +336,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$route = $view == 'edit' ? 'update_event' : 'insert_event';
 		$this->_set_add_edit_form_tags($route);
 		$this->_template_args['publish_box_extra_content'] = $this->_publish_box_extra_content();
-		$this->_set_publish_post_box_vars('delete_event', 'event_id', $id);
+		$this->_set_publish_post_box_vars( 'event_id', $id, 'delete_event' );
 
 		//take care of contents
 		$this->_template_args['admin_page_content'] = $this->_event_details_display();

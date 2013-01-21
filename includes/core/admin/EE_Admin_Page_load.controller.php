@@ -96,7 +96,7 @@ class EE_Admin_Page_load {
 	 */
 	private function _define_all_constants() {
 		define( 'EE_CORE_ADMIN', EE_CORE . 'admin' . DS );
-		define( 'EE_CORE_ADMIN_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'includes' . DS . 'core' . DS . 'admin' . DS );
+		define( 'EE_CORE_ADMIN_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'includes/core/admin/' );
 		define( 'WP_AJAX_URL', get_bloginfo('url') . '/wp-admin/admin-ajax.php' );
 		define( 'JQPLOT_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/' );
 	}

@@ -368,7 +368,7 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 		//$this->_add_admin_page_meta_box( $action, $title, 'edit_attendee_details', NULL );
 		$this->_template_args['admin_page_content'] = espresso_display_template($this->_template_path, $this->_template_args, TRUE);
 
-		$this->_set_publish_post_box_vars( 'delete_attendees', 'id', $ATT_ID );
+		$this->_set_publish_post_box_vars( 'id', $ATT_ID, 'delete_attendees' );
 
 		// the final template wrapper
 		$this->display_admin_page_with_sidebar();

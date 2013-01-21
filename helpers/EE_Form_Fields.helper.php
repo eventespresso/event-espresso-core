@@ -180,6 +180,7 @@ class EE_Form_Fields {
 	 *     [field_name] => array( 'label' => '{label_html}', 'field' => '{input_html}'
 	 */
 	static public function get_form_fields_array($fields) {
+	
 		$form_fields = array();
 		$fields = (array) $fields;
 		
@@ -198,80 +199,88 @@ class EE_Form_Fields {
 				'unique_id' => '',
 				'dimensions' => array('10', '5'),
 				);
+			// merge defaults with passed arguments
 			$_fields = wp_parse_args( $field_atts, $defaults);
 			extract( $_fields );
+			// generate label
 			$label = empty($label) ? '' : '<label for="' . $id . '">' . $label . '</label>';
+			// generate field name
 			$f_name = !empty($unique_id) ? $field_name . '[' . $unique_id . ']' : $field_name;
 			//we determine what we're building based on the type
-			switch ( $field_atts['type'] ) {
+			switch ( $type ) {
+			
 				case 'textarea' :
-					$fld = '<textarea id="' . $id . '" class="' . $class . '" rows="' . $dimensions[1] . '" cols="' . $dimensions[0] . '" name="' . $f_name . '">' . $value . '</textarea>';
-					$fld .= $extra_desc;
+						$fld = '<textarea id="' . $id . '" class="' . $class . '" rows="' . $dimensions[1] . '" cols="' . $dimensions[0] . '" name="' . $f_name . '">' . $value . '</textarea>';
+						$fld .= $extra_desc;
 					break;
+					
 				case 'checkbox' :
-					$c_input = '';
-					if ( is_array($value) ) {
-						foreach ( $value as $key => $val ) {
-							$c_id = $field_name . '_' . $value;
-							$c_class = isset($classes[$key]) ? ' class="' . $classes[$key] . '" ' : '';
-							$c_label = isset($labels[$key]) ? '<label for="' . $c_id . '">' . $labels[$key] . '</label>' : '';
-							$checked = !empty($default) && $default == $val ? ' checked="checked" ' : '';
-							$c_input .= '<input name="' . $f_name . '[]" type="checkbox" id="' . $c_id . '"' . $c_class . 'value="' . $val . '"' . $checked . ' />' . "\n" . $c_label;
+						$c_input = '';
+						if ( is_array($value) ) {
+							foreach ( $value as $key => $val ) {
+								$c_id = $field_name . '_' . $value;
+								$c_class = isset($classes[$key]) ? ' class="' . $classes[$key] . '" ' : '';
+								$c_label = isset($labels[$key]) ? '<label for="' . $c_id . '">' . $labels[$key] . '</label>' : '';
+								$checked = !empty($default) && $default == $val ? ' checked="checked" ' : '';
+								$c_input .= '<input name="' . $f_name . '[]" type="checkbox" id="' . $c_id . '"' . $c_class . 'value="' . $val . '"' . $checked . ' />' . "\n" . $c_label;
+							}
+							$fld = $c_input;
+						} else {
+							$checked = !empty($default) && $default == $val ? 'checked="checked" ' : '';
+							$fld = '<input name="'. $f_name . '" type="checkbox" id="' . $id . '" class="' . $class . '" value="' . $value . '"' . $checked . ' />' . "\n";
 						}
-						$fld = $c_input;
-					} else {
-						$checked = !empty($default) && $default == $val ? 'checked="checked" ' : '';
-						$fld = '<input name="'. $f_name . '" type="checkbox" id="' . $id . '" class="' . $class . '" value="' . $value . '"' . $checked . ' />' . "\n";
-					}
 					break;
+					
 				case 'radio' :
-					$c_input = '';
-					if ( is_array($value) ) {
-						foreach ( $value as $key => $val ) {
-							$c_id = $field_name . '_' . $value;
-							$c_class = isset($classes[$key]) ? 'class="' . $classes[$key] . '" ' : '';
-							$c_label = isset($labels[$key]) ? '<label for="' . $c_id . '">' . $labels[$key] . '</label>' : '';
-							$checked = !empty($default) && $default == $val ? ' checked="checked" ' : '';
-							$c_input .= '<input name="' . $f_name . '" type="checkbox" id="' . $c_id . '"' . $c_class . 'value="' . $val . '"' . $checked . ' />' . "\n" . $c_label;
+						$c_input = '';
+						if ( is_array($value) ) {
+							foreach ( $value as $key => $val ) {
+								$c_id = $field_name . '_' . $value;
+								$c_class = isset($classes[$key]) ? 'class="' . $classes[$key] . '" ' : '';
+								$c_label = isset($labels[$key]) ? '<label for="' . $c_id . '">' . $labels[$key] . '</label>' : '';
+								$checked = !empty($default) && $default == $val ? ' checked="checked" ' : '';
+								$c_input .= '<input name="' . $f_name . '" type="checkbox" id="' . $c_id . '"' . $c_class . 'value="' . $val . '"' . $checked . ' />' . "\n" . $c_label;
+							}
+							$fld = $c_input;
+						} else {
+							$checked = !empty($default) && $default == $val ? 'checked="checked" ' : '';
+							$fld = '<input name="'. $f_name . '" type="checkbox" id="' . $id . '" class="' . $class . '" value="' . $value . '"' . $checked . ' />' . "\n";
 						}
-						$fld = $c_input;
-					} else {
-						$checked = !empty($default) && $default == $val ? 'checked="checked" ' : '';
-						$fld = '<input name="'. $f_name . '" type="checkbox" id="' . $id . '" class="' . $class . '" value="' . $value . '"' . $checked . ' />' . "\n";
-					}
 					break;
+					
 				case 'hidden' :
-					$fld = '<input name="' . $f_name . '" type="hidden" id="' . $id . '" class="' . $class . '" value="' . $value . '" />' . "\n";
+						$fld = '<input name="' . $f_name . '" type="hidden" id="' . $id . '" class="' . $class . '" value="' . $value . '" />' . "\n";
 					break;
+					
 				case 'select' :
-					$fld = '<select name="' . $f_name . '" class="' . $class . '" id="' . $id . '">' . "\n";
-					foreach ( $value as $key => $val ) {
-						$checked = !empty($default) && $default == $val ? ' selected="selected"' : '';
-						$fld .= "\t" . '<option value="' . $val . '"' . $checked . '>' . $labels[$key] . '</option>' . "\n";
-					}
-					$fld .= '</select>';
+						$fld = '<select name="' . $f_name . '" class="' . $class . '" id="' . $id . '">' . "\n";
+						foreach ( $value as $key => $val ) {
+							$checked = !empty($default) && $default == $val ? ' selected="selected"' : '';
+							$fld .= "\t" . '<option value="' . $val . '"' . $checked . '>' . $labels[$key] . '</option>' . "\n";
+						}
+						$fld .= '</select>';
 					break;
+					
 				case 'wp_editor' :
-					$editor_settings = array(
-						'textarea_name' => $f_name,
-						'textarea_rows' => $dimensions[1],
-						'editor_class' => $class
-						);
-					ob_start();
-					wp_editor( $value, $id, $editor_settings );
-					$editor = ob_get_contents();
-					ob_end_clean();
-					$fld = $editor;
+						$editor_settings = array(
+							'textarea_name' => $f_name,
+							'textarea_rows' => $dimensions[1],
+							'editor_class' => $class
+							);
+						ob_start();
+						wp_editor( $value, $id, $editor_settings );
+						$editor = ob_get_contents();
+						ob_end_clean();
+						$fld = $editor;
 					break;
+					
 				default : //'text fields'
-					$fld = '<input name="' . $f_name . '" type="text" id="' . $id . '" class="' . $class . '" value="' . $value . '" />' . "\n";
-					$fld .= $extra_desc;
+						$fld = '<input name="' . $f_name . '" type="text" id="' . $id . '" class="' . $class . '" value="' . $value . '" />' . "\n";
+						$fld .= $extra_desc;
+					
 			}
 
-			$form_fields[$field_name] = array(
-				'label' => $label,
-				'field' => $fld,
-				);	
+			$form_fields[ $field_name ] = array( 'label' => $label, 'field' => $fld );	
 		}
 
 		return $form_fields;

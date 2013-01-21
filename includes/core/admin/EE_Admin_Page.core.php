@@ -1219,8 +1219,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @param	string	$name		key used for the action ID (i.e. event_id)
 	 * @param	int		$id			id attached to the item published
 	 * @param	string	$delete	page route callback for the delete action
+	 * @param	string	$post_save_redirect_URL	custom URL to redirect to after Save & Close has been completed
 	 */	
-	protected function _set_publish_post_box_vars( $name = NULL, $id = FALSE, $delete = FALSE ) {
+	protected function _set_publish_post_box_vars( $name = NULL, $id = FALSE, $delete = FALSE, $save_close_redirect_URL = NULL ) {
 
 		if ( empty( $name ) || ! $id ) {
 			//user error msg
@@ -1229,28 +1230,26 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$dev_msg = $user_msg . "\n" . __('In order for the "Save" or "Save and Close" buttons to work, a key name for what it is being saved (ie: event_id), as well as some sort of id for the individual record is required.', 'event_espresso' );
 			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );			
 		}
-		
-		$this->_set_save_buttons(TRUE, array(), array(), $this->_admin_base_url);
-
+		// if Save & Close, use a custom redirect URL or default to the main page?
+		$save_close_redirect_URL = ! empty( $save_close_redirect_URL ) ? $save_close_redirect_URL : $this->_admin_base_url;
+		// create the Save & Close and Save buttons
+		$this->_set_save_buttons(TRUE, array(), array(), $save_close_redirect_URL );
 		//if we have extra content set let's add it in if not make sure its empty
 		$this->_template_args['publish_box_extra_content'] = isset( $this->_template_args['publish_box_extra_content'] ) ? $this->_template_args['publish_box_extra_content'] : '';
-
-
+		// default args for delete link
 		$delete_link_args = array(
 			$name => $id
 			);
-
 		$delete_link = !empty($delete_action) ? $this->_get_action_link_or_button( $delete_action, $type = 'delete', $delete_link_args, $class='submitdelete deletion') : '';
-		
+		// add delete link
 		$this->_template_args['publish_delete_link'] = $delete_link;
-
+		// create hidden id field for what is being saved
 		$hidden_field_arr[$name] = array(
 			'type' => 'hidden',
 			'value' => $id
 			);
-
 		$hf = $this->_generate_admin_form_fields($hidden_field_arr, 'array');
-
+		// add hidden field
 		$this->_template_args['publish_hidden_fields'] = $hf[$name]['field'];
 
 	}

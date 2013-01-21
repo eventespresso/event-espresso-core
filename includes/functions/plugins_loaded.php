@@ -70,15 +70,15 @@ function espresso_define_tables_and_paths() {
 
 	//Define the uploads directory and url
 	define("EVENT_ESPRESSO_UPLOAD_DIR", $uploads['basedir'] . DS . 'espresso' . DS);
-	define("EVENT_ESPRESSO_UPLOAD_URL", $uploads['baseurl'] . DS . 'espresso' . DS);
+	define("EVENT_ESPRESSO_UPLOAD_URL", $uploads['baseurl'] . '/espresso/' );
 
 	//Define the templates dirrectory and url
 	define("EVENT_ESPRESSO_TEMPLATE_DIR", $uploads['basedir'] . DS . 'espresso' . DS . 'templates' . DS);
-	define("EVENT_ESPRESSO_TEMPLATE_URL", $uploads['baseurl'] . DS . 'espresso' . DS . 'templates' . DS);
+	define("EVENT_ESPRESSO_TEMPLATE_URL", $uploads['baseurl'] . '/espresso/templates/' );
 
 	//Define the gateway directory and url
 	define("EVENT_ESPRESSO_GATEWAY_DIR", $uploads['basedir'] . DS . 'espresso' . DS . 'gateways' . DS);
-	define("EVENT_ESPRESSO_GATEWAY_URL", $uploads['baseurl'] . DS . 'espresso' . DS . 'gateways' . DS);
+	define("EVENT_ESPRESSO_GATEWAY_URL", $uploads['baseurl'] .'/espresso/gateways/' );
 }
 
 
@@ -156,8 +156,8 @@ function espresso_core_admin_autoload($className) {
 		'attendees/' => array('core', 'class'),
 		'events/' => array('core','class'),
 		'event_categories/' => array('core','class'),
-		'event_pricing/' => array('core','class'),
 		'messages/' => array('core', 'class'),
+		'pricing/' => array('core', 'class'),
 		'registrations/' => array('core','class'),
 		'transactions/' => array('core', 'class'),
 		'forms/' => array('core', 'class')
