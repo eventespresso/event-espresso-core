@@ -64,6 +64,9 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		//set default capability
 		$this->_set_capability();
 
+		//global styles/scripts across all wp admin pages
+		add_action('admin_enqueue_scripts', array($this, 'load_wp_global_scripts_styles'), 5 );
+
 		//load initial stuff.
 		$this->_initialize_admin_page();
 
@@ -109,6 +112,35 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 
 
+
+	/**
+	 * This loads scripts and styles for the EE_Admin system that must be available on ALL WP admin pages (i.e. EE_menu items)
+	 * @return void
+	 */
+	public function load_wp_global_scripts_styles() {
+		/** STYLES **/
+		//register
+		wp_register_style('espresso_menu', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-menu-styles.css');
+
+
+
+		//enqueue
+		wp_enqueue_style('espresso_menu');
+
+
+		/** SCRIPTS **/
+		//register
+		
+
+
+		//enqueue
+		
+	}
+
+
+
+
+	
 
 
 	/**
