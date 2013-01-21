@@ -346,10 +346,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//set early because incoming requests could be ajax related and we need to register those hooks.
 		$this->_ajax_hooks();
 
+
 		//first verify if we need to load anything...
 		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
 
-		if ( !$this->_current_page && !DOING_AJAX ) return FALSE;
+		if ( !$this->_current_page && !defined( 'DOING_AJAX') ) return FALSE;
 
 		//next let's just check user_access and kill if no access
 		$this->_check_user_access();
@@ -378,6 +379,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_verify_routes();
 
 
+
 		if ( $this->_is_UI_request ) {
 			
 			//admin_init stuff - global, all views for this page class, specific view
@@ -389,7 +391,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			//hijack regular WP loading and route admin request immediately
 			if ( current_user_can( 'manage_options' ) )
 				@ini_set( 'memory_limit', apply_filters( 'admin_memory_limit', WP_MAX_MEMORY_LIMIT ) );
-			$this->_route_admin_request();
+			$this->route_admin_request();
 		}
 	}
 
@@ -512,7 +514,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	private function _verify_routes() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-		if ( !$this->_current_page && !DOING_AJAX) return FALSE;
+		if ( !$this->_current_page && !defined( 'DOING_AJAX')) return FALSE;
 
 		$this->_route = FALSE;
 		$func = FALSE;
@@ -796,6 +798,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+
 	/**
 	 * load_global_scripts_styles
 	 * The scripts and styles enqueued in here will be loaded on every EE Admin page
@@ -813,7 +816,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css', array(),EVENT_ESPRESSO_VERSION );
 		wp_register_style('event_espresso', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-styles.css', array(), EVENT_ESPRESSO_VERSION);
 		wp_register_style('jquery-ui-style-datepicker-css', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css', array(), EVENT_ESPRESSO_VERSION );
-		wp_register_style('espresso_menu', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-menu-styles.css');
+		
 		wp_register_style('ee-admin-css', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.css', array(), EVENT_ESPRESSO_VERSION);
 
 		//attendee style registrations
@@ -826,7 +829,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_style( 'espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.css', array(), EVENT_ESPRESSO_VERSION );
 
 		//enqueue global styles
-		wp_enqueue_style('espresso_menu');
 		wp_enqueue_style('event_espresso');
 		wp_enqueue_style('ee-admin-css');
 
@@ -1456,7 +1458,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args['current_page'] = $this->_wp_page_slug;
 		$template_path = EE_CORE_ADMIN . 'admin_list_wrapper.template.php';
 
-		$this->_template_args['table_url'] = DOING_AJAX ? add_query_arg( array( 'noheader' => 'true'), $this->_admin_base_url ) : $this->_admin_base_url;
+		$this->_template_args['table_url'] = defined( 'DOING_AJAX') ? add_query_arg( array( 'noheader' => 'true'), $this->_admin_base_url ) : $this->_admin_base_url;
 		$this->_template_args['list_table'] = $this->_list_table_object;
 
 		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
