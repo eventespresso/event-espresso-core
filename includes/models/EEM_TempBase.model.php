@@ -55,6 +55,7 @@ abstract class EEM_TempBase extends EEM_Base{
 				case 'primary_key':
 				case 'foreign_key':
 				case 'int':
+				case 'bool':
 					$type='%d';
 					break;
 				case 'float':
@@ -315,7 +316,7 @@ class EE_Model_Field{
 	 * all the types of ModelFields which are allowed
 	 * @var type 
 	 */
-	private $allowed_types=array('primary_key','primary_text_field','foreign_key','foreign_text_field','int','float','plaintext','simplehtml','fullhtml','enum');
+	private $allowed_types=array('primary_key','primary_text_field','foreign_key','foreign_text_field','int','float','plaintext','simplehtml','fullhtml','enum','bool');
 	private $nicename;
 	private $type;
 	private $nullable;
@@ -404,6 +405,8 @@ class EE_Model_Field{
 	 *				fullhtml (allows all strings, and does not filter HTML tags at all)
 	 * 
 	 *				enum (allows only a limited set of values. $allowedEnumValues MUST be set for this type)
+	 * 
+	 *				bool (allows only true or false)
 	 * @return string
 	 */
 	public function type(){

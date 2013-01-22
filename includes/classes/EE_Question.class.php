@@ -23,12 +23,7 @@
  */
 require_once ( 'EE_Base_Class.class.php' );
 class EE_Question extends EE_Base_Class{
-	/**
-	 * lists all the question types which should be allowed. Ideally, this will be extensible.
-	 * @access private
-	 * @var array of strings 
-	 */
-	private $_allowed_question_types=array('TEXT','TEXTAREA','SINGLE','DROPDOWN','MULTIPLE','DATE');
+	
 	
 	/**
 	 * question's id
@@ -182,6 +177,16 @@ class EE_Question extends EE_Base_Class{
 		}
 		$this->_QST_type =  $QST_type;
 		return TRUE;
+	}
+	
+	/**
+	 * Retrieves the list of allowedquestion types from the model.
+	 * @return string[]
+	 */
+	private function _allowed_question_types(){
+		$questionModel=$this->_get_model();
+		/* @var $questionModel EEM_Question*/
+		return $questionModel->allowed_question_types();
 	}
 	
 	/**
@@ -389,5 +394,14 @@ class EE_Question extends EE_Base_Class{
 	 */
 	public function deleted(){
 		return $this->_QST_deleted;
+	}
+	
+	/**
+	 * Gets an array of related EE_Answer  to this EE_Question
+	 * @return EE_Question
+	 */
+	public function answers(){
+		$model=$this->_get_model();
+		return $model->get_many_related($this,'Answers');
 	}
 }

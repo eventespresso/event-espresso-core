@@ -33,7 +33,7 @@ abstract class EE_Base_Class extends EE_Base{
 	
 	/**
 	 * Gets the 
-	 * @return EEM+Base
+	 * @return EEM_TempBase
 	 */
 	protected function  _get_model(){
 		if(!$this->_model){
@@ -148,6 +148,13 @@ abstract class EE_Base_Class extends EE_Base{
 			case 'int':
 				$return=intval($value);
 				break;
+			case 'bool':
+				if($value){
+					$return=true;
+				}else{
+					$return=false;
+				}
+				break;
 			case 'plaintext':
 			case 'primary_text_key':
 			case 'foreign_text_key':
@@ -182,20 +189,16 @@ abstract class EE_Base_Class extends EE_Base{
 		$return=false;
 		switch($fieldSettings->type()){
 			case 'primary_key':
-				$value=intval($value);
-				if(is_int($value) && $value>0){
-					$return= true;
-				}
 			case 'foreign_key':
-				$value=intval($value);
-				if(is_int($value) && $value>0){
+			case 'int':
+				if(ctype_digit($value) || is_numeric($value)){
 					$return= true;
 				}
 				break;
-			case 'int':
+			case 'bool':
 				$value=intval($value);
-				if(is_int($value)){
-					$return= true;
+				if(is_bool($value)){
+					$return=true;
 				}
 				break;
 			case 'primary_text_key':
