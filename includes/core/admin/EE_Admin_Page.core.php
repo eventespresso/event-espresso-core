@@ -828,6 +828,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//transactions style register
 		wp_register_style( 'espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.css', array(), EVENT_ESPRESSO_VERSION );
 
+		//venues style register
+		wp_register_style( 'espress_venues', EE_VENUES_ASSETS_URL . 'ee-venues-admin.css', array(), EVENT_ESPRESSO_VERSION );
+
 		//enqueue global styles
 		wp_enqueue_style('event_espresso');
 		wp_enqueue_style('ee-admin-css');
@@ -840,6 +843,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script('event_editor_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_editor.js', array('jquery-ui-slider', 'jquery-ui-timepicker-addon'), EVENT_ESPRESSO_VERSION, true);
 		wp_register_script('event_espresso_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_espresso.js', array('jquery'), EVENT_ESPRESSO_VERSION, true);
 		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('jquery'), EVENT_ESPRESSO_VERSION, true );
+		wp_register_script('jquery-validate', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.min.js"), array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
 
 
 		//attendee script registrations
@@ -850,6 +854,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//transactions script register
 		wp_register_script('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.js', array('jquery-ui-datepicker', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
+
+		//venues script register
+		wp_register_script('espresso_venue_admin', EE_VENUES_ASSETS_URL . 'ee-venues-admin.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );
 
 		//jqplot library
 		wp_register_script('jqplot', JQPLOT_URL . 'jquery.jqplot.min.js', array('jquery'), '', FALSE);
@@ -1236,12 +1243,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_set_save_buttons(TRUE, array(), array(), $save_close_redirect_URL );
 		//if we have extra content set let's add it in if not make sure its empty
 		$this->_template_args['publish_box_extra_content'] = isset( $this->_template_args['publish_box_extra_content'] ) ? $this->_template_args['publish_box_extra_content'] : '';
-		// default args for delete link
-		$delete_link_args = array(
-			$name => $id
-			);
-		$delete_link = !empty($delete_action) ? $this->_get_action_link_or_button( $delete_action, $type = 'delete', $delete_link_args, $class='submitdelete deletion') : '';
-		// add delete link
+
+
+		if ( $delete ) {
+			$delete_link_args = array( $name => $id );
+			$delete_link = $this->_get_action_link_or_button( $delete, $type = 'delete', $delete_link_args, $class='submitdelete deletion');
+		}
+		
 		$this->_template_args['publish_delete_link'] = $delete_link;
 		// create hidden id field for what is being saved
 		$hidden_field_arr[$name] = array(

@@ -95,19 +95,19 @@ class EE_Formatter {
 	 * @return [type]        [description]
 	 */
 	static public function ee_tep_not_null($value) {
-	if (is_array($value)) {
-		if (sizeof($value) > 0) {
-			return true;
+		if (is_array($value)) {
+			if (sizeof($value) > 0) {
+				return true;
+			} else {
+				return false;
+			}
 		} else {
-			return false;
-		}
-	} else {
-		if (($value != '') && (strtolower($value) != 'null') && (strlen(trim($value)) > 0)) {
-			return true;
-		} else {
-			return false;
+			if (($value != '') && (strtolower($value) != 'null') && (strlen(trim($value)) > 0)) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
-}
 
 }//end class EE_Form_Fields
