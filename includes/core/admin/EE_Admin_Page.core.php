@@ -1247,10 +1247,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		if ( $delete ) {
 			$delete_link_args = array( $name => $id );
-			$delete_link = $this->_get_action_link_or_button( $delete, $type = 'delete', $delete_link_args, $class='submitdelete deletion');
+			$delete = $this->_get_action_link_or_button( $delete, $type = 'delete', $delete_link_args, $class='submitdelete deletion');
 		}
 		
-		$this->_template_args['publish_delete_link'] = $delete_link;
+		$this->_template_args['publish_delete_link'] = $delete;
 		// create hidden id field for what is being saved
 		$hidden_field_arr[$name] = array(
 			'type' => 'hidden',
