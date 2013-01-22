@@ -35,7 +35,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	 * holds the specific question object for the question details screen
 	 * @var object
 	 */
-	protected $_question;
+	protected $_yes_no_values = array();
 
 	/**
 	 * _question_group
@@ -48,6 +48,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	public function __construct() {
 		parent::__construct();
+		$this->_yes_no_values = array(
+			array('id' => TRUE, 'text' => __('Yes', 'event_espresso')),
+			array('id' => FALSE, 'text' => __('No', 'event_espresso'))
+		);
 	}
 
 
@@ -71,16 +75,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	protected function _define_page_props() {
 		$this->_admin_base_url = GEN_SET_ADMIN_URL;
 		$this->_admin_page_title = GEN_SET_LABEL;
-		$this->_labels = array(
-			'buttons' => array(
-				'add_question' => __('Add New Question', 'event_espresso'),
-				'edit_question' => __('Edit Question', 'event_espresso'),
-				'delete_question' => __('Delete Question', 'event_espresso'),
-				'add_question_group' => __('Add New Question Group', 'event_espresso'),
-				'edit_question_group' => __('Edit Question Group', 'event_espresso'),
-				'delete_question_group' => __('Delete Question Group', 'event_espresso'),
-			)
-		);
+		$this->_labels = array();
 	}
 
 
@@ -88,11 +83,29 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
-			'default' => '_questions_overview_list_table',
-			'question_groups' => '_question_groups_overview_list_table',
-			'update_settings' => array(
-				'func' => '_insert_or_update_question',
-				'args' => array('new_question' => FALSE ),
+			'default' => '_espresso_page_settings',
+			'update_espresso_page_settings' => array(
+				'func' => '_update_espresso_page_settings',
+				'noheader' => TRUE,
+				),
+			'template_settings' => '_template_settings',
+			'update_template_settings' => array(
+				'func' => '_update_template_settings',
+				'noheader' => TRUE,
+				),
+			'google_map_settings' => '_google_map_settings',
+			'update_google_map_settings' => array(
+				'func' => '_update_google_map_settings',
+				'noheader' => TRUE,
+				),
+			'your_organization_settings' => '_your_organization_settings',
+			'update_your_organization_settings' => array(
+				'func' => '_update_your_organization_settings',
+				'noheader' => TRUE,
+				),
+			'admin_option_settings' => '_admin_option_settings',
+			'update_admin_option_settings' => array(
+				'func' => '_update_admin_option_settings',
 				'noheader' => TRUE,
 				)
 			);
@@ -106,15 +119,36 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_page_config = array(
 			'default' => array(
 				'nav' => array(
-					'label' => __('Event Settings'),
-					'order' => 10
+					'label' => __('Espresso Pages'),
+					'order' => 20
 					),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
 				),
-			'your_organization' => array(
+			'template_settings' => array(
+				'nav' => array(
+					'label' => __('Templates'),
+					'order' => 30
+					),
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
+				),
+			'google_map_settings' => array(
+				'nav' => array(
+					'label' => __('Google Maps'),
+					'order' => 40
+					),
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
+				),
+			'your_organization_settings' => array(
 				'nav' => array(
 					'label' => __('Your Organization'),
-					'order' => 20
+					'order' => 50
+					),
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
+				),
+			'admin_option_settings' => array(
+				'nav' => array(
+					'label' => __('Admin Options'),
+					'order' => 60
 					),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
 				)
@@ -124,114 +158,55 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _add_screen_options() {
-		//todo
 	}
-
-
-
-
 
 	protected function _add_screen_options_default() {
 		$this->_per_page_screen_option();
 	}
 
-
 	protected function _add_screen_options_question_groups() {
 		$this->_per_page_screen_option();
 	}
 
-
-
-
-
-
-	//none of the below group are currently used for Event Categories
 	protected function _add_help_tabs() {}
 	protected function _add_feature_pointers() {}
-	public function load_scripts_styles() {}
+	public function load_scripts_styles() {
+		//styles
+		wp_enqueue_style('jquery-ui-style');
+		//scripts
+		wp_enqueue_script('ee_admin_js');		
+	}
 	public function admin_init() {}
 	public function admin_notices() {}
 	public function admin_footer_scripts() {}
 
 
 
-
-
-
-	public function load_scripts_styles_add_question() {
-		$this->load_scripts_styles_forms();
-	}
-	public function load_scripts_styles_edit_question() {
-		$this->load_scripts_styles_forms();
-	}
-	public function load_scripts_styles_add_question_group() {
-		$this->load_scripts_styles_forms();
-	}
-	public function load_scripts_styles_edit_question_group() {
-		$this->load_scripts_styles_forms();
-	}
-
-
-
-
-
-	public function load_scripts_styles_forms() {
-		//styles
-		wp_enqueue_style('jquery-ui-style');
-
-		//scripts
-		wp_enqueue_script('ee_admin_js');
-
-	}
-
-
-
-
-
-
-	protected function _set_list_table_views_default() {
-		$this->_views = array();
-	}
-
-
-
-
-
-
-	protected function _set_list_table_views_question_groups() {
-		$this->_views = array();
-	}
-
-
-
-
-	private function _set_question_object() {}
-	private function _set_question_group_object() {}
-
-
-
-	protected function _questions_overview_list_table() {
-		$this->display_admin_page_with_sidebar();
-	}
-
-
-
-
-	protected function _question_groups_overview_list_table() {
-		$this->display_admin_page_with_sidebar();
-	}
-
-
-
+	protected function _espresso_page_settings() {
 	
-	protected function _question_details( $type = 'add' ) {}
-	protected function _delete_questions() {}
-	protected function _insert_or_update_question($new_question = TRUE) {}
-	protected function _trash_or_restore_questions($trash = TRUE) {}
-	protected function _question_group_details( $type = 'add' ) {}
-	protected function _delete_question_groups() {}
-	protected function _insert_or_update_question_group($new_question_group = TRUE) {}
-	protected function _trash_or_restore_question_groups($trash = TRUE) {}
+		global $org_options;
+		$this->_template_args['org_options'] = $org_options;
+		// array of pages containing critical EE shortcodes
+		$this->_template_args['ee_pages'] = array(		
+			$org_options['event_page_id'] => array( get_page( $org_options['event_page_id'] ), '[ESPRESSO_EVENTS]' ),			
+			$org_options['return_url'] => array( get_page( $org_options['return_url'] ), '[ESPRESSO_PAYMENTS]' ),			
+			$org_options['notify_url'] => array( get_page( $org_options['notify_url'] ), '[ESPRESSO_TXN_PAGE]' ),			
+			$org_options['cancel_return'] => array( get_page( $org_options['cancel_return'] ), 'ESPRESSO_CANCELLED' )			
+		);
+		$this->_set_publish_post_box_vars( 'id', 1 );
+		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'espresso_page_settings.template.php', $this->_template_args, TRUE );
+		// the details template wrapper
+		$this->display_admin_page_with_sidebar();	
+	}
+
+	protected function update_espresso_page_settings() {
+		
+	}
+
+
+
+
+
 
 
 	/***********/
