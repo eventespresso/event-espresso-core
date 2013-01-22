@@ -216,6 +216,95 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	public function get_trashed_questions( $perpage, $count = FALSE ) {}
 	public function get_question_groups( $perpage, $count = FALSE ) {}
 	public function get_trashed_question_groups( $perpage, $count = FALSE ) {}
+	
+	
+	
+
+	/**
+	 * displays edit and view links for critical EE pages
+	 *
+	 * @param WP page object $ee_page
+	 * @return string
+	 */
+	public static function edit_view_links( $ee_page_id ) {
+		$links = '<a href="' . add_query_arg( array( 'post' => $ee_page_id, 'action' => 'edit' ),  admin_url( 'post.php' )) . '" >' . __('Edit', 'event_espresso') . '</a>';
+		$links .= ' &nbsp;|&nbsp; ';
+		$links .= '<a href="' . get_permalink( $ee_page_id ) . '" >' . __('View', 'event_espresso') . '</a>';
+		return $links;
+	}
+	
+	
+	
+
+	/**
+	 * displays page and shortcode status for critical EE pages
+	 *
+	 * @param WP page object $ee_page
+	 * @return string
+	 */
+	public static function page_and_shortcode_status( $ee_page ) {
+
+		// page status
+		if ( $ee_page[0]->post_status != 'publish') { 
+			$status = '
+						<span style="color:red">					
+							<strong>' . __('Not Published', 'event_espresso') . '</strong>
+						</span>';
+		 } else { 
+			$status = '
+						<span style="color:green">
+							<strong>' . __('Published', 'event_espresso') . '</strong>
+						</span>';
+		}	
+
+			$status .= '&nbsp;&nbsp; ';
+		
+		// shortcode status
+		if ( strpos( $ee_page[0]->post_content, $ee_page[1] ) === FALSE ) { 
+			$status .= '
+						<span style="color:red">					
+							<strong>' . __('Shortcode Problem', 'event_espresso') . '</strong>
+						</span>';
+		 } else { 
+			$status .= '
+						<span style="color:green">
+							<strong>' . __('Shortcode OK', 'event_espresso') . '</strong>
+						</span>';
+		}
+		
+		return $status;	
+	}
+	
+	
+	
+
+	/**
+	 * generates a dropdown of all parent pages - copied from WP core
+	 *
+	 * @param unknown_type $default
+	 * @param unknown_type $parent
+	 * @param unknown_type $level
+	 * @return unknown
+	 */
+	public static function page_settings_dropdown( $default = 0, $parent = 0, $level = 0 ) {
+		global $wpdb;
+		$items = $wpdb->get_results( $wpdb->prepare("SELECT ID, post_parent, post_title FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'page' AND post_status != 'trash' ORDER BY menu_order", $parent) );
+
+		if ( $items ) {
+			foreach ( $items as $item ) {
+				$pad = str_repeat( '&nbsp;', $level * 3 );
+				if ( $item->ID == $default)
+					$current = ' selected="selected"';
+				else
+					$current = '';
+
+				echo "\n\t<option class='level-$level' value='$item->ID'$current>$pad " . esc_html($item->post_title) . "</option>";
+				parent_dropdown( $default, $item->ID, $level +1 );
+			}
+		} else {
+			return false;
+		}
+	}
 
 
 } //ends Forms_Admin_Page class
