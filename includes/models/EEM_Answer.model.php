@@ -24,8 +24,8 @@
 require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_TempBase.model.php' );
 
 class EEM_Answer extends EEM_TempBase {
+	protected $_relatedModels;
 	protected $_fieldsSettings;
-	//nicename, type, nullable, options(class, enumvalues,
   	// private instance of the Attendee object
 	private static $_instance = NULL;
 
@@ -51,6 +51,10 @@ class EEM_Answer extends EEM_TempBase {
 									'REG_ID'=>new EE_ModelField('Registration ID', 'foreign_key', false,0,null,'Registration'),
 									'QST_ID'=>new EE_ModelField('Question ID', 'foreign_key', false,0,null,'Question'),
 									'ANS_value'=>new EE_ModelField('Answer Value/Text', 'simplehtml', false,''));
+		$this->_relatedModels=array(
+								'Registration'=>new EE_ModelRelation('hasOne', 'Registration', 'REG_ID'),
+								'Question'=>new EE_ModelRelation('hasOne', 'Question', 'QST_ID'));
+		
 		parent::__construct();
 	}
 

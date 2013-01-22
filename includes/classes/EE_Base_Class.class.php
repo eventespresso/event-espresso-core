@@ -24,18 +24,18 @@ abstract class EE_Base_Class extends EE_Base{
 	 */
 	public function __construct($fieldValues=null){
 		$this->model=$this->_getModel();
-		if($fieldValues!=null){
+		/*if($fieldValues!=null){
 			foreach($fieldValues as  $fieldName=>$fieldValue){
 				$this->set($fieldName,$fieldValue);
 			}
-		}	
+		}	*/
 	}
 	
 	/**
 	 * Gets the 
-	 * @return type
+	 * @return EEM+Base
 	 */
-	protected function _getModel(){
+	protected function  _getModel(){
 		if(!$this->_model){
 			//find model for this class
 			$modelName=$this->__getModelName();
@@ -222,10 +222,10 @@ abstract class EE_Base_Class extends EE_Base{
 	 * @throws EE_Error
 	 */
 	protected function _getFieldsSettings(){
-		if($this->_getModel()->getFieldsSettings()==null){
+		if($this->_getModel()->fieldsSettings()==null){
 			throw new EE_Error(sprintf("An unexpected error has occured with Event Espresso.||An Event Espresso class has not been fully implemented. %s does not override the \$_fieldSettings attribute.",get_class($this)),"event_espresso");
 		}
-		return $this->_getModel()->getFieldsSettings();
+		return $this->_getModel()->fieldsSettings();
 	}
 	
 	/**
@@ -261,7 +261,7 @@ abstract class EE_Base_Class extends EE_Base{
 	 * @return string
 	 */
 	private function __getPrimaryKeyName(){
-		return $this->_getModel()->getPrimaryKeyName();
+		return $this->_getModel()->primaryKeyName();
 	}
 	
 	/**

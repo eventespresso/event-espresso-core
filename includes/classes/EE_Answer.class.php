@@ -64,7 +64,13 @@ class EE_Answer extends EE_Base_Class{
 	 * @param string $ANS_value text representing the answer. Could be CSV'd
 	 */
 	public function __construct( $REG_ID=NULL, $QST_ID=NULL, $ANS_value='') {
-		parent::__construct(array('REG_ID'=>$REG_ID,'QST_ID'=>$QST_ID,'ANS_value'=>$ANS_value));
+		$reflector = new ReflectionMethod($this,'__construct');	
+		$arrayForParent=array();
+		foreach($params=$reflector->getParameters() as $param){
+			$paramName=$param->name;
+			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
+		}
+		parent::__construct($arrayForParent);
 	}
 
 
@@ -171,8 +177,22 @@ class EE_Answer extends EE_Base_Class{
 	public function value() {
 		return $this->_ANS_value;
 	}
-
-
+	/**
+	 * Gets the related EE_Question to this EE_Answer
+	 * @return EE_Question
+	 */
+	public function question(){
+		$model=$this->_getModel();
+		return $model->getFirstRelated($this,'Question');
+	}
+	/**
+	 * Gets teh realted EE_Registration to this EE_Answer
+	 * @return EE_Registration
+	 */
+	public function registration(){
+		$model=$this->_getModel();
+		return $model->getFirstRelated($this,'Registration');
+	}
 
 
 }

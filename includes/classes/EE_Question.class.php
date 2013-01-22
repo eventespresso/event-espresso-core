@@ -133,16 +133,13 @@ class EE_Question extends EE_Base_Class{
 			$QST_admin_only=NULL,
 			$QST_wp_user=NULL,
 			$QST_deleted=NULL){
-		
-		$this->_QST_display_text=$QST_display_text;
-		$this->_QST_system_name=$QST_system_name;
-		$this->_QST_type=$QST_type;
-		$this->_QST_required=$QST_required;
-		$this->_QST_required_text=$QST_required_text;
-		$this->_QST_order=$QST_order;
-		$this->_QST_admin_only=$QST_admin_only;
-		$this->_QST_wp_user=$QST_wp_user;
-		$this->_QST_deleted=$QST_deleted;
+		$reflector = new ReflectionMethod($this,'__construct');	
+		$arrayForParent=array();
+		foreach($params=$reflector->getParameters() as $param){
+			$paramName=$param->name;
+			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
+		}
+		parent::__construct($arrayForParent);
 	}
 	
 	/**
