@@ -52,9 +52,9 @@
 			<td>				
 				<select name="event_page_id" data-placeholder="Choose a page..." class="chzn-select wide">
 					<option value="0"><?php _e('Main page', 'event_espresso'); ?></option>
-					<?php General_Settings_Admin_Page::page_settings_dropdown($default = $org_options['event_page_id']); ?>
+					<?php General_Settings_Admin_Page::page_settings_dropdown( $org_options['event_page_id'] ); ?>
 				</select>
-				<span><?php echo General_Settings_Admin_Page::page_and_shortcode_status( $ee_pages[$org_options['event_page_id']] ); ?></span>				
+				<span><?php echo General_Settings_Admin_Page::page_and_shortcode_status( $ee_pages[$org_options['event_page_id']], '[ESPRESSO_EVENTS]' ); ?></span>				
 				<br />
 				<span class="description">					
 					<?php 
@@ -79,9 +79,9 @@
 			<td>				
 				<select name="return_url" data-placeholder="Choose a page..." class="chzn-select wide">
 					<option value="0"><?php _e('Main page', 'event_espresso'); ?></option>
-					<?php General_Settings_Admin_Page::page_settings_dropdown($default = $org_options['return_url']); ?>
+					<?php General_Settings_Admin_Page::page_settings_dropdown( $org_options['return_url'] ); ?>
 				</select>
-				<span><?php echo General_Settings_Admin_Page::page_and_shortcode_status( $ee_pages[$org_options['return_url']] ); ?></span>				
+				<span><?php echo General_Settings_Admin_Page::page_and_shortcode_status( $ee_pages[$org_options['return_url']], '[ESPRESSO_PAYMENTS]' ); ?></span>				
 				<br />
 				<span class="description">					
 					<?php 
@@ -106,9 +106,9 @@
 			<td>				
 				<select name="notify_url" data-placeholder="Choose a page..." class="chzn-select wide">
 					<option value="0"><?php _e('Main page', 'event_espresso'); ?></option>
-					<?php General_Settings_Admin_Page::page_settings_dropdown($default = $org_options['notify_url']); ?>
+					<?php General_Settings_Admin_Page::page_settings_dropdown( $org_options['notify_url'] ); ?>
 				</select>
-				<span><?php echo General_Settings_Admin_Page::page_and_shortcode_status( $ee_pages[$org_options['notify_url']] ); ?></span>				
+				<span><?php echo General_Settings_Admin_Page::page_and_shortcode_status( $ee_pages[$org_options['notify_url']], '[ESPRESSO_TXN_PAGE]' ); ?></span>				
 				<br />
 				<span class="description">					
 					<?php 
@@ -133,9 +133,9 @@
 			<td>				
 				<select name="cancel_return" data-placeholder="Choose a page..." class="chzn-select wide">
 					<option value="0"><?php _e('Main page', 'event_espresso'); ?></option>
-					<?php General_Settings_Admin_Page::page_settings_dropdown($default = $org_options['cancel_return']); ?>
+					<?php General_Settings_Admin_Page::page_settings_dropdown( $org_options['cancel_return'] ); ?>
 				</select>
-				<span><?php echo General_Settings_Admin_Page::page_and_shortcode_status( $ee_pages[$org_options['cancel_return']] ); ?></span>				
+				<span><?php echo General_Settings_Admin_Page::page_and_shortcode_status( $ee_pages[$org_options['cancel_return']], '[ESPRESSO_TXN_PAGE]' ); ?></span>				
 				<br />
 				<span class="description">					
 					<?php 
@@ -150,8 +150,11 @@
 		</tr>
 	
 		<tr valign="top">
-			<th scope="row"><?php _e('Pretty Permalinks', 'event_espresso'); ?></th>
-			<td><fieldset>
+			<th scope="row">
+				<?php _e('Pretty Permalinks', 'event_espresso'); ?>
+			</th>
+			<td>				
+				<fieldset>
 					<legend class="screen-reader-text"><span>
 							<?php _e('Pretty Permalinks', 'event_espresso'); ?>
 						</span></legend>
@@ -183,12 +186,11 @@
 							</span> 
 						</span> 
 					</label>
-				</fieldset></td>
+				</fieldset>					
+			</td>
 		</tr>
+		
 		</tbody>
-
 	</table>
-	<p>
-		<input class="button-primary" type="submit" name="Submit_2" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_2" />
-	</p>
+
 </div>

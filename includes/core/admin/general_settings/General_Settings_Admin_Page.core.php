@@ -122,35 +122,35 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'label' => __('Espresso Pages'),
 					'order' => 20
 					),
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
+				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' )
 				),
 			'template_settings' => array(
 				'nav' => array(
 					'label' => __('Templates'),
 					'order' => 30
 					),
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
+				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' )
 				),
 			'google_map_settings' => array(
 				'nav' => array(
 					'label' => __('Google Maps'),
 					'order' => 40
 					),
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
+				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box' )
 				),
 			'your_organization_settings' => array(
 				'nav' => array(
 					'label' => __('Your Organization'),
 					'order' => 50
 					),
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
+				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box' )
 				),
 			'admin_option_settings' => array(
 				'nav' => array(
 					'label' => __('Admin Options'),
 					'order' => 60
 					),
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
+				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' )
 				)
 			);
 	}
@@ -193,13 +193,23 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			$org_options['notify_url'] => array( get_page( $org_options['notify_url'] ), '[ESPRESSO_TXN_PAGE]' ),			
 			$org_options['cancel_return'] => array( get_page( $org_options['cancel_return'] ), 'ESPRESSO_CANCELLED' )			
 		);
-		$this->_set_publish_post_box_vars( 'id', 1 );
+		$this->_set_add_edit_form_tags( 'update_espresso_page_settings' );
+		$this->_set_publish_post_box_vars();
 		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'espresso_page_settings.template.php', $this->_template_args, TRUE );
 		// the details template wrapper
 		$this->display_admin_page_with_sidebar();	
 	}
 
-	protected function update_espresso_page_settings() {
+	protected function _update_espresso_page_settings() {
+		
+		$data = array();
+		$data['event_page_id'] = absint( $_POST['event_page_id'] );
+		$data['return_url'] = absint( $_POST['return_url'] );
+		$data['cancel_return'] = absint( $_POST['cancel_return'] );
+		$data['notify_url'] = absint( $_POST['notify_url'] );
+		
+		$success = $this->_update_general_settings( $data, __FILE__, __FUNCTION__, __LINE__ );
+		$this->_redirect_after_action( $success, 'Page Settings', 'updated', array() );
 		
 	}
 
@@ -210,19 +220,48 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 
 	/***********/
-	/* QUERIES */
 
-	public function get_questions( $perpage, $count = FALSE ) {}
-	public function get_trashed_questions( $perpage, $count = FALSE ) {}
-	public function get_question_groups( $perpage, $count = FALSE ) {}
-	public function get_trashed_question_groups( $perpage, $count = FALSE ) {}
-	
-	
-	
+
+
+
+
+	/**
+	 * updates user_meta
+	 *
+	 * @param array $data
+	 * @return string
+	 */
+	private function _update_general_settings( $data, $file, $func, $line ) {
+		global $espresso_wp_user;
+		// grab existing org options
+		$org_options = get_user_meta( $espresso_wp_user, 'events_organization_settings', TRUE );
+//		printr( $data, '$data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $org_options, '$org_options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		if ( ! empty( $org_options )) {
+		// make sure everything is in arrays
+		$org_options = is_array( $org_options ) ? $org_options : array( $org_options );
+		$data = is_array( $data ) ? $data : array( $data );
+		// overwrite existing org options with new data
+		$data = array_merge( $org_options, $data );
+		// and save it
+		if ( update_user_meta( $espresso_wp_user, 'events_organization_settings', $data )) {
+			EE_Error::add_success( __('Organization details saved', 'event_espresso'));
+			return TRUE;
+		} else {
+			$user_msg = __('Unable to save Organization details.', 'event_espresso');
+			EE_Error::add_error( $user_msg, $file, $func, $line  );
+			return FALSE;
+		}			
+//		}
+
+	}
+
+
 
 	/**
 	 * displays edit and view links for critical EE pages
 	 *
+	 * @access public 
 	 * @param WP page object $ee_page
 	 * @return string
 	 */
@@ -242,37 +281,29 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	 * @param WP page object $ee_page
 	 * @return string
 	 */
-	public static function page_and_shortcode_status( $ee_page ) {
-
+	public static function page_and_shortcode_status( $ee_page, $shortcode ) {
+//		printr( $ee_page, '$ee_page  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		echo '<h4>$shortcode : ' . $shortcode . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		// page status
-		if ( $ee_page[0]->post_status != 'publish') { 
-			$status = '
-						<span style="color:red">					
-							<strong>' . __('Not Published', 'event_espresso') . '</strong>
-						</span>';
+		if ( ! isset( $ee_page[0] ) || ! isset( $ee_page[0]->post_status ) || $ee_page[0]->post_status != 'publish') { 
+			$pg_colour = 'red';
+			$pg_status = __('Page Visibility Problem', 'event_espresso');
 		 } else { 
-			$status = '
-						<span style="color:green">
-							<strong>' . __('Published', 'event_espresso') . '</strong>
-						</span>';
-		}	
-
-			$status .= '&nbsp;&nbsp; ';
-		
-		// shortcode status
-		if ( strpos( $ee_page[0]->post_content, $ee_page[1] ) === FALSE ) { 
-			$status .= '
-						<span style="color:red">					
-							<strong>' . __('Shortcode Problem', 'event_espresso') . '</strong>
-						</span>';
-		 } else { 
-			$status .= '
-						<span style="color:green">
-							<strong>' . __('Shortcode OK', 'event_espresso') . '</strong>
-						</span>';
+			$pg_colour = 'green';
+			$pg_status = __('Page Status OK', 'event_espresso');
 		}
 		
-		return $status;	
+		// shortcode status
+		if ( ! isset( $ee_page[0] ) || ! isset( $ee_page[0]->post_content ) || strpos( $ee_page[0]->post_content, $shortcode ) === FALSE ) { 
+			$sc_colour = 'red';
+			$sc_status = __('Shortcode Problem', 'event_espresso');
+		 } else { 
+			$sc_colour = 'green';
+			$sc_status = __('Shortcode OK', 'event_espresso');
+		}
+
+		return '<span style="color:' . $pg_colour . '; margin-right:2em;"><strong>' . $pg_status . '</strong></span><span style="color:' . $sc_colour . '"><strong>' . $sc_status . '</strong></span>';		
+
 	}
 	
 	
