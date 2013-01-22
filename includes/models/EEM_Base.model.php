@@ -30,6 +30,7 @@ abstract class EEM_Base extends EE_Base {
 	// array representation of a table and the data types for each field
 	protected $table_data_types = array();
 
+	
 	protected $singlular_item = 'Item';
 	protected $plual_item = 'Items';
 

@@ -37,7 +37,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	}
 	/**
 	 * Allows other models to know about the fieldson this model
-	 * @return array
+	 * @return EE_Model_Field[]
 	 */
 	public function fields_settings(){
 		return $this->_fields_settings;
@@ -50,7 +50,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	 */
 	protected function _getTableDataTypes(){
 		$dataTypes=array();
-		foreach($this->fields_settings() as $fieldName=>$fieldSettings){
+		foreach($this->fields_settings() as $fieldName=>/*@var $fieldSettings EE_Model_Field */$fieldSettings){
 			switch($fieldSettings->type()){
 				case 'primary_key':
 				case 'foreign_key':
@@ -108,7 +108,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	* 
 	* 		@access		private
 	* 		@param		array		$attendees		
-	*		@return 		mixed		array on success, FALSE on fail
+	*		@return 	EE_Base_Class[]		array on success, FALSE on fail
 	*/	
 	protected function _create_objects( $rows = FALSE ) {
 
@@ -152,7 +152,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	}
 	/**
 	 * Returns the array of EE_ModelRelations for this model.
-	 * @return array
+	 * @return EE_Model_Relation[]
 	 */
 	public function relationSettings(){
 		return $this->_related_models;
@@ -174,7 +174,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * Uses $this->_relatedModels info to find the related model objects of relation $relationName to the given $modelObject
 	 * @param EE_Base_Class'child $modelObject one of EE_Answer, EE_Attendee, etc. 
 	 * @param string $relationName, key in $this->_relatedModels, eg 'Registration', or 'Events'
-	 * @return array of EE_Base_Class
+	 * @return EE_Base_Class[]
 	 */
 	public function get_many_related(EE_Base_Class $modelObject,$relationName){
 		$relatedModelInfo=$this->related_settings_for($relationName);
@@ -212,7 +212,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * Uses $this->_relatedModels info to find the first related model object of relation $relationName to the given $modelObject
 	 * @param EE_Base_Class'child $modelObject one of EE_Answer, EE_Attendee, etc. 
 	 * @param string $relationName, key in $this->_relatedModels, eg 'Registration', or 'Events'
-	 * @return array of EE_Base_Class
+	 * @return EE_Base_Class[]
 	 */
 	public function get_first_related($modelObject,$relationName){
 		$relatedObjects=$this->get_many_related($modelObject, $relationName);
@@ -220,6 +220,89 @@ abstract class EEM_TempBase extends EEM_Base{
 			return null;
 		}else{
 			return array_shift($relatedObjects);
+		}
+	}
+	
+	/**
+	*		retreive  a single item from db via their ID
+	* 
+	* 		@access		public
+	* 		@param		$id		
+	*		@return 	EE_Base_Class or FALSE on fail
+	*/	
+	public function get_one_by_ID( $id = FALSE ) {
+
+		if ( ! $id ) {
+			return FALSE;
+		}
+		// retreive a particular transaction
+		$where_cols_n_values = array( $this->primary_key_name() => $id );
+		if ( $row = $this->select_row_where ( $where_cols_n_values )) {
+			$object_of_model = $this->_create_objects( array( $row ));
+			return array_shift( $object_of_model );
+		} else {
+			return FALSE;
+		}
+
+	}
+	
+	/**
+	*		retreive  a single attendee from db via their ID
+	* 
+	* 		@access		public
+	* 		@param		$where_cols_n_values	 array, where keys are strings for DB columns, and values are their model values	
+	*		@return 	EE_Base_Class		array on success, FALSE on fail
+	*/	
+	public function get_one( $where_cols_n_values = FALSE ) {
+
+		if ( ! $where_cols_n_values ) {
+			return FALSE;
+		}
+
+		if ( $row = $this->select_row_where ( $where_cols_n_values )) {
+			$objects_of_model = $this->_create_objects( array( $row ));
+			return array_shift( $objects_of_model );
+		} else {
+			return FALSE;
+		}
+
+	}
+	
+	/**
+	*		retreive  ALL objects of this model from db
+	* 
+	* 		@access		public
+	*		@return 	EE_Base_Class[]		on success, FALSE on fail
+	*/	
+	public function get_all( $orderby = null, $sort = 'ASC' ) {
+		if($orderby==null){
+			$orderby=$this->primary_key_name();
+		}
+		// retreive all attendees	
+		if ( $rows = $this->select_all ( $orderby, $sort )) {
+			return $this->_create_objects( $rows );
+		} else {
+			return FALSE;
+		}
+		
+	}
+	
+	/**
+	 * retrieves all objects that meet the specified conditions
+	 * @param array $where_cols_n_values keys are column names, values are column values
+	 * @param string $orderby name of a column
+	 * @param string $sort 'ASC' or 'DESC'
+	 * @param mixed $operators string for a single operator, or an array of operators
+	 * @return EE_Base_Class[] or False on failure
+	 */
+	public function get_all_where($where_cols_n_values,$orderby=null,$sort='ASC',$operators=null){
+		if($orderby==null){
+			$orderby=$this->primary_key_name();
+		}
+		if($rows=$this->select_all_where($where_cols_n_values, $orderby, $sort, $operators)){
+			return $this->_create_objects($rows);
+		}else{
+			return FALSE;
 		}
 	}
 }
@@ -417,7 +500,7 @@ class EE_Model_Relation{
 	/**
 	 * Using the info in this ModelRelation, fetches an instance of the related model,
 	 * which can then be used for querying.
-	 * @return object EEM_Base
+	 * @return EEM_Base
 	 */
 	public function model_instance(){
 		$modelName="EEM_".$this->model();
