@@ -16,39 +16,41 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * Forms_Admin_Page_Init
+ * General_Settings_Admin_Page_Init
  *
- * This contains the logic for setting up the Forms (Question and Question Groups) related pages.  Any methods without phpdoc comments have inline docs with parent class. 
+ * This contains the logic for setting up the General_Settings related pages.  Any methods without phpdoc comments have inline docs with parent class. 
  *
- * NOTE:  TODO: This is a straight conversion from the legacy 3.1 events related pages.  It is NOT optimized and will need modification to fully use the new system (and also will need adjusted when Events model is setup)
+ * NOTE:  TODO: This is a straight conversion from the legacy 3.1 settings page.  It is NOT optimized and will need modification to fully use the new system (and also will need adjusted when Events model is setup)
  *
- * @package		Forms_Admin_Page_Init
- * @subpackage	includes/core/admin/Forms_Admin_Page_Init.core.php
- * @author		Darren Ethier
+ * @package		General_Settings_Admin_Page_Init
+ * @subpackage	includes/core/admin/General_Settings_Admin_Page_Init.core.php
+ * @author			Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
 
-class Forms_Admin_Page_Init extends EE_Admin_Page_Init {
+class General_Settings_Admin_Page_Init extends EE_Admin_Page_Init {
 
 	public function __construct() {
 		//define some constants
-		define( 'EE_FORMS_ADMIN_URL', admin_url('admin.php?page=ee_custom_forms') );
+		define( 'GEN_SET_PG_SLUG', 'general_settings' );	
+		define( 'GEN_SET_LABEL', __('General Settings', 'event_espresso'));	
+		define( 'GEN_SET_ADMIN_URL', admin_url( 'admin.php?page=' . GEN_SET_PG_SLUG ));	
 
 		parent::__construct();
 	}
 
 	protected function _set_init_properties() {
-		$this->label = __('Registration Forms Overview', 'event_espresso');
-		$this->menu_label = __('Forms','event_espresso');
-		$this->menu_slug = 'ee_custom_forms';
+		$this->label = GEN_SET_LABEL;
+		$this->menu_label = GEN_SET_LABEL;
+		$this->menu_slug = GEN_SET_PG_SLUG;
 		$this->capability = 'administrator';
 	}
 
 	public function get_menu_map() {
 		$map = array(
-			'group' => 'main',
-			'menu_order' => 60,
+			'group' => 'management',
+			'menu_order' => 100,
 			'show_on_menu' => TRUE,
 			'parent_slug' => 'events'
 			);
