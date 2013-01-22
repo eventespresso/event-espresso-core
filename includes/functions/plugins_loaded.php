@@ -156,6 +156,7 @@ function espresso_core_admin_autoload($className) {
 		'attendees/' => array('core', 'class'),
 		'events/' => array('core','class'),
 		'event_categories/' => array('core','class'),
+		'general_settings/' => array('core','class'),
 		'messages/' => array('core', 'class'),
 		'pricing/' => array('core', 'class'),
 		'registrations/' => array('core','class'),
