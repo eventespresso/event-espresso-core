@@ -193,6 +193,7 @@ class Venues_Admin_Page extends EE_Admin_Page {
 	public function load_scripts_styles_edit_venue() {
 		//styles
 		wp_enqueue_style('jquery-ui-style');
+		wp_enqueue_style('espress_venues');
 
 		//scripts
 		wp_enqueue_script('ee_admin_js');
@@ -237,10 +238,11 @@ class Venues_Admin_Page extends EE_Admin_Page {
 		$route = $view == 'edit' ? 'update_venue' : 'insert_venue';
 		$this->_set_add_edit_form_tags($route);
 
-		$this->_set_venue_object();
+		if ( $view == 'edit' ) $this->_set_venue_object();
 		$id = isset($this->_venue->id) ? $this->_venue->id : '';
 
-		$this->_set_publish_post_box_vars( 'delete_venue', 'venue_id', $id );
+		$this->_set_publish_post_box_vars( 'venue_id', $id, 'delete_venue' );
+
 
 		//take care of contents
 		$this->_template_args['admin_page_content'] = $view == 'edit' ? $this->_edit_venue_content() : $this->_add_venue_content();
@@ -253,7 +255,6 @@ class Venues_Admin_Page extends EE_Admin_Page {
 
 	protected function _add_venue_content() {
 		global $wpdb, $current_user;
-
 		$values = array(
 				array('id' => true, 'text' => __('Yes', 'event_espresso')),
 				array('id' => false, 'text' => __('No', 'event_espresso'))
@@ -422,8 +423,9 @@ class Venues_Admin_Page extends EE_Admin_Page {
 	protected function _edit_venue_content() {
 		global $wpdb;
 
-		$this->_set_venue_object();
+		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/gmap_incl.php');
 
+		$this->_set_venue_object();
 		$venue_id = $this->_venue->id;
 		$name = stripslashes_deep($this->_venue->name);
 		$address = stripslashes_deep($this->_venue->address);
@@ -451,6 +453,8 @@ class Venues_Admin_Page extends EE_Admin_Page {
 		$ee_gmaps_opts['ee_map_height'] = '300';
 		$ee_gmaps_opts['ee_map_zoom'] = '15';
 		$ee_gmaps_opts['ee_map_align'] = 'center';
+
+		ob_start();
 		?>
 		<!--Add event display-->
 		<table width="100%" border="0">
@@ -615,7 +619,7 @@ class Venues_Admin_Page extends EE_Admin_Page {
 			<div class="postbox">
 			<?php 
 				$args = array("textarea_rows" => 5, "textarea_name" => "venue_desc", "editor_class" => "my_editor_custom");
-				wp_editor( espresso_admin_format_content($meta['description']), "venue_desc", $args);
+				wp_editor( EE_Formatter::admin_format_content($meta['description']), "venue_desc", $args);
 			?>	
 				<table id="venue-descr-add-form"  cellspacing="0">
 					<tbody>
@@ -633,6 +637,9 @@ class Venues_Admin_Page extends EE_Admin_Page {
 		<!-- /#descriptiondivrich -->
 
 		<?php
+		$content = ob_get_contents();
+		ob_end_clean();
+		return $content;
 	}
 
 
@@ -646,7 +653,7 @@ class Venues_Admin_Page extends EE_Admin_Page {
 			$sql .= " AND v.wp_user = '%d'";
 		}
 		
-		$venue = function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_event_manager') ? $wpdb->get_row( $wpdb->prepare($sql, $id, espresso_member_data('id') ) ) : $wpdb->get_row( $wpdb->prepare($sql, $id) );
+		$venue = (function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_event_manager') ? $wpdb->get_row( $wpdb->prepare($sql, $id, espresso_member_data('id') ) ) : $wpdb->get_row( $wpdb->prepare($sql, $id) );
 		
 		if (!$wpdb->num_rows > 0) {
 			$msg = sprintf( __('Something went wrong and we couldn\'t retrieve any data for the given venue id (%s)', 'event_espresso'), $id );
@@ -659,7 +666,7 @@ class Venues_Admin_Page extends EE_Admin_Page {
 
 
 
-	protected function _delete_categories() {
+	protected function _delete_venues() {
 		$venue_ids = isset( $this->_req_data['venue_id'] ) ? (array) $this->_req_data['venue_id'] : (array) $this->_req_data['venue_id'];
 
 		foreach ( $venue_ids as $venue_id ) {
@@ -703,14 +710,14 @@ class Venues_Admin_Page extends EE_Admin_Page {
 			$success = 0; //we already have a success message so lets not send another.
 			$query_args = array(
 				'action' => 'edit_venue', 
-				'id' => $venue_id
+				'venue_id' => $venue_id
 			);
 		} else {
 			$venue_id = $this->_update_venue();
 			$success = 0;
 			$query_args = array(
 				'action' => 'edit_venue',
-				'id' => $venue_id
+				'venue_id' => $venue_id
 			);
 		}
 
@@ -722,20 +729,20 @@ class Venues_Admin_Page extends EE_Admin_Page {
 
 
 
-	private function _insert_category() {
+	private function _insert_venue() {
 		global $wpdb, $espresso_wp_user;
 		$wpdb->show_errors();
 		
 		//print_r($this->_req_data);
-		$venue_meta['contact'] = $this->_req_data['contact'];
-		$venue_meta['phone'] = $this->_req_data['phone'];
-		$venue_meta['twitter'] = $this->_req_data['twitter'];
-		$venue_meta['image'] = $this->_req_data['image'];
-		$venue_meta['website'] = $this->_req_data['website'];
-		$venue_meta['description'] = esc_html($this->_req_data['description']);
-		$venue_meta['enable_for_maps'] = $this->_req_data['enable_for_maps'];
-		$venue_meta['gmap_static'] = esc_url($this->_req_data['gmap_static']);
-		$locale = isset( $this->_req_data['locale'] ) ? $this->_req_data['locale'] : '';
+		$venue_meta['contact'] = isset($this->_req_data['contact']) ? $this->_req_data['contact'] : '';
+		$venue_meta['phone'] = isset($this->_req_data['phone']) ? $this->_req_data['phone'] : '';
+		$venue_meta['twitter'] = isset($this->_req_data['twitter']) ? $this->_req_data['twitter'] : '';
+		$venue_meta['image'] = isset($this->_req_data['image']) ? $this->_req_data['image'] : '';
+		$venue_meta['website'] = isset($this->_req_data['website']) ? $this->_req_data['website'] : '';
+		$venue_meta['description'] = isset($this->_req_data['description']) ? esc_html($this->_req_data['description']) : '';
+		$venue_meta['enable_for_maps'] = isset($this->_req_data['enable_for_maps']) ? esc_html($this->_req_data['enable_for_maps']) : '';
+		$venue_meta['gmap_static'] = isset($this->_req_data['gmap_static']) ? esc_url($this->_req_data['gmap_static']) : '';
+		$locale = isset($this->_req_data['locale']) ? $this->_req_data['locale'] : '';
 		$meta = serialize($venue_meta);	
 		
 		$identifier=uniqid($espresso_wp_user.'-');
@@ -789,16 +796,17 @@ class Venues_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _update_venue() {
+		global $wpdb;
 		$wpdb->show_errors();
-		$venue_meta['contact'] = $this->_req_data['contact'];
-		$venue_meta['phone'] = $this->_req_data['phone'];
-		$venue_meta['twitter'] = $this->_req_data['twitter'];
-		$venue_meta['image'] = $this->_req_data['image'];
-		$venue_meta['website'] = $this->_req_data['website'];
-		$venue_meta['description'] = esc_html($this->_req_data['description']);
-		$venue_meta['enable_for_maps'] = esc_html($this->_req_data['enable_for_maps']);
-		$venue_meta['gmap_static'] = esc_url($this->_req_data['gmap_static']);
-		$locale = $this->_req_data['locale'];
+		$venue_meta['contact'] = isset($this->_req_data['contact']) ? $this->_req_data['contact'] : '';
+		$venue_meta['phone'] = isset($this->_req_data['phone']) ? $this->_req_data['phone'] : '';
+		$venue_meta['twitter'] = isset($this->_req_data['twitter']) ? $this->_req_data['twitter'] : '';
+		$venue_meta['image'] = isset($this->_req_data['image']) ? $this->_req_data['image'] : '';
+		$venue_meta['website'] = isset($this->_req_data['website']) ? $this->_req_data['website'] : '';
+		$venue_meta['description'] = isset($this->_req_data['description']) ? esc_html($this->_req_data['description']) : '';
+		$venue_meta['enable_for_maps'] = isset($this->_req_data['enable_for_maps']) ? esc_html($this->_req_data['enable_for_maps']) : '';
+		$venue_meta['gmap_static'] = isset($this->_req_data['gmap_static']) ? esc_url($this->_req_data['gmap_static']) : '';
+		$locale = isset($this->_req_data['locale']) ? $this->_req_data['locale'] : '';
 		$meta = serialize($venue_meta);
 		//echo '<p>$locale = '.$locale.'</p>';
 
@@ -859,7 +867,7 @@ class Venues_Admin_Page extends EE_Admin_Page {
 
 		$_orderby = !empty( $this->_req_data['orderby'] ) ? $this->_req_data['orderby'] : '';
 
-		switch ( $orderby ) {
+		switch ( $_orderby ) {
 			case 'id':
 				$orderby = 'v.id';
 				break;
@@ -877,10 +885,10 @@ class Venues_Admin_Page extends EE_Admin_Page {
 
 
 		$offset = ($current_page-1)*$per_page;
-		$limit = array( $offset, $per_page );
+		$limit = "LIMIT $offset, $per_page";
 
 		//todo: this friggen query needs optimized and $wpdb->prepared
-		$sql = $count ? "( SELECT COUNT(v.id) " : "( SELECT V.* ";
+		$sql = $count ? "( SELECT COUNT(v.id) " : "( SELECT v.* ";
 		$sql .=  "FROM " . EVENTS_VENUE_TABLE . " v ";
 		if (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_group_admin' )) {
 			if ($espresso_manager['event_manager_venue']) {
@@ -901,7 +909,7 @@ class Venues_Admin_Page extends EE_Admin_Page {
 			$sql .= " JOIN $wpdb->users u on u.ID = v.wp_user WHERE v.wp_user = " . $espresso_wp_user;
 		}
 		$sql .= ")";
-		$sql .= $count ? '' : " $orderby $sort $limit";
+		$sql .= $count ? '' : " ORDER BY $orderby $sort $limit";
 		
 		$results = $count ? $wpdb->get_var($sql) : $wpdb->get_results( $sql );
 

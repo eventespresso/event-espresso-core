@@ -828,6 +828,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//transactions style register
 		wp_register_style( 'espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.css', array(), EVENT_ESPRESSO_VERSION );
 
+		//venues style register
+		wp_register_style( 'espress_venues', EE_VENUES_ASSETS_URL . 'ee-venues-admin.css', array(), EVENT_ESPRESSO_VERSION );
+
 		//enqueue global styles
 		wp_enqueue_style('event_espresso');
 		wp_enqueue_style('ee-admin-css');
@@ -1240,11 +1243,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args['publish_box_extra_content'] = isset( $this->_template_args['publish_box_extra_content'] ) ? $this->_template_args['publish_box_extra_content'] : '';
 
 
-		$delete_link_args = array(
-			$name => $id
-			);
-
-		$delete_link = !empty($delete_action) ? $this->_get_action_link_or_button( $delete_action, $type = 'delete', $delete_link_args, $class='submitdelete deletion') : '';
+		if ( $delete ) {
+			$delete_link_args = array( $name => $id );
+			$delete_link = $this->_get_action_link_or_button( $delete, $type = 'delete', $delete_link_args, $class='submitdelete deletion');
+		}
 		
 		$this->_template_args['publish_delete_link'] = $delete_link;
 

@@ -129,7 +129,7 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 			'delete' => '<a href="' . $delete_link . '" title="' . __('Delete Venue', 'event_espresso') . '">' . __('Delete', 'event_espresso') . '</a>'
 			);
 
-		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . stripslashes_deep($item->venue_name) . '</a></strong>';
+		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . stripslashes_deep($item->name) . '</a></strong>';
 		$content .= $this->row_actions($actions);
 		return $content;
 	}
@@ -140,3 +140,5 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 		$content = '[ESPRESSO_VENUE id=' . $item->id . ']';
 		return $content;
 	}
+
+} //end Venues_Admin_List_Table() class
