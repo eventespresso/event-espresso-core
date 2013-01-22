@@ -34,6 +34,7 @@ class Venues_Admin_Page_Init extends EE_Admin_Page_Init {
 	public function __construct() {
 		//define some event categories related constants
 		define( 'EE_VENUES_ADMIN_URL', admin_url('admin.php?page=ee_venues') );
+		define( 'EE_VENUES_ASSETS_URL', EE_CORE_ADMIN_URL . 'venues/assets/');
 
 		parent::__construct();
 	}
