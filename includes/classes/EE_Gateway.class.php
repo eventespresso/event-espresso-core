@@ -155,9 +155,10 @@ abstract class EE_Gateway {
 
 	public function add_settings_page_meta_box() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		add_meta_box(
-						'espresso_' . $this->_gateway . '_gateway_settings', $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso'), array(&$this, 'settings_meta_box'), 'event-espresso_page_payment_gateways'
-		);
+		if ( isset($this->_payment_settings['display_name'] ) )
+			add_meta_box(
+							'espresso_' . $this->_gateway . '_gateway_settings', $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso'), array(&$this, 'settings_meta_box'), 'event-espresso_page_payment_gateways'
+			);
 	}
 
 	public function settings_meta_box() {
