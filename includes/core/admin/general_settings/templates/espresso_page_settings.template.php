@@ -135,13 +135,13 @@
 					<option value="0"><?php _e('Main page', 'event_espresso'); ?></option>
 					<?php General_Settings_Admin_Page::page_settings_dropdown( $org_options['cancel_return'] ); ?>
 				</select>
-				<span><?php echo General_Settings_Admin_Page::page_and_shortcode_status( $ee_pages[$org_options['cancel_return']], '[ESPRESSO_TXN_PAGE]' ); ?></span>				
+				<span><?php echo General_Settings_Admin_Page::page_and_shortcode_status( $ee_pages[$org_options['cancel_return']], '[ESPRESSO_CANCELLED]' ); ?></span>				
 				<br />
 				<span class="description">					
 					<?php 
 					echo sprintf(
 						__( 'This page should be hidden from your navigation, but still viewable to the public (not password protected), and should always contain a "cancelled transaction" message and the %s shortcode.', 'event_espresso' ),
-						'<span class="highlight" style="padding:3px;margin:0;">[ESPRESSO_TXN_PAGE]</span>'
+						'<span class="highlight" style="padding:3px;margin:0;">[ESPRESSO_CANCELLED]</span>'
 					); 
 					?>					
 				</span>
