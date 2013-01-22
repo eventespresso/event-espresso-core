@@ -182,7 +182,7 @@ class EE_Answer extends EE_Base_Class{
 	 * @return EE_Question
 	 */
 	public function question(){
-		$model=$this->_getModel();
+		$model=$this->_get_model();
 		return $model->getFirstRelated($this,'Question');
 	}
 	/**
@@ -190,7 +190,7 @@ class EE_Answer extends EE_Base_Class{
 	 * @return EE_Registration
 	 */
 	public function registration(){
-		$model=$this->_getModel();
+		$model=$this->_get_model();
 		return $model->getFirstRelated($this,'Registration');
 	}
 

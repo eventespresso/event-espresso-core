@@ -14,7 +14,7 @@ abstract class EE_Base_Class extends EE_Base{
 	/**
 	 * Instance of model that corresponds to this class.
 	 * This should be lazy-loaded to avoid recursive loop
-	 * @var type 
+	 * @var EEM_Base 
 	 */
 	private $_model;
 	
@@ -23,7 +23,7 @@ abstract class EE_Base_Class extends EE_Base{
 	 * and verifies it's children play nice
 	 */
 	public function __construct($fieldValues=null){
-		$this->model=$this->_getModel();
+		$this->_model=$this->_get_model();
 		/*if($fieldValues!=null){
 			foreach($fieldValues as  $fieldName=>$fieldValue){
 				$this->set($fieldName,$fieldValue);
@@ -35,10 +35,10 @@ abstract class EE_Base_Class extends EE_Base{
 	 * Gets the 
 	 * @return EEM+Base
 	 */
-	protected function  _getModel(){
+	protected function  _get_model(){
 		if(!$this->_model){
 			//find model for this class
-			$modelName=$this->__getModelName();
+			$modelName=$this->_get_model_name();
 			require_once($modelName.".model.php");
 			//$modelObject=new $modelName;
 			$this->_model=call_user_func($modelName."::instance");
@@ -51,7 +51,7 @@ abstract class EE_Base_Class extends EE_Base{
 	 * EE_Answer, it will return EEM_Answer.
 	 * @return string
 	 */
-	private function __getModelName(){
+	private function _get_model_name(){
 		$className=get_class($this);
 		$modelName=str_replace("EE_","EEM_",$className);
 		return $modelName;
@@ -64,7 +64,7 @@ abstract class EE_Base_Class extends EE_Base{
 	 * @param string $fieldName
 	 * @return string
 	 */
-	private function __getPrivateAttributeName($fieldName){
+	private function _get_private_attribute_name($fieldName){
 		return "_".$fieldName;
 	}
 	//@todo remove duplicate insert() functions in subclasses
@@ -87,7 +87,7 @@ abstract class EE_Base_Class extends EE_Base{
 	 * @return mixed
 	 */
 	public function get($fieldName){
-		$privateFieldName=$this->__getPrivateAttributeName($fieldName);
+		$privateFieldName=$this->_get_private_attribute_name($fieldName);
 		return $this->$privateFieldName;
 	}
 	
@@ -99,7 +99,7 @@ abstract class EE_Base_Class extends EE_Base{
 	 * @param type $value
 	 */
 	public function set($fieldName,$value){
-		$fields=$this->_getFieldsSettings();
+		$fields=$this->_get_fields_settings();
 		if(!array_key_exists($fieldName, $fields)){
 			throw new EE_Error(sprintf(__("An internal Event Espresso error has occured. Please contact Event Espresso.||The field %s doesnt exist on Event Espresso class %s",'event_espresso'),$fieldName,get_class($this)));
 		}
@@ -111,15 +111,15 @@ abstract class EE_Base_Class extends EE_Base{
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return false;
 			}else{
-				$privateAttributeName=$this->__getPrivateAttributeName($fieldName);
+				$privateAttributeName=$this->_get_private_attribute_name($fieldName);
 				$this->$privateAttributeName=$value;
 				return true;
 			}
 		}else{
 			//verify its of the right type
-			if($this->_verifyFieldIsOfCorrectType($value,$fieldSettings)){
+			if($this->_verify_field_type($value,$fieldSettings)){
 				$internalFieldName="_".$fieldName;
-				$this->$internalFieldName=$this->_sanitizeFieldInput($value, $fieldSettings);
+				$this->$internalFieldName=$this->_sanitize_field_input($value, $fieldSettings);
 				return true;
 			}else{
 				$msg = sprintf( __( 'Event Espresso error setting value on field %s.||In trying to set field %s of class %s to value %s, it was found to not be of type %s', 'event_espresso' ), $fieldName,$fieldName,get_class($this),print_r($value,true),$fieldSettings->type());
@@ -136,7 +136,7 @@ abstract class EE_Base_Class extends EE_Base{
 	 * @return type
 	 * @throws EE_Error
 	 */
-	protected function _sanitizeFieldInput($value,$fieldSettings){
+	protected function _sanitize_field_input($value,$fieldSettings){
 		$return=null;
 		switch($fieldSettings->type()){
 			case 'primary_key':
@@ -149,6 +149,8 @@ abstract class EE_Base_Class extends EE_Base{
 				$return=intval($value);
 				break;
 			case 'plaintext':
+			case 'primary_text_key':
+			case 'foreign_text_key':
 				$return=htmlentities(wp_strip_all_tags("$value"), ENT_QUOTES, 'UTF-8' );
 				break;
 			case 'simplehtml':
@@ -172,11 +174,11 @@ abstract class EE_Base_Class extends EE_Base{
 	/**
 	 * verifies that the specified field is of the correct type
 	 * @param mixed $value the value to check if it's of the correct type
-	 * @param EE_ModelField $fieldSettings settings for a specific field. 
+	 * @param EE_Model_Field $fieldSettings settings for a specific field. 
 	 * @return boolean
 	 * @throws EE_Error if fieldSettings is misconfigured
 	 */
-	protected function _verifyFieldIsOfCorrectType($value,  EE_ModelField $fieldSettings){
+	protected function _verify_field_type($value,  EE_Model_Field $fieldSettings){
 		$return=false;
 		switch($fieldSettings->type()){
 			case 'primary_key':
@@ -196,6 +198,8 @@ abstract class EE_Base_Class extends EE_Base{
 					$return= true;
 				}
 				break;
+			case 'primary_text_key':
+			case 'foreign_text_key':
 			case 'plaintext':
 			case 'simplehtml':
 			case 'fullhtml':
@@ -221,11 +225,11 @@ abstract class EE_Base_Class extends EE_Base{
 	 * @return array
 	 * @throws EE_Error
 	 */
-	protected function _getFieldsSettings(){
-		if($this->_getModel()->fieldsSettings()==null){
+	protected function _get_fields_settings(){
+		if($this->_get_model()->fieldsSettings()==null){
 			throw new EE_Error(sprintf("An unexpected error has occured with Event Espresso.||An Event Espresso class has not been fully implemented. %s does not override the \$_fieldSettings attribute.",get_class($this)),"event_espresso");
 		}
-		return $this->_getModel()->fieldsSettings();
+		return $this->_get_model()->fieldsSettings();
 	}
 	
 	/**
@@ -239,17 +243,17 @@ abstract class EE_Base_Class extends EE_Base{
 	*/	
 	public function save() {
 		$set_column_values = array();
-		foreach(array_keys($this->_getFieldsSettings()) as $fieldName){
-			$attributeName=$this->__getPrivateAttributeName($fieldName);
+		foreach(array_keys($this->_get_fields_settings()) as $fieldName){
+			$attributeName=$this->_get_private_attribute_name($fieldName);
 			$set_column_values[$fieldName]=$this->$attributeName;
 		}
-		if ( $set_column_values[$this->__getPrimaryKeyName()]!=null ){
-			$results = $this->_getModel()->update ( $set_column_values, array($this->__getPrimaryKeyName()=>$this->getPrimaryKey()) );
+		if ( $set_column_values[$this->_get_primary_key_name()]!=null ){
+			$results = $this->_get_model()->update ( $set_column_values, array($this->_get_primary_key_name()=>$this->get_primary_key()) );
 		} else {
-			unset($set_column_values[$this->__getPrimaryKeyName()]);
-			$results = $this->_getModel()->insert ( $set_column_values );
+			unset($set_column_values[$this->_get_primary_key_name()]);
+			$results = $this->_get_model()->insert ( $set_column_values );
 			if($results){//if successful, set the primary key
-				$this->set($this->__getPrimaryKeyName(),$results);
+				$this->set($this->_get_primary_key_name(),$results);
 			}
 		}
 		
@@ -260,16 +264,16 @@ abstract class EE_Base_Class extends EE_Base{
 	 * returns the name of the primary key attribute
 	 * @return string
 	 */
-	private function __getPrimaryKeyName(){
-		return $this->_getModel()->primaryKeyName();
+	private function _get_primary_key_name(){
+		return $this->_get_model()->primary_key_name();
 	}
 	
 	/**
 	 * Returns teh value of the primary key for this class. false if there is none
 	 * @return int
 	 */
-	public function getPrimaryKey(){
-		$pk=$this->__getPrimaryKeyName();
+	public function get_primary_key(){
+		$pk=$this->_get_primary_key_name();
 		return $this->$pk;//$pk is the primary key's NAME, so get the attribute with that name and return it
 	}
 	

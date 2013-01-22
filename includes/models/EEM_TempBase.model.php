@@ -11,15 +11,15 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * Eg: array('ANS_ID'=>new EE_ModelField(...),...)
 	 * @var array 
 	 */
-	protected $_fieldsSettings=null;
+	protected $_fields_settings=null;
 	/**
 	 *
 	 * @var type 
 	 */
-	protected $_relatedModels;
+	protected $_related_models;
 	protected function __construct() {
 		
-		$this->__verifyFieldSettings();
+		$this->_verify_field_settings();
 		$this->table_name=$this->_getTableName();
 		$this->table_data_types=$this->_getTableDataTypes();
 	}
@@ -39,29 +39,10 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * Allows other models to know about the fieldson this model
 	 * @return array
 	 */
-	public function fieldsSettings(){
-		return $this->_fieldsSettings;
+	public function fields_settings(){
+		return $this->_fields_settings;
 	}
-	
-	/**
-	 * verifies that the fieldSettings array has been initialized properly
-	 * @throws EE_Error
-	 */
-	private function __verifyFieldSettings(){
-		//verify $_fieldSettings has been set and is valid
-		if($this->_fieldsSettings===null){
-			throw new EE_Error(sprintf("Event Espressso error. _fieldSettings value on %s has nto been set.",'event_espresso'),get_class($this));
-		}
 		
-		foreach($this->_fieldsSettings as $fieldName=>$fieldSettings){
-			
-			//verify the class attribute exists for this var
-			/*if(!property_exists($this,$this->__getPrivateAttributeName($fieldName))){
-				throw new EE_Error(sprintf(__("Event Espresso error. Class %s's field settings has a field named %s, but no attribute named \$%s",'event_espresso'),get_class($this),$fieldName,$this->__getPrivateAttributeName($fieldName)));
-			}*/
-		}
-	}
-	
 	/**
 	 * gets the wordpress insertion datatype for each field in fieldsSettings 
 	 * (ie, whether ot use '%s' or '%d').
@@ -69,7 +50,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	 */
 	protected function _getTableDataTypes(){
 		$dataTypes=array();
-		foreach($this->fieldsSettings() as $fieldName=>$fieldSettings){
+		foreach($this->fields_settings() as $fieldName=>$fieldSettings){
 			switch($fieldSettings->type()){
 				case 'primary_key':
 				case 'foreign_key':
@@ -89,7 +70,7 @@ abstract class EEM_TempBase extends EEM_Base{
 					$type='%s';
 					break;
 			}
-			$dataTypes[$fieldName]=apply_filters('filter_hook_espresso_getTableDataType',$type,$this->fieldsSettings());
+			$dataTypes[$fieldName]=apply_filters('filter_hook_espresso_getTableDataType',$type,$this->fields_settings());
 		}
 		return $dataTypes;
 	}
@@ -113,8 +94,8 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * @return string
 	 * @throws EE_Error
 	 */
-	public function primaryKeyName(){
-		foreach($this->fieldsSettings() as $field=>$settings){
+	public function primary_key_name(){
+		foreach($this->fields_settings() as $field=>$settings){
 			if($settings->type()=='primary_key' || $settings->type()=='primary_text_key'){
 				return $field;
 			}
@@ -174,15 +155,15 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * @return array
 	 */
 	public function relationSettings(){
-		return $this->_relatedModels;
+		return $this->_related_models;
 	}
 	
 	/**
 	 * Returns the specified EE_ModelRelation, or throws an exception
 	 * @param string $relationName name of relation, key in $this->_relatedModels
-	 * @return object EE_ModelRelation
+	 * @return EE_Model_Relation
 	 */
-	public function relatedSettingsFor($relationName){
+	public function related_settings_for($relationName){
 		$relatedModels=$this->relationSettings();
 		if(!array_key_exists($relationName,$relatedModels)){
 			throw new EE_Error(sprintf(__('Cannot get %s related to %s. There is no model relation of that type. There is, however, %s...','event_espresso'),$relationName,  $this->_getClassName(),implode(array_keys($relatedModels))));
@@ -195,31 +176,31 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * @param string $relationName, key in $this->_relatedModels, eg 'Registration', or 'Events'
 	 * @return array of EE_Base_Class
 	 */
-	public function getManyRelated(EE_Base_Class $modelObject,$relationName){
-		$relatedModelInfo=$this->relatedSettingsFor($relationName);
+	public function get_many_related(EE_Base_Class $modelObject,$relationName){
+		$relatedModelInfo=$this->related_settings_for($relationName);
 		/* $relatedModeInfo EEM_TempBase*/
-		$relatedModel=$relatedModelInfo->modelInstance();
+		$relatedModel=$relatedModelInfo->model_instance();
 		
 		switch($relatedModelInfo->type){
 			case 'hasOne':
-				$foreign_key=$relatedModelInfo->fieldName;
-				$row=$relatedModel->select_row_where(array($relatedModel->primaryKeyName()=>$modelObject->$foreign_key));
+				$foreign_key=$relatedModelInfo->field_name;
+				$row=$relatedModel->select_row_where(array($relatedModel->primary_key_name()=>$modelObject->$foreign_key));
 				$relatedObjects=$relatedModel->_create_objects(array($row,));
 				break;
 			case 'belongsTo':
-				$foreignKeyOnOtherModel=$relatedModel->fieldName;
+				$foreignKeyOnOtherModel=$relatedModel->field_name;
 				$rows=$relatedModel->select_row_where(array($foreignKeyOnOtherModel=>$modelObject->$modelObject->primaryKey()));
 				$relatedObjects=$relatedModel->_create_objects(array($rows));
 				break;
 			
 			case 'hasAndBelongsToMany':
-				$joinTable=$relatedModeInfo->joinTable();
+				$joinTable=$relatedModeInfo->join_table();
 				$otherTableName=$relatedModel->_getTableName();
-				$otherTablePK=$relatedModel->primaryKeyName();
+				$otherTablePK=$relatedModel->primary_key_name();
 				$joinSQL="$joinTable LEFT JOIN $otherTableName ON $joinTable.$otherTablePK=$otherTableName.$otherTablePK ";
 				//$rows=$
-				$thisTablePK=$this->primaryKeyName();
-				$wheres=array($thisTablePK=>$modelObject->getPrimaryKey());
+				$thisTablePK=$this->primary_key_name();
+				$wheres=array($thisTablePK=>$modelObject->get_primary_key());
 				$rows=$relatedModel->select_all_join_where($joinSQL,$where);
 				$relatedObjects=$relatedModel->_create_objects($rows);
 				break;
@@ -233,8 +214,8 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * @param string $relationName, key in $this->_relatedModels, eg 'Registration', or 'Events'
 	 * @return array of EE_Base_Class
 	 */
-	public function getFirstRelated($modelObject,$relationName){
-		$relatedObjects=$this->getManyRelated($modelObject, $relationName);
+	public function get_first_related($modelObject,$relationName){
+		$relatedObjects=$this->get_many_related($modelObject, $relationName);
 		if(empty($relatedObjects)){
 			return null;
 		}else{
@@ -246,17 +227,17 @@ abstract class EEM_TempBase extends EEM_Base{
 /**
  * Class for representing field on models/columns on database tables.
  */
-class EE_ModelField{
+class EE_Model_Field{
 	/**
 	 * all the types of ModelFields which are allowed
 	 * @var type 
 	 */
-	private $allowedTypes=array('primary_key','primary_text_field','foreign_key','foreign_text_field','int','float','plaintext','simplehtml','fullhtml','enum');
+	private $allowed_types=array('primary_key','primary_text_field','foreign_key','foreign_text_field','int','float','plaintext','simplehtml','fullhtml','enum');
 	private $nicename;
 	private $type;
 	private $nullable;
-	private $defaultValue;
-	private $allowedEnumValues;
+	private $default_value;
+	private $allowed_enum_values;
 	private $class;
 	/**
 	 * Constructs basic EE_ModelField.
@@ -291,11 +272,11 @@ class EE_ModelField{
 		$this->nicename=$nicename;
 		$this->type=$type;
 		$this->nullable=$nullable;
-		$this->defaultValue=$defaultValue;
-		$this->allowedEnumValues=$allowedEnumValues;
+		$this->default_value=$defaultValue;
+		$this->allowed_enum_values=$allowedEnumValues;
 		$this->class=$class;
-		if(!in_array($type,$this->allowedTypes)){
-			throw new EE_Error(sprintf(__("Event Espresso error. Field %s is of type %s, but only these are the only allowed types %s",'event_espresso'),$nicename,$type,implode(",",$this->allowedTypes)));
+		if(!in_array($type,$this->allowed_types)){
+			throw new EE_Error(sprintf(__("Event Espresso error. Field %s is of type %s, but only these are the only allowed types %s",'event_espresso'),$nicename,$type,implode(",",$this->allowed_types)));
 		}
 		if($type=='foreign_key' || $type=='foreign_text_field'){
 			if(!$class){
@@ -356,21 +337,21 @@ class EE_ModelField{
 	 * Returns the default value of the field. Eg, 12 or 'monkey'
 	 * @return mixed
 	 */
-	public function defaultValue(){
-		return $this->defaultValue;
+	public function default_value(){
+		return $this->default_value;
 	}
 	/**
 	 * Returns an array of allowed Enum values, if any has been set.
 	 * @return array
 	 */
-	public function allowedEnumValues(){
-		return $this->allowedEnumValues;
+	public function allowed_enum_values(){
+		return $this->allowed_enum_values;
 	}
 	/**
 	 * If the field is 'foreign_key' or 'foreign_text_key', this will return a string of the name of the related model. Eg, 'Question' or 'Attendee'.
 	 * @return string
 	 */
-	public function getClass(){
+	public function get_class(){
 		return $this->class;
 	}
 }
@@ -379,13 +360,13 @@ class EE_ModelField{
  * a PHP class for representing a relationship between a model and another. Handles 'belongsTo','hasOne' and 'hasAndBelongsToMany'.
  * Useful for the model so it can can queries on the related models.
  */
-class EE_ModelRelation{
+class EE_Model_Relation{
 	private $type;
 	private $model;
-	private $fieldName;
-	private $joinTable;
+	private $field_name;
+	private $join_table;
 	
-	private $allowedTypes=array('hasOne','belongsTo','hasAndBelongsToMany');
+	private $allowed_types=array('hasOne','belongsTo','hasAndBelongsToMany');
 	/**
 	 * 
 	 * @param string $relationType one of 
@@ -410,9 +391,9 @@ class EE_ModelRelation{
 	public function __construct($type,$model,$fieldName,$joinTable=null){
 		$this->type=$type;
 		$this->model=$model;
-		$this->fieldName=$fieldName;
-		$this->joinTable=$joinTable;
-		if(!in_array($type,$this->allowedTypes)){
+		$this->field_name=$fieldName;
+		$this->join_table=$joinTable;
+		if(!in_array($type,$this->allowed_types)){
 			throw new EE_Error(sprintf(__('A modelReation of type %s is not valid','event_espresso'),$type));
 		}
 		if($type=='hasAndBelongsToMany' && $joinTable==null){
@@ -438,7 +419,7 @@ class EE_ModelRelation{
 	 * which can then be used for querying.
 	 * @return object EEM_Base
 	 */
-	public function modelInstance(){
+	public function model_instance(){
 		$modelName="EEM_".$this->model();
 		require_once($modelName.".model.php");
 		//$modelObject=new $modelName;
@@ -456,14 +437,14 @@ class EE_ModelRelation{
 	 *						AND the foreign_key in the join table which points to the other model's primary_key.
 	 * @return string
 	 */
-	public function fieldName(){
-		$this->fieldName;
+	public function field_name(){
+		$this->field_name;
 	}
 	/**
 	 * Returns the name of the join table in cases of 'hasAndBelongsToMany'. Eg, 'question_group_question', or 'answer', etc. So no prepending of 'wp_' or even 'esp_'. Those are assumed.
 	 * @return string
 	 */
-	public function joinTable(){
-		return $this->joinTable;
+	public function join_table(){
+		return $this->join_table;
 	}
 }

@@ -47,13 +47,13 @@ class EEM_Answer extends EEM_TempBase {
 	}
 
 	protected function __construct(){
-		$this->_fieldsSettings=array('ANS_ID'=>new EE_ModelField('Answer ID', 'primary_key', false),
-									'REG_ID'=>new EE_ModelField('Registration ID', 'foreign_key', false,0,null,'Registration'),
-									'QST_ID'=>new EE_ModelField('Question ID', 'foreign_key', false,0,null,'Question'),
-									'ANS_value'=>new EE_ModelField('Answer Value/Text', 'simplehtml', false,''));
-		$this->_relatedModels=array(
-								'Registration'=>new EE_ModelRelation('hasOne', 'Registration', 'REG_ID'),
-								'Question'=>new EE_ModelRelation('hasOne', 'Question', 'QST_ID'));
+		$this->_fields_settings=array('ANS_ID'=>new EE_Model_Field('Answer ID', 'primary_key', false),
+									'REG_ID'=>new EE_Model_Field('Registration ID', 'foreign_key', false,0,null,'Registration'),
+									'QST_ID'=>new EE_Model_Field('Question ID', 'foreign_key', false,0,null,'Question'),
+									'ANS_value'=>new EE_Model_Field('Answer Value/Text', 'simplehtml', false,''));
+		$this->_related_models=array(
+								'Registration'=>new EE_Model_Relation('hasOne', 'Registration', 'REG_ID'),
+								'Question'=>new EE_Model_Relation('hasOne', 'Question', 'QST_ID'));
 		
 		parent::__construct();
 	}
