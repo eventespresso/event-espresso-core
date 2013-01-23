@@ -168,7 +168,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			$gateways[$gateway] = array(
 				'label' => isset($settings['display_name']) ? $settings['display_name'] : ucwords( str_replace( '_', ' ', $gateway ) ),
 				'class' => array_key_exists( $gateway, $gateway_data['active_gateways'] ) ? 'gateway-active' : '',
-				'href' => '#espresso_' . str_replace(' ', '_', $gateway) . '_gateway_settings',
+				'href' => 'espresso_' . str_replace(' ', '_', $gateway) . '_gateway_settings',
 				'title' => __('Modify this Gateway', 'event_espresso'),
 				'slug' => $gateway
 				);
