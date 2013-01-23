@@ -68,7 +68,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _ajax_hooks() {
-		//todo: all hooks for event_categories ajax goes in here.
+		//todo: all hooks for ajax goes in here.
 	}
 
 
@@ -102,7 +102,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	protected function _set_page_routes() {			
 
 		$this->_page_routes = array(
-				// prices
 				'default'=> '_ee_messages_overview_list_table',
 				'add_new_message_template'	=> '_add_message_template',
 				'edit_message_template'	=> '_edit_message_template',
@@ -195,7 +194,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 
-	//none of the below group are currently used for Event Categories
+	//none of the below group are currently used for Messages
 	protected function _add_help_tabs() {}
 	protected function _add_feature_pointers() {}
 	public function admin_init() {}

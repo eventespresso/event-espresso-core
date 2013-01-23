@@ -112,7 +112,7 @@ function event_espresso_display_firstdata_connect_2_settings($payment_settings) 
 						<?php _e('Use the Debugging Feature and the', 'event_espresso'); ?> <?php _e('FirstData Connect 2 Sandbox? ', 'event_espresso'); ?><?php echo apply_filters('filter_hook_espresso_help', 'sandbox_info_firstdata_connect_2') ?>
 					</label></th>
 					<td><?php
-						echo select_input('sandbox', $values, $payment_settings['firstdata_connect_2']['sandbox']);
+						echo EE_Form_Fields::select_input('sandbox', $values, $payment_settings['firstdata_connect_2']['sandbox']);
 					?>
 					</td>
 				</tr>
@@ -134,7 +134,7 @@ function event_espresso_display_firstdata_connect_2_settings($payment_settings) 
 							array('id' => 'CST', 'text' => __('CST', 'event_espresso')),
 							array('id' => 'MST', 'text' => __('MST', 'event_espresso')),
 							array('id' => 'PST', 'text' => __('PST', 'event_espresso')));
-						echo select_input('timezone', $values, $payment_settings['firstdata_connect_2']['timezone']);
+						echo EE_Form_Fields::select_input('timezone', $values, $payment_settings['firstdata_connect_2']['timezone']);
 					?></td>
 				</tr>
 				<tr>

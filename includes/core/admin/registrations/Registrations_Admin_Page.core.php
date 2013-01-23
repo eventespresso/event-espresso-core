@@ -208,8 +208,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_style('jquery-ui-style-datepicker-css');
 
 		//scripts
-		wp_enqueue_script('ee_admin_js');
-		wp_enqueue_script('event_editor_js');
+		//wp_enqueue_script('ee_admin_js');
+		//wp_enqueue_script('event_editor_js');
 	}
 
 

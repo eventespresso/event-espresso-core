@@ -154,7 +154,7 @@ Class EE_Eway extends EE_Offsite_Gateway {
 					<?php _e('Use the Debugging Feature and the eway Sandbox?', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'eway_sandbox_info'); ?>
 			</label></th>
 		<td><?php
-			echo select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']);
+			echo EE_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']);
 					?></td>
 		</tr>
 

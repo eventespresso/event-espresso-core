@@ -4,12 +4,6 @@ jQuery(document).ready(function($) {
 
 	// clear firefox and safari cache
 	$(window).unload( function() {}); 
-	
-	// close postboxes that should be closed
-	$('.if-js-closed').removeClass('if-js-closed').addClass('closed');
-	// postboxes setup
-	if ( typeof postboxes !== 'undefined' )
-		postboxes.add_postbox_toggles('event-espresso_page_transactions');
 
 	$('#entries-per-page-slct').on( 'change', function() {
 		var per_page = $(this).val();
