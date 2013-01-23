@@ -245,13 +245,70 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	
 		global $org_options;
 		$this->_template_args['org_options'] = $org_options;
+		$this->_template_args['values'] = $this->_yes_no_values;
 
+		// themeroller style directory
+		$path = file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/themeroller/index.php") ? EVENT_ESPRESSO_UPLOAD_DIR . '/themeroller/' : EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/css/themeroller/';
+		$this->_template_args['themeroller_themes'] = glob( $path . '*', GLOB_ONLYDIR ); 
+		array_walk( $this->_template_args['themeroller_themes'], array( $this, '_get_theme_name' )); 
+		
+		$this->_template_args['template_settings'] = isset( $org_options['template_settings'] ) && ! empty( $org_options['template_settings'] ) ? $org_options['template_settings'] : FALSE;
+		if ( ! $this->_template_args['template_settings'] ) {
+			$this->_template_args['template_settings'] = array(
+				'display_description_in_event_list' => FALSE,
+				'display_short_description_in_event_list' => TRUE,
+				'display_address_in_event_list' => FALSE,
+				'display_address_in_regform' => TRUE,
+			);
+		}
+
+		
+		$this->_template_args['style_settings'] = isset( $org_options['style_settings'] ) && ! empty( $org_options['style_settings'] ) ? $org_options['style_settings'] : FALSE;
+		if ( ! $this->_template_args['style_settings'] ) {
+			$this->_template_args['style_settings'] = array(
+				'enable_default_style' => TRUE,
+				'css_name' => '',
+			);
+		}
+		
+		
 		$this->_set_add_edit_form_tags( 'update_template_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'template_settings.template.php', $this->_template_args, TRUE );
 		// the details template wrapper
 		$this->display_admin_page_with_sidebar();	
 	}
+
+
+	
+	
+	/**
+	 * 	_get_theme_name
+	 *
+	 * @access 	private
+	 * @param 	string 	$themeroller_theme_path
+	 * @return	string
+	 */	
+	private function _get_theme_name( &$themeroller_theme_path, $key ) {
+		$this->_template_args['themeroller_themes'][ $key ] = basename( $themeroller_theme_path );
+	}
+
+
+	
+	
+	/**
+	 * 	determines whether file is a themeroller theme
+	 *
+	 * @access 	private
+	 * @param 	array 	$themeroller_theme
+	 * @return	boolean
+	 */	
+	private function _themeroller_exclusions( $themeroller_theme ) {
+		$exclude = array( '.', '..', 'index.htm', 'index.html', 'index.php', '.svn', 'themeroller-.css', '.DS_Store', basename( $_SERVER['PHP_SELF'] ));
+		return ! in_array( $themeroller_theme, $exclude ) && ! is_dir( $themeroller_theme ) ? TRUE : FALSE;
+	}
+
+
 
 	protected function _update_template_settings() {
 		
@@ -390,6 +447,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	/**
 	 * correct variable display
 	 *
+	 * @access private
 	 * @param array $var
 	 * @return string
 	 */
