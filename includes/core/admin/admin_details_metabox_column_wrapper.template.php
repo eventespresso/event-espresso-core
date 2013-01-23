@@ -16,7 +16,7 @@
 		 ?>
 
 			<div id='postbox-container-<?php echo $i; ?>' class='postbox-container'>
-				<?php do_meta_boxes( $current_page, $metaref, '' ); ?>
+				<?php do_meta_boxes( $current_page, $metaref, NULL ); ?>
 			</div>
 		<?php }// end column loop ?>
 	</div> <!-- post-body -->
