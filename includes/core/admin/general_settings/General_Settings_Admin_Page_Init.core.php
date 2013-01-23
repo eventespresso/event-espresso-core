@@ -38,6 +38,7 @@ class General_Settings_Admin_Page_Init extends EE_Admin_Page_Init {
 		define( 'GEN_SET_ADMIN', EE_CORE_ADMIN . GEN_SET_PG_SLUG . DS );	
 		define( 'GEN_SET_ADMIN_URL', admin_url( 'admin.php?page=' . GEN_SET_PG_SLUG ));	
 		define( 'GEN_SET_TEMPLATE_PATH', GEN_SET_ADMIN . 'templates' . DS );	
+		define( 'GEN_SET_ASSETS_URL', EE_CORE_ADMIN_URL . GEN_SET_PG_SLUG .'/assets/' );	
 
 		parent::__construct();
 	}
