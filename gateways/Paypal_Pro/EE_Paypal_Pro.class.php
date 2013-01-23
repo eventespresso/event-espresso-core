@@ -266,7 +266,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 				</label>
 			</th>
 			<td>
-				<?php echo select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?>						
+				<?php echo EE_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?>						
 				<span class="description">
 					<?php _e('Make sure you enter the sandbox credentials above.', 'event_espresso'); ?>
 				</span>

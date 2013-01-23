@@ -194,7 +194,7 @@ function event_espresso_display_mwarrior_settings() {
 							$values = array(
 									array('id' => false, 'text' => __('No', 'event_espresso')),
 									array('id' => true, 'text' => __('Yes', 'event_espresso')));
-							echo select_input('bypass_payment_page', $values, $payment_settings['mwarrior']['bypass_payment_page']);
+							echo EE_Form_Fields::select_input('bypass_payment_page', $values, $payment_settings['mwarrior']['bypass_payment_page']);
 							?>
 						</li>
 						<li>

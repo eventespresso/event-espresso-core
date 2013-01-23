@@ -190,7 +190,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 					<?php _e('Use the Debugging Feature and the PayPal Sandbox', 'event_espresso'); ?>
 					<?php echo apply_filters('filter_hook_espresso_help', 'sandbox_info'); ?>
 				</label></th>
-			<td><?php echo select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
+			<td><?php echo EE_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
 		</tr>
 		
 		<tr>
@@ -207,7 +207,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 						array('id' => '0', 'text' => __('Prompt for an address, but do not require one', 'event_espresso')),
 						array('id' => '2', 'text' => __('Prompt for an address, and require one', 'event_espresso'))
 					);
-				echo select_input('no_shipping', $shipping_values, $this->_payment_settings['no_shipping']);
+				echo EE_Form_Fields::select_input('no_shipping', $shipping_values, $this->_payment_settings['no_shipping']);
 			?>
 			</td>
 		</tr>

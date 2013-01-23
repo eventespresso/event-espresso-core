@@ -205,14 +205,14 @@ function event_espresso_display_realauth_settings() {
 							<?php _e('Bypass Payment Overview Page?', 'event_espresso'); ?>
 							<?php echo apply_filters('filter_hook_espresso_help', 'bypass_confirmation'); ?>
 						</label></th>
-					<td><?php echo select_input('bypass_payment_page', $values, $payment_settings['realauth']['bypass_payment_page']); ?></td>
+					<td><?php echo EE_Form_Fields::select_input('bypass_payment_page', $values, $payment_settings['realauth']['bypass_payment_page']); ?></td>
 				</tr>
 				<tr>
 					<th><label for="auto_settle">
 							<?php _e('Auto settle transactions', 'event_espresso'); ?>
 							<?php echo apply_filters('filter_hook_espresso_help', 'auto_settle_info'); ?>
 						</label></th>
-					<td><?php echo select_input('auto_settle', $values, $payment_settings['realauth']['auto_settle']); ?></td>
+					<td><?php echo EE_Form_Fields::select_input('auto_settle', $values, $payment_settings['realauth']['auto_settle']); ?></td>
 				</tr>
 			</tbody>
 		</table>
