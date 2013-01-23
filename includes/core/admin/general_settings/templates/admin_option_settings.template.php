@@ -75,7 +75,7 @@
 					<label for="expire_on_registration_end"><?php _e('Events expire on registration end date?', 'event_espresso'); ?></label>					
 				</th>
 				<td>
-					<?php echo select_input('expire_on_registration_end', $values, $org_options['expire_on_registration_end']); ?>
+					<?php echo EE_Form_Fields::select_input( 'expire_on_registration_end', $values, $expire_on_registration_end ); ?>
 				</td>
 			</tr>
 		</tbody>
