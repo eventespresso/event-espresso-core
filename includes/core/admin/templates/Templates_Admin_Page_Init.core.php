@@ -30,15 +30,15 @@ class Templates_Admin_Page_Init extends EE_Admin_Page_Init {
 
 	public function __construct() {
 		//define some Template Settings related constants
-		define( 'EE_TEMPLATES_ADMIN_URL', admin_url('admin.php?page=template_confg') );
+		define( 'EE_TEMPLATES_ADMIN_URL', admin_url('admin.php?page=templates') );
 
 		parent::__construct();
 	}
 
 	protected function _set_init_properties() {
 		$this->label = __('Template Settings', 'event_espresso');
-		$this->menu_label = __('Templates', 'event_espresso');
-		$this->menu_slug = 'template_confg';
+		$this->menu_label = __('Template Settings', 'event_espresso');
+		$this->menu_slug = 'templates';
 	}
 
 	public function get_menu_map() {

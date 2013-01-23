@@ -41,7 +41,7 @@ class Templates_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _init_page_props() {
-		$this->page_slug = 'template_confg';
+		$this->page_slug = 'templates';
 		$this->page_label = __('Template Settings', 'event_espresso');
 	}
 
@@ -59,7 +59,7 @@ class Templates_Admin_Page extends EE_Admin_Page {
 
 	protected function _define_page_props() {
 		$this->_admin_base_url = EE_TEMPLATES_ADMIN_URL;
-		$this->_admin_page_title = $this->page_label
+		$this->_admin_page_title = $this->page_label;
 		$this->_labels = array();
 	}
 
@@ -173,7 +173,7 @@ class Templates_Admin_Page extends EE_Admin_Page {
 						<td colspan="2"><strong>
 								<?php _e('Event Listings', 'event_espresso'); ?>
 							</strong></td>
-					<tr>
+					</tr>
 					<tr>
 						<th> <label for="display_description_in_event_list">
 								<?php _e('Display Descriptions', 'event_espresso'); ?>
