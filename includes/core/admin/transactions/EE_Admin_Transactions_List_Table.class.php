@@ -304,6 +304,3 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 
     
 }
-
-
-
