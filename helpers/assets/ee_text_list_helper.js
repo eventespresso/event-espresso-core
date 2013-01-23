@@ -1,26 +1,22 @@
 jQuery(document).ready(function($) {
-	$('li', '.ee-text-links').each( function() {
-		if ( $(this).hasClass('ee-text-link-sep') ) return;
-		if ( ! ( $(this).hasClass('item_display') ) ) {
-			var metabox = $('a', this).attr('href').replace('#', '');
-			$('#'+metabox).hide();
-		}
-	});
+	
+	$('#postbox-container-2 .postbox').hide();
+	var current_metabox = $('.item_display a').attr('href');
+	$(current_metabox).show();
 
-	$('.ee-text-links').on('click', 'li', function(e) {
+	$('.ee-text-links').on('click', '.ee-text-link', function(e) {
 		e.preventDefault();
 
 		//first set all content as hidden and other text links as not active
-		$('li', '.ee-text-links').each( function() {
-			if ( $(this).hasClass('ee-text-link-sep') ) return;
+		$('.ee-text-link-li').each( function() {
 			$(this).removeClass('item_display');
-			var metabox = $('a', this).attr('href').replace('#', '');
-			$('#'+metabox).hide();
+			var metabox = $('a', this).attr('href');
+			$(metabox).hide();
 		});
 
-		$(this).addClass('item_display');
+		$(this).parent().addClass('item_display');
 		//show new box
-		var this_metabox = $('a', this).attr('href').replace('#', '');
-		$('#'+this_metabox).show();
+		var this_metabox = $(this).attr('href');
+		$(this_metabox).fadeIn();
 	});
 });
