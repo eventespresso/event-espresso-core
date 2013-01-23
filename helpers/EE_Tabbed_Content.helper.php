@@ -172,7 +172,7 @@ class EE_Tabbed_Content {
 		$defaults = array(
 			'label' => __('Item', 'event_espresso'),
 			'class' => '',
-			'href' => '#',
+			'href' => '',
 			'title' => __('Link for Item', 'event_espresso'),
 			'slug' => 'item_slug'
 		);
@@ -205,10 +205,11 @@ class EE_Tabbed_Content {
 		} else {
 			extract($item);
 		}
-
-		$class = !empty($class) ? 'class="' . $class . '"' : '';
+		
+		$class = $class != 'ee-text-link-sep'  ? 'class="ee-text-link-li ' . $class . '"' : 'class="ee-text-link-sep"';
+		
 		$content = '<li ' . $class . '>';
-		$content .= !empty($href) ? '<a href="' . $href . '" title="' . $title . '">' : '';
+		$content .= !empty($href) ? '<a class="ee-text-link" href="#' . $href . '" title="' . $title . '">' : '';
 		$content .= $label;
 		$content .= !empty($href) ? '</a>' : '';
 		$content .= '</li>';
