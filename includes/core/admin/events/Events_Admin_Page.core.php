@@ -721,7 +721,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 		
 		$this->_set_event_object();
 
-
 		add_meta_box('espresso_event_editor_date_time', __('Dates &amp; Times', 'event_espresso'), array( $this, 'date_time_metabox' ), $this->_current_screen->id, 'normal', 'high');
 
 		add_meta_box('espresso_event_editor_pricing', __('Event Pricing', 'event_espresso'), array( $this, 'pricing_metabox' ), $this->_current_screen->id, 'normal', 'core');
