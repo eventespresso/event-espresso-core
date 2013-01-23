@@ -834,6 +834,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//venues style register
 		wp_register_style( 'espress_venues', EE_VENUES_ASSETS_URL . 'ee-venues-admin.css', array(), EVENT_ESPRESSO_VERSION );
 
+		//payments style register
+		wp_register_style( 'espresso_payments', EE_PAYMENTS_ASSETS_URL . 'ee-payments.css', array(), EVENT_ESPRESSO_VERSION );
+
 		//enqueue global styles
 		wp_enqueue_style('event_espresso');
 		wp_enqueue_style('ee-admin-css');
