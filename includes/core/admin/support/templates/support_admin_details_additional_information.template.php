@@ -12,7 +12,7 @@
 		<dt><?php printf( __('%sVariables and Shortcodes%s', 'event_espresso'), '<a href="http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/">', '</a>'); ?></dt>
 		<dt><?php printf( __('%sCompatibility Issues%s', 'event_espresso'), '<a href="http://eventespresso.com/forums/category/general/compatiblity-issues/">','</a>' ); ?></dt>
 		<dt><?php printf( __('%sBug Submission Form%s', 'event_espresso'), '<a href="http://eventespresso.com/forums/category/premium-plugin-support/bug-reports/">', '</a>'); ?></dt>
-		<dt><?php printf( __('%sChange log%s', 'event_espresso'), 'a href="http://eventespresso.com/forums/category/premium-plugin-support/news-and-updates/"">', '</a>'); ?></dt>
+		<dt><?php printf( __('%sChange log%s', 'event_espresso'), '<a href="http://eventespresso.com/forums/category/premium-plugin-support/news-and-updates/"">', '</a>'); ?></dt>
 		<dt><?php printf( __('%sUpdate Request Form%s', 'event_espresso'), '<a href="http://eventespresso.com/update-request-form/">', '</a>'); ?></dt>               <dd><?php _e('Please use this form if a newer version of Event Espresso or an Addon  has been released and you are unable to download it from the specified  page or the email notification.', 'event_espresso'); ?></dd>
 	</dl>
 </div>
