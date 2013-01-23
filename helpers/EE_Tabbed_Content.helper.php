@@ -145,4 +145,75 @@ class EE_Tabbed_Content {
 
 
 
+	/** HORIZONTAL TEXT LINKS **/
+
+	/**
+	 * This will take in an array of link items and spit out a formatted list of links that can be used to navigate to items.
+	 * There is a corresponding js file that can be loaded to dynamically display containers with the same id as the href -ref.
+	 * 
+	 * @param  array $item_array      formatted array of items.  Format:
+	 * array(
+	 * 		'label' => __('localized label displayed'),
+	 * 		'class' => 'class_for_item',
+	 * 		'href' => '#some_item_id', //url/bookmark for item.  If you include a bookmark the js will used this to show the container div.
+	 * 		'title' => __('localized text for the title attribute of the link'),
+	 * 		'slug' => 'slug_used_for_reference'
+	 * )
+	 * @param  string $container_class class used for main container
+	 * @param  string $sep       		you can add in what is used as a separator between each link (or leave blank for none)
+	 * @param string $default 			You can include a string for the item that will receive the "item_display" class for the js.
+	 * @return string                  a html snippet of of all the formatted link elements.
+	 */
+	public static function tab_text_links( $item_array, $container_class = '', $sep = '|', $default = '' ) {
+		if ( !is_array($item_array) || empty( $item_array ) ) 
+			return false; //get out we don't have even the basic thing we need!
+
+
+		$defaults = array(
+			'label' => __('Item', 'event_espresso'),
+			'class' => '',
+			'href' => '#',
+			'title' => __('Link for Item', 'event_espresso'),
+			'slug' => 'item_slug'
+		);
+		$container_class = !empty($container_class) ? 'ee-text-links ' . $container_class : 'ee-text-links';
+		$list = '<ul class="' . $container_class . '">';
+		
+		$ci = 1;
+		foreach ( $item_array as $item ) {
+			$item = wp_parse_args( $item, $defaults );
+			$item['class'] = !empty($default) && $default == $item['slug'] ? 'item_display ' . $item['class'] : $item['class'];
+			$list .= self::_text_link_item($item);
+			if ( !empty($sep) && $ci != count($item_array) )
+				$list .= self::_text_link_item($sep);
+			$ci++;
+		}
+
+		$list .= '</ul>';
+		return $list;
+	}
+
+
+
+	private static function _text_link_item( $item ) {
+		//if this isn't an array then we're doing a separator
+		if ( !is_array( $item ) ) {
+			$label = $item;
+			$class = 'ee-text-link-sep';
+			$href = '';
+			$title = '';
+		} else {
+			extract($item);
+		}
+
+		$class = !empty($class) ? 'class="' . $class . '"' : '';
+		$content = '<li ' . $class . '>';
+		$content .= !empty($href) ? '<a href="' . $href . '" title="' . $title . '">' : '';
+		$content .= $label;
+		$content .= !empty($href) ? '</a>' : '';
+		$content .= '</li>';
+		return $content;
+	}
+
+
 }// end EE_Tabbed_Content helper class
