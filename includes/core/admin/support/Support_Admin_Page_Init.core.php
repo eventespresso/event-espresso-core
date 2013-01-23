@@ -33,6 +33,7 @@ class Support_Admin_Page_Init extends EE_Admin_Page_Init {
 	public function __construct() {
 		//define some help/support page related constants
 		define( 'EE_SUPPORT_ADMIN_URL', admin_url('admin.php?page=ee_support') );
+		define( 'EE_SUPPORT_ADMIN_TEMPLATE_PATH', EE_CORE_ADMIN . 'support/templates/');
 
 		parent::__construct();
 	}
