@@ -1,10 +1,9 @@
 	<div id="poststuff">
-		<div id="post-body" class="metabox-holder columns-2">
-						
-			<div id="admin-page-header">
-				<?php echo $admin_page_header; ?>
-			</div>
+		<div id="admin-page-header">
+			<?php echo $admin_page_header; ?>
+		</div>
 			<!-- admin-page-header -->
+		<div id="post-body" class="metabox-holder columns-2">
 			
 		<?php if ( ! empty( $post_body_content )) : ?>
 			<div id="post-body-content">
