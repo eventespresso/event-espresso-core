@@ -155,9 +155,15 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		}
 		
 		$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
-
+		$activate_trigger = $deactivate_trigger = FALSE;
 		//let's assemble the array for the _tab_text_links helper
 		foreach ( $gateway_data['payment_settings'] as $gateway => $settings ) {
+			$activate_trigger = isset($this->_req_data['activate_' . $gateway]) && !$activate_trigger ? $gateway : $activate_trigger;
+			$deactivate_trigger = isset($this->_req_data['deactivate_' . $gateway]) && !$deactivate_trigger ? $gateway : $deactivate_trigger;
+			if ( isset( $this->_req_data['deactivate_' . $gateway] ) )
+				unset($gateway_data['active_gateways'][$gateway]);
+			if ( isset( $this->_req_data['activate_' . $gateway] ) )
+				$gateway_data['active_gateways'][$gateway] = array();
 
 			$gateways[$gateway] = array(
 				'label' => isset($settings['display_name']) ? $settings['display_name'] : ucwords( str_replace( '_', ' ', $gateway ) ),
@@ -169,7 +175,11 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 		}
 
-		$default = !empty( $gateway_data['active_gateways'] ) ? key($gateway_data['active_gateways']) : 'Paypal_Standard';
+		$default = $activate_trigger ? $activate_trigger : FALSE;
+		$default = $deactivate_trigger ? $deactivate_trigger : $activate_trigger;
+
+		if ( !$default )
+			$default = !empty( $gateway_data['active_gateways'] ) ? key($gateway_data['active_gateways']) : 'Paypal_Standard';
 		$this->_template_args['admin_page_header'] = EE_Tabbed_Content::tab_text_links( $gateways, 'gateway_links', '|', $default );
 		$this->display_admin_page_with_sidebar();
 
