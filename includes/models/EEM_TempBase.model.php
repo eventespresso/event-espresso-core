@@ -211,7 +211,7 @@ abstract class EEM_TempBase extends EEM_Base{
 				$relatedObjects=$relatedModel->_create_objects(array($rows));
 				break;
 			case 'hasAndBelongsToMany':
-				$joinTable=$relatedModeInfo->join_table();
+				$joinTable=$relatedModelInfo->join_table();
 				$otherTableName=$relatedModel->_get_table_name();
 				$otherTablePK=$relatedModel->primary_key_name();
 				$joinSQL="$joinTable LEFT JOIN $otherTableName ON $joinTable.$otherTablePK=$otherTableName.$otherTablePK ";
@@ -223,6 +223,46 @@ abstract class EEM_TempBase extends EEM_Base{
 				break;
 		}
 		return apply_filters('filter_hook_espresso_getRelated',$relatedObjects,$this,$modelObject,$relationName);
+	}
+	
+	public function add_relation_to(EE_Base_Class $modelObject,EE_base_Class $otherModelObject, $relationName){
+		/* @var $relatedModeInfo EE_Model_Relation*/
+		$relatedModelInfo=$this->related_settings_for($relationName);
+		
+		
+		switch($relatedModelInfo->type()){
+			case 'hasOne':
+				//just set its foreign_key to be that 
+				$modelObject->set($relatedModelInfo->field_name(),$otherModelObject->ID());
+				return $modelObject->save();
+				break;
+			case 'belongsTo':
+				$otherModelObject->set($relatedModeInfo->field_name(),$modelObject->ID());
+				return $otherModelObject->save();
+				break;
+			case 'hasAndBelongsToMany':
+				//first, we need to make sure both modelObjects have an ID, so save them
+				$modelObject->save();
+				$otherModelObject->save();
+				
+				$relatedModel=$relatedModelInfo->model_instance();
+				/* @var $relatedModel EEM_TempBase*/
+				//check for this relationship
+				$thisPk=$this->primary_key_name();
+				$otherPk=$relatedModelInfo->field_name();
+				$relationsToOtherObject=$this->get_many_related($modelObject,$relationName,array($thisPk=>$modelObject->ID(),
+																								$otherPk=>$otherModelObject->ID()));
+				//if it doesn't exist, add it
+				if(empty($relationsToOtherObject)){
+					$result=$this->_insert($relatedModelInfo->join_table(), 
+								array($thisPk=>'%d',$otherPk=>'%d'), 
+								array($thisPk=>$modelObject->ID(),$otherPk=>$otherModelObject->ID()));
+					return !empty($result);
+				}else{
+					return false;
+				}
+				break;	
+		}
 	}
 	
 	/**
@@ -481,9 +521,9 @@ class EE_Model_Relation{
 	 * @param string $model eg 'Question','Registration', etc.
 	 * @param string $fieldName represents different things for differnet relationship types:
 	 *			
-	 *						for 'hasOne': the name of the field on the current model which points to the other model
+	 *						for 'hasOne': the name of the foreign_key on the current model which points to the other model's primary key
 	 * 
-	 *						for 'belongsTo': the name of the field on the OTHER model whcih points ot the current model
+	 *						for 'belongsTo': the name of the foreign_key on the OTHER model whcih points ot the current model's primary key
 	 * 
 	 *						for 'hasAndBelongsToMany': the name of the primary_key on the OTHER model, 
 	 *						AND the foreign_key in the join table which points to the other model's primary_key.

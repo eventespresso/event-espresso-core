@@ -13,7 +13,7 @@
  *
  * ------------------------------------------------------------------------
  *
- * Attendee Model
+ * Question Model
  *
  * @package			Event Espresso
  * @subpackage		includes/models/

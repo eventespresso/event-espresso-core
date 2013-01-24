@@ -194,8 +194,8 @@ abstract class EE_Base_Class extends EE_Base{
 				}
 				break;
 			case 'bool':
-				$value=intval($value);
-				if(is_bool($value)){
+				//$value=intval($value);
+				if(is_bool($value) || is_int($value) || ctype_digit($value)){
 					$return=true;
 				}
 				break;
@@ -260,7 +260,8 @@ abstract class EE_Base_Class extends EE_Base{
 			unset($set_column_values[$this->_get_primary_key_name()]);
 			$results = $this->_get_model()->insert ( $set_column_values );
 			if($results){//if successful, set the primary key
-				$this->set($this->_get_primary_key_name(),$results['new-ID']);//for some reason the new ID is returned as part of an array,
+				$results=$results['new-ID'];
+				$this->set($this->_get_primary_key_name(),$results);//for some reason the new ID is returned as part of an array,
 				//where teh only key is 'new-ID', and it's value is the new ID.
 			}
 		}

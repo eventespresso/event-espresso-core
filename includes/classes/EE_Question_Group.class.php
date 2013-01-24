@@ -214,11 +214,21 @@ class EE_Question_Group extends EE_Base_Class{
 	}
 	/**
 	 * Gets all events which 
-	 * @return type
+	 * @return EE_Event[]
 	 */
 	public function events(){
 		throw new EE_Error(__("Question Group->events() not yet implemetned","event_esresso"));
 		$model=$this->_get_model();
 		return $model->get_many_related($this,'Events');
+	}
+	
+	/**
+	 * Adds this question to this question group
+	 * @param EE_Question $question
+	 * @return boolean if successful
+	 */
+	public function add_question($question){
+		$model=$this->_get_model();
+		return $model->add_relation_to($this, $question, 'Questions');
 	}
 }
