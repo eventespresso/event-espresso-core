@@ -164,7 +164,7 @@ shortcodes in your event description.', 'event_espresso'); ?>
 				<tr>
 					<th> <label>
 							<?php _e('Use Built-in Style Sheets', 'event_espresso'); ?>
-							<?php echo apply_filters('filter_hook_espresso_help', 'enable_styles_info'); ?>
+							<?php do_action('action_hook_espresso_help', 'enable_styles_info'); ?>
 						</label>
 					</th>
 					<td><?php echo select_input('enable_default_style', $values, $org_options['style_settings']['enable_default_style'], 'id="use_built_in_style_sheets"'); ?><br />
@@ -175,7 +175,7 @@ shortcodes in your event description.', 'event_espresso'); ?>
 				<tr>
 					<th> <label>
 							<?php _e('Use Grid Layout', 'event_espresso'); ?>
-							<?php echo apply_filters('filter_hook_espresso_help', 'use_grid_info'); ?>
+							<?php do_action('action_hook_espresso_help', 'use_grid_info'); ?>
 						</label>
 					</th>
 					<td><?php echo select_input('use_grid_layout', $values, $org_options['style_settings']['use_grid_layout'], 'id="use_grid_layout"'); ?><br />
@@ -187,7 +187,7 @@ shortcodes in your event description.', 'event_espresso'); ?>
 
 				<tr>
 					<th> <?php _e('ThemeRoller Style ', 'event_espresso'); ?>
-						<?php echo apply_filters('filter_hook_espresso_help', 'themeroller_info'); ?>
+						<?php do_action('action_hook_espresso_help', 'themeroller_info'); ?>
 					</th>
 					<td><select id="style-themeroller" class="chzn-select wide" name="themeroller_style">
 							<option <?php espresso_style_is_selected($fname_themeroller) ?> value=""> - <?php _e('Default', 'event_espresso'); ?>

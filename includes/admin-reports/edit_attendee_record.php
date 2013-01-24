@@ -398,17 +398,17 @@ function edit_attendee_record() {
 			echo event_espresso_time_dropdown($event_id, $label = 1, $multi_reg = 0, $time_id);
 ?>
 		</li>
-		<li><h5><strong><?php _e('Price Option', 'event_espresso'); ?> <?php echo apply_filters( 'filter_hook_espresso_help', 'price_info'); ?></strong></h5>
+		<li><h5><strong><?php _e('Price Option', 'event_espresso'); ?> <?php do_action('action_hook_espresso_help', 'price_info'); ?></strong></h5>
 <?php
 			//Show pricing in a dropdown or text
 
 			echo '<p>';
-			echo event_espresso_price_dropdown( $event_id, array('selected_price_type'=>$price_type, 'label'=>__('Standard Price Option', 'event_espresso').' '. apply_filters( 'filter_hook_espresso_help', 'standard_price_info').'<br />'));
+			echo event_espresso_price_dropdown( $event_id, array('selected_price_type'=>$price_type, 'label'=>__('Standard Price Option', 'event_espresso').' '. do_action('action_hook_espresso_help', 'standard_price_info').'<br />'));
 			echo '</p>';
 
 			if ( function_exists('espresso_member_price_select_action') ){
 				echo '<p>';
-				echo espresso_member_price_select_action( $event_id, array( 'option_name'=>'member_price_option','selected_price_type'=>$price_type, 'label'=>__('Member Price Option', 'event_espresso').' '. apply_filters( 'filter_hook_espresso_help', 'member_price_info').'<br />' ) );
+				echo espresso_member_price_select_action( $event_id, array( 'option_name'=>'member_price_option','selected_price_type'=>$price_type, 'label'=>__('Member Price Option', 'event_espresso').' '. do_action('action_hook_espresso_help', 'member_price_info').'<br />' ) );
 				echo '</p>';
 			}
 ?>

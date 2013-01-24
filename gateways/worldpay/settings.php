@@ -117,14 +117,14 @@ function event_espresso_display_worldpay_settings() {
 
 						<li>
 							<label for="button_url">
-								<?php _e('Button Image URL: ', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'button_image'); ?>
+								<?php _e('Button Image URL: ', 'event_espresso'); ?> <?php do_action('action_hook_espresso_help', 'button_image'); ?>
 							</label>
 							<input class="regular-text" type="text" name="button_url" size="34" value="<?php echo $payment_settings['worldpay']['button_url']; ?>" />
 							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <?php echo '<img src="' . $payment_settings['worldpay']['button_url'] . '" />'; ?></li>
 
 						<li>
 							<label for="image_url">
-								<?php _e('Image URL (logo for payment page):', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'worldpay_image_url_info'); ?>
+								<?php _e('Image URL (logo for payment page):', 'event_espresso'); ?> <?php do_action('action_hook_espresso_help', 'worldpay_image_url_info'); ?>
 							</label>
 							<input class="regular-text" type="text" name="image_url" size="35" value="<?php echo $payment_settings['worldpay']['image_url']; ?>" />
 							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=image_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a><br />
@@ -136,7 +136,7 @@ function event_espresso_display_worldpay_settings() {
 					<ul>
 						<li>
 							<label for="currency_format">
-								<?php _e('Select the currency for your country:', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'worldpay_currency_info'); ?>
+								<?php _e('Select the currency for your country:', 'event_espresso'); ?> <?php do_action('action_hook_espresso_help', 'worldpay_currency_info'); ?>
 							</label>
 							<select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
 								<option value="<?php echo $payment_settings['worldpay']['currency_format']; ?>"><?php echo $payment_settings['worldpay']['currency_format']; ?></option>
@@ -212,7 +212,7 @@ function event_espresso_display_worldpay_settings() {
 							</select>
 
 						<li><label for="bypass_payment_page">
-								<?php _e('Bypass Payment Overview Page?', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'worldpay_bypass_confirmation'); ?>
+								<?php _e('Bypass Payment Overview Page?', 'event_espresso'); ?> <?php do_action('action_hook_espresso_help', 'worldpay_bypass_confirmation'); ?>
 							</label>
 							<?php
 							$values = array(
@@ -223,7 +223,7 @@ function event_espresso_display_worldpay_settings() {
 
 						<li>
 							<label for="use_sandbox">
-								<?php _e('Use the Debugging Feature and the worldpay Sandbox?', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'worldpay_sandbox_info'); ?>
+								<?php _e('Use the Debugging Feature and the worldpay Sandbox?', 'event_espresso'); ?> <?php do_action('action_hook_espresso_help', 'worldpay_sandbox_info'); ?>
 							</label>
 							<input name="use_sandbox" type="checkbox" value="1" <?php echo $payment_settings['worldpay']['use_sandbox'] == "1" ? 'checked="checked"' : '' ?> />
 
