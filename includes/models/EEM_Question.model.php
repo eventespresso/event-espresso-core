@@ -63,12 +63,13 @@ class EEM_Question extends EEM_TempBase {
 		$this->_fields_settings=array('QST_ID'=>new EE_Model_Field('Question ID', 'primary_key', false, null, null, null),
 								'QST_display_text'=>new EE_Model_Field('Display Text', 'simplehtml', false, '', null, null),
 								'QST_system_name'=>new EE_Model_Field('System Name', 'plaintext', false, '', null, null),
-								'QST_type'=>new EE_Model_Field('Question Type', 'enum', false, 'textfield', $this->allowed_question_types, null),
+								'QST_type'=>new EE_Model_Field('Question Type', 'enum', false, 'TEXT', $this->allowed_question_types(), null),
 								'QST_required'=>new EE_Model_Field('Required','bool',false,false,null,null),
 								'QST_required_text'=>new EE_Model_Field('Required Text', 'simplehtml', true, 'This field is required', null, null),
 								'QST_order'=>new EE_Model_Field('Order', 'int', false, 0, null, null),
 								'QST_admin_only'=>new EE_Model_Field('For Admins Only','bool',false,false,null,null),
-								'QST_wp_user'=>new EE_Model_Field('WP User ID', 'foreign_key', true, 1, null, 'WP_User'));
+								'QST_wp_user'=>new EE_Model_Field('WP User ID', 'foreign_key', true, 1, null, 'WP_User'),
+								'QST_deleted'=>new EE_Model_Field('Deleted','bool',false,false,null,null));
 		$this->_related_models=array(
 								'Answers'=>new EE_Model_Relation('belongsTo', 'Answer', 'QST_ID'),
 								'Question_Groups'=>new EE_Model_Relation('hasAndBelongsToMany', 'Question_Group', 'QSG_ID','question_group_question'));

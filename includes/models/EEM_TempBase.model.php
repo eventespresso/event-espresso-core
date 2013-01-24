@@ -18,10 +18,8 @@ abstract class EEM_TempBase extends EEM_Base{
 	 */
 	protected $_related_models;
 	protected function __construct() {
-		
-		$this->_verify_field_settings();
-		$this->table_name=$this->_getTableName();
-		$this->table_data_types=$this->_getTableDataTypes();
+		$this->table_name=$this->_get_table_name();
+		$this->table_data_types=$this->_get_table_data_types();
 	}
 	
 	/**
@@ -37,6 +35,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	}
 	/**
 	 * Allows other models to know about the fieldson this model
+	 * Returns an array of EE_Model_Field relating to this model.
 	 * @return EE_Model_Field[]
 	 */
 	public function fields_settings(){
@@ -48,7 +47,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * (ie, whether ot use '%s' or '%d').
 	 * @return array like array('ATT_ID'=>'%d','ATT_fname'=>'%s',...)
 	 */
-	protected function _getTableDataTypes(){
+	protected function _get_table_data_types(){
 		$dataTypes=array();
 		foreach($this->fields_settings() as $fieldName=>/*@var $fieldSettings EE_Model_Field */$fieldSettings){
 			switch($fieldSettings->type()){
@@ -81,7 +80,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * @global type $wpdb
 	 * @return string
 	 */
-	protected function _getTableName(){
+	protected function _get_table_name(){
 		global $wpdb;
 		$modelName=get_class($this);
 		$tableNameCapitalized=str_replace("EEM_","",$modelName);
@@ -113,14 +112,27 @@ abstract class EEM_TempBase extends EEM_Base{
 	*/	
 	protected function _create_objects( $rows = FALSE ) {
 
-		if ( ! $rows ) {
+		if ( ! $rows || empty($rows)) {
 			return FALSE;
 		} 		
 		foreach ( $rows as $row ) {
-				$args=get_object_vars($row);
+			if(empty($row)){//wp did its weird thing where it returns an array like array(0=>null), which is totally not helpful...
+				return FALSE;
+			}
+				$fields=$this->fields_settings();//get_object_vars($row);
+				//remove the primary key, because it's not part of the constructors. we'll just add it after the fact
+				$pkName=$this->primary_key_name();
+				unset($fields[$pkName]);
+				$argNames=array_keys($fields);
+				$args=array();
+				foreach($argNames as $argName){
+					$args[]=$row->$argName;
+				}
 				$class=new ReflectionClass($this->_getClassName());
 				$classInstance=$class->newInstanceArgs($args);
-				$array_of_objects[$classInstance->getPrimaryKey()]=$classInstance;
+				/* @var $classInstance EE_Base_Class */
+				$classInstance->set($pkName,$row->$pkName);
+				$array_of_objects[$classInstance->get_primary_key()]=$classInstance;
 		}	
 		return $array_of_objects;	
 	}
@@ -155,7 +167,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * Returns the array of EE_ModelRelations for this model.
 	 * @return EE_Model_Relation[]
 	 */
-	public function relationSettings(){
+	public function relation_settings(){
 		return $this->_related_models;
 	}
 	
@@ -165,7 +177,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * @return EE_Model_Relation
 	 */
 	public function related_settings_for($relationName){
-		$relatedModels=$this->relationSettings();
+		$relatedModels=$this->relation_settings();
 		if(!array_key_exists($relationName,$relatedModels)){
 			throw new EE_Error(sprintf(__('Cannot get %s related to %s. There is no model relation of that type. There is, however, %s...','event_espresso'),$relationName,  $this->_getClassName(),implode(array_keys($relatedModels))));
 		}
@@ -175,34 +187,38 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * Uses $this->_relatedModels info to find the related model objects of relation $relationName to the given $modelObject
 	 * @param EE_Base_Class'child $modelObject one of EE_Answer, EE_Attendee, etc. 
 	 * @param string $relationName, key in $this->_relatedModels, eg 'Registration', or 'Events'
+	 * @param array $where_col_n_values for extra select clause on hasAndBelongsToMany or belongsTo
 	 * @return EE_Base_Class[]
 	 */
-	public function get_many_related(EE_Base_Class $modelObject,$relationName){
+	public function get_many_related(EE_Base_Class $modelObject,$relationName,$where_col_n_values=array()){
 		$relatedModelInfo=$this->related_settings_for($relationName);
-		/* $relatedModeInfo EEM_TempBase*/
+		/* @var $relatedModeInfo EE_Model_Relation*/
 		$relatedModel=$relatedModelInfo->model_instance();
-		
-		switch($relatedModelInfo->type){
+		/* @var $relatedModel EEM_TempBase*/
+		switch($relatedModelInfo->type()){
 			case 'hasOne':
-				$foreign_key=$relatedModelInfo->field_name;
-				$row=$relatedModel->select_row_where(array($relatedModel->primary_key_name()=>$modelObject->$foreign_key));
+				$foreign_key=$relatedModelInfo->field_name();
+				$args=array($relatedModel->primary_key_name()=>$modelObject->get($foreign_key));
+				$row=$relatedModel->select_row_where($args);
 				$relatedObjects=$relatedModel->_create_objects(array($row,));
 				break;
 			case 'belongsTo':
-				$foreignKeyOnOtherModel=$relatedModel->field_name;
-				$rows=$relatedModel->select_row_where(array($foreignKeyOnOtherModel=>$modelObject->$modelObject->primaryKey()));
+				$foreignKeyOnOtherModel=$relatedModelInfo->field_name();
+				if(!array_key_exists($foreignKeyOnOtherModel, $where_col_n_values)){
+					$where_col_n_values[$foreignKeyOnOtherModel]=$modelObject->primaryKey();
+				}
+				$rows=$relatedModel->select_row_where($where_col_n_values);
 				$relatedObjects=$relatedModel->_create_objects(array($rows));
 				break;
-			
 			case 'hasAndBelongsToMany':
 				$joinTable=$relatedModeInfo->join_table();
-				$otherTableName=$relatedModel->_getTableName();
+				$otherTableName=$relatedModel->_get_table_name();
 				$otherTablePK=$relatedModel->primary_key_name();
 				$joinSQL="$joinTable LEFT JOIN $otherTableName ON $joinTable.$otherTablePK=$otherTableName.$otherTablePK ";
 				//$rows=$
 				$thisTablePK=$this->primary_key_name();
-				$wheres=array($thisTablePK=>$modelObject->get_primary_key());
-				$rows=$relatedModel->select_all_join_where($joinSQL,$where);
+				$where_col_n_values[$thisTablePK]=$modelObject->get_primary_key();
+				$rows=$relatedModel->select_all_join_where($joinSQL,$where_col_n_values);
 				$relatedObjects=$relatedModel->_create_objects($rows);
 				break;
 		}
@@ -215,7 +231,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * @param string $relationName, key in $this->_relatedModels, eg 'Registration', or 'Events'
 	 * @return EE_Base_Class[]
 	 */
-	public function get_first_related($modelObject,$relationName){
+	public function get_first_related(EE_Base_Class $modelObject,$relationName){
 		$relatedObjects=$this->get_many_related($modelObject, $relationName);
 		if(empty($relatedObjects)){
 			return null;
@@ -524,7 +540,7 @@ class EE_Model_Relation{
 	 * @return string
 	 */
 	public function field_name(){
-		$this->field_name;
+		return $this->field_name;
 	}
 	/**
 	 * Returns the name of the join table in cases of 'hasAndBelongsToMany'. Eg, 'question_group_question', or 'answer', etc. So no prepending of 'wp_' or even 'esp_'. Those are assumed.

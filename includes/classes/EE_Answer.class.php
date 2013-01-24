@@ -66,7 +66,7 @@ class EE_Answer extends EE_Base_Class{
 	public function __construct( $REG_ID=NULL, $QST_ID=NULL, $ANS_value='') {
 		$reflector = new ReflectionMethod($this,'__construct');	
 		$arrayForParent=array();
-		foreach($params=$reflector->getParameters() as $param){
+		foreach($reflector->getParameters() as $param){
 			$paramName=$param->name;
 			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
 		}
@@ -183,7 +183,7 @@ class EE_Answer extends EE_Base_Class{
 	 */
 	public function question(){
 		$model=$this->_get_model();
-		return $model->getFirstRelated($this,'Question');
+		return $model->get_first_related($this,'Question');
 	}
 	/**
 	 * Gets teh realted EE_Registration to this EE_Answer
@@ -191,7 +191,7 @@ class EE_Answer extends EE_Base_Class{
 	 */
 	public function registration(){
 		$model=$this->_get_model();
-		return $model->getFirstRelated($this,'Registration');
+		return $model->get_first_related($this,'Registration');
 	}
 
 

@@ -27,75 +27,75 @@ class EE_Question extends EE_Base_Class{
 	
 	/**
 	 * question's id
-	 * @access private
+	 * @access protected
 	 * @var int
 	 */
-	private $_QST_ID=FALSE;
+	protected $_QST_ID=FALSE;
 	
 	
 	/** 
 	 * how the question is displayed.eg, "What is your name?"
-	 * @access private
+	 * @access protected
 	 * @var string
 	 */
-	private $_QST_display_text=NULL;
+	protected $_QST_display_text=NULL;
 	
 	
 	/**
 	 * If it's a system name, the column of the attendee column to which this question corresponds
-	 * @access private
+	 * @access protected
 	 * @var string
 	 */
-	private $_QST_system_name=NULL;
+	protected $_QST_system_name=NULL;
 	
 	
 	/**
 	 * Whether the question's textfield, radio button list, etc.  
 	 * valid values are: TEXT, TEXTAREA, SINGLE, DROPDOWN, MULTIPLE, DATE
-	 * @access private
+	 * @access protected
 	 * @var string 
 	 */
-	private $_QST_type=NULL;
+	protected $_QST_type=NULL;
 	
 	
 	/**
 	 * Indictes whether the question must be answered if presented in a form
-	 * @access private
+	 * @access protected
 	 * @var boolean
 	 */
-	private $_QST_required=NULL;
+	protected $_QST_required=NULL;
 	
 	
 	/**
 	 *Text to show when the field isn't entered in a form when it's required
-	 * @access private
+	 * @access protected
 	 * @var string
 	 */
-	private $_QST_required_text=NULL;
+	protected $_QST_required_text=NULL;
 	
 	
 	/**
 	 * Number to indicate where this question ought to appear in the order of questions
-	 * @access private
+	 * @access protected
 	 * @var int
 	 */
-	private $_QST_order=NULL;
+	protected $_QST_order=NULL;
 	
 	
 	/**
 	 * Indicates whether this question is for administrators only
-	 * @access private
+	 * @access protected
 	 * @var boolena
 	 */
-	private $_QST_admin_only=NULL;
+	protected $_QST_admin_only=NULL;
 	
 	/**
 	 * 
 	 * ID of the WP USEr who created this question
-	 * @access private
+	 * @access protected
 	 * @var int
 	 */
-	private $_QST_wp_user=NULL;
+	protected $_QST_wp_user=NULL;
 	
 	/**
 	 * Boolean to indicate whether this question
@@ -103,7 +103,7 @@ class EE_Question extends EE_Base_Class{
 	 * @access private
 	 * @var boolean 
 	 */
-	private $_QST_deleted=NULL;
+	protected $_QST_deleted=NULL;
 	
 	/**
 	 * constructor for questions
@@ -130,7 +130,7 @@ class EE_Question extends EE_Base_Class{
 			$QST_deleted=NULL){
 		$reflector = new ReflectionMethod($this,'__construct');	
 		$arrayForParent=array();
-		foreach($params=$reflector->getParameters() as $param){
+		foreach($reflector->getParameters() as $param){
 			$paramName=$param->name;
 			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
 		}
@@ -272,54 +272,6 @@ class EE_Question extends EE_Base_Class{
 		return TRUE;
 	}
 	
-	/**
-	*		save object to db
-	* 
-	* 		@access		private
-	* 		@param		array		$where_cols_n_values		
-	*/	
-	private function _save_to_db( $where_cols_n_values = FALSE ) {
-		//@todo implement saaving of answers to db
-		 $MODEL = EEM_Question::instance();
-		
-		$set_column_values = array(		
-				'QST_display_text'=>$this->_QST_display_text,
-				'QST_system_name'=>$this->_QST_system_name,
-				'QST_type'=>$this->_QST_type,
-				'QST_required'=>$this->_QST_required,
-				'QST_required_text'=>$this->_QST_required_text,
-				'QST_order'=>$this->_QST_order,
-				'QST_admin_only'=>$this->_QST_admin_only,
-				'QST_wp_user'=>$this->_QST_wp_user,
-				'QST_deleted'=>$this->_QST_deleted
-		);
-
-		if ( $where_cols_n_values ){
-			$results = $MODEL->update ( $set_column_values, $where_cols_n_values );
-		} else {
-			$results = $MODEL->insert ( $set_column_values );
-		}
-		
-		return $results;
-	}
-	
-	/**
-	*		update existing db record
-	* 
-	* 		@access		public
-	*/	
-	public function update() {
-		return $this->_save_to_db( array( 'QST_ID' => $this->_QST_ID ));
-	}
-	
-	/**
-	 * returns the primary id
-	 * @access public
-	 * @return int
-	 */
-	public function ID(){
-		return $this->_QST_ID;
-	}
 	
 	/**
 	 * returns the text for displaying the question to users
@@ -398,10 +350,21 @@ class EE_Question extends EE_Base_Class{
 	
 	/**
 	 * Gets an array of related EE_Answer  to this EE_Question
-	 * @return EE_Question
+	 * @return EE_Answer[]
 	 */
 	public function answers(){
 		$model=$this->_get_model();
 		return $model->get_many_related($this,'Answers');
 	}
+	
+	/**
+	 * gets an array of EE_Question_Group which relate to thsi question
+	 * @return EE_Question_Group[]
+	 */
+	public function question_groups(){
+		$model=$this->_get_model();
+		return $model->get_many_related($this,'Question_Groups');
+	}
+	
+
 }

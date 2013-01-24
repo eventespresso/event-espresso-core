@@ -21,77 +21,78 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Question_Group {
+require_once ( 'EE_Base_Class.class.php' );
+class EE_Question_Group extends EE_Base_Class{
 	
 	/**
 	 * ID of this question gruop
-	 * @access private
+	 * @access protected
 	 * @var int
 	 */
-	private $_QSG_ID=FALSE;
+	protected $_QSG_ID=FALSE;
 	
 	/**
 	 * Name of this question group. eg, 'addrss info'
-	 * @access private
+	 * @access protected
 	 * @var stirng
 	 */
-	private $_QSG_name=NULL;
+	protected $_QSG_name=NULL;
 	
 	/**
 	 * The unique identifier used for this question group within the system
-	 * @access private
+	 * @access protected
 	 * @var string
 	 */
-	private $_QSG_identifier=NULL;
+	protected $_QSG_identifier=NULL;
 	
 	/**
 	 * Question group descripton
-	 * @access private
+	 * @access protected
 	 * @var string
 	 */
-	private $_QSG_desc=NULL;
+	protected $_QSG_desc=NULL;
 	
 	/**
 	 * Integer to indicate where this question group
 	 * should be placed relative to other question gruops in a sequence
-	 * @access private 
+	 * @access protected 
 	 * @var int
 	 */
-	private $_QSG_order=NULL;
+	protected $_QSG_order=NULL;
 	
 	/**
 	 * Boolean to indicate whether the group name
 	 * should be shown when displaying this question group
 	 * on the frontend
-	 * @access private
+	 * @access protected
 	 * @var boolean 
 	 */
-	private $_QSG_show_group_name=NULL;
+	protected $_QSG_show_group_name=NULL;
 	
 	/**
 	 * Boolean to dinicate whether the group description
 	 * should be shown when displayign this question gruop
 	 * on the frontend
-	 * @access private
+	 * @access protected
 	 * @var boolean 
 	 */
-	private $_QSG_show_group_desc=NULL;
+	protected $_QSG_show_group_desc=NULL;
 	
 	/**
 	 * Boolean to indicate whether this question gruop
 	 * is a mandatory one, ie integral to the system
-	 * @access private
+	 * @access protected
 	 * @var boolea 
 	 */
-	private $_QSG_system_group=NULL;
+	protected $_QSG_system_group=NULL;
 	
 	/**
 	 * Boolean which indicates whether thsi question group
 	 * has been deleted or not
-	 * @access private
+	 * @access protected
 	 * @var boolean 
 	 */
-	private $_QSG_deleted=NULL;
+	protected $_QSG_deleted=NULL;
 	
 	/**
 	 * 
@@ -114,65 +115,17 @@ class EE_Question_Group {
 			$QSG_show_group_desc=NULL,
 			$QSG_system_group=NULL,
 			$QSG_deleted=NULL) {
-		$this->_QSG_name=$QSG_name;
-		$this->_QSG_identifier=$QSG_identifier;
-		$this->_QSG_desc=$QSG_desc;
-		$this->_QSG_order=$QSG_order;
-		$this->_QSG_show_group_name=$QSG_show_group_name;
-		$this->_QSG_show_group_desc=$QSG_show_group_desc;
-		$this->_QSG_system_group=$QSG_system_group;
-		$this->_QSG_deleted=$QSG_deleted;
-	}
-	
-	/**
-	*		save object to db
-	* 
-	* 		@access		private
-	* 		@param		array		$where_cols_n_values
-	*		@return int, 1 on a successful update, the ID of
-	*					the new entry on insert; 0 on failure		
-	*/	
-	private function _save_to_db( $where_cols_n_values = FALSE ) {
-		
-		 $MODEL = EEM_Question_Group::instance();
-		
-		$set_column_values = array(		
-			'QSG_name'=>$this->_QSG_name,
-			'QSG_identifier'=>$this->_QSG_identifier,
-			'QSG_desc'=>$this->_QSG_desc,
-			'QSG_order'=>$this->_QSG_order,
-			'QSG_show_group_name'=>$this->_QSG_show_group_name,
-			'QSG_show_group_desc'=>$this->_QSG_show_group_desc,
-			'QSG_system_group'=>$this->_QSG_system_group,
-			'QSG_deleted'=>$this->_QSG_deleted
-		);
-
-		if ( $where_cols_n_values ){
-			$results = $MODEL->update ( $set_column_values, $where_cols_n_values );
-		} else {
-			$results = $MODEL->insert ( $set_column_values );
+		$reflector = new ReflectionMethod($this,'__construct');	
+		$arrayForParent=array();
+		foreach($reflector->getParameters() as $param){
+			$paramName=$param->name;
+			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
 		}
-		
-		return $results;
+		parent::__construct($arrayForParent);
 	}
 	
-	/**
-	*		update existing db record
-	* 
-	* 		@access		public
-	*/	
-	public function update() {
-		return $this->_save_to_db( array( 'QSG_ID' => $this->_QSG_ID ));
-	}
 	
-	/**
-	 * gets teh question gruop's id
-	 * @access public
-	 * @return int
-	 */
-	public function ID(){
-		return $this->_QSG_ID;
-	}
+	
 	
 	/**
 	 * gets teh question gruop's name
@@ -249,5 +202,23 @@ class EE_Question_Group {
 	 */
 	public function deleted(){
 		return $this->_QST_deleted;
+	}
+	
+	/**
+	 * Gets all the questions whicha re part of this question gruop
+	 * @return EE_Question[]
+	 */
+	public function questions(){
+		$model=$this->_get_model();
+		return $model->get_many_related($this,'Questions');
+	}
+	/**
+	 * Gets all events which 
+	 * @return type
+	 */
+	public function events(){
+		throw new EE_Error(__("Question Group->events() not yet implemetned","event_esresso"));
+		$model=$this->_get_model();
+		return $model->get_many_related($this,'Events');
 	}
 }
