@@ -205,6 +205,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	protected function _espresso_page_settings() {
 	
 		global $org_options;
+		$this->_template_args['values'] = $this->_yes_no_values;
 		$this->_template_args['event_ssl_active'] = isset( $org_options['event_ssl_active'] ) && ! empty( $org_options['event_ssl_active'] ) ? $org_options['event_ssl_active'] : FALSE;
 
 		$this->_template_args['event_page_id'] = isset( $org_options['event_page_id'] ) ? $org_options['event_page_id'] : NULL;
@@ -249,7 +250,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	protected function _template_settings() {
 	
 		global $org_options;
-		$this->_template_args['org_options'] = $org_options;
+		//$this->_template_args['org_options'] = $org_options;
 		$this->_template_args['values'] = $this->_yes_no_values;
 
 		// themeroller style directory
@@ -270,7 +271,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			'display_short_description_in_event_list' => TRUE,
 			'display_address_in_event_list' => FALSE,
 			'display_address_in_regform' => TRUE,			
-			'use_custom_templates' => FALSE,			
+			'use_custom_post_types' => FALSE,			
+			'use_custom_templates' => FALSE,		
 		);
 		$this->_template_args['template_settings'] = 
 				isset( $org_options['template_settings'] ) && ! empty( $org_options['template_settings'] ) 
@@ -365,6 +367,11 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				? absint( $this->_req_data['display_address_in_regform'] ) 
 				: TRUE;
 
+		$data['template_settings']['use_custom_post_types'] = 
+				 isset( $this->_req_data['use_custom_post_types'] ) 
+				? absint( $this->_req_data['use_custom_post_types'] ) 
+				: FALSE;
+
 		$data['style_settings']['enable_default_style'] = 
 				 isset( $this->_req_data['enable_default_style'] ) 
 				? absint( $this->_req_data['enable_default_style'] ) 
@@ -451,8 +458,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['map_settings'] = 
 				isset( $org_options['map_settings'] ) && ! empty( $org_options['map_settings'] ) 
 				? array_merge( $default_map_settings, $org_options['map_settings'] )
-				: $default_map_settings;
-		
+				: $default_map_settings;		
 
 		$this->_set_add_edit_form_tags( 'update_google_map_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
@@ -565,9 +571,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['organization_state'] = isset( $org_options['organization_state'] ) ? $this->_display_nice( $org_options['organization_state'] ) : '';
 		$this->_template_args['organization_zip'] = isset( $org_options['organization_zip'] ) ? $this->_display_nice( $org_options['organization_zip'] ) : '';
 		$this->_template_args['organization_country'] = isset( $org_options['organization_country'] ) ? $this->_display_nice( $org_options['organization_country'] ) : '';
-		$this->_template_args['currency_symbol'] = isset( $org_options['currency_symbol'] ) ? $this->_display_nice( $org_options['currency_symbol'] ) : '';
-		$this->_template_args['contact_email'] = isset( $org_options['contact_email'] ) ? $this->_display_nice( $org_options['contact_email'] ) : '';
-		
+		$this->_template_args['currency_symbol'] = isset( $org_options['currency_symbol'] ) ? $this->_display_nice( $org_options['currency_symbol'] ) : '$';
+		$this->_template_args['contact_email'] = isset( $org_options['contact_email'] ) ? $this->_display_nice( $org_options['contact_email'] ) : '';		
 		
 		$this->_set_add_edit_form_tags( 'update_your_organization_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
@@ -601,10 +606,19 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	protected function _admin_option_settings() {
 	
 		global $org_options;
-		$this->_template_args['org_options'] = $org_options;
 		$this->_template_args['values'] = $this->_yes_no_values;
-		$this->_template_args['expire_on_registration_end'] = isset( $org_options['expire_on_registration_end'] ) ? $this->_display_nice( $org_options['expire_on_registration_end'] ) : FALSE;
-
+		
+		$this->_template_args['use_venue_manager'] = isset( $org_options['use_venue_manager'] ) ? absint( $org_options['use_venue_manager'] ) : FALSE;
+		$this->_template_args['use_personnel_manager'] = isset( $org_options['use_personnel_manager'] ) ? absint( $org_options['use_personnel_manager'] ) : FALSE;
+		$this->_template_args['espresso_dashboard_widget'] = isset( $org_options['espresso_dashboard_widget'] ) ? absint( $org_options['espresso_dashboard_widget'] ) : TRUE;
+		$this->_template_args['events_in_dasboard'] = isset( $org_options['events_in_dasboard'] ) ? absint( $org_options['events_in_dasboard'] ) : 30;
+		$this->_template_args['use_event_timezones'] = isset( $org_options['use_event_timezones'] ) ? absint( $org_options['use_event_timezones'] ) : FALSE;
+		$this->_template_args['full_logging'] = isset( $org_options['full_logging'] ) ? absint( $org_options['full_logging'] ) : FALSE;
+		$this->_template_args['remote_logging'] = isset( $org_options['remote_logging'] ) ? absint( $org_options['remote_logging'] ) : FALSE;
+		$this->_template_args['remote_logging_url'] = isset( $org_options['remote_logging_url'] ) && ! empty( $org_options['remote_logging_url'] ) ? stripslashes( $org_options['remote_logging_url'] ) : '';
+		$this->_template_args['show_reg_footer'] = isset( $org_options['show_reg_footer'] ) ? absint( $org_options['show_reg_footer'] ) : TRUE;
+		$this->_template_args['affiliate_id'] = isset( $org_options['affiliate_id'] ) ? $this->_display_nice( $org_options['affiliate_id'] ) : '';
+		
 		$this->_set_add_edit_form_tags( 'update_admin_option_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'admin_option_settings.template.php', $this->_template_args, TRUE );
@@ -615,11 +629,22 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		
 		$data = array();
 
+		$data['use_venue_manager'] = isset( $this->_req_data['use_venue_manager'] ) ? absint( $this->_req_data['use_venue_manager'] ) : FALSE;
+		$data['use_personnel_manager'] = isset( $this->_req_data['use_personnel_manager'] ) ? absint( $this->_req_data['use_personnel_manager'] ) : FALSE;
+		$data['espresso_dashboard_widget'] = isset( $this->_req_data['espresso_dashboard_widget'] ) ? absint( $this->_req_data['espresso_dashboard_widget'] ) : TRUE;
+		$data['events_in_dasboard'] = isset( $this->_req_data['events_in_dasboard'] ) ? absint( $this->_req_data['events_in_dasboard'] ) : 30;
+		$data['use_event_timezones'] = isset( $this->_req_data['use_event_timezones'] ) ? absint( $this->_req_data['use_event_timezones'] ) : FALSE;
+		$data['full_logging'] = isset( $this->_req_data['full_logging'] ) ? absint( $this->_req_data['full_logging'] ) : FALSE;
+		$data['remote_logging'] = isset( $this->_req_data['remote_logging'] ) ? absint( $this->_req_data['remote_logging'] ) : FALSE;
+		$data['remote_logging_url'] = isset( $this->_req_data['remote_logging_url'] ) ? esc_url_raw( $this->_req_data['remote_logging_url'] ) : NULL;
+		$data['show_reg_footer'] = isset( $this->_req_data['show_reg_footer'] ) ? absint( $this->_req_data['show_reg_footer'] ) : TRUE;
+		$data['affiliate_id'] = isset( $this->_req_data['affiliate_id'] ) ? sanitize_text_field( $this->_req_data['affiliate_id'] ) : NULL;
+		
 		$data = apply_filters('filter_hook_espresso_admin_option_settings_save', $data);	
 		
 		$what = 'Admin Options';
 		$success = $this->_update_general_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
-		$this->_redirect_after_action( $success, $what, 'updated', array() );
+		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'admin_option_settings' ) );
 		
 	}
 
@@ -689,7 +714,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	 * displays edit and view links for critical EE pages
 	 *
 	 * @access public 
-	 * @param WP page object $ee_page
+	 * @param int $ee_page_id
 	 * @return string
 	 */
 	public static function edit_view_links( $ee_page_id ) {
@@ -709,24 +734,23 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	 * @return string
 	 */
 	public static function page_and_shortcode_status( $ee_page, $shortcode ) {
-//		printr( $ee_page, '$ee_page  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		echo '<h4>$shortcode : ' . $shortcode . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+
 		// page status
 		if ( isset( $ee_page->post_status ) && $ee_page->post_status == 'publish') { 
 			$pg_colour = 'green';
-			$pg_status = __('Page Status OK', 'event_espresso');
+			$pg_status = sprintf( __('Page%sStatus%sOK', 'event_espresso'), '&nbsp;' , '&nbsp;' );
 		 } else { 
 			$pg_colour = 'red';
-			$pg_status = __('Page Visibility Problem', 'event_espresso');
+			$pg_status = sprintf( __('Page%sVisibility%sProblem', 'event_espresso'), '&nbsp;', '&nbsp;'  );
 		}
 		
 		// shortcode status
 		if ( isset( $ee_page->post_content ) && strpos( $ee_page->post_content, $shortcode ) !== FALSE ) { 
 			$sc_colour = 'green';
-			$sc_status = __('Shortcode OK', 'event_espresso');
+			$sc_status = sprintf( __('Shortcode%sOK', 'event_espresso'), '&nbsp;' );
 		 } else { 
 			$sc_colour = 'red';
-			$sc_status = __('Shortcode Problem', 'event_espresso');
+			$sc_status = sprintf( __('Shortcode%sProblem', 'event_espresso'), '&nbsp;' );
 		}
 
 		return '<span style="color:' . $pg_colour . '; margin-right:2em;"><strong>' . $pg_status . '</strong></span><span style="color:' . $sc_colour . '"><strong>' . $sc_status . '</strong></span>';		
