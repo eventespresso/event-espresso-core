@@ -1,6 +1,6 @@
 <div class="padding"> 
 	
-	<h4><?php _e('Event URL Display', 'event_espresso'); ?></h4>
+	<h4 class="ee-admin-settings-hdr"><?php _e('Event URL Display', 'event_espresso'); ?></h4>
 	
 	<table class="form-table">
 		<tbody>		
@@ -50,7 +50,7 @@
 	</table>
 
 	
-	<h4><?php _e('Time and Date Settings', 'event_espresso'); ?></h4>
+	<h4 class="ee-admin-settings-hdr"><?php _e('Time and Date Settings', 'event_espresso'); ?></h4>
 	
 	<table class="form-table">
 		<tbody>
