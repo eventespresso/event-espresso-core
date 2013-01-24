@@ -1,14 +1,16 @@
 <div class="padding"> 
 
-	<h5>
+	<h4 class="ee-admin-settings-hdr"><?php _e('Critical Pages & Shortcodes', 'event_espresso'); ?></h4>
+	<p class="ee-attention">
 	<?php 
 		echo sprintf( 
-				__('The following shortcodes and page settings are required for Event Espresso to function properly. %sThese shortcodes should not be replaced with any other shortcodes. Please view %s for a list of optional shortcodes.', 'event_espresso'),
+				__('The following shortcodes and page settings are required for Event Espresso to function properly. %sThese shortcodes should not be replaced with any other shortcodes. Please view %sthis page%s for a list of optional shortcodes you can use on other pages.', 'event_espresso'),
 				'<br />',
-				'<a href="admin.php?page=support&action=shortcodes">this page</a>'
+				'<a href="admin.php?page=support&action=shortcodes">',
+				'</a>'
 			); 
 	?>
-	</h5>
+	</p>
 	
 	<table class="form-table">
 		<tbody>		
@@ -42,7 +44,7 @@
 				<th>				
 					<label for="event_page_id">
 						<b><?php _e('Event Registration page', 'event_espresso'); ?></b>
-						<?php echo apply_filters('filter_hook_espresso_help', 'registration_page_info'); ?><br />
+						<?php do_action('action_hook_espresso_help', 'registration_page_info'); ?><br />
 	 					<?php echo General_Settings_Admin_Page::edit_view_links( $event_page_id );?>
 					</label>
 				</th>
@@ -69,7 +71,7 @@
 				<th>				
 					<label for="return_url">
 						<b><?php _e('Thank You page', 'event_espresso'); ?></b>
-						<?php echo apply_filters('filter_hook_espresso_help', 'registration_page_info'); ?><br />
+						<?php do_action('action_hook_espresso_help', 'registration_page_info'); ?><br />
 	 					<?php echo General_Settings_Admin_Page::edit_view_links( $return_url );?>
 					</label>
 				</th>
@@ -96,7 +98,7 @@
 				<th>				
 					<label for="notify_url">
 						<b><?php _e('Transactions page', 'event_espresso'); ?></b>
-						<?php echo apply_filters('filter_hook_espresso_help', 'registration_page_info'); ?><br />
+						<?php do_action('action_hook_espresso_help', 'registration_page_info'); ?><br />
 	 					<?php echo General_Settings_Admin_Page::edit_view_links( $notify_url );?>
 					</label>
 				</th>
@@ -123,7 +125,7 @@
 				<th>				
 					<label for="cancel_return">
 						<b><?php _e('Cancel/Return page', 'event_espresso'); ?></b>
-						<?php echo apply_filters('filter_hook_espresso_help', 'registration_page_info'); ?><br />
+						<?php do_action('action_hook_espresso_help', 'registration_page_info'); ?><br />
 	 					<?php echo General_Settings_Admin_Page::edit_view_links( $cancel_return );?>
 					</label>
 				</th>
