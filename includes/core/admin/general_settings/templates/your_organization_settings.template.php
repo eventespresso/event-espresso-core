@@ -1,6 +1,6 @@
 <div class="padding">
 
-	<h4><?php _e('Company Logo', 'event_espresso'); ?></h4>
+	<h4 class="ee-admin-settings-hdr"><?php _e('Company Logo', 'event_espresso'); ?></h4>
 	
 	<table class="form-table">
 		<tbody>		
@@ -25,7 +25,7 @@
 		</tbody>
 	</table>
 	
-	<h4 style="display: inline-block; width: 230px; margin:3em 0 1em;"><?php _e('Contact Information', 'event_espresso'); ?></h4>
+	<h4 class="ee-admin-settings-hdr"><?php _e('Contact Information', 'event_espresso'); ?></h4>
 	<span class="description"><?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?></span>
 	
 	<table class="form-table">
