@@ -801,7 +801,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			//print_r( $good_meta );
 			?>
 			<p>
-				<?php _e('Using Event Meta boxes', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'event-meta-boxes'); ?>
+				<?php _e('Using Event Meta boxes', 'event_espresso'); ?> <?php do_action('action_hook_espresso_help', 'event-meta-boxes'); ?>
 			<ul id="dynamicMetaInput">
 				<?php
 				if ($event_meta != '') {
@@ -1184,7 +1184,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 			<p><strong><?php _e('Promotion Codes', 'event_espresso'); ?></strong></p>
 			<p class="disc-codes">
-				<label><?php _e('Allow discount codes?', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'coupon_code_info'); ?></label>
+				<label><?php _e('Allow discount codes?', 'event_espresso'); ?> <?php do_action('action_hook_espresso_help', 'coupon_code_info'); ?></label>
 				<?php echo EE_Form_Fields::select_input('use_coupon_code', $values, !isset($this->_event->use_coupon_code) || $this->_event->use_coupon_code == '' ? false : $this->_event->use_coupon_code); ?>
 			</p>
 
@@ -1339,9 +1339,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 			<table id="event-dates-and-times">
 				<thead>
 					<tr valign="top">
-						<td> <?php echo __('Event Starts on', 'event_espresso') ?> <?php echo apply_filters('filter_hook_espresso_help', 'event_date_info'); ?> </td>
+						<td> <?php echo __('Event Starts on', 'event_espresso') ?> <?php do_action('action_hook_espresso_help', 'event_date_info'); ?> </td>
 						<td><?php echo __('Event Ends on', 'event_espresso') ?></td>
-						<td><?php echo __('Registration Starts on', 'event_espresso') ?> <?php echo apply_filters('filter_hook_espresso_help', 'reg_date_info'); ?></td>
+						<td><?php echo __('Registration Starts on', 'event_espresso') ?> <?php do_action('action_hook_espresso_help', 'reg_date_info'); ?></td>
 						<td><?php echo __('Registration Ends on', 'event_espresso') ?></td>					
 						<?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS <td><?php echo __('Max Reg Limit', 'event_espresso'); ?></td>*/ ?>
 					</tr>
@@ -1352,7 +1352,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				<?php foreach ($times as $time) : ?>
 					<tr valign="top" id="event-dates-and-times-row-<?php echo $row; ?>">
 						<td>
-							<div class="small-screen-table-label"><?php echo __('Event Starts on', 'event_espresso') ?> <?php echo apply_filters('filter_hook_espresso_help', 'event_date_info'); ?></div>
+							<div class="small-screen-table-label"><?php echo __('Event Starts on', 'event_espresso') ?> <?php do_action('action_hook_espresso_help', 'event_date_info'); ?></div>
 							<input id="event-start-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][evt_start]" type="text" class="dtm-es-picker dtm-inp medium-text" value="<?php echo $time->start_date_and_time(  'Y-m-d '  ); ?>"/>
 							<input name="event-start-row-<?php echo $row; ?>" type="hidden" value="<?php echo $row; ?>"/>
 							<?php /* <input id="event-start-max-date-<?php echo $row; ?>" type="hidden" value=""/> */ ?>
@@ -1425,7 +1425,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			<?php if ((!isset($org_options['use_event_timezones']) || $org_options['use_event_timezones'] ) && $espresso_premium === TRUE) : ?>
 				<span class="run-in"> <?php _e('Current Time:', 'event_espresso'); ?> </span>
 				<span class="current-date"> <?php echo date(get_option('date_format')) . ' ' . date(get_option('time_format')); ?></span>
-				<?php echo apply_filters('filter_hook_espresso_help', 'current_time_info'); ?>
+				<?php do_action('action_hook_espresso_help', 'current_time_info'); ?>
 				<a class="change-date-time" href="options-general.php" target="_blank"><?php _e('Change timezone and date format settings?', 'event_espresso'); ?></a>
 			<?php endif; ?>
 

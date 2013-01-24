@@ -21,14 +21,14 @@ function add_new_event_discount() {
 							<tr>
 								<th><label for="coupon_code">
 										<?php _e('Promotional Code ', 'event_espresso'); ?>
-	<?php echo apply_filters( 'filter_hook_espresso_help', 'coupon_code_info') ?>
+	<?php do_action('action_hook_espresso_help', 'coupon_code_info') ?>
 									</label></th>
 								<td><input class="regular-text" type="text" name="coupon_code" size="25" value="<?php echo empty($coupon_code) ? '' : $coupon_code; ?>"></td>
 							</tr>
 							<tr>
 								<th><label for="use_limit">
 										<?php _e('Limited Quantity', 'event_espresso'); ?>
-	<?php echo apply_filters( 'filter_hook_espresso_help', 'qty_info') ?>
+	<?php do_action('action_hook_espresso_help', 'qty_info') ?>
 									</label></th>
 								<td><?php echo select_input('use_limit', $values, empty($use_limit) ? '' : $use_limit); ?></td>
 							</tr>
@@ -41,7 +41,7 @@ function add_new_event_discount() {
 							<tr>
 								<th><label for="use_exp_date">
 										<?php _e('Expiration Active', 'event_espresso'); ?>
-	<?php echo apply_filters( 'filter_hook_espresso_help', 'exp_date_info') ?>
+	<?php do_action('action_hook_espresso_help', 'exp_date_info') ?>
 									</label></th>
 								<td><?php echo select_input('use_exp_date', $values, empty($use_exp_date) ? '' : $use_exp_date); ?></td>
 							</tr>
@@ -60,14 +60,14 @@ function add_new_event_discount() {
 							<tr>
 								<th><label for="use_percentage">
 										<?php _e('Percentage Discount', 'event_espresso'); ?>
-	<?php echo apply_filters( 'filter_hook_espresso_help', 'discount_amount_info') ?>
+	<?php do_action('action_hook_espresso_help', 'discount_amount_info') ?>
 									</label></th>
 								<td><?php echo select_input('use_percentage', $values, false); ?></td>
 							</tr>
 							<tr>
 								<th><label>
 										<?php _e('Short Description', 'event_espresso'); ?>
-	<?php echo apply_filters( 'filter_hook_espresso_help', 'description_info') ?>
+	<?php do_action('action_hook_espresso_help', 'description_info') ?>
 									</label></th>
 								<td><textarea rows="5" cols="30" name="coupon_code_description" id="coupon_code_description_new"></textarea></td>
 							</tr>
