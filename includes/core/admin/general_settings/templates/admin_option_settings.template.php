@@ -99,18 +99,18 @@
 				</td>
 			</tr>
 
-<!--			<tr>
-				<th>
-					<label>
-						<?php _e('Custom Time Zone for Each Event', 'event_espresso'); ?>
-					</label>
-				</th>
-				<td>
-					<?php echo EE_Form_Fields::select_input('use_event_timezones', $values, $use_event_timezones ); ?>
-					<span class="description">
-						<?php _e('This allows you to set a custom time zone for each event. Modificatiosn to your site may be required for this to work properly.', 'event_espresso'); ?>
-					</span>
-				</td>
+			<!--			<tr>
+			<th>
+			<label>
+			<?php _e('Custom Time Zone for Each Event', 'event_espresso'); ?>
+			</label>
+			</th>
+			<td>
+			<?php echo EE_Form_Fields::select_input('use_event_timezones', $values, $use_event_timezones ); ?>
+			<span class="description">
+			<?php _e('This allows you to set a custom time zone for each event. Modificatiosn to your site may be required for this to work properly.', 'event_espresso'); ?>
+			</span>
+			</td>
 			</tr>-->
 
 		</tbody>
@@ -130,13 +130,15 @@
 				<td>
 					<?php echo EE_Form_Fields::select_input('full_logging', $values, $full_logging ); ?>
 					<span class="description">
-						<span class="red_text"><?php _e('Please use caution when using this feature. These files may be publicly available.', 'event_espresso'); ?></span>&nbsp;&nbsp;
+						<span class="red_text">
+							<?php _e('Please use caution when using this feature. These files may be publicly available.', 'event_espresso'); ?>
+						</span>&nbsp;&nbsp;
 						<?php echo sprintf( __('File is available at: %s', 'event_espresso'), '<b>/wp-content/uploads/espresso/logs/</b>' ); ?>
 					</span>
 
 				</td>
 			</tr>
-			
+
 			<tr>
 				<th>
 					<?php _e('Enable Remote Logging', 'event_espresso'); ?>
@@ -149,7 +151,7 @@
 					</span>
 				</td>
 			</tr>
-			
+
 			<tr>
 				<th>
 					<?php _e('Remote Logging URL', 'event_espresso'); ?>
@@ -185,7 +187,7 @@
 					<?php echo EE_Form_Fields::select_input('show_reg_footer', $values, $show_reg_footer ); ?>
 				</td>
 			</tr>
-			
+
 			<tr>
 				<th>
 					<?php _e('Event Espresso Affiliate ID', 'event_espresso'); ?>
