@@ -37,7 +37,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _init_page_props() {
-		$this->page_slug = 'payment_gateways';
+		$this->page_slug = EE_PAYMENTS_PG_SLUG;
 		$this->page_label = __('Payment Gateways', 'event_espresso');
 	}
 
@@ -60,6 +60,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
 			'default' => '_gateway_settings',
+			'payment_settings' => '_payment_settings',
 			'developers' => '_developers_section',
 			'affiliate' => '_affiliate_settings',
 			'save_aff_s' => array(
@@ -75,7 +76,14 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$this->_page_config = array(
 			'default' => array(
 				'nav' => array(
-					'label' => __('Gateways', 'event_espresso'),
+					'label' => __('Payment Methods', 'event_espresso'),
+					'order' => 10
+					),
+				'metaboxes' => array( '_espresso_news_post_box'),
+				),
+			'payment_settings' => array(
+				'nav' => array(
+					'label' => __('Settings', 'event_espresso'),
 					'order' => 10
 					),
 				'metaboxes' => array( '_espresso_news_post_box'),
@@ -185,6 +193,11 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 	}
 
+
+
+	protected function _payment_settings() {
+		$this->display_admin_page_with_sidebar();
+	}
 
 
 	protected function _developers_section() {
