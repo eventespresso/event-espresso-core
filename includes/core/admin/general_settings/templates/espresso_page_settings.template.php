@@ -151,4 +151,44 @@
 		</tbody>
 	</table>
 
+	<h4 class="ee-admin-settings-hdr">
+		<?php _e('Event URL Display', 'event_espresso'); ?>
+	</h4>
+
+	<table class="form-table">
+		<tbody>
+
+			<tr valign="top">
+				<th scope="row">
+					<?php _e('Activate "Pretty" Permalinks', 'event_espresso'); ?>
+				</th>
+				<td>
+					<?php echo EE_Form_Fields::select_input('espresso_url_rewrite_activated', $values, isset($org_options['espresso_url_rewrite_activated']) ? $org_options['espresso_url_rewrite_activated'] : TRUE); ?>
+					<span class="description">
+						<?php
+						echo sprintf(
+							__('makes URLs look like: %s/event-registration/your-event-name%s instead of: %s', 'event_espresso'),
+							'"<b>'. home_url(),
+							'</b>"',
+							'"<b>' . home_url() . '?page_id=4&ee=12</b>"'
+						);
+						?>
+					</span>
+				</td>
+			</tr>
+
+		</tbody>
+	</table>
+
+	<p class="ee-attention">
+		<?php
+		echo sprintf(
+			__('You MUST have %sWordPress Permalinks%s turned on, and mod_rewrite (or similar) active on your server for "Pretty" Permalinks to function.%sIf your permalinks stop working and/or get disrupted for some reason (by other plugins, etc), then simply return to this page and they will be automagically reset.', 'event_espresso'),
+			'<a style="color:#f00;" href="'. home_url('/') .'wp-admin/options-permalink.php">',
+			'</a>',
+			'<br />'
+		);
+		?>
+	</p>
+
 </div>
