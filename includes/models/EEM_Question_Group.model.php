@@ -32,7 +32,7 @@ class EEM_Question_Group extends EEM_TempBase {
 	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
 	 *
 	 *		@access public
-	 *		@return EEM_Attendee instance
+	 *		@return EEM_Question_Group instance
 	 */	
 	public static function instance(){
 	
@@ -58,8 +58,13 @@ class EEM_Question_Group extends EEM_TempBase {
 					'QSG_deleted'=>new EE_Model_Field('Is Question Group deleted?', 'bool', false, false, null, null)
 								);
 		$this->_related_models=array(
-								'Questions'=>new EE_Model_Relation('hasAndBelongsToMany', 'Question', 'QST_ID','question_group_question'),
-								'Events'=>new EE_Model_Relation('hasAndBelongsToMany', 'Event', 'EVT_ID','event_question_group'));
+								'Questions'=>new EE_Model_Relation('hasAndBelongsToMany', 'Question', 'QST_ID','question_group_question',
+											array(
+												'QGQ_ID'=>new EE_Model_Field('Question Group-Question ID', 'primary_key', false, null, null, null),
+												'QSG_ID'=>new EE_Model_Field('Foreign Key to Question Groups', 'foreign_key', false, null, null, 'Question_Group'),
+												'QST_ID'=>new EE_Model_Field('Foreign Key to Questions','foreign_key',false,null,null,'Question'))),
+								//'Events'=>new EE_Model_Relation('hasAndBelongsToMany', 'Event', 'EVT_ID','event_question_group'),
+						);
 		
 		parent::__construct();
 	}

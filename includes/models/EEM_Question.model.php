@@ -32,7 +32,7 @@ class EEM_Question extends EEM_TempBase {
 	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
 	 *
 	 *		@access public
-	 *		@return EEM_Attendee instance
+	 *		@return EEM_Question instance
 	 */	
 	public static function instance(){
 	
@@ -71,8 +71,12 @@ class EEM_Question extends EEM_TempBase {
 								'QST_wp_user'=>new EE_Model_Field('WP User ID', 'foreign_key', true, 1, null, 'WP_User'),
 								'QST_deleted'=>new EE_Model_Field('Deleted','bool',false,false,null,null));
 		$this->_related_models=array(
-								'Answers'=>new EE_Model_Relation('belongsTo', 'Answer', 'QST_ID'),
-								'Question_Groups'=>new EE_Model_Relation('hasAndBelongsToMany', 'Question_Group', 'QSG_ID','question_group_question'));
+								'Answers'=>new EE_Model_Relation('hasMany', 'Answer', 'QST_ID'),
+								'Question_Groups'=>new EE_Model_Relation('hasAndBelongsToMany', 'Question_Group', 'QSG_ID','question_group_question',
+										array(
+											'QGQ_ID'=>new EE_Model_Field('Question Group-Question ID', 'primary_key', false, null, null, null),
+											'QSG_ID'=>new EE_Model_Field('Foreign Key to Question Groups', 'foreign_key', false, null, null, 'Question_Group'),
+											'QST_ID'=>new EE_Model_Field('Foreign Key to Questions','foreign_key',false,null,null,'Question'))));
 		
 		parent::__construct();
 	}

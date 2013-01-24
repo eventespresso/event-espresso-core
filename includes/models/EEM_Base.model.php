@@ -86,6 +86,24 @@ abstract class EEM_Base extends EE_Base {
 		return $results;
 	}
 
+	/**
+	*		This function returns multiple rows from multiple tables. It doesn't take care of making the join syntax for you, however. You'll need
+	*		to make that somewhere beforehand.
+	 * 		SELECT * FROM table_name WHERE column_name operator value ORDER BY column_name(s) ASC|DESC
+	 *
+	 *		@access protected
+	 *		@param string $join_sql eg "$this->table_name INNER JOIN $othertable->table_name ON $this->table_name.ATT_ID=$othertable->table_name=ATT_ID"
+	 *		@param mixed (string, array) 		$where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause
+	 *		@param mixed (string, array)		$orderby - cloumn names to be used for sorting
+	 *		@param string								$sort - ASC or DESC
+	 *		@param mixed (string, array)		$operator -  operator to be used for WHERE clause  > = <
+	 *		@param string								$output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N
+	 *		@return mixed (object, array)
+	 */
+	protected function select_all_join_where ( $join_sql, $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $output = 'OBJECT_K' ) {
+		$results = $this->_select_all_where ( $join_sql, $this->table_data_types, $where_cols_n_values, $orderby, $sort, $operator, $output );
+		return $results;
+	}
 
 
 
@@ -740,14 +758,14 @@ abstract class EEM_Base extends EE_Base {
 	/**
 	 *		This function will delete a row from a table
 	 *
-	 *		@access private
+	 *		@access private settings to 'protected' until we have merged EEM_TempBase into EEM_Base
 	 *		@param string - $em_table_name -
 	 *		@param array - $em_table_data_types
 	 *		@param mixed (string, array) - $where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause
 	 *		@param mixed (string, array) - $operator -  operator to be used for WHERE clause  > = <
 	 *		@return mixed (object, array)
 	 */
-	private function _delete ( $em_table_name=FALSE, $em_table_data_types=array(), $where_cols_n_values=FALSE, $operator = '=' ) {
+	protected function _delete ( $em_table_name=FALSE, $em_table_data_types=array(), $where_cols_n_values=FALSE, $operator = '=' ) {
 
 		// what?? no table name ??? Get outta here!!!
 		if ( ! $em_table_name ) {

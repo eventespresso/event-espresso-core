@@ -51,8 +51,8 @@ class EEM_Answer extends EEM_TempBase {
 									'QST_ID'=>new EE_Model_Field('Question ID', 'foreign_key', false,0,null,'Question'),
 									'ANS_value'=>new EE_Model_Field('Answer Value/Text', 'simplehtml', false,''));
 		$this->_related_models=array(
-								'Registration'=>new EE_Model_Relation('hasOne', 'Registration', 'REG_ID'),
-								'Question'=>new EE_Model_Relation('hasOne', 'Question', 'QST_ID'));
+								'Registration'=>new EE_Model_Relation('belongsTo', 'Registration', 'REG_ID'),
+								'Question'=>new EE_Model_Relation('belongsTo', 'Question', 'QST_ID'));
 		
 		parent::__construct();
 	}

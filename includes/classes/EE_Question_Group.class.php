@@ -223,12 +223,21 @@ class EE_Question_Group extends EE_Base_Class{
 	}
 	
 	/**
-	 * Adds this question to this question group
+	 * Adds the question to this question group
 	 * @param EE_Question $question
 	 * @return boolean if successful
 	 */
 	public function add_question($question){
 		$model=$this->_get_model();
 		return $model->add_relation_to($this, $question, 'Questions');
+	}
+	/**
+	 * Removes the question from this question group
+	 * @param EE_Question $question
+	 * @return boolean of success
+	 */
+	public function remove_question($question){
+		$model=$this->_get_model();
+		return $model->remove_relationship_to($this, $question, 'Questions');
 	}
 }
