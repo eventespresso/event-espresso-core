@@ -16,20 +16,20 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * Forms_Question_Groups_Admin_List_Table
+ * Registration_Forms_Question_Groups_Admin_List_Table
  *
  * Class for preparing the table listing all the custom event Question_Groups
  *
  * note: anywhere there are no php docs it is because the docs are available in the parent class.
  *
- * @package		Forms_Question_Groups_Admin_List_Table
- * @subpackage	includes/core/admin/events/Forms_Question_Groups_Admin_List_Table.class.php
+ * @package		Registration_Forms_Question_Groups_Admin_List_Table
+ * @subpackage	includes/core/admin/events/Registration_Forms_Question_Groups_Admin_List_Table.class.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
 
-class Forms_Question_Groups_Admin_List_Table extends EE_Admin_List_Table {
+class Registration_Forms_Question_Groups_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function __construct( &$admin_page ) {
@@ -121,4 +121,4 @@ class Forms_Question_Groups_Admin_List_Table extends EE_Admin_List_Table {
 	public function column_description($item) {}
 	
 
-} //end class Forms_Questions_Admin_List_Table
+} //end class Registration_Forms_Questions_Admin_List_Table
