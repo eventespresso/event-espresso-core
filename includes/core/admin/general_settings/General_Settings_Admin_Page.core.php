@@ -123,7 +123,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_page_config = array(
 			'default' => array(
 				'nav' => array(
-					'label' => __('Espresso Pages'),
+					'label' => __('Critical Pages'),
 					'order' => 20
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' )
@@ -233,6 +233,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data['return_url'] = isset( $this->_req_data['return_url'] ) ? absint( $this->_req_data['return_url'] ) : NULL;
 		$data['cancel_return'] = isset( $this->_req_data['cancel_return'] ) ? absint( $this->_req_data['cancel_return'] ) : NULL;
 		$data['notify_url'] = isset( $this->_req_data['notify_url'] ) ? absint( $this->_req_data['notify_url'] ) : NULL;
+
+		$data = apply_filters('filter_hook_espresso_page_settings_save', $data);
 		
 		$success = $this->_update_general_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, 'Template Settings', 'updated', array() );
@@ -340,7 +342,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data = array(
 			'template_settings' => array(),
 			'style_settings' => array(),
-			'themeroller' => array(),
+			'themeroller' => array()
 		);
 
 		$data['template_settings']['display_description_in_event_list'] = 
@@ -379,8 +381,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			}
 		}
 		
-		$data['template_settings']['use_custom_templates'] = $this->_req_data['use_custom_templates'];
-		$data = apply_filters('filter_hook_espresso_template_confg_save', $data);
+		$data['template_settings']['use_custom_templates'] =  
+				 isset( $this->_req_data['use_custom_templates'] ) 
+				? sanitize_text_field( $this->_req_data['use_custom_templates'] ) 
+				: FALSE;					
+		
+		$data = apply_filters('filter_hook_espresso_template_settings_save', $data);
 		
 		$what = 'Template Settings';
 		$success = $this->_update_general_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
@@ -429,19 +435,18 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			'ee_map_width_single' => 595,
 			'ee_map_height_single' => 368,
 			'ee_map_zoom_single' => 14,
-			'ee_map_nav_display_single' => FALSE,
-			'ee_map_nav_size_single' => '',
+			'ee_map_nav_display_single' => TRUE,
+			'ee_map_nav_size_single' => FALSE,
 			'ee_map_type_control_single' => 'default',
-			'ee_map_align_single' => 'none',
-//			'ee_map_width_single' => '',
-//			'ee_map_width_single' => '',
-//			'ee_map_width_single' => '',
-//			'ee_map_width_single' => '',
-//			'ee_map_width_single' => '',
-//			'ee_map_width_single' => '',
-//			'ee_map_width_single' => '',
-//			'ee_map_width_single' => '',
-//			'ee_map_width_single' => '',
+			'ee_map_align_single' => 'right',
+			'ee_map_width' => 300,
+			'ee_map_height' => 185,
+			'ee_map_zoom' => 11,
+			'ee_map_nav_display' => FALSE,
+			'ee_map_nav_size' => TRUE,
+			'ee_map_type_control' => 'default',
+			'ee_map_align' => 'right',
+			'ee_display_map_no_shortcodes' => FALSE
 		);
 		$this->_template_args['map_settings'] = 
 				isset( $org_options['map_settings'] ) && ! empty( $org_options['map_settings'] ) 
@@ -456,9 +461,87 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	}
 
 	protected function _update_google_map_settings() {
-		
-		$data = array();
 
+		$data = array(
+			'map_settings' => array()
+		);
+
+		$data['map_settings']['ee_map_width_single'] = 
+				 isset( $this->_req_data['ee_map_width_single'] ) 
+				? absint( $this->_req_data['ee_map_width_single'] ) 
+				: 595;
+
+		$data['map_settings']['ee_map_height_single'] = 
+				 isset( $this->_req_data['ee_map_height_single'] ) 
+				? absint( $this->_req_data['ee_map_height_single'] ) 
+				: 368;
+
+		$data['map_settings']['ee_map_zoom_single'] = 
+				 isset( $this->_req_data['ee_map_zoom_single'] ) 
+				? absint( $this->_req_data['ee_map_zoom_single'] ) 
+				: 14;
+
+		$data['map_settings']['ee_map_nav_display_single'] = 
+				 isset( $this->_req_data['ee_map_nav_display_single'] ) 
+				? absint( $this->_req_data['ee_map_nav_display_single'] ) 
+				: TRUE;
+
+		$data['map_settings']['ee_map_nav_size_single'] = 
+				 isset( $this->_req_data['ee_map_nav_size_single'] ) 
+				? absint( $this->_req_data['ee_map_nav_size_single'] ) 
+				: FALSE;
+
+		$data['map_settings']['ee_map_type_control_single'] = 
+				 isset( $this->_req_data['ee_map_type_control_single'] ) 
+				? absint( $this->_req_data['ee_map_type_control_single'] ) 
+				: 'default';
+
+		$data['map_settings']['ee_map_align_single'] = 
+				 isset( $this->_req_data['ee_map_align_single'] ) 
+				? absint( $this->_req_data['ee_map_align_single'] ) 
+				: 'right';
+
+		$data['map_settings']['ee_map_width'] = 
+				 isset( $this->_req_data['ee_map_width'] ) 
+				? absint( $this->_req_data['ee_map_width'] ) 
+				: 300;
+
+		$data['map_settings']['ee_map_height'] = 
+				 isset( $this->_req_data['ee_map_height'] ) 
+				? absint( $this->_req_data['ee_map_height'] ) 
+				: 185;
+
+		$data['map_settings']['ee_map_zoom'] = 
+				 isset( $this->_req_data['ee_map_zoom'] ) 
+				? absint( $this->_req_data['ee_map_zoom'] ) 
+				: 11;
+
+		$data['map_settings']['ee_map_nav_display'] = 
+				 isset( $this->_req_data['ee_map_nav_display'] ) 
+				? absint( $this->_req_data['ee_map_nav_display'] ) 
+				: FALSE;
+
+		$data['map_settings']['ee_map_nav_size'] = 
+				 isset( $this->_req_data['ee_map_nav_size'] ) 
+				? absint( $this->_req_data['ee_map_nav_size'] ) 
+				: TRUE;
+
+		$data['map_settings']['ee_map_type_control'] = 
+				 isset( $this->_req_data['ee_map_type_control'] ) 
+				? absint( $this->_req_data['ee_map_type_control'] ) 
+				: 'default';
+
+		$data['map_settings']['ee_map_align'] = 
+				 isset( $this->_req_data['ee_map_align'] ) 
+				? absint( $this->_req_data['ee_map_align'] ) 
+				: 'right';
+
+		$data['map_settings']['ee_display_map_no_shortcodes'] = 
+				 isset( $this->_req_data['ee_display_map_no_shortcodes'] ) 
+				? absint( $this->_req_data['ee_display_map_no_shortcodes'] ) 
+				: FALSE;
+
+		$data = apply_filters('filter_hook_espresso_google_map_settings_save', $data);	
 		
 		$what = 'Google Map Settings';
 		$success = $this->_update_general_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
@@ -505,6 +588,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data['organization_country'] = isset( $this->_req_data['organization_country'] ) ? absint( $this->_req_data['organization_country'] ) : NULL;
 		$data['contact_email'] = isset( $this->_req_data['contact_email'] ) ? sanitize_email( $this->_req_data['contact_email'] ) : NULL;
 
+		$data = apply_filters('filter_hook_espresso_your_organization_settings_save', $data);	
+		
 		$what = 'Your Organization Settings';
 		$success = $this->_update_general_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'your_organization_settings' ) );
@@ -530,6 +615,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		
 		$data = array();
 
+		$data = apply_filters('filter_hook_espresso_admin_option_settings_save', $data);	
+		
 		$what = 'Admin Options';
 		$success = $this->_update_general_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array() );

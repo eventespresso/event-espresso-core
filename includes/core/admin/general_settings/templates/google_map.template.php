@@ -64,21 +64,21 @@
 					<?php _e('Set Map Type Control', 'event_espresso') ?>
 				</th>
 				<td>
-					<label for="ee_map_type_control_single" class="ee-admin-radio-lbl">
+					<label for="map-type-control-default-single" class="ee-admin-radio-lbl">
 						<?php $checked = $map_settings['ee_map_type_control_single'] == 'default' ? 'checked="checked"' : ''; ?>
-						<input type="radio" name="ee_map_type_control_single" value="default"<?php echo $checked;?>/>
+						<input id="map-type-control-default-single" type="radio" name="ee_map_type_control_single" value="default"<?php echo $checked;?>/>
 						<?php _e(' Default', 'event_espresso') ?>
 					</label>
 					
-					<label for="ee_map_type_control_single" class="ee-admin-radio-lbl">
+					<label for="map-type-control-horizontal-single" class="ee-admin-radio-lbl">
 						<?php $checked = $map_settings['ee_map_type_control_single'] == 'horizontal' ? 'checked="checked"' : ''; ?>
-						<input type="radio" name="ee_map_type_control_single" value="horizontal"<?php echo $checked;?>/>
+						<input id="map-type-control-horizontal-single" type="radio" name="ee_map_type_control_single" value="horizontal"<?php echo $checked;?>/>
 						<?php _e(' Horizontal', 'event_espresso') ?>							
 					</label>
 					
-					<label for="map-type-dropdown_single" class="ee-admin-radio-lbl">
+					<label for="map-type-control-dropdown-single" class="ee-admin-radio-lbl">
 						<?php $checked = $map_settings['ee_map_type_control_single'] == 'dropdown' ? 'checked="checked"' : ''; ?>
-						<input type="radio" name="ee_map_type_control_single" value="dropdown"<?php echo $checked;?>/>
+						<input id="map-type-control-dropdown-single" type="radio" name="ee_map_type_control_single" value="dropdown"<?php echo $checked;?>/>
 						<?php _e(' Dropdown', 'event_espresso') ?>
 					</label>
 				</td>
@@ -90,25 +90,25 @@
 				</th>
 				<td>
 					<label for="map-align-none_single" class="ee-admin-radio-lbl">
-						<?php $checked = $map_settings['ee_map_type_control_single'] == 'none' ? 'checked="checked"' : ''; ?>
+						<?php $checked = $map_settings['ee_map_align_single'] == 'none' ? 'checked="checked"' : ''; ?>
 						<input id="map-align-none_single" type="radio" name="ee_map_align_single" value="none"<?php echo $checked;?>/>
 						<?php _e(' None', 'event_espresso') ?>
 					</label>
 					
 					<label for="map-align-left_single" class="ee-admin-radio-lbl">
-						<?php $checked = $map_settings['ee_map_type_control_single'] == 'left' ? 'checked="checked"' : ''; ?>
+						<?php $checked = $map_settings['ee_map_align_single'] == 'left' ? 'checked="checked"' : ''; ?>
 						<input id="map-align-left_single" type="radio" name="ee_map_align_single" value="left"<?php echo $checked;?>/>
 						<?php _e(' Align Left', 'event_espresso') ?>							
 					</label>
 					
 					<label for="map-align-center_single" class="ee-admin-radio-lbl">
-						<?php $checked = $map_settings['ee_map_type_control_single'] == 'center' ? 'checked="checked"' : ''; ?>
+						<?php $checked = $map_settings['ee_map_align_single'] == 'center' ? 'checked="checked"' : ''; ?>
 						<input id="map-align-center_single" type="radio" name="ee_map_align_single" value="center"<?php echo $checked;?>/>
 						<?php _e(' Align Center', 'event_espresso') ?>
 					</label>
 					
 					<label for="map-align-right_single" class="ee-admin-radio-lbl">
-						<?php $checked = $map_settings['ee_map_type_control_single'] == 'right' ? 'checked="checked"' : ''; ?>
+						<?php $checked = $map_settings['ee_map_align_single'] == 'right' ? 'checked="checked"' : ''; ?>
 						<input id="map-align-right_single" type="radio" name="ee_map_align_single" value="right"<?php echo $checked;?>/>
 						<?php _e(' Align Right', 'event_espresso') ?>
 					</label>
@@ -130,7 +130,7 @@
 					</label>
 				</th>
 				<td>
-					<input id="map-width" type="text"  name="ee_map_width" value="<?php echo empty($map_settings['ee_map_width']) ? '200' : $map_settings['ee_map_width']; ?>" />
+					<input id="map-width" type="text"  name="ee_map_width" value="<?php echo $map_settings['ee_map_width']; ?>" />
 				</td>
 			</tr>
 			<tr>
@@ -140,7 +140,7 @@
 					</label>
 				</th>
 				<td>
-					<input id="map-height" type="text" size="" name="ee_map_height" value="<?php echo empty($map_settings['ee_map_height']) ? '200' : $map_settings['ee_map_height']; ?>" />
+					<input id="map-height" type="text" size="" name="ee_map_height" value="<?php echo $map_settings['ee_map_height']; ?>" />
 				</td>
 			</tr>
 			<tr>
@@ -150,7 +150,7 @@
 					</label>
 				</th>
 				<td>
-					<input id="map-zoom" type="text" size="" name="ee_map_zoom" value="<?php echo empty($map_settings['ee_map_zoom']) ? '11' : $map_settings['ee_map_zoom']; ?>" />
+					<input id="map-zoom" type="text" size="" name="ee_map_zoom" value="<?php echo $map_settings['ee_map_zoom']; ?>" />
 				</td>
 			</tr>
 			<tr>
@@ -181,18 +181,21 @@
 				</th>
 				<td>
 					<label for="map-type-default" class="ee-admin-radio-lbl">
-					<input id="map-type-default" type="radio" name="ee_map_type_control" <?php //espresso_is_selected_list('default') ?> value="default"  />
-					<?php _e(' Default', 'event_espresso') ?>						
+						<?php $checked = $map_settings['ee_map_type_control'] == 'default' ? 'checked="checked"' : ''; ?>
+						<input id="map-type-default" type="radio" name="ee_map_type_control" value="default"<?php echo $checked;?>/>
+						<?php _e(' Default', 'event_espresso') ?>						
 					</label>
 					
 					<label for="map-type-horizontal" class="ee-admin-radio-lbl">
-					<input id="map-type-horizontal" type="radio" name="ee_map_type_control" <?php //espresso_is_selected_list('horizontal') ?> value="horizontal" />
-					<?php _e(' Horizontal', 'event_espresso') ?>
+						<?php $checked = $map_settings['ee_map_type_control'] == 'horizontal' ? 'checked="checked"' : ''; ?>
+						<input id="map-type-horizontal" type="radio" name="ee_map_type_control" value="horizontal"<?php echo $checked;?>/>
+						<?php _e(' Horizontal', 'event_espresso') ?>
 					</label>
 					
 					<label for="map-type-dropdown" class="ee-admin-radio-lbl">
-					<input id="map-type-dropdown" type="radio" name="ee_map_type_control" <?php //espresso_is_selected_list('dropdown') ?> value="dropdown" />
-					<?php _e(' Dropdown', 'event_espresso') ?>
+						<?php $checked = $map_settings['ee_map_type_control'] == 'dropdown' ? 'checked="checked"' : ''; ?>
+						<input id="map-type-dropdown" type="radio" name="ee_map_type_control" value="dropdown"<?php echo $checked;?>/>
+						<?php _e(' Dropdown', 'event_espresso') ?>
 					</label>
 					
 				</td>
@@ -204,23 +207,27 @@
 				</th>
 				<td>
 					<label for="map-align-none" class="ee-admin-radio-lbl">
-					<input id="map-align-none" type="radio" name="ee_map_align" <?php //espresso_is_selected_list('none') ?> value="none"  />
-					<?php _e(' None', 'event_espresso') ?>
+						<?php $checked = $map_settings['ee_map_align'] == 'none' ? 'checked="checked"' : ''; ?>
+						<input id="map-align-none" type="radio" name="ee_map_align" value="none"<?php echo $checked;?>/>
+						<?php _e(' None', 'event_espresso') ?>
 					</label>
 					
 					<label for="map-align-left" class="ee-admin-radio-lbl">
-					<input id="map-align-left" type="radio" name="ee_map_align" <?php //espresso_is_selected_list('left') ?> value="left"  />
-					<?php _e(' Align Left', 'event_espresso') ?>
+						<?php $checked = $map_settings['ee_map_align'] == 'left' ? 'checked="checked"' : ''; ?>
+						<input id="map-align-left" type="radio" name="ee_map_align" value="left"<?php echo $checked;?>/>
+						<?php _e(' Align Left', 'event_espresso') ?>
 					</label>
 					
 					<label for="map-align-center" class="ee-admin-radio-lbl">
-					<input id="map-align-center" type="radio" name="ee_map_align" <?php //espresso_is_selected_list('center') ?> value="center" />
-					<?php _e(' Align Center', 'event_espresso') ?>						
+						<?php $checked = $map_settings['ee_map_align'] == 'center' ? 'checked="checked"' : ''; ?>
+						<input id="map-align-center" type="radio" name="ee_map_align" value="center"<?php echo $checked;?>/>
+						<?php _e(' Align Center', 'event_espresso') ?>						
 					</label>
 					
 					<label for="map-align-right" class="ee-admin-radio-lbl">
-					<input id="map-align-right" type="radio" name="ee_map_align" <?php //espresso_is_selected_list('right') ?> value="right" />
-					<?php _e(' Align Right', 'event_espresso') ?>						
+						<?php $checked = $map_settings['ee_map_align'] == 'right' ? 'checked="checked"' : ''; ?>
+						<input id="map-align-right" type="radio" name="ee_map_align" value="right"<?php echo $checked;?>/>
+						<?php _e(' Align Right', 'event_espresso') ?>						
 					</label>
 					
 				</td>
@@ -229,11 +236,11 @@
 			<tr>
 				<th>
 					<label for="ee-display-map-no-shortcodes">
-						<?php _e('Use map in template files ( No Shortcodes)', 'event_espresso') ?>
+						<?php _e('Use map in template files ( No Shortcodes )', 'event_espresso') ?>
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('ee_display_map_no_shortcodes', $values, isset($map_settings['ee_display_map_no_shortcodes']) ? $map_settings['ee_display_map_no_shortcodes'] : '', 'id="ee-display-map-no-shortcodes"'); ?>
+					<?php echo EE_Form_Fields::select_input('ee_display_map_no_shortcodes', $values, $map_settings['ee_display_map_no_shortcodes'], 'id="ee-display-map-no-shortcodes"'); ?>
 				</td>
 			</tr>
 			
