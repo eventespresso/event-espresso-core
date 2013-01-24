@@ -94,6 +94,20 @@ class EE_Question_Group extends EE_Base_Class{
 	 */
 	protected $_QSG_deleted=NULL;
 	
+	
+	/**
+	 * Related questions, lazy-loaded.
+	 * @access protected
+	 * @var EE_Question 
+	 */
+	protected $_Questions;
+	
+	/**
+	 * Related Events
+	 * @access protected
+	 * @var EE_Event
+	 */
+	protected $_Events;
 	/**
 	 * 
 	 * @param string $QSG_name name of question group
@@ -133,7 +147,7 @@ class EE_Question_Group extends EE_Base_Class{
 	 * @return string
 	 */
 	public function name(){
-		return $this->_QSG_name;
+		return $this->get('QSG_name');
 	}
 	
 	/**
@@ -142,7 +156,7 @@ class EE_Question_Group extends EE_Base_Class{
 	 * @return string
 	 */
 	public function identifier(){
-		return $this->_QSG_identifier;
+		return $this->get('QSG_identifier');
 	}
 	
 	/**
@@ -151,7 +165,7 @@ class EE_Question_Group extends EE_Base_Class{
 	 * @return string
 	 */
 	public function desc(){
-		return $this->_QSG_desc;
+		return $this->get('QSG_desc');
 	}
 	
 	/**
@@ -161,7 +175,7 @@ class EE_Question_Group extends EE_Base_Class{
 	 * @return int
 	 */
 	public function order(){
-		return $this->_QSG_order;
+		return $this->get('QSG_order');
 	}
 	
 	/**
@@ -170,7 +184,7 @@ class EE_Question_Group extends EE_Base_Class{
 	 * @return boolean
 	 */
 	public function show_group_name(){
-		return $this->_QSG_show_group_name;
+		return $this->get('QSG_show_group_name');
 	}
 	
 	/**
@@ -180,7 +194,7 @@ class EE_Question_Group extends EE_Base_Class{
 	 * @return boolean
 	 */
 	public function show_group_desc(){
-		return $this->_QSG_show_group_desc;
+		return $this->get('QSG_show_group_desc');
 	}
 	
 	/**
@@ -191,7 +205,7 @@ class EE_Question_Group extends EE_Base_Class{
 	 * @return boolean
 	 */
 	public function system_group(){
-		return $this->_QSG_system_group;
+		return $this->get('QSG_system_group');
 	}
 	
 	/**
@@ -201,7 +215,7 @@ class EE_Question_Group extends EE_Base_Class{
 	 * @return boolean
 	 */
 	public function deleted(){
-		return $this->_QST_deleted;
+		return $this->get('QST_deleted');
 	}
 	
 	/**
@@ -209,17 +223,16 @@ class EE_Question_Group extends EE_Base_Class{
 	 * @return EE_Question[]
 	 */
 	public function questions(){
-		$model=$this->_get_model();
-		return $model->get_many_related($this,'Questions');
+		return $this->_get_many_related('Questions');
 	}
+	
 	/**
 	 * Gets all events which 
 	 * @return EE_Event[]
 	 */
 	public function events(){
 		throw new EE_Error(__("Question Group->events() not yet implemetned","event_esresso"));
-		$model=$this->_get_model();
-		return $model->get_many_related($this,'Events');
+		return $this->_get_many_related('Events');
 	}
 	
 	/**
@@ -228,8 +241,7 @@ class EE_Question_Group extends EE_Base_Class{
 	 * @return boolean if successful
 	 */
 	public function add_question($question){
-		$model=$this->_get_model();
-		return $model->add_relation_to($this, $question, 'Questions');
+		return $this->_add_relation_to($question, 'Questions');
 	}
 	/**
 	 * Removes the question from this question group
@@ -237,7 +249,6 @@ class EE_Question_Group extends EE_Base_Class{
 	 * @return boolean of success
 	 */
 	public function remove_question($question){
-		$model=$this->_get_model();
-		return $model->remove_relationship_to($this, $question, 'Questions');
+		return $this->_remove_relation_to($question, 'Questions');
 	}
 }

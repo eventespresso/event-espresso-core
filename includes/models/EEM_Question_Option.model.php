@@ -13,7 +13,7 @@
  *
  * ------------------------------------------------------------------------
  *
- * Attendee Model
+ * Question Group Model
  *
  * @package			Event Espresso
  * @subpackage		includes/models/
@@ -23,7 +23,7 @@
  */
 require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_TempBase.model.php' );
 
-class EEM_Answer extends EEM_TempBase {
+class EEM_Question_Option extends EEM_TempBase {
 
   	// private instance of the Attendee object
 	private static $_instance = NULL;
@@ -32,7 +32,7 @@ class EEM_Answer extends EEM_TempBase {
 	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
 	 *
 	 *		@access public
-	 *		@return EEM_Attendee instance
+	 *		@return EEM_Question_Option instance
 	 */	
 	public static function instance(){
 	
@@ -46,45 +46,45 @@ class EEM_Answer extends EEM_TempBase {
 	}
 
 	protected function __construct(){
-		$this->_fields_settings=array('ANS_ID'=>new EE_Model_Field('Answer ID', 'primary_key', false),
-									'REG_ID'=>new EE_Model_Field('Registration ID', 'foreign_key', false,0,null,'Registration'),
-									'QST_ID'=>new EE_Model_Field('Question ID', 'foreign_key', false,0,null,'Question'),
-									'ANS_value'=>new EE_Model_Field('Answer Value/Text', 'simplehtml', false,''));
+		$this->_fields_settings=array(
+					'QSO_ID'=>new EE_Model_Field('Question Option ID', 'primary_key', false, null, null, null),
+					'QSO_name'=>new EE_Model_Field('Question option Display Name', 'simplehtml', false, '', null, null),
+					'QSO_value'=>new EE_Model_Field('QUestion Option Value', 'plaintext', false, '', null, null),
+					'QST_ID'=>new EE_Model_Field('Related Question ID', 'foreign_key', false, null, null, 'Question')
+								);
 		$this->_related_models=array(
-								'Registration'=>new EE_Model_Relation('belongsTo', 'Registration', 'REG_ID'),
-								'Question'=>new EE_Model_Relation('belongsTo', 'Question', 'QST_ID'));
+								'Question'=>new EE_Model_Relation('belongsTo', 'Question', 'QST_ID')
+						);
 		
 		parent::__construct();
 	}
 
 
 	/**
-	*		delete  a single answer from db via their ID
-	* 
+	*		delete  a single question option from db via their ID
+	*		actually just marks it as deleted, but doesn't really remove the question.
+	 *		This is handy because we might not want to remove all old ANSWERS which relate to thsi question option
 	* 		@access		public
-	* 		@param		$ANS_ID		
+	* 		@param		$ID		
 	*		@return 		mixed		array on success, FALSE on fail
 	*/	
-	public function delete_answer_by_ID( $ANS_ID = FALSE ) {
-
-		if ( ! $ANS_ID ) {
+	public function delete_question_group_by_ID( $ID = FALSE ) {
+		if ( ! $ID ) {
 			return FALSE;
-		}
-				
-		// retreive a particular transaction
-		$where_cols_n_values = array( 'ANS_ID' => $ANS_ID );
-		if ( $answer = $this->delete ( $where_cols_n_values )) {
+		}		
+		// mark an option as deleted
+		$where_cols_n_values = array( 'QSO_ID' => $ID );
+		if ( $question = $this->update (array("QSO_deleted"=>true), $where_cols_n_values )) {
 			return TRUE;
 		} else {
 			return FALSE;
 		}
 
 	}
-	
 
 
 
 
 }
-// End of file EEM_Answer.model.php
-// Location: /ee-mvc/models/EEM_Answer.model.php
+// End of file EEM_Question_Option.model.php
+// Location: /ee-mvc/models/EEM_Question_Option.model.php

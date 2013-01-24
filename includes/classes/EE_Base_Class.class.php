@@ -287,6 +287,60 @@ abstract class EE_Base_Class extends EE_Base{
 	}
 	
 	/**
+	 * Functions through which all other calls to get a single related model object is passed.
+	 * Handy for common logic between them, eg: caching.
+	 * @param string $relationName
+	 * @return EE_Base_Class
+	 */
+	protected function _get_first_related($relationName){
+		if($this->$relationName==null){
+			$model=$this->_get_model();
+			$relationRequested=$model->get_first_related($this, $relationName);
+			$this->$relationName=$relationRequested;
+		}
+		return $this->$relationName;
+	}
+	
+	/**
+	 * Function through which all other calls to get many related model objects is passed.
+	 * Handy for common lgoci between them, eg: caching.
+	 * @param string $relationName
+	 * @param array $where_col_n_vals keys are field/column names, values are their values
+	 * @return EE_Base_Class[]
+	 */
+	protected function _get_many_related($relationName,$where_col_n_vals=null){
+		$privatelRelationName=$this->_get_private_attribute_name($relationName);
+		if($this->$privatelRelationName==null){
+			$model=$this->_get_model();
+			$relationRequested=$model->get_many_related($this, $relationName,$where_col_n_vals);
+			$this->$privatelRelationName=$relationRequested;
+		}
+		return $this->$privatelRelationName;
+	}
+	
+	/**
+	 * Adds a relationship to the specified EE_Base_Class object, given the relationship's name. Eg, if the curren tmodel is related
+	 * to a group of events, the $relationName should be 'Events', and should be a key in the EE Model's $_model_relations array
+	 * @param EE_Base_Class $otherObjectModel
+	 * @param string $relationName eg 'Events','Question',etc.
+	 * @return boolean success
+	 */
+	protected function _add_relation_to(EE_Base_Class $otherObjectModel,$relationName){
+		$model=$this->_get_model();
+		return $model->add_relation_to($this, $otherObjectModel, $relationName);
+	}
+	/**
+	 * Removes a relationship to the psecified EE_Base_Class object, given the relationships' name. Eg, if the curren tmodel is related
+	 * to a group of events, the $relationName should be 'Events', and should be a key in the EE Model's $_model_relations array
+	 * @param EE_Base_Class $otherObjectModel
+	 * @param string $relationName
+	 * @return boolean success
+	 */
+	protected function _remove_relation_to(EE_Base_Class $otherObjectModel,$relationName){
+		$model=$this->_get_model();
+		return $model->remove_relationship_to($this, $otherObjectModel, $relationName);
+	}
+	/**
 	 * Wrapper for get_primary_key(). Gets the value of the primary key.
 	 * @return mixed, if the primary key is of type INT it'll be an int. Otherwise it could be a string
 	 */

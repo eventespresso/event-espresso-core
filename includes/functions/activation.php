@@ -577,6 +577,7 @@ function events_data_tables_install() {
 				QSO_name VARCHAR(45) NOT NULL ,
 				QSO_value VARCHAR(45) NOT NULL ,
 				QST_ID INT UNSIGNED NOT NULL ,
+				QSO_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
 				PRIMARY KEY  (QSO_ID)";
 	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
 

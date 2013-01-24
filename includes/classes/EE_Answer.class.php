@@ -54,7 +54,19 @@ class EE_Answer extends EE_Base_Class{
 	 */
 	protected $_ANS_value=NULL;
 
-
+	/**
+	 * Related question, lazy-loaded
+	 * @access protected
+	 * @var EE_Question[] 
+	 */
+	protected $_Question;
+	
+	/**
+	 * Related registration, lazy-loaded
+	 * @access protected
+	 * @var EE_Registration[] 
+	 */
+	protected $_Registration;
 
 
 	/**
@@ -112,50 +124,15 @@ class EE_Answer extends EE_Base_Class{
 		return $this->set('ANS_value',$ANS_value);
 	}
 
-	
-
-
-
-
-
-
-	/**
-	*		update existing db record
-	* 
-	* 		@access		public
-	*/	
-	public function update() {
-		return $this->_save_to_db( array( 'ANS_ID' => $this->_ANS_ID ));
-	}
-
-
-
-
-
-
-	
-
-
-
-
-
-
-	/**
-	*		get Attendee ID
-	* 		@access		public
-	*/	
-	public function ID() {
-		return $this->_ANS_ID;
-	}
-
 
 
 	/**
 	*		get Attendee First Name
 	* 		@access		public
+	 *		@return		int
 	*/	
 	public function registration_ID() {
-		return $this->_REG_ID;
+		return $this->get('REG_ID');
 	}
 
 
@@ -163,9 +140,10 @@ class EE_Answer extends EE_Base_Class{
 	/**
 	*		get Attendee Last Name
 	* 		@access		public
+	 *		@return		int
 	*/	
 	public function question_ID() {
-		return $this->_QST_ID;
+		return $this->get('QST_ID');
 	}
 
 
@@ -173,25 +151,24 @@ class EE_Answer extends EE_Base_Class{
 	/**
 	*		get Attendee Address
 	* 		@access		public
+	 *		@return		string
 	*/	
 	public function value() {
-		return $this->_ANS_value;
+		return $this->get('ANS_value');
 	}
 	/**
 	 * Gets the related EE_Question to this EE_Answer
 	 * @return EE_Question
 	 */
 	public function question(){
-		$model=$this->_get_model();
-		return $model->get_first_related($this,'Question');
+		return $this->_get_first_related('Question');
 	}
 	/**
 	 * Gets teh realted EE_Registration to this EE_Answer
 	 * @return EE_Registration
 	 */
 	public function registration(){
-		$model=$this->_get_model();
-		return $model->get_first_related($this,'Registration');
+		return $this->_get_first_related('Registration');
 	}
 
 

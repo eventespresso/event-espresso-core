@@ -106,6 +106,18 @@ class EE_Question extends EE_Base_Class{
 	protected $_QST_deleted=NULL;
 	
 	/**
+	 * realted answers, lazy-loaded
+	 * @var EE_Answer[] 
+	 */
+	protected $_Answers;
+	
+	/**
+	 * related question groups, lazy-loaded
+	 * @var EE_Question_Group[] 
+	 */
+	protected $_Question_Group;
+	
+	/**
 	 * constructor for questions
 	 * @param string $QST_display_text text for displaying the question (eg, "what is your name?")
 	 * @param string $QST_system_name if this is a system question, it's internal name
@@ -279,7 +291,7 @@ class EE_Question extends EE_Base_Class{
 	 * @return string
 	 */
 	public function display_text(){
-		return $this->_QST_display_text;
+		return $this->get('QST_display_text');
 	}
 	
 	/**
@@ -288,7 +300,7 @@ class EE_Question extends EE_Base_Class{
 	 * @return string
 	 */
 	public function system_name(){
-		return $this->_QST_system_name;
+		return $this->get('QST_system_name');
 	}
 	
 	/**
@@ -297,7 +309,7 @@ class EE_Question extends EE_Base_Class{
 	 * @return boolean
 	 */
 	public function required(){
-		return $this->_QST_type;
+		return $this->get('QST_type');
 	}
 	
 	/**
@@ -307,7 +319,7 @@ class EE_Question extends EE_Base_Class{
 	 * @return string
 	 */
 	public function required_text(){
-		return $this->_QST_required_text;
+		return $this->get('QST_required_text');
 	}
 	
 	/**
@@ -317,7 +329,7 @@ class EE_Question extends EE_Base_Class{
 	 * @return int
 	 */
 	public function order(){
-		return $this->_QST_order;
+		return $this->get('QST_order');
 	}
 	
 	/**
@@ -327,7 +339,7 @@ class EE_Question extends EE_Base_Class{
 	 * @return boolean
 	 */
 	public function admin_only(){
-		return $this->_QST_admin_only;
+		return $this->get('QST_admin_only');
 	}
 	
 	/**
@@ -336,7 +348,7 @@ class EE_Question extends EE_Base_Class{
 	 * @return int
 	 */
 	public function wp_user(){
-		return $this->_QST_wp_user;
+		return $this->get('QST_wp_user');
 	}
 	
 	/**
@@ -345,7 +357,7 @@ class EE_Question extends EE_Base_Class{
 	 * @return boolean
 	 */
 	public function deleted(){
-		return $this->_QST_deleted;
+		return $this->get('QST_deleted');
 	}
 	
 	/**
@@ -353,8 +365,7 @@ class EE_Question extends EE_Base_Class{
 	 * @return EE_Answer[]
 	 */
 	public function answers(){
-		$model=$this->_get_model();
-		return $model->get_many_related($this,'Answers');
+		return $this->get_many_related('Answers');
 	}
 	
 	/**
@@ -362,8 +373,7 @@ class EE_Question extends EE_Base_Class{
 	 * @return EE_Question_Group[]
 	 */
 	public function question_groups(){
-		$model=$this->_get_model();
-		return $model->get_many_related($this,'Question_Groups');
+		return $this->_get_many_related('Question_Groups');
 	}
 	
 

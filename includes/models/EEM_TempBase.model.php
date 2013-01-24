@@ -19,9 +19,20 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * @var EE_Model_Relation[] 
 	 */
 	protected $_related_models;
+	
+	/**
+	 * Important note for classes which override EEM_TempBase.
+	 * In your constructor, you must define $_fields_settings, which should be an array of EE_Model_Field, where the keys
+	 * are the db column names (on the related class, you must add these as attributes, prepended with an "_".) See the implementation of
+	 * EEM_Answer's constructor for an example. Also note on EE_Answer (the class for the Model) there are attributes $_ANS_ID, $_ANS_value,etc.'
+	 * You must also defin $_related_models. This is an array of EE_Model_Relation where the keys are a string that explains the relationship, and
+	 * that must also be an attribute on the class prepended with an "_". Again, see EEM_Answer, which has a relationship to 'Question', and that 
+	 * EE_Answer (the class for EEM_Answer) has an attribute $_Question, which is used for storing the EE_Question array once it is requested.
+	 */
 	protected function __construct() {
 		$this->table_name=$this->_get_table_name();
 		$this->table_data_types=$this->_get_table_data_types();
+		
 	}
 	
 	/**
