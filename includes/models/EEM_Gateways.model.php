@@ -153,7 +153,7 @@ Class EEM_Gateways {
 	private function _scan_and_load_all_gateways() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		// on the settings page, scan and load all the gateways
-		if (is_admin() && !empty($_GET['page']) && $_GET['page'] == 'payment_gateways') {
+		if (is_admin() && !empty($_GET['page']) && $_GET['page'] == 'payment_settings') {
 			$this->_load_all_gateway_files();
 		} else {
 			// if something went wrong, fail gracefully
