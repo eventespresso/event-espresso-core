@@ -93,6 +93,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				'func' => '_update_template_settings',
 				'noheader' => TRUE,
 				),
+			'copy_templates' => array(
+				'func' => '_copy_templates',
+				'noheader' => TRUE,
+				),
 			'google_map_settings' => '_google_map_settings',
 			'update_google_map_settings' => array(
 				'func' => '_update_google_map_settings',
@@ -191,7 +195,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_script( 'organization_settings' );	
 		$confirm_image_delete = array( 'text' => __('Do you really want to delete this image? Please remember to save your settings to complete the removal.', 'event_espresso')); 
 		wp_localize_script( 'organization_settings', 'confirm_image_delete', $confirm_image_delete );
-		// 
 
 	}
 
@@ -231,7 +234,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data['cancel_return'] = isset( $this->_req_data['cancel_return'] ) ? absint( $this->_req_data['cancel_return'] ) : NULL;
 		$data['notify_url'] = isset( $this->_req_data['notify_url'] ) ? absint( $this->_req_data['notify_url'] ) : NULL;
 		
-		$success = $this->_update_general_settings( $data, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_general_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, 'Template Settings', 'updated', array() );
 		
 	}
@@ -249,79 +252,167 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 		// themeroller style directory
 		$path = file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/themeroller/index.php") ? EVENT_ESPRESSO_UPLOAD_DIR . '/themeroller/' : EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/css/themeroller/';
-		$this->_template_args['themeroller_themes'] = glob( $path . '*', GLOB_ONLYDIR ); 
-		array_walk( $this->_template_args['themeroller_themes'], array( $this, '_get_theme_name' )); 
+		$themeroller_themes = glob( $path . '*', GLOB_ONLYDIR ); 
+		array_walk( $themeroller_themes, array( $this, '_process_theme_name' )); 
 		
-		$this->_template_args['template_settings'] = isset( $org_options['template_settings'] ) && ! empty( $org_options['template_settings'] ) ? $org_options['template_settings'] : FALSE;
-		if ( ! $this->_template_args['template_settings'] ) {
-			$this->_template_args['template_settings'] = array(
-				'display_description_in_event_list' => FALSE,
-				'display_short_description_in_event_list' => TRUE,
-				'display_address_in_event_list' => FALSE,
-				'display_address_in_regform' => TRUE,
-			);
-		}
+		$default_themeroller = array(
+			'themeroller_style' => 'smoothness'
+		);
+		$this->_template_args['themeroller'] = 
+				isset( $org_options['themeroller'] ) && ! empty( $org_options['themeroller'] ) 
+				? array_merge( $default_themeroller, $org_options['themeroller'] ) 
+				: $default_themeroller;
+		
+		$default_template_settings = array(
+			'display_description_in_event_list' => FALSE,
+			'display_short_description_in_event_list' => TRUE,
+			'display_address_in_event_list' => FALSE,
+			'display_address_in_regform' => TRUE,			
+			'use_custom_templates' => FALSE,			
+		);
+		$this->_template_args['template_settings'] = 
+				isset( $org_options['template_settings'] ) && ! empty( $org_options['template_settings'] ) 
+				? array_merge( $default_template_settings, $org_options['template_settings'] )
+				: $default_template_settings;
+		
+		$default_style_settings = array(
+			'enable_default_style' => TRUE,
+			'css_name' => ''
+		);
+		$this->_template_args['style_settings'] = 
+				isset( $org_options['style_settings'] ) && ! empty( $org_options['style_settings'] ) 
+				? array_merge( $default_style_settings, $org_options['style_settings'] )
+				: $default_style_settings;
 
+		$this->_template_args['files'] = array(
+				'attendee_list.php', 
+				'event_list.php', 
+				'event_list_display.php', 
+				'event_post.php', 
+				'payment_page.php', 
+				'registration_page.php', 
+				'registration_page_display.php', 
+				'confirmation_display.php', 
+				'return_payment.php', 
+				'widget.php'
+		);
 		
-		$this->_template_args['style_settings'] = isset( $org_options['style_settings'] ) && ! empty( $org_options['style_settings'] ) ? $org_options['style_settings'] : FALSE;
-		if ( ! $this->_template_args['style_settings'] ) {
-			$this->_template_args['style_settings'] = array(
-				'enable_default_style' => TRUE,
-				'css_name' => '',
-			);
-		}
-		
+		$this->_template_args['custom_templates_exist'] = 
+				file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][0])
+				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][1])
+				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][2])
+				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][3])
+				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][4])
+				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][5])
+				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][6])
+				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][7])
+				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][8])
+				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][9])
+			? TRUE
+			: FALSE;
+
+		$this->_template_args['custom_templates_exist'] = TRUE;
 		
 		$this->_set_add_edit_form_tags( 'update_template_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'template_settings.template.php', $this->_template_args, TRUE );
-		// the details template wrapper
 		$this->display_admin_page_with_sidebar();	
 	}
-
-
 	
 	
 	/**
-	 * 	_get_theme_name
+	 * 	_process_theme_name
 	 *
 	 * @access 	private
 	 * @param 	string 	$themeroller_theme_path
 	 * @return	string
 	 */	
-	private function _get_theme_name( &$themeroller_theme_path, $key ) {
-		$this->_template_args['themeroller_themes'][ $key ] = basename( $themeroller_theme_path );
-	}
-
-
-	
-	
-	/**
-	 * 	determines whether file is a themeroller theme
-	 *
-	 * @access 	private
-	 * @param 	array 	$themeroller_theme
-	 * @return	boolean
-	 */	
-	private function _themeroller_exclusions( $themeroller_theme ) {
-		$exclude = array( '.', '..', 'index.htm', 'index.html', 'index.php', '.svn', 'themeroller-.css', '.DS_Store', basename( $_SERVER['PHP_SELF'] ));
-		return ! in_array( $themeroller_theme, $exclude ) && ! is_dir( $themeroller_theme ) ? TRUE : FALSE;
+	private function _process_theme_name( &$themeroller_theme_path, $key ) {
+		$this->_template_args['themeroller_themes'][] = array( 'id'  => basename( $themeroller_theme_path ), 'text' => ucwords( str_replace( array( '-', '_' ), ' ', basename( $themeroller_theme_path ))));
 	}
 
 
 
 	protected function _update_template_settings() {
 		
-		$data = array();
-//		$data['event_page_id'] = absint( $this->_req_data['event_page_id'] );
-//		$data['return_url'] = absint( $this->_req_data['return_url'] );
-//		$data['cancel_return'] = absint( $this->_req_data['cancel_return'] );
-//		$data['notify_url'] = absint( $this->_req_data['notify_url'] );
+		global $wpdb, $org_options, $notices, $espresso_wp_user;
+
+		$data = array(
+			'template_settings' => array(),
+			'style_settings' => array(),
+			'themeroller' => array(),
+		);
+
+		$data['template_settings']['display_description_in_event_list'] = 
+				 isset( $this->_req_data['display_description_in_event_list'] ) 
+				? absint( $this->_req_data['display_description_in_event_list'] ) 
+				: FALSE;
+
+		$data['template_settings']['display_short_description_in_event_list'] =  
+				 isset( $this->_req_data['display_short_description_in_event_list'] ) 
+				? absint( $this->_req_data['display_short_description_in_event_list'] ) 
+				: TRUE;
+
+		$data['template_settings']['display_address_in_event_list'] = 
+				 isset( $this->_req_data['display_address_in_event_list'] ) 
+				? absint( $this->_req_data['display_address_in_event_list'] ) 
+				: FALSE;
+
+		$data['template_settings']['display_address_in_regform'] = 
+				 isset( $this->_req_data['display_address_in_regform'] ) 
+				? absint( $this->_req_data['display_address_in_regform'] ) 
+				: TRUE;
+
+		$data['style_settings']['enable_default_style'] = 
+				 isset( $this->_req_data['enable_default_style'] ) 
+				? absint( $this->_req_data['enable_default_style'] ) 
+				: TRUE;
+
+		$data['themeroller']['themeroller_style'] = 
+				 isset( $this->_req_data['themeroller_style'] ) 
+				? sanitize_text_field( $this->_req_data['themeroller_style'] ) 
+				: 'smoothness';
+
+		if ( isset($_FILES['css'] ) && is_uploaded_file( $_FILES['css']['tmp_name'] )) {
+			if ( copy( $_FILES['css']['tmp_name'], EVENT_ESPRESSO_UPLOAD_DIR . 'css/' . $_FILES['css']['name'] )) {
+				$data['style_settings']['css_name'] = sanitize_text_field( $_FILES['css']['name'] );
+			}
+		}
 		
-		$success = $this->_update_general_settings( $data, __FILE__, __FUNCTION__, __LINE__ );
-		$this->_redirect_after_action( $success, 'Template Settings', 'updated', array() );
+		$data['template_settings']['use_custom_templates'] = $this->_req_data['use_custom_templates'];
+		$data = apply_filters('filter_hook_espresso_template_confg_save', $data);
+		
+		$what = 'Template Settings';
+		$success = $this->_update_general_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'template_settings' ) );
 		
 	}
+
+	
+	
+	/**
+	 * 	_copy_templates
+	 *
+	 * @access 	protected
+	 * @return	string
+	 */	
+	protected function _copy_templates() {
+		
+		add_action('admin_init', 'event_espresso_smartCopy');
+
+		if ( ! empty($_SESSION['event_espresso_themes_copied'])) {
+			
+			$data['template_settings']['use_custom_templates'] = TRUE;
+			$_SESSION['event_espresso_themes_copied'] = false;
+			
+			$what = 'Custom Templates';
+			$success = $this->_update_general_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+			$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'template_settings' ) );
+			
+		}
+		
+	}
+
 
 
 
@@ -332,26 +423,46 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	
 		global $org_options;
 		
-		$this->_template_args['default_logo_url'] = isset( $org_options['default_logo_url'] ) ? $org_options['default_logo_url'] : '';
+		$this->_template_args['values'] = $this->_yes_no_values;
 
+		$default_map_settings = array(
+			'ee_map_width_single' => 595,
+			'ee_map_height_single' => 368,
+			'ee_map_zoom_single' => 14,
+			'ee_map_nav_display_single' => FALSE,
+			'ee_map_nav_size_single' => '',
+			'ee_map_type_control_single' => 'default',
+			'ee_map_align_single' => 'none',
+//			'ee_map_width_single' => '',
+//			'ee_map_width_single' => '',
+//			'ee_map_width_single' => '',
+//			'ee_map_width_single' => '',
+//			'ee_map_width_single' => '',
+//			'ee_map_width_single' => '',
+//			'ee_map_width_single' => '',
+//			'ee_map_width_single' => '',
+//			'ee_map_width_single' => '',
+		);
+		$this->_template_args['map_settings'] = 
+				isset( $org_options['map_settings'] ) && ! empty( $org_options['map_settings'] ) 
+				? array_merge( $default_map_settings, $org_options['map_settings'] )
+				: $default_map_settings;
+		
 
 		$this->_set_add_edit_form_tags( 'update_google_map_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'google_map.template.php', $this->_template_args, TRUE );
-		// the details template wrapper
 		$this->display_admin_page_with_sidebar();	
 	}
 
 	protected function _update_google_map_settings() {
 		
 		$data = array();
-//		$data['event_page_id'] = absint( $this->_req_data['event_page_id'] );
-//		$data['return_url'] = absint( $this->_req_data['return_url'] );
-//		$data['cancel_return'] = absint( $this->_req_data['cancel_return'] );
-//		$data['notify_url'] = absint( $this->_req_data['notify_url'] );
+
 		
-		$success = $this->_update_general_settings( $data, __FILE__, __FUNCTION__, __LINE__ );
-		$this->_redirect_after_action( $success, 'Google Map Settings', 'updated', array() );
+		$what = 'Google Map Settings';
+		$success = $this->_update_general_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'google_map_settings' ) );
 		
 	}
 
@@ -378,7 +489,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_set_add_edit_form_tags( 'update_your_organization_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'your_organization_settings.template.php', $this->_template_args, TRUE );
-		// the details template wrapper
 		$this->display_admin_page_with_sidebar();	
 	}
 
@@ -394,12 +504,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data['organization_zip'] = isset( $this->_req_data['organization_zip'] ) ? sanitize_text_field( $this->_req_data['organization_zip'] ) : NULL;
 		$data['organization_country'] = isset( $this->_req_data['organization_country'] ) ? absint( $this->_req_data['organization_country'] ) : NULL;
 		$data['contact_email'] = isset( $this->_req_data['contact_email'] ) ? sanitize_email( $this->_req_data['contact_email'] ) : NULL;
-		
-//		printr( $this->_req_data, '$this->_req_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( $data, '$data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-		$success = $this->_update_general_settings( $data, __FILE__, __FUNCTION__, __LINE__ );
-		$this->_redirect_after_action( $success, 'Your Organization Settings', 'updated', array( 'action' => 'your_organization_settings' ) );
+		$what = 'Your Organization Settings';
+		$success = $this->_update_general_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'your_organization_settings' ) );
 		
 	}
 	/*************		Admin Options 		*************/
@@ -415,20 +523,16 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_set_add_edit_form_tags( 'update_admin_option_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'admin_option_settings.template.php', $this->_template_args, TRUE );
-		// the details template wrapper
 		$this->display_admin_page_with_sidebar();	
 	}
 
 	protected function _update_admin_option_settings() {
 		
 		$data = array();
-//		$data['event_page_id'] = absint( $this->_req_data['event_page_id'] );
-//		$data['return_url'] = absint( $this->_req_data['return_url'] );
-//		$data['cancel_return'] = absint( $this->_req_data['cancel_return'] );
-//		$data['notify_url'] = absint( $this->_req_data['notify_url'] );
-		
-		$success = $this->_update_general_settings( $data, __FILE__, __FUNCTION__, __LINE__ );
-		$this->_redirect_after_action( $success, 'Admin Options', 'updated', array() );
+
+		$what = 'Admin Options';
+		$success = $this->_update_general_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$this->_redirect_after_action( $success, $what, 'updated', array() );
 		
 	}
 
@@ -461,34 +565,34 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	/**
 	 * updates user_meta
 	 *
+	 * @param string $tab
 	 * @param array $data
-	 * @return string
+	 * @param string $file	file where error occured
+	 * @param string $func function  where error occured
+	 * @param string $line	line no where error occured
+	 * @return boolean
 	 */
-	private function _update_general_settings( $data, $file, $func, $line ) {
+	private function _update_general_settings( $tab, $data, $file = '', $func = '', $line = '' ) {
 		global $espresso_wp_user;
 		// grab existing org options
 		$org_options = get_user_meta( $espresso_wp_user, 'events_organization_settings', TRUE );
-//		printr( $data, '$data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( $org_options, '$org_options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		if ( ! empty( $org_options )) {
 		// make sure everything is in arrays
 		$org_options = is_array( $org_options ) ? $org_options : array( $org_options );
 		$data = is_array( $data ) ? $data : array( $data );
 		foreach ( $data as $key => $value ) {
-			$data[ $key ] = addslashes( html_entity_decode( $value, ENT_QUOTES, 'UTF-8' ));
+			$data[ $key ] = is_array( $value ) ? $value : addslashes( html_entity_decode( $value, ENT_QUOTES, 'UTF-8' ));
 		}
 		// overwrite existing org options with new data
 		$data = array_merge( $org_options, $data );
 		// and save it
 		if ( update_user_meta( $espresso_wp_user, 'events_organization_settings', $data )) {
-			EE_Error::add_success( __('Organization details saved', 'event_espresso'));
+			EE_Error::add_success( sprintf( __('%s have been successfully updated.', 'event_espresso'), $tab ));
 			return TRUE;
 		} else {
-			$user_msg = __('Unable to save Organization details.', 'event_espresso');
+			$user_msg = sprintf( __('An error occured. The %s were not updated.', 'event_espresso'), $tab );
 			EE_Error::add_error( $user_msg, $file, $func, $line  );
 			return FALSE;
 		}			
-//		}
 
 	}
 
