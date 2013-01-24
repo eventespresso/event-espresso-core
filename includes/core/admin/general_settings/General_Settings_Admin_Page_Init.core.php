@@ -45,7 +45,7 @@ class General_Settings_Admin_Page_Init extends EE_Admin_Page_Init {
 
 	protected function _set_init_properties() {
 		$this->label = GEN_SET_LABEL;
-		$this->menu_label = GEN_SET_LABEL;
+		$this->menu_label = __('General', 'event_espresso');
 		$this->menu_slug = GEN_SET_PG_SLUG;
 		$this->capability = 'administrator';
 	}
