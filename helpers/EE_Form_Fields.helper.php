@@ -346,28 +346,4 @@ class EE_Form_Fields {
 	}
 
 
-
-	/**
-	 * just takes a given name and echoes the "selected" option if style is selected
-	 *
-	 * todo: this needs abstracted so its more generic and usable in other cases.
-	 *
-	 * @static
-	 * @access public
-	 * @param  string $name name of style
-	 * @return mixed(bool|string)       if not a match, false. Otherwise echo 'selected="selected"' string.
-	 */
-	public static function espresso_style_is_selected($name) {
-		global $org_options;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		$input_item = $name;
-		$option_selections = isset($org_options['themeroller']) && !empty($org_options['themeroller']) ? array($org_options['themeroller']['themeroller_style']) : array();
-		if (!in_array($input_item, $option_selections)) {
-			return false;
-		} else {
-			echo 'selected="selected"';
-			return;
-		}
-	}
-
 }//end class EE_Form_Fields
