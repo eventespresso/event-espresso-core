@@ -21,7 +21,8 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Registration {
+require_once ( 'EE_Base_Class.class.php' );
+class EE_Registration extends EE_Base_Class{
 	
     /**
     *	Registration ID
@@ -478,7 +479,9 @@ class EE_Registration {
 	*		save object to db
 	* 
 	* 		@access		private
-	* 		@param		array		$where_cols_n_values		
+	* 		@param		array		$where_cols_n_values
+	*		@return int, 1 on a successful update, the ID of
+	*					the new entry on insert; 0 on failure				
 	*/	
 	private function _save_to_db( $where_cols_n_values = FALSE ) {
 		
@@ -523,49 +526,6 @@ class EE_Registration {
 	public function update() {
 		return $this->_save_to_db( array( 'TXN_ID' => $this->_TXN_ID ));
 	}
-
-
-
-
-
-	/**
-	*		insert new db record
-	* 
-	* 		@access		public
-	*/	
-	public function insert() {
-		return $this->_save_to_db();
-	}
-
-
-
-
-
-
-	/**
-	*		check that var has been passed to method
-	* 
-	* 		@access		private
-	*/	
-	private function _check_for( $var = FALSE, $var_name ) {
-
-		if ( ! $var ) {
-			$msg = sprintf( __( 'No value for %s was supplied.', 'event_espresso' ), $var_name );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		} else {
-			return TRUE;
-		}
-	}
-
-
-
-
-
-
-
-
-
 
 	/**
 	*		get Registration ID

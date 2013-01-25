@@ -7,24 +7,32 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
  * 		@return 		void
  */
 function event_espresso_txn() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	global $wpdb, $org_options, $espresso_wp_user, $payment_settings;
+
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
+	ob_start();
+	global $wpdb, $org_options, $espresso_wp_user, $payment_settings, $espresso_content;
+	
 	$payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', true);
 	$active_gateways = get_user_meta($espresso_wp_user, 'active_gateways', true);
-	if (empty($active_gateways)) {
+	// check gateways
+	if ( empty( $active_gateways )) {
 		$subject = __('Website Payment IPN Not Setup', 'event_espresso');
 		$body = sprintf(__('The IPN for %s at %s has not been properly setup and is not working. Date/time %s', 'event_espresso'), $org_options['organization'], home_url(), date('g:i A'));
-		wp_mail($org_options['contact_email'], $subject, $body);
+		wp_mail( $org_options['contact_email'], $subject, $body );
 		return;
 	}
-	foreach ($active_gateways as $gateway => $path) {
-		require_once($path . "/init.php");
+	// load active gateways
+	foreach ( $active_gateways as $gateway => $path ) {
+		require_once( $path . "/init.php" );
 	}
+	
 	$payment_data['attendee_id'] = apply_filters('filter_hook_espresso_transactions_get_attendee_id', '');
-	if ($payment_data['attendee_id'] == "") {
-		echo "ID not supplied.";
+	
+	if ( empty( $payment_data['attendee_id'] )) {
+		echo __( 'An error occured. Required identification information was not supplied.', 'event_espresso' );
 	} else {
+	
 		$payment_data = apply_filters('filter_hook_espresso_pretransaction_data_processing', $payment_data);
 		$payment_data = apply_filters('filter_hook_espresso_process_transaction', $payment_data);
 		$payment_data = apply_filters('filter_hook_espresso_get_total_cost', $payment_data);
@@ -39,10 +47,17 @@ function event_espresso_txn() {
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/payment_overview.php");
 		}
 	}
+	
 	$_REQUEST['page_id'] = $org_options['return_url'];
+	$espresso_content = ob_get_clean();
+	add_shortcode('ESPRESSO_TXN_PAGE', 'return_espresso_content');
+
 	espresso_clear_session();
+	
+	//$espresso_content = 'WHY HALLLOOO THAR!!!';
+//	return $espresso_content;
+		
 }
-add_shortcode('ESPRESSO_TXN_PAGE', 'event_espresso_txn');
 
 
 
