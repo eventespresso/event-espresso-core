@@ -24,7 +24,7 @@
 
 //Define the version of the plugin
 function espresso_calendar_version() {
-	return '2.0.4';
+	return '2.0.5';
 }
 
 //Update notifications
@@ -68,6 +68,8 @@ $espresso_calendar = get_option('espresso_calendar_settings');
 
 //Install the plugin
 function espresso_calendar_install() {
+	$check_settings = get_option('espresso_calendar_settings');
+	if (!empty($check_settings)) return;//Keeps fom overwriting the settings
 	$espresso_calendar = array(
 			'calendar_pages' => "0",
 			'espresso_page_post' => "R",
