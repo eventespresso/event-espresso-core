@@ -320,6 +320,13 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 				</tr>
 			</tbody>
 		</table>
+				
+		<div id="unique_id_info" style="display:none">
+			<h2><?php _e('Unique Category Identifier', 'event_espresso'); ?></h2>
+			<p><?php _e('This should be a unique identifier for the category. Example: "category1" (without qoutes.)', 'event_espresso'); ?></p>
+			<p>The<?php _e(' unique ID can also be used in individual pages using the', 'event_espresso'); ?>  	[EVENT_ESPRESSO_CATEGORY event_category_id="category_identifier"] <?php _e('shortcode', 'event_espresso'); ?>.</p>
+		</div>	
+		
 		<?php 
 		$content = ob_get_contents();
 		ob_end_clean();
@@ -388,6 +395,13 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 				</tr>
 			</tbody>
 		</table>
+
+		<div id="unique_id_info" style="display:none">
+			<h2><?php _e('Unique Category Identifier', 'event_espresso'); ?></h2>
+			<p><?php _e('This should be a unique identifier for the category. Example: "category1" (without qoutes.)', 'event_espresso'); ?></p>
+			<p>The<?php _e(' unique ID can also be used in individual pages using the', 'event_espresso'); ?>  	[EVENT_ESPRESSO_CATEGORY event_category_id="category_identifier"] <?php _e('shortcode', 'event_espresso'); ?>.</p>
+		</div>	
+
 		<?php
 		$content = ob_get_contents();
 		ob_end_clean();
