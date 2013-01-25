@@ -78,7 +78,7 @@ class EEM_Question_Group extends EEM_TempBase {
 	* 		@param		$ID		
 	*		@return 		mixed		array on success, FALSE on fail
 	*/	
-	public function delete_question_group_by_ID( $ID = FALSE ) {
+	public function delete_by_ID( $ID = FALSE ) {
 		if ( ! $ID ) {
 			return FALSE;
 		}		

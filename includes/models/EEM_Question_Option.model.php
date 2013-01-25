@@ -69,7 +69,7 @@ class EEM_Question_Option extends EEM_TempBase {
 	* 		@param		$ID		
 	*		@return 		mixed		array on success, FALSE on fail
 	*/	
-	public function delete_question_option_by_ID( $ID = FALSE ) {
+	public function delete_by_ID( $ID = FALSE ) {
 		if ( ! $ID ) {
 			return FALSE;
 		}		

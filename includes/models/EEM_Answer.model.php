@@ -65,7 +65,7 @@ class EEM_Answer extends EEM_TempBase {
 	* 		@param		$ANS_ID		
 	*		@return 		mixed		array on success, FALSE on fail
 	*/	
-	public function delete_answer_by_ID( $ANS_ID = FALSE ) {
+	public function delete_by_ID( $ANS_ID = FALSE ) {
 
 		if ( ! $ANS_ID ) {
 			return FALSE;

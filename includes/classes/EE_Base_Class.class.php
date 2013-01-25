@@ -318,6 +318,25 @@ abstract class EE_Base_Class extends EE_Base{
 	}
 	
 	/**
+	 * Removes all caches on relations. E.g., on EE_Question, if you've previously asked for
+	 * all teh related EE_Answers -and had that list automatically cahced- and remove one of those EE_Answers, this function will clear that cache.
+	 * @param string $specificRelationName if you know exactly which relation cache needs to be cleared. If not set, all of them will be cleared.
+	 */
+	public function clear_relation_cache($specificRelationName=null){
+		if(!$specificRelationName){
+			$model=$this->_get_model();
+			$relations=array_keys($model->relation_settings());
+			foreach($relations as $relationName){
+				$privateAttributeName=$this->_get_private_attribute_name($relationName);
+				$this->$privateAttributeName=null;
+			}
+		}else{
+			$privateAttributeName=$this->_get_private_attribute_name($specificRelationName);
+			$this->$privateAttributeName=null;
+		}
+	}
+	
+	/**
 	 * Function through which all other calls to get many related model objects is passed.
 	 * Handy for common lgoci between them, eg: caching.
 	 * @param string $relationName
@@ -345,10 +364,10 @@ abstract class EE_Base_Class extends EE_Base{
 		$model=$this->_get_model();
 		$success= $model->add_relation_to($this, $otherObjectModel, $relationName);
 		if($success){
-			$privateRelationName=$this->_get_private_attribute_name($relationName);
 			//invalidate cached relations
 			//@todo: this could be optimized. Instead, we could just add $otherObjectModel toteh array if it's an array, or set it if it isn't an array
-			$this->$privateRelationName=null;
+			$this->clear_relation_cache($relationName);
+			$otherObjectModel->clear_relation_cache();
 			return $success;
 		}else{
 			return $success;
@@ -365,10 +384,10 @@ abstract class EE_Base_Class extends EE_Base{
 		$model=$this->_get_model();
 		$success= $model->remove_relationship_to($this, $otherObjectModel, $relationName);
 		if($success){
-			$privateRelationName=$this->_get_private_attribute_name($relationName);
 			//invalidate cached relations
 			//@todo: this could be optimized. Instead, we could just remove $otherObjectModel toteh array if it's an array, or unset it if it isn't an array
-			$this->$privateRelationName=null;
+			$this->clear_relation_cache($relationName);
+			$otherObjectModel->clear_relation_cache();
 			return $success;
 		}else{
 			return $success;
@@ -381,6 +400,20 @@ abstract class EE_Base_Class extends EE_Base{
 	public function ID(){
 		$r=$this->get_primary_key();
 		return $r;
+	}
+	
+	/**
+	 * Deletes this model object. That may mean just 'soft deleting' it though.
+	 * @return boolean success
+	 */
+	public function delete(){
+		$model=$this->_get_model();
+		$result=$model->delete_by_ID($this->ID());
+		if($result){
+			return true;
+		}else{
+			return false;
+		}
 	}
 	
 	/**
