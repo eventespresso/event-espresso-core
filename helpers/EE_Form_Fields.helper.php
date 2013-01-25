@@ -312,7 +312,7 @@ class EE_Form_Fields {
 
 		$field = '<select name="' . EE_Formatter::ee_tep_output_string($name) . '"';
 		//Debug
-		//echo "<pre>".print_r($values,true)."</pre>";
+		//printr( $values, '$values  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		if ( EE_Formatter::ee_tep_not_null($parameters))
 			$field .= ' ' . $parameters;
 		if ($autosize) {
@@ -344,5 +344,6 @@ class EE_Form_Fields {
 
 		return $field;
 	}
+
 
 }//end class EE_Form_Fields

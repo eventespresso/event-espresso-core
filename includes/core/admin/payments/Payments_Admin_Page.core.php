@@ -37,7 +37,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _init_page_props() {
-		$this->page_slug = 'payment_gateways';
+		$this->page_slug = EE_PAYMENTS_PG_SLUG;
 		$this->page_label = __('Payment Gateways', 'event_espresso');
 	}
 
@@ -60,6 +60,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
 			'default' => '_gateway_settings',
+			'payment_settings' => '_payment_settings',
 			'developers' => '_developers_section',
 			'affiliate' => '_affiliate_settings',
 			'save_aff_s' => array(
@@ -75,7 +76,14 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$this->_page_config = array(
 			'default' => array(
 				'nav' => array(
-					'label' => __('Gateways', 'event_espresso'),
+					'label' => __('Payment Methods', 'event_espresso'),
+					'order' => 10
+					),
+				'metaboxes' => array( '_espresso_news_post_box'),
+				),
+			'payment_settings' => array(
+				'nav' => array(
+					'label' => __('Settings', 'event_espresso'),
 					'order' => 10
 					),
 				'metaboxes' => array( '_espresso_news_post_box'),
@@ -123,7 +131,6 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		//styles
 		wp_enqueue_style('ee-text-links');
 		wp_enqueue_style('espresso_payments');
-
 		//scripts
 		wp_enqueue_script('ee-text-links');
 	}
@@ -155,6 +162,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		}
 		
 		$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
+
 		$activate_trigger = $deactivate_trigger = FALSE;
 		//let's assemble the array for the _tab_text_links helper
 		foreach ( $gateway_data['payment_settings'] as $gateway => $settings ) {
@@ -168,7 +176,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			$gateways[$gateway] = array(
 				'label' => isset($settings['display_name']) ? $settings['display_name'] : ucwords( str_replace( '_', ' ', $gateway ) ),
 				'class' => array_key_exists( $gateway, $gateway_data['active_gateways'] ) ? 'gateway-active' : '',
-				'href' => 'espresso_' . str_replace(' ', '_', $gateway) . '_gateway_settings',
+				'href' => 'espresso_' . str_replace(' ', '_', $gateway) . '_payment_settings',
 				'title' => __('Modify this Gateway', 'event_espresso'),
 				'slug' => $gateway
 				);
@@ -178,12 +186,36 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$default = $activate_trigger ? $activate_trigger : FALSE;
 		$default = $deactivate_trigger ? $deactivate_trigger : $activate_trigger;
 
-		if ( !$default )
+		if ( ! $default ) {
 			$default = !empty( $gateway_data['active_gateways'] ) ? key($gateway_data['active_gateways']) : 'Paypal_Standard';
+		}
+		
+		$gateways = isset( $gateways ) ? $gateways : array();
+			
 		$this->_template_args['admin_page_header'] = EE_Tabbed_Content::tab_text_links( $gateways, 'gateway_links', '|', $default );
 		$this->display_admin_page_with_sidebar();
 
 	}
+
+
+
+	protected function _payment_settings() {
+
+		global $org_options;
+		$this->_template_args['values'] = $this->_yes_no_values;
+		
+		$this->_template_args['show_pending_payment_options'] = isset( $org_options['show_pending_payment_options'] ) ? absint( $org_options['show_pending_payment_options'] ) : FALSE;
+//		$data['expire_on_registration_end'] = isset( $this->_req_data['expire_on_registration_end'] ) ? absint( $this->_req_data['expire_on_registration_end'] ) : FALSE;
+
+		$this->_set_add_edit_form_tags( 'update_espresso_page_settings' );
+		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
+		$this->_template_args['admin_page_content'] = espresso_display_template( EE_PAYMENTS_TEMPLATE_PATH . 'payment_settings.template.php', $this->_template_args, TRUE );
+		$this->display_admin_page_with_sidebar();	
+		
+	}
+
+
+
 
 
 

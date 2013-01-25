@@ -92,7 +92,7 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 		<tr>
 			<th><label for="currency_format">
 					<?php _e('Country Currency', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', '2co_currency_info'); ?>
+					<?php do_action('action_hook_espresso_help', '2co_currency_info'); ?>
 				</label></th>
 			<td><select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
 					<option value="<?php echo $this->_payment_settings['currency_format']; ?>"><?php echo $this->_payment_settings['currency_format']; ?></option>
@@ -171,7 +171,7 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 		<tr>
 			<th><label for="2co_use_sandbox">
 					<?php _e('Turn on Debugging Using the 2checkout Sandbox', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', '2co_sandbox_info'); ?>
+					<?php do_action('action_hook_espresso_help', '2co_sandbox_info'); ?>
 				</label></th>
 			<td><?php echo EE_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
 		</tr>
@@ -180,7 +180,7 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 			<th>
 				<label for="2co_button_url">
 					<?php _e('Button Image URL', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', '2co_button_image'); ?>
+					<?php do_action('action_hook_espresso_help', '2co_button_image'); ?>
 				</label>
 			</th>
 			<td>

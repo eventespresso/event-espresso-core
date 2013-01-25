@@ -16,19 +16,19 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * Forms_Admin_Page
+ * Registration_Forms_Admin_Page
  *
  * This contains the logic for setting up the Custom Forms related pages.  Any methods without phpdoc comments have inline docs with parent class. 
  *
  * NOTE:  TODO: This is a straight conversion from the legacy 3.1 questions and question groups related pages.  It is NOT optimized and will need modification to fully use the new system (and also will need adjusted when Questions and Questions groups model is implemented)
  *
- * @package		Forms_Admin_Page
- * @subpackage	includes/core/admin/Forms_Admin_Page.core.php
+ * @package		Registration_Forms_Admin_Page
+ * @subpackage	includes/core/admin/Registration_Forms_Admin_Page.core.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
-class Forms_Admin_Page extends EE_Admin_Page {
+class Registration_Forms_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * _question
@@ -53,7 +53,7 @@ class Forms_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _init_page_props() {
-		$this->page_slug = 'ee_custom_forms';
+		$this->page_slug = 'registration_forms';
 		$this->page_label = __('Registration Forms', 'event_espresso');
 	}
 
@@ -170,7 +170,7 @@ class Forms_Admin_Page extends EE_Admin_Page {
 					'label' => __('Questions'),
 					'order' => 10
 					),
-				'list_table' => 'Forms_Questions_Admin_List_Table',
+				'list_table' => 'Registration_Forms_Questions_Admin_List_Table',
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
 				),
 			'question_groups' => array(
@@ -178,7 +178,7 @@ class Forms_Admin_Page extends EE_Admin_Page {
 					'label' => __('Question Groups'),
 					'order' => 20
 					),
-				'list_table' => 'Forms_Question_Groups_Admin_List_Table',
+				'list_table' => 'Registration_Forms_Question_Groups_Admin_List_Table',
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
 				),
 			'add_question' => array(
@@ -378,4 +378,4 @@ class Forms_Admin_Page extends EE_Admin_Page {
 	public function get_trashed_question_groups( $perpage, $count = FALSE ) {}
 
 
-} //ends Forms_Admin_Page class
+} //ends Registration_Forms_Admin_Page class

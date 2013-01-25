@@ -51,8 +51,8 @@ function espresso_optional_settings_meta_box() {
 				<tr>
 					<th><label for="default_payment_status">
 							<?php _e(' Default Payment Status', 'event_espresso'); ?>
-							<?php echo apply_filters('filter_hook_espresso_help', 'payment_status_info') ?> </label></th>
-					<td><?php echo select_input('default_payment_status', $default_payment_status, $org_options['default_payment_status']) ?><br />
+							<?php do_action('action_hook_espresso_help', 'payment_status_info') ?> </label></th>
+					<td><?php echo select_input('default_payment_status', $default_payment_status, $org_options['default_reg_status']) ?><br />
 						<span class="description">
 							<?php _e('This value will be automatically filled in for each person\'s payment status,<br />
 until payment is made, for each event.', 'event_espresso'); ?>
@@ -188,14 +188,14 @@ until payment is made, for each event.', 'event_espresso'); ?>
 				</tr>
 				<tr>
 					<th><label>
-							<?php _e('Enable Full Logging', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'full_logging_info'); ?>
+							<?php _e('Enable Full Logging', 'event_espresso'); ?> <?php do_action('action_hook_espresso_help', 'full_logging_info'); ?>
 						</label></th>
 					<td><?php echo select_input('full_logging', $values, isset($org_options['full_logging']) ? $org_options['full_logging'] : false); ?></td>
 				</tr>
 				<tr>
 					<th><label>
 							<?php _e('Enable Remote Logging', 'event_espresso'); ?>
-							<?php echo apply_filters('filter_hook_espresso_help', 'remote_logging_info'); ?></label></th>
+							<?php do_action('action_hook_espresso_help', 'remote_logging_info'); ?></label></th>
 					<td><?php echo select_input('remote_logging', $values, isset($org_options['remote_logging']) ? $org_options['remote_logging'] : false); ?><br />
 						<span class="description">
 							<?php _e('Send debugging data to the remote URL below.', 'event_espresso'); ?>
@@ -204,7 +204,7 @@ until payment is made, for each event.', 'event_espresso'); ?>
 				<tr <?php //if (!empty($_REQUEST['create_postbin'])) echo ' class="yellow_inform"';   ?>>
 					<th>								<label>
 							<?php _e('Remote Logging URL', 'event_espresso'); ?>
-							<?php echo apply_filters('filter_hook_espresso_help', 'remote_logging_url_info'); ?><?php //if (!empty($_REQUEST['create_postbin'])) echo '<br /><span class="red_text">'.__('Don\'t forget to save!', 'event_espresso').'</span>'; ?></label></th>
+							<?php do_action('action_hook_espresso_help', 'remote_logging_url_info'); ?><?php //if (!empty($_REQUEST['create_postbin'])) echo '<br /><span class="red_text">'.__('Don\'t forget to save!', 'event_espresso').'</span>'; ?></label></th>
 					<td><input name="remote_logging_url" id="remote_logging_url" size="20" class="regular-text" type="text" value="<?php echo $remote_logging_url ?>" /><br />
 						<span class="description">
 							<?php _e('Example: http://www.postbin.org/MY_UNIQUE_ID', 'event_espresso'); ?>
@@ -219,7 +219,7 @@ until payment is made, for each event.', 'event_espresso'); ?>
 				<tr>
 					<th><label>
 							<?php _e('Link to Event Espresso in your Registration Page', 'event_espresso'); ?>
-							<?php apply_filters('filter_hook_espresso_help', 'affiliate_info'); ?>
+							<?php do_action('action_hook_espresso_help', 'affiliate_info'); ?>
 						</label></th>
 					<td><?php echo select_input('show_reg_footer', $values, isset($org_options['show_reg_footer']) ? $org_options['show_reg_footer'] : true); ?></td>
 				</tr>

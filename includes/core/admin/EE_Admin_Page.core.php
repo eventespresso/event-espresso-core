@@ -87,6 +87,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	//for holding incoming request data
 	protected $_req_data;
 
+	// yes / no array for admin form fields
+	protected $_yes_no_values = array();
 
 
 
@@ -97,6 +99,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 		@return void
 	 */
 	public function __construct() {
+
+		$this->_yes_no_values = array(
+			array('id' => TRUE, 'text' => __('Yes', 'event_espresso')),
+			array('id' => FALSE, 'text' => __('No', 'event_espresso'))
+		);
 
 		//set initial page props (child method)
 		$this->_init_page_props();
@@ -1236,8 +1243,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @param	int		$id			id attached to the item published
 	 * @param	string	$delete	page route callback for the delete action
 	 * @param	string	$post_save_redirect_URL	custom URL to redirect to after Save & Close has been completed
+	 * @param	boolean	$both_btns	whether to display BOTH the "Save & Close" and "Save" buttons or just the Save button
 	 */	
-	protected function _set_publish_post_box_vars( $name = NULL, $id = FALSE, $delete = FALSE, $save_close_redirect_URL = NULL ) {
+	protected function _set_publish_post_box_vars( $name = NULL, $id = FALSE, $delete = FALSE, $save_close_redirect_URL = NULL, $both_btns = TRUE ) {
 
 		if ( empty( $name ) || ! $id ) {
 			//user error msg
@@ -1249,7 +1257,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		// if Save & Close, use a custom redirect URL or default to the main page?
 		$save_close_redirect_URL = ! empty( $save_close_redirect_URL ) ? $save_close_redirect_URL : $this->_admin_base_url;
 		// create the Save & Close and Save buttons
-		$this->_set_save_buttons(TRUE, array(), array(), $save_close_redirect_URL );
+		$this->_set_save_buttons( $both_btns, array(), array(), $save_close_redirect_URL );
 		//if we have extra content set let's add it in if not make sure its empty
 		$this->_template_args['publish_box_extra_content'] = isset( $this->_template_args['publish_box_extra_content'] ) ? $this->_template_args['publish_box_extra_content'] : '';
 

@@ -23,19 +23,6 @@
  */
 class Pricing_Admin_Page extends EE_Admin_Page {
 
-
-	/**
-	 * _category
-	 * This will hold the category object for category_details screen.
-	 *
-	 * @access protected
-	 * @var object
-	 */
-	protected $_category;
-
-
-
-
 	/**
 	 * 	constructor
 	 * 	@Constructor

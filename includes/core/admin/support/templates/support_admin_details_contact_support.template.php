@@ -2,7 +2,7 @@
 <h4>Before Contacting Support</h4>
 <p>Please understand that our primary goal is to offer Event Espresso as a very low cost solution compared to building your own system or using a 3rd party service to handle your registrations.</p><p> As with most open source programs (and closed licensed programs), chances are you will find the occasional bug, glitch, white screen of death, and/or general failure. Please don't panic!</p>
 <p>If your problems are not urgent, please post in our <a href="http://eventespresso.com/forums/" target="_blank">support forums</a>. If you need immediate help. Please purchase a support token below, at which time you can schedule time with a dedicated support tech or core developer.</p>
-<p class="attention-block"><strong class="red_text">
+<p class="ee-attention"><strong class="red_text">
 	<?php _e('Attention:', 'event_espresso'); ?>
 	</strong><br />
 <?php _e('When requesting support. Please copy and paste the details displayed of the <a href="admin.php?page=support#details">Important Information</a> section above. This will help us determine potential problems with your server, WordPress installation, and/or the Event Espresso plugin. Please also include a list (or screenshot) of all <a href="plugins.php?plugin_status=active">active plugins</a>.', 'event_espresso'); ?>

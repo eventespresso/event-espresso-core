@@ -8,7 +8,7 @@ function espresso_template_map_confg_meta_box() {
 	?>
 	<div class="padding">
 		<h4>
-			<?php apply_filters('filter_hook_espresso_help', 'gmaps_info'); ?>
+			<?php do_action('action_hook_espresso_help', 'gmaps_info'); ?>
 		</h4>
 
 		<div id="gmap-reg-events-settings">

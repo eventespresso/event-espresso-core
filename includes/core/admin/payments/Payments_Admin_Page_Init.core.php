@@ -31,17 +31,21 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 
 
 	public function __construct() {
-		//define some event categories related constants
-		define( 'EE_PAYMENTS_ADMIN_URL', admin_url('admin.php?page=payment_gateways') );
-		define( 'EE_PAYMENTS_ASSETS_URL', EE_CORE_ADMIN_URL . 'payments/assets/');
+		//define some page related constants
+		define( 'EE_PAYMENTS_PG_SLUG', 'payment_settings' );
+		define( 'EE_PAYMENTS_ADMIN_URL', admin_url( 'admin.php?page=' . EE_PAYMENTS_PG_SLUG ));
+		define( 'EE_PAYMENTS_ADMIN', EE_CORE_ADMIN . 'payments' . DS );	
+		define( 'EE_PAYMENTS_TEMPLATE_PATH', EE_PAYMENTS_ADMIN . 'templates' . DS );	
+		define( 'EE_PAYMENTS_ASSETS_URL', EE_CORE_ADMIN_URL . 'payments/assets/' );
+
 
 		parent::__construct();
 	}
 
 	protected function _set_init_properties() {
-		$this->label = __('Event Payments', 'event_espresso');
+		$this->label = __('Payments', 'event_espresso');
 		$this->menu_label = __('Payments', 'event_espresso');
-		$this->menu_slug = 'payment_gateways';
+		$this->menu_slug = EE_PAYMENTS_PG_SLUG;
 	}
 
 	public function get_menu_map() {

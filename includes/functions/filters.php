@@ -12,10 +12,12 @@ add_filter('admin_footer_text', 'espresso_admin_footer');
 
 
 function espresso_help_popup($name) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-	return '<a class="thickbox" href="#TB_inline?height=400&amp;width=500&amp;inlineId=' . $name . '" target="_blank"><span class="question">[?]</span></a>';
+	wp_enqueue_style('thickbox');
+	wp_enqueue_script('media-upload');
+	wp_enqueue_script('thickbox');
+	echo '<a class="thickbox" href="#TB_inline?height=400&amp;width=500&amp;inlineId=' . $name . '" target="_blank"><span class="question">[?]</span></a>';
 }
-add_filter('filter_hook_espresso_help', 'espresso_help_popup');
+add_action('action_hook_espresso_help', 'espresso_help_popup');
 
 
 
