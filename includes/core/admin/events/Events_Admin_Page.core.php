@@ -1040,9 +1040,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 					$group_name = $question_group->group_name;
 					$checked = (is_array($add_attendee_question_groups) && array_key_exists($question_group_id, $add_attendee_question_groups)) || ($question_group->system_group == 1) ? ' checked="checked" ' : '';
 
-					$visibility = $question_group->system_group == 1 ? 'style="visibility:hidden"' : '';
+					$visibility = $question_group->system_group == 1 ? ' style="visibility:hidden"' : '';
 
-					$html .= '<p id="event-question-group-' . $question_group_id . '"><input value="' . $question_group_id . '" type="checkbox" ' . $visibility . ' name="add_attendee_question_groups[' . $question_group_id . ']" ' . $checked . ' /> <a href="admin.php?page=form_groups&amp;action=edit_group&amp;group_id=' . $question_group_id . '" title="edit" target="_blank">' . $group_name . "</a></p>";
+					$html .= '
+					<p id="event-question-group-' . $question_group_id . '">
+						<input value="' . $question_group_id . '" type="checkbox"' . $visibility . ' name="add_attendee_question_groups[' . $question_group_id . ']"' . $checked . ' /> 
+						<a href="admin.php?page=form_groups&amp;action=edit_group&amp;group_id=' . $question_group_id . '" title="edit" target="_blank">' . $group_name . "</a>
+					</p>";
 				}
 				if ($this->_event->num_rows > 10) {
 					$top_div = '<div style="height:250px;overflow:auto;">';
@@ -1072,58 +1076,80 @@ class Events_Admin_Page extends EE_Admin_Page {
 		);
 		global $wpdb;
 		?>
-		<div class="inside">
+	  <div class="inside">
 
-			<p><strong><?php _e('Early Registration Discount', 'event_espresso'); ?></strong></p>
+	  	<p>
+		  	<strong>
+		  		<?php _e('Early Registration Discount', 'event_espresso'); ?>
+	  		</strong>
+	  	</p>
 
-			<p><label for="early_disc_date"><?php _e('End Date:', 'event_espresso'); ?></label><input type="text" class="datepicker" size="12" id="early_disc_date" name="early_disc_date" value="<?php echo isset($this->_event->early_disc_date) ? $this->_event->early_disc_date : ''; ?>"/> </p>
+	  	<p>
+	  		<label for="early_disc_date">
+		  		<?php _e('End Date:', 'event_espresso'); ?>
+	  		</label>
+			<input type="text" class="datepicker" size="12" id="early_disc_date" name="early_disc_date" value="<?php echo isset($this->_event->early_disc_date) ? $this->_event->early_disc_date : ''; ?>"/>
+	  	</p>
 
-			<p class="promo-amnts">
-				<label for="early_disc"><?php _e('Amount:', 'event_espresso'); ?></label><input type="text" size="3" id="early_disc" name="early_disc" value="<?php echo isset($this->_event->early_disc) ? $this->_event->early_disc : ''; ?>" /> <br /><span class="description"><?php _e('(Leave blank if not applicable)', 'event_espresso'); ?></span>
-			</p>
+	  	<p class="promo-amnts">
+	  		<label for="early_disc">
+		  		<?php _e('Amount:', 'event_espresso'); ?>
+	  		</label>
+			<input type="text" size="3" id="early_disc" name="early_disc" value="<?php echo isset($this->_event->early_disc) ? $this->_event->early_disc : ''; ?>" /> <br />
+	  		<span class="description">
+		  		<?php _e('(Leave blank if not applicable)', 'event_espresso'); ?>
+	  		</span>
+	  	</p>
 
-			<p>
-				<label><?php _e('Percentage:', 'event_espresso') ?></label>
+	  	<p>
+	  		<label>
+		  		<?php _e('Percentage:', 'event_espresso') ?>
+	  		</label>
+	  		<?php echo EE_Form_Fields::select_input('early_disc_percentage', $values, !isset($this->_event->early_disc_percentage) ? '' : $this->_event->early_disc_percentage); ?>
+	  	</p>
 
-				<?php echo EE_Form_Fields::select_input('early_disc_percentage', $values, !isset($this->_event->early_disc_percentage) ? '' : $this->_event->early_disc_percentage); ?>
-			</p>
+	  	<p>
+		  	<strong>
+		  		<?php _e('Promotion Codes', 'event_espresso'); ?>
+	  		</strong>
+	  	</p>
+	  	<p class="disc-codes">
+	  		<label>
+		  		<?php _e('Allow discount codes?', 'event_espresso'); ?> <?php do_action('action_hook_espresso_help', 'coupon_code_info'); ?>
+	  		</label>
+	  		<?php echo EE_Form_Fields::select_input('use_coupon_code', $values, !isset($this->_event->use_coupon_code) || $this->_event->use_coupon_code == '' ? false : $this->_event->use_coupon_code); ?>
+	  	</p>
 
-			<p><strong><?php _e('Promotion Codes', 'event_espresso'); ?></strong></p>
-			<p class="disc-codes">
-				<label><?php _e('Allow discount codes?', 'event_espresso'); ?> <?php do_action('action_hook_espresso_help', 'coupon_code_info'); ?></label>
-				<?php echo EE_Form_Fields::select_input('use_coupon_code', $values, !isset($this->_event->use_coupon_code) || $this->_event->use_coupon_code == '' ? false : $this->_event->use_coupon_code); ?>
-			</p>
+	  	<?php
+	  	$sql = "SELECT * FROM " . EVENTS_DISCOUNT_CODES_TABLE;
+	  	if (function_exists('espresso_member_data') && !empty($this->_event->event_id)) {
+	  		$wpdb->get_results("SELECT wp_user FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $this->_event->event_id . "'");
+	  		$this->_event->wp_user = $wpdb->last_result[0]->wp_user != '' ? $wpdb->last_result[0]->wp_user : espresso_member_data('id');
+	  		$sql .= " WHERE ";
+	  		if ($this->_event->wp_user == 0 || $this->_event->wp_user == 1) {
+	  			$sql .= " (wp_user = '0' OR wp_user = '1') ";
+	  		}else {
+	  			$sql .= " wp_user = '" . $this->_event->wp_user . "' ";
+	  		}
+	  	}
+	  	$event_discounts = $wpdb->get_results($sql);
+	  	if (!empty($event_discounts)) {
+	  		foreach ($event_discounts as $event_discount) {
+	  			$discount_id        = $event_discount->id;
+	  			$coupon_code        = $event_discount->coupon_code;
 
-			<?php
-			$sql = "SELECT * FROM " . EVENTS_DISCOUNT_CODES_TABLE;
-			if (function_exists('espresso_member_data') && !empty($this->_event->event_id)) {
-				$wpdb->get_results("SELECT wp_user FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $this->_event->event_id . "'");
-				$this->_event->wp_user = $wpdb->last_result[0]->wp_user != '' ? $wpdb->last_result[0]->wp_user : espresso_member_data('id');
-				$sql .= " WHERE ";
-				if ($this->_event->wp_user == 0 || $this->_event->wp_user == 1) {
-					$sql .= " (wp_user = '0' OR wp_user = '1') ";
-				} else {
-					$sql .= " wp_user = '" . $this->_event->wp_user . "' ";
-				}
-			}
-			$event_discounts = $wpdb->get_results($sql);
-			if (!empty($event_discounts)) {
-				foreach ($event_discounts as $event_discount) {
-					$discount_id = $event_discount->id;
-					$coupon_code = $event_discount->coupon_code;
+	  			$in_event_discounts = !empty($this->_event->event_id) ? $wpdb->get_results("SELECT * FROM " . EVENTS_DISCOUNT_REL_TABLE . " WHERE event_id='" . $this->_event->event_id . "' AND discount_id='" . $discount_id . "'") : array();
+	  			$in_event_discount = '';
+	  			foreach ($in_event_discounts as $in_discount) {
+	  				$in_event_discount = $in_discount->discount_id;
+	  			}
+	  			echo '<p class="event-disc-code" id="event-discount-' . $discount_id . '"><label for="in-event-discount-' . $discount_id . '" class="selectit"><input value="' . $discount_id . '" type="checkbox" name="event_discount[]" id="in-event-discount-' . $discount_id . '"' . ($in_event_discount == $discount_id ? ' checked="checked"' : "" ) . '/> ' . $coupon_code . "</label></p>";
+	  		}
+	  	}
 
-					$in_event_discounts = !empty($this->_event->event_id) ? $wpdb->get_results("SELECT * FROM " . EVENTS_DISCOUNT_REL_TABLE . " WHERE event_id='" . $this->_event->event_id . "' AND discount_id='" . $discount_id . "'") : array();
-					$in_event_discount = '';
-					foreach ($in_event_discounts as $in_discount) {
-						$in_event_discount = $in_discount->discount_id;
-					}
-					echo '<p class="event-disc-code" id="event-discount-' . $discount_id . '"><label for="in-event-discount-' . $discount_id . '" class="selectit"><input value="' . $discount_id . '" type="checkbox" name="event_discount[]" id="in-event-discount-' . $discount_id . '"' . ($in_event_discount == $discount_id ? ' checked="checked"' : "" ) . '/> ' . $coupon_code . "</label></p>";
-				}
-			}
-
-			echo '<p><a href="admin.php?page=discounts" target="_blank">' . __('Manage Promotional Codes ', 'event_espresso') . '</a></p>';
-			?>
-		</div>
+	  	echo '<p><a href="admin.php?page=discounts" target="_blank">' . __('Manage Promotional Codes ', 'event_espresso') . '</a></p>';
+	  	?>
+	  </div>
 		<?php
 	}
 
@@ -2023,9 +2049,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 					$question_group_id = $question_group->id;
 					$group_name = $question_group->group_name;
 					$checked = (is_array($question_groups) && array_key_exists($question_group_id, $question_groups)) || $question_group->system_group == 1 ? ' checked="checked" ' : '';
-					$visibility = $question_group->system_group == 1 ? 'style="visibility:hidden"' : '';
+					$visibility = $question_group->system_group == 1 ? ' style=" visibility:hidden"' : '';
 					$group_id = isset($group_id) ? $group_id : '';
-					$html .= '<p id="event-question-group-' . $question_group_id . '"><input value="' . $question_group_id . '" type="checkbox" ' . $checked . $visibility . ' name="question_groups[' . $question_group_id . ']" ' . $checked . ' /> <a href="admin.php?page=form_groups&amp;action=edit_group&amp;group_id=' . $question_group_id . '" title="edit" target="_blank">' . $group_name . '</a></p>';
+					$html .= '
+					<p id="event-question-group-' . $question_group_id . '">
+						<input value="' . $question_group_id . '" type="checkbox"' . $visibility . ' name="question_groups[' . $question_group_id . ']"' . $checked . ' /> 
+						<a href="admin.php?page=form_groups&amp;action=edit_group&amp;group_id=' . $question_group_id . '" title="edit" target="_blank">' . $group_name . '</a>
+					</p>';
 				}
 				if ($this->_event->num_rows > 10) {
 					$top_div = '<div style="height:250px;overflow:auto;">';
@@ -3100,11 +3130,11 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$timezone_string = empty($this->_req_data['timezone_string']) ? '' : $this->_req_data['timezone_string'];
 
 		//Early discounts
-		$early_disc = $this->_req_data['early_disc'];
-		$early_disc_date = $this->_req_data['early_disc_date'];
-		$early_disc_percentage = $this->_req_data['early_disc_percentage'];
+		$early_disc = isset( $this->_req_data['early_disc'] ) ? $this->_req_data['early_disc'] : '';
+		$early_disc_date = isset( $this->_req_data['early_disc_date'] ) ? $this->_req_data['early_disc_date'] : '';
+		$early_disc_percentage = isset( $this->_req_data['early_disc_percentage'] ) ? $this->_req_data['early_disc_percentage'] : '';
 
-		$use_coupon_code = $this->_req_data['use_coupon_code'];
+		$use_coupon_code = isset( $this->_req_data['use_coupon_code'] ) ? $this->_req_data['use_coupon_code'] : FALSE;
 		$alt_email = $this->_req_data['alt_email'];
 
 		$confirmation_email_id = isset( $this->_req_data['confirmation_email_id'] ) ? $this->_req_data['confirmation_email_id']  : NULL;
