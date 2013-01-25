@@ -1590,12 +1590,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		$button_text = !empty($text) ? $text : array( __('Save', 'event_espresso'), __('Save and Close', 'event_espresso') );
 		$default_names = array( 'save', 'save_and_close' );
-		$init_div = '<div id="event_editor_major_buttons_wrapper">';
-		$alt_div = '<div id="event-editor-floating-save-btns" class="hidden">';
 
-		$this->_template_args['save_buttons'] = '<div class="publishing-action">';
 		//add in a hidden index for the current page (so save and close redirects properly)
-		$this->_template_args['save_buttons'] .= $referrer_url;
+		$this->_template_args['save_buttons'] = $referrer_url;
 
 		foreach ( $button_text as $key => $button ) {
 			$ref = $default_names[$key];
@@ -1603,9 +1600,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$this->_template_args['save_buttons'] .= '<input type="submit" class="button-primary" value="' . $button . '" name="' . $name . '" id="' . $ref . '" />';
 			if ( !$both ) break;
 		}
-		$this->_template_args['save_buttons'] .= '</div><br class="clear" /></div>';
-		$alt_buttons = $alt_div . $this->_template_args['save_buttons'];
-		$this->_template_args['save_buttons'] = $init_div . $this->_template_args['save_buttons'] . $alt_buttons;
+
 	}
 
 
