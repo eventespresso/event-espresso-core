@@ -327,6 +327,14 @@ class EE_Question extends EE_Base_Class{
 	public function required_text(){
 		return $this->get('QST_required_text');
 	}
+	/**
+	 * returns the type of this question
+	 * @access public
+	 * @return string
+	 */
+	public function type(){
+		return $this->get('QST_type');
+	}
 	
 	/**
 	 * returns an integer showing where this questino should

@@ -393,15 +393,24 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 	/* QUERIES */
 
 	public function get_questions( $perpage=10,$current_page = 1, $count = FALSE ) {
-		global $wpdb,$org_options;
 		$offset=($current_page-1)*$perpage;
+		$output=$count?'COUNT':'OBJECT_K';
 		require_once('EEM_Question.model.php');
 		$questionModel=EEM_Question::instance();
-		$questions=$questionModel->get_all_where(null, 'QST_ID', 'ASC', '=', $offset.",".$perpage);
+		$questions=$questionModel->get_all_where(null, 'QST_ID', 'ASC', '=', array($offset,$perpage),$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
 		return $questions;
 		
 	}
-	public function get_trashed_questions( $perpage, $count = FALSE ) {}
+	public function get_trashed_questions( $perpage,$current_page = 1, $count = FALSE ) {
+		$offset=($current_page-1)*$perpage;
+		$output=$count?'COUNT':'OBJECT_K';
+		require_once('EEM_Question.model.php');
+		$questionModel=EEM_Question::instance();
+		$questions=$questionModel->get_all_where_deleted(null, 'QST_ID', 'ASC', '=', array($offset,$perpage),$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+		//echo "get qeustions $count";
+		//var_dump($questions);
+		return $questions;
+	}
 	public function get_question_groups( $perpage, $count = FALSE ) {}
 	public function get_trashed_question_groups( $perpage, $count = FALSE ) {}
 

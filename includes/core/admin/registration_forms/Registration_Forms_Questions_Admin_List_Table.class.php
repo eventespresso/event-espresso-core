@@ -41,8 +41,8 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 
 	protected function _setup_data() {
 		$this->_per_page = $this->get_items_per_page( $this->_screen . '_per_page' );
-		$this->_data = $this->_view != 'trash' ? $this->_admin_page->get_questions( $this->_per_page, FALSE ) : $this->_admin_page->get_trashed_questions( $this->_per_page, FALSE );
-		$this->_all_data_count = $this->_view != 'trash' ? $this->_admin_page->get_questions( $this->_per_page, TRUE ) : $this->_admin_page->get_trashed_questions( $this->_per_page, TRUE );
+		$this->_data = $this->_view != 'trash' ? $this->_admin_page->get_questions( $this->_per_page,$this->_current_page, FALSE ) : $this->_admin_page->get_trashed_questions( $this->_per_page,$this->_current_page, FALSE );
+		$this->_all_data_count = $this->_view != 'trash' ? $this->_admin_page->get_questions( $this->_per_page,$this->_current_page, TRUE ) : $this->_admin_page->get_trashed_questions( $this->_per_page,$this->_current_page, TRUE );
 	}
 
 
@@ -94,8 +94,8 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 
 
 	protected function _add_view_counts() {
-		$this->_views['all']['count'] = $this->_admin_page->get_questions( $this->_per_page, TRUE );
-		$this->_views['trash']['count'] = $this->_admin_page->get_trashed_questions( $this->_per_page, TRUE );
+		$this->_views['all']['count'] = $this->_admin_page->get_questions( $this->_per_page,$this->_current_page, TRUE );
+		$this->_views['trash']['count'] = $this->_admin_page->get_trashed_questions( $this->_per_page,$this->_current_page, TRUE );
 	}
 
 
@@ -103,8 +103,8 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 
 
 
-	public function column_cb($item) {
-		return sprintf( '<input type="checkbox" name="question_id[]" value="%s" />', $item->id);
+	public function column_cb(EE_Question $item) {
+		return sprintf( '<input type="checkbox" name="question_id[]" value="%s" />', $item->ID());
 	}
 
 
@@ -112,22 +112,47 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 
 
 	public function column_default($item) {
-		switch($column_name){
+		/*switch($column_name){
             case 'question_id':
 				return $item[$column_name];
              default:
 				return ( isset( $item->$column_name )) ? $item->$column_name : '';
-        }
+        }*/
 	}
 
-	public function column_name($item) {
-		
+	public function column_name(EE_Question $item) {
+		return $item->display_text();
 		
 	}
-	public function column_values($item) {}
-	public function column_type($item) {}
-	public function column_required($item) {}
-	public function column_admin_only($item) {}
+	public function column_values(EE_Question $item) {
+		
+		$optionNames=array();
+		$options= $item->options();
+		foreach($options as $optionID=>$option){
+			/* @var $option EE_Question_Option */
+			$optionNames[]=$option->value();
+		}
+		return implode(",",$optionNames);
+	}
+	public function column_type(EE_Question $item) {
+		return $item->type();
+	}
+	public function column_required(EE_Question $item) {
+		$returnText='';
+		if($item->required()){
+			$returnText='Required';
+		}else{
+			$returnText='Optional';
+		}
+		return $returnText;
+	}
+	public function column_admin_only(EE_Question $item) {
+		if($item->admin_only()){
+			return "Admin Only";
+		}else{
+			return "";
+		}
+	}
 
 
 

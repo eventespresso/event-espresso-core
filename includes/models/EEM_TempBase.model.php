@@ -258,8 +258,8 @@ abstract class EEM_TempBase extends EEM_Base{
 			case 'belongsTo':
 				$foreign_key=$relatedModelInfo->field_name();
 				$args=array($relatedModel->primary_key_name()=>$modelObject->get($foreign_key));
-				$row=$relatedModel->select_row_where($args);
-				$relatedObjects=$relatedModel->_create_objects(array($row,));
+				$relatedObjects=$relatedModel->get_all_where($args);
+				//$relatedObjects=$relatedModel->_create_objects(array($row,));
 				break;
 			case 'hasMany':
 				if(!$modelObject->ID()){
@@ -270,8 +270,8 @@ abstract class EEM_TempBase extends EEM_Base{
 				if(!array_key_exists($foreignKeyOnOtherModel, $where_col_n_values)){
 					$where_col_n_values[$foreignKeyOnOtherModel]=$modelObject->ID();
 				}
-				$rows=$relatedModel->select_row_where($where_col_n_values);
-				$relatedObjects=$relatedModel->_create_objects(array($rows));
+				$relatedObjects=$relatedModel->get_all_where($where_col_n_values);
+				//$relatedObjects=$relatedModel->_create_objects(array($rows));
 				break;
 			case 'hasAndBelongsToMany':
 				if(!$modelObject->ID()){
@@ -497,8 +497,11 @@ abstract class EEM_TempBase extends EEM_Base{
 		if($orderby==null){
 			$orderby=$this->primary_key_name();
 		}
-		$results=$this->select_all_where($where_cols_n_values, $orderby, $sort, $operators,$limit);
-		if ( empty( $results ) || $results === FALSE || is_wp_error( $results )) {
+		$results=$this->select_all_where($where_cols_n_values, $orderby, $sort, $operators,$limit,$output);
+		if(empty($results)){
+			return array();
+		}
+		if ( is_wp_error( $results )) {
 			return FALSE;
 		}			
 

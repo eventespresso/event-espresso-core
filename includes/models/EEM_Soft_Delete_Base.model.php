@@ -35,10 +35,10 @@ class EEM_Soft_Delete_Base extends EEM_TempBase{
 	 * @param string $limit
 	 * @return mixed EE_Base_Class is output='OBJECT_K', int is output='count'
 	 */
-	public function get_all_where($where_cols_n_values,$orderby=null,$sort='ASC',$operators=null,$limit=null,$output='OBJECT_K'){
+	public function get_all_where($where_cols_n_values,$orderby=null,$sort='ASC',$operators='=',$limit=null,$output='OBJECT_K'){
 		$deletedFlagFieldName=$this->deleted_field_name();
 		$where_cols_n_values[$deletedFlagFieldName]=false;
-		return parent::get_all_where($where_cols_n_values,$orderby,$sort,$operators,$limit);
+		return parent::get_all_where($where_cols_n_values,$orderby,$sort,$operators,$limit,$output);
 	}
 	
 	public function get_all($orderby=null,$sort='ASC',$limit=null,$output='OBJECT_K'){
@@ -83,10 +83,10 @@ class EEM_Soft_Delete_Base extends EEM_TempBase{
 	 * @param string $limit
 	 * @return mixed EE_Base_Class is output='OBJECT_K', int is output='count'
 	 */
-	public function get_all_where_deleted($where_cols_n_values,$orderby=null,$sort='ASC',$operators=null,$limit=null,$output='OBJECT_K'){
+	public function get_all_where_deleted($where_cols_n_values,$orderby=null,$sort='ASC',$operators='=',$limit=null,$output='OBJECT_K'){
 		$deletedFlagFieldName=$this->deleted_field_name();
 		$where_cols_n_values[$deletedFlagFieldName]=true;
-		return parent::get_all_where($where_cols_n_values,$orderby,$sort,$operators,$limit);
+		return parent::get_all_where($where_cols_n_values,$orderby,$sort,$operators,$limit,$output);
 	}
 	
 	/**
