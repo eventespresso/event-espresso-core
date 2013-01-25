@@ -120,7 +120,10 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
         }
 	}
 
-	public function column_name($item) {}
+	public function column_name($item) {
+		
+		
+	}
 	public function column_values($item) {}
 	public function column_type($item) {}
 	public function column_required($item) {}

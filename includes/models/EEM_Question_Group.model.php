@@ -21,9 +21,9 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_TempBase.model.php' );
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Soft_Delete_Base.model.php' );
 
-class EEM_Question_Group extends EEM_TempBase {
+class EEM_Question_Group extends EEM_Soft_Delete_Base {
 
   	// private instance of the Attendee object
 	private static $_instance = NULL;
@@ -55,7 +55,7 @@ class EEM_Question_Group extends EEM_TempBase {
 					'QSG_show_group_name'=>new EE_Model_Field('Show Question Group Name?', 'bool', false, true, null, null),
 					'QSG_show_group_desc'=>new EE_Model_Field('Show Question Group Description?', 'bool', false, true, null, null),
 					'QSG_system_group'=>new EE_Model_Field('Is an internal-system Question Group', 'bool', false, false, null, null),
-					'QSG_deleted'=>new EE_Model_Field('Is Question Group deleted?', 'bool', false, false, null, null)
+					'QSG_deleted'=>new EE_Model_Field('Is Question Group deleted?', 'deleted_flag', false, false, null, null)
 								);
 		$this->_related_models=array(
 								'Questions'=>new EE_Model_Relation('hasAndBelongsToMany', 'Question', 'QST_ID','question_group_question',
@@ -68,33 +68,6 @@ class EEM_Question_Group extends EEM_TempBase {
 		
 		parent::__construct();
 	}
-
-
-	/**
-	*		delete  a single question from db via their ID
-	*		actually just marks it as deleted, but doesn't really remove the question.
-	 *		This is handy because we might not want to remove all old ANSWERS which relate to thsi question
-	* 		@access		public
-	* 		@param		$ID		
-	*		@return 		mixed		array on success, FALSE on fail
-	*/	
-	public function delete_by_ID( $ID = FALSE ) {
-		if ( ! $ID ) {
-			return FALSE;
-		}		
-		// retreive a particular transaction
-		$where_cols_n_values = array( 'QSG_ID' => $ID );
-		if ( $question = $this->update (array("QSG_deleted"=>true), $where_cols_n_values )) {
-			return TRUE;
-		} else {
-			return FALSE;
-		}
-
-	}
-
-
-
-
 }
 // End of file EEM_Question.model.php
 // Location: /ee-mvc/models/EEM_Question.model.php

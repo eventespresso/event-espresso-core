@@ -338,7 +338,27 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 
 
 
-	private function _set_question_object() {}
+	private function _set_question_object() {
+		echo "set question object called";
+		if ( is_object($this->_question) )
+			return; //get out we've already set the object
+		
+		if ( isset($this->_req_data['QST_ID']) ) {
+			$this->_set_edit_question_object();
+		} else {
+			$this->_set_add_question_object();
+		}
+	}
+	
+	private function _set_add_question_object(){
+		echo "add question";
+		global $wpdb,$org_options,$espresso_premium,$current_user;
+		get_currentuserinfo();
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		require_once('EEM_Question.model.php');
+		$questionModel=EEM_Question::instance();
+		
+	}
 	private function _set_question_group_object() {}
 
 
@@ -372,7 +392,15 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 	/***********/
 	/* QUERIES */
 
-	public function get_questions( $perpage, $count = FALSE ) {}
+	public function get_questions( $perpage=10,$current_page = 1, $count = FALSE ) {
+		global $wpdb,$org_options;
+		$offset=($current_page-1)*$perpage;
+		require_once('EEM_Question.model.php');
+		$questionModel=EEM_Question::instance();
+		$questions=$questionModel->get_all_where(null, 'QST_ID', 'ASC', '=', $offset.",".$perpage);
+		return $questions;
+		
+	}
 	public function get_trashed_questions( $perpage, $count = FALSE ) {}
 	public function get_question_groups( $perpage, $count = FALSE ) {}
 	public function get_trashed_question_groups( $perpage, $count = FALSE ) {}

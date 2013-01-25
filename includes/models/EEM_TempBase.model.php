@@ -141,12 +141,25 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * @throws EE_Error
 	 */
 	public function primary_key_name(){
+		return $this->_get_field_of_types(array('primary_key','primary_text_key'));	
+	}
+	
+	
+	/**
+	 * Used internally by primary_key_name and deleted_field_name to find a field
+	 * of teh given type on this model.
+	 * @param array $types eg array('primary_key','primary_text_key'
+	 * @return type
+	 * @throws EE_Error
+	 */
+	protected function _get_field_of_types($types=array()){
 		foreach($this->fields_settings() as $field=>$settings){
-			if($settings->type()=='primary_key' || $settings->type()=='primary_text_key'){
+			if(in_array($settings->type(),$types)){
 				return $field;
 			}
 		}
-		throw new EE_Error(sprintf(__("Class %s has no primary key set in its fieldsSettings",'event_espresso'),get_class($this)));
+		throw new EE_Error(sprintf(__("Class %s has no field of type %s set in its fieldsSettings",'event_espresso'),get_class($this),implode(",",$types)));
+
 	}
 	
 	/**
@@ -465,19 +478,10 @@ abstract class EEM_TempBase extends EEM_Base{
 	*		retreive  ALL objects of this model from db
 	* 
 	* 		@access		public
-	*		@return 	EE_Base_Class[]		on success, FALSE on fail
+	*		@return mixed EE_Base_Class is output='OBJECT_K', int is output='count'
 	*/	
-	public function get_all( $orderby = null, $sort = 'ASC' ) {
-		if($orderby==null){
-			$orderby=$this->primary_key_name();
-		}
-		// retreive all attendees	
-		if ( $rows = $this->select_all ( $orderby, $sort )) {
-			return $this->_create_objects( $rows );
-		} else {
-			return FALSE;
-		}
-		
+	public function get_all( $orderby = null, $order = 'ASC',$limit=array(0,10),$output='OBJECT_K' ) {
+		return $this->get_all_where(array(),$orderby,$order,'=',$limit,$output);
 	}
 	
 	/**
@@ -486,18 +490,23 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * @param string $orderby name of a column
 	 * @param string $sort 'ASC' or 'DESC'
 	 * @param mixed $operators string for a single operator, or an array of operators
-	 * @return EE_Base_Class[] or False on failure
+	 * @param string $limit
+	 * @return mixed EE_Base_Class is output='OBJECT_K', int is output='count'
 	 */
-	public function get_all_where($where_cols_n_values,$orderby=null,$sort='ASC',$operators=null){
+	public function get_all_where($where_cols_n_values,$orderby=null,$sort='ASC',$operators=null,$limit=null,$output='OBJECT_K'){
 		if($orderby==null){
 			$orderby=$this->primary_key_name();
 		}
-		if($rows=$this->select_all_where($where_cols_n_values, $orderby, $sort, $operators)){
-			return $this->_create_objects($rows);
-		}else{
+		$results=$this->select_all_where($where_cols_n_values, $orderby, $sort, $operators,$limit);
+		if ( empty( $results ) || $results === FALSE || is_wp_error( $results )) {
 			return FALSE;
-		}
+		}			
+
+		//  return the count OR create objects out of data
+		$results = $output == 'COUNT' ? $results : $this->_create_objects($results);
+		return $results;
 	}
+	
 }
 
 /**
@@ -508,7 +517,7 @@ class EE_Model_Field{
 	 * all the types of ModelFields which are allowed
 	 * @var type 
 	 */
-	private $allowed_types=array('primary_key','primary_text_field','foreign_key','foreign_text_field','int','float','plaintext','simplehtml','fullhtml','enum','bool');
+	private $allowed_types=array('primary_key','primary_text_key','foreign_key','foreign_text_key','int','float','plaintext','simplehtml','fullhtml','enum','bool','deleted_flag');
 	private $nicename;
 	private $type;
 	private $nullable;
@@ -539,6 +548,10 @@ class EE_Model_Field{
 	 *				fullhtml (allows all strings, and does not filter HTML tags at all)
 	 * 
 	 *				enum (allows only a limited set of values. $allowedEnumValues MUST be set for this type)
+	 * 
+	 *				bool (boolean, only allows 1 or 0)
+	 * 
+	 *				deleted_flag (special bool used to indicate whehter a modelhas been deleted or not)
 	 * @param boolean $nullable whehter this field should be allowed to be null or not. If not, 
 	 * @param mixed $defaultValue optional. When initially creating the object, if this field's value is set to null, this value will be used instead
 	 * @param array $allowedEnumValues array of allowed values. Eg, array('textfield','textarea','checkbox') or array(1,2,3)
@@ -599,6 +612,8 @@ class EE_Model_Field{
 	 *				enum (allows only a limited set of values. $allowedEnumValues MUST be set for this type)
 	 * 
 	 *				bool (allows only true or false)
+	 * 
+	 *				deleted_flag (allows true or false)
 	 * @return string
 	 */
 	public function type(){

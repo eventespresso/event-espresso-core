@@ -21,9 +21,9 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_TempBase.model.php' );
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Soft_Delete_Base.model.php' );
 
-class EEM_Question_Option extends EEM_TempBase {
+class EEM_Question_Option extends EEM_Soft_Delete_Base {
 
   	// private instance of the Attendee object
 	private static $_instance = NULL;
@@ -51,7 +51,7 @@ class EEM_Question_Option extends EEM_TempBase {
 					'QSO_name'=>new EE_Model_Field('Question option Display Name', 'simplehtml', false, '', null, null),
 					'QSO_value'=>new EE_Model_Field('QUestion Option Value', 'plaintext', false, '', null, null),
 					'QST_ID'=>new EE_Model_Field('Related Question ID', 'foreign_key', false, null, null, 'Question'),
-					'QSO_deleted'=>new EE_Model_Field('Whether the option has been deleted', 'bool', false, false, null, null)
+					'QSO_deleted'=>new EE_Model_Field('Whether the option has been deleted', 'deleted_flag', false, false, null, null)
 								);
 		$this->_related_models=array(
 								'Question'=>new EE_Model_Relation('belongsTo', 'Question', 'QST_ID')
@@ -59,33 +59,6 @@ class EEM_Question_Option extends EEM_TempBase {
 		
 		parent::__construct();
 	}
-
-
-	/**
-	*		delete  a single question option from db via their ID
-	*		actually just marks it as deleted, but doesn't really remove the question.
-	 *		This is handy because we might not want to remove all old ANSWERS which relate to thsi question option
-	* 		@access		public
-	* 		@param		$ID		
-	*		@return 		mixed		array on success, FALSE on fail
-	*/	
-	public function delete_by_ID( $ID = FALSE ) {
-		if ( ! $ID ) {
-			return FALSE;
-		}		
-		// mark an option as deleted
-		$where_cols_n_values = array( 'QSO_ID' => $ID );
-		if ( $question = $this->update (array("QSO_deleted"=>true), $where_cols_n_values )) {
-			return TRUE;
-		} else {
-			return FALSE;
-		}
-
-	}
-
-
-
-
 }
 // End of file EEM_Question_Option.model.php
 // Location: /ee-mvc/models/EEM_Question_Option.model.php

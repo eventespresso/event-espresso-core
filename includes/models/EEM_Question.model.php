@@ -21,9 +21,9 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_TempBase.model.php' );
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Soft_Delete_Base.model.php' );
 
-class EEM_Question extends EEM_TempBase {
+class EEM_Question extends EEM_Soft_Delete_Base {
 
   	// private instance of the Attendee object
 	private static $_instance = NULL;
@@ -69,7 +69,7 @@ class EEM_Question extends EEM_TempBase {
 								'QST_order'=>new EE_Model_Field('Order', 'int', false, 0, null, null),
 								'QST_admin_only'=>new EE_Model_Field('For Admins Only','bool',false,false,null,null),
 								'QST_wp_user'=>new EE_Model_Field('WP User ID', 'foreign_key', true, 1, null, 'WP_User'),
-								'QST_deleted'=>new EE_Model_Field('Deleted','bool',false,false,null,null));
+								'QST_deleted'=>new EE_Model_Field('Deleted','deleted_flag',false,false,null,null));
 		$this->_related_models=array(
 								'Answers'=>new EE_Model_Relation('hasMany', 'Answer', 'QST_ID'),
 								'Question_Groups'=>new EE_Model_Relation('hasAndBelongsToMany', 'Question_Group', 'QSG_ID','question_group_question',
@@ -81,29 +81,8 @@ class EEM_Question extends EEM_TempBase {
 		
 		parent::__construct();
 	}
+	
 
-
-	/**
-	*		delete  a single question from db via their ID
-	*		actually just marks it as deleted, but doesn't really remove the question.
-	 *		This is handy because we might not want to remove all old ANSWERS which relate to thsi question
-	* 		@access		public
-	* 		@param		$ID		
-	*		@return 		mixed		array on success, FALSE on fail
-	*/	
-	public function delete_by_ID( $ID = FALSE ) {
-		if ( ! $ID ) {
-			return FALSE;
-		}		
-		// retreive a particular transaction
-		$where_cols_n_values = array( 'QST_ID' => $ID );
-		if ( $question = $this->update (array("QST_deleted"=>true), $where_cols_n_values )) {
-			return TRUE;
-		} else {
-			return FALSE;
-		}
-
-	}
 
 
 

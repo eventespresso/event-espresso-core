@@ -161,6 +161,7 @@ abstract class EE_Base_Class extends EE_Base{
 				$return=intval($value);
 				break;
 			case 'bool':
+			case 'deleted_flag':
 				if($value){
 					$return=true;
 				}else{
@@ -210,6 +211,7 @@ abstract class EE_Base_Class extends EE_Base{
 				}
 				break;
 			case 'bool':
+			case 'deleted_flag':
 				//$value=intval($value);
 				if(is_bool($value) || is_int($value) || ctype_digit($value)){
 					$return=true;
