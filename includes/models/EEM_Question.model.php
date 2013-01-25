@@ -76,7 +76,8 @@ class EEM_Question extends EEM_TempBase {
 										array(
 											'QGQ_ID'=>new EE_Model_Field('Question Group-Question ID', 'primary_key', false, null, null, null),
 											'QSG_ID'=>new EE_Model_Field('Foreign Key to Question Groups', 'foreign_key', false, null, null, 'Question_Group'),
-											'QST_ID'=>new EE_Model_Field('Foreign Key to Questions','foreign_key',false,null,null,'Question'))));
+											'QST_ID'=>new EE_Model_Field('Foreign Key to Questions','foreign_key',false,null,null,'Question'))),
+								'Question_Options'=>new EE_Model_Relation('hasMany', 'Question_Option', 'QST_ID', null, null));
 		
 		parent::__construct();
 	}

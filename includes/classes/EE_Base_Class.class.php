@@ -14,7 +14,7 @@ abstract class EE_Base_Class extends EE_Base{
 	/**
 	 * Instance of model that corresponds to this class.
 	 * This should be lazy-loaded to avoid recursive loop
-	 * @var EEM_Base 
+	 * @var EEM_TempBase 
 	 */
 	private $_model;
 	
@@ -28,6 +28,22 @@ abstract class EE_Base_Class extends EE_Base{
 			foreach($fieldValues as  $fieldName=>$fieldValue){
 				//"<br>set $fieldName to $fieldValue";
 				$this->set($fieldName,$fieldValue,true);
+			}
+		}
+		//verify we have all the attributes required in teh model
+		foreach($this->_model->fields_settings() as $fieldName=>$fieldSettings){
+			if(!property_exists($this,$this->_get_private_attribute_name($fieldName))){
+				throw new EE_Error(sprintf(__('You have added an attribute titled \'%s\' to your model %s, but have not set a corresponding
+					attribute on %s. Please add $%s to %s','event_espresso'),
+						$fieldName,get_class($this->_model),get_class($this),$this->_get_private_attribute_name($fieldName),get_class($this)));
+			}
+		}
+		//verify we have all the model relations
+		foreach($this->_model->relation_settings() as $relationName=>$relationSettings){
+			if(!property_exists($this,$this->_get_private_attribute_name($relationName))){
+				throw new EE_Error(sprintf(__('You have added a relation titled \'%s\' to your model %s, but have not set a corresponding
+					attribute on %s. Please add $%s to %s','event_espresso'),
+						$relationName,get_class($this->_model),get_class($this),$this->_get_private_attribute_name($relationName),get_class($this)));
 			}
 		}
 	}
@@ -309,13 +325,13 @@ abstract class EE_Base_Class extends EE_Base{
 	 * @return EE_Base_Class[]
 	 */
 	protected function _get_many_related($relationName,$where_col_n_vals=null){
-		$privatelRelationName=$this->_get_private_attribute_name($relationName);
-		if($this->$privatelRelationName==null){
+		$privateRelationName=$this->_get_private_attribute_name($relationName);
+		if($this->$privateRelationName==null){
 			$model=$this->_get_model();
 			$relationRequested=$model->get_many_related($this, $relationName,$where_col_n_vals);
-			$this->$privatelRelationName=$relationRequested;
+			$this->$privateRelationName=$relationRequested;
 		}
-		return $this->$privatelRelationName;
+		return $this->$privateRelationName;
 	}
 	
 	/**
@@ -327,7 +343,16 @@ abstract class EE_Base_Class extends EE_Base{
 	 */
 	protected function _add_relation_to(EE_Base_Class $otherObjectModel,$relationName){
 		$model=$this->_get_model();
-		return $model->add_relation_to($this, $otherObjectModel, $relationName);
+		$success= $model->add_relation_to($this, $otherObjectModel, $relationName);
+		if($success){
+			$privateRelationName=$this->_get_private_attribute_name($relationName);
+			//invalidate cached relations
+			//@todo: this could be optimized. Instead, we could just add $otherObjectModel toteh array if it's an array, or set it if it isn't an array
+			$this->$privateRelationName=null;
+			return $success;
+		}else{
+			return $success;
+		}
 	}
 	/**
 	 * Removes a relationship to the psecified EE_Base_Class object, given the relationships' name. Eg, if the curren tmodel is related
@@ -338,7 +363,16 @@ abstract class EE_Base_Class extends EE_Base{
 	 */
 	protected function _remove_relation_to(EE_Base_Class $otherObjectModel,$relationName){
 		$model=$this->_get_model();
-		return $model->remove_relationship_to($this, $otherObjectModel, $relationName);
+		$success= $model->remove_relationship_to($this, $otherObjectModel, $relationName);
+		if($success){
+			$privateRelationName=$this->_get_private_attribute_name($relationName);
+			//invalidate cached relations
+			//@todo: this could be optimized. Instead, we could just remove $otherObjectModel toteh array if it's an array, or unset it if it isn't an array
+			$this->$privateRelationName=null;
+			return $success;
+		}else{
+			return $success;
+		}
 	}
 	/**
 	 * Wrapper for get_primary_key(). Gets the value of the primary key.

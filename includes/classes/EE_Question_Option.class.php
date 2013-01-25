@@ -56,8 +56,19 @@ class EE_Question_Option extends EE_Base_Class{
 	 */
 	protected $_QST_ID=FALSE;
 	
+	/**
+	 * Whether teh question has been deleted or not
+	 * @access protected
+	 * @var boolean
+	 */
+	protected $_QSO_deleted=FALSE;
 	
-
+	/**
+	 * The question whcih relates to this question option
+	 *@access protected
+	 * @var EE_Question
+	 */
+	protected $_Question;
 
 
 	/**
@@ -114,6 +125,13 @@ class EE_Question_Option extends EE_Base_Class{
 	 */
 	public function value(){
 		return $this->get('QSO_value');
+	}
+	/**
+	 * Returns whether this option has been deleted or not
+	 * @return boolean
+	 */
+	public function deleted(){
+		return $this->get('QSO_deleted');
 	}
 	/**
 	 * Gets the related question's ID

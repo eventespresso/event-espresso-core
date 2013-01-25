@@ -50,7 +50,8 @@ class EEM_Question_Option extends EEM_TempBase {
 					'QSO_ID'=>new EE_Model_Field('Question Option ID', 'primary_key', false, null, null, null),
 					'QSO_name'=>new EE_Model_Field('Question option Display Name', 'simplehtml', false, '', null, null),
 					'QSO_value'=>new EE_Model_Field('QUestion Option Value', 'plaintext', false, '', null, null),
-					'QST_ID'=>new EE_Model_Field('Related Question ID', 'foreign_key', false, null, null, 'Question')
+					'QST_ID'=>new EE_Model_Field('Related Question ID', 'foreign_key', false, null, null, 'Question'),
+					'QSO_deleted'=>new EE_Model_Field('Whether the option has been deleted', 'bool', false, false, null, null)
 								);
 		$this->_related_models=array(
 								'Question'=>new EE_Model_Relation('belongsTo', 'Question', 'QST_ID')
@@ -68,7 +69,7 @@ class EEM_Question_Option extends EEM_TempBase {
 	* 		@param		$ID		
 	*		@return 		mixed		array on success, FALSE on fail
 	*/	
-	public function delete_question_group_by_ID( $ID = FALSE ) {
+	public function delete_question_option_by_ID( $ID = FALSE ) {
 		if ( ! $ID ) {
 			return FALSE;
 		}		

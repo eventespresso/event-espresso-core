@@ -32,7 +32,6 @@ abstract class EEM_TempBase extends EEM_Base{
 	protected function __construct() {
 		$this->table_name=$this->_get_table_name();
 		$this->table_data_types=$this->_get_table_data_types();
-		
 	}
 	
 	/**
@@ -250,21 +249,29 @@ abstract class EEM_TempBase extends EEM_Base{
 				$relatedObjects=$relatedModel->_create_objects(array($row,));
 				break;
 			case 'hasMany':
+				if(!$modelObject->ID()){
+					$relatedObjects=array();
+					break;
+				}
 				$foreignKeyOnOtherModel=$relatedModelInfo->field_name();
 				if(!array_key_exists($foreignKeyOnOtherModel, $where_col_n_values)){
-					$where_col_n_values[$foreignKeyOnOtherModel]=$modelObject->primaryKey();
+					$where_col_n_values[$foreignKeyOnOtherModel]=$modelObject->ID();
 				}
 				$rows=$relatedModel->select_row_where($where_col_n_values);
 				$relatedObjects=$relatedModel->_create_objects(array($rows));
 				break;
 			case 'hasAndBelongsToMany':
+				if(!$modelObject->ID()){
+					$relatedObjects=array();
+					break;
+				}
 				$joinTable=$relatedModelInfo->join_table();
 				$otherTableName=$relatedModel->_get_table_name();
 				$otherTablePK=$relatedModel->primary_key_name();
 				$joinSQL="$joinTable LEFT JOIN $otherTableName ON $joinTable.$otherTablePK=$otherTableName.$otherTablePK ";
 				//$rows=$
 				$thisTablePK=$this->primary_key_name();
-				$where_col_n_values[$thisTablePK]=$modelObject->get_primary_key();
+				$where_col_n_values[$thisTablePK]=$modelObject->ID();
 				$rows=$relatedModel->select_all_join_where($joinSQL,$where_col_n_values);
 				$relatedObjects=$relatedModel->_create_objects($rows);
 				break;
@@ -304,14 +311,14 @@ abstract class EEM_TempBase extends EEM_Base{
 				}
 				
 				//just set the other object's foreign key to null
-				$otherModelObject->set($relatedModeInfo->field_name(),null);
+				$otherModelObject->set($relatedModelInfo->field_name(),null);
 				return $otherModelObject->save();
 				break;
 			case 'hasAndBelongsToMany':
-				//first, we need to make sure both modelObjects have an ID, so save them
-				$thisModelObject->save();
-				$otherModelObject->save();
-				
+				//first, if one of the modelObjects doesn't have an ID, it couldn't have this kind of relationship!
+				if(!$thisModelObject->ID() || !$otherModelObject->ID()){
+					return true;//we removed teh relationship that doesn't exist. That's pretty successful right?
+				}
 				
 				/* @var $relatedModel EEM_TempBase*/
 				//check for this relationship
@@ -330,11 +337,12 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * Adds a relationship of the correct type between $modelObject and $otherModelObject. 
 	 * There are the 3 cases:
 	 * 
-	 * 'belongsTo' relationship: sets $modelObject's foreign_key to be $otherModelObejct's primary_key.
+	 * 'belongsTo' relationship: sets $modelObject's foreign_key to be $otherModelObejct's primary_key. If $otherModelObject has no ID, it is first saved.
 	 * 
-	 * 'hasMany' relationship: sets $otherModelObject's foreign_key to be $modelObject's primary_key
+	 * 'hasMany' relationship: sets $otherModelObject's foreign_key to be $modelObject's primary_key. If $modelObject has no ID, it is first saved.
 	 * 
-	 * 'hasAndBelongsToMany' relationships: checks that there isn't already an entry in the join table, and adds one
+	 * 'hasAndBelongsToMany' relationships: checks that there isn't already an entry in the join table, and adds one.
+	 * If one of the model Objects has not yet been saved to teh database, it is saved before adding the entry in the join table
 	 * 
 	 * @param EE_Base_Class $thisModelObject
 	 * @param EE_base_Class $otherModelObject
@@ -349,18 +357,28 @@ abstract class EEM_TempBase extends EEM_Base{
 		switch($relatedModelInfo->type()){
 			case 'belongsTo':
 				//just set its foreign_key to be that 
+				if(!$otherModelObject->ID()){
+					$otherModelObject->save();
+				}
 				$thisModelObject->set($relatedModelInfo->field_name(),$otherModelObject->ID());
 				return $thisModelObject->save();
 				break;
 			case 'hasMany':
-				$otherModelObject->set($relatedModeInfo->field_name(),$thisModelObject->ID());
+				if(!$thisModelObject->ID()){
+					$thisModelObject->save();
+				}
+				$otherModelObject->set($relatedModelInfo->field_name(),$thisModelObject->ID());
 				return $otherModelObject->save();
 				break;
 			case 'hasAndBelongsToMany':
-				//first, we need to make sure both modelObjects have an ID, so save them
-				$thisModelObject->save();
-				$otherModelObject->save();
-				
+				//first, we need to make sure both modelObjects have an ID, so save them if they don't
+				if(!$thisModelObject->ID()){
+					$thisModelObject->save();
+				}
+				if(!$otherModelObject->ID()){
+					$otherModelObject->save();
+				}
+								
 				$relatedModel=$relatedModelInfo->model_instance();
 				/* @var $relatedModel EEM_TempBase*/
 				//check for this relationship

@@ -115,7 +115,13 @@ class EE_Question extends EE_Base_Class{
 	 * related question groups, lazy-loaded
 	 * @var EE_Question_Group[] 
 	 */
-	protected $_Question_Group;
+	protected $_Question_Groups;
+	
+	/**
+	 * related question options, lazy-loaded
+	 * @var EE_Question_Option[] 
+	 */
+	protected $_Question_Options;
 	
 	/**
 	 * constructor for questions
@@ -374,6 +380,54 @@ class EE_Question extends EE_Base_Class{
 	 */
 	public function question_groups(){
 		return $this->_get_many_related('Question_Groups');
+	}
+	
+	/**
+	 * Returns all the options for this question. By default, it returns only the not-yet-deleted ones.
+	 * @param boolean $notDeletedOptionsOnly whehter to return ALL options, or only the ones which have not yet been deleleted
+	 * @return EE_Question_Option[]
+	 */
+	public function options($notDeletedOptionsOnly=true){
+		if($notDeletedOptionsOnly){
+			return  $this->_get_many_related('Question_Options', array('QSO_deleted'=>false));
+			/*$doubleCheckedOptions=array();
+			foreach($options as $option){
+				if(!$option->deleted()){
+					$doubleCheckedOptions[$option->ID()]=$option;
+				}
+			}
+			return $doubleCheckedOptions;*/
+		}else{
+			return $this->_get_many_related('Question_Options');
+		}
+	}
+	/**
+	 * Adds an option for this question. Note: if the option were previously associted with a different
+	 * Question, that relationship will be overwritten.
+	 * @param EE_Question_Option $option
+	 * @return boolean success
+	 */
+	public function add_option(EE_Question_Option $option){
+		return $this->_add_relation_to($option, 'Question_Options');
+	}
+	
+	/**
+	 * Marks the option as deleted.
+	 * @param EE_Question_Option $option
+	 * @return boolean success
+	 */
+	public function remove_option(EE_Question_Option $option){
+		/*$model=$this->_get_model();
+		$optionRelationSettings=$model->related_settings_for('Question_Options');
+		$optionsModel=$optionRelationSettings->model_instance();
+		$success= $optionsModel->delete_question_option_by_ID($option->ID());
+		if($success){
+			unset($option);
+			return true;
+		}else{
+			return false;
+		}*/
+		return $this->_remove_relation_to($option, 'Question_Options');
 	}
 	
 
