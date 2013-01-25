@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Messages_Template_List_Table extends EE_Admin_List_Table {
 	
 	
-	public function __construct( &$admin_page ) {
+	public function __construct( $admin_page ) {
 		//Set parent defaults
 		parent::__construct($admin_page);
 	}

@@ -34,9 +34,11 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	/**
 	 * 		constructor
 	*/
-	function __construct( &$admin_page ){
+	function __construct( $admin_page ){
         parent::__construct($admin_page);
         $this->_status = $this->_admin_page->get_registration_status_array();
+		//echo "registration list table 40";
+		//var_dump($this);
 	}
 
 
