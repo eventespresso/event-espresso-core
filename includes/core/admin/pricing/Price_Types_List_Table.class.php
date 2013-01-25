@@ -28,7 +28,7 @@
  */
 class Price_Types_List_Table extends EE_Admin_List_Table {
 
-	public function __construct( &$admin_page ) {
+	public function __construct( $admin_page ) {
 		parent::__construct($admin_page);
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 		$this->_PRT = EEM_Price_Type::instance();

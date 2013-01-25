@@ -1,7 +1,7 @@
+	<div id="admin-page-header">
+		<?php echo $admin_page_header; ?>
+	</div>
 	<div id="poststuff">
-		<div id="admin-page-header">
-			<?php echo $admin_page_header; ?>
-		</div>
 			<!-- admin-page-header -->
 		<div id="post-body" class="metabox-holder columns-2">
 			

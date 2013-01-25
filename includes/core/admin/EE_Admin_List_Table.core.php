@@ -191,7 +191,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * constructor
 	 * @param EE_Admin_Page object $admin_page we use this for obtaining everything we need in the list table.
 	 */
-	public function __construct( EE_Admin_Page &$admin_page ) {
+	public function __construct( EE_Admin_Page $admin_page ) {
 		$this->_admin_page = $admin_page;
 		$this->_req_data = $this->_admin_page->get_request_data();
 		$this->_view = $this->_admin_page->get_view();
@@ -393,6 +393,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 
 	public function get_columns() {
+		//var_dump($this->screen);
 		$columns = apply_filters('filter_hook_espresso_manage_'.$this->screen->id.'_columns', $this->_columns);
 		return $this->_columns;
 	}
