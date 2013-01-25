@@ -87,6 +87,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	//for holding incoming request data
 	protected $_req_data;
 
+	// yes / no array for admin form fields
+	protected $_yes_no_values = array();
 
 
 
@@ -97,6 +99,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 		@return void
 	 */
 	public function __construct() {
+
+		$this->_yes_no_values = array(
+			array('id' => TRUE, 'text' => __('Yes', 'event_espresso')),
+			array('id' => FALSE, 'text' => __('No', 'event_espresso'))
+		);
 
 		//set initial page props (child method)
 		$this->_init_page_props();
