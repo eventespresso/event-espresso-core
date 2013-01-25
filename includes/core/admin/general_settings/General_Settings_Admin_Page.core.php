@@ -30,12 +30,6 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class General_Settings_Admin_Page extends EE_Admin_Page {
 
-	/**
-	 * _question
-	 * holds the specific question object for the question details screen
-	 * @var object
-	 */
-	protected $_yes_no_values = array();
 
 	/**
 	 * _question_group
@@ -48,10 +42,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	public function __construct() {
 		parent::__construct();
-		$this->_yes_no_values = array(
-			array('id' => TRUE, 'text' => __('Yes', 'event_espresso')),
-			array('id' => FALSE, 'text' => __('No', 'event_espresso'))
-		);
 	}
 
 
