@@ -979,7 +979,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected function _set_list_table_object() {
 		if ( isset($this->_route_config['list_table'] ) ) {
 			$a = new ReflectionClass($this->_route_config['list_table']);
-			$this->_list_table_object = $a->newInstance(&$this);
+			$this->_list_table_object = $a->newInstance($this);
 		}
 	}
 
