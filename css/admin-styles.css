@@ -351,10 +351,31 @@ ul.ee_subsubsub + ul.ee_subsubsub {
 div.tablenav {
 	clear: both;
 	line-height: 1.4;
-	margin-bottom: 30px;
 	min-height: 30px;
 	height: auto;
 }
+
+.manage-column.column-id {
+	width: 30px;
+}
+
+.manage-column.column-status {
+	width: 80px;
+}
+
+
+.manage-column.column-attendees {
+	width: 100px;
+}
+
+.button.add-new-h2 {
+	margin-left: 15px;
+}
+
+select.wide {
+	margin-right: 10px;
+}
+
 /*** Add new events / Edit events ***/
 
 #event_editor_major_buttons_wrapper{

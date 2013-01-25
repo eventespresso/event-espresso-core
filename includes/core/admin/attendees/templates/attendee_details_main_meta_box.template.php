@@ -2,11 +2,7 @@
 
 	<div id="att-admin-add-new-attendee-messages-dv"></div>
 	
-	<form id="att-admin-add-new-attendee-frm" method="post" action="<?php echo $form_url; ?>">
-		<?php wp_nonce_field( $action . '_nonce' ); ?>
-		<?php if ( $action == 'update_attendee' ) : ?>
 		<input type="hidden" name="ATT_ID" value="<?php echo $ATT_ID; ?>">
-		<?php endif; ?>
 	
 		<table class="form-table">
 			<tbody>
@@ -134,12 +130,4 @@
 				
 			</tbody>
 		</table>
-	
-		<div id="publishing-action">
-			<input class="add_new_attendee button-primary" type="submit" name="save_and_edit" value="<?php _e('Save'); ?>" />
-			<input class="add_new_attendee button-primary" type="submit" name="save_and_close" value="<?php _e('Save &amp; Close'); ?>" />
-		</div>
-		<div class="clear"></div>
-	
-	</form>
 </div>

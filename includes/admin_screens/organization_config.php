@@ -86,7 +86,7 @@ function organization_config_mnu() {
 		$org_options['affiliate_id'] = $_POST['affiliate_id'];
 		$org_options['site_license_key'] = $_POST['site_license_key'];
 		$org_options['default_logo_url'] = $_REQUEST['upload_image'];
-		$org_options['default_payment_status'] = $_POST['default_payment_status'];
+		$org_options['default_reg_status'] = $_POST['default_payment_status'];
 		$org_options['template_settings']['use_custom_post_types'] = $_POST['use_custom_post_types'];
 		//echo getCountryFullData($org_options['organization_country']);
 		$country_data = getCountryFullData($org_options['organization_country']);
@@ -207,7 +207,7 @@ function espresso_org_settings_meta_box() {
 				<tr>
 					<th><label for="upload_image">
 							<?php _e('Add a Default Logo', 'event_espresso'); ?>
-							<?php echo apply_filters('filter_hook_espresso_help', 'espresso_default_logo_info'); ?> </label></th>
+							<?php do_action('action_hook_espresso_help', 'espresso_default_logo_info'); ?> </label></th>
 					<td><div id="default-logo-image">
 							<input id="upload_image" type="hidden" size="36" name="upload_image" value="<?php echo $org_options['default_logo_url'] ?>" />
 							<input id="upload_image_button" type="button" value="Upload Image" />
@@ -227,7 +227,7 @@ function espresso_org_settings_meta_box() {
 		</table>
 		<h4>
 			<?php _e('Contact Information', 'event_espresso'); ?>
-			<?php echo apply_filters('filter_hook_espresso_help', 'contact_info'); ?> </h4>
+			<?php do_action('action_hook_espresso_help', 'contact_info'); ?> </h4>
 		<table class="form-table">
 			<tbody>
 				<tr>
@@ -615,7 +615,7 @@ function espresso_email_settings_meta_box() {
 				<tr>
 					<th><label for="email_fancy_headers">
 							<?php _e('Use Personalized Email Headers', 'event_espresso'); ?>
-							<?php echo apply_filters('filter_hook_espresso_help', 'fancyemailheaders'); ?> </label></th>
+							<?php do_action('action_hook_espresso_help', 'fancyemailheaders'); ?> </label></th>
 					<td><?php echo select_input('email_fancy_headers', $values, $org_options['email_fancy_headers']); ?></td>
 				</tr>
 			</tbody>

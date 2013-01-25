@@ -75,7 +75,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 			</th>
 			<td>
 				<input type="text" name="stripe_secret_key" size="35" value="<?php echo $this->_payment_settings['stripe_secret_key']; ?>"> 
-				<?php echo apply_filters('filter_hook_espresso_help', 'stripe_secret_key') ?>
+				<?php do_action('action_hook_espresso_help', 'stripe_secret_key') ?>
 			</td>
 		</tr>
 		
@@ -85,7 +85,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 			</th>
 			<td>
 				<input type="text" name="stripe_publishable_key" size="35" value="<?php echo $this->_payment_settings['stripe_publishable_key']; ?>"> 
-				<?php echo apply_filters('filter_hook_espresso_help', 'stripe_publishable_key') ?>
+				<?php do_action('action_hook_espresso_help', 'stripe_publishable_key') ?>
 			</td>
 		</tr>
 		
@@ -95,7 +95,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 			</th>
 			<td>
 				<input type="text" name="stripe_currency_symbol" size="35" value="<?php echo $this->_payment_settings['stripe_currency_symbol']; ?>"> 
-				<?php echo apply_filters('filter_hook_espresso_help', 'stripe_currency_symbol') ?>
+				<?php do_action('action_hook_espresso_help', 'stripe_currency_symbol') ?>
 			</td>
 		</tr>
 		

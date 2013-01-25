@@ -652,7 +652,7 @@ if (!function_exists('espresso_secondary_events_dd')) {
 			}
 			$field .= "</select>";
 			$values = array(array('id' => true, 'text' => __('Yes', 'event_espresso')), array('id' => false, 'text' => __('No', 'event_espresso')));
-			$html = '<p><label>' . __('Assign a Waitlist Event? ', 'event_espresso') . '</label> ' . select_input('allow_overflow', $values, $allow_overflow) . ' ' . apply_filters('filter_hook_espresso_help', 'secondary_info') . '</p>' .
+			$html = '<p><label>' . __('Assign a Waitlist Event? ', 'event_espresso') . '</label> ' . select_input('allow_overflow', $values, $allow_overflow) . ' ' . do_action('action_hook_espresso_help', 'secondary_info') . '</p>' .
 							'<p class="inputunder"><label>' . __('Overflow Event', 'event_espresso') . ': </label><br />' . $field . '</p>';
 
 			return $html;

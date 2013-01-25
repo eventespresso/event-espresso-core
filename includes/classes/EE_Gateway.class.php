@@ -56,18 +56,22 @@ abstract class EE_Gateway {
 		//echo '<h4>$this->_gateway : ' . $this->_gateway . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
 		if (!defined('GATEWAYS_ADMIN_URL')) {
-			define('GATEWAYS_ADMIN_URL', admin_url('admin.php?page=payment_gateways'));
+			define('GATEWAYS_ADMIN_URL', admin_url('admin.php?page=payment_settings'));
 		}
 
 		$this->_EEM_Gateways = $model;
 		$this->_set_default_properties();
 		$this->_handle_payment_settings();
 
-		if (is_admin() && !empty($_GET['page']) && $_GET['page'] == 'payment_gateways') {
+		if (is_admin() && !empty($_GET['page']) && $_GET['page'] == 'payment_settings') {
 			$this->_gateways_admin();
 		} else {
 			$this->_gateways_frontend();
 		}
+
+		//load formatter helper and form fields helper
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
 	}
 	
 	public function process_reg_step_3(){
@@ -101,7 +105,7 @@ abstract class EE_Gateway {
 
 	private function _gateways_admin() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		add_action('admin_init', array(&$this, 'add_settings_page_meta_box'));
+		$this->add_settings_page_meta_box();
 		// if our current path is empty or doesn't match what's in the db, then maybe something changed?
 		if ($this->_payment_settings['current_path'] == '' || $this->_payment_settings['current_path'] != $this->_path) {
 			$this->_reset_button_url();
@@ -155,9 +159,9 @@ abstract class EE_Gateway {
 
 	public function add_settings_page_meta_box() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		if ( isset($this->_payment_settings['display_name'] ) )
+		if ( isset( $this->_payment_settings['display_name'] ) )
 			add_meta_box(
-							'espresso_' . $this->_gateway . '_gateway_settings', $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso'), array(&$this, 'settings_meta_box'), 'event-espresso_page_payment_gateways'
+						'espresso_' . $this->_gateway . '_payment_settings', $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso'), array(&$this, 'settings_meta_box'), 'event-espresso_page_payment_settings', 'normal'
 			);
 	}
 
@@ -244,7 +248,7 @@ abstract class EE_Gateway {
 											style="margin:1em 4em 2em 0"
 										/>
 									<?php $deactivate = add_query_arg(array('deactivate_' . $this->_gateway => 'true'), GATEWAYS_ADMIN_URL) . '#' . $this->_gateway; ?>
-									<a id="deactivate_<?php echo $this->_gateway; ?>" class="espresso-button-red button-primary" type="submit" onclick="location.href='<?php echo $deactivate; ?>'">
+									<a id="deactivate_<?php echo $this->_gateway; ?>" class="espresso-button button-secondary" type="submit" onclick="location.href='<?php echo $deactivate; ?>'">
 										<?php echo __('Deactivate', 'event_espresso') . ' ' . $this->_payment_settings['display_name'] . ' ' . __('Payments?'); ?>
 									</a>
 								</p>

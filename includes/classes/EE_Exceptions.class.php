@@ -116,15 +116,11 @@ class EE_Error extends Exception {
 		self::$_all_exceptions[ $x_time ]['string'] 	= $this->getTraceAsString();
 		self::$_error_count++;
 
-		//$this->_display_errors();
-		if ( ! self::$_action_added ) {
-			add_action( 'shutdown', array( $this, 'display_errors' ));
-			self::$_action_added = TRUE;
-		}		
+		
+		//add_action( 'shutdown', array( $this, 'display_errors' ));
+		$this->display_errors();
 		
 	}
-
-
 
 
 
@@ -136,38 +132,13 @@ class EE_Error extends Exception {
     public function display_errors(){		
 		
 		$trace_details = '';
-		
-		if ( ! self::$_js_loaded ) {
-?>
-<script>
-	jQuery(document).ready(function($) {
-	
-		var message = $('#message');
-		var target;
-		
-		$('#message').remove();
-		if ( $('#content').size() ) {
-			target = $('#content');
-		} else if ( $('#screen-meta-links').size() ) {
-			target = $('#screen-meta-links');
-		} else if ( $('#wpbody-content').size() ) {
-			target = $('#wpbody-content');
-		}		
-		
-		$( target ).after( message );
-			
-		$('body').on( 'click', '.display-ee-error-trace-lnk', function(e) {
-			e.preventDefault();
-			var traceTable = '#' + $(this).attr('rel');
-			$( traceTable ).slideToggle();
-		});
-	});
-</script>
-<?php
-			self::$_js_loaded = TRUE;
-		}
 
 		$ouput = '
+<style type="text/css">
+	#error-page {
+		max-width:90% !important;	
+	}
+</style>		
 <div id="message" class="error">';
 
 		if ( ! WP_DEBUG ) {
@@ -224,14 +195,22 @@ class EE_Error extends Exception {
 						$line = $ex['line'] != '' ? $ex['line'] : $line;
 						$error_code = self::generate_error_code ( $file, $trace['function'], $line );
 					}
+					
+					$nmbr_dsply = ! empty( $nmbr ) ? $nmbr : '&nbsp;';
+					$line_dsply = ! empty( $line ) ? $line : '&nbsp;';
+					$file_dsply = ! empty( $file ) ? $file : '&nbsp;';
+					$class_dsply = ! empty( $class ) ? $class : '&nbsp;';
+					$type_dsply = ! empty( $type ) ? $type : '&nbsp;';
+					$function_dsply = ! empty( $function ) ? $function : '&nbsp;';
+					$args_dsply = ! empty( $args ) ? '( ' . $args . ' )' : '';
 								 
 		              $trace_details .= '
 					<tr>
-						<td align="center" style="border-bottom:1px solid #666;' . $zebra . '">' . $nmbr . '</td>
-						<td align="center" style="border-bottom:1px solid #666;' . $zebra . '">' . $line . '</td>
-						<td align="left" style="border-bottom:1px solid #666;' . $zebra . '">' . $file . '</td>
-						<td align="left" style="border-bottom:1px solid #666;' . $zebra . '">' . $class . '</td>
-						<td align="left" style="border-bottom:1px solid #666;' . $zebra . '">' . $type . $function . '( ' . $args . ' )</td>
+						<td align="center" style="border-bottom:1px solid #666;' . $zebra . '">' . $nmbr_dsply . '</td>
+						<td align="center" style="border-bottom:1px solid #666;' . $zebra . '">' . $line_dsply . '</td>
+						<td align="left" style="border-bottom:1px solid #666;' . $zebra . '">' . $file_dsply . '</td>
+						<td align="left" style="border-bottom:1px solid #666;' . $zebra . '">' . $class_dsply . '</td>
+						<td align="left" style="border-bottom:1px solid #666;' . $zebra . '">' . $type_dsply . $function_dsply . $args_dsply . '</td>
 					</tr>';
 
 					
@@ -258,9 +237,9 @@ class EE_Error extends Exception {
 			<p class="ee-error-dev-msg-pg">
 				<strong class="ee-error-dev-msg-str">An ' . $ex['name'] . ' exception was thrown!</strong>  &nbsp; <span>code: ' . $ex['code'] . '</span><br />
 				<span class="big-text">"' . trim( $ex['msg'] ) . '"</span><br />
-				'.$ex['file'].' &nbsp; ( line no: '.$ex['line'].' ) &nbsp; <a class="display-ee-error-trace-lnk" rel="ee-error-trace-' . self::$_error_count . $time . '">' . __( 'click to view backtrace and class/method details', 'event_espresso' ) . '</a>
+				'.$ex['file'].' &nbsp; ( line no: '.$ex['line'].' ) 
 			</p>
-			<div id="ee-error-trace-' . self::$_error_count . $time . '" class="ee-error-trace-dv" style="display:none;">
+			<div id="ee-error-trace-' . self::$_error_count . $time . '" class="ee-error-trace-dv">
 				' . $trace_details;
 				
 				if ( ! empty( $class )) {
@@ -280,6 +259,8 @@ class EE_Error extends Exception {
 		</div>
 		<br />';
 		
+		// &nbsp; <a class="display-ee-error-trace-lnk" rel="ee-error-trace-' . self::$_error_count . $time . '">' . __( 'click to view backtrace and class/method details', 'event_espresso' ) . '</a>
+		
 			}
 			
 			$this->write_to_error_log( $time, $ex );
@@ -298,6 +279,7 @@ class EE_Error extends Exception {
 </div>';
 
 		echo $ouput;
+
 //		$template = 'error_msg.php';
 //		$path_to_template = EE_TEMPLATES_PATH;
 //		$template_vars = array( 'error_msg' => $ouput );
@@ -387,7 +369,7 @@ class EE_Error extends Exception {
 	* 	@return 		void
 	*/
 	public static function add_success( $msg = NULL, $file = NULL, $func = NULL, $line = NULL ) {
-		self::_add_notice ( 'success', $msg, $file, $func, $line );
+		self::_add_notice ( 'success', $msg );
 	}
 
 
@@ -406,8 +388,8 @@ class EE_Error extends Exception {
 	* 	@return 		void
 	*/
 	private static function _add_notice( $type = 'success', $msg = NULL, $file = NULL, $func = NULL, $line = NULL ) {
-		// get error code
-		$error_code = self::generate_error_code ( $file, $func, $line );
+		// get error code only on error
+		$error_code = $type == 'error' ? self::generate_error_code ( $file, $func, $line ) : '';
 		// get separate user and developer messages if they exist		
 		$msg = explode( '||', $msg );
 		$user_msg = $msg[0];

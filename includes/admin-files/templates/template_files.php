@@ -50,7 +50,7 @@ function espresso_template_customization_instructions() {
 					</strong>
 					<?php _e('Are you sure you want to enable this feature?', 'event_espresso'); ?>
 					<?php echo select_input('use_custom_templates', $values, $org_options['template_settings']['use_custom_templates']); ?>
-					<?php apply_filters('filter_hook_espresso_help', 'custom_templates_info'); ?>
+					<?php do_action('action_hook_espresso_help', 'custom_templates_info'); ?>
 				</p>
 			</fieldset>
 			<?php

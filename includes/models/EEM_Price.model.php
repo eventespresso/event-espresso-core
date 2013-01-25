@@ -77,7 +77,7 @@ class EEM_Price extends EEM_Base {
 				'PRC_end_date'			=> '%d',
 				'PRC_disc_code'			=> '%s',
 				'PRC_disc_limit_qty'	=> '%d',
-				'PRC_disc_qty'				=> '%d',
+				'PRC_disc_qty'			=> '%d',
 				'PRC_disc_apply_all'	=> '%d',
 				'PRC_disc_wp_user'	=> '%d',
 				'PRC_is_active' 			=> '%d',
@@ -103,7 +103,7 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 	mixed		array on success, FALSE on fail
 	 */
 	private function _create_objects($prices = FALSE) {
-
+		
 		if (!$prices) {
 			return FALSE;
 		}
@@ -111,7 +111,7 @@ class EEM_Price extends EEM_Base {
 		if (is_object($prices)) {
 			$prices = array($prices);
 		}
-
+		
 		foreach ($prices as $price) {
 
 			$array_of_objects[$price->PRC_ID] = new EE_Price(
@@ -138,6 +138,7 @@ class EEM_Price extends EEM_Base {
 											$price->PRC_ID
 			);
 		}
+
 		return $array_of_objects;
 	}
 
@@ -266,7 +267,8 @@ class EEM_Price extends EEM_Base {
 	 * 		@param		mixed  string|array		$operator
 	 * 		@return 		mixed array on success, FALSE on fail
 	 */
-	private function _select_all_prices_where ( $where_cols_n_values=FALSE, $orderby=array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' ), $order='ASC', $operator = '=' ) {
+	private function _select_all_prices_where ( 
+			$where_cols_n_values=FALSE, $orderby=array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' ), $order='ASC', $operator = '=', $limit = NULL, $count = FALSE ) {
 	
 		$em_table_data_types = array(
 				'prt.PRT_ID'						=> '%d',
@@ -297,21 +299,11 @@ class EEM_Price extends EEM_Base {
 				'prc.PRC_order' 				=> '%d',
 				'prc.PRC_deleted' 			=> '%d'
 		);
-		
-//		printr( $em_table_data_types, '$em_table_data_types' );
-//		
-//		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
-//		$PRT_MDL = EEM_Price_Type::instance();
-//		$prc_data_types = $this->table_data_types;
-//		unset( $prc_data_types['PRT_ID'] );
-//		$em_table_data_types = array_merge( $prc_data_types, $PRT_MDL->get_table_data_types() );
-//		
-//		printr( $em_table_data_types, '$em_table_data_types' );
-		
 
 		global $wpdb;
 		
-		$SQL = 'SELECT * FROM '. $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prt.PRT_ID = prc.PRT_ID';
+		$SQL = $count ? 'SELECT COUNT(prc.PRC_ID) ' : 'SELECT * ';
+		$SQL .= 'FROM '. $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prt.PRT_ID = prc.PRT_ID';
 
 		if ( $where_cols_n_values ) {
 			$prepped = $this->_prepare_where ($where_cols_n_values, $em_table_data_types, $operator);
@@ -319,19 +311,22 @@ class EEM_Price extends EEM_Base {
 			$VAL = $prepped['value'];
 		}
 
-//echo '<h4>$SQL : ' . $SQL . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-//echo printr( $VAL, '$VAL' ); 
+		$SQL .= $this->_orderby_n_sort ( $orderby, $order );
 
-//			$SQL .= $this->_orderby_n_sort ( array( 'prt.PRT_order' ), array( 'ASC' ));
-			$SQL .= $this->_orderby_n_sort ( $orderby, $order );
-
-		//$wpdb->hide_errors();
-		if ( $results = $wpdb->get_results( $wpdb->prepare( $SQL, $VAL ), 'OBJECT' )) {
-			$price_array = $this->_create_objects($results);
-			return $price_array;
-		} else {
-			return FALSE;
+		if ( $limit && is_array($limit) && ! $count ) {
+			$SQL .=	' LIMIT ' . $limit[0] . ',' . $limit[1];
 		}
+		// get count ? or get data?
+		$results = $count ? $wpdb->get_var( $wpdb->prepare( $SQL, $VAL )) : $wpdb->get_results( $wpdb->prepare( $SQL, $VAL ), 'OBJECT' );
+		//echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		// bad results
+		if ( empty( $results ) || $results === FALSE || is_wp_error( $results )) {
+			return FALSE;
+		}			
+		//  return the count OR create objects out of data
+		$results = $count ? $results : $this->_create_objects($results);
+		return $results;
+
 	}
 
 
@@ -465,14 +460,28 @@ class EEM_Price extends EEM_Base {
 
 
 	/**
-	 * 		retreive all prices that are global
+	 * 	retreive all prices that are global
 	 *
-	 * 		@access		public
-	 * 		@return 		array				on success
-	 * 		@return 		boolean			false on fail
+	 * 	@access		public
+	 * 	@return 		boolean	$trashed				return deleted records or just active non-deleted ones ?
+	 * 	@return 		string		$orderby				sorting column
+	 * 	@return 		string		$order					sort ASC or DESC ?
+	 * 	@return 		array		$limit					query limit and offset
+	 * 	@return 		boolean	$count					return count or results ?
+	 * 	@return 		array		on success
+	 * 	@return 		boolean	false on fail
 	 */
-	public function get_all_prices_that_are_global($orderby='prc.PRC_ID', $order='ASC') {
-		return $this->_select_all_prices_where(array('prt.PRT_is_global' => TRUE ), $orderby, $order);
+	public function get_all_prices_that_are_global( $trashed = FALSE, $orderby=array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' ), $order='ASC', $limit = NULL, $count = FALSE ) {
+		
+		return $this->_select_all_prices_where( 
+				array( 'prt.PRT_is_global' => TRUE, 'prc.PRC_deleted' => $trashed ),
+				$orderby,
+				$order,
+				'=',
+				$limit, 
+				$count 
+			);
+
 	}
 
 	public function get_all_prices_that_are_not_global() {

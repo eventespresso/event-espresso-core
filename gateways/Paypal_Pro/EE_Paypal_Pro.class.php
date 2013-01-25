@@ -143,7 +143,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 			<th>
 				<label for="paypal_pro_currency_format">
 					<?php _e('Country Currency', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'paypal_pro_currency_info') ?>
+					<?php do_action('action_hook_espresso_help', 'paypal_pro_currency_info') ?>
 				</label>
 			</th>
 			<td>
@@ -262,11 +262,11 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 			<th>
 				<label for="paypal_pro_use_sandbox">
 					<?php _e('Use the Debugging Feature<br/>and the PayPal Sandbox', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'paypal_pro_sandbox_info'); ?>
+					<?php do_action('action_hook_espresso_help', 'paypal_pro_sandbox_info'); ?>
 				</label>
 			</th>
 			<td>
-				<?php echo select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?>						
+				<?php echo EE_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?>						
 				<span class="description">
 					<?php _e('Make sure you enter the sandbox credentials above.', 'event_espresso'); ?>
 				</span>

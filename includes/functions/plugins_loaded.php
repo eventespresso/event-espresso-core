@@ -70,18 +70,15 @@ function espresso_define_tables_and_paths() {
 
 	//Define the uploads directory and url
 	define("EVENT_ESPRESSO_UPLOAD_DIR", $uploads['basedir'] . DS . 'espresso' . DS);
-	define("EVENT_ESPRESSO_UPLOAD_URL", $uploads['baseurl'] . DS . 'espresso' . DS);
+	define("EVENT_ESPRESSO_UPLOAD_URL", $uploads['baseurl'] . '/espresso/' );
 
 	//Define the templates dirrectory and url
 	define("EVENT_ESPRESSO_TEMPLATE_DIR", $uploads['basedir'] . DS . 'espresso' . DS . 'templates' . DS);
-	define("EVENT_ESPRESSO_TEMPLATE_URL", $uploads['baseurl'] . DS . 'espresso' . DS . 'templates' . DS);
+	define("EVENT_ESPRESSO_TEMPLATE_URL", $uploads['baseurl'] . '/espresso/templates/' );
 
 	//Define the gateway directory and url
 	define("EVENT_ESPRESSO_GATEWAY_DIR", $uploads['basedir'] . DS . 'espresso' . DS . 'gateways' . DS);
-	define("EVENT_ESPRESSO_GATEWAY_URL", $uploads['baseurl'] . DS . 'espresso' . DS . 'gateways' . DS);
-	
-
-	
+	define("EVENT_ESPRESSO_GATEWAY_URL", $uploads['baseurl'] .'/espresso/gateways/' );
 }
 
 
@@ -91,20 +88,100 @@ function espresso_define_tables_and_paths() {
 
 /**
  * 		Automagically load non-singleton class files - no need to include or require
- * 		ONLY woks with class objects created via  "new"  ie: $object = new SomeClassName();
-* 		directory path can be designated by substituting underscores for directory separators
-* 		ie: new admin_transactions_TransactionsInit() would load the file located at : includes/core/admin/transactions/EE_TransactionsInit.class.php
+ * 		ONLY works with class objects created via  "new"  ie: $object = new SomeClassName();
  *
  * 		@access 		public
 * 		@param		$class		path and name of the class file to be loaded
  * 		@return 		void
  */
 function espresso_autoload() {
-	function __autoload( $class_name ) {
-		$include_path = dirname(espresso_main_file()) . '/includes/classes/';
-		if ( file_exists( $include_path . $class_name . '.class.php' )) {
-			require_once( $include_path . $class_name . '.class.php' );
+	//core
+	spl_autoload_register('espresso_models_autoload');
+	spl_autoload_register('espresso_classes_autoload');
+	spl_autoload_register('espresso_classes_core_autoload');	
+	spl_autoload_register('espresso_core_admin_autoload');
+}
+
+function espresso_models_autoload($className) {
+	$filename = dirname(espresso_main_file()) . '/includes/models/' . $className . '.model.php';
+	if ( is_readable($filename) ) {
+		require_once( $filename );
+	}
+}
+
+function espresso_classes_autoload($className) {
+	$filename = dirname(espresso_main_file()) . '/includes/classes/' . $className . '.class.php';
+	if ( is_readable($filename) ) {
+		require_once( $filename );
+	}
+}
+
+function espresso_classes_core_autoload($className) {
+	//let's setup an array of paths to check (for each subsystem)
+	$root = dirname(espresso_main_file()) . '/includes/core/';
+	
+	//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
+	$dir_ref = array(
+		'root' => array('core', 'class'),
+		'/messages/' => 'core',
+		'/messages/message_type/' => 'class',
+		'/messages/messenger/' => 'class'
+		);
+
+	//assemble a list of filenames
+	foreach ( $dir_ref as $dir => $types ) {
+		if ( is_array($types) ) {
+			foreach ( $types as $type) {
+				$filenames[] = ( $dir == 'root' ) ? $root . $className . '.' . $type . '.php' : $root . $dir . $className . '.' . $type . '.php';
+			}
+		} else {
+			$filenames[] = ( $dir == 'root' ) ? $root . $className . '.' . $types . '.php' : $root . $dir . $className . '.' . $types . '.php';
 		}
+	}
+
+	//now loop through assembled filenames and require as available
+	foreach ( $filenames as $filename ) {
+		if ( is_readable($filename) )
+			require_once( $filename );
+	}
+}
+
+function espresso_core_admin_autoload($className) {
+	//let's setup an array of paths to check (for each subsystem)
+	$root = dirname(espresso_main_file()) . '/includes/core/admin/';
+	
+	//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
+	$dir_ref = array(
+		'root' => array('core', 'class', 'controller'),
+		'attendees/' => array('core', 'class'),
+		'events/' => array('core','class'),
+		'event_categories/' => array('core','class'),
+		'registration_forms/' => array('core', 'class'),
+		'general_settings/' => array('core','class'),
+		'messages/' => array('core', 'class'),
+		'payments/' => array('core', 'class'),
+		'pricing/' => array('core', 'class'),
+		'registrations/' => array('core','class'),
+		'support/' => array('core', 'class'),
+		'transactions/' => array('core', 'class'),
+		'venues/' => array('core', 'class')
+		);
+
+	//assemble a list of filenames
+	foreach ( $dir_ref as $dir => $types ) {
+		if ( is_array($types) ) {
+			foreach ( $types as $type) {
+				$filenames[] = ( $dir == 'root' ) ? $root . $className . '.' . $type . '.php' : $root . $dir . $className . '.' . $type . '.php';
+			}
+		} else {
+			$filenames[] = ( $dir == 'root' ) ? $root . $className . '.' . $types . '.php' : $root . $dir . $className . '.' . $types . '.php';
+		}
+	}
+
+	//now loop through assembled filenames and require as available
+	foreach ( $filenames as $filename ) {
+		if ( is_readable($filename) )
+			require_once( $filename );
 	}
 }
 
@@ -505,115 +582,26 @@ function event_espresso_run_install($table_name, $table_version, $sql, $engine =
 }
 
 
-
-
-
 /**
  * 		loads and instantiates files and objects for EE admin pages
- *
  * 		@access public
  * 		@return void
  */
-function espresso_admin_pages() {
-
-	//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-
-	define( 'EE_CORE_ADMIN', EE_CORE . 'admin' . DS );
-	define( 'EE_CORE_ADMIN_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'includes' . DS . 'core' . DS . 'admin' . DS );
-	define( 'WP_AJAX_URL', get_bloginfo('url') . '/wp-admin/admin-ajax.php' );
-	define( 'JQPLOT_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/' );
-	
-	global $is_UI_request, $is_ajax_request;
-	
-//	echo '<h4>$is_UI_request : ' . $is_UI_request . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//	echo '<h4>$is_ajax_request : ' . $is_ajax_request . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-
-	// load admin page factory files
-	require_once( EE_CORE_ADMIN . 'EE_Admin_Page_Init.core.php' );
-	require_once( EE_CORE_ADMIN . DS . 'EE_Admin_Page.core.php' ); 
-
-	$load_admin = TRUE;
-	// grab page request
-	$page_request = ! empty( $_REQUEST['page'] ) ? sanitize_key( $_REQUEST['page'] ) : FALSE;
-	//echo '<h4>$page_request : ' . $page_request . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-	do_action('action_hook_espresso_log', 'admin page request = ' . $page_request, '$is_UI_request = ' . $is_UI_request, '$is_ajax_request = ' . $is_ajax_request );
-
-	// are we just doing some backend processing or runnning the whole shebang?
-	if ( $page_request && ! $is_UI_request ) {
-		//echo '<h4>load admin page : ' . $page_request . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		do_action('action_hook_espresso_load_reg_page_files');
-		// if the page_request doesn't load here for some reason then load the entire admin
-		$load_admin = ! espresso_load_admin_page( $page_request, $page_request ) ? TRUE : FALSE;
-	} 
-	
-	if ( $load_admin && ! $is_ajax_request ) {
-		//echo '<h4>load all admin pages  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		// start with an empty array
-		$admin_pages = array();
-		// folders we don't want
-		$exclude = array();
-		// grab everything in the  admin core directory
-		if ( $admin_screens = glob( EE_CORE_ADMIN . '*' )) {	
-			foreach( $admin_screens as $admin_screen ) {
-				// files and anything in the exclude array need not apply
-				if ( is_dir( $admin_screen ) && ! in_array( $admin_screen, $exclude )) {
-					// these folders represent the different EE admin pages
-					$admin_pages[] = basename( $admin_screen );
-				}
-			}
-		}
-		// allow addons to insert their data into the admin pages array
-		$admin_pages = apply_filters( 'filter_hook_espresso_admin_pages_array', $admin_pages );	
-		//echo '<pre style="height:auto;border:2px solid #FF6600;">' . print_r( $admin_pages, TRUE ) . '</pre>';
-
-		// if it's' an admin page then initialize it
-		if ( ! in_array( $page_request, $admin_pages )) {
-			$page_request = FALSE;
-		}
-
-		// now loop thru all of our admin pages
-		foreach ( $admin_pages as $admin_page ) {
-			espresso_load_admin_page( $admin_page, $page_request );
-		}
-		
-	} else {
-		// frontend AJAX request, prolly for SPCO
-		do_action('action_hook_espresso_load_reg_page_files');
+function espresso_init_admin_pages() {
+	//this loads the controller for the admin pages which will setup routing etc
+	try {
+		$EEAdmin = new EE_Admin_Page_load();
+	} catch ( EE_Error $e ) {
+		$e->get_error();
 	}
 	
 }
 
 
 
-
-/**
- * 		loads and instantiates files and objects for a single EE admin page
- *
- * 		@access public
- * 		@param string	$admin_page
- * 		@return void
- */
-function espresso_load_admin_page( $admin_page, $page_request ) {
-	
-//	echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-
-	$admin_page = strtolower( $admin_page );
-	$page_name = ucwords(  str_replace( '_', ' ', $admin_page ));
-	$class_name = str_replace( ' ', '_', $page_name );
-	
-	// find, load and instantiate admin page init file
-	$path_to_init = EE_CORE_ADMIN . $admin_page . DS . $class_name . '_Admin_Page_Init.core.php';		
-	if ( file_exists( $path_to_init )) {
-		//echo '<h2>$path_to_init : ' . $path_to_init . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h2>';		
-		require_once( $path_to_init );
-		$page_class =  $class_name . '_Admin_Page_Init';
-		$a = new ReflectionClass( $page_class );
-		$a->newInstance( $admin_page, $page_name, $class_name, $page_request );	
-		return TRUE;					
-	} else {
-		return FALSE;
-	}
+function espresso_load_scripts_styles() {
+	wp_register_script('ee_error_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/EE_Error.js', array('jquery'), EVENT_ESPRESSO_VERSION, false);
+	wp_enqueue_script('ee_error_js');
 }
 
 
