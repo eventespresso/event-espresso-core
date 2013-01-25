@@ -131,7 +131,6 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		//styles
 		wp_enqueue_style('ee-text-links');
 		wp_enqueue_style('espresso_payments');
-
 		//scripts
 		wp_enqueue_script('ee-text-links');
 	}
@@ -201,11 +200,23 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _payment_settings() {
-//			$this->_template_args['expire_on_registration_end'] = isset( $org_options['expire_on_registration_end'] ) ? absint( $org_options['expire_on_registration_end'] ) : FALSE;
-//			$data['expire_on_registration_end'] = isset( $this->_req_data['expire_on_registration_end'] ) ? absint( $this->_req_data['expire_on_registration_end'] ) : FALSE;
 
-		$this->display_admin_page_with_sidebar();
+		global $org_options;
+		$this->_template_args['values'] = $this->_yes_no_values;
+		
+		$this->_template_args['show_pending_payment_options'] = isset( $org_options['show_pending_payment_options'] ) ? absint( $org_options['show_pending_payment_options'] ) : FALSE;
+//		$data['expire_on_registration_end'] = isset( $this->_req_data['expire_on_registration_end'] ) ? absint( $this->_req_data['expire_on_registration_end'] ) : FALSE;
+
+		$this->_set_add_edit_form_tags( 'update_espresso_page_settings' );
+		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
+		$this->_template_args['admin_page_content'] = espresso_display_template( EE_PAYMENTS_TEMPLATE_PATH . 'payment_settings.template.php', $this->_template_args, TRUE );
+		$this->display_admin_page_with_sidebar();	
+		
 	}
+
+
+
+
 
 
 	protected function _developers_section() {

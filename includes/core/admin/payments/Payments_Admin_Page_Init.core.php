@@ -34,7 +34,10 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 		//define some page related constants
 		define( 'EE_PAYMENTS_PG_SLUG', 'payment_settings' );
 		define( 'EE_PAYMENTS_ADMIN_URL', admin_url( 'admin.php?page=' . EE_PAYMENTS_PG_SLUG ));
-		define( 'EE_PAYMENTS_ASSETS_URL', EE_CORE_ADMIN_URL . 'payments/assets/');
+		define( 'EE_PAYMENTS_ADMIN', EE_CORE_ADMIN . 'payments' . DS );	
+		define( 'EE_PAYMENTS_TEMPLATE_PATH', EE_PAYMENTS_ADMIN . 'templates' . DS );	
+		define( 'EE_PAYMENTS_ASSETS_URL', EE_CORE_ADMIN_URL . 'payments/assets/' );
+
 
 		parent::__construct();
 	}
