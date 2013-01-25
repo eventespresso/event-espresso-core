@@ -80,7 +80,7 @@ function organization_config_mnu() {
 		$org_options['affiliate_id'] = $_POST['affiliate_id'];
 		$org_options['site_license_key'] = $_POST['site_license_key'];
 		$org_options['default_logo_url'] = $_REQUEST['upload_image'];
-		$org_options['default_payment_status'] = $_POST['default_payment_status'];
+		$org_options['default_reg_status'] = $_POST['default_payment_status'];
 		$org_options['template_settings']['use_custom_post_types'] = $_POST['use_custom_post_types'];
 		//echo getCountryFullData($org_options['organization_country']);
 		$country_data = getCountryFullData($org_options['organization_country']);

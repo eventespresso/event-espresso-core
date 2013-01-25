@@ -52,7 +52,7 @@ function espresso_optional_settings_meta_box() {
 					<th><label for="default_payment_status">
 							<?php _e(' Default Payment Status', 'event_espresso'); ?>
 							<?php do_action('action_hook_espresso_help', 'payment_status_info') ?> </label></th>
-					<td><?php echo select_input('default_payment_status', $default_payment_status, $org_options['default_payment_status']) ?><br />
+					<td><?php echo select_input('default_payment_status', $default_payment_status, $org_options['default_reg_status']) ?><br />
 						<span class="description">
 							<?php _e('This value will be automatically filled in for each person\'s payment status,<br />
 until payment is made, for each event.', 'event_espresso'); ?>
