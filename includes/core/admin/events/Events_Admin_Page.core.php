@@ -49,8 +49,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _init_page_props() {
-		$this->page_slug = 'events';
-		$this->page_label = __('Events', 'event_espresso');
+		$this->page_slug = EVENTS_PG_SLUG;
+		$this->page_label = EVENTS_LABEL;
 	}
 
 
@@ -66,7 +66,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 	protected function _define_page_props() {
 		$this->_admin_base_url = EVENTS_ADMIN_URL;
-		$this->_admin_page_title = __('Events', 'event_espresso');
+		$this->_admin_page_title = EVENTS_LABEL;
 		$this->_labels = array(
 			'buttons' => array(
 				'add' => __('Add New Event', 'event_espresso'),
@@ -82,6 +82,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
 			'default' => '_events_overview_list_table',
+			'event_settings' => '_default_event_settings',
 			'edit_event' => array(
 				'func' => '_event_details',
 				'args' => array('edit')
@@ -158,6 +159,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'nav' => array(
 					'label' => __('Import', 'event_esprsso'),
 					'order' => 30
+					),
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
+				),
+			'event_settings' => array(
+				'nav' => array(
+					'label' => __('Default Settings', 'event_esprsso'),
+					'order' => 40
 					),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
 				),
@@ -3839,6 +3847,54 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _trash_or_restore_event($trash) {}
 
+
+
+
+
+	/**
+	 * _default_event_settings
+	 * @return string html for the settings page
+	 */
+	protected function _default_event_settings() {
+
+		global $org_options;
+		$this->_template_args['values'] = $this->_yes_no_values;
+
+		$this->_template_args['org_options'] = isset( $org_options['org_options'] ) ? maybe_unserialize( $org_options['org_options'] ) : FALSE;
+		$this->_template_args['expire_on_registration_end'] = isset( $org_options['expire_on_registration_end'] ) ? absint( $org_options['expire_on_registration_end'] ) : FALSE;
+
+		$this->_template_args['reg_status_array'] = $this->_get_reg_status_array();
+		$this->_template_args['default_reg_status'] = isset( $org_options['default_reg_status'] ) ? sanitize_text_field( $org_options['default_reg_status'] ) : 'RPN';
+
+		$this->_template_args['use_attendee_pre_approval'] = isset( $org_options['use_attendee_pre_approval'] ) ? absint( $org_options['use_attendee_pre_approval'] ) : FALSE;
+
+		$this->_set_add_edit_form_tags( 'update_global_event_settings' );
+		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
+		$this->_template_args['admin_page_content'] = espresso_display_template( EVENTS_TEMPLATE_PATH . 'event_settings.template.php', $this->_template_args, TRUE );
+		$this->display_admin_page_with_sidebar();	
+		
+	}
+
+
+
+
+	/**
+	 * 		get list of payment statuses
+	*		@access private
+	*		@return array
+	*/
+	private function _get_reg_status_array() {
+
+		global $wpdb;
+		$SQL = 'SELECT STS_ID, STS_code FROM '. $wpdb->prefix . 'esp_status WHERE STS_type = "registration"';
+		$results = $wpdb->get_results( $SQL );
+
+		$reg_status = array();
+		foreach ( $results as $status ) {
+			$reg_status[] = array( 'id' => $status->STS_ID, 'text' => ucwords( strtolower( str_replace( '_', ' ', $status->STS_code ))));
+		}
+		return $reg_status;
+	}
 
 
 
