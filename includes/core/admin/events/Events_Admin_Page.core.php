@@ -175,7 +175,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 					'order' => 5,
 					'persistent' => false
 					),
-				'metaboxes' => array('_register_event_editor_meta_boxes', '_premium_event_editor_meta_boxes', '_publish_post_box')
+				'metaboxes' => array( '_publish_post_box', '_register_event_editor_meta_boxes', '_premium_event_editor_meta_boxes' )
 				),
 			'edit_event' => array(
 				'nav' => array(
@@ -184,7 +184,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 					'persistent' => false,
 					'url' => isset($this->_req_data['EVT_ID']) ? add_query_arg(array('EVT_ID' => $this->_req_data['EVT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
-				'metaboxes' => array('_register_event_editor_meta_boxes', '_premium_event_editor_meta_boxes', '_publish_post_box')
+				'metaboxes' => array( '_publish_post_box', '_register_event_editor_meta_boxes', '_premium_event_editor_meta_boxes' )
 				)
 			);
 	}
@@ -307,7 +307,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _events_overview_list_table() {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_event', 'add', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
@@ -335,20 +334,75 @@ class Events_Admin_Page extends EE_Admin_Page {
 		//set _event property
 		$this->_set_event_object();
 
-		$id = isset($this->_event->id) ? $this->_event->id : '';
+		// form 
+		$route = $view == 'edit' ? 'update_event' : 'insert_event';
+		$this->_set_add_edit_form_tags($route);
 
 		//any specific javascript here.
 		//todo: this needs to be done properly via an enqueue and wp_localize_scripts() for vars
 		add_action( 'action_hook_espresso_event_editor_footer', array($this, 'event_editor_footer_js') );
 
-		$route = $view == 'edit' ? 'update_event' : 'insert_event';
-		$this->_set_add_edit_form_tags($route);
-		$this->_template_args['publish_box_extra_content'] = $this->_publish_box_extra_content();
+		$this->_generate_event_title_and_desc();
+		$this->_generate_publish_box_extra_content();
+		
+		$id = isset($this->_event->id) ? $this->_event->id : '';
 		$this->_set_publish_post_box_vars( 'event_id', $id, 'delete_event' );
 
-		//take care of contents
-		$this->_template_args['admin_page_content'] = $this->_event_details_display();
 		$this->display_admin_page_with_sidebar();
+
+	}
+
+
+
+
+	/**
+	 * 	_generate_event_title_and_desc
+	 * 	@access private
+	 * @return void
+	 */
+	private function _generate_event_title_and_desc() {
+		// title and desc content
+		$title_and_desc_args['event_name'] = $this->_event->event_name;
+		$title_and_desc_args['event_page_url'] = $this->_event->page_url;
+		$title_and_desc_args['event_slug'] = $this->_event->slug;
+		$title_and_desc_args['event_is_new'] = $this->_event->is_new;
+		$title_and_desc_args['event_identifier'] = $this->_event->event_identifier;
+		$title_and_desc_args['shortlink'] = add_query_arg( array( 'ee' => $this->_event->id ), $this->_event->page_url );	
+		// desc editor
+		$editor_args['event_desc'] = array(
+				'type' => 'wp_editor',
+				'value' => EE_Formatter::admin_format_content($this->_event->event_desc),
+				'class' => 'my_editor_custom',
+			);
+		$_wp_editor = $this->_generate_admin_form_fields($editor_args, 'array');
+		$title_and_desc_args['event_desc_editor'] = $_wp_editor['event_desc']['field'];
+		// load template
+		$this->_template_args['admin_page_content'] = espresso_display_template( EVENTS_TEMPLATE_PATH . 'event_title_and_desc.template.php', $title_and_desc_args, TRUE );
+	}
+
+
+
+
+	/**
+	 * 	_generate_publish_box_extra_content
+	 * 	@access private
+	 * @return void
+	 */
+	private function _generate_publish_box_extra_content() {
+		// publish box
+		$publish_box_extra_args['reg_url'] = espresso_reg_url($this->_event->id, $this->_event->slug);
+		$publish_box_extra_args['event_id'] = $this->_event->id;
+		$publish_box_extra_args['event_preview_url'] = add_query_arg( array( 'action' => 'copy_event', 'event_id' => $this->_event->id ), EVENTS_ADMIN_URL ); 
+		$publish_box_extra_args['event_name'] = $this->_event->event_name;
+		$publish_box_extra_args['event_start_date'] = event_date_display($this->_event->start_date);
+		$publish_box_extra_args['event_status_display'] = $this->_event->status['display'];
+		$publish_box_extra_args['view_attendees_url'] = add_query_arg( array( 'event_admin_reports' => 'list_attendee_payments', 'event_id' => $this->_event->id ), 'admin.php?page=attendees' ); 
+		$publish_box_extra_args['attendees_reg_limit'] = get_number_of_attendees_reg_limit($this->_event->id, 'num_attendees_slash_reg_limit'); 
+		$publish_box_extra_args['misc_pub_section_class'] = apply_filters('filter_hook_espresso_event_editor_email_attendees_class', 'misc-pub-section');
+		$publish_box_extra_args['email_attendees_url'] = add_query_arg( array( 'event_admin_reports' => 'event_newsletter', 'event_id' => $this->_event->id ), 'admin.php?page=attendees' ); 
+		$publish_box_extra_args['event_editor_overview_add'] = do_action( 'action_hook_espresso_event_editor_overview_add', $this->_event ); 
+		// load template
+		$this->_template_args['publish_box_extra_content'] = espresso_display_template( EVENTS_TEMPLATE_PATH . 'event_publish_box_extras.template.php', $publish_box_extra_args, TRUE );
 	}
 
 
@@ -374,166 +428,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 	protected function _publish_box_extra_content() {
 		ob_start();
 		?>
-		<div id="minor-publishing">
-		
-			<div id="minor-publishing-actions" class="clearfix">
-				<div id="preview-action"> <a class="preview button" href="<?php echo espresso_reg_url($this->_event->id, $this->_event->slug); ?>" target="_blank" id="event-preview" tabindex="5">
-						<?php _e('View Event', 'event_espresso'); ?>
-					</a>
-					<input type="hidden" name="event-preview" id="event-preview" value="" />
-				</div>
-				<div id="copy-action"> <a class="preview button" href="admin.php?page=events&amp;action=copy_event&event_id=<?php echo $this->_event->id ?>" id="post-copy" tabindex="4" onclick="return confirm('<?php _e('Are you sure you want to copy ' . $this->_event->event_name . '?', 'event_espresso'); ?>')">
-						<?php _e('Duplicate Event', 'event_espresso'); ?>
-					</a>
-					<input  type="hidden" name="event-copy" id="event-copy" value="" />
-				</div>
-			</div>
-			<!-- /minor-publishing-actions -->
-
-			<div id="misc-publishing-actions">
-				<div class="misc-pub-section curtime" id="visibility"> <span id="timestamp">
-						<?php _e('Start Date', 'event_espresso'); ?>
-						<b> <?php echo event_date_display($this->_event->start_date); ?></b> </span> </div>
-				<div class="misc-pub-section">
-					<label for="post_status">
-						<?php _e('Current Status:', 'event_espresso'); ?>
-					</label>
-					<span id="post-status-display"> <?php echo $this->_event->status['display']; ?></span></div>
-
-				<div class="misc-pub-section" id="visibility">
-					<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/group.png" width="16" height="16" alt="<?php _e('View Attendees', 'event_espresso'); ?>" />
-					<a href="admin.php?page=attendees&amp;event_admin_reports=list_attendee_payments&amp;event_id=' . $this->_event->id . '"><?php _e('Attendees', 'event_espresso'); ?></a>:
-					<?php echo get_number_of_attendees_reg_limit($this->_event->id, 'num_attendees_slash_reg_limit'); ?>
-				</div>
-
-				<?php $class = apply_filters('filter_hook_espresso_event_editor_email_attendees_class', 'misc-pub-section'); ?>
-
-				<div class="misc-pub-section <?php echo $class; ?>" id="visibility2">
-					<a href="admin.php?page=attendees&amp;event_admin_reports=event_newsletter&amp;event_id=<?php echo $this->_event->id ?>" title="<?php _e('Email Event Attendees', 'event_espresso'); ?>">
-						<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/email_go.png" width="16" height="16" alt="<?php _e('Newsletter', 'event_espresso'); ?>" />
-					</a>
-					<a href="admin.php?page=attendees&amp;event_admin_reports=event_newsletter&amp;event_id=<?php echo $this->_event->id ?>" title="<?php _e('Email Event Attendees', 'event_espresso'); ?>">
-						<?php _e('Email Event Attendees', 'event_espresso'); ?>
-					</a>
-				</div>
-				<?php do_action('action_hook_espresso_event_editor_overview_add', $this->_event); ?>
-			</div>			
-			<!-- /misc-publishing-actions -->
-		</div>
-		<!-- /minor-publishing -->
 		<?php
 		$content = ob_get_contents();
 		ob_end_clean();
 		return $content;
-	}
-
-
-
-
-	/**
-	 * _event_details_display
-	 * takes care of setting up the html for the main event details (add/edit) display content.
-	 *
-	 * @access private
-	 * @return string html
-	 */
-	private function _event_details_display() {
-		$content = $this->_editor_title_div();
-		$content .= $this->_editor_description_div();
-		$content = apply_filters('action_hook_espresso_event_editor_footer', $content);
-		return $content;
-	}
-
-
-
-
-	
-
-	/**
-	 * _editor_title_div
-	 * returns the html for the title area on the event editor.
-	 *
-	 * @access private
-	 * @return string html
-	 */
-	private function _editor_title_div() {
-		ob_start();
-		?>
-		<div id="titlediv">
-			<div id="titlewrap">
-				<h5 style="margin: 1em .5em .1em;"><?php _e('Event Title', 'event_espresso'); ?></h5>
-				<input id="title" type="text" autocomplete="off" value="<?php echo $this->_event->event_name; ?>" tabindex="1" size="30" name="event">
-			</div>
-			<!-- /titlewrap -->
-
-			<div class="inside">
-				<div id="edit-slug-box" style="height:auto;">
-
-					<strong><?php _e('Permalink:', 'event_espresso'); ?></strong>
-
-					<span id="sample-permalink">
-						<?php echo $this->_event->page_url; ?><input size="50" type="text" tabindex="2" name="slug" id="slug" value ="<?php echo $this->_event->slug; ?>" />
-					</span>
-
-					<?php if ( ! $this->_event->is_new ) : ?>
-						<a class="button" onclick="prompt('Shortcode:', jQuery('#shortcode').val()); return false;" href="#"><?php _e('Shortcode'); ?></a>
-						<a class="button" onclick="prompt('Short URL:', jQuery('#shortlink').val()); return false;" href="#"><?php _e('Short URL'); ?></a>
-						<a class="button" onclick="prompt('Full URL:', jQuery('#fulllink').val()); return false;" href="#"><?php _e('Full URL'); ?></a>
-						<a class="button" onclick="prompt('Unique Event Identifier:', jQuery('#identifier').val()); return false;" href="#"><?php _e('Identifier'); ?></a>
-						<a class="button" target="_blank" href="<?php echo $this->_event->page_url . $this->_event->slug; ?>/"><?php _e('View Post'); ?></a>
-					<?php endif; ?>
-
-					<input id="shortcode" type="hidden" value='[SINGLEEVENT single_event_id="<?php echo $this->_event->event_identifier; ?>"]'>
-					<input id="shortlink" type="hidden" value="<?php echo add_query_arg(array('ee' => $this->_event->id), $this->_event->page_url); ?>">
-					<input id="fulllink" type="hidden" value="<?php echo $this->_event->page_url . $this->_event->slug; ?>">
-					<input id="identifier" type="hidden" value="<?php echo $this->_event->event_identifier; ?>">
-					
-				</div>
-				<!-- /edit-slug-box -->
-			</div>
-		</div>
-		<?php
-		$content = ob_get_contents();
-		ob_end_clean();
-		return $content;
-	}
-
-
-
-
-	/**
-	 * _editor_description_div
-	 * returns the html for the editor description field
-	 * 
-	 * @return string html
-	 */
-	private function _editor_description_div() {
-		$editor_args['event_desc'] = array(
-				'type' => 'wp_editor',
-				'value' => EE_Formatter::admin_format_content($this->_event->event_desc),
-				'class' => 'my_editor_custom',
-			);
-
-		$_wp_editor = $this->_generate_admin_form_fields($editor_args, 'array');
-		$content = $_wp_editor['event_desc']['field'];
-
-		ob_start();
-		?>
-		<div id="postdivrich" class="postarea">
-			<?php echo $content; ?>
-			<table id="post-status-info" cellspacing="0">
-				<tbody>
-					<tr>
-						<td id="wp-word-count"><?php echo __('Word count:', 'event_espresso') ?> <span class="word-count"></span></td>
-						<td class="autosave-info"><span class="autosave-message"></span><span id="last-edit"></span></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-		<?php
-		$n_content = ob_get_contents();
-		ob_end_clean();
-		return $n_content;
 	}
 
 
@@ -735,7 +633,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		add_meta_box('espresso_event_editor_venue', __('Venue Details', 'event_espresso'), array( $this, 'venue_metabox' ), $this->_current_screen->id, 'normal', 'core');
 
-		add_meta_box('espresso_event_editor_email', __('Email Confirmation:', 'event_espresso'), array( $this, 'email_metabox' ), $this->_current_screen->id, 'advanced', 'core');
+		//add_meta_box('espresso_event_editor_email', __('Email Confirmation:', 'event_espresso'), array( $this, 'email_metabox' ), $this->_current_screen->id, 'advanced', 'core');
 
 		add_meta_box('espresso_event_editor_primary_questions', __('Questions for Primary Attendee', 'event_espresso'), array( $this, 'primary_questions_group_meta_box' ), $this->_current_screen->id, 'side', 'core');
 
@@ -1302,6 +1200,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$event_id = !empty($this->_event->id) ? $this->_event->id : 0;
 		$originally_submitted_by = !empty($this->_event->event_meta['originally_submitted_by']) ? $this->_event->event_meta['originally_submitted_by'] : 0;
 		$orig_event_staff = !empty($this->_event->event_meta['orig_event_staff']) ? $this->_event->event_meta['orig_event_staff'] : 0;
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/functions.php');
 		?>
 		<div class="inside">
 			<?php echo espresso_personnel_cb($event_id, $originally_submitted_by, $orig_event_staff); ?>
@@ -3852,8 +3751,11 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * _default_event_settings
-	 * @return string html for the settings page
+	 * 	_default_event_settings
+	 * 
+	 * 	This generates the Default Settings Tab
+	 * 
+	 * 	@return string html for the settings page
 	 */
 	protected function _default_event_settings() {
 
