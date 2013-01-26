@@ -85,7 +85,7 @@ class EEM_Soft_Delete_Base extends EEM_TempBase{
 	 */
 	public function get_all_where_deleted($where_cols_n_values,$orderby=null,$sort='ASC',$operators='=',$limit=null,$output='OBJECT_K'){
 		$deletedFlagFieldName=$this->deleted_field_name();
-		$where_cols_n_values[$deletedFlagFieldName]=true;
+		$where_cols_n_values[$deletedFlagFieldName]=true;	
 		return parent::get_all_where($where_cols_n_values,$orderby,$sort,$operators,$limit,$output);
 	}
 	

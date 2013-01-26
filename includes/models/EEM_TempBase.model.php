@@ -82,6 +82,7 @@ abstract class EEM_TempBase extends EEM_Base{
 				case 'foreign_key':
 				case 'int':
 				case 'bool':
+				case 'deleted_flag':
 					$type='%d';
 					break;
 				case 'float':
@@ -93,7 +94,7 @@ abstract class EEM_TempBase extends EEM_Base{
 				case 'primary_text_key':
 				case 'foreign_text_key':
 				case 'enum':
-				default:
+				
 					$type='%s';
 					break;
 			}
@@ -169,11 +170,8 @@ abstract class EEM_TempBase extends EEM_Base{
 	* 		@param		array		$attendees		
 	*		@return 	EE_Base_Class[]		array on success, FALSE on fail
 	*/	
-	protected function _create_objects( $rows = FALSE ) {
-
-		if ( ! $rows || empty($rows)) {
-			return FALSE;
-		} 		
+	protected function _create_objects( $rows = FALSE ) {	
+		$array_of_objects=array();
 		foreach ( $rows as $row ) {
 			if(empty($row)){//wp did its weird thing where it returns an array like array(0=>null), which is totally not helpful...
 				return FALSE;
@@ -498,14 +496,11 @@ abstract class EEM_TempBase extends EEM_Base{
 			$orderby=$this->primary_key_name();
 		}
 		$results=$this->select_all_where($where_cols_n_values, $orderby, $sort, $operators,$limit,$output);
-		if(empty($results)){
-			return array();
-		}
 		if ( is_wp_error( $results )) {
 			return FALSE;
 		}			
-
-		//  return the count OR create objects out of data
+		//echo "get all where results:$results, output: $output<br>";
+		//return the count OR create objects out of data
 		$results = $output == 'COUNT' ? $results : $this->_create_objects($results);
 		return $results;
 	}

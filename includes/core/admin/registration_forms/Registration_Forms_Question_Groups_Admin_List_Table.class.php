@@ -28,7 +28,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  */
-
+require_once('EE_Question.class.php');
 class Registration_Forms_Question_Groups_Admin_List_Table extends EE_Admin_List_Table {
 
 
@@ -41,8 +41,8 @@ class Registration_Forms_Question_Groups_Admin_List_Table extends EE_Admin_List_
 
 	protected function _setup_data() {
 		$this->_per_page = $this->get_items_per_page( $this->_screen . '_per_page' );
-		$this->_data = $this->_view != 'trash' ? $this->_admin_page->get_question_groups( $this->_per_page, FALSE ) : $this->_admin_page->get_trashed_question_groups( $this->_per_page, FALSE );
-		$this->_all_data_count = $this->_view != 'trash' ? $this->_admin_page->get_question_groups( $this->_per_page, TRUE ) : $this->_admin_page->get_trashed_question_groups( $this->_per_page, TRUE );
+		$this->_data = $this->_view != 'trash' ? $this->_admin_page->get_question_groups( $this->_per_page,$this->_current_page, FALSE ) : $this->_admin_page->get_trashed_question_groups( $this->_per_page,$this->_current_page, FALSE );
+		$this->_all_data_count = $this->_view != 'trash' ? $this->_admin_page->get_question_groups( $this->_per_page,$this->_current_page, TRUE ) : $this->_admin_page->get_trashed_question_groups( $this->_per_page,$this->_current_page, TRUE );
 	}
 
 
@@ -90,8 +90,8 @@ class Registration_Forms_Question_Groups_Admin_List_Table extends EE_Admin_List_
 
 
 	protected function _add_view_counts() {
-		$this->_views['all']['count'] = $this->_admin_page->get_question_groups( $this->_per_page, TRUE );
-		$this->_views['trash']['count'] = $this->_admin_page->get_trashed_question_groups( $this->_per_page, TRUE );
+		$this->_views['all']['count'] = $this->_admin_page->get_question_groups( $this->_per_page,$this->_current_page, TRUE );
+		$this->_views['trash']['count'] = $this->_admin_page->get_trashed_question_groups( $this->_per_page,$this->_current_page, TRUE );
 	}
 
 
@@ -100,25 +100,31 @@ class Registration_Forms_Question_Groups_Admin_List_Table extends EE_Admin_List_
 
 
 	public function column_cb($item) {
-		return sprintf( '<input type="checkbox" name="question_id[]" value="%s" />', $item->id);
+		return sprintf( '<input type="checkbox" name="question_id[]" value="%s" />', $item->ID());
 	}
 
 
 
 
 
-	public function column_default($item) {
-		switch($column_name) {
+	public function column_default(EE_Question_Group $item) {
+		/*switch($column_name) {
             case 'question_group_id':
 				return $item[$column_name];
              default:
 				return ( isset( $item->$column_name )) ? $item->$column_name : '';
-        }
+        }*/
 	}
 
-	public function column_name($item) {}
-	public function column_identifier($item) {}
-	public function column_description($item) {}
+	public function column_name(EE_Question_Group $item) {
+		return $item->name();
+	}
+	public function column_identifier(EE_Question_Group $item) {
+		return $item->identifier();
+	}
+	public function column_description(EE_Question_Group $item) {
+		return $item->desc();
+	}
 	
 
 } //end class Registration_Forms_Questions_Admin_List_Table

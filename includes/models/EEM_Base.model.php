@@ -308,8 +308,9 @@ abstract class EEM_Base extends EE_Base {
 		
 		global $wpdb;
 		$wpdb->show_errors();
+		//echo "QUERY:".$wpdb->prepare( $SQL, $VAL );
 		$results = $output == 'COUNT' ? $wpdb->get_var( $wpdb->prepare( $SQL, $VAL ) ) : $wpdb->get_results( $wpdb->prepare( $SQL, $VAL ), $output );
-
+		//VAR_DUMP($results);
 		return $results;
 	}
 
@@ -858,7 +859,7 @@ abstract class EEM_Base extends EE_Base {
 				$operator = array( $column_name => $operator );
 			}
 			// build this segment of the WHERE clause
-			$WHR .= $column_name . ' ' . $operator[$column_name] . "'" . $em_table_data_types[$column_name] . "'";
+			$WHR .= $column_name . ' ' . $operator[$column_name] .  $em_table_data_types[$column_name] ;
 			$value_parameters[ $column_name ] = $value;
 
 			// add the AND before adding the next segment of the WHERE clause
