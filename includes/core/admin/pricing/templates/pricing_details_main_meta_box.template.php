@@ -1,11 +1,5 @@
 <div style="padding:1em;">	
 
-	<input type="hidden" name="PRC_disc_code" value="<?php echo $price->disc_code(); ?>">
-	<input type="hidden" name="PRC_disc_limit_qty" value="<?php echo $price->disc_limit_qty(); ?>">
-	<input type="hidden" name="PRC_disc_qty" value="<?php echo $price->disc_qty(); ?>">
-	<input type="hidden" name="PRC_disc_apply_all" value="<?php echo $price->disc_apply_all(); ?>">
-	<input type="hidden" name="PRC_disc_wp_user" value="<?php echo $price->disc_wp_user(); ?>">
-
 	<table class="form-table">
 		<tbody>
 			<tr valign="top">
@@ -36,13 +30,6 @@
 				<td>
 					<input class="small-text" type="text" id="PRC_amount" name="PRC_amount" value="<?php echo $price->amount(); ?>"/>
 					<span class="description"><?php _e('The dollar or percentage amount for this Price.', 'event_espresso'); ?></span>
-				</td>
-			</tr>
-			<tr valign="top">
-				<th><label for="PRC_disc_code"><?php _e('Discount Code', 'event_espresso'); ?></label></th>
-				<td>
-					<input class="regular-text" type="text" id="PRC_disc_code" name="PRC_disc_code"  value="<?php echo $price->disc_code(); ?>"/>
-					<span class="description"><?php _e('If this is a global discount code, enter the code here. For discount codes applicable to single events, see the Promotional Codes Event Espresso admin screen.','event_espresso'); ?></span>
 				</td>
 			</tr>
 			<tr valign="top">
