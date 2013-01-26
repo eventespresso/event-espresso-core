@@ -391,38 +391,73 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 
 	/***********/
 	/* QUERIES */
-
-	public function get_questions( $perpage=10,$current_page = 1, $count = FALSE ) {
-		$offset=($current_page-1)*$perpage;
+	
+	/**
+	 * For internal use in getting all the query parameters (because it's pretty well the same between question, question groups, and
+	 * for both when searchign for trahsed and untrahse dones)
+	 * @param EEM_TempBase $model either EEM_Question or EEM_Question_Group
+	 * @return array($orderby,$order,$limit,$output,$searchString)
+	 */
+	private function get_query_params($model,$per_page=10,$current_page=10,$count=FALSE){
+		$offset=($current_page-1)*$per_page;
+		$limit=array($offset,$per_page);
 		$output=$count?'COUNT':'OBJECT_K';
+		$primaryKeyName=$model->primary_key_name();
+		$orderby = empty($this->_req_data['orderby']) ? $primaryKeyName : $this->_req_data['orderby'];
+		$order = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
+		$searchString=empty($this->_req_data['s'])?'':$this->_req_data['s'];
+		$return= array($orderby,$order,$limit,$output,$searchString);
+		return $return;
+		
+	}
+	public function get_questions( $per_page=10,$current_page = 1, $count = FALSE ) {
+		
 		require_once('EEM_Question.model.php');
 		$questionModel=EEM_Question::instance();
-		$questions=$questionModel->get_all_where(null, 'QST_ID', 'ASC', '=', array($offset,$perpage),$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+		list($orderby,$order,$limit,$output,$searchString)=$this->get_query_params($questionModel,$per_page,$current_page,$count);
+		if(!empty($searchString)){
+			$questions=$questionModel->get_all_where(array('QST_display_text'=>'%'.$searchString.'%'), $orderby, $order, 'LIKE', $limit,$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+		}else{
+			$questions=$questionModel->get_all_where(null, $orderby, $order, '=', $limit,$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+		}
 		return $questions;
 		
 	}
-	public function get_trashed_questions( $perpage,$current_page = 1, $count = FALSE ) {
-		$offset=($current_page-1)*$perpage;
-		$output=$count?'COUNT':'OBJECT_K';
+	public function get_trashed_questions( $per_page,$current_page = 1, $count = FALSE ) {
 		require_once('EEM_Question.model.php');
 		$questionModel=EEM_Question::instance();
-		$questions=$questionModel->get_all_where_deleted(null, 'QST_ID', 'ASC', '=', array($offset,$perpage),$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+		list($orderby,$order,$limit,$output,$searchString)=$this->get_query_params($questionModel,$per_page,$current_page,$count);
+		if(!empty($searchString)){
+			$questions=$questionModel->get_all_where_deleted(array('QST_display_text'=>'%'.$searchString.'%'), $orderby, $order, 'LIKE', $limit,$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+		}else{
+			$questions=$questionModel->get_all_where_deleted(null, $orderby, $order, '=', $limit,$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+		}
 		return $questions;
 	}
-	public function get_question_groups( $perpage,$current_page = 1, $count = FALSE ) {
-		$offset=($current_page-1)*$perpage;
-		$output=$count?'COUNT':'OBJECT_K';
+	public function get_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
 		require_once('EEM_Question_Group.model.php');
 		$questionGroupModel=EEM_Question_Group::instance();
-		$questionGroups=$questionGroupModel->get_all_where(null, 'QSG_ID', 'ASC', '=', array($offset,$perpage),$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+		list($orderby,$order,$limit,$output,$searchString)=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
+		if(!empty($searchString)){
+			$questionGroups=$questionGroupModel->get_all_where(array('QSG_name'=>'%'.$searchString.'%'), $orderby, $order, 'LIKE', $limit,$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+		}else{
+			$questionGroups=$questionGroupModel->get_all_where(null, $orderby, $order, '=', $limit,$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+		}
+		
+
 		return $questionGroups;
 	}
-	public function get_trashed_question_groups( $perpage,$current_page = 1, $count = FALSE ) {
-		$offset=($current_page-1)*$perpage;
-		$output=$count?'COUNT':'OBJECT_K';
+	public function get_trashed_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
 		require_once('EEM_Question_Group.model.php');
 		$questionGroupModel=EEM_Question_Group::instance();
-		$questionGroups=$questionGroupModel->get_all_where_deleted(null, 'QSG_ID', 'ASC', '=', array($offset,$perpage),$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+		list($orderby,$order,$limit,$output,$searchString)=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
+		if(!empty($searchString)){
+			$questionGroups=$questionGroupModel->get_all_where_deleted(array('QSG_name'=>'%'.$searchString.'%'), $orderby, $order, 'LIKE', $limit,$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+		}else{
+			$questionGroups=$questionGroupModel->get_all_where_deleted(null, $orderby, $order, '=', $limit,$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+		}
+		
+
 		return $questionGroups;
 	}
 

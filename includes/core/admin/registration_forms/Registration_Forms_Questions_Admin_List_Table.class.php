@@ -68,8 +68,8 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 			);
 
 		$this->_sortable_columns = array(
-			'id' => array( 'q.id' => true ),
-			'name' => array( 'q.question_name' => false )
+			'id' => array( 'QST_ID' => true ),
+			'name' => array( 'QST_display_text' => false )
 			);
 
 		$this->_hidden_columns = array(
@@ -104,7 +104,7 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 
 
 	public function column_cb(EE_Question $item) {
-		return sprintf( '<input type="checkbox" name="question_id[]" value="%s" />', $item->ID());
+		return sprintf( '<input type="checkbox" name="question_id[]" value="%d" />', $item->ID());
 	}
 
 
@@ -121,7 +121,34 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 	}
 
 	public function column_name(EE_Question $item) {
-		return $item->display_text();
+		//return $item->display_text();
+		
+		if ( !defined('ATT_ADMIN_URL') )
+			define('ATT_ADMIN_URL', EVENTS_ADMIN_URL);
+
+		$edit_query_args = array(
+				'action' => 'edit_question',
+				'EVT_ID' => $item->ID()
+			);
+
+		$delete_query_args = array(
+				'action' => 'delete_questions',
+				'EVT_ID' => $item->ID()
+			);
+
+
+
+		$edit_link = wp_nonce_url( add_query_arg( $edit_query_args, EVENTS_ADMIN_URL ), 'edit_event_nonce');
+		$delete_link = wp_nonce_url( add_query_arg( $delete_query_args, EVENTS_ADMIN_URL ), 'delete_events_nonce' );
+		
+		$actions = array(
+			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>',
+			'delete' => '<a href="' . $delete_link . '" title="' . __('Delete Event', 'event_espresso') . '">' . __('Delete', 'event_espresso') . '</a>',
+			);
+
+		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->display_text() . '</a></strong>';
+		$content .= $this->row_actions($actions);
+		return $content;
 		
 	}
 	public function column_values(EE_Question $item) {
