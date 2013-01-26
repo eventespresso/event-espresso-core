@@ -60,12 +60,17 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 			'cb' => '<input type="checkbox" />',
 			'id' => __('ID', 'event_espresso'),
 			'name' => __('Name', 'event_espresso'),
+			'address' => __('Address', 'event_espresso'),
+			'city' => __('City', 'event_espresso'),
+			'capacity' => __('Capacity', 'event_espresso'),
 			'shortcode' => __('Shortcode', 'event_espresso'),
 			);
 
 		$this->_sortable_columns = array(
 			'id' => array( 'id' => true ),
-			'name' => array( 'name' => false )
+			'name' => array( 'name' => false ),
+			'city' => array( 'city' => false ),
+			'capacity' => array( 'capacity' => false )
 			);
 
 		$this->_hidden_columns = array();
@@ -132,6 +137,24 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . stripslashes_deep($item->name) . '</a></strong>';
 		$content .= $this->row_actions($actions);
 		return $content;
+	}
+
+
+
+	public function column_address($item) {
+		return $item->address;
+	}
+
+
+
+	public function column_city($item) {
+		return $item->city;
+	}
+
+
+
+	public function column_capacity($item) {
+		return $item->vnu_capacity;
 	}
 
 
