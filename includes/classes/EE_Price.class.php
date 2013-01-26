@@ -125,51 +125,6 @@ class EE_Price {
 
 
 	/**
-	*	The Promo Code to be entered to receive a discount (or a maybe scoobie snack ?)
-	*
-	*	@access	private
-	*	@var string
-	*/
-	private $_PRC_disc_code = NULL;
-
-
-	/**
-	*	Whether to limit the number of discount codes available
-	*
-	*	@access	private
-	*	@var boolean
-	*/
-	private $_PRC_disc_limit_qty = NULL;
-
-
-	/**
-	*	The number of discounts available at this price level
-	*
-	*	@access	private
-	*	@var string
-	*/
-	private $_PRC_disc_qty = NULL;
-
-
-	/**
-	*	Does discount apply to all attendees being registered?
-	*
-	*	@access	private
-	*	@var string
-	*/
-	private $_PRC_disc_apply_all = NULL;
-
-
-	/**
-	*	WP user id of the admin that created the discount
-	*
-	*	@access	private
-	*	@var string
-	*/
-	private $_PRC_disc_wp_user = NULL;
-
-
-	/**
 	*	Price globally active?
 	*
 	*	@access	private
@@ -222,11 +177,6 @@ class EE_Price {
 	* @param				bool					$PRC_use_dates				Whether to use dates to control when pricing starts and ends
 	* @param				int					$PRC_start_date				If use dates is active, this is when this price becomes active
 	* @param				int					$PRC_end_date				If use dates is active, this is when this price becomes inactive
-	* @param				bool					$PRC_disc_code				The Promo Code to be entered to receive a discount (or a maybe scoobie snack ?)
-	* @param				int					$PRC_disc_limit_qty		Whether to limit the number of discount codes available
-	* @param				int					$PRC_disc_qty				The number of discounts available at this price level
-	* @param				bool					$PRC_disc_apply_all		Does discount apply to all attendees being registered?
-	* @param				int 					$PRC_disc_wp_user		WP user id of the admin that created the discount
 	* @param				bool					$PRC_is_active				is the Price globally active
 	* @param				int 					$PRC_overrides				Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )
 	* @param				int 					$PRC_order						Order that this price is applied ( overrides price type order )
@@ -239,17 +189,11 @@ class EE_Price {
 					$PRC_amount=0,
 					$PRC_name='',
 					$PRC_desc='',
-					/* DO NOT DELETE - NEW FEATURE IN PROGRESS 
 					$PRC_reg_limit=NULL,
-					$PRC_tckts_left=NULL,*/
+					$PRC_tckts_left=NULL,
 					$PRC_use_dates=FALSE,
 					$PRC_start_date=NULL,
 					$PRC_end_date=NULL,
-					$PRC_disc_code=NULL,
-					$PRC_disc_limit_qty=FALSE,
-					$PRC_disc_qty=0,
-					$PRC_disc_apply_all=TRUE,
-					$PRC_disc_wp_user=0,
 					$PRC_is_active=TRUE,
 					$PRC_overrides=NULL,
 					$PRC_order=NULL,
@@ -262,17 +206,11 @@ class EE_Price {
 		$this->_PRC_amount				= (float)abs($PRC_amount);
 		$this->_PRC_name					= wp_strip_all_tags($PRC_name);
 		$this->_PRC_desc						= wp_strip_all_tags($PRC_desc);
-		/* DO NOT DELETE - NEW FEATURE IN PROGRESS 
 		$this->_PRC_reg_limit				= $PRC_reg_limit != NULL ? absint( $PRC_reg_limit ) : NULL;
-		$this->_PRC_tckts_left				= $PRC_tckts_left != NULL ? absint( $PRC_tckts_left ) : NULL;*/
+		$this->_PRC_tckts_left				= $PRC_tckts_left != NULL ? absint( $PRC_tckts_left ) : NULL;
 		$this->_PRC_use_dates				= absint( $PRC_use_dates ) ? TRUE : FALSE;
 		$this->_PRC_start_date				= is_numeric( $PRC_start_date ) ? absint( $PRC_start_date ) : strtotime( $PRC_start_date );
 		$this->_PRC_end_date				= is_numeric( $PRC_end_date ) ? absint( $PRC_end_date ) : strtotime( $PRC_end_date );
-		$this->_PRC_disc_code				= $PRC_disc_code != NULL ? wp_strip_all_tags( $PRC_disc_code ): NULL;
-		$this->_PRC_disc_limit_qty		= absint( $PRC_disc_limit_qty ) ? TRUE : FALSE;
-		$this->_PRC_disc_qty				= absint( $PRC_disc_qty );
-		$this->_PRC_disc_apply_all		= absint( $PRC_disc_apply_all ) ? TRUE : FALSE;
-		$this->_PRC_disc_wp_user		= absint( $PRC_disc_wp_user );
 		$this->_PRC_is_active				= absint( $PRC_is_active ) ? TRUE : FALSE;
 		$this->_PRC_overrides				= $PRC_overrides != NULL ? absint($PRC_overrides) : FALSE;
 		$this->_PRC_deleted					= $PRC_deleted != NULL ? absint($PRC_deleted) : FALSE;
@@ -478,111 +416,6 @@ class EE_Price {
 
 
 	/**
-	*		Set discount code
-	*
-	* 		@access		public
-	*		@param		float		$PRC_disc_code
-	*/
-	public function set_disc_code( $PRC_disc_code = FALSE ) {
-
-		if ( ! $PRC_disc_code ) {
-			$msg = __( 'No discount code was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PRC_disc_code = wp_strip_all_tags( $PRC_disc_code );
-		return TRUE;
-	}
-
-
-
-
-
-	/**
-	*		Set discount limit qty boolean flag
-	*
-	* 		@access		public
-	*		@param		float		$PRC_disc_limit_qty
-	*/
-	public function set_disc_limit_qty( $PRC_disc_limit_qty = NULL ) {
-
-		if ( ! is_bool( $PRC_disc_limit_qty )) {
-			$msg = __( 'No discount limit qty boolean flag was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PRC_disc_limit_qty = (bool)absint( $PRC_disc_limit_qty );
-		return TRUE;
-	}
-
-
-
-
-
-	/**
-	*		Set discount qty
-	*
-	* 		@access		public
-	*		@param		float		$PRC_disc_qty
-	*/
-	public function set_disc_qty( $PRC_disc_qty = FALSE ) {
-
-		if ( ! $PRC_disc_qty ) {
-			$msg = __( 'No discount qty was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PRC_disc_qty = absint( $PRC_disc_qty );
-		return TRUE;
-	}
-
-
-
-
-
-	/**
-	*		Set discount applies to all boolean flag
-	*
-	* 		@access		public
-	*		@param		float		$PRC_disc_apply_all
-	*/
-	public function set_disc_apply_all( $PRC_disc_apply_all = NULL ) {
-
-		if ( ! is_bool( $PRC_disc_apply_all )) {
-			$msg = __( 'No price was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PRC_disc_apply_all = (bool)absint( $PRC_disc_apply_all );
-		return TRUE;
-	}
-
-
-
-
-
-	/**
-	*		Set Price discount WP user id
-	*
-	* 		@access		public
-	*		@param		float		$PRC_disc_wp_user
-	*/
-	public function set_disc_wp_user( $PRC_disc_wp_user = FALSE ) {
-
-		if ( ! $PRC_disc_wp_user ) {
-			$msg = __( 'No price was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PRC_disc_wp_user = absint( $PRC_disc_wp_user );
-		return TRUE;
-	}
-
-
-
-
-
-	/**
 	*		Set Price Globally Active boolean flag
 	*
 	* 		@access		public
@@ -640,17 +473,11 @@ class EE_Price {
 				'PRC_amount'						=> $this->_PRC_amount,
 				'PRC_name'							=> $this->_PRC_name,
 				'PRC_desc'							=> $this->_PRC_desc,
-				/* DO NOT DELETE - NEW FEATURE IN PROGRESS 
 				'PRC_reg_limit'					=> $this->_PRC_reg_limit,
-				'PRC_tckts_left'					=> $this->_PRC_tckts_left,*/
+				'PRC_tckts_left'					=> $this->_PRC_tckts_left,
 				'PRC_use_dates'					=> $this->_PRC_use_dates,
 				'PRC_start_date'					=> $this->_PRC_start_date,
 				'PRC_end_date'					=> $this->_PRC_end_date,
-				'PRC_disc_code'					=> $this->_PRC_disc_code,
-				'PRC_disc_limit_qty'			=> $this->_PRC_disc_limit_qty,
-				'PRC_disc_qty'						=> $this->_PRC_disc_qty,
-				'PRC_disc_apply_all'			=> $this->_PRC_disc_apply_all,
-				'PRC_disc_wp_user'			=> $this->_PRC_disc_wp_user,
 				'PRC_is_active'					=> $this->_PRC_is_active,
 				'PRC_overrides'					=> $this->_PRC_overrides,
 				'PRC_order'							=> $this->_PRC_order,
@@ -814,57 +641,6 @@ class EE_Price {
 		} else {
 			return NULL;
 		}		
-	}
-
-
-
-	/**
-	*	get Price disc_limit_qty
-	* @access		public
-	* @return 		string
-	*/
-	public function disc_limit_qty() {
-		return $this->_PRC_disc_limit_qty;
-	}
-
-
-	/**
-	*	get Price disc_code
-	* @access		public
-	* @return 		string
-	*/
-	public function disc_code() {
-		return $this->_PRC_disc_code;
-	}
-
-
-	/**
-	*	get Price disc_qty
-	* @access		public
-	* @return 		string
-	*/
-	public function disc_qty() {
-		return $this->_PRC_disc_qty;
-	}
-
-
-	/**
-	*	get Price disc_apply_all
-	* @access		public
-	* @return 		string
-	*/
-	public function disc_apply_all() {
-		return $this->_PRC_disc_apply_all;
-	}
-
-
-	/**
-	*	get Price disc_wp_user
-	* @access		public
-	* @return 		string
-	*/
-	public function disc_wp_user() {
-		return $this->_PRC_disc_wp_user;
 	}
 
 
