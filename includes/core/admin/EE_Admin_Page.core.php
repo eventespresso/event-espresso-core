@@ -1884,6 +1884,50 @@ abstract class EE_Admin_Page extends EE_BASE {
 	public function get_request_data() {
 		return $this->_req_data;
 	}
+
+
+
+
+	/**
+	 * updates events_organization_settings user_meta
+	 *
+	 * @access 	protected
+	 * @param string $tab
+	 * @param array $data
+	 * @param string $file	file where error occured
+	 * @param string $func function  where error occured
+	 * @param string $line	line no where error occured
+	 * @return boolean
+	 */
+	protected function _update_organization_settings( $tab, $data, $file = '', $func = '', $line = '' ) {
+		global $espresso_wp_user;
+		// grab existing org options
+		$org_options = get_user_meta( $espresso_wp_user, 'events_organization_settings', TRUE );
+		// make sure everything is in arrays
+		$org_options = is_array( $org_options ) ? $org_options : array( $org_options );
+		$data = is_array( $data ) ? $data : array( $data );
+		foreach ( $data as $key => $value ) {
+			$data[ $key ] = is_array( $value ) ? $value : addslashes( html_entity_decode( $value, ENT_QUOTES, 'UTF-8' ));
+		}
+		// overwrite existing org options with new data
+		$data = array_merge( $org_options, $data );
+		// and save it
+		if ( update_user_meta( $espresso_wp_user, 'events_organization_settings', $data )) {
+			EE_Error::add_success( sprintf( __('%s have been successfully updated.', 'event_espresso'), $tab ));
+			return TRUE;
+		} else {
+			$user_msg = sprintf( __('An error occured. The %s were not updated.', 'event_espresso'), $tab );
+			EE_Error::add_error( $user_msg, $file, $func, $line  );
+			return FALSE;
+		}			
+
+	}
+
+
+
+
+
+
 }
 
 	
