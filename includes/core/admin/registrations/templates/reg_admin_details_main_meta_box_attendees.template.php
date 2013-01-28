@@ -1,6 +1,8 @@
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
 	<br/>
 <?php //echo printr( $event_attendees, 'event_attendees' ); ?>
+<?php echo $attendee_notice; ?>
+<?php if ( !empty($attendees) ) : ?>
 	<div class="admin-primary-mbox-tbl-wrap">
 		<table class="admin-primary-mbox-tbl">
 			<thead>
@@ -36,6 +38,7 @@
 		
 			</tbody>	
 		</table>
-	</div>			
+	</div>
+<?php endif; ?>			
 	
 </div>

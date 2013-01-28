@@ -48,8 +48,9 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 	 */
 	protected function __construct(EEM_Gateways &$model) {
 		$this->_gateway = 'Paypal_Pro';
-		$this->_button_base = 'logo-paypal_pro.png';
+		$this->_button_base = 'paypal_pro-logo.png';
 		$this->_path = str_replace('\\', '/', __FILE__);
+		$this->_btn_img = file_exists( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 	}
 
@@ -69,7 +70,8 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 				'use_sandbox' => false,
 				'type' => 'on-site',
 				'display_name' => 'PayPal Pro',
-				'current_path' => ''
+				'current_path' => '',
+				'button_url' => $this->_btn_img	
 		);
 	}
 
@@ -87,6 +89,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 		//$this->_payment_settings['credit_cards'] = implode(",", empty($_POST['credit_cards']) ? array() : $_POST['credit_cards']);
 		$this->_payment_settings['credit_cards'] = empty($_POST['credit_cards']) ? array() : $_POST['credit_cards'];
 		$this->_payment_settings['use_sandbox'] = empty($_POST['use_sandbox']) ? '' : $_POST['use_sandbox'];
+		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';
 	}
 
 	/**
@@ -140,7 +143,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 			<th>
 				<label for="paypal_pro_currency_format">
 					<?php _e('Country Currency', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'paypal_pro_currency_info') ?>
+					<?php do_action('action_hook_espresso_help', 'paypal_pro_currency_info') ?>
 				</label>
 			</th>
 			<td>
@@ -259,14 +262,27 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 			<th>
 				<label for="paypal_pro_use_sandbox">
 					<?php _e('Use the Debugging Feature<br/>and the PayPal Sandbox', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'paypal_pro_sandbox_info'); ?>
+					<?php do_action('action_hook_espresso_help', 'paypal_pro_sandbox_info'); ?>
 				</label>
 			</th>
 			<td>
-				<?php echo select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?>						
+				<?php echo EE_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?>						
 				<span class="description">
 					<?php _e('Make sure you enter the sandbox credentials above.', 'event_espresso'); ?>
 				</span>
+			</td>
+		</tr>
+		
+		<tr>
+			<th>
+				<label for="<?php echo $this->_gateway; ?>_button_url">
+					<?php _e('Button Image URL', 'event_espresso'); ?>
+				</label>
+			</th>
+			<td>
+				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
+				<input class="regular-text" type="text" name="button_url" id="<?php echo $this->_gateway; ?>_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
+				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
 			</td>
 		</tr>
 		<?php
@@ -367,13 +383,13 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 			$CCDetails = array(
 					// Required. Type of credit card.  Visa, MasterCard, Discover, Amex, Maestro, Solo.  
 					// If Maestro or Solo, the currency code must be GBP.  In addition, either start date or issue number must be specified.
-					'creditcardtype' => $billing_info['reg-page-billing-card-type']['value'],
+					'creditcardtype' => $billing_info['reg-page-billing-card-type-' . $this->_gateway ]['value'],
 					// Required.  Credit card number.  No spaces or punctuation.
-					'acct' => $billing_info['reg-page-billing-card-nmbr']['value'],
+					'acct' => $billing_info['reg-page-billing-card-nmbr-' . $this->_gateway ]['value'],
 					// Required.  Credit card expiration date.  Format is MMYYYY
-					'expdate' => $billing_info['reg-page-billing-card-exp-date-mnth']['value'] . '20' . $billing_info['reg-page-billing-card-exp-date-year']['value'],
+					'expdate' => $billing_info['reg-page-billing-card-exp-date-mnth-' . $this->_gateway ]['value'] . '20' . $billing_info['reg-page-billing-card-exp-date-year-' . $this->_gateway ]['value'],
 					// Requirements determined by your PayPal account settings.  Security digits for credit card.
-					'cvv2' => $billing_info['reg-page-billing-card-ccv-code']['value'],
+					'cvv2' => $billing_info['reg-page-billing-card-ccv-code-' . $this->_gateway ]['value'],
 					// Month and year that Maestro or Solo card was issued.  MMYYYY
 					'startdate' => '',
 					// Issue number of Maestro or Solo card.  Two numeric digits max.
@@ -382,7 +398,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 
 			$PayerInfo = array(
 					// Email address of payer.
-					'email' => $billing_info['reg-page-billing-email']['value'],
+					'email' => $billing_info['reg-page-billing-email-' . $this->_gateway ]['value'],
 					// Unique PayPal customer ID for payer.
 					'payerid' => '',
 					// Status of payer.  Values are verified or unverified
@@ -395,30 +411,30 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 					// Payer's salutation.  20 char max.
 					'salutation' => '',
 					// Payer's first name.  25 char max.
-					'firstname' => $billing_info['reg-page-billing-fname']['value'],
+					'firstname' => $billing_info['reg-page-billing-fname-' . $this->_gateway ]['value'],
 					// Payer's middle name.  25 char max.
 					'middlename' => '',
 					// Payer's last name.  25 char max.
-					'lastname' => $billing_info['reg-page-billing-lname']['value'],
+					'lastname' => $billing_info['reg-page-billing-lname-' . $this->_gateway ]['value'],
 					// Payer's suffix.  12 char max.
 					'suffix' => ''
 			);
 
 			$BillingAddress = array(
 					// Required.  First street address.
-					'street' => $billing_info['reg-page-billing-address']['value'],
+					'street' => $billing_info['reg-page-billing-address-' . $this->_gateway ]['value'],
 					// Second street address.
 					'street2' => '',
 					// Required.  Name of City.
-					'city' => $billing_info['reg-page-billing-city']['value'],
+					'city' => $billing_info['reg-page-billing-city-' . $this->_gateway ]['value'],
 					// Required. Name of State or Province.
-					'state' => $billing_info['reg-page-billing-state']['value'],
+					'state' => $billing_info['reg-page-billing-state-' . $this->_gateway ]['value'],
 					// Required.  Country code.
-					'countrycode' => 'US', //$billing_info['reg-page-billing-country']['value'], 
+					'countrycode' => 'US', //$billing_info['reg-page-billing-country-' . $this->_gateway ]['value'], 
 					// Required.  Postal code of payer.
-					'zip' => $billing_info['reg-page-billing-zip']['value'],
+					'zip' => $billing_info['reg-page-billing-zip-' . $this->_gateway ]['value'],
 					// Phone Number of payer.  20 char max.
-					'phonenum' => empty($billing_info['reg-page-billing-phone']['value']) ? '' : $billing_info['reg-page-billing-phone']['value']
+					'phonenum' => empty($billing_info['reg-page-billing-phone-' . $this->_gateway ]['value']) ? '' : $billing_info['reg-page-billing-phone-' . $this->_gateway ]['value']
 			);
 
 			$ShippingAddress = array(
@@ -517,7 +533,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'response_msg' => isset($PayPalResult['L_LONGMESSAGE0']) ? $PayPalResult['L_LONGMESSAGE0'] : $PayPalResult['ACK'],
 						'amount' => $PayPalResult['AMT'],
 						'method' => 'CC',
-						'card_type' => $billing_info['reg-page-billing-card-type']['value'],
+						'card_type' => $billing_info['reg-page-billing-card-type-' . $this->_gateway ]['value'],
 						'auth_code' => '',
 						'md5_hash' => $PayPalResult['CORRELATIONID'],
 						'transaction_id' => $PayPalResult['TRANSACTIONID'],
@@ -539,7 +555,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'response_msg' => $this->_DisplayErrors($Errors),
 						'amount' => '0.00',
 						'method' => 'CC',
-						'card_type' => $billing_info['reg-page-billing-card-type']['value'],
+						'card_type' => $billing_info['reg-page-billing-card-type-' . $this->_gateway ]['value'],
 						'auth_code' => '',
 						'md5_hash' => '',
 						'transaction_id' => '',
@@ -760,14 +776,14 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 					<h2 class="section-title"><?php _e('PayPal Sandbox Mode', 'event_espreso'); ?></h2>
 					<h3 style="color:#ff0000;"><?php _e('Debug Mode Is Turned On. Payments will not be processed', 'event_espresso'); ?></h3>
 
-					<p class="test-credit-cards-info-pg">
+					<p class="test-credit-cards-info-pg" style="margin-bottom:0;">
 						<strong><?php _e('Testing Guidelines', 'event_espreso'); ?></strong>
-					<ul>
-						<li><?php _e('While testing, use only the credit card numbers listed below. Other numbers will produce an error.', 'event_espreso'); ?></li>
-						<li><?php _e('Expiry Date must be a valid date in the future', 'event_espreso'); ?></li>
+					</p>
+					<ul style="margin:1em 2em 1.5em; line-height:1.2em;">
+						<li><?php _e('While testing, use the credit card number listed below. Other numbers will produce an error.', 'event_espreso'); ?></li>
+						<li><?php _e('Expiry Date can be any valid date in the future', 'event_espreso'); ?></li>
 						<li><?php _e('CVV2 can be any 3 digits', 'event_espreso'); ?></li>
 					</ul>
-					</p>
 
 					<p class="test-credit-cards-info-pg">
 						<strong><?php _e('Credit Card Numbers Used for Testing', 'event_espreso'); ?></strong><br/>
@@ -789,10 +805,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 								</tr>
 							</tbody>
 						</table>	
-					</div>
-					<p class="test-credit-cards-info-pg">
-						<span class="smaller-text light-grey-text">* <?php _e('Even though this number has a different character count than the other test numbers, it is the correct and functional number.', 'event_espreso'); ?></span>
-					</p>
+					</div><br/>
 
 					<p class="test-credit-cards-info-pg">
 						<strong><?php _e('Testing Result Code Responses', 'event_espreso'); ?></strong><br/>
@@ -888,7 +901,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 	public function espresso_reg_page_billing_inputs() {
 
 		$reg_page_billing_inputs = array(
-				'reg-page-billing-fname' => array(
+				'reg-page-billing-fname-' . $this->_gateway => array(
 						'db-col' => 'fname',
 						'label' => __('First Name', 'event_espresso'),
 						'input' => 'text',
@@ -899,7 +912,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-lname' => array(
+				'reg-page-billing-lname-' . $this->_gateway => array(
 						'db-col' => 'lname',
 						'label' => __('Last Name', 'event_espresso'),
 						'input' => 'text',
@@ -910,7 +923,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-email' => array(
+				'reg-page-billing-email-' . $this->_gateway => array(
 						'db-col' => 'email',
 						'label' => __('Email Address', 'event_espresso'),
 						'input' => 'text',
@@ -921,7 +934,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-phone' => array(
+				'reg-page-billing-phone-' . $this->_gateway => array(
 						'db-col' => 'phone',
 						'label' => __('Phone Number', 'event_espresso'),
 						'input' => 'text',
@@ -932,7 +945,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-address' => array(
+				'reg-page-billing-address-' . $this->_gateway => array(
 						'db-col' => 'address',
 						'label' => __('Address', 'event_espresso'),
 						'input' => 'text',
@@ -943,7 +956,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-city' => array(
+				'reg-page-billing-city-' . $this->_gateway => array(
 						'db-col' => 'city',
 						'label' => __('City', 'event_espresso'),
 						'input' => 'text',
@@ -954,7 +967,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-state' => array(
+				'reg-page-billing-state-' . $this->_gateway => array(
 						'db-col' => 'state',
 						'label' => __('State', 'event_espresso'),
 						'input' => 'text',
@@ -965,7 +978,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-country' => array(
+				'reg-page-billing-country-' . $this->_gateway => array(
 						'db-col' => 'country',
 						'label' => __('Country', 'event_espresso'),
 						'input' => 'select',
@@ -977,7 +990,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-zip' => array(
+				'reg-page-billing-zip-' . $this->_gateway => array(
 						'db-col' => 'zip',
 						'label' => __('Zip Code', 'event_espresso'),
 						'input' => 'text',
@@ -988,7 +1001,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-card-nmbr' => array(
+				'reg-page-billing-card-nmbr-' . $this->_gateway => array(
 						'db-col' => 'card-nmbr',
 						'label' => __('Credit Card #', 'event_espresso'),
 						'input' => 'text',
@@ -999,7 +1012,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%d'
 				),
-				'reg-page-billing-card-type' => array(
+				'reg-page-billing-card-type-' . $this->_gateway => array(
 						'db-col' => 'card-type',
 						'label' => __('Credit Card Type', 'event_espresso'),
 						'input' => 'select',
@@ -1011,7 +1024,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'value' => '',
 						'format' => '%s'
 				),
-				'reg-page-billing-card-exp-date-mnth' => array(
+				'reg-page-billing-card-exp-date-mnth-' . $this->_gateway => array(
 						'db-col' => 'exp-date-mnth',
 						'label' => __('Expiry Date Month', 'event_espresso'),
 						'input' => 'select',
@@ -1022,7 +1035,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-card-exp-date-year' => array(
+				'reg-page-billing-card-exp-date-year-' . $this->_gateway => array(
 						'db-col' => 'exp-date-year',
 						'label' => __('Expiry Date Year', 'event_espresso'),
 						'input' => 'select',
@@ -1033,7 +1046,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-card-ccv-code' => array(
+				'reg-page-billing-card-ccv-code-' . $this->_gateway => array(
 						'db-col' => 'ccv-code',
 						'label' => __('CCV Code', 'event_espresso'),
 						'input' => 'text',

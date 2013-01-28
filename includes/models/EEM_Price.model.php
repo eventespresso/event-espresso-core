@@ -75,11 +75,6 @@ class EEM_Price extends EEM_Base {
 				'PRC_use_dates'			=> '%d',
 				'PRC_start_date'			=> '%d',
 				'PRC_end_date'			=> '%d',
-				'PRC_disc_code'			=> '%s',
-				'PRC_disc_limit_qty'	=> '%d',
-				'PRC_disc_qty'				=> '%d',
-				'PRC_disc_apply_all'	=> '%d',
-				'PRC_disc_wp_user'	=> '%d',
 				'PRC_is_active' 			=> '%d',
 				'PRC_overrides' 			=> '%d',
 				'PRC_order' 				=> '%d',
@@ -103,7 +98,7 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 	mixed		array on success, FALSE on fail
 	 */
 	private function _create_objects($prices = FALSE) {
-
+		
 		if (!$prices) {
 			return FALSE;
 		}
@@ -111,26 +106,20 @@ class EEM_Price extends EEM_Base {
 		if (is_object($prices)) {
 			$prices = array($prices);
 		}
-
+		
 		foreach ($prices as $price) {
 
 			$array_of_objects[$price->PRC_ID] = new EE_Price(
-
 											$price->PRT_ID,
 											$price->EVT_ID,
 											$price->PRC_amount,
 											$price->PRC_name,
 											$price->PRC_desc,
-//											$price->PRC_reg_limit,
-//											$price->PRC_tckts_left,
+											$price->PRC_reg_limit,
+											$price->PRC_tckts_left,
 											$price->PRC_use_dates,
 											$price->PRC_start_date,
 											$price->PRC_end_date,
-											$price->PRC_disc_code,
-											$price->PRC_disc_limit_qty,
-											$price->PRC_disc_qty,
-											$price->PRC_disc_apply_all,
-											$price->PRC_disc_wp_user,
 											$price->PRC_is_active,
 											$price->PRC_overrides,
 											$price->PRC_order,
@@ -138,6 +127,7 @@ class EEM_Price extends EEM_Base {
 											$price->PRC_ID
 			);
 		}
+
 		return $array_of_objects;
 	}
 
@@ -152,7 +142,7 @@ class EEM_Price extends EEM_Base {
 	 * 		@return		mixed		array on success, FALSE on fail
 	 */
 	public function get_new_price() { 
-		return new EE_Price( 1, 0, 0.00, '', '', /*NULL, NULL,*/ FALSE, NULL, NULL, NULL, FALSE, 0, FALSE, 1, FALSE, NULL, NULL, FALSE );
+		return new EE_Price( 1, 0, 0.00, '', '', NULL, NULL, FALSE, NULL, NULL, TRUE, NULL, NULL, NULL );
 	}
 
 
@@ -266,53 +256,38 @@ class EEM_Price extends EEM_Base {
 	 * 		@param		mixed  string|array		$operator
 	 * 		@return 		mixed array on success, FALSE on fail
 	 */
-	private function _select_all_prices_where ( $where_cols_n_values=FALSE, $orderby=array( 'prc.PRC_amount', 'prc.PRC_ID'), $order='ASC', $operator = '=' ) {
+	private function _select_all_prices_where ( 
+			$where_cols_n_values=FALSE, $orderby=array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' ), $order='ASC', $operator = '=', $limit = NULL, $count = FALSE ) {
 	
 		$em_table_data_types = array(
 				'prt.PRT_ID'						=> '%d',
 				'prt.PRT_name'				=> '%s',
 				'prt.PRT_is_member'		=> '%d',
-				'prt.PRT_is_discount'		=> '%d',
-				'prt.PRT_is_tax'				=> '%d',
+				'prt.PBT_ID'						=> '%d',
 				'prt.PRT_is_percent'		=> '%d',
 				'prt.PRT_is_global'			=> '%d',
 				'prt.PRT_order'				=> '%d',
 				'prc.PRC_ID'					=> '%d',
-				'prc.PRT_ID'						=> '%d',
-				'prc.EVT_ID'						=> '%d',
+				'prc.PRT_ID'					=> '%d',
+				'prc.EVT_ID'					=> '%d',
 				'prc.PRC_amount'			=> '%f',
 				'prc.PRC_name'				=> '%s',
 				'prc.PRC_desc'				=> '%s',
-//				'prc.PRC_reg_limit' 		=> '%d',
-//				'prc.PRC_tckts_left' 		=> '%d',
+				'prc.PRC_reg_limit' 		=> '%d',
+				'prc.PRC_tckts_left' 		=> '%d',
 				'prc.PRC_use_dates'		=> '%d',
 				'prc.PRC_start_date'		=> '%d',
 				'prc.PRC_end_date'		=> '%d',
-				'prc.PRC_disc_code'		=> '%s',
-				'prc.PRC_disc_limit_qty'	=> '%d',
-				'prc.PRC_disc_qty'			=> '%d',
-				'prc.PRC_disc_apply_all'	=> '%d',
-				'prc.PRC_disc_wp_user'	=> '%d',
 				'prc.PRC_is_active' 			=> '%d',
 				'prc.PRC_overrides' 		=> '%d',
 				'prc.PRC_order' 				=> '%d',
 				'prc.PRC_deleted' 			=> '%d'
 		);
-		
-//		printr( $em_table_data_types, '$em_table_data_types' );
-//		
-//		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
-//		$PRT_MDL = EEM_Price_Type::instance();
-//		$prc_data_types = $this->table_data_types;
-//		unset( $prc_data_types['PRT_ID'] );
-//		$em_table_data_types = array_merge( $prc_data_types, $PRT_MDL->get_table_data_types() );
-//		
-//		printr( $em_table_data_types, '$em_table_data_types' );
-		
 
 		global $wpdb;
 		
-		$SQL = 'SELECT * FROM '. $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prt.PRT_ID = prc.PRT_ID';
+		$SQL = $count ? 'SELECT COUNT(prc.PRC_ID) ' : 'SELECT * ';
+		$SQL .= 'FROM '. $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prt.PRT_ID = prc.PRT_ID';
 
 		if ( $where_cols_n_values ) {
 			$prepped = $this->_prepare_where ($where_cols_n_values, $em_table_data_types, $operator);
@@ -320,19 +295,22 @@ class EEM_Price extends EEM_Base {
 			$VAL = $prepped['value'];
 		}
 
-//echo '<h4>$SQL : ' . $SQL . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-//echo printr( $VAL, '$VAL' ); 
+		$SQL .= $this->_orderby_n_sort ( $orderby, $order );
 
-//			$SQL .= $this->_orderby_n_sort ( array( 'prt.PRT_order' ), array( 'ASC' ));
-			$SQL .= $this->_orderby_n_sort ( $orderby, $order );
-
-		//$wpdb->hide_errors();
-		if ( $results = $wpdb->get_results( $wpdb->prepare( $SQL, $VAL ), 'OBJECT' )) {
-			$price_array = $this->_create_objects($results);
-			return $price_array;
-		} else {
-			return FALSE;
+		if ( $limit && is_array($limit) && ! $count ) {
+			$SQL .=	' LIMIT ' . $limit[0] . ',' . $limit[1];
 		}
+		// get count ? or get data?
+		$results = $count ? $wpdb->get_var( $wpdb->prepare( $SQL, $VAL )) : $wpdb->get_results( $wpdb->prepare( $SQL, $VAL ), 'OBJECT' );
+		//echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		// bad results
+		if ( empty( $results ) || $results === FALSE || is_wp_error( $results )) {
+			return FALSE;
+		}			
+		//  return the count OR create objects out of data
+		$results = $count ? $results : $this->_create_objects($results);
+		return $results;
+
 	}
 
 
@@ -345,7 +323,12 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 		boolean			false on fail
 	 */
 	public function get_all_event_prices( $EVT_ID ) {
-		return $this->_select_all_prices_where( array( 'prc.EVT_ID' =>$EVT_ID ));
+		return $this->_select_all_prices_where( 
+				array( 'prc.EVT_ID' =>$EVT_ID, 'prc.PRC_is_active' => TRUE, 'prc.PRC_deleted' => FALSE, 'prt.PBT_ID' => 4 ), 
+				array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' ), 
+				'ASC', 
+				array( 'prc.EVT_ID' =>'=', 'prc.PRC_is_active' => '=', 'prc.PRC_deleted' => '=', 'prt.PBT_ID' => '!=' )
+		);
 	}
 
 
@@ -357,7 +340,12 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 		boolean			false on fail
 	 */
 	public function get_all_event_default_prices() {
-		return $this->_select_all_prices_where( array( 'prc.EVT_ID' =>0, 'prc.PRC_is_active' => TRUE, 'prt.PRT_is_tax' => FALSE ));
+		return $this->_select_all_prices_where( 
+				array( 'prc.EVT_ID' =>0, 'prc.PRC_is_active' => TRUE, 'prc.PRC_deleted' => FALSE, 'prt.PBT_ID' => 4 ), 
+				array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' ), 
+				'ASC', 
+				array( 'prc.EVT_ID' =>'=', 'prc.PRC_is_active' => '=', 'prc.PRC_deleted' => '=', 'prt.PBT_ID' => '!=' )
+		);
 	}
 
 
@@ -389,11 +377,16 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 		boolean			false on fail
 	 */
 	public function get_all_prices_that_are_discounts() {
-		return $this->_select_all_prices_where(array('prt.PRT_is_discount' => TRUE ));
+		return $this->_select_all_prices_where(array('prt.PBT_ID' => 2 ));
 	}
 
 	public function get_all_prices_that_are_not_discounts() {
-		return $this->_select_all_prices_where(array('prt.PRT_is_discount' => FALSE ));
+		return $this->_select_all_prices_where(
+				array( 'prt.PBT_ID' => 2 ), 
+				array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' ), 
+				'ASC', 
+				array( 'prt.PBT_ID' => '!=' )
+		);
 	}
 
 
@@ -408,7 +401,9 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 		boolean			false on fail
 	 */
 	public function get_all_prices_that_are_taxes() {
-		$all_taxes = $this->_select_all_prices_where(array('prt.PRT_is_tax' => TRUE ));
+		$all_taxes = $this->_select_all_prices_where( 
+				array( 'prt.PBT_ID' => 4, 'prc.PRC_is_active' => TRUE, 'prc.PRC_deleted' => FALSE )	
+		);
 		$taxes = array();
 		foreach ( $all_taxes as $tax ) {
 			$taxes[ $tax->order() ][ $tax->ID() ] = $tax;
@@ -417,7 +412,12 @@ class EEM_Price extends EEM_Base {
 	}
 
 	public function get_all_prices_that_are_not_taxes() {
-		return $this->_select_all_prices_where(array('prt.PRT_is_tax' => FALSE ));
+		return $this->_select_all_prices_where(
+				array( 'prt.PBT_ID' => 4, 'prc.PRC_is_active' => TRUE, 'prc.PRC_deleted' => FALSE ), 
+				array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' ), 
+				'ASC', 
+				array( 'prt.PBT_ID' => '!=', 'prc.PRC_is_active' => '=', 'prc.PRC_deleted' => '=' )
+		);
 	}
 
 
@@ -444,14 +444,28 @@ class EEM_Price extends EEM_Base {
 
 
 	/**
-	 * 		retreive all prices that are global
+	 * 	retreive all prices that are global
 	 *
-	 * 		@access		public
-	 * 		@return 		array				on success
-	 * 		@return 		boolean			false on fail
+	 * 	@access		public
+	 * 	@return 		boolean	$trashed				return deleted records or just active non-deleted ones ?
+	 * 	@return 		string		$orderby				sorting column
+	 * 	@return 		string		$order					sort ASC or DESC ?
+	 * 	@return 		array		$limit					query limit and offset
+	 * 	@return 		boolean	$count					return count or results ?
+	 * 	@return 		array		on success
+	 * 	@return 		boolean	false on fail
 	 */
-	public function get_all_prices_that_are_global($orderby='prc.PRC_ID', $order='ASC') {
-		return $this->_select_all_prices_where(array('prt.PRT_is_global' => TRUE ), $orderby, $order);
+	public function get_all_prices_that_are_global( $trashed = FALSE, $orderby=array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' ), $order='ASC', $limit = NULL, $count = FALSE ) {
+		
+		return $this->_select_all_prices_where( 
+				array( 'prt.PRT_is_global' => TRUE, 'prc.PRC_deleted' => $trashed ),
+				$orderby,
+				$order,
+				'=',
+				$limit, 
+				$count 
+			);
+
 	}
 
 	public function get_all_prices_that_are_not_global() {
@@ -487,7 +501,13 @@ class EEM_Price extends EEM_Base {
 	public function get_all_event_prices_for_admin( $EVT_ID ) {
 
 		if ( ! $EVT_ID ) {
-			if ( $prices = $this->_select_all_prices_where(array( 'prc.EVT_ID' => 0, 'prt.PRT_is_global' => TRUE, 'prt.PRT_is_tax' => FALSE, 'prc.PRC_is_active'=>TRUE ), array('PRC_start_date'), array('DESC'))) {
+			 $prices = $this->_select_all_prices_where(
+					array( 'prc.EVT_ID' => 0, 'prt.PRT_is_global' => TRUE, 'prt.PBT_ID' => 4, 'prc.PRC_is_active'=>TRUE ), 
+					array( 'PRC_start_date' ), 
+					array( 'DESC' ),
+					array( 'prc.EVT_ID' =>'=', 'prt.PRT_is_global' => '=', 'prt.PBT_ID' => '!=', 'prc.PRC_is_active'=>'=' )
+			);
+			if ( $prices ) {
 				$array_of_is_active_and_price_objects = array();
 				foreach ($prices as $price) {
 						$array_of_price_objects[ $price->type() ][] = $price;
@@ -498,11 +518,19 @@ class EEM_Price extends EEM_Base {
 			}
 			
 		}
-
-		if ( ! $globals = $this->_select_all_prices_where(array( 'prc.EVT_ID' => 0, 'prt.PRT_is_global' => TRUE, 'prt.PRT_is_tax' => FALSE, 'prc.PRC_is_active'=>TRUE ), array('PRC_start_date'), array('DESC'))) {
+		
+		$globals = $this->_select_all_prices_where(
+				array( 'prc.EVT_ID' => 0, 'prt.PRT_is_global' => TRUE, 'prt.PBT_ID' => 4, 'prc.PRC_is_active'=>TRUE ), 
+				array( 'PRC_start_date' ), 
+				array( 'DESC' ),
+				array( 'prc.EVT_ID' =>'=', 'prt.PRT_is_global' => '=', 'prt.PBT_ID' => '!=', 'prc.PRC_is_active'=>'=' )
+		);
+		if ( ! $globals ) {
 			$globals = array();
 		}
-		if ( ! $event_prices = $this->_select_all_prices_where(array('prc.EVT_ID' => $EVT_ID ), array('PRC_start_date'), array('DESC'))) {
+		
+		$event_prices = $this->_select_all_prices_where(array('prc.EVT_ID' => $EVT_ID ), array('PRC_start_date'), array('DESC'));
+		if ( ! $event_prices ) {
 			$event_prices = array();
 		}
 //		echo printr( $event_prices, '$event_prices' ); 
@@ -568,7 +596,7 @@ class EEM_Price extends EEM_Base {
 
 		global $wpdb;
 		// retreive prices
-		$SQL = 'SELECT prc.*, prt.* FROM ' . $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prt.PRT_ID = prc.PRT_ID WHERE prt.PRT_is_tax = FALSE ORDER BY PRT_order';
+		$SQL = 'SELECT prc.*, prt.* FROM ' . $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prt.PRT_ID = prc.PRT_ID WHERE prt.PBT_ID != 4 ORDER BY PRT_order';
 
 		if ($prices = $wpdb->get_results($wpdb->prepare($SQL))) {
 			//echo printr($prices, '$prices' );

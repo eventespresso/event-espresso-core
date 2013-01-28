@@ -8,24 +8,16 @@
 			<?php echo $post_body_content; ?>
 		</div> <!-- post-body-content -->
 
-		<div id='postbox-container-1' class='postbox-container'>
-			<?php do_meta_boxes( $current_page, 'normal', '' ); ?>
-		</div>
+		<?php
+		//let's loop through the columns
+		 for ( $i = 1; $i <= $num_columns; $i++ ) {
+		 	$metaref = ( $i === 1 ) ? 'normal' : 'side';
+		 	$metaref = ( $i > 2 ) ? 'column'.$i : $metaref;
+		 ?>
 
-		<div id='postbox-container-2' class='postbox-container'>
-			<?php do_meta_boxes( $current_page, 'side', '' ); ?>
-		</div>
-
-		<div id='postbox-container-3' class='postbox-container'>
-			<?php do_meta_boxes( $current_page, 'column3', '' ); ?>
-		</div>
-
-		<div id='postbox-container-4' class='postbox-container'>
-			<?php do_meta_boxes( $current_page, 'column4', '' ); ?>
-		</div>
+			<div id='postbox-container-<?php echo $i; ?>' class='postbox-container'>
+				<?php do_meta_boxes( $current_page, $metaref, NULL ); ?>
+			</div>
+		<?php }// end column loop ?>
 	</div> <!-- post-body -->
-	<?php
-		wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false );
-		wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false );
-	?>
 </div> <!-- poststuff -->

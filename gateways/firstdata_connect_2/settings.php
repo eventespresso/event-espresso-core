@@ -109,23 +109,23 @@ function event_espresso_display_firstdata_connect_2_settings($payment_settings) 
 				</tr>
 				<tr>
 					<th><label for="use_sandbox">
-						<?php _e('Use the Debugging Feature and the', 'event_espresso'); ?> <?php _e('FirstData Connect 2 Sandbox? ', 'event_espresso'); ?><?php echo apply_filters('filter_hook_espresso_help', 'sandbox_info_firstdata_connect_2') ?>
+						<?php _e('Use the Debugging Feature and the', 'event_espresso'); ?> <?php _e('FirstData Connect 2 Sandbox? ', 'event_espresso'); ?><?php do_action('action_hook_espresso_help', 'sandbox_info_firstdata_connect_2') ?>
 					</label></th>
 					<td><?php
-						echo select_input('sandbox', $values, $payment_settings['firstdata_connect_2']['sandbox']);
+						echo EE_Form_Fields::select_input('sandbox', $values, $payment_settings['firstdata_connect_2']['sandbox']);
 					?>
 					</td>
 				</tr>
 				<tr>
 					<th><label for="button_url">
-						<?php _e('Button Image URL: ', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'button_image') ?>
+						<?php _e('Button Image URL: ', 'event_espresso'); ?> <?php do_action('action_hook_espresso_help', 'button_image') ?>
 					</label></th>
 					<td><input class="regular-text" type="text" name="button_url" size="34" value="<?php echo $payment_settings['firstdata_connect_2']['button_url']; ?>" />
 							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a></td>
 				</tr>
 				<tr>
 					<th><label for="timezone">
-						<?php _e('Choose a timezone for the transaction? ', 'event_espresso'); ?><?php // apply_filters('filter_hook_espresso_help', 'timezone') // removed: no relevent help available, is it required? self explanatory?  ?>
+						<?php _e('Choose a timezone for the transaction? ', 'event_espresso'); ?><?php // do_action('action_hook_espresso_help', 'timezone') // removed: no relevent help available, is it required? self explanatory?  ?>
 					</label></th>
 					<td><?php
 						$values = array(
@@ -134,7 +134,7 @@ function event_espresso_display_firstdata_connect_2_settings($payment_settings) 
 							array('id' => 'CST', 'text' => __('CST', 'event_espresso')),
 							array('id' => 'MST', 'text' => __('MST', 'event_espresso')),
 							array('id' => 'PST', 'text' => __('PST', 'event_espresso')));
-						echo select_input('timezone', $values, $payment_settings['firstdata_connect_2']['timezone']);
+						echo EE_Form_Fields::select_input('timezone', $values, $payment_settings['firstdata_connect_2']['timezone']);
 					?></td>
 				</tr>
 				<tr>

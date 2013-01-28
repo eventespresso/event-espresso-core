@@ -15,9 +15,9 @@
  *
  * Price Type Model
  *
- * @package				Event Espresso
+ * @package			Event Espresso
  * @subpackage		includes/models/
- * @author				Sidney Harrell
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -30,6 +30,13 @@ class EEM_Price_Type extends EEM_Base {
 	// An array of the price type objects
 	public $type = NULL;
 
+	/**
+	*	Price Base types
+	*
+	*	@access	private
+	*	@var int
+	*/
+	public static $base_types = array( 1 => 'Event Price', 2 => 'Discount', 3 => 'Surcharge', 4 => 'Tax' );
 
 
 
@@ -51,6 +58,7 @@ class EEM_Price_Type extends EEM_Base {
 		$this->table_data_types = array(
 				'PRT_ID' 					=> '%d',
 				'PRT_name' 			=> '%s',
+				'PBT_ID' 					=> '%d',
 				'PRT_is_member' 	=> '%d',
 				'PRT_is_discount' 	=> '%d',
 				'PRT_is_tax' 			=> '%d',
@@ -107,9 +115,8 @@ class EEM_Price_Type extends EEM_Base {
 		foreach ($price_types as $price_type) {
 			$array_of_objects[$price_type->PRT_ID] = new EE_Price_Type(
 											$price_type->PRT_name,
+											$price_type->PBT_ID,
 											$price_type->PRT_is_member,
-											$price_type->PRT_is_discount,
-											$price_type->PRT_is_tax,
 											$price_type->PRT_is_percent,
 											$price_type->PRT_is_global,
 											$price_type->PRT_order,
@@ -131,7 +138,7 @@ class EEM_Price_Type extends EEM_Base {
 	 * 		@return		mixed		array on success, FALSE on fail
 	 */
 	public function get_new_price_type() {
-		return new EE_Price_Type( '', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,0 );
+		return new EE_Price_Type( '', 1, FALSE, FALSE, FALSE, 0, FALSE );
 	}
 
 
@@ -139,19 +146,48 @@ class EEM_Price_Type extends EEM_Base {
 
 
 	/**
-	 * 		retreive  ALL price types from db
+	 * 	retreive  ALL price types from db
 	 *
-	 * 		@access		public
-	 * 		@return		mixed		array on success, FALSE on fail
+	 * 	@access		public
+	 * 	@return 		string		$orderby				sorting column
+	 * 	@return 		string		$order					sort ASC or DESC ?
+	 * 	@return 		array		$limit					query limit and offset
+	 * 	@return 		boolean	$output				return count or results ?
+	 * 	@return 		boolean	$trashed				return deleted records or just active non-deleted ones ?
+	 * 	@return		mixed		array on success, FALSE on fail
 	 */
-	public function get_all_price_types($orderby='PRT_order', $order='ASC') {
-
+	public function get_all_price_types( $orderby='PRT_order', $order='ASC', $limit = array(0,10), $output = 'OBJECT_K' , $trashed = FALSE ) {
+		
+		$output = $output === TRUE ? 'COUNT' :  'OBJECT_K';
+		
 		// retreive all price types
-		if ($price_types = $this->select_all($orderby, $order)) {
-			return $this->_create_objects($price_types);
-		} else {
+		$price_types = $this->select_all_where ( 
+				array( 'PRT_deleted' => $trashed ),
+				$orderby, 
+				$order, 
+				'=', 
+				$limit,
+				$output
+			);
+
+//		echo '<h1>XXXXXXXX  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
+//		echo '<h4>$orderby : ' . $orderby . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$order : ' . $order . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		printr( $limit, '$limit  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		echo '<h4>$output : ' . $output . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$trashed : ' . $trashed . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		 printr( $price_types, '$price_types  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+		// bad results ?
+		if ( empty( $price_types ) || $price_types === FALSE || is_wp_error( $price_types )) {
 			return FALSE;
-		}
+		}			
+
+		//  return the count OR create objects out of data
+		$price_types = $output == 'COUNT' ? $price_types : $this->_create_objects($price_types);
+		return $price_types;
+
+		
 	}
 
 

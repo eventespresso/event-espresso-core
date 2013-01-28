@@ -41,6 +41,7 @@ Class EE_Firstdata extends EE_Gateway {
 		$this->_gateway = 'Firstdata';
 		$this->_button_base = 'logo-Firstdata.png';
 		$this->_path = str_replace( '\\', '/', __FILE__ );
+		$this->_btn_img = file_exists( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 	}
 
@@ -52,6 +53,7 @@ Class EE_Firstdata extends EE_Gateway {
 		$this->_payment_settings['type'] = 'on-site';
 		$this->_payment_settings['display_name'] = 'First Data';
 		$this->_payment_settings['current_path'] = '';
+		$this->_payment_settings['button_url'] = $this->_btn_img;
 	}
 
 	protected function _update_settings() {
@@ -60,8 +62,7 @@ Class EE_Firstdata extends EE_Gateway {
 			$this->_payment_settings['authnet_aim_transaction_key'] = $_POST['authnet_aim_transaction_key'];
 			$this->_payment_settings['test_transactions'] = $_POST['test_transactions'];
 			$this->_payment_settings['use_sandbox'] = $_POST['use_sandbox'];
-			$this->_payment_settings['button_url'] = $_POST['button_url'];
-
+			$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';
 			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
 				$espresso_notices['success'][] = __('Authorize AIM Payment Settings Updated!', 'event_espresso');
 			} else {
@@ -95,24 +96,27 @@ Class EE_Firstdata extends EE_Gateway {
 		<tr>
 			<th><label for="use_sandbox">
 					<?php _e('Is this an account on the Authorize.net development server? ', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'authnet_aim_sandbox'); ?>
+					<?php do_action('action_hook_espresso_help', 'authnet_aim_sandbox'); ?>
 				</label></th>
-			<td><?php echo select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
+			<td><?php echo EE_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
 		</tr>
 		<tr>
 			<th><label for="test_transactions">
 					<?php _e('Do you want to submit a test transaction? ', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'authnet_test_transactions') ?>
+					<?php do_action('action_hook_espresso_help', 'authnet_test_transactions') ?>
 				</label></th>
-			<td><?php echo select_input('test_transactions', $this->_yes_no_options, $this->_payment_settings['test_transactions']); ?></td>
+			<td><?php echo EE_Form_Fields::select_input('test_transactions', $this->_yes_no_options, $this->_payment_settings['test_transactions']); ?></td>
 		</tr>
+		
 		<tr>
-			<th><label for="aim_button_url">
+			<th>
+				<label for="<?php echo $this->_gateway; ?>_button_url">
 					<?php _e('Button Image URL', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'aim_button_image'); ?>
-				</label></th>
+				</label>
+			</th>
 			<td>
-				<input class="regular-text" type="text" name="button_url" id="aim_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
+				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
+				<input class="regular-text" type="text" name="button_url" id="<?php echo $this->_gateway; ?>_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
 				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
 			</td>
 		</tr>
@@ -361,9 +365,10 @@ Class EE_Firstdata extends EE_Gateway {
 		<?php
 	}
 
-	public function espresso_reg_page_billing_inputs_aim() {
+	public function espresso_reg_page_billing_inputs_firstdata() {
 
 		$reg_page_billing_inputs = array(
+		
 				'type' => 'onsite',
 				'gateway' => 'Authorize.Net AIM',
 				'reg-page-billing-fname' => array(
@@ -454,18 +459,6 @@ Class EE_Firstdata extends EE_Gateway {
 						'value' => NULL,
 						'format' => '%d'
 				),
-				/* 						'reg-page-billing-card-exp-date' => array(
-				  'db-col' =>'exp-date',
-				  'label' => __( 'Expiry Date', 'event_espresso' ),
-				  'input' =>'text',
-				  'type' =>'string',
-				  'sanitize' => 'mm/yy',
-				  'required' => TRUE,
-				  'validation' => TRUE,
-				  'value' => NULL,
-				  'format' => '%s'
-				  ), */
-
 				'reg-page-billing-card-exp-date-mnth' => array(
 						'db-col' => 'exp-date-mnth',
 						'label' => __('Expiry Date Month', 'event_espresso'),

@@ -153,7 +153,7 @@ Class EEM_Gateways {
 	private function _scan_and_load_all_gateways() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		// on the settings page, scan and load all the gateways
-		if (is_admin() && !empty($_GET['page']) && $_GET['page'] == 'payment_gateways') {
+		if (is_admin() && !empty($_GET['page']) && $_GET['page'] == 'payment_settings') {
 			$this->_load_all_gateway_files();
 		} else {
 			// if something went wrong, fail gracefully
@@ -201,23 +201,27 @@ Class EEM_Gateways {
 		
 		$gateways = array();
 		$upload_gateways = array();
-		$gateways_glob = glob(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways" . DS . "*", GLOB_ONLYDIR);
-		$upload_gateways_glob = glob(EVENT_ESPRESSO_GATEWAY_DIR . '*', GLOB_ONLYDIR);
-		if (!is_array($gateways_glob))
+		// grab standard gateways
+		if ( ! $gateways_glob = glob(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways" . DS . "*", GLOB_ONLYDIR)) {
 			$gateways_glob = array();
+		}
+		// grab custom gateways
+		if ( ! $upload_gateways_glob = glob(EVENT_ESPRESSO_GATEWAY_DIR . '*', GLOB_ONLYDIR)) {
+			$upload_gateways_glob = array();
+		}
+		// grab gateway folder names only
 		foreach ($gateways_glob as $gateway) {
-			$pos = strrpos($gateway, DS);
-			$sub = substr($gateway, $pos + 1);
+			$sub = basename( $gateway );
 			$gateways[$sub] = FALSE;
 		}
-		if (!is_array($upload_gateways_glob))
-			$upload_gateways_glob = array();
+		// grab gateway folder names only
 		foreach ($upload_gateways_glob as $upload_gateway) {
-			$pos = strrpos($upload_gateway, DS);
-			$sub = substr($upload_gateway, $pos + 1);
+			$sub = basename( $gateway );
 			$upload_gateways[$sub] = TRUE;
 		}
+		
 		$this->_all_gateways = array_merge($upload_gateways, $gateways);
+//		printr( $this->_all_gateways, '_all_gateways  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		foreach ($this->_all_gateways as $gateway => $in_uploads) {
 			$classname = 'EE_' . $gateway;
@@ -234,6 +238,7 @@ Class EEM_Gateways {
 					EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				}
 			} else if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . $filename)) {
+//				echo '<h4>$filename : ' . $filename . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . $filename);
 			} else {
 				$msg = sprintf(
@@ -242,10 +247,12 @@ Class EEM_Gateways {
 						'<b>' . EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . '</b>',
 						'<b>' . EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . '</b>'
 				);
+				$msg .= '||' . __( 'For the time being, the following error only indicates that the Gateway has yet to be converted over to 3.2 : ', 'event_espresso') . '<br />' . $msg;
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
 
 			if (class_exists($classname)) {
+//				echo '<h4>$classname : ' . $classname . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 				$that = &$this;
 				$gateway = call_user_func(array($classname, 'instance'), $that);
 				$this->_gateway_instances[$gateway->gateway()] = $gateway;

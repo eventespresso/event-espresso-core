@@ -4,11 +4,6 @@ jQuery(document).ready(function($) {
 
 	// clear firefox and safari cache
 	$(window).unload( function() {}); 
-	
-	// close postboxes that should be closed
-	$('.if-js-closed').removeClass('if-js-closed').addClass('closed');
-	// postboxes setup
-	postboxes.add_postbox_toggles('event-espresso_page_transactions');
 
 	$('#entries-per-page-slct').on( 'change', function() {
 		var per_page = $(this).val();
@@ -82,8 +77,6 @@ jQuery(document).ready(function($) {
 
 
 
-
-	// modal dialog box elements
 	var overlay = $( "#espresso-admin-page-overlay-dv" );
 	var dialog = $( "#txn-admin-apply-payment-dv" ).draggable();
 	var eeTimeout = false;
@@ -272,6 +265,7 @@ jQuery(document).ready(function($) {
 		$('#txn-admin-noheader-inp').val('true');
 		var formData = $('#txn-admin-apply-payment-frm').serialize();
 		//alert( 'formURL = ' + formURL + '\n\n' + 'formData = ' + formData );
+		console.log(formData);
 		response = new Object();
 
 		$.ajax({
@@ -283,6 +277,7 @@ jQuery(document).ready(function($) {
 						do_before_admin_page_ajax();
 					},
 					success: function( response ) {
+						console.log(response);
 						if ( response.return_data != undefined && response.return_data != false && response.return_data != null ) {
 							response.edit_or_apply = editOrApply;
 							process_return_data( response );
@@ -294,6 +289,7 @@ jQuery(document).ready(function($) {
 						}
 					},
 					error: function(response) {
+						console.log(response);
 						if ( response.errors == undefined ) {
 							response.errors = 'An error occured! Please refresh the page and try again.';
 						}

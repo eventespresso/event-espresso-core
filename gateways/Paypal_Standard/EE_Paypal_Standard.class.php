@@ -39,11 +39,12 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 
 	protected function __construct(EEM_Gateways &$model) {
 		$this->_gateway = 'Paypal_Standard';
-		$this->_button_base = 'paypal.gif';
+		$this->_button_base = 'paypal-logo.png';
 		$this->_path = str_replace('\\', '/', __FILE__);
 		$this->gatewayUrl = 'https://www.paypal.com/cgi-bin/webscr';
 		$this->addField('rm', '2');		 // Return method = POST
 		$this->addField('cmd', '_xclick');
+		$this->_btn_img = file_exists( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 	}
 
@@ -56,6 +57,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$this->_payment_settings['type'] = 'off-site';
 		$this->_payment_settings['display_name'] = 'Paypal';
 		$this->_payment_settings['current_path'] = '';
+		$this->_payment_settings['button_url'] = $this->_btn_img;
 	}
 
 	protected function _update_settings() {
@@ -64,11 +66,20 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$this->_payment_settings['currency_format'] = $_POST['currency_format'];
 		$this->_payment_settings['no_shipping'] = $_POST['no_shipping'];
 		$this->_payment_settings['use_sandbox'] = $_POST['use_sandbox'];
-		$this->_payment_settings['button_url'] = $_POST['button_url'];
+		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';	
 	}
 
 	protected function _display_settings() {
 		?>
+		<tr>
+			<th>
+				<label><strong style="color:#F00"><?php _e('Please Note', 'event_espresso'); ?></strong></label>
+			</th>
+			<td>				
+				<?php _e('For PayPal IPN to work, you need a Business or Premier account.', 'event_espresso'); ?>
+			</td>
+		</tr>
+
 		<tr>
 			<th><label for="paypal_id">
 					<?php _e('PayPal ID', 'event_espresso'); ?>
@@ -79,10 +90,11 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 					<?php _e('Typically payment@yourdomain.com', 'event_espresso'); ?>
 				</span></td>
 		</tr>
+		
 		<tr>
 			<th><label for="currency_format">
 					<?php _e('Country Currency', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'currency_info'); ?>
+					<?php do_action('action_hook_espresso_help', 'currency_info'); ?>
 				</label></th>
 			<td><select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
 					<option value="<?php echo $this->_payment_settings['currency_format']; ?>"><?php echo $this->_payment_settings['currency_format']; ?></option>
@@ -162,19 +174,9 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		</tr>
 
 		<tr>
-			<th><label for="pp_button_url">
-					<?php _e('Button Image URL', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'paypal_button_image'); ?>
-				</label></th>
-			<td><input class="regular-text" type="text" name="button_url" id="pp_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" /><br /><span class="description">
-					<?php _e('URL to the payment button.', 'event_espresso'); ?>
-				</span>
-			</td>
-		</tr>
-		<tr>
 			<th><label for="pp_image_url">
 					<?php _e('Image URL', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'paypal_image_url_info'); ?>
+					<?php do_action('action_hook_espresso_help', 'paypal_image_url_info'); ?>
 				</label></th>
 			<td><input class="regular-text" type="text" name="image_url" id="pp_image_url" size="35" value="<?php echo $this->_payment_settings['image_url']; ?>" />
 				<br />
@@ -182,35 +184,52 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 					<?php _e('Used for your business/personal logo on the PayPal page', 'event_espresso'); ?>
 				</span></td>
 		</tr>
+		
 		<tr>
 			<th><label for="use_sandbox">
 					<?php _e('Use the Debugging Feature and the PayPal Sandbox', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'sandbox_info'); ?>
+					<?php do_action('action_hook_espresso_help', 'sandbox_info'); ?>
 				</label></th>
-			<td><?php echo select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
+			<td><?php echo EE_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
 		</tr>
+		
 		<tr>
-			<th><label for="no_shipping">
+			<th>
+				<label for="no_shipping">
 					<?php _e('Shipping Address Options', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'no_shipping'); ?>
-				</label></th>
-			<td><?php
-			$shipping_values = array(
-					array('id' => '1', 'text' => __('Do not prompt for an address', 'event_espresso')),
-					array('id' => '0', 'text' => __('Prompt for an address, but do not require one', 'event_espresso')),
-					array('id' => '2', 'text' => __('Prompt for an address, and require one', 'event_espresso')));
-			echo select_input('no_shipping', $shipping_values, $this->_payment_settings['no_shipping']);
-					?></td>
+					<?php do_action('action_hook_espresso_help', 'no_shipping'); ?>
+				</label>
+			</th>
+			<td>
+			<?php
+				$shipping_values = array(
+						array('id' => '1', 'text' => __('Do not prompt for an address', 'event_espresso')),
+						array('id' => '0', 'text' => __('Prompt for an address, but do not require one', 'event_espresso')),
+						array('id' => '2', 'text' => __('Prompt for an address, and require one', 'event_espresso'))
+					);
+				echo EE_Form_Fields::select_input('no_shipping', $shipping_values, $this->_payment_settings['no_shipping']);
+			?>
+			</td>
+		</tr>
+
+		<tr>
+			<th>
+				<label for="<?php echo $this->_gateway; ?>_button_url">
+					<?php _e('Button Image URL', 'event_espresso'); ?>
+				</label>
+			</th>
+			<td>
+				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
+				<input class="regular-text" type="text" name="button_url" id="<?php echo $this->_gateway; ?>_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
+				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
+			</td>
 		</tr>
 		<?php
 	}
 
 	protected function _display_settings_help() {
 		?>
-		<p><strong style="color:#F00">
-				<?php _e('PayPal Notes', 'event_espresso'); ?>
-			</strong><br />
-			<?php _e('For PayPal IPN to work, you need a Business or Premier account.', 'event_espresso'); ?></p>
+			
 		<div id="sandbox_info" style="display:none">
 			<h2>
 				<?php _e('PayPal Sandbox', 'event_espresso'); ?>

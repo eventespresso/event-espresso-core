@@ -75,8 +75,9 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 	protected function __construct(EEM_Gateways &$model) {
 		$this->_gateway = 'Aim';
-		$this->_button_base = 'logo-aim.png';
+		$this->_button_base = 'aim-logo.png';
 		$this->_path = str_replace('\\', '/', __FILE__);
+		$this->_btn_img = is_readable( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 	}
 
@@ -88,6 +89,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 		$this->_payment_settings['type'] = 'on-site';
 		$this->_payment_settings['display_name'] = 'Authorize.net AIM';
 		$this->_payment_settings['current_path'] = '';
+		$this->_payment_settings['button_url'] = $this->_btn_img;
 	}
 
 	protected function _update_settings() {
@@ -95,8 +97,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 		$this->_payment_settings['authnet_aim_transaction_key'] = $_POST['authnet_aim_transaction_key'];
 		$this->_payment_settings['test_transactions'] = $_POST['test_transactions'];
 		$this->_payment_settings['use_sandbox'] = $_POST['use_sandbox'];
-		$this->_payment_settings['button_url'] = $_POST['button_url'];
-	}
+		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';	}
 
 	protected function _display_settings() {
 		?>
@@ -123,23 +124,24 @@ Class EE_Aim extends EE_Onsite_Gateway {
 		<tr>
 			<th><label for="use_sandbox">
 					<?php _e('Is this an account on the Authorize.net development server? ', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'authnet_aim_sandbox'); ?>
+					<?php do_action('action_hook_espresso_help', 'authnet_aim_sandbox'); ?>
 				</label></th>
-			<td><?php echo select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
+			<td><?php echo EE_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
 		</tr>
 		<tr>
 			<th><label for="test_transactions">
 					<?php _e('Do you want to submit a test transaction? ', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'authnet_test_transactions') ?>
+					<?php do_action('action_hook_espresso_help', 'authnet_test_transactions') ?>
 				</label></th>
-			<td><?php echo select_input('test_transactions', $this->_yes_no_options, $this->_payment_settings['test_transactions']); ?></td>
+			<td><?php echo EE_Form_Fields::select_input('test_transactions', $this->_yes_no_options, $this->_payment_settings['test_transactions']); ?></td>
 		</tr>
 		<tr>
 			<th><label for="aim_button_url">
 					<?php _e('Button Image URL', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'aim_button_image'); ?>
+					<?php do_action('action_hook_espresso_help', 'aim_button_image'); ?>
 				</label></th>
 			<td>
+				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
 				<input class="regular-text" type="text" name="button_url" id="aim_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
 				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
 			</td>
@@ -149,9 +151,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 	protected function _display_settings_help() {
 		?>
-		<p><strong style="color:#F00">
-				<?php _e('WARNING!', 'event_espresso'); ?>
-			</strong><?php _e('You are responsible for your own security and PCI compliance.', 'event_espresso'); ?></p>
+
 		<div id="authnet_aim_sandbox" style="display:none">
 			<h2>
 				<?php _e('Authorize.net AIM Test Mode', 'event_espresso'); ?>
@@ -225,16 +225,16 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 			//start transaction
 			$this->setField('amount', $grand_total);
-			$this->setField('card_num', $billing_info['reg-page-billing-card-nmbr']['value']);
-			$this->setField('exp_date', $billing_info['reg-page-billing-card-exp-date-mnth']['value'] . $billing_info['reg-page-billing-card-exp-date-year']['value']);
-			$this->setField('card_code', $billing_info['reg-page-billing-card-ccv-code']['value']);
-			$this->setField('first_name', $billing_info['reg-page-billing-fname']['value']);
-			$this->setField('last_name', $billing_info['reg-page-billing-lname']['value']);
-			$this->setField('email', $billing_info['reg-page-billing-email']['value']);
-			$this->setField('address', $billing_info['reg-page-billing-address']['value']);
-			$this->setField('city', $billing_info['reg-page-billing-city']['value']);
-			$this->setField('state', $billing_info['reg-page-billing-state']['value']);
-			$this->setField('zip', $billing_info['reg-page-billing-zip']['value']);
+			$this->setField('card_num', $billing_info[ 'reg-page-billing-card-nmbr-' . $this->_gateway ]['value']);
+			$this->setField('exp_date', $billing_info[ 'reg-page-billing-card-exp-date-mnth-' . $this->_gateway ]['value'] . $billing_info['reg-page-billing-card-exp-date-year-' . $this->_gateway ]['value']);
+			$this->setField('card_code', $billing_info[ 'reg-page-billing-card-ccv-code-' . $this->_gateway ]['value']);
+			$this->setField('first_name', $billing_info[ 'reg-page-billing-fname-' . $this->_gateway ]['value']);
+			$this->setField('last_name', $billing_info[ 'reg-page-billing-lname-' . $this->_gateway ]['value']);
+			$this->setField('email', $billing_info[ 'reg-page-billing-email-' . $this->_gateway ]['value']);
+			$this->setField('address', $billing_info[ 'reg-page-billing-address-' . $this->_gateway ]['value']);
+			$this->setField('city', $billing_info[ 'reg-page-billing-city-' . $this->_gateway ]['value']);
+			$this->setField('state', $billing_info[ 'reg-page-billing-state-' . $this->_gateway ]['value']);
+			$this->setField('zip', $billing_info[ 'reg-page-billing-zip-' . $this->_gateway ]['value']);
 			$this->setField('cust_id', $primary_attendee['registration_id']['value']);
 			$this->setField('invoice_num',$EE_Session->id()); 
 
@@ -322,82 +322,71 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 	public function espresso_display_payment_gateways() {
 
-		global $css_class;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-		// this filter allows whatever function is processing the registration page to know what inputs to expect
-		add_filter('filter_hook_espresso_reg_page_billing_inputs', array(&$this, 'espresso_reg_page_billing_inputs_aim'));
-		$use_sandbox = $this->_payment_settings['use_sandbox'] || $this->_payment_settings['test_transactions'];
-		if ($use_sandbox) {
-			$test_creds = '
-		<h4 style="color:#ff0000;" title="Payments will not be processed">' . __('Debug Mode Is Turned On', 'event_espresso') . '</h4>
-		<p style="color:#ff0000;">Test credit card # 4007000000027</p><br/>
-		';
-		} else {
-			$test_creds = '';
-		}
+		global $css_class;
+
+
 		echo $this->_generate_payment_gateway_selection_button();
+		
+		$gw = $this->_gateway;
 		?>
 
 
-		<div id="reg-page-billing-info-<?php echo $this->_gateway; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
+		<div id="reg-page-billing-info-<?php echo $gw;?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
 
-
-			<?php echo $test_creds; ?>
+		<?php if ( $this->_payment_settings['use_sandbox'] || $this->_payment_settings['test_transactions'] ) : ?>
+		<h4 style="color:#ff0000;" title="Payments will not be processed"><?php _e('Debug Mode Is Turned On', 'event_espresso');?></h4>
+		<p style="color:#ff0000;">Test credit card # 4007000000027</p><br/>
+		<?php endif; ?>
 
 			<h5><strong><?php _e('Billing Address', 'event_espresso'); ?></strong></h5>
 
 			<p class="event_form_field">
-				<label for="reg-page-billing-fname"><?php _e('First Name', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-fname" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-fname" title="">
+				<label for="reg-page-billing-fname-<?php echo $gw;?>"><?php _e('First Name', 'event_espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-fname-<?php echo $gw;?>" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-fname-<?php echo $gw;?>" title="">
 			</p>
 
 			<p class="event_form_field">
-				<label for="reg-page-billing-lname"><?php _e('Last Name', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-lname" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-lname" title="">
+				<label for="reg-page-billing-lname-<?php echo $gw;?>"><?php _e('Last Name', 'event_espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-lname-<?php echo $gw;?>" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-lname-<?php echo $gw;?>" title="">
 			</p>
 
 			<p class="event_form_field">
-				<label for="reg-page-billing-email"><?php _e('Email', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-email" class="required email <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-email" title="">
+				<label for="reg-page-billing-email-<?php echo $gw;?>"><?php _e('Email', 'event_espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-email-<?php echo $gw;?>" class="required email <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-email-<?php echo $gw;?>" title="">
 			</p>
 
 			<p class="event_form_field">
-				<label for="reg-page-billing-address"><?php _e('Address', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-address" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-address">
+				<label for="reg-page-billing-address-<?php echo $gw;?>"><?php _e('Address', 'event_espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-address-<?php echo $gw;?>" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-address-<?php echo $gw;?>">
 			</p>
 
 			<p class="event_form_field">
-				<label for="reg-page-billing-city"><?php _e('City', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-city" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-city">
+				<label for="reg-page-billing-city-<?php echo $gw;?>"><?php _e('City', 'event_espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-city-<?php echo $gw;?>" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-city-<?php echo $gw;?>">
 			</p>
 
 			<p class="event_form_field">
-				<label for="reg-page-billing-state"><?php _e('State', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-state" class="required medium-txt <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-state">
+				<label for="reg-page-billing-state-<?php echo $gw;?>"><?php _e('State', 'event_espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-state-<?php echo $gw;?>" class="required medium-txt <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-state-<?php echo $gw;?>">
 			</p>
 
 			<p class="event_form_field">
-				<label for="reg-page-billing-zip"><?php _e('Zip', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-zip" class="required small-txt <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-zip">
+				<label for="reg-page-billing-zip-<?php echo $gw;?>"><?php _e('Zip', 'event_espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-zip-<?php echo $gw;?>" class="required small-txt <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-zip-<?php echo $gw;?>">
 			</p>
 
 			<h5><strong><?php _e('Credit Card Information', 'event_espresso'); ?></strong></h5>
 
 			<p class="event_form_field">
-				<label for="reg-page-billing-card-nmbr"><?php _e('Card Number', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-card-nmbr" class="required <?php echo $css_class; ?>" type="text" name="reg-page-billing-card-nmbr"/>
+				<label for="reg-page-billing-card-nmbr-<?php echo $gw;?>"><?php _e('Card Number', 'event_espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-card-nmbr-<?php echo $gw;?>" class="required <?php echo $css_class; ?>" type="text" name="reg-page-billing-card-nmbr-<?php echo $gw;?>"/>
 			</p>
 
-			<?php /*
-			  <p class="event_form_field">
-			  <label for="reg-page-billing-card-exp-date"><?php _e('Expiry Date', 'event_espresso'); ?> <em>*</em></label>
-			  <input id="reg-page-billing-card-exp-date" class="required medium-txt <?php echo $css_class;?>" type="text" name="reg-page-billing-card-exp-date"/>
-			  </p>
-			 */ ?>
 			<p class="event_form_field">
 				<label><?php _e('Expiry Date', 'event_espresso'); ?> <em>*</em></label>
-				<select id="reg-page-billing-card-exp-date-mnth" class="required small-txt <?php echo $css_class; ?>" name="reg-page-billing-card-exp-date-mnth">
+				<select id="reg-page-billing-card-exp-date-mnth-<?php echo $gw;?>" class="required small-txt <?php echo $css_class; ?>" name="reg-page-billing-card-exp-date-mnth-<?php echo $gw;?>">
 					<?php
 					for ($x = 1; $x <= 12; $x++) {
 						$value = $x < 10 ? '0' . $x : $x;
@@ -407,7 +396,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 					?>
 				</select>
 				&nbsp;/&nbsp;
-				<select id="reg-page-billing-card-exp-date-year" class="required small-txt <?php echo $css_class; ?>" name="reg-page-billing-card-exp-date-year">
+				<select id="reg-page-billing-card-exp-date-year-<?php echo $gw;?>" class="required small-txt <?php echo $css_class; ?>" name="reg-page-billing-card-exp-date-year-<?php echo $gw;?>">
 					<?php
 					$current_year = date('y');
 					$next_decade = $current_year + 10;
@@ -422,8 +411,8 @@ Class EE_Aim extends EE_Onsite_Gateway {
 			</p>
 
 			<p class="event_form_field">
-				<label for="reg-page-billing-card-ccv-code"><?php _e('CCV Code', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-card-ccv-code"  class="required small-txt <?php echo $css_class; ?>" type="text" name="reg-page-billing-card-ccv-code"/>
+				<label for="reg-page-billing-card-ccv-code-<?php echo $gw;?>"><?php _e('CCV Code', 'event_espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-card-ccv-code-<?php echo $gw;?>"  class="required small-txt <?php echo $css_class; ?>" type="text" name="reg-page-billing-card-ccv-code-<?php echo $gw;?>"/>
 			</p>
 
 		</div>
@@ -434,7 +423,8 @@ Class EE_Aim extends EE_Onsite_Gateway {
 	public function espresso_reg_page_billing_inputs() {
 
 		$reg_page_billing_inputs = array(
-				'reg-page-billing-fname' => array(
+		
+				'reg-page-billing-fname-' . $this->_gateway => array(
 						'db-col' => 'fname',
 						'label' => __('First Name', 'event_espresso'),
 						'input' => 'text',
@@ -445,7 +435,8 @@ Class EE_Aim extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-lname' => array(
+				
+				'reg-page-billing-lname-' . $this->_gateway => array(
 						'db-col' => 'lname',
 						'label' => __('Last Name', 'event_espresso'),
 						'input' => 'text',
@@ -456,7 +447,8 @@ Class EE_Aim extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-email' => array(
+				
+				'reg-page-billing-email-' . $this->_gateway => array(
 						'db-col' => 'email',
 						'label' => __('Email Address', 'event_espresso'),
 						'input' => 'text',
@@ -467,7 +459,8 @@ Class EE_Aim extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-address' => array(
+				
+				'reg-page-billing-address-' . $this->_gateway => array(
 						'db-col' => 'address',
 						'label' => __('Address', 'event_espresso'),
 						'input' => 'text',
@@ -478,7 +471,8 @@ Class EE_Aim extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-city' => array(
+				
+				'reg-page-billing-city-' . $this->_gateway => array(
 						'db-col' => 'city',
 						'label' => __('City', 'event_espresso'),
 						'input' => 'text',
@@ -489,7 +483,8 @@ Class EE_Aim extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-state' => array(
+				
+				'reg-page-billing-state-' . $this->_gateway => array(
 						'db-col' => 'state',
 						'label' => __('State', 'event_espresso'),
 						'input' => 'text',
@@ -500,7 +495,8 @@ Class EE_Aim extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-zip' => array(
+				
+				'reg-page-billing-zip-' . $this->_gateway => array(
 						'db-col' => 'zip',
 						'label' => __('Zip Code', 'event_espresso'),
 						'input' => 'text',
@@ -511,7 +507,8 @@ Class EE_Aim extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-card-nmbr' => array(
+				
+				'reg-page-billing-card-nmbr-' . $this->_gateway => array(
 						'db-col' => 'card-nmbr',
 						'label' => __('Credit Card Number', 'event_espresso'),
 						'input' => 'text',
@@ -522,19 +519,8 @@ Class EE_Aim extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%d'
 				),
-				/* 						'reg-page-billing-card-exp-date' => array(
-				  'db-col' =>'exp-date',
-				  'label' => __( 'Expiry Date', 'event_espresso' ),
-				  'input' =>'text',
-				  'type' =>'string',
-				  'sanitize' => 'mm/yy',
-				  'required' => TRUE,
-				  'validation' => TRUE,
-				  'value' => NULL,
-				  'format' => '%s'
-				  ), */
 
-				'reg-page-billing-card-exp-date-mnth' => array(
+				'reg-page-billing-card-exp-date-mnth-' . $this->_gateway => array(
 						'db-col' => 'exp-date-mnth',
 						'label' => __('Expiry Date Month', 'event_espresso'),
 						'input' => 'select',
@@ -545,7 +531,8 @@ Class EE_Aim extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-card-exp-date-year' => array(
+				
+				'reg-page-billing-card-exp-date-year-' . $this->_gateway => array(
 						'db-col' => 'exp-date-year',
 						'label' => __('Expiry Date Year', 'event_espresso'),
 						'input' => 'select',
@@ -556,7 +543,8 @@ Class EE_Aim extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-card-ccv-code' => array(
+				
+				'reg-page-billing-card-ccv-code-' . $this->_gateway => array(
 						'db-col' => 'ccv-code',
 						'label' => __('CCV Code', 'event_espresso'),
 						'input' => 'text',
@@ -567,6 +555,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%d'
 				)
+				
 		);
 
 		return $reg_page_billing_inputs;

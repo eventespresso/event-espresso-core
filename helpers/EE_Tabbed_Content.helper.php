@@ -24,9 +24,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * 
  * @package		EE_Tabbed_Content
  * @subpackage	helpers/
- * @abstract
  * @author		Darren Ethier
- * @todo: This needs to be a bit more dynamic to allow for multiple tabbed instances on a page.  Right now with this we can have only one instance intiialized by the #ee-nav-tabs selector.
  *
  * ------------------------------------------------------------------------
  */
@@ -45,11 +43,11 @@ class EE_Tabbed_Content {
 	 * @param  array $tabs_content an array of the content for each tab [required]
 	 * @return string               the assembled html string containing the tabbed content for display.
 	 */
-	static function display($tabs_contents, $tabs_names = array(), $small_tabs = true ) {
+	public static function display($tabs_contents, $tabs_names = array(), $small_tabs = true, $tabs_content = TRUE ) {
 
 		//first check if $tabs_names is not empty then the count must match the count of $tabs_content otherwise we've got a problem houston
 		if ( !empty( $tabs_names) && ( count( (array) $tabs_names) != count( (array) $tabs_content) ) ) {
-			return new WP_Error('incorrect_tab_keys_values_count', __('The count for $tabs_names and $tabs_content does not match.', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+			throw new EE_Error( __('The count for $tabs_names and $tabs_content does not match.', 'event_espresso') );
 		}
 		
 		//make sure we've got incoming data setup properly
@@ -80,16 +78,53 @@ class EE_Tabbed_Content {
 		return '<div class="'. $tab_container_class . '">' . "\n\t" . $all_tabs . $all_tabs_content . "\n" . '<div style="clear:both"></div></div>';
 	}
 
+
+
+
+	/**
+	 * display_admin_nav_tabs
+	 * this returns the properly formatted tab html for EE_Admin_Pages.
+	 * We are expecting an array of tabs in the following format
+	 * array(
+	 * 	'nav_tab_name' => array(
+	 * 		'url' => 'url for tab',
+	 * 		'link_text' => 'tab text',
+	 * 		'css_class' => 'tab class' //including the nav-tab-active class if its active
+	 * 	)
+	 * ) 
+	 *
+	 * @access public
+	 * @static
+	 * @param array $nav_tabs tab array for nav tabs
+	 */
+	public static function display_admin_nav_tabs($nav_tabs = array()) {
+		if ( empty($nav_tabs) )
+			throw new EE_Error( __('Nav Tabs cannot be generated because the tab array is missing', 'event_espresso' ) );
+
+		$all_tabs = '<h2 class="nav-tab-wrapper">' . "\n";
+		foreach ( $nav_tabs as $slug => $tab ) {
+			$all_tabs .= self::tab($slug, false, $tab['link_text'], $tab['url'], $tab['css_class']);
+		}
+		$all_tabs .= '</h2>';
+		return $all_tabs;
+	}
+
 	/**
 	 * this simply returns a single tab given a tab name & content
 	 * @param  string $name    name of tab
+	 * @param bool $active true=tab active, false=tab not active
+	 * @param bool|string $nice_name if string given then this value will be used for the tab link text.
+	 * @param bool|string $url If url given then tabs will be generated linking to the url.
+	 * @param bool|string $css If string given then the generated tab will include that as the class.
 	 * @return string          html for tab
 	 */
-	static function tab($name, $active = false) {
+	private static function tab($name, $active = false, $nice_name = FALSE, $url = FALSE, $css = FALSE ) {
 		$name = str_replace(' ', '-', $name);
 		$class = $active ? 'nav-tab nav-tab-active' : 'nav-tab';
-		$nice_name = ucwords( preg_replace('/(-|_)/', ' ', $name) );
-		$tab = '<a class="' . $class . '" rel="ee-tab-' . $name . '" href="#' . $name . '">' . $nice_name . '</a>' . "\n\t";
+		$class = $css ? $class . ' ' . $css : $class;
+		$nice_name = $nice_name ? $nice_name : ucwords( preg_replace('/(-|_)/', ' ', $name) );
+		$url = $url ? $url : '#' . $name;
+		$tab = '<a class="' . $class . '" rel="ee-tab-' . $name . '" href="' . $url . '">' . $nice_name . '</a>' . "\n\t";
 		return $tab;
 	}
 
@@ -99,7 +134,7 @@ class EE_Tabbed_Content {
 	 * @param  string $content content of tab
 	 * @return string          html for content area
 	 */
-	static function tab_content($name, $tab_content, $active = false) {
+	private static function tab_content($name, $tab_content, $active = false) {
 		$class = $active ? 'nav-tab-content' : 'nav-tab-content hidden';
 		$name = str_replace( ' ', '-', $name);
 		$content = "\t" . '<div class="'. $class . '" id="ee-tab-' . $name . '">' . "\n";
@@ -107,5 +142,79 @@ class EE_Tabbed_Content {
 		$content .= '</div>';
 		return $content;
 	}
+
+
+
+	/** HORIZONTAL TEXT LINKS **/
+
+	/**
+	 * This will take in an array of link items and spit out a formatted list of links that can be used to navigate to items.
+	 * There is a corresponding js file that can be loaded to dynamically display containers with the same id as the href -ref.
+	 * 
+	 * @param  array $item_array      formatted array of items.  Format:
+	 * array(
+	 * 		'label' => __('localized label displayed'),
+	 * 		'class' => 'class_for_item',
+	 * 		'href' => '#some_item_id', //url/bookmark for item.  If you include a bookmark the js will used this to show the container div.
+	 * 		'title' => __('localized text for the title attribute of the link'),
+	 * 		'slug' => 'slug_used_for_reference'
+	 * )
+	 * @param  string $container_class class used for main container
+	 * @param  string $sep       		you can add in what is used as a separator between each link (or leave blank for none)
+	 * @param string $default 			You can include a string for the item that will receive the "item_display" class for the js.
+	 * @return string                  a html snippet of of all the formatted link elements.
+	 */
+	public static function tab_text_links( $item_array, $container_class = '', $sep = '|', $default = '' ) {
+		if ( !is_array($item_array) || empty( $item_array ) ) 
+			return false; //get out we don't have even the basic thing we need!
+
+
+		$defaults = array(
+			'label' => __('Item', 'event_espresso'),
+			'class' => '',
+			'href' => '',
+			'title' => __('Link for Item', 'event_espresso'),
+			'slug' => 'item_slug'
+		);
+		$container_class = !empty($container_class) ? 'ee-text-links ' . $container_class : 'ee-text-links';
+		$list = '<ul class="' . $container_class . '">';
+		
+		$ci = 1;
+		foreach ( $item_array as $item ) {
+			$item = wp_parse_args( $item, $defaults );
+			$item['class'] = !empty($default) && $default == $item['slug'] ? 'item_display ' . $item['class'] : $item['class'];
+			$list .= self::_text_link_item($item);
+			if ( !empty($sep) && $ci != count($item_array) )
+				$list .= self::_text_link_item($sep);
+			$ci++;
+		}
+
+		$list .= '</ul>';
+		return $list;
+	}
+
+
+
+	private static function _text_link_item( $item ) {
+		//if this isn't an array then we're doing a separator
+		if ( !is_array( $item ) ) {
+			$label = $item;
+			$class = 'ee-text-link-sep';
+			$href = '';
+			$title = '';
+		} else {
+			extract($item);
+		}
+		
+		$class = $class != 'ee-text-link-sep'  ? 'class="ee-text-link-li ' . $class . '"' : 'class="ee-text-link-sep"';
+		
+		$content = '<li ' . $class . '>';
+		$content .= !empty($href) ? '<a class="ee-text-link" href="#' . $href . '" title="' . $title . '">' : '';
+		$content .= $label;
+		$content .= !empty($href) ? '</a>' : '';
+		$content .= '</li>';
+		return $content;
+	}
+
 
 }// end EE_Tabbed_Content helper class

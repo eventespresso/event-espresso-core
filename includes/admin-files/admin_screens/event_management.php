@@ -193,7 +193,7 @@ function espresso_event_editor_promotions_meta_box($event) {
 
 		<p><strong><?php _e('Promotion Codes', 'event_espresso'); ?></strong></p>
 		<p class="disc-codes">
-			<label><?php _e('Allow discount codes?', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'coupon_code_info'); ?></label>
+			<label><?php _e('Allow discount codes?', 'event_espresso'); ?> <?php do_action('action_hook_espresso_help', 'coupon_code_info'); ?></label>
 			<?php echo select_input('use_coupon_code', $values, !isset($event->use_coupon_code) || $event->use_coupon_code == '' ? false : $event->use_coupon_code); ?>
 		</p>
 

@@ -613,79 +613,6 @@ function event_espresso_verify_attendee_data() {
 	}
 }
 
-
-
-
-
-//This function installs the required pages
-function espresso_create_default_pages() {
-	global $wpdb, $org_options, $espresso_wp_user;
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	$default_pages = array('Event Registration', 'Thank You', 'Registration Cancelled', 'Transactions');
-	$existing_pages = get_pages();
-	$temp = array();
-	foreach ($existing_pages as $page) {
-		$temp[] = $page->post_title;
-	}
-	$pages_to_create = array_diff($default_pages, $temp);
-	$updated_flag = false;
-	$page_ids = get_all_page_ids();
-	foreach ($pages_to_create as $new_page_title) {
-
-		// Create post object
-		$my_post = array();
-		$my_post['post_title'] = $new_page_title;
-		//$my_post['post_content'] = 'This is my '.$new_page_title.' page.';
-		$my_post['post_status'] = 'publish';
-		$my_post['post_type'] = 'page';
-		$my_post['comment_status'] = 'closed';
-		// Insert the post into the database
-		//$result = wp_insert_post( $my_post );
-
-		switch ($new_page_title) {
-			case 'Event Registration':
-				if (empty($org_options['event_page_id'])
-								|| !in_array($org_options['event_page_id'], $page_ids)) {
-					$my_post['post_content'] = '[ESPRESSO_EVENTS]';
-					$event_page_id = wp_insert_post($my_post);
-					$org_options['event_page_id'] = $event_page_id;
-					$updated_flag = true;
-				}
-				break;
-			case 'Thank You':
-				if (empty($org_options['return_url'])
-								|| !in_array($org_options['return_url'], $page_ids)) {
-					$my_post['post_content'] = '[ESPRESSO_PAYMENTS]';
-					$return_url = wp_insert_post($my_post);
-					$org_options['return_url'] = $return_url;
-					$updated_flag = true;
-				}
-				break;
-			case 'Registration Cancelled':
-				if (empty($org_options['cancel_return'])
-								|| !in_array($org_options['cancel_return'], $page_ids)) {
-					$my_post['post_content'] = 'You have cancelled your registration.<br />[ESPRESSO_CANCELLED]';
-					$cancel_return = wp_insert_post($my_post);
-					$org_options['cancel_return'] = $cancel_return;
-					$updated_flag = true;
-				}
-				break;
-			case 'Transactions':
-				if (empty($org_options['notify_url'])
-								|| !in_array($org_options['notify_url'], $page_ids)) {
-					$my_post['post_content'] = '[ESPRESSO_TXN_PAGE]';
-					$notify_url = wp_insert_post($my_post);
-					$org_options['notify_url'] = $notify_url;
-					$updated_flag = true;
-				}
-				break;
-		}
-	}
-	update_user_meta($espresso_wp_user, 'events_organization_settings', $org_options);
-	if ($updated_flag)
-		add_action('admin_notices', 'espresso_updated_pages');
-}
-
 //Function to show an admin message if the main pages are not setup.
 function espresso_updated_pages() {
 	echo '<div class="error fade"><p><strong>' . __('In order to function properly Event Espresso has added one or more pages with the corresponding shortcodes. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=event_espresso&anchor=page_settings#page_settings') . '">' . __('Event Espresso Page Settings', 'event_espresso') . '</a>  ' . __('to view the updated pages.', 'event_espresso') . '</strong></p></div>';
@@ -725,7 +652,7 @@ if (!function_exists('espresso_secondary_events_dd')) {
 			}
 			$field .= "</select>";
 			$values = array(array('id' => true, 'text' => __('Yes', 'event_espresso')), array('id' => false, 'text' => __('No', 'event_espresso')));
-			$html = '<p><label>' . __('Assign a Waitlist Event? ', 'event_espresso') . '</label> ' . select_input('allow_overflow', $values, $allow_overflow) . ' ' . apply_filters('filter_hook_espresso_help', 'secondary_info') . '</p>' .
+			$html = '<p><label>' . __('Assign a Waitlist Event? ', 'event_espresso') . '</label> ' . select_input('allow_overflow', $values, $allow_overflow) . ' ' . do_action('action_hook_espresso_help', 'secondary_info') . '</p>' .
 							'<p class="inputunder"><label>' . __('Overflow Event', 'event_espresso') . ': </label><br />' . $field . '</p>';
 
 			return $html;

@@ -28,6 +28,7 @@ function espresso_plugin_activation() {
 		espresso_fix_org_options();
 		espresso_update_active_gateways();
 		espresso_default_prices();
+		espresso_delete_unused_db_tables();
 	}
 }
 
@@ -343,10 +344,7 @@ function espresso_add_query_vars($query_vars) {
 	return $query_vars;
 }
 
-function espresso_buffer_headers() {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	//ob_start();
-}
+
 
 /**
  * event_espresso_require_template()

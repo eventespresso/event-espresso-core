@@ -40,8 +40,9 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 
 	protected function __construct(EEM_Gateways &$model) {
 		$this->_gateway = 'Stripe';
-		$this->_button_base = 'stripe_logo.png';
+		$this->_button_base = 'stripe-logo.png';
 		$this->_path = str_replace( '\\', '/', __FILE__ );
+		$this->_btn_img = file_exists( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 	}
 
@@ -53,7 +54,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 			'stripe_currency_symbol' => 'USD',
 			'stripe_publishable_key' => '',
 			'stripe_secret_key' => '',
-			'button_url' => ''
+			'button_url' =>$this->_btn_img	
 			//no sandbox settings?
 			);
 	}
@@ -63,48 +64,53 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 		$this->_payment_settings['stripe_currency_symbol'] = $_POST['stripe_currency_symbol'];
 		$this->_payment_settings['stripe_publishable_key'] = $_POST['stripe_publishable_key'];
 		$this->_payment_settings['stripe_secret_key'] = $_POST['stripe_secret_key'];
-		$this->_payment_settings['button_url'] = $_POST['stripe_button_url'];
+		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';
 	}
 
 	protected function _display_settings() {
 		?>
-            <tr>
-                <td valign="top">
-                	<ul>
-                        <li>
-                            <label for="stripe_secret_key">
-                            <?php _e('Stripe Secret Key:', 'event_espresso'); ?>
-                            </label>
-                            <br />
-                            <input type="text" name="stripe_secret_key" size="35" value="<?php echo $this->_payment_settings['stripe_secret_key']; ?>"> <?php echo apply_filters('filter_hook_espresso_help', 'stripe_secret_key') ?>
-                        </li>
-                        <li>
-                            <label for="stripe_publishable_key">
-    						<?php _e('Stripe Publishable Key:', 'event_espresso'); ?>
-                            </label>
-                            <br />
-                            <input type="text" name="stripe_publishable_key" size="35" value="<?php echo $this->_payment_settings['stripe_publishable_key']; ?>"> <?php echo apply_filters('filter_hook_espresso_help', 'stripe_publishable_key') ?>
-                        </li>
-                        <li>
-                            <label for="stripe_currency_symbol">
-    						<?php _e('Stripe Currency Symbol (usd):', 'event_espresso'); ?>
-                            </label>
-                            <br />
-                            <input type="text" name="stripe_currency_symbol" size="35" value="<?php echo $this->_payment_settings['stripe_currency_symbol']; ?>"> <?php echo apply_filters('filter_hook_espresso_help', 'stripe_currency_symbol') ?>
-                        </li>
-                    </ul>
-				</td>
-            </tr>
-            <tr>
-			<th><label for="stripe_button_url">
+		<tr>
+			<th>
+				<label for="stripe_secret_key"><?php _e('Stripe Secret Key:', 'event_espresso'); ?></label>
+			</th>
+			<td>
+				<input type="text" name="stripe_secret_key" size="35" value="<?php echo $this->_payment_settings['stripe_secret_key']; ?>"> 
+				<?php do_action('action_hook_espresso_help', 'stripe_secret_key') ?>
+			</td>
+		</tr>
+		
+		<tr>
+			<th>
+				<label for="stripe_publishable_key"><?php _e('Stripe Publishable Key:', 'event_espresso'); ?></label>
+			</th>
+			<td>
+				<input type="text" name="stripe_publishable_key" size="35" value="<?php echo $this->_payment_settings['stripe_publishable_key']; ?>"> 
+				<?php do_action('action_hook_espresso_help', 'stripe_publishable_key') ?>
+			</td>
+		</tr>
+		
+		<tr>
+			<th>
+				<label for="stripe_currency_symbol"><?php _e('Stripe Currency Symbol (usd):', 'event_espresso'); ?></label>
+			</th>
+			<td>
+				<input type="text" name="stripe_currency_symbol" size="35" value="<?php echo $this->_payment_settings['stripe_currency_symbol']; ?>"> 
+				<?php do_action('action_hook_espresso_help', 'stripe_currency_symbol') ?>
+			</td>
+		</tr>
+		
+		<tr>
+			<th>
+				<label for="<?php echo $this->_gateway; ?>_button_url">
 					<?php _e('Button Image URL', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'stripe_button_image'); ?>
-				</label></th>
-				<td><input class="regular-text" type="text" name="stripe_button_url" id="stripe_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" /><br /><span class="description">
-						<?php _e('URL to the payment button.', 'event_espresso'); ?>
-					</span>
-				</td>
-			</tr>
+				</label>
+			</th>
+			<td>
+				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
+				<input class="regular-text" type="text" name="button_url" id="<?php echo $this->_gateway; ?>_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
+				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
+			</td>
+		</tr>
 	    <?php
 	}
 
@@ -186,11 +192,11 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 			$amount_pd = $total;
 
 			//setup transaction
-			$cc = $billing_info['reg-page-billing-card-nmbr']['value'];
-			$csc = $billing_info['reg-page-billing-card-ccv-code']['value'];
-			$exp_month = $billing_info['reg-page-billing-card-exp-date-mnth']['value'];
-			$exp_year = $billing_info['reg-page-billing-card-exp-date-year']['value'];
-			$bname = $billing_info['reg-page-billing-fname']['value'].' '.$billing_info['reg-page-billing-lname']['value'];
+			$cc = $billing_info[ 'reg-page-billing-card-nmbr-' . $this->_gateway ]['value'];
+			$csc = $billing_info[ 'reg-page-billing-card-ccv-code-' . $this->_gateway ]['value'];
+			$exp_month = $billing_info[ 'reg-page-billing-card-exp-date-mnth-' . $this->_gateway ]['value'];
+			$exp_year = $billing_info[ 'reg-page-billing-card-exp-date-year-' . $this->_gateway ]['value'];
+			$bname = $billing_info[ 'reg-page-billing-fname-' . $this->_gateway ]['value'].' '.$billing_info[ 'reg-page-billing-lname-' . $this->_gateway ]['value'];
 
 			$response = $cls_stripe->do_transaction($amount_pd, $cc, $csc, $exp_month, $exp_year, $bname, $description, $stripe_settings);
 
@@ -212,7 +218,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 					'gateway' => $this->_payment_settings['display_name'],
 					'approved' => $approval,
 					'status' => $payment_status,
-					'response_msg' => $response['msg'],
+					'response_msg' => isset( $response['msg'] ) ? $response['msg'] : '',
 					'amount' => $amount_pd,
 					'method' => '',
 					'card_type' => '',
@@ -239,60 +245,59 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 
 
 	public function espresso_display_payment_gateways() {
-		global $css_class;
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-		// this filter allows whatever function is processing the registration page to know what inputs to expect
-		add_filter('filter_hook_espresso_reg_page_billing_inputs', array(&$this, 'espresso_reg_page_billing_inputs_stripe'));
+		global $css_class;
 		echo $this->_generate_payment_gateway_selection_button();
+		$gw = $this->_gateway;
 		?>
 		
-		<div id="reg-page-billing-info-<?php echo $this->_gateway; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
+		<div id="reg-page-billing-info-<?php echo $gw;?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
 
 
 			<h5><strong><?php _e('Billing Address', 'event_espresso'); ?></strong></h5>
 
 			<p class="event_form_field">
-				<label for="reg-page-billing-fname"><?php _e('First Name', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-fname" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-fname" title="">
+				<label for="reg-page-billing-fname-<?php echo $gw;?>"><?php _e('First Name', 'event_espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-fname-<?php echo $gw;?>" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-fname-<?php echo $gw;?>">
 			</p>
 
 			<p class="event_form_field">
-				<label for="reg-page-billing-lname"><?php _e('Last Name', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-lname" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-lname" title="">
+				<label for="reg-page-billing-lname-<?php echo $gw;?>"><?php _e('Last Name', 'event_espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-lname-<?php echo $gw;?>" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-lname-<?php echo $gw;?>">
 			</p>
 
 			<p class="event_form_field">
-				<label for="reg-page-billing-email"><?php _e('Email', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-email" class="required email <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-email" title="">
+				<label for="reg-page-billing-email-<?php echo $gw;?>"><?php _e('Email', 'event_espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-email-<?php echo $gw;?>" class="required email <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-email-<?php echo $gw;?>">
 			</p>
 
 			<p class="event_form_field">
-				<label for="reg-page-billing-address"><?php _e('Address', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-address" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-address">
+				<label for="reg-page-billing-address-<?php echo $gw;?>"><?php _e('Address', 'event_espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-address-<?php echo $gw;?>" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-address-<?php echo $gw;?>">
 			</p>
 
 			<p class="event_form_field">
-				<label for="reg-page-billing-city"><?php _e('City', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-city" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-city">
+				<label for="reg-page-billing-city-<?php echo $gw;?>"><?php _e('City', 'event_espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-city-<?php echo $gw;?>" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-city-<?php echo $gw;?>">
 			</p>
 
 			<p class="event_form_field">
-				<label for="reg-page-billing-state"><?php _e('State', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-state" class="required medium-txt <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-state">
+				<label for="reg-page-billing-state-<?php echo $gw;?>"><?php _e('State', 'event_espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-state-<?php echo $gw;?>" class="required medium-txt <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-state-<?php echo $gw;?>">
 			</p>
 
 			<p class="event_form_field">
-				<label for="reg-page-billing-zip"><?php _e('Zip', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-zip" class="required small-txt <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-zip">
+				<label for="reg-page-billing-zip-<?php echo $gw;?>"><?php _e('Zip', 'event_espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-zip-<?php echo $gw;?>" class="required small-txt <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-zip-<?php echo $gw;?>">
 			</p>
 
 			<h5><strong><?php _e('Credit Card Information', 'event_espresso'); ?></strong></h5>
 
 			<p class="event_form_field">
-				<label for="reg-page-billing-card-nmbr"><?php _e('Card Number', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-card-nmbr" class="required <?php echo $css_class; ?>" type="text" name="reg-page-billing-card-nmbr"/>
+				<label for="reg-page-billing-card-nmbr-<?php echo $gw;?>"><?php _e('Card Number', 'event_espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-card-nmbr-<?php echo $gw;?>" class="required <?php echo $css_class; ?>" type="text" name="reg-page-billing-card-nmbr-<?php echo $gw;?>"/>
 			</p>
 
 			<?php /*
@@ -303,7 +308,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 			 */ ?>
 			<p class="event_form_field">
 				<label><?php _e('Expiry Date', 'event_espresso'); ?> <em>*</em></label>
-				<select id="reg-page-billing-card-exp-date-mnth" class="required small-txt <?php echo $css_class; ?>" name="reg-page-billing-card-exp-date-mnth">
+				<select id="reg-page-billing-card-exp-date-mnth-<?php echo $gw;?>" class="required small-txt <?php echo $css_class; ?>" name="reg-page-billing-card-exp-date-mnth-<?php echo $gw;?>">
 					<?php
 					for ($x = 1; $x <= 12; $x++) {
 						$value = $x < 10 ? '0' . $x : $x;
@@ -313,7 +318,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 					?>
 				</select>
 				&nbsp;/&nbsp;
-				<select id="reg-page-billing-card-exp-date-year" class="required small-txt <?php echo $css_class; ?>" name="reg-page-billing-card-exp-date-year">
+				<select id="reg-page-billing-card-exp-date-year-<?php echo $gw;?>" class="required small-txt <?php echo $css_class; ?>" name="reg-page-billing-card-exp-date-year-<?php echo $gw;?>">
 					<?php
 					$current_year = date('Y');
 					$next_decade = $current_year + 10;
@@ -328,8 +333,8 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 			</p>
 
 			<p class="event_form_field">
-				<label for="reg-page-billing-card-ccv-code"><?php _e('CCV Code', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-card-ccv-code"  class="required small-txt <?php echo $css_class; ?>" type="text" name="reg-page-billing-card-ccv-code"/>
+				<label for="reg-page-billing-card-ccv-code-<?php echo $gw;?>"><?php _e('CCV Code', 'event_espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-card-ccv-code-<?php echo $gw;?>"  class="required small-txt <?php echo $css_class; ?>" type="text" name="reg-page-billing-card-ccv-code-<?php echo $gw;?>"/>
 			</p>
 
 		</div>
@@ -337,9 +342,9 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 		<?php
 	}
 
-	public function espresso_reg_page_billing_inputs() {
+	function espresso_reg_page_billing_inputs() {
 		$reg_page_billing_inputs = array(
-				'reg-page-billing-fname' => array(
+				'reg-page-billing-fname-' . $this->_gateway => array(
 						'db-col' => 'fname',
 						'label' => __('First Name', 'event_espresso'),
 						'input' => 'text',
@@ -350,7 +355,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-lname' => array(
+				'reg-page-billing-lname-' . $this->_gateway => array(
 						'db-col' => 'lname',
 						'label' => __('Last Name', 'event_espresso'),
 						'input' => 'text',
@@ -361,7 +366,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-email' => array(
+				'reg-page-billing-email-' . $this->_gateway => array(
 						'db-col' => 'email',
 						'label' => __('Email Address', 'event_espresso'),
 						'input' => 'text',
@@ -372,7 +377,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-address' => array(
+				'reg-page-billing-address-' . $this->_gateway => array(
 						'db-col' => 'address',
 						'label' => __('Address', 'event_espresso'),
 						'input' => 'text',
@@ -383,7 +388,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-city' => array(
+				'reg-page-billing-city-' . $this->_gateway => array(
 						'db-col' => 'city',
 						'label' => __('City', 'event_espresso'),
 						'input' => 'text',
@@ -394,7 +399,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-state' => array(
+				'reg-page-billing-state-' . $this->_gateway => array(
 						'db-col' => 'state',
 						'label' => __('State', 'event_espresso'),
 						'input' => 'text',
@@ -405,7 +410,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-zip' => array(
+				'reg-page-billing-zip-' . $this->_gateway => array(
 						'db-col' => 'zip',
 						'label' => __('Zip Code', 'event_espresso'),
 						'input' => 'text',
@@ -416,7 +421,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-card-nmbr' => array(
+				'reg-page-billing-card-nmbr-' . $this->_gateway => array(
 						'db-col' => 'card-nmbr',
 						'label' => __('Credit Card Number', 'event_espresso'),
 						'input' => 'text',
@@ -427,7 +432,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%d'
 				),
-				'reg-page-billing-card-exp-date-mnth' => array(
+				'reg-page-billing-card-exp-date-mnth-' . $this->_gateway => array(
 						'db-col' => 'exp-date-mnth',
 						'label' => __('Expiry Date Month', 'event_espresso'),
 						'input' => 'select',
@@ -438,18 +443,18 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-card-exp-date-year' => array(
+				'reg-page-billing-card-exp-date-year-' . $this->_gateway => array(
 						'db-col' => 'exp-date-year',
 						'label' => __('Expiry Date Year', 'event_espresso'),
 						'input' => 'select',
 						'type' => 'int',
-						'sanitize' => 'ccyyyy',
+						'sanitize' => 'ccyy',
 						'required' => TRUE,
 						'validation' => TRUE,
 						'value' => NULL,
 						'format' => '%s'
 				),
-				'reg-page-billing-card-ccv-code' => array(
+				'reg-page-billing-card-ccv-code-' . $this->_gateway => array(
 						'db-col' => 'ccv-code',
 						'label' => __('CCV Code', 'event_espresso'),
 						'input' => 'text',

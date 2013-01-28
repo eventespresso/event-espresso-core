@@ -26,7 +26,7 @@ function add_new_event_category() {
 						<tr>
 							<th><label for="cat_id">
 									<?php _e('Unique ID', 'event_espresso'); ?>
-									<?php echo apply_filters( 'filter_hook_espresso_help', 'unique_id_info'); ?>
+									<?php do_action('action_hook_espresso_help', 'unique_id_info'); ?>
 								</label></th>
 							<td><input id="cat_id"  type="text" name="category_identifier" /></td>
 						</tr>

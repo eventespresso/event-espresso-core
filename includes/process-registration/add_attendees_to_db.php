@@ -122,7 +122,7 @@ function event_espresso_add_attendees_to_db($event_id = NULL, $session_vars = NU
 		}
 
 		//print_r( $event_meta);
-		$default_payment_status = $event_meta['default_payment_status'] != '' && ($org_options['default_payment_status'] != $event_meta['default_payment_status']) ? $event_meta['default_payment_status'] : $org_options['default_payment_status'];
+		$default_payment_status = $event_meta['default_payment_status'] != '' && ($org_options['default_reg_status'] != $event_meta['default_payment_status']) ? $event_meta['default_payment_status'] : $org_options['default_reg_status'];
 
 		$payment_status = ($multi_reg && $data_source['cost'] == 0) ? "Completed" : $default_payment_status;
 		$payment = '';

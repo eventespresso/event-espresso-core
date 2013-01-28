@@ -15,7 +15,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 	protected function __construct(EEM_Gateways &$model) {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		// this filter allows whatever function is processing the registration page to know what inputs to expect
-		add_filter('filter_hook_espresso_reg_page_billing_inputs', array(&$this, 'espresso_reg_page_billing_inputs'));
+		//add_filter('filter_hook_espresso_reg_page_billing_inputs', array(&$this, 'espresso_reg_page_billing_inputs'));
 		parent::__construct($model);
 	}
 	
@@ -24,24 +24,24 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 		parent::_set_default_properties();
 		// list of fields required for capturing the billing address 
 		$this->_billing_info_address_fields = array(
-				'reg-page-billing-fname',
-				'reg-page-billing-lname',
-				'reg-page-billing-email',
-				'reg-page-billing-phone',
-				'reg-page-billing-address',
-				'reg-page-billing-city',
-				'reg-page-billing-state',
-				'reg-page-billing-country',
-				'reg-page-billing-zip'
+				'reg-page-billing-fname-' . $this->_gateway,
+				'reg-page-billing-lname-' . $this->_gateway,
+				'reg-page-billing-email-' . $this->_gateway,
+				'reg-page-billing-phone-' . $this->_gateway,
+				'reg-page-billing-address-' . $this->_gateway,
+				'reg-page-billing-city-' . $this->_gateway,
+				'reg-page-billing-state-' . $this->_gateway,
+				'reg-page-billing-country-' . $this->_gateway,
+				'reg-page-billing-zip-' . $this->_gateway
 		);
 
 		// list of fields required for capturing the credit card information
 		$this->_billing_info_credit_card_fields = array(
-				'reg-page-billing-card-type',
-				'reg-page-billing-card-nmbr',
-				'reg-page-billing-card-exp-date-mnth',
-				'reg-page-billing-card-exp-date-year',
-				'reg-page-billing-card-ccv-code'
+				'reg-page-billing-card-type-' . $this->_gateway,
+				'reg-page-billing-card-nmbr-' . $this->_gateway,
+				'reg-page-billing-card-exp-date-mnth-' . $this->_gateway,
+				'reg-page-billing-card-exp-date-year-' . $this->_gateway,
+				'reg-page-billing-card-ccv-code-' . $this->_gateway
 		);
 	}
 
@@ -73,7 +73,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 				$styles = $billing_input['required'] ? 'required ' . $css_class : $css_class;
 
 				// start with a p tag, unless this is the credit card year field
-				if ($input_key != 'reg-page-billing-card-exp-date-year') {
+				if ( $input_key != 'reg-page-billing-card-exp-date-year-' . $this->_gateway ) {
 					$output .= "\n\t\t" . '<p class="event_form_field">';
 				}
 
@@ -90,19 +90,19 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 					// dropdowns
 					case 'select' :
 
-						if ($input_key == 'reg-page-billing-card-exp-date-mnth') {
+						if ( $input_key == 'reg-page-billing-card-exp-date-mnth-' . $this->_gateway ) {
 
 							$output .= "\n\t\t\t" . '<label>' . __('Expiry Date', 'event_espresso') . '&nbsp;<em>*</em></label>';
-							$output .= "\n\t\t\t" . '<select id="reg-page-billing-card-exp-date-mnth" class="' . $styles . ' small-txt" name="reg-page-billing-card-exp-date-mnth">';
+							$output .= "\n\t\t\t" . '<select id="reg-page-billing-card-exp-date-mnth-' . $this->_gateway . '" class="' . $styles . ' small-txt" name="reg-page-billing-card-exp-date-mnth-' . $this->_gateway . '">';
 							for ($x = 1; $x <= 12; $x++) {
 								$value = $x < 10 ? '0' . $x : $x;
 								$output .= "\n\t\t\t\t" . '<option value="' . $value . '">' . $value . '</option>';
 							}
 							$output .= "\n\t\t\t" . '</select>';
 							$output .= "\n\t\t\t" . '&nbsp;/&nbsp;';
-						} elseif ($input_key == 'reg-page-billing-card-exp-date-year') {
+						} elseif ( $input_key == 'reg-page-billing-card-exp-date-year-' . $this->_gateway ) {
 
-							$output .= "\n\t\t\t" . '<select id="reg-page-billing-card-exp-date-year" class="' . $styles . ' small-txt" name="reg-page-billing-card-exp-date-year">';
+							$output .= "\n\t\t\t" . '<select id="reg-page-billing-card-exp-date-year-' . $this->_gateway . '" class="' . $styles . ' small-txt" name="reg-page-billing-card-exp-date-year-' . $this->_gateway . '">';
 							$current_year = date('y');
 							$next_decade = $current_year + 10;
 							for ($x = $current_year; $x <= $next_decade; $x++) {
@@ -132,7 +132,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 						break;
 				} // end switch
 				// end with a p tag, unless this is the credit card month field
-				if ($input_key != 'reg-page-billing-card-exp-date-mnth') {
+				if ( $input_key != 'reg-page-billing-card-exp-date-mnth-' . $this->_gateway ) {
 					$output .= "\n\t\t" . '</p>';
 				}
 			} // end if ( in_array( $input_key, $this->$section ))
@@ -155,13 +155,14 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 		// set  billing inputs in the individual gateways plz
 		$reg_page_billing_inputs = array();
 		// allow others to edit post input array
-		$reg_page_billing_inputs = apply_filters('filter_hook_espresso_reg_page_billing_inputs', $reg_page_billing_inputs);
-
+		$reg_page_billing_inputs = $this->espresso_reg_page_billing_inputs();
+		$reg_page_billing_inputs = apply_filters( 'filter_hook_espresso_reg_page_billing_inputs', $reg_page_billing_inputs );
 		// if EE_Validate_and_Sanitize is not instantiated
-		if (!defined('EE_Validate_and_Sanitize')) {
+		if ( ! defined( 'EE_Validate_and_Sanitize' )) {
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_Validate_and_Sanitize.class.php');
 			$EE_VnS = EE_Validate_and_Sanitize::instance();
 		}
+//printr( $reg_page_billing_inputs, '$reg_page_billing_inputs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// validate and sanitize	post data
 		$reg_page_billing_inputs = $EE_VnS->validate_and_sanitize_post_inputs($reg_page_billing_inputs);
@@ -187,24 +188,25 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 	public function set_billing_info_for_confirmation( $billing_info ) {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$confirm_inputs = array(
-				'first name'=>'fname',
-				'last name'=>'lname',
-				'email address'=>'email',
-				'address'=>'address',
-				'city'=>'city',
-				'state'=>'state',
-				'country'=>'country',
-				'zip'=>'zip',
-				'ccv code'=>'ccv-code'
+				'first name'=>'fname-' . $this->_gateway,
+				'last name'=>'lname-' . $this->_gateway,
+				'email address'=>'email-' . $this->_gateway,
+				'address'=>'address-' . $this->_gateway,
+				'city'=>'city-' . $this->_gateway,
+				'state'=>'state-' . $this->_gateway,
+				'country'=>'country-' . $this->_gateway,
+				'zip'=>'zip-' . $this->_gateway,
+				'ccv code'=>'ccv-code-' . $this->_gateway
 				);
 		$confirm_data = array();
-		foreach ($confirm_inputs as $confirm_name=>$billing_name) {
-			if(!empty($billing_info['reg-page-billing-'.$billing_name]['value'])) {
+		foreach ( $confirm_inputs as $confirm_name=>$billing_name ) {
+			if ( ! empty( $billing_info['reg-page-billing-'.$billing_name]['value'] )) {
 				$confirm_data[$confirm_name] = $billing_info['reg-page-billing-'.$billing_name]['value'];
 			}
 		}
-		$confirm_data['credit card #'] = $this->_EEM_Gateways->FormatCreditCard( $billing_info['reg-page-billing-card-nmbr']['value'] );
-		$confirm_data['expiry date'] = $billing_info['reg-page-billing-card-exp-date-mnth']['value'] . '&nbsp;/&nbsp;' . $billing_info['reg-page-billing-card-exp-date-year']['value'];
+		$confirm_data['credit card #'] = $this->_EEM_Gateways->FormatCreditCard( $billing_info[ 'reg-page-billing-card-nmbr-' . $this->_gateway ]['value'] );
+		$confirm_data['expiry date'] = $billing_info[ 'reg-page-billing-card-exp-date-mnth-' . $this->_gateway ]['value'] . '&nbsp;/&nbsp;';
+		$confirm_data['expiry date'] .= $billing_info[ 'reg-page-billing-card-exp-date-year-' . $this->_gateway ]['value'];
 		return $confirm_data;
 	}
 

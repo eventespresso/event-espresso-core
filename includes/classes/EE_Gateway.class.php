@@ -56,18 +56,22 @@ abstract class EE_Gateway {
 		//echo '<h4>$this->_gateway : ' . $this->_gateway . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
 		if (!defined('GATEWAYS_ADMIN_URL')) {
-			define('GATEWAYS_ADMIN_URL', admin_url('admin.php?page=payment_gateways'));
+			define('GATEWAYS_ADMIN_URL', admin_url('admin.php?page=payment_settings'));
 		}
 
 		$this->_EEM_Gateways = $model;
 		$this->_set_default_properties();
 		$this->_handle_payment_settings();
 
-		if (is_admin() && !empty($_GET['page']) && $_GET['page'] == 'payment_gateways') {
+		if (is_admin() && !empty($_GET['page']) && $_GET['page'] == 'payment_settings') {
 			$this->_gateways_admin();
 		} else {
 			$this->_gateways_frontend();
 		}
+
+		//load formatter helper and form fields helper
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
 	}
 	
 	public function process_reg_step_3(){
@@ -101,7 +105,7 @@ abstract class EE_Gateway {
 
 	private function _gateways_admin() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		add_action('admin_init', array(&$this, 'add_settings_page_meta_box'));
+		$this->add_settings_page_meta_box();
 		// if our current path is empty or doesn't match what's in the db, then maybe something changed?
 		if ($this->_payment_settings['current_path'] == '' || $this->_payment_settings['current_path'] != $this->_path) {
 			$this->_reset_button_url();
@@ -155,9 +159,10 @@ abstract class EE_Gateway {
 
 	public function add_settings_page_meta_box() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		add_meta_box(
-						'espresso_' . $this->_gateway . '_gateway_settings', $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso'), array(&$this, 'settings_meta_box'), 'event-espresso_page_payment_gateways'
-		);
+		if ( isset( $this->_payment_settings['display_name'] ) )
+			add_meta_box(
+						'espresso_' . $this->_gateway . '_payment_settings', $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso'), array(&$this, 'settings_meta_box'), 'event-espresso_page_payment_settings', 'normal'
+			);
 	}
 
 	public function settings_meta_box() {
@@ -171,22 +176,27 @@ abstract class EE_Gateway {
 
 		<a name="<?php echo $this->_gateway; ?>" id="<?php echo $this->_gateway; ?>"></a>
 		<div class="padding">
-			<ul id="payment-gateways-settings-ul">
-		<?php if (!$this->_EEM_Gateways->is_active($this->_gateway)) { ?>
-			<?php $activate = add_query_arg(array('activate_' . $this->_gateway => 'true'), GATEWAYS_ADMIN_URL) . '#' . $this->_gateway; ?>
-					<li id="activate_<?php echo $this->_gateway; ?>" class="green_alert pointer" onclick="location.href='<?php echo $activate; ?>'">
-						<strong><?php echo __('Activate', 'event_espresso') . ' ' . $this->_payment_settings['display_name'] . ' ' . __('Payments?'); ?></strong>
-					</li>
-		<?php } else { ?>
-			<?php $deactivate = add_query_arg(array('deactivate_' . $this->_gateway => 'true'), GATEWAYS_ADMIN_URL) . '#' . $this->_gateway; ?>
-					<li id="deactivate_<?php echo $this->_gateway; ?>" class="red_alert pointer" onclick="location.href='<?php echo $deactivate; ?>'">
-						<strong><?php echo __('Deactivate', 'event_espresso') . ' ' . $this->_payment_settings['display_name'] . ' ' . __('Payments?'); ?></strong>
-					</li>
-			<?php
-			$this->_display_settings_wrapper();
-		}
+		<?php if ( ! $this->_EEM_Gateways->is_active($this->_gateway)) { 
+						$activate = add_query_arg(array('activate_' . $this->_gateway => 'true'), GATEWAYS_ADMIN_URL) . '#' . $this->_gateway; 
 		?>
-			</ul>
+				<table class="form-table">
+					<tbody>
+						<tr>
+							<th>
+								<label><?php _e('Click to Activate', 'event_espresso'); ?></label>
+							</th>
+							<td>				
+								<a id="activate_<?php echo $this->_gateway; ?>" class="espresso-button-green button-primary" onclick="location.href='<?php echo $activate; ?>'">
+									<?php echo __('Activate', 'event_espresso') . ' ' . $this->_payment_settings['display_name'] . ' ' . __('Payments?'); ?>
+								</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+		<?php } else { 
+						$this->_display_settings_wrapper();
+					} 
+		?>
 		</div> <!-- Class=padding -->
 		<?php
 	}
@@ -195,33 +205,61 @@ abstract class EE_Gateway {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$form_url = GATEWAYS_ADMIN_URL . '#' . $this->_gateway;
 		?>
-		<form method="post" action="<?php echo $form_url; ?>">
-			<table class="form-table">
-				<tbody>
-				<?php $this->_display_settings(); ?>
-					<tr>
-						<th>
-							<label><?php _e('Current Button Image', 'event_espresso'); ?></label>
-						</th>
-						<td>
-				<?php echo '<img src="' . $this->_payment_settings['button_url'] . '" />'; ?>
-						</td>
-					</tr>
-				</tbody>
-			</table>
+			<form method="post" action="<?php echo $form_url; ?>">
+				<table class="form-table">
+					<tbody>
+						<?php if ( $this->_payment_settings['type'] == 'on-site' ) : ?>
+						<tr>
+							<th>
+								<label><strong style="color:#F00"><?php _e('WARNING !!!', 'event_espresso'); ?></strong></label>
+							</th>
+							<td>				
+								<strong><?php _e('You are responsible for your own security and Payment Card Industry Data Security Standards (PCI DSS) compliance.', 'event_espresso');?></strong><br />
+								<?php _e('Click here for more information about ', 'event_espresso');?>
+								<a href="https://www.pcisecuritystandards.org/merchants/index.php">
+									<?php _e('PCI DSS compliance', 'event_espresso');?>
+								</a>
+							</td>
+						</tr>
+						<?php endif; ?>
+					
+						<?php $this->_display_settings(); ?>
+					
+						<tr>
+							<th>
+								<label><?php _e('Current Button Image', 'event_espresso'); ?></label>
+							</th>
+							<td>
+					<?php echo '<img src="' . $this->_payment_settings['button_url'] . '" />'; ?>
+							</td>
+						</tr>
 
-			<p>
-				<input type="hidden" name="update_<?php echo $this->_gateway; ?>" value="1">
-				<input class="button-primary" type="submit" name="Submit" value="<?php
-		_e('Update', 'event_espresso');
-		echo ' ' . $this->_payment_settings['display_name'] . ' ';
-		_e('Settings', 'event_espresso')
-				?>" id="save_<?php echo $this->_gateway; ?>_settings" />
-			</p>
+						<tr>
+							<th></th>
+							<td>
+								<p>
+									<input type="hidden" name="update_<?php echo $this->_gateway; ?>" value="1">
+									<input 
+											id="save_<?php echo $this->_gateway; ?>_settings"
+											class="button-primary" 
+											type="submit" 
+											name="Submit" 
+											value="<?php echo __('Update', 'event_espresso') . ' ' . $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso');?>" 
+											style="margin:1em 4em 2em 0"
+										/>
+									<?php $deactivate = add_query_arg(array('deactivate_' . $this->_gateway => 'true'), GATEWAYS_ADMIN_URL) . '#' . $this->_gateway; ?>
+									<a id="deactivate_<?php echo $this->_gateway; ?>" class="espresso-button button-secondary" type="submit" onclick="location.href='<?php echo $deactivate; ?>'">
+										<?php echo __('Deactivate', 'event_espresso') . ' ' . $this->_payment_settings['display_name'] . ' ' . __('Payments?'); ?>
+									</a>
+								</p>
+							</td>
+						</tr>
+					</tbody>
+				</table>
 
-					<?php wp_nonce_field('espresso_form_check', 'add_' . $this->_gateway . '_settings'); ?>
+			<?php wp_nonce_field('espresso_form_check', 'add_' . $this->_gateway . '_settings'); ?>
 
-		</form>
+			</form>
 		<?php
 		$this->_display_settings_help();
 	}
@@ -317,9 +355,11 @@ abstract class EE_Gateway {
 	protected function _generate_payment_gateway_selection_button() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		return '
-		<a id="payment-gateway-button-' . $this->_gateway . '" class="reg-page-payment-option-lnk' . $this->_css_link_class . '" rel="' . $this->_gateway . '" href="' . $this->_form_url . '" >
-			<img src="' . $this->_payment_settings['button_url'] . '" alt="Pay using ' . $this->_payment_settings['display_name'] . '" />
-		</a>
+		 <div id="' . $this->_gateway . '-payment-option-dv" class="'. $this->_payment_settings['type'] .'-payment-gateway reg-page-payment-option-dv' . $this->_css_link_class . '">
+			<a id="payment-gateway-button-' . $this->_gateway . '" class="reg-page-payment-option-lnk" rel="' . $this->_gateway . '" href="' . $this->_form_url . '" >
+				<img src="' . $this->_payment_settings['button_url'] . '" alt="Pay using ' . $this->_payment_settings['display_name'] . '" />
+			</a>
+		</div>
 ';
 	}
 	
