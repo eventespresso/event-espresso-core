@@ -61,18 +61,21 @@ class EE_messages {
 
 
 		if ( empty($active_names) ) {
-			return new WP_Error(__('no_active_messengers', 'event_espresso'), __('No messages have gone out because there are no active_messengers.', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+			$msg = __('There are no active messengers in the database', 'event_espresso');
+			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 		}
 
-		foreach ( $active_names as $name => $class ) {
-			$a = new ReflectionClass( $class );
-			$active = $a->newInstance();
-			if ( is_wp_error($active) ) {
-				//we've got an error so let's bubble up the error_object to be caught by caller.
-				//todo: would be better to just catch the errors and then return any aggregated errors later.
-				return $active;
+		if ( is_array($active_names) ) {
+			foreach ( $active_names as $name => $class ) {
+				$a = new ReflectionClass( $class );
+				$active = $a->newInstance();
+				if ( is_wp_error($active) ) {
+					//we've got an error so let's bubble up the error_object to be caught by caller.
+					//todo: would be better to just catch the errors and then return any aggregated errors later.
+					EE_Error::add_error($active->get_error_message(), __FILE__, __FUNCTION__, __LINE__);
+				}
+				$this->_active_messengers[$name] = $active;
 			}
-			$this->_active_messengers[$name] = $active;
 		}
 	}
 

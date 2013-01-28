@@ -56,6 +56,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->page_label = __('Messages System', 'event_espresso');
 
 		$this->_activate_state = isset($this->_req_data['activate_state']) ? (array) $this->_req_data['activate_state'] : array();
+	
 
 		//we're also going to set the active messengers and active message types in here.
 		$this->_active_messengers = get_user_meta($espresso_wp_user, 'ee_active_messengers', true);
@@ -737,7 +738,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['before_admin_page_content'] = $this->add_context_switcher();
 		$this->_template_args['before_admin_page_content'] .= $this->_add_form_element_before();
 		$this->_template_args['after_admin_page_content'] = $this->_add_form_element_after();
-		var_dump($this->_template_args);
 
 		$this->_template_path = $this->_template_args['GRP_ID'] ? EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_edit_meta_box.template.php' : EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_add_meta_box.template.php';
 
@@ -957,9 +957,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//if we STILL have empty $message_types then we need to generate an error message b/c we NEED message types to do the template files.
 		if ( empty($message_types) ) {
-			$error = new WP_Error('empty_variable', __('We need at least one message type to generate templates!', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
-			$this->_handle_errors($error);
-			return $error;
+			throw new EE_Error( __('We need at least one message type to generate templates!', 'event_espresso') );
 		}
 
 		$MSG = new EE_messages();
@@ -1158,6 +1156,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$view = isset($this->_req_data['activate_view']) ? $this->_req_data['activate_view'] : 'message_types';
 		$this->_template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_activate_meta_box.template.php';
 
+
 		//this will be an associative array for setting up the initial metaboxes for display.
 		$meta_box_callbacks = array();
 
@@ -1194,9 +1193,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			}
 		}
 
-		//oh while we're at it... let's remove the espresso metaboxes.  We don't need them on this page.
-		remove_meta_box('espresso_news_post_box', $this->wp_page_slug, 'side');
-		remove_meta_box('espresso_links_post_box', $this->wp_page_slug, 'side');
 
 		//final template wrapper
 		$this->display_admin_page_with_metabox_columns();
@@ -1272,25 +1268,24 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'box_head_content' => 'hmm... missing some content',
 			'show_hide_active_content' => 'hidden',
 			'activate_msgs_active_details' => '',
-			'activate_msgs_details_url' => wp_nonce_url(add_query_arg($default_edit_query_args, $this->admin_base_url), $nonce_edit_ref),
+			'activate_msgs_details_url' => wp_nonce_url(add_query_arg($default_edit_query_args, $this->_admin_base_url), $nonce_edit_ref),
 			'show_hide_edit_form' => 'hidden',
-			'activate_message_template_form_action' => wp_nonce_url(add_query_arg($default_activate_query_args, $this->admin_base_url), $nonce_activate_ref),
+			'activate_message_template_form_action' => wp_nonce_url(add_query_arg($default_activate_query_args, $this->_admin_base_url), $nonce_activate_ref),
 			'activate_msgs_form_fields' => '',
-			'on_off_action' => wp_nonce_url(add_query_arg($default_edit_query_args, $this->admin_base_url), $nonce_edit_ref),
+			'on_off_action' => wp_nonce_url(add_query_arg($default_edit_query_args, $this->_admin_base_url), $nonce_edit_ref),
 			'on_off_status' => 'inactive',
 			'activate_msgs_on_off_descrp' => __('Activate', 'event-espresso'),
 			'activate_meta_box_type' => ucwords(str_replace('_', ' ', $this->_activate_meta_box_type) ),
 			'activate_meta_box_page_instructions' => $this->_activate_meta_box_type == 'message_types' ? __('Message Types are the areas of Event Espresso that you can activate notifications for.  On this page you can see all the various message types currently available and whether they are active or not.', 'event-espresso') : __('Messengers are the vehicles for delivering your notifications.  On this page you can see all the various messengers available and whether they are active or not.', 'event-espresso'),
-			'activate_msg_type_toggle_link' => add_query_arg($switch_view_query_args, $this->admin_base_url),
+			'activate_msg_type_toggle_link' => add_query_arg($switch_view_query_args, $this->_admin_base_url),
 			'activate_meta_box_toggle_type' => ucwords(str_replace('_', ' ', $switch_view_toggle_text) ),
-			'on_off_action_on' => wp_nonce_url(add_query_arg($default_edit_query_args, $this->admin_base_url), $nonce_edit_ref),
-			'on_off_action_off' => wp_nonce_url(add_query_arg($default_deactivate_query_args, $this->admin_base_url), $nonce_deactivate_ref),
+			'on_off_action_on' => wp_nonce_url(add_query_arg($default_edit_query_args, $this->_admin_base_url), $nonce_edit_ref),
+			'on_off_action_off' => wp_nonce_url(add_query_arg($default_deactivate_query_args, $this->_admin_base_url), $nonce_deactivate_ref),
 			'show_on_off_button' => ''
 			);
 
 		$this->_template_args = array_merge($default_template_args, $this->_template_args);
 
-		
 		//let's check and see if we've got a specific state for this box. if so we need to set the state accordingly (or if no state set we need to try and figure that out - can't be stateless now can we?)
 		if ( !empty($this->_activate_state) && is_array($this->_activate_state) && $box_name = explode('_', $this->_activate_state[0]) ) {
 
@@ -1356,6 +1351,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$this->_box_content_editing();
 			return;
 		}
+
 
 		//we're still here so let's setup the display for this page.
 		if ( !empty($existing_settings_fields) ) {
@@ -1425,7 +1421,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'action' => 'activate',
 				'activate_view' => 'message_types'
 				);
-			$error = new WP_Error('missing_required_message_types', sprintf( __('Before any messengers can be activated there needs to be at least one <a href="%s" title="Click to switch to message types">Message Type</a> active', 'event_espresso'), add_query_arg($switch_view_query_arg, $this->admin_base_url) ) . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__ ) );
+			$error = new WP_Error('missing_required_message_types', sprintf( __('Before any messengers can be activated there needs to be at least one <a href="%s" title="Click to switch to message types">Message Type</a> active', 'event_espresso'), add_query_arg($switch_view_query_arg, $this->_admin_base_url) ) . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__ ) );
 			$this->_handle_errors($error);
 			$this->_activate_state = 'inactive';
 			$this->_box_content_inactive();
@@ -1435,7 +1431,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		foreach ( $settings_fields as $field => $items ) {
 			$field_id = $this->_current_message_meta_box . '-' . $field;
 			$template_form_field[$field_id] = array(
-				'name' => $field_id,
+				'name' => 'message_settings['.$field_id.']',
 				'label' => $items['label'],
 				'input' => $items['field_type'],
 				'type' => $items['value_type'],
@@ -1454,9 +1450,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		if ( $this->_activate_meta_box_type == 'messengers' && !empty($this->_active_message_types) ) {
 			foreach ( $this->_active_message_types as $mt => $values ) {
 				$field_id = $this->_current_message_meta_box . '-message_types[' . $mt . ']';
+				$name = 'message_settings[' . $this->_current_message_meta_box . '-message_types][' . $mt . ']';
 				$is_using_message_type = isset($existing_settings_fields[$field_id]) && $existing_settings_fields[$field_id] ? TRUE : FALSE;
 				$mt_template_form_field[$field_id] = array(
-					'name' => $field_id,
+					'name' => $name,
 					'label' => ucwords(str_replace('_',' ', $mt) ),
 					'input' => 'checkbox',
 					'type' => 'int',
@@ -1474,7 +1471,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				$mt_template_form_field[$this->_current_message_meta_box . '-message_types[payment]']['value'] = 1;
 			}
 
-			$mt_template_form_fields = !empty($mt_template_form_field) ? $this->_generate_admin_form_fields( $mt_template_form_field, 'ee_msg_activate_form') : NULL;
+			$mt_template_form_fields = !empty($mt_template_form_field) ? $this->_generate_admin_form_fields( $mt_template_form_field, 'string', 'ee_msg_activate_form') : NULL;
 
 			//make sure is an array.
 			$mt_template_form_fields = (array) $mt_template_form_fields;
@@ -1499,7 +1496,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			}
 		}
 
-		$template_form_fields = !empty($template_form_field) ? $this->_generate_admin_form_fields( $template_form_field, 'ee_msg_activate_form' ) : '';
+		$template_form_fields = !empty($template_form_field) ? $this->_generate_admin_form_fields( $template_form_field, 'string', 'ee_msg_activate_form' ) : '';
 
 		if ( is_wp_error($template_form_fields) ) {
 			$this->_handle_errors($template_form_fields);
@@ -1542,7 +1539,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				//check nonces
 				$nonce = $this->_req_data['_wpnonce'];
 				if ( !wp_verify_nonce($nonce, $this->_current_message_meta_box . '_activate_nonce' ) && !wp_verify_nonce($nonce, $this->_current_message_meta_box . '_edit_nonce') ) {
-					$this->_nonce_error( espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+					$this->_nonce_error( __FILE__, __FUNCTION__, __LINE__ );
 					$this->_activate_state = 'inactive';
 					$this->_box_content_inactive();
 					return;
@@ -1554,7 +1551,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				//check nonce
 				$nonce = $this->_req_data['_wpnonce'];
 				if ( !wp_verify_nonce($nonce, $this->_current_message_meta_box . '_deactivate_nonce' ) ) {
-					$this->_nonce_error( espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+					$this->_nonce_error( __FILE__, __FUNCTION__, __LINE__ );
 					$this->_activate_state = 'inactive';
 					$this->_box_content_inactive();
 					return;
@@ -1580,12 +1577,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$success_msg = array();
 		$update = FALSE;
 		$ref = '_active_' . $this->_activate_meta_box_type;
+		
 		if ( !$remove ) {
 			if ( isset($this->_req_data['ee-msg-activate-form'] ) ) {
 				unset($this->_req_data['ee-msg-activate-form']);
 				$update = TRUE;
 			}
-			$this->{$ref}[$this->_current_message_meta_box]['settings'] = $update ? $this->_req_data : NULL;
+			$this->{$ref}[$this->_current_message_meta_box]['settings'] = $update ? $this->_req_data['message_settings'] : NULL;
 			update_user_meta($espresso_wp_user, 'ee_active_' . $this->_activate_meta_box_type, $this->{$ref});
 			$success_msg = sprintf( __('%s %s has been successfully activated', 'event_espresso'), ucwords(str_replace('_', ' ' , $this->_current_message_meta_box) ), ucwords(str_replace('_', ' ', rtrim($this->_activate_meta_box_type, 's') ) ) );
 			
@@ -1615,9 +1613,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @param  string $error_code generated error code (so we know where the nonce fail happened)
 	 * @return void 
 	 */
-	private function _nonce_error($error_code) {
-		$error = new WP_Error('nonce_check_fail', __('Security check failed.', 'event_espresso') . $error_code);
-		$this->_handle_errors($error);
+	private function _nonce_error($file, $line, $function) {
+		$msg = __('Security check failed.', 'event_espresso');
+		EE_Error::add_error( $msg, $file, $line, $function);
 	}
 
 	
