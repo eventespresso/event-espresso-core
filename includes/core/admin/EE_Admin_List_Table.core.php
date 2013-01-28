@@ -337,9 +337,9 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	protected function _get_bulk_actions() {
 		$actions = array();
 		//the _views property should have the bulk_actions, so let's go through and extract them into a properly formatted array for the wp_list_table();
-		foreach ( $this->_views as $view ) {
-			if ( isset( $view['bulk_action']) && is_array($view['bulk_action']) )
-				$actions = array_merge($actions, $view['bulk_action']);
+		foreach ( $this->_views as $view => $args) {
+			if ( isset( $args['bulk_action']) && is_array($args['bulk_action']) && $this->_view == $view )
+				$actions = array_merge($actions, $args['bulk_action']);
 		}
 		return $actions;
 	}

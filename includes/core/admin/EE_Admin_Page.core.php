@@ -105,6 +105,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 			array('id' => FALSE, 'text' => __('No', 'event_espresso'))
 		);
 
+		//set the _req_data property.
+		$this->_req_data = array_merge( $_GET, $_POST );
+		
 		//set initial page props (child method)
 		$this->_init_page_props();
 
@@ -361,9 +364,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//next let's just check user_access and kill if no access
 		$this->_check_user_access();
-
-		//set the _req_data property.
-		$this->_req_data = array_merge( $_GET, $_POST );
 
 		
 		// becuz WP List tables have two duplicate select inputs for choosing bulk actions, we need to copy the action from the second to the first
