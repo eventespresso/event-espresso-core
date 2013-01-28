@@ -41,7 +41,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 	protected function _setup_data() {
 		$this->_per_page = $this->get_items_per_page( $this->_screen . '_per_page' );
 		$this->_data = $this->_admin_page->get_message_templates( $this->_per_page, $this->_view, FALSE);
-		$this->_all_data_count = $this->_admin_page->get_message_templates( $this->_per_page, $this->_view, TRUE );
+		$this->_all_data_count = $this->_admin_page->get_message_templates( $this->_per_page, $this->_view, TRUE, TRUE );
 	}
 
 
