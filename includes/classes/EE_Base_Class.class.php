@@ -450,5 +450,4 @@ abstract class EE_Base_Class extends EE_Base{
 	}
 	
 }
-
 ?>

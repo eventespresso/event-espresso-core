@@ -43,10 +43,26 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 	 * @var object
 	 */
 	protected $_question_group;
+	
+	/**
+	 *_question_model EEM_Question model instance (for queries)
+	 * @var EEM_Question
+	 */
+	private $_question_model;
+	
+	/**
+	 * _question_group_model EEM_QUestion_group instance (for queries)
+	 * @var EEM_Question_Group 
+	 */
+	private $_question_group_model;
 
 
 
 	public function __construct() {
+		require_once('EEM_Question.model.php');
+		require_once('EEM_Question_Group.model.php');
+		$this->_question_model=  EEM_Question::instance();
+		$this->_question_group_model=EEM_Question_Group::instance();
 		parent::__construct();
 	}
 
@@ -95,12 +111,12 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 				'func' => '_question_details',
 				'args' => array('edit')
 				),
-			'delete_questions' => array(
-				'func' => '_delete_questions',
+			'trash_question' => array(
+				'func' => '_delete_question',
 				'noheader' => TRUE
 				),
 			'delete_question' => array(
-				'func' => '_delete_questions',
+				'func' => '_delete_question',
 				'noheader' => TRUE
 				),
 			'insert_question' => array(
@@ -113,13 +129,13 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 				'args' => array('new_question' => FALSE ),
 				'noheader' => TRUE,
 				),
-			'trash_question' => array(
-				'func' => '_trash_or_restore_question',
+			'trash_questions' => array(
+				'func' => '_trash_or_restore_questions',
 				'args' => array('trash' => TRUE),
 				'noheader' => TRUE
 				),
-			'restore_question' => array(
-				'func' => '_trash_or_restore_question',
+			'restore_questions' => array(
+				'func' => '_trash_or_restore_questions',
 				'args' => array('trash' => FALSE),
 				'noheader' => TRUE
 				),
@@ -302,7 +318,7 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 				'count' => 0,
 				'bulk_action' => array(
 					'delete_questions' => __('Delete Permanently', 'event_espresso'),
-					'restore_questions' => __('Trash', 'event_espresso'),
+					'restore_questions' => __('Restore', 'event_espresso'),
 					)
 				),
 		);
@@ -329,7 +345,7 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 				'count' => 0,
 				'bulk_action' => array(
 					'delete_question_groups' => __('Delete Permanently', 'event_espresso'),
-					'restore_question_groups' => __('Trash', 'event_espresso'),
+					'restore_question_groups' => __('Restore', 'event_espresso'),
 					)
 				),
 		);
@@ -355,7 +371,6 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 		global $wpdb,$org_options,$espresso_premium,$current_user;
 		get_currentuserinfo();
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		require_once('EEM_Question.model.php');
 		$questionModel=EEM_Question::instance();
 		
 	}
@@ -382,12 +397,50 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 	protected function _question_details( $type = 'add' ) {}
 	protected function _delete_questions() {}
 	protected function _insert_or_update_question($new_question = TRUE) {}
-	protected function _trash_or_restore_questions($trash = TRUE) {}
+	protected function _trash_or_restore_questions($trash=TRUE){
+		return $this->_trash_or_restore_items($this->_question_model,$trash);
+	}
+	
 	protected function _question_group_details( $type = 'add' ) {}
 	protected function _delete_question_groups() {}
 	protected function _insert_or_update_question_group($new_question_group = TRUE) {}
-	protected function _trash_or_restore_question_groups($trash = TRUE) {}
+	protected function _trash_or_restore_question_groups($trash = TRUE) {
+		return $this->_trash_or_restore_items($this->_question_group_model,$trash);
+	}
 
+	/**
+	 * Interally used to delete or restore items, using the request data. Meant to be 
+	 * flexible between question or question gruops
+	 * @param EEM_TempBase $model
+	 * @param boolean $trash wehter to trash or restore
+	 */
+	private function _trash_or_restore_items(EEM_TempBase $model,$trash = TRUE) {
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		//Checkboxes
+		//echo "$trash";
+		//var_dump($this->_req_data['checkbox']);die;
+		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
+			
+// if array has more than one element than success message should be plural
+			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
+			// cycle thru bulk action checkboxes
+			while (list( $ID, $value ) = each($this->_req_data['checkbox'])) {
+				if (!$model->delete_or_restore_by_ID($trash,absint($ID))) {
+					$success = 0;
+				}
+			}
+	
+		} else {
+			// grab single id and delete
+			$ID = absint($this->_req_data['checkbox']);
+			if ( ! $model->delete_or_restore_by_ID($trash,$ID)) {
+				$success = 0;
+			}
+			
+		}
+		$action=$trash?'deleted':'restored';
+		$this->_redirect_after_action( $success, $model->item_name($success), $action, array() );
+	}
 
 	/***********/
 	/* QUERIES */
@@ -412,7 +465,7 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 	}
 	public function get_questions( $per_page=10,$current_page = 1, $count = FALSE ) {
 		
-		require_once('EEM_Question.model.php');
+		
 		$questionModel=EEM_Question::instance();
 		list($orderby,$order,$limit,$output,$searchString)=$this->get_query_params($questionModel,$per_page,$current_page,$count);
 		if(!empty($searchString)){
@@ -424,7 +477,6 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 		
 	}
 	public function get_trashed_questions( $per_page,$current_page = 1, $count = FALSE ) {
-		require_once('EEM_Question.model.php');
 		$questionModel=EEM_Question::instance();
 		list($orderby,$order,$limit,$output,$searchString)=$this->get_query_params($questionModel,$per_page,$current_page,$count);
 		if(!empty($searchString)){
@@ -435,7 +487,7 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 		return $questions;
 	}
 	public function get_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
-		require_once('EEM_Question_Group.model.php');
+
 		$questionGroupModel=EEM_Question_Group::instance();
 		list($orderby,$order,$limit,$output,$searchString)=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
 		if(!empty($searchString)){
@@ -448,7 +500,6 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 		return $questionGroups;
 	}
 	public function get_trashed_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
-		require_once('EEM_Question_Group.model.php');
 		$questionGroupModel=EEM_Question_Group::instance();
 		list($orderby,$order,$limit,$output,$searchString)=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
 		if(!empty($searchString)){

@@ -33,6 +33,22 @@ abstract class EEM_TempBase extends EEM_Base{
 		$this->table_name=$this->_get_table_name();
 		$this->table_data_types=$this->_get_table_data_types();
 	}
+	/**
+	 * Returns the item's name. If there are many of these items, returns a plural version fo the name
+	 * @param int $count
+	 * @return string the item's name pluralized. Eg, for the model 'EEM_Question_Group' the singular name would be 
+	 * 'Question Group' and the plural version would be 'Question Groups'
+	 */
+	public function item_name($count=0){
+		$modelName=get_class($this);
+		$className=str_replace("EEM_","",$modelName);
+		if($count>1){
+			require_once('helpers/EE_Pluralize.helper.php');
+			return str_replace("_"," ", EE_Pluralize::pluralize_if($count, $className));
+		}else{
+			return $className;
+		}
+	}
 	
 	/**
 	 * Gets the EE class that corresponds to this model. Eg, for EEM_Answer that

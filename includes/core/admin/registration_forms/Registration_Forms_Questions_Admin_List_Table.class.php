@@ -104,7 +104,7 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 
 
 	public function column_cb(EE_Question $item) {
-		return sprintf( '<input type="checkbox" name="question_id[]" value="%d" />', $item->ID());
+		return sprintf( '<input type="checkbox" name="checkbox[]" value="%d" />', $item->ID());
 	}
 
 

@@ -1,14 +1,8 @@
 <?php
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  * Description of EEM_Soft_Delete_Base
  *
- * @author mnelson4
+ * @author Mike Nelson
  */
 require_once('EEM_TempBase.model.php');
 class EEM_Soft_Delete_Base extends EEM_TempBase{
@@ -104,19 +98,62 @@ class EEM_Soft_Delete_Base extends EEM_TempBase{
 	}
 	
 	/**
+	 * Permanently deletes teh selected rows
+	 * @param array $where_cols_n_values
+	 * @param mixed $operator
+	 * @return boolean success
+	 */
+	public function delete_permanently($where_cols_n_values=FALSE,$operator='='){
+		if(empty($where_cols_n_values)){
+			return FALSE;
+		}
+		return parent::delete($where_cols_n_values,$operator);
+	}
+	
+	/**
+	 * Permanently deletes the object given its ID
+	 * @param mixed $ID int or string, depending on the table's primary key type
+	 * @return boolean success
+	 */
+	public function delete_permanently_by_ID($ID=FALSE){
+		if ( ! $ID ) {
+			return FALSE;
+		}
+		$primaryKeyName=$this->primary_key_name();
+		$where_cols_n_values = array( $primaryKeyName => $ID );
+		return $this->delete_permanently($where_cols_n_values,'=');
+	}
+	
+	/**
 	 * Handles special logic for deleting a single item
 	 * @param mixed $ID value of the primary_key or primary_text_key
 	 * @return boolean success
 	 */
 	public function delete_by_ID($ID=FALSE){
+		return $this->delete_or_restore_by_ID(true,$ID);
+	}
+	/**
+	 * Restores a particular item by its ID (primary key)
+	 * @param mixed $ID int if primary key is an int, string otherwise
+	 * @return boolean success
+	 */
+	public function restore_by_ID($ID=FALSE){
+		return $this->delete_or_restore_by_ID(false,$ID);
+	}
+	/**
+	 * For deleting or restoring a particular item.
+	 * @param boolean $delete true for deletem, false for restore
+	 * @param mixed $ID int if primary key is an int, string otherwise
+	 * @return boolean success
+	 */
+	public function delete_or_restore_by_ID($delete=true,$ID=FALSE){
 		if ( ! $ID ) {
 			return FALSE;
 		}
 		$primaryKeyName=$this->primary_key_name();
-		$deletedFlagFieldName=$this->deleted_field_name();
 		// retreive a particular transaction
 		$where_cols_n_values = array( $primaryKeyName => $ID );
-		if ( $this->update (array($deletedFlagFieldName=>true), $where_cols_n_values )) {
+		if ( $this->delete_or_restore ($delete, $where_cols_n_values )) {
 			return TRUE;
 		} else {
 			return FALSE;
@@ -129,12 +166,32 @@ class EEM_Soft_Delete_Base extends EEM_TempBase{
 	 * @param mixed $operator string or array of strings
 	 * @return boolean success
 	 */
-	public function delete($where_col_n_values=FALSE,$operator='='){
-		if ( ! $where_col_n_values ) {
+	public function delete($where_cols_n_values=FALSE,$operator='='){
+		return $this->delete_or_restore(true, $where_cols_n_values, $operator);
+	}
+	
+	/**
+	 * 'Undeletes' the chosen items.
+	 * @param array $where_cols_n_values
+	 * @param mixed $operator string or array of strings
+	 * @return type
+	 */
+	public function restore($where_cols_n_values=FALSE,$operator='='){
+		return $this->delete_or_restore(false, $where_cols_n_values, $operator);
+	}
+	/**
+	 * Performs deletes or restores on items.
+	 * @param boolean $delete true to indicate deletion, false to indicate restoration
+	 * @param array $where_cols_n_values
+	 * @param mixed $operator string or array of strings
+	 * @return boolean success
+	 */
+	function delete_or_restore($delete=true,$where_cols_n_values=FALSE,$operator='='){
+		if ( ! $where_cols_n_values ) {
 			return FALSE;
 		}
 		$deletedFlagFieldName=$this->deleted_field_name();
-		if ( $this->update (array($deletedFlagFieldName=>true), $where_cols_n_values )) {
+		if ( $this->update (array($deletedFlagFieldName=>$delete), $where_cols_n_values )) {
 			return TRUE;
 		} else {
 			return FALSE;

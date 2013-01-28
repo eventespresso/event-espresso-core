@@ -21,8 +21,8 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( 'EE_Base_Class.class.php' );
-class EE_Question_Group extends EE_Base_Class{
+require_once ( 'EE_Soft_Delete_Base_Class.class.php' );
+class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	
 	/**
 	 * ID of this question gruop
