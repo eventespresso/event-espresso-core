@@ -82,7 +82,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
 			'default' => '_events_overview_list_table',
-			'event_settings' => '_default_event_settings',
 			'edit_event' => array(
 				'func' => '_event_details',
 				'args' => array('edit')
@@ -133,7 +132,12 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'noheader' => true
 				),
 			'import_events' => '_import_events',
-			'import' => '_import_events'
+			'import' => '_import_events',
+			'default_event_settings' => '_default_event_settings',
+			'update_default_event_settings' => array(
+				'func' => '_update_default_event_settings',
+				'noheader' => TRUE,
+				),			
 			);
 	}
 
@@ -162,13 +166,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
 				),
-			'event_settings' => array(
-				'nav' => array(
-					'label' => __('Default Settings', 'event_esprsso'),
-					'order' => 40
-					),
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
-				),
 			'add_event' => array(
 				'nav' => array(
 					'label' => __('Add Event', 'event_espresso'),
@@ -185,6 +182,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 					'url' => isset($this->_req_data['EVT_ID']) ? add_query_arg(array('EVT_ID' => $this->_req_data['EVT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
 				'metaboxes' => array( '_publish_post_box', '_register_event_editor_meta_boxes', '_premium_event_editor_meta_boxes' )
+				),
+			'default_event_settings' => array(
+				'nav' => array(
+					'label' => __('Default Settings', 'event_esprsso'),
+					'order' => 40
+					),
+				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' )
 				)
 			);
 	}
@@ -3800,11 +3804,34 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		$this->_template_args['use_attendee_pre_approval'] = isset( $org_options['use_attendee_pre_approval'] ) ? absint( $org_options['use_attendee_pre_approval'] ) : FALSE;
 
-		$this->_set_add_edit_form_tags( 'update_global_event_settings' );
+		$this->_set_add_edit_form_tags( 'update_default_event_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = espresso_display_template( EVENTS_TEMPLATE_PATH . 'event_settings.template.php', $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();	
 		
+	}
+
+
+
+
+	/**
+	 * 		_update_default_event_settings
+	*		@access protected
+	*		@return array
+	*/
+	protected function _update_default_event_settings() {	
+
+		$data = array();
+		$data['expire_on_registration_end'] = isset( $this->_req_data['expire_on_registration_end'] ) ? absint( $this->_req_data['expire_on_registration_end'] ) : FALSE;
+		$data['default_reg_status'] = isset( $this->_req_data['default_reg_status'] ) ? sanitize_text_field( $this->_req_data['default_reg_status'] ) : 'RPN';
+		$data['use_attendee_pre_approval'] = isset( $this->_req_data['use_attendee_pre_approval'] ) ? absint( $this->_req_data['use_attendee_pre_approval'] ) : FALSE;
+
+		$data = apply_filters('filter_hook_espresso_default_event_settings_save', $data);	
+		
+		$what = 'Default Event Settings';
+		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'default_event_settings' ) );
+				
 	}
 
 
