@@ -73,7 +73,8 @@ class EEM_Message_Template extends EEM_Base {
 				'MTP_content' => '%s',
 				'MTP_is_global' => '%d',
 				'MTP_is_override' => '%d',
-				'MTP_deleted' => '%d'
+				'MTP_deleted' => '%d',
+				'MTP_is_active' => '%d'
 		);
 
 
@@ -110,6 +111,7 @@ class EEM_Message_Template extends EEM_Base {
 			$a_temp[$template->GRP_ID]['MTP_user_id'] = $template->MTP_user_id;
 			$a_temp[$template->GRP_ID]['EVT_ID'] = $template->EVT_ID;
 			$a_temp[$template->GRP_ID]['MTP_is_global'] = $template->MTP_is_global;
+			$a_temp[$template->GRP_ID]['MTP_is_active'] = $template->MTP_is_active;
 			
 			//within the template group templates are grouped by contexts.  below are items common to template types within a context (i.e. "is_active").  We also have an array of template_ids attached to a context to make it easier to update all the templates in this context with the new values.
 			$a_temp[$template->GRP_ID]['templates'][$template->MTP_context]['MTP_is_global'] = $template->MTP_is_global;
@@ -151,8 +153,11 @@ class EEM_Message_Template extends EEM_Base {
 		// retrieve all templates
 		// we have to use limit and count later because we're not getting by rows.  So we have to retrieve all templates first.
 		
+		//we have to make sure we're only returning "ACTIVE" templates (i.e. an active messenger or message_type);
+		$where_cols_n_values = array( 'MTP_is_active' => 1 );
+		
 
-		if ($templates = $this->select_all($orderby, $order)) {
+		if ($templates = $this->select_all_where($where_cols_n_values, $orderby, $order)) {
 			$r_templates = $this->_create_objects($templates);
 		} else {
 			return FALSE;
@@ -178,6 +183,10 @@ class EEM_Message_Template extends EEM_Base {
 		if (!$where_cols_n_values) {
 			return FALSE;
 		}
+
+		//need to make sure we only return ACTIVE templates
+		$active = array( 'MTP_is_active' => 1 );
+		$where_cols_n_values = array_merge( $active, $where_cols_n_values );
 
 		// retrieve all templates
 		if ($templates = $this->select_all_where( $where_cols_n_values, $orderby, $order )) {
@@ -207,9 +216,9 @@ class EEM_Message_Template extends EEM_Base {
 		if (!$GRP_ID) {
 			return FALSE;
 		}
-		// retrieve a particular template group
+		// retrieve a particular template group (but only if active);
 		
-		$where_cols_n_values = array('GRP_ID' => $GRP_ID);
+		$where_cols_n_values = array('GRP_ID' => $GRP_ID, 'MTP_is_active' => 1);
 		if ($template = $this->select_all_where($where_cols_n_values)) {
 			$tmplt = $this->_create_objects( $template );
 			return $tmplt[$GRP_ID];
@@ -230,6 +239,10 @@ class EEM_Message_Template extends EEM_Base {
 		if (!$where_cols_n_values) {
 			return FALSE;
 		}
+
+		//need to make sure we only return ACTIVE templates
+		$active = array( 'MTP_is_active' => 1 );
+		$where_cols_n_values = array_merge( $active, $where_cols_n_values );
 
 		//get group_id
 		$group_id = $this->get_message_template_grp_ID( $where_cols_n_values );
@@ -252,6 +265,10 @@ class EEM_Message_Template extends EEM_Base {
 		if ( !$where_cols_n_values) {
 			return FALSE;
 		}
+
+		//need to make sure we only return ACTIVE templates
+		$active = array( 'MTP_is_active' => 1 );
+		$where_cols_n_values = array_merge( $active, $where_cols_n_values );
 
 		global $wpdb;
 		return $this->select_value_where($this->table_name, $this->table_data_types, 'GRP_ID', $where_cols_n_values );
@@ -347,7 +364,7 @@ class EEM_Message_Template extends EEM_Base {
 	 * @return ARRAY               message template objects that are global (i.e. non-event)
 	 */
 	public function get_global_message_template_by_m_and_mt($messenger, $message_type, $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE) {
-		return $this->get_all_message_templates_where(array('MTP_deleted' => FALSE, 'MTP_messenger' => $messenger, 'MTP_message_type' => $message_type, 'MTP_is_global' => TRUE), $orderby, $order );
+		return $this->get_all_message_templates_where(array('MTP_deleted' => FALSE, 'MTP_messenger' => $messenger, 'MTP_message_type' => $message_type, 'MTP_is_global' => TRUE), $orderby, $order, $limit, $count );
 	}
 
 
@@ -452,6 +469,8 @@ class EEM_Message_Template extends EEM_Base {
 			$max_grp_id = 0;
 		$max_grp_id++;
 		return $max_grp_id;
-	}	
+	}
+
+	
 
 } //end class EEM_Message_Template.model

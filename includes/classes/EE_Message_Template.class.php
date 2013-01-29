@@ -124,6 +124,16 @@ class EE_Message_Template {
 	 */
 	private $_MTP_is_global = FALSE;
 
+
+
+	/**
+	 * is template active?
+	 *
+	 * @access private
+	 * @var boolean
+	 */
+	private $_MTP_is_active = TRUE;
+
 	/**
 	 * count of contexts that override (per group).
 	 * 
@@ -166,6 +176,7 @@ class EE_Message_Template {
 		$this->_EVT_ID = absint($template_group['EVT_ID']);
 		$this->_contexts = (array) $template_group['templates'];
 		$this->_MTP_is_global = (bool) $template_group['MTP_is_global'];
+		$this->_MTP_is_active = (bool) $template_group['MTP_is_active'];
 
 		//initialize group counts
 		$this->_is_active_count = 0;
@@ -279,7 +290,8 @@ class EE_Message_Template {
 					'MTP_message_type' => $this->_MTP_message_type,
 					'MTP_user_id' => $this->_MTP_user_id,
 					'EVT_ID' => $this->_EVT_ID,
-					'MTP_context' => $context
+					'MTP_context' => $context,
+					'MTP_is_active' => $this->_MTP_is_active
 				);
 
 				//next data for this template type
@@ -311,7 +323,7 @@ class EE_Message_Template {
 	*	update existing db record
 	*
 	* 	@access	public
-	* 	@todo this may not work as is.  I have to see how the method get's used first (i.e. how is the object setup).
+	* 	@todo this may not work as is.  I have to see how the method gets used first (i.e. how is the object setup).
 	*/
 	public function update() {
 		return $this->_save_to_db( array( 'MTP_context' => $this->_MTP_context ) );
@@ -441,6 +453,16 @@ class EE_Message_Template {
 	 */
 	public function is_global() {
 		return $this->_MTP_is_global;
+	}
+
+
+
+	/**
+	 * this returns if the template group is active (i.e. turned "on" or not)
+	 * @return boolean true if it is, false if it isn't
+	 */
+	public function is_active() {
+		return $this->_MTP_is_active;
 	}
 
 	/**

@@ -585,6 +585,7 @@ function events_data_tables_install() {
 				  MTP_is_global tinyint(1) NOT NULL DEFAULT '0',
 				  MTP_is_override tinyint(1) NOT NULL DEFAULT '0',
 				  MTP_deleted tinyint(1) NOT NULL DEFAULT '0',
+				  MTP_is_active tinyint(1) NOT NULL DEFAULT '1',
 				  PRIMARY KEY  (MTP_ID),
 				  KEY GRP_ID (GRP_ID),
 				  KEY EVT_ID (EVT_ID),
