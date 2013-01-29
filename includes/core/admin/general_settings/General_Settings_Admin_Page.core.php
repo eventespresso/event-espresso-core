@@ -651,20 +651,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * correct variable display
-	 *
-	 * @access private
-	 * @param array $var
-	 * @return string
-	 */
-	private function _display_nice( $var ) {
-		return htmlentities( stripslashes( $var ), ENT_QUOTES, 'UTF-8' );
-	}
-
-
-
-
-	/**
 	 * displays edit and view links for critical EE pages
 	 *
 	 * @access public 
