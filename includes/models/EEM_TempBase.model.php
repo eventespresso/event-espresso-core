@@ -43,7 +43,7 @@ abstract class EEM_TempBase extends EEM_Base{
 		$modelName=get_class($this);
 		$className=str_replace("EEM_","",$modelName);
 		if($count>1){
-			require_once('helpers/EE_Pluralize.helper.php');
+			require_once(EVENT_ESPRESSO_PLUGINFULLPATH.'/helpers/EE_Pluralize.helper.php');
 			return str_replace("_"," ", EE_Pluralize::pluralize_if($count, $className));
 		}else{
 			return $className;

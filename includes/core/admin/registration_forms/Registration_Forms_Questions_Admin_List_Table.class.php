@@ -104,7 +104,7 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 
 
 	public function column_cb(EE_Question $item) {
-		return sprintf( '<input type="checkbox" name="checkbox[]" value="%d" />', $item->ID());
+		return sprintf( '<input type="checkbox" name="checkbox[%d]" value="%d" />',$item->ID(), $item->ID());
 	}
 
 
@@ -131,19 +131,19 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 				'QST_ID' => $item->ID()
 			);
 
-		$delete_query_args = array(
-				'action' => 'delete_questions',
+		$trash_query_args = array(
+				'action' => 'trash_question',
 				'QST_ID' => $item->ID()
 			);
 
 
 
-		$edit_link = wp_nonce_url( add_query_arg( $edit_query_args, EE_FORMS_ADMIN_URL ), 'edit_event_nonce');
-		$delete_link = wp_nonce_url( add_query_arg( $delete_query_args, EE_FORMS_ADMIN_URL ), 'delete_events_nonce' );
+		$edit_link = wp_nonce_url( add_query_arg( $edit_query_args, EE_FORMS_ADMIN_URL ), 'edit_question_nonce');
+		$trash_link = wp_nonce_url( add_query_arg( $trash_query_args, EE_FORMS_ADMIN_URL ), 'trash_question_none' );
 		
 		$actions = array(
 			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>',
-			'delete' => '<a href="' . $delete_link . '" title="' . __('Delete Event', 'event_espresso') . '">' . __('Delete', 'event_espresso') . '</a>',
+			'delete' => '<a href="' . $trash_link . '" title="' . __('Delete Event', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>',
 			);
 
 		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->display_text() . '</a></strong>';

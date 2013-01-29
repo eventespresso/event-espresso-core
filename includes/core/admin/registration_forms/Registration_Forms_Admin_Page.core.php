@@ -112,7 +112,7 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 				'args' => array('edit')
 				),
 			'trash_question' => array(
-				'func' => '_delete_question',
+				'func' => '_trash_question',
 				'noheader' => TRUE
 				),
 			'delete_question' => array(
@@ -454,7 +454,19 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 	public function edit_question_meta_box(){
 		echo espresso_display_template(REGISTRATION_FORMS_TEMPLATE_PATH.'registration_forms_main_meta_box.template.php',$this->_template_args,TRUE);
 	}
-	protected function _delete_questions() {}
+	protected function _trash_question(){
+		$success=$this->_question_model->delete_by_ID(intval($this->_req_data['QST_ID']));
+		$query_args=array('action'=>'default','status'=>'all');
+		$this->_redirect_after_action($success, $this->_question_model->item_name($success), 'trashed', $query_args);
+	}
+	protected function _delete_question(){
+		$success=$this->_question_model->delete_permanently_by_ID(intval($this->_req_data['QST_ID']));
+		$query_args=array('action'=>'default','status'=>'all');
+		$this->_redirect_after_action($success, $this->_question_model->item_name($success), 'trashed', $query_args);
+	}
+	protected function _delete_questions() {
+		
+	}
 	protected function _insert_or_update_question($new_question = TRUE) {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		$success=0;
@@ -545,7 +557,7 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 	private function _trash_or_restore_items(EEM_TempBase $model,$trash = TRUE) {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		//Checkboxes
-		//echo "$trash";
+		//echo "trash $trash";
 		//var_dump($this->_req_data['checkbox']);die;
 		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
 			
@@ -553,9 +565,11 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
 			// cycle thru bulk action checkboxes
 			while (list( $ID, $value ) = each($this->_req_data['checkbox'])) {
+
 				if (!$model->delete_or_restore_by_ID($trash,absint($ID))) {
 					$success = 0;
 				}
+				
 			}
 	
 		} else {
@@ -566,8 +580,8 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 			}
 			
 		}
-		$action=$trash?'deleted':'restored';
-		$this->_redirect_after_action( $success, $model->item_name($success), $action, array() );
+		$action=$trash?'trashed':'restored';
+		$this->_redirect_after_action( $success, $model->item_name($success), $action, array('status'=>'all') );
 	}
 
 	/***********/
