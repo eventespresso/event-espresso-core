@@ -1863,6 +1863,107 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 
+
+	private function _espresso_venue_dd($current_value = 0) {
+		global $espresso_premium;
+		if ($espresso_premium != true)
+			return;
+		global $wpdb, $espresso_manager, $espresso_wp_user;
+
+		$WHERE = " WHERE ";
+		$sql = "SELECT ev.*, el.name AS locale FROM " . EVENTS_VENUE_TABLE . " ev ";
+		$sql .= " LEFT JOIN " . EVENTS_LOCALE_REL_TABLE . " lr ON lr.venue_id = ev.id ";
+		$sql .= " LEFT JOIN " . EVENTS_LOCALE_TABLE . " el ON el.id = lr.locale_id ";
+
+		if (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_group_admin' )) {
+			if ($espresso_manager['event_manager_venue']) {
+				//show only venues inside their assigned locales.
+				$group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
+				$group = unserialize($group);
+				$sql .= " $WHERE lr.locale_id IN (" . implode(",", $group) . ")";
+				$sql .= " OR ev.wp_user = " . $espresso_wp_user;
+				$WHERE = " AND ";
+			}
+		}
+		$sql .= " GROUP BY ev.id ORDER by name";
+
+		$venues = $wpdb->get_results($sql);
+		$num_rows = $wpdb->num_rows;
+
+		if ($num_rows > 0) {
+			$field = '<label>' . __('Select from Venue Manager list', 'event_espresso') . '</label>';
+			$field .= '<select name="venue_id[]" id="venue_id" class="chzn-select"  >\n';
+			$field .= '<option value="0">' . __('Select a Venue', 'event_espresso') . '</option>';
+			$div = "";
+			$help_div = "";
+			$i = 0;
+			foreach ($venues as $venue) {
+
+				$i++;
+				$selected = $venue->id == $current_value ? 'selected="selected"' : '';
+				if ($venue->locale != '') {
+					$field .= '<option rel="' . $i . '" ' . $selected . ' value="' . $venue->id . '">' . stripslashes_deep($venue->name) . ' (' . stripslashes_deep($venue->locale) . ') </option>\n';
+				} else if ($venue->city != '' && $venue->state != '') {
+					$field .= '<option rel="' . $i . '" ' . $selected . ' value="' . $venue->id . '">' . stripslashes_deep($venue->name) . ' (' . stripslashes_deep($venue->city) . ', ' . stripslashes_deep($venue->state) . ') </option>\n';
+				} else if ($venue->state != '') {
+					$field .= '<option rel="' . $i . '" ' . $selected . ' value="' . $venue->id . '">' . stripslashes_deep($venue->name) . ' (' . stripslashes_deep($venue->state) . ') </option>\n';
+				} else {
+					$field .= '<option rel="' . $i . '" ' . $selected . ' value="' . $venue->id . '">' . stripslashes_deep($venue->name) . ' </option>\n';
+				}
+
+				$hidden = "display:none;";
+				if ($selected)
+					$hidden = '';
+				$div .= "
+	<fieldset id='eebox_" . $i . "' class='eebox' style='" . $hidden . "'>
+		<ul class='address-view'>
+			<li>
+				<p><span>Address:</span> " . stripslashes($venue->address) . "<br/>
+				<span></span> " . stripslashes($venue->address2) . "<br/>
+				<span>City:</span> " . stripslashes($venue->city) . "<br/>
+				<span>State:</span> " . stripslashes($venue->state) . "<br/>
+				<span>Zip:</span> " . stripslashes($venue->zip) . "<br/>
+				<span>Country:</span> " . stripslashes($venue->country) . "<br/>
+				<span>Venue ID:</span> " . $venue->id . "<br/></p>
+				This venues shortcode <b class='highlight'>[ESPRESSO_VENUE id='" . $venue->id . "']</b><br/>";
+				$div .= '<a href="admin.php?page=event_venues&action=edit&id=' . $venue->id . '" target="_blank">' . __('Edit this venue', 'event_espresso') . '</a> | <a class="thickbox link" href="#TB_inline?height=300&width=400&inlineId=venue_info">Shortcode</a></li></ul>';
+				$div .= "</fieldset>";
+			}
+			$field .= "</select>";
+			$help_div .= '<div id="venue_info" style="display:none">';
+			$help_div .= '<div class="TB-ee-frame">';
+			$help_div .= '<h2>' . __('Venue Shortcode', 'event_espresso') . '</h2>';
+			$help_div .= '<p>' . __('Add the following shortcode into the description to show the venue for this event.', 'event_espresso') . '<br/>';
+			$help_div .= '[ESPRESSO_VENUE]<br/>';
+			$help_div .=  __('To use this venue in a page or post. Use the following shortcode.', 'event_espresso') . '<br/>';
+			$help_div .= '[ESPRESSO_VENUE id="selected_venue_id"]</p>';
+			$help_div .= '<p>Example with Optional Parameters:<br />[ESPRESSO_VENUE outside_wrapper="div" outside_wrapper_class="event_venue"]</p>';
+			$help_div .= '<p><strong><a href="http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/#venue_shortcode" target="_blank">More Examples</a></strong></p>';
+			$help_div .= '</div>';
+			$help_div .= '</div>';
+			ob_start();
+			?>
+			<script>
+				jQuery("#venue_id").change( function(){
+					var selected = jQuery("#venue_id option:selected");
+					var rel = selected.attr("rel");
+					jQuery(".eebox").hide();
+					jQuery("#eebox_"+rel).show();
+				});
+			</script>
+			<?php
+			$js = ob_get_contents();
+			ob_end_clean();
+			$html = '<table><tr><td>' . $field . '</td></tr><tr><td>' . $div . '</td></tr></table>' . $help_div . $js;
+			return $html;
+		}
+	}
+
+
+
+
+
+
 	public function venue_metabox() {
 		global $org_options, $espresso_premium;
 		$values = array(
@@ -1870,22 +1971,24 @@ class Events_Admin_Page extends EE_Admin_Page {
 				array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
 		?>
+		
 	<div class="inside">
 		<table class="form-table">
 			<tr>
 				<?php
-				if (function_exists('espresso_venue_dd') && $org_options['use_venue_manager'] && $espresso_premium) {
+				if ( $org_options['use_venue_manager'] && $espresso_premium ) {
 					$ven_type = 'class="use-ven-manager"';
+
 					?>
 				<td valign="top" <?php echo $ven_type ?>><fieldset id="venue-manager">
 							<legend><?php echo __('Venue Information', 'event_espresso') ?></legend>
-							<?php if (!espresso_venue_dd()) : ?>
+							<?php if (! $this->_espresso_venue_dd()) : ?>
 								<p class="info">
 									<b><?php _e('You have not created any venues yet.', 'event_espresso'); ?></b>
 								</p>
 								<p><a href="admin.php?page=event_venues"><?php echo __('Add venues to the Venue Manager', 'event_espresso') ?></a></p>
 							<?php else: ?>
-								<?php echo espresso_venue_dd($this->_event->venue_id) ?>
+								<?php echo $this->_espresso_venue_dd($this->_event->venue_id) ?>
 							<?php endif; ?>
 						</fieldset>
 					</td>
