@@ -1,6 +1,6 @@
 <?php
 //PARAMS THAT MUST BE PASSED ARE:
-assert($QST_ID);
+assert(isset($QST_ID));
 assert($question);
 assert($question instanceof EE_Question);
 assert($question_types);
@@ -29,8 +29,7 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 						case 'QST_type':
 							echo EE_Form_fields::select_input('QST_type', $question_types, $question->type(),"id='QST_type'");?>
 							<br/><span class='description'><?php _e("'Text' is best for small text (fewer than 100 characters). 'Text area' is best for large text (paragraphs). 
-								'Radio Button' and 'Dropdown' are best for a multiple-choice-questions where the registrant can only select 1 option.
-								'Checkbox' is best for multiple-choice-questions where the registrant can select multiple options.",'event_espresso');?>
+								'SINGLE' is for a multiple-choice question where registrants can only choose one option. 'DROPDOWN' and 'MULTIPLE' allow users to select multiple options. 'DATE' allows users to select a date."  ,'event_espresso');?>
 							</span>
 			
 				</td>

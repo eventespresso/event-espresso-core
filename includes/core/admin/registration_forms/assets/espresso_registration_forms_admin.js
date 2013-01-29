@@ -8,7 +8,7 @@ jQuery(document).ready(function($) {
 	$('.remove-option').click(function(){
 		espresso_reg_forms_trash_option(this);
 	})
-	
+	espresso_reg_forms_show_or_hide_question_options();
 	
 	
 });

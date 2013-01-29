@@ -203,7 +203,7 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 					'order' => 5,
 					'persistent' => FALSE
 					),
-				'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box')
+				'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box','_edit_question_meta_box')
 				),
 			'edit_question' => array(
 				'nav' => array(
@@ -397,7 +397,7 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		$set_column_values=array();
 		foreach($this->_question_model->fields_settings() as $fieldName=>$settings){
-			$set_column_values[$fieldName]=$this->_req_data[$fieldName];
+			$set_column_values[$fieldName]=array_key_exists($fieldName,$this->_req_data)?$this->_req_data[$fieldName]:null;
 		}
 		return $set_column_values;//validation fo this data to be performed by the model before insertion.
 	}
@@ -419,7 +419,7 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 
 
 	
-	protected function _edit_question( $type = 'add' ) {
+	protected function _edit_question( $action= 'add' ) {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		$ID=isset( $this->_req_data['QST_ID'] ) && ! empty( $this->_req_data['QST_ID'] ) ? absint( $this->_req_data['QST_ID'] ) : FALSE;
 		
