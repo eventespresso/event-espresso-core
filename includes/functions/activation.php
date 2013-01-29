@@ -1267,7 +1267,7 @@ function espresso_default_prices() {
 	global $wpdb;
 
 	if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_PRICE_TYPE . "'") == ESP_PRICE_TYPE) {
-		$sql = 'DELETE FROM ' . ESP_PRICE_TYPE . ' WHERE PRT_ID < 9';
+		$sql = 'DELETE FROM ' . ESP_PRICE_TYPE . ' WHERE PRT_ID < 8';
 		$wpdb->query($sql);
 	
 		$sql = "INSERT INTO " . ESP_PRICE_TYPE . " ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_is_global, PRT_order, PRT_deleted ) VALUES
@@ -1288,19 +1288,19 @@ function espresso_default_prices() {
 	
 		$sql = "INSERT INTO " . ESP_PRICE_TABLE . "
 					(PRC_ID, PRT_ID, EVT_ID, PRC_amount, PRC_name, PRC_desc, PRC_use_dates, PRC_start_date, PRC_end_date, PRC_is_active, PRC_overrides, PRC_order, PRC_deleted ) VALUES
-					(1, 1, 0, '100.00', 'General Admission', 'Regular price for all Events.', 0, NULL, NULL, NULL, 1, NULL, 0, 0),
-					(2, 3, 0, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price.', 0, NULL, NULL, NULL, 1, NULL, 10, 0),
-					(3, 4, 0, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price.',  1, NULL, NULL, NULL, 1, NULL, 20, 0),
-					(4, 6, 0, '7.50', 'Service Fee', 'Covers administrative expenses.', 0, NULL, NULL, NULL, 1, NULL, 30, 0),
-					(5, 7, 0, '7.00', 'Sales Tax', 'Locally imposed tax.', 0, NULL, NULL, NULL, 1, NULL, 40, 0),
-					(6, 8, 0, '15.00', 'VAT', 'Value Added Tax.', 0, NULL, NULL, NULL, 1, NULL, 50, 0);";
+					(1, 1, 0, '100.00', 'General Admission', 'Regular price for all Events. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 0, 0),
+					(2, 3, 0, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 10, 0),
+					(3, 4, 0, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price. Example content - delete if you want to',  1, NULL, NULL, 1, NULL, 20, 0),
+					(4, 5, 0, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 30, 0),
+					(5, 6, 0, '7.00', 'Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 40, 0),
+					(6, 7, 0, '15.00', 'VAT', 'Value Added Tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 50, 0);";
 		$wpdb->query($sql);
 	}
 	
 
 
 	if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_STATUS_TABLE . "'") == ESP_STATUS_TABLE) {
-		$sql = "DELETE FROM " . ESP_STATUS_TABLE . " WHERE STS_ID IN ('ACT','RAP','CLS','TCM','PDC','DEL','DEN','DRF','EDR','EXP','TIN','TOP','NAC','RNA','NOP','ONG','OPN','PND','RPN','SEC','SNT','PAP','TPN','RCN','PCN','PFL');";
+		$sql = "DELETE FROM " . ESP_STATUS_TABLE . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPN', 'RCN', 'RAP', 'RNA', 'TIN', 'TPN', 'TCM', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN' );";
 		$wpdb->query($sql);
 		
 		$sql = "INSERT INTO " . ESP_STATUS_TABLE . " 
@@ -1329,8 +1329,7 @@ function espresso_default_prices() {
 				('PFL', 'FAILED', 'payment', 0, NULL),
 				('PDC', 'DECLINED', 'payment', 0, NULL),
 				('EDR', 'DRAFT', 'email', 0, NULL),
-				('ESN', 'SENT', 'email', 0, NULL),
-				;";
+				('ESN', 'SENT', 'email', 0, NULL);";
 		$wpdb->query($sql);
 		
 		
@@ -1344,23 +1343,17 @@ function espresso_default_prices() {
 
 function espresso_delete_unused_db_tables() {
 	global $wpdb;
-	$wpdb->query( 'DROP TABLE IF EXISTS '. $wpdb->prefix . '"events_meta"' );
-	$wpdb->query( 'DROP TABLE IF EXISTS '. $wpdb->prefix . '"events_status"' );
+	$wpdb->query( 'DROP TABLE IF EXISTS '. $wpdb->prefix . 'events_meta' );
+	$wpdb->query( 'DROP TABLE IF EXISTS '. $wpdb->prefix . 'events_status' );
 }
 
 
 
 
 
-if (!function_exists('save_error')) {
-
-	function save_error() {
+if (!function_exists('espresso_save_error')) {
+	function espresso_save_error() {
 		update_option('plugin_error', ob_get_contents());
 	}
-
 }
-
-
-
-
-//add_action('activated_plugin', 'save_error');
+add_action('activated_plugin', 'espresso_save_error');
