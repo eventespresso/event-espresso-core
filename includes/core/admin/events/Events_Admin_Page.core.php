@@ -1870,128 +1870,123 @@ class Events_Admin_Page extends EE_Admin_Page {
 				array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
 		?>
-		<div class="inside">
-			<table class="form-table">
-				<tr>
-					<?php
-					if (function_exists('espresso_venue_dd') && $org_options['use_venue_manager'] && $espresso_premium) {
-						$ven_type = 'class="use-ven-manager"';
-						?>
-					<td valign="top" <?php echo $ven_type ?>><fieldset id="venue-manager">
-								<legend><?php echo __('Venue Information', 'event_espresso') ?></legend>
-								<?php if (!espresso_venue_dd()) : ?>
-									<p class="info">
-										<b><?php _e('You have not created any venues yet.', 'event_espresso'); ?></b>
-									</p>
-									<p><a href="admin.php?page=event_venues"><?php echo __('Add venues to the Venue Manager', 'event_espresso') ?></a></p>
-								<?php else: ?>
-									<?php echo espresso_venue_dd($this->_event->venue_id) ?>
-								<?php endif; ?>
-							</fieldset>
-						</td>
-						<?php
-					} else {
-						$ven_type = 'class="manual-venue"';
-						?>
-						<td valign="top" <?php echo $ven_type ?>>
-							<fieldset>
-								<legend>
-									<?php _e('Physical Location', 'event_espresso'); ?>
-								</legend>
-								<p>
-									<label for="phys-addr">
-										<?php _e('Address:', 'event_espresso'); ?>
-									</label>
-									<input size="20" id="phys-addr" tabindex="100"  type="text"  value="<?php echo $this->_event->address ?>" name="address" />
-									<label for="phys-addr-2"><?php _e('Address 2:', 'event_espresso'); ?></label>
-									<input size="20" id="phys-addr-2" tabindex="101"  type="text"  value="<?php echo $this->_event->address2 ?>" name="address2" />
-									<label for="phys-city">
-										<?php _e('City:', 'event_espresso'); ?>
-									</label>
-									<input size="20" id="phys-city" tabindex="102"  type="text"  value="<?php echo $this->_event->city ?>" name="city" />
-									<label for="phys-state">
-										<?php _e('State:', 'event_espresso'); ?>
-									</label>
-									<input size="20" id="phys-state" tabindex="103"  type="text"  value="<?php echo $this->_event->state ?>" name="state" />
-									<label for="zip-postal">
-										<?php _e('Zip/Postal Code:', 'event_espresso'); ?>
-									</label>
-									<input size="20" id="zip-postal"  tabindex="104"  type="text"  value="<?php echo $this->_event->zip ?>" name="zip" />
-									<label for="phys-country">
-										<?php _e('Country:', 'event_espresso'); ?>
-									</label>
-									<input size="20" id="phys-country" tabindex="105"  type="text"  value="<?php echo $this->_event->country ?>" name="country" />
-									<br/>
-									<?php _e('Google Map Link (for email):', 'event_espresso'); ?>
-									<br />
-									<?php echo $this->_event->google_map_link; ?> </p>
-							</fieldset>
-						</td>
-						<td valign="top" <?php echo $ven_type; ?>>
-
-								<legend>
-									<?php _e('Venue Information', 'event_espresso'); ?>
-								</legend>
-								<p>
-									<label for="ven-title">
-										<?php _e('Title:', 'event_espresso'); ?>
-									</label>
-									<input size="20"id="ven-title" tabindex="106"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_title) ?>" name="venue_title" />
+	<div class="inside">
+		<table class="form-table">
+			<tr>
+				<?php
+				if (function_exists('espresso_venue_dd') && $org_options['use_venue_manager'] && $espresso_premium) {
+					$ven_type = 'class="use-ven-manager"';
+					?>
+				<td valign="top" <?php echo $ven_type ?>><fieldset id="venue-manager">
+							<legend><?php echo __('Venue Information', 'event_espresso') ?></legend>
+							<?php if (!espresso_venue_dd()) : ?>
+								<p class="info">
+									<b><?php _e('You have not created any venues yet.', 'event_espresso'); ?></b>
 								</p>
-								<p>
-									<label for="ven-website">
-										<?php _e('Website:', 'event_espresso'); ?>
-									</label>
-									<input size="20" id="ven-website" tabindex="107"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_url) ?>" name="venue_url" />
-								</p>
-								<p>
-									<label for="ven-phone">
-										<?php _e('Phone:', 'event_espresso'); ?>
-									</label>
-									<input size="20" id="ven-phone" tabindex="108"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_phone) ?>" name="venue_phone" />
-								</p>
-								<p>
-									<label for="ven-image">
-										<?php _e('Image:', 'event_espresso'); ?>
-									</label>
-									<input size="20" id="ven-image" tabindex="110"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_image) ?>" name="venue_image" />
-								</p>
-							<?php } ?>
-					</td>
-					<td valign="top" <?php echo $ven_type ?>>
-						<fieldset id="virt-location">
-							<legend>
-								<?php _e('Virtual Location', 'event_espresso'); ?>
-							</legend>
-							<p>
-								<label for="virt-phone" style="display:inline-block; width:100px;">
-									<?php _e('Phone:', 'event_espresso'); ?>
-								</label>
-								<input size="20" id="virt-phone" type="text" tabindex="111" value="<?php echo $this->_event->phone ?>" name="phone" />
-							</p>
-							<p>
-								<label for="url-event" style="display:inline-block; width:100px; vertical-align:top;">
-									<?php _e('URL of Event:', 'event_espresso'); ?>
-								</label>
-								<textarea id="url-event" cols="30" rows="4" tabindex="112"  name="virtual_url"><?php echo stripslashes_deep($this->_event->virtual_url) ?></textarea>
-							</p>
-							<p>
-								<label for="call-in-num" style="display:inline-block; width:100px;">
-									<?php _e('Call in Number:', 'event_espresso'); ?>
-								</label>
-								<input id="call-in-num" size="20" tabindex="113"  type="text"  value="<?php echo stripslashes_deep($this->_event->virtual_phone) ?>" name="virtual_phone" />
-							</p>
+								<p><a href="admin.php?page=event_venues"><?php echo __('Add venues to the Venue Manager', 'event_espresso') ?></a></p>
+							<?php else: ?>
+								<?php echo espresso_venue_dd($this->_event->venue_id) ?>
+							<?php endif; ?>
 						</fieldset>
 					</td>
-				</tr>
+					<?php
+				} else {
+					$ven_type = 'class="manual-venue"';
+					?>
+					<td valign="top" <?php echo $ven_type; ?>>
 
-			</table>
-			<p>
-				<label for="enable_for_gmap">
-					<?php _e('Enable event address in Google Maps? ', 'event_espresso') ?>
-				</label>
-				<?php echo EE_Form_Fields::select_input('enable_for_gmap', $values, isset($this->_event->event_meta['enable_for_gmap']) ? $this->_event->event_meta['enable_for_gmap'] : '', 'id="enable_for_gmap"') ?> </p>
-		</div>
+							<legend>
+								<?php _e('Venue Information', 'event_espresso'); ?>
+							</legend>
+							<p>
+								<label for="ven-title"><?php _e('Title:', 'event_espresso'); ?></label><br/>
+								<input size="20"id="ven-title" tabindex="106"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_title) ?>" name="venue_title" />
+							</p>
+							<p>
+								<label for="ven-website"><?php _e('Website:', 'event_espresso'); ?></label><br/>
+								<input size="20" id="ven-website" tabindex="107"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_url) ?>" name="venue_url" />
+							</p>
+							<p>
+								<label for="ven-phone"><?php _e('Phone:', 'event_espresso'); ?></label><br/>
+								<input size="20" id="ven-phone" tabindex="108"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_phone) ?>" name="venue_phone" />
+							</p>
+							<p>
+								<label for="ven-image"><?php _e('Image:', 'event_espresso'); ?></label><br/>
+								<input size="20" id="ven-image" tabindex="110"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_image) ?>" name="venue_image" />
+							</p>
+					</td>
+					<td valign="top" <?php echo $ven_type ?>>
+						<fieldset>
+							<legend><?php _e('Physical Location', 'event_espresso'); ?></legend>
+							<p>
+								<label for="phys-addr"><?php _e('Address:', 'event_espresso'); ?></label><br/>
+								<input size="20" id="phys-addr" tabindex="100"  type="text"  value="<?php echo $this->_event->address ?>" name="address" />
+							</p>
+							<p>
+								<label for="phys-addr-2"><?php _e('Address 2:', 'event_espresso'); ?></label><br/>
+								<input size="20" id="phys-addr-2" tabindex="101"  type="text"  value="<?php echo $this->_event->address2 ?>" name="address2" />
+							</p>
+							<p>
+								<label for="phys-city"><?php _e('City:', 'event_espresso'); ?></label><br/>
+								<input size="20" id="phys-city" tabindex="102"  type="text"  value="<?php echo $this->_event->city ?>" name="city" />
+							</p>
+							<p>
+								<label for="phys-state"><?php _e('State:', 'event_espresso'); ?></label><br/>
+								<input size="20" id="phys-state" tabindex="103"  type="text"  value="<?php echo $this->_event->state ?>" name="state" />
+							</p>
+							<p>
+								<label for="phys-country"><?php _e('Country:', 'event_espresso'); ?></label><br/>
+								<input size="20" id="phys-country" tabindex="105"  type="text"  value="<?php echo $this->_event->country ?>" name="country" />
+							</p>
+							<p>
+								<label for="zip-postal"><?php _e('Zip/Postal Code:', 'event_espresso'); ?></label><br/>
+								<input size="20" id="zip-postal"  tabindex="104"  type="text"  value="<?php echo $this->_event->zip ?>" name="zip" />
+							</p>
+								<br/>
+							<p>
+								<?php _e('Google Map Link (for email):', 'event_espresso'); ?>
+								<?php echo $this->_event->google_map_link; ?> 
+							</p>	
+								<br/>
+							<p>
+								<label for="enable_for_gmap">
+									<?php _e('Enable event address in Google Maps? ', 'event_espresso') ?>
+								</label>
+								<?php echo EE_Form_Fields::select_input('enable_for_gmap', $values, isset($this->_event->event_meta['enable_for_gmap']) ? $this->_event->event_meta['enable_for_gmap'] : '', 'id="enable_for_gmap"') ?> 
+							</p>
+
+						</fieldset>
+					</td>
+						<?php } ?>
+				<td valign="top" <?php echo $ven_type ?>>
+					<fieldset id="virt-location">
+						<legend>
+							<?php _e('Virtual Location', 'event_espresso'); ?>
+						</legend>
+						<p>
+							<label for="virt-phone" style="display:inline-block; width:100px;">
+								<?php _e('Phone:', 'event_espresso'); ?>
+							</label>
+							<input size="20" id="virt-phone" type="text" tabindex="111" value="<?php echo $this->_event->phone ?>" name="phone" />
+						</p>
+						<p>
+							<label for="url-event" style="display:inline-block; width:100px; vertical-align:top;">
+								<?php _e('URL of Event:', 'event_espresso'); ?>
+							</label>
+							<textarea id="url-event" cols="30" rows="4" tabindex="112"  name="virtual_url"><?php echo stripslashes_deep($this->_event->virtual_url) ?></textarea>
+						</p>
+						<p>
+							<label for="call-in-num" style="display:inline-block; width:100px;">
+								<?php _e('Call in Number:', 'event_espresso'); ?>
+							</label>
+							<input id="call-in-num" size="20" tabindex="113"  type="text"  value="<?php echo stripslashes_deep($this->_event->virtual_phone) ?>" name="virtual_phone" />
+						</p>
+					</fieldset>
+				</td>
+			</tr>
+		</table>
+
+	</div>
 		<?php
 	}
 
