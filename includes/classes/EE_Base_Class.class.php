@@ -258,25 +258,29 @@ abstract class EE_Base_Class extends EE_Base{
 	}
 	
 	/**
-	*		save object to db
+	*		Saves this object to teh database. An array may be supplied to set some values on this
+	 * object just before saving.
 	* 
-	* 		@access		private
-	* 		@param		array		$where_cols_n_values		
+	* 		@access		public
+	* 		@param		array		$set_cols_n_values		
 	*		@return int, 1 on a successful update, the ID of
 	*					the new entry on insert; 0 on failure		
 	
 	*/	
-	public function save() {
-		$set_column_values = array();
+	public function save($set_cols_n_values=array()) {
+		foreach($set_cols_n_values as $column=>$value){
+			$this->set($column,$value);
+		}
+		$save_cols_n_values = array();
 		foreach(array_keys($this->get_fields_settings()) as $fieldName){
 			$attributeName=$this->_get_private_attribute_name($fieldName);
-			$set_column_values[$fieldName]=$this->$attributeName;
+			$save_cols_n_values[$fieldName]=$this->$attributeName;
 		}
-		if ( $set_column_values[$this->_get_primary_key_name()]!=null ){
-			$results = $this->_get_model()->update ( $set_column_values, array($this->_get_primary_key_name()=>$this->get_primary_key()) );
+		if ( $save_cols_n_values[$this->_get_primary_key_name()]!=null ){
+			$results = $this->_get_model()->update ( $save_cols_n_values, array($this->_get_primary_key_name()=>$this->get_primary_key()) );
 		} else {
-			unset($set_column_values[$this->_get_primary_key_name()]);
-			$results = $this->_get_model()->insert ( $set_column_values );
+			unset($save_cols_n_values[$this->_get_primary_key_name()]);
+			$results = $this->_get_model()->insert ( $save_cols_n_values );
 			if($results){//if successful, set the primary key
 				$results=$results['new-ID'];
 				$this->set($this->_get_primary_key_name(),$results);//for some reason the new ID is returned as part of an array,

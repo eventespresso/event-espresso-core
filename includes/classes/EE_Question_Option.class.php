@@ -73,11 +73,16 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * Constructor
-	 * @param string $QSO_name
+	 * @param string/array $QSO_name OR an array of all field values, where keys match these arguments' names
 	 * @param string $QSO_value
 	 * @param int $QST_ID
 	 */
 	public function __construct($QSO_name=null, $QSO_value=null, $QST_ID=null) {
+		//if the first parameter is an array, assume it's an array of key-value pairs for this object
+		if(is_array($QSO_name)){
+			parent::__construct($QSO_name);
+			return;
+		}
 		$reflector = new ReflectionMethod($this,'__construct');	
 		$arrayForParent=array();
 		foreach($reflector->getParameters() as $param){

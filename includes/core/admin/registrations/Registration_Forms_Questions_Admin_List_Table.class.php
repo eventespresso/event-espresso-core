@@ -128,18 +128,18 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 
 		$edit_query_args = array(
 				'action' => 'edit_question',
-				'EVT_ID' => $item->ID()
+				'QST_ID' => $item->ID()
 			);
 
 		$delete_query_args = array(
 				'action' => 'delete_questions',
-				'EVT_ID' => $item->ID()
+				'QST_ID' => $item->ID()
 			);
 
 
 
-		$edit_link = wp_nonce_url( add_query_arg( $edit_query_args, EVENTS_ADMIN_URL ), 'edit_event_nonce');
-		$delete_link = wp_nonce_url( add_query_arg( $delete_query_args, EVENTS_ADMIN_URL ), 'delete_events_nonce' );
+		$edit_link = wp_nonce_url( add_query_arg( $edit_query_args, EE_FORMS_ADMIN_URL ), 'edit_event_nonce');
+		$delete_link = wp_nonce_url( add_query_arg( $delete_query_args, EE_FORMS_ADMIN_URL ), 'delete_events_nonce' );
 		
 		$actions = array(
 			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>',

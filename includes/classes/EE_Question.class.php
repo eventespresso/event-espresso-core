@@ -125,7 +125,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	
 	/**
 	 * constructor for questions
-	 * @param string $QST_display_text text for displaying the question (eg, "what is your name?")
+	 * @param string/array $QST_display_text text for displaying the question (eg, "what is your name?") OR an array of all field values, where keys match these arguments' names
 	 * @param string $QST_system_name if this is a system question, it's internal name
 	 * @param string $QST_type one of 'text','textarea',etc.
 	 * @param boolean $QST_required indicates whether this question must be answered
@@ -146,6 +146,11 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 			$QST_admin_only=NULL,
 			$QST_wp_user=NULL,
 			$QST_deleted=NULL){
+		//if the first parameter is an array, assume it's an array of key-value pairs for this object
+		if(is_array($QST_display_text)){
+			parent::__construct($QST_display_text);
+			return;
+		}
 		$reflector = new ReflectionMethod($this,'__construct');	
 		$arrayForParent=array();
 		foreach($reflector->getParameters() as $param){

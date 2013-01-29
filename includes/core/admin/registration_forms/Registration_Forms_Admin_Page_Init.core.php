@@ -34,7 +34,16 @@ class Registration_Forms_Admin_Page_Init extends EE_Admin_Page_Init {
 	public function __construct() {
 		//define some constants
 		define( 'EE_FORMS_ADMIN_URL', admin_url('admin.php?page=registration_forms') );
-
+		
+		define( 'REGISTRATION_FORMS_PG_SLUG', 'registration_forms' );	
+		define( 'REGISTRATION_FORMS_LABEL', __('Registration Forms', 'event_espresso'));	
+		define( 'REGISTRATION_FORMS_PG_NAME', ucwords( str_replace( '_', '', REGISTRATION_FORMS_PG_SLUG )));	
+		define( 'REGISTRATION_FORMS_ADMIN', EE_CORE_ADMIN . REGISTRATION_FORMS_PG_SLUG . DS );	
+		define( 'REGISTRATION_FORMS_ADMIN_URL', admin_url( 'admin.php?page=' . REGISTRATION_FORMS_PG_SLUG ));	
+		define( 'REGISTRATION_FORMS_ASSETS_PATH', REGISTRATION_FORMS_ADMIN . 'assets' . DS );		
+		define( 'REGISTRATION_FORMS_ASSETS_URL', EE_CORE_ADMIN_URL . REGISTRATION_FORMS_PG_SLUG .'/assets/' );	
+		define( 'REGISTRATION_FORMS_TEMPLATE_PATH', REGISTRATION_FORMS_ADMIN . 'templates' . DS );	
+		define( 'REGISTRATION_FORMS_TEMPLATE_URL', EE_CORE_ADMIN_URL . REGISTRATION_FORMS_PG_SLUG . DS . 'templates/' );
 		parent::__construct();
 	}
 

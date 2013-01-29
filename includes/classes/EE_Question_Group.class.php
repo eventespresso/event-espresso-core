@@ -110,7 +110,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	protected $_Events;
 	/**
 	 * 
-	 * @param string $QSG_name name of question group
+	 * @param string/array $QSG_name name of question group  OR an array of all field values, where keys match these arguments' names
 	 * @param string $QSG_identifier string ofr identifying the question group internally
 	 * @param string $QSG_desc description
 	 * @param int $QSG_order int to indicate where this question gruop should be displayed relative to others
@@ -129,6 +129,11 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 			$QSG_show_group_desc=NULL,
 			$QSG_system_group=NULL,
 			$QSG_deleted=NULL) {
+		//if the first parameter is an array, assume it's an array of key-value pairs for this object
+		if(is_array($QSG_name)){
+			parent::__construct($QSG_name);
+			return;
+		}
 		$reflector = new ReflectionMethod($this,'__construct');	
 		$arrayForParent=array();
 		foreach($reflector->getParameters() as $param){

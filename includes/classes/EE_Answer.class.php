@@ -71,11 +71,16 @@ class EE_Answer extends EE_Base_Class{
 
 	/**
 	 * Constructor
-	 * @param int $REG_ID registration ID
+	 * @param int $REG_ID registration ID OR an array of all field values, where keys match these arguments' names
 	 * @param int $QST_ID question ID
 	 * @param string $ANS_value text representing the answer. Could be CSV'd
 	 */
 	public function __construct( $REG_ID=NULL, $QST_ID=NULL, $ANS_value='') {
+		//if the first parameter is an array, assume it's an array of key-value pairs for this object
+		if(is_array($REG_ID)){
+			parent::__construct($REG_ID);
+			return;
+		}
 		$reflector = new ReflectionMethod($this,'__construct');	
 		$arrayForParent=array();
 		foreach($reflector->getParameters() as $param){

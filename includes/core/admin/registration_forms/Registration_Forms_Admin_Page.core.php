@@ -106,9 +106,9 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 			'default' => '_questions_overview_list_table',
 			'question_groups' => '_question_groups_overview_list_table',
-			'add_question' => '_question_details',
+			'add_question' => '_edit_question',
 			'edit_question' => array(
-				'func' => '_question_details',
+				'func' => '_edit_question',
 				'args' => array('edit')
 				),
 			'trash_question' => array(
@@ -212,7 +212,7 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['question_id']) ? add_query_arg(array('question_id' => $this->_req_data['question_id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
-				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box')
+				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box','_edit_question_meta_box')
 				),
 			'add_question_group' => array(
 				'nav' => array(
@@ -273,9 +273,19 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles_add_question() {
 		$this->load_scripts_styles_forms();
+		wp_register_script( 'espresso_REGISTRATION_FORMS_SINGLE', REGISTRATION_FORMS_ASSETS_URL . 'espresso_registration_forms_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_enqueue_script( 'espresso_REGISTRATION_FORMS_SINGLE' );	
+		
+		wp_register_style( 'espresso_REGISTRATION', REGISTRATION_FORMS_ASSETS_URL . 'espresso_registration_forms_admin.css', array(), EVENT_ESPRESSO_VERSION );		
+		wp_enqueue_style('espresso_REGISTRATION');
 	}
 	public function load_scripts_styles_edit_question() {
 		$this->load_scripts_styles_forms();
+		wp_register_script( 'espresso_REGISTRATION_FORMS_SINGLE', REGISTRATION_FORMS_ASSETS_URL . 'espresso_registration_forms_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_enqueue_script( 'espresso_REGISTRATION_FORMS_SINGLE' );	
+		
+		wp_register_style( 'espresso_REGISTRATION', REGISTRATION_FORMS_ASSETS_URL . 'espresso_registration_forms_admin.css', array(), EVENT_ESPRESSO_VERSION );		
+		wp_enqueue_style('espresso_REGISTRATION');
 	}
 	public function load_scripts_styles_add_question_group() {
 		$this->load_scripts_styles_forms();
@@ -371,11 +381,26 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 		global $wpdb,$org_options,$espresso_premium,$current_user;
 		get_currentuserinfo();
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		$questionModel=EEM_Question::instance();
+		require_once('EE_Question.class.php');
+		
+	}
+	private function _set_edit_question_object(){
 		
 	}
 	private function _set_question_group_object() {}
 
+	/**
+	 * Extracts the question field's values from the POST request to update or insert them
+	 * @return array where each key is the name of a model's field/db column, and each value is its value.
+	 */
+	private function _set_question_column_values(){
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		$set_column_values=array();
+		foreach($this->_question_model->fields_settings() as $fieldName=>$settings){
+			$set_column_values[$fieldName]=$this->_req_data[$fieldName];
+		}
+		return $set_column_values;//validation fo this data to be performed by the model before insertion.
+	}
 
 
 	protected function _questions_overview_list_table() {
@@ -394,9 +419,112 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 
 
 	
-	protected function _question_details( $type = 'add' ) {}
+	protected function _edit_question( $type = 'add' ) {
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		$ID=isset( $this->_req_data['QST_ID'] ) && ! empty( $this->_req_data['QST_ID'] ) ? absint( $this->_req_data['QST_ID'] ) : FALSE;
+		
+		$this->_admin_page_title = ucwords( str_replace( '_', ' ', $this->_req_action ));
+		// add PRC_ID to title if editing 
+		$this->_admin_page_title = $ID ? $this->_admin_page_title . ' # ' . $ID : $this->_admin_page_title;
+		if($ID){
+			$question=$this->_question_model->get_one_by_ID($ID);
+			$additional_hidden_fields=array('QST_ID'=>array('type'=>'hidden','value'=>$ID));
+			$this->_set_add_edit_form_tags('update_question', $additional_hidden_fields);
+		}else{
+			$question=new EE_Question();
+			$this->_set_add_edit_form_tags('insert_question');
+		}
+		$questionTypes=array();
+		$count=0;
+		foreach($this->_question_model->allowed_question_types() as $type){
+			$questionTypes[$count]=array('id'=>$type,'text'=>$type);
+			$count++;
+		}
+		$this->_template_args['QST_ID']=$ID;
+		$this->_template_args['question']=$question;
+		$this->_template_args['question_types']=$questionTypes;
+		
+		$this->_set_publish_post_box_vars( 'id', $ID );
+		// the details template wrapper
+		$this->display_admin_page_with_sidebar();	
+	}
+	protected function _edit_question_meta_box(){
+		add_meta_box('edit-question-mbox',__('Edit Question','event_espresso'),array($this,'edit_question_meta_box'),$this->wp_page_slug,'normal','high');
+	}
+	public function edit_question_meta_box(){
+		echo espresso_display_template(REGISTRATION_FORMS_TEMPLATE_PATH.'registration_forms_main_meta_box.template.php',$this->_template_args,TRUE);
+	}
 	protected function _delete_questions() {}
-	protected function _insert_or_update_question($new_question = TRUE) {}
+	protected function _insert_or_update_question($new_question = TRUE) {
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		$success=0;
+		$set_column_values=$this->_set_question_column_values();
+		require_once('EE_Question.class.php');
+		if($new_question){
+			$results=$this->_question_model->insert($set_column_values);
+			if($results){
+				$success=1;
+				$ID=$results['new-ID'];
+			}else{
+				$success=0;
+				$ID=false;
+			}
+			$action_desc='created';
+		}else{
+			$ID=absint($this->_req_data['QST_ID']);
+			$pk=$this->_question_model->primary_key_name();
+			$wheres=array($pk=>$ID);
+			unset($set_column_values[$pk]);
+			$success= $this->_question_model->update($set_column_values,$wheres);
+			$action_desc='updated';
+		}
+		//save the related options
+		//trash removed options, save old ones
+			//get list of all options
+		$question=$this->_question_model->get_one_by_ID($ID);
+		$options=$question->options();
+		foreach($options as $option_ID=>$option){
+			$option_req_index=$this->_get_option_req_data_index($option_ID);
+			if($option_req_index!==FALSE){
+				$option->save($this->_req_data['question_options'][$option_req_index]);
+			}else{
+				//not found, remove it
+				$option->delete();
+			}
+		}
+		//save new related options
+		foreach($this->_req_data['question_options'] as $index=>$option_req_data){
+			if(empty($option_req_data['QSO_ID']) && (!empty($option_req_data['QSO_name']) || !empty($option_req_data['QSO_value']))){//no ID! save it!
+				if(empty($option_req_data['QSO_value'])){
+					$option_req_data['QSO_value']=$option_req_data['QSO_name'];
+				}
+				if(empty($option_req_data['QSO_name'])){
+					$option_req_data['QSO_name']=$option_req_data['QSO_value'];
+				}
+				$new_option=new EE_Question_Option($option_req_data['QSO_name'], $option_req_data['QSO_value'], $question->ID());
+				$new_option->save();
+			}
+		}
+		$query_args=array('action'=>'edit_question','QST_ID'=>$ID);
+		$this->_redirect_after_action($success, $this->_question_model->item_name($success), $action_desc, $query_args);
+	}
+	
+	/**
+	 * Upon saving a question, there should be an array of 'question_options'. This array is index numerically, but not by ID 
+	 * (this is done because new question optiosn don't have an ID, but we may want to add multiple simultaneously).
+	 * So, this function gets the index in that request data array called question_options. Returns FALSE if not found.
+	 * @param int $ID of the question option to find
+	 * @return int indexin in question_options array if successful, FALSE if unsuccessful
+	 */
+	private function _get_option_req_data_index($ID){
+		$req_data_for_question_options=$this->_req_data['question_options'];
+		foreach($req_data_for_question_options as $num=>$option_data){
+			if(array_key_exists('QSO_ID',$option_data) && intval($option_data['QSO_ID'])==$ID){
+				return $num;
+			}
+		}
+		return FALSE;
+	}
 	protected function _trash_or_restore_questions($trash=TRUE){
 		return $this->_trash_or_restore_items($this->_question_model,$trash);
 	}

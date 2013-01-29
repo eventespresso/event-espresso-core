@@ -716,6 +716,7 @@ abstract class EEM_Base extends EE_Base {
 		//printr($em_updata, 'updata');
 		//printr($em_upformat, 'upformat');
 		// use $wpdb->update because it automagically escapes and sanitizes data for us
+
 		$row_results = $wpdb->update( $em_table_name, $em_updata, $em_where, $em_upformat, $em_where_format);
 
 		// set generic success / error mesasges
