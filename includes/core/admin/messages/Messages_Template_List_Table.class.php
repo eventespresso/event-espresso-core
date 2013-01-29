@@ -102,6 +102,17 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 			$i++;
 		}
 
+		if ( empty($m_values ) )
+			$m_values[] = array(
+				'id' => 'no_messenger_options',
+				'text' => __('No Messengers active', 'event_espresso')
+				);
+
+		if ( empty($mt_values) )
+			$mt_values[] = array(
+				'id' => 'no_message_type_options',
+				'text' => __('No Message Types active', 'event_espresso')
+				);
 		
 		$filters[] = EE_Form_Fields::select_input('ee_messenger_filter_by', $m_values, isset($this->_req_data['ee_messenger_filter_by']) ? sanitize_key( $this->_req_data['ee_messenger_filter_by']) : '' );
 		$filters[] = EE_Form_Fields::select_input('ee_message_type_filter_by', $mt_values, isset($this->_req_data['ee_message_type_filter_by']) ? sanitize_key( $this->_req_data['ee_message_type_filter_by']) : '');
