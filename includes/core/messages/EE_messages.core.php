@@ -301,7 +301,8 @@ class EE_messages {
 			'MTP_is_override' => 0,
 			'MTP_deleted' => 0,
 			'MTP_is_global' => $is_global,
-			'MTP_user_id' => get_current_user_id()
+			'MTP_user_id' => get_current_user_id(),
+			'MTP_is_active' => 1,
 		);
 
 		foreach ( $mt_contexts as $context ) {

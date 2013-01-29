@@ -668,6 +668,19 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'db-col' => 'MTP_is_override'
 				);
 
+			$sidebar_form_fiels['ee-msg-is-active'] = array(
+					'name' => 'MTP_is_active',
+					'label' => __('Active Template', 'event_espresso'),
+					'input' => 'hidden',
+					'type' => 'int',
+					'required' => FALSE,
+					'validation' => TRUE,
+					'value' => $message_template->is_active(),
+					'css_class' => '',
+					'format' => '%d',
+					'db-col' => 'MTP_is_active'
+				);
+
 			$sidebar_form_fields['ee-msg-deleted'] = array(
 					'name' => 'MTP_deleted',
 					'label' => null,
@@ -692,7 +705,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'db-col' => 'MTP_user_id'
 			);
 
-			$sidebar_array = array('ee-msg-is-global', 'ee-msg-is-override', 'ee-msg-deleted');
+			$sidebar_array = array('ee-msg-is-global', 'ee-msg-is-override', 'ee-msg-deleted', 'ee-msg-is-active');
 
 			//send to field generator
 			
@@ -848,7 +861,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'MTP_content' => maybe_serialize($this->_req_data['MTP_template_fields'][$index]['content']),
 			'MTP_is_global' => isset($this->_req_data['MTP_is_global']) ? absint($this->_req_data['MTP_is_global']) : 0,
 			'MTP_is_override' => isset($this->_req_data['MTP_is_override']) ? absint($this->_req_data['MTP_is_override']) : 0,
-			'MTP_deleted' => absint($this->_req_data['MTP_deleted'])
+			'MTP_deleted' => absint($this->_req_data['MTP_deleted']),
+			'MTP_is_active' => absint($this->_req_data['MTP_is_active'])
 		);
 		return $set_column_values;
 	}
@@ -961,13 +975,17 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		}
 
 		$MSG = new EE_messages();
-		
+
 		foreach ( $message_types as $message_type ) {
+			//first let's determine if we already HAVE global templates for this messenger and message_type combination.  If we do then NO generation!!
+			if ( $this->_already_generated($messenger, $message_type, $evt_id ) )
+				continue; //get out we've already got generated templates for this.
 			$new_message_template_group = $MSG->create_new_templates($messenger, $message_type, $evt_id, $global);
 			if ( is_wp_error($new_message_template_group) ) {
 				$this->_handle_errors($new_message_template_group);
 				continue;
 			}
+
 			$templates[] = $new_message_template_group;
 		}
 		
@@ -975,6 +993,30 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	}
 
+
+
+
+	/**
+	 * The purpose of this method is to determine if there are already generated templates in the database for the given variables.
+	 * @param  string $messenger     messenger
+	 * @param  string $message_type message type
+	 * @param  int $evt_id        Event ID ( if an event specific template)
+	 * @return bool                true = generated, false = hasn't been generated.
+	 */
+	private function _already_generated( $messenger, $message_type, $evt_id = NULL ) {
+		require_once EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php';
+		$MTP = EEM_Message_Template::instance();
+
+		//what method we use depends on whether we have an evt_id or not
+		$count = !empty( $evt_id) ? $MTP->get_event_message_templates_by_m_and_mt_and_evt( $messenger, $message_type, $evt_id, 'GRP_ID', 'ASC', NULL, TRUE ) : $MTP->get_global_message_template_by_m_and_mt( $messenger, $message_type, 'GRP_ID', 'ASC', NULL, TRUE);
+
+		//if the count is greater than 0 then we need to update the templates so they are active.
+		if ( $count > 0 ) {
+			$MTP->update( array('MTP_is_active' => 1), array('MTP_messenger' => $messenger, 'MTP_message_type' => $message_type ) );
+		}
+
+		return ( $count > 0 ) ? TRUE : FALSE;
+	}
 
 
 
@@ -1590,13 +1632,23 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			if ( $this->_activate_meta_box_type == 'messengers' && $this->_activate_state[0] == $this->_current_message_meta_box . '_active' ) {
 				$message_types = isset($this->_active_messengers[$this->_current_message_meta_box]['settings'][$this->_current_message_meta_box . '-message_types']) ? array_keys($this->_active_messengers[$this->_current_message_meta_box]['settings'][$this->_current_message_meta_box . '-message_types']) : NULL;
 				$templates = $this->_generate_new_templates($this->_current_message_meta_box, $message_types, '', TRUE);
-				//todo: templates aren't getting generated.
+				
 			}
 		} else {
+
+			//okay let's update the message templates that match this type (i.e. messenger or message type ) so that they are deactivated in the database as well.
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
+			$MTP = EEM_Message_Template::instance();
+			
+			$where_col = $this->_activate_meta_box_type == 'messengers' ? 'MTP_messenger' : 'MTP_message_type';
+			$success = $MTP->update( array( 'MTP_is_active' => 0 ), array( $where_col => $this->_current_message_meta_box ) );
+
+
 			unset($this->{$ref}[$this->_current_message_meta_box]);
 			update_user_meta($espresso_wp_user, 'ee_active_' . $this->_activate_meta_box_type, $this->{$ref});
+
 			$success_msg = sprintf( __('%s %s has been successfully deactivated', 'event_espresso'), ucwords(str_replace('_', ' ', $this->_current_message_meta_box) ) , ucwords(str_replace('_', ' ', rtrim($this->_activate_meta_box_type, 's') ) ) );
-			//todo: we need to delete any templates that are associated.  If this is a messenger, then delete all templates matching the messenger.  If this is a message_type, then delete all templates matching the message type.  We also need to make sure that any messengers that have this associated message type have that message type removed from the messenger settings.
+			
 		}
 
 		$espresso_notices['success'][] = $success_msg;
