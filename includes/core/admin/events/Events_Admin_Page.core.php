@@ -633,7 +633,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		add_meta_box('espresso_event_editor_venue', __('Venue Details', 'event_espresso'), array( $this, 'venue_metabox' ), $this->_current_screen->id, 'normal', 'core');
 
-		//add_meta_box('espresso_event_editor_email', __('Email Confirmation:', 'event_espresso'), array( $this, 'email_metabox' ), $this->_current_screen->id, 'advanced', 'core');
+		add_meta_box('espresso_event_editor_email', __('Email Confirmation:', 'event_espresso'), array( $this, 'email_metabox' ), $this->_current_screen->id, 'advanced', 'core');
 
 		add_meta_box('espresso_event_editor_primary_questions', __('Questions for Primary Attendee', 'event_espresso'), array( $this, 'primary_questions_group_meta_box' ), $this->_current_screen->id, 'side', 'core');
 
@@ -1996,12 +1996,19 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 	public function email_metabox() {
-		//todo: this needs to be moved into the the Messages_Admin_Page.core.php once the events_admin has been reworked to be in the new admin system.
 
 		//let's get the active messengers (b/c messenger objects have the active message templates)
 		$EEM_controller = new EE_Messages;
 		$active_messengers = $EEM_controller->get_active_messengers();
 		$tabs = array();
+
+		//empty messengers?
+		if ( empty( $active_messengers ) ) {
+			$msg_activate_url = wp_nonce_url( add_query_arg( array('action' => 'activate'), EE_MSG_ADMIN_URL ), 'activate_nonce' );
+			$tabbed_content = '<div class="error">' . sprintf( __('There are no active messengers. So no notifications will go out.  You will want to %sActivate a Messenger%s.', 'event_espresso'), '<a href="' . $msg_activate_url . '">', '</a>') . '</div>';
+			echo $tabbed_content;
+			return;
+		}
 
 		//get content for active messengers
 		foreach ( $active_messengers as $name => $messenger ) {
