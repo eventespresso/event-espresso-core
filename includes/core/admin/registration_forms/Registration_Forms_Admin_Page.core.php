@@ -139,6 +139,11 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 				'args' => array('trash' => FALSE),
 				'noheader' => TRUE
 				),
+			'delete_questions'=>array(
+				'func'=>'_delete_questions',
+				'args'=>array(),
+				'noheader'=>TRUE
+			),
 			'add_question_group' => '_question_group_details',
 			'edit_question_group' => array(
 				'func' => '_question_group_details',
@@ -465,7 +470,25 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 		$this->_redirect_after_action($success, $this->_question_model->item_name($success), 'trashed', $query_args);
 	}
 	protected function _delete_questions() {
-		
+		return $this->_delete_items($this->_question_model);;
+	}
+	private function _delete_items(EEM_TempBase $model){
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
+			
+// if array has more than one element than success message should be plural
+			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
+			// cycle thru bulk action checkboxes
+			while (list( $ID, $value ) = each($this->_req_data['checkbox'])) {
+
+				if (!$model->delete_permanently_by_ID(absint($ID))) {
+					$success = 0;
+				}
+				
+			}
+	
+		}
+		$this->_redirect_after_action( $success, $model->item_name($success), 'deleted permanently', array('status'=>'all') );
 	}
 	protected function _insert_or_update_question($new_question = TRUE) {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
