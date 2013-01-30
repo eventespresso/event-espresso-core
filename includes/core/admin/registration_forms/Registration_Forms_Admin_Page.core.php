@@ -176,16 +176,6 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 				'func' => '_trash_or_restore_question_group',
 				'args' => array('trash' => FALSE),
 				'noheader' => TRUE
-				),
-			'trash_question_groups' => array(
-				'func' => '_trash_or_restore_question_groups',
-				'args' => array('trash' => TRUE),
-				'noheader' => array('trash' => FALSE)
-				),
-			'restore_question_groups' => array(
-				'func' => '_trash_or_restore_question_groups',
-				'args' => array('trash' => FALSE),
-				'noheader' => array('trash' => FALSE)
 				)
 			);
 	}
@@ -392,6 +382,7 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 	}
 	
 	private function _set_add_question_object(){
+		echo "add question";
 		global $wpdb,$org_options,$espresso_premium,$current_user;
 		get_currentuserinfo();
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
@@ -473,7 +464,6 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 		$query_args=array('action'=>'default','status'=>'all');
 		$this->_redirect_after_action($success, $this->_question_model->item_name($success), 'trashed', $query_args);
 	}
-	
 	protected function _delete_question(){
 		$success=$this->_question_model->delete_permanently_by_ID(intval($this->_req_data['QST_ID']));
 		$query_args=array('action'=>'default','status'=>'all');
@@ -570,7 +560,7 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 		return FALSE;
 	}
 	protected function _trash_or_restore_questions($trash=TRUE){
-		return $this->_trash_or_restore_items($this->_question_model,$trash,null);
+		return $this->_trash_or_restore_items($this->_question_model,$trash);
 	}
 	
 	protected function _edit_question_group( $type = 'add' ) {
@@ -604,11 +594,6 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 	}
 	public function edit_questions_in_group_meta_box(){
 		echo espresso_display_template(REGISTRATION_FORMS_TEMPLATE_PATH.'questions_in_group_meta_box.template.php',$this->_template_args,TRUE);
-	}
-	protected function _trash_or_restore_question_group($trash=true){
-		$success=$this->_question_group_model->delete_by_ID(intval($this->_req_data['QSG_ID']));
-		$query_args=array('action'=>'question_groups','status'=>'all');
-		$this->_redirect_after_action($success, $this->_question_group_model->item_name($success), 'trashed', $query_args);
 	}
 	protected function _delete_question_groups() {}
 	protected function _insert_or_update_question_group($new_question_group = TRUE) {
@@ -657,7 +642,7 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 		
 	}
 	protected function _trash_or_restore_question_groups($trash = TRUE) {
-		return $this->_trash_or_restore_items($this->_question_group_model,$trash,'question_groups');
+		return $this->_trash_or_restore_items($this->_question_group_model,$trash);
 	}
 
 	/**
@@ -666,7 +651,7 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 	 * @param EEM_TempBase $model
 	 * @param boolean $trash wehter to trash or restore
 	 */
-	private function _trash_or_restore_items(EEM_TempBase $model,$trash = TRUE,$action_after_completed=null) {
+	private function _trash_or_restore_items(EEM_TempBase $model,$trash = TRUE) {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		//Checkboxes
 		//echo "trash $trash";
@@ -692,12 +677,8 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 			}
 			
 		}
-		$action_description=$trash?'trashed':'restored';
-		$args=array('status'=>'all');
-		if($action_after_completed){
-			$args['action']=$action_after_completed;
-		}
-		$this->_redirect_after_action( $success, $model->item_name($success), $action_description, $args );
+		$action=$trash?'trashed':'restored';
+		$this->_redirect_after_action( $success, $model->item_name($success), $action, array('status'=>'all') );
 	}
 
 	/***********/
