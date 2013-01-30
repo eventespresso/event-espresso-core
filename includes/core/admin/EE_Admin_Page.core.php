@@ -1165,22 +1165,26 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	private function _espresso_news_post_box() {
 		function espresso_news_post_box() {
-			?>
-			<div class="padding">
-				<div class="infolinks">
-					<?php
-					echo '<h2 style="margin:0">' . __('From the Blog', 'event_espresso') . '</h2>';
+		?>
+	  <div class="padding">
+	  	<div class="infolinks">
+	  		<?php
+	  		echo '<h4 style="margin:0">' . __('From the Blog', 'event_espresso') . '</h4>';
 
-					// Get RSS Feed(s)
-					@wp_widget_rss_output('http://eventespresso.com/feed/', array('show_date' => 0, 'items' => 6));
+	  		// Get RSS Feed(s)
+	  		@wp_widget_rss_output('http://eventespresso.com/feed/', array('show_date'=> 0,'items'    => 5));
 
-					echo '<h2 style="margin:0">' . __('From the Forums', 'event_espresso') . '</h2>';
+	  		/*echo '<h4 style="margin:0">' . __('From the Forums', 'event_espresso') . '</h4>';
 
-					@wp_widget_rss_output('http://eventespresso.com/forums/feed/', array('show_date' => 0, 'items' => 4));
-					?>
-				</div>
-			</div>
-			<?php
+	  		if ($espresso_premium == true){
+	  		@wp_widget_rss_output('http://eventespresso.com/forum/event-espresso-support/feed', array('show_date' => 0, 'items' => 4));
+	  		}else{
+	  		@wp_widget_rss_output('http://eventespresso.com/forum/event-espresso-public/feed', array('show_date' => 0, 'items' => 4));
+	  		}*/
+	  		?>
+	  	</div>
+	  </div>
+		<?php
 		}
 		add_meta_box('espresso_news_post_box', __('New @ Event Espresso', 'event_espresso'), 'espresso_news_post_box', $this->_wp_page_slug, 'side');
 	}
@@ -1188,33 +1192,87 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	private function _espresso_links_post_box() {
 		function espresso_links_post_box() {
-			?>
-			<div class="padding">
-				<ul class="infolinks">
-					<li><a href="http://eventespresso.com/support/installation/" target="_blank">
-							<?php _e('Installation &amp; Usage Guide', 'event_espresso'); ?>
-						</a></li>
-					<li><a href="http://eventespresso.com/forums/2010/09/css-classes/" target="_blank">
-							<?php _e('Customization Forums', 'event_espresso'); ?>
-						</a></li>
-					<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/" target="_blank">
-							<?php _e('Plugin Support Forums', 'event_espresso'); ?>
-						</a></li>
-					<li><a href="http://eventespresso.com/forums/category/general/features-requests/" target="_blank">
-							<?php _e('Feature Request Forums', 'event_espresso'); ?>
-						</a></li>
-					<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/bug-reports/" target="_blank">
-							<?php _e('Bug Submission Forums', 'event_espresso'); ?>
-						</a></li>
-					<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/news-and-updates/changelogs/" target="_blank">
-							<?php _e('Changelog', 'event_espresso'); ?>
-						</a></li>
-					<li><a href="http://eventespresso.com/download/plugins-and-addons/">
-							<?php _e('Plugins and Addons', 'event_espresso'); ?>
-						</a></li>
-				</ul>
-			</div>
-			<?php
+?>
+	   <div class="padding">
+	   	<ul class="infolinks">
+	   		<li>
+	   			<?php echo '<a href="http://eventespresso.com/wiki/installation/" target="_blank">'.__('Installation', 'event_espresso') . '</a>  &amp; <a href="http://eventespresso.com/wiki/setting-up-event-espresso/" target="_blank">' . __('Usage Guide').'</a>'; ?>
+	   		</li>
+	   		<li>
+		   		<a href="http://eventespresso.com/wiki/put-custom-templates/" target="_blank">
+	   				<?php _e('Template Customization', 'event_espresso'); ?>
+	   			</a>
+	   		</li>
+	   		<li>
+		   		<a href="http://eventespresso.com/support/forums/" target="_blank">
+	   				<?php _e('Support Forums', 'event_espresso'); ?>
+	   			</a>
+	   		</li>
+
+	   		<li>
+		   		<a href="http://eventespresso.com/wiki/change-log/" target="_blank">
+	   				<?php _e('Changelog', 'event_espresso'); ?>
+	   			</a>
+	   		</li>
+	   		<li>
+		   		<a href="http://eventespresso.com/about/" target="_blank">
+	   				<?php _e('Meet the Team', 'event_espresso'); ?>
+	   			</a>
+	   		</li>
+	   		<li>
+		   		<a href="http://eventespresso.com/rich-features/sponsor-new-features/" target="_blank">
+	   				<?php _e('Sponsor New Features!', 'event_espresso'); ?>
+	   			</a>
+	   		</li>
+	   		<li>
+	   			<?php echo '<a href="http://eventespresso.com/pricing/" target="_blank">'.__('Plugins', 'event_espresso'). '</a> &amp; <a href="http://eventespresso.com/add-ons/" target="_blank">' .__('Addons', 'event_espresso').'</a>'; ?><br />
+	   			<br />
+	   			<ol>
+	   				<li>
+		   				<a href="http://eventespresso.com/product/espresso-ticketing/" target="_blank">
+		   					<?php _e('Ticket Scanning', 'event_espresso'); ?>
+	   					</a>
+	   				</li>
+	   				<li>
+		   				<a href="http://eventespresso.com/product/espresso-multiple/" target="_blank">
+		   					<?php _e('Multiple Event Registration', 'event_espresso'); ?>
+	   					</a>
+	   				</li>
+	   				<li>
+		   				<a href="http://eventespresso.com/product/espresso-recurring/" target="_blank">
+		   					<?php _e('Recurring Events', 'event_espresso'); ?>
+	   					</a>
+	   				</li>
+	   				<li>
+		   				<a href="http://eventespresso.com/product/espresso-members/" target="_blank">
+		   					<?php _e('WP User Integration', 'event_espresso'); ?>
+	   					</a>
+	   				</li>
+	   				<li>
+		   				<a href="http://eventespresso.com/product/espresso-seating/" target="_blank">
+		   					<?php _e('Seating Chart', 'event_espresso'); ?>
+	   					</a>
+	   				</li>
+	   			</ol>
+	   		</li>
+	   	</ul>
+	</div>
+		   <?php
+		   global $espresso_premium;
+		   if ( ! $espresso_premium ) {
+		   	?>
+   	<div id="submitdiv2" class="postbox " >
+   		<h3>
+   			<?php _e('Sponsors', 'event_espresso'); ?>
+   		</h3>
+   		<div class="inside">
+   			<div class="padding">
+   				<?php echo wp_remote_retrieve_body(wp_remote_get('http://ee-updates.s3.amazonaws.com/plugin-sponsors.html')); ?>
+   			</div>
+   		</div>
+   	</div>
+		   	<?php
+			}			
 		}
 		add_meta_box('espresso_links_post_box', __('Helpful Plugin Links', 'event_espresso'), 'espresso_links_post_box', $this->_wp_page_slug, 'side');
 	}
@@ -1895,6 +1953,64 @@ abstract class EE_Admin_Page extends EE_BASE {
 	public function get_request_data() {
 		return $this->_req_data;
 	}
+
+
+
+
+
+	/**
+	 * correct variable display
+	 *
+	 * @access protected
+	 * @param array $var
+	 * @return string
+	 */
+	protected function _display_nice( $var ) {
+		return htmlentities( stripslashes( $var ), ENT_QUOTES, 'UTF-8' );
+	}
+
+
+
+	/**
+	 * updates events_organization_settings user_meta
+	 *
+	 * @access 	protected
+	 * @param string $tab
+	 * @param array $data
+	 * @param string $file	file where error occured
+	 * @param string $func function  where error occured
+	 * @param string $line	line no where error occured
+	 * @return boolean
+	 */
+	protected function _update_organization_settings( $tab, $data, $file = '', $func = '', $line = '' ) {
+		global $espresso_wp_user;
+		// grab existing org options
+		$org_options = get_user_meta( $espresso_wp_user, 'events_organization_settings', TRUE );
+		// make sure everything is in arrays
+		$org_options = is_array( $org_options ) ? $org_options : array( $org_options );
+		$data = is_array( $data ) ? $data : array( $data );
+		foreach ( $data as $key => $value ) {
+			$data[ $key ] = is_array( $value ) ? $value : addslashes( html_entity_decode( $value, ENT_QUOTES, 'UTF-8' ));
+		}
+		// overwrite existing org options with new data
+		$data = array_merge( $org_options, $data );
+		// and save it
+		if ( update_user_meta( $espresso_wp_user, 'events_organization_settings', $data )) {
+			EE_Error::add_success( sprintf( __('%s have been successfully updated.', 'event_espresso'), $tab ));
+			return TRUE;
+		} else {
+			$user_msg = sprintf( __('An error occured. The %s were not updated.', 'event_espresso'), $tab );
+			EE_Error::add_error( $user_msg, $file, $func, $line  );
+			return FALSE;
+		}			
+
+	}
+
+
+
+
+
+
 }
 
 	

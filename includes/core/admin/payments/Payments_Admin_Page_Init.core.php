@@ -43,8 +43,8 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 	}
 
 	protected function _set_init_properties() {
-		$this->label = __('Payments', 'event_espresso');
-		$this->menu_label = __('Payments', 'event_espresso');
+		$this->label = __('Payment Methods', 'event_espresso');
+		$this->menu_label = __('Payment Methods', 'event_espresso');
 		$this->menu_slug = EE_PAYMENTS_PG_SLUG;
 	}
 
