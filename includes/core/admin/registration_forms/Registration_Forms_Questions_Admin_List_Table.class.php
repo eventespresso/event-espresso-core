@@ -139,7 +139,7 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 
 
 		$edit_link = wp_nonce_url( add_query_arg( $edit_query_args, EE_FORMS_ADMIN_URL ), 'edit_question_nonce');
-		$trash_link = wp_nonce_url( add_query_arg( $trash_query_args, EE_FORMS_ADMIN_URL ), 'trash_question_none' );
+		$trash_link = wp_nonce_url( add_query_arg( $trash_query_args, EE_FORMS_ADMIN_URL ), 'trash_question_nonce' );
 		
 		$actions = array(
 			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>',

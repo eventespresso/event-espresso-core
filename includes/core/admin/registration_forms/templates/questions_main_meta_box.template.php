@@ -13,7 +13,7 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 ?>
 
 
-<div style='padding:1em;'>
+<div>
 	<table class='form-table'>
 		<tbody>
 			<?php foreach($question->get_fields_settings() as $fieldName=>$settings){

@@ -118,7 +118,7 @@ abstract class EE_Base_Class extends EE_Base{
 			$this->$privateAttributeName=$defaultValue;
 			return true;
 		}elseif($value===null & !$useDefault){
-			if(!$fieldSettings->nullable){
+			if(!$fieldSettings->nullable()){
 				$msg = sprintf( __( 'Event Espresso error setting value on field %s.||Field %s on class %s cannot be null, but you are trying to set it to null!', 'event_espresso' ), $fieldName,$fieldName,get_class($this));
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return false;
@@ -362,18 +362,20 @@ abstract class EE_Base_Class extends EE_Base{
 	/**
 	 * Adds a relationship to the specified EE_Base_Class object, given the relationship's name. Eg, if the curren tmodel is related
 	 * to a group of events, the $relationName should be 'Events', and should be a key in the EE Model's $_model_relations array
-	 * @param EE_Base_Class $otherObjectModel
+	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object
 	 * @param string $relationName eg 'Events','Question',etc.
 	 * @return boolean success
 	 */
-	protected function _add_relation_to(EE_Base_Class $otherObjectModel,$relationName){
+	protected function _add_relation_to($otherObjectModelObjectOrID,$relationName){
 		$model=$this->_get_model();
-		$success= $model->add_relation_to($this, $otherObjectModel, $relationName);
+		$success= $model->add_relation_to($this, $otherObjectModelObjectOrID, $relationName);
 		if($success){
 			//invalidate cached relations
 			//@todo: this could be optimized. Instead, we could just add $otherObjectModel toteh array if it's an array, or set it if it isn't an array
 			$this->clear_relation_cache($relationName);
-			$otherObjectModel->clear_relation_cache();
+			if($otherObjectModelObjectOrID instanceof EE_Base_Class){
+				$otherObjectModelObjectOrID->clear_relation_cache();
+			}
 			return $success;
 		}else{
 			return $success;
@@ -382,18 +384,20 @@ abstract class EE_Base_Class extends EE_Base{
 	/**
 	 * Removes a relationship to the psecified EE_Base_Class object, given the relationships' name. Eg, if the curren tmodel is related
 	 * to a group of events, the $relationName should be 'Events', and should be a key in the EE Model's $_model_relations array
-	 * @param EE_Base_Class $otherObjectModel
+	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object
 	 * @param string $relationName
 	 * @return boolean success
 	 */
-	protected function _remove_relation_to(EE_Base_Class $otherObjectModel,$relationName){
+	protected function _remove_relation_to($otherObjectModelObjectOrID,$relationName){
 		$model=$this->_get_model();
-		$success= $model->remove_relationship_to($this, $otherObjectModel, $relationName);
+		$success= $model->remove_relationship_to($this, $otherObjectModelObjectOrID, $relationName);
 		if($success){
 			//invalidate cached relations
 			//@todo: this could be optimized. Instead, we could just remove $otherObjectModel toteh array if it's an array, or unset it if it isn't an array
 			$this->clear_relation_cache($relationName);
-			$otherObjectModel->clear_relation_cache();
+			if($otherObjectModelObjectOrID instanceof EE_Base_Class){
+				$otherObjectModelObjectOrID->clear_relation_cache();
+			}
 			return $success;
 		}else{
 			return $success;

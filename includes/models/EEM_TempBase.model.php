@@ -305,8 +305,22 @@ abstract class EEM_TempBase extends EEM_Base{
 		}
 		return apply_filters('filter_hook_espresso_getRelated',$relatedObjects,$this,$modelObject,$relationName);
 	}
-	
-	public function remove_relationship_to(EE_Base_Class $thisModelObject,  EE_Base_Class $otherModelObject, $relationName){
+	/**
+	 * Removes a relationship of the correct type between $modelObject and $otherModelObject. 
+	 * There are the 3 cases:
+	 * 
+	 * 'belongsTo' relationship: sets $modelObject's foreign_key to null, if that field is nullable.Otherwise throws an error
+	 * 
+	 * 'hasMany' relationship: sets $otherModelObject's foreign_key to null,if that field is nullable.Otherwise throws an error
+	 * 
+	 * 'hasAndBelongsToMany' relationships:remoevs any existing entry in the join table between the two models.
+	 * 
+	 * @param EE_Base_Class $thisModelObject
+	 * @param mixed $otherModelObjectOrID EE_base_Class or ID of other Model Object
+	 * @param string $relationName
+	 * @return boolean of success
+	 */
+	public function remove_relationship_to(EE_Base_Class $thisModelObject,  $otherModelObjectOrID, $relationName){
 		/* @var $relatedModeInfo EE_Model_Relation*/
 		$relatedModelInfo=$this->related_settings_for($relationName);
 		$relatedModel=$relatedModelInfo->model_instance();
@@ -318,7 +332,7 @@ abstract class EEM_TempBase extends EEM_Base{
 				
 				if(!$fieldSettings->nullable()){
 					EE_Error::add_error(sprintf(__('Trying to set field %s to null in order to remove the relationship between %s and %s. However, this field cannot be null','event_espresso'),
-							$relatedModelInfo->field_name(),get_class($thisModelObject),get_class($otherModelObject)
+							$relatedModelInfo->field_name(),get_class($thisModelObject),$relationName
 							), __FILE__, __FUNCTION__, __LINE__);
 					return false;
 				}
@@ -332,9 +346,17 @@ abstract class EEM_TempBase extends EEM_Base{
 				
 				if(!$fieldSettings->nullable()){
 					EE_Error::add_error(sprintf(__('Trying to set field %s to null in order to remove the relationship between %s and %s. However, this field cannot be null','event_espresso'),
-							$relatedModelInfo->field_name(),get_class($thisModelObject),get_class($otherModelObject)
+							$relatedModelInfo->field_name(),get_class($thisModelObject),get_class($otherModelObjectOrID)
 							), __FILE__, __FUNCTION__, __LINE__);
 					return false;
+				}
+				if(!($otherModelObjectOrID instanceof EE_Base_Class)){
+					$otherModelId=$otherModelObjectOrID;
+					$otherModelSettings=$this->related_settings_for($relationName);
+					$otherModelInstance=$otherModelSettings->model_instance();
+					$otherModelObject=$otherModelInstance->get_one_by_ID($otherModelId);
+				}else{
+					$otherModelObject=$otherModelObjectOrID;
 				}
 				
 				//just set the other object's foreign key to null
@@ -343,8 +365,14 @@ abstract class EEM_TempBase extends EEM_Base{
 				break;
 			case 'hasAndBelongsToMany':
 				//first, if one of the modelObjects doesn't have an ID, it couldn't have this kind of relationship!
-				if(!$thisModelObject->ID() || !$otherModelObject->ID()){
+				if($otherModelObjectOrID instanceof EE_Base_Class && (!$thisModelObject->ID() || !$otherModelObjectOrID->ID())){
 					return true;//we removed teh relationship that doesn't exist. That's pretty successful right?
+				}
+				
+				if($otherModelObjectOrID instanceof EE_Base_Class){
+					$otherModelID=$otherModelObjectOrID->ID();
+				}else{
+					$otherModelID=$otherModelObjectOrID;
 				}
 				
 				/* @var $relatedModel EEM_TempBase*/
@@ -352,7 +380,7 @@ abstract class EEM_TempBase extends EEM_Base{
 				$thisPk=$this->primary_key_name();
 				$otherPk=$relatedModelInfo->field_name();
 				$success=$this->_delete($relatedModelInfo->join_table(),$this->_get_table_data_types(),array($thisPk=>$thisModelObject->ID(),
-																								$otherPk=>$otherModelObject->ID()));
+																								$otherPk=>$otherModelID));
 				return $success;
 				break;	
 			default:
@@ -372,11 +400,11 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * If one of the model Objects has not yet been saved to teh database, it is saved before adding the entry in the join table
 	 * 
 	 * @param EE_Base_Class $thisModelObject
-	 * @param EE_base_Class $otherModelObject
+	 * @param mixed $otherModelObjectOrID EE_base_Class or ID of other Model Object
 	 * @param string $relationName
 	 * @return boolean of success
 	 */
-	public function add_relation_to(EE_Base_Class $thisModelObject,EE_base_Class $otherModelObject, $relationName){
+	public function add_relation_to(EE_Base_Class $thisModelObject,$otherModelObjectOrID, $relationName){
 		/* @var $relatedModeInfo EE_Model_Relation*/
 		$relatedModelInfo=$this->related_settings_for($relationName);
 		
@@ -384,15 +412,29 @@ abstract class EEM_TempBase extends EEM_Base{
 		switch($relatedModelInfo->type()){
 			case 'belongsTo':
 				//just set its foreign_key to be that 
-				if(!$otherModelObject->ID()){
-					$otherModelObject->save();
+				if($otherModelObjectOrID instanceof EE_Base_Class){
+					if(!$otherModelObjectOrID->ID()){
+						$otherModelObjectOrID->save();
+					}
+					$ID=$otherModelObjectOrID->ID();
 				}
-				$thisModelObject->set($relatedModelInfo->field_name(),$otherModelObject->ID());
+				if(is_int($otherModelObjectOrID) || is_string($otherModelObjectOrID)){
+					$ID=$otherModelObjectOrID;
+				}
+				$thisModelObject->set($relatedModelInfo->field_name(),$ID);
 				return $thisModelObject->save();
 				break;
 			case 'hasMany':
 				if(!$thisModelObject->ID()){
 					$thisModelObject->save();
+				}
+				if(!($otherModelObjectOrID instanceof EE_TempBase)){
+					$otherModelId=$otherModelObjectOrID;
+					$otherModelSettings=$this->related_settings_for($relationName);
+					$otherModelInstance=$otherModelSettings->model_instance();
+					$otherModelObject=$otherModelInstance->get_one_by_ID($otherModelId);
+				}else{
+					$otherModelObject=$otherModelObjectOrID;
 				}
 				$otherModelObject->set($relatedModelInfo->field_name(),$thisModelObject->ID());
 				return $otherModelObject->save();
@@ -402,8 +444,14 @@ abstract class EEM_TempBase extends EEM_Base{
 				if(!$thisModelObject->ID()){
 					$thisModelObject->save();
 				}
-				if(!$otherModelObject->ID()){
-					$otherModelObject->save();
+				if($otherModelObjectOrID instanceof EE_Base_Class){
+					if(!$otherModelObjectOrID->ID()){
+						$otherModelObjectOrID->save();
+					}
+					$otherModelID=$otherModelObjectOrID->ID();
+				}
+				if(!($otherModelObjectOrID instanceof EE_Base_Class)){
+					$otherModelID=$otherModelObjectOrID;
 				}
 								
 				$relatedModel=$relatedModelInfo->model_instance();
@@ -412,12 +460,12 @@ abstract class EEM_TempBase extends EEM_Base{
 				$thisPk=$this->primary_key_name();
 				$otherPk=$relatedModelInfo->field_name();
 				$relationsToOtherObject=$this->get_many_related($thisModelObject,$relationName,array($thisPk=>$thisModelObject->ID(),
-																								$relatedModel->_get_table_name().".".$otherPk=>$otherModelObject->ID()));
+																								$relatedModel->_get_table_name().".".$otherPk=>$otherModelID));
 				//if it doesn't exist, add it
 				if(empty($relationsToOtherObject)){
 					$result=$this->_insert($relatedModelInfo->join_table(), 
 								array($thisPk=>'%d',$otherPk=>'%d'), 
-								array($thisPk=>$thisModelObject->ID(),$otherPk=>$otherModelObject->ID()));
+								array($thisPk=>$thisModelObject->ID(),$otherPk=>$otherModelID));
 					return !empty($result);
 				}else{
 					return false;
@@ -737,7 +785,7 @@ class EE_Model_Relation{
 	/**
 	 * Using the info in this ModelRelation, fetches an instance of the related model,
 	 * which can then be used for querying.
-	 * @return EEM_Base
+	 * @return EEM_TempBase
 	 */
 	public function model_instance(){
 		$modelName="EEM_".$this->model();

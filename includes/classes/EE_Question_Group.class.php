@@ -242,18 +242,18 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	
 	/**
 	 * Adds the question to this question group
-	 * @param EE_Question $question
+	 * @param EE_Question || int $question object or ID
 	 * @return boolean if successful
 	 */
-	public function add_question($question){
-		return $this->_add_relation_to($question, 'Questions');
+	public function add_question($questionObjectOrID){
+		return $this->_add_relation_to($questionObjectOrID, 'Questions');
 	}
 	/**
 	 * Removes the question from this question group
-	 * @param EE_Question $question
+	 * @param EE_Question || int $question object or ID
 	 * @return boolean of success
 	 */
-	public function remove_question($question){
-		return $this->_remove_relation_to($question, 'Questions');
+	public function remove_question($questionObjectOrID){
+		return $this->_remove_relation_to($questionObjectOrID, 'Questions');
 	}
 }
