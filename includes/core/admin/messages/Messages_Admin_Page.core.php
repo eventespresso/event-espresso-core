@@ -1008,7 +1008,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$MTP = EEM_Message_Template::instance();
 
 		//what method we use depends on whether we have an evt_id or not
-		$count = !empty( $evt_id) ? $MTP->get_event_message_templates_by_m_and_mt_and_evt( $messenger, $message_type, $evt_id, 'GRP_ID', 'ASC', NULL, TRUE ) : $MTP->get_global_message_template_by_m_and_mt( $messenger, $message_type, 'GRP_ID', 'ASC', NULL, TRUE);
+		$count = !empty( $evt_id) ? $MTP->get_event_message_templates_by_m_and_mt_and_evt( $messenger, $message_type, $evt_id, 'GRP_ID', 'ASC', NULL, TRUE, FALSE ) : $MTP->get_global_message_template_by_m_and_mt( $messenger, $message_type, 'GRP_ID', 'ASC', NULL, TRUE, FALSE);
+
 
 		//if the count is greater than 0 then we need to update the templates so they are active.
 		if ( $count > 0 ) {

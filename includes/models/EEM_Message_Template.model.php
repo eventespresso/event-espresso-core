@@ -184,9 +184,11 @@ class EEM_Message_Template extends EEM_Base {
 			return FALSE;
 		}
 
-		//need to make sure we only return ACTIVE templates
-		$active = array( 'MTP_is_active' => 1 );
-		$where_cols_n_values = array_merge( $active, $where_cols_n_values );
+		//need to make sure we only return ACTIVE templates BUT only if the 'MTP_is_active' reference isn't already in the where array.
+		if ( !isset( $where_cols_n_values['MTP_is_active'] ) ) {
+			$active = array( 'MTP_is_active' => 1 );
+			$where_cols_n_values = array_merge( $active, $where_cols_n_values );
+		}
 
 		// retrieve all templates
 		if ($templates = $this->select_all_where( $where_cols_n_values, $orderby, $order )) {
@@ -240,9 +242,11 @@ class EEM_Message_Template extends EEM_Base {
 			return FALSE;
 		}
 
-		//need to make sure we only return ACTIVE templates
-		$active = array( 'MTP_is_active' => 1 );
-		$where_cols_n_values = array_merge( $active, $where_cols_n_values );
+		//need to make sure we only return ACTIVE templates BUT only if the 'MTP_is_active' reference isn't already in the where array.
+		if ( !isset( $where_cols_n_values['MTP_is_active'] ) ) {
+			$active = array( 'MTP_is_active' => 1 );
+			$where_cols_n_values = array_merge( $active, $where_cols_n_values );
+		}
 
 		//get group_id
 		$group_id = $this->get_message_template_grp_ID( $where_cols_n_values );
@@ -266,9 +270,11 @@ class EEM_Message_Template extends EEM_Base {
 			return FALSE;
 		}
 
-		//need to make sure we only return ACTIVE templates
-		$active = array( 'MTP_is_active' => 1 );
-		$where_cols_n_values = array_merge( $active, $where_cols_n_values );
+		//need to make sure we only return ACTIVE templates BUT only if the 'MTP_is_active' reference isn't already in the where array.
+		if ( !isset( $where_cols_n_values['MTP_is_active'] ) ) {
+			$active = array( 'MTP_is_active' => 1 );
+			$where_cols_n_values = array_merge( $active, $where_cols_n_values );
+		}
 
 		global $wpdb;
 		return $this->select_value_where($this->table_name, $this->table_data_types, 'GRP_ID', $where_cols_n_values );
@@ -361,10 +367,24 @@ class EEM_Message_Template extends EEM_Base {
 	 * @param  string $message_type slug for message type
 	 * @param  string $orderby      what column to orderby
 	 * @param  string $order        ASC or DESC
+	 * @param  mixed (array|null) $limit array($offset, $num)
+	 * @param  bool   $count        true = just return count, false = objects
+	 * @param  bool   $active  		ignore "active" or not. (default only return active)
 	 * @return ARRAY               message template objects that are global (i.e. non-event)
 	 */
-	public function get_global_message_template_by_m_and_mt($messenger, $message_type, $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE) {
-		return $this->get_all_message_templates_where(array('MTP_deleted' => FALSE, 'MTP_messenger' => $messenger, 'MTP_message_type' => $message_type, 'MTP_is_global' => TRUE), $orderby, $order, $limit, $count );
+	public function get_global_message_template_by_m_and_mt($messenger, $message_type, $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE, $active = TRUE ) {
+		$_where = array(
+			'MTP_deleted' => FALSE,
+			'MTP_messenger' => $messenger,
+			'MTP_message_type' => $message_type,
+			'MTP_is_global' => TRUE
+			);
+
+		if ( !$active ) {
+			$_where['MTP_is_active'] = FALSE;
+		}
+
+		return $this->get_all_message_templates_where($_where, $orderby, $order, $limit, $count );
 	}
 
 
@@ -376,11 +396,26 @@ class EEM_Message_Template extends EEM_Base {
 	 * @param  string  $message_type 
 	 * @param  string  $orderby      pointless at this point but still included
 	 * @param  string  $order        
-	 * @param  boolean $count        return count or objects
+	 * @param  mixed (array|null) $limit array($offset, $num)
+	 * @param  bool   $count        true = just return count, false = objects
+	 * @param  bool   $active  		ignore "active" or not. (default only return active)
 	 * @return mixed (int|array)                depending on $count.
 	 */
-	public function get_event_message_templates_by_m_and_mt_and_evt( $messenger, $message_type, $evt_id, $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE ) {
-		return $this->get_all_message_templates_where( array( 'MTP_is_global' => FALSE, 'EVT_ID' => $evt_id, 'MTP_messenger' => $messenger, 'MTP_message_type' => $message_type), $orderby, $order, $limit, $count );
+	public function get_event_message_templates_by_m_and_mt_and_evt( $messenger, $message_type, $evt_id, $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE, $active = TRUE ) {
+
+		$_where = array(
+			'MTP_deleted' => FALSE,
+			'MTP_messenger' => $messenger,
+			'MTP_message_type' => $message_type,
+			'EVT_ID' => $evt_id,
+			'MTP_is_global' => TRUE
+			);
+
+		if ( !$active ) {
+			$_where['MTP_is_active'] = FALSE;
+		}
+
+		return $this->get_all_message_templates_where( $_where, $orderby, $order, $limit, $count );
 	}
 
 	/**
