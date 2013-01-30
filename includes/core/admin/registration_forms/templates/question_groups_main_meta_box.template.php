@@ -1,6 +1,6 @@
 <?php
 //requiresd variables
-assert($QSG_ID);//question gruop's ID
+assert(isset($QSG_ID));//question gruop's ID
 assert($question_group);//the main question group
 assert($question_group instanceof EE_Question_Group);
 
