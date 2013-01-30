@@ -234,9 +234,11 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 				'action' => 'default',
 				'EVT_ID' => $item->event_id
 			);
-		$attendees_link = wp_nonce_url( add_query_arg( $attendees_query_args, ATT_ADMIN_URL ), 'default_nonce' );
-
-		return '<a href="' . $attendees_link . '">' . get_number_of_attendees_reg_limit($item->event_id, 'num_attendees_slash_reg_limit' ) . '</a>';
+		$attendees_link = wp_nonce_url( add_query_arg( $attendees_query_args, ATT_ADMIN_URL ), 'default_nonce' );	
+		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
+		$registered_attendees = EEM_Attendee::instance()->get_event_attendees( $item->event_id, FALSE, FALSE, FALSE, 'REG_date', 'DESC', FALSE, 'COUNT' );
+		$registered_attendees = $registered_attendees ? $registered_attendees : 0;
+		return '<a href="' . $attendees_link . '">' . $registered_attendees . '/' . $item->reg_limit . '</a>';
 	}
 
 
