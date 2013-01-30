@@ -200,6 +200,128 @@ class EEM_Attendee extends EEM_Base {
 
 
 
+
+	/**
+	 * retrieve all "in use" attendees (i.e. non trashed)
+	 * @param  int  			$EVT_ID 		event ID
+	 * @param  int  			$CAT_ID 		category ID
+	 * @param  string		$reg_status reg STS_ID
+	 * @param  boolean  $trashed 	whether to return list of active or deleted attendees
+	 * @param  string 		$orderby 	field to orderby
+	 * @param  string 	 	$sort    		field to sortby
+	 * @param  mixed	 	$limit   		if FALSE no limit other wise limit an array with offset and limit.
+	 * @param  string	 	$output  		WP data type to return OR 'COUNT' to return count.
+	 * @return mixed           				FALSE if no data, count or array of attendee objects.
+	 */
+	public function get_event_attendees( $EVT_ID = FALSE, $CAT_ID = FALSE, $reg_status = FALSE, $trashed = FALSE, $orderby = 'ATT_lname', $sort = 'DESC', $limit = FALSE, $output = 'OBJECT_K' ) {
+		
+		global $wpdb;
+		
+		$where['ATT_deleted'] = $trashed;
+		
+		if ( $EVT_ID ) {
+			$where['EVT_ID'] = $EVT_ID;
+		}
+		
+		$select = $output == 'COUNT' ? 'COUNT(reg.ATT_ID)' : 'att.ATT_ID, CONCAT(att.ATT_fname, " ", att.ATT_lname) AS ATT_name, reg.REG_ID, reg.REG_code, reg.STS_ID AS REG_status, reg.REG_final_price, reg.REG_date, reg.REG_is_primary, dtt.DTT_EVT_start, evt.id AS EVT_ID, evt.event_name, evt.require_pre_approval, txn.TXN_ID, txn.TXN_total, txn.STS_ID AS txn_status, prc.PRC_name';
+
+		$SQL = 'SELECT ' . $select;  
+		$SQL .= ' FROM ' . $wpdb->prefix . 'esp_attendee att';
+		$SQL .= ' LEFT JOIN ' . $wpdb->prefix . 'esp_registration reg ON reg.ATT_ID = att.ATT_ID';
+		$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID';
+		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_transaction txn ON txn.TXN_ID = reg.TXN_ID';
+		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_price prc ON prc.PRC_ID = reg.PRC_ID';
+		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_datetime dtt ON dtt.DTT_ID = reg.DTT_ID';
+
+		if ( $CAT_ID ) {
+			$SQL .= ' JOIN ' . EVENTS_CATEGORY_REL_TABLE . ' ect ON ect.event_id = evt.id';
+			$SQL .= ' JOIN ' . EVENTS_CATEGORY_TABLE . ' cat ON  cat.id = ect.cat_id';
+		}
+
+		$sql_clause = ' WHERE ';
+
+		if ( $CAT_ID ) {
+			$SQL .= $sql_clause .'cat.id = "' . $CAT_ID . '"';
+			$sql_clause = ' AND ';
+		}
+
+		if ( $reg_status ) {
+			$SQL .= $sql_clause .'reg.STS_ID = "' . $reg_status  . '"';
+			$sql_clause = ' AND ';
+		}
+
+		if ( $EVT_ID ) {
+			$SQL .= $sql_clause .' reg.EVT_ID = "' . $EVT_ID  . '"';
+			$sql_clause = ' AND ';
+		}
+
+//		if ( $month_range ) {
+//			$pieces = explode('-', $month_range, 3);
+//			$year_r = $pieces[0];
+//			$month_r = $pieces[1];
+//
+//			$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . strtotime( $month_r . ' 01 ' . $year_r . ' ' . $time_start ) . '" ';
+//			$SQL .= 'AND "' . strtotime( $month_r . ' ' . date( 't', strtotime( $year_r . ' ' . $month_r )) . ' ' . $year_r . ' ' . $time_end )  . '"';
+//			$sql_clause = ' AND ';
+//		}
+//
+//		if ( $today_a ) {
+//			$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . $curdate . $time_start . '" AND "' . $curdate . $time_end  . '"';
+//			$sql_clause = ' AND ';
+//		}
+//
+//		if ( $this_month_a ) {
+//			$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . strtotime( $this_year_r . '-' . $this_month_r . '-01' . $time_start ) . '" AND "' . strtotime( $this_year_r . '-' . $this_month_r . '-' . $days_this_month . $time_end )  . '"';
+//			$sql_clause = ' AND ';
+//		}
+
+//		if (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
+//			$SQL .= $sql_clause . ' evt.wp_user = "' . espresso_member_data('id')  . '"';
+//			$sql_clause = ' AND ';
+//		}
+
+		$SQL .= $sql_clause . ' evt.event_status != "D" ';
+
+		//let's setup orderby
+		switch ( $orderby ) {
+			case 'REG_ID':
+				$orderby = 'reg.REG_ID';
+				break;
+			case 'STS_ID':
+				$orderby = 'REG_status';
+				break;
+			case 'REG_att_name':
+				$orderby = 'REG_att_name';
+				break;
+			case 'event_name':
+				$orderby = 'evt.event_name';
+				break;
+			case 'DTT_EVT_start':
+				$orderby = 'dtt.DTT_EVT_start';
+				break;
+			default: //'REG_date'
+				$orderby = 'reg.REG_date';
+		}
+
+		//let's setup limit
+		$limit = !empty($limit) ? 'LIMIT ' . implode(',', $limit) : '';
+		$SQL .= $output == 'COUNT' ? '' : " ORDER BY $orderby $sort $limit";
+
+		
+		// retreive all attendees	
+		$attendees = $output == 'COUNT' ? $wpdb->get_var( $SQL ) : $wpdb->get_results( $SQL );
+
+		if ( empty($attendees) || $attendees === FALSE || is_wp_error($attendees) )
+			return FALSE;
+		
+//		printr( $attendees, '$attendees  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+		return $attendees;
+		
+	}
+
+
+
 	
 
 
