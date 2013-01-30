@@ -322,7 +322,7 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
 		//$ATT_MDL = EEM_Attendee::instance();
 		
-		$EVT_ID = isset($this->_req_data['EVT_ID']) ? absint( $this->_req_data['EVT_ID'] ) : FALSE;
+		$EVT_ID = isset($this->_req_data['event_id']) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$CAT_ID = isset($this->_req_data['category_id']) ? absint( $this->_req_data['category_id'] ) : FALSE;
 		$reg_status = isset($this->_req_data['reg_status']) ? sanitize_text_field( $this->_req_data['reg_status'] ) : FALSE;
 		

@@ -142,22 +142,22 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 		$edit_query_args = array(
 				'action' => 'edit_event',
-				'EVT_ID' => $item->event_id
+				'event_id' => $item->event_id
 			);
 
 		$delete_query_args = array(
 				'action' => 'delete_events',
-				'EVT_ID' => $item->event_id
+				'event_id' => $item->event_id
 			);
 
 		$attendees_query_args = array(
 				'action' => 'default',
-				'EVT_ID' => $item->event_id
+				'event_id' => $item->event_id
 			);
 
 		$export_query_args = array(
 				'action' => 'export_events',
-				'EVT_ID' => $item->event_id
+				'event_id' => $item->event_id
 			);
 
 
@@ -232,7 +232,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	public function column_attendees($item) {
 		$attendees_query_args = array(
 				'action' => 'default',
-				'EVT_ID' => $item->event_id
+				'event_id' => $item->event_id
 			);
 		$attendees_link = wp_nonce_url( add_query_arg( $attendees_query_args, ATT_ADMIN_URL ), 'default_nonce' );	
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
@@ -250,27 +250,27 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 		$edit_query_args = array(
 				'action' => 'edit_event',
-				'EVT_ID' => $item->event_id
+				'event_id' => $item->event_id
 			);
 
 		$delete_query_args = array(
 				'action' => 'delete_events',
-				'EVT_ID' => $item->event_id
+				'event_id' => $item->event_id
 			);
 
 		$attendees_query_args = array(
 				'action' => 'default',
-				'EVT_ID' => $item->event_id
+				'event_id' => $item->event_id
 			);
 
 		$reports_query_args = array(
 				'action' => 'view_report',
-				'EVT_ID' => $item->event_id
+				'event_id' => $item->event_id
 			);
 
 		$export_query_args = array(
 				'action' => 'export_events',
-				'EVT_ID' => $item->event_id
+				'event_id' => $item->event_id
 			);
 
 
