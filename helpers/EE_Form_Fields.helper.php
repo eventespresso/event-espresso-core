@@ -298,7 +298,8 @@ class EE_Form_Fields {
 	 * @static
 	 * @access public
 	 * @param  string  $name       field name
-	 * @param  array  $values     option values
+	 * @param  array  $values     option values, numbered array starting at 0, where each value is an array with a key 'text' (meaning text to display' and 'id' (meaning the internal value)
+	 * eg: array(1=>array('text'=>'Monday','id'=>1),2=>array('text'=>'Tuesday','id'=>2)...)
 	 * @param  string  $default    default value
 	 * @param  string  $parameters extra paramaters
 	 * @param  string  $class      css class
@@ -343,6 +344,16 @@ class EE_Form_Fields {
 		$field .= '</select>';
 
 		return $field;
+	}
+	
+	/**
+	 * Simply return sthe HTML for a hidden input of the given name and value.
+	 * @param string $name
+	 * @param string $value
+	 * @return string HTML
+	 */
+	static function hidden_input($name,$value){
+		return "<input type='hidden' name='$name' value='$value'/>";
 	}
 
 

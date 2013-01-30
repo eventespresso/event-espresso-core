@@ -87,6 +87,22 @@ abstract class EEM_Base extends EE_Base {
 		$results = $this->_select_all_where ( $this->table_name, $this->table_data_types, $where_cols_n_values, $orderby, $sort, $operator, $limit, $output );
 		return $results;
 	}
+	
+	/**
+	 *		Function for running a join query
+	 *		@param string $joinStatement eg "tablex innner join tably on tablex.x=tabley.y"
+	 *		@param mixed (string, array) 		$where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause
+	 *		@param mixed (string, array)		$orderby - cloumn names to be used for sorting
+	 *		@param string								$sort - ASC or DESC
+	 *		@param array $limit send along limit offset for paging purposes
+	 *		@param mixed (string, array)		$operator -  operator to be used for WHERE clause  > = <
+	 *		@param string								$output - WP output types && count - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N, COUNT (=count of rows);
+	 *		@return mixed (object, array)
+	 * @return type
+	 */
+	protected function select_all_join_where($joinStatement,$where_cols_n_values=FALSE,$orderby=FALSE,$sort='ASC',$operator='=',$limit=FALSE,$output='OBJECT_K'){
+		return $this->_select_all_where($joinStatement, $this->table_data_types, $where_cols_n_values, $orderby, $sort, $operator, $limit, $output);
+	}
 
 
 
@@ -292,8 +308,9 @@ abstract class EEM_Base extends EE_Base {
 		
 		global $wpdb;
 		$wpdb->show_errors();
+		//echo "QUERY:".$wpdb->prepare( $SQL, $VAL );
 		$results = $output == 'COUNT' ? $wpdb->get_var( $wpdb->prepare( $SQL, $VAL ) ) : $wpdb->get_results( $wpdb->prepare( $SQL, $VAL ), $output );
-
+		//VAR_DUMP($results);
 		return $results;
 	}
 
@@ -699,6 +716,7 @@ abstract class EEM_Base extends EE_Base {
 		//printr($em_updata, 'updata');
 		//printr($em_upformat, 'upformat');
 		// use $wpdb->update because it automagically escapes and sanitizes data for us
+
 		$row_results = $wpdb->update( $em_table_name, $em_updata, $em_where, $em_upformat, $em_where_format);
 
 		// set generic success / error messages
@@ -755,14 +773,14 @@ abstract class EEM_Base extends EE_Base {
 	/**
 	 *		This function will delete a row from a table
 	 *
-	 *		@access private
+	 *		@access private --set to protected whiel EEM_TempBase is seperate from EEM_Base
 	 *		@param string - $em_table_name -
 	 *		@param array - $em_table_data_types
 	 *		@param mixed (string, array) - $where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause
 	 *		@param mixed (string, array) - $operator -  operator to be used for WHERE clause  > = <
 	 *		@return mixed (object, array)
 	 */
-	private function _delete ( $em_table_name=FALSE, $em_table_data_types=array(), $where_cols_n_values=FALSE, $operator = '=' ) {
+	protected function _delete ( $em_table_name=FALSE, $em_table_data_types=array(), $where_cols_n_values=FALSE, $operator = '=' ) {
 
 		// what?? no table name ??? Get outta here!!!
 		if ( ! $em_table_name ) {
@@ -842,7 +860,7 @@ abstract class EEM_Base extends EE_Base {
 				$operator = array( $column_name => $operator );
 			}
 			// build this segment of the WHERE clause
-			$WHR .= $column_name . ' ' . $operator[$column_name] . "'" . $em_table_data_types[$column_name] . "'";
+			$WHR .= $column_name . ' ' . $operator[$column_name] .  $em_table_data_types[$column_name] ;
 			$value_parameters[ $column_name ] = $value;
 
 			// add the AND before adding the next segment of the WHERE clause

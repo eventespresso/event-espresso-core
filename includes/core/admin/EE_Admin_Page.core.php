@@ -580,7 +580,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	private function _route_admin_request() {
 
 		if ( $this->_req_action != 'default' ) {
-			wp_verify_nonce( $this->_req_nonce );
+			if ( !wp_verify_nonce( $this->_req_nonce ) ) {
+				wp_die( sprintf(__('%sNonce Fail.%s' , 'event_espresso'), '<a href="http://www.youtube.com/watch?v=56_S0WeTkzs">', '</a>' ) );
+			}
 		}		
 
 		$this->_set_nav_tabs(); //set the nav_tabs array

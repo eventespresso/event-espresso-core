@@ -41,8 +41,8 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 
 	protected function _setup_data() {
 		$this->_per_page = $this->get_items_per_page( $this->_screen . '_per_page' );
-		$this->_data = $this->_view != 'trash' ? $this->_admin_page->get_questions( $this->_per_page, FALSE ) : $this->_admin_page->get_trashed_questions( $this->_per_page, FALSE );
-		$this->_all_data_count = $this->_view != 'trash' ? $this->_admin_page->get_questions( $this->_per_page, TRUE ) : $this->_admin_page->get_trashed_questions( $this->_per_page, TRUE );
+		$this->_data = $this->_view != 'trash' ? $this->_admin_page->get_questions( $this->_per_page,$this->_current_page, FALSE ) : $this->_admin_page->get_trashed_questions( $this->_per_page,$this->_current_page, FALSE );
+		$this->_all_data_count = $this->_view != 'trash' ? $this->_admin_page->get_questions( $this->_per_page,$this->_current_page, TRUE ) : $this->_admin_page->get_trashed_questions( $this->_per_page,$this->_current_page, TRUE );
 	}
 
 
@@ -68,8 +68,8 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 			);
 
 		$this->_sortable_columns = array(
-			'id' => array( 'q.id' => true ),
-			'name' => array( 'q.question_name' => false )
+			'id' => array( 'QST_ID' => true ),
+			'name' => array( 'QST_display_text' => false )
 			);
 
 		$this->_hidden_columns = array(
@@ -94,8 +94,8 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 
 
 	protected function _add_view_counts() {
-		$this->_views['all']['count'] = $this->_admin_page->get_questions( $this->_per_page, TRUE );
-		$this->_views['trash']['count'] = $this->_admin_page->get_trashed_questions( $this->_per_page, TRUE );
+		$this->_views['all']['count'] = $this->_admin_page->get_questions( $this->_per_page,$this->_current_page, TRUE );
+		$this->_views['trash']['count'] = $this->_admin_page->get_trashed_questions( $this->_per_page,$this->_current_page, TRUE );
 	}
 
 
@@ -103,8 +103,8 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 
 
 
-	public function column_cb($item) {
-		return sprintf( '<input type="checkbox" name="question_id[]" value="%s" />', $item->id);
+	public function column_cb(EE_Question $item) {
+		return sprintf( '<input type="checkbox" name="checkbox[%d]" value="%d" />',$item->ID(), $item->ID());
 	}
 
 
@@ -112,19 +112,74 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 
 
 	public function column_default($item) {
-		switch($column_name){
+		/*switch($column_name){
             case 'question_id':
 				return $item[$column_name];
              default:
 				return ( isset( $item->$column_name )) ? $item->$column_name : '';
-        }
+        }*/
 	}
 
-	public function column_name($item) {}
-	public function column_values($item) {}
-	public function column_type($item) {}
-	public function column_required($item) {}
-	public function column_admin_only($item) {}
+	public function column_name(EE_Question $item) {
+		//return $item->display_text();
+		
+		if ( !defined('ATT_ADMIN_URL') )
+			define('ATT_ADMIN_URL', EVENTS_ADMIN_URL);
+
+		$edit_query_args = array(
+				'action' => 'edit_question',
+				'QST_ID' => $item->ID()
+			);
+
+		$trash_query_args = array(
+				'action' => 'trash_question',
+				'QST_ID' => $item->ID()
+			);
+
+
+
+		$edit_link = wp_nonce_url( add_query_arg( $edit_query_args, EE_FORMS_ADMIN_URL ), 'edit_question_nonce');
+		$trash_link = wp_nonce_url( add_query_arg( $trash_query_args, EE_FORMS_ADMIN_URL ), 'trash_question_nonce' );
+		
+		$actions = array(
+			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>',
+			'delete' => '<a href="' . $trash_link . '" title="' . __('Delete Event', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>',
+			);
+
+		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->display_text() . '</a></strong>';
+		$content .= $this->row_actions($actions);
+		return $content;
+		
+	}
+	public function column_values(EE_Question $item) {
+		
+		$optionNames=array();
+		$options= $item->options();
+		foreach($options as $optionID=>$option){
+			/* @var $option EE_Question_Option */
+			$optionNames[]=$option->value();
+		}
+		return implode(",",$optionNames);
+	}
+	public function column_type(EE_Question $item) {
+		return $item->type();
+	}
+	public function column_required(EE_Question $item) {
+		$returnText='';
+		if($item->required()){
+			$returnText='Required';
+		}else{
+			$returnText='Optional';
+		}
+		return $returnText;
+	}
+	public function column_admin_only(EE_Question $item) {
+		if($item->admin_only()){
+			return "Admin Only";
+		}else{
+			return "";
+		}
+	}
 
 
 

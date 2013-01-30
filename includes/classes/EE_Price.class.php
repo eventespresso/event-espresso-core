@@ -1,6 +1,6 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
- * Event Espresso
+ * Event Espresso 
  *
  * Event Registration and Management Plugin for WordPress
  *

@@ -376,7 +376,6 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		$this->_set_column_info();
 		//$this->_column_headers = $this->get_column_info();
 		$total_items = $this->_all_data_count;
-
 		$this->process_bulk_action();
 
 		$this->items = $this->_data;
