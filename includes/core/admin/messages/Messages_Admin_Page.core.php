@@ -1636,12 +1636,48 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				
 			}
 		} else {
-
-			//okay let's update the message templates that match this type (i.e. messenger or message type ) so that they are deactivated in the database as well.
+			
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
 			$MTP = EEM_Message_Template::instance();
-			
+
+			//first lets make sure that there are NO existing event templates for the given messenger or message type.  If there ARE then we need to drop out with an error message, prevent deactivation and display warning.
 			$where_col = $this->_activate_meta_box_type == 'messengers' ? 'MTP_messenger' : 'MTP_message_type';
+			$_where = array(
+				$where_col => $this->_current_message_meta_box,
+				'MTP_is_global' => FALSE
+				);
+			$event_templates = $MTP->get_all_message_templates_where( $_where );
+
+			if ( count($event_templates) > 0 ) {
+				$m_label_pl = $this->_activate_meta_box_type == 'messengers' ? __('Messengers', 'event_espresso') : __('Message Types', 'event_espresso');
+				$m_label_sg = $this->_activate_meta_box_type == 'messengers' ? __('messenger', 'event_espresso') : __('message type', 'event_espresso');
+				$warning_msg = sprintf( __('<strong>Warning:</strong> %s cannot be deleted if there are any Events currently using a custom template for it. Before you can deactivate the "%s" %s, you must switch the following "Events" to use global templates:', 'event_espresso' ), $m_label_pl, $this->_current_message_meta_box, $m_label_sg  );
+				$warning_msg .= '<ul>';
+
+				//output list of events
+				$base_event_admin_url = admin_url( 'admin.php?page=events' );
+				foreach ( $event_templates as $template ) {
+					$event_name = $this->event_name($template->event());
+					$query_args = array(
+						'action' => 'edit_event',
+						'event_id' => $template->event()
+						);
+					$edit_event_url = add_query_arg( $query_args, $base_event_admin_url );
+					$warning_msg .= "\n" . '<li><a href="' . $edit_event_url . '" title="' . __('Edit Event', 'event_espresso') . '">' . $event_name . '</a></li>';
+				}
+
+				$warning_msg .= '</ul>';
+				$warning_msg .= '<br />' . __('Remember, deactivating messengers or message types does NOT delete any templates or any customization you have done.  All it does is "deactivate" them. Should you activate the message type or messenger later your templates will be restored.', 'event_espresso');
+				$this->_activate_state = 'active';
+				EE_Error::add_error($warning_msg);
+				echo EE_Error::get_notices();
+				return;
+			}
+
+
+
+			//okay let's update the message templates that match this type (i.e. messenger or message type ) so that they are deactivated in the database as well.
+			
 			$success = $MTP->update( array( 'MTP_is_active' => 0 ), array( $where_col => $this->_current_message_meta_box ) );
 
 
@@ -1652,11 +1688,29 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			
 		}
 
-		$espresso_notices['success'][] = $success_msg;
+		EE_Error::add_success($success_msg);
+		echo EE_Error::get_notices();
 	}
 
 
 
+
+	/**
+	 * [event_name description]
+	 * This just takes a given event_id and will output the name of the event for it.
+	 * @todo: temporary... will need to remove/replace once proper Event models/classes are in place.
+	 * @access private
+	 * @param  int $evt_id event_id
+	 * @return string event_name 
+	 */
+	public function event_name($evt_id) {
+		global $wpdb;
+		$evt_id = absint($evt_id);
+		$tablename = $wpdb->prefix . 'events_detail';
+		$query = "SELECT event_name FROM {$tablename} WHERE id = %d";
+		$event_name = $wpdb->get_var( $wpdb->prepare($query, $evt_id) );
+		return $event_name;
+	}
 
 
 
