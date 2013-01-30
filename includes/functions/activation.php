@@ -527,33 +527,33 @@ function events_data_tables_install() {
 	event_espresso_run_install($table_name, $table_version, $sql);
 	
 	$table_name='esp_question';
-	$sql="QST_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-				QST_display_text TEXT NOT NULL ,
-				QST_admin_text TEXT NOT NULL ,
-				QST_system_name VARCHAR(45) NOT NULL ,
-				QST_type VARCHAR(25) NOT NULL DEFAULT 'TEXT' ,
-				QST_required TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
-				QST_required_text TEXT NULL ,
-				QST_order TINYINT UNSIGNED NOT NULL DEFAULT 0 ,
-				QST_admin_only TINYINT(1) NOT NULL DEFAULT 0 ,
-				QST_wp_user SMALLINT UNSIGNED NULL ,
-				QST_deleted TINYINT UNSIGNED NOT NULL DEFAULT 0
-				PRIMARY KEY  (QST_ID) ,
-				UNIQUE INDEX QST_system_name_UNIQUE (QST_system_name ASC) ";
+	$sql='QST_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+				QST_display_text TEXT NOT NULL,
+				QST_admin_text TEXT NOT NULL,
+				QST_system_name VARCHAR(45) NOT NULL,
+				QST_type VARCHAR(25) NOT NULL DEFAULT "TEXT",
+				QST_required TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+				QST_required_text TEXT NULL,
+				QST_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
+				QST_admin_only TINYINT(1) NOT NULL DEFAULT 0,
+				QST_wp_user SMALLINT UNSIGNED NULL,
+				QST_deleted TINYINT UNSIGNED NOT NULL DEFAULT 0,
+				PRIMARY KEY  (QST_ID),
+				UNIQUE INDEX QST_system_name_UNIQUE (QST_system_name ASC)';
 	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
 	
 	$table_name = 'esp_question_group';
-	$sql="QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-				QSG_name VARCHAR(145) NOT NULL ,
-				QSG_identifier VARCHAR(45) NOT NULL ,
-				QSG_desc TEXT NULL ,
-				QSG_order TINYINT UNSIGNED NOT NULL DEFAULT 0 ,
-				QSG_show_group_name TINYINT(1) NOT NULL ,
-				QSG_show_group_desc TINYINT(1) NOT NULL ,
-				QSG_system_group TINYINT(1) NOT NULL ,
-				QSG_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
-				PRIMARY KEY  (QSG_ID) ,
-				UNIQUE INDEX QSG_identifier_UNIQUE (QSG_identifier ASC) ";
+	$sql='QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+				QSG_name VARCHAR(145) NOT NULL,
+				QSG_identifier VARCHAR(45) NOT NULL,
+				QSG_desc TEXT NULL,
+				QSG_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
+				QSG_show_group_name TINYINT(1) NOT NULL,
+				QSG_show_group_desc TINYINT(1) NOT NULL,
+				QSG_system_group TINYINT(1) NOT NULL,
+				QSG_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+				PRIMARY KEY  (QSG_ID),
+				UNIQUE INDEX QSG_identifier_UNIQUE (QSG_identifier ASC)';
 	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
 	
 	
