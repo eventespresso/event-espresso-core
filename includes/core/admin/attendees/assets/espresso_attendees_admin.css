@@ -13,9 +13,13 @@ textarea { width:25em; }
 .requires-value { border:1px solid #FE2A00 !important; }
 .denotes-required-spn { margin-left:.5em; font-weight: bold; color:#ff0000; }
 
+.status-APR, .reg-overview-full-payment-spn { color:#090;  }
+.status-RPN, .reg-overview-part-payment-spn { color:#F93;  }
+.status-NAP, .reg-overview-no-payment-spn { color:#F00;  }
+
 /* TABLE COLUMNS */
 
-.wp-list-table #ATT_ID { width:18px; }
+.wp-list-table #ATT_ID { width:24px; }
 .wp-list-table #ATT_fname { width:10%; }
 .wp-list-table #ATT_lname { width:12.5%; }
 .wp-list-table #ATT_email { }
