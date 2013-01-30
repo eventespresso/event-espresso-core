@@ -313,7 +313,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		if ( $this->_registration = $REG->get_registration_for_admin_page( $REG_ID ) )
 			return;
 		else {
-			$error_msg = __('An error occured and the details for Registration ID #', 'event_espresso') . $REG_ID .  __(' could not be retreived.', 'event_espresso');
+			$error_msg = sprintf( __('An error occured and the details for Registration ID #%s could not be retreived.', 'event_espresso'), $REG_ID );
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			$this->_registration = NULL;
 		}
@@ -833,9 +833,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	 * @return mixed (int|array)  int = count || array of registration objects
 	 */
 	public function get_registrations( $per_page = 10, $count = FALSE ) {
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
-		$REG = EEM_Registration::instance();
 
 		$EVT_ID = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$CAT_ID = isset( $this->_req_data['category_id'] ) ? absint( $this->_req_data['category_id'] ) : FALSE;
@@ -845,7 +842,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$this_month_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'month' ? TRUE  : FALSE;
 		$start_date = FALSE;
 		$end_date = FALSE;
-
 
 		//set orderby
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
@@ -877,7 +873,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$offset = ($current_page-1)*$per_page;
 		$limit = array( $offset, $per_page );
 
-		$registrations = $REG->get_registrations_for_admin_page( $EVT_ID, $CAT_ID, $reg_status, $month_range, $today_a, $this_month_a, $start_date, $end_date, $orderby, $sort, $limit, $count );
+		$registrations = EEM_Registration::instance()->get_registrations_for_admin_page( $EVT_ID, $CAT_ID, $reg_status, $month_range, $today_a, $this_month_a, $start_date, $end_date, $orderby, $sort, $limit, $count );
 
 		return $registrations;
 	}
