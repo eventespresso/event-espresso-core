@@ -10,7 +10,7 @@
 
 /* if ($wpdb->get_var("SHOW TABLES LIKE $table") == $table) {
   $wpdb->query("ALTER TABLE $table DROP INDEX date");
-  } */
+  } */ 
 
 //Credit: http://flav36rs.com/2010/04/02/wp-dbdelta-function-cannot-modify-unique-keys/
 //This fixes some tables that may have been named wrong in an earlier version of the plugin
