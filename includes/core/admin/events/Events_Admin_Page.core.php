@@ -2105,12 +2105,18 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$tabs = array();
 
 		//empty messengers?
+		//Note message types will always have at least one available because every messenger has a default message type associated with it (payment) if no other message types are selected.
 		if ( empty( $active_messengers ) ) {
-			$msg_activate_url = wp_nonce_url( add_query_arg( array('action' => 'activate'), EE_MSG_ADMIN_URL ), 'activate_nonce' );
-			$tabbed_content = '<div class="error">' . sprintf( __('There are no active messengers. So no notifications will go out.  You will want to %sActivate a Messenger%s.', 'event_espresso'), '<a href="' . $msg_activate_url . '">', '</a>') . '</div>';
-			echo $tabbed_content;
+			$msg_activate_url = wp_nonce_url( add_query_arg( array('action' => 'activate', 'activate_view' => 'messengers'), 
+				EE_MSG_ADMIN_URL ), 'activate_nonce' );
+			$error_msg = sprintf( __('There are no active messengers. So no notifications will NOT go out for <strong>any</strong> events.  You will want to %sActivate a Messenger%s.', 'event_espresso'), '<a href="' . $msg_activate_url . '">', '</a>');
+			$error_content = '<div class="error"><p>' . $error_msg . '</p></div>';
+			$internal_content = '<div id="messages-error"><p>' . $error_msg . '</p></div>'; 
+			echo $error_content;
+			echo $internal_content;
 			return;
 		}
+		
 
 		//get content for active messengers
 		foreach ( $active_messengers as $name => $messenger ) {
