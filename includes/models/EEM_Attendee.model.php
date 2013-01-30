@@ -213,7 +213,7 @@ class EEM_Attendee extends EEM_Base {
 	 * @param  string	 	$output  		WP data type to return OR 'COUNT' to return count.
 	 * @return mixed           				FALSE if no data, count or array of attendee objects.
 	 */
-	public function get_event_attendees( $EVT_ID = FALSE, $CAT_ID = FALSE, $reg_status = FALSE, $trashed = FALSE, $orderby = 'ATT_lname', $sort = 'DESC', $limit = FALSE, $output = 'OBJECT_K' ) {
+	public function get_event_attendees( $EVT_ID = FALSE, $CAT_ID = FALSE, $reg_status = FALSE, $trashed = FALSE, $orderby = 'REG_date', $sort = 'DESC', $limit = FALSE, $output = 'OBJECT_K' ) {
 		
 		global $wpdb;
 		
