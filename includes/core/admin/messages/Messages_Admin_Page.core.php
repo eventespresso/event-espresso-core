@@ -1616,7 +1616,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @return void
 	 */
 	private function _update_msg_settings($remove = false) {
-		global $espresso_wp_user, $espresso_notices;
+		global $espresso_wp_user;
 		$success_msg = array();
 		$update = FALSE;
 		$ref = '_active_' . $this->_activate_meta_box_type;
