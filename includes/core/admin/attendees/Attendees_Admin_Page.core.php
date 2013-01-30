@@ -336,20 +336,8 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 			case 'ATT_name':
 				$orderby = 'ATT_fname';
 				break;
-			case 'ATT_email':
-				$orderby = 'ATT_email';
-				break;
-			case 'ATT_city':
-				$orderby = 'ATT_city';
-				break;
-			case 'STA_ID':
-				$orderby = 'STA_ID';
-				break;
-			case 'CNT_ID':
-				$orderby = 'CNT_ID';
-				break;
 			default:
-				$orderby = 'ATT_name';
+				$orderby = 'REG_date';
 		}
 		
 		$sort = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'DESC';
