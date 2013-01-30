@@ -379,7 +379,7 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 
 
 
-	private function _set_question_object() {
+	/*private function _set_question_object() {
 		echo "set question object called";
 		if ( is_object($this->_question) )
 			return; //get out we've already set the object
@@ -402,7 +402,7 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 		
 	}
 	private function _set_question_group_object() {}
-
+*/
 	/**
 	 * Extracts the question field's values from the POST request to update or insert them
 	 * @return array where each key is the name of a model's field/db column, and each value is its value.
