@@ -335,7 +335,7 @@ add_action( 'shutdown', 'espresso_printr_session' );
  */
 function espresso_plugin_activation_errors() {
 	if ( WP_DEBUG === TRUE ) {
-		file_put_contents( EVENT_ESPRESSO_UPLOAD_URL. 'logs/espresso_plugin_activation_errors.html', ob_get_contents() );
+		file_put_contents( EVENT_ESPRESSO_UPLOAD_DIR. 'logs/espresso_plugin_activation_errors.html', ob_get_contents() );
 	}	
 }
 add_action('activated_plugin', 'espresso_plugin_activation_errors');
