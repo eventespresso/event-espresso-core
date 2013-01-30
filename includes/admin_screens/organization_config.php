@@ -1,6 +1,6 @@
 <?php
 
-/**
+/** 
  * 		Event Registration Subpage 1 - Configure Organization
  *
  * 		@ access public

@@ -10,7 +10,7 @@
 
 /* if ($wpdb->get_var("SHOW TABLES LIKE $table") == $table) {
   $wpdb->query("ALTER TABLE $table DROP INDEX date");
-  } */
+  } */ 
 
 //Credit: http://flav36rs.com/2010/04/02/wp-dbdelta-function-cannot-modify-unique-keys/
 //This fixes some tables that may have been named wrong in an earlier version of the plugin
@@ -414,7 +414,14 @@ function events_data_tables_install() {
 	
 	$table_version = EVENT_ESPRESSO_VERSION;
 
-
+	$table_name='esp_answer';
+	$sql=" ANS_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+				REG_ID INT UNSIGNED NOT NULL ,
+				QST_ID INT UNSIGNED NOT NULL ,
+				ANS_value TEXT NOT NULL ,
+				PRIMARY KEY  (ANS_ID)";
+	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
+	
 	$table_name = 'esp_attendee';
 	$sql = "ATT_ID int(10) unsigned NOT	NULL AUTO_INCREMENT,
 					ATT_fname varchar(45) NOT NULL,
@@ -454,7 +461,12 @@ function events_data_tables_install() {
 						KEY DTT_is_primary (DTT_is_primary)";
 	event_espresso_run_install($table_name, $table_version, $sql );
 	
-
+	$table_name='esp_event_question_group';
+	$sql="EQG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+				EVT_ID INT UNSIGNED NOT NULL ,
+				QSG_ID INT UNSIGNED NOT NULL ,
+				PRIMARY KEY  (EQG_ID)";
+	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
 
 	$table_name = 'esp_payment';
 	$sql = "PAY_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -513,7 +525,54 @@ function events_data_tables_install() {
 			  UNIQUE KEY PRT_name_UNIQUE (PRT_name),
 			  PRIMARY KEY  (PRT_ID)";
 	event_espresso_run_install($table_name, $table_version, $sql);
-
+	
+	$table_name='esp_question';
+	$sql="QST_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+				QST_display_text TEXT NOT NULL ,
+				QST_admin_text TEXT NOT NULL ,
+				QST_system_name VARCHAR(45) NOT NULL ,
+				QST_type VARCHAR(25) NOT NULL DEFAULT 'TEXT' ,
+				QST_required TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
+				QST_required_text TEXT NULL ,
+				QST_order TINYINT UNSIGNED NOT NULL DEFAULT 0 ,
+				QST_admin_only TINYINT(1) NOT NULL DEFAULT 0 ,
+				QST_wp_user SMALLINT UNSIGNED NULL ,
+				QST_deleted TINYINT UNSIGNED NOT NULL DEFAULT 0
+				PRIMARY KEY  (QST_ID) ,
+				UNIQUE INDEX QST_system_name_UNIQUE (QST_system_name ASC) ";
+	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
+	
+	$table_name = 'esp_question_group';
+	$sql="QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+				QSG_name VARCHAR(145) NOT NULL ,
+				QSG_identifier VARCHAR(45) NOT NULL ,
+				QSG_desc TEXT NULL ,
+				QSG_order TINYINT UNSIGNED NOT NULL DEFAULT 0 ,
+				QSG_show_group_name TINYINT(1) NOT NULL ,
+				QSG_show_group_desc TINYINT(1) NOT NULL ,
+				QSG_system_group TINYINT(1) NOT NULL ,
+				QSG_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
+				PRIMARY KEY  (QSG_ID) ,
+				UNIQUE INDEX QSG_identifier_UNIQUE (QSG_identifier ASC) ";
+	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
+	
+	
+	
+	$table_name='esp_question_group_question';
+	$sql="QGQ_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+				QSG_ID INT UNSIGNED NOT NULL ,
+				QST_ID INT UNSIGNED NOT NULL ,
+				PRIMARY KEY  (QGQ_ID) ";
+	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
+	
+	$table_name='esp_question_option';
+	$sql="QSO_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+				QSO_name VARCHAR(45) NOT NULL ,
+				QSO_value VARCHAR(45) NOT NULL ,
+				QST_ID INT UNSIGNED NOT NULL ,
+				QSO_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
+				PRIMARY KEY  (QSO_ID)";
+	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
 
 
 	$table_name = 'esp_registration';
@@ -819,8 +878,6 @@ function events_data_tables_install() {
 			KEY attendee_id (attendee_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
-
-
 	$table_name = "events_question";
 	$sql = "id int(11) unsigned NOT NULL auto_increment,
 			sequence INT(11) NOT NULL default '0',
@@ -878,6 +935,8 @@ function events_data_tables_install() {
 			KEY registration_id (registration_id),
 			KEY attendee_id (attendee_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
+
+	
 
 }
 

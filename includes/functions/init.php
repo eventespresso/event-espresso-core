@@ -470,6 +470,20 @@ function event_espresso_run() {
 
 function return_espresso_content() {
 	global $espresso_content;
+	/*require('EE_Answer.class.php');
+	$answer=new EE_Answer(1, 1, 'all your base');
+	echo $answer->question_ID();
+	echo $answer->registration_ID();
+	echo $answer->value();
+	echo $answer->get('ANS_value');
+	echo $answer->get('ANS_ID');
+	var_dump($answer);
+	$answer->save();*/
+	require('EEM_Answer.model.php');
+	
+	$answerModel=  EEM_Answer::instance();
+	$answerModel->get_all_answers();
+	var_dump($answerModel);
 	return $espresso_content;
 }
 
