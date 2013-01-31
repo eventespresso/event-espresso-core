@@ -385,7 +385,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//next verify routes
 		$this->_verify_routes();
 
-
+		$this->_do_other_page_hooks();
 
 		if ( $this->_is_UI_request ) {
 			
@@ -399,6 +399,35 @@ abstract class EE_Admin_Page extends EE_BASE {
 			if ( current_user_can( 'manage_options' ) )
 				@ini_set( 'memory_limit', apply_filters( 'admin_memory_limit', WP_MAX_MEMORY_LIMIT ) );
 			$this->route_admin_request();
+		}
+	}
+
+
+
+	/**
+	 * Provides a way for related child admin pages to load stuff on the loaded admin page.
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _do_other_page_hooks() {
+		$registered_pages = apply_filters('filter_hook_espresso_do_other_page_hooks_' . $this->page_slug, array() );
+
+		foreach ( $registered_pages as $page ) {
+
+			//now let's setup the file name and class that should be present
+			$classname = $this->page_slug . '_' . $page . '_Hooks';
+			$classname = str_replace( ' ', '_', $classname );
+
+			//autoloaders should take care of loading file
+			if ( !class_exists( $classname ) ) {
+				$error_msg[] = sprintf( __('Something went wrong with loading the %s admin hooks page.', 'event_espresso' ), $page);
+				$error_msg[] = $error_msg[0] . "\r\n" . sprintf( __( 'There is no  class in place for the %s admin hooks page.', 'event_espresso') . '<br />' . __( 'Make sure you have <strong>%s</strong> defined. If this is a non-EE-core admin page then you also must have an autoloader in place for your class', 'event_espresso'), $page, $classname );
+				throw new EE_Error( implode( '||', $error_msg ));
+			}
+
+			$a = new ReflectionClass($classname);
+			$hookobj[] = $a->newInstance( $this->_page_routes );
 		}
 	}
 
