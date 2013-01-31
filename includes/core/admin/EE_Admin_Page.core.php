@@ -1741,7 +1741,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//calculate where we're going (if we have a "save and close" button pushed)
 		if ( isset($this->_req_data['save_and_close'] ) && isset($this->_req_data['save_and_close_referrer'] ) ) {
-			// evne though we have the save_and_close referrer, we need to parse the url for the action in order to generate a nonce
+			// even though we have the save_and_close referrer, we need to parse the url for the action in order to generate a nonce
 			$parsed_url = parse_url( $this->_req_data['save_and_close_referrer'] );
 			// regenerate query args array from refferer URL
 			parse_str( $parsed_url['query'], $query_args );
