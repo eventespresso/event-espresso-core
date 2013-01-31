@@ -138,7 +138,8 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 		$arrayForParent=array();
 		foreach($reflector->getParameters() as $param){
 			$paramName=$param->name;
-			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
+			$arrayForParent[$paramName]=${$paramName};
+			//yes, that's using a variable variable. { } added by br3nt to make it even more obvious ;D
 		}
 		parent::__construct($arrayForParent);
 	}
