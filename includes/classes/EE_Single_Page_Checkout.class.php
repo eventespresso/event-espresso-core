@@ -1066,7 +1066,8 @@ class EE_Single_Page_Checkout {
 
 			// start the transaction record
 			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Transaction.class.php' );
-			$transaction = new EE_Transaction( time(), $grand_total, 0, 'TPN', NULL, $session, NULL, NULL );
+			$txn_status = $grand_total > 0 ? 'TIN' : 'TCM';
+			$transaction = new EE_Transaction( time(), $grand_total, 0, $txn_status, NULL, $session, NULL, NULL );
 			$txn_results = $transaction->insert();
 			// more than one item means this is a group registration
 			$is_group_reg = count($reg_items) > 1 ? TRUE : FALSE;
@@ -1161,7 +1162,7 @@ class EE_Single_Page_Checkout {
 													$txn_results['new-ID'],
 													$DTT_ID,
 													$PRC_ID,
-													'RPN',
+													$price_paid > 0 ? 'RPN' : 'RAP',
 													time(),
 													$price_paid,
 													$session['id'],

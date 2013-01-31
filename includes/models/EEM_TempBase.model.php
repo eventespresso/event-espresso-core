@@ -515,7 +515,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	}
 	
 	/**
-	*		retreive  a single attendee from db via their ID
+	*		retreive  a single item from db via array of key value pairs
 	* 
 	* 		@access		public
 	* 		@param		$where_cols_n_values	 array, where keys are strings for DB columns, and values are their model values	

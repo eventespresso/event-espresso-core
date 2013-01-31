@@ -101,20 +101,24 @@ class EE_Ticket_Selector extends EE_BASE {
 		$template_args = array();
 		//printr( $this->_event, '$this->_event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
-		if ( ! isset( $this->_event->additional_limit ) or $this->_event->additional_limit == '' ) {
-			$this->_event->additional_limit = $this->_event->reg_limit;
+		if ( $this->_event->allow_multiple ) {
+			// make sure additional_limit is set
+			if ( ! isset( $this->_event->additional_limit ) or $this->_event->additional_limit == '' ) {
+				$this->_event->additional_limit = $this->_event->reg_limit;
+			}
+			// then make it at least 1
+			$this->_event->additional_limit = ( $this->_event->additional_limit == 0 ) ? 1 : $this->_event->additional_limit;
+			// let's make the max amount of attendees somebody can select a little more reasonable
+			$template_args['max_atndz'] = $this->_event->additional_limit > 16 ? 16 : $this->_event->additional_limit;	
+		} else {
+			$template_args['max_atndz'] = 1;
 		}
+		
 
-		// make it at least 1
-		$this->_event->additional_limit = ( $this->_event->additional_limit == 0 ) ? 1 : $this->_event->additional_limit;
-		// let's make the max amount of attendees somebody can select a little more reasonable
-		$max_atndz = $this->_event->additional_limit > 16 ? 16 : $this->_event->additional_limit;
 		
 		$template_args['event_id'] = $this->_event->id;
 		$template_args['event_name'] = $this->_event->event_name;
 		$template_args['require_pre_approval'] = $this->_event->require_pre_approval;
-
-		$template_args['max_atndz'] = $max_atndz;
 
 		$template_args['dates'] = is_array($this->_event->recurring_events) ? $this->_event->recurring_events : $this->_event->datetimes;
 		$template_args['dates'] = $this->_format_date($template_args['dates']);

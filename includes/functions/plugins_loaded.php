@@ -156,7 +156,7 @@ function espresso_core_admin_autoload($className) {
 		'attendees/' => array('core', 'class'),
 		'events/' => array('core','class'),
 		'event_categories/' => array('core','class'),
-		'registration_forms/' => array('core', 'class'),
+		'registration_form/' => array('core', 'class'),
 		'general_settings/' => array('core','class'),
 		'messages/' => array('core', 'class'),
 		'payments/' => array('core', 'class'),
@@ -286,7 +286,8 @@ function espresso_clear_session() {
 						'tax_totals',
 						'taxes',
 						'billing_info',
-						'txn_results'
+						'txn_results',
+						'grand_total_price_object'
 					));
 																
 	$EE_Session->set_session_data(
@@ -325,6 +326,19 @@ function espresso_printr_session() {
 add_action( 'shutdown', 'espresso_printr_session' );
 
 
+
+/**
+ * 		captures plugin activation errors for debugging
+ *
+ * 		@access public
+ * 		@return void
+ */
+function espresso_plugin_activation_errors() {
+	if ( WP_DEBUG === TRUE ) {
+		file_put_contents( EVENT_ESPRESSO_UPLOAD_DIR. 'logs/espresso_plugin_activation_errors.html', ob_get_contents() );
+	}	
+}
+add_action('activated_plugin', 'espresso_plugin_activation_errors');
 
 
 
@@ -587,6 +601,34 @@ function event_espresso_run_install($table_name, $table_version, $sql, $engine =
  * 		@return void
  */
 function espresso_init_admin_pages() {
+	
+		$load_SPCO = FALSE;
+		
+		$e_reg_pages = array( 
+						'register', 
+						'process_reg_step_1', 
+						'process_reg_step_2', 
+						'process_reg_step_3', 
+						'event_queue'
+				);
+		$load_SPCO = isset( $_REQUEST['e_reg'] ) && ( in_array( $_REQUEST['e_reg'], $e_reg_pages )) ? TRUE : $load_SPCO;
+			
+		$e_reg_ajax_actions = array( 
+						'espresso_process_registration_step_1', 
+						'espresso_process_registration_step_2', 
+						'espresso_process_registration_step_3'
+				);
+		$load_SPCO = isset( $_REQUEST['action'] ) && ( in_array( $_REQUEST['action'], $e_reg_ajax_actions )) ? TRUE : $load_SPCO;
+				
+		if ( $load_SPCO ) {
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Single_Page_Checkout.class.php');
+			global $Single_Page_Checkout;
+			$Single_Page_Checkout = EE_Single_Page_Checkout::instance();	
+			//Process email confirmations
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/email.php');
+			define("ESPRESSO_REG_PAGE_FILES_LOADED", "true");
+		}
+
 	//this loads the controller for the admin pages which will setup routing etc
 	try {
 		$EEAdmin = new EE_Admin_Page_load();

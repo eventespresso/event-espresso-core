@@ -502,11 +502,6 @@ function events_data_tables_install() {
 				  PRC_use_dates tinyint(1) unsigned NOT NULL DEFAULT '0',
 				  PRC_start_date int(10) unsigned DEFAULT NULL,
 				  PRC_end_date int(10) unsigned DEFAULT NULL,
-				  PRC_disc_code varchar(100) DEFAULT NULL,
-				  PRC_disc_limit_qty tinyint(1) unsigned NOT NULL DEFAULT '0',
-				  PRC_disc_qty smallint(6) DEFAULT '0',
-				  PRC_disc_apply_all tinyint(1) unsigned NOT NULL DEFAULT '0',
-				  PRC_disc_wp_user bigint(20) DEFAULT '1',
 				  PRC_is_active tinyint(1) unsigned NOT NULL DEFAULT '1',
 				  PRC_overrides int(10) unsigned DEFAULT NULL,
 				  PRC_deleted tinyint(1) unsigned NOT NULL DEFAULT '0',
@@ -523,8 +518,6 @@ function events_data_tables_install() {
 			  PRT_name VARCHAR(45) NOT NULL ,
 			  PBT_ID tinyint(3) unsigned NOT NULL DEFAULT '1',
 			  PRT_is_member tinyint(1) NOT NULL DEFAULT '0',
-			  PRT_is_discount tinyint(1) NULL,
-			  PRT_is_tax tinyint(1) NULL,
 			  PRT_is_percent tinyint(1) NOT NULL DEFAULT '0',
 			  PRT_is_global tinyint(1) NOT NULL DEFAULT '0',
 			  PRT_order tinyint(1) UNSIGNED NULL,
@@ -534,33 +527,35 @@ function events_data_tables_install() {
 	event_espresso_run_install($table_name, $table_version, $sql);
 	
 	$table_name='esp_question';
-	$sql="QST_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-				QST_display_text TEXT NOT NULL ,
-				QST_admin_text TEXT NOT NULL ,
-				QST_system_name VARCHAR(45) NOT NULL ,
-				QST_type VARCHAR(25) NOT NULL DEFAULT 'TEXT' ,
-				QST_required TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
-				QST_required_text TEXT NULL ,
-				QST_order TINYINT UNSIGNED NOT NULL DEFAULT 0 ,
-				QST_admin_only TINYINT(1) NOT NULL DEFAULT 0 ,
-				QST_wp_user SMALLINT UNSIGNED NULL ,
-				QST_deleted TINYINT UNSIGNED NOT NULL DEFAULT 0
-				PRIMARY KEY  (QST_ID) ,
-				UNIQUE INDEX QST_system_name_UNIQUE (QST_system_name ASC) ";
+	$sql='QST_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+				QST_display_text TEXT NOT NULL,
+				QST_admin_label TEXT NOT NULL,
+				QST_system_name VARCHAR(45) NOT NULL,
+				QST_type VARCHAR(25) NOT NULL DEFAULT "TEXT",
+				QST_required TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+				QST_required_text TEXT NULL,
+				QST_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
+				QST_admin_only TINYINT(1) NOT NULL DEFAULT 0,
+				QST_wp_user SMALLINT UNSIGNED NULL,
+				QST_deleted TINYINT UNSIGNED NOT NULL DEFAULT 0,
+				PRIMARY KEY  (QST_ID)';
 	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
 	
+//	,
+//				UNIQUE INDEX QST_system_name_UNIQUE (QST_system_name ASC)
+	
 	$table_name = 'esp_question_group';
-	$sql="QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-				QSG_name VARCHAR(145) NOT NULL ,
-				QSG_identifier VARCHAR(45) NOT NULL ,
-				QSG_desc TEXT NULL ,
-				QSG_order TINYINT UNSIGNED NOT NULL DEFAULT 0 ,
-				QSG_show_group_name TINYINT(1) NOT NULL ,
-				QSG_show_group_desc TINYINT(1) NOT NULL ,
-				QSG_system_group TINYINT(1) NOT NULL ,
-				QSG_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
-				PRIMARY KEY  (QSG_ID) ,
-				UNIQUE INDEX QSG_identifier_UNIQUE (QSG_identifier ASC) ";
+	$sql='QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+				QSG_name VARCHAR(145) NOT NULL,
+				QSG_identifier VARCHAR(45) NOT NULL,
+				QSG_desc TEXT NULL,
+				QSG_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
+				QSG_show_group_name TINYINT(1) NOT NULL,
+				QSG_show_group_desc TINYINT(1) NOT NULL,
+				QSG_system_group TINYINT(1) NOT NULL,
+				QSG_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+				PRIMARY KEY  (QSG_ID),
+				UNIQUE INDEX QSG_identifier_UNIQUE (QSG_identifier ASC)';
 	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
 	
 	
@@ -571,6 +566,8 @@ function events_data_tables_install() {
 				QST_ID INT UNSIGNED NOT NULL ,
 				PRIMARY KEY  (QGQ_ID) ";
 	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
+
+
 	
 	$table_name='esp_question_option';
 	$sql="QSO_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
@@ -637,60 +634,7 @@ function events_data_tables_install() {
 				  KEY TXN_timestamp (TXN_timestamp),
 				  KEY STS_ID (STS_ID)";
 	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
-		
-	$table_name = "events_attendee";
-	$sql = " id int(11) unsigned NOT NULL AUTO_INCREMENT,
-					  registration_id VARCHAR(23) DEFAULT '0',
-					  is_primary tinyint(1) NOT NULL DEFAULT '0',
-					  lname VARCHAR(45) DEFAULT NULL,
-					  fname VARCHAR(45) DEFAULT NULL,
-					  address VARCHAR(45) DEFAULT NULL,
-					  address2 VARCHAR(45) DEFAULT NULL,
-					  city VARCHAR(45) DEFAULT NULL,
-					  state VARCHAR(45) DEFAULT NULL,
-					  zip VARCHAR(45) DEFAULT NULL,
-					  country_id VARCHAR(128) DEFAULT NULL,
-					  organization_name VARCHAR(50) DEFAULT NULL,
-					  vat_number VARCHAR(20) DEFAULT NULL,
-					  email VARCHAR(45) DEFAULT NULL,
-					  phone VARCHAR(45) DEFAULT NULL,
-					  date timestamp NOT NULL default CURRENT_TIMESTAMP,
-					  payment VARCHAR(45) DEFAULT NULL,
-					  payment_status VARCHAR(45) DEFAULT 'Incomplete',
-					  txn_type VARCHAR(45) DEFAULT NULL,
-					  txn_id VARCHAR(45) DEFAULT NULL,
-					  amount_pd decimal(20,2) DEFAULT '0.00',
-					  total_cost decimal(20,2) DEFAULT '0.00',
-					  price_option VARCHAR(100) DEFAULT NULL,
-					  coupon_code VARCHAR(45) DEFAULT NULL,
-					  quantity VARCHAR(5) DEFAULT '0',
-					  payment_date VARCHAR(45) DEFAULT NULL,
-					  event_id VARCHAR(45) DEFAULT NULL,
-						venue_id VARCHAR(45) DEFAULT NULL,
-					  event_time VARCHAR(15) DEFAULT NULL,
-					  end_time VARCHAR(15) DEFAULT NULL,
-					  start_date VARCHAR(45) DEFAULT NULL,
-					  end_date VARCHAR(45) DEFAULT NULL,
-					  attendee_session VARCHAR(250) DEFAULT NULL,
-					  transaction_details TEXT,
-					  pre_approve tinyint(1) NOT NULL DEFAULT '1',
-					  checked_in tinyint(1) NOT NULL DEFAULT '0',
-					  checked_in_quantity INT(11) DEFAULT '0',
-					  hashSalt VARCHAR(250) DEFAULT NULL,
-					PRIMARY KEY  (id),
-					KEY registration_id (registration_id),
-					KEY event_id (event_id)";
-	event_espresso_run_install($table_name, $table_version, $sql);
 
-
-
-	$table_name = "events_status";
-	$sql = "id int(3) unsigned NOT NULL AUTO_INCREMENT,
-					  code VARCHAR(45) DEFAULT NULL,
-					  type INT(11) DEFAULT '0',
-					  can_edit BOOLEAN DEFAULT '0',
-					PRIMARY KEY  (id)";
-	event_espresso_run_install($table_name, $table_version, $sql);
 
 
 
@@ -778,18 +722,6 @@ function events_data_tables_install() {
 
 
 
-	$table_name = "events_meta";
-	$sql = "emeta_id bigint(20) NOT NULL AUTO_INCREMENT,
-			  event_id int(11) DEFAULT NULL,
-			  meta_key varchar(255) DEFAULT NULL,
-			  meta_value longtext,
-			  date_added datetime DEFAULT NULL,
-  			  PRIMARY KEY  (emeta_id),
-			  KEY event_id (event_id),
-			  KEY meta_key (meta_key)";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
-
 
 	$table_name = "events_email";
 	$sql = "id int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -839,6 +771,7 @@ function events_data_tables_install() {
 				zip VARCHAR(250) DEFAULT NULL,
 				country VARCHAR(250) DEFAULT NULL,
 				phone VARCHAR(250) DEFAULT NULL,
+				vnu_capacity mediumint(8) unsigned NOT NULL,
 				meta TEXT,
 				wp_user int(22) DEFAULT '1',
 				UNIQUE KEY id (id),
@@ -949,63 +882,6 @@ function events_data_tables_install() {
 			KEY attendee_id (attendee_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
-	$table_name = "events_question";
-	$sql = "id int(11) unsigned NOT NULL auto_increment,
-			sequence INT(11) NOT NULL default '0',
-			question_type enum('TEXT','TEXTAREA','MULTIPLE','SINGLE','DROPDOWN','DATE') NOT NULL default 'TEXT',
-			question text NOT NULL,
-			system_name varchar(15) DEFAULT NULL,
-			response text NULL,
-			required tinyint(1) NOT NULL DEFAULT '0',
-			required_text text NULL,
-			admin_only tinyint(1) NOT NULL DEFAULT '0',
-			wp_user int(22) DEFAULT '1',
-			PRIMARY KEY  (id),
-			KEY wp_user (wp_user),
-			KEY system_name (system_name),
-			KEY admin_only (admin_only)";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
-
-
-	$table_name = "events_qst_group";
-	$sql = "id int(11) NOT NULL AUTO_INCREMENT,
-				group_name VARCHAR(100) NOT NULL default 'NULL',
-				group_identifier VARCHAR(45) NOT NULL default 'NULL',
-				group_description TEXT,
-				group_order int(11) DEFAULT '0',
-				show_group_name tinyint(1) NOT NULL DEFAULT '1',
-				show_group_description tinyint(1) NOT NULL DEFAULT '1',
-				system_group tinyint(1) NOT NULL DEFAULT '0',
-				wp_user int(22) DEFAULT '1',
-				PRIMARY KEY  (id),
-			  	KEY system_group (system_group),
-			  	KEY wp_user (wp_user)";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
-
-
-	$table_name = "events_qst_group_rel";
-	$sql = "id int(11) NOT NULL AUTO_INCREMENT,
-				group_id int(11)  NOT NULL,
-				question_id int(11) NOT NULL,
-				PRIMARY KEY  (id),
-			  	KEY group_id (group_id),
-			  	KEY question_id (question_id)";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
-
-
-	$table_name = "events_answer";
-	$sql = "id int(11) NOT NULL AUTO_INCREMENT,
-			registration_id varchar(23) NOT NULL,
-			attendee_id int(11) NOT NULL default '0',
-			question_id int(11) NOT NULL default '0',
-			answer text NOT NULL,
-			PRIMARY KEY  (id),
-			KEY registration_id (registration_id),
-			KEY attendee_id (attendee_id)";
-	event_espresso_run_install($table_name, $table_version, $sql);
 
 	
 
@@ -1397,80 +1273,93 @@ function espresso_default_prices() {
 	global $wpdb;
 
 	if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_PRICE_TYPE . "'") == ESP_PRICE_TYPE) {
-		$sql = 'DELETE FROM ' . ESP_PRICE_TYPE . ' WHERE PRT_ID < 9';
+		$sql = 'DELETE FROM ' . ESP_PRICE_TYPE . ' WHERE PRT_ID < 8';
 		$wpdb->query($sql);
 	
-		$sql = "INSERT INTO " . ESP_PRICE_TYPE . " ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_is_global, PRT_order ) VALUES
-					(1, 'Default Event Price', 1, 0, 0, 1, 0),
-					(2, 'Event Price', 1, 0, 0, 0, 0),
-					(3, 'Default Member % Discount', 2, 1, 1, 1, 10),
-					(4, 'Default Early Bird % Discount', 2, 0, 1, 1, 20),
-					(5, 'Default Surcharge', 3, 0, 0, 1, 30),
-					(6, 'Regional Tax', 4, 0, 1, 1, 40),
-					(7, 'Federal Tax', 4, 0, 1, 1, 50);";
+		$sql = "INSERT INTO " . ESP_PRICE_TYPE . " ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_is_global, PRT_order, PRT_deleted ) VALUES
+					(1, 'Default Event Price', 1, 0, 0, 1, 0, 0),
+					(2, 'Event Price', 1, 0, 0, 0, 0, 0),
+					(3, 'Default Member % Discount', 2, 1, 1, 1, 10, 0),
+					(4, 'Default Early Bird % Discount', 2, 0, 1, 1, 20, 0),
+					(5, 'Default Surcharge', 3, 0, 0, 1, 30, 0),
+					(6, 'Regional Tax', 4, 0, 1, 1, 40, 0),
+					(7, 'Federal Tax', 4, 0, 1, 1, 50, 0);";
 		$wpdb->query($sql);	
 	}
 
 
 	if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_PRICE_TABLE . "'") == ESP_PRICE_TABLE) {
-		$sql = 'DELETE FROM ' . ESP_PRICE_TABLE . ' WHERE PRC_ID < 8';
+		$sql = 'DELETE FROM ' . ESP_PRICE_TABLE . ' WHERE PRC_ID < 7';
 		$wpdb->query($sql);
 	
 		$sql = "INSERT INTO " . ESP_PRICE_TABLE . "
-					(PRC_ID, PRT_ID, EVT_ID, PRC_amount, PRC_name, PRC_desc, PRC_use_dates, PRC_start_date, PRC_end_date, PRC_disc_code, PRC_disc_limit_qty, PRC_disc_qty, PRC_disc_apply_all, PRC_disc_wp_user, PRC_is_active, PRC_overrides, PRC_order, PRC_deleted ) VALUES
-					(1, 1, 0, '100.00', 'General Admission', 'Regular price for all Events.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 0, 0),
-					(2, 3, 0, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 10, 0),
-					(3, 4, 0, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price.',  1, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 20, 0),
-					(4, 6, 0, '7.50', 'Service Fee', 'Covers administrative expenses.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 30, 0),
-					(5, 7, 0, '7.00', 'Sales Tax', 'Locally imposed tax.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 40, 0),
-					(6, 8, 0, '15.00', 'VAT', 'Value Added Tax.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 50, 0);";
+					(PRC_ID, PRT_ID, EVT_ID, PRC_amount, PRC_name, PRC_desc, PRC_use_dates, PRC_start_date, PRC_end_date, PRC_is_active, PRC_overrides, PRC_order, PRC_deleted ) VALUES
+					(1, 1, 0, '100.00', 'General Admission', 'Regular price for all Events. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 0, 0),
+					(2, 3, 0, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 10, 0),
+					(3, 4, 0, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price. Example content - delete if you want to',  1, NULL, NULL, 1, NULL, 20, 0),
+					(4, 5, 0, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 30, 0),
+					(5, 6, 0, '7.00', 'Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 40, 0),
+					(6, 7, 0, '15.00', 'VAT', 'Value Added Tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 50, 0);";
 		$wpdb->query($sql);
 	}
 	
 
 
 	if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_STATUS_TABLE . "'") == ESP_STATUS_TABLE) {
-		$sql = "DELETE FROM " . ESP_STATUS_TABLE . " WHERE STS_ID IN ('ACT','RAP','CLS','TCM','PDC','DEL','DEN','DRF','EDR','EXP','TOP','NAC','RNA','NOP','ONG','OPN','PND','RPN','SEC','SNT','PAP','TPN','RCN','PCN','PFL');";
+		$sql = "DELETE FROM " . ESP_STATUS_TABLE . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPN', 'RCN', 'RAP', 'RNA', 'TIN', 'TPN', 'TCM', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN' );";
 		$wpdb->query($sql);
 		
 		$sql = "INSERT INTO " . ESP_STATUS_TABLE . " 
 				(STS_ID, STS_code, STS_type, STS_can_edit, STS_desc) VALUES
 				('ACT', 'ACTIVE', 'event', 0, NULL),
-				('RAP', 'APPROVED', 'registration', 0, NULL),
+				('NAC', 'NOT_ACTIVE', 'event', 0, NULL),
+				('NOP', 'REGISTRATION_NOT_OPEN', 'event', 0, NULL),
+				('OPN', 'REGISTRATION_OPEN', 'event', 0, NULL),
 				('CLS', 'REGISTRATION_CLOSED', 'event', 0, NULL),
-				('TCM', 'COMPLETE', 'transaction', 0, NULL),
-				('PDC', 'DECLINED', 'payment', 0, NULL),
+				('PND', 'PENDING', 'event', 0, NULL),
+				('ONG', 'ONGOING', 'event', 0, NULL),
+				('SEC', 'SECONDARY', 'event', 0, NULL),
+				('DRF', 'DRAFT', 'event', 0, NULL),
 				('DEL', 'DELETED', 'event', 0, NULL),
 				('DEN', 'DENIED', 'event', 0, NULL),
-				('DRF', 'DRAFT', 'event', 0, NULL),
-				('EDR', 'DRAFT', 'email', 0, NULL),
 				('EXP', 'EXPIRED', 'event', 0, NULL),
-				('TOP', 'OPEN', 'transaction', 0, NULL),
-				('NAC', 'NOT_ACTIVE', 'event', 0, NULL),
-				('RNA', 'NOT_APPROVED', 'registration', 0, NULL),
-				('NOP', 'REGISTRATION_NOT_OPEN', 'event', 0, NULL),
-				('ONG', 'ONGOING', 'event', 0, NULL),
-				('OPN', 'REGISTRATION_OPEN', 'event', 0, NULL),
-				('PND', 'PENDING', 'event', 0, NULL),
 				('RPN', 'PENDING', 'registration', 0, NULL),
-				('SEC', 'SECONDARY', 'event', 0, NULL),
-				('SNT', 'SENT', 'email', 0, NULL),
-				('PAP', 'APPROVED', 'payment', 0, NULL),
-				('TPN', 'PENDING', 'transaction', 0, NULL),
 				('RCN', 'CANCELLED', 'registration', 0, NULL),
+				('RAP', 'APPROVED', 'registration', 0, NULL),
+				('RNA', 'NOT_APPROVED', 'registration', 0, NULL),
+				('TIN', 'INCOMPLETE', 'transaction', 0, NULL),
+				('TPN', 'PENDING', 'transaction', 0, NULL),
+				('TCM', 'COMPLETE', 'transaction', 0, NULL),
+				('PAP', 'APPROVED', 'payment', 0, NULL),
 				('PCN', 'CANCELLED', 'payment', 0, NULL),
-				('PFL', 'FAILED', 'payment', 0, NULL);";
+				('PFL', 'FAILED', 'payment', 0, NULL),
+				('PDC', 'DECLINED', 'payment', 0, NULL),
+				('EDR', 'DRAFT', 'email', 0, NULL),
+				('ESN', 'SENT', 'email', 0, NULL);";
 		$wpdb->query($sql);
+		
+		
 	}
 	
 }
 
-if (!function_exists('save_error')) {
 
-	function save_error() {
-		update_option('plugin_error', ob_get_contents());
-	}
 
+
+
+function espresso_delete_unused_db_tables() {
+	global $wpdb;
+	$wpdb->query( 'DROP TABLE IF EXISTS '. $wpdb->prefix . 'events_meta' );
+	$wpdb->query( 'DROP TABLE IF EXISTS '. $wpdb->prefix . 'events_status' );
 }
 
-//add_action('activated_plugin', 'save_error');
+
+
+
+
+if (!function_exists('espresso_save_error')) {
+	function espresso_save_error() {
+		update_option('plugin_error', ob_get_contents());
+	}
+}
+add_action('activated_plugin', 'espresso_save_error');

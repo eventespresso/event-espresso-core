@@ -336,7 +336,7 @@ class EE_Form_Fields {
 		for ($i = 0, $n = sizeof($values); $i < $n; $i++) {
 			$field .= '<option value="' . $values[$i]['id'] . '"';
 			if ($default == $values[$i]['id']) {
-				$field .= 'selected = "selected"';
+				$field .= ' selected = "selected"';
 			}
 
 			$field .= '>' . $values[$i]['text'] . '</option>';

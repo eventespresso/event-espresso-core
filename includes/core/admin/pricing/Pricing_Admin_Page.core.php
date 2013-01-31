@@ -472,7 +472,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	public function _edit_price_details_meta_box() {		
-		echo espresso_display_template( PRICING_TEMPLATE_PATH . 'PRICING_details_main_meta_box.template.php', $this->_template_args, TRUE );		
+		echo espresso_display_template( PRICING_TEMPLATE_PATH . 'pricing_details_main_meta_box.template.php', $this->_template_args, TRUE );		
 	}
 
 
@@ -500,11 +500,6 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				'PRC_use_dates' => absint($this->_req_data['PRC_use_dates']),
 				'PRC_start_date' => NULL,
 				'PRC_end_date' => NULL,
-				'PRC_disc_code' => ( ! empty( $this->_req_data['PRC_disc_code'] )) ? wp_strip_all_tags($this->_req_data['PRC_disc_code']) : NULL,
-				'PRC_disc_limit_qty' => absint($this->_req_data['PRC_disc_limit_qty']),
-				'PRC_disc_qty' => absint($this->_req_data['PRC_disc_qty']),
-				'PRC_disc_apply_all' => absint($this->_req_data['PRC_disc_apply_all']),
-				'PRC_disc_wp_user' => absint($this->_req_data['PRC_disc_wp_user']),
 				'PRC_overrides' => NULL,
 				'PRC_order' => 0,
 				'PRC_is_active' => absint($this->_req_data['PRC_is_active']),
@@ -827,8 +822,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		switch ($base_type) {
 	
 			case 'Price' :
-				$this->_req_data['PRT_is_discount'] = 0;
-				$this->_req_data['PRT_is_tax'] = 0;
+				$this->_req_data['PBT_ID'] = 1;
 				$this->_req_data['PRT_is_percent'] = 0;
 				$this->_req_data['PRT_order'] = 0;
 	
@@ -842,7 +836,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				break;
 	
 			case 'Discount' :
-				$this->_req_data['PRT_is_discount'] = 1;
+				$this->_req_data['PBT_ID'] = 2;
 				$pos = strpos($name, ' Discount');
 				$trunc = strlen($name) - 9;
 				if ($pos == $trunc) {
@@ -853,8 +847,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				break;
 	
 			case 'Surcharge' :
-				$this->_req_data['PRT_is_discount'] = 0;
-				$this->_req_data['PRT_is_tax'] = 0;
+				$this->_req_data['PBT_ID'] = 3;
 				$pos = strpos($name, ' Surcharge');
 				$trunc = strlen($name) - 10;
 				if ($pos == $trunc) {
@@ -865,8 +858,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				break;
 	
 			case 'Tax' :
-				$this->_req_data['PRT_is_discount'] = 0;
-				$this->_req_data['PRT_is_tax'] = 1;
+				$this->_req_data['PBT_ID'] = 4;
 				$this->_req_data['PRT_is_percent'] = 1;
 				$pos = strpos($name, ' Tax');
 				$trunc = strlen($name) - 4;
@@ -883,9 +875,8 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	
 		$set_column_values = array(
 				'PRT_name' => $this->_req_data['PRT_name'],
+				'PBT_ID' => absint($this->_req_data['PBT_ID']),
 				'PRT_is_member' => absint($this->_req_data['PRT_is_member']),
-				'PRT_is_discount' => absint($this->_req_data['PRT_is_discount']),
-				'PRT_is_tax' => absint($this->_req_data['PRT_is_tax']),
 				'PRT_is_percent' => absint($this->_req_data['PRT_is_percent']),
 				'PRT_is_global' => absint($this->_req_data['PRT_is_global']),
 				'PRT_order' => absint($this->_req_data['PRT_order'])

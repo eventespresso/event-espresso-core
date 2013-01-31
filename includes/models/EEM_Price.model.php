@@ -75,11 +75,6 @@ class EEM_Price extends EEM_Base {
 				'PRC_use_dates'			=> '%d',
 				'PRC_start_date'			=> '%d',
 				'PRC_end_date'			=> '%d',
-				'PRC_disc_code'			=> '%s',
-				'PRC_disc_limit_qty'	=> '%d',
-				'PRC_disc_qty'			=> '%d',
-				'PRC_disc_apply_all'	=> '%d',
-				'PRC_disc_wp_user'	=> '%d',
 				'PRC_is_active' 			=> '%d',
 				'PRC_overrides' 			=> '%d',
 				'PRC_order' 				=> '%d',
@@ -115,22 +110,16 @@ class EEM_Price extends EEM_Base {
 		foreach ($prices as $price) {
 
 			$array_of_objects[$price->PRC_ID] = new EE_Price(
-
 											$price->PRT_ID,
 											$price->EVT_ID,
 											$price->PRC_amount,
 											$price->PRC_name,
 											$price->PRC_desc,
-//											$price->PRC_reg_limit,
-//											$price->PRC_tckts_left,
+											$price->PRC_reg_limit,
+											$price->PRC_tckts_left,
 											$price->PRC_use_dates,
 											$price->PRC_start_date,
 											$price->PRC_end_date,
-											$price->PRC_disc_code,
-											$price->PRC_disc_limit_qty,
-											$price->PRC_disc_qty,
-											$price->PRC_disc_apply_all,
-											$price->PRC_disc_wp_user,
 											$price->PRC_is_active,
 											$price->PRC_overrides,
 											$price->PRC_order,
@@ -153,7 +142,7 @@ class EEM_Price extends EEM_Base {
 	 * 		@return		mixed		array on success, FALSE on fail
 	 */
 	public function get_new_price() { 
-		return new EE_Price( 1, 0, 0.00, '', '', /*NULL, NULL,*/ FALSE, NULL, NULL, NULL, FALSE, 0, FALSE, 1, FALSE, NULL, NULL, FALSE );
+		return new EE_Price( 1, 0, 0.00, '', '', NULL, NULL, FALSE, NULL, NULL, TRUE, NULL, NULL, NULL );
 	}
 
 
@@ -284,16 +273,11 @@ class EEM_Price extends EEM_Base {
 				'prc.PRC_amount'			=> '%f',
 				'prc.PRC_name'				=> '%s',
 				'prc.PRC_desc'				=> '%s',
-//				'prc.PRC_reg_limit' 		=> '%d',
-//				'prc.PRC_tckts_left' 		=> '%d',
+				'prc.PRC_reg_limit' 		=> '%d',
+				'prc.PRC_tckts_left' 		=> '%d',
 				'prc.PRC_use_dates'		=> '%d',
 				'prc.PRC_start_date'		=> '%d',
 				'prc.PRC_end_date'		=> '%d',
-				'prc.PRC_disc_code'		=> '%s',
-				'prc.PRC_disc_limit_qty'	=> '%d',
-				'prc.PRC_disc_qty'			=> '%d',
-				'prc.PRC_disc_apply_all'=> '%d',
-				'prc.PRC_disc_wp_user'	=> '%d',
 				'prc.PRC_is_active' 			=> '%d',
 				'prc.PRC_overrides' 		=> '%d',
 				'prc.PRC_order' 				=> '%d',

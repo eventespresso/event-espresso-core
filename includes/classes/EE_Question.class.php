@@ -41,6 +41,14 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	protected $_QST_display_text=NULL;
 	
 	
+	/** 
+	 * An administrative label to help differentiate between two questions that have the same display text
+	 * @access protected
+	 * @var string
+	 */
+	protected $_QST_admin_label=NULL;
+	
+	
 	/**
 	 * If it's a system name, the column of the attendee column to which this question corresponds
 	 * @access protected
@@ -126,6 +134,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	/**
 	 * constructor for questions
 	 * @param string/array $QST_display_text text for displaying the question (eg, "what is your name?") OR an array of all field values, where keys match these arguments' names
+	 * @param string $QST_admin_label administrative label for a question
 	 * @param string $QST_system_name if this is a system question, it's internal name
 	 * @param string $QST_type one of 'text','textarea',etc.
 	 * @param boolean $QST_required indicates whether this question must be answered
@@ -138,6 +147,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 */
 	public function __construct( 
 			$QST_display_text=NULL, 
+			$QST_admin_label=NULL, 
 			$QST_system_name=NULL, 
 			$QST_type=NULL, 
 			$QST_required=NULL,
@@ -169,6 +179,20 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	public function set_display_text( $QST_display_text = FALSE ) {
 		if ( ! $this->_check_for( $QST_display_text, 'Display text' )) { return FALSE; }
 		$this->_QST_display_text = wp_strip_all_tags( $QST_display_text );
+		return TRUE;
+	}
+	
+	
+	
+	/**
+	*		Set	Question admin text
+	* 
+	* 		@access		public		
+	*		@param		int		$QST_admin_label
+	*/	
+	public function set_admin_label( $QST_admin_label = FALSE ) {
+		if ( ! $this->_check_for( $QST_admin_label, 'Admin Label' )) { return FALSE; }
+		$this->_QST_admin_label = wp_strip_all_tags( $QST_admin_label );
 		return TRUE;
 	}
 	
@@ -303,6 +327,16 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 */
 	public function display_text(){
 		return $this->get('QST_display_text');
+	}
+	
+	
+	/**
+	 * returns the text for the administrative label
+	 * @access public
+	 * @return string
+	 */
+	public function admin_label(){
+		return $this->get('QST_admin_label');
 	}
 	
 	/**

@@ -38,7 +38,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 	protected function _init_page_props() {
 		$this->page_slug = EE_PAYMENTS_PG_SLUG;
-		$this->page_label = __('Payment Gateways', 'event_espresso');
+		$this->page_label = __('Payment Methods', 'event_espresso');
 	}
 
 
@@ -61,6 +61,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 			'default' => '_gateway_settings',
 			'payment_settings' => '_payment_settings',
+			'update_payment_settings' => '_update_payment_settings',
 			'developers' => '_developers_section',
 			'affiliate' => '_affiliate_settings',
 			'save_aff_s' => array(
@@ -86,7 +87,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					'label' => __('Settings', 'event_espresso'),
 					'order' => 10
 					),
-				'metaboxes' => array( '_espresso_news_post_box'),
+				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box'),
 				),
 			'developers' => array(
 				'nav' => array(
@@ -207,13 +208,32 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['show_pending_payment_options'] = isset( $org_options['show_pending_payment_options'] ) ? absint( $org_options['show_pending_payment_options'] ) : FALSE;
 //		$data['expire_on_registration_end'] = isset( $this->_req_data['expire_on_registration_end'] ) ? absint( $this->_req_data['expire_on_registration_end'] ) : FALSE;
 
-		$this->_set_add_edit_form_tags( 'update_espresso_page_settings' );
+		$this->_set_add_edit_form_tags( 'update_payment_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = espresso_display_template( EE_PAYMENTS_TEMPLATE_PATH . 'payment_settings.template.php', $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();	
 		
 	}
 
+
+
+
+	/**
+	 * 		_update_payment_settings
+	*		@access protected
+	*		@return array
+	*/
+	protected function _update_payment_settings() {	
+
+		$data = array();
+		$data['show_pending_payment_options'] = isset( $this->_req_data['show_pending_payment_options'] ) ? absint( $this->_req_data['show_pending_payment_options'] ) : FALSE;
+		$data = apply_filters('filter_hook_espresso_payment_settings_save', $data);	
+		
+		$what = 'Payment Settings';
+		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'payment_settings' ) );
+				
+	}
 
 
 
@@ -347,7 +367,16 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 	public function aff_settings() {
 		global $org_options, $espresso_wp_user;
-		$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+		
+		if ( ! $payment_settings = get_option('payment_data_' . $espresso_wp_user )) {
+			$payment_settings = array(
+				'affiliate' => array( 
+					'script' => '',
+					'hook_into' => ''
+				)
+			);
+		}
+		
 		$options = array('header' => esc_html('Before the opening \'<body>\' tag of every page on the website'), 'purchase_comfirmation' => 'On the purchase confirmation page after completed purchase', 'footer' => esc_html('Before the closing \'</body>\' tag of every page on the website'));
 		$hook_row_span = round(count($options)/2);
 		?>

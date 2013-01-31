@@ -82,7 +82,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
 			'default' => '_events_overview_list_table',
-			'event_settings' => '_default_event_settings',
 			'edit_event' => array(
 				'func' => '_event_details',
 				'args' => array('edit')
@@ -133,7 +132,12 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'noheader' => true
 				),
 			'import_events' => '_import_events',
-			'import' => '_import_events'
+			'import' => '_import_events',
+			'default_event_settings' => '_default_event_settings',
+			'update_default_event_settings' => array(
+				'func' => '_update_default_event_settings',
+				'noheader' => TRUE,
+				),			
 			);
 	}
 
@@ -162,13 +166,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
 				),
-			'event_settings' => array(
-				'nav' => array(
-					'label' => __('Default Settings', 'event_esprsso'),
-					'order' => 40
-					),
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
-				),
 			'add_event' => array(
 				'nav' => array(
 					'label' => __('Add Event', 'event_espresso'),
@@ -185,6 +182,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 					'url' => isset($this->_req_data['EVT_ID']) ? add_query_arg(array('EVT_ID' => $this->_req_data['EVT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
 				'metaboxes' => array( '_publish_post_box', '_register_event_editor_meta_boxes', '_premium_event_editor_meta_boxes' )
+				),
+			'default_event_settings' => array(
+				'nav' => array(
+					'label' => __('Default Settings', 'event_esprsso'),
+					'order' => 40
+					),
+				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' )
 				)
 			);
 	}
@@ -665,7 +669,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		add_meta_box('espresso_event_editor_additional_questions', __('Questions for Additional Attendees', 'event_espresso'), array( $this, 'additional_attendees_question_groups_meta_box' ), $this->_current_screen->id, 'side', 'core');
 
-		add_meta_box('espresso_event_editor_promo_box', __('Event Promotions', 'event_espresso'), array( $this, 'promotions_meta_box' ), $this->_current_screen->id, 'side', 'core');
+		//add_meta_box('espresso_event_editor_promo_box', __('Event Promotions', 'event_espresso'), array( $this, 'promotions_meta_box' ), $this->_current_screen->id, 'side', 'core');
 
 		add_meta_box('espresso_event_editor_featured_image_box', __('Featured Image', 'event_espresso'), array( $this, 'featured_image_meta_box' ), $this->_current_screen->id, 'side', 'default');
 
@@ -1040,9 +1044,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 					$group_name = $question_group->group_name;
 					$checked = (is_array($add_attendee_question_groups) && array_key_exists($question_group_id, $add_attendee_question_groups)) || ($question_group->system_group == 1) ? ' checked="checked" ' : '';
 
-					$visibility = $question_group->system_group == 1 ? 'style="visibility:hidden"' : '';
+					$visibility = $question_group->system_group == 1 ? ' style="visibility:hidden"' : '';
 
-					$html .= '<p id="event-question-group-' . $question_group_id . '"><input value="' . $question_group_id . '" type="checkbox" ' . $visibility . ' name="add_attendee_question_groups[' . $question_group_id . ']" ' . $checked . ' /> <a href="admin.php?page=form_groups&amp;action=edit_group&amp;group_id=' . $question_group_id . '" title="edit" target="_blank">' . $group_name . "</a></p>";
+					$html .= '
+					<p id="event-question-group-' . $question_group_id . '">
+						<input value="' . $question_group_id . '" type="checkbox"' . $visibility . ' name="add_attendee_question_groups[' . $question_group_id . ']"' . $checked . ' /> 
+						<a href="admin.php?page=form_groups&amp;action=edit_group&amp;group_id=' . $question_group_id . '" title="edit" target="_blank">' . $group_name . "</a>
+					</p>";
 				}
 				if ($this->_event->num_rows > 10) {
 					$top_div = '<div style="height:250px;overflow:auto;">';
@@ -1072,58 +1080,80 @@ class Events_Admin_Page extends EE_Admin_Page {
 		);
 		global $wpdb;
 		?>
-		<div class="inside">
+	  <div class="inside">
 
-			<p><strong><?php _e('Early Registration Discount', 'event_espresso'); ?></strong></p>
+	  	<p>
+		  	<strong>
+		  		<?php _e('Early Registration Discount', 'event_espresso'); ?>
+	  		</strong>
+	  	</p>
 
-			<p><label for="early_disc_date"><?php _e('End Date:', 'event_espresso'); ?></label><input type="text" class="datepicker" size="12" id="early_disc_date" name="early_disc_date" value="<?php echo isset($this->_event->early_disc_date) ? $this->_event->early_disc_date : ''; ?>"/> </p>
+	  	<p>
+	  		<label for="early_disc_date">
+		  		<?php _e('End Date:', 'event_espresso'); ?>
+	  		</label>
+			<input type="text" class="datepicker" size="12" id="early_disc_date" name="early_disc_date" value="<?php echo isset($this->_event->early_disc_date) ? $this->_event->early_disc_date : ''; ?>"/>
+	  	</p>
 
-			<p class="promo-amnts">
-				<label for="early_disc"><?php _e('Amount:', 'event_espresso'); ?></label><input type="text" size="3" id="early_disc" name="early_disc" value="<?php echo isset($this->_event->early_disc) ? $this->_event->early_disc : ''; ?>" /> <br /><span class="description"><?php _e('(Leave blank if not applicable)', 'event_espresso'); ?></span>
-			</p>
+	  	<p class="promo-amnts">
+	  		<label for="early_disc">
+		  		<?php _e('Amount:', 'event_espresso'); ?>
+	  		</label>
+			<input type="text" size="3" id="early_disc" name="early_disc" value="<?php echo isset($this->_event->early_disc) ? $this->_event->early_disc : ''; ?>" /> <br />
+	  		<span class="description">
+		  		<?php _e('(Leave blank if not applicable)', 'event_espresso'); ?>
+	  		</span>
+	  	</p>
 
-			<p>
-				<label><?php _e('Percentage:', 'event_espresso') ?></label>
+	  	<p>
+	  		<label>
+		  		<?php _e('Percentage:', 'event_espresso') ?>
+	  		</label>
+	  		<?php echo EE_Form_Fields::select_input('early_disc_percentage', $values, !isset($this->_event->early_disc_percentage) ? '' : $this->_event->early_disc_percentage); ?>
+	  	</p>
 
-				<?php echo EE_Form_Fields::select_input('early_disc_percentage', $values, !isset($this->_event->early_disc_percentage) ? '' : $this->_event->early_disc_percentage); ?>
-			</p>
+	  	<p>
+		  	<strong>
+		  		<?php _e('Promotion Codes', 'event_espresso'); ?>
+	  		</strong>
+	  	</p>
+	  	<p class="disc-codes">
+	  		<label>
+		  		<?php _e('Allow discount codes?', 'event_espresso'); ?> <?php do_action('action_hook_espresso_help', 'coupon_code_info'); ?>
+	  		</label>
+	  		<?php echo EE_Form_Fields::select_input('use_coupon_code', $values, !isset($this->_event->use_coupon_code) || $this->_event->use_coupon_code == '' ? false : $this->_event->use_coupon_code); ?>
+	  	</p>
 
-			<p><strong><?php _e('Promotion Codes', 'event_espresso'); ?></strong></p>
-			<p class="disc-codes">
-				<label><?php _e('Allow discount codes?', 'event_espresso'); ?> <?php do_action('action_hook_espresso_help', 'coupon_code_info'); ?></label>
-				<?php echo EE_Form_Fields::select_input('use_coupon_code', $values, !isset($this->_event->use_coupon_code) || $this->_event->use_coupon_code == '' ? false : $this->_event->use_coupon_code); ?>
-			</p>
+	  	<?php
+	  	$sql = "SELECT * FROM " . EVENTS_DISCOUNT_CODES_TABLE;
+	  	if (function_exists('espresso_member_data') && !empty($this->_event->event_id)) {
+	  		$wpdb->get_results("SELECT wp_user FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $this->_event->event_id . "'");
+	  		$this->_event->wp_user = $wpdb->last_result[0]->wp_user != '' ? $wpdb->last_result[0]->wp_user : espresso_member_data('id');
+	  		$sql .= " WHERE ";
+	  		if ($this->_event->wp_user == 0 || $this->_event->wp_user == 1) {
+	  			$sql .= " (wp_user = '0' OR wp_user = '1') ";
+	  		}else {
+	  			$sql .= " wp_user = '" . $this->_event->wp_user . "' ";
+	  		}
+	  	}
+	  	$event_discounts = $wpdb->get_results($sql);
+	  	if (!empty($event_discounts)) {
+	  		foreach ($event_discounts as $event_discount) {
+	  			$discount_id        = $event_discount->id;
+	  			$coupon_code        = $event_discount->coupon_code;
 
-			<?php
-			$sql = "SELECT * FROM " . EVENTS_DISCOUNT_CODES_TABLE;
-			if (function_exists('espresso_member_data') && !empty($this->_event->event_id)) {
-				$wpdb->get_results("SELECT wp_user FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $this->_event->event_id . "'");
-				$this->_event->wp_user = $wpdb->last_result[0]->wp_user != '' ? $wpdb->last_result[0]->wp_user : espresso_member_data('id');
-				$sql .= " WHERE ";
-				if ($this->_event->wp_user == 0 || $this->_event->wp_user == 1) {
-					$sql .= " (wp_user = '0' OR wp_user = '1') ";
-				} else {
-					$sql .= " wp_user = '" . $this->_event->wp_user . "' ";
-				}
-			}
-			$event_discounts = $wpdb->get_results($sql);
-			if (!empty($event_discounts)) {
-				foreach ($event_discounts as $event_discount) {
-					$discount_id = $event_discount->id;
-					$coupon_code = $event_discount->coupon_code;
+	  			$in_event_discounts = !empty($this->_event->event_id) ? $wpdb->get_results("SELECT * FROM " . EVENTS_DISCOUNT_REL_TABLE . " WHERE event_id='" . $this->_event->event_id . "' AND discount_id='" . $discount_id . "'") : array();
+	  			$in_event_discount = '';
+	  			foreach ($in_event_discounts as $in_discount) {
+	  				$in_event_discount = $in_discount->discount_id;
+	  			}
+	  			echo '<p class="event-disc-code" id="event-discount-' . $discount_id . '"><label for="in-event-discount-' . $discount_id . '" class="selectit"><input value="' . $discount_id . '" type="checkbox" name="event_discount[]" id="in-event-discount-' . $discount_id . '"' . ($in_event_discount == $discount_id ? ' checked="checked"' : "" ) . '/> ' . $coupon_code . "</label></p>";
+	  		}
+	  	}
 
-					$in_event_discounts = !empty($this->_event->event_id) ? $wpdb->get_results("SELECT * FROM " . EVENTS_DISCOUNT_REL_TABLE . " WHERE event_id='" . $this->_event->event_id . "' AND discount_id='" . $discount_id . "'") : array();
-					$in_event_discount = '';
-					foreach ($in_event_discounts as $in_discount) {
-						$in_event_discount = $in_discount->discount_id;
-					}
-					echo '<p class="event-disc-code" id="event-discount-' . $discount_id . '"><label for="in-event-discount-' . $discount_id . '" class="selectit"><input value="' . $discount_id . '" type="checkbox" name="event_discount[]" id="in-event-discount-' . $discount_id . '"' . ($in_event_discount == $discount_id ? ' checked="checked"' : "" ) . '/> ' . $coupon_code . "</label></p>";
-				}
-			}
-
-			echo '<p><a href="admin.php?page=discounts" target="_blank">' . __('Manage Promotional Codes ', 'event_espresso') . '</a></p>';
-			?>
-		</div>
+	  	echo '<p><a href="admin.php?page=discounts" target="_blank">' . __('Manage Promotional Codes ', 'event_espresso') . '</a></p>';
+	  	?>
+	  </div>
 		<?php
 	}
 
@@ -1833,6 +1863,107 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 
+
+	private function _espresso_venue_dd($current_value = 0) {
+		global $espresso_premium;
+		if ($espresso_premium != true)
+			return;
+		global $wpdb, $espresso_manager, $espresso_wp_user;
+
+		$WHERE = " WHERE ";
+		$sql = "SELECT ev.*, el.name AS locale FROM " . EVENTS_VENUE_TABLE . " ev ";
+		$sql .= " LEFT JOIN " . EVENTS_LOCALE_REL_TABLE . " lr ON lr.venue_id = ev.id ";
+		$sql .= " LEFT JOIN " . EVENTS_LOCALE_TABLE . " el ON el.id = lr.locale_id ";
+
+		if (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_group_admin' )) {
+			if ($espresso_manager['event_manager_venue']) {
+				//show only venues inside their assigned locales.
+				$group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
+				$group = unserialize($group);
+				$sql .= " $WHERE lr.locale_id IN (" . implode(",", $group) . ")";
+				$sql .= " OR ev.wp_user = " . $espresso_wp_user;
+				$WHERE = " AND ";
+			}
+		}
+		$sql .= " GROUP BY ev.id ORDER by name";
+
+		$venues = $wpdb->get_results($sql);
+		$num_rows = $wpdb->num_rows;
+
+		if ($num_rows > 0) {
+			$field = '<label>' . __('Select from Venue Manager list', 'event_espresso') . '</label>';
+			$field .= '<select name="venue_id[]" id="venue_id" class="chzn-select"  >\n';
+			$field .= '<option value="0">' . __('Select a Venue', 'event_espresso') . '</option>';
+			$div = "";
+			$help_div = "";
+			$i = 0;
+			foreach ($venues as $venue) {
+
+				$i++;
+				$selected = $venue->id == $current_value ? 'selected="selected"' : '';
+				if ($venue->locale != '') {
+					$field .= '<option rel="' . $i . '" ' . $selected . ' value="' . $venue->id . '">' . stripslashes_deep($venue->name) . ' (' . stripslashes_deep($venue->locale) . ') </option>\n';
+				} else if ($venue->city != '' && $venue->state != '') {
+					$field .= '<option rel="' . $i . '" ' . $selected . ' value="' . $venue->id . '">' . stripslashes_deep($venue->name) . ' (' . stripslashes_deep($venue->city) . ', ' . stripslashes_deep($venue->state) . ') </option>\n';
+				} else if ($venue->state != '') {
+					$field .= '<option rel="' . $i . '" ' . $selected . ' value="' . $venue->id . '">' . stripslashes_deep($venue->name) . ' (' . stripslashes_deep($venue->state) . ') </option>\n';
+				} else {
+					$field .= '<option rel="' . $i . '" ' . $selected . ' value="' . $venue->id . '">' . stripslashes_deep($venue->name) . ' </option>\n';
+				}
+
+				$hidden = "display:none;";
+				if ($selected)
+					$hidden = '';
+				$div .= "
+	<fieldset id='eebox_" . $i . "' class='eebox' style='" . $hidden . "'>
+		<ul class='address-view'>
+			<li>
+				<p><span>Address:</span> " . stripslashes($venue->address) . "<br/>
+				<span></span> " . stripslashes($venue->address2) . "<br/>
+				<span>City:</span> " . stripslashes($venue->city) . "<br/>
+				<span>State:</span> " . stripslashes($venue->state) . "<br/>
+				<span>Zip:</span> " . stripslashes($venue->zip) . "<br/>
+				<span>Country:</span> " . stripslashes($venue->country) . "<br/>
+				<span>Venue ID:</span> " . $venue->id . "<br/></p>
+				This venues shortcode <b class='highlight'>[ESPRESSO_VENUE id='" . $venue->id . "']</b><br/>";
+				$div .= '<a href="admin.php?page=event_venues&action=edit&id=' . $venue->id . '" target="_blank">' . __('Edit this venue', 'event_espresso') . '</a> | <a class="thickbox link" href="#TB_inline?height=300&width=400&inlineId=venue_info">Shortcode</a></li></ul>';
+				$div .= "</fieldset>";
+			}
+			$field .= "</select>";
+			$help_div .= '<div id="venue_info" style="display:none">';
+			$help_div .= '<div class="TB-ee-frame">';
+			$help_div .= '<h2>' . __('Venue Shortcode', 'event_espresso') . '</h2>';
+			$help_div .= '<p>' . __('Add the following shortcode into the description to show the venue for this event.', 'event_espresso') . '<br/>';
+			$help_div .= '[ESPRESSO_VENUE]<br/>';
+			$help_div .=  __('To use this venue in a page or post. Use the following shortcode.', 'event_espresso') . '<br/>';
+			$help_div .= '[ESPRESSO_VENUE id="selected_venue_id"]</p>';
+			$help_div .= '<p>Example with Optional Parameters:<br />[ESPRESSO_VENUE outside_wrapper="div" outside_wrapper_class="event_venue"]</p>';
+			$help_div .= '<p><strong><a href="http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/#venue_shortcode" target="_blank">More Examples</a></strong></p>';
+			$help_div .= '</div>';
+			$help_div .= '</div>';
+			ob_start();
+			?>
+			<script>
+				jQuery("#venue_id").change( function(){
+					var selected = jQuery("#venue_id option:selected");
+					var rel = selected.attr("rel");
+					jQuery(".eebox").hide();
+					jQuery("#eebox_"+rel).show();
+				});
+			</script>
+			<?php
+			$js = ob_get_contents();
+			ob_end_clean();
+			$html = '<table><tr><td>' . $field . '</td></tr><tr><td>' . $div . '</td></tr></table>' . $help_div . $js;
+			return $html;
+		}
+	}
+
+
+
+
+
+
 	public function venue_metabox() {
 		global $org_options, $espresso_premium;
 		$values = array(
@@ -1840,128 +1971,125 @@ class Events_Admin_Page extends EE_Admin_Page {
 				array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
 		?>
-		<div class="inside">
-			<table class="form-table">
-				<tr>
-					<?php
-					if (function_exists('espresso_venue_dd') && $org_options['use_venue_manager'] && $espresso_premium) {
-						$ven_type = 'class="use-ven-manager"';
-						?>
-					<td valign="top" <?php echo $ven_type ?>><fieldset id="venue-manager">
-								<legend><?php echo __('Venue Information', 'event_espresso') ?></legend>
-								<?php if (!espresso_venue_dd()) : ?>
-									<p class="info">
-										<b><?php _e('You have not created any venues yet.', 'event_espresso'); ?></b>
-									</p>
-									<p><a href="admin.php?page=event_venues"><?php echo __('Add venues to the Venue Manager', 'event_espresso') ?></a></p>
-								<?php else: ?>
-									<?php echo espresso_venue_dd($this->_event->venue_id) ?>
-								<?php endif; ?>
-							</fieldset>
-						</td>
-						<?php
-					} else {
-						$ven_type = 'class="manual-venue"';
-						?>
-						<td valign="top" <?php echo $ven_type ?>>
-							<fieldset>
-								<legend>
-									<?php _e('Physical Location', 'event_espresso'); ?>
-								</legend>
-								<p>
-									<label for="phys-addr">
-										<?php _e('Address:', 'event_espresso'); ?>
-									</label>
-									<input size="20" id="phys-addr" tabindex="100"  type="text"  value="<?php echo $this->_event->address ?>" name="address" />
-									<label for="phys-addr-2"><?php _e('Address 2:', 'event_espresso'); ?></label>
-									<input size="20" id="phys-addr-2" tabindex="101"  type="text"  value="<?php echo $this->_event->address2 ?>" name="address2" />
-									<label for="phys-city">
-										<?php _e('City:', 'event_espresso'); ?>
-									</label>
-									<input size="20" id="phys-city" tabindex="102"  type="text"  value="<?php echo $this->_event->city ?>" name="city" />
-									<label for="phys-state">
-										<?php _e('State:', 'event_espresso'); ?>
-									</label>
-									<input size="20" id="phys-state" tabindex="103"  type="text"  value="<?php echo $this->_event->state ?>" name="state" />
-									<label for="zip-postal">
-										<?php _e('Zip/Postal Code:', 'event_espresso'); ?>
-									</label>
-									<input size="20" id="zip-postal"  tabindex="104"  type="text"  value="<?php echo $this->_event->zip ?>" name="zip" />
-									<label for="phys-country">
-										<?php _e('Country:', 'event_espresso'); ?>
-									</label>
-									<input size="20" id="phys-country" tabindex="105"  type="text"  value="<?php echo $this->_event->country ?>" name="country" />
-									<br/>
-									<?php _e('Google Map Link (for email):', 'event_espresso'); ?>
-									<br />
-									<?php echo $this->_event->google_map_link; ?> </p>
-							</fieldset>
-						</td>
-						<td valign="top" <?php echo $ven_type; ?>>
+		
+	<div class="inside">
+		<table class="form-table">
+			<tr>
+				<?php
+				if ( $org_options['use_venue_manager'] && $espresso_premium ) {
+					$ven_type = 'class="use-ven-manager"';
 
-								<legend>
-									<?php _e('Venue Information', 'event_espresso'); ?>
-								</legend>
-								<p>
-									<label for="ven-title">
-										<?php _e('Title:', 'event_espresso'); ?>
-									</label>
-									<input size="20"id="ven-title" tabindex="106"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_title) ?>" name="venue_title" />
+					?>
+				<td valign="top" <?php echo $ven_type ?>><fieldset id="venue-manager">
+							<legend><?php echo __('Venue Information', 'event_espresso') ?></legend>
+							<?php if (! $this->_espresso_venue_dd()) : ?>
+								<p class="info">
+									<b><?php _e('You have not created any venues yet.', 'event_espresso'); ?></b>
 								</p>
-								<p>
-									<label for="ven-website">
-										<?php _e('Website:', 'event_espresso'); ?>
-									</label>
-									<input size="20" id="ven-website" tabindex="107"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_url) ?>" name="venue_url" />
-								</p>
-								<p>
-									<label for="ven-phone">
-										<?php _e('Phone:', 'event_espresso'); ?>
-									</label>
-									<input size="20" id="ven-phone" tabindex="108"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_phone) ?>" name="venue_phone" />
-								</p>
-								<p>
-									<label for="ven-image">
-										<?php _e('Image:', 'event_espresso'); ?>
-									</label>
-									<input size="20" id="ven-image" tabindex="110"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_image) ?>" name="venue_image" />
-								</p>
-							<?php } ?>
-					</td>
-					<td valign="top" <?php echo $ven_type ?>>
-						<fieldset id="virt-location">
-							<legend>
-								<?php _e('Virtual Location', 'event_espresso'); ?>
-							</legend>
-							<p>
-								<label for="virt-phone" style="display:inline-block; width:100px;">
-									<?php _e('Phone:', 'event_espresso'); ?>
-								</label>
-								<input size="20" id="virt-phone" type="text" tabindex="111" value="<?php echo $this->_event->phone ?>" name="phone" />
-							</p>
-							<p>
-								<label for="url-event" style="display:inline-block; width:100px; vertical-align:top;">
-									<?php _e('URL of Event:', 'event_espresso'); ?>
-								</label>
-								<textarea id="url-event" cols="30" rows="4" tabindex="112"  name="virtual_url"><?php echo stripslashes_deep($this->_event->virtual_url) ?></textarea>
-							</p>
-							<p>
-								<label for="call-in-num" style="display:inline-block; width:100px;">
-									<?php _e('Call in Number:', 'event_espresso'); ?>
-								</label>
-								<input id="call-in-num" size="20" tabindex="113"  type="text"  value="<?php echo stripslashes_deep($this->_event->virtual_phone) ?>" name="virtual_phone" />
-							</p>
+								<p><a href="admin.php?page=event_venues"><?php echo __('Add venues to the Venue Manager', 'event_espresso') ?></a></p>
+							<?php else: ?>
+								<?php echo $this->_espresso_venue_dd($this->_event->venue_id) ?>
+							<?php endif; ?>
 						</fieldset>
 					</td>
-				</tr>
+					<?php
+				} else {
+					$ven_type = 'class="manual-venue"';
+					?>
+					<td valign="top" <?php echo $ven_type; ?>>
 
-			</table>
-			<p>
-				<label for="enable_for_gmap">
-					<?php _e('Enable event address in Google Maps? ', 'event_espresso') ?>
-				</label>
-				<?php echo EE_Form_Fields::select_input('enable_for_gmap', $values, isset($this->_event->event_meta['enable_for_gmap']) ? $this->_event->event_meta['enable_for_gmap'] : '', 'id="enable_for_gmap"') ?> </p>
-		</div>
+							<legend>
+								<?php _e('Venue Information', 'event_espresso'); ?>
+							</legend>
+							<p>
+								<label for="ven-title"><?php _e('Title:', 'event_espresso'); ?></label><br/>
+								<input size="20"id="ven-title" tabindex="106"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_title) ?>" name="venue_title" />
+							</p>
+							<p>
+								<label for="ven-website"><?php _e('Website:', 'event_espresso'); ?></label><br/>
+								<input size="20" id="ven-website" tabindex="107"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_url) ?>" name="venue_url" />
+							</p>
+							<p>
+								<label for="ven-phone"><?php _e('Phone:', 'event_espresso'); ?></label><br/>
+								<input size="20" id="ven-phone" tabindex="108"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_phone) ?>" name="venue_phone" />
+							</p>
+							<p>
+								<label for="ven-image"><?php _e('Image:', 'event_espresso'); ?></label><br/>
+								<input size="20" id="ven-image" tabindex="110"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_image) ?>" name="venue_image" />
+							</p>
+					</td>
+					<td valign="top" <?php echo $ven_type ?>>
+						<fieldset>
+							<legend><?php _e('Physical Location', 'event_espresso'); ?></legend>
+							<p>
+								<label for="phys-addr"><?php _e('Address:', 'event_espresso'); ?></label><br/>
+								<input size="20" id="phys-addr" tabindex="100"  type="text"  value="<?php echo $this->_event->address ?>" name="address" />
+							</p>
+							<p>
+								<label for="phys-addr-2"><?php _e('Address 2:', 'event_espresso'); ?></label><br/>
+								<input size="20" id="phys-addr-2" tabindex="101"  type="text"  value="<?php echo $this->_event->address2 ?>" name="address2" />
+							</p>
+							<p>
+								<label for="phys-city"><?php _e('City:', 'event_espresso'); ?></label><br/>
+								<input size="20" id="phys-city" tabindex="102"  type="text"  value="<?php echo $this->_event->city ?>" name="city" />
+							</p>
+							<p>
+								<label for="phys-state"><?php _e('State:', 'event_espresso'); ?></label><br/>
+								<input size="20" id="phys-state" tabindex="103"  type="text"  value="<?php echo $this->_event->state ?>" name="state" />
+							</p>
+							<p>
+								<label for="phys-country"><?php _e('Country:', 'event_espresso'); ?></label><br/>
+								<input size="20" id="phys-country" tabindex="105"  type="text"  value="<?php echo $this->_event->country ?>" name="country" />
+							</p>
+							<p>
+								<label for="zip-postal"><?php _e('Zip/Postal Code:', 'event_espresso'); ?></label><br/>
+								<input size="20" id="zip-postal"  tabindex="104"  type="text"  value="<?php echo $this->_event->zip ?>" name="zip" />
+							</p>
+								<br/>
+							<p>
+								<?php _e('Google Map Link (for email):', 'event_espresso'); ?>
+								<?php echo $this->_event->google_map_link; ?> 
+							</p>	
+								<br/>
+							<p>
+								<label for="enable_for_gmap">
+									<?php _e('Enable event address in Google Maps? ', 'event_espresso') ?>
+								</label>
+								<?php echo EE_Form_Fields::select_input('enable_for_gmap', $values, isset($this->_event->event_meta['enable_for_gmap']) ? $this->_event->event_meta['enable_for_gmap'] : '', 'id="enable_for_gmap"') ?> 
+							</p>
+
+						</fieldset>
+					</td>
+						<?php } ?>
+				<td valign="top" <?php echo $ven_type ?>>
+					<fieldset id="virt-location">
+						<legend>
+							<?php _e('Virtual Location', 'event_espresso'); ?>
+						</legend>
+						<p>
+							<label for="virt-phone" style="display:inline-block; width:100px;">
+								<?php _e('Phone:', 'event_espresso'); ?>
+							</label>
+							<input size="20" id="virt-phone" type="text" tabindex="111" value="<?php echo $this->_event->phone ?>" name="phone" />
+						</p>
+						<p>
+							<label for="url-event" style="display:inline-block; width:100px; vertical-align:top;">
+								<?php _e('URL of Event:', 'event_espresso'); ?>
+							</label>
+							<textarea id="url-event" cols="30" rows="4" tabindex="112"  name="virtual_url"><?php echo stripslashes_deep($this->_event->virtual_url) ?></textarea>
+						</p>
+						<p>
+							<label for="call-in-num" style="display:inline-block; width:100px;">
+								<?php _e('Call in Number:', 'event_espresso'); ?>
+							</label>
+							<input id="call-in-num" size="20" tabindex="113"  type="text"  value="<?php echo stripslashes_deep($this->_event->virtual_phone) ?>" name="virtual_phone" />
+						</p>
+					</fieldset>
+				</td>
+			</tr>
+		</table>
+
+	</div>
 		<?php
 	}
 
@@ -2023,9 +2151,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 					$question_group_id = $question_group->id;
 					$group_name = $question_group->group_name;
 					$checked = (is_array($question_groups) && array_key_exists($question_group_id, $question_groups)) || $question_group->system_group == 1 ? ' checked="checked" ' : '';
-					$visibility = $question_group->system_group == 1 ? 'style="visibility:hidden"' : '';
+					$visibility = $question_group->system_group == 1 ? ' style=" visibility:hidden"' : '';
 					$group_id = isset($group_id) ? $group_id : '';
-					$html .= '<p id="event-question-group-' . $question_group_id . '"><input value="' . $question_group_id . '" type="checkbox" ' . $checked . $visibility . ' name="question_groups[' . $question_group_id . ']" ' . $checked . ' /> <a href="admin.php?page=form_groups&amp;action=edit_group&amp;group_id=' . $question_group_id . '" title="edit" target="_blank">' . $group_name . '</a></p>';
+					$html .= '
+					<p id="event-question-group-' . $question_group_id . '">
+						<input value="' . $question_group_id . '" type="checkbox"' . $visibility . ' name="question_groups[' . $question_group_id . ']"' . $checked . ' /> 
+						<a href="admin.php?page=form_groups&amp;action=edit_group&amp;group_id=' . $question_group_id . '" title="edit" target="_blank">' . $group_name . '</a>
+					</p>';
 				}
 				if ($this->_event->num_rows > 10) {
 					$top_div = '<div style="height:250px;overflow:auto;">';
@@ -3100,11 +3232,11 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$timezone_string = empty($this->_req_data['timezone_string']) ? '' : $this->_req_data['timezone_string'];
 
 		//Early discounts
-		$early_disc = $this->_req_data['early_disc'];
-		$early_disc_date = $this->_req_data['early_disc_date'];
-		$early_disc_percentage = $this->_req_data['early_disc_percentage'];
+		$early_disc = isset( $this->_req_data['early_disc'] ) ? $this->_req_data['early_disc'] : '';
+		$early_disc_date = isset( $this->_req_data['early_disc_date'] ) ? $this->_req_data['early_disc_date'] : '';
+		$early_disc_percentage = isset( $this->_req_data['early_disc_percentage'] ) ? $this->_req_data['early_disc_percentage'] : '';
 
-		$use_coupon_code = $this->_req_data['use_coupon_code'];
+		$use_coupon_code = isset( $this->_req_data['use_coupon_code'] ) ? $this->_req_data['use_coupon_code'] : FALSE;
 		$alt_email = $this->_req_data['alt_email'];
 
 		$confirmation_email_id = isset( $this->_req_data['confirmation_email_id'] ) ? $this->_req_data['confirmation_email_id']  : NULL;
@@ -3770,11 +3902,34 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		$this->_template_args['use_attendee_pre_approval'] = isset( $org_options['use_attendee_pre_approval'] ) ? absint( $org_options['use_attendee_pre_approval'] ) : FALSE;
 
-		$this->_set_add_edit_form_tags( 'update_global_event_settings' );
+		$this->_set_add_edit_form_tags( 'update_default_event_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = espresso_display_template( EVENTS_TEMPLATE_PATH . 'event_settings.template.php', $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();	
 		
+	}
+
+
+
+
+	/**
+	 * 		_update_default_event_settings
+	*		@access protected
+	*		@return array
+	*/
+	protected function _update_default_event_settings() {	
+
+		$data = array();
+		$data['expire_on_registration_end'] = isset( $this->_req_data['expire_on_registration_end'] ) ? absint( $this->_req_data['expire_on_registration_end'] ) : FALSE;
+		$data['default_reg_status'] = isset( $this->_req_data['default_reg_status'] ) ? sanitize_text_field( $this->_req_data['default_reg_status'] ) : 'RPN';
+		$data['use_attendee_pre_approval'] = isset( $this->_req_data['use_attendee_pre_approval'] ) ? absint( $this->_req_data['use_attendee_pre_approval'] ) : FALSE;
+
+		$data = apply_filters('filter_hook_espresso_default_event_settings_save', $data);	
+		
+		$what = 'Default Event Settings';
+		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'default_event_settings' ) );
+				
 	}
 
 

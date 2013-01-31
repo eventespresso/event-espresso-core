@@ -227,7 +227,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 		$data = apply_filters('filter_hook_espresso_page_settings_save', $data);
 		
-		$success = $this->_update_general_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, 'Template Settings', 'updated', array() );
 		
 	}
@@ -386,7 +386,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data = apply_filters('filter_hook_espresso_template_settings_save', $data);
 		
 		$what = 'Template Settings';
-		$success = $this->_update_general_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'template_settings' ) );
 		
 	}
@@ -409,7 +409,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			$_SESSION['event_espresso_themes_copied'] = false;
 			
 			$what = 'Custom Templates';
-			$success = $this->_update_general_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+			$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
 			$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'template_settings' ) );
 			
 		}
@@ -540,7 +540,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data = apply_filters('filter_hook_espresso_google_map_settings_save', $data);	
 		
 		$what = 'Google Map Settings';
-		$success = $this->_update_general_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'google_map_settings' ) );
 		
 	}
@@ -586,7 +586,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data = apply_filters('filter_hook_espresso_your_organization_settings_save', $data);	
 		
 		$what = 'Your Organization Settings';
-		$success = $this->_update_general_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'your_organization_settings' ) );
 		
 	}
@@ -633,7 +633,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data = apply_filters('filter_hook_espresso_admin_option_settings_save', $data);	
 		
 		$what = 'Admin Options';
-		$success = $this->_update_general_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'admin_option_settings' ) );
 		
 	}
@@ -647,56 +647,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	/***********/
 
 
-
-
-
-	/**
-	 * correct variable display
-	 *
-	 * @access private
-	 * @param array $var
-	 * @return string
-	 */
-	private function _display_nice( $var ) {
-		return htmlentities( stripslashes( $var ), ENT_QUOTES, 'UTF-8' );
-	}
-
-
-
-
-	/**
-	 * updates user_meta
-	 *
-	 * @param string $tab
-	 * @param array $data
-	 * @param string $file	file where error occured
-	 * @param string $func function  where error occured
-	 * @param string $line	line no where error occured
-	 * @return boolean
-	 */
-	private function _update_general_settings( $tab, $data, $file = '', $func = '', $line = '' ) {
-		global $espresso_wp_user;
-		// grab existing org options
-		$org_options = get_user_meta( $espresso_wp_user, 'events_organization_settings', TRUE );
-		// make sure everything is in arrays
-		$org_options = is_array( $org_options ) ? $org_options : array( $org_options );
-		$data = is_array( $data ) ? $data : array( $data );
-		foreach ( $data as $key => $value ) {
-			$data[ $key ] = is_array( $value ) ? $value : addslashes( html_entity_decode( $value, ENT_QUOTES, 'UTF-8' ));
-		}
-		// overwrite existing org options with new data
-		$data = array_merge( $org_options, $data );
-		// and save it
-		if ( update_user_meta( $espresso_wp_user, 'events_organization_settings', $data )) {
-			EE_Error::add_success( sprintf( __('%s have been successfully updated.', 'event_espresso'), $tab ));
-			return TRUE;
-		} else {
-			$user_msg = sprintf( __('An error occured. The %s were not updated.', 'event_espresso'), $tab );
-			EE_Error::add_error( $user_msg, $file, $func, $line  );
-			return FALSE;
-		}			
-
-	}
 
 
 

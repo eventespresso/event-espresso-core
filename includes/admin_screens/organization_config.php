@@ -365,9 +365,10 @@ function espresso_page_settings_meta_box() {
 			?>
 		
 			<tr>
-				<th><label for="event_page_id">
-						<?php _e('Main registration page', 'event_espresso'); ?>
-						<?php do_action('action_hook_espresso_help', 'registration_page_info'); ?><br />
+				<th>
+					<label for="event_page_id">
+						<b><?php _e('Event Registration page', 'event_espresso'); ?></b>
+						<?php echo apply_filters('filter_hook_espresso_help', 'registration_page_info'); ?><br />
 						<a href="<?php echo home_url(); ?>/wp-admin/post.php?post=<?php echo $org_options['event_page_id']; ?>&action=edit" >
 							<?php _e('Edit', 'event_espresso'); ?>
 						</a> | <a href="<?php echo home_url(); ?>/?page_id=<?php echo $org_options['event_page_id']; ?>" >
@@ -410,9 +411,10 @@ function espresso_page_settings_meta_box() {
 			</tr>
 		
 			<tr>
-				<th><label for="return_url">
-						<?php _e('Auto Return URL', 'event_espresso'); ?>
-						<?php do_action('action_hook_espresso_help', 'return_url_info'); ?><br />
+				<th>
+					<label for="return_url">
+						<b><?php _e('Thank You page', 'event_espresso'); ?></b>
+						<?php echo apply_filters('filter_hook_espresso_help', 'return_url_info'); ?><br />
 						<a href="<?php echo home_url(); ?>/wp-admin/post.php?post=<?php echo $org_options['return_url']; ?>&action=edit" >
 							<?php _e('Edit', 'event_espresso'); ?>
 						</a> | <a href="<?php echo home_url(); ?>/?page_id=<?php echo $org_options['return_url']; ?>" >
@@ -456,9 +458,10 @@ function espresso_page_settings_meta_box() {
 			</tr>
 		
 			<tr>
-				<th><label for="notify_url">
-						<?php _e('Payment Notification URL', 'event_espresso'); ?>
-						<?php do_action('action_hook_espresso_help', 'notify_url_info'); ?><br />
+				<th>
+					<label for="notify_url">
+						<b><?php _e('Transactions page', 'event_espresso'); ?></b>
+						<?php echo apply_filters('filter_hook_espresso_help', 'notify_url_info'); ?><br />
 						<a href="<?php echo home_url(); ?>/wp-admin/post.php?post=<?php echo $org_options['notify_url']; ?>&action=edit" >
 							<?php _e('Edit', 'event_espresso'); ?>
 						</a> | <a href="<?php echo home_url(); ?>/?page_id=<?php echo $org_options['notify_url']; ?>" >
@@ -501,9 +504,10 @@ function espresso_page_settings_meta_box() {
 			</tr>
 			
 			<tr>
-				<th><label for="cancel_return">
-						<?php _e('Cancel Return URL', 'event_espresso'); ?>
-						<?php do_action('action_hook_espresso_help', 'cancel_return_info'); ?><br />
+				<th>
+					<label for="cancel_return">
+						<b><?php _e('Registration Cancelled page', 'event_espresso'); ?></b>
+						<?php echo apply_filters('filter_hook_espresso_help', 'cancel_return_info'); ?><br />
 						<a href="<?php echo home_url(); ?>/wp-admin/post.php?post=<?php echo $org_options['cancel_return']; ?>&action=edit" >
 							<?php _e('Edit', 'event_espresso'); ?>
 						</a> | <a href="<?php echo home_url(); ?>/?page_id=<?php echo $org_options['cancel_return']; ?>" >

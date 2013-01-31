@@ -484,12 +484,12 @@ select.wide {
 
 .event-price-settings-dv {
 	padding:5px 60px 10px 15px; margin:10px 0 20px; 
-	background:#fcfcfc; border:1px solid #eee; border-radius:5px;
+	background:#fcfcfc; border:1px solid #C8E1EC; border-radius:5px;
 }
 
 .cancel-event-price-btn {
 	display:inline-block; float:right; position:relative; top:5px; right:-50px; padding:3px 6px; 
-	background:#fff; border:1px solid #dfdfdf; border-radius:3px;
+	background:#fff; border:1px solid #C8E1EC; border-radius:3px;
 	color:#666; cursor:pointer;
 }
 .cancel-event-price-btn:hover { border-color:#D54E21; }
