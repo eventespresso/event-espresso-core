@@ -448,13 +448,12 @@ abstract class EEM_TempBase extends EEM_Base{
 				if(!$thisModelObject->ID()){
 					$thisModelObject->save();
 				}
-				if($otherModelObjectOrID instanceof EE_TempBase){
+				if($otherModelObjectOrID instanceof EE_Base_Class){
 					if(!$otherModelObjectOrID->ID()){
 						$otherModelObjectOrID->save();
 					}
 					$otherModelID=$otherModelObjectOrID->ID();
-				}
-				if(!($otherModelObjectOrID instanceof EE_TempBase)){
+				}else{
 					$otherModelID=$otherModelObjectOrID;
 				}
 								
