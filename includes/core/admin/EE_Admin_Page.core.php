@@ -385,7 +385,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//next verify routes
 		$this->_verify_routes();
 
-
+		$this->_do_other_page_hooks();
 
 		if ( $this->_is_UI_request ) {
 			
@@ -399,6 +399,35 @@ abstract class EE_Admin_Page extends EE_BASE {
 			if ( current_user_can( 'manage_options' ) )
 				@ini_set( 'memory_limit', apply_filters( 'admin_memory_limit', WP_MAX_MEMORY_LIMIT ) );
 			$this->route_admin_request();
+		}
+	}
+
+
+
+	/**
+	 * Provides a way for related child admin pages to load stuff on the loaded admin page.
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _do_other_page_hooks() {
+		$registered_pages = apply_filters('filter_hook_espresso_do_other_page_hooks_' . $this->page_slug, array() );
+
+		foreach ( $registered_pages as $page ) {
+
+			//now let's setup the file name and class that should be present
+			$classname = $this->page_slug . '_' . $page . '_Hooks';
+			$classname = str_replace( ' ', '_', $classname );
+
+			//autoloaders should take care of loading file
+			if ( !class_exists( $classname ) ) {
+				$error_msg[] = sprintf( __('Something went wrong with loading the %s admin hooks page.', 'event_espresso' ), $page);
+				$error_msg[] = $error_msg[0] . "\r\n" . sprintf( __( 'There is no class in place for the %s admin hooks page.%sMake sure you have <strong>%s</strong> defined. If this is a non-EE-core admin page then you also must have an autoloader in place for your class', 'event_espresso'), $page, '<br />', $classname );
+				throw new EE_Error( implode( '||', $error_msg ));
+			}
+
+			$a = new ReflectionClass($classname);
+			$hookobj[] = $a->newInstance( $this->_page_routes );
 		}
 	}
 
@@ -978,7 +1007,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		// looking at active items or dumpster diving ?
 		if ( ! isset( $this->_req_data['status'] ) || ! array_key_exists( $this->_req_data['status'], $this->_views )) {
-			$this->_view = 'in_use';
+			$this->_view = 'all';
 		} else {
 			$this->_view = sanitize_key( $this->_req_data['status'] );
 		}
@@ -1752,9 +1781,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//calculate where we're going (if we have a "save and close" button pushed)
 		if ( isset($this->_req_data['save_and_close'] ) && isset($this->_req_data['save_and_close_referrer'] ) ) {
-			//dump query_args (becaus ethe save_and_close referrer should be setup)
-			$query_args = array();
-			$redirect_url = $this->_req_data['save_and_close_referrer'];
+			// even though we have the save_and_close referrer, we need to parse the url for the action in order to generate a nonce
+			$parsed_url = parse_url( $this->_req_data['save_and_close_referrer'] );
+			// regenerate query args array from refferer URL
+			parse_str( $parsed_url['query'], $query_args );
+			// correct page and action will be in the query args now
+			$redirect_url = admin_url( 'admin.php' );
 		}
 		
 		// grab messages
@@ -1766,10 +1798,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		// if redirecting to anything other than the main page, add a nonce
 		if ( isset( $query_args['action'] )) {
-			// manually generate wp_nonce
-			$nonce = array( '_wpnonce' => wp_create_nonce( $query_args['action'] . '_nonce' ));
-			// and merge that with the query vars becuz the wp_nonce_url function wrecks havoc on some vars
-			$query_args = array_merge( $query_args, $nonce );
+			// manually generate wp_nonce and merge that with the query vars becuz the wp_nonce_url function wrecks havoc on some vars
+			$query_args['_wpnonce'] = wp_create_nonce( $query_args['action'] . '_nonce' );
 		} 
 
 		$redirect_url = add_query_arg( $query_args, $redirect_url ); 

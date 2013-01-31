@@ -16,41 +16,41 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * Registration_Forms_Admin_Page_Init
+ * Registration_Form_Admin_Page_Init
  *
  * This contains the logic for setting up the Forms (Question and Question Groups) related pages.  Any methods without phpdoc comments have inline docs with parent class. 
  *
  * NOTE:  TODO: This is a straight conversion from the legacy 3.1 events related pages.  It is NOT optimized and will need modification to fully use the new system (and also will need adjusted when Events model is setup)
  *
- * @package		Registration_Forms_Admin_Page_Init
- * @subpackage	includes/core/admin/Registration_Forms_Admin_Page_Init.core.php
+ * @package		Registration_Form_Admin_Page_Init
+ * @subpackage	includes/core/admin/Registration_Form_Admin_Page_Init.core.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
 
-class Registration_Forms_Admin_Page_Init extends EE_Admin_Page_Init {
+class Registration_Form_Admin_Page_Init extends EE_Admin_Page_Init {
 
 	public function __construct() {
 		//define some constants
-		define( 'EE_FORMS_ADMIN_URL', admin_url('admin.php?page=registration_forms') );
+		define( 'EE_FORMS_ADMIN_URL', admin_url('admin.php?page=registration_form') );
 		
-		define( 'REGISTRATION_FORMS_PG_SLUG', 'registration_forms' );	
-		define( 'REGISTRATION_FORMS_LABEL', __('Registration Forms', 'event_espresso'));	
-		define( 'REGISTRATION_FORMS_PG_NAME', ucwords( str_replace( '_', '', REGISTRATION_FORMS_PG_SLUG )));	
-		define( 'REGISTRATION_FORMS_ADMIN', EE_CORE_ADMIN . REGISTRATION_FORMS_PG_SLUG . DS );	
-		define( 'REGISTRATION_FORMS_ADMIN_URL', admin_url( 'admin.php?page=' . REGISTRATION_FORMS_PG_SLUG ));	
-		define( 'REGISTRATION_FORMS_ASSETS_PATH', REGISTRATION_FORMS_ADMIN . 'assets' . DS );		
-		define( 'REGISTRATION_FORMS_ASSETS_URL', EE_CORE_ADMIN_URL . REGISTRATION_FORMS_PG_SLUG .'/assets/' );	
-		define( 'REGISTRATION_FORMS_TEMPLATE_PATH', REGISTRATION_FORMS_ADMIN . 'templates' . DS );	
-		define( 'REGISTRATION_FORMS_TEMPLATE_URL', EE_CORE_ADMIN_URL . REGISTRATION_FORMS_PG_SLUG . DS . 'templates/' );
+		define( 'REGISTRATION_FORM_PG_SLUG', 'registration_form' );	
+		define( 'REGISTRATION_FORM_LABEL', __('Registration Form', 'event_espresso'));	
+		define( 'REGISTRATION_FORM_PG_NAME', ucwords( str_replace( '_', '', REGISTRATION_FORM_PG_SLUG )));	
+		define( 'REGISTRATION_FORM_ADMIN', EE_CORE_ADMIN . REGISTRATION_FORM_PG_SLUG . DS );	
+		define( 'REGISTRATION_FORM_ADMIN_URL', admin_url( 'admin.php?page=' . REGISTRATION_FORM_PG_SLUG ));	
+		define( 'REGISTRATION_FORM_ASSETS_PATH', REGISTRATION_FORM_ADMIN . 'assets' . DS );		
+		define( 'REGISTRATION_FORM_ASSETS_URL', EE_CORE_ADMIN_URL . REGISTRATION_FORM_PG_SLUG .'/assets/' );	
+		define( 'REGISTRATION_FORM_TEMPLATE_PATH', REGISTRATION_FORM_ADMIN . 'templates' . DS );	
+		define( 'REGISTRATION_FORM_TEMPLATE_URL', EE_CORE_ADMIN_URL . REGISTRATION_FORM_PG_SLUG . DS . 'templates/' );
 		parent::__construct();
 	}
 
 	protected function _set_init_properties() {
-		$this->label = __('Registration Forms Overview', 'event_espresso');
-		$this->menu_label = __('Registration Forms','event_espresso');
-		$this->menu_slug = 'registration_forms';
+		$this->label = __('Registration Form Overview', 'event_espresso');
+		$this->menu_label = __('Registration Form','event_espresso');
+		$this->menu_slug = 'registration_form';
 		$this->capability = 'administrator';
 	}
 
