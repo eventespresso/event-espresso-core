@@ -228,7 +228,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 * @return EE_Question[]
 	 */
 	public function questions(){
-		return $this->_get_many_related('Questions');
+		return $this->get_many_related('Questions');
 	}
 	
 	/**
@@ -237,7 +237,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 */
 	public function events(){
 		throw new EE_Error(__("Question Group->events() not yet implemetned","event_esresso"));
-		return $this->_get_many_related('Events');
+		return $this->get_many_related('Events');
 	}
 	
 	/**

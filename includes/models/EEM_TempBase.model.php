@@ -32,6 +32,9 @@ abstract class EEM_TempBase extends EEM_Base{
 	protected function __construct() {
 		$this->table_name=$this->_get_table_name();
 		$this->table_data_types=$this->_get_table_data_types();
+		$className=get_class($this);
+		$this->_fields_settings=apply_filters("filter_hook_espresso__{$className}__field_settings",$this->_fields_settings);
+		$this->_related_models=apply_filters("filter_hook_espresso__{$className}__related_models",$this->_related_models);
 	}
 	/**
 	 * Returns the item's name. If there are many of these items, returns a plural version fo the name
@@ -184,7 +187,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	* 
 	* 		@access		private
 	* 		@param		array		$attendees		
-	*		@return 	EE_Base_Class[]		array on success, FALSE on fail
+	*		@return 	EE_TempBase[]		array on success, FALSE on fail
 	*/	
 	protected function _create_objects( $rows = FALSE ) {	
 		$array_of_objects=array();
@@ -203,7 +206,7 @@ abstract class EEM_TempBase extends EEM_Base{
 				}
 				$class=new ReflectionClass($this->_getClassName());
 				$classInstance=$class->newInstanceArgs($args);
-				/* @var $classInstance EE_Base_Class */
+				/* @var $classInstance EE_TempBase */
 				$classInstance->set($pkName,$row->$pkName);
 				$array_of_objects[$classInstance->get_primary_key()]=$classInstance;
 		}	
@@ -258,10 +261,10 @@ abstract class EEM_TempBase extends EEM_Base{
 	}
 	/**
 	 * Uses $this->_relatedModels info to find the related model objects of relation $relationName to the given $modelObject
-	 * @param EE_Base_Class'child $modelObject one of EE_Answer, EE_Attendee, etc. 
+	 * @param EE_TempBase'child $modelObject one of EE_Answer, EE_Attendee, etc. 
 	 * @param string $relationName, key in $this->_relatedModels, eg 'Registration', or 'Events'
 	 * @param array $where_col_n_values for extra select clause on hasAndBelongsToMany or hasMany
-	 * @return EE_Base_Class[]
+	 * @return EE_TempBase[]
 	 */
 	public function get_many_related(EE_Base_Class $modelObject,$relationName,$where_col_n_values=array()){
 		$relatedModelInfo=$this->related_settings_for($relationName);
@@ -303,7 +306,8 @@ abstract class EEM_TempBase extends EEM_Base{
 				$relatedObjects=$relatedModel->_create_objects($rows);
 				break;
 		}
-		return apply_filters('filter_hook_espresso_getRelated',$relatedObjects,$this,$modelObject,$relationName);
+		$className=get_class($this);
+		return apply_filters('filter_hook_espresso__{$className}__get_many_related',$relatedObjects,$this,$modelObject,$relationName);
 	}
 	/**
 	 * Removes a relationship of the correct type between $modelObject and $otherModelObject. 
@@ -315,7 +319,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * 
 	 * 'hasAndBelongsToMany' relationships:remoevs any existing entry in the join table between the two models.
 	 * 
-	 * @param EE_Base_Class $thisModelObject
+	 * @param EE_TempBase $thisModelObject
 	 * @param mixed $otherModelObjectOrID EE_base_Class or ID of other Model Object
 	 * @param string $relationName
 	 * @return boolean of success
@@ -350,7 +354,7 @@ abstract class EEM_TempBase extends EEM_Base{
 							), __FILE__, __FUNCTION__, __LINE__);
 					return false;
 				}
-				if(!($otherModelObjectOrID instanceof EE_Base_Class)){
+				if(!($otherModelObjectOrID instanceof EE_TempBase)){
 					$otherModelId=$otherModelObjectOrID;
 					$otherModelSettings=$this->related_settings_for($relationName);
 					$otherModelInstance=$otherModelSettings->model_instance();
@@ -365,11 +369,11 @@ abstract class EEM_TempBase extends EEM_Base{
 				break;
 			case 'hasAndBelongsToMany':
 				//first, if one of the modelObjects doesn't have an ID, it couldn't have this kind of relationship!
-				if($otherModelObjectOrID instanceof EE_Base_Class && (!$thisModelObject->ID() || !$otherModelObjectOrID->ID())){
+				if($otherModelObjectOrID instanceof EE_TempBase && (!$thisModelObject->ID() || !$otherModelObjectOrID->ID())){
 					return true;//we removed teh relationship that doesn't exist. That's pretty successful right?
 				}
 				
-				if($otherModelObjectOrID instanceof EE_Base_Class){
+				if($otherModelObjectOrID instanceof EE_TempBase){
 					$otherModelID=$otherModelObjectOrID->ID();
 				}else{
 					$otherModelID=$otherModelObjectOrID;
@@ -399,12 +403,12 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * 'hasAndBelongsToMany' relationships: checks that there isn't already an entry in the join table, and adds one.
 	 * If one of the model Objects has not yet been saved to teh database, it is saved before adding the entry in the join table
 	 * 
-	 * @param EE_Base_Class $thisModelObject
+	 * @param EE_TempBase $thisModelObject
 	 * @param mixed $otherModelObjectOrID EE_base_Class or ID of other Model Object
 	 * @param string $relationName
 	 * @return boolean of success
 	 */
-	public function add_relation_to(EE_Base_Class $thisModelObject,$otherModelObjectOrID, $relationName){
+	public function _add_relation_to(EE_Base_Class $thisModelObject,$otherModelObjectOrID, $relationName){
 		/* @var $relatedModeInfo EE_Model_Relation*/
 		$relatedModelInfo=$this->related_settings_for($relationName);
 		
@@ -412,7 +416,7 @@ abstract class EEM_TempBase extends EEM_Base{
 		switch($relatedModelInfo->type()){
 			case 'belongsTo':
 				//just set its foreign_key to be that 
-				if($otherModelObjectOrID instanceof EE_Base_Class){
+				if($otherModelObjectOrID instanceof EE_TempBase){
 					if(!$otherModelObjectOrID->ID()){
 						$otherModelObjectOrID->save();
 					}
@@ -444,13 +448,13 @@ abstract class EEM_TempBase extends EEM_Base{
 				if(!$thisModelObject->ID()){
 					$thisModelObject->save();
 				}
-				if($otherModelObjectOrID instanceof EE_Base_Class){
+				if($otherModelObjectOrID instanceof EE_TempBase){
 					if(!$otherModelObjectOrID->ID()){
 						$otherModelObjectOrID->save();
 					}
 					$otherModelID=$otherModelObjectOrID->ID();
 				}
-				if(!($otherModelObjectOrID instanceof EE_Base_Class)){
+				if(!($otherModelObjectOrID instanceof EE_TempBase)){
 					$otherModelID=$otherModelObjectOrID;
 				}
 								
@@ -478,9 +482,9 @@ abstract class EEM_TempBase extends EEM_Base{
 	
 	/**
 	 * Uses $this->_relatedModels info to find the first related model object of relation $relationName to the given $modelObject
-	 * @param EE_Base_Class'child $modelObject one of EE_Answer, EE_Attendee, etc. 
+	 * @param EE_TempBase'child $modelObject one of EE_Answer, EE_Attendee, etc. 
 	 * @param string $relationName, key in $this->_relatedModels, eg 'Registration', or 'Events'
-	 * @return EE_Base_Class[]
+	 * @return EE_TempBase[]
 	 */
 	public function get_first_related(EE_Base_Class $modelObject,$relationName){
 		$relatedObjects=$this->get_many_related($modelObject, $relationName);
@@ -496,7 +500,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	* 
 	* 		@access		public
 	* 		@param		$id		
-	*		@return 	EE_Base_Class or FALSE on fail
+	*		@return 	EE_TempBase or FALSE on fail
 	*/	
 	public function get_one_by_ID( $id = FALSE ) {
 
@@ -519,7 +523,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	* 
 	* 		@access		public
 	* 		@param		$where_cols_n_values	 array, where keys are strings for DB columns, and values are their model values	
-	*		@return 	EE_Base_Class		array on success, FALSE on fail
+	*		@return 	EE_TempBase		array on success, FALSE on fail
 	*/	
 	public function get_one( $where_cols_n_values = FALSE ) {
 
@@ -540,7 +544,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	*		retreive  ALL objects of this model from db
 	* 
 	* 		@access		public
-	*		@return mixed EE_Base_Class is output='OBJECT_K', int is output='count'
+	*		@return mixed EE_TempBase is output='OBJECT_K', int is output='count'
 	*/	
 	public function get_all( $orderby = null, $order = 'ASC',$limit=array(0,10),$output='OBJECT_K' ) {
 		return $this->get_all_where(array(),$orderby,$order,'=',$limit,$output);
@@ -553,7 +557,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * @param string $sort 'ASC' or 'DESC'
 	 * @param mixed $operators string for a single operator, or an array of operators
 	 * @param string $limit
-	 * @return mixed EE_Base_Class is output='OBJECT_K', int is output='count'
+	 * @return mixed EE_TempBase is output='OBJECT_K', int is output='count'
 	 */
 	public function get_all_where($where_cols_n_values,$orderby=null,$sort='ASC',$operators=null,$limit=null,$output='OBJECT_K'){
 		if($orderby==null){
@@ -569,6 +573,36 @@ abstract class EEM_TempBase extends EEM_Base{
 		return $results;
 	}
 	
+	/**
+	 * Very handy general function to allow for plugins to extend any child of EE_TempBase.
+	 * If a method is called on a child of EE_TempBase that doesn't exist, this function is called (http://www.garfieldtech.com/blog/php-magic-call)
+	 * and passed the method's name and arguments.
+	 * Instead of requiring a plugin to extend the EE_TempBase (which works fine is there's only 1 plugin, but when will that happen?)
+	 * they can add a hook onto 'filters_hook_espresso__{className}__{methodName}' (eg, filters_hook_espresso__EE_Answer__my_great_function)
+	 * and accepts 2 arguments: the object on which teh function was called, and an array of the original arguments passed to the function. Whatever their callbackfunction returns will be returned by this function.
+	 * Example: in functions.php (or in a plugin):
+	 * add_filter('filter_hook_espresso__EE_Answer__my_callback','my_callback',10,3);
+	 * function my_callback($previousReturnValue,EE_TempBase $object,$argsArray){
+			$returnString= "you called my_callback! and passed args:".implode(",",$argsArray);
+	 *		return $previousReturnValue.$returnString;
+	 * }
+	 * require('EEM_Answer.model.php');
+	 * $answer=EEM_Answer::instace();
+	 * echo $answer->my_callback('monkeys',100);
+	 * //will output "you called my_callback! and passed args:monkeys,100"
+	 * @param string $methodName name of method which was called on a child of EE_TempBase, but which 
+	 * @param array $args array of original arguments passed to the function
+	 * @return mixed whatever the plugin which calls add_filter decides
+	 */
+	public function __call($methodName,$args){
+		$className=get_class($this);
+		$tagName="filter_hook_espresso__{$className}__{$methodName}";
+		if(!has_filter($tagName)){
+			throw new EE_Error(sprintf(__("Method %s on model %s does not exist! You can create one with the following code in functions.php or in a plugin: add_filter('%s','my_callback',10,3);function my_callback(\$previousReturnValue,EEM_TempBase \$object\$argsArray=null){/*function body*/return \$whatever;}","event_espresso"),
+										$methodName,$className,$tagName));
+		}
+		return apply_filters($tagName,null,$this,$args);
+	}
 }
 
 /**

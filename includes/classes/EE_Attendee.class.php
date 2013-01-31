@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Attendee {
+class EE_Attendee extends EE_Base_Class{
 
 
     /**
@@ -29,55 +29,55 @@ class EE_Attendee {
 	* 
 	* 	primary key
 	*	
-	* 	@access	private
+	* 	@access	protected
     *	@var int	
     */
-	private $_ATT_ID = FALSE;
+	protected $_ATT_ID = FALSE;
 
 
     /**
     *	Attendee First Name
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_ATT_fname = NULL;
+	protected $_ATT_fname = NULL;
 
 
     /**
     *	Attendee Last Name
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_ATT_lname = NULL;
+	protected $_ATT_lname = NULL;
 
 
     /**
     *	Attendee Address
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_ATT_address = NULL;
+	protected $_ATT_address = NULL;
 
 
     /**
     *	Attendee Address 2
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_ATT_address2 = NULL;
+	protected $_ATT_address2 = NULL;
 
 
     /**
     *	Attendee City
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_ATT_city = NULL;
+	protected $_ATT_city = NULL;
 
 
     /**
@@ -85,10 +85,10 @@ class EE_Attendee {
 	* 
 	*	foreign key from state table
 	*  
-	*	@access	private
+	*	@access	protected
     *	@var int	
     */
-	private $_STA_ID = NULL;
+	protected $_STA_ID = NULL;
 
 
     /**
@@ -96,73 +96,79 @@ class EE_Attendee {
 	* 
 	*	foreign key from country table
 	*  
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_CNT_ISO = NULL;
+	protected $_CNT_ISO = NULL;
 
 
     /**
     *	Attendee Zip/Postal Code
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_ATT_zip = NULL;
+	protected $_ATT_zip = NULL;
 
 
     /**
     *	Attendee Email Address
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_ATT_email = NULL;
+	protected $_ATT_email = NULL;
 
 
     /**
     *	Attendee Phone
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_ATT_phone = NULL;
+	protected $_ATT_phone = NULL;
 
 
     /**
     *	Attendee Social Networking details - links, ID's, etc
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_ATT_social = NULL;
+	protected $_ATT_social = NULL;
 
 
     /**
     *	Attendee Comments (from the attendee)
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_ATT_comments = NULL;
+	protected $_ATT_comments = NULL;
 
 
     /**
     *	Attendee Notes (about the attendee)
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_ATT_notes = NULL;
+	protected $_ATT_notes = NULL;
 
 
     /**
     *	Whether this Attendee has been moved to the trash
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var boolean	
     */
-	private $_ATT_deleted = FALSE;
+	protected $_ATT_deleted = FALSE;
+	
+	/**
+	 *
+	 * @var EE_Registration[]
+	 */
+	protected $_Registrations=NULL;
 
 
 
@@ -204,6 +210,7 @@ class EE_Attendee {
 		$this->_ATT_comments	= htmlentities( wp_strip_all_tags( $ATT_comments ), ENT_QUOTES, 'UTF-8' );
 		$this->_ATT_notes				= htmlentities( wp_strip_all_tags( $ATT_notes ), ENT_QUOTES, 'UTF-8' );
 		$this->_ATT_deleted			= absint( $ATT_deleted ) === 1 ? TRUE : FALSE;
+		parent::__construct();
 	}
 
 
@@ -434,7 +441,7 @@ class EE_Attendee {
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
-		$this->_ATT_phone = wp_kses_data( $social );
+		$this->_ATT_social = wp_kses_data( $social );
 		return TRUE;
 	}
 

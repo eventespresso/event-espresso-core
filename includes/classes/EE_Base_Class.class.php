@@ -10,7 +10,7 @@
  *
  * @author mnelson4
  */
-abstract class EE_Base_Class extends EE_Base{
+abstract class EE_Base_Class {
 	/**
 	 * Instance of model that corresponds to this class.
 	 * This should be lazy-loaded to avoid recursive loop
@@ -23,6 +23,8 @@ abstract class EE_Base_Class extends EE_Base{
 	 * and verifies it's children play nice
 	 */
 	public function __construct($fieldValues=null){
+		$className=get_class($this);
+		do_action("action_hook_espresso__{$className}__construct",$this,$fieldValues);
 		$this->_model=$this->_get_model();
 		if($fieldValues!=null){
 			foreach($fieldValues as  $fieldName=>$fieldValue){
@@ -40,9 +42,10 @@ abstract class EE_Base_Class extends EE_Base{
 		}
 		//verify we have all the model relations
 		foreach($this->_model->relation_settings() as $relationName=>$relationSettings){
+			$privateAttributeName=$this->_get_private_attribute_name($relationName);
 			if(!property_exists($this,$this->_get_private_attribute_name($relationName))){
 				throw new EE_Error(sprintf(__('You have added a relation titled \'%s\' to your model %s, but have not set a corresponding
-					attribute on %s. Please add $%s to %s','event_espresso'),
+					attribute on %s. Please add protected $%s to %s','event_espresso'),
 						$relationName,get_class($this->_model),get_class($this),$this->_get_private_attribute_name($relationName),get_class($this)));
 			}
 		}
@@ -358,13 +361,14 @@ abstract class EE_Base_Class extends EE_Base{
 	 * @param string $relationName
 	 * @return EE_Base_Class
 	 */
-	protected function _get_first_related($relationName){
-		if($this->$relationName==null){
+	public function get_first_related($relationName){
+		$internalName=$this->_get_private_attribute_name($relationName);
+		if($this->$internalName==null){
 			$model=$this->_get_model();
 			$relationRequested=$model->get_first_related($this, $relationName);
-			$this->$relationName=$relationRequested;
+			$this->$internalName=$relationRequested;
 		}
-		return $this->$relationName;
+		return $this->$internalName;
 	}
 	
 	/**
@@ -393,7 +397,7 @@ abstract class EE_Base_Class extends EE_Base{
 	 * @param array $where_col_n_vals keys are field/column names, values are their values
 	 * @return EE_Base_Class[]
 	 */
-	protected function _get_many_related($relationName,$where_col_n_vals=null){
+	public function get_many_related($relationName,$where_col_n_vals=null){
 		$privateRelationName=$this->_get_private_attribute_name($relationName);
 		if($this->$privateRelationName==null){
 			$model=$this->_get_model();
@@ -410,9 +414,9 @@ abstract class EE_Base_Class extends EE_Base{
 	 * @param string $relationName eg 'Events','Question',etc.
 	 * @return boolean success
 	 */
-	protected function _add_relation_to($otherObjectModelObjectOrID,$relationName){
+	public function _add_relation_to($otherObjectModelObjectOrID,$relationName){
 		$model=$this->_get_model();
-		$success= $model->add_relation_to($this, $otherObjectModelObjectOrID, $relationName);
+		$success= $model->_add_relation_to($this, $otherObjectModelObjectOrID, $relationName);
 		if($success){
 			//invalidate cached relations
 			//@todo: this could be optimized. Instead, we could just add $otherObjectModel toteh array if it's an array, or set it if it isn't an array
@@ -432,7 +436,7 @@ abstract class EE_Base_Class extends EE_Base{
 	 * @param string $relationName
 	 * @return boolean success
 	 */
-	protected function _remove_relation_to($otherObjectModelObjectOrID,$relationName){
+	public function _remove_relation_to($otherObjectModelObjectOrID,$relationName){
 		$model=$this->_get_model();
 		$success= $model->remove_relationship_to($this, $otherObjectModelObjectOrID, $relationName);
 		if($success){
@@ -476,10 +480,10 @@ abstract class EE_Base_Class extends EE_Base{
 	 * and passed the method's name and arguments.
 	 * Instead of requiring a plugin to extend the EE_Base_Class (which works fine is there's only 1 plugin, but when will that happen?)
 	 * they can add a hook onto 'filters_hook_espresso__{className}__{methodName}' (eg, filters_hook_espresso__EE_Answer__my_great_function)
-	 * and accept an array of the original arguments passed to the function. Whatever their callbackfunction returns will be returned by this function.
+	 * and accepts 2 arguments: the object on which teh function was called, and an array of the original arguments passed to the function. Whatever their callbackfunction returns will be returned by this function.
 	 * Example: in functions.php (or in a plugin):
-	 * add_filter('filter_hook_espresso__EE_Answer__my_callback','my_callback',10,1);
-	 * function my_callback($previousReturnValue,$argsArray){
+	 * add_filter('filter_hook_espresso__EE_Answer__my_callback','my_callback',10,3);
+	 * function my_callback($previousReturnValue,EE_Base_Class $object,$argsArray){
 			$returnString= "you called my_callback! and passed args:".implode(",",$argsArray);
 	 *		return $previousReturnValue.$returnString;
 	 * }
@@ -495,10 +499,10 @@ abstract class EE_Base_Class extends EE_Base{
 		$className=get_class($this);
 		$tagName="filter_hook_espresso__{$className}__{$methodName}";
 		if(!has_filter($tagName)){
-			throw new EE_Error(sprintf(__("Method %s on class %s does not exist! You can create one with the following code in functions.php or in a plugin: add_filter('%s','my_callback',10,1);function my_callback(\$previousReturnValue,\$argsArray){/*function body*/return \$whatever;}","event_espresso"),
+			throw new EE_Error(sprintf(__("Method %s on class %s does not exist! You can create one with the following code in functions.php or in a plugin: add_filter('%s','my_callback',10,3);function my_callback(\$previousReturnValue,EE_Base_Class \$object, \$argsArray){/*function body*/return \$whatever;}","event_espresso"),
 										$methodName,$className,$tagName));
 		}
-		return apply_filters($tagName,null,$args);
+		return apply_filters($tagName,null,$this,$args);
 	}
 	
 }

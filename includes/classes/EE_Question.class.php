@@ -392,7 +392,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * @return EE_Question_Group[]
 	 */
 	public function question_groups(){
-		return $this->_get_many_related('Question_Groups');
+		return $this->get_many_related('Question_Groups');
 	}
 	
 	/**
@@ -402,7 +402,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 */
 	public function options($notDeletedOptionsOnly=true){
 		if($notDeletedOptionsOnly){
-			return  $this->_get_many_related('Question_Options', array('QSO_deleted'=>false));
+			return  $this->get_many_related('Question_Options', array('QSO_deleted'=>false));
 			/*$doubleCheckedOptions=array();
 			foreach($options as $option){
 				if(!$option->deleted()){
@@ -411,7 +411,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 			}
 			return $doubleCheckedOptions;*/
 		}else{
-			return $this->_get_many_related('Question_Options');
+			return $this->get_many_related('Question_Options');
 		}
 	}
 	/**

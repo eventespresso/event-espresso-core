@@ -151,7 +151,7 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	 * @return EE_Question
 	 */
 	public function question(){
-		return $this->_get_first_related('Question');
+		return $this->get_first_related('Question');
 	}
 
 }
