@@ -325,7 +325,7 @@ class EEM_Message_Template extends EEM_Base {
 	 * @return array message template groups.
 	 * @return [type] [description]
 	 */
-	public function get_all_trashed_grouped_message_templates($orderby = 'GRP_ID', $order = 'ASC') {
+	public function get_all_trashed_grouped_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE) {
 		$msg_tmps = array();
 		
 		//first let's get all the templates
@@ -339,7 +339,12 @@ class EEM_Message_Template extends EEM_Base {
 			}
 		}
 
-		return ( empty($msg_tmps) ) ? FALSE : $msg_tmps;
+		//now let's select the data to return
+		if ( empty( $limit) || !is_array($limit) )
+			return $count ? count($msg_tmps) : $msg_tmps;
+
+		$r_templates = array_slice( $msg_tmps, $limit[0], $limit[1]);
+		return $count ? count($msg_tmps) : $msg_tmps;
 
 	}
 
