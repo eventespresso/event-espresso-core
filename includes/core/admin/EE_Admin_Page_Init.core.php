@@ -235,7 +235,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	 */
 	private function _register_hooks() {
 		//get a list of files in the directory that have the "Hook" in their name
-		if ( $hook_files = glob( EE_CORE_ADMIN . $this->_file_name . '*.Hooks.class.php' ) ) {
+		if ( $hook_files = glob( EE_CORE_ADMIN . '*' . $this->_file_name . '_.Hooks.class.php' ) ) {
 			foreach ( $hook_files as $file ) {
 				//lets get the linked admin.
 				$rel_admin = preg_replace('/_' . $this->_file_name . '_Hooks.class.php/', '', $file );
