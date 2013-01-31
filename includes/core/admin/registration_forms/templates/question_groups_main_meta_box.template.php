@@ -51,9 +51,7 @@ foreach($all_questions as $unused_question){
 									</label>
 								</th>
 								<td>
-									<textarea name="QSG_desc"  class="regular-text" rows="1" cols="50">
-										<?php echo $question_group->desc()?>
-									</textarea>
+									<textarea name="QSG_desc"  class="regular-text" rows="1" cols="50"><?php echo $question_group->desc()?></textarea>
 								</td>
 							</tr>
 							<tr>
