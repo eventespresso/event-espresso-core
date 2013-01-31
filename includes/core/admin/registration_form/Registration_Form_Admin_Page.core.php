@@ -573,7 +573,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['QSG_ID']=$ID ? $ID : TRUE;
 		$this->_template_args['question_group']=$questionGroup;
 		
-		$this->_set_publish_post_box_vars( 'id', $ID );
+		$redirect_URL = add_query_arg( array( 'action' => 'question_groups'), $this->_admin_base_url );
+		$this->_set_publish_post_box_vars( 'id', $ID, FALSE, $redirect_URL  );
 		$this->_template_args['admin_page_content'] = espresso_display_template( REGISTRATION_FORM_TEMPLATE_PATH . 'question_groups_main_meta_box.template.php', $this->_template_args, TRUE );
 
 		// the details template wrapper
