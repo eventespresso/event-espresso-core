@@ -579,7 +579,7 @@ class EE_Model_Field{
 	 * all the types of ModelFields which are allowed
 	 * @var type 
 	 */
-	private $allowed_types=array('primary_key','primary_text_key','foreign_key','foreign_text_key','int','float','plaintext','simplehtml','fullhtml','enum','bool','deleted_flag');
+	private $allowed_types=array('primary_key','primary_text_key','foreign_key','foreign_text_key','int','float','plaintext','simplehtml','fullhtml','enum','bool','deleted_flag','serializedtext');
 	private $nicename;
 	private $type;
 	private $nullable;

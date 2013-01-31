@@ -92,7 +92,42 @@ abstract class EE_Base_Class extends EE_Base{
 	 */
 	public function get($fieldName){
 		$privateFieldName=$this->_get_private_attribute_name($fieldName);
-		return $this->$privateFieldName;
+		$fieldSettings=$this->get_fields_settings();
+		if(array_key_exists($fieldName,$fieldSettings)){
+			$value=$this->$privateFieldName;
+			$thisFieldSettings=$fieldSettings[$fieldName];
+			switch($thisFieldSettings->type()){
+				case 'primary_key':
+				case 'foreign_key':
+				case 'int':
+					return intval($value);
+				case 'bool':
+				case 'deleted_flag':
+					//$value=intval($value);
+					return $value==true;
+					break;
+				case 'primary_text_key':
+				case 'foreign_text_key':
+				case 'plaintext':
+				case 'simplehtml':
+				case 'fullhtml':
+					return $value;
+				case 'float':
+					return floatval($value);
+				case 'enum':
+					return $value;
+					break;
+				case 'serializedtext'://accept anything. even if it's not an array, or if it's not yet serialized. we'll deal with it.
+					if(is_array($value)){
+						return $value;
+					}else{
+						return unserialize($value);
+					}
+			}
+		}else{
+			EE_Error::add_error(sprintf(__("You have requested a field named %s on model %s",'event_espresso'),$fieldName,get_class($this)), __FILE__, __FUNCTION__, __LINE__);
+			RETURN FALSE;
+		}
 	}
 	
 	
@@ -185,6 +220,13 @@ abstract class EE_Base_Class extends EE_Base{
 				break;
 			case 'enum':
 				$return=$value;
+				break;
+			case 'serializedtext':
+				if(is_array($value)){
+					$value=serialize($value);
+				}
+				$return=$value;
+				break;
 		}
 		$return=apply_filters('filter_hook_espresso_sanitizeFieldInput',$return,$value,$fieldSettings);//allow to be overridden
 		if(is_null($return)){
@@ -237,6 +279,8 @@ abstract class EE_Base_Class extends EE_Base{
 					$return=true;
 				}
 				break;
+			case 'serializedtext'://accept anything. even if it's not an array, or if it's not yet serialized. we'll deal with it.
+				$return=true;
 		}
 		$return= apply_filters('filter_hook_espresso_verifyFieldIsOfCorrectType',$return,$value,$fieldSettings);//allow to be overridden
 		if(is_null($return)){
