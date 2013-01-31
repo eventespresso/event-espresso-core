@@ -1277,7 +1277,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'activate_state' => $this->_current_message_meta_box . '_editing',
 			'action' => 'activate'
 		);
-		$nonce_edit_ref = $this->_current_message_meta_box . '_edit_nonce';
 
 		$default_activate_query_args = array(
 			'activate_view' => $this->_activate_meta_box_type,
@@ -1285,7 +1284,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'box_action' => 'activated',
 			'action' => 'activate'
 		);
-		$nonce_activate_ref = $this->_current_message_meta_box . '_activate_nonce';
 
 		$default_deactivate_query_args = array(
 			'activate_view' => $this->_activate_meta_box_type,
@@ -1293,7 +1291,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'box_action' => 'deactivated',
 			'action' => 'activate'
 		);
-		$nonce_deactivate_ref = $this->_current_message_meta_box . '_deactivate_nonce';
 
 		
 
@@ -1311,19 +1308,19 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'box_head_content' => 'hmm... missing some content',
 			'show_hide_active_content' => 'hidden',
 			'activate_msgs_active_details' => '',
-			'activate_msgs_details_url' => wp_nonce_url(add_query_arg($default_edit_query_args, $this->_admin_base_url), $nonce_edit_ref),
+			'activate_msgs_details_url' => wp_nonce_url(add_query_arg($default_edit_query_args, $this->_admin_base_url), 'activate_nonce'),
 			'show_hide_edit_form' => 'hidden',
-			'activate_message_template_form_action' => wp_nonce_url(add_query_arg($default_activate_query_args, $this->_admin_base_url), $nonce_activate_ref),
+			'activate_message_template_form_action' => wp_nonce_url(add_query_arg($default_activate_query_args, $this->_admin_base_url), 'activate_nonce'),
 			'activate_msgs_form_fields' => '',
-			'on_off_action' => wp_nonce_url(add_query_arg($default_edit_query_args, $this->_admin_base_url), $nonce_edit_ref),
+			'on_off_action' => wp_nonce_url(add_query_arg($default_edit_query_args, $this->_admin_base_url), 'activate_nonce'),
 			'on_off_status' => 'inactive',
 			'activate_msgs_on_off_descrp' => __('Activate', 'event-espresso'),
 			'activate_meta_box_type' => ucwords(str_replace('_', ' ', $this->_activate_meta_box_type) ),
 			'activate_meta_box_page_instructions' => $this->_activate_meta_box_type == 'message_types' ? __('Message Types are the areas of Event Espresso that you can activate notifications for.  On this page you can see all the various message types currently available and whether they are active or not.', 'event-espresso') : __('Messengers are the vehicles for delivering your notifications.  On this page you can see all the various messengers available and whether they are active or not.', 'event-espresso'),
-			'activate_msg_type_toggle_link' => add_query_arg($switch_view_query_args, $this->_admin_base_url),
+			'activate_msg_type_toggle_link' => wp_nonce_url(add_query_arg($switch_view_query_args, $this->_admin_base_url), 'activate_nonce'),
 			'activate_meta_box_toggle_type' => ucwords(str_replace('_', ' ', $switch_view_toggle_text) ),
-			'on_off_action_on' => wp_nonce_url(add_query_arg($default_edit_query_args, $this->_admin_base_url), $nonce_edit_ref),
-			'on_off_action_off' => wp_nonce_url(add_query_arg($default_deactivate_query_args, $this->_admin_base_url), $nonce_deactivate_ref),
+			'on_off_action_on' => wp_nonce_url(add_query_arg($default_edit_query_args, $this->_admin_base_url), 'activate_nonce'),
+			'on_off_action_off' => wp_nonce_url(add_query_arg($default_deactivate_query_args, $this->_admin_base_url), 'activate_nonce'),
 			'show_on_off_button' => ''
 			);
 
@@ -1580,25 +1577,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		switch ( $this->_req_data['box_action'] ) {
 			case 'activated' :
 				//check nonces
-				$nonce = $this->_req_data['_wpnonce'];
-				if ( !wp_verify_nonce($nonce, $this->_current_message_meta_box . '_activate_nonce' ) && !wp_verify_nonce($nonce, $this->_current_message_meta_box . '_edit_nonce') ) {
-					$this->_nonce_error( __FILE__, __FUNCTION__, __LINE__ );
-					$this->_activate_state = 'inactive';
-					$this->_box_content_inactive();
-					return;
-				}
 				$this->_update_msg_settings();
 				break;
 
 			case 'deactivated' :
-				//check nonce
-				$nonce = $this->_req_data['_wpnonce'];
-				if ( !wp_verify_nonce($nonce, $this->_current_message_meta_box . '_deactivate_nonce' ) ) {
-					$this->_nonce_error( __FILE__, __FUNCTION__, __LINE__ );
-					$this->_activate_state = 'inactive';
-					$this->_box_content_inactive();
-					return;
-				}
 				$this->_update_msg_settings(true);
 				break;	
 		}
@@ -1651,7 +1633,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			if ( count($event_templates) > 0 ) {
 				$m_label_pl = $this->_activate_meta_box_type == 'messengers' ? __('Messengers', 'event_espresso') : __('Message Types', 'event_espresso');
 				$m_label_sg = $this->_activate_meta_box_type == 'messengers' ? __('messenger', 'event_espresso') : __('message type', 'event_espresso');
-				$warning_msg = sprintf( __('<strong>Warning:</strong> %s cannot be deleted if there are any Events currently using a custom template for it. Before you can deactivate the "%s" %s, you must switch the following "Events" to use global templates:', 'event_espresso' ), $m_label_pl, $this->_current_message_meta_box, $m_label_sg  );
+				$warning_msg = sprintf( __('<strong>Warning:</strong> %s cannot be deactivated if there are any Events currently using a custom template for it. Before you can deactivate the "%s" %s, you must switch the following "Events" to use global templates:', 'event_espresso' ), $m_label_pl, $this->_current_message_meta_box, $m_label_sg  );
 				$warning_msg .= '<ul>';
 
 				//output list of events
@@ -1660,9 +1642,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					$event_name = $this->event_name($template->event());
 					$query_args = array(
 						'action' => 'edit_event',
-						'event_id' => $template->event()
+						'EVT_ID' => $template->event()
 						);
-					$edit_event_url = add_query_arg( $query_args, $base_event_admin_url );
+					$edit_event_url = wp_nonce_url( add_query_arg( $query_args, $base_event_admin_url ), 'edit_event_nonce');
 					$warning_msg .= "\n" . '<li><a href="' . $edit_event_url . '" title="' . __('Edit Event', 'event_espresso') . '">' . $event_name . '</a></li>';
 				}
 
@@ -1710,19 +1692,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$query = "SELECT event_name FROM {$tablename} WHERE id = %d";
 		$event_name = $wpdb->get_var( $wpdb->prepare($query, $evt_id) );
 		return $event_name;
-	}
-
-
-
-
-	/**
-	 * This is just a common error handler for nonce check fails.
-	 * @param  string $error_code generated error code (so we know where the nonce fail happened)
-	 * @return void 
-	 */
-	private function _nonce_error($file, $line, $function) {
-		$msg = __('Security check failed.', 'event_espresso');
-		EE_Error::add_error( $msg, $file, $line, $function);
 	}
 
 	
