@@ -1741,9 +1741,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//calculate where we're going (if we have a "save and close" button pushed)
 		if ( isset($this->_req_data['save_and_close'] ) && isset($this->_req_data['save_and_close_referrer'] ) ) {
-			//dump query_args (becaus ethe save_and_close referrer should be setup)
-			$query_args = array();
-			$redirect_url = $this->_req_data['save_and_close_referrer'];
+			// evne though we have the save_and_close referrer, we need to parse the url for the action in order to generate a nonce
+			$parsed_url = parse_url( $this->_req_data['save_and_close_referrer'] );
+			// regenerate query args array from refferer URL
+			parse_str( $parsed_url['query'], $query_args );
+			// correct page and action will be in the query args now
+			$redirect_url = admin_url( 'admin.php' );
 		}
 		
 		// grab messages
@@ -1755,10 +1758,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		// if redirecting to anything other than the main page, add a nonce
 		if ( isset( $query_args['action'] )) {
-			// manually generate wp_nonce
-			$nonce = array( '_wpnonce' => wp_create_nonce( $query_args['action'] . '_nonce' ));
-			// and merge that with the query vars becuz the wp_nonce_url function wrecks havoc on some vars
-			$query_args = array_merge( $query_args, $nonce );
+			// manually generate wp_nonce and merge that with the query vars becuz the wp_nonce_url function wrecks havoc on some vars
+			$query_args['_wpnonce'] = wp_create_nonce( $query_args['action'] . '_nonce' );
 		} 
 
 		$redirect_url = add_query_arg( $query_args, $redirect_url ); 
