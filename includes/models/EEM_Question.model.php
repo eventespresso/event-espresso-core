@@ -61,7 +61,8 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	protected function __construct(){
 		$this->_allowed_question_types=apply_filters('filter_hook_espresso_allowed_question_types',array('TEXT','TEXTAREA','SINGLE','DROPDOWN','MULTIPLE','DATE'));
 		$this->_fields_settings=array('QST_ID'=>new EE_Model_Field('Question ID', 'primary_key', false, null, null, null),
-								'QST_display_text'=>new EE_Model_Field('Display Text', 'simplehtml', false, '', null, null),
+								'QST_display_text'=>new EE_Model_Field('Question Text', 'simplehtml', false, '', null, null),
+								'QST_admin_label'=>new EE_Model_Field('Admin Label', 'simplehtml', false, '', null, null),
 								'QST_system_name'=>new EE_Model_Field('System Name', 'plaintext', false, '', null, null),
 								'QST_type'=>new EE_Model_Field('Question Type', 'enum', false, 'TEXT', $this->allowed_question_types(), null),
 								'QST_required'=>new EE_Model_Field('Required','bool',false,false,null,null),

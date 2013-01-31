@@ -61,6 +61,7 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 			'cb' => '<input type="checkbox" />',
 			'id' => __('ID', 'event_espresso'),
 			'name' => __('Question', 'event_espresso'),
+			'admin_label' => __('Admin Label', 'event_espresso'),
 			'values' => __('Values', 'event_espresso'),
 			'type' => __('Type', 'event_espresso'),
 			'required' => __('Required', 'event_espresso'),
@@ -81,15 +82,10 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 
 
 
-
-
-
 	//not needed
 	protected function _get_table_filters() {
 		return array();
 	}
-
-
 
 
 
@@ -100,14 +96,9 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 
 
 
-
-
-
 	public function column_cb(EE_Question $item) {
 		return sprintf( '<input type="checkbox" name="checkbox[%d]" value="%d" />',$item->ID(), $item->ID());
 	}
-
-
 
 
 
@@ -119,6 +110,8 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 				return ( isset( $item->$column_name )) ? $item->$column_name : '';
         }*/
 	}
+
+
 
 	public function column_name(EE_Question $item) {
 		//return $item->display_text();
@@ -151,8 +144,16 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 		return $content;
 		
 	}
-	public function column_values(EE_Question $item) {
-		
+
+
+
+	public function column_admin_label(EE_Question $item) {
+		return $item->admin_label();
+	}
+
+
+
+	public function column_values(EE_Question $item) {		
 		$optionNames=array();
 		$options= $item->options();
 		foreach($options as $optionID=>$option){
@@ -161,9 +162,15 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 		}
 		return implode(",",$optionNames);
 	}
+
+
+
 	public function column_type(EE_Question $item) {
 		return $item->type();
 	}
+
+
+
 	public function column_required(EE_Question $item) {
 		$returnText='';
 		if($item->required()){
@@ -173,6 +180,9 @@ class Registration_Forms_Questions_Admin_List_Table extends EE_Admin_List_Table 
 		}
 		return $returnText;
 	}
+
+
+
 	public function column_admin_only(EE_Question $item) {
 		if($item->admin_only()){
 			return "Admin Only";

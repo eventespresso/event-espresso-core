@@ -208,7 +208,7 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 					'order' => 5,
 					'persistent' => FALSE
 					),
-				'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box','_edit_question_meta_box')
+				'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' )
 				),
 			'edit_question' => array(
 				'nav' => array(
@@ -217,7 +217,7 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['question_id']) ? add_query_arg(array('question_id' => $this->_req_data['question_id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
-				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box','_edit_question_meta_box')
+				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box' )
 				),
 			'add_question_group' => array(
 				'nav' => array(
@@ -225,7 +225,7 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 					'order' => 5,
 					'persistent' => FALSE
 					),
-				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box','_edit_question_group_meta_box')
+				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box' )
 				),
 			'edit_question_group' => array(
 				'nav' => array(
@@ -234,7 +234,7 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['question_group_id']) ? add_query_arg(array('question_group_id' => $this->_req_data['question_group_id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
-				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box','_edit_question_group_meta_box'),
+				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box' ),
 				)
 			);
 	}
@@ -368,32 +368,6 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 
 
 
-
-	/*private function _set_question_object() {
-		echo "set question object called";
-		if ( is_object($this->_question) )
-			return; //get out we've already set the object
-		
-		if ( isset($this->_req_data['QST_ID']) ) {
-			$this->_set_edit_question_object();
-		} else {
-			$this->_set_add_question_object();
-		}
-	}
-	
-	private function _set_add_question_object(){
-		echo "add question";
-		global $wpdb,$org_options,$espresso_premium,$current_user;
-		get_currentuserinfo();
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		require_once('EE_Question.class.php');
-		
-	}
-	private function _set_edit_question_object(){
-		
-	}
-	private function _set_question_group_object() {}
-*/
 	/**
 	 * Extracts the question field's values from the POST request to update or insert them
 	 * @return array where each key is the name of a model's field/db column, and each value is its value.
@@ -406,6 +380,9 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 		}
 		return $set_column_values;//validation fo this data to be performed by the model before insertion.
 	}
+
+
+
 
 	protected function _questions_overview_list_table() {
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_question', 'add_question', array(), 'button add-new-h2');
@@ -449,29 +426,37 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['question_types']=$questionTypes;
 		
 		$this->_set_publish_post_box_vars( 'id', $ID );
+		$this->_template_args['admin_page_content'] = espresso_display_template( REGISTRATION_FORMS_TEMPLATE_PATH . 'questions_main_meta_box.template.php', $this->_template_args, TRUE );
+
 		// the details template wrapper
 		$this->display_admin_page_with_sidebar();	
 	}
-	protected function _edit_question_meta_box(){
-		add_meta_box('edit-question-mbox',__('Edit Question','event_espresso'),array($this,'edit_question_meta_box'),$this->wp_page_slug,'normal','high');
-	}
-	public function edit_question_meta_box(){
-		echo espresso_display_template(REGISTRATION_FORMS_TEMPLATE_PATH.'questions_main_meta_box.template.php',$this->_template_args,TRUE);
-	}
+
+
+
 	
 	protected function _trash_question(){
 		$success=$this->_question_model->delete_by_ID(intval($this->_req_data['QST_ID']));
 		$query_args=array('action'=>'default','status'=>'all');
 		$this->_redirect_after_action($success, $this->_question_model->item_name($success), 'trashed', $query_args);
 	}
+
+
+
 	protected function _delete_question(){
 		$success=$this->_question_model->delete_permanently_by_ID(intval($this->_req_data['QST_ID']));
 		$query_args=array('action'=>'default','status'=>'all');
 		$this->_redirect_after_action($success, $this->_question_model->item_name($success), 'trashed', $query_args);
 	}
+
+
+
 	protected function _delete_questions() {
 		return $this->_delete_items($this->_question_model);
 	}
+
+
+
 	private function _delete_items(EEM_TempBase $model){
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
@@ -489,6 +474,9 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 		}
 		$this->_redirect_after_action( $success, $model->item_name($success), 'deleted permanently', array('status'=>'all') );
 	}
+
+
+
 	protected function _insert_or_update_question($new_question = TRUE) {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		$success=0;
@@ -542,6 +530,9 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 		$query_args=array('action'=>'edit_question','QST_ID'=>$ID);
 		$this->_redirect_after_action($success, $this->_question_model->item_name($success), $action_desc, $query_args);
 	}
+
+
+
 	
 	/**
 	 * Upon saving a question, there should be an array of 'question_options'. This array is index numerically, but not by ID 
@@ -559,10 +550,15 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 		}
 		return FALSE;
 	}
+
+
+
 	protected function _trash_or_restore_questions($trash=TRUE){
 		return $this->_trash_or_restore_items($this->_question_model,$trash);
 	}
 	
+
+
 	protected function _edit_question_group( $type = 'add' ) {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		$ID=isset( $this->_req_data['QSG_ID'] ) && ! empty( $this->_req_data['QSG_ID'] ) ? absint( $this->_req_data['QSG_ID'] ) : FALSE;
@@ -578,24 +574,23 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 			$this->_set_add_edit_form_tags('insert_question_group');
 		}
 		$this->_template_args['all_questions']=$this->_question_model->get_all();
-		$this->_template_args['QSG_ID']=$ID;
+		$this->_template_args['QSG_ID']=$ID ? $ID : TRUE;
 		$this->_template_args['question_group']=$questionGroup;
 		
 		$this->_set_publish_post_box_vars( 'id', $ID );
+		$this->_template_args['admin_page_content'] = espresso_display_template( REGISTRATION_FORMS_TEMPLATE_PATH . 'question_groups_main_meta_box.template.php', $this->_template_args, TRUE );
+
 		// the details template wrapper
 		$this->display_admin_page_with_sidebar();	
 	}
-	protected function _edit_question_group_meta_box(){
-		add_meta_box('edit-question-group-mbox',__('Edit Question Group','event_espresso'),array($this,'edit_question_group_meta_box'),$this->wp_page_slug,'normal','high');
-		add_meta_box('edit-questions-in-group-mbox',__('Edit Questions in Group','event_espresso'),array($this,'edit_questions_in_group_meta_box'),$this->wp_page_slug,'normal','high');
-	}
-	public function edit_question_group_meta_box(){
-		echo espresso_display_template(REGISTRATION_FORMS_TEMPLATE_PATH.'question_groups_main_meta_box.template.php',$this->_template_args,TRUE);
-	}
-	public function edit_questions_in_group_meta_box(){
-		echo espresso_display_template(REGISTRATION_FORMS_TEMPLATE_PATH.'questions_in_group_meta_box.template.php',$this->_template_args,TRUE);
-	}
+
+
+
+
 	protected function _delete_question_groups() {}
+
+
+
 	protected function _insert_or_update_question_group($new_question_group = TRUE) {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		$success=0;
@@ -641,9 +636,14 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 		$this->_redirect_after_action($success, $this->_question_group_model->item_name($success), $action_desc, $query_args);
 		
 	}
+
+
+
 	protected function _trash_or_restore_question_groups($trash = TRUE) {
 		return $this->_trash_or_restore_items($this->_question_group_model,$trash);
 	}
+
+
 
 	/**
 	 * Interally used to delete or restore items, using the request data. Meant to be 
@@ -681,8 +681,13 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 		$this->_redirect_after_action( $success, $model->item_name($success), $action, array('status'=>'all') );
 	}
 
+
+
+
 	/***********/
 	/* QUERIES */
+
+
 	
 	/**
 	 * For internal use in getting all the query parameters (because it's pretty well the same between question, question groups, and
@@ -702,6 +707,9 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 		return $return;
 		
 	}
+
+
+
 	public function get_questions( $per_page=10,$current_page = 1, $count = FALSE ) {
 		
 		
@@ -715,6 +723,9 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 		return $questions;
 		
 	}
+
+
+
 	public function get_trashed_questions( $per_page,$current_page = 1, $count = FALSE ) {
 		$questionModel=EEM_Question::instance();
 		list($orderby,$order,$limit,$output,$searchString)=$this->get_query_params($questionModel,$per_page,$current_page,$count);
@@ -725,6 +736,9 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 		}
 		return $questions;
 	}
+
+
+
 	public function get_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
 
 		$questionGroupModel=EEM_Question_Group::instance();
@@ -738,6 +752,9 @@ class Registration_Forms_Admin_Page extends EE_Admin_Page {
 
 		return $questionGroups;
 	}
+
+
+
 	public function get_trashed_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
 		$questionGroupModel=EEM_Question_Group::instance();
 		list($orderby,$order,$limit,$output,$searchString)=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
