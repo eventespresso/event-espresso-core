@@ -120,7 +120,7 @@ function espresso_initialize_system_questions() {
 								'QSG_name' => 'Personal Information',
 								'QSG_identifier' => 'personal-information-' . time(),
 								'QSG_desc' => '',
-								'QSG_order' => 10,
+								'QSG_order' => 1,
 								'QSG_show_group_name' => 1,
 								'QSG_show_group_desc' => 1,
 								'QSG_system_ID' => 1,
@@ -133,7 +133,7 @@ function espresso_initialize_system_questions() {
 								'QSG_name' => 'Address Information',
 								'QSG_identifier' => 'address-information-' . time(),
 								'QSG_desc' => '',
-								'QSG_order' => 20,
+								'QSG_order' => 2,
 								'QSG_show_group_name' => 1,
 								'QSG_show_group_desc' => 1,
 								'QSG_system_ID' => 2,
@@ -176,7 +176,7 @@ function espresso_initialize_system_questions() {
 								'QST_type' => 'TEXT',
 								'QST_required' => 1,
 								'QST_required_text' => 'This field is required',
-								'QST_order' => 10,
+								'QST_order' => 1,
 								'QST_admin_only' => 0,
 								'QST_wp_user' => 1,
 								'QST_deleted' => 0
@@ -191,7 +191,7 @@ function espresso_initialize_system_questions() {
 								'QST_type' => 'TEXT',
 								'QST_required' => 1,
 								'QST_required_text' => 'This field is required',
-								'QST_order' => 20,
+								'QST_order' => 2,
 								'QST_admin_only' => 0,
 								'QST_wp_user' => 1,
 								'QST_deleted' => 0
@@ -206,7 +206,7 @@ function espresso_initialize_system_questions() {
 								'QST_type' => 'TEXT',
 								'QST_required' => 1,
 								'QST_required_text' => 'This field is required',
-								'QST_order' => 30,
+								'QST_order' => 3,
 								'QST_admin_only' => 0,
 								'QST_wp_user' => 1,
 								'QST_deleted' => 0
@@ -219,9 +219,9 @@ function espresso_initialize_system_questions() {
 								'QST_admin_label' => 'Address - System Question',
 								'QST_system_ID' => 4,
 								'QST_type' => 'TEXT',
-								'QST_required' => 1,
+								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
-								'QST_order' => 40,
+								'QST_order' => 4,
 								'QST_admin_only' => 0,
 								'QST_wp_user' => 1,
 								'QST_deleted' => 0
@@ -234,9 +234,9 @@ function espresso_initialize_system_questions() {
 								'QST_admin_label' => 'FirAddress2 - System Question',
 								'QST_system_ID' => 5,
 								'QST_type' => 'TEXT',
-								'QST_required' => 1,
+								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
-								'QST_order' => 50,
+								'QST_order' => 5,
 								'QST_admin_only' => 0,
 								'QST_wp_user' => 1,
 								'QST_deleted' => 0
@@ -249,9 +249,9 @@ function espresso_initialize_system_questions() {
 								'QST_admin_label' => 'City - System Question',
 								'QST_system_ID' => 6,
 								'QST_type' => 'TEXT',
-								'QST_required' => 1,
+								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
-								'QST_order' => 60,
+								'QST_order' => 6,
 								'QST_admin_only' => 0,
 								'QST_wp_user' => 1,
 								'QST_deleted' => 0
@@ -264,9 +264,9 @@ function espresso_initialize_system_questions() {
 								'QST_admin_label' => 'State / Province - System Question',
 								'QST_system_ID' => 7,
 								'QST_type' => 'TEXT',
-								'QST_required' => 1,
+								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
-								'QST_order' => 70,
+								'QST_order' => 7,
 								'QST_admin_only' => 0,
 								'QST_wp_user' => 1,
 								'QST_deleted' => 0
@@ -279,9 +279,9 @@ function espresso_initialize_system_questions() {
 								'QST_admin_label' => 'Zip / Postal Code - System Question',
 								'QST_system_ID' => 8,
 								'QST_type' => 'TEXT',
-								'QST_required' => 1,
+								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
-								'QST_order' => 80,
+								'QST_order' => 8,
 								'QST_admin_only' => 0,
 								'QST_wp_user' => 1,
 								'QST_deleted' => 0
@@ -294,9 +294,9 @@ function espresso_initialize_system_questions() {
 								'QST_admin_label' => 'Country - System Question',
 								'QST_system_ID' => 9,
 								'QST_type' => 'TEXT',
-								'QST_required' => 1,
+								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
-								'QST_order' => 90,
+								'QST_order' => 9,
 								'QST_admin_only' => 0,
 								'QST_wp_user' => 1,
 								'QST_deleted' => 0
@@ -309,9 +309,9 @@ function espresso_initialize_system_questions() {
 								'QST_admin_label' => 'Phone Number - System Question',
 								'QST_system_ID' => 10,
 								'QST_type' => 'TEXT',
-								'QST_required' => 1,
+								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
-								'QST_order' => 100,
+								'QST_order' => 10,
 								'QST_admin_only' => 0,
 								'QST_wp_user' => 1,
 								'QST_deleted' => 0
@@ -371,32 +371,7 @@ function espresso_initialize_email() {
 	}
 }
 
-function espresso_update_event_ids() {
-	global $wpdb;
-	$event_data = "SELECT id FROM " . $wpdb->prefix . "events_detail WHERE event_code='0' ";
-	if ($wpdb->num_rows == 0) {
-		$wpdb->update($wpdb->prefix . "events_detail", array('group_name' => 'Personal Information', 'group_identifier' => sanitize_title_with_dashes('personal_information-' . time()), 'system_group' => 1), array('%s', '%s', '%d'));
-	}
-}
 
-function event_espresso_update_shortcodes() {
-	global $wpdb;
-	$wpdb->query("SELECT id FROM " . $wpdb->prefix . "posts " . " WHERE (post_content LIKE '%{ESPRESSO_EVENTS}%' AND post_type = 'page') OR (post_content LIKE '%{ESPRESSO_PAYMENTS}%'  AND post_type = 'page') OR (post_content LIKE '%{ESPRESSO_TXN_PAGE}%'  AND post_type = 'page') ");
-
-	if ($wpdb->num_rows > 0) {
-		$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{ESPRESSO_EVENTS}','[ESPRESSO_EVENTS]')");
-		$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{ESPRESSO_PAYMENTS}','[ESPRESSO_PAYMENTS]')");
-		$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{ESPRESSO_TXN_PAGE}','[ESPRESSO_TXN_PAGE]')");
-	}
-
-	$wpdb->query("SELECT id FROM " . $wpdb->prefix . "posts " . " WHERE (post_content LIKE '%{EVENTREGIS}%' AND post_type = 'page') OR (post_content LIKE '%{EVENTREGPAY}%' AND post_type = 'page') OR (post_content LIKE '%{EVENTPAYPALTXN}%' AND post_type = 'page') ");
-
-	if ($wpdb->num_rows > 0) {
-		$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{EVENTREGIS}','[ESPRESSO_EVENTS]')");
-		$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{EVENTREGPAY}','[ESPRESSO_PAYMENTS]')");
-		$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{EVENTPAYPALTXN}','[ESPRESSO_TXN_PAGE]')");
-	}
-}
 
 
 
@@ -411,9 +386,9 @@ function espresso_org_option_initialization() {
 
 			$new_org_options = array(
 					'organization' => get_bloginfo('name'),
-					'organization_street1' => '123 West Somewhere',
+					'organization_street1' => '123 Onna Road',
 					'organization_street2' => '',
-					'organization_city' => 'Some City',
+					'organization_city' => 'Inna City',
 					'organization_state' => 'AZ',
 					'organization_zip' => '84128',
 					'contact_email' => get_bloginfo('admin_email'),
