@@ -408,7 +408,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * 'hasAndBelongsToMany' relationships: checks that there isn't already an entry in the join table, and adds one.
 	 * If one of the model Objects has not yet been saved to teh database, it is saved before adding the entry in the join table
 	 * 
-	 * @param EE_TempBase $thisModelObject
+	 * @param EE_Base_Class $thisModelObject
 	 * @param mixed $otherModelObjectOrID EE_base_Class or ID of other Model Object
 	 * @param string $relationName
 	 * @param array $extraColumnsForHABTM mapping from column/attribute names to values for JOIN tables with extra columns. Eg, when adding 
