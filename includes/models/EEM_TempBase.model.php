@@ -204,7 +204,12 @@ abstract class EEM_TempBase extends EEM_Base{
 				foreach($argNames as $argName){
 					$args[]=$row->$argName;
 				}
-				$class=new ReflectionClass($this->_getClassName());
+				$className=$this->_getClassName();
+				if(!class_exists($className)){
+					require_once($className.".class.php");
+				}
+				$class=new ReflectionClass($className);
+				
 				$classInstance=$class->newInstanceArgs($args);
 				/* @var $classInstance EE_TempBase */
 				$classInstance->set($pkName,$row->$pkName);
@@ -406,9 +411,11 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * @param EE_TempBase $thisModelObject
 	 * @param mixed $otherModelObjectOrID EE_base_Class or ID of other Model Object
 	 * @param string $relationName
+	 * @param array $extraColumnsForHABTM mapping from column/attribute names to values for JOIN tables with extra columns. Eg, when adding 
+	 * an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specificy array('role-column-name'=>'role-id')
 	 * @return boolean of success
 	 */
-	public function _add_relation_to(EE_Base_Class $thisModelObject,$otherModelObjectOrID, $relationName){
+	public function _add_relation_to(EE_Base_Class $thisModelObject,$otherModelObjectOrID, $relationName,$extraColumnsForHABTM=null){
 		/* @var $relatedModeInfo EE_Model_Relation*/
 		$relatedModelInfo=$this->related_settings_for($relationName);
 		
@@ -465,10 +472,16 @@ abstract class EEM_TempBase extends EEM_Base{
 				$relationsToOtherObject=$this->get_many_related($thisModelObject,$relationName,array($thisPk=>$thisModelObject->ID(),
 																								$relatedModel->_get_table_name().".".$otherPk=>$otherModelID));
 				//if it doesn't exist, add it
+				$insertionValues=array($thisPk=>$thisModelObject->ID(),$otherPk=>$otherModelID);
+				if(!empty($extraColumnsForHABTM)){
+					foreach($extraColumnsForHABTM as $columnName=>$columnValue){
+						$insertionValues[$columnName]=$columnValue;
+					}
+				}
 				if(empty($relationsToOtherObject)){
 					$result=$this->_insert($relatedModelInfo->join_table(), 
-								array($thisPk=>'%d',$otherPk=>'%d'), 
-								array($thisPk=>$thisModelObject->ID(),$otherPk=>$otherModelID));
+								$this->_get_table_data_types_for($relatedModelInfo->join_table(), $relatedModelInfo->join_table_fields()), 
+								$insertionValues);
 					return !empty($result);
 				}else{
 					return false;
@@ -558,7 +571,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * @param string $limit
 	 * @return mixed EE_TempBase is output='OBJECT_K', int is output='count'
 	 */
-	public function get_all_where($where_cols_n_values,$orderby=null,$sort='ASC',$operators=null,$limit=null,$output='OBJECT_K'){
+	public function get_all_where($where_cols_n_values,$orderby=null,$sort='ASC',$operators='=',$limit=null,$output='OBJECT_K'){
 		if($orderby==null){
 			$orderby=$this->primary_key_name();
 		}

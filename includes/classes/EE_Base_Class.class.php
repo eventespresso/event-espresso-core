@@ -412,11 +412,14 @@ abstract class EE_Base_Class {
 	 * to a group of events, the $relationName should be 'Events', and should be a key in the EE Model's $_model_relations array
 	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object
 	 * @param string $relationName eg 'Events','Question',etc.
+	 * @param array $extraColumnsForHABTM mapping from column/attribute names to values for JOIN tables with extra columns. Eg, when adding 
+	 * an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specificy array('role-column-name'=>'role-id')
+	 
 	 * @return boolean success
 	 */
-	public function _add_relation_to($otherObjectModelObjectOrID,$relationName){
+	public function _add_relation_to($otherObjectModelObjectOrID,$relationName,$extraColumnsForHABTM=null){
 		$model=$this->_get_model();
-		$success= $model->_add_relation_to($this, $otherObjectModelObjectOrID, $relationName);
+		$success= $model->_add_relation_to($this, $otherObjectModelObjectOrID, $relationName,$extraColumnsForHABTM);
 		if($success){
 			//invalidate cached relations
 			//@todo: this could be optimized. Instead, we could just add $otherObjectModel toteh array if it's an array, or set it if it isn't an array
