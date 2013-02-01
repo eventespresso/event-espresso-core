@@ -6,7 +6,7 @@ assert($question instanceof EE_Question);
 assert($question_types);
 
 //start output
-echo EE_Form_Fields::hidden_input('QST_system_name', $question->system_name());
+echo EE_Form_Fields::hidden_input('QST_system_ID', $question->system_name());
 echo EE_Form_Fields::hidden_input('QST_wp_user', $question->wp_user());
 echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 
@@ -17,7 +17,7 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 		<tbody>
 			<?php 
 			foreach($question->get_fields_settings() as $fieldName=>$settings){
-				if( in_array( $fieldName, array( 'QST_ID', 'QST_system_name','QST_wp_user','QST_deleted' ))) {
+				if( in_array( $fieldName, array( 'QST_ID', 'QST_system_ID','QST_wp_user','QST_deleted' ))) {
 					continue;
 				}
 			?>

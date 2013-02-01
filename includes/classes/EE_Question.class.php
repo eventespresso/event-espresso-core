@@ -54,7 +54,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * @access protected
 	 * @var string
 	 */
-	protected $_QST_system_name=NULL;
+	protected $_QST_system_ID=NULL;
 	
 	
 	/**
@@ -135,7 +135,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * constructor for questions
 	 * @param string/array $QST_display_text text for displaying the question (eg, "what is your name?") OR an array of all field values, where keys match these arguments' names
 	 * @param string $QST_admin_label administrative label for a question
-	 * @param string $QST_system_name if this is a system question, it's internal name
+	 * @param string $QST_system_ID if this is a system question, it's internal name
 	 * @param string $QST_type one of 'text','textarea',etc.
 	 * @param boolean $QST_required indicates whether this question must be answered
 	 * @param string $QST_required_text text that's displayed if teh question isn't answered
@@ -148,7 +148,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	public function __construct( 
 			$QST_display_text=NULL, 
 			$QST_admin_label=NULL, 
-			$QST_system_name=NULL, 
+			$QST_system_ID=NULL, 
 			$QST_type=NULL, 
 			$QST_required=NULL,
 			$QST_required_text=NULL,
@@ -202,11 +202,11 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	*		Set	system name
 	* 
 	* 		@access		public		
-	*		@param		int		$QST_system_name
+	*		@param		int		$QST_system_ID
 	*/	
-	public function set_system_name( $QST_system_name = FALSE ) {
-		if ( ! $this->_check_for( $QST_system_name, 'system name' )) { return FALSE; }
-		$this->_QST_system_name = wp_strip_all_tags( $QST_system_name );
+	public function set_system_name( $QST_system_ID = FALSE ) {
+		if ( ! $this->_check_for( $QST_system_ID, 'system name' )) { return FALSE; }
+		$this->_QST_system_ID = wp_strip_all_tags( $QST_system_ID );
 		return TRUE;
 	}
 	
@@ -345,7 +345,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * @return string
 	 */
 	public function system_name(){
-		return $this->get('QST_system_name');
+		return $this->get('QST_system_ID');
 	}
 	
 	/**
