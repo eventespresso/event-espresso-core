@@ -527,33 +527,35 @@ function events_data_tables_install() {
 	event_espresso_run_install($table_name, $table_version, $sql);
 	
 	$table_name='esp_question';
-	$sql="QST_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-				QST_display_text TEXT NOT NULL ,
-				QST_admin_text TEXT NOT NULL ,
-				QST_system_name VARCHAR(45) NOT NULL ,
-				QST_type VARCHAR(25) NOT NULL DEFAULT 'TEXT' ,
-				QST_required TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
-				QST_required_text TEXT NULL ,
-				QST_order TINYINT UNSIGNED NOT NULL DEFAULT 0 ,
-				QST_admin_only TINYINT(1) NOT NULL DEFAULT 0 ,
-				QST_wp_user SMALLINT UNSIGNED NULL ,
-				QST_deleted TINYINT UNSIGNED NOT NULL DEFAULT 0
-				PRIMARY KEY  (QST_ID) ,
-				UNIQUE INDEX QST_system_name_UNIQUE (QST_system_name ASC) ";
+	$sql='QST_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+				QST_display_text TEXT NOT NULL,
+				QST_admin_label TEXT NOT NULL,
+				QST_system_name VARCHAR(45) NOT NULL,
+				QST_type VARCHAR(25) NOT NULL DEFAULT "TEXT",
+				QST_required TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+				QST_required_text TEXT NULL,
+				QST_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
+				QST_admin_only TINYINT(1) NOT NULL DEFAULT 0,
+				QST_wp_user SMALLINT UNSIGNED NULL,
+				QST_deleted TINYINT UNSIGNED NOT NULL DEFAULT 0,
+				PRIMARY KEY  (QST_ID)';
 	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
 	
+//	,
+//				UNIQUE INDEX QST_system_name_UNIQUE (QST_system_name ASC)
+	
 	$table_name = 'esp_question_group';
-	$sql="QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-				QSG_name VARCHAR(145) NOT NULL ,
-				QSG_identifier VARCHAR(45) NOT NULL ,
-				QSG_desc TEXT NULL ,
-				QSG_order TINYINT UNSIGNED NOT NULL DEFAULT 0 ,
-				QSG_show_group_name TINYINT(1) NOT NULL ,
-				QSG_show_group_desc TINYINT(1) NOT NULL ,
-				QSG_system_group TINYINT(1) NOT NULL ,
-				QSG_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
-				PRIMARY KEY  (QSG_ID) ,
-				UNIQUE INDEX QSG_identifier_UNIQUE (QSG_identifier ASC) ";
+	$sql='QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+				QSG_name VARCHAR(145) NOT NULL,
+				QSG_identifier VARCHAR(45) NOT NULL,
+				QSG_desc TEXT NULL,
+				QSG_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
+				QSG_show_group_name TINYINT(1) NOT NULL,
+				QSG_show_group_desc TINYINT(1) NOT NULL,
+				QSG_system_group TINYINT(1) NOT NULL,
+				QSG_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+				PRIMARY KEY  (QSG_ID),
+				UNIQUE INDEX QSG_identifier_UNIQUE (QSG_identifier ASC)';
 	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
 	
 	
@@ -564,6 +566,8 @@ function events_data_tables_install() {
 				QST_ID INT UNSIGNED NOT NULL ,
 				PRIMARY KEY  (QGQ_ID) ";
 	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
+
+
 	
 	$table_name='esp_question_option';
 	$sql="QSO_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
@@ -878,63 +882,6 @@ function events_data_tables_install() {
 			KEY attendee_id (attendee_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
-	$table_name = "events_question";
-	$sql = "id int(11) unsigned NOT NULL auto_increment,
-			sequence INT(11) NOT NULL default '0',
-			question_type enum('TEXT','TEXTAREA','MULTIPLE','SINGLE','DROPDOWN','DATE') NOT NULL default 'TEXT',
-			question text NOT NULL,
-			system_name varchar(15) DEFAULT NULL,
-			response text NULL,
-			required tinyint(1) NOT NULL DEFAULT '0',
-			required_text text NULL,
-			admin_only tinyint(1) NOT NULL DEFAULT '0',
-			wp_user int(22) DEFAULT '1',
-			PRIMARY KEY  (id),
-			KEY wp_user (wp_user),
-			KEY system_name (system_name),
-			KEY admin_only (admin_only)";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
-
-
-	$table_name = "events_qst_group";
-	$sql = "id int(11) NOT NULL AUTO_INCREMENT,
-				group_name VARCHAR(100) NOT NULL default 'NULL',
-				group_identifier VARCHAR(45) NOT NULL default 'NULL',
-				group_description TEXT,
-				group_order int(11) DEFAULT '0',
-				show_group_name tinyint(1) NOT NULL DEFAULT '1',
-				show_group_description tinyint(1) NOT NULL DEFAULT '1',
-				system_group tinyint(1) NOT NULL DEFAULT '0',
-				wp_user int(22) DEFAULT '1',
-				PRIMARY KEY  (id),
-			  	KEY system_group (system_group),
-			  	KEY wp_user (wp_user)";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
-
-
-	$table_name = "events_qst_group_rel";
-	$sql = "id int(11) NOT NULL AUTO_INCREMENT,
-				group_id int(11)  NOT NULL,
-				question_id int(11) NOT NULL,
-				PRIMARY KEY  (id),
-			  	KEY group_id (group_id),
-			  	KEY question_id (question_id)";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
-
-
-	$table_name = "events_answer";
-	$sql = "id int(11) NOT NULL AUTO_INCREMENT,
-			registration_id varchar(23) NOT NULL,
-			attendee_id int(11) NOT NULL default '0',
-			question_id int(11) NOT NULL default '0',
-			answer text NOT NULL,
-			PRIMARY KEY  (id),
-			KEY registration_id (registration_id),
-			KEY attendee_id (attendee_id)";
-	event_espresso_run_install($table_name, $table_version, $sql);
 
 	
 

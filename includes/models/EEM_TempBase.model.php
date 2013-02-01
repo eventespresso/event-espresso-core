@@ -359,7 +359,7 @@ abstract class EEM_TempBase extends EEM_Base{
 							), __FILE__, __FUNCTION__, __LINE__);
 					return false;
 				}
-				if(!($otherModelObjectOrID instanceof EE_TempBase)){
+				if(!($otherModelObjectOrID instanceof EE_Base_Class)){
 					$otherModelId=$otherModelObjectOrID;
 					$otherModelSettings=$this->related_settings_for($relationName);
 					$otherModelInstance=$otherModelSettings->model_instance();
@@ -374,11 +374,11 @@ abstract class EEM_TempBase extends EEM_Base{
 				break;
 			case 'hasAndBelongsToMany':
 				//first, if one of the modelObjects doesn't have an ID, it couldn't have this kind of relationship!
-				if($otherModelObjectOrID instanceof EE_TempBase && (!$thisModelObject->ID() || !$otherModelObjectOrID->ID())){
+				if($otherModelObjectOrID instanceof EE_Base_Class && (!$thisModelObject->ID() || !$otherModelObjectOrID->ID())){
 					return true;//we removed teh relationship that doesn't exist. That's pretty successful right?
 				}
 				
-				if($otherModelObjectOrID instanceof EE_TempBase){
+				if($otherModelObjectOrID instanceof EE_Base_Class){
 					$otherModelID=$otherModelObjectOrID->ID();
 				}else{
 					$otherModelID=$otherModelObjectOrID;
@@ -423,7 +423,7 @@ abstract class EEM_TempBase extends EEM_Base{
 		switch($relatedModelInfo->type()){
 			case 'belongsTo':
 				//just set its foreign_key to be that 
-				if($otherModelObjectOrID instanceof EE_TempBase){
+				if($otherModelObjectOrID instanceof EE_Base_Class){
 					if(!$otherModelObjectOrID->ID()){
 						$otherModelObjectOrID->save();
 					}
@@ -494,9 +494,9 @@ abstract class EEM_TempBase extends EEM_Base{
 	
 	/**
 	 * Uses $this->_relatedModels info to find the first related model object of relation $relationName to the given $modelObject
-	 * @param EE_TempBase'child $modelObject one of EE_Answer, EE_Attendee, etc. 
+	 * @param EE_Base_Class'child $modelObject one of EE_Answer, EE_Attendee, etc. 
 	 * @param string $relationName, key in $this->_relatedModels, eg 'Registration', or 'Events'
-	 * @return EE_TempBase[]
+	 * @return EE_Base_Class[]
 	 */
 	public function get_first_related(EE_Base_Class $modelObject,$relationName){
 		$relatedObjects=$this->get_many_related($modelObject, $relationName);
@@ -512,7 +512,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	* 
 	* 		@access		public
 	* 		@param		$id		
-	*		@return 	EE_TempBase or FALSE on fail
+	*		@return 	EE_Base_Class or FALSE on fail
 	*/	
 	public function get_one_by_ID( $id = FALSE ) {
 
@@ -531,11 +531,11 @@ abstract class EEM_TempBase extends EEM_Base{
 	}
 	
 	/**
-	*		retreive  a single attendee from db via their ID
+	*		retreive  a single item from db via array of key value pairs
 	* 
 	* 		@access		public
 	* 		@param		$where_cols_n_values	 array, where keys are strings for DB columns, and values are their model values	
-	*		@return 	EE_TempBase		array on success, FALSE on fail
+	*		@return 	EE_Base_Class		array on success, FALSE on fail
 	*/	
 	public function get_one( $where_cols_n_values = FALSE ) {
 
@@ -556,7 +556,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	*		retreive  ALL objects of this model from db
 	* 
 	* 		@access		public
-	*		@return mixed EE_TempBase is output='OBJECT_K', int is output='count'
+	*		@return mixed EE_Base_Class is output='OBJECT_K', int is output='count'
 	*/	
 	public function get_all( $orderby = null, $order = 'ASC',$limit=array(0,10),$output='OBJECT_K' ) {
 		return $this->get_all_where(array(),$orderby,$order,'=',$limit,$output);
@@ -569,9 +569,9 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * @param string $sort 'ASC' or 'DESC'
 	 * @param mixed $operators string for a single operator, or an array of operators
 	 * @param string $limit
-	 * @return mixed EE_TempBase is output='OBJECT_K', int is output='count'
+	 * @return mixed EE_Base_Class is output='OBJECT_K', int is output='count'
 	 */
-	public function get_all_where($where_cols_n_values,$orderby=null,$sort='ASC',$operators='=',$limit=null,$output='OBJECT_K'){
+	public function get_all_where($where_cols_n_values,$orderby=null,$sort='ASC',$operators=null,$limit=null,$output='OBJECT_K'){
 		if($orderby==null){
 			$orderby=$this->primary_key_name();
 		}

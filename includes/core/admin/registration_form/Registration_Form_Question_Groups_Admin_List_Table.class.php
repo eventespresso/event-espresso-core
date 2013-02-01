@@ -16,20 +16,20 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * Registration_Forms_Question_Groups_Admin_List_Table
+ * Registration_Form_Question_Groups_Admin_List_Table
  *
  * Class for preparing the table listing all the custom event Question_Groups
  *
  * note: anywhere there are no php docs it is because the docs are available in the parent class.
  *
- * @package		Registration_Forms_Question_Groups_Admin_List_Table
- * @subpackage	includes/core/admin/events/Registration_Forms_Question_Groups_Admin_List_Table.class.php
+ * @package		Registration_Form_Question_Groups_Admin_List_Table
+ * @subpackage	includes/core/admin/events/Registration_Form_Question_Groups_Admin_List_Table.class.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
 require_once('EE_Question.class.php');
-class Registration_Forms_Question_Groups_Admin_List_Table extends EE_Admin_List_Table {
+class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function __construct( $admin_page ) {
@@ -60,15 +60,16 @@ class Registration_Forms_Question_Groups_Admin_List_Table extends EE_Admin_List_
 		$this->_columns = array(
 			'cb' => '<input type="checkbox" />',
 			'id' => __('ID', 'event_espresso'),
+			'order' => __('Order', 'event_espresso'),
 			'name' => __('Group Name', 'event_espresso'),
-			'identifier' => __('Identifier', 'event_espresso'),
-			'description' => __('Description', 'event_espresso')
+			'description' => __('Description', 'event_espresso'),
+			'show_group_name' => __('Show Name', 'event_espresso'),
+			'show_group_desc' => __('Show Desc', 'event_espresso')
 			);
 
 		$this->_sortable_columns = array(
 			'id' => array( 'QSG_ID' => true ),
-			'name' => array( 'QSG_name' => false ),
-			'identifier'=>array('QSG_identifier'=>false)
+			'name' => array( 'QSG_name' => false )
 			);
 
 		$this->_hidden_columns = array(
@@ -146,12 +147,38 @@ class Registration_Forms_Question_Groups_Admin_List_Table extends EE_Admin_List_
 		$content .= $this->row_actions($actions);
 		return $content;
 	}
+
+
+
+
 	public function column_identifier(EE_Question_Group $item) {
 		return $item->identifier();
 	}
+
+
+
 	public function column_description(EE_Question_Group $item) {
 		return $item->desc();
 	}
 	
 
-} //end class Registration_Forms_Questions_Admin_List_Table
+
+	public function column_order(EE_Question_Group $item) {
+		return $item->order();
+	}
+	
+
+
+	public function column_show_group_name(EE_Question_Group $item) {
+		return $this->_yes_no[ $item->show_group_name() ];
+	}
+	
+	
+
+	public function column_show_group_desc(EE_Question_Group $item) {
+		return $this->_yes_no[ $item->show_group_desc() ];
+	}
+	
+	
+
+} //end class Registration_Form_Questions_Admin_List_Table

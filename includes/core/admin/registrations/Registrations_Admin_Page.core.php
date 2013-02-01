@@ -706,8 +706,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	
 		$page_args = array();
 		
-		$page_args['admin_reports'][] = $this->_registrations_per_day_report( '-8 month' );  //  option: '-1 week', '-2 weeks' defaults to '-1 month'
-		$page_args['admin_reports'][] = $this->_get_registrations_per_event_report( '-8 month' ); //  option: '-1 week', '-2 weeks' defaults to '-1 month'
+		$page_args['admin_reports'][] = $this->_registrations_per_day_report( '-1 month' );  //  option: '-1 week', '-2 weeks' defaults to '-1 month'
+		$page_args['admin_reports'][] = $this->_get_registrations_per_event_report( '-1 month' ); //  option: '-1 week', '-2 weeks' defaults to '-1 month'
 //		$page_args['admin_reports'][] = 'chart1';
 		
 		$template_path = EE_CORE_ADMIN . 'admin_reports.template.php';
