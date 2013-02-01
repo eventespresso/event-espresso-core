@@ -1,6 +1,6 @@
 <?php
 require_once('EEM_Base.model.php');
-abstract class EEM_TempBase extends EEM_Base{
+abstract class EEM_TempBase extends EEM_Base{ 
 	/**
 	 * arary for defining all the fields on a model. May not replace all the 
 	 * individual setters and getters, as these are convenient for PHP docs and developing,
