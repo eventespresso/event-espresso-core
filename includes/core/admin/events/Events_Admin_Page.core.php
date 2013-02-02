@@ -3563,7 +3563,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		
 		$ticket_prices_to_save = array();
 		$quick_edit_ticket_price = isset($this->_req_data['quick_edit_ticket_price']) ? $this->_req_data['quick_edit_ticket_price'] : array();
-//			echo printr( $quick_edit_ticket_price, '$quick_edit_ticket_price' );
+		//printr( $quick_edit_ticket_price, '$quick_edit_ticket_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// grab list of edited ticket prices
 		if ($edited_ticket_price_IDs = isset($this->_req_data['edited_ticket_price_IDs']) ? $this->_req_data['edited_ticket_price_IDs'] : FALSE) {
@@ -3585,7 +3585,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 					// add edited ticket prices to list of ticket prices to save
 					if (in_array($PRC_ID, $edited_ticket_price_IDs)) {
 //							echo printr( $quick_edit_ticket_price[$PRC_ID], '$quick_edit_ticket_price[$PRC_ID]' );
-						if ( is_array( $quick_edit_ticket_price[$PRC_ID] )) {
+						if ( isset( $quick_edit_ticket_price[$PRC_ID] ) && is_array( $quick_edit_ticket_price[$PRC_ID] )) {
 							$edited_ticket_price = array_merge( $quick_edit_ticket_price[$PRC_ID], $edited_ticket_price );
 //								echo printr( $edited_ticket_price, '$edited_ticket_price' );	
 						}
