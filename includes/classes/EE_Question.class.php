@@ -354,7 +354,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	public function required(){
-		return $this->get('QST_type');
+		return $this->get('QST_required');
 	}
 	
 	/**
