@@ -17,7 +17,7 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 		<tbody>
 			<?php 
 			foreach($question->get_fields_settings() as $fieldName=>$settings){
-				if( in_array( $fieldName, array( 'QST_ID', 'QST_system_ID','QST_wp_user','QST_deleted' ))) {
+				if( in_array( $fieldName, array( 'QST_ID', 'QST_system_ID','QST_wp_user','QST_deleted', 'QST_order' ))) {
 					continue;
 				}
 			?>
@@ -183,14 +183,6 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 					<br/>
 					<span class="description">
 						<?php _e("Only the administrator can see this field.",'event_espresso')?>
-					</span>					
-					<?php break;
-					
-					case 'QST_order':?>
-					<input type="text" class="small-text" id="<?php echo $fieldName?>" name="<?php echo $fieldName?>" value="<?php echo $question->order()?>"/>
-					<br/>
-					<span class="description">
-						<?php _e('Order in which question will appear in your Registration Form. Lower numbers appear first. HINT: When initially creating your Registration Form, order your questions by "tens" (10, 20, 30, etc) that way it will be easier to insert new questions later on without having to reorder the entire list." ','event_espresso');?>
 					</span>					
 					<?php break;
 					
