@@ -1,9 +1,5 @@
 jQuery(document).ready(function($) {
 
-	$.ajaxSetup ({ cache: false });
-
-	// clear firefox and safari cache
-	$(window).unload( function() {}); 
 
 	$('#entries-per-page-slct').on( 'change', function() {
 		var per_page = $(this).val();
@@ -77,9 +73,9 @@ jQuery(document).ready(function($) {
 
 
 
-	var overlay = $( "#espresso-admin-page-overlay-dv" );
 	var dialog = $( "#txn-admin-apply-payment-dv" ).draggable();
-	var eeTimeout = false;
+	// send to global space
+	window.dialog = dialog;
 
 
 
@@ -138,6 +134,7 @@ jQuery(document).ready(function($) {
 		$('#message').hide();
 		position_overlay();
 		position_dialog();
+		$('#txn-admin-payment-method-slct').trigger('change');
 		overlay.on('click', function() {
 			dialog.fadeOut( 'fast');
 			overlay.fadeOut('fast', function(){
@@ -163,50 +160,6 @@ jQuery(document).ready(function($) {
 			});
 		});	
 	}
-
-
-	function position_dialog() {
-		var wndwWidth = parseInt( $(window).width() );
-		var wndwHeight = parseInt( $(window).height() );		
-		var scrllTp = $('html').scrollTop();
-		$('#txn-admin-payment-method-slct').trigger('change');
-		var parOff = dialog.parent().offset();
-		var dialogTop =  ( wndwHeight / 10 ) - parOff.top + scrllTp;
-		var dialogLeft = ( wndwWidth / 4 - parOff.left );
-		var dialogWidth = wndwWidth / 2;
-		dialog.css({ 'top' : dialogTop, 'left' : dialogLeft, 'width' : dialogWidth }).fadeIn('fast');		
-	}
-
-
-
-	function position_overlay() {
-		var dcmntWidth = parseInt($(document).width() );
-		var dcmntHeight = parseInt($(document).height() );
-		$(window).scrollTop(0);
-		var ovrParOff = overlay.parent().offset();
-		var ovrlyTop = ovrParOff.top * (-1);
-		var ovrlyLeft = ovrParOff.left * (-1);
-		overlay.css({ 'top' : ovrlyTop, 'left' : ovrlyLeft, 'width' : dcmntWidth, 'height' : dcmntHeight }).fadeIn('fast').addClass('active');
-	}
-
-
-
-	function doneResizing(){
-		if ( overlay.hasClass('active') ) {
-			position_overlay( $( "#admin-page-overlay-dv" ), false ); 
-			position_dialog( $( "#txn-admin-apply-payment-dv" ) ); 
-			eeTimeout = false;	
-		}
-	}
-
-
-
-	$(window).resize(function(){	
-		 if( eeTimeout !== false) {
-		    clearTimeout(eeTimeout);
-		}
-		eeTimeout = setTimeout(doneResizing, 200);
-	});
 
 
 
@@ -461,13 +414,7 @@ jQuery(document).ready(function($) {
 
 
 	function process_delete_payment( response ) {
-	
-		// return data
-		// [amount] => 1000
-	   	// [total_paid] => 579.9
-	    // [txn_status] => TOP
-	    // [PAY_ID] => 73	
-	 
+
 		// grab PAY ID from return data
 		var PAY_ID = response.return_data.PAY_ID;
 		update_payment_totals( response );
@@ -484,75 +431,7 @@ jQuery(document).ready(function($) {
 
 
 
-	function do_before_admin_page_ajax() {
-		// stop any message alerts that are in progress
-		$('#message').stop().hide();
-		// spinny things pacify the masses
-		var st = $('html').scrollTop();
-		var po = $('#espresso-admin-page-ajax-loading').parent().offset();		
-		var mal_top = ( st+( parseInt( $(window).height() )/3 )-po.top ) - 15;
-		var ww = $('#espresso-admin-page-ajax-loading').parent().width();
-		var mal_left = ( ww/2 ) -15;		
-		$('#espresso-admin-page-ajax-loading').css({ 'top' : mal_top, 'left' : mal_left }).show();
 		
-	}		
-		
-
-
-	function show_admin_page_ajax_msg( response, beforeWhat, closeModal ) {
-			
-		$('#espresso-admin-page-ajax-loading').fadeOut('fast');
-		//alert( response.toSource() );
-		if (( response.success != undefined && response.success != '' ) || ( response.errors != undefined && response.errors != '' )) {
-		
-			if ( closeModal == undefined ) {
-				closeModal = false;
-			}
-
-			var fadeaway = true;
-
-			if ( response.success != undefined && response.success != '' ) {
-				msg = '<div id="message" class="updated hidden"><p>' + response.success + '</p></div>';
-				//closeModal = true;
-			}
-		
-			if ( response.errors != undefined && response.errors != '' ) {
-				msg = '<div id="message" class="error hidden"><p>' + response.errors + '</p></div>';
-				//closeModal = false;
-				fadeaway = false;
-			}
-			// display message
-			$( beforeWhat ).before( msg );
-			if ( fadeaway == true ) {
-				$('#message').removeClass('hidden').show().delay(8000).fadeOut();
-//				$('#message').removeClass('hidden').show().delay(8000).fadeOut( function(){
-//						if ( closeModal ) {
-//							overlay.trigger('click');
-//						}
-//				});
-			} else {
-				$('#message').removeClass('hidden').show();
-//				$('#message').removeClass('hidden').show().delay(8000).queue( function() {
-//						if ( closeModal ) {
-//							overlay.trigger('click');
-//						}
-//				});
-			}
-
-		} 
-		
-//		response.success = '';
-//		response.errors = '';
-		//response = null;
-			
-		
-	}
-
-
-
-
-
-	
 	
 });
 
