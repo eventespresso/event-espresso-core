@@ -39,28 +39,6 @@ class EEM_Attendee extends EEM_TempBase {
 	 *		@return void
 	 */	
 	private function __construct() {	
-		echo "construct EEM_Attendee";
-		global $wpdb;
-		// set table name
-		$this->table_name = $wpdb->prefix . 'esp_attendee';
-		// array representation of the attendee table and the data types for each field 
-		$this->table_data_types = array (	
-			'ATT_ID' 					=> '%d',
-			'ATT_fname' 			=> '%s',
-			'ATT_lname' 			=> '%s',
-			'ATT_address'			=> '%s',
-			'ATT_address2'		=> '%s',
-			'ATT_city'					=> '%s',
-			'STA_ID'					=> '%d',
-			'CNT_ISO'				=> '%s',
-			'ATT_zip'					=> '%s',
-			'ATT_email'				=> '%s',
-			'ATT_phone'			=> '%s',
-			'ATT_social'				=> '%s',
-			'ATT_comments'		=> '%s',
-			'ATT_notes'				=> '%s',
-			'ATT_deleted'			=> '%d'
-		);
 		// load Attendee object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php');
 		$this->_fields_settings=array('ATT_ID'=>new EE_Model_Field('Attendee ID', 'primary_key', false),
@@ -81,7 +59,10 @@ class EEM_Attendee extends EEM_TempBase {
 			);
 		$this->_related_models=array(
 								'Registrations'=>new EE_Model_Relation('belongsTo', 'Registration', 'ATT_ID'));
+		$this->table_name = $this->_get_table_data_types();
+		$this->table_data_types = $this->_get_table_data_types;
 		parent::__construct();
+		
 	}
 
 	/**
@@ -113,9 +94,7 @@ class EEM_Attendee extends EEM_TempBase {
 	*/	
 	protected function _create_objects( $attendees = FALSE ) {
 
-		if ( ! $attendees ) {
-			return FALSE;
-		} 		
+		$array_of_objects=array();
 
 		foreach ( $attendees as $attendee ) {
 				$array_of_objects[ $attendee->ATT_ID ] = new EE_Attendee(

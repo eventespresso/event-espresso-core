@@ -91,6 +91,7 @@ abstract class EEM_Base extends EE_Base {
 	/**
 	 *		Function for running a join query
 	 *		@param string $joinStatement eg "tablex innner join tably on tablex.x=tabley.y"
+	 *		@param array $table_data_types where each key is the name of a column, and each value is its wp data type, eg '%d','%s','%f'
 	 *		@param mixed (string, array) 		$where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause
 	 *		@param mixed (string, array)		$orderby - cloumn names to be used for sorting
 	 *		@param string								$sort - ASC or DESC
@@ -100,8 +101,11 @@ abstract class EEM_Base extends EE_Base {
 	 *		@return mixed (object, array)
 	 * @return type
 	 */
-	protected function select_all_join_where($joinStatement,$where_cols_n_values=FALSE,$orderby=FALSE,$sort='ASC',$operator='=',$limit=FALSE,$output='OBJECT_K'){
-		return $this->_select_all_where($joinStatement, $this->table_data_types, $where_cols_n_values, $orderby, $sort, $operator, $limit, $output);
+	protected function select_all_join_where($joinStatement,$table_data_types=FALSE,$where_cols_n_values=FALSE,$orderby=FALSE,$sort='ASC',$operator='=',$limit=FALSE,$output='OBJECT_K'){
+		if(empty($table_data_types)){
+			$table_data_types=$this->table_data_types;
+		}
+		return $this->_select_all_where($joinStatement, $table_data_types, $where_cols_n_values, $orderby, $sort, $operator, $limit, $output);
 	}
 
 

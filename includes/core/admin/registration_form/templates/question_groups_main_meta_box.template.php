@@ -8,6 +8,7 @@ foreach($all_questions as $unused_question){
 	assert($unused_question);
 	assert($unused_question instanceof EE_Question);
 }
+assert(is_array($values));
 ?>
 
 <div class="edit-group padding" style="float:left; width:60%; padding-right: 5%;">

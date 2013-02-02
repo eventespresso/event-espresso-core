@@ -304,10 +304,12 @@ abstract class EEM_TempBase extends EEM_Base{
 				$otherTableName=$relatedModel->_get_table_name();
 				$otherTablePK=$relatedModel->primary_key_name();
 				$joinSQL="$joinTable LEFT JOIN $otherTableName ON $joinTable.$otherTablePK=$otherTableName.$otherTablePK ";
-				//$rows=$
+				//$rows=$;
 				$thisTablePK=$this->primary_key_name();
 				$where_col_n_values[$thisTablePK]=$modelObject->ID();
-				$rows=$relatedModel->select_all_join_where($joinSQL,$where_col_n_values);
+				$rows=$relatedModel->select_all_join_where($joinSQL,
+													$this->_get_table_data_types_for($relatedModelInfo->join_table(), $relatedModelInfo->join_table_fields()), 
+													$where_col_n_values);
 				$relatedObjects=$relatedModel->_create_objects($rows);
 				break;
 		}
@@ -388,7 +390,7 @@ abstract class EEM_TempBase extends EEM_Base{
 				//check for this relationship
 				$thisPk=$this->primary_key_name();
 				$otherPk=$relatedModelInfo->field_name();
-				$success=$this->_delete($relatedModelInfo->join_table(),$this->_get_table_data_types(),array($thisPk=>$thisModelObject->ID(),
+				$success=$this->_delete($relatedModelInfo->join_table(),$this->_get_table_data_types_for($relatedModelInfo->join_table(), $relatedModelInfo->join_table_fields()),array($thisPk=>$thisModelObject->ID(),
 																								$otherPk=>$otherModelID));
 				return $success;
 				break;	
@@ -571,7 +573,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * @param string $limit
 	 * @return mixed EE_Base_Class is output='OBJECT_K', int is output='count'
 	 */
-	public function get_all_where($where_cols_n_values,$orderby=null,$sort='ASC',$operators=null,$limit=null,$output='OBJECT_K'){
+	public function get_all_where($where_cols_n_values,$orderby=null,$sort='ASC',$operators='=',$limit=null,$output='OBJECT_K'){
 		if($orderby==null){
 			$orderby=$this->primary_key_name();
 		}
