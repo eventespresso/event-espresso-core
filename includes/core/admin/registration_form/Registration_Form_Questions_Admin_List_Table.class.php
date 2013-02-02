@@ -60,24 +60,24 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 		$this->_columns = array(
 			'cb' => '<input type="checkbox" />',
 			'id' => __('ID', 'event_espresso'),
-			'name' => __('Question', 'event_espresso'),
+			'display_text' => __('Question', 'event_espresso'),
 			'admin_label' => __('Admin Label', 'event_espresso'),
-			'values' => __('Values', 'event_espresso'),
 			'type' => __('Type', 'event_espresso'),
+			'values' => __('Values', 'event_espresso'),
 			'required' => __('Required', 'event_espresso'),
 			'admin_only' => __('Admin Only', 'event_espresso')
 			);
 
 		$this->_sortable_columns = array(
-			'id' => array( 'QST_ID' => true ),
-			'name' => array( 'QST_display_text' => false )
+			'id' => array( 'QST_ID' => TRUE ),
+			'display_text' => array( 'QST_display_text' => FALSE )
 			);
 
 		$this->_hidden_columns = array(
-			'id',
-			'values',
-			'admin_only'
 			);
+
+		$this->_ajax_sorting_callback = 'update_question_order';
+
 	}
 
 
@@ -97,23 +97,24 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_cb(EE_Question $item) {
-		return sprintf( '<input type="checkbox" name="checkbox[%d]" value="%d" />',$item->ID(), $item->ID());
+		return sprintf( '<input type="checkbox" class="QST_ID" name="checkbox[%d]" value="%d" />', $item->ID(), $item->ID() );
 	}
 
 
 
 	public function column_default($item) {
-		/*switch($column_name){
-            case 'question_id':
-				return $item[$column_name];
-             default:
-				return ( isset( $item->$column_name )) ? $item->$column_name : '';
-        }*/
+		//return ( isset( $item->$column_name )) ? $item->$column_name : '';
 	}
 
 
 
-	public function column_name(EE_Question $item) {
+	public function column_id(EE_Question $item) {	
+		return $item->ID();
+	}
+
+
+
+	public function column_display_text(EE_Question $item) {
 		//return $item->display_text();
 		
 		if ( !defined('ATT_ADMIN_URL') )
@@ -160,7 +161,7 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 			/* @var $option EE_Question_Option */
 			$optionNames[]=$option->value();
 		}
-		return implode(",",$optionNames);
+		return implode(', ',$optionNames);
 	}
 
 
@@ -172,24 +173,16 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_required(EE_Question $item) {
-		$returnText='';
-		if($item->required()){
-			$returnText='Required';
-		}else{
-			$returnText='Optional';
-		}
-		return $returnText;
+		return $item->required() ? 'Yes' : '';
 	}
 
 
 
 	public function column_admin_only(EE_Question $item) {
-		if($item->admin_only()){
-			return "Admin Only";
-		}else{
-			return "";
-		}
+		return $item->admin_only() ? 'Yes' : '';
 	}
+
+
 
 
 
