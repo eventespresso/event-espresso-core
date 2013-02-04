@@ -149,6 +149,8 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		if ( empty( $_init_func) )
 			return; //get out there's nothing to take care of.
 
+		//We need to determine what page_route we are on!
+		$current_route = isset ( $_REQUEST['action'] ) ? $_REQUEST['action'] : 'default';
 
 		foreach ( $this->_init_func as $route => $method ) {
 			//make sure method exists
