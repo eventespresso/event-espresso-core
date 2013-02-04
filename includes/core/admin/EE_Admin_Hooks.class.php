@@ -32,7 +32,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	/**
 	 * This is set by child classes and is an associative array of ajax hooks in the format:
 	 * array(
-	 * 	'ajax_action_ref' => '_executing_method';
+	 * 	'ajax_action_ref' => 'executing_method'; //must be public
 	 * )
 	 * @var array
 	 */
@@ -42,11 +42,39 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	/**
 	 * This is an array of methods that get executed on a page routes init hook. Use the following format:
 	 * array(
-	 * 	'page_route' => '_executing_method'
+	 * 	'page_route' => 'executing_method' //must be public
 	 * )
 	 * @var array
 	 */
 	protected $_init_func;
+
+
+
+	/**
+	 * This is an array of methods that output metabox content for the given page route.  Use the following format:
+	 * array(
+	 * 	'page_route' => array(
+	 * 		'func' =>  'executing_method',  //must be public (i.e. public function executing_method($post, $callback_args){} ).  Note if you include callback args in the array then you need to declare them in the method arguments.
+	 * 		'id' => 'identifier_for_metabox', //so it can be removed by addons (optional, class will set it automatically)
+	 * 		'priority' => 'default', //default 'default' (optional)
+	 * 		'label' => __('Localized Title', 'event_espresso'),
+	 * 		'context' => 'advanced' //advanced is default (optional),
+	 *   	'callback_args' => array() //any callback args to include (optional)
+	 * )
+	 * @var array
+	 */
+	protected $_metaboxes;
+
+
+
+
+	/**
+	 * This is a property that will contain the current route.
+	 * @var string;
+	 */
+	protected $_current_route;
+
+
 
 
 
@@ -56,6 +84,9 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		$this->_set_hooks_properties();
 		$this->_ajax_hooks();
 		$this->_init_hooks();
+		
+		//add metaboxes (the proper way)...todo we eventually should do something similar in the EE_Admin_Page parent as well.
+		add_action( 'add_meta_boxes', array($this, 'add_metaboxes') );
 	}
 
 
@@ -80,7 +111,8 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * @return void
 	 */
 	private function _set_defaults() {
-		$this->_ajax_func = $this->_init_func = array();
+		$this->_ajax_func = $this->_init_func = $this->_metaboxes = array();
+		$this->_current_route = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : 'default';
 	}
 
 
@@ -99,7 +131,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 			if ( !method_exists($this, $method) ) {
 				$msg[] = __('There is no corresponding method for the hook labeled in the _ajax_func array', 'event_espresso') . '<br />';
 				$msg[] = sprintf( __('The method name given in the array is %s, check the spelling and make sure it exists in the %s class', 'event_espresso' ), $method, __CLASS__ );
-				throw EE_Error( implode('||', $msg ) );
+				throw new EE_Error( implode('||', $msg ) );
 			}
 
 			add_action('wp_ajax_' . $action, array( $this, $method ) );
@@ -125,10 +157,56 @@ abstract class EE_Admin_Hooks extends EE_Base {
 			if ( !method_exists($this, $method) ) {
 				$msg[] = __('There is no corresponding method for the hook labeled in the _init_func array', 'event_espresso') . '<br />';
 				$msg[] = sprintf( __('The method name given in the array is %s, check the spelling and make sure it exists in the %s class', 'event_espresso' ), $method, __CLASS__ );
-				throw EE_Error( implode('||', $msg ) );
+				throw new EE_Error( implode('||', $msg ) );
 			}
-			if ( $route == $current_route )
+			if ( $route == $this->_current_route )
 				add_action('init', array( $this, $method ) );
 		}
+	}
+
+
+
+	/**
+	 * Loop through the _metaboxes property and add_metaboxes accordingly
+	 * //todo we could eventually make this a config component class (i.e. new EE_Metabox);
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function add_metaboxes() {
+
+		$current_screen = get_current_screen();
+
+		if ( empty( $this->_metaboxes ) )
+			return; //get out we don't have any metaboxes to set for this connection
+
+		foreach ( $this->_metaboxes as $route => $settings ) {
+			if ( $this->_current_route != $route )
+				continue; //we only add metaboxes for the set route
+
+			//set defaults
+			$defaults = array(
+				'func' => 'some_breaking_link',
+				'id' => $this->_current_route . '_' . __CLASS__ . '_metabox',
+				'priority' => 'default',
+				'label' => __CLASS__,
+				'context' => 'advanced',
+				'callback_args' => array()
+				);
+	
+			$args = wp_parse_args( $settings, $defaults );
+			extract($args);
+
+			//make sure method exists
+			if ( !method_exists($this, $func) ) {
+				$msg[] = __('There is no corresponding method to display the metabox content', 'event_espresso') . '<br />';
+				$msg[] = sprintf( __('The method name given in the array is %s, check the spelling and make sure it exists in the %s class', 'event_espresso' ), $func, __CLASS__ );
+				throw new EE_Error( implode('||', $msg ) );
+			}
+
+			//everything checks out so lets add the metabox
+			add_meta_box( $id, $label, array( $this, $func), $current_screen->id, $context, $priority, $callback_args);
+		}
+
 	}
 }
