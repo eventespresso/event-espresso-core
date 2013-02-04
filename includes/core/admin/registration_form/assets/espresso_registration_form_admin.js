@@ -1,17 +1,24 @@
 jQuery(document).ready(function($) {
+	
 	$('#QST_type').click(function(event){
 		espresso_reg_forms_show_or_hide_question_options();
 	});
+	
 	$('#new-question-option').click(function(){
 		espresso_reg_forms_add_option();
 	})
+	
 	$('.remove-option').click(function(){
 		espresso_reg_forms_trash_option(this);
 	})
+	
 	espresso_reg_forms_show_or_hide_question_options();
 	
 	
 });
+
+
+
 function espresso_reg_forms_show_or_hide_question_options(){
 	var val=jQuery('#QST_type').val();
 	if (val=='DROPDOWN' || val=='SINGLE' || val=='MULTIPLE'){
@@ -20,6 +27,9 @@ function espresso_reg_forms_show_or_hide_question_options(){
 		jQuery('#question_options').hide();
 	}
 }
+
+
+
 function espresso_reg_forms_add_option(){
 	var count=jQuery('#question_options tbody tr').not('.sample').size();
 	var sampleRow=jQuery('#question_options tbody tr:first-child');
@@ -33,6 +43,9 @@ function espresso_reg_forms_add_option(){
 	newRow.removeClass('sample');
 	jQuery('#question_options tr:last').after(newRow);
 }
+
+
+
 function espresso_reg_forms_trash_option(item){
 	jQuery(item).parents('.question-option').remove();
 }
