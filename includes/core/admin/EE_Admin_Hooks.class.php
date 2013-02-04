@@ -32,7 +32,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	/**
 	 * This is set by child classes and is an associative array of ajax hooks in the format:
 	 * array(
-	 * 	'ajax_action_ref' => '_executing_method';
+	 * 	'ajax_action_ref' => 'executing_method'; //must be public
 	 * )
 	 * @var array
 	 */
@@ -42,7 +42,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	/**
 	 * This is an array of methods that get executed on a page routes init hook. Use the following format:
 	 * array(
-	 * 	'page_route' => '_executing_method'
+	 * 	'page_route' => 'executing_method' //must be public
 	 * )
 	 * @var array
 	 */
