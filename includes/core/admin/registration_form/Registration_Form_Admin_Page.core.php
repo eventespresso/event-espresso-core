@@ -77,7 +77,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _ajax_hooks() {
-		//todo: all hooks for events ajax goes in here.
+		add_action('wp_ajax_espresso_update_question_order', array( $this, 'update_question_order' ));
 	}
 
 
@@ -176,6 +176,14 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				'func' => '_trash_or_restore_question_groups',
 				'args' => array('trash' => FALSE),
 				'noheader' => TRUE
+				),
+			'espresso_update_question_order' => array(
+				'func' => 'update_question_order',
+				'noheader' => TRUE
+				),
+			'espresso_update_question_group_order' => array(
+				'func' => 'update_question_group_order',
+				'noheader' => TRUE
 				)
 			);
 	}
@@ -256,31 +264,36 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	//none of the below group are currently used for Event Categories
 	protected function _add_help_tabs() {}
 	protected function _add_feature_pointers() {}
-	public function load_scripts_styles() {}
+	public function load_scripts_styles() {
+		wp_register_style( 'espresso_registration', REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.css', array(), EVENT_ESPRESSO_VERSION );		
+		wp_enqueue_style('espresso_registration');		
+	}
 	public function admin_init() {}
 	public function admin_notices() {}
 	public function admin_footer_scripts() {}
 
 
 
+	public function load_scripts_styles_default() {
+		wp_enqueue_script( 'espresso_ajax_table_sorting' );	
+	}
+
+	public function load_scripts_styles_question_groups() {
+		wp_enqueue_script( 'espresso_ajax_table_sorting' );	
+	}
 
 
 
 	public function load_scripts_styles_add_question() {
 		$this->load_scripts_styles_forms();
-		wp_register_script( 'espresso_REGISTRATION_FORM_SINGLE', REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_enqueue_script( 'espresso_REGISTRATION_FORM_SINGLE' );	
-		
-		wp_register_style( 'espresso_REGISTRATION', REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.css', array(), EVENT_ESPRESSO_VERSION );		
-		wp_enqueue_style('espresso_REGISTRATION');
+		wp_register_script( 'espresso_registration_form_single', REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_enqueue_script( 'espresso_registration_form_single' );	
 	}
 	public function load_scripts_styles_edit_question() {
 		$this->load_scripts_styles_forms();
-		wp_register_script( 'espresso_REGISTRATION_FORM_SINGLE', REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_enqueue_script( 'espresso_REGISTRATION_FORM_SINGLE' );	
+		wp_register_script( 'espresso_registration_form_single', REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_enqueue_script( 'espresso_registration_form_single' );	
 		
-		wp_register_style( 'espresso_REGISTRATION', REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.css', array(), EVENT_ESPRESSO_VERSION );		
-		wp_enqueue_style('espresso_REGISTRATION');
 	}
 	public function load_scripts_styles_add_question_group() {
 		$this->load_scripts_styles_forms();
@@ -296,10 +309,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	public function load_scripts_styles_forms() {
 		//styles
 		wp_enqueue_style('jquery-ui-style');
-
 		//scripts
 		wp_enqueue_script('ee_admin_js');
-
 	}
 
 
@@ -552,6 +563,43 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		return $this->_trash_or_restore_items( $this->_question_model, $trash );
 	}
 	
+	
+	/**
+	 * method for performing updates to question order
+	 * @return array results array
+	 */	
+	public function update_question_order() {
+
+		$success = __( 'Question order was updated successfully.', 'event_espresso' );
+		
+		// grab our row IDs
+		$row_ids = isset( $this->_req_data['row_ids'] ) && ! empty( $this->_req_data['row_ids'] ) ? explode( ',', wp_strip_all_tags( $this->_req_data['row_ids'] )) : FALSE;
+
+		if ( is_array( $row_ids )) {
+			global $wpdb;
+			for ( $i = 0; $i < count( $row_ids ); $i++ ) {
+				//Update the questions when re-ordering
+				if ( ! EEM_Question::instance()->update ( array( 'QST_order' => $i+1 ), array( 'QST_ID' => $row_ids[$i] ) )) {
+					$success = FALSE;
+				} 
+			}
+		} else {
+			$success = FALSE;
+		}
+		
+		$errors = ! $success ? __( 'An error occured. The question order was not updated.', 'event_espresso' ) : FALSE;
+		
+		echo json_encode( array( 'return_data' => FALSE, 'success' => $success, 'errors' => $errors ));
+		die();
+		
+	}
+
+
+
+
+	/******************************    QUESTION GROUPS    ******************************/
+
+
 
 
 	protected function _edit_question_group( $type = 'add' ) {
@@ -702,32 +750,30 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	 * For internal use in getting all the query parameters (because it's pretty well the same between question, question groups, and
 	 * for both when searchign for trahsed and untrahse dones)
 	 * @param EEM_TempBase $model either EEM_Question or EEM_Question_Group
-	 * @return array($orderby,$order,$limit,$output,$searchString)
+	 * @return array($order,$limit,$output,$searchString)
 	 */
 	private function get_query_params($model,$per_page=10,$current_page=10,$count=FALSE){
 		$offset=($current_page-1)*$per_page;
 		$limit=array($offset,$per_page);
 		$output=$count?'COUNT':'OBJECT_K';
-		$primaryKeyName=$model->primary_key_name();
-		$orderby = empty($this->_req_data['orderby']) ? $primaryKeyName : $this->_req_data['orderby'];
 		$order = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
 		$searchString=empty($this->_req_data['s'])?'':$this->_req_data['s'];
-		$return= array($orderby,$order,$limit,$output,$searchString);
+		$return= array($order,$limit,$output,$searchString);
 		return $return;
 		
 	}
 
 
 
-	public function get_questions( $per_page=10,$current_page = 1, $count = FALSE ) {
-		
-		
-		$questionModel=EEM_Question::instance();
-		list($orderby,$order,$limit,$output,$searchString)=$this->get_query_params($questionModel,$per_page,$current_page,$count);
+	public function get_questions( $per_page=10,$current_page = 1, $count = FALSE ) {		
+		list($order,$limit,$output,$searchString)=$this->get_query_params(EEM_Question::instance(),$per_page,$current_page,$count);		
+		$orderby = empty($this->_req_data['orderby']) ? 'QST_order' : $this->_req_data['orderby'];		
 		if(!empty($searchString)){
-			$questions=$questionModel->get_all_where(array('QST_display_text'=>'%'.$searchString.'%'), $orderby, $order, 'LIKE', $limit,$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+			$questions=EEM_Question::instance()->get_all_where(array('QST_display_text'=>'%'.$searchString.'%'), $orderby, $order, 'LIKE', $limit,$output);
 		}else{
-			$questions=$questionModel->get_all_where(null, $orderby, $order, '=', $limit,$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+			$questions=EEM_Question::instance()->get_all_where(null, $orderby, $order, '=', $limit,$output);
 		}
 		return $questions;
 		
@@ -736,12 +782,14 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 	public function get_trashed_questions( $per_page,$current_page = 1, $count = FALSE ) {
-		$questionModel=EEM_Question::instance();
-		list($orderby,$order,$limit,$output,$searchString)=$this->get_query_params($questionModel,$per_page,$current_page,$count);
+		list($order,$limit,$output,$searchString)=$this->get_query_params(EEM_Question::instance(),$per_page,$current_page,$count);
+		$orderby = empty($this->_req_data['orderby']) ? 'QST_order' : $this->_req_data['orderby'];		
 		if(!empty($searchString)){
-			$questions=$questionModel->get_all_where_deleted(array('QST_display_text'=>'%'.$searchString.'%'), $orderby, $order, 'LIKE', $limit,$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+			$questions=EEM_Question::instance()->get_all_where_deleted(array('QST_display_text'=>'%'.$searchString.'%'), $orderby, $order, 'LIKE', $limit,$output);
 		}else{
-			$questions=$questionModel->get_all_where_deleted(null, $orderby, $order, '=', $limit,$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+			$questions=EEM_Question::instance()->get_all_where_deleted(null, $orderby, $order, '=', $limit,$output);
 		}
 		return $questions;
 	}
@@ -749,9 +797,9 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 	public function get_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
-
 		$questionGroupModel=EEM_Question_Group::instance();
-		list($orderby,$order,$limit,$output,$searchString)=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
+		list($order,$limit,$output,$searchString)=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
+		$orderby = empty($this->_req_data['orderby']) ? 'QSG_order' : $this->_req_data['orderby'];		
 		if(!empty($searchString)){
 			$questionGroups=$questionGroupModel->get_all_where(array('QSG_name'=>'%'.$searchString.'%'), $orderby, $order, 'LIKE', $limit,$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
 		}else{
@@ -766,7 +814,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	public function get_trashed_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
 		$questionGroupModel=EEM_Question_Group::instance();
-		list($orderby,$order,$limit,$output,$searchString)=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
+		list($order,$limit,$output,$searchString)=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
+		$orderby = empty($this->_req_data['orderby']) ? 'QSG_order' : $this->_req_data['orderby'];		
 		if(!empty($searchString)){
 			$questionGroups=$questionGroupModel->get_all_where_deleted(array('QSG_name'=>'%'.$searchString.'%'), $orderby, $order, 'LIKE', $limit,$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
 		}else{
@@ -776,6 +825,40 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 		return $questionGroups;
 	}
+
+
+	/**
+	 * method for performing updates to question order
+	 * @return array results array
+	 */	
+	public function update_question_group_order() {
+
+		$success = __( 'Question group order was updated successfully.', 'event_espresso' );
+		
+		// grab our row IDs
+		$row_ids = isset( $this->_req_data['row_ids'] ) && ! empty( $this->_req_data['row_ids'] ) ? explode( ',', wp_strip_all_tags( $this->_req_data['row_ids'] )) : FALSE;
+
+		if ( is_array( $row_ids )) {
+			global $wpdb;
+			for ( $i = 0; $i < count( $row_ids ); $i++ ) {
+				//Update the questions when re-ordering
+				if ( ! EEM_Question_Group::instance()->update ( array( 'QSG_order' => $i+1 ), array( 'QSG_ID' => $row_ids[$i] ) )) {
+					$success = FALSE;
+				} 
+			}
+		} else {
+			$success = FALSE;
+		}
+		
+		$errors = ! $success ? __( 'An error occured. The question group order was not updated.', 'event_espresso' ) : FALSE;
+		
+		echo json_encode( array( 'return_data' => FALSE, 'success' => $success, 'errors' => $errors ));
+		die();
+		
+	}
+
+
+
 
 
 } //ends Registration_Form_Admin_Page class

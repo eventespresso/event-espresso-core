@@ -1438,7 +1438,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		if ( empty( $all_prices[1] ) && empty( $all_prices[2] )) {
 			$show_no_event_price_msg = TRUE;
 		}
-	//	 echo printr( $all_prices, '$all_prices' );
+		//printr( $all_prices, '$all_prices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		foreach ($PRT->type as $type) {
 			$all_price_types[] = array('id' => $type->ID(), 'text' => $type->name());
@@ -1751,6 +1751,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 								<?php echo EE_Form_Fields::select_input( 'new_ticket_price[PRT_ID]', $price_types, 2, 'id="new-ticket-price-type-ID"', 'add-new-ticket-price-input' ); ?>
 								<span class="description">&nbsp;&nbsp;<?php _e('Whether this is an Event Price, Discount, or Surcharge.', 'event_espresso'); ?></span>
 								<input id="new_ticket_price-EVT_ID" name="new_ticket_price[EVT_ID]" type="hidden" value="<?php echo $this->_event->id; ?>" />
+								<input id="new_ticket_price-PRT_is_global" name="new_ticket_price[PRT_is_global]" type="hidden" value="0" />									
+								<input id="new_ticket_price-PRC_overrides" name="new_ticket_price[PRC_overrides]" type="hidden" value="0" />									
+								<input id="new_ticket_price-PRC_deleted" name="new_ticket_price[PRC_deleted]" type="hidden" value="0" />									
 							</td>
 						</tr>
 						
@@ -3563,7 +3566,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		
 		$ticket_prices_to_save = array();
 		$quick_edit_ticket_price = isset($this->_req_data['quick_edit_ticket_price']) ? $this->_req_data['quick_edit_ticket_price'] : array();
-//			echo printr( $quick_edit_ticket_price, '$quick_edit_ticket_price' );
+		//printr( $quick_edit_ticket_price, '$quick_edit_ticket_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// grab list of edited ticket prices
 		if ($edited_ticket_price_IDs = isset($this->_req_data['edited_ticket_price_IDs']) ? $this->_req_data['edited_ticket_price_IDs'] : FALSE) {
@@ -3585,7 +3588,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 					// add edited ticket prices to list of ticket prices to save
 					if (in_array($PRC_ID, $edited_ticket_price_IDs)) {
 //							echo printr( $quick_edit_ticket_price[$PRC_ID], '$quick_edit_ticket_price[$PRC_ID]' );
-						if ( is_array( $quick_edit_ticket_price[$PRC_ID] )) {
+						if ( isset( $quick_edit_ticket_price[$PRC_ID] ) && is_array( $quick_edit_ticket_price[$PRC_ID] )) {
 							$edited_ticket_price = array_merge( $quick_edit_ticket_price[$PRC_ID], $edited_ticket_price );
 //								echo printr( $edited_ticket_price, '$edited_ticket_price' );	
 						}
@@ -3616,9 +3619,11 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 			global $current_user;
 			get_currentuserinfo();
-
+			
+			
 			foreach ($ticket_prices_to_save as $PRC_ID => $ticket_price) {
-				//printr( $ticket_price, '$ticket_price' );
+				//printr( $ticket_price, '$ticket_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
 				//determine whether this price overrides an existing global or not
 				$overrides = absint($ticket_price['PRT_is_global']) ? $PRC_ID : NULL;
 //echo '<br/><br/><h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
@@ -3632,27 +3637,21 @@ class Events_Admin_Page extends EE_Admin_Page {
 												$ticket_price['PRC_amount'],
 												$ticket_price['PRC_name'],
 												$ticket_price['PRC_desc'],
-												/* DO NOT DELETE - NEW FEATURE IN PROGRESS   
-												$ticket_price['PRC_reg_limit'],
-												$ticket_price['PRC_tckts_left'],
-												*/
-												$ticket_price['PRC_use_dates'] ? TRUE : FALSE,
-												$ticket_price['PRC_start_date'],
-												$ticket_price['PRC_end_date'],
-												FALSE,
-												FALSE,
-												0,
-												TRUE,
-												$current_user->ID,
+												isset( $ticket_price['PRC_reg_limit'] ) ? $ticket_price['PRC_reg_limit'] : NULL,
+												isset( $ticket_price['PRC_tckts_left'] ) ? $ticket_price['PRC_tckts_left'] : NULL,
+												isset( $ticket_price['PRC_use_dates'] ) ? $ticket_price['PRC_use_dates'] : FALSE,
+												isset( $ticket_price['PRC_start_date'] ) ? $ticket_price['PRC_start_date'] : FALSE,
+												isset( $ticket_price['PRC_end_date'] ) ? $ticket_price['PRC_end_date'] : FALSE,
 												$ticket_price['PRC_is_active'] ? TRUE : FALSE,
 												$overrides,
 												$ticket_price['PRT_ID'] < 3 ? 0 : $ticket_price['PRC_order'],
-												$ticket_price['PRC_deleted'],
-												(( $ticket_price['PRT_is_global'] == 1 ) && ( ! isset ( $PRC_ID ))) ? 0 : $PRC_ID
+												isset( $ticket_price['PRC_deleted'] ) ? $ticket_price['PRC_deleted'] : FALSE,
+												$ticket_price['PRT_is_global'] == 1 &&  ! isset ( $PRC_ID ) ? 0 : $PRC_ID
 				);
+				
+//				printr( $ticket_price, '$ticket_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//				printr( $new_price, '$new_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-//                    echo printr( $ticket_price, '$ticket_price' );
-//                    echo printr( $new_price, '$new_price' );
 
 				if (!$new_price->ID()) {
 //echo '<h1>insert !!!</h1>';

@@ -889,6 +889,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script('event-espresso-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_espresso.js', array('jquery'), EVENT_ESPRESSO_VERSION, true);
 		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('jquery'), EVENT_ESPRESSO_VERSION, true );
 		wp_register_script('jquery-validate', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.min.js"), array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
+		wp_register_script('espresso_ajax_table_sorting', (EE_CORE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js"), array('ee_admin_js', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
+//		$ajax_table_sorting_i18n = array();
+//		wp_localize_script( 'espresso_ajax_table_sorting', 'EEi18n', $ajax_table_sorting_i18n );
 
 		//helpers scripts
 		wp_register_script('ee-text-links', EVENT_ESPRESSO_PLUGINFULLURL . 'helpers/assets/ee_text_list_helper.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
@@ -901,7 +904,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.js', array('jquery-ui-datepicker', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
 
 		//transactions script register
-		wp_register_script('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.js', array('jquery-ui-datepicker', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
+		wp_register_script('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.js', array('ee_admin_js', 'jquery-ui-datepicker', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
 
 		//venues script register
 		wp_register_script('espresso_venue_admin', EE_VENUES_ASSETS_URL . 'ee-venues-admin.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );
@@ -1575,6 +1578,18 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		$this->_template_args['table_url'] = defined( 'DOING_AJAX') ? add_query_arg( array( 'noheader' => 'true'), $this->_admin_base_url ) : $this->_admin_base_url;
 		$this->_template_args['list_table'] = $this->_list_table_object;
+		
+		$ajax_sorting_callback = $this->_list_table_object->get_ajax_sorting_callback();	
+		if( ! empty( $ajax_sorting_callback )) {
+			$reorder_action = 'espresso_' . $ajax_sorting_callback . '_nonce';
+			$sortable_list_table_form_fields = wp_nonce_field( $reorder_action, 'ajax_table_sort_nonce', FALSE, FALSE );
+			$sortable_list_table_form_fields .= '<input type="hidden" id="ajax_table_sort_page" name="ajax_table_sort_page" value="' . $this->page_slug .'" />';
+			$sortable_list_table_form_fields .= '<input type="hidden" id="ajax_table_sort_action" name="ajax_table_sort_action" value="espresso_' . $ajax_sorting_callback .'" />';
+		} else {
+			$sortable_list_table_form_fields = '';
+		}
+
+		$this->_template_args['sortable_list_table_form_fields'] = $sortable_list_table_form_fields;
 
 		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
 

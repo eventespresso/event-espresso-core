@@ -479,11 +479,11 @@ function return_espresso_content() {
 	echo $answer->get('ANS_ID');
 	var_dump($answer);
 	$answer->save();*/
-	require('EEM_Answer.model.php');
-	
-	$answerModel=  EEM_Answer::instance();
-	$answerModel->get_all_answers();
-	var_dump($answerModel);
+//	require('EEM_Answer.model.php');
+//	
+//	$answerModel=  EEM_Answer::instance();
+//	$answerModel->get_all_answers();
+//	var_dump($answerModel);
 	return $espresso_content;
 }
 
