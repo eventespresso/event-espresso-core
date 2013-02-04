@@ -21,8 +21,8 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( 'EE_Base_Class.class.php' );
-class EE_Registration extends EE_Base_Class{
+//require_once ( 'EE_Base_Class.class.php' );
+class EE_Registration extends EE_Base {
 	
     /**
     *	Registration ID
@@ -526,6 +526,17 @@ class EE_Registration extends EE_Base_Class{
 	public function update() {
 		return $this->_save_to_db( array( 'TXN_ID' => $this->_TXN_ID ));
 	}
+
+
+	/**
+	*	insert new db record
+	*
+	* @access		public
+	*/
+	public function insert() {
+		return $this->_save_to_db();
+	}
+
 
 	/**
 	*		get Registration ID
