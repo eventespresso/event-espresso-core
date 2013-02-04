@@ -50,6 +50,11 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 
 
+	/**
+	 * This is a property that will contain the current route.
+	 * @var string;
+	 */
+	protected $_current_route;
 
 	public function __construct() {
 		$this->_set_defaults();
@@ -81,6 +86,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 */
 	private function _set_defaults() {
 		$this->_ajax_func = $this->_init_func = array();
+		$this->_current_route = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : 'default';
 	}
 
 
@@ -117,8 +123,6 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		if ( empty( $_init_func) )
 			return; //get out there's nothing to take care of.
 
-		//We need to determine what page_route we are on!
-		$current_route = isset ( $_REQUEST['action'] ) ? $_REQUEST['action'] : 'default';
 
 		foreach ( $this->_init_func as $route => $method ) {
 			//make sure method exists
@@ -127,7 +131,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 				$msg[] = sprintf( __('The method name given in the array is %s, check the spelling and make sure it exists in the %s class', 'event_espresso' ), $method, __CLASS__ );
 				throw EE_Error( implode('||', $msg ) );
 			}
-			if ( $route == $current_route )
+			if ( $route == $this->_current_route )
 				add_action('init', array( $this, $method ) );
 		}
 	}
