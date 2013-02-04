@@ -105,7 +105,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 			if ( !method_exists($this, $method) ) {
 				$msg[] = __('There is no corresponding method for the hook labeled in the _ajax_func array', 'event_espresso') . '<br />';
 				$msg[] = sprintf( __('The method name given in the array is %s, check the spelling and make sure it exists in the %s class', 'event_espresso' ), $method, __CLASS__ );
-				throw EE_Error( implode('||', $msg ) );
+				throw new EE_Error( implode('||', $msg ) );
 			}
 
 			add_action('wp_ajax_' . $action, array( $this, $method ) );
@@ -129,7 +129,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 			if ( !method_exists($this, $method) ) {
 				$msg[] = __('There is no corresponding method for the hook labeled in the _init_func array', 'event_espresso') . '<br />';
 				$msg[] = sprintf( __('The method name given in the array is %s, check the spelling and make sure it exists in the %s class', 'event_espresso' ), $method, __CLASS__ );
-				throw EE_Error( implode('||', $msg ) );
+				throw new EE_Error( implode('||', $msg ) );
 			}
 			if ( $route == $this->_current_route )
 				add_action('init', array( $this, $method ) );
