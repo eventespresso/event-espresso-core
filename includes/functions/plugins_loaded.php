@@ -123,9 +123,9 @@ function espresso_classes_core_autoload($className) {
 	//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
 	$dir_ref = array(
 		'root' => array('core', 'class'),
-		'/messages/' => 'core',
-		'/messages/message_type/' => 'class',
-		'/messages/messenger/' => 'class'
+		'messages/' => 'core',
+		'messages/message_type/' => 'class',
+		'messages/messenger/' => 'class'
 		);
 
 	//assemble a list of filenames
