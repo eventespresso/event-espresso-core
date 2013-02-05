@@ -116,6 +116,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//set up page dependencies
 		$this->_page_setup();
+
 	}
 
 
@@ -385,9 +386,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//next verify routes
 		$this->_verify_routes();
 
-		$this->_do_other_page_hooks();
+		//do page_hooks
+		add_action('wp_loaded', array( $this, 'load_early_hooks') );
+
 
 		if ( $this->_is_UI_request ) {
+
 			
 			//admin_init stuff - global, all views for this page class, specific view
 			add_action( 'admin_init', array( $this, 'admin_init_global' ), 5 );
@@ -404,6 +408,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+	public function load_early_hooks() {
+		$this->_do_other_page_hooks();
+	}
+
+
+
 	/**
 	 * Provides a way for related child admin pages to load stuff on the loaded admin page.
 	 *
@@ -416,8 +426,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		foreach ( $registered_pages as $page ) {
 
 			//now let's setup the file name and class that should be present
-			$classname = $this->page_slug . '_' . $page . '_Hooks';
-			$classname = str_replace( ' ', '_', $classname );
+			$classname = str_replace('.class.php', '', $page);
 
 			//autoloaders should take care of loading file
 			if ( !class_exists( $classname ) ) {
@@ -427,7 +436,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			}
 
 			$a = new ReflectionClass($classname);
-			$hookobj[] = $a->newInstance( $this->_page_routes );
+			$hookobj[] = $a->newInstance();
 		}
 	}
 

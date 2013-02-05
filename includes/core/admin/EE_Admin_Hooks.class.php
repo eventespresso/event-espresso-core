@@ -40,7 +40,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 
 	/**
-	 * This is an array of methods that get executed on a page routes init hook. Use the following format:
+	 * This is an array of methods that get executed on a page routes admin_init hook. Use the following format:
 	 * array(
 	 * 	'page_route' => 'executing_method' //must be public
 	 * )
@@ -78,6 +78,16 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 
 
+	/**
+	 * This just holds a merged array of the $_POST and $_GET vars in favor of $_POST
+	 * @var array
+	 */
+	protected $_req_data;
+
+
+
+
+
 
 	public function __construct() {
 		$this->_set_defaults();
@@ -85,8 +95,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		$this->_ajax_hooks();
 		$this->_init_hooks();
 		
-		//add metaboxes (the proper way)...todo we eventually should do something similar in the EE_Admin_Page parent as well.
-		add_action( 'add_meta_boxes', array($this, 'add_metaboxes') );
+		add_action( 'admin_head', array($this, 'add_metaboxes') );
 	}
 
 
@@ -113,6 +122,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	private function _set_defaults() {
 		$this->_ajax_func = $this->_init_func = $this->_metaboxes = array();
 		$this->_current_route = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : 'default';
+		$this->_req_data = array_merge($_GET, $_POST);
 	}
 
 
@@ -160,7 +170,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 				throw new EE_Error( implode('||', $msg ) );
 			}
 			if ( $route == $this->_current_route )
-				add_action('init', array( $this, $method ) );
+				add_action('admin_init', array( $this, $method ) );
 		}
 	}
 

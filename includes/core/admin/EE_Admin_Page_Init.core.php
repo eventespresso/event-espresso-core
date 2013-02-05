@@ -38,6 +38,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	//set in _set_defaults
 	protected $_folder_name;
 	protected $_file_name;
+	public $hook_file;
 	protected $_wp_page_slug;
 
 
@@ -70,8 +71,8 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 		//load initial stuff.
 		$this->_set_file_and_folder_name();
-		$this->_initialize_admin_page();
 		$this->_register_hooks();
+		$this->_initialize_admin_page();
 
 		//some global constants
 		if ( !defined('EE_FF_HELPER') )
@@ -235,15 +236,23 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	 */
 	private function _register_hooks() {
 		//get a list of files in the directory that have the "Hook" in their name
-		if ( $hook_files = glob( EE_CORE_ADMIN . '*' . $this->_file_name . '_.Hooks.class.php' ) ) {
+		if ( $hook_files = glob( EE_CORE_ADMIN . $this->_folder_name . DS . '*' . $this->_file_name . '_Hooks.class.php' ) ) {
 			foreach ( $hook_files as $file ) {
 				//lets get the linked admin.
-				$rel_admin = preg_replace('/_' . $this->_file_name . '_Hooks.class.php/', '', $file );
+				$this->hook_file = str_replace(EE_CORE_ADMIN . $this->_folder_name . DS, '', $file );
+				$rel_admin = str_replace( '_' . $this->_file_name . '_Hooks.class.php', '', $this->hook_file);
 				$rel_admin = strtolower($rel_admin);
 				$rel_admin_hook = 'filter_hook_espresso_do_other_page_hooks_' . $rel_admin;
-				add_filter($rel_admin_hook, $file);
+				$filter = add_filter( $rel_admin_hook, array($this, 'load_admin_hook') );
 			}
 		}
+	}
+
+
+
+	public function load_admin_hook($registered_pages) {
+		$hook_file = (array) $this->hook_file;
+		return array_merge($hook_file, $registered_pages);
 	}
 
 
