@@ -59,7 +59,7 @@ class EE_Form_Fields {
 	static public function get_form_fields( $input_vars = array(), $id = FALSE ) {
 
 		if ( empty($input_vars) ) {
-			return new WP_Error(__('form_field_generator_error', 'event_espresso'), __('missing required variables for the form field generator', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+			return EE_Error::get_error( __('missing required variables for the form field generator', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
 		}
 		
 		// if you don't behave - this is what you're gonna get !!!
