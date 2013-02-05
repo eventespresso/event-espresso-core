@@ -38,7 +38,6 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	//set in _set_defaults
 	protected $_folder_name;
 	protected $_file_name;
-	public $hook_file;
 	protected $_wp_page_slug;
 
 
@@ -71,7 +70,6 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 		//load initial stuff.
 		$this->_set_file_and_folder_name();
-		$this->_register_hooks();
 		$this->_initialize_admin_page();
 
 		//some global constants
@@ -228,32 +226,8 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	}
 
 
-	/**
-	 * This automatically checks if we have a hook class in the loaded child directory.  If we DO then we will register it with the appropriate pages.  That way all we have to do is make sure the file is named correctly and "dropped" in.  
-	 * Example: if we wanted to set this up for Messages hooking into Events then we would do:  events_Messages_Hooks.class.php
-	 * 
-	 * @return void
-	 */
-	private function _register_hooks() {
-		//get a list of files in the directory that have the "Hook" in their name
-		if ( $hook_files = glob( EE_CORE_ADMIN . $this->_folder_name . DS . '*' . $this->_file_name . '_Hooks.class.php' ) ) {
-			foreach ( $hook_files as $file ) {
-				//lets get the linked admin.
-				$this->hook_file = str_replace(EE_CORE_ADMIN . $this->_folder_name . DS, '', $file );
-				$rel_admin = str_replace( '_' . $this->_file_name . '_Hooks.class.php', '', $this->hook_file);
-				$rel_admin = strtolower($rel_admin);
-				$rel_admin_hook = 'filter_hook_espresso_do_other_page_hooks_' . $rel_admin;
-				$filter = add_filter( $rel_admin_hook, array($this, 'load_admin_hook') );
-			}
-		}
-	}
 
 
-
-	public function load_admin_hook($registered_pages) {
-		$hook_file = (array) $this->hook_file;
-		return array_merge($hook_file, $registered_pages);
-	}
 
 
 	/**

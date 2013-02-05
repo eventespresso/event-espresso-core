@@ -363,6 +363,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//set early because incoming requests could be ajax related and we need to register those hooks.
 		$this->_ajax_hooks();
 
+		//other_page_hooks have to be early too.
+		$this->_do_other_page_hooks();
 
 		//first verify if we need to load anything...
 		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
@@ -422,6 +424,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	private function _do_other_page_hooks() {
+
 		$registered_pages = apply_filters('filter_hook_espresso_do_other_page_hooks_' . $this->page_slug, array() );
 
 		foreach ( $registered_pages as $page ) {
