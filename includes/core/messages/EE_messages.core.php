@@ -61,18 +61,21 @@ class EE_messages {
 
 
 		if ( empty($active_names) ) {
-			return new WP_Error(__('no_active_messengers', 'event_espresso'), __('No messages have gone out because there are no active_messengers.', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+			$msg = __('There are no active messengers in the database', 'event_espresso');
+			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 		}
 
-		foreach ( $active_names as $name => $class ) {
-			$a = new ReflectionClass( $class );
-			$active = $a->newInstance();
-			if ( is_wp_error($active) ) {
-				//we've got an error so let's bubble up the error_object to be caught by caller.
-				//todo: would be better to just catch the errors and then return any aggregated errors later.
-				return $active;
+		if ( is_array($active_names) ) {
+			foreach ( $active_names as $name => $class ) {
+				$a = new ReflectionClass( $class );
+				$active = $a->newInstance();
+				if ( is_wp_error($active) ) {
+					//we've got an error so let's bubble up the error_object to be caught by caller.
+					//todo: would be better to just catch the errors and then return any aggregated errors later.
+					EE_Error::add_error($active->get_error_message(), __FILE__, __FUNCTION__, __LINE__);
+				}
+				$this->_active_messengers[$name] = $active;
 			}
-			$this->_active_messengers[$name] = $active;
 		}
 	}
 
@@ -87,7 +90,8 @@ class EE_messages {
 		$active_names = $this->_load_files('message_type', $actives);
 
 		if ( empty($active_names) ) {
-			return new WP_Error(__('no_active_types', 'event_espresso'), __('No messages have gone out because there are no active message types.', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+			$msg = __('No messages have gone out because there are no active message types.', 'event_espresso');
+			return EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 
 		foreach ( $active_names as $name => $class ) {
@@ -125,7 +129,7 @@ class EE_messages {
 			} else {
 				$this->_unset_active($active, $kind);
 				//set WP_Error
-				return new WP_Error(__('missing_file', 'event_espresso'), sprintf(__("missing messenger file set as active: (%s) %s \nMessenger has been made inactive.", 'event_espresso'), $load_file, espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__ ) ) );
+				return EE_Error::add_error( sprintf( __("missing messenger file set as active: (%s) %s \nMessenger has been made inactive.", 'event_espresso'), $load_file), __FILE__, __FUNCTION__, __LINE__ );
 			}
 		}
 		return $active_names; 
@@ -180,7 +184,7 @@ class EE_messages {
 				unset($messages);
 			}
 		} else {
-			return new WP_Error(__('missing_class', 'event_espresso'), sprintf(__('Class: %s does not exist', 'event_espresso'), $classname) .espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__ ) );
+			return EE_Error::add_error( sprintf( __('Class: %s does not exist', 'event_espresso'), $classname), __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
 
@@ -207,13 +211,13 @@ class EE_messages {
 
 		//do we have the necessary objects loaded?
 		if ( empty( $this->_messenger) || empty($this->_message_type) )
-			return new WP_Error(__('problem_creating_required_objects', 'event_espresso'), sprintf(__(' We had a problem creating the %s messenger or the %s message_type. Are you sure they exist?', 'event_espresso'), $messenger, $message_type) . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) ); 
+			return EE_Error::add_error( sprintf(__(' We had a problem creating the %s messenger or the %s message_type. Are you sure they exist?', 'event_espresso'), $messenger, $message_type), __FILE__, __FUNCTION__, __LINE__ );
 		
 		//is given message_type valid for given messenger (if this is not a global save)
 		if ( !$is_global ) {
 			foreach ( $this->_messenger->active_templates as $template ) {
 				if ( $template->message_type() != $message_type )
-					return new WP_Error(__('invalid_message_type_messenger_match', 'event_espresso'), sprintf(__(' The %s message type is not registered with the %s messenger. Please visit the Messenger activation page to assign this message type first if you want to use it.', 'event_espresso'), $messenger, $message_type) . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+					return EE_Error::add_error( sprintf(__(' The %s message type is not registered with the %s messenger. Please visit the Messenger activation page to assign this message type first if you want to use it.', 'event_espresso'), $messenger, $message_type), __FILE__, __FUNCTION__, __LINE__ );
 			}
 		}
 		return true;
@@ -241,8 +245,7 @@ class EE_messages {
 		}
 
 		if ( !$is_global && empty($evt_id) ) {
-			//hey we need an evt_id to create this custom template
-			return new WP_Error(__('missing_event_id', 'event_espresso'), __('This template is not being created by messenger activation and is a custom template that requires event id (which is missing)', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__ ) );
+			return EE_Error::add_error( __('This template is not being created by messenger activation and is a custom template that requires event id (which is missing)', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 
 		//whew made it this far!  Okay, let's go ahead and create the templates then
@@ -298,7 +301,8 @@ class EE_messages {
 			'MTP_is_override' => 0,
 			'MTP_deleted' => 0,
 			'MTP_is_global' => $is_global,
-			'MTP_user_id' => get_current_user_id()
+			'MTP_user_id' => get_current_user_id(),
+			'MTP_is_active' => 1,
 		);
 
 		foreach ( $mt_contexts as $context ) {
@@ -309,7 +313,7 @@ class EE_messages {
 					$template_data['MTP_content'] = $templates[$context][$field];
 					$MTP = $this->_EEM_data->insert($template_data);
 					if ( !$MTP ) 
-						return new WP_Error( __('template_creation_error', 'event_espresso'), sprintf(__('There was an error in saving new template data for %s messenger, %s message type, %s context and %s template field.', 'event_espresso'), $this->_messenger->name, $this->_message_type->name, $context, $field) . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__));
+						return EE_Error::add_error( sprintf(__('There was an error in saving new template data for %s messenger, %s message type, %s context and %s template field.', 'event_espresso'), $this->_messenger->name, $this->_message_type->name, $context, $field), __FILE__, __FUNCTION__, __LINE__  );
 				}
 			}
 		}
@@ -348,7 +352,7 @@ class EE_messages {
 		}
 
 		if ( empty($template_fields) )
-			return new WP_Error( __('get_template_field_error', 'event_espresso'), __('Something went wrong and we couldn\'t get any templates assembled', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__));
+			return EE_Error::get_error( __('Something went wrong and we couldn\'t get any templates assembled', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 
 		return $template_fields;
 	}
@@ -908,7 +912,7 @@ abstract class EE_messenger {
 
 	protected function _get_admin_content_events_edit( $message_types, $extra ) {
 		//we don't need message types here so we're just going to ignore. we do, however, expect the event id here. The event id is needed to provide a link to setup a custom template for this event.
-		$event_id = isset($extra['event']) ? $extra['event']->id : null;
+		$event_id = isset($extra['event']) ? $extra['event'] : null;
 		$event_template_set = array();
 		$event_template_trashed = array();
 		$event_group_id = array();

@@ -723,7 +723,7 @@ abstract class EEM_Base extends EE_Base {
 
 		$row_results = $wpdb->update( $em_table_name, $em_updata, $em_where, $em_upformat, $em_where_format);
 
-		// set generic success / error mesasges
+		// set generic success / error messages
 		if ( $row_results === 1 ) {
 			// multiple rows were successfully updated
 			$msg = sprintf( __( '%s details have been successfully updated.', 'event_espresso' ), $this->singlular_item );
@@ -731,7 +731,7 @@ abstract class EEM_Base extends EE_Base {
 			
 		} elseif ( $row_results > 1 ) {
 			// one row was successfully updated
-			$msg = sprintf( __( 'Details for %d %s have been successfully updated.', 'event_espresso' ), $results, $this->plual_item );
+			$msg = sprintf( __( 'Details for %d %s have been successfully updated.', 'event_espresso' ), $row_results, $this->plual_item );
 			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			
 		} elseif ( $row_results === 0 ) {
@@ -839,7 +839,7 @@ abstract class EEM_Base extends EE_Base {
 
 		// what??? no WHERE clause??? get outta here!!
 		if ( ! $where_cols_n_values ) {
-			$msg = __( 'No coulmn name was provided for the WHERE clause.', 'event_espresso' );
+			$msg = __( 'No column name was provided for the WHERE clause.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}

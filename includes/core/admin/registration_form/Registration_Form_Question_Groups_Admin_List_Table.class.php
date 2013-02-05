@@ -60,7 +60,6 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 		$this->_columns = array(
 			'cb' => '<input type="checkbox" />',
 			'id' => __('ID', 'event_espresso'),
-			'order' => __('Order', 'event_espresso'),
 			'name' => __('Group Name', 'event_espresso'),
 			'description' => __('Description', 'event_espresso'),
 			'show_group_name' => __('Show Name', 'event_espresso'),
@@ -75,6 +74,9 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 		$this->_hidden_columns = array(
 			'id'
 			);
+
+		$this->_ajax_sorting_callback = 'update_question_group_order';
+
 	}
 
 
@@ -102,7 +104,7 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 
 
 	public function column_cb($item) {
-		return sprintf( '<input type="checkbox" name="checkbox[$item->ID()]" value="%s" />', $item->ID(),$item->ID());
+		return sprintf( '<input type="checkbox" id="QSG_ID[%d]" name="checkbox[%d]" value="%d" />', $item->ID(), $item->ID(), $item->ID() );
 	}
 
 
@@ -117,6 +119,14 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 				return ( isset( $item->$column_name )) ? $item->$column_name : '';
         }*/
 	}
+
+
+
+	public function column_id(EE_Question_Group $item) {	
+		return $item->ID();
+	}
+
+
 
 	public function column_name(EE_Question_Group $item) {
 		//return $item->name();
@@ -159,12 +169,6 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 
 	public function column_description(EE_Question_Group $item) {
 		return $item->desc();
-	}
-	
-
-
-	public function column_order(EE_Question_Group $item) {
-		return $item->order();
 	}
 	
 

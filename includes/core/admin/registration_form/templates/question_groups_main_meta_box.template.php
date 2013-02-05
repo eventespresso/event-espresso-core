@@ -21,6 +21,7 @@ assert(is_array($values));
 <div class="edit-group padding" style="float:left; width:60%; padding-right: 5%;">
 	<table class="form-table">
 		<tbody>
+		
 			<tr>
 				<th>
 					<label for="QSG_name">
@@ -34,6 +35,7 @@ assert(is_array($values));
 					</span>
 				</td>
 			</tr>
+			
 <!--			<tr>
 				<th>
 					<label for="QSG_identifier">
@@ -46,7 +48,8 @@ assert(is_array($values));
 						<?php _e('The "Group Identifier" is a unique name for this group that can be used to distinguish it from all other groups in the system. A Group Identifier therefore can not be the same as any other. It will NOT be displayed to site visitors. If left blank, one will be automagically generated for you, ie: address-info-12345.','event_espresso')?>
 					</span>
 				</td>
-			</tr>-->
+			</tr>
+			-->			
 			<tr>
 				<th>
 					<label for="QSG_desc">
@@ -57,16 +60,7 @@ assert(is_array($values));
 					<textarea name="QSG_desc"  class="regular-text" rows="1" cols="50"><?php echo $question_group->desc()?></textarea>
 				</td>
 			</tr>
-			<tr>
-				<th>
-					<label for="QSG_order">
-						<?php _e('Group Order','event_espresso');?>
-					</label>
-				</th>
-				<td>
-					<input name="QSG_order" value="<?php echo $question_group->order()?>" type="text" class="small-text">
-				</td>
-			</tr>
+
 			<tr>
 				<th>
 					<label>
@@ -81,6 +75,7 @@ assert(is_array($values));
 					</label>
 				</td>
 			</tr>
+			
 			<tr>
 				<th>
 					<label>
@@ -97,6 +92,7 @@ assert(is_array($values));
 					</label>
 				</td>
 			</tr>
+			
 		</tbody>
 	</table>
 </div>

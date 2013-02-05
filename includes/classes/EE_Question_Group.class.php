@@ -1,7 +1,7 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
- * Event Espresso
- * 
+ * Event Espresso 
+ *
  * Event Registration and Management Plugin for WordPress
  *
  * @ package			Event Espresso
@@ -84,7 +84,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 * @access protected
 	 * @var boolea 
 	 */
-	protected $_QSG_system_group=NULL;
+	protected $_QSG_system_ID=NULL;
 	
 	/**
 	 * Boolean which indicates whether thsi question group
@@ -116,7 +116,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 * @param int $QSG_order int to indicate where this question gruop should be displayed relative to others
 	 * @param boolean $QSG_show_group_name whether to show the question group name on the frontend
 	 * @param boolean $QSG_show_group_desc whether to show the question gruop description on teh frontend
-	 * @param string $QSG_system_group boolean indicates whether this question group is integral to the system, or an extra one
+	 * @param string $QSG_system_ID boolean indicates whether this question group is integral to the system, or an extra one
 	 * @param boolean $QSG_deleted indicates whether this question gruop has been 'deleted'
 	 * @access public
 	 */
@@ -127,7 +127,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 			$QSG_order=NULL,
 			$QSG_show_group_name=NULL,
 			$QSG_show_group_desc=NULL,
-			$QSG_system_group=NULL,
+			$QSG_system_ID=NULL,
 			$QSG_deleted=NULL) {
 		//if the first parameter is an array, assume it's an array of key-value pairs for this object
 		if(is_array($QSG_name)){
@@ -211,7 +211,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	public function system_group(){
-		return $this->get('QSG_system_group');
+		return $this->get('QSG_system_ID');
 	}
 	
 	/**
@@ -229,7 +229,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 * @return EE_Question[]
 	 */
 	public function questions(){
-		return $this->get_many_related('Questions');
+		return $this->_get_many_related('Questions');
 	}
 	
 	/**
@@ -238,7 +238,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 */
 	public function events(){
 		throw new EE_Error(__("Question Group->events() not yet implemetned","event_esresso"));
-		return $this->get_many_related('Events');
+		return $this->_get_many_related('Events');
 	}
 	
 	/**

@@ -133,6 +133,14 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	protected $_sortable_columns;
 
 
+	/**
+	 * _ajax_sorting_callback
+	 * callback method used to perform AJAX row reordering 
+	 * @var string
+	 */
+	protected $_ajax_sorting_callback = NULL;
+
+
 
 	/**
 	 * _hidden_columns
@@ -426,6 +434,10 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 	public function get_sortable_columns() {
 		return (array) $this->_sortable_columns;
+	}
+
+	public function get_ajax_sorting_callback() {
+		return $this->_ajax_sorting_callback;
 	}
 
 	public function get_hidden_columns() {

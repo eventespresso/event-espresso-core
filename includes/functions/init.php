@@ -1,4 +1,5 @@
-<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php 
+if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 
 
@@ -479,11 +480,11 @@ function return_espresso_content() {
 	echo $answer->get('ANS_ID');
 	var_dump($answer);
 	$answer->save();*/
-	require('EEM_Answer.model.php');
-	
-	$answerModel=  EEM_Answer::instance();
-	$answerModel->get_all_answers();
-	var_dump($answerModel);
+//	require('EEM_Answer.model.php');
+//	
+//	$answerModel=  EEM_Answer::instance();
+//	$answerModel->get_all_answers();
+//	var_dump($answerModel);
 	return $espresso_content;
 }
 

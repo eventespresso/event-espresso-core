@@ -1008,6 +1008,29 @@ function espresso_event_editor_venue_metabox($event) {
 }
 
 function espresso_event_editor_email_metabox($event) {
+	//todo: this needs to be moved into the the Messages_Admin_Page.core.php once the events_admin has been reworked to be in the new admin system.
+
+	//let's get the active messengers (b/c messenger objects have the active message templates)
+	$EEM_controller = new EE_Messages;
+	$active_messengers = $EEM_controller->get_active_messengers();
+	$tabs = array();
+
+	//get content for active messengers
+	foreach ( $active_messengers as $name => $messenger ) {
+		$tabs[$name] = $messenger->get_messenger_admin_page_content('events', 'edit', array('event' => $event) );
+	}
+
+	require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Tabbed_Content.helper.php';
+	//we want this to be tabbed content so let's use the EE_Tabbed_Content::display helper.
+	$tabbed_content = EE_Tabbed_Content::display($tabs);
+	if ( is_wp_error($tabbed_content) ) {
+		$tabbed_content = $tabbed_content->get_error_message();
+	}
+	
+	echo $tabbed_content;
+}
+/* //removing for new metabox (see above)
+function espresso_event_editor_email_metabox($event) {
 	?>
 	<div class="inside">
 		<table class="form-table">
@@ -1028,7 +1051,7 @@ function espresso_event_editor_email_metabox($event) {
 		</table>
 	</div>
 	<?php
-}
+} /**/
 
 function espresso_register_event_editor_meta_boxes() {
 
@@ -1044,7 +1067,7 @@ function espresso_register_event_editor_meta_boxes() {
 
 	add_meta_box('espresso_event_editor_venue', __('Venue Details', 'event_espresso'), 'espresso_event_editor_venue_metabox', 'toplevel_page_events', 'normal', 'core');
 
-	add_meta_box('espresso_event_editor_email', __('Email Confirmation:', 'event_espresso'), 'espresso_event_editor_email_metabox', 'toplevel_page_events', 'advanced', 'core');
+	add_meta_box('espresso_event_editor_email', __('Message Notifications:', 'event_espresso'), 'espresso_event_editor_email_metabox', 'toplevel_page_events', 'advanced', 'core');
 
 	add_meta_box('espresso_event_editor_quick_overview', __('Quick Overview', 'event_espresso'), 'espresso_event_editor_quick_overview_meta_box', 'toplevel_page_events', 'side', 'high');
 

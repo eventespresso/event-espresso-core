@@ -54,6 +54,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	//bools
 	protected $_is_UI_request;
+	protected $_routing;
 
 	//list table args
 	protected $_view;
@@ -95,10 +96,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	/**
 	 * 		@Constructor
+	 *
+	 * 		@param bool $routing indicate whether we want to just load the object and handle routing or just load the object.
 	 * 		@access public
 	 * 		@return void
 	 */
-	public function __construct() {
+	public function __construct( $routing = TRUE ) {
 
 		$this->_yes_no_values = array(
 			array('id' => TRUE, 'text' => __('Yes', 'event_espresso')),
@@ -107,6 +110,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//set the _req_data property.
 		$this->_req_data = array_merge( $_GET, $_POST );
+
+		//routing enabled?
+		$this->_routing = $routing;
 		
 		//set initial page props (child method)
 		$this->_init_page_props();
@@ -116,6 +122,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//set up page dependencies
 		$this->_page_setup();
+
 	}
 
 
@@ -357,10 +364,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_ajax_hooks();
 
 
+		//other_page_hooks have to be early too.
+		$this->_do_other_page_hooks();
+
 		//first verify if we need to load anything...
 		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
 
 		if ( !$this->_current_page && !defined( 'DOING_AJAX') ) return FALSE;
+
 
 		//next let's just check user_access and kill if no access
 		$this->_check_user_access();
@@ -382,25 +393,30 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_set_page_routes();
 		$this->_set_page_config();
 
-		//next verify routes
-		$this->_verify_routes();
 
-		$this->_do_other_page_hooks();
+		//next verify routes and route only if routing enabled
+		if ( $this->_routing && !defined('DOING_AJAX') ) {
+			$this->_verify_routes();
 
-		if ( $this->_is_UI_request ) {
-			
-			//admin_init stuff - global, all views for this page class, specific view
-			add_action( 'admin_init', array( $this, 'admin_init_global' ), 5 );
-			add_action( 'admin_init', array( $this, 'admin_init' ), 10 );
-			if ( method_exists( $this, 'admin_init_' . $this->_current_view ) )
-				add_action( 'admin_init', array( $this, 'admin_init_' . $this->_current_view ), 15 );
-		} else {
-			//hijack regular WP loading and route admin request immediately
-			if ( current_user_can( 'manage_options' ) )
-				@ini_set( 'memory_limit', apply_filters( 'admin_memory_limit', WP_MAX_MEMORY_LIMIT ) );
-			$this->route_admin_request();
+
+			if ( $this->_is_UI_request ) {
+
+				
+				//admin_init stuff - global, all views for this page class, specific view
+				add_action( 'admin_init', array( $this, 'admin_init_global' ), 5 );
+				add_action( 'admin_init', array( $this, 'admin_init' ), 10 );
+				if ( method_exists( $this, 'admin_init_' . $this->_current_view ) )
+					add_action( 'admin_init', array( $this, 'admin_init_' . $this->_current_view ), 15 );
+			} else {
+				//hijack regular WP loading and route admin request immediately
+				if ( current_user_can( 'manage_options' ) )
+					@ini_set( 'memory_limit', apply_filters( 'admin_memory_limit', WP_MAX_MEMORY_LIMIT ) );
+				$this->route_admin_request();
+			}
 		}
 	}
+
+
 
 
 
@@ -411,13 +427,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	private function _do_other_page_hooks() {
+
 		$registered_pages = apply_filters('filter_hook_espresso_do_other_page_hooks_' . $this->page_slug, array() );
 
 		foreach ( $registered_pages as $page ) {
 
 			//now let's setup the file name and class that should be present
-			$classname = $this->page_slug . '_' . $page . '_Hooks';
-			$classname = str_replace( ' ', '_', $classname );
+			$classname = str_replace('.class.php', '', $page);
 
 			//autoloaders should take care of loading file
 			if ( !class_exists( $classname ) ) {
@@ -427,7 +443,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			}
 
 			$a = new ReflectionClass($classname);
-			$hookobj[] = $a->newInstance( $this->_page_routes );
+			$hookobj[] = $a->newInstance();
 		}
 	}
 
@@ -731,6 +747,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+
+
 	/**
 	 * admin_init_global
 	 * This runs all the code that we want executed within the WP admin_init hook.
@@ -889,6 +907,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script('event-espresso-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_espresso.js', array('jquery'), EVENT_ESPRESSO_VERSION, true);
 		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('jquery'), EVENT_ESPRESSO_VERSION, true );
 		wp_register_script('jquery-validate', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.min.js"), array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
+		wp_register_script('espresso_ajax_table_sorting', (EE_CORE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js"), array('ee_admin_js', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
+//		$ajax_table_sorting_i18n = array();
+//		wp_localize_script( 'espresso_ajax_table_sorting', 'EEi18n', $ajax_table_sorting_i18n );
 
 		//helpers scripts
 		wp_register_script('ee-text-links', EVENT_ESPRESSO_PLUGINFULLURL . 'helpers/assets/ee_text_list_helper.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
@@ -901,7 +922,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.js', array('jquery-ui-datepicker', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
 
 		//transactions script register
-		wp_register_script('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.js', array('jquery-ui-datepicker', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
+		wp_register_script('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.js', array('ee_admin_js', 'jquery-ui-datepicker', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
 
 		//venues script register
 		wp_register_script('espresso_venue_admin', EE_VENUES_ASSETS_URL . 'ee-venues-admin.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );
@@ -994,6 +1015,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+
+
 	/**
 	 * 		set current view for List Table
 	*		@access public
@@ -1021,6 +1044,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$this->_list_table_object = $a->newInstance($this);
 		}
 	}
+
+
 
 	/**
 	 * 		get_list_table_view_RLs - get it? View RL ?? VU-RL???  URL ??
@@ -1053,6 +1078,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		
 		return $this->_views;
 	}
+
+
 
 
 	/**
@@ -1492,6 +1519,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+
 	/**
 	*		generates  HTML wrapper for an admin details page
 	*		@access public
@@ -1575,6 +1603,18 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		$this->_template_args['table_url'] = defined( 'DOING_AJAX') ? add_query_arg( array( 'noheader' => 'true'), $this->_admin_base_url ) : $this->_admin_base_url;
 		$this->_template_args['list_table'] = $this->_list_table_object;
+		
+		$ajax_sorting_callback = $this->_list_table_object->get_ajax_sorting_callback();	
+		if( ! empty( $ajax_sorting_callback )) {
+			$reorder_action = 'espresso_' . $ajax_sorting_callback . '_nonce';
+			$sortable_list_table_form_fields = wp_nonce_field( $reorder_action, 'ajax_table_sort_nonce', FALSE, FALSE );
+			$sortable_list_table_form_fields .= '<input type="hidden" id="ajax_table_sort_page" name="ajax_table_sort_page" value="' . $this->page_slug .'" />';
+			$sortable_list_table_form_fields .= '<input type="hidden" id="ajax_table_sort_action" name="ajax_table_sort_action" value="espresso_' . $ajax_sorting_callback .'" />';
+		} else {
+			$sortable_list_table_form_fields = '';
+		}
+
+		$this->_template_args['sortable_list_table_form_fields'] = $sortable_list_table_form_fields;
 
 		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
 
@@ -1584,6 +1624,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		else
 			$this->display_admin_page_with_no_sidebar();
 	}
+
+
 
 
 
@@ -1620,6 +1662,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+
 	/**
 	*		sort nav tabs
 	*		@access public
@@ -1632,7 +1675,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	    }
 	    return ($a['order'] < $b['order']) ? -1 : 1;
 	}
-
 
 
 
