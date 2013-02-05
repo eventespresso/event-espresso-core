@@ -170,7 +170,7 @@ th.fc-widget-header {
 	float: left;
 	height: 1.9em;
 	line-height: 1.9em;
-	padding: 0 .6em;
+	padding:  .6em;
 	white-space: nowrap;
 	}
 
@@ -218,9 +218,10 @@ th.fc-widget-header {
 .fc-state-default .fc-button-inner {
 	border-style: solid;
 	border-color: #ccc #bbb #aaa;
-	background: #F3F3F3;
+	background-color: #F3F3F3;
 	color: #000;
-	}
+	/*background-color: #eff8f7;*/
+}
 
 .fc-state-hover,
 .fc-state-hover .fc-button-inner {
@@ -231,14 +232,16 @@ th.fc-widget-header {
 .fc-state-down .fc-button-inner {
 	border-color: #555;
 	background: #777;
-	}
+	/*border-color: #eef8f7;
+	background-color: #82c2bb;*/
+}
 
 .fc-state-active,
 .fc-state-active .fc-button-inner {
-	border-color: #555;
-	background: #777;
+	border-color: #489089;
 	color: #fff;
-	}
+	background-color: #6fb9b2;
+}
 
 .fc-state-disabled,
 .fc-state-disabled .fc-button-inner {
@@ -278,7 +281,8 @@ a.fc-event {
 .fc-rtl .fc-event {
 	text-align: right;
 	}
-.expired .fc-event-skin { background-color: #888; }
+/*.expired .fc-event-skin { background-color: #888; }*/
+.expired .fc-event-skin { }
 .fc-event-skin {
 	background-color: rgb(72, 109, 150);
 	/* using rgba values for opacity. bitchin */
@@ -287,6 +291,7 @@ a.fc-event {
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
+	margin-top:.3em;
 	}
 .fc-event-inner {
 	position: relative;
@@ -298,9 +303,12 @@ a.fc-event {
 	}
 
 .fc-event-title {
-	margin: 0 6px;
-	padding:6px 1px 0;
-	}
+	margin-top: 0;
+	margin-bottom: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+	line-height: 16px;
+}
 
 .fc .ui-resizable-handle { /*** TODO: don't use ui-resizable anymore, change class ***/
 	display: block;
@@ -378,10 +386,18 @@ table.fc-border-separate {
 	text-align: center;
 	}
 
+/* Seth: Day numbers (make this a setting?)  */
 .fc-grid .fc-day-number {
-	float: right;
-	padding: 0 2px;
-	}
+	/*float: right;
+	padding: 0 2px;*/
+	float: left;
+	padding: 5px 10px;
+	background: -moz-linear-gradient(270deg, white 0%, #e9f5f4 100%) #ebebeb;
+	background: -webkit-gradient(linear, left top, left bottom, from(white), to(#e9f5f4)) #ebebeb;
+	-moz-box-shadow: 0 1px 4px #cfcfcf;
+	-webkit-box-shadow: 0 1px 4px #cfcfcf;
+	box-shadow: 0 1px 4px #cfcfcf;
+}
 
 .fc-grid .fc-other-month .fc-day-number {
 	opacity: 0.3;
@@ -555,9 +571,13 @@ class name '.event-has-thumb' is added to top level parent event */
 	width: auto;
 	}
 #espresso_calendar p.time-display-block {
- padding: 0 6px;
- font-size: 84.50%;
- margin: 3px 0;
+	 /*padding: 0 6px;
+	 font-size: 84.50%;
+	 margin: 3px 0;*/
+	 font-size: 84.50%;
+	 margin: 3px 0;
+	 padding-top: 0;
+	 padding-bottom: 0;
 }
 #espresso_calendar  span.thumb-wrap {
 	display: inline-block !important;
@@ -588,8 +608,9 @@ class name '.event-has-thumb' is added to top level parent event */
 #content table.fc-header, #content table.fc-border-separate, .fc-header th, .fc-header td { border: none; }
 a.fc-event { line-height: 100%; }
 
-.qtip, .ui-tooltip-titlebar { font-size: 12px; }
-.ui-tooltip-content { font-size: 11px; }
+/*.qtip, .ui-tooltip-titlebar { font-size: 12px; }
+.ui-tooltip-content { font-size: 11px; }*/
+
 .ui-widget-content .fc-event.ui-state-focus, .ui-widget-content  .fc-event.ui-state-default, .ui-widget-content  .fc-content .ui-state-active, .fc-view .ui-state-active { background-image: none!important; }
 
 /* Calendar Widget CSS */
@@ -607,8 +628,10 @@ a.fc-event { line-height: 100%; }
 	border: none;
 	height: 16px;
 }
+
 .espresso_calendar_widget a.fc-event-skin div {
-	background: url('images/tick-circle-frame.png') no-repeat 6px -24px; /* add an image instead */
+	/*background: url('images/tick-circle-frame.png') no-repeat 6px -24px;*//* add an image instead */
+	background: no-repeat 6px -24px; 
 }
 .espresso_calendar_widget .fc-day-content { min-width: 26px; }
 .espresso_calendar_widget a.fc-event-skin div:hover { background-position:6px 0px!important; }
@@ -618,7 +641,14 @@ a.fc-event { line-height: 100%; }
 .espresso_calendar_widget th.fc-widget-header { font-weight: normal; } /* resets the weight of the days */
 .espresso_calendar_widget .fc-button-content { line-height: 16px; padding: 0 5px; height: 16px; font-size: 0.8em; } /* resets the button styles */
 .espresso_calendar_widget table.fc-header { margin-bottom: 0; } /* removes any padding under the header table (might be built into the theme's style.css) */
-.espresso_calendar_widget table.fc-border-separate tbody { font-size: 0.8em; } /* resets the font size of the dates */
+
+/* resets the font size of the dates */
+.espresso_calendar_widget table.fc-border-separate tbody { 
+	font-size: 0.8em;
+	/*background-color: #fff;
+	color: #000;*/
+} 
+
 .espresso_calendar_widget table.fc-border-separate thead { font-size: 0.9em; } /* resets the font size of the day names */
 
 /* default resets for themeroller */
@@ -633,3 +663,4 @@ a.fc-event.themeroller.ui-widget-header p.time-display-block { font-weight: norm
 .espresso_calendar_widget th.ui-widget-header { font-weight: normal; }
 .espresso_calendar_widget .fc-button-content .ui-icon { margin-top: -50%; }
 .espresso_calendar_widget span.ui-icon { margin: 0; } /* this resets the style of the themeroller < > icons */
+
