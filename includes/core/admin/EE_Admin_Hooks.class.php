@@ -69,6 +69,17 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 
 	/**
+	 * This parent class takes care of loading the scripts and styles if the child class has set the properties for them in the following format.  It's important that the child classes have already registered the scripts using the "wp_register_[style|script]" wp function:
+	 * array(
+	 * 'page_route' => 'script_ref' // if more than one script is to be loaded its best to use the 'dependency' argument when registering the scripts/styles to make sure more all that are needed are loaded.
+	 * )
+	 * @var array
+	 */
+	protected $_scripts;
+	protected $_styles;
+
+
+	/**
 	 * This is a property that will contain the current route.
 	 * @var string;
 	 */
@@ -94,7 +105,8 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		$this->_set_hooks_properties();
 		$this->_ajax_hooks();
 		$this->_init_hooks();
-		
+
+		add_action( 'admin_enqueue_scripts', array($this->_enqueue_scripts_styles ) );
 		add_action( 'admin_head', array($this, 'add_metaboxes') );
 	}
 
@@ -114,13 +126,39 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 
 	/**
+	 * The hooks for enqueue_scripts and enqueue_styles will be run in here.  Child classes need to define their scripts and styles in the relevant $_scripts and $_styles properties.  Child classes must have also already registered the scripts and styles using wp_register_script and wp_register_style functions.
+	 * @return void 
+	 */
+	private function _enqueue_scripts_styles() {
+		//scripts first
+		if ( !empty( $this->_scripts ) ) {
+			foreach ( $this->_scripts as $route => $ref ) {
+				if ( $this->_current_route != $route )
+					continue;
+				wp_enqueue_script($ref);
+			}
+		}
+
+		//styles
+		if ( !empty( $this->_styles ) ) {
+			foreach ( $this->_styles as $route => $ref ) {
+				if ( $this->_current_route != $route ) 
+					continue;
+				wp_enqueue_style($ref);
+			}
+		}
+	}
+
+
+
+	/**
 	 * just set the defaults for the hooks properties.
 	 *
 	 * @access private
 	 * @return void
 	 */
 	private function _set_defaults() {
-		$this->_ajax_func = $this->_init_func = $this->_metaboxes = array();
+		$this->_ajax_func = $this->_init_func = $this->_metaboxes = $this->_scripts = $this->_styles = array();
 		$this->_current_route = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : 'default';
 		$this->_req_data = array_merge($_GET, $_POST);
 	}
