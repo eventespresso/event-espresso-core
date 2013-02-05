@@ -54,6 +54,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	//bools
 	protected $_is_UI_request;
+	protected $_routing;
 
 	//list table args
 	protected $_view;
@@ -95,10 +96,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	/**
 	 * 		@Constructor
+	 *
+	 * 		@param bool $routing indicate whether we want to just load the object and handle routing or just load the object.
 	 * 		@access public
 	 * 		@return void
 	 */
-	public function __construct() {
+	public function __construct( $routing = TRUE ) {
 
 		$this->_yes_no_values = array(
 			array('id' => TRUE, 'text' => __('Yes', 'event_espresso')),
@@ -107,6 +110,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//set the _req_data property.
 		$this->_req_data = array_merge( $_GET, $_POST );
+
+		//routing enabled?
+		$this->_routing = $routing;
 		
 		//set initial page props (child method)
 		$this->_init_page_props();
@@ -383,34 +389,29 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_set_page_routes();
 		$this->_set_page_config();
 
-		//next verify routes
-		$this->_verify_routes();
-
-		//do page_hooks
-		add_action('wp_loaded', array( $this, 'load_early_hooks') );
+		//next verify routes and route only if routing enabled
+		if ( $this->_routing ) {
+			$this->_verify_routes();
 
 
-		if ( $this->_is_UI_request ) {
+			if ( $this->_is_UI_request ) {
 
-			
-			//admin_init stuff - global, all views for this page class, specific view
-			add_action( 'admin_init', array( $this, 'admin_init_global' ), 5 );
-			add_action( 'admin_init', array( $this, 'admin_init' ), 10 );
-			if ( method_exists( $this, 'admin_init_' . $this->_current_view ) )
-				add_action( 'admin_init', array( $this, 'admin_init_' . $this->_current_view ), 15 );
-		} else {
-			//hijack regular WP loading and route admin request immediately
-			if ( current_user_can( 'manage_options' ) )
-				@ini_set( 'memory_limit', apply_filters( 'admin_memory_limit', WP_MAX_MEMORY_LIMIT ) );
-			$this->route_admin_request();
+				
+				//admin_init stuff - global, all views for this page class, specific view
+				add_action( 'admin_init', array( $this, 'admin_init_global' ), 5 );
+				add_action( 'admin_init', array( $this, 'admin_init' ), 10 );
+				if ( method_exists( $this, 'admin_init_' . $this->_current_view ) )
+					add_action( 'admin_init', array( $this, 'admin_init_' . $this->_current_view ), 15 );
+			} else {
+				//hijack regular WP loading and route admin request immediately
+				if ( current_user_can( 'manage_options' ) )
+					@ini_set( 'memory_limit', apply_filters( 'admin_memory_limit', WP_MAX_MEMORY_LIMIT ) );
+				$this->route_admin_request();
+			}
 		}
 	}
 
 
-
-	public function load_early_hooks() {
-		$this->_do_other_page_hooks();
-	}
 
 
 

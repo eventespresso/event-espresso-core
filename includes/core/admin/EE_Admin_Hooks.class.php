@@ -36,6 +36,18 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 */
 	public $caller;
 
+
+
+
+	/**
+	 * child classes MUST set this property so that the page object can be loaded correctly	
+	 * @var string
+	 */
+	protected $_name;
+
+
+
+
 	/**
 	 * This is set by child classes and is an associative array of ajax hooks in the format:
 	 * array(
@@ -107,10 +119,21 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 
 
+	/**
+	 * This just holds an instance of the page object for this hook
+	 * @var object
+	 */
+	protected $_page_object;
+
+
+
+
+
 
 	public function __construct() {
 		$this->_set_defaults();
 		$this->_set_hooks_properties();
+		$this->_set_page_object();
 		$this->_ajax_hooks();
 		$this->_init_hooks();
 
@@ -121,7 +144,15 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 
 	/**
-	 * used by child classes to set the $_ajax_fun and $_init_func properties
+	 * used by child classes to set the following properties:
+	 * $_ajax_func (optional)
+	 * $_init_func (optional)
+	 * $_metaboxes (optional)
+	 * $_scripts (optional)
+	 * $_styles (optional)
+	 * $_name (required)
+	 *
+	 * Also in this method will be registered any scripts or styles loaded on the targeted page (as indicated in the _scripts/_styles properties)
 	 *
 	 * @access protected
 	 * @abstract
@@ -175,6 +206,35 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	}
 
 
+
+	/**
+	 * this sets the _page_object property
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _set_page_object() {
+		//first make sure $this->_name is set
+		if ( empty( $this->_name ) ) {
+			$msg[] = __('We can\'t load the page object', 'event_espresso');
+			$msg[] = sprintf( __("This is because the %s child class has not set the 
+				'_name' property", 'event_espresso'), $this->_caller );
+			throw new EE_Error( implode( '||', $msg ) );
+		}
+
+		$ref = str_replace('_' , ' ', $this->_name); //take the_message -> the message
+		$ref = str_replace(' ', '_', ucwords($ref) ) . '_Admin_Page'; //take the message -> The_Message
+
+		//let's make sure the class exists
+		if ( !class_exists( $ref ) ) {
+			$msg[] = __('We can\'t load the page object', 'event_espresso');
+			$msg[] = sprintf( __('The class name that was given is %s. Check the spelling and make sure its correct, also there needs to be an autoloader setup for the class', 'event_espresso'), $ref );
+			throw new EE_Error( implode( '||', $msg ) );
+		}
+
+		$a = new ReflectionClass($ref);
+		$this->_page_object = $a->newInstance(FALSE);
+	}
 	
 
 	/**
@@ -254,7 +314,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 */
 	private function _add_metabox( $args ) {
 		$current_screen = get_current_screen();
-		
+
 		//set defaults
 		$defaults = array(
 			'func' => 'some_breaking_link',
