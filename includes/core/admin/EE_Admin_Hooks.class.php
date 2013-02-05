@@ -29,6 +29,13 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 abstract class EE_Admin_Hooks extends EE_Base {
 
+
+	/**
+	 * we're just going to use this to hold the name of the caller class (child class name)
+	 * @var string
+	 */
+	public $caller;
+
 	/**
 	 * This is set by child classes and is an associative array of ajax hooks in the format:
 	 * array(
@@ -106,7 +113,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		$this->_ajax_hooks();
 		$this->_init_hooks();
 
-		add_action( 'admin_enqueue_scripts', array($this->_enqueue_scripts_styles ) );
+		add_action( 'admin_enqueue_scripts', array($this, 'enqueue_scripts_styles' ) );
 		add_action( 'admin_head', array($this, 'add_metaboxes') );
 	}
 
@@ -127,9 +134,11 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 	/**
 	 * The hooks for enqueue_scripts and enqueue_styles will be run in here.  Child classes need to define their scripts and styles in the relevant $_scripts and $_styles properties.  Child classes must have also already registered the scripts and styles using wp_register_script and wp_register_style functions.
+	 *
+	 * @access public
 	 * @return void 
 	 */
-	private function _enqueue_scripts_styles() {
+	public function enqueue_scripts_styles() {
 		//scripts first
 		if ( !empty( $this->_scripts ) ) {
 			foreach ( $this->_scripts as $route => $ref ) {
@@ -161,6 +170,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		$this->_ajax_func = $this->_init_func = $this->_metaboxes = $this->_scripts = $this->_styles = array();
 		$this->_current_route = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : 'default';
 		$this->_req_data = array_merge($_GET, $_POST);
+		$this->caller = get_class($this);
 	}
 
 
@@ -178,7 +188,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 			//make sure method exists
 			if ( !method_exists($this, $method) ) {
 				$msg[] = __('There is no corresponding method for the hook labeled in the _ajax_func array', 'event_espresso') . '<br />';
-				$msg[] = sprintf( __('The method name given in the array is %s, check the spelling and make sure it exists in the %s class', 'event_espresso' ), $method, __CLASS__ );
+				$msg[] = sprintf( __('The method name given in the array is %s, check the spelling and make sure it exists in the %s class', 'event_espresso' ), $method, $this->caller );
 				throw new EE_Error( implode('||', $msg ) );
 			}
 
@@ -204,7 +214,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 			//make sure method exists
 			if ( !method_exists($this, $method) ) {
 				$msg[] = __('There is no corresponding method for the hook labeled in the _init_func array', 'event_espresso') . '<br />';
-				$msg[] = sprintf( __('The method name given in the array is %s, check the spelling and make sure it exists in the %s class', 'event_espresso' ), $method, __CLASS__ );
+				$msg[] = sprintf( __('The method name given in the array is %s, check the spelling and make sure it exists in the %s class', 'event_espresso' ), $method, $this->caller );
 				throw new EE_Error( implode('||', $msg ) );
 			}
 			if ( $route == $this->_current_route )
@@ -235,9 +245,9 @@ abstract class EE_Admin_Hooks extends EE_Base {
 			//set defaults
 			$defaults = array(
 				'func' => 'some_breaking_link',
-				'id' => $this->_current_route . '_' . __CLASS__ . '_metabox',
+				'id' => $this->_current_route . '_' . $this->caller . '_metabox',
 				'priority' => 'default',
-				'label' => __CLASS__,
+				'label' => $this->caller,
 				'context' => 'advanced',
 				'callback_args' => array()
 				);
@@ -248,7 +258,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 			//make sure method exists
 			if ( !method_exists($this, $func) ) {
 				$msg[] = __('There is no corresponding method to display the metabox content', 'event_espresso') . '<br />';
-				$msg[] = sprintf( __('The method name given in the array is %s, check the spelling and make sure it exists in the %s class', 'event_espresso' ), $func, __CLASS__ );
+				$msg[] = sprintf( __('The method name given in the array is %s, check the spelling and make sure it exists in the %s class', 'event_espresso' ), $func, $this->caller );
 				throw new EE_Error( implode('||', $msg ) );
 			}
 
