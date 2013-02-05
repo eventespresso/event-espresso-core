@@ -60,7 +60,8 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	/**
 	 * This is an array of methods that output metabox content for the given page route.  Use the following format:
 	 * array(
-	 * 	'page_route' => array(
+	 * 	[0] => array(
+	 * 		'page_route' => 'string_for_page_route', //must correspond to a page route in the class being connected with (i.e. "edit_event");
 	 * 		'func' =>  'executing_method',  //must be public (i.e. public function executing_method($post, $callback_args){} ).  Note if you include callback args in the array then you need to declare them in the method arguments.
 	 * 		'id' => 'identifier_for_metabox', //so it can be removed by addons (optional, class will set it automatically)
 	 * 		'priority' => 'default', //default 'default' (optional)
@@ -233,38 +234,48 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 */
 	public function add_metaboxes() {
 
-		$current_screen = get_current_screen();
-
 		if ( empty( $this->_metaboxes ) )
 			return; //get out we don't have any metaboxes to set for this connection
 
-		foreach ( $this->_metaboxes as $route => $settings ) {
-			if ( $this->_current_route != $route )
+		foreach ( $this->_metaboxes as $box ) {
+			if ( !isset($box['page_route']) || ( isset($box['page_route']) && $box['page_route'] != $this->_current_route ) )
 				continue; //we only add metaboxes for the set route
+			$this->_add_metabox($box);
+		}			
 
-			//set defaults
-			$defaults = array(
-				'func' => 'some_breaking_link',
-				'id' => $this->_current_route . '_' . $this->caller . '_metabox',
-				'priority' => 'default',
-				'label' => $this->caller,
-				'context' => 'advanced',
-				'callback_args' => array()
-				);
-	
-			$args = wp_parse_args( $settings, $defaults );
-			extract($args);
+	}
 
-			//make sure method exists
-			if ( !method_exists($this, $func) ) {
-				$msg[] = __('There is no corresponding method to display the metabox content', 'event_espresso') . '<br />';
-				$msg[] = sprintf( __('The method name given in the array is %s, check the spelling and make sure it exists in the %s class', 'event_espresso' ), $func, $this->caller );
-				throw new EE_Error( implode('||', $msg ) );
-			}
 
-			//everything checks out so lets add the metabox
-			add_meta_box( $id, $label, array( $this, $func), $current_screen->id, $context, $priority, $callback_args);
+	/**
+	 * This just handles adding a metabox
+	 *
+	 * @access private
+	 * @param array $args an array of args that have been set for this metabox by the child class
+	 */
+	private function _add_metabox( $args ) {
+		$current_screen = get_current_screen();
+		
+		//set defaults
+		$defaults = array(
+			'func' => 'some_breaking_link',
+			'id' => $this->_current_route . '_' . $this->caller . '_metabox',
+			'priority' => 'default',
+			'label' => $this->caller,
+			'context' => 'advanced',
+			'callback_args' => array()
+			);
+
+		$args = wp_parse_args( $args, $defaults );
+		extract($args);
+
+		//make sure method exists
+		if ( !method_exists($this, $func) ) {
+			$msg[] = __('There is no corresponding method to display the metabox content', 'event_espresso') . '<br />';
+			$msg[] = sprintf( __('The method name given in the array is %s, check the spelling and make sure it exists in the %s class', 'event_espresso' ), $func, $this->caller );
+			throw new EE_Error( implode('||', $msg ) );
 		}
 
+		//everything checks out so lets add the metabox
+		add_meta_box( $id, $label, array( $this, $func), $current_screen->id, $context, $priority, $callback_args);
 	}
 }
