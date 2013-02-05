@@ -224,7 +224,7 @@ class EE_Message_Template {
 
 	public function set_message_type( $message_type = FALSE ) {
 		if ( !$message_type ) {
-			new WP_Error(__('missing_parameter_value', 'event_espresso'), __('Missing required value for the message_type parameter', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+			throw new EE_Error( __('Missing required value for the message_type parameter', 'event_espresso') );
 		}
 
 		$this->_MTP_message_type = wp_strip_all_tags( strtolower($message_type) );
@@ -233,7 +233,7 @@ class EE_Message_Template {
 
 	public function set_messenger ( $messenger = FALSE ) {
 		if ( !$messenger ) {
-			new WP_Error(__('missing_parameter_value', 'event_espresso'), __('Missing required value for the messenger parameter') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+			throw new EE_Error(  __('Missing required value for the messenger parameter', 'event_espresso') );
 		}
 
 		$this->_MTP_messenger = wp_strip_all_tags( str_to_lower($messenger) );
@@ -242,7 +242,7 @@ class EE_Message_Template {
 
 	public function set_group_template_id ( $GRP_ID = FALSE ) {
 		if ( !$GRP_ID ) {
-			new WP_Error(__('missing_parameter_value', 'event_espresso'), __('Missing required value for the message template group id') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+			throw new EE_Error( __('Missing required value for the message template group id', 'event_espresso') );
 		}
 
 		$this->_GRP_ID = absint($GRP_ID);
@@ -255,7 +255,7 @@ class EE_Message_Template {
 	 */
 	public function set_context ( $context = array() ) {
 		if ( empty($context) ) {
-			new WP_Error(__('missing_parameter_value', 'event_espresso'), __('Missing required values for the message template context') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+			throw new EE_Error( __('Missing required values for the message template context', 'event_espresso') );
 		}
 
 		//make sure given $context is in an array (even if there is only one context sent along).

@@ -910,8 +910,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			
 			//run update for each template field in displayed context
 			if ( !isset($this->_req_data['MTP_template_fields']) && empty($this->_req_data['MTP_template_fields'] ) ) {
-				$error =  new WP_Error( __('problem_saving_template_fields', 'event_espresso'), __('There was a problem saving the template fields from the form becuase I didn\'t receive any actual template field data.', 'even_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
-				$this->_handle_errors($error);
+				EE_Error::add_error( __('There was a problem saving the template fields from the form becuase I didn\'t receive any actual template field data.', 'even_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 				$success = 0;
 				$action_desc = '';
 				$query_args = array(
@@ -964,9 +963,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$templates = array();
 
 		if ( empty($messenger) ) {
-			$error = new WP_Error('empty_variable', __('We need a messenger to generate templates!', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
-			$this->_handle_errors($error);
-			return $error;
+			throw new EE_Error( __('We need a messenger to generate templates!', 'event_espresso') );
 		}
 
 		//if we STILL have empty $message_types then we need to generate an error message b/c we NEED message types to do the template files.
@@ -1461,8 +1458,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'action' => 'activate',
 				'activate_view' => 'message_types'
 				);
-			$error = new WP_Error('missing_required_message_types', sprintf( __('Before any messengers can be activated there needs to be at least one <a href="%s" title="Click to switch to message types">Message Type</a> active', 'event_espresso'), add_query_arg($switch_view_query_arg, $this->_admin_base_url) ) . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__ ) );
-			$this->_handle_errors($error);
+			EE_Error::add_error( sprintf( __('Before any messengers can be activated there needs to be at least one <a href="%s" title="Click to switch to message types">Message Type</a> active', 'event_espresso'), add_query_arg($switch_view_query_arg, $this->_admin_base_url) ), __FILE__, __FUNCTION__, __LINE__ );
 			$this->_activate_state = 'inactive';
 			$this->_box_content_inactive();
 			return;
