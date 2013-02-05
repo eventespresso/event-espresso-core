@@ -118,7 +118,7 @@ function espresso_classes_autoload($className) {
 
 function espresso_classes_core_autoload($className) {
 	//let's setup an array of paths to check (for each subsystem)
-	$root = dirname(espresso_main_file()) . '/includes/core/';
+	$root = EE_CORE;
 	
 	//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
 	$dir_ref = array(
@@ -148,7 +148,7 @@ function espresso_classes_core_autoload($className) {
 
 function espresso_core_admin_autoload($className) {
 	//let's setup an array of paths to check (for each subsystem)
-	$root = dirname(espresso_main_file()) . '/includes/core/admin/';
+	$root = EE_CORE . 'admin/';
 	
 	//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
 	$dir_ref = array(
