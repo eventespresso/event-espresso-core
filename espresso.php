@@ -67,12 +67,9 @@ require_once(dirname(__FILE__) . '/includes/functions/init.php');
 require_once(dirname(__FILE__) . '/includes/functions/wp_hooks.php');
 
 
-//autoloaders should run really early
-espresso_autoload();
-
 
 add_action('plugins_loaded', 'espresso_define_tables_and_paths', 1);
-//add_action('plugins_loaded', 'espresso_autoload', 2);
+add_action('plugins_loaded', 'espresso_autoload', 2);
 add_action('plugins_loaded', 'espresso_get_user_id', 3);
 add_action('plugins_loaded', 'espresso_load_org_options', 4);
 add_action('plugins_loaded', 'espresso_EE_Session', 5);
