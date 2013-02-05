@@ -134,10 +134,12 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		$this->_set_defaults();
 		$this->_set_hooks_properties();
 		$this->_set_page_object();
-		$this->_ajax_hooks();
 		$this->_init_hooks();
 
+		$this->_ajax_hooks();
+
 		add_action( 'admin_enqueue_scripts', array($this, 'enqueue_scripts_styles' ) );
+
 		add_action( 'admin_head', array($this, 'add_metaboxes') );
 	}
 
@@ -242,7 +244,8 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * @return void
 	 */
 	private function _ajax_hooks() {
-		if ( empty( $_ajax_func) )
+
+		if ( empty( $this->_ajax_func) )
 			return; //get out there's nothing to take care of.
 
 		foreach ( $this->_ajax_func as $action => $method ) {
@@ -281,6 +284,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 			if ( $route == $this->_current_route )
 				add_action('admin_init', array( $this, $method ) );
 		}
+
 	}
 
 

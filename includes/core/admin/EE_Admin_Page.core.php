@@ -363,6 +363,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//set early because incoming requests could be ajax related and we need to register those hooks.
 		$this->_ajax_hooks();
 
+
 		//other_page_hooks have to be early too.
 		$this->_do_other_page_hooks();
 
@@ -370,6 +371,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
 
 		if ( !$this->_current_page && !defined( 'DOING_AJAX') ) return FALSE;
+
 
 		//next let's just check user_access and kill if no access
 		$this->_check_user_access();
@@ -391,8 +393,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_set_page_routes();
 		$this->_set_page_config();
 
+
 		//next verify routes and route only if routing enabled
-		if ( $this->_routing ) {
+		if ( $this->_routing && !defined('DOING_AJAX') ) {
 			$this->_verify_routes();
 
 

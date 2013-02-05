@@ -67,10 +67,12 @@ require_once(dirname(__FILE__) . '/includes/functions/init.php');
 require_once(dirname(__FILE__) . '/includes/functions/wp_hooks.php');
 
 
+//autoloaders should run really early
+espresso_autoload();
 
 
 add_action('plugins_loaded', 'espresso_define_tables_and_paths', 1);
-add_action('plugins_loaded', 'espresso_autoload', 2);
+//add_action('plugins_loaded', 'espresso_autoload', 2);
 add_action('plugins_loaded', 'espresso_get_user_id', 3);
 add_action('plugins_loaded', 'espresso_load_org_options', 4);
 add_action('plugins_loaded', 'espresso_EE_Session', 5);
@@ -84,7 +86,7 @@ if ( is_admin() ) {
 	register_activation_hook(__FILE__, 'espresso_plugin_activation');
 	add_action('plugins_loaded', 'espresso_check_for_export');
 	add_action('plugins_loaded', 'espresso_check_for_import');
-	add_action('init', 'espresso_init_admin_pages', 100);
+	add_action('plugins_loaded', 'espresso_init_admin_pages', 100);
 	add_action('admin_bar_menu', 'espresso_toolbar_items', 100);
 	//add_action('init', 'espresso_admin_init', 25);
 	//add_action('init', 'espresso_load_admin_ajax_callbacks', 25);
