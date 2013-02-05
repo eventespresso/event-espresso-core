@@ -6,7 +6,7 @@
   Version: 2.0.4
   Author: Event Espresso
   Author URI: http://www.eventespresso.com
-  Copyright 2012 Seth Shoultes(email : seth@eventespresso.com)
+  Copyright 2012 Event Espresso (email : support@eventespresso.com)
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License, version 2, as
@@ -341,6 +341,18 @@ function espresso_calendar_do_stuff($show_expired) {
 
 		//Id of the event
 		$eventArray['id'] = $event->id;
+		$show_attendee_limit = TRUE;
+		if ($show_attendee_limit == TRUE){
+			$orig_attendee_limit = get_number_of_attendees_reg_limit($event->id, $type = 'num_attendees_slash_reg_limit');
+			$parse_limits = explode( '/', $orig_attendee_limit, 2 );
+			$num_completed = $parse_limits[0];
+			$reg_limit = $parse_limits[1];
+			if ($reg_limit >= 999999){
+				$eventArray['attendee_limit'] = __('Unlimited', 'event_espresso');
+			}else{
+				$eventArray['attendee_limit'] = $num_completed.'/'.$reg_limit;
+			}
+		}
 
 		//Get the title of the event
 		$ee_event_title = htmlspecialchars_decode(stripslashes_deep($event->event_name . $status), ENT_QUOTES);
@@ -609,27 +621,33 @@ if (!function_exists('espresso_calendar')) {
 			?>
 										element.qtip({
 											content: {
-												text: event.description,
+												text: event.description + '<div class="qtip_info">' + '<a class="reg_now" href="' + event.url + '">Register Now</a>' + '<span class="attendee_limit">' + event.attendee_limit + '</span>' + '<span class="time_cal_qtip">' + event.startTime + ' - ' + event.endTime + '</span>' + '</div>',
 												title: {
 													text: '<?php _e('Description', 'event_espresso'); ?>',
+													button: true,
 												}
 
 											},
 											position: {
-												at: 'top right',
+												/*at: 'top right',
 												adjust: {
-													x: 0, y: 30
-												},
+													x: 0, y: 30*/
+												my: 'bottom center',  // Position my top left...
+												at: 'top center', // at the bottom right of...
 											},
-
+											show: {
+												event: 'click mouseenter',
+												solo: true
+											},
+											hide: "unfocus",
 											style: {//Additional informatio: http://craigsworks.com/projects/qtip2/docs/style/
 												tip: {
-													corner: 'left top'
+													corner: 'bottom center'
 												},
 									<?php
 										if ( function_exists('espresso_version') ) {
 											if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || (espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) { ?>
-												classes: 'ui-tooltip-rounded ui-tooltip-shadow', //Themeroller styles
+												classes: 'ui-tooltip-rounded ui-tooltip-light ui-tooltip-shadow', //Themeroller styles
 									<?php 	} else { ?>
 												classes: 'ui-tooltip-rounded ui-tooltip-ee ui-tooltip-shadow', //Themeroller styles
 									<?php 	}
