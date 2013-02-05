@@ -37,6 +37,37 @@ abstract class EEM_TempBase extends EEM_Base{
 		$this->_related_models=apply_filters("filter_hook_espresso__{$className}__related_models",$this->_related_models);
 	}
 	/**
+	 * 
+	 * @param mixed $cols_n_values either an array of where each key is the name of a field, and the value is its value
+	 * or an stdClass where each property is the name of a column,
+	 * @return EE_Base_Class
+	 */
+	public function instantiate_class_from_array_or_object($cols_n_values){
+		if(!is_array($cols_n_values)){
+			$cols_n_values=get_object_vars($cols_n_values);
+		}
+		//make sure the array only has keys that are fields/columns on this model
+		$cols_n_values=array_intersect_key($cols_n_values,$this->fields_settings());
+		
+		//get the ID of the object, and remove it from cols_n_values for now
+		$pkName=$this->primary_key_name();
+		$pkValue=$cols_n_values[$pkName];
+		unset($cols_n_values[$pkName]);
+		
+		//get the required info to instantiate the class whcih relates to this model.
+		$className=$this->_getClassName();
+		$class=new ReflectionClass($className);
+		//call the constructor of the EE_Base_Class, passing it an array of all the fields, except
+		//the ID, because we set that later
+		$classInstance=$class->newInstanceArgs($cols_n_values);
+		
+		/* @var $classInstance EE_Base_Class */
+		//now set the ID on this new EE_Base_Class instance, so we realize it's 
+		//already in teh DB
+		$classInstance->set($pkName,$pkValue);
+		return $classInstance;
+	}
+	/**
 	 * Returns the item's name. If there are many of these items, returns a plural version fo the name
 	 * @param int $count
 	 * @return string the item's name pluralized. Eg, for the model 'EEM_Question_Group' the singular name would be 
@@ -181,6 +212,15 @@ abstract class EEM_TempBase extends EEM_Base{
 		throw new EE_Error(sprintf(__("Class %s has no field of type %s set in its fieldsSettings",'event_espresso'),get_class($this),implode(",",$types)));
 
 	}
+	/**
+	 * takes care of including the PHP file with the corresponding .class file to this model.
+	 */
+	private function _include_php_class(){
+		$className=$this->_getClassName();
+		if(!class_exists($className)){
+			require_once($className.".class.php");
+		}
+	}
 	
 	/**
 	*		cycle though array of attendees and create objects out of each item
@@ -190,12 +230,13 @@ abstract class EEM_TempBase extends EEM_Base{
 	*		@return 	EE_TempBase[]		array on success, FALSE on fail
 	*/	
 	protected function _create_objects( $rows = FALSE ) {	
+		$this->_include_php_class();
 		$array_of_objects=array();
 		foreach ( $rows as $row ) {
 			if(empty($row)){//wp did its weird thing where it returns an array like array(0=>null), which is totally not helpful...
 				return FALSE;
 			}
-				$fields=$this->fields_settings();//get_object_vars($row);
+				/*$fields=$this->fields_settings();//get_object_vars($row);
 				//remove the primary key, because it's not part of the constructors. we'll just add it after the fact
 				$pkName=$this->primary_key_name();
 				unset($fields[$pkName]);
@@ -203,17 +244,9 @@ abstract class EEM_TempBase extends EEM_Base{
 				$args=array();
 				foreach($argNames as $argName){
 					$args[]=$row->$argName;
-				}
-				$className=$this->_getClassName();
-				if(!class_exists($className)){
-					require_once($className.".class.php");
-				}
-				$class=new ReflectionClass($className);
-				
-				$classInstance=$class->newInstanceArgs($args);
-				/* @var $classInstance EE_TempBase */
-				$classInstance->set($pkName,$row->$pkName);
-				$array_of_objects[$classInstance->get_primary_key()]=$classInstance;
+				}*/
+				$classInstance=$this->instantiate_class_from_array_or_object($row);
+				$array_of_objects[$classInstance->ID()]=$classInstance;
 		}	
 		return $array_of_objects;	
 	}
