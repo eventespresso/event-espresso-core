@@ -912,7 +912,7 @@ abstract class EE_messenger {
 
 	protected function _get_admin_content_events_edit( $message_types, $extra ) {
 		//we don't need message types here so we're just going to ignore. we do, however, expect the event id here. The event id is needed to provide a link to setup a custom template for this event.
-		$event_id = isset($extra['event']) ? $extra['event']->id : null;
+		$event_id = isset($extra['event']) ? $extra['event'] : null;
 		$event_template_set = array();
 		$event_template_trashed = array();
 		$event_group_id = array();

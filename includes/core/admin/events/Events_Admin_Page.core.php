@@ -637,8 +637,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		add_meta_box('espresso_event_editor_venue', __('Venue Details', 'event_espresso'), array( $this, 'venue_metabox' ), $this->_current_screen->id, 'normal', 'core');
 
-		add_meta_box('espresso_event_editor_email', __('Email Confirmation:', 'event_espresso'), array( $this, 'email_metabox' ), $this->_current_screen->id, 'advanced', 'core');
-
+		
 		add_meta_box('espresso_event_editor_primary_questions', __('Questions for Primary Attendee', 'event_espresso'), array( $this, 'primary_questions_group_meta_box' ), $this->_current_screen->id, 'side', 'core');
 
 		add_meta_box('espresso_event_editor_categories', __('Event Category', 'event_espresso'), array( $this, 'categories_meta_box' ), $this->_current_screen->id, 'side', 'default');
@@ -2095,48 +2094,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 	</div>
 		<?php
 	}
-
-
-
-
-
-	public function email_metabox() {
-
-		//let's get the active messengers (b/c messenger objects have the active message templates)
-		$EEM_controller = new EE_Messages;
-		$active_messengers = $EEM_controller->get_active_messengers();
-		$tabs = array();
-
-		//empty messengers?
-		//Note message types will always have at least one available because every messenger has a default message type associated with it (payment) if no other message types are selected.
-		if ( empty( $active_messengers ) ) {
-			$msg_activate_url = wp_nonce_url( add_query_arg( array('action' => 'activate', 'activate_view' => 'messengers'), 
-				EE_MSG_ADMIN_URL ), 'activate_nonce' );
-			$error_msg = sprintf( __('There are no active messengers. So no notifications will NOT go out for <strong>any</strong> events.  You will want to %sActivate a Messenger%s.', 'event_espresso'), '<a href="' . $msg_activate_url . '">', '</a>');
-			$error_content = '<div class="error"><p>' . $error_msg . '</p></div>';
-			$internal_content = '<div id="messages-error"><p>' . $error_msg . '</p></div>'; 
-			echo $error_content;
-			echo $internal_content;
-			return;
-		}
-		
-
-		//get content for active messengers
-		foreach ( $active_messengers as $name => $messenger ) {
-			$tabs[$name] = $messenger->get_messenger_admin_page_content('events', 'edit', array('event' => $this->_event) );
-		}
-
-
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Tabbed_Content.helper.php';
-		//we want this to be tabbed content so let's use the EE_Tabbed_Content::display helper.
-		$tabbed_content = EE_Tabbed_Content::display($tabs);
-		if ( is_wp_error($tabbed_content) ) {
-			$tabbed_content = $tabbed_content->get_error_message();
-		}
-		
-		echo $tabbed_content;
-	}
-
 
 
 
