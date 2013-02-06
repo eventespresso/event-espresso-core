@@ -105,7 +105,6 @@ function espresso_autoload() {
 
 function espresso_models_autoload($className) {
 	$filename = dirname(espresso_main_file()) . '/includes/models/' . $className . '.model.php';
-	clearstatcache();
 	if ( is_readable($filename) ) {
 		require_once( $filename );
 	}
@@ -113,7 +112,6 @@ function espresso_models_autoload($className) {
 
 function espresso_classes_autoload($className) {
 	$filename = dirname(espresso_main_file()) . '/includes/classes/' . $className . '.class.php';
-	clearstatcache();
 	if ( is_readable($filename) ) {
 		require_once( $filename );
 	}
@@ -144,7 +142,6 @@ function espresso_classes_core_autoload($className) {
 
 	//now loop through assembled filenames and require as available
 	foreach ( $filenames as $filename ) {
-		clearstatcache();
 		if ( is_readable($filename) )
 			require_once( $filename );
 	}
@@ -184,7 +181,6 @@ function espresso_core_admin_autoload($className) {
 
 	//now loop through assembled filenames and require as available
 	foreach ( $filenames as $filename ) {
-		clearstatcache();
 		if ( is_readable($filename) )
 			require_once( $filename );
 	}

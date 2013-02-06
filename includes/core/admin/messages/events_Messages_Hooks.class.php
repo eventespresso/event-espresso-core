@@ -62,7 +62,7 @@ class events_Messages_Hooks extends EE_Admin_Hooks {
 	public function messages_metabox($event, $callback_args) {
 
 		//let's get the active messengers (b/c messenger objects have the active message templates)
-		$EEM_controller = new EE_Messages;
+		$EEM_controller = new EE_messages;
 		$active_messengers = $EEM_controller->get_active_messengers();
 		$tabs = array();
 
