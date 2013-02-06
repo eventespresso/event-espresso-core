@@ -199,7 +199,7 @@ function event_list_attendees() {
 						$amount_pd = $attendee->REG_price_paid;
 						$payment_status = $attendee->txn_status;
 						$payment_date = $attendee->TXN_timestamp;
-						$date = date_i18n( get_option('date_format') . ' g:i a', $attendee->REG_date );
+						$date = event_date_display( $attendee->REG_date, get_option('date_format') . ' g:i a' );
 						$event_id = $attendee->EVT_ID;
 						$txn_id = $attendee->TXN_ID;
 						$price_option = $attendee->REG_price_paid;

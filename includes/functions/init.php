@@ -280,12 +280,9 @@ function espresso_verify_default_pages_exist() {
 function espresso_frontend_init() {
 
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-	global $espresso_reg_page;
 	
-	$espresso_reg_page = espresso_test_for_reg_page();
-	//echo '<h4>$espresso_reg_page : ' . $espresso_reg_page . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-
-	if ($espresso_reg_page) {
+	global $espresso_reg_page;
+	if ( $espresso_reg_page = espresso_test_for_reg_page() ) {
 		do_action('action_hook_espresso_load_reg_page_files');
 	}
 
@@ -294,7 +291,7 @@ function espresso_frontend_init() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/affiliate-handling.php');
 
 	//Registration forms
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/form_build.php');
+	//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/form_build.php');
 
 	//Custom post type integration
 	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/custom_post_type.php') && !empty($org_options['template_settings']['use_custom_post_types'])) {
@@ -603,36 +600,3 @@ function espresso_dashboard_init() {
 	}
 }
 
-
-
-
-
-function ee_update_questions_sequence() {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	global $wpdb;
-	//Update the questions when re-ordering
-	if (!empty($_POST['update_sequence'])) {
-		$rows = explode(",", $_POST['row_ids']);
-		for ($i = 0; $i < count($rows); $i++) {
-			$wpdb->query("UPDATE " . EVENTS_QUESTION_TABLE . " SET sequence=" . $i . " WHERE id='" . $rows[$i] . "'");
-		}
-		exit();
-	}
-}
-
-
-
-
-
-function ee_update_question_groups_sequence() {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	global $wpdb;
-	//Update the questions when re-ordering
-	if (!empty($_POST['update_sequence'])) {
-		$rows = explode(",", $_POST['row_ids']);
-		for ($i = 0; $i < count($rows); $i++) {
-			$wpdb->query("UPDATE " . EVENTS_QST_GROUP_TABLE . " SET group_order=" . $i . " WHERE id='" . $rows[$i] . "'");
-		}
-		exit();
-	}
-}

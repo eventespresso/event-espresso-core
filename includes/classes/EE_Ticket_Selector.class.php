@@ -18,7 +18,6 @@
  * @package		Event Espresso
  * @subpackage	includes/classes/EE_Ticket_Selector.class.php
  * @author			Brent Christensen
- * @author			Sidney Harell
  *
  * ------------------------------------------------------------------------
  */

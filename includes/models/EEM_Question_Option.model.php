@@ -17,7 +17,7 @@
  *
  * @package			Event Espresso
  * @subpackage		includes/models/
- * @author				Brent Christensen 
+ * @author				Michael Nelson
  *
  * ------------------------------------------------------------------------
  */
@@ -47,18 +47,18 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base {
 
 	protected function __construct(){
 		$this->_fields_settings=array(
-					'QSO_ID'=>new EE_Model_Field('Question Option ID', 'primary_key', false, null, null, null),
-					'QSO_name'=>new EE_Model_Field('Question option Display Name', 'simplehtml', false, '', null, null),
-					'QSO_value'=>new EE_Model_Field('QUestion Option Value', 'plaintext', false, '', null, null),
-					'QST_ID'=>new EE_Model_Field('Related Question ID', 'foreign_key', false, null, null, 'Question'),
-					'QSO_deleted'=>new EE_Model_Field('Whether the option has been deleted', 'deleted_flag', false, false, null, null)
-								);
+				'QSO_ID'=>new EE_Model_Field('Question Option ID', 'primary_key', false, null, null, null),
+				'QSO_name'=>new EE_Model_Field('Question option Display Name', 'simplehtml', false, '', null, null),
+				'QSO_value'=>new EE_Model_Field('QUestion Option Value', 'plaintext', false, '', null, null),
+				'QST_ID'=>new EE_Model_Field('Related Question ID', 'foreign_key', false, null, null, 'Question'),
+				'QSO_deleted'=>new EE_Model_Field('Whether the option has been deleted', 'deleted_flag', false, false, null, null)
+			);
 		$this->_related_models=array(
-								'Question'=>new EE_Model_Relation('belongsTo', 'Question', 'QST_ID')
-						);
+				'Question'=>new EE_Model_Relation('belongsTo', 'Question', 'QST_ID')
+			);
 		
 		parent::__construct();
 	}
 }
 // End of file EEM_Question_Option.model.php
-// Location: /ee-mvc/models/EEM_Question_Option.model.php
+// Location: /includes/models/EEM_Question_Option.model.php

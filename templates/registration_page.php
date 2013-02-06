@@ -298,8 +298,8 @@ if (!function_exists('event_registration')) {
 					$event->registration_endT,
 					$event->registration_end,
 					empty($event->event_address) ? '' : $event->event_address,
-					'<span class="section-title">' . event_espresso_no_format_date($start_date, get_option('date_format')) . '</span>',
-					'<span class="section-title">' . event_date_display($end_date, get_option('date_format')) . '</span>',
+					'<span class="section-title">' . event_date_display( $start_date ) . '</span>',
+					'<span class="section-title">' . event_date_display( $end_date ) . '</span>',
 					$google_map_link
 					);
 			foreach ($event_meta as $key => $value) {

@@ -425,8 +425,8 @@ function event_espresso_get_event_details($attributes) {
 				$event->registration_end,
 				empty($event->is_active) ? '' : $event->is_active,
 				$event->country,
-				event_date_display($event->start_date, get_option('date_format')),
-				event_date_display($event->end_date, get_option('date_format')),
+				event_date_display( $event->start_date ),
+				event_date_display( $event->end_date ),
 				empty($event->start_time) ? '' : $event->start_time, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 				htmlentities($google_map_link),
 				empty($event->event_cost) ? '' : $event->event_cost,
