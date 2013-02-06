@@ -299,7 +299,8 @@ class EE_Form_Fields {
 	 * @access public
 	 * @param  string  $name       field name
 	 * @param  array  $values     option values, numbered array starting at 0, where each value is an array with a key 'text' (meaning text to display' and 'id' (meaning the internal value)
-	 * eg: array(1=>array('text'=>'Monday','id'=>1),2=>array('text'=>'Tuesday','id'=>2)...)
+	 * eg: array(1=>array('text'=>'Monday','id'=>1),2=>array('text'=>'Tuesday','id'=>2)...). or as an array of key-value pairs, where the key is to be used for the 
+	 * select input's name, and the value will be the text shown to the user
 	 * @param  string  $default    default value
 	 * @param  string  $parameters extra paramaters
 	 * @param  string  $class      css class
@@ -307,7 +308,14 @@ class EE_Form_Fields {
 	 * @return string              html string for the select input
 	 */
 	static public function select_input($name, $values, $default = '', $parameters = '', $class = '', $autosize = true) {
-
+		//if $values was submitted in the wrong format, convert it over
+		if(!empty($values) && (!array_key_exists(0,$values) || !is_array($values[0]))){
+			$converted_values=array();
+			foreach($values as $id=>$text){
+				$converted_values[]=array('id'=>$id,'text'=>$text);
+			}
+			$values=$converted_values;
+		}
 		//load formatter helper
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
 

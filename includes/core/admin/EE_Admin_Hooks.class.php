@@ -121,7 +121,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 	/**
 	 * This just holds an instance of the page object for this hook
-	 * @var object
+	 * @var EE_Admin_Page
 	 */
 	protected $_page_object;
 

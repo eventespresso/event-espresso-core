@@ -592,6 +592,49 @@ function event_espresso_run_install($table_name, $table_version, $sql, $engine =
 	}
 }
 
+/**
+ * Checks if this column already exists on 
+ * @param string $table_name (wihtout "wp_", eg "esp_attendee"
+ * @param string $column_name
+ * @param string $column_info if your SQL were 'ALTER TABLE table_name ADD price VARCHAR(10)', this would be 'VARCHAR(10)'
+ */
+function espresso_add_column_if_it_doesnt_exist($table_name,$column_name,$column_info='INT UNSIGNED NOT NULL'){
+	global $wpdb;
+	$full_table_name=$wpdb->prefix.$table_name;
+	$fields = espresso_get_fields_on_table($table_name);
+	if (!in_array($column_name, $fields)){
+		$alter_query="ALTER TABLE $full_table_name ADD $column_name $column_info";
+		echo "alter query:$alter_query";
+		return mysql_query($alter_query);
+	}
+	return true;
+}
+
+/**
+ * Gets all the fields on teh database table. 
+ * @param string $table_name, wihtout prefixed $wpdb->prefix
+ * @return array of database column names
+ */
+function espresso_get_fields_on_table($table_name = null) {	
+		global $wpdb;
+		$table_name=$wpdb->prefix.$table_name;
+
+		if (!empty($table_name)) {
+			$fullname = $table_name;
+			if (($tablefields = mysql_list_fields(DB_NAME, $fullname, $wpdb -> dbh)) !== false) { 
+				$columns = mysql_num_fields($tablefields);
+				$field_array = array();
+				for ($i = 0; $i < $columns; $i++) {
+					$fieldname = mysql_field_name($tablefields, $i);
+					$field_array[] = $fieldname;
+				}
+				return $field_array;
+			}
+		}
+		return false;
+
+	}
+
 
 /**
  * 		loads and instantiates files and objects for EE admin pages
