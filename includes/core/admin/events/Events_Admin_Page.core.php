@@ -596,7 +596,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$this->_event->state = stripslashes_deep($this->_event->state);
 		$this->_event->zip = stripslashes_deep($this->_event->zip);
 		$this->_event->country = stripslashes_deep($this->_event->country);
-		$this->_event->submitted = $this->_event->submitted != '0000-00-00 00:00:00' ? (empty($this->_event->submitted) ? '' : event_date_display($this->_event->submitted, get_option('date_format')) ) : 'N/A';
+		$this->_event->submitted = $this->_event->submitted != '0000-00-00 00:00:00' ? ( empty( $this->_event->submitted ) ? '' : event_date_display( $this->_event->submitted ) ) : 'N/A';
 		$this->_event->google_map_link = espresso_google_map_link(array('address' => $this->_event->address, 'city' => $this->_event->city, 'state' => $this->_event->state, 'zip' => $this->_event->zip, 'country' => $this->_event->country));
 		$this->_event->question_groups = unserialize($this->_event->question_groups);
 		$this->_event->event_meta = unserialize($this->_event->event_meta);
@@ -3281,7 +3281,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$event_meta['display_thumb_in_calendar'] = !empty($this->_req_data['show_on_calendar']) ? $this->_req_data['show_on_calendar'] : '';
 
 		if (!empty($this->_req_data['venue_id'][0]) || !empty($this->_req_data['zip']) || !empty($this->_req_data['city']) || !empty($this->_req_data['state'])) {
-			$event_meta['enable_for_gmap'] = $this->_req_data['enable_for_gmap'];
+			$event_meta['enable_for_gmap'] = isset( $this->_req_data['enable_for_gmap'] )  ? $this->_req_data['enable_for_gmap'] : FALSE;
 		} else {
 			$event_meta['enable_for_gmap'] = false;
 		}
