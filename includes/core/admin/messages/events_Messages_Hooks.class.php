@@ -49,12 +49,19 @@ class events_Messages_Hooks extends EE_Admin_Hooks {
 				'priority' => 'core'
 				)
 			);
-		$this->_scripts = array(
-			'edit_event' => 'events_msgs_admin'
+		
+		//see explanation for layout in EE_Admin_Hooks
+		$this->_scripts_styles = array(
+			'registers' => array(
+				'events_msg_admin' => array(
+					'url' => EE_MSG_ASSETS_URL . 'events_messages_admin.js',
+					'depends' => array('jquery')
+					)
+				),
+			'enqueues' => array(
+				'events_msg_admin' => array('edit_event')
+				)
 			);
-
-		//register scripts
-		wp_register_script('events_msgs_admin', EE_MSG_ASSETS_URL . 'events_messages_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
 	}
 
 
@@ -62,7 +69,7 @@ class events_Messages_Hooks extends EE_Admin_Hooks {
 	public function messages_metabox($event, $callback_args) {
 
 		//let's get the active messengers (b/c messenger objects have the active message templates)
-		$EEM_controller = new EE_Messages;
+		$EEM_controller = new EE_messages;
 		$active_messengers = $EEM_controller->get_active_messengers();
 		$tabs = array();
 

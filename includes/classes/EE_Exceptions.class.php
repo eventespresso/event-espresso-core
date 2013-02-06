@@ -278,6 +278,11 @@ class EE_Error extends Exception {
 		$ouput .= '
 </div>';
 
+		if ( defined('DOING_AJAX') ) {
+			echo json_encode( array('error' => $ouput) );
+			exit();
+		}
+
 		echo $ouput;
 
 //		$template = 'error_msg.php';
