@@ -95,7 +95,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * 		'script_ref' => array( // if more than one script is to be loaded its best to use the 'dependency' argument to link scripts together.
 	 * 			'type' => 'js' // 'js' or 'css' (defaults to js).  This tells us what type of wp_function to use
 	 * 			'url' => 'http://urltoscript.css.js',
-	 * 		 	'depends' => array('jquery'), //an array of dependencies for the scripts
+	 * 		 	'depends' => array('jquery'), //an array of dependencies for the scripts. REMEMBER, if a script has already been registered elsewhere in the system.  You can just use the depends array to make sure it gets loaded before the one you are setting here.
 	 * 		 	'footer' => TRUE //defaults to true (styles don't use this parameter)
 	 * 	 	),
 	 * 	'enqueues' => array( //this time each key corresponds to the script ref followed by an array of page routes the script gets enqueued on.
