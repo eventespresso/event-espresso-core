@@ -89,14 +89,22 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 
 	/**
-	 * This parent class takes care of loading the scripts and styles if the child class has set the properties for them in the following format.  It's important that the child classes have already registered the scripts using the "wp_register_[style|script]" wp function:
+	 * This parent class takes care of loading the scripts and styles if the child class has set the properties for them in the following format.  It's important that the child classes have already registered the scripts using the "wp_register_[style|script]" wp function.  Note, the first array index ('register') is for defining all the registers.  The second array index is for indicating what routes each script/style loads on.
 	 * array(
-	 * 'page_route' => 'script_ref' // if more than one script is to be loaded its best to use the 'dependency' argument when registering the scripts/styles to make sure more all that are needed are loaded.
+	 * 'registers' => array(
+	 * 		'script_ref' => array( // if more than one script is to be loaded its best to use the 'dependency' argument to link scripts together.
+	 * 			'type' => 'js' // 'js' or 'css' (defaults to js).  This tells us what type of wp_function to use
+	 * 			'url' => 'http://urltoscript.css.js',
+	 * 		 	'depends' => array('jquery'), //an array of dependencies for the scripts
+	 * 		 	'footer' => TRUE //defaults to true (styles don't use this parameter)
+	 * 	 	),
+	 * 	'enqueues' => array( //this time each key corresponds to the script ref followed by an array of page routes the script gets enqueued on.
+	 * 		'script_ref' => array('route_one', 'route_two');
+	 * 	)
 	 * )
 	 * @var array
 	 */
-	protected $_scripts;
-	protected $_styles;
+	protected $_scripts_styles;
 
 
 	/**
@@ -173,21 +181,49 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * @return void 
 	 */
 	public function enqueue_scripts_styles() {
-		//scripts first
-		if ( !empty( $this->_scripts ) ) {
-			foreach ( $this->_scripts as $route => $ref ) {
-				if ( $this->_current_route != $route )
-					continue;
-				wp_enqueue_script($ref);
-			}
-		}
 
-		//styles
-		if ( !empty( $this->_styles ) ) {
-			foreach ( $this->_styles as $route => $ref ) {
-				if ( $this->_current_route != $route ) 
-					continue;
-				wp_enqueue_style($ref);
+		if ( !empty( $this->_scripts_styles ) ) {
+			//first let's do all the registrations
+			if ( !isset($this->_scripts_styles['registers'] ) ) {
+				$msg[] = __('There is no "registers" index in the <code>$this->_scripts_styles</code> property.', 'event_espresso');
+				$msg[] = sprintf ( __('Make sure you read the phpdoc comments above the definition of the $_scripts_styles property in the <code>EE_Admin_Hooks</code> class and modify according in the %s child', 'event_espresso'), '<strong>' . $this->_caller . '</strong>' );
+				throw new EE_Error( implode( '||', $msg ) );
+			}
+
+			foreach( $this->_scripts_styles['registers'] as $ref => $details ) {
+				$defaults = array(
+					'type' => 'js',
+					'url' => '',
+					'depends' => array(),
+					'version' => EVENT_ESPRESSO_VERSION,
+					'footer' => TRUE
+					);
+				$details = wp_parse_args($details, $defaults);
+				extract( $details );
+
+				//let's make sure that we set the 'registers' type if it's not set! We need it later to determine whhich enqueu we do
+				$this->_scripts_styles['registers'][$ref]['type'] = $type;
+
+				//let's make sure we're not missing any REQUIRED parameters
+				if ( empty($url) ) {
+					$msg[] = sprintf( __('Missing the url for the requested %s', 'event_espresso'), $type == 'js' ? 'script' : 'stylesheet' );
+					$msg[] = sprintf( __('Doublecheck your <code>$this->_scripts_styles</code> array in %s and make sure that there is a "url" set for the %s ref', 'event_espresso'), '<strong>' . $this->_caller . '</strong>', $ref );
+					throw new EE_Error( implode( '||', $msg ) );
+				}
+				//made it here so let's do the appropriate registration
+				$type == 'js' ? wp_register_script( $ref, $url, $depends, $version, $footer ) : wp_register_style( $ref, $url, $depends, $version );
+			}
+
+			//k now lets do the enqueues
+			if( !isset( $this->_scripts_styles['enqueues'] ) )
+				return;  //not sure if we should throw an error here or not.
+			foreach( $this->_scripts_styles['enqueues'] as $ref => $routes ) {
+				//make sure $routes is an array
+				$routes = (array) $routes;
+
+				if ( in_array($this->_current_route, $routes ) ) {
+					$this->_scripts_styles['registers'][$ref]['type'] == 'js' ? wp_enqueue_script($ref) : wp_enqueue_style($ref);
+				}
 			}
 		}
 	}
