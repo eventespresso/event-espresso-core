@@ -906,8 +906,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script('event_editor_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_editor.js', array('jquery-ui-slider', 'jquery-ui-timepicker-addon'), EVENT_ESPRESSO_VERSION, true);
 		wp_register_script('event-espresso-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_espresso.js', array('jquery'), EVENT_ESPRESSO_VERSION, true);
 		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('jquery'), EVENT_ESPRESSO_VERSION, true );
-		wp_register_script('jquery-validate', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.min.js"), array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
-		wp_register_script('espresso_ajax_table_sorting', (EE_CORE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js"), array('ee_admin_js', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
+		wp_register_script('jquery-validate', EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.min.js", array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
+		wp_register_script('espresso_ajax_table_sorting', EE_CORE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js", array('ee_admin_js', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
+
+		//script for parsing uri's
+		wp_register_script( 'ee-parse-uri', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/pareuri.js', array(), EVENT_ESPRESSO_VERSION, TRUE );
+
+
 //		$ajax_table_sorting_i18n = array();
 //		wp_localize_script( 'espresso_ajax_table_sorting', 'EEi18n', $ajax_table_sorting_i18n );
 
