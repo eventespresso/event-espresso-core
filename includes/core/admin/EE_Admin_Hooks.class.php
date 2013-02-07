@@ -264,10 +264,10 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	/**
 	 * this sets the _page_object property
 	 *
-	 * @access private
+	 * @access protected
 	 * @return void
 	 */
-	private function _set_page_object() {
+	protected function _set_page_object() {
 		//first make sure $this->_name is set
 		if ( empty( $this->_name ) ) {
 			$msg[] = __('We can\'t load the page object', 'event_espresso');
@@ -341,6 +341,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 			add_action('wp_ajax_' . $action, array( $this, $method ) );
 		}
+
 	}
 
 
