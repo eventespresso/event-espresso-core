@@ -95,7 +95,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * 		'script_ref' => array( // if more than one script is to be loaded its best to use the 'dependency' argument to link scripts together.
 	 * 			'type' => 'js' // 'js' or 'css' (defaults to js).  This tells us what type of wp_function to use
 	 * 			'url' => 'http://urltoscript.css.js',
-	 * 		 	'depends' => array('jquery'), //an array of dependencies for the scripts
+	 * 		 	'depends' => array('jquery'), //an array of dependencies for the scripts. REMEMBER, if a script has already been registered elsewhere in the system.  You can just use the depends array to make sure it gets loaded before the one you are setting here.
 	 * 		 	'footer' => TRUE //defaults to true (styles don't use this parameter)
 	 * 	 	),
 	 * 	'enqueues' => array( //this time each key corresponds to the script ref followed by an array of page routes the script gets enqueued on.
@@ -137,14 +137,30 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 
 
+	/**
+	 * This holds the EE_Admin_Page object from the calling admin page that this object hooks into.
+	 * @var EE_Admin_Page object
+	 */
+	protected $_adminpage_obj;
 
-	public function __construct() {
+
+
+
+
+	/**
+	 * constructor
+	 * @param EE_Admin_Page $admin_page the calling admin_page_object
+	 */
+	public function __construct( EE_Admin_Page $adminpage ) {
+		$this->_adminpage_obj = $adminpage;
+
 		$this->_set_defaults();
 		$this->_set_hooks_properties();
 		$this->_set_page_object();
 		$this->_init_hooks();
 
 		$this->_ajax_hooks();
+		$this->_load_custom_methods();
 
 		add_action( 'admin_enqueue_scripts', array($this, 'enqueue_scripts_styles' ) );
 
@@ -186,7 +202,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 			//first let's do all the registrations
 			if ( !isset($this->_scripts_styles['registers'] ) ) {
 				$msg[] = __('There is no "registers" index in the <code>$this->_scripts_styles</code> property.', 'event_espresso');
-				$msg[] = sprintf ( __('Make sure you read the phpdoc comments above the definition of the $_scripts_styles property in the <code>EE_Admin_Hooks</code> class and modify according in the %s child', 'event_espresso'), '<strong>' . $this->_caller . '</strong>' );
+				$msg[] = sprintf ( __('Make sure you read the phpdoc comments above the definition of the $_scripts_styles property in the <code>EE_Admin_Hooks</code> class and modify according in the %s child', 'event_espresso'), '<strong>' . $this->caller . '</strong>' );
 				throw new EE_Error( implode( '||', $msg ) );
 			}
 
@@ -207,7 +223,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 				//let's make sure we're not missing any REQUIRED parameters
 				if ( empty($url) ) {
 					$msg[] = sprintf( __('Missing the url for the requested %s', 'event_espresso'), $type == 'js' ? 'script' : 'stylesheet' );
-					$msg[] = sprintf( __('Doublecheck your <code>$this->_scripts_styles</code> array in %s and make sure that there is a "url" set for the %s ref', 'event_espresso'), '<strong>' . $this->_caller . '</strong>', $ref );
+					$msg[] = sprintf( __('Doublecheck your <code>$this->_scripts_styles</code> array in %s and make sure that there is a "url" set for the %s ref', 'event_espresso'), '<strong>' . $this->caller . '</strong>', $ref );
 					throw new EE_Error( implode( '||', $msg ) );
 				}
 				//made it here so let's do the appropriate registration
@@ -256,7 +272,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		if ( empty( $this->_name ) ) {
 			$msg[] = __('We can\'t load the page object', 'event_espresso');
 			$msg[] = sprintf( __("This is because the %s child class has not set the 
-				'_name' property", 'event_espresso'), $this->_caller );
+				'_name' property", 'event_espresso'), $this->caller );
 			throw new EE_Error( implode( '||', $msg ) );
 		}
 
@@ -272,6 +288,37 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 		$a = new ReflectionClass($ref);
 		$this->_page_object = $a->newInstance(FALSE);
+	}
+
+
+	/**
+	 * Child "hook" classes can declare any methods that they want executed when a specific page route is loaded.  The advantage of this is when doing things like running our own db interactions on saves etc.  Remember that $this->_req_data (all the _POST and _GET data) is available to your methods.
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _load_custom_methods() {
+		
+		//these run before the Admin_Page route executes.
+		if ( method_exists( $this, $this->_current_route ) ) {
+			call_user_func( array( $this, $this->_current_route) );
+		}
+
+
+		//these run via the _redirect_after_action method in EE_Admin_Page which usually happens after non_UI methods in EE_Admin_Page classes.
+		//first the actions
+		//note that this action hook will have the $query_args value available.
+		$admin_class_name = get_class( $this->_adminpage_obj );
+
+		if ( method_exists( $this, '_redirect_action_' . $this->_current_route ) ) {
+			add_action( 'action_hook_espresso_redirect_' . $admin_class_name . $this->_current_route, array( $this, '_redirect_action_' . $this->_current_route ), 10 );
+		}
+
+		//let's hook into the _redirect itself and allow for changing where the user goes after redirect.  This will have $query_args and $redirect_url available.
+		if ( method_exists( $this, '_redirect_filter_' . $this->_current_route ) ) {
+			add_filter( 'filter_hook_espresso_redirect_' . $admin_class_name . $this->_current_route, array( $this, '_redirect_filter_ ' . $this->_current_route ), 10, 2 );
+		}
+
 	}
 	
 
