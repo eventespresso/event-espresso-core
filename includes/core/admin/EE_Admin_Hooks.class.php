@@ -362,7 +362,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 			if ( method_exists( $this, $this->_current_route . '_' . $hook ) ) {
 				if ( isset( $this->_wp_action_filters_priority[$hook] ) )
 					$args['priority'] = $this->_wp_action_filters_priority[$hook];
-				if ( $type == 'action' )
+				if ( $args['type'] == 'action' )
 					add_action( $hook, array( $this, $this->_current_route . '_' . $hook ), $args['priority'], $args['argnum'] );
 				else
 					add_filter( $hook, array( $this, $this->_current_route . '_' . $hook ), $args['priority'], $args['argnum'] );
