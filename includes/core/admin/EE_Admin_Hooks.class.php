@@ -145,6 +145,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		$this->_init_hooks();
 
 		$this->_ajax_hooks();
+		$this->_load_custom_methods();
 
 		add_action( 'admin_enqueue_scripts', array($this, 'enqueue_scripts_styles' ) );
 
@@ -272,6 +273,13 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 		$a = new ReflectionClass($ref);
 		$this->_page_object = $a->newInstance(FALSE);
+	}
+
+
+	private function _load_custom_methods() {
+		if ( method_exists( $this, $this->_current_route ) ) {
+			call_user_func( array( $this, $this->_current_route) );
+		}
 	}
 	
 
