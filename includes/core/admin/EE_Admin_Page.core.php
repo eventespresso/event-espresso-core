@@ -1797,6 +1797,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
+
 		$redirect_url = $this->_admin_base_url;
 
 		// how many records affected ? more than one record ? or just one ?
@@ -1840,7 +1841,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$query_args['_wpnonce'] = wp_create_nonce( $query_args['action'] . '_nonce' );
 		} 
 
-		$redirect_url = add_query_arg( $query_args, $redirect_url ); 
+		//we're adding some hooks and filters in here for processing any things just before redirects (example: an admin page has done an insert or update and we want to run something after that).
+		$classname = get_class($this);
+		do_action( 'action_hook_espresso_redirect_' . $class_name . $this->_req_action, $query_args );
+
+
+		$redirect_url = apply_filters( 'filter_hook_espresso_redirect_' . $class_name . $this->_req_action, add_query_arg( $query_args, $redirect_url ), $query_args ); 
 
 		wp_safe_redirect( $redirect_url );	
 		exit();		

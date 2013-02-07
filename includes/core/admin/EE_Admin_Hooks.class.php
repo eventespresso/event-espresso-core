@@ -291,10 +291,34 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	}
 
 
+	/**
+	 * Child "hook" classes can declare any methods that they want executed when a specific page route is loaded.  The advantage of this is when doing things like running our own db interactions on saves etc.  Remember that $this->_req_data (all the _POST and _GET data) is available to your methods.
+	 *
+	 * @access private
+	 * @return void
+	 */
 	private function _load_custom_methods() {
+		
+		//these run before the Admin_Page route executes.
 		if ( method_exists( $this, $this->_current_route ) ) {
 			call_user_func( array( $this, $this->_current_route) );
 		}
+
+
+		//these run via the _redirect_after_action method in EE_Admin_Page which usually happens after non_UI methods in EE_Admin_Page classes.
+		//first the actions
+		//note that this action hook will have the $query_args value available.
+		$admin_class_name = get_class( $this->_adminpage_obj );
+
+		if ( method_exists( $this, '_redirect_action_' . $this->_current_route ) ) {
+			add_action( 'action_hook_espresso_redirect_' . $admin_class_name . $this->_current_route, array( $this, '_redirect_action_' . $this->_current_route ), 10 );
+		}
+
+		//let's hook into the _redirect itself and allow for changing where the user goes after redirect.  This will have $query_args and $redirect_url available.
+		if ( method_exists( $this, '_redirect_filter_' . $this->_current_route ) ) {
+			add_filter( 'filter_hook_espresso_redirect_' . $admin_class_name . $this->_current_route, array( $this, '_redirect_filter_ ' . $this->_current_route ), 10, 2 );
+		}
+
 	}
 	
 
