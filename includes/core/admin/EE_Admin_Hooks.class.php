@@ -116,6 +116,20 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 
 
+	/**
+	 * this optional property can be set by child classes to override the priority for the automatic action/filter hook loading in the `_load_routed_hooks()` method.  Please follow this format:
+	 *
+	 * array(
+	 * 	'wp_hook_reference' => 1
+	 * 	)
+	 * )
+	 * @var array
+	 */
+	protected $_wp_action_filters_priority;
+
+
+
+
 
 	/**
 	 * This just holds a merged array of the $_POST and $_GET vars in favor of $_POST
@@ -254,7 +268,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * @return void
 	 */
 	private function _set_defaults() {
-		$this->_ajax_func = $this->_init_func = $this->_metaboxes = $this->_scripts = $this->_styles = array();
+		$this->_ajax_func = $this->_init_func = $this->_metaboxes = $this->_scripts = $this->_styles = $this->_wp_action_filters_priority = array();
 		$this->_current_route = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : 'default';
 		$this->_req_data = array_merge($_GET, $_POST);
 		$this->caller = get_class($this);
@@ -325,7 +339,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 
 	/**
-	 * This method will search for a corresponding method with a name matching the route and the wp_hook to run.  This allows child hook classes to target hooking into a specific wp action or filter hook ONLY on a certain route.
+	 * This method will search for a corresponding method with a name matching the route and the wp_hook to run.  This allows child hook classes to target hooking into a specific wp action or filter hook ONLY on a certain route.  just remember, methods MUST be public
 	 *
 	 * Future hooks should be added in here to be access by child classes.
 	 * 
@@ -337,16 +351,21 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		$hook_filter_array = array(
 			'admin_footer' => array(
 				'type' => 'action',
-				'argnum' => 1
+				'argnum' => 1,
+				'priority' => 10
 				)
 			);
 
+
+
 		foreach ( $hook_filter_array as $hook => $args ) {
 			if ( method_exists( $this, $this->_current_route . '_' . $hook ) ) {
+				if ( isset( $this->_wp_action_filters_priority[$hook] ) )
+					$args['priority'] = $this->_wp_action_filters_priority[$hook];
 				if ( $type == 'action' )
-					add_action( $hook, array( $this, $this->_current_route . '_' . $hook ), 10, $args['argnum'] );
+					add_action( $hook, array( $this, $this->_current_route . '_' . $hook ), $args['priority'], $args['argnum'] );
 				else
-					add_filter( $hook, array( $this, $this->_current_route . '_' . $hook ), 10, $args['argnum'] );
+					add_filter( $hook, array( $this, $this->_current_route . '_' . $hook ), $args['priority'], $args['argnum'] );
 			}
 		}
 
