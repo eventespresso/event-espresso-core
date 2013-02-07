@@ -137,8 +137,23 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 
 
+	/**
+	 * This holds the EE_Admin_Page object from the calling admin page that this object hooks into.
+	 * @var EE_Admin_Page object
+	 */
+	protected $_adminpage_obj;
 
-	public function __construct() {
+
+
+
+
+	/**
+	 * constructor
+	 * @param EE_Admin_Page $admin_page the calling admin_page_object
+	 */
+	public function __construct( EE_Admin_Page $adminpage ) {
+		$this->_adminpage_obj = $adminpage;
+
 		$this->_set_defaults();
 		$this->_set_hooks_properties();
 		$this->_set_page_object();
@@ -187,7 +202,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 			//first let's do all the registrations
 			if ( !isset($this->_scripts_styles['registers'] ) ) {
 				$msg[] = __('There is no "registers" index in the <code>$this->_scripts_styles</code> property.', 'event_espresso');
-				$msg[] = sprintf ( __('Make sure you read the phpdoc comments above the definition of the $_scripts_styles property in the <code>EE_Admin_Hooks</code> class and modify according in the %s child', 'event_espresso'), '<strong>' . $this->_caller . '</strong>' );
+				$msg[] = sprintf ( __('Make sure you read the phpdoc comments above the definition of the $_scripts_styles property in the <code>EE_Admin_Hooks</code> class and modify according in the %s child', 'event_espresso'), '<strong>' . $this->caller . '</strong>' );
 				throw new EE_Error( implode( '||', $msg ) );
 			}
 
@@ -208,7 +223,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 				//let's make sure we're not missing any REQUIRED parameters
 				if ( empty($url) ) {
 					$msg[] = sprintf( __('Missing the url for the requested %s', 'event_espresso'), $type == 'js' ? 'script' : 'stylesheet' );
-					$msg[] = sprintf( __('Doublecheck your <code>$this->_scripts_styles</code> array in %s and make sure that there is a "url" set for the %s ref', 'event_espresso'), '<strong>' . $this->_caller . '</strong>', $ref );
+					$msg[] = sprintf( __('Doublecheck your <code>$this->_scripts_styles</code> array in %s and make sure that there is a "url" set for the %s ref', 'event_espresso'), '<strong>' . $this->caller . '</strong>', $ref );
 					throw new EE_Error( implode( '||', $msg ) );
 				}
 				//made it here so let's do the appropriate registration
@@ -257,7 +272,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		if ( empty( $this->_name ) ) {
 			$msg[] = __('We can\'t load the page object', 'event_espresso');
 			$msg[] = sprintf( __("This is because the %s child class has not set the 
-				'_name' property", 'event_espresso'), $this->_caller );
+				'_name' property", 'event_espresso'), $this->caller );
 			throw new EE_Error( implode( '||', $msg ) );
 		}
 

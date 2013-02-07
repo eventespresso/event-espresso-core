@@ -443,7 +443,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 			}
 
 			$a = new ReflectionClass($classname);
-			$hookobj[] = $a->newInstance();
+
+			//notice we are passing the instance of this class to the hook object.
+			$hookobj[] = $a->newInstance($this);
 		}
 	}
 
