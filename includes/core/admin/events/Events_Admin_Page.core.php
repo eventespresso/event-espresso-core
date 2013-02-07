@@ -2716,11 +2716,11 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$certificate_id = empty($this->_req_data['certificate_id']) ? '' : $this->_req_data['certificate_id'];
 
 		//Early discounts
-		$early_disc = $this->_req_data['early_disc'];
-		$early_disc_date = $this->_req_data['early_disc_date'];
-		$early_disc_percentage = $this->_req_data['early_disc_percentage'];
+		$early_disc = isset($this->_req_data['early_disc']) ? $this->_req_data['early_disc'] : '';
+		$early_disc_date = isset($this->_req_data['early_disc_date']) ? $this->_req_data['early_disc_data'] : '';
+		$early_disc_percentage = isset($this->_req_data['early_disc_percentage']) ? $this->_req_data['early_disc_percentage'] : '';
 
-		$use_coupon_code = $this->_req_data['use_coupon_code'];
+		$use_coupon_code = isset( $this->_req_data['use_coupon_code'] ) ? $this->_req_data['use_coupon_cod'] : '';
 		$alt_email = $this->_req_data['alt_email'];
 
 		$confirmation_email_id = isset( $this->_req_data['confirmation_email_id'] ) ? $this->_req_data['confirmation_email_id'] : null;
