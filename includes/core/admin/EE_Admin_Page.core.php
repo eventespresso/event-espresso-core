@@ -443,7 +443,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 			}
 
 			$a = new ReflectionClass($classname);
-			$hookobj[] = $a->newInstance();
+
+			//notice we are passing the instance of this class to the hook object.
+			$hookobj[] = $a->newInstance($this);
 		}
 	}
 
@@ -906,8 +908,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script('event_editor_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_editor.js', array('jquery-ui-slider', 'jquery-ui-timepicker-addon'), EVENT_ESPRESSO_VERSION, true);
 		wp_register_script('event-espresso-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_espresso.js', array('jquery'), EVENT_ESPRESSO_VERSION, true);
 		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('jquery'), EVENT_ESPRESSO_VERSION, true );
-		wp_register_script('jquery-validate', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.min.js"), array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
-		wp_register_script('espresso_ajax_table_sorting', (EE_CORE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js"), array('ee_admin_js', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
+		wp_register_script('jquery-validate', EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.min.js", array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
+		wp_register_script('espresso_ajax_table_sorting', EE_CORE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js", array('ee_admin_js', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
+
+		//script for parsing uri's
+		wp_register_script( 'ee-parse-uri', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/pareuri.js', array(), EVENT_ESPRESSO_VERSION, TRUE );
+
+
 //		$ajax_table_sorting_i18n = array();
 //		wp_localize_script( 'espresso_ajax_table_sorting', 'EEi18n', $ajax_table_sorting_i18n );
 
@@ -1790,6 +1797,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
+
 		$redirect_url = $this->_admin_base_url;
 
 		// how many records affected ? more than one record ? or just one ?
@@ -1833,7 +1841,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$query_args['_wpnonce'] = wp_create_nonce( $query_args['action'] . '_nonce' );
 		} 
 
-		$redirect_url = add_query_arg( $query_args, $redirect_url ); 
+		//we're adding some hooks and filters in here for processing any things just before redirects (example: an admin page has done an insert or update and we want to run something after that).
+		$classname = get_class($this);
+		do_action( 'action_hook_espresso_redirect_' . $class_name . $this->_req_action, $query_args );
+
+
+		$redirect_url = apply_filters( 'filter_hook_espresso_redirect_' . $class_name . $this->_req_action, add_query_arg( $query_args, $redirect_url ), $query_args ); 
 
 		wp_safe_redirect( $redirect_url );	
 		exit();		
