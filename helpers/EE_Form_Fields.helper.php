@@ -69,6 +69,21 @@ class EE_Form_Fields {
 		// cycle thru inputs
 		foreach ($input_vars as $input_key => $input_value) {
 
+			$defaults = array(
+				'name' => $input_key,
+				'label' => __('No label', 'event_espresso'),
+				'input' => 'hidden',
+				'type' => 'int',
+				'required' => FALSE,
+				'validation' => TRUE,
+				'value' => 'some_value_for_field',
+				'format' => '%d',
+				'db-col' => 'column_in_db',
+				'options' => array()
+				);
+
+			$input_value = wp_parse_args( $input_value, $defaults );
+
 			// required fields get a * 
 			$required = isset($input_value['required']) && $input_value['required'] ? ' <span>*</span>: ' : ': ';
 			// and the css class "required"

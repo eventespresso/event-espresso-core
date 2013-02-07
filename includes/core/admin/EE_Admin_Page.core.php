@@ -367,6 +367,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//other_page_hooks have to be early too.
 		$this->_do_other_page_hooks();
 
+
+
 		//first verify if we need to load anything...
 		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
 
@@ -375,7 +377,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//next let's just check user_access and kill if no access
 		$this->_check_user_access();
-
 		
 		// becuz WP List tables have two duplicate select inputs for choosing bulk actions, we need to copy the action from the second to the first
 		if ( isset( $this->_req_data['action2'] ) && $this->_req_data['action'] == -1 ) {
@@ -383,6 +384,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 		// then set blank or -1 action values to 'default'
 		$this->_req_action = isset( $this->_req_data['action'] ) && ! empty( $this->_req_data['action'] ) && $this->_req_data['action'] != -1 ? sanitize_key( $this->_req_data['action'] ) : 'default';
+		
+		//however if we are doing_ajax and we've got a 'route' set then that's what the req_action will be
+		$this->_req_action = defined('DOING_AJAX') && isset($this->_req_data['route']) ? $this->_req_data['route'] : $this->_req_action;
+
 		$this->_current_view = $this->_req_action;
 		$this->_req_nonce = $this->_req_action . '_nonce';
 		$this->_define_page_props();
@@ -393,11 +398,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_set_page_routes();
 		$this->_set_page_config();
 
+		
 
-		//next verify routes and route only if routing enabled
+		//next route only if routing enabled
 		if ( $this->_routing && !defined('DOING_AJAX') ) {
+			
 			$this->_verify_routes();
-
 
 			if ( $this->_is_UI_request ) {
 
@@ -427,7 +433,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	private function _do_other_page_hooks() {
-
 		$registered_pages = apply_filters('filter_hook_espresso_do_other_page_hooks_' . $this->page_slug, array() );
 
 		foreach ( $registered_pages as $page ) {
@@ -458,14 +463,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	public function load_page_dependencies() {
 
-		$this->_current_screen = get_current_screen();
 
-		//init template args
-		$this->_template_args = array(
-			'admin_page_header' => '',
-			'admin_page_content' => '',
-			'post_body_content' => ''
-		);
+		$this->_current_screen = get_current_screen();
 			
 		
 		//load admin_notices - global, page class, and view specific
@@ -532,6 +531,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_nav_tabs = $this_views = $this->_page_routes = $this->_page_config = array();
 
 		$this->default_nav_tab_name = 'overview';
+
+		//init template args
+		$this->_template_args = array(
+			'admin_page_header' => '',
+			'admin_page_content' => '',
+			'post_body_content' => ''
+		);
 	}
 
 
@@ -545,6 +551,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void|exception error
 	 */
 	public function route_admin_request() {
+
 		try {
 			$this->_route_admin_request();
 		} catch ( EE_Error $e ) {
@@ -626,10 +633,20 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	private function _route_admin_request() {
 
+		$this->_verify_routes();
+
 		if ( $this->_req_action != 'default' ) {
 			$nonce = isset($this->_req_data['_wpnonce']) ? $this->_req_data['_wpnonce'] : '';
+
+
 			if ( !wp_verify_nonce( $nonce, $this->_req_nonce ) ) {
-				wp_die( sprintf(__('%sNonce Fail.%s' , 'event_espresso'), '<a href="http://www.youtube.com/watch?v=56_S0WeTkzs">', '</a>' ) );
+				$msg = sprintf(__('%sNonce Fail.%s' , 'event_espresso'), '<a href="http://www.youtube.com/watch?v=56_S0WeTkzs">', '</a>' );
+				if ( !defined('DOING_AJAX') )
+					wp_die( $msg );
+				else {
+					echo json_encode( array('error' => $msg ) );
+					exit();
+				}
 			}
 		}		
 
@@ -912,7 +929,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script('espresso_ajax_table_sorting', EE_CORE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js", array('ee_admin_js', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
 
 		//script for parsing uri's
-		wp_register_script( 'ee-parse-uri', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/pareuri.js', array(), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'ee-parse-uri', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/parseuri.js', array(), EVENT_ESPRESSO_VERSION, TRUE );
 
 
 //		$ajax_table_sorting_i18n = array();
@@ -1532,7 +1549,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@access public
 	*		@return void
 	*/		
-	public function display_admin_page_with_sidebar() {		
+	public function display_admin_page_with_sidebar() {	
+
 		$this->_display_admin_page(TRUE);
 	}
 
@@ -1559,15 +1577,21 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	private function _display_admin_page($sidebar = false) {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
 		// set current wp page slug - looks like: event-espresso_page_event_categories
 		$this->_template_args['current_page'] = $this->_wp_page_slug;
 		$template_path = $sidebar ?  EE_CORE_ADMIN . 'admin_details_wrapper.template.php' : EE_CORE_ADMIN . 'admin_details_wrapper_no_sidebar.template.php';
+
+		if ( defined('DOING_AJAX' ) )
+			$template_path = EE_CORE_ADMIN . 'admin_details_wrapper_no_sidebar_ajax.template.php';
+
 		$template_path = !empty($this->_column_template_path) ? $this->_column_template_path : $template_path;
 
 		$this->_template_args['post_body_content'] = isset( $this->_template_args['admin_page_content'] ) ? $this->_template_args['admin_page_content'] : '';
 		$this->_template_args['before_admin_page_content'] = isset($this->_template_args['before_admin_page_content']) ? $this->_template_args['before_admin_page_content'] : '';
 		$this->_template_args['after_admin_page_content'] = isset($this->_template_args['after_admin_page_content']) ? $this->_template_args['after_admin_page_content'] : '';
 		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
+
 
 		// the final template wrapper
 		$this->admin_page_wrapper();
@@ -1635,6 +1659,39 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+	/**
+	 * this is used whenever we're DOING_AJAX to return a formatted json array that our calling javascript can expect
+	 *
+	 * The returned json object is created from an array in the following format:
+	 * array(
+	 * 	'error' => FALSE, //(default FALSE), contains any errors and/or exceptions (exceptions return json early),
+	 * 	'success' => FALSE, //(default FALSE) - contains any special success message.
+	 * 	'notices' => '', // - contains any EE_Error formatted notices
+	 * 	'content' => 'string can be html', //this is a string of formatted content (can be html)
+	 * 	'data' => array() //this can be any key/value pairs that a method returns for later json parsing by the js. We're also going to include the template args with every package (so js can pick out any specific template args that might be included in here)
+	 * )
+	 *
+	 * The json object is populated by whatever is set in the $_template_args property.
+	 *
+	 * @return json object 
+	 */
+	protected function _return_json() {
+		$data = isset( $this->_template_args['data'] ) ? $this->_template_args['data'] : array();
+		$json = array(
+			'error' => isset( $this->_template_args['error'] ) ? $this->_template_args['error'] : FALSE,
+			'success' => isset( $this->_template_args['success'] ) ? $this->_template_args['success'] : FALSE,
+			'notices' => EE_Error::get_notices(),
+			'content' => $this->_template_args['admin_page_content'],
+			'data' => array_merge( $data, $this->_template_args )
+			);
+
+		echo json_encode( $json );
+		exit();
+	}
+
+
+
+
 
 
 	/**
@@ -1660,8 +1717,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 		
 		
 		// load settings page wrapper template
-		$template_path = EE_CORE_ADMIN . 'admin_wrapper.template.php';
-		espresso_display_template( $template_path, $this->_template_args );
+		$template_path = !defined( 'DOING_AJAX' ) ? EE_CORE_ADMIN . 'admin_wrapper.template.php' : EE_CORE_ADMIN . 'admin_wrapper_ajax.template.php';
+
+		if ( defined( 'DOING_AJAX' ) ) {
+			$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
+			$this->_return_json();
+		} else {
+			espresso_display_template( $template_path, $this->_template_args );
+		}
 
 	}
 
@@ -1735,8 +1798,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		foreach ( $button_text as $key => $button ) {
 			$ref = $default_names[$key];
+			$id = $this->_current_view . '_' . $ref;
 			$name = !empty($actions) ? $actions[$key] : $ref;
-			$this->_template_args['save_buttons'] .= '<input type="submit" class="button-primary" value="' . $button . '" name="' . $name . '" id="' . $ref . '" />';
+			$this->_template_args['save_buttons'] .= '<input type="submit" class="button-primary ' . $ref . '" value="' . $button . '" name="' . $name . '" id="' . $id . '" />';
 			if ( !$both ) break;
 		}
 
@@ -1847,6 +1911,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		$redirect_url = apply_filters( 'filter_hook_espresso_redirect_' . $classname . $this->_req_action, add_query_arg( $query_args, $redirect_url ), $query_args ); 
+
+		// check if we're doing ajax.  If we are then lets just return the results and js can handle how it wants.
+		if ( defined('DOING_AJAX' ) ) {
+			$this->_template_args['success'] = $success;
+			$this->_template_args['notices'] = $notices;
+			$this->_template_args['data'] = array( 'close' => TRUE, 'redirect_url' => $redirect_url );
+			$this->_return_json();
+		}
 
 		wp_safe_redirect( $redirect_url );	
 		exit();		

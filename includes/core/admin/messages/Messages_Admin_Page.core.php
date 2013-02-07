@@ -128,7 +128,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	protected function _set_page_config() {
 
 		//setting up the edit message template url for the nav tab
-		$group_query_args = isset($this->_req_data['GRP_ID']) ? array('GRP_ID' => $this->_req_data['EVT_CAT_ID'] ) : array();
+		$group_query_args = isset($this->_req_data['GRP_ID']) ? array('GRP_ID' => $this->_req_data['GRP_ID'] ) : array();
 		$event_query_args = isset($this->_req_data['evt_id']) ? array('evt_id' => $this->_req_data['evt_id'] ) : array();
 		$edit_query_args = array_merge( $group_query_args, $event_query_args );
 
@@ -380,10 +380,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 
-
-
-
-
 	/**
 	 * _add_message_template
 	 * 
@@ -417,10 +413,17 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_add_meta_box.template.php';
 		$this->_add_admin_page_meta_box( 'insert_message_template', __('Add New Message Templates', 'event_espresso'), __FUNCTION__, NULL);
 
+		//AJAX?
+		if ( defined('DOING_AJAX') ) {
+			$content = espresso_display_template( $this->_template_path, $this->_template_args, TRUE );
+			return $content;
+		}
+
 		//final template wrapper
 		$this->display_admin_page_with_sidebar();
 
 	}
+
 
 	/**
 	 * _edit_message_template
@@ -451,12 +454,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		} else {
 			$message_template = $MTP->get_message_template_by_ID($GRP_ID);
 			$action = 'update_message_template';
-			$button_both = TRUE;
+			$button_both = !defined( 'DOING_AJAX' ) ? TRUE : FALSE;
 			$button_text = array();
 			$button_actions = array();
 			$referrer = NULL;
 			$edit_message_template_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
 		}
+
 
 		//todo: we need to assemble the title from Various details
 		$context_label = sprintf( __('(%s Context)', 'event_espresso'), ucwords(str_replace('_', ' ', $context) ) );
@@ -502,8 +506,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							$template_form_fields[$field_id] = $extra_array;
 							$template_form_fields[$field_id]['name'] = 'MTP_template_fields[' . $reference_field . '][content][' . $extra_field . ']';
 							$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($message_templates[$context][$reference_field]['content'][$extra_field]) ? $message_templates[$context][$reference_field]['content'][$extra_field] : '';
-							$template_form_fields[$field_id]['db-col'] = 'MTP_content';
-							
+							$template_form_fields[$field_id]['db-col'] = 'MTP_content';	
+
+							//if doing ajax and the extra field input type is wp_editor, let's change back to text area and also change class.
+							if ( isset( $extra_array['input'] ) && $extra_array['input'] == 'wp_editor' && defined('DOING_AJAX') ) {
+								$template_form_fields[$field_id]['input'] = 'textarea';
+								$template_form_fields[$field_id]['css_class'] = 'large-text';
+								$template_form_fields[$field_id]['label'] = $extra_array['label'] . '&nbsp;' . __('(Basic HTML tags allowed)', 'event_espresso');
+							}/**/
 						}
 						$templatefield_MTP_id = $reference_field . '-MTP_ID';
 						$templatefield_templatename_id = $reference_field . '-name';
@@ -541,6 +551,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					$template_form_fields[$field_id]['name'] = 'MTP_template_fields[' . $template_field . '][content]';
 					$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($message_templates[$context][$template_field]['content']) ? $message_templates[$context][$template_field]['content'] : '';
 					$template_form_fields[$field_id]['db-col'] = 'MTP_content';
+
+					//if doing ajax and the extra field input type is wp_editor, let's change to text area and also change class.
+					if ( isset( $field_setup_array['input'] ) && $field_setup_array['input'] == 'wp_editor' && defined('DOING_AJAX') ) {
+						$template_form_fields[$field_id]['input'] = 'textarea';
+						$template_form_fields[$field_id]['css_class'] = 'large-text';
+						$template_form_fields[$field_id]['label'] = $extra_array['label'] . '&nbsp;' . __('(Basic HTML tags allowed)', 'event_espresso');
+					}/**/
 				}
 
 				//k took care of content field(s) now let's take care of others.
@@ -668,7 +685,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'db-col' => 'MTP_is_override'
 				);
 
-			$sidebar_form_fiels['ee-msg-is-active'] = array(
+			$sidebar_form_fields['ee-msg-is-active'] = array(
 					'name' => 'MTP_is_active',
 					'label' => __('Active Template', 'event_espresso'),
 					'input' => 'hidden',
@@ -705,6 +722,33 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'db-col' => 'MTP_user_id'
 			);
 
+			$sidebar_form_fields['ee-msg-route'] = array(
+				'name' => 'action',
+				'input' => 'hidden',
+				'type' => 'string',
+				'value' => $action
+				);
+
+			$sidebar_form_fields['ee-msg-id'] = array(
+				'name' => 'id',
+				'input' => 'hidden',
+				'type' => 'int',
+				'value' => $GRP_ID
+				);
+
+			$sidebar_form_fields['ee-msg-evt-id'] = array(
+				'name' => 'evt_id',
+				'input' => 'hidden',
+				'type' => 'int',
+				'value' => $EVT_ID
+				);
+			$sidebar_form_fields['ee-msg-evt-nonce'] = array(
+				'name' => '_wpnonce',
+				'input' => 'hidden',
+				'type' => 'string',
+				'value' => wp_create_nonce( $action . '_nonce')
+				);
+
 			$sidebar_array = array('ee-msg-is-global', 'ee-msg-is-override', 'ee-msg-deleted', 'ee-msg-is-active');
 
 			//send to field generator
@@ -720,7 +764,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//setup context switcher
 		$context_switcher_args = array(
-			'page' => 'messages',
+			'page' => 'ee_messages',
 			'action' => 'edit_message_template',
 			'id' => $GRP_ID,
 			'evt_id' => $EVT_ID,
@@ -754,18 +798,28 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$this->_template_path = $this->_template_args['GRP_ID'] ? EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_edit_meta_box.template.php' : EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_add_meta_box.template.php';
 
-		//generate metabox
-		$this->_add_admin_page_meta_box( $action, $title, __FUNCTION__, NULL );
+		//generate metabox but only if not ajax
+		if ( !defined( 'DOING_AJAX' ) )
+			$this->_add_admin_page_meta_box( $action, $title, __FUNCTION__, NULL );
+
+		else {
+			$this->_template_args['admin_page_content'] = espresso_display_template( $this->_template_path, $this->_template_args, TRUE );
+		}
 
 		//sidebar metabox (if we are editing)
 		if ( $this->_template_args['GRP_ID'] ) {
 			$this->_template_path = $sidebar_template_path;
-			$this->_add_admin_page_meta_box( $sidebar_action, $sidebar_title, __FUNCTION__, NULL, 'side');
+
+			if ( !defined( 'DOING_AJAX' ) )
+				$this->_add_admin_page_meta_box( $sidebar_action, $sidebar_title, __FUNCTION__, NULL, 'side');
+			else {
+				$this->_template_args['admin_page_content'] .= espresso_display_template( $this->_template_path, $this->_template_args, TRUE );
+			}
 		}
 
 		//shortcode metabox (if we are editing)
 		//todo: this should be moved to it's own method.  It's just a placeholder right now but the displayed shortcodes should be dynamic (we might need to create a shortcoode object for holding all valid shortcodes and message_types can register_new shortocdes with the object);
-		if ( $this->_template_args['GRP_ID'] ) {
+		if ( $this->_template_args['GRP_ID'] && !defined( 'DOING_AJAX' ) ) {
 			$this->_template_args['sidebar_content'] = 'Place holder, this will contain shortcodes that can be used with the template';
 			$sidebar_title = __('Shortcodes', 'event_espresso');
 			$this->_template_args['sidebar_box_id'] = 'shortcodes';
@@ -773,21 +827,23 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$this->_add_admin_page_meta_box( $sidebar_action, $sidebar_title, __FUNCTION__, NULL, 'side');
 		}/**/
 
+		//finally, let's set the admin_page title
+		$this->_admin_page_title = sprintf( __('Editing %s', 'event_espresso'), $title );
 
 		//final template wrapper
 		$this->display_admin_page_with_sidebar();
 	}
 
 	public function add_context_switcher() {
-		echo $this->_context_switcher;
+		return $this->_context_switcher;
 	}
 
 	public function _add_form_element_before() {
-		echo '<form method="post" action="' . $this->_template_args["edit_message_template_form_url"] . '" id="ee-msg-edit-frm">';
+		return '<form method="post" action="' . $this->_template_args["edit_message_template_form_url"] . '" id="ee-msg-edit-frm">';
 	}
 
 	public function _add_form_element_after() {
-		echo '</form>';
+		return '</form>';
 	}
 
 
@@ -914,9 +970,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				$success = 0;
 				$action_desc = '';
 				$query_args = array(
-						'id' => $edit_array['GRP_ID'],
-						'evt_id' => $edit_array['EVT_ID'],
-						'context' => $edit_array['MTP_context'],
+						'id' => $this->_req_data['GRP_ID'],
+						'evt_id' => $this->_req_data['EVT_ID'],
+						'context' => $this->_req_data['MTP_context'],
 						'action' => 'edit_message_template'
 						);
 			} else {
@@ -1626,7 +1682,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				);
 			$event_templates = $MTP->get_all_message_templates_where( $_where );
 
-			if ( count($event_templates) > 0 ) {
+			if ( $event_templates && count($event_templates) > 0 ) {
 				$m_label_pl = $this->_activate_meta_box_type == 'messengers' ? __('Messengers', 'event_espresso') : __('Message Types', 'event_espresso');
 				$m_label_sg = $this->_activate_meta_box_type == 'messengers' ? __('messenger', 'event_espresso') : __('message type', 'event_espresso');
 				$warning_msg = sprintf( __('<strong>Warning:</strong> %s cannot be deactivated if there are any Events currently using a custom template for it. Before you can deactivate the "%s" %s, you must switch the following "Events" to use global templates:', 'event_espresso' ), $m_label_pl, $this->_current_message_meta_box, $m_label_sg  );

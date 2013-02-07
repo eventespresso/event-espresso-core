@@ -55,13 +55,18 @@ class events_Messages_Hooks extends EE_Admin_Hooks {
 			'registers' => array(
 				'events_msg_admin' => array(
 					'url' => EE_MSG_ASSETS_URL . 'events_messages_admin.js',
-					'depends' => array('jquery')
+					'depends' => array('jquery', 'ee-parse-uri')
+					),
+				'events_msg_admin_css' => array(
+					'url' => EE_MSG_ASSETS_URL . 'ee_msg_events_admin.css',
+					'type' => 'css'
 					)
 				),
 			'enqueues' => array(
-				'events_msg_admin' => array('edit_event')
+				'events_msg_admin' => array('edit_event'),
+				'events_msg_admin_css' => array('edit_event')
 				)
-			);
+			); /**/
 	}
 
 
@@ -102,6 +107,8 @@ class events_Messages_Hooks extends EE_Admin_Hooks {
 		}
 		
 		echo $tabbed_content;
+
+		
 	}
 
 
@@ -112,9 +119,20 @@ class events_Messages_Hooks extends EE_Admin_Hooks {
 	 * @return string either an html string will be returned or a success message
 	 */
 	public function switch_template() {
-
 		//let's route according to the sent page route
-		var_dump('in_here');
-		exit();
+		$this->_set_page_object();
+		$this->_page_object->route_admin_request();
+	}
+
+
+
+
+	public function edit_event_admin_footer() {
+		//dialog container
+		$d_cont = '<div id="messages-change-edit-templates-dv" class="messages-change-edit-templates-option auto-hide hidden">' . "\n";
+		$d_cont .= '<div class="ajax-loader-grey"></div>';	
+		$d_cont .= '<div class="messages-change-edit-templates-content"></div>';		
+		$d_cont .= '</div>';
+		echo $d_cont;
 	}
 }

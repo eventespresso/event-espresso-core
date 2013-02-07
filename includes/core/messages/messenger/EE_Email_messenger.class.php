@@ -119,7 +119,7 @@ class EE_Email_messenger extends EE_messenger  {
 					),
 					'main' => array(
 						'input' => 'wp_editor',
-						'label' => '',
+						'label' => __('Main Content', 'event_espresso'),
 						'type' => 'string',
 						'required' => TRUE,
 						'validation' => TRUE,

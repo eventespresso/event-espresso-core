@@ -470,22 +470,6 @@ jQuery(document).ready(function($) {
 		$(this).parents('.edit-ticket-price-use-dates-tbl-row').next().next().find('.edit-ticket-price-dates').slideUp().parent().animate({ 'padding-top' : '0', 'padding-bottom' : '0' }, 250);
 	});
 
-	/*
-	Tabs for Messages box on Event Editor Page
-	 */
-	 $('.nav-tab-wrapper', '.ee-nav-tabs').on('click', '.nav-tab', function(e) {
-	 	e.preventDefault();
-	 	var content_id = $(this).attr('rel');
-	 	//first set all content as hidden and other nav tabs as not active
-	 	$('.ee-nav-tabs .nav-tab-content').hide();
-	 	$('.ee-nav-tabs .nav-tab').removeClass('nav-tab-active');
-
-	 	//set new active tab
-	 	$(this).addClass('nav-tab-active');
-	 	$('#'+content_id).show();
-	 })
-
-
 
 
 

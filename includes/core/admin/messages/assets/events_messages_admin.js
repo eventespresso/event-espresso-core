@@ -10,18 +10,25 @@ jQuery(document).ready(function($) {
 			return parseUri(url);
 		},
 
-		get_template_content: function(selected) {
-			var query_parts = this.parseurl($(selected).attr('href'));
+		get_template_content: function(selected, type) {
+			//if type is form let's setit up for with a dummy url for the parser.
+			var url = type == 'form' ? 'http://dummywebsite.com/?' + $(selected).serialize() : $(selected).attr('href');
+
+			var query_parts = this.parseurl(url);
+
+
+			//lets reset and add a couple of new vars to the queryKey object
+			query_parts.queryKey.route = query_parts.queryKey.action !== 'undefined' ? query_parts.queryKey.action : '';
+			query_parts.queryKey.action = 'ee_msgs_switch_template';
+			query_parts.queryKey.page = 'events';
+
+			//now let's serialize the query_parts.queryKey object to pass via ajax
+			var data = $.param(query_parts.queryKey);
+			
+		
 			$('.ajax-loader-grey').toggle().show();
 			//do post
-			$.post( ajaxurl, {
-				action: 'ee_msgs_switch_template',
-				page: 'events',
-				route: query_parts.queryKey.action,
-				id: query_parts.queryKey.id === undefined ? '' : query_parts.queryKey.id,
-				evt_id: query_parts.queryKey.evt_id === undefined ? '' : query_parts.queryKey.evt_id,
-				_wpnonce: query_parts.queryKey._wpnonce
-				},
+			$.post( ajaxurl, data,
 				function( response ) {
 					console.log(response);
 					var resp = $.parseJSON(response);
@@ -66,7 +73,7 @@ jQuery(document).ready(function($) {
 
 	$('.messages-change-edit-templates-content').on('submit', 'form', function(e) {
 		e.preventDefault();
-		EE_messages_evt_helper.get_template_content(this);
+		EE_messages_evt_helper.get_template_content(this, 'form');
 	});
 
 });

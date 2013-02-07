@@ -41,7 +41,7 @@ jQuery(document).ready(function($) {
 		//set new active tab
 		$(this).addClass('nav-tab-active');
 		$('#'+content_id).show();
-	});
+	});/**/
 
 
 	// generic click event for displaying and giving focus to an element and hiding control 
