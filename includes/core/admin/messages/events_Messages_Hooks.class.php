@@ -29,8 +29,8 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class events_Messages_Hooks extends EE_Admin_Hooks {
 
-	public function __construct() {
-		parent::__construct();
+	public function __construct( EE_Admin_Page $admin_page ) {
+		parent::__construct($admin_page);
 	}
 
 
@@ -39,7 +39,7 @@ class events_Messages_Hooks extends EE_Admin_Hooks {
 		
 		$this->_name = 'messages';
 		$this->_ajax_func = array(
-			'switch_template' => 'switch_template'
+			'ee_msgs_switch_template' => 'switch_template'
 			);
 		$this->_metaboxes = array(
 			0 => array(
