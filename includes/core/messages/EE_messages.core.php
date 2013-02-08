@@ -962,12 +962,12 @@ abstract class EE_messenger {
 
 			//setup current button
 			$button_text = $et_set && !$et_trashed ? __('Custom Templates', 'event_espresso') : __('Global Templates', 'event_espresso');
-			$button_link = $et_set && !$et_trashed ? wp_nonce_url( add_query_arg( array('action'=>'edit_message_template', 'id'=>$et_group_id, 'evt_id' => $event_id), $ee_msg_admin_url ), 'edit_message_template_nonce' ) : wp_nonce_url( add_query_arg( array('action'=>'edit_message_template', 'id'=>$template->GRP_ID() ), $ee_msg_admin_url ), 'edit_message_template_nonce');
+			$button_link = $et_set && !$et_trashed ? wp_nonce_url( add_query_arg( array('action'=>'edit_message_template', 'id'=>$et_group_id, 'evt_id' => $event_id), $ee_msg_admin_url ), 'edit_message_template_nonce' ) : wp_nonce_url( add_query_arg( array('action'=>'edit_message_template', 'id'=>$template->GRP_ID(), 'evt_id' => $event_id ), $ee_msg_admin_url ), 'edit_message_template_nonce');
 
 			//setup switch button
 			$switch_b_text = ($et_set && $et_trashed) || !$et_set ? __('Switch to Custom Templates', 'event_espresso') : __('Switch to Global Templates', 'event_espresso');
 			$switch_b_text = empty($event_id) ? false : $switch_b_text;
-			$switch_b_link = ($et_set && $et_trashed) ? wp_nonce_url( add_query_arg( array('action'=>'restore_message_template', 'message_type' => $template->message_type(), 'id' => $et_group_id), $ee_msg_admin_url ), 'restore_message_template_nonce' ) : wp_nonce_url( add_query_arg( array('action'=>'trash_message_template', 'id'=>$et_group_id), $ee_msg_admin_url), 'trash_message_template_nonce' );
+			$switch_b_link = ($et_set && $et_trashed) ? wp_nonce_url( add_query_arg( array('action'=>'restore_message_template', 'message_type' => $template->message_type(), 'id' => $et_group_id, 'template_switch' => TRUE, 'evt_id' => $event_id ), $ee_msg_admin_url ), 'restore_message_template_nonce' ) : wp_nonce_url( add_query_arg( array('action'=>'trash_message_template', 'id'=>$et_group_id, 'template_switch' => TRUE, 'evt_id' => $event_id ), $ee_msg_admin_url), 'trash_message_template_nonce' );
 			$switch_b_link = !$et_set && !empty($event_id) ? wp_nonce_url( add_query_arg( array('action' => 'add_new_message_template', 'evt_id' => $event_id), $ee_msg_admin_url ), 'add_new_message_template_nonce' ) : $switch_b_link;
 
 			$main_button = '<a class="button-primary template_picker" href="' . $button_link . '" title="' . __('Click to Edit', 'event_espresso') . '">' . $button_text . '</a>';

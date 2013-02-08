@@ -96,7 +96,9 @@ class events_Messages_Hooks extends EE_Admin_Hooks {
 			return;
 		}
 		
-
+		//convert 'evt_id' to 'EVT_ID'
+		if ( isset( $this->_req_data['evt_id'] ) && !isset($this->_req_data['EVT_ID'] ) )
+			$this->_req_data['EVT_ID'] = $this->_req_data['evt_id'];
 		//get content for active messengers
 		foreach ( $active_messengers as $name => $messenger ) {
 			$event_id = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : NULL;

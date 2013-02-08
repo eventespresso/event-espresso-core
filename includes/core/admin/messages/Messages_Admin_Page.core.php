@@ -459,7 +459,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
 		$MTP = EEM_Message_Template::instance();
 
-		if ( empty($GRP_ID) && $new_template ) {
+		if ( empty($GRP_ID) ) {
 			$message_template = $MTP->get_new_template;
 			$action = 'insert_message_template';
 			$button_both = FALSE;
@@ -1010,7 +1010,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		}
 
 		if ( defined('DOING_AJAX') && $new ) {
-			$this->req_data = array_merge($this->_req_data, $query_args);
+			$this->_req_data = array_merge($this->_req_data, $query_args);
 			$this->_edit_message_template();
 			$this->_req_data['template_switch'] = TRUE;
 		}
@@ -1180,7 +1180,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		if ( defined('DOING_AJAX') ) {
 			$this->_check_template_switch();
 		}
-		
+
 		$this->_redirect_after_action( $success, $item_desc, $action_desc, array() );
 	
 	}

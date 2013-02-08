@@ -1058,7 +1058,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		// looking at active items or dumpster diving ?
 		if ( ! isset( $this->_req_data['status'] ) || ! array_key_exists( $this->_req_data['status'], $this->_views )) {
-			$this->_view = 'all';
+			$this->_view = isset( $this->_views['in_use'] ) ? 'in_use' : 'all';
 		} else {
 			$this->_view = sanitize_key( $this->_req_data['status'] );
 		}
