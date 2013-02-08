@@ -566,8 +566,13 @@ class EE_Form_Fields {
 		if ( ! $question || ! $name || ! $values || empty( $values ) || ! is_array( $values )) {
 			return NULL;
 		}
-		// prep the answer
-		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer );
+		// prep the answer(s)
+		$answer = is_array( $answer ) ? $answer : array( sanitize_key( $answer ) => $answer );
+		foreach ( $answer as $key => $value ) {
+			$key = self::prep_option_value( $key );
+			$answer[$key] = self::prep_answer( $value );
+		}	
+		
 		// make sure $required is an array
 		$required = is_array( $required ) ? $required : array();
 		// and set some defaults
@@ -578,18 +583,20 @@ class EE_Form_Fields {
 		$class = empty( $class ) ? 'espresso-radio-btn-inp' : $class;
 		
 		$html = "\n\t\t\t" . '<label class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
-		$html .= "\n\t\t\t" . '<ul class="espresso-radio-btn-options-ul ' . $label_class . '">';
+		$html .= "\n\t\t\t" . '<ul class="espresso-checkbox-options-ul ' . $label_class . '">';
 		
 		foreach ( $values as $key => $value ) {
 
 			$checked = ( $value == $answer ) ? ' checked="checked"' : "";
+			$checked = (is_array($answer) && in_array($value, $answer)) ? ' checked="checked"' : "";
+			
 			$key = self::prep_option_value( $key );
 			$value = self::prep_answer( $value );
 
 			$html .= "\n\t\t\t\t" . '<li>';
-			$html .= "\n\t\t\t\t\t" . '<label for="' . $name . '_' . $key . '" class="' . $label_class . ' espresso-radio-btn-lbl">';
+			$html .= "\n\t\t\t\t\t" . '<label for="' . $name . '_' . $key . '" class="' . $label_class . ' espresso-checkbox-lbl">';
 			$html .= $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';
-			$html .= "\n\t\t\t\t\t\t" . '<input type="radio" name="' . $name . '" id="' . $id . '_' . $key . '" class="' . $class . ' ' . $required['class'] . '" value="' . $key . '" title="' . $required['msg'] . '" ' . $disabled . $checked . ' />';
+			$html .= "\n\t\t\t\t\t\t" . '<input type="checkbox" name="' . $name . '" id="' . $id . '_' . $key . '" class="' . $class . ' ' . $required['class'] . '" value="' . $key . '" title="' . $required['msg'] . '" ' . $disabled . $checked . ' />';
 			$html .= ! $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';
  			$html .= "\n\t\t\t\t\t" . '</label>';
 			$html .= "\n\t\t\t\t" . '</li>';
@@ -597,6 +604,49 @@ class EE_Form_Fields {
 		}
 
 		$html .= "\n\t\t\t" . '</ul>';
+
+
+
+
+		$html .= '<ul class="options-list-check event_form_field">';
+
+		if ( is_array( $answer )) {
+			foreach ( $answer as $key => $value ) {
+				$value = trim( stripslashes( str_replace( '&#039;', "'", $value )));
+				$answer[$key] = htmlspecialchars( $value, ENT_QUOTES, 'UTF-8' );
+			}					
+		} else {
+			$answer = trim( stripslashes( str_replace( '&#039;', "'", $answer )));
+			$answer = htmlspecialchars( $answer, ENT_QUOTES, 'UTF-8' );
+		}
+
+		
+		$values = explode(",", $question->response);
+		foreach ($values as $key => $value) {
+			
+			$value = trim( stripslashes( str_replace( '&#039;', "'", $value )));
+			$value = htmlspecialchars( $value, ENT_QUOTES, 'UTF-8' );
+			$checked = (is_array($answer) && in_array($value, $answer)) ? ' checked="checked"' : "";
+			$value_id = str_replace(' ', '', $value) . '-' . $event_id . '_' . $attendee_number;
+
+			$html .= '
+			<li>
+				<label for="' . $value_id . '" class="' . $class . ' checkbox-lbl">
+					<input id="' . $value_id . '" ' . $required_title . ' class="' . $required_class . $class . '" name="' . $field_name . $multi_name_adjust . '[]"  type="checkbox" value="' . $value . '" ' . $checked . '/> 
+					<span>' . $value . '</span>
+				</label>
+			</li>';
+			
+		}
+		
+		$html .= '</ul>';
+
+
+
+
+
+
+
 		return $html;
 
 	}
