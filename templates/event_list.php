@@ -386,64 +386,31 @@ function event_espresso_get_event_details($attributes) {
 		$ee_gmap_location = $venue_address_elements;
 
 		//Create all meta vars
-		$meta_keys = array(
-				'event_name',
-				'event_desc',
-				'event_address',
-				'event_address2',
-				'event_city',
-				'event_state',
-				'event_zip',
-				'event_status',
-				'start_time', // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-				'registration_startT',
-				'registration_start',
-				'registration_endT',
-				'registration_end',
-				'is_active',
-				'event_country',
-				'start_date',
-				'end_date',
-				'time', // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-				'google_map_link',
-				'price',
-				'event_cost',
+		$more_meta = array(
+				'event_name' => $event_name,
+				'event_desc' => $event_desc,
+				'event_address' => $event_address,
+				'event_address2' => $event_address2,
+				'event_city' => $event_state,
+				'event_state' => $event_name,
+				'event_zip' => $event_zip,
+				'event_status' => $event->event_status,
+				'start_time' => empty($event->start_time) ? '' : $event->start_time, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+				'registration_startT' => $event->registration_startT,
+				'registration_start' => $event->registration_start,
+				'registration_endT' => $event->registration_endT,
+				'registration_end' => $event->registration_end,
+				'is_active' => empty($event->is_active) ? '' : $event->is_active,
+				'event_country' => $event->country,
+				'start_date' => event_date_display( $event->start_date ),
+				'end_date' => event_date_display( $event->end_date ),
+				'time' => empty($event->start_time) ? '' : $event->start_time, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+				'google_map_link' => $google_map_link,
+				'price' => empty($event->event_cost) ? '' : $event->event_cost,
+				'event_cost' => empty($event->event_cost) ? '' : $event->event_cost
 		);
-		$meta_values = array(
-				$event_name,
-				$event_desc,
-				$event_address,
-				$event_address2,
-				$event_city,
-				$event_state,
-				$event_zip,
-				$event->event_status,
-				empty($event->start_time) ? '' : $event->start_time, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-				$event->registration_startT,
-				$event->registration_start,
-				$event->registration_endT,
-				$event->registration_end,
-				empty($event->is_active) ? '' : $event->is_active,
-				$event->country,
-				event_date_display( $event->start_date ),
-				event_date_display( $event->end_date ),
-				empty($event->start_time) ? '' : $event->start_time, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-				htmlentities($google_map_link),
-				empty($event->event_cost) ? '' : $event->event_cost,
-				empty($event->event_cost) ? '' : $event->event_cost,
-		);
-		$meta_key = array();
-		foreach ($event_meta as $key => $value) {
-			$meta_key[] = $key;
-			$meta_value[] = $value;
-		}
-		foreach ($meta_keys as $key=>$meta_key) {
-			$event->meta_keys[$key] = htmlspecialchars($meta_key);
-		}
-		foreach ($meta_values as $key=>$meta_value) {
-			$event->meta_values[$key] = htmlspecialchars($meta_value);
-		}
-
+		
+		$event->meta = array_merge( $more_meta, $event_meta );
 
 		// EE gmaps needs it's own org_options array populated on a per page basis to enable common queries in gmaps api function
 		if (isset($org_options['map_settings']) && !empty($org_options['map_settings'])) {
@@ -554,6 +521,8 @@ function event_espresso_get_event_details($attributes) {
 				$registration_closed_msg = __('This Event is no longer open for registration.', 'event_espresso');
 			}
 
+		$event = array();
+
 			if ($allow_override == 1) {
 				include('event_list_display.php');
 			} else {
@@ -567,7 +536,6 @@ function event_espresso_get_event_details($attributes) {
 
 						if (current_user_can('administrator') || function_exists('espresso_member_data') && espresso_can_view_event($event_id) == true) {
 							echo '<div class="pending_event">';
-							//include('event_list_display.php');
 							include(espresso_get_event_list_display_template());
 							echo '</div>';
 						}

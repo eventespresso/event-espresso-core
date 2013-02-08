@@ -129,8 +129,8 @@ if (!function_exists('event_registration')) {
 			$event_id = $event->id;
 			$this_event_id = $event_id;
 
-			$event_name = stripslashes_deep($event->event_name);
-			$event_desc = stripslashes_deep($event->event_desc);
+			$event_name = stripslashes($event->event_name);
+			$event_desc = stripslashes($event->event_desc);
 			$display_desc = $event->display_desc;
 			$display_reg_form = $event->display_reg_form;
 			$event_address = $event->address;
@@ -250,68 +250,39 @@ if (!function_exists('event_registration')) {
 			}
 
 			$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees'); //Get the number of attendees
-			
-			$meta_keys = array(
-					'event_name',
-					'event_desc',
-					'event_address',
-					'event_address2',
-					'event_city',
-					'event_state',
-					'event_zip',
-					'event_country',
-					'venue_title',
-					'venue_address',
-					'venue_address2',
-					'venue_city',
-					'venue_state',
-					'venue_country',
-					'is_active',
-					'event_status',
-					'registration_startT',
-					'registration_start',
-					'registration_endT',
-					'registration_end',
-					'event_address',
-					'start_date',
-					'end_date',
-					'google_map_link');
-			$meta_values = array(
-					'<p class="section-title">' . stripslashes_deep($event_name) . '</span>',
-					stripslashes_deep($event_desc),
-					$event_address,
-					$event_address2,
-					$event_city,
-					$event_state,
-					$event_zip,
-					$event_country,
-					'<span class="section-title">' . $venue_title . '</span>',
-					$venue_address,
-					$venue_address2,
-					$venue_city,
-					$venue_state,
-					$venue_country,
-					$event->is_active,
-					$event->event_status,
-					$event->registration_startT,
-					$event->registration_start,
-					$event->registration_endT,
-					$event->registration_end,
-					empty($event->event_address) ? '' : $event->event_address,
-					'<span class="section-title">' . event_date_display( $start_date ) . '</span>',
-					'<span class="section-title">' . event_date_display( $end_date ) . '</span>',
-					$google_map_link
-					);
-			foreach ($event_meta as $key => $value) {
-				$meta_key[] = $key;
-				$meta_value[] = $value;
-			}
-			foreach ($meta_keys as $key=>$meta_key) {
-				$event->meta_keys[$key] = htmlspecialchars($meta_key);
-			}
-			foreach ($meta_values as $key=>$meta_value) {
-				$event->meta_values[$key] = htmlspecialchars($meta_value);
-			}
+
+			//Create all meta vars
+			$more_meta = array(
+					'event_name' => $event_name,
+					'event_desc' => $event_desc,
+					'event_address' => $event_address,
+					'event_address2' => $event_address2,
+					'event_city' => $event_state,
+					'event_state' => $event_name,
+					'event_zip' => $event_zip,
+					'event_country' => $event->country,
+					'venue_title' => '<span class="section-title">' . $venue_title . '</span>',
+					'venue_address' => $venue_address,
+					'venue_address2' => $venue_address2,
+					'venue_city' => $venue_state,
+					'venue_state' => $venue_state,
+					'venue_country' => $venue_country,				
+					'event_status' => $event->event_status,
+					'is_active' => empty($event->is_active) ? '' : $event->is_active,
+					'start_time' => empty($event->start_time) ? '' : $event->start_time, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+					'registration_startT' => $event->registration_startT,
+					'registration_start' => $event->registration_start,
+					'registration_endT' => $event->registration_endT,
+					'registration_end' => $event->registration_end,
+					'start_date' => event_date_display( $event->start_date ),
+					'end_date' => event_date_display( $event->end_date ),
+					'google_map_link' => $google_map_link,
+					'price' => empty($event->event_cost) ? '' : $event->event_cost,
+					'event_cost' => empty($event->event_cost) ? '' : $event->event_cost
+			);
+
+			$event->meta = array_merge( $more_meta, $event_meta );
+
 			$is_active = array();
 			$is_active = event_espresso_get_is_active($event_id);
 
