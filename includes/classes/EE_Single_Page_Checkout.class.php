@@ -383,10 +383,10 @@ class EE_Single_Page_Checkout {
 				$x = 1;
 				$counter = 1;
 				foreach ($cart_contents['items'] as $item) {
+					printr( $item, '$item  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 					$step_1_line_items .= '#mer-reg-page-line-item-' . $item['id'];
-
-					//echo printr( $item, '$item' );
+					
 					$event_queue[$cart_type]['items'][$item['line_item']]['id'] = $item['id'];
 					$event_queue[$cart_type]['items'][$item['line_item']]['name'] = $item['name'];
 					$event_queue[$cart_type]['items'][$item['line_item']]['price_desc'] = $item['options']['price_desc'];
@@ -436,15 +436,29 @@ class EE_Single_Page_Checkout {
 						$input_name = '[' . $item['id'] . '][' . $att_nmbr . '][' . $tckt_date . '][' . $tckt_time . '][' . $price_id . ']';
 
 						//echo '<h4>$input_id : ' . $input_id . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-						//echo '<h4>$input_name : ' . $input_name . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+						//echo '<h4>$input_name : ' . $input_name . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';					
+						$additional_attendee_reg_info = 1;
+						if ( isset( $item['options']['event_meta'] )) {
+							$event_meta = html_entity_decode( $item['options']['event_meta'], ENT_QUOTES, 'UTF-8'  );
+							$event_meta = unserialize( stripslashes( $event_meta ));
+							$additional_attendee_reg_info = isset( $event_meta['additional_attendee_reg_info'] ) ? absint( $event_meta['additional_attendee_reg_info'] ) : 1;
+						}
 
 						$question_meta = array(
 								'attendee_number' => $att_nmbr,
 								'price_id' => $price_id,
 								'date' => $tckt_date,
 								'time' => $tckt_time,
-								'input_id' => $input_id
+								'input_name' => $input_name,
+								'input_id' => $input_id,
+								'input_class' => $template_args['css_class'],
+								'additional_attendee_reg_info' => $additional_attendee_reg_info
 						);
+						
+						$att_questions = EEM_Event::instance()->get_event_questions( $item['id'], $question_meta );
+
+						printr( $att_questions, '$att_questions  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+						
 						// grab questions
 						$att_questions = event_espresso_add_question_groups(
 										$event_reg_details->question_groups, '', $item['id'], TRUE, $question_meta, $template_args['css_class']
