@@ -21,10 +21,10 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_TempBase.model.php' );
 
 
-class EEM_Registration extends EEM_Base {
+class EEM_Registration extends EEM_TempBase {
 
   	// private instance of the Registration object
 	private static $_instance = NULL;
@@ -40,31 +40,39 @@ class EEM_Registration extends EEM_Base {
 	 */
 	private function __construct() {
 		global $wpdb;
-		// set table name
-		$this->table_name = $wpdb->prefix . 'esp_registration';
-		// set item names
-		$this->singlular_item = 'Registration';
-		$this->plual_item = 'Registrations';		
-		// array representation of the transaction table and the data types for each field
-		// REG_ID 	EVT_ID 	ATT_ID 	TXN_ID 	DTT_ID 	PRC_ID 	STS_ID 	REG_date 	REG_session 	REG_code 	REG_is_primary 	REG_is_group_reg 	REG_att_is_going 	REG_att_checked_in
-		$this->table_data_types = array (
-			'REG_ID' 						=> '%d',
-			'EVT_ID' 						=> '%d',
-			'ATT_ID' 						=> '%d',
-			'TXN_ID' 						=> '%d',
-			'DTT_ID' 						=> '%d',
-			'PRC_ID' 						=> '%d',
-			'STS_ID' 						=> '%s',
-			'REG_date' 					=> '%d',
-			'REG_final_price' 		=> '%d',
-			'REG_session' 				=> '%s',
-			'REG_code'					=> '%s',
-			'REG_url_link'				=> '%s',
-			'REG_is_primary' 		=> '%d',
-			'REG_is_group_reg' 	=> '%d',
-			'REG_att_is_going' 		=> '%d',
-			'REG_att_checked_in' => '%d',
-		);
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Registration.class.php');
+		$this->_allowed_statuses=apply_filters('filter_hook_espresso__EEM_Registration__allowed_statuses',
+				array('RAP'=>'APPROVED',
+					'RCN'=>'CANCELLED',
+					'RNA'=>'NOT_APPROVED',
+					'RPN'=>'PENDING'));
+		$this->_fields_settings=array(
+			'REG_ID'=>new EE_Model_Field('Registration ID','primary_key',false),
+			'EVT_ID'=>new EE_Model_Field('Event ID','foreign_key',false,null,null,'Event'),
+			'ATT_ID'=>new EE_Model_Field('Attendee ID', 'foreign_key', false,null,null,'Attendee'),
+			'TXN_ID'=>new EE_Model_Field('Transaction ID', 'foreign_key', false, null, null, 'Transaction'),
+			'DTT_ID'=>new EE_Model_Field('Datetime ID','foreign_key',false,null,null,'Datetime'),
+			'PRC_ID'=>new EE_model_Field('Price ID','foreign_key',false,null,null,'Price'),
+			'STS_ID'=>new EE_Model_Field('Status ID', 'foreign_text_key', false, 'RNA', $this->_allowed_statuses, 'Status'),
+			'REG_date'=>new EE_Model_Field('Registration Date','int',false,0),
+			'REG_final_price'=>new EE_Model_Field('Final Price', 'float', false, 0),
+			'REG_session'=>new EE_Model_Field('Session of Original Registration','plaintext',false),
+			'REG_code'=>new EE_Model_Field('Unique Registration Code', 'plaintext', true, ''),
+			'REG_url_link'=>new EE_Model_Field('URL Link of Registration','plaintext',true,''),
+			'REG_is_primary'=>new EE_Model_Field('Flag indicating whether Registration is Unique','bool',false,false),
+			'REG_is_group_reg'=>new EE_Model_Field('Flag indicating whether is part of a group registration', 'bool', false, false),
+			'REG_att_is_going'=>new EE_Model_Field('Flag indicating if Person is going', 'bool', false, true),
+			'REG_att_checked_in'=>new EE_Model_Field('Flag indicating whether attendee has checked in','bool',false,false)				
+			);
+		$this->_related_models=array(
+								//'Event'=>new EE_Model_Relation('belongsTo', 'Event', 'EVT_ID'),//no such classes or model yet created
+								'Attendee'=>new EE_Model_Relation('belongsTo', 'Attendee', 'ATT_ID'),
+								'Transaction'=>new EE_Model_Relation('belongsTo', 'Transaction', 'TXN_ID'),
+								'Datetime'=>new EE_Model_Relation('belongsTo', 'Datetime', 'DTT_ID'),
+								'Price'=>new EE_Model_Relation('belongsTo', 'Price', 'PRC_ID'),
+								'Status'=>new EE_Model_Relation('belongsTo', 'Status','STS_ID'),
+								'Answers'=>new EE_Model_Relation('hasMany','Answer','REG_ID'));
+		parent::__construct();
 		// uncomment these for example code samples of how to use them
 		//			$this->how_to_use_insert();
 		//			$this->how_to_use_update();
@@ -97,7 +105,7 @@ class EEM_Registration extends EEM_Base {
 	* 		@param		array		$transactions
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
-	private function _create_objects( $registrations = FALSE ) {
+	/*private function _create_objects( $registrations = FALSE ) {
 
 		if ( ! $registrations ) {
 			return FALSE;
@@ -126,7 +134,7 @@ class EEM_Registration extends EEM_Base {
 		}
 		return $array_of_objects;
 
-	}
+	}*/
 
 
 

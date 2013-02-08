@@ -732,7 +732,21 @@ class EE_Attendee extends EE_Base_Class{
 
 
 
-
+	/**
+	 * Gets a maximum of 100 related registrations
+	 * @return EE_Registration[] UNLESS $output='count', in which case INT
+	 */
+	public function get_registrations($limit=100,$ouput='OBJECT_K'){
+		return $this->get_many_related('Registrations', null, null, 'ASC', '=', $limit, $ouput);
+	}
+	
+	/**
+	 * Gets the most recent registration of this attendee
+	 * @return EE_Registration[]
+	 */
+	public function get_most_recent_registration(){
+		return $this->get_first_related('Registrations', null, 'REG_date', 'DESC', null, null);
+	}
 }
 
 /* End of file EE_Attendee.class.php */

@@ -304,7 +304,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * @param array $where_col_n_values for extra select clause on hasAndBelongsToMany or hasMany
 	 * @return EE_TempBase[]
 	 */
-	public function get_many_related(EE_Base_Class $modelObject,$relationName,$where_col_n_values=array()){
+	public function get_many_related(EE_Base_Class $modelObject,$relationName,$where_col_n_values=array(),$orderby=null,$order='ASC',$operators='=',$limit=null,$output='OBJECT_K'){
 		$relatedModelInfo=$this->related_settings_for($relationName);
 		/* @var $relatedModeInfo EE_Model_Relation*/
 		$relatedModel=$relatedModelInfo->model_instance();
@@ -312,8 +312,8 @@ abstract class EEM_TempBase extends EEM_Base{
 		switch($relatedModelInfo->type()){
 			case 'belongsTo':
 				$foreign_key=$relatedModelInfo->field_name();
-				$args=array($relatedModel->primary_key_name()=>$modelObject->get($foreign_key));
-				$relatedObjects=$relatedModel->get_all_where($args);
+				$where_col_n_values[$relatedModel->primary_key_name()]=$modelObject->get($foreign_key);
+				$relatedObjects=$relatedModel->get_all_where($where_col_n_values,$orderby,$order,$operators,$limit,$output);
 				//$relatedObjects=$relatedModel->_create_objects(array($row,));
 				break;
 			case 'hasMany':
@@ -325,7 +325,7 @@ abstract class EEM_TempBase extends EEM_Base{
 				if(!array_key_exists($foreignKeyOnOtherModel, $where_col_n_values)){
 					$where_col_n_values[$foreignKeyOnOtherModel]=$modelObject->ID();
 				}
-				$relatedObjects=$relatedModel->get_all_where($where_col_n_values);
+				$relatedObjects=$relatedModel->get_all_where($where_col_n_values,$orderby,$order,$operators,$limit,$output);
 				//$relatedObjects=$relatedModel->_create_objects(array($rows));
 				break;
 			case 'hasAndBelongsToMany':
@@ -342,7 +342,12 @@ abstract class EEM_TempBase extends EEM_Base{
 				$where_col_n_values[$thisTablePK]=$modelObject->ID();
 				$rows=$relatedModel->select_all_join_where($joinSQL,
 													$this->_get_table_data_types_for($relatedModelInfo->join_table(), $relatedModelInfo->join_table_fields()), 
-													$where_col_n_values);
+													$where_col_n_values,
+													$orderby,
+													$order,
+													$operators,
+													$limit,
+													$output);
 				$relatedObjects=$relatedModel->_create_objects($rows);
 				break;
 		}
@@ -533,8 +538,8 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * @param string $relationName, key in $this->_relatedModels, eg 'Registration', or 'Events'
 	 * @return EE_Base_Class[]
 	 */
-	public function get_first_related(EE_Base_Class $modelObject,$relationName){
-		$relatedObjects=$this->get_many_related($modelObject, $relationName);
+	public function get_first_related(EE_Base_Class $modelObject,$relationName,$where_col_n_values=null,$orderby=null,$order='ASC',$operators='=',$output='OBJECT_K'){
+		$relatedObjects=$this->get_many_related($modelObject, $relationName,$where_col_n_values,$orderby,$order,$operators,1,$output);
 		if(empty($relatedObjects)){
 			return null;
 		}else{

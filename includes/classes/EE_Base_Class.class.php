@@ -361,11 +361,11 @@ abstract class EE_Base_Class {
 	 * @param string $relationName
 	 * @return EE_Base_Class
 	 */
-	public function get_first_related($relationName){
+	public function get_first_related($relationName,$where_col_n_values,$orderby,$order,$operators,$output){
 		$internalName=$this->_get_private_attribute_name($relationName);
 		if($this->$internalName==null){
 			$model=$this->_get_model();
-			$relationRequested=$model->get_first_related($this, $relationName);
+			$relationRequested=$model->get_first_related($this, $relationName,$where_col_n_values,$orderby,$order,$operators,$output);
 			$this->$internalName=$relationRequested;
 		}
 		return $this->$internalName;
@@ -397,11 +397,11 @@ abstract class EE_Base_Class {
 	 * @param array $where_col_n_vals keys are field/column names, values are their values
 	 * @return EE_Base_Class[]
 	 */
-	public function get_many_related($relationName,$where_col_n_vals=null){
+	public function get_many_related($relationName,$where_col_n_values=null,$orderby=null,$order='ASC',$operators='=',$limit=null,$output='OBJECT_K'){
 		$privateRelationName=$this->_get_private_attribute_name($relationName);
 		if($this->$privateRelationName==null){
 			$model=$this->_get_model();
-			$relationRequested=$model->get_many_related($this, $relationName,$where_col_n_vals);
+			$relationRequested=$model->get_many_related($this, $relationName,$where_col_n_values,$orderby,$order,$operators,$limit,$output);
 			$this->$privateRelationName=$relationRequested;
 		}
 		return $this->$privateRelationName;

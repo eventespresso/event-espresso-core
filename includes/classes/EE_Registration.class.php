@@ -22,17 +22,17 @@
  * ------------------------------------------------------------------------
  */
 //require_once ( 'EE_Base_Class.class.php' );
-class EE_Registration extends EE_Base {
+class EE_Registration extends EE_Base_Class {
 	
     /**
     *	Registration ID
 	* 
 	* 	primary key
 	*	
-	* 	@access	private
+	* 	@access	protected
     *	@var int	
     */
-	private $_REG_ID = FALSE;
+	protected $_REG_ID = FALSE;
 
 	
 	
@@ -42,10 +42,10 @@ class EE_Registration extends EE_Base {
 	* 
 	*	foreign key from event table
 	*  
-	*	@access	private
+	*	@access	protected
     *	@var int	
     */
-	private $_EVT_ID = NULL;
+	protected $_EVT_ID = NULL;
 	
 	
 	
@@ -54,10 +54,10 @@ class EE_Registration extends EE_Base {
 	* 
 	* 	foreign key from attendee table
 	*
-	*	@access	private
+	*	@access	protected
     *	@var int	
     */
-	private $_ATT_ID = NULL;	
+	protected $_ATT_ID = NULL;	
 	
 	
     /**
@@ -65,10 +65,10 @@ class EE_Registration extends EE_Base {
 	*
 	*	foreign key from transaction table
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var int	
     */
-	private $_TXN_ID = NULL;
+	protected $_TXN_ID = NULL;
 	
 	
     /**
@@ -76,10 +76,10 @@ class EE_Registration extends EE_Base {
 	* 
     *	foreign key from Datetime table
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var int	
     */
-	private $_DTT_ID = NULL;	
+	protected $_DTT_ID = NULL;	
 	
 	
     /**
@@ -87,10 +87,10 @@ class EE_Registration extends EE_Base {
 	* 
     *	foreign key from Price table
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var int	
     */
-	private $_PRC_ID = NULL;	
+	protected $_PRC_ID = NULL;	
 	
 	
     /**
@@ -98,10 +98,10 @@ class EE_Registration extends EE_Base {
 	* 
     *	registration status code - Pending, Complete, Incomplete
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_STS_ID = NULL;	
+	protected $_STS_ID = NULL;	
 	
 	
     /**
@@ -109,10 +109,10 @@ class EE_Registration extends EE_Base {
 	* 
     *	Unix timestamp
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var int	
     */
-	private $_REG_date = NULL;	
+	protected $_REG_date = NULL;	
 	
 	
     /**
@@ -120,20 +120,20 @@ class EE_Registration extends EE_Base {
 	* 
     *	Final Price for ticket after all modifications
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var float	
     */
-	private $_REG_final_price = NULL;	
+	protected $_REG_final_price = NULL;	
 	
 	
 	
     /**
     *	PHP Session ID
 	*  
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_REG_session = NULL;	
+	protected $_REG_session = NULL;	
 	
 	
 	
@@ -142,10 +142,10 @@ class EE_Registration extends EE_Base {
 	* 
     *	a unique string for public identification ( = existing registration_id )
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_REG_code = NULL;	
+	protected $_REG_code = NULL;	
 	
 	
 	
@@ -154,10 +154,10 @@ class EE_Registration extends EE_Base {
 	* 
     *	a unique string for use in email links, etc
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_REG_url_link = NULL;	
+	protected $_REG_url_link = NULL;	
 	
 	
 	
@@ -166,10 +166,10 @@ class EE_Registration extends EE_Base {
 	* 
     *	whether or not this is the primary attendee for a group of registrations
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var boolean	
     */
-	private $_REG_is_primary = NULL;		
+	protected $_REG_is_primary = NULL;		
 	
 	
     /**
@@ -177,10 +177,10 @@ class EE_Registration extends EE_Base {
 	* 
     *	whether or not this registration is part of a group of registrations
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var boolean	
     */
-	private $_REG_is_group_reg = NULL;	
+	protected $_REG_is_group_reg = NULL;	
 	
 	
     /**
@@ -188,10 +188,10 @@ class EE_Registration extends EE_Base {
 	* 
     *	whether or not the attendee has confirmed they will be going to the event
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var boolean	
     */
-	private $_REG_att_is_going = 0;	
+	protected $_REG_att_is_going = 0;	
 	
 	
     /**
@@ -199,14 +199,67 @@ class EE_Registration extends EE_Base {
 	* 
     *	whether or not the attendee checked in at the event
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var boolean	
     */
-	private $_REG_att_checked_in = NULL;	
+	protected $_REG_att_checked_in = NULL;	
 
-
-
-
+	
+	/**
+	 * Event for which this registration is for
+	 * 
+	 * @access protected
+	 * @var object (should be EE_Event, but its not create dyet)
+	 */
+	protected $_Event = NULL;
+	
+	
+	/**
+	 * Attendee data for this registration
+	 * 
+	 * @access protected
+	 * @var EE_Attendee
+	 */
+	protected $_Attendee = NULL;
+	
+	
+	/**
+	 * Transaction of this Registration
+	 * @access protected
+	 * @var EE_Tranaction
+	 */
+	protected $_Transaction = NULL;
+	
+	
+	/**
+	 * Datetime of the Event this registratino is for
+	 * @access protected
+	 * @var EE_Datetime
+	 */
+	protected $_Datetime = NULL;
+	
+	
+	/**
+	 * Price of the Event this registration paid
+	 * @access protected
+	 * @var EE_Price
+	 */
+	protected $_Price = NULL;
+	
+	
+	/**
+	 * Status of the registration
+	 * @access protected
+	 * @var EE_Status (looks unfinished right now)
+	 */
+	protected $_Status = NULL;
+	
+	/**
+	 * Answers made to questions for this registration
+	 * @access protected 
+	 * @var EE_Answer[]
+	 */
+	protected $_Answers = NULL;
 
 
 	/**

@@ -309,7 +309,6 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		//first the actions
 		//note that this action hook will have the $query_args value available.
 		$admin_class_name = get_class( $this->_adminpage_obj );
-
 		if ( method_exists( $this, '_redirect_action_' . $this->_current_route ) ) {
 			add_action( 'action_hook_espresso_redirect_' . $admin_class_name . $this->_current_route, array( $this, '_redirect_action_' . $this->_current_route ), 10 );
 		}
