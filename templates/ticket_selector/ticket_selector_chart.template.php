@@ -5,25 +5,10 @@
 		
 		<input type="hidden" name="tkt-slctr-event-id" value="<?php echo $event_id; ?>" />
 		
-		<?php
-		foreach ($meta_keys as $key=>$meta_key) {
-		?>
-			<input type="hidden"
-						name="tkt-slctr-meta-keys-<?php echo $event_id ?>[<?php echo $key; ?>]"
-						value="<?php echo $meta_key; ?>"
-				/>
-		<?php
-		}
-		
-		foreach ($meta_values as $key=>$meta_value) {
-		?>
 		<input type="hidden"
-					name="tkt-slctr-meta-values-<?php echo $event_id ?>[<?php echo $key; ?>]"
-					value="<?php echo $meta_value; ?>"
+			name="tkt-slctr-event-meta-<?php echo $event_id ?>"
+			value="<?php echo $event_meta; ?>"
 			/>
-		<?php
-		}
-		?>
 
 		<input type="hidden"
 					id="tkt-slctr-max-atndz-<?php echo $event_id ?>"
