@@ -4,7 +4,8 @@
 	<p><?php echo $action_message; ?></p>
 
 	<form id="ee-msg-add-message-template-frm" action="<?php echo $edit_message_template_form_url; ?>" method="post">
-		<input type="hidden" id="evt_id" name="evt_id" value="<?php echo ($EVT_ID) ? $EVT_ID : ''; ?>" />
+		<input type="hidden" id="evt_id" name="EVT_ID" value="<?php echo ($EVT_ID) ? $EVT_ID : ''; ?>" />
+		<?php if ( isset( $hidden_fields ) ) echo $hidden_fields; ?>
 		
 		<!--active_messengers -->
 		<label for="MTP_messenger"><?php _e('Select Messenger', 'event_espresso'); ?></label>
@@ -30,6 +31,7 @@
 				<?php endforeach; ?>
 			</select>
 		<?php endif; ?>
+
 		<input id="submit-msg-add-sbmt" class="button-secondary" type="submit" value="Generate Templates">
 	</form>
 </div> <!-- end #admin-primary-mbox-dv -->

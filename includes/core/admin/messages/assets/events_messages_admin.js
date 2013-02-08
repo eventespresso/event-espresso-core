@@ -6,40 +6,45 @@ jQuery(document).ready(function($) {
 
 	var EE_messages_evt_helper = {
 		
-		parseurl: function(url) {
+		parseurl: function(url, mode) {
+			if ( typeof(mode) === 'undefined' ) mode = 'loose';
+			if ( mode == 'strict' ) {
+				parseUri.options.strictMode = true;
+			}
 			return parseUri(url);
 		},
 
 		get_template_content: function(selected, type) {
-			//if type is form let's setit up for with a dummy url for the parser.
-			var url = type == 'form' ? 'http://dummywebsite.com/?' + $(selected).serialize() : $(selected).attr('href');
+			//if type is form then we use serializeFullArray
+			var queryparts = type == 'form' ? $(selected).serializeFullArray() : this.parseurl($(selected).attr('href'));
 
-			var query_parts = this.parseurl(url);
+			queryobj = type != 'form' ? queryparts.queryKey : queryparts;
 
 
 			//lets reset and add a couple of new vars to the queryKey object
-			query_parts.queryKey.route = query_parts.queryKey.action !== 'undefined' ? query_parts.queryKey.action : '';
-			query_parts.queryKey.action = 'ee_msgs_switch_template';
-			query_parts.queryKey.page = 'events';
+			queryobj.route = queryobj.action !== 'undefined' ? queryobj.action : '';
+			queryobj.action = 'ee_msgs_switch_template';
+			queryobj.page = 'events';
 
-			//now let's serialize the query_parts.queryKey object to pass via ajax
-			var data = $.param(query_parts.queryKey);
 			
 		
 			$('.ajax-loader-grey').toggle().show();
 			//do post
-			$.post( ajaxurl, data,
+			$.post( ajaxurl, queryobj,
 				function( response ) {
 					console.log(response);
 					var resp = $.parseJSON(response);
+					if ( typeof(resp.data.where) === 'undefined' ) resp.data.where = 'dialog';
+					if ( typeof(resp.data.what) === 'undefined' ) resp.data.what = 'clear';
 					if ( resp.error ) {
-						EE_messages_evt_helper.display_content(resp.error);
+						EE_messages_evt_helper.display_notices(resp.notices, resp.data.where);
+						EE_messages_evt_helper.display_content(resp.error, resp.data.where, resp.data.what);
 					} else {
-						EE_messages_evt_helper.display_content(resp.content);
-						if ( resp.data.close ) {
-							dialog.fadeOut( 'fast' );
-							overlay.fadeOut( 'fast' );
-						}
+						EE_messages_evt_helper.display_notices(resp.notices, resp.data.where);
+						EE_messages_evt_helper.display_content(resp.content, resp.data.where, resp.data.what);
+					}
+					if ( resp.data.close ) {
+						EE_messages_evt_helper.close_modal();
 					}
 				}
 			);
@@ -51,17 +56,54 @@ jQuery(document).ready(function($) {
 			position_dialog();
 			this.get_template_content(selected);
 			overlay.on('click', function() {
-				dialog.fadeOut( 'fast' );
-				overlay.fadeOut( 'fast' );
+				EE_messages_evt_helper.close_modal();
 				$('.messages-change-edit-templates-content').html('');
 			});
 		},
 
-		display_content: function(content) {
-			var content_div = $('.messages-change-edit-templates-content');
+
+		close_modal: function() {
+			dialog.fadeOut( 'fast' );
+			overlay.fadeOut( 'fast' );
+		},
+
+
+		display_notices: function(content, where, what) {
+			if ( typeof(where) === 'undefined' ) where = 'dialog';
+			if ( typeof(clear) === 'undefined' ) what = 'clear';
+			this.display_content(content, where, what, 'notices');
+		},
+
+		/**
+		 * displays the content retrieved from ajax
+		 * @param  {string} content the content to display
+		 * @param  {string} where   where to show ('dialog', 'main') : default = dialog
+		 * @param  {string} what    what to do with existing content in the target container ('clear', 'append', 'prepend')
+		 * @param {string} type content or notices ('content', 'notices') : default = content;
+		 * @return {void}
+		 */
+		display_content: function(content, where, what, type) {
+			if ( typeof(where) === 'undefined' ) where = 'dialog';
+			if ( typeof(clear) === 'undefined' ) what = 'clear';
+			if ( typeof(type) === 'undefined' ) type = 'content';
+
+			//if content is empty let's get out
+			if ( ( content === '' || typeof(content) === 'undefined' ) && type != 'notices' )
+				return;
+			
+			var main_container = type == 'content' ? $('.inside', '#edit_event_events_Messages_Hooks_metabox') : $('.ee-notices', '#edit_event_events_Messages_Hooks_metabox');
+			var dialog_container = type == 'content' ? $('.messages-change-edit-templates-content') : $('.ee-notices', '.messages-change-edit-templates-content');
+			var content_div = where == 'main' ? main_container : dialog_container;
+
 			$('.ajax-loader-grey').toggle().hide();
-			content_div.html('');
-			content_div.html(content);
+			if ( what == 'clear' ) {
+				content_div.html('');
+				content_div.html(content);
+			} else if ( what == 'append' ) {
+				content_div.append(content);
+			} else if ( what == 'prepend' ) {
+				content_div.prepend(content);
+			}
 		}
 	};
 

@@ -111,6 +111,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//set the _req_data property.
 		$this->_req_data = array_merge( $_GET, $_POST );
 
+
 		//routing enabled?
 		$this->_routing = $routing;
 		
@@ -124,6 +125,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_page_setup();
 
 	}
+
 
 
 	
@@ -930,10 +932,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//script for parsing uri's
 		wp_register_script( 'ee-parse-uri', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/parseuri.js', array(), EVENT_ESPRESSO_VERSION, TRUE );
+		
+		//and parsing associative serialized form elements
+		wp_register_script( 'ee-serialize-full-array', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.serializefullarray.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 
 
-//		$ajax_table_sorting_i18n = array();
-//		wp_localize_script( 'espresso_ajax_table_sorting', 'EEi18n', $ajax_table_sorting_i18n );
+		//$ajax_table_sorting_i18n = array();
+		//wp_localize_script( 'espresso_ajax_table_sorting', 'EEi18n', $ajax_table_sorting_i18n );
 
 		//helpers scripts
 		wp_register_script('ee-text-links', EVENT_ESPRESSO_PLUGINFULLURL . 'helpers/assets/ee_text_list_helper.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
@@ -1914,9 +1919,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		// check if we're doing ajax.  If we are then lets just return the results and js can handle how it wants.
 		if ( defined('DOING_AJAX' ) ) {
+			$default_data = array(
+				'close' => TRUE,
+				'redirect_url' => $redirect_url,
+				'where' => 'main',
+				'what' => 'append',
+				);
+
 			$this->_template_args['success'] = $success;
 			$this->_template_args['notices'] = $notices;
-			$this->_template_args['data'] = array( 'close' => TRUE, 'redirect_url' => $redirect_url );
+			$this->_template_args['data'] = !empty($this->_template_args['data']) ? array_merge($default_data, $this->_template_args['data'] ): $default_data;
 			$this->_return_json();
 		}
 

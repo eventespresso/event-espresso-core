@@ -3957,6 +3957,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 			'event_id' => $this->_req_data['EVT_ID'],
 			);
 		$this->_req_data = array_merge( $this->_req_data, $new_request_args);
+
+		
 		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php')) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
 			$EE_Export = EE_Export::instance();

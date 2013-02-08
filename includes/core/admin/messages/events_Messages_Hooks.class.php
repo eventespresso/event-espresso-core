@@ -55,7 +55,7 @@ class events_Messages_Hooks extends EE_Admin_Hooks {
 			'registers' => array(
 				'events_msg_admin' => array(
 					'url' => EE_MSG_ASSETS_URL . 'events_messages_admin.js',
-					'depends' => array('jquery', 'ee-parse-uri')
+					'depends' => array('jquery', 'ee-parse-uri', 'ee-serialize-full-array')
 					),
 				'events_msg_admin_css' => array(
 					'url' => EE_MSG_ASSETS_URL . 'ee_msg_events_admin.css',
@@ -105,9 +105,10 @@ class events_Messages_Hooks extends EE_Admin_Hooks {
 		if ( is_wp_error($tabbed_content) ) {
 			$tabbed_content = $tabbed_content->get_error_message();
 		}
-		
-		echo $tabbed_content;
 
+		$notices = '<div class="ee-notices"></div>';
+
+		echo $notices . $tabbed_content;
 		
 	}
 
@@ -133,6 +134,8 @@ class events_Messages_Hooks extends EE_Admin_Hooks {
 		$d_cont .= '<div class="ajax-loader-grey"></div>';	
 		$d_cont .= '<div class="messages-change-edit-templates-content"></div>';		
 		$d_cont .= '</div>';
-		echo $d_cont;
+
+		$notices = '<div class="ee-notices"></div>';
+		echo $notices . $d_cont;
 	}
 }

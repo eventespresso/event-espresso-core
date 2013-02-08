@@ -408,16 +408,32 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['learn_more_about_message_templates_link'] = $this->_learn_more_about_message_templates_link();
 		$this->_template_args['action_message'] = __('Before we generate the new templates we need to ask you what messenger and message type you want the templates for');
 
+		$hidden_inputs['ee-msg-route'] = array(
+				'name' => 'action',
+				'input' => 'hidden',
+				'type' => 'string',
+				'value' => 'insert_message_template'
+				);
+
+		$hidden_inputs['ee-msg-evt-nonce'] = array(
+			'name' => '_wpnonce',
+			'input' => 'hidden',
+			'type' => 'string',
+			'value' => wp_create_nonce( 'insert_message_template' . '_nonce')
+			);
+
+		$this->_template_args['hidden_fields'] = $this->_generate_admin_form_fields( $hidden_inputs );
+
 
 		//generate metabox	
 		$this->_template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_add_meta_box.template.php';
-		$this->_add_admin_page_meta_box( 'insert_message_template', __('Add New Message Templates', 'event_espresso'), __FUNCTION__, NULL);
 
-		//AJAX?
-		if ( defined('DOING_AJAX') ) {
-			$content = espresso_display_template( $this->_template_path, $this->_template_args, TRUE );
-			return $content;
+		if ( !defined('DOING_AJAX') ) {
+			$this->_add_admin_page_meta_box( 'insert_message_template', __('Add New Message Templates', 'event_espresso'), __FUNCTION__, NULL);
+		} else {
+			$this->_template_args['admin_page_content'] = espresso_display_template( $this->_template_path, $this->_template_args, TRUE );
 		}
+
 
 		//final template wrapper
 		$this->display_admin_page_with_sidebar();
@@ -963,10 +979,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		} else {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
 			$MTP = EEM_Message_Template::instance();
+
 			
 			//run update for each template field in displayed context
 			if ( !isset($this->_req_data['MTP_template_fields']) && empty($this->_req_data['MTP_template_fields'] ) ) {
-				EE_Error::add_error( __('There was a problem saving the template fields from the form becuase I didn\'t receive any actual template field data.', 'even_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error( __('There was a problem saving the template fields from the form because I didn\'t receive any actual template field data.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 				$success = 0;
 				$action_desc = '';
 				$query_args = array(
@@ -1207,7 +1224,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		global $wpdb;
 		$evt_id = absint($evt_id);
 		$tablename = $wpdb->prefix . 'events_detail';
-		$query = "SELECT event_name FROM {$table_name} WHERE id = %d";
+		$query = "SELECT event_name FROM {$tablename} WHERE id = %d";
 		$event_name = $wpdb->get_var( $wpdb->prepare($query, $evt_id) );
 		return $event_name;
 	}
