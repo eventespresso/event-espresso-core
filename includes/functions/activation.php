@@ -106,6 +106,8 @@ function espresso_initialize_system_questions() {
 	$SQL = 'SELECT QSG_system_ID FROM ' . $wpdb->prefix . 'esp_question_group WHERE QSG_system_ID != 0';
 	// what we have
 	$question_groups = $wpdb->get_results( $SQL );
+	// check the reponse
+	$question_groups = is_array( $question_groups ) ? $question_groups : array();
 	// what we should have
 	$QSG_system_IDs = array( 1, 2 );
 	// loop thru what we should have and compare to what we have
