@@ -70,10 +70,10 @@ class EE_Form_Fields {
 		foreach ($input_vars as $input_key => $input_value) {
 
 			// required fields get a * 
-			$required = isset($input_value['required']) && $input_value['required'] ? ' <span>*</span>: ' : ': ';
+			$required['label'] = isset($input_value['required']) && $input_value['required'] ? ' <span>*</span>: ' : ': ';
 			// and the css class "required"
 			$css_class = isset( $input_value['css_class'] ) ? $input_value['css_class'] : '';
-			$styles = $input_value['required']? 'required ' . $css_class : $css_class;
+			$required['class'] = $input_value['required']? 'required ' : '';
 			$field_id = ($id) ? $id . '-' . $input_key : $input_key;
 
 			//rows or cols?
@@ -88,14 +88,13 @@ class EE_Form_Fields {
 
 				// text inputs
 				case 'text' :
-					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
-					$output .= "\n\t\t\t" . '<input id="' . $field_id . '" class="' . $styles . '" type="text" value="' . $input_value['value'] . '" name="' . $input_value['name'] . '">';
+					self::text( $input_value['label'], $input_value['value'], $input_value['name'], $field_id, $styles, $required );
 					break;
 
 				// dropdowns
 				case 'select' :
 
-					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
+					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required['label'] . '</label>';
 					$output .= "\n\t\t\t" . '<select id="' . $field_id . '" class="' . $styles . '" name="' . $input_value['name'] . '">';
 
 					if (is_array($input_value['options'])) {
@@ -114,7 +113,7 @@ class EE_Form_Fields {
 
 				case 'textarea' :
 
-					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
+					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required['label'] . '</label>';
 					$output .= "\n\t\t\t" . '<textarea id="' . $field_id . '" class="' . $styles . '" rows="'.$rows.'" cols="'.$cols.'" name="' . $input_value['name'] . '">' . $input_value['value'] . '</textarea>';
 					break;
 
@@ -126,7 +125,7 @@ class EE_Form_Fields {
 
 				case 'checkbox' : 
 					$checked = ( $input_value['value'] == 1 ) ? 'checked="checked"' : '';
-					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
+					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required['label'] . '</label>';
 					$output .= "\n\t\t\t" . '<input id="' . $field_id. '" type="checkbox" name="' . $input_value['name'] . '" value="1"' . $checked . ' />';
 					break; 
 
@@ -292,7 +291,7 @@ class EE_Form_Fields {
 
 
 	/**
-	 * select_input
+	 * espresso admin page select_input
 	 * Turns an array into a select fields
 	 *
 	 * @static
@@ -345,15 +344,312 @@ class EE_Form_Fields {
 
 		return $field;
 	}
-	
+
+
+
+
+
+
+	/**
+	 * generates HTML for a form text input 
+ 	 * 
+	 * @param string $question 		label content
+	 * @param string $answer 		form input value attribute
+	 * @param string $name 			form input name attribute
+	 * @param string $id 				form input css id attribute
+	 * @param string $class 			form input css class attribute
+	 * @param array $required 		'label', 'class', and 'msg' - array of values for required "label" content, css required 'class', and required 'msg' attribute
+	 * @param string $label_class 	css class attribute for the label
+	 * @param string $disabled 		disabled="disabled" or null
+	 * @return string HTML
+	 */
+	static function text( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '' ) {
+		// need these
+		if ( ! $question || ! $name ) {
+			return NULL;
+		}
+		// prep the answer
+		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer );
+		// make sure required is an array
+		$required = is_array( $required ) ? $required : array();
+		// and set some defaults
+		$required = array_merge( array( 'label' => '', 'class' => '', 'title' => '' ), $required );
+		// set disabled tag
+		$disabled = empty( $answer ) ? '' : $disabled;
+		// ya gots ta have style man!!!
+		$class = empty( $class ) ? 'espresso-text-inp' : $class;
+		
+		$html = "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
+		$html .= "\n\t\t\t" . '<input type="text" name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" value="' . $answer . '"  title="' . $required['msg'] . '" ' . $disabled . '/>';
+		
+		return $html;		
+		
+	}
+
+
+
+
+
+
+	/**
+	 * generates HTML for a form textarea 
+ 	 * 
+	 * @param string $question 		label content
+	 * @param string $answer 		form input value attribute
+	 * @param string $name 			form input name attribute
+	 * @param string $id 				form input css id attribute
+	 * @param string $class 			form input css class attribute
+	 * @param array $dimensions	array of form input rows and cols attributes : array( 'rows' => 50, 'cols' => 3 )
+	 * @param array $required 		'label', 'class', and 'msg' - array of values for required "label" content, css required 'class', and required 'msg' attribute
+	 * @param string $label_class 	css class attribute for the label
+	 * @param string $disabled 		disabled="disabled" or null
+	 * @return string HTML
+	 */
+	static function textarea( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $dimensions = FALSE, $required = FALSE, $label_class = '', $disabled = '' ) {
+		// need these
+		if ( ! $question || ! $name ) {
+			return NULL;
+		}
+		// prep the answer
+		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer );
+		// make sure $required is an array
+		$required = is_array( $required ) ? $required : array();
+		// and set some defaults
+		$required = array_merge( array( 'label' => '', 'class' => '', 'title' => '' ), $required );
+		// make sure $dimensions is an array
+		$dimensions = is_array( $dimensions ) ? $dimensions : array();
+		// and set some defaults
+		$dimensions = array_merge( array( 'rows' => 50, 'cols' => 3 ), $dimensions );
+		// set disabled tag
+		$disabled = empty( $answer ) ? '' : $disabled;
+		// ya gots ta have style man!!!
+		$class = empty( $class ) ? 'espresso-textarea-inp' : $class;
+		
+		$html = "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
+		$html .= "\n\t\t\t" . '<textarea name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" rows="' . $dimensions['rows'] . '" cols="' . $dimensions['cols'] . '"  title="' . $required['msg'] . '" ' . $disabled . '/>' . $answer . '</textarea>';
+
+		return $html;		
+		
+	}
+
+
+
+
+
+
+	/**
+	 * generates HTML for a form select input 
+ 	 * 
+	 * @param string $question 		label content
+	 * @param string $answer 		form input value attribute
+	 * @param array $values 			array of options where array key = option value and array value = option display text
+	 * @param string $name 			form input name attribute
+	 * @param string $id 				form input css id attribute
+	 * @param string $class 			form input css class attribute
+	 * @param array $required 		'label', 'class', and 'msg' - array of values for required "label" content, css required 'class', and required 'msg' attribute
+	 * @param string $label_class 	css class attribute for the label
+	 * @param string $disabled 		disabled="disabled" or null
+	 * @return string HTML
+	 */
+	static function select( $question = FALSE, $answer = '', $values = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '' ) {
+		// need these
+		if ( ! $question || ! $name || ! $values || empty( $values ) || ! is_array( $values )) {
+			return NULL;
+		}
+		// prep the answer
+		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer );
+		// make sure $required is an array
+		$required = is_array( $required ) ? $required : array();
+		// and set some defaults
+		$required = array_merge( array( 'label' => '', 'class' => '', 'title' => '' ), $required );
+		// set disabled tag
+		$disabled = empty( $answer ) ? '' : $disabled;
+		// ya gots ta have style man!!!
+		$class = empty( $class ) ? 'espresso-select-inp' : $class;
+		
+		$html = "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
+		$html .= "\n\t\t\t" . '<select name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" title="' . $required['msg'] . '" ' . $disabled . '/>';
+		$html .= "\n\t\t\t\t" . '<option value="">' . __(' - please select - ', 'event_espresso') . '</option>';
+
+		foreach ( $values as $key => $value ) {		
+			$value = self::prep_answer( $value );
+			$selected = ( $value == $answer ) ? ' selected="selected"' : "";
+			$html .= "\n\t\t\t\t" . '<option value="' . self::prep_option_value( $key ) . '"' . $selected . '> ' . $value . '</option>';					
+		}
+
+		$html .= "\n\t\t\t" . '</select>';
+			
+		return $html;		
+		
+	}
+
+
+
+
+
+
+	/**
+	 * generates HTML for form radio button inputs 
+ 	 * 
+	 * @param string $question 		label content
+	 * @param string $answer 		form input value attribute
+	 * @param array $values 			array of options where array key = option value and array value = option display text
+	 * @param string $name 			form input name attribute
+	 * @param string $id 				form input css id attribute
+	 * @param string $class 			form input css class attribute
+	 * @param array $required 		'label', 'class', and 'msg' - array of values for required "label" content, css required 'class', and required 'msg' attribute
+	 * @param string $label_class 	css class attribute for the label
+	 * @param string $disabled 		disabled="disabled" or null
+	 * @return string HTML
+	 */
+	static function radio_button( $question = FALSE, $answer = '', $values = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $label_b4 = FALSE ) {
+		// need these
+		if ( ! $question || ! $name || ! $values || empty( $values ) || ! is_array( $values )) {
+			return NULL;
+		}
+		// prep the answer
+		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer );
+		// make sure $required is an array
+		$required = is_array( $required ) ? $required : array();
+		// and set some defaults
+		$required = array_merge( array( 'label' => '', 'class' => '', 'title' => '' ), $required );
+		// set disabled tag
+		$disabled = empty( $answer ) ? '' : $disabled;
+		// ya gots ta have style man!!!
+		$class = empty( $class ) ? 'espresso-radio-btn-inp' : $class;
+		
+		$html = "\n\t\t\t" . '<label class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
+		$html .= "\n\t\t\t" . '<ul class="espresso-radio-btn-options-ul ' . $label_class . '">';
+		
+		foreach ( $values as $key => $value ) {
+
+			$checked = ( $value == $answer ) ? ' checked="checked"' : "";
+			$key = self::prep_option_value( $key );
+			$value = self::prep_answer( $value );
+
+			$html .= "\n\t\t\t\t" . '<li>';
+			$html .= "\n\t\t\t\t\t" . '<label for="' . $name . '_' . $key . '" class="' . $label_class . ' espresso-radio-btn-lbl">';
+			$html .= $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';
+			$html .= "\n\t\t\t\t\t\t" . '<input type="radio" name="' . $name . '" id="' . $id . '_' . $key . '" class="' . $class . ' ' . $required['class'] . '" value="' . $key . '" title="' . $required['msg'] . '" ' . $disabled . $checked . ' />';
+			$html .= ! $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';
+ 			$html .= "\n\t\t\t\t\t" . '</label>';
+			$html .= "\n\t\t\t\t" . '</li>';
+
+		}
+
+		$html .= "\n\t\t\t" . '</ul>';
+		return $html;
+
+	}
+
+
+
+
+
+
+	/**
+	 * generates HTML for form checkbox inputs 
+ 	 * 
+	 * @param string $question 		label content
+	 * @param string $answer 		form input value attribute
+	 * @param array $values 			array of options where array key = option value and array value = option display text
+	 * @param string $name 			form input name attribute
+	 * @param string $id 				form input css id attribute
+	 * @param string $class 			form input css class attribute
+	 * @param array $required 		'label', 'class', and 'msg' - array of values for required "label" content, css required 'class', and required 'msg' attribute
+	 * @param string $label_class 	css class attribute for the label
+	 * @param string $disabled 		disabled="disabled" or null
+	 * @return string HTML
+	 */
+	static function checkbox( $question = FALSE, $answer = '', $values = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $label_b4 = FALSE ) {
+		// need these
+		if ( ! $question || ! $name || ! $values || empty( $values ) || ! is_array( $values )) {
+			return NULL;
+		}
+		// prep the answer
+		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer );
+		// make sure $required is an array
+		$required = is_array( $required ) ? $required : array();
+		// and set some defaults
+		$required = array_merge( array( 'label' => '', 'class' => '', 'title' => '' ), $required );
+		// set disabled tag
+		$disabled = empty( $answer ) ? '' : $disabled;
+		// ya gots ta have style man!!!
+		$class = empty( $class ) ? 'espresso-radio-btn-inp' : $class;
+		
+		$html = "\n\t\t\t" . '<label class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
+		$html .= "\n\t\t\t" . '<ul class="espresso-radio-btn-options-ul ' . $label_class . '">';
+		
+		foreach ( $values as $key => $value ) {
+
+			$checked = ( $value == $answer ) ? ' checked="checked"' : "";
+			$key = self::prep_option_value( $key );
+			$value = self::prep_answer( $value );
+
+			$html .= "\n\t\t\t\t" . '<li>';
+			$html .= "\n\t\t\t\t\t" . '<label for="' . $name . '_' . $key . '" class="' . $label_class . ' espresso-radio-btn-lbl">';
+			$html .= $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';
+			$html .= "\n\t\t\t\t\t\t" . '<input type="radio" name="' . $name . '" id="' . $id . '_' . $key . '" class="' . $class . ' ' . $required['class'] . '" value="' . $key . '" title="' . $required['msg'] . '" ' . $disabled . $checked . ' />';
+			$html .= ! $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';
+ 			$html .= "\n\t\t\t\t\t" . '</label>';
+			$html .= "\n\t\t\t\t" . '</li>';
+
+		}
+
+		$html .= "\n\t\t\t" . '</ul>';
+		return $html;
+
+	}
+
+
+
+
+
+
 	/**
 	 * Simply return sthe HTML for a hidden input of the given name and value.
 	 * @param string $name
 	 * @param string $value
 	 * @return string HTML
 	 */
-	static function hidden_input($name,$value){
-		return "<input type='hidden' name='$name' value='$value'/>";
+	static function hidden_input( $name, $value ){
+		return '<input type="hidden" name="'.$name.'" value="'.$value.'"/>';
+	}
+
+
+
+
+
+	/**
+	 * prep_question
+	 * @param string $question
+	 * @return string 
+	 */
+	static function prep_question( $question ){
+		return htmlspecialchars( trim( stripslashes( str_replace( '&#039;', "'", $question ))), ENT_QUOTES, 'UTF-8' );
+	}
+
+
+
+
+	/**
+	 * prep_answer
+	 * @param string $answer
+	 * @return string 
+	 */
+	static function prep_answer( $answer ){
+		return htmlspecialchars( trim( stripslashes( $answer )), ENT_QUOTES, 'UTF-8' );
+	}
+
+
+
+	/**
+	 * prep_option_value
+	 * @param string $option_value
+	 * @return string 
+	 */
+	static function prep_option_value( $option_value ){
+		return trim( stripslashes( str_replace( '&#039;', "'", $option_value )));
 	}
 
 
