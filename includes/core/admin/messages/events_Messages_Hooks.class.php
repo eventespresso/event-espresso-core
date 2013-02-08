@@ -85,7 +85,12 @@ class events_Messages_Hooks extends EE_Admin_Hooks {
 				EE_MSG_ADMIN_URL ), 'activate_nonce' );
 			$error_msg = sprintf( __('There are no active messengers. So no notifications will NOT go out for <strong>any</strong> events.  You will want to %sActivate a Messenger%s.', 'event_espresso'), '<a href="' . $msg_activate_url . '">', '</a>');
 			$error_content = '<div class="error"><p>' . $error_msg . '</p></div>';
-			$internal_content = '<div id="messages-error"><p>' . $error_msg . '</p></div>'; 
+			$internal_content = '<div id="messages-error"><p>' . $error_msg . '</p></div>';
+
+
+			if ( defined('DOING_AJAX') )
+				return $error_content . $intenral_content;
+
 			echo $error_content;
 			echo $internal_content;
 			return;
@@ -106,7 +111,10 @@ class events_Messages_Hooks extends EE_Admin_Hooks {
 			$tabbed_content = $tabbed_content->get_error_message();
 		}
 
-		$notices = '<div class="ee-notices"></div>';
+		$notices = '<div class="ee-notices"><div class="ajax-loader-grey"></div></div>';
+
+		if ( defined('DOING_AJAX' ) )
+			return $tabbed_content;
 
 		echo $notices . $tabbed_content;
 		

@@ -1009,7 +1009,37 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		}
 
+		if ( defined('DOING_AJAX') && $new ) {
+			$this->req_data = array_merge($this->_req_data, $query_args);
+			$this->_edit_message_template();
+			$this->_req_data['template_switch'] = TRUE;
+		}
+
+		if ( defined('DOING_AJAX') ) {
+			$this->_check_template_switch();
+		}
+
 		$this->_redirect_after_action( $success, $item_desc, $action_desc, $query_args );
+	}
+
+
+
+
+
+	/**
+	 * This ajax method is called during ajax requests and checks to see if a template switch has been triggered (via edit_event notifications meta box.  If it has then we want to regenerate the switching ui to reflect the change and assign that to the 'admin_page_content' template arg key
+	 *
+	 * 
+	 * @return void 
+	 */
+	private function _check_template_switch() {
+		if ( defined('DOING_AJAX') && isset($this->_req_data['template_switch']) && $this->_req_data['template_switch'] ) {
+			if ( isset($this->_req_data['evt_id'] ) && !isset($this->_req_data['EVT_ID']) )
+				$this->_req_data['EVT_ID'] = $this->_req_data['evt_id'];
+			$this->_template_args['admin_page_content'] = $this->_hook_obj->messages_metabox('', array());
+			$this->_template_args['data']['what'] = 'clear';
+			$this->_template_args['data']['where'] = 'main';
+		}
 	}
 
 
@@ -1146,6 +1176,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$action_desc = $trash ? 'moved to the trash' : 'restored';
 		$item_desc = $all ? 'Message Template Group' : 'Message Template Context';
+
+		if ( defined('DOING_AJAX') ) {
+			$this->_check_template_switch();
+		}
+		
 		$this->_redirect_after_action( $success, $item_desc, $action_desc, array() );
 	
 	}
