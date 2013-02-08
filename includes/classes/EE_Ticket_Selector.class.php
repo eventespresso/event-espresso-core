@@ -133,9 +133,12 @@ class EE_Ticket_Selector extends EE_BASE {
 		$template_args['multiple_price_options'] = count($template_args['prices']) > 1 ? TRUE : FALSE;
 		//echo printr($this->_event->prices, 'event->prices <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
 		
-		$template_args['meta_keys'] = empty($this->_event->meta_keys) ? array() : $this->_event->meta_keys;
-		array_walk_recursive( $this->_event->meta_values, array( $this, '_apply_htmlentities' ));
-		$template_args['meta_values'] = empty($this->_event->meta_values) ? array() : $this->_event->meta_values;
+//		printr( $this->_event, '$this->_event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		$event_meta = serialize ( empty($this->_event->meta) ? array() : $this->_event->meta );
+		$event_meta = htmlentities( $event_meta, ENT_QUOTES, 'UTF-8' );
+//		array_walk_recursive( $this->_event->meta, array( $this, '_apply_htmlentities' ));
+		$template_args['event_meta'] = $event_meta;
+//		printr( $template_args['event_meta'], 'event_meta  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		$template_args['currency_symbol'] = $this->_event->currency_symbol;
 		
@@ -343,13 +346,15 @@ class EE_Ticket_Selector extends EE_BASE {
 								'price_id' => $valid['price_id'][$x],
 								'price_obj' => $valid['price_obj'][$x],
 								'qty' => $valid['qty'][$x],
-								'meta_keys' => $valid['meta_keys'],
-								'meta_values' => $valid['meta_values'],
+//								'meta_keys' => $valid['meta_keys'],
+//								'meta_values' => $valid['meta_values'],
+								
 								'options' => array(
 										'date' => $valid['date'][$x],
 										'time' => $valid['time'][$x],
 										'dtt_id' => $valid['dtt_id'][$x],
 										'price_desc' => $valid['price_desc'][$x],
+										'event_meta' => $valid['event_meta'],
 										'pre_approval' => $valid['pre_approval']
 								)
 						);
@@ -451,8 +456,9 @@ class EE_Ticket_Selector extends EE_BASE {
 					'time' => 'tkt-slctr-time-',
 					'price_desc' => 'tkt-slctr-price-desc-',
 					'price_obj' => 'tkt-slctr-price-obj-',
-					'meta_keys' => 'tkt-slctr-meta-keys-',
-					'meta_values' => 'tkt-slctr-meta-values-',
+					'event_meta' => 'tkt-slctr-event-meta-',
+//					'meta_keys' => 'tkt-slctr-meta-keys-',
+//					'meta_values' => 'tkt-slctr-meta-values-',
 					'pre_approval' => 'tkt-slctr-pre-approval-'
 			);
 			// let's track the total number of tickets ordered.'
@@ -531,6 +537,9 @@ class EE_Ticket_Selector extends EE_BASE {
 					case 'name':
 						// allow only numbers, letters,  spaces, commas and dashes
 						$valid_data[$what] = sanitize_text_field( $_POST[$input_to_clean . $id] );
+						break;
+					case 'event_meta':
+						$valid_data[$what] = $_POST[$input_to_clean . $id];
 						break;
 
 					// arrays of string
@@ -622,8 +631,9 @@ class EE_Ticket_Selector extends EE_BASE {
 				'price_obj' => $event['price_obj'],
 				'qty' => $event['qty'],
 				'options' => $event['options'],
-				'meta_keys' => $event['meta_keys'],
-				'meta_values' => $event['meta_values']
+//				'meta_keys' => $event['meta_keys'],
+//				'meta_values' => $event['meta_values']
+//				'event_meta' => $event['event_meta']
 		);
 
 		// get the number of spaces left for this event
