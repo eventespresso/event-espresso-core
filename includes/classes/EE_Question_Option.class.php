@@ -33,20 +33,20 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	protected $_QSO_ID=FALSE;
 	
 	/**
-	 * Question Option Name
+	 * Question Option key value
 	 * 
 	 * @access protected
 	 * @var string
 	 */
-	protected $_QSO_name=FALSE;
+	protected $_QSO_value=FALSE;
 	
 	/**
-	 * Question Option Value
+	 * Question Option Display Text
 	 * 
 	 * @access protected
 	 * @var int
 	 */
-	protected $_QSO_value=FALSE;
+	protected $_QSO_text=FALSE;
 	
 	/**
 	 * Question ID
@@ -73,14 +73,14 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * Constructor
-	 * @param string/array $QSO_name OR an array of all field values, where keys match these arguments' names
-	 * @param string $QSO_value
+	 * @param string/array $QSO_value OR an array of all fields' display text, where keys match these arguments' values
+	 * @param string $
 	 * @param int $QST_ID
 	 */
-	public function __construct($QSO_name=null, $QSO_value=null, $QST_ID=null) {
+	public function __construct($QSO_value=null, $QSO_text=null, $QST_ID=null) {
 		//if the first parameter is an array, assume it's an array of key-value pairs for this object
-		if(is_array($QSO_name)){
-			parent::__construct($QSO_name);
+		if(is_array($QSO_value)){
+			parent::__construct($QSO_value);
 			return;
 		}
 		$reflector = new ReflectionMethod($this,'__construct');	
@@ -93,20 +93,20 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	}
 	
 	/**
-	 * Sets the option's name
-	 * @param strig $name
-	 * @return bool success
-	 */
-	public function set_name($name){
-		return $this->set('QSO_name',$name);
-	}
-	/**
-	 * Sets the option's value
-	 * @param string $value
+	 * Sets the option's key value
+	 * @param strig $value
 	 * @return bool success
 	 */
 	public function set_value($value){
 		return $this->set('QSO_value',$value);
+	}
+	/**
+	 * Sets the option's Display Text 
+	 * @param string $text
+	 * @return bool success
+	 */
+	public function set_text($text){
+		return $this->set('QSO_text',$text);
 	}
 	/**
 	 * Sets the ID of the related questino
@@ -118,19 +118,21 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	}
 	
 	/**
-	 * Gets teh option's name (usually used for displaying)
-	 * @return string
-	 */
-	public function name(){
-		return $this->get('QSO_name');
-	}
-	/**
-	 * Gets the option's value (usually used internally)
+	 * Gets the option's key value
 	 * @return string
 	 */
 	public function value(){
 		return $this->get('QSO_value');
 	}
+
+	/**
+	 * Gets the option's display text
+	 * @return string
+	 */
+	public function text(){
+		return $this->get('QSO_text');
+	}
+
 	/**
 	 * Returns whether this option has been deleted or not
 	 * @return boolean
