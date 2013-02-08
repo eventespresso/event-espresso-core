@@ -120,8 +120,13 @@ class events_Messages_Hooks extends EE_Admin_Hooks {
 	 * @return string either an html string will be returned or a success message
 	 */
 	public function switch_template() {
-		//let's route according to the sent page route
+		//set EE_Admin_Page object (see method details in EE_Admin_Hooks parent
 		$this->_set_page_object();
+
+		//is this a template switch if so EE_Admin_Page child needs this object
+		$this->_page_object->set_hook_object( $this );
+
+		//let's route according to the sent page route
 		$this->_page_object->route_admin_request();
 	}
 

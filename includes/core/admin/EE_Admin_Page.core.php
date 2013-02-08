@@ -85,6 +85,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	//for holding current screen object provided by WP
 	protected $_current_screen;
 
+	//for holding EE_Admin_Hooks object when needed (set via set_hook_object())
+	protected $_hook_obj;
+
 	//for holding incoming request data
 	protected $_req_data;
 
@@ -1694,6 +1697,20 @@ abstract class EE_Admin_Page extends EE_BASE {
 		exit();
 	}
 
+
+
+
+	/**
+	 * This provides a way for child hook classes to send along themselves by reference so methods/properties within them can be accessed by EE_Admin_child pages. This is assigned to the $_hook_obj property.
+	 * 
+	 * @param EE_Admin_Hooks object $hook_obj This will be the object for the EE_Admin_Hooks child
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function set_hook_object( EE_Admin_Hooks $hook_obj ) {
+		$this->_hook_obj = $hook_obj;
+	}
 
 
 
