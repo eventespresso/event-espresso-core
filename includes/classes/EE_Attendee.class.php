@@ -195,6 +195,9 @@ class EE_Attendee extends EE_Base_Class{
 	* @param 		int 					$ATT_ID 						Attendee ID
 	*/
 	public function __construct( $ATT_fname='', $ATT_lname='', $ATT_address=NULL, $ATT_address2=NULL, $ATT_city=NULL, $STA_ID=NULL, $CNT_ISO=NULL, $ATT_zip=NULL, $ATT_email=NULL, $ATT_phone=NULL, $ATT_social=NULL, $ATT_comments=NULL, $ATT_notes=NULL, $ATT_deleted=FALSE,$ATT_ID=FALSE ) {
+		/* @todo consolidate this logic by using constructor like EE_Answer, and ensuring each of EEM_Attendee's _field_settings has a type that performs the logic
+		 * of removing html tags, encoding htmlentities, etc.
+		 */
 		$this->_ATT_ID 					= absint( $ATT_ID );
 		$this->_ATT_fname 			= 	htmlentities( wp_strip_all_tags( $ATT_fname ), ENT_QUOTES, 'UTF-8' ); 
 		$this->_ATT_lname 			= htmlentities( wp_strip_all_tags( $ATT_lname ), ENT_QUOTES, 'UTF-8' );

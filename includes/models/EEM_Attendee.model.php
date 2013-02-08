@@ -23,7 +23,7 @@
  */
 require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 
-class EEM_Attendee extends EEM_TempBase {
+class EEM_Attendee extends EEM_Soft_Delete_Base {
 
   	// private instance of the Attendee object
 	private static $_instance = NULL;
@@ -59,8 +59,6 @@ class EEM_Attendee extends EEM_TempBase {
 			);
 		$this->_related_models=array(
 								'Registrations'=>new EE_Model_Relation('belongsTo', 'Registration', 'ATT_ID'));
-		$this->table_name = $this->_get_table_data_types();
-		$this->table_data_types = $this->_get_table_data_types;
 		parent::__construct();
 		
 	}

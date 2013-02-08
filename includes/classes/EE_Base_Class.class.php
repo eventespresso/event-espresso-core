@@ -137,7 +137,7 @@ abstract class EE_Base_Class {
 	/**
 	 * Sets the class attribute by the specified name to the value.
 	 * Uses the _fieldSettings attribute to 
-	 * @param string $attributeName
+	 * @param string $attributeName, as it appears on teh DB column (no _ prefix)
 	 * @param mixed $value
 	 * @param boolean $useDefault if $value is null and $useDefault is true, retrieve a default value from the EEM_TempBase's EE_Model_Field.
 	 * @return null
@@ -432,6 +432,7 @@ abstract class EE_Base_Class {
 			return $success;
 		}
 	}
+	
 	/**
 	 * Removes a relationship to the psecified EE_Base_Class object, given the relationships' name. Eg, if the curren tmodel is related
 	 * to a group of events, the $relationName should be 'Events', and should be a key in the EE Model's $_model_relations array

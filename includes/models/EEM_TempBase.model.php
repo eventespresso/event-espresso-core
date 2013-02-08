@@ -30,11 +30,12 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * EE_Answer (the class for EEM_Answer) has an attribute $_Question, which is used for storing the EE_Question array once it is requested.
 	 */
 	protected function __construct() {
-		$this->table_name=$this->_get_table_name();
-		$this->table_data_types=$this->_get_table_data_types();
+		
 		$className=get_class($this);
 		$this->_fields_settings=apply_filters("filter_hook_espresso__{$className}__field_settings",$this->_fields_settings);
 		$this->_related_models=apply_filters("filter_hook_espresso__{$className}__related_models",$this->_related_models);
+		$this->table_name=$this->_get_table_name();
+		$this->table_data_types=$this->_get_table_data_types();
 	}
 	/**
 	 * 
@@ -311,9 +312,10 @@ abstract class EEM_TempBase extends EEM_Base{
 		/* @var $relatedModel EEM_TempBase*/
 		switch($relatedModelInfo->type()){
 			case 'belongsTo':
-				$foreign_key=$relatedModelInfo->field_name();
-				if(!array_key_exists($relatedModel->primary_key_name(), $where_col_n_values)){
-					$where_col_n_values[$relatedModel->primary_key_name()]=$modelObject->get($foreign_key);
+				$foreign_key_name=$relatedModelInfo->field_name();
+				$related_model_pk_name=$relatedModel->primary_key_name();
+				if(!is_array($where_col_n_values) || !array_key_exists($related_model_pk_name, $where_col_n_values)){
+					$where_col_n_values[$related_model_pk_name]=$modelObject->get($foreign_key_name);
 				}
 				$relatedObjects=$relatedModel->get_all_where($where_col_n_values,$orderby,$order,$operators,$limit,$output);
 				//$relatedObjects=$relatedModel->_create_objects(array($row,));
@@ -324,7 +326,7 @@ abstract class EEM_TempBase extends EEM_Base{
 					break;
 				}
 				$foreignKeyOnOtherModel=$relatedModelInfo->field_name();
-				if(!array_key_exists($foreignKeyOnOtherModel, $where_col_n_values)){
+				if(!is_array( $where_col_n_values) || !array_key_exists($foreignKeyOnOtherModel, $where_col_n_values )){
 					$where_col_n_values[$foreignKeyOnOtherModel]=$modelObject->ID();
 				}
 				$relatedObjects=$relatedModel->get_all_where($where_col_n_values,$orderby,$order,$operators,$limit,$output);
@@ -341,7 +343,7 @@ abstract class EEM_TempBase extends EEM_Base{
 				$joinSQL="$joinTable LEFT JOIN $otherTableName ON $joinTable.$otherTablePK=$otherTableName.$otherTablePK ";
 				//$rows=$;
 				$thisTablePK=$this->primary_key_name();
-				if(!array_key_exists($thisTablePK,$where_col_n_values)){
+				if( !is_array($where_col_n_values) || !array_key_exists($thisTablePK,$where_col_n_values )){
 					$where_col_n_values[$thisTablePK]=$modelObject->ID();
 				}
 				$rows=$relatedModel->select_all_join_where($joinSQL,
@@ -693,6 +695,7 @@ abstract class EEM_TempBase extends EEM_Base{
 			throw new EE_Error(sprintf(__("Method %s on model %s does not exist! You can create one with the following code in functions.php or in a plugin: add_filter('%s','my_callback',10,3);function my_callback(\$previousReturnValue,EEM_TempBase \$object\$argsArray=null){/*function body*/return \$whatever;}","event_espresso"),
 										$methodName,$className,$tagName));
 		}
+		
 		return apply_filters($tagName,null,$this,$args);
 	}
 }
