@@ -312,7 +312,9 @@ abstract class EEM_TempBase extends EEM_Base{
 		switch($relatedModelInfo->type()){
 			case 'belongsTo':
 				$foreign_key=$relatedModelInfo->field_name();
-				$where_col_n_values[$relatedModel->primary_key_name()]=$modelObject->get($foreign_key);
+				if(!array_key_exists($relatedModel->primary_key_name(), $where_col_n_values)){
+					$where_col_n_values[$relatedModel->primary_key_name()]=$modelObject->get($foreign_key);
+				}
 				$relatedObjects=$relatedModel->get_all_where($where_col_n_values,$orderby,$order,$operators,$limit,$output);
 				//$relatedObjects=$relatedModel->_create_objects(array($row,));
 				break;
@@ -339,7 +341,9 @@ abstract class EEM_TempBase extends EEM_Base{
 				$joinSQL="$joinTable LEFT JOIN $otherTableName ON $joinTable.$otherTablePK=$otherTableName.$otherTablePK ";
 				//$rows=$;
 				$thisTablePK=$this->primary_key_name();
-				$where_col_n_values[$thisTablePK]=$modelObject->ID();
+				if(!array_key_exists($thisTablePK,$where_col_n_values)){
+					$where_col_n_values[$thisTablePK]=$modelObject->ID();
+				}
 				$rows=$relatedModel->select_all_join_where($joinSQL,
 													$this->_get_table_data_types_for($relatedModelInfo->join_table(), $relatedModelInfo->join_table_fields()), 
 													$where_col_n_values,
@@ -626,6 +630,42 @@ abstract class EEM_TempBase extends EEM_Base{
 	}
 	
 	/**
+	 * Takes an array of EE_Base_Class, and preloads the related model objects of 
+	 * type $relation_name. Eg, if you have a list of EE_Answers, and call this function
+	 * passing it the string 'Question' and that list of EE_Answers, this function
+	 * will load each object's related question and save it on each answer, then
+	 * return the updated list of EE_Answers.
+	 * This function is only useful for optmization. Use it if you know each of the
+	 * objects in $objects will need its related model of $relation_name.
+	 * NOTE: currently this function is actually no more efficient than individually
+	 * fetching the related models on each object, but we hope to
+	 * upgrade it in the future to be more efficient.
+	 * @param string $relation_name, eg "Events", "Answers". A key in the child class' 
+	 * _related_models	 * 
+	 * @param EE_Base_Class[] $objects onto which we want to preload the related model
+	 * of type $relation_name
+	 * @return EE_Base_Class[] the original $objects with the related models of type
+	 * $relation_name preloaded onto them
+	 */
+	public function preload_related_models_of_type_onto($relation_name,array $objects){
+		/* @todo optimize this function to only need to perform a single query, 
+		 * and then loop through the results and attach to $objects.
+		 * As it is right now, it performs a query for each object, and is
+		 * no more efficient than just not preloading the related models
+		 */
+		$relation_settings=$this->related_settings_for($relation_name);
+		foreach($objects as $id=>$object){
+			/* @var $object EE_Base_Class */
+			if('belongsTo'==$relation_settings->type()){
+				$object->get_first_related($relation_name);
+			}else{
+				$object->get_many_related($relation_name);
+			}
+		}
+		return $objects;
+	}
+	
+	/**
 	 * Very handy general function to allow for plugins to extend any child of EE_TempBase.
 	 * If a method is called on a child of EE_TempBase that doesn't exist, this function is called (http://www.garfieldtech.com/blog/php-magic-call)
 	 * and passed the method's name and arguments.
@@ -657,21 +697,94 @@ abstract class EEM_TempBase extends EEM_Base{
 	}
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
- * Class for representing field on models/columns on database tables.
+ * Class for representing field on models/columns on database tables. Mostly
+ * just stores information about the field/column, which models and classes
+ * representing rows find useful.
  */
 class EE_Model_Field{
 	/**
 	 * all the types of ModelFields which are allowed
 	 * @var type 
 	 */
-	private $allowed_types=array('primary_key','primary_text_key','foreign_key','foreign_text_key','int','float','plaintext','simplehtml','fullhtml','enum','bool','deleted_flag','serializedtext');
-	private $nicename;
-	private $type;
-	private $nullable;
-	private $default_value;
-	private $allowed_enum_values;
-	private $class;
+	private $_allowed_types=array('primary_key','primary_text_key','foreign_key','foreign_text_key','int','float','plaintext','simplehtml','fullhtml','enum','bool','deleted_flag','serializedtext');
+	
+	
+	
+	
+	/**
+	 * Human-friendly version of the name
+	 * @var string
+	 */
+	private $_nicename;
+	
+	
+	
+	
+	/**
+	 * One of EE_Model_Field->_allowed_types
+	 * @var string 
+	 */
+	private $_type;
+	
+	
+	
+	
+	/**
+	 * Whether this field should be allowed to be set to null
+	 * @var boolean 
+	 */
+	private $_nullable;
+	
+	
+	
+	/**
+	 * If, when originally instantiating an class relating to a model with this field,
+	 * this field would be null, use this default value instead.
+	 * @var mixed 
+	 */
+	private $_default_value;
+	
+	
+	
+	
+	/**
+	 * If this field is an enum, then these are the allowed values.
+	 * @var array 
+	 */
+	private $_allowed_enum_values;
+	
+	
+	
+	
+	/**
+	 * In case this field has type 'foreign_key' or 'foreign_text_key',
+	 * then is a string of the class's singular name, without the prepended EE_.
+	 * @var string 
+	 */
+	private $_class;
+	
+	
+	
+	
+	
 	/**
 	 * Constructs basic EE_ModelField.
 	 * @param string $nicename the string that displays this field's name nicely. Eg, "First Name" isntead of "fname"
@@ -705,15 +818,21 @@ class EE_Model_Field{
 	 * @param array $allowedEnumValues array of allowed values. Eg, array('textfield','textarea','checkbox') or array(1,2,3)
 	 * @param string $class required when $type=='foreign_key' or $type=='foreign_text_key'. The name of the related class. Eg, 'Question'
 	 */
+	
+	
+	
+	
+	
+	
 	public function __construct($nicename,$type,$nullable,$defaultValue=null,$allowedEnumValues=array(),$class=null){
-		$this->nicename=$nicename;
-		$this->type=$type;
-		$this->nullable=$nullable;
-		$this->default_value=$defaultValue;
-		$this->allowed_enum_values=$allowedEnumValues;
-		$this->class=$class;
-		if(!in_array($type,$this->allowed_types)){
-			throw new EE_Error(sprintf(__("Event Espresso error. Field %s is of type %s, but only these are the only allowed types %s",'event_espresso'),$nicename,$type,implode(",",$this->allowed_types)));
+		$this->_nicename=$nicename;
+		$this->_type=$type;
+		$this->_nullable=$nullable;
+		$this->_default_value=$defaultValue;
+		$this->_allowed_enum_values=$allowedEnumValues;
+		$this->_class=$class;
+		if(!in_array($type,$this->_allowed_types)){
+			throw new EE_Error(sprintf(__("Event Espresso error. Field %s is of type %s, but only these are the only allowed types %s",'event_espresso'),$nicename,$type,implode(",",$this->_allowed_types)));
 		}
 		if($type=='foreign_key' || $type=='foreign_text_field'){
 			if(!$class){
@@ -729,13 +848,24 @@ class EE_Model_Field{
 			throw new EE_Error(sprintf(__("Event Espresso error. Field %s is of type 'enum' is missing the \$allowedEnumValues parameter in the constructor.",'event_espresso'),$nicename));
 		}
 	}
+	
+	
+	
+	
+	
 	/**
 	 * Returns the human-readable string of the field's name. Eg, 'First Name' instead of 'fname'
 	 * @return string
 	 */
 	public function nicename(){
-		return $this->nicename;
+		return $this->_nicename;
 	}
+	
+	
+	
+	
+	
+	
 	/**
 	 * Returns teh type of the field. Allowed values include: 
 	 *				
@@ -765,50 +895,143 @@ class EE_Model_Field{
 	 * @return string
 	 */
 	public function type(){
-		return $this->type;
+		return $this->_type;
 	}
+	
+	
+	
+	
+	
 	/**
 	 * Returns whether the field may be set to NULL or not
 	 * @return boolean
 	 */
 	public function nullable(){
-		return $this->nullable;
+		return $this->_nullable;
 	}
+	
+	
+	
+	
+	
 	/**
 	 * Returns the default value of the field. Eg, 12 or 'monkey'
 	 * @return mixed
 	 */
 	public function default_value(){
-		return $this->default_value;
+		return $this->_default_value;
 	}
+	
+	
+	
+	
+	
 	/**
 	 * Returns an array of allowed Enum values, if any has been set.
 	 * @return array
 	 */
 	public function allowed_enum_values(){
-		return $this->allowed_enum_values;
+		return $this->_allowed_enum_values;
 	}
+	
+	
+	
+	
+	
 	/**
 	 * If the field is 'foreign_key' or 'foreign_text_key', this will return a string of the name of the related model. Eg, 'Question' or 'Attendee'.
 	 * @return string
 	 */
 	public function get_class(){
-		return $this->class;
+		return $this->_class;
 	}
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
- * a PHP class for representing a relationship between a model and another. Handles 'hasMany','belongsTo' and 'hasAndBelongsToMany'.
+ * a PHP class for representing a relationship between a model and another (ie,
+ * a database table and another). Handles 'hasMany','belongsTo' and 'hasAndBelongsToMany' relationships.
+ * Mostly just stores information defining the relationship.
  * Useful for the model so it can can queries on the related models.
  */
 class EE_Model_Relation{
+	
+	
+	
+	/**
+	 * see constructor for description
+	 * @var string 
+	 */
 	private $type;
+	
+	
+	
+	
+	/**
+	 * see constructor for description
+	 * @var string 
+	 */
 	private $model;
+	
+	
+	
+	
+	/**
+	 * see constructor for description
+	 * @var string 
+	 */
 	private $field_name;
+	
+	
+	
+	
+	/**
+	 * see constructor for description
+	 * @var string 
+	 */
 	private $join_table;
+	
+	
+	
+	
+	/**
+	 * see constructor for description
+	 * @var EE_Model_Field[] 
+	 */
 	private $join_table_fields;
 	
+	
+	
+	
+	/**
+	 * defines all the allowed model relations
+	 * @var array 
+	 */
 	private $allowed_types=array('belongsTo','hasMany','hasAndBelongsToMany');
+	
+	
+	
+	
+	
+	
 	/**
 	 * 
 	 * @param string $relationType one of 
@@ -854,6 +1077,11 @@ class EE_Model_Relation{
 			}
 		}
 	}
+	
+	
+	
+	
+	
 	/**
 	 * Returns the type of this relationship. One of 'belongsTo','hasMany', or 'hasAndBelongsToMany'
 	 * @return string
@@ -861,6 +1089,11 @@ class EE_Model_Relation{
 	public function type(){
 		return $this->type;
 	}
+	
+	
+	
+	
+	
 	/**
 	 * Returns the name of the model for this modelRelation. Eg 'Attendee', 'Event', etc.
 	 * @return string
@@ -868,6 +1101,11 @@ class EE_Model_Relation{
 	public function model(){
 		return $this->model;
 	}
+	
+	
+	
+	
+	
 	/**
 	 * Using the info in this ModelRelation, fetches an instance of the related model,
 	 * which can then be used for querying.
@@ -880,6 +1118,11 @@ class EE_Model_Relation{
 		$modelInstance=call_user_func($modelName."::instance");
 		return $modelInstance;
 	}
+	
+	
+	
+	
+	
 	/**
 	 * Returns the name of the modelField/db-column for this relation. This represents different things for differnet relationship types:
 	 *			
@@ -894,6 +1137,11 @@ class EE_Model_Relation{
 	public function field_name(){
 		return $this->field_name;
 	}
+	
+	
+	
+	
+	
 	/**
 	 * Returns the name of the join table in cases of 'hasAndBelongsToMany'. Eg, 'question_group_question', or 'answer', etc. So no prepending of 'wp_' or even 'esp_'. Those are assumed.
 	 * @return string
@@ -902,6 +1150,10 @@ class EE_Model_Relation{
 		global $wpdb;
 		return $wpdb->prefix."esp_".$this->join_table;
 	}
+	
+	
+	
+	
 	
 	/**
 	 * Returns an array of all the fields on the join table. Exactly like the fields on each model. Eg array('QGQ_ID'=>EE_Model_Field('QuestionGroup-Question ID','primary_key'),
