@@ -820,13 +820,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$this->_template_path = $this->_template_args['GRP_ID'] ? EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_edit_meta_box.template.php' : EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_add_meta_box.template.php';
 
-		//generate metabox but only if not ajax
-		if ( !defined( 'DOING_AJAX' ) )
-			$this->_add_admin_page_meta_box( $action, $title, __FUNCTION__, NULL );
-
-		else {
-			$this->_template_args['admin_page_content'] = espresso_display_template( $this->_template_path, $this->_template_args, TRUE );
-		}
+	
+		$this->_template_args['admin_page_content'] = espresso_display_template( $this->_template_path, $this->_template_args, TRUE );
 
 		//sidebar metabox (if we are editing)
 		if ( $this->_template_args['GRP_ID'] ) {
