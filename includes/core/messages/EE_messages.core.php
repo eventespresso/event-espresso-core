@@ -951,13 +951,15 @@ abstract class EE_messenger {
 			$et_set = isset($event_template_set[$template->message_type()]) ? true : false;
 			$et_trashed = isset($event_template_trashed[$template->message_type()]) ? true : false;
 			$et_group_id = isset($event_group_id[$template->message_type()]) ? $event_group_id[$template->message_type()] : false;
+
 			
 			//check for existence of Event Template and if present AND the current template in the loop is the event template (or the current template in the loop is a DIFFERENT event template) let's skip (we'll delay until we get to global)
 			if ( $et_set && !$template->is_global() ) continue;
 
 			//if this is a new event then we ONLY want to show ONE option.
+			
 			$template_type = $template->message_type();
-			if ( $new_event && ( isset($old_template_type) && $old_template_type == $template_type ) ) continue;
+			if ( ( isset($old_template_type) && $old_template_type == $template_type ) ) continue;
 
 
 			//setup current button
