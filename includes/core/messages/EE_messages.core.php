@@ -977,7 +977,7 @@ abstract class EE_messenger {
 
 			$content .= '<div class="message-template-message-type-container">' . "\n\t";
 			$content .= '<p>';
-			$content .= sprintf( __('This event will use the %s for <span class="message-type-text">%s %s</span> messages. %s.', 'event_espresso'), $main_button, str_replace('_', ' ',$template->message_type()), str_replace('_', ' ', $this->name), $switch_button);
+			$content .= sprintf( __('This event will use %s for <span class="message-type-text">%s %s</span> messages. %s.', 'event_espresso'), $main_button, str_replace('_', ' ',$template->message_type()), str_replace('_', ' ', $this->name), $switch_button);
 			$content .= '</p>' . "\n" . '</div>';
 
 			$old_template_type = $template_type;
