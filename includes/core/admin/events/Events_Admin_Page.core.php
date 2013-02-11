@@ -497,8 +497,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$this->_event->country = '';
 		$this->_event->virtual_url = '';
 		$this->_event->virtual_phone = '';
-		$this->_event->payment_email_id = 0;
-		$this->_event->confirmation_email_id = 1;
 		$this->_event->submitted = '';
 		$this->_event->google_map_link = espresso_google_map_link(array(
 				'address' => $this->_event->address,
@@ -2352,9 +2350,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 			$phone=$result->phone;
 
-			$send_mail= $result->send_mail;
-			$conf_mail= $result->conf_mail;
-			$email_id = $result->email_id;
 			$use_coupon_code= $result->use_coupon_code;
 					
 			$question_groups = $result->question_groups;
@@ -2410,11 +2405,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'registration_end'=>$registration_end, 
 				'start_date'=>$start_date, 
 				'end_date'=>$end_date, 
-				'allow_multiple'=>$allow_multiple, 
-				'send_mail'=>$send_mail, 
+				'allow_multiple'=>$allow_multiple,
 				'is_active'=>$is_active, 
-				'event_status'=>$event_status, 
-				'conf_mail'=>$conf_mail, 
+				'event_status'=>$event_status,
 				'use_coupon_code'=>$use_coupon_code, 
 				'member_only'=>$member_only,
 				'externalURL' => $externalURL, 
@@ -2437,25 +2430,23 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'reg_limit'=>$reg_limit, 
 				'additional_limit'=>$additional_limit, 
 				'recurrence_id'=>$recurrence_id, 
-				'email_id' => $email_id, 
 				'wp_user' => $espresso_wp_user,
 				'post_id' => $post_id);
 			}
 			
 			$sql_data = array(
 				'%s','%s','%s','%s',
-				'%s','%s','%s','%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
+				'%s','%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%d',
-				'%d','%d','%d','%d',
-				'%d'
+				'%d','%d','%d','%d'
 			);
 			
 			/*//check the counts to make sure the data is matched up correctly
@@ -2723,8 +2714,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$use_coupon_code = isset( $this->_req_data['use_coupon_code'] ) ? $this->_req_data['use_coupon_cod'] : '';
 		$alt_email = $this->_req_data['alt_email'];
 
-		$confirmation_email_id = isset( $this->_req_data['confirmation_email_id'] ) ? $this->_req_data['confirmation_email_id'] : null;
-		$payment_email_id = isset( $this->_req_data['payment_email_id'] ) ? $this->_req_data['payment_email_id'] : null;
 		//Venue Information
 		$venue_title = empty($this->_req_data['venue_title']) ? '' : $this->_req_data['venue_title'];
 		$venue_url = empty($this->_req_data['venue_url']) ? '' : $this->_req_data['venue_url'];
@@ -2818,8 +2807,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'wp_user' => $wp_user_id,
 				'ticket_id' => $ticket_id,
 				'certificate_id' => $certificate_id,
-				'confirmation_email_id' => $confirmation_email_id,
-				'payment_email_id' => $payment_email_id
 		);
 
 		$sql_data = array(
@@ -2832,7 +2819,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'%s', '%s', '%s', '%s', '%s',
 				'%s', '%s', '%s', '%s', '%s',
 				'%s', '%d', '%d', '%d', '%d',
-				'%d', '%d', '%d'
+				'%d'
 		);
 
 		//Add groupon reference if installed
@@ -3212,9 +3199,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$use_coupon_code = isset( $this->_req_data['use_coupon_code'] ) ? $this->_req_data['use_coupon_code'] : FALSE;
 		$alt_email = $this->_req_data['alt_email'];
 
-		$confirmation_email_id = isset( $this->_req_data['confirmation_email_id'] ) ? $this->_req_data['confirmation_email_id']  : NULL;
-		$payment_email_id = isset( $this->_req_data['payment_email_id'] ) ? $this->_req_data['payment_email_id'] : NULL;
-
 
 		//Venue Information
 		$venue_title = isset($this->_req_data['venue_title']) ? $this->_req_data['venue_title'] : '';
@@ -3338,9 +3322,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'additional_limit' => $additional_limit,
 				'wp_user' => $wp_user_id,
 				'ticket_id' => $ticket_id,
-				'certificate_id' => $certificate_id,
-				'confirmation_email_id' => $confirmation_email_id,
-				'payment_email_id' => $payment_email_id
+				'certificate_id' => $certificate_id
 		);
 
 
@@ -3353,7 +3335,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'%s', '%s', '%s', '%s', '%s', 
 				'%s', '%s', '%s', '%s', '%s', 
 				'%s', '%s', '%s',  '%d', '%d', 
-				'%d', '%d', '%d', '%d', '%d'
+				'%d', '%d', '%d'
 		);
 
 		$update_id = array('id' => $event_id);
