@@ -3117,7 +3117,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			
 			$msg = sprintf( 
 					__( 'The event %s has been added for %s.', 'event_espresso' ), 
-					'<a href="' . espresso_reg_url($last_event_id) . '">' . stripslashes_deep($this->_req_data['event']) . '</a>', 
+					'<a href=' . espresso_reg_url($last_event_id) . '>' . stripslashes_deep($this->_req_data['event']) . '</a>', 
 					$evt_date 
 			);
 			EE_Error::add_success( $msg );
@@ -3126,7 +3126,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 			$msg = sprintf( 
 					__( 'An error occured and the event %s has not been saved to the database.', 'event_espresso' ), 
-					'<a href="' . espresso_reg_url($last_event_id) . '">' . stripslashes_deep($this->_req_data['event']) . '</a>' 
+					'<a href=' . espresso_reg_url($last_event_id) . '>' . stripslashes_deep($this->_req_data['event']) . '</a>' 
 			);
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			
@@ -3784,7 +3784,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			
 			$msg = sprintf( 
 					__( 'The event %s has been updated', 'event_espresso' ), 
-					'<a href="' . espresso_reg_url($event_id) . '">' . stripslashes_deep($this->_req_data['event']) . '</a>'
+					'<a href=' . espresso_reg_url($event_id) . '>' . stripslashes_deep($this->_req_data['event']) . '</a>'
 			);
 			EE_Error::add_success( $msg );
 
@@ -3792,7 +3792,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 			$msg = sprintf( 
 					__( 'An error occured and the event %s has not been updated in the database.', 'event_espresso' ), 
-					'<a href="' . espresso_reg_url($event_id) . '">' . stripslashes_deep($this->_req_data['event']) . '</a>' 
+					'<a href=' . espresso_reg_url($event_id) . '>' . stripslashes_deep($this->_req_data['event']) . '</a>' 
 			);
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			

@@ -196,7 +196,7 @@ function espresso_reg_url($event_id = FALSE, $event_slug = FALSE) {
 	} else
 		$registration_url = '';
 
-	return $registration_url;
+	return stripslashes_deep($registration_url);
 }
 
 //Text formatting function.
