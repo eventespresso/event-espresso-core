@@ -767,6 +767,15 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 			$sidebar_array = array('ee-msg-is-global', 'ee-msg-is-override', 'ee-msg-deleted', 'ee-msg-is-active');
 
+			if ( isset($this->_req_data['template_switch']) && $this->_req_data['template_switch'] ) {
+				$sidebar_form_fields['ee-msg-template-switch'] = array(
+					'name' => 'template_switch',
+					'input' => 'hidden',
+					'type' => 'int',
+					'value' => 1
+					);
+			}
+
 			//send to field generator
 			
 			$template_fields = $this->_generate_admin_form_fields( $template_form_fields );
@@ -1011,8 +1020,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		if ( defined('DOING_AJAX') && $new ) {
 			$this->_req_data = array_merge($this->_req_data, $query_args);
-			$this->_edit_message_template();
 			$this->_req_data['template_switch'] = TRUE;
+			$this->_edit_message_template();
 		}
 
 		if ( defined('DOING_AJAX') ) {
