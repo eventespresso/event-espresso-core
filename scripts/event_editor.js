@@ -66,7 +66,7 @@ jQuery(document).ready(function($) {
 	$('.dtm-inp').change( function() {
 		$('#process_datetimes').val(1);
 	});
-	// or if any datetime buttons are clicked	
+	// or if any datetime buttons are clicked
 	$('.dtm-inp-btn').click( function() {
 		$('#process_datetimes').val(1);
 	});

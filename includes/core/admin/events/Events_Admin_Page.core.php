@@ -376,7 +376,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$editor_args['event_desc'] = array(
 				'type' => 'wp_editor',
 				'value' => EE_Formatter::admin_format_content($this->_event->event_desc),
-				'class' => 'my_editor_custom',
+				'class' => 'my_editor_custom'
 			);
 		$_wp_editor = $this->_generate_admin_form_fields($editor_args, 'array');
 		$title_and_desc_args['event_desc_editor'] = $_wp_editor['event_desc']['field'];
@@ -2003,19 +2003,19 @@ class Events_Admin_Page extends EE_Admin_Page {
 							</legend>
 							<p>
 								<label for="ven-title"><?php _e('Title:', 'event_espresso'); ?></label><br/>
-								<input size="20"id="ven-title" tabindex="106"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_title) ?>" name="venue_title" />
+								<input size="20"id="ven-title" type="text"  value="<?php echo stripslashes_deep($this->_event->venue_title) ?>" name="venue_title" />
 							</p>
 							<p>
 								<label for="ven-website"><?php _e('Website:', 'event_espresso'); ?></label><br/>
-								<input size="20" id="ven-website" tabindex="107"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_url) ?>" name="venue_url" />
+								<input size="20" id="ven-website" type="text"  value="<?php echo stripslashes_deep($this->_event->venue_url) ?>" name="venue_url" />
 							</p>
 							<p>
 								<label for="ven-phone"><?php _e('Phone:', 'event_espresso'); ?></label><br/>
-								<input size="20" id="ven-phone" tabindex="108"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_phone) ?>" name="venue_phone" />
+								<input size="20" id="ven-phone" type="text"  value="<?php echo stripslashes_deep($this->_event->venue_phone) ?>" name="venue_phone" />
 							</p>
 							<p>
 								<label for="ven-image"><?php _e('Image:', 'event_espresso'); ?></label><br/>
-								<input size="20" id="ven-image" tabindex="110"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_image) ?>" name="venue_image" />
+								<input size="20" id="ven-image" type="text"  value="<?php echo stripslashes_deep($this->_event->venue_image) ?>" name="venue_image" />
 							</p>
 					</td>
 					<td valign="top" <?php echo $ven_type ?>>
@@ -2023,27 +2023,27 @@ class Events_Admin_Page extends EE_Admin_Page {
 							<legend><?php _e('Physical Location', 'event_espresso'); ?></legend>
 							<p>
 								<label for="phys-addr"><?php _e('Address:', 'event_espresso'); ?></label><br/>
-								<input size="20" id="phys-addr" tabindex="100"  type="text"  value="<?php echo $this->_event->address ?>" name="address" />
+								<input size="20" id="phys-addr" type="text"  value="<?php echo $this->_event->address ?>" name="address" />
 							</p>
 							<p>
 								<label for="phys-addr-2"><?php _e('Address 2:', 'event_espresso'); ?></label><br/>
-								<input size="20" id="phys-addr-2" tabindex="101"  type="text"  value="<?php echo $this->_event->address2 ?>" name="address2" />
+								<input size="20" id="phys-addr-2" type="text"  value="<?php echo $this->_event->address2 ?>" name="address2" />
 							</p>
 							<p>
 								<label for="phys-city"><?php _e('City:', 'event_espresso'); ?></label><br/>
-								<input size="20" id="phys-city" tabindex="102"  type="text"  value="<?php echo $this->_event->city ?>" name="city" />
+								<input size="20" id="phys-city" type="text"  value="<?php echo $this->_event->city ?>" name="city" />
 							</p>
 							<p>
 								<label for="phys-state"><?php _e('State:', 'event_espresso'); ?></label><br/>
-								<input size="20" id="phys-state" tabindex="103"  type="text"  value="<?php echo $this->_event->state ?>" name="state" />
+								<input size="20" id="phys-state" type="text"  value="<?php echo $this->_event->state ?>" name="state" />
 							</p>
 							<p>
 								<label for="phys-country"><?php _e('Country:', 'event_espresso'); ?></label><br/>
-								<input size="20" id="phys-country" tabindex="105"  type="text"  value="<?php echo $this->_event->country ?>" name="country" />
+								<input size="20" id="phys-country" type="text"  value="<?php echo $this->_event->country ?>" name="country" />
 							</p>
 							<p>
 								<label for="zip-postal"><?php _e('Zip/Postal Code:', 'event_espresso'); ?></label><br/>
-								<input size="20" id="zip-postal"  tabindex="104"  type="text"  value="<?php echo $this->_event->zip ?>" name="zip" />
+								<input size="20" id="zip-postal" type="text"  value="<?php echo $this->_event->zip ?>" name="zip" />
 							</p>
 								<br/>
 							<p>
@@ -2070,19 +2070,19 @@ class Events_Admin_Page extends EE_Admin_Page {
 							<label for="virt-phone" style="display:inline-block; width:100px;">
 								<?php _e('Phone:', 'event_espresso'); ?>
 							</label>
-							<input size="20" id="virt-phone" type="text" tabindex="111" value="<?php echo $this->_event->phone ?>" name="phone" />
+							<input size="20" id="virt-phone" type="text" value="<?php echo $this->_event->phone ?>" name="phone" />
 						</p>
 						<p>
 							<label for="url-event" style="display:inline-block; width:100px; vertical-align:top;">
 								<?php _e('URL of Event:', 'event_espresso'); ?>
 							</label>
-							<textarea id="url-event" cols="30" rows="4" tabindex="112"  name="virtual_url"><?php echo stripslashes_deep($this->_event->virtual_url) ?></textarea>
+							<textarea id="url-event" cols="30" rows="4" name="virtual_url"><?php echo stripslashes_deep($this->_event->virtual_url) ?></textarea>
 						</p>
 						<p>
 							<label for="call-in-num" style="display:inline-block; width:100px;">
 								<?php _e('Call in Number:', 'event_espresso'); ?>
 							</label>
-							<input id="call-in-num" size="20" tabindex="113"  type="text"  value="<?php echo stripslashes_deep($this->_event->virtual_phone) ?>" name="virtual_phone" />
+							<input id="call-in-num" size="20" type="text"  value="<?php echo stripslashes_deep($this->_event->virtual_phone) ?>" name="virtual_phone" />
 						</p>
 					</fieldset>
 				</td>
