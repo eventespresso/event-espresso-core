@@ -47,6 +47,12 @@ class events_Messages_Hooks extends EE_Admin_Hooks {
 				'func' => 'messages_metabox',
 				'label' => __('Notifications', 'event_espresso'),
 				'priority' => 'core'
+				),
+			1 => array(
+				'page_route' => 'add_event',
+				'func' => 'messages_metabox',
+				'label' => __('Notifications', 'event_espresso'),
+				'priority' => 'core'
 				)
 			);
 		
@@ -74,43 +80,53 @@ class events_Messages_Hooks extends EE_Admin_Hooks {
 	public function messages_metabox($event, $callback_args) {
 
 		//let's get the active messengers (b/c messenger objects have the active message templates)
-		$EEM_controller = new EE_messages;
-		$active_messengers = $EEM_controller->get_active_messengers();
-		$tabs = array();
-
-		//empty messengers?
-		//Note message types will always have at least one available because every messenger has a default message type associated with it (payment) if no other message types are selected.
-		if ( empty( $active_messengers ) ) {
-			$msg_activate_url = wp_nonce_url( add_query_arg( array('action' => 'activate', 'activate_view' => 'messengers'), 
-				EE_MSG_ADMIN_URL ), 'activate_nonce' );
-			$error_msg = sprintf( __('There are no active messengers. So no notifications will NOT go out for <strong>any</strong> events.  You will want to %sActivate a Messenger%s.', 'event_espresso'), '<a href="' . $msg_activate_url . '">', '</a>');
-			$error_content = '<div class="error"><p>' . $error_msg . '</p></div>';
-			$internal_content = '<div id="messages-error"><p>' . $error_msg . '</p></div>';
-
-
-			if ( defined('DOING_AJAX') )
-				return $error_content . $intenral_content;
-
-			echo $error_content;
-			echo $internal_content;
-			return;
-		}
-		
 		//convert 'evt_id' to 'EVT_ID'
 		if ( isset( $this->_req_data['evt_id'] ) && !isset($this->_req_data['EVT_ID'] ) )
 			$this->_req_data['EVT_ID'] = $this->_req_data['evt_id'];
-		//get content for active messengers
-		foreach ( $active_messengers as $name => $messenger ) {
-			$event_id = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : NULL;
-			$tabs[$name] = $messenger->get_messenger_admin_page_content('events', 'edit', array('event' => $event_id) );
-		}
+
+		//set flag for whether we are adding or editing an event.
+		$add_event = !isset($this->_req_data['EVT_ID']) ? TRUE : FALSE;
+
+		if ( !$add_event ) {
+
+			$EEM_controller = new EE_messages;
+			$active_messengers = $EEM_controller->get_active_messengers();
+			$tabs = array();
+
+			//empty messengers?
+			//Note message types will always have at least one available because every messenger has a default message type associated with it (payment) if no other message types are selected.
+			if ( empty( $active_messengers ) ) {
+				$msg_activate_url = wp_nonce_url( add_query_arg( array('action' => 'activate', 'activate_view' => 'messengers'), 
+					EE_MSG_ADMIN_URL ), 'activate_nonce' );
+				$error_msg = sprintf( __('There are no active messengers. So no notifications will NOT go out for <strong>any</strong> events.  You will want to %sActivate a Messenger%s.', 'event_espresso'), '<a href="' . $msg_activate_url . '">', '</a>');
+				$error_content = '<div class="error"><p>' . $error_msg . '</p></div>';
+				$internal_content = '<div id="messages-error"><p>' . $error_msg . '</p></div>';
 
 
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Tabbed_Content.helper.php';
-		//we want this to be tabbed content so let's use the EE_Tabbed_Content::display helper.
-		$tabbed_content = EE_Tabbed_Content::display($tabs);
-		if ( is_wp_error($tabbed_content) ) {
-			$tabbed_content = $tabbed_content->get_error_message();
+				if ( defined('DOING_AJAX') )
+					return $error_content . $intenral_content;
+
+				echo $error_content;
+				echo $internal_content;
+				return;
+			}
+			
+			
+			//get content for active messengers
+			foreach ( $active_messengers as $name => $messenger ) {
+				$event_id = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : NULL;
+				$tabs[$name] = $messenger->get_messenger_admin_page_content('events', 'edit', array('event' => $event_id) );
+			}
+
+
+			require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Tabbed_Content.helper.php';
+			//we want this to be tabbed content so let's use the EE_Tabbed_Content::display helper.
+			$tabbed_content = EE_Tabbed_Content::display($tabs);
+			if ( is_wp_error($tabbed_content) ) {
+				$tabbed_content = $tabbed_content->get_error_message();
+			}
+		} else {
+			$tabbed_content = '<p>' . __( 'You will see notifications options after you add the initial details for your event and save it', 'event_espresso' ) . '</p>';
 		}
 
 		$notices = '<div class="ee-notices"><div class="ajax-loader-grey"></div></div>';
