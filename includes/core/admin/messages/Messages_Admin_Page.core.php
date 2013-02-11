@@ -467,6 +467,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$message_template = $MTP->get_message_template_by_ID($GRP_ID);
 			$action = 'update_message_template';
 			$button_both = !defined( 'DOING_AJAX' ) ? TRUE : FALSE;
+			$event_name = $message_template->event_name();
 			$button_text = array();
 			$button_actions = array();
 			$referrer = NULL;
@@ -478,8 +479,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$context_label = sprintf( __('(%s Context)', 'event_espresso'), ucwords(str_replace('_', ' ', $context) ) );
 
 		//todo: we should eventually display the event title instead of ID.
-		$event_label = $EVT_ID ? sprintf( __('for Event ID: %s', 'event_espresso'), $EVT_ID) : '';
-		$title = sprintf( __('Edit %s %s Template %s %s', 'event_espresso'), ucwords(str_replace('_', ' ', $message_template->messenger()) ), ucwords(str_replace('_', ' ', $message_template->message_type()) ), $context_label, $event_label );
+		$event_label = isset($event_name) && !empty($event_name) ? sprintf( __('for Event: %s', 'event_espresso'), $event_name) : '';
+		$title = sprintf( __(' %s %s Template %s %s', 'event_espresso'), ucwords(str_replace('_', ' ', $message_template->messenger()) ), ucwords(str_replace('_', ' ', $message_template->message_type()) ), $context_label, $event_label );
 
 		$this->_template_args['GRP_ID'] = $GRP_ID;
 		$this->_template_args['message_template'] = $message_template;
