@@ -51,6 +51,7 @@ class EE_Form_Fields {
 	 * 		'format' => '%d', //what format the value is (%d, %f, or %s)
 	 * 		'db-col' => 'column_in_db' //used to indicate which column the field corresponds with in the db
 	 * 		'options' => optiona, optionb || array('value' => 'label', '') //if the input type is "select", this allows you to set the args for the different <option> tags.
+	 * 		'tabindex' => 1 //this allows you to set the tabindex for the field.
 	 * 	)
 	 * 	@param	array $id - used for defining unique identifiers for the form.
 	 * 	@return string
@@ -79,7 +80,8 @@ class EE_Form_Fields {
 				'value' => 'some_value_for_field',
 				'format' => '%d',
 				'db-col' => 'column_in_db',
-				'options' => array()
+				'options' => array(),
+				'tabindex' => ''
 				);
 
 			$input_value = wp_parse_args( $input_value, $defaults );
@@ -90,6 +92,7 @@ class EE_Form_Fields {
 			$css_class = isset( $input_value['css_class'] ) ? $input_value['css_class'] : '';
 			$styles = $input_value['required']? 'required ' . $css_class : $css_class;
 			$field_id = ($id) ? $id . '-' . $input_key : $input_key;
+			$tabindex = !empty($input_value['tabindex']) ? ' tabindex="' . $input_value['tabindex'] . '"' : '';
 
 			//rows or cols?
 			$rows = isset($input_value['rows'] ) ? $input_value['rows'] : '10';
@@ -104,14 +107,14 @@ class EE_Form_Fields {
 				// text inputs
 				case 'text' :
 					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
-					$output .= "\n\t\t\t" . '<input id="' . $field_id . '" class="' . $styles . '" type="text" value="' . $input_value['value'] . '" name="' . $input_value['name'] . '">';
+					$output .= "\n\t\t\t" . '<input id="' . $field_id . '" class="' . $styles . '" type="text" value="' . $input_value['value'] . '" name="' . $input_value['name'] . '"' . $tabindex . '>';
 					break;
 
 				// dropdowns
 				case 'select' :
 
 					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
-					$output .= "\n\t\t\t" . '<select id="' . $field_id . '" class="' . $styles . '" name="' . $input_value['name'] . '">';
+					$output .= "\n\t\t\t" . '<select id="' . $field_id . '" class="' . $styles . '" name="' . $input_value['name'] . '"' . $tabindex . '>';
 
 					if (is_array($input_value['options'])) {
 						$options = $input_value['options'];
@@ -130,7 +133,7 @@ class EE_Form_Fields {
 				case 'textarea' :
 
 					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
-					$output .= "\n\t\t\t" . '<textarea id="' . $field_id . '" class="' . $styles . '" rows="'.$rows.'" cols="'.$cols.'" name="' . $input_value['name'] . '">' . $input_value['value'] . '</textarea>';
+					$output .= "\n\t\t\t" . '<textarea id="' . $field_id . '" class="' . $styles . '" rows="'.$rows.'" cols="'.$cols.'" name="' . $input_value['name'] . '"' . $tabindex . '>' . $input_value['value'] . '</textarea>';
 					break;
 
 				case 'hidden' :
@@ -142,7 +145,7 @@ class EE_Form_Fields {
 				case 'checkbox' : 
 					$checked = ( $input_value['value'] == 1 ) ? 'checked="checked"' : '';
 					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
-					$output .= "\n\t\t\t" . '<input id="' . $field_id. '" type="checkbox" name="' . $input_value['name'] . '" value="1"' . $checked . ' />';
+					$output .= "\n\t\t\t" . '<input id="' . $field_id. '" type="checkbox" name="' . $input_value['name'] . '" value="1"' . $checked . $tabindex . ' />';
 					break; 
 
 				case 'wp_editor' :
@@ -150,7 +153,8 @@ class EE_Form_Fields {
 					$editor_settings = array(
 						'textarea_name' => $input_value['name'],
 						'textarea_rows' => $rows,
-						'editor_class' => $styles
+						'editor_class' => $styles,
+						'tabindex' => $input_value['tabindex']
 					);
 					$output .= '</li>';
 					$output .= '</ul>';
@@ -189,7 +193,8 @@ class EE_Form_Fields {
 	 * 		['classes'] => array('class_1', 'class_2'); //optional - if the field type is a multi select type of field you can indicate the css class for each option via this index.
 	 * 		['id'] => 'css-id-for-input') //defaults to 'field_name'
 	 * 		['unique_id'] => 1 //defaults to empty string.  This is useful for when the fields generated are going to be used in a loop and you want to make sure that the field identifiers are unique from each other.
-	 * 		['dimensions'] => array(100,300) //defaults to empty array.  This is used by field types such as textarea to indicate cols/rows.
+	 * 		['dimensions'] => array(100,300), //defaults to empty array.  This is used by field types such as textarea to indicate cols/rows.
+	 * 		['tabindex'] => '' //this allows you to set the tabindex for the field.
 	 *   
 	 * @return array         an array of inputs for form indexed by field name, and in the following structure:
 	 *     [field_name] => array( 'label' => '{label_html}', 'field' => '{input_html}'
@@ -213,6 +218,7 @@ class EE_Form_Fields {
 				'id' => $field_name,
 				'unique_id' => '',
 				'dimensions' => array('10', '5'),
+				'tabindex' => ''
 				);
 			// merge defaults with passed arguments
 			$_fields = wp_parse_args( $field_atts, $defaults);
@@ -221,11 +227,15 @@ class EE_Form_Fields {
 			$label = empty($label) ? '' : '<label for="' . $id . '">' . $label . '</label>';
 			// generate field name
 			$f_name = !empty($unique_id) ? $field_name . '[' . $unique_id . ']' : $field_name;
+
+			//tabindex
+			$tabindex_str = !empty( $tabindex ) ? ' tabindex="' . $tabindex . '"' : '';
+
 			//we determine what we're building based on the type
 			switch ( $type ) {
 			
 				case 'textarea' :
-						$fld = '<textarea id="' . $id . '" class="' . $class . '" rows="' . $dimensions[1] . '" cols="' . $dimensions[0] . '" name="' . $f_name . '">' . $value . '</textarea>';
+						$fld = '<textarea id="' . $id . '" class="' . $class . '" rows="' . $dimensions[1] . '" cols="' . $dimensions[0] . '" name="' . $f_name . '"' . $tabindex_str . '>' . $value . '</textarea>';
 						$fld .= $extra_desc;
 					break;
 					
@@ -237,12 +247,12 @@ class EE_Form_Fields {
 								$c_class = isset($classes[$key]) ? ' class="' . $classes[$key] . '" ' : '';
 								$c_label = isset($labels[$key]) ? '<label for="' . $c_id . '">' . $labels[$key] . '</label>' : '';
 								$checked = !empty($default) && $default == $val ? ' checked="checked" ' : '';
-								$c_input .= '<input name="' . $f_name . '[]" type="checkbox" id="' . $c_id . '"' . $c_class . 'value="' . $val . '"' . $checked . ' />' . "\n" . $c_label;
+								$c_input .= '<input name="' . $f_name . '[]" type="checkbox" id="' . $c_id . '"' . $c_class . 'value="' . $val . '"' . $checked . $tabindex_str . ' />' . "\n" . $c_label;
 							}
 							$fld = $c_input;
 						} else {
 							$checked = !empty($default) && $default == $val ? 'checked="checked" ' : '';
-							$fld = '<input name="'. $f_name . '" type="checkbox" id="' . $id . '" class="' . $class . '" value="' . $value . '"' . $checked . ' />' . "\n";
+							$fld = '<input name="'. $f_name . '" type="checkbox" id="' . $id . '" class="' . $class . '" value="' . $value . '"' . $checked . $tabindex_str . ' />' . "\n";
 						}
 					break;
 					
@@ -254,12 +264,12 @@ class EE_Form_Fields {
 								$c_class = isset($classes[$key]) ? 'class="' . $classes[$key] . '" ' : '';
 								$c_label = isset($labels[$key]) ? '<label for="' . $c_id . '">' . $labels[$key] . '</label>' : '';
 								$checked = !empty($default) && $default == $val ? ' checked="checked" ' : '';
-								$c_input .= '<input name="' . $f_name . '" type="checkbox" id="' . $c_id . '"' . $c_class . 'value="' . $val . '"' . $checked . ' />' . "\n" . $c_label;
+								$c_input .= '<input name="' . $f_name . '" type="checkbox" id="' . $c_id . '"' . $c_class . 'value="' . $val . '"' . $checked . $tabindex_str . ' />' . "\n" . $c_label;
 							}
 							$fld = $c_input;
 						} else {
 							$checked = !empty($default) && $default == $val ? 'checked="checked" ' : '';
-							$fld = '<input name="'. $f_name . '" type="checkbox" id="' . $id . '" class="' . $class . '" value="' . $value . '"' . $checked . ' />' . "\n";
+							$fld = '<input name="'. $f_name . '" type="checkbox" id="' . $id . '" class="' . $class . '" value="' . $value . '"' . $checked . $tabindex_str . ' />' . "\n";
 						}
 					break;
 					
@@ -268,7 +278,7 @@ class EE_Form_Fields {
 					break;
 					
 				case 'select' :
-						$fld = '<select name="' . $f_name . '" class="' . $class . '" id="' . $id . '">' . "\n";
+						$fld = '<select name="' . $f_name . '" class="' . $class . '" id="' . $id . '"' . $tabindex_str . '>' . "\n";
 						foreach ( $value as $key => $val ) {
 							$checked = !empty($default) && $default == $val ? ' selected="selected"' : '';
 							$fld .= "\t" . '<option value="' . $val . '"' . $checked . '>' . $labels[$key] . '</option>' . "\n";
@@ -280,7 +290,8 @@ class EE_Form_Fields {
 						$editor_settings = array(
 							'textarea_name' => $f_name,
 							'textarea_rows' => $dimensions[1],
-							'editor_class' => $class
+							'editor_class' => $class,
+							'tabindex' => $tabindex
 							);
 						ob_start();
 						wp_editor( $value, $id, $editor_settings );
@@ -290,7 +301,7 @@ class EE_Form_Fields {
 					break;
 					
 				default : //'text fields'
-						$fld = '<input name="' . $f_name . '" type="text" id="' . $id . '" class="' . $class . '" value="' . $value . '" />' . "\n";
+						$fld = '<input name="' . $f_name . '" type="text" id="' . $id . '" class="' . $class . '" value="' . $value . '"' . $tabindex_str . ' />' . "\n";
 						$fld .= $extra_desc;
 					
 			}
