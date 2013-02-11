@@ -145,8 +145,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'label' => __('Add New Message Templates', 'event_espresso'),
 					'order' => 5,
 					'persistent' => FALSE 
-					),
-				'columns' => array(1,1)
+					)
 				),
 			'edit_message_template' => array(
 				'nav' => array(
@@ -428,11 +427,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//generate metabox	
 		$this->_template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_add_meta_box.template.php';
 
-		if ( !defined('DOING_AJAX') ) {
-			$this->_add_admin_page_meta_box( 'insert_message_template', __('Add New Message Templates', 'event_espresso'), __FUNCTION__, NULL);
-		} else {
-			$this->_template_args['admin_page_content'] = espresso_display_template( $this->_template_path, $this->_template_args, TRUE );
-		}
+	
+		$this->_template_args['admin_page_content'] = espresso_display_template( $this->_template_path, $this->_template_args, TRUE );
 
 
 		//final template wrapper
