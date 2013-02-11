@@ -504,7 +504,7 @@ class EEM_Message_Template extends EEM_Base {
 		global $wpdb;
 		//first let's find out whether there is already a max value
 		$query = "SELECT MAX(GRP_ID) FROM " . $this->table_name . ";";
-		$max_grp_id = $wpdb->get_var( $wpdb->prepare($query) );
+		$max_grp_id = $wpdb->get_var( $query );
 		if ( empty($max_grp_id) || $max_grp_id === 0 )
 			$max_grp_id = 0;
 		$max_grp_id++;

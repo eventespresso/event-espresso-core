@@ -1283,7 +1283,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$msg_table = $wpdb->prefix . 'esp_message_template';
 		$sub_query = "SELECT EVT_ID FROM {$msg_table} GROUP BY EVT_ID";
 		$query = "SELECT event_name, id as event_id FROM {$tablename} WHERE is_active = '1' AND id NOT IN ({$sub_query})";
-		$events = $wpdb->get_results( $wpdb->prepare($query,'') );
+		$events = $wpdb->get_results( $query );
 		return $events;
 	}
 
