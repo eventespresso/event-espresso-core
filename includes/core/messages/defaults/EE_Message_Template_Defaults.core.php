@@ -172,7 +172,7 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 	 * @access protected
 	 * @return void 
 	 */
-	abstract protected function _change_templates();
+	abstract protected function _change_templates( $evt_id, $is_global );
 
 
 
@@ -255,8 +255,8 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 		$this->_fields = $this->_messenger->get_template_fields();
 		$this->_contexts = $this->_message_type->get_contexts();
 		$this->_defaults = array(
-			'm' => $this->_messenger->get_default_field_content();
-			'mt' => $this->_message_type->get_default_field_content();
+			'm' => $this->_messenger->get_default_field_content(),
+			'mt' => $this->_message_type->get_default_field_content()
 			);
 	}
 
@@ -286,13 +286,13 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 	 */
 	private function _create_new_templates( $evt_id, $is_global ) {
 
-		$this->_set_templates();
-		$this->_change_templates();
+		$this->_set_templates( $evt_id, $is_global );
+		$this->_change_templates( $evt_id, $is_global );
 
 		//necessary properties are set, let's save the default templates
 
 		$template_data =  array(
-			'MTP_Messenger' => $this->_messenger->name,
+			'MTP_messenger' => $this->_messenger->name,
 			'MTP_message_type' => $this->_message_type->name,
 			'GRP_ID' => $this->_EEM_data->generate_grp_id(),
 			'EVT_ID' => $evt_id,

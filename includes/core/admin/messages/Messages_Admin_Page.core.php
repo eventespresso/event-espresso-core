@@ -1062,6 +1062,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//make sure message_type is an array.
 		$message_types = (array) $message_types;
 		$templates = array();
+		$success = TRUE;
 
 		if ( empty($messenger) ) {
 			throw new EE_Error( __('We need a messenger to generate templates!', 'event_espresso') );
@@ -1080,13 +1081,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				continue; //get out we've already got generated templates for this.
 			$new_message_template_group = $MSG->create_new_templates($messenger, $message_type, $evt_id, $global);
 			if ( !$new_message_template_group ) {
+				$success = FALSE;
 				continue;
 			}
 
 			$templates[] = $new_message_template_group;
 		}
 		
-		return $templates;
+		return ($success) ? $templates : $success;
 
 	}
 
@@ -1701,6 +1703,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$success_msg = array();
 		$update = FALSE;
 		$ref = '_active_' . $this->_activate_meta_box_type;
+		$templates = TRUE;
 		
 		if ( !$remove ) {
 			if ( isset($this->_req_data['ee-msg-activate-form'] ) ) {
@@ -1715,6 +1718,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				$message_types = isset($this->_active_messengers[$this->_current_message_meta_box]['settings'][$this->_current_message_meta_box . '-message_types']) ? array_keys($this->_active_messengers[$this->_current_message_meta_box]['settings'][$this->_current_message_meta_box . '-message_types']) : NULL;
 				$templates = $this->_generate_new_templates($this->_current_message_meta_box, $message_types, '', TRUE);
 				
+			}
+
+			//if generation failed then we need to remove the active messenger
+			if ( !$templates ) {
+				unset($this->{$ref}[$this->_current_message_meta_box]);
+				update_user_meta($espresso_wp_user, 'ee_active_' . $this->_activate_meta_box_type, $this->{$ref});
 			}
 		} else {
 			
@@ -1768,8 +1777,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$success_msg = sprintf( __('%s %s has been successfully deactivated', 'event_espresso'), ucwords(str_replace('_', ' ', $this->_current_message_meta_box) ) , ucwords(str_replace('_', ' ', rtrim($this->_activate_meta_box_type, 's') ) ) );
 			
 		}
-
-		EE_Error::add_success($success_msg);
+	
+		if ( $templates ) EE_Error::add_success($success_msg);
 		echo EE_Error::get_notices();
 	}
 

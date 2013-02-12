@@ -127,7 +127,7 @@ function espresso_classes_core_autoload($className) {
 		'messages/' => 'core',
 		'messages/message_type/' => 'class',
 		'messages/messenger/' => 'class',
-		'messages/defaults/' => 'class', 'core',
+		'messages/defaults/' => array('class', 'core'),
 		'messages/defaults/email/' => 'class'
 		);
 

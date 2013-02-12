@@ -32,7 +32,7 @@ class EE_Messages_Email_Payment_Defaults extends EE_Message_Template_Defaults {
 
 
 	public function __construct( EE_Messages $messages ) {
-		parent::construct( $messages );
+		parent::__construct( $messages );
 	}
 
 
@@ -42,7 +42,7 @@ class EE_Messages_Email_Payment_Defaults extends EE_Message_Template_Defaults {
 	}
 
 
-	protected function _change_templates() {
+	protected function _change_templates( $evt_id, $is_global ) {
 		//make sure admin context has correct "To" email address
 		$this->_templates['admin']['to'] = '[ADMIN_EMAIL]';
 	}

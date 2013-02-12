@@ -211,13 +211,14 @@ class EE_messages {
 
 		//do we have the necessary objects loaded?
 		if ( empty( $this->_messenger) || empty($this->_message_type) )
-			return EE_Error::add_error( sprintf(__(' We had a problem creating the %s messenger or the %s message_type. Are you sure they exist?', 'event_espresso'), $messenger, $message_type), __FILE__, __FUNCTION__, __LINE__ );
+			throw new EE_Error( sprintf( __(' We had a problem creating the %s messenger or the %s message_type. Are you sure they exist?', 'event_espresso'), $messenger, $message_type ) );
 		
 		//is given message_type valid for given messenger (if this is not a global save)
 		if ( !$is_global ) {
 			foreach ( $this->_messenger->active_templates as $template ) {
 				if ( $template->message_type() != $message_type )
-					return EE_Error::add_error( sprintf(__(' The %s message type is not registered with the %s messenger. Please visit the Messenger activation page to assign this message type first if you want to use it.', 'event_espresso'), $messenger, $message_type), __FILE__, __FUNCTION__, __LINE__ );
+					EE_Error::add_error( sprintf(__(' The %s message type is not registered with the %s messenger. Please visit the Messenger activation page to assign this message type first if you want to use it.', 'event_espresso'), $messenger, $message_type), __FILE__, __FUNCTION__, __LINE__ );
+				return false;
 			}
 		}
 		return true;
@@ -257,15 +258,15 @@ class EE_messages {
 
 		//assemble class name
 		$messenger = ucwords( str_replace( '_', ' ', $this->_messenger->name ) );
-		$messenger = str_replace( ' ', '_', $this->_messenger->name );
+		$messenger = str_replace( ' ', '_', $messenger );
 		$message_type = ucwords( str_replace( '_', ' ', $this->_message_type->name ) );
-		$message_type = str_replace( ' ', '_', $this->_message_type->name );
+		$message_type = str_replace( ' ', '_', $message_type );
 		$classname = 'EE_Messages_' . $messenger . '_' . $message_type . '_Defaults';
 
 		//next we need to see if the defaults class exists
 		if ( !class_exists( $classname ) ) {
 			$msg[] = __('Something went wrong with creating a new template', 'event_espresso');
-			$msg[] = sprintf( __('The defaults class being checked for is <strong>%s</strong>. Please doublecheck the spelling and make sure you have a class for this messenger/message_type combo setup. Also verify that the autoloaders are setup correctly for the class', 'event_espresso') );
+			$msg[] = sprintf( __('The defaults class being checked for is <strong>%s</strong>. Please doublecheck the spelling and make sure you have a class for this messenger/message_type combo setup. Also verify that the autoloaders are setup correctly for the class', 'event_espresso'), $classname );
 			throw new EE_Error( implode('||', $msg ) );
 		}
 
