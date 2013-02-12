@@ -271,7 +271,7 @@ class EE_Single_Page_Checkout {
 		$template_args['currency_symbol'] = $org_options['currency_symbol'];
 		$template_args['reg_page_url'] = $this->_reg_page_base_url;
 
-		$template_args['css_class'] = 'ui-widget-content ui-corner-all';
+		$template_args['css_class'] = ' ui-widget-content ui-corner-all';
 		$template_args['confirmation_data'] = '';
 
 		// grab what step we're on
@@ -383,7 +383,7 @@ class EE_Single_Page_Checkout {
 				$x = 1;
 				$counter = 1;
 				foreach ($cart_contents['items'] as $item) {
-					printr( $item, '$item  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+					//printr( $item, '$item  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 					$step_1_line_items .= '#mer-reg-page-line-item-' . $item['id'];
 					
@@ -445,24 +445,22 @@ class EE_Single_Page_Checkout {
 						}
 
 						$question_meta = array(
-								'attendee_number' => $att_nmbr,
+								'EVT_ID' => $item['id'],
+								'att_nmbr' => $att_nmbr,
 								'price_id' => $price_id,
 								'date' => $tckt_date,
 								'time' => $tckt_time,
 								'input_name' => $input_name,
 								'input_id' => $input_id,
-								'input_class' => $template_args['css_class'],
+								'input_class' => 'ee-reg-page-questions' . $template_args['css_class'],
 								'additional_attendee_reg_info' => $additional_attendee_reg_info
 						);
-						
-						$att_questions = EEM_Event::instance()->get_event_questions( $item['id'], $question_meta );
 
-						printr( $att_questions, '$att_questions  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+						add_filter( 'filter_hook_espresso_form_field_label_html', array( $this, 'reg_form_form_field_label_wrap' ), 10, 1 );
+						add_filter( 'filter_hook_espresso_form_field_input_html', array( $this, 'reg_form_form_field_input__wrap' ), 10, 1 );
 						
-						// grab questions
-						$att_questions = event_espresso_add_question_groups(
-										$event_reg_details->question_groups, '', $item['id'], TRUE, $question_meta, $template_args['css_class']
-						);
+						$questions_and_groups = EEM_Event::instance()->get_event_questions_and_groups( $question_meta );
+						$att_questions = EE_Form_Fields::generate_question_groups_html( $questions_and_groups, 'div' );
 
 						if ($att_questions != '') {
 							$att_questions .= '
@@ -659,7 +657,7 @@ class EE_Single_Page_Checkout {
 	var RecaptchaOptions = { theme : "' . $rc_theme . '", lang : "' . $rc_lang . '" };
 /*  ] ]>  */
 </script>
-<p class="event_form_field" id="spc-captcha">
+<p class="reg-page-form-field-wrap-pg" id="spc-captcha">
 	' . __('Anti-Spam Measure: Please enter the following phrase', 'event_espresso') . '
 	' . recaptcha_get_html($org_options['recaptcha_publickey'], $error, is_ssl() ? true : false) . '
 ';
@@ -682,6 +680,37 @@ class EE_Single_Page_Checkout {
 //		printr( $EE_Session->get_session_data(), '$EE_Session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		espresso_display_template($this->_templates['registration_page_wrapper'], $template_args);
+	}
+
+
+
+
+
+	/**
+	 * 		reg_form_form_field_label_wrap
+	 *
+	 * 		@access 		public
+	 * 		@param 		string 		$label
+	 * 		@return 		string
+	 */
+	public function reg_form_form_field_label_wrap( $label ) {
+		return '<p class="reg-page-form-field-wrap-pg">' . $label ;
+		
+	}
+
+
+
+
+	/**
+	 * 		reg_form_form_field_input__wrap
+	 *
+	 * 		@access 		public
+	 * 		@param 		string 		$label
+	 * 		@return 		string
+	 */
+	public function reg_form_form_field_input__wrap( $input ) {
+		return $input . '</p>';
+		
 	}
 
 
@@ -743,7 +772,7 @@ class EE_Single_Page_Checkout {
 			//$valid_data[$key] = wp_strip_all_tags($value);
 		}
 		
-		//printr( $valid_data, '$valid_data' );
+		//printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// if we don't have a qstn field then something went TERRIBLY WRONG !!! AHHHHHHHH!!!!!!!
 		if (isset($valid_data['qstn'])) {
