@@ -748,7 +748,7 @@ class EE_Attendee extends EE_Base_Class{
 	 * @return EE_Registration[]
 	 */
 	public function get_most_recent_registration(){
-		return $this->get_first_related('Registrations', null, 'REG_date', 'DESC', null, null);
+		return $this->get_first_related('Registrations', null, 'REG_date', 'DESC', '=', null);
 	}
 }
 

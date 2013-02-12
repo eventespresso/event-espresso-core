@@ -361,7 +361,7 @@ abstract class EE_Base_Class {
 	 * @param string $relationName
 	 * @return EE_Base_Class
 	 */
-	public function get_first_related($relationName,$where_col_n_values,$orderby,$order,$operators,$output){
+	public function get_first_related( $relationName, $where_col_n_values = null, $orderby = null, $order = null, $operators = '=', $output = 'OBJECT_K'){
 		$internalName=$this->_get_private_attribute_name($relationName);
 		if($this->$internalName==null){
 			$model=$this->_get_model();
@@ -376,7 +376,7 @@ abstract class EE_Base_Class {
 	 * all teh related EE_Answers -and had that list automatically cahced- and remove one of those EE_Answers, this function will clear that cache.
 	 * @param string $specificRelationName if you know exactly which relation cache needs to be cleared. If not set, all of them will be cleared.
 	 */
-	public function clear_relation_cache($specificRelationName=null){
+	public function clear_relation_cache( $specificRelationName = null ){
 		if(!$specificRelationName){
 			$model=$this->_get_model();
 			$relations=array_keys($model->relation_settings());

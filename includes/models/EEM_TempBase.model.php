@@ -230,9 +230,12 @@ abstract class EEM_TempBase extends EEM_Base{
 	* 		@param		array		$attendees		
 	*		@return 	EE_TempBase[]		array on success, FALSE on fail
 	*/	
-	protected function _create_objects( $rows = FALSE ) {	
+	protected function _create_objects( $rows = array() ) {	
 		$this->_include_php_class();
 		$array_of_objects=array();
+		if(empty($rows)){
+			return FALSE;
+		}
 		foreach ( $rows as $row ) {
 			if(empty($row)){//wp did its weird thing where it returns an array like array(0=>null), which is totally not helpful...
 				return FALSE;

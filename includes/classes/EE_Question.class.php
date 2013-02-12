@@ -54,7 +54,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * @access protected
 	 * @var string
 	 */
-	protected $_QST_system_name=NULL;
+	protected $_QST_system_ID=NULL;
 	
 	
 	/**
@@ -135,7 +135,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * constructor for questions
 	 * @param string/array $QST_display_text text for displaying the question (eg, "what is your name?") OR an array of all field values, where keys match these arguments' names
 	 * @param string $QST_admin_label administrative label for a question
-	 * @param string $QST_system_name if this is a system question, it's internal name
+	 * @param string $QST_system_ID if this is a system question, it's internal name
 	 * @param string $QST_type one of 'text','textarea',etc.
 	 * @param boolean $QST_required indicates whether this question must be answered
 	 * @param string $QST_required_text text that's displayed if teh question isn't answered
@@ -148,7 +148,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	public function __construct( 
 			$QST_display_text=NULL, 
 			$QST_admin_label=NULL, 
-			$QST_system_name=NULL, 
+			$QST_system_ID=NULL, 
 			$QST_type=NULL, 
 			$QST_required=NULL,
 			$QST_required_text=NULL,
@@ -177,9 +177,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	*		@param		int		$QST_display_text
 	*/	
 	public function set_display_text( $QST_display_text = FALSE ) {
-		if ( ! $this->_check_for( $QST_display_text, 'Display text' )) { return FALSE; }
-		$this->_QST_display_text = wp_strip_all_tags( $QST_display_text );
-		return TRUE;
+		return $this->set('QST_display_text',$QST_display_text);
 	}
 	
 	
@@ -191,9 +189,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	*		@param		int		$QST_admin_label
 	*/	
 	public function set_admin_label( $QST_admin_label = FALSE ) {
-		if ( ! $this->_check_for( $QST_admin_label, 'Admin Label' )) { return FALSE; }
-		$this->_QST_admin_label = wp_strip_all_tags( $QST_admin_label );
-		return TRUE;
+		return $this->set('QST_admin_label',$QST_admin_label);
 	}
 	
 	
@@ -202,12 +198,10 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	*		Set	system name
 	* 
 	* 		@access		public		
-	*		@param		int		$QST_system_name
+	*		@param		int		$QST_system_ID
 	*/	
-	public function set_system_name( $QST_system_name = FALSE ) {
-		if ( ! $this->_check_for( $QST_system_name, 'system name' )) { return FALSE; }
-		$this->_QST_system_name = wp_strip_all_tags( $QST_system_name );
-		return TRUE;
+	public function set_system_ID( $QST_system_ID = FALSE ) {
+		return $this->set('QST_system_ID',$QST_system_ID);
 	}
 	
 	/**
@@ -217,13 +211,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	*		@param		int		$QST_type
 	*/	
 	public function set_question_type( $QST_type = FALSE ) {
-		if ( ! $this->_check_for( $QST_type, 'Question Type' )) { return FALSE; }
-		if ( ! in_array($QST_type, $this->_allowed_question_types)) { 
-			EE_Error::add_error( sprintf(__("You provided an invalid question type: %s. Valid types are %s"),$QST_type,implode(",",$this->_allowed_question_types)), __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE; 
-		}
-		$this->_QST_type =  $QST_type;
-		return TRUE;
+		return $this->set('QST_type',$QST_type);
 	}
 	
 	/**
@@ -243,9 +231,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	*		@param		int		$QST_required
 	*/	
 	public function set_required( $QST_required = FALSE ) {
-		if ( ! $this->_check_for( $QST_required, 'Required' )) { return FALSE; }
-		$this->_QST_required = intval( $QST_required );
-		return TRUE;
+		return $this->set('QST_required',$QST_required);
 	}
 	
 	/**
@@ -255,9 +241,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	*		@param		int		$QST_required_text
 	*/	
 	public function set_required_text( $QST_required_text = FALSE ) {
-		if ( ! $this->_check_for( $QST_required_text, 'Required text' )) { return FALSE; }
-		$this->_QST_required_text = wp_strip_all_tags( $QST_required_text );
-		return TRUE;
+		return $this->set('QST_required_text',$QST_required_text);
 	}
 	
 	
@@ -269,9 +253,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	*		@param		int		$QST_order
 	*/	
 	public function set_order( $QST_order = FALSE ) {
-		if ( ! $this->_check_for( $QST_order, 'Order' )) { return FALSE; }
-		$this->_QST_order = wp_strip_all_tags( $QST_order );
-		return TRUE;
+		return $this->set('QST_order',$QST_order);
 	}
 	
 	
@@ -283,9 +265,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	*		@param		int		$QST_admin_only
 	*/	
 	public function set_admin_only( $QST_admin_only = FALSE ) {
-		if ( ! $this->_check_for( $QST_admin_only, 'Admin Only' )) { return FALSE; }
-		$this->_QST_admin_only = wp_strip_all_tags( $QST_admin_only );
-		return TRUE;
+		return $this->set('QST_admin_only',$QST_admin_only);
 	}
 	
 	
@@ -297,9 +277,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	*		@param		int		$QST_wp_user
 	*/	
 	public function set_wp_user( $QST_wp_user = FALSE ) {
-		if ( ! $this->_check_for( $QST_wp_user, 'WP User Id' )) { return FALSE; }
-		$this->_QST_wp_user = wp_strip_all_tags( $QST_wp_user );
-		return TRUE;
+		return $this->set('QST_wp_user',$QST_wp_user);
 	}
 	
 	/**
@@ -314,9 +292,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	*		@param		int		$QST_wp_user
 	*/	
 	public function set_deleted( $QST_deleted = FALSE ) {
-		if ( ! $this->_check_for( $QST_deleted, 'WP User Id' )) { return FALSE; }
-		$this->_QST_deleted = wp_strip_all_tags( $QST_deleted );
-		return TRUE;
+		return $this->set('QST_deleted',$QST_deleted);
 	}
 	
 	
@@ -437,13 +413,6 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	public function options($notDeletedOptionsOnly=true){
 		if($notDeletedOptionsOnly){
 			return  $this->get_many_related('Question_Options', array('QSO_deleted'=>false));
-			/*$doubleCheckedOptions=array();
-			foreach($options as $option){
-				if(!$option->deleted()){
-					$doubleCheckedOptions[$option->ID()]=$option;
-				}
-			}
-			return $doubleCheckedOptions;*/
 		}else{
 			return $this->get_many_related('Question_Options');
 		}
@@ -464,16 +433,6 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * @return boolean success
 	 */
 	public function remove_option(EE_Question_Option $option){
-		/*$model=$this->_get_model();
-		$optionRelationSettings=$model->related_settings_for('Question_Options');
-		$optionsModel=$optionRelationSettings->model_instance();
-		$success= $optionsModel->delete_question_option_by_ID($option->ID());
-		if($success){
-			unset($option);
-			return true;
-		}else{
-			return false;
-		}*/
 		return $this->_remove_relation_to($option, 'Question_Options');
 	}
 	
