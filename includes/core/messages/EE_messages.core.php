@@ -255,77 +255,27 @@ class EE_messages {
 
 	protected function _create_new_templates($evt_id, $is_global) {
 
-		$m_fields = $this->_messenger->get_template_fields();
-		$m_defaults = $this->_messenger->get_default_field_content();
-		$mt_contexts = $this->_message_type->get_contexts();
-		$mt_defaults = $this->_message_type->get_default_field_content();
-		$variable_template_data = array();
+		//assemble class name
+		$messenger = ucwords( str_replace( '_', ' ', $this->_messenger->name ) );
+		$messenger = str_replace( ' ', '_', $this->_messenger->name );
+		$message_type = ucwords( str_replace( '_', ' ', $this->_message_type->name ) );
+		$message_type = str_replace( ' ', '_', $this->_message_type->name );
+		$classname = 'EE_Messages_' . $messenger . '_' . $message_type . '_Defaults';
 
-		//first are we setting up templates after messenger activation? If so then we need to get defaults from the messenger
-		if ( empty($evt_id) && $is_global ) {
-			//setup templates array
-			foreach ( $mt_contexts as $context ) {
-				foreach ( $m_fields as $field => $field_type ) {
-					if ( $field !== 'extra' )
-						$templates[$context][$field] = ( isset($mt_defaults[$field]) ? maybe_serialize($mt_defaults[$field]) : maybe_serialize($m_defaults[$field]) );
-				}
-			}
-
-		} else if ( !empty($evt_id) ) {
-			//k we're setting up a custom event template so let's just copy what's currently in the active global template for this messenger and message_type
-			//first let's get all templates for this messenger
-			$all_templates = $this->_EEM_data->get_all_message_templates_by_messenger($this->_messenger->name);
-			foreach ( $all_templates as $template_object ) {
-				$mt = $template_object->message_type();
-				$e_id = $template_object->event();
-				if ( $this->_message_type->name == $mt && empty($e_id) ) {
-					$context_templates = $template_object->context_templates();
-					foreach ( $mt_contexts as $context ) {
-						foreach ( $m_fields as $field => $field_type ) {
-							if ( $field !== 'extra' ) {
-								$templates[$context][$field] = ( isset($context_templates[$context][$field] ) ) ? $context_templates[$context][$field]['content'] : '';
-								$templates[$context][$field] = (!is_serialized($templates[$context][$field]) ) ? maybe_serialize($templates[$context][$field]) : $templates[$context][$field];
-							}
-						}
-					}
-				}
-			}
-			
-		}
-		//setup data and update
-		
-		$template_data = array(
-			'MTP_messenger' => $this->_messenger->name,
-			'MTP_message_type' => $this->_message_type->name,
-			'GRP_ID' => $this->_EEM_data->generate_grp_id(),
-			'EVT_ID' => $evt_id,
-			'MTP_is_override' => 0,
-			'MTP_deleted' => 0,
-			'MTP_is_global' => $is_global,
-			'MTP_user_id' => get_current_user_id(),
-			'MTP_is_active' => 1,
-		);
-
-		foreach ( $mt_contexts as $context ) {
-			foreach ( $m_fields as $field => $field_type ) {
-				if ( $field != 'extra' ) {
-					$template_data['MTP_context'] = $context;
-					$template_data['MTP_template_field'] = $field;
-					$template_data['MTP_content'] = $templates[$context][$field];
-					$MTP = $this->_EEM_data->insert($template_data);
-					if ( !$MTP ) 
-						return EE_Error::add_error( sprintf(__('There was an error in saving new template data for %s messenger, %s message type, %s context and %s template field.', 'event_espresso'), $this->_messenger->name, $this->_message_type->name, $context, $field), __FILE__, __FUNCTION__, __LINE__  );
-				}
-			}
+		//next we need to see if the defaults class exists
+		if ( !class_exists( $classname ) ) {
+			$msg[] = __('Something went wrong with creating a new template', 'event_espresso');
+			$msg[] = sprintf( __('The defaults class being checked for is <strong>%s</strong>. Please doublecheck the spelling and make sure you have a class for this messenger/message_type combo setup. Also verify that the autoloaders are setup correctly for the class', 'event_espresso') );
+			throw new EE_Error( implode('||', $msg ) );
 		}
 
-		$success_array = array(
-			'GRP_ID' => $template_data['GRP_ID'],
-			'EVT_ID' => $template_data['EVT_ID'],
-			'MTP_context' => $mt_contexts[0]
-		);	
+		//if we've made it this far we have the class so let's instantiate
+		$a = new ReflectionClass( $classname );
+		$DFLT = $a->newInstance( $this );
 
-		return $success_array;	
+		//generate templates
+		$success = $DFLT->create_new_templates($evt_id, $is_global);
+		return $success;
 	}
 
 	/**
