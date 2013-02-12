@@ -32,7 +32,7 @@ function espresso_display_payment_overview_template($data) {
 								<label><?php _e('Payment Type:', 'event_espresso'); ?></label>
 							</td>
 							<td>
-								<?php echo espresso_payment_type($data['txn_type']); ?>
+								<?php echo $data['txn_type']; ?>
 							</td>
 						</tr>
 						<?php endif;?>
@@ -51,7 +51,7 @@ function espresso_display_payment_overview_template($data) {
 								<label><?php _e('Amount Paid/Owed:', 'event_espresso'); ?></label>
 							</td>
 							<td>
-								<?php echo event_espresso_paid_status_icon($data['payment_status']) . ' ' . $org_options['currency_symbol'] . $data['total_cost']; ?>
+								<?php echo /*event_espresso_paid_status_icon($data['payment_status']) . ' ' .*/ $org_options['currency_symbol'] . number_format( $data['total_cost'], 2, '.', ',' ); ?>
 							</td>
 						</tr>
 						<tr>
