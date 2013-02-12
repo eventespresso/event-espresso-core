@@ -213,6 +213,9 @@ abstract class EE_Base_Class {
 				break;
 			case 'simplehtml':
 				global $allowedtags;
+				$allowedtags['ol']=array();
+				$allowedtags['ul']=array();
+				$allowedtags['li']=array();
 				$return=  htmlentities(wp_kses("$value",$allowedtags),ENT_QUOTES,'UTF-8');
 				break;
 			case 'fullhtml':
