@@ -105,7 +105,7 @@ function espresso_initialize_system_questions() {
 	global $wpdb;
 	$SQL = 'SELECT QSG_system_ID FROM ' . $wpdb->prefix . 'esp_question_group WHERE QSG_system_ID != 0';
 	// what we have
-	$question_groups = $wpdb->get_results( $SQL );
+	$question_groups = $wpdb->get_col( $SQL );
 	// check the reponse
 	$question_groups = is_array( $question_groups ) ? $question_groups : array();
 	// what we should have
@@ -996,23 +996,6 @@ function events_data_tables_install() {
 			  	KEY coupon_code (coupon_code),
 			  	KEY wp_user (wp_user)";
 	event_espresso_run_install($table_name, $table_version, $sql);
-
-
-
-	$table_name = "events_multi_event_registration_id_group";
-	$sql = "primary_registration_id varchar(255) DEFAULT NULL,
-			registration_id varchar(255) DEFAULT NULL  ";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
-
-
-	$table_name = "events_attendee_cost";
-	$sql = "attendee_id int(11) DEFAULT NULL,
-			cost decimal(20,2) DEFAULT '0.00',
-			quantity int(11) DEFAULT NULL,
-			KEY attendee_id (attendee_id)";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
 
 	
 
