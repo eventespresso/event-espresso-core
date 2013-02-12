@@ -346,6 +346,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 
 	public function thank_you_page() {
 		global $EE_Session;
+		printr( $_POST, '$_POST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$txn_details = array(
 				'gateway' => $this->_payment_settings['display_name'],
 				'approved' => FALSE,
