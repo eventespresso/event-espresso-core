@@ -491,9 +491,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$MSG = new EE_messages();
 		$template_field_structure = $MSG->get_fields($message_template->messenger(), $message_template->message_type());
 		
-		if ( is_wp_error($template_field_structure) ) {
-			$this->_handle_errors($template_field_structure); 
-			$template_field_structure = false;
+		if ( !$template_field_structure ) {
+			$template_field_structure = FALSE;
 			$template_fields = 'There was an error in assembling the fields for this display (you should see an error message';
 		}
 
@@ -778,9 +777,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$template_fields = $this->_generate_admin_form_fields( $template_form_fields );
 			$sidebar_fields = $this->_generate_admin_form_fields( $sidebar_form_fields );
 
-			if ( is_wp_error($template_fields) ) {
-				$this->_handle_errors($template_fields);
-			}
 
 		} //end if ( !empty($template_field_structure) )
 
@@ -998,8 +994,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					$set_column_values = $this->_set_message_template_column_values($template_field);
 					$where_cols_n_values = array( 'MTP_ID' => $this->_req_data['MTP_template_fields'][$template_field]['MTP_ID']);
 					if ( $updated = $MTP->update( $set_column_values, $where_cols_n_values ) ) {
-						if ( is_wp_error($updated) ) {
-							$this->_handle_errors($updated);
+						if ( !$updated ) {
+							$msg = sprintf( __('%s field was NOT updated for some reason', 'event_espresso') );
+							EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__ );
 						} else {
 							$success = 1;
 						}
@@ -1082,8 +1079,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			if ( $this->_already_generated($messenger, $message_type, $evt_id ) )
 				continue; //get out we've already got generated templates for this.
 			$new_message_template_group = $MSG->create_new_templates($messenger, $message_type, $evt_id, $global);
-			if ( is_wp_error($new_message_template_group) ) {
-				$this->_handle_errors($new_message_template_group);
+			if ( !$new_message_template_group ) {
 				continue;
 			}
 
@@ -1621,8 +1617,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			//make sure is an array.
 			$mt_template_form_fields = (array) $mt_template_form_fields;
 
-			if ( is_wp_error($mt_template_form_fields) ) {
-				$this->_handle_errors($mt_template_form_fields);
+			if ( !$mt_template_form_fields ) {
 				$mt_template_form_fields = NULL;
 			}
 
@@ -1643,8 +1638,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$template_form_fields = !empty($template_form_field) ? $this->_generate_admin_form_fields( $template_form_field, 'string', 'ee_msg_activate_form' ) : '';
 
-		if ( is_wp_error($template_form_fields) ) {
-			$this->_handle_errors($template_form_fields);
+		if ( !$template_form_fields ) {
 			$template_form_fields = NULL;
 		}
 

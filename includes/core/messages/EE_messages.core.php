@@ -245,7 +245,8 @@ class EE_messages {
 		}
 
 		if ( !$is_global && empty($evt_id) ) {
-			return EE_Error::add_error( __('This template is not being created by messenger activation and is a custom template that requires event id (which is missing)', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __('This template is not being created by messenger activation and is a custom template that requires event id (which is missing)', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			return false;
 		}
 
 		//whew made it this far!  Okay, let's go ahead and create the templates then
@@ -351,8 +352,10 @@ class EE_messages {
 			} 
 		}
 
-		if ( empty($template_fields) )
-			return EE_Error::get_error( __('Something went wrong and we couldn\'t get any templates assembled', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		if ( empty($template_fields) ) {
+			EE_Error::add_error( __('Something went wrong and we couldn\'t get any templates assembled', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}
 
 		return $template_fields;
 	}

@@ -60,7 +60,8 @@ class EE_Form_Fields {
 	static public function get_form_fields( $input_vars = array(), $id = FALSE ) {
 
 		if ( empty($input_vars) ) {
-			return EE_Error::get_error( __('missing required variables for the form field generator', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
+			EE_Error::add_error( __('missing required variables for the form field generator', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
+			return FALSE;
 		}
 		
 		// if you don't behave - this is what you're gonna get !!!
