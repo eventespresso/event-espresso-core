@@ -50,23 +50,22 @@ class EEM_Event  {
 
 
 	/**
-	*		retrieve all active Questions for an Event via the Event's ID
+	*		retrieve all active Questions and Groups for an Event via the Event's ID
 	* 
 	* 		@access		public
-	* 		@param		int 			$EVT_ID		
 	* 		@param		array 		$question_meta		additional question details petaining to the form	
 	*		@return 		mixed		array on success, FALSE on fail
 	*/	
-	public function get_event_questions( $EVT_ID = FALSE, $q_meta = array() ) {
+	public function get_event_questions_and_groups( $q_meta = array() ) {
 		
-		if ( ! $EVT_ID ) {
+		if ( ! isset( $q_meta['EVT_ID'] ) || ! absint( $q_meta['EVT_ID'] )) {
 			EE_Error::add_error( __( 'An error occured. No Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
-		
+
 		$questions = array();
 		$default_q_meta = array(
-				'attendee_number' => 1,
+				'att_nmbr' => 1,
 				'price_id' => '',
 				'date' => '',
 				'time' => '',
@@ -76,7 +75,7 @@ class EEM_Event  {
 		);
 		
 		$q_meta = array_merge( $default_q_meta, $q_meta );
-		
+
 		global $wpdb;
 //		$SQL = 'SELECT QST.QST_ID, QSG.*, QST.* FROM ' . $wpdb->prefix . 'esp_event_question_group EQG '; 
 //		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_question_group QSG ON  EQG.QSG_ID = QSG.QSG_ID '; 
@@ -97,11 +96,11 @@ class EEM_Event  {
 		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_question_group QSG ON  EQG.QSG_ID = QSG.QSG_ID ';
 		$SQL .= 'WHERE EQG.EVT_ID = %d AND QSG.QSG_deleted = 0 '; 
 		// Only personal information for the additional attendees in each group
-		if ( $q_meta['additional_attendee_reg_info'] < 3 && $q_meta['attendee_number'] > 1 ) {
-			$SQL .= " AND qg.system_group = 1 ";
+		if ( $q_meta['additional_attendee_reg_info'] < 3 && $q_meta['att_nmbr'] > 1 ) {
+			$SQL .= " AND QSG.QSG_system_ID 	 = 1 ";
 		}
 		$SQL .= 'ORDER BY QSG.QSG_order'; 
-		$QSGs = $wpdb->get_results( $wpdb->prepare( $SQL, $EVT_ID ), 'OBJECT_K' );
+		$QSGs = $wpdb->get_results( $wpdb->prepare( $SQL, $q_meta['EVT_ID'] ), 'OBJECT_K' );
 		
 		$QSG_IDs = implode( array_keys( $QSGs ), ',' );		
 
@@ -123,23 +122,28 @@ class EEM_Event  {
 		// now interlace everything into one big array where quetions groups have questions and questions have options
 		foreach ( $QSGs as $QSG_ID => $QSG ) {
 			$questions[ $QSG_ID ] = (array)$QSG;
+			$questions[ $QSG_ID ]['QSG_form_key'] = $q_meta['input_id'];
 			$questions[ $QSG_ID ]['QSG_questions'] = array();
 			foreach ( $QSTs as $QST_ID => $QST ) {
 				if ( $QST->QSG_ID == $QSG_ID ) {
 					
-					$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ] = array(
-							'db-col' =>  $this->_get_question_target_db_column( $QST->QST_system_ID ),
-							'label' => $QST->QST_display_text,
-							'input' => 'text',
-							'type' => 'string',
-							'sanitize' => 'no_html',
-							'required' => TRUE,
-							'validation' => TRUE,
-							'value' => NULL,
-							'format' => '%s'
-					);
+//					$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ] = array(
+//							'db-col' =>  $this->_get_question_target_db_column( $QST->QST_system_ID ),
+//							'label' => $QST->QST_display_text,
+//							'input' => 'text',
+//							'type' => 'string',
+//							'sanitize' => 'no_html',
+//							'required' => TRUE,
+//							'validation' => TRUE,
+//							'value' => NULL,
+//							'format' => '%s'
+//					);
 					//printr( $QST, '$QST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );	
 					$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ] = (array)$QST;
+					$qst_name = $this->_generate_question_input_name( $QST );
+					$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_input_name'] = 'qstn' . $q_meta['input_name'] . '[' . $qst_name . ']';
+					$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_input_id'] = $q_meta['input_id'] . '-' . $qst_name;
+					$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_input_class'] = $q_meta['input_class'];
 					$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_options'] = array();
 					if ( $QST->QST_type == 'SINGLE' ||$QST->QST_type == 'MULTIPLE' ||$QST->QST_type == 'DROPDOWN' ) {
 						foreach ( $QSOs as $QSO_ID => $QSO ) {					
@@ -172,57 +176,60 @@ class EEM_Event  {
 	*		_get_question_target_db_column
 	* 
 	* 		@access		private
-	* 		@param		$QST_system_ID 			
+	* 		@param		$QST 			
 	*		@return 		string		string
 	*/	
-	private function _get_question_target_db_column( $QST_system_ID = FALSE ) {
-		$db_col = 'esp_answer.ANS_value';
-		if ( $QST_system_ID ) {
-			switch( $QST_system_ID ) {
+	private function _generate_question_input_name( $QST ) {
+
+		if ( $QST->QST_system_ID ) {
+			switch( $QST->QST_system_ID ) {
 				
 				case 1 :
-						$db_col = 'esp_attendee.ATT_fname';
+						$qst_name = 'fname';
 					break;
 					
 				case 2 :
-						$db_col = 'esp_attendee.ATT_fname';
+						$qst_name = 'lname';
 					break;
 					
 				case 3 :
-						$db_col = 'esp_attendee.ATT_email';
+						$qst_name = 'email';
 					break;
 					
 				case 4 :
-						$db_col = 'esp_attendee.ATT_address';
+						$qst_name = 'address';
 					break;
 					
 				case 5 :
-						$db_col = 'esp_attendee.ATT_address2';
+						$qst_name = 'address2';
 					break;
 					
 				case  6  :
-						$db_col = 'esp_attendee.ATT_city';
+						$qst_name = 'city';
 					break;
 					
 				case 7 :
-						$db_col = 'esp_attendee.STA_ID';
+						$qst_name = 'state';
 					break;
 					
 				case 8 :
-						$db_col = 'esp_attendee.ATT_zip';
+						$qst_name = 'zip';
 					break;
 					
 				case 9 :
-						$db_col = 'esp_attendee.CNT_ISO';
+						$qst_name = 'country';
 					break;
 					
 				case 10 :
-						$db_col = 'esp_attendee.ATT_phone';
+						$qst_name = 'phone';
 					break;
 				
 			}
+			
+		} else {
+			$qst_name = str_replace( array( ' ', '-', '.' ), '_', strtolower( $QST->QST_display_text ));
 		}
-		return $db_col;
+		return $qst_name;
 	}
 
 
