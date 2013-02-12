@@ -75,7 +75,7 @@ class EE_Template_Validator {
 	 */
 	static function verify_isnt_null($variable_to_test,$name_of_variable){
 		if(WP_DEBUG)return;
-		if($variable_to_test==null){
+		if($variable_to_test==null && $variable_to_test!=0 && $variable_to_test!=FALSE){
 			$error[]=__('Variable named %s is null.','event_espresso');
 			$error[]=__("Consider looking at the stack trace to see why it wasn't set.",'event_espresso');
 			throw new EE_Error(sprintf(implode(",",$error),$name_of_variable,$name_of_variable));

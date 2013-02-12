@@ -318,8 +318,9 @@ abstract class EEM_TempBase extends EEM_Base{
 				$foreign_key_name=$relatedModelInfo->field_name();
 				$related_model_pk_name=$relatedModel->primary_key_name();
 				if(!is_array($where_col_n_values) || !array_key_exists($related_model_pk_name, $where_col_n_values)){
-					$where_col_n_values[$related_model_pk_name]=$modelObject->get($foreign_key_name);
+					$where_col_n_values[$foreign_key_name]=$modelObject->get($foreign_key_name);
 				}
+				//echo "belognsto";var_dump($where_col_n_values);
 				$relatedObjects=$relatedModel->get_all_where($where_col_n_values,$orderby,$order,$operators,$limit,$output);
 				//$relatedObjects=$relatedModel->_create_objects(array($row,));
 				break;
@@ -357,11 +358,17 @@ abstract class EEM_TempBase extends EEM_Base{
 													$operators,
 													$limit,
 													$output);
-				$relatedObjects=$relatedModel->_create_objects($rows);
+				//if we're only wanting to count them, then $rows is actually just an integer
+				//so we only want ot return it.
+				if($output!=='COUNT'){
+					$relatedObjects=$relatedModel->_create_objects($rows);
+				}else{
+					$relatedObjects=$rows;
+				}
 				break;
 		}
 		$className=get_class($this);
-		return apply_filters('filter_hook_espresso__{$className}__get_many_related',$relatedObjects,$this,$modelObject,$relationName);
+		return apply_filters('filter_hook_espresso__{$className}__get_many_related',$relatedObjects,$this,$modelObject,$relationName,$where_col_n_values,$order,$orderby,$operators,$limit,$output);
 	}
 	/**
 	 * Removes a relationship of the correct type between $modelObject and $otherModelObject. 
