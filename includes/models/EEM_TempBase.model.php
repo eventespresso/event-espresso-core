@@ -345,7 +345,6 @@ abstract class EEM_TempBase extends EEM_Base{
 				$otherTableName=$relatedModel->_get_table_name();
 				$otherTablePK=$relatedModel->primary_key_name();
 				$joinSQL="$joinTable LEFT JOIN $otherTableName ON $joinTable.$otherTablePK=$otherTableName.$otherTablePK ";
-				//$rows=$;
 				$thisTablePK=$this->primary_key_name();
 				if( !is_array($where_col_n_values) || !array_key_exists($thisTablePK,$where_col_n_values )){
 					$where_col_n_values[$thisTablePK]=$modelObject->ID();
@@ -526,7 +525,7 @@ abstract class EEM_TempBase extends EEM_Base{
 				$thisPk=$this->primary_key_name();
 				$otherPk=$relatedModelInfo->field_name();
 				$relationsToOtherObject=$this->get_many_related($thisModelObject,$relationName,array($thisPk=>$thisModelObject->ID(),
-																								$relatedModel->_get_table_name().".".$otherPk=>$otherModelID));
+																								$otherPk=>$otherModelID));
 				//if it doesn't exist, add it
 				$insertionValues=array($thisPk=>$thisModelObject->ID(),$otherPk=>$otherModelID);
 				if(!empty($extraColumnsForHABTM)){
