@@ -1,5 +1,5 @@
 <!--**********************************  STEP 1 	**********************************-->		
-<?php echo do_action('action_hook_espresso_registration_page_step_1_start');?>
+<?php echo do_action('action_hook_espresso_registration_page_step_1_start',$event_queue);?>
 	<h2 id="mer-reg-page-step-title-1-hdr" class="mer-reg-page-step-title-hdr">
 		<?php _e('Step 1 -  Attendee Information', 'event_espresso'); ?>
 		<a id="mer-reg-page-edit-step-1-lnk" class="mer-reg-page-go-to-step-1 mer-reg-page-edit-step-lnk <?php echo $step_1_edit_lnk_class; ?>"  href="<?php echo $reg_page_step_1_url; ?>"><?php _e('edit', 'event_espresso'); ?></a>

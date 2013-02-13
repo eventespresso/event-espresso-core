@@ -462,6 +462,10 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 		}
 		$EE_Session->set_session_data(array('txn_results' => $txn_details), 'session_data');
 
+		$success = $txn_details['approved'];
+
+		do_action( 'action_hook_espresso_after_payment', $EE_Session, $success );
+
 		if ($txn_details['approved'] == TRUE && $this->_payment_settings['use_sandbox']) {
 			do_action('action_hook_espresso_mail_successful_transaction_debugging_output');
 		} else {
