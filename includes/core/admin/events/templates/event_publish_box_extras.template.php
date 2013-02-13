@@ -7,12 +7,12 @@
 			</a>
 			<input type="hidden" name="event-preview" id="event-preview" value="" />
 		</div>
-		<div id="copy-action">
+		<!--<div id="copy-action">
 			<a class="preview button" href="<?php echo $event_preview_url; ?>" id="post-copy" onclick="return confirm('<?php _e('Are you sure you want to copy ' . $event_name . '?', 'event_espresso'); ?>')">
 				<?php _e('Duplicate Event', 'event_espresso'); ?>
 			</a>
 			<input  type="hidden" name="event-copy" id="event-copy" value="" />
-		</div>
+		</div>-->
 	</div>
 	<!-- /minor-publishing-actions -->
 
