@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EEM_Event  {
+class EEM_Event  extends EEM_TempBase{
 	//extends EEM_TempBase
 
   	// private instance of the Event object
@@ -45,6 +45,8 @@ class EEM_Event  {
 	}
 
 	protected function __construct(){
+		$this->table_name='events_detail';
+		$this->data_types=array();
 	}
 
 
