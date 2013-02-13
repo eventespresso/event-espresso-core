@@ -157,11 +157,15 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 	public function column_values(EE_Question $item) {		
 		$optionNames=array();
 		$options= $item->options();
-		foreach($options as $optionID=>$option){
-			/* @var $option EE_Question_Option */
-			$optionNames[]=$option->value();
+		if(empty($options)){
+			return "N/A";
+		}else{
+			foreach($options as $optionID=>$option){
+				/* @var $option EE_Question_Option */
+				$optionNames[]=$option->value();
+			}
+			return implode(', ',$optionNames);
 		}
-		return implode(', ',$optionNames);
 	}
 
 

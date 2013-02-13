@@ -82,7 +82,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 * Boolean to indicate whether this question gruop
 	 * is a mandatory one, ie integral to the system
 	 * @access protected
-	 * @var boolea 
+	 * @var boolean 
 	 */
 	protected $_QSG_system_ID=NULL;
 	
@@ -229,7 +229,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 * @return EE_Question[]
 	 */
 	public function questions(){
-		return $this->_get_many_related('Questions');
+		return $this->get_many_related('Questions');
 	}
 	
 	/**
@@ -238,7 +238,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 */
 	public function events(){
 		throw new EE_Error(__("Question Group->events() not yet implemetned","event_esresso"));
-		return $this->_get_many_related('Events');
+		return $this->get_many_related('Events');
 	}
 	
 	/**
