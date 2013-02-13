@@ -274,8 +274,10 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 			$EE_Session->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
 
-			add_action('action_hook_espresso_email_after_payment', 'espresso_email_after_payment'); //<-- Should this be here ? or in the successful txn bit above ( after line 80 ? ) or does this send failed txn info as well /
-			// return $payment_data;  <<<<-------  do we need to return success or FALSE or anything ?
+			$success = $payment_status == 'Approved' ? TRUE : FALSE;
+
+			do_action( 'action_hook_espresso_after_payment', $EE_Session, $success );
+
 		} else {
 			// no payment required
 		}
