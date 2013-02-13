@@ -132,12 +132,8 @@ class EE_Ticket_Selector extends EE_BASE {
 		$template_args['prices'] = $this->_process_event_prices( $this->_event->prices, $this->_event->currency_symbol );
 		$template_args['multiple_price_options'] = count($template_args['prices']) > 1 ? TRUE : FALSE;
 		//echo printr($this->_event->prices, 'event->prices <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
-		
-//		printr( $this->_event, '$this->_event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$event_meta = serialize ( empty($this->_event->meta) ? array() : $this->_event->meta );
-		$event_meta = htmlentities( $event_meta, ENT_QUOTES, 'UTF-8' );
-//		array_walk_recursive( $this->_event->meta, array( $this, '_apply_htmlentities' ));
-		$template_args['event_meta'] = $event_meta;
+
+		$template_args['event_meta'] = base64_encode( serialize( empty( $this->_event->meta ) ? array() : $this->_event->meta ));
 //		printr( $template_args['event_meta'], 'event_meta  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		$template_args['currency_symbol'] = $this->_event->currency_symbol;
@@ -149,19 +145,6 @@ class EE_Ticket_Selector extends EE_BASE {
 
 	}
 
-
-
-
-
-	/**
-	* 	creates buttons for selecting number of attendees for an event
-	*
-	*	@access private
-	* 	@return 	string	
-	*/
-	private function _apply_htmlentities( &$item, $key ) {
-		$item = htmlentities( $item, ENT_QUOTES, 'UTF-8' );
-	}
 
 
 
