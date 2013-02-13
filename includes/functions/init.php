@@ -638,3 +638,7 @@ function ee_update_question_groups_sequence() {
 		exit();
 	}
 }
+
+function espresso_load_messages_init() {
+	$EEMSGS_init = new EE_messages_init();
+}
