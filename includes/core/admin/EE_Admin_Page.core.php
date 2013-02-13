@@ -2186,6 +2186,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}			
 
 	}
+	
+	/**
+	 * Returns an array to be used for EE_FOrm_Fields.helper.php's select_input as the $values argument.
+	 * @return array
+	 */
+	function get_yes_no_values(){
+		return $this->_yes_no_values;
+	}
 
 
 

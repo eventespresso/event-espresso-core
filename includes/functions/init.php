@@ -404,6 +404,7 @@ function espresso_test_for_reg_page() {
 function event_espresso_run() {
 
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('action_hook_espresso_event_espresso_run_start');
 	// grab some globals
 	global $load_espresso_scripts, $espresso_content;
 

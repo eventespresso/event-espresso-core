@@ -23,7 +23,7 @@
  */
 require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 
-class EEM_Attendee extends EEM_Base {
+class EEM_Attendee extends EEM_Soft_Delete_Base {
 
   	// private instance of the Attendee object
 	private static $_instance = NULL;
@@ -39,33 +39,28 @@ class EEM_Attendee extends EEM_Base {
 	 *		@return void
 	 */	
 	private function __construct() {	
-		global $wpdb;
-		// set table name
-		$this->table_name = $wpdb->prefix . 'esp_attendee';
-		// array representation of the attendee table and the data types for each field 
-		$this->table_data_types = array (	
-			'ATT_ID' 					=> '%d',
-			'ATT_fname' 			=> '%s',
-			'ATT_lname' 			=> '%s',
-			'ATT_address'			=> '%s',
-			'ATT_address2'		=> '%s',
-			'ATT_city'					=> '%s',
-			'STA_ID'					=> '%d',
-			'CNT_ISO'				=> '%s',
-			'ATT_zip'					=> '%s',
-			'ATT_email'				=> '%s',
-			'ATT_phone'			=> '%s',
-			'ATT_social'				=> '%s',
-			'ATT_comments'		=> '%s',
-			'ATT_notes'				=> '%s',
-			'ATT_deleted'			=> '%d'
-		);
 		// load Attendee object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php');
-	
-		// uncomment these for example code samples of how to use them
-		//			self::how_to_use_insert();
-		//			self::how_to_use_update();
+		$this->_fields_settings=array('ATT_ID'=>new EE_Model_Field('Attendee ID', 'primary_key', false),
+									'ATT_fname'=>new EE_Model_Field('First Name', 'plaintext', false),
+									'ATT_lname'=>new EE_Model_Field('Last Name','plaintext',false),
+									'ATT_address'=>new EE_Model_Field('Address1','plaintext',true),
+									'ATT_address2'=>new EE_Model_Field('Address2','plaintext',true),
+									'ATT_city'=>new EE_Model_Field('City','plaintext',true),
+									'STA_ID'=>new EE_Model_Field('State ID','foreign_key',true,0,null,'State'),
+									'CNT_ISO'=>new EE_Model_Field('Country Code','foreign_key',true,0,null,'Country'),
+									'ATT_zip'=>new EE_Model_Field('Zip/Postal Code', 'plaintext', true, ''),
+									'ATT_email'=>new EE_Model_Field('Email', 'plaintext', false, ''),
+									'ATT_phone'=>new EE_Model_Field('Phone', 'plaintext', true),
+									'ATT_social'=>new EE_Model_Field('Social Media Details','serializedtext',true),
+									'ATT_comments'=>new EE_Model_Field('Comments','simplehtml',true),
+									'ATT_notes'=>new EE_Model_Field('Notes', 'simplehtml', true),
+									'ATT_deleted'=>new EE_Model_Field('Deleted flag', 'deleted_flag', false,0),
+			);
+		$this->_related_models=array(
+								'Registrations'=>new EE_Model_Relation('belongsTo', 'Registration', 'ATT_ID'));
+		parent::__construct();
+		
 	}
 
 	/**
@@ -95,11 +90,9 @@ class EEM_Attendee extends EEM_Base {
 	* 		@param		array		$attendees		
 	*		@return 		mixed		array on success, FALSE on fail
 	*/	
-	private function _create_objects( $attendees = FALSE ) {
+	protected function _create_objects( $attendees = FALSE ) {
 
-		if ( ! $attendees ) {
-			return FALSE;
-		} 		
+		$array_of_objects=array();
 
 		foreach ( $attendees as $attendee ) {
 				$array_of_objects[ $attendee->ATT_ID ] = new EE_Attendee(

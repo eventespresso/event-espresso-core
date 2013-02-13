@@ -1,5 +1,5 @@
 <!--**********************************  STEP 1 	**********************************-->		
-
+<?php echo do_action('action_hook_espresso_registration_page_step_1_start');?>
 	<h2 id="mer-reg-page-step-title-1-hdr" class="mer-reg-page-step-title-hdr">
 		<?php _e('Step 1 -  Attendee Information', 'event_espresso'); ?>
 		<a id="mer-reg-page-edit-step-1-lnk" class="mer-reg-page-go-to-step-1 mer-reg-page-edit-step-lnk <?php echo $step_1_edit_lnk_class; ?>"  href="<?php echo $reg_page_step_1_url; ?>"><?php _e('edit', 'event_espresso'); ?></a>
@@ -24,6 +24,7 @@
 	foreach ( $event_queue as $cart_type => $cart ) : 
 		if ( $cart['has_items'] ) :
 			foreach ( $cart['items'] as $line_item => $item ) :
+			
 ?>
 
 			<div id="mer-reg-page-attendee-panel-dv-<?php echo $line_item;?>" class="mer-reg-page-attendee-panel-dv">		
@@ -37,7 +38,8 @@
 	
 				<fieldset id="mer-reg-page-attendee-wrap-<?php echo $item['id'] . '-' . $counter;?>" class="mer-reg-page-attendee-wrap-fs">
 	  				<legend class="mer-reg-page-attendee-lgnd smaller-text lt-grey-text"><?php echo $item['attendee_headings'][ $line_item ][$att_nmbr]?></legend>
-
+					<?php //do an action before the questions output, including the item and count 
+					echo do_action('action_hook_espresso_registration_page_step_1_before_questions',$item, $counter);?>
 					<?php echo $attendee_questions;?>
 					
 				<?php if ( $att_nmbr == 1 && $print_copy_info ) : ?>

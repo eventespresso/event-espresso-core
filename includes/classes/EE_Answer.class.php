@@ -166,14 +166,14 @@ class EE_Answer extends EE_Base_Class{
 	 * @return EE_Question
 	 */
 	public function question(){
-		return $this->_get_first_related('Question');
+		return $this->get_first_related('Question');
 	}
 	/**
 	 * Gets teh realted EE_Registration to this EE_Answer
 	 * @return EE_Registration
 	 */
 	public function registration(){
-		return $this->_get_first_related('Registration');
+		return $this->get_first_related('Registration');
 	}
 
 

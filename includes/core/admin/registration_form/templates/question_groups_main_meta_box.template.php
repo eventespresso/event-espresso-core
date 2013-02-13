@@ -1,13 +1,21 @@
 <?php
-//requiresd variables
-assert($QSG_ID);//question gruop's ID
-assert($question_group);//the main question group
+/**
+ * Template: includes/core/admin/registration_form/templates/question_groups_main_meta_box.template.php
+ * For displaying a question group for editing/creating within the EE Admin page
+ */
+/* @var int $QSG_ID the main question group's ID */
+assert($QSG_ID);
+/* @var EE_Question_Group $question_group the main question group we're displaying*/
+assert($question_group);
 assert($question_group instanceof EE_Question_Group);
+/* @var EE_Question[] $all_questions */
 assert(isset($all_questions) && (empty($all_questions) || is_array($all_questions)));//list of unused questions
 foreach($all_questions as $unused_question){
 	assert($unused_question);
 	assert($unused_question instanceof EE_Question);
 }
+/* @var array $values. Array of arrays, where each sub-array contains 2 keys: 'id' (internal value) and 'name' (label for displaying) */
+assert(is_array($values));
 ?>
 
 <div class="edit-group padding" style="float:left; width:60%; padding-right: 5%;">
