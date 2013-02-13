@@ -439,8 +439,7 @@ class EE_Single_Page_Checkout {
 						//echo '<h4>$input_name : ' . $input_name . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';					
 						$additional_attendee_reg_info = 1;
 						if ( isset( $item['options']['event_meta'] )) {
-							$event_meta = html_entity_decode( $item['options']['event_meta'], ENT_QUOTES, 'UTF-8'  );
-							$event_meta = unserialize( stripslashes( $event_meta ));
+							$event_meta =unserialize( base64_decode( $item['options']['event_meta'] ));
 							$additional_attendee_reg_info = isset( $event_meta['additional_attendee_reg_info'] ) ? absint( $event_meta['additional_attendee_reg_info'] ) : 1;
 						}
 
@@ -1066,11 +1065,11 @@ class EE_Single_Page_Checkout {
 			}
 		}
 
+		global $EE_Session;
+
 		if ($continue_reg) {
 
 			do_action('action_hook_espresso_begin_reg');
-
-			global $EE_Session;
 
 			// load and instantiate models
 			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
@@ -1155,13 +1154,14 @@ class EE_Single_Page_Checkout {
 					$session['cart']['REG']['items'][$line_item_id]['attendees'][$att_nmbr]['att_obj'] = $att[$att_nmbr];
 
 					$DTT_ID = $event['options']['dtt_id'];
-					$PRC_ID = $event['options']['price_id'];
+					$PRC_ID = explode( ',', $event['options']['price_id'] );
+					$PRC_ID = $PRC_ID[0];
 					$price_paid = $attendee['price_paid'];
 
 					$session_snip =  substr( $session['id'], 0, 3 ) . substr( $session['id'], -3 );
 
 //					$new_reg_code = $txn_results['new-ID'] . '-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session_snip;
-					$new_reg_code = $txn_results['new-ID'] . '-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip;
+					$new_reg_code = $txn_results['new-ID'] . '-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 ));
 //					$new_reg_code = $txn_results['new-ID'] . '-' . $att_nmbr . '-' . $session_snip;
 					
 					$new_reg_code = apply_filters( 'filter_hook_espresso_new_registration_code', $new_reg_code );
@@ -1170,7 +1170,7 @@ class EE_Single_Page_Checkout {
 						$prev_reg_code = $new_reg_code;
 					} else {
 //						$prev_reg_code = '%-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session_snip . '%';
-						$prev_reg_code = '%-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip . '%';
+						$prev_reg_code = '%-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 )) . '%';
 //						$prev_reg_code = '%-' . $att_nmbr . '-' . $session_snip . '%';
 					}					
 
@@ -1187,14 +1187,15 @@ class EE_Single_Page_Checkout {
 								$prev_txn_details['REDO_TXN'] = array();
 							}
 							// update with new TXN_ID
-							$prev_txn_details['REDO_TXN'][] = $txn_results['new-ID'];//var_dump($prev_txn_details);die();
+							$prev_txn_details['REDO_TXN'][] = $txn_results['new-ID'];
+							$prev_txn->set_status('TFL');
 							$prev_txn->set_details( $prev_txn_details );
 							$prev_txn->update();
 						}
-
 						// delete prev registration so that they don't pile up in the DB
 						// ( it's ok - we're tracking the failed transactions, and if they don't retry the transaction, then we will still have this record won't we? )
 						$REG->delete(array('REG_ID' => $prev_reg->ID()));
+
 					}
 
 					// now create a new registration for the attendee
@@ -1231,6 +1232,9 @@ class EE_Single_Page_Checkout {
 					}
 					
 					$EE_Session->set_session_data( $session['cart'] );
+
+//					$this->_process_attendee_questions( $att[$att_nmbr], $reg[$line_item_id], );
+//					$this->_process_attendee_questions( );
 					
 				}
 			}
@@ -1238,6 +1242,7 @@ class EE_Single_Page_Checkout {
 			$transaction->set_txn_session_data( $session );
 			$transaction->update();
 			$EE_Session->set_session_data(array( 'registration' => $reg, 'transaction' => $transaction ), 'session_data');
+			
 
 //			printr( $EE_Session, '$EE_Session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 
 //			die();
@@ -1248,7 +1253,7 @@ class EE_Single_Page_Checkout {
 			$success_msg = $response['msg']['success'];
 		}
 		
-		$session = $EE_Session->get_session_data();
+		//$session = $EE_Session->get_session_data();
 		//printr( $session, '$session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 
 		//die();
 		
@@ -1260,6 +1265,35 @@ class EE_Single_Page_Checkout {
 				wp_safe_redirect($reg_page_step_3_url);
 				exit();
 			}
+	}
+
+
+
+
+
+	
+	/**
+	 * 		_process_attendee_questions
+	 *
+	 * 		@access 		private
+	 * 		@param 		string 		$success_msg
+	 * 		@return 		void
+	 */
+	private function _process_attendee_questions( ) {
+			global $EE_Session;
+
+/*			// load and instantiate models
+			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
+			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
+			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php' );
+			$REG = EEM_Registration::instance();
+			$ATT = EEM_Attendee::instance();
+
+			// grab session data
+			$session = $EE_Session->get_session_data();
+			$reg_items = $session['cart']['REG']['items'];*/
+		//printr( $reg_items, '$reg_items  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	}
 
 
