@@ -481,8 +481,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$this->_template_args['reg_details']['invoice_number']['label'] = __( 'Invoice Number', 'event_espresso' );
 			$this->_template_args['reg_details']['invoice_number']['class'] = 'regular-text';
 		}
-					
-
 
 		$this->_template_args['reg_details']['registration_session']['value'] = $this->_registration->REG_session;
 		$this->_template_args['reg_details']['registration_session']['label'] = __( 'Registration Session', 'event_espresso' );
@@ -495,6 +493,15 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['reg_details']['user_agent']['value'] = $this->_session['user_agent'];
 		$this->_template_args['reg_details']['user_agent']['label'] = __( 'Registrant User Agent', 'event_espresso' );
 		$this->_template_args['reg_details']['user_agent']['class'] = 'large-text';
+		
+		$this->_template_args['full_session'] = $this->_session;
+
+		
+		
+		// attendee questions
+		
+//		$this->_registration->REG_ID
+		
 
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_reg_details.template.php';
 		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
