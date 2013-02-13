@@ -376,7 +376,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$editor_args['event_desc'] = array(
 				'type' => 'wp_editor',
 				'value' => EE_Formatter::admin_format_content($this->_event->event_desc),
-				'class' => 'my_editor_custom',
+				'class' => 'my_editor_custom'
 			);
 		$_wp_editor = $this->_generate_admin_form_fields($editor_args, 'array');
 		$title_and_desc_args['event_desc_editor'] = $_wp_editor['event_desc']['field'];
@@ -497,8 +497,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$this->_event->country = '';
 		$this->_event->virtual_url = '';
 		$this->_event->virtual_phone = '';
-		$this->_event->payment_email_id = 0;
-		$this->_event->confirmation_email_id = 1;
 		$this->_event->submitted = '';
 		$this->_event->google_map_link = espresso_google_map_link(array(
 				'address' => $this->_event->address,
@@ -2005,19 +2003,19 @@ class Events_Admin_Page extends EE_Admin_Page {
 							</legend>
 							<p>
 								<label for="ven-title"><?php _e('Title:', 'event_espresso'); ?></label><br/>
-								<input size="20"id="ven-title" tabindex="106"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_title) ?>" name="venue_title" />
+								<input size="20"id="ven-title" type="text"  value="<?php echo stripslashes_deep($this->_event->venue_title) ?>" name="venue_title" />
 							</p>
 							<p>
 								<label for="ven-website"><?php _e('Website:', 'event_espresso'); ?></label><br/>
-								<input size="20" id="ven-website" tabindex="107"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_url) ?>" name="venue_url" />
+								<input size="20" id="ven-website" type="text"  value="<?php echo stripslashes_deep($this->_event->venue_url) ?>" name="venue_url" />
 							</p>
 							<p>
 								<label for="ven-phone"><?php _e('Phone:', 'event_espresso'); ?></label><br/>
-								<input size="20" id="ven-phone" tabindex="108"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_phone) ?>" name="venue_phone" />
+								<input size="20" id="ven-phone" type="text"  value="<?php echo stripslashes_deep($this->_event->venue_phone) ?>" name="venue_phone" />
 							</p>
 							<p>
 								<label for="ven-image"><?php _e('Image:', 'event_espresso'); ?></label><br/>
-								<input size="20" id="ven-image" tabindex="110"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_image) ?>" name="venue_image" />
+								<input size="20" id="ven-image" type="text"  value="<?php echo stripslashes_deep($this->_event->venue_image) ?>" name="venue_image" />
 							</p>
 					</td>
 					<td valign="top" <?php echo $ven_type ?>>
@@ -2025,27 +2023,27 @@ class Events_Admin_Page extends EE_Admin_Page {
 							<legend><?php _e('Physical Location', 'event_espresso'); ?></legend>
 							<p>
 								<label for="phys-addr"><?php _e('Address:', 'event_espresso'); ?></label><br/>
-								<input size="20" id="phys-addr" tabindex="100"  type="text"  value="<?php echo $this->_event->address ?>" name="address" />
+								<input size="20" id="phys-addr" type="text"  value="<?php echo $this->_event->address ?>" name="address" />
 							</p>
 							<p>
 								<label for="phys-addr-2"><?php _e('Address 2:', 'event_espresso'); ?></label><br/>
-								<input size="20" id="phys-addr-2" tabindex="101"  type="text"  value="<?php echo $this->_event->address2 ?>" name="address2" />
+								<input size="20" id="phys-addr-2" type="text"  value="<?php echo $this->_event->address2 ?>" name="address2" />
 							</p>
 							<p>
 								<label for="phys-city"><?php _e('City:', 'event_espresso'); ?></label><br/>
-								<input size="20" id="phys-city" tabindex="102"  type="text"  value="<?php echo $this->_event->city ?>" name="city" />
+								<input size="20" id="phys-city" type="text"  value="<?php echo $this->_event->city ?>" name="city" />
 							</p>
 							<p>
 								<label for="phys-state"><?php _e('State:', 'event_espresso'); ?></label><br/>
-								<input size="20" id="phys-state" tabindex="103"  type="text"  value="<?php echo $this->_event->state ?>" name="state" />
+								<input size="20" id="phys-state" type="text"  value="<?php echo $this->_event->state ?>" name="state" />
 							</p>
 							<p>
 								<label for="phys-country"><?php _e('Country:', 'event_espresso'); ?></label><br/>
-								<input size="20" id="phys-country" tabindex="105"  type="text"  value="<?php echo $this->_event->country ?>" name="country" />
+								<input size="20" id="phys-country" type="text"  value="<?php echo $this->_event->country ?>" name="country" />
 							</p>
 							<p>
 								<label for="zip-postal"><?php _e('Zip/Postal Code:', 'event_espresso'); ?></label><br/>
-								<input size="20" id="zip-postal"  tabindex="104"  type="text"  value="<?php echo $this->_event->zip ?>" name="zip" />
+								<input size="20" id="zip-postal" type="text"  value="<?php echo $this->_event->zip ?>" name="zip" />
 							</p>
 								<br/>
 							<p>
@@ -2072,19 +2070,19 @@ class Events_Admin_Page extends EE_Admin_Page {
 							<label for="virt-phone" style="display:inline-block; width:100px;">
 								<?php _e('Phone:', 'event_espresso'); ?>
 							</label>
-							<input size="20" id="virt-phone" type="text" tabindex="111" value="<?php echo $this->_event->phone ?>" name="phone" />
+							<input size="20" id="virt-phone" type="text" value="<?php echo $this->_event->phone ?>" name="phone" />
 						</p>
 						<p>
 							<label for="url-event" style="display:inline-block; width:100px; vertical-align:top;">
 								<?php _e('URL of Event:', 'event_espresso'); ?>
 							</label>
-							<textarea id="url-event" cols="30" rows="4" tabindex="112"  name="virtual_url"><?php echo stripslashes_deep($this->_event->virtual_url) ?></textarea>
+							<textarea id="url-event" cols="30" rows="4" name="virtual_url"><?php echo stripslashes_deep($this->_event->virtual_url) ?></textarea>
 						</p>
 						<p>
 							<label for="call-in-num" style="display:inline-block; width:100px;">
 								<?php _e('Call in Number:', 'event_espresso'); ?>
 							</label>
-							<input id="call-in-num" size="20" tabindex="113"  type="text"  value="<?php echo stripslashes_deep($this->_event->virtual_phone) ?>" name="virtual_phone" />
+							<input id="call-in-num" size="20" type="text"  value="<?php echo stripslashes_deep($this->_event->virtual_phone) ?>" name="virtual_phone" />
 						</p>
 					</fieldset>
 				</td>
@@ -2352,9 +2350,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 			$phone=$result->phone;
 
-			$send_mail= $result->send_mail;
-			$conf_mail= $result->conf_mail;
-			$email_id = $result->email_id;
 			$use_coupon_code= $result->use_coupon_code;
 					
 			$question_groups = $result->question_groups;
@@ -2410,11 +2405,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'registration_end'=>$registration_end, 
 				'start_date'=>$start_date, 
 				'end_date'=>$end_date, 
-				'allow_multiple'=>$allow_multiple, 
-				'send_mail'=>$send_mail, 
+				'allow_multiple'=>$allow_multiple,
 				'is_active'=>$is_active, 
-				'event_status'=>$event_status, 
-				'conf_mail'=>$conf_mail, 
+				'event_status'=>$event_status,
 				'use_coupon_code'=>$use_coupon_code, 
 				'member_only'=>$member_only,
 				'externalURL' => $externalURL, 
@@ -2437,25 +2430,23 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'reg_limit'=>$reg_limit, 
 				'additional_limit'=>$additional_limit, 
 				'recurrence_id'=>$recurrence_id, 
-				'email_id' => $email_id, 
 				'wp_user' => $espresso_wp_user,
 				'post_id' => $post_id);
 			}
 			
 			$sql_data = array(
 				'%s','%s','%s','%s',
-				'%s','%s','%s','%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
+				'%s','%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%d',
-				'%d','%d','%d','%d',
-				'%d'
+				'%d','%d','%d','%d'
 			);
 			
 			/*//check the counts to make sure the data is matched up correctly
@@ -2723,8 +2714,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$use_coupon_code = isset( $this->_req_data['use_coupon_code'] ) ? $this->_req_data['use_coupon_cod'] : '';
 		$alt_email = $this->_req_data['alt_email'];
 
-		$confirmation_email_id = isset( $this->_req_data['confirmation_email_id'] ) ? $this->_req_data['confirmation_email_id'] : null;
-		$payment_email_id = isset( $this->_req_data['payment_email_id'] ) ? $this->_req_data['payment_email_id'] : null;
 		//Venue Information
 		$venue_title = empty($this->_req_data['venue_title']) ? '' : $this->_req_data['venue_title'];
 		$venue_url = empty($this->_req_data['venue_url']) ? '' : $this->_req_data['venue_url'];
@@ -2818,8 +2807,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'wp_user' => $wp_user_id,
 				'ticket_id' => $ticket_id,
 				'certificate_id' => $certificate_id,
-				'confirmation_email_id' => $confirmation_email_id,
-				'payment_email_id' => $payment_email_id
 		);
 
 		$sql_data = array(
@@ -2832,7 +2819,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'%s', '%s', '%s', '%s', '%s',
 				'%s', '%s', '%s', '%s', '%s',
 				'%s', '%d', '%d', '%d', '%d',
-				'%d', '%d', '%d'
+				'%d'
 		);
 
 		//Add groupon reference if installed
@@ -3130,7 +3117,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			
 			$msg = sprintf( 
 					__( 'The event %s has been added for %s.', 'event_espresso' ), 
-					'<a href="' . espresso_reg_url($last_event_id) . '">' . stripslashes_deep($this->_req_data['event']) . '</a>', 
+					'<a href=' . espresso_reg_url($last_event_id) . '>' . stripslashes_deep($this->_req_data['event']) . '</a>', 
 					$evt_date 
 			);
 			EE_Error::add_success( $msg );
@@ -3139,7 +3126,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 			$msg = sprintf( 
 					__( 'An error occured and the event %s has not been saved to the database.', 'event_espresso' ), 
-					'<a href="' . espresso_reg_url($last_event_id) . '">' . stripslashes_deep($this->_req_data['event']) . '</a>' 
+					'<a href=' . espresso_reg_url($last_event_id) . '>' . stripslashes_deep($this->_req_data['event']) . '</a>' 
 			);
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			
@@ -3211,9 +3198,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		$use_coupon_code = isset( $this->_req_data['use_coupon_code'] ) ? $this->_req_data['use_coupon_code'] : FALSE;
 		$alt_email = $this->_req_data['alt_email'];
-
-		$confirmation_email_id = isset( $this->_req_data['confirmation_email_id'] ) ? $this->_req_data['confirmation_email_id']  : NULL;
-		$payment_email_id = isset( $this->_req_data['payment_email_id'] ) ? $this->_req_data['payment_email_id'] : NULL;
 
 
 		//Venue Information
@@ -3338,9 +3322,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'additional_limit' => $additional_limit,
 				'wp_user' => $wp_user_id,
 				'ticket_id' => $ticket_id,
-				'certificate_id' => $certificate_id,
-				'confirmation_email_id' => $confirmation_email_id,
-				'payment_email_id' => $payment_email_id
+				'certificate_id' => $certificate_id
 		);
 
 
@@ -3353,7 +3335,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'%s', '%s', '%s', '%s', '%s', 
 				'%s', '%s', '%s', '%s', '%s', 
 				'%s', '%s', '%s',  '%d', '%d', 
-				'%d', '%d', '%d', '%d', '%d'
+				'%d', '%d', '%d'
 		);
 
 		$update_id = array('id' => $event_id);
@@ -3802,7 +3784,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			
 			$msg = sprintf( 
 					__( 'The event %s has been updated', 'event_espresso' ), 
-					'<a href="' . espresso_reg_url($event_id) . '">' . stripslashes_deep($this->_req_data['event']) . '</a>'
+					'<a href=' . espresso_reg_url($event_id) . '>' . stripslashes_deep($this->_req_data['event']) . '</a>'
 			);
 			EE_Error::add_success( $msg );
 
@@ -3810,7 +3792,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 			$msg = sprintf( 
 					__( 'An error occured and the event %s has not been updated in the database.', 'event_espresso' ), 
-					'<a href="' . espresso_reg_url($event_id) . '">' . stripslashes_deep($this->_req_data['event']) . '</a>' 
+					'<a href=' . espresso_reg_url($event_id) . '>' . stripslashes_deep($this->_req_data['event']) . '</a>' 
 			);
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			
@@ -3957,6 +3939,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 			'event_id' => $this->_req_data['EVT_ID'],
 			);
 		$this->_req_data = array_merge( $this->_req_data, $new_request_args);
+
+		
 		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php')) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
 			$EE_Export = EE_Export::instance();

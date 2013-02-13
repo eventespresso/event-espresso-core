@@ -211,13 +211,14 @@ class EE_messages {
 
 		//do we have the necessary objects loaded?
 		if ( empty( $this->_messenger) || empty($this->_message_type) )
-			return EE_Error::add_error( sprintf(__(' We had a problem creating the %s messenger or the %s message_type. Are you sure they exist?', 'event_espresso'), $messenger, $message_type), __FILE__, __FUNCTION__, __LINE__ );
+			throw new EE_Error( sprintf( __(' We had a problem creating the %s messenger or the %s message_type. Are you sure they exist?', 'event_espresso'), $messenger, $message_type ) );
 		
 		//is given message_type valid for given messenger (if this is not a global save)
 		if ( !$is_global ) {
 			foreach ( $this->_messenger->active_templates as $template ) {
 				if ( $template->message_type() != $message_type )
-					return EE_Error::add_error( sprintf(__(' The %s message type is not registered with the %s messenger. Please visit the Messenger activation page to assign this message type first if you want to use it.', 'event_espresso'), $messenger, $message_type), __FILE__, __FUNCTION__, __LINE__ );
+					EE_Error::add_error( sprintf(__(' The %s message type is not registered with the %s messenger. Please visit the Messenger activation page to assign this message type first if you want to use it.', 'event_espresso'), $messenger, $message_type), __FILE__, __FUNCTION__, __LINE__ );
+				return false;
 			}
 		}
 		return true;
@@ -245,7 +246,8 @@ class EE_messages {
 		}
 
 		if ( !$is_global && empty($evt_id) ) {
-			return EE_Error::add_error( __('This template is not being created by messenger activation and is a custom template that requires event id (which is missing)', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __('This template is not being created by messenger activation and is a custom template that requires event id (which is missing)', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			return false;
 		}
 
 		//whew made it this far!  Okay, let's go ahead and create the templates then
@@ -254,77 +256,27 @@ class EE_messages {
 
 	protected function _create_new_templates($evt_id, $is_global) {
 
-		$m_fields = $this->_messenger->get_template_fields();
-		$m_defaults = $this->_messenger->get_default_field_content();
-		$mt_contexts = $this->_message_type->get_contexts();
-		$mt_defaults = $this->_message_type->get_default_field_content();
-		$variable_template_data = array();
+		//assemble class name
+		$messenger = ucwords( str_replace( '_', ' ', $this->_messenger->name ) );
+		$messenger = str_replace( ' ', '_', $messenger );
+		$message_type = ucwords( str_replace( '_', ' ', $this->_message_type->name ) );
+		$message_type = str_replace( ' ', '_', $message_type );
+		$classname = 'EE_Messages_' . $messenger . '_' . $message_type . '_Defaults';
 
-		//first are we setting up templates after messenger activation? If so then we need to get defaults from the messenger
-		if ( empty($evt_id) && $is_global ) {
-			//setup templates array
-			foreach ( $mt_contexts as $context ) {
-				foreach ( $m_fields as $field => $field_type ) {
-					if ( $field !== 'extra' )
-						$templates[$context][$field] = ( isset($mt_defaults[$field]) ? maybe_serialize($mt_defaults[$field]) : maybe_serialize($m_defaults[$field]) );
-				}
-			}
-
-		} else if ( !empty($evt_id) ) {
-			//k we're setting up a custom event template so let's just copy what's currently in the active global template for this messenger and message_type
-			//first let's get all templates for this messenger
-			$all_templates = $this->_EEM_data->get_all_message_templates_by_messenger($this->_messenger->name);
-			foreach ( $all_templates as $template_object ) {
-				$mt = $template_object->message_type();
-				$e_id = $template_object->event();
-				if ( $this->_message_type->name == $mt && empty($e_id) ) {
-					$context_templates = $template_object->context_templates();
-					foreach ( $mt_contexts as $context ) {
-						foreach ( $m_fields as $field => $field_type ) {
-							if ( $field !== 'extra' ) {
-								$templates[$context][$field] = ( isset($context_templates[$context][$field] ) ) ? $context_templates[$context][$field]['content'] : '';
-								$templates[$context][$field] = (!is_serialized($templates[$context][$field]) ) ? maybe_serialize($templates[$context][$field]) : $templates[$context][$field];
-							}
-						}
-					}
-				}
-			}
-			
-		}
-		//setup data and update
-		
-		$template_data = array(
-			'MTP_messenger' => $this->_messenger->name,
-			'MTP_message_type' => $this->_message_type->name,
-			'GRP_ID' => $this->_EEM_data->generate_grp_id(),
-			'EVT_ID' => $evt_id,
-			'MTP_is_override' => 0,
-			'MTP_deleted' => 0,
-			'MTP_is_global' => $is_global,
-			'MTP_user_id' => get_current_user_id(),
-			'MTP_is_active' => 1,
-		);
-
-		foreach ( $mt_contexts as $context ) {
-			foreach ( $m_fields as $field => $field_type ) {
-				if ( $field != 'extra' ) {
-					$template_data['MTP_context'] = $context;
-					$template_data['MTP_template_field'] = $field;
-					$template_data['MTP_content'] = $templates[$context][$field];
-					$MTP = $this->_EEM_data->insert($template_data);
-					if ( !$MTP ) 
-						return EE_Error::add_error( sprintf(__('There was an error in saving new template data for %s messenger, %s message type, %s context and %s template field.', 'event_espresso'), $this->_messenger->name, $this->_message_type->name, $context, $field), __FILE__, __FUNCTION__, __LINE__  );
-				}
-			}
+		//next we need to see if the defaults class exists
+		if ( !class_exists( $classname ) ) {
+			$msg[] = __('Something went wrong with creating a new template', 'event_espresso');
+			$msg[] = sprintf( __('The defaults class being checked for is <strong>%s</strong>. Please doublecheck the spelling and make sure you have a class for this messenger/message_type combo setup. Also verify that the autoloaders are setup correctly for the class', 'event_espresso'), $classname );
+			throw new EE_Error( implode('||', $msg ) );
 		}
 
-		$success_array = array(
-			'GRP_ID' => $template_data['GRP_ID'],
-			'EVT_ID' => $template_data['EVT_ID'],
-			'MTP_context' => $mt_contexts[0]
-		);	
+		//if we've made it this far we have the class so let's instantiate
+		$a = new ReflectionClass( $classname );
+		$DFLT = $a->newInstance( $this );
 
-		return $success_array;	
+		//generate templates
+		$success = $DFLT->create_new_templates($evt_id, $is_global);
+		return $success;
 	}
 
 	/**
@@ -351,8 +303,10 @@ class EE_messages {
 			} 
 		}
 
-		if ( empty($template_fields) )
-			return EE_Error::get_error( __('Something went wrong and we couldn\'t get any templates assembled', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		if ( empty($template_fields) ) {
+			EE_Error::add_error( __('Something went wrong and we couldn\'t get any templates assembled', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}
 
 		return $template_fields;
 	}
@@ -919,7 +873,7 @@ abstract class EE_messenger {
 		$new_event = empty($event_id) ? true : false;
 
 		//todo: this should be replaced by EE_MSG_ADMIN_URL constant when we have access to it.
-		$ee_msg_admin_url = defined('EE_MSG_ADMIN_URL') ? EE_MSG_ADMIN_URL : admin_url('admin.php?page=messages');
+		$ee_msg_admin_url = defined('EE_MSG_ADMIN_URL') ? EE_MSG_ADMIN_URL : admin_url('admin.php?page=ee_messages');
 
 
 		//is there a template for this event (and each message type)?  If so, then we need to indicate that it's been selected and provide the option to switch back to global (which trashes the event template). $this->active_templates ONLY includes non-trashed templates.	
@@ -951,31 +905,33 @@ abstract class EE_messenger {
 			$et_set = isset($event_template_set[$template->message_type()]) ? true : false;
 			$et_trashed = isset($event_template_trashed[$template->message_type()]) ? true : false;
 			$et_group_id = isset($event_group_id[$template->message_type()]) ? $event_group_id[$template->message_type()] : false;
+
 			
 			//check for existence of Event Template and if present AND the current template in the loop is the event template (or the current template in the loop is a DIFFERENT event template) let's skip (we'll delay until we get to global)
 			if ( $et_set && !$template->is_global() ) continue;
 
 			//if this is a new event then we ONLY want to show ONE option.
+			
 			$template_type = $template->message_type();
-			if ( $new_event && ( isset($old_template_type) && $old_template_type == $template_type ) ) continue;
+			if ( ( isset($old_template_type) && $old_template_type == $template_type ) ) continue;
 
 
 			//setup current button
 			$button_text = $et_set && !$et_trashed ? __('Custom Templates', 'event_espresso') : __('Global Templates', 'event_espresso');
-			$button_link = $et_set && !$et_trashed ? wp_nonce_url( add_query_arg( array('action'=>'edit_message_template', 'id'=>$et_group_id), $ee_msg_admin_url ), 'edit_message_template_nonce' ) : wp_nonce_url( add_query_arg( array('action'=>'edit_message_template', 'id'=>$template->GRP_ID() ), $ee_msg_admin_url ), 'edit_message_template_nonce');
+			$button_link = $et_set && !$et_trashed ? wp_nonce_url( add_query_arg( array('action'=>'edit_message_template', 'id'=>$et_group_id, 'evt_id' => $event_id), $ee_msg_admin_url ), 'edit_message_template_nonce' ) : wp_nonce_url( add_query_arg( array('action'=>'edit_message_template', 'id'=>$template->GRP_ID(), 'evt_id' => $event_id ), $ee_msg_admin_url ), 'edit_message_template_nonce');
 
 			//setup switch button
 			$switch_b_text = ($et_set && $et_trashed) || !$et_set ? __('Switch to Custom Templates', 'event_espresso') : __('Switch to Global Templates', 'event_espresso');
 			$switch_b_text = empty($event_id) ? false : $switch_b_text;
-			$switch_b_link = ($et_set && $et_trashed) ? wp_nonce_url( add_query_arg( array('action'=>'restore_message_template', 'message_type' => $template->message_type(), 'id' => $et_group_id), $ee_msg_admin_url ), 'restore_message_template_nonce' ) : wp_nonce_url( add_query_arg( array('action'=>'trash_message_template', 'id'=>$et_group_id), $ee_msg_admin_url), 'trash_message_template_nonce' );
+			$switch_b_link = ($et_set && $et_trashed) ? wp_nonce_url( add_query_arg( array('action'=>'restore_message_template', 'message_type' => $template->message_type(), 'id' => $et_group_id, 'template_switch' => TRUE, 'evt_id' => $event_id ), $ee_msg_admin_url ), 'restore_message_template_nonce' ) : wp_nonce_url( add_query_arg( array('action'=>'trash_message_template', 'id'=>$et_group_id, 'template_switch' => TRUE, 'evt_id' => $event_id ), $ee_msg_admin_url), 'trash_message_template_nonce' );
 			$switch_b_link = !$et_set && !empty($event_id) ? wp_nonce_url( add_query_arg( array('action' => 'add_new_message_template', 'evt_id' => $event_id), $ee_msg_admin_url ), 'add_new_message_template_nonce' ) : $switch_b_link;
 
-			$main_button = '<a class="button-primary" href="' . $button_link . '" title="' . __('Click to Edit', 'event_espresso') . '">' . $button_text . '</a>';
-			$switch_button = $switch_b_text ? sprintf( __('You can %s if you want', 'event_espresso'),'<span class="switch-template-button"><a class="button-secondary" href="' . $switch_b_link . '">' . $switch_b_text . '</a></span>') : '<span class="switch-template-button">' . __('You can\'t create custom templates (for this event) until you\'ve saved this event', 'event_espresso') . '</span>';
+			$main_button = '<a class="button-primary template_picker" href="' . $button_link . '" title="' . __('Click to Edit', 'event_espresso') . '">' . $button_text . '</a>';
+			$switch_button = $switch_b_text ? sprintf( __('You can %s if you want', 'event_espresso'),'<span class="switch-template-button"><a class="button-secondary template_picker" href="' . $switch_b_link . '">' . $switch_b_text . '</a></span>') : '<span class="switch-template-button">' . __('You can\'t create custom templates (for this event) until you\'ve saved this event', 'event_espresso') . '</span>';
 
 			$content .= '<div class="message-template-message-type-container">' . "\n\t";
 			$content .= '<p>';
-			$content .= sprintf( __('This event will use the %s for <span class="message-type-text">%s %s</span> messages. %s.', 'event_espresso'), $main_button, str_replace('_', ' ',$template->message_type()), str_replace('_', ' ', $this->name), $switch_button);
+			$content .= sprintf( __('This event will use %s for <span class="message-type-text">%s %s</span> messages. %s.', 'event_espresso'), $main_button, str_replace('_', ' ',$template->message_type()), str_replace('_', ' ', $this->name), $switch_button);
 			$content .= '</p>' . "\n" . '</div>';
 
 			$old_template_type = $template_type;

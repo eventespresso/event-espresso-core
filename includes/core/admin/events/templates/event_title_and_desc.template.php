@@ -3,7 +3,7 @@
 		
 			<div id="titlewrap">
 				<h5 style="margin: 1em .5em .1em;"><?php _e('Event Title', 'event_espresso'); ?></h5>
-				<input id="title" type="text" autocomplete="off" value="<?php echo $event_name; ?>" tabindex="1" size="30" name="event">
+				<input id="title" type="text" autocomplete="off" value="<?php echo $event_name; ?>"  size="30" name="event">
 			</div>
 			<!-- /titlewrap -->
 
@@ -12,15 +12,15 @@
 				<strong><?php _e('Permalink:', 'event_espresso'); ?></strong>
 
 				<span id="sample-permalink">
-					<?php echo $event_page_url; ?><input size="50" type="text" tabindex="2" name="slug" id="slug" value ="<?php echo $event_slug; ?>" />
+					<?php echo $event_page_url; ?><input size="50" type="text" name="slug" id="slug" value ="<?php echo $event_slug; ?>" />
 				</span>
 
 				<?php if ( ! $event_is_new ) : ?>
-					<a class="button" onclick="prompt('Shortcode:', jQuery('#shortcode').val()); return false;" href="#"><?php _e('Shortcode'); ?></a>
-					<a class="button" onclick="prompt('Short URL:', jQuery('#shortlink').val()); return false;" href="#"><?php _e('Short URL'); ?></a>
-					<a class="button" onclick="prompt('Full URL:', jQuery('#fulllink').val()); return false;" href="#"><?php _e('Full URL'); ?></a>
-					<a class="button" onclick="prompt('Unique Event Identifier:', jQuery('#identifier').val()); return false;" href="#"><?php _e('Identifier'); ?></a>
-					<a class="button" target="_blank" href="<?php echo $event_page_url . $event_slug; ?>/"><?php _e('View Post'); ?></a>
+					<a class="button" onclick="prompt('Shortcode:', jQuery('#shortcode').val()); return false;" href="#"  tabindex="-1"><?php _e('Shortcode'); ?></a>
+					<a class="button" onclick="prompt('Short URL:', jQuery('#shortlink').val()); return false;" href="#"  tabindex="-1"><?php _e('Short URL'); ?></a>
+					<a class="button" onclick="prompt('Full URL:', jQuery('#fulllink').val()); return false;" href="#"  tabindex="-1"><?php _e('Full URL'); ?></a>
+					<a class="button" onclick="prompt('Unique Event Identifier:', jQuery('#identifier').val()); return false;" href="#"  tabindex="-1"><?php _e('Identifier'); ?></a>
+					<a class="button" target="_blank" href="<?php echo $event_page_url . $event_slug; ?>/"  tabindex="-1"><?php _e('View Post'); ?></a>
 				<?php endif; ?>
 
 				<input id="shortcode" type="hidden" value='[SINGLEEVENT single_event_id="<?php echo $event_identifier; ?>"]'>

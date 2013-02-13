@@ -160,7 +160,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 		//Build row actions
 		$actions = array();
 		// edit link
-		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_message_template', 'id'=>$item->GRP_ID() ), EE_MSG_ADMIN_URL ), 'edit_message_template_nonce' );
+		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_message_template', 'id'=>$item->GRP_ID(), 'evt_id' => $item->event() ), EE_MSG_ADMIN_URL ), 'edit_message_template_nonce' );
 		$actions['edit'] = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Template Group', 'event_espresso' ) . '">' . __( 'Edit', 'event_espresso' ) . '</a>';
 		
 		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Template Group', 'event_espresso' ) . '">' . stripslashes( $item->messenger() ) . '</a>';

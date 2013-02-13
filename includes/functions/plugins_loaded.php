@@ -119,14 +119,16 @@ function espresso_classes_autoload($className) {
 
 function espresso_classes_core_autoload($className) {
 	//let's setup an array of paths to check (for each subsystem)
-	$root = EE_CORE;
+	$root = dirname(espresso_main_file()) . '/includes/core/';
 	
 	//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
 	$dir_ref = array(
 		'root' => array('core', 'class'),
 		'messages/' => 'core',
 		'messages/message_type/' => 'class',
-		'messages/messenger/' => 'class'
+		'messages/messenger/' => 'class',
+		'messages/defaults/' => array('class', 'core'),
+		'messages/defaults/email/' => 'class'
 		);
 
 	//assemble a list of filenames
@@ -149,7 +151,7 @@ function espresso_classes_core_autoload($className) {
 
 function espresso_core_admin_autoload($className) {
 	//let's setup an array of paths to check (for each subsystem)
-	$root = EE_CORE . 'admin/';
+	$root = dirname(espresso_main_file()) . '/includes/core/admin/';
 	
 	//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
 	$dir_ref = array(

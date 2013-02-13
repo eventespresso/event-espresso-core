@@ -370,6 +370,24 @@ class EE_Message_Template {
 		return $this->_EVT_ID;
 	}
 
+
+	/**
+	 * this returns the event_name for the event attached to the group
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function event_name() {
+		if ( empty($this->_EVT_ID) ) return;
+
+		global $wpdb;
+		$evt_id = absint($this->_EVT_ID);
+		$tablename = $wpdb->prefix . 'events_detail';
+		$query = "SELECT event_name FROM {$tablename} WHERE id = %d";
+		$event_name = $wpdb->get_var( $wpdb->prepare($query, $evt_id) );
+		return $event_name;
+	}
+
 	/**
 	 * get User ID
 	 * @access public
@@ -464,6 +482,8 @@ class EE_Message_Template {
 	public function is_active() {
 		return $this->_MTP_is_active;
 	}
+
+
 
 	/**
 	 *		@ override magic methods

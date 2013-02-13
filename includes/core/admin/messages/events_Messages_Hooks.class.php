@@ -47,6 +47,12 @@ class events_Messages_Hooks extends EE_Admin_Hooks {
 				'func' => 'messages_metabox',
 				'label' => __('Notifications', 'event_espresso'),
 				'priority' => 'core'
+				),
+			1 => array(
+				'page_route' => 'add_event',
+				'func' => 'messages_metabox',
+				'label' => __('Notifications', 'event_espresso'),
+				'priority' => 'core'
 				)
 			);
 		
@@ -55,13 +61,18 @@ class events_Messages_Hooks extends EE_Admin_Hooks {
 			'registers' => array(
 				'events_msg_admin' => array(
 					'url' => EE_MSG_ASSETS_URL . 'events_messages_admin.js',
-					'depends' => array('jquery')
+					'depends' => array('jquery', 'ee-parse-uri', 'ee-serialize-full-array')
+					),
+				'events_msg_admin_css' => array(
+					'url' => EE_MSG_ASSETS_URL . 'ee_msg_events_admin.css',
+					'type' => 'css'
 					)
 				),
 			'enqueues' => array(
-				'events_msg_admin' => array('edit_event')
+				'events_msg_admin' => array('edit_event'),
+				'events_msg_admin_css' => array('edit_event')
 				)
-			);
+			); /**/
 	}
 
 
@@ -69,39 +80,62 @@ class events_Messages_Hooks extends EE_Admin_Hooks {
 	public function messages_metabox($event, $callback_args) {
 
 		//let's get the active messengers (b/c messenger objects have the active message templates)
-		$EEM_controller = new EE_messages;
-		$active_messengers = $EEM_controller->get_active_messengers();
-		$tabs = array();
+		//convert 'evt_id' to 'EVT_ID'
+		if ( isset( $this->_req_data['evt_id'] ) && !isset($this->_req_data['EVT_ID'] ) )
+			$this->_req_data['EVT_ID'] = $this->_req_data['evt_id'];
 
-		//empty messengers?
-		//Note message types will always have at least one available because every messenger has a default message type associated with it (payment) if no other message types are selected.
-		if ( empty( $active_messengers ) ) {
-			$msg_activate_url = wp_nonce_url( add_query_arg( array('action' => 'activate', 'activate_view' => 'messengers'), 
-				EE_MSG_ADMIN_URL ), 'activate_nonce' );
-			$error_msg = sprintf( __('There are no active messengers. So no notifications will NOT go out for <strong>any</strong> events.  You will want to %sActivate a Messenger%s.', 'event_espresso'), '<a href="' . $msg_activate_url . '">', '</a>');
-			$error_content = '<div class="error"><p>' . $error_msg . '</p></div>';
-			$internal_content = '<div id="messages-error"><p>' . $error_msg . '</p></div>'; 
-			echo $error_content;
-			echo $internal_content;
-			return;
+		//set flag for whether we are adding or editing an event.
+		$add_event = !isset($this->_req_data['EVT_ID']) ? TRUE : FALSE;
+
+		if ( !$add_event ) {
+
+			$EEM_controller = new EE_messages;
+			$active_messengers = $EEM_controller->get_active_messengers();
+			$tabs = array();
+
+			//empty messengers?
+			//Note message types will always have at least one available because every messenger has a default message type associated with it (payment) if no other message types are selected.
+			if ( empty( $active_messengers ) ) {
+				$msg_activate_url = wp_nonce_url( add_query_arg( array('action' => 'activate', 'activate_view' => 'messengers'), 
+					EE_MSG_ADMIN_URL ), 'activate_nonce' );
+				$error_msg = sprintf( __('There are no active messengers. So no notifications will NOT go out for <strong>any</strong> events.  You will want to %sActivate a Messenger%s.', 'event_espresso'), '<a href="' . $msg_activate_url . '">', '</a>');
+				$error_content = '<div class="error"><p>' . $error_msg . '</p></div>';
+				$internal_content = '<div id="messages-error"><p>' . $error_msg . '</p></div>';
+
+
+				if ( defined('DOING_AJAX') )
+					return $error_content . $intenral_content;
+
+				echo $error_content;
+				echo $internal_content;
+				return;
+			}
+			
+			
+			//get content for active messengers
+			foreach ( $active_messengers as $name => $messenger ) {
+				$event_id = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : NULL;
+				$tabs[$name] = $messenger->get_messenger_admin_page_content('events', 'edit', array('event' => $event_id) );
+			}
+
+
+			require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Tabbed_Content.helper.php';
+			//we want this to be tabbed content so let's use the EE_Tabbed_Content::display helper.
+			$tabbed_content = EE_Tabbed_Content::display($tabs);
+			if ( is_wp_error($tabbed_content) ) {
+				$tabbed_content = $tabbed_content->get_error_message();
+			}
+		} else {
+			$tabbed_content = '<p>' . __( 'You will see notifications options after you add the initial details for your event and save it', 'event_espresso' ) . '</p>';
 		}
+
+		$notices = '<div class="ee-notices"><div class="ajax-loader-grey"></div></div>';
+
+		if ( defined('DOING_AJAX' ) )
+			return $tabbed_content;
+
+		echo $notices . $tabbed_content;
 		
-
-		//get content for active messengers
-		foreach ( $active_messengers as $name => $messenger ) {
-			$event_id = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : NULL;
-			$tabs[$name] = $messenger->get_messenger_admin_page_content('events', 'edit', array('event' => $event_id) );
-		}
-
-
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Tabbed_Content.helper.php';
-		//we want this to be tabbed content so let's use the EE_Tabbed_Content::display helper.
-		$tabbed_content = EE_Tabbed_Content::display($tabs);
-		if ( is_wp_error($tabbed_content) ) {
-			$tabbed_content = $tabbed_content->get_error_message();
-		}
-		
-		echo $tabbed_content;
 	}
 
 
@@ -112,9 +146,27 @@ class events_Messages_Hooks extends EE_Admin_Hooks {
 	 * @return string either an html string will be returned or a success message
 	 */
 	public function switch_template() {
+		//set EE_Admin_Page object (see method details in EE_Admin_Hooks parent
+		$this->_set_page_object();
+
+		//is this a template switch if so EE_Admin_Page child needs this object
+		$this->_page_object->set_hook_object( $this );
 
 		//let's route according to the sent page route
-		var_dump('in_here');
-		exit();
+		$this->_page_object->route_admin_request();
+	}
+
+
+
+
+	public function edit_event_admin_footer() {
+		//dialog container
+		$d_cont = '<div id="messages-change-edit-templates-dv" class="messages-change-edit-templates-option auto-hide hidden">' . "\n";
+		$d_cont .= '<div class="ajax-loader-grey"></div>';	
+		$d_cont .= '<div class="messages-change-edit-templates-content"></div>';		
+		$d_cont .= '</div>';
+
+		$notices = '<div class="ee-notices"></div>';
+		echo $notices . $d_cont;
 	}
 }

@@ -116,6 +116,20 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 
 
+	/**
+	 * this optional property can be set by child classes to override the priority for the automatic action/filter hook loading in the `_load_routed_hooks()` method.  Please follow this format:
+	 *
+	 * array(
+	 * 	'wp_hook_reference' => 1
+	 * 	)
+	 * )
+	 * @var array
+	 */
+	protected $_wp_action_filters_priority;
+
+
+
+
 
 	/**
 	 * This just holds a merged array of the $_POST and $_GET vars in favor of $_POST
@@ -161,6 +175,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 		$this->_ajax_hooks();
 		$this->_load_custom_methods();
+		$this->_load_routed_hooks();
 
 		add_action( 'admin_enqueue_scripts', array($this, 'enqueue_scripts_styles' ) );
 
@@ -253,7 +268,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * @return void
 	 */
 	private function _set_defaults() {
-		$this->_ajax_func = $this->_init_func = $this->_metaboxes = $this->_scripts = $this->_styles = array();
+		$this->_ajax_func = $this->_init_func = $this->_metaboxes = $this->_scripts = $this->_styles = $this->_wp_action_filters_priority = array();
 		$this->_current_route = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : 'default';
 		$this->_req_data = array_merge($_GET, $_POST);
 		$this->caller = get_class($this);
@@ -264,10 +279,10 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	/**
 	 * this sets the _page_object property
 	 *
-	 * @access private
+	 * @access protected
 	 * @return void
 	 */
-	private function _set_page_object() {
+	protected function _set_page_object() {
 		//first make sure $this->_name is set
 		if ( empty( $this->_name ) ) {
 			$msg[] = __('We can\'t load the page object', 'event_espresso');
@@ -320,6 +335,41 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		}
 
 	}
+
+
+
+	/**
+	 * This method will search for a corresponding method with a name matching the route and the wp_hook to run.  This allows child hook classes to target hooking into a specific wp action or filter hook ONLY on a certain route.  just remember, methods MUST be public
+	 *
+	 * Future hooks should be added in here to be access by child classes.
+	 * 
+	 * @return void
+	 */
+	private function _load_routed_hooks() {
+
+		//this array provides the hook action names that will be referenced.  Key is the action. Value is an array with the type (action or filter) and the number of parameters for the hook.  We'll default all priorities for automatic hooks to 10.
+		$hook_filter_array = array(
+			'admin_footer' => array(
+				'type' => 'action',
+				'argnum' => 1,
+				'priority' => 10
+				)
+			);
+
+
+
+		foreach ( $hook_filter_array as $hook => $args ) {
+			if ( method_exists( $this, $this->_current_route . '_' . $hook ) ) {
+				if ( isset( $this->_wp_action_filters_priority[$hook] ) )
+					$args['priority'] = $this->_wp_action_filters_priority[$hook];
+				if ( $args['type'] == 'action' )
+					add_action( $hook, array( $this, $this->_current_route . '_' . $hook ), $args['priority'], $args['argnum'] );
+				else
+					add_filter( $hook, array( $this, $this->_current_route . '_' . $hook ), $args['priority'], $args['argnum'] );
+			}
+		}
+
+	}
 	
 
 	/**
@@ -341,6 +391,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 			add_action('wp_ajax_' . $action, array( $this, $method ) );
 		}
+
 	}
 
 
