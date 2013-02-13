@@ -1,6 +1,28 @@
-<?php
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+/**
+ * Event Espresso
+ *
+ * Event Registration and Management Plugin for WordPress
+ *
+ * @ package			Event Espresso
+ * @ author				Seth Shoultes
+ * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ link					http://www.eventespresso.com
+ * @ version		 	3.1.P.7
+ *
+ * ------------------------------------------------------------------------
+ *
+ * EEM_TempBase Model
+ *
+ * @package			Event Espresso
+ * @subpackage		includes/models/
+ * @author				Michael Nelson
+ *
+ * ------------------------------------------------------------------------
+ */
 require_once('EEM_Base.model.php');
-abstract class EEM_TempBase extends EEM_Base{ 
+abstract class EEM_TempBase extends EEM_Base{
 	/**
 	 * arary for defining all the fields on a model. May not replace all the 
 	 * individual setters and getters, as these are convenient for PHP docs and developing,
@@ -30,43 +52,8 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * EE_Answer (the class for EEM_Answer) has an attribute $_Question, which is used for storing the EE_Question array once it is requested.
 	 */
 	protected function __construct() {
-		
-		$className=get_class($this);
-		$this->_fields_settings=apply_filters("filter_hook_espresso__{$className}__field_settings",$this->_fields_settings);
-		$this->_related_models=apply_filters("filter_hook_espresso__{$className}__related_models",$this->_related_models);
 		$this->table_name=$this->_get_table_name();
 		$this->table_data_types=$this->_get_table_data_types();
-	}
-	/**
-	 * 
-	 * @param mixed $cols_n_values either an array of where each key is the name of a field, and the value is its value
-	 * or an stdClass where each property is the name of a column,
-	 * @return EE_Base_Class
-	 */
-	public function instantiate_class_from_array_or_object($cols_n_values){
-		if(!is_array($cols_n_values)){
-			$cols_n_values=get_object_vars($cols_n_values);
-		}
-		//make sure the array only has keys that are fields/columns on this model
-		$cols_n_values=array_intersect_key($cols_n_values,$this->fields_settings());
-		
-		//get the ID of the object, and remove it from cols_n_values for now
-		$pkName=$this->primary_key_name();
-		$pkValue=$cols_n_values[$pkName];
-		unset($cols_n_values[$pkName]);
-		
-		//get the required info to instantiate the class whcih relates to this model.
-		$className=$this->_getClassName();
-		$class=new ReflectionClass($className);
-		//call the constructor of the EE_Base_Class, passing it an array of all the fields, except
-		//the ID, because we set that later
-		$classInstance=$class->newInstanceArgs($cols_n_values);
-		
-		/* @var $classInstance EE_Base_Class */
-		//now set the ID on this new EE_Base_Class instance, so we realize it's 
-		//already in teh DB
-		$classInstance->set($pkName,$pkValue);
-		return $classInstance;
 	}
 	/**
 	 * Returns the item's name. If there are many of these items, returns a plural version fo the name
@@ -213,34 +200,21 @@ abstract class EEM_TempBase extends EEM_Base{
 		throw new EE_Error(sprintf(__("Class %s has no field of type %s set in its fieldsSettings",'event_espresso'),get_class($this),implode(",",$types)));
 
 	}
-	/**
-	 * takes care of including the PHP file with the corresponding .class file to this model.
-	 */
-	private function _include_php_class(){
-		$className=$this->_getClassName();
-		if(!class_exists($className)){
-			require_once($className.".class.php");
-		}
-	}
 	
 	/**
 	*		cycle though array of attendees and create objects out of each item
 	* 
 	* 		@access		private
 	* 		@param		array		$attendees		
-	*		@return 	EE_TempBase[]		array on success, FALSE on fail
+	*		@return 	EE_Base_Class[]		array on success, FALSE on fail
 	*/	
-	protected function _create_objects( $rows = array() ) {	
-		$this->_include_php_class();
+	protected function _create_objects( $rows = FALSE ) {	
 		$array_of_objects=array();
-		if(empty($rows)){
-			return FALSE;
-		}
 		foreach ( $rows as $row ) {
 			if(empty($row)){//wp did its weird thing where it returns an array like array(0=>null), which is totally not helpful...
 				return FALSE;
 			}
-				/*$fields=$this->fields_settings();//get_object_vars($row);
+				$fields=$this->fields_settings();//get_object_vars($row);
 				//remove the primary key, because it's not part of the constructors. we'll just add it after the fact
 				$pkName=$this->primary_key_name();
 				unset($fields[$pkName]);
@@ -248,9 +222,12 @@ abstract class EEM_TempBase extends EEM_Base{
 				$args=array();
 				foreach($argNames as $argName){
 					$args[]=$row->$argName;
-				}*/
-				$classInstance=$this->instantiate_class_from_array_or_object($row);
-				$array_of_objects[$classInstance->ID()]=$classInstance;
+				}
+				$class=new ReflectionClass($this->_getClassName());
+				$classInstance=$class->newInstanceArgs($args);
+				/* @var $classInstance EE_Base_Class */
+				$classInstance->set($pkName,$row->$pkName);
+				$array_of_objects[$classInstance->get_primary_key()]=$classInstance;
 		}	
 		return $array_of_objects;	
 	}
@@ -303,25 +280,21 @@ abstract class EEM_TempBase extends EEM_Base{
 	}
 	/**
 	 * Uses $this->_relatedModels info to find the related model objects of relation $relationName to the given $modelObject
-	 * @param EE_TempBase'child $modelObject one of EE_Answer, EE_Attendee, etc. 
+	 * @param EE_Base_Class'child $modelObject one of EE_Answer, EE_Attendee, etc. 
 	 * @param string $relationName, key in $this->_relatedModels, eg 'Registration', or 'Events'
 	 * @param array $where_col_n_values for extra select clause on hasAndBelongsToMany or hasMany
-	 * @return EE_TempBase[]
+	 * @return EE_Base_Class[]
 	 */
-	public function get_many_related(EE_Base_Class $modelObject,$relationName,$where_col_n_values=array(),$orderby=null,$order='ASC',$operators='=',$limit=null,$output='OBJECT_K'){
+	public function get_many_related(EE_Base_Class $modelObject,$relationName,$where_col_n_values=array()){
 		$relatedModelInfo=$this->related_settings_for($relationName);
 		/* @var $relatedModeInfo EE_Model_Relation*/
 		$relatedModel=$relatedModelInfo->model_instance();
 		/* @var $relatedModel EEM_TempBase*/
 		switch($relatedModelInfo->type()){
 			case 'belongsTo':
-				$foreign_key_name=$relatedModelInfo->field_name();
-				$related_model_pk_name=$relatedModel->primary_key_name();
-				if(!is_array($where_col_n_values) || !array_key_exists($related_model_pk_name, $where_col_n_values)){
-					$where_col_n_values[$foreign_key_name]=$modelObject->get($foreign_key_name);
-				}
-				//echo "belognsto";var_dump($where_col_n_values);
-				$relatedObjects=$relatedModel->get_all_where($where_col_n_values,$orderby,$order,$operators,$limit,$output);
+				$foreign_key=$relatedModelInfo->field_name();
+				$args=array($relatedModel->primary_key_name()=>$modelObject->get($foreign_key));
+				$relatedObjects=$relatedModel->get_all_where($args);
 				//$relatedObjects=$relatedModel->_create_objects(array($row,));
 				break;
 			case 'hasMany':
@@ -330,10 +303,10 @@ abstract class EEM_TempBase extends EEM_Base{
 					break;
 				}
 				$foreignKeyOnOtherModel=$relatedModelInfo->field_name();
-				if(!is_array( $where_col_n_values) || !array_key_exists($foreignKeyOnOtherModel, $where_col_n_values )){
+				if(!array_key_exists($foreignKeyOnOtherModel, $where_col_n_values)){
 					$where_col_n_values[$foreignKeyOnOtherModel]=$modelObject->ID();
 				}
-				$relatedObjects=$relatedModel->get_all_where($where_col_n_values,$orderby,$order,$operators,$limit,$output);
+				$relatedObjects=$relatedModel->get_all_where($where_col_n_values);
 				//$relatedObjects=$relatedModel->_create_objects(array($rows));
 				break;
 			case 'hasAndBelongsToMany':
@@ -345,29 +318,14 @@ abstract class EEM_TempBase extends EEM_Base{
 				$otherTableName=$relatedModel->_get_table_name();
 				$otherTablePK=$relatedModel->primary_key_name();
 				$joinSQL="$joinTable LEFT JOIN $otherTableName ON $joinTable.$otherTablePK=$otherTableName.$otherTablePK ";
+				//$rows=$
 				$thisTablePK=$this->primary_key_name();
-				if( !is_array($where_col_n_values) || !array_key_exists($thisTablePK,$where_col_n_values )){
-					$where_col_n_values[$thisTablePK]=$modelObject->ID();
-				}
-				$rows=$relatedModel->select_all_join_where($joinSQL,
-													$this->_get_table_data_types_for($relatedModelInfo->join_table(), $relatedModelInfo->join_table_fields()), 
-													$where_col_n_values,
-													$orderby,
-													$order,
-													$operators,
-													$limit,
-													$output);
-				//if we're only wanting to count them, then $rows is actually just an integer
-				//so we only want ot return it.
-				if($output!=='COUNT'){
-					$relatedObjects=$relatedModel->_create_objects($rows);
-				}else{
-					$relatedObjects=$rows;
-				}
+				$where_col_n_values[$thisTablePK]=$modelObject->ID();
+				$rows=$relatedModel->select_all_join_where($joinSQL,$where_col_n_values);
+				$relatedObjects=$relatedModel->_create_objects($rows);
 				break;
 		}
-		$className=get_class($this);
-		return apply_filters('filter_hook_espresso__{$className}__get_many_related',$relatedObjects,$this,$modelObject,$relationName,$where_col_n_values,$order,$orderby,$operators,$limit,$output);
+		return apply_filters('filter_hook_espresso_getRelated',$relatedObjects,$this,$modelObject,$relationName);
 	}
 	/**
 	 * Removes a relationship of the correct type between $modelObject and $otherModelObject. 
@@ -379,7 +337,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * 
 	 * 'hasAndBelongsToMany' relationships:remoevs any existing entry in the join table between the two models.
 	 * 
-	 * @param EE_TempBase $thisModelObject
+	 * @param EE_Base_Class $thisModelObject
 	 * @param mixed $otherModelObjectOrID EE_base_Class or ID of other Model Object
 	 * @param string $relationName
 	 * @return boolean of success
@@ -443,7 +401,7 @@ abstract class EEM_TempBase extends EEM_Base{
 				//check for this relationship
 				$thisPk=$this->primary_key_name();
 				$otherPk=$relatedModelInfo->field_name();
-				$success=$this->_delete($relatedModelInfo->join_table(),$this->_get_table_data_types_for($relatedModelInfo->join_table(), $relatedModelInfo->join_table_fields()),array($thisPk=>$thisModelObject->ID(),
+				$success=$this->_delete($relatedModelInfo->join_table(),$this->_get_table_data_types(),array($thisPk=>$thisModelObject->ID(),
 																								$otherPk=>$otherModelID));
 				return $success;
 				break;	
@@ -466,11 +424,9 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * @param EE_Base_Class $thisModelObject
 	 * @param mixed $otherModelObjectOrID EE_base_Class or ID of other Model Object
 	 * @param string $relationName
-	 * @param array $extraColumnsForHABTM mapping from column/attribute names to values for JOIN tables with extra columns. Eg, when adding 
-	 * an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specificy array('role-column-name'=>'role-id')
 	 * @return boolean of success
 	 */
-	public function _add_relation_to(EE_Base_Class $thisModelObject,$otherModelObjectOrID, $relationName,$extraColumnsForHABTM=null){
+	public function add_relation_to(EE_Base_Class $thisModelObject,$otherModelObjectOrID, $relationName){
 		/* @var $relatedModeInfo EE_Model_Relation*/
 		$relatedModelInfo=$this->related_settings_for($relationName);
 		
@@ -515,7 +471,8 @@ abstract class EEM_TempBase extends EEM_Base{
 						$otherModelObjectOrID->save();
 					}
 					$otherModelID=$otherModelObjectOrID->ID();
-				}else{
+				}
+				if(!($otherModelObjectOrID instanceof EE_Base_Class)){
 					$otherModelID=$otherModelObjectOrID;
 				}
 								
@@ -525,18 +482,12 @@ abstract class EEM_TempBase extends EEM_Base{
 				$thisPk=$this->primary_key_name();
 				$otherPk=$relatedModelInfo->field_name();
 				$relationsToOtherObject=$this->get_many_related($thisModelObject,$relationName,array($thisPk=>$thisModelObject->ID(),
-																								$otherPk=>$otherModelID));
+																								$relatedModel->_get_table_name().".".$otherPk=>$otherModelID));
 				//if it doesn't exist, add it
-				$insertionValues=array($thisPk=>$thisModelObject->ID(),$otherPk=>$otherModelID);
-				if(!empty($extraColumnsForHABTM)){
-					foreach($extraColumnsForHABTM as $columnName=>$columnValue){
-						$insertionValues[$columnName]=$columnValue;
-					}
-				}
 				if(empty($relationsToOtherObject)){
 					$result=$this->_insert($relatedModelInfo->join_table(), 
-								$this->_get_table_data_types_for($relatedModelInfo->join_table(), $relatedModelInfo->join_table_fields()), 
-								$insertionValues);
+								array($thisPk=>'%d',$otherPk=>'%d'), 
+								array($thisPk=>$thisModelObject->ID(),$otherPk=>$otherModelID));
 					return !empty($result);
 				}else{
 					return false;
@@ -553,8 +504,8 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * @param string $relationName, key in $this->_relatedModels, eg 'Registration', or 'Events'
 	 * @return EE_Base_Class[]
 	 */
-	public function get_first_related(EE_Base_Class $modelObject,$relationName,$where_col_n_values=null,$orderby=null,$order='ASC',$operators='=',$output='OBJECT_K'){
-		$relatedObjects=$this->get_many_related($modelObject, $relationName,$where_col_n_values,$orderby,$order,$operators,1,$output);
+	public function get_first_related(EE_Base_Class $modelObject,$relationName){
+		$relatedObjects=$this->get_many_related($modelObject, $relationName);
 		if(empty($relatedObjects)){
 			return null;
 		}else{
@@ -626,7 +577,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * @param string $limit
 	 * @return mixed EE_Base_Class is output='OBJECT_K', int is output='count'
 	 */
-	public function get_all_where($where_cols_n_values,$orderby=null,$sort='ASC',$operators='=',$limit=null,$output='OBJECT_K'){
+	public function get_all_where($where_cols_n_values,$orderby=null,$sort='ASC',$operators=null,$limit=null,$output='OBJECT_K'){
 		if($orderby==null){
 			$orderby=$this->primary_key_name();
 		}
@@ -640,163 +591,23 @@ abstract class EEM_TempBase extends EEM_Base{
 		return $results;
 	}
 	
-	/**
-	 * Takes an array of EE_Base_Class, and preloads the related model objects of 
-	 * type $relation_name. Eg, if you have a list of EE_Answers, and call this function
-	 * passing it the string 'Question' and that list of EE_Answers, this function
-	 * will load each object's related question and save it on each answer, then
-	 * return the updated list of EE_Answers.
-	 * This function is only useful for optmization. Use it if you know each of the
-	 * objects in $objects will need its related model of $relation_name.
-	 * NOTE: currently this function is actually no more efficient than individually
-	 * fetching the related models on each object, but we hope to
-	 * upgrade it in the future to be more efficient.
-	 * @param string $relation_name, eg "Events", "Answers". A key in the child class' 
-	 * _related_models	 * 
-	 * @param EE_Base_Class[] $objects onto which we want to preload the related model
-	 * of type $relation_name
-	 * @return EE_Base_Class[] the original $objects with the related models of type
-	 * $relation_name preloaded onto them
-	 */
-	public function preload_related_models_of_type_onto($relation_name,array $objects){
-		/* @todo optimize this function to only need to perform a single query, 
-		 * and then loop through the results and attach to $objects.
-		 * As it is right now, it performs a query for each object, and is
-		 * no more efficient than just not preloading the related models
-		 */
-		$relation_settings=$this->related_settings_for($relation_name);
-		foreach($objects as $id=>$object){
-			/* @var $object EE_Base_Class */
-			if('belongsTo'==$relation_settings->type()){
-				$object->get_first_related($relation_name);
-			}else{
-				$object->get_many_related($relation_name);
-			}
-		}
-		return $objects;
-	}
-	
-	/**
-	 * Very handy general function to allow for plugins to extend any child of EE_TempBase.
-	 * If a method is called on a child of EE_TempBase that doesn't exist, this function is called (http://www.garfieldtech.com/blog/php-magic-call)
-	 * and passed the method's name and arguments.
-	 * Instead of requiring a plugin to extend the EE_TempBase (which works fine is there's only 1 plugin, but when will that happen?)
-	 * they can add a hook onto 'filters_hook_espresso__{className}__{methodName}' (eg, filters_hook_espresso__EE_Answer__my_great_function)
-	 * and accepts 2 arguments: the object on which teh function was called, and an array of the original arguments passed to the function. Whatever their callbackfunction returns will be returned by this function.
-	 * Example: in functions.php (or in a plugin):
-	 * add_filter('filter_hook_espresso__EE_Answer__my_callback','my_callback',10,3);
-	 * function my_callback($previousReturnValue,EE_TempBase $object,$argsArray){
-			$returnString= "you called my_callback! and passed args:".implode(",",$argsArray);
-	 *		return $previousReturnValue.$returnString;
-	 * }
-	 * require('EEM_Answer.model.php');
-	 * $answer=EEM_Answer::instace();
-	 * echo $answer->my_callback('monkeys',100);
-	 * //will output "you called my_callback! and passed args:monkeys,100"
-	 * @param string $methodName name of method which was called on a child of EE_TempBase, but which 
-	 * @param array $args array of original arguments passed to the function
-	 * @return mixed whatever the plugin which calls add_filter decides
-	 */
-	public function __call($methodName,$args){
-		$className=get_class($this);
-		$tagName="filter_hook_espresso__{$className}__{$methodName}";
-		if(!has_filter($tagName)){
-			throw new EE_Error(sprintf(__("Method %s on model %s does not exist! You can create one with the following code in functions.php or in a plugin: add_filter('%s','my_callback',10,3);function my_callback(\$previousReturnValue,EEM_TempBase \$object\$argsArray=null){/*function body*/return \$whatever;}","event_espresso"),
-										$methodName,$className,$tagName));
-		}
-		
-		return apply_filters($tagName,null,$this,$args);
-	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
- * Class for representing field on models/columns on database tables. Mostly
- * just stores information about the field/column, which models and classes
- * representing rows find useful.
+ * Class for representing field on models/columns on database tables.
  */
 class EE_Model_Field{
 	/**
 	 * all the types of ModelFields which are allowed
 	 * @var type 
 	 */
-	private $_allowed_types=array('primary_key','primary_text_key','foreign_key','foreign_text_key','int','float','plaintext','simplehtml','fullhtml','enum','bool','deleted_flag','serializedtext');
-	
-	
-	
-	
-	/**
-	 * Human-friendly version of the name
-	 * @var string
-	 */
-	private $_nicename;
-	
-	
-	
-	
-	/**
-	 * One of EE_Model_Field->_allowed_types
-	 * @var string 
-	 */
-	private $_type;
-	
-	
-	
-	
-	/**
-	 * Whether this field should be allowed to be set to null
-	 * @var boolean 
-	 */
-	private $_nullable;
-	
-	
-	
-	/**
-	 * If, when originally instantiating an class relating to a model with this field,
-	 * this field would be null, use this default value instead.
-	 * @var mixed 
-	 */
-	private $_default_value;
-	
-	
-	
-	
-	/**
-	 * If this field is an enum, then these are the allowed values.
-	 * @var array 
-	 */
-	private $_allowed_enum_values;
-	
-	
-	
-	
-	/**
-	 * In case this field has type 'foreign_key' or 'foreign_text_key',
-	 * then is a string of the class's singular name, without the prepended EE_.
-	 * @var string 
-	 */
-	private $_class;
-	
-	
-	
-	
-	
+	private $allowed_types=array('primary_key','primary_text_key','foreign_key','foreign_text_key','int','float','plaintext','simplehtml','fullhtml','enum','bool','deleted_flag');
+	private $nicename;
+	private $type;
+	private $nullable;
+	private $default_value;
+	private $allowed_enum_values;
+	private $class;
 	/**
 	 * Constructs basic EE_ModelField.
 	 * @param string $nicename the string that displays this field's name nicely. Eg, "First Name" isntead of "fname"
@@ -830,21 +641,15 @@ class EE_Model_Field{
 	 * @param array $allowedEnumValues array of allowed values. Eg, array('textfield','textarea','checkbox') or array(1,2,3)
 	 * @param string $class required when $type=='foreign_key' or $type=='foreign_text_key'. The name of the related class. Eg, 'Question'
 	 */
-	
-	
-	
-	
-	
-	
 	public function __construct($nicename,$type,$nullable,$defaultValue=null,$allowedEnumValues=array(),$class=null){
-		$this->_nicename=$nicename;
-		$this->_type=$type;
-		$this->_nullable=$nullable;
-		$this->_default_value=$defaultValue;
-		$this->_allowed_enum_values=$allowedEnumValues;
-		$this->_class=$class;
-		if(!in_array($type,$this->_allowed_types)){
-			throw new EE_Error(sprintf(__("Event Espresso error. Field %s is of type %s, but only these are the only allowed types %s",'event_espresso'),$nicename,$type,implode(",",$this->_allowed_types)));
+		$this->nicename=$nicename;
+		$this->type=$type;
+		$this->nullable=$nullable;
+		$this->default_value=$defaultValue;
+		$this->allowed_enum_values=$allowedEnumValues;
+		$this->class=$class;
+		if(!in_array($type,$this->allowed_types)){
+			throw new EE_Error(sprintf(__("Event Espresso error. Field %s is of type %s, but only these are the only allowed types %s",'event_espresso'),$nicename,$type,implode(",",$this->allowed_types)));
 		}
 		if($type=='foreign_key' || $type=='foreign_text_field'){
 			if(!$class){
@@ -860,24 +665,13 @@ class EE_Model_Field{
 			throw new EE_Error(sprintf(__("Event Espresso error. Field %s is of type 'enum' is missing the \$allowedEnumValues parameter in the constructor.",'event_espresso'),$nicename));
 		}
 	}
-	
-	
-	
-	
-	
 	/**
 	 * Returns the human-readable string of the field's name. Eg, 'First Name' instead of 'fname'
 	 * @return string
 	 */
 	public function nicename(){
-		return $this->_nicename;
+		return $this->nicename;
 	}
-	
-	
-	
-	
-	
-	
 	/**
 	 * Returns teh type of the field. Allowed values include: 
 	 *				
@@ -907,143 +701,50 @@ class EE_Model_Field{
 	 * @return string
 	 */
 	public function type(){
-		return $this->_type;
+		return $this->type;
 	}
-	
-	
-	
-	
-	
 	/**
 	 * Returns whether the field may be set to NULL or not
 	 * @return boolean
 	 */
 	public function nullable(){
-		return $this->_nullable;
+		return $this->nullable;
 	}
-	
-	
-	
-	
-	
 	/**
 	 * Returns the default value of the field. Eg, 12 or 'monkey'
 	 * @return mixed
 	 */
 	public function default_value(){
-		return $this->_default_value;
+		return $this->default_value;
 	}
-	
-	
-	
-	
-	
 	/**
 	 * Returns an array of allowed Enum values, if any has been set.
 	 * @return array
 	 */
 	public function allowed_enum_values(){
-		return $this->_allowed_enum_values;
+		return $this->allowed_enum_values;
 	}
-	
-	
-	
-	
-	
 	/**
 	 * If the field is 'foreign_key' or 'foreign_text_key', this will return a string of the name of the related model. Eg, 'Question' or 'Attendee'.
 	 * @return string
 	 */
 	public function get_class(){
-		return $this->_class;
+		return $this->class;
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
- * a PHP class for representing a relationship between a model and another (ie,
- * a database table and another). Handles 'hasMany','belongsTo' and 'hasAndBelongsToMany' relationships.
- * Mostly just stores information defining the relationship.
+ * a PHP class for representing a relationship between a model and another. Handles 'hasMany','belongsTo' and 'hasAndBelongsToMany'.
  * Useful for the model so it can can queries on the related models.
  */
 class EE_Model_Relation{
-	
-	
-	
-	/**
-	 * see constructor for description
-	 * @var string 
-	 */
 	private $type;
-	
-	
-	
-	
-	/**
-	 * see constructor for description
-	 * @var string 
-	 */
 	private $model;
-	
-	
-	
-	
-	/**
-	 * see constructor for description
-	 * @var string 
-	 */
 	private $field_name;
-	
-	
-	
-	
-	/**
-	 * see constructor for description
-	 * @var string 
-	 */
 	private $join_table;
-	
-	
-	
-	
-	/**
-	 * see constructor for description
-	 * @var EE_Model_Field[] 
-	 */
 	private $join_table_fields;
 	
-	
-	
-	
-	/**
-	 * defines all the allowed model relations
-	 * @var array 
-	 */
 	private $allowed_types=array('belongsTo','hasMany','hasAndBelongsToMany');
-	
-	
-	
-	
-	
-	
 	/**
 	 * 
 	 * @param string $relationType one of 
@@ -1089,11 +790,6 @@ class EE_Model_Relation{
 			}
 		}
 	}
-	
-	
-	
-	
-	
 	/**
 	 * Returns the type of this relationship. One of 'belongsTo','hasMany', or 'hasAndBelongsToMany'
 	 * @return string
@@ -1101,11 +797,6 @@ class EE_Model_Relation{
 	public function type(){
 		return $this->type;
 	}
-	
-	
-	
-	
-	
 	/**
 	 * Returns the name of the model for this modelRelation. Eg 'Attendee', 'Event', etc.
 	 * @return string
@@ -1113,11 +804,6 @@ class EE_Model_Relation{
 	public function model(){
 		return $this->model;
 	}
-	
-	
-	
-	
-	
 	/**
 	 * Using the info in this ModelRelation, fetches an instance of the related model,
 	 * which can then be used for querying.
@@ -1130,11 +816,6 @@ class EE_Model_Relation{
 		$modelInstance=call_user_func($modelName."::instance");
 		return $modelInstance;
 	}
-	
-	
-	
-	
-	
 	/**
 	 * Returns the name of the modelField/db-column for this relation. This represents different things for differnet relationship types:
 	 *			
@@ -1149,11 +830,6 @@ class EE_Model_Relation{
 	public function field_name(){
 		return $this->field_name;
 	}
-	
-	
-	
-	
-	
 	/**
 	 * Returns the name of the join table in cases of 'hasAndBelongsToMany'. Eg, 'question_group_question', or 'answer', etc. So no prepending of 'wp_' or even 'esp_'. Those are assumed.
 	 * @return string
@@ -1162,10 +838,6 @@ class EE_Model_Relation{
 		global $wpdb;
 		return $wpdb->prefix."esp_".$this->join_table;
 	}
-	
-	
-	
-	
 	
 	/**
 	 * Returns an array of all the fields on the join table. Exactly like the fields on each model. Eg array('QGQ_ID'=>EE_Model_Field('QuestionGroup-Question ID','primary_key'),
@@ -1176,4 +848,3 @@ class EE_Model_Relation{
 	public function join_table_fields(){
 		return $this->join_table_fields;
 	}
-}

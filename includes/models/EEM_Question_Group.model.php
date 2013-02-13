@@ -17,7 +17,7 @@
  *
  * @package			Event Espresso
  * @subpackage		includes/models/
- * @author				Brent Christensen 
+ * @author				Michael Nelson
  *
  * ------------------------------------------------------------------------
  */
@@ -56,18 +56,19 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base {
 					'QSG_show_group_desc'=>new EE_Model_Field('Show Question Group Description?', 'bool', false, true, null, null),
 					'QSG_system_ID'=>new EE_Model_Field('Is an internal-system Question Group', 'bool', false, false, null, null),
 					'QSG_deleted'=>new EE_Model_Field('Is Question Group deleted?', 'deleted_flag', false, false, null, null)
-								);
+				);
 		$this->_related_models=array(
-								'Questions'=>new EE_Model_Relation('hasAndBelongsToMany', 'Question', 'QST_ID','question_group_question',
-											array(
-												'QGQ_ID'=>new EE_Model_Field('Question Group-Question ID', 'primary_key', false, null, null, null),
-												'QSG_ID'=>new EE_Model_Field('Foreign Key to Question Groups', 'foreign_key', false, null, null, 'Question_Group'),
-												'QST_ID'=>new EE_Model_Field('Foreign Key to Questions','foreign_key',false,null,null,'Question'))),
-								//'Events'=>new EE_Model_Relation('hasAndBelongsToMany', 'Event', 'EVT_ID','event_question_group'),
-						);
+				'Questions'=>new EE_Model_Relation('hasAndBelongsToMany', 'Question', 'QST_ID','question_group_question',
+						array(
+							'QGQ_ID'=>new EE_Model_Field('Question Group-Question ID', 'primary_key', false, null, null, null),
+							'QSG_ID'=>new EE_Model_Field('Foreign Key to Question Groups', 'foreign_key', false, null, null, 'Question_Group'),
+							'QST_ID'=>new EE_Model_Field('Foreign Key to Questions','foreign_key',false,null,null,'Question')
+						)
+					)
+				);
 		
 		parent::__construct();
 	}
 }
 // End of file EEM_Question.model.php
-// Location: /ee-mvc/models/EEM_Question.model.php
+// Location: /includes/models/EEM_Question.model.php

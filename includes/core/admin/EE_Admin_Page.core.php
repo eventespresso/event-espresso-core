@@ -896,7 +896,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//register all styles
 		wp_register_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css', array(),EVENT_ESPRESSO_VERSION );
 		wp_register_style('event_espresso', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-styles.css', array(), EVENT_ESPRESSO_VERSION);
-		wp_register_style('jquery-ui-style-datepicker-css', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css', array(), EVENT_ESPRESSO_VERSION );
+		wp_register_style('jquery-ui-style-datepicker-css', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css', array('jquery-ui-style'), EVENT_ESPRESSO_VERSION );
 
 		//helpers styles
 		wp_register_style('ee-text-links', EVENT_ESPRESSO_PLUGINFULLURL . 'helpers/assets/ee_text_list_helper.css', array(), EVENT_ESPRESSO_VERSION );
@@ -926,6 +926,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		/** SCRIPTS **/
 
 		//register all scripts
+		//wp_register_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-datepicker.js', array('jquery-ui-core'), EVENT_ESPRESSO_VERSION, true );
 		wp_register_script('jquery-ui-timepicker-addon', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker'), EVENT_ESPRESSO_VERSION, true );
 		wp_register_script('event_editor_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_editor.js', array('jquery-ui-slider', 'jquery-ui-timepicker-addon'), EVENT_ESPRESSO_VERSION, true);
 		wp_register_script('event-espresso-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_espresso.js', array('jquery'), EVENT_ESPRESSO_VERSION, true);

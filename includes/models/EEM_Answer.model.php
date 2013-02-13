@@ -17,7 +17,7 @@
  *
  * @package			Event Espresso
  * @subpackage		includes/models/
- * @author				Brent Christensen 
+ * @author				Michael Nelson
  *
  * ------------------------------------------------------------------------
  */
@@ -46,13 +46,16 @@ class EEM_Answer extends EEM_TempBase {
 	}
 
 	protected function __construct(){
-		$this->_fields_settings=array('ANS_ID'=>new EE_Model_Field('Answer ID', 'primary_key', false),
-									'REG_ID'=>new EE_Model_Field('Registration ID', 'foreign_key', false,0,null,'Registration'),
-									'QST_ID'=>new EE_Model_Field('Question ID', 'foreign_key', false,0,null,'Question'),
-									'ANS_value'=>new EE_Model_Field('Answer Value/Text', 'simplehtml', false,''));
+		$this->_fields_settings=array(
+				'ANS_ID'=>new EE_Model_Field('Answer ID', 'primary_key', false),
+				'REG_ID'=>new EE_Model_Field('Registration ID', 'foreign_key', false,0,null,'Registration'),
+				'QST_ID'=>new EE_Model_Field('Question ID', 'foreign_key', false,0,null,'Question'),
+				'ANS_value'=>new EE_Model_Field('Answer Value/Text', 'simplehtml', false,'')
+			);
 		$this->_related_models=array(
-								'Registration'=>new EE_Model_Relation('belongsTo', 'Registration', 'REG_ID'),
-								'Question'=>new EE_Model_Relation('belongsTo', 'Question', 'QST_ID'));
+				'Registration'=>new EE_Model_Relation('belongsTo', 'Registration', 'REG_ID'),
+				'Question'=>new EE_Model_Relation('belongsTo', 'Question', 'QST_ID')
+			);
 		
 		parent::__construct();
 	}
@@ -87,4 +90,4 @@ class EEM_Answer extends EEM_TempBase {
 
 }
 // End of file EEM_Answer.model.php
-// Location: /ee-mvc/models/EEM_Answer.model.php
+// Location: /includes/models/EEM_Answer.model.php

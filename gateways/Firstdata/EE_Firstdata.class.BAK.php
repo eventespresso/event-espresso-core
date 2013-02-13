@@ -281,55 +281,55 @@ Class EE_Firstdata extends EE_Gateway {
 
 			<h5><strong><?php _e('Billing Address', 'event_espresso'); ?></strong></h5>
 
-			<p class="event_form_field">
+			<p class="reg-page-form-field-wrap-pg">
 				<label for="reg-page-billing-fname"><?php _e('First Name', 'event_espresso'); ?> <em>*</em></label>
 				<input id="reg-page-billing-fname" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-fname" title="">
 			</p>
 
-			<p class="event_form_field">
+			<p class="reg-page-form-field-wrap-pg">
 				<label for="reg-page-billing-lname"><?php _e('Last Name', 'event_espresso'); ?> <em>*</em></label>
 				<input id="reg-page-billing-lname" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-lname" title="">
 			</p>
 
-			<p class="event_form_field">
+			<p class="reg-page-form-field-wrap-pg">
 				<label for="reg-page-billing-email"><?php _e('Email', 'event_espresso'); ?> <em>*</em></label>
 				<input id="reg-page-billing-email" class="required email <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-email" title="">
 			</p>
 
-			<p class="event_form_field">
+			<p class="reg-page-form-field-wrap-pg">
 				<label for="reg-page-billing-address"><?php _e('Address', 'event_espresso'); ?> <em>*</em></label>
 				<input id="reg-page-billing-address" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-address">
 			</p>
 
-			<p class="event_form_field">
+			<p class="reg-page-form-field-wrap-pg">
 				<label for="reg-page-billing-city"><?php _e('City', 'event_espresso'); ?> <em>*</em></label>
 				<input id="reg-page-billing-city" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-city">
 			</p>
 
-			<p class="event_form_field">
+			<p class="reg-page-form-field-wrap-pg">
 				<label for="reg-page-billing-state"><?php _e('State', 'event_espresso'); ?> <em>*</em></label>
 				<input id="reg-page-billing-state" class="required medium-txt <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-state">
 			</p>
 
-			<p class="event_form_field">
+			<p class="reg-page-form-field-wrap-pg">
 				<label for="reg-page-billing-zip"><?php _e('Zip', 'event_espresso'); ?> <em>*</em></label>
 				<input id="reg-page-billing-zip" class="required small-txt <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-zip">
 			</p>
 
 			<h5><strong><?php _e('Credit Card Information', 'event_espresso'); ?></strong></h5>
 
-			<p class="event_form_field">
+			<p class="reg-page-form-field-wrap-pg">
 				<label for="reg-page-billing-card-nmbr"><?php _e('Card Number', 'event_espresso'); ?> <em>*</em></label>
 				<input id="reg-page-billing-card-nmbr" class="required <?php echo $css_class; ?>" type="text" name="reg-page-billing-card-nmbr"/>
 			</p>
 
 			<?php /*
-			  <p class="event_form_field">
+			  <p class="reg-page-form-field-wrap-pg">
 			  <label for="reg-page-billing-card-exp-date"><?php _e('Expiry Date', 'event_espresso'); ?> <em>*</em></label>
 			  <input id="reg-page-billing-card-exp-date" class="required medium-txt <?php echo $css_class;?>" type="text" name="reg-page-billing-card-exp-date"/>
 			  </p>
 			 */ ?>
-			<p class="event_form_field">
+			<p class="reg-page-form-field-wrap-pg">
 				<label><?php _e('Expiry Date', 'event_espresso'); ?> <em>*</em></label>
 				<select id="reg-page-billing-card-exp-date-mnth" class="required small-txt <?php echo $css_class; ?>" name="reg-page-billing-card-exp-date-mnth">
 					<?php
@@ -355,7 +355,7 @@ Class EE_Firstdata extends EE_Gateway {
 				<span class="small-text lt-grey-text"><?php _e('(mm/yy)', 'event_espresso'); ?></span>
 			</p>
 
-			<p class="event_form_field">
+			<p class="reg-page-form-field-wrap-pg">
 				<label for="reg-page-billing-card-ccv-code"><?php _e('CCV Code', 'event_espresso'); ?> <em>*</em></label>
 				<input id="reg-page-billing-card-ccv-code"  class="required small-txt <?php echo $css_class; ?>" type="text" name="reg-page-billing-card-ccv-code"/>
 			</p>
