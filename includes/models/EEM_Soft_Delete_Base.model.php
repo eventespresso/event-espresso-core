@@ -1,8 +1,25 @@
-<?php
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
+ * Event Espresso
+ *
+ * Event Registration and Management Plugin for WordPress
+ *
+ * @ package			Event Espresso
+ * @ author				Seth Shoultes
+ * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ link					http://www.eventespresso.com
+ * @ version		 	3.1.P.7
+ *
+ * ------------------------------------------------------------------------
+ *
  * Description of EEM_Soft_Delete_Base
  *
- * @author Mike Nelson
+ * @package			Event Espresso
+ * @subpackage		includes/models/
+ * @author				Michael Nelson
+ *
+ * ------------------------------------------------------------------------
  */
 require_once('EEM_TempBase.model.php');
 class EEM_Soft_Delete_Base extends EEM_TempBase{

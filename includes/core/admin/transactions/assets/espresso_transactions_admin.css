@@ -11,12 +11,16 @@
 .datepicker { width:125px; }
 
 /* TABLE COLUMNS */
+#event-espresso_page_transactions-table-frm .widefat td {
+	min-height: 43px;
+}
 
 .column-TXN_ID { width:3%; }
+td.column-TXN_ID { padding: 4px 7px  29px; }
 .column-TXN_timestamp { width:15%; }
 
 #STS_ID {}
-.column-STS_ID { width:6%; /*text-align:center; */}
+.column-STS_ID { width:7%; /*text-align:center; */}
 /* green text */
 .status-TCM, .txn-overview-full-payment-spn,
 .txn-admin-payment-status-PAP { color:#090;  }

@@ -143,18 +143,52 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 
 .mer-reg-page-attendee-wrap-fs, .reg-page-confirmation-wrap-fs { padding:1em 3% 0em; margin:1em 0 2em; border: 2px solid #eee; border-radius:5px; }
 
-.mer-reg-page-attendee-lgnd { padding:0 1em; /*font-size:.8em; color:#999;*/ letter-spacing:1px; }
+.mer-reg-page-attendee-lgnd { 
+	width: auto; padding:0 1em; margin:0;
+	border: none; -moz-border:none;
+	letter-spacing:1px; 
+}
 .event_questions + .mer-reg-page-attendee-lgnd { margin-top:2em; }
 
-.event_form_field { margin:0; }
+.reg-page-form-field-wrap-pg { margin:0 0 1em; }
 .mer-reg-page-copy-attendee-chk-pg { display:inline-block; float:left; clear:none!important; width:32%; }
 .mer-reg-page-copy-attendee-hr {
 	clear:both; margin:1em 0 0; background:none;
 	border:none; border-top:1px solid rgba( 0,0,0,.05); border-bottom:1px solid rgba( 255,255,255,.9);
 }
-.event_form_field label,
-.reg-page-confirmation-billing-info-spn,
-#mer-reg-page-copy-attendee-dv label { display:inline-block; width:24.5%; min-width:150px; padding-right:.5%; margin:0; font-size:.9em; text-align:right; }
+.reg-page-form-field-wrap-pg label { 
+    display: inline-block; float: left; width: 150px; padding: 0.5em 10px 1em 0;
+	font-size: .9em; line-height: 1em; text-align: right; vertical-align: middle;
+}
+
+.reg-page-confirmation-billing-info-spn { 
+    display: inline-block; width: 150px; padding: 0.5em 10px 1em 0;
+	font-size: .9em; line-height: 1em; text-align: right; vertical-align: middle;
+}
+
+
+#multi-event-registration .espresso-radio-btn-options-ul,
+#multi-event-registration .espresso-checkbox-options-ul {
+    display: inline-block; width: 65%; padding: 0; margin: 0.25em 0 0; list-style: none outside none;
+}
+#multi-event-registration .espresso-radio-btn-options-ul li,
+#multi-event-registration .espresso-checkbox-options-ul li {
+    display: inline-block; width:100%; padding: 0; margin: 0 0 .5em; vertical-align: middle;
+}
+#multi-event-registration .espresso-radio-btn-options-ul li.small-lbl,
+#multi-event-registration .espresso-checkbox-options-ul li.small-lbl {
+    width:49.5%;
+}
+#multi-event-registration .espresso-radio-btn-options-ul .espresso-radio-btn-lbl, 
+#multi-event-registration .espresso-radio-btn-options-ul .espresso-checkbox-lbl  {
+    cursor: pointer; display: inline-block; padding: 0; margin: 0 2em 0 0;    
+    text-align: left; vertical-align: middle;
+}
+#multi-event-registration .espresso-radio-btn-options-ul .espresso-radio-btn-lbl input, 
+#multi-event-registration .espresso-radio-btn-options-ul .espresso-checkbox-lbl input  {
+	margin:0 .5em 3px 0; vertical-align: middle;
+}
+
 
 #mer-reg-page-copy-attendee-dv .wide { width:auto !important; }
 
@@ -164,21 +198,25 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 .hide-the-displayed { position:absolute; top:-.25em; right:0; cursor:pointer; }
 
 
-.event_form_field input[type="text"] { display:inline-block; width:68%; margin:0 0 .5em; }
-.event_form_field select { display:inline-block; margin:0 0 .5em; }
-.event_form_field input.medium-txt { width:35%; }
-.event_form_field input.small-txt { width:20%; }
+.reg-page-form-field-wrap-pg input[type="text"] { display:inline-block; width:68%; margin:0 0 .5em; }
+.reg-page-form-field-wrap-pg select { display:inline-block; margin:0 0 .5em; }
+.reg-page-form-field-wrap-pg input.medium-txt { width:35%; }
+.reg-page-form-field-wrap-pg input.small-txt { width:20%; }
 
 
-.asterisk, label em { font-weight:bold; color:red !important; }
+.asterisk, .espresso-form-input-lbl em { font-weight:bold; color:red !important; }
 .requires-value { border-color:red !important; border-width:2px !important; }
 
 #mer-reg-page-copy-attendee-dv { position:relative; padding:1.5em; margin:1em 0; background:#f8f8f8; border-radius:5px; line-height:1.1em; }
-.mer-reg-page-copy-attendee-pg { margin:0; font-size:.8em; letter-spacing:.4px; }
-.mer-reg-page-copy-all-attendee-pg { margin:0 0 .75em;}
-.mer-reg-page-copy-attendee-pg span { margin:0 0 1em; font-size:.9em; letter-spacing:1px; color:#777; line-height:.9em; }
-.mer-reg-page-copy-attendee-event-hdr { clear:both; margin:1.5em 0 .5em; font-size:.8em; font-weight:bold; color:#444; } 
-.mer-reg-page-copy-attendee-chk, #mer-reg-page-copy-all-attendee-chk { position:relative; top:2px; left:5px; margin:0 5px; }
+#mer-reg-page-copy-attendee-dv .mer-reg-page-copy-attendee-pg { margin:0; font-size:.8em; letter-spacing:.4px; }
+#mer-reg-page-copy-attendee-dv .mer-reg-page-copy-all-attendee-pg { margin:0 0 .75em;}
+#mer-reg-page-copy-attendee-dv label { 
+    display: block; padding: 0.5em 10px 1em 0; cursor: pointer;
+	font-size: .9em; line-height: 1em; vertical-align: middle;
+}
+#mer-reg-page-copy-attendee-dv .mer-reg-page-copy-attendee-pg span { margin:0 0 1em; font-size:.9em; letter-spacing:1px; color:#777; line-height:.9em; }
+#mer-reg-page-copy-attendee-dv .mer-reg-page-copy-attendee-event-hdr { clear:both; margin:1.5em 0 .5em; font-size:.8em; font-weight:bold; color:#444; } 
+#mer-reg-page-copy-attendee-dv .mer-reg-page-copy-attendee-chk, #mer-reg-page-copy-all-attendee-chk { position:relative; top:2px; left:5px; margin:0 5px; }
 
 
 #events-requiring-pre-approval-pg { margin:.5em 0 0; }
