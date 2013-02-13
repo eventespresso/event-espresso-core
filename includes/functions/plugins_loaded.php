@@ -512,7 +512,7 @@ function espresso_load_reg_page_files() {
 						global $Single_Page_Checkout;
 						$Single_Page_Checkout = EE_Single_Page_Checkout::instance();	
 						//Process email confirmations
-						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/email.php');
+//						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/email.php');
 						define("ESPRESSO_REG_PAGE_FILES_LOADED", "true");
 					}
 
@@ -669,7 +669,7 @@ function espresso_init_admin_pages() {
 			global $Single_Page_Checkout;
 			$Single_Page_Checkout = EE_Single_Page_Checkout::instance();	
 			//Process email confirmations
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/email.php');
+			//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/email.php');
 			define("ESPRESSO_REG_PAGE_FILES_LOADED", "true");
 		}
 

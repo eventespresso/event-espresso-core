@@ -231,8 +231,9 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 
 				$EE_Session->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
 
-				add_action('action_hook_espresso_email_after_payment', 'espresso_email_after_payment'); // COPIED FROM @AIM Gateway -->//<-- Should this be here ? or in the successful txn bit above ( after line 80 ? ) or does this send failed txn info as well /
-				// return $payment_data;  <<<<-------  do we need to return success or FALSE or anything ?
+				$success = $payment_status == 'Approved' ? TRUE : FALSE;
+
+				do_action( 'action_hook_espresso_after_payment', $EE_Session, $success );
 			} 
 
 		} else {
@@ -258,55 +259,55 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 
 			<h5><strong><?php _e('Billing Address', 'event_espresso'); ?></strong></h5>
 
-			<p class="event_form_field">
+			<p class="reg-page-form-field-wrap-pg">
 				<label for="reg-page-billing-fname-<?php echo $gw;?>"><?php _e('First Name', 'event_espresso'); ?> <em>*</em></label>
 				<input id="reg-page-billing-fname-<?php echo $gw;?>" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-fname-<?php echo $gw;?>">
 			</p>
 
-			<p class="event_form_field">
+			<p class="reg-page-form-field-wrap-pg">
 				<label for="reg-page-billing-lname-<?php echo $gw;?>"><?php _e('Last Name', 'event_espresso'); ?> <em>*</em></label>
 				<input id="reg-page-billing-lname-<?php echo $gw;?>" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-lname-<?php echo $gw;?>">
 			</p>
 
-			<p class="event_form_field">
+			<p class="reg-page-form-field-wrap-pg">
 				<label for="reg-page-billing-email-<?php echo $gw;?>"><?php _e('Email', 'event_espresso'); ?> <em>*</em></label>
 				<input id="reg-page-billing-email-<?php echo $gw;?>" class="required email <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-email-<?php echo $gw;?>">
 			</p>
 
-			<p class="event_form_field">
+			<p class="reg-page-form-field-wrap-pg">
 				<label for="reg-page-billing-address-<?php echo $gw;?>"><?php _e('Address', 'event_espresso'); ?> <em>*</em></label>
 				<input id="reg-page-billing-address-<?php echo $gw;?>" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-address-<?php echo $gw;?>">
 			</p>
 
-			<p class="event_form_field">
+			<p class="reg-page-form-field-wrap-pg">
 				<label for="reg-page-billing-city-<?php echo $gw;?>"><?php _e('City', 'event_espresso'); ?> <em>*</em></label>
 				<input id="reg-page-billing-city-<?php echo $gw;?>" class="required <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-city-<?php echo $gw;?>">
 			</p>
 
-			<p class="event_form_field">
+			<p class="reg-page-form-field-wrap-pg">
 				<label for="reg-page-billing-state-<?php echo $gw;?>"><?php _e('State', 'event_espresso'); ?> <em>*</em></label>
 				<input id="reg-page-billing-state-<?php echo $gw;?>" class="required medium-txt <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-state-<?php echo $gw;?>">
 			</p>
 
-			<p class="event_form_field">
+			<p class="reg-page-form-field-wrap-pg">
 				<label for="reg-page-billing-zip-<?php echo $gw;?>"><?php _e('Zip', 'event_espresso'); ?> <em>*</em></label>
 				<input id="reg-page-billing-zip-<?php echo $gw;?>" class="required small-txt <?php echo $css_class; ?>" type="text" value="" name="reg-page-billing-zip-<?php echo $gw;?>">
 			</p>
 
 			<h5><strong><?php _e('Credit Card Information', 'event_espresso'); ?></strong></h5>
 
-			<p class="event_form_field">
+			<p class="reg-page-form-field-wrap-pg">
 				<label for="reg-page-billing-card-nmbr-<?php echo $gw;?>"><?php _e('Card Number', 'event_espresso'); ?> <em>*</em></label>
 				<input id="reg-page-billing-card-nmbr-<?php echo $gw;?>" class="required <?php echo $css_class; ?>" type="text" name="reg-page-billing-card-nmbr-<?php echo $gw;?>"/>
 			</p>
 
 			<?php /*
-			  <p class="event_form_field">
+			  <p class="reg-page-form-field-wrap-pg">
 			  <label for="reg-page-billing-card-exp-date"><?php _e('Expiry Date', 'event_espresso'); ?> <em>*</em></label>
 			  <input id="reg-page-billing-card-exp-date" class="required medium-txt <?php echo $css_class;?>" type="text" name="reg-page-billing-card-exp-date"/>
 			  </p>
 			 */ ?>
-			<p class="event_form_field">
+			<p class="reg-page-form-field-wrap-pg">
 				<label><?php _e('Expiry Date', 'event_espresso'); ?> <em>*</em></label>
 				<select id="reg-page-billing-card-exp-date-mnth-<?php echo $gw;?>" class="required small-txt <?php echo $css_class; ?>" name="reg-page-billing-card-exp-date-mnth-<?php echo $gw;?>">
 					<?php
@@ -332,7 +333,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 				<span class="small-text lt-grey-text"><?php _e('(mm/yy)', 'event_espresso'); ?></span>
 			</p>
 
-			<p class="event_form_field">
+			<p class="reg-page-form-field-wrap-pg">
 				<label for="reg-page-billing-card-ccv-code-<?php echo $gw;?>"><?php _e('CCV Code', 'event_espresso'); ?> <em>*</em></label>
 				<input id="reg-page-billing-card-ccv-code-<?php echo $gw;?>"  class="required small-txt <?php echo $css_class; ?>" type="text" name="reg-page-billing-card-ccv-code-<?php echo $gw;?>"/>
 			</p>

@@ -81,6 +81,10 @@ add_action('init', 'espresso_add_rewrite_rules');
 add_filter('query_vars', 'espresso_add_query_vars');
 add_action( 'admin_enqueue_scripts', 'espresso_load_scripts_styles' );
 
+
+//load messages init
+add_action( 'init', 'espresso_load_messages_init', 15 );
+
 if ( is_admin() ) {
 
 	register_activation_hook(__FILE__, 'espresso_plugin_activation');

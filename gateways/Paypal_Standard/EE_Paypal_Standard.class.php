@@ -346,6 +346,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 
 	public function thank_you_page() {
 		global $EE_Session;
+		printr( $_POST, '$_POST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$txn_details = array(
 				'gateway' => $this->_payment_settings['display_name'],
 				'approved' => FALSE,
@@ -374,6 +375,10 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			}
 		}
 		$EE_Session->set_session_data(array('txn_results' => $txn_details), 'session_data');
+
+		$success = $txn_details['approved'];
+
+		do_action( 'action_hook_espresso_after_payment', $EE_Session, $success );
 
 		if ($txn_details['approved'] == TRUE && $this->_payment_settings['use_sandbox']) {
 			do_action('action_hook_espresso_mail_successful_transaction_debugging_output');

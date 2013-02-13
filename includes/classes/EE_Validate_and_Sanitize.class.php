@@ -287,7 +287,7 @@
 								}
 								break;		
 								
-							case 'mm-dd-yyyy' :												
+						case 'mm-dd-yyyy' :												
 								if ( preg_match( '/(0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])[- \/.](19|20)[0-9]{2}/', $value, $matches )) {
 									if ( checkdate($matches[2], $matches[1], $matches[3])) {
 										$input_data['value'] = $matches[1];

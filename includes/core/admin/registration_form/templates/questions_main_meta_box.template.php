@@ -42,7 +42,7 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 					<input type="text" class="regular-text" id="<?php echo $fieldName?>" name="<?php echo $fieldName?>" value="<?php echo $question->admin_label()?>"/>
 					<br/>
 					<span class="description">
-						<?php _e('An administrative label for this question to help you differentiate between two questions that may appear the same to registrants (but are for different events). For example: You could have two questions that simply ask the registrant to choose a "Color", then use this field to label one "T-shirt Color" and the other "Team Color".','event_espresso')?>
+						<?php _e('An administrative label for this question to help you differentiate between two questions that may appear the same to registrants (but are for different events). For example: You could have two questions that simply ask the registrant to choose a "Size", then use this field to label one "T-shirt Size" and the other "Shoe Size".','event_espresso')?>
 					</span>					
 					<?php break;
 					
@@ -83,10 +83,10 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 						<thead>
 							<tr>
 								<th style="padding:1em 10px 0 3px; line-height: 1em;">
-									<?php _e('Name','event_espresso')?>
+									<?php _e('Option Value (key)','event_espresso')?>
 								</th>
 								<th style="padding:1em 10px 0 3px; line-height: 1em;">
-									<?php _e('Value','event_espresso')?>
+									<?php _e('Answer Option Display Text','event_espresso')?>
 								</th>
 								<th style="padding:1em 10px 0 3px; line-height: 1em;">
 								</th>
@@ -96,10 +96,10 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 						<tbody>
 							<tr class="question-option sample">
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
-									<input type="text" name="question_options[xxcountxx][QSO_name]" class="option-name regular-text">
+									<input type="text" name="question_options[xxcountxx][QSO_value]" class="option-name medium-text">
 								</td>
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
-									<input type="text" name="question_options[xxcountxx][QSO_value]" class="option-value regular-text">
+									<input type="text" name="question_options[xxcountxx][QSO_text]" class="option-value regular-text">
 								</td>
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
 									<a class="remove-option remove-item">
@@ -115,10 +115,10 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 							?>
 								<tr class="question-option">
 									<td style="padding: 0 10px 10px 0; line-height: 1em;">
-										<input type="text" class="regular-text" name="question_options[<?php echo $count?>][QSO_name]" value="<?php echo $option->name()?>">
+										<input type="text" class="regular-text" name="question_options[<?php echo $count?>][QSO_value]" value="<?php echo $option->value()?>">
 									</td>
 									<td style="padding: 0 10px 10px 0; line-height: 1em;">
-										<input type="text" class="regular-text" name="question_options[<?php echo $count?>][QSO_value]" value="<?php echo $option->value()?>">
+										<input type="text" class="regular-text" name="question_options[<?php echo $count?>][QSO_text]" value="<?php echo $option->text()?>">
 									</td>
 									<?php if( $count > 0 ){ ?>
 									<td style="padding: 0 10px 10px 0; line-height: 1em;">
@@ -140,10 +140,10 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 							?>
 							<tr class="question-option">
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
-									<input type="text" name="question_options[0][QSO_name]" class="option-name regular-text">
+									<input type="text" name="question_options[0][QSO_value]" class="option-name regular-text">
 								</td>
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
-									<input type="text" name="question_options[0][QSO_value]" class="option-value regular-text">
+									<input type="text" name="question_options[0][QSO_text]" class="option-value regular-text">
 								</td>
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
 								</td>
@@ -157,7 +157,12 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 					
 					<a id="new-question-option" class="button" style="margin:0 0 1em 3px;">
 						<?php _e('Add Another Answer Option','event_espresso')?>
-					</a>					
+					</a><br/>
+					
+					<span class="description">
+						<?php _e('Answer Options are the choices that you give people to select from for SINGLE, MULTIPLE or DROPDOWN questions. The Option Value is a simple key that will be saved to the database and the Answer Option Display Text is what the user will actually see in the form. For example, you may have a question for  "T-shirt Size" that has the Option Values of "S", "M", "L", and "XL" with the corresponding display text "Small", "Medium", "Large", and "Extra Large".','event_espresso')?>
+					</span>
+							
 					<?php break;
 					
 					case 'QST_required':

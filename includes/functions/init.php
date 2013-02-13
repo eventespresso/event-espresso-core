@@ -1,5 +1,4 @@
-<?php 
-if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 
 
@@ -45,17 +44,17 @@ function espresso_admin_init() {
 		return;
 	}
 		
-	define('EVENTS_ADMIN_URL', admin_url('admin.php?page=events'));
+//	define('EVENTS_ADMIN_URL', admin_url('admin.php?page=events'));
 
 //	require_once(EVENT_ESPRESSO_INCLUDES_DIR . "functions/main.php");
 //	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/actions.php');
 //	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');
 
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_menu.php');
+//	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_menu.php');
 
 	if ( $is_UI_request ) {
 
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin.php');
+	/*	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin.php');
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_screen.php');
 
 		add_action('wp_dashboard_setup', 'espresso_dashboard_init');
@@ -206,9 +205,9 @@ function espresso_admin_init() {
 				add_action('admin_head', 'espresso_add_meta_boxes');
 			}
 
-		}
+		}*/
 
-		do_action('action_hook_espresso_require_admin_files');
+/*		do_action('action_hook_espresso_require_admin_files');
 
 		// Update the question sequences
 		add_action('wp_ajax_update_sequence', 'event_espresso_questions_config_mnu');
@@ -223,7 +222,7 @@ function espresso_admin_init() {
 		// Update the question sequences
 		add_action('wp_ajax_update_sequence', 'ee_update_questions_sequence');
 		// Update the question group sequences
-		add_action('wp_ajax_update_qgr_sequence', 'ee_update_question_groups_sequence');
+		add_action('wp_ajax_update_qgr_sequence', 'ee_update_question_groups_sequence');*/
 
 		// copy themes to template directory
 		if (isset($_REQUEST['event_espresso_admin_action'])) {
@@ -281,12 +280,9 @@ function espresso_verify_default_pages_exist() {
 function espresso_frontend_init() {
 
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-	global $espresso_reg_page;
 	
-	$espresso_reg_page = espresso_test_for_reg_page();
-	//echo '<h4>$espresso_reg_page : ' . $espresso_reg_page . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-
-	if ($espresso_reg_page) {
+	global $espresso_reg_page;
+	if ( $espresso_reg_page = espresso_test_for_reg_page() ) {
 		do_action('action_hook_espresso_load_reg_page_files');
 	}
 
@@ -295,7 +291,7 @@ function espresso_frontend_init() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/affiliate-handling.php');
 
 	//Registration forms
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/form_build.php');
+	//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/form_build.php');
 
 	//Custom post type integration
 	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/custom_post_type.php') && !empty($org_options['template_settings']['use_custom_post_types'])) {
@@ -404,7 +400,6 @@ function espresso_test_for_reg_page() {
 function event_espresso_run() {
 
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-	do_action('action_hook_espresso_event_espresso_run_start');
 	// grab some globals
 	global $load_espresso_scripts, $espresso_content;
 
@@ -429,6 +424,9 @@ function event_espresso_run() {
 			break;
 
 		case 'register' :
+			if ( ! defined( 'MER_ACTIVE' )) {
+				espresso_clear_session();
+			}			
 			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, ' e_reg = register'  );
 			remove_all_actions('action_hook_espresso_regevent_default_action');
 			remove_all_actions('action_hook_espresso_event_registration');
@@ -444,6 +442,9 @@ function event_espresso_run() {
 			break;
 
 		default :
+			if ( ! defined( 'MER_ACTIVE' )) {
+				espresso_clear_session();
+			}			
 			// check if this is an event list or an event detail page by looking for event slug
 			$event_detail_page = get_query_var('event_slug') ? TRUE : FALSE;
 			espresso_require_template('init.php');
@@ -637,4 +638,8 @@ function ee_update_question_groups_sequence() {
 		}
 		exit();
 	}
+}
+
+function espresso_load_messages_init() {
+	$EEMSGS_init = new EE_messages_init();
 }
