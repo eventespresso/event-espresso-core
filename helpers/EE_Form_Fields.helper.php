@@ -1053,3 +1053,4 @@ class EE_Form_Fields {
 
 
 
+}//end class EE_Form_Fields 
