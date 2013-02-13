@@ -361,52 +361,54 @@ class EEM_Event  {
 	private function _generate_question_input_name( $QST ) {
 
 		if ( $QST->QST_system_ID ) {
-			switch( $QST->QST_system_ID ) {
+			$qst_name = $QST->QST_system_ID;
+/*			switch( $QST->QST_system_ID ) {
 				
 				case 1 :
-						$qst_name = 'fname';
+						$qst_name = $QST->QST_ID . '-fname';
 					break;
 					
 				case 2 :
-						$qst_name = 'lname';
+						$qst_name = $QST->QST_ID . '-lname';
 					break;
 					
 				case 3 :
-						$qst_name = 'email';
+						$qst_name = $QST->QST_ID . '-email';
 					break;
 					
 				case 4 :
-						$qst_name = 'address';
+						$qst_name = $QST->QST_ID . '-address';
 					break;
 					
 				case 5 :
-						$qst_name = 'address2';
+						$qst_name = $QST->QST_ID . '-address2';
 					break;
 					
 				case  6  :
-						$qst_name = 'city';
+						$qst_name = $QST->QST_ID . '-city';
 					break;
 					
 				case 7 :
-						$qst_name = 'state';
+						$qst_name = $QST->QST_ID . '-state';
 					break;
 					
 				case 8 :
-						$qst_name = 'zip';
+						$qst_name = $QST->QST_ID . '-zip';
 					break;
 					
 				case 9 :
-						$qst_name = 'country';
+						$qst_name = $QST->QST_ID . '-country';
 					break;
 					
 				case 10 :
-						$qst_name = 'phone';
+						$qst_name = $QST->QST_ID . '-phone-' . $QST->QST_ID;
 					break;
 				
-			}
+			}*/
 			
 		} else {
-			$qst_name = str_replace( array( ' ', '-', '.' ), '_', strtolower( $QST->QST_display_text ));
+			//$qst_name = $QST->QST_ID . '-' . str_replace( array( ' ', '-', '.' ), '_', strtolower( $QST->QST_display_text ));
+			$qst_name = $QST->QST_ID;
 		}
 		return $qst_name;
 	}
