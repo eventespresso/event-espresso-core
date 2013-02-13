@@ -15,7 +15,7 @@ textarea { width:25em; }
 
 /* TABLE COLUMNS */
 
-.wp-list-table #ATT_ID { width:18px; }
+.wp-list-table #ATT_ID { width:24px; }
 .wp-list-table #ATT_fname { width:10%; }
 .wp-list-table #ATT_lname { width:12.5%; }
 .wp-list-table #ATT_email { }
