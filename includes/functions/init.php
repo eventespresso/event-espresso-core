@@ -488,6 +488,7 @@ function return_espresso_content() {
 //	$answerModel=  EEM_Answer::instance();
 //	$answerModel->get_all_answers();
 //	var_dump($answerModel);
+	
 	return $espresso_content;
 }
 
