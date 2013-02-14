@@ -227,6 +227,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 		$data = apply_filters('filter_hook_espresso_page_settings_save', $data);
 		
+		$what = 'Critical Pages & Shortcodes';
 		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, 'Template Settings', 'updated', array() );
 		
