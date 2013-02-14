@@ -511,13 +511,15 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			//get list of all options
 		$question=$this->_question_model->get_one_by_ID($ID);
 		$options=$question->options();
-		foreach($options as $option_ID=>$option){
-			$option_req_index=$this->_get_option_req_data_index($option_ID);
-			if($option_req_index!==FALSE){
-				$option->save($this->_req_data['question_options'][$option_req_index]);
-			}else{
-				//not found, remove it
-				$option->delete();
+		if(!empty($options)){
+			foreach($options as $option_ID=>$option){
+				$option_req_index=$this->_get_option_req_data_index($option_ID);
+				if($option_req_index!==FALSE){
+					$option->save($this->_req_data['question_options'][$option_req_index]);
+				}else{
+					//not found, remove it
+					$option->delete();
+				}
 			}
 		}
 		//save new related options
