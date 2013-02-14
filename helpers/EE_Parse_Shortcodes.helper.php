@@ -156,8 +156,11 @@ class EE_Parse_Shortcodes {
 			"[TOTAL_COST]" => isset($this->data->billing['total_due']) ? $this->data->billing['total_due'] : '',
 			"[EVENT_PRICE]" => isset($data['price']) ? $data['price'] : '',
 			"[PAYMENT_STATUS]" => isset($this->data->txn['status']) ? $this->data->txn['status'] : __('Unknown', 'event_espresso'),
-			"[PAYMENT_GATEWAY]" => isset($this->data->txn['gateway']) ? $this->data->txn['gateway'] : __('Unknown', 'event_espresso')
-			//todo we need to add any other shortcodes that we can use.
+			"[PAYMENT_GATEWAY]" => isset($this->data->txn['gateway']) ? $this->data->txn['gateway'] : __('Unknown', 'event_espresso'),
+			"[SITE_ADMIN_EMAIL" => $this->_get_site_admin_email(),
+			"[ADMIN_EMAIL]" => isset($this->data->attendees['admin']['email']) ? $this->data->attendees['admin']['email'] : '',
+			"[ATTENDEE_EMAIL]" => isset($data['email']) ? $data['email'] : '',
+			"[PRIMARY_ATTENDEE_EMAIL]" => isset($this->data->attendees['primary_attendee']['email']) ? $this->data->attendees['primary_attendee']['email'] : ''
 		);
 
 		//third any additional stuff obtained from the database and data here.
@@ -240,6 +243,11 @@ class EE_Parse_Shortcodes {
 			$content .= $item;
 		}
 		return $content;
+	}
+
+
+	protected function _get_site_admin_email() {
+		return get_bloginfo('admin_email');
 	}
 
 } //end EE_Parse_Shortcodes
