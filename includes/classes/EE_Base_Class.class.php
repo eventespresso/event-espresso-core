@@ -52,10 +52,11 @@ abstract class EE_Base_Class {
 	}
 	
 	/**
-	 * Gets the 
+	 * Gets the EEM_*_Model for this class
+	 * @access public now, as this is more convenient 
 	 * @return EEM_TempBase
 	 */
-	protected function  _get_model(){
+	public function  _get_model(){
 		if(!$this->_model){
 			//find model for this class
 			$modelName=$this->_get_model_name();

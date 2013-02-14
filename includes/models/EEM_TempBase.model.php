@@ -256,11 +256,11 @@ abstract class EEM_TempBase extends EEM_Base{
 		$this->_include_php_class();
 		$array_of_objects=array();
 		if(empty($rows)){
-			return FALSE;
+			return array();
 		}
 		foreach ( $rows as $row ) {
 			if(empty($row)){//wp did its weird thing where it returns an array like array(0=>null), which is totally not helpful...
-				return FALSE;
+				return array();
 			}
 				/*$fields=$this->fields_settings();//get_object_vars($row);
 				//remove the primary key, because it's not part of the constructors. we'll just add it after the fact
@@ -660,6 +660,7 @@ abstract class EEM_TempBase extends EEM_Base{
 		//echo "get all where results:$results, output: $output<br>";
 		//return the count OR create objects out of data
 		$results = $output == 'COUNT' ? $results : $this->_create_objects($results);
+		//ECHO "RESULTS OF GETA LL WHERE";VAR_DUMP($results);
 		return $results;
 	}
 	
@@ -687,9 +688,13 @@ abstract class EEM_TempBase extends EEM_Base{
 		 * As it is right now, it performs a query for each object, and is
 		 * no more efficient than just not preloading the related models
 		 */
-		$relation_settings=$this->related_settings_for($relation_name);
+		
+		$relation_settings=null;//$this->related_settings_for($relation_name);
 		foreach($objects as $id=>$object){
 			/* @var $object EE_Base_Class */
+			if(empty($relation_settings)){
+				$relation_settings=$object->_get_model()->related_settings_for($relation_name);
+			}
 			if('belongsTo'==$relation_settings->type()){
 				$object->get_first_related($relation_name);
 			}else{
