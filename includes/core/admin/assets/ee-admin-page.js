@@ -8,7 +8,16 @@ jQuery(document).ready(function($) {
 	var overlay = $( "#espresso-admin-page-overlay-dv" );
 	window.eeTimeout = false;
 	window.overlay = overlay;
-	
+
+
+
+	$('.confirm-delete').click(function() {
+		var what = $(this).attr('rel');
+		var answer = confirm('Are you absolutely sure you want to delete this '+what+'?\nThis action will delete ALL DATA asscociated with this '+what+'!!!\nThis can NOT be undone!!!');
+  		return answer;
+	});
+
+	$('.updated.fade').delay(5000).fadeOut();	
 	
 	/*
 	Floating "Save" and "Save & Close" buttons

@@ -275,10 +275,10 @@ function espresso_initialize_system_questions() {
 							);
 					break;
 					
-				case 8:
+				case 8 : 
 						$QST_values = array( 
-								'QST_display_text' => 'Zip / Postal Code',
-								'QST_admin_label' => 'Zip / Postal Code - System Question',
+								'QST_display_text' => 'Country',
+								'QST_admin_label' => 'Country - System Question',
 								'QST_system_ID' => 8,
 								'QST_type' => 'TEXT',
 								'QST_required' => 0,
@@ -290,10 +290,10 @@ function espresso_initialize_system_questions() {
 							);
 					break;
 					
-				case 9 : 
+				case 9:
 						$QST_values = array( 
-								'QST_display_text' => 'Country',
-								'QST_admin_label' => 'Country - System Question',
+								'QST_display_text' => 'Zip / Postal Code',
+								'QST_admin_label' => 'Zip / Postal Code - System Question',
 								'QST_system_ID' => 9,
 								'QST_type' => 'TEXT',
 								'QST_required' => 0,

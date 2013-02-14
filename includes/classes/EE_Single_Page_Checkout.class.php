@@ -738,7 +738,9 @@ class EE_Single_Page_Checkout {
 	}
 
 
-
+	function sanitize_text_field_for_array_walk( &$item, &$key ) {
+	   $item = sanitize_text_field( $item );
+	}
 
 
 	/**
@@ -766,11 +768,16 @@ class EE_Single_Page_Checkout {
 		$valid_data = array();
 
 		// loop through post data and sanitize all elements
-		foreach ($_POST as $key => $value) {
-			$valid_data[$key] = stripslashes_deep($value);
-			//$valid_data[$key] = wp_strip_all_tags($value);
-		}
-		
+//		foreach ($_POST as $key => $value) {
+//			if ( is_array( $value )) {
+//				$valid_data[$key] = array_walk_recursive( $value, array( $this, 'sanitize_text_field_for_array_walk' ));
+//			} else {
+//				$valid_data[$key] = sanitize_text_field( $value );
+//			}
+//		}
+
+		array_walk_recursive( $_POST, array( $this, 'sanitize_text_field_for_array_walk' ));
+		$valid_data = $_POST;
 		//printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// if we don't have a qstn field then something went TERRIBLY WRONG !!! AHHHHHHHH!!!!!!!
@@ -779,8 +786,7 @@ class EE_Single_Page_Checkout {
 			if (isset($valid_data['qstn']['custom_questions'])) {
 				$custom_questions = $valid_data['qstn']['custom_questions'];
 				$EE_Session->set_session_data(array('custom_questions'=>$custom_questions), 'session_data');
-//				var_dump( $valid_data['qstn']['custom_questions'] );
-//				printr( $valid_data, '$valid_data' );
+//				printr( $valid_data['qstn']['custom_questions'], 'custom_questions  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 				unset($valid_data['qstn']['custom_questions']);
 			}
 			
@@ -820,9 +826,9 @@ class EE_Single_Page_Checkout {
 									if ($form_input == 'primary_attendee' && $input_value == 1) {
 										$primary_attendee['line_item_id'] = $line_item_id;
 										//$primary_attendee['registration_id'] = $registration_id;
-										$primary_attendee['fname'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['fname'];
-										$primary_attendee['lname'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['lname'];
-										$primary_attendee['email'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['email'];
+										$primary_attendee['fname'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['1'];
+										$primary_attendee['lname'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['2'];
+										$primary_attendee['email'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['3'];
 										$EE_Session->set_session_data(array('primary_attendee' => $primary_attendee), 'session_data');
 									}
 								}
@@ -976,14 +982,14 @@ class EE_Single_Page_Checkout {
 	
 				foreach ($event['attendees'] as $att_nmbr => $attendee) {
 	
-					$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['name'] = $attendee['fname'] . ' ' . $attendee['lname'];
+					$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['name'] = $attendee['1'] . ' ' . $attendee['2'];
 					$extra_att_details = array();
 	
 					foreach ($attendee as $key => $value) {
 						switch ($key) {
 	
-							case 'fname' :
-							case 'lname' :
+							case '1' :
+							case '2' :
 								break;
 	
 							default:
@@ -1121,9 +1127,9 @@ class EE_Single_Page_Checkout {
 				foreach ($event['attendees'] as $att_nmbr => $attendee) {
 
 					// grab main attendee details
-					$ATT_fname = isset($attendee['fname']) ? $attendee['fname'] : '';
-					$ATT_lname = isset($attendee['lname']) ? $attendee['lname'] : '';
-					$ATT_email = isset($attendee['email']) ? $attendee['email'] : '';
+					$ATT_fname = isset($attendee[1]) ? $attendee[1] : '';
+					$ATT_lname = isset($attendee[2]) ? $attendee[2] : '';
+					$ATT_email = isset($attendee[3]) ? $attendee[3] : '';
 					// create array for query where statement
 					$where_cols_n_values = array('ATT_fname' => $ATT_fname, 'ATT_lname' => $ATT_lname, 'ATT_email' => $ATT_email);
 					// do we already have an existing record for this attendee ?
@@ -1135,15 +1141,15 @@ class EE_Single_Page_Checkout {
 						$att[$att_nmbr] = new EE_Attendee(
 														$ATT_fname,
 														$ATT_lname,
-														isset($attendee['address']) ? $attendee['address'] : NULL,
-														isset($attendee['address2']) ? $attendee['address2'] : NULL,
-														isset($attendee['city']) ? $attendee['city'] : NULL,
-														isset($attendee['state']) ? $attendee['state'] : NULL,
-														isset($attendee['country']) ? $attendee['country'] : NULL,
-														isset($attendee['zip']) ? $attendee['zip'] : NULL,
-														$ATT_email,
-														isset($attendee['phone']) ? $attendee['phone'] : NULL,
-														isset($attendee['social']) ? $attendee['social'] : NULL
+														isset($attendee[4]) ? $attendee[4] : NULL,		// address
+														isset($attendee[5]) ? $attendee[5] : NULL,		// address2
+														isset($attendee[6]) ? $attendee[6] : NULL,		// city
+														isset($attendee[7]) ? $attendee[7] : NULL,		// state
+														isset($attendee[8]) ? $attendee[8] : NULL,		// country
+														isset($attendee[9]) ? $attendee[9] : NULL,		// zip
+														$ATT_email,		// address
+														isset($attendee[10]) ? $attendee[10] : NULL,		// phone
+														NULL		// social
 						);
 						//add attendee to db
 						$att_results = $att[$att_nmbr]->insert();
@@ -1151,7 +1157,7 @@ class EE_Single_Page_Checkout {
 					}
 					
 					// add attendee object to attendee info in session
-					$session['cart']['REG']['items'][$line_item_id]['attendees'][$att_nmbr]['att_obj'] = $att[$att_nmbr];
+					$session['cart']['REG']['items'][$line_item_id]['attendees'][$att_nmbr]['att_obj'] = base64_encode( serialize( $att[$att_nmbr] ));
 
 					$DTT_ID = $event['options']['dtt_id'];
 					$PRC_ID = explode( ',', $event['options']['price_id'] );
@@ -1219,10 +1225,11 @@ class EE_Single_Page_Checkout {
 							);
 					//printr( $reg[$line_item_id], '$reg[$line_item_id] ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' );die();
 
-					$reg[$line_item_id]->insert();
+					$reg_results = $reg[$line_item_id]->insert();
+					$REG_ID = $reg[$line_item_id]->ID();
 
 					// add attendee object to attendee info in session
-					$session['cart']['REG']['items'][$line_item_id]['attendees'][$att_nmbr]['reg_obj'] = $reg[$line_item_id];
+					$session['cart']['REG']['items'][$line_item_id]['attendees'][$att_nmbr]['reg_obj'] = base64_encode( serialize( $reg[$line_item_id] ));
 
 					// add registration id to session for the primary attendee
 					if (isset($attendee['primary_attendee']) && $attendee['primary_attendee'] == 1) {
@@ -1233,8 +1240,13 @@ class EE_Single_Page_Checkout {
 					
 					$EE_Session->set_session_data( $session['cart'] );
 
-//					$this->_process_attendee_questions( $att[$att_nmbr], $reg[$line_item_id], );
-//					$this->_process_attendee_questions( );
+					// save attendee question answerss
+					$exclude = array( 'price_paid', 'primary_attendee', 'att_obj', 'reg_obj' );
+					foreach ( $reg_items[ $line_item_id ]['attendees'][ $att_nmbr ] as $QST_ID => $answer ) {
+						if ( ! in_array( $QST_ID, $exclude ) && ! empty( $answer )) {
+							EEM_Answer::instance()->insert( array( 'REG_ID' =>$REG_ID, 'QST_ID' =>$QST_ID, 'ANS_value' =>sanitize_text_field( $answer )));
+						}
+					}
 					
 				}
 			}
@@ -1279,22 +1291,27 @@ class EE_Single_Page_Checkout {
 	 * 		@param 		string 		$success_msg
 	 * 		@return 		void
 	 */
-	private function _process_attendee_questions( ) {
-			global $EE_Session;
+/*	private function _process_attendee_questions( $REG_ID, $line_item_id = FALSE, $att_nmbr = 1 ) {
+			
+		if ( empty( $line_item_id )) {
+			EE_Error::add_error( __( 'An error occured. Can not save attendee questions because no line item ID was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			return false;
+		}
+			
+		global $EE_Session, $wpdb;
 
-/*			// load and instantiate models
-			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
-			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
-			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
-			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php' );
-			$REG = EEM_Registration::instance();
-			$ATT = EEM_Attendee::instance();
+		// grab session data
+		$session = $EE_Session->get_session_data();
+		$reg_items = $session['cart']['REG']['items'];
+		$exclude = array( 'price_paid', 'primary_attendee', 'att_obj', 'reg_obj' );
+		
+		foreach ( $reg_items[ $line_item_id ]['attendees'][ $att_nmbr ] as $QST_ID => $answer ) {
+			if ( ! in_array( $QST_ID, $exclude ) && ! empty( $answer )) {
+				EEM_Answer::instance()->insert( array( 'REG_ID' =>$REG_ID, 'QST_ID' =>$QST_ID, 'ANS_value' =>sanitize_text_field( $answer )));
+			}
+		}
 
-			// grab session data
-			$session = $EE_Session->get_session_data();
-			$reg_items = $session['cart']['REG']['items'];*/
-		//printr( $reg_items, '$reg_items  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-	}
+	}*/
 
 
 
