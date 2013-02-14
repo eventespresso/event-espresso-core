@@ -546,8 +546,9 @@ abstract class EEM_TempBase extends EEM_Base{
 				//check for this relationship
 				$thisPk=$this->primary_key_name();
 				$otherPk=$relatedModelInfo->field_name();
+				$relatedModeltable=$relatedModelInfo->join_table();
 				$relationsToOtherObject=$this->get_many_related($thisModelObject,$relationName,array($thisPk=>$thisModelObject->ID(),
-																								$otherPk=>$otherModelID));
+																								$relatedModeltable.".".$otherPk=>$otherModelID));
 				//if it doesn't exist, add it
 				$insertionValues=array($thisPk=>$thisModelObject->ID(),$otherPk=>$otherModelID);
 				if(!empty($extraColumnsForHABTM)){
