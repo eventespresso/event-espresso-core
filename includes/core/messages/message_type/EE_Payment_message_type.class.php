@@ -211,12 +211,7 @@ class EE_Payment_message_type extends EE_message_type {
 		foreach ( $this->_contexts as $context ) {
 			switch ( $context ) {
 				case 'admin' :
-				$user_info = get_userdata($espresso_wp_user);
-				$this->data->attendees['admin']['fname'] = $user_info->first_name;
-				$this->data->attendees['admin']['lname'] = $user_info->last_name;
-				$this->data->attendees['admin']['email'] = $user_info->user_email;
-				$this->data->attendees['admin']['context'] = 'admin';
-				break;
+				//retrieval of event admin info (i.e. user who created the event) has been moved to the shortcode parser.
 
 				case 'primary_attendee' :
 				case 'attendee' :

@@ -158,8 +158,8 @@ class EE_Parse_Shortcodes {
 			"[PAYMENT_STATUS]" => isset($this->data->txn['status']) ? $this->data->txn['status'] : __('Unknown', 'event_espresso'),
 			"[PAYMENT_GATEWAY]" => isset($this->data->txn['gateway']) ? $this->data->txn['gateway'] : __('Unknown', 'event_espresso'),
 			"[SITE_ADMIN_EMAIL" => $this->_get_site_admin_email(),
-			"[ADMIN_EMAIL]" => isset($this->data->attendees['admin']['email']) ? $this->data->attendees['admin']['email'] : '',
-			"[ATTENDEE_EMAIL]" => isset($data['email']) ? $data['email'] : '',
+			"[ADMIN_EMAIL]" => $this->_get_event_admin_emails(),
+			"[ATTENDEE_EMAIL]" => $this->_get_event_attendee_emails(),
 			"[PRIMARY_ATTENDEE_EMAIL]" => isset($this->data->attendees['primary_attendee']['email']) ? $this->data->attendees['primary_attendee']['email'] : ''
 		);
 
@@ -246,8 +246,86 @@ class EE_Parse_Shortcodes {
 	}
 
 
+
+
+
+	/**
+	 * This simply returns the site admin email (result for parsing "[SITE_ADMIN_EMAIL]" shortcode)
+	 * @return string email address of site admin
+	 */
 	protected function _get_site_admin_email() {
 		return get_bloginfo('admin_email');
+	}
+
+
+
+
+	/**
+	 * Returns the properly formatted admin email of a given event (or multiple events if present)
+	 *
+	 * If there is more than one event in the incoming data, we will parse the "[ADMIN_EMAIL]" shortcode so it returns the properly formatted list of all event admin emails.
+	 *
+	 *	@todo: once we have a proper event model in place let's make sure that we use it!
+	 * 	@access protected
+	 * 	@return string properly formatted list of email addresses for an event admin.
+	 */
+	protected function _get_event_admin_emails() {
+		global $wpdb;
+
+		$admin_email = array();
+		//loop through events and set the list of event_ids to retrieve so we can do ONE query.
+		foreach ( $this->data->events as $event ) {
+			$ids[] = $event['ID'];
+		}
+
+		//k we've got our list of ids now let's do the query.
+		$sql = "SELECT e.wp_user, u.user_email as email, uma.meta_value as first_name, umb.meta_value as last_name FROM " . EVENTS_DETAIL_TABLE . " as e LEFT JOIN $wpdb->users as u ON u.ID = e.wp_user LEFT JOIN $wpdb->usermeta as uma ON uma.user_id = u.ID AND uma.meta_key = 'first_name' LEFT JOIN $wpdb->usermeta as umb ON umb.user_id = u.ID AND umb.meta_key = 'last_name' WHERE e.id IN (%s) GROUP BY e.wp_user";
+		$admin_details = $wpdb->get_results( $wpdb->prepare( $sql, implode(',', $ids) ) );
+
+		//results?
+		if ( empty($admin_details) || !is_array($admin_details) ) {
+			$msg[] = __('The admin details could not be retrieved from the database.', 'event_espresso');
+			$msg[] = sprintf( __('Query: %s', 'event_espresso'), $sql );
+			$msg[] = sprintf( __('Events Data: %s', 'event_espresso'), var_export($this->data->events, TRUE) );
+			$msg[] = sprintf( __('Event IDS: %s', 'event_espresso'), var_export($ids, TRUE) );
+			$msg[] = sprintf( __('Query Results: %s', 'event_espresso'), var_export($admin_details) );
+			do_action('espresso_log_shortcode_parser', __FILE__, __FUNCTION__, implode("\n", $msg) );
+		}
+
+		foreach ( $admin_details as $admin ) {
+			//only add an admin email if it is present.
+			if ( empty( $admin->email ) || $admin->email == '' ) continue;
+
+			$admin_email[] = $admin->first_name . ' ' . $admin->last_name . ' <' . $admin->email . '>';
+		}
+
+		$admin_email = implode( ',', $admin_email );
+		return $admin_email;
+	}
+
+
+
+
+	/**
+	 * Returns the properly formatted attendee emails for a given template request (could be multiple attendees).
+	 *
+	 * @access protected
+	 * @return string properly formatted list of email addresses for attendees
+	 */
+	protected function _get_event_attendee_emails() {
+		$attendee_email = array();
+		$existing_emails = array(); //used to make sure we only send one email per email address.
+
+		//loop through attendees and extract info from the data
+		foreach ( $this->data->attendees as $attendee ) {
+			if ( in_array($attendee->email, $existing_emails ) ) continue;
+
+			$attendee_email[] = $attendee->fname . ' ' . $attendee->lname . ' <' . $attendee->email . '>';
+			$existing_emails[] = $attendee->email;
+		}
+
+		$attendee_email = implode( ',', $attendee_email );
+		return $attendee_email;
 	}
 
 } //end EE_Parse_Shortcodes
