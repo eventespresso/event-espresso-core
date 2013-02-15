@@ -595,6 +595,7 @@ function events_data_tables_install() {
 	$sql="EQG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 				EVT_ID INT UNSIGNED NOT NULL ,
 				QSG_ID INT UNSIGNED NOT NULL ,
+				EQG_primary TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 				PRIMARY KEY  (EQG_ID)";
 	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
 
