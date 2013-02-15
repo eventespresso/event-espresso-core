@@ -577,7 +577,7 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public
 	*/	
 	public function update() {
-		return $this->save();
+		return $this->_save_to_db( array( 'TXN_ID' => $this->_TXN_ID ));
 	}
 
 
@@ -587,7 +587,7 @@ class EE_Registration extends EE_Base_Class {
 	* @access		public
 	*/
 	public function insert() {
-		return $this->save();
+		return $this->_save_to_db();
 	}
 
 
