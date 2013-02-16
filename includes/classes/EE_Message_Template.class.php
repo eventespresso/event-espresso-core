@@ -406,6 +406,29 @@ class EE_Message_Template {
 		return $this->_MTP_messenger;
 	}
 
+
+	/**
+	 * get Message Messenger OBJECT
+	 *
+	 * @access public
+	 * @return object Messenger Object for the given messenger
+	 */
+	public function messenger_obj() {
+		$ref = ucwords( str_replace( '_', ' ', $this->_MTP_messenger ) );
+		$ref = str_replace( ' ', '_', $ref );
+		$classname = 'EE_' . $ref . '_messenger';
+
+		if ( !class_exists($class_name) ) {
+			$msg[] = __('Messenger class loading fail.', 'event_espresso');
+			$msg[] = sprintf( __('The class name checked was "%s". Please check the spelling and case of this reference and make sure it matches the appropriate messenger file name (minus the extension) in the "/core/messages/messenger/" directory', 'event_espresso'), $classname );
+			throw new EE_Error( implode( '||', $msg ) );
+		}
+
+		//made it here so let's instantiate the object and return it.
+		$a = new ReflectionClass($classname);
+		return $a->newInstance();
+	}
+
 	/**
 	 * get Message Type
 	 * 
@@ -414,6 +437,30 @@ class EE_Message_Template {
 	 */
 	public function message_type() {
 		return $this->_MTP_message_type;
+	}
+
+
+
+	/**
+	 * get Message type OBJECT
+	 *
+	 * @access public
+	 * @return object  Message Type object for the given message type
+	 */
+	public function message_type_object() {
+		$ref = ucwords( str_replace( '_', ' ', $this->_MTP_message_type ) );
+		$ref = str_replace( ' ', '_', $ref );
+		$classname = 'EE_' . $ref . '_message_type';
+
+		if ( !class_exists($class_name) ) {
+			$msg[] = __('Message Type class loading fail.', 'event_espresso');
+			$msg[] = sprintf( __('The class name checked was "%s". Please check the spelling and case of this reference and make sure it matches the appropriate message type file name (minus the extension) in the "/core/messages/message_type/" directory', 'event_espresso'), $classname );
+			throw new EE_Error( implode( '||', $msg ) );
+		}
+
+		//made it here so let's instantiate the object and return it.
+		$a = new ReflectionClass($classname);
+		return $a->newInstance();
 	}
 
 
