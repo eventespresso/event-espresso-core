@@ -894,7 +894,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			<?php foreach ( $this->_shortcodes as $code => $label ) : ?>
 				<?php $alt_class = !($alt%2) ? 'class="alternate"' : ''; ?>
 				<tr <?php echo $alt_class; ?>>
-					<td class="row-title"><?php echo $code; $this->_set_help_trigger( 'shortcode_' . $alt, TRUE, array('100', '400') );?></td>
+					<td><?php echo $code; $this->_set_help_trigger( 'shortcode_' . $alt, TRUE, array('100', '400') );?></td>
 				</tr>
 			<?php $alt++; endforeach; ?>
 			</table> <!-- end .ee-shortcode-table -->
@@ -940,7 +940,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//let's setup the $help array for each shortcode
 		foreach ( $this->_shortcodes as $shortcode => $description ) {
 			$help['shortcode_' . $i] = array(
-				'title' => sprintf( __('%s Description', 'event_espresso'), $shortcode ),
+				'title' => $shortcode,
 				'content' => $description
 				);
 			$i++;
