@@ -55,7 +55,7 @@ class EE_Parse_Shortcodes {
 	 * @access private
 	 * @var array
 	 */
-	private $_shortcode_objx = array(); 
+	private $_shortcode_objs = array(); 
 
 
 
