@@ -848,8 +848,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected function _set_help_popup_content( $help_array = array(), $display = FALSE ) {
 		$content = '';
 
-		$help_array = empty( $help_array) ? $this->_get_help_content() : $help_array;
+		$help_array = empty( $help_array ) ? $this->_get_help_content() : $help_array;
 		$template_path = EE_CORE_ADMIN . 'admin_help_popup.template.php';
+
 
 		//loop through the array and setup content
 		foreach ( $help_array as $trigger => $help ) {
@@ -889,7 +890,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//if method doesn't exist let's get out.
 		if ( !method_exists( $this, $method_name ) )
-			return FALSE;
+			return array();
 
 		//k we're good to go let's retrieve the help array
 		$help_array = call_user_func( array( $this, $method_name ) );
