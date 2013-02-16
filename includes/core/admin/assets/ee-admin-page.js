@@ -25,7 +25,7 @@ jQuery(document).ready(function($) {
 	$(window).scroll(function() {
 		var scrollTop = $(this).scrollTop();
 		var offset = $('#event_editor_major_buttons_wrapper').offset();
-		if(offset !== null) {
+		if( typeof offset !== 'undefined' ) {
 			if ( (scrollTop+25) > offset.top ) {
 				$('#event-editor-floating-save-btns').removeClass('hidden');
 				$('#event_editor_major_buttons_wrapper .button-primary').addClass('hidden');
@@ -200,6 +200,33 @@ jQuery(document).ready(function($) {
 		} 
 
 	}
+
+	/**
+	 * EE Help dialog loads
+	 */
+	$('.espresso-admin').on('click', '.ee-dialog', function(e) {
+		e.preventDefault();
+		//parse url to get the dialog ref
+		var url = $(this).attr('href');
+		//create dummy url for parser
+		url = 'http://dummyurl.com/' + url;
+		console.log(url);
+		var queryparts = parseUri(url);
+
+		console.log(queryparts);
+		console.log()
+
+		//set dialog window
+		var help_dialog = $( '#' + queryparts.queryKey.inlineId ).draggable();
+		window.dialog = help_dialog;
+
+		position_overlay();
+		position_dialog();
+		overlay.on('click', function() {
+			dialog.fadeOut( 'fast' );
+			overlay.fadeOut( 'fast' );
+		});
+	});
 
 
 	// add functions to global scope

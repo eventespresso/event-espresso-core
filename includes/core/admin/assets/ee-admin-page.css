@@ -115,3 +115,8 @@
 .clearfix { zoom: 1; } 
 
 #adminmenuwrap { z-index:100; }
+
+.ee-pop-help {
+	position:absolute; top:50px; left:25%; width:75%; height:auto; padding:3em 4em 2em; z-index:9999;
+	background:#fff; border:1px solid #ddd; border-radius:5px;
+}
