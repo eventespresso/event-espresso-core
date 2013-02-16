@@ -914,7 +914,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	private function _set_shortcodes() {
 
 		//no need to run this if the property is already set
-		if ( !empty($this->_shortcodes ) ) return $this->_shortcodes;
+		if ( !empty($this->_shortcodes ) ) return;
 
 		//we need the messenger and message template to retrieve the valid shortcodes array.
 		$GRP_ID = isset( $this->_req_data['id'] ) && !empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
