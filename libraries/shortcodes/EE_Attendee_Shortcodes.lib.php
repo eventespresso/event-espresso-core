@@ -1,0 +1,71 @@
+<?php
+
+if (!defined('EVENT_ESPRESSO_VERSION') )
+	exit('NO direct script access allowed');
+
+/**
+ * Event Espresso
+ *
+ * Event Registration and Management Plugin for WordPress
+ *
+ * @ package			Event Espresso
+ * @ author				Seth Shoultes
+ * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ link				http://www.eventespresso.com
+ * @ version		 	3.2
+ *
+ * ------------------------------------------------------------------------
+ *
+ * EE_Attendee_Shortcodes
+ * 
+ * this is a child class for the EE_Shortcodes library.  The EE_Attendee_Shortcodes lists all shortcodes related to attendee specific info. 
+ *
+ * NOTE: if a method doesn't have any phpdoc commenting the details can be found in the comments in EE_Shortcodes parent class.
+ * 
+ * @package		Event Espresso
+ * @subpackage	libraries/shortcodes/EE_Attendee_Shortcodes.lib.php
+ * @author		Darren Ethier
+ *
+ * ------------------------------------------------------------------------
+ */
+class EE_Attendee_Shortcodes extends EE_Shortcodes {
+
+
+	public function __construct() {
+		parent::__construct();
+	}
+
+
+
+	protected function _init_props() {
+		$this->label = __('Attendee Shortcodes', 'event_espresso');
+		$this->description = __('All shortcodes specific to attendee related data', 'event_espresso');
+		$this->_shortcodes = array(
+			'[FNAME]' => __('First Name of an attendee', 'event_espresso'),
+			'[LNAME]' => __('Last Name of an attendee', 'event_espresso'),
+			'[EDIT_ATTENDEE_LINK]' => __('A link to edit the attendee details', 'event_espresso')
+			);
+	}
+
+
+	protected function _parser( $shortcode ) {
+		switch ( $shortcode ) {
+			
+			case '[FNAME]' :
+				return isset($this->_data['fname']) ? $this->_data['fname'] : '';
+				break;
+
+			case '[LNAME]' :
+				return isset($this->_data['lname']) ? $this->_data['lname'] : '';
+				break;
+
+			case '[EDIT_ATTENDEE_LINK]' :
+				return isset($this->_data['edit_attendee_link']) ? $this->_data['edit_attendee_link'] : '';
+				break;
+
+		}
+	}
+
+
+} //end EE_Attendee_Shortcodes class
