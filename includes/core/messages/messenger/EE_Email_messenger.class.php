@@ -31,7 +31,6 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class EE_Email_messenger extends EE_messenger  {
 
-	/** MESSAGE SEND PROPERTIES **/
 	/**
 	 * The following are the properties that email requires for the message going out.
 	 */
@@ -39,7 +38,6 @@ class EE_Email_messenger extends EE_messenger  {
 	protected $_from;
 	protected $_subject;
 	protected $_content;
-
 	/**
 	 * constructor
 	 * 
@@ -63,6 +61,14 @@ class EE_Email_messenger extends EE_messenger  {
 		$this->_admin_registered_pages = array(
 			'events_edit' => true,
 		);
+	}
+
+
+	/**
+	 * see abstract declaration in parent class for details
+	 */
+	protected function _set_valid_shortcodes() {
+		$this->_valid_shortcodes = array('email');
 	}
 
 	

@@ -117,6 +117,15 @@ class EE_Payment_message_type extends EE_message_type {
 		$this->_contexts = apply_filters('filter_hook_espresso_set_contexts_all', $this->_contexts);
 	}
 
+
+	/**
+	 * see abstract declaration in parent class for details
+	 */
+	protected function _set_valid_shortcodes() {
+		$this->_valid_shortcodes = array('transaction','event','organization');
+	}
+
+
 	/**
 	 * The main purpose of this function is to setup the various parameters within the message_type.  $this->addressees, $this->templates, $this->count, and any extra stuff to the data object that can come from the messenger template options.
 	 * @return void
@@ -137,11 +146,6 @@ class EE_Payment_message_type extends EE_message_type {
 
 		$this->_process_data(); //process the data sent
 
-
-		//... do stuff
-		//you need to at least set the following properties:
-		//$this->addressees (who ever is going to receive the message)
-		//$this->count (which can just be a simple count of the $this->addressees)
 	}
 
 	/**
@@ -211,15 +215,11 @@ class EE_Payment_message_type extends EE_message_type {
 		foreach ( $this->_contexts as $context ) {
 			switch ( $context ) {
 				case 'admin' :
-				$user_info = get_userdata($espresso_wp_user);
-				$this->data->attendees['admin']['fname'] = $user_info->first_name;
-				$this->data->attendees['admin']['lname'] = $user_info->last_name;
-				$this->data->attendees['admin']['email'] = $user_info->user_email;
-				$this->data->attendees['admin']['context'] = 'admin';
-				break;
+				//retrieval of event admin info (i.e. user who created the event) has been moved to the shortcode parser.
 
 				case 'primary_attendee' :
 				case 'attendee' :
+				//what we're doing here is just removing any duplicate primary_attendee data from the attendees array and adding a new index ['primary_attendee'] to the ['attendee'] array.
 				if ( isset($this->data['primary_attendee']) && !empty($this->data['primary_attendee']['line_item_id'] ) ) {
 					foreach ( $this->data->attendees as $a_index => $a_data ) {
 						//todo: this won't work because 'line_item_id' will be found within the line_ref array for $a_data.  So we have to modify.
@@ -228,6 +228,8 @@ class EE_Payment_message_type extends EE_message_type {
 								$this->data->attendees['primary_attendee'][$key] = $value;
 							}
 							$this->data->attendees['primary_attendee']['context'] = 'primary_attendee';
+							$this->data->attendees['primary_attendee']['registration_id'] = isset($this->data['primary_attendee']['registration_id']) ? $this->data['primary_attendee']['registration_id'] : '';
+							$this->data->attendees['primary_attendee']['registration_id'] = empty( $this->data->attendees['primary_attendee']['registration_id']) && isset( $this->data->attendees[$a_index]['registration_id'] ) ? $this->data->attendees[$a_index]['registration_id'] : $this->data->attendees['primary_attendee']['registration_id'];
 							unset($this->data->attendees[$a_index]);
 						}
 					}
