@@ -934,7 +934,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	protected function _help_popup_content_edit_message_template() {
 		$this->_set_shortcodes();
 
-		if ( empty( $this->_shortcodes ) ) return array();
+		$help = array();
 
 		$i = 0;
 		//let's setup the $help array for each shortcode
