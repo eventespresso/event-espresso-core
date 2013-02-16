@@ -98,6 +98,7 @@ function espresso_define_tables_and_paths() {
 function espresso_autoload() {
 	//core
 	spl_autoload_register('espresso_models_autoload');
+	spl_autoload_register('espresso_libraries_autoload');
 	spl_autoload_register('espresso_classes_autoload');
 	spl_autoload_register('espresso_classes_core_autoload');	
 	spl_autoload_register('espresso_core_admin_autoload');
@@ -105,6 +106,14 @@ function espresso_autoload() {
 
 function espresso_models_autoload($className) {
 	$filename = dirname(espresso_main_file()) . '/includes/models/' . $className . '.model.php';
+	if ( is_readable($filename) ) {
+		require_once( $filename );
+	}
+}
+
+
+function espresso_libraries_autoload($className) {
+	$filename = dirname(espresso_main_file()) . '/libraries/' . $className . '.lib.php';
 	if ( is_readable($filename) ) {
 		require_once( $filename );
 	}
