@@ -113,9 +113,30 @@ function espresso_models_autoload($className) {
 
 
 function espresso_libraries_autoload($className) {
-	$filename = dirname(espresso_main_file()) . '/libraries/' . $className . '.lib.php';
-	if ( is_readable($filename) ) {
-		require_once( $filename );
+	//let's setup an array of paths to check (for each subsystem)
+	$root = dirname(espresso_main_file()) . '/libraries/';
+	
+	//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
+	$dir_ref = array(
+		'root' => array('core', 'lib'),
+		'shortcodes/' => array('core', 'lib')
+		);
+
+	//assemble a list of filenames
+	foreach ( $dir_ref as $dir => $types ) {
+		if ( is_array($types) ) {
+			foreach ( $types as $type) {
+				$filenames[] = ( $dir == 'root' ) ? $root . $className . '.' . $type . '.php' : $root . $dir . $className . '.' . $type . '.php';
+			}
+		} else {
+			$filenames[] = ( $dir == 'root' ) ? $root . $className . '.' . $types . '.php' : $root . $dir . $className . '.' . $types . '.php';
+		}
+	}
+
+	//now loop through assembled filenames and require as available
+	foreach ( $filenames as $filename ) {
+		if ( is_readable($filename) )
+			require_once( $filename );
 	}
 }
 

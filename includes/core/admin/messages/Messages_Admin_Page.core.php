@@ -35,6 +35,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	private $_current_message_meta_box;
 	private $_current_message_meta_box_object;
 	private $_context_switcher;
+	private $_shortcodes = array();
 
 	/**
 	 * constructor
@@ -154,6 +155,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'persistent' => FALSE,
 					'url' => !empty($edit_query_args) ? add_query_arg( $edit_query_args, $this->_current_page_view_url ) : $this->_admin_base_url
 					),
+				'metaboxes' => array('_register_edit_meta_boxes'),
 				'has_metaboxes' => TRUE
 				),
 			'activate' => array(
@@ -218,6 +220,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_script('espress_msg_js');
 	}
 
+
+	public function load_scripts_styles_edit_message_template() {
+		wp_enqueue_script('ee_admin_js');
+	}
 
 
 
@@ -830,18 +836,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			}
 		}
 
-		//shortcode metabox (if we are editing)
-		//todo: this should be moved to it's own method.  It's just a placeholder right now but the displayed shortcodes should be dynamic (we might need to create a shortcoode object for holding all valid shortcodes and message_types can register_new shortocdes with the object);
-		if ( $this->_template_args['GRP_ID'] && !defined( 'DOING_AJAX' ) ) {
-			$this->_template_args['sidebar_content'] = 'Place holder, this will contain shortcodes that can be used with the template';
-			$sidebar_title = __('Shortcodes', 'event_espresso');
-			$this->_template_args['sidebar_box_id'] = 'shortcodes';
-			$sidebar_action = 'update_message_template_sidebar_shortcodes';
-			$this->_add_admin_page_meta_box( $sidebar_action, $sidebar_title, __FUNCTION__, NULL, 'side');
-		}/**/
 
 		//finally, let's set the admin_page title
 		$this->_admin_page_title = sprintf( __('Editing %s', 'event_espresso'), $title );
+
+		//we need to take care of setting the shortcodes property for use elsewhere.
+		$this->_set_shortcodes();
 
 		//final template wrapper
 		$this->display_admin_page_with_sidebar();
@@ -860,6 +860,94 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	}
 
 
+
+
+	/**
+	 * registers metaboxes that should show up on the "edit_message_template" page
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function _register_edit_meta_boxes() {
+		add_meta_box( 'mtp_valid_shortcodes', __('Valid Shortcodes', 'event_espresso'), array( $this, 'shortcode_meta_box' ), $this->_current_screen->id, 'side', 'default' );
+	}
+
+
+	/**
+	 * This just takes care of returning the meta box content for shortcodes (only used on the edit message template page)
+	 *
+	 * @access public
+	 * @return void 
+	 */
+	public function shortcode_meta_box() {
+		$this->_set_shortcodes(); //just make sure shortcodes property is set
+		
+
+		//now let's set the content depending on the status of the shortcodes array
+		if ( empty( $this->_shortcodes ) ) {
+			$content = '<p>' . __('There are no valid shortcodes available', 'event_espresso') . '</p>';
+			echo $content;
+		} else {
+			$alt = 0;
+			?>
+			<table class="widefat ee-shortcode-table">
+			<?php foreach ( $this->_shortcodes as $code => $label ) : ?>
+				<?php $alt_class = !($alt%2) ? 'class="alternate"' : ''; ?>
+				<tr <?php echo $alt_class; ?>>
+					<td class="row-title"><?php echo $code; $this->_set_help_trigger( 'shortcode_' . $alt, TRUE, array('100', '400') );?></td>
+				</tr>
+			<?php $alt++; endforeach; ?>
+			</table> <!-- end .ee-shortcode-table -->
+			<?php
+		}
+
+
+	}
+
+
+	/**
+	 * used to set the $_shortcodes property for when its needed elsewhere.
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _set_shortcodes() {
+
+		//no need to run this if the property is already set
+		if ( !empty($this->_shortcodes ) ) return $this->_shortcodes;
+
+		//we need the messenger and message template to retrieve the valid shortcodes array.
+		$GRP_ID = isset( $this->_req_data['id'] ) && !empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
+
+		if ( !empty($GRP_ID) ) {
+			//let's get the message templates
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
+			$MTP = EEM_Message_Template::instance();
+			$message_template = $MTP->get_message_template_by_ID($GRP_ID);
+			$this->_shortcodes = $message_template->get_shortcodes();
+		} else {
+			$this->_shortcodes = array();
+		}
+	}
+
+
+	protected function _help_popup_content_edit_message_template() {
+		$this->_set_shortcodes();
+
+		if ( empty( $this->_shortcodes ) ) return array();
+
+		$i = 0;
+		//let's setup the $help array for each shortcode
+		foreach ( $this->_shortcodes as $shortcode => $description ) {
+			$help['shortcode_' . $i] = array(
+				'title' => sprintf( __('%s Description', 'event_espresso'), $shortcode ),
+				'content' => $description
+				);
+			$i++;
+		}
+
+		return $help;
+	}
 
 
 

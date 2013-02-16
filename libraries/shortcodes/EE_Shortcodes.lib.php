@@ -32,7 +32,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  */
-class EE_Shortcodes extends EE_Base {
+abstract class EE_Shortcodes extends EE_Base {
 
 	/**
 	 * holds label for library
@@ -145,7 +145,7 @@ class EE_Shortcodes extends EE_Base {
 	 * @param mixed (object|array) $data incoming data for the parser.  The data could be either an object or array because there are some shortcodes that might be replaced by prepared data that has multiple items in a list (i.e. list of attendees in an event and we're showing fname/lname for each attendee).  In this case data will be in an array.  Otherwise the data shoudl be in a properly formatted object.  The EE_Parse_Shortcodes.helper.php describes the data object we're expecting.
 	 * @return string parsed shortcode
 	 */
-	abstract protected function _parser( $shortcode, $data );
+	abstract protected function _parser( $shortcode );
 
 
 
