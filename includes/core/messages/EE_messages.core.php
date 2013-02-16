@@ -489,12 +489,24 @@ abstract class EE_message_type {
 	 */
 	protected $_existing_admin_settings = array();
 
+
+	/**
+	 * this property will hold an array of valid shortcodes for this message type.  This is an array of strings that correspond to defined EE_Shortcode libraries.  For example:
+	 * array('transaction', 'event', 'attendee') corresponds to 'EE_Transaction_Shortcodes.lib.php, EE_Event_Shortcodes.lib.php, EE_Attendee_Shortcodes.lib.php';
+	 * @var array
+	 */
+	protected $_valid_shortcodes = array();
+
+
+
+
 	public function __construct() {
 		$this->_set_admin_settings_fields();
 		$this->_set_existing_admin_settings();
 		$this->_set_default_field_content();
 		$this->_set_contexts();
 		$this->_set_admin_pages();
+		$this->_set_valid_shortcodes();
 	}
 
 	/** METHODS **/
@@ -549,6 +561,34 @@ abstract class EE_message_type {
 	 * @return void
 	 */
 	abstract protected function _set_admin_pages();
+
+
+
+
+	/**
+	 * Child classes must declare the $_valid_shortcodes property using this method.
+	 * See comments for $_valid_shortcodes property for details on what it is used for.
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	abstract protected function _set_valid_shortcodes();
+
+
+
+
+
+	/**
+	 * This returns the array of valid shortcodes for a message type as set by the child in the $_valid_shortcode property.
+	 * @return array   an array of valid shortcodes.
+	 */
+	public function get_valid_shortcodes() {
+		return $this->_valid_shortcodes;
+	}
+
+
+
+
 
 	/**
 	 * this public method accepts a page slug (for an EE_admin page) and will return the response from the child class callback function if that page is registered via the `_admin_registered_page` property set by the child class.
@@ -689,10 +729,16 @@ abstract class EE_message_type {
 	 */
 	protected function _setup_message_object($receiver) {
 		$message = new stdClass();
+
+		//get what shortcodes are supposed to be used
+		$mt_shortcodes = $this->_valid_shortcodes;
+		$m_shortcodes = $this->active_messenger->get_valid_shortcodes();
+		$valid_shortcodes = array_merge($m_shortcodes, $mt_shortcodes);
+		$valid_shortcodes = array_unique($valid_shortcodes);
 		
 		foreach ( $this->templates as $template_type => $context ) {
 			if ( isset( $this->templates[$template_type][$receiver->context] ) ) {
-				$message->$template_type = $this->_shortcode_replace->parse_template($this->templates[$template_type][$receiver->context], $this->data);
+				$message->$template_type = $this->_shortcode_replace->parse_message_template($this->templates[$template_type][$receiver->context], $this->data, $valid_shortcodes);
 			}
 		}
 		return $message;
@@ -775,6 +821,18 @@ abstract class EE_messenger {
 	 */
 	protected $_existing_admin_settings = array();
 
+
+
+	/**
+	 * this property will hold an array of valid shortcodes for this messenger.  This is an array of strings that correspond to defined EE_Shortcode libraries.  For example:
+	 * array('transaction', 'event', 'attendee') corresponds to 'EE_Transaction_Shortcodes.lib.php, EE_Event_Shortcodes.lib.php, EE_Attendee_Shortcodes.lib.php';
+	 * @var array
+	 */
+	protected $_valid_shortcodes = array();
+
+
+
+
 	public $active_templates = array(); //holds all the active templates saved in the database.
 
 	public function __construct() {
@@ -784,6 +842,7 @@ abstract class EE_messenger {
 		$this->_set_templates();	
 		$this->_set_template_fields();
 		$this->_set_default_field_content();
+		$this->_set_valid_shortcodes();
 		$this->_set_admin_pages();
 	}
 
@@ -838,6 +897,33 @@ abstract class EE_messenger {
 	 * @return void
 	 */
 	abstract protected function _set_admin_pages();
+
+
+
+
+	/**
+	 * Child classes must declare the $_valid_shortcodes property using this method.
+	 * See comments for $_valid_shortcodes property for details on what it is used for.
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	abstract protected function _set_valid_shortcodes();
+
+
+
+
+
+	/**
+	 * This returns the array of valid shortcodes for a message type as set by the child in the $_valid_shortcode property.
+	 * @return array   an array of valid shortcodes.
+	 */
+	public function get_valid_shortcodes() {
+		return $this->_valid_shortcodes;
+	}
+
+
+
 
 	/**
 	 * this public method accepts a page slug (for an EE_admin page) and will return the response from the child class callback function if that page is registered via the `_admin_registered_page` property set by the child class.
