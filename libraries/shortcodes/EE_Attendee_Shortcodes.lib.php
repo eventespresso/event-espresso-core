@@ -44,7 +44,6 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 		$this->_shortcodes = array(
 			'[FNAME]' => __('First Name of an attendee', 'event_espresso'),
 			'[LNAME]' => __('Last Name of an attendee', 'event_espresso'),
-			'[EDIT_ATTENDEE_LINK]' => __('A link to edit the attendee details', 'event_espresso')
 			);
 	}
 
@@ -58,10 +57,6 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 
 			case '[LNAME]' :
 				return isset($this->_data['lname']) ? $this->_data['lname'] : '';
-				break;
-
-			case '[EDIT_ATTENDEE_LINK]' :
-				return isset($this->_data['edit_attendee_link']) ? $this->_data['edit_attendee_link'] : '';
 				break;
 
 		}
