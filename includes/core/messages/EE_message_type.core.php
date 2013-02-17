@@ -165,6 +165,17 @@ abstract class EE_message_type extends EE_Base {
 
 
 
+	/**
+	 * This holds the addressees in an array indexed by context for later retrieval when assembling the message objects.
+	 *
+	 * @access protected
+	 * @var array
+	 */
+	protected $_addressees = array();
+
+
+
+
 	public function __construct() {
 		$this->_set_admin_settings_fields();
 		$this->_set_existing_admin_settings();
@@ -198,13 +209,9 @@ abstract class EE_message_type extends EE_Base {
 		$this->_assemble_messages();
 		$this->count = count($this->messages);
 	}
-	/**
-	 * The main purpose of this function is to setup the various parameters within the message_type.  $templates and any extra stuff to the data object that can come from the messenger template options for the child class type.
-	 * @return void
-	 * @abstract
-	 * @access protected
-	 */
-	abstract protected function _init_data();
+	
+
+
 
 	/**
 	 * This sets the _default_field_content property which needs to be defined by child classes.
@@ -344,6 +351,129 @@ abstract class EE_message_type extends EE_Base {
 	public function get_context_label() {
 		return $this->_context_label;
 	}
+
+
+
+
+	/**
+	 * The main purpose of this function is to setup the various parameters within the message_type.  $this->addressees, $this->templates, $this->count, and any extra stuff to the data object that can come from the message_type template options.
+	 * Child classes might overwrite this if they aren't expecting EE_Session as the incoming data object.
+	 * 
+	 * @return void
+	 * @access protected
+	 */
+	protected function _init_data() {
+		//assuming the incoming data is the $EE_Session object
+		if ( !is_a($this->data, 'EE_Session') ) {
+			$msg = sprintf( __('Wrong incoming type for "%s" message_type. Expecting the EE_Session object', 'event_espresso'), $this->label['singular'] );
+			throw new EE_Error( $msg );
+		}
+
+		$session_stuff = $this->data->get_session_data();
+		$this->data = $session_stuff;
+		
+		if ( is_array($this->data) && empty($this->data) ) {
+			$msg = sprintf( __( '"%s" message type incoming data is empty.  There is nothing to work with so why are you bugging me?', 'event_espresso'), $this->label['singular'] );
+			throw new EE_Error( $msg );
+		}
+
+		$this->_process_data(); //process the data sent
+
+	}
+
+
+
+	/**
+	 * processes the data object so we get 
+	 * @return void
+	 */
+	protected function _process_data() {
+
+		//setup the initial data
+		$this->_setup_data();
+
+		//process addressees for each context.  Child classes will have to have methods for each context defined to handle the processing of the data object within them
+		foreach ( $this->_contexts as $context ) {
+			$xpctd_method = '_' . $context . '_adressees';
+
+			if ( !method_exists( $this, $xpctd_method ) )
+				throw new EE_Error( sprintf( __('The data for $1%s message type cannot be prepared because there is no set method for doing so.  The expected method name is "$2%s" please doublecheck the $1%s message type class and make sure that method is present', 'event_espresso'), $this->label['singular'], $expctd_method) );
+				$this->_addressees[$context] = call_user_func( array( $this, $xpctd_method ) ); 
+		}
+	}
+
+
+
+
+	protected function _setup_data() {
+		$this->data->billing_info = $this->data['billing_info'];
+		$this->data->reg_info = $this->data['cart']['REG'];
+
+
+		//first let's loop through the events and setup a referenced event_data array (indexed by event_id?)
+		if ( isset( $this->data->reg_info['items'] ) && is_array($this->data->reg_info['items'] ) ) {
+			foreach ( $this->data->reg_info['items'] as $line_item_id => $event ) {
+				$this->data->events[$line_item_id]['ID'] = $event['id'];
+				$this->data->events[$line_item_id]['line_ref'] = $line_item_id;
+				$this->data->events[$line_item_id]['name'] = $event['name'];
+				$this->data->events[$line_item_id]['date'] = $event['options']['date'];
+				$this->data->events[$line_item_id]['time'] = date('g:i a', strtotime($event['options']['time']));
+				$this->data->events[$line_item_id]['daytime_id'] = $event['options']['dtt_id'];
+				$this->data->events[$line_item_id]['price'] = $event['options']['price'];
+				$this->data->events[$line_item_id]['price_desc'] = $event['options']['price_desc'];
+				$this->data->events[$line_item_id]['pre_approval'] = $event['options']['pre_approval'];
+				$this->data->events[$line_item_id]['price_id'] = $event['options']['price_id'];
+				$this->data->events[$line_item_id]['meta'] = array_combine($event['meta_keys'], $event['meta_values']);
+				$this->data->events[$line_item_id]['line_total'] = $event['line_total'];
+				foreach ($event['attendees'] as $att_nmbr => $attendee) {
+					$a_index = $attendee['fname'] . '_' . $attendee['lname'];
+					//use email to detect if the created index is DIFFERENT from an existing index.  If emails don't match then chances are this is a different person so we'll just create a new index.
+					$a_index = ( isset($this->data->attendees[$a_index] ) && (!empty($this->data->attendees[$a_index]['email']) || !empty($attendee['email'] ) ) && $this->data->attendees[$a_index]['email'] != $attendee['email'] ) ? $a_index . '_' . $att_nmbr : $a_index;
+					if ( !isset($this->data->attendees[$a_index] ) ) {
+						$this->data->attendees[$a_index]['line_ref'] = array($line_item_id);
+						foreach ( $attendee as $key => $value ) {
+							$this->data->attendees[$a_index][$key] = $value;
+						}
+						$this->data->attendee[$a_index]['context'] = 'attendee'; //default attendee context.
+					} else {
+						array_push($this->data->attendees[$a_index]['line_ref'], $line_item_id);
+					}
+				}
+			}
+		}
+
+		// load gateways
+		if (!defined('ESPRESSO_GATEWAYS')) {
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
+			$this->gateways = EEM_Gateways::instance();
+		}
+
+
+		if ($this->data->billing_info == 'no payment required') {
+			$this->data->billing = null;
+		} else {
+			// get billing info fields
+			$this->data->billing = $this->gateways->set_billing_info_for_confirmation( $this->data->billing_info );
+
+			$total = $this->data['_cart_grand_total_amount'];
+			// add taxes
+			if (isset($this->data['tax_totals'])) {
+				foreach ($this->data['tax_totals'] as $taxes) {
+					$total = $total + $taxes;
+				}
+			}
+
+			$this->data->taxes = $this->data['taxes'];
+			$this->data->txn = $this->data['txn_results'];
+
+			$this->data->billing['total_due'] = $org_options['currency_symbol'] . number_format($total, 2);
+		}
+
+	}
+
+
+
+
 
 	/**
 	 * get and set the templates for the type and messenger from the database
