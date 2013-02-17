@@ -34,7 +34,11 @@ class EE_Payment_message_type extends EE_message_type {
 
 		//setup type details for reference
 		$this->name = 'payment';
-		$this->description = 'Sets up payment messages when triggered by a payment'; //is it possible that these coudld be triggered by ipn or by manual payment? 
+		$this->description = 'Sets up payment messages when triggered by a payment'; //is it possible that these coudld be triggered by ipn or by manual payment?
+		$this->label = array(
+			'singular' => __('payment', 'event_espresso'),
+			'plural' => __('payments', 'event_espresso')
+			);
 
 		parent::__construct();
 

@@ -35,6 +35,19 @@ abstract class EE_messenger extends EE_Base {
 	public $name;
 	public $description;
 
+
+	/**
+	 * This is an array describing the ui facing labels that will be used whenever the messenger is referenced in the ui
+	 *
+	 * array(
+	 * 	'singular' => __('something'),
+	 * 	'plural' => __('somethings')
+	 * )
+	 * 
+	 * @var array
+	 */
+	public $label;
+
 	/**
 	 * This property when set will hold the slugs of all EE admin pages that we will need to retrieve fields for (and used to determine which callback method to call from the childclass)
 	 *

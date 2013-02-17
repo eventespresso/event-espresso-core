@@ -48,6 +48,10 @@ class EE_Email_messenger extends EE_messenger  {
 		//set name and description properties
 		$this->name = 'email';
 		$this->description = __('Email messenger.  This sends out email via the built-in wp_mail function included with WordPress', 'event_espresso');
+		$this->label = array(
+			'singular' => __('email', 'event_espresso'),
+			'plural' => __('emails', 'event_espresso')
+			);
 
 		//we're using defaults so let's call parent constructor that will take care of setting up all the other properties
 		parent::__construct();
