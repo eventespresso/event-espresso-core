@@ -120,3 +120,11 @@
 	position:absolute; top:50px; left:25%; width:75%; height:auto; padding:3em 4em 2em; z-index:9999;
 	background:#fff; border:1px solid #ddd; border-radius:5px;
 }
+
+.ee-help-popup-question {
+	background: transparent url(../../../../images/icons/subtle_help.png) top left no-repeat;
+	display: inline-block;
+	margin-left: 3px;
+	width: 26px;
+	height: 26px;
+}

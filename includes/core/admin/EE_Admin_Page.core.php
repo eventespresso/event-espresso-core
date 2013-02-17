@@ -934,7 +934,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		//let's setup the trigger
-		$content = '<a class="ee-dialog" href="?height='. $dimensions[0] . '&width=' . $dimensions[1] . '&inlineId=' . $trigger_id . '" target="_blank"><span class="question ee-help-popup-question">[?]</span></a>';
+		$content = '<a class="ee-dialog" href="?height='. $dimensions[0] . '&width=' . $dimensions[1] . '&inlineId=' . $trigger_id . '" target="_blank"><span class="question ee-help-popup-question"></span></a>';
 		$content = $content . $help_content;
 
 		if ( $display )

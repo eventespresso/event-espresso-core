@@ -944,7 +944,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			<?php foreach ( $this->_shortcodes as $code => $label ) : ?>
 				<?php $alt_class = !($alt%2) ? 'class="alternate"' : ''; ?>
 				<tr <?php echo $alt_class; ?>>
-					<td><?php echo $code; $this->_set_help_trigger( 'shortcode_' . $alt, TRUE, array('100', '400') );?></td>
+					<td><?php $this->_set_help_trigger( 'shortcode_' . $alt, TRUE, array('100', '400') ); echo $code; ?></td>
 				</tr>
 			<?php $alt++; endforeach; ?>
 			</table> <!-- end .ee-shortcode-table -->
