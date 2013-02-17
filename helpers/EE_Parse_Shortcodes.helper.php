@@ -109,13 +109,16 @@ class EE_Parse_Shortcodes {
 	 * @param  array $valid_shortcodes  An array of strings that correspond to EE_Shortcode libraries
 	 * @return string                   The parsed template string
 	 */
-	public function parse_message_template( $template, $data, $valid_shortcodes) {
+	public function parse_message_template( $template, EE_Messages_Addressee $data, $valid_shortcodes) {
 		$this->_template = $template;
 		$this->_data = $data;
 		$this->_set_shortcodes( $valid_shortcodes );
 		$this->_parse_message_template($this->_template);
 		return $this->parsed;
 	}
+
+
+
 
 	/**
 	 * takes the given template and parses it with the $_shortcodes property

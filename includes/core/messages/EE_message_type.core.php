@@ -521,8 +521,10 @@ abstract class EE_message_type extends EE_Base {
 	 * @access protected
 	 */
 	protected function _assemble_messages() {
-		foreach ( $this->data->addressees as $receiver ) {
-			$this->messages[] = $this->_setup_message_object($receiver);
+		foreach ( $this->addressees as $context => $addressees ) {
+			foreach ( $addressees as $addressee ) {
+				$this->messages[] = $this->_setup_message_object($context, $addressee);
+			}
 		}
 	}
 	
@@ -533,18 +535,22 @@ abstract class EE_message_type extends EE_Base {
 	 * @access protected
 	 * 
 	 */
-	protected function _setup_message_object($receiver) {
+	protected function _setup_message_object($context, $addressee) {
 		$message = new stdClass();
 
 		//get what shortcodes are supposed to be used
 		$mt_shortcodes = $this->_valid_shortcodes;
 		$m_shortcodes = $this->active_messenger->get_valid_shortcodes();
-		$valid_shortcodes = array_merge($m_shortcodes, $mt_shortcodes);
-		$valid_shortcodes = array_unique($valid_shortcodes);
-		
-		foreach ( $this->templates as $template_type => $context ) {
-			if ( isset( $this->templates[$template_type][$receiver->context] ) ) {
-				$message->$template_type = $this->_shortcode_replace->parse_message_template($this->templates[$template_type][$receiver->context], $this->data, $valid_shortcodes);
+
+		//let's setup the valid shortcodes for the incoming context.
+		$valid_shortcodes = $mt_shortcodes[$context];
+
+		foreach ( $this->templates as $field => $ctxt ) {
+			//merge in valid shortcodes for the field.
+			$valid_shortcodes = isset($m_shortcodes[$field]) ? array_merge($valid_shortcodes, $m_shortcodes[$field]) : $valid_shortcodes;
+			$valid_shortcodes = array_unique( $valid_shortcodes );
+			if ( isset( $this->templates[$field][$context] ) ) {
+				$message->$field = $this->_shortcode_replace->parse_message_template($this->templates[$field][$context], $addressee, $valid_shortcodes);
 			}
 		}
 		return $message;

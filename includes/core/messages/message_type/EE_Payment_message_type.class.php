@@ -144,27 +144,83 @@ class EE_Payment_message_type extends EE_message_type {
 
 
 	/**
+	 * returns an array of addressee objects for event_admins
+	 *
 	 * @access protected
+	 * @return array array of EE_Messages_Addressee objects
 	 */
+	protected function _admin_addressees() {
+		$admin_ids = array();
+		$admin_events = array();
+		$addresees = array();
+
+		//first we need to get the event admin user id for all the events and setup an addressee object for each unique admin user.
+		foreach ( $this->data->events as $event ) {
+			//get the user_id for the event
+			$admin_ids[] = $this->_get_event_admin_id($event['ID']);
+			//make sure we are just including the events that belong to this admin!
+			$admin_events[$admin_id] = $event;
 		}
 
+		//make sure we've got unique event_admins!
+		$admin_ids = array_unique($admin_ids);
+
+		//k now we can loop through the event_admins and setup the addressee data.
+		foreach ( $admin_ids as $event_admin ) {
+			$aee = array(
+				'user_id' => $event_admin,
+				'events' => $admin_events[$event_admin],
+				'billing' => $this->data->billing,
+				'taxes' => $this->data->taxes,
+				'txn' => $this->data->txn
+				);
+			$addressees[] = new EE_Messages_Addressee( $aee );
 		}
 
+		return $addressees;
+	}
 
+
+
+	private function _get_event_admin_id($event_id) {
+		global $wpdb;
+		$event_id = (int) $event_id;
+		$sql = "SELECT e.wp_user as event_admin_id FROM " . EVENTS_DETAIL_TABLE . " AS e WHERE e.wp_user = %d";
+		$result = $wpdb->get_var( $wpdb->prepare( $sql, $event_id ) );
+		return $result;
 	}
 
 
 
 	/**
+	 * Takes care of setting up the addressee object(s) for the primary attendee.
+	 *
+	 * @access protected
 	 * @return void
 	 */
+	protected function _primary_attendee_addressees() {
+		//we get the primary attendee information from the primary_attendee data
+		foreach ( $this->data['primary_attendee'] as $key => $val ) {
+			if ( $key == 'email') {
+				$aee['primary_attendee_email'] = $val;
+				continue;
 			}
 
+			if ( $key == 'registration_id' ) {
+				$aee['primary_registration_id'] = $val;
+				continue;
 			}
 
+			$aee[$key] = $value;
 		}
 
+		//now let's include some specific data
+		$aee['billing'] = $this->data->billing;
+		$aee['taxes'] = $this->data->taxes;
+		$aee['txn'] = $this->data->txn;
 
+		//great now we can instantiate the $addressee object and return (as an array);
+		$add[] = new EE_Messages_Addressee( $aee );
 	}
 	
 }
