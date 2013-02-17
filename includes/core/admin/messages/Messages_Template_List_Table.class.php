@@ -58,8 +58,8 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 
 		$this->_columns = array(
 			'event' => __( 'Event', 'event_espresso'),
-			'messenger' => __( 'Messenger', 'event_espresso'),
 			'message_type' => __('Message Type', 'event_espresso'),
+			'messenger' => __( 'Messenger', 'event_espresso'),
 			'messages_sent' => __( 'Total Sent', 'event_espresso' )
 			);
 

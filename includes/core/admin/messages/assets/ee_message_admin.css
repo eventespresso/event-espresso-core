@@ -35,15 +35,15 @@
 /** overview table styles **/
 
 .column-messenger {
-	width: 55%;
+	width: 66%;
 }
 
 .column-event {
-	width: 15%;
+	width: 12%;
 }
 
 .column-message_type {
-	width: 20%;
+	width: 12%;
 }
 
 .column-messages_setn {
