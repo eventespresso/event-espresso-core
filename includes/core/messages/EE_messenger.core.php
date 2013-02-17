@@ -367,8 +367,10 @@ abstract class EE_messenger extends EE_Base {
 	 * The following method doesn't NEED to be used by child classes but might be modified by the specific messenger
 	 */
 	protected function _set_template_value($item, $value) {
-		if ( array_key_exists($item, $this->_template_fields) )
+		if ( array_key_exists($item, $this->_template_fields) ) {
+			$prop = '_' . $item;
 			$this->$item = $value;
+		}
 	}
 
 	/**
