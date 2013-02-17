@@ -65,8 +65,57 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_active_messengers = !empty($this->_active_messengers) ?  $this->_active_messengers : array();
 		$this->_active_message_types = get_user_meta($espresso_wp_user, 'ee_active_message_types', true);
 		$this->_active_message_types = !empty($this->_active_message_types ) ? $this->_active_message_types : array();
+
+		//what about saving the objects in the active_messengers and active_message_types?
+		$this->_load_active_messenger_objects();
+		$this->_load_active_message_type_objects();
 	}
 
+
+
+
+	/**
+	 * loads messenger objects into the $_active_messengers property (so we can access the needed methods)
+	 *
+	 * @access  private
+	 * @return void 
+	 */
+	private function _load_active_messenger_objects() {
+		foreach ( $this->_active_messengers as $messenger => $values ) {
+			$ref = ucwords( str_replace( '_' , ' ', $messenger) );
+			$ref = str_replace( ' ', '_', $ref );
+			$classname = 'EE_' . $ref . '_messenger';
+
+			if ( !class_exists($classname) )
+				throw new EE_Error( sprintf( __('There is no messenger for the given classname (%s)', 'event_espresso'), $classname );
+
+			$a = new ReflectionClass( $classname );
+			$this->_active_messengers[$messenger]['obj'] = $a->newInstance();
+		}
+	}
+
+
+
+
+	/**
+	 * loads messenger objects into the $_active_messengers property (so we can access the needed methods)
+	 *
+	 * @access  private
+	 * @return void 
+	 */
+	private function _load_active_message_type_objects() {
+		foreach ( $this->_active_message_types as $message_type => $values ) {
+			$ref = ucwords( str_replace( '_' , ' ', $message_type) );
+			$ref = str_replace( ' ', '_', $ref );
+			$classname = 'EE_' . $ref . '_message_type';
+
+			if ( !class_exists($classname) )
+				throw new EE_Error( sprintf( __('There is no message type for the given classname (%s)', 'event_espresso'), $classname );
+
+			$a = new ReflectionClass( $classname );
+			$this->_active_messengers[$message_type]['obj'] = $a->newInstance();
+		}
+	}
 
 
 
