@@ -69,7 +69,9 @@ abstract class EE_message_type extends EE_Base {
 
 	/**
 	 * This property is used to define what the display label will be for contexts (eg. "Recipients", "Themes" etc.)
-	 * @var string
+	 * Format:
+	 * array( 'label' => 'something', 'plural' => 'somethings', 'description' => 'something' );
+	 * @var array
 	 */
 	protected $_context_label;
 

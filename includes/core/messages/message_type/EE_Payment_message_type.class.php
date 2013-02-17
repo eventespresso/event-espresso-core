@@ -107,7 +107,11 @@ class EE_Payment_message_type extends EE_message_type {
 	 * @return  void
 	 */
 	protected function _set_contexts() {
-		$this->_context_label = __('Recipient', 'event_espresso');
+		$this->_context_label = array(
+			'label' => __('recipient', 'event_espresso'),
+			'plural' => __('recipients', 'event_espresso'),
+			'description' => __('Recipient\'s are who will recieve the template.  You may want different payment details sent out depending on who the recipient is', 'event_espresso')
+			);
 
 		$this->_contexts = array(
 			'admin' => array(

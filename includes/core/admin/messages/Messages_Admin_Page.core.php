@@ -36,6 +36,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	private $_current_message_meta_box_object;
 	private $_context_switcher;
 	private $_shortcodes = array();
+	private $_message_template;
 
 	/**
 	 * constructor
@@ -455,14 +456,15 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$EVT_ID = isset( $this->_req_data['evt_id'] ) && !empty( $this->_req_data['evt_id'] ) ? absint( $this->_req_data['evt_id'] ) : FALSE;
 
-		$context = isset( $this->_req_data['context']) && !empty($this->_req_data['context'] ) ? strtolower($this->_req_data['context']) : 'admin';
+		$this->_set_message_template();
+		$message_template = $this->_message_template;
+		$c_label = $message_template->context_label();
+		$c_config = $message_template->contexts_config();
 
-		//let's get the message templates
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
-		$MTP = EEM_Message_Template::instance();
+		$context = isset( $this->_req_data['context']) && !empty($this->_req_data['context'] ) ? strtolower($this->_req_data['context']) : key($c_config);
+
 
 		if ( empty($GRP_ID) ) {
-			$message_template = $MTP->get_new_template;
 			$action = 'insert_message_template';
 			$button_both = FALSE;
 			$button_text = array( __( 'Save','event_espresso') );
@@ -470,7 +472,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$referrer = FALSE;
 			$edit_message_template_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
 		} else {
-			$message_template = $MTP->get_message_template_by_ID($GRP_ID);
 			$action = 'update_message_template';
 			$button_both = !defined( 'DOING_AJAX' ) ? TRUE : FALSE;
 			$event_name = $message_template->event_name();
@@ -482,9 +483,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 		//todo: we need to assemble the title from Various details
-		$c_label = $message_template->context_label();
-		$c_config = $message_template->contexts_config();
-		$context_label = sprintf( __('(%s %s)', 'event_espresso'), $c_config[$context]['label'], $c_label );
+		$context_label = sprintf( __('(%s %s)', 'event_espresso'), $c_config[$context]['label'], ucwords($c_label['label'] ));
 
 		//todo: we should eventually display the event title instead of ID.
 		$event_label = isset($event_name) && !empty($event_name) ? sprintf( __('for Event: %s', 'event_espresso'), $event_name) : '';
@@ -495,7 +494,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['is_extra_fields'] = FALSE;
 
 
-		//let's get the EE_messages_controller so we can get templates
+		//let's get the EE_messages_controller so we can get template form fields
 		$MSG = new EE_messages();
 		$template_field_structure = $MSG->get_fields($message_template->messenger(), $message_template->message_type());
 		
@@ -918,18 +917,42 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//no need to run this if the property is already set
 		if ( !empty($this->_shortcodes ) ) return;
 
+		$this->_set_message_template();
+
 		//we need the messenger and message template to retrieve the valid shortcodes array.
 		$GRP_ID = isset( $this->_req_data['id'] ) && !empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
 
 		if ( !empty($GRP_ID) ) {
-			//let's get the message templates
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
-			$MTP = EEM_Message_Template::instance();
-			$message_template = $MTP->get_message_template_by_ID($GRP_ID);
-			$this->_shortcodes = $message_template->get_shortcodes();
+			$this->_shortcodes = $this->_message_template->get_shortcodes();
 		} else {
 			$this->_shortcodes = array();
 		}
+	}
+
+
+
+	/**
+	 * This sets the _message_template property (containing the called message_template object)
+	 *
+	 * @access private
+	 * @return  void 
+	 */
+	private function _set_message_template() {
+
+		if ( !empty( $this->_message_template ) )
+			return; //get out if this is already set.
+
+		$GRP_ID = isset( $this->_req_data['id'] ) && !empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
+
+		//let's get the message templates
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
+		$MTP = EEM_Message_Template::instance();
+
+		if ( empty($GRP_ID) )
+			$this->_message_template = $MTP->get_new_template();
+		else
+			$this->_message_template = $MTP->get_message_template_by_ID( $GRP_ID );
+
 	}
 
 
@@ -947,6 +970,29 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				);
 			$i++;
 		}
+
+
+		$context_label = $this->_message_template->context_label();
+		$context_configs = $this->_message_template->contexts_config();
+		$current_context = isset($this->_req_data['context']) ? $this->_req_data['context'] : key($context_configs);
+
+		$content = '<p>' . $context_label['description'] . '</p>';
+		$content .= '<p>' . sprintf( __(' The current %s selected is <strong>%s</strong>', 'event_espresso'), $context_label['label'], $context_configs[$current_context]['label'] ) . '<br />';
+		$content .= '<em>' . $context_configs[$current_context]['description'] . '</em></p>';
+		$content .= '<p>' . sprintf( __('Other %s:', 'event_espresso'), ucwords($context_label['plural']) ) . '</p>';
+
+		foreach ( $context_configs as $ctxt => $details ) {
+			if ( $ctxt == $current_context ) continue;
+			$content .= '<p>' . $details['label'] . '<br />';
+			$content .= '<em>' . $details['description'] . '</em></p>';
+		}
+
+		$title = sprintf( __('What is a %s?', 'event_espresso'), $context_label['label']);
+
+		$help['context_switcher'] = array(
+			'title' => $title,
+			'content' => $content
+		);
 
 		return $help;
 	}
@@ -988,8 +1034,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					<option value="<?php echo $context; ?>" <?php echo $checked; ?>><?php echo $context_details[$context]['label']; ?></option>
 					<?php endforeach; endif; ?>
 				</select>
-				<?php $button_text = sprintf( __('Switch %s', 'event_espresso'), $context_label ); ?>
-				<input id="submit-msg-context-switcher-sbmt" class="button-secondary" type="submit" value="<?php echo $button_text; ?>">
+				<?php $button_text = sprintf( __('Switch %s', 'event_espresso'), ucwords($context_label['label']) ); ?>
+				<input id="submit-msg-context-switcher-sbmt" class="button-secondary" type="submit" value="<?php echo $button_text; ?>"> <?php $this->_set_help_trigger( 'context_switcher' ); ?>
 			</form>
 		</div> <!-- end .ee-msg-switcher-container -->
 		<?php
