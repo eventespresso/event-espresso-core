@@ -31,3 +31,21 @@
 .ee-msg-switcher-container {
 	margin-top: 15px;
 }
+
+/** overview table styles **/
+
+.column-messenger {
+	width: 55%;
+}
+
+.column-event {
+	width: 15%;
+}
+
+.column-message_type {
+	width: 20%;
+}
+
+.column-messages_setn {
+	width: 10%;
+}

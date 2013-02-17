@@ -87,7 +87,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$classname = 'EE_' . $ref . '_messenger';
 
 			if ( !class_exists($classname) )
-				throw new EE_Error( sprintf( __('There is no messenger for the given classname (%s)', 'event_espresso'), $classname );
+				throw new EE_Error( sprintf( __('There is no messenger for the given classname (%s)', 'event_espresso'), $classname ) );
 
 			$a = new ReflectionClass( $classname );
 			$this->_active_messengers[$messenger]['obj'] = $a->newInstance();
@@ -110,10 +110,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$classname = 'EE_' . $ref . '_message_type';
 
 			if ( !class_exists($classname) )
-				throw new EE_Error( sprintf( __('There is no message type for the given classname (%s)', 'event_espresso'), $classname );
+				throw new EE_Error( sprintf( __('There is no message type for the given classname (%s)', 'event_espresso'), $classname ) );
 
 			$a = new ReflectionClass( $classname );
-			$this->_active_messengers[$message_type]['obj'] = $a->newInstance();
+			$this->_active_message_types[$message_type]['obj'] = $a->newInstance();
 		}
 	}
 
