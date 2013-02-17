@@ -34,8 +34,7 @@ class EE_Messages_Addressee extends EE_Base {
 	/**
 	 * Identifier properties
 	 */
-	public $user_id;
-	public $attendee_id;
+	public $user_id;  //if available we'll use this to set the fname and lname.
 	public $fname;
 	public $lname;
 	public $primary_registration_id;
@@ -45,16 +44,9 @@ class EE_Messages_Addressee extends EE_Base {
 	/**
 	 * communication related
 	 */
-	public $site_admin_email;
 	public $attendee_email;
 	public $primary_attendee_email;
 	public $admin_email;
-
-
-	/**
-	 * Admin related
-	 */
-	public $edit_attendee_link;
 
 
 
@@ -111,7 +103,16 @@ class EE_Messages_Addressee extends EE_Base {
 			if( isset( $this->$prop ) )
 				$this->$prop = $value;
 		}
-		
+
+		//if user_id present we'll use this to set the fname and lname and admin_email.
+		if ( !empty( $this->user_id ) ) {
+			$this->user_id = (int) $this->user_id;
+			$user = get_userdata( $this->user_id );
+			$this->fname = $user->user_firstname;
+			$this->lname = $user->user_lastname;
+			$this->admin_email = $user->user_email;
+		}
+
 	}
 
 } //end class EE_Payment_message_type
