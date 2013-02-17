@@ -486,6 +486,30 @@ class EE_Message_Template {
 		return $this->_MTP_context;
 	}
 
+
+	/**
+	 * This returns the set context array configured in the message type object
+	 *
+	 * @access public
+	 * @return array array of contexts and their configuration.
+	 */
+	public function contexts_config() {
+		$obj = $this->message_type_obj();
+		return $obj->get_contexts();
+	}
+
+
+	/**
+	 * This returns the context_label for contexts as set in the message type object
+	 *
+	 * @access public
+	 * @return string label for "context"
+	 */
+	public function context_label() {
+		$obj = $this->message_type_obj();
+		return $obj->get_context_label();
+	}
+
 	/**
 	 * get number of trashed contexts
 	 * 

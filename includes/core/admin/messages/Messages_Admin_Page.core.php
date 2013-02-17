@@ -482,7 +482,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 		//todo: we need to assemble the title from Various details
-		$context_label = sprintf( __('(%s Context)', 'event_espresso'), ucwords(str_replace('_', ' ', $context) ) );
+		$c_label = $message_template->context_label();
+		$c_config = $message_template->contexts_config();
+		$context_label = sprintf( __('(%s %s)', 'event_espresso'), $c_config[$context]['label'], $c_label );
 
 		//todo: we should eventually display the event title instead of ID.
 		$event_label = isset($event_name) && !empty($event_name) ? sprintf( __('for Event: %s', 'event_espresso'), $event_name) : '';
@@ -959,7 +961,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @param array $args various things the context switcher needs.
 	 * @return void
 	 */
-	private function _set_context_switcher($template_object, $args) {
+	private function _set_context_switcher(EE_Message_Template $template_object, $args) {
+		$context_details = $template_object->contexts_config();
+		$context_label = $template_object->context_label();
 		ob_start();
 		?>
 		<div class="ee-msg-switcher-container">
@@ -981,10 +985,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							foreach ( $context_templates as $context => $template_fields ) :
 								$checked = ($context == $args['context']) ? 'selected="selected"' : '';
 					?>
-					<option value="<?php echo $context; ?>" <?php echo $checked; ?>><?php echo $context; ?></option>
+					<option value="<?php echo $context; ?>" <?php echo $checked; ?>><?php echo $context_details[$context]['label']; ?></option>
 					<?php endforeach; endif; ?>
 				</select>
-				<input id="submit-msg-context-switcher-sbmt" class="button-secondary" type="submit" value="Switch Context">
+				<?php $button_text = sprintf( __('Switch %s', 'event_espresso'), $context_label ); ?>
+				<input id="submit-msg-context-switcher-sbmt" class="button-secondary" type="submit" value="<?php echo $button_text; ?>">
 			</form>
 		</div> <!-- end .ee-msg-switcher-container -->
 		<?php

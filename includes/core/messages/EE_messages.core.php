@@ -297,7 +297,7 @@ class EE_messages {
 
 
 		//okay now let's assemble an array with the messenger template fields added to the message_type contexts.
-		foreach ( $this->_message_type->get_contexts() as $context ) {
+		foreach ( $this->_message_type->get_contexts() as $context => $details ) {
 			foreach ( $this->_messenger->get_template_fields() as $field => $value ) {
 				$template_fields[$context][$field] = $value;
 			} 

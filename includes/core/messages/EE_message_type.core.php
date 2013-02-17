@@ -55,9 +55,23 @@ abstract class EE_message_type extends EE_Base {
 
 	/**
 	 * message type child classes will set what contexts are associated with the message type via this array.
+	 * format:
+	 * array(
+	 * 'context' => array(
+	 * 		'label' => __('Context Label', 'event_espresso'),
+	 * 		'description' => __('Context description (for help popups)', 'event_espresso')
+	 * 	));
 	 * @var array
 	 */
 	protected $_contexts = array();
+
+
+
+	/**
+	 * This property is used to define what the display label will be for contexts (eg. "Recipients", "Themes" etc.)
+	 * @var string
+	 */
+	protected $_context_label;
 
 	
 	/** MESSAGE ASSEMBLING PROPERTIES **/	
@@ -302,6 +316,17 @@ abstract class EE_message_type extends EE_Base {
 
 	public function get_contexts() {
 		return $this->_contexts;
+	}
+
+
+	/**
+	 * This just returns the context label for a given context (as set in $_context_label property)
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function get_context_label() {
+		return $this->_context_label;
 	}
 
 	/**

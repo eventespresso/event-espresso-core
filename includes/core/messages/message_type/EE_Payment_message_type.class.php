@@ -107,10 +107,22 @@ class EE_Payment_message_type extends EE_message_type {
 	 * @return  void
 	 */
 	protected function _set_contexts() {
+		$this->_context_label = __('Recipient', 'event_espresso');
+
 		$this->_contexts = array(
-			'admin',
-			'primary_attendee',
-			'attendee'
+			'admin' => array(
+				'label' => __('Event Admin', 'event_espresso'),
+				'description' => __('This template is what event administrators will receive on a successful payment', 'event_espresso')
+				),
+			'primary_attendee' => array(
+				'label' => __('Primary Attendee', 'event_espresso'),
+				'description' => __('This template is what the primary attendee (the person who made the main registration) will receive on successful payment', 'event_espresso')
+				),
+			'attendee' => array(
+				'label' => __('Attendee', 'event_espresso'),
+				'description' => __('This is what an attendee registered for an event will receive when a successful payment has been completed', 'event_espresso'
+					)
+				)
 		);
 
 		$this->_contexts = apply_filters('filter_hook_espresso_set_contexts_'. $this->name, $this->_contexts);
