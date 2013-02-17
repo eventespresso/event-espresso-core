@@ -921,6 +921,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	protected function _set_help_trigger( $trigger_id, $display = TRUE, $dimensions = array( '400', '640') ) {
 
+		if ( defined('DOING_AJAX') ) return;
+
 		//let's check and see if there is any content set for this popup.  If there isn't then we'll include a default title and content so that developers know something needs to be corrected
 		$help_array = $this->_get_help_content();
 		$help_content = '';
