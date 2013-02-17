@@ -46,7 +46,28 @@ jQuery(document).ready(function($) {
 
 
 
+	
+	$( '.reg-admin-attendee-questions-input-td' ).each(function() {
+		$(this).find('input').prop( 'disabled', true );
+	});	
+	
+	$('#reg-admin-attendee-questions-frm').on( 'click', '.reg-admin-edit-attendee-question-lnk', function(e) {
+		e.preventDefault();
+		$(this).closest('table').find('.reg-admin-attendee-questions-input-td' ).each(function() {
+			$(this).removeClass('disabled-input');
+			$(this).find('input').prop( 'disabled', false ).addClass('editable-input');
+		});	
+	});
+	
+	$('#reg-admin-attendee-questions-frm').on( 'change', '.editable-input', function(e) {
+		$(this).removeClass('editable-input').addClass('edited-input');
+		var edit_lnk = $(this).closest('table').find('.reg-admin-edit-attendee-question-td' ).html();
+		var edit_lnk = '<span class="reminder-spn">click "Update Attendee Questions" to save your changes<span><span class="hidden">' + edit_lnk + '<span>';
+		$(this).closest('table').find('.reg-admin-edit-attendee-question-td' ).html( edit_lnk );
+		$('#reg-admin-attendee-questions-submit').prop( 'disabled', false );
+	});
 
 
 });
+
 
