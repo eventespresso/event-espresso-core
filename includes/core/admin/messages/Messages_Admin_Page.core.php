@@ -970,9 +970,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//we need the messenger and message template to retrieve the valid shortcodes array.
 		$GRP_ID = isset( $this->_req_data['id'] ) && !empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
+		$context = isset( $this->_req_data['context'] ) ? $this->_req_data['context'] : key( $this->_message_template->contexts_config() );
 
 		if ( !empty($GRP_ID) ) {
-			$this->_shortcodes = $this->_message_template->get_shortcodes();
+			$this->_shortcodes = $this->_message_template->get_shortcodes( $context );
 		} else {
 			$this->_shortcodes = array();
 		}

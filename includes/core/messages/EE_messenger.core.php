@@ -92,8 +92,9 @@ abstract class EE_messenger extends EE_Base {
 
 
 	/**
-	 * this property will hold an array of valid shortcodes for this messenger.  This is an array of strings that correspond to defined EE_Shortcode libraries.  For example:
-	 * array('transaction', 'event', 'attendee') corresponds to 'EE_Transaction_Shortcodes.lib.php, EE_Event_Shortcodes.lib.php, EE_Attendee_Shortcodes.lib.php';
+	 * this property will hold an array of valid shortcodes for this messenger.  This is an array of strings that correspond to defined EE_Shortcode libraries per field.  For example:
+	 * array('subject' => array('transaction', 'event', 'attendee')) corresponds to 'EE_Transaction_Shortcodes.lib.php, EE_Event_Shortcodes.lib.php, EE_Attendee_Shortcodes.lib.php' for the 'subject' field;
+	 * NOTE:  by default, with messengers, if the valid shortcodes for a field is left blank,  that field will inherit whatever are set as valid shortcodes by message_type.  This is so messenger can set specific valid codes for fields and leave other valid shortcodes up to the message type matched with the messenger.
 	 * @var array
 	 */
 	protected $_valid_shortcodes = array();

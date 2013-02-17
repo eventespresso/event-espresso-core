@@ -560,9 +560,11 @@ class EE_Message_Template {
 	 * This will return an array of shortcodes => labels from the messenger and message_type objecst associated with this template.
 	 * 
 	 * @access public
+	 * @param string $context what context we're going to return shortcodes for
+	 * @param array $fields what fields we're returning valid shortcodes for.  If empty then we assume all fields are to be merged and returned.
 	 * @return mixed (array|bool) an array of shortcodes in the format array( '[shortcode] => 'label') OR FALSE if no shortcodes found.
 	 */
-	public function get_shortcodes() {
+	public function get_shortcodes( $context, $fields = array() ) {
 		$shortcodes = array();
 
 		$messenger = $this->messenger_obj();
@@ -571,8 +573,22 @@ class EE_Message_Template {
 		$m_shortcodes = $messenger->get_valid_shortcodes();
 		$mt_shortcodes = $message_type->get_valid_shortcodes();
 
+		//let's make sure only the valid shortcodes for the given context are returned.  We will merge that with all shortcodes for the given fields.  If $field is empty then we'll just return the shortcodes for all fields
+		$valid_shortcodes = isset($mt_shortcodes[$context]) ? $mt_shortcodes[$context] : array();
+
+		if ( empty( $fields ) ) {
+			foreach ( $m_shortcodes as $ms ) {
+				$valid_shortcodes = array_merge( $valid_shortcodes, $ms );
+			}
+		} else {
+			foreach ( $fields as $field ) {
+				$valid_shortcodes = isset( $m_shortcodes[$field] ) ? array_merge( $valid_shortcodes, $m_shortcodes[$field] ) : $valid_shortcodes;
+			}
+		}
+
+
 		//let's merge shortcodes and make sure we've got unique refs
-		$all_scs = array_unique( array_merge( $m_shortcodes, $mt_shortcodes ) );
+		$all_scs = array_unique( $valid_shortcodes );
 
 		//now we can use the assembled array to instantiate the relevant shortcode objects
 		$sc_objs = $this->_get_shortcode_objects( $all_scs );

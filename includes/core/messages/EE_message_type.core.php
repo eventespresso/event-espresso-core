@@ -156,8 +156,8 @@ abstract class EE_message_type extends EE_Base {
 
 
 	/**
-	 * this property will hold an array of valid shortcodes for this message type.  This is an array of strings that correspond to defined EE_Shortcode libraries.  For example:
-	 * array('transaction', 'event', 'attendee') corresponds to 'EE_Transaction_Shortcodes.lib.php, EE_Event_Shortcodes.lib.php, EE_Attendee_Shortcodes.lib.php';
+	 * this property will hold an array of valid shortcodes for this message type.  This is an array of strings that correspond to defined EE_Shortcode libraries and per context.  For example:
+	 * array( 'admin' => array('transaction', 'event', 'attendee') )corresponds to 'EE_Transaction_Shortcodes.lib.php, EE_Event_Shortcodes.lib.php, EE_Attendee_Shortcodes.lib.php' fo the admin context;
 	 * @var array
 	 */
 	protected $_valid_shortcodes = array();

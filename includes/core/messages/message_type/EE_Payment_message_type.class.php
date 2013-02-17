@@ -119,13 +119,8 @@ class EE_Payment_message_type extends EE_message_type {
 			'primary_attendee' => array(
 				'label' => __('Primary Attendee', 'event_espresso'),
 				'description' => __('This template is what the primary attendee (the person who made the main registration) will receive on successful payment', 'event_espresso')
-				),
-			'attendee' => array(
-				'label' => __('Attendee', 'event_espresso'),
-				'description' => __('This is what an attendee registered for an event will receive when a successful payment has been completed', 'event_espresso'
-					)
 				)
-		);
+			);
 
 		$this->_contexts = apply_filters('filter_hook_espresso_set_contexts_'. $this->name, $this->_contexts);
 		$this->_contexts = apply_filters('filter_hook_espresso_set_contexts_all', $this->_contexts);
@@ -136,7 +131,10 @@ class EE_Payment_message_type extends EE_message_type {
 	 * see abstract declaration in parent class for details
 	 */
 	protected function _set_valid_shortcodes() {
-		$this->_valid_shortcodes = array('transaction','event','organization');
+		$this->_valid_shortcodes = array(
+			'admin' => array('transaction','event','organization', 'attendee'),
+			'primary_attendee' => array('transaction', 'event', 'organization', 'attendee')
+			);
 	}
 
 
