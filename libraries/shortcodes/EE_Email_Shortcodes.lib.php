@@ -42,7 +42,6 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 		$this->label = __('Email Shortcodes', 'event_espresso');
 		$this->description = __('All shortcodes related to emails', 'event_espresso');
 		$this->_shortcodes = array(
-			'[ALT_EMAIL]' => __('An alternate email address for the event contact', 'event_espresso'),
 			'[SITE_ADMIN_EMAIL]' => __('Will be replaced with the admin email for the site that Event Espresso is installed on', 'event_espresso'),
 			'[ATTENDEE_EMAIL]' => __('Will be replaced with a properly formatted list of attendee emails who have been registered for an event', 'event_espresso'),
 			'[PRIMARY_ATTENDEE_EMAIL]' => __('This will be replaced with the properly formatted email for the primary registrant of an event', 'event_espresso'),
@@ -56,10 +55,6 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 
 		switch ( $shortcode ) {
 			
-			case '[ALT_EMAIL]' :
-				return isset($this->_data['meta']['alt_email']) || $this->_data['meta']['alt_email'] == '' ? $org_options['contact_email'] : $this->_data['meta']['alt_email'];
-				break;
-
 			case '[SITE_ADMIN_EMAIL]' :
 				return $this->_get_site_admin_email();
 				break;
