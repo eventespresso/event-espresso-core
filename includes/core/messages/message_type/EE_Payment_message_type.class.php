@@ -69,32 +69,45 @@ class EE_Payment_message_type extends EE_message_type {
 	}
 
 	protected function _set_default_field_content() {
+
 		$this->_default_field_content = array(
-			'subject' => sprintf(__('Payment processed for %s', 'event_espresso'), '[EVENT_NAME]'),
+			'subject' => $this->_default_template_field_subject(),
 			'content' => $this->_default_template_field_content(),
 		);
 		$this->_default_field_content = apply_filters('filter_hook_espresso_default_field_content_'.$this->name, $this->_default_field_content);
 	}
 
+
+
+
+	protected function _default_template_field_subject() {
+		foreach ( $this->_contexts as $context ) {
+			$content[$context] = 'Payment processed for [EVENT_NAME]';
+		};
+		return $content;
+	}
+
 	protected function _default_template_field_content() {
 		$content = array();
-		$content['main'] = "<h3>Payment Details:</h3>\n";
-		$content['main'] .= "<p>For Event: [EVENT_NAME]</p>\n";
-		$content['main'] .= "<p>Payment status: [PAYMENT_STATUS]</p>\n";
-		$content['main'] .= "<p>Payment gateway: [PAYMENT_GATEWAY]</p>\n";
-		$content['main'] .= "<p>Total Cost: [TOTAL_COST]</p>\n";
-		$content['main'] .= "<p>Event Price: [EVENT_PRICE]</p>\n";
-		$content['main'] .= "<p>[ATTENDEE_LIST_UNORDERED]</p>\n";
-		$content['main'] .= "\n<br /><p>Thanks for your purchase,</p>\n";
-		$content['main'] .= "<p>[COMPANY]</p>\n";
-		$content['main'] .= "<p>[CO_ADD1]</p>\n";
-		$content['main'] .= "<p>[CO_ADD2]</p>\n";
-		$content['main'] .= "<p>[CO_STATE], [CO_ZIP]\n";
-		
-		//ATTENDEE_LIST field
-		$content['attendee_list'] = "[FIRST_NAME] [LAST_NAME]";
+		$content .= "<h3>Payment Details:</h3>\n";
+		$content .= "<p>For Event: [EVENT_NAME]</p>\n";
+		$content .= "<p>Payment status: [PAYMENT_STATUS]</p>\n";
+		$content .= "<p>Payment gateway: [PAYMENT_GATEWAY]</p>\n";
+		$content .= "<p>Total Cost: [TOTAL_COST]</p>\n";
+		$content .= "<p>Event Price: [EVENT_PRICE]</p>\n";
+		$content .= "<p><ul>[ATTENDEE_LIST]</ul></p>\n";
+		$content .= "\n<br /><p>Thanks for your purchase,</p>\n";
+		$content .= "<p>[COMPANY]</p>\n";
+		$content .= "<p>[CO_ADD1]</p>\n";
+		$content .= "<p>[CO_ADD2]</p>\n";
+		$content .= "<p>[CO_STATE], [CO_ZIP]\n";
 
-		return $content;
+		foreach ( $this->_contexts as $context ) {
+			$tcontent[$context]['main'] = $content;
+			$tcontent[$context]['attendee_list'] = "<li>[FIRST_NAME] [LAST_NAME]</li>";
+		}
+
+		return $tcontent;
 	}
 
 	/**

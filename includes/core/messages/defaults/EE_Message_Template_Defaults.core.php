@@ -195,7 +195,7 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 			foreach ( $this->_contexts as $context => $details ) {
 				foreach ( $this->_fields as $field => $field_type ) {
 					if ( $field !== 'extra' )
-						$this->_templates[$context][$field] = ( isset($this->_defaults['mt'][$field]) ? maybe_serialize($this->_defaults['mt'][$field]) : maybe_serialize($this->_defaults['m'][$field]) );
+						$this->_templates[$context][$field] = ( isset($this->_defaults['mt'][$field][$context]) ? maybe_serialize($this->_defaults['mt'][$field][$context]) : maybe_serialize($this->_defaults['m'][$field]) );
 				}
 			}
 

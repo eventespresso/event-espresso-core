@@ -62,7 +62,21 @@ abstract class EE_message_type extends EE_Base {
 	public $_admin_registered_pages = array();
 
 	/**
-	 * there are certain template fields that are global across all messengers.  This will hold the default content for those global template fields that will be added 
+	 * there are certain template fields that are global across all messengers.  This will hold the default content for those global template fields that will be added.  Note we're expecting an array back that will be an index of fields and values with an array of defaults for each indexed context. For example:
+	 * $defaults = array(
+	 * 	'subject' => array(
+	 * 		'admin' => 'some default content',
+	 * 		'attendee' => 'some other default content'
+	 * 		),
+	 * 	'content' => array(
+	 * 		'admin' => array(
+	 * 			'main' => 'some content for the main content area',
+	 * 			'attendee_list' => 'some content for the attendee list content area'
+	 * 			),
+	 * 		'attendees' => '' //etc..
+	 * 		)
+	 * )
+	 * 
 	 * @var array
 	 */
 	protected $_default_field_content = array();
