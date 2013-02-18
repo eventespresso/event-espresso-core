@@ -42,7 +42,7 @@ class EE_Question_Answers_Shortcodes extends EE_Shortcodes {
 		$this->label = __('Questions and Answers Shortcodes', 'event_espresso');
 		$this->description = __('All shortcodes related to custom questions and answers', 'event_espresso');
 		$this->_shortcodes = array(
-			'[CUSTOM_Q_A]' => __('Use this if you want a list of all the custom Questions and Answers attached to an attendee listed. If you want just the specific Question and Answer then you must use the shortcode listed with on the Questions admin page.', 'event_espresso');
+			'[CUSTOM_Q_A]' => __('Use this if you want a list of all the custom Questions and Answers attached to an attendee listed. If you want just the specific Question and Answer then you must use the shortcode listed with on the Questions admin page.', 'event_espresso')
 			);
 	}
 
@@ -80,22 +80,7 @@ class EE_Question_Answers_Shortcodes extends EE_Shortcodes {
 			return $this->_custom_questions_answers();
 		}
 
-		//todo parse the custom shortcodes for "questions" or "answers";
-		if ( isset( $this->_data->attendee->id ) ) {
-			$questions = $this->_get_questions( $this->_data->attendee->id );
-
-			if ( $questions ) {
-				foreach ($questions as $q) {
-					$k = $q['question'];
-					$v = $q['answer'];
-
-					$question = '[question_' . $k . ']';
-
-					if ( $shortcode == $question )
-						return $v; //we'll return the answer for the given question shortcode.
-				}
-			}
-		}
+		//todo parse the dynamic custom shortcodes for "questions" or "answers";
 	}
 
 

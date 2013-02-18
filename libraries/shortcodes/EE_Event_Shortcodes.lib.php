@@ -63,6 +63,9 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 
 
 	protected function _parser( $shortcode ) {
+		global $org_options;
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Formatter.helper.php';
+
 		switch ( $shortcode ) {
 			
 			case '[EVENT_ID]' :
@@ -83,7 +86,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[ALT_EMAIL]' :
-				return isset($this->_data['meta']['alt_email']) || $this->_data['meta']['alt_email'] == '' ? $org_options['contact_email'] : $this->_data['meta']['alt_email'];
+				return !isset($this->_data['meta']['alt_email']) || $this->_data['meta']['alt_email'] == '' ? $org_options['contact_email'] : $this->_data['meta']['alt_email'];
 				break;
 
 			case '[EVENT_DESCRIPTION]' :
@@ -106,19 +109,19 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[EVENT_START_DATE]' :
-				isset($this->_data['event_start_date']) ? event_date_display($this->_data['event_start_date']) : '';
+				isset($this->_data['event_start_date']) ? EE_Formatter::event_date_display($this->_data['event_start_date']) : '';
 				break;
 
 			case '[EVENT_END_DATE]' :
-				isset($this->_data['event_end_date']) ? event_date_display($this->_data['event_end_date']) : '';
+				isset($this->_data['event_end_date']) ? EE_Formatter::event_date_display($this->_data['event_end_date']) : '';
 				break;
 
 			case '[EVENT_START_TIME]' :
-				isset($this->_data['event_start_time']) ? event_date_display($this->_data['event_start_time'], get_option('time_format')) : '';
+				isset($this->_data['event_start_time']) ? EE_Formatter::event_date_display($this->_data['event_start_time'], get_option('time_format')) : '';
 				break;
 
 			case '[EVENT_END_TIME]' :
-				isset($this->_data['event_end_time']) ? event_date_display($this->_data['event_end_time'], get_option('time_format')) : '';
+				isset($this->_data['event_end_time']) ? EE_Formatter::event_date_display($this->_data['event_end_time'], get_option('time_format')) : '';
 				break;
 
 			case '[EVENT_PRICE]' :

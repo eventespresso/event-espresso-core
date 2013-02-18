@@ -52,11 +52,13 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 		switch ( $shortcode ) {
 			
 			case '[FNAME]' :
-				return isset($this->_data['fname']) ? $this->_data['fname'] : '';
+				$fname = !empty( $this->_data->fname ) ? $this->_data->fname : '';
+				return isset($this->_data['fname']) ? $this->_data['fname'] : $fname;
 				break;
 
 			case '[LNAME]' :
-				return isset($this->_data['lname']) ? $this->_data['lname'] : '';
+				$lname = !empty( $this->_data->lname ) ? $this->_data->lname : '';
+				return isset($this->_data['lname']) ? $this->_data['lname'] : $lname;
 				break;
 
 		}

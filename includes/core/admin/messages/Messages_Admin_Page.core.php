@@ -505,11 +505,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$EVT_ID = isset( $this->_req_data['evt_id'] ) && !empty( $this->_req_data['evt_id'] ) ? absint( $this->_req_data['evt_id'] ) : FALSE;
 
-		$this->_set_message_template();
+		$this->_set_shortcodes(); //this also sets the _message_template property.
 		$message_template = $this->_message_template;
 		$c_label = $message_template->context_label();
 		$c_config = $message_template->contexts_config();
 
+		reset( $c_config );
 		$context = isset( $this->_req_data['context']) && !empty($this->_req_data['context'] ) ? strtolower($this->_req_data['context']) : key($c_config);
 
 
@@ -570,6 +571,16 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					$this->_template_args['is_extra_fields'] = TRUE;
 					foreach ( $field_setup_array as $reference_field => $new_fields_array ) {
 						foreach ( $new_fields_array as $extra_field =>  $extra_array ) {
+							//let's verify if we need this extra field via the shortcodes parameter.
+							if ( isset( $extra_array['shortcodes_required'] ) ) {
+								$continue = FALSE;
+								foreach ( (array) $extra_array['shortcodes_required'] as $shortcode ) {
+									if ( !array_key_exists( $shortcode, $this->_shortcodes ) )
+										$continue = TRUE;
+								}
+								if ( $continue ) continue;
+							}
+
 							$field_id = $reference_field . '-' . $extra_field . '-content';
 							$template_form_fields[$field_id] = $extra_array;
 							$template_form_fields[$field_id]['name'] = 'MTP_template_fields[' . $reference_field . '][content][' . $extra_field . ']';
@@ -1024,6 +1035,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$context_label = $this->_message_template->context_label();
 		$context_configs = $this->_message_template->contexts_config();
+		reset( $context_configs );
 		$current_context = isset($this->_req_data['context']) ? $this->_req_data['context'] : key($context_configs);
 
 		$content = '<p>' . $context_label['description'] . '</p>';

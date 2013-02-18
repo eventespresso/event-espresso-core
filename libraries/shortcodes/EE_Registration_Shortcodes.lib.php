@@ -52,11 +52,12 @@ class EE_Registration_Shortcodes extends EE_Shortcodes {
 	protected function _parser( $shortcode ) {
 		switch ( $shortcode ) {
 			case '[PRIMARY_REGISTRATION_ID]' :
-				return isset( $this->_data->attendees['primary_attendee']['registration_id'] ) ? $this->_data->attendees['primary_attendee']['registration_id'] : '';
+				return $this->_data->primary_registration_id;
 				break;
 
 			case '[ATTENDEE_REGISTRATION_ID]' :
-				return isset( $this->_data['registration_id'] ) ? $this->_data['registration_id'] : '';
+				$id = !empty($this->_data->attendee_registration_id) ? $this->_data->attendee_registration_id : '';
+				return isset( $this->_data['registration_id'] ) ? $this->_data['registration_id'] : $id;
 				break;
 
 			case '[ATTENDEE_LIST]' :

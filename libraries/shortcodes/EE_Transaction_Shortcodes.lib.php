@@ -62,7 +62,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[INVOICE_LINK]' :
-				return isset($this->_data->invoice_link) ? $this->_data->invoice_link : '';
+				return isset($this->_data->invoice_link) ? $this->_data->invoice_link : ''; //todo this nees to be setup via the message type.
 				break;
 
 
