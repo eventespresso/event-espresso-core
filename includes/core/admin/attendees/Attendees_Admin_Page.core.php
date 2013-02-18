@@ -167,7 +167,7 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 				),
 			'contact_list' => array(
 				'nav' => array(
-					'label' => __('Contact List', 'event_espresso'),
+					'label' => __('Attendee Contact List', 'event_espresso'),
 					'order' => 20
 					),
 				'list_table' => 'EE_Attendee_Contact_List_Table',
