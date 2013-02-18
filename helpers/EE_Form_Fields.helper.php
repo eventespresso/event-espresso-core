@@ -396,6 +396,9 @@ class EE_Form_Fields {
 	static function generate_question_groups_html( $question_groups = array(), $group_wrapper = 'fieldset' ) {
 			
 		$html = '';
+		$before_question_group_questions = apply_filters( 'filter_hook_espresso_form_before_question_group_questions', '' );
+		$after_question_group_questions = apply_filters( 'filter_hook_espresso_form_after_question_group_questions', '' );		
+
 			
 		if ( ! empty( $question_groups )) {
 			//printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -409,10 +412,14 @@ class EE_Form_Fields {
 					$html .= $QSG['QSG_show_group_name'] ? "\n\t\t" . '<h4 class="espresso-question-group-title-h4 section-title">' . self::prep_answer( $QSG['QSG_name'] ) . '</h4>' : '';
 					// group_desc
 					$html .= $QSG['QSG_show_group_desc'] && ! empty( $QSG['QSG_desc'] ) ? '<p class="espresso-question-group-desc-pg">' . self::prep_answer( $QSG['QSG_desc'] ) . '</p>' : '';
+					
+					$html .= $before_question_group_questions;
 					// loop thru questions
 					foreach ( $QSG['QSG_questions'] as $question ) {
 						$html .= self::generate_form_input( $question );
 					}
+					$html .= $after_question_group_questions;
+					
 					$html .= "\n\t" . '</' . $group_wrapper . '>';
 				}
 			}
@@ -445,7 +452,8 @@ class EE_Form_Fields {
 		$input_id = isset( $question['QST_input_id'] ) ? $question['QST_input_id'] : '';
 		$input_class = isset( $question['QST_input_class'] ) ? $question['QST_input_class'] : '';
 		$disabled = isset( $question['disabled'] ) ? $question['disabled'] : '';
-		$required = $question['QST_required'] ? array( 'label' => '<em>*</em>', 'class' => 'required', 'title' => $question['QST_required'] ) : array();
+		$required_label = apply_filters( 'filter_hook_espresso_required_form_input_label', '<em>*</em>' );
+		$required = $question['QST_required'] ? array( 'label' => $required_label, 'class' => 'required', 'title' => $question['QST_required'] ) : array();
 		$label_class = 'espresso-form-input-lbl';		
 		$options = isset( $question['QST_options'] ) ? self::prep_answer_options( $question['QST_options'] ) : array();
 
@@ -510,7 +518,8 @@ class EE_Form_Fields {
 		// set disabled tag
 		$disabled = empty( $answer ) ? '' : $disabled;
 		// ya gots ta have style man!!!
-		$class = empty( $class ) ? 'espresso-text-inp' : $class;
+		$txt_class = is_admin() ? 'regular-text' : 'espresso-text-inp';
+		$class = empty( $class ) ? $txt_class : $class;
 		$extra = apply_filters( 'filter_hook_espresso_additional_form_field_attributes', '' );
 
 		$label_html = "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
@@ -557,7 +566,8 @@ class EE_Form_Fields {
 		// set disabled tag
 		$disabled = empty( $answer ) ? '' : $disabled;
 		// ya gots ta have style man!!!
-		$class = empty( $class ) ? 'espresso-textarea-inp' : $class;
+		$txt_class = is_admin() ? 'regular-text' : 'espresso-textarea-inp';
+		$class = empty( $class ) ? $txt_class : $class;
 		$extra = apply_filters( 'filter_hook_espresso_additional_form_field_attributes', '' );
 		
 		$label_html = "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
@@ -601,7 +611,8 @@ class EE_Form_Fields {
 		// set disabled tag
 		$disabled = empty( $answer ) ? '' : $disabled;
 		// ya gots ta have style man!!!
-		$class = empty( $class ) ? 'espresso-select-inp' : $class;
+		$txt_class = is_admin() ? 'wide' : 'espresso-select-inp';
+		$class = empty( $class ) ? $txt_class : $class;
 		$extra = apply_filters( 'filter_hook_espresso_additional_form_field_attributes', '' );
 		
 		$label_html = "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
@@ -654,6 +665,7 @@ class EE_Form_Fields {
 		// set disabled tag
 		$disabled = empty( $answer ) ? '' : $disabled;
 		// ya gots ta have style man!!!
+		$rdio_class = is_admin() ? 'ee-admin-radio-lbl' : $label_class;		
 		$class = empty( $class ) ? 'espresso-radio-btn-inp' : $class;
 		$extra = apply_filters( 'filter_hook_espresso_additional_form_field_attributes', '' );
 		
@@ -664,14 +676,14 @@ class EE_Form_Fields {
 		
 		foreach ( $options as $key => $value ) {
 
-			$checked = ( $value == $answer ) ? ' checked="checked"' : '';
 			$key = self::prep_option_value( $key );
 			$size = strlen( $value ) < 25 ? ' class="small-lbl"' : '';
 			$value = self::prep_answer( $value );
+			$checked = ( $key == $answer ) ? ' checked="checked"' : '';
 			$opt = '-' . sanitize_key( $key );
 
 			$input_html .= "\n\t\t\t\t" . '<li' . $size . '>';
-			$input_html .= "\n\t\t\t\t\t" . '<label class="' . $label_class . ' espresso-radio-btn-lbl">';
+			$input_html .= "\n\t\t\t\t\t" . '<label class="' . $rdio_class . ' espresso-radio-btn-lbl">';
 			$input_html .= $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';
 			$input_html .= "\n\t\t\t\t\t\t" . '<input type="radio" name="' . $name . '" id="' . $id . $opt . '" class="' . $class . ' ' . $required['class'] . '" value="' . $key . '" title="' . $required['msg'] . '" ' . $disabled . $checked . ' ' . $extra . '/>';
 			$input_html .= ! $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';
@@ -723,6 +735,7 @@ class EE_Form_Fields {
 		// set disabled tag
 		$disabled = empty( $answer ) ? '' : $disabled;
 		// ya gots ta have style man!!!
+		$rdio_class = is_admin() ? 'ee-admin-radio-lbl' : $label_class;		
 		$class = empty( $class ) ? 'espresso-radio-btn-inp' : $class;
 		$extra = apply_filters( 'filter_hook_espresso_additional_form_field_attributes', '' );
 		
@@ -741,7 +754,7 @@ class EE_Form_Fields {
 			$opt = '-' . sanitize_key( $key );
 
 			$input_html .= "\n\t\t\t\t" . '<li' . $size . '>';
-			$input_html .= "\n\t\t\t\t\t" . '<label class="' . $label_class . ' espresso-checkbox-lbl">';
+			$input_html .= "\n\t\t\t\t\t" . '<label class="' . $rdio_class . ' espresso-checkbox-lbl">';
 			$input_html .= $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';
 			$input_html .= "\n\t\t\t\t\t\t" . '<input type="checkbox" name="' . $name . '" id="' . $id . $opt . '" class="' . $class . ' ' . $required['class'] . '" value="' . $key . '" title="' . $required['msg'] . '" ' . $disabled . $checked . ' ' . $extra . '/>';
 			$input_html .= ! $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';
@@ -787,7 +800,8 @@ class EE_Form_Fields {
 		// set disabled tag
 		$disabled = empty( $answer ) ? '' : $disabled;
 		// ya gots ta have style man!!!
-		$class = empty( $class ) ? 'espresso-datepicker-inp' : $class;
+		$txt_class = is_admin() ? 'regular-text' : 'espresso-datepicker-inp';
+		$class = empty( $class ) ? $txt_class : $class;
 		$extra = apply_filters( 'filter_hook_espresso_additional_form_field_attributes', '' );
 
 		$label_html = "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';

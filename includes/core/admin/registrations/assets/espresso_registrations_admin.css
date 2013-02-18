@@ -79,20 +79,13 @@
 	box-shadow: 1px 1px 1px rgba(0,0,0,.2), 3px 3px 2px rgba(0,0,0,.1); 
 }
 
+.reg-admin-edit-question-group-spn { position: relative; top:-4px; padding: 4px; vertical-align: middle; }
+.reg-admin-edit-attendee-question-lnk { padding: 4px; text-decoration: none; outline:none; }
+.reg-admin-edit-attendee-question-lnk:focus { outline:none; }
+.reg-admin-edit-attendee-question-lnk img { }
 
 
-.jst-left { text-align:left; }
-.jst-cntr { text-align:center; }
-.jst-rght { text-align:right; }
 
-.display-the-hidden { float:right; padding-left:16px; background: url("../../../images/icons/additional_info-10x10.png") no-repeat scroll left center transparent; cursor:pointer; }
-.hide-the-displayed { float:right; padding-left:16px; background: url("../../../images/icons/close_additional_info-10x10.png") no-repeat scroll left center transparent; cursor:pointer; }
+.display-the-hidden { float:right; padding-left:16px; cursor:pointer; }
+.hide-the-displayed { float:right; padding-left:16px; cursor:pointer; }
 
-
-.lt-grey-txt  { color:#999;  text-shadow:none; }
-.float-left { float:left; }
-
-/* Nicolas Gallagher's micro clearfix */
-.clearfix:before, .clearfix:after { content:""; display:table; }
-.clearfix:after { clear: both; }
-.clearfix { zoom: 1; }
