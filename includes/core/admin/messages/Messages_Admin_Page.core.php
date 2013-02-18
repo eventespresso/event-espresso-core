@@ -35,6 +35,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	private $_current_message_meta_box;
 	private $_current_message_meta_box_object;
 	private $_context_switcher;
+	private $_shortcodes = array();
+	private $_message_template;
 
 	/**
 	 * constructor
@@ -63,8 +65,57 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_active_messengers = !empty($this->_active_messengers) ?  $this->_active_messengers : array();
 		$this->_active_message_types = get_user_meta($espresso_wp_user, 'ee_active_message_types', true);
 		$this->_active_message_types = !empty($this->_active_message_types ) ? $this->_active_message_types : array();
+
+		//what about saving the objects in the active_messengers and active_message_types?
+		$this->_load_active_messenger_objects();
+		$this->_load_active_message_type_objects();
 	}
 
+
+
+
+	/**
+	 * loads messenger objects into the $_active_messengers property (so we can access the needed methods)
+	 *
+	 * @access  private
+	 * @return void 
+	 */
+	private function _load_active_messenger_objects() {
+		foreach ( $this->_active_messengers as $messenger => $values ) {
+			$ref = ucwords( str_replace( '_' , ' ', $messenger) );
+			$ref = str_replace( ' ', '_', $ref );
+			$classname = 'EE_' . $ref . '_messenger';
+
+			if ( !class_exists($classname) )
+				throw new EE_Error( sprintf( __('There is no messenger for the given classname (%s)', 'event_espresso'), $classname ) );
+
+			$a = new ReflectionClass( $classname );
+			$this->_active_messengers[$messenger]['obj'] = $a->newInstance();
+		}
+	}
+
+
+
+
+	/**
+	 * loads messenger objects into the $_active_messengers property (so we can access the needed methods)
+	 *
+	 * @access  private
+	 * @return void 
+	 */
+	private function _load_active_message_type_objects() {
+		foreach ( $this->_active_message_types as $message_type => $values ) {
+			$ref = ucwords( str_replace( '_' , ' ', $message_type) );
+			$ref = str_replace( ' ', '_', $ref );
+			$classname = 'EE_' . $ref . '_message_type';
+
+			if ( !class_exists($classname) )
+				throw new EE_Error( sprintf( __('There is no message type for the given classname (%s)', 'event_espresso'), $classname ) );
+
+			$a = new ReflectionClass( $classname );
+			$this->_active_message_types[$message_type]['obj'] = $a->newInstance();
+		}
+	}
 
 
 
@@ -154,6 +205,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'persistent' => FALSE,
 					'url' => !empty($edit_query_args) ? add_query_arg( $edit_query_args, $this->_current_page_view_url ) : $this->_admin_base_url
 					),
+				'metaboxes' => array('_register_edit_meta_boxes'),
 				'has_metaboxes' => TRUE
 				),
 			'activate' => array(
@@ -218,6 +270,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_script('espress_msg_js');
 	}
 
+
+	public function load_scripts_styles_edit_message_template() {
+		wp_enqueue_script('ee_admin_js');
+	}
 
 
 
@@ -449,14 +505,16 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$EVT_ID = isset( $this->_req_data['evt_id'] ) && !empty( $this->_req_data['evt_id'] ) ? absint( $this->_req_data['evt_id'] ) : FALSE;
 
-		$context = isset( $this->_req_data['context']) && !empty($this->_req_data['context'] ) ? strtolower($this->_req_data['context']) : 'admin';
+		$this->_set_shortcodes(); //this also sets the _message_template property.
+		$message_template = $this->_message_template;
+		$c_label = $message_template->context_label();
+		$c_config = $message_template->contexts_config();
 
-		//let's get the message templates
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
-		$MTP = EEM_Message_Template::instance();
+		reset( $c_config );
+		$context = isset( $this->_req_data['context']) && !empty($this->_req_data['context'] ) ? strtolower($this->_req_data['context']) : key($c_config);
+
 
 		if ( empty($GRP_ID) ) {
-			$message_template = $MTP->get_new_template;
 			$action = 'insert_message_template';
 			$button_both = FALSE;
 			$button_text = array( __( 'Save','event_espresso') );
@@ -464,7 +522,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$referrer = FALSE;
 			$edit_message_template_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
 		} else {
-			$message_template = $MTP->get_message_template_by_ID($GRP_ID);
 			$action = 'update_message_template';
 			$button_both = !defined( 'DOING_AJAX' ) ? TRUE : FALSE;
 			$event_name = $message_template->event_name();
@@ -476,7 +533,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 		//todo: we need to assemble the title from Various details
-		$context_label = sprintf( __('(%s Context)', 'event_espresso'), ucwords(str_replace('_', ' ', $context) ) );
+		$context_label = sprintf( __('(%s %s)', 'event_espresso'), $c_config[$context]['label'], ucwords($c_label['label'] ));
 
 		//todo: we should eventually display the event title instead of ID.
 		$event_label = isset($event_name) && !empty($event_name) ? sprintf( __('for Event: %s', 'event_espresso'), $event_name) : '';
@@ -487,7 +544,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['is_extra_fields'] = FALSE;
 
 
-		//let's get the EE_messages_controller so we can get templates
+		//let's get the EE_messages_controller so we can get template form fields
 		$MSG = new EE_messages();
 		$template_field_structure = $MSG->get_fields($message_template->messenger(), $message_template->message_type());
 		
@@ -514,6 +571,16 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					$this->_template_args['is_extra_fields'] = TRUE;
 					foreach ( $field_setup_array as $reference_field => $new_fields_array ) {
 						foreach ( $new_fields_array as $extra_field =>  $extra_array ) {
+							//let's verify if we need this extra field via the shortcodes parameter.
+							if ( isset( $extra_array['shortcodes_required'] ) ) {
+								$continue = FALSE;
+								foreach ( (array) $extra_array['shortcodes_required'] as $shortcode ) {
+									if ( !array_key_exists( $shortcode, $this->_shortcodes ) )
+										$continue = TRUE;
+								}
+								if ( $continue ) continue;
+							}
+
 							$field_id = $reference_field . '-' . $extra_field . '-content';
 							$template_form_fields[$field_id] = $extra_array;
 							$template_form_fields[$field_id]['name'] = 'MTP_template_fields[' . $reference_field . '][content][' . $extra_field . ']';
@@ -830,18 +897,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			}
 		}
 
-		//shortcode metabox (if we are editing)
-		//todo: this should be moved to it's own method.  It's just a placeholder right now but the displayed shortcodes should be dynamic (we might need to create a shortcoode object for holding all valid shortcodes and message_types can register_new shortocdes with the object);
-		if ( $this->_template_args['GRP_ID'] && !defined( 'DOING_AJAX' ) ) {
-			$this->_template_args['sidebar_content'] = 'Place holder, this will contain shortcodes that can be used with the template';
-			$sidebar_title = __('Shortcodes', 'event_espresso');
-			$this->_template_args['sidebar_box_id'] = 'shortcodes';
-			$sidebar_action = 'update_message_template_sidebar_shortcodes';
-			$this->_add_admin_page_meta_box( $sidebar_action, $sidebar_title, __FUNCTION__, NULL, 'side');
-		}/**/
 
 		//finally, let's set the admin_page title
 		$this->_admin_page_title = sprintf( __('Editing %s', 'event_espresso'), $title );
+
+		//we need to take care of setting the shortcodes property for use elsewhere.
+		$this->_set_shortcodes();
 
 		//final template wrapper
 		$this->display_admin_page_with_sidebar();
@@ -862,6 +923,143 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 
+	/**
+	 * registers metaboxes that should show up on the "edit_message_template" page
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function _register_edit_meta_boxes() {
+		add_meta_box( 'mtp_valid_shortcodes', __('Valid Shortcodes', 'event_espresso'), array( $this, 'shortcode_meta_box' ), $this->_current_screen->id, 'side', 'default' );
+	}
+
+
+	/**
+	 * This just takes care of returning the meta box content for shortcodes (only used on the edit message template page)
+	 *
+	 * @access public
+	 * @return void 
+	 */
+	public function shortcode_meta_box() {
+		$this->_set_shortcodes(); //just make sure shortcodes property is set
+		
+
+		//now let's set the content depending on the status of the shortcodes array
+		if ( empty( $this->_shortcodes ) ) {
+			$content = '<p>' . __('There are no valid shortcodes available', 'event_espresso') . '</p>';
+			echo $content;
+		} else {
+			$alt = 0;
+			?>
+			<table class="widefat ee-shortcode-table">
+			<?php foreach ( $this->_shortcodes as $code => $label ) : ?>
+				<?php $alt_class = !($alt%2) ? 'class="alternate"' : ''; ?>
+				<tr <?php echo $alt_class; ?>>
+					<td><?php $this->_set_help_trigger( 'shortcode_' . $alt, TRUE, array('100', '400') ); echo $code; ?></td>
+				</tr>
+			<?php $alt++; endforeach; ?>
+			</table> <!-- end .ee-shortcode-table -->
+			<?php
+		}
+
+
+	}
+
+
+	/**
+	 * used to set the $_shortcodes property for when its needed elsewhere.
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _set_shortcodes() {
+
+		//no need to run this if the property is already set
+		if ( !empty($this->_shortcodes ) ) return;
+
+		$this->_set_message_template();
+
+		//we need the messenger and message template to retrieve the valid shortcodes array.
+		$GRP_ID = isset( $this->_req_data['id'] ) && !empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
+		$context = isset( $this->_req_data['context'] ) ? $this->_req_data['context'] : key( $this->_message_template->contexts_config() );
+
+		if ( !empty($GRP_ID) ) {
+			$this->_shortcodes = $this->_message_template->get_shortcodes( $context );
+		} else {
+			$this->_shortcodes = array();
+		}
+	}
+
+
+
+	/**
+	 * This sets the _message_template property (containing the called message_template object)
+	 *
+	 * @access private
+	 * @return  void 
+	 */
+	private function _set_message_template() {
+
+		if ( !empty( $this->_message_template ) )
+			return; //get out if this is already set.
+
+		$GRP_ID = isset( $this->_req_data['id'] ) && !empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
+
+		//let's get the message templates
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
+		$MTP = EEM_Message_Template::instance();
+
+		if ( empty($GRP_ID) )
+			$this->_message_template = $MTP->get_new_template();
+		else
+			$this->_message_template = $MTP->get_message_template_by_ID( $GRP_ID );
+
+	}
+
+
+	protected function _help_popup_content_edit_message_template() {
+		$this->_set_shortcodes();
+
+		$help = array();
+
+		$i = 0;
+		//let's setup the $help array for each shortcode
+		foreach ( $this->_shortcodes as $shortcode => $description ) {
+			$help['shortcode_' . $i] = array(
+				'title' => $shortcode,
+				'content' => $description
+				);
+			$i++;
+		}
+
+
+		$context_label = $this->_message_template->context_label();
+		$context_configs = $this->_message_template->contexts_config();
+		reset( $context_configs );
+		$current_context = isset($this->_req_data['context']) ? $this->_req_data['context'] : key($context_configs);
+
+		$content = '<p>' . $context_label['description'] . '</p>';
+		$content .= '<p>' . sprintf( __(' The current %s selected is <strong>%s</strong>', 'event_espresso'), $context_label['label'], $context_configs[$current_context]['label'] ) . '<br />';
+		$content .= '<em>' . $context_configs[$current_context]['description'] . '</em></p>';
+		$content .= '<p>' . sprintf( __('Other %s:', 'event_espresso'), ucwords($context_label['plural']) ) . '</p>';
+
+		foreach ( $context_configs as $ctxt => $details ) {
+			if ( $ctxt == $current_context ) continue;
+			$content .= '<p>' . $details['label'] . '<br />';
+			$content .= '<em>' . $details['description'] . '</em></p>';
+		}
+
+		$title = sprintf( __('What is a %s?', 'event_espresso'), $context_label['label']);
+
+		$help['context_switcher'] = array(
+			'title' => $title,
+			'content' => $content
+		);
+
+		return $help;
+	}
+
+
 
 	/**
 	 * sets up a context switcher for edit forms
@@ -871,7 +1069,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @param array $args various things the context switcher needs.
 	 * @return void
 	 */
-	private function _set_context_switcher($template_object, $args) {
+	private function _set_context_switcher(EE_Message_Template $template_object, $args) {
+		$context_details = $template_object->contexts_config();
+		$context_label = $template_object->context_label();
 		ob_start();
 		?>
 		<div class="ee-msg-switcher-container">
@@ -893,10 +1093,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							foreach ( $context_templates as $context => $template_fields ) :
 								$checked = ($context == $args['context']) ? 'selected="selected"' : '';
 					?>
-					<option value="<?php echo $context; ?>" <?php echo $checked; ?>><?php echo $context; ?></option>
+					<option value="<?php echo $context; ?>" <?php echo $checked; ?>><?php echo $context_details[$context]['label']; ?></option>
 					<?php endforeach; endif; ?>
 				</select>
-				<input id="submit-msg-context-switcher-sbmt" class="button-secondary" type="submit" value="Switch Context">
+				<?php $button_text = sprintf( __('Switch %s', 'event_espresso'), ucwords($context_label['label']) ); ?>
+				<input id="submit-msg-context-switcher-sbmt" class="button-secondary" type="submit" value="<?php echo $button_text; ?>"> <?php $this->_set_help_trigger( 'context_switcher' ); ?>
 			</form>
 		</div> <!-- end .ee-msg-switcher-container -->
 		<?php

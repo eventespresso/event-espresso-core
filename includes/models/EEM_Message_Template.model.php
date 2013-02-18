@@ -319,7 +319,7 @@ class EEM_Message_Template extends EEM_Base {
 
 	/**
 	 * get_all_trashed_grouped_message_templates
-	 * this returns ONLY the tempalte groups where ALL contexts are trashed and none of the group are non-trashed
+	 * this returns ONLY the template groups where ALL contexts are trashed and none of the group are non-trashed
 	 * 
 	 * @access public
 	 * @return array message template groups.

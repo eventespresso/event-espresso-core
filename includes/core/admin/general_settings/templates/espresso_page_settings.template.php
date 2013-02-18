@@ -196,7 +196,7 @@
 					<?php _e('Activate "Pretty" Permalinks', 'event_espresso'); ?>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('espresso_url_rewrite_activated', $values, isset($org_options['espresso_url_rewrite_activated']) ? $org_options['espresso_url_rewrite_activated'] : TRUE); ?>
+					<?php echo EE_Form_Fields::select_input('espresso_url_rewrite_activated', $values, $espresso_url_rewrite_activated ); ?>
 					<span class="description">
 						<?php
 						echo sprintf(

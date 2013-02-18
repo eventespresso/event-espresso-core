@@ -210,6 +210,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['cancel_return'] = isset( $org_options['cancel_return'] ) ? $org_options['cancel_return'] : NULL;
 		$this->_template_args['cancel_return_page'] = isset( $org_options['cancel_return'] ) ? get_page( $org_options['cancel_return'] ) : FALSE;
 		
+		$this->_template_args['espresso_url_rewrite_activated'] = isset( $org_options['espresso_url_rewrite_activated'] ) ? $org_options['espresso_url_rewrite_activated'] : TRUE;
+		
 		$this->_set_add_edit_form_tags( 'update_espresso_page_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'espresso_page_settings.template.php', $this->_template_args, TRUE );
@@ -224,6 +226,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data['return_url'] = isset( $this->_req_data['return_url'] ) ? absint( $this->_req_data['return_url'] ) : NULL;
 		$data['cancel_return'] = isset( $this->_req_data['cancel_return'] ) ? absint( $this->_req_data['cancel_return'] ) : NULL;
 		$data['notify_url'] = isset( $this->_req_data['notify_url'] ) ? absint( $this->_req_data['notify_url'] ) : NULL;
+		$data['espresso_url_rewrite_activated'] = isset( $this->_req_data['espresso_url_rewrite_activated'] ) ? absint( $this->_req_data['espresso_url_rewrite_activated'] ) : NULL;
 
 		$data = apply_filters('filter_hook_espresso_page_settings_save', $data);
 		

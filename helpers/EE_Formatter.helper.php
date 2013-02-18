@@ -110,4 +110,21 @@ class EE_Formatter {
 		}
 	}
 
+
+
+	/*
+	 * Date formatting function
+	 * Formats a date
+	 * @params string $date
+	 * @params string $format - format for the date
+	 */	
+	static public function event_date_display( $date, $format = '' ) {
+		$format = $format == '' ? get_option('date_format') : $format;
+		if ( empty( $date )) {
+			return '';
+		} else {
+			return date_i18n( $format, strtotime( $date )); 
+		}
+	}
+
 }//end class EE_Form_Fields

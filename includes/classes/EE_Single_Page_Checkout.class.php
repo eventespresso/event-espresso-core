@@ -1225,7 +1225,7 @@ class EE_Single_Page_Checkout {
 							);
 					//printr( $reg[$line_item_id], '$reg[$line_item_id] ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' );die();
 
-					$reg_results = $reg[$line_item_id]->insert();
+					$reg_results = $reg[$line_item_id]->save();
 					$REG_ID = $reg[$line_item_id]->ID();
 
 					// add attendee object to attendee info in session
