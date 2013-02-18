@@ -445,7 +445,7 @@ class EE_Registration extends EE_Base_Class {
 	*/	
 	public function set_status( $STS_ID = FALSE ) {		
 		if ( ! $this->_check_for( $STS_ID, 'Status ID' )) { return FALSE; }
-		$this->_STS_ID = absint( $STS_ID );
+		$this->_STS_ID = strtoupper( sanitize_key( $STS_ID ));
 		return TRUE;
 	}
 
@@ -528,6 +528,28 @@ class EE_Registration extends EE_Base_Class {
 
 
 
+
+	/**
+	*		check that var has been passed to method
+	* 
+	* 		@access		private
+	*/	
+	private function _check_for( $var = FALSE, $var_name ) {
+
+		if ( ! $var ) {
+			$msg = sprintf( __( 'No value for %s was supplied.', 'event_espresso' ), $var_name );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		} else {
+			return TRUE;
+		}
+	}
+
+
+
+
+
+
 	/**
 	*		save object to db
 	* 
@@ -577,7 +599,7 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public
 	*/	
 	public function update() {
-		return $this->_save_to_db( array( 'TXN_ID' => $this->_TXN_ID ));
+		return $this->_save_to_db( array( 'REG_ID' => $this->_REG_ID ));
 	}
 
 
