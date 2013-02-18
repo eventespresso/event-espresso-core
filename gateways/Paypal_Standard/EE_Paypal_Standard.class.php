@@ -311,9 +311,13 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 
 		$item_num = 1;
 		$registrations = $session_data['cart']['REG']['items'];
+		require_once('EEM_Attendee.model.php');
 		foreach ($registrations as $registration) {
 			foreach ($registration['attendees'] as $attendee) {
-				$this->addField('item_name_' . $item_num, $attendee['fname'] . ' ' . $attendee['lname'] . ' attending ' . $registration['name'] . ' on ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc']);
+				//echo "paypal standard, attendee<br>\r\n";
+				//var_dump($attendee);
+				$this->addField('item_name_' . $item_num, $attendee[EEM_Attendee::fname_question_id] . ' ' 
+						. $attendee[EEM_Attendee::lname_question_id] . ' attending ' . $registration['name'] . ' on ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc']);
 				$this->addField('amount_' . $item_num, $attendee['price_paid']);
 				$this->addField('quantity_' . $item_num, '1');
 				$item_num++;

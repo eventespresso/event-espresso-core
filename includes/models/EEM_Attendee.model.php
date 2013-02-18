@@ -27,7 +27,20 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 
   	// private instance of the Attendee object
 	private static $_instance = NULL;
-
+	
+	/**
+	 * QST_ID and QST_system_IDs that relate to attendee attributes.
+	 */
+	const fname_question_id=1;
+	const lname_question_id=2;
+	const email_question_id=3;
+	const address_question_id=4;
+	const address2_question_id=5;
+	const city_question_id=6;
+	const state_question_id=7;
+	const country_question_id=8;
+	const zip_question_id=9;
+	const phone_question_id=10;
 
 
 
