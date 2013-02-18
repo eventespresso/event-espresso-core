@@ -158,7 +158,8 @@ function espresso_classes_core_autoload($className) {
 		'messages/message_type/' => 'class',
 		'messages/messenger/' => 'class',
 		'messages/defaults/' => array('class', 'core'),
-		'messages/defaults/email/' => 'class'
+		'messages/defaults/email/' => 'class',
+		'messages/data_class/' => 'class'
 		);
 
 	//assemble a list of filenames
