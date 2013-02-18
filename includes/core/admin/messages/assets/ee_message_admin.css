@@ -46,6 +46,11 @@
 	width: 12%;
 }
 
-.column-messages_setn {
+.column-messages_sent {
 	width: 10%;
+}
+
+#mtp_valid_shortcodes .inside {
+	max-height: 400px;
+	overflow: scroll;
 }
