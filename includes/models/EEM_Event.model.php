@@ -294,7 +294,7 @@ class EEM_Event  extends EEM_TempBase{
 	*/	
 	public function assemble_array_of_groups_questions_and_options( $QSGs = array(), $QSTs = array(), $QSOs = array(), $q_meta = array() ) {		
 
-		if ( empty( $QSGs ) || empty( $QSTs ) || empty( $q_meta )) {
+		if ( empty( $QSGs ) || empty( $QSTs ) /*|| empty( $q_meta )*/) {
 			EE_Error::add_error( __( 'An error occured. Insufficient data was received to process question groups and questions.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
@@ -304,30 +304,25 @@ class EEM_Event  extends EEM_TempBase{
 		if ( is_array( $QSGs )) {
 			foreach ( $QSGs as $QSG_ID => $QSG ) {
 				$questions[ $QSG_ID ] = (array)$QSG;
-				$questions[ $QSG_ID ]['QSG_form_key'] = $q_meta['input_id'];
 				$questions[ $QSG_ID ]['QSG_questions'] = array();
+				
 				if ( is_array( $QSTs )) {
 					foreach ( $QSTs as $QST_ID => $QST ) {
 						if ( $QST->QSG_ID == $QSG_ID ) {
 							
-		//					$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ] = array(
-		//							'db-col' =>  $this->_get_question_target_db_column( $QST->QST_system_ID ),
-		//							'label' => $QST->QST_display_text,
-		//							'input' => 'text',
-		//							'type' => 'string',
-		//							'sanitize' => 'no_html',
-		//							'required' => TRUE,
-		//							'validation' => TRUE,
-		//							'value' => NULL,
-		//							'format' => '%s'
-		//					);
+							$qst_name = $qst_id = $QST->QST_system_ID ? $QST->QST_system_ID : $QST->QST_ID;
+							$qst_name = isset( $QST->ANS_ID ) ? '[' . $qst_name . '][' . $QST->ANS_ID . ']' : '[' . $qst_name . ']';
+							$input_name = isset( $q_meta['input_name'] ) ? $q_meta['input_name']  : '';
+							$input_id = isset( $q_meta['input_id'] ) ? $q_meta['input_id'] : sanitize_key( $QST->QST_display_text );
+							$input_class = isset( $q_meta['input_class'] ) ? $q_meta['input_class'] : '';
+							
 							//printr( $QST, '$QST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );	
 							$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ] = (array)$QST;
-							$qst_name = $this->_generate_question_input_name( $QST );
-							$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_input_name'] = 'qstn' . $q_meta['input_name'] . '[' . $qst_name . ']';
-							$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_input_id'] = $q_meta['input_id'] . '-' . $qst_name;
-							$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_input_class'] = $q_meta['input_class'];
+							$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_input_name'] = 'qstn' . $input_name . $qst_name;
+							$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_input_id'] = $input_id . '-' . $qst_id;
+							$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_input_class'] = $input_class;
 							$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_options'] = array();
+							
 							if ( $QST->QST_type == 'SINGLE' ||$QST->QST_type == 'MULTIPLE' ||$QST->QST_type == 'DROPDOWN' ) {
 								if ( is_array( $QSOs )) {
 									foreach ( $QSOs as $QSO_ID => $QSO ) {					

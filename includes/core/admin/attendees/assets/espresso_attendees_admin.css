@@ -58,8 +58,8 @@ textarea { width:25em; }
 
 .admin-primary-mbox-total-tr { font-size:1.1em; }
 
-.display-the-hidden { float:right; padding-left:16px; background: url("../../../images/icons/additional_info-10x10.png") no-repeat scroll left center transparent; cursor:pointer; }
-.hide-the-displayed { float:right; padding-left:16px; background: url("../../../images/icons/close_additional_info-10x10.png") no-repeat scroll left center transparent; cursor:pointer; }
+.display-the-hidden { float:right; padding-left:16px; /*background: url("../../../images/icons/additional_info-10x10.png") no-repeat scroll left center transparent; */cursor:pointer; }
+.hide-the-displayed { float:right; padding-left:16px; /*background: url("../../../images/icons/close_additional_info-10x10.png") no-repeat scroll left center transparent;*/ cursor:pointer; }
 
 .lt-grey-txt  { color:#999;  text-shadow:none; }
 .float-left { float:left; }
