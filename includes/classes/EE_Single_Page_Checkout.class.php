@@ -384,7 +384,7 @@ class EE_Single_Page_Checkout {
 				$counter = 1;
 				foreach ($cart_contents['items'] as $item) {
 					//printr( $item, '$item  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
+					//echo "item in cart:";var_dump($item);
 					$step_1_line_items .= '#mer-reg-page-line-item-' . $item['id'];
 					
 					$event_queue[$cart_type]['items'][$item['line_item']]['id'] = $item['id'];
@@ -778,6 +778,7 @@ class EE_Single_Page_Checkout {
 
 		array_walk_recursive( $_POST, array( $this, 'sanitize_text_field_for_array_walk' ));
 		$valid_data = $_POST;
+		$valid_data = apply_filters('filter_hook_espresso__EE_Single_Page_Checkout__process_registration_step_1__valid_data',$valid_data);
 		//printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// if we don't have a qstn field then something went TERRIBLY WRONG !!! AHHHHHHHH!!!!!!!
@@ -814,13 +815,7 @@ class EE_Single_Page_Checkout {
 									$attendees[$line_item_id][$event_id]['attendees'][$att_nmbr][$form_input] = $input_value;
 									unset($attendees[$line_item_id][$event_id]['attendees'][$att_nmbr]['line_item_id']);
 
-									// gather other content to save to attendee table
-									if (is_array($cart_contents['options']['price_desc'])) {
-										$price_desc = explode(' : ', $cart_contents['options']['price_desc']);
-										$price_option = $price_desc[0];
-									} else {
-										$price_option = $cart_contents['options']['price_desc'];
-									}
+									
 
 									// store a bit of data about the primary attendee
 									if ($form_input == 'primary_attendee' && $input_value == 1) {
@@ -855,6 +850,9 @@ class EE_Single_Page_Checkout {
 			$success_msg = FALSE;
 			$error_msg = __('An error occured! No valid question responses were received.', 'event_espresso');
 		}
+		//do action in case a plugin wants to do something with the data submitted in step 1.
+		//passes EE_Single_Page_Checkout, and it's posted data
+		do_action('action_hook_espresso__EE_Single_Page_Checkout__process_registration_step_1__end',$this,$valid_data);
 
 		if ($this->send_ajax_response($success_msg, $error_msg)) {
 			$reg_page_step_2_url = add_query_arg(array('e_reg' => 'register', 'step' => '2'), $this->_reg_page_base_url);
@@ -1151,10 +1149,13 @@ class EE_Single_Page_Checkout {
 														isset($attendee[10]) ? $attendee[10] : NULL,		// phone
 														NULL		// social
 						);
+						
 						//add attendee to db
-						$att_results = $att[$att_nmbr]->insert();
-						$ATT_ID = $att_results['new-ID'];
+						$att_results = $att[$att_nmbr]->save();
+						$ATT_ID = $att[$att_nmbr]->ID();//$att_results['new-ID'];
+						do_action('action_hook_espresso__EE_Single_Page_Checkout__process_registration_step_3__after_attendee_save',$att_nmbr,$att[$att_nmbr]);
 					}
+					
 					
 					// add attendee object to attendee info in session
 					$session['cart']['REG']['items'][$line_item_id]['attendees'][$att_nmbr]['att_obj'] = base64_encode( serialize( $att[$att_nmbr] ));
@@ -1248,6 +1249,7 @@ class EE_Single_Page_Checkout {
 						}
 					}
 					
+					
 				}
 			}
 			
@@ -1264,6 +1266,8 @@ class EE_Single_Page_Checkout {
 			$this->_return_page_url = $response['forward_url'];
 			$success_msg = $response['msg']['success'];
 		}
+		
+		do_action('action_hook_espresso__EE_Single_Page_Checkout__process_registration_step_3__end', $this);
 		
 		//$session = $EE_Session->get_session_data();
 		//printr( $session, '$session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 
