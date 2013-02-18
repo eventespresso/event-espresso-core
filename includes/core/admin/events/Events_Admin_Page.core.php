@@ -1926,6 +1926,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			<?php
 			$QSGs = EEM_Event::instance()->get_all_question_groups();
 			$EQGs = EEM_Event::instance()->get_event_question_groups( $this->_event->id );
+			$EQGs = is_array( $EQGs ) ? $EQGs : array();
 
 			if ( ! empty( $QSGs )) {
  				$html = count( $QSGs ) > 10 ? '<div style="height:250px;overflow:auto;">' : '';
@@ -1977,6 +1978,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			<?php
 			$QSGs = EEM_Event::instance()->get_all_question_groups();
 			$EQGs = EEM_Event::instance()->get_event_question_groups( $this->_event->id, TRUE );
+			$EQGs = is_array( $EQGs ) ? $EQGs : array();
 
 			if ( ! empty( $QSGs )) {
  				$html = count( $QSGs ) > 10 ? '<div style="height:250px;overflow:auto;">' : '';
@@ -3826,10 +3828,11 @@ class Events_Admin_Page extends EE_Admin_Page {
 				if ( isset( $this->_req_data['post_id'] ) && ! empty( $this->_req_data['post_id'] )) {
 					$post_id = absint( $this->_req_data['post_id'] );
 				} else {
-					$sql = " SELECT * FROM " . EVENTS_DETAIL_TABLE;
-					$sql .= " WHERE id = '" . $event_id . "' ";
-					$wpdb->get_results($sql);
-					$post_id = $wpdb->last_result[0]->post_id;
+					$sql = "SELECT * FROM " . EVENTS_DETAIL_TABLE;
+					$sql .= " WHERE id = %d";
+					if ( $wpdb->get_results( $wpdb->prepare( $sql, $event_id ))) {
+						$post_id = $wpdb->last_result[0]->post_id;
+					}					
 				}
 
 				if ($wpdb->num_rows > 0 && !empty($this->_req_data['delete_post']) && $this->_req_data['delete_post'] == 'true') {
