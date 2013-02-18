@@ -186,6 +186,30 @@ class EEM_Registration extends EEM_TempBase {
 
 
 
+	/**
+	*		retreive a single registration from db by the ID
+	*
+	* 		@access		public
+	* 		@param		array		$REG_ID
+	*		@return 		mixed		array on success, FALSE on fail
+	*/
+	public function get_registration_by_ID( $REG_ID = FALSE ) {
+		if ( ! $REG_ID ) {
+			return FALSE;
+		}
+		
+		// retreive a particular registration
+		if ( $registration = $this->select_row_where ( array( 'REG_ID' => $REG_ID ))) {
+			$reg_array = $this->_create_objects( array( $registration ));
+			return array_shift($reg_array);
+		} else {
+			return FALSE;
+		}
+	}
+
+
+
+
 
 
 	/**
