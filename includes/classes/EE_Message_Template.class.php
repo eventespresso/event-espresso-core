@@ -406,6 +406,29 @@ class EE_Message_Template {
 		return $this->_MTP_messenger;
 	}
 
+
+	/**
+	 * get Message Messenger OBJECT
+	 *
+	 * @access public
+	 * @return object Messenger Object for the given messenger
+	 */
+	public function messenger_obj() {
+		$ref = ucwords( str_replace( '_', ' ', $this->_MTP_messenger ) );
+		$ref = str_replace( ' ', '_', $ref );
+		$classname = 'EE_' . $ref . '_messenger';
+
+		if ( !class_exists($classname) ) {
+			$msg[] = __('Messenger class loading fail.', 'event_espresso');
+			$msg[] = sprintf( __('The class name checked was "%s". Please check the spelling and case of this reference and make sure it matches the appropriate messenger file name (minus the extension) in the "/core/messages/messenger/" directory', 'event_espresso'), $classname );
+			throw new EE_Error( implode( '||', $msg ) );
+		}
+
+		//made it here so let's instantiate the object and return it.
+		$a = new ReflectionClass($classname);
+		return $a->newInstance();
+	}
+
 	/**
 	 * get Message Type
 	 * 
@@ -414,6 +437,30 @@ class EE_Message_Template {
 	 */
 	public function message_type() {
 		return $this->_MTP_message_type;
+	}
+
+
+
+	/**
+	 * get Message type OBJECT
+	 *
+	 * @access public
+	 * @return object  Message Type object for the given message type
+	 */
+	public function message_type_obj() {
+		$ref = ucwords( str_replace( '_', ' ', $this->_MTP_message_type ) );
+		$ref = str_replace( ' ', '_', $ref );
+		$classname = 'EE_' . $ref . '_message_type';
+
+		if ( !class_exists($classname) ) {
+			$msg[] = __('Message Type class loading fail.', 'event_espresso');
+			$msg[] = sprintf( __('The class name checked was "%s". Please check the spelling and case of this reference and make sure it matches the appropriate message type file name (minus the extension) in the "/core/messages/message_type/" directory', 'event_espresso'), $classname );
+			throw new EE_Error( implode( '||', $msg ) );
+		}
+
+		//made it here so let's instantiate the object and return it.
+		$a = new ReflectionClass($classname);
+		return $a->newInstance();
 	}
 
 
@@ -437,6 +484,30 @@ class EE_Message_Template {
 	 */
 	public function contexts() {
 		return $this->_MTP_context;
+	}
+
+
+	/**
+	 * This returns the set context array configured in the message type object
+	 *
+	 * @access public
+	 * @return array array of contexts and their configuration.
+	 */
+	public function contexts_config() {
+		$obj = $this->message_type_obj();
+		return $obj->get_contexts();
+	}
+
+
+	/**
+	 * This returns the context_label for contexts as set in the message type object
+	 *
+	 * @access public
+	 * @return string label for "context"
+	 */
+	public function context_label() {
+		$obj = $this->message_type_obj();
+		return $obj->get_context_label();
 	}
 
 	/**
@@ -483,6 +554,84 @@ class EE_Message_Template {
 		return $this->_MTP_is_active;
 	}
 
+
+
+	/**
+	 * This will return an array of shortcodes => labels from the messenger and message_type objecst associated with this template.
+	 * 
+	 * @access public
+	 * @param string $context what context we're going to return shortcodes for
+	 * @param array $fields what fields we're returning valid shortcodes for.  If empty then we assume all fields are to be merged and returned.
+	 * @return mixed (array|bool) an array of shortcodes in the format array( '[shortcode] => 'label') OR FALSE if no shortcodes found.
+	 */
+	public function get_shortcodes( $context, $fields = array() ) {
+		$shortcodes = array();
+
+		$messenger = $this->messenger_obj();
+		$message_type = $this->message_type_obj();
+
+		$m_shortcodes = $messenger->get_valid_shortcodes();
+		$mt_shortcodes = $message_type->get_valid_shortcodes();
+
+		//let's make sure only the valid shortcodes for the given context are returned.  We will merge that with all shortcodes for the given fields.  If $field is empty then we'll just return the shortcodes for all fields
+		$valid_shortcodes = isset($mt_shortcodes[$context]) ? $mt_shortcodes[$context] : array();
+
+		if ( empty( $fields ) ) {
+			foreach ( $m_shortcodes as $ms ) {
+				$valid_shortcodes = array_merge( $valid_shortcodes, $ms );
+			}
+		} else {
+			foreach ( $fields as $field ) {
+				$valid_shortcodes = isset( $m_shortcodes[$field] ) ? array_merge( $valid_shortcodes, $m_shortcodes[$field] ) : $valid_shortcodes;
+			}
+		}
+
+
+		//let's merge shortcodes and make sure we've got unique refs
+		$all_scs = array_unique( $valid_shortcodes );
+
+		//now we can use the assembled array to instantiate the relevant shortcode objects
+		$sc_objs = $this->_get_shortcode_objects( $all_scs );
+
+		//great! check to see if sc_objs is empty.  If it is return FALSE. Otherwise we'll go ahead and merge the array of shortcodes and send back.
+		if ( empty( $sc_objs ) ) return FALSE;
+
+		foreach ( $sc_objs as $obj ) {
+			$shortcodes = array_merge( $shortcodes, $obj->get_shortcodes() );
+		}
+
+		return $shortcodes;
+	}
+
+
+
+	/**
+	 * this just returns and array of instantiated shortcode objects given an array of object refs
+	 *
+	 * @access private
+	 * @return array 	an array of EE_Shortcode objects
+	 */
+	private function _get_shortcode_objects( $sc_refs ) {
+		
+		$sc_objs = array();
+
+		foreach ( $sc_refs as $shortcode_ref ) {
+			$ref = ucwords( str_replace('_', ' ', $shortcode_ref ) );
+			$ref = str_replace( ' ', '_', $ref );
+			$classname = 'EE_' . $ref . '_Shortcodes';
+
+			if ( !class_exists( $classname ) ) {
+				$msg[] = __('Shortcode library loading fail.', 'event_espresso');
+				$msg[] = sprintf( __('The class name checked was "%s". Please check the spelling and case of this reference and make sure it matches the appropriate shortcode library file name (minus the extension) in the "/library/shortcodes/" directory', 'event_espresso'), $classname );
+				throw new EE_Error( implode( '||', $msg ) );
+			}
+
+			$a = new ReflectionClass( $classname );
+			$sc_objs[] = $a->newInstance();
+		}
+
+		return $sc_objs;
+	}
 
 
 	/**

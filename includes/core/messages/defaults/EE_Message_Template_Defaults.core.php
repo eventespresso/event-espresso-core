@@ -192,10 +192,10 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 		//first are we setting up templates after messenger activation? If so then we need to get defaults from the messenger
 		if ( empty($evt_id) && $is_global ) {
 			//setup templates array
-			foreach ( $this->_contexts as $context ) {
+			foreach ( $this->_contexts as $context => $details ) {
 				foreach ( $this->_fields as $field => $field_type ) {
 					if ( $field !== 'extra' )
-						$this->_templates[$context][$field] = ( isset($this->_defaults['mt'][$field]) ? maybe_serialize($this->_defaults['mt'][$field]) : maybe_serialize($this->_defaults['m'][$field]) );
+						$this->_templates[$context][$field] = ( isset($this->_defaults['mt'][$field][$context]) ? maybe_serialize($this->_defaults['mt'][$field][$context]) : maybe_serialize($this->_defaults['m'][$field]) );
 				}
 			}
 
@@ -208,7 +208,7 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 				$e_id = $template_object->event();
 				if ( $this->_message_type->name == $mt && empty($e_id) ) {
 					$context_templates = $template_object->context_templates();
-					foreach ( $this->_contexts as $context ) {
+					foreach ( $this->_contexts as $context => $details ) {
 						foreach ( $this->_fields as $field => $field_type ) {
 							if ( $field !== 'extra' ) {
 								$this->_templates[$context][$field] = ( isset($context_templates[$context][$field] ) ) ? $context_templates[$context][$field]['content'] : '';
@@ -254,12 +254,31 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 		$this->_message_type = $active_message_types[$this->_mt_name];
 		$this->_fields = $this->_messenger->get_template_fields();
 		$this->_contexts = $this->_message_type->get_contexts();
+		$this->_valid_shortcodes = $this->_get_valid_shortcodes();
 		$this->_defaults = array(
 			'm' => $this->_messenger->get_default_field_content(),
 			'mt' => $this->_message_type->get_default_field_content()
 			);
 	}
 
+
+
+
+	/**
+	 * This just gets the list of valid shortcodes from the messenger and message type and returns them
+	 *
+	 * @access private
+	 * @return array an array of valid shortcodes => $labels
+	 */
+	private function _get_valid_shortcodes() {
+		$m_shortcodes = $this->_messenger->get_valid_shortcodes();
+		$mt_shortcodes = $this->_message_type->get_valid_shortcodes();
+
+		//we don't need the actual shortcodes here.  We just need the array of valid shortcodes for each context and field.
+		$valid_shortcodes = array_merge( $m_shortcodes, $mt_shortcodes );
+
+		return $valid_shortcodes;
+	}
 	
 	
 
@@ -287,6 +306,8 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 	private function _create_new_templates( $evt_id, $is_global ) {
 
 		$this->_set_templates( $evt_id, $is_global );
+
+		//allow for child classes to override.
 		$this->_change_templates( $evt_id, $is_global );
 
 		//necessary properties are set, let's save the default templates
@@ -303,7 +324,7 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 			'MTP_is_active' => 1,
 			);
 
-		foreach ( $this->_contexts as $context ) {
+		foreach ( $this->_contexts as $context => $details ) {
 			foreach ( $this->_fields as $field => $field_type ) {
 				if ( $field != 'extra' ) {
 					$template_data['MTP_context'] = $context;
@@ -321,7 +342,7 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 		$success_array = array(
 			'GRP_ID' => $template_data['GRP_ID'],
 			'EVT_ID' => $template_data['EVT_ID'],
-			'MTP_context' => $this->_contexts[0]
+			'MTP_context' => key($this->_contexts)
 		);	
 
 		return $success_array;

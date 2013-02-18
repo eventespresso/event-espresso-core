@@ -231,7 +231,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *     			'persistent' => false //if you want the nav tab to ONLY display when the specific route is displayed then add this parameter.
 	 *     		'list_table' => 'name_of_list_table' //string for list table class to be loaded for this admin_page.
 	 *     		'metaboxes' => array('metabox1', 'metabox2'), //if present this key indicates we want to load metaboxes set for eventespresso admin pages. 
-	 *     		'has_metaboxes' => true //this boolean flag can simply be used to indicate if the route will have metaboxes.  Typically this is used if the 'metaboxes' index is not used because metaboxes are added later.  We just use this flag to make sure the necessary js gets enqueued on page load.
+	 *     		'has_metaboxes' => true, //this boolean flag can simply be used to indicate if the route will have metaboxes.  Typically this is used if the 'metaboxes' index is not used because metaboxes are added later.  We just use this flag to make sure the necessary js gets enqueued on page load.
+	 *     		'has_help_popups' => false //defaults(true) //this boolean flag can simply be used to indicate if the given route has help popups setup and if it does then we need to make sure thickbox is enqueued.
 	 *     		'columns' => array(4, 2) //this key triggers the setup of a page that uses columns (metaboxes).  The array indicates the max number of columns (4) and the default number of columns on page load (2).  There is an option in the "screen_options" dropdown that is setup so users can pick what columns they want to display.
 	 * 			
 	 * )
@@ -815,7 +816,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_add_admin_page_ajax_loading_img();
 		$this->_add_admin_page_overlay();
 
-
 		//if metaboxes are present we need to add the nonce field
 		if ( isset($this->_route_config['metaboxes']) || ( isset($this->_route_config['has_metaboxes']) && $this->_route_config['has_metaboxes'] ) || isset($this->_route_config['list_table']) ) {
 			wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false);
@@ -823,7 +823,127 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 	}
 
+
+
+	/**
+	 * This function sees if there is a method for help popup content existing for the given route.  If there is then we'll use the retrieved array to output the content using the template.
+	 *
+	 * For child classes:
+	 * If you want to have help popups then in your templates or your content you set "triggers" for the content using the "_set_help_trigger('help_trigger_id')" where "help_trigger_id" is what you will use later in your custom method for the help popup content on that page.
+	 * Then in your Child_Admin_Page class you need to define a help popup method for the content in the format "_help_popup_content_{route_name}()"  So if you are setting help content for the 'edit_event' route you should have a method named "_help_popup_content_edit_route".
+	 * In your defined "help_popup_content_..." method.  You must prepare and return an array in the following format
+	 * array(
+	 * 	'help_trigger_id' => array(
+	 * 		'title' => __('localized title for popup', 'event_espresso'),
+	 * 		'content' => __('localized content for popup', 'event_espresso')
+	 * 	)
+	 * );
+	 *
+	 * Then the EE_Admin_Parent will take care of making sure that is setup properly on the correct route.
+	 * 
+	 *
+	 * @access protected
+	 * @return string content
+	 */
+	protected function _set_help_popup_content( $help_array = array(), $display = FALSE ) {
+		$content = '';
+
+		$help_array = empty( $help_array ) ? $this->_get_help_content() : $help_array;
+		$template_path = EE_CORE_ADMIN . 'admin_help_popup.template.php';
+
+
+		//loop through the array and setup content
+		foreach ( $help_array as $trigger => $help ) {
+			//make sure the array is setup properly
+			if ( !isset($help['title']) || !isset($help['content'] ) ) {
+				throw new EE_Error( __('Does not look like the popup content array has been setup correctly.  Might want to double check that.  Read the comments for the _get_help_popup_content method found in "EE_Admin_Page" class', 'event_espresso') );
+			}
+
+			//we're good so let'd setup the template vars and then assign parsed template content to our content.
+			$template_args = array(
+				'help_popup_id' => $trigger,
+				'help_popup_title' => $help['title'],
+				'help_popup_content' => $help['content']
+				); 
+
+			$content .= espresso_display_template( $template_path, $template_args, TRUE );
+		}
+
+		if ( $display )
+			echo $content;
+		else
+			return $content;
+	}
+
+
+
+
+	/**
+	 * All this does is retrive the help content array if set by the EE_Admin_Page child
+	 *
+	 * @access private
+	 * @return array properly formatted array for help popup content
+	 */
+	private function _get_help_content() {
+		//what is the method we're looking for?
+		$method_name = '_help_popup_content_' . $this->_req_action;
+
+		//if method doesn't exist let's get out.
+		if ( !method_exists( $this, $method_name ) )
+			return array();
+
+		//k we're good to go let's retrieve the help array
+		$help_array = call_user_func( array( $this, $method_name ) );
+
+		//make sure we've got an array!
+		if ( !is_array($help_array) ) {
+			throw new EE_Error( __('Something went wrong with help popup content generation. Expecting an array and well, this ain\'t no array bub.', 'event_espresso' ) );
+		}
+
+		return $help_array;
+	}
 	
+
+
+	/**
+	 * EE Admin Pages can use this to set a properly formatted trigger for a help popup.
+	 *
+	 * By default the trigger html is printed.  Otherwise it can be returned if the $display flag is set "false"
+	 *
+	 * See comments made on the _set_help_content method for understanding other parts to the help popup tool.
+	 *
+	 * 
+	 * @access protected
+	 * @param string  $trigger_id reference for retrieving the trigger content for the popup
+	 * @param boolean $display    if false then we return the trigger string
+	 * @param array $dimensions an array of dimensions for the box (array(h,w))
+	 * @return string
+	 */
+	protected function _set_help_trigger( $trigger_id, $display = TRUE, $dimensions = array( '400', '640') ) {
+
+		if ( defined('DOING_AJAX') ) return;
+
+		//let's check and see if there is any content set for this popup.  If there isn't then we'll include a default title and content so that developers know something needs to be corrected
+		$help_array = $this->_get_help_content();
+		$help_content = '';
+
+		if ( empty( $help_array ) || !isset( $help_array[$trigger_id] ) ) {
+			$help_array[$trigger_id] = array(
+				'title' => __('Missing Content', 'event_espresso'),
+				'content' => __('A trigger has been set that doesn\'t have any corresponding content. Make sure you have set the help content. (see the "_set_help_popup_content" method in the EE_Admin_Page for instructions.)', 'event_espresso')
+				);
+			$help_content = $this->_set_help_popup_content( $help_array, FALSE );
+		}
+
+		//let's setup the trigger
+		$content = '<a class="ee-dialog" href="?height='. $dimensions[0] . '&width=' . $dimensions[1] . '&inlineId=' . $trigger_id . '" target="_blank"><span class="question ee-help-popup-question"></span></a>';
+		$content = $content . $help_content;
+
+		if ( $display )
+			echo $content;
+		else
+			return $content;
+	}
 
 
 	/**
@@ -930,7 +1050,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script('jquery-ui-timepicker-addon', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker'), EVENT_ESPRESSO_VERSION, true );
 		wp_register_script('event_editor_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_editor.js', array('jquery-ui-slider', 'jquery-ui-timepicker-addon'), EVENT_ESPRESSO_VERSION, true);
 		wp_register_script('event-espresso-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_espresso.js', array('jquery'), EVENT_ESPRESSO_VERSION, true);
-		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('jquery'), EVENT_ESPRESSO_VERSION, true );
+		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('jquery', 'ee-parse-uri'), EVENT_ESPRESSO_VERSION, true );
 		wp_register_script('jquery-validate', EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.min.js", array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
 		wp_register_script('espresso_ajax_table_sorting', EE_CORE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js", array('ee_admin_js', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
 
@@ -977,6 +1097,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//taking care of metaboxes
 		if ( isset($this->_route_config['metaboxes'] ) || isset($this->_route_config['has_metaboxes']) ) {
 			wp_enqueue_script('dashboard');
+		}
+
+		//enqueue thickbox for ee help popups.  default is to enqueue unless its explicitly set to false since we're assuming all EE pages will have popups
+		if ( !isset( $this->_route_config['has_help_popups']) || ( isset( $this->_route_config['has_help_popups']) && $this->_route_config['has_help_popups'] ) ) {
+			wp_enqueue_script('ee_admin_js');
+			wp_enqueue_style('ee-admin-css');
 		}
 		
 
@@ -1739,6 +1865,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		$this->_template_args['before_admin_page_content'] = apply_filters( 'filter_hook_espresso_before_admin_page_content' . $this->_current_page . $this->_current_view, isset( $this->_template_args['before_admin_page_content'] ) ? $this->_template_args['before_admin_page_content'] : '');
 		$this->_template_args['after_admin_page_content'] = apply_filters( 'filter_hook_espresso_after_admin_page_content' . $this->_current_page . $this->_current_view, isset( $this->_template_args['after_admin_page_content'] ) ? $this->_template_args['after_admin_page_content'] : '');
+
+		$this->_template_args['after_admin_page_content'] .= $this->_set_help_popup_content();
 
 		
 		
