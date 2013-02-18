@@ -254,12 +254,31 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 		$this->_message_type = $active_message_types[$this->_mt_name];
 		$this->_fields = $this->_messenger->get_template_fields();
 		$this->_contexts = $this->_message_type->get_contexts();
+		$this->_valid_shortcodes = $this->_get_valid_shortcodes();
 		$this->_defaults = array(
 			'm' => $this->_messenger->get_default_field_content(),
 			'mt' => $this->_message_type->get_default_field_content()
 			);
 	}
 
+
+
+
+	/**
+	 * This just gets the list of valid shortcodes from the messenger and message type and returns them
+	 *
+	 * @access private
+	 * @return array an array of valid shortcodes => $labels
+	 */
+	private function _get_valid_shortcodes() {
+		$m_shortcodes = $this->_messenger->get_valid_shortcodes();
+		$mt_shortcodes = $this->_message_type->get_valid_shortcodes();
+
+		//we don't need the actual shortcodes here.  We just need the array of valid shortcodes for each context and field.
+		$valid_shortcodes = array_merge( $m_shortcodes, $mt_shortcodes );
+
+		return $valid_shortcodes;
+	}
 	
 	
 
@@ -287,6 +306,8 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 	private function _create_new_templates( $evt_id, $is_global ) {
 
 		$this->_set_templates( $evt_id, $is_global );
+
+		//allow for child classes to override.
 		$this->_change_templates( $evt_id, $is_global );
 
 		//necessary properties are set, let's save the default templates

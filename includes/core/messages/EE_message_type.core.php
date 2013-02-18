@@ -193,8 +193,8 @@ abstract class EE_message_type extends EE_Base {
 	public function __construct() {
 		$this->_set_admin_settings_fields();
 		$this->_set_existing_admin_settings();
-		$this->_set_default_field_content();
 		$this->_set_contexts();
+		$this->_set_default_field_content();
 		$this->_set_admin_pages();
 		$this->_set_valid_shortcodes();
 	}
@@ -407,7 +407,7 @@ abstract class EE_message_type extends EE_Base {
 		$this->_setup_data();
 
 		//process addressees for each context.  Child classes will have to have methods for each context defined to handle the processing of the data object within them
-		foreach ( $this->_contexts as $context ) {
+		foreach ( $this->_contexts as $context => $details ) {
 			$xpctd_method = '_' . $context . '_adressees';
 
 			if ( !method_exists( $this, $xpctd_method ) )

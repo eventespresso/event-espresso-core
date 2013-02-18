@@ -81,30 +81,27 @@ class EE_Payment_message_type extends EE_message_type {
 
 
 	protected function _default_template_field_subject() {
-		foreach ( $this->_contexts as $context ) {
+		foreach ( $this->_contexts as $context => $details ) {
 			$content[$context] = 'Payment processed for [EVENT_NAME]';
 		};
 		return $content;
 	}
 
 	protected function _default_template_field_content() {
-		$content = array();
-		$content .= "<h3>Payment Details:</h3>\n";
+		$content = "<h3>Payment Details:</h3>\n";
 		$content .= "<p>For Event: [EVENT_NAME]</p>\n";
 		$content .= "<p>Payment status: [PAYMENT_STATUS]</p>\n";
 		$content .= "<p>Payment gateway: [PAYMENT_GATEWAY]</p>\n";
 		$content .= "<p>Total Cost: [TOTAL_COST]</p>\n";
 		$content .= "<p>Event Price: [EVENT_PRICE]</p>\n";
-		$content .= "<p><ul>[ATTENDEE_LIST]</ul></p>\n";
 		$content .= "\n<br /><p>Thanks for your purchase,</p>\n";
 		$content .= "<p>[COMPANY]</p>\n";
 		$content .= "<p>[CO_ADD1]</p>\n";
 		$content .= "<p>[CO_ADD2]</p>\n";
 		$content .= "<p>[CO_STATE], [CO_ZIP]\n";
 
-		foreach ( $this->_contexts as $context ) {
-			$tcontent[$context]['main'] = $content;
-			$tcontent[$context]['attendee_list'] = "<li>[FIRST_NAME] [LAST_NAME]</li>";
+		foreach ( $this->_contexts as $context => $details ) {
+			$tcontent[$context] = $content;
 		}
 
 		return $tcontent;
@@ -185,7 +182,8 @@ class EE_Payment_message_type extends EE_message_type {
 				'events' => $admin_events[$event_admin],
 				'billing' => $this->data->billing,
 				'taxes' => $this->data->taxes,
-				'txn' => $this->data->txn
+				'txn' => $this->data->txn,
+				'primary_attendee_email' => $this->data['primary_attendee']['email']
 				);
 			$addressees[] = new EE_Messages_Addressee( $aee );
 		}
