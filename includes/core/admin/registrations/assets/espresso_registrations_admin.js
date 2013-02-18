@@ -44,49 +44,30 @@ jQuery(document).ready(function($) {
 	});
 
 
-	$('.confirm-delete').click(function() {
-		var what = $(this).attr('rel');
-		var answer = confirm('Are you absolutely sure you want to delete this '+what+'?\nThis action will delete ALL DATA asscociated with this '+what+'!!!\nThis can NOT be undone!!!');
-  		return answer;
-	});
-
-	$('.updated.fade').delay(5000).fadeOut();
 
 
-	// generic click event for displaying and giving focus to an element and hiding control 
-	$('.display-the-hidden').click(function() {
-		// get target element from "this" (the control element's) "rel" attribute
-		var item_to_display = $(this).attr("rel"); 
-		var control = $(this);
-		// display the target's div container - use slideToggle or removeClass
-		$('#'+item_to_display+'-dv').slideToggle(500, function() {
-			// hide the control element
-			control.addClass('hidden');  
-			// display the target div's hide link
-			$('#hide-'+item_to_display).removeClass('hidden'); 
-			// if hiding/showing a form input, then id of the form input must = item_to_display
-			//$('#'+item_to_display).focus(); // add focus to the target
-		}); 
-		return false;
-	});
-
-	// generic click event for re-hiding an element and displaying it's display control 
-	$('.hide-the-displayed').click(function() {
-		// get target element from "this" (the control element's) "rel" attribute
-		var item_to_hide = $(this).attr("rel"); 
-		var control = $(this);
-		// hide the target's div container - use slideToggle or addClass
-		$('#'+item_to_hide+'-dv').slideToggle(500, function() {
-			//$('#'+item_to_hide+'-dv').delay(250).addClass('hidden'); 
-			// hide the control element
-			control.addClass('hidden');  
-			// display the control element that toggles display of this element
-			$('#display-'+item_to_hide).removeClass('hidden');  
-		}); 
-		return false;
+	
+	$( '.reg-admin-attendee-questions-input-td' ).each(function() {
+		$(this).find('input').prop( 'disabled', true );
 	});	
-
+	
+	$('#reg-admin-attendee-questions-frm').on( 'click', '.reg-admin-edit-attendee-question-lnk', function(e) {
+		e.preventDefault();
+		$(this).closest('table').find('.reg-admin-attendee-questions-input-td' ).each(function() {
+			$(this).removeClass('disabled-input');
+			$(this).find('input').prop( 'disabled', false ).addClass('editable-input');
+		});	
+	});
+	
+	$('#reg-admin-attendee-questions-frm').on( 'change', '.editable-input', function(e) {
+		$(this).removeClass('editable-input').addClass('edited-input');
+		var edit_lnk = $(this).closest('table').find('.reg-admin-edit-attendee-question-td' ).html();
+		var edit_lnk = '<span class="reminder-spn">click "Update Attendee Questions" to save your changes<span><span class="hidden">' + edit_lnk + '<span>';
+		$(this).closest('table').find('.reg-admin-edit-attendee-question-td' ).html( edit_lnk );
+		$('#reg-admin-attendee-questions-submit').prop( 'disabled', false );
+	});
 
 
 });
+
 

@@ -66,7 +66,7 @@ jQuery(document).ready(function($) {
 	$('.dtm-inp').change( function() {
 		$('#process_datetimes').val(1);
 	});
-	// or if any datetime buttons are clicked	
+	// or if any datetime buttons are clicked
 	$('.dtm-inp-btn').click( function() {
 		$('#process_datetimes').val(1);
 	});
@@ -469,8 +469,6 @@ jQuery(document).ready(function($) {
 		$(this).parents('.edit-ticket-price-use-dates-tbl-row').next().find('.edit-ticket-price-dates').slideUp().parent().animate({ 'padding-top' : '0', 'padding-bottom' : '0' }, 250);
 		$(this).parents('.edit-ticket-price-use-dates-tbl-row').next().next().find('.edit-ticket-price-dates').slideUp().parent().animate({ 'padding-top' : '0', 'padding-bottom' : '0' }, 250);
 	});
-
-
 
 
 

@@ -36,7 +36,9 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	public $show_on_menu;
 
 	//set in _set_defaults
-	protected $_dir_name;
+	protected $_folder_name;
+	protected $_file_name;
+	public $hook_file;
 	protected $_wp_page_slug;
 
 
@@ -68,7 +70,8 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		add_action('admin_enqueue_scripts', array($this, 'load_wp_global_scripts_styles'), 5 );
 
 		//load initial stuff.
-		$this->_initialize_admin_page();
+		$this->_set_file_and_folder_name();
+
 
 		//some global constants
 		if ( !defined('EE_FF_HELPER') )
@@ -150,7 +153,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	 * @return  void
 	 */
 	private function _set_defaults() {
-		$this->dir_name = $this->_wp_page_slug = $this->capability = NULL;
+		$this->_file_name = $this->_folder_name = $this->_wp_page_slug = $this->capability = NULL;
 		$this->show_on_menu = TRUE;
 		$this->_load_page = FALSE;
 	}
@@ -187,12 +190,13 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 
 
+
 	public function set_page_dependencies($wp_page_slug) {
 		if ( !$this->_load_page ) return;
 
 		if ( !is_object($this->_loaded_page_object) ) {
 			$msg[] = __('We can\'t load the page because we\'re missing a valid page object that tells us what to load', 'event_espresso');
-			$msg[] = $msg[0] . "\r\n" . sprintf( __('The custom slug you have set for this page is %s. This means we\'re looking for the class %s_Admin_Page (found in %s_Admin_Page.core.php) within your %s directory', 'event_espresso'), $this->_dir_name, $this->_dir_name, $this->_dir_name, $this->menu_label);
+			$msg[] = $msg[0] . "\r\n" . sprintf( __('The custom slug you have set for this page is %s. This means we\'re looking for the class %s_Admin_Page (found in %s_Admin_Page.core.php) within your %s directory', 'event_espresso'), $this->_file_name, $this->_file_name, $this->_file_name, $this->menu_label);
 			throw new EE_Error( implode( '||', $msg) );
 		}
 
@@ -204,33 +208,80 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	}
 
 
+	/**
+	 * This executes the intial page loads for EE_Admin pages to take care of any ajax or other code needing to run before the load-page... hook.
+	 * Note, the page loads are happening around the wp_init hook.
+	 * @return [type] [description]
+	 */
+	public function do_initial_loads() {
+		$this->_initialize_admin_page();
+	}
+
+
+	/**
+	 * all we're doing here is setting the $_file_name property for later use.
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _set_file_and_folder_name() {
+		$bt = debug_backtrace();
+
+		//we're using this to get the actual folder name of the CALLING class (i.e. the child class that extends this).  Why?  Because $this->menu_slug may be different than the folder name (to avoid conflicts with other plugins)
+		$this->_folder_name = basename(dirname($bt[1]['file']));
+
+		$this->_file_name = preg_replace( '/^ee/' , 'EE', $this->_folder_name );
+		$this->_file_name = ucwords( str_replace('_', ' ', $this->_file_name) );
+		$this->_file_name = str_replace(' ', '_', $this->_file_name);
+	}
+
+
+	/**
+	 * This automatically checks if we have a hook class in the loaded child directory.  If we DO then we will register it with the appropriate pages.  That way all we have to do is make sure the file is named correctly and "dropped" in.  
+	 * Example: if we wanted to set this up for Messages hooking into Events then we would do:  events_Messages_Hooks.class.php
+	 * 
+	 * @return void
+	 */
+	public function register_hooks() {
+
+		//get a list of files in the directory that have the "Hook" in their name
+		if ( $hook_files = glob( EE_CORE_ADMIN . $this->_folder_name . DS . '*' . $this->_file_name . '_Hooks.class.php' ) ) {
+			foreach ( $hook_files as $file ) {
+				//lets get the linked admin.
+				$this->hook_file = str_replace(EE_CORE_ADMIN . $this->_folder_name . DS, '', $file );
+				$rel_admin = str_replace( '_' . $this->_file_name . '_Hooks.class.php', '', $this->hook_file);
+				$rel_admin = strtolower($rel_admin);
+				$rel_admin_hook = 'filter_hook_espresso_do_other_page_hooks_' . $rel_admin;
+				$filter = add_filter( $rel_admin_hook, array($this, 'load_admin_hook') );
+			}
+		}
+	}
+
+
+
+	public function load_admin_hook($registered_pages) {
+		$hook_file = (array) $this->hook_file;
+		return array_merge($hook_file, $registered_pages);
+	}
 
 
 	/**
 	 * _initialize_admin_page
 	 * @see  initialize_admin_page() for info
 	 */
-	protected function _initialize_admin_page() {
+	protected function _initialize_admin_page() {		
+		
 		//JUST CHECK WE'RE ON RIGHT PAGE.
 		if ( !isset( $_REQUEST['page'] ) || $_REQUEST['page'] != $this->menu_slug )
 			return; //not on the right page so let's get out.
-
 		$this->_load_page = TRUE;
 
-		$bt = debug_backtrace();
-
-		//we're using this to get the actual folder name of the CALLING class (i.e. the child class that extends this).  Why?  Because $this->menu_slug may be different than the folder name (to avoid conflicts with other plugins)
-		$name = basename(dirname($bt[1]['file']));
-
-		$this->_dir_name = preg_replace( '/^ee/' , 'EE', $name );
-		$this->_dir_name = ucwords( str_replace('_', ' ', $this->_dir_name) );
-		$this->_dir_name = str_replace(' ', '_', $this->_dir_name);
-
 		//we don't need to do a page_request check here because it's only called via WP menu system.
-		$admin_page = $this->_dir_name . '_Admin_Page';
+		$admin_page = $this->_file_name . '_Admin_Page';
 		
 		// define requested admin page class name then load the file and instantiate
-		$path_to_file = str_replace( array( '\\', '/' ), DS, EE_CORE_ADMIN . $name . DS . $admin_page . '.core.php' );
+		$path_to_file = str_replace( array( '\\', '/' ), DS, EE_CORE_ADMIN . $this->_folder_name . DS . $admin_page . '.core.php' );
+		$path_to_file=apply_filters("filter_hooks_espresso_path_to_{$this->menu_slug}_{$admin_page}",$path_to_file);//so if the file would be in EE_CORE_ADMIN/attendees/Attendee_Admin_Page.core.php, the filter would be filter_hooks_espresso_path_to_attendees_Attendee_Admin_Page
 		if ( is_readable( $path_to_file )) {					
 			
 			/**

@@ -10,7 +10,7 @@
 
 /* if ($wpdb->get_var("SHOW TABLES LIKE $table") == $table) {
   $wpdb->query("ALTER TABLE $table DROP INDEX date");
-  } */
+  } */ 
 
 //Credit: http://flav36rs.com/2010/04/02/wp-dbdelta-function-cannot-modify-unique-keys/
 //This fixes some tables that may have been named wrong in an earlier version of the plugin
@@ -94,107 +94,260 @@ function espresso_fix_org_options() {
 	update_user_meta($espresso_wp_user, 'events_organization_settings', $org_options);
 }
 
+
+
+
+
+
 function espresso_initialize_system_questions() {
+	
+	// QUESTION GROUPS
 	global $wpdb;
-
-	$system_name_data = "SELECT system_name FROM " . $wpdb->prefix . "events_question";
-
-	$system_names = $wpdb->get_results($system_name_data);
-
-	foreach ($system_names as $system_name) {
-		switch ($system_name->system_name) {
-			case 'fname':
-				$fname = true;
-				break;
-			case 'lname':
-				$lname = true;
-				break;
-			case 'email':
-				$email = true;
-				break;
-			case 'address':
-				$adress = true;
-				break;
-			case 'address2':
-				$adress2 = true;
-				break;
-			case 'city':
-				$city = true;
-				break;
-			case 'state':
-				$state = true;
-				break;
-			case 'zip':
-				$zip = true;
-				break;
-			case 'country' : 
-				$country = true;
-				break;
-			case 'phone':
-				$phone = true;
-				break;
+	$SQL = 'SELECT QSG_system_ID FROM ' . $wpdb->prefix . 'esp_question_group WHERE QSG_system_ID != 0';
+	// what we have
+	$question_groups = $wpdb->get_col( $SQL );
+	// check the reponse
+	$question_groups = is_array( $question_groups ) ? $question_groups : array();
+	// what we should have
+	$QSG_system_IDs = array( 1, 2 );
+	// loop thru what we should have and compare to what we have
+	foreach ( $QSG_system_IDs as $QSG_system_ID ) {
+		// if we don't have what we should have
+		if ( ! in_array( $QSG_system_ID, $question_groups )) {
+			// add it
+			switch ( $QSG_system_ID ) {
+				
+				case 1:
+						$QSG_values = array( 
+								'QSG_name' => 'Personal Information',
+								'QSG_identifier' => 'personal-information-' . time(),
+								'QSG_desc' => '',
+								'QSG_order' => 1,
+								'QSG_show_group_name' => 1,
+								'QSG_show_group_desc' => 1,
+								'QSG_system_ID' => 1,
+								'QSG_deleted' => 0
+							);
+					break;
+					
+				case 2:
+						$QSG_values = array( 
+								'QSG_name' => 'Address Information',
+								'QSG_identifier' => 'address-information-' . time(),
+								'QSG_desc' => '',
+								'QSG_order' => 2,
+								'QSG_show_group_name' => 1,
+								'QSG_show_group_desc' => 1,
+								'QSG_system_ID' => 2,
+								'QSG_deleted' => 0
+							);
+					break;
+					
+			}
+			// insert system question
+			$wpdb->insert(
+				$wpdb->prefix . 'esp_question_group', 
+				$QSG_values, 
+				array('%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d' )
+			);
+			$QSG_IDs[ $QSG_system_ID ] = $wpdb->insert_id;		
 		}
 	}
 
-	if (empty($fname))
-		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'First Name', 'question_type' => 'TEXT', 'system_name' => 'fname', 'required' => true, 'sequence' => '0'), array('%s', '%s', '%s', '%s', '%s'));
 
-	if (empty($lname))
-		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Last Name', 'question_type' => 'TEXT', 'system_name' => 'lname', 'required' => true, 'sequence' => '1'), array('%s', '%s', '%s', '%s', '%s'));
-
-	if (empty($email))
-		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Email', 'question_type' => 'TEXT', 'system_name' => 'email', 'required' => true, 'sequence' => '2'), array('%s', '%s', '%s', '%s', '%s'));
-
-	if (empty($adress))
-		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Address', 'system_name' => 'address', 'sequence' => '3'), array('%s', '%s', '%s'));
-
-	if (empty($adress2))
-		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Address 2', 'system_name' => 'address2', 'sequence' => '3'), array('%s', '%s', '%s'));
-
-	if (empty($city))
-		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'City', 'system_name' => 'city', 'sequence' => '4'), array('%s', '%s', '%s'));
-
-	if (empty($state))
-		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'State', 'system_name' => 'state', 'sequence' => '5'), array('%s', '%s', '%s'));
-
-	if (empty($zip))
-		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Zip', 'system_name' => 'zip', 'sequence' => '6'), array('%s', '%s', '%s'));
-
-	if (empty($country))
-		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Country', 'system_name' => 'country', 'sequence' => '6'), array('%s', '%s', '%s'));
-
-	if (empty($phone))
-		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Phone', 'system_name' => 'phone', 'sequence' => '7'), array('%s', '%s', '%s'));
-
-	$system_group = $wpdb->get_row("SELECT system_group FROM " . $wpdb->prefix . "events_qst_group" . " WHERE system_group = 1");
-
-	if ($wpdb->num_rows == 0) {
-
-		$wpdb->insert($wpdb->prefix . "events_qst_group", array('group_name' => 'Personal Information', 'group_identifier' => sanitize_title_with_dashes('personal_information-' . time()), 'system_group' => 1), array('%s', '%s', '%d'));
-
-		$personal_group_id = $wpdb->insert_id;
-
-		$wpdb->insert($wpdb->prefix . "events_qst_group", array('group_name' => 'Address Information', 'group_identifier' => sanitize_title_with_dashes('address_information-' . time()), 'system_group' => 0), array('%s', '%s', '%d'));
-
-		$address_group_id = $wpdb->insert_id;
-
-		$system_name_data = "SELECT id, system_name FROM " . $wpdb->prefix . "events_question" . " where system_name IN ('fname', 'lname', 'email')";
-		$system_names = $wpdb->get_results($system_name_data);
-
-		foreach ($system_names as $system_name) {
-
-			$wpdb->insert($wpdb->prefix . "events_qst_group_rel", array('group_id' => $personal_group_id, 'question_id' => $system_name->id), array('%d', '%d'));
-		}
-
-		$system_name_data = "SELECT id, system_name FROM " . $wpdb->prefix . "events_question" . " where system_name IN ('address', 'city', 'state', 'zip', 'country' )";
-		$system_names = $wpdb->get_results($system_name_data);
-
-		foreach ($system_names as $system_name) {
-
-			$wpdb->insert($wpdb->prefix . "events_qst_group_rel", array('group_id' => $address_group_id, 'question_id' => $system_name->id), array('%d', '%d'));
+	
+	// QUESTIONS
+	global $wpdb;
+	$SQL = 'SELECT QST_system_ID FROM ' . $wpdb->prefix . 'esp_question WHERE QST_system_ID != 0';
+	// what we have
+	$questions = $wpdb->get_col( $SQL );
+	// what we should have
+	$QST_system_IDs = array( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
+	// loop thru what we should have and compare to what we have
+	foreach ( $QST_system_IDs as $QST_system_ID ) {
+		// if we don't have what we should have
+		if ( ! in_array( $QST_system_ID, $questions )) {
+			// add it
+			switch ( $QST_system_ID ) {
+				
+				case 1:
+						$QST_values = array( 
+								'QST_display_text' => 'First Name',
+								'QST_admin_label' => 'First Name - System Question',
+								'QST_system_ID' => 1,
+								'QST_type' => 'TEXT',
+								'QST_required' => 1,
+								'QST_required_text' => 'This field is required',
+								'QST_order' => 1,
+								'QST_admin_only' => 0,
+								'QST_wp_user' => 1,
+								'QST_deleted' => 0
+							);
+					break;
+					
+				case 2:
+						$QST_values = array( 
+								'QST_display_text' => 'Last Name',
+								'QST_admin_label' => 'Last Name - System Question',
+								'QST_system_ID' => 2,
+								'QST_type' => 'TEXT',
+								'QST_required' => 1,
+								'QST_required_text' => 'This field is required',
+								'QST_order' => 2,
+								'QST_admin_only' => 0,
+								'QST_wp_user' => 1,
+								'QST_deleted' => 0
+							);
+					break;
+					
+				case 3:
+						$QST_values = array( 
+								'QST_display_text' => 'Email Address',
+								'QST_admin_label' => 'Email Address - System Question',
+								'QST_system_ID' => 3,
+								'QST_type' => 'TEXT',
+								'QST_required' => 1,
+								'QST_required_text' => 'This field is required',
+								'QST_order' => 3,
+								'QST_admin_only' => 0,
+								'QST_wp_user' => 1,
+								'QST_deleted' => 0
+							);
+					break;
+					
+				case 4:
+						$QST_values = array( 
+								'QST_display_text' => 'Address',
+								'QST_admin_label' => 'Address - System Question',
+								'QST_system_ID' => 4,
+								'QST_type' => 'TEXT',
+								'QST_required' => 0,
+								'QST_required_text' => 'This field is required',
+								'QST_order' => 4,
+								'QST_admin_only' => 0,
+								'QST_wp_user' => 1,
+								'QST_deleted' => 0
+							);
+					break;
+					
+				case 5:
+						$QST_values = array( 
+								'QST_display_text' => 'Address2',
+								'QST_admin_label' => 'FirAddress2 - System Question',
+								'QST_system_ID' => 5,
+								'QST_type' => 'TEXT',
+								'QST_required' => 0,
+								'QST_required_text' => 'This field is required',
+								'QST_order' => 5,
+								'QST_admin_only' => 0,
+								'QST_wp_user' => 1,
+								'QST_deleted' => 0
+							);
+					break;
+					
+				case 6:
+						$QST_values = array( 
+								'QST_display_text' => 'City',
+								'QST_admin_label' => 'City - System Question',
+								'QST_system_ID' => 6,
+								'QST_type' => 'TEXT',
+								'QST_required' => 0,
+								'QST_required_text' => 'This field is required',
+								'QST_order' => 6,
+								'QST_admin_only' => 0,
+								'QST_wp_user' => 1,
+								'QST_deleted' => 0
+							);
+					break;
+					
+				case 7:
+						$QST_values = array( 
+								'QST_display_text' => 'State / Province',
+								'QST_admin_label' => 'State / Province - System Question',
+								'QST_system_ID' => 7,
+								'QST_type' => 'TEXT',
+								'QST_required' => 0,
+								'QST_required_text' => 'This field is required',
+								'QST_order' => 7,
+								'QST_admin_only' => 0,
+								'QST_wp_user' => 1,
+								'QST_deleted' => 0
+							);
+					break;
+					
+				case 8 : 
+						$QST_values = array( 
+								'QST_display_text' => 'Country',
+								'QST_admin_label' => 'Country - System Question',
+								'QST_system_ID' => 8,
+								'QST_type' => 'TEXT',
+								'QST_required' => 0,
+								'QST_required_text' => 'This field is required',
+								'QST_order' => 8,
+								'QST_admin_only' => 0,
+								'QST_wp_user' => 1,
+								'QST_deleted' => 0
+							);
+					break;
+					
+				case 9:
+						$QST_values = array( 
+								'QST_display_text' => 'Zip / Postal Code',
+								'QST_admin_label' => 'Zip / Postal Code - System Question',
+								'QST_system_ID' => 9,
+								'QST_type' => 'TEXT',
+								'QST_required' => 0,
+								'QST_required_text' => 'This field is required',
+								'QST_order' => 9,
+								'QST_admin_only' => 0,
+								'QST_wp_user' => 1,
+								'QST_deleted' => 0
+							);
+					break;
+					
+				case 10:
+						$QST_values = array( 
+								'QST_display_text' => 'Phone Number',
+								'QST_admin_label' => 'Phone Number - System Question',
+								'QST_system_ID' => 10,
+								'QST_type' => 'TEXT',
+								'QST_required' => 0,
+								'QST_required_text' => 'This field is required',
+								'QST_order' => 10,
+								'QST_admin_only' => 0,
+								'QST_wp_user' => 1,
+								'QST_deleted' => 0
+							);
+					break;
+					
+			}
+			// insert system question
+			$wpdb->insert(
+				$wpdb->prefix . 'esp_question', 
+				$QST_values, 
+				array( '%s', '%s', '%d', '%s', '%d', '%s', '%d', '%d', '%d', '%d' )
+			);
+			$QST_ID = $wpdb->insert_id;	
+			
+			// QUESTION GROUP QUESTIONS 
+			
+			// questions 1-3 go in group 1, the rest go in 2
+			$QSG_ID = $QST_system_ID < 4 ? 1 : 2;			
+			// add system questions to groups
+			$wpdb->insert(
+				$wpdb->prefix . 'esp_question_group_question', 
+				array( 'QSG_ID' => $QSG_IDs[ $QSG_ID ], 'QST_ID' => $QST_ID ), 
+				array( '%d', '%d' )
+			);			
+			
 		}
 	}
+
 }
+
+
+
+
 
 function espresso_initialize_email() {
 	global $wpdb;
@@ -220,32 +373,7 @@ function espresso_initialize_email() {
 	}
 }
 
-function espresso_update_event_ids() {
-	global $wpdb;
-	$event_data = "SELECT id FROM " . $wpdb->prefix . "events_detail WHERE event_code='0' ";
-	if ($wpdb->num_rows == 0) {
-		$wpdb->update($wpdb->prefix . "events_detail", array('group_name' => 'Personal Information', 'group_identifier' => sanitize_title_with_dashes('personal_information-' . time()), 'system_group' => 1), array('%s', '%s', '%d'));
-	}
-}
 
-function event_espresso_update_shortcodes() {
-	global $wpdb;
-	$wpdb->query("SELECT id FROM " . $wpdb->prefix . "posts " . " WHERE (post_content LIKE '%{ESPRESSO_EVENTS}%' AND post_type = 'page') OR (post_content LIKE '%{ESPRESSO_PAYMENTS}%'  AND post_type = 'page') OR (post_content LIKE '%{ESPRESSO_TXN_PAGE}%'  AND post_type = 'page') ");
-
-	if ($wpdb->num_rows > 0) {
-		$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{ESPRESSO_EVENTS}','[ESPRESSO_EVENTS]')");
-		$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{ESPRESSO_PAYMENTS}','[ESPRESSO_PAYMENTS]')");
-		$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{ESPRESSO_TXN_PAGE}','[ESPRESSO_TXN_PAGE]')");
-	}
-
-	$wpdb->query("SELECT id FROM " . $wpdb->prefix . "posts " . " WHERE (post_content LIKE '%{EVENTREGIS}%' AND post_type = 'page') OR (post_content LIKE '%{EVENTREGPAY}%' AND post_type = 'page') OR (post_content LIKE '%{EVENTPAYPALTXN}%' AND post_type = 'page') ");
-
-	if ($wpdb->num_rows > 0) {
-		$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{EVENTREGIS}','[ESPRESSO_EVENTS]')");
-		$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{EVENTREGPAY}','[ESPRESSO_PAYMENTS]')");
-		$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{EVENTPAYPALTXN}','[ESPRESSO_TXN_PAGE]')");
-	}
-}
 
 
 
@@ -260,9 +388,9 @@ function espresso_org_option_initialization() {
 
 			$new_org_options = array(
 					'organization' => get_bloginfo('name'),
-					'organization_street1' => '123 West Somewhere',
+					'organization_street1' => '123 Onna Road',
 					'organization_street2' => '',
-					'organization_city' => 'Some City',
+					'organization_city' => 'Inna City',
 					'organization_state' => 'AZ',
 					'organization_zip' => '84128',
 					'contact_email' => get_bloginfo('admin_email'),
@@ -414,7 +542,14 @@ function events_data_tables_install() {
 	
 	$table_version = EVENT_ESPRESSO_VERSION;
 
-
+	$table_name='esp_answer';
+	$sql=" ANS_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+				REG_ID INT UNSIGNED NOT NULL ,
+				QST_ID INT UNSIGNED NOT NULL ,
+				ANS_value TEXT NOT NULL ,
+				PRIMARY KEY  (ANS_ID)";
+	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
+	
 	$table_name = 'esp_attendee';
 	$sql = "ATT_ID int(10) unsigned NOT	NULL AUTO_INCREMENT,
 					ATT_fname varchar(45) NOT NULL,
@@ -453,7 +588,17 @@ function events_data_tables_install() {
 						KEY EVT_ID (EVT_ID),
 						KEY DTT_is_primary (DTT_is_primary)";
 	event_espresso_run_install($table_name, $table_version, $sql );
+
+
 	
+	$table_name='esp_event_question_group';
+	$sql="EQG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+				EVT_ID INT UNSIGNED NOT NULL ,
+				QSG_ID INT UNSIGNED NOT NULL ,
+				EQG_primary TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+				PRIMARY KEY  (EQG_ID)";
+	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
+
 
 
 	$table_name = 'esp_payment';
@@ -474,7 +619,6 @@ function events_data_tables_install() {
 				KEY TXN_ID (TXN_ID),
 				KEY PAY_timestamp (PAY_timestamp)";
 	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
-
 
 
 
@@ -499,8 +643,6 @@ function events_data_tables_install() {
 
 
 
-
-
 	$table_name = "esp_price_type";
 	$sql = "PRT_ID tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
 			  PRT_name VARCHAR(45) NOT NULL ,
@@ -513,6 +655,59 @@ function events_data_tables_install() {
 			  UNIQUE KEY PRT_name_UNIQUE (PRT_name),
 			  PRIMARY KEY  (PRT_ID)";
 	event_espresso_run_install($table_name, $table_version, $sql);
+
+
+	
+	$table_name='esp_question';
+	$sql='QST_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+				QST_display_text VARCHAR(100) NOT NULL,
+				QST_admin_label VARCHAR(100) NOT NULL,
+				QST_system_ID TINYINT(3) UNSIGNED NOT NULL,
+				QST_type VARCHAR(25) NOT NULL DEFAULT "TEXT",
+				QST_required TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+				QST_required_text VARCHAR(100) NULL,
+				QST_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
+				QST_admin_only TINYINT(1) NOT NULL DEFAULT 0,
+				QST_wp_user BIGINT UNSIGNED NULL,
+				QST_deleted TINYINT UNSIGNED NOT NULL DEFAULT 0,
+				PRIMARY KEY  (QST_ID)';
+	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
+	
+
+	
+	$table_name = 'esp_question_group';
+	$sql='QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+				QSG_name VARCHAR(100) NOT NULL,
+				QSG_identifier VARCHAR(100) NOT NULL,
+				QSG_desc TEXT NULL,
+				QSG_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
+				QSG_show_group_name TINYINT(1) NOT NULL,
+				QSG_show_group_desc TINYINT(1) NOT NULL,
+				QSG_system_ID TINYINT(3) UNSIGNED NOT NULL,
+				QSG_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+				PRIMARY KEY  (QSG_ID),
+				UNIQUE INDEX QSG_identifier_UNIQUE (QSG_identifier ASC)';
+	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
+	
+	
+	
+	$table_name='esp_question_group_question';
+	$sql="QGQ_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+				QSG_ID INT UNSIGNED NOT NULL ,
+				QST_ID INT UNSIGNED NOT NULL ,
+				PRIMARY KEY  (QGQ_ID) ";
+	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
+
+
+	
+	$table_name='esp_question_option';
+	$sql="QSO_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+				QSO_name VARCHAR(100) NOT NULL ,
+				QSO_value VARCHAR(100) NOT NULL ,
+				QST_ID INT UNSIGNED NOT NULL ,
+				QSO_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
+				PRIMARY KEY  (QSO_ID)";
+	event_espresso_run_install($table_name,$table_version,$sql, 'ENGINE=InnoDB');
 
 
 
@@ -570,6 +765,26 @@ function events_data_tables_install() {
 				  PRIMARY KEY  (TXN_ID),
 				  KEY TXN_timestamp (TXN_timestamp),
 				  KEY STS_ID (STS_ID)";
+	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
+
+	$table_name = 'esp_message_template';
+	$sql = "MTP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+				  EVT_ID int(10) unsigned DEFAULT NULL,
+				  GRP_ID int(10) unsigned NOT NULL,
+				  MTP_user_id int(10) NOT NULL DEFAULT '1',
+				  MTP_messenger varchar(30) NOT NULL,
+				  MTP_message_type varchar(50) NOT NULL,
+				  MTP_template_field varchar(30) NOT NULL,
+				  MTP_context varchar(50) NOT NULL,
+				  MTP_content text NOT NULL,
+				  MTP_is_global tinyint(1) NOT NULL DEFAULT '0',
+				  MTP_is_override tinyint(1) NOT NULL DEFAULT '0',
+				  MTP_deleted tinyint(1) NOT NULL DEFAULT '0',
+				  MTP_is_active tinyint(1) NOT NULL DEFAULT '1',
+				  PRIMARY KEY  (MTP_ID),
+				  KEY GRP_ID (GRP_ID),
+				  KEY EVT_ID (EVT_ID),
+				  KEY MTP_user_id (MTP_user_id)";
 	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
 
 
@@ -803,81 +1018,7 @@ function events_data_tables_install() {
 			  	KEY wp_user (wp_user)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
-
-
-	$table_name = "events_multi_event_registration_id_group";
-	$sql = "primary_registration_id varchar(255) DEFAULT NULL,
-			registration_id varchar(255) DEFAULT NULL  ";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
-
-
-	$table_name = "events_attendee_cost";
-	$sql = "attendee_id int(11) DEFAULT NULL,
-			cost decimal(20,2) DEFAULT '0.00',
-			quantity int(11) DEFAULT NULL,
-			KEY attendee_id (attendee_id)";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
-
-
-	$table_name = "events_question";
-	$sql = "id int(11) unsigned NOT NULL auto_increment,
-			sequence INT(11) NOT NULL default '0',
-			question_type enum('TEXT','TEXTAREA','MULTIPLE','SINGLE','DROPDOWN','DATE') NOT NULL default 'TEXT',
-			question text NOT NULL,
-			system_name varchar(15) DEFAULT NULL,
-			response text NULL,
-			required tinyint(1) NOT NULL DEFAULT '0',
-			required_text text NULL,
-			admin_only tinyint(1) NOT NULL DEFAULT '0',
-			wp_user int(22) DEFAULT '1',
-			PRIMARY KEY  (id),
-			KEY wp_user (wp_user),
-			KEY system_name (system_name),
-			KEY admin_only (admin_only)";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
-
-
-	$table_name = "events_qst_group";
-	$sql = "id int(11) NOT NULL AUTO_INCREMENT,
-				group_name VARCHAR(100) NOT NULL default 'NULL',
-				group_identifier VARCHAR(45) NOT NULL default 'NULL',
-				group_description TEXT,
-				group_order int(11) DEFAULT '0',
-				show_group_name tinyint(1) NOT NULL DEFAULT '1',
-				show_group_description tinyint(1) NOT NULL DEFAULT '1',
-				system_group tinyint(1) NOT NULL DEFAULT '0',
-				wp_user int(22) DEFAULT '1',
-				PRIMARY KEY  (id),
-			  	KEY system_group (system_group),
-			  	KEY wp_user (wp_user)";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
-
-
-	$table_name = "events_qst_group_rel";
-	$sql = "id int(11) NOT NULL AUTO_INCREMENT,
-				group_id int(11)  NOT NULL,
-				question_id int(11) NOT NULL,
-				PRIMARY KEY  (id),
-			  	KEY group_id (group_id),
-			  	KEY question_id (question_id)";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
-
-
-	$table_name = "events_answer";
-	$sql = "id int(11) NOT NULL AUTO_INCREMENT,
-			registration_id varchar(23) NOT NULL,
-			attendee_id int(11) NOT NULL default '0',
-			question_id int(11) NOT NULL default '0',
-			answer text NOT NULL,
-			PRIMARY KEY  (id),
-			KEY registration_id (registration_id),
-			KEY attendee_id (attendee_id)";
-	event_espresso_run_install($table_name, $table_version, $sql);
+	
 
 }
 
@@ -1262,6 +1403,8 @@ function espresso_update_active_gateways() {
 	}
 }
 
+
+
 function espresso_default_prices() {
 
 	global $wpdb;
@@ -1347,13 +1490,3 @@ function espresso_delete_unused_db_tables() {
 	$wpdb->query( 'DROP TABLE IF EXISTS '. $wpdb->prefix . 'events_status' );
 }
 
-
-
-
-
-if (!function_exists('espresso_save_error')) {
-	function espresso_save_error() {
-		update_option('plugin_error', ob_get_contents());
-	}
-}
-add_action('activated_plugin', 'espresso_save_error');

@@ -542,7 +542,8 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 				);
 				$EE_Session->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
 
-				add_action('action_hook_espresso_email_after_payment', 'espresso_email_after_payment');
+				$success = TRUE;
+
 			} else {
 
 				$Errors = $this->_GetErrors($PayPalResult);
@@ -563,7 +564,12 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'raw_response' => $PayPalResult
 				);
 				$EE_Session->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
+
+				$success = FALSE;
 			}
+
+			do_action( 'action_hook_espresso_after_payment', $EE_Session, $success );
+
 		} // end if ($billing_info != 'no payment required')
 
 		return array('success' => TRUE);

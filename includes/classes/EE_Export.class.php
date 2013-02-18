@@ -183,14 +183,14 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 	 */	
 	function export_all_event_data() {
 		$tables_to_export = array( 
-																						EVENTS_DETAIL_TABLE,
-																						EVENTS_CATEGORY_REL_TABLE,
-																						EVENTS_CATEGORY_TABLE,
-																						EVENTS_VENUE_REL_TABLE,
-																						EVENTS_VENUE_TABLE,
-																						EVENTS_LOCALE_REL_TABLE,
-																						EVENTS_LOCALE_TABLE
-																				);
+				EVENTS_DETAIL_TABLE,
+				EVENTS_CATEGORY_REL_TABLE,
+				EVENTS_CATEGORY_TABLE,
+				EVENTS_VENUE_REL_TABLE,
+				EVENTS_VENUE_TABLE,
+				EVENTS_LOCALE_REL_TABLE,
+				EVENTS_LOCALE_TABLE
+			);
 																				
 		$table_data = $this->process_mult_table_export( $tables_to_export );
 		$filename = $this->generate_filename ( 'all-events' );
@@ -209,10 +209,10 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 	 */	
 	function export_attendees() {
 		$tables_to_export = array( 
-																						EVENTS_ATTENDEE_TABLE,
-																						EVENTS_ATTENDEE_COST_TABLE,
-																						//EVENTS_ATTENDEE_META_TABLE
-																				);
+				EVENTS_ATTENDEE_TABLE,
+				EVENTS_ATTENDEE_COST_TABLE,
+				//EVENTS_ATTENDEE_META_TABLE
+			);
 																				
 		$table_data = $this->process_mult_table_export( $tables_to_export );
 		$filename = $this->generate_filename ( 'all-attendees' );
@@ -231,9 +231,9 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 	 */	
 	function export_categories() {
 		$tables_to_export = array( 
-																						EVENTS_CATEGORY_REL_TABLE,
-																						EVENTS_CATEGORY_TABLE,
-																				);
+				EVENTS_CATEGORY_REL_TABLE,
+				EVENTS_CATEGORY_TABLE,
+			);
 																				
 		$table_data = $this->process_mult_table_export( $tables_to_export );
 		$filename = $this->generate_filename ( 'all-categories' );
@@ -260,8 +260,49 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 
 	
 	
+	
 	/**
-	 *			@Legacy code  ; )	Export data for event
+	 *			@process export name to create a suitable filename
+	 *		  @access private
+	 *		  @param string - export_name
+	 *			@return string on success, FALSE on fail
+	 */	
+	private function generate_filename ( $export_name = FALSE ) {
+		if ( $export_name ) {
+			$filename = get_bloginfo('name') . '-' . $export_name;
+			$filename = str_replace( ' ', '-', strtolower( $filename )) . '-' . $this->today;
+			return $filename;
+		}	 else {
+			$this->EE_CSV->_notices['errors'][] = 'No filename was provided.';
+			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
+		}
+	}	
+	
+	
+	
+	/**
+	 *			@recursive funtion for exporting table data and merging the results with the next results
+	 *		  @access private
+	 *		  @param array - tables_to_export
+	 *			@return array on success, FALSE on fail
+	 */	
+	private function process_mult_table_export( $tables_to_export = FALSE ) {
+		$table_data = FALSE;
+		if ( is_array( $tables_to_export ) ) {
+			foreach ( $tables_to_export as $table ) {
+				$table_data = $this->EE_CSV->export_table_to_array ( $table, $table_data, FALSE );
+			}
+		}
+		return $table_data;
+	}		
+
+
+
+
+	
+	
+	/**
+	 *			@LEGACY CODE  ; )	Export data for event
 	 *		  @access private 
 	 *			@return void
 	 */	
@@ -367,7 +408,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 
 
 	/**
-	 *			@Legacy code  ; ) 
+	 *			@LEGACY CODE  ; ) 
 	 *		  @access private
 	 *			@return void
 	 */	
@@ -577,7 +618,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 	
 	
 	/**
-	 *			@Legacy code  ; ) 
+	 *			@LEGACY CODE  ; ) 
 	 *		  @access private
 	 *			@return void
 	 */	
@@ -622,43 +663,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 		}
 		
 	}
-	
-	
-	
-	/**
-	 *			@process export name to create a suitable filename
-	 *		  @access private
-	 *		  @param string - export_name
-	 *			@return string on success, FALSE on fail
-	 */	
-	private function generate_filename ( $export_name = FALSE ) {
-		if ( $export_name ) {
-			$filename = get_bloginfo('name') . '-' . $export_name;
-			$filename = str_replace( ' ', '-', strtolower( $filename )) . '-' . $this->today;
-			return $filename;
-		}	 else {
-			$this->EE_CSV->_notices['errors'][] = 'No filename was provided.';
-			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
-		}
-	}	
-	
-	
-	
-	/**
-	 *			@recursive funtion for exporting table data and merging the results with the next results
-	 *		  @access private
-	 *		  @param array - tables_to_export
-	 *			@return array on success, FALSE on fail
-	 */	
-	private function process_mult_table_export( $tables_to_export = FALSE ) {
-		$table_data = FALSE;
-		if ( is_array( $tables_to_export ) ) {
-			foreach ( $tables_to_export as $table ) {
-				$table_data = $this->EE_CSV->export_table_to_array ( $table, $table_data, FALSE );
-			}
-		}
-		return $table_data;
-	}		
+
 
 
 

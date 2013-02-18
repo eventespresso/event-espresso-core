@@ -9,6 +9,7 @@
 class espresso_log {
 
 	var $file;
+	var $folder;
 	var $url; //Used for remote logging
 	private static $inst;
 
@@ -16,9 +17,9 @@ class espresso_log {
 	function __construct() {
 		//echo __FILE__;
 		//echo dirname( __FILE__ );
-		$folder = EVENT_ESPRESSO_UPLOAD_DIR . 'logs/';
+		$this->folder = EVENT_ESPRESSO_UPLOAD_DIR . 'logs/';
 		//echo $folder;
-		$this->file = $folder . 'espresso_log.txt';
+		$this->file = $this->folder . 'espresso_log.txt';
 		
 		$uploads = wp_upload_dir();
 		if (!is_dir(EVENT_ESPRESSO_UPLOAD_DIR) && is_writable($uploads['baseurl'])) {
@@ -31,8 +32,8 @@ class espresso_log {
 		if (is_writable(EVENT_ESPRESSO_UPLOAD_DIR.'logs') && !file_exists($this->file)) {
 			touch($this->file);
 		}
-		if (is_writable(EVENT_ESPRESSO_UPLOAD_DIR.'logs') && !file_exists($folder.'espresso_debug.php')) {
-			touch($folder.'espresso_debug.php');
+		if (is_writable(EVENT_ESPRESSO_UPLOAD_DIR.'logs') && !file_exists($this->folder.'espresso_debug.php')) {
+			touch($this->folder.'espresso_debug.php');
 		}
 	}
 
@@ -45,6 +46,14 @@ class espresso_log {
 	}
 
 	public function log($message) {
+		if ( isset( $message['type'] ) ) {
+			$this->file = $this->folder . 'espresso_debug_' . $message['type'] . '.txt';
+			
+			if (is_writable(EVENT_ESPRESSO_UPLOAD_DIR.'logs') && !file_exists($this->file)) {
+				touch($this->file);
+			}
+		}
+
 		if (is_writable($this->file)) {
 			$fh = fopen($this->file, 'a') or die("Cannot open file! " . $this->file);
 			fwrite($fh, '[' . date("m.d.y H:i:s") . '], ' . basename($message['file']) . ' ->' . $message['function'] . ',  ' . $message['status'] . "\n");
@@ -115,8 +124,13 @@ function espresso_log($file, $function, $message) {
 	espresso_log::singleton()->log(array('file' => $file, 'function' => $function, 'status' => $message));
 }
 
+function espresso_log_shortcode_parser( $file, $function, $message ) {
+	espresso_log::singleton()->log(array('file' => $file, 'function' => $function, 'status' => $message, 'type' => 'shortcode_parser') );
+}
+
 if (!empty($org_options['full_logging'])) {
 	add_action('action_hook_espresso_log', 'espresso_log', 10, 3);
+	add_action('action_hook_espresso_log_shortcode_parser', 'espresso_log_shortcode', 10, 3);
 	add_action('action_hook_espresso_debug_file', 'espresso_debug_file');	
 }
 

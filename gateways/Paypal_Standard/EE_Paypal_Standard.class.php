@@ -311,9 +311,13 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 
 		$item_num = 1;
 		$registrations = $session_data['cart']['REG']['items'];
+		require_once('EEM_Attendee.model.php');
 		foreach ($registrations as $registration) {
 			foreach ($registration['attendees'] as $attendee) {
-				$this->addField('item_name_' . $item_num, $attendee['fname'] . ' ' . $attendee['lname'] . ' attending ' . $registration['name'] . ' on ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc']);
+				//echo "paypal standard, attendee<br>\r\n";
+				//var_dump($attendee);
+				$this->addField('item_name_' . $item_num, $attendee[EEM_Attendee::fname_question_id] . ' ' 
+						. $attendee[EEM_Attendee::lname_question_id] . ' attending ' . $registration['name'] . ' on ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc']);
 				$this->addField('amount_' . $item_num, $attendee['price_paid']);
 				$this->addField('quantity_' . $item_num, '1');
 				$item_num++;
@@ -346,6 +350,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 
 	public function thank_you_page() {
 		global $EE_Session;
+		printr( $_POST, '$_POST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$txn_details = array(
 				'gateway' => $this->_payment_settings['display_name'],
 				'approved' => FALSE,
@@ -374,6 +379,10 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			}
 		}
 		$EE_Session->set_session_data(array('txn_results' => $txn_details), 'session_data');
+
+		$success = $txn_details['approved'];
+
+		do_action( 'action_hook_espresso_after_payment', $EE_Session, $success );
 
 		if ($txn_details['approved'] == TRUE && $this->_payment_settings['use_sandbox']) {
 			do_action('action_hook_espresso_mail_successful_transaction_debugging_output');

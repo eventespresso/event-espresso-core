@@ -196,7 +196,7 @@ function espresso_reg_url($event_id = FALSE, $event_slug = FALSE) {
 	} else
 		$registration_url = '';
 
-	return $registration_url;
+	return stripslashes_deep($registration_url);
 }
 
 //Text formatting function.
@@ -784,8 +784,13 @@ function espresso_display_questions($questions, $attendee) {
 	return $html;
 }
 
+
+
+
+
+
 //Build the form questions. This function can be overridden using the custom files addon
-if (!function_exists('event_espresso_add_question_groups')) {
+/*if (!function_exists('event_espresso_add_question_groups')) {
 
 	function event_espresso_add_question_groups($question_groups, $answer = '', $event_id = null, $multi_reg = 0, $meta = array()) {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
@@ -845,7 +850,7 @@ if (!function_exists('event_espresso_add_question_groups')) {
 							$html .= $question->show_group_description != 0 && true == $question->group_description ? "<p class='quest-group-descript'>$question->group_description</p>" : '';
 							$group_name = $question->group_name;
 						}
-						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/form_build.php');
+//						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/form_build.php');
 						$html .= event_form_build($question, $answer, $event_id, $multi_reg, $meta);
 					}
 					$html .= $counter == $num_rows ? '</div>' : '';
@@ -858,6 +863,11 @@ if (!function_exists('event_espresso_add_question_groups')) {
 	}
 
 }
+*/
+
+
+
+
 
 //Simple function to return the meta an event, venue, staff etc.
 function ee_show_meta($meta, $name) {
@@ -1542,7 +1552,8 @@ function printr( $var, $var_name = FALSE, $height = 'auto', $die = FALSE ) {
  * 		@return 		void
  */
 function espresso_display_template($path_to_file = FALSE, $template_args = FALSE, $return_string = FALSE) {
-
+	//require the template validator for verifying variables are set according to how the template requires
+	require_once(EVENT_ESPRESSO_PLUGINFULLPATH.'/helpers/EE_Template_Validator.helper.php');
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	// you gimme nuttin - YOU GET NUTTIN !!
 	if (!$path_to_file) {

@@ -7,7 +7,7 @@
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
-  Version: 			3.2.gateways-728
+  Version: 			3.2.DEV.3016
 
   Author: 				Seth Shoultes
   Author URI: 		http://www.eventespresso.com
@@ -29,10 +29,9 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-
 //Returns the plugin version
 function espresso_version() {
-	return '3.2.3014';
+	return '3.2.3016';
 }
 
 define("EVENT_ESPRESSO_VERSION", espresso_version());
@@ -68,6 +67,8 @@ require_once(dirname(__FILE__) . '/includes/functions/init.php');
 require_once(dirname(__FILE__) . '/includes/functions/wp_hooks.php');
 
 
+//autoloaders should run really early
+//espresso_autoload();
 
 
 add_action('plugins_loaded', 'espresso_define_tables_and_paths', 1);
@@ -79,6 +80,10 @@ add_action('plugins_loaded', 'espresso_init', 25);
 add_action('init', 'espresso_add_rewrite_rules');
 add_filter('query_vars', 'espresso_add_query_vars');
 add_action( 'admin_enqueue_scripts', 'espresso_load_scripts_styles' );
+
+
+//load messages init
+add_action( 'init', 'espresso_load_messages_init', 15 );
 
 if ( is_admin() ) {
 

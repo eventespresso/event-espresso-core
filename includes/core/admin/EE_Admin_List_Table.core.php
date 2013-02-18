@@ -133,6 +133,14 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	protected $_sortable_columns;
 
 
+	/**
+	 * _ajax_sorting_callback
+	 * callback method used to perform AJAX row reordering 
+	 * @var string
+	 */
+	protected $_ajax_sorting_callback = NULL;
+
+
 
 	/**
 	 * _hidden_columns
@@ -185,6 +193,11 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * @var array
 	 */
 	protected $_req_data;
+	
+
+
+	// yes / no array for admin form fields
+	protected $_yes_no = array();	
 
 
 	/**
@@ -198,6 +211,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		$this->_views = $this->_admin_page->get_list_table_view_RLs();
 		$this->_current_page = $this->get_pagenum();
 		$this->_screen = $this->_admin_page->get_current_page() . '_' . $this->_admin_page->get_current_view();
+		$this->_yes_no = array(  __('No', 'event_espresso'), __('Yes', 'event_espresso'));
 		
 		$this->_setup_data();
 		$this->_add_view_counts();
@@ -376,7 +390,6 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		$this->_set_column_info();
 		//$this->_column_headers = $this->get_column_info();
 		$total_items = $this->_all_data_count;
-
 		$this->process_bulk_action();
 
 		$this->items = $this->_data;
@@ -421,6 +434,10 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 	public function get_sortable_columns() {
 		return (array) $this->_sortable_columns;
+	}
+
+	public function get_ajax_sorting_callback() {
+		return $this->_ajax_sorting_callback;
 	}
 
 	public function get_hidden_columns() {

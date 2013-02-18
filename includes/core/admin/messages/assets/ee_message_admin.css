@@ -29,5 +29,28 @@
 }
 
 .ee-msg-switcher-container {
-	margin-top: 15px;
+	margin-top: 8px;
+}
+
+/** overview table styles **/
+
+.column-messenger {
+	width: 66%;
+}
+
+.column-event {
+	width: 12%;
+}
+
+.column-message_type {
+	width: 12%;
+}
+
+.column-messages_sent {
+	width: 10%;
+}
+
+#mtp_valid_shortcodes .inside {
+	max-height: 400px;
+	overflow: scroll;
 }

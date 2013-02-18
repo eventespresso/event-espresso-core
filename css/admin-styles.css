@@ -2243,3 +2243,32 @@ pre {
 		font-size: 22px; font-weight: bold; line-height: .5; color: #aaa; text-shadow: 0 -1px 1px rbga(0,0,0,.6);		
 		cursor: pointer;
 		} 
+
+#poststuff .ee-nav-tabs .nav-tab-wrapper, .ee-nav-tabs .nav-tab-wrapper {
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+}
+
+#poststuff .ee-nav-tabs .nav-tab-content, .ee-nav-tabs .nav-tab-content {
+	margin: 5px;
+	margin-bottom: 15px;
+}
+
+#poststuff .ee-nav-tabs-small .nav-tab, .ee-nav-tabs-small .nav-tab {
+	font-size: 12px;
+	height: 18px;
+	line-height: 18px;
+}
+
+.message-type-text {
+	padding: 5px;
+	-webkit-border-radius: 3px;
+	-webkit-appearance: none;
+	border-radius: 3px;
+	white-space: nowrap;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing:    border-box;
+	box-sizing:         border-box;
+	background: #f3f3f3;
+	font-weight: bold;
+}

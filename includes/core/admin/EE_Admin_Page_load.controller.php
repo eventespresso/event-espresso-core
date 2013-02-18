@@ -60,6 +60,14 @@ class EE_Admin_Page_load {
 
 
 
+	/**
+	 * This property will hold the hook file for setting up the filter that does all the connections between admin pages.
+	 * @var string
+	 */
+	public $hook_file;
+
+
+
 
 
 
@@ -185,6 +193,14 @@ class EE_Admin_Page_load {
 		//loop through admin pages and setup the $_installed_pages array.
 		foreach ( $installed_refs as $page ) {
 			$this->_installed_pages[$page] = $this->_load_admin_page( $page );
+
+			//let's do the registered hooks first
+			$this->_installed_pages[$page]->register_hooks();
+		}
+
+		//we need to loop again to run any early code
+		foreach ( $installed_refs as $page ) {
+			$this->_installed_pages[$page]->do_initial_loads();
 		}
 	}
 
@@ -330,9 +346,6 @@ class EE_Admin_Page_load {
 
 		
 	}
-
-
-
 
 
 

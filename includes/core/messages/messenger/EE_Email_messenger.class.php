@@ -31,7 +31,6 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class EE_Email_messenger extends EE_messenger  {
 
-	/** MESSAGE SEND PROPERTIES **/
 	/**
 	 * The following are the properties that email requires for the message going out.
 	 */
@@ -39,7 +38,6 @@ class EE_Email_messenger extends EE_messenger  {
 	protected $_from;
 	protected $_subject;
 	protected $_content;
-
 	/**
 	 * constructor
 	 * 
@@ -50,6 +48,10 @@ class EE_Email_messenger extends EE_messenger  {
 		//set name and description properties
 		$this->name = 'email';
 		$this->description = __('Email messenger.  This sends out email via the built-in wp_mail function included with WordPress', 'event_espresso');
+		$this->label = array(
+			'singular' => __('email', 'event_espresso'),
+			'plural' => __('emails', 'event_espresso')
+			);
 
 		//we're using defaults so let's call parent constructor that will take care of setting up all the other properties
 		parent::__construct();
@@ -65,6 +67,17 @@ class EE_Email_messenger extends EE_messenger  {
 		);
 	}
 
+
+	/**
+	 * see abstract declaration in parent class for details
+	 */
+	protected function _set_valid_shortcodes() {
+		//remember by leaving the other fields not set, those fields will inherit the valid shortcodes from the message type.
+		$this->_valid_shortcodes = array(
+			'to' => array('email')
+			);
+	}
+
 	
 
 	/**
@@ -75,7 +88,7 @@ class EE_Email_messenger extends EE_messenger  {
 	 * @return void
 	 */
 	protected function _set_template_fields() {
-		// any extra template fields that are NOT used by the messenger but will get used by a messenger field for shortcode replacement get added to the 'extra' key in an associated array indexed by the messenger field they relate to.  This is important for the Messages_admin to know what fields to display to the user.  Also, notice that the "values" are equal to the field type that messages admin will use to know what kind of field to display. 
+		// any extra template fields that are NOT used by the messenger but will get used by a messenger field for shortcode replacement get added to the 'extra' key in an associated array indexed by the messenger field they relate to.  This is important for the Messages_admin to know what fields to display to the user.  Also, notice that the "values" are equal to the field type that messages admin will use to know what kind of field to display. The values ALSO have one index labeled "shortcode".  the values in that array indicate which ACTUAL SHORTCODE (i.e. [SHORTCODE]) is required in order for this extra field to be displayed.  If the required shortcode isn't part of the shortcodes array then the field is not needed and will not be displayed/parsed.
 		$this->_template_fields = array(
 			'to' => array(
 				'input' => 'text',
@@ -115,11 +128,23 @@ class EE_Email_messenger extends EE_messenger  {
 						'validation' => TRUE,
 						'format' => '%s',
 						'css_class' => 'large-text',
-						'rows' => '5'
+						'rows' => '5',
+						'shortcodes_required' => array('[ATTENDEE_LIST]')
 					),
+					'event_list' => array(
+						'input' => 'textarea',
+						'label' => __('Attendee List', 'event_espresso'),
+						'type' => 'string',
+						'required' => TRUE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'css_class' => 'large-text',
+						'rows' => '5',
+						'shortcodes_required' => array('[EVENT_LIST]')
+						),
 					'main' => array(
 						'input' => 'wp_editor',
-						'label' => '',
+						'label' => __('Main Content', 'event_espresso'),
 						'type' => 'string',
 						'required' => TRUE,
 						'validation' => TRUE,
@@ -148,7 +173,8 @@ class EE_Email_messenger extends EE_messenger  {
 			'subject' => '',
 			'content' => array(
 				'main' => 'This contains the main content for the message going out.  It\'s specific to message type so you will want to replace this in the template',
-				'attendee_list' => 'This contains the formatting for each attendee in a attendee list'
+				'attendee_list' => 'This contains the formatting for each attendee in a attendee list',
+				'event_list' => 'This contains the formatting for each event in an event list'
 				)
 			);
 	}
@@ -177,6 +203,9 @@ class EE_Email_messenger extends EE_messenger  {
 	 * @return bool|error_object true if message delivered, false if it didn't deliver OR bubble up any error object if present.
 	 */
 	protected function _send_message() {
+
+		//todo we need to validate the different fields before sending.
+
 		return wp_mail($this->_to, stripslashes_deep(html_entity_decode($this->_subject, ENT_QUOTES, "UTF-8")), stripslashes_deep(html_entity_decode(wpautop($this->_body()), ENT_QUOTES,"UTF-8")), $this->_headers());
 	}
 

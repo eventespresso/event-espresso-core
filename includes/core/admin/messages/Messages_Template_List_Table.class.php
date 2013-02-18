@@ -41,7 +41,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 	protected function _setup_data() {
 		$this->_per_page = $this->get_items_per_page( $this->_screen . '_per_page' );
 		$this->_data = $this->_admin_page->get_message_templates( $this->_per_page, $this->_view, FALSE);
-		$this->_all_data_count = $this->_admin_page->get_message_templates( $this->_per_page, $this->_view, TRUE );
+		$this->_all_data_count = $this->_admin_page->get_message_templates( $this->_per_page, $this->_view, TRUE, TRUE );
 	}
 
 
@@ -58,9 +58,8 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 
 		$this->_columns = array(
 			'event' => __( 'Event', 'event_espresso'),
-			'messenger' => __( 'Messenger', 'event_espresso'),
 			'message_type' => __('Message Type', 'event_espresso'),
-			'context' => __('Context', 'event_espresso'),
+			'messenger' => __( 'Messenger', 'event_espresso'),
 			'messages_sent' => __( 'Total Sent', 'event_espresso' )
 			);
 
@@ -90,7 +89,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 		$i=0;
 		foreach ( $messengers as $messenger => $args ) {
 			$m_values[$i]['id'] = $messenger;
-			$m_values[$i]['text'] = ucwords(str_replace('_', ' ', $messenger) );
+			$m_values[$i]['text'] = ucwords($args['obj']->label['singular']);
 			$i++;
 		}
 		
@@ -98,10 +97,21 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 		$i=0;
 		foreach ( $message_types as $message_type => $args ) {
 			$mt_values[$i]['id'] = $message_type;
-			$mt_values[$i]['text'] = ucwords( str_replace('_', ' ', $message_type ) );
+			$mt_values[$i]['text'] = ucwords($args['obj']->label['singular']);
 			$i++;
 		}
 
+		if ( empty($m_values ) )
+			$m_values[] = array(
+				'id' => 'no_messenger_options',
+				'text' => __('No Messengers active', 'event_espresso')
+				);
+
+		if ( empty($mt_values) )
+			$mt_values[] = array(
+				'id' => 'no_message_type_options',
+				'text' => __('No Message Types active', 'event_espresso')
+				);
 		
 		$filters[] = EE_Form_Fields::select_input('ee_messenger_filter_by', $m_values, isset($this->_req_data['ee_messenger_filter_by']) ? sanitize_key( $this->_req_data['ee_messenger_filter_by']) : '' );
 		$filters[] = EE_Form_Fields::select_input('ee_message_type_filter_by', $mt_values, isset($this->_req_data['ee_message_type_filter_by']) ? sanitize_key( $this->_req_data['ee_message_type_filter_by']) : '');
@@ -148,11 +158,12 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 		
 		//Build row actions
 		$actions = array();
+		
 		// edit link
-		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_message_template', 'id'=>$item->GRP_ID() ), EE_MSG_ADMIN_URL ), 'edit_message_template_nonce' );
+		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_message_template', 'id'=>$item->GRP_ID(), 'evt_id' => $item->event() ), EE_MSG_ADMIN_URL ), 'edit_message_template_nonce' );
 		$actions['edit'] = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Template Group', 'event_espresso' ) . '">' . __( 'Edit', 'event_espresso' ) . '</a>';
 		
-		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Template Group', 'event_espresso' ) . '">' . stripslashes( $item->messenger() ) . '</a>';
+		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Template Group', 'event_espresso' ) . '">' . ucwords( $item->messenger_obj()->label['singular'] ) . '</a>';
 
 		if ( !$item->is_global() ) {
 			if ($this->_view == 'in_use') {
@@ -169,10 +180,23 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 			}
 		}
 
+		//we want to display the contexts in here so we need to set them up
+		$c_label = $item->context_label();
+		$c_configs = $item->contexts_config(); 
+		foreach ( $item->context_templates() as $context => $template_fields ) {
+			$context_title = ucwords($c_configs[$context]['label']);
+			$edit_link = wp_nonce_url( add_query_arg( array('action'=>'edit_message_template', 'id'=>$item->GRP_ID(), 'context' => $context), EE_MSG_ADMIN_URL ), 'edit_message_template_nonce' );
+			$ctxt[] = '<a href="'. $edit_link . '" title="' . __('Edit Context', 'event_espresso') . '">' . $context_title . '</a>';
+		}
+
+		$ctx_content = sprintf( __('<strong>%s:</strong> ', 'event_espresso'), ucwords($c_label['plural']) ) . implode(' | ', $ctxt);
+
+
 		//Return the name contents
-		return sprintf('%1$s <span style="color:silver">(id:%2$s)</span>%3$s',
+		return sprintf('%1$s <span style="color:silver">(id:%2$s)</span><br />%3$s%4$s',
 										/* $1%s */ $name_link,
 										/* $2%s */ $item->GRP_ID(),
+										/* %4$s */ $ctx_content,
 										/* $3%s */ $this->row_actions( $actions )
 		);
 	}
@@ -208,19 +232,10 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 	 * @return string       message_type name
 	 */
 	function column_message_type($item) {
-		return ucwords(str_replace('_', ' ', $item->message_type()) );
+		return ucwords($item->message_type_obj()->label['singular'] );
 	}
 
-	function column_context($item) {
-		$content = '<ul>';
-		foreach ( $item->context_templates() as $context => $template_fields ) {
-			$context_title = ucwords(str_replace('_', ' ', $context ) );
-			$edit_link = wp_nonce_url( add_query_arg( array('action'=>'edit_message_template', 'id'=>$item->GRP_ID(), 'context' => $context), EE_MSG_ADMIN_URL ), 'edit_message_template_nonce' );
-			$content .= '<li><a href="'. $edit_link . '" title="' . __('Edit Context', 'event_espresso') . '">' . $context_title . '</a></li>';  ;
-		}
-		$content .= '</ul>';
-		return $content;
-	}
+	
 
 	function column_messages_sent($item) {
 		//todo: we need to obtain the messages sent and the link to the messages report table and output

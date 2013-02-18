@@ -21,6 +21,7 @@ function espresso_define_tables_and_paths() {
 		dirname( espresso_main_file() ) . DS . 'gateways' . DS . PS .
 		get_include_path()
 	);
+
 	
 	// Define all plugin database tables
 	define("EVENTS_ANSWER_TABLE", $wpdb->prefix . "events_answer");
@@ -97,6 +98,7 @@ function espresso_define_tables_and_paths() {
 function espresso_autoload() {
 	//core
 	spl_autoload_register('espresso_models_autoload');
+	spl_autoload_register('espresso_libraries_autoload');
 	spl_autoload_register('espresso_classes_autoload');
 	spl_autoload_register('espresso_classes_core_autoload');	
 	spl_autoload_register('espresso_core_admin_autoload');
@@ -106,6 +108,35 @@ function espresso_models_autoload($className) {
 	$filename = dirname(espresso_main_file()) . '/includes/models/' . $className . '.model.php';
 	if ( is_readable($filename) ) {
 		require_once( $filename );
+	}
+}
+
+
+function espresso_libraries_autoload($className) {
+	//let's setup an array of paths to check (for each subsystem)
+	$root = dirname(espresso_main_file()) . '/libraries/';
+	
+	//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
+	$dir_ref = array(
+		'root' => array('core', 'lib'),
+		'shortcodes/' => array('core', 'lib')
+		);
+
+	//assemble a list of filenames
+	foreach ( $dir_ref as $dir => $types ) {
+		if ( is_array($types) ) {
+			foreach ( $types as $type) {
+				$filenames[] = ( $dir == 'root' ) ? $root . $className . '.' . $type . '.php' : $root . $dir . $className . '.' . $type . '.php';
+			}
+		} else {
+			$filenames[] = ( $dir == 'root' ) ? $root . $className . '.' . $types . '.php' : $root . $dir . $className . '.' . $types . '.php';
+		}
+	}
+
+	//now loop through assembled filenames and require as available
+	foreach ( $filenames as $filename ) {
+		if ( is_readable($filename) )
+			require_once( $filename );
 	}
 }
 
@@ -123,9 +154,11 @@ function espresso_classes_core_autoload($className) {
 	//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
 	$dir_ref = array(
 		'root' => array('core', 'class'),
-		'/messages/' => 'core',
-		'/messages/message_type/' => 'class',
-		'/messages/messenger/' => 'class'
+		'messages/' => 'core',
+		'messages/message_type/' => 'class',
+		'messages/messenger/' => 'class',
+		'messages/defaults/' => array('class', 'core'),
+		'messages/defaults/email/' => 'class'
 		);
 
 	//assemble a list of filenames
@@ -156,7 +189,7 @@ function espresso_core_admin_autoload($className) {
 		'attendees/' => array('core', 'class'),
 		'events/' => array('core','class'),
 		'event_categories/' => array('core','class'),
-		'registration_forms/' => array('core', 'class'),
+		'registration_form/' => array('core', 'class'),
 		'general_settings/' => array('core','class'),
 		'messages/' => array('core', 'class'),
 		'payments/' => array('core', 'class'),
@@ -184,8 +217,6 @@ function espresso_core_admin_autoload($className) {
 			require_once( $filename );
 	}
 }
-
-
 
 function espresso_display_exception( $excptn ) {
 	echo '
@@ -335,7 +366,7 @@ add_action( 'shutdown', 'espresso_printr_session' );
  */
 function espresso_plugin_activation_errors() {
 	if ( WP_DEBUG === TRUE ) {
-		file_put_contents( EVENT_ESPRESSO_UPLOAD_URL. 'logs/espresso_plugin_activation_errors.html', ob_get_contents() );
+		file_put_contents( EVENT_ESPRESSO_UPLOAD_DIR. 'logs/espresso_plugin_activation_errors.html', ob_get_contents() );
 	}	
 }
 add_action('activated_plugin', 'espresso_plugin_activation_errors');
@@ -511,7 +542,7 @@ function espresso_load_reg_page_files() {
 						global $Single_Page_Checkout;
 						$Single_Page_Checkout = EE_Single_Page_Checkout::instance();	
 						//Process email confirmations
-						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/email.php');
+//						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/email.php');
 						define("ESPRESSO_REG_PAGE_FILES_LOADED", "true");
 					}
 
@@ -594,6 +625,49 @@ function event_espresso_run_install($table_name, $table_version, $sql, $engine =
 	}
 }
 
+/**
+ * Checks if this column already exists on 
+ * @param string $table_name (wihtout "wp_", eg "esp_attendee"
+ * @param string $column_name
+ * @param string $column_info if your SQL were 'ALTER TABLE table_name ADD price VARCHAR(10)', this would be 'VARCHAR(10)'
+ */
+function espresso_add_column_if_it_doesnt_exist($table_name,$column_name,$column_info='INT UNSIGNED NOT NULL'){
+	global $wpdb;
+	$full_table_name=$wpdb->prefix.$table_name;
+	$fields = espresso_get_fields_on_table($table_name);
+	if (!in_array($column_name, $fields)){
+		$alter_query="ALTER TABLE $full_table_name ADD $column_name $column_info";
+		echo "alter query:$alter_query";
+		return mysql_query($alter_query);
+	}
+	return true;
+}
+
+/**
+ * Gets all the fields on teh database table. 
+ * @param string $table_name, wihtout prefixed $wpdb->prefix
+ * @return array of database column names
+ */
+function espresso_get_fields_on_table($table_name = null) {	
+		global $wpdb;
+		$table_name=$wpdb->prefix.$table_name;
+
+		if (!empty($table_name)) {
+			$fullname = $table_name;
+			if (($tablefields = mysql_list_fields(DB_NAME, $fullname, $wpdb -> dbh)) !== false) { 
+				$columns = mysql_num_fields($tablefields);
+				$field_array = array();
+				for ($i = 0; $i < $columns; $i++) {
+					$fieldname = mysql_field_name($tablefields, $i);
+					$field_array[] = $fieldname;
+				}
+				return $field_array;
+			}
+		}
+		return false;
+
+	}
+
 
 /**
  * 		loads and instantiates files and objects for EE admin pages
@@ -625,7 +699,7 @@ function espresso_init_admin_pages() {
 			global $Single_Page_Checkout;
 			$Single_Page_Checkout = EE_Single_Page_Checkout::instance();	
 			//Process email confirmations
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/email.php');
+			//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/email.php');
 			define("ESPRESSO_REG_PAGE_FILES_LOADED", "true");
 		}
 

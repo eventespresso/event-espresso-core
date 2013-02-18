@@ -88,9 +88,10 @@
 		
 		// the primary attendee question group
 		var prmry_att_qstn_grp = $(this).val();
+		//alert( 'prmry_att_qstn_grp = ' + prmry_att_qstn_grp );
 		// find all of the primaray attendee's questions for this event
-		var prmry_att_questions = $( '#mer-reg-page-attendee-wrap-' + prmry_att_qstn_grp ).children( '.event_questions' ).find('input');		
-		//$( '#mer-reg-page-attendee-wrap-' + prmry_att_qstn_grp ).children( '.event_questions' ).find('input').css('background','pink');		
+		var prmry_att_questions = $( '#mer-reg-page-attendee-wrap-' + prmry_att_qstn_grp ).children( '.espresso-question-group-wrap' ).find('input');		
+		//$( '#mer-reg-page-attendee-wrap-' + prmry_att_qstn_grp ).children( '.espresso-question-group-wrap' ).find('input').css('background','pink');		
 
 		// the targeted attendee question group
 		var trgt_att_qstn_grp = $(this).attr('rel');
@@ -127,7 +128,7 @@
 					var lbl = $(this).prev('label');
 					// grab it's text
 					var lbl_txt = $(lbl).html();
-					//alert(lbl_txt);
+					//alert('lbl_txt = ' + lbl_txt);
 					// remove "<em>*</em>" from end
 					lbl_txt = lbl_txt.substring(0, lbl_txt.length - 10);
 					// show an error msg
@@ -142,10 +143,21 @@
 				} else {
 	
 					new_input_id = '#' + trgt_att_qstn_grp + '-' +  input_id_array[5];
-	//				alert ( 'new_input_id = ' + new_input_id  ); // + '\n' + 'att_nmbr = ' + trgt_att_nmbr
+					if ( input_id_array[6] != undefined ) {
+						new_input_id = new_input_id + '-' +  input_id_array[6];
+					}
+					//alert ( 'new_input_id = ' + new_input_id + '\n' + 'input_id = ' + input_id ); // + '\n' + 'att_nmbr = ' + trgt_att_nmbr
 					
 					if ( $(new_input_id).length > 0 ){
-						$(new_input_id).val(input_value);
+						if ( $(new_input_id).is(':radio') && $('#' + input_id).is(':checked') === true ) {
+							//alert ( 'radio = ' + new_input_id  );
+					       $(new_input_id).prop('checked', true);
+					    } else if ( $(new_input_id).is(':checkbox') && $('#' + input_id).is(':checked') === true ) {
+							//alert ( 'checkbox = ' + new_input_id  );
+					        $(new_input_id).prop('checked', true);
+					    } else {
+							$(new_input_id).val(input_value);
+						}						
 					}
 	
 					var billing = '#reg-page-billing-' + input_id_array[5];
@@ -585,7 +597,7 @@
 		}		
 		
 		if ( good_to_go === true && allAttendeesChk ) {
-			$('.event_questions').slideUp(); 
+			$('.espresso-question-group-wrap').slideUp(); 
 			$('#mer-reg-page-copy-attendee-dv').slideUp();
 			$('#mer-reg-page-display-event-questions-lnk').removeClass('hidden');
 		} else if ( good_to_go != '' && good_to_go!==true ) {
@@ -602,7 +614,7 @@
 
 	// show event questions
 	$('#mer-reg-page-display-event-questions-lnk').on( 'click', function() {
-		$('.event_questions').slideDown();
+		$('.espresso-question-group-wrap').slideDown();
 		$('#mer-reg-page-copy-attendee-dv').slideDown();
 		$(this).addClass('hidden');
 	});

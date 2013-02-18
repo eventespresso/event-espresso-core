@@ -58,6 +58,10 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 		$session = $EE_Session->get_session_data();
 //		printr( $session, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
 //		die();	
+
+		$success = $txn_results['approved'];
+		do_action( 'action_hook_espresso_after_payment', $EE_Session, $success );
+		
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 		$transaction = $session['transaction'];
 		$transaction->set_paid($txn_results['amount']);
