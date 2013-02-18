@@ -498,31 +498,50 @@ abstract class EE_message_type extends EE_Base {
 		$current_templates = $this->active_messenger->active_templates;
 		$has_event_template = false;
 		$event_id = null;
+		$global_templates = $event_templates = $global_override = array();
 
-		//in vanilla EE we're assuming there's only one event.  Let's get that.  TODO: we'll need to provide a way for addons (such as MER) to account for multiple events (or maybe just hardcode the posibility of multiple events?  This needs reworked regardless as it will only take the first even it finds in the registration and process the notification for that event using that event's template)
-		foreach ( $this->data->events as $event ) {
-			$event_id = $event['ID'];
-			break;
+		//in vanilla EE we're assuming there's only one event.  However, if there are multiple events then we'll just do global.
+		if ( count($this->data->events) === 1 ) {
+			foreach ( $this->data->events as $event ) {
+				$event_id = $event['ID'];
+			}
 		}
 
 		if ( isset($current_templates) ) {
-			if ( !empty($event_id) ) {
-				foreach ( $current_templates as $template_object ) {
-					$has_event_template = $template_object->event() == $event_id ? true : false;
-				}
-			}
 
 			foreach ( $current_templates as $template_object ) {
 				if ( $this->name == $template_object->message_type() ) {
 					$templates = $template_object->context_templates();
 					foreach ( $templates as $context => $template_fields ) {
 						foreach ( $template_fields as $template_field => $value ) {
-								if ( is_array($value ) ) {
-									if ( ($template_object->event() != $event_id && !$template_fields['MTP_is_override'] && $has_event_template) || !$has_event_template )
-										continue;
-									$this->templates[$template_field][$context] = $value['content'];
+								if ( $template_object->is_global() ) {
+									$global_templates[$template_field][$context] = $value;
+									if ( $template_fields['MTP_is_override'] )
+										$global_override[$context] = TRUE;
+								}
+
+								if ( $template_object->event() == $event_id && !empty( $event_id )) {
+									$event_templates[$template_field][$context] = $value;
 								}
 						}
+					}
+				}
+			}
+
+			//k we now have $global and (possibly) $event_templates.  So let's decide who makes it to the finals.
+			//first if there are no event templates, global wins
+			if ( empty( $event_templates) ) {
+				$this->templates = $global_templates;
+
+			//next if there are event templates and no global overrides set, event wins.
+			} elseif ( !empty( $event_templates) && empty( $global_override ) ) {
+				$this->templates = $event_templates;
+
+			//hmph looks like we have event templates and global overrides present.  So its down to the wire, lets take a snapshot and see who wins.
+			} else {
+				foreach ( $event_templates as $field => $contexts ) {
+					foreach ( $contexts as $context ) {
+						$this->templates[$field][$context] = isset( $global_override[$context] ) ? $global_templates[$field][$context] : $event_templates[$field][$context];
 					}
 				}
 			}
