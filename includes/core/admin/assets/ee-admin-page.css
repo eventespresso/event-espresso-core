@@ -110,6 +110,13 @@ table .espresso-radio-btn-options-ul .small-lbl,
 .jst-cntr { text-align:center; }
 .jst-rght { text-align:right; }
 
+.tiny-text { font-size:.5em; line-height:.8em; }
+.smaller-text { font-size:.7em; line-height:1em; }
+.small-text { font-size:.85em; line-height:1.2em; }
+.big-text { font-size:1.2em; line-height:1.6em; }
+.bigger-text { font-size:1.5em; line-height:2em; }
+.huge-text { font-size:2em; line-height:2.4em; }
+
 
 .display-the-hidden { float:right; cursor:pointer; }
 .hide-the-displayed { float:right; cursor:pointer; }
