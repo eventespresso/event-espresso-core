@@ -98,7 +98,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				
 				'edit_registration'	=> array( 
 						'func' => '_registration_details', 
-						'param' => array( 'edit' ), 
+						'args' => array( 'edit' ), 
 						'noheader' => TRUE 
 						
 					),
@@ -111,6 +111,24 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					
 				'delete_registration'	=> array(
 						'func' => '_delete_registration',
+						'noheader' => TRUE
+					),
+					
+				'approve_reg_status'	=> array(
+						'func' => '_approve_or_decline_reg_status',
+						'args' => array( 'RAP' ),
+						'noheader' => TRUE
+					),
+					
+				'decline_reg_status'	=> array(
+						'func' => '_approve_or_decline_reg_status',
+						'args' => array( 'RNA' ),
+						'noheader' => TRUE
+					),
+					
+				'set_pending_reg_status'	=> array(
+						'func' => '_approve_or_decline_reg_status',
+						'args' => array( 'RPN' ),
 						'noheader' => TRUE
 					),
 					
@@ -330,11 +348,12 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$REG_ID = ( ! empty( $this->_req_data['reg'] )) ? absint( $this->_req_data['reg'] ) : FALSE;
 
 		if ( $this->_registration = $REG->get_registration_for_admin_page( $REG_ID ) )
-			return;
+			return TRUE;
 		else {
 			$error_msg = __('An error occured and the details for Registration ID #', 'event_espresso') . $REG_ID .  __(' could not be retreived.', 'event_espresso');
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			$this->_registration = NULL;
+			return FALSE;
 		}
 	}
 
@@ -355,7 +374,9 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 		$this->_set_registration_object();
 
-		if ( is_object( $this->_registration) ) {
+		if ( is_object( $this->_registration )) {
+			
+			//printr( $this->_registration, '$this->_registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
 			$this->_session = maybe_unserialize( maybe_unserialize( $this->_registration->TXN_session_data ));
 
@@ -370,9 +391,40 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$this->_template_args['reg_datetime']['value'] = date( 'l F j, Y,    g:i:s a', $this->_registration->REG_date );
 			$this->_template_args['reg_datetime']['label'] = __( 'Date', 'event_espresso' );
 
-			$this->_template_args['reg_status']['value'] = self::$_reg_status[ $this->_registration->REG_status ];
+			$this->_template_args['reg_status']['value'] = str_replace( '_', ' ', self::$_reg_status[ $this->_registration->REG_status ] );
 			$this->_template_args['reg_status']['label'] = __( 'Registration Status', 'event_espresso' );
 			$this->_template_args['reg_status']['class'] = 'status-' . $this->_registration->REG_status;
+			
+			switch ( $this->_registration->REG_status ) {
+				
+				case 'RAP' :
+					$pending_url = wp_nonce_url( add_query_arg( array( 'action'=>'set_pending_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'set_pending_reg_status_nonce' );
+					$decline_url = wp_nonce_url( add_query_arg( array( 'action'=>'decline_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'decline_reg_status_nonce' );
+					$this->_template_args['approve_decline_reg_status_buttons'] = '
+			<a id="reg-admin-pending-reg-status-lnk" class="button-secondary" href="' . $pending_url . '">' . __( 'Set this Registration to Pending', 'event_espresso' ) . '</a>
+			<a id="reg-admin-decline-reg-status-lnk" class="button-secondary" href="' . $decline_url . '">' . __( 'Decline this Registration', 'event_espresso' ) . '</a>';
+					break;
+				
+				case 'RPN' :
+					$aprove_url = wp_nonce_url( add_query_arg( array( 'action'=>'approve_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'approve_reg_status_nonce' );
+					$decline_url = wp_nonce_url( add_query_arg( array( 'action'=>'decline_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'decline_reg_status_nonce' );
+					$this->_template_args['approve_decline_reg_status_buttons'] = '
+			<a id="reg-admin-approve-reg-status-lnk" class="espresso-button-green button-primary" href="' . $aprove_url . '">' . __( 'Approve this Registration', 'event_espresso' ) . '</a>
+			<a id="reg-admin-decline-reg-status-lnk" class="button-secondary" href="' . $decline_url . '">' . __( 'Decline this Registration', 'event_espresso' ) . '</a>';
+					break;
+				
+				case 'RNA' :
+					$aprove_url = wp_nonce_url( add_query_arg( array( 'action'=>'approve_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'approve_reg_status_nonce' );
+					$pending_url = wp_nonce_url( add_query_arg( array( 'action'=>'set_pending_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'set_pending_reg_status_nonce' );
+					$this->_template_args['approve_decline_reg_status_buttons'] = '
+			<a id="reg-admin-approve-reg-status-lnk" class="espresso-button-green button-primary" href="' . $aprove_url . '">' . __( 'Approve this Registration', 'event_espresso' ) . '</a>
+			<a id="reg-admin-pending-reg-status-lnk" class="button-secondary" href="' . $pending_url . '">' . __( 'Set this Registration to Pending', 'event_espresso' ) . '</a>';
+					break;
+				
+				default :
+					$this->_template_args['approve_decline_reg_status_buttons'] = '';
+				
+			}
 
 			$this->_template_args['grand_total'] = $this->_registration->TXN_total;
 
@@ -409,6 +461,34 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			add_meta_box( 'edit-reg-attendees-mbox', __( 'Other Attendees Registered in this Transaction', 'event_espresso' ), array( $this, '_reg_attendees_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
 		}
 	}
+
+
+
+
+
+
+	/**
+	 * 		set reg status to approved
+	*		@access public
+	*		@param string	$REG_status
+	*		@return void
+	*/
+	public function _approve_or_decline_reg_status( $REG_status = FALSE ) {
+		
+		$success = FALSE;
+		$REG_ID = ( ! empty( $this->_req_data['reg'] )) ? absint( $this->_req_data['reg'] ) : FALSE;			
+		if ( $REG_ID && array_key_exists( $REG_status, self::$_reg_status )) {
+			if ( $registration = EEM_Registration::instance()->get_registration_by_ID( $REG_ID )) {
+				$registration->set_status( $REG_status );
+				$success = $registration->update();		
+			}
+		}
+		
+		$what = 'Attendee Registration Status';
+		$route = $REG_ID ? array( 'action' => 'view_registration', 'reg' => $REG_ID ) : array( 'action' => 'default' );
+		$this->_redirect_after_action( $success, $what, 'updated', $route );
+	}
+
 
 
 
