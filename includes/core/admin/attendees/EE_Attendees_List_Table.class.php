@@ -35,9 +35,9 @@ class EE_Attendees_List_Table extends EE_Admin_List_Table {
 
 		$this->_columns = array(
 				'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
-				'REG_date' => __('Registration Date', 'event_espresso'),
-				'ATT_name' => __('Attendee', 'event_espresso'),
 				'event_name' => __('Event', 'event_espresso'),
+				'ATT_name' => __('Attendee', 'event_espresso'),
+				'REG_date' => __('Registration Date', 'event_espresso'),
 				'DTT_EVT_start' => __('Event Date & Time', 'event_espresso'),
 				'PRC_name' => __('Ticket Option', 'event_espresso'),
 				'REG_final_price' => __('Price Paid', 'event_espresso')
@@ -90,10 +90,10 @@ class EE_Attendees_List_Table extends EE_Admin_List_Table {
 
 
 
-	function column_REG_date($item) {
-		$view_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL ), 'view_registration_nonce' );	
-		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . date( 'D M j, Y  g:i a',	$item->REG_date ) . '</a>';	
-		return $REG_date;	
+	function column_event_name($item){
+		$edit_event_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_event', 'event_id'=>$item->EVT_ID ), EVENTS_ADMIN_URL ), 'edit_event_nonce' );
+		$event_name = stripslashes( html_entity_decode( $item->event_name, ENT_QUOTES, 'UTF-8' ));
+		return '<a href="' . $edit_event_url . '" title="' . __( 'Edit Event #', 'event_espresso' ) . $item->EVT_ID.'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>';
 	}
 
 
@@ -111,10 +111,10 @@ class EE_Attendees_List_Table extends EE_Admin_List_Table {
 
 
 
-	function column_event_name($item){
-		$edit_event_url = add_query_arg( array( 'event_id'=>$item->EVT_ID ), REG_ADMIN_URL );
-		$event_name = stripslashes( html_entity_decode( $item->event_name, ENT_QUOTES, 'UTF-8' ));
-		return '<a href="' . $edit_event_url . '" title="' . __( 'Edit Event #', 'event_espresso' ) . $item->EVT_ID.'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>';
+	function column_REG_date($item) {
+		$view_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL ), 'view_registration_nonce' );	
+		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . date( 'D M j, Y  g:i a',	$item->REG_date ) . '</a>';	
+		return $REG_date;	
 	}
 
 
