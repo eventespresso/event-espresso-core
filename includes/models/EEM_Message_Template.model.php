@@ -148,13 +148,14 @@ class EEM_Message_Template extends EEM_Base {
 	 * 	@access	public
 	 * 	@return	mixed array on success, FALSE on fail
 	 */
-	public function get_all_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE) {
+	public function get_all_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE, $active = TRUE ) {
 
 		// retrieve all templates
 		// we have to use limit and count later because we're not getting by rows.  So we have to retrieve all templates first.
 		
-		//we have to make sure we're only returning "ACTIVE" templates (i.e. an active messenger or message_type);
-		$where_cols_n_values = array( 'MTP_is_active' => 1 );
+		//we have to make sure we're only returning "ACTIVE" templates unless the $active has explicitly been set to false.  If active has been set to 'all' then we DON'T set the active parameter.
+		$where_cols_n_values = !$active ? array( 'MTP_is_active' => 0 ) : array( 'MTP_is_active' => 1);
+		$where_cols_n_values = $active == 'all' ? '' : $where_cols_n_values;
 		
 
 		if ($templates = $this->select_all_where($where_cols_n_values, $orderby, $order)) {
@@ -179,16 +180,23 @@ class EEM_Message_Template extends EEM_Base {
 	 * 	@return	mixed	array on success, FALSE on fail
 	 */
 	public function get_all_message_templates_where( $where_cols_n_values = FALSE, $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE ) {
-
+		$active = array();
+		
 		if (!$where_cols_n_values) {
 			return FALSE;
 		}
 
-		//need to make sure we only return ACTIVE templates BUT only if the 'MTP_is_active' reference isn't already in the where array.
+		//if the active reference IS not set then we're assuming we only want active templates
 		if ( !isset( $where_cols_n_values['MTP_is_active'] ) ) {
 			$active = array( 'MTP_is_active' => 1 );
-			$where_cols_n_values = array_merge( $active, $where_cols_n_values );
 		}
+
+		//however if the active reference IS set and it == 'all' then we don't send ANY filter on active
+		if ( isset( $where_cols_n_values['MTP_is_active'] ) && $where_cols_n_values['MTP_is_active'] == 'all' ) {
+			$active = array();
+		}
+
+		$where_cols_n_values = array_merge( $active, $where_cols_n_values );
 
 		// retrieve all templates
 		if ($templates = $this->select_all_where( $where_cols_n_values, $orderby, $order )) {
@@ -196,7 +204,7 @@ class EEM_Message_Template extends EEM_Base {
 		} else {
 			return FALSE;
 		}
-
+		
 		//now let's select the data to return
 		if ( empty( $limit) || !is_array($limit) )
 			return $count ? count($r_templates) : $r_templates;
@@ -374,7 +382,7 @@ class EEM_Message_Template extends EEM_Base {
 	 * @param  string $order        ASC or DESC
 	 * @param  mixed (array|null) $limit array($offset, $num)
 	 * @param  bool   $count        true = just return count, false = objects
-	 * @param  bool   $active  		ignore "active" or not. (default only return active)
+	 * @param  bool   $active  		ignore "active" or not. (default only return active) - 'all' means return both inactive AND inactive.
 	 * @return ARRAY               message template objects that are global (i.e. non-event)
 	 */
 	public function get_global_message_template_by_m_and_mt($messenger, $message_type, $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE, $active = TRUE ) {
@@ -389,6 +397,7 @@ class EEM_Message_Template extends EEM_Base {
 			$_where['MTP_is_active'] = FALSE;
 		}
 
+		
 		return $this->get_all_message_templates_where($_where, $orderby, $order, $limit, $count );
 	}
 

@@ -133,7 +133,7 @@ class EE_Email_messenger extends EE_messenger  {
 					),
 					'event_list' => array(
 						'input' => 'textarea',
-						'label' => __('Attendee List', 'event_espresso'),
+						'label' => __('Event List', 'event_espresso'),
 						'type' => 'string',
 						'required' => TRUE,
 						'validation' => TRUE,

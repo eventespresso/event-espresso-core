@@ -209,9 +209,10 @@ class EE_messages {
 
 		$this->_message_type = is_object($mt) ? $mt : null;
 
+
 		//do we have the necessary objects loaded?
 		if ( empty( $this->_messenger) || empty($this->_message_type) )
-			throw new EE_Error( sprintf( __(' We had a problem creating the %s messenger or the %s message_type. Are you sure they exist?', 'event_espresso'), $messenger, $message_type ) );
+			throw new EE_Error( sprintf( __(' The %s messenger or the %s message_type are not active. Are you sure they exist?', 'event_espresso'), $messenger, $message_type ) );
 		
 		//is given message_type valid for given messenger (if this is not a global save)
 		if ( !$is_global ) {
@@ -290,10 +291,6 @@ class EE_messages {
 		$template_fields = array();
 
 		$valid_msg = $this->_validate_setup($messenger, $message_type);
-
-		//bubble up wp_error_obj if exists
-		if ( is_wp_error($valid_msg) )
-			return $valid_msg;
 
 
 		//okay now let's assemble an array with the messenger template fields added to the message_type contexts.
