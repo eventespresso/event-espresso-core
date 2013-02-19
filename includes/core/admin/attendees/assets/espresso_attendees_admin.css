@@ -19,16 +19,16 @@ textarea { width:25em; }
 
 /* TABLE COLUMNS */
 
-.wp-list-table #ATT_ID { width:24px; }
-.wp-list-table #ATT_fname { width:10%; }
-.wp-list-table #ATT_lname { width:12.5%; }
-.wp-list-table #ATT_email { }
-.wp-list-table #ATT_address { width:15%; }
-.wp-list-table #ATT_city { width:10%; }
-.wp-list-table #STA_ID { width:5.5%; }
-.wp-list-table #CNT_ISO { width:7%; }
-.wp-list-table #ATT_phone { width:10%; }
-.wp-list-table #actions { width:5%;  }
+.wp-list-table .column-ATT_ID { width:50px; text-align:right; }
+.wp-list-table .column-ATT_fname { width:10%; }
+.wp-list-table .column-ATT_lname { width:12.5%; }
+.wp-list-table .column-ATT_email { }
+.wp-list-table .column-ATT_address { width:15%; }
+.wp-list-table .column-ATT_city { width:10%; }
+.wp-list-table .column-STA_ID { width:5.5%; }
+.wp-list-table .column-CNT_ISO { width:7%; }
+.wp-list-table .column-ATT_phone { width:10%; }
+.wp-list-table .column-actions { width:5%;  }
 
 .jst-left { text-align:left; }
 .jst-cntr { text-align:center; }
