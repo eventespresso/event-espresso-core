@@ -65,7 +65,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _add_view_counts() {
-		$this->_views['in_use']['count'] = $this->_admin_page->get_attendees( $this->_per_page, TRUE );
+		$this->_views['in_use']['count'] = $this->_admin_page->get_attendees( $this->_per_page, TRUE, FALSE );
 		$this->_views['trash']['count'] = $this->_admin_page->get_attendees( $this->_per_page, TRUE, TRUE );
 	}
 

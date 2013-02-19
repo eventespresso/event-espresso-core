@@ -247,6 +247,15 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 				'bulk_action' => array(
 					'trash_attendees' => __('Move to Trash', 'event_espresso'),
 					)
+				),
+			'trash' => array(
+				'slug' => 'trash',
+				'label' => __('Trash', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'restore_attendees' => __('Restore from Trash', 'event_espresso'),
+					'delete_attendees' => __('Delete Permanently', 'event_espresso')
+					)
 				)
 			);
 	}
@@ -269,7 +278,7 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 				'count' => 0,
 				'bulk_action' => array(
 					'restore_attendees' => __('Restore from Trash', 'event_espresso'),
-					'delete_attendees' => __('Delete Permanently', 'event_espresso'),
+					'delete_attendees' => __('Delete Permanently', 'event_espresso')
 					)
 				)
 				
@@ -417,7 +426,7 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 		$limit = array( $offset, $per_page );
 
 		if ( $trash )
-			$all_attendees = $count ? $ATT_MDL->get_all_trashed_attendees( $orderby, $sort, $limit, TRUE ) : $ATT_MDL->get_all_trashed_attendees( $orderby, $sort, $limit );
+			$all_attendees = $count ? $ATT_MDL->get_all_trashed_attendees( $orderby, $sort, $limit, 'COUNT' ) : $ATT_MDL->get_all_trashed_attendees( $orderby, $sort, $limit );
 		else
 			$all_attendees = $count ? $ATT_MDL->get_all_inuse_attendees( $orderby, $sort, $limit, 'COUNT' ) : $ATT_MDL->get_all_inuse_attendees( $orderby, $sort, $limit );
 

@@ -13,8 +13,8 @@ class EE_Event_Attendees_List_Table extends EE_Admin_List_Table {
 
 	protected function _setup_data() {
 		$this->_per_page = $this->get_items_per_page( $this->_screen . '_per_page' );
-		$this->_data = $this->_admin_page->get_event_attendees( $this->_per_page, FALSE, TRUE );
-		$this->_all_data_count = $this->_admin_page->get_event_attendees(  $this->_per_page, TRUE, TRUE );
+		$this->_data = $this->_view != 'trash' ? $this->_admin_page->get_event_attendees( $this->_per_page ) : $this->_admin_page->get_event_attendees( $this->_per_page, FALSE, TRUE );
+		$this->_all_data_count = $this->_view != 'trash' ? $this->_admin_page->get_event_attendees(  $this->_per_page, TRUE ) : $this->_admin_page->get_event_attendees(  $this->_per_page, TRUE, TRUE );
 	}
 
 
@@ -61,7 +61,8 @@ class EE_Event_Attendees_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _add_view_counts() {
-		$this->_views['all']['count'] = $this->_admin_page->get_event_attendees( $this->_per_page,TRUE );
+		$this->_views['all']['count'] = $this->_admin_page->get_event_attendees( $this->_per_page, TRUE );
+		$this->_views['trash']['count'] = $this->_admin_page->get_event_attendees( $this->_per_page, TRUE, TRUE );
 	}
 
 

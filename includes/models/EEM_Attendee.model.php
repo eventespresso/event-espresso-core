@@ -222,13 +222,7 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 	public function get_event_attendees( $EVT_ID = FALSE, $CAT_ID = FALSE, $reg_status = FALSE, $trashed = FALSE, $orderby = 'REG_date', $sort = 'DESC', $limit = FALSE, $output = 'OBJECT_K' ) {
 		
 		global $wpdb;
-		
-		$where['ATT_deleted'] = $trashed;
-		
-		if ( $EVT_ID ) {
-			$where['EVT_ID'] = $EVT_ID;
-		}
-		
+			
 		$select = $output == 'COUNT' ? 'COUNT(reg.ATT_ID)' : 'att.ATT_ID, CONCAT(att.ATT_fname, " ", att.ATT_lname) AS ATT_name, reg.REG_ID, reg.REG_code, reg.STS_ID AS REG_status, reg.REG_final_price, reg.REG_date, reg.REG_is_primary, dtt.DTT_EVT_start, evt.id AS EVT_ID, evt.event_name, evt.require_pre_approval, txn.TXN_ID, txn.TXN_total, txn.STS_ID AS txn_status, prc.PRC_name';
 
 		$SQL = 'SELECT ' . $select;  
@@ -261,32 +255,9 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 			$sql_clause = ' AND ';
 		}
 
-//		if ( $month_range ) {
-//			$pieces = explode('-', $month_range, 3);
-//			$year_r = $pieces[0];
-//			$month_r = $pieces[1];
-//
-//			$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . strtotime( $month_r . ' 01 ' . $year_r . ' ' . $time_start ) . '" ';
-//			$SQL .= 'AND "' . strtotime( $month_r . ' ' . date( 't', strtotime( $year_r . ' ' . $month_r )) . ' ' . $year_r . ' ' . $time_end )  . '"';
-//			$sql_clause = ' AND ';
-//		}
-//
-//		if ( $today_a ) {
-//			$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . $curdate . $time_start . '" AND "' . $curdate . $time_end  . '"';
-//			$sql_clause = ' AND ';
-//		}
-//
-//		if ( $this_month_a ) {
-//			$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . strtotime( $this_year_r . '-' . $this_month_r . '-01' . $time_start ) . '" AND "' . strtotime( $this_year_r . '-' . $this_month_r . '-' . $days_this_month . $time_end )  . '"';
-//			$sql_clause = ' AND ';
-//		}
-
-//		if (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
-//			$SQL .= $sql_clause . ' evt.wp_user = "' . espresso_member_data('id')  . '"';
-//			$sql_clause = ' AND ';
-//		}
-
-		$SQL .= $sql_clause . ' evt.event_status != "D" ';
+		$trashed = $trashed ? 1 : 0;
+		$SQL .= $sql_clause . ' att.ATT_deleted = ' . $trashed;
+		$SQL .= ' AND evt.event_status != "D" ';
 
 		//let's setup orderby
 		switch ( $orderby ) {
