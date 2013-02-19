@@ -63,6 +63,7 @@ class EE_messages_init extends EE_Base {
 	 */
 	private function _do_actions() {
 		add_action( 'action_hook_espresso_after_payment', array( $this, 'payment' ), 10, 2 );
+		add_action( 'action_hook_espresso_after_registration', array( $this, 'registration' ), 10 );
 	}
 
 
@@ -73,9 +74,21 @@ class EE_messages_init extends EE_Base {
 	 * @param  bool $success    payment was successful or not (TRUE OR FALSE)
 	 * @return void
 	 */
-	public function payment( $EE_Session, $success ) {
+	public function payment( EE_Session $EE_Session, $success ) {
 		$this->_load_controller();
 		$this->_EEMSG->send_message( 'payment', $EE_session );
+	}
+
+
+
+	/**
+	 * Message triggers for after successful frontend registration go here
+	 * @param  EE_Session object  $EE_Session 	
+	 * @return void
+	 */
+	public function registration( EE_Session $EE_Session ) {
+		$this->_load_controller();
+		$this->_EEMSG->send_message( 'registration', $EE_Session );
 	}
 
 
