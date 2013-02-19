@@ -1256,8 +1256,6 @@ class EE_Single_Page_Checkout {
 			$transaction->set_txn_session_data( $session );
 			$transaction->update();
 			$EE_Session->set_session_data(array( 'registration' => $reg, 'transaction' => $transaction ), 'session_data');
-
-			do_action( 'action_hook_espresso_after_registration', $EE_Session );
 			
 
 //			printr( $EE_Session, '$EE_Session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 

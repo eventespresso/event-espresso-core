@@ -63,7 +63,7 @@ class EE_messages_init extends EE_Base {
 	 */
 	private function _do_actions() {
 		add_action( 'action_hook_espresso_after_payment', array( $this, 'payment' ), 10, 2 );
-		add_action( 'action_hook_espresso_after_registration', array( $this, 'registration' ), 10 );
+		add_action( 'action_hook_espresso__EE_Single_Page_Checkout__process_registration_step_3__end', array( $this, 'registration' ), 10 );
 	}
 
 
@@ -83,10 +83,11 @@ class EE_messages_init extends EE_Base {
 
 	/**
 	 * Message triggers for after successful frontend registration go here
-	 * @param  EE_Session object  $EE_Session 	
+	 * @param  EE_Single_Page_Checkout object  $SPCO 	
 	 * @return void
 	 */
-	public function registration( EE_Session $EE_Session ) {
+	public function registration( EE_Single_Page_Checkout $SPCO ) {
+		global $EE_Session;
 		$this->_load_controller();
 		$this->_EEMSG->send_message( 'registration', $EE_Session );
 	}
