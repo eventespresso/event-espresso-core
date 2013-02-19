@@ -145,7 +145,7 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 					'label' => __('Event Attendees', 'event_espresso'),
 					'order' => 10
 					),
-					'list_table' => 'EE_Attendees_List_Table',
+					'list_table' => 'EE_Event_Attendees_List_Table',
 					'metaboxes' => array()
 				),
 			'add_new_attendee' => array(
@@ -308,7 +308,7 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 		// start with an empty array
 		$attendees = array();
 		
-		require_once( ATT_ADMIN . 'EE_Attendees_List_Table.class.php' );
+		require_once( ATT_ADMIN . 'EE_Event_Attendees_List_Table.class.php' );
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
 		//$ATT_MDL = EEM_Attendee::instance();
 		
@@ -377,7 +377,7 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 		// start with an empty array
 		$attendees = array();
 		
-		require_once( ATT_ADMIN . 'EE_Attendees_List_Table.class.php' );
+		require_once( ATT_ADMIN . 'EE_Attendee_Contact_List_Table.class.php' );
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
 		$ATT_MDL = EEM_Attendee::instance();
 		

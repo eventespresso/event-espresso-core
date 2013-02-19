@@ -1,7 +1,7 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
 
-class EE_Attendees_List_Table extends EE_Admin_List_Table {
+class EE_Event_Attendees_List_Table extends EE_Admin_List_Table {
 
 
 	public function __construct( $admin_page ) {
@@ -31,7 +31,7 @@ class EE_Attendees_List_Table extends EE_Admin_List_Table {
 		$this->_columns = array(
 				'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
 				'event_name' => __('Event', 'event_espresso'),
-				'ATT_name' => __('Attendee', 'event_espresso'),
+				'ATT_name' => sprintf( __('Attendee %sprimary registrant%s', 'event_espresso'), '<span class="primary-registrant-spn lt-grey-txt small-text">(&nbsp;<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/star-8x8.png" width="8" height="8" />&nbsp;=&nbsp;', '&nbsp;)</span>' ),
 				'REG_date' => __('Registration Date', 'event_espresso'),
 				'DTT_EVT_start' => __('Event Date & Time', 'event_espresso'),
 				'PRC_name' => __('Ticket Option', 'event_espresso'),
@@ -98,6 +98,7 @@ class EE_Attendees_List_Table extends EE_Admin_List_Table {
 		// edit attendee link
 		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item->ATT_ID ), ATT_ADMIN_URL ), 'edit_attendee_nonce' );
 		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . html_entity_decode( stripslashes( $item->ATT_name ), ENT_QUOTES, 'UTF-8' ) . '</a>';
+		$name_link .= $item->REG_is_primary ? '<img class="primary-attendee-star-img" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/star-8x8.png" width="8" height="8" alt="this is the primary attendee"/>' : '';
 		return $name_link;
 	}
 
