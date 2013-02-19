@@ -101,6 +101,10 @@ table .espresso-radio-btn-options-ul .small-lbl,
 	background: rgba(0, 0, 0, 0.6) !important; z-index:999;
 }
 
+.primary-attendee-star-img {
+	margin: 0 0 4px .5em;
+}
+
 .ee-width-50 { width: 50%; }
 .ee-width-33 { width: 33%; }
 .ee-width-25 { width: 25%; }

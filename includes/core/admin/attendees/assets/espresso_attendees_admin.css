@@ -19,6 +19,7 @@ textarea { width:25em; }
 
 /* TABLE COLUMNS */
 
+.wp-list-table #ATT_name .primary-registrant-spn { float: none !important; } 
 .wp-list-table .column-ATT_ID { width:50px; text-align:right; }
 .wp-list-table .column-ATT_fname { width:10%; }
 .wp-list-table .column-ATT_lname { width:12.5%; }
