@@ -63,7 +63,8 @@ function display_event_espresso_categories($category_identifier = 'null', $css_c
  */
 function event_espresso_get_event_details($attributes) {
 
-	global $wpdb, $org_options, $events_in_session, $ee_gmaps_opts, $EE_Cart;
+	global $wpdb, $org_options, $events_in_session, $ee_gmaps_opts, $EE_Cart;	
+	//printr( $org_options, '$org_options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	do_action( 'action_hook_espresso_before_event_list' );
@@ -362,12 +363,12 @@ function event_espresso_get_event_details($attributes) {
 		$venue_address_elements .= $event_zip . ',';
 		$venue_address_elements .= $event_country . ',';
 
-		$location = $event_address;
-		$location .= '<br />' . $event_address2;
-		$location .= '<br />' . $event_city;
-		$location .= ', ' . $event_state;
-		$location .= '<br />' . $event_zip;
-		$location .= '<br />' . $event_country;
+		$location = ! empty( $event_address2 ) ? $event_address . '<br />' : '';
+		$location .= ! empty( $event_address2 ) ? $event_address2 . '<br />' : '';
+		$location .= ! empty( $event_city ) ? $event_city . ', ' : '';
+		$location .= ! empty( $event_state ) ? $event_state . '<br />' : '';
+		$location .= ! empty( $event_country ) ? $event_country . '<br />' : '';
+		$location .= ! empty( $event_zip ) ? $event_zip . '<br />' : '';
 
 
 		//Google map link creation
@@ -440,18 +441,21 @@ function event_espresso_get_event_details($attributes) {
 		$display_thumb_in_list = ( isset($event_meta['display_thumb_in_lists']) && $event_meta['display_thumb_in_lists'] && !empty($event_meta['event_thumbnail_url']) ) ? TRUE : FALSE;
 
 
-		$display_address = ( $location != '' && isset( $org_options['template_settings']['display_address_in_event_list'] ) && $org_options['template_settings']['display_address_in_event_list']) ? TRUE : FALSE;
+		$display_address = ( ! empty( $location) && isset( $org_options['template_settings']['display_address_in_event_list'] ) && $org_options['template_settings']['display_address_in_event_list']) ? TRUE : FALSE;
 
 
 		//Event description
 		if (!empty($event_desc)) {
 			if (isset($org_options['template_settings']['display_description_in_event_list']) && $org_options['template_settings']['display_description_in_event_list']) {
+				$display_desc = TRUE;
 				//Show short descriptions
 				if (isset($org_options['template_settings']['display_short_description_in_event_list']) && $org_options['template_settings']['display_short_description_in_event_list']) {
 					$event_desc = explode('<!--more-->', $event_desc);
 					$event_desc = array_shift($event_desc);
 				}
 				$event_desc = espresso_format_content($event_desc);
+			} else {
+				$display_desc = FALSE;
 			}
 		}
 
@@ -502,7 +506,7 @@ function event_espresso_get_event_details($attributes) {
 				$event->reg_btn = apply_filters( 'filter_hook_espresso_event_reg_btn', $event->reg_btn );
 
 				$event_reg_link = '
-			<p id="register_link-' . $event_id . '" class="">
+			<p id="register_link-' . $event_id . '" class="register-link">
 				<a	id="a_register_link-' . $event_id . '"
 						class="ui-button ui-button-big ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all float-right"
 						href="' . $event->reg_url . '"
@@ -510,6 +514,7 @@ function event_espresso_get_event_details($attributes) {
 					>
 					' . __('Register Now', 'event_espresso') . '
 				</a>
+				<div class="clear"></div>
 			</p>';
 				
 				$event_reg_link = apply_filters( 'filter_hook_espresso_event_reg_link', $event_reg_link, $event->reg_btn );
