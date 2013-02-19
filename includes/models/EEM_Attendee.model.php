@@ -290,23 +290,29 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 
 		//let's setup orderby
 		switch ( $orderby ) {
+			
 			case 'REG_ID':
-				$orderby = 'reg.REG_ID';
+				$orderby = 'reg.REG_ID ';
 				break;
+				
 			case 'STS_ID':
-				$orderby = 'REG_status';
+				$orderby = 'reg.REG_status ';
 				break;
-			case 'REG_att_name':
-				$orderby = 'REG_att_name';
+				
+			case 'ATT_lname':
+				$orderby = 'att.ATT_lname, reg.REG_date ';
 				break;
+				
 			case 'event_name':
-				$orderby = 'evt.event_name';
+				$orderby = 'evt.event_name, att.ATT_lname ';
 				break;
+				
 			case 'DTT_EVT_start':
-				$orderby = 'dtt.DTT_EVT_start';
+				$orderby = 'dtt.DTT_EVT_start, evt.event_name, att.ATT_lname ';
 				break;
+				
 			default: //'REG_date'
-				$orderby = 'reg.REG_date';
+				$orderby = 'reg.REG_date ';
 		}
 
 		//let's setup limit
