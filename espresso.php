@@ -86,7 +86,6 @@ add_action( 'admin_enqueue_scripts', 'espresso_load_scripts_styles' );
 add_action( 'init', 'espresso_load_messages_init', 15 );
 
 if ( is_admin() ) {
-
 	register_activation_hook(__FILE__, 'espresso_plugin_activation');
 	add_action('plugins_loaded', 'espresso_check_for_export');
 	add_action('plugins_loaded', 'espresso_check_for_import');
@@ -98,7 +97,6 @@ if ( is_admin() ) {
 	add_filter('plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2);
 	
 } else {
-
 	add_action('init', 'espresso_export_certificate', 30);
 	add_action('init', 'espresso_export_invoice', 30);
 	add_action('init', 'espresso_export_ticket', 30);

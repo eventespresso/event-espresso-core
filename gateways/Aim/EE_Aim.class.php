@@ -200,14 +200,14 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 			$reg_info = $session_data['cart']['REG'];
 			$primary_attendee = $session_data['primary_attendee'];
-			
 			$registrations = $session_data['cart']['REG']['items'];
 
 			$item_num = 1;
+			require_once('EEM_Attendee.model.php');
 			foreach ($registrations as $registration) {
 				foreach ($registration['attendees'] as $attendee) {			
 					$item_name = substr( $registration['name'], 0, 31 );
-					$item_desc = substr( $attendee['fname'] . ' ' . $attendee['lname'] . ' - ' . $registration['name'] . ' - ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc'], 0, 255 );
+					$item_desc = substr( $attendee[EEM_Attendee::fname_question_id] . ' ' . $attendee[EEM_Attendee::lname_question_id] . ' - ' . $registration['name'] . ' - ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc'], 0, 255 );
 					$this->addLineItem( $item_num, $item_name, $item_desc, 1, $attendee['price_paid'], 'N');
 					$item_num++;				
 				}
@@ -235,7 +235,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 			$this->setField('city', $billing_info[ 'reg-page-billing-city-' . $this->_gateway ]['value']);
 			$this->setField('state', $billing_info[ 'reg-page-billing-state-' . $this->_gateway ]['value']);
 			$this->setField('zip', $billing_info[ 'reg-page-billing-zip-' . $this->_gateway ]['value']);
-			$this->setField('cust_id', $primary_attendee['registration_id']['value']);
+			$this->setField('cust_id', $primary_attendee['registration_id']);
 			$this->setField('invoice_num',$EE_Session->id()); 
 
 	

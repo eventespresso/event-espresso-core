@@ -473,12 +473,14 @@ abstract class EE_Gateway {
 		}
 
 		$transaction->update();
+		//echo "NOT clearing session data in EE_gateway 476";
 		$this->_EEM_Gateways->reset_session_data();
 
 //printr( $transaction, '$transaction  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
 //die();
 //		printr( $EE_Session, '$EE_Session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
 //		die();
+		
 
 	}
 

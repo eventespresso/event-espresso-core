@@ -412,7 +412,23 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 	 */
 	public function validateIpn() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		if (function_exists('curl_init')) {
+		
+		$this->ipnData=$_POST;
+		$response_post_data=$_POST + array('cmd'=>'_notify-validate');
+		$result= wp_remote_post($this->_gatewayUrl, array('body' => $response_post_data, 'sslverify' => false, 'timeout' => 60));
+		//echo "eepaypstandard results:";print_r($result);
+		
+		if (!is_wp_error($result) && array_key_exists('body',$result) && strcmp($result['body'], "VERIFIED") == 0) { 
+			//echo "eepaypalstandard success!";
+			$this->ipnResponse = $result['body'];
+			return true;
+		}else{
+			$this->lastError = "IPN Validation Failed . $this->_gatewayUrl with response:".print_r($result,true);
+			//echo "eepaypalstandard error:".is_wp_error($result).", body equals VERIFIED:".(strcmp($result['body'], "VERIFIED") == 0);
+			$this->ipnResponse=$result['body'];
+			return false;
+		}
+		/*if (function_exists('curl_init')) {
 			//new paypal code//
 			// parse the paypal URL
 			$urlParsed = parse_url($this->_gatewayUrl);
@@ -431,7 +447,8 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			}
 			$req .= 'cmd=_notify-validate';
 			$url = $this->_gatewayUrl;
-			$ch = curl_init(); // Starts the curl handler
+			
+			$ch = curl_init(); // Starts the curl handler;
 			$error = array();
 			$error["set_host"] = curl_setopt($ch, CURLOPT_URL, $url); // Sets the paypal address for curl
 			$error["set_fail_on_error"] = curl_setopt($ch, CURLOPT_FAILONERROR, 1);
@@ -458,8 +475,9 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			$this->ipnResponse = $result;
 			$error["result"] = curl_error($ch);
 			curl_close($ch);
-			$errors .= "Errors resulting from the execution of curl transfer: " . $error["result"];
-
+			//$errors .= "Errors resulting from the execution of curl transfer: " . $error["result"];
+			
+			
 			if (strcmp($result, "VERIFIED") == 0) { // It may seem strange but this function returns 0 if the result matches the string So you MUST check it is 0 and not just do strcmp ($result, "VERIFIED") (the if will fail as it will equate the result as false)
 				// Do some checks to ensure that the payment has been sent to the correct person
 				// Check and ensure currency and amount are correct
@@ -515,7 +533,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 				$this->lastError = "IPN Validation Failed . $urlParsed[path] : $urlParsed[host]";
 				return false;
 			}
-		}
+		}*/
 	}
 
 }

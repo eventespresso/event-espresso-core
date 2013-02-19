@@ -200,7 +200,7 @@ class EE_Single_Page_Checkout {
 		$event_page_id = $org_options['event_page_id'];
 		// get permalink for registration page
 		// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
-		$this->_reg_page_base_url = rtrim(get_permalink($event_page_id), '/');
+		$this->_reg_page_base_url = rtrim(get_permalink($event_page_id), '/').'/';
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $event_page_id . '|' . $this->_reg_page_base_url);
 
@@ -636,7 +636,7 @@ class EE_Single_Page_Checkout {
 		$template_args['reg_page_goto_step_2_url'] = add_query_arg(array('e_reg' => 'process_reg_step_1'), $this->_reg_page_base_url);
 		$template_args['reg_page_goto_step_3_url'] = add_query_arg(array('e_reg' => 'process_reg_step_2'), $this->_reg_page_base_url);
 		$template_args['reg_page_complete_reg_url'] = add_query_arg(array('e_reg' => 'process_reg_step_3'), $this->_reg_page_base_url);
-
+		//echo "reg page complet url:".$template_args['reg_page_complete_reg_url'];
 		//Recaptcha
 		$template_args['recaptcha'] = '';
 		if ($org_options['use_captcha'] && (empty($_REQUEST['edit_details']) || $_REQUEST['edit_details'] != 'true') && !is_user_logged_in()) {
