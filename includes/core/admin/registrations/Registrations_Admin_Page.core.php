@@ -1152,7 +1152,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				$orderby = 'STS_ID';
 				break;
 			case 'ATT_fname':
-				$orderby = 'REG_att_name';
+				$orderby = 'ATT_lname';
 				break;
 			case 'event_name':
 				$orderby = 'event_name';
