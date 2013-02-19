@@ -34,8 +34,8 @@ class EE_Event_Attendees_List_Table extends EE_Admin_List_Table {
 				'ATT_name' => sprintf( __('Attendee %sprimary registrant%s', 'event_espresso'), '<span class="primary-registrant-spn lt-grey-txt small-text">(&nbsp;<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/star-8x8.png" width="8" height="8" />&nbsp;=&nbsp;', '&nbsp;)</span>' ),
 				'REG_date' => __('Registration Date', 'event_espresso'),
 				'DTT_EVT_start' => __('Event Date & Time', 'event_espresso'),
-				'PRC_name' => __('Ticket Option', 'event_espresso'),
 				'REG_final_price' => __('Ticket Price', 'event_espresso'),
+				'PRC_name' => __('Ticket Option', 'event_espresso'),
 				'REG_is_group_reg' => __('Group?', 'event_espresso'),
 				'REG_att_checked_in' => __('Checked In', 'event_espresso'),
 			);
