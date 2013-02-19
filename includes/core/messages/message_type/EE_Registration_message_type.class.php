@@ -37,13 +37,14 @@ class EE_Registration_message_type extends EE_message_type {
 			'singular' => __('registration', 'event_espresso'),
 			'plural' => __('regisgrations', 'event_espresso')
 			);
+		$this->_data_handler = 'EE_Session';
 
 		parent::__construct();
 	}
 
 
 	protected function _set_admin_pages() {
-		$this->_admin_registered_pages = array(
+		$this->admin_registered_pages = array(
 			'events_edit' => TRUE
 			);
 	}

@@ -59,7 +59,7 @@ abstract class EE_message_type extends EE_Base {
 	 * )
 	 * @var array
 	 */
-	public $_admin_registered_pages = array();
+	public $admin_registered_pages = array();
 
 	/**
 	 * there are certain template fields that are global across all messengers.  This will hold the default content for those global template fields that will be added.  Note we're expecting an array back that will be an index of fields and values with an array of defaults for each indexed context. For example:
@@ -116,7 +116,7 @@ abstract class EE_message_type extends EE_Base {
 	 * The following holds the templates that will be used to assemble the message object for the messenger.
 	 * @var array
 	 */
-	protected $templates;
+	protected $_templates;
 	
 
 	/** OTHER INFO PROPERTIES **/
@@ -124,13 +124,13 @@ abstract class EE_message_type extends EE_Base {
 	 * This will hold the count of the message objects in the messages array. This could be used for determining if batching/queueing is needed.
 	 * @var int
 	 */
-	protected $count = 0;
+	public $count = 0;
 
 	/**
 	 * This will hold the active messenger object that is passed to the type so the message_type knows what template files to process.  IT is possible that the active_messenger sent along actually doesn't HAVE a template (or maybe turned off) for the given message_type.
 	 * @var object
 	 */
-	protected $active_messenger; 
+	protected $_active_messenger; 
 
 	/**
 	 * This will hold the shortcode_replace instance for handling replacement of shortcodes in the various templates
@@ -142,19 +142,24 @@ abstract class EE_message_type extends EE_Base {
 	 * This will hold the EEM_message_templates model for interacting with the database and retrieving templates.
 	 * @var object
 	 */
-	protected $EEM_data;
+	protected $_EEM_data;
 
-	/**
-	 * holds the gateway object
-	 * @var object
-	 */
-	protected $gateways;
 
 	/**
 	 * This holds the data passed to this class from the controller
 	 * @var object
 	 */
-	protected $data;
+	protected $_data;
+
+
+
+	/**
+	 * Child classes declare through this property what handler they want to use for the incoming data and this string is used to instantiate the EE_Messages_incoming_data child class for that handler.
+	 * @var string
+	 */
+	protected $_data_handler;
+
+
 
 	/**
 	 * This holds any specific fields for holding any settings related to a message type (if any needed)
@@ -214,12 +219,12 @@ abstract class EE_message_type extends EE_Base {
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Parse_Shortcodes.helper.php';
 		//get shortcode_replace instance- set when _get_messages is called in child...
 		$this->_shortcode_replace = EE_Parse_Shortcodes::instance();
-		$this->active_messenger = $active_messenger;
-		$this->data = $data;
-		$this->_get_templates(); //get the templates that have been set with this type and for the given messenger that have been saved in the database.
-		$this->_set_default_field_content;
+		$this->_active_messenger = $active_messenger;
+		$this->_data = $data;
 		$this->_set_contexts;
 		$this->_init_data();
+		$this->_get_templates(); //get the templates that have been set with this type and for the given messenger that have been saved in the database.
+		$this->_set_default_field_content;
 		$this->_assemble_messages();
 		$this->count = count($this->messages);
 	}
@@ -292,7 +297,7 @@ abstract class EE_message_type extends EE_Base {
 			$page = $page . '_' . $action;
 		}
 
-		if ( !isset( $this->_admin_registered_pages[$page]) ) return false; //todo: a place to throw an exception?  We need to indicate there is no registered page so this function is not being called correctly.
+		if ( !isset( $this->admin_registered_pages[$page]) ) return false; //todo: a place to throw an exception?  We need to indicate there is no registered page so this function is not being called correctly.
 
 		//k made it here so let's call the method
 		if ( FALSE === ( $content = call_user_func_array( array( $this, '_get_admin_content_' . $page), array($messengers) ) ) ) {
@@ -370,120 +375,42 @@ abstract class EE_message_type extends EE_Base {
 
 
 	/**
-	 * The main purpose of this function is to setup the various parameters within the message_type.  $this->addressees, $this->templates, $this->count, and any extra stuff to the data object that can come from the message_type template options.
+	 * The main purpose of this function is to setup the various parameters within the message_type.  $this->addressees, $this->_templates, $this->count, and any extra stuff to the data object that can come from the message_type template options.
 	 * Child classes might overwrite this if they aren't expecting EE_Session as the incoming data object.
 	 * 
 	 * @return void
 	 * @access protected
 	 */
 	protected function _init_data() {
-		//assuming the incoming data is the $EE_Session object
-		if ( !is_a($this->data, 'EE_Session') ) {
-			$msg = sprintf( __('Wrong incoming type for "%s" message_type. Expecting the EE_Session object', 'event_espresso'), $this->label['singular'] );
-			throw new EE_Error( $msg );
-		}
-
-		$session_stuff = $this->data->get_session_data();
-		$this->data = $session_stuff;
 		
-		if ( is_array($this->data) && empty($this->data) ) {
+		/**
+		 * first let's make sure that incoming data isn't empty!
+		 */
+		if ( is_array($this->_data) && empty($this->_data) ) {
 			$msg = sprintf( __( '"%s" message type incoming data is empty.  There is nothing to work with so why are you bugging me?', 'event_espresso'), $this->label['singular'] );
 			throw new EE_Error( $msg );
 		}
 
-		$this->_process_data(); //process the data sent
+		if ( empty( $this->_data_handler) ) {
+			$msg = sprintf( __('Hey %s hasn\'t declared a handler for the incoming data, so I\'m stuck', 'event_espresso'), __CLASS__ );
+			throw new EE_Error( $msg );
+		}
 
+		//setup class name for the data handler
+		$classname = 'EE_Messages_' . $this->_data_handler . 'incoming_data';
+
+		//check that the class exists
+		if ( !class_exists( $classname ) ) {
+			$msg[] = __('uhoh, Something went wrong and no data handler is found', 'event_espresso');
+			$msg[] = sprintf( __('The %s class has set the "$_data_handler" property but the string included (%s) does not match any existing "EE_Messages_incoming_data" classes (found in "/includes/core/messages/data_class"', 'event_espresso'), __CLASS__, $this->_data_handler );
+			throw new EE_error( implode('||', $msg) );
+		}
+
+		//k lets get the prepared data object and replace existing data property with it.
+		$a = new ReflectionClass( $classname );
+		$this->_data = $a->newInstance( $this->_data );
 	}
 
-
-
-	/**
-	 * processes the data object so we get 
-	 * @return void
-	 */
-	protected function _process_data() {
-
-		//setup the initial data
-		$this->_setup_data();
-
-		//process addressees for each context.  Child classes will have to have methods for each context defined to handle the processing of the data object within them
-		foreach ( $this->_contexts as $context => $details ) {
-			$xpctd_method = '_' . $context . '_adressees';
-
-			if ( !method_exists( $this, $xpctd_method ) )
-				throw new EE_Error( sprintf( __('The data for $1%s message type cannot be prepared because there is no set method for doing so.  The expected method name is "$2%s" please doublecheck the $1%s message type class and make sure that method is present', 'event_espresso'), $this->label['singular'], $expctd_method) );
-				$this->_addressees[$context] = call_user_func( array( $this, $xpctd_method ) ); 
-		}
-	}
-
-
-
-
-	protected function _setup_data() {
-		$this->data->billing_info = $this->data['billing_info'];
-		$this->data->reg_info = $this->data['cart']['REG'];
-
-
-		//first let's loop through the events and setup a referenced event_data array (indexed by event_id?)
-		if ( isset( $this->data->reg_info['items'] ) && is_array($this->data->reg_info['items'] ) ) {
-			foreach ( $this->data->reg_info['items'] as $line_item_id => $event ) {
-				$this->data->events[$line_item_id]['ID'] = $event['id'];
-				$this->data->events[$line_item_id]['line_ref'] = $line_item_id;
-				$this->data->events[$line_item_id]['name'] = $event['name'];
-				$this->data->events[$line_item_id]['date'] = $event['options']['date'];
-				$this->data->events[$line_item_id]['time'] = date('g:i a', strtotime($event['options']['time']));
-				$this->data->events[$line_item_id]['daytime_id'] = $event['options']['dtt_id'];
-				$this->data->events[$line_item_id]['price'] = $event['options']['price'];
-				$this->data->events[$line_item_id]['price_desc'] = $event['options']['price_desc'];
-				$this->data->events[$line_item_id]['pre_approval'] = $event['options']['pre_approval'];
-				$this->data->events[$line_item_id]['price_id'] = $event['options']['price_id'];
-				$this->data->events[$line_item_id]['meta'] = array_combine($event['meta_keys'], $event['meta_values']);
-				$this->data->events[$line_item_id]['line_total'] = $event['line_total'];
-				foreach ($event['attendees'] as $att_nmbr => $attendee) {
-					$a_index = $attendee['fname'] . '_' . $attendee['lname'];
-					//use email to detect if the created index is DIFFERENT from an existing index.  If emails don't match then chances are this is a different person so we'll just create a new index.
-					$a_index = ( isset($this->data->attendees[$a_index] ) && (!empty($this->data->attendees[$a_index]['email']) || !empty($attendee['email'] ) ) && $this->data->attendees[$a_index]['email'] != $attendee['email'] ) ? $a_index . '_' . $att_nmbr : $a_index;
-					if ( !isset($this->data->attendees[$a_index] ) ) {
-						$this->data->attendees[$a_index]['line_ref'] = array($line_item_id);
-						foreach ( $attendee as $key => $value ) {
-							$this->data->attendees[$a_index][$key] = $value;
-						}
-						$this->data->attendee[$a_index]['context'] = 'attendee'; //default attendee context.
-					} else {
-						array_push($this->data->attendees[$a_index]['line_ref'], $line_item_id);
-					}
-				}
-			}
-		}
-
-		// load gateways
-		if (!defined('ESPRESSO_GATEWAYS')) {
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
-			$this->gateways = EEM_Gateways::instance();
-		}
-
-
-		if ($this->data->billing_info == 'no payment required') {
-			$this->data->billing = null;
-		} else {
-			// get billing info fields
-			$this->data->billing = $this->gateways->set_billing_info_for_confirmation( $this->data->billing_info );
-
-			$total = $this->data['_cart_grand_total_amount'];
-			// add taxes
-			if (isset($this->data['tax_totals'])) {
-				foreach ($this->data['tax_totals'] as $taxes) {
-					$total = $total + $taxes;
-				}
-			}
-
-			$this->data->taxes = $this->data['taxes'];
-			$this->data->txn = $this->data['txn_results'];
-
-			$this->data->billing['total_due'] = $org_options['currency_symbol'] . number_format($total, 2);
-		}
-
-	}
 
 
 
@@ -495,14 +422,14 @@ abstract class EE_message_type extends EE_Base {
 	 * @access protected
 	 */
 	protected function _get_templates() {
-		$current_templates = $this->active_messenger->active_templates;
+		$current_templates = $this->_active_messenger->active_templates;
 		$has_event_template = false;
 		$event_id = null;
 		$global_templates = $event_templates = $global_override = array();
 
 		//in vanilla EE we're assuming there's only one event.  However, if there are multiple events then we'll just do global.
-		if ( count($this->data->events) === 1 ) {
-			foreach ( $this->data->events as $event ) {
+		if ( count($this->_data->events) === 1 ) {
+			foreach ( $this->_data->events as $event ) {
 				$event_id = $event['ID'];
 			}
 		}
@@ -531,17 +458,17 @@ abstract class EE_message_type extends EE_Base {
 			//k we now have $global and (possibly) $event_templates.  So let's decide who makes it to the finals.
 			//first if there are no event templates, global wins
 			if ( empty( $event_templates) ) {
-				$this->templates = $global_templates;
+				$this->_templates = $global_templates;
 
 			//next if there are event templates and no global overrides set, event wins.
 			} elseif ( !empty( $event_templates) && empty( $global_override ) ) {
-				$this->templates = $event_templates;
+				$this->_templates = $event_templates;
 
 			//hmph looks like we have event templates and global overrides present.  So its down to the wire, lets take a snapshot and see who wins.
 			} else {
 				foreach ( $event_templates as $field => $contexts ) {
 					foreach ( $contexts as $context ) {
-						$this->templates[$field][$context] = isset( $global_override[$context] ) ? $global_templates[$field][$context] : $event_templates[$field][$context];
+						$this->_templates[$field][$context] = isset( $global_override[$context] ) ? $global_templates[$field][$context] : $event_templates[$field][$context];
 					}
 				}
 			}
@@ -573,17 +500,17 @@ abstract class EE_message_type extends EE_Base {
 
 		//get what shortcodes are supposed to be used
 		$mt_shortcodes = $this->_valid_shortcodes;
-		$m_shortcodes = $this->active_messenger->get_valid_shortcodes();
+		$m_shortcodes = $this->_active_messenger->get_valid_shortcodes();
 
 		//let's setup the valid shortcodes for the incoming context.
 		$valid_shortcodes = $mt_shortcodes[$context];
 
-		foreach ( $this->templates as $field => $ctxt ) {
+		foreach ( $this->_templates as $field => $ctxt ) {
 			//merge in valid shortcodes for the field.
 			$valid_shortcodes = isset($m_shortcodes[$field]) ? array_merge($valid_shortcodes, $m_shortcodes[$field]) : $valid_shortcodes;
 			$valid_shortcodes = array_unique( $valid_shortcodes );
-			if ( isset( $this->templates[$field][$context] ) ) {
-				$message->$field = $this->_shortcode_replace->parse_message_template($this->templates[$field][$context], $addressee, $valid_shortcodes);
+			if ( isset( $this->_templates[$field][$context] ) ) {
+				$message->$field = $this->_shortcode_replace->parse_message_template($this->_templates[$field][$context], $addressee, $valid_shortcodes);
 			}
 		}
 		return $message;

@@ -39,6 +39,7 @@ class EE_Payment_message_type extends EE_message_type {
 			'singular' => __('payment', 'event_espresso'),
 			'plural' => __('payments', 'event_espresso')
 			);
+		$this->_data_handler = 'EE_Session';
 
 		parent::__construct();
 	
@@ -49,7 +50,7 @@ class EE_Payment_message_type extends EE_message_type {
 	 * see abstract declaration in parent class for details.
 	 */
 	protected function _set_admin_pages() {
-		$this->_admin_registered_pages = array(
+		$this->admin_registered_pages = array(
 			'events_edit' => true
 			); 
 	}

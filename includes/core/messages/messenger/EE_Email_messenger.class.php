@@ -62,7 +62,7 @@ class EE_Email_messenger extends EE_messenger  {
 	 * see abstract declaration in parent class for details.
 	 */
 	protected function _set_admin_pages() {
-		$this->_admin_registered_pages = array(
+		$this->admin_registered_pages = array(
 			'events_edit' => true,
 		);
 	}

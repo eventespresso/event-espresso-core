@@ -57,7 +57,7 @@ abstract class EE_messenger extends EE_Base {
 	 * )
 	 * @var array
 	 */
-	public $_admin_registered_pages = array();
+	public $admin_registered_pages = array();
 
 	/**
 	 * there are certain template fields that are global across all messengers.  This will hold the default content for those global template fields that will be added 
@@ -210,7 +210,7 @@ abstract class EE_messenger extends EE_Base {
 			$page = $page . '_' . $action;
 		}
 
-		if ( !isset( $this->_admin_registered_pages[$page]) ) return false; //todo: a place to throw an exception?  We need to indicate there is no registered page so this function is not being called correctly.
+		if ( !isset( $this->admin_registered_pages[$page]) ) return false; //todo: a place to throw an exception?  We need to indicate there is no registered page so this function is not being called correctly.
 
 		//k made it here so let's call the method
 		if ( FALSE === ( $content = call_user_func_array( array( $this, '_get_admin_content_' . $page), array($message_types, $extra) ) ) ) {
