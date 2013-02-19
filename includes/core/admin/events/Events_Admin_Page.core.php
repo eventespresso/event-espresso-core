@@ -453,7 +453,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	private function _set_event_object() {
 		if ( is_object($this->_event) )
 			return; //get out we've already set the object
-		
+
 		if ( isset($this->_req_data['EVT_ID']) ) {
 			$this->_set_edit_event_object();
 		} else {
