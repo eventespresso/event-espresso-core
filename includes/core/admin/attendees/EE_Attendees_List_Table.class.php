@@ -13,13 +13,8 @@ class EE_Attendees_List_Table extends EE_Admin_List_Table {
 
 	protected function _setup_data() {
 		$this->_per_page = $this->get_items_per_page( $this->_screen . '_per_page' );
-		if ( $this->_view != 'trash' ) {
-			$this->_data = $this->_admin_page->get_event_attendees( $this->_per_page );
-			$this->_all_data_count = $this->_admin_page->get_event_attendees( $this->_per_page, TRUE );		
-		} else {
-			$this->_data = $this->_admin_page->get_event_attendees( $this->_per_page, FALSE, TRUE );
-			$this->_all_data_count = $this->_admin_page->get_event_attendees( $this->_per_page, TRUE, TRUE );
-		}
+		$this->_data = $this->_admin_page->get_event_attendees( $this->_per_page, FALSE, TRUE );
+		$this->_all_data_count = $this->_admin_page->get_event_attendees(  $this->_per_page, TRUE, TRUE );
 	}
 
 
@@ -44,10 +39,10 @@ class EE_Attendees_List_Table extends EE_Admin_List_Table {
 			);
 
 		$this->_sortable_columns = array(
-			'id' => array( 'REG_ID' => FALSE ),
-			'REG_date' => array( 'REG_date', TRUE ), //true means its already sorted
-			'ATT_name' => array( 'ATT_name', FALSE ),
-			'event_name' => array( 'event_name', FALSE )
+			 //true means its already sorted
+			'event_name' => array( 'event_name' => TRUE ),
+			'ATT_name' => array( 'ATT_name' => FALSE ),
+			'REG_date' => array( 'REG_date' => FALSE )
 		);
 
 		$this->_hidden_columns = array();
@@ -66,8 +61,7 @@ class EE_Attendees_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _add_view_counts() {
-		$this->_views['in_use']['count'] = $this->_admin_page->get_attendees($this->_per_page,TRUE);
-		$this->_views['trash']['count'] = $this->_admin_page->get_attendees($this->_per_page,TRUE, TRUE);
+		$this->_views['all']['count'] = $this->_admin_page->get_event_attendees( $this->_per_page,TRUE );
 	}
 
 
@@ -149,7 +143,7 @@ class EE_Attendees_List_Table extends EE_Admin_List_Table {
 		if ( $item->REG_final_price > 0 ) {
 			return '<span class="reg-overview-full-payment-spn reg-pad-rght">' . $org_options['currency_symbol'] . ' ' . number_format( $item->REG_final_price, 2 ) . '</span>';
 		} else {
-			return '<span class="reg-overview-free-event-spn">' . __( 'zip', 'event_espresso' ) . '</span>';
+			return '<span class="reg-overview-free-event-spn">' . $org_options['currency_symbol'] . '0.00</span>';
 		}
 		
 	}

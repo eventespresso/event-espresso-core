@@ -13,9 +13,8 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 
 	protected function _setup_data() {
 		$this->_per_page = $this->get_items_per_page( $this->_screen . '_per_page' );
-		$this->_data = $this->_view != 'trash' ? $this->_admin_page->get_attendees($this->_per_page) : $this->_admin_page->get_attendees($this->_per_page,FALSE,TRUE);
-		$this->_all_data_count = $this->_view != 'trash' ? $this->_admin_page->get_attendees($this->_per_page,TRUE) : $this->_admin_page->get_attendees(
-			$this->_per_page,TRUE, TRUE);
+		$this->_data = $this->_view != 'trash' ? $this->_admin_page->get_attendees( $this->_per_page ) : $this->_admin_page->get_attendees( $this->_per_page, FALSE, TRUE );
+		$this->_all_data_count = $this->_view != 'trash' ? $this->_admin_page->get_attendees( $this->_per_page, TRUE ) : $this->_admin_page->get_attendees( $this->_per_page,TRUE, TRUE );
 	}
 
 
@@ -43,13 +42,13 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 			);
 
 		$this->_sortable_columns = array(
-			'id' => array( 'ATT_ID' => FALSE ),
-			'ATT_lname' => array( 'ATT_lname', TRUE ), //true means its already sorted
-			'ATT_fname' => array( 'ATT_fname', FALSE ),
-			'ATT_email' => array( 'ATT_email', FALSE ),
-			'ATT_city' => array( 'ATT_city', FALSE ),
-			'STA_ID' => array( 'STA_ID', FALSE ),
-			'CNT_ISO' => array( 'CNT_ISO', FALSE )
+			'ATT_ID' => array( 'ATT_ID' => FALSE ),
+			'ATT_lname' => array( 'ATT_lname' => TRUE ), //true means its already sorted
+			'ATT_fname' => array( 'ATT_fname' => FALSE ),
+			'ATT_email' => array( 'ATT_email' => FALSE ),
+			'ATT_city' => array( 'ATT_city' => FALSE ),
+			'STA_ID' => array( 'STA_ID' => FALSE ),
+			'CNT_ISO' => array( 'CNT_ISO' => FALSE )
 		);
 
 		$this->_hidden_columns = array();
@@ -66,8 +65,8 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _add_view_counts() {
-		$this->_views['in_use']['count'] = $this->_admin_page->get_attendees($this->_per_page,TRUE);
-		$this->_views['trash']['count'] = $this->_admin_page->get_attendees($this->_per_page,TRUE, TRUE);
+		$this->_views['in_use']['count'] = $this->_admin_page->get_attendees( $this->_per_page, TRUE );
+		$this->_views['trash']['count'] = $this->_admin_page->get_attendees( $this->_per_page, TRUE, TRUE );
 	}
 
 
@@ -132,8 +131,11 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 			$actions['delete'] = '<a href="'.$delete_lnk_url.'" title="' . __( 'Delete Attendee Permanently', 'event_espresso' ) . '">' . __( 'Delete Permanently', 'event_espresso' ) . '</a>';
 		}
 
+		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item->ID() ), ATT_ADMIN_URL ), 'edit_attendee_nonce' );
+		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . html_entity_decode( stripslashes( $item->fname() ), ENT_QUOTES, 'UTF-8' ) . '</a>';
+
 		//Return the name contents
-		return sprintf('%1$s %2$s',  html_entity_decode( stripslashes( $item->fname() ), ENT_QUOTES, 'UTF-8' ), $this->row_actions($actions) );		
+		return sprintf('%1$s %2$s', $name_link, $this->row_actions($actions) );		
 	}
 
 

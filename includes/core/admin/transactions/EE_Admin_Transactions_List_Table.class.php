@@ -76,11 +76,11 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
         );
 
         $this->_sortable_columns = array(
-          	'TXN_ID' => array( 'TXN_ID', FALSE ),     
-            'STS_ID' => array( 'STS_ID', FALSE ),
-            'event_name' => array( 'event_name', FALSE ),
-            'ATT_fname'	=> array( 'ATT_fname', FALSE ),
-           	'TXN_timestamp'	=> array( 'TXN_timestamp', TRUE ) //true means its already sorted
+          	'TXN_ID' => array( 'TXN_ID' => FALSE ),     
+            'STS_ID' => array( 'STS_ID'=> FALSE ),
+            'event_name' => array( 'event_name'=> FALSE ),
+            'ATT_fname'	=> array( 'ATT_fname'=> FALSE ),
+           	'TXN_timestamp'	=> array( 'TXN_timestamp'=> TRUE ) //true means its already sorted
         	);
 
         $this->_hidden_columns = array();
