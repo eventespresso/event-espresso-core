@@ -76,12 +76,12 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
         );
 
         $this->_sortable_columns = array(
-          		'REG_date' => array( 'REG_date', TRUE ),   //true means its already sorted
-            	'ATT_fname' => array( 'ATT_fname', FALSE ),
-            	'event_name' => array( 'event_name', FALSE ),
-            	'DTT_EVT_start'	=> array( 'DTT_EVT_start', FALSE ),
-            	'Reg_status' => array( 'Reg_status', FALSE ),
-				'REG_ID' => array( 'REG_ID', FALSE ),
+          		'REG_date' => array( 'REG_date' => TRUE ),   //true means its already sorted
+            	'ATT_fname' => array( 'ATT_fname' => FALSE ),
+            	'event_name' => array( 'event_name' => FALSE ),
+            	'DTT_EVT_start'	=> array( 'DTT_EVT_start' => FALSE ),
+            	'Reg_status' => array( 'Reg_status' => FALSE ),
+				'REG_ID' => array( 'REG_ID' => FALSE ),
         	);
 
         $this->_hidden_columns = array();

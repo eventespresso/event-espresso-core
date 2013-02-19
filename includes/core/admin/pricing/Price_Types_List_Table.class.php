@@ -67,7 +67,7 @@ class Price_Types_List_Table extends EE_Admin_List_Table {
 
         $this->_sortable_columns = array(
 				// TRUE means its already sorted
-				'name' => array('name', false)
+				'name' => array( 'name' => FALSE )
 	        );
 
         $this->_hidden_columns = array(

@@ -69,7 +69,7 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 			);
 
 		$this->_sortable_columns = array(
-			'id' => array( 'QST_ID' => TRUE ),
+			'id' => array( 'QST_ID' => FALSE ),
 			'display_text' => array( 'QST_display_text' => FALSE )
 			);
 

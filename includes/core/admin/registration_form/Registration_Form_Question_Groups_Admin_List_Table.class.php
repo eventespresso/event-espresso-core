@@ -67,8 +67,8 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 			);
 
 		$this->_sortable_columns = array(
-			'id' => array( 'QSG_ID' => true ),
-			'name' => array( 'QSG_name' => false )
+			'id' => array( 'QSG_ID' => FALSE ),
+			'name' => array( 'QSG_name' => FALSE )
 			);
 
 		$this->_hidden_columns = array(

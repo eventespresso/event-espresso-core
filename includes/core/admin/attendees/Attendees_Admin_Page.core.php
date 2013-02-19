@@ -88,13 +88,48 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 				// attendees
 				'default'	=> '_attendee_overview_list_table',
-				'add_new_attendee'	=> array( 'func' => '_edit_attendee_details', 'args' => array( 'new_attendee' => TRUE )),
-				'edit_attendee'	=> array( 'func' => '_edit_attendee_details'),
-				'insert_attendee'	=> array( 'func' => '_insert_or_update_attendee', 'args' => array( 'new_attendee' => TRUE ), 'noheader' => TRUE ),
-				'update_attendee'	=> array( 'func' => '_insert_or_update_attendee', 'args' => array( 'new_attendee' => FALSE ), 'noheader' => TRUE ),
-				'trash_attendees'	=> array( 'func' => '_trash_or_restore_attendees', 'args' => array( 'trash' => TRUE ), 'noheader' => TRUE ),
-				'restore_attendees'	=> array( 'func' => '_trash_or_restore_attendees', 'args' => array( 'trash' => FALSE ), 'noheader' => TRUE ),
-				'delete_attendees'	=> array( 'func' => '_delete_attendees', 'noheader' => TRUE )
+				'contact_list'	=> '_attendee_contact_list_table',
+				'add_new_attendee'	=> array( 
+					'func' => '_edit_attendee_details', 
+					'args' => array( 
+						'new_attendee' => TRUE 
+					)
+				),
+				'edit_attendee'	=> array( 
+					'func' => '_edit_attendee_details'
+				),
+				'insert_attendee'	=> array( 
+					'func' => '_insert_or_update_attendee', 
+					'args' => array( 
+						'new_attendee' => TRUE 
+					), 
+					'noheader' => TRUE 
+				),
+				'update_attendee'	=> array( 
+					'func' => '_insert_or_update_attendee', 
+					'args' => array( 
+						'new_attendee' => FALSE 
+					), 
+					'noheader' => TRUE
+				),
+				'trash_attendees'	=> array( 
+					'func' => '_trash_or_restore_attendees', 
+					'args' => array( 
+						'trash' => TRUE 
+					), 
+					'noheader' => TRUE 
+				),
+				'restore_attendees'	=> array( 
+					'func' => '_trash_or_restore_attendees', 
+					'args' => array( 
+						'trash' => FALSE 
+					), 
+					'noheader' => TRUE 
+				),
+				'delete_attendees'	=> array( 
+					'func' => '_delete_attendees', 
+					'noheader' => TRUE 
+				)
 
 		);
 	}
@@ -107,11 +142,11 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 		$this->_page_config = array(
 			'default' => array(
 				'nav' => array(
-					'label' => __('Overview', 'event_espresso'),
+					'label' => __('Event Attendees', 'event_espresso'),
 					'order' => 10
 					),
-				'list_table' => 'EE_Attendees_List_Table',
-				'metaboxes' => array()
+					'list_table' => 'EE_Event_Attendees_List_Table',
+					'metaboxes' => array()
 				),
 			'add_new_attendee' => array(
 				'nav' => array(
@@ -119,7 +154,7 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 					'order' => 5,
 					'persistent' => FALSE
 					),
-				'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box')
+					'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box')
 				),
 			'edit_attendee' => array(
 				'nav' => array(
@@ -128,7 +163,15 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['id']) ? add_query_arg(array('id' => $this->_req_data['id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
-				'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box')
+					'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box')
+				),
+			'contact_list' => array(
+				'nav' => array(
+					'label' => __('Attendee Contact List', 'event_espresso'),
+					'order' => 20
+					),
+					'list_table' => 'EE_Attendee_Contact_List_Table',
+					'metaboxes' => array()
 				)
 		);
 	}
@@ -197,6 +240,30 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_list_table_views_default() {
 		$this->_views = array(
+			'all' => array(
+				'slug' => 'all',
+				'label' => __('All', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'trash_attendees' => __('Move to Trash', 'event_espresso'),
+					)
+				),
+			'trash' => array(
+				'slug' => 'trash',
+				'label' => __('Trash', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'restore_attendees' => __('Restore from Trash', 'event_espresso'),
+					'delete_attendees' => __('Delete Permanently', 'event_espresso')
+					)
+				)
+			);
+	}
+
+
+
+	protected function _set_list_table_views_contact_list() {
+		$this->_views = array(
 			'in_use' => array(
 				'slug' => 'in_use',
 				'label' => __('In Use', 'event_espresso'),
@@ -211,7 +278,7 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 				'count' => 0,
 				'bulk_action' => array(
 					'restore_attendees' => __('Restore from Trash', 'event_espresso'),
-					'delete_attendees' => __('Delete Permanently', 'event_espresso'),
+					'delete_attendees' => __('Delete Permanently', 'event_espresso')
 					)
 				)
 				
@@ -230,10 +297,77 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 	*/
 	protected function _attendee_overview_list_table() {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_new_attendee', 'add', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
+	}
+
+
+
+
+
+	/**
+	 * 		get_attendees
+	 * 		@param bool $count whether to return count or data.
+	*		@access public
+	*		@return array
+	*/
+	public function get_event_attendees( $per_page = 10, $count = FALSE, $trash = FALSE ) {  
+
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		// start with an empty array
+		$attendees = array();
 		
+		require_once( ATT_ADMIN . 'EE_Event_Attendees_List_Table.class.php' );
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
+		//$ATT_MDL = EEM_Attendee::instance();
+		
+		$EVT_ID = isset($this->_req_data['event_id']) ? absint( $this->_req_data['event_id'] ) : FALSE;
+		$CAT_ID = isset($this->_req_data['category_id']) ? absint( $this->_req_data['category_id'] ) : FALSE;
+		$reg_status = isset($this->_req_data['reg_status']) ? sanitize_text_field( $this->_req_data['reg_status'] ) : FALSE;
+		
+		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
+
+		
+		switch ($this->_req_data['orderby']) {
+			case 'REG_date':
+				$orderby = 'REG_date';
+				break;
+			case 'ATT_name':
+				$orderby = 'ATT_lname';
+				break;
+			default:
+				$orderby = 'event_name';
+		}
+		
+		$sort = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
+
+		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
+		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $per_page;
+
+
+		$offset = ($current_page-1)*$per_page;
+		$limit = array( $offset, $per_page );
+		
+		$output = $count ? 'COUNT' : 'OBJECT_K';
+		$all_attendees = EEM_Attendee::instance()->get_event_attendees( $EVT_ID, $CAT_ID, $reg_status, $trash, $orderby, $sort, $limit, $output );
+
+
+		return $all_attendees;
+	}
+
+
+
+
+
+	/**
+	 * 		generates HTML for the Attendee Contact List
+	*		@access protected
+	*		@return void
+	*/
+	protected function _attendee_contact_list_table() {
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		$this->_admin_page_title .= $this->_get_action_link_or_button('add_new_attendee', 'add', array(), 'button add-new-h2');
+		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
 
@@ -252,12 +386,11 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 		// start with an empty array
 		$attendees = array();
 		
-		require_once( ATT_ADMIN . 'EE_Attendees_List_Table.class.php' );
+		require_once( ATT_ADMIN . 'EE_Attendee_Contact_List_Table.class.php' );
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
 		$ATT_MDL = EEM_Attendee::instance();
 		
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
-
 		
 		switch ($this->_req_data['orderby']) {
 			case 'ATT_ID':
@@ -293,7 +426,7 @@ class Attendees_Admin_Page extends EE_Admin_Page {
 		$limit = array( $offset, $per_page );
 
 		if ( $trash )
-			$all_attendees = $count ? $ATT_MDL->get_all_trashed_attendees( $orderby, $sort, $limit, TRUE ) : $ATT_MDL->get_all_trashed_attendees( $orderby, $sort, $limit );
+			$all_attendees = $count ? $ATT_MDL->get_all_trashed_attendees( $orderby, $sort, $limit, 'COUNT' ) : $ATT_MDL->get_all_trashed_attendees( $orderby, $sort, $limit );
 		else
 			$all_attendees = $count ? $ATT_MDL->get_all_inuse_attendees( $orderby, $sort, $limit, 'COUNT' ) : $ATT_MDL->get_all_inuse_attendees( $orderby, $sort, $limit );
 
