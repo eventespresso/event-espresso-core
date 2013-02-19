@@ -339,7 +339,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	 */
 	private function _set_registration_object() {
 		if ( is_object($this->_registration) )
-			return; //get out we've already set the object
+			return TRUE; //get out we've already set the object
 
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
@@ -395,36 +395,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$this->_template_args['reg_status']['label'] = __( 'Registration Status', 'event_espresso' );
 			$this->_template_args['reg_status']['class'] = 'status-' . $this->_registration->REG_status;
 			
-			switch ( $this->_registration->REG_status ) {
-				
-				case 'RAP' :
-					$pending_url = wp_nonce_url( add_query_arg( array( 'action'=>'set_pending_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'set_pending_reg_status_nonce' );
-					$decline_url = wp_nonce_url( add_query_arg( array( 'action'=>'decline_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'decline_reg_status_nonce' );
-					$this->_template_args['approve_decline_reg_status_buttons'] = '
-			<a id="reg-admin-pending-reg-status-lnk" class="button-secondary" href="' . $pending_url . '">' . __( 'Set this Registration to Pending', 'event_espresso' ) . '</a>
-			<a id="reg-admin-decline-reg-status-lnk" class="button-secondary" href="' . $decline_url . '">' . __( 'Decline this Registration', 'event_espresso' ) . '</a>';
-					break;
-				
-				case 'RPN' :
-					$aprove_url = wp_nonce_url( add_query_arg( array( 'action'=>'approve_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'approve_reg_status_nonce' );
-					$decline_url = wp_nonce_url( add_query_arg( array( 'action'=>'decline_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'decline_reg_status_nonce' );
-					$this->_template_args['approve_decline_reg_status_buttons'] = '
-			<a id="reg-admin-approve-reg-status-lnk" class="espresso-button-green button-primary" href="' . $aprove_url . '">' . __( 'Approve this Registration', 'event_espresso' ) . '</a>
-			<a id="reg-admin-decline-reg-status-lnk" class="button-secondary" href="' . $decline_url . '">' . __( 'Decline this Registration', 'event_espresso' ) . '</a>';
-					break;
-				
-				case 'RNA' :
-					$aprove_url = wp_nonce_url( add_query_arg( array( 'action'=>'approve_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'approve_reg_status_nonce' );
-					$pending_url = wp_nonce_url( add_query_arg( array( 'action'=>'set_pending_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'set_pending_reg_status_nonce' );
-					$this->_template_args['approve_decline_reg_status_buttons'] = '
-			<a id="reg-admin-approve-reg-status-lnk" class="espresso-button-green button-primary" href="' . $aprove_url . '">' . __( 'Approve this Registration', 'event_espresso' ) . '</a>
-			<a id="reg-admin-pending-reg-status-lnk" class="button-secondary" href="' . $pending_url . '">' . __( 'Set this Registration to Pending', 'event_espresso' ) . '</a>';
-					break;
-				
-				default :
-					$this->_template_args['approve_decline_reg_status_buttons'] = '';
-				
-			}
+			$this->_template_args['approve_decline_reg_status_buttons'] = $this->_set_approve_or_decline_reg_status_buttons();
 
 			$this->_template_args['grand_total'] = $this->_registration->TXN_total;
 
@@ -460,6 +431,55 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		if ( $this->_registration->REG_is_group_reg ) {
 			add_meta_box( 'edit-reg-attendees-mbox', __( 'Other Attendees Registered in this Transaction', 'event_espresso' ), array( $this, '_reg_attendees_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
 		}
+	}
+
+
+
+
+
+
+	/**
+	 * 		_set_approve_or_decline_reg_status_buttons
+	*		@access protected
+	*		@param string	$REG_status
+	*		@return void
+	*/
+	protected function _set_approve_or_decline_reg_status_buttons() {
+		
+		$approve_decline_reg_status_buttons = '';
+
+		if ( $this->_set_registration_object() ) {
+			switch ( $this->_registration->REG_status ) {
+				
+				case 'RAP' :
+					$pending_url = wp_nonce_url( add_query_arg( array( 'action'=>'set_pending_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'set_pending_reg_status_nonce' );
+					$decline_url = wp_nonce_url( add_query_arg( array( 'action'=>'decline_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'decline_reg_status_nonce' );
+					$approve_decline_reg_status_buttons = '
+			<a id="reg-admin-pending-reg-status-lnk" class="button-secondary" href="' . $pending_url . '">' . __( 'Set this Registration to Pending', 'event_espresso' ) . '</a>
+			<a id="reg-admin-decline-reg-status-lnk" class="button-secondary" href="' . $decline_url . '">' . __( 'Decline this Registration', 'event_espresso' ) . '</a>';
+					break;
+				
+				case 'RPN' :
+					$aprove_url = wp_nonce_url( add_query_arg( array( 'action'=>'approve_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'approve_reg_status_nonce' );
+					$decline_url = wp_nonce_url( add_query_arg( array( 'action'=>'decline_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'decline_reg_status_nonce' );
+					$approve_decline_reg_status_buttons = '
+			<a id="reg-admin-approve-reg-status-lnk" class="espresso-button-green button-primary" href="' . $aprove_url . '">' . __( 'Approve this Registration', 'event_espresso' ) . '</a>
+			<a id="reg-admin-decline-reg-status-lnk" class="button-secondary" href="' . $decline_url . '">' . __( 'Decline this Registration', 'event_espresso' ) . '</a>';
+					break;
+				
+				case 'RNA' :
+					$aprove_url = wp_nonce_url( add_query_arg( array( 'action'=>'approve_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'approve_reg_status_nonce' );
+					$pending_url = wp_nonce_url( add_query_arg( array( 'action'=>'set_pending_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'set_pending_reg_status_nonce' );
+					$approve_decline_reg_status_buttons = '
+			<a id="reg-admin-approve-reg-status-lnk" class="espresso-button-green button-primary" href="' . $aprove_url . '">' . __( 'Approve this Registration', 'event_espresso' ) . '</a>
+			<a id="reg-admin-pending-reg-status-lnk" class="button-secondary" href="' . $pending_url . '">' . __( 'Set this Registration to Pending', 'event_espresso' ) . '</a>';
+					break;
+				
+			}		
+		}
+		
+		return $approve_decline_reg_status_buttons;
+		
 	}
 
 
