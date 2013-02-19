@@ -142,22 +142,22 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 		$edit_query_args = array(
 				'action' => 'edit_event',
-				'event_id' => $item->event_id
+				'EVT_ID' => $item->event_id
 			);
 
 		$delete_query_args = array(
 				'action' => 'delete_events',
-				'event_id' => $item->event_id
+				'EVT_ID' => $item->event_id
 			);
 
 		$attendees_query_args = array(
 				'action' => 'default',
-				'event_id' => $item->event_id
+				'EVT_ID' => $item->event_id
 			);
 
 		$export_query_args = array(
 				'action' => 'export_events',
-				'event_id' => $item->event_id
+				'EVT_ID' => $item->event_id
 			);
 
 

@@ -4,7 +4,7 @@
 .icon-right span.ui-icon { margin: 0.7em 0.3em 0 0; }
 
 .event-list-display-dv {
-	padding-bottom:4em; 
+	padding-bottom:2em; 
 }
 .event_data .event-display-boxes {
 	margin:.5em 0 1.5em; border: 1px solid #aaa; border-radius:5px;
@@ -19,7 +19,7 @@
 }
 .event_data h3.ui-widget-header,
 #event-queue  h3.ui-widget-header {
-	padding-left:1em!important; margin:0!important;
+	padding-left:1em!important; margin:.25em 0 0;
 }
 .espresso-mini-cart h4.ui-widget-header {
 	padding-left:.5em!important; margin:0!important;
@@ -80,6 +80,8 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 .ui-button:hover { border-color:#999; }
 
 .ui-button-big { padding: 0.95em 1em .95em; margin:2em 0 1em; }
+.register-link .ui-button-big { margin:0; }
+
 
 
 .mini-btn {
