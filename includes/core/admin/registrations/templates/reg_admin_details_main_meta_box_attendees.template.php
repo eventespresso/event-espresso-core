@@ -1,3 +1,4 @@
+<a id="other-attendees"></a>
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
 	<br/>
 <?php //echo printr( $event_attendees, 'event_attendees' ); ?>

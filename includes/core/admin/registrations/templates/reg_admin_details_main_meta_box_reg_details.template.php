@@ -1,4 +1,4 @@
-<div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
+<div id="admin-primary-mbox-reg-details-dv" class="admin-primary-mbox-dv">
 	
 	<h4 class="admin-primary-mbox-h4"><?php _e( 'Payment Details', 'event_espresso' );?></h4>
 
@@ -56,8 +56,6 @@
 		</table>
 	</div>	
 
-
-
 	<a id="display-additional-registration-session-info" class="display-the-hidden" rel="additional-registration-session-info">
 		<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL; ?>images/icons/additional_info-10x10.png" alt="" />
 		<?php _e( 'view additional registration session details', 'event_espresso' );?>
@@ -90,13 +88,6 @@
 		<?php printr( $full_session, 'full_session', 'auto' ); ?>
 	</div>
 	
-
-	<br class="clear"/>
-	
-	<h4 class="admin-primary-mbox-h4"><?php _e( 'Attendee\'s Registration Form', 'event_espresso' );?></h4>
-	
-
 	<br class="clear"/>
 	
 </div>
-<a id="other-attendees"></a>

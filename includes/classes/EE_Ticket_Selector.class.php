@@ -94,7 +94,6 @@ class EE_Ticket_Selector extends EE_BASE {
 	* 	@return 	string	
 	*/
 	private function _display_ticket_selector() {
-		
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');		
 
 		$template_args = array();
@@ -137,8 +136,10 @@ class EE_Ticket_Selector extends EE_BASE {
 //		printr( $template_args['event_meta'], 'event_meta  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		$template_args['currency_symbol'] = $this->_event->currency_symbol;
+		$template_args = apply_filters('filter_hook_espresso__EE_Ticket_Selector__display_ticket_selector__template_args',$template_args,$this->_event);
 		
-		$templates['ticket_selector'] =  EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/ticket_selector/ticket_selector_chart.template.php';
+		$templates['ticket_selector'] =  apply_filters('filter_hook_espresso__EE_Ticket_Selector__display_ticket_selector__template_path',
+							EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/ticket_selector/ticket_selector_chart.template.php',$this->_event);
 	//	$templates['ticket_selector'] =  EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/ticket_selector/ticket_selector_multi_selects.template.php';
 	//	$templates['ticket_selector'] =  EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/ticket_selector/ticket_selector_threaded_chart.template.php';
 		espresso_display_template($templates['ticket_selector'], $template_args);

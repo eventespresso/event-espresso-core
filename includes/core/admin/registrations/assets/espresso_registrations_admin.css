@@ -13,9 +13,17 @@
 .column-REG_date { width:12.5%; }
 
 .column-Reg_status { width:7%; }
-.status-APR, .reg-overview-full-payment-spn { color:#090;  }
-.status-RPN, .reg-overview-part-payment-spn { color:#F93;  }
-.status-NAP, .reg-overview-no-payment-spn { color:#F00;  }
+
+.status-RAP, 
+.reg-overview-full-payment-spn { color:#090;  }
+
+.status-RPN, 
+.reg-overview-part-payment-spn { color:#F93;  }
+
+.status-RCN, 
+.status-RFL, 
+.status-RNA, 
+.reg-overview-no-payment-spn { color:#F00;  }
 
 .column-ATT_fname { width:14%; }
 .column-REG_code { width:11%; }
@@ -34,6 +42,13 @@
 .reg-overview-actions-ul { list-style:none; margin:0; }
 .reg-overview-actions-ul li { display: inline; margin:0; }
 .reg-overview-actions-ul li + li { margin-left:.25em; }
+
+#reg-admin-reg-details-reg-nmbr-hdr { padding:0; margin:-.5em 0 1em; }
+#reg-admin-reg-details-reg-date-hdr,
+#reg-admin-reg-details-reg-status-hdr { padding:0; margin:0 0 1em; }
+
+#reg-admin-approve-decline-reg-status-spn { position: relative; top:-4px; }
+#reg-admin-approve-decline-reg-status-spn a { margin-left:1em; vertical-align: baseline; }
 
 .admin-side-mbox-dv { margin:1em 0 2em; }
 .admin-side-mbox-dv p { margin:.5em 0; line-height:1.2em; color:#333; text-shadow:0px 1px 0px #fff; }
@@ -79,20 +94,13 @@
 	box-shadow: 1px 1px 1px rgba(0,0,0,.2), 3px 3px 2px rgba(0,0,0,.1); 
 }
 
+.reg-admin-edit-question-group-spn { position: relative; top:-4px; padding: 4px; vertical-align: middle; }
+.reg-admin-edit-attendee-question-lnk { padding: 4px; text-decoration: none; outline:none; }
+.reg-admin-edit-attendee-question-lnk:focus { outline:none; }
+.reg-admin-edit-attendee-question-lnk img { }
 
 
-.jst-left { text-align:left; }
-.jst-cntr { text-align:center; }
-.jst-rght { text-align:right; }
 
-.display-the-hidden { float:right; padding-left:16px; background: url("../../../images/icons/additional_info-10x10.png") no-repeat scroll left center transparent; cursor:pointer; }
-.hide-the-displayed { float:right; padding-left:16px; background: url("../../../images/icons/close_additional_info-10x10.png") no-repeat scroll left center transparent; cursor:pointer; }
+.display-the-hidden { float:right; padding-left:16px; cursor:pointer; }
+.hide-the-displayed { float:right; padding-left:16px; cursor:pointer; }
 
-
-.lt-grey-txt  { color:#999;  text-shadow:none; }
-.float-left { float:left; }
-
-/* Nicolas Gallagher's micro clearfix */
-.clearfix:before, .clearfix:after { content:""; display:table; }
-.clearfix:after { clear: both; }
-.clearfix { zoom: 1; }

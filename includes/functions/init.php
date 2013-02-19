@@ -415,7 +415,6 @@ function event_espresso_run() {
 
 	// Get action type
 	$e_reg = isset($_REQUEST['e_reg']) ? $_REQUEST['e_reg'] : '';
-
 	switch ($e_reg) {
 
 		case 'process_ticket_selections' :
@@ -448,7 +447,7 @@ function event_espresso_run() {
 			}			
 			// check if this is an event list or an event detail page by looking for event slug
 			$event_detail_page = get_query_var('event_slug') ? TRUE : FALSE;
-			espresso_require_template('init.php');
+			espresso_require_template('init.php');//@fixme isn't this requiring the current file?
 
 			if ( $event_detail_page or isset($_REQUEST['ee']) ) {
 				do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, ' e_reg = event_detail_page'  );

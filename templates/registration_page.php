@@ -92,286 +92,290 @@ if (!function_exists('event_registration')) {
 
 //
 		//Build the registration page
-		if (!empty($event)) {
-		
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
-			$DTM_MDL = EEM_Datetime::instance();
+		//allow addons to override this part
+		do_action('action_hook_espresso__registration_page__begin_display',$event);
+		if(apply_filters('filter_hook_espresso__registration_page__display_normal_reg_page',true,$event)){
+			if (!empty($event)) {
 
-			// grab event times
-			if ( $datetimes = $DTM_MDL->get_all_event_dates( $event->id )) {
-				//printr( $datetimes, '$datetimes' );
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
+				$DTM_MDL = EEM_Datetime::instance();
 
-				$single_event = count( $datetimes ) == 1 ? TRUE : FALSE;
+				// grab event times
+				if ( $datetimes = $DTM_MDL->get_all_event_dates( $event->id )) {
+					//printr( $datetimes, '$datetimes' );
 
-				$first_event = current( $datetimes );
+					$single_event = count( $datetimes ) == 1 ? TRUE : FALSE;
 
-				if ( $single_event ) {
-					$last_event = end( $datetimes );
-					$start_date = $first_event->start_date_and_time( get_option('date_format') );
-					$reg_start_date = $first_event->reg_start_date_and_time( get_option('date_format') );
-					$end_date = $last_event->end_date_and_time( get_option('date_format'));
+					$first_event = current( $datetimes );
+
+					if ( $single_event ) {
+						$last_event = end( $datetimes );
+						$start_date = $first_event->start_date_and_time( get_option('date_format') );
+						$reg_start_date = $first_event->reg_start_date_and_time( get_option('date_format') );
+						$end_date = $last_event->end_date_and_time( get_option('date_format'));
+					}
+
+
+
+					$event->registration_startT = $first_event->reg_start_time();
+					$event->registration_start = $first_event->reg_start_date();
+					$event->registration_endT = $first_event->reg_end_time();
+					$event->registration_end = $first_event->reg_end_date();			
+
 				}
 
-				
+				//Create a log file
+				//espresso_log::singleton()->log( array ( 'file' => __FILE__, 'function' => __FUNCTION__, 'status' => " $sql] [ sqldump = " . var_export($events, true) ) );
+				//These are the variables that can be used throughout the registration page
+				//foreach ($events as $event) {
+				global $this_event_id;
+				$event_id = $event->id;
+				$this_event_id = $event_id;
 
-				$event->registration_startT = $first_event->reg_start_time();
-				$event->registration_start = $first_event->reg_start_date();
-				$event->registration_endT = $first_event->reg_end_time();
-				$event->registration_end = $first_event->reg_end_date();			
-
-			}
-				
-			//Create a log file
-			//espresso_log::singleton()->log( array ( 'file' => __FILE__, 'function' => __FUNCTION__, 'status' => " $sql] [ sqldump = " . var_export($events, true) ) );
-			//These are the variables that can be used throughout the registration page
-			//foreach ($events as $event) {
-			global $this_event_id;
-			$event_id = $event->id;
-			$this_event_id = $event_id;
-
-			$event_name = stripslashes($event->event_name);
-			$event_desc = stripslashes($event->event_desc);
-			$display_desc = $event->display_desc;
-			$display_reg_form = $event->display_reg_form;
-			$event_address = $event->address;
-			$event_address2 = $event->address2;
-			$event_city = $event->city;
-			$event_state = $event->state;
-			$event_zip = $event->zip;
-			$event_country = $event->country;
+				$event_name = stripslashes($event->event_name);
+				$event_desc = stripslashes($event->event_desc);
+				$display_desc = $event->display_desc;
+				$display_reg_form = $event->display_reg_form;
+				$event_address = $event->address;
+				$event_address2 = $event->address2;
+				$event_city = $event->city;
+				$event_state = $event->state;
+				$event_zip = $event->zip;
+				$event_country = $event->country;
 
 
-			$member_only = $event->member_only;
-			$reg_limit = $event->reg_limit;
+				$member_only = $event->member_only;
+				$reg_limit = $event->reg_limit;
 
-			$allow_overflow = $event->allow_overflow;
-			$overflow_event_id = $event->overflow_event_id;
+				$allow_overflow = $event->allow_overflow;
+				$overflow_event_id = $event->overflow_event_id;
 
-			//Venue details
-			$venue_title = $event->venue_title;
-			$venue_address = '';
-			$venue_address2 = '';
-			$venue_city = '';
-			$venue_state = '';
-			$venue_zip = '';
-			$venue_country = '';
+				//Venue details
+				$venue_title = $event->venue_title;
+				$venue_address = '';
+				$venue_address2 = '';
+				$venue_city = '';
+				$venue_state = '';
+				$venue_zip = '';
+				$venue_country = '';
 
-			global $event_meta;
-			$event_meta = unserialize($event->event_meta);
+				global $event_meta;
+				$event_meta = unserialize($event->event_meta);
 
-			//Venue information
-			if ($org_options['use_venue_manager']) {
-				$event_address = $event->venue_address;
-				$event_address2 = $event->venue_address2;
-				$event_city = $event->venue_city;
-				$event_state = $event->venue_state;
-				$event_zip = $event->venue_zip;
-				$event_country = $event->venue_country;
+				//Venue information
+				if ($org_options['use_venue_manager']) {
+					$event_address = $event->venue_address;
+					$event_address2 = $event->venue_address2;
+					$event_city = $event->venue_city;
+					$event_state = $event->venue_state;
+					$event_zip = $event->venue_zip;
+					$event_country = $event->venue_country;
 
-				//Leaving these variables intact, just in case people wnat to use them
-				$venue_title = $event->venue_name;
-				$venue_address = $event->venue_address;
-				$venue_address2 = $event->venue_address2;
-				$venue_city = $event->venue_city;
-				$venue_state = $event->venue_state;
-				$venue_zip = $event->venue_zip;
-				$venue_country = $event->venue_country;
-				global $venue_meta;
-				$add_venue_meta = array(
-						'venue_title' => $event->venue_name,
-						'venue_address' => $event->venue_address,
-						'venue_address2' => $event->venue_address2,
-						'venue_city' => $event->venue_city,
-						'venue_state' => $event->venue_state,
-						'venue_country' => $event->venue_country,
+					//Leaving these variables intact, just in case people wnat to use them
+					$venue_title = $event->venue_name;
+					$venue_address = $event->venue_address;
+					$venue_address2 = $event->venue_address2;
+					$venue_city = $event->venue_city;
+					$venue_state = $event->venue_state;
+					$venue_zip = $event->venue_zip;
+					$venue_country = $event->venue_country;
+					global $venue_meta;
+					$add_venue_meta = array(
+							'venue_title' => $event->venue_name,
+							'venue_address' => $event->venue_address,
+							'venue_address2' => $event->venue_address2,
+							'venue_city' => $event->venue_city,
+							'venue_state' => $event->venue_state,
+							'venue_country' => $event->venue_country,
+					);
+					$venue_meta = (isset($event->venue_meta) && $event->venue_meta != '') && (isset($add_venue_meta) && $add_venue_meta != '') ? array_merge(unserialize($event->venue_meta), $add_venue_meta) : '';
+					//print_r($venue_meta);
+				}
+
+
+				global $ee_gmaps_opts;
+				// EE gmaps needs it's own org_options array populated on a per page basis to enable common queries in gmaps api function
+				$ee_gmaps_opts = array(
+						'ee_map_width' => empty($org_options['map_settings']['ee_map_width_single']) ? '' : $org_options['map_settings']['ee_map_width_single'],
+						'ee_map_height' => empty($org_options['map_settings']['ee_map_height_single']) ? '' : $org_options['map_settings']['ee_map_height_single'],
+						'ee_map_zoom' => empty($org_options['map_settings']['ee_map_zoom_single']) ? '' : $org_options['map_settings']['ee_map_zoom_single'],
+						'ee_map_nav_display' => empty($org_options['map_settings']['ee_map_nav_display_single']) ? '' : $org_options['map_settings']['ee_map_nav_display_single'],
+						'ee_map_nav_size' => empty($org_options['map_settings']['ee_map_nav_size_single']) ? '' : $org_options['map_settings']['ee_map_nav_size_single'],
+						'ee_map_type_control' => empty($org_options['map_settings']['ee_map_type_control_single']) ? '' : $org_options['map_settings']['ee_map_type_control_single'],
+						'ee_map_align' => empty($org_options['map_settings']['ee_map_align_single']) ? '' : $org_options['map_settings']['ee_map_align_single'],
+						'ee_static_url' => empty($venue_meta['gmap_static']) ? '' : $venue_meta['gmap_static'],
+						'ee_enable_for_gmap' => empty($event_meta['enable_for_gmap']) ? '' : $event_meta['enable_for_gmap']
 				);
-				$venue_meta = (isset($event->venue_meta) && $event->venue_meta != '') && (isset($add_venue_meta) && $add_venue_meta != '') ? array_merge(unserialize($event->venue_meta), $add_venue_meta) : '';
-				//print_r($venue_meta);
-			}
 
 
-			global $ee_gmaps_opts;
-			// EE gmaps needs it's own org_options array populated on a per page basis to enable common queries in gmaps api function
-			$ee_gmaps_opts = array(
-					'ee_map_width' => empty($org_options['map_settings']['ee_map_width_single']) ? '' : $org_options['map_settings']['ee_map_width_single'],
-					'ee_map_height' => empty($org_options['map_settings']['ee_map_height_single']) ? '' : $org_options['map_settings']['ee_map_height_single'],
-					'ee_map_zoom' => empty($org_options['map_settings']['ee_map_zoom_single']) ? '' : $org_options['map_settings']['ee_map_zoom_single'],
-					'ee_map_nav_display' => empty($org_options['map_settings']['ee_map_nav_display_single']) ? '' : $org_options['map_settings']['ee_map_nav_display_single'],
-					'ee_map_nav_size' => empty($org_options['map_settings']['ee_map_nav_size_single']) ? '' : $org_options['map_settings']['ee_map_nav_size_single'],
-					'ee_map_type_control' => empty($org_options['map_settings']['ee_map_type_control_single']) ? '' : $org_options['map_settings']['ee_map_type_control_single'],
-					'ee_map_align' => empty($org_options['map_settings']['ee_map_align_single']) ? '' : $org_options['map_settings']['ee_map_align_single'],
-					'ee_static_url' => empty($venue_meta['gmap_static']) ? '' : $venue_meta['gmap_static'],
-					'ee_enable_for_gmap' => empty($event_meta['enable_for_gmap']) ? '' : $event_meta['enable_for_gmap']
-			);
+				// display formatting
+				$location = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? '<br />' . $event_address2 : '') . ($event_city != '' ? '<br />' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? '<br />' . $event_zip : '') . ($event_country != '' ? '<br />' . $event_country : '');
 
+				//Google map link creation
+				$google_map_link = espresso_google_map_link(array('address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country, 'text' => 'Map and Directions', 'type' => 'text'));
 
-			// display formatting
-			$location = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? '<br />' . $event_address2 : '') . ($event_city != '' ? '<br />' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? '<br />' . $event_zip : '') . ($event_country != '' ? '<br />' . $event_country : '');
-
-			//Google map link creation
-			$google_map_link = espresso_google_map_link(array('address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country, 'text' => 'Map and Directions', 'type' => 'text'));
-
-			$today = date("Y-m-d");
-			if (isset($event->timezone_string) && $event->timezone_string != '') {
-				$timezone_string = $event->timezone_string;
-			} else {
-				$timezone_string = get_option('timezone_string');
-				if (!isset($timezone_string) || $timezone_string == '') {
-					$timezone_string = 'America/New_York';
-				}
-			}
-
-			$t = time();
-			$today = date_at_timezone("Y-m-d H:i A", $timezone_string, $t);
-			//echo event_date_display($today, get_option('date_format'). ' ' .get_option('time_format')) . ' ' . $timezone_string;
-			//echo espresso_ddtimezone_simple();
-			$reg_limit = $event->reg_limit;
-			$additional_limit = $event->additional_limit;
-
-			$event->recurring_events = FALSE;
-
-			//If the coupon code system is intalled then use it
-			if (function_exists('event_espresso_coupon_registration_page')) {
-				$use_coupon_code = $event->use_coupon_code;
-			} else {
-				$use_coupon_code = FALSE;
-			}
-
-			//If the groupon code addon is installed, then use it
-			if (function_exists('event_espresso_groupon_payment_page')) {
-				$use_groupon_code = $event->use_groupon_code;
-			} else {
-				$use_groupon_code = FALSE;
-			}
-
-			//Set a default value for additional limit
-			if ($additional_limit == '') {
-				$additional_limit = '5';
-			}
-
-			$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees'); //Get the number of attendees
-
-			//Create all meta vars
-			$more_meta = array(
-					'event_name' => $event_name,
-					'event_desc' => $event_desc,
-					'event_address' => $event_address,
-					'event_address2' => $event_address2,
-					'event_city' => $event_state,
-					'event_state' => $event_name,
-					'event_zip' => $event_zip,
-					'event_country' => $event->country,
-					'venue_title' => '<span class="section-title">' . $venue_title . '</span>',
-					'venue_address' => $venue_address,
-					'venue_address2' => $venue_address2,
-					'venue_city' => $venue_state,
-					'venue_state' => $venue_state,
-					'venue_country' => $venue_country,				
-					'event_status' => $event->event_status,
-					'is_active' => empty($event->is_active) ? '' : $event->is_active,
-					'start_time' => empty($event->start_time) ? '' : $event->start_time, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-					'registration_startT' => $event->registration_startT,
-					'registration_start' => $event->registration_start,
-					'registration_endT' => $event->registration_endT,
-					'registration_end' => $event->registration_end,
-					'start_date' => event_date_display( $event->start_date ),
-					'end_date' => event_date_display( $event->end_date ),
-					'google_map_link' => $google_map_link,
-					'price' => empty($event->event_cost) ? '' : $event->event_cost,
-					'event_cost' => empty($event->event_cost) ? '' : $event->event_cost
-			);
-
-			$event->meta = array_merge( $more_meta, $event_meta );
-
-			$is_active = array();
-			$is_active = event_espresso_get_is_active($event_id);
-
-
-
-			//This is the start of the registration form. This is where you can start editing your display.
-			//(Shows the regsitration form if enough spaces exist)
-			if ($num_attendees >= $reg_limit) {
-				?>
-				<div class="espresso_event_full event-display-boxes" id="espresso_event_full-<?php echo $event_id; ?>">
-					<h3 class="event_title"><?php echo stripslashes_deep($event_name) ?></h3>
-					<div class="event-messages">
-						<p class="event_full"><strong><?php _e('We are sorry but this event has reached the maximum number of attendees!', 'event_espresso'); ?></strong></p>
-						<p class="event_full"><strong><?php _e('Please check back in the event someone cancels.', 'event_espresso'); ?></strong></p>
-						<p class="num_attendees"><?php _e('Current Number of Attendees:', 'event_espresso'); ?> <?php echo $num_attendees ?></p>
-					</div>
-					<?php
-					$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees');
-					if (($num_attendees >= $reg_limit) && ($allow_overflow && $overflow_event_id != 0)) {
-						?>
-						<p id="register_link-<?php echo $overflow_event_id ?>" class="register-link-footer"><a class="a_register_link" id="a_register_link-<?php echo $overflow_event_id ?>" href="<?php echo espresso_reg_url($overflow_event_id); ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Join Waiting List', 'event_espresso'); ?></a></p>
-					<?php } ?>
-				</div>
-
-				<?php
-			} else {
-				//If enough spaces exist then show the form
-				//Check to see if the Members plugin is installed.
-				if (!is_user_logged_in() && defined( 'EVENT_ESPRESSO_MEMBERS_DIR' ) && $member_only) {
-					event_espresso_user_login();
+				$today = date("Y-m-d");
+				if (isset($event->timezone_string) && $event->timezone_string != '') {
+					$timezone_string = $event->timezone_string;
 				} else {
-
-					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/event_details.helper.php');
-
-					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
-					$DTM_MDL = EEM_Datetime::instance();
-					$event->datetimes = $DTM_MDL->get_all_event_dates($event->id);
-//						echo printr($event->times, 'EVENT TIMES <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
-
-//					require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Price.class.php' );
-//					$EVT_Prices = new EE_Event_Prices($event->id);
-//					$event->prices = $EVT_Prices->get_final_event_prices();
-					require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Prices.class.php' );
-					//$event->prices = new EE_Ticket_Prices( $event->id );
-					$TKT_PRCs = new EE_Ticket_Prices( $event->id );
-					$event->prices = $TKT_PRCs->get_all_final_event_prices();
-					
-					//echo printr($event->prices, 'EVENT PRICES <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
-
-					$event->currency_symbol = $org_options['currency_symbol'];
-
-					$event->display_available_spaces = ( $event->display_reg_form && $event->externalURL == '' ) ? TRUE : FALSE;
-					$event->available_spaces = get_number_of_attendees_reg_limit($event_id, 'available_spaces');
-
-					// ticket selector
-					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Selector.class.php');
-					add_action( 'action_hook_espresso_ticket_selector', array( 'EE_Ticket_Selector', 'init' ), 10, 1 );		
-
-					$registration_url = add_query_arg(array('e_reg' => 'process_ticket_selections'), espresso_get_reg_page_full_url());
-
-					//Serve up the registration form
-					require(espresso_get_registration_display_template());
-					// The following keys are available in the $data array:
-// event_id, event_name, is_active, registration_url, reg_start_date, display_reg_form, event, use_coupon_code, use_groupon_code, location, org_options, google_map_link, show_ee_gmap_no_shortcode, ee_gmap_display, end_date, start_date, display_desc, event_desc
-					$data=array();
-					$data['event_id'] = $event_id;
-					$data['event_name'] = $event_name;
-					$data['is_active'] = $is_active;
-					$data['registration_url'] = $registration_url;
-					$data['reg_start_date'] = $reg_start_date;
-					$data['display_reg_form'] = $display_reg_form;
-					$data['event'] = $event;
-					$data['use_coupon_code'] = $use_coupon_code;
-					$data['use_groupon_code'] = $use_groupon_code;
-					$data['location'] = $location;
-					$data['org_options'] = $org_options;
-					$data['google_map_link'] = $google_map_link;
-					$data['show_ee_gmap_no_shortcode'] = $show_ee_gmap_no_shortcode;
-					$data['end_date'] = $end_date;
-					$data['start_date'] = $start_date;
-					$data['display_desc'] = $display_desc;
-					$data['event_desc'] = $event_desc;
-					$data['event_meta'] = $event_meta;
-					$data['single_event'] = $single_event;
-					espresso_display_reg_page($data);
+					$timezone_string = get_option('timezone_string');
+					if (!isset($timezone_string) || $timezone_string == '') {
+						$timezone_string = 'America/New_York';
+					}
 				}
-			}//End if ($num_attendees >= $reg_limit) (Shows the regsitration form if enough spaces exist)
-		} else {//If there are no results from the query, display this message
-			echo '<h3>' . __('This event has expired or is no longer available.', 'event_espresso') . '</h3>';
+
+				$t = time();
+				$today = date_at_timezone("Y-m-d H:i A", $timezone_string, $t);
+				//echo event_date_display($today, get_option('date_format'). ' ' .get_option('time_format')) . ' ' . $timezone_string;
+				//echo espresso_ddtimezone_simple();
+				$reg_limit = $event->reg_limit;
+				$additional_limit = $event->additional_limit;
+
+				$event->recurring_events = FALSE;
+
+				//If the coupon code system is intalled then use it
+				if (function_exists('event_espresso_coupon_registration_page')) {
+					$use_coupon_code = $event->use_coupon_code;
+				} else {
+					$use_coupon_code = FALSE;
+				}
+
+				//If the groupon code addon is installed, then use it
+				if (function_exists('event_espresso_groupon_payment_page')) {
+					$use_groupon_code = $event->use_groupon_code;
+				} else {
+					$use_groupon_code = FALSE;
+				}
+
+				//Set a default value for additional limit
+				if ($additional_limit == '') {
+					$additional_limit = '5';
+				}
+
+				$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees'); //Get the number of attendees
+
+				//Create all meta vars
+				$more_meta = array(
+						'event_name' => $event_name,
+						'event_desc' => $event_desc,
+						'event_address' => $event_address,
+						'event_address2' => $event_address2,
+						'event_city' => $event_state,
+						'event_state' => $event_name,
+						'event_zip' => $event_zip,
+						'event_country' => $event->country,
+						'venue_title' => '<span class="section-title">' . $venue_title . '</span>',
+						'venue_address' => $venue_address,
+						'venue_address2' => $venue_address2,
+						'venue_city' => $venue_state,
+						'venue_state' => $venue_state,
+						'venue_country' => $venue_country,				
+						'event_status' => $event->event_status,
+						'is_active' => empty($event->is_active) ? '' : $event->is_active,
+						'start_time' => empty($event->start_time) ? '' : $event->start_time, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+						'registration_startT' => $event->registration_startT,
+						'registration_start' => $event->registration_start,
+						'registration_endT' => $event->registration_endT,
+						'registration_end' => $event->registration_end,
+						'start_date' => event_date_display( $event->start_date ),
+						'end_date' => event_date_display( $event->end_date ),
+						'google_map_link' => $google_map_link,
+						'price' => empty($event->event_cost) ? '' : $event->event_cost,
+						'event_cost' => empty($event->event_cost) ? '' : $event->event_cost
+				);
+
+				$event->meta = array_merge( $more_meta, $event_meta );
+
+				$is_active = array();
+				$is_active = event_espresso_get_is_active($event_id);
+
+
+
+				//This is the start of the registration form. This is where you can start editing your display.
+				//(Shows the regsitration form if enough spaces exist)
+				if ($num_attendees >= $reg_limit) {
+					?>
+					<div class="espresso_event_full event-display-boxes" id="espresso_event_full-<?php echo $event_id; ?>">
+						<h3 class="event_title"><?php echo stripslashes_deep($event_name) ?></h3>
+						<div class="event-messages">
+							<p class="event_full"><strong><?php _e('We are sorry but this event has reached the maximum number of attendees!', 'event_espresso'); ?></strong></p>
+							<p class="event_full"><strong><?php _e('Please check back in the event someone cancels.', 'event_espresso'); ?></strong></p>
+							<p class="num_attendees"><?php _e('Current Number of Attendees:', 'event_espresso'); ?> <?php echo $num_attendees ?></p>
+						</div>
+						<?php
+						$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees');
+						if (($num_attendees >= $reg_limit) && ($allow_overflow && $overflow_event_id != 0)) {
+							?>
+							<p id="register_link-<?php echo $overflow_event_id ?>" class="register-link-footer"><a class="a_register_link" id="a_register_link-<?php echo $overflow_event_id ?>" href="<?php echo espresso_reg_url($overflow_event_id); ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Join Waiting List', 'event_espresso'); ?></a></p>
+						<?php } ?>
+					</div>
+
+					<?php
+				} else {
+					//If enough spaces exist then show the form
+					//Check to see if the Members plugin is installed.
+					if (!is_user_logged_in() && defined( 'EVENT_ESPRESSO_MEMBERS_DIR' ) && $member_only) {
+						event_espresso_user_login();
+					} else {
+
+						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/event_details.helper.php');
+
+						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
+						$DTM_MDL = EEM_Datetime::instance();
+						$event->datetimes = $DTM_MDL->get_all_event_dates($event->id);
+	//						echo printr($event->times, 'EVENT TIMES <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
+
+	//					require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Price.class.php' );
+	//					$EVT_Prices = new EE_Event_Prices($event->id);
+	//					$event->prices = $EVT_Prices->get_final_event_prices();
+						require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Prices.class.php' );
+						//$event->prices = new EE_Ticket_Prices( $event->id );
+						$TKT_PRCs = new EE_Ticket_Prices( $event->id );
+						$event->prices = $TKT_PRCs->get_all_final_event_prices();
+
+						//echo printr($event->prices, 'EVENT PRICES <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
+
+						$event->currency_symbol = $org_options['currency_symbol'];
+
+						$event->display_available_spaces = ( $event->display_reg_form && $event->externalURL == '' ) ? TRUE : FALSE;
+						$event->available_spaces = get_number_of_attendees_reg_limit($event_id, 'available_spaces');
+
+						// ticket selector
+						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Selector.class.php');
+						add_action( 'action_hook_espresso_ticket_selector', array( 'EE_Ticket_Selector', 'init' ), 10, 1 );		
+
+						$registration_url = add_query_arg(array('e_reg' => 'process_ticket_selections'), espresso_get_reg_page_full_url());
+
+						//Serve up the registration form
+						require(espresso_get_registration_display_template());
+						// The following keys are available in the $data array:
+	// event_id, event_name, is_active, registration_url, reg_start_date, display_reg_form, event, use_coupon_code, use_groupon_code, location, org_options, google_map_link, show_ee_gmap_no_shortcode, ee_gmap_display, end_date, start_date, display_desc, event_desc
+						$data=array();
+						$data['event_id'] = $event_id;
+						$data['event_name'] = $event_name;
+						$data['is_active'] = $is_active;
+						$data['registration_url'] = $registration_url;
+						$data['reg_start_date'] = $reg_start_date;
+						$data['display_reg_form'] = $display_reg_form;
+						$data['event'] = $event;
+						$data['use_coupon_code'] = $use_coupon_code;
+						$data['use_groupon_code'] = $use_groupon_code;
+						$data['location'] = $location;
+						$data['org_options'] = $org_options;
+						$data['google_map_link'] = $google_map_link;
+						$data['show_ee_gmap_no_shortcode'] = $show_ee_gmap_no_shortcode;
+						$data['end_date'] = $end_date;
+						$data['start_date'] = $start_date;
+						$data['display_desc'] = $display_desc;
+						$data['event_desc'] = $event_desc;
+						$data['event_meta'] = $event_meta;
+						$data['single_event'] = $single_event;
+						espresso_display_reg_page($data);
+					}
+				}//End if ($num_attendees >= $reg_limit) (Shows the regsitration form if enough spaces exist)
+			} else {//If there are no results from the query, display this message
+				echo '<h3>' . __('This event has expired or is no longer available.', 'event_espresso') . '</h3>';
+			}
 		}
 
 		echo espresso_registration_footer();
