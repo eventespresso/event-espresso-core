@@ -171,8 +171,8 @@ class EE_Message_Template {
 
 		$this->_GRP_ID = absint($template_group['GRP_ID']);
 		$this->_MTP_user_id = absint($template_group['MTP_user_id']);
-		$this->_MTP_messenger = wp_strip_all_tags(strtolower($template_group['MTP_messenger']));
-		$this->_MTP_message_type = wp_strip_all_tags(strtolower($template_group['MTP_message_type']));
+		$this->_MTP_messenger = wp_kses_post(strtolower($template_group['MTP_messenger']));
+		$this->_MTP_message_type = wp_kses_post(strtolower($template_group['MTP_message_type']));
 		$this->_EVT_ID = absint($template_group['EVT_ID']);
 		$this->_contexts = (array) $template_group['templates'];
 		$this->_MTP_is_global = (bool) $template_group['MTP_is_global'];
@@ -204,7 +204,7 @@ class EE_Message_Template {
 					}
 				} else if ( is_array($value) ) {
 					$value['MTP_ID'] = absint($value['MTP_ID']);
-					$value['content'] = is_array($value['content']) ? array_map('wp_strip_all_tags', $value['content'] ) : wp_strip_all_tags($value['content']);
+					$value['content'] = is_array($value['content']) ? array_map('wp_kses_post', $value['content'] ) : wp_kses_post($value['content']);
 					$template_fields[$key] = $value;
 				} else {
 					continue;
