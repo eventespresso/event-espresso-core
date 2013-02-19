@@ -35,8 +35,11 @@ class EE_Event_Attendees_List_Table extends EE_Admin_List_Table {
 				'REG_date' => __('Registration Date', 'event_espresso'),
 				'DTT_EVT_start' => __('Event Date & Time', 'event_espresso'),
 				'PRC_name' => __('Ticket Option', 'event_espresso'),
-				'REG_final_price' => __('Price Paid', 'event_espresso')
+				'REG_final_price' => __('Ticket Price', 'event_espresso'),
+				'REG_is_group_reg' => __('Group?', 'event_espresso'),
+				'REG_att_checked_in' => __('Checked In', 'event_espresso'),
 			);
+			//  reg.REG_is_group_reg, reg.REG_att_is_going, reg.REG_att_checked_in
 
 		$this->_sortable_columns = array(
 			 //true means its already sorted
@@ -141,11 +144,13 @@ class EE_Event_Attendees_List_Table extends EE_Admin_List_Table {
 	
 		global $org_options;
 		$item->REG_final_price = abs( $item->REG_final_price );
+
+		//TXN_total, txn.TXN_paid
 		
 		if ( $item->REG_final_price > 0 ) {
-			return '<span class="reg-overview-full-payment-spn reg-pad-rght">' . $org_options['currency_symbol'] . ' ' . number_format( $item->REG_final_price, 2 ) . '</span>';
+			return '<span class="status-' . $item->txn_status . ' reg-pad-rght">' . $org_options['currency_symbol'] . ' ' . number_format( $item->REG_final_price, 2 ) . '</span>';
 		} else {
-			return '<span class="reg-overview-free-event-spn">' . $org_options['currency_symbol'] . '0.00</span>';
+			return '<span class="status-TCM">' . $org_options['currency_symbol'] . '0.00</span>';
 		}
 		
 	}
@@ -153,6 +158,42 @@ class EE_Event_Attendees_List_Table extends EE_Admin_List_Table {
 
 
 
+
+
+	/**
+	 * 		column_REG_is_group_reg
+	*/
+	function column_REG_is_group_reg($item){
+		
+		if ( $item->REG_is_group_reg ) {
+			return '<img class="group-reg-img" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/group-reg-16x16.png" width="16" height="16" alt="this is the group registration"/>';
+		} else {
+			return '';
+		}
+		
+	}
+
+
+
+
+
+
+	/**
+	 * 		column_REG_att_checked_in
+	*/
+	function column_REG_att_checked_in($item){
+		
+		if ( $item->REG_att_checked_in ) {
+			return 'Yes';
+		} else {
+			return '';
+		}
+		
+	}
+
+
+
+// group-reg-16x16.png
 
 
 }

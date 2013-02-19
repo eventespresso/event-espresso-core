@@ -13,9 +13,9 @@ textarea { width:25em; }
 .requires-value { border:1px solid #FE2A00 !important; }
 .denotes-required-spn { margin-left:.5em; font-weight: bold; color:#ff0000; }
 
-.status-APR, .reg-overview-full-payment-spn { color:#090;  }
-.status-RPN, .reg-overview-part-payment-spn { color:#F93;  }
-.status-NAP, .reg-overview-no-payment-spn { color:#F00;  }
+.status-TCM, .txn-full-payment-spn { color:#090;  }
+.status-TPN, .txn-part-payment-spn { color:#F93;  }
+.status-TFL, .status-TIN, .txn-no-payment-spn { color:#F00;  }
 
 /* TABLE COLUMNS */
 
@@ -23,12 +23,17 @@ textarea { width:25em; }
 .wp-list-table .column-ATT_ID { width:50px; text-align:right; }
 .wp-list-table .column-ATT_fname { width:10%; }
 .wp-list-table .column-ATT_lname { width:12.5%; }
+.wp-list-table .column-event_name { width:17.5%; }
+.wp-list-table .column-ATT_name { width:17.5%; }
 .wp-list-table .column-ATT_email { }
 .wp-list-table .column-ATT_address { width:15%; }
 .wp-list-table .column-ATT_city { width:10%; }
 .wp-list-table .column-STA_ID { width:5.5%; }
 .wp-list-table .column-CNT_ISO { width:7%; }
+.wp-list-table .column-REG_is_group_reg,
+.wp-list-table .column-REG_att_checked_in { width:5%; text-align:center; }
 .wp-list-table .column-ATT_phone { width:10%; }
+.wp-list-table .column-REG_final_price { width:10%; text-align: right; }
 .wp-list-table .column-actions { width:5%;  }
 
 .jst-left { text-align:left; }
