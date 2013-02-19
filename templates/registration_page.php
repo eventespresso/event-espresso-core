@@ -94,7 +94,7 @@ if (!function_exists('event_registration')) {
 		//Build the registration page
 		//allow addons to override this part
 		do_action('action_hook_espresso__registration_page__begin_display',$event);
-		if(apply_filters('filter_hook_espresso__registration_page__display_normal_reg_page',false,$event)){
+		if(apply_filters('filter_hook_espresso__registration_page__display_normal_reg_page',true,$event)){
 			if (!empty($event)) {
 
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
