@@ -1275,13 +1275,13 @@ class EE_Single_Page_Checkout {
 		//die();
 		
 		if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_3_ajax_response')) {
-				wp_safe_redirect($this->_return_page_url);
-				exit();
-			} else {
-				$reg_page_step_3_url = add_query_arg(array('e_reg' => 'register', 'step' => '3'), $this->_reg_page_base_url);
-				wp_safe_redirect($reg_page_step_3_url);
-				exit();
-			}
+			wp_safe_redirect($this->_return_page_url);
+			exit();
+		} else {
+			$reg_page_step_3_url = add_query_arg(array('e_reg' => 'register', 'step' => '3'), $this->_reg_page_base_url);
+			wp_safe_redirect($reg_page_step_3_url);
+			exit();
+		}
 	}
 
 
@@ -1356,7 +1356,6 @@ class EE_Single_Page_Checkout {
 	public function send_ajax_response($success_msg = FALSE, $error_msg = FALSE, $callback = FALSE, $callback_param = FALSE) {
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-
 		$valid_callback = FALSE;
 		// check for valid callback function
 		if ($callback != FALSE && $callback != '' && !function_exists($callback)) {

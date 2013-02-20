@@ -258,16 +258,14 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 		if (isset($_GET['session_id'])) {
 			session_id(sanitize_key($_GET['session_id']));
 			session_start();
-		}elseif(isset($_REQUEST['reg_url_link'])){
+		}/*elseif(isset($_REQUEST['reg_url_link'])){
 			//get the session from the reg_url_link. 
 			require_once('EEM_Registration.model.php');
 			$registration =  EEM_Registration::instance()->get_registration_for_reg_url_link(sanitize_key($_REQUEST['reg_url_link']));
 			session_id($registration->session_ID());
 			session_start();
-			//echo "registration:";var_dump($registration);
-			
-			
-		}
+			//echo "registration:";var_dump($registration);			
+		}*/
 		
 		if ( ! session_id() ) {
 			session_start();
@@ -369,7 +367,6 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 	 *		@return TRUE on success, FALSE on fail
 	 */
 	public function _update_espresso_session( $new_session = FALSE ) {
-
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 

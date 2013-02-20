@@ -37,9 +37,25 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 
 
 
-
-	public function set_transaction_details() {
+	/**
+	 * Updates the transaction in the session to acknowledge the registrant is done
+	 * the registration process, all that remains is for them ot make the offline
+	 * payment. Was renamed from 'set_transaction_details' to 'thank_you_page()', because it served the same purpose
+	 * as it's parent's 'thank_you_page()', which is to update the transaction (but not the payment
+	 * because in this case no payment has been made)
+	 * @global type $EE_Session
+	 * @return void
+	 */
+	public function thank_you_page() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		global $EE_Session;
+		$session = $EE_Session->get_session_data();
+		//check that there's still a transaction in the session.
+		//if there isn't, maybe we've cleared it (session ended with the thank you page)
+		//or something wack's going on...
+		if(!array_key_exists('transaction',$session)){
+			return;
+		}
 		$txn_results = array(
 				'gateway' => $this->_payment_settings['display_name'],
 				'approved' => FALSE,
@@ -53,9 +69,9 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 				'invoice_number' => '',
 				'transaction_id' => ''
 		);
-		global $EE_Session;
+		
 		$EE_Session->set_session_data(array('txn_results' => $txn_results), 'session_data');
-		$session = $EE_Session->get_session_data();
+		
 //		printr( $session, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
 //		die();	
 
@@ -64,10 +80,13 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 		
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 		$transaction = $session['transaction'];
+		
 		$transaction->set_paid($txn_results['amount']);
 		$transaction->set_details( $txn_results );
 		$txn_status = 'TPN';
 		$transaction->set_status($txn_status);
+		//update our local session data with what's in teh session singleton
+		$session = $EE_Session->get_session_data();
 		unset( $session['transaction'] );
 		$transaction->set_txn_session_data( $session );
 		if (isset($session['taxes'])) {
@@ -75,6 +94,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 			$transaction->set_tax_data($tax_data);
 		}
 		$transaction->update();
+		
 	}
 	
 

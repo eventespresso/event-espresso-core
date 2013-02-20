@@ -364,7 +364,9 @@ abstract class EE_Gateway {
 	}
 	
 	/**
-	 * 		process registration payment
+	 * 		process registration payment. Updates the transaction with the data
+	 *		concerning the payment already in the session.
+	 *		
 	 *
 	 * 		@access 		private
 	 * 		@param 		boolean 		$perform_redirect  - whether to send JSON response or redirect
@@ -474,7 +476,7 @@ abstract class EE_Gateway {
 
 		$transaction->update();
 		//echo "NOT clearing session data in EE_gateway 476";
-		$this->_EEM_Gateways->reset_session_data();
+		//$this->_EEM_Gateways->reset_session_data();
 
 //printr( $transaction, '$transaction  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
 //die();

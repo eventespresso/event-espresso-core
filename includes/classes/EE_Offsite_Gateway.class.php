@@ -19,7 +19,10 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 		//get a registration that's currently getting processed
 		/*@var $a_current_registration EE_Registration */
 		$a_current_registration=current($session_data['registration']);
-		$url=get_permalink($org_options['return_url']) .  '?reg_url_link=' . $a_current_registration->reg_url_link() . '&attendee_action=post_payment&form_action=payment';
+		$url=add_query_arg(array('reg_url_link'=>$a_current_registration->reg_url_link(),
+				'attendee_action'=>'post_payment',
+				'form_action'=>'payment'),
+				get_permalink($org_options['return_url']));
 		if($urlencode){
 			$url=urlencode($url);
 		}

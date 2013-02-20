@@ -140,7 +140,6 @@ Class EE_Check extends EE_Offline_Gateway {
 
 		echo $this->_generate_payment_gateway_selection_button();
 		?>
-
 		<div id="reg-page-billing-info-<?php echo $this->_gateway; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
 			<?php _e('After confirming the details of your registration in Step 3, you will be transferred to the payment overview where you can view details of how to complete your payment by Check.', 'event_espresso'); ?>
 		</div>
@@ -149,7 +148,7 @@ Class EE_Check extends EE_Offline_Gateway {
 	}
 
 	public function thank_you_page() {
-		$this->set_transaction_details();
+		parent::thank_you_page();
 		?>
 		<div class="event-display-boxes">
 			<h4 id="check_title" class="payment_type_title section-heading"><?php echo stripslashes_deep(empty($this->_payment_settings['check_title']) ? '' : $this->_payment_settings['check_title']) ?></h4>

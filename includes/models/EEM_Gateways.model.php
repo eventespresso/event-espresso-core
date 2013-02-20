@@ -751,13 +751,13 @@ Class EEM_Gateways {
 			$EE_Session->set_session_data(array('txn_results' => $txn_results), 'session_data');
 			$response = array(
 					'msg' => array('success'=>TRUE),
-					'forward_url' => $this->_get_return_page_url()
+					'forward_url' => $return_page_url
 			);
 
 		} else {
 			$response = array(
 					'msg' => $this->_gateway_instances[ $this->_selected_gateway ]->process_reg_step_3(),
-					'forward_url' => $this->_get_return_page_url()
+					'forward_url' => $return_page_url
 				);
 		}
 		return $response;
@@ -766,18 +766,22 @@ Class EEM_Gateways {
 
 
 	/**
-	 * 		set_return_page_url
+	 * 		get_return_page_url
 	 *
 	 * 		@access 		public
 	 * 		@return 		void
 	 */
 	private function _get_return_page_url() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $org_options;
+		global $org_options,$EE_Session;
+		$session_data=$EE_Session->get_session_data();
+		$a_current_registration=current($session_data['registration']);
+		
 		$return_page_id = $org_options['return_url'];
 		// get permalink for thank you page
 		// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
-		return rtrim( get_permalink( $return_page_id ), '/' );
+		return add_query_arg(array('reg_url_link'=>$a_current_registration->reg_url_link()),
+				rtrim( get_permalink( $return_page_id ), '/' ));
 	}
 
 
@@ -839,6 +843,7 @@ Class EEM_Gateways {
 						&& !empty($this->_gateway_instances[ $this->_selected_gateway ])) {
 			$this->_gateway_instances[ $this->_selected_gateway ]->thank_you_page();
 		}
+		$this->reset_session_data();
 	}
 
 

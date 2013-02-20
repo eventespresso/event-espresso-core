@@ -135,7 +135,7 @@ Class EE_Bank extends EE_Offline_Gateway {
 	}
 
 	public function thank_you_page() {
-		$this->set_transaction_details();
+		parent::thank_you_page();
 		?>
 		<div class="event-display-boxes">
 			<h4 id="page_title" class="payment_type_title section-heading"><?php echo stripslashes_deep(empty($this->_payment_settings['page_title']) ? '' : $this->_payment_settings['page_title']) ?></h4>
