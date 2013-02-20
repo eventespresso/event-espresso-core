@@ -64,24 +64,26 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 		$this->_columns = array(
             	'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
-            	'REG_ID' => __( 'ID', 'event_espresso' ),
-				'REG_date' => __( 'Registration Date', 'event_espresso' ),
-				'Reg_status' => __( 'Reg Status', 'event_espresso' ),
-            	'ATT_fname' => __( 'Attendee Name', 'event_espresso' ),
-				'REG_code' => __( 'Registration Code', 'event_espresso' ),
- 				'event_name' => __( 'Event Title', 'event_espresso' ),
+           	'REG_ID' => __( 'ID', 'event_espresso' ),
+			'event_name' => __( 'Event Title', 'event_espresso' ),
     	       	'DTT_EVT_start' => __( 'Event Date & Time', 'event_espresso' ),
-				'REG_final_price' => __( 'Price Paid', 'event_espresso' ),
+           	'ATT_fname' => __( 'Attendee Name', 'event_espresso' ),
+			'REG_count' => __('Att #', 'event_espresso'),
+			'REG_code' => __( 'Registration Code', 'event_espresso' ),
+			'Reg_status' => __( 'Reg Status', 'event_espresso' ),
+			'REG_date' => __( 'Registration Date', 'event_espresso' ),
+  			'REG_final_price' => __( 'Price Paid', 'event_espresso' ),
+			'REG_att_checked_in' => __('Chkd In', 'event_espresso'),
             	'actions' => __( 'Actions', 'event_espresso' )
         );
 
         $this->_sortable_columns = array(
-          		'REG_date' => array( 'REG_date' => TRUE ),   //true means its already sorted
+          	'REG_date' => array( 'REG_date' => TRUE ),   //true means its already sorted
             	'ATT_fname' => array( 'ATT_fname' => FALSE ),
             	'event_name' => array( 'event_name' => FALSE ),
             	'DTT_EVT_start'	=> array( 'DTT_EVT_start' => FALSE ),
             	'Reg_status' => array( 'Reg_status' => FALSE ),
-				'REG_ID' => array( 'REG_ID' => FALSE ),
+			'REG_ID' => array( 'REG_ID' => FALSE ),
         	);
 
         $this->_hidden_columns = array();
@@ -185,8 +187,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * 		column_ATT_fname
 	*/
    	function column_ATT_fname($item){
-		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item->ATT_ID ), ATT_ADMIN_URL ), 'edit_attendee_nonce' );
-		return '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . ucwords( $item->REG_att_name ) . '</a>';
+		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item->ATT_ID ), REG_ADMIN_URL ), 'edit_attendee_nonce' );
+		$link = '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . ucwords( $item->REG_att_name ) . '</a>';
+		$link .= $item->REG_count == 1 ? '<img class="primary-attendee-star-img" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/star-8x8.png" width="8" height="8" alt="this is the primary attendee"/>' : '';
+		return $link;
 	}
 
 
@@ -232,7 +236,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			
 		} else {
 			// free event
-			return '<span class="reg-overview-free-event-spn">' . __( 'zip', 'event_espresso' ) . '</span>';
+			return '<span class="reg-overview-free-event-spn">' . $org_options['currency_symbol'] . '0.00</span>';
 		}
 	
 		return '<div class="jst-rght">' . $org_options['currency_symbol'] . ' ' . number_format( $item->REG_final_price, 2 ) . '</div>';
@@ -245,13 +249,41 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	/**
+	 * 		column_REG_count
+	*/
+	function column_REG_count($item){
+		return $item->REG_count . __( ' of ', 'event_espresso' ) . $item->REG_group_size;
+	}
+
+
+
+
+
+
+
+	/**
+	 * 		column_REG_att_checked_in
+	*/
+	function column_REG_att_checked_in($item){		
+		if ( $item->REG_att_checked_in ) {
+			return __( 'Yes', 'event_espresso' );
+		} else {
+			return '';
+		}		
+	}
+
+
+
+
+
+	/**
 	 * 		column_actions
 	*/
 	function column_actions($item) {
 
 	        //Build row actions
 		$view_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL ), 'view_registration_nonce' );
-		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item->ATT_ID ), ATT_ADMIN_URL ), 'edit_attendee_nonce' );
+		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item->ATT_ID ), REG_ADMIN_URL ), 'edit_attendee_nonce' );
 		
 		// page=attendees&event_admin_reports=resend_email&registration_id=43653465634&event_id=2&form_action=resend_email
 		//$resend_reg_lnk_url_params = array( 'action'=>'resend_registration', 'reg'=>$item->REG_ID );
@@ -305,6 +337,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 				
 	}
 
-
+//UPDATE `wp_esp_registration` SET `REG_count`=2,`REG_group_size`=2 WHERE `REG_count` = 0
 
 }

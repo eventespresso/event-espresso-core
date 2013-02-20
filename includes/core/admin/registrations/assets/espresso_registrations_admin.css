@@ -25,17 +25,18 @@
 .status-RNA, 
 .reg-overview-no-payment-spn { color:#F00;  }
 
-.column-ATT_fname { width:14%; }
-.column-REG_code { width:11%; }
-.column-REG_att_checked_in { width:4%; text-align:center; }
-.column-event_name { }
-.column-DTT_EVT_start { width:12.5%; }
+.wp-list-table .column-ATT_fname { width:10%; }
+.wp-list-table .column-REG_code { width:9%; }
+.wp-list-table .column-REG_att_checked_in { width:4%; text-align:center; }
+.wp-list-table .column-event_name { }
+.wp-list-table .column-DTT_EVT_start { width:12.5%; }
 
-#REG_final_price { text-align:center; }
-.column-REG_final_price { width:6%; text-align:right; }
+.wp-list-table #REG_final_price { text-align:center; }
+.wp-list-table .column-REG_final_price { width:5%; text-align:right; }
 .reg-pad-rght { display:block; padding-right:1.5em; }
 
-.column-actions { width:8.5%;  }
+.wp-list-table .column-REG_count { width:4%;  }
+.wp-list-table .column-actions { width:8.5%;  }
 
 .reg-overview-free-event-spn { display: block; text-align:center; }
 

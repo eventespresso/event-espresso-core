@@ -68,9 +68,9 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$this->_admin_page_title = $this->page_label;
 		$this->_labels = array(
 			'buttons' => array(
-				'add' => __('Add New Registration', 'event_espresso'),
-				'edit' => __('Edit Registration', 'event_espresso'),
-				'delete' => __('Delete Registration','event_espresso')
+				'add' => __('Add New Attendee', 'event_espresso'),
+				'edit' => __('Edit Event', 'event_espresso'),
+				'delete' => __('Delete Event', 'event_espresso')
 				)
 			);
 	}
@@ -139,7 +139,46 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 						'noheader' => TRUE
 					),
 					
-				'reports'	=> '_registration_reports'
+				'reports'	=> '_registration_reports',
+
+				'event_registrations'	=> '_event_registrations_list_table',
+				
+				'contact_list'	=> '_attendee_contact_list_table',
+				
+				'add_new_attendee'	=> array( 
+					'func' => '_edit_attendee_details', 
+					'args' => array( 
+						'new_attendee' => TRUE 
+					)
+				),
+				
+				'edit_attendee'	=> array( 
+					'func' => '_edit_attendee_details'
+				),
+				
+				'insert_attendee'	=> array( 
+					'func' => '_insert_or_update_attendee', 
+					'args' => array( 
+						'new_attendee' => TRUE 
+					), 
+					'noheader' => TRUE 
+				),
+
+				'update_attendee'	=> array( 
+					'func' => '_insert_or_update_attendee', 
+					'args' => array( 
+						'new_attendee' => FALSE 
+					), 
+					'noheader' => TRUE
+				),
+
+				'trash_attendees'	=> array( 
+					'func' => '_trash_or_restore_attendees', 
+					'args' => array( 
+						'trash' => TRUE 
+					), 
+					'noheader' => TRUE 
+				)
 				
 		);
 		
@@ -151,6 +190,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_config() {
 		$this->_page_config = array(
+		
 			'default' => array(
 				'nav' => array(
 					'label' => __('Overview', 'event_espresso'),
@@ -158,28 +198,70 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					),
 				'list_table' => 'EE_Registrations_List_Table'
 				),
+
+			'event_registrations' => array(
+				'nav' => array(
+					'label' => __('Event Registrations', 'event_espresso'),
+					'order' => 10,
+					'persistent' => FALSE
+					),
+					'list_table' => 'EE_Event_Registrations_List_Table',
+					'metaboxes' => array()
+				),
+								
 			'view_registration' => array(
 				'nav' => array(
 					'label' => __('REG Details', 'event_espresso'),
-					'order' => 5,
+					'order' => 15,
 					'url' => isset($this->_req_data['reg']) ? add_query_arg(array('reg' => $this->_req_data['reg'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
 					'persistent' => FALSE
 					),
 				'metaboxes' => array( '_registration_details_metaboxes', '_espresso_news_post_box', '_espresso_links_post_box' )
 				),
+				
+			'add_new_attendee' => array(
+				'nav' => array(
+					'label' => __('Add Attendee', 'event_espresso'),
+					'order' => 15,
+					'persistent' => FALSE
+					),
+					'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box')
+				),
+				
+			'edit_attendee' => array(
+				'nav' => array(
+					'label' => __('Edit Attendee', 'event_espresso'),
+					'order' => 15,
+					'persistent' => FALSE,
+					'url' => isset($this->_req_data['id']) ? add_query_arg(array('id' => $this->_req_data['id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
+					),
+					'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box')
+				),
+				
+			'contact_list' => array(
+				'nav' => array(
+					'label' => __('Attendee Contact List', 'event_espresso'),
+					'order' => 20
+					),
+					'list_table' => 'EE_Attendee_Contact_List_Table',
+					'metaboxes' => array()
+				),
+
 			'reports' => array(
 				'nav' => array(
 					'label' => __('Reports', 'event_espresso'),
-					'order' => 20
+					'order' => 30
 					)
 				),
+
 			'registration_settings' => array(
 				'nav' => array(
 					'label' => __('Settings', 'event_espresso'),
-					'order' => 30
+					'order' => 40
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' )
 				)
+				
 			);
 	}
 
@@ -320,10 +402,66 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 
+	protected function _set_list_table_views_event_registrations() {
+		$this->_views = array(
+			'all' => array(
+				'slug' => 'all',
+				'label' => __('All', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'trash_attendees' => __('Move to Trash', 'event_espresso'),
+					)
+				),
+			'trash' => array(
+				'slug' => 'trash',
+				'label' => __('Trash', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'restore_attendees' => __('Restore from Trash', 'event_espresso'),
+					'delete_attendees' => __('Delete Permanently', 'event_espresso')
+					)
+				)
+			);
+	}
+
+
+
+	protected function _set_list_table_views_contact_list() {
+		$this->_views = array(
+			'in_use' => array(
+				'slug' => 'in_use',
+				'label' => __('In Use', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'trash_attendees' => __('Move to Trash', 'event_espresso'),
+					)
+				),
+			'trash' => array(
+				'slug' => 'trash',
+				'label' => 'Trash',
+				'count' => 0,
+				'bulk_action' => array(
+					'restore_attendees' => __('Restore from Trash', 'event_espresso'),
+					'delete_attendees' => __('Delete Permanently', 'event_espresso')
+					)
+				)
+				
+			);
+	}
+
+
+
+
+
+	/***************************************		REGISTRATION OVERVIEW 		***************************************/
+
+
+
 
 
 
 	protected function _registrations_overview_list_table() {
+		$this->_admin_page_title .= $this->_get_action_link_or_button('add_new_attendee', 'add', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
@@ -356,6 +494,76 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			return FALSE;
 		}
 	}
+
+
+
+
+
+	/**
+	 * get registrations for given parameters (used by list table)
+	 * @param  int  $per_page    how many registrations displayed per page
+	 * @param  boolean $count   return the count or objects
+	 * @return mixed (int|array)  int = count || array of registration objects
+	 */
+	public function get_registrations( $per_page = 10, $count = FALSE ) {
+
+		$EVT_ID = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : FALSE;
+		$CAT_ID = isset( $this->_req_data['category_id'] ) ? absint( $this->_req_data['category_id'] ) : FALSE;
+		$reg_status = isset( $this->_req_data['reg_status'] ) ? sanitize_text_field( $this->_req_data['reg_status'] ) : FALSE;
+		$month_range = isset( $this->_req_data['month_range'] ) ? sanitize_text_field( $this->_req_data['month_range'] ) : FALSE;
+		$today_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'today' ? TRUE : FALSE;
+		$this_month_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'month' ? TRUE  : FALSE;
+		$start_date = FALSE;
+		$end_date = FALSE;
+
+		//set orderby
+		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
+
+		switch ( $this->_req_data['orderby'] ) {
+			case 'REG_ID':
+				$orderby = 'REG_ID';
+				break;
+			case 'Reg_status':
+				$orderby = 'STS_ID';
+				break;
+			case 'ATT_fname':
+				$orderby = 'ATT_lname';
+				break;
+			case 'event_name':
+				$orderby = 'event_name';
+				break;
+			case 'DTT_EVT_start':
+				$orderby = 'DTT_EVT_start';
+				break;
+			default: //'REG_date'
+				$orderby = 'REG_date';
+		}
+
+		$sort = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'DESC';
+		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
+		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $per_page;
+
+		$offset = ($current_page-1)*$per_page;
+		$limit = array( $offset, $per_page );
+
+		$registrations = EEM_Registration::instance()->get_registrations_for_admin_page( $EVT_ID, $CAT_ID, $reg_status, $month_range, $today_a, $this_month_a, $start_date, $end_date, $orderby, $sort, $limit, $count );
+
+		return $registrations;
+	}
+
+
+
+
+
+
+	public function get_registration_status_array() {
+		return self::$_reg_status;
+	}
+
+
+
+
+	/***************************************		REGISTRATION DETAILS 		***************************************/
 
 
 
@@ -428,7 +636,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		add_meta_box( 'edit-reg-details-mbox', __( 'Registration Details', 'event_espresso' ), array( $this, '_reg_details_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
 		add_meta_box( 'edit-reg-questions-mbox', __( 'Attendee\'s Registration Form', 'event_espresso' ), array( $this, '_reg_questions_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
 		add_meta_box( 'edit-reg-registrant-mbox', __( 'Attendee Details', 'event_espresso' ), array( $this, '_reg_registrant_side_meta_box' ), $this->wp_page_slug, 'side', 'high' );
-		if ( $this->_registration->REG_is_group_reg ) {
+		if ( $this->_registration->REG_group_size > 1 ) {
 			add_meta_box( 'edit-reg-attendees-mbox', __( 'Other Attendees Registered in this Transaction', 'event_espresso' ), array( $this, '_reg_attendees_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
 		}
 	}
@@ -850,7 +1058,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				}
 				$this->_template_args['attendees'][ $att_nmbr ]['address'] = implode( ', ', $address );
 				
-				$this->_template_args['attendees'][ $att_nmbr ]['att_link'] = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$attendee->ATT_ID ), ATT_ADMIN_URL ), 'edit_attendee_nonce' );
+				$this->_template_args['attendees'][ $att_nmbr ]['att_link'] = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$attendee->ATT_ID ), REG_ADMIN_URL ), 'edit_attendee_nonce' );
 				
 				$att_nmbr++;
 			}
@@ -992,6 +1200,391 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 
+	/***************************************		EVENT REGISTRATIONS 		***************************************/
+
+
+
+
+
+	/**
+	 * 		generates HTML for the Event Registrations List Table
+	*		@access protected
+	*		@return void
+	*/
+	protected function _event_registrations_list_table() {
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		$this->_admin_page_title .= $this->_get_action_link_or_button('add_new_attendee', 'add', array(), 'button add-new-h2');
+		$this->display_admin_list_table_page_with_no_sidebar();
+	}
+
+
+
+
+
+	/**
+	 * 		get_attendees
+	 * 		@param bool $count whether to return count or data.
+	*		@access public
+	*		@return array
+	*/
+	public function get_event_attendees( $per_page = 10, $count = FALSE, $trash = FALSE ) {  
+
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		// start with an empty array
+		$attendees = array();
+		
+		require_once( REG_ADMIN . 'EE_Event_Registrations_List_Table.class.php' );
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
+		//$ATT_MDL = EEM_Attendee::instance();
+		
+		$EVT_ID = isset($this->_req_data['event_id']) ? absint( $this->_req_data['event_id'] ) : FALSE;
+		$CAT_ID = isset($this->_req_data['category_id']) ? absint( $this->_req_data['category_id'] ) : FALSE;
+		$reg_status = isset($this->_req_data['reg_status']) ? sanitize_text_field( $this->_req_data['reg_status'] ) : FALSE;
+		
+		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
+
+		
+		switch ($this->_req_data['orderby']) {
+			case 'REG_date':
+				$orderby = 'REG_date';
+				break;
+			case 'ATT_name':
+				$orderby = 'ATT_lname';
+				break;
+			default:
+				$orderby = 'event_name';
+		}
+		
+		$sort = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
+
+		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
+		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $per_page;
+
+
+		$offset = ($current_page-1)*$per_page;
+		$limit = array( $offset, $per_page );
+		
+		$output = $count ? 'COUNT' : 'OBJECT_K';
+		$all_attendees = EEM_Attendee::instance()->get_event_attendees( $EVT_ID, $CAT_ID, $reg_status, $trash, $orderby, $sort, $limit, $output );
+
+
+		return $all_attendees;
+	}
+
+
+
+
+
+	/**
+	 * 		generates HTML for the Attendee Contact List
+	*		@access protected
+	*		@return void
+	*/
+	protected function _attendee_contact_list_table() {
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		$this->_admin_page_title .= $this->_get_action_link_or_button('add_new_attendee', 'add', array(), 'button add-new-h2');
+		$this->display_admin_list_table_page_with_no_sidebar();
+	}
+
+
+
+
+
+	/**
+	 * 		get_attendees
+	 * 		@param bool $count whether to return count or data.
+	*		@access public
+	*		@return array
+	*/
+	public function get_attendees( $per_page, $count = FALSE, $trash = FALSE ) {  
+
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		// start with an empty array
+		$attendees = array();
+		
+		require_once( REG_ADMIN . 'EE_Attendee_Contact_List_Table.class.php' );
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
+		$ATT_MDL = EEM_Attendee::instance();
+		
+		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
+		
+		switch ($this->_req_data['orderby']) {
+			case 'ATT_ID':
+				$orderby = 'ATT_ID';
+				break;
+			case 'ATT_fname':
+				$orderby = 'ATT_fname';
+				break;
+			case 'ATT_email':
+				$orderby = 'ATT_email';
+				break;
+			case 'ATT_city':
+				$orderby = 'ATT_city';
+				break;
+			case 'STA_ID':
+				$orderby = 'STA_ID';
+				break;
+			case 'CNT_ID':
+				$orderby = 'CNT_ID';
+				break;
+			default:
+				$orderby = 'ATT_lname';
+		}
+		
+		$sort = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
+
+		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
+		$per_page = isset( $per_page ) && !empty( $per_page ) ? $per_page : 10;
+		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $per_page;
+
+
+		$offset = ($current_page-1)*$per_page;
+		$limit = array( $offset, $per_page );
+
+		if ( $trash )
+			$all_attendees = $count ? $ATT_MDL->get_all_trashed_attendees( $orderby, $sort, $limit, 'COUNT' ) : $ATT_MDL->get_all_trashed_attendees( $orderby, $sort, $limit );
+		else
+			$all_attendees = $count ? $ATT_MDL->get_all_inuse_attendees( $orderby, $sort, $limit, 'COUNT' ) : $ATT_MDL->get_all_inuse_attendees( $orderby, $sort, $limit );
+
+		return $all_attendees;
+	}
+
+
+
+
+
+
+	/**
+	 * 		_attendee_details
+	*		@access protected
+	*		@return void
+	*/
+	protected function _edit_attendee_details( $new = FALSE ) {		
+	
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		
+		$ATT_ID = isset( $this->_req_data['id'] ) && ! empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
+
+		$title = __( ucwords( str_replace( '_', ' ', $this->_req_action )), 'event_espresso' );
+		// add ATT_ID to title if editing 
+		$title = $ATT_ID ? $title . ' # ' . $ATT_ID : $title;
+
+		// get attendees
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
+		$ATT_MDL = EEM_Attendee::instance();
+
+		if ( $ATT_ID ) {
+		
+			$attendee = $ATT_MDL->get_attendee_by_ID( $ATT_ID );
+			$action = 'update_attendee';
+			
+		} else {
+			$attendee = new EE_Attendee();
+			$action = 'insert_attendee';
+		}
+
+		$this->_set_add_edit_form_tags($action);
+
+		
+		$this->_template_args['ATT_ID'] = $ATT_ID;
+		$this->_template_args['attendee_fname'] = html_entity_decode( stripslashes( $attendee->fname() ), ENT_QUOTES, 'UTF-8' );
+		$this->_template_args['attendee_lname'] = html_entity_decode( stripslashes( $attendee->lname() ), ENT_QUOTES, 'UTF-8' );
+		$this->_template_args['attendee_email'] = $attendee->email();
+		$this->_template_args['attendee_phone'] = $attendee->phone();
+		$this->_template_args['attendee_address'] = html_entity_decode( stripslashes( $attendee->address() ), ENT_QUOTES, 'UTF-8' );
+		$this->_template_args['attendee_address2'] = html_entity_decode( stripslashes( $attendee->address2() ), ENT_QUOTES, 'UTF-8' );
+		$this->_template_args['attendee_city'] = html_entity_decode( stripslashes( $attendee->city() ), ENT_QUOTES, 'UTF-8' );		
+		$this->_template_args['attendee_state_ID'] = $attendee->state_ID();
+		$this->_template_args['attendee_country_ISO'] = $attendee->country_ISO();
+		$this->_template_args['attendee_zip'] = $attendee->zip();
+		$this->_template_args['attendee_social'] = html_entity_decode( stripslashes( $attendee->social() ), ENT_QUOTES, 'UTF-8' );
+		$this->_template_args['attendee_comments'] = html_entity_decode( stripslashes( $attendee->comments() ), ENT_QUOTES, 'UTF-8' );
+		$this->_template_args['attendee_notes'] = html_entity_decode( stripslashes( $attendee->notes() ), ENT_QUOTES, 'UTF-8' );
+
+
+		//get list of all registrations for this attendee
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php');
+		$REG_MDL = EEM_Registration::instance();		
+		if ( $this->_template_args['registrations'] = $REG_MDL->get_all_registrations_for_attendee( $ATT_ID )) {
+			$this->_template_path = REG_TEMPLATE_PATH . 'attendee_registrations_main_meta_box.template.php';
+			$meta_box_args['template_path'] = $this->_template_path;
+			$meta_box_args['template_args'] = $this->_template_args;
+			$this->_add_admin_page_meta_box( 'attendee_registrations_meta_', __( 'Event Registrations for this Attendee', 'event_espresso' ), 'attendee_registrations', $meta_box_args );
+		}
+		
+		// generate metabox - you MUST create a callback named __FUNCTION__ . '_meta_box'  ( see "_edit_attendee_details_meta_box" below )
+		$this->_template_path = REG_TEMPLATE_PATH . 'attendee_details_main_meta_box.template.php';
+		//$this->_add_admin_page_meta_box( $action, $title, 'edit_attendee_details', NULL );
+		$this->_template_args['admin_page_content'] = espresso_display_template($this->_template_path, $this->_template_args, TRUE);
+
+		$this->_set_publish_post_box_vars( 'id', $ATT_ID, 'delete_attendees' );
+
+		// the final template wrapper
+		$this->display_admin_page_with_sidebar();
+		
+	}
+
+
+
+
+
+
+
+
+
+
+	/**
+	 * 		insert_or_update_attendee
+	*		@param boolean 		$new_attendee - whether to insert or update
+	*		@access protected
+	*		@return void
+	*/
+	protected function _insert_or_update_attendee( $new_attendee = FALSE ) {
+
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
+		$ATT_MDL = EEM_Attendee::instance();
+		
+		//printr( $this->_req_data ); die();
+		
+		// why be so pessimistic ???  : (
+		$success = 0;
+		//create attendee object
+		$attendee = new EE_Attendee(
+						$this->_req_data['ATT_fname'],
+						$this->_req_data['ATT_lname'],
+						$this->_req_data['ATT_address'],
+						$this->_req_data['ATT_address2'],
+						$this->_req_data['ATT_city'],
+						$this->_req_data['STA_ID'],
+						$this->_req_data['CNT_ISO'],
+						$this->_req_data['ATT_zip'],
+						$this->_req_data['ATT_email'],
+						$this->_req_data['ATT_phone'],
+						$this->_req_data['ATT_social'],
+						$this->_req_data['ATT_comments'],
+						$this->_req_data['ATT_notes'],
+						isset($this->_req_data['ATT_deleted']) ? $this->_req_data['ATT_deleted'] : 0,
+						$this->_req_data['ATT_ID']
+				);
+				
+		// is this a new Attendee ?
+		if ( $new_attendee ) {
+			// run the insert
+			if ( $attendee->insert() ) {
+				$success = 1;
+			} 
+			$action_desc = 'created';
+		} else {
+			// run the update
+			if ( $attendee->update() ) {
+				$success = 1;
+			}
+			$action_desc = 'updated';
+		}
+		
+		$this->_redirect_after_action( $success, 'Attendee', $action_desc, array() );
+			
+	}
+ 
+
+
+
+
+	/**
+	 * 		_trash_or_restore_attendee
+	*		@param boolean 		$trash - whether to move item to trash (TRUE) or restore it (FALSE)
+	*		@access protected
+	*		@return void
+	*/
+	protected function _trash_or_restore_attendees( $trash = TRUE ) {
+	
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
+		$ATT_MDL = EEM_Attendee::instance();
+	
+		$success = 1;
+		$ATT_deleted = $trash ? TRUE : FALSE;
+		//Checkboxes
+		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
+			// if array has more than one element than success message should be plural
+			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
+			// cycle thru checkboxes 
+			while (list( $ATT_ID, $value ) = each($this->_req_data['checkbox'])) {
+				if ( ! $ATT_MDL->update(array('ATT_deleted' => $ATT_deleted), array('ATT_ID' => absint($ATT_ID)))) {
+					$success = 0;
+				}
+			}
+			
+		} else {
+			// grab single id and delete
+			$ATT_ID = absint($this->_req_data['id']);
+			if ( ! $ATT_MDL->update(array('ATT_deleted' => $ATT_deleted), array('ATT_ID' => absint($ATT_ID)))) {
+				$success = 0;
+			}
+			
+		}
+
+		$what = $success > 1 ? 'Attendees' : 'Attendee';
+		$action_desc = $trash ? 'moved to the trash' : 'restored';
+		$this->_redirect_after_action( $success, $what, $action_desc, array() );
+		
+	}
+
+
+
+
+
+
+	/**
+	 * 		_delete_attendee
+	*		@access protected
+	*		@return void
+	*/
+	protected function _delete_attendees() {
+	
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
+		$ATT_MDL = EEM_Attendee::instance();
+		
+		$success = 1;
+		//Checkboxes
+		if ( ! empty($this->_req_data['checkbox']) && is_array( $this->_req_data['checkbox'] )) {
+			// if array has more than one element than success message should be plural
+			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
+			// cycle thru bulk action checkboxes
+			while ( list( $ATT_ID, $value ) = each( $this->_req_data['checkbox'] )) {
+				if ( ! $ATT_MDL->delete_attendee_by_ID( absint( $ATT_ID ))) {
+					$success = 0;
+				}
+			}
+	
+		} else {
+			// grab single id and delete
+			$ATT_ID = absint( $this->_req_data['id'] );
+			if ( ! $ATT_MDL->delete_attendee_by_ID( $ATT_ID )) {
+				$success = 0;
+			}
+			
+		}
+		$what = $success > 1 ? 'Attendees' : 'Attendee';
+		$this->_redirect_after_action( $success, $what, 'deleted', array() );
+		
+	}
+
+
+
+
+
+	/***************************************		REPORTS 		***************************************/
+
+
+
+
+
 
 	/**
 	 * 		generates Business Reports regarding Registrations
@@ -1124,73 +1717,9 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 
-	/**
-	 * get registrations for given parameters (used by list table)
-	 * @param  int  $per_page    how many registrations displayed per page
-	 * @param  boolean $count   return the count or objects
-	 * @return mixed (int|array)  int = count || array of registration objects
-	 */
-	public function get_registrations( $per_page = 10, $count = FALSE ) {
-
-		$EVT_ID = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : FALSE;
-		$CAT_ID = isset( $this->_req_data['category_id'] ) ? absint( $this->_req_data['category_id'] ) : FALSE;
-		$reg_status = isset( $this->_req_data['reg_status'] ) ? sanitize_text_field( $this->_req_data['reg_status'] ) : FALSE;
-		$month_range = isset( $this->_req_data['month_range'] ) ? sanitize_text_field( $this->_req_data['month_range'] ) : FALSE;
-		$today_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'today' ? TRUE : FALSE;
-		$this_month_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'month' ? TRUE  : FALSE;
-		$start_date = FALSE;
-		$end_date = FALSE;
-
-		//set orderby
-		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
-
-		switch ( $this->_req_data['orderby'] ) {
-			case 'REG_ID':
-				$orderby = 'REG_ID';
-				break;
-			case 'Reg_status':
-				$orderby = 'STS_ID';
-				break;
-			case 'ATT_fname':
-				$orderby = 'ATT_lname';
-				break;
-			case 'event_name':
-				$orderby = 'event_name';
-				break;
-			case 'DTT_EVT_start':
-				$orderby = 'DTT_EVT_start';
-				break;
-			default: //'REG_date'
-				$orderby = 'REG_date';
-		}
-
-		$sort = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'DESC';
-		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
-		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $per_page;
-
-		$offset = ($current_page-1)*$per_page;
-		$limit = array( $offset, $per_page );
-
-		$registrations = EEM_Registration::instance()->get_registrations_for_admin_page( $EVT_ID, $CAT_ID, $reg_status, $month_range, $today_a, $this_month_a, $start_date, $end_date, $orderby, $sort, $limit, $count );
-
-		return $registrations;
-	}
-
-
-
-
-
-
-	public function get_registration_status_array() {
-		return self::$_reg_status;
-	}
-
-
-
-
 	
 
-	/*************		Registration Settings 		*************/
+	/***************************************		REGISTRATION SETTINGS 		***************************************/
 
 
 	protected function _registration_settings() {
