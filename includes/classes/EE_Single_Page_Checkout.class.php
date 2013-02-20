@@ -1115,12 +1115,10 @@ class EE_Single_Page_Checkout {
 			$txn_status = $grand_total > 0 ? 'TIN' : 'TCM';
 			$transaction = new EE_Transaction( time(), $grand_total, 0, $txn_status, NULL, $session, NULL, NULL );
 			$txn_results = $transaction->insert();
-			// more than one item means this is a group registration
-			$is_group_reg = count($reg_items) > 1 ? TRUE : FALSE;
+
 			// cycle through items in session
 			foreach ($reg_items as $line_item_id => $event) {
-				// more than one attendee also means this is a group registration
-				$is_group_reg = count($event['attendees']) > 1 ? TRUE : $is_group_reg;
+
 				// cycle through attendees
 				foreach ($event['attendees'] as $att_nmbr => $attendee) {
 
@@ -1219,8 +1217,8 @@ class EE_Single_Page_Checkout {
 													$session['id'],
 													$new_reg_code,
 													md5( $new_reg_code ),
-													isset($attendee['primary_attendee']),
-													$is_group_reg,
+													$att_nmbr,
+													count($event['attendees']),
 													FALSE,
 													FALSE
 							);

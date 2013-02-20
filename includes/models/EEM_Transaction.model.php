@@ -292,7 +292,7 @@ class EEM_Transaction extends EEM_Base {
 		$SQL .= 'RIGHT JOIN ' . $this->table_name . ' txn ON reg.TXN_ID = txn.TXN_ID ';
 		$SQL .= 'WHERE TXN_timestamp >= %d ';
 		$SQL .= 'AND TXN_timestamp <= %d ';
-		$SQL .= 'AND reg.REG_is_primary = 1 ';
+		$SQL .= 'AND reg.REG_nmbr = 1 ';
 
 		//setup orderby
 		switch ( $orderby ) {
@@ -359,7 +359,7 @@ class EEM_Transaction extends EEM_Base {
 		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_attendee att ON reg.ATT_ID = att.ATT_ID ';
 		$SQL .= 'INNER JOIN ' . $this->table_name . ' txn ON reg.TXN_ID = txn.TXN_ID ';
 		$SQL .= 'WHERE txn.TXN_ID = %d ';
-		$SQL .= 'AND reg.REG_is_primary = 1 ';
+		$SQL .= 'AND reg.REG_nmbr = 1 ';
 		$SQL .= 'ORDER BY TXN_timestamp DESC';
 
 		if ( $transaction = $wpdb->get_results( $wpdb->prepare( $SQL, $TXN_ID ))) {

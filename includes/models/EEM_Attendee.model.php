@@ -223,7 +223,7 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 		
 		global $wpdb;
 			
-		$select = $output == 'COUNT' ? 'COUNT(reg.ATT_ID)' : 'att.ATT_ID, CONCAT(att.ATT_fname, " ", att.ATT_lname) AS ATT_name, reg.REG_ID, reg.REG_code, reg.STS_ID AS REG_status, reg.REG_final_price, reg.REG_date, reg.REG_is_primary, reg.REG_is_group_reg, reg.REG_att_is_going, reg.REG_att_checked_in, dtt.DTT_EVT_start, evt.id AS EVT_ID, evt.event_name, evt.require_pre_approval, txn.TXN_ID, txn.TXN_total, txn.TXN_paid, txn.STS_ID AS txn_status, prc.PRC_name';
+		$select = $output == 'COUNT' ? 'COUNT(reg.ATT_ID)' : 'att.ATT_ID, CONCAT(att.ATT_fname, " ", att.ATT_lname) AS ATT_name, reg.REG_ID, reg.REG_code, reg.STS_ID AS REG_status, reg.REG_final_price, reg.REG_date, reg.REG_count, reg.REG_group_size, reg.REG_att_is_going, reg.REG_att_checked_in, dtt.DTT_EVT_start, evt.id AS EVT_ID, evt.event_name, evt.require_pre_approval, txn.TXN_ID, txn.TXN_total, txn.TXN_paid, txn.STS_ID AS txn_status, prc.PRC_name';
 
 		$SQL = 'SELECT ' . $select;  
 		$SQL .= ' FROM ' . $wpdb->prefix . 'esp_attendee att';
