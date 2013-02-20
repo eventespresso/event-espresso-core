@@ -229,6 +229,19 @@ class EEM_Registration extends EEM_TempBase {
 			return FALSE;
 		}
 	}
+	
+	/**
+	 * Gets a registration given their REG_url_link. Yes, this should usually 
+	 * be passed via a GET parameter.
+	 * @param string $REG_url_link
+	 * @return EE_Registration
+	 */
+	public function get_registration_for_reg_url_link($REG_url_link){
+		if(!$REG_url_link){
+			return false;
+		}
+		return $this->get_one(array('REG_url_link'=>$REG_url_link));
+	}
 
 
 
