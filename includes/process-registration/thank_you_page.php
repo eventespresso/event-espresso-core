@@ -12,8 +12,15 @@ function espresso_thank_you_page() {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
 		$EEM_Gateways = EEM_Gateways::instance();
 	}
+	//only use session data to process final payment etc. After thank_you_page()
+	//though, the session gets wiped out.
 	$EEM_Gateways->thank_you_page();
-	$session_data = $EE_Session->get_session_data();
+	
+	
+	//$transaction=$registration->transaction();
+	//var_dump($transaction);
+	//$session_data = $EE_Session->get_session_data();
+	$session_data = $EE_Session->get_session_from_reg_url_link();
 	if (!empty($session_data['txn_results'])) {
 		//printr( $session_data);
 		$grand_total = $session_data['_cart_grand_total_amount'];

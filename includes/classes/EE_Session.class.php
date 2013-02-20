@@ -258,6 +258,15 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 		if (isset($_GET['session_id'])) {
 			session_id(sanitize_key($_GET['session_id']));
 			session_start();
+		}elseif(isset($_REQUEST['reg_url_link'])){
+			//get the session from the reg_url_link. 
+			require_once('EEM_Registration.model.php');
+			$registration =  EEM_Registration::instance()->get_registration_for_reg_url_link(sanitize_key($_REQUEST['reg_url_link']));
+			session_id($registration->session_ID());
+			session_start();
+			//echo "registration:";var_dump($registration);
+			
+			
 		}
 		
 		if ( ! session_id() ) {
@@ -294,6 +303,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 			}
 
 		} else {
+			//try using the 
 			// no previous session = go back and create one
 			return FALSE;
 		}
@@ -324,7 +334,32 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 
 	}
 
-
+	/**
+	 * To be used when there's a GET parameter of reg_url_link with the esp_registration.REG_url_link of a registration.
+	 * Uses that to find the registration, then to get the transaction for it, then unserialize its session_data
+	 * and places it into EE_Session->_session_data. Returns the new _session_data on success,
+	 * false on failure
+	 * @return array of entire session
+	 */
+	public function get_session_from_reg_url_link(){
+		if(!isset($_REQUEST['reg_url_link'])){
+			return false;
+		}
+		//get the session data from the reg_url_link in teh querystring, as the session si actually destroyed by now
+		require_once('EEM_Registration.model.php');
+		require_once('EEM_Transaction.model.php');
+		$regmodel=  EEM_Registration::instance();
+		$transmodel = EEM_Transaction::instance();
+		$registration=$regmodel->get_registration_for_reg_url_link($_REQUEST['reg_url_link']);
+		if(!empty($registration)){
+			$transaction=$transmodel->get_transaction($registration->transaction_ID());
+			if(!empty($transaction)){
+				$this->_session_data=$transaction->session_data();
+				return $this->_session_data;
+			}
+		}
+		return false;
+	}
 
 
 

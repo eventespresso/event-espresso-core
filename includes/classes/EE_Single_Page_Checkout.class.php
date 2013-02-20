@@ -1207,6 +1207,7 @@ class EE_Single_Page_Checkout {
 
 					// now create a new registration for the attendee
 					require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Registration.class.php' );
+					$reg_url_link=md5($new_reg_code);
 					$reg[$line_item_id] = new EE_Registration(
 													$event['id'],
 													$ATT_ID,
@@ -1218,7 +1219,7 @@ class EE_Single_Page_Checkout {
 													$price_paid,
 													$session['id'],
 													$new_reg_code,
-													md5( $new_reg_code ),
+													$reg_url_link,
 													isset($attendee['primary_attendee']),
 													$is_group_reg,
 													FALSE,

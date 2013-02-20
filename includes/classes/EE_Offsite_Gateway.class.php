@@ -5,6 +5,28 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 
 	protected $_gatewayUrl = NULL;
 	
+	/**
+	 *  Gets the URL that the user should generally be sent back to after payment completion offiste
+	 *  Adds the reg_url_link in order to remember which session we were in the middle of processing
+	 * @param boolean $urlencode whether or not to url-encode the url (if true, you probably intend to pass
+	 * this string as a URL parameter itself, or maybe a post parameter)
+	 *  @return string URL on the current site of the thank_you page, with parameters added on to know which registration was just 
+	 * processed in order to correctly display the payment status. And it gets URL-encoded by default
+	 */
+	protected function _get_return_url_with_params( $urlencode = true ){
+		global $org_options,$EE_Session;
+		$session_data=$EE_Session->get_session_data();
+		//get a registration that's currently getting processed
+		/*@var $a_current_registration EE_Registration */
+		$a_current_registration=current($session_data['registration']);
+		$url=get_permalink($org_options['return_url']) .  '?reg_url_link=' . $a_current_registration->reg_url_link() . '&attendee_action=post_payment&form_action=payment';
+		if($urlencode){
+			$url=urlencode($url);
+		}
+		//echo "url to send to :$url";
+		return $url;
+	}
+	
 	protected function __construct(EEM_Gateways &$model) {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		parent::__construct($model);

@@ -335,9 +335,9 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			}
 		}
 		$this->addField('business', $paypal_id);
-		$this->addField('return', home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment');
+		$this->addField('return',  $this->_get_return_url_with_params(false));
 		$this->addField('cancel_return', home_url() . '/?page_id=' . $org_options['cancel_return']);
-		$this->addField('notify_url', home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment');
+		$this->addField('notify_url', $this->_get_return_url_with_params(false));
 		$this->addField('cmd', '_cart');
 		$this->addField('upload', '1');
 		$this->addField('currency_code', $paypal_cur);
@@ -350,7 +350,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 
 	public function thank_you_page() {
 		global $EE_Session;
-		printr( $_POST, '$_POST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//printr( $_POST, '$_POST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$txn_details = array(
 				'gateway' => $this->_payment_settings['display_name'],
 				'approved' => FALSE,
@@ -361,8 +361,8 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 				'method' => sanitize_text_field($_POST['txn_type']),
 				'auth_code' => sanitize_text_field($_POST['payer_id']),
 				'md5_hash' => sanitize_text_field($_POST['verify_sign']),
-				'invoice_number' => sanitize_text_field($_POST['invoice_id']),
-				'transaction_id' => sanitize_text_field($_POST['ipn_track_id'])
+				//'invoice_number' => sanitize_text_field($_POST['invoice_id']),
+				//'transaction_id' => sanitize_text_field($_POST['ipn_track_id'])
 		);
 		$this->ipnLog = TRUE;
 		if ($this->_payment_settings['use_sandbox']) {

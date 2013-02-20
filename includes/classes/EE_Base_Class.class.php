@@ -367,11 +367,13 @@ abstract class EE_Base_Class {
 	 */
 	public function get_first_related( $relationName, $where_col_n_values = null, $orderby = null, $order = null, $operators = '=', $output = 'OBJECT_K'){
 		$internalName=$this->_get_private_attribute_name($relationName);
+		//cache the related object
 		if($this->$internalName==null){
 			$model=$this->_get_model();
 			$relationRequested=$model->get_first_related($this, $relationName,$where_col_n_values,$orderby,$order,$operators,$output);
 			$this->$internalName=$relationRequested;
 		}
+		//return teh now-cahced related object
 		return $this->$internalName;
 	}
 	
