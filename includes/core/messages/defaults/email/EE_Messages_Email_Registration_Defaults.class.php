@@ -45,5 +45,6 @@ class EE_Messages_Email_Registration_Defaults extends EE_Message_Template_Defaul
 	protected function _change_templates( $evt_id, $is_global ) {
 		//make sure admin context has correct "To" email address
 		$this->_templates['admin']['to'] = '[ADMIN_EMAIL]';
+		$this->_templates['primary_attendee']['to'] = '[PRIMARY_ATTENDEE_EMAIL]';
 	}
 }

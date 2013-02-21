@@ -227,7 +227,7 @@ abstract class EE_message_type extends EE_Base {
 		//todo: need to move require into registration hook but for now we'll require here.
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Parse_Shortcodes.helper.php';
 		//get shortcode_replace instance- set when _get_messages is called in child...
-		$this->_shortcode_replace = EE_Parse_Shortcodes::instance();
+		$this->_shortcode_replace = new EE_Parse_Shortcodes();
 		$this->_active_messenger = $active_messenger;
 		$this->_data = $data;
 		$this->_set_contexts;
@@ -555,6 +555,7 @@ abstract class EE_message_type extends EE_Base {
 				$message->$field = $this->_shortcode_replace->parse_message_template($this->_templates[$field][$context], $addressee, $shortcodes);
 			}
 		}
+
 		return $message;
 	}	
 } 

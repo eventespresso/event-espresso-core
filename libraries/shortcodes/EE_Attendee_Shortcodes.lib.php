@@ -53,12 +53,12 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 			
 			case '[FNAME]' :
 				$fname = !empty( $this->_data->fname ) ? $this->_data->fname : '';
-				return isset($this->_data['att_obj']) && is_object($this->_data['att_obj']) ? $this->_data['att_obj']->fname() : $fname;
+				return is_object($this->_data) ? $this->_data->fname() : $fname;
 				break;
 
 			case '[LNAME]' :
 				$lname = !empty( $this->_data->lname ) ? $this->_data->lname : '';
-				return isset($this->_data['att_obj']) && is_object($this->_data['att_obj']) ? $this->_data['att_obj']->lname() : $lname;
+				return is_object($this->_data) ? $this->_data->lname() : $lname;
 				break;
 
 		}

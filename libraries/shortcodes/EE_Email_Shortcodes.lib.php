@@ -64,7 +64,7 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[PRIMARY_ATTENDEE_EMAIL]' :
-				return $this->_data->primary_attendee_email();
+				return $this->_data->primary_attendee_email;
 				break;
 
 			case '[ADMIN_EMAIL]' :
@@ -95,16 +95,16 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 	 * @return string properly formatted list of email addresses for attendees
 	 */
 	private function _get_event_attendee_email() {
-		//why all the checks?  Because its possible someone may use the [ATTENDEE_EMAIL] shortcode in the content.  If they do then the incoming data will have the email address in an array for the attendee.
+		//why all the checks?  Because there's possible different sources for the Attendee details depending on 
 
 		$fname = !empty( $this->_data->fname ) ? $this->_data->fname : '';
-		$fname = !is_object( $this->_data ) && isset( $this->_data['att_obj'] ) && is_object( $this->_data['att_obj'] ) ? $this->_data['att_obj']->fname() : $fname;
+		$fname = is_object( $this->_data ) && isset( $this->_data->att_obj ) ? $this->_data->att_obj->fname() : $fname;
 
 		$lname = !empty( $this->_data->lname ) ? $this->_data->lname : '';
-		$lname = !is_object( $this->_data ) && isset( $this->_data['att_obj'] ) && is_object( $this->_data['att_obj'] ) ? $this->_data['att_obj']->lname() : $lname;
+		$lname = is_object( $this->_data ) && isset( $this->_data->att_obj ) ? $this->_data->att_obj->lname() : $lname;
 
 		$email = !empty( $this->_data->attendee_email ) ? $this->_data->attendee_email : '';
-		$email = !is_object( $this->_data ) && isset( $this->_data['att_obj'] ) && is_object( $this->_data['att_obj'] ) ? $this->_data['att_obj']->email() : $email;
+		$email = is_object( $this->_data ) && isset( $this->_data->att_obj ) ? $this->_data->att_obj->email() : $email;
 
 		$attendee_email = $fname . ' ' . $lname . ' <' . $email . '>';
 		return $attendee_email;
@@ -131,6 +131,7 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 		//k this shortcode has been used else where.  Since we don't know what particular event this is for, let's loop through the events and get an array of event admins for the events.  We'll return the formatted list of admin emails and let the messenger make sure we only pick one if this is for a field that can only have ONE!.
 		
 		$admin_email = array();
+
 		//loop through events and set the list of event_ids to retrieve so we can do ONE query.
 		foreach ( $this->_data->events as $event ) {
 			$ids[] = $event['ID'];

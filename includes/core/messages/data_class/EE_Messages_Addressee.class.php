@@ -76,6 +76,14 @@ class EE_Messages_Addressee extends EE_Base {
 
 
 
+	/**
+	 * things that get set later by parsers
+	 */
+	public $event_list;
+	public $attendee_list;
+
+
+
 
 	/**
 	 * This just holds the incoming data

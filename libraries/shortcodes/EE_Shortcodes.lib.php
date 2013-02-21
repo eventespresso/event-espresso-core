@@ -75,6 +75,16 @@ abstract class EE_Shortcodes extends EE_Base {
 
 
 
+
+	/**
+	 * This will hold an instance of the EE_Parse_Shortcodes helper that will be used when handling list type shortcodes
+	 * @var object
+	 */
+	protected $_shortcode_helper;
+
+
+
+
 	public function __construct() {
 		$this->_set_defaults();
 		$this->_init_props();
@@ -89,6 +99,17 @@ abstract class EE_Shortcodes extends EE_Base {
 		$this->_shortcodes = array();
 	}
 
+
+
+	/**
+	 * loads an instance of the EE_Shortcode_Parser helper when requested
+	 */
+	protected function _set_shortcode_helper() {	
+		//shortcode helper
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Parse_Shortcodes.helper.php';
+		//get shortcode_replace instance- set when _get_messages is called in child...
+		$this->_shortcode_helper = new EE_Parse_Shortcodes();
+	}
 
 
 	/**
@@ -147,6 +168,32 @@ abstract class EE_Shortcodes extends EE_Base {
 	 */
 	abstract protected function _parser( $shortcode );
 
+
+
+
+	/**
+	 * This just validates incoming data for list type shortcode parsers (and they call this method) to make sure it meets their requirements
+	 * @return mixed (void|exception) If validation fails we'll throw an exception.
+	 */
+	protected function _validate_list_requirements() {
+		
+		//first test to make sure we've got an array!
+		if ( !is_array($this->_data) ) {
+			throw new EE_Error( sprintf( __('Expecting an array for the data sent to %s', 'event_espresso'), get_class($this) ) );
+		}
+
+		//next test to make sure we've got the required template in the index!
+		if ( !isset( $this->_data['template'] ) ) {
+			throw new EE_Error( sprintf( __('The incoming data does not have the required template (%s) in its array', 'event_espresso'), $req_template ) );
+		}
+
+		//next test to make sure we've got got a data index in the incoming data array
+		if ( !isset( $this->_data['data'] ) )
+			throw new EE_Error( __('The incoming data does not have the required data index in its array', 'event_espresso') );
+
+		//all is well
+
+	}
 
 
 } //end EE_Shortcodes

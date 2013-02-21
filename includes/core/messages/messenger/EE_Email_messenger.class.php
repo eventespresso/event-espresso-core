@@ -74,7 +74,8 @@ class EE_Email_messenger extends EE_messenger  {
 	protected function _set_valid_shortcodes() {
 		//remember by leaving the other fields not set, those fields will inherit the valid shortcodes from the message type.
 		$this->_valid_shortcodes = array(
-			'to' => array('email')
+			'to' => array('email'),
+			'from' => array('email')
 			);
 	}
 

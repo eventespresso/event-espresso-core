@@ -98,7 +98,6 @@ class EE_Registration_message_type extends EE_message_type {
 		$content = "<h3>Registration Details:</h3>\n";
 		$content .= "<p>Your Registered Event(s):\n";
 		$content .= "<ul>[EVENT_LIST]</ul></p>\n";
-		$content .= "<p>Total Cost: [TOTAL_COST]</p>\n";
 		$content .= "<p><ul>[ATTENDEE_LIST]</ul></p>";
 		$content .= "<p>[COMPANY]</p>\n";
 		$content .= "<p>[CO_ADD1]</p>\n";
@@ -157,9 +156,9 @@ class EE_Registration_message_type extends EE_message_type {
 	 */
 	protected function _set_valid_shortcodes() {
 		$this->_valid_shortcodes = array(
-			'admin' => array('event','organization', 'attendee', 'registration'),
-			'primary_attendee' => array('event', 'organization', 'attendee', 'registration'),
-			'attendee' => array('event', 'organization', 'attendee', 'registration')
+			'admin' => array('transaction','event','organization', 'attendee', 'registration', 'attendee_list', 'event_list'),
+			'primary_attendee' => array('transaction','event', 'organization', 'attendee', 'registration', 'attendee_list', 'event_list'),
+			'attendee' => array('transaction','event', 'organization', 'attendee', 'registration', 'attendee_list', 'event_list')
 			);
 	}
 
@@ -275,6 +274,7 @@ class EE_Registration_message_type extends EE_message_type {
 			$aee = array_merge( $this->_default_addressee_data, $aee );
 			$add[] = new EE_Messages_Addressee( $aee );
 		}
+	
 		return $add;
 	}
 

@@ -142,8 +142,8 @@ class EE_Payment_message_type extends EE_message_type {
 	 */
 	protected function _set_valid_shortcodes() {
 		$this->_valid_shortcodes = array(
-			'admin' => array('transaction','event','organization', 'attendee', 'registration'),
-			'primary_attendee' => array('transaction', 'event', 'organization', 'attendee', 'registration')
+			'admin' => array('transaction','event','organization', 'attendee', 'registration', 'attendee_list', 'event_list'),
+			'primary_attendee' => array('transaction', 'event', 'organization', 'attendee', 'registration', 'attendee_list', 'event_list')
 			);
 	}
 

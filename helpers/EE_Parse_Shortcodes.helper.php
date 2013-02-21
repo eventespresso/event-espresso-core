@@ -50,6 +50,7 @@ class EE_Parse_Shortcodes {
 
 
 
+
 	/**
 	 * will hold an array of EE_Shortcodes library objects.
 	 * @access private
@@ -62,42 +63,10 @@ class EE_Parse_Shortcodes {
 
 
 
-	/**
-	 * will hold the parsed given template that's been replaced with the relevant data and can be accessed by the caller.
-	 * @var string
-	 * @access public
-	 */
-	public $parsed; 
+
+	public function __construct() {}
 
 
-
-
-
-	/**
-	 * holds the _instance object (utilizaing the singleton method)
-	 *
-	 * private
-	 * @var object
-	 */
-	private static $_instance = NULL;
-
-
-
-
-
-
-	private function __construct() {}
-
-
-
-
-
-	public static function instance() {
-		if (self::$_instance === NULL or !is_object(self::$_instance) or !is_a(self::$_instance, __CLASS__)) {
-			self::$_instance = new self();
-		}
-		return self::$_instance;
-	}
 
 
 
@@ -110,72 +79,100 @@ class EE_Parse_Shortcodes {
 	 * @return string                   The parsed template string
 	 */
 	public function parse_message_template( $template, EE_Messages_Addressee $data, $valid_shortcodes) {
-		$this->_template = $template;
-		$this->_data = $data;
-		$this->_set_shortcodes( $valid_shortcodes );
-		$this->_parse_message_template($this->_template);
-		return $this->parsed;
+		$this->_init_data( $template, $data, $valid_shortcodes );
+
+		
+		$this->_template = is_array($template) ? $template['main'] : $template;
+
+
+		$parsed = $this->_parse_message_template();
+		return $parsed;
 	}
 
 
+	public function parse_attendee_list_template( $template, EE_Attendee $attendee, $valid_shortcodes ) {
+		$this->_init_data( $template, $attendee, $valid_shortcodes );
+
+		$this->_template = is_array($template) ? $template['attendee_list'] : $template;
+
+		$parsed = $this->_parse_message_template();
+		return $parsed;
+	}
+
+	public function parse_event_list_template( $template, $event, $valid_shortcodes ) {
+		$this->_init_data( $template, $event, $valid_shortcodes );
+
+		$this->_template = is_array($template) ? $template['event_list'] : $template;
+
+		$parsed = $this->_parse_message_template();
+		return $parsed;
+	}
+
+
+	private function _init_data( $template, $data, $valid_shortcodes ) {
+		$this->_reset_props();
+		$this->_data['template'] = $template;
+		$this->_data['data'] = $data;
+
+		$this->_set_shortcodes( $valid_shortcodes );
+	}
+
+
+	private function _reset_props() {
+		$this->_template = $this->_data = NULL;
+		$this->_shortcode_objs = array();
+	}
 
 
 	/**
 	 * takes the given template and parses it with the $_shortcodes property
-	 * @param  string $template string containing shortcodes to be parsed.
 	 * @return void
 	 * @access private
 	 */
-	private function _parse_message_template( $template, $data = array() ) {
-		$event_list_items = $attendee_list_items = '';
-
-	
-		//first we need to know if the template is an array.  If it is then we know we've got some special secondary templates in here that have to be parsed first.
-		if ( empty($data) && is_array($template) ) {
-			$data['event_list'] = isset( $this->_template['event_list'] ) ? $this->_get_event_list($this->_data->events) : '';
-			$data['attendee_list'] = isset( $this->_template['attendee_list'] ) ? $this->_get_attendee_list($this->_data->attendees) : '';
-		}
-
-		//k now let's assemble the different list items (if present)
-		if ( !empty($data['event_list'] ) ) {
-			$data['event_list'] = $this->_get_list_items($data['event_list']);
-		}
-
-		if ( !empty($data['attendee_list'] ) ) {
-			$data['attendee_list'] = $this->_get_list_items($data['attendee_list']);
-		}
-
-		//we need to figure out what data we're sending.  Secondary templates may be using this method to parse their stuff before the main template (recursively like).
-		$data_to_send = empty($data) ? $this->_data : $data;
-
-
-		//let's set the template to the main template if this is an array processing.
-		$template = ( is_array($template) ) ? $template['main'] : $template;
+	private function _parse_message_template() {
 
 		
 		//now let's get a list of shortcodes that are found in the given template
-		$possible_shortcodes = preg_match_all( '/(\[.+?\])/', $template, $matches );
+		$possible_shortcodes = preg_match_all( '/(\[.+?\])/', $this->_template, $matches );
 		$shortcodes = (array) $matches[0]; //this should be an array of shortcodes in the template string.
 
-		//now lets go ahead and loop through our parsers for each shortcode and setup the values
+
+		$matched_code = array();
 		$sc_values = array();
+		//now lets go ahead and loop through our parsers for each shortcode and setup the values
+		foreach ( $shortcodes as $shortcode ) {
 
-		foreach ( $this->_shortcode_objs as $sc_obj ) {
 
-			//loop through our shortcodes with the current parser
-			foreach ( $shortcodes as $shortcode ) {
-
-				if ( !array_key_exists( $shortcode, $sc_obj->get_shortcodes() ) )
+			foreach ( $this->_shortcode_objs as $sc_obj ) {
+				$data_send = '';
+				
+				if ( !array_key_exists( $shortcode, $sc_obj->get_shortcodes() ) ) { 
 					continue; //the given shortcode isn't in this object
+				}
 
 				
-				if ( $parsed = $sc_obj->parser( $shortcode, $data_to_send ) )
+				//if this isn't  a "list" type shortcode then we'll send along the data vanilla instead of in an array.
+				if ( $shortcode != '[ATTENDEE_LIST]' && $shortcode != '[EVENT_LIST]' ) {
+					$data_send = !is_object($this->_data) && isset($this->_data['data']) ? $this->_data['data'] : $this->_data;
+				} else {
+					$data_send = $this->_data;
+				}
+
+
+				if ( $parsed = $sc_obj->parser( $shortcode, $data_send ) ) {
+					$matched_code[] = $shortcode;
 					$sc_values[] = $parsed;
+				} else {
+					//let's just strip the ugly code. (usually in the case of list templates)
+					$matched_code[] = $shortcode;
+					$sc_values[] = '';
+				}
 			}
 		} 
 
 		//now we've got parsed values for all the shortcodes in the template so we can go ahead and swap the shortcodes out.
-		$this->parsed = str_replace(array_values($shortcodes), array_values($sc_values), $template);
+		$parsed = str_replace(array_values($matched_code), array_values($sc_values), $this->_template);
+		return $parsed;
 	}
 
 
@@ -198,69 +195,6 @@ class EE_Parse_Shortcodes {
 				$this->_shortcode_objs[] = $a->newInstance();
 			}
 		}
-	}
-
-	
-
-
-
-	protected function _get_event_list($events) {
-		$evnts = array();
-		//if this is an array then we've got an event array.
-		if ( is_array($events) ) {
-			foreach ( $events as $event ) {
-				//okay we need to get the $attendee list array for this event in case the shortcode is in the template.
-				$event['attendee_list'] = $this->_get_attendee_list($event['line_ref']);
-				$evnts[] = $this->_parse_message_template($this->_template['event_list'], $event);
-			}
-		}
-
-		return $evnts;
-	}
-
-
-
-
-
-	protected function _get_attendee_list($attendees) {
-		$attnds = array();
-		//if this is an array then we've got an attendee array otherwise this is an incoming event so lets skip this one.
-		if ( is_array($attendees) ) {
-			foreach ( $attendees as $attendee ) {
-				//let's get the event list for this $attendee in case the shortcode for event_list is in the template.
-				foreach ( $attendee['line_ref'] as $event_ref ) {
-					$events[] = $this->_data->events[$event_ref];
-				}
-				$attendee['event_list'] = $this->_get_event_list($events);
-				$attnds[] = $this->_parse_message_template($this->_template['attendee_list'], $attendee);
-			}
-		}
-
-		//if $attendees is a string then we've got a single event that we need to get the attendees for JUST that event (called by _get_event_list);
-		if ( !is_array($attendees) && is_array($this->_data->attendees ) ) {
-			$e_ref = $attendees['line_ref'];
-			foreach ( $this->_data->attendees as $attendee ) {
-				foreach ( $attendee['line_ref'] as $event_ref ) {
-					if ( $attendee['line_ref'] == $e_ref ) {
-						$attnds[] = $this->_parse_message_template( $this->_template['attendee_list'], $attendee );
-					}
-				}
-			}
-		}
-
-		return $attnds;
-	}
-
-
-
-
-
-	protected function _get_list_items($items) {
-		$content = '';
-		foreach ( $items as $item ) {
-			$content .= $item;
-		}
-		return $content;
 	}
 
 

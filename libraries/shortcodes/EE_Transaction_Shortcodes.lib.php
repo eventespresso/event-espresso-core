@@ -67,7 +67,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 			case "[TOTAL_COST]" :
-				return isset($this->_data->billing['total_due']) ? $this->_data->billing['total_due'] : '';
+				$total = $this->_data->txn->total();
+				return !empty($total) ? $total : '';
 				break;
 
 			case "[EVENT_PRICE]" :
