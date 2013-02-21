@@ -504,8 +504,8 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public		
 	*		@param		boolean		$REG_att_is_going 		Attendee Is Going
 	*/	
-	public function set_att_is_going( $REG_att_is_going = FALSE ) {		
-		if ( ! $this->_check_for( $REG_att_is_going, 'Attendee Is Going' )) { return FALSE; }
+	public function set_att_is_going( $REG_att_is_going = NULL ) {		
+		if ( $REG_att_is_going == NULL ) { return FALSE; }
 		$this->_REG_att_is_going = absint( $REG_att_is_going );
 		return TRUE;
 	}
@@ -518,8 +518,8 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public		
 	*		@param		boolean		$REG_att_checked_in 		Attendee Checked In
 	*/	
-	public function set_att_checked_in( $REG_att_checked_in = FALSE ) {		
-		if ( ! $this->_check_for( $REG_att_checked_in, 'Attendee Checked In' )) { return FALSE; }
+	public function set_att_checked_in( $REG_att_checked_in = NULL ) {		
+		if ( $REG_att_checked_in === NULL ) { return FALSE; }
 		$this->_REG_att_checked_in = absint( $REG_att_checked_in );
 		return TRUE;
 	}
