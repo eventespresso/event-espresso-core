@@ -473,7 +473,7 @@
 							}								
 						},
 						error: function(response) {
-							console.log( dump( response ) );
+							//console.log( dump( response ) );
 							msg = new Object();
 							msg.error = 'An error occured! Registration Step '+step+' could not be completed. Please refresh the page and try again.';
 							show_event_queue_ajax_error_msg( msg );
