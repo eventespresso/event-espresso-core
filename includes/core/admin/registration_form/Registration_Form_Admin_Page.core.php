@@ -104,87 +104,116 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
+		
 			'default' => '_questions_overview_list_table',
+			
 			'question_groups' => '_question_groups_overview_list_table',
+			
 			'add_question' => '_edit_question',
+
 			'edit_question' => array(
 				'func' => '_edit_question',
 				'args' => array('edit')
 				),
+
 			'trash_question' => array(
 				'func' => '_trash_question',
 				'noheader' => TRUE
 				),
+
 			'delete_question' => array(
 				'func' => '_delete_question',
 				'noheader' => TRUE
 				),
+
 			'insert_question' => array(
 				'func' => '_insert_or_update_question',
 				'args' => array('new_question' => TRUE),
 				'noheader' => TRUE
 				),
+
 			'update_question' => array(
 				'func' => '_insert_or_update_question',
 				'args' => array('new_question' => FALSE ),
 				'noheader' => TRUE,
 				),
+
 			'trash_questions' => array(
 				'func' => '_trash_or_restore_questions',
 				'args' => array('trash' => TRUE),
 				'noheader' => TRUE
 				),
+
 			'restore_questions' => array(
 				'func' => '_trash_or_restore_questions',
 				'args' => array('trash' => FALSE),
 				'noheader' => TRUE
 				),
+
 			'delete_questions'=>array(
 				'func'=>'_delete_questions',
 				'args'=>array(),
 				'noheader'=>TRUE
 			),
+
 			'add_question_group' => '_edit_question_group',
+
 			'edit_question_group' => array(
 				'func' => '_edit_question_group',
 				'args' => array('edit')
 				),
+
 			'delete_question_groups' => array(
 				'func' => '_delete_question_groups',
 				'noheader' => TRUE
 				),
+
 			'delete_question_group' => array(
 				'func' => '_delete_question_groups',
 				'noheader' => TRUE
 				),
+
 			'insert_question_group' => array(
 				'func' => '_insert_or_update_question_group',
 				'args' => array('new_question_group' => TRUE),
 				'noheader' => TRUE
 				),
+
 			'update_question_group' => array(
 				'func' => '_insert_or_update_question_group',
 				'args' => array('new_question_group' => FALSE ),
 				'noheader' => TRUE,
 				),
+
 			'trash_question_group' => array(
 				'func' => '_trash_or_restore_question_groups',
 				'args' => array('trash' => TRUE),
 				'noheader' => array('trash' => FALSE)
 				),
+
 			'restore_question_group' => array(
 				'func' => '_trash_or_restore_question_groups',
 				'args' => array('trash' => FALSE),
 				'noheader' => TRUE
 				),
+
 			'espresso_update_question_order' => array(
 				'func' => 'update_question_order',
 				'noheader' => TRUE
 				),
+
 			'espresso_update_question_group_order' => array(
 				'func' => 'update_question_group_order',
 				'noheader' => TRUE
-				)
+				),
+
+			'reg_form_settings'	=> '_reg_form_settings',
+			
+			'update_reg_form_settings'	=> array(
+					'func' => '_update_reg_form_settings',
+					'noheader' => TRUE
+				),
+					
 			);
 	}
 
@@ -194,6 +223,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_config() {
 		$this->_page_config = array(
+
 			'default' => array(
 				'nav' => array(
 					'label' => __('Questions'),
@@ -202,6 +232,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				'list_table' => 'Registration_Form_Questions_Admin_List_Table',
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
 				),
+
 			'question_groups' => array(
 				'nav' => array(
 					'label' => __('Question Groups'),
@@ -210,6 +241,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				'list_table' => 'Registration_Form_Question_Groups_Admin_List_Table',
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
 				),
+
 			'add_question' => array(
 				'nav' => array(
 					'label' => __('Add Question', 'event_espresso'),
@@ -218,6 +250,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' )
 				),
+
 			'edit_question' => array(
 				'nav' => array(
 					'label' => __('Edit Question', 'event_espresso'),
@@ -227,6 +260,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box' )
 				),
+
 			'add_question_group' => array(
 				'nav' => array(
 					'label' => __('Add Question Group', 'event_espresso'),
@@ -235,6 +269,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box' )
 				),
+
 			'edit_question_group' => array(
 				'nav' => array(
 					'label' => __('Edit Question Group', 'event_espresso'),
@@ -243,6 +278,14 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'url' => isset($this->_req_data['question_group_id']) ? add_query_arg(array('question_group_id' => $this->_req_data['question_group_id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
 				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box' ),
+				),
+
+			'reg_form_settings' => array(
+				'nav' => array(
+					'label' => __('Reg Form Settings', 'event_espresso'),
+					'order' => 40
+					),
+				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' )
 				)
 			);
 	}
@@ -858,6 +901,74 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		die();
 		
 	}
+
+
+
+
+
+	/***************************************		REGISTRATION SETTINGS 		***************************************/
+
+
+
+
+
+	protected function _reg_form_settings() {
+	
+		global $org_options;
+		$this->_template_args['values'] = $this->_yes_no_values;
+		
+		$this->_template_args['use_captcha'] = isset( $org_options['use_captcha'] ) ? absint( $org_options['use_captcha'] ) : FALSE;
+		$this->_template_args['show_captcha_settings'] = $this->_template_args['use_captcha'] ? 'style="display:table-row;"': ''; 
+		
+		$this->_template_args['recaptcha_publickey'] = isset( $org_options['recaptcha_publickey'] ) ? stripslashes( $org_options['recaptcha_publickey'] ) : '';
+		$this->_template_args['recaptcha_privatekey'] = isset( $org_options['recaptcha_privatekey'] ) ? stripslashes( $org_options['recaptcha_privatekey'] ) : '';
+		$this->_template_args['recaptcha_width'] = isset( $org_options['recaptcha_width'] ) ? absint( $org_options['recaptcha_width'] ) : 500;
+		
+		$this->_template_args['recaptcha_theme_options'] = array(
+				array('id'  => 'red','text'=> __('Red', 'event_espresso')),
+				array('id'  => 'white','text'=> __('White', 'event_espresso')),
+				array('id'  => 'blackglass','text'=> __('Blackglass', 'event_espresso')),
+				array('id'  => 'clean','text'=> __('Clean', 'event_espresso'))
+			);
+		$this->_template_args['recaptcha_theme'] = isset( $org_options['recaptcha_theme'] ) ? $this->_display_nice( $org_options['recaptcha_theme'] ) : 'clean';
+	
+		$this->_template_args['recaptcha_language_options'] = array(
+				array('id'  => 'en','text'=> __('English', 'event_espresso')),
+				array('id'  => 'es','text'=> __('Spanish', 'event_espresso')),
+				array('id'  => 'nl','text'=> __('Dutch', 'event_espresso')),
+				array('id'  => 'fr','text'=> __('French', 'event_espresso')),
+				array('id'  => 'de','text'=> __('German', 'event_espresso')),
+				array('id'  => 'pt','text'=> __('Portuguese', 'event_espresso')),
+				array('id'  => 'ru','text'=> __('Russian', 'event_espresso')),
+				array('id'  => 'tr','text'=> __('Turkish', 'event_espresso'))
+			);		
+		$this->_template_args['recaptcha_language'] = isset( $org_options['recaptcha_language'] ) ? $this->_display_nice( $org_options['recaptcha_language'] ) : 'en';
+
+		$this->_set_add_edit_form_tags( 'update_reg_form_settings' );
+		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
+		$this->_template_args['admin_page_content'] = espresso_display_template( REGISTRATION_FORM_TEMPLATE_PATH . 'reg_form_settings.template.php', $this->_template_args, TRUE );
+		$this->display_admin_page_with_sidebar();	
+	}
+
+	protected function _update_reg_form_settings() {
+		
+		$data = array();
+
+		$data['use_captcha'] = isset( $this->_req_data['use_captcha'] ) ? absint( $this->_req_data['use_captcha'] ) : FALSE;
+		$data['recaptcha_publickey'] = isset( $this->_req_data['recaptcha_publickey'] ) ? sanitize_text_field( $this->_req_data['recaptcha_publickey'] ) : NULL;
+		$data['recaptcha_privatekey'] = isset( $this->_req_data['recaptcha_privatekey'] ) ? sanitize_text_field( $this->_req_data['recaptcha_privatekey'] ) : NULL;
+		$data['recaptcha_width'] = isset( $this->_req_data['recaptcha_width'] ) ? absint( $this->_req_data['recaptcha_width'] ) : 500;
+		$data['recaptcha_theme'] = isset( $this->_req_data['recaptcha_theme'] ) ? sanitize_text_field( $this->_req_data['recaptcha_theme'] ) : 'clean';
+		$data['recaptcha_language'] = isset( $this->_req_data['recaptcha_language'] ) ? sanitize_text_field( $this->_req_data['recaptcha_language'] ) : 'en';
+		
+		$data = apply_filters('filter_hook_espresso_reg_form_settings_save', $data);	
+		
+		$what = 'Registration Options';
+		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'reg_form_settings' ) );
+		
+	}
+
 
 
 
