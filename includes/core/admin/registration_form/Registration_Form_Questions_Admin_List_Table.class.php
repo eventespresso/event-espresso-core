@@ -69,7 +69,7 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 			);
 
 		$this->_sortable_columns = array(
-			'id' => array( 'QST_ID' => TRUE ),
+			'id' => array( 'QST_ID' => FALSE ),
 			'display_text' => array( 'QST_display_text' => FALSE )
 			);
 
@@ -117,8 +117,8 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 	public function column_display_text(EE_Question $item) {
 		//return $item->display_text();
 		
-		if ( !defined('ATT_ADMIN_URL') )
-			define('ATT_ADMIN_URL', EVENTS_ADMIN_URL);
+		if ( !defined('REG_ADMIN_URL') )
+			define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
 
 		$edit_query_args = array(
 				'action' => 'edit_question',

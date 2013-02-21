@@ -162,25 +162,25 @@ class EE_Registration extends EE_Base_Class {
 	
 	
     /**
-    *	Is Primary Attendee
+    *	Attendee Number
 	* 
-    *	whether or not this is the primary attendee for a group of registrations
+    *	Simple attendee counter where the Primary Registrant is always #1
 	* 
 	*	@access	protected
-    *	@var boolean	
+    *	@var int	
     */
-	protected $_REG_is_primary = NULL;		
+	protected $_REG_count = 1;		
 	
 	
     /**
-    *	Is Group Registration
+    *	Group Size
 	* 
-    *	whether or not this registration is part of a group of registrations
+    *	total number of registrations that were performed in the same session
 	* 
 	*	@access	protected
-    *	@var boolean	
+    *	@var int	
     */
-	protected $_REG_is_group_reg = NULL;	
+	protected $_REG_group_size = 1;	
 	
 	
     /**
@@ -277,8 +277,8 @@ class EE_Registration extends EE_Base_Class {
 	* @param 		string			$REG_session  				PHP Session ID
 	* @param 		string 			$REG_code  					Registration Code
 	* @param 		string 			$REG_url_link					Registration URL Link
-	* @param 		boolean		$REG_is_primary 			Is Primary Attendee
-	* @param 		boolean		$REG_is_group_reg		Is Group Registration
+	* @param 		int				$REG_count 					Attendee Counter
+	* @param 		boolean		$REG_group_size			Group Size
 	* @param 		boolean		$REG_att_is_going		 	Attendee Is Going
 	* @param 		boolean		$REG_att_checked_in	Attendee Checked In
 	* @param 		int 				$REG_ID 							Registration ID
@@ -295,14 +295,14 @@ class EE_Registration extends EE_Base_Class {
 													$REG_session = NULL, 
 													$REG_code = NULL, 
 													$REG_url_link = NULL, 
-													$REG_is_primary = NULL, 
-													$REG_is_group_reg = NULL, 
+													$REG_count = 1, 
+													$REG_group_size = 1, 
 													$REG_att_is_going = NULL, 
 													$REG_att_checked_in = NULL, 
 													$REG_ID = NULL 
 												) {
 												
-		// REG_ID 	EVT_ID 	ATT_ID 	TXN_ID 	DTT_ID 	PRC_ID 	STS_ID 	REG_date 	REG_session 	REG_code 	REG_is_primary 	REG_is_group_reg 	REG_att_is_going 	REG_att_checked_in
+		// REG_ID 	EVT_ID 	ATT_ID 	TXN_ID 	DTT_ID 	PRC_ID 	STS_ID 	REG_date 	REG_session 	REG_code 	REG_count 	REG_group_size 	REG_att_is_going 	REG_att_checked_in
 		$this->_REG_ID 						= $REG_ID;
 		$this->_EVT_ID 						= $EVT_ID;
 		$this->_ATT_ID 						= $ATT_ID;
@@ -311,14 +311,14 @@ class EE_Registration extends EE_Base_Class {
 		$this->_PRC_ID 						= $PRC_ID;
 		$this->_STS_ID 						= $STS_ID;
 		$this->_REG_date 					= $REG_date;
-		$this->_REG_final_price		= $REG_final_price;
+		$this->_REG_final_price			= $REG_final_price;
 		$this->_REG_session 				= $REG_session;
 		$this->_REG_code					= $REG_code;
 		$this->_REG_url_link				= $REG_url_link;
-		$this->_REG_is_primary 		= $REG_is_primary;
-		$this->_REG_is_group_reg 	= $REG_is_group_reg;
-		$this->_REG_att_is_going 	= $REG_att_is_going;
-		$this->_REG_att_checked_in= $REG_att_checked_in;
+		$this->_REG_count 					= $REG_count;
+		$this->_REG_group_size 		= $REG_group_size;
+		$this->_REG_att_is_going 		= $REG_att_is_going;
+		$this->_REG_att_checked_in	= $REG_att_checked_in;
 	}
 
 
@@ -410,28 +410,28 @@ class EE_Registration extends EE_Base_Class {
 
 
 	/**
-	*		Set Is Primary Attendee
+	*		Set Attendee Counter
 	* 
 	* 		@access		public		
-	*		@param		boolean		$REG_is_primary 		Primary Attendee
+	*		@param		boolean		$REG_count 		Primary Attendee
 	*/	
-	public function set_is_primary( $REG_is_primary = FALSE ) {		
-		if ( ! $this->_check_for( $REG_is_primary, 'Primary Attendee' )) { return FALSE; }
-		$this->_REG_is_primary = absint( $REG_is_primary );
+	public function set_count( $REG_count = FALSE ) {		
+		if ( ! $this->_check_for( $REG_count, 'Attendee Count' )) { return FALSE; }
+		$this->_REG_count = absint( $REG_count );
 		return TRUE;
 	}
 
 
 
 	/**
-	*		Set Is Group Registration
+	*		Set Group Size
 	* 
 	* 		@access		public		
-	*		@param		boolean		$REG_is_group_reg 		Group Registration
+	*		@param		boolean		$REG_group_size 		Group Registration
 	*/	
-	public function set_is_group_reg( $REG_is_group_reg = FALSE ) {		
-		if ( ! $this->_check_for( $REG_is_group_reg, 'Group Registration' )) { return FALSE; }
-		$this->_REG_is_group_reg = absint( $REG_is_group_reg );
+	public function set_group_size( $REG_group_size = FALSE ) {		
+		if ( ! $this->_check_for( $REG_group_size, 'Group Size' )) { return FALSE; }
+		$this->_REG_group_size = absint( $REG_group_size );
 		return TRUE;
 	}
 
@@ -504,8 +504,8 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public		
 	*		@param		boolean		$REG_att_is_going 		Attendee Is Going
 	*/	
-	public function set_att_is_going( $REG_att_is_going = FALSE ) {		
-		if ( ! $this->_check_for( $REG_att_is_going, 'Attendee Is Going' )) { return FALSE; }
+	public function set_att_is_going( $REG_att_is_going = NULL ) {		
+		if ( $REG_att_is_going == NULL ) { return FALSE; }
 		$this->_REG_att_is_going = absint( $REG_att_is_going );
 		return TRUE;
 	}
@@ -518,8 +518,8 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public		
 	*		@param		boolean		$REG_att_checked_in 		Attendee Checked In
 	*/	
-	public function set_att_checked_in( $REG_att_checked_in = FALSE ) {		
-		if ( ! $this->_check_for( $REG_att_checked_in, 'Attendee Checked In' )) { return FALSE; }
+	public function set_att_checked_in( $REG_att_checked_in = NULL ) {		
+		if ( $REG_att_checked_in === NULL ) { return FALSE; }
 		$this->_REG_att_checked_in = absint( $REG_att_checked_in );
 		return TRUE;
 	}
@@ -565,18 +565,18 @@ class EE_Registration extends EE_Base_Class {
 		$set_column_values = array(		
 				'EVT_ID' 						=> $this->_EVT_ID,
 				'ATT_ID' 						=> $this->_ATT_ID,
-				'TXN_ID' 						=> $this->_TXN_ID,
+				'TXN_ID' 					=> $this->_TXN_ID,
 				'DTT_ID' 						=> $this->_DTT_ID,
 				'PRC_ID' 						=> $this->_PRC_ID,
 				'STS_ID' 						=> $this->_STS_ID,
 				'REG_date' 					=> $this->_REG_date,
 				'REG_final_price' 		=> $this->_REG_final_price,
-				'REG_session' 				=> $this->_REG_session,
+				'REG_session' 			=> $this->_REG_session,
 				'REG_code'					=> $this->_REG_code,
 				'REG_url_link'				=> $this->_REG_url_link,
-				'REG_is_primary' 		=> $this->_REG_is_primary,
-				'REG_is_group_reg' 	=> $this->_REG_is_group_reg,
-				'REG_att_is_going' 		=> $this->_REG_att_is_going,
+				'REG_count' 				=> $this->_REG_count,
+				'REG_group_size' 		=> $this->_REG_group_size,
+				'REG_att_is_going' 	=> $this->_REG_att_is_going,
 				'REG_att_checked_in' => $this->_REG_att_checked_in
 		);
 
@@ -715,21 +715,21 @@ class EE_Registration extends EE_Base_Class {
 
 
 	/**
-	*		get Is Primary Attendee
+	*		get  Attendee Number
 	* 		@access		public
 	*/	
-	public function is_primary() {
-		return $this->_REG_is_primary;
+	public function count() {
+		return $this->_REG_count;
 	}
 
 
 
 	/**
-	*		get Is Group Registration
+	*		get Group Size
 	* 		@access		public
 	*/	
-	public function is_group_reg() {
-		return $this->_REG_is_group_reg;
+	public function group_size() {
+		return $this->_REG_group_size;
 	}
 
 

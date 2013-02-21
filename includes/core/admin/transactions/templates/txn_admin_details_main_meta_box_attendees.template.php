@@ -28,7 +28,7 @@
 						<?php 
 						$attendee_name = $att->fname() != '' ? $att->fname() : $attendee['fname'];
 						$attendee_name .= $att->lname() != '' ? ' ' . $att->lname() : ' ' . $attendee['lname'];
-						$att_link = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$att->ID() ), ATT_ADMIN_URL ), 'edit_attendee_nonce' ); 
+						$att_link = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$att->ID() ), REG_ADMIN_URL ), 'edit_attendee_nonce' ); 
 						?>
 						<a href="<?php echo $att_link; ?>" title="<?php _e( 'View details for this attendee', 'event_espresso' );?>">
 							<?php echo $attendee_name;?>

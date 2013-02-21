@@ -963,7 +963,6 @@ class EE_Single_Page_Checkout {
 
 		$session_data = $EE_Session->get_session_data();
 		//printr( $session_data, '$session_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
 		$billing_info = $session_data['billing_info'];
 		$reg_info = $session_data['cart']['REG'];
 		$template_args = array();
@@ -1115,12 +1114,10 @@ class EE_Single_Page_Checkout {
 			$txn_status = $grand_total > 0 ? 'TIN' : 'TCM';
 			$transaction = new EE_Transaction( time(), $grand_total, 0, $txn_status, NULL, $session, NULL, NULL );
 			$txn_results = $transaction->insert();
-			// more than one item means this is a group registration
-			$is_group_reg = count($reg_items) > 1 ? TRUE : FALSE;
+
 			// cycle through items in session
 			foreach ($reg_items as $line_item_id => $event) {
-				// more than one attendee also means this is a group registration
-				$is_group_reg = count($event['attendees']) > 1 ? TRUE : $is_group_reg;
+
 				// cycle through attendees
 				foreach ($event['attendees'] as $att_nmbr => $attendee) {
 
@@ -1220,8 +1217,8 @@ class EE_Single_Page_Checkout {
 													$session['id'],
 													$new_reg_code,
 													$reg_url_link,
-													isset($attendee['primary_attendee']),
-													$is_group_reg,
+													$att_nmbr,
+													count($event['attendees']),
 													FALSE,
 													FALSE
 							);
@@ -1257,6 +1254,9 @@ class EE_Single_Page_Checkout {
 			$transaction->set_txn_session_data( $session );
 			$transaction->update();
 			$EE_Session->set_session_data(array( 'registration' => $reg, 'transaction' => $transaction ), 'session_data');
+
+
+			do_action('action_hook_espresso__EE_Single_Page_Checkout__process_registration_step_3__before_gateway', $this);
 			
 
 //			printr( $EE_Session, '$EE_Session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 

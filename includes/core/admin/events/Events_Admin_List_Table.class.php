@@ -137,8 +137,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 	public function column_name($item) {
 		//todo: remove when attendees is active
-		if ( !defined('ATT_ADMIN_URL') )
-			define('ATT_ADMIN_URL', EVENTS_ADMIN_URL);
+		if ( !defined('REG_ADMIN_URL') )
+			define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
 
 		$edit_query_args = array(
 				'action' => 'edit_event',
@@ -152,7 +152,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 		$attendees_query_args = array(
 				'action' => 'default',
-				'EVT_ID' => $item->event_id
+				'event_id' => $item->event_id
 			);
 
 		$export_query_args = array(
@@ -164,7 +164,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$edit_link = wp_nonce_url( add_query_arg( $edit_query_args, EVENTS_ADMIN_URL ), 'edit_event_nonce');
 		$view_link = espresso_reg_url( $item->event_id, $item->slug );
 		$delete_link = wp_nonce_url( add_query_arg( $delete_query_args, EVENTS_ADMIN_URL ), 'delete_events_nonce' );
-		$attendees_link = wp_nonce_url( add_query_arg( $attendees_query_args, ATT_ADMIN_URL ), 'default_nonce' );
+		$attendees_link = wp_nonce_url( add_query_arg( $attendees_query_args, REG_ADMIN_URL ), 'default_nonce' );
 		$export_event_link = wp_nonce_url( add_query_arg( $export_query_args, EVENTS_ADMIN_URL), 'export_events_nonce' );
 
 		$actions = array(
@@ -232,50 +232,54 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	public function column_attendees($item) {
 		$attendees_query_args = array(
 				'action' => 'default',
-				'EVT_ID' => $item->event_id
+				'event_id' => $item->event_id
 			);
-		$attendees_link = wp_nonce_url( add_query_arg( $attendees_query_args, ATT_ADMIN_URL ), 'default_nonce' );
-
-		return '<a href="' . $attendees_link . '">' . get_number_of_attendees_reg_limit($item->event_id, 'num_attendees_slash_reg_limit' ) . '</a>';
+		$attendees_link = wp_nonce_url( add_query_arg( $attendees_query_args, REG_ADMIN_URL ), 'default_nonce' );	
+		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
+//		$registered_attendees = EEM_Attendee::instance()->get_event_attendees( $item->event_id, FALSE, FALSE, FALSE, 'REG_date', 'DESC', FALSE, 'COUNT' );
+//		$registered_attendees = $registered_attendees ? $registered_attendees : 0;
+//		return '<a href="' . $attendees_link . '">' . $registered_attendees . '/' . $item->reg_limit . '</a>';
+		$registered_attendees = get_number_of_attendees_reg_limit( $item->EVT_ID, 'num_attendees_slash_reg_limit', $item->reg_limit ); 
+		return '<a href="' . $attendees_link . '">' . $registered_attendees . '</a>';
 	}
 
 
 
 	public function column_actions($item) {
 		//todo: remove when attendees is active
-		if ( !defined('ATT_ADMIN_URL') )
-			define('ATT_ADMIN_URL', EVENTS_ADMIN_URL);
+		if ( !defined('REG_ADMIN_URL') )
+			define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
 
 		$edit_query_args = array(
 				'action' => 'edit_event',
-				'EVT_ID' => $item->event_id
+				'event_id' => $item->event_id
 			);
 
 		$delete_query_args = array(
 				'action' => 'delete_events',
-				'EVT_ID' => $item->event_id
+				'event_id' => $item->event_id
 			);
 
 		$attendees_query_args = array(
 				'action' => 'default',
-				'EVT_ID' => $item->event_id
+				'event_id' => $item->event_id
 			);
 
 		$reports_query_args = array(
 				'action' => 'view_report',
-				'EVT_ID' => $item->event_id
+				'event_id' => $item->event_id
 			);
 
 		$export_query_args = array(
 				'action' => 'export_events',
-				'EVT_ID' => $item->event_id
+				'event_id' => $item->event_id
 			);
 
 
 		$edit_link = wp_nonce_url( add_query_arg( $edit_query_args, EVENTS_ADMIN_URL ), 'edit_event_nonce');
 		$view_link = espresso_reg_url( $item->event_id, $item->slug );
 		$delete_link = wp_nonce_url( add_query_arg( $delete_query_args, EVENTS_ADMIN_URL ), 'delete_events_nonce' );
-		$attendees_link = wp_nonce_url( add_query_arg( $attendees_query_args, ATT_ADMIN_URL ), 'default_nonce' );
+		$attendees_link = wp_nonce_url( add_query_arg( $attendees_query_args, REG_ADMIN_URL ), 'default_nonce' );
 		$reports_link = wp_nonce_url( add_query_arg( $reports_query_args, EVENTS_ADMIN_URL ), 'view_report_nonce' );
 		$export_event_link = wp_nonce_url( add_query_arg( $export_query_args, EVENTS_ADMIN_URL), 'export_events_nonce' );
 		

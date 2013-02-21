@@ -62,7 +62,7 @@ class EE_Email_messenger extends EE_messenger  {
 	 * see abstract declaration in parent class for details.
 	 */
 	protected function _set_admin_pages() {
-		$this->_admin_registered_pages = array(
+		$this->admin_registered_pages = array(
 			'events_edit' => true,
 		);
 	}
@@ -74,7 +74,8 @@ class EE_Email_messenger extends EE_messenger  {
 	protected function _set_valid_shortcodes() {
 		//remember by leaving the other fields not set, those fields will inherit the valid shortcodes from the message type.
 		$this->_valid_shortcodes = array(
-			'to' => array('email')
+			'to' => array('email'),
+			'from' => array('email')
 			);
 	}
 
@@ -133,7 +134,7 @@ class EE_Email_messenger extends EE_messenger  {
 					),
 					'event_list' => array(
 						'input' => 'textarea',
-						'label' => __('Attendee List', 'event_espresso'),
+						'label' => __('Event List', 'event_espresso'),
 						'type' => 'string',
 						'required' => TRUE,
 						'validation' => TRUE,
@@ -205,8 +206,9 @@ class EE_Email_messenger extends EE_messenger  {
 	protected function _send_message() {
 
 		//todo we need to validate the different fields before sending.
+		
+		$success = wp_mail($this->_to, stripslashes_deep(html_entity_decode($this->_subject, ENT_QUOTES, "UTF-8")), stripslashes_deep(html_entity_decode(wpautop($this->_body()), ENT_QUOTES,"UTF-8")), $this->_headers());
 
-		return wp_mail($this->_to, stripslashes_deep(html_entity_decode($this->_subject, ENT_QUOTES, "UTF-8")), stripslashes_deep(html_entity_decode(wpautop($this->_body()), ENT_QUOTES,"UTF-8")), $this->_headers());
 	}
 
 	/**

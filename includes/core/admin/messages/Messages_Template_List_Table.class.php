@@ -64,9 +64,9 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 			);
 
 		$this->_sortable_columns = array(
-			'event' => array( 'EVT_ID', FALSE ), //true means it's already sorted.
-			'messenger' => array( 'MTP_messenger', TRUE ),
-			'message_type' => array( 'MTP_message_type', FALSE )
+			'event' => array( 'EVT_ID' => FALSE ), //true means it's already sorted.
+			'messenger' => array( 'MTP_messenger' => TRUE ),
+			'message_type' => array( 'MTP_message_type' => FALSE )
 			);
 
 		$this->_hidden_columns = array();

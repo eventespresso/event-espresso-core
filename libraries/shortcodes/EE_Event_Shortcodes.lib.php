@@ -78,11 +78,11 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 
 			case '[EVENT]' :
 			case '[EVENT_NAME]' :
-				isset($this->_data['name']) ? $this->_data['name'] : '';
+				return isset($this->_data['name']) ? $this->_data['name'] : '';
 				break;
 
 			case '[EVENT_PHONE]' :
-				isset($this->_data['meta']['phone']) ? $this->_data['meta']['phone'] : '';
+				return isset($this->_data['meta']['phone']) ? $this->_data['meta']['phone'] : '';
 				break;
 
 			case '[ALT_EMAIL]' :
@@ -90,42 +90,42 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[EVENT_DESCRIPTION]' :
-				isset($this->_data['meta']['event_desc']) ? $this->_data['meta']['event_desc']: '';
+				return isset($this->_data['meta']['event_desc']) ? $this->_data['meta']['event_desc']: '';
 				break;
 
 			case '[EVENT_LINK]' :
-				isset($this->_data['meta']['event_link']) ? $this->_data['meta']['event_link'] : '';
+				return isset($this->_data['meta']['event_link']) ? $this->_data['meta']['event_link'] : '';
 				break;
 
 			case '[EVENT_URL]' :
-				isset($this->_data['meta']['event_url']) ? $this->_data['meta']['event_url'] : '';
+				return isset($this->_data['meta']['event_url']) ? $this->_data['meta']['event_url'] : '';
 				break;
 
 			case '[VIRTUAL_URL]' :
-				isset($this->_data['meta']['virtual_url']) ? $this->_data['meta']['virtual_url'] : '';
+				return isset($this->_data['meta']['virtual_url']) ? $this->_data['meta']['virtual_url'] : '';
 
 			case '[VIRTUAL_PHONE]' :
-				isset($this->_data['meta']['virtual_phone']) ? $this->_data['meta']['virtual_phone'] : '';
+				return isset($this->_data['meta']['virtual_phone']) ? $this->_data['meta']['virtual_phone'] : '';
 				break;
 
 			case '[EVENT_START_DATE]' :
-				isset($this->_data['event_start_date']) ? EE_Formatter::event_date_display($this->_data['event_start_date']) : '';
+				return isset($this->_data['event_start_date']) ? EE_Formatter::event_date_display($this->_data['event_start_date']) : '';
 				break;
 
 			case '[EVENT_END_DATE]' :
-				isset($this->_data['event_end_date']) ? EE_Formatter::event_date_display($this->_data['event_end_date']) : '';
+				return isset($this->_data['event_end_date']) ? EE_Formatter::event_date_display($this->_data['event_end_date']) : '';
 				break;
 
 			case '[EVENT_START_TIME]' :
-				isset($this->_data['event_start_time']) ? EE_Formatter::event_date_display($this->_data['event_start_time'], get_option('time_format')) : '';
+				return isset($this->_data['event_start_time']) ? EE_Formatter::event_date_display($this->_data['event_start_time'], get_option('time_format')) : '';
 				break;
 
 			case '[EVENT_END_TIME]' :
-				isset($this->_data['event_end_time']) ? EE_Formatter::event_date_display($this->_data['event_end_time'], get_option('time_format')) : '';
+				return isset($this->_data['event_end_time']) ? EE_Formatter::event_date_display($this->_data['event_end_time'], get_option('time_format')) : '';
 				break;
 
 			case '[EVENT_PRICE]' :
-				isset($this->_data['price']) ? $this->_data['price'] : '';
+				return isset($this->_data['price']) ? $this->_data['price'] : '';
 				break;
 		}
 	}

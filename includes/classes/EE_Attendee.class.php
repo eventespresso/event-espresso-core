@@ -172,6 +172,14 @@ class EE_Attendee extends EE_Base_Class{
 
 
 
+	/**
+	 * Will hold an array of events attached to this attendee (attached by others not on instantiating)
+	 * @var array
+	 */
+	protected $_Events = array();
+
+
+
 
 
 	/**
@@ -749,6 +757,25 @@ class EE_Attendee extends EE_Base_Class{
 	 */
 	public function get_most_recent_registration(){
 		return $this->get_first_related('Registrations', null, 'REG_date', 'DESC', '=', 'OBJECT_K');
+	}
+
+
+	/**
+	 * Attaches events to this attendee and sets the $_Events property
+	 * @param  array $events an array of events (each event is an array of event details)
+	 * @return void
+	 */
+	public function attach_events( $events ) {
+		$this->_Events = $events;
+	}
+
+
+	/**
+	 * returns any events attached to this attendee ($_Event property);
+	 * @return array 
+	 */
+	public function events() {
+		return $this->_Events;
 	}
 }
 

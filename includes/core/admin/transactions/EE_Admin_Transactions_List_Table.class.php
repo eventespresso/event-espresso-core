@@ -76,11 +76,11 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
         );
 
         $this->_sortable_columns = array(
-          	'TXN_ID' => array( 'TXN_ID', FALSE ),     
-            'STS_ID' => array( 'STS_ID', FALSE ),
-            'event_name' => array( 'event_name', FALSE ),
-            'ATT_fname'	=> array( 'ATT_fname', FALSE ),
-           	'TXN_timestamp'	=> array( 'TXN_timestamp', TRUE ) //true means its already sorted
+          	'TXN_ID' => array( 'TXN_ID' => FALSE ),     
+            'STS_ID' => array( 'STS_ID'=> FALSE ),
+            'event_name' => array( 'event_name'=> FALSE ),
+            'ATT_fname'	=> array( 'ATT_fname'=> FALSE ),
+           	'TXN_timestamp'	=> array( 'TXN_timestamp'=> TRUE ) //true means its already sorted
         	);
 
         $this->_hidden_columns = array();
@@ -162,7 +162,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	 * 		column_ATT_fname
 	*/ 
     function column_ATT_fname($item){
-		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item['ATT_ID'] ), ATT_ADMIN_URL ), 'edit_attendee_nonce' );
+		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item['ATT_ID'] ), REG_ADMIN_URL ), 'edit_attendee_nonce' );
 		return '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . ucwords( $item['TXN_att_name'] ) . '</a>';
 	}
 

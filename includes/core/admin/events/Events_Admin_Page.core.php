@@ -400,8 +400,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$publish_box_extra_args['event_name'] = $this->_event->event_name;
 		$publish_box_extra_args['event_start_date'] = event_date_display($this->_event->start_date);
 		$publish_box_extra_args['event_status_display'] = $this->_event->status['display'];
-		$publish_box_extra_args['view_attendees_url'] = add_query_arg( array( 'event_admin_reports' => 'list_attendee_payments', 'event_id' => $this->_event->id ), 'admin.php?page=attendees' ); 
-		$publish_box_extra_args['attendees_reg_limit'] = get_number_of_attendees_reg_limit($this->_event->id, 'num_attendees_slash_reg_limit'); 
+		$publish_box_extra_args['view_attendees_url'] = add_query_arg( array( 'action' => 'default', 'event_id' => $this->_event->id ), REG_ADMIN_URL ); 
+		$publish_box_extra_args['attendees_reg_limit'] = get_number_of_attendees_reg_limit($this->_event->id, 'num_attendees_slash_reg_limit', $this->_event->reg_limit ); 
 		$publish_box_extra_args['misc_pub_section_class'] = apply_filters('filter_hook_espresso_event_editor_email_attendees_class', 'misc-pub-section');
 		$publish_box_extra_args['email_attendees_url'] = add_query_arg( array( 'event_admin_reports' => 'event_newsletter', 'event_id' => $this->_event->id ), 'admin.php?page=attendees' ); 
 		$publish_box_extra_args['event_editor_overview_add'] = do_action( 'action_hook_espresso_event_editor_overview_add', $this->_event ); 
@@ -453,7 +453,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	private function _set_event_object() {
 		if ( is_object($this->_event) )
 			return; //get out we've already set the object
-		
+
 		if ( isset($this->_req_data['EVT_ID']) ) {
 			$this->_set_edit_event_object();
 		} else {
@@ -1926,6 +1926,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			<?php
 			$QSGs = EEM_Event::instance()->get_all_question_groups();
 			$EQGs = EEM_Event::instance()->get_event_question_groups( $this->_event->id );
+			$EQGs = is_array( $EQGs ) ? $EQGs : array();
 
 			if ( ! empty( $QSGs )) {
  				$html = count( $QSGs ) > 10 ? '<div style="height:250px;overflow:auto;">' : '';
@@ -1977,6 +1978,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			<?php
 			$QSGs = EEM_Event::instance()->get_all_question_groups();
 			$EQGs = EEM_Event::instance()->get_event_question_groups( $this->_event->id, TRUE );
+			$EQGs = is_array( $EQGs ) ? $EQGs : array();
 
 			if ( ! empty( $QSGs )) {
  				$html = count( $QSGs ) > 10 ? '<div style="height:250px;overflow:auto;">' : '';
@@ -3826,10 +3828,11 @@ class Events_Admin_Page extends EE_Admin_Page {
 				if ( isset( $this->_req_data['post_id'] ) && ! empty( $this->_req_data['post_id'] )) {
 					$post_id = absint( $this->_req_data['post_id'] );
 				} else {
-					$sql = " SELECT * FROM " . EVENTS_DETAIL_TABLE;
-					$sql .= " WHERE id = '" . $event_id . "' ";
-					$wpdb->get_results($sql);
-					$post_id = $wpdb->last_result[0]->post_id;
+					$sql = "SELECT * FROM " . EVENTS_DETAIL_TABLE;
+					$sql .= " WHERE id = %d";
+					if ( $wpdb->get_results( $wpdb->prepare( $sql, $event_id ))) {
+						$post_id = $wpdb->last_result[0]->post_id;
+					}					
 				}
 
 				if ($wpdb->num_rows > 0 && !empty($this->_req_data['delete_post']) && $this->_req_data['delete_post'] == 'true') {

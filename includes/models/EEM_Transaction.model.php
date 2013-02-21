@@ -292,7 +292,7 @@ class EEM_Transaction extends EEM_Base {
 		$SQL .= 'RIGHT JOIN ' . $this->table_name . ' txn ON reg.TXN_ID = txn.TXN_ID ';
 		$SQL .= 'WHERE TXN_timestamp >= %d ';
 		$SQL .= 'AND TXN_timestamp <= %d ';
-		$SQL .= 'AND reg.REG_is_primary = 1 ';
+		$SQL .= 'AND reg.REG_count = 1 ';
 
 		//setup orderby
 		switch ( $orderby ) {
@@ -359,7 +359,7 @@ class EEM_Transaction extends EEM_Base {
 		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_attendee att ON reg.ATT_ID = att.ATT_ID ';
 		$SQL .= 'INNER JOIN ' . $this->table_name . ' txn ON reg.TXN_ID = txn.TXN_ID ';
 		$SQL .= 'WHERE txn.TXN_ID = %d ';
-		$SQL .= 'AND reg.REG_is_primary = 1 ';
+		$SQL .= 'AND reg.REG_count = 1 ';
 		$SQL .= 'ORDER BY TXN_timestamp DESC';
 
 		if ( $transaction = $wpdb->get_results( $wpdb->prepare( $SQL, $TXN_ID ))) {
@@ -423,6 +423,23 @@ class EEM_Transaction extends EEM_Base {
 		return $wpdb->get_results( $wpdb->prepare( $SQL, $date_mod ));
 
 	}
+
+
+
+	/**
+	 * retrieve the status details from esp_status table as an array.
+	 * @return array 
+	 */
+	 public function status_array() {
+	 	global $wpdb;
+	 	$SQL = 'SELECT STS_ID, STS_code FROM '. $wpdb->prefix . 'esp_status WHERE STS_type = "transaction"';
+	 	$results = $wpdb->get_results( $SQL );
+	 	$txn_status = array();
+	 	foreach ( $results as $status ) {
+            $txn_status[ $status->STS_ID ] = __( $status->STS_code, 'event_espresso' );
+        }
+        return $txn_status;
+    }
 
 	
 	

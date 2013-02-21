@@ -50,7 +50,7 @@ function espresso_define_tables_and_paths() {
 	define("EVENTS_VENUE_REL_TABLE", $wpdb->prefix . "events_venue_rel");
 	// End table definitions
 	
-	define("EVENTS_PRICES_TABLE", $wpdb->prefix . "events_prices"); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<  ADDED BACK IN UNTIL PRICE TABLE CHANGES ARE COMPLETE
+	//define("EVENTS_PRICES_TABLE", $wpdb->prefix . "events_prices"); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<  ADDED BACK IN UNTIL PRICE TABLE CHANGES ARE COMPLETE
 
 	define('EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION);
 
@@ -158,7 +158,8 @@ function espresso_classes_core_autoload($className) {
 		'messages/message_type/' => 'class',
 		'messages/messenger/' => 'class',
 		'messages/defaults/' => array('class', 'core'),
-		'messages/defaults/email/' => 'class'
+		'messages/defaults/email/' => 'class',
+		'messages/data_class/' => array('core','class')
 		);
 
 	//assemble a list of filenames
@@ -404,15 +405,9 @@ function espresso_init() {
 	load_plugin_textdomain('event_espresso', false, dirname(plugin_basename(__FILE__)) . '/languages/');
 
 	//Core function files			
-//	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Object.class.php';
-//	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event.class.php';
-//	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php';
-//	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Venue.class.php';
-	
 	$espresso_premium = apply_filters('filter_hook_espresso_systems_check', false);
 	
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . "functions/main.php");
-//	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/pricing.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/time_date.php');
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/actions.php');

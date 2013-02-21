@@ -70,9 +70,9 @@ class Prices_List_Table extends EE_Admin_List_Table {
 
         $this->_sortable_columns = array(
 				// TRUE means its already sorted
-				'name' => array('name', false), 
-				'type' => array('type', false),
-				'amount' => array('amount', false)
+				'name' => array( 'name' => FALSE ), 
+				'type' => array( 'type' => FALSE ),
+				'amount' => array( 'amount' => FALSE )
 	        	);
 
         $this->_hidden_columns = array(

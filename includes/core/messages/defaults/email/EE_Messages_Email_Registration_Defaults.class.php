@@ -17,7 +17,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * EE_Messages_Email_Payment_Defaults class
+ * EE_Messages_Registration_Defaults class
  *
  * Handles all the defaults for Email messenger, Payment message type templates
  *
@@ -27,7 +27,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  */
-class EE_Messages_Email_Payment_Defaults extends EE_Message_Template_Defaults {
+class EE_Messages_Email_Registration_Defaults extends EE_Message_Template_Defaults {
 
 
 
@@ -38,7 +38,7 @@ class EE_Messages_Email_Payment_Defaults extends EE_Message_Template_Defaults {
 
 	protected function _set_props() {
 		$this->_m_name = 'email';
-		$this->_mt_name = 'payment';
+		$this->_mt_name = 'registration';
 	}
 
 
