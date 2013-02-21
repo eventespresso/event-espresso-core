@@ -57,6 +57,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 	protected function _ajax_hooks() {
 		//todo: all hooks for registrations ajax goes in here
+		add_action( 'action_hook_espresso_attendee_check_in', array( $this, '_attendee_check_in' ));
 	}
 
 
@@ -69,8 +70,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$this->_labels = array(
 			'buttons' => array(
 				'add' => __('Add New Attendee', 'event_espresso'),
-				'edit' => __('Edit Event', 'event_espresso'),
-				'delete' => __('Delete Event', 'event_espresso')
+				'edit' => __('Edit Attendee', 'event_espresso'),
+				'delete' => __('Delete Attendee', 'event_espresso')
 				)
 			);
 	}
@@ -132,13 +133,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 						'noheader' => TRUE
 					),
 					
-				'registration_settings'	=> '_registration_settings',
-				
-				'update_registration_settings'	=> array(
-						'func' => '_update_registration_settings',
-						'noheader' => TRUE
-					),
-					
 				'reports'	=> '_registration_reports',
 
 				'event_registrations'	=> '_event_registrations_list_table',
@@ -178,8 +172,28 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 						'trash' => TRUE 
 					), 
 					'noheader' => TRUE 
-				)
+				),
 				
+				'delete_attendees'	=> array( 
+					'func' => '_delete_attendees', 
+					'noheader' => TRUE 
+				),
+				
+				'attendee_check_in'	=> array( 
+					'func' => '_attendee_check_in', 
+					'args' => array( 
+						'check_in' => TRUE 
+					), 
+					'noheader' => TRUE 
+				),
+				
+				'attendee_check_out'	=> array( 
+					'func' => '_attendee_check_out', 
+					'args' => array( 
+						'check_in' => FALSE 
+					), 
+					'noheader' => TRUE 
+				)
 		);
 		
 	}
@@ -194,14 +208,14 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			'default' => array(
 				'nav' => array(
 					'label' => __('Overview', 'event_espresso'),
-					'order' => 10
+					'order' => 5
 					),
 				'list_table' => 'EE_Registrations_List_Table'
 				),
 
 			'event_registrations' => array(
 				'nav' => array(
-					'label' => __('Event Registrations', 'event_espresso'),
+					'label' => __('Check In List', 'event_espresso'),
 					'order' => 10,
 					'persistent' => FALSE
 					),
@@ -240,7 +254,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				
 			'contact_list' => array(
 				'nav' => array(
-					'label' => __('Attendee Contact List', 'event_espresso'),
+					'label' => __('Contact List', 'event_espresso'),
 					'order' => 20
 					),
 					'list_table' => 'EE_Attendee_Contact_List_Table',
@@ -252,14 +266,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					'label' => __('Reports', 'event_espresso'),
 					'order' => 30
 					)
-				),
-
-			'registration_settings' => array(
-				'nav' => array(
-					'label' => __('Settings', 'event_espresso'),
-					'order' => 40
-					),
-				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' )
 				)
 				
 			);
@@ -409,18 +415,18 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				'label' => __('All', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'trash_attendees' => __('Move to Trash', 'event_espresso'),
+					'attendee_check_in' => __('Toggle Attendees Check In', 'event_espresso'),
 					)
 				),
-			'trash' => array(
-				'slug' => 'trash',
-				'label' => __('Trash', 'event_espresso'),
-				'count' => 0,
-				'bulk_action' => array(
-					'restore_attendees' => __('Restore from Trash', 'event_espresso'),
-					'delete_attendees' => __('Delete Permanently', 'event_espresso')
-					)
-				)
+//			'trash' => array(
+//				'slug' => 'trash',
+//				'label' => __('Trash', 'event_espresso'),
+//				'count' => 0,
+//				'bulk_action' => array(
+//					'restore_attendees' => __('Restore from Trash', 'event_espresso'),
+//					'delete_attendees' => __('Delete Permanently', 'event_espresso')
+//					)
+//				)
 			);
 	}
 
@@ -547,7 +553,30 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$limit = array( $offset, $per_page );
 
 		$registrations = EEM_Registration::instance()->get_registrations_for_admin_page( $EVT_ID, $CAT_ID, $reg_status, $month_range, $today_a, $this_month_a, $start_date, $end_date, $orderby, $sort, $limit, $count );
+		//printr( $registrations, '$registrations  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		
+		if ( $EVT_ID && isset( $registrations[0] ) && isset( $registrations[0]->event_name )) {
+			//printr( $registrations[0], '$registrations  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			$event_name = isset( $registrations[0]->event_name ) ? $registrations[0]->event_name : '';
+			$event_date = isset( $registrations[0]->DTT_EVT_start ) ? date( 'l F j, Y,    g:i:s a', $registrations[0]->DTT_EVT_start ) : '';
+			// edit event link
+			if ( $event_name != '' ) {
+				$edit_event_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_event', 'EVT_ID'=>$EVT_ID ), EVENTS_ADMIN_URL ), 'edit_event_nonce' );	
+				$edit_event_lnk = '<a href="'.$edit_event_url.'" title="' . __( 'Edit ', 'event_espresso' ) . $event_name . '">' . __( 'Edit Event', 'event_espresso' ) . '</a>';	
+				$event_name .= ' <span class="admin-page-header-edit-lnk not-bold">' . $edit_event_lnk . '</span>' ;
+			}
 
+			$back_2_reg_url = wp_nonce_url( add_query_arg( array( 'action'=>'default' ), REG_ADMIN_URL ), 'default_nonce' );	
+			$back_2_reg_lnk = '<a href="'.$back_2_reg_url.'" title="' . __( 'click to return to viewing all registrations ', 'event_espresso' ) . '">&laquo; ' . __( 'Back to All Registrations', 'event_espresso' ) . '</a>';	
+
+			$this->_template_args['before_admin_page_content'] = '
+		<div id="admin-page-header">
+			<h1><span class="small-text not-bold">'.__( 'Event: ', 'event_espresso' ).'</span>'. $event_name .'</h1>
+			<h3><span class="small-text not-bold">'.__( 'Date: ', 'event_espresso' ). '</span>'. $event_date .'</h3>
+			<span class="admin-page-header-edit-lnk not-bold">' . $back_2_reg_lnk . '</span>
+		</div>
+		';
+		}
 		return $registrations;
 	}
 
@@ -1227,7 +1256,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*		@access public
 	*		@return array
 	*/
-	public function get_event_attendees( $per_page = 10, $count = FALSE, $trash = FALSE ) {  
+	public function get_event_attendees( $per_page = 10, $count = FALSE, $trash = FALSE, $orderby = '' ) {  
 
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		// start with an empty array
@@ -1241,18 +1270,15 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$CAT_ID = isset($this->_req_data['category_id']) ? absint( $this->_req_data['category_id'] ) : FALSE;
 		$reg_status = isset($this->_req_data['reg_status']) ? sanitize_text_field( $this->_req_data['reg_status'] ) : FALSE;
 		
-		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
-
+		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : $orderby;
 		
 		switch ($this->_req_data['orderby']) {
 			case 'REG_date':
 				$orderby = 'REG_date';
 				break;
-			case 'ATT_name':
+			default :
 				$orderby = 'ATT_lname';
-				break;
-			default:
-				$orderby = 'event_name';
+//				$orderby = 'reg.REG_final_price';
 		}
 		
 		$sort = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
@@ -1266,7 +1292,29 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		
 		$output = $count ? 'COUNT' : 'OBJECT_K';
 		$all_attendees = EEM_Attendee::instance()->get_event_attendees( $EVT_ID, $CAT_ID, $reg_status, $trash, $orderby, $sort, $limit, $output );
+		if ( isset( $all_attendees[0] ) && isset( $all_attendees[0]->event_name )) {
+			//printr( $all_attendees[0], '$all_attendees[0]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			// name
+			$event_name = isset( $all_attendees[0]->event_name ) ? $all_attendees[0]->event_name : '';
+			$event_date = isset( $all_attendees[0]->DTT_EVT_start ) ? date( 'l F j, Y,    g:i:s a', $all_attendees[0]->DTT_EVT_start ) : '';
+			// edit event link
+			if ( $event_name != '' ) {
+				$edit_event_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_event', 'EVT_ID'=>$EVT_ID ), EVENTS_ADMIN_URL ), 'edit_event_nonce' );	
+				$edit_event_lnk = '<a href="'.$edit_event_url.'" title="' . __( 'Edit ', 'event_espresso' ) . $event_name . '">' . __( 'Edit Event', 'event_espresso' ) . '</a>';	
+				$event_name .= ' <span class="admin-page-header-edit-lnk not-bold">' . $edit_event_lnk . '</span>' ;
+			}
 
+			$back_2_reg_url = wp_nonce_url( add_query_arg( array( 'action'=>'default' ), REG_ADMIN_URL ), 'default_nonce' );	
+			$back_2_reg_lnk = '<a href="'.$back_2_reg_url.'" title="' . __( 'click to return to viewing all registrations ', 'event_espresso' ) . '">&laquo; ' . __( 'Back to All Registrations', 'event_espresso' ) . '</a>';	
+			
+			$this->_template_args['before_admin_page_content'] = '
+		<div id="admin-page-header">
+			<h1><span class="small-text not-bold">'.__( 'Event: ', 'event_espresso' ).'</span>'. $event_name .'</h1>
+			<h3><span class="small-text not-bold">'.__( 'Date: ', 'event_espresso' ). '</span>'. $event_date .'</h3>
+			<span class="admin-page-header-edit-lnk not-bold">' . $back_2_reg_lnk . '</span>
+		</div>
+		';
+		}
 
 		return $all_attendees;
 	}
@@ -1349,6 +1397,89 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		return $all_attendees;
 	}
 
+
+
+
+
+
+	/**
+	 * 		_attendee_check_in
+	*		@access public
+	*		@return void
+	*/
+	public function _attendee_check_in( ) {	
+		 $this->_toggle_attendee_check_in_status( TRUE );
+	}
+
+
+
+
+
+	/**
+	 * 		_attendee_check_out
+	*		@access public
+	*		@return void
+	*/
+	public function _attendee_check_out( ) {	
+		 $this->_toggle_attendee_check_in_status( FALSE );
+	}
+
+
+
+
+
+
+	/**
+	 * 		_attendee_check_in
+	*		@access protected
+	*		@param boolean 	$check_in
+	*		@return void
+	*/
+	private function _toggle_attendee_check_in_status( $REG_att_checked_in = FALSE ) {
+		
+		// bulk action check in toggle
+		if ( ! empty( $this->_req_data['checkbox'] ) && is_array( $this->_req_data['checkbox'] )) {
+			
+			$success = TRUE;
+			// if array has more than one element than success message should be plural
+			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
+			// cycle thru checkboxes 
+			while ( list( $REG_ID, $value ) = each($this->_req_data['checkbox'])) {
+				if ( ! EEM_Registration::instance()->update( array( 'REG_att_checked_in' => $REG_att_checked_in ), array( 'REG_ID' => absint( $REG_ID )))) {
+					$success = FALSE;
+				}
+			}
+			
+		} elseif ( $REG_ID = ! empty($this->_req_data['id']) ? $this->_req_data['id'] : FALSE ) {
+			
+			$success = FALSE;
+			//echo '<h4>$REG_ID : ' . $REG_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+			$REG_url_link = ! empty($this->_req_data['reg']) ? sanitize_text_field( $this->_req_data['reg'] ) : FALSE;
+			//$REG_att_checked_in = ! empty($this->_req_data['check_in']) ? absint( $this->_req_data['check_in'] ) : 0;
+			
+			if ( $REG = EEM_Registration::instance()->get_one( array( 'REG_ID' => absint( $REG_ID ), 'REG_url_link' => $REG_url_link ))) {
+				//echo '<h4>$REG ID : ' . $REG->ID() . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+				if ( $REG->set_att_checked_in( $REG_att_checked_in )) {
+					//echo '<h1>set_att_checked_in<br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
+					$success = $REG->update();
+				}
+			}		
+				
+		} else {
+			$success = FALSE;
+		}
+
+		//echo '<h4>$success : ' . $success . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		$this->_redirect_after_action( $success, 'Attendee Check In Status', 'updated', array( 'action' => 'event_registrations', 'reg' => $REG_ID ));
+		
+	}
+
+
+
+
+
+
+	/***************************************		ATTENDEE DETAILS 		***************************************/
 
 
 
@@ -1718,70 +1849,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 	
-
-	/***************************************		REGISTRATION SETTINGS 		***************************************/
-
-
-	protected function _registration_settings() {
-	
-		global $org_options;
-		$this->_template_args['values'] = $this->_yes_no_values;
-		
-		$this->_template_args['use_captcha'] = isset( $org_options['use_captcha'] ) ? absint( $org_options['use_captcha'] ) : FALSE;
-		$this->_template_args['show_captcha_settings'] = $this->_template_args['use_captcha'] ? 'style="display:table-row;"': ''; 
-		
-		$this->_template_args['recaptcha_publickey'] = isset( $org_options['recaptcha_publickey'] ) ? stripslashes( $org_options['recaptcha_publickey'] ) : '';
-		$this->_template_args['recaptcha_privatekey'] = isset( $org_options['recaptcha_privatekey'] ) ? stripslashes( $org_options['recaptcha_privatekey'] ) : '';
-		$this->_template_args['recaptcha_width'] = isset( $org_options['recaptcha_width'] ) ? absint( $org_options['recaptcha_width'] ) : 500;
-		
-		$this->_template_args['recaptcha_theme_options'] = array(
-				array('id'  => 'red','text'=> __('Red', 'event_espresso')),
-				array('id'  => 'white','text'=> __('White', 'event_espresso')),
-				array('id'  => 'blackglass','text'=> __('Blackglass', 'event_espresso')),
-				array('id'  => 'clean','text'=> __('Clean', 'event_espresso'))
-			);
-		$this->_template_args['recaptcha_theme'] = isset( $org_options['recaptcha_theme'] ) ? $this->_display_nice( $org_options['recaptcha_theme'] ) : 'clean';
-	
-		$this->_template_args['recaptcha_language_options'] = array(
-				array('id'  => 'en','text'=> __('English', 'event_espresso')),
-				array('id'  => 'es','text'=> __('Spanish', 'event_espresso')),
-				array('id'  => 'nl','text'=> __('Dutch', 'event_espresso')),
-				array('id'  => 'fr','text'=> __('French', 'event_espresso')),
-				array('id'  => 'de','text'=> __('German', 'event_espresso')),
-				array('id'  => 'pt','text'=> __('Portuguese', 'event_espresso')),
-				array('id'  => 'ru','text'=> __('Russian', 'event_espresso')),
-				array('id'  => 'tr','text'=> __('Turkish', 'event_espresso'))
-			);		
-		$this->_template_args['recaptcha_language'] = isset( $org_options['recaptcha_language'] ) ? $this->_display_nice( $org_options['recaptcha_language'] ) : 'en';
-
-		$this->_set_add_edit_form_tags( 'update_registration_settings' );
-		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
-		$this->_template_args['admin_page_content'] = espresso_display_template( REG_TEMPLATE_PATH . 'registration_settings.template.php', $this->_template_args, TRUE );
-		$this->display_admin_page_with_sidebar();	
-	}
-
-	protected function _update_registration_settings() {
-		
-		$data = array();
-
-		$data['use_captcha'] = isset( $this->_req_data['use_captcha'] ) ? absint( $this->_req_data['use_captcha'] ) : FALSE;
-		$data['recaptcha_publickey'] = isset( $this->_req_data['recaptcha_publickey'] ) ? sanitize_text_field( $this->_req_data['recaptcha_publickey'] ) : NULL;
-		$data['recaptcha_privatekey'] = isset( $this->_req_data['recaptcha_privatekey'] ) ? sanitize_text_field( $this->_req_data['recaptcha_privatekey'] ) : NULL;
-		$data['recaptcha_width'] = isset( $this->_req_data['recaptcha_width'] ) ? absint( $this->_req_data['recaptcha_width'] ) : 500;
-		$data['recaptcha_theme'] = isset( $this->_req_data['recaptcha_theme'] ) ? sanitize_text_field( $this->_req_data['recaptcha_theme'] ) : 'clean';
-		$data['recaptcha_language'] = isset( $this->_req_data['recaptcha_language'] ) ? sanitize_text_field( $this->_req_data['recaptcha_language'] ) : 'en';
-		
-		$data = apply_filters('filter_hook_espresso_registration_settings_save', $data);	
-		
-		$what = 'Registration Options';
-		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
-		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'registration_settings' ) );
-		
-	}
-
-
-
-
 
 
 
