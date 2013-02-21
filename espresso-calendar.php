@@ -81,6 +81,7 @@ function espresso_calendar_install() {
 			'espresso_calendar_width' => '2',
 			//'enable_calendar_thumbs' => false,
 			'show_tooltips' => true,
+			'tooltips_pos' => array('my_1' => "bottom", 'my_2' => "center", 'at_1' => "top", 'at_2' => "center"),
 			'espresso_use_pickers' => false,
 			'ee_event_background' => 'ffffff',
 			'ee_event_text_color' => '555555',
@@ -599,8 +600,8 @@ if (!function_exists('espresso_calendar')) {
 												/*at: 'top right',
 												adjust: {
 													x: 0, y: 30*/
-												my: 'bottom center',  // Position my top left...
-												at: 'top center', // at the bottom right of...
+												my: '<?php echo isset($espresso_calendar['tooltips_pos']['my_1']) && !empty($espresso_calendar['tooltips_pos']['my_1']) ? $espresso_calendar['tooltips_pos']['my_1'] : 'bottom' ?> <?php echo isset($espresso_calendar['tooltips_pos']['my_2']) && !empty($espresso_calendar['tooltips_pos']['my_2']) ? $espresso_calendar['tooltips_pos']['my_2'] : 'center' ?>',  // Position my top left...
+												at: '<?php echo isset($espresso_calendar['tooltips_pos']['at_1']) && !empty($espresso_calendar['tooltips_pos']['at_1']) ? $espresso_calendar['tooltips_pos']['at_1'] : 'top' ?> <?php echo isset($espresso_calendar['tooltips_pos']['at_1']) && !empty($espresso_calendar['tooltips_pos']['at_1']) ? $espresso_calendar['tooltips_pos']['at_2'] : 'center' ?>', // at the bottom right of...
 											},
 											show: {
 												event: 'click mouseenter',
@@ -609,7 +610,7 @@ if (!function_exists('espresso_calendar')) {
 											hide: "unfocus",
 											style: {//Additional informatio: http://craigsworks.com/projects/qtip2/docs/style/
 												tip: {
-													corner: 'bottom center'
+													corner: '<?php echo isset($espresso_calendar['tooltips_pos']['my_1']) && !empty($espresso_calendar['tooltips_pos']['my_1']) ? $espresso_calendar['tooltips_pos']['my_1'] : 'bottom' ?> <?php echo isset($espresso_calendar['tooltips_pos']['my_2']) && !empty($espresso_calendar['tooltips_pos']['my_2']) ? $espresso_calendar['tooltips_pos']['my_2'] : 'center' ?>'
 												},
 									<?php
 										if ( function_exists('espresso_version') ) {

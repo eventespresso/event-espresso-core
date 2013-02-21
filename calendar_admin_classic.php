@@ -40,6 +40,10 @@ function espresso_calendar_config_mnu() {
 		$espresso_calendar['espresso_calendar_height'] = $_POST['espresso_calendar_height'];
 		$espresso_calendar['enable_calendar_thumbs'] = $_POST['enable_calendar_thumbs'];
 		$espresso_calendar['show_tooltips'] = $_POST['show_tooltips'];
+		$espresso_calendar['tooltips_pos']['my_1'] = $_POST['tooltips_pos_my_1'];
+		$espresso_calendar['tooltips_pos']['my_2'] = $_POST['tooltips_pos_my_2'];
+		$espresso_calendar['tooltips_pos']['at_1'] = $_POST['tooltips_pos_at_1'];
+		$espresso_calendar['tooltips_pos']['at_2'] = $_POST['tooltips_pos_at_2'];
 		$espresso_calendar['show_time'] = $_POST['show_time'];
 		$espresso_calendar['time_format'] = $_POST['time_format_custom'];
 		$espresso_calendar['espresso_use_pickers'] = $_POST['espresso_use_pickers'];
@@ -285,7 +289,46 @@ function espresso_calendar_config_mnu() {
 	<?php echo select_input('show_tooltips', $values, $espresso_calendar['show_tooltips'], 'id="show_tooltips"'); ?>
 										</td>
 									</tr>
-
+							<?php 
+								$values_1 = array(
+										array('id' => 'top', 'text' => __('Top', 'event_espresso')),
+										array('id' => 'center', 'text' => __('Center', 'event_espresso')),
+										array('id' => 'bottom', 'text' => __('Bottom', 'event_espresso'))
+								);
+								$values_2 = array(
+										array('id' => 'left', 'text' => __('Left', 'event_espresso')),
+										array('id' => 'center', 'text' => __('Center', 'event_espresso')),
+										array('id' => 'right', 'text' => __('Right', 'event_espresso'))
+								);
+							?>		
+									<tr class="tooltip-position-selections">
+										<th class="tooltip-positions">
+											<label for="tooltips_pos_my_1">
+	<?php _e('Tooltip Position 1', 'event_espresso'); ?>
+											</label>
+										</th>
+										<td>
+	<?php echo select_input('tooltips_pos_my_1', $values_1, !empty($espresso_calendar['tooltips_pos']['my_1']) ? $espresso_calendar['tooltips_pos']['my_1'] : 'bottom', 'id="tooltips_pos_my_1"'); ?>
+	<?php echo select_input('tooltips_pos_my_2', $values_2, !empty($espresso_calendar['tooltips_pos']['my_2']) ? $espresso_calendar['tooltips_pos']['my_2'] : 'center', 'id="tooltips_pos_my_2"'); ?><br />
+											<span class="description">
+	<?php _e('Default: bottom center', 'event_espresso'); ?>
+											</span>
+										</td>
+									</tr>
+									<tr class="tooltip-position-selections">
+										<th class="tooltip-positions">
+											<label for="tooltips_pos_at_1">
+	<?php _e('Tooltip Position 2', 'event_espresso'); ?>
+											</label>
+										</th>
+										<td>
+	<?php echo select_input('tooltips_pos_at_1', $values_1, !empty($espresso_calendar['tooltips_pos']['at_1']) ? $espresso_calendar['tooltips_pos']['at_1'] : 'top', 'id="tooltips_pos_at_1"'); ?>
+	<?php echo select_input('tooltips_pos_at_2', $values_2, !empty($espresso_calendar['tooltips_pos']['at_2']) ? $espresso_calendar['tooltips_pos']['at_2'] : 'center', 'id="tooltips_pos_at_2"'); ?><br />
+											<span class="description">
+	<?php _e('Default: top center', 'event_espresso'); ?>
+											</span>
+										</td>
+									</tr>
 									<tr>
 										<th> <label for="enable-cat-classes">
 	<?php _e('Enable CSS for Categories', 'event_espresso'); ?>
@@ -428,12 +471,9 @@ function espresso_calendar_config_mnu() {
 			// disable color picker & thumb sizes inputs & fade if not use controls true
 			window.scp = $('select#espresso_use_pickers option:selected').val();
 			window.ect = $('select#enable-calendar-thumbs option:selected').val();
+			window.ectt = $('select#show_tooltips option:selected').val();
 
-			if(window.scp == ''){
-				$('input#event-background, input#event-text').attr('disabled', true);
-				$('.color-picker-style').attr('style', "opacity: .3");
-				$('tr.color-picker-selections th, tr.color-picker-selections td').attr('style', "opacity: .3");
-			}
+			
 			if(window.ect == 'false'){
 				$('tr#thumbnail-sizes td input').attr('disabled', true);
 				$('tr#thumbnail-sizes').attr('style', "opacity: .3");
@@ -448,6 +488,13 @@ function espresso_calendar_config_mnu() {
 					$('tr#thumbnail-sizes').removeAttr('style', "opacity: .3");
 				}
 			});
+			
+			// color picker settings
+			if(window.scp == ''){
+				$('input#event-background, input#event-text').attr('disabled', true);
+				$('.color-picker-style').attr('style', "opacity: .3");
+				$('tr.color-picker-selections th, tr.color-picker-selections td').attr('style', "opacity: .3");
+			}
 			$('select#espresso_use_pickers').change(function(){
 				window.scp = $('select#espresso_use_pickers option:selected').val();
 				if(window.scp == ''){
@@ -458,15 +505,32 @@ function espresso_calendar_config_mnu() {
 					$('tr.color-picker-selections th, tr.color-picker-selections td').removeAttr('style');
 				}
 			});
-
-			// color picker initialization
 			$('#colorpicker-1').hide();
 			$('#colorpicker-2').hide();
 			$('#colorpicker-1').farbtastic("#background-color");
 			$('#colorpicker-2').farbtastic("#text-color");
 			$("#background-color").click(function(){$('#colorpicker-1').slideToggle()});
 			$("#text-color").click(function(){$('#colorpicker-2').slideToggle()});
-
+			
+			
+			// tooltip settings initialization
+			if(window.ectt == ''){
+				$('input#show_tooltips').attr('disabled', true);
+				$('.tooltip-positions').attr('style', "opacity: .3");
+				$('tr.tooltip-position-selections th, tr.tooltip-position-selections td').attr('style', "opacity: .3");
+			}
+			$('select#show_tooltips').change(function(){
+				window.ectt = $('select#show_tooltips option:selected').val();
+				if(window.ectt == ''){
+					$('input#event-background, input#event-text').attr('disabled', true);
+					$('tr.tooltip-position-selections th, tr.tooltip-position-selections td').attr('style', "opacity: .3");
+				}else {
+					$('input#tooltips_pos_my_1, input#tooltips_pos_my_2, input#tooltips_pos_at_1, input#tooltips_pos_at_2').removeAttr('disabled', true);
+					$('tr.tooltip-position-selections th, tr.tooltip-position-selections td').removeAttr('style');
+				}
+			});
+			
+			
 			// WP toggle function
 			postboxes.add_postbox_toggles('espresso_calendar');
 
