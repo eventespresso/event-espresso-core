@@ -54,16 +54,16 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	protected function _parser( $shortcode ) {
 		switch ( $shortcode ) {
 			case '[TXN_ID]' :
-				return isset($this->_data->txn['transaction_id']) ? $this->_data->txn['transaction_id'] : '';
+				return isset($this->_data->txn->ID) ? $this->_data->txn->ID : '';
 				break;
 
-			case '[PAYMENT_URL]' :
+			/*case '[PAYMENT_URL]' :
 				return isset($this->_data->payment_link) ? $this->_data->payment_link : ''; //todo this needs to be setup via the message type and I'm assuming its for when the payment has not been made yet... this directs to a place to pay.
 				break;
 
 			case '[INVOICE_LINK]' :
 				return isset($this->_data->invoice_link) ? $this->_data->invoice_link : ''; //todo this nees to be setup via the message type.
-				break;
+				break; **/
 
 
 			case "[TOTAL_COST]" :
@@ -75,8 +75,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case "[PAYMENT_STATUS]" :
-				return isset($this->_data->txn['status']) ? $this->_data->txn['status'] : __('Unknown', 'event_espresso');
-				break;
+				return isset($this->_data->txn_status) ? $this->_data->txn_status : __('Unknown', 'event_espresso');
+				break; /**/
 
 			case "[PAYMENT_GATEWAY]" :
 				return isset($this->_data->txn['gateway']) ? $this->_data->txn['gateway'] : __('Unknown', 'event_espresso');

@@ -57,7 +57,7 @@ abstract class EE_messenger extends EE_Base {
 	 * )
 	 * @var array
 	 */
-	public $_admin_registered_pages = array();
+	public $admin_registered_pages = array();
 
 	/**
 	 * there are certain template fields that are global across all messengers.  This will hold the default content for those global template fields that will be added 
@@ -210,7 +210,7 @@ abstract class EE_messenger extends EE_Base {
 			$page = $page . '_' . $action;
 		}
 
-		if ( !isset( $this->_admin_registered_pages[$page]) ) return false; //todo: a place to throw an exception?  We need to indicate there is no registered page so this function is not being called correctly.
+		if ( !isset( $this->admin_registered_pages[$page]) ) return false; //todo: a place to throw an exception?  We need to indicate there is no registered page so this function is not being called correctly.
 
 		//k made it here so let's call the method
 		if ( FALSE === ( $content = call_user_func_array( array( $this, '_get_admin_content_' . $page), array($message_types, $extra) ) ) ) {
@@ -369,7 +369,7 @@ abstract class EE_messenger extends EE_Base {
 	protected function _set_template_value($item, $value) {
 		if ( array_key_exists($item, $this->_template_fields) ) {
 			$prop = '_' . $item;
-			$this->$item = $value;
+			$this->$prop= $value;
 		}
 	}
 
@@ -377,7 +377,10 @@ abstract class EE_messenger extends EE_Base {
 	 * Sets up the message for sending.
 	 * @param  EE_message_type $message the message object that contains details about the message.
 	 */
-	public function send_message( EE_message_type $message ) {
+	public function send_message( $message ) {
+		if ( !is_object( $message ) )
+			throw new EE_Error( __('Incoming "$message" must be an object', 'event_espresso' ) );
+
 		foreach ( $this->_template_fields as $template => $value ) {
 			if ( $template !== 'extra' )
 				$this->_set_template_value($template, $message->$template);

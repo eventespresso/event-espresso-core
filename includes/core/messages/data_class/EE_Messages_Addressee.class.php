@@ -34,9 +34,9 @@ class EE_Messages_Addressee extends EE_Base {
 	/**
 	 * Identifier properties
 	 */
-	public $user_id;  //if available we'll use this to set the fname and lname.
-	public $fname;
-	public $lname;
+	public $user_id;  //if available we'll use this to set the fname and lname (admin)
+	public $fname; //this will usually only be available for primary_attendees or admin
+	public $lname; //this will ususally only be available for primary_attendees or admin
 	public $primary_registration_id;
 	public $attendee_registration_id;
 
@@ -49,11 +49,19 @@ class EE_Messages_Addressee extends EE_Base {
 	public $admin_email;
 
 
+	/**
+	 * Attendee related
+	 */
+	public $att_obj; //holds the attendee object for an attendee
+	public $reg_obj; //holds the registration object for an attendee
+
+
 
 	/**
 	 * event related
 	 */
 	public $events; //this will hold all event info
+	public $attendees; //holds all the attendees for an event.
 
 
 
@@ -63,6 +71,8 @@ class EE_Messages_Addressee extends EE_Base {
 	public $billing;
 	public $taxes;
 	public $txn;
+	public $txn_objs;
+	public $reg_objs;
 
 
 
@@ -100,7 +110,7 @@ class EE_Messages_Addressee extends EE_Base {
 	protected function _set_properties() {
 
 		foreach ( $this->_data as $prop => $value ) {
-			if( isset( $this->$prop ) )
+			if( property_exists( $this, $prop ) )
 				$this->$prop = $value;
 		}
 

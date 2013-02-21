@@ -129,10 +129,11 @@ class EE_Parse_Shortcodes {
 	private function _parse_message_template( $template, $data = array() ) {
 		$event_list_items = $attendee_list_items = '';
 
+	
 		//first we need to know if the template is an array.  If it is then we know we've got some special secondary templates in here that have to be parsed first.
-		if ( empty($data) && is_array($this->_template) ) {
-			$data['event_list'] = $this->_get_event_list($this->_data->events);
-			$data['attendee_list'] = $this->_get_attendee_list($this->_data->attendees);
+		if ( empty($data) && is_array($template) ) {
+			$data['event_list'] = isset( $this->_template['event_list'] ) ? $this->_get_event_list($this->_data->events) : '';
+			$data['attendee_list'] = isset( $this->_template['attendee_list'] ) ? $this->_get_attendee_list($this->_data->attendees) : '';
 		}
 
 		//k now let's assemble the different list items (if present)
@@ -147,12 +148,14 @@ class EE_Parse_Shortcodes {
 		//we need to figure out what data we're sending.  Secondary templates may be using this method to parse their stuff before the main template (recursively like).
 		$data_to_send = empty($data) ? $this->_data : $data;
 
+
 		//let's set the template to the main template if this is an array processing.
-		$this->_template = ( is_array($this->_template) ) ? $this->_template['main'] : $this->_template;
+		$template = ( is_array($template) ) ? $template['main'] : $template;
+
 		
 		//now let's get a list of shortcodes that are found in the given template
-		$possible_shortcodes = preg_match_all( '/\[+?\]/', $this->_template, $matches );
-		$shortcodes = (array) $possible_shortcodes[0]; //this should be an array of shortcodes in the template string.
+		$possible_shortcodes = preg_match_all( '/(\[.+?\])/', $template, $matches );
+		$shortcodes = (array) $matches[0]; //this should be an array of shortcodes in the template string.
 
 		//now lets go ahead and loop through our parsers for each shortcode and setup the values
 		$sc_values = array();
@@ -161,6 +164,11 @@ class EE_Parse_Shortcodes {
 
 			//loop through our shortcodes with the current parser
 			foreach ( $shortcodes as $shortcode ) {
+
+				if ( !array_key_exists( $shortcode, $sc_obj->get_shortcodes() ) )
+					continue; //the given shortcode isn't in this object
+
+				
 				if ( $parsed = $sc_obj->parser( $shortcode, $data_to_send ) )
 					$sc_values[] = $parsed;
 			}
@@ -181,12 +189,11 @@ class EE_Parse_Shortcodes {
 	 * @return void
 	 */
 	private function _set_shortcodes( $valid_shortcodes ) {
-
 		foreach ( $valid_shortcodes as $shortcode_ref ) {
 			$ref = ucwords( str_replace('_', ' ', $shortcode_ref ) );
 			$ref = str_replace( ' ', '_', $ref );
 			$classname = 'EE_' . $ref . '_Shortcodes';
-			if ( $class_exists( $classname ) ) {
+			if ( class_exists( $classname ) ) {
 				$a = new ReflectionClass( $classname );
 				$this->_shortcode_objs[] = $a->newInstance();
 			}
@@ -200,10 +207,10 @@ class EE_Parse_Shortcodes {
 	protected function _get_event_list($events) {
 		$evnts = array();
 		//if this is an array then we've got an event array.
-		if ( isset($events) && is_array($events) ) {
+		if ( is_array($events) ) {
 			foreach ( $events as $event ) {
 				//okay we need to get the $attendee list array for this event in case the shortcode is in the template.
-				$event['attendee_list'] = $this->_get_attendee_list($event);
+				$event['attendee_list'] = $this->_get_attendee_list($event['line_ref']);
 				$evnts[] = $this->_parse_message_template($this->_template['event_list'], $event);
 			}
 		}
@@ -225,16 +232,18 @@ class EE_Parse_Shortcodes {
 					$events[] = $this->_data->events[$event_ref];
 				}
 				$attendee['event_list'] = $this->_get_event_list($events);
-				$this->_set_shortcodes($attendee);
-				$attnds = $this->_parse_message_template($this->_template['attendee_list'], $attendee);
+				$attnds[] = $this->_parse_message_template($this->_template['attendee_list'], $attendee);
 			}
 		}
 
 		//if $attendees is a string then we've got a single event that we need to get the attendees for JUST that event (called by _get_event_list);
-		if ( !is_array($attendees) ) {
-			foreach ( $attendees as $attendee ) {
-				if ( $event['line_ref'] == $attendee['line_ref'] ) {
-					$attnds = $this->_parse_message_template( $this->_template['attendee_list'], $attendee );
+		if ( !is_array($attendees) && is_array($this->_data->attendees ) ) {
+			$e_ref = $attendees['line_ref'];
+			foreach ( $this->_data->attendees as $attendee ) {
+				foreach ( $attendee['line_ref'] as $event_ref ) {
+					if ( $attendee['line_ref'] == $e_ref ) {
+						$attnds[] = $this->_parse_message_template( $this->_template['attendee_list'], $attendee );
+					}
 				}
 			}
 		}
