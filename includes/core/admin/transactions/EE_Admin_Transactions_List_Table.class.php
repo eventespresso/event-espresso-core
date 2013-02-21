@@ -162,7 +162,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	 * 		column_ATT_fname
 	*/ 
     function column_ATT_fname($item){
-		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item['ATT_ID'] ), ATT_ADMIN_URL ), 'edit_attendee_nonce' );
+		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item['ATT_ID'] ), REG_ADMIN_URL ), 'edit_attendee_nonce' );
 		return '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . ucwords( $item['TXN_att_name'] ) . '</a>';
 	}
 
