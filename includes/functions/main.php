@@ -511,7 +511,7 @@ if (!function_exists('event_espresso_get_status')) {
  */
 if (!function_exists('get_number_of_attendees_reg_limit')) {
 
-	function get_number_of_attendees_reg_limit($event_id, $type = 'NULL') {
+	function get_number_of_attendees_reg_limit( $event_id, $type = 'NULL', $reg_limit = 999 ) {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $wpdb;
 
@@ -522,13 +522,8 @@ if (!function_exists('get_number_of_attendees_reg_limit')) {
 			case 'number_available_spaces' :
 			case 'num_completed_slash_incomplete' :
 			case 'num_attendees_slash_reg_limit' :
-			case 'avail_spaces_slash_reg_limit' :
-				$num_attendees = 0;
-				$a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND (payment_status='Completed' OR payment_status='Pending') ";
-				$wpdb->get_results($a_sql, ARRAY_A);
-				if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
-					$num_attendees = $wpdb->last_result[0]->quantity;
-				}
+			case 'avail_spaces_slash_reg_limit' :		
+				$num_attendees = EEM_Registration::instance()->get_event_registration_count( $event_id );
 			//break;
 
 			case 'reg_limit' :
@@ -536,11 +531,11 @@ if (!function_exists('get_number_of_attendees_reg_limit')) {
 			case 'number_available_spaces' :
 			case 'avail_spaces_slash_reg_limit' :
 			case 'num_attendees_slash_reg_limit' :
-				$number_available_spaces = 0;
-				$sql_reg_limit = "SELECT reg_limit FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'";
-				$reg_limit = $wpdb->get_var($sql_reg_limit);
-				if (empty($num_attendees))
-					$num_attendees = 0;
+//				$number_available_spaces = 0;
+//				$sql_reg_limit = "SELECT reg_limit FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'";
+//				$reg_limit = $wpdb->get_var($sql_reg_limit);
+//				if (empty($num_attendees))
+//					$num_attendees = 0;
 				if ($reg_limit > $num_attendees) {
 					$number_available_spaces = $reg_limit - $num_attendees;
 				}
@@ -548,12 +543,7 @@ if (!function_exists('get_number_of_attendees_reg_limit')) {
 
 			case 'num_incomplete' :
 			case 'num_completed_slash_incomplete' :
-				$num_incomplete = 0;
-				$a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND payment_status='Incomplete'";
-				$wpdb->get_results($a_sql);
-				if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
-					$num_incomplete = $wpdb->last_result[0]->quantity;
-				}
+				$num_incomplete = EEM_Registration::instance()->get_event_registration_count( $event_id, TRUE );
 			//break;
 		}
 
