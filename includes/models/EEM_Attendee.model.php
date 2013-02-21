@@ -223,7 +223,7 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 		
 		global $wpdb;
 			
-		$select = $output == 'COUNT' ? 'COUNT(reg.ATT_ID)' : 'att.ATT_ID, CONCAT(att.ATT_fname, " ", att.ATT_lname) AS ATT_name, reg.REG_ID, reg.REG_code, reg.STS_ID AS REG_status, reg.REG_final_price, reg.REG_date, reg.REG_count, reg.REG_group_size, reg.REG_att_is_going, reg.REG_att_checked_in, dtt.DTT_EVT_start, evt.id AS EVT_ID, evt.event_name, evt.require_pre_approval, txn.TXN_ID, txn.TXN_total, txn.TXN_paid, txn.STS_ID AS txn_status, prc.PRC_name';
+		$select = $output == 'COUNT' ? 'COUNT(reg.ATT_ID)' : 'att.ATT_ID, att.ATT_lname, CONCAT(att.ATT_fname, " ", att.ATT_lname) AS ATT_name, att.ATT_email, reg.REG_ID, reg.REG_code, reg.STS_ID AS REG_status, reg.REG_final_price, reg.REG_date, reg.REG_count, reg.REG_group_size, reg.REG_att_is_going, reg.REG_url_link, reg.REG_att_checked_in, dtt.DTT_EVT_start, evt.id AS EVT_ID, evt.event_name, evt.require_pre_approval, txn.TXN_ID, txn.TXN_total, txn.TXN_paid, txn.STS_ID AS txn_status, prc.PRC_name';
 
 		$SQL = 'SELECT ' . $select;  
 		$SQL .= ' FROM ' . $wpdb->prefix . 'esp_attendee att';
@@ -267,23 +267,23 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 				break;
 				
 			case 'STS_ID':
-				$orderby = 'reg.REG_status ';
+				$orderby = 'reg.REG_status, reg.REG_date, reg.REG_count ';
 				break;
 				
 			case 'ATT_lname':
-				$orderby = 'att.ATT_lname, reg.REG_date ';
+				$orderby = 'att.ATT_lname, reg.REG_date, reg.REG_count ';
 				break;
 				
 			case 'event_name':
-				$orderby = 'evt.event_name, att.ATT_lname ';
+				$orderby = 'evt.event_name, att.ATT_lname, reg.REG_count ';
 				break;
 				
 			case 'DTT_EVT_start':
-				$orderby = 'dtt.DTT_EVT_start, evt.event_name, att.ATT_lname ';
+				$orderby = 'dtt.DTT_EVT_start, evt.event_name, att.ATT_lname, reg.REG_count ';
 				break;
 				
 			default: //'REG_date'
-				$orderby = 'reg.REG_date ';
+				$orderby = 'reg.REG_date, reg.REG_count ';
 		}
 
 		//let's setup limit
