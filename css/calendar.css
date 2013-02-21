@@ -392,11 +392,13 @@ table.fc-border-separate {
 	padding: 0 2px;*/
 	float: left;
 	padding: 5px 10px;
-	background: -moz-linear-gradient(270deg, white 0%, #e9f5f4 100%) #ebebeb;
+	
+	/* Enable this code to place the day numbers in nice looking boxes*/
+	/*background: -moz-linear-gradient(270deg, white 0%, #e9f5f4 100%) #ebebeb;
 	background: -webkit-gradient(linear, left top, left bottom, from(white), to(#e9f5f4)) #ebebeb;
 	-moz-box-shadow: 0 1px 4px #cfcfcf;
 	-webkit-box-shadow: 0 1px 4px #cfcfcf;
-	box-shadow: 0 1px 4px #cfcfcf;
+	box-shadow: 0 1px 4px #cfcfcf;*/
 }
 
 .fc-grid .fc-other-month .fc-day-number {
