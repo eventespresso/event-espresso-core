@@ -175,7 +175,8 @@ add_action('wp_print_styles', 'espresso_init_calendar_style');
 
 function espresso_calendar_do_stuff($show_expired) {
 	global $wpdb, $org_options, $espresso_calendar, $event_category_id, $events, $eventsArray;
-
+	remove_shortcode( 'LISTATTENDEES' );
+	
 	//Build the SQL to run
 	//Get the categories
 	if ($event_category_id != "") {
@@ -233,7 +234,8 @@ function espresso_calendar_do_stuff($show_expired) {
 	$events_data = $wpdb->get_results($sql);
 	
 	foreach ($events_data as $event) {
-		
+		global $this_event_id;
+		$this_event_id = $event->id;
 		
 		//Debug:
 		//Print the category id for each event.
