@@ -92,6 +92,8 @@ table .espresso-radio-btn-options-ul .small-lbl,
     display: inline-block; width: 49.5%;
 }
 
+#admin-page-header { clear: both; padding:.25em 0 0; }
+.admin-page-header-edit-lnk  { margin:0 0 0 1em; font-size:10px; }
 
 #espresso-admin-page-ajax-loading { display:none; position:absolute; top:18px; left:50%; margin-left:-15px; padding:0; z-index:99999; }
 #espresso-admin-page-ajax-loading span { display:none; }
@@ -134,7 +136,8 @@ table .espresso-radio-btn-options-ul .small-lbl,
 .edited-input { border : 1px solid #d54e21 !important; }
 .reminder-spn  { display: inline-block; color : #d54e21; line-height:1em; }
 
-.lt-grey-txt  { color:#999 !important;  text-shadow:none; }
+.not-bold { font-weight:normal !important; }
+.lt-grey-txt { color:#999 !important;  text-shadow:none; }
 .float-left { float:left; }
 
 /* Nicolas Gallagher's micro clearfix */

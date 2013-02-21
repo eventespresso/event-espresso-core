@@ -31,7 +31,7 @@ textarea { width:25em; }
 .wp-list-table .column-ATT_city { width:10%; }
 .wp-list-table .column-STA_ID { width:5.5%; }
 .wp-list-table .column-CNT_ISO { width:7%; }
-.wp-list-table .column-REG_is_group_reg,
+.wp-list-table .column-REG_group_size,
 .wp-list-table .column-REG_att_checked_in { width:5%; text-align:center; }
 .wp-list-table .column-REG_date { width:15%; }
 .wp-list-table .column-ATT_phone { width:10%; }

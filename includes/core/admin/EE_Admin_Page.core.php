@@ -1024,7 +1024,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_style('ee-admin-css', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.css', array(), EVENT_ESPRESSO_VERSION);
 
 		//attendee style registrations
-		wp_register_style('espresso_attendees', ATT_ASSETS_URL . 'espresso_attendees_admin.css', array(), EVENT_ESPRESSO_VERSION );	
+		//wp_register_style('espresso_attendees', ATT_ASSETS_URL . 'espresso_attendees_admin.css', array(), EVENT_ESPRESSO_VERSION );	
 
 		//registrations style register
 		wp_register_style('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.css', array('event_espresso'), EVENT_ESPRESSO_VERSION );
@@ -1069,7 +1069,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		//attendee script registrations
-		wp_register_script('espresso_attendees', ATT_ASSETS_URL . 'espresso_attendees_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
+		wp_register_script('espresso_attendees', REG_ASSETS_URL . 'espresso_attendees_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
 
 		//registrations script register
 		wp_register_script('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.js', array('jquery-ui-datepicker', 'jquery-ui-draggable', 'ee_admin_js'), EVENT_ESPRESSO_VERSION, TRUE);

@@ -724,8 +724,8 @@ function events_data_tables_install() {
 				  REG_session varchar(45) COLLATE utf8_bin NOT NULL,
 				  REG_code varchar(45) COLLATE utf8_bin DEFAULT NULL,
 				  REG_url_link varchar(64) COLLATE utf8_bin DEFAULT NULL,
-				  REG_is_primary tinyint(1) DEFAULT '0',
-				  REG_is_group_reg tinyint(1) DEFAULT '0',
+				  REG_count tinyint(4) DEFAULT '1',
+				  REG_group_size tinyint(4) DEFAULT '1',
 				  REG_att_is_going tinyint(1) DEFAULT '0',
 				  REG_att_checked_in tinyint(1) DEFAULT '0',
 				  PRIMARY KEY  (REG_ID),
@@ -734,7 +734,7 @@ function events_data_tables_install() {
 				  KEY TXN_ID (TXN_ID),
 				  KEY DTT_ID (DTT_ID),
 				  KEY STS_ID (STS_ID),
-				  KEY REG_is_primary (REG_is_primary),
+				  KEY REG_url_link (REG_url_link),
 				  KEY REG_code (REG_code)";
 	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
 

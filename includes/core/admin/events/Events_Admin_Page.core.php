@@ -400,8 +400,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$publish_box_extra_args['event_name'] = $this->_event->event_name;
 		$publish_box_extra_args['event_start_date'] = event_date_display($this->_event->start_date);
 		$publish_box_extra_args['event_status_display'] = $this->_event->status['display'];
-		$publish_box_extra_args['view_attendees_url'] = add_query_arg( array( 'event_admin_reports' => 'list_attendee_payments', 'event_id' => $this->_event->id ), 'admin.php?page=attendees' ); 
-		$publish_box_extra_args['attendees_reg_limit'] = get_number_of_attendees_reg_limit($this->_event->id, 'num_attendees_slash_reg_limit'); 
+		$publish_box_extra_args['view_attendees_url'] = add_query_arg( array( 'action' => 'default', 'event_id' => $this->_event->id ), REG_ADMIN_URL ); 
+		$publish_box_extra_args['attendees_reg_limit'] = get_number_of_attendees_reg_limit($this->_event->id, 'num_attendees_slash_reg_limit', $this->_event->reg_limit ); 
 		$publish_box_extra_args['misc_pub_section_class'] = apply_filters('filter_hook_espresso_event_editor_email_attendees_class', 'misc-pub-section');
 		$publish_box_extra_args['email_attendees_url'] = add_query_arg( array( 'event_admin_reports' => 'event_newsletter', 'event_id' => $this->_event->id ), 'admin.php?page=attendees' ); 
 		$publish_box_extra_args['event_editor_overview_add'] = do_action( 'action_hook_espresso_event_editor_overview_add', $this->_event ); 
