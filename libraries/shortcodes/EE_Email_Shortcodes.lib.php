@@ -98,13 +98,13 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 		//why all the checks?  Because its possible someone may use the [ATTENDEE_EMAIL] shortcode in the content.  If they do then the incoming data will have the email address in an array for the attendee.
 
 		$fname = !empty( $this->_data->fname ) ? $this->_data->fname : '';
-		$fname = isset( $this->_data['fname'] ) ? $this->_data['fname'] : $fname;
+		$fname = !is_object( $this->_data ) && isset( $this->_data['att_obj'] ) && is_object( $this->_data['att_obj'] ) ? $this->_data['att_obj']->fname() : $fname;
 
 		$lname = !empty( $this->_data->lname ) ? $this->_data->lname : '';
-		$lname = isset( $this->_data['lname'] ) ? $this->_data['lname'] : $lname;
+		$lname = !is_object( $this->_data ) && isset( $this->_data['att_obj'] ) && is_object( $this->_data['att_obj'] ) ? $this->_data['att_obj']->lname() : $lname;
 
 		$email = !empty( $this->_data->attendee_email ) ? $this->_data->attendee_email : '';
-		$email = isset( $this->_data['email'] ) ? $this->_data['email'] : $email;
+		$email = !is_object( $this->_data ) && isset( $this->_data['att_obj'] ) && is_object( $this->_data['att_obj'] ) ? $this->_data['att_obj']->email() : $email;
 
 		$attendee_email = $fname . ' ' . $lname . ' <' . $email . '>';
 		return $attendee_email;

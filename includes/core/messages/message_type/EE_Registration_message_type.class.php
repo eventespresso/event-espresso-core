@@ -84,7 +84,7 @@ class EE_Registration_message_type extends EE_message_type {
 
 	protected function _default_template_field_subject() {
 		foreach ( $this->_contexts as $context => $details ) {
-			$content[$context] = 'You have been registered for [EVENT_NAME]';
+			$content[$context] = 'Event Registration Details';
 		};
 		return $content;
 	}
@@ -96,11 +96,10 @@ class EE_Registration_message_type extends EE_message_type {
 
 	protected function _default_template_field_content() {
 		$content = "<h3>Registration Details:</h3>\n";
-		$content .= "<p>For Event: [EVENT_NAME]</p>\n";
+		$content .= "<p>Your Registered Event(s):\n";
+		$content .= "<ul>[EVENT_LIST]</ul></p>\n";
 		$content .= "<p>Total Cost: [TOTAL_COST]</p>\n";
-		$content .= "<p>Event Price: [EVENT_PRICE]</p>\n";
 		$content .= "<p><ul>[ATTENDEE_LIST]</ul></p>";
-		$content .= "\n<br /><p>Thanks for your purchase,</p>\n";
 		$content .= "<p>[COMPANY]</p>\n";
 		$content .= "<p>[CO_ADD1]</p>\n";
 		$content .= "<p>[CO_ADD2]</p>\n";
@@ -110,6 +109,7 @@ class EE_Registration_message_type extends EE_message_type {
 		foreach ( $this->_contexts as $context => $details ) {
 			$tcontent[$context]['main'] = $content;
 			$tcontent[$context]['attendee_list'] = '<li>[FNAME] [LNAME]</li>';
+			$tcontent[$context]['event_list'] = '<li>[EVENT_NAME]<br />Event Price: [EVENT_PRICE]</li>';
 		}
 
 
@@ -178,14 +178,16 @@ class EE_Registration_message_type extends EE_message_type {
 	protected function _admin_addressees() {
 		$admin_ids = array();
 		$admin_events = array();
+		$admin_attendees = array();
 		$addresees = array();
 
 		//first we need to get the event admin user id for all the events and setup an addressee object for each unique admin user.
-		foreach ( $this->data->events as $event ) {
+		foreach ( $this->_data->events as $line_ref => $event ) {
+			$admin_id = $this->_get_event_admin_id($event['ID']);
 			//get the user_id for the event
-			$admin_ids[] = $this->_get_event_admin_id($event['ID']);
+			$admin_ids[] = $admin_id;
 			//make sure we are just including the events that belong to this admin!
-			$admin_events[$admin_id] = $event;
+			$admin_events[$admin_id][$line_ref] = $event;
 		}
 
 		//make sure we've got unique event_admins!
@@ -196,8 +198,9 @@ class EE_Registration_message_type extends EE_message_type {
 			$aee = array(
 				'user_id' => $event_admin,
 				'events' => $admin_events[$event_admin],
-				'primary_attendee_email' => $this->data['primary_attendee']['email']
+				'attendees' => $this->_data->attendees
 				);
+			$aee = array_merge( $this->_default_addressee_data, $aee );
 			$addressees[] = new EE_Messages_Addressee( $aee );
 		}
 
@@ -209,7 +212,7 @@ class EE_Registration_message_type extends EE_message_type {
 	private function _get_event_admin_id($event_id) {
 		global $wpdb;
 		$event_id = (int) $event_id;
-		$sql = "SELECT e.wp_user as event_admin_id FROM " . EVENTS_DETAIL_TABLE . " AS e WHERE e.wp_user = %d";
+		$sql = "SELECT e.wp_user as event_admin_id FROM " . EVENTS_DETAIL_TABLE . " AS e WHERE e.id = %d";
 		$result = $wpdb->get_var( $wpdb->prepare( $sql, $event_id ) );
 		return $result;
 	}
@@ -223,44 +226,14 @@ class EE_Registration_message_type extends EE_message_type {
 	 * @return array of EE_Addressee objects
 	 */
 	protected function _primary_attendee_addressees() {
-		//we get the primary attendee information from the primary_attendee data
-		$primary_attendee = $this->_get_primary_attendee_data();
-
-
-		$aee = array_merge( $aee, $primary_attendee );
+		
+		$aee = $this->_default_addressee_data;
+		$aee['events'] = $this->_data->events;
+		$aee['attendees'] = $this->_data->attendees;
 
 		//great now we can instantiate the $addressee object and return (as an array);
 		$add[] = new EE_Messages_Addressee( $aee );
 		return $add;
-	}
-
-
-
-
-	/**
-	 * This just gets the _primary_attendee_data from the data array formatted for setting the EE_Messages_Addresee object
-	 *
-	 * @access protected
-	 * @return array array of primary attendee data
-	 */
-	protected function _get_primary_attendee_data() {
-		$padata = array();
-
-		foreach ( $this->data['primary_attendee'] as $key => $val ) {
-			if ( $key == 'email') {
-				$padata['primary_attendee_email'] = $val;
-				continue;
-			}
-
-			if ( $key == 'registration_id' ) {
-				$padata['primary_registration_id'] = $val;
-				continue;
-			}
-
-			$padata[$key] = $value;
-		}
-
-		return $padata;
 	}
 
 
@@ -275,19 +248,15 @@ class EE_Registration_message_type extends EE_message_type {
 	 */
 	protected function _attendee_addressees() {
 		$add = array();
-
-		//let's get the primary attendee info that we'll merge into each attendee
-		$padata = $this->_get_primary_attendee_data();
-
 		//we just have to loop through the attendees.  We'll also set the attached events for each attendee.
-		foreach ( $this->data->attendees as $index => $values ) {
+		foreach ( $this->_data->attendees as $index => $values ) {
 			//set the attendee array to blank on each loop;
 			$aee = array();
 			foreach ( $values as $field => $value ) {
-				$aee[$field] = $aee[$value];
+				$aee[$field] = $value;
 				if ( $field == 'line_ref' ) {
 					foreach ( $value as $line_ref ) {
-						$aee['events'][] = $this->data->events[$line_ref];
+						$aee['events'][$line_ref] = $this->_data->events[$line_ref];
 					}
 				}
 
@@ -300,8 +269,10 @@ class EE_Registration_message_type extends EE_message_type {
 				}
 			}
 
+			$aee['attendees'] = $this->_data->attendees;
+
 			//merge in the primary attendee data
-			$aee = array_merge( $aee, $padata );
+			$aee = array_merge( $this->_default_addressee_data, $aee );
 			$add[] = new EE_Messages_Addressee( $aee );
 		}
 		return $add;

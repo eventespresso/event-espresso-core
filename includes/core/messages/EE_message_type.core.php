@@ -153,6 +153,15 @@ abstract class EE_message_type extends EE_Base {
 
 
 
+
+	/**
+	 * This just holds defaults for addressee data that children merge with their data array setup
+	 * @var array
+	 */
+	protected $_default_addressee_data;
+
+
+
 	/**
 	 * Child classes declare through this property what handler they want to use for the incoming data and this string is used to instantiate the EE_Messages_incoming_data child class for that handler.
 	 * @var string
@@ -397,7 +406,7 @@ abstract class EE_message_type extends EE_Base {
 		}
 
 		//setup class name for the data handler
-		$classname = 'EE_Messages_' . $this->_data_handler . 'incoming_data';
+		$classname = 'EE_Messages_' . $this->_data_handler . '_incoming_data';
 
 		//check that the class exists
 		if ( !class_exists( $classname ) ) {
@@ -409,8 +418,40 @@ abstract class EE_message_type extends EE_Base {
 		//k lets get the prepared data object and replace existing data property with it.
 		$a = new ReflectionClass( $classname );
 		$this->_data = $a->newInstance( $this->_data );
+
+		$this->_process_data();
 	}
 
+
+
+	/**
+	 * processes the data object so we get 
+	 * @return void
+	 */
+	protected function _process_data() {
+
+		$this->_default_addressee_data = array(
+			'billing' => $this->_data->billing,
+			'taxes' => $this->_data->taxes,
+			'txn' => $this->_data->txn,
+			'reg_objs' => $this->_data->reg_objs,
+			'txn_status' => $this->_data->txn_status
+			);
+
+		if ( is_array( $this->_data->primary_attendee_data ) ) {
+			$this->_default_addressee_data = array_merge( $this->_default_addressee_data, $this->_data->primary_attendee_data );
+		}
+
+
+		//process addressees for each context.  Child classes will have to have methods for each context defined to handle the processing of the data object within them
+		foreach ( $this->_contexts as $context => $details ) {
+			$xpctd_method = '_' . $context . '_addressees';
+
+			if ( !method_exists( $this, $xpctd_method ) )
+				throw new EE_Error( sprintf( __('The data for %1$s message type cannot be prepared because there is no set method for doing so.  The expected method name is "%2$s" please doublecheck the %1$s message type class and make sure that method is present', 'event_espresso'), $this->label['singular'], $xpctd_method) );
+			 $this->_addressees[$context] = call_user_func( array( $this, $xpctd_method ) ); 
+		}
+	}
 
 
 
@@ -434,6 +475,7 @@ abstract class EE_message_type extends EE_Base {
 			}
 		}
 
+
 		if ( isset($current_templates) ) {
 
 			foreach ( $current_templates as $template_object ) {
@@ -442,13 +484,13 @@ abstract class EE_message_type extends EE_Base {
 					foreach ( $templates as $context => $template_fields ) {
 						foreach ( $template_fields as $template_field => $value ) {
 								if ( $template_object->is_global() ) {
-									$global_templates[$template_field][$context] = $value;
+									$global_templates[$template_field][$context] = $value['content'];
 									if ( $template_fields['MTP_is_override'] )
 										$global_override[$context] = TRUE;
 								}
 
 								if ( $template_object->event() == $event_id && !empty( $event_id )) {
-									$event_templates[$template_field][$context] = $value;
+									$event_templates[$template_field][$context] = $value['content'];
 								}
 						}
 					}
@@ -481,7 +523,7 @@ abstract class EE_message_type extends EE_Base {
 	 * @access protected
 	 */
 	protected function _assemble_messages() {
-		foreach ( $this->addressees as $context => $addressees ) {
+		foreach ( $this->_addressees as $context => $addressees ) {
 			foreach ( $addressees as $addressee ) {
 				$this->messages[] = $this->_setup_message_object($context, $addressee);
 			}
@@ -502,15 +544,15 @@ abstract class EE_message_type extends EE_Base {
 		$mt_shortcodes = $this->_valid_shortcodes;
 		$m_shortcodes = $this->_active_messenger->get_valid_shortcodes();
 
-		//let's setup the valid shortcodes for the incoming context.
-		$valid_shortcodes = $mt_shortcodes[$context];
 
 		foreach ( $this->_templates as $field => $ctxt ) {
+			//let's setup the valid shortcodes for the incoming context.
+			$valid_shortcodes = $mt_shortcodes[$context];
 			//merge in valid shortcodes for the field.
-			$valid_shortcodes = isset($m_shortcodes[$field]) ? array_merge($valid_shortcodes, $m_shortcodes[$field]) : $valid_shortcodes;
-			$valid_shortcodes = array_unique( $valid_shortcodes );
+			$shortcodes = isset($m_shortcodes[$field]) ? array_merge($valid_shortcodes, $m_shortcodes[$field]) : $valid_shortcodes;
+			$shortcodes = array_unique( $shortcodes );
 			if ( isset( $this->_templates[$field][$context] ) ) {
-				$message->$field = $this->_shortcode_replace->parse_message_template($this->_templates[$field][$context], $addressee, $valid_shortcodes);
+				$message->$field = $this->_shortcode_replace->parse_message_template($this->_templates[$field][$context], $addressee, $shortcodes);
 			}
 		}
 		return $message;

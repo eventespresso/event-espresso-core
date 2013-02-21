@@ -205,8 +205,8 @@ class EE_Email_messenger extends EE_messenger  {
 	protected function _send_message() {
 
 		//todo we need to validate the different fields before sending.
-
-		return wp_mail($this->_to, stripslashes_deep(html_entity_decode($this->_subject, ENT_QUOTES, "UTF-8")), stripslashes_deep(html_entity_decode(wpautop($this->_body()), ENT_QUOTES,"UTF-8")), $this->_headers());
+		
+		$success = wp_mail($this->_to, stripslashes_deep(html_entity_decode($this->_subject, ENT_QUOTES, "UTF-8")), stripslashes_deep(html_entity_decode(wpautop($this->_body()), ENT_QUOTES,"UTF-8")), $this->_headers());
 	}
 
 	/**

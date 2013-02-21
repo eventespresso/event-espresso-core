@@ -45,11 +45,5 @@ class EE_Messages_Email_Payment_Defaults extends EE_Message_Template_Defaults {
 	protected function _change_templates( $evt_id, $is_global ) {
 		//make sure admin context has correct "To" email address
 		$this->_templates['admin']['to'] = '[ADMIN_EMAIL]';
-
-		//make sure that all the contexts have the default content set correctly (i.e. in a serialized ['content']['main']), to match the email requirements.
-		foreach ( $this->_contexts as $context => $details ) {
-			$content['main'] =  $this->_defaults['mt']['content'][$context];
-			$this->_templates[$context]['content'] = serialize($content);
-		}
 	}
 }

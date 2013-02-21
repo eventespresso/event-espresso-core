@@ -30,6 +30,29 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 
 abstract class EE_Messages_incoming_data {
 
+
+	/**
+	 * user id for logged in user when data collected
+	 * @var string
+	 */
+	public $user_id;
+
+
+	/**
+	 * IP Address of browser used
+	 * @var
+	 */
+	public $ip_address;
+
+
+	/**
+	 * other browser info when data collected
+	 */
+	public $user_agent;
+	public $init_access;
+	public $last_access;
+
+
 	/**
 	 * Holds billing info about the transaction
 	 * @var mixed (array|string)
@@ -80,10 +103,35 @@ abstract class EE_Messages_incoming_data {
 
 
 	/**
-	 * Will hold txn details from transaction (if present)
-	 * @var array
+	 * Will hold the final transaction object (EE_Transaction)
+	 * @var array (of EE_Transaction objects);
 	 */
 	public $txn;
+
+
+
+	/**
+	 * Will hold the label for the txn status
+	 * @var string
+	 */
+	public $txn_status;
+
+
+
+
+	/**
+	 * Will hold the final registration object (EE_Registration)
+	 * @var array (of EE_Registration objects)
+	 */
+	public $reg_objs;
+
+
+
+	/**
+	 * Will hold an array of primary attendee data (if present)
+	 * @var array
+	 */
+	public $primary_attendee_data;
 
 
 
@@ -104,7 +152,7 @@ abstract class EE_Messages_incoming_data {
 	public function __construct( $data ) {
 		$this->_data = $data;
 		$this->_setup_data();
-		$this->_return_data();
+		
 	}
 
 
@@ -119,9 +167,11 @@ abstract class EE_Messages_incoming_data {
 
 	/**
 	 * only purpose is to return the data 
+	 *
+	 * @access public
 	 * @return object the formatted data object!
 	 */
-	private function _return_data() {
+	public function data() {
 		return $this->_data;
 	}
 

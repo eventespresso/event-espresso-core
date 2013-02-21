@@ -369,7 +369,7 @@ abstract class EE_messenger extends EE_Base {
 	protected function _set_template_value($item, $value) {
 		if ( array_key_exists($item, $this->_template_fields) ) {
 			$prop = '_' . $item;
-			$this->$item = $value;
+			$this->$prop= $value;
 		}
 	}
 
@@ -377,7 +377,10 @@ abstract class EE_messenger extends EE_Base {
 	 * Sets up the message for sending.
 	 * @param  EE_message_type $message the message object that contains details about the message.
 	 */
-	public function send_message( EE_message_type $message ) {
+	public function send_message( $message ) {
+		if ( !is_object( $message ) )
+			throw new EE_Error( __('Incoming "$message" must be an object', 'event_espresso' ) );
+
 		foreach ( $this->_template_fields as $template => $value ) {
 			if ( $template !== 'extra' )
 				$this->_set_template_value($template, $message->$template);
