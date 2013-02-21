@@ -14,28 +14,42 @@
 
 .column-Reg_status { width:7%; }
 
+.status-TCM,
 .status-RAP, 
 .reg-overview-full-payment-spn { color:#090;  }
 
+.status-TPN,
 .status-RPN, 
 .reg-overview-part-payment-spn { color:#F93;  }
 
-.status-RCN, 
-.status-RFL, 
-.status-RNA, 
+.status-TFL, .status-TIN, .status-TOP,
+.status-RCN, .status-RFL, .status-RNA, 
 .reg-overview-no-payment-spn { color:#F00;  }
 
-.wp-list-table .column-ATT_fname { width:10%; }
-.wp-list-table .column-REG_code { width:9%; }
-.wp-list-table .column-REG_att_checked_in { width:4%; text-align:center; }
 .wp-list-table .column-event_name { }
+.wp-list-table .column-REG_date,
 .wp-list-table .column-DTT_EVT_start { width:12.5%; }
+/*.wp-list-table .column-ATT_fname { width:11%; }*/
+.wp-list-table .column-REG_count { width:3%; text-align:center;  }
+.wp-list-table .column-ATT_email { width:10.5%; }
+.wp-list-table .column-REG_code { width:10.5%; }
+.wp-list-table .column-Reg_status { width:6.5%; text-align:center; }
 
-.wp-list-table #REG_final_price { text-align:center; }
-.wp-list-table .column-REG_final_price { width:5%; text-align:right; }
-.reg-pad-rght { display:block; padding-right:1.5em; }
+.wp-list-table .column-REG_att_checked_in { width:5%; text-align:center; }
+.wp-list-table .column-DTT_reg_limit { width:4.25%; text-align:center; }
 
-.wp-list-table .column-REG_count { width:4%;  }
+.wp-list-table #PRC_amount,
+.wp-list-table #REG_final_price,
+.wp-list-table #TXN_total,
+.wp-list-table #TXN_paid { text-align:center; }
+
+.wp-list-table .column-PRC_amount,
+.wp-list-table .column-REG_final_price,
+.wp-list-table .column-TXN_total,
+.wp-list-table .column-TXN_paid { width:5%; text-align:right; }
+
+.reg-pad-rght { display:block; padding-right:1em; }
+
 .wp-list-table .column-actions { width:8.5%;  }
 
 .reg-overview-free-event-spn { display: block; text-align:center; }
