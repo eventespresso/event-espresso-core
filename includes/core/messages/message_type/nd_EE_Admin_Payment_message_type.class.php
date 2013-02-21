@@ -49,7 +49,7 @@ class EE_Admin_Payment_message_type extends EE_message_type {
 	}
 
 	/**
-	 * The main purpose of this function is to setup the various parameters within the message_type.  $this->addressees, $this->templates, $this->count, and any extra stuff to the data object that can come from the messenger template options.
+	 * The main purpose of this function is to setup the various parameters within the message_type.  $this->addressees, $this->_templates, $this->count, and any extra stuff to the data object that can come from the messenger template options.
 	 * @return void
 	 * @access protected
 	 */

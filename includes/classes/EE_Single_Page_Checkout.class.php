@@ -963,7 +963,6 @@ class EE_Single_Page_Checkout {
 
 		$session_data = $EE_Session->get_session_data();
 		//printr( $session_data, '$session_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
 		$billing_info = $session_data['billing_info'];
 		$reg_info = $session_data['cart']['REG'];
 		$template_args = array();
@@ -1256,6 +1255,7 @@ class EE_Single_Page_Checkout {
 			$transaction->set_txn_session_data( $session );
 			$transaction->update();
 			$EE_Session->set_session_data(array( 'registration' => $reg, 'transaction' => $transaction ), 'session_data');
+
 
 			do_action('action_hook_espresso__EE_Single_Page_Checkout__process_registration_step_3__before_gateway', $this);
 			

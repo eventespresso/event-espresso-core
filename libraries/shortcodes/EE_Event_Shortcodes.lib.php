@@ -66,6 +66,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 		global $org_options;
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Formatter.helper.php';
 
+
 		switch ( $shortcode ) {
 			
 			case '[EVENT_ID]' :

@@ -163,7 +163,7 @@ class EE_messages {
 			// then send it
 			foreach ( $this->_active_messengers as $active_messenger ) {
 				// create message data
-				$messages = $this->_active_messages_types[$type];
+				$messages = $this->_active_message_types[$type];
 				$messages->set_messages($vars, $active_messenger);
 
 				if ( is_wp_error($messages) ) {

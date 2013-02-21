@@ -424,6 +424,23 @@ class EEM_Transaction extends EEM_Base {
 
 	}
 
+
+
+	/**
+	 * retrieve the status details from esp_status table as an array.
+	 * @return array 
+	 */
+	 public function status_array() {
+	 	global $wpdb;
+	 	$SQL = 'SELECT STS_ID, STS_code FROM '. $wpdb->prefix . 'esp_status WHERE STS_type = "transaction"';
+	 	$results = $wpdb->get_results( $SQL );
+	 	$txn_status = array();
+	 	foreach ( $results as $status ) {
+            $txn_status[ $status->STS_ID ] = __( $status->STS_code, 'event_espresso' );
+        }
+        return $txn_status;
+    }
+
 	
 	
 

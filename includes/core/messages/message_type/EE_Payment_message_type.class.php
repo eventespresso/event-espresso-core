@@ -39,6 +39,7 @@ class EE_Payment_message_type extends EE_message_type {
 			'singular' => __('payment', 'event_espresso'),
 			'plural' => __('payments', 'event_espresso')
 			);
+		$this->_data_handler = 'EE_Session';
 
 		parent::__construct();
 	
@@ -49,7 +50,7 @@ class EE_Payment_message_type extends EE_message_type {
 	 * see abstract declaration in parent class for details.
 	 */
 	protected function _set_admin_pages() {
-		$this->_admin_registered_pages = array(
+		$this->admin_registered_pages = array(
 			'events_edit' => true
 			); 
 	}
@@ -80,18 +81,17 @@ class EE_Payment_message_type extends EE_message_type {
 
 	protected function _default_template_field_subject() {
 		foreach ( $this->_contexts as $context => $details ) {
-			$content[$context] = 'Payment processed for [EVENT_NAME]';
+			$content[$context] = 'Event Payment Details';
 		};
 		return $content;
 	}
 
 	protected function _default_template_field_content() {
 		$content = "<h3>Payment Details:</h3>\n";
-		$content .= "<p>For Event: [EVENT_NAME]</p>\n";
+		$content .= "<ul>[EVENT_LIST]</ul>\n";
 		$content .= "<p>Payment status: [PAYMENT_STATUS]</p>\n";
 		$content .= "<p>Payment gateway: [PAYMENT_GATEWAY]</p>\n";
 		$content .= "<p>Total Cost: [TOTAL_COST]</p>\n";
-		$content .= "<p>Event Price: [EVENT_PRICE]</p>\n";
 		$content .= "\n<br /><p>Thanks for your purchase,</p>\n";
 		$content .= "<p>[COMPANY]</p>\n";
 		$content .= "<p>[CO_ADD1]</p>\n";
@@ -99,7 +99,9 @@ class EE_Payment_message_type extends EE_message_type {
 		$content .= "<p>[CO_STATE], [CO_ZIP]</p>\n";
 
 		foreach ( $this->_contexts as $context => $details ) {
-			$tcontent[$context] = $content;
+			$tcontent[$context]['main'] = $content;
+			$tcontent[$context]['attendee_list'] = '<li>[FNAME] [LNAME]</li>';
+			$tcontent[$context]['event_list'] = '<li>[EVENT_NAME]<br />Event Price: [EVENT_PRICE]</li>';
 		}
 
 		return $tcontent;
@@ -140,8 +142,8 @@ class EE_Payment_message_type extends EE_message_type {
 	 */
 	protected function _set_valid_shortcodes() {
 		$this->_valid_shortcodes = array(
-			'admin' => array('transaction','event','organization', 'attendee'),
-			'primary_attendee' => array('transaction', 'event', 'organization', 'attendee')
+			'admin' => array('transaction','event','organization', 'attendee', 'registration'),
+			'primary_attendee' => array('transaction', 'event', 'organization', 'attendee', 'registration')
 			);
 	}
 
@@ -163,11 +165,11 @@ class EE_Payment_message_type extends EE_message_type {
 		$addresees = array();
 
 		//first we need to get the event admin user id for all the events and setup an addressee object for each unique admin user.
-		foreach ( $this->data->events as $event ) {
+		foreach ( $this->_data->events as $line_ref => $event ) {
 			//get the user_id for the event
 			$admin_ids[] = $this->_get_event_admin_id($event['ID']);
 			//make sure we are just including the events that belong to this admin!
-			$admin_events[$admin_id] = $event;
+			$admin_events[$admin_id][$line_ref] = $event;
 		}
 
 		//make sure we've got unique event_admins!
@@ -178,11 +180,12 @@ class EE_Payment_message_type extends EE_message_type {
 			$aee = array(
 				'user_id' => $event_admin,
 				'events' => $admin_events[$event_admin],
-				'billing' => $this->data->billing,
-				'taxes' => $this->data->taxes,
-				'txn' => $this->data->txn,
-				'primary_attendee_email' => $this->data['primary_attendee']['email']
+				'attendees' => $this->_data->attendees
 				);
+
+			//merge in with default addressee_data
+			$aee = array_merge( $this->_default_addressee_data, $aee );
+
 			$addressees[] = new EE_Messages_Addressee( $aee );
 		}
 
@@ -210,25 +213,9 @@ class EE_Payment_message_type extends EE_message_type {
 	protected function _primary_attendee_addressees() {
 		$add = array();
 
-		//we get the primary attendee information from the primary_attendee data
-		foreach ( $this->data['primary_attendee'] as $key => $val ) {
-			if ( $key == 'email') {
-				$aee['primary_attendee_email'] = $val;
-				continue;
-			}
-
-			if ( $key == 'registration_id' ) {
-				$aee['primary_registration_id'] = $val;
-				continue;
-			}
-
-			$aee[$key] = $value;
-		}
-
-		//now let's include some specific data
-		$aee['billing'] = $this->data->billing;
-		$aee['taxes'] = $this->data->taxes;
-		$aee['txn'] = $this->data->txn;
+		$aee = $this->_default_addressee_data;
+		$aee['events'] = $this->_data->events;
+		$aee['attendees'] = $this->_data->attendees;
 
 		//great now we can instantiate the $addressee object and return (as an array);
 		$add[] = new EE_Messages_Addressee( $aee );
