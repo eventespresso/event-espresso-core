@@ -37,8 +37,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	function __construct( $admin_page ){
         parent::__construct($admin_page);
         $this->_status = $this->_admin_page->get_registration_status_array();
-		//echo "registration list table 40";
-		//var_dump($this);
 	}
 
 
@@ -62,27 +60,47 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			'screen' => $this->_admin_page->get_current_screen()->id
 			);
 
-		$this->_columns = array(
+		
+		if ( isset( $_GET['event_id'] )) {
+			$this->_columns = array(
             	'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
-           	'REG_ID' => __( 'ID', 'event_espresso' ),
-			'event_name' => __( 'Event Title', 'event_espresso' ),
-    	       	'DTT_EVT_start' => __( 'Event Date & Time', 'event_espresso' ),
-           	'ATT_fname' => __( 'Attendee Name', 'event_espresso' ),
-			'REG_count' => __('Att #', 'event_espresso'),
-			'REG_code' => __( 'Registration Code', 'event_espresso' ),
-			'Reg_status' => __( 'Reg Status', 'event_espresso' ),
-			'REG_date' => __( 'Registration Date', 'event_espresso' ),
-  			'REG_final_price' => __( 'Price Paid', 'event_espresso' ),
-			'REG_att_checked_in' => __('Chkd In', 'event_espresso'),
+	           	'REG_ID' => __( 'ID', 'event_espresso' ),
+	           	'ATT_fname' => __( 'Attendee Name', 'event_espresso' ),
+				'ATT_email' =>  __('Email Address', 'event_espresso'),
+				'REG_count' => __('Att #', 'event_espresso'),
+				'REG_code' => __( 'Registration Code', 'event_espresso' ),
+				'Reg_status' => __( 'Reg Status', 'event_espresso' ),
+				'REG_date' => __( 'Registration Date', 'event_espresso' ),
+	  			'PRC_amount' => __( 'Ticket Price', 'event_espresso' ),
+	  			'REG_final_price' => __( 'Final Price', 'event_espresso' ),
+	  			'TXN_total' => __( 'Total Txn', 'event_espresso' ),
+ 				'TXN_paid' => __('Paid', 'event_espresso'),
+	           	'actions' => __( 'Actions', 'event_espresso' )
+	        );			
+		} else {
+			$this->_columns = array(
+            	'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
+	           	'REG_ID' => __( 'ID', 'event_espresso' ),
+				'event_name' => __( 'Event Title', 'event_espresso' ),
+	   	       	'DTT_EVT_start' => __( 'Event Date & Time', 'event_espresso' ),
+//	   	       	'DTT_reg_limit' => __( 'Reg Limit', 'event_espresso' ),
+				'REG_count' => __('Att #', 'event_espresso'),
+	           	'ATT_fname' => __( 'Attendee Name', 'event_espresso' ),
+				'REG_code' => __( 'Registration Code', 'event_espresso' ),
+				'Reg_status' => __( 'Reg Status', 'event_espresso' ),
+				'REG_date' => __( 'Registration Date', 'event_espresso' ),
+	  			'REG_final_price' => __( 'Price', 'event_espresso' ),
             	'actions' => __( 'Actions', 'event_espresso' )
-        );
+	        );			
+		}
+		
 
         $this->_sortable_columns = array(
           	'REG_date' => array( 'REG_date' => TRUE ),   //true means its already sorted
-            	'ATT_fname' => array( 'ATT_fname' => FALSE ),
-            	'event_name' => array( 'event_name' => FALSE ),
-            	'DTT_EVT_start'	=> array( 'DTT_EVT_start' => FALSE ),
-            	'Reg_status' => array( 'Reg_status' => FALSE ),
+           	'ATT_fname' => array( 'ATT_fname' => FALSE ),
+           	'event_name' => array( 'event_name' => FALSE ),
+           	'DTT_EVT_start'	=> array( 'DTT_EVT_start' => FALSE ),
+           	'Reg_status' => array( 'Reg_status' => FALSE ),
 			'REG_ID' => array( 'REG_ID' => FALSE ),
         	);
 
@@ -132,16 +150,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	/**
 	 * 		column_default
 	*/
-   	function column_default($item, $column_name){
- 		switch( $column_name ) {
-
-			case 'DTT_EVT_start' :
-				return date( 'D M j, Y  g:i a',	$item->$column_name );
-			break;
-
-			default :
-				return isset( $item->$column_name ) ? $item->$column_name : '';
-		}
+   	function column_default( $item, $column_name ){
+		return isset( $item->$column_name ) ? $item->$column_name : '';
     }
 
 
@@ -162,22 +172,55 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	/**
-	 * 		REG_date
+	* 		column_event_name
 	*/
-	function column_REG_date($item){
-		$view_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL ), 'view_registration_nonce' );	
-		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . date( 'D M j, Y  g:i a',	$item->REG_date ) . '</a>';	
-		return $REG_date;	
+	function column_event_name($item){
+		
+		//Build row actions
+		$actions = array();
+
+        //Build row actions
+		$view_details_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL ), 'view_registration_nonce' );
+        $actions['view_details'] = '
+			<a href="'.$view_details_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . __( 'View Reg Details', 'event_espresso' ) . '</a>';
+ 		$check_in_url = wp_nonce_url( add_query_arg( array( 'action'=>'event_registrations', 'reg'=>$item->REG_ID ), REG_ADMIN_URL ), 'event_registrations_nonce' );
+		$actions['check_in'] = '
+			<a href="'.$check_in_url.'" title="' . __( 'View Check In List', 'event_espresso' ) . '">' . __( 'View Check In List', 'event_espresso' ) . '</a>';
+
+		$edit_event_url = add_query_arg( array( 'event_id'=>$item->EVT_ID ), REG_ADMIN_URL );
+		$event_name = stripslashes( html_entity_decode( $item->event_name, ENT_QUOTES, 'UTF-8' ));
+		$event_filter = '<a href="' . $edit_event_url . '" title="' . sprintf( __( 'Only show %s in this list (filter the list)', 'event_espresso' ), $item->event_name ) .'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>';
+		
+		return sprintf('%1$s %2$s', $event_filter, $this->row_actions($actions) );		
 	}
 
 
 
 
+
+
+
+
 	/**
-	 * 		column_Reg_status
+	 * 		column_default
 	*/
-   	function column_Reg_status($item){
-		return '<span class="status-'. $item->REG_status .'">' . __( $this->_status[ $item->REG_status ], 'event_espresso' ) . '</span>';
+   	function column_DTT_EVT_start($item){
+		return date( 'D M j, Y  g:i a',	$item->DTT_EVT_start );
+    }
+
+
+
+
+
+	/**
+	 * 		DTT_reg_limit
+	*/
+	function column_DTT_reg_limit($item){ 
+	
+		if ( empty( $item->DTT_reg_limit ) || ! is_int( $item->DTT_reg_limit )) {
+			$item->DTT_reg_limit = '<span class="big-text">&infin;</span>';
+		}
+		return $item->DTT_reg_limit;
 	}
 
 
@@ -198,12 +241,20 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	/**
-	* 		column_event_name
+	 * 		column_REG_count
 	*/
-	function column_event_name($item){
-		$edit_event_url = add_query_arg( array( 'event_id'=>$item->EVT_ID ), REG_ADMIN_URL );
-		$event_name = stripslashes( html_entity_decode( $item->event_name, ENT_QUOTES, 'UTF-8' ));
-		return '<a href="' . $edit_event_url . '" title="' . __( 'Edit Event #', 'event_espresso' ) . $item->EVT_ID.'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>';
+	function column_REG_count($item){
+		return $item->REG_count . __( ' of ', 'event_espresso' ) . $item->REG_group_size;
+	}
+
+
+
+
+	/**
+	 * 		column_Reg_status
+	*/
+   	function column_Reg_status($item){
+		return '<span class="status-'. $item->REG_status .'">' . __( $this->_status[ $item->REG_status ], 'event_espresso' ) . '</span>';
 	}
 
 
@@ -211,12 +262,35 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	/**
-	* 		column_REG_att_checked_in
-	* 		//removing this... it can be added via the manage_columns_{} filter inside the ticketing addon.
-	 */
-	/* function column_REG_att_checked_in($item){
-		 return ( $item->REG_att_checked_in ) ? event_espresso_paid_status_icon('Checkedin') : '-'; 
-	} /**/
+	 * 		REG_date
+	*/
+	function column_REG_date($item){
+		$view_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL ), 'view_registration_nonce' );	
+		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . date( 'D M j, Y  g:i a',	$item->REG_date ) . '</a>';	
+		return $REG_date;	
+	}
+
+
+
+
+
+
+	/**
+	 * 		column_PRC_amount
+	*/
+	function column_PRC_amount($item){
+	
+		global $org_options;
+		$item->PRC_amount = abs( $item->PRC_amount );
+		
+		if ( $item->PRC_amount > 0 ) {
+			return '<span class="reg-pad-rght">' . $org_options['currency_symbol'] . ' ' . number_format( $item->PRC_amount, 2 ) . '</span>';			
+		} else {
+			// free event
+			return '<span class="reg-overview-free-event-spn reg-pad-rght">' . $org_options['currency_symbol'] . __( 'free', 'event_espresso' ) . '</span>';
+		}
+		
+	}
 
 
 
@@ -230,16 +304,26 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	
 		global $org_options;
 		$item->REG_final_price = abs( $item->REG_final_price );
+		$item->REG_final_price = $item->REG_final_price > 0 ? number_format( $item->REG_final_price, 2 ) : '0.00';
+		return '<span class="reg-pad-rght">' . $org_options['currency_symbol'] . ' ' . $item->REG_final_price . '</span>';			
 		
-		if ( $item->REG_final_price > 0 ) {
-			return '<span class="reg-overview-full-payment-spn reg-pad-rght">' . $org_options['currency_symbol'] . ' ' . number_format( $item->REG_final_price, 2 ) . '</span>';
-			
-		} else {
-			// free event
-			return '<span class="reg-overview-free-event-spn">' . $org_options['currency_symbol'] . '0.00</span>';
-		}
+	}
+
+
+
+
+
+	/**
+	 * 		column_TXN_total
+	*/
+	function column_TXN_total($item){
 	
-		return '<div class="jst-rght">' . $org_options['currency_symbol'] . ' ' . number_format( $item->REG_final_price, 2 ) . '</div>';
+		global $org_options;
+		$item->TXN_total = abs( $item->TXN_total );
+		$item->TXN_total = $item->TXN_total > 0 ? number_format( $item->TXN_total, 2 ) : '0.00';
+		
+		$view_txn_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_transaction', 'txn'=>$item->TXN_ID ), admin_url( 'admin.php?page=transactions' ) ), 'view_transaction_nonce' );
+		return '<span class="reg-pad-rght"><a class="status-'. $item->txn_status .'" href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">' . $org_options['currency_symbol'] . ' ' . $item->TXN_total . '</a></span>';			
 		
 	}
 
@@ -247,30 +331,30 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 
-
 	/**
-	 * 		column_REG_count
+	 * 		column_TXN_paid
 	*/
-	function column_REG_count($item){
-		return $item->REG_count . __( ' of ', 'event_espresso' ) . $item->REG_group_size;
+	function column_TXN_paid($item){
+		
+		if ( $item->REG_count == 1 ) {
+			global $org_options;
+			$item->TXN_paid = abs( $item->TXN_paid );
+			$item->TXN_total = abs( $item->TXN_total );
+			
+			if ( $item->TXN_paid >= $item->TXN_total ) {
+				return '<span class="reg-pad-rght"><img class="" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/check-mark-16x16.png" width="16" height="16" alt="Paid in Full"/></span>';
+			} else {
+				$view_txn_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_transaction', 'txn'=>$item->TXN_ID ), TXN_ADMIN_URL ), 'view_transaction_nonce' );
+				$owing = number_format( $item->TXN_paid, 2, '.', ',' );
+				return '<span class="reg-pad-rght"><a class="status-'. $item->txn_status .'" href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">' . $org_options['currency_symbol'] . $owing . '</a><span>';
+			}			
+		}
+		
+		return '&nbsp;';
+		
 	}
 
 
-
-
-
-
-
-	/**
-	 * 		column_REG_att_checked_in
-	*/
-	function column_REG_att_checked_in($item){		
-		if ( $item->REG_att_checked_in ) {
-			return __( 'Yes', 'event_espresso' );
-		} else {
-			return '';
-		}		
-	}
 
 
 
@@ -289,8 +373,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		//$resend_reg_lnk_url_params = array( 'action'=>'resend_registration', 'reg'=>$item->REG_ID );
 		$resend_reg_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'resend_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL ), 'resend_registration_nonce' );
 		
-		// page=transactions&action=view_transaction&txn=256&_wpnonce=6414da4dbb
-		$view_txn_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_transaction', 'txn'=>$item->TXN_ID ), admin_url( 'admin.php?page=transactions' ) ), 'view_transaction_nonce' );
 
 	        //Build row actions
 	        $view_lnk = '
@@ -321,7 +403,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			</a>
 		</li>';
 
-	         $view_txn_lnk = '
+			// page=transactions&action=view_transaction&txn=256&_wpnonce=6414da4dbb
+		$view_txn_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_transaction', 'txn'=>$item->TXN_ID ), admin_url( 'admin.php?page=transactions' ) ), 'view_transaction_nonce' );
+		$view_txn_lnk = '
 		<li>
 			<a href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">
 				<img width="16" height="16" alt="View Transaction" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/icons/money.png">
