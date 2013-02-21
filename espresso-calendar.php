@@ -90,10 +90,10 @@ function espresso_calendar_install() {
 			//'use_themeroller' => false,
 			'espresso_calendar_titleFormat' => "month: 'MMMM yyyy', week: 'MMM dS[ yyyy] - {[ MMM] dS yyyy}', day: 'dddd, MMM dS, yyyy'",
 			'espresso_calendar_columnFormat' => "month: 'ddd', week: 'ddd M/d', day: 'dddd M/d'",
-			'espresso_calendar_monthNames' => "'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'",
-			'espresso_calendar_monthNamesShort' => "'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'",
-			'espresso_calendar_dayNames' => "'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'",
-			'espresso_calendar_dayNamesShort' => "'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'"
+			'espresso_calendar_monthNames' => "'".__('January', 'event_espresso')."', '".__('February', 'event_espresso')."', '".__('March', 'event_espresso')."', '".__('April', 'event_espresso')."', '".__('May', 'event_espresso')."', '".__('June', 'event_espresso')."', '".__('July', 'event_espresso')."', '".__('August', 'event_espresso')."', '".__('September', 'event_espresso')."', '".__('October', 'event_espresso')."', '".__('November', 'event_espresso')."', '".__('December', 'event_espresso')."'",
+			'espresso_calendar_monthNamesShort' => "'".__('Jan', 'event_espresso')."', '".__('Feb', 'event_espresso')."', '".__('Mar', 'event_espresso')."', '".__('Apr', 'event_espresso')."', '".__('May', 'event_espresso')."', '".__('Jun', 'event_espresso')."', '".__('Jul', 'event_espresso')."', '".__('Aug', 'event_espresso')."', '".__('Sep', 'event_espresso')."', '".__('Oct', 'event_espresso')."', '".__('Nov', 'event_espresso')."', '".__('Dec', 'event_espresso')."'",
+			'espresso_calendar_dayNames' => "'".__('Sunday', 'event_espresso')."', '".__('Monday', 'event_espresso')."', '".__('Tuesday', 'event_espresso')."', '".__('Wednesday', 'event_espresso')."', '".__('Thursday', 'event_espresso')."', '".__('Friday', 'event_espresso')."', '".__('Saturday', 'event_espresso')."'",
+			'espresso_calendar_dayNamesShort' => "'".__('Sun', 'event_espresso')."', '".__('Mon', 'event_espresso')."', '".__('Tue', 'event_espresso')."', '".__('Wed', 'event_espresso')."', '".__('Thu', 'event_espresso')."', '".__('Fri', 'event_espresso')."', '".__('Sat', 'event_espresso')."'"
 	);
 	update_option('espresso_calendar_settings', $espresso_calendar);
 }
@@ -171,40 +171,6 @@ if (!function_exists('espresso_init_calendar_style')) {
 
 }
 add_action('wp_print_styles', 'espresso_init_calendar_style');
-
-/*// Add our embedded head styles for color picker selection
-if ($espresso_calendar['espresso_use_pickers'] == true) {
-
-	function event_background_selection() {
-		global $espresso_calendar;
-		?>
-		<style type="text/css">
-<?php  
-		if (isset($espresso_calendar['ee_event_background']) && !empty($espresso_calendar['ee_event_background'])) {
-			 ?>  
-			 .ui-tooltip-ee .ui-tooltip-titlebar {
-			 background: <?php echo $espresso_calendar['ee_event_background'] ?>;
-			}
-			 th.fc-widget-header {
-			 background-color: <?php echo $espresso_calendar['ee_event_background'] ?>;
-			}
- <?php
-		}
-		if (isset($espresso_calendar['ee_event_text_color']) && !empty($espresso_calendar['ee_event_text_color'])) {
-	?>			
-			.fc-event-title, .time-display-block, .ui-tooltip-ee .ui-tooltip-titlebar, th.fc-widget-header {
-				color: <?php echo $espresso_calendar['ee_event_text_color'] ?>;
-			}
-<?php
-		}
- ?>
-		</style>
-<?php
-		return;
-	}
-
-	add_action('wp_head', 'event_background_selection', 10);
-}// close if use picker is Yes*/
 
 function espresso_calendar_do_stuff($show_expired) {
 	global $wpdb, $org_options, $espresso_calendar, $event_category_id, $events, $eventsArray;
