@@ -350,8 +350,8 @@ function espresso_calendar_do_stuff($show_expired) {
 		}
 		$eventArray['today'] = date('Y-m-d');
 		$eventArray['this_month'] = date('m');
-		$eventArray['startTime'] = event_date_display($event->start_time, $espresso_calendar['time_format']);
-		$eventArray['endTime'] = event_date_display($event->end_time, $espresso_calendar['time_format']);
+		$eventArray['startTime'] = !empty($event->start_time) ? event_date_display($event->start_time, $espresso_calendar['time_format']) : '';
+		$eventArray['endTime'] = !empty($event->end_time) ? event_date_display($event->end_time, $espresso_calendar['time_format']) : '';
 
 		// Add thumb to eventArray
 		$eventArray['event_img_thumb'] = '';
@@ -579,6 +579,7 @@ if (!function_exists('espresso_calendar')) {
 								if ( event.startTime ) {
 									element.find('.fc-event-title').after($('<p class="time-display-block">' + event.startTime + ' - ' + event.endTime + '</p>'));
 								}
+								
 
 			<?php
 					}
