@@ -384,7 +384,14 @@ abstract class EE_Gateway {
 		$session = $EE_Session->get_session_data();
 		//printr( $session, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 
 		//die();
-
+		//check that we hvae the info we need in the session before proceeding.
+		//if its not there, maybe it's just a regular page load, not
+		//a return from a payment gateway
+		//either way, we can't do anything. so return.
+		if(!array_key_exists('transaction', $session) 
+				|| !array_key_exists('txn_results',$session)){
+			return;
+		}
 		$transaction = $session['transaction'];
 		$txn_results = $session['txn_results'];
 		// $txn_results['txn_results'] = $session;

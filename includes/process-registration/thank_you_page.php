@@ -14,7 +14,10 @@ function espresso_thank_you_page() {
 	}
 	//only use session data to process final payment etc. After thank_you_page()
 	//though, the session gets wiped out.
-	$EEM_Gateways->thank_you_page();
+	$current_session=$EE_Session->get_session_data();
+	if(isset($current_session['transaction'])){
+		$EEM_Gateways->thank_you_page();
+	}
 	
 	
 	//$transaction=$registration->transaction();
