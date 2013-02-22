@@ -69,7 +69,7 @@ function event_espresso_get_event_details($attributes) {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	do_action( 'action_hook_espresso_before_event_list' );
 
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/gmap_incl.php');
+	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/gmap_display.helper.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/event_details.helper.php');
 	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Prices.class.php' );
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Selector.class.php');

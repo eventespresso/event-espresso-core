@@ -83,7 +83,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$filters = array();
 
 		//todo we're currently using old functions here. We need to move things into the Events_Admin_Page() class as methods.
-		require_once EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin.php';
+		require_once EE_CORE_ADMIN . 'admin_helper.php';
 
 		//first month/year filters
 		$filters[] = $this->_admin_page->espresso_event_months_dropdown( isset($this->_req_data['month_range']) ? $this->_req_data['month_range'] : '' );

@@ -115,7 +115,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$filters = array();
 
 		//todo we're currently using old functions here. We need to move things into the Events_Admin_Page() class as methods.
-		require_once EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin.php';
+		require_once EE_CORE_ADMIN . 'admin_helper.php';
 		require_once EE_FF_HELPER;
 
 		$filters[] = espresso_event_months_dropdown( isset($this->_req_data['month_range']) ? sanitize_key($this->_req_data['month_range']) : '' );
@@ -134,7 +134,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _add_view_counts() {
-		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin_screens/events/queries.php' );
+		require_once( EE_CORE_ADMIN . 'total_count_queries.php' );
 		$this->_views['all']['count'] = espresso_total_all_attendees();
 		$this->_views['month']['count'] = espresso_total_attendees_this_month();
 		$this->_views['today']['count'] = espresso_total_attendees_today();
@@ -232,7 +232,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
    	function column_ATT_fname($item){
 		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item->ATT_ID ), REG_ADMIN_URL ), 'edit_attendee_nonce' );
 		$link = '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . ucwords( $item->REG_att_name ) . '</a>';
-		$link .= $item->REG_count == 1 ? '<img class="primary-attendee-star-img" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/star-8x8.png" width="8" height="8" alt="this is the primary attendee"/>' : '';
+		$link .= $item->REG_count == 1 ? '<img class="primary-attendee-star-img" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/star-8x8.png" width="8" height="8" alt="this is the primary attendee"/>' : '';
 		return $link;
 	}
 
@@ -342,7 +342,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			$item->TXN_total = abs( $item->TXN_total );
 			
 			if ( $item->TXN_paid >= $item->TXN_total ) {
-				return '<span class="reg-pad-rght"><img class="" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/check-mark-16x16.png" width="16" height="16" alt="Paid in Full"/></span>';
+				return '<span class="reg-pad-rght"><img class="" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/check-mark-16x16.png" width="16" height="16" alt="Paid in Full"/></span>';
 			} else {
 				$view_txn_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_transaction', 'txn'=>$item->TXN_ID ), TXN_ADMIN_URL ), 'view_transaction_nonce' );
 				$owing = number_format( $item->TXN_paid, 2, '.', ',' );
@@ -378,28 +378,28 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	        $view_lnk = '
 		<li>
 			<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="' . __( 'View Registration Details', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/icons/magnifier.png">
+				<img width="16" height="16" alt="' . __( 'View Registration Details', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/magnifier.png">
 			</a>
 		</li>';
 
 	       $edit_lnk = '
 		<li>
 			<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee Details', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="' . __( 'Edit Attendee Details', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/icons/user_edit.png">
+				<img width="16" height="16" alt="' . __( 'Edit Attendee Details', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/user_edit.png">
 			</a>
 		</li>';
 
 	         $resend_reg_lnk = '
 		<li>
 			<a href="'.$resend_reg_lnk_url.'" title="' . __( 'Resend Registration Details', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="' . __( 'Resend Registration Details', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/icons/email_go.png">
+				<img width="16" height="16" alt="' . __( 'Resend Registration Details', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/email_go.png">
 			</a>
 		</li>';
 
 	         $dl_tckt_lnk = '
 		<li>
 			<a href="' . add_query_arg( array( 'ticket_launch'=>'true', 'reg'=>$item->REG_ID,  'html'=>'true' ), site_url() ) . '" target="_blank" title="' . __( 'Download Ticket', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="' . __( 'Download Ticket', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/icons/ticket-arrow-icon.png">
+				<img width="16" height="16" alt="' . __( 'Download Ticket', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/ticket-arrow-icon.png">
 			</a>
 		</li>';
 
@@ -408,7 +408,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$view_txn_lnk = '
 		<li>
 			<a href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="View Transaction" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/icons/money.png">
+				<img width="16" height="16" alt="View Transaction" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/money.png">
 			</a>
 		</li>';
 

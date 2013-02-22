@@ -523,7 +523,7 @@ class Venues_Admin_Page extends EE_Admin_Page {
 	protected function _edit_venue_content() {
 		global $wpdb;
 
-		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/gmap_incl.php');
+		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/gmap_display.helper.php');
 
 		$this->_set_venue_object();
 		$venue_id = $this->_venue->id;
