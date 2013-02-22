@@ -16,8 +16,6 @@ if (!function_exists('event_registration')) {
 		global $wpdb, $org_options;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/gmap_incl.php');
-
 		$event_slug = (get_query_var('event_slug')) ? get_query_var('event_slug') : FALSE;
 
 
@@ -48,6 +46,7 @@ if (!function_exists('event_registration')) {
 
 		if (isset($org_options['map_settings']['ee_display_map_no_shortcodes']) && $org_options['map_settings']['ee_display_map_no_shortcodes']) {
 			$show_ee_gmap_no_shortcode = true;
+			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/gmap_display.helper.php');
 		} else {
 			$show_ee_gmap_no_shortcode = false;
 		}
