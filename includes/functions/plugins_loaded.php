@@ -62,6 +62,7 @@ function espresso_define_tables_and_paths() {
 
 	//Define the includes directory
 	define("EVENT_ESPRESSO_INCLUDES_DIR", EVENT_ESPRESSO_PLUGINFULLPATH . 'includes' . DS );
+	define("EVENT_ESPRESSO_TEMPLATES", EVENT_ESPRESSO_PLUGINFULLPATH . 'templates' . DS );
 	define( 'EE_CORE', EVENT_ESPRESSO_INCLUDES_DIR . 'core' . DS );
 
 
@@ -545,7 +546,7 @@ function espresso_load_reg_page_files() {
 			
 			case 'return_url' :
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/pricing.php');
-					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/thank_you_page.php');
+					require_once(EVENT_ESPRESSO_TEMPLATES . 'thank_you_page.php');
 					event_espresso_require_gateway('PaymentGateway.php');
 				break;
 			

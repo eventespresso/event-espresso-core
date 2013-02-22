@@ -118,7 +118,7 @@ class EE_Ticket_Selector extends EE_BASE {
 		$template_args['event_name'] = $this->_event->event_name;
 		$template_args['require_pre_approval'] = $this->_event->require_pre_approval;
 
-		$template_args['dates'] = is_array($this->_event->recurring_events) ? $this->_event->recurring_events : $this->_event->datetimes;
+		$template_args['dates'] = $this->_event->datetimes;
 		$template_args['dates'] = $this->_format_date($template_args['dates']);
 		//printr( $template_args['dates'], 'dates <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 

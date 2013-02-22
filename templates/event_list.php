@@ -11,16 +11,14 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
  * method long descriptiom
  *
  * @access 		private		private protected public
- * @param 		int 			$var_name 		int float string array object mixed
  * @return 		void			var type
  */
-function display_all_events($show_recurrence = TRUE) {
+function display_all_events() {
 
 	global $org_options;
 	// error logging
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	$attributes = array( 'show_recurrence' => $show_recurrence );
-	event_espresso_get_event_details($attributes); //This function is located below
+	event_espresso_get_event_details(); //This function is located below
 }
 
 
@@ -61,7 +59,7 @@ function display_event_espresso_categories($category_identifier = 'null', $css_c
  * @param 		boolean 		$allow_override 		int float string array object mixed
  * @return 		void
  */
-function event_espresso_get_event_details($attributes) {
+function event_espresso_get_event_details( $attributes = array()) {
 
 	global $wpdb, $org_options, $events_in_session, $ee_gmaps_opts, $EE_Cart;	
 	//printr( $org_options, '$org_options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -86,7 +84,6 @@ function event_espresso_get_event_details($attributes) {
 			'show_expired' => 'false',
 			'show_secondary' => 'false',
 			'show_deleted' => 'false',
-			'show_recurrence' => 'false',
 			'limit' => '0',
 			'order_by' => 'NULL',
 			'css_class' => 'NULL',
@@ -167,7 +164,6 @@ function event_espresso_get_event_details($attributes) {
 	
 	$SQL .= $show_secondary == 'false' ? " AND eventDetails.event_status != 'S'" : '';
 	$SQL .= $show_deleted == 'false' ? " AND eventDetails.event_status != 'D'" : '';
-	$SQL .= $show_recurrence == 'false' ? " AND eventDetails.recurrence_id = '0'" : ' GROUP BY eventDetails.id';
 	$SQL .= $order_by != NULL ? ' ORDER BY ' . $order_by . ' ASC' : ' ORDER BY date(dateTime.DTT_EVT_start), eventDetails.id ASC';
 	$SQL .= $limit > 0 ? ' LIMIT 0,' . $limit . ' ' : '';
 
@@ -239,29 +235,11 @@ function event_espresso_get_event_details($attributes) {
 		$overflow_event_id = $event->overflow_event_id;
 
 
-		$event->recurring_events = FALSE;
-		// check for a valid recurrence id and that the recurring events table is set
-		if ($show_recurrence && $event->recurrence_id && defined('EVENT_ESPRESSO_RECURRENCE_TABLE')) {
-			//$event->recurring_events = espresso_event_list_get_recurring_events( $event->recurrence_id );
-			//echo pre_arr($event->recurring_events);
-		}
-
 
 		global $event_meta;
 		$event_meta = unserialize($event->event_meta);
 		$event_meta['is_active'] = $event->is_active;
 		$event_meta['event_status'] = $event->event_status;
-//		$event_meta['start_time'] = empty($event->start_time) ? '' : $event->start_time;
-//		$event_meta['start_date'] = $event->start_date;
-//		$event_meta['registration_start'] = $event->registration_start;
-//		$event_meta['registration_startT'] = $event->registration_startT;
-//		$event_meta['registration_end'] = $event->registration_end;
-//		$event_meta['registration_endT'] = $event->registration_endT;
-
-		//$display_event_date = event_date_display( $event->start_date, get_option('date_format'));
-		//$display_event_date = date_i18n( 'l F jS, Y', strtotime( $event->start_date ));
-		//$event->single_date = date_i18n( 'D M jS', strtotime( $event->start_date ));
-		//$event->single_date = date_i18n( 'l F jS, Y', strtotime( $event->start_date ));
 
 
 		//Here we can create messages based on the event status. These variables can be echoed anywhere on the page to display your status message.
@@ -283,30 +261,19 @@ function event_espresso_get_event_details($attributes) {
 		$status['status'] = str_replace('_', ' ', $status['status']);
 
 
-// EVENT TIMES
+		// EVENT TIMES
 		if ( $event->datetimes = $edts = $DTM_MDL->get_all_event_dates($event->id) ) {
 			//echo printr($event->datetimes, 'EVENT TIMES for '. $event_name.'  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );	
 			$display_event_date = array_shift( $edts );
 		} else {
 			$display_event_date = FALSE;
 		}
-			
-
-//		echo printr( $event->datetimes, 'event->datetimes <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
-//echo '<h4>$display_event_date : ' . $display_event_date->start() . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-
-
 
 		$event->event_cost = empty($event->event_cost) ? '' : $event->event_cost;
 
-// EVENT PRICING
-		// let's start with an empty array'
-//		$EVT_Prices = new EE_Event_Prices( $event->id );
-//		$event->prices = $EVT_Prices->get_final_event_prices();
-		//echo printr($event->prices, 'EVENT PRICES <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
+		// EVENT PRICING
 		$TKT_PRCs = new EE_Ticket_Prices( $event->id );
 		$event->prices = $TKT_PRCs->get_all_final_event_prices();
-//		echo printr($event->prices, 'EVENT PRICES <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
 
 		$event->currency_symbol = $org_options['currency_symbol'];
 

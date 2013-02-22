@@ -457,23 +457,6 @@ select.wide {
 #event-dates-and-times .dtm-inp.small-text { width:75px; }
 
 
-/*#event-date-time .recurring-available {
-	bottom: -10px;
-	clear: both;
-	left: 0;
-	position: relative;
-}
-#event-date-time .recurring-available a:hover {
-	color: #C8AE34;
-}
-#recurring_event_wrapper .ui-corner-all {
-	margin-bottom: 5px;
-}
-.recurring_events_details p span {
-	display: block;
-	margin: 5px 0;
-}*/
-
 
 /*  TICKET PRICES  */
 

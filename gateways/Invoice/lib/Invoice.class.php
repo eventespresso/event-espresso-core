@@ -215,15 +215,14 @@ class Invoice {
 //		echo '</div>';
 		//Data
 		foreach ($this->session_data['cart']['REG']['items'] as $line_item ) {
+			//printr( $line_item, '$line_item  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			foreach ( $line_item['attendees'] as $attendee) {
-				//Debug:
-				//echo '<pre>'.print_r($data, TRUE).'</pre>';
 				$html .= '<tr class="item ' . (($c = !$c) ? ' odd' : '') . '">';
 				$html .= '<td class="item_l">1</td>';
 				$html .= '<td class="item_l">' . $line_item['name'] . '</td>';
 				$html .= '<td class="item_l">' . $line_item['options']['price_desc'] . '</td>';
 				$html .= '<td class="item_l">' . $line_item['options']['date'] . ' @ ' . $line_item['options']['time'] . '</td>';
-				$html .= '<td class="item_l">' . $attendee['fname'] . ' ' . $attendee['lname'] . '</td>';
+				$html .= '<td class="item_l">' . $attendee[1] . ' ' . $attendee[1] . '</td>';
 				$html .= '<td class="item_r"><span class="crncy-sign">' . $org_options['currency_symbol'] . '</span>' . $attendee['price_paid'] . '</td>';
 				$html .= '</tr>';
 			}

@@ -842,7 +842,6 @@ function events_data_tables_install() {
 					event_type VARCHAR(250) DEFAULT NULL,
 					allow_overflow tinyint(1) NOT NULL DEFAULT '0',
 					overflow_event_id INT(10) DEFAULT '0',
-					recurrence_id int(11) DEFAULT '0',
 					alt_email TEXT,
 					event_meta LONGTEXT DEFAULT NULL,
 					wp_user int(22) DEFAULT '1',
@@ -867,7 +866,6 @@ function events_data_tables_install() {
 				KEY registration_end (registration_end),
 				KEY reg_limit (reg_limit),
 				KEY event_status (event_status),
-				KEY recurrence_id (recurrence_id),
 				KEY submitted (submitted),
 				KEY likes (likes)";
 	event_espresso_run_install($table_name, $table_version, $sql);

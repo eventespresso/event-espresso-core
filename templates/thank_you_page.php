@@ -10,12 +10,11 @@ function espresso_thank_you_page() {
 	
 	if (!defined('ESPRESSO_GATEWAYS')) {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
-		$EEM_Gateways = EEM_Gateways::instance();
 	}
-	$EEM_Gateways->thank_you_page();
+	EEM_Gateways::instance()->thank_you_page();
 	$session_data = $EE_Session->get_session_data();
 	if (!empty($session_data['txn_results'])) {
-		//printr( $session_data);
+		//printr( $session_data, '$session_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$grand_total = $session_data['_cart_grand_total_amount'];
 
 		// add taxes

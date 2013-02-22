@@ -230,8 +230,6 @@ if (!function_exists('event_registration')) {
 				$reg_limit = $event->reg_limit;
 				$additional_limit = $event->additional_limit;
 
-				$event->recurring_events = FALSE;
-
 				//If the coupon code system is intalled then use it
 				if (function_exists('event_espresso_coupon_registration_page')) {
 					$use_coupon_code = $event->use_coupon_code;

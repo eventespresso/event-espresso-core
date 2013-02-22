@@ -2340,9 +2340,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 
-	protected function _duplicate_event( $recurrence_arr = array() ) {
+	protected function _duplicate_event( ) {
 		global $wpdb, $espresso_wp_user;
-		$event_id = array_key_exists('event_id', $recurrence_arr) ? $recurrence_arr['event_id'] : $this->_req_data['event_id'];
+		$event_id = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : '';
 
 		$result = $wpdb->get_row("SELECT * FROM ". EVENTS_DETAIL_TABLE ." WHERE id ='" . $event_id . "'");
 
@@ -2359,10 +2359,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 			$allow_multiple = $result->allow_multiple;
 			$additional_limit = $result->additional_limit;
 
-			$registration_start = array_key_exists('registration_start', $recurrence_arr)?$recurrence_arr['registration_start']:$result->registration_start;;
-			$registration_end = array_key_exists('registration_end', $recurrence_arr)?$recurrence_arr['registration_end']:$result->registration_end;
-			$start_date = array_key_exists('start_date', $recurrence_arr)?$recurrence_arr['start_date']:$result->start_date;
-			$end_date = array_key_exists('end_date', $recurrence_arr)?$recurrence_arr['end_date']:$result->end_date;
+			$registration_start = $result->registration_start;
+			$registration_end = $result->registration_end;
+			$start_date = $result->start_date;
+			$end_date = $result->end_date;
 
 			$start_time = $result->start_time;
 			$end_time = $result->end_time;
@@ -2455,7 +2455,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'submitted' => date('Y-m-d H:i:s', time()), 
 				'reg_limit'=>$reg_limit, 
 				'additional_limit'=>$additional_limit, 
-				'recurrence_id'=>$recurrence_id, 
 				'wp_user' => $espresso_wp_user,
 				'post_id' => $post_id);
 			}
@@ -2472,7 +2471,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%d',
-				'%d','%d','%d','%d'
+				'%d','%d','%d'
 			);
 			
 			/*//check the counts to make sure the data is matched up correctly
@@ -2604,33 +2603,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		 	return false;
 		 }
 
-	/*
-	 * With the recursion of this function, additional recurring events will be added
-	 */
-	static $counter = 1;
-			 if ( count( $recurrence_arr) > 0 ) {
-				 
-				//$recurrence_dates = array_shift($recurrence_dates); //Remove the first item from the array since it will be added after this recursion
-				foreach ($recurrence_arr as $r_a){
 
-					echo_f($event_id, $r_a['start_date'] );
-
-					$this->_duplicate_event(
-							array(
-								'event_id'	 => $event_id,
-								'recurrence_id'	 => $recurrence_id,
-								'start_date'		=>$r_a['start_date'],
-								'registration_start'=>$r_a['registration_start'],
-								'registration_end'  =>$r_a['registration_end']
-							));
-
-					$counter ++;
-					if ($counter >20) exit();
-				}
-			}
-	/*
-	 * End recursion, as part of recurring events.
-	 */
 	return $new_id;
 
 	}
@@ -4104,7 +4077,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		}
 		
 		$sql = '';
-		$sql = $count ? "SELECT COUNT(e.id) " : "SELECT e.id as event_id, e.event_name, e.slug, e.event_identifier, e.reg_limit, e.is_active, e.recurrence_id, e.event_meta, e.event_status, dtt.*";
+		$sql = $count ? "SELECT COUNT(e.id) " : "SELECT e.id as event_id, e.event_name, e.slug, e.event_identifier, e.reg_limit, e.is_active, e.event_meta, e.event_status, dtt.*";
 
 		if ( !$count ) {
 

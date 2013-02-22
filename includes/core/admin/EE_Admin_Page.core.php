@@ -1449,11 +1449,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	   					</a>
 	   				</li>
 	   				<li>
-		   				<a href="http://eventespresso.com/product/espresso-recurring/" target="_blank">
-		   					<?php _e('Recurring Events', 'event_espresso'); ?>
-	   					</a>
-	   				</li>
-	   				<li>
 		   				<a href="http://eventespresso.com/product/espresso-members/" target="_blank">
 		   					<?php _e('WP User Integration', 'event_espresso'); ?>
 	   					</a>
