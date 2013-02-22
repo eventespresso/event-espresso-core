@@ -235,9 +235,7 @@ function espresso_calendar_do_stuff($show_expired) {
 	}
 	$sql .= " GROUP BY e.id ORDER BY e.start_date = '0000-00-00' ASC " . $throttle;
 	//Debug
-	//echo '<p>$sql - '.$sql.'</p>';
-	
-	echo '<h4>$sql : ' . $sql . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4><br /><br /><br />';
+	//echo '<h4>$sql : ' . $sql . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4><br /><br /><br />';
 
 	$events = array();
 	$events_data = $wpdb->get_results($wpdb->prepare($sql, ''));
