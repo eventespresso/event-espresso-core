@@ -141,8 +141,11 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _gateway_settings() {
-		global $EE_Session, $EEM_Gateways;
+		
+		global $EE_Session, $EEM_Gateways, $espresso_premium;
+		
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Tabbed_Content.helper.php' ;
+		
 		if (isset($this->_req_data['_wp_http_referer']) || in_array(TRUE, $_GET)) {
 			$EE_Session->set_session_data(
 				array(
@@ -157,41 +160,55 @@ class Payments_Admin_Page extends EE_Admin_Page {
 						),
 				'gateway_data');
 		}
+		
 		if (!defined('ESPRESSO_GATEWAYS')) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
 			$EEM_Gateways = EEM_Gateways::instance();
 		}
 		
 		$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
+		//printr( $gateway_data, '$gateway_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		$activate_trigger = $deactivate_trigger = FALSE;
+		$gateways = array();
 		//let's assemble the array for the _tab_text_links helper
 		foreach ( $gateway_data['payment_settings'] as $gateway => $settings ) {
-			$activate_trigger = isset($this->_req_data['activate_' . $gateway]) && !$activate_trigger ? $gateway : $activate_trigger;
-			$deactivate_trigger = isset($this->_req_data['deactivate_' . $gateway]) && !$deactivate_trigger ? $gateway : $deactivate_trigger;
-			if ( isset( $this->_req_data['deactivate_' . $gateway] ) )
-				unset($gateway_data['active_gateways'][$gateway]);
-			if ( isset( $this->_req_data['activate_' . $gateway] ) )
-				$gateway_data['active_gateways'][$gateway] = array();
 
-			$gateways[$gateway] = array(
-				'label' => isset($settings['display_name']) ? $settings['display_name'] : ucwords( str_replace( '_', ' ', $gateway ) ),
-				'class' => array_key_exists( $gateway, $gateway_data['active_gateways'] ) ? 'gateway-active' : '',
-				'href' => 'espresso_' . str_replace(' ', '_', $gateway) . '_payment_settings',
-				'title' => __('Modify this Gateway', 'event_espresso'),
-				'slug' => $gateway
-				);
+			if (( $espresso_premium || $gateway == 'Paypal_Standard' )){			
+			
+				// activate this gateway ?
+				$activate_trigger = isset($this->_req_data['activate_' . $gateway]) && !$activate_trigger ? $gateway : $activate_trigger;
+				// or deactivate this gateway ?
+				$deactivate_trigger = isset($this->_req_data['deactivate_' . $gateway]) && !$deactivate_trigger ? $gateway : $deactivate_trigger;
+				// now add or remove gateways from list
+				if ( isset( $this->_req_data['activate_' . $gateway] )) {
+					$gateway_data['active_gateways'][$gateway] = array();
+				}
+				if ( isset( $this->_req_data['deactivate_' . $gateway] )) {
+					unset($gateway_data['active_gateways'][$gateway]);
+			}				
 
+				$gateways[$gateway] = array(
+					'label' => isset($settings['display_name']) ? $settings['display_name'] : ucwords( str_replace( '_', ' ', $gateway ) ),
+					'class' => array_key_exists( $gateway, $gateway_data['active_gateways'] ) ? 'gateway-active' : '',
+					'href' => 'espresso_' . str_replace(' ', '_', $gateway) . '_payment_settings',
+					'title' => __('Modify this Gateway', 'event_espresso'),
+					'slug' => $gateway
+					);
+			}
+			
 		}
 
 		$default = $activate_trigger ? $activate_trigger : FALSE;
 		$default = $deactivate_trigger ? $deactivate_trigger : $activate_trigger;
 
 		if ( ! $default ) {
-			$default = !empty( $gateway_data['active_gateways'] ) ? key($gateway_data['active_gateways']) : 'Paypal_Standard';
+//			$default = !empty( $gateway_data['active_gateways'] ) ? key($gateway_data['active_gateways']) : 'Paypal_Standard';
+			$default = !empty( $gateways ) ? key($gateways) : 'Paypal_Standard';
 		}
-		
+
 		$gateways = isset( $gateways ) ? $gateways : array();
+		//printr( $gateways, '$gateways  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			
 		$this->_template_args['admin_page_header'] = EE_Tabbed_Content::tab_text_links( $gateways, 'gateway_links', '|', $default );
 		$this->display_admin_page_with_sidebar();
