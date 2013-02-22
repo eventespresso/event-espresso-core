@@ -177,16 +177,8 @@ function espresso_display_reg_page($data) {
 				//End display description
 				?>
 			</form>
-	<?php echo '<p class="register-link-footer">' . espresso_edit_this($data['event_id']) . '</p>' ?> </div>
-		<form action="" method="post">
-			<input type="hidden" name="clear_cart" value="true"/>
-			<input type="submit"
-				name="clear-cart"
-				class="event-list-reg-link-sbmt-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx float-right"
-				value="<?php _e('Clear Cart', 'event_espresso'); ?>"
-				role="button"
-				/>
-		</form>
+	<?php echo '<p class="register-link-footer">' . espresso_edit_this($data['event_id']) . '</p>' ?> 
 	</div>
-	<?php
+</div>
+<?php
 }
