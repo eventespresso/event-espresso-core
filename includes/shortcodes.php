@@ -19,6 +19,9 @@ if (!function_exists('show_single_event')) {
 		global $load_espresso_scripts;
 		$load_espresso_scripts = true; //This tells the plugin to load the required scripts
 		//echo $single_event_id;
+		espresso_require_template('init.php');
+		require_once(espresso_get_registration_page_template());
+
 		ob_start();
 		event_details_page($single_event_id);
 		$buffer = ob_get_contents();
