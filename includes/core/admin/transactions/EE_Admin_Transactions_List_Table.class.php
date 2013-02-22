@@ -269,28 +269,28 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
         $view_lnk = '
 		<li>
 			<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="' . __( 'View Transaction Details', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/icons/magnifier.png">
+				<img width="16" height="16" alt="' . __( 'View Transaction Details', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/magnifier.png">
 			</a>
 		</li>';
 		
          $dl_invoice_lnk = '
 		<li>
 			<a title="Download Invoice" target="_blank" href="'.$dl_invoice_lnk_url.'">
-				<img width="16" height="16" alt="Download Invoice" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/icons/invoice-1-16x16.png">
+				<img width="16" height="16" alt="Download Invoice" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/invoice-1-16x16.png">
 			</a>
 		</li>';
       
 	       $send_pay_lnk = '
 		<li>
 			<a href="'.$send_pay_lnk_url.'" title="' . __( 'Send Payment Reminder', 'event_espresso' ) . '">
-				<img width="20" height="20" alt="' . __( 'Send Payment Reminder', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/icons/payment-reminder-20x20.png">
+				<img width="20" height="20" alt="' . __( 'Send Payment Reminder', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/payment-reminder-20x20.png">
 			</a>
 		</li>';
 		
 	        $view_reg_lnk = '
 		<li>
 			<a href="'.$view_reg_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">
-				<img width="13" height="13" alt="' . __( 'View Registration Details', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/icons/edit.png">
+				<img width="13" height="13" alt="' . __( 'View Registration Details', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/edit.png">
 			</a>
 		</li>';
 

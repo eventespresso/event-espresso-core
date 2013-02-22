@@ -18,7 +18,7 @@ function espresso_help_popup($name) {
 	echo '
 	<a class="thickbox" href="#TB_inline?height=400&amp;width=500&amp;inlineId=' . $name . '" target="_blank">
 		<span class="question">
-			<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/subtle_help.png" width="16" height="16" alt="help" />
+			<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/subtle_help.png" width="16" height="16" alt="help" />
 		</span>
 	</a>';
 }

@@ -103,7 +103,7 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 								</td>
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
 									<a class="remove-option remove-item">
-										<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/trash-16x16.png"/>
+										<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/trash-16x16.png"/>
 									</a>
 								</td>
 							</tr>
@@ -123,7 +123,7 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 									<?php if( $count > 0 ){ ?>
 									<td style="padding: 0 10px 10px 0; line-height: 1em;">
 										<a class="remove-option remove-item">
-											<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/trash-16x16.png"/>
+											<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/trash-16x16.png"/>
 										</a>
 									</td>
 									<?php } ?>

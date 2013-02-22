@@ -30,7 +30,7 @@ global $org_options;
 							echo '
 							<a href="'.$reg_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">
 								View Registration ' . $registration->ID() . '  
-								<!--<img width="13" height="13" alt="View Registration" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/icons/edit.png">-->
+								<!--<img width="13" height="13" alt="View Registration" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/edit.png">-->
 							</a>';
 					?>
 					</th>
@@ -40,7 +40,7 @@ global $org_options;
 						echo '
 						<a href="'.$txn_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">
 							View Transaction ' . $registration->transaction_ID() . '  
-							<!--<img width="16" height="16" alt="' . __( 'View Transaction', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/icons/money.png">-->
+							<!--<img width="16" height="16" alt="' . __( 'View Transaction', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/money.png">-->
 						</a>';						
 					?>
 					</th>

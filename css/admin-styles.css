@@ -1757,7 +1757,7 @@ select.wide, td.wide select, td.wide input {width: 175px;}
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../images/icons/magnifier.png) no-repeat;
+	background: url(../images/magnifier.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -1771,7 +1771,7 @@ select.wide, td.wide select, td.wide input {width: 175px;}
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../images/icons/calendar_edit.png) no-repeat;
+	background: url(../images/calendar_edit.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -1799,7 +1799,7 @@ select.wide, td.wide select, td.wide input {width: 175px;}
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../images/icons/group.png) no-repeat;
+	background: url(../images/group.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -1828,7 +1828,7 @@ select.wide, td.wide select, td.wide input {width: 175px;}
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../images/icons/cog.png) no-repeat;
+	background: url(../images/cog.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -1842,7 +1842,7 @@ select.wide, td.wide select, td.wide input {width: 175px;}
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../images/icons/excel_icon.png) no-repeat;
+	background: url(../images/excel_icon.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -1856,7 +1856,7 @@ select.wide, td.wide select, td.wide input {width: 175px;}
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../images/icons/csv_icon_sm.gif) no-repeat;
+	background: url(../images/csv_icon_sm.gif) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -1870,7 +1870,7 @@ select.wide, td.wide select, td.wide input {width: 175px;}
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../images/icons/email_go.png) no-repeat;
+	background: url(../images/email_go.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -1884,7 +1884,7 @@ select.wide, td.wide select, td.wide input {width: 175px;}
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../images/icons/chart_bar.png) no-repeat;
+	background: url(../images/chart_bar.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -1894,7 +1894,7 @@ select.wide, td.wide select, td.wide input {width: 175px;}
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../images/icons/tag.png) no-repeat;
+	background: url(../images/tag.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }

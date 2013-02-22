@@ -7,35 +7,35 @@ function event_espresso_paid_status_icon($payment_status = '') {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	switch ($payment_status) {
 		case 'Checkedin':
-			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/accept.png" width="16" height="16" alt="' . __('Checked-in', 'event_espresso') . '" title="' . __('Checked-in', 'event_espresso') . '" />';
+			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/accept.png" width="16" height="16" alt="' . __('Checked-in', 'event_espresso') . '" title="' . __('Checked-in', 'event_espresso') . '" />';
 			break;
 		case 'NotCheckedin':
-			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/exclamation.png" width="16" height="16" alt="' . __('Not Checked-in', 'event_espresso') . '" title="' . __('Not Checked-in', 'event_espresso') . '" />';
+			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/exclamation.png" width="16" height="16" alt="' . __('Not Checked-in', 'event_espresso') . '" title="' . __('Not Checked-in', 'event_espresso') . '" />';
 			break;
 		case 'Active':
-			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/accept.png" width="16" height="16" alt="' . __('Active', 'event_espresso') . '" title="' . __('Active', 'event_espresso') . '" />';
+			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/accept.png" width="16" height="16" alt="' . __('Active', 'event_espresso') . '" title="' . __('Active', 'event_espresso') . '" />';
 			break;
 		case 'Inactive':
-			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/exclamation.png" width="16" height="16" alt="' . __('Inactive', 'event_espresso') . '" title="' . __('Inactive', 'event_espresso') . '" />';
+			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/exclamation.png" width="16" height="16" alt="' . __('Inactive', 'event_espresso') . '" title="' . __('Inactive', 'event_espresso') . '" />';
 			break;
 //		case 'Checkedin':
-//			echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/accept.png" width="16" height="16" alt="' . __('Checked-in', 'event_espresso') . '" title="' . __('Checked-in', 'event_espresso') . '" />';
+//			echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/accept.png" width="16" height="16" alt="' . __('Checked-in', 'event_espresso') . '" title="' . __('Checked-in', 'event_espresso') . '" />';
 //			break;
 //		case 'NotCheckedin':
-//			echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/exclamation.png" width="16" height="16" alt="' . __('Not Checked-in', 'event_espresso') . '" title="' . __('Not Checked-in', 'event_espresso') . '" />';
+//			echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/exclamation.png" width="16" height="16" alt="' . __('Not Checked-in', 'event_espresso') . '" title="' . __('Not Checked-in', 'event_espresso') . '" />';
 //			break;
 		case 'Approved':
-			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/accept.png" width="16" height="16" alt="' . __('Completed', 'event_espresso') . '" title="' . __('Completed', 'event_espresso') . '" />';
+			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/accept.png" width="16" height="16" alt="' . __('Completed', 'event_espresso') . '" title="' . __('Completed', 'event_espresso') . '" />';
 			break;
 
 		case 'Pending':
-			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/error.png" width="16" height="16" alt="' . __('Pending', 'event_espresso') . '" title="' . __('Pending', 'event_espresso') . '" />';
+			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/error.png" width="16" height="16" alt="' . __('Pending', 'event_espresso') . '" title="' . __('Pending', 'event_espresso') . '" />';
 			break;
 		case 'Declined':
-			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/exclamation.png" width="16" height="16" alt="' . __('Payment Declined', 'event_espresso') . '" title="' . __('Payment Declined', 'event_espresso') . '" />';
+			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/exclamation.png" width="16" height="16" alt="' . __('Payment Declined', 'event_espresso') . '" title="' . __('Payment Declined', 'event_espresso') . '" />';
 			break;
 		default:
-			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/exclamation.png" width="16" height="16" alt="' . __('Incomplete', 'event_espresso') . '" title="' . __('Incomplete', 'event_espresso') . '" />';
+			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/exclamation.png" width="16" height="16" alt="' . __('Incomplete', 'event_espresso') . '" title="' . __('Incomplete', 'event_espresso') . '" />';
 			break;
 	}
 }
