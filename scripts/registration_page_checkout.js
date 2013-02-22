@@ -6,6 +6,9 @@
 	$(window).unload( function() {}); 
 
 
+	//$('#mer-registration-frm-1').validate();
+
+
 	// move notifications from top of reg form to just before closing body tag
 	// so that notifications can easily be centered on screen regardless of resolution or scroll position
 	var notifications = $('#multi-event-registration-notifications').html();
@@ -26,6 +29,7 @@
 		}
 		return this;
 	}
+
 
 
 
