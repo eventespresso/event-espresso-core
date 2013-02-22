@@ -336,6 +336,7 @@ function espresso_calendar_do_stuff($show_expired) {
 		$ee_event_title = htmlspecialchars_decode(stripslashes_deep($event->event_name . $status), ENT_QUOTES);
 		$eventArray['title'] = $ee_event_title;
 
+		
 		//Gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
 		$eventArray['description'] = espresso_format_content($event->event_desc);
 		
