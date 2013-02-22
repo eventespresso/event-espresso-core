@@ -45,6 +45,9 @@ function espresso_calendar_config_mnu() {
 		$espresso_calendar['tooltips_pos']['at_1'] = $_POST['tooltips_pos_at_1'];
 		$espresso_calendar['tooltips_pos']['at_2'] = $_POST['tooltips_pos_at_2'];
 		$espresso_calendar['show_time'] = $_POST['show_time'];
+		$espresso_calendar['throttle']['enable'] = $_POST['throttle_enable'];
+		$espresso_calendar['throttle']['amount'] = $_POST['throttle_amount'];
+		$espresso_calendar['show_attendee_limit'] = $_POST['show_attendee_limit'];
 		$espresso_calendar['time_format'] = $_POST['time_format_custom'];
 		$espresso_calendar['espresso_use_pickers'] = $_POST['espresso_use_pickers'];
 		$espresso_calendar['ee_event_background'] = (!empty($_POST['ee_event_background']) ) ? $_POST['ee_event_background'] : $espresso_calendar['ee_event_background'];
@@ -277,16 +280,17 @@ function espresso_calendar_config_mnu() {
 										</th>
 										<td><input id="text-color" type="text" name="ee_event_text_color" <?php echo (isset($espresso_calendar['ee_event_text_color']) && !empty($espresso_calendar['ee_event_text_color'])) ? 'value="' . $espresso_calendar['ee_event_text_color'] . '"' : 'value="#ebe6e8"' ?> /><div id="colorpicker-2"></div></td>
 									</tr>
+									
 
 
 									<tr>
 										<th>
 											<label for="show_tooltips">
-	<?php _e('Show Tooltips', 'event_espresso'); ?>
+											<?php _e('Show Tooltips', 'event_espresso'); ?>
 											</label>
 										</th>
 										<td>
-	<?php echo select_input('show_tooltips', $values, $espresso_calendar['show_tooltips'], 'id="show_tooltips"'); ?>
+											<?php echo select_input('show_tooltips', $values, $espresso_calendar['show_tooltips'], 'id="show_tooltips"'); ?>
 										</td>
 									</tr>
 							<?php 
@@ -362,7 +366,7 @@ function espresso_calendar_config_mnu() {
 							<table class="form-table">
 								<tbody>
 									<tr>
-										<th><?php _e('Header Style', 'event_espresso'); ?></th>
+										<th><label><?php _e('Header Style', 'event_espresso'); ?></label></th>
 										<td><textarea name="espresso_calendar_header" id="espresso_calendar_header" cols="30" rows="5"><?php echo htmlentities(stripslashes_deep($espresso_calendar['espresso_calendar_header'])) ?></textarea>
 											<br />
 											<span class="description">
@@ -370,7 +374,7 @@ function espresso_calendar_config_mnu() {
 											</span></td>
 									</tr>
 									<tr>
-										<th><?php _e('Button Text', 'event_espresso'); ?></th>
+										<th><label><?php _e('Button Text', 'event_espresso'); ?></label></th>
 										<td><textarea name="espresso_calendar_buttonText" id="espresso_calendar_buttonText" cols="30" rows="5"><?php echo htmlentities(stripslashes_deep($espresso_calendar['espresso_calendar_buttonText'])) ?></textarea>
 											<br />
 											<span class="description">
@@ -378,7 +382,7 @@ function espresso_calendar_config_mnu() {
 											</span></td>
 									</tr>
 									<tr>
-										<th><?php _e('Title Format', 'event_espresso'); ?></th>
+										<th><label><?php _e('Title Format', 'event_espresso'); ?></label></th>
 										<td><textarea name="espresso_calendar_titleFormat" id="espresso_calendar_titleFormat" cols="30" rows="5"><?php echo htmlentities(stripslashes_deep($espresso_calendar['espresso_calendar_titleFormat'])) ?></textarea>
 											<br />
 											<span class="description">
@@ -386,7 +390,7 @@ function espresso_calendar_config_mnu() {
 											</span></td>
 									</tr>
 									<tr>
-										<th><?php _e('Column Format', 'event_espresso'); ?></th>
+										<th><label><?php _e('Column Format', 'event_espresso'); ?></label></th>
 										</th>
 										<td><textarea name="espresso_calendar_columnFormat" id="espresso_calendar_columnFormat" cols="30" rows="5"><?php echo htmlentities(stripslashes_deep($espresso_calendar['espresso_calendar_columnFormat'])) ?></textarea>
 											<br />
@@ -395,7 +399,7 @@ function espresso_calendar_config_mnu() {
 											</span></td>
 									</tr>
 									<tr>
-										<th><?php _e('Month Names', 'event_espresso'); ?></th>
+										<th><label><?php _e('Month Names', 'event_espresso'); ?></label></th>
 										<td><textarea name="espresso_calendar_monthNames" id="espresso_calendar_monthNames" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_monthNames']) ?></textarea>
 											<br />
 											<span class="description">
@@ -403,7 +407,7 @@ function espresso_calendar_config_mnu() {
 											</span></td>
 									</tr>
 									<tr>
-										<th><?php _e('Month Names Short', 'event_espresso'); ?></th>
+										<th><label><?php _e('Month Names Short', 'event_espresso'); ?></label></th>
 										<td><textarea name="espresso_calendar_monthNamesShort" id="espresso_calendar_monthNamesShort" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_monthNamesShort']) ?></textarea>
 											<br />
 											<span class="description">
@@ -411,7 +415,7 @@ function espresso_calendar_config_mnu() {
 											</span></td>
 									</tr>
 									<tr>
-										<th><?php _e('Day Names', 'event_espresso'); ?></th>
+										<th><label><?php _e('Day Names', 'event_espresso'); ?></label></th>
 										<td><textarea name="espresso_calendar_dayNames" id="espresso_calendar_dayNames" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_dayNames']) ?></textarea>
 											<br />
 											<span class="description">
@@ -419,13 +423,60 @@ function espresso_calendar_config_mnu() {
 											</span></td>
 									</tr>
 									<tr>
-										<th><?php _e('Day Names Short', 'event_espresso'); ?></th>
+										<th><label><?php _e('Day Names Short', 'event_espresso'); ?></label></th>
 										<td><textarea name="espresso_calendar_dayNamesShort" id="espresso_calendar_dayNamesShort" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_dayNamesShort']) ?></textarea>
 											<br />
 											<span class="description">
 	<?php _e('Abbreviated names of days-of-week.', 'event_espresso'); ?>
 											</span></td>
 									</tr>
+									</tbody>
+							</table>
+							<h4>
+	<?php _e('Memory Management', 'event_espresso'); ?>
+							</h4>
+
+							<table class="form-table">
+								<tbody>
+									<?php 
+									//Throttle settings
+									$throttle_values = array(
+											array('id' => '50', 'text' => __('Really Low (50 records)', 'event_espresso')),
+											array('id' => '100', 'text' => __('Low (100 records)', 'event_espresso')),
+											array('id' => '250', 'text' => __('Low - Medium  (250 records)', 'event_espresso')),
+											array('id' => '500', 'text' => __('Medium (500 records)', 'event_espresso')),
+											array('id' => '750', 'text' => __('Medium - High (750 records)', 'event_espresso')),
+											array('id' => '1000', 'text' => __('High (1000 records)', 'event_espresso')),
+											array('id' => '1', 'text' => __('All the Way! (all records)', 'event_espresso')),
+									);
+									?>
+									<tr>
+										<th>
+											<label for="throttle_enable">
+											<?php _e('Enable Database Throttling', 'event_espresso'); ?>
+											</label>
+										</th>
+										<td>
+											<?php echo select_input('throttle_enable', $values, !empty($espresso_calendar['throttle']['enable']) ? $espresso_calendar['throttle']['enable'] : true, 'id="throttle_enable"'); ?> <?php echo select_input('throttle_amount', $throttle_values, !empty($espresso_calendar['throttle']['amount']) ? $espresso_calendar['throttle']['amount'] : '250', 'id="throttle_amount"'); ?><br />
+										<span class="description">
+	<?php _e('Enabling this setting allows you to limit the amount of records retrieved from the database .', 'event_espresso'); ?>
+											</span>
+										</td>
+									</tr>
+									
+									<tr>
+										<th> <label for="show_attendee_limit">
+	<?php _e('Display Attendee Limits', 'event_espresso'); ?>
+											</label>
+										</th>
+										<td><?php echo select_input('show_attendee_limit', $values, !empty($espresso_calendar['show_attendee_limit']) ? $espresso_calendar['show_attendee_limit'] : false, 'id="show_attendee_limit"'); ?><br />
+										<span class="description">
+	<?php _e('Enabling this setting increases the amount database queries and may break the calendar on some servers.', 'event_espresso'); ?>
+											</span>
+										</td>
+									</tr>
+									
+									
 								</tbody>
 							</table>
 							<input type="hidden" name="update_calendar" value="update" />

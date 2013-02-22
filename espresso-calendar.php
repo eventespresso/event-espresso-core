@@ -88,6 +88,8 @@ function espresso_calendar_install() {
 			'enable_cat_classes' => false,
 			'time_format' => get_option('time_format'),
 			'show_time' => true,
+			'throttle' => array('enable'=>true, 'amount'=>100),
+			'show_attendee_limit' => false,
 			//'use_themeroller' => false,
 			'espresso_calendar_titleFormat' => "month: 'MMMM yyyy', week: 'MMM dS[ yyyy] - {[ MMM] dS yyyy}', day: 'dddd, MMM dS, yyyy'",
 			'espresso_calendar_columnFormat' => "month: 'ddd', week: 'ddd M/d', day: 'dddd M/d'",
@@ -176,6 +178,11 @@ add_action('wp_print_styles', 'espresso_init_calendar_style');
 function espresso_calendar_do_stuff($show_expired) {
 	global $wpdb, $org_options, $espresso_calendar, $event_category_id, $events, $eventsArray;
 	remove_shortcode( 'LISTATTENDEES' );
+	$throttle = '';
+	if ( isset($espresso_calendar['throttle']['enable']) && $espresso_calendar['throttle']['enable'] == true ) {
+		if ($espresso_calendar['throttle']['amount'] > 1)
+			$throttle = 'LIMIT ' . $espresso_calendar['throttle']['amount'];
+	}
 	
 	//Build the SQL to run
 	//Get the categories
@@ -226,12 +233,14 @@ function espresso_calendar_do_stuff($show_expired) {
 			$sql .= " AND e.registration_end >= '" . date('Y-m-d') . "' ";
 		}
 	}
-	$sql .= " GROUP BY e.id ORDER BY date(start_date), id ASC";
+	$sql .= " GROUP BY e.id ORDER BY e.start_date = '0000-00-00' ASC " . $throttle;
 	//Debug
 	//echo '<p>$sql - '.$sql.'</p>';
+	
+	echo '<h4>$sql : ' . $sql . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4><br /><br /><br />';
 
 	$events = array();
-	$events_data = $wpdb->get_results($sql);
+	$events_data = $wpdb->get_results($wpdb->prepare($sql, ''));
 	
 	foreach ($events_data as $event) {
 		global $this_event_id;
@@ -310,8 +319,8 @@ function espresso_calendar_do_stuff($show_expired) {
 
 		//Id of the event
 		$eventArray['id'] = $event->id;
-		$show_attendee_limit = TRUE;
-		if ($show_attendee_limit == TRUE){
+		
+		if (isset($espresso_calendar['show_attendee_limit']) && $espresso_calendar['show_attendee_limit'] == true) {
 			$orig_attendee_limit = get_number_of_attendees_reg_limit($event->id, $type = 'num_attendees_slash_reg_limit');
 			$parse_limits = explode( '/', $orig_attendee_limit, 2 );
 			$num_completed = $parse_limits[0];
@@ -569,20 +578,18 @@ if (!function_exists('espresso_calendar')) {
 			?>				
 								if ( event.startTime != '' && event.startTime != undefined ) {
 									event.startTime = '<span class="event-start-time">' + event.startTime + '</span>';
-								} else {
-									event.startTime = false;
-								}
 								
-								if ( event.startTime != false && event.endTime != '' && event.endTime != undefined ) {
-									event.endTime = '<span class="event-end-time">' + event.endTime + '</span>';
-								} else {
-									event.endTime = '';
-								}
 								
-								if ( event.startTime ) {
-									element.find('.fc-event-title').after($('<p class="time-display-block">' + event.startTime + ' - ' + event.endTime + '</p>'));
-								}
-								
+									if ( event.startTime != false && event.endTime != '' && event.endTime != undefined ) {
+										event.endTime = '<span class="event-end-time">' + event.endTime + '</span>';
+									} else {
+										event.endTime = '';
+									}
+									
+									if ( event.startTime ) {
+										element.find('.fc-event-title').after($('<p class="time-display-block">' + event.startTime + ' - ' + event.endTime + '</p>'));
+									}
+								} 
 
 			<?php
 					}
@@ -591,7 +598,7 @@ if (!function_exists('espresso_calendar')) {
 			?>
 										element.qtip({
 											content: {
-												text: event.description + '<div class="qtip_info">' + '<a class="reg_now" href="' + event.url + '">Register Now</a>' + '<span class="attendee_limit">' + event.attendee_limit + '</span>' + '<span class="time_cal_qtip">' + event.startTime + ' - ' + event.endTime + '</span>' + '</div>',
+												text: event.description + '<div class="qtip_info">' + '<a class="reg_now" href="' + event.url + '">Register Now</a>'  <?php if (isset($espresso_calendar['show_attendee_limit']) && $espresso_calendar['show_attendee_limit'] == true) {?>+' <span class="attendee_limit">' + event.attendee_limit + '</span>' <?php }?> <?php if ($espresso_calendar['show_time'] == true) {?> +(event.startTime != '' ? '<span class="time_cal_qtip">' + event.startTime + ' - ' + event.endTime + '</span>' : '')<?php }?> + '</div>',
 												title: {
 													text: '<?php _e('Description', 'event_espresso'); ?>',
 													button: true,
@@ -888,7 +895,7 @@ class Espresso_Calendar_Widget extends WP_Widget {
 					} else {
 						$dont_show_expired = null;
 					}
-					do_action('action_hook_espresso_calendar_do_stuff',$show_expired);
+					do_action('action_hook_espresso_calendar_do_stuff');
 					include_once(ESPRESSO_CALENDAR_PLUGINFULLPATH . 'espresso-calendar-widget.php');
 					//var_dump($events);
 					echo $espresso_calendar_widget;
