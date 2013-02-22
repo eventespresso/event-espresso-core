@@ -111,8 +111,6 @@ function espresso_load_javascript_files() {
 
 	if (!$load_espresso_scripts)
 		return;
-//	wp_register_script('reCopy', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/reCopy.js"), false, '1.1.0');
-//	wp_print_scripts('reCopy');
 
 	wp_register_script('jquery.validate.js', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.min.js"), false, '1.8.1');
 	wp_print_scripts('jquery.validate.js');
@@ -120,6 +118,9 @@ function espresso_load_javascript_files() {
 	wp_register_script('validation', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/validation.js"), false, EVENT_ESPRESSO_VERSION);
 	wp_print_scripts('validation');
 }
+
+
+
 
 function espresso_toolbar_items($admin_bar) {
 
