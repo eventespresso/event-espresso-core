@@ -228,6 +228,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		foreach ( $results as $status ) {
 			self::$_pay_status[ $status->STS_ID ] = __( $status->STS_code, 'event_espresso' );
 		}
+		//printr( self::$_pay_status, 'self::$_pay_status  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$this->_template_args['payment_status'] = self::$_pay_status;
 			
 	}
@@ -626,7 +627,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					// check for attendee object
 					$attendee['att_obj'] = isset( $attendee['att_obj'] ) && is_object( $attendee['att_obj'] ) ? $attendee['att_obj'] : FALSE;
 					if ( ! $attendee['att_obj'] ) {
-						$where_cols_n_values = array( 'ATT_fname' => $attendee['fname'], 'ATT_lname' => $attendee['lname'], 'ATT_email' => $attendee['email'] );
+						$where_cols_n_values = array( 'ATT_fname' => $attendee[1], 'ATT_lname' => $attendee[2], 'ATT_email' => $attendee[3] );
 					    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php' );
 					    $ATT_MDL = EEM_Attendee::instance();
 						if ( ! $attendee['att_obj'] = $ATT_MDL->find_existing_attendee( $where_cols_n_values )) {
@@ -636,7 +637,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					// check for reg object
 					$attendee['reg_obj'] = isset( $attendee['reg_obj'] ) && is_object( $attendee['reg_obj'] ) ? $attendee['reg_obj'] : FALSE;		
 					if ( ! $attendee['reg_obj'] ) {
-						$where_cols_n_values = array( 'ATT_fname' => $attendee['fname'], 'ATT_lname' => $attendee['lname'], 'ATT_email' => $attendee['email'] );
+						$where_cols_n_values = array( 'ATT_fname' => $attendee[1], 'ATT_lname' => $attendee[2], 'ATT_email' => $attendee[3] );
 					    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
 					    $REG_MDL = EEM_Registration::instance();
 						if ( ! $attendee['reg_obj'] = $REG_MDL->get_registration_for_transaction_attendee( $TXN_ID, $attendee['att_obj']->ID(), $att_nmbr )) {

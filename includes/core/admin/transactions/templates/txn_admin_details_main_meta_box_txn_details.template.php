@@ -96,9 +96,9 @@
 					<th class="jst-cntr"><?php _e( 'Method', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Gateway', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Gateway Response', 'event_espresso' );?></th>
-					<th class="jst-left"><?php _e( 'TXN ID / CHQ #', 'event_espresso' );?></th>
-					<th class="jst-left"><?php _e( 'P.O. / S.O. #', 'event_espresso' );?></th>
-					<th class="jst-left"><?php _e( 'Notes / Extra Accounting', 'event_espresso' );?></th>
+					<th class="jst-left"><?php _e( 'TXN&nbsp;ID / CHQ&nbsp;#', 'event_espresso' );?></th>
+					<th class="jst-left"><?php _e( 'P.O. / S.O.&nbsp;#', 'event_espresso' );?></th>
+					<th class="jst-left"><?php _e( 'Notes / Extra&nbsp;Accounting', 'event_espresso' );?></th>
 					<!--<th class="jst-left"><?php _e( 'Details', 'event_espresso' );?></th>-->
 					<th class="jst-cntr"><?php _e( 'Amount', 'event_espresso' );?></th>
 				</tr>
@@ -139,7 +139,7 @@
 					</td>
 					<td class=" jst-left">
 						<div id="payment-gateway-<?php echo $PAY_ID;?>">
-							<?php echo isset( $active_gateways[ $payment->gateway() ] ) ? $active_gateways[ $payment->gateway() ] : '';?>
+							<?php echo $payment->gateway();?>
 						</div>
 						<div id="payment-gateway-id-<?php echo $PAY_ID;?>" class="hidden"><?php echo $payment->gateway();?></div>
 					</td>
