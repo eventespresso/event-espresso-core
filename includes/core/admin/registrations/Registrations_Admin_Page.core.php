@@ -1469,8 +1469,10 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$success = FALSE;
 		}
 
+		$EVT_ID = isset($this->_req_data['event_id']) ? absint( $this->_req_data['event_id'] ) : FALSE;
+
 		//echo '<h4>$success : ' . $success . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		$this->_redirect_after_action( $success, 'Attendee Check In Status', 'updated', array( 'action' => 'event_registrations', 'reg' => $REG_ID ));
+		$this->_redirect_after_action( $success, 'Attendee Check In Status', 'updated', array( 'action' => 'event_registrations', 'event_id' => $EVT_ID ));
 		
 	}
 

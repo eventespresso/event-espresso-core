@@ -183,7 +183,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$view_details_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL ), 'view_registration_nonce' );
         $actions['view_details'] = '
 			<a href="'.$view_details_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . __( 'View Reg Details', 'event_espresso' ) . '</a>';
- 		$check_in_url = wp_nonce_url( add_query_arg( array( 'action'=>'event_registrations', 'reg'=>$item->REG_ID ), REG_ADMIN_URL ), 'event_registrations_nonce' );
+ 		$check_in_url = wp_nonce_url( add_query_arg( array( 'action'=>'event_registrations', 'event_id'=>$item->EVT_ID ), REG_ADMIN_URL ), 'event_registrations_nonce' );
 		$actions['check_in'] = '
 			<a href="'.$check_in_url.'" title="' . __( 'View Check In List', 'event_espresso' ) . '">' . __( 'View Check In List', 'event_espresso' ) . '</a>';
 
