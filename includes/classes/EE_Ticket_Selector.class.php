@@ -257,14 +257,19 @@ class EE_Ticket_Selector extends EE_BASE {
 		$price_options = array();
 
 		if ( ! empty( $prices )) {
-			foreach ( $prices as $price ) {
-				//printr( $price, '$price  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );		
-				// add price 
-				$price_option = $price->name() . ': ';
-				// format ticket price
-				$price_option .= $price == '0.00' ? '<span class="price-is-free">free</span>' : $currency_symbol . $price->price();
-				// add this price option to the array of options
-				$price_options[ implode( ',', $price->ID_list() ) ] = array( 'raw' => $price->price(), 'option' => $price_option, 'obj' => $price->obfuscate() );
+			foreach ( $prices as $price ) {			
+				if ( is_object( $price ) && is_a( $price, 'EE_Ticket_Price' )) {
+					//printr( $price, '$price  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );		
+					// add price 
+					$price_option = $price->name() . ': ';
+					// format ticket price
+					$price_option .= $price == '0.00' ? '<span class="price-is-free">free</span>' : $currency_symbol . $price->price();
+					// add this price option to the array of options
+					$price_options[ implode( ',', $price->ID_list() ) ] = array( 'raw' => $price->price(), 'option' => $price_option, 'obj' => $price->obfuscate() );				
+				} else {
+					$error_msg = __( 'An error occured. A supplied ticket price was not of the correct type.', 'event_espresso' );
+					EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );					
+				}
 			}		
 		}
 		//printr( $price_options, '$price_options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );

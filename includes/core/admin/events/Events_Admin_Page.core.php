@@ -826,7 +826,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 	public function pricing_metabox() {
-		global $org_options;
+		global $org_options, $espresso_premium;
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
@@ -867,7 +867,15 @@ class Events_Admin_Page extends EE_Admin_Page {
 				<p><?php _e('There are currently no Prices set for this Event. Please see the Event Pricing section for more details.', 'event_espresso'); ?></p>
 			</div>	
 			<div id="no-ticket-prices-msg-dv">
-				<p><?php _e('Please enter at lease one Event Price for this Event, or one Default Event Price to ensure that this Event displays and functions properly. Default Event Prices can be set on the <a href="'. admin_url( 'admin.php?page=pricing' ) .'">Pricing Management</a> page.', 'event_espresso'); ?></p>
+				<p>
+				<?php 
+				if ( $espresso_premium ) {
+					_e('Please enter at lease one Event Price for this Event, or one Default Event Price to ensure that this Event displays and functions properly. Default Event Prices can be set on the <a href="'. admin_url( 'admin.php?page=pricing' ) .'">Pricing Management</a> page.', 'event_espresso'); 
+				} else {
+					_e('Please enter at lease one Event Price for this Event to ensure that this Event displays and functions properly.', 'event_espresso'); 
+				}				
+				?>					
+				</p>
 			</div>
 		<?php endif; ?>
 
@@ -891,7 +899,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		foreach ( $all_prices as $price_type => $prices ) :
 			foreach ( $prices as $price ) :
 				if ( ! $price->deleted() ) :
-					//echo printr( $price, '$price' );
+					//printr( $price, '$price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 					$disabled = ! $price->is_active() ? ' disabled="disabled"' : ''; 
 					$disabled_class = ! $price->is_active() ? ' input-disabled' : ''; 
 					$inactive = ! $price->is_active() ? '<span class="inactice-price">'.__('inactive price - edit advanced settings to reactivate', 'event_espresso').'</span>' : FALSE; 
@@ -2733,7 +2741,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$event_meta['originally_submitted_by'] = $espresso_wp_user;
 		$event_meta['default_payment_status'] = $this->_req_data['default_payment_status'];
 
-		if ($this->_req_data['emeta'] != '') {
+		if ( isset( $this->_req_data['emeta'] ) && ! empty ( $this->_req_data['emeta'] )) {
 			foreach ($this->_req_data['emeta'] as $k => $v) {
 				$event_meta[$v] = strlen(trim($this->_req_data['emetad'][$k])) > 0 ? $this->_req_data['emetad'][$k] : '';
 			}
@@ -3279,7 +3287,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		 */
 
 
-		if ( $this->_req_data['emeta'] != '' ) {
+		if ( isset( $this->_req_data['emeta'] ) && ! empty ( $this->_req_data['emeta'] )) {
 			foreach ($this->_req_data['emeta'] as $k => $v) {
 				$event_meta[$v] = $this->_req_data['emetad'][$k];
 			}
