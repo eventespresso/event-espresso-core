@@ -575,8 +575,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * _verify_routes
 	 * All this method does is verify the incoming request and make sure that routes exist for it.  We do this early so we know if we need to drop out.
 	 *
-	 * @
-	 * @return [type] [description]
+	 * @access private
+	 * @return void
 	 */
 	private function _verify_routes() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
@@ -624,6 +624,25 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//wait a minute... we might have a noheader in the route array
 		$this->_is_UI_request = is_array($this->_route) && isset($this->_route['noheader'] ) && $this->_route['noheader'] ? FALSE : $this->_is_UI_request;
 
+	}
+
+
+
+	/**
+	 * this method simply verifies a given route and makes sure its an actual route available for the loaded page
+	 * @param  string $route the route name we're verifying
+	 * @return mixed  (bool|Exception)      we'll throw an exception if this isn't a valid route.
+	 */
+	private function _verify_route( $route ) {
+		if ( array_key_exists( $this->_req_action, $this->_page_routes )) {
+			return true;
+		} else {
+			// user error msg
+			$error_msg =  sprintf( __( 'The given page route does not exist for the %s admin page.', 'primal-plugin' ), $this->_admin_page_title );
+			// developer error msg
+			$error_msg .=  '||' . $error_msg . sprintf( __( ' Check the route you are using in your method (%s) and make sure it matches a route set in your "_page_routes" array property', 'event_espresso' ), $route );
+			throw new PRM_Error( $error_msg );
+		}
 	}
 
 
@@ -1584,7 +1603,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@return 		string
 	*/
 	private function _display_espresso_notices() {
-		echo EE_Error::get_notices();
+		$notices = $this->_get_transient( TRUE );
+		echo stripslashes($notices);
 	}
 
 
@@ -2041,11 +2061,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$redirect_url = admin_url( 'admin.php' );
 		}
 		
-		// grab messages
-		$notices = EE_Error::get_notices( false, true );
-
-		//combine $query_args and $notices
-		$query_args = array_merge( $query_args, $notices );
+		//assign notices to transient
+		$notices = EE_Error::get_notices();
+		//first we need the route for the transient!
+		$route = isset( $query_args['action'] ) ? $query_args['action'] : 'default';
+		$this->_add_transient( $route, $notices, TRUE );
+		
 		// generate redirect url
 
 		// if redirecting to anything other than the main page, add a nonce
@@ -2185,6 +2206,50 @@ abstract class EE_Admin_Page extends EE_BASE {
 			exit;
 		}
 	}
+
+
+
+
+	/**
+	 * This makes available the WP transient system for temporarily moving data between routes
+	 *
+	 * @access protected
+	 * @param route $route the route that should receive the transient
+	 * @param data $data  the data that gets sent
+	 * @param bool $notices If this is for notices then we use this to indicate so, otherwise its just a normal route transient.
+	 */
+	protected function _add_transient( $route, $data, $notices = FALSE ) {
+		$user_id = get_current_user_id();
+		
+		$this->_verify_route($route);
+
+
+		//now let's set the string for what kind of transient we're setting
+		$transient = $notices ? 'rte_n_tx_' . $route . '_' . $user_id : 'rte_tx_' . $route . '_' . $user_id;
+		$data = $notices ? array( 'notices' => $data ) : $data;
+		//is there already a transient for this route?  If there is then let's ADD to that transient
+		if ( $existing = get_transient( $transient ) ) {
+			$data = array_merge( (array) $data, (array) $existing );
+		}
+
+		set_transient( $transient, $data, 5 );
+	}
+	
+
+
+
+	/**
+	 * this retrieves the temporary transient that has been set for moving data between routes.
+	 * @param bool $notices true we get notices transient. False we just return normal route transient
+	 * @return mixed data
+	 */
+	protected function _get_transient( $notices = FALSE ) {
+		$user_id = get_current_user_id();
+		$transient = $notices ? 'rte_n_tx_' . $this->_req_action . '_' . $user_id : 'rte_tx_' . $this->_req_action . '_' . $user_id;
+		$data = get_transient( $transient );
+		return $notices ? $data['notices'] : $data;
+	}
+
 
 
 
