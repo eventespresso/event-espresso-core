@@ -83,6 +83,10 @@ class EE_Email_messenger extends EE_messenger  {
 
 	/**
 	 * see abstract declaration in parent class for details
+	 * 
+	 *
+	 * @access protected
+	 * @return void
 	 */
 	protected function _set_validator_config() {
 

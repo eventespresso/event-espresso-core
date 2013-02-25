@@ -68,7 +68,11 @@ abstract class EE_messenger extends EE_Base {
 
 
 	/**
-	 * Holds the configuration for the EE_Messages_Validator class to know how to validated the different fields. Note that the Validator will match each field here with the allowed shortcodes set in the "valid_shortcodes" array for the matched message type context.  So message types don't need to set a $_validator_config property.  Array should be in this format:
+	 * Holds the configuration for the EE_Messages_Validator class to know how to validated the different fields. Note that the Validator will match each field here with the allowed shortcodes set in the "valid_shortcodes" array for the matched message type context.  So message types don't need to set a $_validator_config property.
+	 *
+	 * Remember, ALL fields must be declared in this array.  However, an empty value for the field means that the field will accept all valid shortcodes set for the given context in the message type (by default). 
+	 * 
+	 * Array should be in this format:
 	 *
 	 * array(
 	 * 	'field_name(i.e.to)' => array(
