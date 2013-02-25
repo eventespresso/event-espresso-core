@@ -35,54 +35,6 @@ function espresso_load_admin_ajax_callbacks() {
 
 
 
-function espresso_admin_init() {
-
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-
-	global $org_options, $espresso_premium, $is_UI_request;
-	if (!is_user_logged_in()) {
-		return;
-	}
-
-	if ( $is_UI_request ) {
-
-		// copy themes to template directory
-		if (isset($_REQUEST['event_espresso_admin_action'])) {
-			if ($_REQUEST['event_espresso_admin_action'] == 'copy_templates') {
-				add_action('admin_init', 'event_espresso_trigger_copy_templates');
-			}
-		}
-		// copy gateways to gateway directory
-		if (isset($_REQUEST['event_espresso_admin_action'])) {
-			if ($_REQUEST['event_espresso_admin_action'] == 'copy_gateways') {
-				add_action('admin_init', 'event_espresso_trigger_copy_gateways');
-			}
-		}
-		
-		// Check to make sure all of the main pages are setup properly,
-		// if not create the default pages and display an admin notice
-		espresso_verify_default_pages_exist();
-		
-		$ee_pages = array(
-				$org_options['event_page_id'] => array(get_page($org_options['event_page_id']), '[ESPRESSO_EVENTS]'),
-				$org_options['return_url'] => array(get_page($org_options['return_url']), '[ESPRESSO_PAYMENTS]'),
-				$org_options['notify_url'] => array(get_page($org_options['notify_url']), '[ESPRESSO_TXN_PAGE]'),
-				$org_options['cancel_return'] => array(get_page($org_options['cancel_return']), 'ESPRESSO_CANCELLED')
-			);
-
-		foreach ($ee_pages as $ee_page) {
-			if ( ! isset($ee_page[0]->post_status) || $ee_page[0]->post_status != 'publish' || strpos( $ee_page[0]->post_content, $ee_page[1] ) === false) {
-				add_action('admin_notices', 'espresso_page_problems');
-			}
-		}
-	}
-}
-
-
-
-
-
-
 function espresso_verify_default_pages_exist() {
 	global $org_options;
 	$page_ids = get_all_page_ids();
@@ -476,6 +428,92 @@ function ee_update_question_groups_sequence() {
 	}
 }
 
+
+
+
+
 function espresso_load_messages_init() {
 	$EEMSGS_init = new EE_messages_init();
+}
+
+
+
+
+
+
+
+/**
+ * 		loads and instantiates files and objects for EE admin pages
+ * 		@access public
+ * 		@return void
+ */
+function espresso_init_admin_pages() {
+	
+	global $org_options, $is_UI_request;
+	
+	if ( $is_UI_request ) {
+
+		// copy themes to template directory
+		if (isset($_REQUEST['event_espresso_admin_action'])) {
+			if ($_REQUEST['event_espresso_admin_action'] == 'copy_templates') {
+				add_action('admin_init', 'event_espresso_trigger_copy_templates');
+			}
+		}
+		// copy gateways to gateway directory
+		if (isset($_REQUEST['event_espresso_admin_action'])) {
+			if ($_REQUEST['event_espresso_admin_action'] == 'copy_gateways') {
+				add_action('admin_init', 'event_espresso_trigger_copy_gateways');
+			}
+		}
+		
+		// Check to make sure all of the main pages are setup properly,
+		// if not create the default pages and display an admin notice
+		espresso_verify_default_pages_exist();
+		
+		$ee_pages = array(
+				$org_options['event_page_id'] => array(get_page($org_options['event_page_id']), '[ESPRESSO_EVENTS]'),
+				$org_options['return_url'] => array(get_page($org_options['return_url']), '[ESPRESSO_PAYMENTS]'),
+				$org_options['notify_url'] => array(get_page($org_options['notify_url']), '[ESPRESSO_TXN_PAGE]'),
+				$org_options['cancel_return'] => array(get_page($org_options['cancel_return']), 'ESPRESSO_CANCELLED')
+			);
+
+		foreach ($ee_pages as $ee_page) {
+			if ( ! isset($ee_page[0]->post_status) || $ee_page[0]->post_status != 'publish' || strpos( $ee_page[0]->post_content, $ee_page[1] ) === false) {
+				add_action('admin_notices', 'espresso_page_problems');
+			}
+		}
+	}		$load_SPCO = FALSE;
+		
+		$e_reg_pages = array( 
+						'register', 
+						'process_reg_step_1', 
+						'process_reg_step_2', 
+						'process_reg_step_3', 
+						'event_queue'
+				);
+		$load_SPCO = isset( $_REQUEST['e_reg'] ) && ( in_array( $_REQUEST['e_reg'], $e_reg_pages )) ? TRUE : $load_SPCO;
+			
+		$e_reg_ajax_actions = array( 
+						'espresso_process_registration_step_1', 
+						'espresso_process_registration_step_2', 
+						'espresso_process_registration_step_3'
+				);
+		$load_SPCO = isset( $_REQUEST['action'] ) && ( in_array( $_REQUEST['action'], $e_reg_ajax_actions )) ? TRUE : $load_SPCO;
+				
+		if ( $load_SPCO ) {
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Single_Page_Checkout.class.php');
+			global $Single_Page_Checkout;
+			$Single_Page_Checkout = EE_Single_Page_Checkout::instance();	
+			//Process email confirmations
+			//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/email.php');
+			define("ESPRESSO_REG_PAGE_FILES_LOADED", "true");
+		}
+
+	//this loads the controller for the admin pages which will setup routing etc
+	try {
+		$EEAdmin = new EE_Admin_Page_load();
+	} catch ( EE_Error $e ) {
+		$e->get_error();
+	}
+	
 }

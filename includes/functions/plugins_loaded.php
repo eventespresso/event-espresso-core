@@ -665,50 +665,6 @@ function espresso_get_fields_on_table($table_name = null) {
 	}
 
 
-/**
- * 		loads and instantiates files and objects for EE admin pages
- * 		@access public
- * 		@return void
- */
-function espresso_init_admin_pages() {
-	
-		$load_SPCO = FALSE;
-		
-		$e_reg_pages = array( 
-						'register', 
-						'process_reg_step_1', 
-						'process_reg_step_2', 
-						'process_reg_step_3', 
-						'event_queue'
-				);
-		$load_SPCO = isset( $_REQUEST['e_reg'] ) && ( in_array( $_REQUEST['e_reg'], $e_reg_pages )) ? TRUE : $load_SPCO;
-			
-		$e_reg_ajax_actions = array( 
-						'espresso_process_registration_step_1', 
-						'espresso_process_registration_step_2', 
-						'espresso_process_registration_step_3'
-				);
-		$load_SPCO = isset( $_REQUEST['action'] ) && ( in_array( $_REQUEST['action'], $e_reg_ajax_actions )) ? TRUE : $load_SPCO;
-				
-		if ( $load_SPCO ) {
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Single_Page_Checkout.class.php');
-			global $Single_Page_Checkout;
-			$Single_Page_Checkout = EE_Single_Page_Checkout::instance();	
-			//Process email confirmations
-			//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/email.php');
-			define("ESPRESSO_REG_PAGE_FILES_LOADED", "true");
-		}
-
-	//this loads the controller for the admin pages which will setup routing etc
-	try {
-		$EEAdmin = new EE_Admin_Page_load();
-	} catch ( EE_Error $e ) {
-		$e->get_error();
-	}
-	
-}
-
-
 
 function espresso_load_scripts_styles() {
 	wp_register_script('ee_error_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/EE_Error.js', array('jquery'), EVENT_ESPRESSO_VERSION, false);
