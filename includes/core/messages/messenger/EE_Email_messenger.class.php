@@ -79,6 +79,25 @@ class EE_Email_messenger extends EE_messenger  {
 			);
 	}
 
+
+
+	/**
+	 * see abstract declaration in parent class for details
+	 */
+	protected function _set_validator_config() {
+
+		$this->_validator_config = array(
+			'to' => array(
+				'shortcodes' => $this->_valid_shortcodes['to'],
+				'type' => 'email'
+				),
+			'from' => array(
+				'shortcodes' => $this->_valid_shortcodes['from'],
+				'type' => 'email'
+				)
+			);
+	}
+
 	
 
 	/**

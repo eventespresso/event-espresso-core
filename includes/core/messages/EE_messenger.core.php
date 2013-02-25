@@ -65,8 +65,27 @@ abstract class EE_messenger extends EE_Base {
 	 */
 	protected $_default_field_content = array();
 
+
+
 	/**
-	 * This wil hold the EEM_message_templates model for interacting with the database and retrieving active templates for the messenger
+	 * Holds the configuration for the EE_Messages_Validator class to know how to validated the different fields. Note that the Validator will match each field here with the allowed shortcodes set in the "valid_shortcodes" array for the matched message type context.  So message types don't need to set a $_validator_config property.  Array should be in this format:
+	 *
+	 * array(
+	 * 	'field_name(i.e.to)' => array(
+	 * 		'shortcodes' => array('email'), //an array of shortcode groups (correspond to EE_Shortcodes library class) that are allowed in the field. Typically you can just include $this->_valid_shortcodes['field_name'] as the value here (because they will match).
+	 * 		'specific_shortcodes' => array('[ADMIN_EMAIL]'), //if this index is present you can further restrict the field to ONLY specific shortcodes if an entire group isn't sufficient.
+	 * 		'type' => 'email' //this is the field type and should match one of the validator types (see EE_Messages_Validator.core.php for all the possible types).  If not required you can just leave empty.
+	 * 	)
+	 * )
+	 * 
+	 * @var array
+	 */
+	protected $_validator_config = array();
+
+
+
+	/**
+	 * This will hold the EEM_message_templates model for interacting with the database and retrieving active templates for the messenger
 	 * @var object
 	 */
 	protected $_EEM_data;
@@ -112,6 +131,7 @@ abstract class EE_messenger extends EE_Base {
 		$this->_set_template_fields();
 		$this->_set_default_field_content();
 		$this->_set_valid_shortcodes();
+		$this->_set_validator_config();
 		$this->_set_admin_pages();
 	}
 
@@ -182,13 +202,40 @@ abstract class EE_messenger extends EE_Base {
 
 
 
+	/**
+	 * Child classes must declare the $_validator_config property using this method.
+	 * See comments for $_validator_config for details on what it is used for.
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	abstract protected function _set_validator_config();
+
+
+
+
 
 	/**
 	 * This returns the array of valid shortcodes for a message type as set by the child in the $_valid_shortcode property.
+	 *
+	 * @access public
 	 * @return array   an array of valid shortcodes.
 	 */
 	public function get_valid_shortcodes() {
 		return $this->_valid_shortcodes;
+	}
+
+
+
+
+	/**
+	 * This returns the _validator_config property
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public function get_validator_config() {
+		return $this->_validator_config;
 	}
 
 
