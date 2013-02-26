@@ -126,8 +126,8 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 			'venue_id' => $item->id
 		);
 
-		$edit_link = wp_nonce_url( add_query_arg( $edit_query_args, EE_VENUES_ADMIN_URL ), 'edit_venue_nonce' );
-		$delete_link = wp_nonce_url( add_query_arg( $delete_query_args, EE_VENUES_ADMIN_URL ), 'delete_venue_nonce' );
+		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EE_VENUES_ADMIN_URL );
+		$delete_link = EE_Admin_Page::add_query_args_and_nonce( $delete_query_args, EE_VENUES_ADMIN_URL );
 
 		$actions = array(
 			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Venue', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>',

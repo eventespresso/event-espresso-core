@@ -26,7 +26,7 @@ global $org_options;
 					</th>
 					<th class="jst-left">
 					<?php 
-							$reg_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg'=>$registration->ID() ), REG_ADMIN_URL ), 'view_registration_nonce' );	
+							$reg_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', 'reg'=>$registration->ID() ), REG_ADMIN_URL );	
 							echo '
 							<a href="'.$reg_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">
 								View Registration ' . $registration->ID() . '  
@@ -36,7 +36,7 @@ global $org_options;
 					</th>
 					<th class="jst-left">
 					<?php 
-						$txn_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_transaction', 'txn'=>$registration->transaction_ID() ), TXN_ADMIN_URL ), 'view_transaction_nonce' );
+						$txn_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'txn'=>$registration->transaction_ID() ), TXN_ADMIN_URL );
 						echo '
 						<a href="'.$txn_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">
 							View Transaction ' . $registration->transaction_ID() . '  

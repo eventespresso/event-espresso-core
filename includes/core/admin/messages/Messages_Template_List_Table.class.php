@@ -160,7 +160,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 		$actions = array();
 		
 		// edit link
-		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_message_template', 'id'=>$item->GRP_ID(), 'evt_id' => $item->event() ), EE_MSG_ADMIN_URL ), 'edit_message_template_nonce' );
+		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_message_template', 'id'=>$item->GRP_ID(), 'evt_id' => $item->event() ), EE_MSG_ADMIN_URL );
 		$actions['edit'] = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Template Group', 'event_espresso' ) . '">' . __( 'Edit', 'event_espresso' ) . '</a>';
 		
 		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Template Group', 'event_espresso' ) . '">' . ucwords( $item->messenger_obj()->label['singular'] ) . '</a>';
@@ -168,14 +168,14 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 		if ( !$item->is_global() ) {
 			if ($this->_view == 'in_use') {
 				// trash link
-					$trash_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'trash_message_template', 'id'=>$item->GRP_ID(), 'noheader' => TRUE ), EE_MSG_ADMIN_URL ), 'trash_message_template_nonce' );
+					$trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'trash_message_template', 'id'=>$item->GRP_ID(), 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
 					$actions['trash'] = '<a href="'.$trash_lnk_url.'" title="' . __( 'Move Template Group to Trash', 'event_espresso' ) . '">' . __( 'Move to Trash', 'event_espresso' ) . '</a>';
 			} else {
 				// restore link
-				$restore_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'restore_message_template', 'id'=>$item->GRP_ID(), 'noheader' => TRUE ), EE_MSG_ADMIN_URL ), 'restore_message_template_nonce' );
+				$restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'restore_message_template', 'id'=>$item->GRP_ID(), 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
 				$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . __( 'Restore Message Template', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
 				// delete price link
-				$delete_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'delete_message_template', 'id'=>$item->GRP_ID(), 'noheader' => TRUE ), EE_MSG_ADMIN_URL ), 'delete_message_template_nonce' );
+				$delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'delete_message_template', 'id'=>$item->GRP_ID(), 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
 				$actions['delete'] = '<a href="'.$delete_lnk_url.'" title="' . __( 'Delete Template Group Permanently', 'event_espresso' ) . '">' . __( 'Delete Permanently', 'event_espresso' ) . '</a>';
 			}
 		}
@@ -185,7 +185,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 		$c_configs = $item->contexts_config(); 
 		foreach ( $item->context_templates() as $context => $template_fields ) {
 			$context_title = ucwords($c_configs[$context]['label']);
-			$edit_link = wp_nonce_url( add_query_arg( array('action'=>'edit_message_template', 'id'=>$item->GRP_ID(), 'context' => $context), EE_MSG_ADMIN_URL ), 'edit_message_template_nonce' );
+			$edit_link = EE_Admin_Page::add_query_args_and_nonce( array('action'=>'edit_message_template', 'id'=>$item->GRP_ID(), 'context' => $context), EE_MSG_ADMIN_URL );
 			$ctxt[] = '<a href="'. $edit_link . '" title="' . __('Edit Context', 'event_espresso') . '">' . $context_title . '</a>';
 		}
 
@@ -221,7 +221,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 			'action' => 'edit_event',
 			'event_id' => $item->event()
 			);
-		$edit_event_url = add_query_arg( $query_args, $base_event_admin_url );
+		$edit_event_url = EE_Admin_Page::add_query_args_and_nonce( $query_args, $base_event_admin_url );
 		$event_link = '<a href="'.$edit_event_url.'" title="' . __('Edit Event', 'event_espresso') . '">' . $event_name . '</a>';
 		return $event_link;
 	}

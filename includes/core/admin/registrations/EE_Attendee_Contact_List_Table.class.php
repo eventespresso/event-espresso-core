@@ -101,7 +101,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 	function column_ATT_lname($item) {
 
 		// edit attendee link
-		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item->ID() ), REG_ADMIN_URL ), 'edit_attendee_nonce' );
+		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'id'=>$item->ID() ), REG_ADMIN_URL );
 		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . html_entity_decode( stripslashes( $item->lname() ), ENT_QUOTES, 'UTF-8' ) . '</a>';
 		return $name_link;
 
@@ -115,23 +115,23 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 		//Build row actions
 		$actions = array();
 		// edit attendee link
-		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item->ID() ), REG_ADMIN_URL ), 'edit_attendee_nonce' );
+		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'id'=>$item->ID() ), REG_ADMIN_URL );
 		$actions['edit'] = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . __( 'Edit', 'event_espresso' ) . '</a>';
 
 		if ( $this->_view == 'in_use' ) {
 			// trash attendee link
-			$trash_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'trash_attendees', 'id'=>$item->ID() ), REG_ADMIN_URL ), 'trash_attendees_nonce' );
+			$trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'trash_attendees', 'id'=>$item->ID() ), REG_ADMIN_URL );
 			$actions['trash'] = '<a href="'.$trash_lnk_url.'" title="' . __( 'Move Attendee to Trash', 'event_espresso' ) . '">' . __( 'Move to Trash', 'event_espresso' ) . '</a>';
 		} else {
 			// restore attendee link
-			$restore_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'restore_attendees', 'id'=>$item->ID() ), REG_ADMIN_URL ), 'restore_attendees_nonce' );
+			$restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'restore_attendees', 'id'=>$item->ID() ), REG_ADMIN_URL );
 			$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . __( 'Restore Attendee', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
 			// delete attendee link
-			$delete_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'delete_attendees', 'id'=>$item->ID() ), REG_ADMIN_URL ), 'delete_attendees_nonce' );
+			$delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'delete_attendees', 'id'=>$item->ID() ), REG_ADMIN_URL );
 			$actions['delete'] = '<a href="'.$delete_lnk_url.'" title="' . __( 'Delete Attendee Permanently', 'event_espresso' ) . '">' . __( 'Delete Permanently', 'event_espresso' ) . '</a>';
 		}
 
-		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item->ID() ), REG_ADMIN_URL ), 'edit_attendee_nonce' );
+		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'id'=>$item->ID() ), REG_ADMIN_URL );
 		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . html_entity_decode( stripslashes( $item->fname() ), ENT_QUOTES, 'UTF-8' ) . '</a>';
 
 		//Return the name contents

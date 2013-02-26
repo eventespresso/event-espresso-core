@@ -180,14 +180,14 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$actions = array();
 
         //Build row actions
-		$view_details_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL ), 'view_registration_nonce' );
+		$view_details_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL );
         $actions['view_details'] = '
 			<a href="'.$view_details_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . __( 'View Reg Details', 'event_espresso' ) . '</a>';
- 		$check_in_url = wp_nonce_url( add_query_arg( array( 'action'=>'event_registrations', 'event_id'=>$item->EVT_ID ), REG_ADMIN_URL ), 'event_registrations_nonce' );
+ 		$check_in_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'event_registrations', 'event_id'=>$item->EVT_ID ), REG_ADMIN_URL );
 		$actions['check_in'] = '
 			<a href="'.$check_in_url.'" title="' . __( 'View Check In List', 'event_espresso' ) . '">' . __( 'View Check In List', 'event_espresso' ) . '</a>';
 
-		$edit_event_url = add_query_arg( array( 'event_id'=>$item->EVT_ID ), REG_ADMIN_URL );
+		$edit_event_url = EE_Admin_Page::add_query_args_and_nonce( array( 'event_id'=>$item->EVT_ID ), REG_ADMIN_URL );
 		$event_name = stripslashes( html_entity_decode( $item->event_name, ENT_QUOTES, 'UTF-8' ));
 		$event_filter = '<a href="' . $edit_event_url . '" title="' . sprintf( __( 'Only show %s in this list (filter the list)', 'event_espresso' ), $item->event_name ) .'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>';
 		
@@ -230,7 +230,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * 		column_ATT_fname
 	*/
    	function column_ATT_fname($item){
-		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item->ATT_ID ), REG_ADMIN_URL ), 'edit_attendee_nonce' );
+		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'id'=>$item->ATT_ID ), REG_ADMIN_URL );
 		$link = '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . ucwords( $item->REG_att_name ) . '</a>';
 		$link .= $item->REG_count == 1 ? '<img class="primary-attendee-star-img" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/star-8x8.png" width="8" height="8" alt="this is the primary attendee"/>' : '';
 		return $link;
@@ -265,7 +265,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * 		REG_date
 	*/
 	function column_REG_date($item){
-		$view_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL ), 'view_registration_nonce' );	
+		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL );	
 		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . date( 'D M j, Y  g:i a',	$item->REG_date ) . '</a>';	
 		return $REG_date;	
 	}
@@ -322,7 +322,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$item->TXN_total = abs( $item->TXN_total );
 		$item->TXN_total = $item->TXN_total > 0 ? number_format( $item->TXN_total, 2 ) : '0.00';
 		
-		$view_txn_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_transaction', 'txn'=>$item->TXN_ID ), admin_url( 'admin.php?page=transactions' ) ), 'view_transaction_nonce' );
+		$view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'txn'=>$item->TXN_ID ), TXN_ADMIN_URL );
 		return '<span class="reg-pad-rght"><a class="status-'. $item->txn_status .'" href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">' . $org_options['currency_symbol'] . ' ' . $item->TXN_total . '</a></span>';			
 		
 	}
@@ -344,7 +344,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			if ( $item->TXN_paid >= $item->TXN_total ) {
 				return '<span class="reg-pad-rght"><img class="" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/check-mark-16x16.png" width="16" height="16" alt="Paid in Full"/></span>';
 			} else {
-				$view_txn_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_transaction', 'txn'=>$item->TXN_ID ), TXN_ADMIN_URL ), 'view_transaction_nonce' );
+				$view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'txn'=>$item->TXN_ID ), TXN_ADMIN_URL );
 				$owing = number_format( $item->TXN_paid, 2, '.', ',' );
 				return '<span class="reg-pad-rght"><a class="status-'. $item->txn_status .'" href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">' . $org_options['currency_symbol'] . $owing . '</a><span>';
 			}			
@@ -366,12 +366,12 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	function column_actions($item) {
 
 	        //Build row actions
-		$view_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL ), 'view_registration_nonce' );
-		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item->ATT_ID ), REG_ADMIN_URL ), 'edit_attendee_nonce' );
+		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL );
+		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'id'=>$item->ATT_ID ), REG_ADMIN_URL );
 		
 		// page=attendees&event_admin_reports=resend_email&registration_id=43653465634&event_id=2&form_action=resend_email
 		//$resend_reg_lnk_url_params = array( 'action'=>'resend_registration', 'reg'=>$item->REG_ID );
-		$resend_reg_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'resend_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL ), 'resend_registration_nonce' );
+		$resend_reg_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL );
 		
 
 	        //Build row actions
@@ -404,7 +404,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		</li>';
 
 			// page=transactions&action=view_transaction&txn=256&_wpnonce=6414da4dbb
-		$view_txn_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_transaction', 'txn'=>$item->TXN_ID ), admin_url( 'admin.php?page=transactions' ) ), 'view_transaction_nonce' );
+		$view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'txn'=>$item->TXN_ID ), TXN_ADMIN_URL );
 		$view_txn_lnk = '
 		<li>
 			<a href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">

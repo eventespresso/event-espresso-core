@@ -107,21 +107,21 @@ class Price_Types_List_Table extends EE_Admin_List_Table {
 		//Build row actions
 		$actions = array();
 		// edit price link
-		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_price_type', 'id'=>$item->ID() ), PRICING_ADMIN_URL ), 'edit_price_type_nonce' );
+		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_price_type', 'id'=>$item->ID() ), PRICING_ADMIN_URL );
 		$actions['edit'] = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Price Type', 'event_espresso' ) . '">' . __( 'Edit', 'event_espresso' ) . '</a>';
 		
 		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Price Type', 'event_espresso' ) . '">' . stripslashes( $item->name() ) . '</a>';
 
 		if ( $this->_view == 'in_use' ) {
 			// trash price link
-			$trash_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'trash_price_type', 'id'=>$item->ID(), 'noheader' => TRUE ), PRICING_ADMIN_URL ), 'trash_price_type_nonce' );
+			$trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'trash_price_type', 'id'=>$item->ID(), 'noheader' => TRUE ), PRICING_ADMIN_URL );
 			$actions['trash'] = '<a href="'.$trash_lnk_url.'" title="' . __( 'Move Price Type to Trash', 'event_espresso' ) . '">' . __( 'Move to Trash', 'event_espresso' ) . '</a>';
 		} else {
 			// restore price link
-			$restore_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'restore_price_type', 'id'=>$item->ID(), 'noheader' => TRUE ), PRICING_ADMIN_URL ), 'restore_price_type_nonce' );
+			$restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'restore_price_type', 'id'=>$item->ID(), 'noheader' => TRUE ), PRICING_ADMIN_URL );
 			$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . __( 'Restore Price Type', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
 			// delete price link
-			$delete_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'delete_price_type', 'id'=>$item->ID(), 'noheader' => TRUE ), PRICING_ADMIN_URL ), 'delete_price_type_nonce' );
+			$delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'delete_price_type', 'id'=>$item->ID(), 'noheader' => TRUE ), PRICING_ADMIN_URL );
 			$actions['delete'] = '<a href="'.$delete_lnk_url.'" title="' . __( 'Delete Price Type Permanently', 'event_espresso' ) . '">' . __( 'Delete Permanently', 'event_espresso' ) . '</a>';
 		}
 

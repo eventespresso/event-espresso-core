@@ -1942,7 +1942,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 					$checked = ( in_array( $QSG->QSG_ID, $EQGs ) || $QSG->QSG_system_ID == 1 ) ? ' checked="checked"' : '';
 					$visibility = $QSG->QSG_system_ID == 1 ? ' style="visibility:hidden"' : '';
-					$edit_link = wp_nonce_url( add_query_arg( array( 'action' => 'edit_question_group', 'QSG_ID' => $QSG->QSG_ID ), EE_FORMS_ADMIN_URL ), 'edit_question_group_nonce');
+					$edit_link = self::add_query_args_and_nonce( array( 'action' => 'edit_question_group', 'QSG_ID' => $QSG->QSG_ID ), EE_FORMS_ADMIN_URL );
 					
 					$html .= '
 					<p id="event-question-group-' . $QSG->QSG_ID . '">
@@ -1994,7 +1994,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 					$checked = in_array( $QSG->QSG_ID, $EQGs ) || $QSG->QSG_system_ID == 1 ? ' checked="checked" ' : '';
 					$visibility = $QSG->QSG_system_ID == 1 ? ' style=" visibility:hidden"' : '';
-					$edit_link = wp_nonce_url( add_query_arg( array( 'action' => 'edit_question_group', 'QSG_ID' => $QSG->QSG_ID ), EE_FORMS_ADMIN_URL ), 'edit_question_group_nonce');
+					$edit_link = self::add_query_args_and_nonce( array( 'action' => 'edit_question_group', 'QSG_ID' => $QSG->QSG_ID ), EE_FORMS_ADMIN_URL );
 
 					$html .= '
 					<p id="event-question-group-' . $QSG->QSG_ID . '">
