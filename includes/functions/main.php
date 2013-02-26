@@ -84,8 +84,11 @@ function espresso_create_default_pages() {
 		}
 	}
 	update_user_meta( $espresso_wp_user, 'events_organization_settings', $org_options );
-	if ( $updated_flag )
+	if ( $updated_flag ) {
+		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'core'.DS.'admin'.DS.'admin_helper.php');
 		add_action('admin_notices', 'espresso_updated_pages');
+	}
+		
 }
 
 
