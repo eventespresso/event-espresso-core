@@ -2175,7 +2175,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$event_id = !empty($this->_event->id) ? $this->_event->id : 0;
 		$originally_submitted_by = !empty($this->_event->event_meta['originally_submitted_by']) ? $this->_event->event_meta['originally_submitted_by'] : 0;
 		$orig_event_staff = !empty($this->_event->event_meta['orig_event_staff']) ? $this->_event->event_meta['orig_event_staff'] : 0;
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/functions.php');
+		require_once( EE_CORE . 'admin/admin_helper.php');
 		?>
 		<div class="inside">
 			<?php echo espresso_personnel_cb($event_id, $originally_submitted_by, $orig_event_staff); ?>
