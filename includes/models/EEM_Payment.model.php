@@ -172,6 +172,25 @@ class EEM_Payment extends EEM_Base {
 		}
 
 	}
+	
+	/**
+	 * Gets the payment by the gateway server's unique ID. Eg, the unique ID PayPal assigned
+	 * to the payment. This is handy for verifying an IPN hasn't already been processed.
+	 * @param string $txn_id_chq_nmbr
+	 * @return EE_Payment
+	 */
+	public function get_payment_by_txn_id_chq_nmbr($PAY_txn_id_chq_nmbr){
+		if ( ! $PAY_txn_id_chq_nmbr ) {
+			return FALSE;
+		}
+		$where_cols_n_values = array( 'PAY_txn_id_chq_nmbr' => $PAY_txn_id_chq_nmbr );
+		if ( $payment_row = $this->select_row_where ( $where_cols_n_values )) {
+			$payment_objects = $this->_create_objects( array( $payment_row ));
+			return array_shift( $payment_objects );
+		} else {
+			return array();
+		}
+	}
 
 
 

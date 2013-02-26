@@ -193,7 +193,6 @@ class EE_Single_Page_Checkout {
 	 * 		@return 		void
 	 */
 	public function set_paths_and_routing() {
-
 		// grab some globals store them by reference
 		global $org_options;
 
@@ -1205,7 +1204,7 @@ class EE_Single_Page_Checkout {
 					// now create a new registration for the attendee
 					require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Registration.class.php' );
 					$reg_url_link=md5($new_reg_code);
-					$reg[$line_item_id] = new EE_Registration(
+					$saved_registrations[$line_item_id] = new EE_Registration(
 													$event['id'],
 													$ATT_ID,
 													$txn_results['new-ID'],
@@ -1224,11 +1223,11 @@ class EE_Single_Page_Checkout {
 							);
 					//printr( $reg[$line_item_id], '$reg[$line_item_id] ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' );die();
 
-					$reg_results = $reg[$line_item_id]->save();
-					$REG_ID = $reg[$line_item_id]->ID();
+					$reg_results = $saved_registrations[$line_item_id]->save();
+					$REG_ID = $saved_registrations[$line_item_id]->ID();
 
 					// add attendee object to attendee info in session
-					$session['cart']['REG']['items'][$line_item_id]['attendees'][$att_nmbr]['reg_obj'] = base64_encode( serialize( $reg[$line_item_id] ));
+					$session['cart']['REG']['items'][$line_item_id]['attendees'][$att_nmbr]['reg_obj'] = base64_encode( serialize( $saved_registrations[$line_item_id] ));
 
 					// add registration id to session for the primary attendee
 					if (isset($attendee['primary_attendee']) && $attendee['primary_attendee'] == 1) {
@@ -1251,10 +1250,14 @@ class EE_Single_Page_Checkout {
 				}
 			}
 			
+			
+			//$updated_session=$EE_Session->get_session_data();
 			$transaction->set_txn_session_data( $session );
 			$transaction->update();
-			$EE_Session->set_session_data(array( 'registration' => $reg, 'transaction' => $transaction ), 'session_data');
-
+			$EE_Session->set_session_data(array( 'registration' => $saved_registrations, 'transaction' => $transaction ), 'session_data');
+			$EE_Session->_update_espresso_session();
+			
+			//var_dump($)
 
 			do_action('action_hook_espresso__EE_Single_Page_Checkout__process_registration_step_3__before_gateway', $this);
 			

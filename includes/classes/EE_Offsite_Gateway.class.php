@@ -4,7 +4,6 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 abstract class EE_Offsite_Gateway extends EE_Gateway {
 
 	protected $_gatewayUrl = NULL;
-	
 	/**
 	 *  Gets the URL that the user should generally be sent back to after payment completion offiste
 	 *  Adds the reg_url_link in order to remember which session we were in the middle of processing

@@ -31,6 +31,10 @@ class EEM_Registration extends EEM_TempBase {
 
 	private static $_reg_status;
 
+	/**
+	 * The value of REG_count for a primary registrant
+	 */
+	const PRIMARY_REGISTRANT_COUNT = 1;
 
 	/**
 	 *		private constructor to prevent direct creation
@@ -681,8 +685,17 @@ class EEM_Registration extends EEM_TempBase {
 	}
 
 
-
-
+	/**
+	 * Returns the EE_Registration of the primary attendee on the transaction id provided
+	 * @param int $TXN_ID
+	 * @return EE_Registration
+	 */
+	public function get_primary_registration_for_transaction_ID( $TXN_ID = FALSE){
+		if( ! $TXN_ID ){
+			return false;
+		}
+		return $this->get_one(array('TXN_ID'=>$TXN_ID,'REG_count'=>$this->PRIMARY_REGISTRANT_COUNT));
+	}
 
 	/**
 	*		get all registrations for a specific transaction, possibly excluding one (ie: get all OTHER registrations except this one )

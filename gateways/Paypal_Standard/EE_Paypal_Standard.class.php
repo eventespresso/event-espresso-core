@@ -38,14 +38,19 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 	}
 
 	protected function __construct(EEM_Gateways &$model) {
-		$this->_gateway = 'Paypal_Standard';
+		$this->_gateway_name = 'Paypal_Standard';
 		$this->_button_base = 'paypal-logo.png';
 		$this->_path = str_replace('\\', '/', __FILE__);
-		$this->gatewayUrl = 'https://www.paypal.com/cgi-bin/webscr';
+		
 		$this->addField('rm', '2');		 // Return method = POST
 		$this->addField('cmd', '_xclick');
-		$this->_btn_img = file_exists( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway . '/lib/' . $this->_button_base : '';
+		$this->_btn_img = file_exists( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway_name . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
+		if(!$this->_payment_settings['use_sandbox']){
+			$this->_gatewayUrl = 'https://www.paypal.com/cgi-bin/webscr';
+		}else{
+			$this->_gatewayUrl = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
+		}
 	}
 
 	protected function _default_settings() {
@@ -214,13 +219,13 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 
 		<tr>
 			<th>
-				<label for="<?php echo $this->_gateway; ?>_button_url">
+				<label for="<?php echo $this->_gateway_name; ?>_button_url">
 					<?php _e('Button Image URL', 'event_espresso'); ?>
 				</label>
 			</th>
 			<td>
 				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
-				<input class="regular-text" type="text" name="button_url" id="<?php echo $this->_gateway; ?>_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
+				<input class="regular-text" type="text" name="button_url" id="<?php echo $this->_gateway_name; ?>_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
 				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
 			</td>
 		</tr>
@@ -305,9 +310,6 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$paypal_id = $paypal_settings['paypal_id'];
 		$paypal_cur = $paypal_settings['currency_format'];
 		$no_shipping = $paypal_settings['no_shipping'];
-		if ($paypal_settings['use_sandbox']) {
-			$this->_gatewayUrl = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
-		}
 
 		$item_num = 1;
 		$registrations = $session_data['cart']['REG']['items'];
@@ -348,7 +350,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$this->redirect_after_reg_step_3();
 	}
 
-	public function thank_you_page() {
+	/*public function thank_you_page() {
 		global $EE_Session;
 		//printr( $_POST, '$_POST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$txn_details = array(
@@ -390,14 +392,88 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			do_action('action_hook_espresso_mail_failed_transaction_debugging_output');
 		}
 		parent::thank_you_page();
+	}*/
+	
+	/**
+	 * Handles a paypal IPN, verifies we haven't already processed this IPN, creates a payment (regardless of success or not)
+	 * and updates the provided transaction, and saves to DB
+	 * @param EE_Transaction or ID $transaction
+	 * @return boolean
+	 */
+	public function handle_ipn_for_transaction($transaction){
+		
+		if($this->_debug_mode){
+			echo "<hr><br>".get_class($this).":start handle_ipn_for_transaction on transaction:".print_r($transaction,true);
+		}
+		//@todo just for debugging. remove in production
+		if($_GET['payment_status'] && $_GET['txn_id']){
+			echo "<br>NOTE! payment_staut and txn_id overridden!!!";
+			$_POST['payment_status']=$_GET['payment_status'];
+			$_POST['txn_id']=$_GET['txn_id'];
+		}
+		//verify there's payment data that's been sent
+		if(empty($_POST['payment_status']) || empty($_POST['txn_id'])){
+			return false;
+		}
+		if($this->_debug_mode){
+			echo "<hr><br>".get_class($this).": payment_status and txn_id sent properly. payment_status:".$_POST['payment_status'].", txn_id:".$_POST['txn_id'];
+		}
+		//ok, then verify the IPN. Even if we've already processed this payment, let paypal know we don't want to hear from them anymore!
+		if(!$this->validateIpn() && !$_GET['ignore_ipn']){
+			//huh, something's wack... the IPN didn't validate. We must have replied to teh IPN incorrectly,
+			//or their API must ahve changed: http://www.paypalobjects.com/en_US/ebook/PP_OrderManagement_IntegrationGuide/ipn.html
+			return false;
+		}
+		
+		//verify the transaction_id exists
+		if(empty($transaction)){
+			return false;
+		}
+		if( ! $transaction instanceof EE_Transaction){
+			$transaction = $this->_TXN->get_transaction($transaction);
+		}
+		if(empty($transaction)){
+			return false;
+		}
+		//verify we haven't already verified this IPN
+		$existing_payment_record = $this->_PAY->get_payment_by_txn_id_chq_nmbr($_POST['txn_id']);
+		if(!empty($existing_payment_record)){
+			return false;
+		}
+		
+		//ok, well let's process this payment then!
+		require_once('EEM_Registration.model.php');
+		$REG = EEM_Registration::instance();
+		if($_POST['payment_status']=='Completed'){ //the old code considered 'Pending' as completed too..
+			$status = 'PAP';//approved
+		}else{
+			$status = 'PDC';//declined
+		}
+		$payment = new EE_Payment($transaction->ID(), 
+				$status, 
+				$transaction->datetime(), 
+				sanitize_text_field($_POST['txn_type']), 
+				floatval($_REQUEST['mc_gross']), 
+				'Paypal', 
+				$_POST, 
+				$_POST['txn_id'], 
+				NULL,
+				$REG->get_primary_registration_for_transaction_ID($transaction->ID()), 
+				false, 
+				false);
+		$goofy_results=$payment->insert();
+		
+		return parent::update_transaction_with_payment($transaction,$payment);	
 	}
+	
+	
 
 	public function espresso_display_payment_gateways() {
 		echo $this->_generate_payment_gateway_selection_button();
 		?>
 
 
-		<div id="reg-page-billing-info-<?php echo $this->_gateway; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
+		<div id="reg-page-billing-info-<?php echo $this->_gateway_name; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
 			<?php _e('After confirming the details of your registration in Step 3, you will be transferred to the PayPal.com website where your payment will be securely processed.', 'event_espresso'); ?>
 		</div>
 
@@ -423,9 +499,12 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			$this->ipnResponse = $result['body'];
 			return true;
 		}else{
-			$this->lastError = "IPN Validation Failed . $this->_gatewayUrl with response:".print_r($result,true);
+			$this->lastError = "IPN Validation Failed . $this->_gatewayUrl with response:".print_r($result['body'],true);
 			//echo "eepaypalstandard error:".is_wp_error($result).", body equals VERIFIED:".(strcmp($result['body'], "VERIFIED") == 0);
 			$this->ipnResponse=$result['body'];
+			if($this->_debug_mode){
+				echo "error!".print_r($this->lastError,true);
+			}
 			return false;
 		}
 		/*if (function_exists('curl_init')) {

@@ -28,7 +28,7 @@ abstract class EE_Gateway {
 	private $_session_gateway_data = NULL;
 	protected $_payment_settings = array();
 	// gateway name 
-	protected $_gateway = NULL;
+	protected $_gateway_name = NULL;
 	// path to gateway class file 
 	protected $_path = NULL;
 	// image name for gateway button
@@ -44,6 +44,25 @@ abstract class EE_Gateway {
 	protected $_css_link_class = '';
 	// list of options for building Yes or NO dropdown boxes
 	protected $_yes_no_options = array();
+	
+	/**
+	 * whether this gateway should be in debug mode or not. If it is, we'll probably
+	 * send the website admin IPN messages and show debug info, etc.
+	 * Can be activated with sandbox mode or not, whatever you want. 
+	 */
+	protected $_debug_mode = FALSE;
+	
+	/**
+	 * Transaction model for querying
+	 * @var EEM_Transaction
+	 */
+	protected $_TXN = null;
+	
+	/**
+	 * Payment model for querying
+	 * @var EEM_Payment 
+	 */
+	protected $_PAY = null;
 
 	abstract protected function _default_settings();
 	abstract protected function _update_settings();
@@ -60,9 +79,14 @@ abstract class EE_Gateway {
 		}
 
 		$this->_EEM_Gateways = $model;
+		require_once('EEM_Transaction.model.php');
+		require_once('EE_Transaction.class.php');
+		$this->_TXN = EEM_Transaction::instance();
+		require_once('EEM_Payment.model.php');
+		require_once('EE_Payment.class.php');
+		$this->_PAY = EEM_Payment::instance();
 		$this->_set_default_properties();
 		$this->_handle_payment_settings();
-
 		if (is_admin() && !empty($_GET['page']) && $_GET['page'] == 'payment_settings') {
 			$this->_gateways_admin();
 		} else {
@@ -91,15 +115,17 @@ abstract class EE_Gateway {
 	private function _handle_payment_settings() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-		if (!$this->_payment_settings = $this->_EEM_Gateways->payment_settings($this->_gateway)) {
+		if (!$this->_payment_settings = $this->_EEM_Gateways->payment_settings($this->_gateway_name)) {
 			$this->_default_settings();
-			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
+			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway_name, $this->_payment_settings)) {
 				$msg = sprintf( __( '%s payment settings initialized.', 'event_espresso' ), $this->_payment_settings['display_name'] );
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			} else {
 				$msg = sprintf( __( '%s payment settings were not initialized.', 'event_espresso' ), $this->_payment_settings['display_name'] );
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
+		}else{
+			$this->_debug_mode = array_key_exists('use_sandbox',$this->_payment_settings)?$this->_payment_settings['use_sandbox']:false;
 		}
 	}
 
@@ -110,17 +136,17 @@ abstract class EE_Gateway {
 		if ($this->_payment_settings['current_path'] == '' || $this->_payment_settings['current_path'] != $this->_path) {
 			$this->_reset_button_url();
 		}
-		if (!empty($_REQUEST['activate_' . $this->_gateway])) {
-			$this->_EEM_Gateways->set_active($this->_gateway);
+		if (!empty($_REQUEST['activate_' . $this->_gateway_name])) {
+			$this->_EEM_Gateways->set_active($this->_gateway_name);
 		}
-		if (!empty($_REQUEST['deactivate_' . $this->_gateway])) {
-			$this->_EEM_Gateways->unset_active($this->_gateway);
+		if (!empty($_REQUEST['deactivate_' . $this->_gateway_name])) {
+			$this->_EEM_Gateways->unset_active($this->_gateway_name);
 		}
 
-		if (isset($_POST['update_' . $this->_gateway]) && check_admin_referer('espresso_form_check', 'add_' . $this->_gateway . '_settings')) {
+		if (isset($_POST['update_' . $this->_gateway_name]) && check_admin_referer('espresso_form_check', 'add_' . $this->_gateway_name . '_settings')) {
 			//printr( $_POST, 'POST' );		
 			$this->_update_settings();
-			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
+			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway_name, $this->_payment_settings)) {
 				$msg = sprintf( __( '%s payment settings updated.', 'event_espresso' ), $this->_payment_settings['display_name'] );
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			} else {
@@ -135,7 +161,7 @@ abstract class EE_Gateway {
 		global $EE_Session;
 		add_action('action_hook_espresso_display_payment_gateways', array(&$this, 'espresso_display_payment_gateways'));
 		// grab session data for this gateway
-		if ($this->_session_gateway_data = $EE_Session->get_session_data($this->_gateway, "gateway_data")) {
+		if ($this->_session_gateway_data = $EE_Session->get_session_data($this->_gateway_name, "gateway_data")) {
 			if (!empty($this->_session_gateway_data['form_url'])) {
 				$this->_form_url = $this->_session_gateway_data['form_url'];
 			}
@@ -153,15 +179,15 @@ abstract class EE_Gateway {
 	}
 
 	public function gateway() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, ' $this->_gateway = ' . $this->_gateway );
-		return $this->_gateway;
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, ' $this->_gateway = ' . $this->_gateway_name );
+		return $this->_gateway_name;
 	}
 
 	public function add_settings_page_meta_box() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if ( isset( $this->_payment_settings['display_name'] ) )
 			add_meta_box(
-						'espresso_' . $this->_gateway . '_payment_settings', $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso'), array(&$this, 'settings_meta_box'), 'event-espresso_page_payment_settings', 'normal'
+						'espresso_' . $this->_gateway_name . '_payment_settings', $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso'), array(&$this, 'settings_meta_box'), 'event-espresso_page_payment_settings', 'normal'
 			);
 	}
 
@@ -174,10 +200,10 @@ abstract class EE_Gateway {
 		}
 		?>
 
-		<a name="<?php echo $this->_gateway; ?>" id="<?php echo $this->_gateway; ?>"></a>
+		<a name="<?php echo $this->_gateway_name; ?>" id="<?php echo $this->_gateway_name; ?>"></a>
 		<div class="padding">
-		<?php if ( ! $this->_EEM_Gateways->is_active($this->_gateway)) { 
-						$activate = add_query_arg(array('activate_' . $this->_gateway => 'true'), GATEWAYS_ADMIN_URL) . '#' . $this->_gateway; 
+		<?php if ( ! $this->_EEM_Gateways->is_active($this->_gateway_name)) { 
+						$activate = add_query_arg(array('activate_' . $this->_gateway_name => 'true'), GATEWAYS_ADMIN_URL) . '#' . $this->_gateway_name; 
 		?>
 				<table class="form-table">
 					<tbody>
@@ -186,7 +212,7 @@ abstract class EE_Gateway {
 								<label><?php _e('Click to Activate', 'event_espresso'); ?></label>
 							</th>
 							<td>				
-								<a id="activate_<?php echo $this->_gateway; ?>" class="espresso-button-green button-primary" onclick="location.href='<?php echo $activate; ?>'">
+								<a id="activate_<?php echo $this->_gateway_name; ?>" class="espresso-button-green button-primary" onclick="location.href='<?php echo $activate; ?>'">
 									<?php echo __('Activate', 'event_espresso') . ' ' . $this->_payment_settings['display_name'] . ' ' . __('Payments?'); ?>
 								</a>
 							</td>
@@ -203,7 +229,7 @@ abstract class EE_Gateway {
 
 	private function _display_settings_wrapper() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		$form_url = GATEWAYS_ADMIN_URL . '#' . $this->_gateway;
+		$form_url = GATEWAYS_ADMIN_URL . '#' . $this->_gateway_name;
 		?>
 			<form method="post" action="<?php echo $form_url; ?>">
 				<table class="form-table">
@@ -238,17 +264,17 @@ abstract class EE_Gateway {
 							<th></th>
 							<td>
 								<p>
-									<input type="hidden" name="update_<?php echo $this->_gateway; ?>" value="1">
+									<input type="hidden" name="update_<?php echo $this->_gateway_name; ?>" value="1">
 									<input 
-											id="save_<?php echo $this->_gateway; ?>_settings"
+											id="save_<?php echo $this->_gateway_name; ?>_settings"
 											class="button-primary" 
 											type="submit" 
 											name="Submit" 
 											value="<?php echo __('Update', 'event_espresso') . ' ' . $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso');?>" 
 											style="margin:1em 4em 2em 0"
 										/>
-									<?php $deactivate = add_query_arg(array('deactivate_' . $this->_gateway => 'true'), GATEWAYS_ADMIN_URL) . '#' . $this->_gateway; ?>
-									<a id="deactivate_<?php echo $this->_gateway; ?>" class="espresso-button button-secondary" type="submit" onclick="location.href='<?php echo $deactivate; ?>'">
+									<?php $deactivate = add_query_arg(array('deactivate_' . $this->_gateway_name => 'true'), GATEWAYS_ADMIN_URL) . '#' . $this->_gateway_name; ?>
+									<a id="deactivate_<?php echo $this->_gateway_name; ?>" class="espresso-button button-secondary" type="submit" onclick="location.href='<?php echo $deactivate; ?>'">
 										<?php echo __('Deactivate', 'event_espresso') . ' ' . $this->_payment_settings['display_name'] . ' ' . __('Payments?'); ?>
 									</a>
 								</p>
@@ -257,7 +283,7 @@ abstract class EE_Gateway {
 					</tbody>
 				</table>
 
-			<?php wp_nonce_field('espresso_form_check', 'add_' . $this->_gateway . '_settings'); ?>
+			<?php wp_nonce_field('espresso_form_check', 'add_' . $this->_gateway_name . '_settings'); ?>
 
 			</form>
 		<?php
@@ -269,7 +295,7 @@ abstract class EE_Gateway {
 		if (!$base_url) {
 			return FALSE;
 		}
-		$this->_form_url = add_query_arg(array('e_reg' => 'register', 'step' => 2, 'payment' => $this->_gateway), $base_url);
+		$this->_form_url = add_query_arg(array('e_reg' => 'register', 'step' => 2, 'payment' => $this->_gateway_name), $base_url);
 		$this->_set_session_data();
 		return TRUE;
 	}
@@ -306,7 +332,7 @@ abstract class EE_Gateway {
 		global $EE_Session;
 		$EE_Session->set_session_data(
 				array(
-							$this->_gateway => array(
+							$this->_gateway_name => array(
 									'form_url' => $this->_form_url,
 									'selected' => $this->_selected,
 									'css_class' => $this->_css_class,
@@ -328,17 +354,17 @@ abstract class EE_Gateway {
 	protected function _reset_button_url() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		
-		$in_uploads = $this->_EEM_Gateways->is_in_uploads($this->_gateway);
-		if (is_array($in_uploads) && $in_uploads[$this->_gateway]) {
-			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/" . $this->_gateway . '/lib/' . $this->_button_base;
+		$in_uploads = $this->_EEM_Gateways->is_in_uploads($this->_gateway_name);
+		if (is_array($in_uploads) && $in_uploads[$this->_gateway_name]) {
+			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/" . $this->_gateway_name . '/lib/' . $this->_button_base;
 		} else {
-			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/" . $this->_gateway . '/lib/' . $this->_button_base;
+			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/" . $this->_gateway_name . '/lib/' . $this->_button_base;
 		}
 		$this->_payment_settings['button_url'] = $button_url;
 		// change windows style filepaths to Unix style filepaths
 		$this->_payment_settings['current_path'] = str_replace('\\', '/', $this->_path);
 
-		if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
+		if ($this->_EEM_Gateways->update_payment_settings($this->_gateway_name, $this->_payment_settings)) {
 			$msg = sprintf( __( 'The %s button URL was reset.', 'event_espresso' ), $this->_payment_settings['display_name'] );
 			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		} else {
@@ -355,12 +381,21 @@ abstract class EE_Gateway {
 	protected function _generate_payment_gateway_selection_button() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		return '
-		 <div id="' . $this->_gateway . '-payment-option-dv" class="'. $this->_payment_settings['type'] .'-payment-gateway reg-page-payment-option-dv' . $this->_css_link_class . '">
-			<a id="payment-gateway-button-' . $this->_gateway . '" class="reg-page-payment-option-lnk" rel="' . $this->_gateway . '" href="' . $this->_form_url . '" >
+		 <div id="' . $this->_gateway_name . '-payment-option-dv" class="'. $this->_payment_settings['type'] .'-payment-gateway reg-page-payment-option-dv' . $this->_css_link_class . '">
+			<a id="payment-gateway-button-' . $this->_gateway_name . '" class="reg-page-payment-option-lnk" rel="' . $this->_gateway_name . '" href="' . $this->_form_url . '" >
 				<img src="' . $this->_payment_settings['button_url'] . '" alt="Pay using ' . $this->_payment_settings['display_name'] . '" />
 			</a>
 		</div>
 ';
+	}
+	
+	/**
+	 * States whether this gateway is in debug mode or not. if it is, then we'll be
+	 * displaying debug info, and email the admin debug info.
+	 * @return boolean
+	 */
+	public function debug_mode_active(){
+		return $this->_debug_mode;
 	}
 	
 	/**
@@ -372,7 +407,7 @@ abstract class EE_Gateway {
 	 * 		@param 		boolean 		$perform_redirect  - whether to send JSON response or redirect
 	 * 		@return 		JSON			or redirect
 	 */
-	public function thank_you_page() {
+	/*public function thank_you_page() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $EE_Session;
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
@@ -491,6 +526,46 @@ abstract class EE_Gateway {
 //		die();
 		
 
+	}*/
+	
+	/**
+	 * Updates the transaction according to teh payment info
+	 * @param EE_Transaction or int $transaction the transaction to update, or its ID. Cannot be null.
+	 * @param EE_Payment or int $payment the payment just made or its ID. If empty that's actually OK. It just means no payment has been made.
+	 * @return boolean success
+	 */
+	public function update_transaction_with_payment($transaction,$payment){
+		if(empty($transaction)){
+			return false;
+		}
+		if( ! $transaction instanceof EE_Transaction){
+			$transaction = $this->_TXN->get_transaction($transaction);
+		}
+		if( ! $payment instanceof EE_Payment){
+			$payment = $this->_PAY->get_payment_by_ID($payment);
+		}
+		//now, if teh payment's empty, we're going to update the transaction accordingly
+		if(empty($payment)){
+			$transaction->set_status($this->_TXN->pending_status_code);
+		}else{
+			//ok, now process the transaction according to the payment
+			if ( $transaction->total() == 0 || ( $payment->amount() >= $transaction->total() )) {
+				$transaction->set_status($this->_TXN->complete_status_code);//Complete
+			}else{
+				$transaction->set_status($this->_TXN->pending_status_code);
+			}
+			$transaction->set_paid($payment->amount());
+			
+			$transaction->set_details($payment->details());
+			//old code also set the hash_salt, added teh transaction to the session, and setted_tax_data.
+			//but I don't see either how those are necessary, or why they should be handled in the page's controller.
+			//the hash_salt doesn't seem to be used anywhere. 
+			//The tax data should be added on the thankyou page, not here, as this may be an IPN.
+			//updating teh transaction in the session should be done on the thank you page, as taht's where the session is always available.
+		}	
+		$transaction->update();
+		return true;
 	}
 
 }
+

@@ -29,9 +29,26 @@ class EEM_Transaction extends EEM_Base {
   	// private instance of the Transaction object
 	private static $_instance = NULL;
 
-
-
-
+	
+	
+	/**
+	 * Status ID (STS_ID on esp_status table) to indicate a complete transaction.
+	 */
+	const complete_status_code = 'TCM';
+	
+	
+	
+	/**
+	 * STatus ID(STS_ID on esp_status table) to indicate an incomplete transaction
+	 */
+	const incomplete_status_code = 'TIN';
+	
+	
+	
+	/**
+	 * Status ID(STS_ID on esp_status table) to indicate the transaction's payment in process. IE, pay by cheque, or in the middle of paypal offsite process
+	 */
+	const pending_status_code = 'TPN';
 
 	/**
 	 *		private constructor to prevent direct creation
@@ -481,7 +498,28 @@ class EEM_Transaction extends EEM_Base {
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
 		return $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );
 	}
-
+	
+	/**
+	 * Gets teh current transaction given teh reg_url_link, or assumes the reg_url_link is in the
+	 * $_REQUEST global variable. Either way, tries to find the current transaction (through
+	 * teh registration poitned to by reg_url_link), if not reutrns null
+	 * @param string $reg_url_link
+	 * @return EE_Transaction
+	 */
+	public function get_transaction_from_reg_url_link( $reg_url_link = NULL ){
+		if( NULL == $reg_url_link ){
+			$reg_url_link = $_REQUEST['reg_url_link'];
+		}
+		require_once('EEM_Registration.model.php');
+		$regmodel=  EEM_Registration::instance();
+		$registration=$regmodel->get_registration_for_reg_url_link($reg_url_link);
+		if(!empty($registration)){
+			$transaction = $this->get_transaction($registration->transaction_ID());
+			return $transaction;
+		}else{
+			return NULL;
+		}
+	}
 
 
 

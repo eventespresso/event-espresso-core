@@ -14,16 +14,28 @@ function espresso_thank_you_page() {
 	}
 	//only use session data to process final payment etc. After thank_you_page()
 	//though, the session gets wiped out.
-	$current_session=$EE_Session->get_session_data();
+	/*$current_session=$EE_Session->get_session_data();
 	if(isset($current_session['transaction'])){
 		$EEM_Gateways->thank_you_page();
-	}
+	}*/
 	
 	
 	//$transaction=$registration->transaction();
 	//var_dump($transaction);
 	//$session_data = $EE_Session->get_session_data();
 	$session_data = $EE_Session->get_session_from_reg_url_link();
+	echo "<hr>session data:";var_dump($session_data);
+	$EE_Session->set_session_data($session_data,'session_data');
+	
+	$EEM_Gateways->thank_you_page();
+	echo "<hr>session data after thankyoupage:";var_dump($session_data);
+	/*$TXN = EEM_Transaction::instance();
+	$transactions=$TXN->get_all_transactions();
+	foreach($transactions as $transaction){
+		echo "<hr>Transaction:".$transaction->ID()."<br>";
+		var_dump($transaction->session_data());
+	}*/
+	//$session_data = $EE_Session->get_session_from_reg_url_link();
 	if (!empty($session_data['txn_results'])) {
 		//printr( $session_data);
 		$grand_total = $session_data['_cart_grand_total_amount'];

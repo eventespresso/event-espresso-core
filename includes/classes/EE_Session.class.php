@@ -347,13 +347,17 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 		require_once('EEM_Registration.model.php');
 		require_once('EEM_Transaction.model.php');
 		$regmodel=  EEM_Registration::instance();
-		$transmodel = EEM_Transaction::instance();
+		$TXN = EEM_Transaction::instance();
 		$registration=$regmodel->get_registration_for_reg_url_link($_REQUEST['reg_url_link']);
 		if(!empty($registration)){
-			$transaction=$transmodel->get_transaction($registration->transaction_ID());
+			$transaction=$TXN->get_transaction($registration->transaction_ID());
 			if(!empty($transaction)){
-				$this->_session_data=$transaction->session_data();
-				return $this->_session_data;
+				//echo "transaction not empty. this is its session data:".$transaction->session_data();
+				//var_dump(unserialize($transaction->session_data()));
+				//$this->_session_data=$transaction->session_data();
+				$restored_session=maybe_unserialize($transaction->session_data());//$this->_session_data;
+				//$restored_session['transaction']=$transaction;
+				return $restored_session;
 			}
 		}
 		return false;
@@ -477,8 +481,8 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 		}
 
 		// we're using the Transient API for storing session data, cuz it's so damn simple -> set_transient(  transient ID, data, expiry )
-		set_transient( $this->_sid, $session_data, $this->_expiration );
-		die();
+		//set_transient( $this->_sid, $session_data, $this->_expiration );
+		//die();
 		return set_transient( $this->_sid, $session_data, $this->_expiration ) ? TRUE : FALSE;
 
 	}

@@ -516,4 +516,3 @@ abstract class EE_Base_Class {
 	}
 	
 }
-?>

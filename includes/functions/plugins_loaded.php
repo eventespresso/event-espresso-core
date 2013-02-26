@@ -544,16 +544,16 @@ function espresso_load_reg_page_files() {
 				break;
 			
 			case 'return_url' :
-					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/pricing.php');
-					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/thank_you_page.php');
-					event_espresso_require_gateway('PaymentGateway.php');
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Thank_You_Page.class.php');
+				EE_Thank_You_Page::instance();	
 				break;
 			
 			case 'cancel_return' :
 				break;
 			
 			case 'notify_url' :
-					event_espresso_require_gateway('process_payments.php');
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Transaction_Page.class.php');
+				EE_Transaction_Page::instance();	
 				break;
 		}
 

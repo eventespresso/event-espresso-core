@@ -845,6 +845,30 @@ Class EEM_Gateways {
 		}
 		$this->reset_session_data();
 	}
+	
+	/**
+	 * Uses teh currently-active and selected gateway to handle an Instant Payment Notification.
+	 * Obviously, if this occurs the active gateway must be an Offsite gateway
+	 * @param EE_Transaction or ID $transaction Transaction to beudpated by the IPN
+	 * @return boolean success
+	 */
+	public function handle_ipn_for_transaction($transaction){
+		global $org_options;
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		$current_gateway=(!empty($this->_selected_gateway))?$this->_gateway_instances[$this->_selected_gateway] : null;
+		
+		if(!empty($current_gateway)	&& $current_gateway instanceof EE_Offsite_Gateway){
+			if($current_gateway->debug_mode_active()){
+				ob_start();
+			}
+			
+			$current_gateway->handle_ipn_for_transaction($transaction);
+			if($current_gateway->debug_mode_active()){		
+				$debug_output=ob_get_flush();
+				wp_mail($org_options['contact_email'],"Event Espresso IPN Debug info for ".$this->_selected_gateway,"POST data received:".print_r($_POST,false)." output is".$debug_output);
+			}
+		}
+	}
 
 
 
