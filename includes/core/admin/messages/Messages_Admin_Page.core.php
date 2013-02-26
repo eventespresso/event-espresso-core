@@ -1088,7 +1088,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 						<?php
 					}
 					//setup nonce_url
-					wp_nonce_field($args['action'] . '_nonce', '_wpnonce', false);
+					wp_nonce_field($args['action'] . '_nonce', $args['action'] . '_nonce', false);
 				?>
 				<select name="context">
 					<?php 
