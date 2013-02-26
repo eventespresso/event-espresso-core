@@ -1,6 +1,5 @@
 <?php
-if (!defined('EVENT_ESPRESSO_VERSION') )
-	exit('NO direct script access allowed');
+if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowed'); }
 
 /**
  * Event Espresso

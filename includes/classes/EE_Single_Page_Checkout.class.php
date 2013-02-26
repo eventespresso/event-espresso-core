@@ -256,6 +256,8 @@ class EE_Single_Page_Checkout {
 //		printr( $this->cart->whats_in_the_cart(), 'whats_in_the_cart  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		global $org_options, $espresso_wp_user, $EE_Session;
+		
+		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Form_Fields.helper.php' );
 
 		$template_args = array();
 
