@@ -19,11 +19,8 @@ function espresso_plugin_activation() {
 		espresso_get_user_id();
 		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/activation.php');
 		events_data_tables_install();
-		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin.php');
 		espresso_initialize_system_questions();
-		espresso_initialize_email();
 		event_espresso_create_upload_directories();
-		//event_espresso_update_shortcodes();
 		espresso_org_option_initialization();
 		espresso_fix_org_options();
 		espresso_update_active_gateways();
