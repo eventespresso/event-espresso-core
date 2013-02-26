@@ -278,31 +278,7 @@ function event_espresso_count_files($path, $exclude = ".|..|.svn", $recursive = 
 	return count($result);
 }
 
-//Functions for copying and moving templates
-function event_espresso_trigger_copy_templates() {
-	global $wpdb;
-	check_admin_referer('copy_templates');
-	event_espresso_smartCopy(EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/', EVENT_ESPRESSO_TEMPLATE_DIR);
 
-	$_SESSION['event_espresso_themes_copied'] = true;
-	$sendback = wp_get_referer();
-	$sendback = add_query_arg('tab', $_SESSION['event_espresso_settings_curr_page'], remove_query_arg('tab', $sendback));
-	wp_redirect($sendback);
-	exit();
-}
-
-//Functions for copying and moving gateways
-function event_espresso_trigger_copy_gateways() {
-	global $wpdb;
-	check_admin_referer('copy_gateways');
-	event_espresso_smartCopy(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/', EVENT_ESPRESSO_GATEWAY_DIR);
-
-	$_SESSION['event_espresso_gateways_copied'] = true;
-	$sendback = wp_get_referer();
-	$sendback = add_query_arg('tab', $_SESSION['event_espresso_settings_curr_page'], remove_query_arg('tab', $sendback));
-	wp_redirect($sendback);
-	exit();
-}
 
 //Functions for copying and moving files and themes
 function event_espresso_smartCopy($source, $dest, $folderPermission = 0755, $filePermission = 0644) {

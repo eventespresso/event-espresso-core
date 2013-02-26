@@ -452,19 +452,6 @@ function espresso_init_admin_pages() {
 	global $org_options, $is_UI_request;
 	
 	if ( $is_UI_request ) {
-
-		// copy themes to template directory
-		if (isset($_REQUEST['event_espresso_admin_action'])) {
-			if ($_REQUEST['event_espresso_admin_action'] == 'copy_templates') {
-				add_action('admin_init', 'event_espresso_trigger_copy_templates');
-			}
-		}
-		// copy gateways to gateway directory
-		if (isset($_REQUEST['event_espresso_admin_action'])) {
-			if ($_REQUEST['event_espresso_admin_action'] == 'copy_gateways') {
-				add_action('admin_init', 'event_espresso_trigger_copy_gateways');
-			}
-		}
 		
 		// Check to make sure all of the main pages are setup properly,
 		// if not create the default pages and display an admin notice

@@ -67,6 +67,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			'save_aff_s' => array(
 				'func' => '_save_aff_s',
 				'noheader' => TRUE
+				),
+			'_copy_gateways' => array(
+				'func' => '_copy_gateways',
+				'noheader' => TRUE
 				)
 			);
 	}
@@ -289,17 +293,6 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					</p>
 					<?php
 				} else {
-					if (isset($this->_request_data['event_espresso_admin_action']) && $this->_req_data['event_espresso_admin_action'] == 'copy_gateways') {
-						add_action('admin_init', 'event_espresso_smartCopy');
-					}
-					if (isset($_SESSION['event_espresso_gateways_copied']) && $_SESSION['event_espresso_gateways_copied'] == true) {
-						?>
-						<div class="updated fade below-h2" id="message" style="background-color: rgb(255, 251, 204);">
-							<p><?php _e("Your gateways have been moved.", 'event_espresso'); ?></p>
-						</div>
-						<?php
-						$_SESSION['event_espresso_gateways_copied'] = false;
-					}
 
 					if ($this->_event_espresso_count_files(EVENT_ESPRESSO_GATEWAY_DIR) > 0) {
 
@@ -329,7 +322,14 @@ class Payments_Admin_Page extends EE_Admin_Page {
 							<?php _e("Path:", 'event_espresso'); ?>
 									</strong> <?php echo EVENT_ESPRESSO_GATEWAY_DIR; ?> </span></p>
 						<?php } else { ?>
-							<p class="updated"><?php printf(__("Click here to <a href='%s'>Move your files</a> to a safe place.", 'event_espresso'), wp_nonce_url("admin.php?event_espresso_admin_action=copy_gateways", 'copy_gateways')); ?> </p>
+							<p class="updated">
+							<?php 
+								printf(
+									__("Click here to <a href='%s'>Move your files</a> to a safe place.", 'event_espresso'), 
+									EE_Admin_Page::add_query_args_and_nonce( array( 'action' => '_copy_gateways' ), EE_PAYMENTS_ADMIN_URL )
+								); 
+							?> 
+							</p>
 							<?php
 						}
 					}
@@ -338,6 +338,24 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		</div>
 		<?php
 	}
+
+
+
+
+
+
+	//Functions for copying and moving gateways
+	protected function _copy_gateways() {
+		require_once EE_CORE_ADMIN . 'admin_helper.php';
+		$success = event_espresso_smartCopy(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/', EVENT_ESPRESSO_GATEWAY_DIR);
+		$_SESSION['event_espresso_gateways_copied'] = $success;
+		$this->_redirect_after_action( $success, 'Gateway Files', 'moved', array( 'action' => 'developers' ) );
+	}
+
+
+
+
+
 
 
 	private function _event_espresso_count_files( $path, $exclude = '.|..|.svn', $recursive = false ) {
