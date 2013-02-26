@@ -207,7 +207,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				'noheader' => TRUE
 				),
 
-			'reg_form_settings'	=> '_reg_form_settings',
+			'view_reg_form_settings'	=> '_reg_form_settings',
 			
 			'update_reg_form_settings'	=> array(
 					'func' => '_update_reg_form_settings',
@@ -280,7 +280,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box' ),
 				),
 
-			'reg_form_settings' => array(
+			'view_reg_form_settings' => array(
 				'nav' => array(
 					'label' => __('Reg Form Settings', 'event_espresso'),
 					'order' => 40
@@ -492,25 +492,29 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 
+	protected function _trash_or_restore_questions($trash=TRUE){
+		$this->_trash_or_restore_items( $this->_question_model, $trash );
+	}
+
+
 	protected function _delete_question(){
 		$success=$this->_question_model->delete_permanently_by_ID(intval($this->_req_data['QST_ID']));
 		$query_args=array('action'=>'default','status'=>'all');
-		$this->_redirect_after_action($success, $this->_question_model->item_name($success), 'trashed', $query_args);
+		$this->_redirect_after_action($success, $this->_question_model->item_name($success), 'deleted', $query_args);
 	}
 
 
 
 	protected function _delete_questions() {
-		return $this->_delete_items($this->_question_model);
+		$this->_delete_items($this->_question_model);
 	}
 
 
 
 	private function _delete_items(EEM_TempBase $model){
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
-			
-// if array has more than one element than success message should be plural
+		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {			
+			// if array has more than one element than success message should be plural
 			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
 			// cycle thru bulk action checkboxes
 			while (list( $ID, $value ) = each($this->_req_data['checkbox'])) {
@@ -521,7 +525,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			}
 	
 		}
-		$this->_redirect_after_action( $success, $model->item_name($success), 'deleted permanently', array('status'=>'all') );
+		$this->_redirect_after_action( $success, $model->item_name($success), 'deleted permanently', array( 'action'=>'default', 'status'=>'all' ));
 	}
 
 
@@ -602,11 +606,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		return FALSE;
 	}
 
-
-
-	protected function _trash_or_restore_questions($trash=TRUE){
-		return $this->_trash_or_restore_items( $this->_question_model, $trash );
-	}
 	
 	
 	/**
@@ -779,8 +778,11 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		}
 		
 
-		$action=$trash?'trashed':'restored';
-		$this->_redirect_after_action( $success, $model->item_name($success), $action, array( 'action' => strtolower( $model->item_name() . 's' ), 'status'=>'all' ) );
+		$action = strtolower( $model->item_name() . 's' );
+		$action = 'questions' ? 'default' : $action;
+		$action_desc = $trash?'trashed':'restored';
+		
+		$this->_redirect_after_action( $success, $model->item_name($success), $action_desc, array( 'action' => $action, 'status'=>'all' ) );
 	}
 
 
@@ -965,7 +967,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		
 		$what = 'Registration Options';
 		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
-		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'reg_form_settings' ) );
+		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'view_reg_form_settings' ) );
 		
 	}
 
