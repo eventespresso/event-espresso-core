@@ -78,7 +78,7 @@ abstract class EE_messenger extends EE_Base {
 	 * 	'field_name(i.e.to)' => array(
 	 * 		'shortcodes' => array('email'), //an array of shortcode groups (correspond to EE_Shortcodes library class) that are allowed in the field. Typically you can just include $this->_valid_shortcodes['field_name'] as the value here (because they will match).
 	 * 		'specific_shortcodes' => array('[ADMIN_EMAIL]'), //if this index is present you can further restrict the field to ONLY specific shortcodes if an entire group isn't sufficient.
-	 * 		'type' => 'email' //this is the field type and should match one of the validator types (see EE_Messages_Validator.core.php for all the possible types).  If not required you can just leave empty.
+	 * 		'type' => 'email' //this is the field type and should match one of the validator types (see EE_Messages_Validator::validator() for all the possible types).  If not required you can just leave empty.
 	 * 	)
 	 * )
 	 * 

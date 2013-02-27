@@ -98,7 +98,11 @@ class EE_Email_messenger extends EE_messenger  {
 			'from' => array(
 				'shortcodes' => $this->_valid_shortcodes['from'],
 				'type' => 'email'
-				)
+				),
+			'subject' => array(),
+			'content' => array(),
+			'attendee_list' => array('attendee', 'event_list'),
+			'event_list' => array('event', 'attendee_list')
 			);
 	}
 
@@ -231,6 +235,7 @@ class EE_Email_messenger extends EE_messenger  {
 		//todo we need to validate the different fields before sending.
 		
 		$success = wp_mail($this->_to, stripslashes_deep(html_entity_decode($this->_subject, ENT_QUOTES, "UTF-8")), stripslashes_deep(html_entity_decode(wpautop($this->_body()), ENT_QUOTES,"UTF-8")), $this->_headers());
+		return $success;
 
 	}
 
