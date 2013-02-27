@@ -121,12 +121,6 @@ abstract class EE_Messages_Validator extends EE_Base {
 
 		//modify any messenger/message_type specific validation instructions.  This is what child classes define.
 		$this->_modify_validator();
-
-		//let's run validation!
-		$this->_validate();
-
-		//return any errors or just TRUE if everything validates
-		return empty( $this->_errors ) ? TRUE : $this->_errors();
 	}
 
 
@@ -261,16 +255,18 @@ abstract class EE_Messages_Validator extends EE_Base {
 	 * This is the main method that handles validation
 	 *
 	 * What it does is loop through the _fields (the ones that get validated) and checks them against the shortcodes array for the field and the 'type' indicated by the 
-	 * 
-	 * @return void
+	 *
+	 * @access public
+	 * @return mixed (bool|array)  if errors present we return the array otherwise true
 	 */
-	private function _validate() {
+	public function validate() {
 		//some defaults
 		$invalid_shortcodes = '';
 		$template_fields = $this->_MSGR->get_template_fields();
 		//loop through the fields and check!
 		foreach ( $this->_fields as $field => $value ) {
-			$this->_errors[$field] = '';
+			$this->_errors[$field] = array();
+			$err_msg = '';
 			$field_label = '';
 
 			//if field is not present in the _validators array then we continue
@@ -279,30 +275,34 @@ abstract class EE_Messages_Validator extends EE_Base {
 			//get the translated field label!
 			//first check if it's in the main fields list
 			if ( isset( $template_fields[$field] ) ) {
-				if ( empty( $template_fields[$field] ) ) $field_label = $field; //most likely the field is found in the 'extra' array.
-				$field_label = $template_fields[$field]['label'];
+				if ( empty( $template_fields[$field] ) ) 
+					$field_label = $field; //most likely the field is found in the 'extra' array.
+				else
+					$field_label = $template_fields[$field]['label'];
 			} 
 
 			//if field label is empty OR is equal to the current field then we need to loop through the 'extra' fields in the template_fields config (if present)
 			if ( isset( $template_fields['extra'] ) && ( empty($field_label) ) || $field_label == $field ) {
 				foreach( $template_fields['extra'] as $main_field => $secondary_field ) {
-					if ( $secondary_field == $field ) {
-						$field_label = $secondary_field['label'];
-					}
+					foreach ( $secondary_field as $name => $values ) {
+						if ( $name == $field ) {
+							$field_label = $values['label'];
+						}
 
-					//if we've got a 'main' secondary field, let's see if that matches what field we're on which means it contains the label for this field.
-					if ( $secondary_field == 'main' && $main_field == $field_label ) 
-						$field_label = $secondary_field['label'];
+						//if we've got a 'main' secondary field, let's see if that matches what field we're on which means it contains the label for this field.
+						if ( $name == 'main' && $main_field == $field_label ) 
+							$field_label = $values['label'];
+					}
 				}
 			} 
 
 			//field is present. Let's validate shortcodes first (but only if shortcodes present).
 			if ( isset( $this->_validators[$field]['shortcodes'] ) && !empty( $this->_validators[$field]['shortcodes'] ) ) {
-				$invalid_shortcodes = $this->_invalid_shortcodes( $value, $shortcodes );
+				$invalid_shortcodes = $this->_invalid_shortcodes( $value, $this->_validators[$field]['shortcodes'] );
 				//if true then that means there is a returned error message that we'll need to add to the _errors array for this field.
 				if ( $invalid_shortcodes ) {
-					$this->_errors[$field] = sprintf( __('<p>The following shortcodes were found in the %s field that ARE not valid: %s</p>', 'event_espresso'), $field_label, $invalid_shortcodes );
-					$this->_errors[$field] .= sprintf( __('<p>Valid shortcodes for this field are: %s', 'event_espresso'), implode(',', $shortcodes ) );
+					$err_msg = sprintf( __('<p>The following shortcodes were found in the "%s" field that ARE not valid: %s</p>', 'event_espresso'), '<strong>' . $field_label . '</strong>', $invalid_shortcodes );
+					$err_msg .= sprintf( __('<p>Valid shortcodes for this field are: %s', 'event_espresso'), implode(', ', $this->_validators[$field]['shortcodes'] ) );
 				}
 			}
 
@@ -311,21 +311,36 @@ abstract class EE_Messages_Validator extends EE_Base {
 				switch ( $this->_validators[$field]['type'] ) {
 					case 'number' :
 						if ( !is_numeric($value) )
-							$this->_errors[$field] .= sprintf( __('<p>The %s field is supposed to be a number. The value given (%s)  is not.  Please doublecheck and make sure the field contains a number</p>', 'event_espresso'), $field_label, $value );
+							$err_msg .= sprintf( __('<p>The %s field is supposed to be a number. The value given (%s)  is not.  Please doublecheck and make sure the field contains a number</p>', 'event_espresso'), $field_label, $value );
 						break;
 					case 'email' :
-						$invalid_email = $this->_validate_email($value);
-						if ( $invalid_email )
-							$this->_errors[$field] .= sprintf( __('<p>The %s field has strings that are not valid emails.  Valid emails are in the format: "Name <email@something.com>" or "email@something.com" and multiple emails can be separated by a comma.'), $field_label );
+						$valid_email = $this->_validate_email($value);
+						if ( !$valid_email )
+							$err_msg .= htmlentities( sprintf( __('The %s field has at least one string that is not a valid email address record.  Valid emails are in the format: "Name <email@something.com>" or "email@something.com" and multiple emails can be separated by a comma.'), $field_label ) );
 						break;
 					default :
 						break;
 				}
 			}
 
-			//if _errors is empty for this field then let's make sure it gets unset so we don't accidentally trigger a validation fail!
-			if ( empty($this->_errors[$field] ) ) unset($this->_errors[$field]);
+			//if $err_msg isn't empty let's setup the _errors array for this field.
+			if ( !empty($err_msg ) ) {
+				$this->_errors[$field]['msg'] = $err_msg;
+			} else {
+				unset( $this->_errors[$field] );
+			}
+
 		}
+
+		//if we have ANY errors, then we want to make sure we return the values for ALL the fields so the user doesn't have to retype them all.
+		if ( !empty( $this->_errors ) ) {
+			foreach ( $this->_fields as $field => $value ) {
+				$this->_errors[$field]['value'] = $value;
+			}
+		}
+
+		//return any errors or just TRUE if everything validates
+		return empty( $this->_errors ) ? TRUE : $this->_errors;
 	}
 
 
@@ -365,25 +380,41 @@ abstract class EE_Messages_Validator extends EE_Base {
 	 */
 	private function _validate_email( $value ) {
 		$validate = TRUE;
+		$fail = FALSE;
+		$or_val = $value;
+		//first we need to strip out all the shortcodes!
+		$value = preg_replace('/(\[.+?\])/', '', $value);
 
-		//first we need to split up the string if its comma delimited.
+		//if original value is not empty and new value is, then we've parsed out a shortcode and we now have an empty string which DOES validate (otherwise an empty string doesn't validate)
+		if ( !empty($or_val) && empty($value) )
+			return $validate;
+
+		//trim any commas from beginning and end of string ( after whitespace trimmed );
+		$value = trim( trim($value), ',' );
+
+		//next we need to split up the string if its comma delimited.
 		$emails = explode(',', $value);
 
 		//now let's loop through the emails and do our checks
 		foreach ( $emails as $email ) {
+			//trim whitespace
+			$email = trim($email);
 
 			//first just check if this is a straight email address and continue if is
-			if ( $validate = is_email( $email ) ) continue;
-
+			if ( !$validate = is_email( $email ) ) {
+				$fail = TRUE;
+				continue;
+			}
+	
 			//if false then we move to the next check.  Is this in the format "Foo <email@somethign.com)"?
-			$validate = preg_match( '/(.*)<(.+)>/', $value, $matches ) ) ? TRUE : FALSE;
+			$validate = preg_match( '/(.*)<(.+)>/', $value, $matches ) ? TRUE : FALSE;
 
 			//if FALSE here then we return because there is an invalid email.  Otherwise we do a final check on the email address.
 			if ( !$validate ) return FALSE;
 			
 			$validate = is_email($matches[2]);
 
-			if ( !$validate ) return FALSE;
+			if ( !$validate || ( empty( $matches[2] ) && $fail ) ) return FALSE;
 		}
 
 		return $validate;
