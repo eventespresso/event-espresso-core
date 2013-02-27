@@ -246,6 +246,7 @@ function event_espresso_get_event_details( $attributes = array()) {
 		$status = event_espresso_get_is_active( $event_id, $event_meta, $event->is_active, $event->event_status );
 
 		$status_display = $status['display_custom'];
+	
 		$status_display_open = $status['status'] == 'REGISTRATION_OPEN' ? $status['display_custom'] : $status['status'];
 		$status_display_ongoing = $status['status'] == 'ONGOING' ? $status['display_custom'] : $status['status'];
 		$status_display_secondary = $status['status'] == 'SECONDARY' ? $status['display_custom'] : $status['status']; //Waitlist event
@@ -278,7 +279,7 @@ function event_espresso_get_event_details( $attributes = array()) {
 		$event->currency_symbol = $org_options['currency_symbol'];
 
 		$display_available_spaces = ( $event->display_reg_form && $event->externalURL == '' ) ? TRUE : FALSE;
-		$available_spaces = get_number_of_attendees_reg_limit($event_id, 'available_spaces');
+		$available_spaces = get_number_of_attendees_reg_limit( $event_id, 'available_spaces' );
 
 		//Venue information
 		if ($use_venues) {

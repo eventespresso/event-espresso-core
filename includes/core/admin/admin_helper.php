@@ -678,3 +678,95 @@ if (!function_exists('espresso_reset_cache')) {
 }
 
 
+
+
+
+if (!function_exists('espresso_personnel_cb')) {
+
+	function espresso_personnel_cb($event_id = 0, $orig_user = 0, $orig_event_staff = 0) {
+		global $wpdb;
+		if ($orig_event_staff != 0) {
+			//print_r( $orig_event_staff );
+			$p_id = '';
+			foreach ($orig_event_staff as $k => $v) {
+				$p_id .= "'" . $v . "',";
+			}
+			$p_id = rtrim($p_id, ",");
+		}
+		if ($event_id != 0) {
+			$sql = "SELECT id, name, role, meta FROM " . EVENTS_PERSONNEL_TABLE;
+			if (function_exists('espresso_member_data')) {
+				$wpdb->get_results("SELECT wp_user FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $event_id . "'");
+				$wp_user = $wpdb->last_result[0]->wp_user != '' ? $wpdb->last_result[0]->wp_user : espresso_member_data('id');
+				$sql .= " WHERE ";
+				$sql .= "(";
+				if ($wp_user == 0 || $wp_user == 1) {
+					$sql .= " (wp_user = '0' OR wp_user = '1') ";
+				} else {
+
+					$sql .= " wp_user = '" . $wp_user . "' ";
+					if ($orig_user != 0) {
+						$sql .= " OR wp_user = '" . $orig_user . "' ";
+					}
+				}
+				if ($orig_event_staff != 0) {
+					$sql .= " OR id IN (" . $p_id . ") ";
+				}
+				$sql .= ")";
+			}
+			//echo $sql;
+			$event_personnel = $wpdb->get_results($sql);
+			$num_rows = $wpdb->num_rows;
+		} else
+			$num_rows = 0;
+		if ($num_rows > 0) {
+			$html = '';
+			foreach ($event_personnel as $person) {
+				$person_id = $person->id;
+				$person_name = $person->name;
+				$person_role = $person->role;
+
+				$meta = unserialize($person->meta);
+				$person_organization = (isset($meta['organization']) && $meta['organization'] != '') ? $meta['organization'] : '';
+				//$person_title = $meta['title']!=''? $meta['title']:'';
+				$person_info = (isset($person_role) && $person_role != '') ? ' [' . $person_role . ']' : '';
+
+				$in_event_personnel = $wpdb->get_results("SELECT * FROM " . EVENTS_PERSONNEL_REL_TABLE . " WHERE event_id='" . $event_id . "' AND person_id='" . $person_id . "'");
+				$in_event_person = '';
+				foreach ($in_event_personnel as $in_person) {
+					$in_event_person = $in_person->person_id;
+				}
+
+				$html .= '<p id="event-person-' . $person_id . '" class="event-staff-list"><label for="in-event-person-' . $person_id . '" class="selectit"><input value="' . $person_id . '" type="checkbox" name="event_person[]" id="in-event-person-' . $person_id . '"' . ($in_event_person == $person_id ? ' checked="checked"' : "" ) . '/> <a href="admin.php?page=event_staff&amp;action=edit&amp;id=' . $person_id . '"  target="_blank" title="' . $person_organization . '">' . $person_name . '</a> ' . $person_info . '</label></p>';
+			}
+
+			$top_div = '';
+			$bottom_div = '';
+
+			if ($num_rows > 10) {
+				$top_div = '<div style="height:250px;overflow:auto;">';
+				$bottom_div = '</div>';
+			}
+
+			$manage = '<p><a href="admin.php?page=event_staff" target="_blank">' . __('Manage Staff Members', 'event_espresso') . '</a> | <a class="thickbox link" href="#TB_inline?height=300&width=400&inlineId=staff_info">Shortcode</a> </p>';
+
+			echo '<div id="staff_info" style="display:none">';
+			echo '<div class="TB-ee-frame">';
+			echo '<h2>' . __('Staff Shortcode', 'event_espresso') . '</h2>';
+			echo '<p>' . __('Add the following shortcode into the description to show the staff for this event.', 'event_espresso') . '</p>';
+			echo '<p>[ESPRESSO_STAFF]</p>';
+			echo '<p>Example with Optional Parameters:<br />
+			[ESPRESSO_STAFF outside_wrapper="div" outside_wrapper_class="event_staff" inside_wrapper="p" inside_wrapper_class="event_person"]</p>';
+
+			echo '<p><strong><a href="http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/#staff_shortcode" target="_blank">More Examples</a></strong></p>';
+			echo '</div>';
+			echo '</div>';
+
+			$html = $top_div . $html . $bottom_div . $manage;
+			return $html;
+		} else {
+			return '<a href="admin.php?page=event_staff&amp;action=add_new_person">' . __('Please add at least one person.', 'event_espresso') . '</a>';
+		}
+	}
+
+}
