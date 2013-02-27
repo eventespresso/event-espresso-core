@@ -60,6 +60,14 @@ abstract class EE_Messages_Validator extends EE_Base {
 
 
 
+	/**
+	 * this will hold the incoming context
+	 * @var string
+	 */
+	protected $_context;
+
+
+
 
 	/**
 	 * this holds an array of fields and the relevant validation information that the incoming fields data get validated against.  This gets setup in the _set_props() method.
@@ -74,7 +82,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 	 * holds the messenger object
 	 * @var object
 	 */
-	protected $_MSGR
+	protected $_MSGR;
 
 
 
@@ -82,7 +90,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 	 * holds the message type object
 	 * @var object
 	 */
-	protected $_MSGTYP
+	protected $_MSGTYP;
 
 
 
@@ -94,13 +102,15 @@ abstract class EE_Messages_Validator extends EE_Base {
 	 *
 	 * 
 	 * @param array $fields The fields sent by the EEM object.
-	 * @return mixed (bool|array)  if errors present we return the array otherwise true
+	 * @return void
 	 */
-	public function __construct( $fields ) {
+	public function __construct( $fields, $context ) {
 		//check that _m_name and _mt_name have been set by child class otherwise we get out.
 		if ( empty($this->_m_name ) || empty( $this->_mt_name) )
 			throw new EE_Error( __('EE_Messages_Validator child classes MUST set the $_m_name and $_mt_name property.  Check that the child class is doing this', 'event_espresso') );
 
+		$this->_fields = $fields;
+		$this->_context = $context;
 
 		//load messenger and message_type objects and the related shortcode objects.
 		$this->_load_objects();
@@ -143,7 +153,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 		$messenger = 'EE_' . $messenger . '_messenger';
 
 		if ( !class_exists( $messenger ) ) {
-			$msg = sprintf( __('There is no messenger class for the given string (%s)'), $this->_m_name ) );
+			$msg = sprintf( __('There is no messenger class for the given string (%s)', 'event_espresso'), $this->_m_name );
 		}
 
 		$a = new ReflectionClass( $messenger );
@@ -155,7 +165,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 		$message_type = 'EE_' . $message_type . '_message_type';
 
 		if ( !class_exists( $message_type ) ) {
-			$msg = sprintf( __('There is no message type class for the given string (%s)'), $this->_mt_name ) );
+			$msg = sprintf( __('There is no message type class for the given string (%s)', 'event_espresso'), $this->_mt_name );
 		}
 
 		$a = new ReflectionClass( $message_type );
@@ -181,14 +191,15 @@ abstract class EE_Messages_Validator extends EE_Base {
 
 		
 		//we only want the valid shortcodes for the given context!
-		$context = $this->_fields['MTP_context'];
+		$context = $this->_context;
 		$mt_codes = $mt_codes[$context];
 
 
 		//in this first loop we're just getting all shortcode group indexes from the msgr_validator into a single array (so we can get the appropriate shortcode objects for the groups)
 		$shrtcode_grps = $mt_codes; //start off with the mt_codes group.
+		
 		foreach ( $msgr_validator as $field => $config ) {
-			if ( empty($config) || !isset($config['specific_shortcodes']) )
+			if ( empty($config) || !isset($config['shortcodes']) )
 				continue;  //Nothing to see here.
 
 			$shrtcode_grps = array_merge( $config['shortcodes'], $shrtcode_grps );
@@ -196,16 +207,18 @@ abstract class EE_Messages_Validator extends EE_Base {
 
 		//okay now we've got our grps. Let's get the codes from the objects into an array indexed by group for easy retrieval later.
 		$codes_from_objs = array();
-		foreach ( $shrtcode_groups as $group ) {
-			$ref = ucwords( str_replace('_', ' ', $shortcode_ref ) );
+		$shrtcode_grps = array_unique($shrtcode_grps);
+		foreach ( $shrtcode_grps as $group ) {
+			$ref = ucwords( str_replace('_', ' ', $group ) );
 			$ref = str_replace( ' ', '_', $ref );
 			$classname = 'EE_' . $ref . '_Shortcodes';
 			if ( class_exists( $classname ) ) {
 				$a = new ReflectionClass( $classname );
 				$obj = $a->newInstance();
-				$codes_from_objs[$group] = array_merge( $codes_from_objs, array_keys($obj->get_shortcodes()) );
+				$codes_from_objs[$group] = array_keys($obj->get_shortcodes());
 			}
 		}
+
 
 
 		//let's just replace the $mt shortcode group indexes with the actual shortcodes (unique)
@@ -220,6 +233,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 		//k now in this next loop we're going to loop through $msgr_validator again and setup the _validators property from the data we've setup so far.
 		foreach ( $msgr_validator as $field => $config ) {
 			//if empty config then we're assuming we're just going to use the shortcodes from the message type context
+
 			if ( empty( $config ) ) {
 				$this->_validators[$field]['shortcodes'] = $mt_codes;
 			}
@@ -232,7 +246,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 			//otherwise the shortcodes are what is set by the messenger for that field
 			else {
 				foreach ( $config['shortcodes'] as $group ) {
-					$this->_validators[$field]['shortcodes'] = array_merge( $this->_validators[$field]['shortcodes'], $codes_from_objs[$group] );
+					$this->_validators[$field]['shortcodes'] = isset($this->_validators[$field]['shortcodes']) ? array_merge( $this->_validators[$field]['shortcodes'], $codes_from_objs[$group] ) : $codes_from_objs[$group];
 				}
 			}
 

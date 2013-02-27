@@ -527,11 +527,12 @@ class EEM_Message_Template extends EEM_Base {
 	 *
 	 * 
 	 * @param  array $fields the incoming fields to check.  Note this array is in the formatted fields from the form fields setup.  So we need to reformat this into an array of expected field refs by the validator.
+	 * @param string $context The context the fields were obtained from.
 	 * @param string $messenger The messenger we are validating
 	 * @param string $message_type The message type we are validating.
 	 * @return mixed (bool|array)         If the fields all check out then we return true otherwise error messages are returned (indexed by field name);
 	 */
-	public function validate($fields, $messenger, $message_type) {
+	public function validate($fields, $context, $messenger, $message_type) {
 
 		$assembled_fields = array();
 		
@@ -560,15 +561,15 @@ class EEM_Message_Template extends EEM_Base {
 
 		$classname = 'EE_Messages_' . $m_ref . '_' . $mt_ref . '_Validator';
 
-		if ( !class_exists( $class_name ) ) {
+		if ( !class_exists( $classname ) ) {
 			$msg[] = __( 'The Validator class was unable to load', 'event_espresso');
 			$msg[] = sprintf( __('The class name compiled was %s. Please check and make sure the spelling and case is correct for the class name and that there is an autoloader in place for this class', 'event_espresso'), $classname );
 			throw new EE_Error( implode( '||', $msg ) );
 		}
 
 		$a = new ReflectionClass( $classname );
-		$result = $a->newInstance( $fields );
-
+		$_VLD = $a->newInstance( $assembled_fields, $context );
+		$result = $_VLD->validate();
 		return $result;
 	}
 

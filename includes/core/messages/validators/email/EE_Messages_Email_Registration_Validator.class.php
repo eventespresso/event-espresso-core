@@ -30,11 +30,11 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class EE_Messages_Email_Registration_Validator extends EE_Messages_Validator {
 
 
-	public function __construct( $fields ) {
+	public function __construct( $fields, $context ) {
 		$this->_m_name = 'email';
 		$this->_mt_name = 'registration';
 
-		parent::__construct();
+		parent::__construct( $fields, $context );
 	}
 
 	/**
