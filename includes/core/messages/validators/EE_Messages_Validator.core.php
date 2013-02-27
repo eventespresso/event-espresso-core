@@ -23,7 +23,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * @abstract
  * @package		Event Espresso
- * @subpackage	includes/core/messages/defaults
+ * @subpackage	includes/core/messages/validators/EE_Messages_Validator.core.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
@@ -83,6 +83,9 @@ abstract class EE_Messages_Validator extends EE_Base {
 	 * @var object
 	 */
 	protected $_MSGTYP
+
+
+
 
 
 
@@ -240,9 +243,137 @@ abstract class EE_Messages_Validator extends EE_Base {
 
 
 
-
+	/**
+	 * This is the main method that handles validation
+	 *
+	 * What it does is loop through the _fields (the ones that get validated) and checks them against the shortcodes array for the field and the 'type' indicated by the 
+	 * 
+	 * @return void
+	 */
 	private function _validate() {
-		//todo
+		//some defaults
+		$invalid_shortcodes = '';
+		$template_fields = $this->_MSGR->get_template_fields();
+		//loop through the fields and check!
+		foreach ( $this->_fields as $field => $value ) {
+			$this->_errors[$field] = '';
+			$field_label = '';
+
+			//if field is not present in the _validators array then we continue
+			if ( !isset( $this->_validators[$field] ) ) continue;
+
+			//get the translated field label!
+			//first check if it's in the main fields list
+			if ( isset( $template_fields[$field] ) ) {
+				if ( empty( $template_fields[$field] ) ) $field_label = $field; //most likely the field is found in the 'extra' array.
+				$field_label = $template_fields[$field]['label'];
+			} 
+
+			//if field label is empty OR is equal to the current field then we need to loop through the 'extra' fields in the template_fields config (if present)
+			if ( isset( $template_fields['extra'] ) && ( empty($field_label) ) || $field_label == $field ) {
+				foreach( $template_fields['extra'] as $main_field => $secondary_field ) {
+					if ( $secondary_field == $field ) {
+						$field_label = $secondary_field['label'];
+					}
+
+					//if we've got a 'main' secondary field, let's see if that matches what field we're on which means it contains the label for this field.
+					if ( $secondary_field == 'main' && $main_field == $field_label ) 
+						$field_label = $secondary_field['label'];
+				}
+			} 
+
+			//field is present. Let's validate shortcodes first (but only if shortcodes present).
+			if ( isset( $this->_validators[$field]['shortcodes'] ) && !empty( $this->_validators[$field]['shortcodes'] ) ) {
+				$invalid_shortcodes = $this->_invalid_shortcodes( $value, $shortcodes );
+				//if true then that means there is a returned error message that we'll need to add to the _errors array for this field.
+				if ( $invalid_shortcodes ) {
+					$this->_errors[$field] = sprintf( __('<p>The following shortcodes were found in the %s field that ARE not valid: %s</p>', 'event_espresso'), $field_label, $invalid_shortcodes );
+					$this->_errors[$field] .= sprintf( __('<p>Valid shortcodes for this field are: %s', 'event_espresso'), implode(',', $shortcodes ) );
+				}
+			}
+
+			//if there's a "type" to be validated then let's do that too.
+			if ( isset( $this->_validators[$field]['type'] ) && !empty( $this->_validators[$field]['type'] ) ) {
+				switch ( $this->_validators[$field]['type'] ) {
+					case 'number' :
+						if ( !is_numeric($value) )
+							$this->_errors[$field] .= sprintf( __('<p>The %s field is supposed to be a number. The value given (%s)  is not.  Please doublecheck and make sure the field contains a number</p>', 'event_espresso'), $field_label, $value );
+						break;
+					case 'email' :
+						$invalid_email = $this->_validate_email($value);
+						if ( $invalid_email )
+							$this->_errors[$field] .= sprintf( __('<p>The %s field has strings that are not valid emails.  Valid emails are in the format: "Name <email@something.com>" or "email@something.com" and multiple emails can be separated by a comma.'), $field_label );
+						break;
+					default :
+						break;
+				}
+			}
+
+			//if _errors is empty for this field then let's make sure it gets unset so we don't accidentally trigger a validation fail!
+			if ( empty($this->_errors[$field] ) ) unset($this->_errors[$field]);
+		}
+	}
+
+
+
+	/**
+	 * Validates a string against a list of accepted shortcodes
+	 *
+	 * This function takes in an array of shortcodes and makes sure that the given string ONLY contains shortcodes in that array.
+	 * 	
+	 * @param  string $value      string to evaluate
+	 * @param  array  $valid_shortcodes array of shortcodes that are acceptable.
+	 * @return mixed (bool|string)  return either a list of invalid shortcodes OR false if the shortcodes validate.
+	 */
+	private function _invalid_shortcodes($value, $valid_shortcodes) {
+		//first we need to go through the string and get the shortcodes in the string
+		$sc = preg_match_all( '/(\[.+?\])/', $value, $matches );
+		$incoming_shortcodes = (array) $matches[0];
+
+		//get a diff of the shortcodes in the string vs the valid shortcodes
+		$diff = array_diff( $incoming_shortcodes, $valid_shortcodes );
+
+		if ( empty( $diff ) ) return FALSE; //there is no diff, we have no invalid shortcodes, so return
+
+		//made it here? then let's assemble the error message
+		$invalid_shortcodes = implode( '</strong>,<strong>', $diff );
+		$invalid_shortcodes = '<strong>' . $invalid_shortcodes . '</strong>';
+		return $invalid_shortcodes;
+	}
+
+
+
+
+	/**
+	 * Validates an incoming string and makes sure we have valid emails in the string.
+	 * @param  string $value incoming value to validate
+	 * @return bool        true if the string validates, false if it doesn't
+	 */
+	private function _validate_email( $value ) {
+		$validate = TRUE;
+
+		//first we need to split up the string if its comma delimited.
+		$emails = explode(',', $value);
+
+		//now let's loop through the emails and do our checks
+		foreach ( $emails as $email ) {
+
+			//first just check if this is a straight email address and continue if is
+			if ( $validate = is_email( $email ) ) continue;
+
+			//if false then we move to the next check.  Is this in the format "Foo <email@somethign.com)"?
+			$validate = preg_match( '/(.*)<(.+)>/', $value, $matches ) ) ? TRUE : FALSE;
+
+			//if FALSE here then we return because there is an invalid email.  Otherwise we do a final check on the email address.
+			if ( !$validate ) return FALSE;
+			
+			$validate = is_email($matches[2]);
+
+			if ( !$validate ) return FALSE;
+		}
+
+		return $validate;
+
 	}
 
 }
