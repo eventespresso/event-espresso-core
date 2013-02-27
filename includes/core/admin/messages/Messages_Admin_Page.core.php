@@ -471,10 +471,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				);
 
 		$hidden_inputs['ee-msg-evt-nonce'] = array(
-			'name' => '_wpnonce',
+			'name' => 'insert_message_template_nonce',
 			'input' => 'hidden',
 			'type' => 'string',
-			'value' => wp_create_nonce( 'insert_message_template' . '_nonce')
+			'value' => wp_create_nonce( 'insert_message_template_nonce')
 			);
 
 		$this->_template_args['hidden_fields'] = $this->_generate_admin_form_fields( $hidden_inputs );
@@ -531,6 +531,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$edit_message_template_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
 		}
 
+		//Do we have any validation errors?
+		$validators = $this->_get_transient();
+		$v_fields = !empty($validators) ? array_keys($validators) : array();
+
 
 		//todo: we need to assemble the title from Various details
 		$context_label = sprintf( __('(%s %s)', 'event_espresso'), $c_config[$context]['label'], ucwords($c_label['label'] ));
@@ -585,13 +589,18 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							$field_id = $reference_field . '-' . $extra_field . '-content';
 							$template_form_fields[$field_id] = $extra_array;
 							$template_form_fields[$field_id]['name'] = 'MTP_template_fields[' . $reference_field . '][content][' . $extra_field . ']';
+							$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array($extra_field, $v_fields) && isset( $validators[$extra_field]['msg'] ) ? 'validate-error' : '';
 							$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($message_templates[$context][$reference_field]['content'][$extra_field]) ? $message_templates[$context][$reference_field]['content'][$extra_field] : '';
+
+							//do we have a validation error?  if we do then let's use that value instead
+							$template_form_fields[$field_id]['value'] = isset($validators[$extra_field]) ? $validators[$extra_field]['value'] : $template_form_fields[$field_id]['value'];
+
 							$template_form_fields[$field_id]['db-col'] = 'MTP_content';	
 
 							//if doing ajax and the extra field input type is wp_editor, let's change back to text area and also change class.
 							if ( isset( $extra_array['input'] ) && $extra_array['input'] == 'wp_editor' && defined('DOING_AJAX') ) {
 								$template_form_fields[$field_id]['input'] = 'textarea';
-								$template_form_fields[$field_id]['css_class'] = 'large-text';
+								$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array($extra_field, $v_fields) ? 'large-text validate-error' : 'large-text';
 								$template_form_fields[$field_id]['label'] = $extra_array['label'] . '&nbsp;' . __('(Basic HTML tags allowed)', 'event_espresso');
 							}/**/
 						}
@@ -630,12 +639,18 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					$template_form_fields[$field_id] = $field_setup_array;
 					$template_form_fields[$field_id]['name'] = 'MTP_template_fields[' . $template_field . '][content]';
 					$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($message_templates[$context][$template_field]['content']) ? $message_templates[$context][$template_field]['content'] : '';
+
+					//do we have a validator error for this field?  if we do then we'll use that value instead
+					$template_form_fields[$field_id]['value'] = isset($validators[$template_field]) ? $validators[$template_field]['value'] : $template_form_fields[$field_id]['value'];
+
+
 					$template_form_fields[$field_id]['db-col'] = 'MTP_content';
+					$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array( $template_field, $v_fields ) && isset( $validators[$template_field]['msg'] ) ? 'validate-error' : '';
 
 					//if doing ajax and the extra field input type is wp_editor, let's change to text area and also change class.
 					if ( isset( $field_setup_array['input'] ) && $field_setup_array['input'] == 'wp_editor' && defined('DOING_AJAX') ) {
 						$template_form_fields[$field_id]['input'] = 'textarea';
-						$template_form_fields[$field_id]['css_class'] = 'large-text';
+						$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array( $template_field, $v_fields ) ? 'large-text validate-error' : 'large-text';
 						$template_form_fields[$field_id]['label'] = $extra_array['label'] . '&nbsp;' . __('(Basic HTML tags allowed)', 'event_espresso');
 					}/**/
 				}
@@ -823,7 +838,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'value' => $EVT_ID
 				);
 			$sidebar_form_fields['ee-msg-evt-nonce'] = array(
-				'name' => '_wpnonce',
+				'name' => $action . '_nonce',
 				'input' => 'hidden',
 				'type' => 'string',
 				'value' => wp_create_nonce( $action . '_nonce')
@@ -1123,6 +1138,16 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @param int $index This helps us know which template field to select from the request array.
 	 */
 	protected function _set_message_template_column_values($index) {
+		//first we need to make sure we run the content through html_entities
+		if ( is_array($this->_req_data['MTP_template_fields'][$index]['content'] ) ) {
+			foreach ( $this->_req_data['MTP_template_fields'][$index]['content'] as $field => $value ) {
+				$this->_req_data['MTP_template_fields'][$index]['content'][$field] = htmlentities( $value );
+			}
+		} else {
+			$this->_req_data['MTP_template_fields'][$index]['content'] = htmlentities( $this->_req_data['MTP_template_fields'][$index]['content'] );
+		}
+
+
 		$set_column_values = array(
 			'MTP_ID' => absint($this->_req_data['MTP_template_fields'][$index]['MTP_ID']),
 			'EVT_ID' => absint($this->_req_data['EVT_ID']),
@@ -1138,6 +1163,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'MTP_deleted' => absint($this->_req_data['MTP_deleted']),
 			'MTP_is_active' => absint($this->_req_data['MTP_is_active'])
 		);
+
+	
 		return $set_column_values;
 	}
 
@@ -1195,18 +1222,44 @@ class Messages_Admin_Page extends EE_Admin_Page {
 						'action' => 'edit_message_template'
 						);
 			} else {
-				foreach ( $this->_req_data['MTP_template_fields'] as $template_field => $content ) {
-					$set_column_values = $this->_set_message_template_column_values($template_field);
-					$where_cols_n_values = array( 'MTP_ID' => $this->_req_data['MTP_template_fields'][$template_field]['MTP_ID']);
-					if ( $updated = $MTP->update( $set_column_values, $where_cols_n_values ) ) {
-						if ( !$updated ) {
-							$msg = sprintf( __('%s field was NOT updated for some reason', 'event_espresso') );
-							EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__ );
+				//first validate all fields!
+				$validates = $MTP->validate($this->_req_data['MTP_template_fields'], $this->_req_data['MTP_context'],  $this->_req_data['MTP_messenger'], $this->_req_data['MTP_message_type']);
+
+				//if $validate returned error messages (i.e. is_array()) then we need to process them and setup an appropriate response.
+				if ( is_array($validates) ) {
+					//add the transient so when the form loads we know which fields to highlight
+					$this->_add_transient( 'edit_message_template', $validates );
+
+					$success = 0;
+					$action_desc ='';
+
+					//setup query args to load the edit message template
+					$query_args = array(
+						'id' => $this->_req_data['GRP_ID'],
+						'evt_id' => $this->_req_data['EVT_ID'],
+						'context' => $this->_req_data['MTP_context'],
+						'action' => 'edit_message_template'
+						);
+					//setup notices
+					foreach ( $validates as $field => $error ) {
+						if ( isset($error['msg'] ) )
+							EE_Error::add_error( $error['msg'], __FILE__, __FUNCTION__, __LINE__ );
+					}
+				} else {
+					foreach ( $this->_req_data['MTP_template_fields'] as $template_field => $content ) {
+						$set_column_values = $this->_set_message_template_column_values($template_field);
+						$where_cols_n_values = array( 'MTP_ID' => $this->_req_data['MTP_template_fields'][$template_field]['MTP_ID']);
+						if ( $updated = $MTP->update( $set_column_values, $where_cols_n_values ) ) {
+							if ( !$updated ) {
+								$msg = sprintf( __('%s field was NOT updated for some reason', 'event_espresso') );
+								EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__ );
 						} else {
 							$success = 1;
 						}
 					}
 					$action_desc = 'updated';
+				}
+				
 				}
 			}
 
