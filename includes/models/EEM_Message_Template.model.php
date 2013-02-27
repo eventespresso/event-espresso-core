@@ -520,6 +520,58 @@ class EEM_Message_Template extends EEM_Base {
 		return $max_grp_id;
 	}
 
+
+
+	/**
+	 * This sends things to the validator for the given messenger and message type.
+	 *
+	 * 
+	 * @param  array $fields the incoming fields to check.  Note this array is in the formatted fields from the form fields setup.  So we need to reformat this into an array of expected field refs by the validator.
+	 * @param string $messenger The messenger we are validating
+	 * @param string $message_type The message type we are validating.
+	 * @return mixed (bool|array)         If the fields all check out then we return true otherwise error messages are returned (indexed by field name);
+	 */
+	public function validate($fields, $messenger, $message_type) {
+
+		$assembled_fields = array();
+		
+		//let's loop through all the fields and set them up in the right format
+		foreach ( $fields as $index => $value ) {
+			//first let's figure out if the value['content'] in the current index is an array.  If it is then this is special fields that are used in parsing special shortcodes (i.e. 'attendee_list').
+			if ( is_array($value['content']) ) {
+				$assembled_fields[$value['name']] = $value['content']['main'];
+				//loop through the content and get the other fields.
+				foreach ( $value['content'] as $name => $value ) {
+					if ( $name == 'main' ) continue;
+					$assembled_fields[$name] = $value;
+				}
+				continue;
+			}
+
+			//okay if we're here then this is just a straight field=>$value arrangement
+			$assembled_fields[$value['name']] = $value['content'];
+		}
+
+		//now we've got the assembled_fields.  We need to setup the string for the appropriate validator class and call that.
+		$m_ref = ucwords( str_replace('_',' ', $messenger ) );
+		$m_ref = str_replace( ' ', '_', $m_ref );
+		$mt_ref = ucwords( str_replace('_', ' ', $message_type ) );
+		$mt_ref = str_replace( ' ', '_', $mt_ref );
+
+		$classname = 'EE_Messages_' . $m_ref . '_' . $mt_ref . '_Validator';
+
+		if ( !class_exists( $class_name ) ) {
+			$msg[] = __( 'The Validator class was unable to load', 'event_espresso');
+			$msg[] = sprintf( __('The class name compiled was %s. Please check and make sure the spelling and case is correct for the class name and that there is an autoloader in place for this class', 'event_espresso'), $classname );
+			throw new EE_Error( implode( '||', $msg ) );
+		}
+
+		$a = new ReflectionClass( $classname );
+		$result = $a->newInstance( $fields );
+
+		return $result;
+	}
+
 	
 
 } //end class EEM_Message_Template.model
