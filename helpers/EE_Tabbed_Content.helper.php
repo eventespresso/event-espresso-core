@@ -68,14 +68,14 @@ class EE_Tabbed_Content {
 		sample content for testing
 		 */
 		$all_tabs .= '<a class="nav-tab" rel="ee-tab-anothertab" href="#anothertab">Another Tab</a>';
-		$all_tabs_content .= '<div class="nav-tab-content hidden" id="ee-tab-anothertab">This is just some sample content to show another tab</div>';
+		$all_tabs_content .= '<div class="nav-tab-content hidden" id="ee-tab-anothertab">This is just some sample content to show another tab<div style="clear:both"></div></div>';
 		//end sample content /**/
 
 		$all_tabs .= '</h2>';
 
 		$tab_container_class = $small_tabs ? 'ee-nav-tabs ee-nav-tabs-small' : 'ee-nav-tabs';
 
-		return '<div class="'. $tab_container_class . '">' . "\n\t" . $all_tabs . $all_tabs_content . "\n" . '<div style="clear:both"></div></div>';
+		return '<div class="'. $tab_container_class . '">' . "\n\t" . $all_tabs . $all_tabs_content . "\n" . '</div>';
 	}
 
 
@@ -139,7 +139,7 @@ class EE_Tabbed_Content {
 		$name = str_replace( ' ', '-', $name);
 		$content = "\t" . '<div class="'. $class . '" id="ee-tab-' . $name . '">' . "\n";
 		$content .= "\t" . $tab_content . "\n";
-		$content .= '</div>';
+		$content .= '<div style="clear:both"></div></div>';
 		return $content;
 	}
 
