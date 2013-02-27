@@ -35,6 +35,10 @@
 	line-height: 18px;
 }
 
+#poststuff .nav-tab-content {
+	height: 100%;
+}
+
 .message-type-text {
 	margin-left: 5px;
 	margin-right: 5px;
