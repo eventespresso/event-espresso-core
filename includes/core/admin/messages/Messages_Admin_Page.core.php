@@ -531,6 +531,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$edit_message_template_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
 		}
 
+		//Do we have any validation errors?
+		$validators = $this->_get_transient();
+		$v_fields = !empty($validators) ? array_keys($validators) : array();
+
 
 		//todo: we need to assemble the title from Various details
 		$context_label = sprintf( __('(%s %s)', 'event_espresso'), $c_config[$context]['label'], ucwords($c_label['label'] ));
@@ -585,13 +589,18 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							$field_id = $reference_field . '-' . $extra_field . '-content';
 							$template_form_fields[$field_id] = $extra_array;
 							$template_form_fields[$field_id]['name'] = 'MTP_template_fields[' . $reference_field . '][content][' . $extra_field . ']';
+							$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array($extra_field, $v_fields) && isset( $validators[$extra_field]['msg'] ) ? 'validate-error' : '';
 							$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($message_templates[$context][$reference_field]['content'][$extra_field]) ? $message_templates[$context][$reference_field]['content'][$extra_field] : '';
+
+							//do we have a validation error?  if we do then let's use that value instead
+							$template_form_fields[$field_id]['value'] = isset($validators[$extra_field]) ? $validators[$extra_field]['value'] : $template_form_fields[$field_id]['value'];
+
 							$template_form_fields[$field_id]['db-col'] = 'MTP_content';	
 
 							//if doing ajax and the extra field input type is wp_editor, let's change back to text area and also change class.
 							if ( isset( $extra_array['input'] ) && $extra_array['input'] == 'wp_editor' && defined('DOING_AJAX') ) {
 								$template_form_fields[$field_id]['input'] = 'textarea';
-								$template_form_fields[$field_id]['css_class'] = 'large-text';
+								$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array($extra_field, $v_fields) ? 'large-text validate-error' : 'large-text';
 								$template_form_fields[$field_id]['label'] = $extra_array['label'] . '&nbsp;' . __('(Basic HTML tags allowed)', 'event_espresso');
 							}/**/
 						}
@@ -630,12 +639,18 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					$template_form_fields[$field_id] = $field_setup_array;
 					$template_form_fields[$field_id]['name'] = 'MTP_template_fields[' . $template_field . '][content]';
 					$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($message_templates[$context][$template_field]['content']) ? $message_templates[$context][$template_field]['content'] : '';
+
+					//do we have a validator error for this field?  if we do then we'll use that value instead
+					$template_form_fields[$field_id]['value'] = isset($validators[$template_field]) ? $validators[$template_field]['value'] : $template_form_fields[$field_id]['value'];
+
+
 					$template_form_fields[$field_id]['db-col'] = 'MTP_content';
+					$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array( $template_field, $v_fields ) && isset( $validators[$template_field]['msg'] ) ? 'validate-error' : '';
 
 					//if doing ajax and the extra field input type is wp_editor, let's change to text area and also change class.
 					if ( isset( $field_setup_array['input'] ) && $field_setup_array['input'] == 'wp_editor' && defined('DOING_AJAX') ) {
 						$template_form_fields[$field_id]['input'] = 'textarea';
-						$template_form_fields[$field_id]['css_class'] = 'large-text';
+						$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array( $template_field, $v_fields ) ? 'large-text validate-error' : 'large-text';
 						$template_form_fields[$field_id]['label'] = $extra_array['label'] . '&nbsp;' . __('(Basic HTML tags allowed)', 'event_espresso');
 					}/**/
 				}
@@ -1203,17 +1218,20 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					//add the transient so when the form loads we know which fields to highlight
 					$this->_add_transient( 'edit_message_template', $validates );
 
+					$success = 0;
+					$action_desc ='';
+
 					//setup query args to load the edit message template
-					$auery_args = array(
+					$query_args = array(
 						'id' => $this->_req_data['GRP_ID'],
 						'evt_id' => $this->_req_data['EVT_ID'],
 						'context' => $this->_req_data['MTP_context'],
 						'action' => 'edit_message_template'
 						);
-
 					//setup notices
-					foreach ( $validates as $field => $message ) {
-						EE_Error::add_error( $message, __FILE__, __FUNCTION__, __LINE__ );
+					foreach ( $validates as $field => $error ) {
+						if ( isset($error['msg'] ) )
+							EE_Error::add_error( $error['msg'], __FILE__, __FUNCTION__, __LINE__ );
 					}
 				} else {
 					foreach ( $this->_req_data['MTP_template_fields'] as $template_field => $content ) {
