@@ -718,8 +718,8 @@ function espresso_display_questions($questions, $attendee) {
 				case "DATE" :
 					//Load scripts and styles
 					wp_register_style('jquery-ui-style-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css');
-					wp_print_styles('jquery-ui-style-datepicker');
-					wp_print_scripts('jquery-ui-datepicker');
+					wp_enqueue_style('jquery-ui-style-datepicker');
+					wp_enqueue_script('jquery-ui-datepicker');
 
 					$html .= '<p class="event_form_field">' . $label;
 					$html .= '<input type="text" ' . $required . ' id="' . $field_name . '-' . $attendee . '"  name="' . $field_name . '" size="40" /></p>';
