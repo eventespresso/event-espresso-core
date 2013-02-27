@@ -102,7 +102,6 @@ class events_Messages_Hooks extends EE_Admin_Hooks {
 				$error_content = '<div class="error"><p>' . $error_msg . '</p></div>';
 				$internal_content = '<div id="messages-error"><p>' . $error_msg . '</p></div>';
 
-
 				if ( defined('DOING_AJAX') )
 					return $error_content . $intenral_content;
 
