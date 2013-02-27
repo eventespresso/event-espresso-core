@@ -1138,6 +1138,16 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @param int $index This helps us know which template field to select from the request array.
 	 */
 	protected function _set_message_template_column_values($index) {
+		//first we need to make sure we run the content through html_entities
+		if ( is_array($this->_req_data['MTP_template_fields'][$index]['content'] ) ) {
+			foreach ( $this->_req_data['MTP_template_fields'][$index]['content'] as $field => $value ) {
+				$this->_req_data['MTP_template_fields'][$index]['content'][$field] = htmlentities( $value );
+			}
+		} else {
+			$this->_req_data['MTP_template_fields'][$index]['content'] = htmlentities( $this->_req_data['MTP_template_fields'][$index]['content'] );
+		}
+
+
 		$set_column_values = array(
 			'MTP_ID' => absint($this->_req_data['MTP_template_fields'][$index]['MTP_ID']),
 			'EVT_ID' => absint($this->_req_data['EVT_ID']),
@@ -1153,6 +1163,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'MTP_deleted' => absint($this->_req_data['MTP_deleted']),
 			'MTP_is_active' => absint($this->_req_data['MTP_is_active'])
 		);
+
+	
 		return $set_column_values;
 	}
 

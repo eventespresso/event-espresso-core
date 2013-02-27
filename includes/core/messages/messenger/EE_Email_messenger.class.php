@@ -234,7 +234,7 @@ class EE_Email_messenger extends EE_messenger  {
 
 		//todo we need to validate the different fields before sending.
 		
-		$success = wp_mail($this->_to, stripslashes_deep(html_entity_decode($this->_subject, ENT_QUOTES, "UTF-8")), stripslashes_deep(html_entity_decode(wpautop($this->_body()), ENT_QUOTES,"UTF-8")), $this->_headers());
+		$success = wp_mail(html_entity_decode($this->_to), stripslashes_deep(html_entity_decode($this->_subject, ENT_QUOTES, "UTF-8")), stripslashes_deep(html_entity_decode(wpautop($this->_body()), ENT_QUOTES,"UTF-8")), $this->_headers());
 		return $success;
 
 	}
@@ -246,11 +246,12 @@ class EE_Email_messenger extends EE_messenger  {
 	 * @return string formatted header for email
 	 */
 	protected function _headers() {
-		$headers = '';
-		$headers .= "MIME-Version: 1.0\r\n";
-		$headers .= "From: " . $this->_from;
-		$headers .= "Reply-To: " . $this->_from;
-		$headers .= "Content-Type: text/html; charset=utf-8\r\n";
+		$headers = array(
+			'MIME-Version' => '1.0',
+			'From' => html_entity_decode( $this->_from ),
+			'Reply-To' => html_entity_decode( $this->_from ),
+			'Content-Type' => 'text/html; charset=utf-8'
+			);
 		return $headers;
 	}
 
