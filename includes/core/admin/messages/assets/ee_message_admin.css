@@ -54,3 +54,7 @@
 	max-height: 400px;
 	overflow: scroll;
 }
+
+.validate-error, input.validate-error {
+	border-color: red;
+}
