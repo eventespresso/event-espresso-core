@@ -471,10 +471,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				);
 
 		$hidden_inputs['ee-msg-evt-nonce'] = array(
-			'name' => '_wpnonce',
+			'name' => 'insert_message_template_nonce',
 			'input' => 'hidden',
 			'type' => 'string',
-			'value' => wp_create_nonce( 'insert_message_template' . '_nonce')
+			'value' => wp_create_nonce( 'insert_message_template_nonce')
 			);
 
 		$this->_template_args['hidden_fields'] = $this->_generate_admin_form_fields( $hidden_inputs );
@@ -823,7 +823,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'value' => $EVT_ID
 				);
 			$sidebar_form_fields['ee-msg-evt-nonce'] = array(
-				'name' => '_wpnonce',
+				'name' => $action . '_nonce',
 				'input' => 'hidden',
 				'type' => 'string',
 				'value' => wp_create_nonce( $action . '_nonce')
