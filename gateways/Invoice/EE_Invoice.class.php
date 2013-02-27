@@ -124,7 +124,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 					<td>
 						<p id="invoice-logo-image">
 							<input id="invoice_logo_url" type="text" size="36" name="invoice_logo_url" value="<?php echo $this->_payment_settings['invoice_logo_url']; ?>" />
-							<input id="upload_image_button" type="button" value="Upload Image" />
+							<input id="upload_image_button" type="button" value="<?php _e('Upload Image', 'event_espresso'); ?>" />
 							<span class="description"><?php _e('(logo for the top left of the invoice)', 'event_espresso'); ?></span>
 						</p>
 						<p class="invoice-logo"><img src="<?php echo $this->_payment_settings['invoice_logo_url']; ?>" alt="" /></p>

@@ -154,7 +154,7 @@
 				</th>
 				<td>
 					<input id="upload_image" type="text" class="regular-text" name="default_logo_url" value="<?php echo $default_logo_url ?>" />
-					<input id="upload_image_button" type="button" value="Upload Image" />
+					<input id="upload_image_button" type="button" value="<?php _e('Upload Image', 'event_espresso'); ?>" />
 					<span class="description">
 						<?php echo __('Your logo will be used on custom invoices, tickets, certificates, and payment templates.', 'event_espresso'); ?>
 					</span>
@@ -173,7 +173,7 @@
 						?>
 						<p id="default-logo-thumb">
 							<img id="current-image-thumb" src="<?php echo $default_logo_url ?>" alt="" /><br />
-							<a id='remove-image' href='#' title='Remove this image' onclick='return false;'>
+							<a id='remove-image' href='#' title='<?php _e('Remove Image', 'event_espresso'); ?>' onclick='return false;'>
 								<?php _e('Remove Image', 'event_espresso'); ?>
 							</a>
 						</p>
