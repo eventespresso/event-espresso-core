@@ -477,7 +477,7 @@ class EE_Single_Page_Checkout {
 						// add to array
 						$attendee_questions[$item['line_item']][$att_nmbr] = $att_questions;
 						//$attendee_headings[ $item['line_item'] ][ $att_nmbr ] = $att_nmbr == 1 ? 'Primary Attendee' :  'Attendee Number ' . $att_nmbr;
-						$attendee_headings[$item['line_item']][$att_nmbr] = 'Attendee #' . $att_nmbr;
+						$attendee_headings[$item['line_item']][$att_nmbr] = __('Attendee #', 'event_espresso') . $att_nmbr;
 
 						// for all  attendees other than the primary attendee
 						if ($counter != 1) {
@@ -1022,7 +1022,7 @@ class EE_Single_Page_Checkout {
 				}
 			}
 
-			$template_args['billing']['total due'] = $org_options['currency_symbol'] . number_format($total, 2);
+			$template_args['billing'][ __('total due', 'event_espresso') ] = $org_options['currency_symbol'] . number_format($total, 2);
 
 			$ouput = espresso_display_template($this->_templates['confirmation_page'], $template_args, TRUE);
 		}		

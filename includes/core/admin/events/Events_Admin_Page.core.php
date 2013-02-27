@@ -1836,10 +1836,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$event_status_values = apply_filters('filter_hook_espresso_event_status_values', $event_status_values);
 
 		$default_payment_status_values = array(
-				array('id' => "", 'text' => 'No Change'),
-				array('id' => 'Incomplete', 'text' => 'Incomplete'),
-				array('id' => 'Pending', 'text' => 'Pending'),
-				array('id' => 'Completed', 'text' => 'Completed')
+				array('id' => "", 'text' => __('No Change', 'event_espresso')),
+				array('id' => 'Incomplete', 'text' => __('Incomplete', 'event_espresso')),
+				array('id' => 'Pending', 'text' => __('Pending', 'event_espresso')),
+				array('id' => 'Completed', 'text' => __('Completed', 'event_espresso'))
 		);
 		?>
 		<p class="inputundersmall">
@@ -2125,10 +2125,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 					<?php _e('Add Featured Image', 'event_espresso'); ?>
 				</label>
 				<input id="upload_image" type="hidden" size="36" name="upload_image" value="<?php echo $event_thumb ?>" />
-				<input id="upload_image_button" type="button" value="Upload Image" />
+				<input id="upload_image_button" type="button" value="<?php _e('Upload Image', 'event_espresso'); ?>" />
 				<?php if ($event_thumb) { ?>
 					<p class="event-featured-thumb"><img  src="<?php echo $event_thumb ?>" alt="" /></p>
-					<a id='remove-image' href='#' title='Remove this image' onclick='return false;'>Remove Image</a>
+					<a id='remove-image' href='#' title='<?php _e('Remove this image', 'event_espresso'); ?>' onclick='return false;'><?php _e('Remove Image', 'event_espresso'); ?></a>
 				<?php } ?>
 			</div>
 			<p>

@@ -412,8 +412,14 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			);
 		}
 		
-		$options = array('header' => esc_html('Before the opening \'<body>\' tag of every page on the website'), 'purchase_comfirmation' => 'On the purchase confirmation page after completed purchase', 'footer' => esc_html('Before the closing \'</body>\' tag of every page on the website'));
+		$options = array(
+			'header' => htmlentities( sprintf( __( 'Before the opening %s tag of every page on the website', 'event_espresso' ), '<body>' ), ENT_QUOTES, 'UTF-8' ), 
+			'purchase_comfirmation' => __( 'On the purchase confirmation page after completed purchase', 'event_espresso' ), 
+			'footer' => htmlentities( sprintf( __( 'Before the closing %s tag of every page on the website', 'event_espresso' ), '</body>' ), ENT_QUOTES, 'UTF-8' )
+		);
+		
 		$hook_row_span = round(count($options)/2);
+		
 		?>
 		<div class="padding">
 			<p><?php _e('You can copy and paste any code you are given from your 3rd party affiliate system and indicate using the checkboxes where you want this to be added on your website as per your 3rd party instructions.', 'event_espresso'); ?></p>
@@ -428,17 +434,19 @@ class Payments_Admin_Page extends EE_Admin_Page {
 						<th rowspan="<?php echo $hook_row_span; ?>">
 							<?php _e('Check the box for where you want the affiliate code inserted:', 'event_espresso'); ?>
 						</th>
+						<td>
 						<?php
 						$ind = 0;
 						foreach ( $options as $opt => $description ) :
-							$checked = in_array($opt, $payment_settings['affiliate']['hook_into']) ? 'checked' : '';
+							$checked = $opt == $payment_settings['affiliate']['hook_into'] ? ' checked="checked"' : '';
 						?>
-							<td><input type="radio" name="aff_hook_into[]" id="affiliate_hook_into_header" value="<?php echo $opt; ?>" <?php echo $checked; ?> /> <?php echo $description; ?></td> 
-
-						<?php
-							if ( $ind%2 ) echo '</tr><tr>';
-							$ind++;
-						endforeach; ?>
+							<label class="ee-admin-radio-long-lbl">
+								<input type="radio" name="aff_hook_into[]" id="affiliate_hook_into_header" value="<?php echo $opt; ?>"<?php echo $checked; ?> /> 
+								<?php echo $description; ?>
+							</label>
+							<br/>
+						<?php endforeach; ?>
+					</td> 
 					</tr>
 				</tbody>
 			</table>
