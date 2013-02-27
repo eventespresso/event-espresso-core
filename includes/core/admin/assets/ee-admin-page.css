@@ -82,11 +82,19 @@
 }
 
 table .ee-admin-radio-lbl,
-.inside table .ee-admin-radio-lbl {
+.inside table .ee-admin-radio-lbl,
+table .ee-admin-radio-long-lbl,
+.inside table .ee-admin-radio-long-lbl {
 	display: inline-block; min-width:100px; margin: 0 4em 0 0; vertical-align: middle;
 }
+table .ee-admin-radio-long-lbl,
+.inside table .ee-admin-radio-long-lbl { margin:0 4em 1.5em 0 !important;  }
+
 table .ee-admin-radio-lbl input,
-.inside table .ee-admin-radio-lbl input { position: relative; top:-2.5px; width: auto; margin:3px 0.5em 0 0; vertical-align: middle; }
+.inside table .ee-admin-radio-lbl input,
+table .ee-admin-radio-long-lbl input,
+.inside table .ee-admin-radio-long-lbl input { position: relative; top:-2.5px; width: auto; margin:3px 0.5em 0 0; vertical-align: middle; }
+
 table .espresso-radio-btn-options-ul .small-lbl,
 .inside table .espresso-radio-btn-options-ul .small-lbl {
     display: inline-block; width: 49.5%;
