@@ -1195,18 +1195,27 @@ class Messages_Admin_Page extends EE_Admin_Page {
 						'action' => 'edit_message_template'
 						);
 			} else {
-				foreach ( $this->_req_data['MTP_template_fields'] as $template_field => $content ) {
-					$set_column_values = $this->_set_message_template_column_values($template_field);
-					$where_cols_n_values = array( 'MTP_ID' => $this->_req_data['MTP_template_fields'][$template_field]['MTP_ID']);
-					if ( $updated = $MTP->update( $set_column_values, $where_cols_n_values ) ) {
-						if ( !$updated ) {
-							$msg = sprintf( __('%s field was NOT updated for some reason', 'event_espresso') );
-							EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__ );
+				//first validate all fields!
+				$validate = $MTP->validate($this->_req_data['MTP_template_fields'], $this->_req_data['MTP_messenger'], $this->_req_data['MTP_message_type']);
+
+				//if $validate returned error messages (i.e. is_array()) then we need to process them and setup an appropriate response.
+				if ( is_array($validate) ) {
+					//todo handle the error messsages and the redirect to fix!  We'll prolly need to set the transient in here as well so the field generators can add the appropriate class changes.
+				} else {
+					foreach ( $this->_req_data['MTP_template_fields'] as $template_field => $content ) {
+						$set_column_values = $this->_set_message_template_column_values($template_field);
+						$where_cols_n_values = array( 'MTP_ID' => $this->_req_data['MTP_template_fields'][$template_field]['MTP_ID']);
+						if ( $updated = $MTP->update( $set_column_values, $where_cols_n_values ) ) {
+							if ( !$updated ) {
+								$msg = sprintf( __('%s field was NOT updated for some reason', 'event_espresso') );
+								EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__ );
 						} else {
 							$success = 1;
 						}
 					}
 					$action_desc = 'updated';
+				}
+				
 				}
 			}
 
