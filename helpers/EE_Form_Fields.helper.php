@@ -90,7 +90,7 @@ class EE_Form_Fields {
 			$required = isset($input_value['required']) && $input_value['required'] ? ' <span>*</span>: ' : ': ';
 			// and the css class "required"
 			$css_class = isset( $input_value['css_class'] ) ? $input_value['css_class'] : '';
-			$styles = $input_value['required']? 'required ' . $css_class : $css_class; 
+			$styles = $input_value['required'] ? 'required ' . $css_class : $css_class; 
 			
 			$field_id = ($id) ? $id . '-' . $input_key : $input_key;
 			$tabindex = !empty($input_value['tabindex']) ? ' tabindex="' . $input_value['tabindex'] . '"' : '';

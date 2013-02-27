@@ -589,7 +589,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							$field_id = $reference_field . '-' . $extra_field . '-content';
 							$template_form_fields[$field_id] = $extra_array;
 							$template_form_fields[$field_id]['name'] = 'MTP_template_fields[' . $reference_field . '][content][' . $extra_field . ']';
-							$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array($extra_field, $v_fields) && isset( $validators[$extra_field]['msg'] ) ? 'validate-error' : '';
+							$css_class = isset( $extra_array['css_class'] ) ? $extra_array['css_class'] : '';
+							$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array($extra_field, $v_fields) && isset( $validators[$extra_field]['msg'] ) ? 'validate-error ' . $css_class : $css_class;
 							$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($message_templates[$context][$reference_field]['content'][$extra_field]) ? $message_templates[$context][$reference_field]['content'][$extra_field] : '';
 
 							//do we have a validation error?  if we do then let's use that value instead
@@ -598,10 +599,17 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							$template_form_fields[$field_id]['db-col'] = 'MTP_content';	
 
 							//if doing ajax and the extra field input type is wp_editor, let's change back to text area and also change class.
-							if ( isset( $extra_array['input'] ) && $extra_array['input'] == 'wp_editor' && defined('DOING_AJAX') ) {
-								$template_form_fields[$field_id]['input'] = 'textarea';
-								$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array($extra_field, $v_fields) ? 'large-text validate-error' : 'large-text';
-								$template_form_fields[$field_id]['label'] = $extra_array['label'] . '&nbsp;' . __('(Basic HTML tags allowed)', 'event_espresso');
+							if ( isset( $extra_array['input'] ) && $extra_array['input'] == 'wp_editor' ) {
+
+								if ( defined('DOING_AJAX') ) {
+									$template_form_fields[$field_id]['input'] = 'textarea';
+									$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array($extra_field, $v_fields) ? 'large-text validate-error' : 'large-text';
+									$template_form_fields[$field_id]['label'] = $extra_array['label'] . '&nbsp;' . __('(Basic HTML tags allowed)', 'event_espresso');
+								}
+
+								//with or without ajax we want to decode the entities
+								$template_form_fields[$field_id]['value'] = html_entity_decode($template_form_fields[$field_id]['value']);
+
 							}/**/
 						}
 						$templatefield_MTP_id = $reference_field . '-MTP_ID';
@@ -645,13 +653,19 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 					$template_form_fields[$field_id]['db-col'] = 'MTP_content';
-					$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array( $template_field, $v_fields ) && isset( $validators[$template_field]['msg'] ) ? 'validate-error' : '';
+					$css_class = isset($field_setup_array['css_class']) ? $field_setup_array['css_class'] : '';
+					$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array( $template_field, $v_fields ) && isset( $validators[$template_field]['msg'] ) ? 'validate-error ' . $css_class : $css_class;
 
 					//if doing ajax and the extra field input type is wp_editor, let's change to text area and also change class.
-					if ( isset( $field_setup_array['input'] ) && $field_setup_array['input'] == 'wp_editor' && defined('DOING_AJAX') ) {
-						$template_form_fields[$field_id]['input'] = 'textarea';
-						$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array( $template_field, $v_fields ) ? 'large-text validate-error' : 'large-text';
-						$template_form_fields[$field_id]['label'] = $extra_array['label'] . '&nbsp;' . __('(Basic HTML tags allowed)', 'event_espresso');
+					if ( isset( $field_setup_array['input'] ) && $field_setup_array['input'] == 'wp_editor' ) {
+						if ( defined('DOING_AJAX') ) {
+							$template_form_fields[$field_id]['input'] = 'textarea';
+							$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array( $template_field, $v_fields ) ? 'large-text validate-error' : 'large-text';
+							$template_form_fields[$field_id]['label'] = $extra_array['label'] . '&nbsp;' . __('(Basic HTML tags allowed)', 'event_espresso');
+						}
+
+						//with or without ajax we want to decode the entities
+						$template_form_fields[$field_id]['value'] = html_entity_decode($template_form_fields[$field_id]['value']);
 					}/**/
 				}
 
