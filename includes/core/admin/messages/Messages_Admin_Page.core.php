@@ -532,7 +532,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		}
 
 		//Do we have any validation errors?
-		$validators = $this->_get_transient();
+		$validators = defined('DOING_AJAX') ? $this->_get_transient(FALSE, 'edit_message_template') : $this->_get_transient();
 		$v_fields = !empty($validators) ? array_keys($validators) : array();
 
 
@@ -1201,6 +1201,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$item_desc = $messenger ? $messenger . ' ' . $message_type . ' ' . $context . ' ' : '';
 		$item_desc .= 'Message Template';
 		$query_args = array();
+		$validates = '';
 
 		//if this is "new" then we need to generate the default contexts for the selected messenger/message_type for user to edit.
 		if ( $new ) {
@@ -1254,11 +1255,24 @@ class Messages_Admin_Page extends EE_Admin_Page {
 						'context' => $this->_req_data['MTP_context'],
 						'action' => 'edit_message_template'
 						);
+
 					//setup notices
 					foreach ( $validates as $field => $error ) {
 						if ( isset($error['msg'] ) )
 							EE_Error::add_error( $error['msg'], __FILE__, __FUNCTION__, __LINE__ );
 					}
+
+					if ( defined( 'DOING_AJAX' ) ) {
+						//trigger reload of edit message form
+						$new = TRUE;
+						$this->_template_args['data'] = array(
+						'close' => FALSE,
+						'what' => 'clear',
+						'where' => 'dialog'
+						);
+						$this->_template_args['ajax_notices'] = EE_Error::get_notices();
+					}
+
 				} else {
 					foreach ( $this->_req_data['MTP_template_fields'] as $template_field => $content ) {
 						$set_column_values = $this->_set_message_template_column_values($template_field);

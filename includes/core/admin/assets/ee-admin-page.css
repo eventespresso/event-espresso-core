@@ -163,3 +163,7 @@ table .espresso-radio-btn-options-ul .small-lbl,
 	width: 26px;
 	height: 26px;
 }
+
+.validate-error, input.validate-error {
+	border-color: red;
+}
