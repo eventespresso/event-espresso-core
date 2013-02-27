@@ -349,33 +349,6 @@ function espresso_initialize_system_questions() {
 
 
 
-function espresso_initialize_email() {
-	global $wpdb;
-	$test = $wpdb->get_row("SELECT * FROM " . $wpdb->prefix . "events_email WHERE id=1");
-	if (empty($test)) {
-		$text = "***This Is An Automated Response***\nThank You [fname] [lname]\n";
-		$text .= "We have just received a payment in the amount of [event_price] for your registration to [event_name].\n";
-		$text .= "Transaction ID: [txn_id]";
-		$wpdb->insert($wpdb->prefix . "events_email", array('email_type' => 'payment', 'email_name' => 'default payment email', 'email_subject' => 'Payment Received for [event_name]', 'email_text' => $text, 'wp_user' => 1), array('%s', '%s', '%s', '%s', '%d'));
-
-		$text = "***This is an automated response - Do Not Reply***\n";
-		$text .= "Thank you [fname] [lname] for registering for [event].\n";
-		$text .= "This event starts at [start_time] on [start_date] and runs until [end_time] on [end_date].\n";
-		$text .= "Location:\n";
-		$text .= "[location]\n";
-		$text .= "Phone: [location_phone]\n";
-		$text .= "Google Map: [google_map_link]\n";
-		$text .= "We hope that you will find this event both informative and enjoyable. Should you have any questions, please contact [contact].\n";
-		$text .= "If you have not done so already, please submit your payment in the amount of [cost].\n";
-		$text .= "Click here to review your payment information [payment_url].\n";
-		$text .= "Thank You.\n";
-		$wpdb->insert($wpdb->prefix . "events_email", array('email_type' => 'confirmation', 'email_name' => 'default confirmation email', 'email_subject' => 'Registration confirmation for [event_name]', 'email_text' => $text, 'wp_user' => 1), array('%s', '%s', '%s', '%s', '%d'));
-	}
-}
-
-
-
-
 
 function espresso_org_option_initialization() {
 	global $wpdb, $espresso_wp_user;
@@ -842,7 +815,6 @@ function events_data_tables_install() {
 					event_type VARCHAR(250) DEFAULT NULL,
 					allow_overflow tinyint(1) NOT NULL DEFAULT '0',
 					overflow_event_id INT(10) DEFAULT '0',
-					recurrence_id int(11) DEFAULT '0',
 					alt_email TEXT,
 					event_meta LONGTEXT DEFAULT NULL,
 					wp_user int(22) DEFAULT '1',
@@ -867,7 +839,6 @@ function events_data_tables_install() {
 				KEY registration_end (registration_end),
 				KEY reg_limit (reg_limit),
 				KEY event_status (event_status),
-				KEY recurrence_id (recurrence_id),
 				KEY submitted (submitted),
 				KEY likes (likes)";
 	event_espresso_run_install($table_name, $table_version, $sql);

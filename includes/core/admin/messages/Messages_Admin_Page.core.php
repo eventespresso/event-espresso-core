@@ -1088,7 +1088,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 						<?php
 					}
 					//setup nonce_url
-					wp_nonce_field($args['action'] . '_nonce', '_wpnonce', false);
+					wp_nonce_field($args['action'] . '_nonce', $args['action'] . '_nonce', false);
 				?>
 				<select name="context">
 					<?php 
@@ -1629,19 +1629,19 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'box_head_content' => 'hmm... missing some content',
 			'show_hide_active_content' => 'hidden',
 			'activate_msgs_active_details' => '',
-			'activate_msgs_details_url' => wp_nonce_url(add_query_arg($default_edit_query_args, $this->_admin_base_url), 'activate_nonce'),
+			'activate_msgs_details_url' => self::add_query_args_and_nonce( $default_edit_query_args, $this->_admin_base_url ),
 			'show_hide_edit_form' => 'hidden',
-			'activate_message_template_form_action' => wp_nonce_url(add_query_arg($default_activate_query_args, $this->_admin_base_url), 'activate_nonce'),
+			'activate_message_template_form_action' => self::add_query_args_and_nonce( $default_activate_query_args, $this->_admin_base_url ),
 			'activate_msgs_form_fields' => '',
-			'on_off_action' => wp_nonce_url(add_query_arg($default_edit_query_args, $this->_admin_base_url), 'activate_nonce'),
+			'on_off_action' => self::add_query_args_and_nonce( $default_edit_query_args, $this->_admin_base_url ),
 			'on_off_status' => 'inactive',
 			'activate_msgs_on_off_descrp' => __('Activate', 'event-espresso'),
 			'activate_meta_box_type' => ucwords(str_replace('_', ' ', $this->_activate_meta_box_type) ),
 			'activate_meta_box_page_instructions' => $this->_activate_meta_box_type == 'message_types' ? __('Message Types are the areas of Event Espresso that you can activate notifications for.  On this page you can see all the various message types currently available and whether they are active or not.', 'event-espresso') : __('Messengers are the vehicles for delivering your notifications.  On this page you can see all the various messengers available and whether they are active or not.', 'event-espresso'),
-			'activate_msg_type_toggle_link' => wp_nonce_url(add_query_arg($switch_view_query_args, $this->_admin_base_url), 'activate_nonce'),
+			'activate_msg_type_toggle_link' => self::add_query_args_and_nonce( $switch_view_query_args, $this->_admin_base_url ),
 			'activate_meta_box_toggle_type' => ucwords(str_replace('_', ' ', $switch_view_toggle_text) ),
-			'on_off_action_on' => wp_nonce_url(add_query_arg($default_edit_query_args, $this->_admin_base_url), 'activate_nonce'),
-			'on_off_action_off' => wp_nonce_url(add_query_arg($default_deactivate_query_args, $this->_admin_base_url), 'activate_nonce'),
+			'on_off_action_on' => self::add_query_args_and_nonce( $default_edit_query_args, $this->_admin_base_url ),
+			'on_off_action_off' => self::add_query_args_and_nonce( $default_deactivate_query_args, $this->_admin_base_url ),
 			'show_on_off_button' => ''
 			);
 
@@ -1971,7 +1971,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 						'action' => 'edit_event',
 						'EVT_ID' => $template->event()
 						);
-					$edit_event_url = wp_nonce_url( add_query_arg( $query_args, $base_event_admin_url ), 'edit_event_nonce');
+					$edit_event_url = self::add_query_args_and_nonce( $query_args, $base_event_admin_url );
 					$warning_msg .= "\n" . '<li><a href="' . $edit_event_url . '" title="' . __('Edit Event', 'event_espresso') . '">' . $event_name . '</a></li>';
 				}
 

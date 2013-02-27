@@ -337,7 +337,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 			$group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
 			$group = unserialize($group);
 			$sql = "(SELECT e.id event_id, e.event_name, e.event_identifier, e.reg_limit, e.registration_start, ";
-			$sql .= " e.start_date, e.is_active, e.recurrence_id, e.registration_startT, ";
+			$sql .= " e.start_date, e.is_active, e.registration_startT, ";
 			$sql .= " e.address, e.address2, e.city, e.state, e.zip, e.country, ";
 			$sql .= " e.venue_title, e.phone, e.wp_user ";
 			$sql .= " FROM ". EVENTS_DETAIL_TABLE ." e ";
@@ -369,7 +369,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 			$sql .= ") UNION ";
 		}
 		$sql .= "(SELECT e.id event_id, e.event_name, e.event_identifier, e.reg_limit, e.registration_start, ";
-		$sql .= " e.start_date, e.is_active, e.recurrence_id, e.registration_startT, ";
+		$sql .= " e.start_date, e.is_active, e.registration_startT, ";
 		$sql .= " e.address, e.address2, e.city, e.state, e.zip, e.country, ";
 		$sql .= " e.venue_title, e.phone, e.wp_user ";
 		$sql .= " FROM ". EVENTS_DETAIL_TABLE ." e ";

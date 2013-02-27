@@ -561,12 +561,12 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$event_date = isset( $registrations[0]->DTT_EVT_start ) ? date( 'l F j, Y,    g:i:s a', $registrations[0]->DTT_EVT_start ) : '';
 			// edit event link
 			if ( $event_name != '' ) {
-				$edit_event_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_event', 'EVT_ID'=>$EVT_ID ), EVENTS_ADMIN_URL ), 'edit_event_nonce' );	
+				$edit_event_url = self::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$EVT_ID ), EVENTS_ADMIN_URL );	
 				$edit_event_lnk = '<a href="'.$edit_event_url.'" title="' . __( 'Edit ', 'event_espresso' ) . $event_name . '">' . __( 'Edit Event', 'event_espresso' ) . '</a>';	
 				$event_name .= ' <span class="admin-page-header-edit-lnk not-bold">' . $edit_event_lnk . '</span>' ;
 			}
 
-			$back_2_reg_url = wp_nonce_url( add_query_arg( array( 'action'=>'default' ), REG_ADMIN_URL ), 'default_nonce' );	
+			$back_2_reg_url = self::add_query_args_and_nonce( array( 'action'=>'default' ), REG_ADMIN_URL );	
 			$back_2_reg_lnk = '<a href="'.$back_2_reg_url.'" title="' . __( 'click to return to viewing all registrations ', 'event_espresso' ) . '">&laquo; ' . __( 'Back to All Registrations', 'event_espresso' ) . '</a>';	
 
 			$this->_template_args['before_admin_page_content'] = '
@@ -689,24 +689,24 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			switch ( $this->_registration->REG_status ) {
 				
 				case 'RAP' :
-					$pending_url = wp_nonce_url( add_query_arg( array( 'action'=>'set_pending_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'set_pending_reg_status_nonce' );
-					$decline_url = wp_nonce_url( add_query_arg( array( 'action'=>'decline_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'decline_reg_status_nonce' );
+					$pending_url = self::add_query_args_and_nonce( array( 'action'=>'set_pending_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
+					$decline_url = self::add_query_args_and_nonce( array( 'action'=>'decline_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
 					$approve_decline_reg_status_buttons = '
 			<a id="reg-admin-pending-reg-status-lnk" class="button-secondary" href="' . $pending_url . '">' . __( 'Set this Registration to Pending', 'event_espresso' ) . '</a>
 			<a id="reg-admin-decline-reg-status-lnk" class="button-secondary" href="' . $decline_url . '">' . __( 'Decline this Registration', 'event_espresso' ) . '</a>';
 					break;
 				
 				case 'RPN' :
-					$aprove_url = wp_nonce_url( add_query_arg( array( 'action'=>'approve_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'approve_reg_status_nonce' );
-					$decline_url = wp_nonce_url( add_query_arg( array( 'action'=>'decline_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'decline_reg_status_nonce' );
+					$aprove_url = self::add_query_args_and_nonce( array( 'action'=>'approve_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
+					$decline_url = self::add_query_args_and_nonce( array( 'action'=>'decline_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
 					$approve_decline_reg_status_buttons = '
 			<a id="reg-admin-approve-reg-status-lnk" class="espresso-button-green button-primary" href="' . $aprove_url . '">' . __( 'Approve this Registration', 'event_espresso' ) . '</a>
 			<a id="reg-admin-decline-reg-status-lnk" class="button-secondary" href="' . $decline_url . '">' . __( 'Decline this Registration', 'event_espresso' ) . '</a>';
 					break;
 				
 				case 'RNA' :
-					$aprove_url = wp_nonce_url( add_query_arg( array( 'action'=>'approve_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'approve_reg_status_nonce' );
-					$pending_url = wp_nonce_url( add_query_arg( array( 'action'=>'set_pending_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL ), 'set_pending_reg_status_nonce' );
+					$aprove_url = self::add_query_args_and_nonce( array( 'action'=>'approve_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
+					$pending_url = self::add_query_args_and_nonce( array( 'action'=>'set_pending_reg_status', 'reg'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
 					$approve_decline_reg_status_buttons = '
 			<a id="reg-admin-approve-reg-status-lnk" class="espresso-button-green button-primary" href="' . $aprove_url . '">' . __( 'Approve this Registration', 'event_espresso' ) . '</a>
 			<a id="reg-admin-pending-reg-status-lnk" class="button-secondary" href="' . $pending_url . '">' . __( 'Set this Registration to Pending', 'event_espresso' ) . '</a>';
@@ -948,7 +948,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				<td class="reg-admin-edit-attendee-question-td">
 					<a class="reg-admin-edit-attendee-question-lnk" href="#" title="' . __( 'click to edit attendee question', 'event_espresso' ) . '">
 						<span class="reg-admin-edit-question-group-spn lt-grey-txt">' . __( 'edit the above question group', 'event_espresso' ) . '</span>
-						<img width="16" height="16" alt="' . __( 'Edit Attendee Question', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/icons/pencil-16x16.png">		
+						<img width="16" height="16" alt="' . __( 'Edit Attendee Question', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/pencil-16x16.png">		
 					</a>
 				</td>
 			</tr>
@@ -1087,7 +1087,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				}
 				$this->_template_args['attendees'][ $att_nmbr ]['address'] = implode( ', ', $address );
 				
-				$this->_template_args['attendees'][ $att_nmbr ]['att_link'] = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$attendee->ATT_ID ), REG_ADMIN_URL ), 'edit_attendee_nonce' );
+				$this->_template_args['attendees'][ $att_nmbr ]['att_link'] = self::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'id'=>$attendee->ATT_ID ), REG_ADMIN_URL );
 				
 				$att_nmbr++;
 			}
@@ -1299,12 +1299,12 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$event_date = isset( $all_attendees[0]->DTT_EVT_start ) ? date( 'l F j, Y,    g:i:s a', $all_attendees[0]->DTT_EVT_start ) : '';
 			// edit event link
 			if ( $event_name != '' ) {
-				$edit_event_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_event', 'EVT_ID'=>$EVT_ID ), EVENTS_ADMIN_URL ), 'edit_event_nonce' );	
+				$edit_event_url = self::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$EVT_ID ), EVENTS_ADMIN_URL );	
 				$edit_event_lnk = '<a href="'.$edit_event_url.'" title="' . __( 'Edit ', 'event_espresso' ) . $event_name . '">' . __( 'Edit Event', 'event_espresso' ) . '</a>';	
 				$event_name .= ' <span class="admin-page-header-edit-lnk not-bold">' . $edit_event_lnk . '</span>' ;
 			}
 
-			$back_2_reg_url = wp_nonce_url( add_query_arg( array( 'action'=>'default' ), REG_ADMIN_URL ), 'default_nonce' );	
+			$back_2_reg_url = self::add_query_args_and_nonce( array( 'action'=>'default' ), REG_ADMIN_URL );	
 			$back_2_reg_lnk = '<a href="'.$back_2_reg_url.'" title="' . __( 'click to return to viewing all registrations ', 'event_espresso' ) . '">&laquo; ' . __( 'Back to All Registrations', 'event_espresso' ) . '</a>';	
 			
 			$this->_template_args['before_admin_page_content'] = '
@@ -1469,8 +1469,10 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$success = FALSE;
 		}
 
+		$EVT_ID = isset($this->_req_data['event_id']) ? absint( $this->_req_data['event_id'] ) : FALSE;
+
 		//echo '<h4>$success : ' . $success . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		$this->_redirect_after_action( $success, 'Attendee Check In Status', 'updated', array( 'action' => 'event_registrations', 'reg' => $REG_ID ));
+		$this->_redirect_after_action( $success, 'Attendee Check In Status', 'updated', array( 'action' => 'event_registrations', 'event_id' => $EVT_ID ));
 		
 	}
 

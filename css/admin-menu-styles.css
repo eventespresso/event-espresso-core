@@ -28,13 +28,13 @@ a[href="admin.php?page=admin_addons"] {
 }
 
 #wpadminbar #wp-admin-bar-espresso-toolbar > .ab-item .ab-icon-espresso {
-	background-image: url("../images/icons/ee-cup-menu-icon.png");
+	background-image: url("../images/ee-cup-menu-icon.png");
 	background-position: 0px 0px;
 	background-repeat: no-repeat;
 }
 
 #wpadminbar #wp-admin-bar-espresso-toolbar:hover > .ab-item .ab-icon-espresso {
-	background-image: url("../images/icons/ee-cup-menu-icon-dark.png");
+	background-image: url("../images/ee-cup-menu-icon-dark.png");
 	background-position: 0px 0px;
 	background-repeat: no-repeat;
 }

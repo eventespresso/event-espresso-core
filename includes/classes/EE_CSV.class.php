@@ -43,7 +43,6 @@
 		EVENTS_QST_GROUP_TABLE	=> array( 'id' ),
 		EVENTS_QST_GROUP_REL_TABLE	=> array( 'id' ),
 		EVENTS_QUESTION_TABLE	=> array( 'id' ),
-		'wp_events_recurrence' =>  array( 'recurrence_id ' ),
 		'wp_events_seating_chart' =>  array( 'id ' ),
 		'wp_events_seating_chart_event' =>  array( 'event_id', 'seating_chart_id' ),
 		'wp_events_seating_chart_event_seat' =>  array( 'id ' ),

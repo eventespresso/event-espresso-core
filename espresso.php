@@ -1,5 +1,4 @@
 <?php
-
 /*
   Plugin Name: 	Event Espresso
   Plugin URI: 		http://eventespresso.com/

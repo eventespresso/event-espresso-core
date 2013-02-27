@@ -35,7 +35,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 	private $_session_data = array();
 
 	// default session expiration 2 hours
-	private $_expiration = 7200;
+	private $_expiration = 172800;
 
 	// current time with GMT offset
 	private $_time;

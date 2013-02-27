@@ -38,9 +38,7 @@ jQuery(document).ready(function($) {
 
 
 
-	/*
-	Tabs for Messages box on Event Editor Page
-	 */
+	// Tabs for Messages box on Event Editor Page
 	$('.nav-tab-wrapper', '.ee-nav-tabs').on('click', '.nav-tab', function(e) {
 		e.preventDefault();
 		var content_id = $(this).attr('rel');
@@ -50,7 +48,7 @@ jQuery(document).ready(function($) {
 		//set new active tab
 		$(this).addClass('nav-tab-active');
 		$('#'+content_id).show();
-	});/**/
+	});
 
 
 	// generic click event for displaying and giving focus to an element and hiding control 

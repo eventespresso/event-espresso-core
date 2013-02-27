@@ -67,6 +67,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			'save_aff_s' => array(
 				'func' => '_save_aff_s',
 				'noheader' => TRUE
+				),
+			'_copy_gateways' => array(
+				'func' => '_copy_gateways',
+				'noheader' => TRUE
 				)
 			);
 	}
@@ -141,8 +145,11 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _gateway_settings() {
-		global $EE_Session, $EEM_Gateways;
+		
+		global $EE_Session, $EEM_Gateways, $espresso_premium;
+		
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Tabbed_Content.helper.php' ;
+		
 		if (isset($this->_req_data['_wp_http_referer']) || in_array(TRUE, $_GET)) {
 			$EE_Session->set_session_data(
 				array(
@@ -157,41 +164,55 @@ class Payments_Admin_Page extends EE_Admin_Page {
 						),
 				'gateway_data');
 		}
+		
 		if (!defined('ESPRESSO_GATEWAYS')) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
 			$EEM_Gateways = EEM_Gateways::instance();
 		}
 		
 		$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
+		//printr( $gateway_data, '$gateway_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		$activate_trigger = $deactivate_trigger = FALSE;
+		$gateways = array();
 		//let's assemble the array for the _tab_text_links helper
 		foreach ( $gateway_data['payment_settings'] as $gateway => $settings ) {
-			$activate_trigger = isset($this->_req_data['activate_' . $gateway]) && !$activate_trigger ? $gateway : $activate_trigger;
-			$deactivate_trigger = isset($this->_req_data['deactivate_' . $gateway]) && !$deactivate_trigger ? $gateway : $deactivate_trigger;
-			if ( isset( $this->_req_data['deactivate_' . $gateway] ) )
-				unset($gateway_data['active_gateways'][$gateway]);
-			if ( isset( $this->_req_data['activate_' . $gateway] ) )
-				$gateway_data['active_gateways'][$gateway] = array();
 
-			$gateways[$gateway] = array(
-				'label' => isset($settings['display_name']) ? $settings['display_name'] : ucwords( str_replace( '_', ' ', $gateway ) ),
-				'class' => array_key_exists( $gateway, $gateway_data['active_gateways'] ) ? 'gateway-active' : '',
-				'href' => 'espresso_' . str_replace(' ', '_', $gateway) . '_payment_settings',
-				'title' => __('Modify this Gateway', 'event_espresso'),
-				'slug' => $gateway
-				);
+			if (( $espresso_premium || $gateway == 'Paypal_Standard' )){			
+			
+				// activate this gateway ?
+				$activate_trigger = isset($this->_req_data['activate_' . $gateway]) && !$activate_trigger ? $gateway : $activate_trigger;
+				// or deactivate this gateway ?
+				$deactivate_trigger = isset($this->_req_data['deactivate_' . $gateway]) && !$deactivate_trigger ? $gateway : $deactivate_trigger;
+				// now add or remove gateways from list
+				if ( isset( $this->_req_data['activate_' . $gateway] )) {
+					$gateway_data['active_gateways'][$gateway] = array();
+				}
+				if ( isset( $this->_req_data['deactivate_' . $gateway] )) {
+					unset($gateway_data['active_gateways'][$gateway]);
+			}				
 
+				$gateways[$gateway] = array(
+					'label' => isset($settings['display_name']) ? $settings['display_name'] : ucwords( str_replace( '_', ' ', $gateway ) ),
+					'class' => array_key_exists( $gateway, $gateway_data['active_gateways'] ) ? 'gateway-active' : '',
+					'href' => 'espresso_' . str_replace(' ', '_', $gateway) . '_payment_settings',
+					'title' => __('Modify this Gateway', 'event_espresso'),
+					'slug' => $gateway
+					);
+			}
+			
 		}
 
 		$default = $activate_trigger ? $activate_trigger : FALSE;
 		$default = $deactivate_trigger ? $deactivate_trigger : $activate_trigger;
 
 		if ( ! $default ) {
-			$default = !empty( $gateway_data['active_gateways'] ) ? key($gateway_data['active_gateways']) : 'Paypal_Standard';
+//			$default = !empty( $gateway_data['active_gateways'] ) ? key($gateway_data['active_gateways']) : 'Paypal_Standard';
+			$default = !empty( $gateways ) ? key($gateways) : 'Paypal_Standard';
 		}
-		
+
 		$gateways = isset( $gateways ) ? $gateways : array();
+		//printr( $gateways, '$gateways  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			
 		$this->_template_args['admin_page_header'] = EE_Tabbed_Content::tab_text_links( $gateways, 'gateway_links', '|', $default );
 		$this->display_admin_page_with_sidebar();
@@ -272,17 +293,6 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					</p>
 					<?php
 				} else {
-					if (isset($this->_request_data['event_espresso_admin_action']) && $this->_req_data['event_espresso_admin_action'] == 'copy_gateways') {
-						add_action('admin_init', 'event_espresso_smartCopy');
-					}
-					if (isset($_SESSION['event_espresso_gateways_copied']) && $_SESSION['event_espresso_gateways_copied'] == true) {
-						?>
-						<div class="updated fade below-h2" id="message" style="background-color: rgb(255, 251, 204);">
-							<p><?php _e("Your gateways have been moved.", 'event_espresso'); ?></p>
-						</div>
-						<?php
-						$_SESSION['event_espresso_gateways_copied'] = false;
-					}
 
 					if ($this->_event_espresso_count_files(EVENT_ESPRESSO_GATEWAY_DIR) > 0) {
 
@@ -312,7 +322,14 @@ class Payments_Admin_Page extends EE_Admin_Page {
 							<?php _e("Path:", 'event_espresso'); ?>
 									</strong> <?php echo EVENT_ESPRESSO_GATEWAY_DIR; ?> </span></p>
 						<?php } else { ?>
-							<p class="updated"><?php printf(__("Click here to <a href='%s'>Move your files</a> to a safe place.", 'event_espresso'), wp_nonce_url("admin.php?event_espresso_admin_action=copy_gateways", 'copy_gateways')); ?> </p>
+							<p class="updated">
+							<?php 
+								printf(
+									__("Click here to <a href='%s'>Move your files</a> to a safe place.", 'event_espresso'), 
+									EE_Admin_Page::add_query_args_and_nonce( array( 'action' => '_copy_gateways' ), EE_PAYMENTS_ADMIN_URL )
+								); 
+							?> 
+							</p>
 							<?php
 						}
 					}
@@ -321,6 +338,24 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		</div>
 		<?php
 	}
+
+
+
+
+
+
+	//Functions for copying and moving gateways
+	protected function _copy_gateways() {
+		require_once EE_CORE_ADMIN . 'admin_helper.php';
+		$success = event_espresso_smartCopy(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/', EVENT_ESPRESSO_GATEWAY_DIR);
+		$_SESSION['event_espresso_gateways_copied'] = $success;
+		$this->_redirect_after_action( $success, 'Gateway Files', 'moved', array( 'action' => 'developers' ) );
+	}
+
+
+
+
+
 
 
 	private function _event_espresso_count_files( $path, $exclude = '.|..|.svn', $recursive = false ) {

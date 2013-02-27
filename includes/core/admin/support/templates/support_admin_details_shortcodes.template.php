@@ -44,7 +44,6 @@
 			<li><span class="highlight">[EVENT_LIST show_expired=true]</span></li>
 			<li><span class="highlight">[EVENT_LIST show_deleted=true]</span></li>
 			<li><span class="highlight">[EVENT_LIST show_secondary=true]</span></li>
-			<li><span class="highlight">[EVENT_LIST show_recurrence=true]</span></li>
 			<li><span class="highlight">[EVENT_LIST category_identifier=your_category_identifier]</span></li>
 			<li><span class="highlight">[EVENT_LIST staff_id=staff_id_number]</span></li>
 			<li><span class="highlight">[EVENT_LIST order_by=date(start_date),id]</span></li>
@@ -82,7 +81,6 @@
 			<li><span class="highlight">[LISTATTENDEES show_deleted="true"]</span> //Show deleted events</li>
 			<li><span class="highlight">[LISTATTENDEES show_secondary="true"]</span> //Show secondary/backup events</li>
 			<li><span class="highlight">[LISTATTENDEES show_gravatar="true"]</span> //Show a Gravatar of the attendee</li>
-			<li><span class="highlight">[LISTATTENDEES show_recurrence="false"]</span> //Exclude recurring events</li>
 			<li><span class="highlight">[LISTATTENDEES event_identifier="your_event_identifier"]</span> //Show a single event using the event identifier</li>
 			<li><span class="highlight">[LISTATTENDEES category_identifier="your_category_identifier"]</span> //Show a group of events in a category using the category identifier</li>
 			<li><span class="highlight">[LISTATTENDEES staff_id="staff_id_number"]</span> //Show a list of events that are assigned to a staff member</li>

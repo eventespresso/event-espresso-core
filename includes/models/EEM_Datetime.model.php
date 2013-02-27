@@ -358,11 +358,6 @@ class EEM_Datetime extends EEM_Base {
 			$SQL = 'SELECT * FROM wp_events_start_end WHERE event_id = '. $id .' ORDER BY start_time, end_time';
 			$event_times = $wpdb->get_results( $SQL, OBJECT_K );
 
-			if( $event->recurrence_id ) {
-//				$SQL = 'SELECT * FROM wp_events_start_end WHERE event_id = '. $id .' ORDER BY start_time, end_time';
-//				$event_times = $wpdb->get_results( $SQL, OBJECT_K );
-			}
-
 			if ( $event_times ) {
 
 				foreach ( $event_times as $event_time ) {

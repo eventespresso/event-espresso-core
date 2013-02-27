@@ -740,14 +740,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 						<td>
 							<div class="small-screen-table-label"><?php echo __('Actions', 'event_espresso') ?></div>
 							<?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS <a class='display-dtm-tickets-left-lnk display-ticket-manager' data-reveal-id="ticket-manager-dv" rel="<?php echo $time->ID(); ?>"  title='Display the Ticket Manager for this Date Time' style="position:relative; top:5px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;" >
-								<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/tickets-1-16x16.png" width="16" height="16" alt="<?php _e('tickets left', 'event_espresso'); ?>"/>
+								<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/tickets-1-16x16.png" width="16" height="16" alt="<?php _e('tickets left', 'event_espresso'); ?>"/>
 							</a> */ ?>
 							<a class='clone-date-time dtm-inp-btn' rel='<?php echo $row; ?>' title='<?php _e('Clone this Event Date and Time', 'event_espresso'); ?>' style='position:relative; top:5px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'>
-								<img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/clone-trooper-16x16.png' width='16' height='16' alt='<?php _e('clone', 'event_espresso'); ?>'/>
+								<img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/clone-trooper-16x16.png' width='16' height='16' alt='<?php _e('clone', 'event_espresso'); ?>'/>
 							</a>
 					<?php if ( $row != 1 ) : ?>
 							<a class='remove-xtra-time dtm-inp-btn' rel='<?php echo $row; ?>' title='<?php _e('Remove this Event Date and Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'>
-								<img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/trash-16x16.png' width='16' height='16' alt='<?php _e('trash', 'event_espresso'); ?>'/>
+								<img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/trash-16x16.png' width='16' height='16' alt='<?php _e('trash', 'event_espresso'); ?>'/>
 							</a>
 					<?php endif; ?>
 						</td>
@@ -789,7 +789,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 					var counter = <?php echo $row; ?>;
 
 					$('#add-new-date-time').live('click', function(){
-						var newRow = "<tr valign='top' id='event-dates-and-times-row-"+counter+"'><td><div class='small-screen-table-label'><?php echo __('Event Starts on', 'event_espresso') ?></div><input id='event-start-"+counter+"' name='event_datetimes["+counter+"][evt_start]' type='text' class='dtm-es-picker dtm-inp medium-text' value=''/><input name='event-start-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/><input id='is-primary-"+counter+"' name='event_datetimes["+counter+"][is_primary]' type='hidden' value='' /></td><td><div class='small-screen-table-label'><?php echo __('Event Ends on', 'event_espresso') ?></div><input id='event-end-"+counter+"' name='event_datetimes["+counter+"][evt_end]' type='text' class='dtm-ee-picker dtm-inp medium-text' value=''/><input name='event-end-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/></td><td><div class='small-screen-table-label'><?php echo __('Registration Starts on', 'event_espresso') ?></div><input id='reg-start-"+counter+"' name='event_datetimes["+counter+"][reg_start]' type='text' class='dtm-rs-picker dtm-inp medium-text' value='' /><input name='reg-start-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/></td><td><div class='small-screen-table-label'><?php echo __('Registration Ends on', 'event_espresso') ?></div><input id='reg-end-"+counter+"' name='event_datetimes["+counter+"][reg_end]' type='text' class='dtm-re-picker dtm-inp medium-text' value='' /><input name='reg-end-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/></td><?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS <?php if ($org_options['time_reg_limit']) : ?><td><input type='text' id='reg-limit-"+counter+"' name='event_datetimes["+counter+"][reg_limit]' class='small-text dtm-inp' style='text-align:right;' value=''/></td><?php endif; // time_reg_limit   ?><td><input type='text' id='tckts-left-"+counter+"' name='event_datetimes["+counter+"][tckts_left]' class='small-text dtm-inp' style='text-align:right;' value=''/></td> */ ?><td><div class=small-screen-table-label><?php echo __('Actions', 'event_espresso') ?></div><a class='clone-date-time dtm-inp-btn' rel='"+counter+"' title='<?php _e('Clone this Event Date and Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/clone-trooper-16x16.png' width='16' height='16' alt='<?php _e('clone', 'event_espresso'); ?>'/></a><a class='remove-xtra-time dtm-inp-btn' rel='"+counter+"' title='<?php _e('Remove this Event Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/trash-16x16.png' width='16' height='16' alt='<?php _e('trash', 'event_espresso'); ?>'/></a></td></tr>";
+						var newRow = "<tr valign='top' id='event-dates-and-times-row-"+counter+"'><td><div class='small-screen-table-label'><?php echo __('Event Starts on', 'event_espresso') ?></div><input id='event-start-"+counter+"' name='event_datetimes["+counter+"][evt_start]' type='text' class='dtm-es-picker dtm-inp medium-text' value=''/><input name='event-start-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/><input id='is-primary-"+counter+"' name='event_datetimes["+counter+"][is_primary]' type='hidden' value='' /></td><td><div class='small-screen-table-label'><?php echo __('Event Ends on', 'event_espresso') ?></div><input id='event-end-"+counter+"' name='event_datetimes["+counter+"][evt_end]' type='text' class='dtm-ee-picker dtm-inp medium-text' value=''/><input name='event-end-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/></td><td><div class='small-screen-table-label'><?php echo __('Registration Starts on', 'event_espresso') ?></div><input id='reg-start-"+counter+"' name='event_datetimes["+counter+"][reg_start]' type='text' class='dtm-rs-picker dtm-inp medium-text' value='' /><input name='reg-start-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/></td><td><div class='small-screen-table-label'><?php echo __('Registration Ends on', 'event_espresso') ?></div><input id='reg-end-"+counter+"' name='event_datetimes["+counter+"][reg_end]' type='text' class='dtm-re-picker dtm-inp medium-text' value='' /><input name='reg-end-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/></td><?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS <?php if ($org_options['time_reg_limit']) : ?><td><input type='text' id='reg-limit-"+counter+"' name='event_datetimes["+counter+"][reg_limit]' class='small-text dtm-inp' style='text-align:right;' value=''/></td><?php endif; // time_reg_limit   ?><td><input type='text' id='tckts-left-"+counter+"' name='event_datetimes["+counter+"][tckts_left]' class='small-text dtm-inp' style='text-align:right;' value=''/></td> */ ?><td><div class=small-screen-table-label><?php echo __('Actions', 'event_espresso') ?></div><a class='clone-date-time dtm-inp-btn' rel='"+counter+"' title='<?php _e('Clone this Event Date and Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/clone-trooper-16x16.png' width='16' height='16' alt='<?php _e('clone', 'event_espresso'); ?>'/></a><a class='remove-xtra-time dtm-inp-btn' rel='"+counter+"' title='<?php _e('Remove this Event Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/trash-16x16.png' width='16' height='16' alt='<?php _e('trash', 'event_espresso'); ?>'/></a></td></tr>";
 						$('#event-dates-and-times tr:last').after( newRow );
 						counter++;
 					});
@@ -797,7 +797,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 					$('.clone-date-time').live('click', function(){				
 						var cloneRow = $(this).attr('rel');					
-						var newRow = "<tr valign='top' id='event-dates-and-times-row-"+counter+"'><td><div class='small-screen-table-label'><?php echo __('Event Starts on', 'event_espresso') ?></div><input id='event-start-"+counter+"' name='event_datetimes["+counter+"][evt_start]' type='text' class='dtm-es-picker dtm-inp medium-text' value=''/><input name='event-start-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/><input id='is-primary-"+counter+"' name='event_datetimes["+counter+"][is_primary]' type='hidden' value='' /></td><td><div class='small-screen-table-label'><?php echo __('Event Ends on', 'event_espresso') ?></div><input id='event-end-"+counter+"' name='event_datetimes["+counter+"][evt_end]' type='text' class='dtm-ee-picker dtm-inp medium-text' value=''/><input name='event-end-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/></td><td><div class='small-screen-table-label'><?php echo __('Registration Starts on', 'event_espresso') ?></div><input id='reg-start-"+counter+"' name='event_datetimes["+counter+"][reg_start]' type='text' class='dtm-rs-picker dtm-inp medium-text' value='' /><input name='reg-start-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/></td><td><div class='small-screen-table-label'><?php echo __('Registration Ends on', 'event_espresso') ?></div><input id='reg-end-"+counter+"' name='event_datetimes["+counter+"][reg_end]' type='text' class='dtm-re-picker dtm-inp medium-text' value='' /><input name='reg-end-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/></td><?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS <?php if ($org_options['time_reg_limit']) : ?><td><input type='text' id='reg-limit-"+counter+"' name='event_datetimes["+counter+"][reg_limit]' class='small-text dtm-inp' style='text-align:right;' value=''/></td><?php endif; // time_reg_limit   ?><td><input type='text' id='tckts-left-"+counter+"' name='event_datetimes["+counter+"][tckts_left]' class='small-text dtm-inp' style='text-align:right;' value=''/></td>  */ ?><td><div class=small-screen-table-label><?php echo __('Actions', 'event_espresso') ?></div><a class='clone-date-time dtm-inp-btn' rel='"+counter+"' title='<?php _e('Clone this Event Date and Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/clone-trooper-16x16.png' width='16' height='16' alt='<?php _e('clone', 'event_espresso'); ?>'/></a><a class='remove-xtra-time dtm-inp-btn' rel='"+counter+"' title='<?php _e('Remove this Event Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/trash-16x16.png' width='16' height='16' alt='<?php _e('trash', 'event_espresso'); ?>'/></a></td></tr>";
+						var newRow = "<tr valign='top' id='event-dates-and-times-row-"+counter+"'><td><div class='small-screen-table-label'><?php echo __('Event Starts on', 'event_espresso') ?></div><input id='event-start-"+counter+"' name='event_datetimes["+counter+"][evt_start]' type='text' class='dtm-es-picker dtm-inp medium-text' value=''/><input name='event-start-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/><input id='is-primary-"+counter+"' name='event_datetimes["+counter+"][is_primary]' type='hidden' value='' /></td><td><div class='small-screen-table-label'><?php echo __('Event Ends on', 'event_espresso') ?></div><input id='event-end-"+counter+"' name='event_datetimes["+counter+"][evt_end]' type='text' class='dtm-ee-picker dtm-inp medium-text' value=''/><input name='event-end-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/></td><td><div class='small-screen-table-label'><?php echo __('Registration Starts on', 'event_espresso') ?></div><input id='reg-start-"+counter+"' name='event_datetimes["+counter+"][reg_start]' type='text' class='dtm-rs-picker dtm-inp medium-text' value='' /><input name='reg-start-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/></td><td><div class='small-screen-table-label'><?php echo __('Registration Ends on', 'event_espresso') ?></div><input id='reg-end-"+counter+"' name='event_datetimes["+counter+"][reg_end]' type='text' class='dtm-re-picker dtm-inp medium-text' value='' /><input name='reg-end-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/></td><?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS <?php if ($org_options['time_reg_limit']) : ?><td><input type='text' id='reg-limit-"+counter+"' name='event_datetimes["+counter+"][reg_limit]' class='small-text dtm-inp' style='text-align:right;' value=''/></td><?php endif; // time_reg_limit   ?><td><input type='text' id='tckts-left-"+counter+"' name='event_datetimes["+counter+"][tckts_left]' class='small-text dtm-inp' style='text-align:right;' value=''/></td>  */ ?><td><div class=small-screen-table-label><?php echo __('Actions', 'event_espresso') ?></div><a class='clone-date-time dtm-inp-btn' rel='"+counter+"' title='<?php _e('Clone this Event Date and Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/clone-trooper-16x16.png' width='16' height='16' alt='<?php _e('clone', 'event_espresso'); ?>'/></a><a class='remove-xtra-time dtm-inp-btn' rel='"+counter+"' title='<?php _e('Remove this Event Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/trash-16x16.png' width='16' height='16' alt='<?php _e('trash', 'event_espresso'); ?>'/></a></td></tr>";
 						$('#event-dates-and-times-row-'+cloneRow).after( newRow );
 						$('#event-start-'+counter).val( $('#event-start-'+(cloneRow)).val() );
 						$('#event-end-'+counter).val( $('#event-end-'+(cloneRow)).val() );
@@ -826,7 +826,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 	public function pricing_metabox() {
-		global $org_options;
+		global $org_options, $espresso_premium;
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
@@ -867,7 +867,15 @@ class Events_Admin_Page extends EE_Admin_Page {
 				<p><?php _e('There are currently no Prices set for this Event. Please see the Event Pricing section for more details.', 'event_espresso'); ?></p>
 			</div>	
 			<div id="no-ticket-prices-msg-dv">
-				<p><?php _e('Please enter at lease one Event Price for this Event, or one Default Event Price to ensure that this Event displays and functions properly. Default Event Prices can be set on the <a href="'. admin_url( 'admin.php?page=pricing' ) .'">Pricing Management</a> page.', 'event_espresso'); ?></p>
+				<p>
+				<?php 
+				if ( $espresso_premium ) {
+					_e('Please enter at lease one Event Price for this Event, or one Default Event Price to ensure that this Event displays and functions properly. Default Event Prices can be set on the <a href="'. admin_url( 'admin.php?page=pricing' ) .'">Pricing Management</a> page.', 'event_espresso'); 
+				} else {
+					_e('Please enter at lease one Event Price for this Event to ensure that this Event displays and functions properly.', 'event_espresso'); 
+				}				
+				?>					
+				</p>
 			</div>
 		<?php endif; ?>
 
@@ -891,18 +899,18 @@ class Events_Admin_Page extends EE_Admin_Page {
 		foreach ( $all_prices as $price_type => $prices ) :
 			foreach ( $prices as $price ) :
 				if ( ! $price->deleted() ) :
-					//echo printr( $price, '$price' );
+					//printr( $price, '$price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 					$disabled = ! $price->is_active() ? ' disabled="disabled"' : ''; 
 					$disabled_class = ! $price->is_active() ? ' input-disabled' : ''; 
 					$inactive = ! $price->is_active() ? '<span class="inactice-price">'.__('inactive price - edit advanced settings to reactivate', 'event_espresso').'</span>' : FALSE; 
 					if ( $price->use_dates() ){
 						$today = time();
 						if ( $today < $price->start_date( FALSE ) ){
-							$price_date_status = '<a title="'. __('This Event Price option is not yet active', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/icons/timer-pending-16x22.png" width="16" height="22" alt="'. __('This Event Price option is not yet active', 'event_espresso') . '" class="price-date-status-img"/></a>';					
+							$price_date_status = '<a title="'. __('This Event Price option is not yet active', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-pending-16x22.png" width="16" height="22" alt="'. __('This Event Price option is not yet active', 'event_espresso') . '" class="price-date-status-img"/></a>';					
 						} elseif ( $today > $price->start_date( FALSE ) && $today < $price->end_date( FALSE ) ) {
-							$price_date_status = '<a title="'. __('This Event Price option is currently active', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/icons/timer-active-16x22.png" width="16" height="22" alt="'. __('This Event Price option is currently active', 'event_espresso') . '" class="price-date-status-img"/></a>';					
+							$price_date_status = '<a title="'. __('This Event Price option is currently active', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-active-16x22.png" width="16" height="22" alt="'. __('This Event Price option is currently active', 'event_espresso') . '" class="price-date-status-img"/></a>';					
 						} else {
-							$price_date_status = '<a title="'. __('This Event Price option has expired', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/icons/timer-expired-16x22.png" width="16" height="22" alt="'. __('This Event Price option has expired', 'event_espresso') . '" class="price-date-status-img"/></a>';
+							$price_date_status = '<a title="'. __('This Event Price option has expired', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-expired-16x22.png" width="16" height="22" alt="'. __('This Event Price option has expired', 'event_espresso') . '" class="price-date-status-img"/></a>';
 							$disabled = ' disabled="disabled"'; 
 							$disabled_class = ' input-disabled'; 
 							$inactive = '<span class="inactice-price">'.__('This Event Price option has expired - edit advanced settings to reactivate', 'event_espresso').'</span>';
@@ -1109,14 +1117,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 										<div class="small-screen-table-label"><?php echo __('Actions', 'event_espresso') ?></div>									
 										<?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS
 										<a class='display-price-tickets-left-lnk display-ticket-manager' data-reveal-id="ticket-manager-dv" rel="<?php echo $price->ID(); ?>"  title='Display the Ticket Manager for this Event' style="cursor:pointer;" >
-											<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/tickets-1-16x16.png" width="16" height="16" alt="<?php _e('tickets left', 'event_espresso'); ?>"/>
+											<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/tickets-1-16x16.png" width="16" height="16" alt="<?php _e('tickets left', 'event_espresso'); ?>"/>
 										</a>
 										 */ ?>
 										<a class='edit-event-price-lnk evt-prc-btn' rel="<?php echo $price->ID(); ?>"  title="Edit Advanced Settings for this Event Price">
-											<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/settings-16x16.png" width="16" height="16" alt="<?php _e('edit', 'event_espresso'); ?>"/>
+											<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/settings-16x16.png" width="16" height="16" alt="<?php _e('edit', 'event_espresso'); ?>"/>
 										</a>
 										<a class='delete-event-price-lnk evt-prc-btn' rel="<?php echo $price->ID(); ?>" title="Delete this Event Price" >
-											<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/trash-16x16.png" width="16" height="16" alt="<?php _e('trash', 'event_espresso'); ?>"/>
+											<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/trash-16x16.png" width="16" height="16" alt="<?php _e('trash', 'event_espresso'); ?>"/>
 										</a>
 									</td>
 
@@ -1624,7 +1632,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 								</label>
 								<input  size="20" type="text" value="<?php echo $v; ?>" name="emetad[]" id="emetad[]" />
 								<?php
-								echo '<img class="remove-item" title="' . __('Remove this meta box', 'event_espresso') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif" alt="' . __('Remove Meta', 'event_espresso') . '" />';
+								echo '<img class="remove-item" title="' . __('Remove this meta box', 'event_espresso') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/remove.gif" alt="' . __('Remove Meta', 'event_espresso') . '" />';
 								?>
 							</li>
 							<?php
@@ -1644,7 +1652,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				</label>
 				<input size="20" type="text" value="" name="emetad[]" id="emetad[]">
 				<?php
-				echo '<img class="remove-item" title="' . __('Remove this meta box', 'event_espresso') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif" alt="' . __('Remove Meta', 'event_espresso') . '" /></li>';
+				echo '<img class="remove-item" title="' . __('Remove this meta box', 'event_espresso') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/remove.gif" alt="' . __('Remove Meta', 'event_espresso') . '" /></li>';
 			} else {
 				echo '<li><label for="emeta[]">' . __('Key', 'event_espresso');
 				?>
@@ -1653,7 +1661,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				<?php _e('Value', 'event_espresso'); ?>
 				<input size="20" type="text" value="" name="emetad[]" id="emetad[]">
 				<?php
-				echo '<img class="remove-item" title="' . __('Remove this meta box', 'event_espresso') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif" alt="' . __('Remove Meta', 'event_espresso') . '" />' . '</li>';
+				echo '<img class="remove-item" title="' . __('Remove this meta box', 'event_espresso') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/remove.gif" alt="' . __('Remove Meta', 'event_espresso') . '" />' . '</li>';
 				// $meta_counter++;
 			}
 			?>
@@ -1667,7 +1675,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				function addMetaInput(divName){
 					var next_counter = counter_staticm(meta_counter);
 					var newdiv = document.createElement('li');
-					newdiv.innerHTML = "<label><?php _e('Key', 'event_espresso'); ?></label> <input size='20' type='text' value='' name='emeta[]' id='emeta[]'> <label><?php _e('Value', 'event_espresso'); ?></label> <input size='20' type='text' value='' name='emetad[]' id='emetad[]'><?php echo ' <img class=\"remove-item\" title=\"' . __('Remove this meta box', 'event_espresso') . '\" onclick=\"this.parentNode.parentNode.removeChild(this.parentNode);\" src=\"' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif\" alt=\"' . __('Remove Meta', 'event_espresso') . '\" />'; ?>";
+					newdiv.innerHTML = "<label><?php _e('Key', 'event_espresso'); ?></label> <input size='20' type='text' value='' name='emeta[]' id='emeta[]'> <label><?php _e('Value', 'event_espresso'); ?></label> <input size='20' type='text' value='' name='emetad[]' id='emetad[]'><?php echo ' <img class=\"remove-item\" title=\"' . __('Remove this meta box', 'event_espresso') . '\" onclick=\"this.parentNode.parentNode.removeChild(this.parentNode);\" src=\"' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/remove.gif\" alt=\"' . __('Remove Meta', 'event_espresso') . '\" />'; ?>";
 					document.getElementById(divName).appendChild(newdiv);
 					counter++;
 				}
@@ -1934,7 +1942,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 					$checked = ( in_array( $QSG->QSG_ID, $EQGs ) || $QSG->QSG_system_ID == 1 ) ? ' checked="checked"' : '';
 					$visibility = $QSG->QSG_system_ID == 1 ? ' style="visibility:hidden"' : '';
-					$edit_link = wp_nonce_url( add_query_arg( array( 'action' => 'edit_question_group', 'QSG_ID' => $QSG->QSG_ID ), EE_FORMS_ADMIN_URL ), 'edit_question_group_nonce');
+					$edit_link = self::add_query_args_and_nonce( array( 'action' => 'edit_question_group', 'QSG_ID' => $QSG->QSG_ID ), EE_FORMS_ADMIN_URL );
 					
 					$html .= '
 					<p id="event-question-group-' . $QSG->QSG_ID . '">
@@ -1986,7 +1994,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 					$checked = in_array( $QSG->QSG_ID, $EQGs ) || $QSG->QSG_system_ID == 1 ? ' checked="checked" ' : '';
 					$visibility = $QSG->QSG_system_ID == 1 ? ' style=" visibility:hidden"' : '';
-					$edit_link = wp_nonce_url( add_query_arg( array( 'action' => 'edit_question_group', 'QSG_ID' => $QSG->QSG_ID ), EE_FORMS_ADMIN_URL ), 'edit_question_group_nonce');
+					$edit_link = self::add_query_args_and_nonce( array( 'action' => 'edit_question_group', 'QSG_ID' => $QSG->QSG_ID ), EE_FORMS_ADMIN_URL );
 
 					$html .= '
 					<p id="event-question-group-' . $QSG->QSG_ID . '">
@@ -2340,9 +2348,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 
-	protected function _duplicate_event( $recurrence_arr = array() ) {
+	protected function _duplicate_event( ) {
 		global $wpdb, $espresso_wp_user;
-		$event_id = array_key_exists('event_id', $recurrence_arr) ? $recurrence_arr['event_id'] : $this->_req_data['event_id'];
+		$event_id = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : '';
 
 		$result = $wpdb->get_row("SELECT * FROM ". EVENTS_DETAIL_TABLE ." WHERE id ='" . $event_id . "'");
 
@@ -2359,10 +2367,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 			$allow_multiple = $result->allow_multiple;
 			$additional_limit = $result->additional_limit;
 
-			$registration_start = array_key_exists('registration_start', $recurrence_arr)?$recurrence_arr['registration_start']:$result->registration_start;;
-			$registration_end = array_key_exists('registration_end', $recurrence_arr)?$recurrence_arr['registration_end']:$result->registration_end;
-			$start_date = array_key_exists('start_date', $recurrence_arr)?$recurrence_arr['start_date']:$result->start_date;
-			$end_date = array_key_exists('end_date', $recurrence_arr)?$recurrence_arr['end_date']:$result->end_date;
+			$registration_start = $result->registration_start;
+			$registration_end = $result->registration_end;
+			$start_date = $result->start_date;
+			$end_date = $result->end_date;
 
 			$start_time = $result->start_time;
 			$end_time = $result->end_time;
@@ -2455,7 +2463,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'submitted' => date('Y-m-d H:i:s', time()), 
 				'reg_limit'=>$reg_limit, 
 				'additional_limit'=>$additional_limit, 
-				'recurrence_id'=>$recurrence_id, 
 				'wp_user' => $espresso_wp_user,
 				'post_id' => $post_id);
 			}
@@ -2472,7 +2479,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%d',
-				'%d','%d','%d','%d'
+				'%d','%d','%d'
 			);
 			
 			/*//check the counts to make sure the data is matched up correctly
@@ -2604,33 +2611,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		 	return false;
 		 }
 
-	/*
-	 * With the recursion of this function, additional recurring events will be added
-	 */
-	static $counter = 1;
-			 if ( count( $recurrence_arr) > 0 ) {
-				 
-				//$recurrence_dates = array_shift($recurrence_dates); //Remove the first item from the array since it will be added after this recursion
-				foreach ($recurrence_arr as $r_a){
 
-					echo_f($event_id, $r_a['start_date'] );
-
-					$this->_duplicate_event(
-							array(
-								'event_id'	 => $event_id,
-								'recurrence_id'	 => $recurrence_id,
-								'start_date'		=>$r_a['start_date'],
-								'registration_start'=>$r_a['registration_start'],
-								'registration_end'  =>$r_a['registration_end']
-							));
-
-					$counter ++;
-					if ($counter >20) exit();
-				}
-			}
-	/*
-	 * End recursion, as part of recurring events.
-	 */
 	return $new_id;
 
 	}
@@ -2760,7 +2741,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$event_meta['originally_submitted_by'] = $espresso_wp_user;
 		$event_meta['default_payment_status'] = $this->_req_data['default_payment_status'];
 
-		if ($this->_req_data['emeta'] != '') {
+		if ( isset( $this->_req_data['emeta'] ) && ! empty ( $this->_req_data['emeta'] )) {
 			foreach ($this->_req_data['emeta'] as $k => $v) {
 				$event_meta[$v] = strlen(trim($this->_req_data['emetad'][$k])) > 0 ? $this->_req_data['emetad'][$k] : '';
 			}
@@ -3306,7 +3287,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		 */
 
 
-		if ( $this->_req_data['emeta'] != '' ) {
+		if ( isset( $this->_req_data['emeta'] ) && ! empty ( $this->_req_data['emeta'] )) {
 			foreach ($this->_req_data['emeta'] as $k => $v) {
 				$event_meta[$v] = $this->_req_data['emetad'][$k];
 			}
@@ -4104,7 +4085,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		}
 		
 		$sql = '';
-		$sql = $count ? "SELECT COUNT(e.id) " : "SELECT e.id as event_id, e.event_name, e.slug, e.event_identifier, e.reg_limit, e.is_active, e.recurrence_id, e.event_meta, e.event_status, dtt.*";
+		$sql = $count ? "SELECT COUNT(e.id) " : "SELECT e.id as event_id, e.event_name, e.slug, e.event_identifier, e.reg_limit, e.is_active, e.event_meta, e.event_status, dtt.*";
 
 		if ( !$count ) {
 

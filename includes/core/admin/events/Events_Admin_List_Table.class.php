@@ -83,7 +83,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$filters = array();
 
 		//todo we're currently using old functions here. We need to move things into the Events_Admin_Page() class as methods.
-		require_once EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin.php';
+		require_once EE_CORE_ADMIN . 'admin_helper.php';
 
 		//first month/year filters
 		$filters[] = $this->_admin_page->espresso_event_months_dropdown( isset($this->_req_data['month_range']) ? $this->_req_data['month_range'] : '' );
@@ -161,11 +161,11 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			);
 
 
-		$edit_link = wp_nonce_url( add_query_arg( $edit_query_args, EVENTS_ADMIN_URL ), 'edit_event_nonce');
+		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EVENTS_ADMIN_URL );
 		$view_link = espresso_reg_url( $item->event_id, $item->slug );
-		$delete_link = wp_nonce_url( add_query_arg( $delete_query_args, EVENTS_ADMIN_URL ), 'delete_events_nonce' );
-		$attendees_link = wp_nonce_url( add_query_arg( $attendees_query_args, REG_ADMIN_URL ), 'default_nonce' );
-		$export_event_link = wp_nonce_url( add_query_arg( $export_query_args, EVENTS_ADMIN_URL), 'export_events_nonce' );
+		$delete_link = EE_Admin_Page::add_query_args_and_nonce( $delete_query_args, EVENTS_ADMIN_URL );
+		$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );
+		$export_event_link = EE_Admin_Page::add_query_args_and_nonce( $export_query_args, EVENTS_ADMIN_URL );
 
 		$actions = array(
 			'view' => '<a href="' . $view_link . '" title="' . __('View Event', 'event_espresso') . '">' . __('View', 'event_espresso') . '</a>',
@@ -234,7 +234,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 				'action' => 'default',
 				'event_id' => $item->event_id
 			);
-		$attendees_link = wp_nonce_url( add_query_arg( $attendees_query_args, REG_ADMIN_URL ), 'default_nonce' );	
+		$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );	
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
 //		$registered_attendees = EEM_Attendee::instance()->get_event_attendees( $item->event_id, FALSE, FALSE, FALSE, 'REG_date', 'DESC', FALSE, 'COUNT' );
 //		$registered_attendees = $registered_attendees ? $registered_attendees : 0;
@@ -276,12 +276,12 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			);
 
 
-		$edit_link = wp_nonce_url( add_query_arg( $edit_query_args, EVENTS_ADMIN_URL ), 'edit_event_nonce');
+		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EVENTS_ADMIN_URL );
 		$view_link = espresso_reg_url( $item->event_id, $item->slug );
-		$delete_link = wp_nonce_url( add_query_arg( $delete_query_args, EVENTS_ADMIN_URL ), 'delete_events_nonce' );
-		$attendees_link = wp_nonce_url( add_query_arg( $attendees_query_args, REG_ADMIN_URL ), 'default_nonce' );
-		$reports_link = wp_nonce_url( add_query_arg( $reports_query_args, EVENTS_ADMIN_URL ), 'view_report_nonce' );
-		$export_event_link = wp_nonce_url( add_query_arg( $export_query_args, EVENTS_ADMIN_URL), 'export_events_nonce' );
+		$delete_link = EE_Admin_Page::add_query_args_and_nonce( $delete_query_args, EVENTS_ADMIN_URL );
+		$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );
+		$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, EVENTS_ADMIN_URL );
+		$export_event_link = EE_Admin_Page::add_query_args_and_nonce( $export_query_args, EVENTS_ADMIN_URL );
 		
 		$content = '<div style="width:180px;">' . "\n\t";
 		$content .= '<a href="' .  $view_link . '" title="' . __('View Event', 'event_espresso') . '" target="_blank">' . "\n\t";

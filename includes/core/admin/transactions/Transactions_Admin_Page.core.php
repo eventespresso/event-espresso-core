@@ -228,6 +228,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		foreach ( $results as $status ) {
 			self::$_pay_status[ $status->STS_ID ] = __( $status->STS_code, 'event_espresso' );
 		}
+		//printr( self::$_pay_status, 'self::$_pay_status  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$this->_template_args['payment_status'] = self::$_pay_status;
 			
 	}
@@ -335,7 +336,16 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 	    if ( $transaction = $TXN->get_transaction_for_admin_page( $TXN_ID ) ) {
 	    	$this->_transaction = array_shift( $transaction ); 
-			$this->_session = maybe_unserialize( maybe_unserialize( $this->_transaction ->TXN_session_data ));
+			$this->_session = maybe_unserialize( $this->_transaction ->TXN_session_data );
+			//printr( $this->_session, '$this->_session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			if ( ! is_array( $this->_session )) {
+				$this->_session = unserialize( base64_decode( $this->_session ));
+				//printr( $this->_session, '$this->_session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			}			
+			
+			$this->_session = maybe_unserialize( $this->_session );
+			//printr( $this->_session, '$this->_session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
 	    	return;
 	    } else {
 	    	$error_msg = __('An error occured and the details for Transaction ID #', 'event_espresso') . $TXN_ID .  __(' could not be retreived.', 'event_espresso');
@@ -377,7 +387,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['transactions_page'] = $this->wp_page_slug;  
 
 	    $this->_set_transaction_object();
-
 	
 		$this->_template_args['txn_nmbr']['value'] = $this->_transaction->TXN_ID;
 		$this->_template_args['txn_nmbr']['label'] = __( 'Transaction Number', 'event_espresso' );
@@ -437,7 +446,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		$this->_set_transaction_object();
 
-
 		add_meta_box( 'edit-txn-details-mbox', __( 'Transaction Details', 'event_espresso' ), array( $this, '_txn_details_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
 		add_meta_box( 
 			'edit-txn-attendees-mbox',
@@ -462,9 +470,10 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	function _txn_details_meta_box() {
 	
 		global $wpdb, $org_options;
+		$this->_set_transaction_object();
 
 		// process items in cart
-		$cart_items = $this->_session['cart']['REG']['items'];
+		$cart_items = isset( $this->_session['cart'] ) ? $this->_session['cart']['REG']['items'] : array();
 		$this->_template_args['items'] = array();
 		$exclude = array( 'attendees' );
 		
@@ -626,7 +635,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					// check for attendee object
 					$attendee['att_obj'] = isset( $attendee['att_obj'] ) && is_object( $attendee['att_obj'] ) ? $attendee['att_obj'] : FALSE;
 					if ( ! $attendee['att_obj'] ) {
-						$where_cols_n_values = array( 'ATT_fname' => $attendee['fname'], 'ATT_lname' => $attendee['lname'], 'ATT_email' => $attendee['email'] );
+						$where_cols_n_values = array( 'ATT_fname' => $attendee[1], 'ATT_lname' => $attendee[2], 'ATT_email' => $attendee[3] );
 					    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php' );
 					    $ATT_MDL = EEM_Attendee::instance();
 						if ( ! $attendee['att_obj'] = $ATT_MDL->find_existing_attendee( $where_cols_n_values )) {
@@ -636,7 +645,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					// check for reg object
 					$attendee['reg_obj'] = isset( $attendee['reg_obj'] ) && is_object( $attendee['reg_obj'] ) ? $attendee['reg_obj'] : FALSE;		
 					if ( ! $attendee['reg_obj'] ) {
-						$where_cols_n_values = array( 'ATT_fname' => $attendee['fname'], 'ATT_lname' => $attendee['lname'], 'ATT_email' => $attendee['email'] );
+						$where_cols_n_values = array( 'ATT_fname' => $attendee[1], 'ATT_lname' => $attendee[2], 'ATT_email' => $attendee[3] );
 					    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
 					    $REG_MDL = EEM_Registration::instance();
 						if ( ! $attendee['reg_obj'] = $REG_MDL->get_registration_for_transaction_attendee( $TXN_ID, $attendee['att_obj']->ID(), $att_nmbr )) {
@@ -936,8 +945,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	
 		$page_args = array();
 		
-		$page_args['admin_reports'][] = $this->_revenue_per_day_report( '-8 month' );  //  option: '-1 week', '-2 weeks' defaults to '-1 month'
-		$page_args['admin_reports'][] = $this->_revenue_per_event_report( '-8 month' ); //  option: '-1 week', '-2 weeks' defaults to '-1 month'
+		$page_args['admin_reports'][] = $this->_revenue_per_day_report( '-1 month' );  //  option: '-1 week', '-2 weeks' defaults to '-1 month'
+		$page_args['admin_reports'][] = $this->_revenue_per_event_report( '-1 month' ); //  option: '-1 week', '-2 weeks' defaults to '-1 month'
 //		$page_args['admin_reports'][] = 'chart1';
 		
 		$template_path = EE_CORE_ADMIN . 'admin_reports.template.php';

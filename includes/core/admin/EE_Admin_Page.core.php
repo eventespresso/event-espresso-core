@@ -575,8 +575,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * _verify_routes
 	 * All this method does is verify the incoming request and make sure that routes exist for it.  We do this early so we know if we need to drop out.
 	 *
-	 * @
-	 * @return [type] [description]
+	 * @access private
+	 * @return void
 	 */
 	private function _verify_routes() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
@@ -628,6 +628,25 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+	/**
+	 * this method simply verifies a given route and makes sure its an actual route available for the loaded page
+	 * @param  string $route the route name we're verifying
+	 * @return mixed  (bool|Exception)      we'll throw an exception if this isn't a valid route.
+	 */
+	private function _verify_route( $route ) {
+		if ( array_key_exists( $this->_req_action, $this->_page_routes )) {
+			return true;
+		} else {
+			// user error msg
+			$error_msg =  sprintf( __( 'The given page route does not exist for the %s admin page.', 'primal-plugin' ), $this->_admin_page_title );
+			// developer error msg
+			$error_msg .=  '||' . $error_msg . sprintf( __( ' Check the route you are using in your method (%s) and make sure it matches a route set in your "_page_routes" array property', 'event_espresso' ), $route );
+			throw new PRM_Error( $error_msg );
+		}
+	}
+
+
+
 
 	/**
 	 * _route_admin_request()
@@ -642,15 +661,19 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_verify_routes();
 
 		if ( $this->_req_action != 'default' ) {
-			$nonce = isset($this->_req_data['_wpnonce']) ? $this->_req_data['_wpnonce'] : '';
-
-
-			if ( !wp_verify_nonce( $nonce, $this->_req_nonce ) ) {
+			// set nonce from post data
+			$nonce = isset($this->_req_data[ $this->_req_nonce  ]) ? sanitize_text_field( $this->_req_data[ $this->_req_nonce  ] ) : '';
+			// verify nonce against expected value
+			if ( ! wp_verify_nonce( $nonce, $this->_req_nonce ) ) {
+				// these are not the droids you are looking for !!!
 				$msg = sprintf(__('%sNonce Fail.%s' , 'event_espresso'), '<a href="http://www.youtube.com/watch?v=56_S0WeTkzs">', '</a>' );
-				if ( !defined('DOING_AJAX') )
+				if ( WP_DEBUG ) {
+					$msg .= "\n" . sprintf( __('In order to dynamically generate nonces for your actions, use the %s->_add_query_arg method. May the Nonce be with you!', 'event_espresso' ), __CLASS__  );
+				}
+				if ( ! defined( 'DOING_AJAX' )) {
 					wp_die( $msg );
-				else {
-					echo json_encode( array('error' => $msg ) );
+				} else {
+					echo json_encode( array('error' => $msg ));
 					exit();
 				}
 			}
@@ -685,6 +708,37 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 	/**
+	 * _add_query_arg
+	 * adds nonce to array of arguments then calls WP add_query_arg function
+	 *
+	 * 	@access public
+	 *	@param array $args
+	 *	@param string $url
+	 * 	@return void
+	 */
+	public static function add_query_args_and_nonce( $args = array(), $url = FALSE ) {
+		if ( ! $url ) {
+			$user_msg = __('An error occured. A URL is a required parameter for the _add_query_arg method.', 'event_espresso' );
+			$dev_msg = $user_msg . "\n" . sprintf( 
+					__('In order to dynamically generate nonces for your actions, you need to supply a valid URL as a second parameter for the %s->_add_query_arg method.', 'event_espresso' ),
+					__CLASS__ 
+				);
+			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );				
+		}
+		// check that an action exists
+		if ( isset( $args['action'] ) && ! empty( $args['action'] )) {
+			$args = array_merge( $args, array( $args['action'] . '_nonce' => wp_create_nonce( $args['action'] . '_nonce' )));
+		} else {
+			$args = array_merge( $args, array( 'action' => 'default', 'default_nonce' => wp_create_nonce( 'default_nonce' )));
+		}
+		return add_query_arg( $args, $url );
+		
+	}
+
+
+
+
+	/**
 	 * _set_nav_tabs
 	 * This sets up the nav tabs from the page_routes array.  This method can be overwritten by child classes if you wish to add additional tabs or modify accordingly.
 	 *
@@ -703,7 +757,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 			$css_class = isset( $config['css_class'] ) ? $config['css_class'] . ' ' : '';
 			$this->_nav_tabs[$slug] = array(
-				'url' => isset($config['nav']['url']) ? $config['nav']['url'] : wp_nonce_url( add_query_arg( array( 'action'=>$slug ), $this->_admin_base_url), $slug . '_nonce'),
+				'url' => isset($config['nav']['url']) ? $config['nav']['url'] : self::add_query_args_and_nonce( array( 'action'=>$slug ), $this->_admin_base_url ),
 				'link_text' => isset( $config['nav']['label'] ) ? $config['nav']['label'] : ucwords(str_replace('_', ' ', $slug ) ),
 				'css_class' => $this->_req_action == $slug ? $css_class . 'nav-tab-active' : $css_class,
 				'order' => isset( $config['nav']['order'] ) ? $config['nav']['order'] : $i
@@ -1048,7 +1102,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//register all scripts
 		//wp_register_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-datepicker.js', array('jquery-ui-core'), EVENT_ESPRESSO_VERSION, true );
 		wp_register_script('jquery-ui-timepicker-addon', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker'), EVENT_ESPRESSO_VERSION, true );
-		wp_register_script('event_editor_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_editor.js', array('jquery-ui-slider', 'jquery-ui-timepicker-addon'), EVENT_ESPRESSO_VERSION, true);
+		wp_register_script('event_editor_js', EVENTS_ASSETS_URL . 'event_editor.js', array('jquery-ui-slider', 'jquery-ui-timepicker-addon'), EVENT_ESPRESSO_VERSION, true);
 		wp_register_script('event-espresso-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_espresso.js', array('jquery'), EVENT_ESPRESSO_VERSION, true);
 		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('jquery', 'ee-parse-uri'), EVENT_ESPRESSO_VERSION, true );
 		wp_register_script('jquery-validate', EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.min.js", array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
@@ -1449,11 +1503,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	   					</a>
 	   				</li>
 	   				<li>
-		   				<a href="http://eventespresso.com/product/espresso-recurring/" target="_blank">
-		   					<?php _e('Recurring Events', 'event_espresso'); ?>
-	   					</a>
-	   				</li>
-	   				<li>
 		   				<a href="http://eventespresso.com/product/espresso-members/" target="_blank">
 		   					<?php _e('WP User Integration', 'event_espresso'); ?>
 	   					</a>
@@ -1589,7 +1638,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@return 		string
 	*/
 	private function _display_espresso_notices() {
-		echo EE_Error::get_notices();
+		$notices = $this->_get_transient( TRUE );
+		echo stripslashes($notices);
 	}
 
 
@@ -1772,10 +1822,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 		
 		$ajax_sorting_callback = $this->_list_table_object->get_ajax_sorting_callback();	
 		if( ! empty( $ajax_sorting_callback )) {
-			$reorder_action = 'espresso_' . $ajax_sorting_callback . '_nonce';
-			$sortable_list_table_form_fields = wp_nonce_field( $reorder_action, 'ajax_table_sort_nonce', FALSE, FALSE );
+			$sortable_list_table_form_fields = wp_nonce_field( $ajax_sorting_callback . '_nonce', $ajax_sorting_callback . '_nonce', FALSE, FALSE );
+//			$reorder_action = 'espresso_' . $ajax_sorting_callback . '_nonce';
+//			$sortable_list_table_form_fields = wp_nonce_field( $reorder_action, 'ajax_table_sort_nonce', FALSE, FALSE );
 			$sortable_list_table_form_fields .= '<input type="hidden" id="ajax_table_sort_page" name="ajax_table_sort_page" value="' . $this->page_slug .'" />';
-			$sortable_list_table_form_fields .= '<input type="hidden" id="ajax_table_sort_action" name="ajax_table_sort_action" value="espresso_' . $ajax_sorting_callback .'" />';
+			$sortable_list_table_form_fields .= '<input type="hidden" id="ajax_table_sort_action" name="ajax_table_sort_action" value="' . $ajax_sorting_callback . '" />';
 		} else {
 			$sortable_list_table_form_fields = '';
 		}
@@ -1980,7 +2031,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		// open form
 		$this->_template_args['before_admin_page_content'] = '<form name="form" method="post" action="' . $this->_admin_base_url . '" id="' . $route . '_event_form" >';
 		// add nonce
-		$nonce = wp_nonce_field( $route . '_nonce', '_wpnonce', FALSE, FALSE );
+		$nonce = wp_nonce_field( $route . '_nonce', $route . '_nonce', FALSE, FALSE );
+//		$nonce = wp_nonce_field( $route . '_nonce', '_wpnonce', FALSE, FALSE );
 		$this->_template_args['before_admin_page_content'] .= "\n\t" . $nonce;
 		// add REQUIRED form action
 		$hidden_fields = array( 
@@ -2046,11 +2098,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$redirect_url = admin_url( 'admin.php' );
 		}
 		
-		// grab messages
-		$notices = EE_Error::get_notices( false, true );
-
-		//combine $query_args and $notices
-		$query_args = array_merge( $query_args, $notices );
+		//assign notices to transient
+		$notices = EE_Error::get_notices();
+		//first we need the route for the transient!
+		$route = isset( $query_args['action'] ) ? $query_args['action'] : 'default';
+		$this->_add_transient( $route, $notices, TRUE );
+		
 		// generate redirect url
 
 		// if redirecting to anything other than the main page, add a nonce
@@ -2063,8 +2116,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$classname = get_class($this);
 		do_action( 'action_hook_espresso_redirect_' . $classname . $this->_req_action, $query_args );
 
-
-		$redirect_url = apply_filters( 'filter_hook_espresso_redirect_' . $classname . $this->_req_action, add_query_arg( $query_args, $redirect_url ), $query_args ); 
+		$redirect_url = apply_filters( 'filter_hook_espresso_redirect_' . $classname . $this->_req_action, self::add_query_args_and_nonce( $query_args, $redirect_url ), $query_args ); 
 
 		// check if we're doing ajax.  If we are then lets just return the results and js can handle how it wants.
 		if ( defined('DOING_AJAX' ) ) {
@@ -2119,7 +2171,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( !empty($extra_request) )
 			$query_args = array_merge( $extra_request, $query_args );
 
-		$url = wp_nonce_url( add_query_arg( $query_args, $_base_url), $action . '_nonce');
+		$url = self::add_query_args_and_nonce( $query_args, $_base_url );
 
 		$button = '<a href="' . $url . '" class="' . $class . '">' . $this->_labels['buttons'][$type] . '</a>';
 
@@ -2190,6 +2242,50 @@ abstract class EE_Admin_Page extends EE_BASE {
 			exit;
 		}
 	}
+
+
+
+
+	/**
+	 * This makes available the WP transient system for temporarily moving data between routes
+	 *
+	 * @access protected
+	 * @param route $route the route that should receive the transient
+	 * @param data $data  the data that gets sent
+	 * @param bool $notices If this is for notices then we use this to indicate so, otherwise its just a normal route transient.
+	 */
+	protected function _add_transient( $route, $data, $notices = FALSE ) {
+		$user_id = get_current_user_id();
+		
+		$this->_verify_route($route);
+
+
+		//now let's set the string for what kind of transient we're setting
+		$transient = $notices ? 'rte_n_tx_' . $route . '_' . $user_id : 'rte_tx_' . $route . '_' . $user_id;
+		$data = $notices ? array( 'notices' => $data ) : $data;
+		//is there already a transient for this route?  If there is then let's ADD to that transient
+		if ( $existing = get_transient( $transient ) ) {
+			$data = array_merge( (array) $data, (array) $existing );
+		}
+
+		set_transient( $transient, $data, 5 );
+	}
+	
+
+
+
+	/**
+	 * this retrieves the temporary transient that has been set for moving data between routes.
+	 * @param bool $notices true we get notices transient. False we just return normal route transient
+	 * @return mixed data
+	 */
+	protected function _get_transient( $notices = FALSE ) {
+		$user_id = get_current_user_id();
+		$transient = $notices ? 'rte_n_tx_' . $this->_req_action . '_' . $user_id : 'rte_tx_' . $this->_req_action . '_' . $user_id;
+		$data = get_transient( $transient );
+		return $notices ? $data['notices'] : $data;
+	}
+
 
 
 

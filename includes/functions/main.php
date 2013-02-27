@@ -84,8 +84,11 @@ function espresso_create_default_pages() {
 		}
 	}
 	update_user_meta( $espresso_wp_user, 'events_organization_settings', $org_options );
-	if ( $updated_flag )
+	if ( $updated_flag ) {
+		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'core'.DS.'admin'.DS.'admin_helper.php');
 		add_action('admin_notices', 'espresso_updated_pages');
+	}
+		
 }
 
 
@@ -302,7 +305,7 @@ if (!function_exists('event_espresso_additional_attendees')) {
 			} else {
 				$html .= event_espresso_add_question_groups($event_meta['add_attendee_question_groups'], '', null, 0, array("x_attendee" => true));
 			}
-			$html .= '<a href="#" class="add" rel=".clone" title="' . __('Add an Additonal Attendee', 'event_espresso') . '"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/add.png" alt="' . __('Add an Additonal Attendee', 'event_espresso') . '" /></a>';
+			$html .= '<a href="#" class="add" rel=".clone" title="' . __('Add an Additonal Attendee', 'event_espresso') . '"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/add.png" alt="' . __('Add an Additonal Attendee', 'event_espresso') . '" /></a>';
 			$html .= '</div>';
 			$html .= '<hr />';
 			$html .= '</div>';
@@ -312,7 +315,7 @@ if (!function_exists('event_espresso_additional_attendees')) {
 	$jaer = jQuery.noConflict();
 	jQuery(document).ready(function($jaer) { 
 		$jaer(function(){
-			var removeLink = '<a style="" class="remove" href="#" onclick="$jaer(this).parent().slideUp(function(){ $jaer(this).remove() }); return false"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL . "images/icons/remove.gif"; ?>" alt="<?php _e('Remove Attendee', 'event_espresso'); ?>" /></a>';
+			var removeLink = '<a style="" class="remove" href="#" onclick="$jaer(this).parent().slideUp(function(){ $jaer(this).remove() }); return false"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL . "images/remove.gif"; ?>" alt="<?php _e('Remove Attendee', 'event_espresso'); ?>" /></a>';
 			$jaer('a.add').relCopy({
 				limit: <?php echo $i; ?>, 
 				append: removeLink

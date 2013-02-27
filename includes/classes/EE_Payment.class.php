@@ -567,7 +567,7 @@ class EE_Payment {
 	* 		@access		public
 	*/
 	public function STS_ID() {
-		return $this->_STS_ID;
+		return ! empty( $this->_STS_ID ) ? $this->_STS_ID : 'PFL' ;
 	}
 
 
@@ -588,7 +588,7 @@ class EE_Payment {
 	* 		@access		public
 	*/
 	public function method() {
-		return $this->_PAY_method;
+		return ! empty( $this->_PAY_method ) ? $this->_PAY_method : $this->_PAY_gateway;
 	}
 
 

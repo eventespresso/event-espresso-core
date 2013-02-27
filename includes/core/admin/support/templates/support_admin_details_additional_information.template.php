@@ -8,7 +8,6 @@
 		<dt><a href="http://eventespresso.com/forums/2010/12/video-initial-setp-general-settings-pages/"><?php _e('General Setup &amp; Using Shortcodes</a> (video)', 'event_espresso'); ?></dt>
 		<dt><?php printf( __('%sCustomizing the Registration Form%s (video)', 'event_espresso'), '<a href="http://eventespresso.com/forums/2010/12/customizing-the-registration-form/%5C">', '</a>'); ?></dt>
 		<dt><?php printf( __('%sOptional PayPal Account Settings%s (video)', 'event_espresso'), '<a href="http://eventespresso.com/forums/2010/07/account-optional-setting/"', '</a>'); ?></dt>
-		<dt><?php printf( __('%sRecurring Events Manager%s (video)', 'event_espresso'), '<a href="http://eventespresso.com/forums/2011/01/templates-for-the-recurring-events-manager/">', '</a>'); ?></dt>
 		<dt><?php printf( __('%sVariables and Shortcodes%s', 'event_espresso'), '<a href="http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/">', '</a>'); ?></dt>
 		<dt><?php printf( __('%sCompatibility Issues%s', 'event_espresso'), '<a href="http://eventespresso.com/forums/category/general/compatiblity-issues/">','</a>' ); ?></dt>
 		<dt><?php printf( __('%sBug Submission Form%s', 'event_espresso'), '<a href="http://eventespresso.com/forums/category/premium-plugin-support/bug-reports/">', '</a>'); ?></dt>
