@@ -49,7 +49,7 @@
 		<div class="event-data-display-dv ui-widget-content ui-corner-bottom">
 
 			<p id="event-status-pg-<?php echo $event_id ?>" class="event-status-pg">
-				<span class="section-title"><?php echo __('Event Status: ', 'event_espresso'); ?></span>&nbsp;<?php echo $status['status']; ?>
+				<span class="section-title"><?php echo __('Event Status: ', 'event_espresso'); ?></span>&nbsp;<?php echo $status_display; ?>
 			</p>
 
 			<?php

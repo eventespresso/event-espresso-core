@@ -267,7 +267,7 @@ class EE_Datetime {
 	private function _EVT_start_date() {
 		// check for existing event date AND verify that it NOT an end date
 		if ( isset( $this->_DTT_EVT_start )) {
-			return date( $this->_dt_frmt, $this->_DTT_EVT_start );
+			return date_i18n( $this->_dt_frmt, $this->_DTT_EVT_start );
 		} else {
 			return FALSE;
 		}
@@ -288,7 +288,7 @@ class EE_Datetime {
 	private function _EVT_start_time() {
 		// check for existing event time
 		if ( isset( $this->_DTT_EVT_start )) {
-			return date( $this->_tm_frmt, $this->_DTT_EVT_start );
+			return date_i18n( $this->_tm_frmt, $this->_DTT_EVT_start );
 		} else {
 			return FALSE;
 		}
@@ -310,7 +310,7 @@ class EE_Datetime {
 	private function _EVT_end_date() {
 		// check for existing event date AND verify that it NOT an end date
 		if ( isset( $this->_DTT_EVT_end )) {
-			return date( $this->_dt_frmt, $this->_DTT_EVT_end );
+			return date_i18n( $this->_dt_frmt, $this->_DTT_EVT_end );
 		} else {
 			return FALSE;
 		}
@@ -331,7 +331,7 @@ class EE_Datetime {
 	private function _EVT_end_time() {
 		// check for existing event time
 		if ( isset( $this->_DTT_EVT_end )) {
-			return date( $this->_tm_frmt, $this->_DTT_EVT_end );
+			return date_i18n( $this->_tm_frmt, $this->_DTT_EVT_end );
 		} else {
 			return FALSE;
 		}
@@ -354,7 +354,7 @@ class EE_Datetime {
 	private function _REG_start_date() {
 		// check for existing event date AND verify that it NOT an end date
 		if ( isset( $this->_DTT_REG_start )) {
-			return date( $this->_dt_frmt, $this->_DTT_REG_start );
+			return date_i18n( $this->_dt_frmt, $this->_DTT_REG_start );
 		} else {
 			return FALSE;
 		}
@@ -375,7 +375,7 @@ class EE_Datetime {
 	private function _REG_start_time() {
 		// check for existing event time
 		if ( isset( $this->_DTT_REG_start )) {
-			return date( $this->_tm_frmt, $this->_DTT_REG_start );
+			return date_i18n( $this->_tm_frmt, $this->_DTT_REG_start );
 		} else {
 			return FALSE;
 		}
@@ -397,7 +397,7 @@ class EE_Datetime {
 	private function _REG_end_date() {
 		// check for existing event date AND verify that it NOT an end date
 		if ( isset( $this->_DTT_REG_end )) {
-			return date( $this->_dt_frmt, $this->_DTT_REG_end );
+			return date_i18n( $this->_dt_frmt, $this->_DTT_REG_end );
 		} else {
 			return FALSE;
 		}
@@ -418,7 +418,7 @@ class EE_Datetime {
 	private function _REG_end_time() {
 		// check for existing event time
 		if ( isset( $this->_DTT_REG_end )) {
-			return date( $this->_tm_frmt, $this->_DTT_REG_end );
+			return date_i18n( $this->_tm_frmt, $this->_DTT_REG_end );
 		} else {
 			return FALSE;
 		}
@@ -441,9 +441,9 @@ class EE_Datetime {
 	
 		// if no date is set then use today
 		if ( ! $date ){
-			$event_date = date( $this->_dt_frmt, time());
+			$event_date = date_i18n( $this->_dt_frmt, time());
 		} else {
-			$event_date = date( $this->_dt_frmt, strtotime($date) );
+			$event_date = date_i18n( $this->_dt_frmt, strtotime($date) );
 		}
 		
 		if( $start_or_end == 'start' ) {
@@ -485,15 +485,15 @@ class EE_Datetime {
 	
 		// if no time is set, then use RIGHT NOW!!!!
 		if ( ! $time ){
-			$event_time = date( $this->_tm_frmt, time());
+			$event_time = date_i18n( $this->_tm_frmt, time());
 		} else {
-			$event_time = date( $this->_tm_frmt, strtotime($time) );
+			$event_time = date_i18n( $this->_tm_frmt, strtotime($time) );
 		}
 
 		$function_name = "_{$EVT_or_REG}_{$start_or_end}_date";
 		if ( ! $event_date = $this->$function_name() ) {
 			// or if no date is set, then use RIGHT NOW!!!!
-			$event_date = date( $this->_dt_frmt, time());
+			$event_date = date_i18n( $this->_dt_frmt, time());
 		}
 			
 		$var_name = "_DTT_{$EVT_or_REG}_{$start_or_end}";
@@ -761,15 +761,15 @@ class EE_Datetime {
 		switch ( $date_or_time ) {
 			
 			case 'D' :
-				return date( $dt_frmt, $this->{$var_name} );
+				return date_i18n( $dt_frmt, $this->{$var_name} );
 				break;
 			
 			case 'T' :
-				return date( $tm_format, $this->{$var_name} );
+				return date_i18n( $tm_format, $this->{$var_name} );
 				break;
 			
 			default :
-				return date( $dt_frmt . ' ' . $tm_format, $this->{$var_name} );
+				return date_i18n( $dt_frmt . ' ' . $tm_format, $this->{$var_name} );
 				
 		}
 

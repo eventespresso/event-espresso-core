@@ -425,7 +425,7 @@ if (!function_exists('event_espresso_get_is_active')) {
 
 		//If the registration start date is less than the current date
 		elseif ($is_active && $regstart <= $now && $event_status != "D") {
-			$event_status = array('status' => 'REGISTRATION_OPEN', 'display' => __('OPEN', 'event_espresso'), 'display_custom' => '<span class="espresso_open">' . __('Open', 'event_espresso') . '</span>');
+			$event_status = array('status' => 'REGISTRATION_OPEN', 'display' => __('OPEN', 'event_espresso'), 'display_custom' => '<span class="espresso_open">' . __('Registration Open', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
 		}
@@ -556,7 +556,7 @@ if (!function_exists('get_number_of_attendees_reg_limit')) {
 				break;
 			case 'available_spaces' :
 				if ($reg_limit >= 999) {
-					$number_available_spaces = "Unlimited";
+					$number_available_spaces = __('Unlimited', 'event_espresso');
 				}
 				return $number_available_spaces;
 				break;
