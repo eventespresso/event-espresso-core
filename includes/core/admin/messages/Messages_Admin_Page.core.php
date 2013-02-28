@@ -30,6 +30,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	private $_active_messengers = array();
 	private $_active_message_types = array();
+	private $_active_messenger;
 	private $_activate_state;
 	private $_activate_meta_box_type;
 	private $_current_message_meta_box;
@@ -262,6 +263,22 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		wp_register_style('espresso_ee_msg', EE_MSG_ASSETS_URL . 'ee_message_admin.css', EVENT_ESPRESSO_VERSION );
 		wp_enqueue_style('espresso_ee_msg');
 	}
+
+
+
+
+
+	public function wp_editor_css( $mce_css ) {
+		//if we're on the edit_message_template route
+		if ( $this->_req_action == 'edit_message_template' && !empty( $this->_active_messenger ) ) {
+			//we're going to REPLACE the existing mce css
+			//we need to get the css file location from the active messenger
+			$mce_css = $this->_active_messenger->get_inline_css_template(TRUE);
+		}
+
+		return $mce_css;
+	}
+
 
 
 
@@ -530,6 +547,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$referrer = NULL;
 			$edit_message_template_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
 		}
+
+		//set active messenger for this view
+		$this->_active_messenger = $this->_active_messengers[$message_template->messenger()]['obj'];
+
+		//add in special css for tiny_mce
+		add_filter( 'mce_css', array( $this, 'wp_editor_css' ) );
+
 
 		//Do we have any validation errors?
 		$validators = defined('DOING_AJAX') ? $this->_get_transient(FALSE, 'edit_message_template') : $this->_get_transient();
