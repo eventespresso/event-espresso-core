@@ -48,7 +48,8 @@ function espresso_main_file() {
 	return $main_file;
 }
 
-
+global $eei18n_js_strings;
+$eei18n_js_strings = array();
 
 
 
@@ -102,6 +103,7 @@ if ( is_admin() ) {
 	add_action('widgets_init', 'espresso_widget');
 	add_action('wp_head', 'espresso_info_header');
 	add_action('wp_enqueue_scripts', 'add_espresso_stylesheet', 20);
+	add_action('wp_enqueue_scripts', 'eei18n_js_strings', 100 );
 
 }
 
