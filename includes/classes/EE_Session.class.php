@@ -443,7 +443,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 
 		// we're using the Transient API for storing session data, cuz it's so damn simple -> set_transient(  transient ID, data, expiry )
 		set_transient( $this->_sid, $session_data, $this->_expiration );
-		die();
+		//die();
 		return set_transient( $this->_sid, $session_data, $this->_expiration ) ? TRUE : FALSE;
 
 	}
