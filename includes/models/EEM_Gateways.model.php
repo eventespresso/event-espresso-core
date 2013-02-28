@@ -890,13 +890,13 @@ Class EEM_Gateways {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$current_gateway=(!empty($this->_selected_gateway))?$this->_gateway_instances[$this->_selected_gateway] : null;
 		if(!empty($current_gateway)	&& $current_gateway instanceof EE_Offsite_Gateway){
-			if($current_gateway->debug_mode_active()){
+			/*if($current_gateway->debug_mode_active()){
 				ob_start();
-			}
+			}*/
 			
 			$current_gateway->handle_ipn_for_transaction($transaction);
 			if($current_gateway->debug_mode_active()){		
-				$debug_output=ob_get_contents();
+				$debug_output=$current_gateway->get_debug_log();
 				ob_end_clean();
 				wp_mail($org_options['contact_email'],"Event Espresso IPN Debug info for ".$this->_selected_gateway,"POST data received:".print_r($_POST,true)." output is".$debug_output);
 			}

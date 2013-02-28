@@ -44,7 +44,8 @@ abstract class EE_Gateway {
 	protected $_css_link_class = '';
 	// list of options for building Yes or NO dropdown boxes
 	protected $_yes_no_options = array();
-	
+	//output log for emailing on ipns, or echoing out where appropriate,e tc.
+	protected $_debug_log = '';
 	/**
 	 * whether this gateway should be in debug mode or not. If it is, we'll probably
 	 * send the website admin IPN messages and show debug info, etc.
@@ -112,6 +113,24 @@ abstract class EE_Gateway {
 	public function process_reg_step_3(){
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		return array('success'=>TRUE);
+	}
+	
+	/**
+	 * Adds the msg to the debug output log, for sending emails on ipns, or whatever
+	 * @param string $msg
+	 * @return void
+	 */
+	protected function _debug_log($msg){
+		$this->_debug_log.="<br>".$msg;
+	}
+	
+	
+	/**
+	 * returns a string of the gateway's debug output.
+	 * @return string
+	 */
+	public function get_debug_log(){
+		return $this->_debug_log;
 	}
 
 	protected function _set_default_properties() {
@@ -635,10 +654,12 @@ abstract class EE_Gateway {
 			//to determine if the transactin oshould be marked as complete.
 			if ( $transaction->total() == 0 || 
 					( $payment->amount() >= $transaction->total() && $payment->STS_ID()==EEM_Payment::status_id_approved)) {
-				$transaction->set_status(EEM_Transaction::complete_status_code);//Complete
+				$transaction->set_status(EEM_Transaction::complete_status_code);
 				$transaction->set_paid($payment->amount());
+			}else if ($payment->STS_ID() == EEM_Payment::status_id_pending){
+				$transaction->set_status(EEM_Transaction::pending_status_code);
 			}else{
-				$transaction->set_status(EEM_Transaction::incomplete_status_code);//sorry, still not complete. 
+				$transaction->set_status(EEM_Transaction::incomplete_status_code);
 			}
 			
 			
@@ -678,7 +699,7 @@ abstract class EE_Gateway {
 	 */
 	public function get_payment_overview_content(){
 		//stubb
-		return '';
+		echo " ";//just echo out a single space, so the output buffer that's listening doesnt complain its empty
 	}
 
 }

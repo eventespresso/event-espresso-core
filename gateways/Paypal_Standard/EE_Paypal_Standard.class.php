@@ -403,9 +403,9 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 	 * @return boolean
 	 */
 	public function handle_ipn_for_transaction($transaction){
-		if($this->debug_mode_active()){
-			echo "<hr><br>".get_class($this).":start handle_ipn_for_transaction on transaction:".print_r($transaction,true);
-		}
+		
+		$this->_debug_log("<hr><br>".get_class($this).":start handle_ipn_for_transaction on transaction:".print_r($transaction,true));
+		
 		//@todo just for debugging. remove in production
 		if($_GET['payment_status'] && $_GET['txn_id']){
 			echo "<br>NOTE! payment_staut and txn_id overridden!!!";
@@ -416,9 +416,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		if(empty($_POST['payment_status']) || empty($_POST['txn_id'])){
 			return false;
 		}
-		if($this->debug_mode_active()){
-			echo "<hr><br>".get_class($this).": payment_status and txn_id sent properly. payment_status:".$_POST['payment_status'].", txn_id:".$_POST['txn_id'];
-		}
+			$this->_debug_log( "<hr><br>".get_class($this).": payment_status and txn_id sent properly. payment_status:".$_POST['payment_status'].", txn_id:".$_POST['txn_id']);
 		//ok, then validate the IPN. Even if we've already processed this payment, let paypal know we don't want to hear from them anymore!
 		if(!$this->validateIpn() && !$_GET['ignore_ipn']){
 			//huh, something's wack... the IPN didn't validate. We must have replied to teh IPN incorrectly,
@@ -451,13 +449,18 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		//check if we've already processed this payment
 		
 		$payment = $this->_PAY->get_payment_by_txn_id_chq_nmbr($_POST['txn_id']);
-		
+
 		if(!empty($payment)){
-			//payment exists, update it
-			$payment->set_status($status);
-			$payment->set_amount($_POST['mc_gross']);
-			$payment->set_gateway_response($gateway_response);
-			$payment->set_details($_POST);
+			//payment exists. if this has the exact same status and amount, don't bother updating. just return
+			if($payment->STS_ID() == $status && $payment->amount() == $_POST['mc_gross']){
+				echo "duplicated update! dont bother updating transaction foo!";
+				return false;
+			}else{
+				$payment->set_status($status);
+				$payment->set_amount($_POST['mc_gross']);
+				$payment->set_gateway_response($gateway_response);
+				$payment->set_details($_POST);
+			}
 		}else{
 			//no previous payment exists, create one
 			$primary_registrant = $transaction->primary_registration();
@@ -524,113 +527,21 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			}
 			return false;
 		}
-		/*if (function_exists('curl_init')) {
-			//new paypal code//
-			// parse the paypal URL
-			$urlParsed = parse_url($this->_gatewayUrl);
-
-			// generate the post string from the _POST vars
-			$req = '';
-
-			$errors = "\nUsing BUILT-IN PHP curl methods\n";
-			// Run through the posted array
-			foreach ($_POST as $key => $value) {
-				$this->ipnData["$key"] = $value;
-				$errors .= "key = " . $key . "\nvalue = " . $value . "\n";
-				$value = urlencode(stripslashes($value));
-				$value = preg_replace('/(.*[^%^0^D])(%0A)(.*)/i', '${1}%0D%0A${3}', $value); // IPN fix
-				$req .= $key . '=' . $value . '&';
-			}
-			$req .= 'cmd=_notify-validate';
-			$url = $this->_gatewayUrl;
-			
-			$ch = curl_init(); // Starts the curl handler;
-			$error = array();
-			$error["set_host"] = curl_setopt($ch, CURLOPT_URL, $url); // Sets the paypal address for curl
-			$error["set_fail_on_error"] = curl_setopt($ch, CURLOPT_FAILONERROR, 1);
-			$error["set_return_transfer"] = curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // Returns result to a variable instead of echoing
-			$error["set_timeout"] = curl_setopt($ch, CURLOPT_TIMEOUT, 45); // Sets a time limit for curl in seconds (do not set too low)
-			$error["set_post"] = curl_setopt($ch, CURLOPT_POST, 1); // Set curl to send data using post
-			$error["set_post_fields"] = curl_setopt($ch, CURLOPT_POSTFIELDS, $req); // Add the request parameters to the post
-			$errors .= $error["set_host"] ? "Success" : "Failure";
-			$errors .= " Setting host: " . $url . "\n";
-			$errors .= $error["set_post"] ? "Success" : "Failure";
-			$errors .= " Setting request type to post\n";
-			$errors .= $error["set_post_fields"] ? "Success" : "Failure";
-			$errors .= " Setting post fields: " . htmlspecialchars($req) . "\n";
-			$errors .= $error["set_fail_on_error"] ? "Success" : "Failure";
-			$errors .= " Setting Fain On Error\n";
-			$errors .= $error["set_return_transfer"] ? "Success" : "Failure";
-			$errors .= " Setting return transfer\n";
-			$errors .= $error["set_timeout"] ? "Success" : "Failure";
-			$errors .= " Setting Timeout\n";
-			$error["set_verbose"] = curl_setopt($ch, CURLOPT_VERBOSE, 1);
-			$errors .= $error["set_verbose"] ? "Success" : "Failure";
-			$errors .= " Setting verbose mode\n";
-			$result = curl_exec($ch); // run the curl process (and return the result to $result
-			$this->ipnResponse = $result;
-			$error["result"] = curl_error($ch);
-			curl_close($ch);
-			//$errors .= "Errors resulting from the execution of curl transfer: " . $error["result"];
-			
-			
-			if (strcmp($result, "VERIFIED") == 0) { // It may seem strange but this function returns 0 if the result matches the string So you MUST check it is 0 and not just do strcmp ($result, "VERIFIED") (the if will fail as it will equate the result as false)
-				// Do some checks to ensure that the payment has been sent to the correct person
-				// Check and ensure currency and amount are correct
-				// Check that the transaction has not been processed before
-				// Ensure the payment is complete
-				// Valid IPN transaction.
-				return true;
-			} else {
-				// Log an invalid request to look into
-				// Invalid IPN transaction.  Check the log for details.
-				$this->lastError = "IPN Validation Failed . $urlParsed[path] : $urlParsed[host]";
-				return false;
-			}
-		} else {
-
-			//Old paypal code
-			// parse the paypal URL
-			$urlParsed = parse_url($this->_gatewayUrl);
-			// generate the post string from the _POST vars
-			$postString = '';
-			foreach ($_POST as $key => $value) {
-				$this->ipnData["$key"] = $value;
-				$value = urlencode(stripslashes($value));
-				$value = preg_replace('/(.*[^%^0^D])(%0A)(.*)/i', '${1}%0D%0A${3}', $value); // IPN fix
-				$postString .= $key . '=' . $value . '&';
-			}
-			$postString .="cmd=_notify-validate"; // append ipn command
-			// open the connection to paypal
-			$fp = fsockopen($urlParsed[host], "80", $errNum, $errStr, 30);
-			if (!$fp) {
-				// Could not open the connection, log error if enabled
-				$this->lastError = "fsockopen error no. $errNum: $errStr";
-				return false;
-			} else {
-				// Post the data back to paypal
-				fputs($fp, "POST $urlParsed[path] HTTP/1.1\r\n");
-				fputs($fp, "Host: $urlParsed[host]\r\n");
-				fputs($fp, "Content-type: application/x-www-form-urlencoded\r\n");
-				fputs($fp, "Content-length: " . strlen($postString) . "\r\n");
-				fputs($fp, "Connection: close\r\n\r\n");
-				fputs($fp, $postString . "\r\n\r\n");
-				// loop through the response from the server and append to variable
-				while (!feof($fp)) {
-					$this->ipnResponse .= fgets($fp, 1024);
-				}
-				fclose($fp); // close connection
-			}
-			if (eregi("VERIFIED", $this->ipnResponse)) {
-				// Valid IPN transaction.
-				return true;
-			} else {
-				// Invalid IPN transaction.  Check the log for details.
-				$this->lastError = "IPN Validation Failed . $urlParsed[path] : $urlParsed[host]";
-				return false;
-			}
-		}*/
 	}
+	
+	/**
+	 * We only really want to exlain to users why they'r epayment is pending, if that's teh case.
+	 * Otherwise, they probably don't want to know anything.
+	 * @param EE_Transaction $transaction
+	 */
+	/*public function get_payment_overview_content(EE_Transaction $transaction){
+			if($transaction->status_ID() == EEM_Transaction::pending_status_code){
+				?>
+		<h1><?php _e('Awaiting Payment Response from Paypal...','event_espresso')?></h1>
+		<p><?php _e('Paypal has notified us that your payment is in progress. You will be notified when payment is accepted.')?></p>
+		<?php
+			}
+	}*/
 
 }
 
