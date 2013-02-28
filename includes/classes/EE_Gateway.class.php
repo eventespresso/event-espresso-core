@@ -63,6 +63,14 @@ abstract class EE_Gateway {
 	 * @var EEM_Payment 
 	 */
 	protected $_PAY = null;
+	
+	
+	
+	/**
+	 * Registration model for querying
+	 * @var EEM_Registration
+	 */
+	protected $_REG = null;
 
 	abstract protected function _default_settings();
 	abstract protected function _update_settings();
@@ -85,6 +93,9 @@ abstract class EE_Gateway {
 		require_once('EEM_Payment.model.php');
 		require_once('EE_Payment.class.php');
 		$this->_PAY = EEM_Payment::instance();
+		require_once('EEM_Registration.model.php');
+		require_once('EE_Registration.class.php');
+		$this->_REG = EEM_Registration::instance();
 		$this->_set_default_properties();
 		$this->_handle_payment_settings();
 		if (is_admin() && !empty($_GET['page']) && $_GET['page'] == 'payment_settings') {
@@ -155,6 +166,8 @@ abstract class EE_Gateway {
 			}
 		}
 	}
+	
+	
 
 	private function _gateways_frontend() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
@@ -178,6 +191,37 @@ abstract class EE_Gateway {
 		}
 	}
 
+	/**
+	 *  Gets the URL that the user should generally be sent back to after payment completion offiste
+	 *  Adds the reg_url_link in order to remember which session we were in the middle of processing
+	 * @param EE_Registration or int, current registration we want to link back to in the return url.
+	 * @param boolean $urlencode whether or not to url-encode the url (if true, you probably intend to pass
+	 * this string as a URL parameter itself, or maybe a post parameter)
+	 *  @return string URL on the current site of the thank_you page, with parameters added on to know which registration was just 
+	 * processed in order to correctly display the payment status. And it gets URL-encoded by default
+	 */
+	protected function _get_return_url( $registration, $urlencode = false ){
+		global $org_options;
+		//if $registration is an ID instead of an EE_Registration, make it an EE_Registration
+		if( ! $registration instanceof EE_Registration){
+			$registration = $this->_REG->get_one_by_ID($registration);
+		}
+		if(empty($registration)){
+			$msg[0]=__("Cannot get Return URL for gateway. Invalid registration",'event_espresso');
+			$msg[1]=sprinf(__("Registration being used is %s.",'event_espresso'),  print_r($registration, true));
+			EE_Error::add_error(implode("||", $msg), __FILE__, __FUNCTION__, __LINE__);
+			return '';
+		}
+		//get a registration that's currently getting processed
+		/*@var $registration EE_Registration */
+		$url=add_query_arg(array('reg_url_link'=>$registration->reg_url_link()),
+				get_permalink($org_options['return_url']));
+		if($urlencode){
+			$url=urlencode($url);
+		}
+		return $url;
+	}
+	
 	public function gateway() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, ' $this->_gateway = ' . $this->_gateway_name );
 		return $this->_gateway_name;
@@ -529,12 +573,33 @@ abstract class EE_Gateway {
 	}*/
 	
 	/**
+	 * Logic general to all gateways on the thank you page. Mostly just updates the transaction
+	 * @global EE_Sesison $EE_Session
+	 * @param EE_Transaction $transaction
+	 * @return boolean
+	 */
+	public function thank_you_page(EE_Transaction $transaction){
+		global $EE_Session;
+		$session_data = $EE_Session->get_session_data();
+		//update the session as if we just updated the session
+		//...actually, I'm not sure if there's much to save. 
+		unset($session_data['transaction']);
+		$transaction->set_txn_session_data($session_data);
+		$transaction->save();
+		return true;
+	}
+	
+	
+	/**
 	 * Updates the transaction according to teh payment info
 	 * @param EE_Transaction or int $transaction the transaction to update, or its ID. Cannot be null.
 	 * @param EE_Payment or int $payment the payment just made or its ID. If empty that's actually OK. It just means no payment has been made.
 	 * @return boolean success
 	 */
 	public function update_transaction_with_payment($transaction,$payment){
+		//@todo this could really use the payment's apply_payment_to_transaction method,
+		//but there are some subtle differences... especially regarding the legacy txn_details\
+		//getting set on the transaction. once those are remoevd, the transition would be easier
 		if(empty($transaction)){
 			return false;
 		}
@@ -547,16 +612,48 @@ abstract class EE_Gateway {
 		//now, if teh payment's empty, we're going to update the transaction accordingly
 		if(empty($payment)){
 			$transaction->set_status($this->_TXN->pending_status_code);
+			$legacy_txn_details = array(
+				'gateway' => $this->_payment_settings['display_name'],
+				'approved' => FALSE,
+				'response_msg' => __('You\'re registration will be marked as complete once your payment is received.', 'event_espresso'),
+				'status' => 'Incomplete',
+				'raw_response' => serialize($_REQUEST),
+				'amount' => 0.00,
+				'method' => 'Off-line',
+				'auth_code' => '',
+				'md5_hash' => '',
+				'invoice_number' => '',
+				'transaction_id' => ''
+			);
+			$transaction->set_details($legacy_txn_details);
 		}else{
 			//ok, now process the transaction according to the payment
+			//NOTE: if we allow multiple payments someday, then we'll need to tally up all previous payments
+			//to determine if the transactin oshould be marked as complete.
 			if ( $transaction->total() == 0 || ( $payment->amount() >= $transaction->total() )) {
-				$transaction->set_status($this->_TXN->complete_status_code);//Complete
+				$transaction->set_status(EEM_Transaction::complete_status_code);//Complete
 			}else{
-				$transaction->set_status($this->_TXN->pending_status_code);
+				$transaction->set_status(EEM_Transaction::incomplete_status_code);//sorry, still not complete. 
 			}
 			$transaction->set_paid($payment->amount());
 			
-			$transaction->set_details($payment->details());
+			//create the legacy transaction details. Really this data is a duplication of the 
+			//payment data, and should probably be removed as to avoid confusion
+			$payment_details = $payment->details();
+			$legacy_txn_details = array(
+				'gateway' => $payment->gateway(),
+				'approved' => $payment->STS_ID()==EEM_Payment::status_id_approved ? true : false,
+				'response_msg' => $payment->pretty_status(),
+				'status' => in_array($payment->STS_ID(),array(EEM_Payment::status_id_approved)) ? 'Completed' : 'Incomplete',
+				'raw_response' => $payment_details,
+				'amount' => $payment->amount(),
+				'method' => 'CART',
+				'auth_code' => array_key_exists('payer_id',$payment_details) ? $payment_details['payer_id'] : '',
+				'md5_hash' => array_key_exists('verify_sign',$payment_details) ? $payment_details['verify_sign'] : '',
+				//'invoice_number' => sanitize_text_field($_POST['invoice_id']),
+				//'transaction_id' => sanitize_text_field($_POST['ipn_track_id'])
+			);
+			$transaction->set_details($legacy_txn_details);
 			//old code also set the hash_salt, added teh transaction to the session, and setted_tax_data.
 			//but I don't see either how those are necessary, or why they should be handled in the page's controller.
 			//the hash_salt doesn't seem to be used anywhere. 
@@ -564,6 +661,7 @@ abstract class EE_Gateway {
 			//updating teh transaction in the session should be done on the thank you page, as taht's where the session is always available.
 		}	
 		$transaction->update();
+		//do_action( 'action_hook_espresso__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
 		return true;
 	}
 

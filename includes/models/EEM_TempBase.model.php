@@ -764,7 +764,7 @@ class EE_Model_Field{
 	 * all the types of ModelFields which are allowed
 	 * @var type 
 	 */
-	private $_allowed_types=array('primary_key','primary_text_key','foreign_key','foreign_text_key','int','float','plaintext','simplehtml','fullhtml','enum','bool','deleted_flag','serializedtext');
+	private $_allowed_types=array('primary_key','primary_text_key','foreign_key','foreign_text_key','int','float','date', 'plaintext','simplehtml','fullhtml','enum','bool','deleted_flag','serialized_text');
 	
 	
 	
@@ -840,13 +840,17 @@ class EE_Model_Field{
 					
 	 *				int (only allows integers)
 					
-	 *				float (only allows floats)
+	 *				float (only allows floats. ie decimals)
+	 * 
+	 *				date (allow input as either a well-formatted datetime string, or a UNIX timestamp)
 					
 	 *				plaintext (allows strings, but filters out all HTML tags)
 					
 	 *				simplehtml (like plaintext, but allows a few basic HTML tags)
 					
 	 *				fullhtml (allows all strings, and does not filter HTML tags at all)
+	 * 
+	 *				serialized_text (an array that gets serialized into a string when setting and saving ot db, and unserialized when retrieved from db)
 	 * 
 	 *				enum (allows only a limited set of values. $allowedEnumValues MUST be set for this type)
 	 * 

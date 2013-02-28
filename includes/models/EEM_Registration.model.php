@@ -694,7 +694,7 @@ class EEM_Registration extends EEM_TempBase {
 		if( ! $TXN_ID ){
 			return false;
 		}
-		return $this->get_one(array('TXN_ID'=>$TXN_ID,'REG_count'=>$this->PRIMARY_REGISTRANT_COUNT));
+		return $this->get_one(array('TXN_ID'=>$TXN_ID,'REG_count'=>  EEM_Registration::PRIMARY_REGISTRANT_COUNT));
 	}
 
 	/**

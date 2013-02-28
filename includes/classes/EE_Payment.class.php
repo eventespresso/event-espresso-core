@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Payment {
+class EE_Payment extends EE_Base_Class{
 
 
     /**
@@ -29,121 +29,135 @@ class EE_Payment {
 	*
 	* 	primary key
 	*
-	* 	@access	private
+	* 	@access	protected
     *	@var int
     */
-	private $_PAY_ID = FALSE;
+	protected $_PAY_ID = FALSE;
 
 
     /**
     *	Transaction ID
 	*
-	*	@access	private
+	*	@access	protected
     *	@var int
     */
-	private $_TXN_ID = NULL;
+	protected $_TXN_ID = NULL;
 
 
     /**
     *	Payment Status
 	*
-	*	@access	private
+	*	@access	protected
     *	@var string
     */
-	private $_STS_ID = NULL;
+	protected $_STS_ID = NULL;
 
 
     /**
     *	Payment Timestamp
 	*
-	*	@access	private
+	*	@access	protected
     *	@var int
     */
-	private $_PAY_timestamp = NULL;
+	protected $_PAY_timestamp = NULL;
 
 
     /**
     *	Payment Method
 	*
-	*	@access	private
+	*	@access	protected
     *	@var string
     */
-	private $_PAY_method = NULL;
+	protected $_PAY_method = NULL;
 
 
     /**
     *	Payment Amount
 	*
-	*	@access	private
+	*	@access	protected
     *	@var float
     */
-	private $_PAY_amount = NULL;
+	protected $_PAY_amount = NULL;
 
 
     /**
     *	Payment Gateway utilized 
 	*
-	*	@access	private
+	*	@access	protected
     *	@var string
     */
-	private $_PAY_gateway = NULL;
+	protected $_PAY_gateway = NULL;
 
 
     /**
     *	Gateway Response
 	*
-	*	@access	private
+	*	@access	protected
     *	@var string
     */
-	private $_PAY_gateway_response = NULL;
+	protected $_PAY_gateway_response = NULL;
 
 
     /**
     *	Gateway Transaction ID or Cheque #
 	*
-	*	@access	private
+	*	@access	protected
     *	@var string
     */
-	private $_PAY_txn_id_chq_nmbr = NULL;
+	protected $_PAY_txn_id_chq_nmbr = NULL;
 
  	 	 	
     /**
     *	Purchase Order Number
 	*
-	*	@access	private
+	*	@access	protected
     *	@var string
     */
-	private $_PAY_po_number = NULL;
+	protected $_PAY_po_number = NULL;
 
  	 	 	
     /**
     *	Extra Accounting Field
 	*
-	*	@access	private
+	*	@access	protected
     *	@var string
     */
-	private $_PAY_extra_accntng = NULL;
+	protected $_PAY_extra_accntng = NULL;
 
 
     /**
     *	Payment made via admin
 	*
-	*	@access	private
+	*	@access	protected
     *	@var string
     */
-	private $_PAY_via_admin = NULL;
+	protected $_PAY_via_admin = NULL;
 
 
     /**
     *	Payment Details
 	*
-	*	@access	private
+	*	@access	protected
     *	@var string
     */
-	private $_PAY_details = NULL;
+	protected $_PAY_details = NULL;
 
+	
+	
+	/**
+	 * Transaction this payment was for
+	 * @var EE_Transaction
+	 */
+	protected $_Transaction = NULL;
 
-
+	
+	
+	
+	/**
+	 * Status of this payment
+	 * @var EE_Status
+	 */
+	protected $_Status = NULL;
 
 
 
@@ -670,7 +684,36 @@ class EE_Payment {
 	public function details() {
 		return $this->_PAY_details;
 	}
-
+	
+	
+	/**
+	 * returns a pretty version of the status, good for displayign to users
+	 * @return string
+	 */
+	public function pretty_status(){
+		switch($this->STS_ID()){
+			case EEM_Payment::status_id_approved:
+				return __("Accepted",'event_espresso');
+			case EEM_Payment::status_id_cancelled:
+				return __('Cancelled','event_espresso');
+			case EEM_Payment::status_id_declined:
+				return __('Declined','event_espresso');
+			case EEM_Payment::status_id_failed:
+				return __('Failed','event_espresso');
+			default:
+				return __('Unknown','event_espresso');
+		}
+	}
+	
+	
+	
+	/**
+	 * echoes $this->pretty_status()
+	 * @return void
+	 */
+	public function e_pretty_status(){
+		echo $this->pretty_status();
+	}
 
 
 

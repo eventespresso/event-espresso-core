@@ -247,8 +247,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 	}
 
 
-	public function thank_you_page() {
-		parent::thank_you_page();
+	public function get_payment_overview_content(EE_Transaction $transaction) {
 		global $EE_Session;
 		$session_data = $EE_Session->get_session_data();
 		//printr( $session_data, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 

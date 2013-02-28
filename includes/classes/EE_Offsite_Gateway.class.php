@@ -4,28 +4,39 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 abstract class EE_Offsite_Gateway extends EE_Gateway {
 
 	protected $_gatewayUrl = NULL;
+	
+	
+	
+	
 	/**
 	 *  Gets the URL that the user should generally be sent back to after payment completion offiste
 	 *  Adds the reg_url_link in order to remember which session we were in the middle of processing
+	 * @param EE_Registration or int, current registration we want to link back to in the return url.
 	 * @param boolean $urlencode whether or not to url-encode the url (if true, you probably intend to pass
 	 * this string as a URL parameter itself, or maybe a post parameter)
 	 *  @return string URL on the current site of the thank_you page, with parameters added on to know which registration was just 
 	 * processed in order to correctly display the payment status. And it gets URL-encoded by default
 	 */
-	protected function _get_return_url_with_params( $urlencode = true ){
-		global $org_options,$EE_Session;
-		$session_data=$EE_Session->get_session_data();
+	protected function _get_notify_url( $registration, $urlencode = false ){
+		global $org_options;
+		//if $registration is an ID instead of an EE_Registration, make it an EE_Registration
+		if( ! ($registration instanceof EE_Registration)){
+			$registration = $this->_REG->get_one_by_ID($registration);
+		}
+		if(empty($registration)){
+			$msg[0]=__("Cannot get Notify URL for gateway. Invalid registration",'event_espresso');
+			$msg[1]=sprinf(__("Registration being used is %s.",'event_espresso'),  print_r($registration, true));
+			EE_Error::add_error(implode("||", $msg), __FILE__, __FUNCTION__, __LINE__);
+			return '';
+		}
 		//get a registration that's currently getting processed
-		/*@var $a_current_registration EE_Registration */
-		$a_current_registration=current($session_data['registration']);
-		$url=add_query_arg(array('reg_url_link'=>$a_current_registration->reg_url_link(),
-				'attendee_action'=>'post_payment',
-				'form_action'=>'payment'),
-				get_permalink($org_options['return_url']));
+		/*@var $registration EE_Registration */
+		$url=add_query_arg(array('reg_url_link'=>$registration->reg_url_link(),
+					'ee_gateway'=>$this->_gateway_name),
+				get_permalink($org_options['notify_url']));
 		if($urlencode){
 			$url=urlencode($url);
 		}
-		//echo "url to send to :$url";
 		return $url;
 	}
 	
@@ -132,5 +143,29 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 			$output .= "<input type=\"hidden\" name=\"$name\" value=\"$value\"/>\n";
 		}
 		return $output;
+	}
+	
+	/**
+	 * This function should create a payment given the IPN data, and update the transaction accordingly.
+	 * I would have made thsi function abstract, but then I'd get compile-time errors until I rewrote all the gateways...
+	 * SO maybe in the future I wll make it abstract.
+	 * @param EE_Transaction $transaction
+	 * @throws EE_Error
+	 */
+	public function handle_ipn_for_transaction(EE_Transaction $transaction){
+		throw new EE_Error(sprintf(__('handle_ipn_for_transaction not implemented for gateway %s. || This function should take care of creating a payment given teh ipn data, and updating the transaction accordingly.','event_espresso'),get_class($this)));
+	
+	}
+	
+	/**
+	 * Handles the gateway-specific logic when displaying the payment page..
+	 * @global type $EE_Session
+	 * @param EE_Transaction $transaction
+	 * @return string
+	 */
+	public function thank_you_page_logic(EE_Transaction $transaction){
+		//check that we've received an IPN for this payment, otherwise consider this the IPN
+		$this->handle_ipn_for_transaction($transaction);
+		parent::thank_you_page($transaction);
 	}
 }

@@ -62,7 +62,7 @@ class EE_messages_init extends EE_Base {
 	 * @return void
 	 */
 	private function _do_actions() {
-		//add_action( 'action_hook_espresso_after_payment', array( $this, 'payment' ), 10, 2 );
+		add_action( 'action_hook_espresso__EE_Gateway__update_transaction_with_payment__done', array( $this, 'payment' ), 10, 2 );
 		add_action( 'action_hook_espresso__EE_Single_Page_Checkout__process_registration_step_3__before_gateway', array( $this, 'registration' ), 10 );
 	}
 

@@ -65,7 +65,7 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 									'ATT_zip'=>new EE_Model_Field('Zip/Postal Code', 'plaintext', true, ''),
 									'ATT_email'=>new EE_Model_Field('Email', 'plaintext', false, ''),
 									'ATT_phone'=>new EE_Model_Field('Phone', 'plaintext', true),
-									'ATT_social'=>new EE_Model_Field('Social Media Details','serializedtext',true),
+									'ATT_social'=>new EE_Model_Field('Social Media Details','serialized_text',true),
 									'ATT_comments'=>new EE_Model_Field('Comments','simplehtml',true),
 									'ATT_notes'=>new EE_Model_Field('Notes', 'simplehtml', true),
 									'ATT_deleted'=>new EE_Model_Field('Deleted flag', 'deleted_flag', false,0),

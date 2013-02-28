@@ -833,17 +833,49 @@ Class EEM_Gateways {
 	}
 
 
-
-	public function thank_you_page() {
+	/**
+	 * Handles the thank_you_page, given the curren transaction
+	 * @param type $transaction
+	 */
+	public function thank_you_page_logic(EE_Transaction $transaction) {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $EE_Session;
-		$session_data = $EE_Session->get_session_data();
-		if (empty($session_data['txn_results']['approved'])
-						&& !empty($this->_selected_gateway)
+		if (!empty($this->_selected_gateway)
 						&& !empty($this->_gateway_instances[ $this->_selected_gateway ])) {
-			$this->_gateway_instances[ $this->_selected_gateway ]->thank_you_page();
+			$this->_gateway_instances[ $this->_selected_gateway ]->thank_you_page_logic($transaction);
 		}
-		$this->reset_session_data();
+		$this->check_for_completed_transaction($transaction);
+	}
+	
+	/**
+	 * Gets the HTML from the currently-selected gateway to display the payment's overview, specific to this gateway.
+	 * Content to be shown may include errors, notes about the payment, and further payment instructions (often the case for offline gateways).
+	 * 
+	 * @param EE_Transaction $transaction
+	 * @return string of HTML to be displayed above the payment overview, usually on the thank you page
+	 */
+	public function get_payment_overview_content(EE_Transaction $transaction){
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		if (!empty($this->_selected_gateway)
+						&& !empty($this->_gateway_instances[ $this->_selected_gateway ])) {
+				ob_start();
+				$this->_gateway_instances[ $this->_selected_gateway ]->get_payment_overview_content($transaction);
+				$output = ob_get_clean();
+				return $output;
+		}
+		return '';
+	}
+	/**
+	 * Checks if teh provided transaction is completed. If so, clears teh session and handles
+	 * the logic of finalizing the transaction
+	 * @param EE_Transaction $transaction
+	 */
+	public function check_for_completed_transaction(EE_Transaction $transaction){
+		//throw new Exception("unfinished. This functino should check for a completed transaction .If completed, clear some session etc
+		require_once('EEM_Transaction.model.php');
+		if($transaction->status_ID() == EEM_Transaction::complete_status_code
+				|| $transaction->status_ID() == EEM_Transaction::pending_status_code){
+			$this->reset_session_data();
+		}
 	}
 	
 	/**
@@ -867,6 +899,7 @@ Class EEM_Gateways {
 				$debug_output=ob_get_flush();
 				wp_mail($org_options['contact_email'],"Event Espresso IPN Debug info for ".$this->_selected_gateway,"POST data received:".print_r($_POST,false)." output is".$debug_output);
 			}
+			
 		}
 	}
 

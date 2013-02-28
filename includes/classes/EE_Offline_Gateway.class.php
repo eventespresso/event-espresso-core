@@ -44,16 +44,27 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 	 * as it's parent's 'thank_you_page()', which is to update the transaction (but not the payment
 	 * because in this case no payment has been made)
 	 * @global type $EE_Session
+	 * @param EE_Transaction
 	 * @return void
 	 */
-	public function thank_you_page() {
+	public function thank_you_page_logic(EE_Transaction $transaction) {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		
 		global $EE_Session;
+		
+		$success = $this->update_transaction_with_payment($transaction, null);
+		
+		
+		$EE_Session->set_session_data(array('txn_results' => $transaction->details()), 'session_data');
 		$session = $EE_Session->get_session_data();
+		//prevent trying to serialize a recursive relationship
+		unset($session['transaction']);
+		$transaction->set_txn_session_data( $session );
+		parent::thank_you_page($transaction);
 		//check that there's still a transaction in the session.
 		//if there isn't, maybe we've cleared it (session ended with the thank you page)
 		//or something wack's going on...
-		if(!array_key_exists('transaction',$session)){
+		/*if(!array_key_exists('transaction',$session)){
 			return;
 		}
 		$txn_results = array(
@@ -68,14 +79,13 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 				'md5_hash' => '',
 				'invoice_number' => '',
 				'transaction_id' => ''
-		);
+		);*/
 		
-		$EE_Session->set_session_data(array('txn_results' => $txn_results), 'session_data');
 		
 //		printr( $session, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
 //		die();	
 
-		$success = $txn_results['approved'];
+		/*$success = $txn_results['approved'];
 		do_action( 'action_hook_espresso_after_payment', $EE_Session, $success );
 		
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
@@ -83,8 +93,8 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 		
 		$transaction->set_paid($txn_results['amount']);
 		$transaction->set_details( $txn_results );
-		$txn_status = 'TPN';
-		$transaction->set_status($txn_status);
+		//$txn_status = $this->_TXN->pending_status_code;//'TPN';
+		$transaction->set_status(EEM_Transaction::pending_status_code);
 		//update our local session data with what's in teh session singleton
 		$session = $EE_Session->get_session_data();
 		unset( $session['transaction'] );
@@ -93,7 +103,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 			$tax_data = array('taxes' => $session['taxes'], 'tax_totals' => $session['tax_totals']);
 			$transaction->set_tax_data($tax_data);
 		}
-		$transaction->update();
+		$transaction->update();*/
 		
 	}
 	

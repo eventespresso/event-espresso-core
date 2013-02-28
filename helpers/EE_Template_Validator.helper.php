@@ -113,7 +113,7 @@ class EE_Template_Validator {
 	 */
 	static function verify_instanceof($variable_to_test,$name_of_variable,$class_name){
 		if(WP_DEBUG)return;
-		if(!is_a($variable_to_test,$class_name)){
+		if($variable_to_test == NULL ||  !is_a($variable_to_test,$class_name)){
 			$msg[]=__('Variable %s is not of the correct type.','event_espresso');
 			$msg[]=__("It should be of type %s",'event_espresso');
 			throw new EE_Error(sprintf(implode(",",$msg),$name_of_variable,$name_of_variable,$class_name));

@@ -336,10 +336,12 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 				$item_num++;
 			}
 		}
+		//get any of the current registrations, 
+		$a_current_registration = current($session_data['registration']);
 		$this->addField('business', $paypal_id);
-		$this->addField('return',  $this->_get_return_url_with_params(false));
+		$this->addField('return',  $this->_get_return_url($a_current_registration));
 		$this->addField('cancel_return', home_url() . '/?page_id=' . $org_options['cancel_return']);
-		$this->addField('notify_url', $this->_get_return_url_with_params(false));
+		$this->addField('notify_url', $this->_get_notify_url($a_current_registration));
 		$this->addField('cmd', '_cart');
 		$this->addField('upload', '1');
 		$this->addField('currency_code', $paypal_cur);
@@ -418,53 +420,54 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		if($this->_debug_mode){
 			echo "<hr><br>".get_class($this).": payment_status and txn_id sent properly. payment_status:".$_POST['payment_status'].", txn_id:".$_POST['txn_id'];
 		}
-		//ok, then verify the IPN. Even if we've already processed this payment, let paypal know we don't want to hear from them anymore!
+		//ok, then validate the IPN. Even if we've already processed this payment, let paypal know we don't want to hear from them anymore!
 		if(!$this->validateIpn() && !$_GET['ignore_ipn']){
 			//huh, something's wack... the IPN didn't validate. We must have replied to teh IPN incorrectly,
 			//or their API must ahve changed: http://www.paypalobjects.com/en_US/ebook/PP_OrderManagement_IntegrationGuide/ipn.html
 			return false;
 		}
-		
-		//verify the transaction_id exists
-		if(empty($transaction)){
-			return false;
-		}
+		//if the transaction's just an ID, swap it for a real EE_Transaction
 		if( ! $transaction instanceof EE_Transaction){
 			$transaction = $this->_TXN->get_transaction($transaction);
 		}
+		//verify the transaction exists
 		if(empty($transaction)){
 			return false;
 		}
-		//verify we haven't already verified this IPN
+		//verify we haven't already processed this IPN
 		$existing_payment_record = $this->_PAY->get_payment_by_txn_id_chq_nmbr($_POST['txn_id']);
 		if(!empty($existing_payment_record)){
 			return false;
 		}
 		
 		//ok, well let's process this payment then!
-		require_once('EEM_Registration.model.php');
-		$REG = EEM_Registration::instance();
 		if($_POST['payment_status']=='Completed'){ //the old code considered 'Pending' as completed too..
-			$status = 'PAP';//approved
+			$status = EEM_Payment::status_id_approved;//approved
+			$gateway_response = __('Your payment is incomplete or has failed.', 'event_espresso');
 		}else{
-			$status = 'PDC';//declined
+			$status = EEM_Payment::status_id_declined;//declined
+			$gateway_response = __('Your payment has been completed successfully.', 'event_espresso');
 		}
+		$primary_registrant = $transaction->primary_registration();
+		$primary_registration_code = !empty($primary_registrant) ? $primary_registrant->reg_code() : '';
+		
 		$payment = new EE_Payment($transaction->ID(), 
 				$status, 
 				$transaction->datetime(), 
 				sanitize_text_field($_POST['txn_type']), 
 				floatval($_REQUEST['mc_gross']), 
-				'Paypal', 
-				$_POST, 
+				$this->_gateway_name, 
+				$gateway_response, 
 				$_POST['txn_id'], 
 				NULL,
-				$REG->get_primary_registration_for_transaction_ID($transaction->ID()), 
+				$primary_registration_code, 
 				false, 
 				false);
-		$goofy_results=$payment->insert();
+		$payment->save();
 		
 		return parent::update_transaction_with_payment($transaction,$payment);	
 	}
+	
 	
 	
 
