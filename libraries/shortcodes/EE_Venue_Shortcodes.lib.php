@@ -52,7 +52,8 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 			'[VENUE_STATE]' => __('The state the venue is located in', 'event_espresso'),
 			'[VENUE_COUNTRY]' => __('The country the venue is located in', 'event_espresso'),
 			'[VENUE_ZIP]' => __('The zip code for the venue address', 'event_espresso'),
-			'[GOOGLE_MAP_LINK]' => __('Link to a google map for the event', 'event_espresso')
+			'[GOOGLE_MAP_LINK]' => __('Link to a google map for the venue', 'event_espresso'),
+			'[GOOGLE_MAP_IMAGE]' => __('Google map for venue wrapped in image tags', 'event_espresso')
 			);
 	}
 
@@ -99,6 +100,10 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 
 			case '[GOOGLE_MAP_LINK]' :
 				return isset($this->_data['meta']['google_map_link']) ? $this->_data['meta']['google_map_link'] : '';
+				break;
+
+			case '[GOOGLE_MAP_IMAGE]' : 
+				return isset($this->_data['meta']['google_map_link']) ? '<img width="180px" src="' . $this->_data['meta']['google_map_link'] . '" alt="map for venue" />' : '';
 				break;
 				
 		}
