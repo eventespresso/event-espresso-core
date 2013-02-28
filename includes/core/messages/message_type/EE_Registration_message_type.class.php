@@ -95,20 +95,12 @@ class EE_Registration_message_type extends EE_message_type {
 
 
 	protected function _default_template_field_content() {
-		$content = "<h3>Registration Details:</h3>\n";
-		$content .= "<p>Your Registered Event(s):\n";
-		$content .= "<ul>[EVENT_LIST]</ul></p>\n";
-		$content .= "<p><ul>[ATTENDEE_LIST]</ul></p>";
-		$content .= "<p>[COMPANY]</p>\n";
-		$content .= "<p>[CO_ADD1]</p>\n";
-		$content .= "<p>[CO_ADD2]</p>\n";
-		$content .= "<p>[CO_STATE], [CO_ZIP]</p>\n";
-
+		$content = file_get_contents( EE_CORE . 'messages/message_type/assets/defaults/registration-message-type-content.template.php', TRUE );
 		
 		foreach ( $this->_contexts as $context => $details ) {
 			$tcontent[$context]['main'] = $content;
-			$tcontent[$context]['attendee_list'] = '<li>[FNAME] [LNAME]</li>';
-			$tcontent[$context]['event_list'] = '<li>[EVENT_NAME]<br />Event Price: [EVENT_PRICE]</li>';
+			$tcontent[$context]['attendee_list'] = file_get_contents( EE_CORE . 'messages/message_type/assets/defaults/registration-message-type-attendee-list.template.php', TRUE );;
+			$tcontent[$context]['event_list'] = file_get_contents( EE_CORE . 'messages/message_type/assets/defaults/registration-message-type-event-list.template.php', TRUE );;
 		}
 
 
