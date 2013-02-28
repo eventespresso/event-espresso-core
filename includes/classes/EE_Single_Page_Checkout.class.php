@@ -79,7 +79,6 @@ class EE_Single_Page_Checkout {
 
 			add_action('wp_ajax_espresso_process_registration_step_3', array(&$this, 'process_registration_step_3'));
 			add_action('wp_ajax_nopriv_espresso_process_registration_step_3', array(&$this, 'process_registration_step_3'));
-
 		}
 	
 		// load classes
@@ -945,7 +944,6 @@ class EE_Single_Page_Checkout {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 		$confirmation_page = $this->display_data_for_confirmation();
-
 		$response_data = array(
 				'success' => $success_msg,
 				'return_data' => array('reg-page-confirmation-dv' => $confirmation_page)
@@ -1051,9 +1049,9 @@ class EE_Single_Page_Checkout {
 	 */
 	public function process_registration_step_3() {
 		// Sidney is watching me...   { : \
+		global $EE_Session;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-
 		global $org_options;
 
 		$success_msg = FALSE;
@@ -1078,7 +1076,6 @@ class EE_Single_Page_Checkout {
 				$error_msg = __('Sorry, but you did not enter the correct anti-spam phrase.<br/>Please refresh the ReCaptcha (the top button of the three), and try again.', 'event_espresso');
 			}
 		}
-
 		global $EE_Session;
 
 		if ($continue_reg) {
@@ -1131,6 +1128,7 @@ class EE_Single_Page_Checkout {
 
 				// cycle through attendees
 				foreach ($event['attendees'] as $att_nmbr => $attendee) {
+
 
 					// grab main attendee details
 					$ATT_fname = isset($attendee[1]) ? $attendee[1] : '';
@@ -1198,7 +1196,12 @@ class EE_Single_Page_Checkout {
 						if ($prev_txn) {
 							// get txn details
 							$prev_txn_details = $prev_txn->details();
-							if (!isset($prev_txn_details['REDO_TXN'])) {
+							//echo "prevtxndetails:";var_dump($prev_txn_details);
+							if(!is_array($prev_txn_details)){
+								$prev_txn_details = array();
+							}
+							if (!array_key_exists('REDO_TXN',$prev_txn_details)) {
+								
 								$prev_txn_details['REDO_TXN'] = array();
 							}
 							// update with new TXN_ID
@@ -1261,16 +1264,13 @@ class EE_Single_Page_Checkout {
 					
 				}
 			}
-			
-			
 			//$updated_session=$EE_Session->get_session_data();
 			$transaction->set_txn_session_data( $session );
 			$transaction->update();
+			//var_dump($EE_Session->get_session_data());
 			$EE_Session->set_session_data(array( 'registration' => $saved_registrations, 'transaction' => $transaction ), 'session_data');
 			$EE_Session->_update_espresso_session();
-			
 			//var_dump($)
-
 			do_action('action_hook_espresso__EE_Single_Page_Checkout__process_registration_step_3__before_gateway', $this);
 			
 
@@ -1288,7 +1288,6 @@ class EE_Single_Page_Checkout {
 		//$session = $EE_Session->get_session_data();
 		//printr( $session, '$session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 
 		//die();
-		
 		if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_3_ajax_response')) {
 			wp_safe_redirect($this->_return_page_url);
 			exit();
@@ -1349,7 +1348,6 @@ class EE_Single_Page_Checkout {
 
 		// Sidney is watching me...   { : \
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-
 		$response_data = array(
 				'success' => $success_msg,
 				'return_data' => array('redirect-to-thank-you-page' => $this->_return_page_url)
@@ -1376,7 +1374,6 @@ class EE_Single_Page_Checkout {
 		if ($callback != FALSE && $callback != '' && !function_exists($callback)) {
 			$valid_callback = TRUE;
 		}
-
 		if ($success_msg) {
 
 			// if this is an ajax request AND a callback function exists

@@ -302,7 +302,7 @@ class EE_Transaction extends EE_Base_Class{
 	* 		@access		public		
 	*		@param		string		$details 		dump off the entire session object 
 	*/	
-	public function set_txn_session_data( $session_data = FALSE ) {
+	public function set_txn_session_data( $session_data = FALSE ) {	
 		return	$this->set('TXN_session_data',$session_data);
 		/*if ( ! $session_data ) {
 			$msg = __( 'No session data was supplied.', 'event_espresso' );
@@ -480,7 +480,7 @@ class EE_Transaction extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function details() {
-		return maybe_unserialize( $this->_TXN_details );
+		return $this->get('TXN_details');
 	}
 
 
