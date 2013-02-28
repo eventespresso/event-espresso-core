@@ -2337,9 +2337,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @param bool $notices true we get notices transient. False we just return normal route transient
 	 * @return mixed data
 	 */
-	protected function _get_transient( $notices = FALSE ) {
+	protected function _get_transient( $notices = FALSE, $route = FALSE ) {
 		$user_id = get_current_user_id();
-		$transient = $notices ? 'rte_n_tx_' . $this->_req_action . '_' . $user_id : 'rte_tx_' . $this->_req_action . '_' . $user_id;
+		$route = !$route ? $this->_req_action : $route;
+		$transient = $notices ? 'rte_n_tx_' . $route . '_' . $user_id : 'rte_tx_' . $route . '_' . $user_id;
 		$data = get_transient( $transient );
 		return $notices ? $data['notices'] : $data;
 	}
