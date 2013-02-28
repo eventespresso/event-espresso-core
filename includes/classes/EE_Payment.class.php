@@ -211,8 +211,8 @@ class EE_Payment extends EE_Base_Class{
 		$this->_PAY_amount					= floatval( preg_replace( '/[^-0-9.]*/', '', preg_replace( '/,/', '.', $PAY_amount )));
 		$this->_PAY_gateway					= wp_strip_all_tags( $PAY_gateway );
 		$this->_PAY_gateway_response	= htmlentities( wp_strip_all_tags( $PAY_gateway_response ), ENT_QUOTES, 'UTF-8' ); 
-		$this->_PAY_txn_id_chq_nmbr		= sanitize_key( $PAY_txn_id_chq_nmbr );
-		$this->_PAY_po_number				= sanitize_key( $PAY_po_number );
+		$this->_PAY_txn_id_chq_nmbr		=  wp_strip_all_tags( $PAY_txn_id_chq_nmbr );
+		$this->_PAY_po_number				=  wp_strip_all_tags( $PAY_po_number ) ;
 		$this->_PAY_extra_accntng			= wp_strip_all_tags( $PAY_extra_accntng );
 		$this->_PAY_via_admin				= absint( $PAY_via_admin ) ? TRUE : FALSE;
 		$this->_PAY_details						= maybe_serialize( $PAY_details );

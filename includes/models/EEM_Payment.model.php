@@ -35,6 +35,11 @@ class EEM_Payment extends EEM_TempBase {
 	const status_id_approved = 'PAP';
 	
 	
+	/**
+	 * Status id in esp_status table that represents a pending payment
+	 */
+	const status_id_pending = 'PPN';
+	
 	
 	/**
 	 * Status id in esp_status table that represents a canceleld payment (eg, the

@@ -168,4 +168,5 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 		$this->handle_ipn_for_transaction($transaction);
 		parent::thank_you_page($transaction);
 	}
+	
 }

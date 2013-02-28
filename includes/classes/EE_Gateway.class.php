@@ -632,12 +632,14 @@ abstract class EE_Gateway {
 			//ok, now process the transaction according to the payment
 			//NOTE: if we allow multiple payments someday, then we'll need to tally up all previous payments
 			//to determine if the transactin oshould be marked as complete.
-			if ( $transaction->total() == 0 || ( $payment->amount() >= $transaction->total() )) {
+			if ( $transaction->total() == 0 || 
+					( $payment->amount() >= $transaction->total() && $payment->STS_ID()==EEM_Payment::status_id_approved)) {
 				$transaction->set_status(EEM_Transaction::complete_status_code);//Complete
+				$transaction->set_paid($payment->amount());
 			}else{
 				$transaction->set_status(EEM_Transaction::incomplete_status_code);//sorry, still not complete. 
 			}
-			$transaction->set_paid($payment->amount());
+			
 			
 			//create the legacy transaction details. Really this data is a duplication of the 
 			//payment data, and should probably be removed as to avoid confusion
@@ -665,6 +667,17 @@ abstract class EE_Gateway {
 		$transaction->update();
 		//do_action( 'action_hook_espresso__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
 		return true;
+	}
+	
+	/**
+	 * For adding any html output ab ove the payment overview.
+	 * Many gateways won't want ot display anything, so this function just returns an empty string.
+	 * Other gateways may want to override this, such as offline gateways.
+	 * @return string
+	 */
+	public function get_payment_overview_content(){
+		//stubb
+		return '';
 	}
 
 }
