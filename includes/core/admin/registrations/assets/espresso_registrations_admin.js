@@ -62,7 +62,7 @@ jQuery(document).ready(function($) {
 	$('#reg-admin-attendee-questions-frm').on( 'change', '.editable-input', function(e) {
 		$(this).removeClass('editable-input').addClass('edited-input');
 		var edit_lnk = $(this).closest('table').find('.reg-admin-edit-attendee-question-td' ).html();
-		var edit_lnk = '<span class="reminder-spn">click "Update Attendee Questions" to save your changes<span><span class="hidden">' + edit_lnk + '<span>';
+		var edit_lnk = '<span class="reminder-spn">' + eei18n.update_att_qstns + '<span><span class="hidden">' + edit_lnk + '<span>';
 		$(this).closest('table').find('.reg-admin-edit-attendee-question-td' ).html( edit_lnk );
 		$('#reg-admin-attendee-questions-submit').prop( 'disabled', false );
 	});

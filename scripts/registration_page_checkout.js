@@ -47,7 +47,7 @@
 
 	// apply coupon button
 	$('#mer-reg-page-apply-coupon-btn').on( 'click', function() {
-		var error_msg = "We're sorry but that coupon code does not appear to be vaild. If this is incorrect, please contact the site administrator.";
+		var error_msg = eei18n.invalid_coupon;
 		show_event_queue_ajax_error_msg( error_msg );
 		return false;
 	});
@@ -136,7 +136,7 @@
 					// remove "<em>*</em>" from end
 					lbl_txt = lbl_txt.substring(0, lbl_txt.length - 10);
 					// show an error msg
-					var error_msg = 'The ' + lbl_txt + ' input is a required field. Please enter a value for this field and all other required fields before preceeding.';
+					var error_msg = lbl_txt + eei18n.required_field;
 					//show_reg_page_copy_attendee_error( event_id, error_msg );	
 					show_event_queue_ajax_error_msg( error_msg );	
 					// uncheck the checkbox that was clicked
@@ -456,12 +456,12 @@
 			var form_data = $('#mer-registration-frm-'+step).serialize();
 //alert	(form_data);
 //alert( '#mer-reg-page-step-'+step+'-action = ' + $('#mer-reg-page-step-'+step+'-action').val() );
-//alert( 'event_espresso.ajax_url = ' + event_espresso.ajax_url );
+//alert( 'eei18n.ajax_url = ' + eei18n.ajax_url );
 
 
 			$.ajax({
 						type: "POST",
-						url:  event_espresso.ajax_url,
+						url:  eei18n.ajax_url,
 						data: form_data,
 						dataType: "json",
 						beforeSend: function() {
@@ -479,7 +479,7 @@
 						error: function(response) {
 							//console.log( dump( response ) );
 							msg = new Object();
-							msg.error = 'An error occured! Registration Step '+step+' could not be completed. Please refresh the page and try again.';
+							msg.error = eei18n.reg_step_error;
 							show_event_queue_ajax_error_msg( msg );
 						}			
 				});	
@@ -556,9 +556,9 @@
 			
 				// set error messages
 				if ( good_to_go === true ) {
-					good_to_go = 'You need to answer all required questions before you can proceed.';
-				} else if ( good_to_go == 'You must enter a valid email address.' ) {
-					good_to_go = 'You must enter a valid email address and answer all other required questions before you can proceed.';
+					good_to_go = eei18n.answer_required_questions;
+				} else if ( good_to_go == eei18n.enter_valid_email ) {
+					good_to_go = eei18n.valid_email_and_questions;
 				} 
 				
 				$(this).addClass('requires-value');
@@ -578,9 +578,9 @@
 						$(this).addClass('requires-value');
 						// set error messages
 						if ( good_to_go === true ) {
-							good_to_go = 'You must enter a valid email address.';
-						} else if ( good_to_go == 'You need to answer all required questions before you can proceed.' ) {
-							good_to_go = 'You must enter a valid email address and answer all other required questions before you can proceed.';
+							good_to_go = eei18n.enter_valid_email;
+						} else if ( good_to_go == eei18n.answer_required_questions ) {
+							good_to_go = eei18n.valid_email_and_questions;
 						} 						
 					}								
 							
