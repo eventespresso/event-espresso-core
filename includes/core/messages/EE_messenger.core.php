@@ -100,6 +100,18 @@ abstract class EE_messenger extends EE_Base {
 	 */
 	protected $_template_fields = array();
 
+
+
+	
+	/**
+	 * This holds an array of the arguments used in parsing a template for the sender.
+	 * @var array
+	 */
+	protected $_template_args = array();
+
+
+
+
 	/**
 	 * this property holds any specific fields for holding any settings related to a messenger (if any needed)
 	 * @var array
@@ -218,6 +230,20 @@ abstract class EE_messenger extends EE_Base {
 
 
 
+	/**
+	 * messengers must define the location of the inline css template to use in final assembled templates.
+	 *
+	 * This method is also used in the admin backend to set the css for the tinymce editor.
+	 * 
+	 * @access public
+	 * @param bool $url if true we return the url to the css, if false, we return the path.
+	 * @return string the location of the css file to use for inline css.
+	 */
+	abstract public function get_inline_css_template( $url = FALSE );
+
+
+
+
 
 	/**
 	 * This returns the array of valid shortcodes for a message type as set by the child in the $_valid_shortcode property.
@@ -227,6 +253,19 @@ abstract class EE_messenger extends EE_Base {
 	 */
 	public function get_valid_shortcodes() {
 		return $this->_valid_shortcodes;
+	}
+
+
+
+
+	/**
+	 * this is just used by the custom validators (EE_Messages_Validator classes) to modify the _validator_config for certain message_type/messenger combos where a context may only use certain shortcodes etc.
+	 *
+	 * @access public
+	 * @param array $new_config Whatever is put in here will reset the _validator_config property
+	 */
+	public function set_validator_config( $new_config ) {
+		$this->_validator_config = $new_config;
 	}
 
 
@@ -481,6 +520,33 @@ abstract class EE_messenger extends EE_Base {
 				$this->_set_template_value($template, $message->$template);
 		}
 		$this->_send_message();
+	}
+
+
+
+
+	/**
+	 * Utility method for child classes to get the contents of a template file and return
+	 *
+	 * We're assuming the child messenger class has already setup template args!
+	 * @param  string  $template url for template
+	 * @return string
+	 */
+	protected function _get_main_template() {
+
+		//first get inline css (will be empty if the messenger doesn't use it)
+		$this->_template_args['inline_style'] = file_get_contents( $this->get_inline_css_template, TRUE );
+
+		//figure out main template path
+		$wrapper_template = EE_CORE . 'messages/messenger/assets/' . $this->name . '/' . $this->name . '-messenger-main-wrapper.template.php';
+
+		//check file exists and is readable
+		if ( !is_readable( $wrapper_template ) )
+			throw new EE_Error( sprintf( __('Unable to access the template file for the %s messenger main content wrapper.  The location being attempted is %s.', 'event_espresso' ), ucwords($this->label['singular'])), $wrapper_template );
+
+		//require template helper
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Template.helper.php';
+		return EE_Template::display_template( $wrapper_template, $this->_template_args, TRUE );
 	}
 
 	/**
