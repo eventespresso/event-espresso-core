@@ -35,7 +35,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 	private $_session_data = array();
 
 	// default session expiration 2 hours
-	private $_expiration = 7200;
+	private $_expiration = 172800;
 
 	// current time with GMT offset
 	private $_time;
@@ -258,14 +258,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 		if (isset($_GET['session_id'])) {
 			session_id(sanitize_key($_GET['session_id']));
 			session_start();
-		}/*elseif(isset($_REQUEST['reg_url_link'])){
-			//get the session from the reg_url_link. 
-			require_once('EEM_Registration.model.php');
-			$registration =  EEM_Registration::instance()->get_registration_for_reg_url_link(sanitize_key($_REQUEST['reg_url_link']));
-			session_id($registration->session_ID());
-			session_start();
-			//echo "registration:";var_dump($registration);			
-		}*/
+		}
 		
 		if ( ! session_id() ) {
 			session_start();
@@ -301,7 +294,6 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 			}
 
 		} else {
-			//try using the 
 			// no previous session = go back and create one
 			return FALSE;
 		}
@@ -332,36 +324,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 
 	}
 
-	/**
-	 * To be used when there's a GET parameter of reg_url_link with the esp_registration.REG_url_link of a registration.
-	 * Uses that to find the registration, then to get the transaction for it, then unserialize its session_data
-	 * and places it into EE_Session->_session_data. Returns the new _session_data on success,
-	 * false on failure
-	 * @return array of entire session
-	 */
-	public function get_session_from_reg_url_link(){
-		if(!isset($_REQUEST['reg_url_link'])){
-			return false;
-		}
-		//get the session data from the reg_url_link in teh querystring, as the session si actually destroyed by now
-		require_once('EEM_Registration.model.php');
-		require_once('EEM_Transaction.model.php');
-		$regmodel=  EEM_Registration::instance();
-		$TXN = EEM_Transaction::instance();
-		$registration=$regmodel->get_registration_for_reg_url_link($_REQUEST['reg_url_link']);
-		if(!empty($registration)){
-			$transaction=$TXN->get_transaction($registration->transaction_ID());
-			if(!empty($transaction)){
-				//echo "transaction not empty. this is its session data:".$transaction->session_data();
-				//var_dump(unserialize($transaction->session_data()));
-				//$this->_session_data=$transaction->session_data();
-				$restored_session=maybe_unserialize($transaction->session_data());//$this->_session_data;
-				//$restored_session['transaction']=$transaction;
-				return $restored_session;
-			}
-		}
-		return false;
-	}
+
 
 
 
@@ -371,6 +334,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 	 *		@return TRUE on success, FALSE on fail
 	 */
 	public function _update_espresso_session( $new_session = FALSE ) {
+
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
@@ -481,8 +445,8 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 		}
 
 		// we're using the Transient API for storing session data, cuz it's so damn simple -> set_transient(  transient ID, data, expiry )
-		//set_transient( $this->_sid, $session_data, $this->_expiration );
-		//die();
+		set_transient( $this->_sid, $session_data, $this->_expiration );
+		die();
 		return set_transient( $this->_sid, $session_data, $this->_expiration ) ? TRUE : FALSE;
 
 	}

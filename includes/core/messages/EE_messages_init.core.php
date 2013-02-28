@@ -96,7 +96,7 @@ class EE_messages_init extends EE_Base {
 
 
 	/**
-	 * This is just for adding all the filters
+	 * This is just for adding all the filters (if any!)
 	 *
 	 * @access private
 	 * @return void

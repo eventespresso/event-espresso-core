@@ -22,7 +22,7 @@ jQuery(document).ready(function($) {
 
 	$('.confirm-delete').click(function() {
 		var what = $(this).attr('rel');
-		var answer = confirm('Are you absolutely sure you want to delete this '+what+'?\nThis action will delete ALL DATA asscociated with this '+what+'!!!\nThis can NOT be undone!!!');
+		var answer = confirm( eei18n.confirm_delete );
   		return answer;
 	});
 

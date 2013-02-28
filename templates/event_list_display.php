@@ -10,11 +10,8 @@
  * [EVENT_LIST show_expired=true]
  * [EVENT_LIST show_deleted=true]
  * [EVENT_LIST show_secondary=false]
- * [EVENT_LIST show_recurrence=true]
  * [EVENT_LIST category_identifier=your_category_identifier]
  *
- * Example:
- * [EVENT_LIST limit=5 show_recurrence=true category_identifier=your_category_identifier]
  *
  */
 ?>
@@ -52,7 +49,7 @@
 		<div class="event-data-display-dv ui-widget-content ui-corner-bottom">
 
 			<p id="event-status-pg-<?php echo $event_id ?>" class="event-status-pg">
-				<span class="section-title"><?php echo __('Event Status: ', 'event_espresso'); ?></span>&nbsp;<?php echo $status['status']; ?>
+				<span class="section-title"><?php echo __('Event Status: ', 'event_espresso'); ?></span>&nbsp;<?php echo $status_display; ?>
 			</p>
 
 			<?php

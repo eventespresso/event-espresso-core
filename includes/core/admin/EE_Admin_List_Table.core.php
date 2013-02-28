@@ -296,6 +296,12 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	protected function _get_hidden_fields() {
 		$field = '<input type="hidden" name="page" value="' . $this->_req_data['page'] . '" />' . "\n";
 		$field .= '<input type="hidden" name="perpage" value="' . $this->_per_page . '" />' . "\n";
+		
+		$bulk_actions = $this->_get_bulk_actions();
+		foreach ( $bulk_actions as $bulk_action => $label ) {
+			$field .= '<input type="hidden" name="' . $bulk_action . '_nonce" value="' . wp_create_nonce  ( $bulk_action . '_nonce' ) . '" />' . "\n";
+		}
+		
 		return $field;
 	}
 

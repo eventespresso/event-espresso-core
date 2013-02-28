@@ -92,6 +92,7 @@ class EE_Single_Page_Checkout {
 		if (( isset( $_REQUEST['e_reg'] ) && ( in_array($_REQUEST['e_reg'], $e_reg_pages))) || $this->_ajax ) {
 		
 			if ( $is_UI_request ) {
+				add_action('init', array(&$this, 'translate_js_strings'), 19);
 				add_action('init', array(&$this, 'load_css'), 20);
 				add_action('init', array(&$this, 'load_js'), 20);
 			}
@@ -152,6 +153,22 @@ class EE_Single_Page_Checkout {
 	}
 
 	/**
+	 * 		translate_js_strings
+	 *
+	 * 		@access 		public
+	 * 		@return 		void
+	 */
+	public function translate_js_strings() {
+		global $eei18n_js_strings;
+		$eei18n_js_strings['invalid_coupon'] = __('We\'re sorry but that coupon code does not appear to be vaild. If this is incorrect, please contact the site administrator.', 'event_espresso');
+		$eei18n_js_strings['required_field'] = __(' is a required field. Please enter a value for this field and all other required fields before preceeding.', 'event_espresso');
+		$eei18n_js_strings['reg_step_error'] = __('An error occured! This registration step could not be completed. Please refresh the page and try again.', 'event_espresso');
+		$eei18n_js_strings['answer_required_questions'] = __('You need to answer all required questions before you can proceed.', 'event_espresso');
+		$eei18n_js_strings['enter_valid_email'] = __('You must enter a valid email address.', 'event_espresso');
+		$eei18n_js_strings['valid_email_and_questions'] = __('You must enter a valid email address and answer all other required questions before you can proceed.', 'event_espresso');
+	}
+
+	/**
 	 * 		load css
 	 *
 	 * 		@access 		public
@@ -176,13 +193,6 @@ class EE_Single_Page_Checkout {
 			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 			wp_register_script('single_page_checkout', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/registration_page_checkout.js', array('jquery'), '', TRUE);
 			wp_enqueue_script('single_page_checkout');
-			$params = array();
-			// Get current page protocol
-			$protocol = isset($_SERVER["HTTPS"]) ? 'https://' : 'http://';
-			// Output admin-ajax.php URL with same protocol as current page
-			$params['ajax_url'] = admin_url('admin-ajax.php', $protocol);
-			wp_localize_script('single_page_checkout', 'event_espresso', $params);
-
 	}
 
 
@@ -255,6 +265,8 @@ class EE_Single_Page_Checkout {
 //		printr( $this->cart->whats_in_the_cart(), 'whats_in_the_cart  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		global $org_options, $espresso_wp_user, $EE_Session;
+		
+		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Form_Fields.helper.php' );
 
 		$template_args = array();
 
@@ -370,7 +382,7 @@ class EE_Single_Page_Checkout {
 
 			$cart_contents = $this->cart->whats_in_the_cart($cart_type);
 
-			$event_queue[$cart_type]['title'] = 'Registrations';
+			$event_queue[$cart_type]['title'] = __('Registrations', 'event_espresso');
 			$attendee_headings = array();
 			$additional_attendees = array();
 			$target_inputs = '';
@@ -474,7 +486,7 @@ class EE_Single_Page_Checkout {
 						// add to array
 						$attendee_questions[$item['line_item']][$att_nmbr] = $att_questions;
 						//$attendee_headings[ $item['line_item'] ][ $att_nmbr ] = $att_nmbr == 1 ? 'Primary Attendee' :  'Attendee Number ' . $att_nmbr;
-						$attendee_headings[$item['line_item']][$att_nmbr] = 'Attendee #' . $att_nmbr;
+						$attendee_headings[$item['line_item']][$att_nmbr] = __('Attendee #', 'event_espresso') . $att_nmbr;
 
 						// for all  attendees other than the primary attendee
 						if ($counter != 1) {
@@ -1019,7 +1031,7 @@ class EE_Single_Page_Checkout {
 				}
 			}
 
-			$template_args['billing']['total due'] = $org_options['currency_symbol'] . number_format($total, 2);
+			$template_args['billing'][ __('total due', 'event_espresso') ] = $org_options['currency_symbol'] . number_format($total, 2);
 
 			$ouput = espresso_display_template($this->_templates['confirmation_page'], $template_args, TRUE);
 		}		

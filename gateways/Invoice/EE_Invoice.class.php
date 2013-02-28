@@ -124,7 +124,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 					<td>
 						<p id="invoice-logo-image">
 							<input id="invoice_logo_url" type="text" size="36" name="invoice_logo_url" value="<?php echo $this->_payment_settings['invoice_logo_url']; ?>" />
-							<input id="upload_image_button" type="button" value="Upload Image" />
+							<input id="upload_image_button" type="button" value="<?php _e('Upload Image', 'event_espresso'); ?>" />
 							<span class="description"><?php _e('(logo for the top left of the invoice)', 'event_espresso'); ?></span>
 						</p>
 						<p class="invoice-logo"><img src="<?php echo $this->_payment_settings['invoice_logo_url']; ?>" alt="" /></p>
@@ -265,10 +265,6 @@ Class EE_Invoice extends EE_Offline_Gateway {
 				echo '<h4 id="invoice_title" class="payment_type_title section-heading">' . stripslashes_deep($this->_payment_settings['invoice_title']) . '</h4>';
 			}
 
-			/* $pdf_url = home_url().'/?invoice_type=' . ( empty($invoice_type) ? '' : $invoice_type ) . '&amp;download_invoice=true&amp;attendee_id='.$attendee_id.'&amp;registration_id='.registration_id;
-
-			  $page_url = home_url().'/?invoice_type=' . ( empty($invoice_type) ? '' : $invoice_type ) . '&amp;download_invoice=true&amp;attendee_id='.$attendee_id.'&amp;registration_id='.registration_id;
-			 */
 			?>
 			<p><a href="<?php echo home_url() . '/?invoice_launch=true&amp;id=' . $registration->reg_url_link(); ?>" class="inline-button ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" target="_blank">
 					<?php _e('Download PDF Invoice', 'event_espresso'); ?>

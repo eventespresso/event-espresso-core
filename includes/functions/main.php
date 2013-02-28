@@ -84,8 +84,11 @@ function espresso_create_default_pages() {
 		}
 	}
 	update_user_meta( $espresso_wp_user, 'events_organization_settings', $org_options );
-	if ( $updated_flag )
+	if ( $updated_flag ) {
+		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'core'.DS.'admin'.DS.'admin_helper.php');
 		add_action('admin_notices', 'espresso_updated_pages');
+	}
+		
 }
 
 
@@ -302,7 +305,7 @@ if (!function_exists('event_espresso_additional_attendees')) {
 			} else {
 				$html .= event_espresso_add_question_groups($event_meta['add_attendee_question_groups'], '', null, 0, array("x_attendee" => true));
 			}
-			$html .= '<a href="#" class="add" rel=".clone" title="' . __('Add an Additonal Attendee', 'event_espresso') . '"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/add.png" alt="' . __('Add an Additonal Attendee', 'event_espresso') . '" /></a>';
+			$html .= '<a href="#" class="add" rel=".clone" title="' . __('Add an Additonal Attendee', 'event_espresso') . '"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/add.png" alt="' . __('Add an Additonal Attendee', 'event_espresso') . '" /></a>';
 			$html .= '</div>';
 			$html .= '<hr />';
 			$html .= '</div>';
@@ -312,7 +315,7 @@ if (!function_exists('event_espresso_additional_attendees')) {
 	$jaer = jQuery.noConflict();
 	jQuery(document).ready(function($jaer) { 
 		$jaer(function(){
-			var removeLink = '<a style="" class="remove" href="#" onclick="$jaer(this).parent().slideUp(function(){ $jaer(this).remove() }); return false"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL . "images/icons/remove.gif"; ?>" alt="<?php _e('Remove Attendee', 'event_espresso'); ?>" /></a>';
+			var removeLink = '<a style="" class="remove" href="#" onclick="$jaer(this).parent().slideUp(function(){ $jaer(this).remove() }); return false"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL . "images/remove.gif"; ?>" alt="<?php _e('Remove Attendee', 'event_espresso'); ?>" /></a>';
 			$jaer('a.add').relCopy({
 				limit: <?php echo $i; ?>, 
 				append: removeLink
@@ -422,7 +425,7 @@ if (!function_exists('event_espresso_get_is_active')) {
 
 		//If the registration start date is less than the current date
 		elseif ($is_active && $regstart <= $now && $event_status != "D") {
-			$event_status = array('status' => 'REGISTRATION_OPEN', 'display' => __('OPEN', 'event_espresso'), 'display_custom' => '<span class="espresso_open">' . __('Open', 'event_espresso') . '</span>');
+			$event_status = array('status' => 'REGISTRATION_OPEN', 'display' => __('OPEN', 'event_espresso'), 'display_custom' => '<span class="espresso_open">' . __('Registration Open', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
 		}
@@ -553,7 +556,7 @@ if (!function_exists('get_number_of_attendees_reg_limit')) {
 				break;
 			case 'available_spaces' :
 				if ($reg_limit >= 999) {
-					$number_available_spaces = "Unlimited";
+					$number_available_spaces = __('Unlimited', 'event_espresso');
 				}
 				return $number_available_spaces;
 				break;
@@ -715,8 +718,8 @@ function espresso_display_questions($questions, $attendee) {
 				case "DATE" :
 					//Load scripts and styles
 					wp_register_style('jquery-ui-style-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css');
-					wp_print_styles('jquery-ui-style-datepicker');
-					wp_print_scripts('jquery-ui-datepicker');
+					wp_enqueue_style('jquery-ui-style-datepicker');
+					wp_enqueue_script('jquery-ui-datepicker');
 
 					$html .= '<p class="event_form_field">' . $label;
 					$html .= '<input type="text" ' . $required . ' id="' . $field_name . '-' . $attendee . '"  name="' . $field_name . '" size="40" /></p>';

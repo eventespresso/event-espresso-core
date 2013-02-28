@@ -8,7 +8,6 @@
 //[LISTATTENDEES show_secondary="false"]
 //[LISTATTENDEES show_gravatar="true"]
 //[LISTATTENDEES paid_only="true"]
-//[LISTATTENDEES show_recurrence="false"]
 //[LISTATTENDEES event_identifier="your_event_identifier"]
 //[LISTATTENDEES category_identifier="your_category_identifier"]
 

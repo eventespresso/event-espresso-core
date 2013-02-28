@@ -26,21 +26,21 @@ global $org_options;
 					</th>
 					<th class="jst-left">
 					<?php 
-							$reg_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg'=>$registration->ID() ), REG_ADMIN_URL ), 'view_registration_nonce' );	
+							$reg_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', 'reg'=>$registration->ID() ), REG_ADMIN_URL );	
 							echo '
 							<a href="'.$reg_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">
 								View Registration ' . $registration->ID() . '  
-								<!--<img width="13" height="13" alt="View Registration" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/icons/edit.png">-->
+								<!--<img width="13" height="13" alt="View Registration" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/edit.png">-->
 							</a>';
 					?>
 					</th>
 					<th class="jst-left">
 					<?php 
-						$txn_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_transaction', 'txn'=>$registration->transaction_ID() ), TXN_ADMIN_URL ), 'view_transaction_nonce' );
+						$txn_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'txn'=>$registration->transaction_ID() ), TXN_ADMIN_URL );
 						echo '
 						<a href="'.$txn_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">
 							View Transaction ' . $registration->transaction_ID() . '  
-							<!--<img width="16" height="16" alt="' . __( 'View Transaction', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/icons/money.png">-->
+							<!--<img width="16" height="16" alt="' . __( 'View Transaction', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/money.png">-->
 						</a>';						
 					?>
 					</th>

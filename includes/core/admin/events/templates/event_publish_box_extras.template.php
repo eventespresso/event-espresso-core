@@ -33,7 +33,7 @@
 		</div>
 
 		<div class="misc-pub-section" id="visibility">
-			<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/group.png" width="16" height="16" alt="<?php _e('View Attendees', 'event_espresso'); ?>" />
+			<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/group.png" width="16" height="16" alt="<?php _e('View Attendees', 'event_espresso'); ?>" />
 			<a href="<?php echo $view_attendees_url;?>">
 				<?php _e('Attendees', 'event_espresso'); ?>
 			</a>:
@@ -42,7 +42,7 @@
 
 		<div class="misc-pub-section <?php echo $misc_pub_section_class; ?>" id="visibility2">
 			<a href="<?php echo $email_attendees_url;?>" title="<?php _e('Email Event Attendees', 'event_espresso'); ?>">
-				<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/email_go.png" width="16" height="16" alt="<?php _e('Newsletter', 'event_espresso'); ?>" />
+				<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/email_go.png" width="16" height="16" alt="<?php _e('Newsletter', 'event_espresso'); ?>" />
 				<?php _e('Email Event Attendees', 'event_espresso'); ?>
 			</a>
 		</div>

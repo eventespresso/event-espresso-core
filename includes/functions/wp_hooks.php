@@ -19,15 +19,12 @@ function espresso_plugin_activation() {
 		espresso_get_user_id();
 		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/activation.php');
 		events_data_tables_install();
-		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin.php');
 		espresso_initialize_system_questions();
-		espresso_initialize_email();
 		event_espresso_create_upload_directories();
-		//event_espresso_update_shortcodes();
 		espresso_org_option_initialization();
 		espresso_fix_org_options();
 		espresso_update_active_gateways();
-		espresso_default_prices();
+		//espresso_default_prices();
 		espresso_delete_unused_db_tables();
 	}
 }
@@ -111,15 +108,34 @@ function espresso_load_javascript_files() {
 
 	if (!$load_espresso_scripts)
 		return;
-//	wp_register_script('reCopy', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/reCopy.js"), false, '1.1.0');
-//	wp_print_scripts('reCopy');
 
 	wp_register_script('jquery.validate.js', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.min.js"), false, '1.8.1');
-	wp_print_scripts('jquery.validate.js');
-
-	wp_register_script('validation', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/validation.js"), false, EVENT_ESPRESSO_VERSION);
-	wp_print_scripts('validation');
+//	wp_enqueue_script('jquery.validate.js');
+//
+//	wp_register_script('validation', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/validation.js"), false, EVENT_ESPRESSO_VERSION);
+//	wp_enqueue_script('validation');
 }
+
+
+
+
+function eei18n_js_strings() {
+	global $eei18n_js_strings;
+	// Get current page protocol
+	$protocol = isset($_SERVER["HTTPS"]) ? 'https://' : 'http://';
+	// Output admin-ajax.php URL with same protocol as current page
+	$eei18n_js_strings['ajax_url'] = admin_url('admin-ajax.php', $protocol);
+	wp_localize_script( 'ticket_selector', 'eei18n', $eei18n_js_strings );
+	wp_localize_script( 'single_page_checkout', 'eei18n', $eei18n_js_strings );
+	// usage:  
+	// global $eei18n_js_strings;
+	// $eei18n_js_strings['string_key'] = __( 'string to translate.', 'event_espresso' );
+	// in js file:
+	// var translatedString = eei18n.string_key;
+}
+
+
+
 
 function espresso_toolbar_items($admin_bar) {
 

@@ -721,7 +721,8 @@ Class EEM_Gateways {
 			return FALSE;
 		}
 		$confirm_info = $this->_gateway_instances[ $this->_selected_gateway ]->set_billing_info_for_confirmation( $billing_info );
-		$confirm_info['gateway'] = $this->display_name();
+		//$confirm_info['gateway'] = $this->display_name();
+		$confirm_info[ __('payment method', 'event_espresso') ] = $this->display_name();
 		return $confirm_info;
 	}
 

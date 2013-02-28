@@ -81,6 +81,11 @@ abstract class EE_message_type extends EE_Base {
 	 */
 	protected $_default_field_content = array();
 
+
+
+
+
+
 	/**
 	 * message type child classes will set what contexts are associated with the message type via this array.
 	 * format:

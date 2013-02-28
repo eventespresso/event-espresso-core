@@ -1,4 +1,4 @@
-.event-list-reg-link-title { font-size:1.1em; margin:1em 0 .5em; }
+#content .event-list-reg-link-title { font-size:1.1em; margin:0 0 .5em; }
 
 /* span.ui-icon { float:none !important; }*/
 .icon-right span.ui-icon { margin: 0.7em 0.3em 0 0; }
@@ -54,7 +54,7 @@
 }
 
 .tkt-slctr-tbl { margin-bottom:1em;; }
-.tkt-slctr-tbl td { padding:.5em 1em .5em 0; font-size:.8em; line-height:1em; }
+.tkt-slctr-tbl td { padding:.5em 1em .5em 0; font-size:1em; line-height:1em; }
 /*.tkt-slctr-tbl .tckt-slctr-tbl-td-date { max-width:20%; }
 .tkt-slctr-tbl .tckt-slctr-tbl-td-time { max-width:20%; }
 .tkt-slctr-tbl .tckt-slctr-tbl-td-desc { max-width:20%; }*/

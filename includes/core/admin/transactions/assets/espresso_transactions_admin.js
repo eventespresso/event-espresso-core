@@ -18,7 +18,7 @@ jQuery(document).ready(function($) {
 
 	$('.confirm-delete').on( 'click', function() {
 		var what = $(this).attr('rel');
-		var answer = confirm('Are you absolutely sure you want to delete this '+what+'?\nThis action will delete ALL DATA asscociated with this '+what+'!!!\nThis can NOT be undone!!!');
+		var answer = confirm( eei18n.confirm_delete );
   		return answer;
 	});
 
@@ -199,14 +199,14 @@ jQuery(document).ready(function($) {
 						} else if ( response.errors ) {
 							show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );
 						} else {
-							response.errors = 'An error occured! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.';
+							response.errors = eei18n.invalid_server_response;
 							show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 						}
 					},
 					error: function(response) {
 						console.log(response);
 						if ( response.errors == undefined ) {
-							response.errors = 'An error occured! Please refresh the page and try again.';
+							response.errors = eei18n.error_occured;
 						}
 						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 					}
@@ -243,13 +243,13 @@ jQuery(document).ready(function($) {
 							show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper' );
 						} else {
 							response = new Object();
-							response.errors = 'An error occured! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.';					
+							response.errors = eei18n.invalid_server_response;
 							show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', true );
 						}
 					},
 					error: function(response) {
 						if ( response.errors == undefined ) {
-							response.errors = 'An error occured! Please refresh the page and try again.';
+							response.errors = eei18n.error_occured;
 						}
 						show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', true );
 					}
@@ -331,7 +331,7 @@ jQuery(document).ready(function($) {
 		//$('#txn-admin-total-amount-due').html( totalAmountDue.toFixed(2) );
 		$('#txn-amount-due-h2 > span').html( totalAmountDue.toFixed(2) );
 
-		$('#txn-status').html( txn_status_array[ response.return_data.txn_status ] );
+		$('#txn-status').html( eei18n.txn_status_array[ response.return_data.txn_status ] );
 		$('#txn-status').removeClass().addClass( 'status-' + response.return_data.txn_status  );
 
 		if ( totalPaid == txnTotal ) {

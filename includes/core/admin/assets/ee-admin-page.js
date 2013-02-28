@@ -3,7 +3,83 @@ jQuery(document).ready(function($) {
 	$.ajaxSetup ({ cache: false });
 	// clear firefox and safari cache
 	$(window).unload( function() {}); 
+
+
+
+
+	function validate_form_inputs( submittedForm ) {
 	
+		var goodToGo = true;
+		var cntr = 1;
+		
+		$( submittedForm ).find('.required').each( function( index ) {
+		    if( $(this).val() == '' || $(this).val() == 0 ) {
+		 		$(this).addClass('requires-value').siblings( '.validation-notice-dv' ).fadeIn();
+				goodToGo = false;
+			}
+			$(this).on( 'change', function() {
+			    if( $(this).val() != '' || $(this).val() != 0 ) {
+			 		$(this).removeClass('requires-value').siblings( '.validation-notice-dv' ).fadeOut('fast');
+				}
+			});
+			if ( cntr == 1 ) {
+				var thisPos = $(this).offset();				
+				$(window).scrollTop( thisPos.top - 200 );
+			}
+			cntr++;
+		});
+		return goodToGo;
+	}
+
+	
+	$('.submit-for-validation').click(function(event) {
+		event.preventDefault();
+		var submittedForm = $(this).closest('form');
+		if ( validate_form_inputs( submittedForm ) ) {
+			submittedForm.submit();
+		} 	
+	});
+	
+	$('#admin-recaptcha-settings-slct').change( function() {
+		if ( $(this).val() == 1 ) {
+			$('.admin-recaptcha-settings-tr').find('.maybe-required').removeClass('maybe-required').addClass('required');
+			$('.admin-recaptcha-settings-tr').show();
+		} else {
+			$('.admin-recaptcha-settings-tr').find('.required').removeClass('required').addClass('maybe-required');
+			$('.admin-recaptcha-settings-tr').hide();
+		}
+	});
+				
+	$('#admin-recaptcha-settings-slct').trigger( 'change' );
+
+
+		
+	function escape_square_brackets( value ) {
+		value = value.replace(/[[]/g,'\\\[');
+		value = value.replace(/]/g,'\\\]'); 
+		return value; 
+	}
+
+
+	//Confirm Delete
+	function confirmDelete(){
+		if (confirm('Are you sure want to delete?')){
+			return true;
+		}
+		return false;
+	}
+
+		  
+	//Select All
+	function selectAll(x) {
+		for(var i=0,l=x.form.length; i<l; i++) {
+			if(x.form[i].type == 'checkbox' && x.form[i].name != 'sAll') {
+				x.form[i].checked=x.form[i].checked?false:true
+			}			
+		}
+	}
+		
+			
 	
 	var overlay = $( "#espresso-admin-page-overlay-dv" );
 	window.eeTimeout = false;
@@ -13,7 +89,7 @@ jQuery(document).ready(function($) {
 
 	$('.confirm-delete').click(function() {
 		var what = $(this).attr('rel');
-		var answer = confirm('Are you absolutely sure you want to delete this '+what+'?\nThis action will delete ALL DATA asscociated with this '+what+'!!!\nThis can NOT be undone!!!');
+		var answer = confirm( eei18n.confirm_delete );
   		return answer;
 	});
 
@@ -38,9 +114,7 @@ jQuery(document).ready(function($) {
 
 
 
-	/*
-	Tabs for Messages box on Event Editor Page
-	 */
+	// Tabs for Messages box on Event Editor Page
 	$('.nav-tab-wrapper', '.ee-nav-tabs').on('click', '.nav-tab', function(e) {
 		e.preventDefault();
 		var content_id = $(this).attr('rel');
@@ -50,7 +124,7 @@ jQuery(document).ready(function($) {
 		//set new active tab
 		$(this).addClass('nav-tab-active');
 		$('#'+content_id).show();
-	});/**/
+	});
 
 
 	// generic click event for displaying and giving focus to an element and hiding control 

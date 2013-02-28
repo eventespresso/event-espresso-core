@@ -122,6 +122,7 @@
 							<?php _e('Transactions page', 'event_espresso'); ?>
 						</b>
 						<?php do_action('action_hook_espresso_help', 'registration_page_info'); ?><br />
+						<span class="lt-grey-text"><?php _e('Notify URL (processes payments)', 'event_espresso'); ?></span><br/>
 						<?php echo General_Settings_Admin_Page::edit_view_links( $notify_url );?>
 					</label>
 				</th>

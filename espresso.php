@@ -1,5 +1,4 @@
 <?php
-
 /*
   Plugin Name: 	Event Espresso
   Plugin URI: 		http://eventespresso.com/
@@ -49,7 +48,8 @@ function espresso_main_file() {
 	return $main_file;
 }
 
-
+global $eei18n_js_strings;
+$eei18n_js_strings = array();
 
 
 
@@ -77,13 +77,9 @@ add_action('plugins_loaded', 'espresso_get_user_id', 3);
 add_action('plugins_loaded', 'espresso_load_org_options', 4);
 add_action('plugins_loaded', 'espresso_EE_Session', 5);
 add_action('plugins_loaded', 'espresso_init', 25);
+add_action('init', 'espresso_load_messages_init', 15);
 add_action('init', 'espresso_add_rewrite_rules');
 add_filter('query_vars', 'espresso_add_query_vars');
-add_action( 'admin_enqueue_scripts', 'espresso_load_scripts_styles' );
-
-
-//load messages init
-add_action( 'init', 'espresso_load_messages_init', 15 );
 
 if ( is_admin() ) {
 	register_activation_hook(__FILE__, 'espresso_plugin_activation');
@@ -91,10 +87,9 @@ if ( is_admin() ) {
 	add_action('plugins_loaded', 'espresso_check_for_import');
 	add_action('init', 'espresso_init_admin_pages', 100);
 	add_action('admin_bar_menu', 'espresso_toolbar_items', 100);
-	//add_action('init', 'espresso_admin_init', 25);
-	//add_action('init', 'espresso_load_admin_ajax_callbacks', 25);
 	add_action('init', 'espresso_flush_rewrite_rules', 41);
 	add_filter('plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2);
+	add_action( 'admin_enqueue_scripts', 'espresso_load_scripts_styles' );
 	
 } else {
 	add_action('init', 'espresso_export_certificate', 30);
@@ -105,8 +100,9 @@ if ( is_admin() ) {
 	add_action('init', 'espresso_frontend_init', 25);
 	add_action('widgets_init', 'espresso_widget');
 	add_action('wp_head', 'espresso_info_header');
-	add_action('wp_print_styles', 'add_espresso_stylesheet', 20);
-//	add_action('wp_footer', 'espresso_load_javascript_files');
+	add_action('wp_enqueue_scripts', 'add_espresso_stylesheet', 20);
+	add_action('wp_enqueue_scripts', 'eei18n_js_strings', 100 );
+
 }
 
 /** edit as neccessary

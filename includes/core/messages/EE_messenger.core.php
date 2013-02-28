@@ -65,8 +65,31 @@ abstract class EE_messenger extends EE_Base {
 	 */
 	protected $_default_field_content = array();
 
+
+
 	/**
-	 * This wil hold the EEM_message_templates model for interacting with the database and retrieving active templates for the messenger
+	 * Holds the configuration for the EE_Messages_Validator class to know how to validated the different fields. Note that the Validator will match each field here with the allowed shortcodes set in the "valid_shortcodes" array for the matched message type context.  So message types don't need to set a $_validator_config property.
+	 *
+	 * Remember, ALL fields must be declared in this array.  However, an empty value for the field means that the field will accept all valid shortcodes set for the given context in the message type (by default). 
+	 * 
+	 * Array should be in this format:
+	 *
+	 * array(
+	 * 	'field_name(i.e.to)' => array(
+	 * 		'shortcodes' => array('email'), //an array of shortcode groups (correspond to EE_Shortcodes library class) that are allowed in the field. Typically you can just include $this->_valid_shortcodes['field_name'] as the value here (because they will match).
+	 * 		'specific_shortcodes' => array('[ADMIN_EMAIL]'), //if this index is present you can further restrict the field to ONLY specific shortcodes if an entire group isn't sufficient.
+	 * 		'type' => 'email' //this is the field type and should match one of the validator types (see EE_Messages_Validator::validator() for all the possible types).  If not required you can just leave empty.
+	 * 	)
+	 * )
+	 * 
+	 * @var array
+	 */
+	protected $_validator_config = array();
+
+
+
+	/**
+	 * This will hold the EEM_message_templates model for interacting with the database and retrieving active templates for the messenger
 	 * @var object
 	 */
 	protected $_EEM_data;
@@ -112,6 +135,7 @@ abstract class EE_messenger extends EE_Base {
 		$this->_set_template_fields();
 		$this->_set_default_field_content();
 		$this->_set_valid_shortcodes();
+		$this->_set_validator_config();
 		$this->_set_admin_pages();
 	}
 
@@ -182,13 +206,40 @@ abstract class EE_messenger extends EE_Base {
 
 
 
+	/**
+	 * Child classes must declare the $_validator_config property using this method.
+	 * See comments for $_validator_config for details on what it is used for.
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	abstract protected function _set_validator_config();
+
+
+
+
 
 	/**
 	 * This returns the array of valid shortcodes for a message type as set by the child in the $_valid_shortcode property.
+	 *
+	 * @access public
 	 * @return array   an array of valid shortcodes.
 	 */
 	public function get_valid_shortcodes() {
 		return $this->_valid_shortcodes;
+	}
+
+
+
+
+	/**
+	 * This returns the _validator_config property
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public function get_validator_config() {
+		return $this->_validator_config;
 	}
 
 
@@ -273,13 +324,57 @@ abstract class EE_messenger extends EE_Base {
 
 			//setup current button
 			$button_text = $et_set && !$et_trashed ? __('Custom Templates', 'event_espresso') : __('Global Templates', 'event_espresso');
-			$button_link = $et_set && !$et_trashed ? wp_nonce_url( add_query_arg( array('action'=>'edit_message_template', 'id'=>$et_group_id, 'evt_id' => $event_id), $ee_msg_admin_url ), 'edit_message_template_nonce' ) : wp_nonce_url( add_query_arg( array('action'=>'edit_message_template', 'id'=>$template->GRP_ID(), 'evt_id' => $event_id ), $ee_msg_admin_url ), 'edit_message_template_nonce');
+
+			//setup query_args for button link
+			if ( $et_set && !$et_trashed ) {
+				$button_query_args = array(
+					'action' => 'edit_message_template',
+					'id' => $et_group_id,
+					'evt_id' => $event_id,
+					'edit_message_template_nonce' => wp_create_nonce( 'edit_message_template_nonce')
+					);
+			} else {
+				$button_query_args = array(
+					'action' => 'edit_message_template',
+					'id' => $template->GRP_ID(),
+					'evt_id' => $event_id,
+					'edit_message_template_nonce' => wp_create_nonce( 'edit_message_template_nonce' )
+					);
+			}
+
+			$button_link = add_query_arg( $button_query_args, $ee_msg_admin_url);
 
 			//setup switch button
 			$switch_b_text = ($et_set && $et_trashed) || !$et_set ? __('Switch to Custom Templates', 'event_espresso') : __('Switch to Global Templates', 'event_espresso');
 			$switch_b_text = empty($event_id) ? false : $switch_b_text;
-			$switch_b_link = ($et_set && $et_trashed) ? wp_nonce_url( add_query_arg( array('action'=>'restore_message_template', 'message_type' => $template->message_type(), 'id' => $et_group_id, 'template_switch' => TRUE, 'evt_id' => $event_id ), $ee_msg_admin_url ), 'restore_message_template_nonce' ) : wp_nonce_url( add_query_arg( array('action'=>'trash_message_template', 'id'=>$et_group_id, 'template_switch' => TRUE, 'evt_id' => $event_id ), $ee_msg_admin_url), 'trash_message_template_nonce' );
-			$switch_b_link = !$et_set && !empty($event_id) ? wp_nonce_url( add_query_arg( array('action' => 'add_new_message_template', 'evt_id' => $event_id), $ee_msg_admin_url ), 'add_new_message_template_nonce' ) : $switch_b_link;
+
+			//setup query_args for switcher button
+			if ( $et_set && $et_trashed ) {
+				$switch_query_args = array(
+					'action' => 'restore_message_template',
+					'message_type' => $tempalte->message_type(),
+					'id' => $et_group_id,
+					'template_switch' => TRUE,
+					'evt_id' => $event_id,
+					'restore_message_template_nonce' => wp_create_nonce( 'restore_message_template_nonce' )
+					);
+			} else if ( !$et_set && !empty($event_id) ) {
+				$switch_query_args = array(
+					'action' => 'add_new_message_template',
+					'evt_id' => $event_id,
+					'add_new_message_template_nonce' => wp_create_nonce('add_new_message_template_nonce')
+					);
+			} else {
+				$switch_query_args = array(
+					'action' => 'trash_message_template',
+					'id' => $et_group_id,
+					'template_switch' => TRUE,
+					'evt_id' => $event_id,
+					'trash_message_template_nonce' => wp_create_nonce('trash_message_template_nonce')
+				);
+			}
+
+			$switch_b_link = add_query_arg( $switch_query_args, $ee_msg_admin_url );
 
 			$main_button = '<a class="button-primary template_picker" href="' . $button_link . '" title="' . __('Click to Edit', 'event_espresso') . '">' . $button_text . '</a>';
 			$switch_button = $switch_b_text ? sprintf( __('You can %s if you want', 'event_espresso'),'<span class="switch-template-button"><a class="button-secondary template_picker" href="' . $switch_b_link . '">' . $switch_b_text . '</a></span>') : '<span class="switch-template-button">' . __('You can\'t create custom templates (for this event) until you\'ve saved this event', 'event_espresso') . '</span>';

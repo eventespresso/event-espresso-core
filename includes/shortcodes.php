@@ -19,6 +19,9 @@ if (!function_exists('show_single_event')) {
 		global $load_espresso_scripts;
 		$load_espresso_scripts = true; //This tells the plugin to load the required scripts
 		//echo $single_event_id;
+		espresso_require_template('init.php');
+		require_once(espresso_get_registration_page_template());
+
 		ob_start();
 		event_details_page($single_event_id);
 		$buffer = ob_get_contents();
@@ -69,7 +72,6 @@ add_shortcode('EVENT_ESPRESSO_CATEGORY', 'show_event_category');
  * [LISTATTENDEES show_secondary="false"]
  * [LISTATTENDEES show_gravatar="true"]
  * [LISTATTENDEES paid_only="true"]
- * [LISTATTENDEES show_recurrence="false"]
  * [LISTATTENDEES event_identifier="your_event_identifier"]
  * [LISTATTENDEES category_identifier="your_category_identifier"]
  */
@@ -79,7 +81,6 @@ if (!function_exists('event_espresso_attendee_list')) {
 		$show_expired = $show_expired == 'false' ? " AND e.start_date >= '" . date('Y-m-d') . "' " : '';
 		$show_secondary = $show_secondary == 'false' ? " AND e.event_status != 'S' " : '';
 		$show_deleted = $show_deleted == 'false' ? " AND e.event_status != 'D' " : '';
-		$show_recurrence = $show_recurrence == 'false' ? " AND e.recurrence_id = '0' " : '';
 		$sort = $sort_by == 'last name' ? " ORDER BY lname " : '';
 		$limit = $limit > 0 ? " LIMIT 0," . $limit . " " : '';
 		if ($event_identifier != 'NULL') {
@@ -99,7 +100,6 @@ if (!function_exists('event_espresso_attendee_list')) {
 			$sql .= $show_secondary;
 			$sql .= $show_expired;
 			$sql .= $show_deleted;
-			$sql .= $show_recurrence;
 			$sql .= $limit;
 			event_espresso_show_attendess($sql, $show_gravatar, $paid_only, $sort);
 		} else if (!empty($type) && $type == 'category') {
@@ -111,7 +111,6 @@ if (!function_exists('event_espresso_attendee_list')) {
 			$sql .= $show_secondary;
 			$sql .= $show_expired;
 			$sql .= $show_deleted;
-			$sql .= $show_recurrence;
 			$sql .= $limit;
 			event_espresso_show_attendess($sql, $show_gravatar, $paid_only, $sort);
 		} else {
@@ -120,7 +119,6 @@ if (!function_exists('event_espresso_attendee_list')) {
 			$sql .= $show_secondary;
 			$sql .= $show_expired;
 			$sql .= $show_deleted;
-			$sql .= $show_recurrence;
 			$sql .= $limit;
 			event_espresso_show_attendess($sql, $show_gravatar, $paid_only, $sort);
 		}	
@@ -135,7 +133,7 @@ if (!function_exists('event_espresso_list_attendees')) {
 	function event_espresso_list_attendees($atts) {
 		//echo $atts;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-		extract(shortcode_atts(array('event_identifier' => 'NULL', 'category_identifier' => 'NULL', 'event_category_id' => 'NULL', 'show_gravatar' => 'NULL', 'show_expired' => 'NULL', 'show_secondary' => 'NULL', 'show_deleted' => 'NULL', 'show_recurrence' => 'NULL', 'limit' => 'NULL', 'paid_only' => 'NULL'), $atts));
+		extract(shortcode_atts(array('event_identifier' => 'NULL', 'category_identifier' => 'NULL', 'event_category_id' => 'NULL', 'show_gravatar' => 'NULL', 'show_expired' => 'NULL', 'show_secondary' => 'NULL', 'show_deleted' => 'NULL', 'limit' => 'NULL', 'paid_only' => 'NULL'), $atts));
 		global $load_espresso_scripts;
 		$load_espresso_scripts = true; //This tells the plugin to load the required scripts
 		//get the event identifiers
@@ -152,11 +150,10 @@ if (!function_exists('event_espresso_list_attendees')) {
 		$show_expired = "{$show_expired}";
 		$show_secondary = "{$show_secondary}";
 		$show_deleted = "{$show_deleted}";
-		$show_recurrence = "{$show_recurrence}";
 		$paid_only = "{$paid_only}";
 
 		ob_start();
-		event_espresso_attendee_list($event_identifier, $category_identifier, $show_gravatar, $show_expired, $show_secondary, $show_deleted, $show_recurrence, $limit, $paid_only);
+		event_espresso_attendee_list($event_identifier, $category_identifier, $show_gravatar, $show_expired, $show_secondary, $show_deleted, $limit, $paid_only);
 		$buffer = ob_get_contents();
 		ob_end_clean();
 		return $buffer;
@@ -644,7 +641,6 @@ add_shortcode('ATTENDEE_NUMBERS', 'espresso_attendees_data_sc');
  * [EVENT_LIST show_expired=true]
  * [EVENT_LIST show_deleted=true]
  * [EVENT_LIST show_secondary=true]
- * [EVENT_LIST show_recurrence=true]
  * [EVENT_LIST category_identifier=your_category_identifier]
  *
  */
