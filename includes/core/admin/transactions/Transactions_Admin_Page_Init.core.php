@@ -36,7 +36,7 @@ class Transactions_Admin_Page_Init extends EE_Admin_Page_Init {
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-		define( 'TXN_PG_SLUG', 'transactions' );	
+		define( 'TXN_PG_SLUG', 'espresso_transactions' );	
 		define( 'TXN_PG_NAME', ucwords( str_replace( '_', '', TXN_PG_SLUG )));	
 		define( 'TXN_ADMIN', EE_CORE_ADMIN . TXN_PG_SLUG . DS );	
 		define( 'TXN_ADMIN_URL', admin_url( 'admin.php?page=' . TXN_PG_SLUG ));	
@@ -56,7 +56,7 @@ class Transactions_Admin_Page_Init extends EE_Admin_Page_Init {
 	protected function _set_init_properties() {
 		$this->label = __('Transactions Overview', 'event_espresso');
 		$this->menu_label = __('Transactions', 'event_espresso');
-		$this->menu_slug = 'transactions';
+		$this->menu_slug = TXN_PG_SLUG;
 		$this->capability = 'administrator';
 	}
 
@@ -69,7 +69,7 @@ class Transactions_Admin_Page_Init extends EE_Admin_Page_Init {
 			'group' => 'main',
 			'menu_order' => 50,
 			'show_on_menu' => TRUE,
-			'parent_slug' => 'events'
+			'parent_slug' => 'espresso_events'
 			);
 		return $map;
 	}

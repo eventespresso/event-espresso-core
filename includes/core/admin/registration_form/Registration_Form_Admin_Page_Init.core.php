@@ -33,13 +33,12 @@ class Registration_Form_Admin_Page_Init extends EE_Admin_Page_Init {
 
 	public function __construct() {
 		//define some constants
-		define( 'EE_FORMS_ADMIN_URL', admin_url('admin.php?page=registration_form') );
-		
-		define( 'REGISTRATION_FORM_PG_SLUG', 'registration_form' );	
+		define( 'REGISTRATION_FORM_PG_SLUG', 'espresso_registration_form' );	
 		define( 'REGISTRATION_FORM_LABEL', __('Registration Form', 'event_espresso'));	
 		define( 'REGISTRATION_FORM_PG_NAME', ucwords( str_replace( '_', '', REGISTRATION_FORM_PG_SLUG )));	
 		define( 'REGISTRATION_FORM_ADMIN', EE_CORE_ADMIN . REGISTRATION_FORM_PG_SLUG . DS );	
 		define( 'REGISTRATION_FORM_ADMIN_URL', admin_url( 'admin.php?page=' . REGISTRATION_FORM_PG_SLUG ));	
+		define( 'EE_FORMS_ADMIN_URL', admin_url('admin.php?page=' . REGISTRATION_FORM_PG_SLUG ));
 		define( 'REGISTRATION_FORM_ASSETS_PATH', REGISTRATION_FORM_ADMIN . 'assets' . DS );		
 		define( 'REGISTRATION_FORM_ASSETS_URL', EE_CORE_ADMIN_URL . REGISTRATION_FORM_PG_SLUG .'/assets/' );	
 		define( 'REGISTRATION_FORM_TEMPLATE_PATH', REGISTRATION_FORM_ADMIN . 'templates' . DS );	
@@ -50,7 +49,7 @@ class Registration_Form_Admin_Page_Init extends EE_Admin_Page_Init {
 	protected function _set_init_properties() {
 		$this->label = __('Registration Form Overview', 'event_espresso');
 		$this->menu_label = __('Registration Form','event_espresso');
-		$this->menu_slug = 'registration_form';
+		$this->menu_slug = REGISTRATION_FORM_PG_SLUG;
 		$this->capability = 'administrator';
 	}
 
@@ -59,7 +58,7 @@ class Registration_Form_Admin_Page_Init extends EE_Admin_Page_Init {
 			'group' => 'management',
 			'menu_order' => 60,
 			'show_on_menu' => TRUE,
-			'parent_slug' => 'events'
+			'parent_slug' => 'espresso_events'
 			);
 		return $map;
 	}

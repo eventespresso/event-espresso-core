@@ -54,7 +54,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	protected function _init_page_props() {
 		global $espresso_wp_user;
-		$this->page_slug = 'ee_messages';
+		$this->page_slug = EE_MSG_PG_SLUG;
 		$this->page_label = __('Messages System', 'event_espresso');
 
 		$this->_activate_state = isset($this->_req_data['activate_state']) ? (array) $this->_req_data['activate_state'] : array();

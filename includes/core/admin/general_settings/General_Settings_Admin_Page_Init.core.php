@@ -33,7 +33,7 @@ class General_Settings_Admin_Page_Init extends EE_Admin_Page_Init {
 
 	public function __construct() {
 		//define some constants
-		define( 'GEN_SET_PG_SLUG', 'general_settings' );	
+		define( 'GEN_SET_PG_SLUG', 'espresso_general_settings' );	
 		define( 'GEN_SET_LABEL', __('General Settings', 'event_espresso'));	
 		define( 'GEN_SET_ADMIN', EE_CORE_ADMIN . GEN_SET_PG_SLUG . DS );	
 		define( 'GEN_SET_ADMIN_URL', admin_url( 'admin.php?page=' . GEN_SET_PG_SLUG ));	
@@ -55,7 +55,7 @@ class General_Settings_Admin_Page_Init extends EE_Admin_Page_Init {
 			'group' => 'settings',
 			'menu_order' => 20,
 			'show_on_menu' => TRUE,
-			'parent_slug' => 'events'
+			'parent_slug' => 'espresso_events'
 			);
 		return $map;
 	}

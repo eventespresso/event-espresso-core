@@ -239,7 +239,7 @@ class EE_Admin_Page_load {
 		global $espresso_manager;
 		//prep the pages (sort, group, set if display etc.)
 		$this->_prep_pages();
-		$parent_slug = 'events';
+		$parent_slug = 'espresso_events';
 		$add_main_menu = true;
 
 		//loop through prepped pages and hook into WP's menu functions

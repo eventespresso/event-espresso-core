@@ -36,7 +36,7 @@ class Registrations_Admin_Page_Init extends EE_Admin_Page_Init  {
 	public function __construct() { 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		
-		define( 'REG_PG_SLUG', 'registrations' );	
+		define( 'REG_PG_SLUG', 'espresso_registrations' );	
 		define( 'REG_PG_NAME', ucwords( str_replace( '_', '', REG_PG_SLUG )));	
 		define( 'REG_ADMIN', EE_CORE_ADMIN . REG_PG_SLUG . DS );	
 		define( 'REG_ADMIN_URL', admin_url( 'admin.php?page=' . REG_PG_SLUG ));	
@@ -56,7 +56,7 @@ class Registrations_Admin_Page_Init extends EE_Admin_Page_Init  {
 	protected function _set_init_properties() {
 		$this->label = __('Registrations Overview', 'event_espresso');
 		$this->menu_label = __('Registrations', 'event_espresso');
-		$this->menu_slug = 'registrations';
+		$this->menu_slug = REG_PG_SLUG;
 		$this->capability = 'administrator';
 	}
 
@@ -70,7 +70,7 @@ class Registrations_Admin_Page_Init extends EE_Admin_Page_Init  {
 			'group' => 'main',
 			'menu_order' => 40,
 			'show_on_menu' => TRUE,
-			'parent_slug' => 'events'
+			'parent_slug' => 'espresso_events'
 			);
 		return $map;
 	}
