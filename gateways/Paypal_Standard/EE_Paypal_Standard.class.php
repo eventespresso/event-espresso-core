@@ -403,7 +403,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 	 * @return boolean
 	 */
 	public function handle_ipn_for_transaction($transaction){
-		if($this->_debug_mode){
+		if($this->debug_mode_active()){
 			echo "<hr><br>".get_class($this).":start handle_ipn_for_transaction on transaction:".print_r($transaction,true);
 		}
 		//@todo just for debugging. remove in production
@@ -416,7 +416,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		if(empty($_POST['payment_status']) || empty($_POST['txn_id'])){
 			return false;
 		}
-		if($this->_debug_mode){
+		if($this->debug_mode_active()){
 			echo "<hr><br>".get_class($this).": payment_status and txn_id sent properly. payment_status:".$_POST['payment_status'].", txn_id:".$_POST['txn_id'];
 		}
 		//ok, then validate the IPN. Even if we've already processed this payment, let paypal know we don't want to hear from them anymore!
@@ -479,7 +479,6 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		}
 		
 		$payment->save();
-		
 		return parent::update_transaction_with_payment($transaction,$payment);	
 	}
 	

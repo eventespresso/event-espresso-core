@@ -412,6 +412,7 @@ abstract class EE_Base_Class {
 			$results = $this->_get_model()->update ( $save_cols_n_values, array($this->_get_primary_key_name()=>$this->get_primary_key()) );
 		} else {
 			unset($save_cols_n_values[$this->_get_primary_key_name()]);
+			
 			$results = $this->_get_model()->insert ( $save_cols_n_values );
 			if($results){//if successful, set the primary key
 				$results=$results['new-ID'];

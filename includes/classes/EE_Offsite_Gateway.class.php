@@ -165,8 +165,8 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 	 */
 	public function thank_you_page_logic(EE_Transaction $transaction){
 		//check that we've received an IPN for this payment, otherwise consider this the IPN
-		$this->handle_ipn_for_transaction($transaction);
-		parent::thank_you_page($transaction);
+		$this->_EEM_Gateways->handle_ipn_for_transaction($transaction);
+		parent::thank_you_page_logic($transaction);
 	}
 	
 }

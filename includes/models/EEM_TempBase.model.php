@@ -167,6 +167,8 @@ abstract class EEM_TempBase extends EEM_Base{
 				case 'primary_text_key':
 				case 'foreign_text_key':
 				case 'enum':
+				case 'serialized_text':
+				case 'date':
 				
 					$type='%s';
 					break;

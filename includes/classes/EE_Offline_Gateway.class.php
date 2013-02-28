@@ -55,7 +55,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 		$success = $this->update_transaction_with_payment($transaction, null);
 		
 		
-		$EE_Session->set_session_data(array('txn_results' => $transaction->details()), 'session_data');
+		$EE_Session->set_session_data(array('txn_results' => serialize($transaction->details())), 'session_data');
 		$session = $EE_Session->get_session_data();
 		//prevent trying to serialize a recursive relationship
 		unset($session['transaction']);

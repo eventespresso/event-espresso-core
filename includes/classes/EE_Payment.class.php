@@ -463,14 +463,7 @@ class EE_Payment extends EE_Base_Class{
 	*		@param		string		$details
 	*/
 	public function set_details( $details = FALSE ) {
-
-		if ( ! $details ) {
-			$msg = __( 'No Payment Details were supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PAY_details = wp_strip_all_tags( $details );
-		return TRUE;
+		return $this->set('PAY_details',$details);
 	}
 
 
@@ -682,7 +675,7 @@ class EE_Payment extends EE_Base_Class{
 	* 		@access		public
 	*/
 	public function details() {
-		return $this->_PAY_details;
+		return $this->get('PAY_details');
 	}
 	
 	

@@ -127,6 +127,7 @@ abstract class EE_Gateway {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 		if (!$this->_payment_settings = $this->_EEM_Gateways->payment_settings($this->_gateway_name)) {
+			
 			$this->_default_settings();
 			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway_name, $this->_payment_settings)) {
 				$msg = sprintf( __( '%s payment settings initialized.', 'event_espresso' ), $this->_payment_settings['display_name'] );
@@ -136,7 +137,7 @@ abstract class EE_Gateway {
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
 		}else{
-			$this->_debug_mode = array_key_exists('use_sandbox',$this->_payment_settings)?$this->_payment_settings['use_sandbox']:false;
+			$this->_debug_mode = array_key_exists('use_sandbox',$this->_payment_settings)?intval($this->_payment_settings['use_sandbox']):false;
 		}
 	}
 
@@ -580,7 +581,7 @@ abstract class EE_Gateway {
 	 * @param EE_Transaction $transaction
 	 * @return boolean
 	 */
-	public function thank_you_page(EE_Transaction $transaction){
+	public function thank_you_page_logic(EE_Transaction $transaction){
 		global $EE_Session;
 		$session_data = $EE_Session->get_session_data();
 		//update the session as if we just updated the session
