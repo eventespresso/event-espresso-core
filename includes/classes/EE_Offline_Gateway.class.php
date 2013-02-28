@@ -60,7 +60,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 		//prevent trying to serialize a recursive relationship
 		unset($session['transaction']);
 		$transaction->set_txn_session_data( $session );
-		parent::thank_you_page($transaction);
+		parent::thank_you_page_logic($transaction);
 		//check that there's still a transaction in the session.
 		//if there isn't, maybe we've cleared it (session ended with the thank you page)
 		//or something wack's going on...
