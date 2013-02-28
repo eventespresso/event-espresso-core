@@ -47,7 +47,9 @@ class EE_Organization_Shortcodes extends EE_Shortcodes {
 			'[CO_ADD2]' => __('Address 2 value for the organization', 'event_espresso'),
 			'[CO_CITY]' => __('City the organization is in', 'event_espresso'),
 			'[CO_STATE]' => __('State the organization is located in', 'event_espresso'),
-			'[CO_ZIP]' => __('The zip code for the organization', 'event_espresso')
+			'[CO_ZIP]' => __('The zip code for the organization', 'event_espresso'),
+			'[CO_LOGO]' => __('The logo for the organization', 'event_espresso'),
+			'[CO_LOGO_URL]' => __('Just the link to the image used as the logo for the organization', 'event_espresso')
 			);
 	}
 
@@ -80,7 +82,16 @@ class EE_Organization_Shortcodes extends EE_Shortcodes {
 			case '[CO_ZIP]' :
 				return $org_options['organization_zip'];
 				break;
-				
+
+			case '[CO_LOGO]' :
+				$url = $org_options['default_logo_url'];
+				return '<img src="' . $url . '" style="width:720px;" id="headerImage" />';
+				break;
+
+			case '[CO_LOGO_URL]' : 
+				return $org_options['default_logo_url'];
+				break;
+
 		}
 	}
 
