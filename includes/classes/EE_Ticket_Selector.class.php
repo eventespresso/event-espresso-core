@@ -54,6 +54,7 @@ class EE_Ticket_Selector extends EE_BASE {
 		}
 		
 		$this->_event = $event;
+//		$this->translate_js_strings();
 		$this->load_tckt_slctr_js();
 		$this->_display_ticket_selector();
 
@@ -723,6 +724,16 @@ class EE_Ticket_Selector extends EE_BASE {
 	}
 
 
+	/**
+	 * 		translate_js_strings
+	 *
+	 * 		@access 		public
+	 * 		@return 		void
+	 */
+	public function translate_js_strings() {
+		global $eei18n_js_strings;	
+
+	}
 
 
 

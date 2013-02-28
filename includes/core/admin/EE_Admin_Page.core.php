@@ -521,6 +521,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts' ), 100 );
 		if ( method_exists( $this, 'admin_footer_scripts_' . $this->_current_view ) )
 			add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_' . $this->_current_view ), 101 );
+		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_eei18n_js_strings' ), 102 );
 	}
 
 	
@@ -1102,8 +1103,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//register all scripts
 		//wp_register_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-datepicker.js', array('jquery-ui-core'), EVENT_ESPRESSO_VERSION, true );
 		wp_register_script('jquery-ui-timepicker-addon', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker'), EVENT_ESPRESSO_VERSION, true );
-		wp_register_script('event_editor_js', EVENTS_ASSETS_URL . 'event_editor.js', array('jquery-ui-slider', 'jquery-ui-timepicker-addon'), EVENT_ESPRESSO_VERSION, true);
-		wp_register_script('event-espresso-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_espresso.js', array('jquery'), EVENT_ESPRESSO_VERSION, true);
+		wp_register_script('event_editor_js', EVENTS_ASSETS_URL . 'event_editor.js', array('ee_admin_js', 'jquery-ui-slider', 'jquery-ui-timepicker-addon'), EVENT_ESPRESSO_VERSION, true);
+		//wp_register_script('event-espresso-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_espresso.js', array('jquery'), EVENT_ESPRESSO_VERSION, true);
 		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('jquery', 'ee-parse-uri'), EVENT_ESPRESSO_VERSION, true );
 		wp_register_script('jquery-validate', EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.min.js", array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
 		wp_register_script('espresso_ajax_table_sorting', EE_CORE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js", array('ee_admin_js', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
@@ -1123,7 +1124,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		//attendee script registrations
-		wp_register_script('espresso_attendees', REG_ASSETS_URL . 'espresso_attendees_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
+		//wp_register_script('espresso_attendees', REG_ASSETS_URL . 'espresso_attendees_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
 
 		//registrations script register
 		wp_register_script('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.js', array('jquery-ui-datepicker', 'jquery-ui-draggable', 'ee_admin_js'), EVENT_ESPRESSO_VERSION, TRUE);
@@ -1162,16 +1163,73 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		//localizers (for passing variables to js as well)
-		$js_args = array(
-			'image_confirm' => __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso')
-			);
-		wp_localize_script( 'event_editor_js', 'EE_EDIT_VARS', $js_args );
+//		global $eei18n_js_strings;
+//		$eei18n_js_strings['image_confirm'] = __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso');
+//		wp_localize_script( 'event_editor_js', 'EE_EDIT_VARS', $eei18n_js_strings );
 
 
 		/** remove filters **/
 		remove_all_filters('mce_external_plugins');
 	}
 
+
+	
+
+	/**
+	*		admin_footer_scripts_eei18n_js_strings
+	* 
+	*		@access 		public
+	*		@return 		void
+	*/	
+	public function admin_footer_scripts_eei18n_js_strings() {
+		
+		global $eei18n_js_strings;
+		$eei18n_js_strings['confirm_delete'] = __( 'Are you absolutely sure you want to delete this item?\nThis action will delete ALL DATA asscociated with this item!!!\nThis can NOT be undone!!!', 'event_espresso' );
+		
+		$eei18n_js_strings['January'] = __( 'January', 'event_espresso' );
+		$eei18n_js_strings['February'] = __( 'February', 'event_espresso' );
+		$eei18n_js_strings['March'] = __( 'March', 'event_espresso' );
+		$eei18n_js_strings['April'] = __( 'April', 'event_espresso' );
+		$eei18n_js_strings['May'] = __( 'May', 'event_espresso' );
+		$eei18n_js_strings['June'] = __( 'June', 'event_espresso' );
+		$eei18n_js_strings['July'] = __( 'July', 'event_espresso' );
+		$eei18n_js_strings['August'] = __( 'August', 'event_espresso' );
+		$eei18n_js_strings['September'] = __( 'September', 'event_espresso' );
+		$eei18n_js_strings['October'] = __( 'October', 'event_espresso' );
+		$eei18n_js_strings['November'] = __( 'November', 'event_espresso' );
+		$eei18n_js_strings['December'] = __( 'December', 'event_espresso' );
+		$eei18n_js_strings['Jan'] = __( 'Jan', 'event_espresso' );
+		$eei18n_js_strings['Feb'] = __( 'Feb', 'event_espresso' );
+		$eei18n_js_strings['Mar'] = __( 'Mar', 'event_espresso' );
+		$eei18n_js_strings['Apr'] = __( 'Apr', 'event_espresso' );
+		$eei18n_js_strings['May'] = __( 'May', 'event_espresso' );
+		$eei18n_js_strings['Jun'] = __( 'Jun', 'event_espresso' );
+		$eei18n_js_strings['Jul'] = __( 'Jul', 'event_espresso' );
+		$eei18n_js_strings['Aug'] = __( 'Aug', 'event_espresso' );
+		$eei18n_js_strings['Sep'] = __( 'Sep', 'event_espresso' );
+		$eei18n_js_strings['Oct'] = __( 'Oct', 'event_espresso' );
+		$eei18n_js_strings['Nov'] = __( 'Nov', 'event_espresso' );
+		$eei18n_js_strings['Dec'] = __( 'Dec', 'event_espresso' );
+		
+		$eei18n_js_strings['Sunday'] = __( 'Sunday', 'event_espresso' );
+		$eei18n_js_strings['Monday'] = __( 'Monday', 'event_espresso' );
+		$eei18n_js_strings['Tuesday'] = __( 'Tuesday', 'event_espresso' );
+		$eei18n_js_strings['Wednesday'] = __( 'Wednesday', 'event_espresso' );
+		$eei18n_js_strings['Thursday'] = __( 'Thursday', 'event_espresso' );
+		$eei18n_js_strings['Friday'] = __( 'Friday', 'event_espresso' );
+		$eei18n_js_strings['Saturday'] = __( 'Saturday', 'event_espresso' );
+		$eei18n_js_strings['Sun'] = __( 'Sun', 'event_espresso' );
+		$eei18n_js_strings['Mon'] = __( 'Mon', 'event_espresso' );
+		$eei18n_js_strings['Tue'] = __( 'Tue', 'event_espresso' );
+		$eei18n_js_strings['Wed'] = __( 'Wed', 'event_espresso' );
+		$eei18n_js_strings['Thu'] = __( 'Thu', 'event_espresso' );
+		$eei18n_js_strings['Fri'] = __( 'Fri', 'event_espresso' );
+		$eei18n_js_strings['Sat'] = __( 'Sat', 'event_espresso' );
+		
+		wp_localize_script( 'ee_admin_js', 'eei18n', $eei18n_js_strings );
+		wp_localize_script( 'jquery-validate', 'eei18n', $eei18n_js_strings );
+		
+	}
 
 	
 

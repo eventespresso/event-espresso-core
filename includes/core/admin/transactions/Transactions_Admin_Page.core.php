@@ -253,10 +253,14 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		//scripts
 		wp_enqueue_script('espresso_txn');	
 
+		global $eei18n_js_strings;
+		$eei18n_js_strings['invalid_server_response'] = __( 'An error occured! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
+		$eei18n_js_strings['error_occured'] = __(  'An error occured! Please refresh the page and try again.', 'event_espresso' );
+		$eei18n_js_strings['txn_status_array'] = self::$_txn_status;
+		$eei18n_js_strings['pay_status_array'] = self::$_pay_status;
 
-		//localize scripts (for vars)
-		wp_localize_script('espresso_txn', 'txn_status_array', self::$_txn_status);
-		wp_localize_script('espresso_txn', 'pay_status_array', self::$_pay_status);	
+		wp_localize_script( 'espresso_txn', 'eei18n', $eei18n_js_strings );
+
 	}
 
 

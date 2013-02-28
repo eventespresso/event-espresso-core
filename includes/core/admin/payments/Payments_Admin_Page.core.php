@@ -125,7 +125,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	public function load_scripts_styles() {
-		wp_enqueue_script('event-espresso-js');
+		wp_enqueue_script('ee_admin_js');
 	}
 
 

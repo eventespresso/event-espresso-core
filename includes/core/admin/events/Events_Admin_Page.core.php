@@ -225,6 +225,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles() {
 		//todo note: we also need to load_scripts_styles per view (i.e. default/view_report/event_details)
+		global $eei18n_js_strings;
+		$eei18n_js_strings['image_confirm'] = __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso');
+		wp_localize_script( 'event_editor_js', 'eei18n', $eei18n_js_strings );		
 	}
 
 
@@ -250,7 +253,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_style('jquery-ui-style-datepicker-css');
 
 		//scripts
-		wp_enqueue_script('ee_admin_js');
 		wp_enqueue_script('event_editor_js');
 	}
 
