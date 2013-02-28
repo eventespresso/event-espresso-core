@@ -1544,7 +1544,7 @@ function printr( $var, $var_name = FALSE, $height = 'auto', $die = FALSE ) {
 function espresso_display_template($path_to_file = FALSE, $template_args = FALSE, $return_string = FALSE) {
 	//require the template helper 
 	require_once(EVENT_ESPRESSO_PLUGINFULLPATH.'/helpers/EE_Template.helper.php');
-	if ( $return )
+	if ( $return_string )
 		return EE_Template::display_template( $path_to_file, $template_args, $return_string );
 	else
 		EE_Template::display_template( $path_to_file, $template_args, $return_string );
