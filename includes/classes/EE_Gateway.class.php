@@ -81,7 +81,7 @@ abstract class EE_Gateway {
 	protected function __construct(EEM_Gateways &$model) {
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		//echo '<h4>$this->_gateway : ' . $this->_gateway . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		//echo '<h4>$this->_gateway_name : ' . $this->_gateway_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
 		if (!defined('GATEWAYS_ADMIN_URL')) {
 			define('GATEWAYS_ADMIN_URL', admin_url('admin.php?page=payment_settings'));
@@ -243,14 +243,14 @@ abstract class EE_Gateway {
 	}
 	
 	public function gateway() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, ' $this->_gateway = ' . $this->_gateway_name );
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, ' $this->_gateway_name = ' . $this->_gateway_name );
 		return $this->_gateway_name;
 	}
 
 	public function add_settings_page_meta_box() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $espresso_premium;
-		if (( $espresso_premium || $this->_gateway == 'Paypal_Standard' ) && isset( $this->_payment_settings['display_name'] )){
+		if (( $espresso_premium || $this->_gateway_name == 'Paypal_Standard' ) && isset( $this->_payment_settings['display_name'] )){
 			add_meta_box(
 						'espresso_' . $this->_gateway_name . '_payment_settings', $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso'), array(&$this, 'settings_meta_box'), 'event-espresso_page_payment_settings', 'normal'
 			);
@@ -261,7 +261,7 @@ abstract class EE_Gateway {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $espresso_premium;
 
-		if ( ! $espresso_premium && $this->_gateway != 'Paypal_Standard' ) {
+		if ( ! $espresso_premium && $this->_gateway_name != 'Paypal_Standard' ) {
 			return;
 		}
 		?>
