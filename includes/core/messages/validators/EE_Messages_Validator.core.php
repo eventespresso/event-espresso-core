@@ -116,17 +116,18 @@ abstract class EE_Messages_Validator extends EE_Base {
 		$this->_load_objects();
 
 
-		//let's set validators property
-		$this->_set_validators();
-
 		//modify any messenger/message_type specific validation instructions.  This is what child classes define.
 		$this->_modify_validator();
+
+
+		//let's set validators property
+		$this->_set_validators();
 	}
 
 
 
 	/**
-	 * Child classes instantiate this and use it to modify the _validators array property that has been set in _set_props().  This is so we can specify specific validation instructions for a messenger/message_type combo that aren't handled by the defaults setup in the messenger.	
+	 * Child classes instantiate this and use it to modify the _validator_config array property for the messenger using messengers set_validate_config() method.  This is so we can specify specific validation instructions for a messenger/message_type combo that aren't handled by the defaults setup in the messenger.	
 	 * @abstract
 	 * @access protected
 	 * @return void 

@@ -40,6 +40,14 @@ class EE_Messages_Email_Registration_Validator extends EE_Messages_Validator {
 	/**
 	 * at this point no custom validation needed for this messenger/message_type combo.
 	 */
-	protected function _modify_validator() {}
+	protected function _modify_validator() {
+		$new_config = $this->_MSGR->get_validator_config();
+
+		//modify just event_list
+		$new_config['event_list'] = array(
+			'shortcodes' => array('event', 'attendee_list', 'venue', 'transaction')
+			);
+		$this->_MSGR->set_validator_config( $new_config );
+	}
 
 } //end class EE_Messages_Email_Registration_Validator
