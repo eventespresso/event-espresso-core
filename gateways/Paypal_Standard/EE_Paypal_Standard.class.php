@@ -403,7 +403,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 	 * @return boolean
 	 */
 	public function handle_ipn_for_transaction($transaction){
-		$this->_debug_log("<hr><br>".get_class($this).":start handle_ipn_for_transaction on transaction:".print_r($transaction,true));
+		$this->_debug_log("<hr><br>".get_class($this).":start handle_ipn_for_transaction on transaction:".($transaction instanceof EE_Transaction)?$transaction->ID():'unknown');
 		
 		//@todo just for debugging. remove in production
 		if($_GET['payment_status'] && $_GET['txn_id']){
@@ -443,22 +443,26 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			$status = EEM_Payment::status_id_declined;//declined
 			$gateway_response = __('Your payment has been declined.', 'event_espresso');
 		}
+		$this->_debug_log( "<hr>Payment is interpreted as $status, and teh gateway's response set to '$gateway_response'");
 		//check if we've already processed this payment
 		
 		$payment = $this->_PAY->get_payment_by_txn_id_chq_nmbr($_POST['txn_id']);
-
+		
 		if(!empty($payment)){
 			//payment exists. if this has the exact same status and amount, don't bother updating. just return
 			if($payment->STS_ID() == $status && $payment->amount() == $_POST['mc_gross']){
 				//echo "duplicated ipn! dont bother updating transaction foo!";
+				$this->_debug_log( "<hr>Duplicated IPN! ignore it...");
 				return false;
 			}else{
+				$this->_debug_log( "<hr>Existing IPN for this paypal trasaction, but its got some new info. Old status:".$payment->STS_ID().", old amount:".$payment->amount());
 				$payment->set_status($status);
 				$payment->set_amount($_POST['mc_gross']);
 				$payment->set_gateway_response($gateway_response);
 				$payment->set_details($_POST);
 			}
 		}else{
+			$this->_debug_log( "<hr>No Previous IPN payment received. Create a new one");
 			//no previous payment exists, create one
 			$primary_registrant = $transaction->primary_registration();
 			$primary_registration_code = !empty($primary_registrant) ? $primary_registrant->reg_code() : '';
