@@ -353,11 +353,11 @@ function event_espresso_admin_news($url) {
 
 //Function to show an admin message if the main pages are not setup.
 function espresso_updated_pages() {
-	echo '<div class="error fade"><p><strong>' . __('In order to function properly Event Espresso has added one or more pages with the corresponding shortcodes. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=event_espresso&anchor=page_settings#page_settings') . '">' . __('Event Espresso Page Settings', 'event_espresso') . '</a>  ' . __('to view the updated pages.', 'event_espresso') . '</strong></p></div>';
+	echo '<div class="error fade"><p><strong>' . __('In order to function properly Event Espresso has added one or more pages with the corresponding shortcodes. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=general_settings') . '">' . __('Event Espresso Page Settings', 'event_espresso') . '</a>  ' . __('to view the updated pages.', 'event_espresso') . '</strong></p></div>';
 }
 
 function espresso_page_problems() {
-	echo '<div class="error fade"><p><strong>' . __('A problem has been detected with one or more of your Event Espresso pages. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=event_espresso&anchor=page_settings#page_settings') . '">' . __('Event Espresso Page Settings', 'event_espresso') . '</a>  ' . __('to view your Event Espresso pages.', 'event_espresso') . '</strong></p></div>';
+	echo '<div class="error fade"><p><strong>' . __('A problem has been detected with one or more of your Event Espresso pages. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=general_settings') . '">' . __('Event Espresso Critical Pages Settings', 'event_espresso') . '</a>  ' . __('to view your Event Espresso pages.', 'event_espresso') . '</strong></p></div>';
 }
 
 //Function to show an admin message if registration id's are missing.

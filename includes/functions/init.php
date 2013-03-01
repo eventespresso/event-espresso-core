@@ -34,23 +34,6 @@ function espresso_load_admin_ajax_callbacks() {
 
 
 
-
-function espresso_verify_default_pages_exist() {
-	global $org_options;
-	$page_ids = get_all_page_ids();
-	if (	! isset( $org_options['event_page_id'] ) || empty( $org_options['event_page_id'] ) || ! in_array( $org_options['event_page_id'], $page_ids )|| 
-			! isset( $org_options['return_url'] ) || empty( $org_options['return_url'] ) || ! in_array( $org_options['return_url'], $page_ids ) || 
-			! isset( $org_options['notify_url'] ) || empty( $org_options['notify_url'] ) || ! in_array( $org_options['notify_url'], $page_ids ) || 
-			! isset( $org_options['cancel_return'] ) || empty( $org_options['cancel_return'] ) || ! in_array( $org_options['cancel_return'], $page_ids )
-	) { 
-		espresso_create_default_pages(); 
-	}
-}
-
-
-
-
-
 function espresso_frontend_init() {
 
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
@@ -134,14 +117,58 @@ function espresso_critical_pages( $page_id, $event_page_slug = FALSE ) {
 
 
 
+
+
+
+
+function espresso_verify_default_pages_exist() {
+	
+	global $org_options;
+	$critical_page_problem = FALSE;
+	
+	// first check that critical page id's are set in the org options and that those page id's exist in the WP post db
+	$page_ids = get_all_page_ids();
+	if (	! isset( $org_options['event_page_id'] ) || empty( $org_options['event_page_id'] ) || ! in_array( $org_options['event_page_id'], $page_ids )|| 
+			! isset( $org_options['return_url'] ) || empty( $org_options['return_url'] ) || ! in_array( $org_options['return_url'], $page_ids ) || 
+			! isset( $org_options['notify_url'] ) || empty( $org_options['notify_url'] ) || ! in_array( $org_options['notify_url'], $page_ids ) || 
+			! isset( $org_options['cancel_return'] ) || empty( $org_options['cancel_return'] ) || ! in_array( $org_options['cancel_return'], $page_ids )
+	) { 
+		$critical_page_problem = TRUE;
+	} else {
+	
+		$ee_pages = array(
+				$org_options['event_page_id'] => array(get_page($org_options['event_page_id']), '[ESPRESSO_EVENTS]'),
+				$org_options['return_url'] => array(get_page($org_options['return_url']), '[ESPRESSO_PAYMENTS]'),
+				$org_options['notify_url'] => array(get_page($org_options['notify_url']), '[ESPRESSO_TXN_PAGE]'),
+				$org_options['cancel_return'] => array(get_page($org_options['cancel_return']), 'ESPRESSO_CANCELLED')
+			);
+
+		foreach ($ee_pages as $ee_page) {
+			if ( ! isset($ee_page[0]->post_status) || $ee_page[0]->post_status != 'publish' || strpos( $ee_page[0]->post_content, $ee_page[1] ) === false) {	
+				$critical_page_problem = TRUE;
+			}
+		}
+			
+	}
+
+	if ( $critical_page_problem ) {
+		require_once( EE_CORE . 'admin/admin_helper.php' );
+		add_action('admin_notices', 'espresso_page_problems');
+	}
+
+
+}
+
+
+
+
+
 function espresso_test_for_reg_page() {
 
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	global $org_options, $current_ee_page, $this_is_a_reg_page;
 	
 	$this_is_a_reg_page = FALSE;
-
-	espresso_create_default_pages();
 	
 	$critical_page_ids = array(
 		'event_page_id' => $org_options['event_page_id'],
@@ -449,52 +476,32 @@ function espresso_load_messages_init() {
  */
 function espresso_init_admin_pages() {
 	
-	global $org_options, $is_UI_request;
+	espresso_verify_default_pages_exist();
 	
-	if ( $is_UI_request ) {
+	$load_SPCO = FALSE;
 		
-		// Check to make sure all of the main pages are setup properly,
-		// if not create the default pages and display an admin notice
-		espresso_verify_default_pages_exist();
-		
-		$ee_pages = array(
-				$org_options['event_page_id'] => array(get_page($org_options['event_page_id']), '[ESPRESSO_EVENTS]'),
-				$org_options['return_url'] => array(get_page($org_options['return_url']), '[ESPRESSO_PAYMENTS]'),
-				$org_options['notify_url'] => array(get_page($org_options['notify_url']), '[ESPRESSO_TXN_PAGE]'),
-				$org_options['cancel_return'] => array(get_page($org_options['cancel_return']), 'ESPRESSO_CANCELLED')
+	$e_reg_pages = array( 
+					'register', 
+					'process_reg_step_1', 
+					'process_reg_step_2', 
+					'process_reg_step_3', 
+					'event_queue'
 			);
-
-		foreach ($ee_pages as $ee_page) {
-			if ( ! isset($ee_page[0]->post_status) || $ee_page[0]->post_status != 'publish' || strpos( $ee_page[0]->post_content, $ee_page[1] ) === false) {
-				add_action('admin_notices', 'espresso_page_problems');
-			}
-		}
-	}		$load_SPCO = FALSE;
+	$load_SPCO = isset( $_REQUEST['e_reg'] ) && ( in_array( $_REQUEST['e_reg'], $e_reg_pages )) ? TRUE : $load_SPCO;
 		
-		$e_reg_pages = array( 
-						'register', 
-						'process_reg_step_1', 
-						'process_reg_step_2', 
-						'process_reg_step_3', 
-						'event_queue'
-				);
-		$load_SPCO = isset( $_REQUEST['e_reg'] ) && ( in_array( $_REQUEST['e_reg'], $e_reg_pages )) ? TRUE : $load_SPCO;
+	$e_reg_ajax_actions = array( 
+					'espresso_process_registration_step_1', 
+					'espresso_process_registration_step_2', 
+					'espresso_process_registration_step_3'
+			);
+	$load_SPCO = isset( $_REQUEST['action'] ) && ( in_array( $_REQUEST['action'], $e_reg_ajax_actions )) ? TRUE : $load_SPCO;
 			
-		$e_reg_ajax_actions = array( 
-						'espresso_process_registration_step_1', 
-						'espresso_process_registration_step_2', 
-						'espresso_process_registration_step_3'
-				);
-		$load_SPCO = isset( $_REQUEST['action'] ) && ( in_array( $_REQUEST['action'], $e_reg_ajax_actions )) ? TRUE : $load_SPCO;
-				
-		if ( $load_SPCO ) {
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Single_Page_Checkout.class.php');
-			global $Single_Page_Checkout;
-			$Single_Page_Checkout = EE_Single_Page_Checkout::instance();	
-			//Process email confirmations
-			//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/email.php');
-			define("ESPRESSO_REG_PAGE_FILES_LOADED", "true");
-		}
+	if ( $load_SPCO ) {
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Single_Page_Checkout.class.php');
+		global $Single_Page_Checkout;
+		$Single_Page_Checkout = EE_Single_Page_Checkout::instance();	
+		define("ESPRESSO_REG_PAGE_FILES_LOADED", "true");
+	}
 
 	//this loads the controller for the admin pages which will setup routing etc
 	try {

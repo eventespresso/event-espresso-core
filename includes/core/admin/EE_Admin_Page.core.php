@@ -412,13 +412,17 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$this->_verify_routes();
 
 			if ( $this->_is_UI_request ) {
-
-				
 				//admin_init stuff - global, all views for this page class, specific view
 				add_action( 'admin_init', array( $this, 'admin_init_global' ), 5 );
 				add_action( 'admin_init', array( $this, 'admin_init' ), 10 );
-				if ( method_exists( $this, 'admin_init_' . $this->_current_view ) )
+				if ( method_exists( $this, 'admin_init_' . $this->_current_view )) {
 					add_action( 'admin_init', array( $this, 'admin_init_' . $this->_current_view ), 15 );
+				}
+				
+				// Check to make sure all of the main pages are setup properly,
+				// if not create the default pages and display an admin notice
+				$this->_verify_default_pages_exist();
+							
 			} else {
 				//hijack regular WP loading and route admin request immediately
 				if ( current_user_can( 'manage_options' ) )
@@ -2481,6 +2485,118 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+
+
+
+
+
+
+	private function _verify_default_pages_exist() {
+				
+		if ( has_action('admin_notices', 'espresso_page_problems')) {
+			$this->_create_default_pages(); 
+		}
+
+
+	}
+
+
+
+
+
+	//This function installs the required pages
+	private function _create_default_pages() {
+
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+		global $wpdb, $org_options, $espresso_wp_user;
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		
+		$required_pages = array( 
+				'event_page_id' 	=> __( 'Event Registration', 'event_espresso' ), 
+				'return_url' 			=> __( 'Thank You', 'event_espresso' ), 
+				'cancel_return'	=> __( 'Registration Cancelled', 'event_espresso' ), 
+				'notify_url'			=> __( 'Transactions', 'event_espresso' ) 
+			);
+					
+		$existing_pages = get_pages();
+		//printr( $existing_pages, '$existing_pages  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		foreach ( $existing_pages as $page ) {
+			// does page already exist ?
+			if ( in_array( $page->post_title, $required_pages )) {
+				//make sure it's ID is set properlly, but first we'll need the right org_option key
+				$key = array_search( $page->post_title, $required_pages );
+				$org_options[ $key ] = $page->ID;
+				// now remove it from required pages list since we already have it
+				unset( $required_pages[ $key ] );
+			} 
+		}
+		
+		$event_reg = __( 'Event Registration', 'event_espresso' );
+		$thank_you = __( 'Thank You', 'event_espresso' );
+		$reg_cancelled = __( 'Registration Cancelled', 'event_espresso' );
+		$transactions = __( 'Transactions', 'event_espresso' );
+		
+		
+		$updated_flag = false;
+		$page_ids = get_all_page_ids();
+		foreach ( $required_pages as $new_page_title ) {
+
+			// Create post object
+			$my_post = array();
+			$my_post['post_title'] = $new_page_title;
+			$my_post['post_status'] = 'publish';
+			$my_post['post_type'] = 'page';
+			$my_post['comment_status'] = 'closed';
+			
+			//echo '<h4>$new_page_title : ' . $new_page_title . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+
+			switch ( $new_page_title ) {
+			
+				case $event_reg :
+					//if ( empty( $org_options['event_page_id'] ) || ! in_array( $org_options['event_page_id'], $page_ids )) {
+						$my_post['post_content'] = '[ESPRESSO_EVENTS]';
+						$event_page_id = wp_insert_post($my_post);
+						$org_options['event_page_id'] = $event_page_id;
+						$updated_flag = true;
+					//}
+					break;
+					
+				case $thank_you :
+					//if ( empty( $org_options['return_url'] ) || ! in_array( $org_options['return_url'], $page_ids )) {
+						$my_post['post_content'] = '[ESPRESSO_PAYMENTS]';
+						$return_url = wp_insert_post($my_post);
+						$org_options['return_url'] = $return_url;
+						$updated_flag = true;
+					//}
+					break;
+					
+				case $reg_cancelled :
+					//if ( empty( $org_options['cancel_return'] ) || ! in_array( $org_options['cancel_return'], $page_ids )) {
+						$my_post['post_content'] = 'You have cancelled your registration.<br />[ESPRESSO_CANCELLED]';
+						$cancel_return = wp_insert_post($my_post);
+						$org_options['cancel_return'] = $cancel_return;
+						$updated_flag = true;
+					//}
+					break;
+					
+				case $transactions :
+					//if ( empty( $org_options['notify_url'] ) || ! in_array( $org_options['notify_url'], $page_ids )) {
+						$my_post['post_content'] = '[ESPRESSO_TXN_PAGE]';
+						$notify_url = wp_insert_post($my_post);
+						$org_options['notify_url'] = $notify_url;
+						$updated_flag = true;
+					//}
+					break;
+			}
+		}
+		
+		update_user_meta( $espresso_wp_user, 'events_organization_settings', $org_options );
+		if ( $updated_flag ) {
+			require_once( EE_CORE . 'admin/admin_helper.php' );
+			add_action('admin_notices', 'espresso_updated_pages');
+		}
+			
+	}
 
 
 

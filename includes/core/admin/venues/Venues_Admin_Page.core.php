@@ -52,7 +52,7 @@ class Venues_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _init_page_props() {
-		$this->page_slug = 'ee_venues';
+		$this->page_slug = EE_VENUES_PG_SLUG;
 		$this->page_label = __('Event Venues', 'event_espresso');
 	}
 

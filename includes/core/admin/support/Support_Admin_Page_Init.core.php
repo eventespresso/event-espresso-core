@@ -32,7 +32,8 @@ class Support_Admin_Page_Init extends EE_Admin_Page_Init {
 
 	public function __construct() {
 		//define some help/support page related constants
-		define( 'EE_SUPPORT_ADMIN_URL', admin_url('admin.php?page=ee_support') );
+		define( 'EE_SUPPORT_PG_SLUG', 'espresso_support' );	
+		define( 'EE_SUPPORT_ADMIN_URL', admin_url('admin.php?page=' . EE_SUPPORT_PG_SLUG ));
 		define( 'EE_SUPPORT_ADMIN_TEMPLATE_PATH', EE_CORE_ADMIN . 'support/templates/');
 
 		parent::__construct();
@@ -41,7 +42,7 @@ class Support_Admin_Page_Init extends EE_Admin_Page_Init {
 	protected function _set_init_properties() {
 		$this->label = __('Help & Support', 'event_espresso');
 		$this->menu_label = __('Help/Support', 'event_espresso');
-		$this->menu_slug = 'ee_support';
+		$this->menu_slug = EE_SUPPORT_PG_SLUG;
 	}
 
 	public function get_menu_map() {
@@ -49,7 +50,7 @@ class Support_Admin_Page_Init extends EE_Admin_Page_Init {
 			'group' => 'extras',
 			'menu_order' => 30,
 			'show_on_menu' => TRUE,
-			'parent_slug' => 'events'
+			'parent_slug' => 'espresso_events'
 			);
 		return $map;
 	}

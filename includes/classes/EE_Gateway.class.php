@@ -56,14 +56,14 @@ abstract class EE_Gateway {
 		//echo '<h4>$this->_gateway : ' . $this->_gateway . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
 		if (!defined('GATEWAYS_ADMIN_URL')) {
-			define('GATEWAYS_ADMIN_URL', admin_url('admin.php?page=payment_settings'));
+			define('GATEWAYS_ADMIN_URL', admin_url('admin.php?page=espresso_payment_settings'));
 		}
 
 		$this->_EEM_Gateways = $model;
 		$this->_set_default_properties();
 		$this->_handle_payment_settings();
 
-		if (is_admin() && !empty($_GET['page']) && $_GET['page'] == 'payment_settings') {
+		if (is_admin() && !empty($_GET['page']) && $_GET['page'] == 'espresso_payment_settings') {
 			$this->_gateways_admin();
 		} else {
 			$this->_gateways_frontend();
@@ -160,9 +160,10 @@ abstract class EE_Gateway {
 	public function add_settings_page_meta_box() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $espresso_premium;
-		if (( $espresso_premium || $this->_gateway == 'Paypal_Standard' ) && isset( $this->_payment_settings['display_name'] )){
+		$default_gateways = array( 'Bank', 'Check', 'Invoice', 'Paypal_Standard' );
+		if (( $espresso_premium || in_array( $this->_gateway, $default_gateways )) && isset( $this->_payment_settings['display_name'] )){
 			add_meta_box(
-						'espresso_' . $this->_gateway . '_payment_settings', $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso'), array(&$this, 'settings_meta_box'), 'event-espresso_page_payment_settings', 'normal'
+						'espresso_' . $this->_gateway . '_payment_settings', $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso'), array(&$this, 'settings_meta_box'), 'event-espresso_page_espresso_payment_settings', 'normal'
 			);
 		}
 	}
@@ -170,8 +171,8 @@ abstract class EE_Gateway {
 	public function settings_meta_box() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $espresso_premium;
-
-		if ( ! $espresso_premium && $this->_gateway != 'Paypal_Standard' ) {
+		$default_gateways = array( 'Bank', 'Check', 'Invoice', 'Paypal_Standard' );
+		if ( ! $espresso_premium && ! in_array( $this->_gateway, $default_gateways )) {
 			return;
 		}
 		?>

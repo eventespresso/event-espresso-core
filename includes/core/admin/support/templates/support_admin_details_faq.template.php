@@ -12,6 +12,7 @@
 			<?php _e('Paypal IPN Problem?', 'event_espresso'); ?>
 		</dt>
 		<dd>
+			<p>
 <?php _e('Four things to check with PayPal when payments notifications are not being sent to Event Espresso.', 'event_espresso'); ?>
 			</p>
 			<ol>
@@ -37,9 +38,10 @@
 			<?php _e('Why are mails are not being sent when somone registers?', 'event_espresso'); ?>
 		</dt>
 		<dd>
+			<p>
 <?php _e('Check your email settings on the', 'event_espresso'); ?>
-			<a href="admin.php?page=event_espresso#email-settings">Event Espresso > General Settings > Email Settings</a> page<br />
-			<img class="email-settings-img" src="http://ee-updates.s3.amazonaws.com/images/email-settings.png" width="472" height="120" />
+			<a href="admin.php?page=ee_messages"><?php _e('Event Espresso', 'event_espresso'); ?> > <?php _e('Messages', 'event_espresso'); ?></a> <?php _e('page', 'event_espresso'); ?><br />
+				<img class="email-settings-img" src="http://ee-updates.s3.amazonaws.com/images/email-settings.png" width="472" height="120" />
 			</p>
 			<p>
 <?php _e('If you\'re using WP SMTP with Gmail, also check your spam box to make sure Gmail isn\'t filtering the confirmation emails as spam.', 'event_espresso'); ?>
