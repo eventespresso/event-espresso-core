@@ -450,7 +450,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		if(!empty($payment)){
 			//payment exists. if this has the exact same status and amount, don't bother updating. just return
 			if($payment->STS_ID() == $status && $payment->amount() == $_POST['mc_gross']){
-				echo "duplicated ipn! dont bother updating transaction foo!";
+				//echo "duplicated ipn! dont bother updating transaction foo!";
 				return false;
 			}else{
 				$payment->set_status($status);
