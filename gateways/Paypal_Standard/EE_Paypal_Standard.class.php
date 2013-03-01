@@ -403,7 +403,6 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 	 * @return boolean
 	 */
 	public function handle_ipn_for_transaction($transaction){
-		
 		$this->_debug_log("<hr><br>".get_class($this).":start handle_ipn_for_transaction on transaction:".print_r($transaction,true));
 		
 		//@todo just for debugging. remove in production
@@ -418,7 +417,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		}
 			$this->_debug_log( "<hr><br>".get_class($this).": payment_status and txn_id sent properly. payment_status:".$_POST['payment_status'].", txn_id:".$_POST['txn_id']);
 		//ok, then validate the IPN. Even if we've already processed this payment, let paypal know we don't want to hear from them anymore!
-		if(!$this->validateIpn() && !$_GET['ignore_ipn']){
+		if(!$this->validateIpn()){
 			//huh, something's wack... the IPN didn't validate. We must have replied to teh IPN incorrectly,
 			//or their API must ahve changed: http://www.paypalobjects.com/en_US/ebook/PP_OrderManagement_IntegrationGuide/ipn.html
 			return false;
@@ -436,7 +435,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		//ok, well let's process this payment then!
 		if($_POST['payment_status']=='Completed'){ //the old code considered 'Pending' as completed too..
 			$status = EEM_Payment::status_id_approved;//approved
-			$gateway_response = __('Your payment is incomplete or has failed.', 'event_espresso');
+			$gateway_response = __('Your payment is approved.', 'event_espresso');
 		}elseif($_POST['payment_status']=='Pending'){
 			$status = EEM_Payment::status_id_pending;//approved
 			$gateway_response = __('Your payment is in progress. Another message will be sent when paymente is approved.', 'event_espresso');
@@ -444,8 +443,6 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			$status = EEM_Payment::status_id_declined;//declined
 			$gateway_response = __('Your payment has been declined.', 'event_espresso');
 		}
-		
-		
 		//check if we've already processed this payment
 		
 		$payment = $this->_PAY->get_payment_by_txn_id_chq_nmbr($_POST['txn_id']);
@@ -453,7 +450,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		if(!empty($payment)){
 			//payment exists. if this has the exact same status and amount, don't bother updating. just return
 			if($payment->STS_ID() == $status && $payment->amount() == $_POST['mc_gross']){
-				echo "duplicated update! dont bother updating transaction foo!";
+				echo "duplicated ipn! dont bother updating transaction foo!";
 				return false;
 			}else{
 				$payment->set_status($status);
