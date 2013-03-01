@@ -52,11 +52,11 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 	}
 
 	protected function __construct(EEM_Gateways &$model) {
-		$this->_gateway = 'Authnet';
+		$this->_gateway_name = 'Authnet';
 		$this->_button_base = 'authnet-logo.png';
 		$this->_path = str_replace('\\', '/', __FILE__);
 		$this->_gatewayUrl = 'https://secure.authorize.net/gateway/transact.dll';
-		$this->_btn_img = is_readable( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway . '/lib/' . $this->_button_base : '';
+		$this->_btn_img = is_readable( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway_name . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 	}
 
@@ -479,7 +479,7 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 		?>
 
 
-		<div id="reg-page-billing-info-<?php echo $this->_gateway; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
+		<div id="reg-page-billing-info-<?php echo $this->_gateway_name; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
 		<?php _e('After confirming the details of your registration in Step 3, you will be transferred to the Authorize.net website where your payment will be securely processed.', 'event_espresso'); ?>
 		</div>
 

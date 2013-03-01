@@ -752,13 +752,13 @@ Class EEM_Gateways {
 			$EE_Session->set_session_data(array('txn_results' => $txn_results), 'session_data');
 			$response = array(
 					'msg' => array('success'=>TRUE),
-					'forward_url' => $this->_get_return_page_url()
+					'forward_url' => $return_page_url
 			);
 
 		} else {
 			$response = array(
 					'msg' => $this->_gateway_instances[ $this->_selected_gateway ]->process_reg_step_3(),
-					'forward_url' => $this->_get_return_page_url()
+					'forward_url' => $return_page_url
 				);
 		}
 		return $response;
@@ -767,18 +767,22 @@ Class EEM_Gateways {
 
 
 	/**
-	 * 		set_return_page_url
+	 * 		get_return_page_url
 	 *
 	 * 		@access 		public
 	 * 		@return 		void
 	 */
 	private function _get_return_page_url() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $org_options;
+		global $org_options,$EE_Session;
+		$session_data=$EE_Session->get_session_data();
+		$a_current_registration=current($session_data['registration']);
+		
 		$return_page_id = $org_options['return_url'];
 		// get permalink for thank you page
 		// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
-		return rtrim( get_permalink( $return_page_id ), '/' );
+		return add_query_arg(array('reg_url_link'=>$a_current_registration->reg_url_link()),
+				rtrim( get_permalink( $return_page_id ), '/' ));
 	}
 
 
@@ -830,15 +834,73 @@ Class EEM_Gateways {
 	}
 
 
-
-	public function thank_you_page() {
+	/**
+	 * Handles the thank_you_page, given the curren transaction
+	 * @param type $transaction
+	 */
+	public function thank_you_page_logic(EE_Transaction $transaction) {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $EE_Session;
-		$session_data = $EE_Session->get_session_data();
-		if (empty($session_data['txn_results']['approved'])
-						&& !empty($this->_selected_gateway)
+		if (!empty($this->_selected_gateway)
 						&& !empty($this->_gateway_instances[ $this->_selected_gateway ])) {
-			$this->_gateway_instances[ $this->_selected_gateway ]->thank_you_page();
+			$this->_gateway_instances[ $this->_selected_gateway ]->thank_you_page_logic($transaction);
+		}
+		$this->check_for_completed_transaction($transaction);
+	}
+	
+	/**
+	 * Gets the HTML from the currently-selected gateway to display the payment's overview, specific to this gateway.
+	 * Content to be shown may include errors, notes about the payment, and further payment instructions (often the case for offline gateways).
+	 * 
+	 * @param EE_Transaction $transaction
+	 * @return string of HTML to be displayed above the payment overview, usually on the thank you page
+	 */
+	public function get_payment_overview_content(EE_Transaction $transaction){
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		if (!empty($this->_selected_gateway)
+						&& !empty($this->_gateway_instances[ $this->_selected_gateway ])) {
+				ob_start();
+				$this->_gateway_instances[ $this->_selected_gateway ]->get_payment_overview_content($transaction);
+				$output = ob_get_clean();
+				return $output;
+		}
+		return '';
+	}
+	/**
+	 * Checks if teh provided transaction is completed. If so, clears teh session and handles
+	 * the logic of finalizing the transaction
+	 * @param EE_Transaction $transaction
+	 */
+	public function check_for_completed_transaction(EE_Transaction $transaction){
+		//throw new Exception("unfinished. This functino should check for a completed transaction .If completed, clear some session etc
+		require_once('EEM_Transaction.model.php');
+		if($transaction->status_ID() == EEM_Transaction::complete_status_code
+				|| $transaction->status_ID() == EEM_Transaction::pending_status_code){
+			$this->reset_session_data();
+		}
+	}
+	
+	/**
+	 * Uses teh currently-active and selected gateway to handle an Instant Payment Notification.
+	 * Obviously, if this occurs the active gateway must be an Offsite gateway
+	 * @param EE_Transaction or ID $transaction Transaction to beudpated by the IPN
+	 * @return boolean success
+	 */
+	public function handle_ipn_for_transaction($transaction){
+		global $org_options;
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		$current_gateway=(!empty($this->_selected_gateway))?$this->_gateway_instances[$this->_selected_gateway] : null;
+		if(!empty($current_gateway)	&& $current_gateway instanceof EE_Offsite_Gateway){
+			/*if($current_gateway->debug_mode_active()){
+				ob_start();
+			}*/
+			
+			$current_gateway->handle_ipn_for_transaction($transaction);
+			if($current_gateway->debug_mode_active()){		
+				$debug_output=$current_gateway->get_debug_log();
+				ob_end_clean();
+				wp_mail($org_options['contact_email'],"Event Espresso IPN Debug info for ".$this->_selected_gateway,"POST data received:".print_r($_POST,true)." output is".$debug_output);
+			}
+			
 		}
 	}
 

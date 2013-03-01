@@ -152,7 +152,6 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 //				$this->reset_data( array() );
 //			}
 //		}
-
 		// once everything is all said and done,
 		add_action( 'shutdown', array( &$this, '_update_espresso_session' ), 100);
 
@@ -334,7 +333,6 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 	 *		@return TRUE on success, FALSE on fail
 	 */
 	public function _update_espresso_session( $new_session = FALSE ) {
-
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
@@ -396,7 +394,6 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 				return FALSE;
 			}
 		} 
-
 		// meh, why not?
 		return TRUE;
 
@@ -446,7 +443,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 
 		// we're using the Transient API for storing session data, cuz it's so damn simple -> set_transient(  transient ID, data, expiry )
 		set_transient( $this->_sid, $session_data, $this->_expiration );
-		die();
+		//die();
 		return set_transient( $this->_sid, $session_data, $this->_expiration ) ? TRUE : FALSE;
 
 	}

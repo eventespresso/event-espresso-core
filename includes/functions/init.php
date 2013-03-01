@@ -87,7 +87,12 @@ function espresso_critical_pages( $page_id, $event_page_slug = FALSE ) {
 			$org_options['return_url'] => 'return_url',
 			$org_options['cancel_return'] => 'cancel_return'
 	);
-
+/*echo "reg page ids:";
+foreach($reg_page_ids as $id=>$reg_pad){
+	echo "link:".get_permalink($id);
+	echo " key:$id, value:$reg_pad <br>";
+}
+var_dump($reg_page_ids);*/
 	if ( isset( $reg_page_ids[ $page_id ] )) {
 		$current_ee_page = $page_id;
 		switch( $reg_page_ids[ $page_id ] ) {
@@ -98,12 +103,12 @@ function espresso_critical_pages( $page_id, $event_page_slug = FALSE ) {
 				break;
 			case 'notify_url' :
 					$this_is_a_reg_page = TRUE;
-					add_action( 'wp', 'event_espresso_txn', 101 );
+					//add_action( 'wp', 'event_espresso_txn', 101 );
 					return TRUE;
 				break;			
 			case 'return_url' :
 					$this_is_a_reg_page = TRUE;
-					add_action( 'wp', 'espresso_thank_you_page', 102 );
+					//add_action( 'wp', 'espresso_thank_you_page', 102 );
 					return TRUE;
 				break;
 		}		

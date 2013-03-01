@@ -24,14 +24,33 @@
 require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 
 
-class EEM_Transaction extends EEM_Base {
+class EEM_Transaction extends EEM_TempBase {
 
   	// private instance of the Transaction object
 	private static $_instance = NULL;
 
-
-
-
+	
+	
+	/**
+	 * Status ID (STS_ID on esp_status table) to indicate a complete transaction.
+	 */
+	const complete_status_code = 'TCM';
+	
+	
+	
+	/**
+	 * STatus ID(STS_ID on esp_status table) to indicate an incomplete transaction
+	 */
+	const incomplete_status_code = 'TIN';
+	
+	
+	
+	/**
+	 * Status ID(STS_ID on esp_status table) to indicate the transaction is complete,
+	 * but payment is pending. This is the state for transactions where payment is promised
+	 * from an offline gateway. 
+	 */
+	const pending_status_code = 'TPN';
 
 	/**
 	 *		private constructor to prevent direct creation
@@ -42,7 +61,7 @@ class EEM_Transaction extends EEM_Base {
 	private function __construct() {	
 		global $wpdb;
 		// set table name
-		$this->table_name = $wpdb->prefix . 'esp_transaction';
+		/*$this->table_name = $wpdb->prefix . 'esp_transaction';
 		// set item names
 		$this->singlular_item = 'Transaction';
 		$this->plual_item = 'Transactions';		
@@ -57,7 +76,24 @@ class EEM_Transaction extends EEM_Base {
 			'TXN_session_data'		=> '%s',
 			'TXN_hash_salt'			=> '%s',
 			'TXN_tax_data'			=> '%s'	
-		);		
+		);*/
+		$this->_fields_settings = array(
+			'TXN_ID' =>			new EE_Model_Field('Transaction ID', 'primary_key', false),
+			'TXN_timestamp' =>	new EE_Model_Field('Transaction Teimstamp', 'int', false,time()),
+			'TXN_total' =>		new EE_Model_Field('Total amount due for this transaction', 'float', true,0),
+			'TXN_paid' =>		new EE_Model_Field('Total amoutn paid so far', 'float', false,0),
+			'STS_ID' =>			new EE_Model_Field('Status of Transaction.','foreign_text_key',false,  EEM_Transaction::incomplete_status_code,null,'Status'),
+			'TXN_details' =>	new EE_Model_Field('Mishmash of Info about the Transaction', 'serialized_text', true, null),
+			'TXN_tax_data' =>	new EE_Model_Field('Mishmash of tax data', 'serialized_text', true, null),
+			'TXN_session_data'=>new EE_Model_Field('Mishmash of session data', 'serialized_text', true, null),
+			'TXN_hash_salt' =>	new EE_Model_Field('Who knows', 'plaintext', true,null)
+		);
+		$this->_related_models = array(
+			'Payments' =>		new EE_Model_Relation('hasMany', 'Payment', 'TXN_ID'),
+			'Registrations' =>	new EE_Model_Relation('hasMany', 'Registration', 'TXN_ID'),
+			'Status' =>			new EE_Model_Relation('belongsTo','Status','STS_ID')
+		);
+		parent::__construct();
 	
 		// uncomment these for example code samples of how to use them
 		//			self::how_to_use_insert();
@@ -84,41 +120,7 @@ class EEM_Transaction extends EEM_Base {
 
 
 
-	/**
-	*		cycle though array of transactions and create objects out of each item
-	* 
-	* 		@access		private
-	* 		@param		array		$transactions		
-	*		@return 		mixed		array on success, FALSE on fail
-	*/	
-	private function _create_objects( $transactions = FALSE ) {
-
-		if ( ! $transactions ) {
-			return FALSE;
-		} 		
-		
-		if ( is_object( $transactions )){
-			$transactions = array( $transactions );
-		}
-
-
-		foreach ( $transactions as $transaction ) {
-				$array_of_objects[ $transaction->TXN_ID ] = new EE_Transaction(
-						$transaction->TXN_timestamp, 
-						$transaction->TXN_total, 
-						$transaction->TXN_paid, 
-						$transaction->STS_ID, 
-						maybe_unserialize( $transaction->TXN_details ), 
-						maybe_unserialize( $transaction->TXN_session_data ), 
-						$transaction->TXN_hash_salt,
-						maybe_unserialize( $transaction->TXN_tax_data ),
-						$transaction->TXN_ID
-				 	);
-		}	
-		return $array_of_objects;	
-
-	}
-
+	
 
 
 
@@ -481,7 +483,28 @@ class EEM_Transaction extends EEM_Base {
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
 		return $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );
 	}
-
+	
+	/**
+	 * Gets teh current transaction given teh reg_url_link, or assumes the reg_url_link is in the
+	 * $_REQUEST global variable. Either way, tries to find the current transaction (through
+	 * teh registration poitned to by reg_url_link), if not reutrns null
+	 * @param string $reg_url_link
+	 * @return EE_Transaction
+	 */
+	public function get_transaction_from_reg_url_link( $reg_url_link = NULL ){
+		if( NULL == $reg_url_link ){
+			$reg_url_link = $_REQUEST['reg_url_link'];
+		}
+		require_once('EEM_Registration.model.php');
+		$regmodel=  EEM_Registration::instance();
+		$registration=$regmodel->get_registration_for_reg_url_link($reg_url_link);
+		if(!empty($registration)){
+			$transaction = $this->get_transaction($registration->transaction_ID());
+			return $transaction;
+		}else{
+			return NULL;
+		}
+	}
 
 
 

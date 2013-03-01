@@ -40,10 +40,10 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 	}
 
 	protected function __construct(EEM_Gateways &$model) {
-		$this->_gateway = '2Checkout';
+		$this->_gateway_name = '2Checkout';
 		$this->_button_base = '2checkout-logo.png';
 		$this->_path =  str_replace( '\\', '/', __FILE__ );
-		$this->_btn_img = is_readable( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway . '/lib/' . $this->_button_base : '';
+		$this->_btn_img = is_readable( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway_name . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 	}
 
@@ -317,7 +317,7 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 		?>
 		
 
-		<div id="reg-page-billing-info-<?php echo $this->_gateway; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
+		<div id="reg-page-billing-info-<?php echo $this->_gateway_name; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
 			<?php _e('After confirming the details of your registration in Step 3, you will be transferred to the 2CheckOut.com website where your payment will be securely processed.', 'event_espresso'); ?>
 		</div>
 

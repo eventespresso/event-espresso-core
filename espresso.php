@@ -6,7 +6,7 @@
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
-  Version: 			3.2.DEV.3016
+  Version: 			3.2.DEV.3017
 
   Author: 				Seth Shoultes
   Author URI: 		http://www.eventespresso.com
@@ -82,7 +82,6 @@ add_action('init', 'espresso_add_rewrite_rules');
 add_filter('query_vars', 'espresso_add_query_vars');
 
 if ( is_admin() ) {
-
 	register_activation_hook(__FILE__, 'espresso_plugin_activation');
 	add_action('plugins_loaded', 'espresso_check_for_export');
 	add_action('plugins_loaded', 'espresso_check_for_import');
@@ -93,7 +92,6 @@ if ( is_admin() ) {
 	add_action( 'admin_enqueue_scripts', 'espresso_load_scripts_styles' );
 	
 } else {
-
 	add_action('init', 'espresso_export_certificate', 30);
 	add_action('init', 'espresso_export_invoice', 30);
 	add_action('init', 'espresso_export_ticket', 30);

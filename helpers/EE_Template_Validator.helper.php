@@ -51,14 +51,14 @@ class EE_Template_Validator {
 	 * @throws EE_Error (indirectly)
 	 */
 	static function verify_is_array_of($variable_to_test,$name_of_variable,$class_name,$allow_null='allow_null'){
-		if(WP_DEBUG)return;
-		self::verify_argument_is_one_of($allow_null, 'allow_null', array('allow_null','do_not_allow_nulls'));
+		if(!WP_DEBUG)return;
+		self::verify_argument_is_one_of($allow_null, 'allow_null', array('allow_null','do_not_allow_null'));
 		if('allow_null'!=$allow_null){
 			self::verify_isnt_null($variable_to_test);
 		}
 		self::verify_is_array($variable_to_test, $name_of_variable);
-		foreach($variable_to_test as $array_element){
-			self::verify_instanceof($variable_to_test, $name_of_variable, $class_name);
+		foreach($variable_to_test as $key=>$array_element){
+			self::verify_instanceof($array_element, $key, $class_name);
 		}
 	}
 	
@@ -74,7 +74,7 @@ class EE_Template_Validator {
 	 * @throws EE_Error
 	 */
 	static function verify_isnt_null($variable_to_test,$name_of_variable){
-		if(WP_DEBUG)return;
+		if(!WP_DEBUG)return;
 		if($variable_to_test==null && $variable_to_test!=0 && $variable_to_test!=FALSE){
 			$error[]=__('Variable named %s is null.','event_espresso');
 			$error[]=__("Consider looking at the stack trace to see why it wasn't set.",'event_espresso');
@@ -91,7 +91,7 @@ class EE_Template_Validator {
 	 * @throws EE_Error
 	 */
 	static function verify_is_true($expression_to_test,$expression_string_representation){
-		if(WP_DEBUG)return;
+		if(!WP_DEBUG)return;
 		if(!$expression_to_test){
 			$error[]=__('Template error.','event_espresso');
 			$error[]=__("%s evaluated to false, but it must be true!",'event_espresso');
@@ -112,8 +112,8 @@ class EE_Template_Validator {
 	 * @throws EE_Error
 	 */
 	static function verify_instanceof($variable_to_test,$name_of_variable,$class_name){
-		if(WP_DEBUG)return;
-		if(!is_a($variable_to_test,$class_name)){
+		if(!WP_DEBUG)return;
+		if($variable_to_test == NULL ||  !is_a($variable_to_test,$class_name)){
 			$msg[]=__('Variable %s is not of the correct type.','event_espresso');
 			$msg[]=__("It should be of type %s",'event_espresso');
 			throw new EE_Error(sprintf(implode(",",$msg),$name_of_variable,$name_of_variable,$class_name));
@@ -133,8 +133,8 @@ class EE_Template_Validator {
 	 * @throws EE_Error
 	 */
 	static function verify_is_array($variable_to_test,$variable_name,$allow_empty='allow_empty'){
-		if(WP_DEBUG)return;
-		self::verify_argument_is_one_of($variable_to_test, $variable_name, array('allow_empty','do_not_allow_empty'));
+		if(!WP_DEBUG)return;
+		self::verify_argument_is_one_of($allow_empty, $variable_name, array('allow_empty','do_not_allow_empty'));
 		if(empty($variable_to_test) && 'allow_empty'==$allow_empty){
 			return;
 		}
@@ -160,11 +160,11 @@ class EE_Template_Validator {
 	 * @throws EE_Error
 	 */
 	static function verify_argument_is_one_of($variable_to_test,$variable_name,$string_options){
-		if(WP_DEBUG)return;
-		if(in_array($variable_to_test,$string_options)){
+		if(!WP_DEBUG)return;
+		if(!in_array($variable_to_test,$string_options)){
 			$msg[0]=__('Malconfigured template.','event_espresso');
-			$msg[1]=__('set %s to %s. It can only be one of %s','event_espresso');
-			throw new EE_Error(sprintf(implode("||",$msg),$variable_to_test,$variable_name,$string_options));
+			$msg[1]=__("Variable named '%s' was set to '%s'. It can only be one of '%s'",'event_espresso');
+			throw new EE_Error(sprintf(implode("||",$msg),$variable_name,$variable_to_test, implode("', '",$string_options)));
 		}
 	}
 }

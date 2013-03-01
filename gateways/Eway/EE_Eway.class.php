@@ -38,10 +38,10 @@ Class EE_Eway extends EE_Offsite_Gateway {
 	}
 
 	protected function __construct(EEM_Gateways &$model) {
-		$this->_gateway = 'Eway';
+		$this->_gateway_name = 'Eway';
 		$this->_button_base = 'eway-logo.png';
 		$this->_path = str_replace('\\', '/', __FILE__);
-		$this->_btn_img = file_exists( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway . '/lib/' . $this->_button_base : '';
+		$this->_btn_img = file_exists( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway_name . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 	}
 
@@ -160,13 +160,13 @@ Class EE_Eway extends EE_Offsite_Gateway {
 
 		<tr>
 			<th>
-				<label for="<?php echo $this->_gateway; ?>_button_url">
+				<label for="<?php echo $this->_gateway_name; ?>_button_url">
 					<?php _e('Button Image URL', 'event_espresso'); ?>
 				</label>
 			</th>
 			<td>
 				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
-				<input class="regular-text" type="text" name="button_url" id="<?php echo $this->_gateway; ?>_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
+				<input class="regular-text" type="text" name="button_url" id="<?php echo $this->_gateway_name; ?>_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
 				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
 			</td>
 		</tr>
@@ -389,7 +389,7 @@ Class EE_Eway extends EE_Offsite_Gateway {
 		?>
 		
 
-			<div id="reg-page-billing-info-<?php echo $this->_gateway;?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class;?>">
+			<div id="reg-page-billing-info-<?php echo $this->_gateway_name;?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class;?>">
 				<?php _e('After confirming the details of your registration in Step 3, you will be transferred to the Eway.com website where your payment will be securely processed.', 'event_espresso'); ?>
 			</div>
 

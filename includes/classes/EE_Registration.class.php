@@ -612,6 +612,22 @@ class EE_Registration extends EE_Base_Class {
 		return $this->_save_to_db();
 	}
 
+	/**
+	 * Returns the related EE_Transaction to this registration
+	 * @return EE_Transaction	 
+	 */
+	public function transaction(){
+		return $this->get_first_related('Transaction');
+	}
+	
+	
+	/**
+	 * Gets the reltaed attendee
+	 * @return EE_Attendee
+	 */
+	public function attendee(){
+		return $this->get_first_related('Attendee');
+	}
 
 	/**
 	*		get Registration ID

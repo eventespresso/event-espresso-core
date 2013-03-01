@@ -1367,7 +1367,7 @@ function espresso_default_prices() {
 
 
 	if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_STATUS_TABLE . "'") == ESP_STATUS_TABLE) {
-		$sql = "DELETE FROM " . ESP_STATUS_TABLE . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPN', 'RCN', 'RAP', 'RNA', 'TIN', 'TPN', 'TCM', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN' );";
+		$sql = "DELETE FROM " . ESP_STATUS_TABLE . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPN', 'RCN', 'RAP', 'RNA', 'TIN', 'TPN', 'TCM', 'PAP', 'PPN', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN' );";
 		$wpdb->query($sql);
 		
 		$sql = "INSERT INTO " . ESP_STATUS_TABLE . " 
@@ -1392,6 +1392,7 @@ function espresso_default_prices() {
 				('TPN', 'PENDING', 'transaction', 0, NULL),
 				('TCM', 'COMPLETE', 'transaction', 0, NULL),
 				('PAP', 'APPROVED', 'payment', 0, NULL),
+				('PPN', 'PENDING', 'payment', 0, NULL),
 				('PCN', 'CANCELLED', 'payment', 0, NULL),
 				('PFL', 'FAILED', 'payment', 0, NULL),
 				('PDC', 'DECLINED', 'payment', 0, NULL),
