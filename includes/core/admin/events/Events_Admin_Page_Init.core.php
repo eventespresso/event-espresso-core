@@ -30,19 +30,19 @@ class Events_Admin_Page_Init extends EE_Admin_Page_Init {
 
 	public function __construct() {
 		//define some events related constants
-		define( 'EVENTS_PG_SLUG', 'events' );	
+		define( 'EVENTS_PG_SLUG', 'espresso_events' );	
 		define( 'EVENTS_LABEL', __('Events', 'event_espresso'));	
-		define( 'EVENTS_ADMIN', EE_CORE_ADMIN . EVENTS_PG_SLUG . DS );	
+		define( 'EVENTS_ADMIN', EE_CORE_ADMIN . 'events' . DS );	
 		define( 'EVENTS_ADMIN_URL', admin_url( 'admin.php?page=' . EVENTS_PG_SLUG ));	
 		define( 'EVENTS_TEMPLATE_PATH', EVENTS_ADMIN . 'templates' . DS );	
-		define( 'EVENTS_ASSETS_URL', EE_CORE_ADMIN_URL . EVENTS_PG_SLUG .'/assets/' );	
+		define( 'EVENTS_ASSETS_URL', EE_CORE_ADMIN_URL . 'events/assets/' );	
 		parent::__construct();
 	}
 
 	protected function _set_init_properties() {
 		$this->label = __('Events Overview', 'event_espresso');
 		$this->menu_label = EVENTS_LABEL;
-		$this->menu_slug = EVENTS_PG_SLUG;
+		$this->menu_slug = 'espresso_events';
 	}
 
 	public function get_menu_map() {
@@ -50,7 +50,7 @@ class Events_Admin_Page_Init extends EE_Admin_Page_Init {
 			'group' => 'main',
 			'menu_order' => 1,
 			'show_on_menu' => TRUE,
-			'parent_slug' => 'events'
+			'parent_slug' => 'espresso_events'
 			);
 		return $map;
 	}

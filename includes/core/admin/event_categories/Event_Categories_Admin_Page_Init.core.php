@@ -30,7 +30,8 @@ class Event_Categories_Admin_Page_Init extends EE_Admin_Page_Init {
 
 	public function __construct() {
 		//define some event categories related constants
-		define( 'EE_CATS_ADMIN_URL', admin_url('admin.php?page=event_categories') );
+		define( 'EE_CATS_PG_SLUG', 'espresso_event_categories' );	
+		define( 'EE_CATS_ADMIN_URL', admin_url('admin.php?page=' . EE_CATS_PG_SLUG ));
 
 		parent::__construct();
 	}
@@ -38,15 +39,15 @@ class Event_Categories_Admin_Page_Init extends EE_Admin_Page_Init {
 	protected function _set_init_properties() {
 		$this->label = __('Event Categories', 'event_espresso');
 		$this->menu_label = __('Event Categories', 'event_espresso');
-		$this->menu_slug = 'event_categories';
+		$this->menu_slug = EE_CATS_PG_SLUG;
 	}
 
 	public function get_menu_map() {
 		$map = array(
-			'group' => 'main',
-			'menu_order' => 5,
-			'show_on_menu' => TRUE,
-			'parent_slug' => 'events'
+				'group' => 'main',
+				'menu_order' => 5,
+				'show_on_menu' => TRUE,
+				'parent_slug' => 'espresso_events'
 			);
 		return $map;
 	}
