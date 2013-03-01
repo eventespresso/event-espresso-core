@@ -175,11 +175,11 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 		$activate_trigger = $deactivate_trigger = FALSE;
 		$gateways = array();
+		$default_gateways = array( 'Bank', 'Check', 'Invoice', 'Paypal_Standard' );
 		//let's assemble the array for the _tab_text_links helper
 		foreach ( $gateway_data['payment_settings'] as $gateway => $settings ) {
 
-			if (( $espresso_premium || $gateway == 'Paypal_Standard' )){			
-			
+			if (( $espresso_premium || in_array( $gateway, $default_gateways ))){		
 				// activate this gateway ?
 				$activate_trigger = isset($this->_req_data['activate_' . $gateway]) && !$activate_trigger ? $gateway : $activate_trigger;
 				// or deactivate this gateway ?
@@ -211,7 +211,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			$default = !empty( $gateways ) ? key($gateways) : 'Paypal_Standard';
 		}
 
-		$gateways = isset( $gateways ) ? $gateways : array();
+		//$gateways = isset( $gateways ) ? $gateways : array();
 		//printr( $gateways, '$gateways  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			
 		$this->_template_args['admin_page_header'] = EE_Tabbed_Content::tab_text_links( $gateways, 'gateway_links', '|', $default );

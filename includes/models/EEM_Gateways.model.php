@@ -153,7 +153,7 @@ Class EEM_Gateways {
 	private function _scan_and_load_all_gateways() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		// on the settings page, scan and load all the gateways
-		if (is_admin() && !empty($_GET['page']) && $_GET['page'] == 'payment_settings') {
+		if (is_admin() && !empty($_GET['page']) && $_GET['page'] == 'espresso_payment_settings') {
 			$this->_load_all_gateway_files();
 		} else {
 			// if something went wrong, fail gracefully
@@ -221,7 +221,7 @@ Class EEM_Gateways {
 		}
 		
 		$this->_all_gateways = array_merge($upload_gateways, $gateways);
-//		printr( $this->_all_gateways, '_all_gateways  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//printr( $this->_all_gateways, '_all_gateways  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		foreach ($this->_all_gateways as $gateway => $in_uploads) {
 			$classname = 'EE_' . $gateway;
@@ -252,7 +252,7 @@ Class EEM_Gateways {
 			}
 
 			if (class_exists($classname)) {
-//				echo '<h4>$classname : ' . $classname . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+				//echo '<h4>$classname : ' . $classname . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 				$that = &$this;
 				$gateway = call_user_func(array($classname, 'instance'), $that);
 				$this->_gateway_instances[$gateway->gateway()] = $gateway;
