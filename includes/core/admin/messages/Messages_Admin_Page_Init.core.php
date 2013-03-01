@@ -42,7 +42,7 @@ class Messages_Admin_Page_Init extends EE_Admin_Page_Init  {
 		define( 'EE_MSG_ASSETS_PATH', EE_MSG_ADMIN . 'assets' . DS );		
 		define( 'EE_MSG_ASSETS_URL', EE_CORE_ADMIN_URL  . 'messages/assets/' );	
 		define( 'EE_MSG_TEMPLATE_PATH', EE_MSG_ADMIN . 'templates' . DS );	
-		define( 'EE_MSG_TEMPLATE_URL', EE_CORE_ADMIN_URL . EE_MSG_PG_SLUG . '/templates/' );
+		define( 'EE_MSG_TEMPLATE_URL', EE_CORE_ADMIN_URL . 'messages/templates/' );
 
 		parent::__construct();
 	}

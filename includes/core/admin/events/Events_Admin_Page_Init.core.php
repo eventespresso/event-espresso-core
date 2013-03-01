@@ -32,10 +32,10 @@ class Events_Admin_Page_Init extends EE_Admin_Page_Init {
 		//define some events related constants
 		define( 'EVENTS_PG_SLUG', 'espresso_events' );	
 		define( 'EVENTS_LABEL', __('Events', 'event_espresso'));	
-		define( 'EVENTS_ADMIN', EE_CORE_ADMIN . EVENTS_PG_SLUG . DS );	
+		define( 'EVENTS_ADMIN', EE_CORE_ADMIN . 'events' . DS );	
 		define( 'EVENTS_ADMIN_URL', admin_url( 'admin.php?page=' . EVENTS_PG_SLUG ));	
 		define( 'EVENTS_TEMPLATE_PATH', EVENTS_ADMIN . 'templates' . DS );	
-		define( 'EVENTS_ASSETS_URL', EE_CORE_ADMIN_URL . EVENTS_PG_SLUG .'/assets/' );	
+		define( 'EVENTS_ASSETS_URL', EE_CORE_ADMIN_URL . 'events/assets/' );	
 		parent::__construct();
 	}
 
