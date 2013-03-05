@@ -36,12 +36,17 @@ abstract class EEM_Base extends EE_Base {
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
-	 *		@access private
+	 *		@access protected
 	 *		@return void
 	 */
 	protected function __construct() {
-		$this->singlular_item = __('Item','event_espresso');
-		$this->plural_item = __('Items','event_espresso');
+		if(isNull($this->singlular_item)){
+			$this->singlular_item = __('Item','event_espresso');
+		}
+		if(isNull($this->plural_item)){
+			$this->plural_item = __('Items','event_espresso');
+		}
+		
 	}
 
 	function get_table_data_types() {

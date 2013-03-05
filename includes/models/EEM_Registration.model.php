@@ -39,10 +39,10 @@ class EEM_Registration extends EEM_TempBase {
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
-	 *		@access private
+	 *		@access protected
 	 *		@return void
 	 */
-	private function __construct() {
+	protected function __construct() {
 		$this->singular_item = __('Registration','event_espresso');
 		$this->plural_item = __('Registrations','event_espresso');
 		$this->_get_registration_status_array();

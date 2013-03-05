@@ -52,10 +52,10 @@ class EEM_Price extends EEM_Base {
 	/**
 	 * 		private constructor to prevent direct creation
 	 * 		@Constructor
-	 * 		@access private
+	 * 		@access protected
 	 * 		@return void
 	 */
-	private function __construct() {
+	protected function __construct() {
 		global $wpdb;
 		// set table name
 		$this->table_name = $wpdb->prefix . 'esp_price';

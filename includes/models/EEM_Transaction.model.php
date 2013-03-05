@@ -55,10 +55,10 @@ class EEM_Transaction extends EEM_TempBase {
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
-	 *		@access private
+	 *		@access protected
 	 *		@return void
 	 */	
-	private function __construct() {	
+	protected function __construct() {	
 		$this->singlular_item = __('Transaction','event_espresso');
 		$this->plural_item = __('Transactions','event_espresso');		
 		// set table name

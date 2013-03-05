@@ -48,7 +48,7 @@ class EEM_Datetime extends EEM_Base {
 	 *		@access private
 	 *		@return void
 	 */
-	private function __construct() {
+	protected function __construct() {
 		global $wpdb;
 		// set table name
 		$this->table_name = $wpdb->prefix . 'esp_datetime';
