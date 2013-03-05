@@ -37,7 +37,7 @@ class Support_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _init_page_props() {
-		$this->page_slug = 'ee_support';
+		$this->page_slug = EE_SUPPORT_PG_SLUG;
 		$this->page_label = __('Help & Support', 'event_espresso');
 	}
 

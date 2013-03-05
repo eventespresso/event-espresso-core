@@ -206,11 +206,15 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 	public function load_scripts_styles_edit_category() {
 		//styles
 		wp_enqueue_style('jquery-ui-style');
-		wp_enqueue_style('ee_cats_admin_js', EE_CORE_ADMIN_URL . 'event_categories/assets/ee-cat-admin.css', array(), EVENT_ESPRESSO_VERSION );
+		wp_enqueue_style('ee_cat_admin', EE_CORE_ADMIN_URL . 'event_categories/assets/ee-cat-admin.css', array(), EVENT_ESPRESSO_VERSION );
 
 		//scripts
-		wp_enqueue_script('ee_admin_js');
-		wp_enqueue_script( 'ee_cats_admin_js', EE_CORE_ADMIN_URL . 'event_categories/assets/ee-cat-admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_enqueue_script( 'ee_cat_admin_js', EE_CORE_ADMIN_URL . 'event_categories/assets/ee-cat-admin.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );
+		
+		global $eei18n_js_strings;
+		$eei18n_js_strings['add_cat_name'] = __('Category Name is a required field. Please enter a value in order to continue.', 'event_espresso');
+		wp_localize_script( 'ee_cat_admin_js', 'eei18n', $eei18n_js_strings );
+
 	}
 
 

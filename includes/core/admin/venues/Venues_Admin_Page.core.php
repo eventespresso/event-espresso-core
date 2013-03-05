@@ -52,7 +52,7 @@ class Venues_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _init_page_props() {
-		$this->page_slug = 'ee_venues';
+		$this->page_slug = EE_VENUES_PG_SLUG;
 		$this->page_label = __('Event Venues', 'event_espresso');
 	}
 
@@ -197,8 +197,13 @@ class Venues_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_style('espress_venues');
 
 		//scripts
-		wp_enqueue_script('ee_admin_js');
+		//wp_enqueue_script('ee_admin_js');
 		wp_enqueue_script('espresso_venue_admin');
+
+		global $eei18n_js_strings;
+		$eei18n_js_strings['required'] = __( 'This is a required filed. Please add a value in order to continue.', 'event_espresso' );
+		wp_localize_script( 'espresso_venue_admin', 'eei18n', $eei18n_js_strings );
+
 	}
 
 

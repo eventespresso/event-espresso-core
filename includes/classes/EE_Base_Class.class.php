@@ -118,10 +118,12 @@ abstract class EE_Base_Class {
 					return $value;
 				case 'float':
 					return floatval($value);
+				case 'date':
+					return intval($value);
 				case 'enum':
 					return $value;
 					break;
-				case 'serializedtext'://accept anything. even if it's not an array, or if it's not yet serialized. we'll deal with it.
+				case 'serialized_text'://accept anything. even if it's not an array, or if it's not yet serialized. we'll deal with it.
 					if(is_array($value)){
 						return $value;
 					}else{
@@ -225,10 +227,18 @@ abstract class EE_Base_Class {
 			case 'float':
 				$return=floatval($value);
 				break;
+			case 'date':
+				//check if we've been given a string representing a time.
+				if(intval($value)!==0 && intval($value)!==1){
+					//if so, try to convert it to unix timestamp
+					$value=strtotime($value);
+				}
+				$return = intval($value);
+				break;
 			case 'enum':
 				$return=$value;
 				break;
-			case 'serializedtext':
+			case 'serialized_text':
 				if(is_array($value)){
 					$value=serialize($value);
 				}
@@ -280,13 +290,21 @@ abstract class EE_Base_Class {
 					$return= true;
 				}
 				break;
+			case 'date':
+				//@todo could verify date format here maybe.
+				//if we were to do that, the EE_Model_Field should take an input
+				//specifying teh date's format
+				if(is_int($value) || is_string($value)){
+					$return = true;
+				}
+				break;
 			case 'enum':
 				$allowedValues=$fieldSettings->allowed_enum_values();
 				if(in_array($value,$allowedValues) || in_array(intval($value),$allowedValues)){
 					$return=true;
 				}
 				break;
-			case 'serializedtext'://accept anything. even if it's not an array, or if it's not yet serialized. we'll deal with it.
+			case 'serialized_text'://accept anything. even if it's not an array, or if it's not yet serialized. we'll deal with it.
 				$return=true;
 		}
 		$return= apply_filters('filter_hook_espresso_verifyFieldIsOfCorrectType',$return,$value,$fieldSettings);//allow to be overridden
@@ -294,6 +312,69 @@ abstract class EE_Base_Class {
 			throw new EE_Error(sprintf(__("Internal Event Espresso error. Field %s on class %s is of type %s","event_espresso"),$fieldSettings->nicename,get_class($this),$fieldSettings->type()));
 		}
 		return $return;
+	}
+	
+	
+	
+	/**
+	 * To be used in template to immediately echo out the value, and format it for output.
+	 * Eg, shoudl call stripslashes and whatnought before echoing
+	 * @param string $fieldName the name of the field as it appears in teh DB
+	 * @return void
+	 */
+	public function e($fieldName){
+		$privateFieldName=$this->_get_private_attribute_name($fieldName);
+		$fieldSettings=$this->get_fields_settings();
+		if(array_key_exists($fieldName,$fieldSettings)){
+			$value=$this->$privateFieldName;
+			$thisFieldSettings=$fieldSettings[$fieldName];
+			switch($thisFieldSettings->type()){
+				case 'primary_key':
+				case 'foreign_key':
+				case 'int':
+					echo intval($value);
+					break;
+				case 'bool':
+				case 'deleted_flag':
+					if($value){
+						_e("Yes",'event_espresso');
+					}else{
+						_e("No",'event_espresso');
+					}
+					break;
+				case 'primary_text_key':
+				case 'foreign_text_key':
+				case 'plaintext':
+				case 'simplehtml':
+				case 'fullhtml':
+					echo stripslashes($value);
+					break;
+				case 'float':
+					echo floatval($value);
+					break;
+				case 'date':
+					
+					$format = get_option('date_format');
+					if ( empty( $value )) {
+						_e("Unknown",'event_espresso');
+					} else {
+						echo date_i18n( $format, strtotime( $value )); 
+					}
+					break;
+				case 'enum':
+					echo stripslashes($value);
+					break;
+				case 'serialized_text'://accept anything. even if it's not an array, or if it's not yet serialized. we'll deal with it.
+					if(is_array($value)){
+						echo stripslashes($value);
+					}else{
+						echo stripslashes(unserialize($value));
+					}
+			}
+		}else{
+			EE_Error::add_error(sprintf(__("You have requested a field named %s on model %s",'event_espresso'),$fieldName,get_class($this)), __FILE__, __FUNCTION__, __LINE__);
+			return;
+		}
 	}
 	
 	/**
@@ -331,6 +412,7 @@ abstract class EE_Base_Class {
 			$results = $this->_get_model()->update ( $save_cols_n_values, array($this->_get_primary_key_name()=>$this->get_primary_key()) );
 		} else {
 			unset($save_cols_n_values[$this->_get_primary_key_name()]);
+			
 			$results = $this->_get_model()->insert ( $save_cols_n_values );
 			if($results){//if successful, set the primary key
 				$results=$results['new-ID'];
@@ -367,11 +449,13 @@ abstract class EE_Base_Class {
 	 */
 	public function get_first_related( $relationName, $where_col_n_values = null, $orderby = null, $order = null, $operators = '=', $output = 'OBJECT_K'){
 		$internalName=$this->_get_private_attribute_name($relationName);
+		//cache the related object
 		if($this->$internalName==null){
 			$model=$this->_get_model();
 			$relationRequested=$model->get_first_related($this, $relationName,$where_col_n_values,$orderby,$order,$operators,$output);
 			$this->$internalName=$relationRequested;
 		}
+		//return teh now-cahced related object
 		return $this->$internalName;
 	}
 	
@@ -514,4 +598,3 @@ abstract class EE_Base_Class {
 	}
 	
 }
-?>

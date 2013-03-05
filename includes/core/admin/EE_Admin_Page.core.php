@@ -412,13 +412,17 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$this->_verify_routes();
 
 			if ( $this->_is_UI_request ) {
-
-				
 				//admin_init stuff - global, all views for this page class, specific view
 				add_action( 'admin_init', array( $this, 'admin_init_global' ), 5 );
 				add_action( 'admin_init', array( $this, 'admin_init' ), 10 );
-				if ( method_exists( $this, 'admin_init_' . $this->_current_view ) )
+				if ( method_exists( $this, 'admin_init_' . $this->_current_view )) {
 					add_action( 'admin_init', array( $this, 'admin_init_' . $this->_current_view ), 15 );
+				}
+				
+				// Check to make sure all of the main pages are setup properly,
+				// if not create the default pages and display an admin notice
+				$this->_verify_default_pages_exist();
+							
 			} else {
 				//hijack regular WP loading and route admin request immediately
 				if ( current_user_can( 'manage_options' ) )
@@ -521,6 +525,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts' ), 100 );
 		if ( method_exists( $this, 'admin_footer_scripts_' . $this->_current_view ) )
 			add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_' . $this->_current_view ), 101 );
+		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_eei18n_js_strings' ), 102 );
 	}
 
 	
@@ -1102,8 +1107,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//register all scripts
 		//wp_register_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-datepicker.js', array('jquery-ui-core'), EVENT_ESPRESSO_VERSION, true );
 		wp_register_script('jquery-ui-timepicker-addon', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker'), EVENT_ESPRESSO_VERSION, true );
-		wp_register_script('event_editor_js', EVENTS_ASSETS_URL . 'event_editor.js', array('jquery-ui-slider', 'jquery-ui-timepicker-addon'), EVENT_ESPRESSO_VERSION, true);
-		wp_register_script('event-espresso-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_espresso.js', array('jquery'), EVENT_ESPRESSO_VERSION, true);
+		wp_register_script('event_editor_js', EVENTS_ASSETS_URL . 'event_editor.js', array('ee_admin_js', 'jquery-ui-slider', 'jquery-ui-timepicker-addon'), EVENT_ESPRESSO_VERSION, true);
+		//wp_register_script('event-espresso-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_espresso.js', array('jquery'), EVENT_ESPRESSO_VERSION, true);
 		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('jquery', 'ee-parse-uri'), EVENT_ESPRESSO_VERSION, true );
 		wp_register_script('jquery-validate', EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.min.js", array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
 		wp_register_script('espresso_ajax_table_sorting', EE_CORE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js", array('ee_admin_js', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
@@ -1123,7 +1128,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		//attendee script registrations
-		wp_register_script('espresso_attendees', REG_ASSETS_URL . 'espresso_attendees_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
+		//wp_register_script('espresso_attendees', REG_ASSETS_URL . 'espresso_attendees_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
 
 		//registrations script register
 		wp_register_script('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.js', array('jquery-ui-datepicker', 'jquery-ui-draggable', 'ee_admin_js'), EVENT_ESPRESSO_VERSION, TRUE);
@@ -1162,16 +1167,73 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		//localizers (for passing variables to js as well)
-		$js_args = array(
-			'image_confirm' => __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso')
-			);
-		wp_localize_script( 'event_editor_js', 'EE_EDIT_VARS', $js_args );
+//		global $eei18n_js_strings;
+//		$eei18n_js_strings['image_confirm'] = __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso');
+//		wp_localize_script( 'event_editor_js', 'EE_EDIT_VARS', $eei18n_js_strings );
 
 
 		/** remove filters **/
 		remove_all_filters('mce_external_plugins');
 	}
 
+
+	
+
+	/**
+	*		admin_footer_scripts_eei18n_js_strings
+	* 
+	*		@access 		public
+	*		@return 		void
+	*/	
+	public function admin_footer_scripts_eei18n_js_strings() {
+		
+		global $eei18n_js_strings;
+		$eei18n_js_strings['confirm_delete'] = __( 'Are you absolutely sure you want to delete this item?\nThis action will delete ALL DATA asscociated with this item!!!\nThis can NOT be undone!!!', 'event_espresso' );
+		
+		$eei18n_js_strings['January'] = __( 'January', 'event_espresso' );
+		$eei18n_js_strings['February'] = __( 'February', 'event_espresso' );
+		$eei18n_js_strings['March'] = __( 'March', 'event_espresso' );
+		$eei18n_js_strings['April'] = __( 'April', 'event_espresso' );
+		$eei18n_js_strings['May'] = __( 'May', 'event_espresso' );
+		$eei18n_js_strings['June'] = __( 'June', 'event_espresso' );
+		$eei18n_js_strings['July'] = __( 'July', 'event_espresso' );
+		$eei18n_js_strings['August'] = __( 'August', 'event_espresso' );
+		$eei18n_js_strings['September'] = __( 'September', 'event_espresso' );
+		$eei18n_js_strings['October'] = __( 'October', 'event_espresso' );
+		$eei18n_js_strings['November'] = __( 'November', 'event_espresso' );
+		$eei18n_js_strings['December'] = __( 'December', 'event_espresso' );
+		$eei18n_js_strings['Jan'] = __( 'Jan', 'event_espresso' );
+		$eei18n_js_strings['Feb'] = __( 'Feb', 'event_espresso' );
+		$eei18n_js_strings['Mar'] = __( 'Mar', 'event_espresso' );
+		$eei18n_js_strings['Apr'] = __( 'Apr', 'event_espresso' );
+		$eei18n_js_strings['May'] = __( 'May', 'event_espresso' );
+		$eei18n_js_strings['Jun'] = __( 'Jun', 'event_espresso' );
+		$eei18n_js_strings['Jul'] = __( 'Jul', 'event_espresso' );
+		$eei18n_js_strings['Aug'] = __( 'Aug', 'event_espresso' );
+		$eei18n_js_strings['Sep'] = __( 'Sep', 'event_espresso' );
+		$eei18n_js_strings['Oct'] = __( 'Oct', 'event_espresso' );
+		$eei18n_js_strings['Nov'] = __( 'Nov', 'event_espresso' );
+		$eei18n_js_strings['Dec'] = __( 'Dec', 'event_espresso' );
+		
+		$eei18n_js_strings['Sunday'] = __( 'Sunday', 'event_espresso' );
+		$eei18n_js_strings['Monday'] = __( 'Monday', 'event_espresso' );
+		$eei18n_js_strings['Tuesday'] = __( 'Tuesday', 'event_espresso' );
+		$eei18n_js_strings['Wednesday'] = __( 'Wednesday', 'event_espresso' );
+		$eei18n_js_strings['Thursday'] = __( 'Thursday', 'event_espresso' );
+		$eei18n_js_strings['Friday'] = __( 'Friday', 'event_espresso' );
+		$eei18n_js_strings['Saturday'] = __( 'Saturday', 'event_espresso' );
+		$eei18n_js_strings['Sun'] = __( 'Sun', 'event_espresso' );
+		$eei18n_js_strings['Mon'] = __( 'Mon', 'event_espresso' );
+		$eei18n_js_strings['Tue'] = __( 'Tue', 'event_espresso' );
+		$eei18n_js_strings['Wed'] = __( 'Wed', 'event_espresso' );
+		$eei18n_js_strings['Thu'] = __( 'Thu', 'event_espresso' );
+		$eei18n_js_strings['Fri'] = __( 'Fri', 'event_espresso' );
+		$eei18n_js_strings['Sat'] = __( 'Sat', 'event_espresso' );
+		
+		wp_localize_script( 'ee_admin_js', 'eei18n', $eei18n_js_strings );
+		wp_localize_script( 'jquery-validate', 'eei18n', $eei18n_js_strings );
+		
+	}
 
 	
 
@@ -2423,6 +2485,118 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+
+
+
+
+
+
+	private function _verify_default_pages_exist() {
+				
+		if ( has_action('admin_notices', 'espresso_page_problems')) {
+			$this->_create_default_pages(); 
+		}
+
+
+	}
+
+
+
+
+
+	//This function installs the required pages
+	private function _create_default_pages() {
+
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+		global $wpdb, $org_options, $espresso_wp_user;
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		
+		$required_pages = array( 
+				'event_page_id' 	=> __( 'Event Registration', 'event_espresso' ), 
+				'return_url' 			=> __( 'Thank You', 'event_espresso' ), 
+				'cancel_return'	=> __( 'Registration Cancelled', 'event_espresso' ), 
+				'notify_url'			=> __( 'Transactions', 'event_espresso' ) 
+			);
+					
+		$existing_pages = get_pages();
+		//printr( $existing_pages, '$existing_pages  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		foreach ( $existing_pages as $page ) {
+			// does page already exist ?
+			if ( in_array( $page->post_title, $required_pages )) {
+				//make sure it's ID is set properlly, but first we'll need the right org_option key
+				$key = array_search( $page->post_title, $required_pages );
+				$org_options[ $key ] = $page->ID;
+				// now remove it from required pages list since we already have it
+				unset( $required_pages[ $key ] );
+			} 
+		}
+		
+		$event_reg = __( 'Event Registration', 'event_espresso' );
+		$thank_you = __( 'Thank You', 'event_espresso' );
+		$reg_cancelled = __( 'Registration Cancelled', 'event_espresso' );
+		$transactions = __( 'Transactions', 'event_espresso' );
+		
+		
+		$updated_flag = false;
+		$page_ids = get_all_page_ids();
+		foreach ( $required_pages as $new_page_title ) {
+
+			// Create post object
+			$my_post = array();
+			$my_post['post_title'] = $new_page_title;
+			$my_post['post_status'] = 'publish';
+			$my_post['post_type'] = 'page';
+			$my_post['comment_status'] = 'closed';
+			
+			//echo '<h4>$new_page_title : ' . $new_page_title . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+
+			switch ( $new_page_title ) {
+			
+				case $event_reg :
+					//if ( empty( $org_options['event_page_id'] ) || ! in_array( $org_options['event_page_id'], $page_ids )) {
+						$my_post['post_content'] = '[ESPRESSO_EVENTS]';
+						$event_page_id = wp_insert_post($my_post);
+						$org_options['event_page_id'] = $event_page_id;
+						$updated_flag = true;
+					//}
+					break;
+					
+				case $thank_you :
+					//if ( empty( $org_options['return_url'] ) || ! in_array( $org_options['return_url'], $page_ids )) {
+						$my_post['post_content'] = '[ESPRESSO_PAYMENTS]';
+						$return_url = wp_insert_post($my_post);
+						$org_options['return_url'] = $return_url;
+						$updated_flag = true;
+					//}
+					break;
+					
+				case $reg_cancelled :
+					//if ( empty( $org_options['cancel_return'] ) || ! in_array( $org_options['cancel_return'], $page_ids )) {
+						$my_post['post_content'] = 'You have cancelled your registration.<br />[ESPRESSO_CANCELLED]';
+						$cancel_return = wp_insert_post($my_post);
+						$org_options['cancel_return'] = $cancel_return;
+						$updated_flag = true;
+					//}
+					break;
+					
+				case $transactions :
+					//if ( empty( $org_options['notify_url'] ) || ! in_array( $org_options['notify_url'], $page_ids )) {
+						$my_post['post_content'] = '[ESPRESSO_TXN_PAGE]';
+						$notify_url = wp_insert_post($my_post);
+						$org_options['notify_url'] = $notify_url;
+						$updated_flag = true;
+					//}
+					break;
+			}
+		}
+		
+		update_user_meta( $espresso_wp_user, 'events_organization_settings', $org_options );
+		if ( $updated_flag ) {
+			require_once( EE_CORE . 'admin/admin_helper.php' );
+			add_action('admin_notices', 'espresso_updated_pages');
+		}
+			
+	}
 
 
 

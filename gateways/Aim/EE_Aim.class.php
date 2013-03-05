@@ -74,10 +74,10 @@ Class EE_Aim extends EE_Onsite_Gateway {
 	}
 
 	protected function __construct(EEM_Gateways &$model) {
-		$this->_gateway = 'Aim';
+		$this->_gateway_name = 'Aim';
 		$this->_button_base = 'aim-logo.png';
 		$this->_path = str_replace('\\', '/', __FILE__);
-		$this->_btn_img = is_readable( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway . '/lib/' . $this->_button_base : '';
+		$this->_btn_img = is_readable( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway_name . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 	}
 
@@ -200,14 +200,14 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 			$reg_info = $session_data['cart']['REG'];
 			$primary_attendee = $session_data['primary_attendee'];
-			
 			$registrations = $session_data['cart']['REG']['items'];
 
 			$item_num = 1;
+			require_once('EEM_Attendee.model.php');
 			foreach ($registrations as $registration) {
 				foreach ($registration['attendees'] as $attendee) {			
 					$item_name = substr( $registration['name'], 0, 31 );
-					$item_desc = substr( $attendee['fname'] . ' ' . $attendee['lname'] . ' - ' . $registration['name'] . ' - ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc'], 0, 255 );
+					$item_desc = substr( $attendee[EEM_Attendee::fname_question_id] . ' ' . $attendee[EEM_Attendee::lname_question_id] . ' - ' . $registration['name'] . ' - ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc'], 0, 255 );
 					$this->addLineItem( $item_num, $item_name, $item_desc, 1, $attendee['price_paid'], 'N');
 					$item_num++;				
 				}
@@ -225,17 +225,17 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 			//start transaction
 			$this->setField('amount', $grand_total);
-			$this->setField('card_num', $billing_info[ 'reg-page-billing-card-nmbr-' . $this->_gateway ]['value']);
-			$this->setField('exp_date', $billing_info[ 'reg-page-billing-card-exp-date-mnth-' . $this->_gateway ]['value'] . $billing_info['reg-page-billing-card-exp-date-year-' . $this->_gateway ]['value']);
-			$this->setField('card_code', $billing_info[ 'reg-page-billing-card-ccv-code-' . $this->_gateway ]['value']);
-			$this->setField('first_name', $billing_info[ 'reg-page-billing-fname-' . $this->_gateway ]['value']);
-			$this->setField('last_name', $billing_info[ 'reg-page-billing-lname-' . $this->_gateway ]['value']);
-			$this->setField('email', $billing_info[ 'reg-page-billing-email-' . $this->_gateway ]['value']);
-			$this->setField('address', $billing_info[ 'reg-page-billing-address-' . $this->_gateway ]['value']);
-			$this->setField('city', $billing_info[ 'reg-page-billing-city-' . $this->_gateway ]['value']);
-			$this->setField('state', $billing_info[ 'reg-page-billing-state-' . $this->_gateway ]['value']);
-			$this->setField('zip', $billing_info[ 'reg-page-billing-zip-' . $this->_gateway ]['value']);
-			$this->setField('cust_id', $primary_attendee['registration_id']['value']);
+			$this->setField('card_num', $billing_info[ 'reg-page-billing-card-nmbr-' . $this->_gateway_name ]['value']);
+			$this->setField('exp_date', $billing_info[ 'reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name ]['value'] . $billing_info['reg-page-billing-card-exp-date-year-' . $this->_gateway_name ]['value']);
+			$this->setField('card_code', $billing_info[ 'reg-page-billing-card-ccv-code-' . $this->_gateway_name ]['value']);
+			$this->setField('first_name', $billing_info[ 'reg-page-billing-fname-' . $this->_gateway_name ]['value']);
+			$this->setField('last_name', $billing_info[ 'reg-page-billing-lname-' . $this->_gateway_name ]['value']);
+			$this->setField('email', $billing_info[ 'reg-page-billing-email-' . $this->_gateway_name ]['value']);
+			$this->setField('address', $billing_info[ 'reg-page-billing-address-' . $this->_gateway_name ]['value']);
+			$this->setField('city', $billing_info[ 'reg-page-billing-city-' . $this->_gateway_name ]['value']);
+			$this->setField('state', $billing_info[ 'reg-page-billing-state-' . $this->_gateway_name ]['value']);
+			$this->setField('zip', $billing_info[ 'reg-page-billing-zip-' . $this->_gateway_name ]['value']);
+			$this->setField('cust_id', $primary_attendee['registration_id']);
 			$this->setField('invoice_num',$EE_Session->id()); 
 
 	
@@ -331,7 +331,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 		echo $this->_generate_payment_gateway_selection_button();
 		
-		$gw = $this->_gateway;
+		$gw = $this->_gateway_name;
 		?>
 
 
@@ -426,7 +426,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 		$reg_page_billing_inputs = array(
 		
-				'reg-page-billing-fname-' . $this->_gateway => array(
+				'reg-page-billing-fname-' . $this->_gateway_name => array(
 						'db-col' => 'fname',
 						'label' => __('First Name', 'event_espresso'),
 						'input' => 'text',
@@ -438,7 +438,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 						'format' => '%s'
 				),
 				
-				'reg-page-billing-lname-' . $this->_gateway => array(
+				'reg-page-billing-lname-' . $this->_gateway_name => array(
 						'db-col' => 'lname',
 						'label' => __('Last Name', 'event_espresso'),
 						'input' => 'text',
@@ -450,7 +450,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 						'format' => '%s'
 				),
 				
-				'reg-page-billing-email-' . $this->_gateway => array(
+				'reg-page-billing-email-' . $this->_gateway_name => array(
 						'db-col' => 'email',
 						'label' => __('Email Address', 'event_espresso'),
 						'input' => 'text',
@@ -462,7 +462,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 						'format' => '%s'
 				),
 				
-				'reg-page-billing-address-' . $this->_gateway => array(
+				'reg-page-billing-address-' . $this->_gateway_name => array(
 						'db-col' => 'address',
 						'label' => __('Address', 'event_espresso'),
 						'input' => 'text',
@@ -474,7 +474,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 						'format' => '%s'
 				),
 				
-				'reg-page-billing-city-' . $this->_gateway => array(
+				'reg-page-billing-city-' . $this->_gateway_name => array(
 						'db-col' => 'city',
 						'label' => __('City', 'event_espresso'),
 						'input' => 'text',
@@ -486,7 +486,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 						'format' => '%s'
 				),
 				
-				'reg-page-billing-state-' . $this->_gateway => array(
+				'reg-page-billing-state-' . $this->_gateway_name => array(
 						'db-col' => 'state',
 						'label' => __('State', 'event_espresso'),
 						'input' => 'text',
@@ -498,7 +498,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 						'format' => '%s'
 				),
 				
-				'reg-page-billing-zip-' . $this->_gateway => array(
+				'reg-page-billing-zip-' . $this->_gateway_name => array(
 						'db-col' => 'zip',
 						'label' => __('Zip Code', 'event_espresso'),
 						'input' => 'text',
@@ -510,7 +510,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 						'format' => '%s'
 				),
 				
-				'reg-page-billing-card-nmbr-' . $this->_gateway => array(
+				'reg-page-billing-card-nmbr-' . $this->_gateway_name => array(
 						'db-col' => 'card-nmbr',
 						'label' => __('Credit Card Number', 'event_espresso'),
 						'input' => 'text',
@@ -522,7 +522,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 						'format' => '%d'
 				),
 
-				'reg-page-billing-card-exp-date-mnth-' . $this->_gateway => array(
+				'reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name => array(
 						'db-col' => 'exp-date-mnth',
 						'label' => __('Expiry Date Month', 'event_espresso'),
 						'input' => 'select',
@@ -534,7 +534,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 						'format' => '%s'
 				),
 				
-				'reg-page-billing-card-exp-date-year-' . $this->_gateway => array(
+				'reg-page-billing-card-exp-date-year-' . $this->_gateway_name => array(
 						'db-col' => 'exp-date-year',
 						'label' => __('Expiry Date Year', 'event_espresso'),
 						'input' => 'select',
@@ -546,7 +546,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 						'format' => '%s'
 				),
 				
-				'reg-page-billing-card-ccv-code-' . $this->_gateway => array(
+				'reg-page-billing-card-ccv-code-' . $this->_gateway_name => array(
 						'db-col' => 'ccv-code',
 						'label' => __('CCV Code', 'event_espresso'),
 						'input' => 'text',

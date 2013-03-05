@@ -6,7 +6,7 @@
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
-  Version: 			3.2.DEV.3016
+  Version: 			3.2.DEV.3017
 
   Author: 				Seth Shoultes
   Author URI: 		http://www.eventespresso.com
@@ -48,7 +48,8 @@ function espresso_main_file() {
 	return $main_file;
 }
 
-
+global $eei18n_js_strings;
+$eei18n_js_strings = array();
 
 
 
@@ -81,18 +82,16 @@ add_action('init', 'espresso_add_rewrite_rules');
 add_filter('query_vars', 'espresso_add_query_vars');
 
 if ( is_admin() ) {
-
 	register_activation_hook(__FILE__, 'espresso_plugin_activation');
 	add_action('plugins_loaded', 'espresso_check_for_export');
 	add_action('plugins_loaded', 'espresso_check_for_import');
+	add_action('init', 'espresso_flush_rewrite_rules', 41);
 	add_action('init', 'espresso_init_admin_pages', 100);
 	add_action('admin_bar_menu', 'espresso_toolbar_items', 100);
-	add_action('init', 'espresso_flush_rewrite_rules', 41);
 	add_filter('plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2);
 	add_action( 'admin_enqueue_scripts', 'espresso_load_scripts_styles' );
 	
 } else {
-
 	add_action('init', 'espresso_export_certificate', 30);
 	add_action('init', 'espresso_export_invoice', 30);
 	add_action('init', 'espresso_export_ticket', 30);
@@ -102,6 +101,7 @@ if ( is_admin() ) {
 	add_action('widgets_init', 'espresso_widget');
 	add_action('wp_head', 'espresso_info_header');
 	add_action('wp_enqueue_scripts', 'add_espresso_stylesheet', 20);
+	add_action('wp_enqueue_scripts', 'eei18n_js_strings', 100 );
 
 }
 

@@ -69,7 +69,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _init_page_props() {
-		$this->page_slug = 'registration_form';
+		$this->page_slug = REGISTRATION_FORM_PG_SLUG;
 		$this->page_label = __('Registration Form', 'event_espresso');
 	}
 

@@ -33,7 +33,8 @@ class Venues_Admin_Page_Init extends EE_Admin_Page_Init {
 
 	public function __construct() {
 		//define some event categories related constants
-		define( 'EE_VENUES_ADMIN_URL', admin_url('admin.php?page=ee_venues') );
+		define( 'EE_VENUES_PG_SLUG', 'espresso_transactions' );	
+		define( 'EE_VENUES_ADMIN_URL', admin_url('admin.php?page=' . EE_VENUES_PG_SLUG ));
 		define( 'EE_VENUES_ASSETS_URL', EE_CORE_ADMIN_URL . 'venues/assets/');
 
 		parent::__construct();
@@ -42,15 +43,15 @@ class Venues_Admin_Page_Init extends EE_Admin_Page_Init {
 	protected function _set_init_properties() {
 		$this->label = __('Event Venues', 'event_espresso');
 		$this->menu_label = __('Venues', 'event_espresso');
-		$this->menu_slug = 'ee_venues';
+		$this->menu_slug = EE_VENUES_PG_SLUG;
 	}
 
 	public function get_menu_map() {
 		$map = array(
-			'group' => 'management',
-			'menu_order' => 30,
-			'show_on_menu' => TRUE,
-			'parent_slug' => 'events'
+				'group' => 'management',
+				'menu_order' => 30,
+				'show_on_menu' => TRUE,
+				'parent_slug' => 'espresso_events'
 			);
 		return $map;
 	}

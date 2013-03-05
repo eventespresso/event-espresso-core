@@ -21,17 +21,18 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Transaction {
+require_once('EE_Base_Class.class.php');
+class EE_Transaction extends EE_Base_Class{
 	
     /**
     *	Transaction ID
 	* 
 	* 	primary key
 	*	
-	* 	@access	private
+	* 	@access	protected
     *	@var int	
     */
-	private $_TXN_ID = FALSE;
+	protected $_TXN_ID = FALSE;
 
 	
 	
@@ -41,10 +42,10 @@ class EE_Transaction {
 	* 
 	*	date / time
 	*  
-	*	@access	private
+	*	@access	protected
     *	@var timestamp	
     */
-	private $_TXN_timestamp = NULL;
+	protected $_TXN_timestamp = NULL;
 	
 	
 	
@@ -53,10 +54,10 @@ class EE_Transaction {
 	* 
 	* 	note: always use Decimal(10,2) as SQL type for money
 	*
-	*	@access	private
+	*	@access	protected
     *	@var float	
     */
-	private $_TXN_total = 0;	
+	protected $_TXN_total = 0;	
 	
 	
 	
@@ -65,10 +66,10 @@ class EE_Transaction {
 	* 
 	* 	note: always use Decimal(10,2) as SQL type for money
 	*
-	*	@access	private
+	*	@access	protected
     *	@var float	
     */
-	private $_TXN_paid = 0;	
+	protected $_TXN_paid = 0;	
 	
 	
     /**
@@ -76,10 +77,10 @@ class EE_Transaction {
 	*
 	*	foreign key from status type table - 3 character string
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_STS_ID = NULL;
+	protected $_STS_ID = NULL;
 	
 	
 	
@@ -88,10 +89,10 @@ class EE_Transaction {
 	* 
     *	notes regarding the transaction
 	*  
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_TXN_details = NULL;	
+	protected $_TXN_details = NULL;	
 	
 	
 	
@@ -100,10 +101,10 @@ class EE_Transaction {
 	* 
     *	dump off the entire session object 
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_TXN_session_data = NULL;	
+	protected $_TXN_session_data = NULL;	
 	
 	
 	
@@ -112,10 +113,10 @@ class EE_Transaction {
 	* 
     *	required for some payment gateways
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_TXN_hash_salt = NULL;		
+	protected $_TXN_hash_salt = NULL;		
 
 
 
@@ -124,10 +125,10 @@ class EE_Transaction {
 	* 
     *	information regarding taxes
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var array	
     */
-	private $_TXN_tax_data = NULL;	
+	protected $_TXN_tax_data = NULL;	
 
 
 
@@ -141,7 +142,20 @@ class EE_Transaction {
     */
 	private $dt_frmt = 'F j, Y g:i a';	
 
-
+	
+	/**
+	 * Registrations on this transaction
+	 * @var EE_Registration[]
+	 */
+	protected $_Registrations = NULL;
+	
+	
+	
+	/**
+	 * Payments for this transaction
+	 * @var EE_Payment[]
+	 */
+	protected $_Payments = NULL;
 
 
 
@@ -266,14 +280,15 @@ class EE_Transaction {
 	*		@param		string		$details 		notes regarding the transaction
 	*/	
 	public function set_details( $details = FALSE ) {
-		
+		return $this->set('TXN_details',$details);
+		/*
 		if ( ! $details ) {
 			$msg = __( 'No details were supplied.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_TXN_details = $details;
-		return TRUE;
+		return TRUE;*/
 	}
 
 
@@ -287,15 +302,15 @@ class EE_Transaction {
 	* 		@access		public		
 	*		@param		string		$details 		dump off the entire session object 
 	*/	
-	public function set_txn_session_data( $session_data = FALSE ) {
-		
-		if ( ! $session_data ) {
+	public function set_txn_session_data( $session_data = FALSE ) {	
+		return	$this->set('TXN_session_data',$session_data);
+		/*if ( ! $session_data ) {
 			$msg = __( 'No session data was supplied.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		$this->_TXN_session_data = $session_data;
-		return TRUE;
+		return TRUE;*/
 	}
 
 
@@ -465,7 +480,7 @@ class EE_Transaction {
 	* 		@access		public
 	*/	
 	public function details() {
-		return maybe_unserialize( $this->_TXN_details );
+		return $this->get('TXN_details');
 	}
 
 
@@ -521,6 +536,72 @@ class EE_Transaction {
 
 	}	
 	
+	
+	
+	
+	/**
+	 * Gets registrations on this transaction
+	 * @return EE_Registration[]
+	 */
+	public function registrations(){
+		return $this->get_many_related('Registrations');
+	}
+	
+	/**
+	 * Gets teh primary registration only
+	 * @return EE_Registration
+	 */
+	public function primary_registration(){
+		require_once('EEM_Registration.model.php');
+		return $this->get_first_related('Registrations', array('REG_count'=>  EEM_Registration::PRIMARY_REGISTRANT_COUNT));
+	}
+	
+	
+	
+	/**
+	 * gets payments for this transaction
+	 * @return EE_Payment[]
+	 */
+	public function payments(){
+		return $this->get_many_related('Payments');
+	}
+	
+	
+	/**
+	 * gets only approved payments for this transaction
+	 * @return EE_Payment[]
+	 */
+	public function approved_payments(){
+		require_once('EEM_Payment.model.php');
+		return $this->get_first_related('Payments', array('STS_ID'=>  EEM_Payment::status_id_approved), 'PAY_timestamp', 'DESC');
+	}
+	
+	
+	/**
+	 * returns a pretty version of the status, good for displayign to users
+	 * @return string
+	 */
+	public function pretty_status(){
+		switch($this->status_ID()){
+			case EEM_Transaction::complete_status_code:
+				return __("Complete",'event_espresso');
+			case EEM_Transaction::incomplete_status_code:
+				return __('Incomplete','event_espresso');
+			case EEM_Transaction::pending_status_code:
+				return __('Complete, Pending Payment','event_espresso');
+			default:
+				return __('Unknown','event_espresso');
+		}
+	}
+	
+	
+	/**
+	 * echoes $this->pretty_status()
+	 * @return void
+	 */
+	public function e_pretty_status(){
+		echo $this->pretty_status();
+	}
 	
 
 

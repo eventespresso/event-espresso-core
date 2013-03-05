@@ -21,15 +21,47 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
-class EEM_Payment extends EEM_Base {
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_TempBase.model.php' );
+class EEM_Payment extends EEM_TempBase {
 
   	// private instance of the Payment object
 	private static $_instance = NULL;
 
 
 
-
+/**
+	 * Status id in esp_status table that represents an approved payment
+	 */
+	const status_id_approved = 'PAP';
+	
+	
+	/**
+	 * Status id in esp_status table that represents a pending payment
+	 */
+	const status_id_pending = 'PPN';
+	
+	
+	/**
+	 * Status id in esp_status table that represents a canceleld payment (eg, the
+	 * user went to PayPal, but on the paypal site decided to cancel teh payment)
+	 */
+	const status_id_cancelled = 'PCN';
+	
+	
+	
+	/**
+	 * Status id in esp_status table that represents a payment taht was declined by
+	 * the gateway. (eg, the user's card had no funds, or it was a fraudulent card)
+	 */
+	const status_id_declined = 'PDC';
+	
+	
+	
+	/**
+	 * Status id in esp_status table that represents a payment that failed for technical reasons.
+	 * (Eg, there was some error in communicating with the payment gateway.)
+	 */
+	const status_id_failed = 'PFL';
 
 	/**
 	 *		private constructor to prevent direct creation
@@ -38,9 +70,9 @@ class EEM_Payment extends EEM_Base {
 	 *		@return void
 	 */	
 	private function __construct() {	  
-		global $wpdb;
+		//global $wpdb;
 		// set table name
-		$this->table_name = $wpdb->prefix . 'esp_payment';
+		/*$this->table_name = $wpdb->prefix . 'esp_payment';
 		// set item names
 		$this->singlular_item = 'Payment';
 		$this->plual_item = 'Payments';		
@@ -59,11 +91,30 @@ class EEM_Payment extends EEM_Base {
 			'PAY_extra_accntng'			=> '%s',
 			'PAY_via_admin'					=> '%d',
 			'PAY_details'						=> '%s'
+		);*/
+		$this->_fields_settings = array(
+			'PAY_ID'=>				new EE_Model_Field('Payment ID', 'primary_key', false),
+			'TXN_ID'=>				new EE_Model_Field('Tranaction ID related to payment', 'foreign_key', false, null, null, 'Transaction'),
+			'STS_ID'=>				new EE_Model_Field('Status of payment', 'foreign_text_key', false, EEM_Payment::status_id_failed,null,'Status'),
+			'PAY_timestamp'=>		new EE_Model_Field('Unix Timestamp of when Payment occured','date',false,time()),
+			'PAY_method'=>			new EE_Model_Field('String stating method of payment', 'plaintext', true,'CART'),
+			'PAY_amount'=>			new EE_Model_Field('Amount this payment is for', 'float', false, 0),
+			'PAY_gateway'=>			new EE_Model_Field('Gateway name used for payment', 'plaintext', true, 'PayPal_Standard'),
+			'PAY_gateway_response'=>new EE_Model_Field('Response text from gateway that users would want to see', 'simplehtml', true,''),
+			'PAY_txn_id_chq_nmbr'=>	new EE_Model_Field('Unique ID for this payment in gateway, or cheque number', 'plaintext', true,''),
+			'PAY_po_number'=>		new EE_Model_Field('Purhcase or Sales Order Number','plaintext',true,''),
+			'PAY_extra_accntng'=>	new EE_Model_Field('Extra Accounting Info for Payment','simplehtml',true,''),
+			'PAY_via_admin'=>		new EE_Model_Field('Whether this payment was made via the admin', 'bool', false,false),
+			'PAY_details'=>			new EE_Model_Field('Full Response from Gateway concernign Payment', 'serialized_text', true,'')
+		);
+		$this->_related_models = array(
+			'Transaction'=>			new EE_Model_Relation('belongsTo', 'Transaction', 'TXN_ID'),
+			'Status'=>				new EE_Model_Relation('belongsTo', 'Status', 'STS_ID')
 		);
 		
 		// load Payment object class file
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Payment.class.php');
-
+		parent::__construct();
 	}
 
 	/**
@@ -82,51 +133,6 @@ class EEM_Payment extends EEM_Base {
 		// EEM_Payment object
 		return self::$_instance;
 	}
-
-
-
-
-	/**
-	*		cycle though array of payments and create objects out of each item
-	* 
-	* 		@access		private
-	* 		@param		array		$payments		
-	*		@return 		mixed		array on success, FALSE on fail
-	*/	
-	private function _create_objects( $payments = FALSE ) {
-
-		if ( ! $payments ) {
-			return FALSE;
-		} 		
-
-		if ( ! is_array( $payments )) {
-			$payments = array( $payments );
-		} 	
-		
-	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Payment.class.php' );
-
-		foreach ( $payments as $payment ) {
-				$array_of_objects[ $payment->PAY_ID ] = new EE_Payment(
-						$payment->TXN_ID,
-						$payment->STS_ID,
-						$payment->PAY_timestamp,
-						$payment->PAY_method,
-						$payment->PAY_amount,
-						$payment->PAY_gateway,
-						$payment->PAY_gateway_response,
-						$payment->PAY_txn_id_chq_nmbr,
-						$payment->PAY_po_number,
-						$payment->PAY_extra_accntng,
-						$payment->PAY_via_admin,
-						$payment->PAY_details,
-						$payment->PAY_ID
-				 	);
-		}	
-		return $array_of_objects;	
-
-	}
-
-
 
 
 	/**
@@ -172,6 +178,25 @@ class EEM_Payment extends EEM_Base {
 		}
 
 	}
+	
+	/**
+	 * Gets the payment by the gateway server's unique ID. Eg, the unique ID PayPal assigned
+	 * to the payment. This is handy for verifying an IPN hasn't already been processed.
+	 * @param string $txn_id_chq_nmbr
+	 * @return EE_Payment
+	 */
+	public function get_payment_by_txn_id_chq_nmbr($PAY_txn_id_chq_nmbr){
+		if ( ! $PAY_txn_id_chq_nmbr ) {
+			return FALSE;
+		}
+		$where_cols_n_values = array( 'PAY_txn_id_chq_nmbr' => $PAY_txn_id_chq_nmbr );
+		if ( $payment_row = $this->select_row_where ( $where_cols_n_values )) {
+			$payment_objects = $this->_create_objects( array( $payment_row ));
+			return array_shift( $payment_objects );
+		} else {
+			return array();
+		}
+	}
 
 
 
@@ -194,17 +219,23 @@ class EEM_Payment extends EEM_Base {
 		// retreive payments
 		$where_cols_n_values = array( 'TXN_ID' => $TXN_ID );
 		
-		if ( $payments = $this->select_all_where ( $where_cols_n_values, 'PAY_timestamp' )) {		
-			return $this->_create_objects( $payments );
-		} else {
+		 return $this->get_all_where ( $where_cols_n_values, 'PAY_timestamp' );		
+	}
+	
+	public function get_approved_payments_for_transaction( $TXN_ID = FALSE){
+		if ( ! $TXN_ID ) {
+			$msg = __('No Transaction ID was supplied.', 'event_espresso');
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ ); 
 			return FALSE;
 		}
+		// retreive payments
+		$where_cols_n_values = array( 'TXN_ID' => $TXN_ID,'STS_ID'=> EEM_Payment::status_id_approved );
 
+		return $this->get_all_where ( $where_cols_n_values, 'PAY_timestamp' );	
+		
 	}
-
-
-
-
+	
+	
 
 	/**
 	*		recalculate_total_payments_for_transaction
@@ -232,9 +263,9 @@ class EEM_Payment extends EEM_Base {
 
 		// set transaction status to complete if paid in full or the event was a freebie
 		if ( $total_paid == $transaction->total() || $transaction->total() == 0 ) {
-			$transaction->set_status('TCM');
+			$transaction->set_status(EEM_Transaction::complete_status_code);
 		} else {
-			$transaction->set_status('TPN');
+			$transaction->set_status(EEM_Transaction::incomplete_status_code);
 		}
 
 		// update transaction and return results
