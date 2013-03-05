@@ -402,7 +402,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 	 * @param EE_Transaction or ID $transaction
 	 * @return boolean
 	 */
-	public function handle_ipn_for_transaction($transaction){
+	public function handle_ipn_for_transaction(EE_Transaction $transaction){
 		$this->_debug_log("<hr><br>".get_class($this).":start handle_ipn_for_transaction on transaction:".($transaction instanceof EE_Transaction)?$transaction->ID():'unknown');
 		
 		//@todo just for debugging. remove in production
