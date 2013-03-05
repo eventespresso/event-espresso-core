@@ -91,19 +91,18 @@ abstract class EEM_TempBase extends EEM_Base{
 		return $classInstance;
 	}
 	/**
-	 * Returns the item's name. If there are many of these items, returns a plural version fo the name
+	 * Returns the item's translated name. If there are many of these items, returns a plural version fo the name.
+	 * Eg, on EEM_Registration, $eem_registration->item_name(1) would return "Registration", and on EEM_Transaction
+	 * $eem_transaction->item_name(2) will return "Transactions"
 	 * @param int $count
 	 * @return string the item's name pluralized. Eg, for the model 'EEM_Question_Group' the singular name would be 
 	 * 'Question Group' and the plural version would be 'Question Groups'
 	 */
 	public function item_name($count=0){
-		$modelName=get_class($this);
-		$className=str_replace("EEM_","",$modelName);
 		if($count>1){
-			require_once(EVENT_ESPRESSO_PLUGINFULLPATH.'/helpers/EE_Pluralize.helper.php');
-			return str_replace("_"," ", EE_Pluralize::pluralize_if($count, $className));
+			return $this->plural_item;
 		}else{
-			return $className;
+			return $this->singlular_item;
 		}
 	}
 	

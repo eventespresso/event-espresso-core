@@ -60,8 +60,8 @@ class EEM_Price extends EEM_Base {
 		// set table name
 		$this->table_name = $wpdb->prefix . 'esp_price';
 		// set item names
-		$this->singlular_item = 'Price';
-		$this->plual_item = 'Prices';		
+		$this->singlular_item = __('Price','event_espresso');
+		$this->plural_item = __('Prices','event_espresso');		
 		// array representation of the price table and the data types for each field
 		$this->table_data_types = array(
 				'PRC_ID'						=> '%d',

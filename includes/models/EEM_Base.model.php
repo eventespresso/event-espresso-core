@@ -30,8 +30,8 @@ abstract class EEM_Base extends EE_Base {
 	// array representation of a table and the data types for each field
 	protected $table_data_types = array();
 
-	protected $singlular_item = 'Item';
-	protected $plual_item = 'Items';
+	protected $singlular_item= NULL;
+	protected $plural_item = NULL;
 
 	/**
 	 *		private constructor to prevent direct creation
@@ -39,7 +39,9 @@ abstract class EEM_Base extends EE_Base {
 	 *		@access private
 	 *		@return void
 	 */
-	private function __construct() {
+	protected function __construct() {
+		$this->singlular_item = __('Item','event_espresso');
+		$this->plural_item = __('Items','event_espresso');
 	}
 
 	function get_table_data_types() {
@@ -627,7 +629,7 @@ abstract class EEM_Base extends EE_Base {
 		}
 		elseif ( $row_results > 1 ) {
 			// multiple rows were successfully updated
-			$msg = sprintf( __( 'Details for %d %s have been successfully saved to the database.', 'event_espresso' ), $results, $this->plual_item );
+			$msg = sprintf( __( 'Details for %d %s have been successfully saved to the database.', 'event_espresso' ), $row_results, $this->plural_item );
 			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			$update_results = TRUE;
 		} else {
@@ -731,7 +733,7 @@ abstract class EEM_Base extends EE_Base {
 			
 		} elseif ( $row_results > 1 ) {
 			// one row was successfully updated
-			$msg = sprintf( __( 'Details for %d %s have been successfully updated.', 'event_espresso' ), $row_results, $this->plual_item );
+			$msg = sprintf( __( 'Details for %d %s have been successfully updated.', 'event_espresso' ), $row_results, $this->plural_item );
 			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			
 		} elseif ( $row_results === 0 ) {
