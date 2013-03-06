@@ -1,8 +1,8 @@
 <?php
 
 function event_espresso_ideal_payment_settings() {
-	global $espresso_premium, $notices, $espresso_wp_user;
-	if ($espresso_premium != true)
+	global $caffeinated, $notices, $espresso_wp_user;
+	if ($caffeinated != true)
 		return;
 
 	$payment_settings = get_option('payment_data_' . $espresso_wp_user);

@@ -1,8 +1,8 @@
 <?php
 
 function event_espresso_realauth_payment_settings() {
-	global $espresso_premium, $notices, $espresso_wp_user;
-	if ($espresso_premium != true) {
+	global $caffeinated, $notices, $espresso_wp_user;
+	if ($caffeinated != true) {
 		return;
 	}
 

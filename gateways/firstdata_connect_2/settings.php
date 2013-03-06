@@ -1,8 +1,8 @@
 <?php
 
 function event_espresso_firstdata_connect_2_payment_settings() {
-	global $espresso_premium, $notices, $espresso_wp_user, $active_gateways;
-	if ($espresso_premium != true)
+	global $caffeinated, $notices, $espresso_wp_user, $active_gateways;
+	if ($caffeinated != true)
 		return;
 
 	$payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', true);

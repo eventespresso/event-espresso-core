@@ -474,7 +474,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * @return void
 	 */
 	private function _set_add_event_object() {
-		global $wpdb, $org_options, $espresso_premium, $current_user;
+		global $wpdb, $org_options, $caffeinated, $current_user;
 		get_currentuserinfo();
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$this->_event = new stdClass();
@@ -655,7 +655,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 	public function date_time_metabox() {
-		global $org_options, $espresso_premium;
+		global $org_options, $caffeinated;
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
@@ -767,14 +767,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 		
 		<div id="timezones-datetimes-dv" class="">
 
-			<?php if ((!isset($org_options['use_event_timezones']) || $org_options['use_event_timezones'] ) && $espresso_premium === TRUE) : ?>
+			<?php if ((!isset($org_options['use_event_timezones']) || $org_options['use_event_timezones'] ) && $caffeinated === TRUE) : ?>
 				<span class="run-in"> <?php _e('Current Time:', 'event_espresso'); ?> </span>
 				<span class="current-date"> <?php echo date(get_option('date_format')) . ' ' . date(get_option('time_format')); ?></span>
 				<?php do_action('action_hook_espresso_help', 'current_time_info'); ?>
 				<a class="change-date-time" href="options-general.php" target="_blank"><?php _e('Change timezone and date format settings?', 'event_espresso'); ?></a>
 			<?php endif; ?>
 
-			<?php if (!empty($org_options['use_event_timezones']) && $espresso_premium === TRUE) : ?>
+			<?php if (!empty($org_options['use_event_timezones']) && $caffeinated === TRUE) : ?>
 				<h6> <?php _e('Event Timezone:', 'event_espresso') ?> </h6>
 				<?php echo eventespresso_ddtimezone($this->_event->id) ?>
 			<?php endif; ?>
@@ -785,7 +785,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		<input  type="hidden" id="process_datetimes" name="process_datetimes" value="1"/>
 
 
-		<?php if ($espresso_premium) : ?>
+		<?php if ($caffeinated) : ?>
 			<script type="text/javascript">
 				(function($) {
 					var counter = <?php echo $row; ?>;
@@ -820,7 +820,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 				})(jQuery);
 			</script>
-		<?php endif; // $espresso_premium 
+		<?php endif; // $caffeinated 
 	}
 
 
@@ -828,7 +828,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 	public function pricing_metabox() {
-		global $org_options, $espresso_premium;
+		global $org_options, $caffeinated;
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
@@ -871,7 +871,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			<div id="no-ticket-prices-msg-dv">
 				<p>
 				<?php 
-				if ( $espresso_premium ) {
+				if ( $caffeinated ) {
 					_e('Please enter at lease one Event Price for this Event, or one Default Event Price to ensure that this Event displays and functions properly. Default Event Prices can be set on the <a href="'. admin_url( 'admin.php?page=espresso_pricing' ) .'">Pricing Management</a> page.', 'event_espresso'); 
 				} else {
 					_e('Please enter at lease one Event Price for this Event to ensure that this Event displays and functions properly.', 'event_espresso'); 
@@ -1284,8 +1284,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 	private function _espresso_venue_dd($current_value = 0) {
-		global $espresso_premium;
-		if ($espresso_premium != true)
+		global $caffeinated;
+		if ($caffeinated != true)
 			return;
 		global $wpdb, $espresso_manager, $espresso_wp_user;
 
@@ -1384,7 +1384,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 	public function venue_metabox() {
-		global $org_options, $espresso_premium;
+		global $org_options, $caffeinated;
 		$values = array(
 				array('id' => true, 'text' => __('Yes', 'event_espresso')),
 				array('id' => false, 'text' => __('No', 'event_espresso'))
@@ -1395,7 +1395,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		<table class="form-table">
 			<tr>
 				<?php
-				if ( $org_options['use_venue_manager'] && $espresso_premium ) {
+				if ( $org_options['use_venue_manager'] && $caffeinated ) {
 					$ven_type = 'class="use-ven-manager"';
 
 					?>
@@ -1585,8 +1585,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 	public function event_meta_metabox() {
 		global $wpdb, $org_options;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $espresso_premium;
-		if ($espresso_premium != true)
+		global $caffeinated;
+		if ($caffeinated != true)
 			return;
 
 		$event_meta = $this->_event->event_meta;
@@ -2651,7 +2651,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$this->_espresso_reset_cache();
 
 	/* @var $espresso_wp_user type array*/
-		global $wpdb, $espresso_wp_user, $espresso_premium;
+		global $wpdb, $espresso_wp_user, $caffeinated;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 		$wpdb->show_errors();
@@ -2685,7 +2685,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$event_meta['event_thumbnail_url'] = $this->_req_data['upload_image'];
 		$event_meta['display_thumb_in_lists'] = $this->_req_data['show_thumb_in_lists'];
 		$event_meta['display_thumb_in_regpage'] = $this->_req_data['show_thumb_in_regpage'];
-		if (function_exists('espresso_calendar_config_mnu') && $espresso_premium == true) {
+		if (function_exists('espresso_calendar_config_mnu') && $caffeinated == true) {
 			$event_meta['display_thumb_in_calendar'] = $this->_req_data['show_on_calendar'];
 		}
 
@@ -2837,7 +2837,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		do_action('action_hook_espresso_insert_event_add_ons');
 		############# MailChimp Integration ##############
-		if (get_option('event_mailchimp_active') == 'true' && $espresso_premium == true) {
+		if (get_option('event_mailchimp_active') == 'true' && $caffeinated == true) {
 			MailChimpController::add_event_list_rel($last_event_id);
 		}
 
@@ -3159,7 +3159,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	private function _update_event() {
 		//print_r($this->_req_data);
 
-		global $wpdb, $espresso_wp_user, $espresso_premium;
+		global $wpdb, $espresso_wp_user, $caffeinated;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 		$wpdb->show_errors();
@@ -3668,7 +3668,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 		############# MailChimp Integration ###############
-		if (get_option('event_mailchimp_active') == 'true' && $espresso_premium == true) {
+		if (get_option('event_mailchimp_active') == 'true' && $caffeinated == true) {
 			MailChimpController::update_event_list_rel($event_id);
 		}
 

@@ -1502,7 +1502,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	  		/*echo '<h4 style="margin:0">' . __('From the Forums', 'event_espresso') . '</h4>';
 
-	  		if ($espresso_premium == true){
+	  		if ($caffeinated == true){
 	  		@wp_widget_rss_output('http://eventespresso.com/forum/event-espresso-support/feed', array('show_date' => 0, 'items' => 4));
 	  		}else{
 	  		@wp_widget_rss_output('http://eventespresso.com/forum/event-espresso-public/feed', array('show_date' => 0, 'items' => 4));
@@ -1579,8 +1579,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	   	</ul>
 	</div>
 		   <?php
-		   global $espresso_premium;
-		   if ( ! $espresso_premium ) {
+		   global $caffeinated;
+		   if ( ! $caffeinated ) {
 		   	?>
    	<div id="submitdiv2" class="postbox " >
    		<h3>

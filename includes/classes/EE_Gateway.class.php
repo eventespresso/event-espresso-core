@@ -159,9 +159,9 @@ abstract class EE_Gateway {
 
 	public function add_settings_page_meta_box() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $espresso_premium;
+		global $caffeinated;
 		$default_gateways = array( 'Bank', 'Check', 'Invoice', 'Paypal_Standard' );
-		if (( $espresso_premium || in_array( $this->_gateway, $default_gateways )) && isset( $this->_payment_settings['display_name'] )){
+		if (( $caffeinated || in_array( $this->_gateway, $default_gateways )) && isset( $this->_payment_settings['display_name'] )){
 			add_meta_box(
 						'espresso_' . $this->_gateway . '_payment_settings', $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso'), array(&$this, 'settings_meta_box'), 'event-espresso_page_espresso_payment_settings', 'normal'
 			);
@@ -170,9 +170,9 @@ abstract class EE_Gateway {
 
 	public function settings_meta_box() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $espresso_premium;
+		global $caffeinated;
 		$default_gateways = array( 'Bank', 'Check', 'Invoice', 'Paypal_Standard' );
-		if ( ! $espresso_premium && ! in_array( $this->_gateway, $default_gateways )) {
+		if ( ! $caffeinated && ! in_array( $this->_gateway, $default_gateways )) {
 			return;
 		}
 		?>

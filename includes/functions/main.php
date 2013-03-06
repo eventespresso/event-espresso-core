@@ -533,9 +533,9 @@ if (!function_exists('get_number_of_attendees_reg_limit')) {
 
 function espresso_registration_footer() {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	global $espresso_premium, $org_options;
+	global $caffeinated, $org_options;
 	$url = (!isset($org_options['affiliate_id']) || $org_options['affiliate_id'] == '' || $org_options['affiliate_id'] == 0) ? 'http://eventespresso.com/' : 'https://www.e-junkie.com/ecom/gb.php?cl=113214&c=ib&aff=' . $org_options['affiliate_id'];
-	if (!$espresso_premium || !empty($org_options['show_reg_footer'])) {
+	if (!$caffeinated || !empty($org_options['show_reg_footer'])) {
 		return '<p style="font-size: 12px;"><a href="' . $url . '" title="Event Registration Powered by Event Espresso" target="_blank">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress" target="_blank">Event Espresso</a></p>';
 	}
 }
@@ -902,8 +902,8 @@ if (!function_exists('espresso_show_personnel')) {
 
 	function espresso_show_personnel($event_id, $atts) {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $espresso_premium;
-		if ($espresso_premium != true)
+		global $caffeinated;
+		if ($caffeinated != true)
 			return;
 		global $wpdb;
 		extract($atts, EXTR_PREFIX_ALL, "v");
@@ -1048,8 +1048,8 @@ function espresso_check_scripts() {
 //These functions were moved here from admin.php on 08-30-2011 by Seth
 function espresso_edit_this($event_id) {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	global $espresso_premium;
-	if ($espresso_premium != true)
+	global $caffeinated;
+	if ($caffeinated != true)
 		return;
 	$curauth = wp_get_current_user();
 	$user_id = $curauth->ID;

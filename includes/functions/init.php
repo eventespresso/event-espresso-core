@@ -413,10 +413,10 @@ function espresso_flush_rewrite_rules() {
 
 function espresso_dashboard_init() {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-	global $org_options, $espresso_premium;
+	global $org_options, $caffeinated;
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/dashboard_widget.php');
 	wp_add_dashboard_widget('espresso_news_dashboard_widget', 'Event Espresso News', 'espresso_news_dashboard_widget_function');
-	if (!empty($org_options['espresso_dashboard_widget']) && $espresso_premium) {
+	if (!empty($org_options['espresso_dashboard_widget']) && $caffeinated) {
 		event_espresso_dashboard_widget();
 	}
 }

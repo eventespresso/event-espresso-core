@@ -146,7 +146,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 	protected function _gateway_settings() {
 		
-		global $EE_Session, $EEM_Gateways, $espresso_premium;
+		global $EE_Session, $EEM_Gateways, $caffeinated;
 		
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Tabbed_Content.helper.php' ;
 		
@@ -179,7 +179,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		//let's assemble the array for the _tab_text_links helper
 		foreach ( $gateway_data['payment_settings'] as $gateway => $settings ) {
 
-			if (( $espresso_premium || in_array( $gateway, $default_gateways ))){		
+			if (( $caffeinated || in_array( $gateway, $default_gateways ))){		
 				// activate this gateway ?
 				$activate_trigger = isset($this->_req_data['activate_' . $gateway]) && !$activate_trigger ? $gateway : $activate_trigger;
 				// or deactivate this gateway ?

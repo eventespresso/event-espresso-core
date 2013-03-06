@@ -2,8 +2,8 @@
 
 function event_espresso_worldpay_payment_settings() {
 
-	global $espresso_premium, $notices, $espresso_wp_user, $org_options;
-	if ($espresso_premium != true)
+	global $caffeinated, $notices, $espresso_wp_user, $org_options;
+	if ($caffeinated != true)
 		return;
 
 	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
