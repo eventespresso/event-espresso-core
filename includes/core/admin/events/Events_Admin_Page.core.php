@@ -405,7 +405,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$publish_box_extra_args['view_attendees_url'] = add_query_arg( array( 'action' => 'default', 'event_id' => $this->_event->id ), REG_ADMIN_URL ); 
 		$publish_box_extra_args['attendees_reg_limit'] = get_number_of_attendees_reg_limit($this->_event->id, 'num_attendees_slash_reg_limit', $this->_event->reg_limit ); 
 		$publish_box_extra_args['misc_pub_section_class'] = apply_filters('filter_hook_espresso_event_editor_email_attendees_class', 'misc-pub-section');
-		$publish_box_extra_args['email_attendees_url'] = add_query_arg( array( 'event_admin_reports' => 'event_newsletter', 'event_id' => $this->_event->id ), 'admin.php?page=attendees' ); 
+		$publish_box_extra_args['email_attendees_url'] = add_query_arg( array( 'event_admin_reports' => 'event_newsletter', 'event_id' => $this->_event->id ), 'admin.php?page=espresso_registrations' ); 
 		$publish_box_extra_args['event_editor_overview_add'] = do_action( 'action_hook_espresso_event_editor_overview_add', $this->_event ); 
 		// load template
 		$this->_template_args['publish_box_extra_content'] = espresso_display_template( EVENTS_TEMPLATE_PATH . 'event_publish_box_extras.template.php', $publish_box_extra_args, TRUE );
@@ -872,7 +872,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				<p>
 				<?php 
 				if ( $espresso_premium ) {
-					_e('Please enter at lease one Event Price for this Event, or one Default Event Price to ensure that this Event displays and functions properly. Default Event Prices can be set on the <a href="'. admin_url( 'admin.php?page=pricing' ) .'">Pricing Management</a> page.', 'event_espresso'); 
+					_e('Please enter at lease one Event Price for this Event, or one Default Event Price to ensure that this Event displays and functions properly. Default Event Prices can be set on the <a href="'. admin_url( 'admin.php?page=espresso_pricing' ) .'">Pricing Management</a> page.', 'event_espresso'); 
 				} else {
 					_e('Please enter at lease one Event Price for this Event to ensure that this Event displays and functions properly.', 'event_espresso'); 
 				}				
@@ -1345,7 +1345,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				<span>Country:</span> " . stripslashes($venue->country) . "<br/>
 				<span>Venue ID:</span> " . $venue->id . "<br/></p>
 				This venues shortcode <b class='highlight'>[ESPRESSO_VENUE id='" . $venue->id . "']</b><br/>";
-				$div .= '<a href="admin.php?page=event_venues&action=edit&id=' . $venue->id . '" target="_blank">' . __('Edit this venue', 'event_espresso') . '</a> | <a class="thickbox link" href="#TB_inline?height=300&width=400&inlineId=venue_info">Shortcode</a></li></ul>';
+				$div .= '<a href="admin.php?page=espresso_venues&action=edit&id=' . $venue->id . '" target="_blank">' . __('Edit this venue', 'event_espresso') . '</a> | <a class="thickbox link" href="#TB_inline?height=300&width=400&inlineId=venue_info">Shortcode</a></li></ul>';
 				$div .= "</fieldset>";
 			}
 			$field .= "</select>";
@@ -1405,7 +1405,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 								<p class="info">
 									<b><?php _e('You have not created any venues yet.', 'event_espresso'); ?></b>
 								</p>
-								<p><a href="admin.php?page=event_venues"><?php echo __('Add venues to the Venue Manager', 'event_espresso') ?></a></p>
+								<p><a href="admin.php?page=espresso_venues"><?php echo __('Add venues to the Venue Manager', 'event_espresso') ?></a></p>
 							<?php else: ?>
 								<?php echo $this->_espresso_venue_dd($this->_event->venue_id) ?>
 							<?php endif; ?>
@@ -1924,12 +1924,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 					<?php _e('Question Groups', 'event_espresso'); ?>
 				</strong><br />
 				<?php _e('Add a pre-populated', 'event_espresso'); ?>
-				<a href="admin.php?page=form_groups" target="_blank">
-					<?php _e('group', 'event_espresso'); ?>
-				</a>
-				<?php _e('of', 'event_espresso'); ?>
-				<a href="admin.php?page=form_builder" target="_blank">
-					<?php _e('questions', 'event_espresso'); ?>
+				<a href="admin.php?page=espresso_registration_form" target="_blank">
+					<?php _e('group of questions', 'event_espresso'); ?>
 				</a>
 				<?php _e('to your event. The personal information group is required for all events.', 'event_espresso'); ?>
 			</p>
@@ -1976,12 +1972,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 					<?php _e('Question Groups', 'event_espresso'); ?>
 				</strong><br />
 				<?php _e('Add a pre-populated', 'event_espresso'); ?>
-				<a href="admin.php?page=form_groups" target="_blank">
-					<?php _e('group', 'event_espresso'); ?>
-				</a>
-				<?php _e('of', 'event_espresso'); ?>
-				<a href="admin.php?page=form_builder" target="_blank">
-					<?php _e('questions', 'event_espresso'); ?>
+				<a href="admin.php?page=espresso_registration_form" target="_blank">
+					<?php _e('group of questions', 'event_espresso'); ?>
 				</a>
 				<?php _e('to your event. The personal information group is required for all events.', 'event_espresso'); ?>
 			</p>

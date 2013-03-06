@@ -68,9 +68,9 @@ function event_espresso_firstdata_connect_2_payment_settings() {
 			
 		echo '<ul>';
 		if (!array_key_exists('firstdata_connect_2', $active_gateways)) {
-			echo '<li id="activate_firstdata_connect_2" style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_firstdata_connect_2=true#firstdata_connect_2\';" class="green_alert pointer"><strong>' . __('Activate First Data Connect 2?', 'event_espresso') . '</strong></li>';
+			echo '<li id="activate_firstdata_connect_2" style="width:30%;" onclick="location.href=' . EE_PAYMENTS_ADMIN . '&activate_firstdata_connect_2=true#firstdata_connect_2\';" class="green_alert pointer"><strong>' . __('Activate First Data Connect 2?', 'event_espresso') . '</strong></li>';
 		} else {
-			echo '<li id="deactivate_firstdata_connect_2" style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_firstdata_connect_2=true\';" class="red_alert pointer"><strong>' . __('Deactivate First Data Connect 2?', 'event_espresso') . '</strong></li>';
+			echo '<li id="deactivate_firstdata_connect_2" style="width:30%;" onclick="location.href=' . EE_PAYMENTS_ADMIN . '&deactivate_firstdata_connect_2=true\';" class="red_alert pointer"><strong>' . __('Deactivate First Data Connect 2?', 'event_espresso') . '</strong></li>';
 			event_espresso_display_firstdata_connect_2_settings($payment_settings);
 		}
 		echo '</ul>';

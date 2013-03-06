@@ -2,7 +2,7 @@
 /*
   Plugin Name: 	Event Espresso
   Plugin URI: 		http://eventespresso.com/
-  Description: 		Out-of-the-box Events Registration integrated with PayPal IPN for your WordPress blog/website. <a href="admin.php?page=support" >Support</a>
+  Description: 		Out-of-the-box Events Registration integrated with PayPal IPN for your WordPress blog/website. <a href="admin.php?page=espresso_support" >Support</a>
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
@@ -32,6 +32,7 @@
 function espresso_version() {
 	return '3.2.3016';
 }
+
 
 define("EVENT_ESPRESSO_VERSION", espresso_version());
 

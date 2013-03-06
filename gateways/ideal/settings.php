@@ -65,10 +65,10 @@ function event_espresso_ideal_payment_settings() {
 					echo '<ul>';
 					switch ($payment_settings['ideal']['active']) {
 						case false:
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_ideal=true#ideal\';" class="green_alert pointer"><strong>' . __('Activate iDEAL (Mollie)?', 'event_espresso') . '</strong></li>';
+							echo '<li style="width:30%;" onclick="location.href=' . EE_PAYMENTS_ADMIN . '&activate_ideal=true#ideal\';" class="green_alert pointer"><strong>' . __('Activate iDEAL (Mollie)?', 'event_espresso') . '</strong></li>';
 							break;
 						case true:
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_ideal=true\';" class="red_alert pointer"><strong>' . __('Deactivate iDEAL (Mollie)?', 'event_espresso') . '</strong></li>';
+							echo '<li style="width:30%;" onclick="location.href=' . EE_PAYMENTS_ADMIN . '&deactivate_ideal=true\';" class="red_alert pointer"><strong>' . __('Deactivate iDEAL (Mollie)?', 'event_espresso') . '</strong></li>';
 							event_espresso_display_ideal_settings();
 							break;
 					}

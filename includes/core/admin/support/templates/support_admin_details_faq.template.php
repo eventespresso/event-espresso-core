@@ -40,7 +40,7 @@
 		<dd>
 			<p>
 <?php _e('Check your email settings on the', 'event_espresso'); ?>
-			<a href="admin.php?page=ee_messages"><?php _e('Event Espresso', 'event_espresso'); ?> > <?php _e('Messages', 'event_espresso'); ?></a> <?php _e('page', 'event_espresso'); ?><br />
+			<a href="admin.php?page=espresso_messages"><?php _e('Event Espresso', 'event_espresso'); ?> > <?php _e('Messages', 'event_espresso'); ?></a> <?php _e('page', 'event_espresso'); ?><br />
 				<img class="email-settings-img" src="http://ee-updates.s3.amazonaws.com/images/email-settings.png" width="472" height="120" />
 			</p>
 			<p>

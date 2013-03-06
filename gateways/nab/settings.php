@@ -67,10 +67,10 @@ function event_espresso_nab_settings() {
 					echo '<ul>';
 					switch ($payment_settings['nab']['active']) {
 						case false:
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_nab=true#nab\';" class="green_alert pointer"><strong>' . __('Activate NAB Transact Direct Post?', 'event_espresso') . '</strong></li>';
+							echo '<li style="width:30%;" onclick="location.href=' . EE_PAYMENTS_ADMIN . '&activate_nab=true#nab\';" class="green_alert pointer"><strong>' . __('Activate NAB Transact Direct Post?', 'event_espresso') . '</strong></li>';
 							break;
 						case true:
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_nab=true\';" class="red_alert pointer"><strong>' . __('Deactivate NAB Transact Direct Post?', 'event_espresso') . '</strong></li>';
+							echo '<li style="width:30%;" onclick="location.href=' . EE_PAYMENTS_ADMIN . '&deactivate_nab=true\';" class="red_alert pointer"><strong>' . __('Deactivate NAB Transact Direct Post?', 'event_espresso') . '</strong></li>';
 							event_espresso_display_nab_settings();
 							break;
 					}

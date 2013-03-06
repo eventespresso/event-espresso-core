@@ -3,18 +3,6 @@
 *
 */
 
-a[href="admin.php?page=discounts"],  
-a[href="admin.php?page=form_builder"],  
-a[href="admin.php?page=event_categories"], 
-a[href="admin.php?page=event_venues"],
-a[href="admin.php?page=event_categories"] {
-	border-bottom: 1px solid #ccc; margin-bottom: 5px; padding-bottom: 5px;
-}
-
-a[href="admin.php?page=admin_addons"] {
-	border-top: 1px solid #ccc; margin-top: 5px; padding-top: 5px;
-}
-
 .ee_menu_group {
 	display:block;background-color: #ddd; margin: -2px -5px 0px -12px; padding: 2px 0 2px 10px; font-weight: bold;letter-spacing: 1px; cursor:default;
 }

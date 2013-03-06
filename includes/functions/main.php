@@ -12,7 +12,7 @@ function espresso_edit_attendee($registration_id, $attendee_id, $event_id = 0, $
 		$text = __('Edit Attendee', 'event_espresso');
 	switch ($type) {
 		case'admin':
-			$html .= '<a href="' . get_admin_url() . 'admin.php?page=attendees&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&form_action=edit_attendee&id=' . $attendee_id . '&registration_id=' . $registration_id . '">' . $text . '</a>';
+			$html .= '<a href="' . get_admin_url() . 'admin.php?page=espresso_registrations&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&form_action=edit_attendee&id=' . $attendee_id . '&registration_id=' . $registration_id . '">' . $text . '</a>';
 			break;
 		case'attendee':
 		default:

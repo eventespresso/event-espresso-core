@@ -72,10 +72,10 @@ function event_espresso_quickpay_payment_settings() {
 					echo '<ul>';
 					switch ($payment_settings['quickpay']['active']) {
 						case false:
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_quickpay=true#quickpay\';" class="green_alert pointer"><strong>' . __('Activate quickpay IPN?', 'event_espresso') . '</strong></li>';
+							echo '<li style="width:30%;" onclick="location.href=' . EE_PAYMENTS_ADMIN . '&activate_quickpay=true#quickpay\';" class="green_alert pointer"><strong>' . __('Activate quickpay IPN?', 'event_espresso') . '</strong></li>';
 							break;
 						case true:
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_quickpay=true\';" class="red_alert pointer"><strong>' . __('Deactivate quickpay IPN?', 'event_espresso') . '</strong></li>';
+							echo '<li style="width:30%;" onclick="location.href=' . EE_PAYMENTS_ADMIN . '&deactivate_quickpay=true\';" class="red_alert pointer"><strong>' . __('Deactivate quickpay IPN?', 'event_espresso') . '</strong></li>';
 							event_espresso_display_quickpay_settings();
 							break;
 					}

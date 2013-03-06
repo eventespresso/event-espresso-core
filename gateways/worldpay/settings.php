@@ -79,10 +79,10 @@ function event_espresso_worldpay_payment_settings() {
 					echo '<ul>';
 					switch ($payment_settings['worldpay']['active']) {
 						case false:
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_worldpay=true#worldpay\';" class="green_alert pointer"><strong>' . __('Activate worldpay IPN?', 'event_espresso') . '</strong></li>';
+							echo '<li style="width:30%;" onclick="location.href=' . EE_PAYMENTS_ADMIN . '&activate_worldpay=true#worldpay\';" class="green_alert pointer"><strong>' . __('Activate worldpay IPN?', 'event_espresso') . '</strong></li>';
 							break;
 						case true:
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_worldpay=true\';" class="red_alert pointer"><strong>' . __('Deactivate worldpay IPN?', 'event_espresso') . '</strong></li>';
+							echo '<li style="width:30%;" onclick="location.href=' . EE_PAYMENTS_ADMIN . '&deactivate_worldpay=true\';" class="red_alert pointer"><strong>' . __('Deactivate worldpay IPN?', 'event_espresso') . '</strong></li>';
 							event_espresso_display_worldpay_settings();
 							break;
 					}

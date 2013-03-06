@@ -130,7 +130,7 @@
 						<?php _e('Deleted', 'event_espresso'); ?>
 					</strong><br />
 					<?php _e('This is event type will not appear in the event listings and will not dispaly a registrations page. Deleted events can still be accessed in the', 'event_espresso'); ?>
-					<a href="admin.php?page=events"><?php _e('Registration Overview', 'event_espresso'); ?></a>
+					<a href="admin.php?page=espresso_events"><?php _e('Registration Overview', 'event_espresso'); ?></a>
 					<?php _e('page', 'event_espresso'); ?>
 					.</li>
 			</ul>
@@ -261,7 +261,7 @@ function my_event_meta(){
 add_filter( 'filter_hook_espresso_filter_default_event_meta', 'my_event_meta' );
 			</pre>
 
-			<p> <?php echo __('Further information on shortcodes is available ', 'event_espresso') . "<a href='" . admin_url('admin.php?page=support#shortcodes') . " '>" . __('on the Help &amp; Support page', 'event_espresso') . "</a>" . __(' or from the', 'event_espreso') . " <a href='http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/'>" . __('forums', 'event_espresso') . "</a>."; ?> </p>
+			<p> <?php echo __('Further information on shortcodes is available ', 'event_espresso') . "<a href='" . admin_url('admin.php?page=espresso_support#shortcodes') . " '>" . __('on the Help &amp; Support page', 'event_espresso') . "</a>" . __(' or from the', 'event_espreso') . " <a href='http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/'>" . __('forums', 'event_espresso') . "</a>."; ?> </p>
 		</div>
 	</div>
 

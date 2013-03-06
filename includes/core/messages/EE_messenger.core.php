@@ -279,7 +279,7 @@ abstract class EE_messenger extends EE_Base {
 		$new_event = empty($event_id) ? true : false;
 
 		//todo: this should be replaced by EE_MSG_ADMIN_URL constant when we have access to it.
-		$ee_msg_admin_url = defined('EE_MSG_ADMIN_URL') ? EE_MSG_ADMIN_URL : admin_url('admin.php?page=ee_messages');
+		$ee_msg_admin_url = defined('EE_MSG_ADMIN_URL') ? EE_MSG_ADMIN_URL : admin_url('admin.php?page=espresso_messages');
 
 
 		//is there a template for this event (and each message type)?  If so, then we need to indicate that it's been selected and provide the option to switch back to global (which trashes the event template). $this->active_templates ONLY includes non-trashed templates.	
