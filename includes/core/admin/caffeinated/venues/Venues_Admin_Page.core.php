@@ -194,10 +194,11 @@ class Venues_Admin_Page extends EE_Admin_Page {
 	public function load_scripts_styles_edit_venue() {
 		//styles
 		wp_enqueue_style('jquery-ui-style');
-		wp_enqueue_style('espress_venues');
+		wp_register_style( 'espresso_venues', EE_VENUES_ASSETS_URL . 'ee-venues-admin.css', array(), EVENT_ESPRESSO_VERSION );
+		wp_enqueue_style('espresso_venues');
 
 		//scripts
-		//wp_enqueue_script('ee_admin_js');
+		wp_register_script('espresso_venue_admin', EE_VENUES_ASSETS_URL . 'ee-venues-admin.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script('espresso_venue_admin');
 
 		global $eei18n_js_strings;

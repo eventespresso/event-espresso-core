@@ -1074,7 +1074,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		
 		//register all styles
 		wp_register_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css', array(),EVENT_ESPRESSO_VERSION );
-		wp_register_style('event_espresso', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-styles.css', array(), EVENT_ESPRESSO_VERSION);
+		//wp_register_style('event_espresso', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-styles.css', array(), EVENT_ESPRESSO_VERSION);
 		wp_register_style('jquery-ui-style-datepicker-css', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css', array('jquery-ui-style'), EVENT_ESPRESSO_VERSION );
 
 		//helpers styles
@@ -1086,19 +1086,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//wp_register_style('espresso_attendees', ATT_ASSETS_URL . 'espresso_attendees_admin.css', array(), EVENT_ESPRESSO_VERSION );	
 
 		//registrations style register
-		wp_register_style('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.css', array('event_espresso'), EVENT_ESPRESSO_VERSION );
+		wp_register_style('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.css', array('ee-admin-css'), EVENT_ESPRESSO_VERSION );
 
 		//transactions style register
 		wp_register_style( 'espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.css', array(), EVENT_ESPRESSO_VERSION );
-
-		//venues style register
-		wp_register_style( 'espress_venues', EE_VENUES_ASSETS_URL . 'ee-venues-admin.css', array(), EVENT_ESPRESSO_VERSION );
 
 		//payments style register
 		wp_register_style( 'espresso_payments', EE_PAYMENTS_ASSETS_URL . 'ee-payments.css', array(), EVENT_ESPRESSO_VERSION );
 
 		//enqueue global styles
-		wp_enqueue_style('event_espresso');
+		//wp_enqueue_style('event_espresso');
 		wp_enqueue_style('ee-admin-css');
 
 
@@ -1136,8 +1133,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//transactions script register
 		wp_register_script('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.js', array('ee_admin_js', 'jquery-ui-datepicker', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
 
-		//venues script register
-		wp_register_script('espresso_venue_admin', EE_VENUES_ASSETS_URL . 'ee-venues-admin.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );
 
 		//jqplot library
 		wp_register_script('jqplot', JQPLOT_URL . 'jquery.jqplot.min.js', array('jquery'), '', FALSE);
