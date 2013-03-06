@@ -33,7 +33,7 @@ class Venues_Admin_Page_Init extends EE_Admin_Page_Init {
 
 	public function __construct() {
 		//define some event categories related constants
-		define( 'EE_VENUES_PG_SLUG', 'espresso_transactions' );	
+		define( 'EE_VENUES_PG_SLUG', 'espresso_venues' );	
 		define( 'EE_VENUES_ADMIN_URL', admin_url('admin.php?page=' . EE_VENUES_PG_SLUG ));
 		define( 'EE_VENUES_ASSETS_URL', EE_CORE_ADMIN_URL . 'venues/assets/');
 
