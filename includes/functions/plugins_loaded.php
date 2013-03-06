@@ -386,7 +386,7 @@ add_action('activated_plugin', 'espresso_plugin_activation_errors');
 function espresso_init() {
 
 	//Globals used throughout the site
-	global $espresso_premium, $is_UI_request, $is_ajax_request, $espresso_content;
+	global $caffeinated, $is_UI_request, $is_ajax_request, $espresso_content;
 	// is this request for UI or backend 
 	$is_UI_request = ( ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' ) ? TRUE : FALSE;
 	$is_ajax_request = ( isset( $_REQUEST['espresso_ajax'] ) && $_REQUEST['espresso_ajax'] == 1 ) ? TRUE : FALSE;
@@ -407,15 +407,12 @@ function espresso_init() {
 	//Get language files
 	load_plugin_textdomain('event_espresso', false, dirname(plugin_basename(__FILE__)) . '/languages/');
 
-	//Core function files			
-	$espresso_premium = apply_filters('filter_hook_espresso_systems_check', false);
-	
+	//Core function files
+	$caffeinated = apply_filters( 'filter_hook_espresso_systems_check', $caffeinated );
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . "functions/main.php");
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/time_date.php');
-
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/actions.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');
-
 
 	do_action('action_hook_espresso_coupon_codes');
 }
@@ -430,18 +427,11 @@ function espresso_init() {
  * 		@access public
  * 		@return void
  */
-function espresso_systems_check( $check = FALSE ) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/misc_functions.php')) {
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/misc_functions.php');
-		$check = espresso_system_check();
+function espresso_systems_check( ) {
+	if ( file_exists( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' )) {
+		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' );
 	}
-
-	//These files need to be above the core function files
-	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/addons_includes.php')) {
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/addons_includes.php');
-	}
-	return $check;
+	return function_exists( 'espresso_system_check' ) ? espresso_system_check() : FALSE;
 }
 add_filter('filter_hook_espresso_systems_check', 'espresso_systems_check');
 
