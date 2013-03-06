@@ -1338,17 +1338,22 @@ function espresso_default_price_types() {
 		$SQL = 'DELETE FROM ' . ESP_PRICE_TYPE . ' WHERE PRT_ID < 8';
 		$wpdb->query( $SQL );
 	
-		$SQL = "INSERT INTO " . ESP_PRICE_TYPE . " ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_is_global, PRT_order, PRT_deleted ) VALUES
+		$SQL = "INSERT INTO " . ESP_PRICE_TYPE . " ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_is_global, PRT_order, PRT_deleted ) VALUES";
+
+		$SQL .= $caffeinated ? "
 					(1, 'Default Event Price', 1, 0, 0, 1, 0, 0),
 					(2, 'Event Price', 1, 0, 0, 0, 0, 0),
 					(3, 'Default Member % Discount', 2, 1, 1, 1, 10, 0),
 					(4, 'Default Early Bird % Discount', 2, 0, 1, 1, 20, 0),
-					(5, 'Default Surcharge', 3, 0, 0, 1, 30, 0)";
-
-		$SQL .= $caffeinated ? ",
+					(5, 'Default Surcharge', 3, 0, 0, 1, 30, 0),
 					(6, 'Regional Tax', 4, 0, 1, 1, 40, 0),
 					(7, 'Federal Tax', 4, 0, 1, 1, 50, 0);"
-					: ",
+					: "
+					(1, 'Default Event Price', 1, 0, 0, 1, 0, 1),
+					(2, 'Event Price', 1, 0, 0, 0, 0, 0),
+					(3, 'Member % Discount', 2, 1, 1, 0, 10, 0),
+					(4, 'Early Bird % Discount', 2, 0, 1, 0, 20, 0),
+					(5, 'Surcharge', 3, 0, 0, 0, 30, 0),
 					(6, 'Regional Tax', 4, 0, 1, 1, 40, 1),
 					(7, 'Federal Tax', 4, 0, 1, 1, 50, 1);";
 
