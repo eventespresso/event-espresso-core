@@ -328,9 +328,11 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles() {
 		//style
+		wp_register_style('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.css', array('ee-admin-css'), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_style('espresso_reg');
 
 		//script
+		wp_register_script('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.js', array('jquery-ui-datepicker', 'jquery-ui-draggable', 'ee_admin_js'), EVENT_ESPRESSO_VERSION, TRUE);
 		wp_enqueue_script('espresso_reg');
 	}
 
@@ -347,6 +349,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		//scripts
 		global $eei18n_js_strings;
 		$eei18n_js_strings['update_att_qstns'] = __( 'click "Update Attendee Questions" to save your changes', 'event_espresso' );
+		wp_localize_script( 'espresso_reg', 'eei18n', $eei18n_js_strings );
+
 
 	}
 
@@ -906,7 +910,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
 		$this->_template_args['att_questions'] = EE_Form_Fields::generate_question_groups_html( $question_groups );
 
-		$this->_template_args['form_action'] = 'update_attendee_registration_form';
+		$this->_template_args['reg_questions_form_action'] = 'update_attendee_registration_form';
 		$this->_template_args['REG_ID'] = $this->_registration->REG_ID;
 
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_reg_questions.template.php';
@@ -944,7 +948,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	 */
 	public function form_after_question_group( $output ) {
 		return  '
-			<tr>
+			<tr class="hide-if-no-js">
 				<th> </th>		
 				<td class="reg-admin-edit-attendee-question-td">
 					<a class="reg-admin-edit-attendee-question-lnk" href="#" title="' . __( 'click to edit attendee question', 'event_espresso' ) . '">
