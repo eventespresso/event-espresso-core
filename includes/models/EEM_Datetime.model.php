@@ -220,6 +220,21 @@ class EEM_Datetime extends EEM_Base {
 
 
 
+	/**
+	*		get event start date from db
+	*
+	* 		@access		public
+	* 		@param		int 			$EVT_ID
+	*		@return 		mixed		array on success, FALSE on fail
+	*/
+	public function get_event_start_date( $EVT_ID = FALSE ) {
+		$start_date = array_shift( $this->_get_event_datetimes( $EVT_ID, TRUE ));
+		return $start_date->start_date();
+	}
+
+
+
+
 
 	/**
 	*		get event start date from db
