@@ -558,8 +558,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_get_payment_status_array();
 		
 		$this->_template_args['transaction_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'transaction'  ), TXN_ADMIN_URL );
-		$this->_template_args['apply_payment_form_url'] = add_query_arg( array( 'page' => 'transactions', 'action' => 'espresso_apply_payment' ), WP_AJAX_URL );
-		$this->_template_args['delete_payment_form_url'] = add_query_arg( array( 'page' => 'transactions', 'action' => 'espresso_delete_payment' ), WP_AJAX_URL );
+		$this->_template_args['apply_payment_form_url'] = add_query_arg( array( 'page' => 'espresso_transactions', 'action' => 'espresso_apply_payment' ), WP_AJAX_URL );
+		$this->_template_args['delete_payment_form_url'] = add_query_arg( array( 'page' => 'espresso_transactions', 'action' => 'espresso_delete_payment' ), WP_AJAX_URL );
 		
 		// 'espresso_delete_payment_nonce'
 		
