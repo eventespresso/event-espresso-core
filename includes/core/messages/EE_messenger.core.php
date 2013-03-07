@@ -512,6 +512,31 @@ abstract class EE_messenger extends EE_Base {
 	 * @param  EE_message_type $message the message object that contains details about the message.
 	 */
 	public function send_message( $message ) {
+		$this->_validate_and_setup( $message );
+		$this->_send_message();
+	}
+
+
+
+	/**
+	 * Sets up and returns message preview
+	 * @param  object $message incoming message object
+	 * @return string          return the message html content
+	 */
+	public function get_preview( $message ) {
+		$this->_validate_and_setup( $message );
+		return $this->_preview();
+	}
+
+
+
+
+	/**
+	 * simply validates the incoming message object and then sets up the properties for the messenger
+	 * @param  object $message message object
+	 * @return void          
+	 */
+	protected function _validate_and_setup( $message ) {
 		if ( !is_object( $message ) )
 			throw new EE_Error( __('Incoming "$message" must be an object', 'event_espresso' ) );
 
@@ -519,7 +544,6 @@ abstract class EE_messenger extends EE_Base {
 			if ( $template !== 'extra' )
 				$this->_set_template_value($template, $message->$template);
 		}
-		$this->_send_message();
 	}
 
 
@@ -529,17 +553,18 @@ abstract class EE_messenger extends EE_Base {
 	 * Utility method for child classes to get the contents of a template file and return
 	 *
 	 * We're assuming the child messenger class has already setup template args!
-	 * @param  string  $template url for template
+	 * @param  string  	$template url for template
+	 * @param  bool 	$preview if true we use the preview wrapper otherwise we use main wrapper.
 	 * @return string
 	 */
-	protected function _get_main_template() {
+	protected function _get_main_template( $preview = FALSE ) {
 
 		//first get inline css (will be empty if the messenger doesn't use it)
-		$this->_template_args['inline_style'] = file_get_contents( $this->get_inline_css_template, TRUE );
+		$this->_template_args['inline_style'] = file_get_contents( $this->get_inline_css_template(FALSE, $preview), TRUE );
+		$base_path = EE_CORE . 'messages/messenger/assets/' . $this->name . '/';
 
 		//figure out main template path
-		$wrapper_template = EE_CORE . 'messages/messenger/assets/' . $this->name . '/' . $this->name . '-messenger-main-wrapper.template.php';
-
+		$wrapper_template = !$preview ? $base_path . $this->name . '-messenger-main-wrapper.template.php' : $base_path . $this->name . '-messenger-preview-wrapper.template.php';
 		//check file exists and is readable
 		if ( !is_readable( $wrapper_template ) )
 			throw new EE_Error( sprintf( __('Unable to access the template file for the %s messenger main content wrapper.  The location being attempted is %s.', 'event_espresso' ), ucwords($this->label['singular'])), $wrapper_template );
@@ -555,6 +580,15 @@ abstract class EE_messenger extends EE_Base {
 	 * @todo  at some point we may want to return success or fail so we know whether a message has gone off okay and we can assemble reporting.
 	 */
 	abstract protected function _send_message();
+
+
+
+
+	/**
+	 * We give you pretty previews of the messages!
+	 * @return string html body for message content.
+	 */
+	abstract protected function _preview();
 
 	
 

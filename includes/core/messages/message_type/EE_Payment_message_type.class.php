@@ -157,7 +157,8 @@ class EE_Payment_message_type extends EE_message_type {
 		//first we need to get the event admin user id for all the events and setup an addressee object for each unique admin user.
 		foreach ( $this->_data->events as $line_ref => $event ) {
 			//get the user_id for the event
-			$admin_ids[] = $this->_get_event_admin_id($event['ID']);
+			$admin_id = $this->_get_event_admin_id($event['ID']);
+			$admin_ids[] = $admin_id;
 			//make sure we are just including the events that belong to this admin!
 			$admin_events[$admin_id][$line_ref] = $event;
 		}

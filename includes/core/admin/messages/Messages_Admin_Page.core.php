@@ -158,6 +158,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'default'=> '_ee_messages_overview_list_table',
 				'add_new_message_template'	=> '_add_message_template',
 				'edit_message_template'	=> '_edit_message_template',
+				'preview_message' => '_preview_message',
 				'insert_message_template' => array( 'func' => '_insert_or_update_message_template', 'args' => array( 'new_template' => TRUE ), 'noheader' => TRUE ),
 				'update_message_template'	=> array( 'func' => '_insert_or_update_message_template', 'args' => array( 'new_template' => FALSE ), 'noheader' => TRUE ),
 				'trash_message_template' => array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => TRUE, 'all' => TRUE ), 'noheader' => TRUE ),
@@ -208,6 +209,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array('_register_edit_meta_boxes'),
 				'has_metaboxes' => TRUE
+				),
+			'preview_message' => array(
+				'nav' => array(
+					'label' => __('Message Preview', 'event_espresso'),
+					'order' => 5,
+					'persistent' => FALSE
+					)
 				),
 			'activate' => array(
 				'nav' => array(
@@ -290,6 +298,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles_edit_message_template() {
 		wp_enqueue_script('ee_admin_js');
+	}
+
+
+
+	public function load_scripts_styles_preview_message() {
+		if ( isset( $this->_req_data['messenger'] ) )
+			$this->_active_messenger = $this->_active_messengers[$this->_req_data['messenger']]['obj'];
+		wp_enqueue_style('espresso_preview_css', $this->_active_messenger->get_inline_css_template(TRUE, TRUE) );
 	}
 
 
@@ -913,8 +929,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$this->_set_save_buttons($button_both, $button_text, $button_actions, $referrer);
 
+		//add preview button
+		$preview_url = parent::add_query_args_and_nonce( array( 'message_type' => $message_template->message_type(), 'messenger' => $message_template->messenger(), 'context' => $context, 'action' => 'preview_message' ) );
+		$preview_button = '<a href="' . $preview_url . '" class="button-secondary messages-preview-button">' . __('Preview', 'event_espresso') . '</a>';
+
 		//sidebar box
-		$this->_template_args['sidebar_content'] = $sidebar_fields . $this->_template_args['save_buttons'];
+		$this->_template_args['sidebar_content'] = $sidebar_fields . $this->_template_args['save_buttons'] . $preview_button;
 		$this->_template_args['sidebar_description'] = '';
 		$this->_template_args['sidebar_title'] = '';
 		$sidebar_title = __('Other Details', 'event_espresso');
@@ -975,6 +995,31 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	public function _add_form_element_after() {
 		return '</form>';
+	}
+
+
+
+	/**
+	 * Retrieve and set the message preview for display.
+	 * @return void
+	 */
+	public function _preview_message() {
+		//first make sure we've got the necessary parameters
+		if ( !isset( $this->_req_data['message_template'] ) || !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['messenger'] ) ) {
+			EE_Error::add_error( __('Missing necessary parameters for displaying preview', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		}
+
+		$MSG = new EE_messages();
+
+
+		//get the preview!
+		$preview = $MSG->preview_message( $this->_req_data['message_type'], $this->_req_data['context'], $this->_req_data['messenger'] );
+
+
+		//setup display of preview.  We put it in an iframe so that any html headers etc display properly (and css styling is in place).
+		$this->_template_args['admin_page_content'] = html_entity_decode(stripslashes($preview));
+
+		$this->display_admin_page_with_no_sidebar();
 	}
 
 

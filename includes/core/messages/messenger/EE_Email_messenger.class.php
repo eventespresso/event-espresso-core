@@ -117,8 +117,8 @@ class EE_Email_messenger extends EE_messenger  {
 	 * see parent declaration for description
 	 * @return string path to inline css template file
 	 */
-	public function get_inline_css_template( $url = FALSE ) {
-		$base = 'messages/messenger/assets/email/email-messenger-inline-css.template.css';
+	public function get_inline_css_template( $url = FALSE, $preview = FALSE ) {
+		$base = !$preview ? 'messages/messenger/assets/email/email-messenger-inline-css.template.css' : 'messages/messenger/assets/email/email-messenger-inline-preview-css.template.css';
 		return $url ? EVENT_ESPRESSO_PLUGINFULLURL . 'includes/core/' . $base : EE_CORE . $base;
 	}
 
@@ -249,13 +249,26 @@ class EE_Email_messenger extends EE_messenger  {
 	 * @return bool|error_object true if message delivered, false if it didn't deliver OR bubble up any error object if present.
 	 */
 	protected function _send_message() {
-
-		//todo we need to validate the different fields before sending.
 		
 		$success = wp_mail(html_entity_decode($this->_to), stripslashes_deep(html_entity_decode($this->_subject, ENT_QUOTES, "UTF-8")), stripslashes_deep(html_entity_decode(wpautop($this->_body()), ENT_QUOTES,"UTF-8")), $this->_headers());
 		return $success;
 
 	}
+
+
+
+
+	/**
+	 * see parent for definition
+	 * @return string html body of the message content and the related css.
+	 */
+	protected function _preview() {
+		return $this->_body( TRUE );
+	}
+
+
+
+
 
 	/**
 	 * Setup headers for email
@@ -275,16 +288,18 @@ class EE_Email_messenger extends EE_messenger  {
 
 	/**
 	 * setup body for email
+	 *
+	 * @param bool $preview will etermine whether this is preview template or not.
 	 * @return string formatted body for email.
 	 */
-	protected function _body() {
+	protected function _body( $preview = FALSE ) {
 		//setup template args!
 		$this->_template_args = array(
 			'subject' => $this->_subject,
 			'from' => $this->_from,
 			'main_body' => $this->_content
 			);
-		return $this->_get_main_template();
+		return $this->_get_main_template( $preview );
 	}
 
 

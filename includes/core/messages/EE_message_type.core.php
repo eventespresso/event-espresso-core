@@ -160,6 +160,15 @@ abstract class EE_message_type extends EE_Base {
 
 
 	/**
+	 * this is just a flag indicating whether we're in preview mode or not.
+	 * @var bool
+	 */
+	protected $_preview = FALSE;
+
+
+
+
+	/**
 	 * This just holds defaults for addressee data that children merge with their data array setup
 	 * @var array
 	 */
@@ -226,19 +235,31 @@ abstract class EE_message_type extends EE_Base {
 	 * @access public
 	 * @param  array|object $data       Data to be parsed for messenger/message_type
 	 * @param  string $active_messenger The active messenger being used
+	 * @param  mixed (bool|string) $context if present then this is a preview being generated, so we'll make sure we ONLY do the preview for the given context and set up the message
 	 * @return void      
 	 */
-	public function set_messages($data, $active_messenger) {
+	public function set_messages($data, $active_messenger, $context = FALSE ) {
 		//todo: need to move require into registration hook but for now we'll require here.
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Parse_Shortcodes.helper.php';
 		//get shortcode_replace instance- set when _get_messages is called in child...
 		$this->_shortcode_replace = new EE_Parse_Shortcodes();
 		$this->_active_messenger = $active_messenger;
 		$this->_data = $data;
+
+		//if there is a context available then we're going to reset the datahandler to the Preview_incoming_data handler
+		$this->_data_handler = !$context ? $this->_data_handler : 'Preview';
 		$this->_set_contexts;
+
+		//if there is an incoming context then this is a preview so let's ONLY show the given context!
+		if ( $context ) {
+			$this->_preview = TRUE;
+			$cntxt = $this->_contexts[$context];
+			$this->_contexts = array();
+			$this->_contexts[$context] = $cntxt;
+		}
+
 		$this->_init_data();
 		$this->_get_templates(); //get the templates that have been set with this type and for the given messenger that have been saved in the database.
-		$this->_set_default_field_content;
 		$this->_assemble_messages();
 		$this->count = count($this->messages);
 	}
@@ -400,7 +421,7 @@ abstract class EE_message_type extends EE_Base {
 		/**
 		 * first let's make sure that incoming data isn't empty!
 		 */
-		if ( is_array($this->_data) && empty($this->_data) ) {
+		if ( is_array($this->_data) && empty($this->_data) && !$this->_preview ) {
 			$msg = sprintf( __( '"%s" message type incoming data is empty.  There is nothing to work with so why are you bugging me?', 'event_espresso'), $this->label['singular'] );
 			throw new EE_Error( $msg );
 		}
