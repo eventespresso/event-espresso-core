@@ -1,3 +1,10 @@
+#icon-options-event { background:url(../../../../images/events_icon_32.png) no-repeat; }
+.button.add-new-h2 { margin-left: 15px; }
+
+.tablenav div { margin-right:15px; }
+.tablenav select { margin:0 1em 0 0 !important; }
+
+
 /*** Save buttons ***/
 #event_editor_major_buttons_wrapper{
     border-top: medium none;
@@ -54,6 +61,7 @@
 	font-weight: bold;
 }
 
+#post-body .postbox { background: #fff; }
 #post-body-content li.current a {
 	color: black;
 	font-weight: 800;
@@ -140,6 +148,7 @@ table .espresso-radio-btn-options-ul .small-lbl,
 .hide-the-displayed { float:right; cursor:pointer; }
 .display-the-hidden img, .hide-the-displayed img { position:relative; top:1px; left:-4px; }
 .display-the-hidden.no-icon, .hide-the-displayed.no-icon { background-image:none; }
+.display-the-hidden.hidden { display:none !important; }
 
 .disabled-input input,
 .disabled-input label { color:#777 !important;  text-shadow:none; }
@@ -174,4 +183,217 @@ table .espresso-radio-btn-options-ul .small-lbl,
 
 .validate-error, input.validate-error {
 	border-color: red;
+}
+.validation-notice-dv { display:none; padding:0; margin:0; color:red; }
+.requires-value { border:1px solid #FE2A00 !important; }
+
+
+
+
+.espresso-button-red {
+    background-color: #A32615 !important;
+    background-image: linear-gradient(to bottom, #D22C1A, #A32615) !important;
+    border-color: #A32615 #A32615 #8E2112 !important;
+	box-shadow: 0 1px 0 rgba(230, 116, 103, 0.5) inset !important;
+}
+.espresso-button-red:hover {
+    background-color: #B82818 !important;
+    background-image: linear-gradient(to bottom, #DB2E1B, #A32615) !important;
+    border-color: #7E1D10 !important;
+	box-shadow: 0 1px 0 rgba(230, 116, 103, 0.6) inset !important;
+}
+
+
+.espresso-button-green {
+    background-color: #2f7f0f !important;
+    background-image: linear-gradient(to bottom, #3AA012, #2F7F0F) !important;
+    border-color: #2F7F0F #2F7F0F #286A0C !important;
+	box-shadow: 0 1px 0 rgba(110, 193, 75, 0.5) inset !important;
+} 
+.espresso-button-green:hover {
+    background-color: #399811 !important;
+    background-image: linear-gradient(to bottom, #42AF14, #2f7f0f) !important;
+    border-color: #225A0A !important;
+	box-shadow: 0 1px 0 rgba(110, 193, 75, 0.6) inset !important;
+}
+
+
+
+
+.remove-item { cursor: pointer; vertical-align: middle; }
+
+.small-screen-table-label { display:none; }
+#event-dates-and-times { }
+#event-dates-and-times .dtm-picker { width:200px;  }
+
+@media only screen and (max-width: 1425px) { #event-dates-and-times .dtm-picker { width:175px; } }
+@media only screen and (max-width: 1325px) { #event-dates-and-times .dtm-picker { width:150px; } }
+@media only screen and (max-width: 1225px) { #event-dates-and-times .dtm-picker { width:125px; } }
+@media only screen and (max-width: 1125px) {
+	/* Force table to not be like tables anymore */
+	#event-dates-and-times, 
+	#event-dates-and-times thead, 
+	#event-dates-and-times tbody, 
+	#event-dates-and-times th, 
+	#event-dates-and-times td, 
+	#event-dates-and-times tr { 
+		display: block; 
+	}
+	
+	/* Hide table headers */
+	#event-dates-and-times thead tr {  display:none; }
+	/* Display replacements for table headers */
+	.small-screen-table-label { display:inline-block; float:left; width:30%; padding-right: 15px; text-align:right; }	
+	#event-dates-and-times tr { padding-bottom:5px; margin-bottom:5px; border-bottom: 1px solid #eee;  }	
+	#event-dates-and-times td { padding-bottom:5px; }
+	#event-dates-and-times .dtm-picker { width:175px; }
+}
+@media only screen and (max-width: 850px) {
+	/* Force tables back into tables */
+	#event-dates-and-times { display:table; }	
+	#event-dates-and-times thead { display:table-header-group; }
+	#event-dates-and-times tbody { display:table-row-group; }
+	#event-dates-and-times tr { display:table-row; }
+	#event-dates-and-times th { display:table-cell; }
+	#event-dates-and-times td { display:table-cell; }
+	
+	/* Display replacements for table headers */
+	.small-screen-table-label { display:none; }	
+	#event-dates-and-times tr { padding:0; margin:0; border: none;  }	
+	#event-dates-and-times td { padding:1px; }
+	#event-dates-and-times .dtm-picker { width:150px; }
+}
+@media only screen and (max-width: 768px) {
+	#event-dates-and-times .dtm-picker { width:100%; }
+}
+
+#event-dates-and-times .dtm-inp.small-text { width:75px; }
+
+
+
+/*  TICKET PRICES  */
+
+#no-ticket-prices-msg-dv {
+	padding: 0 0.6em; margin: 1em 0; background-color: #FFEBE8; border: 1px solid #CC0000; border-radius: 3px 3px 3px 3px; color: #333;
+}
+#no-ticket-prices-msg-dv p { padding: 2px; margin: 0.5em 0; }
+
+.event-price-settings-dv {
+	padding:5px 60px 10px 15px; margin:10px 0 20px; 
+	background:#fcfcfc; border:1px solid #C8E1EC; border-radius:5px;
+}
+
+.cancel-event-price-btn {
+	/*display:inline-block; float:right; position:relative; top:5px; right:-50px; padding:3px 6px; 
+	background:#fff; border:1px solid #C8E1EC; border-radius:3px;
+	color:#666; cursor:pointer;*/
+}
+.cancel-event-price-btn:hover { border-color:#D54E21; }
+
+.inactice-price { margin-right:1em; color:#CE9B8B; }
+
+.price-date-status-img {
+	 position:relative; top:5px; left:4px;
+}
+.input-disabled { color:#999 !important; }
+
+
+#ticket-prices-dv .event-price-settings-dv td { padding:10px 5px; vertical-align:middle; }
+
+.event-price-tbl-hdr-type { width:17.5%; padding:0 .5em; }
+.event-price-tbl-hdr-order { width:4%; text-align:center; }
+.event-price-tbl-hdr-name { width:17.5%; padding:0 .5em; }
+.event-price-tbl-hdr-amount { width:100px; text-align:center; }
+.event-price-tbl-hdr-actions { width:55px; text-align:center; }
+.event-price-tbl-hdr-desc { padding:0 .5em; }
+
+.evt-prc-btn  { display:inline-block; position:relative; width:16px; height:16px; margin-right:10px; cursor:pointer; }
+.jst-left { text-align:left; }
+.jst-cntr { text-align:center; }
+.jst-rght { text-align:right; }
+
+.ticket-price-quick-edit-tbl .type-column { width:17.5%; height:2.5em; }
+.ticket-price-quick-edit-tbl .order-column { width:4%; height:2.5em; text-align:center; }
+.ticket-price-quick-edit-tbl .name-column { width:17.5%; height:2.5em; }
+.ticket-price-quick-edit-tbl .amount-column { width:100px; height:2.5em; text-align:right; }
+.ticket-price-quick-edit-tbl .amount-column .cur-sign { display:inline-block; width:20px; margin-top:4px; }
+.ticket-price-quick-edit-tbl .amount-column input { width:50px; }
+.ticket-price-quick-edit-tbl .amount-column .percent-sign { display:inline-block; width:20px; margin-top:4px; }
+.ticket-price-quick-edit-tbl .edit-column { width:55px; height:2.5em; vertical-align:middle; text-align:center; }
+.ticket-price-quick-edit-tbl .desc-column { height:2.5em; }
+.ticket-price-quick-edit-tbl .desc-column .small-screen-table-label { vertical-align:top; }
+.ticket-price-quick-edit-column input { position:top; left:0; top:0; width:100%; min-width:20px; vertical-align:top; }
+
+.edit-ticket-price-input { vertical-align:top; }
+.edit-ticket-price-radio-lbl { margin-right:15px; vertical-align:top; }
+
+@media only screen and (max-width: 1125px) {
+	/* Force table to not be like tables anymore */
+	.ticket-price-quick-edit-tbl, 
+	.ticket-price-quick-edit-tbl thead, 
+	.ticket-price-quick-edit-tbl tbody, 
+	.ticket-price-quick-edit-tbl th, 
+	.ticket-price-quick-edit-tbl td, 
+	.ticket-price-quick-edit-tbl tr { 
+		display: block; 
+	}
+	
+	/* Hide table headers */
+	#event_editor_pricing thead tr {  display:none; }
+	/* Display replacements for table headers */
+	.ticket-price-quick-edit-tbl tr { padding-bottom:5px; margin-bottom:10px; border-bottom: 1px solid #eee;  }	
+
+	.ticket-price-quick-edit-tbl .type-column,
+	.ticket-price-quick-edit-tbl .order-column,
+	.ticket-price-quick-edit-tbl .name-column,
+	.ticket-price-quick-edit-tbl .amount-column,
+	.ticket-price-quick-edit-tbl .edit-column,
+	.ticket-price-quick-edit-tbl .desc-column { width:100%; padding-bottom:5px; text-align:left; }
+	.ticket-price-quick-edit-tbl .amount-column .cur-sign { width:auto; }
+
+	.order-column input { width: 35px !important; position:relative; left:0; top:-4px; }
+	.name-column input { width: 175px !important; position:relative; left:-4px; top:-3px; }	
+	.description { display:inline-block; width: 65% !important; }	
+	.evt-prc-btn { top: 4px; }
+	
+	.event-price-settings-dv { padding-right:20px; }
+	.cancel-event-price-btn { right:0; }
+	.event-price-settings-dv th { width:17.5% !important; }	
+	
+	.event-price-settings-dv .edit-ticket-price-input { /*width:100% !important; */}	
+/*	.event-price-settings-dv .edit-ticket-price-input { width: 200px !important; }	*/
+
+}
+@media only screen and (max-width: 850px) {
+
+	/* Force tables back into tables */
+	.ticket-price-quick-edit-tbl { display:table; }	
+	.ticket-price-quick-edit-tbl thead { display:table-header-group; }
+	.ticket-price-quick-edit-tbl tbody { display:table-row-group; }
+	.ticket-price-quick-edit-tbl tr { display:table-row; }
+	.ticket-price-quick-edit-tbl th { display:table-cell; }
+	.ticket-price-quick-edit-tbl td { display:table-cell; }
+	#event_editor_pricing thead tr {  display:table-header-group !important; }
+	
+	/* Display replacements for table headers */
+	.ticket-price-quick-edit-tbl tr { padding:0; margin:0; border: none;  }	
+	.ticket-price-quick-edit-tbl td { padding:1px; }
+	
+	#event_editor_pricing .ticket-price-quick-edit-tbl .type-column { width:17.5%!important; height:2.5em; padding:0 .5em; }
+	#event_editor_pricing .ticket-price-quick-edit-tbl .order-column { width:4%; height:2.5em; text-align:center; }
+	#event_editor_pricing .ticket-price-quick-edit-tbl .name-column { width:17.5%; height:2.5em; padding:0 .5em; }
+	#event_editor_pricing .ticket-price-quick-edit-tbl .name-column input { width: 125px !important; }	
+
+	#event_editor_pricing .ticket-price-quick-edit-column.amount-column { width:100px!important; height:2.5em; text-align:right; }
+	#event_editor_pricing .ticket-price-quick-edit-tbl .amount-column .cur-sign { display:inline-block; width:20px; }
+	#event_editor_pricing .ticket-price-quick-edit-tbl .amount-column input { width:50px; }
+	#event_editor_pricing .ticket-price-quick-edit-tbl .amount-column .percent-sign { display:inline-block; width:20px; }
+	#event_editor_pricing .ticket-price-quick-edit-tbl .edit-column { width:55px; height:2.5em; vertical-align:middle; text-align:center; }
+	#event_editor_pricing .ticket-price-quick-edit-tbl .desc-column { width:auto; height:2.5em; padding:0 .5em; }
+	
+	.order-column input { width: 35px !important; left:0px; top:0px;  }
+	.name-column input { width: 175px !important; }	
+	.amount-column input { width: 50px !important; }	
+	.description { display:inline-block; width:auto !important; }	
+
 }
