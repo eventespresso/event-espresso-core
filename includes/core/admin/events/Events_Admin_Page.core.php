@@ -81,63 +81,81 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
+		
 			'default' => '_events_overview_list_table',
+			
 			'edit_event' => array(
 				'func' => '_event_details',
 				'args' => array('edit')
 				),
+				
 			'add_event' => array(
 				'func' => '_event_details',
 				'args' => array('add')
 				),
+				
 			'delete_events' => array(
 				'func' => '_delete_events', //coming from overview page
 				'noheader' => true
 				),
+				
 			'delete_event' => array(
 				'func' => '_delete_events', //coming from edit page.
 				'noheader' => true
 				),
+				
 			'insert_event' => array(
 				'func' => '_insert_or_update_event',
 				'args' => array('new_event' => TRUE),
 				'noheader' => TRUE
 				 ),
+				
 			'update_event' => array(
 				'func' => '_insert_or_update_event',
 				'args' => array('new_event' => FALSE ), 
 				'noheader' => true
 				),
+				
 			'copy_event' => array(
 				'func' => '_copy_events',
 				'noheader' => true
 				),
+
 			'trash_events' => array(
 				'func' => '_trash_or_restore_events',
 				'args' => array('trash' => TRUE ),
 				'noheader' => true
 				),
+
 			'restore_events' => array(
 				'func' => '_trash_or_restore_events',
 				'args' => array('trash' => FALSE ),
 				'noheader' => true
 				),
+
 			'view_report' => '_view_report',
+
 			'export_events' => array(
 				'func' => '_events_export',
 				'noheader' => true
 				),
+
 			'export_payments' => array(
 				'func' => '_payment_export',
 				'noheader' => true
 				),
+
 			'import_events' => '_import_events',
+
 			'import' => '_import_events',
+
 			'default_event_settings' => '_default_event_settings',
+
 			'update_default_event_settings' => array(
 				'func' => '_update_default_event_settings',
 				'noheader' => TRUE,
-				),			
+				),		
+					
 			);
 	}
 
@@ -4072,10 +4090,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 		}
 
 		include( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/csv_uploader.php' );
-		$import_what = 'Event Details';
-		$import_intro = 'If you have a previously exported list of Event Details in a Comma Separated Value (CSV) file format, you can upload the file here: ';
-		$page = 'events';
-		$content = espresso_csv_uploader($import_what, $import_intro, $page);
+		$title = 'Event Details';
+		$intro = 'If you have a previously exported list of Event Details in a Comma Separated Value (CSV) file format, you can upload the file here: ';
+		$action = 'import_events';
+		$content = espresso_csv_uploader( $title, $intro, EVENTS_PG_SLUG, $action );
 
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_event', 'add', array(), 'button add-new-h2');
 		$this->_template_args['admin_page_content'] = $content;	
