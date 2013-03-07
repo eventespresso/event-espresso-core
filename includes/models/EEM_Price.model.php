@@ -401,10 +401,11 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 		boolean			false on fail
 	 */
 	public function get_all_prices_that_are_taxes() {
+		$taxes = array();
 		$all_taxes = $this->_select_all_prices_where( 
 				array( 'prt.PBT_ID' => 4, 'prc.PRC_is_active' => TRUE, 'prc.PRC_deleted' => FALSE )	
 		);
-		$taxes = array();
+		$all_taxes = ! empty( $all_taxes ) ? $all_taxes : array();
 		foreach ( $all_taxes as $tax ) {
 			$taxes[ $tax->order() ][ $tax->ID() ] = $tax;
 		}
