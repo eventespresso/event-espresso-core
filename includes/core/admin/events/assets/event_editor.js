@@ -17,6 +17,8 @@ jQuery(document).ready(function($) {
 //	$('html').click(function(){
 //		$('#ticket-manager-dv').css({ top : 0, opacity : 0 });
 //	});
+
+	$('.event-price-settings-dv').addClass('hidden');
 	
 	$(".datepicker" ).datepicker({
 		changeMonth: true,

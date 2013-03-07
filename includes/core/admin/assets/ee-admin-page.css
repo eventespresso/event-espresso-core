@@ -127,6 +127,8 @@ table .espresso-radio-btn-options-ul .small-lbl,
 	margin: 0 0 4px .5em;
 }
 
+.ee-width-100 { width: 100%; }
+.ee-width-75 { width: 75%; }
 .ee-width-50 { width: 50%; }
 .ee-width-33 { width: 33%; }
 .ee-width-25 { width: 25%; }
@@ -143,6 +145,7 @@ table .espresso-radio-btn-options-ul .small-lbl,
 .bigger-text { font-size:1.5em; line-height:2em; }
 .huge-text { font-size:2em; line-height:2.4em; }
 
+/*.medium-text  { width: 50%; }*/
 
 .display-the-hidden { float:right; cursor:pointer; }
 .hide-the-displayed { float:right; cursor:pointer; }
@@ -224,11 +227,11 @@ table .espresso-radio-btn-options-ul .small-lbl,
 
 .small-screen-table-label { display:none; }
 #event-dates-and-times { }
-#event-dates-and-times .dtm-picker { width:200px;  }
+#event-dates-and-times .dtm-inp { width:200px; margin-right:1em; }
 
-@media only screen and (max-width: 1425px) { #event-dates-and-times .dtm-picker { width:175px; } }
-@media only screen and (max-width: 1325px) { #event-dates-and-times .dtm-picker { width:150px; } }
-@media only screen and (max-width: 1225px) { #event-dates-and-times .dtm-picker { width:125px; } }
+@media only screen and (max-width: 1425px) { #event-dates-and-times .dtm-inp { width:175px; } }
+@media only screen and (max-width: 1325px) { #event-dates-and-times .dtm-inp { width:150px; } }
+@media only screen and (max-width: 1225px) { #event-dates-and-times .dtm-inp { width:125px; } }
 @media only screen and (max-width: 1125px) {
 	/* Force table to not be like tables anymore */
 	#event-dates-and-times, 
@@ -246,12 +249,13 @@ table .espresso-radio-btn-options-ul .small-lbl,
 	.small-screen-table-label { display:inline-block; float:left; width:30%; padding-right: 15px; text-align:right; }	
 	#event-dates-and-times tr { padding-bottom:5px; margin-bottom:5px; border-bottom: 1px solid #eee;  }	
 	#event-dates-and-times td { padding-bottom:5px; }
-	#event-dates-and-times .dtm-picker { width:175px; }
+	#event-dates-and-times .dtm-inp { width:175px; }
 }
 @media only screen and (max-width: 850px) {
 	/* Force tables back into tables */
 	#event-dates-and-times { display:table; }	
 	#event-dates-and-times thead { display:table-header-group; }
+	#event-dates-and-times thead tr {  display: table-row; }
 	#event-dates-and-times tbody { display:table-row-group; }
 	#event-dates-and-times tr { display:table-row; }
 	#event-dates-and-times th { display:table-cell; }
@@ -261,10 +265,10 @@ table .espresso-radio-btn-options-ul .small-lbl,
 	.small-screen-table-label { display:none; }	
 	#event-dates-and-times tr { padding:0; margin:0; border: none;  }	
 	#event-dates-and-times td { padding:1px; }
-	#event-dates-and-times .dtm-picker { width:150px; }
+	#event-dates-and-times .dtm-inp { width:150px; }
 }
 @media only screen and (max-width: 768px) {
-	#event-dates-and-times .dtm-picker { width:100%; }
+	#event-dates-and-times .dtm-inp { width:100%; }
 }
 
 #event-dates-and-times .dtm-inp.small-text { width:75px; }
