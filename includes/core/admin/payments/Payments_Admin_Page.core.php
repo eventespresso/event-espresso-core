@@ -62,7 +62,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			'default' => '_gateway_settings',
 			'payment_settings' => '_payment_settings',
 			'update_payment_settings' => '_update_payment_settings',
-			'developers' => '_developers_section',
+			//'developers' => '_developers_section',
 			'affiliate' => '_affiliate_settings',
 			'save_aff_s' => array(
 				'func' => '_save_aff_s',
@@ -93,13 +93,13 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box'),
 				),
-			'developers' => array(
-				'nav' => array(
-					'label' => __('Developer Settings', 'event_espresso'),
-					'order' => 20
-					),
-				'metaboxes' => array('_espresso_news_post_box', '_developers_meta_box')
-				),
+//			'developers' => array(
+//				'nav' => array(
+//					'label' => __('Developer Settings', 'event_espresso'),
+//					'order' => 20
+//					),
+//				'metaboxes' => array('_espresso_news_post_box', '_developers_meta_box')
+//				),
 			'affiliate' => array(
 				'nav' => array(
 					'label' => __('Affiliate Settings', 'event_espresso'),
@@ -134,8 +134,9 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles_default() {
 		//styles
-		wp_enqueue_style('ee-text-links');
+		wp_register_style( 'espresso_payments', EE_PAYMENTS_ASSETS_URL . 'ee-payments.css', array(), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_style('espresso_payments');
+		wp_enqueue_style('ee-text-links');
 		//scripts
 		wp_enqueue_script('ee-text-links');
 	}
