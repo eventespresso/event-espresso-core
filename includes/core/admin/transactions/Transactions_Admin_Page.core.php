@@ -248,9 +248,11 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles() {
 		//enqueue style
+		wp_register_style( 'espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.css', array(), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_style('espresso_txn');
 
 		//scripts
+		wp_register_script('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.js', array('ee_admin_js', 'jquery-ui-datepicker', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
 		wp_enqueue_script('espresso_txn');	
 
 		global $eei18n_js_strings;

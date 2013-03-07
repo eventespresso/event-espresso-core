@@ -328,6 +328,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles() {
 		//style
+		//wp_register_style('espresso_attendees', ATT_ASSETS_URL . 'espresso_attendees_admin.css', array(), EVENT_ESPRESSO_VERSION );	
 		wp_register_style('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.css', array('ee-admin-css'), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_style('espresso_reg');
 

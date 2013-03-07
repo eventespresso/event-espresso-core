@@ -47,9 +47,12 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 	display: block; text-align:center;
 }
 
-.txn-overview-actions-ul { list-style:none; width:33px; margin:0; }
+.txn-overview-actions-ul { list-style:none; margin:0; }
 .txn-overview-actions-ul li { display: inline-block; float: left; margin:0; }
 .txn-overview-actions-ul li + li { margin-left:6px; }
+
+#txn-admin-payments-tbl .txn-overview-actions-ul { width:32px; }
+
 .txn-admin-payment-action-edit-lnk,
 .txn-admin-payment-action-delete-lnk { cursor:pointer; }
 .payment-date-dv { width: 100px; }
