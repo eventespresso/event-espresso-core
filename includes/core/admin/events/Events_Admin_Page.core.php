@@ -688,9 +688,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 			<table id="event-dates-and-times">
 				<thead>
 					<tr valign="top">
-						<td> <?php echo __('Event Starts on', 'event_espresso') ?> <?php do_action('action_hook_espresso_help', 'event_date_info'); ?> </td>
+						<td> <?php echo __('Event Starts on', 'event_espresso') ?> <?php //do_action('action_hook_espresso_help', 'event_date_info'); ?> </td>
 						<td><?php echo __('Event Ends on', 'event_espresso') ?></td>
-						<td><?php echo __('Registration Starts on', 'event_espresso') ?> <?php do_action('action_hook_espresso_help', 'reg_date_info'); ?></td>
+						<td><?php echo __('Registration Starts on', 'event_espresso') ?> <?php //do_action('action_hook_espresso_help', 'reg_date_info'); ?></td>
 						<td><?php echo __('Registration Ends on', 'event_espresso') ?></td>					
 						<?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS <td><?php echo __('Max Reg Limit', 'event_espresso'); ?></td>*/ ?>
 					</tr>
@@ -701,7 +701,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				<?php foreach ($times as $time) : ?>
 					<tr valign="top" id="event-dates-and-times-row-<?php echo $row; ?>">
 						<td>
-							<div class="small-screen-table-label"><?php echo __('Event Starts on', 'event_espresso') ?> <?php do_action('action_hook_espresso_help', 'event_date_info'); ?></div>
+							<div class="small-screen-table-label"><?php echo __('Event Starts on', 'event_espresso') ?> <?php //do_action('action_hook_espresso_help', 'event_date_info'); ?></div>
 							<input id="event-start-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][evt_start]" type="text" class="dtm-es-picker dtm-inp medium-text" value="<?php echo $time->start_date_and_time(  'Y-m-d '  ); ?>"/>
 							<input name="event-start-row-<?php echo $row; ?>" type="hidden" value="<?php echo $row; ?>"/>
 							<?php /* <input id="event-start-max-date-<?php echo $row; ?>" type="hidden" value=""/> */ ?>
@@ -748,9 +748,11 @@ class Events_Admin_Page extends EE_Admin_Page {
 							<?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS <a class='display-dtm-tickets-left-lnk display-ticket-manager' data-reveal-id="ticket-manager-dv" rel="<?php echo $time->ID(); ?>"  title='Display the Ticket Manager for this Date Time' style="position:relative; top:5px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;" >
 								<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/tickets-1-16x16.png" width="16" height="16" alt="<?php _e('tickets left', 'event_espresso'); ?>"/>
 							</a> */ ?>
+							<?php if ( $caffeinated ) : ?>
 							<a class='clone-date-time dtm-inp-btn' rel='<?php echo $row; ?>' title='<?php _e('Clone this Event Date and Time', 'event_espresso'); ?>' style='position:relative; top:5px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'>
 								<img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/clone-trooper-16x16.png' width='16' height='16' alt='<?php _e('clone', 'event_espresso'); ?>'/>
 							</a>
+							<?php endif; ?>
 					<?php if ( $row != 1 ) : ?>
 							<a class='remove-xtra-time dtm-inp-btn' rel='<?php echo $row; ?>' title='<?php _e('Remove this Event Date and Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'>
 								<img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/trash-16x16.png' width='16' height='16' alt='<?php _e('trash', 'event_espresso'); ?>'/>
@@ -763,9 +765,12 @@ class Events_Admin_Page extends EE_Admin_Page {
 				<?php endforeach; // ($times as $time)  ?>
 			</table>
 			<br class="clear"/>
+			<?php if ( $caffeinated ) : ?>
 			<!--<input type="button" id="add-time" class="button dtm-inp-btn" value="<?php _e('Add Additional Time', 'event_espresso'); ?>" />-->
 			<a id="add-new-date-time" class="button dtm-inp-btn" ><?php _e('Add New Dates &amp; Times', 'event_espresso'); ?></a>
-			<br class="clear"/><br/>
+			<br class="clear"/>
+			<?php endif; ?>
+
 		</div>
 
 		
