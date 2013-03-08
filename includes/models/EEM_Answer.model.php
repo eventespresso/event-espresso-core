@@ -46,6 +46,8 @@ class EEM_Answer extends EEM_TempBase {
 	}
 
 	protected function __construct(){
+		$this->singlular_item = __('Answer','event_espresso');
+		$this->plural_item = __('Answers','event_espresso');
 		$this->_fields_settings=array(
 				'ANS_ID'=>new EE_Model_Field('Answer ID', 'primary_key', false),
 				'REG_ID'=>new EE_Model_Field('Registration ID', 'foreign_key', false,0,null,'Registration'),

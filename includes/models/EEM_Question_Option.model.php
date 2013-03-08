@@ -46,6 +46,9 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base {
 	}
 
 	protected function __construct(){
+		$this->singular_item = __('Question Option','event_espresso');
+		$this->plural_item = __('Question Options','event_espresso');
+		
 		$this->_fields_settings=array(
 				'QSO_ID'=>new EE_Model_Field('Question Option ID', 'primary_key', false, null, null, null),
 				'QSO_value'=>new EE_Model_Field('Question Option Key Value', 'plaintext', false, '', null, null),

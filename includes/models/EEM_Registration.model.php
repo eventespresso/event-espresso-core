@@ -39,11 +39,12 @@ class EEM_Registration extends EEM_TempBase {
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
-	 *		@access private
+	 *		@access protected
 	 *		@return void
 	 */
-	private function __construct() {
-		global $wpdb;
+	protected function __construct() {
+		$this->singular_item = __('Registration','event_espresso');
+		$this->plural_item = __('Registrations','event_espresso');
 		$this->_get_registration_status_array();
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Registration.class.php');
 		$this->_allowed_statuses=apply_filters('filter_hook_espresso__EEM_Registration__allowed_statuses', self::$_reg_status );

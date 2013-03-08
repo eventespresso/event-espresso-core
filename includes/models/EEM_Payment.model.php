@@ -66,16 +66,15 @@ class EEM_Payment extends EEM_TempBase {
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
-	 *		@access private
+	 *		@access protected
 	 *		@return void
 	 */	
-	private function __construct() {	  
+	protected function __construct() {	  
 		//global $wpdb;
 		// set table name
 		/*$this->table_name = $wpdb->prefix . 'esp_payment';
 		// set item names
-		$this->singlular_item = 'Payment';
-		$this->plual_item = 'Payments';		
+				
 		// array representation of the payment table and the data types for each field 
 		$this->table_data_types = array (	
 			'PAY_ID' 								=> '%d',
@@ -92,6 +91,8 @@ class EEM_Payment extends EEM_TempBase {
 			'PAY_via_admin'					=> '%d',
 			'PAY_details'						=> '%s'
 		);*/
+		$this->singlular_item = __('Payment','event_espresso');
+		$this->plural_item = __('Payments','event_espresso');
 		$this->_fields_settings = array(
 			'PAY_ID'=>				new EE_Model_Field('Payment ID', 'primary_key', false),
 			'TXN_ID'=>				new EE_Model_Field('Tranaction ID related to payment', 'foreign_key', false, null, null, 'Transaction'),

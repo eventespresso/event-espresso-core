@@ -59,6 +59,8 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 		return $this->_allowed_question_types;
 	}
 	protected function __construct(){
+		$this->singular_item = __('Question','event_espresso');
+		$this->plural_item = __('Questions','event_espresso');
 		$this->_allowed_question_types=apply_filters('filter_hook_espresso_allowed_question_types',array('TEXT','TEXTAREA','SINGLE','DROPDOWN','MULTIPLE','DATE'));
 		$this->_fields_settings=array(
 				'QST_ID'=>new EE_Model_Field( __('Question ID','event_espresso'), 'primary_key', false, null, null, null),

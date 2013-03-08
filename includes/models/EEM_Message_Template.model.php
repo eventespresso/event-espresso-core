@@ -50,16 +50,16 @@ class EEM_Message_Template extends EEM_Base {
 	/**
 	 * 		private constructor to prevent direct creation
 	 * 		@Constructor
-	 * 		@access private
+	 * 		@access protected
 	 * 		@return void
 	 */
-	private function __construct() {
+	protected function __construct() {
 		global $wpdb;
 		// set table name
 		$this->table_name = $wpdb->prefix . 'esp_message_template';
 		// set item names
-		$this->singlular_item = 'Message Template';
-		$this->plual_item = 'Message Templates';		
+		$this->singlular_item = __('Message Template','event_espresso');
+		$this->plural_item = __('Message Templates','event_espresso');		
 		// array representation of the price table and the data types for each field
 		$this->table_data_types = array(
 				'MTP_ID' => '%d',

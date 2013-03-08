@@ -46,6 +46,8 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base {
 	}
 
 	protected function __construct(){
+		$this->singular_item = __('Question Group','event_espresso');
+		$this->plural_item = __('Question Groups','event_espresso');
 		$this->_fields_settings=array(
 					'QSG_ID'=>new EE_Model_Field('Question Group ID', 'primary_key', false, null, null, null),
 					'QSG_name'=>new EE_Model_Field('Question Gruop Name', 'plaintext', false, '', null, null),

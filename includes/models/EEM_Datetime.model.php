@@ -48,13 +48,13 @@ class EEM_Datetime extends EEM_Base {
 	 *		@access private
 	 *		@return void
 	 */
-	private function __construct() {
+	protected function __construct() {
 		global $wpdb;
 		// set table name
 		$this->table_name = $wpdb->prefix . 'esp_datetime';
 		// set item names
-		$this->singlular_item = 'Datetime';
-		$this->plual_item = 'Datetimes';		
+		$this->singlular_item = __('Datetime','event_espresso');
+		$this->plural_item = __('Datetimes','event_espresso');		
 		// array representation of the datetime table and the data types for each field
 		$this->table_data_types = array (
 			'DTT_ID' 					=> '%d',
@@ -479,6 +479,7 @@ class EEM_Datetime extends EEM_Base {
 		echo EE_Error::get_notices();
 
 	}
+
 
 
 

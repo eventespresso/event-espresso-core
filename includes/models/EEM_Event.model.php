@@ -45,6 +45,8 @@ class EEM_Event  extends EEM_TempBase{
 	}
 
 	protected function __construct(){
+		$this->singular_item = __('Event','event_espresso');
+		$this->plural_item = __('Events','event_espresso');
 		$this->table_name='events_detail';
 		$this->data_types=array();
 	}

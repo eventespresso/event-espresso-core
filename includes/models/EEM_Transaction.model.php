@@ -55,16 +55,16 @@ class EEM_Transaction extends EEM_TempBase {
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
-	 *		@access private
+	 *		@access protected
 	 *		@return void
 	 */	
-	private function __construct() {	
-		global $wpdb;
+	protected function __construct() {	
+		$this->singlular_item = __('Transaction','event_espresso');
+		$this->plural_item = __('Transactions','event_espresso');		
 		// set table name
 		/*$this->table_name = $wpdb->prefix . 'esp_transaction';
 		// set item names
-		$this->singlular_item = 'Transaction';
-		$this->plual_item = 'Transactions';		
+		
 		// array representation of the transaction table and the data types for each field 
 		$this->table_data_types = array (	
 			'TXN_ID' 						=> '%d', 	

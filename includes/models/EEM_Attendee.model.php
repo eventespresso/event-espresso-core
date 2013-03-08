@@ -48,10 +48,12 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
-	 *		@access private
+	 *		@access protected
 	 *		@return void
 	 */	
-	private function __construct() {	
+	protected function __construct() {	
+		$this->singlular_item = __('Attendee','event_espresso');
+		$this->plural_item = __('Attendees','event_espresso');
 		// load Attendee object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php');
 		$this->_fields_settings=array('ATT_ID'=>new EE_Model_Field('Attendee ID', 'primary_key', false),
