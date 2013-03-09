@@ -17,8 +17,11 @@
 * @tip Set the background color for your email. You may want to choose one that matches your company's branding.
 * @theme page
 */
-#ee-message-preview-container body, #backgroundTable{
+#ee-message-preview-container, #backgroundTable{
 	/*@editable*/ background-color:#383739;
+	padding-top: 20px;
+	width: 70%;
+	margin: auto;
 }
 
 /**
@@ -106,7 +109,7 @@
 	margin-top:0;
 	margin-right:0;
 	margin-bottom:10px;
-	margin-left:0;
+	margin-left:20px;
 	/*@editable*/ text-align:left;
 }
 

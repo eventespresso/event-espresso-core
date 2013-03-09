@@ -21,6 +21,7 @@ table td{border-collapse:collapse;}
 */
 body, #backgroundTable{
 	/*@editable*/ background-color:#383739;
+	padding-top: 20px;
 }
 
 /**
@@ -108,7 +109,7 @@ h4, .h4{
 	margin-top:0;
 	margin-right:0;
 	margin-bottom:10px;
-	margin-left:0;
+	margin-left:20px;
 	/*@editable*/ text-align:left;
 }
 
