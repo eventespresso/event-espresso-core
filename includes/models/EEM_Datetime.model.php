@@ -152,6 +152,43 @@ class EEM_Datetime extends EEM_Base {
 
 	private function _compare_order( $A, $B ) {
 		return ( $A->start() == $B->start() ) ? 0 : $A->start() < $B->start() ? -1 : 1;
+	}
+
+
+
+
+
+	/**
+	 * This returns the date time for the given DTT_ID
+	 * @param  mixed (bool|int) $DTT_ID if false then we return empty
+	 * @return mixed (object|bool)          DTT object or false
+	 */
+	private function _get_date_time_by_dtt_id( $DTT_ID = FALSE ) {
+		if ( ! $DTT_ID ) {
+			$msg = __( 'No Event datetimescould be retrieved because no Date Time ID (DTT_ID) was received.', 'event_espresso');
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}
+
+		$where = array( 'DTT_ID' => $DTT_ID );
+
+		if ( $datetimes = $this->select_all_where( $where ) ) {
+			//load Datetime object class file
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Datetime.class.php');
+			$datetime = $datetimes[0];
+			$date_time_obj = new EE_Datetime(
+					$datetime->EVT_ID,
+					$datetime->DTT_is_primary,
+					$datetime->DTT_EVT_start,
+					$datetime->DTT_EVT_end,
+					$datetime->DTT_REG_start,
+					$datetime->DTT_REG_end,
+					$datetime->DTT_ID
+				);
+			return $date_time_obj;
+		} else {
+			return FALSE;
+		}
 	}	
 
 
@@ -232,7 +269,7 @@ class EEM_Datetime extends EEM_Base {
 		return $start_date->start_date();
 	}
 
-
+	
 
 
 	/**
@@ -311,6 +348,21 @@ class EEM_Datetime extends EEM_Base {
 	public function get_reg_end_dates( $EVT_ID = FALSE ) {
 		return $this->_get_event_datetimes( $EVT_ID, TRUE );
 	}
+
+
+
+
+
+	/**
+	 * get datetime object for the given datetime ID
+	 * 
+	 * @param  boolean $DTT_ID 		Date Time ID
+	 * @return mixed (object|bool)  Date Time object or FALSE
+	 */
+	public function get_date_time_by_dtt_id( $DTT_ID = FALSE ) {
+		return $this->_get_date_time_by_dtt_id( $DTT_ID );
+	}
+
 
 
 

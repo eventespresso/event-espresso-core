@@ -347,7 +347,7 @@ class EE_Attendee extends EE_Base_Class{
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
-		$this->_STA_ID = absint( $STA_ID );
+		$this->_STA_ID = wp_strip_all_tags( $STA_ID );
 		return TRUE;
 	}
 

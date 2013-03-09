@@ -90,7 +90,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[EVENT_DESCRIPTION]' :
-				return isset($this->_data['meta']['event_desc']) ? $this->_data['meta']['event_desc']: '';
+				return $this->_event('desc');
 				break;
 
 			case '[EVENT_LINK]' :
@@ -109,25 +109,93 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[EVENT_START_DATE]' :
-				return isset($this->_data['event_start_date']) ? EE_Formatter::event_date_display($this->_data['event_start_date']) : '';
+				return $this->_event_date( 'event_start_date' );
 				break;
 
 			case '[EVENT_END_DATE]' :
-				return isset($this->_data['event_end_date']) ? EE_Formatter::event_date_display($this->_data['event_end_date']) : '';
+				return $this->_event_date( 'event_end_date' );
 				break;
 
 			case '[EVENT_START_TIME]' :
-				return isset($this->_data['event_start_time']) ? EE_Formatter::event_date_display($this->_data['event_start_time'], get_option('time_format')) : '';
+				return $this->_event_date( 'event_start_time' );
 				break;
 
 			case '[EVENT_END_TIME]' :
-				return isset($this->_data['event_end_time']) ? EE_Formatter::event_date_display($this->_data['event_end_time'], get_option('time_format')) : '';
+				return $this->_event_date( 'event_end_time' );
 				break;
 
 			case '[EVENT_PRICE]' :
 				return isset($this->_data['price']) ? $this->_data['price'] : '';
 				break;
 		}
+	}
+
+
+
+
+	/**
+	 * This just figures out the event date for the incoming data according to what date type we are requesting
+	 *
+	 * @access private
+	 * @param string $type what we're requesting (see switch for examples )
+	 * @return string the date/time requested
+	 */
+	private function _event_date( $type ) {
+
+		//check if we have the daytime_id that we need to retrieve the date stuff, otherwise we just return an empty string
+		if ( !isset( $this->_data['daytime_id'] ) )
+			return '';
+
+		//let's get the DTT Model and retrieve the Date Time object
+		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php' );
+		$DTTM = EEM_Datetime::instance();
+		$DTT = $DTTM->get_date_time_by_dtt_id( $this->_data['datytime_id'] );
+
+		//if empty|false let's get out
+		if ( empty( $DTT ) || !is_object( $DTT ) ) return '';
+
+		switch ( $type ) {
+			case 'event_start_date' :
+				return $DTT->start_date( get_option('date_format') );
+				break;
+			case 'event_end_date' :
+				return $DTT->end_date( get_option('date_format') );
+				break;
+			case 'event_end_time' :
+				return $DTT->end_time( get_option('time_format') );
+				break;
+			case 'event_start_time' :
+				return $DTT->start_time( get_option('time_format') );
+				break;
+		}
+
+	}
+
+
+
+	/**
+	 * return the event details for a given key
+	 * @param  string $type what to return
+	 * @return string       returned value if present, empty string if not
+	 */
+	private function _event( $type ) {
+		$what = '';
+		if ( !isset( $this->_data['ID'] ) ) return ''; //no event id get out.
+		global $wpdb;
+
+		//we're using a switch here because I anticipate there will eventually be more types coming in here!
+		switch ( $type ) {
+			case 'desc' :
+				$what = 'e.event_desc';
+				break;
+		}
+
+		$select = "SELECT $what FROM " . EVENTS_DETAIL_TABLE . " AS e WHERE e.id = %s";
+
+		$result = $wpdb->get_var( $wpdb->prepare( $select, $this->_data['ID'] ) );
+
+		return $result;
+
 	}
 
 

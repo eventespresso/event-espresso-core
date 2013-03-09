@@ -87,21 +87,11 @@ class EE_Payment_message_type extends EE_message_type {
 	}
 
 	protected function _default_template_field_content() {
-		$content = "<h3>Payment Details:</h3>\n";
-		$content .= "<ul>[EVENT_LIST]</ul>\n";
-		$content .= "<p>Payment status: [PAYMENT_STATUS]</p>\n";
-		$content .= "<p>Payment gateway: [PAYMENT_GATEWAY]</p>\n";
-		$content .= "<p>Total Cost: [TOTAL_COST]</p>\n";
-		$content .= "\n<br /><p>Thanks for your purchase,</p>\n";
-		$content .= "<p>[COMPANY]</p>\n";
-		$content .= "<p>[CO_ADD1]</p>\n";
-		$content .= "<p>[CO_ADD2]</p>\n";
-		$content .= "<p>[CO_STATE], [CO_ZIP]</p>\n";
+		$content = file_get_contents( EE_CORE . 'messages/message_type/assets/defaults/payment-message-type-content.template.php');
 
 		foreach ( $this->_contexts as $context => $details ) {
 			$tcontent[$context]['main'] = $content;
-			$tcontent[$context]['attendee_list'] = '<li>[FNAME] [LNAME]</li>';
-			$tcontent[$context]['event_list'] = '<li>[EVENT_NAME]<br />Event Price: [EVENT_PRICE]</li>';
+			$tcontent[$context]['event_list'] = file_get_contents( EE_CORE . 'messages/message_type/assets/defaults/payment-message-type-event-list.template.php');
 		}
 
 		return $tcontent;
@@ -142,8 +132,8 @@ class EE_Payment_message_type extends EE_message_type {
 	 */
 	protected function _set_valid_shortcodes() {
 		$this->_valid_shortcodes = array(
-			'admin' => array('transaction','event','organization', 'attendee', 'registration', 'attendee_list', 'event_list'),
-			'primary_attendee' => array('transaction', 'event', 'organization', 'attendee', 'registration', 'attendee_list', 'event_list')
+			'admin' => array('transaction','event','organization','registration','event_list'),
+			'primary_attendee' => array('transaction', 'event', 'organization','registration', 'event_list')
 			);
 	}
 
@@ -167,7 +157,8 @@ class EE_Payment_message_type extends EE_message_type {
 		//first we need to get the event admin user id for all the events and setup an addressee object for each unique admin user.
 		foreach ( $this->_data->events as $line_ref => $event ) {
 			//get the user_id for the event
-			$admin_ids[] = $this->_get_event_admin_id($event['ID']);
+			$admin_id = $this->_get_event_admin_id($event['ID']);
+			$admin_ids[] = $admin_id;
 			//make sure we are just including the events that belong to this admin!
 			$admin_events[$admin_id][$line_ref] = $event;
 		}

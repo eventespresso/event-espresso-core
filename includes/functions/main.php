@@ -1449,35 +1449,15 @@ function printr( $var, $var_name = FALSE, $height = 'auto', $die = FALSE ) {
 
 /**
  * 		load and display a template
- *
- * 		@param 		string			$path_to_file		server path to the file to be loaded, including the file name and extension
- * 		@param 		array			$template_args	an array of arguments to be extracted for use in the template
- * 		@param 		boolean		$return_string	whether to send ouput immediately to screen, or capture and return as a string
+ * 		This is a wrapper for the EE_Template::display_template helper.
  * 		@return 		void
  */
 function espresso_display_template($path_to_file = FALSE, $template_args = FALSE, $return_string = FALSE) {
-	//require the template validator for verifying variables are set according to how the template requires
-	require_once(EVENT_ESPRESSO_PLUGINFULLPATH.'/helpers/EE_Template_Validator.helper.php');
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	// you gimme nuttin - YOU GET NUTTIN !!
-	if (!$path_to_file) {
-		return FALSE;
-	}
-	// if $template_args are not in an array, then make it so
-	if (!is_array($template_args)) {
-		$template_args = array($template_args);
-	}
-
-	extract($template_args);
-
-	if ($return_string) {
-		// becuz we want to return a string, we are going to capture the output
-		ob_start();
-		include( $path_to_file );
-		$output = ob_get_clean();
-		return $output;
-	} else {
-		include( $path_to_file );
-	}
-}
+	//require the template helper 
+	require_once(EVENT_ESPRESSO_PLUGINFULLPATH.'/helpers/EE_Template.helper.php');
+	if ( $return_string )
+		return EE_Template::display_template( $path_to_file, $template_args, $return_string );
+	else
+		EE_Template::display_template( $path_to_file, $template_args, $return_string );
+}		
 

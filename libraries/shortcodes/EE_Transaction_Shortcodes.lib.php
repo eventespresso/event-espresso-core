@@ -76,13 +76,24 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case "[PAYMENT_STATUS]" :
-				return isset($this->_data->txn_status) ? $this->_data->txn_status : __('Unknown', 'event_espresso');
+				$status = $this->_data->txn->pretty_status();
+				return !empty($status) ? $status : __('Unknown', 'event_espresso');
 				break; /**/
 
 			case "[PAYMENT_GATEWAY]" :
-				return isset($this->_data->txn['gateway']) ? $this->_data->txn['gateway'] : __('Unknown', 'event_espresso');
+				return $this->_get_payment_gateway();
 				break;
 		}
+	}
+
+
+
+	private function _get_payment_gateway() {
+		if ( !is_object( $this->_data->txn ) )
+			return '';
+
+		$payment = $this->_data->txn->approved_payments();
+		return !empty($payment) ? $payment->gateway() : '';
 	}
 
 } //end EE_Transaction Shortcodes library

@@ -30,6 +30,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	private $_active_messengers = array();
 	private $_active_message_types = array();
+	private $_active_messenger;
 	private $_activate_state;
 	private $_activate_meta_box_type;
 	private $_current_message_meta_box;
@@ -157,6 +158,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'default'=> '_ee_messages_overview_list_table',
 				'add_new_message_template'	=> '_add_message_template',
 				'edit_message_template'	=> '_edit_message_template',
+				'preview_message' => '_preview_message',
 				'insert_message_template' => array( 'func' => '_insert_or_update_message_template', 'args' => array( 'new_template' => TRUE ), 'noheader' => TRUE ),
 				'update_message_template'	=> array( 'func' => '_insert_or_update_message_template', 'args' => array( 'new_template' => FALSE ), 'noheader' => TRUE ),
 				'trash_message_template' => array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => TRUE, 'all' => TRUE ), 'noheader' => TRUE ),
@@ -207,6 +209,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array('_register_edit_meta_boxes'),
 				'has_metaboxes' => TRUE
+				),
+			'preview_message' => array(
+				'nav' => array(
+					'label' => __('Message Preview', 'event_espresso'),
+					'order' => 5,
+					'persistent' => FALSE
+					)
 				),
 			'activate' => array(
 				'nav' => array(
@@ -265,6 +274,22 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 
+
+
+	public function wp_editor_css( $mce_css ) {
+		//if we're on the edit_message_template route
+		if ( $this->_req_action == 'edit_message_template' && !empty( $this->_active_messenger ) ) {
+			//we're going to REPLACE the existing mce css
+			//we need to get the css file location from the active messenger
+			$mce_css = $this->_active_messenger->get_inline_css_template(TRUE, 'wpeditor');
+		}
+
+		return $mce_css;
+	}
+
+
+
+
 	public function load_scripts_styles_activate() {
 		wp_register_script('espresso_msg_js', EE_MSG_ASSETS_URL . 'espresso_ee_msg_admin.js', array('jquery', 'jquery-ui-position', 'jquery-ui-widget', 'dashboard'), EVENT_ESPRESSO_VERSION, TRUE);
 		wp_enqueue_script('espress_msg_js');
@@ -273,6 +298,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles_edit_message_template() {
 		wp_enqueue_script('ee_admin_js');
+	}
+
+
+
+	public function load_scripts_styles_preview_message() {
+		if ( isset( $this->_req_data['messenger'] ) )
+			$this->_active_messenger = $this->_active_messengers[$this->_req_data['messenger']]['obj'];
+		wp_enqueue_style('espresso_preview_css', $this->_active_messenger->get_inline_css_template(TRUE, TRUE) );
 	}
 
 
@@ -531,6 +564,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$edit_message_template_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
 		}
 
+		//set active messenger for this view
+		$this->_active_messenger = $this->_active_messengers[$message_template->messenger()]['obj'];
+
+		//add in special css for tiny_mce
+		add_filter( 'mce_css', array( $this, 'wp_editor_css' ) );
+
+
 		//Do we have any validation errors?
 		$validators = defined('DOING_AJAX') ? $this->_get_transient(FALSE, 'edit_message_template') : $this->_get_transient();
 		$v_fields = !empty($validators) ? array_keys($validators) : array();
@@ -591,7 +631,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							$template_form_fields[$field_id]['name'] = 'MTP_template_fields[' . $reference_field . '][content][' . $extra_field . ']';
 							$css_class = isset( $extra_array['css_class'] ) ? $extra_array['css_class'] : '';
 							$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array($extra_field, $v_fields) && isset( $validators[$extra_field]['msg'] ) ? 'validate-error ' . $css_class : $css_class;
-							$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($message_templates[$context][$reference_field]['content'][$extra_field]) ? $message_templates[$context][$reference_field]['content'][$extra_field] : '';
+							$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($message_templates[$context][$reference_field]['content'][$extra_field]) ? stripslashes($message_templates[$context][$reference_field]['content'][$extra_field]) : '';
 
 							//do we have a validation error?  if we do then let's use that value instead
 							$template_form_fields[$field_id]['value'] = isset($validators[$extra_field]) ? $validators[$extra_field]['value'] : $template_form_fields[$field_id]['value'];
@@ -608,7 +648,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 								}
 
 								//with or without ajax we want to decode the entities
-								$template_form_fields[$field_id]['value'] = html_entity_decode($template_form_fields[$field_id]['value']);
+								$template_form_fields[$field_id]['value'] = html_entity_decode(stripslashes($template_form_fields[$field_id]['value']));
 
 							}/**/
 						}
@@ -646,7 +686,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					$field_id = $template_field . '-content';
 					$template_form_fields[$field_id] = $field_setup_array;
 					$template_form_fields[$field_id]['name'] = 'MTP_template_fields[' . $template_field . '][content]';
-					$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($message_templates[$context][$template_field]['content']) ? $message_templates[$context][$template_field]['content'] : '';
+					$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($message_templates[$context][$template_field]['content']) ? stripslashes($message_templates[$context][$template_field]['content']) : '';
 
 					//do we have a validator error for this field?  if we do then we'll use that value instead
 					$template_form_fields[$field_id]['value'] = isset($validators[$template_field]) ? $validators[$template_field]['value'] : $template_form_fields[$field_id]['value'];
@@ -665,7 +705,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 						}
 
 						//with or without ajax we want to decode the entities
-						$template_form_fields[$field_id]['value'] = html_entity_decode($template_form_fields[$field_id]['value']);
+						$template_form_fields[$field_id]['value'] = html_entity_decode(stripslashes($template_form_fields[$field_id]['value']));
 					}/**/
 				}
 
@@ -889,8 +929,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$this->_set_save_buttons($button_both, $button_text, $button_actions, $referrer);
 
+		//add preview button
+		$preview_url = parent::add_query_args_and_nonce( array( 'message_type' => $message_template->message_type(), 'messenger' => $message_template->messenger(), 'context' => $context, 'action' => 'preview_message' ) );
+		$preview_button = '<a href="' . $preview_url . '" class="button-secondary messages-preview-button">' . __('Preview', 'event_espresso') . '</a>';
+
 		//sidebar box
-		$this->_template_args['sidebar_content'] = $sidebar_fields . $this->_template_args['save_buttons'];
+		$this->_template_args['sidebar_content'] = $sidebar_fields . $this->_template_args['save_buttons'] . $preview_button;
 		$this->_template_args['sidebar_description'] = '';
 		$this->_template_args['sidebar_title'] = '';
 		$sidebar_title = __('Other Details', 'event_espresso');
@@ -951,6 +995,31 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	public function _add_form_element_after() {
 		return '</form>';
+	}
+
+
+
+	/**
+	 * Retrieve and set the message preview for display.
+	 * @return void
+	 */
+	public function _preview_message() {
+		//first make sure we've got the necessary parameters
+		if ( !isset( $this->_req_data['message_template'] ) || !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['messenger'] ) ) {
+			EE_Error::add_error( __('Missing necessary parameters for displaying preview', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		}
+
+		$MSG = new EE_messages();
+
+
+		//get the preview!
+		$preview = $MSG->preview_message( $this->_req_data['message_type'], $this->_req_data['context'], $this->_req_data['messenger'] );
+
+
+		//setup display of preview.  We put it in an iframe so that any html headers etc display properly (and css styling is in place).
+		$this->_template_args['admin_page_content'] = html_entity_decode(stripslashes($preview));
+
+		$this->display_admin_page_with_no_sidebar();
 	}
 
 

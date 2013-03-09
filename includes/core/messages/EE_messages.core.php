@@ -154,7 +154,15 @@ class EE_messages {
 		update_user_meta($espresso_wp_user, 'ee_active_'.$kind, $this->_active{$kind});
 	}
 
-	// delegates message sending to messengers
+
+
+
+	/**
+	 * delegates message sending to messengers
+	 * @param  string  $type    What type of message are we sending (corresponds to message types)
+	 * @param  array  $vars    Data being sent for parsing in the message
+	 * @return void           
+	 */
 	public function send_message( $type, $vars ) {
 	
 
@@ -164,7 +172,7 @@ class EE_messages {
 			foreach ( $this->_active_messengers as $active_messenger ) {
 				// create message data
 				$messages = $this->_active_message_types[$type];
-				$messages->set_messages($vars, $active_messenger);
+				$messages->set_messages( $vars, $active_messenger );
 
 				if ( is_wp_error($messages) ) {
 					//we've got an error so let's bubble up the error_object to be caught by caller.
@@ -187,6 +195,47 @@ class EE_messages {
 			return EE_Error::add_error( sprintf( __('Message type: %s does not exist', 'event_espresso'), $type ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
+
+
+
+
+	/**
+	 * Use to generate and return a message preview!
+	 * @param  string $type    This should correspond with a valid message type
+	 * @param  string $context This should correspond with a valid context for the message type
+	 * @param  string $messenger This should correspond with a valid messenger.
+	 * @return string          The body of the message.
+	 */
+	public function preview_message( $type, $context, $messenger ) {
+
+		//does the given type match an actual message type class.
+		if ( isset(  $this->_active_message_types[$type] ) ) {
+			// valid messenger?
+			if ( isset( $this->_active_messengers[$messenger] ) ) {
+				$message = $this->_active_message_types[$type];
+				$messenger = $this->_active_messengers[$messenger];
+
+				//set data for preview
+				$message->set_messages( array(), $messenger, $context );
+
+				//let's GET the message body from the messenger (instead of the normal send_message)
+				return $messenger->get_preview( $message->messages[0] );
+
+			} else {
+				EE_Error::add_error( sprintf( __('Messenger: %s does not exist', 'event_espresso'), $messenger ), __FILE__, __FUNCTION__, __LINE__ );
+				return FALSE;
+			}
+
+		} else {
+			EE_Error::add_error( sprintf( __('Message type: %s does not exist', 'event_espresso'), $type ), __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}
+
+	}
+
+
+
+
 
 	/**
 	 * _validate_setup

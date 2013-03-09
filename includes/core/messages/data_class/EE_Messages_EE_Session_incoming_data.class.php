@@ -19,7 +19,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * EE_Messages_EE_Session_incoming_data
  *
- * This is the parent class for all incoming data to EE_Messages objects.  We create different data handlers for different incoming data depending on the message types set requirements.
+ * This is the child class for all incoming data to EE_Messages objects that originate as an EE_Session object.
  *
  * @package		Event Espresso
  * @subpackage	includes/core/messages/data_class/EE_Messages_EE_Session_incoming_data.core.php
@@ -108,12 +108,9 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 				$this->events[$line_item_id]['ID'] = $event['id'];
 				$this->events[$line_item_id]['line_ref'] = $line_item_id;
 				$this->events[$line_item_id]['name'] = $event['name'];
-				$this->events[$line_item_id]['date'] = $event['options']['date'];
-				$this->events[$line_item_id]['time'] = date('g:i a', strtotime($event['options']['time']));
 				$this->events[$line_item_id]['daytime_id'] = $event['options']['dtt_id'];
 				$this->events[$line_item_id]['price'] = $event['price'];
-				//todo price_obj appears to be available but its serialized and I can't for the life of me find in the code where it gets serialized!! so I'm just leaving it serialized for now.
-				$this->events[$line_item_id]['price_obj'] = $event['price_obj'];
+				$this->events[$line_item_id]['price_obj'] = unserialize( gzinflate( base64_decode( $event['price_obj'] )));
 				$this->events[$line_item_id]['price_desc'] = $event['options']['price_desc'];
 				$this->events[$line_item_id]['pre_approval'] = $event['options']['pre_approval'];
 				$this->events[$line_item_id]['price_id'] = $event['options']['price_id'];
@@ -127,8 +124,7 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 
 					$this->attendees[$att_nmbr]['line_ref'][] = $line_item_id; //so we can retrieve events later this attendee registered for!
 					$this->attendees[$att_nmbr]['att_obj'] = unserialize( base64_decode( $attendee['att_obj'] ) );
-					$this->attendees[$att_nmbr]['reg_obj'] = $this->reg_objs[$line_item_id];
-					$this->attendees[$att_nmbr]['context'] = 'attendee'; //default attendee context
+					$this->attendees[$att_nmbr]['reg_objs'][$event['id']] = $this->reg_objs[$line_item_id];
 				}
 			}
 		}

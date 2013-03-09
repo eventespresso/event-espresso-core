@@ -64,6 +64,7 @@ function espresso_define_tables_and_paths() {
 	define("EVENT_ESPRESSO_INCLUDES_DIR", EVENT_ESPRESSO_PLUGINFULLPATH . 'includes' . DS );
 	define("EVENT_ESPRESSO_TEMPLATES", EVENT_ESPRESSO_PLUGINFULLPATH . 'templates' . DS );
 	define( 'EE_CORE', EVENT_ESPRESSO_INCLUDES_DIR . 'core' . DS );
+	define( 'EE_HELPERS', EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers' . DS );
 
 
 	//Define directory structure for uploads
