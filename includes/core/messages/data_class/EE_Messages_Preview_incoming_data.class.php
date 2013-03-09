@@ -92,16 +92,19 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			$TKT = new EE_Ticket_Prices( $events[$key]->ID );
 			$final_tkt_prices = $TKT->get_all_final_event_prices();
 
-			$id_list = $final_tkt_prices[0]->ID_list();
+			//get the key of the first index in the ticket prices array.
+			$tkt_key = key($final_tkt_prices);
+
+			$id_list = $final_tkt_prices[$tkt_key]->ID_list();
 
 			//for the purpose of our example we're just going select the first price object as the one we'll use.
-			$this->_events[$line_item]['price_obj'] = $final_tkt_prices[0];
-			$this->_events[$line_item]['price'] = $final_tkt_prices[0]->price();
+			$this->_events[$line_item]['price_obj'] = $final_tkt_prices[$tkt_key];
+			$this->_events[$line_item]['price'] = $final_tkt_prices[$tkt_key]->price();
 			$this->_events[$line_item]['price_id'] = $id_list[0];
-			$this->_events[$line_item]['price_desc'] = $final_tkt_prices[0]->name();
+			$this->_events[$line_item]['price_desc'] = $final_tkt_prices[$tkt_key]->name();
 			$this->_events[$line_item]['pre_approval'] = 0; //we're going to ignore the event settings for this.
 			$this->_events[$line_item]['meta'] = unserialize( $events[$key]->meta );
-			$line_total = count( $attendees ) * $final_tkt_prices[0]->price();
+			$line_total = count( $attendees ) * $final_tkt_prices[$tkt_key]->price();
 			$this->_events[$line_item]['line_total'] = $line_total;
 			$this->_events[$line_item]['total_attendees'] = count( $attendees );
 
