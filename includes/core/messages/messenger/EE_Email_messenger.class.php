@@ -195,14 +195,13 @@ class EE_Email_messenger extends EE_messenger  {
 						'shortcodes_required' => array('[ATTENDEE_LIST]')
 					),
 					'event_list' => array(
-						'input' => 'textarea',
+						'input' => 'wp_editor',
 						'label' => __('Event List', 'event_espresso'),
 						'type' => 'string',
 						'required' => TRUE,
 						'validation' => TRUE,
 						'format' => '%s',
-						'css_class' => 'large-text',
-						'rows' => '5',
+						'rows' => '15',
 						'shortcodes_required' => array('[EVENT_LIST]')
 						),
 					'main' => array(
