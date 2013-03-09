@@ -768,60 +768,49 @@ function events_data_tables_install() {
 
 	$table_name = "events_detail";
 	$sql = "id int(11) unsigned NOT NULL AUTO_INCREMENT,
-				  event_code VARCHAR(26) DEFAULT '0',
-				  event_name VARCHAR(100) DEFAULT NULL,
-				  slug VARCHAR(100) DEFAULT NULL,
-				  event_desc TEXT,
-				  display_desc tinyint(1) DEFAULT 1,
-				  display_reg_form tinyint(1) DEFAULT 1,
-				  event_identifier VARCHAR(75) DEFAULT NULL,
-				  visible_on VARCHAR(15) DEFAULT NULL,
-				  address TEXT,
-				  address2 TEXT,
-				  city VARCHAR(100) DEFAULT NULL,
-				  state VARCHAR(100) DEFAULT NULL,
-				  zip VARCHAR(11) DEFAULT NULL,
-				  phone VARCHAR(15) DEFAULT NULL,
-				  venue_title VARCHAR(250) DEFAULT NULL,
-				  venue_url VARCHAR(250) DEFAULT NULL,
-				  venue_image TEXT,
-				  venue_phone VARCHAR(15) DEFAULT NULL,
-				  virtual_url VARCHAR(250) DEFAULT NULL,
-				  virtual_phone VARCHAR(15) DEFAULT NULL,
-				  reg_limit VARCHAR(25) DEFAULT '999999',
-				  allow_multiple tinyint(1) NOT NULL DEFAULT '0',
-				  additional_limit INT(10) DEFAULT '5',
-				  is_active tinyint(1) NOT NULL DEFAULT '1',
-				  event_status VARCHAR(1) DEFAULT 'A',
-				  use_coupon_code tinyint(1) NOT NULL DEFAULT '0',
-				  use_groupon_code tinyint(1) NOT NULL DEFAULT '0',
-				  category_id TEXT,
-				  coupon_id TEXT,
-				  tax_percentage FLOAT,
-				  tax_mode INT(11),
-				  member_only tinyint(1) NOT NULL DEFAULT '0',
-					post_id INT(11) DEFAULT NULL,
-					post_type VARCHAR(50) DEFAULT NULL,
-					country VARCHAR(200) DEFAULT NULL,
-					externalURL VARCHAR(255) DEFAULT NULL,
-					early_disc VARCHAR(10) DEFAULT NULL,
-					early_disc_date VARCHAR(15) DEFAULT NULL,
-					early_disc_percentage VARCHAR(1) DEFAULT false,
-					item_groups LONGTEXT NULL DEFAULT NULL,
-					event_type VARCHAR(250) DEFAULT NULL,
-					allow_overflow tinyint(1) NOT NULL DEFAULT '0',
-					overflow_event_id INT(10) DEFAULT '0',
-					alt_email TEXT,
-					event_meta LONGTEXT DEFAULT NULL,
-					wp_user int(22) DEFAULT '1',
-					require_pre_approval tinyint(1) NOT NULL DEFAULT '0',
-					timezone_string VARCHAR(250) DEFAULT NULL,
-					likes int(22) DEFAULT NULL,
-					submitted datetime NOT NULL,
-					ticket_id int(22) DEFAULT '0',
-					certificate_id int(22) DEFAULT '0',
-					confirmation_email_id int(22) DEFAULT '0',
-					payment_email_id int(22) DEFAULT '0',
+				event_code VARCHAR(26) DEFAULT '0',
+				event_name VARCHAR(100) DEFAULT NULL,
+				slug VARCHAR(100) DEFAULT NULL,				
+				is_active tinyint(1) NOT NULL DEFAULT '1',
+				event_status VARCHAR(1) DEFAULT 'A',
+				event_desc TEXT,
+				display_desc tinyint(1) DEFAULT 1,
+				display_reg_form tinyint(1) DEFAULT 1,
+				event_identifier VARCHAR(75) DEFAULT NULL,
+				visible_on VARCHAR(15) DEFAULT NULL,
+				reg_limit VARCHAR(25) DEFAULT '999999',
+				allow_multiple tinyint(1) NOT NULL DEFAULT '0',
+				additional_limit INT(10) DEFAULT '5',
+				category_id TEXT,
+				member_only tinyint(1) NOT NULL DEFAULT '0',
+				allow_overflow tinyint(1) NOT NULL DEFAULT '0',
+				overflow_event_id INT(10) DEFAULT '0',
+				require_pre_approval tinyint(1) NOT NULL DEFAULT '0',
+				post_id INT(11) DEFAULT NULL,
+				post_type VARCHAR(50) DEFAULT NULL,
+				externalURL VARCHAR(255) DEFAULT NULL,
+				item_groups LONGTEXT NULL DEFAULT NULL,
+				event_type VARCHAR(250) DEFAULT NULL,
+				event_meta LONGTEXT DEFAULT NULL,
+				wp_user int(22) DEFAULT '1',
+				timezone_string VARCHAR(250) DEFAULT NULL,
+				address TEXT,
+				address2 TEXT,
+				city VARCHAR(100) DEFAULT NULL,
+				state VARCHAR(100) DEFAULT NULL,
+				country VARCHAR(200) DEFAULT NULL,
+				zip VARCHAR(11) DEFAULT NULL,
+				phone VARCHAR(15) DEFAULT NULL,
+				venue_title VARCHAR(250) DEFAULT NULL,
+				venue_url VARCHAR(250) DEFAULT NULL,
+				venue_image TEXT,
+				venue_phone VARCHAR(15) DEFAULT NULL,
+				virtual_url VARCHAR(250) DEFAULT NULL,
+				virtual_phone VARCHAR(15) DEFAULT NULL,
+				likes int(22) DEFAULT NULL,
+				submitted datetime NOT NULL,
+				ticket_id int(22) DEFAULT '0',
+				certificate_id int(22) DEFAULT '0',
 				PRIMARY KEY  (id),
 				KEY slug (slug),
 				KEY event_code (event_code),
@@ -829,10 +818,6 @@ function events_data_tables_install() {
 				KEY event_name (event_name),
 				KEY city (city),
 				KEY state (state),
-				KEY start_date (start_date),
-				KEY end_date (end_date),
-				KEY registration_start (registration_start),
-				KEY registration_end (registration_end),
 				KEY reg_limit (reg_limit),
 				KEY event_status (event_status),
 				KEY submitted (submitted),
@@ -1329,48 +1314,79 @@ function espresso_update_active_gateways() {
 
 
 
-function espresso_default_prices() {
+function espresso_default_price_types() {
 
-	global $wpdb;
+	global $wpdb, $caffeinated;
 
 	if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_PRICE_TYPE . "'") == ESP_PRICE_TYPE) {
-		$sql = 'DELETE FROM ' . ESP_PRICE_TYPE . ' WHERE PRT_ID < 8';
-		$wpdb->query($sql);
+
+		$SQL = 'DELETE FROM ' . ESP_PRICE_TYPE . ' WHERE PRT_ID < 8';
+		$wpdb->query( $SQL );
 	
-		$sql = "INSERT INTO " . ESP_PRICE_TYPE . " ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_is_global, PRT_order, PRT_deleted ) VALUES
+		$SQL = "INSERT INTO " . ESP_PRICE_TYPE . " ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_is_global, PRT_order, PRT_deleted ) VALUES";
+
+		$SQL .= $caffeinated ? "
 					(1, 'Default Event Price', 1, 0, 0, 1, 0, 0),
 					(2, 'Event Price', 1, 0, 0, 0, 0, 0),
 					(3, 'Default Member % Discount', 2, 1, 1, 1, 10, 0),
 					(4, 'Default Early Bird % Discount', 2, 0, 1, 1, 20, 0),
 					(5, 'Default Surcharge', 3, 0, 0, 1, 30, 0),
 					(6, 'Regional Tax', 4, 0, 1, 1, 40, 0),
-					(7, 'Federal Tax', 4, 0, 1, 1, 50, 0);";
-		$wpdb->query($sql);	
+					(7, 'Federal Tax', 4, 0, 1, 1, 50, 0);"
+					: "
+					(1, 'Default Event Price', 1, 0, 0, 1, 0, 1),
+					(2, 'Event Price', 1, 0, 0, 0, 0, 0),
+					(3, 'Member % Discount', 2, 1, 1, 0, 10, 0),
+					(4, 'Early Bird % Discount', 2, 0, 1, 0, 20, 0),
+					(5, 'Surcharge', 3, 0, 0, 0, 30, 0),
+					(6, 'Regional Tax', 4, 0, 1, 1, 40, 1),
+					(7, 'Federal Tax', 4, 0, 1, 1, 50, 1);";
+
+		$wpdb->query( $SQL );	
 	}
 
+}
 
-	if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_PRICE_TABLE . "'") == ESP_PRICE_TABLE) {
-		$sql = 'DELETE FROM ' . ESP_PRICE_TABLE . ' WHERE PRC_ID < 7';
-		$wpdb->query($sql);
+
+
+function espresso_default_prices() {
+
+	global $wpdb, $caffeinated;
 	
-		$sql = "INSERT INTO " . ESP_PRICE_TABLE . "
+	if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_PRICE_TABLE . "'") == ESP_PRICE_TABLE) {
+	
+		$SQL = 'DELETE FROM ' . ESP_PRICE_TABLE . ' WHERE PRC_ID < 7';
+		$wpdb->query( $SQL );
+	
+		$SQL = "INSERT INTO " . ESP_PRICE_TABLE . "
 					(PRC_ID, PRT_ID, EVT_ID, PRC_amount, PRC_name, PRC_desc, PRC_use_dates, PRC_start_date, PRC_end_date, PRC_is_active, PRC_overrides, PRC_order, PRC_deleted ) VALUES
-					(1, 1, 0, '100.00', 'General Admission', 'Regular price for all Events. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 0, 0),
+					(1, 1, 0, '10.00', 'General Admission', 'Regular price for all Events. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 0, 0),
 					(2, 3, 0, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 10, 0),
 					(3, 4, 0, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price. Example content - delete if you want to',  1, NULL, NULL, 1, NULL, 20, 0),
-					(4, 5, 0, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 30, 0),
-					(5, 6, 0, '7.00', 'Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 40, 0),
-					(6, 7, 0, '15.00', 'VAT', 'Value Added Tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 50, 0);";
-		$wpdb->query($sql);
+					(4, 5, 0, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 30, 0)";
+		$SQL .= $caffeinated ? ",
+					(5, 6, 0, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 40, 0),
+					(6, 7, 0, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 50, 0);" 
+					: ",
+					(5, 6, 0, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 40, 1),
+					(6, 7, 0, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 50, 1);";
+		
+		$wpdb->query($SQL);
 	}
 	
+}
 
+
+
+function espresso_default_status_codes() {
+
+	global $wpdb;
 
 	if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_STATUS_TABLE . "'") == ESP_STATUS_TABLE) {
-		$sql = "DELETE FROM " . ESP_STATUS_TABLE . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPN', 'RCN', 'RAP', 'RNA', 'TIN', 'TPN', 'TCM', 'PAP', 'PPN', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN' );";
-		$wpdb->query($sql);
+		$SQL = "DELETE FROM " . ESP_STATUS_TABLE . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPN', 'RCN', 'RAP', 'RNA', 'TIN', 'TPN', 'TCM', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN' );";
+		$wpdb->query($SQL);
 		
-		$sql = "INSERT INTO " . ESP_STATUS_TABLE . " 
+		$SQL = "INSERT INTO " . ESP_STATUS_TABLE . " 
 				(STS_ID, STS_code, STS_type, STS_can_edit, STS_desc) VALUES
 				('ACT', 'ACTIVE', 'event', 0, NULL),
 				('NAC', 'NOT_ACTIVE', 'event', 0, NULL),
@@ -1392,13 +1408,12 @@ function espresso_default_prices() {
 				('TPN', 'PENDING', 'transaction', 0, NULL),
 				('TCM', 'COMPLETE', 'transaction', 0, NULL),
 				('PAP', 'APPROVED', 'payment', 0, NULL),
-				('PPN', 'PENDING', 'payment', 0, NULL),
 				('PCN', 'CANCELLED', 'payment', 0, NULL),
 				('PFL', 'FAILED', 'payment', 0, NULL),
 				('PDC', 'DECLINED', 'payment', 0, NULL),
 				('EDR', 'DRAFT', 'email', 0, NULL),
 				('ESN', 'SENT', 'email', 0, NULL);";
-		$wpdb->query($sql);
+		$wpdb->query($SQL);
 		
 		
 	}

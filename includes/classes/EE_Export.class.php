@@ -320,7 +320,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 		$htables[] = 'Start Time';
 		$htables[] = 'DoW';
 		$htables[] = 'Reg Begins';
-		if (function_exists('espresso_is_admin')&&espresso_is_admin()==true && $espresso_premium == true){
+		if (function_exists('espresso_is_admin')&&espresso_is_admin()==true && $caffeinated == true){
 			$htables[] = 'Submitter';
 		}
 		$htables[] = 'Status';

@@ -216,7 +216,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 		$get_event_name = $this->_event_name($item->event());
 		$event_name = empty($get_event_name) ? __('Cannot find Event', 'event_espresso') : $get_event_name;
 
-		$base_event_admin_url = admin_url( 'admin.php?page=events' );
+		$base_event_admin_url = admin_url( 'admin.php?page=espresso_events' );
 		$query_args = array(
 			'action' => 'edit_event',
 			'event_id' => $item->event()

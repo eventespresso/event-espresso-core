@@ -504,14 +504,12 @@
 		for ( key in response.return_data ) {
 			//alert( 'key = ' + key + '\n' + 'response.return_data[key] = ' + response.return_data[key] );
 			if ( key == 'reg-page-confirmation-dv' ) {
-				// //here we just want to replace part of the form contained in reg-page-confirmation-dv
 				$( '#reg-page-confirmation-dv' ).html( response.return_data[key] );
 			} else if ( key == 'redirect-to-thank-you-page' ) {
 				window.location.replace( response.return_data[key] );
 				return;
 			} else if ( key == 'off-site-redirect') {
-				//here we want to completely replace the entire form contained within reg-page-confirmatino-dv-and-whats-next-button
-				$( '#reg-page-confirmation-dv-and-whats-next-button' ).html( response.return_data[key] );
+				$( '#reg-page-confirmation-dv' ).html( response.return_data[key] );
 				document.forms['gateway_form'].submit();
 			}
 		}

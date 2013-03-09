@@ -408,7 +408,7 @@ class EE_Single_Page_Checkout {
 					$event_reg_details = $this->_get_event_reg_details($item['id']);
 					//echo printr($event_reg_details);
 
-					$event_reg_details->question_groups = maybe_unserialize($event_reg_details->question_groups);
+					//$event_reg_details->question_groups = maybe_unserialize($event_reg_details->question_groups);
 					$event_reg_details->event_meta = maybe_unserialize($event_reg_details->event_meta);
 
 					// echo '<h2>require pre approval : ' . $event_reg_details->require_pre_approval . '</h2>';
@@ -419,13 +419,13 @@ class EE_Single_Page_Checkout {
 						$events_requiring_pre_approval[$cart_type]['items'][$item['line_item']] = array('id' => $item['id'], 'name' => $item['name'], 'price' => $item['price'], 'qty' => $item['qty']);
 					}
 
-					if ($event_reg_details->use_coupon_code) {
-						$events_that_use_coupon_codes[$cart_type]['items'][$item['line_item']] = array('id' => $item['id'], 'name' => $item['name'], 'price' => $item['price'], 'qty' => $item['qty']);
-					}
-
-					if (defined('EVENTS_GROUPON_CODES_TABLE') && $event_reg_details->use_groupon_code) {
-						$events_that_use_groupon_codes[$cart_type]['items'][$item['line_item']] = array('id' => $item['id'], 'name' => $item['name'], 'price' => $item['price'], 'qty' => $item['qty']);
-					}
+//					if ($event_reg_details->use_coupon_code) {
+//						$events_that_use_coupon_codes[$cart_type]['items'][$item['line_item']] = array('id' => $item['id'], 'name' => $item['name'], 'price' => $item['price'], 'qty' => $item['qty']);
+//					}
+//
+//					if (defined('EVENTS_GROUPON_CODES_TABLE') && $event_reg_details->use_groupon_code) {
+//						$events_that_use_groupon_codes[$cart_type]['items'][$item['line_item']] = array('id' => $item['id'], 'name' => $item['name'], 'price' => $item['price'], 'qty' => $item['qty']);
+//					}
 
 					// $additional_event_registration_info = apply_filters( 'filter_hook_espresso_additional_event_registration_info', $additional_event_registration_info );
 					// $event_queue[$cart_type]['items'][ $item['line_item'] ]['extra_reg_info'] = $additional_event_registration_info;
@@ -738,7 +738,7 @@ class EE_Single_Page_Checkout {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $wpdb;
 
-		$SQL = "SELECT event_code, use_coupon_code, use_groupon_code, category_id, coupon_id, tax_percentage, tax_mode, early_disc, early_disc_date, early_disc_percentage, question_groups, allow_overflow, overflow_event_id, event_meta, require_pre_approval FROM " . EVENTS_DETAIL_TABLE . " WHERE id=%d";
+		$SQL = "SELECT event_code, category_id, allow_overflow, overflow_event_id, event_meta, require_pre_approval FROM " . EVENTS_DETAIL_TABLE . " WHERE id=%d";
 		$event_reg_details = $wpdb->get_row($wpdb->prepare($SQL, $event_id));
 		if ($event_reg_details) {
 			return $event_reg_details;

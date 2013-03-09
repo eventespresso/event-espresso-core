@@ -1,8 +1,8 @@
 <?php
 
 function event_espresso_mwarrior_payment_settings() {
-	global $espresso_premium, $notices, $espresso_wp_user;
-	if ($espresso_premium != true)
+	global $caffeinated, $notices, $espresso_wp_user;
+	if ($caffeinated != true)
 		return;
 	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
 
@@ -88,10 +88,10 @@ function event_espresso_mwarrior_payment_settings() {
 					echo '<ul>';
 					switch ($payment_settings['mwarrior']['active']) {
 						case false:
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_mwarrior=true#mwarrior\';" class="green_alert pointer"><strong>' . __('Activate Merchant Warrior IPN?', 'event_espresso') . '</strong></li>';
+							echo '<li style="width:30%;" onclick="location.href=' . EE_PAYMENTS_ADMIN . '&activate_mwarrior=true#mwarrior\';" class="green_alert pointer"><strong>' . __('Activate Merchant Warrior IPN?', 'event_espresso') . '</strong></li>';
 							break;
 						case true:
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_mwarrior=true\';" class="red_alert pointer"><strong>' . __('Deactivate Merchant Warrior IPN?', 'event_espresso') . '</strong></li>';
+							echo '<li style="width:30%;" onclick="location.href=' . EE_PAYMENTS_ADMIN . '&deactivate_mwarrior=true\';" class="red_alert pointer"><strong>' . __('Deactivate Merchant Warrior IPN?', 'event_espresso') . '</strong></li>';
 							event_espresso_display_mwarrior_settings();
 							break;
 					}

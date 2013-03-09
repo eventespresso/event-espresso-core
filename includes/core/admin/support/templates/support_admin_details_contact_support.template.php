@@ -19,7 +19,7 @@
 		<strong class="red_text">
 			<?php _e('Attention:', 'event_espresso'); ?>
 		</strong><br />
-		<?php _e('When requesting support. Please copy and paste the details displayed of the <a href="admin.php?page=support#details">Important Information</a> section above. This will help us determine potential problems with your server, WordPress installation, and/or the Event Espresso plugin. Please also include a list (or screenshot) of all <a href="plugins.php?plugin_status=active">active plugins</a>.', 'event_espresso'); ?>
+		<?php _e('When requesting support. Please copy and paste the details displayed of the <a href="admin.php?page=espresso_support#details">Important Information</a> section above. This will help us determine potential problems with your server, WordPress installation, and/or the Event Espresso plugin. Please also include a list (or screenshot) of all <a href="plugins.php?plugin_status=active">active plugins</a>.', 'event_espresso'); ?>
 	</p>
 
 	<h4>

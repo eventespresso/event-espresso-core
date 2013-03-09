@@ -36,8 +36,8 @@ function event_espresso_filter_plugin_actions($links, $file) {
 		$this_plugin = plugin_basename(espresso_main_file());
 
 	if ($file == $this_plugin) {
-		$org_settings_link = '<a href="admin.php?page=general_settings">' . __('Settings') . '</a>';
-		$events_link = '<a href="admin.php?page=events">' . __('Events') . '</a>';
+		$org_settings_link = '<a href="admin.php?page=espresso_general_settings">' . __('Settings') . '</a>';
+		$events_link = '<a href="admin.php?page=espresso_events">' . __('Events') . '</a>';
 		array_unshift($links, $org_settings_link, $events_link); // before other links
 	}
 	return $links;

@@ -1,8 +1,8 @@
 <?php
 
 function event_espresso_realauth_payment_settings() {
-	global $espresso_premium, $notices, $espresso_wp_user;
-	if ($espresso_premium != true) {
+	global $caffeinated, $notices, $espresso_wp_user;
+	if ($caffeinated != true) {
 		return;
 	}
 
@@ -79,11 +79,11 @@ function event_espresso_realauth_payment_settings() {
 					switch ($payment_settings['realauth']['active']) {
 
 						case false:
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_realauth=true#realauth\';" class="green_alert pointer"><strong>' . __('Activate realauth Payments?', 'event_espresso') . '</strong></li>';
+							echo '<li style="width:30%;" onclick="location.href=' . EE_PAYMENTS_ADMIN . '&activate_realauth=true#realauth\';" class="green_alert pointer"><strong>' . __('Activate realauth Payments?', 'event_espresso') . '</strong></li>';
 							break;
 
 						case true:
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_realauth=true\';" class="red_alert pointer"><strong>' . __('Deactivate realauth Payments?', 'event_espresso') . '</strong></li>';
+							echo '<li style="width:30%;" onclick="location.href=' . EE_PAYMENTS_ADMIN . '&deactivate_realauth=true\';" class="red_alert pointer"><strong>' . __('Deactivate realauth Payments?', 'event_espresso') . '</strong></li>';
 							event_espresso_display_realauth_settings();
 							break;
 					}

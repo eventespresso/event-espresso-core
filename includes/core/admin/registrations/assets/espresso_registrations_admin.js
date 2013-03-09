@@ -5,7 +5,9 @@ jQuery(document).ready(function($) {
 	// clear firefox and safari cache
 	$(window).unload( function() {}); 
 	
-
+	
+	$('#reg-admin-attendee-questions-submit').prop( 'disabled', true );
+	
 
 	$('#entries-per-page-slct').change( function() {
 		var per_page = $(this).val();
@@ -66,6 +68,8 @@ jQuery(document).ready(function($) {
 		$(this).closest('table').find('.reg-admin-edit-attendee-question-td' ).html( edit_lnk );
 		$('#reg-admin-attendee-questions-submit').prop( 'disabled', false );
 	});
+	
+	
 
 
 });

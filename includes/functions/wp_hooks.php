@@ -25,6 +25,8 @@ function espresso_plugin_activation() {
 		espresso_fix_org_options();
 		espresso_update_active_gateways();
 		//espresso_default_prices();
+		espresso_default_price_types();
+		espresso_default_status_codes();
 		espresso_delete_unused_db_tables();
 	}
 }
@@ -140,8 +142,8 @@ function eei18n_js_strings() {
 function espresso_toolbar_items($admin_bar) {
 
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	$events_page = get_admin_url() . 'admin.php?page=events';
-	$registrations_page = get_admin_url() . 'admin.php?page=attendees';
+	$events_page = get_admin_url() . 'admin.php?page=espresso_events';
+	$registrations_page = get_admin_url() . 'admin.php?page=espresso_registrations';
 	$menu_class = 'espresso_menu_item_class';
 
 	//Top Level

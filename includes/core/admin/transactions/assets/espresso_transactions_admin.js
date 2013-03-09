@@ -180,8 +180,8 @@ jQuery(document).ready(function($) {
 		$('#txn-admin-noheader-inp').val('true');
 		var formData = $('#txn-admin-apply-payment-frm').serialize();
 		//alert( 'formURL = ' + formURL + '\n\n' + 'formData = ' + formData );
-		console.log(formData);
-		response = new Object();
+//		console.log(formData);
+//		response = new Object();
 
 		$.ajax({
 					type: "POST",
