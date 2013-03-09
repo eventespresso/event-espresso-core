@@ -1,27 +1,3 @@
-"<br />
-<font size='1'><table class='xdebug-error xe-notice xe-scream' dir='ltr' border='1' cellspacing='0' cellpadding='1'>
-<tr><th align='left' bgcolor='#f57900' colspan="5"><span style='background-color: #cc0000; color: #fce94f; font-size: x-large;'>( ! )</span> SCREAM: Error suppression ignored for</th></tr>
-<tr><th align='left' bgcolor='#f57900' colspan="5"><span style='background-color: #cc0000; color: #fce94f; font-size: x-large;'>( ! )</span> Notice: Undefined index:  in C:\xampp\htdocs\Wordpress2\wp-content\plugins\32-core\includes\models\EEM_Gateways.model.php on line <i>760</i></th></tr>
-<tr><th align='left' bgcolor='#e9b96e' colspan='5'>Call Stack</th></tr>
-<tr><th align='center' bgcolor='#eeeeec'>#</th><th align='left' bgcolor='#eeeeec'>Time</th><th align='left' bgcolor='#eeeeec'>Memory</th><th align='left' bgcolor='#eeeeec'>Function</th><th align='left' bgcolor='#eeeeec'>Location</th></tr>
-<tr><td bgcolor='#eeeeec' align='center'>1</td><td bgcolor='#eeeeec' align='center'>0.0007</td><td bgcolor='#eeeeec' align='right'>144272</td><td bgcolor='#eeeeec'>{main}(  )</td><td title='C:\xampp\htdocs\Wordpress2\wp-admin\admin-ajax.php' bgcolor='#eeeeec'>..\admin-ajax.php<b>:</b>0</td></tr>
-<tr><td bgcolor='#eeeeec' align='center'>2</td><td bgcolor='#eeeeec' align='center'>1.3376</td><td bgcolor='#eeeeec' align='right'>16230880</td><td bgcolor='#eeeeec'>do_action(  )</td><td title='C:\xampp\htdocs\Wordpress2\wp-admin\admin-ajax.php' bgcolor='#eeeeec'>..\admin-ajax.php<b>:</b>72</td></tr>
-<tr><td bgcolor='#eeeeec' align='center'>3</td><td bgcolor='#eeeeec' align='center'>1.3376</td><td bgcolor='#eeeeec' align='right'>16231856</td><td bgcolor='#eeeeec'><a href='http://www.php.net/call_user_func_array' target='_new'>call_user_func_array</a>
-(  )</td><td title='C:\xampp\htdocs\Wordpress2\wp-includes\plugin.php' bgcolor='#eeeeec'>..\plugin.php<b>:</b>406</td></tr>
-<tr><td bgcolor='#eeeeec' align='center'>4</td><td bgcolor='#eeeeec' align='center'>1.3376</td><td bgcolor='#eeeeec' align='right'>16231904</td><td bgcolor='#eeeeec'>EE_Single_Page_Checkout->process_registration_step_3(  )</td><td title='C:\xampp\htdocs\Wordpress2\wp-includes\plugin.php' bgcolor='#eeeeec'>..\plugin.php<b>:</b>406</td></tr>
-<tr><td bgcolor='#eeeeec' align='center'>5</td><td bgcolor='#eeeeec' align='center'>1.4254</td><td bgcolor='#eeeeec' align='right'>17489280</td><td bgcolor='#eeeeec'>EEM_Gateways->process_reg_step_3(  )</td><td title='C:\xampp\htdocs\Wordpress2\wp-content\plugins\32-core\includes\classes\EE_Single_Page_Checkout.class.php' bgcolor='#eeeeec'>..\EE_Single_Page_Checkout.class.php<b>:</b>1277</td></tr>
-</table></font>
-<br />
-<font size='1'><table class='xdebug-error xe-fatal-error xe-scream' dir='ltr' border='1' cellspacing='0' cellpadding='1'>
-<tr><th align='left' bgcolor='#f57900' colspan="5"><span style='background-color: #cc0000; color: #fce94f; font-size: x-large;'>( ! )</span> SCREAM: Error suppression ignored for</th></tr>
-<tr><th align='left' bgcolor='#f57900' colspan="5"><span style='background-color: #cc0000; color: #fce94f; font-size: x-large;'>( ! )</span> Fatal error: Call to a member function process_reg_step_3() on a non-object in C:\xampp\htdocs\Wordpress2\wp-content\plugins\32-core\includes\models\EEM_Gateways.model.php on line <i>760</i></th></tr>
-<tr><th align='left' bgcolor='#e9b96e' colspan='5'>Call Stack</th></tr>
-<tr><th align='center' bgcolor='#eeeeec'>#</th><th align='left' bgcolor='#eeeeec'>Time</th><th align='left' bgcolor='#eeeeec'>Memory</th><th align='left' bgcolor='#eeeeec'>Function</th><th align='left' bgcolor='#eeeeec'>Location</th></tr>
-<tr><td bgcolor='#eeeeec' align='center'>1</td><td bgcolor='#eeeeec' align='center'>0.0007</td><td bgcolor='#eeeeec' align='right'>144272</td><td bgcolor='#eeeeec'>{main}(  )</td><td title='C:\xampp\htdocs\Wordpress2\wp-admin\admin-ajax.php' bgcolor='#eeeeec'>..\admin-ajax.php<b>:</b>0</td></tr>
-<tr><td bgcolor='#eeeeec' align='center'>2</td><td bgcolor='#eeeeec' align='center'>1.3376</td><td bgcolor='#eeeeec' align='right'>16230880</td><td bgcolor='#eeeeec'>do_action(  )</td><td title='C:\xampp\htdocs\Wordpress2\wp-admin\admin-ajax.php' bgcolor='#eeeeec'>..\admin-ajax.php<b>:</b>72</td></tr>
-<tr><td bgcolor='#eeeeec' align='center'>3</td><td bgcolor='#eeeeec' align='center'>1.3376</td><td bgcolor='#eeeeec' align='right'>16231856</td><td bgcolor='#eeeeec'><a href='http://www.php.net/call_user_func_array' target='_new'>call_user_func_array</a>
-(  )</td><td title='C:\xampp\htdocs\Wordpress2\wp-includes\plugin.php' bgcolor='#eeeeec'>..\plugin.php<b>:</b>406</td></tr>
-<tr><td bgcolor='#eeeeec' align='center'>4</td><td bgcolor='#eeeeec' align='center'>1.3376</td><td bgcolor='#eeeeec' align='right'>16231904</td><td bgcolor='#eeeeec'>EE_Single_Page_Checkout->process_registration_step_3(  )</td><td title='C:\xampp\htdocs\Wordpress2\wp-includes\plugin.php' bgcolor='#eeeeec'>..\plugin.php<b>:</b>406</td></tr>
-<tr><td bgcolor='#eeeeec' align='center'>5</td><td bgcolor='#eeeeec' align='center'>1.4254</td><td bgcolor='#eeeeec' align='right'>17489280</td><td bgcolor='#eeeeec'>EEM_Gateways->process_reg_step_3(  )</td><td title='C:\xampp\htdocs\Wordpress2\wp-content\plugins\32-core\includes\classes\EE_Single_Page_Checkout.class.php' bgcolor='#eeeeec'>..\EE_Single_Page_Checkout.class.php<b>:</b>1277</td></tr>
-</table></font>
-"
+<?php
+// Silence is golden.
+?>

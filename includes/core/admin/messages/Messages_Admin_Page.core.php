@@ -2036,7 +2036,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				$warning_msg .= '<ul>';
 
 				//output list of events
-				$base_event_admin_url = admin_url( 'admin.php?page=events' );
+				$base_event_admin_url = admin_url( 'admin.php?page=espresso_events' );
 				foreach ( $event_templates as $template ) {
 					$event_name = $this->event_name($template->event());
 					$query_args = array(

@@ -20,7 +20,7 @@ global $org_options;
 				<tr>
 					<th class="jst-left">
 					<?php 
-						$event_url = add_query_arg( array( 'action' => 'edit_event', 'event_id' => $registration->event_ID() ), admin_url( 'admin.php?page=events' ));
+						$event_url = add_query_arg( array( 'action' => 'edit_event', 'event_id' => $registration->event_ID() ), admin_url( 'admin.php?page=espresso_events' ));
 						echo '<a href="'. $event_url .'"  title="'. __( 'Edit Event', 'event_espresso' ) .'">' . $registration->event_name() . '</a>';
 					?>
 					</th>

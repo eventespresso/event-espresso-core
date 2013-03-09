@@ -353,19 +353,19 @@ function event_espresso_admin_news($url) {
 
 //Function to show an admin message if the main pages are not setup.
 function espresso_updated_pages() {
-	echo '<div class="error fade"><p><strong>' . __('In order to function properly Event Espresso has added one or more pages with the corresponding shortcodes. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=general_settings') . '">' . __('Event Espresso Page Settings', 'event_espresso') . '</a>  ' . __('to view the updated pages.', 'event_espresso') . '</strong></p></div>';
+	echo '<div class="error fade"><p><strong>' . __('In order to function properly Event Espresso has added one or more pages with the corresponding shortcodes. Go to', 'event_espresso') . ' <a href="' . admin_url('edit.php?post_type=page') . '">' . __('Pages', 'event_espresso') . '</a>  ' . __('to view the updated pages.', 'event_espresso') . '</strong></p></div>';
 }
 
 function espresso_page_problems() {
-	echo '<div class="error fade"><p><strong>' . __('A problem has been detected with one or more of your Event Espresso pages. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=general_settings') . '">' . __('Event Espresso Critical Pages Settings', 'event_espresso') . '</a>  ' . __('to view your Event Espresso pages.', 'event_espresso') . '</strong></p></div>';
+	echo '<div class="error fade"><p><strong>' . __('A problem has been detected with one or more of your Event Espresso pages. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=espresso_general_settings') . '">' . __('Event Espresso Critical Pages Settings', 'event_espresso') . '</a>  ' . __('to view your Event Espresso pages.', 'event_espresso') . '</strong></p></div>';
 }
 
 //Function to show an admin message if registration id's are missing.
 function event_espresso_registration_id_notice() {
 	if (function_exists('admin_url')) {
-		echo '<div class="error fade"><p><strong>' . __('Event Espresso attendee data needs to be updated. Please visit the ', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=support#attendee_data') . '">' . __('Support page', 'event_espresso') . '</a>  ' . __('to configure update the attendee information.', 'event_espresso') . '</strong></p></div>';
+		echo '<div class="error fade"><p><strong>' . __('Event Espresso attendee data needs to be updated. Please visit the ', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=espresso_support#attendee_data') . '">' . __('Support page', 'event_espresso') . '</a>  ' . __('to configure update the attendee information.', 'event_espresso') . '</strong></p></div>';
 	} else {
-		echo '<div class="error fade"><p><strong>' . __('Event Espresso attendee data needs to be updated. Please visit the ', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=support#attendee_data') . '">' . __('Support page', 'event_espresso') . '</a>  ' . __('to configure update the attendee information.', 'event_espresso') . '</strong></p></div>';
+		echo '<div class="error fade"><p><strong>' . __('Event Espresso attendee data needs to be updated. Please visit the ', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=espresso_support#attendee_data') . '">' . __('Support page', 'event_espresso') . '</a>  ' . __('to configure update the attendee information.', 'event_espresso') . '</strong></p></div>';
 	}
 }
 
@@ -737,7 +737,7 @@ if (!function_exists('espresso_personnel_cb')) {
 					$in_event_person = $in_person->person_id;
 				}
 
-				$html .= '<p id="event-person-' . $person_id . '" class="event-staff-list"><label for="in-event-person-' . $person_id . '" class="selectit"><input value="' . $person_id . '" type="checkbox" name="event_person[]" id="in-event-person-' . $person_id . '"' . ($in_event_person == $person_id ? ' checked="checked"' : "" ) . '/> <a href="admin.php?page=event_staff&amp;action=edit&amp;id=' . $person_id . '"  target="_blank" title="' . $person_organization . '">' . $person_name . '</a> ' . $person_info . '</label></p>';
+				$html .= '<p id="event-person-' . $person_id . '" class="event-staff-list"><label for="in-event-person-' . $person_id . '" class="selectit"><input value="' . $person_id . '" type="checkbox" name="event_person[]" id="in-event-person-' . $person_id . '"' . ($in_event_person == $person_id ? ' checked="checked"' : "" ) . '/> <a href="admin.php?page=espresso_personnel&amp;action=edit&amp;id=' . $person_id . '"  target="_blank" title="' . $person_organization . '">' . $person_name . '</a> ' . $person_info . '</label></p>';
 			}
 
 			$top_div = '';
@@ -748,7 +748,7 @@ if (!function_exists('espresso_personnel_cb')) {
 				$bottom_div = '</div>';
 			}
 
-			$manage = '<p><a href="admin.php?page=event_staff" target="_blank">' . __('Manage Staff Members', 'event_espresso') . '</a> | <a class="thickbox link" href="#TB_inline?height=300&width=400&inlineId=staff_info">Shortcode</a> </p>';
+			$manage = '<p><a href="admin.php?page=espresso_personnel" target="_blank">' . __('Manage Staff Members', 'event_espresso') . '</a> | <a class="thickbox link" href="#TB_inline?height=300&width=400&inlineId=staff_info">Shortcode</a> </p>';
 
 			echo '<div id="staff_info" style="display:none">';
 			echo '<div class="TB-ee-frame">';
@@ -765,7 +765,7 @@ if (!function_exists('espresso_personnel_cb')) {
 			$html = $top_div . $html . $bottom_div . $manage;
 			return $html;
 		} else {
-			return '<a href="admin.php?page=event_staff&amp;action=add_new_person">' . __('Please add at least one person.', 'event_espresso') . '</a>';
+			return '<a href="admin.php?page=espresso_personnel&amp;action=add_new_person">' . __('Please add at least one person.', 'event_espresso') . '</a>';
 		}
 	}
 

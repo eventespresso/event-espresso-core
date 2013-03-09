@@ -1,8 +1,8 @@
 <?php
 
 function event_espresso_firstdata_payment_settings() {
-	global $espresso_premium, $notices, $espresso_wp_user;
-	if ($espresso_premium != true)
+	global $caffeinated, $notices, $espresso_wp_user;
+	if ($caffeinated != true)
 		return;
 
 	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
@@ -66,10 +66,10 @@ function event_espresso_firstdata_payment_settings() {
 					echo '<ul>';
 					switch ($payment_settings['firstdata']['active']) {
 						case false:
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_firstdata=true#firstdata\';" class="green_alert pointer"><strong>' . __('Activate First Data?', 'event_espresso') . '</strong></li>';
+							echo '<li style="width:30%;" onclick="location.href=' . EE_PAYMENTS_ADMIN . '&activate_firstdata=true#firstdata\';" class="green_alert pointer"><strong>' . __('Activate First Data?', 'event_espresso') . '</strong></li>';
 							break;
 						case 'true':
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_firstdata=true\';" class="red_alert pointer"><strong>' . __('Deactivate First Data?', 'event_espresso') . '</strong></li>';
+							echo '<li style="width:30%;" onclick="location.href=' . EE_PAYMENTS_ADMIN . '&deactivate_firstdata=true\';" class="red_alert pointer"><strong>' . __('Deactivate First Data?', 'event_espresso') . '</strong></li>';
 							event_espresso_display_firstdata_settings();
 
 							break;

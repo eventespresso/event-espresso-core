@@ -18,42 +18,7 @@
 	var $_notices = array( 'updates' => array(), 'errors' => array() );
 
 
-	var $_primary_keys = array(
-		EVENTS_ANSWER_TABLE	=> array( 'id' ),
-		EVENTS_ATTENDEE_TABLE	=> array( 'id' ),
-		EVENTS_ATTENDEE_COST_TABLE	=> array( 'attendee_id' ),
-		//EVENTS_ATTENDEE_META_TABLE	=> array( 'ameta_id' ),
-		EVENTS_CATEGORY_TABLE	=> array( 'id' ),
-		EVENTS_CATEGORY_REL_TABLE	=> array( 'id' ),
-		'wp_events_certificate_templates' =>  array( 'emeta_id' ),
-		EVENTS_DETAIL_TABLE	=> array( 'id' ),
-		EVENTS_DISCOUNT_CODES_TABLE	=> array( 'id' ),
-		EVENTS_DISCOUNT_REL_TABLE	=> array( 'id' ),
-		EVENTS_EMAIL_TABLE	=> array( 'id' ),
-		'wp_events_groupon_codes' =>  array( 'emeta_id' ),
-		EVENTS_LOCALE_TABLE	=> array( 'id' ),
-		EVENTS_LOCALE_REL_TABLE	=> array( 'id' ),
-		'wp_events_mailchimp_attendee_rel' =>  array( 'id' ),
-		'wp_events_mailchimp_event_rel' =>  array( 'id' ),
-		'wp_events_member_rel' =>  array( 'id' ),
-		EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE	=> array( 'primary_registration_id', 'registration_id' ),
-		EVENTS_PERSONNEL_TABLE	=> array( 'id' ),
-		EVENTS_PERSONNEL_REL_TABLE	=> array( 'id' ),
-		EVENTS_PRICES_TABLE	=> array( 'id' ),
-		EVENTS_QST_GROUP_TABLE	=> array( 'id' ),
-		EVENTS_QST_GROUP_REL_TABLE	=> array( 'id' ),
-		EVENTS_QUESTION_TABLE	=> array( 'id' ),
-		'wp_events_seating_chart' =>  array( 'id ' ),
-		'wp_events_seating_chart_event' =>  array( 'event_id', 'seating_chart_id' ),
-		'wp_events_seating_chart_event_seat' =>  array( 'id ' ),
-		'wp_events_seating_chart_level_section_alignment' =>  array( 'seating_chart_id ' ),
-		'wp_events_seating_chart_seat' =>  array( 'id ' ),
-		EVENTS_START_END_TABLE	=> array( 'id' ),
-		'wp_events_ticket_templates' =>  array( 'id ' ),
-		EVENTS_VENUE_TABLE	=> array( 'id' ),
-		EVENTS_VENUE_REL_TABLE	=> array( 'id' ),
-		'wp_fbevents_events' =>  array( 'id ' ),
-	);
+	private $_primary_keys;
 
 
 
@@ -63,7 +28,38 @@
 	 *		@access private
 	 *		@return void
 	 */	
-  private function __construct() {
+ 	private function __construct() {
+		
+		global $wpdb;
+
+		$this->_primary_keys = array(
+				$wpdb->prefix . 'esp_answer' => array( 'ANS_ID' ),
+				$wpdb->prefix . 'esp_attendee' => array( 'ATT_ID' ),
+				$wpdb->prefix . 'esp_datetime'	=> array( 'DTT_ID' ),
+				$wpdb->prefix . 'esp_event_question_group'	=> array( 'EQG_ID' ),
+				$wpdb->prefix . 'esp_message_template'	=> array( 'MTP_ID' ),
+				$wpdb->prefix . 'esp_payment'	=> array( 'PAY_ID' ),
+				$wpdb->prefix . 'esp_price'	=> array( 'PRC_ID' ),
+				$wpdb->prefix . 'esp_price_type'	=> array( 'PRT_ID' ),
+				$wpdb->prefix . 'esp_question'	=> array( 'QST_ID' ),
+				$wpdb->prefix . 'esp_question_group'	=> array( 'QSG_ID' ),
+				$wpdb->prefix . 'esp_question_group_question'	=> array( 'QGQ_ID' ),
+				$wpdb->prefix . 'esp_question_option'	=> array( 'QSO_ID' ),
+				$wpdb->prefix . 'esp_registration'	=> array( 'REG_ID' ),
+				$wpdb->prefix . 'esp_status'	=> array( 'STS_ID' ),
+				$wpdb->prefix . 'esp_transaction'	=> array( 'TXN_ID' ),
+				$wpdb->prefix . 'esp_transaction'	=> array( 'TXN_ID' ),
+				$wpdb->prefix . 'events_detail'	=> array( 'id' ),
+				$wpdb->prefix . 'events_category_detail'	=> array( 'id' ),
+				$wpdb->prefix . 'events_category_rel'	=> array( 'id' ),
+				$wpdb->prefix . 'events_venue'	=> array( 'id' ),
+				$wpdb->prefix . 'events_venue_rel' =>  array( 'emeta_id' ),
+				$wpdb->prefix . 'events_locale'	=> array( 'id' ),
+				$wpdb->prefix . 'events_locale_rel'	=> array( 'id' ),
+				$wpdb->prefix . 'events_personnel' =>  array( 'id' ),
+				$wpdb->prefix . 'events_personnel_rel' =>  array( 'id' ),
+			);
+
 	}
 
 

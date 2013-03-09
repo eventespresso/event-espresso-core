@@ -1,19 +1,18 @@
 <?php
 
-function espresso_csv_uploader ( $import_what, $import_intro, $page  ) {
-
-	$name = str_replace( ' ', '_', strtolower( $import_what ));
+function espresso_csv_uploader ( $title, $intro, $page, $action  ) {
 
 	$csv_uploader = '
 	<div class="clear"></div>
 	<br /><br />
-	<h3>Import '.$import_what.'</h3>
-	<p>'.$import_intro.'</p>
+	<h3>Import '.$title.'</h3>
+	<p>'.$intro.'</p>
 	
-	<form action="' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page='.$page.'&amp;import=csv" method="post" enctype="multipart/form-data">
+	<form action="' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page='.$page.'" method="post" enctype="multipart/form-data">
 		<input type="hidden" name="csv_submitted" value="TRUE" id="' . time() . '">
-		<input name="action" type="hidden" value="csv_import_'.$name.'" />
-		<font color="red"> * </font><input type="file" name="file[]">
+		<input name="action" type="hidden" value="'.$action.'" />
+		<input name="import" type="hidden" value="csv" />
+		<font color="red"> * </font><input type="file" name="file[]" size="90" style="padding:3px; border:1px solid #999; outline:none; height:20px;">
 		<input class="button-primary" type="submit" value="Upload File">
 	</form>
 		

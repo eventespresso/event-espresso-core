@@ -1,3 +1,10 @@
+#icon-options-event { background:url(../../../../images/events_icon_32.png) no-repeat; }
+.button.add-new-h2 { margin-left: 15px; }
+
+.tablenav div { margin-right:15px; }
+.tablenav select { margin:0 1em 0 0 !important; }
+
+
 /*** Save buttons ***/
 #event_editor_major_buttons_wrapper{
     border-top: medium none;
@@ -54,6 +61,7 @@
 	font-weight: bold;
 }
 
+#post-body .postbox { background: #fff; }
 #post-body-content li.current a {
 	color: black;
 	font-weight: 800;
@@ -119,6 +127,8 @@ table .espresso-radio-btn-options-ul .small-lbl,
 	margin: 0 0 4px .5em;
 }
 
+.ee-width-100 { width: 100%; }
+.ee-width-75 { width: 75%; }
 .ee-width-50 { width: 50%; }
 .ee-width-33 { width: 33%; }
 .ee-width-25 { width: 25%; }
@@ -135,11 +145,13 @@ table .espresso-radio-btn-options-ul .small-lbl,
 .bigger-text { font-size:1.5em; line-height:2em; }
 .huge-text { font-size:2em; line-height:2.4em; }
 
+/*.medium-text  { width: 50%; }*/
 
 .display-the-hidden { float:right; cursor:pointer; }
 .hide-the-displayed { float:right; cursor:pointer; }
 .display-the-hidden img, .hide-the-displayed img { position:relative; top:1px; left:-4px; }
 .display-the-hidden.no-icon, .hide-the-displayed.no-icon { background-image:none; }
+.display-the-hidden.hidden { display:none !important; }
 
 .disabled-input input,
 .disabled-input label { color:#777 !important;  text-shadow:none; }
@@ -175,3 +187,66 @@ table .espresso-radio-btn-options-ul .small-lbl,
 .validate-error, input.validate-error {
 	border-color: red;
 }
+.validation-notice-dv { display:none; padding:0; margin:0; color:red; }
+.requires-value { border:1px solid #FE2A00 !important; }
+
+
+
+
+.espresso-button-red {
+    background-color: #A32615 !important;
+    background-image: linear-gradient(to bottom, #D22C1A, #A32615) !important;
+    border-color: #A32615 #A32615 #8E2112 !important;
+	box-shadow: 0 1px 0 rgba(230, 116, 103, 0.5) inset !important;
+}
+.espresso-button-red:hover {
+    background-color: #B82818 !important;
+    background-image: linear-gradient(to bottom, #DB2E1B, #A32615) !important;
+    border-color: #7E1D10 !important;
+	box-shadow: 0 1px 0 rgba(230, 116, 103, 0.6) inset !important;
+}
+
+
+.espresso-button-green {
+    background-color: #2f7f0f !important;
+    background-image: linear-gradient(to bottom, #3AA012, #2F7F0F) !important;
+    border-color: #2F7F0F #2F7F0F #286A0C !important;
+	box-shadow: 0 1px 0 rgba(110, 193, 75, 0.5) inset !important;
+} 
+.espresso-button-green:hover {
+    background-color: #399811 !important;
+    background-image: linear-gradient(to bottom, #42AF14, #2f7f0f) !important;
+    border-color: #225A0A !important;
+	box-shadow: 0 1px 0 rgba(110, 193, 75, 0.6) inset !important;
+}
+
+
+
+
+
+
+.ui-slider { position: relative; text-align: left; }
+.ui-slider .ui-slider-handle { position: absolute; z-index: 2; width: 1.2em; height: 1.2em; cursor: default; }
+.ui-slider .ui-slider-range { position: absolute; z-index: 1; font-size: .7em; display: block; border: 0; background-position: 0 0; }
+
+.ui-slider-horizontal { height: .8em; }
+.ui-slider-horizontal .ui-slider-handle { top: -.3em; margin-left: -.6em; }
+.ui-slider-horizontal .ui-slider-range { top: 0; height: 100%; }
+.ui-slider-horizontal .ui-slider-range-min { left: 0; }
+.ui-slider-horizontal .ui-slider-range-max { right: 0; }
+
+.ui-slider-vertical { width: .8em; height: 100px; }
+.ui-slider-vertical .ui-slider-handle { left: -.3em; margin-left: 0; margin-bottom: -.6em; }
+.ui-slider-vertical .ui-slider-range { left: 0; width: 100%; }
+.ui-slider-vertical .ui-slider-range-min { bottom: 0; }
+.ui-slider-vertical .ui-slider-range-max { top: 0; }
+
+.ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
+.ui-timepicker-div dl { text-align: left; }
+.ui-timepicker-div dl dt { height: 25px; margin-bottom: -25px; }
+.ui-timepicker-div dl dd { margin: 0 10px 10px 65px; }
+.ui-timepicker-div td { font-size: 90%; }
+.ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }
+	
+	
+	

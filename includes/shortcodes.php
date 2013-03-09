@@ -696,8 +696,8 @@ if (!function_exists('espresso_staff_sc')) {
 	function espresso_staff_sc($atts) {
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-		global $wpdb, $espresso_premium, $this_event_id;
-		if ($espresso_premium != true)
+		global $wpdb, $caffeinated, $this_event_id;
+		if ($caffeinated != true)
 			return;
 
 		empty($atts) ? '' : extract($atts);
@@ -857,7 +857,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 	function espresso_venue_details_sc($atts) {
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-		global $wpdb, $this_event_id, $espresso_premium, $espresso_reg_page;
+		global $wpdb, $this_event_id, $caffeinated, $espresso_reg_page;
 
 		empty($atts) ? '' : extract($atts);
 
@@ -1007,7 +1007,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 				$html .= $show_google_map_link ? '<div class="google-remote-map-link">' . $google_map_link . '</div>' : '';
 				//$html .= var_dump($meta);
 				//If the premium version is installed, then we can laod the map.
-				if ($espresso_premium) {
+				if ($caffeinated) {
 					if (!empty($meta['enable_for_maps'])) {
 						//Adding this check to make sure we are on a registration page. Otherwise it will break regular posts/pages that are loading the [ESPRESSO_VENUE] shortcode.
 						if ($espresso_reg_page) {

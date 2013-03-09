@@ -8,7 +8,7 @@
 		echo sprintf(
 			__('The following shortcodes and page settings are required for Event Espresso to function properly. %sThese shortcodes should not be replaced with any other shortcodes. Please view %sthis page%s for a list of optional shortcodes you can use on other pages.', 'event_espresso'),
 			'<br />',
-			'<a href="admin.php?page=support&action=shortcodes">',
+			'<a href="admin.php?page=espresso_support&action=shortcodes">',
 			'</a>'
 		);
 		?>
