@@ -86,7 +86,7 @@ class EE_Attendee_List_Shortcodes extends EE_Shortcodes {
 	 * This returns the parsed attendee list for main template;
 	 */
 	private function _get_attendee_list_for_main() {
-		$valid_shortcodes = array('attendee', 'event_list');
+		$valid_shortcodes = array('attendee', 'event_list', 'registration');
 		$template = $this->_data['template'];
 		$data = $this->_data['data'];
 		$events = array();

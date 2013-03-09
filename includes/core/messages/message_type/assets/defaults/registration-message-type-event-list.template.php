@@ -3,7 +3,7 @@
 <td valign="top" width="440">								
 		<h3>[EVENT_NAME]</h3>
 		<p>[EVENT_DESCRIPTION]</p>
-		<h4>Event Price: [TOTAL_COST]</h4>
+		<h4>Event Price: [EVENT_PRICE]</h4>
 		<h3>Attendees</h3>
 		<ol>
 			[ATTENDEE_LIST]

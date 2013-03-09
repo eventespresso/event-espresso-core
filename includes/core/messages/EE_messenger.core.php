@@ -222,6 +222,8 @@ abstract class EE_messenger extends EE_Base {
 	 * Child classes must declare the $_validator_config property using this method.
 	 * See comments for $_validator_config for details on what it is used for.
 	 *
+	 * NOTE:  messengers should set an array of valid shortcodes for ALL scenarios.  The corresponding validator class (validators/{messenger}) can be used to restrict only certain shortcodes per template so users cannot add certain shortcodes.
+	 *
 	 * @access protected
 	 * @return void
 	 */

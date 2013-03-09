@@ -87,7 +87,7 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_event_list_for_main() {
-		$valid_shortcodes = array('event', 'attendee_list');
+		$valid_shortcodes = array('event', 'attendee_list', 'venue');
 		$template = $this->_data['template'];
 		$data = $this->_data['data'];
 		$atts = array();

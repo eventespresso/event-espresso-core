@@ -83,7 +83,7 @@ class EE_Email_messenger extends EE_messenger  {
 
 	/**
 	 * see abstract declaration in parent class for details
-	 * 
+	 *
 	 *
 	 * @access protected
 	 * @return void
@@ -102,10 +102,10 @@ class EE_Email_messenger extends EE_messenger  {
 			'subject' => array(),
 			'content' => array(),
 			'attendee_list' => array(
-				'shortcodes' => array('attendee', 'event_list')
+				'shortcodes' => array('attendee', 'event_list', 'registration')
 				),
 			'event_list' => array(
-				'shortcodes' => array('event', 'attendee_list')
+				'shortcodes' => array('event', 'attendee_list', 'venue')
 				)
 			);
 	}

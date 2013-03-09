@@ -581,7 +581,6 @@ abstract class EE_message_type extends EE_Base {
 				$message->$field = $this->_shortcode_replace->parse_message_template($this->_templates[$field][$context], $addressee, $shortcodes);
 			}
 		}
-
 		return $message;
 	}	
 } 

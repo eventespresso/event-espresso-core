@@ -207,7 +207,7 @@ h4, .h4{
 	/*@editable*/ background-color:#FFFFFF;
 }
 
-#sidebar { background-color:#B6CBD8; }
+#sidebar { background-color:#B6CBD8; padding: 10px; }
 #sidebar p { color: #2A292A; }
 #sidebar img { border-width:10px; border-style: solid; border-color: #FFFFFF; }
 

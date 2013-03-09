@@ -148,9 +148,9 @@ class EE_Registration_message_type extends EE_message_type {
 	 */
 	protected function _set_valid_shortcodes() {
 		$this->_valid_shortcodes = array(
-			'admin' => array('transaction','event','organization', 'attendee', 'registration', 'attendee_list', 'event_list'),
-			'primary_attendee' => array('transaction','event', 'organization', 'attendee', 'registration', 'attendee_list', 'event_list'),
-			'attendee' => array('transaction','event', 'organization', 'attendee', 'registration', 'attendee_list', 'event_list')
+			'admin' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list'),
+			'primary_attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list'),
+			'attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list')
 			);
 	}
 

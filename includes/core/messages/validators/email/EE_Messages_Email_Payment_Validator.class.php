@@ -45,7 +45,10 @@ class EE_Messages_Email_Payment_Validator extends EE_Messages_Validator {
 
 		//modify just event_list
 		$new_config['event_list'] = array(
-			'shortcodes' => array('event', 'attendee_list', 'venue', 'transaction')
+			'shortcodes' => array('event', 'attendee_list', 'transaction')
+			);
+		$new_config['attendee_list'] = array(
+			'shortcodes' => array('attendee', 'event_list', 'registration')
 			);
 		$this->_MSGR->set_validator_config( $new_config );
 	}
