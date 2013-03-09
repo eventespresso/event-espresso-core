@@ -210,6 +210,9 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 		$where = !empty( $event_ids ) ?  " e.id IN ('" . implode(",'", $event_ids ) . "')" : " e.is_active = '1'";
 
+		//make sure we get only active events!
+		$where .= " AND e.event_status = 'A'";
+
 		$events = $wpdb->get_results( $SQL . $where . $limit );
 		
 		return $events;
