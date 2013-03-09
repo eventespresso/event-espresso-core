@@ -115,10 +115,27 @@ class EE_Email_messenger extends EE_messenger  {
 
 	/**
 	 * see parent declaration for description
+	 *
+	 * @param bool $url return the url or path
+	 * @param mixed (string|bool) $type 'preview'|wpeditor|FALSE (default is the inline preview for email)
 	 * @return string path to inline css template file
 	 */
-	public function get_inline_css_template( $url = FALSE, $preview = FALSE ) {
-		$base = !$preview ? 'messages/messenger/assets/email/email-messenger-inline-css.template.css' : 'messages/messenger/assets/email/email-messenger-inline-preview-css.template.css';
+	public function get_inline_css_template( $url = FALSE, $type = FALSE ) {
+		switch ( $type ) {
+			
+			case 'preview' :
+				$base = 'messages/messenger/assets/email/email-messenger-inline-preview-css.template.css';
+				break;
+
+			case 'wpeditor' :
+				$base = 'messages/messenger/assets/email/email-messenger-inline-wpeditor-css.template.css';
+				break;
+
+			default :
+				$base = 'messages/messenger/assets/email/email-messenger-inline-css.template.css';
+				break;
+		}
+		
 		return $url ? EVENT_ESPRESSO_PLUGINFULLURL . 'includes/core/' . $base : EE_CORE . $base;
 	}
 

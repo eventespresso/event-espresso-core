@@ -281,7 +281,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		if ( $this->_req_action == 'edit_message_template' && !empty( $this->_active_messenger ) ) {
 			//we're going to REPLACE the existing mce css
 			//we need to get the css file location from the active messenger
-			$mce_css = $this->_active_messenger->get_inline_css_template(TRUE);
+			$mce_css = $this->_active_messenger->get_inline_css_template(TRUE, 'wpeditor');
 		}
 
 		return $mce_css;
