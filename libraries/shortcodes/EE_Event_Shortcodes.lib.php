@@ -90,7 +90,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[EVENT_DESCRIPTION]' :
-				return isset($this->_data['meta']['event_desc']) ? $this->_data['meta']['event_desc']: '';
+				return $this->_event('desc');
 				break;
 
 			case '[EVENT_LINK]' :
@@ -168,6 +168,33 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				return $DTT->start_time( get_option('time_format') );
 				break;
 		}
+
+	}
+
+
+
+	/**
+	 * return the event details for a given key
+	 * @param  string $type what to return
+	 * @return string       returned value if present, empty string if not
+	 */
+	private function _event( $type ) {
+		$what = '';
+		if ( !isset( $this->_data['ID'] ) ) return ''; //no event id get out.
+		global $wpdb;
+
+		//we're using a switch here because I anticipate there will eventually be more types coming in here!
+		switch ( $type ) {
+			case 'desc' :
+				$what = 'e.event_desc';
+				break;
+		}
+
+		$select = "SELECT $what FROM " . EVENTS_DETAIL_TABLE . " AS e WHERE e.id = %s";
+
+		$result = $wpdb->get_var( $wpdb->prepare( $select, $this->_data['ID'] ) );
+
+		return $result;
 
 	}
 
