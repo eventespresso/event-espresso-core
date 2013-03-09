@@ -108,9 +108,9 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			$running_total = $running_total + $line_total;
 
 			//let's also setup the dummy attendees property!
-			foreach ( $attendees as $attendee ) {
-				$this->_attendees[$key]['line_ref'][] = $line_item;  //so later it can be determined what events this attendee registered for!
-				$this->_attendees[$key]['att_obj'] = $attendee;
+			foreach ( $attendees as $att_key => $attendee ) {
+				$this->_attendees[$att_key]['line_ref'][] = $line_item;  //so later it can be determined what events this attendee registered for!
+				$this->_attendees[$att_key]['att_obj'] = $attendee;
 			}
 		}
 
@@ -163,7 +163,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 				FALSE,
 				'999999992'
 				),
-			3 => array(
+			2 => array(
 				'Yoda',
 				'I Am',
 				'4th Tree',
@@ -184,9 +184,13 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 		//let's generate the attendee objects
 		$attendees = array();
+		$var_array = array('fname','lname','address','address2','city','staid','cntry','zip','email','phone','social','comments','notes','deleted','attid');
+
 		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php');
 		foreach ( $dummy_attendees as $dummy ) {
-			$attendees[] = new EE_Attendee(implode(',', $dummy));
+			$att = array_combine( $var_array, $dummy );
+			extract($att);
+			$attendees[] = new EE_Attendee($fname, $lname, $address, $address2, $city, $staid, $cntry, $zip, $email, $phone, $social, $comments, $notes, $deleted, $attid);
 		}
 
 		return $attendees;
