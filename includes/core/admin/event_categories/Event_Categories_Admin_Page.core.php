@@ -593,21 +593,18 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 	protected function _import_categories() {
 
-		//first check if we've got an incoming import
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php');
 		//first check if we've got an incoming import
 		if (isset($this->_req_data['import'])) {
-			if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php')) {
-				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php');
-				$EE_Import = EE_Import::instance();
-				$EE_Import->import();
-			}
+			EE_Import::instance()->import();
 		}
 
-		include( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/csv_uploader.php' );
-		$import_what = 'Event Categories';
-		$import_intro = 'If you have a previously exported list of Categories in a Comma Separated Value (CSV) file format, you can upload the file here: ';
+		$title = __( 'Import Event Categories', 'event_espresso' );
+		$intro = __( 'If you have a previously exported list of Event Categories in a Comma Separated Value (CSV) file format, you can upload the file here: ', 'event_espresso' );
 		$page = 'event_categories';
-		$content = espresso_csv_uploader($import_what, $import_intro, $page);
+		$action = 'import_categories(';
+		$type = 'csv';
+		$content = EE_Import::instance()->upload_form( $title, $intro, $page, $action, $type );
 
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_category', 'add', array(), 'button add-new-h2');
 		$this->_template_args['admin_page_content'] = $content;	
