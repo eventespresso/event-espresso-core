@@ -4,12 +4,14 @@ EE_Template_Validator::verify_instanceof($primary_registrant, '$primary_registra
 EE_Template_Validator::verify_is_array_of($payments, '$payments', 'EE_Payment');
 EE_Template_Validator::verify_is_array($event_names, '$event_names');
 EE_Template_Validator::verify_isnt_null($currency_symbol, '$currency_symbol');
+EE_Template_Validator::verify_isnt_null($SPCO_step_2_url, '$SPCO_step_2_url');
 /**
  * @var $transaction EE_Transaction
  * @var $primary_registrant EE_Registration
  * @var $payments EE_Payment[]
  * @var $event_names array of strings of only event names
  * @var $currency_symbol string
+ * @var $SPCO_step_2_url string
  */
 ?>
 <div class="espresso_payment_overview event-display-boxes ui-widget" >
@@ -152,7 +154,7 @@ EE_Template_Validator::verify_isnt_null($currency_symbol, '$currency_symbol');
 			<?php
 			if (!$transaction->is_completed()) {
 				?>
-				<a href=''><?php _e("Try payment again", 'event_espresso'); ?></a>
+			<a href='<?php echo $SPCO_step_2_url?>'><?php _e("Try payment again", 'event_espresso'); ?></a>
 				<?php }
 			?>
 		</div><!-- / .reg-gen-details -->

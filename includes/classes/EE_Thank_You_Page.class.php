@@ -82,7 +82,13 @@ class EE_Thank_You_Page{
 		$this->_REG = EEM_Registration::instance();
 	}
 	
+	
+	
+	/**
+	 * performs business logic on page load, like maybe forgetting some session info etc
+	 */
 	function handle_thank_you_page(){
+		
 		$this->_GATEWAYS->thank_you_page_logic($this->_current_transaction);
 	}
 	
@@ -125,7 +131,7 @@ class EE_Thank_You_Page{
 		$template_args['primary_registrant'] = $this->_REG->get_primary_registration_for_transaction_ID($transaction->ID());
 		$template_args['event_names']=$event_names;
 		$template_args['currency_symbol']=$org_options['currency_symbol'];
-		//$tempalte_args['SPCO_url']=  get_permalink($org_options
+		$template_args['SPCO_step_2_url']= add_query_arg(array('e_reg'=>'register','step'=>'2'),get_permalink($org_options['event_page_id']));
 		return $gateway_payment_overview_content . espresso_display_template(EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/payment_overview.template.php',$template_args,true);
 		
 	}
