@@ -1411,6 +1411,7 @@ function espresso_default_status_codes() {
 				('PCN', 'CANCELLED', 'payment', 0, NULL),
 				('PFL', 'FAILED', 'payment', 0, NULL),
 				('PDC', 'DECLINED', 'payment', 0, NULL),
+				('PPN', 'PENDING', 'payment', 0, NULL),
 				('EDR', 'DRAFT', 'email', 0, NULL),
 				('ESN', 'SENT', 'email', 0, NULL);";
 		$wpdb->query($SQL);
