@@ -125,6 +125,7 @@ class EE_Thank_You_Page{
 		$template_args['primary_registrant'] = $this->_REG->get_primary_registration_for_transaction_ID($transaction->ID());
 		$template_args['event_names']=$event_names;
 		$template_args['currency_symbol']=$org_options['currency_symbol'];
+		//$tempalte_args['SPCO_url']=  get_permalink($org_options
 		return $gateway_payment_overview_content . espresso_display_template(EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/payment_overview.template.php',$template_args,true);
 		
 	}

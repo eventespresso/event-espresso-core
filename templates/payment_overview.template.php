@@ -107,7 +107,13 @@ EE_Template_Validator::verify_isnt_null($currency_symbol, '$currency_symbol');
 							</tr>
 						<?php } ?>
 					</tbody>
-				</table>					
+				</table>
+				<?php 
+					if (!$transaction->is_completed()){
+						?>
+				<a href=''><?php _e("Try payment again",'event_espresso');?></a>
+						<?php
+					}?>
 			</div><!-- / .reg-gen-details -->
 		</div><!-- / .event-data-display -->
 	</div><!-- / .event-display-boxes -->

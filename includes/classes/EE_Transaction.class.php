@@ -603,6 +603,22 @@ class EE_Transaction extends EE_Base_Class{
 		echo $this->pretty_status();
 	}
 	
+	
+	
+	/**
+	 * Returns whether this transaction is complete or at least pending.
+	 * Useful in templates and other logic for deciding if we should ask for another payment...
+	 * @return boolean
+	 */
+	public function is_completed(){
+		if($this->status_ID()==EEM_Transaction::complete_status_code
+				||
+				$this->status_ID()== EEM_Transaction::pending_status_code){
+			return true;
+		}else{
+			return false;
+		}
+	}
 
 
 }
