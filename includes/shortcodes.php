@@ -517,7 +517,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 												&& (empty($_REQUEST['edit_details']) || $_REQUEST['edit_details'] != 'true')
 												&& !is_user_logged_in()) {
 									if (!function_exists('recaptcha_get_html')) {
-										require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/recaptchalib.php');
+										require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/recaptchalib.php');
 									}//End require captcha library
 									# the response from reCAPTCHA
 									$resp = null;

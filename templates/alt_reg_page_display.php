@@ -60,7 +60,7 @@
 			//Recaptcha portion
 			if ($org_options['use_captcha'] && $_REQUEST['edit_details'] != 'true') {
 				if (!function_exists('recaptcha_get_html')) {
-					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/recaptchalib.php');
+					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/recaptchalib.php');
 				}//End require captcha library
 				# the response from reCAPTCHA
 				$resp = null;

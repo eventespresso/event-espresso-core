@@ -652,7 +652,7 @@ class EE_Single_Page_Checkout {
 		if ($org_options['use_captcha'] && (empty($_REQUEST['edit_details']) || $_REQUEST['edit_details'] != 'true') && !is_user_logged_in()) {
 
 			if (!function_exists('recaptcha_get_html')) {
-				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/recaptchalib.php');
+				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/recaptchalib.php');
 			}
 
 			// the error code from reCAPTCHA, if any
@@ -1062,7 +1062,7 @@ class EE_Single_Page_Checkout {
 		// check recaptcha
 		if ($org_options['use_captcha'] && !is_user_logged_in()) {
 			if (!function_exists('recaptcha_check_answer')) {
-				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/recaptchalib.php');
+				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/recaptchalib.php');
 				$response = recaptcha_check_answer(
 										$org_options['recaptcha_privatekey'], 
 										$_SERVER["REMOTE_ADDR"], 
