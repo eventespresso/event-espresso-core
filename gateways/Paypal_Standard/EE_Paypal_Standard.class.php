@@ -406,11 +406,11 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$this->_debug_log("<hr><br>".get_class($this).":start handle_ipn_for_transaction on transaction:".($transaction instanceof EE_Transaction)?$transaction->ID():'unknown');
 		
 		//@todo just for debugging. remove in production
-		if($_GET['payment_status'] && $_GET['txn_id']){
-			echo "<br>NOTE! payment_staut and txn_id overridden!!!";
-			$_POST['payment_status']=$_GET['payment_status'];
-			$_POST['txn_id']=$_GET['txn_id'];
-		}
+//		if($_GET['payment_status'] && $_GET['txn_id']){
+//			echo "<br>NOTE! payment_staut and txn_id overridden!!!";
+//			$_POST['payment_status']=$_GET['payment_status'];
+//			$_POST['txn_id']=$_GET['txn_id'];
+//		}
 		//verify there's payment data that's been sent
 		if(empty($_POST['payment_status']) || empty($_POST['txn_id'])){
 			return false;
