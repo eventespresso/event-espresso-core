@@ -76,8 +76,10 @@
 		}
 		return self::$_instance;
 	}
+
 	
-	
+
+
 
 	
 	/**

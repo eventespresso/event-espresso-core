@@ -221,10 +221,6 @@ table .espresso-radio-btn-options-ul .small-lbl,
 }
 
 
-
-
-
-
 .ui-slider { position: relative; text-align: left; }
 .ui-slider .ui-slider-handle { position: absolute; z-index: 2; width: 1.2em; height: 1.2em; cursor: default; }
 .ui-slider .ui-slider-range { position: absolute; z-index: 1; font-size: .7em; display: block; border: 0; background-position: 0 0; }
@@ -247,6 +243,8 @@ table .espresso-radio-btn-options-ul .small-lbl,
 .ui-timepicker-div dl dd { margin: 0 10px 10px 65px; }
 .ui-timepicker-div td { font-size: 90%; }
 .ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }
-	
-	
-	
+
+
+.ee-upload-form-dv {
+	margin: 2em 0;
+}

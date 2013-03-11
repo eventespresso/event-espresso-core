@@ -44,7 +44,51 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 		}
 		return self::$_instance;
 	}
-	
+
+
+
+
+	/**
+	 *	@ generates HTML for a file upload input and form
+	 *	@ access 	public
+	 * 	@param 	string 		$title - heading for the form
+	 * 	@param 	string 		$intro - additional text explaing what to do
+	 * 	@param 	string 		$page - EE Admin page to direct form to - in the form "espresso_{pageslug}"
+	 * 	@param 	string 		$action - EE Admin page route array "action" that form will direct to
+	 * 	@param 	string 		$type - type of file to import
+	 *	@ return 	string
+	 */
+	public function upload_form ( $title, $intro, $page, $action, $type  ) {
+		
+		ob_start();
+?>
+	<div class="ee-upload-form-dv">
+		<h3><?php echo $title;?></h3>
+		<p><?php echo $intro;?></p>
+		
+		<form action="<?php echo get_bloginfo('wpurl');?>/wp-admin/admin.php?page=<?php echo $page;?>" method="post" enctype="multipart/form-data">
+			<input type="hidden" name="csv_submitted" value="TRUE" id="<?php echo time();?>">
+			<input name="action" type="hidden" value="<?php echo $action;?>" />
+			<input name="import" type="hidden" value="<?php echo $type;?>" />
+			<input type="file" name="file[]" size="90" >
+			<input class="button-primary" type="submit" value="<?php _e( 'Upload File', 'event_espresso' );?>">
+		</form>
+			
+		<p class="ee-attention">
+			<b><?php _e( 'Attention', 'event_espresso' );?></b><br/>
+			<?php echo sprintf( __( 'Accepts .%s file types only. Maximum file name length (minus extension) is 15 characters. Anything over that will be truncated to 15 characters.', 'event_espresso' ), $type ) ;?>	
+		</p>
+
+	</div>
+		
+<?php
+		$uploader = ob_get_clean();
+		return $uploader;
+	}
+
+
+
+
 
 	/**
 	 *			@Import Event Espresso data - some code "borrowed" from event espresso csv_import.php
