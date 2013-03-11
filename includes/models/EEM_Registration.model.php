@@ -36,6 +36,30 @@ class EEM_Registration extends EEM_TempBase {
 	 */
 	const PRIMARY_REGISTRANT_COUNT = 1;
 
+	
+	
+	/**
+	 * Status ID (STS_ID on esp_status table) to indicate a pending registration
+	 */
+	const status_id_pending = 'RPN';
+	
+	
+	/**
+	 * Status ID (STS_ID on esp_status table) to indicate a cancelled registration
+	 */
+	const status_id_cancelled = 'RCN';
+	
+	
+	/**
+	 * Status ID (STS_ID on esp_status table) to indicate an approved registration
+	 */
+	const status_id_approved = 'RAP';
+	
+	
+	/**
+	 * Status ID (STS_ID on esp_status table) to indicate an unapproved registration
+	 */
+	const status_id_not_approved = 'RNA';
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor

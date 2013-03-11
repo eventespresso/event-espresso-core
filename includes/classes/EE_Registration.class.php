@@ -761,7 +761,37 @@ class EE_Registration extends EE_Base_Class {
 	public function price_paid() {
 		return $this->_REG_final_price;
 	}
+	
+	
+	/**
+	 * Returns a nice version of the status for displaying to customers
+	 * @return string
+	 */
+	public function pretty_status(){
+		require_once('EEM_Registration.model.php');
+		switch($this->status_ID()){
+			case EEM_Registration::status_id_approved:
+				return __("Approved",'event_espresso');
+			case EEM_Registration::status_id_not_approved:
+				return __("Not Approved",'event_espresso');
+			case EEM_Registration::status_id_pending:
+				return __("Pending Approval",'event_espresso');
+			case EEM_Registration::status_id_cancelled:
+				return __("Cancelled",'event_espresso');
+			default:
+				return __("Unknown",'event_espresso');
+		}
+	}
 
+	
+	
+	/**
+	 * Prints out the return value of $this->pretty_status()
+	 * @return void
+	 */
+	public function e_pretty_status(){
+		echo $this->pretty_status();
+	}
 
 
 	/**

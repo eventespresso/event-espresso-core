@@ -456,6 +456,7 @@ class EE_Transaction extends EE_Base_Class{
 	/**
 	*		get Total Amount Paid to Date
 	* 		@access		public
+	*		@return float
 	*/	
 	public function paid() {
 		return (float)$this->_TXN_paid;
@@ -606,14 +607,43 @@ class EE_Transaction extends EE_Base_Class{
 	
 	
 	/**
-	 * Returns whether this transaction is complete or at least pending.
+	 * Returns whether this transaction is complete
 	 * Useful in templates and other logic for deciding if we should ask for another payment...
 	 * @return boolean
 	 */
 	public function is_completed(){
-		if($this->status_ID()==EEM_Transaction::complete_status_code
-				||
-				$this->status_ID()== EEM_Transaction::pending_status_code){
+		if($this->status_ID()==EEM_Transaction::complete_status_code){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	
+	
+	/**
+	 * Returns whether this transaction is pending
+	 * Useful in templates and other logic for deciding if we should ask for another payment...
+	 * @return boolean
+	 */
+	public function is_pending(){
+		if($this->status_ID() == EEM_Transaction::pending_status_code){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	
+	
+	
+	/**
+	 * Returns whether this transaction is incomplete
+	 * Useful in templates and other logic for deciding if we should ask for another payment...
+	 * @return boolean
+	 */
+	public function is_incomplete(){
+		if($this->status_ID() == EEM_Transaction::incomplete_status_code){
 			return true;
 		}else{
 			return false;
