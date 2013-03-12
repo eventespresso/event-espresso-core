@@ -917,24 +917,27 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		} //end if ( !empty($template_field_structure) )
 
+
+		$this->_set_save_buttons($button_both, $button_text, $button_actions, $referrer);
+
+		//add preview button
+		$preview_url = parent::add_query_args_and_nonce( array( 'message_type' => $message_template->message_type(), 'messenger' => $message_template->messenger(), 'context' => $context,'msg_id' => $GRP_ID, 'evt_id' => $EVT_ID, 'action' => 'preview_message' ) );
+		$preview_button = '<a href="' . $preview_url . '" class="button-secondary messages-preview-button">' . __('Preview', 'event_espresso') . '</a>';
+
+
 		//setup context switcher
 		$context_switcher_args = array(
 			'page' => 'ee_messages',
 			'action' => 'edit_message_template',
 			'id' => $GRP_ID,
 			'evt_id' => $EVT_ID,
-			'context' => $context
+			'context' => $context,
+			'extra' => $preview_button
 		);
 		$this->_set_context_switcher($message_template, $context_switcher_args);
 
-		$this->_set_save_buttons($button_both, $button_text, $button_actions, $referrer);
-
-		//add preview button
-		$preview_url = parent::add_query_args_and_nonce( array( 'message_type' => $message_template->message_type(), 'messenger' => $message_template->messenger(), 'context' => $context, 'action' => 'preview_message' ) );
-		$preview_button = '<a href="' . $preview_url . '" class="button-secondary messages-preview-button">' . __('Preview', 'event_espresso') . '</a>';
-
 		//sidebar box
-		$this->_template_args['sidebar_content'] = $sidebar_fields . $this->_template_args['save_buttons'] . $preview_button;
+		$this->_template_args['sidebar_content'] = $sidebar_fields . $this->_template_args['save_buttons'];
 		$this->_template_args['sidebar_description'] = '';
 		$this->_template_args['sidebar_title'] = '';
 		$sidebar_title = __('Other Details', 'event_espresso');
@@ -1005,7 +1008,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	public function _preview_message() {
 		//first make sure we've got the necessary parameters
-		if ( !isset( $this->_req_data['message_template'] ) || !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['messenger'] ) ) {
+		if ( !isset( $this->_req_data['message_template'] ) || !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['msg_id'] ) ) {
 			EE_Error::add_error( __('Missing necessary parameters for displaying preview', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 
@@ -1015,9 +1018,17 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//get the preview!
 		$preview = $MSG->preview_message( $this->_req_data['message_type'], $this->_req_data['context'], $this->_req_data['messenger'] );
 
+		//let's add a button to go back to the edit view
+		$go_back_url = parent::add_query_args_and_nonce( array( 'id' => $this->_req_data['msg_id'], 'context' => $this->_req_data['context'], 'evt_id' => isset($this->_req_data['evt_id']) ? $this->_req_data['evt_id'] : '', 'action' => 'edit_message_template' ) );
+		$preview_button = '<a href="' . $go_back_url . '" class="button-secondary messages-preview-go-back-button">' . __('Go Back to Edit', 'event_espresso') . '</a>';
+
+		//let's provide a helpful title for context
+		$preview_title = sprintf( __('Viewing Preview for %s %s Message Template', 'event_espresso'), ucwords($this->_active_messengers[$this->_req_data['messenger']]['obj']->label['singular']), ucwords($this->_active_message_types[$this->_req_data['message_type']]['obj']->label['singular']) );
+
 
 		//setup display of preview.  We put it in an iframe so that any html headers etc display properly (and css styling is in place).
-		$this->_template_args['admin_page_content'] = html_entity_decode(stripslashes($preview));
+		$this->_admin_page_title = $preview_title;
+		$this->_template_args['admin_page_content'] = $preview_button . '<br />' . html_entity_decode(stripslashes($preview));
 
 		$this->display_admin_page_with_no_sidebar();
 	}
@@ -1158,6 +1169,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'content' => $content
 		);
 
+		//help for preview button
+		$help['preview_button'] = array(
+			'title' => __('Message Template Preview', 'event_espresso'),
+			'content' => __('Clicking this button will show you a preview of what the current template will look like when received.', 'event_espresso')
+			);
+
 		return $help;
 	}
 
@@ -1180,7 +1197,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			<form method="get" action="<?php echo EE_MSG_ADMIN_URL; ?>" id="ee-msg-context-switcher-frm">
 				<?php
 					foreach ( $args as $name => $value ) {
-						if ( $name == 'context' || empty($value) ) continue;
+						if ( $name == 'context' || empty($value) || $name == 'extra' ) continue;
 						?>
 						<input type="hidden" name="<?php echo $name; ?>" value = "<?php echo $value; ?>" />
 						<?php
@@ -1201,6 +1218,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				<?php $button_text = sprintf( __('Switch %s', 'event_espresso'), ucwords($context_label['label']) ); ?>
 				<input id="submit-msg-context-switcher-sbmt" class="button-secondary" type="submit" value="<?php echo $button_text; ?>"> <?php $this->_set_help_trigger( 'context_switcher' ); ?>
 			</form>
+			<?php echo $args['extra']; ?><?php $this->_set_help_trigger( 'preview_button' ); ?>
 		</div> <!-- end .ee-msg-switcher-container -->
 		<?php
 		$output = ob_get_contents();

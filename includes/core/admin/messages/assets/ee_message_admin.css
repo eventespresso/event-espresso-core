@@ -54,3 +54,10 @@
 	max-height: 400px;
 	overflow: scroll;
 }
+
+#ee-msg-context-switcher-frm {
+    display: inline-block;
+}
+.messages-preview-button {
+    display: inline-block;
+}
