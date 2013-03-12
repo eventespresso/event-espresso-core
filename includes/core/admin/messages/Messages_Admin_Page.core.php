@@ -917,15 +917,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		} //end if ( !empty($template_field_structure) )
 
-		//setup context switcher
-		$context_switcher_args = array(
-			'page' => 'ee_messages',
-			'action' => 'edit_message_template',
-			'id' => $GRP_ID,
-			'evt_id' => $EVT_ID,
-			'context' => $context
-		);
-		$this->_set_context_switcher($message_template, $context_switcher_args);
 
 		$this->_set_save_buttons($button_both, $button_text, $button_actions, $referrer);
 
@@ -933,8 +924,20 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$preview_url = parent::add_query_args_and_nonce( array( 'message_type' => $message_template->message_type(), 'messenger' => $message_template->messenger(), 'context' => $context, 'action' => 'preview_message' ) );
 		$preview_button = '<a href="' . $preview_url . '" class="button-secondary messages-preview-button">' . __('Preview', 'event_espresso') . '</a>';
 
+
+		//setup context switcher
+		$context_switcher_args = array(
+			'page' => 'ee_messages',
+			'action' => 'edit_message_template',
+			'id' => $GRP_ID,
+			'evt_id' => $EVT_ID,
+			'context' => $context,
+			'extra' => $preview_button
+		);
+		$this->_set_context_switcher($message_template, $context_switcher_args);
+
 		//sidebar box
-		$this->_template_args['sidebar_content'] = $sidebar_fields . $this->_template_args['save_buttons'] . $preview_button;
+		$this->_template_args['sidebar_content'] = $sidebar_fields . $this->_template_args['save_buttons'];
 		$this->_template_args['sidebar_description'] = '';
 		$this->_template_args['sidebar_title'] = '';
 		$sidebar_title = __('Other Details', 'event_espresso');
@@ -1158,6 +1161,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'content' => $content
 		);
 
+		//help for preview button
+		$help['preview_button'] = array(
+			'title' => __('Message Template Preview', 'event_espresso'),
+			'content' => __('Clicking this button will show you a preview of what the current template will look like when received.', 'event_espresso')
+			);
+
 		return $help;
 	}
 
@@ -1180,7 +1189,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			<form method="get" action="<?php echo EE_MSG_ADMIN_URL; ?>" id="ee-msg-context-switcher-frm">
 				<?php
 					foreach ( $args as $name => $value ) {
-						if ( $name == 'context' || empty($value) ) continue;
+						if ( $name == 'context' || empty($value) || $name == 'extra' ) continue;
 						?>
 						<input type="hidden" name="<?php echo $name; ?>" value = "<?php echo $value; ?>" />
 						<?php
@@ -1201,6 +1210,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				<?php $button_text = sprintf( __('Switch %s', 'event_espresso'), ucwords($context_label['label']) ); ?>
 				<input id="submit-msg-context-switcher-sbmt" class="button-secondary" type="submit" value="<?php echo $button_text; ?>"> <?php $this->_set_help_trigger( 'context_switcher' ); ?>
 			</form>
+			<?php echo $args['extra']; ?><?php $this->_set_help_trigger( 'preview_button' ); ?>
 		</div> <!-- end .ee-msg-switcher-container -->
 		<?php
 		$output = ob_get_contents();
