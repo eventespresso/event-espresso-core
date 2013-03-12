@@ -1022,8 +1022,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$go_back_url = parent::add_query_args_and_nonce( array( 'id' => $this->_req_data['msg_id'], 'context' => $this->_req_data['context'], 'evt_id' => isset($this->_req_data['evt_id']) ? $this->_req_data['evt_id'] : '', 'action' => 'edit_message_template' ) );
 		$preview_button = '<a href="' . $go_back_url . '" class="button-secondary messages-preview-go-back-button">' . __('Go Back to Edit', 'event_espresso') . '</a>';
 
+		//let's provide a helpful title for context
+		$preview_title = sprintf( __('Viewing Preview for %s %s Message Template', 'event_espresso'), ucwords($this->_active_messengers[$this->_req_data['messenger']]['obj']->label['singular']), ucwords($this->_active_message_types[$this->_req_data['message_type']]['obj']->label['singular']) );
+
 
 		//setup display of preview.  We put it in an iframe so that any html headers etc display properly (and css styling is in place).
+		$this->_admin_page_title = $preview_title;
 		$this->_template_args['admin_page_content'] = $preview_button . '<br />' . html_entity_decode(stripslashes($preview));
 
 		$this->display_admin_page_with_no_sidebar();
