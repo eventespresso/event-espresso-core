@@ -266,7 +266,7 @@ class EE_Email_messenger extends EE_messenger  {
 	 */
 	protected function _send_message() {
 		
-		$success = wp_mail(html_entity_decode($this->_to), stripslashes_deep(html_entity_decode($this->_subject, ENT_QUOTES, "UTF-8")), stripslashes_deep(html_entity_decode($this->_body(), ENT_QUOTES,"UTF-8")), $this->_headers());
+		$success = wp_mail(html_entity_decode($this->_to), stripslashes_deep(html_entity_decode($this->_subject, ENT_QUOTES, "UTF-8")), $this->_body(), $this->_headers());
 		return $success;
 
 	}
@@ -313,9 +313,18 @@ class EE_Email_messenger extends EE_messenger  {
 		$this->_template_args = array(
 			'subject' => $this->_subject,
 			'from' => $this->_from,
-			'main_body' => $this->_content
+			'main_body' => wpautop(stripslashes_deep( html_entity_decode($this->_content,  ENT_QUOTES,"UTF-8" ) ))
 			);
-		return $this->_get_main_template( $preview );
+		$body =  $this->_get_main_template( $preview );
+
+		//now if this isn't a preview, let's setup the body so it has inline styles
+		if ( !$preview ) {
+			require_once EE_CORE . 'messages/messenger/assets/email/CssToInlineStyles.php';
+			$CSS = new CssToInlineStyles( $body );
+			$CSS->setUseInlineStylesBlock();
+			$body = ltrim( $CSS->convert(), ">\n" ); //for some reason the library has a bracket and new line at the beginning.  This takes care of that.
+		}
+		return $body;
 	}
 
 
