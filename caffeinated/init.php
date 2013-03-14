@@ -2,7 +2,7 @@
 
 	function espresso_system_check() {
 		global $caffeinated;
-		$caffeinated = TRUE;
+		$caffeinated = defined('EE_CAFFEINATED') ? EE_CAFFEINATED : TRUE;
 		return $caffeinated;
 	}
 
