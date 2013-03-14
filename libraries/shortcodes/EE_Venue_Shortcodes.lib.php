@@ -94,6 +94,10 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 				return $this->_venue('country');
 				break;
 
+			case '[VENUE_STATE]' :
+				return $this->_venue('state');
+				break;
+
 			case '[VENUE_ZIP]' :
 				return $this->_venue('zip');
 				break;
@@ -122,8 +126,10 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 		//first we get the venue id from the data.  If that isn't present then we always return empty!
 		$venue_id = isset( $this->_data['meta']['venue_id'] ) ? (int) $this->_data['meta']['venue_id'] : NULL;
 
-		if ( empty( $venue_id ) )
-			return ''; //get out we need an id!!
+		//if ( empty( $venue_id ) ) {
+			//it's likely this is an freemium request so let's see if there are any details there.
+			return $this->_event_details_venue( $db_ref ); 
+		//}
 
 		switch ( $db_ref ) {
 			case 'title':
@@ -152,6 +158,10 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 
 			case 'city':
 				$what = "v.city";
+				break;
+
+			case 'state':
+				$what = "v.state";
 				break;
 
 			case 'country':
@@ -194,6 +204,87 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 
 		return $results;
 
+	}
+
+
+
+	private function _event_details_venue( $db_ref ) {
+		global $wpdb;
+		//first need to make sure we have an event_id!
+		if ( !isset($this->_data['ID'] ) )
+			return ''; //get out no event details obviously
+
+		switch ( $db_ref ) {
+			case 'title':
+				$what = "e.venue_title";
+				break;
+
+			case 'url':
+				$what = "e.venue_url";
+				break;
+
+			case 'image':
+				$what = "e.venue_image";
+				break;
+
+			case 'phone':
+				$what = "e.venue_phone";
+				break;
+
+			case 'address':
+				$what = "e.address";
+				break;
+
+			case 'address2':
+				$what = "e.address2";
+				break;
+
+			case 'state':
+				$what = "e.state";
+				break;
+
+			case 'city':
+				$what = "e.city";
+				break;
+
+			case 'country':
+				$what = "e.country";
+				break;
+
+			case 'zip':
+				$what = "e.zip";
+				break;
+
+			case 'gmap_link':
+			case 'gmap_link_img':
+				$what = "e.address AS address, e.city AS city, e.state AS state, e.zip AS zip, e.country AS country";
+				break;
+		}
+
+		//prepare query
+		$select = "SELECT $what FROM " . EVENTS_DETAIL_TABLE . " AS e WHERE e.id = %s";
+		$results = $db_ref == 'gmap_link' || $db_ref == 'gmap_link_img' ? $wpdb->get_results( $wpdb->prepare( $select, $this->_data['ID'] ) ) : $wpdb->get_var( $wpdb->prepare( $select, $this->_data['ID'] ) );
+
+		if ( empty( $results ) ) return '';
+
+		if ( $db_ref == 'gmap_link' || $db_ref == 'gmap_link_img' ) {
+			require_once EE_HELPERS . 'EE_Maps.helper.php';
+			$atts = array(
+				'id' => $this->_data['ID'],
+				'address' => $results[0]->address,
+				'city' => $results[0]->city,
+				'state' => $results[0]->state,
+				'zip' => $results[0]->zip,
+				'country' => $results[0]->country,
+				'type' => $what == 'gmap_link' ? 'url' : 'map',
+				'map_w' => 200,
+				'map_h' => 200
+				);
+
+			$results = EE_Maps::google_map_link($atts);
+		}
+
+		return $results;
 	}
 
 
