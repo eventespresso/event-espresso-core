@@ -207,7 +207,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'persistent' => FALSE,
 					'url' => !empty($edit_query_args) ? add_query_arg( $edit_query_args, $this->_current_page_view_url ) : $this->_admin_base_url
 					),
-				'metaboxes' => array('_register_edit_meta_boxes'),
+				'metaboxes' => array('_publish_post_box', '_register_edit_meta_boxes'),
 				'has_metaboxes' => TRUE
 				),
 			'preview_message' => array(
@@ -560,7 +560,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$event_name = $message_template->event_name();
 			$button_text = array();
 			$button_actions = array();
-			$referrer = NULL;
+			$referrer = $this->_admin_base_url;
 			$edit_message_template_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
 		}
 
@@ -917,8 +917,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		} //end if ( !empty($template_field_structure) )
 
-
-		$this->_set_save_buttons($button_both, $button_text, $button_actions, $referrer);
+		//set extra content for publish box
+		$this->_template_args['publish_box_extra_content'] = $sidebar_fields;
+		$this->_set_publish_post_box_vars( 'id', $GRP_ID );
+		
+		if ( defined('DOING_AJAX') )
+			$this->_set_save_buttons($button_both, $button_text, $button_actions, $referrer);
 
 		//add preview button
 		$preview_url = parent::add_query_args_and_nonce( array( 'message_type' => $message_template->message_type(), 'messenger' => $message_template->messenger(), 'context' => $context,'msg_id' => $GRP_ID, 'evt_id' => $EVT_ID, 'action' => 'preview_message' ) );
@@ -937,12 +941,15 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_set_context_switcher($message_template, $context_switcher_args);
 
 		//sidebar box
-		$this->_template_args['sidebar_content'] = $sidebar_fields . $this->_template_args['save_buttons'];
-		$this->_template_args['sidebar_description'] = '';
-		$this->_template_args['sidebar_title'] = '';
-		$sidebar_title = __('Other Details', 'event_espresso');
-		$sidebar_action = 'update_message_template_sidebar';
-		$sidebar_template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_details_sidebar_edit_meta_box.template.php';
+		if ( defined( 'DOING_AJAX' ) ) {
+			$this->_template_args['sidebar_content'] = $sidebar_fields . '<div class="submitbox" id="submitpost"><div class="publishing-action">' . $this->_template_args['save_buttons'] . '</div></div>';
+			$this->_template_args['sidebar_description'] = '';
+			$this->_template_args['sidebar_title'] = '';
+			$sidebar_title = __('Other Details', 'event_espresso');
+			$sidebar_action = 'update_message_template_sidebar';
+			/**/
+			$sidebar_template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_details_sidebar_edit_meta_box.template.php';
+		}
 
 		//main box
 		$this->_template_args['template_fields'] = $template_fields;
@@ -963,15 +970,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	
 		$this->_template_args['admin_page_content'] = espresso_display_template( $this->_template_path, $this->_template_args, TRUE );
 
-		//sidebar metabox (if we are editing)
-		if ( $this->_template_args['GRP_ID'] ) {
+		//sidebar metabox (if we are editing and doing_ajax)
+		if ( $this->_template_args['GRP_ID'] && defined('DOING_AJAX') ) {
 			$this->_template_path = $sidebar_template_path;
-
-			if ( !defined( 'DOING_AJAX' ) )
-				$this->_add_admin_page_meta_box( $sidebar_action, $sidebar_title, __FUNCTION__, NULL, 'side');
-			else {
 				$this->_template_args['admin_page_content'] .= espresso_display_template( $this->_template_path, $this->_template_args, TRUE );
-			}
 		}
 
 
@@ -1317,12 +1319,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				EE_Error::add_error( __('There was a problem saving the template fields from the form because I didn\'t receive any actual template field data.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 				$success = 0;
 				$action_desc = '';
-				$query_args = array(
-						'id' => $this->_req_data['GRP_ID'],
-						'evt_id' => $this->_req_data['EVT_ID'],
-						'context' => $this->_req_data['MTP_context'],
-						'action' => 'edit_message_template'
-						);
+				
 			} else {
 				//first validate all fields!
 				$validates = $MTP->validate($this->_req_data['MTP_template_fields'], $this->_req_data['MTP_context'],  $this->_req_data['MTP_messenger'], $this->_req_data['MTP_message_type']);
@@ -1334,14 +1331,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 					$success = 0;
 					$action_desc ='';
-
-					//setup query args to load the edit message template
-					$query_args = array(
-						'id' => $this->_req_data['GRP_ID'],
-						'evt_id' => $this->_req_data['EVT_ID'],
-						'context' => $this->_req_data['MTP_context'],
-						'action' => 'edit_message_template'
-						);
 
 					//setup notices
 					foreach ( $validates as $field => $error ) {
@@ -1388,6 +1377,15 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		if ( defined('DOING_AJAX') ) {
 			$this->_check_template_switch();
+		}
+
+		if ( empty( $query_args ) ) {
+			$query_args = array(
+				'id' => $this->_req_data['GRP_ID'],
+				'evt_id' => $this->_req_data['EVT_ID'],
+				'context' => $this->_req_data['MTP_context'],
+				'action' => 'edit_message_template'
+				);
 		}
 
 		$this->_redirect_after_action( $success, $item_desc, $action_desc, $query_args );
