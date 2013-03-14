@@ -20,18 +20,10 @@ table td{border-collapse:collapse;}
 * @theme page
 */
 body, #backgroundTable{
-	/*@editable*/ background-color:#383739;
+	background-color:#383739;
 	padding-top: 20px;
 }
 
-/**
-* @tab Page
-* @section email border
-* @tip Set the border for your email.
-*/
-#templateContainer{
-	/*@editable*/ border: 20px solid #FFFFFF;
-}
 
 /**
 * @tab Page
@@ -40,17 +32,17 @@ body, #backgroundTable{
 * @style heading 1
 */
 h1, .h1{
-	/*@editable*/ color:#383739;
+	color:#383739;
 	display:block;
-	/*@editable*/ font-family:Arial;
-	/*@editable*/ font-size:34px;
-	/*@editable*/ font-weight:bold;
-	/*@editable*/ line-height:100%;
+	font-family:Arial;
+	font-size:34px;
+	font-weight:bold;
+	line-height:100%;
 	margin-top:0;
 	margin-right:0;
 	margin-bottom:10px;
 	margin-left:0;
-	/*@editable*/ text-align:left;
+	text-align:left;
 }
 
 /**
@@ -60,17 +52,17 @@ h1, .h1{
 * @style heading 2
 */
 h2, .h2{
-	/*@editable*/ color:#383739;
+	color:#383739;
 	display:block;
-	/*@editable*/ font-family:Arial;
-	/*@editable*/ font-size:30px;
-	/*@editable*/ font-weight:bold;
-	/*@editable*/ line-height:100%;
+	font-family:Arial;
+	font-size:30px;
+	font-weight:bold;
+	line-height:100%;
 	margin-top:0;
 	margin-right:0;
 	margin-bottom:10px;
 	margin-left:0;
-	/*@editable*/ text-align:left;
+	text-align:left;
 }
 
 /**
@@ -80,17 +72,17 @@ h2, .h2{
 * @style heading 3
 */
 h3, .h3{
-	/*@editable*/ color:#2A292A;
+	color:#2A292A;
 	display:block;
-	/*@editable*/ font-family:Arial;
-	/*@editable*/ font-size:26px;
-	/*@editable*/ font-weight:bold;
-	/*@editable*/ line-height:100%;
+	font-family:Arial;
+	font-size:26px;
+	font-weight:bold;
+	line-height:100%;
 	margin-top:0;
 	margin-right:0;
 	margin-bottom:10px;
 	margin-left:0;
-	/*@editable*/ text-align:left;
+	text-align:left;
 }
 
 /**
@@ -100,17 +92,17 @@ h3, .h3{
 * @style heading 4
 */
 h4, .h4{
-	/*@editable*/ color:#2A292A;
+	color:#2A292A;
 	display:block;
-	/*@editable*/ font-family:Arial;
-	/*@editable*/ font-size:22px;
-	/*@editable*/ font-weight:bold;
-	/*@editable*/ line-height:100%;
+	font-family:Arial;
+	font-size:22px;
+	font-weight:bold;
+	line-height:100%;
 	margin-top:0;
 	margin-right:0;
 	margin-bottom:10px;
 	margin-left:20px;
-	/*@editable*/ text-align:left;
+	text-align:left;
 }
 
 /* /\/\/\/\/\/\/\/\/\/\ STANDARD STYLING: PREHEADER /\/\/\/\/\/\/\/\/\/\ */
@@ -122,7 +114,7 @@ h4, .h4{
 * @theme page
 */
 #templatePreheader{
-	/*@editable*/ background-color:#383739;
+	background-color:#383739;
 }
 
 /**
@@ -131,11 +123,11 @@ h4, .h4{
 * @tip Set the styling for your email's preheader text. Choose a size and color that is easy to read.
 */
 .preheaderContent div{
-	/*@editable*/ color:#FFFFFF;
-	/*@editable*/ font-family:Arial;
-	/*@editable*/ font-size:12px;
-	/*@editable*/ line-height:100%;
-	/*@editable*/ text-align:right;
+	color:#FFFFFF;
+	font-family:Arial;
+	font-size:12px;
+	line-height:100%;
+	text-align:right;
 }
 
 /**
@@ -144,9 +136,9 @@ h4, .h4{
 * @tip Set the styling for your email's preheader links. Choose a color that helps them stand out from your text.
 */
 .preheaderContent div a:link, .preheaderContent div a:visited, /* Yahoo! Mail Override */ .preheaderContent div a .yshortcuts /* Yahoo! Mail Override */{
-	/*@editable*/ color:#2FBCFE;		/*		2FBCFE	C56CFC	*/
-	/*@editable*/ font-weight:normal;
-	/*@editable*/ text-decoration:underline;
+	color:#2FBCFE;		/*		2FBCFE	C56CFC	*/
+	font-weight:normal;
+	text-decoration:underline;
 }
 
 /* /\/\/\/\/\/\/\/\/\/\ STANDARD STYLING: HEADER /\/\/\/\/\/\/\/\/\/\ */
@@ -158,8 +150,8 @@ h4, .h4{
 * @theme header
 */
 #templateHeader{
-	/*@editable*/ background-color:#FFFFFF;
-	/*@editable*/ border-bottom:0;
+	background-color:#FFFFFF;
+	border-bottom:0;
 }
 
 /**
@@ -168,14 +160,14 @@ h4, .h4{
 * @tip Set the styling for your email's header text. Choose a size and color that is easy to read.
 */
 .headerContent{
-	/*@editable*/ color:#2A292A;
-	/*@editable*/ font-family:Arial;
-	/*@editable*/ font-size:34px;
-	/*@editable*/ font-weight:bold;
-	/*@editable*/ line-height:100%;
-	/*@editable*/ padding:0;
-	/*@editable*/ text-align:center;
-	/*@editable*/ vertical-align:middle;
+	color:#2A292A;
+	font-family:Arial;
+	font-size:34px;
+	font-weight:bold;
+	line-height:100%;
+	padding:0;
+	text-align:center;
+	vertical-align:middle;
 }
 
 /**
@@ -187,9 +179,9 @@ h4, .h4{
 .headerContent a:visited, 
 /* Yahoo! Mail Override */ 
 .headerContent a .yshortcuts {
-	/*@editable*/ color:#006AA8; 
-	/*@editable*/ font-weight:normal;
-	/*@editable*/ text-decoration:underline;
+	color:#006AA8; 
+	font-weight:normal;
+	text-decoration:underline;
 }
 
 #headerImage{
@@ -205,7 +197,7 @@ h4, .h4{
 * @tip Set the background color for your email's body area.
 */
 #templateContainer, .bodyContent{
-	/*@editable*/ background-color:#FFFFFF;
+	background-color:#FFFFFF;
 }
 
 #sidebar { background-color:#B6CBD8; padding: 10px; }
@@ -219,11 +211,11 @@ h4, .h4{
 * @theme main
 */
 .bodyContent div{
-	/*@editable*/ color:#504F51;
-	/*@editable*/ font-family:Arial;
-	/*@editable*/ font-size:14px;
-	/*@editable*/ line-height:150%;
-	/*@editable*/ text-align:left;
+	color:#504F51;
+	font-family:Arial;
+	font-size:14px;
+	line-height:150%;
+	text-align:left;
 }
 
 .table-wrap { border-width:1px; border-style: solid; border-color: #C7C4C9; margin:0 0 20px;  }
@@ -238,9 +230,9 @@ h4, .h4{
 * @tip Set the styling for your email's main content links. Choose a color that helps them stand out from your text.
 */
 .bodyContent div a:link, .bodyContent div a:visited, /* Yahoo! Mail Override */ .bodyContent div a .yshortcuts /* Yahoo! Mail Override */{
-	/*@editable*/ color:#006AA8;
-	/*@editable*/ font-weight:normal;
-	/*@editable*/ text-decoration:underline;
+	color:#006AA8;
+	font-weight:normal;
+	text-decoration:underline;
 }
 
 .bodyContent img{
@@ -257,8 +249,8 @@ h4, .h4{
 * @theme footer
 */
 #templateFooter{
-	/*@editable*/ background-color:#FFFFFF;
-	/*@editable*/ border-top:0;
+	background-color:#FFFFFF;
+	border-top:0;
 }
 
 /**
@@ -268,11 +260,11 @@ h4, .h4{
 * @theme footer
 */
 .footerContent div{
-	/*@editable*/ color:#7D7B7E;
-	/*@editable*/ font-family:Arial;
-	/*@editable*/ font-size:12px;
-	/*@editable*/ line-height:125%;
-	/*@editable*/ text-align:left;
+	color:#7D7B7E;
+	font-family:Arial;
+	font-size:12px;
+	line-height:125%;
+	text-align:left;
 }
 
 /**
@@ -281,9 +273,9 @@ h4, .h4{
 * @tip Set the styling for your email's footer links. Choose a color that helps them stand out from your text.
 */
 .footerContent div a:link, .footerContent div a:visited, /* Yahoo! Mail Override */ .footerContent div a .yshortcuts /* Yahoo! Mail Override */{
-	/*@editable*/ color:#2FBCFE;			/*		2FBCFE	C56CFC	*/
-	/*@editable*/ font-weight:normal;
-	/*@editable*/ text-decoration:underline;
+	color:#2FBCFE;			/*		2FBCFE	C56CFC	*/
+	font-weight:normal;
+	text-decoration:underline;
 }
 
 .footerContent img{
@@ -297,9 +289,9 @@ h4, .h4{
 * @theme footer
 */
 #social{
-	/*@editable*/ background-color:#383739;
-	/*@editable*/ border:0;
-	/*@editable*/ min-height:20px;
+	background-color:#383739;
+	border:0;
+	min-height:20px;
 }
 
 /**
@@ -308,7 +300,7 @@ h4, .h4{
 * @tip Set the background color and border for your email's footer social bar.
 */
 #social div{
-	/*@editable*/ text-align:center;
+	text-align:center;
 }
 
 /**
@@ -318,8 +310,8 @@ h4, .h4{
 * @theme footer
 */
 #utility{
-	/*@editable*/ background-color:#FFFFFF;
-	/*@editable*/ border:0;
+	background-color:#FFFFFF;
+	border:0;
 }
 
 /**
@@ -328,5 +320,5 @@ h4, .h4{
 * @tip Set the background color and border for your email's footer utility bar.
 */
 #utility div{
-	/*@editable*/ text-align:center;
+	text-align:center;
 }
