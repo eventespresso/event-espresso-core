@@ -927,7 +927,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//setup context switcher
 		$context_switcher_args = array(
-			'page' => 'ee_messages',
+			'page' => 'espresso_messages',
 			'action' => 'edit_message_template',
 			'id' => $GRP_ID,
 			'evt_id' => $EVT_ID,
