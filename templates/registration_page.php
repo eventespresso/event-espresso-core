@@ -355,7 +355,7 @@ if (!function_exists('event_registration')) {
 						$data['reg_start_date'] = $reg_start_date;
 						$data['display_reg_form'] = $display_reg_form;
 						$data['event'] = $event;
-						$data['use_coupon_code'] = $use_coupon_code;
+						//$data['use_coupon_code'] = $use_coupon_code;
 						$data['use_groupon_code'] = $use_groupon_code;
 						$data['location'] = $location;
 						$data['org_options'] = $org_options;

@@ -2492,7 +2492,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 			$phone=$result->phone;
 
-			$use_coupon_code= $result->use_coupon_code;
+			//$use_coupon_code= $result->use_coupon_code;
 					
 			$allow_overflow = $result->allow_overflow;
 			$overflow_event_id = $result->overflow_event_id;
@@ -2549,7 +2549,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'allow_multiple'=>$allow_multiple,
 				'is_active'=>$is_active, 
 				'event_status'=>$event_status,
-				'use_coupon_code'=>$use_coupon_code, 
+				//'use_coupon_code'=>$use_coupon_code, 
 				'member_only'=>$member_only,
 				'externalURL' => $externalURL, 
 				'early_disc' => $early_disc, 
@@ -2580,7 +2580,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s',
-				'%s','%s','%s','%s',
+				'%s','%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
@@ -2824,7 +2824,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$early_disc_date = isset($this->_req_data['early_disc_date']) ? $this->_req_data['early_disc_data'] : '';
 		$early_disc_percentage = isset($this->_req_data['early_disc_percentage']) ? $this->_req_data['early_disc_percentage'] : '';
 
-		$use_coupon_code = isset( $this->_req_data['use_coupon_code'] ) ? $this->_req_data['use_coupon_cod'] : '';
+		//$use_coupon_code = isset( $this->_req_data['use_coupon_code'] ) ? $this->_req_data['use_coupon_cod'] : '';
 		$alt_email = $this->_req_data['alt_email'];
 
 		//Venue Information
@@ -2900,7 +2900,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'allow_multiple' => $allow_multiple,
 				'is_active' => $is_active,
 				'event_status' => $event_status,
-				'use_coupon_code' => $use_coupon_code,
+				//'use_coupon_code' => $use_coupon_code,
 				'member_only' => $member_only,
 				'externalURL' => $externalURL,
 				'early_disc' => $early_disc,
@@ -2925,7 +2925,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'%s', '%s', '%s', '%s', '%s',
 				'%s', '%s', '%s', '%s', '%s',
 				'%s', '%s', '%s', '%s', '%s',
-				'%s', '%s', '%s', '%s', '%s',
+				'%s', '%s', '%s', '%s',
 				'%s', '%d', '%d', '%d', '%d',
 				'%d'
 		);
@@ -3303,7 +3303,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$early_disc_date = isset( $this->_req_data['early_disc_date'] ) ? $this->_req_data['early_disc_date'] : '';
 		$early_disc_percentage = isset( $this->_req_data['early_disc_percentage'] ) ? $this->_req_data['early_disc_percentage'] : '';
 
-		$use_coupon_code = isset( $this->_req_data['use_coupon_code'] ) ? $this->_req_data['use_coupon_code'] : FALSE;
+		//$use_coupon_code = isset( $this->_req_data['use_coupon_code'] ) ? $this->_req_data['use_coupon_code'] : FALSE;
 		$alt_email = $this->_req_data['alt_email'];
 
 
@@ -3383,7 +3383,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'allow_multiple' => $allow_multiple,
 				'is_active' => $is_active,
 				'event_status' => $event_status,
-				'use_coupon_code' => $use_coupon_code,
+				//'use_coupon_code' => $use_coupon_code,
 				'member_only' => $member_only,
 				'externalURL' => $externalURL,
 				'early_disc' => $early_disc,
@@ -3410,7 +3410,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'%s', '%s', '%s', '%s', '%s',
 				'%s', '%s', '%s', '%s', '%s', 
 				'%s', '%s', '%s', '%s', '%s', 
-				'%s', '%s', '%s', '%s', 
+				'%s', '%s', '%s', 
 				'%s', '%s', '%s',  '%d', '%d', 
 				'%d', '%d', '%d'
 		);
