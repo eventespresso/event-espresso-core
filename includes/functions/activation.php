@@ -1383,7 +1383,7 @@ function espresso_default_status_codes() {
 	global $wpdb;
 
 	if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_STATUS_TABLE . "'") == ESP_STATUS_TABLE) {
-		$SQL = "DELETE FROM " . ESP_STATUS_TABLE . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPN', 'RCN', 'RAP', 'RNA', 'TIN', 'TPN', 'TCM', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN' );";
+		$SQL = "DELETE FROM " . ESP_STATUS_TABLE . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPN', 'RCN', 'RAP', 'RNA', 'TIN', 'TPN', 'TCM', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN' );";
 		$wpdb->query($SQL);
 		
 		$SQL = "INSERT INTO " . ESP_STATUS_TABLE . " 
