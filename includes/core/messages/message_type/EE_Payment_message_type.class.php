@@ -39,7 +39,7 @@ class EE_Payment_message_type extends EE_message_type {
 			'singular' => __('payment', 'event_espresso'),
 			'plural' => __('payments', 'event_espresso')
 			);
-		$this->_data_handler = 'EE_Session';
+		$this->_data_handler = 'Gateways';
 
 		parent::__construct();
 	
