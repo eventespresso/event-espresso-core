@@ -665,6 +665,43 @@ class EE_Registration extends EE_Base_Class {
 
 
 	/**
+	 * get Event daytime id
+	 *
+	 * @access public
+	 * @return int
+	 */
+	public function event_daytime_id() {
+		if ( empty( $this->_EVT_ID ) ) {
+			return FALSE;
+		}
+
+		global $wpdb;
+		$SQL = "SELECT DTT_ID FROM " . ESP_DATETIME . " WHERE EVT_ID = %s";
+		return $wpdb->get_var( $wpdb->prepare( $SQL, $this->_EVT_ID ) );
+	}
+
+
+	/**
+	 * just get the entire event
+	 * @todo eventually this will change when events are in a proper model/class and can be retrieved with `get_first_related()`
+	 *
+	 * @access public
+	 * @return object
+	 */
+	public function event() {
+		if ( empty ( $this->_EVT_ID ) ) {
+			return FALSE;
+		}
+
+		global $wpdb;
+		$SQL = "SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id = %s";
+		$event = $wpdb->get_results( $wpdb->prepare( $SQL, $this->_EVT_ID ) );
+		return $event[0];
+	}
+
+
+
+	/**
 	*		get Attendee ID
 	* 		@access		public
 	*/	
@@ -800,6 +837,19 @@ class EE_Registration extends EE_Base_Class {
 	*/	
 	public function price_ID() {
 		return $this->_PRC_ID;
+	}
+
+
+
+	/**
+	 * get price object for this registration
+	 *
+	 * @access public
+	 * @return object
+	 */
+	public function price_obj() {
+		require_once('EEM_Price.model.php');
+		return $this->get_price_by_ID( $this->_PRC_ID );
 	}
 
 
