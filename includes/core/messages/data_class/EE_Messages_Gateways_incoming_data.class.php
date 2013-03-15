@@ -72,7 +72,8 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 		$this->reg_objs = $this->txn->registrations();
 
 		//let's get just the primary_attendee_data!  First we get the primary registration object.
-		$primary_reg = $this->txn->primary_registration();
+		$primary_reg = $this->txn->primary_registration(TRUE);
+
 		$primary_att = $primary_reg->attendee();
 
 		//now we can setup the primary_attendee_data array

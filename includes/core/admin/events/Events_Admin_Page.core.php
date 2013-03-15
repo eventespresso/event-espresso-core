@@ -864,6 +864,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	public function pricing_metabox() {
 		global $org_options, $caffeinated;
 
+
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
 

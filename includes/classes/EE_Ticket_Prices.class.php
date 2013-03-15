@@ -163,6 +163,7 @@ class EE_Ticket_Prices extends EE_BASE {
 		$today = time();
 		// grab array of price types
 		$types = $this->_PRT_MDL->type;
+		
 		// cycle thru events
 		foreach ( $this->_all_event_prices as $event_price ) {
 			// if members only, then check for login, OR let anybody in for non-member pricing
