@@ -101,6 +101,14 @@ abstract class EE_Messages_incoming_data {
 
 
 
+	/**
+	 * holds the grand total price object
+	 * @var obj
+	 */
+	public $grand_total_price_object;
+
+
+
 
 	/**
 	 * Will hold the final transaction object (EE_Transaction)

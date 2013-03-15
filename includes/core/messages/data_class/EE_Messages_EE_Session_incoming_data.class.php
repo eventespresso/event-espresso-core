@@ -30,8 +30,6 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 
 class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 
-	public $grand_total_price_object;
-
 
 	public function __construct( EE_Session $data ) {
 		parent::__construct($data);

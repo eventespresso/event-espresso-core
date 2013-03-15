@@ -33,8 +33,6 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 
 class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
-	public $grand_total_price_object;
-
 	//some specific properties we need for this class
 	private $_events = array();
 	private $_attendees = array();
