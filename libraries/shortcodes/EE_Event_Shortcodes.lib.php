@@ -46,7 +46,6 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			'[EVENT_IDENTIFIER]' => __('Will be replaced with the event identifier of an event', 'event_espresso'),
 			'[EVENT]' => __('The name of the event', 'event_espresso'),
 			'[EVENT_PHONE]' => __('The phone number for the event (usually an info number)', 'event_espresso'),
-			'[ALT_EMAIL]' => __('An alternate email address for the event contact', 'event_espresso'),
 			'[EVENT_DESCRIPTION]' => __('The description of the event', 'event_espresso'),
 			'[EVENT_NAME]' => __('The name of the event', 'event_espresso'),
 			'[EVENT_LINK]' => __('A link associated with the event', 'event_espresso'),
@@ -83,10 +82,6 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 
 			case '[EVENT_PHONE]' :
 				return isset($this->_data['meta']['phone']) ? $this->_data['meta']['phone'] : '';
-				break;
-
-			case '[ALT_EMAIL]' :
-				return !isset($this->_data['meta']['alt_email']) || $this->_data['meta']['alt_email'] == '' ? $org_options['contact_email'] : $this->_data['meta']['alt_email'];
 				break;
 
 			case '[EVENT_DESCRIPTION]' :

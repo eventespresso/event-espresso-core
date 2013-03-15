@@ -20,7 +20,6 @@ function espresso_pending_registration_approval($registration_id) {
 		$send_mail = $event->send_mail;
 		$conf_mail = $event->conf_mail;
 		$email_id = $event->email_id;
-		$alt_email = $event->alt_email;
 		$start_date = event_date_display($event->start_date);
 		$end_date = $event->end_date;
 		$virtual_url = $event->virtual_url;

@@ -552,7 +552,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$this->_event->event_status = 'A';
 		$this->_event->display_desc = true;
 		$this->_event->display_reg_form = true;
-		$this->_event->alt_email = '';
+		//$this->_event->alt_email = '';
 		$this->_event->require_pre_approval = false;
 		$this->_event->member_only = false;
 		$this->_event->ticket_id = 0;
@@ -598,6 +598,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 		LEFT JOIN " . EVENTS_VENUE_TABLE . " ev ON vr.venue_id = ev.id
 		WHERE e.id = %d";
 		$this->_event = $wpdb->get_row($wpdb->prepare($sql, $event_id), OBJECT);
+
+		if ( empty( $this->_event) )
+			return;
 		
 		// grab event times
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
@@ -2014,14 +2017,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 			</label>
 			<input name="externalURL" size="20" type="text" value="<?php echo $this->_event->externalURL; ?>">
 		</p>
-		<p class="inputunder">
+		<?php /*<p class="inputunder">
 			<label><?php _e('Alternate Email Address', 'event_espresso'); ?>
 				<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=alt_email_info">
 					<span class="question">[?]</span>
 				</a>
 			</label>
 			<input name="alt_email" size="20" type="text" value="<?php echo $this->_event->alt_email; ?>">
-		</p>
+		</p> /**/ ?>
 		<?php
 	}
 
@@ -2555,7 +2558,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				//'early_disc' => $early_disc, 
 				//'early_disc_date' => $early_disc_date, 
 				//'early_disc_percentage' => $early_disc_percentage, 
-				'alt_email' => $alt_email, 
+				//'alt_email' => $alt_email, 
 				'post_type' => $post_type, 
 				'registration_startT' => $registration_startT, 
 				'registration_endT' => $registration_endT, 
@@ -2579,7 +2582,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
-				'%s','%s','%s',
+				'%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
@@ -2824,7 +2827,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		//$early_disc_percentage = isset($this->_req_data['early_disc_percentage']) ? $this->_req_data['early_disc_percentage'] : '';
 
 		//$use_coupon_code = isset( $this->_req_data['use_coupon_code'] ) ? $this->_req_data['use_coupon_cod'] : '';
-		$alt_email = $this->_req_data['alt_email'];
+		//$alt_email = $this->_req_data['alt_email'];
 
 		//Venue Information
 		$venue_title = empty($this->_req_data['venue_title']) ? '' : $this->_req_data['venue_title'];
@@ -2905,7 +2908,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				//'early_disc' => $early_disc,
 				//'early_disc_date' => $early_disc_date,
 				//'early_disc_percentage' => $early_disc_percentage,
-				'alt_email' => $alt_email,
+				//'alt_email' => $alt_email,
 				'event_meta' => $event_meta,
 				'require_pre_approval' => $require_pre_approval,
 				'submitted' => date('Y-m-d H:i:s', time()),
@@ -3303,7 +3306,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		//$early_disc_percentage = isset( $this->_req_data['early_disc_percentage'] ) ? $this->_req_data['early_disc_percentage'] : '';
 
 		//$use_coupon_code = isset( $this->_req_data['use_coupon_code'] ) ? $this->_req_data['use_coupon_code'] : FALSE;
-		$alt_email = $this->_req_data['alt_email'];
+		//$alt_email = $this->_req_data['alt_email'];
 
 
 		//Venue Information
@@ -3388,7 +3391,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				//'early_disc' => $early_disc,
 				//'early_disc_date' => $early_disc_date,
 				//'early_disc_percentage' => $early_disc_percentage,
-				'alt_email' => $alt_email,
+				//'alt_email' => $alt_email,
 				'allow_overflow' => $allow_overflow,
 
 				'event_meta' => $event_meta,
@@ -3408,7 +3411,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'%s', '%s', '%s', '%s', '%s',
 				'%s', '%s', '%s', '%s', '%s',
 				'%s', '%s', '%s', '%s', '%s', 
-				'%s', '%s', '%s', '%s', '%s', 
+				'%s', '%s', '%s', '%s', 
 				'%s', '%s', '%s',  '%d', '%d', 
 				'%d', '%d', '%d'
 		);
