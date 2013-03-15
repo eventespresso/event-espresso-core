@@ -32,13 +32,18 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 
 	
 	/**
-	 * incoming data is expected to be a EE_Transaction object and EE_Payment object
-	 * @param EE_Transaction $data [description]
+	 * incoming data is expected to be a EE_Transaction object and EE_Payment object in an array.  
+	 * @param array $data
 	 */
-	public function __construct( EE_Transaction $transaction, EE_Payment $payment ) {
+	public function __construct( $data ) {
+
+		//test for valid params
+		if ( !is_a( $data[0], 'EE_Transaction' ) || !is_a( $data[1], 'EE_Payment') )
+			throw new EE_Error( __('Incoming data for the Gateways data handler is not of a valid type.', 'event_espresso') );
+
 		$data = array(
-			'txn_obj' => $transaction,
-			'pmt_obj' => $payment,
+			'txn_obj' => $data[0],
+			'pmt_obj' => $data[1],
 			);
 		parent::__construct( $data );
 	}

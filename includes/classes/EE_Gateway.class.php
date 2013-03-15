@@ -689,7 +689,7 @@ abstract class EE_Gateway {
 			//updating teh transaction in the session should be done on the thank you page, as taht's where the session is always available.
 		}	
 		$transaction->update();
-		//do_action( 'action_hook_espresso__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
+		do_action( 'action_hook_espresso__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
 		return true;
 	}
 	

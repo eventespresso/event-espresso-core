@@ -70,12 +70,13 @@ class EE_messages_init extends EE_Base {
 
 	/**
 	 * Any messages triggers for after successful gateway payments should go in here.
-	 * @param  EE_Session object $EE_Session
-	 * @param  bool $success    payment was successful or not (TRUE OR FALSE)
+	 * @param  EE_Transaction object 
+	 * @param  EE_Payment object
 	 * @return void
 	 */
-	public function payment( EE_Session $EE_Session, $success ) {
+	public function payment( EE_Transaction $transaction, EE_Payment $payment ) {
 		$this->_load_controller();
+		$data = array( $transaction, $payment );
 		$this->_EEMSG->send_message( 'payment', $EE_Session );
 	}
 
@@ -89,6 +90,7 @@ class EE_messages_init extends EE_Base {
 	public function registration( EE_Single_Page_Checkout $SPCO ) {
 		global $EE_Session;
 		$this->_load_controller();
+		//notice... we don't actually send the SPCO here, might need to change at some point but really everything we need is in the session at this point.
 		$this->_EEMSG->send_message( 'registration', $EE_Session );
 	}
 
