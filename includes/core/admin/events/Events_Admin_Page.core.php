@@ -507,9 +507,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$this->_event->event_desc = '';
 		$this->_event->phone = '';
 		$this->_event->externalURL = '';
-		$this->_event->early_disc = '';
-		$this->_event->early_disc_date = '';
-		$this->_event->early_disc_percentage = '';
+		//$this->_event->early_disc = '';
+		//$this->_event->early_disc_date = '';
+		//$this->_event->early_disc_percentage = '';
 		$this->_event->event_identifier = '';
 
 		$this->_event->status = array('display' => 'OPEN');
@@ -610,9 +610,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$this->_event->event_desc = stripslashes_deep($this->_event->event_desc);
 		$this->_event->phone = stripslashes_deep($this->_event->phone);
 		$this->_event->externalURL = stripslashes_deep($this->_event->externalURL);
-		$this->_event->early_disc = stripslashes_deep($this->_event->early_disc);
-		$this->_event->early_disc_date = stripslashes_deep($this->_event->early_disc_date);
-		$this->_event->early_disc_percentage = stripslashes_deep($this->_event->early_disc_percentage);
+		//$this->_event->early_disc = stripslashes_deep($this->_event->early_disc);
+		//$this->_event->early_disc_date = stripslashes_deep($this->_event->early_disc_date);
+		//$this->_event->early_disc_percentage = stripslashes_deep($this->_event->early_disc_percentage);
 		$this->_event->event_identifier = stripslashes_deep($this->_event->event_identifier);
 	//	$this->_event->start_time = isset($this->_event->start_time) ? $this->_event->start_time : '';
 	//	$this->_event->end_time = isset($this->_event->end_time) ? $this->_event->end_time : '';
@@ -2512,9 +2512,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 			$post_type = $result->post_type;
 			$post_type = $result->post_type;
 			$externalURL = $result->externalURL;
-			$early_disc = $result->early_disc;
-			$early_disc_date = $result->early_disc_date;
-			$early_disc_percentage = $result->early_disc_percentage;
+			//$early_disc = $result->early_disc;
+			//$early_disc_date = $result->early_disc_date;
+			//$early_disc_percentage = $result->early_disc_percentage;
 					
 			$venue_title = $result->venue_title;
 			$venue_url = $result->venue_url;
@@ -2552,9 +2552,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 				//'use_coupon_code'=>$use_coupon_code, 
 				'member_only'=>$member_only,
 				'externalURL' => $externalURL, 
-				'early_disc' => $early_disc, 
-				'early_disc_date' => $early_disc_date, 
-				'early_disc_percentage' => $early_disc_percentage, 
+				//'early_disc' => $early_disc, 
+				//'early_disc_date' => $early_disc_date, 
+				//'early_disc_percentage' => $early_disc_percentage, 
 				'alt_email' => $alt_email, 
 				'post_type' => $post_type, 
 				'registration_startT' => $registration_startT, 
@@ -2579,7 +2579,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
-				'%s','%s','%s',
 				'%s','%s','%s',
 				'%s','%s','%s','%s',
 				'%s','%s','%s','%s',
@@ -2820,9 +2819,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$certificate_id = empty($this->_req_data['certificate_id']) ? '' : $this->_req_data['certificate_id'];
 
 		//Early discounts
-		$early_disc = isset($this->_req_data['early_disc']) ? $this->_req_data['early_disc'] : '';
-		$early_disc_date = isset($this->_req_data['early_disc_date']) ? $this->_req_data['early_disc_data'] : '';
-		$early_disc_percentage = isset($this->_req_data['early_disc_percentage']) ? $this->_req_data['early_disc_percentage'] : '';
+		//$early_disc = isset($this->_req_data['early_disc']) ? $this->_req_data['early_disc'] : '';
+		//$early_disc_date = isset($this->_req_data['early_disc_date']) ? $this->_req_data['early_disc_data'] : '';
+		//$early_disc_percentage = isset($this->_req_data['early_disc_percentage']) ? $this->_req_data['early_disc_percentage'] : '';
 
 		//$use_coupon_code = isset( $this->_req_data['use_coupon_code'] ) ? $this->_req_data['use_coupon_cod'] : '';
 		$alt_email = $this->_req_data['alt_email'];
@@ -2903,9 +2902,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 				//'use_coupon_code' => $use_coupon_code,
 				'member_only' => $member_only,
 				'externalURL' => $externalURL,
-				'early_disc' => $early_disc,
-				'early_disc_date' => $early_disc_date,
-				'early_disc_percentage' => $early_disc_percentage,
+				//'early_disc' => $early_disc,
+				//'early_disc_date' => $early_disc_date,
+				//'early_disc_percentage' => $early_disc_percentage,
 				'alt_email' => $alt_email,
 				'event_meta' => $event_meta,
 				'require_pre_approval' => $require_pre_approval,
@@ -2925,7 +2924,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'%s', '%s', '%s', '%s', '%s',
 				'%s', '%s', '%s', '%s', '%s',
 				'%s', '%s', '%s', '%s', '%s',
-				'%s', '%s', '%s', '%s',
+				'%s',
 				'%s', '%d', '%d', '%d', '%d',
 				'%d'
 		);
@@ -3299,9 +3298,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$timezone_string = empty($this->_req_data['timezone_string']) ? '' : $this->_req_data['timezone_string'];
 
 		//Early discounts
-		$early_disc = isset( $this->_req_data['early_disc'] ) ? $this->_req_data['early_disc'] : '';
-		$early_disc_date = isset( $this->_req_data['early_disc_date'] ) ? $this->_req_data['early_disc_date'] : '';
-		$early_disc_percentage = isset( $this->_req_data['early_disc_percentage'] ) ? $this->_req_data['early_disc_percentage'] : '';
+		//$early_disc = isset( $this->_req_data['early_disc'] ) ? $this->_req_data['early_disc'] : '';
+		//$early_disc_date = isset( $this->_req_data['early_disc_date'] ) ? $this->_req_data['early_disc_date'] : '';
+		//$early_disc_percentage = isset( $this->_req_data['early_disc_percentage'] ) ? $this->_req_data['early_disc_percentage'] : '';
 
 		//$use_coupon_code = isset( $this->_req_data['use_coupon_code'] ) ? $this->_req_data['use_coupon_code'] : FALSE;
 		$alt_email = $this->_req_data['alt_email'];
@@ -3386,9 +3385,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 				//'use_coupon_code' => $use_coupon_code,
 				'member_only' => $member_only,
 				'externalURL' => $externalURL,
-				'early_disc' => $early_disc,
-				'early_disc_date' => $early_disc_date,
-				'early_disc_percentage' => $early_disc_percentage,
+				//'early_disc' => $early_disc,
+				//'early_disc_date' => $early_disc_date,
+				//'early_disc_percentage' => $early_disc_percentage,
 				'alt_email' => $alt_email,
 				'allow_overflow' => $allow_overflow,
 
@@ -3410,7 +3409,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'%s', '%s', '%s', '%s', '%s',
 				'%s', '%s', '%s', '%s', '%s', 
 				'%s', '%s', '%s', '%s', '%s', 
-				'%s', '%s', '%s', 
 				'%s', '%s', '%s',  '%d', '%d', 
 				'%d', '%d', '%d'
 		);
