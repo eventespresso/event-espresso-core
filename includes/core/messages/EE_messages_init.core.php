@@ -77,7 +77,7 @@ class EE_messages_init extends EE_Base {
 	public function payment( EE_Transaction $transaction, EE_Payment $payment ) {
 		$this->_load_controller();
 		$data = array( $transaction, $payment );
-		$this->_EEMSG->send_message( 'payment', $EE_Session );
+		$this->_EEMSG->send_message( 'payment', $data);
 	}
 
 
