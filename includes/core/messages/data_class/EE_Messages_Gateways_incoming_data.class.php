@@ -59,6 +59,8 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 
 		$this->grand_total_price_object = ''; //not available and not needed?
 
+		$session = $this->txn->session_data();
+
 		//other data from the session (if possible)
 		$this->user_id = isset( $session['user_id'] ) ? $session['user_id'] : '';
 		$this->ip_address = isset( $session['ip_address'] ) ? $session['ip_address'] : '';
@@ -80,7 +82,9 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 		$this->primary_attendee_data = array(
 			'fname' => $primary_att->fname(),
 			'lname' => $primary_att->lname(),
-			'email' => $primary_att->email()
+			'email' => $primary_att->email(),
+			'primary_attendee_email' => $primary_att->email(),
+			'registration_id' => $primary_reg->ID()
 			);
 
 		//get all attendee and events associated with the registrations in this transaction
