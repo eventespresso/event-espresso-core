@@ -353,7 +353,7 @@ function event_espresso_admin_news($url) {
 
 //Function to show an admin message if the main pages are not setup.
 function espresso_updated_pages() {
-	echo '<div class="error fade"><p><strong>' . __('In order to function properly Event Espresso has added one or more pages with the corresponding shortcodes. Go to', 'event_espresso') . ' <a href="' . admin_url('edit.php?post_type=page') . '">' . __('Pages', 'event_espresso') . '</a>  ' . __('to view the updated pages.', 'event_espresso') . '</strong></p></div>';
+	echo '<div class="error fade"><p><strong>' . __('In order to function properly Event Espresso has added one or more pages with the corresponding shortcodes. As long as all of the Page Status and Shortcode notices below are OK, then this meassage will dissappear. Please attend to any issues that require attention.', 'event_espresso') . '</strong></p></div>';
 }
 
 function espresso_page_problems() {
