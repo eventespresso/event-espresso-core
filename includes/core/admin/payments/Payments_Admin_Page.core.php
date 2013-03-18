@@ -439,6 +439,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 						<?php
 						$ind = 0;
 						foreach ( $options as $opt => $description ) :
+							$payment_settings['affiliate']['hook_into'] = isset( $payment_settings['affiliate']['hook_into'] ) ? $payment_settings['affiliate']['hook_into'] : '';
 							$checked = $opt == $payment_settings['affiliate']['hook_into'] ? ' checked="checked"' : '';
 						?>
 							<label class="ee-admin-radio-long-lbl">
