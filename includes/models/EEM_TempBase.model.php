@@ -575,7 +575,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * Uses $this->_relatedModels info to find the first related model object of relation $relationName to the given $modelObject
 	 * @param EE_Base_Class'child $modelObject one of EE_Answer, EE_Attendee, etc. 
 	 * @param string $relationName, key in $this->_relatedModels, eg 'Registration', or 'Events'
-	 * @return EE_Base_Class[]
+	 * @return EE_Base_Class
 	 */
 	public function get_first_related(EE_Base_Class $modelObject,$relationName,$where_col_n_values=null,$orderby=null,$order='ASC',$operators='=',$output='OBJECT_K'){
 		$relatedObjects=$this->get_many_related($modelObject, $relationName,$where_col_n_values,$orderby,$order,$operators,1,$output);
