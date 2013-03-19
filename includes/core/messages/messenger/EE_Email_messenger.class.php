@@ -323,6 +323,17 @@ class EE_Email_messenger extends EE_messenger  {
 			$CSS = new CssToInlineStyles( $body );
 			$CSS->setUseInlineStylesBlock();
 			$body = ltrim( $CSS->convert(), ">\n" ); //for some reason the library has a bracket and new line at the beginning.  This takes care of that.
+		} else if ( $preview && defined('DOING_AJAX' ) ) {
+			require_once EE_CORE . 'messages/messenger/assets/email/CssToInlineStyles.php';
+			$style = file_get_contents( $this->get_inline_css_template( FALSE, TRUE ) );
+			$CSS = new CssToInlineStyles( $body, $style );
+			$body = ltrim( $CSS->convert(), ">\n" );
+
+			//let's attempt to fix width's for ajax preview
+			$i_width = '/width:[ 0-9%]+;|width:[ 0-9px]+;/';
+			$s_width = '/width="[ 0-9]+"/';
+			$body = preg_replace( $i_width, 'width:100%;', $body );
+			$body = preg_replace( $s_width, 'width=100%', $body );
 		}
 		return $body;
 	}

@@ -139,4 +139,14 @@ jQuery(document).ready(function($) {
 		EE_messages_evt_helper.get_template_content(this, 'form');
 	});
 
+	$('.messages-change-edit-templates-content').on('click', '.messages-preview-button', function(e) {
+		e.preventDefault();
+		EE_messages_evt_helper.get_template_content(this);
+	});
+
+	$('.messages-change-edit-templates-content').on('click', '.messages-preview-go-back-button', function(e) {
+		e.preventDefault();
+		EE_messages_evt_helper.get_template_content(this);
+	});
+
 });
