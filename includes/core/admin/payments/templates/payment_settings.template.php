@@ -10,9 +10,9 @@
 				</th>
 				<td>
 					<?php echo EE_Form_Fields::select_input('show_pending_payment_options', $values, $show_pending_payment_options ); ?>
-					<span class="description">
+					<p class="description">
 						<?php _e('Shows alternate payment options for "Pending Payments" on the Payment Overview page.', 'event_espresso'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 

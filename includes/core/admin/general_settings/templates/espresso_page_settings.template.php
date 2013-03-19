@@ -70,14 +70,14 @@
 						<?php echo General_Settings_Admin_Page::page_and_shortcode_status( $event_reg_page, '[ESPRESSO_EVENTS]' ); ?>
 					</span>
 					<br />
-					<span class="description">
+					<p class="description">
 						<?php
 						echo sprintf(
 							__("This page can be hidden from navigation if desired, but should always contain the %s shortcode.", 'event_espresso'),
 							'<span class="highlight" style="padding:3px;margin:0;">[ESPRESSO_EVENTS]</span>'
 						);
 						?>
-					</span>
+					</p>
 					<br/><br/>
 				</td>
 			</tr>
@@ -103,14 +103,14 @@
 						<?php echo General_Settings_Admin_Page::page_and_shortcode_status( $thank_you_page, '[ESPRESSO_PAYMENTS]' ); ?>
 					</span>
 					<br />
-					<span class="description">
+					<p class="description">
 						<?php
 						echo sprintf(
 							__( 'This page should be hidden from your navigation, but still viewable to the public (not password protected), and should always contain the %s shortcode.', 'event_espresso' ),
 							'<span class="highlight" style="padding:3px;margin:0;">[ESPRESSO_PAYMENTS]</span>'
 						);
 						?>
-					</span>
+					</p>
 					<br/><br/>
 				</td>
 			</tr>
@@ -137,14 +137,14 @@
 						<?php echo General_Settings_Admin_Page::page_and_shortcode_status( $transactions_page, '[ESPRESSO_TXN_PAGE]' ); ?>
 					</span>
 					<br />
-					<span class="description">
+					<p class="description">
 						<?php
 						echo sprintf(
 							__( 'This page should be hidden from your navigation, but still viewable to the public (not password protected), and should always contain the %s shortcode.', 'event_espresso' ),
 							'<span class="highlight" style="padding:3px;margin:0;">[ESPRESSO_TXN_PAGE]</span>'
 						);
 						?>
-					</span>
+					</p>
 					<br/><br/>
 				</td>
 			</tr>
@@ -170,14 +170,14 @@
 						<?php echo General_Settings_Admin_Page::page_and_shortcode_status( $cancel_return_page, '[ESPRESSO_CANCELLED]' ); ?>
 					</span>
 					<br />
-					<span class="description">
+					<p class="description">
 						<?php
 						echo sprintf(
 							__( 'This page should be hidden from your navigation, but still viewable to the public (not password protected), and should always contain a "cancelled transaction" message and the %s shortcode.', 'event_espresso' ),
 							'<span class="highlight" style="padding:3px;margin:0;">[ESPRESSO_CANCELLED]</span>'
 						);
 						?>
-					</span>
+					</p>
 					<br/><br/>
 				</td>
 			</tr>
@@ -198,7 +198,7 @@
 				</th>
 				<td>
 					<?php echo EE_Form_Fields::select_input('espresso_url_rewrite_activated', $values, $espresso_url_rewrite_activated ); ?>
-					<span class="description">
+					<p class="description">
 						<?php
 						echo sprintf(
 							__('makes URLs look like: %s/event-registration/your-event-name%s instead of: %s', 'event_espresso'),
@@ -207,7 +207,7 @@
 							'"<b>' . home_url() . '?page_id=4&ee=12</b>"'
 						);
 						?>
-					</span>
+					</p>
 				</td>
 			</tr>
 

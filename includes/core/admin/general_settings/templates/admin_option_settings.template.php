@@ -17,9 +17,9 @@
 				</th>
 				<td>
 					<?php echo EE_Form_Fields::select_input('use_venue_manager', $values, $use_venue_manager ); ?>
-					<span class="description">
+					<p class="description">
 						<?php _e('Activates an additional Event Espresso admin page that allows you to manage multiple event venues and locations.', 'event_espresso'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 			<tr>
@@ -30,9 +30,9 @@
 				</th>
 				<td>
 					<?php echo EE_Form_Fields::select_input('use_personnel_manager', $values, $use_personnel_manager ); ?>
-					<span class="description">
+					<p class="description">
 						<?php _e('Activates an additional Event Espresso admin page that allows you to manage event staff and personnel.', 'event_espresso'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 
@@ -56,9 +56,9 @@
 				</th>
 				<td>
 					<?php echo EE_Form_Fields::select_input('espresso_dashboard_widget', $values, $espresso_dashboard_widget ); ?>
-					<span class="description">
+					<p class="description">
 						<?php _e('Activates the Upcoming Events Widget in the WordPress Dashboard so that you can see a list of upcoming events as soon as you log in.', 'event_espresso'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 
@@ -89,7 +89,7 @@
 					<strong>
 						<?php echo date(get_option('date_format') . ' ' . get_option('time_format')); ?>
 					</strong>
-					<span class="description">
+					<p class="description">
 						<a class="change-date-time" href="options-general.php" target="_blank">
 							<?php _e('Change timezone and date format settings?', 'event_espresso'); ?>
 						</a><br />
@@ -100,7 +100,7 @@
 						<a href="http://ee-updates.s3.amazonaws.com/images/time-zone-settings-example.jpg?TB_iframe=true&height=200&width=630" class="thickbox">
 							<?php _e('View an example?', 'event_espresso'); ?>
 						</a>
-					</span>
+					</p>
 				</td>
 			</tr>
 
@@ -112,9 +112,9 @@
 			</th>
 			<td>
 			<?php echo EE_Form_Fields::select_input('use_event_timezones', $values, $use_event_timezones ); ?>
-			<span class="description">
+			<p class="description">
 			<?php _e('This allows you to set a custom time zone for each event. Modificatiosn to your site may be required for this to work properly.', 'event_espresso'); ?>
-			</span>
+			</p>
 			</td>
 			</tr>-->
 
@@ -134,12 +134,12 @@
 				</th>
 				<td>
 					<?php echo EE_Form_Fields::select_input('full_logging', $values, $full_logging ); ?>
-					<span class="description">
+					<p class="description">
 						<span class="red_text">
 							<?php _e('Please use caution when using this feature. These files may be publicly available.', 'event_espresso'); ?>
 						</span>&nbsp;&nbsp;
 						<?php echo sprintf( __('File is available at: %s', 'event_espresso'), '<b>/wp-content/uploads/espresso/logs/</b>' ); ?>
-					</span>
+					</p>
 
 				</td>
 			</tr>
@@ -151,9 +151,9 @@
 				</th>
 				<td>
 					<?php echo EE_Form_Fields::select_input('remote_logging', $values, $remote_logging ); ?>
-					<span class="description">
+					<p class="description">
 						<?php _e('Send debugging data to the remote URL below.', 'event_espresso'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 
@@ -164,10 +164,10 @@
 				</th>
 				<td>
 					<input name="remote_logging_url" id="remote_logging_url" size="20" class="regular-text" type="text" value="<?php echo $remote_logging_url;?>" />
-					<span class="description">
+					<p class="description">
 						<?php _e('Example: http://www.postbin.org/MY_UNIQUE_ID', 'event_espresso'); ?>
 
-					</span>
+					</p>
 				</td>
 			</tr>
 
@@ -200,9 +200,9 @@
 				<td>
 					<input name="affiliate_id" class="regular-text" type="text" value="<?php echo $affiliate_id; ?>" />
 					<br />
-					<span class="description">
+					<p class="description">
 						<?php _e('Earn cash for promoting our plugin.', 'event_espresso'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 

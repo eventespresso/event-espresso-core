@@ -10,9 +10,9 @@
 				</th>
 				<td>
 					<?php echo EE_Form_Fields::select_input( 'expire_on_registration_end', $values, $expire_on_registration_end ); ?>
-					<span class="description">
+					<p class="description">
 						<?php _e('If set to "Yes", then as soon as an event\'s registration end date has passed, the event will become inactive, and will no longer appear in your event listings.', 'event_espresso'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 
@@ -25,9 +25,9 @@
 				</th>
 				<td>
 					<?php echo EE_Form_Fields::select_input('default_reg_status', $reg_status_array, $default_reg_status ) ?>
-					<span class="description">
+					<p class="description">
 						<?php _e('This value will be automatically filled in for each person\'s registration status, until payment is made, for each event.', 'event_espresso'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 
@@ -39,9 +39,9 @@
 				</th>
 				<td>
 					<?php echo EE_Form_Fields::select_input('use_attendee_pre_approval', $values, $use_attendee_pre_approval ); ?>
-					<span class="description">
+					<p class="description">
 						<?php _e('Attendeess will be marked as pending approval, until an administrator manually changes their status to approved via the Registrations Admin page.', 'event_espresso'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 
