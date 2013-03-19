@@ -115,7 +115,7 @@ jQuery(document).ready(function($) {
 
 
 	// Tabs for Messages box on Event Editor Page
-	$(document).on('click', '.nav-tab .messages-tabs-content', function(e) {
+	$(document).on('click', '.inside .nav-tab', function(e) {
 		e.preventDefault();
 		var content_id = $(this).attr('rel');
 		//first set all content as hidden and other nav tabs as not active
