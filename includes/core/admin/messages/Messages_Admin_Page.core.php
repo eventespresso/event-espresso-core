@@ -1028,7 +1028,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$preview_title = sprintf( __('Viewing Preview for %s %s Message Template', 'event_espresso'), ucwords($this->_active_messengers[$this->_req_data['messenger']]['obj']->label['singular']), ucwords($this->_active_message_types[$this->_req_data['message_type']]['obj']->label['singular']) );
 
 
-		//setup display of preview.  We put it in an iframe so that any html headers etc display properly (and css styling is in place).
+		//setup display of preview.
 		$this->_admin_page_title = $preview_title;
 		$this->_template_args['admin_page_content'] = $preview_button . '<br />' . html_entity_decode(stripslashes($preview));
 
