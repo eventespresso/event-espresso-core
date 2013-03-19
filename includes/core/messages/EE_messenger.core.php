@@ -393,7 +393,7 @@ abstract class EE_messenger extends EE_Base {
 			if ( $et_set && $et_trashed ) {
 				$switch_query_args = array(
 					'action' => 'restore_message_template',
-					'message_type' => $tempalte->message_type(),
+					'message_type' => $template->message_type(),
 					'id' => $et_group_id,
 					'template_switch' => TRUE,
 					'evt_id' => $event_id,

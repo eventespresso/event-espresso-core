@@ -220,7 +220,6 @@ abstract class EE_message_type extends EE_Base {
 
 	public function __construct() {
 		$this->_set_admin_settings_fields();
-		$this->_set_existing_admin_settings();
 		$this->_set_contexts();
 		$this->_set_default_field_content();
 		$this->_set_admin_pages();
@@ -345,9 +344,10 @@ abstract class EE_message_type extends EE_Base {
 	 * sets the _existing_admin_settings property can be overridden by child classes.  We do this so we only do database calls if needed.
 	 *
 	 * @access protected
+	 * @param string $messenger The messenger these settings are associated with.
 	 * @return void
 	 */
-	protected function _set_existing_admin_settings() {
+	protected function _set_existing_admin_settings( $messenger ) {
 		global $espresso_wp_user;
 		$active_message_types = get_user_meta($espresso_wp_user, 'ee_active_message_types', true);
 
@@ -355,14 +355,14 @@ abstract class EE_message_type extends EE_Base {
 		if ( !isset($active_message_types[$this->name]) && empty($this->_admin_settings_fields) )
 			return $this->_existing_admin_settings = NULL;
 		
-		$this->_existing_admin_settings = isset($active_message_types[$this->name] ) ?  $active_message_types[$this->name]['settings'] : null;
+		$this->_existing_admin_settings = isset($active_message_types[$this->name][$messenger]['settings'] ) ?  $active_message_types[$this->name][$messenger]['settings'] : null;
 
 	}
 
-	public function get_existing_admin_settings() {
+	public function get_existing_admin_settings( $messenger ) {
 		// if admin_settings property empty lets try setting it.
 		if ( empty( $this->_existing_admin_settings ) && method_exists($this, '_set_existing_admin_settings') )
-			$this->_set_existing_admin_settings();
+			$this->_set_existing_admin_settings( $messenger );
 
 		return property_exists($this,'_existing_admin_settings') ? $this->_existing_admin_settings : null;
 	}
@@ -431,11 +431,13 @@ abstract class EE_message_type extends EE_Base {
 			throw new EE_Error( $msg );
 		}
 
+
 		//setup class name for the data handler
 		$classname = 'EE_Messages_' . $this->_data_handler . '_incoming_data';
 
 		//check that the class exists
 		if ( !class_exists( $classname ) ) {
+			
 			$msg[] = __('uhoh, Something went wrong and no data handler is found', 'event_espresso');
 			$msg[] = sprintf( __('The %s class has set the "$_data_handler" property but the string included (%s) does not match any existing "EE_Messages_incoming_data" classes (found in "/includes/core/messages/data_class"', 'event_espresso'), __CLASS__, $this->_data_handler );
 			throw new EE_error( implode('||', $msg) );

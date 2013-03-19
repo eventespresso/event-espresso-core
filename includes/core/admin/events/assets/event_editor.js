@@ -534,7 +534,7 @@ jQuery(document).ready(function($) {
 // ------------------------------------------------------------------
 
 var MONTH_NAMES=new Array( eei18n.January, eei18n.February, eei18n.March, eei18n.April, eei18n.May, eei18n.June, eei18n.July, eei18n.August, eei18n.September, eei18n.October, eei18n.November, eei18n.December, eei18n.Jan, eei18n.Feb, eei18n.Mar, eei18n.Apr, eei18n.May, eei18n.Jun, eei18n.Jul, eei18n.Aug, eei18n.Sep, eei18n.Oct, eei18n.Nov, eei18n.Dec );
-var DAY_NAMES=new Array( Sunday, eei18n.Monday, eei18n.Tuesday, eei18n.Wednesday, eei18n.Thursday, eei18n.Friday, eei18n.Saturday, eei18n.Sun, eei18n.Mon, eei18n.Tue, eei18n.Wed, eei18n.Thu, eei18n.Fri, eei18n.Sat );
+var DAY_NAMES=new Array( eei18n.Sunday, eei18n.Monday, eei18n.Tuesday, eei18n.Wednesday, eei18n.Thursday, eei18n.Friday, eei18n.Saturday, eei18n.Sun, eei18n.Mon, eei18n.Tue, eei18n.Wed, eei18n.Thu, eei18n.Fri, eei18n.Sat );
 function LZ(x) {return(x<0||x>9?"":"0")+x}
 
 // ------------------------------------------------------------------

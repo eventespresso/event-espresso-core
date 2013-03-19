@@ -533,6 +533,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @return void
 	 */
 	protected function _edit_message_template() {
+
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$GRP_ID = isset( $this->_req_data['id'] ) && !empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
 
@@ -925,7 +926,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$this->_set_save_buttons($button_both, $button_text, $button_actions, $referrer);
 
 		//add preview button
-		$preview_url = parent::add_query_args_and_nonce( array( 'message_type' => $message_template->message_type(), 'messenger' => $message_template->messenger(), 'context' => $context,'msg_id' => $GRP_ID, 'evt_id' => $EVT_ID, 'action' => 'preview_message' ) );
+		$preview_url = parent::add_query_args_and_nonce( array( 'message_type' => $message_template->message_type(), 'messenger' => $message_template->messenger(), 'context' => $context,'msg_id' => $GRP_ID, 'evt_id' => $EVT_ID, 'action' => 'preview_message' ), $this->_admin_base_url );
 		$preview_button = '<a href="' . $preview_url . '" class="button-secondary messages-preview-button">' . __('Preview', 'event_espresso') . '</a>';
 
 
@@ -1010,27 +1011,34 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	public function _preview_message() {
 		//first make sure we've got the necessary parameters
-		if ( !isset( $this->_req_data['message_template'] ) || !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['msg_id'] ) ) {
+		if ( !isset( $this->_req_data['message_type'] ) || !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['msg_id'] ) ) {
 			EE_Error::add_error( __('Missing necessary parameters for displaying preview', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 
 		$MSG = new EE_messages();
 
-
 		//get the preview!
 		$preview = $MSG->preview_message( $this->_req_data['message_type'], $this->_req_data['context'], $this->_req_data['messenger'] );
 
+
 		//let's add a button to go back to the edit view
-		$go_back_url = parent::add_query_args_and_nonce( array( 'id' => $this->_req_data['msg_id'], 'context' => $this->_req_data['context'], 'evt_id' => isset($this->_req_data['evt_id']) ? $this->_req_data['evt_id'] : '', 'action' => 'edit_message_template' ) );
+		$query_args = array(
+			'id' => $this->_req_data['msg_id'],
+			'context' => $this->_req_data['context'],
+			'evt_id' => isset($this->_req_data['evt_id']) ? $this->_req_data['evt_id'] : '',
+			'action' => 'edit_message_template'
+			);
+		$go_back_url = parent::add_query_args_and_nonce( $query_args, $this->_admin_base_url );
 		$preview_button = '<a href="' . $go_back_url . '" class="button-secondary messages-preview-go-back-button">' . __('Go Back to Edit', 'event_espresso') . '</a>';
 
 		//let's provide a helpful title for context
 		$preview_title = sprintf( __('Viewing Preview for %s %s Message Template', 'event_espresso'), ucwords($this->_active_messengers[$this->_req_data['messenger']]['obj']->label['singular']), ucwords($this->_active_message_types[$this->_req_data['message_type']]['obj']->label['singular']) );
 
 
-		//setup display of preview.  We put it in an iframe so that any html headers etc display properly (and css styling is in place).
+		//setup display of preview.
 		$this->_admin_page_title = $preview_title;
 		$this->_template_args['admin_page_content'] = $preview_button . '<br />' . html_entity_decode(stripslashes($preview));
+		$this->_template_args['data']['force_json'] = TRUE;
 
 		$this->display_admin_page_with_no_sidebar();
 	}

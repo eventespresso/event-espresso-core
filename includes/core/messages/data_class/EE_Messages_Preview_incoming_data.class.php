@@ -1,4 +1,3 @@
-
 <?php
 
 if (!defined('EVENT_ESPRESSO_VERSION') )

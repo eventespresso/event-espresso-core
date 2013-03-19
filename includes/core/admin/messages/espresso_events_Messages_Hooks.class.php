@@ -27,7 +27,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  */
-class events_Messages_Hooks extends EE_Admin_Hooks {
+class espresso_events_Messages_Hooks extends EE_Admin_Hooks {
 
 
 	public function __construct( EE_Admin_Page $admin_page ) {
@@ -128,12 +128,12 @@ class events_Messages_Hooks extends EE_Admin_Hooks {
 			$tabbed_content = '<p>' . __( 'You will see notifications options after you add the initial details for your event and save it', 'event_espresso' ) . '</p>';
 		}
 
-		$notices = '<div class="ee-notices"><div class="ajax-loader-grey"></div></div>';
+		$notices = '<div class="ajax-loader-grey"></div><div class="ee-notices"></div>';
 
 		if ( defined('DOING_AJAX' ) )
 			return $tabbed_content;
 
-		echo $notices . $tabbed_content;
+		echo $notices . '<div class="messages-tabs-content">' . $tabbed_content . '</div>';
 		
 	}
 

@@ -555,7 +555,7 @@ class EE_Transaction extends EE_Base_Class{
 	public function primary_registration( $return_obj = FALSE ){
 		require_once('EEM_Registration.model.php');
 		$result = $this->get_first_related('Registrations', array('REG_count'=>  EEM_Registration::PRIMARY_REGISTRANT_COUNT));
-		return $return_obj ? array_shift($result) : $result;
+		return $result;//$return_obj ? array_shift($result) : $result;
 	}
 	
 	

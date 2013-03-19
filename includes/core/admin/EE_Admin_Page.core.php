@@ -374,7 +374,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_do_other_page_hooks();
 
 
-
 		//first verify if we need to load anything...
 		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
 

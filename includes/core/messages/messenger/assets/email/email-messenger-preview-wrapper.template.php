@@ -1,4 +1,4 @@
-<div id="ee-message-preview-container">
+<div id="ee-message-preview-container" style="margin-top: 10px">
 <center>
     	<table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="backgroundTable">
         	<tr>
