@@ -1,5 +1,8 @@
+<?php global $caffeinated; ?>
 <div class="padding">
-
+	
+	<?php if ( $caffeinated ) : ?>
+	
 	<h4 class="ee-admin-settings-hdr">
 		<?php _e('Espresso Admin Managers', 'event_espresso'); ?>
 	</h4>
@@ -35,6 +38,8 @@
 
 		</tbody>
 	</table>
+	
+	<?php endif; ?>
 
 	<h4 class="ee-admin-settings-hdr">
 		<?php _e('WordPress Dashboard', 'event_espresso'); ?>
