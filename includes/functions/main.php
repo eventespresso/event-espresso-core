@@ -1098,7 +1098,7 @@ function espresso_edit_this($event_id) {
 //	}
 //}
 
-function espresso_ticket_links($registration_id, $attendee_id) {
+/*function espresso_ticket_links($registration_id, $attendee_id) {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	global $wpdb;
 	$sql = "SELECT id, registration_id, fname, lname  FROM " . EVENTS_ATTENDEE_TABLE;
@@ -1122,7 +1122,7 @@ function espresso_ticket_links($registration_id, $attendee_id) {
 		}
 		return '<p>' . $group . $ticket_link . '</p>';
 	}
-}
+}*/
 
 function getCountriesArray($lang = "en") {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');

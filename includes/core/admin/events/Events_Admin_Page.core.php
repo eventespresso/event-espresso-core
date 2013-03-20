@@ -1684,7 +1684,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		//add_meta_box('espresso_event_editor_promo_box', __('Event Promotions', 'event_espresso'), array( $this, 'promotions_meta_box' ), $this->_current_screen->id, 'side', 'core');
 
-		add_meta_box('espresso_event_editor_featured_image_box', __('Featured Image', 'event_espresso'), array( $this, 'featured_image_meta_box' ), $this->_current_screen->id, 'side', 'default');
+		//add_meta_box('espresso_event_editor_featured_image_box', __('Featured Image', 'event_espresso'), array( $this, 'featured_image_meta_box' ), $this->_current_screen->id, 'side', 'default');
 
 		if ($org_options['use_attendee_pre_approval']) {
 			add_meta_box('espresso_event_editor_preapproval_box', __('Attendee Pre-Approval', 'event_espresso'), array( $this, 'preapproval_metabox' ), $this->_current_screen->id, 'side', 'default');
@@ -2124,136 +2124,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 		<?php
 	}
 
-
-
-
-
-/*	public function promotions_meta_box() {
-		$values = array(
-			array('id' => true, 'text' => __('Yes', 'event_espresso')),
-			array('id' => false, 'text' => __('No', 'event_espresso'))
-		);
-		global $wpdb;
-		?>
-	  <div class="inside">
-
-	  	<p>
-		  	<strong>
-		  		<?php _e('Early Registration Discount', 'event_espresso'); ?>
-	  		</strong>
-	  	</p>
-
-	  	<p>
-	  		<label for="early_disc_date">
-		  		<?php _e('End Date:', 'event_espresso'); ?>
-	  		</label>
-			<input type="text" class="datepicker" size="12" id="early_disc_date" name="early_disc_date" value="<?php echo isset($this->_event->early_disc_date) ? $this->_event->early_disc_date : ''; ?>"/>
-	  	</p>
-
-	  	<p class="promo-amnts">
-	  		<label for="early_disc">
-		  		<?php _e('Amount:', 'event_espresso'); ?>
-	  		</label>
-			<input type="text" size="3" id="early_disc" name="early_disc" value="<?php echo isset($this->_event->early_disc) ? $this->_event->early_disc : ''; ?>" /> <br />
-	  		<p class="description">
-		  		<?php _e('(Leave blank if not applicable)', 'event_espresso'); ?>
-	  		</p>
-	  	</p>
-
-	  	<p>
-	  		<label>
-		  		<?php _e('Percentage:', 'event_espresso') ?>
-	  		</label>
-	  		<?php echo EE_Form_Fields::select_input('early_disc_percentage', $values, !isset($this->_event->early_disc_percentage) ? '' : $this->_event->early_disc_percentage); ?>
-	  	</p>
-
-	  	<p>
-		  	<strong>
-		  		<?php _e('Promotion Codes', 'event_espresso'); ?>
-	  		</strong>
-	  	</p>
-	  	<p class="disc-codes">
-	  		<label>
-		  		<?php _e('Allow discount codes?', 'event_espresso'); ?> <?php do_action('action_hook_espresso_help', 'coupon_code_info'); ?>
-	  		</label>
-	  		<?php echo EE_Form_Fields::select_input('use_coupon_code', $values, !isset($this->_event->use_coupon_code) || $this->_event->use_coupon_code == '' ? false : $this->_event->use_coupon_code); ?>
-	  	</p>
-
-	  	<?php
-	  	$sql = "SELECT * FROM " . EVENTS_DISCOUNT_CODES_TABLE;
-	  	if (function_exists('espresso_member_data') && !empty($this->_event->event_id)) {
-	  		$wpdb->get_results("SELECT wp_user FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $this->_event->event_id . "'");
-	  		$this->_event->wp_user = $wpdb->last_result[0]->wp_user != '' ? $wpdb->last_result[0]->wp_user : espresso_member_data('id');
-	  		$sql .= " WHERE ";
-	  		if ($this->_event->wp_user == 0 || $this->_event->wp_user == 1) {
-	  			$sql .= " (wp_user = '0' OR wp_user = '1') ";
-	  		}else {
-	  			$sql .= " wp_user = '" . $this->_event->wp_user . "' ";
-	  		}
-	  	}
-	  	$event_discounts = $wpdb->get_results($sql);
-	  	if (!empty($event_discounts)) {
-	  		foreach ($event_discounts as $event_discount) {
-	  			$discount_id        = $event_discount->id;
-	  			$coupon_code        = $event_discount->coupon_code;
-
-	  			$in_event_discounts = !empty($this->_event->event_id) ? $wpdb->get_results("SELECT * FROM " . EVENTS_DISCOUNT_REL_TABLE . " WHERE event_id='" . $this->_event->event_id . "' AND discount_id='" . $discount_id . "'") : array();
-	  			$in_event_discount = '';
-	  			foreach ($in_event_discounts as $in_discount) {
-	  				$in_event_discount = $in_discount->discount_id;
-	  			}
-	  			echo '<p class="event-disc-code" id="event-discount-' . $discount_id . '"><label for="in-event-discount-' . $discount_id . '" class="selectit"><input value="' . $discount_id . '" type="checkbox" name="event_discount[]" id="in-event-discount-' . $discount_id . '"' . ($in_event_discount == $discount_id ? ' checked="checked"' : "" ) . '/> ' . $coupon_code . "</label></p>";
-	  		}
-	  	}
-
-	  	echo '<p><a href="admin.php?page=discounts" target="_blank">' . __('Manage Promotional Codes ', 'event_espresso') . '</a></p>';
-	  	?>
-	  </div>
-		<?php
-	}*/
-
-
-
-
-
-	public function featured_image_meta_box() {
-		$event_meta = $this->_event->event_meta;
-		$values = array(
-				array('id' => true, 'text' => __('Yes', 'event_espresso')),
-				array('id' => false, 'text' => __('No', 'event_espresso')));
-		?>
-		<div class="inside">
-			<div id="featured-image">
-				<?php
-				if (!empty($event_meta['event_thumbnail_url'])) {
-					$event_thumb = $event_meta['event_thumbnail_url'];
-				} else {
-					$event_thumb = '';
-				}
-				?>
-				<label for="upload_image">
-					<?php _e('Add Featured Image', 'event_espresso'); ?>
-				</label>
-				<input id="upload_image" type="hidden" size="36" name="upload_image" value="<?php echo $event_thumb ?>" />
-				<input id="upload_image_button" type="button" value="<?php _e('Upload Image', 'event_espresso'); ?>" />
-				<?php if ($event_thumb) { ?>
-					<p class="event-featured-thumb"><img  src="<?php echo $event_thumb ?>" alt="" /></p>
-					<a id='remove-image' href='#' title='<?php _e('Remove this image', 'event_espresso'); ?>' onclick='return false;'><?php _e('Remove Image', 'event_espresso'); ?></a>
-				<?php } ?>
-			</div>
-			<p>
-				<label>
-					<?php _e('Enable image in event lists', 'event_espresso'); ?>
-				</label>
-				<?php echo EE_Form_Fields::select_input('show_thumb_in_lists', $values, isset($event_meta['display_thumb_in_lists']) ? $event_meta['display_thumb_in_lists'] : '', 'id="show_thumb_in_lists"'); ?> </p>
-			<p>
-				<label>
-					<?php _e('Enable image in registration', 'event_espresso'); ?>
-				</label>
-				<?php echo EE_Form_Fields::select_input('show_thumb_in_regpage', $values, isset($event_meta['display_thumb_in_regpage']) ? $event_meta['display_thumb_in_regpage'] : '', 'id="show_thumb_in_regpage"'); ?> </p>
-		</div>
-		<?php
-	}
 
 
 
@@ -2738,21 +2608,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * @return void
 	 */
 	protected function _insert_or_update_event($new_event) {
-		if ( $new_event ) {
-			$_SESSION['event_id'] = $event_id = $this->_insert_event();
-			$success = 0; //we already have a success message so lets not send another.
-			$query_args = array(
-				'action' => 'edit_event',
-				'EVT_ID' => $event_id
-				);
-		} else {
-			$_SESSION['event_id'] = $event_id = $this->_update_event();
-			$success = 0; //we already have a success message so lets not send another.
-			$query_args = array(
-				'action' => 'edit_event',
-				'EVT_ID' => $event_id
-				);
-		}
+		
+		$_SESSION['event_id'] = $event_id = $new_event ? $this->_insert_event() : $this->_update_event();
+
+		$success = 0; //we already have a success message so lets not send another.
+		$query_args = array(
+			'action' => 'edit_event',
+			'EVT_ID' => $event_id
+		);
 
 		$this->_redirect_after_action( $success, '', '', $query_args );
 	}
@@ -2764,7 +2627,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	private function _insert_event() {
 		//Delete the transients that may be set
 		$this->_espresso_reset_cache();
-
+		
 	/* @var $espresso_wp_user type array*/
 		global $wpdb, $espresso_wp_user, $caffeinated;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
@@ -3089,10 +2952,11 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		// add new tickets if any
 		if ($new_ticket_price = isset($this->_req_data['new_ticket_price']) ? $this->_req_data['new_ticket_price'] : array('PRC_name' => NULL)) {
-			if (!empty($new_ticket_price['PRC_name'])) {
+			if ( ! empty($new_ticket_price['PRC_name'])) {
 				$ticket_prices_to_save[0] = $new_ticket_price;
 			}
 		}
+//		printr( $ticket_prices_to_save, '$ticket_prices_to_save  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// and now we actually save the ticket prices
 		if (!empty($ticket_prices_to_save)) {
@@ -3119,17 +2983,16 @@ class Events_Admin_Page extends EE_Admin_Page {
 												$ticket_price['PRC_amount'],
 												$ticket_price['PRC_name'],
 												$ticket_price['PRC_desc'],
-												 /* DO NOT DELETE - NEW FEATURE IN PROGRESS 
-												$ticket_price['PRC_reg_limit'],
-												*/
+												isset( $ticket_price['PRC_reg_limit'] ) ? $ticket_price['PRC_reg_limit'] : NULL,
+												NULL,
 												$ticket_price['PRC_use_dates'] ? TRUE : FALSE,
 												$ticket_price['PRC_start_date'],
 												$ticket_price['PRC_end_date'],
-												FALSE,
+/*												FALSE,
 												FALSE,
 												0,
 												TRUE,
-												$current_user->ID,
+												$current_user->ID,*/
 												$ticket_price['PRC_is_active'] ? TRUE : FALSE,
 												$overrides,
 												$ticket_price['PRT_ID'] < 3 ? 0 : $ticket_price['PRC_order'],
@@ -3144,7 +3007,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 			}
 		}
 
-		
 		
 		
 
