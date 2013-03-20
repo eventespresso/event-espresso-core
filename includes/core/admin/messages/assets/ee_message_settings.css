@@ -1,0 +1,72 @@
+.ee-text-links .item_display {
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	background-color: #b2b2b2;
+	padding: 5px;
+	margin-right: 10px;
+}
+
+.ee-text-links .messenger-active a {
+	padding-left: 20px;
+	background: transparent url(images/sprocket_green.png) no-repeat left;
+}
+
+.ee-text-links .item_display a {
+	color: white;
+	text-decoration: none;
+}
+
+
+.ee-text-links a {
+	padding-left: 20px;
+	background: transparent url(images/sprocket_s_light.png) no-repeat left;
+}
+
+.on-off-inactive, .on-off-active {
+	border: none;
+	background-color: transparent;
+	cursor: pointer;
+}
+
+
+#active-message-types, #inactive-message-types {
+    width: 95%;
+    min-height: 10em;
+    margin: 0 0.4em, 0.4em, 0;
+    padding: 8px;
+    margin-top: 10px;
+    border: 1px solid #eee;
+}
+
+#active-message-types.custom-state-active, #inactive-message-types.ui-state-highlight { 
+    background: #f8f8f8;
+    border: 1px dashed #b2b2b2;
+   }
+
+li.mt-tab {
+    float: left;
+    width: 15%;
+    padding: 0.6em;
+    margin: 0 0.4em 0.4em 0;
+    text-align: left;
+    background: #eee;
+    z-index: 1000;
+}
+
+.mt-content, li {
+    cursor: move;
+}
+
+#active-message-types ul, #inactive-message-types ul {
+    margin: 0;
+    padding: 0;
+    width: 95%;
+    border: none;
+}
+
+li.mt-tab h4 { margin: 0 0 0.4em; cursor: move; }
+
+.ui-helper-clearfix {
+    clear: both;
+}
