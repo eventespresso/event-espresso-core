@@ -660,7 +660,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	protected function _verify_nonce( $nonce, $nonce_ref ) {
 		// verify nonce against expected value
-		if ( ! wp_verify_nonce( $nonce, $this->_req_nonce ) ) {
+		if ( ! wp_verify_nonce( $nonce, $nonce_ref) ) {
 			// these are not the droids you are looking for !!!
 			$msg = sprintf(__('%sNonce Fail.%s' , 'event_espresso'), '<a href="http://www.youtube.com/watch?v=56_S0WeTkzs">', '</a>' );
 			if ( WP_DEBUG ) {
@@ -669,8 +669,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 			if ( ! defined( 'DOING_AJAX' )) {
 				wp_die( $msg );
 			} else {
-				echo json_encode( array('error' => $msg ));
-				exit();
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+				$this->_return_json();
 			}
 		}
 	}
