@@ -2137,7 +2137,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		$this->_process_notices($query_args);
-		$notices = $this->_template_args['notices'];
 		
 		
 		// generate redirect url
@@ -2184,13 +2183,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	protected function _process_notices( $query_args = array() ) {
 		
-		$this->template_args['notices'] = EE_Error::get_notices();
-
+		$this->_template_args['notices'] = EE_Error::get_notices();
 
 		//IF this isn't ajax we need to create a transient for the notices using the route.
 		if ( ! defined( 'DOING_AJAX' ) ) {
 			$route = isset( $query_args['action'] ) ? $query_args['action'] : 'default';
-			$this->_add_transient( $route, $notices, TRUE );
+			$this->_add_transient( $route, $this->_template_args['notices'], TRUE );
 		}
 	}
 
