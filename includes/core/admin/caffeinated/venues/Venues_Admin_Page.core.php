@@ -298,7 +298,7 @@ class Venues_Admin_Page extends EE_Admin_Page {
 	 						</th>
 	 						<td>
 		 						<input class="required small-text" type="text" id="vnu_capacity" name="vnu_capacity" value="">
-								<span class="description"><?php _e('leave blank for no limit', 'event_espresso') ?></span>
+								<p class="description"><?php _e('leave blank for no limit', 'event_espresso') ?></p>
 	 						</td>
 	 					</tr>
 						<tr>
@@ -478,9 +478,9 @@ class Venues_Admin_Page extends EE_Admin_Page {
 							<td>
 								<input class="regular-text" type="text" id="gmap-static" name="gmap_static" <?php echo (!empty($meta['gmap_static']) ) ? 'value="' . $meta['gmap_static'] .'"' : 'value=""'; ?> />
 								<br />
-								<span class="description">
+								<p class="description">
 									<?php _e('Will be used in place of the venue address.', 'event_espresso'); ?>
-								</span>
+								</p>
 							</td>
 						</tr>
 
@@ -592,7 +592,7 @@ class Venues_Admin_Page extends EE_Admin_Page {
 	 						</th>
 	 						<td>
 		 						<input class="required small-text" type="text" id="vnu_capacity" name="vnu_capacity" value="<?php echo $vnu_capacity; ?>">
-								<span class="description"><?php _e('leave blank for no limit', 'event_espresso') ?></span>
+								<p class="description"><?php _e('leave blank for no limit', 'event_espresso') ?></p>
 	 						</td>
 	 					</tr>
 	 					<tr>
@@ -772,9 +772,9 @@ class Venues_Admin_Page extends EE_Admin_Page {
 	 						<td>
 		 						<input class="regular-text" type="text" id="gmap-static" name="gmap_static" <?php echo (!empty($meta['gmap_static']) ) ? 'value="' . $meta['gmap_static'] . '"' : 'value=""'; ?> />
 	 							<br />
-	 							<span class="description">
+	 							<p class="description">
 	 								<?php _e('Will be used in place of the venue address.', 'event_espresso'); ?>
-	 							</span>
+	 							</p>
 	 						</td>
 	 					</tr>
 	 					<tr>

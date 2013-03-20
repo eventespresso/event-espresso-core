@@ -6,10 +6,10 @@
 
 
 /*** Save buttons ***/
-#event_editor_major_buttons_wrapper{
+#espresso_major_buttons_wrapper{
     border-top: medium none;
     clear: both;
-    padding: 10px 0 8px;	
+    padding: 0 0 8px;	
 }
 #save-event-floating-btns-spacer {
 	height:45px;
@@ -21,7 +21,8 @@
 	z-index: 1000;
 }
 
-#event_editor_major_buttons_wrapper .button-primary, #event-editor-floating-save-btns .button-primary {
+#espresso_major_buttons_wrapper #delete-action { float:none; margin:0 0 1em; }
+#espresso_major_buttons_wrapper .button-primary, #event-editor-floating-save-btns .button-primary {
 	margin-right: 5px;
 	float: right;
 }

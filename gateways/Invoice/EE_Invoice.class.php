@@ -78,11 +78,23 @@ Class EE_Invoice extends EE_Offline_Gateway {
 		$this->_payment_settings['invoice_logo_url'] = trim(strip_tags($_POST['invoice_logo_url']));
 		$this->_payment_settings['show'] = $_POST['show'];
 		$this->_payment_settings['invoice_css'] = trim(strip_tags($_POST['invoice_css']));
-		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';	}
+		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';	
+	}
 
 	protected function _display_settings() {
 		require_once('lib/invoice_functions.php');
 		$themes = espresso_invoice_template_files($this->_path);
+
+//		$this->_payment_settings['pdf_title'] = isset( $this->_payment_settings['pdf_title'] ) ? $this->_payment_settings['pdf_title'] : '';
+//		$this->_payment_settings['pdf_instructions'] = isset( $this->_payment_settings['pdf_instructions'] ) ? $this->_payment_settings['pdf_instructions'] : '';
+//		$this->_payment_settings['page_instructions'] = isset( $this->_payment_settings['page_instructions'] ) ? $this->_payment_settings['page_instructions'] : '';
+//		$this->_payment_settings['payable_to'] = isset( $this->_payment_settings['payable_to'] ) ? $this->_payment_settings['payable_to'] : '';
+//		$this->_payment_settings['payment_address'] = isset( $this->_payment_settings['payment_address'] ) ? $this->_payment_settings['payment_address'] : '';
+//		$this->_payment_settings['invoice_logo_url'] = isset( $this->_payment_settings['invoice_logo_url'] ) ? $this->_payment_settings['invoice_logo_url'] : '';
+//		$this->_payment_settings['show'] = isset( $this->_payment_settings['show'] ) ? $this->_payment_settings['show'] : '';
+//		$this->_payment_settings['invoice_css'] = isset( $this->_payment_settings['invoice_css'] ) ? $this->_payment_settings['invoice_css'] : '';
+//		$this->_payment_settings['button_url'] = isset( $this->_payment_settings['button_url'] ) ? $this->_payment_settings['button_url'] : '';
+		
 		?>
 				<tr>
 					<th><h4 style="margin:.75em 0 1em;"><?php _e('Invoice Display Settings', 'event_espresso'); ?></h4></th>

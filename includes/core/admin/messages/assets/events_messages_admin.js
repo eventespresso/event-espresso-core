@@ -24,7 +24,7 @@ jQuery(document).ready(function($) {
 			//lets reset and add a couple of new vars to the queryKey object
 			queryobj.route = queryobj.action !== 'undefined' ? queryobj.action : '';
 			queryobj.action = 'ee_msgs_switch_template';
-			queryobj.page = 'events';
+			queryobj.page = 'espresso_events';
 
 			
 		
@@ -105,14 +105,14 @@ jQuery(document).ready(function($) {
 		 */
 		display_content: function(content, where, what, type) {
 			if ( typeof(where) === 'undefined' ) where = 'dialog';
-			if ( typeof(clear) === 'undefined' ) what = 'clear';
+			if ( typeof(what) === 'undefined' ) what = 'clear';
 			if ( typeof(type) === 'undefined' ) type = 'content';
 
 			//if content is empty let's get out
 			if ( ( content === '' || typeof(content) === 'undefined' ) && type != 'notices' )
 				return;
 			
-			var main_container = type == 'content' ? $('.inside', '#edit_event_events_Messages_Hooks_metabox') : $('.ee-notices', '#edit_event_events_Messages_Hooks_metabox');
+			var main_container = type == 'content' ? $('.messages-tabs-content', '#edit_event_espresso_events_Messages_Hooks_metabox') : $('.ee-notices', '#edit_event_espresso_events_Messages_Hooks_metabox');
 			var dialog_container = type == 'content' ? $('.messages-change-edit-templates-content') : $('.ee-notices', '.messages-change-edit-templates-content');
 			var content_div = where == 'main' ? main_container : dialog_container;
 
@@ -129,7 +129,7 @@ jQuery(document).ready(function($) {
 	};
 
 
-	$('#edit_event_events_Messages_Hooks_metabox').on('click', '.template_picker', function(e) {
+	$('#edit_event_espresso_events_Messages_Hooks_metabox').on('click', '.template_picker', function(e) {
 		e.preventDefault();
 		EE_messages_evt_helper.get_template_content(this);
 	});
@@ -137,6 +137,16 @@ jQuery(document).ready(function($) {
 	$('.messages-change-edit-templates-content').on('submit', 'form', function(e) {
 		e.preventDefault();
 		EE_messages_evt_helper.get_template_content(this, 'form');
+	});
+
+	$('.messages-change-edit-templates-content').on('click', '.messages-preview-button', function(e) {
+		e.preventDefault();
+		EE_messages_evt_helper.get_template_content(this);
+	});
+
+	$('.messages-change-edit-templates-content').on('click', '.messages-preview-go-back-button', function(e) {
+		e.preventDefault();
+		EE_messages_evt_helper.get_template_content(this);
 	});
 
 });

@@ -374,7 +374,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_do_other_page_hooks();
 
 
-
 		//first verify if we need to load anything...
 		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
 
@@ -383,6 +382,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//next let's just check user_access and kill if no access
 		$this->_check_user_access();
+
 		
 		// becuz WP List tables have two duplicate select inputs for choosing bulk actions, we need to copy the action from the second to the first
 		if ( isset( $this->_req_data['action2'] ) && $this->_req_data['action'] == -1 ) {
@@ -404,7 +404,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_set_page_routes();
 		$this->_set_page_config();
 
-		
 
 		//next route only if routing enabled
 		if ( $this->_routing && !defined('DOING_AJAX') ) {
@@ -472,7 +471,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	public function load_page_dependencies() {
-
 
 		$this->_current_screen = get_current_screen();
 			
@@ -654,6 +652,33 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 	/**
+	 * perform nonce verification
+	 * This method has be encapsulated here so that any ajax requests that bypass normal routes can verify their nonces using this method (and save retyping!)
+	 * @param  string $nonce     The nonce sent
+	 * @param  string $nonce_ref The nonce reference string (name0)
+	 * @return mixed (bool|die)   
+	 */
+	protected function _verify_nonce( $nonce, $nonce_ref ) {
+		// verify nonce against expected value
+		if ( ! wp_verify_nonce( $nonce, $this->_req_nonce ) ) {
+			// these are not the droids you are looking for !!!
+			$msg = sprintf(__('%sNonce Fail.%s' , 'event_espresso'), '<a href="http://www.youtube.com/watch?v=56_S0WeTkzs">', '</a>' );
+			if ( WP_DEBUG ) {
+				$msg .= "\n" . sprintf( __('In order to dynamically generate nonces for your actions, use the %s->_add_query_arg method. May the Nonce be with you!', 'event_espresso' ), __CLASS__  );
+			}
+			if ( ! defined( 'DOING_AJAX' )) {
+				wp_die( $msg );
+			} else {
+				echo json_encode( array('error' => $msg ));
+				exit();
+			}
+		}
+	}
+
+
+
+
+	/**
 	 * _route_admin_request()
 	 * Meat and potatoes of the class.  Basically, this dude checks out what's being requested and sees if theres are some doodads to work the magic and handle the flingjangy.
 	 * Translation:  Checks if the requested action is listed in the page routes and then will try to load the corresponding method.
@@ -668,20 +693,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( $this->_req_action != 'default' ) {
 			// set nonce from post data
 			$nonce = isset($this->_req_data[ $this->_req_nonce  ]) ? sanitize_text_field( $this->_req_data[ $this->_req_nonce  ] ) : '';
-			// verify nonce against expected value
-			if ( ! wp_verify_nonce( $nonce, $this->_req_nonce ) ) {
-				// these are not the droids you are looking for !!!
-				$msg = sprintf(__('%sNonce Fail.%s' , 'event_espresso'), '<a href="http://www.youtube.com/watch?v=56_S0WeTkzs">', '</a>' );
-				if ( WP_DEBUG ) {
-					$msg .= "\n" . sprintf( __('In order to dynamically generate nonces for your actions, use the %s->_add_query_arg method. May the Nonce be with you!', 'event_espresso' ), __CLASS__  );
-				}
-				if ( ! defined( 'DOING_AJAX' )) {
-					wp_die( $msg );
-				} else {
-					echo json_encode( array('error' => $msg ));
-					exit();
-				}
-			}
+			$this->_verify_nonce( $nonce, $this->_req_nonce );	
 		}		
 
 		$this->_set_nav_tabs(); //set the nav_tabs array
@@ -1883,6 +1895,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return json object 
 	 */
 	protected function _return_json() {
+
+		//make sure any EE_Error notices have been handled.
+		$this->_process_notices();
+
+
 		$data = isset( $this->_template_args['data'] ) ? $this->_template_args['data'] : array();
 		$json = array(
 			'error' => isset( $this->_template_args['error'] ) ? $this->_template_args['error'] : FALSE,
@@ -2118,12 +2135,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 			// correct page and action will be in the query args now
 			$redirect_url = admin_url( 'admin.php' );
 		}
+
+		$this->_process_notices($query_args);
 		
-		//assign notices to transient
-		$notices = EE_Error::get_notices();
-		//first we need the route for the transient!
-		$route = isset( $query_args['action'] ) ? $query_args['action'] : 'default';
-		$this->_add_transient( $route, $notices, TRUE );
 		
 		// generate redirect url
 
@@ -2149,7 +2163,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 				);
 
 			$this->_template_args['success'] = $success;
-			$this->_template_args['notices'] = $notices;
 			$this->_template_args['data'] = !empty($this->_template_args['data']) ? array_merge($default_data, $this->_template_args['data'] ): $default_data;
 			$this->_return_json();
 		}
@@ -2158,6 +2171,26 @@ abstract class EE_Admin_Page extends EE_BASE {
 		exit();		
 	}
 
+
+
+
+	/**
+	 * process any notices before redirecting (or returning ajax request)
+	 * This method sets the $this->_template_args['notices'] attribute;
+	 * 
+	 * @param  array  $query_args any query args that need to be used for notice transient ('action')
+	 * @return void
+	 */
+	protected function _process_notices( $query_args = array() ) {
+		
+		$this->_template_args['notices'] = EE_Error::get_notices();
+
+		//IF this isn't ajax we need to create a transient for the notices using the route.
+		if ( ! defined( 'DOING_AJAX' ) ) {
+			$route = isset( $query_args['action'] ) ? $query_args['action'] : 'default';
+			$this->_add_transient( $route, $this->_template_args['notices'], TRUE );
+		}
+	}
 
 
 	

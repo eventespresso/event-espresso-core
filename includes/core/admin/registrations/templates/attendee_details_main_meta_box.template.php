@@ -14,7 +14,7 @@
 					<td>
 						<div class="validation-notice-dv"><?php _e( 'The following is  a required field', 'event_espresso' );?></div>
 						<input class="regular-text required" type="text" id="ATT_fname" name="ATT_fname" value="<?php echo $attendee_fname; ?>"/><br/>
-						<span class="description"><?php _e('The attendee\'s given name. ( required value )', 'event_espresso'); ?></span>
+						<p class="description"><?php _e('The attendee\'s given name. ( required value )', 'event_espresso'); ?></p>
 					</td>
 				</tr>
 				
@@ -25,7 +25,7 @@
 					<td>
 						<div class="validation-notice-dv"><?php _e( 'The following is  a required field', 'event_espresso' );?></div>
 						<input class="regular-text required" type="text" id="ATT_lname" name="ATT_lname" value="<?php echo $attendee_lname; ?>"/><br/>
-						<span class="description"><?php _e('The attendee\'s family name. ( required value )', 'event_espresso'); ?></span>
+						<p class="description"><?php _e('The attendee\'s family name. ( required value )', 'event_espresso'); ?></p>
 					</td>
 				</tr>
 				
@@ -36,7 +36,7 @@
 					<td>
 						<div class="validation-notice-dv"><?php _e( 'The following is  a required field', 'event_espresso' );?></div>
 						<input class="regular-text required" type="text" id="ATT_email" name="ATT_email" value="<?php echo $attendee_email; ?>"/><br/>
-						<span class="description"><?php _e('( required value )', 'event_espresso'); ?></span>
+						<p class="description"><?php _e('( required value )', 'event_espresso'); ?></p>
 					</td>
 				</tr>
 				
@@ -58,7 +58,7 @@
 						<br/>
 						<input class="regular-text" type="text" id="ATT_address2" name="ATT_address2" value="<?php echo $attendee_address2; ?>"/>
 						<br/>
-						<span class="description"><?php _e('The attendee\'s street address.', 'event_espresso'); ?></span>
+						<p class="description"><?php _e('The attendee\'s street address.', 'event_espresso'); ?></p>
 					</td>
 				</tr>
 				
@@ -104,7 +104,7 @@
 					</th>
 					<td>
 						<textarea class="" id="ATT_social" name="ATT_social" cols="40" rows="2" ><?php echo $attendee_social; ?></textarea><br/>
-						<span class="description"><?php _e('Social networking contacts for the attendee such as Facebook page, Twitter account, LinkedIn account, etc. One per line please', 'event_espresso'); ?></span>
+						<p class="description"><?php _e('Social networking contacts for the attendee such as Facebook page, Twitter account, LinkedIn account, etc. One per line please', 'event_espresso'); ?></p>
 					</td>							
 				</tr>
 				
@@ -114,7 +114,7 @@
 					</th>
 					<td>
 						<textarea class="" id="ATT_comments" name="ATT_comments" cols="40" rows="4" ><?php echo $attendee_comments; ?></textarea><br/>
-						<span class="description"><?php _e('Comments from the attendee regarding your events, services, etc collected via forms, emails, etc.', 'event_espresso'); ?></span>
+						<p class="description"><?php _e('Comments from the attendee regarding your events, services, etc collected via forms, emails, etc.', 'event_espresso'); ?></p>
 					</td>							
 				</tr>
 				
@@ -124,7 +124,7 @@
 					</th>
 					<td>
 						<textarea class="" id="ATT_notes" name="ATT_notes" cols="40" rows="4" ><?php echo $attendee_notes; ?></textarea><br/>
-						<span class="description"><?php _e('A place for you to keep any notes pertaining to this attendee, their preferences, special circumstances, etc.', 'event_espresso'); ?></span>
+						<p class="description"><?php _e('A place for you to keep any notes pertaining to this attendee, their preferences, special circumstances, etc.', 'event_espresso'); ?></p>
 					</td>							
 				</tr>
 				

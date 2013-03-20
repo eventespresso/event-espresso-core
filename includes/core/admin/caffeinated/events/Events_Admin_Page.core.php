@@ -224,10 +224,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 	public function load_scripts_styles() {
-		//todo note: we also need to load_scripts_styles per view (i.e. default/view_report/event_details)
-		global $eei18n_js_strings;
-		$eei18n_js_strings['image_confirm'] = __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso');
-		wp_localize_script( 'event_editor_js', 'eei18n', $eei18n_js_strings );		
+		//todo note: we also need to load_scripts_styles per view (i.e. default/view_report/event_details)		
 	}
 
 
@@ -254,6 +251,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		//scripts
 		wp_enqueue_script('event_editor_js');
+		global $eei18n_js_strings;
+		$eei18n_js_strings['image_confirm'] = __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso');
+		wp_localize_script( 'event_editor_js', 'eei18n', $eei18n_js_strings );
 	}
 
 
@@ -939,7 +939,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 										<td>
 											<?php $select_name = 'edit_ticket_price['. $price->ID() .'][PRT_ID]'; ?>
 											<?php echo EE_Form_Fields::select_input( $select_name, $all_price_types, $price->type(), 'id="edit-ticket-price-type-ID-'.$price->ID().'" style="width:auto;"', 'edit-ticket-price-input' ); ?>
-											<span class="description">&nbsp;&nbsp;<?php _e('Whether this is an Event Price, Discount, or Surcharge.', 'event_espresso'); ?></span>
+											<p class="description">&nbsp;&nbsp;<?php _e('Whether this is an Event Price, Discount, or Surcharge.', 'event_espresso'); ?></p>
 											<input name="edit_ticket_price[<?php echo $price->ID()?>][PRC_ID]" type="hidden" value="<?php echo $price->ID()?>"/>
 											<input name="edit_ticket_price[<?php echo $price->ID()?>][EVT_ID]" type="hidden" value="<?php echo $this->_event->id?>"/>
 											<?php $price_type = isset( $global_price_types[$price->type()] ) ? $global_price_types[$price->type()]->is_global() : FALSE; ?>
@@ -955,7 +955,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 										<th><label for="edit-ticket-price-PRC_name"><?php _e('Name', 'event_espresso'); ?></label></th>
 										<td>
 											<input class="edit-ticket-price-input regular-text" type="text" id="edit-ticket-price-PRC_name-<?php echo $price->ID(); ?>" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_name]" value="<?php echo $price->name(); ?>"/>
-											<span class="description">&nbsp;&nbsp;<?php _e('The name that site visitors will see for this Price.', 'event_espresso'); ?></span>
+											<p class="description">&nbsp;&nbsp;<?php _e('The name that site visitors will see for this Price.', 'event_espresso'); ?></p>
 										</td>
 									</tr>
 									
@@ -963,7 +963,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 										<th><label for="edit-ticket-price-PRC_desc"><?php _e('Description', 'event_espresso'); ?></label></th>
 										<td>
 											<input class="edit-ticket-price-input widefat" type="text" id="edit-ticket-price-PRC_desc-<?php echo $price->ID(); ?>" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_desc]" value="<?php echo stripslashes( $price->desc() ); ?>"/><br/>
-											<span class="description"><?php _e('A brief description for this Price. More for your benefit, as it is currently not displayed to site visitors.', 'event_espresso'); ?></span>
+											<p class="description"><?php _e('A brief description for this Price. More for your benefit, as it is currently not displayed to site visitors.', 'event_espresso'); ?></p>
 										</td>							
 									</tr>
 									
@@ -972,7 +972,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 										<td>
 											<?php $price_amount =  ($PRT->type[$price->type()]->is_percent()) ? number_format( $price->amount(), 1 ) : number_format( $price->amount(), 2 ); ?>
 											<input class="edit-ticket-price-input small-text" type="text" id="edit-ticket-price-PRC_amount-<?php echo $price->ID(); ?>" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_amount]" style="text-align:right;" value="<?php echo $price_amount; ?>"/>
-											<span class="description">&nbsp;&nbsp;<?php _e('The dollar or percentage amount for this Price.', 'event_espresso'); ?></span>
+											<p class="description">&nbsp;&nbsp;<?php _e('The dollar or percentage amount for this Price.', 'event_espresso'); ?></p>
 										</td>
 									</tr>
 									
@@ -981,7 +981,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 										<th><label for="edit-ticket-price-PRC_reg_limit"><?php _e('Registration Limit', 'event_espresso'); ?></label></th>
 										<td>
 											<input type="text" id="edit-ticket-price-PRC_reg_limit-<?php echo $price->ID(); ?>" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_reg_limit]" class="edit-ticket-price-input small-text" style="text-align:right;" value="<?php echo $price->reg_limit(); ?>"/>
-											<span class="description">&nbsp;&nbsp;<?php _e('The maximum number of attendees that can be registratered at this Price Level. Leave blank for no limit.', 'event_espresso'); ?></span>
+											<p class="description">&nbsp;&nbsp;<?php _e('The maximum number of attendees that can be registratered at this Price Level. Leave blank for no limit.', 'event_espresso'); ?></p>
 										</td>
 									</tr>
 									
@@ -989,7 +989,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 										<th><label for="edit-ticket-price-PRC_tckts_left"><?php _e('Tickets Left', 'event_espresso'); ?></label></th>
 										<td>
 											<input type="text" id="edit-ticket-price-PRC_tckts_left-<?php echo $price->ID(); ?>" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_tckts_left]" class="edit-ticket-price-input small-text" style="text-align:right;" value="<?php echo $price->tckts_left(); ?>"/>
-											<span class="description">&nbsp;&nbsp;<?php _e('The number of tickets left, or available spaces, at this Price Level. This field is computed and any changes made to this quatity will have no affect. To change the number of Tickets LEft you will need to manually add Attendees via the Registrations Admin page.', 'event_espresso'); ?></span>
+											<p class="description">&nbsp;&nbsp;<?php _e('The number of tickets left, or available spaces, at this Price Level. This field is computed and any changes made to this quatity will have no affect. To change the number of Tickets LEft you will need to manually add Attendees via the Registrations Admin page.', 'event_espresso'); ?></p>
 										</td>
 									</tr>
 	  */ ?>			
@@ -1008,7 +1008,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 												<input name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_use_dates]" class="edit-ticket-price-use-dates-no edit-ticket-price-input etp-radio" type="radio" value="0"<?php echo $checked;?> style="margin-right:5px;"/>
 												<?php _e('No', 'event_espresso');?>
 											</label>
-											<span class="description"><?php _e( 'If set to "Yes", then you will be able to set the dates for when this price will become active / inactive.', 'event_espresso' ); ?></span>
+											<p class="description"><?php _e( 'If set to "Yes", then you will be able to set the dates for when this price will become active / inactive.', 'event_espresso' ); ?></p>
 										</td>
 									</tr>
 				
@@ -1021,7 +1021,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 										<td>
 											<div class="edit-ticket-price-dates">
 												<input id="edit-ticket-price-PRC_start_date-<?php echo $price->ID(); ?>" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_start_date]" type="text" class="datepicker edit-ticket-price-input" value="<?php echo $price->start_date(); ?>" />
-												<span class="description">&nbsp;&nbsp;<?php _e( sprintf( 'If the "Triggered by Date" field above is set to "Yes", then this is the date that this Event Price would become active and displayed.' ), 'event_espresso'); ?></span>
+												<p class="description">&nbsp;&nbsp;<?php _e( sprintf( 'If the "Triggered by Date" field above is set to "Yes", then this is the date that this Event Price would become active and displayed.' ), 'event_espresso'); ?></p>
 											</div>
 										</td>
 									</tr>
@@ -1035,7 +1035,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 										<td>
 											<div class="edit-ticket-price-dates">
 											<input id="edit-ticket-price-PRC_end_date-<?php echo $price->ID(); ?>" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_end_date]" type="text" class="datepicker edit-ticket-price-input" value="<?php echo $price->end_date(); ?>" />
-											<span class="description">&nbsp;&nbsp;<?php _e( sprintf( 'If "Triggered by Date" is set to "Yes", then this is the date that this Event Price would become inactive and no longer displayed.' ), 'event_espresso'); ?></span>
+											<p class="description">&nbsp;&nbsp;<?php _e( sprintf( 'If "Triggered by Date" is set to "Yes", then this is the date that this Event Price would become inactive and no longer displayed.' ), 'event_espresso'); ?></p>
 											</div>
 										</td>
 									</tr>			
@@ -1051,7 +1051,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 												<input class="edit-ticket-price-input" type="radio" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_is_active]" value="0" style="margin-right:5px;" <?php echo ! $price->is_active() ? 'checked="checked"' : '' ?> />
 												<?php _e('No', 'event_espresso');?>
 											</label>
-											<span class="description"><?php _e('Whether this Price is currently being used and displayed on the site.', 'event_espresso'); ?></span>
+											<p class="description"><?php _e('Whether this Price is currently being used and displayed on the site.', 'event_espresso'); ?></p>
 										</td>
 									</tr>
 									<?php else : ?>
@@ -1135,7 +1135,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 										<div class="small-screen-table-label"><?php echo __('Description', 'event_espresso') ?></div>		
 										<?php //echo $price->desc(); ?>
 										<!--<input class="edit-ticket-price-input quick-edit widefat" type="text" id="quick-edit-ticket-price[<?php echo $price->ID(); ?>][PRC_desc]" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_desc]" value="<?php echo $price->desc(); ?>" style="width:100%;"/>-->
-										<span class="description"><?php echo $inactive ? $inactive : stripslashes( $price->desc() ); ?></span>
+										<p class="description"><?php echo $inactive ? $inactive : stripslashes( $price->desc() ); ?></p>
 									</td> 
 									
 
@@ -1165,7 +1165,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 							<th><label for="new-ticket-price-PRT_ID"><?php _e('Type', 'event_espresso'); ?></label></th>
 							<td>
 								<?php echo EE_Form_Fields::select_input( 'new_ticket_price[PRT_ID]', $price_types, 2, 'id="new-ticket-price-type-ID"', 'add-new-ticket-price-input' ); ?>
-								<span class="description">&nbsp;&nbsp;<?php _e('Whether this is an Event Price, Discount, or Surcharge.', 'event_espresso'); ?></span>
+								<p class="description">&nbsp;&nbsp;<?php _e('Whether this is an Event Price, Discount, or Surcharge.', 'event_espresso'); ?></p>
 								<input id="new_ticket_price-EVT_ID" name="new_ticket_price[EVT_ID]" type="hidden" value="<?php echo $this->_event->id; ?>" />
 								<input id="new_ticket_price-PRT_is_global" name="new_ticket_price[PRT_is_global]" type="hidden" value="0" />									
 								<input id="new_ticket_price-PRC_overrides" name="new_ticket_price[PRC_overrides]" type="hidden" value="0" />									
@@ -1177,7 +1177,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 							<th><label for="new-ticket-price-PRC_name"><?php _e('Name', 'event_espresso'); ?></label></th>
 							<td>
 								<input class="add-new-ticket-price-input regular-text" type="text" id="new-ticket-price-PRC_name" name="new_ticket_price[PRC_name]" value=""/>
-								<span class="description">&nbsp;&nbsp;<?php _e('The name that site visitors will see for this Price.', 'event_espresso'); ?></span>
+								<p class="description">&nbsp;&nbsp;<?php _e('The name that site visitors will see for this Price.', 'event_espresso'); ?></p>
 							</td>
 						</tr>
 						
@@ -1185,7 +1185,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 							<th><label for="new-ticket-price-PRC_desc"><?php _e('Description', 'event_espresso'); ?></label></th>
 							<td>
 								<textarea class="add-new-ticket-price-input regular-text" type="text" id="new-ticket-price[PRC_desc]" name="new_ticket_price[PRC_desc]" cols="100" rows="1" ></textarea><br/>
-								<span class="description"><?php _e('A brief description for this Price. More for your benefit, as it is currently not displayed to site visitors.', 'event_espresso'); ?></span>
+								<p class="description"><?php _e('A brief description for this Price. More for your benefit, as it is currently not displayed to site visitors.', 'event_espresso'); ?></p>
 							</td>							
 						</tr>
 						
@@ -1193,7 +1193,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 							<th><label for="new-ticket-price-PRC_amount"><?php _e('Amount', 'event_espresso'); ?></label></th>
 							<td>
 								<input class="add-new-ticket-price-input small-text" type="text" id="new-ticket-price[PRC_amount]" name="new_ticket_price[PRC_amount]" style="text-align:right;" value=""/>
-								<span class="description">&nbsp;&nbsp;<?php _e('The dollar or percentage amount for this Price.', 'event_espresso'); ?></span>
+								<p class="description">&nbsp;&nbsp;<?php _e('The dollar or percentage amount for this Price.', 'event_espresso'); ?></p>
 							</td>
 						</tr>
 
@@ -1202,7 +1202,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 							<th><label for="new-ticket-price-PRC_amount"><?php _e('Registration Limit', 'event_espresso'); ?></label></th>
 							<td>
 								<input type="text" id="new_ticket_price[PRC_reg_limit]" name="new_ticket_price[PRC_reg_limit]" class="add-new-ticket-price-input small-text" style="text-align:right;" value=""/>
-								<span class="description">&nbsp;&nbsp;<?php _e('The maximum number of attendees that can be registratered at this Price Level. Leave blank for no limit.', 'event_espresso'); ?></span>
+								<p class="description">&nbsp;&nbsp;<?php _e('The maximum number of attendees that can be registratered at this Price Level. Leave blank for no limit.', 'event_espresso'); ?></p>
 							</td>
 						</tr>
 	*/ ?>
@@ -1218,7 +1218,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 									<input class="add-new-ticket-price-input" type="radio" name="new_ticket_price[PRC_use_dates]" value="0" style="margin-right:5px;" checked="checked" />
 									<?php _e('No', 'event_espresso');?>
 								</label>
-								<span class="description"><?php _e( 'If set to "Yes", then you will be able to set the dates for when this price will become active / inactive.', 'event_espresso' ); ?></span>
+								<p class="description"><?php _e( 'If set to "Yes", then you will be able to set the dates for when this price will become active / inactive.', 'event_espresso' ); ?></p>
 							</td>
 						</tr>
 
@@ -1226,7 +1226,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 							<th><label for="new_ticket_price[PRC_start_date]"><?php _e('Start Date', 'event_espresso'); ?></label></th>
 							<td>
 								<input id="new-ticket-price[PRC_start_date]" name="new_ticket_price[PRC_start_date]" type="text" class="datepicker add-new-ticket-price-input" value="" />
-								<span class="description">&nbsp;&nbsp;<?php _e( sprintf( 'If the "Triggered by Date" field above is set to "Yes", then this is the date that this Event Price would become active and displayed for this Event.' ), 'event_espresso'); ?></span>
+								<p class="description">&nbsp;&nbsp;<?php _e( sprintf( 'If the "Triggered by Date" field above is set to "Yes", then this is the date that this Event Price would become active and displayed for this Event.' ), 'event_espresso'); ?></p>
 							</td>
 						</tr>
 
@@ -1234,7 +1234,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 							<th><label for="new_ticket_price[PRC_end_date]"><?php _e('End Date', 'event_espresso'); ?></label></th>
 							<td>
 								<input id="new-ticket-price[PRC_end_date]" name="new_ticket_price[PRC_end_date]" type="text" class="datepicker add-new-ticket-price-input" value="" />
-								<span class="description">&nbsp;&nbsp;<?php _e( sprintf( 'If "Triggered by Date" is set to "Yes", then this is the date that this Event Price would become inactive and no longer displayed for this Event.' ), 'event_espresso'); ?></span>
+								<p class="description">&nbsp;&nbsp;<?php _e( sprintf( 'If "Triggered by Date" is set to "Yes", then this is the date that this Event Price would become inactive and no longer displayed for this Event.' ), 'event_espresso'); ?></p>
 							</td>
 						</tr>			
 
@@ -1249,7 +1249,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 									<input class="add-new-ticket-price-input" type="radio" name="new_ticket_price[PRC_is_active]" value="0" style="margin-right:5px;" />
 									<?php _e('No', 'event_espresso');?>
 								</label>
-								<span class="description"><?php _e('Whether this Price is currently being used and displayed on the site.', 'event_espresso'); ?></span>
+								<p class="description"><?php _e('Whether this Price is currently being used and displayed on the site.', 'event_espresso'); ?></p>
 							</td>
 						</tr>
 						
@@ -2011,7 +2011,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 
-
+/*
 	public function promotions_meta_box() {
 		$values = array(
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
@@ -2039,9 +2039,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 		  		<?php _e('Amount:', 'event_espresso'); ?>
 	  		</label>
 			<input type="text" size="3" id="early_disc" name="early_disc" value="<?php echo isset($this->_event->early_disc) ? $this->_event->early_disc : ''; ?>" /> <br />
-	  		<span class="description">
+	  		<p class="description">
 		  		<?php _e('(Leave blank if not applicable)', 'event_espresso'); ?>
-	  		</span>
+	  		</p>
 	  	</p>
 
 	  	<p>
@@ -2095,7 +2095,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	  </div>
 		<?php
 	}
-
+*/
 
 
 

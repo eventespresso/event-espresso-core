@@ -3,6 +3,7 @@
 	<div id="icon-options-event" class="icon32"></div>	
 		
 	<h2><?php esc_attr_e( 'Event Espresso', 'event_espresso' );?>&nbsp;-&nbsp;<?php  echo $admin_page_title; ?></h2>
+	<div id="ajax-notices-container"></div>
 	
 	<?php echo $nav_tabs; ?>
 
