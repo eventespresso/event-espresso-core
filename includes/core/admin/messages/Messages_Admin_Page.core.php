@@ -1734,7 +1734,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$selected_messenger = isset( $this->_req_data['selected_messenger'] ) ? $this->_req_data['selected_messenger'] : 'email';
 		
 		//get all installed messengers and message_types
-		$EE_MSG = new EE_Messages();
+		$EE_MSG = new EE_messages();
 		$installed_message_objects = $EE_MSG->get_installed();
 
 		$messengers = $installed_message_objects['messengers'];
