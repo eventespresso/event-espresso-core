@@ -590,7 +590,7 @@ class EE_Transaction extends EE_Base_Class{
 			case EEM_Transaction::incomplete_status_code:
 				return __('Incomplete','event_espresso');
 			case EEM_Transaction::pending_status_code:
-				return __('Complete, Pending Payment','event_espresso');
+				return __('Pending Payment','event_espresso');
 			default:
 				return __('Unknown','event_espresso');
 		}
