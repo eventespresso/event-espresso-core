@@ -1895,6 +1895,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return json object 
 	 */
 	protected function _return_json() {
+
+		//make sure any EE_Error notices have been handled.
+		$this->_process_notices();
+
+
 		$data = isset( $this->_template_args['data'] ) ? $this->_template_args['data'] : array();
 		$json = array(
 			'error' => isset( $this->_template_args['error'] ) ? $this->_template_args['error'] : FALSE,
@@ -2130,12 +2135,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 			// correct page and action will be in the query args now
 			$redirect_url = admin_url( 'admin.php' );
 		}
+
+		$this->_process_notices($query_args);
+		$notices = $this->_template_args['notices'];
 		
-		//assign notices to transient
-		$notices = EE_Error::get_notices();
-		//first we need the route for the transient!
-		$route = isset( $query_args['action'] ) ? $query_args['action'] : 'default';
-		$this->_add_transient( $route, $notices, TRUE );
 		
 		// generate redirect url
 
@@ -2161,7 +2164,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 				);
 
 			$this->_template_args['success'] = $success;
-			$this->_template_args['notices'] = $notices;
 			$this->_template_args['data'] = !empty($this->_template_args['data']) ? array_merge($default_data, $this->_template_args['data'] ): $default_data;
 			$this->_return_json();
 		}
@@ -2170,6 +2172,27 @@ abstract class EE_Admin_Page extends EE_BASE {
 		exit();		
 	}
 
+
+
+
+	/**
+	 * process any notices before redirecting (or returning ajax request)
+	 * This method sets the $this->_template_args['notices'] attribute;
+	 * 
+	 * @param  array  $query_args any query args that need to be used for notice transient ('action')
+	 * @return void
+	 */
+	protected function _process_notices( $query_args = array() ) {
+		
+		$this->template_args['notices'] = EE_Error::get_notices();
+
+
+		//IF this isn't ajax we need to create a transient for the notices using the route.
+		if ( ! defined( 'DOING_AJAX' ) ) {
+			$route = isset( $query_args['action'] ) ? $query_args['action'] : 'default';
+			$this->_add_transient( $route, $notices, TRUE );
+		}
+	}
 
 
 	
