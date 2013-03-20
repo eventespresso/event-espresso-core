@@ -95,14 +95,11 @@ jQuery(document).ready(function($) {
 				messenger: messenger,
 				status: status,
 				action: 'activate_messenger',
-				page: 'espresso_messages'
-			},
-			setup = {
-				where: $('#messenger_notices'),
-				what: 'append'
+				page: 'espresso_messages',
+				_wpnonce: $('#on-off-nonce').text()
 			};
 
-			this.do_ajax(data, setup);
+			this.do_ajax(data);
 		},
 
 
@@ -124,22 +121,41 @@ jQuery(document).ready(function($) {
 					if (ct.indexOf('json') > -1 ) {
 						var resp = response;
 
-						if
+						if ( typeof(resp.data.what) === 'undefined' )
+							resp.data.what = setup.what === 'undefined' ? 'clear' : setup.what;
+
+						if ( typeof(resp.data.where ) === 'undefined' )
+							resp.data.where = setup.where === 'undefined' ? undefined : setup.where;
+
+						var display_content = resp.error ? resp.error : resp.content;
+						EE_messages.display_notices(resp.notices);
+						EE_messages.display_content(display_content, resp.data.where, resp.data.what);
 					}
 				}
 			});
-		}
+			return false;
+		},
 
 
 		display_notices: function(content) {
-			$('#messenger_notices').html(content);
-		}
+			$('#ajax-notices-container').html(content);
+		},
 
 
 		
 
 		display_content: function(content, where, what) {
-
+			if ( typeof(where) === 'undefined' || typeof(what) === 'undefined' ) {
+				console.log('content cannot be displayed because we need where or what');
+				return false;
+			}
+			if ( what == 'clear' ) {
+				$(where).html(content);
+			} else if ( what == 'append' ) {
+				$(where).append(content);
+			} else if ( what == 'prepend' ) {
+				$(where).prepend(content);
+			}
 		}
 	};
 	
