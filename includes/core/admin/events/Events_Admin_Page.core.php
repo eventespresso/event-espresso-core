@@ -3808,7 +3808,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['org_options'] = isset( $org_options['org_options'] ) ? maybe_unserialize( $org_options['org_options'] ) : FALSE;
 		$this->_template_args['expire_on_registration_end'] = isset( $org_options['expire_on_registration_end'] ) ? absint( $org_options['expire_on_registration_end'] ) : FALSE;
 
-		$this->_template_args['reg_status_array'] = $this->_get_reg_status_array();
+		$this->_template_args['reg_status_array'] = $this->_get_reg_status_array( array( 'RCN', 'RNA' ));
 		$this->_template_args['default_reg_status'] = isset( $org_options['default_reg_status'] ) ? sanitize_text_field( $org_options['default_reg_status'] ) : 'RPN';
 
 		$this->_template_args['use_attendee_pre_approval'] = isset( $org_options['use_attendee_pre_approval'] ) ? absint( $org_options['use_attendee_pre_approval'] ) : FALSE;
@@ -3849,9 +3849,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 	/**
 	 * 		get list of payment statuses
 	*		@access private
+	* 		@param	array 	$exclude		array of STS_IDs to exclude from returned array
 	*		@return array
 	*/
-	private function _get_reg_status_array() {
+	private function _get_reg_status_array( $exclude = array() ) {
 
 		global $wpdb;
 		$SQL = 'SELECT STS_ID, STS_code FROM '. $wpdb->prefix . 'esp_status WHERE STS_type = "registration"';
@@ -3859,7 +3860,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		$reg_status = array();
 		foreach ( $results as $status ) {
-			$reg_status[] = array( 'id' => $status->STS_ID, 'text' => ucwords( strtolower( str_replace( '_', ' ', $status->STS_code ))));
+			if ( ! in_array( $status->STS_ID, $exclude )) {
+				$reg_status[] = array( 'id' => $status->STS_ID, 'text' => ucwords( strtolower( str_replace( '_', ' ', $status->STS_code ))));
+			}
 		}
 		return $reg_status;
 	}
