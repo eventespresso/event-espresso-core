@@ -67,6 +67,17 @@ abstract class EE_messenger extends EE_Base {
 
 
 
+
+	/**
+	 * This property holds the default message types associated with this messenger when it is activated. The values of the array must match a valid message type.
+	 * This property gets set by the _set_default_message_types() method.
+	 * 
+	 * @var array
+	 */
+	protected $_default_message_types = array();
+
+
+
 	/**
 	 * Holds the configuration for the EE_Messages_Validator class to know how to validated the different fields. Note that the Validator will match each field here with the allowed shortcodes set in the "valid_shortcodes" array for the matched message type context.  So message types don't need to set a $_validator_config property.
 	 *
@@ -139,6 +150,11 @@ abstract class EE_messenger extends EE_Base {
 
 	public $active_templates = array(); //holds all the active templates saved in the database.
 
+
+
+
+
+
 	public function __construct() {
 		$this->_EEM_data = EEM_Message_Template::instance(); //todo might move this into the constructor and typehint
 		$this->_set_admin_settings_fields();
@@ -146,10 +162,15 @@ abstract class EE_messenger extends EE_Base {
 		$this->_set_templates();	
 		$this->_set_template_fields();
 		$this->_set_default_field_content();
+		$this->_set_default_message_types();
 		$this->_set_valid_shortcodes();
 		$this->_set_validator_config();
 		$this->_set_admin_pages();
 	}
+
+
+
+
 
 	/**
 	 * _set_template_fields
@@ -161,6 +182,10 @@ abstract class EE_messenger extends EE_Base {
 	 */
 	abstract protected function _set_template_fields();
 
+
+
+
+
 	/**
 	 * _set_default_field_content
 	 * child classes need to define this function to set the _default_field_content property (what gets added in the default templates).
@@ -170,6 +195,24 @@ abstract class EE_messenger extends EE_Base {
 	 * @return void
 	 */
 	abstract protected function _set_default_field_content();
+
+
+
+
+
+	
+	/**
+	 * This method sets the _default_message_type property (see definition in docs attached to property)
+	 *
+	 * @abstract
+	 * @access protected
+	 * @return void
+	 */
+	abstract protected function _set_default_message_types();
+
+
+
+
 
 	/**
 	 * sets the _admin_settings_fields property which needs to be defined by child classes.
@@ -191,6 +234,12 @@ abstract class EE_messenger extends EE_Base {
 	 * @return void
 	 */
 	abstract protected function _set_admin_settings_fields();
+
+
+
+
+
+
 
 	/**
 	 * sets any properties on whether a message type interface shows up on a ee administration page.  Child classes have to define this method but don't necessarily have to set the flags as they will be set to false by default.
@@ -256,6 +305,20 @@ abstract class EE_messenger extends EE_Base {
 	public function get_valid_shortcodes() {
 		return $this->_valid_shortcodes;
 	}
+
+
+
+
+	/**
+	 * This just returns the default message types associated with this messenger when it is first activated.
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public function get_default_message_types() {
+		return $this->_default_message_types;
+	}
+
 
 
 
