@@ -15,9 +15,9 @@
 				</th>
 				<td>
 					<input name="site_license_key" id="site_license_key" size="10" class="regular-text" type="text" value="<?php echo isset($org_options['site_license_key']) && $org_options['site_license_key'] != '' ? stripslashes_deep($org_options['site_license_key']) : '0'; ?>" /><br/>
-					<span class="description">
+					<p class="description">
 						<?php _e('Adding a valid Support License Key will enable automatic update notifications and backend updates for Event Espresso Core and any installed addons.'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 
@@ -38,9 +38,9 @@
 				</th>
 				<td>
 					<input class="regular-text" type="text" name="organization" value="<?php echo $organization; ?>" />
-					<span class="description">
+					<p class="description">
 						<?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 			<tr>
@@ -51,9 +51,9 @@
 				</th>
 				<td>
 					<input class="regular-text" type="text" name="organization_street1" value="<?php echo $organization_street1; ?>" />
-					<span class="description">
+					<p class="description">
 						<?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 			<tr>
@@ -64,9 +64,9 @@
 				</th>
 				<td>
 					<input class="regular-text" type="text" name="organization_street2" value="<?php echo $organization_street2; ?>" />
-					<span class="description">
+					<p class="description">
 						<?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 			<tr>
@@ -77,9 +77,9 @@
 				</th>
 				<td>
 					<input class="regular-text" type="text" name="organization_city" value="<?php echo $organization_city; ?>" />
-					<span class="description">
+					<p class="description">
 						<?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 			<tr>
@@ -90,9 +90,9 @@
 				</th>
 				<td>
 					<input class="regular-text" type="text" name="organization_state" value="<?php echo $organization_state; ?>" />
-					<span class="description">
+					<p class="description">
 						<?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 			<tr>
@@ -103,9 +103,9 @@
 				</th>
 				<td>
 					<input class="regular-text" type="text" name="organization_zip" size="10" value="<?php echo $organization_zip; ?>" />
-					<span class="description">
+					<p class="description">
 						<?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 			<tr>
@@ -116,12 +116,12 @@
 				</th>
 				<td>
 					<?php printCountriesSelector( 'organization_country', $organization_country ); ?>
-					<span class="description">
+					<p class="description">
 						<?php echo _e('currency sign: ', 'event_espresso') . $currency_symbol; ?>
-					</span>
-					<span class="description">
+					</p>
+					<p class="description">
 						<?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 			<tr>
@@ -132,9 +132,9 @@
 				</th>
 				<td>
 					<input class="regular-text" type="text" name="contact_email" value="<?php echo $contact_email; ?>" />
-					<span class="description">
+					<p class="description">
 						<?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 		</tbody>
@@ -155,9 +155,9 @@
 				<td>
 					<input id="upload_image" type="text" class="regular-text" name="default_logo_url" value="<?php echo $default_logo_url ?>" />
 					<input id="upload_image_button" type="button" value="<?php _e('Upload Image', 'event_espresso'); ?>" />
-					<span class="description">
+					<p class="description">
 						<?php echo __('Your logo will be used on custom invoices, tickets, certificates, and payment templates.', 'event_espresso'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 

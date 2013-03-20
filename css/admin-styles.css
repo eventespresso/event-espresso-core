@@ -378,7 +378,7 @@ select.wide {
 
 /*** Add new events / Edit events ***/
 
-#event_editor_major_buttons_wrapper{
+#espresso_major_buttons_wrapper{
     border-top: medium none;
     clear: both;
     padding: 10px 0 8px;	
@@ -392,18 +392,18 @@ select.wide {
 	background:rgba(255,230,0,.2);
 }
 
-/*#event_editor_major_buttons_wrapper input, #event_editor_major_buttons_wrapper a {
+/*#espresso_major_buttons_wrapper input, #espresso_major_buttons_wrapper a {
 	padding: 3px;
 	margin: 5px 0;
 }*/
 
-#event_editor_major_buttons_wrapper .delete-event {
+#espresso_major_buttons_wrapper .delete-event {
 	/*background-image: url('../images/red-button-grad.png');*/
 	background:#D54E21;
 	border:1px solid #D54E21;
 	color:#fff; text-shadow:none;
 }
-#event_editor_major_buttons_wrapper .delete-event:hover {
+#espresso_major_buttons_wrapper .delete-event:hover {
 	border-color:#A41200;
 }
 

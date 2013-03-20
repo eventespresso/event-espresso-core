@@ -36,9 +36,9 @@
 				</th>
 				<td>
 					<?php echo EE_Form_Fields::select_input('display_short_description_in_event_list', $values, $template_settings['display_short_description_in_event_list'], 'id="display_short_description_in_event_list"'); ?>
-					<span class="description">
+					<p class="description">
 						<?php _e('Be sure to use the more... tag in your event description', 'event_espresso'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 
@@ -73,9 +73,9 @@
 				</th>
 				<td>
 					<?php echo EE_Form_Fields::select_input('display_address_in_regform', $values, $template_settings['display_address_in_regform'], 'id="display_address_in_regform"'); ?>
-					<span class="description">
+					<p class="description">
 						<?php _e('Do not use this if you are using the venue shortcodes in your event description.', 'event_espresso'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 
@@ -87,9 +87,9 @@
 				</th>
 				<td>
 					<?php echo EE_Form_Fields::select_input('use_custom_post_types', $values, $template_settings['use_custom_post_types'], 'id="use_custom_post_types"'); ?>
-					<span class="description">
+					<p class="description">
 						<?php _e('This merely "copies" your event data over to a WordPress Custom Post Type which can be used by developers for generating custom templates.', 'event_espresso'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 
@@ -114,9 +114,9 @@
 				</th>
 				<td>
 					<?php echo EE_Form_Fields::select_input('enable_default_style', $values, $style_settings['enable_default_style'], 'id="use_built_in_style_sheets"'); ?>
-					<span class="description">
+					<p class="description">
 						<?php _e('This enables the following style settings below.', 'event_espresso'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 
@@ -127,9 +127,9 @@
 				<td>
 					<?php //printr( $themeroller_themes, '$themeroller_themes < br /><span style = "font - size:10px;font - weight:normal;" > ' . __FILE__ . ' < br />line no: ' . __LINE__ . '</span > ', 'auto' ); ?>
 					<?php echo EE_Form_Fields::select_input('themeroller_style', $themeroller_themes, $themeroller['themeroller_style'], 'id="themeroller_style"'); ?>
-					<span class="description">
+					<p class="description">
 						<?php _e('The default style sheet is Smoothness.', 'event_espresso'); ?>
-					</span>
+					</p>
 				</td>
 			</tr>
 
@@ -147,9 +147,9 @@
 							<?php echo $style_settings['css_name']; ?>
 						</a>
 						<input style="width:20px; margin-left:20px" name="remove_css" type="checkbox" value="true" />
-						<span class="description">
+						<p class="description">
 							<?php _e('Remove style sheet?', 'event_espresso'); ?>
-						</span>
+						</p>
 					</td>
 				</tr>
 				<?php
@@ -210,9 +210,9 @@
 					</th>
 					<td>
 						<?php echo EE_Form_Fields::select_input('use_custom_templates', $values, $template_settings['use_custom_templates']); ?>
-						<span class="description">
+						<p class="description">
 							<?php _e('This will override the built-in Event Espresso templates.', 'event_espresso'); ?>
-						</span>
+						</p>
 					</td>
 				</tr>
 

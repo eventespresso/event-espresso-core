@@ -32,25 +32,25 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 					?>
 					<input type="text" class="regular-text" id="<?php echo $fieldName?>" name="<?php echo $fieldName?>" value="<?php echo $question->display_text()?>"/>
 					<br/>
-					<span class="description">
+					<p class="description">
 						<?php _e("The actual question to display to registrants who are signing up for events",'event_espresso')?>
-					</span>					
+					</p>					
 					<?php break;
 					
 						case 'QST_admin_label': 
 					?>
 					<input type="text" class="regular-text" id="<?php echo $fieldName?>" name="<?php echo $fieldName?>" value="<?php echo $question->admin_label()?>"/>
 					<br/>
-					<span class="description">
+					<p class="description">
 						<?php _e('An administrative label for this question to help you differentiate between two questions that may appear the same to registrants (but are for different events). For example: You could have two questions that simply ask the registrant to choose a "Size", then use this field to label one "T-shirt Size" and the other "Shoe Size".','event_espresso')?>
-					</span>					
+					</p>					
 					<?php break;
 					
 						case 'QST_type':
 								echo EE_Form_fields::select_input( 'QST_type', $question_types, $question->type(), 'id="QST_type"' );
 					?>
 					<br/>
-					<span class="description">
+					<p class="description">
 						<?php 
 						echo sprintf( 
 							__("
@@ -66,7 +66,7 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 							'<br />',
 							'<br />'
 						);?>
-					</span>
+					</p>
 
 				</td>
 			</tr>
@@ -159,9 +159,9 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 						<?php _e('Add Another Answer Option','event_espresso')?>
 					</a><br/>
 					
-					<span class="description">
+					<p class="description">
 						<?php _e('Answer Options are the choices that you give people to select from for SINGLE, MULTIPLE or DROPDOWN questions. The Option Value is a simple key that will be saved to the database and the Answer Option Display Text is what the user will actually see in the form. For example, you may have a question for  "T-shirt Size" that has the Option Values of "S", "M", "L", and "XL" with the corresponding display text "Small", "Medium", "Large", and "Extra Large".','event_espresso')?>
-					</span>
+					</p>
 							
 					<?php break;
 					
@@ -169,26 +169,26 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 					$requiredOptions=array(0=>array('text'=>'Required','id'=>'1'),1=>array('text'=>'Optional','id'=>0));
 					echo EE_Form_Fields::select_input('QST_required', $requiredOptions,$question->required());?>
 					<br/>
-					<span class="description">
+					<p class="description">
 						<?php _e("Whether registrants are required to answer this question.",'event_espress');?>
-					</span>					
+					</p>					
 					<?php break;
 					
 					case 'QST_required_text':?>
 					<input type="text" class="regular-text" id="<?php echo $fieldName?>" name="<?php echo $fieldName?>" value="<?php echo $question->required_text()?>"/>
 					<br/>
-					<span class="description">
+					<p class="description">
 						<?php _e("Text to display when the registrant does not answer the question but is required to",'event_espresso');?>
-					</span>					
+					</p>					
 					<?php break;
 					
 					case 'QST_admin_only':
 					$adminOnlyOptions=array(array('text'=>'Only Admins can See','id'=>1),array('text'=>'All Can See','id'=>0));
 					echo EE_Form_Fields::select_input('QST_admin_only',$adminOnlyOptions,$question->admin_only());?>
 					<br/>
-					<span class="description">
+					<p class="description">
 						<?php _e("Only the administrator can see this field.",'event_espresso')?>
-					</span>					
+					</p>					
 					<?php break;
 					
 					}?>

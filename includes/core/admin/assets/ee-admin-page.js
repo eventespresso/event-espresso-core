@@ -100,14 +100,14 @@ jQuery(document).ready(function($) {
 	 */
 	$(window).scroll(function() {
 		var scrollTop = $(this).scrollTop();
-		var offset = $('#event_editor_major_buttons_wrapper').offset();
+		var offset = $('#espresso_major_buttons_wrapper .publishing-action').offset();
 		if( typeof offset !== 'undefined' && offset !== null && offset.top != undefined ) {
-			if ( (scrollTop+25) > offset.top ) {
+			if ( (scrollTop+33) > offset.top ) {
 				$('#event-editor-floating-save-btns').removeClass('hidden');
-				$('#event_editor_major_buttons_wrapper .button-primary').addClass('hidden');
+				$('#espresso_major_buttons_wrapper .button-primary').addClass('hidden');
 			} else {
 				$('#event-editor-floating-save-btns').addClass('hidden');
-				$('#event_editor_major_buttons_wrapper .button-primary').removeClass('hidden');
+				$('#espresso_major_buttons_wrapper .button-primary').removeClass('hidden');
 			}
 		}
 	});

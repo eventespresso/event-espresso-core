@@ -15,7 +15,7 @@
 				</th>
 				<td>
 					<?php echo EE_Form_Fields::select_input( 'use_captcha', $values, $use_captcha, 'id="admin-recaptcha-settings-slct"' ); ?>
-					<span class="description">
+					<p class="description">
 						<?php 
 							echo sprintf( 
 								__( 'Used to block spam registrations. Sign up %shere%s to receive your Public and Private keys.', 'event_espresso' ),
@@ -23,7 +23,7 @@
 								'</a>'
 							); 
 						?>
-					</span>
+					</p>
 				</td>
 			</tr>
 			
