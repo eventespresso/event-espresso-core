@@ -652,6 +652,33 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 	/**
+	 * perform nonce verification
+	 * This method has be encapsulated here so that any ajax requests that bypass normal routes can verify their nonces using this method (and save retyping!)
+	 * @param  string $nonce     The nonce sent
+	 * @param  string $nonce_ref The nonce reference string (name0)
+	 * @return mixed (bool|die)   
+	 */
+	protected function _verify_nonce( $nonce, $nonce_ref ) {
+		// verify nonce against expected value
+		if ( ! wp_verify_nonce( $nonce, $this->_req_nonce ) ) {
+			// these are not the droids you are looking for !!!
+			$msg = sprintf(__('%sNonce Fail.%s' , 'event_espresso'), '<a href="http://www.youtube.com/watch?v=56_S0WeTkzs">', '</a>' );
+			if ( WP_DEBUG ) {
+				$msg .= "\n" . sprintf( __('In order to dynamically generate nonces for your actions, use the %s->_add_query_arg method. May the Nonce be with you!', 'event_espresso' ), __CLASS__  );
+			}
+			if ( ! defined( 'DOING_AJAX' )) {
+				wp_die( $msg );
+			} else {
+				echo json_encode( array('error' => $msg ));
+				exit();
+			}
+		}
+	}
+
+
+
+
+	/**
 	 * _route_admin_request()
 	 * Meat and potatoes of the class.  Basically, this dude checks out what's being requested and sees if theres are some doodads to work the magic and handle the flingjangy.
 	 * Translation:  Checks if the requested action is listed in the page routes and then will try to load the corresponding method.
@@ -666,20 +693,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( $this->_req_action != 'default' ) {
 			// set nonce from post data
 			$nonce = isset($this->_req_data[ $this->_req_nonce  ]) ? sanitize_text_field( $this->_req_data[ $this->_req_nonce  ] ) : '';
-			// verify nonce against expected value
-			if ( ! wp_verify_nonce( $nonce, $this->_req_nonce ) ) {
-				// these are not the droids you are looking for !!!
-				$msg = sprintf(__('%sNonce Fail.%s' , 'event_espresso'), '<a href="http://www.youtube.com/watch?v=56_S0WeTkzs">', '</a>' );
-				if ( WP_DEBUG ) {
-					$msg .= "\n" . sprintf( __('In order to dynamically generate nonces for your actions, use the %s->_add_query_arg method. May the Nonce be with you!', 'event_espresso' ), __CLASS__  );
-				}
-				if ( ! defined( 'DOING_AJAX' )) {
-					wp_die( $msg );
-				} else {
-					echo json_encode( array('error' => $msg ));
-					exit();
-				}
-			}
+			$this->_verify_nonce( $nonce, $this->_req_nonce );	
 		}		
 
 		$this->_set_nav_tabs(); //set the nav_tabs array
