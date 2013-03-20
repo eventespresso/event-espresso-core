@@ -1215,6 +1215,7 @@ class EE_Single_Page_Checkout {
 						$REG->delete(array('REG_ID' => $prev_reg->ID()));
 
 					}
+					$default_reg_status = isset( $org_options['default_reg_status'] ) ? $org_options['default_reg_status'] : 'RPN';
 
 					// now create a new registration for the attendee
 					require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Registration.class.php' );
@@ -1225,7 +1226,7 @@ class EE_Single_Page_Checkout {
 													$txn_results['new-ID'],
 													$DTT_ID,
 													$PRC_ID,
-													$price_paid > 0 ? 'RPN' : 'RAP',
+													$default_reg_status,
 													time(),
 													$price_paid,
 													$session['id'],
