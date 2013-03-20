@@ -2738,21 +2738,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * @return void
 	 */
 	protected function _insert_or_update_event($new_event) {
-		if ( $new_event ) {
-			$_SESSION['event_id'] = $event_id = $this->_insert_event();
-			$success = 0; //we already have a success message so lets not send another.
-			$query_args = array(
-				'action' => 'edit_event',
-				'EVT_ID' => $event_id
-				);
-		} else {
-			$_SESSION['event_id'] = $event_id = $this->_update_event();
-			$success = 0; //we already have a success message so lets not send another.
-			$query_args = array(
-				'action' => 'edit_event',
-				'EVT_ID' => $event_id
-				);
-		}
+		
+		$_SESSION['event_id'] = $event_id = $new_event ? $this->_insert_event() : $this->_update_event();
+
+		$success = 0; //we already have a success message so lets not send another.
+		$query_args = array(
+			'action' => 'edit_event',
+			'EVT_ID' => $event_id
+		);
 
 		$this->_redirect_after_action( $success, '', '', $query_args );
 	}
@@ -2764,7 +2757,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	private function _insert_event() {
 		//Delete the transients that may be set
 		$this->_espresso_reset_cache();
-
+		
 	/* @var $espresso_wp_user type array*/
 		global $wpdb, $espresso_wp_user, $caffeinated;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
@@ -3089,10 +3082,11 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		// add new tickets if any
 		if ($new_ticket_price = isset($this->_req_data['new_ticket_price']) ? $this->_req_data['new_ticket_price'] : array('PRC_name' => NULL)) {
-			if (!empty($new_ticket_price['PRC_name'])) {
+			if ( ! empty($new_ticket_price['PRC_name'])) {
 				$ticket_prices_to_save[0] = $new_ticket_price;
 			}
 		}
+//		printr( $ticket_prices_to_save, '$ticket_prices_to_save  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// and now we actually save the ticket prices
 		if (!empty($ticket_prices_to_save)) {
@@ -3119,17 +3113,16 @@ class Events_Admin_Page extends EE_Admin_Page {
 												$ticket_price['PRC_amount'],
 												$ticket_price['PRC_name'],
 												$ticket_price['PRC_desc'],
-												 /* DO NOT DELETE - NEW FEATURE IN PROGRESS 
-												$ticket_price['PRC_reg_limit'],
-												*/
+												isset( $ticket_price['PRC_reg_limit'] ) ? $ticket_price['PRC_reg_limit'] : NULL,
+												NULL,
 												$ticket_price['PRC_use_dates'] ? TRUE : FALSE,
 												$ticket_price['PRC_start_date'],
 												$ticket_price['PRC_end_date'],
-												FALSE,
+/*												FALSE,
 												FALSE,
 												0,
 												TRUE,
-												$current_user->ID,
+												$current_user->ID,*/
 												$ticket_price['PRC_is_active'] ? TRUE : FALSE,
 												$overrides,
 												$ticket_price['PRT_ID'] < 3 ? 0 : $ticket_price['PRC_order'],
@@ -3144,7 +3137,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 			}
 		}
 
-		
 		
 		
 
