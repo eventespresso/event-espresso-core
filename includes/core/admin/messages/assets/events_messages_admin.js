@@ -105,7 +105,7 @@ jQuery(document).ready(function($) {
 		 */
 		display_content: function(content, where, what, type) {
 			if ( typeof(where) === 'undefined' ) where = 'dialog';
-			if ( typeof(clear) === 'undefined' ) what = 'clear';
+			if ( typeof(what) === 'undefined' ) what = 'clear';
 			if ( typeof(type) === 'undefined' ) type = 'content';
 
 			//if content is empty let's get out

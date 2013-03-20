@@ -382,6 +382,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//next let's just check user_access and kill if no access
 		$this->_check_user_access();
+
 		
 		// becuz WP List tables have two duplicate select inputs for choosing bulk actions, we need to copy the action from the second to the first
 		if ( isset( $this->_req_data['action2'] ) && $this->_req_data['action'] == -1 ) {
@@ -403,7 +404,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_set_page_routes();
 		$this->_set_page_config();
 
-		
 
 		//next route only if routing enabled
 		if ( $this->_routing && !defined('DOING_AJAX') ) {
@@ -471,7 +471,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	public function load_page_dependencies() {
-
 
 		$this->_current_screen = get_current_screen();
 			
