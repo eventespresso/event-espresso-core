@@ -411,13 +411,13 @@ class EE_Single_Page_Checkout {
 					//$event_reg_details->question_groups = maybe_unserialize($event_reg_details->question_groups);
 					$event_reg_details->event_meta = maybe_unserialize($event_reg_details->event_meta);
 
-					// echo '<h2>require pre approval : ' . $event_reg_details->require_pre_approval . '</h2>';
-					// echo '<h2>use coupon code : ' . $event_reg_details->use_coupon_code . '</h2>';
-					// echo '<h2>use groupon code : ' . $event_reg_details->use_groupon_code . '</h2>';
+//					 echo '<h2>require pre approval : ' . $event_reg_details->require_pre_approval . '</h2>';
+//					 echo '<h2>use coupon code : ' . $event_reg_details->use_coupon_code . '</h2>';
+//					 echo '<h2>use groupon code : ' . $event_reg_details->use_groupon_code . '</h2>';
 
-					if ($event_reg_details->require_pre_approval == 1) {
-						$events_requiring_pre_approval[$cart_type]['items'][$item['line_item']] = array('id' => $item['id'], 'name' => $item['name'], 'price' => $item['price'], 'qty' => $item['qty']);
-					}
+//					if ($event_reg_details->require_pre_approval == 1) {
+//						$events_requiring_pre_approval[$cart_type]['items'][$item['line_item']] = array('id' => $item['id'], 'name' => $item['name'], 'price' => $item['price'], 'qty' => $item['qty']);
+//					}
 
 //					if ($event_reg_details->use_coupon_code) {
 //						$events_that_use_coupon_codes[$cart_type]['items'][$item['line_item']] = array('id' => $item['id'], 'name' => $item['name'], 'price' => $item['price'], 'qty' => $item['qty']);
@@ -544,32 +544,35 @@ class EE_Single_Page_Checkout {
 			$total_items = $total_items + $cart_contents['total_items'];
 			$grand_total = $grand_total + $cart_contents['sub_total'];
 		}
+		
+		//printr( $event_queue, '$event_queue  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// PRE APPROVAL
 		$template_args['events_requiring_pre_approval'] = '';
 		//  do we have any events that require it ?
-		if (!empty($events_requiring_pre_approval)) {
-
-			// echo printr( $events_requiring_pre_approval, '$events_requiring_pre_approval' );
-			// cycle through array of events requiring pre approval
-			foreach ($events_requiring_pre_approval as $cart_type => $cart_contents) {
-				foreach ($cart_contents as $items) {
-					foreach ($items as $line_item_id => $item) {
-						// we will subtract events that require pre-approval from the event queue totals since these will not be getting purchased right now
-						$total_items = $total_items - $item['qty'];
-						$grand_total = $grand_total - $item['price'];
-						$template_args['events_requiring_pre_approval'] .= '<li>' . $item['name'] . '</li>';
-					}
-				}
-			}
-			$template_args['events_requiring_pre_approval'] = rtrim($template_args['events_requiring_pre_approval'], ', ');
-		}
+//		if (!empty($events_requiring_pre_approval)) {
+//
+//			// echo printr( $events_requiring_pre_approval, '$events_requiring_pre_approval' );
+//			// cycle through array of events requiring pre approval
+//			foreach ($events_requiring_pre_approval as $cart_type => $cart_contents) {
+//				foreach ($cart_contents as $items) {
+//					foreach ($items as $line_item_id => $item) {
+//						// we will subtract events that require pre-approval from the event queue totals since these will not be getting purchased right now
+//						//$total_items = $total_items - $item['qty'];
+//						$grand_total = $grand_total - $item['price'];
+//						$template_args['events_requiring_pre_approval'] .= '<li>' . $item['name'] . '</li>';
+//					}
+//				}
+//			}
+//			$template_args['events_requiring_pre_approval'] = rtrim($template_args['events_requiring_pre_approval'], ', ');
+//		}
 
 
 		//  GOT COUPONS ?
 		$template_args['events_that_use_coupon_codes'] = '';
+		$template_args['use_coupon_codes'] = FALSE;
 		// do we have any events that use them ?
-		if (!empty($events_that_use_coupon_codes)) {
+/*		if (!empty($events_that_use_coupon_codes)) {
 
 			//echo printr( $events_that_use_coupon_codes, '$events_that_use_coupon_codes' );
 			$template_args['use_coupon_codes'] = TRUE;
@@ -587,13 +590,14 @@ class EE_Single_Page_Checkout {
 			$template_args['events_that_use_coupon_codes'] = rtrim($template_args['events_that_use_coupon_codes'], ',');
 		} else {
 			$template_args['use_coupon_codes'] = FALSE;
-		}
+		}*/
 
 
 		// Groupons ?
 		$template_args['events_that_use_groupon_codes'] = '';
+		$template_args['use_groupon_codes'] = FALSE;
 		// do we have any events that use them ?
-		if (!empty($events_that_use_groupon_codes)) {
+/*		if (!empty($events_that_use_groupon_codes)) {
 
 			//echo printr( $events_that_use_groupon_codes, '$events_that_use_groupon_codes' );
 			$template_args['use_groupon_codes'] = TRUE;
@@ -611,7 +615,7 @@ class EE_Single_Page_Checkout {
 			$template_args['events_that_use_groupon_codes'] = rtrim($template_args['events_that_use_groupon_codes'], ',');
 		} else {
 			$template_args['use_groupon_codes'] = FALSE;
-		}
+		}*/
 
 
 		$template_args['mer_reg_page_ajax_coupons_url'] = add_query_arg(array('e_reg' => 'apply_coupon'), $this->_reg_page_base_url);
