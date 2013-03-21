@@ -192,12 +192,16 @@ jQuery(document).ready(function($) {
 				$( $active_on_msg ).addClass('hidden');
 			}
 
+			//unbind any existing ajax success handler so we don't get repeat fires
+			$(document).unbind('ajaxSuccess');
+
 			//make sure active mts are moved to the right spot
-			
-			$.each(mts, function( index, value ) {
-				var $item = $('#' + value + '-messagetype');
-				MSG_helper.switch_types($item, status);
-			});
+			if ( typeof(mts) !== 'undefined' ) {
+				$.each(mts, function( index, value ) {
+					var $item = $('#' + value + '-messagetype');
+					MSG_helper.switch_types($item, status);
+				});
+			}
 		},
 
 
