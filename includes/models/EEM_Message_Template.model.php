@@ -393,9 +393,7 @@ class EEM_Message_Template extends EEM_Base {
 			'MTP_is_global' => TRUE
 			);
 
-		if ( !$active ) {
-			$_where['MTP_is_active'] = FALSE;
-		}
+		$_where['MTP_is_active'] = $active;
 
 		
 		return $this->get_all_message_templates_where($_where, $orderby, $order, $limit, $count );
