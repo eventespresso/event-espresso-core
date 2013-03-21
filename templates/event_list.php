@@ -279,7 +279,7 @@ function event_espresso_get_event_details( $attributes = array()) {
 		$event->currency_symbol = $org_options['currency_symbol'];
 
 		$display_available_spaces = ( $event->display_reg_form && $event->externalURL == '' ) ? TRUE : FALSE;
-		$available_spaces = get_number_of_attendees_reg_limit( $event_id, 'available_spaces' );
+		$available_spaces = get_number_of_attendees_reg_limit( $event_id, 'available_spaces', $event->reg_limit );
 
 		//Venue information
 		if ($use_venues) {
