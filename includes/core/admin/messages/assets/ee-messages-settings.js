@@ -37,6 +37,67 @@ jQuery(document).ready(function($) {
 		},
 
 
+
+		mt_toggle: function( $item, status ) {
+			var msgr = messenger.replace('#',''),
+			mt = $($item).attr('id').replace('-messagetype','');
+
+			var data = {
+				messenger: msgr,
+				message_type: mt,
+				status: status,
+				action: 'activate_mt',
+				page: 'espresso_messages',
+				mt_nonce: $('.mt_nonce', $item).text()
+			};
+
+			$('.ajax-loader-grey').toggle();
+
+			//register a handler for success ajax called after
+			$(document).ajaxSuccess( function( event, xhr, ajaxoptions ) {
+				//we can get the response from xhr
+				var ct = xhr.getResponseHeader("content-type") || "";
+				if ( ct.indexOf('json') > -1 ) {
+					var resp = xhr.responseText;
+					resp = $.parseJSON(resp);
+					//let's handle toggling all the elements if we had a successful switch!
+					$('.ajax-loader-grey').hide();
+					if ( resp.success ) {
+						MSG_helper.switch_types( $item, status );
+					}
+				}
+			});
+
+			this.do_ajax(data);
+		},
+
+
+
+		switch_types: function( $item, status ) {
+			//convert status if necessary
+			if ( status == 'on' || status == 'off' ) {
+				status = status == 'on' ? 'activate' : 'deactivate';
+			}
+
+			$item.fadeOut(function() {
+				var $list = status == 'activate' ? $( "ul", $active_mts ) : $( "ul", $inactive_mts),
+				css_width = status == 'activate' ? '15%' : '50%',
+				list_width = status == 'deactivate' ? $( $list ).width(): '';
+
+				$item
+					.css("width", css_width)
+					.appendTo( $list )
+					.fadeIn( function() {
+						if ( status == 'deactivate' )
+							$item.animate({width: list_width});
+					});
+			});
+
+			//unbind any existing ajax success handler so we don't get repeat fires
+			$(document).unbind('ajaxSuccess');
+		},
+
+
 		/**
 		 * This just initializes the display everytime a messenger is selected
 		 * @return {void}
@@ -56,17 +117,7 @@ jQuery(document).ready(function($) {
 		 * @return {obj}      this so it can be chainable
 		 */
 		inactivate: function( $item ) {
-			console.log(messenger);
-			console.log(this);
-			$item.fadeOut( function() {
-				var $list = $( "ul", $inactive_mts),
-				list_width = $( $list ).width();
-
-				$item.css("width", "50%");
-				$item.appendTo( $list ).fadeIn(function() {
-					$item.animate({width: list_width});
-				});
-			});
+			this.mt_toggle( $item, 'deactivate' );
 			return this;
 		},
 
@@ -77,15 +128,7 @@ jQuery(document).ready(function($) {
 		 * @return {obj}      this so it can be chainable
 		 */
 		activate: function( $item ) {
-			console.log(messenger);
-			console.log(this);
-			$item.fadeOut(function() {
-				var $list = $( "ul", $active_mts );
-				$item
-					.css( "width", "15%" )
-					.appendTo( $list )
-					.fadeIn();
-			});
+			this.mt_toggle( $item, 'activate' );
 			return this;
 		},
 
@@ -110,7 +153,7 @@ jQuery(document).ready(function($) {
 					resp = $.parseJSON(resp);
 					//let's handle toggling all the elements if we had a successful switch!
 					if ( resp.success ) {
-						MSG_helper.toggle_msg_elements( messenger, status );
+						MSG_helper.toggle_msg_elements( messenger, status, resp.data.active_mts );
 					}
 				}
 			});
@@ -120,8 +163,9 @@ jQuery(document).ready(function($) {
 
 
 		
-		toggle_msg_elements: function( messenger, status ) {
+		toggle_msg_elements: function( messenger, status, mts ) {
 			$('.ajax-loader-grey').toggle().hide();
+
 			var $on_off_button = $('#on-off-' + messenger),
 				$messenger_settings = $('.messenger-settings', '.' + messenger + '-content'),
 				$active_mts = $('#active-message-types'),
@@ -147,6 +191,13 @@ jQuery(document).ready(function($) {
 				$( $inactive_off_msg ).removeClass('hidden');
 				$( $active_on_msg ).addClass('hidden');
 			}
+
+			//make sure active mts are moved to the right spot
+			
+			$.each(mts, function( index, value ) {
+				var $item = $('#' + value + '-messagetype');
+				MSG_helper.switch_types($item, status);
+			});
 		},
 
 
@@ -166,10 +217,7 @@ jQuery(document).ready(function($) {
 				data: data,
 				success: function(response, status, xhr) {
 					var ct = xhr.getResponseHeader("content-type") || "";
-					console.log( ct );
 					if (ct.indexOf('html') > -1) {
-						/*console.log('html');
-						console.log('response');*/
 						MSG_helper.display_content(response,setup.where,setup.what);
 					}
 
@@ -197,7 +245,7 @@ jQuery(document).ready(function($) {
 
 		display_content: function(content, where, what) {
 			if ( typeof(where) === 'undefined' || typeof(what) === 'undefined' ) {
-				console.log('content cannot be displayed because we need where or what');
+				console.log('content is not displayed because we need where or what');
 				return false;
 			}
 			if ( what == 'clear' ) {
@@ -236,7 +284,7 @@ jQuery(document).ready(function($) {
 		containment: "document",
 		helper: "clone",
 		cursor: "move"
-	});
+	});/**/
 
 	$inactive_mts.droppable({
 		accept: "#active-message-types li",
