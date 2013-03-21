@@ -631,6 +631,12 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$this->_event->google_map_link = espresso_google_map_link(array('address' => $this->_event->address, 'city' => $this->_event->city, 'state' => $this->_event->state, 'zip' => $this->_event->zip, 'country' => $this->_event->country));
 		$this->_event->event_meta = unserialize($this->_event->event_meta);
 
+		
+		if ( isset( $this->_event->event_meta['default_payment_status'] )) {
+			$this->_event->event_meta['default_reg_status'] = $this->_event->event_meta['default_payment_status'];
+			unset( $this->_event->event_meta['default_payment_status'] );
+		}
+
 /*		$this->_event->question_groups = unserialize($this->_event->question_groups);
 		$sql = "SELECT qg.* FROM " . EVENTS_QST_GROUP_TABLE . " qg JOIN " . EVENTS_QST_GROUP_REL_TABLE . " qgr ON qg.id = qgr.group_id ";
 		$sql2 = apply_filters('filter_hook_espresso_event_editor_question_groups_sql', " WHERE wp_user = '0' OR wp_user = '1' ", $this->_event->id);
@@ -1676,9 +1682,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		add_meta_box('espresso_event_editor_event_meta', __('Event Meta', 'event_espresso'), array( $this, 'event_meta_metabox'), $this->_current_screen->id, 'advanced', 'high');
 
-		add_meta_box('espresso_event_editor_event_post', __('Create a Post', 'event_espresso'), array( $this, 'event_post_metabox'), $this->_current_screen->id, 'advanced', 'core');
+		//add_meta_box('espresso_event_editor_event_post', __('Create a Post', 'event_espresso'), array( $this, 'event_post_metabox'), $this->_current_screen->id, 'advanced', 'core');
 
-		add_meta_box('espresso_event_editor_event_options', __('Registration Options', 'event_espresso'), array( $this, 'registration_options_meta_box' ), $this->_current_screen->id, 'side', 'high');
+		add_meta_box('espresso_event_editor_event_options', __('Event Registration Options', 'event_espresso'), array( $this, 'registration_options_meta_box' ), $this->_current_screen->id, 'side', 'high');
 
 		add_meta_box('espresso_event_editor_additional_questions', __('Questions for Additional Attendees', 'event_espresso'), array( $this, 'additional_attendees_question_groups_meta_box' ), $this->_current_screen->id, 'side', 'core');
 
@@ -1686,9 +1692,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		//add_meta_box('espresso_event_editor_featured_image_box', __('Featured Image', 'event_espresso'), array( $this, 'featured_image_meta_box' ), $this->_current_screen->id, 'side', 'default');
 
-		if ($org_options['use_attendee_pre_approval']) {
-			add_meta_box('espresso_event_editor_preapproval_box', __('Attendee Pre-Approval', 'event_espresso'), array( $this, 'preapproval_metabox' ), $this->_current_screen->id, 'side', 'default');
-		}
+//		if ($org_options['use_attendee_pre_approval']) {
+//			add_meta_box('espresso_event_editor_preapproval_box', __('Attendee Pre-Approval', 'event_espresso'), array( $this, 'preapproval_metabox' ), $this->_current_screen->id, 'side', 'default');
+//		}
 
 		if ($org_options['use_personnel_manager']) {
 			add_meta_box('espresso_event_editor_personnel_box', __('Event Staff / Speakers', 'event_espresso'), array( $this, 'personnel_metabox' ), $this->_current_screen->id, 'side', 'default');
@@ -1935,7 +1941,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 	public function registration_options_meta_box() {
-		$values = array(
+		
+		global $org_options, $caffeinated;
+		
+		$yes_no_values = array(
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
@@ -1956,23 +1965,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$default_reg_status_values = $this->_get_reg_status_array( array( 'RCN', 'RNA' ));
 		array_unshift( $default_reg_status_values, array( 'id' => "", 'text' => __('No Change', 'event_espresso')));
 		
-		$pre_approval_values = array(
-			array('id' => true, 'text' => __('Yes', 'event_espresso')),
-			array('id' => false, 'text' => __('No', 'event_espresso'))
-		)
-		;
 		?>
 		<p>
 			<label><?php _e('Event is Active', 'event_espresso'); ?></label>
-			<?php echo EE_Form_Fields::select_input('is_active', $values, $this->_event->is_active); ?>
+			<?php echo EE_Form_Fields::select_input('is_active', $yes_no_values, $this->_event->is_active); ?>
 		</p>
 		
 		<p>
-			<label><?php _e('Event Status', 'event_espresso'); ?>
-				<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=status_types_info">
-					<span class="question">[?]</span>
-				</a>
-			</label>
+			<label><?php _e('Event Status', 'event_espresso'); ?></label>
 			<?php echo EE_Form_Fields::select_input('new_event_status', $event_status_values, $this->_event->event_status, '', '', false); ?>
 		</p>
 		
@@ -1986,7 +1986,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		
 		<p class="clearfix" style="clear: both;">
 			<label for="group-reg"><?php _e('Allow group registrations? ', 'event_espresso'); ?></label>
-			<?php echo EE_Form_Fields::select_input('allow_multiple', $values, $this->_event->allow_multiple, 'id="group-reg"', '', false); ?>
+			<?php echo EE_Form_Fields::select_input('allow_multiple', $yes_no_values, $this->_event->allow_multiple, 'id="group-reg"', '', false); ?>
 		</p>
 		
 		<p>
@@ -1999,45 +1999,34 @@ class Events_Admin_Page extends EE_Admin_Page {
 			<?php echo EE_Form_Fields::select_input('additional_attendee_reg_info', $additional_attendee_reg_info_values, $this->_event->event_meta['additional_attendee_reg_info']); ?>
 		</p>
 		
+		<?php if ( $caffeinated && $org_options['use_attendee_pre_approval'] ) : ?>
 		<p>
-			<label>
-				<?php _e('Default Payment Status', 'event_espresso'); ?>
-				<a class="thickbox" href="#TB_inline?height=300&amp;width=400&amp;inlineId=payment_status_info">
-					<span class="question">[?]</span>
-				</a>
-			</label>
+			<label><?php _e('Attendee pre-approval required?', 'event_espresso'); ?></label>
+			<?php
+			echo EE_Form_Fields::select_input("require_pre_approval", $yes_no_values, $this->_event->require_pre_approval);
+			?>
+		</p>
+		<?php endif; ?>
+		
+		<p>
+			<label><?php _e('Default Payment Status', 'event_espresso'); ?></label>
 			<?php echo EE_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_event->event_meta['default_reg_status']); ?>
 		</p>
 		
 		<p>
 			<label><?php _e('Display  Description', 'event_espresso'); ?></label>
-			<?php echo EE_Form_Fields::select_input('display_desc', $values, $this->_event->display_desc); ?>
+			<?php echo EE_Form_Fields::select_input('display_desc', $yes_no_values, $this->_event->display_desc); ?>
 		</p>
 		
 		<p>
-			<label>
-				<?php _e('Display  Registration Form', 'event_espresso'); ?>
-			</label>
-			<?php echo EE_Form_Fields::select_input('display_reg_form', $values, $this->_event->display_reg_form, '', '', false); ?>
+			<label><?php _e('Display  Registration Form', 'event_espresso'); ?></label>
+			<?php echo EE_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_event->display_reg_form, '', '', false); ?>
 		</p>
 		
 		<p>
-			<label><?php _e('Alternate Registration Page', 'event_espresso'); ?>
-				<a class="thickbox" href="#TB_inline?height=300&amp;width=400&amp;inlineId=external_URL_info">
-					<span class="question">[?]</span>
-				</a>
-			</label>
+			<label><?php _e('Alternate Registration Page', 'event_espresso'); ?></label>
 			<input name="externalURL" size="20" type="text" value="<?php echo $this->_event->externalURL; ?>">
 		</p>
-		
-		<p class="pre-approve">
-			<label>
-				<?php _e('Attendee pre-approval required?', 'event_espresso'); ?>
-			</label>
-			<?php
-			echo EE_Form_Fields::select_input("require_pre_approval", $pre_approval_values, $this->_event->require_pre_approval);
-			?>
-		</p>		
 		
 		<?php /*<p>
 			<label><?php _e('Alternate Email Address', 'event_espresso'); ?>
@@ -2145,28 +2134,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 		<?php
 	}
 
-
-
-
-
-
-	public function preapproval_metabox() {
-		$pre_approval_values = array(
-			array('id' => true, 'text' => __('Yes', 'event_espresso')),
-			array('id' => false, 'text' => __('No', 'event_espresso')));
-		?>
-		<div class="inside">
-			<p class="pre-approve">
-				<label>
-					<?php _e('Attendee pre-approval required?', 'event_espresso'); ?>
-				</label>
-				<?php
-				echo EE_Form_Fields::select_input("require_pre_approval", $pre_approval_values, $this->_event->require_pre_approval);
-				?>
-			</p>
-		</div>
-		<?php
-	}
 
 
 
@@ -2350,7 +2317,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _duplicate_event( ) {
-		global $wpdb, $espresso_wp_user;
+		global $wpdb, $espresso_wp_user, $org_options;
 		$event_id = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : '';
 
 		$result = $wpdb->get_row("SELECT * FROM ". EVENTS_DETAIL_TABLE ." WHERE id ='" . $event_id . "'");
@@ -2415,8 +2382,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 			$venue_url = $result->venue_url;
 			$venue_phone = $result->venue_phone;
 			$venue_image = $result->venue_image;
-			$event_meta = $result->event_meta;
-			$require_pre_approval = $result->require_pre_approval;
+			$event_meta = $result->event_meta;			
+			$require_pre_approval = isset( $result->require_pre_approval ) ? $result->require_pre_approval : FALSE;
 			$timezone_string = $result->timezone_string;
 					
 					
@@ -2745,10 +2712,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$event_meta = serialize($event_meta);
 
 		############ Added by wp-developers ######################
-		$require_pre_approval = 0;
-		if (isset($this->_req_data['require_pre_approval'])) {
-			$require_pre_approval = $this->_req_data['require_pre_approval'];
-		}
+		$require_pre_approval = isset( $this->_req_data['require_pre_approval'] ) ? $this->_req_data['require_pre_approval'] : FALSE;
 		################# END #################
 		//Event name
 		$event_name = empty($this->_req_data['event']) ? uniqid($espresso_wp_user . '-') : htmlentities( wp_strip_all_tags( $this->_req_data['event'] ), ENT_QUOTES, 'UTF-8');
@@ -3831,6 +3795,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		$this->_template_args['reg_status_array'] = $this->_get_reg_status_array( array( 'RCN', 'RNA' ));
 		$this->_template_args['default_reg_status'] = isset( $org_options['default_reg_status'] ) ? sanitize_text_field( $org_options['default_reg_status'] ) : 'RPN';
+		$this->_template_args['pending_counts_reg_limit'] = isset( $org_options['pending_counts_reg_limit'] ) ? sanitize_text_field( $org_options['pending_counts_reg_limit'] ) : TRUE;
 
 		$this->_template_args['use_attendee_pre_approval'] = isset( $org_options['use_attendee_pre_approval'] ) ? absint( $org_options['use_attendee_pre_approval'] ) : FALSE;
 
@@ -3854,6 +3819,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$data = array();
 		$data['expire_on_registration_end'] = isset( $this->_req_data['expire_on_registration_end'] ) ? absint( $this->_req_data['expire_on_registration_end'] ) : FALSE;
 		$data['default_reg_status'] = isset( $this->_req_data['default_reg_status'] ) ? sanitize_text_field( $this->_req_data['default_reg_status'] ) : 'RPN';
+		$data['pending_counts_reg_limit'] = isset( $this->_req_data['pending_counts_reg_limit'] ) ? absint( $this->_req_data['pending_counts_reg_limit'] ) : FALSE;
 		$data['use_attendee_pre_approval'] = isset( $this->_req_data['use_attendee_pre_approval'] ) ? absint( $this->_req_data['use_attendee_pre_approval'] ) : FALSE;
 
 		$data = apply_filters('filter_hook_espresso_default_event_settings_save', $data);	

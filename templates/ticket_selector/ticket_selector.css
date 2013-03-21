@@ -52,6 +52,9 @@
 .event-list-add-ticket-lnk {
 	font-size:.75em; float:right; cursor:pointer;
 }
+.event-list-sold-out-msg-pg {
+	font-weight: bold; color:#EB574D;
+}
 
 .tkt-slctr-tbl { margin-bottom:1em;; }
 .tkt-slctr-tbl td { padding:.5em 1em .5em 0; font-size:1em; line-height:1em; }
