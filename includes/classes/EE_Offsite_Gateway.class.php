@@ -31,7 +31,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 		}
 		//get a registration that's currently getting processed
 		/*@var $registration EE_Registration */
-		$url=add_query_arg(array('reg_url_link'=>$registration->reg_url_link(),
+		$url=add_query_arg(array('e_reg_url_link'=>$registration->reg_url_link(),
 					'ee_gateway'=>$this->_gateway_name),
 				get_permalink($org_options['notify_url']));
 		if($urlencode){

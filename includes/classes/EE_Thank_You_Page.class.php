@@ -59,7 +59,7 @@ class EE_Thank_You_Page{
 		add_action( 'wp', array($this,'display_payment_overview'), 102 );
 		$this->load_classes();
 		
-		$transaction = $this->_TXN->get_transaction_from_reg_url_link($_GET['reg_url_link']);
+		$transaction = $this->_TXN->get_transaction_from_reg_url_link($_GET['e_reg_url_link']);
 		$this->_current_transaction = $transaction;
 	}
 	
@@ -99,7 +99,7 @@ class EE_Thank_You_Page{
 	 */
 	function display_payment_overview(){
 		global $espresso_content;
-		$espresso_content = $this->_get_payment_overview_content($_GET['reg_url_link']);
+		$espresso_content = $this->_get_payment_overview_content($_GET['e_reg_url_link']);
 		//not sure why we wait to add this shortcode, but its what was previously in teh code...
 		add_shortcode('ESPRESSO_PAYMENTS', 'return_espresso_content');
 	}

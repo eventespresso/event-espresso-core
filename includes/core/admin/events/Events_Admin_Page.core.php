@@ -2648,9 +2648,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$post_type = $this->_req_data['post_type'];
 
 		// thumbnail image options
-		$event_meta['event_thumbnail_url'] = $this->_req_data['upload_image'];
-		$event_meta['display_thumb_in_lists'] = $this->_req_data['show_thumb_in_lists'];
-		$event_meta['display_thumb_in_regpage'] = $this->_req_data['show_thumb_in_regpage'];
+		$event_meta['event_thumbnail_url'] = array_key_exists('upload_image',$this->_req_data) ? $this->_req_data['upload_image'] : '';
+		$event_meta['display_thumb_in_lists'] = array_key_exists('show_thumb_in_lists', $this->_req_data) ? $this->_req_data['show_thumb_in_lists'] : '';
+		$event_meta['display_thumb_in_regpage'] = array_key_exists('show_thumb_in_regpage',$this->_req_data) ? $this->_req_data['show_thumb_in_regpage'] : '';
 		if (function_exists('espresso_calendar_config_mnu') && $caffeinated == true) {
 			$event_meta['display_thumb_in_calendar'] = $this->_req_data['show_on_calendar'];
 		}

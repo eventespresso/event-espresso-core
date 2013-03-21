@@ -781,7 +781,7 @@ Class EEM_Gateways {
 		$return_page_id = $org_options['return_url'];
 		// get permalink for thank you page
 		// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
-		return add_query_arg(array('reg_url_link'=>$a_current_registration->reg_url_link()),
+		return add_query_arg(array('e_reg_url_link'=>$a_current_registration->reg_url_link()),
 				rtrim( get_permalink( $return_page_id ), '/' ));
 	}
 
