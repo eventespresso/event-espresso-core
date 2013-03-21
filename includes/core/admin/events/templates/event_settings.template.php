@@ -1,3 +1,4 @@
+<?php global $caffeinated; ?>
 <div class="padding">
 	<table class="form-table">
 		<tbody>
@@ -19,7 +20,7 @@
 			<tr>
 				<th>
 					<label for="default_reg_status">
-						<?php _e(' Default Registration Status', 'event_espresso'); ?>
+						<?php _e('Default Registration Status', 'event_espresso'); ?>
 						<?php do_action('action_hook_espresso_help', 'payment_status_info') ?>
 					</label>
 				</th>
@@ -33,6 +34,22 @@
 
 			<tr>
 				<th>
+					<label for="pending_counts_reg_limit">
+						<?php _e('Pending Registrations Count Towards Registration Limits', 'event_espresso'); ?>
+						<?php //do_action('action_hook_espresso_help', 'payment_status_info') ?>
+					</label>
+				</th>
+				<td>
+					<?php echo EE_Form_Fields::select_input('pending_counts_reg_limit', $values, $pending_counts_reg_limit) ?>
+					<p class="description">
+						<?php _e('If set to "Yes", then attendee\'s whose registration status is set to "Pending" will still count towards an Event\'s registration limit, and therefore also affect the number of spaces available, tickets left, and seating options (if applicable).', 'event_espresso'); ?>
+					</p>
+				</td>
+			</tr>
+
+		<?php if ( $caffeinated ) : ?>
+			<tr>
+				<th>
 					<label for="use_attendee_pre_approval">
 						<?php _e('Enable Attendee Pre-approval', 'event_espresso'); ?>
 					</label>
@@ -44,6 +61,7 @@
 					</p>
 				</td>
 			</tr>
+		<?php endif; ?>
 
 		</tbody>
 	</table>
