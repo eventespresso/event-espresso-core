@@ -96,15 +96,70 @@ jQuery(document).ready(function($) {
 				status: status,
 				action: 'activate_messenger',
 				page: 'espresso_messages',
-				_wpnonce: $('#on-off-nonce').text()
+				activate_nonce: $('#on-off-nonce').text()
 			};
+
+			$('.ajax-loader-grey').toggle();
+
+			//let's register a handler for success ajax called after
+			$(document).ajaxSuccess( function( event, xhr, ajaxoptions ) {
+				//we can get the response from xhr
+				var ct = xhr.getResponseHeader("content-type") || "";
+				if ( ct.indexOf('json') > -1 ) {
+					var resp = xhr.responseText;
+					resp = $.parseJSON(resp);
+					//let's handle toggling all the elements if we had a successful switch!
+					if ( resp.success ) {
+						MSG_helper.toggle_msg_elements( messenger, status );
+					}
+				}
+			});
 
 			this.do_ajax(data);
 		},
 
 
+		
+		toggle_msg_elements: function( messenger, status ) {
+			$('.ajax-loader-grey').toggle().hide();
+			var $on_off_button = $('#on-off-' + messenger),
+				$messenger_settings = $('.messenger-settings', '.' + messenger + '-content'),
+				$active_mts = $('#active-message-types'),
+				$inactive_mts = $('#inactive-message-types'),
+				$inactive_on_msg = $('.inactive-on-message', '.' + messenger + '-mt-content'),
+				$inactive_off_msg = $('.inactive-off-message', '.' + messenger + '-mt-content'),
+				$active_on_msg = $('.active-on-message', '.' + messenger + '-content');
+
+			if ( status == 'on' ) {
+				$( $on_off_button ).attr('value','messenger-off').attr('class', 'on-off-active on-off-action');
+				$( $messenger_settings ).removeClass('hidden');
+				$( $active_mts ).removeClass('hidden');
+				$( $inactive_mts ).removeClass('hidden');
+				$( $inactive_on_msg ).removeClass('hidden');
+				$( $inactive_off_msg ).addClass('hidden');
+				$( $active_on_msg ).removeClass('hidden');
+			} else if ( status == 'off' ) {
+				$( $on_off_button ).attr('value', 'messenger-on').attr('class','on-off-inactive on-off-action');
+				$( $messenger_settings ).addClass('hidden');
+				$( $active_mts ).addClass('hidden');
+				$( $inactive_mts ).addClass('hidden');
+				$( $inactive_on_msg ).addClass('hidden');
+				$( $inactive_off_msg ).removeClass('hidden');
+				$( $active_on_msg ).addClass('hidden');
+			}
+		},
+
+
 
 		do_ajax: function(data, setup) {
+
+			if ( typeof(setup) === 'undefined' ) {
+				setup = {
+					where: '#ajax-notices-container',
+					what: 'clear'
+				};
+			}
+
 			$.ajax({
 				type: "POST",
 				url: ajaxurl,
@@ -115,21 +170,17 @@ jQuery(document).ready(function($) {
 					if (ct.indexOf('html') > -1) {
 						/*console.log('html');
 						console.log('response');*/
-						EE_messages.display_content(response,setup.where,setup.what);
+						MSG_helper.display_content(response,setup.where,setup.what);
 					}
 
 					if (ct.indexOf('json') > -1 ) {
-						var resp = response;
+						var resp = response,
+						wht = resp.data.what === 'undefined' ? setup.what : resp.data.what,
+						whr = resp.data.where === 'undefined' ? setup.where : resp.data.where,
+						display_content = resp.error ? resp.error : resp.content;
 
-						if ( typeof(resp.data.what) === 'undefined' )
-							resp.data.what = setup.what === 'undefined' ? 'clear' : setup.what;
-
-						if ( typeof(resp.data.where ) === 'undefined' )
-							resp.data.where = setup.where === 'undefined' ? undefined : setup.where;
-
-						var display_content = resp.error ? resp.error : resp.content;
-						EE_messages.display_notices(resp.notices);
-						EE_messages.display_content(display_content, resp.data.where, resp.data.what);
+						MSG_helper.display_notices(resp.notices);
+						MSG_helper.display_content(display_content, whr, wht);
 					}
 				}
 			});
@@ -229,7 +280,7 @@ jQuery(document).ready(function($) {
 	$('.activate_messages_on_off_toggle_container').on('click', '.on-off-action', function(e) {
 		e.preventDefault();
 		var messenger = $(this).attr('id').replace('on-off-',''),
-		status = $(this).attr('value').replace('messenger-');
+		status = $(this).attr('value').replace('messenger-','');
 		MSG_helper.messenger_toggle(messenger, status);
 	});
 });

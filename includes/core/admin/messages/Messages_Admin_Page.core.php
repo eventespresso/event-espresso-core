@@ -1512,10 +1512,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		require_once EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php';
 		$MTP = EEM_Message_Template::instance();
 
-
 		//what method we use depends on whether we have an evt_id or not
 		$count = !empty( $evt_id) ? $MTP->get_event_message_templates_by_m_and_mt_and_evt( $messenger, $message_type, $evt_id, 'GRP_ID', 'ASC', NULL, TRUE, FALSE ) : $MTP->get_global_message_template_by_m_and_mt( $messenger, $message_type, 'GRP_ID', 'ASC', NULL, TRUE, 'all');
-
 
 		//if the count is greater than 0 then we need to update the templates so they are active.
 		if ( $count > 0 ) {
@@ -1752,8 +1750,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'obj' => $messenger
 				);
 
-			//assemble the array for the ACTIVE and INACTIVE message types with the selected messenger
-			$selected_settings = $this->_active_messengers[$messenger->name]['settings'];
+			//assemble the array for the ACTIVE and INACTIVE message types with the selected messenger //note that all message types will be in the inactive box if the messenger is NOT active.
+			$selected_settings = isset( $this->_active_messengers[$messenger->name]['settings'] ) ? $this->_active_messengers[$messenger->name]['settings'] : array();
 			foreach ( $message_types as $message_type ) {
 				$a_or_i = isset( $selected_settings[$messenger->name . '-message_types'][$message_type->name] ) && $selected_settings[$messenger->name . '-message_types'][$message_type->name] ? 'active' : 'inactive';
 
@@ -1822,6 +1820,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				);
 		$settings_template_args['hidden_fields'] = $this->_generate_admin_form_fields( $settings_template_args['hidden_fields'], 'array' );
 		$settings_template_args['show_form'] = empty( $settings_template_args['template_form_fields'] ) ? ' hidden' : '';
+
+
+		//setup hidden content areas depending on whether the messenger is active or not
+		$settings_template_args['show_form'] = isset( $this->_active_messengers[$messenger->name] ) ? '' : ' hidden';
+
+
+
 		$template = EE_MSG_TEMPLATE_PATH . 'ee_msg_mt_settings_content.template.php';
 		$content = espresso_display_template( $template, $settings_template_args, TRUE );
 		return $content;
@@ -1843,13 +1848,19 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$selected_messenger = isset( $this->_req_data['selected_messenger'] ) ? $this->_req_data['selected_messenger'] : 'email';
 
 		foreach ( $this->_m_mt_settings['messenger_tabs'] as $messenger => $tab_array ) {
+
+			$hide_on_message = isset( $this->_active_messengers[$messenger] ) ? '' : 'hidden';
+			$hide_off_message = isset( $this->_active_messengers[$messenger] ) ? 'hidden' : '';
+
 			//messenger meta boxes
 			$active = $selected_messenger == $messenger ? TRUE : FALSE;
+			$active_mt_tabs = isset(  $this->_m_mt_settings['message_type_tabs'][$messenger]['active'] ) ?  $this->_m_mt_settings['message_type_tabs'][$messenger]['active'] : '';
 			$m_boxes[$messenger . '_a_box'] = sprintf( __('%s Settings', 'event_espresso'), $tab_array['label'] );
 			$m_template_args[$messenger . '_a_box'] = array(
-					'active_message_types' => $this->_get_mt_tabs( $this->_m_mt_settings['message_type_tabs'][$messenger]['active'] ),
+					'active_message_types' => !empty( $active_mt_tabs ) ? $this->_get_mt_tabs( $active_mt_tabs ) : '',
 					'content' => $this->_get_messenger_box_content( $tab_array['obj'] ),
 					'hidden' => $active ? '' : ' hidden',
+					'hide_on_message' => $hide_on_message,
 					'messenger' => $messenger,
 					'active' => $active
 				);
@@ -1860,6 +1871,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$mt_template_args[$messenger . '_i_box'] = array(
 				'inactive_message_types' => isset( $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'] ) ? $this->_get_mt_tabs( $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'] ) : '',
 				'hidden' => $active ? '' : ' hidden',
+				'hide_on_message' => $hide_on_message,
+				'hide_off_message' => $hide_off_message,
 				'messenger' => $messenger,
 				'active' => $active
 				);
@@ -1965,6 +1978,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$settings_template_args['messenger'] = $messenger->name;
 		$settings_template_args['description'] = $messenger->description;
 		$settings_template_args['show_hide_edit_form'] = $active ? '' : 'hidden';
+
+
+		//setup hidden content areas depending on whether the messenger is active or not
+		$settings_template_args['show_hide_edit_form'] = isset( $this->_active_messengers[$messenger->name] ) ? '' : ' hidden';
+
+
 		$settings_template_args['on_off_action'] = $active ? 'messenger-off' : 'messenger-on';
 		$settings_template_args['nonce'] = wp_create_nonce('activate_' . $messenger->name . '_toggle_nonce');
 		$settings_template_args['on_off_status'] = $active ? 'active' : 'inactive';
@@ -1981,10 +2000,157 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @return void
 	 */
 	public function activate_messenger_toggle() {
+		$success = TRUE;
+		//let's check that we have required data
+		if ( !isset( $this->_req_data[ 'messenger' ] ) ) {
+			EE_Error::add_error( __('Messenger name needed to toggle activation. None given', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			$success = FALSE;
+		}
+
+		//do a nonce check here since we're not arriving via a normal route
+		$nonce = isset($this->_req_data[ 'activate_nonce' ]) ? sanitize_text_field( $this->_req_data[ 'activate_nonce'] ) : '';
+		$nonce_ref = 'activate_' . $this->_req_data['messenger'] . '_toggle_nonce';
+
+		$this->_verify_nonce( $nonce, $nonce_ref );
+
 		
+
+		if ( !isset( $this->_req_data[ 'status' ])) {
+			EE_Error::add_error( __('Messenger status needed to know whether activation or deactivation is happening. No status is given', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			$success = FALSE;
+		}
+
+		//do check to verify we have a valid status.
+		$status = $this->_req_data['status'];
+
+		if ( $status != 'off' && $status != 'on' ) {
+			EE_Error::add_error( sprintf( __('The given status (%s) is not valid. Must be "off" or "on"', 'event_espresso'), $this->_req_data['status'] ), __FILE__, __FUNCTION__, __LINE__ );
+			$success = FALSE;
+		}
+
+		if ( $success ) {
+			//made it here?  Stop dawdling then!!
+			if ( $status == 'off' ) {
+				//off = deactivate.  get it?
+				$success = $this->_activate_messenger( $this->_req_data['messenger'], TRUE );
+			} else {
+				$success = $this->_activate_messenger( $this->_req_data['messenger'] );
+			}
+		}
+
+		$this->_template_args['success'] = $success;
+
+		//no special instructions so let's just do the json return (which should automatically do all the special stuff).
+		$this->_return_json();		
+
 	}
 
 
+
+
+
+
+	/**
+	 * This just updates the active_messengers usermeta field when activated/deactivated. 
+	 * NOTE: deactivating will remove the messenger from the active_messengers user_meta field so all saved settings WILL be lost for the messenger AND message_types associated with that messenger.
+	 * 
+	 * @param  boolean $deactivate if true then we deactivate
+	 * @return void
+	 */
+	private function _activate_messenger($messenger, $deactivate = false) {
+		global $espresso_wp_user;
+		$success_msg = array();
+		$update = FALSE;
+		$ref = $messenger;
+		$templates = TRUE;
+		
+		if ( !$deactivate ) {
+			//we are activating.  we can use $this->_m_mt_settings to get all the installed messengers.
+			$this->_set_m_mt_settings();
+
+			$this->_active_messengers[$messenger]['settings'] = array();
+			$this->_active_messengers[$messenger]['obj'] = $this->_m_mt_settings['messenger_tabs'][$messenger]['obj'];
+
+			//k we need to get what default message types are to be associated with the messenger that's been activated.
+			$default_types = $this->_active_messengers[$messenger]['obj']->get_default_message_types();
+
+			foreach ( $default_types as $type ) {
+				$this->_active_messengers[$messenger]['settings'][$messenger . '-message_types'][$type] = 1;
+			}
+
+			//update settings in database
+			update_user_meta( $espresso_wp_user, 'ee_active_messengers', $this->_active_messengers );
+			
+
+			//generate new templates (if necessary)
+			$templates = $this->_generate_new_templates( $messenger, $default_types, '', TRUE );
+
+			EE_Error::overwrite_success();
+
+			//if generation failed then we need to remove the active messenger.
+			if ( !$templates ) {
+				unset($this->_active_messengers[$messenger]);
+				update_user_meta($espresso_wp_user, 'ee_active_messengers', $this->_active_messengers);
+			} else {
+				//all is good let's do a success message
+				$success_msg = sprintf( __('%s messenger has been successfully activated', 'event_espresso'), ucwords( $this->_active_messengers[$messenger]['obj']->label['singular'] ) );
+			}
+			
+		} else {
+			//we're deactivating
+			
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
+			$MTP = EEM_Message_Template::instance();
+
+			//first lets make sure that there are NO existing event templates for the given messenger.  If there ARE then we need to drop out with an error message, prevent deactivation and display warning.
+			$where_col = 'MTP_messenger';
+			$_where = array(
+				$where_col => $messenger,
+				'MTP_is_global' => FALSE
+				);
+			$event_templates = $MTP->get_all_message_templates_where( $_where );
+
+			if ( $event_templates && count($event_templates) > 0 ) {
+				$m_label_pl = __('Messengers', 'event_espresso');
+				$m_label_sg = __('messenger', 'event_espresso');
+				$warning_msg = sprintf( __('<strong>Warning:</strong> %s cannot be deactivated if there are any Events currently using a custom template for it. Before you can deactivate the "%s" %s, you must switch the following "Events" to use global templates:', 'event_espresso' ), $m_label_pl, $this->_active_messengers[$messenger]['obj']->label['singular'], $m_label_sg  );
+				$warning_msg .= '<ul>';
+
+				//output list of events
+				$base_event_admin_url = admin_url( 'admin.php?page=espresso_events' );
+				foreach ( $event_templates as $template ) {
+					$event_name = $this->event_name($template->event());
+					$query_args = array(
+						'action' => 'edit_event',
+						'EVT_ID' => $template->event()
+						);
+					$edit_event_url = self::add_query_args_and_nonce( $query_args, $base_event_admin_url );
+					$warning_msg .= "\n" . '<li><a href="' . $edit_event_url . '" title="' . __('Edit Event', 'event_espresso') . '">' . $event_name . '</a></li>';
+				}
+
+				$warning_msg .= '</ul>';
+				$warning_msg .= '<br />' . __('Remember, deactivating messengers does NOT delete any templates or any customization you have done.  All it does is "deactivate" them. Should you activate the message type or messenger later your templates will be restored.', 'event_espresso');
+				EE_Error::add_error($warning_msg);
+				return false;
+			}
+
+			//okay let's update the message templates that match this messenger so that they are deactivated in the database as well.
+			
+			$success = $MTP->update( array( 'MTP_is_active' => 0 ), array( $where_col => $messenger ) );
+
+			$messenger_obj = $this->_active_messengers[$messenger]['obj'];
+
+
+			unset($this->_active_messengers[$messenger]);
+			update_user_meta($espresso_wp_user, 'ee_active_messengers', $this->_active_messengers);
+
+			$success_msg = sprintf( __('%s %s has been successfully deactivated', 'event_espresso'), ucwords($messenger_obj->label['singular'] ) , __('Messengers', 'event_espresso') );
+			
+		}
+		EE_Error::overwrite_success();
+		if ( $templates ) EE_Error::add_success($success_msg);
+		return true;
+	}
 
 
 

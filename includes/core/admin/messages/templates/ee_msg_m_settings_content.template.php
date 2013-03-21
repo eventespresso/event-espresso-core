@@ -1,5 +1,6 @@
 <div class="messenger-settings-content">
 	<div class="activate_messages_on_off_toggle_container">
+		<span class="ajax-loader-grey"></span>
 		<span id="on-off-nonce" class="hidden"><?php echo $nonce; ?></span>
 		<button type="button" name="messenger_on_off_action" id="on-off-<?php echo $messenger; ?>" value="<?php echo $on_off_action; ?>" class="on-off-<?php echo $on_off_status;?> on-off-action"></button>
 	</div> <!-- end .activate_messages_on_off_toggle_container -->

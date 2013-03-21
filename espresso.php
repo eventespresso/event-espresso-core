@@ -95,7 +95,7 @@ if ( is_admin() ) {
 } else {
 	add_action('init', 'espresso_export_certificate', 30);
 	add_action('init', 'espresso_export_invoice', 30);
-//	add_action('init', 'espresso_export_ticket', 30);
+	//add_action('init', 'espresso_export_ticket', 30);
 
 	add_action('init', 'espresso_load_jquery', 10);
 	add_action('init', 'espresso_frontend_init', 25);

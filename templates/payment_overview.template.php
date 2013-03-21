@@ -94,7 +94,9 @@ EE_Template_Validator::verify_isnt_null($SPCO_step_2_url, '$SPCO_step_2_url');
 					<td>
 						<?php if ($transaction->is_completed()) { ?>
 							<img class="espresso-paid-status-icon-img" align="absmiddle" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/accept.png" width="16" height="16" alt="<?php $transaction->e_pretty_status() ?>" title="<?php $transaction->e_pretty_status() ?>" />
-						<?php } else { ?>
+						<?php } elseif($transaction->is_pending()) { ?>
+							<img class="espresso-unpaid-status-icon-img" align="absmiddle" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/error.png" width="16" height="16" alt="<?php $transaction->e_pretty_status() ?>" title="<?php $transaction->e_pretty_status() ?>" />
+						<?php }else{?>
 							<img class="espresso-unpaid-status-icon-img" align="absmiddle" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/exclamation.png" width="16" height="16" alt="<?php $transaction->e_pretty_status() ?>" title="<?php $transaction->e_pretty_status() ?>" />
 						<?php } ?>
 						<?php $transaction->e_pretty_status(); ?>

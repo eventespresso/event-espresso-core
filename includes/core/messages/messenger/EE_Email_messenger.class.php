@@ -241,6 +241,22 @@ class EE_Email_messenger extends EE_messenger  {
 			);
 	}
 
+
+
+
+	/**
+	 * See definition of this class in parent
+	 */
+	protected function _set_default_message_types() {
+		$this->_default_message_types = array(
+			'payment',
+			'registration'
+			);
+	}
+
+
+
+
 	/**
 	 * setting up admin_settings_fields for messenger.
 	 */

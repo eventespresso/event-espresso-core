@@ -59,12 +59,6 @@ class EE_messages {
 		$actives = is_array($actives) ? array_keys($actives) : $actives;
 		$active_names = $this->_load_files('messenger', $actives);
 
-
-		if ( empty($active_names) ) {
-			$msg = __('There are no active messengers in the database', 'event_espresso');
-			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-		}
-
 		if ( is_array($active_names) ) {
 			foreach ( $active_names as $name => $class ) {
 				$a = new ReflectionClass( $class );
