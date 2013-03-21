@@ -54,6 +54,10 @@ li.mt-tab {
     z-index: 1000;
 }
 
+#inactive-message-types li.mt-tab {
+    width: 100%%;
+}
+
 .mt-content, li {
     cursor: move;
 }
