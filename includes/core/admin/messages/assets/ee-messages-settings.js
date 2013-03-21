@@ -99,6 +99,8 @@ jQuery(document).ready(function($) {
 				activate_nonce: $('#on-off-nonce').text()
 			};
 
+			$('.ajax-loader-grey').toggle();
+
 			//let's register a handler for success ajax called after
 			$(document).ajaxSuccess( function( event, xhr, ajaxoptions ) {
 				//we can get the response from xhr
