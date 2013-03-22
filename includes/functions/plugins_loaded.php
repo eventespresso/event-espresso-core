@@ -351,6 +351,7 @@ add_action( 'action_hook_espresso_before_event_list', 'espresso_clear_session' )
 function espresso_printr_session() {
 	$user = wp_get_current_user();
 	$wp_user_id = isset( $user->data->ID ) ? $user->data->ID : NULL;
+	//$_REQUEST['ee_session'] = TRUE;
 	if ( isset( $_REQUEST['ee_session'] ) && $wp_user_id <= 1 ) {	
 		global $EE_Session;
 		echo '<pre style="height:auto;border:2px solid lightblue;">';
@@ -391,6 +392,9 @@ function espresso_init() {
 	// is this request for UI or backend 
 	$is_UI_request = ( ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' ) ? TRUE : FALSE;
 	$is_ajax_request = ( isset( $_REQUEST['espresso_ajax'] ) && $_REQUEST['espresso_ajax'] == 1 ) ? TRUE : FALSE;
+	if ( $is_ajax_request ) {
+		remove_action( 'shutdown', 'espresso_printr_session' );
+	}
 
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, 'is_UI_request = ' . $is_UI_request );
 
@@ -414,6 +418,7 @@ function espresso_init() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/time_date.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/actions.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');
+	
 
 	do_action('action_hook_espresso_coupon_codes');
 }

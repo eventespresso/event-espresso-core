@@ -445,11 +445,7 @@ if (!function_exists('get_number_of_attendees_reg_limit')) {
 			case 'number_available_spaces' :
 			case 'avail_spaces_slash_reg_limit' :
 			case 'num_attendees_slash_reg_limit' :
-//				$number_available_spaces = 0;
-//				$sql_reg_limit = "SELECT reg_limit FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'";
-//				$reg_limit = $wpdb->get_var($sql_reg_limit);
-//				if (empty($num_attendees))
-//					$num_attendees = 0;
+				$number_available_spaces = $reg_limit;
 				if ($reg_limit > $num_attendees) {
 					$number_available_spaces = $reg_limit - $num_attendees;
 				}

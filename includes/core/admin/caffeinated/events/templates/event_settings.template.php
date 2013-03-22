@@ -18,7 +18,7 @@
 
 			<tr>
 				<th>
-					<label for="default_payment_status">
+					<label for="default_reg_status">
 						<?php _e(' Default Registration Status', 'event_espresso'); ?>
 						<?php do_action('action_hook_espresso_help', 'payment_status_info') ?>
 					</label>

@@ -508,7 +508,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'country' => $this->_event->country));
 		$this->_event->event_meta = array(
 				'additional_attendee_reg_info' => 1,
-				'default_payment_status' => '',
+				'default_reg_status' => '',
 				//'add_attendee_question_groups' => array('1'),
 				'originally_submitted_by' => $current_user->ID);
 		$this->_event->wp_user = $current_user->ID;
@@ -1594,7 +1594,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		<div class="inside">
 		<?php
 			$good_meta = array();
-			$hiddenmeta = array("", "venue_id", "additional_attendee_reg_info", /*"add_attendee_question_groups",*/ "date_submitted", "event_host_terms", "default_payment_status", "display_thumb_in_lists", "display_thumb_in_regpage", "display_thumb_in_calendar", "event_thumbnail_url", "originally_submitted_by", "enable_for_gmap", "orig_event_staff");
+			$hiddenmeta = array("", "venue_id", "additional_attendee_reg_info", /*"add_attendee_question_groups",*/ "date_submitted", "event_host_terms", "default_reg_status", "display_thumb_in_lists", "display_thumb_in_regpage", "display_thumb_in_calendar", "event_thumbnail_url", "originally_submitted_by", "enable_for_gmap", "orig_event_staff");
 			$meta_counter = 1;
 
 			$default_event_meta = array();
@@ -1837,7 +1837,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		);
 		$event_status_values = apply_filters('filter_hook_espresso_event_status_values', $event_status_values);
 
-		$default_payment_status_values = array(
+		$default_reg_status_values = array(
 				array('id' => "", 'text' => __('No Change', 'event_espresso')),
 				array('id' => 'Incomplete', 'text' => __('Incomplete', 'event_espresso')),
 				array('id' => 'Pending', 'text' => __('Pending', 'event_espresso')),
@@ -1892,7 +1892,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 					<span class="question">[?]</span>
 				</a>
 			</label>
-			<?php echo EE_Form_Fields::select_input('default_payment_status', $default_payment_status_values, $this->_event->event_meta['default_payment_status']); ?>
+			<?php echo EE_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_event->event_meta['default_reg_status']); ?>
 		</p>
 		<p class="inputunder">
 			<label><?php _e('Alternate Registration Page', 'event_espresso'); ?>
@@ -2733,7 +2733,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$event_meta['additional_attendee_reg_info'] = $this->_req_data['additional_attendee_reg_info'];
 		$event_meta['date_submitted'] = date("Y-m-d H:i:s");
 		$event_meta['originally_submitted_by'] = $espresso_wp_user;
-		$event_meta['default_payment_status'] = $this->_req_data['default_payment_status'];
+		$event_meta['default_reg_status'] = $this->_req_data['default_reg_status'];
 
 		if ( isset( $this->_req_data['emeta'] ) && ! empty ( $this->_req_data['emeta'] )) {
 			foreach ($this->_req_data['emeta'] as $k => $v) {
@@ -3231,7 +3231,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			$reg_limit = 999999;
 		}
 
-		$event_meta['default_payment_status'] = $this->_req_data['default_payment_status'];
+		$event_meta['default_reg_status'] = $this->_req_data['default_reg_status'];
 		$event_meta['venue_id'] = empty($this->_req_data['venue_id']) ? '' : $this->_req_data['venue_id'][0];
 		$event_meta['additional_attendee_reg_info'] = $this->_req_data['additional_attendee_reg_info'];
 		$event_meta['date_submitted'] = isset( $this->_req_data['date_submitted'] ) ? $this->_req_data['date_submitted'] : NULL;

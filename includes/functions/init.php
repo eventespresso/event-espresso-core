@@ -244,6 +244,7 @@ function event_espresso_run() {
 
 	// Get action type
 	$e_reg = isset($_REQUEST['e_reg']) ? sanitize_text_field( $_REQUEST['e_reg'] ) : '';
+	//echo '<h4>$e_reg : ' . $e_reg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 	switch ($e_reg) {
 
 		case 'process_ticket_selections' :
@@ -253,9 +254,6 @@ function event_espresso_run() {
 			break;
 
 		case 'register' :
-			if ( ! defined( 'MER_ACTIVE' )) {
-				espresso_clear_session();
-			}			
 			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, ' e_reg = register'  );
 			remove_all_actions('action_hook_espresso_regevent_default_action');
 			remove_all_actions('action_hook_espresso_event_registration');
@@ -270,10 +268,7 @@ function event_espresso_run() {
 			attendee_edit_record();
 			break;
 
-		default :
-			if ( ! defined( 'MER_ACTIVE' )) {
-				espresso_clear_session();
-			}			
+		default :		
 
 			espresso_require_template('init.php');
 
