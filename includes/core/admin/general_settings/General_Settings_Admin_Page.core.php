@@ -125,13 +125,13 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' )
 				),
-			'google_map_settings' => array(
+/*			'google_map_settings' => array(
 				'nav' => array(
 					'label' => __('Google Maps'),
 					'order' => 40
 					),
 				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box' )
-				),
+				),*/
 			'your_organization_settings' => array(
 				'nav' => array(
 					'label' => __('Your Organization'),
