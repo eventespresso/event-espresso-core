@@ -21,12 +21,12 @@ jQuery(document).ready(function($) {
 			//remove or add id?
 			if ( type == 'active' ) {
 				$('.inactive-message-types', active_secondary).attr('id', 'inactive-message-types');
-				$('.messenger-activation', active_main).attr('id', 'active-message-types');
+				$('.mt-tab-container', active_main).attr('id', 'active-message-types');
 				$(active_main).fadeIn();
 				$(active_secondary).fadeIn();
 			} else {
 				$('.inactive-message-types', active_secondary).attr('id', '');
-				$('.messenger-activation', active_main).attr('id', '');
+				$('.mt-tab-container', active_main).attr('id', '');
 			}
 
 			//make sure we grab any changed containers
@@ -40,7 +40,7 @@ jQuery(document).ready(function($) {
 
 		mt_toggle: function( $item, status ) {
 			var msgr = messenger.replace('#',''),
-			mt = $($item).attr('id').replace('-messagetype','');
+			mt = $($item).attr('id').replace('-messagetype-'+msgr,'');
 
 			var data = {
 				messenger: msgr,
@@ -105,6 +105,7 @@ jQuery(document).ready(function($) {
 		init: function() {
 			$('#postbox-container-2 .postbox').hide();
 			$('#postbox-container-1 .postbox').hide();
+			$('.mt-settings-content').toggle();
 
 			return this; //make chainable
 		},
@@ -170,8 +171,8 @@ jQuery(document).ready(function($) {
 				$messenger_settings = $('.messenger-settings', '.' + messenger + '-content'),
 				$active_mts = $('#active-message-types'),
 				$inactive_mts = $('#inactive-message-types'),
-				$inactive_on_msg = $('.inactive-on-message', '.' + messenger + '-mt-content'),
-				$inactive_off_msg = $('.inactive-off-message', '.' + messenger + '-mt-content'),
+				$inactive_on_msg = $('.inactive-on-message', '.' + messenger + '-content'),
+				$inactive_off_msg = $('.inactive-off-message', '.' + messenger + '-content'),
 				$active_on_msg = $('.active-on-message', '.' + messenger + '-content');
 
 			if ( status == 'on' ) {
@@ -198,7 +199,7 @@ jQuery(document).ready(function($) {
 			//make sure active mts are moved to the right spot
 			if ( typeof(mts) !== 'undefined' ) {
 				$.each(mts, function( index, value ) {
-					var $item = $('#' + value + '-messagetype');
+					var $item = $('#' + value + '-messagetype-'+messenger);
 					MSG_helper.switch_types($item, status);
 				});
 			}
@@ -259,6 +260,14 @@ jQuery(document).ready(function($) {
 			} else if ( what == 'prepend' ) {
 				$(where).prepend(content);
 			}
+		},
+
+
+		slide: function($item) {
+			var msgr = messenger.replace('#',''),
+				mt = $( $item ).attr('id').replace('-messagetype-'+msgr+'-handle','');
+			
+			$( '.mt-settings-content', '.'+msgr+'-content #'+mt+'-messagetype-'+msgr ).slideToggle();
 		}
 	};
 	
@@ -274,16 +283,27 @@ jQuery(document).ready(function($) {
 
 	//set draggables and droppables!
 	$( "li", $active_mts ).draggable({
-		cancel: ".mt-settings-submit", //clicking a submit button wont' initiate dragging
+		cancel: ".no-drag", //clicking .no-drag class element won't initiate dragging
 		revert: "invalid", //when not dropped the item will revert back to its initial location
 		containment: "document",
 		helper: "clone",
 		cursor: "move"
 	});
 
+	//toggle slide
+	$( document ).on('click', '#active-message-types .mt-handlediv', function() {
+		console.log('here');
+		MSG_helper.slide(this);
+	});
+
+	$( document ).on('click', '#inactive-message-types .mt-handlediv', function() {
+		console.log('here2');
+		MSG_helper.slide(this);
+	})
+
 	//make sure inactives are draggable too
 	$( "li", $inactive_mts ).draggable({
-		cancel: ".mt-settings-submit", //clicking a submit button wont' initiate dragging
+		cancel: ".no-drag", //clicking .no-drag class element won't initiate dragging
 		revert: "invalid", //when not dropped the item will revert back to its initial location
 		containment: "document",
 		helper: "clone",
@@ -335,4 +355,5 @@ jQuery(document).ready(function($) {
 		status = $(this).attr('value').replace('messenger-','');
 		MSG_helper.messenger_toggle(messenger, status);
 	});
+
 });

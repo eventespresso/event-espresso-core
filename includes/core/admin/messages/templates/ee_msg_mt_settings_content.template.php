@@ -8,7 +8,7 @@
 			<?php foreach ( $hidden_fields as $name => $field ) {
 				echo $field['field'];
 			} ?> 
-			<input type="submit" value="<?php _e('Submit', 'event_espresso'); ?>" class="button-secondary mt-settings-submit" />
+			<input type="submit" value="<?php _e('Submit', 'event_espresso'); ?>" class="button-secondary mt-settings-submit no-drag" />
 		</form>
 	</div>
 </div>

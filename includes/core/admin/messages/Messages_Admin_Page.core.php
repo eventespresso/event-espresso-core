@@ -1745,7 +1745,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				$this->_m_mt_settings['message_type_tabs'][$messenger->name][$a_or_i][$message_type->name] = array(
 						'label' => ucwords($message_type->label['singular']),
 						'class' => 'message-type-' . $a_or_i,
-						'slug_class' => $message_type->name . '-messagetype',
+						'slug_id' => $message_type->name . '-messagetype-' . $messenger->name,
 						'mt_nonce' => wp_create_nonce($message_type->name . '_nonce'),
 						'href' => 'espresso_' . $message_type->name . '_message_type_settings',
 						'title' => $a_or_i == 'active' ? __('Drag this message type to the Inactive window to deactivate', 'event_espresso') : __('Drag this message type to the messenger to activate', 'event_espresso'),
