@@ -50,6 +50,8 @@ if (!function_exists('show_event_category')) {
 		global $load_espresso_scripts;
 		$load_espresso_scripts = true; //This tells the plugin to load the required scripts
 		ob_start();
+		espresso_require_template('init.php');
+		require_once(espresso_get_event_list_template());
 		display_event_espresso_categories($event_category_id, $css_class); //This function is called from the "/templates/event_list.php" file.
 		$buffer = ob_get_contents();
 		ob_end_clean();
