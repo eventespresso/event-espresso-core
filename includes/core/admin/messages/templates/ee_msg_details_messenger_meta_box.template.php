@@ -1,4 +1,4 @@
-<div class="<?php echo $messenger; ?>-mt-content">
+<div class="<?php echo $messenger; ?>-content">
 	<p class="inactive-on-message <?php echo $hide_on_message; ?>">
 		<?php _e('Below are message types that are currently inactive with this messenger.  Drag them over to the messenger box to activate them.', 'event_espresso'); ?>
 	<p>
