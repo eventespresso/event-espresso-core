@@ -208,13 +208,14 @@ class EEM_Event  extends EEM_TempBase{
 		}
 		$SQL .= 'ORDER BY QSG.QSG_order'; 
 		$QSGs = $wpdb->get_results( $wpdb->prepare( $SQL, $EVT_ID, $system_ID ), 'OBJECT_K' );
+
 		// WHAT?!?!? NOTHING?!?!?
-		if ( empty( $QSGs )) {
-			$SQL = 'SELECT QSG.* FROM ' . $wpdb->prefix . 'esp_event_question_group EQG '; 
-			$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_question_group QSG ON  EQG.QSG_ID = QSG.QSG_ID ';
-			$SQL .= 'WHERE QSG.QSG_system_ID = 1';
-			$QSGs = $wpdb->get_results( $wpdb->prepare( $SQL, $EVT_ID, $system_ID ), 'OBJECT_K' );		
-		}
+//		if ( empty( $QSGs )) {
+//			$SQL = 'SELECT QSG.* FROM ' . $wpdb->prefix . 'esp_event_question_group EQG '; 
+//			$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_question_group QSG ON  EQG.QSG_ID = QSG.QSG_ID ';
+//			$SQL .= 'WHERE QSG.QSG_system_ID = 1';
+//			$QSGs = $wpdb->get_results( $wpdb->prepare( $SQL, $EVT_ID, $system_ID ), 'OBJECT_K' );		
+//		}
 		
 		return $QSGs;
 		

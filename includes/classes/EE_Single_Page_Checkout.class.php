@@ -360,8 +360,6 @@ class EE_Single_Page_Checkout {
 		$total_items = 0;
 
 		$event_queue = array();
-		$additional_attendees = array();
-
 		$step_1_line_items = '';
 
 //		$additional_event_registration_info = new stdClass();
@@ -384,6 +382,7 @@ class EE_Single_Page_Checkout {
 			$event_queue[$cart_type]['title'] = __('Registrations', 'event_espresso');
 			$attendee_headings = array();
 			$additional_attendees = array();
+			$additional_attendee_forms = TRUE;
 			$target_inputs = '';
 
 			if ($cart_contents['total_items'] !== 0) {
@@ -411,13 +410,13 @@ class EE_Single_Page_Checkout {
 					//$event_reg_details->question_groups = maybe_unserialize($event_reg_details->question_groups);
 					$event_reg_details->event_meta = maybe_unserialize($event_reg_details->event_meta);
 
-					// echo '<h2>require pre approval : ' . $event_reg_details->require_pre_approval . '</h2>';
-					// echo '<h2>use coupon code : ' . $event_reg_details->use_coupon_code . '</h2>';
-					// echo '<h2>use groupon code : ' . $event_reg_details->use_groupon_code . '</h2>';
+//					 echo '<h2>require pre approval : ' . $event_reg_details->require_pre_approval . '</h2>';
+//					 echo '<h2>use coupon code : ' . $event_reg_details->use_coupon_code . '</h2>';
+//					 echo '<h2>use groupon code : ' . $event_reg_details->use_groupon_code . '</h2>';
 
-					if ($event_reg_details->require_pre_approval == 1) {
-						$events_requiring_pre_approval[$cart_type]['items'][$item['line_item']] = array('id' => $item['id'], 'name' => $item['name'], 'price' => $item['price'], 'qty' => $item['qty']);
-					}
+//					if ($event_reg_details->require_pre_approval == 1) {
+//						$events_requiring_pre_approval[$cart_type]['items'][$item['line_item']] = array('id' => $item['id'], 'name' => $item['name'], 'price' => $item['price'], 'qty' => $item['qty']);
+//					}
 
 //					if ($event_reg_details->use_coupon_code) {
 //						$events_that_use_coupon_codes[$cart_type]['items'][$item['line_item']] = array('id' => $item['id'], 'name' => $item['name'], 'price' => $item['price'], 'qty' => $item['qty']);
@@ -432,6 +431,7 @@ class EE_Single_Page_Checkout {
 
 
 					$attendee_questions = array();
+					
 					$price_id = $item['price'] * 100;
 					$tckt_date = $item['options']['date'];
 					$find = array("\xC2\xA0", "\x20", "&#160;", "&nbsp;", ' ');
@@ -452,6 +452,9 @@ class EE_Single_Page_Checkout {
 							$event_meta =unserialize( base64_decode( $item['options']['event_meta'] ));
 							$additional_attendee_reg_info = isset( $event_meta['additional_attendee_reg_info'] ) ? absint( $event_meta['additional_attendee_reg_info'] ) : 1;
 						}
+					
+//					echo '<h4>$att_nmbr : ' . $att_nmbr . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//					echo '<h4>$additional_attendee_reg_info : ' . $additional_attendee_reg_info . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
 						$question_meta = array(
 								'EVT_ID' => $item['id'],
@@ -471,20 +474,25 @@ class EE_Single_Page_Checkout {
 						$questions_and_groups = EEM_Event::instance()->get_event_questions_and_groups( $question_meta );
 						$att_questions = EE_Form_Fields::generate_question_groups_html( $questions_and_groups, 'div' );
 
-						if ($att_questions != '') {
-							$att_questions .= '
+						// show this attendee form?
+						if ( empty( $att_questions )) {
+							$additional_attendee_forms = FALSE;
+						}
+						$att_questions .= empty( $att_questions ) ? '<p>' . __('This event does not require registration information for additional attendees.', 'event_espresso') . '</p>' : '';
+
+						$att_questions .= '
 							<input
 									type="hidden"
 									id="' . $input_id . '-line_item_id"
 									name="qstn' . $input_name . '[line_item_id]"
 									value="' . $item['line_item'] . '"
-							/>
-';
-						}
+							/>' . "\n";
+
+
 
 						// add to array
 						$attendee_questions[$item['line_item']][$att_nmbr] = $att_questions;
-						//$attendee_headings[ $item['line_item'] ][ $att_nmbr ] = $att_nmbr == 1 ? 'Primary Attendee' :  'Attendee Number ' . $att_nmbr;
+						//fieldset legend
 						$attendee_headings[$item['line_item']][$att_nmbr] = __('Attendee #', 'event_espresso') . $att_nmbr;
 
 						// for all  attendees other than the primary attendee
@@ -544,32 +552,35 @@ class EE_Single_Page_Checkout {
 			$total_items = $total_items + $cart_contents['total_items'];
 			$grand_total = $grand_total + $cart_contents['sub_total'];
 		}
+		
+		//printr( $event_queue, '$event_queue  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// PRE APPROVAL
 		$template_args['events_requiring_pre_approval'] = '';
 		//  do we have any events that require it ?
-		if (!empty($events_requiring_pre_approval)) {
-
-			// echo printr( $events_requiring_pre_approval, '$events_requiring_pre_approval' );
-			// cycle through array of events requiring pre approval
-			foreach ($events_requiring_pre_approval as $cart_type => $cart_contents) {
-				foreach ($cart_contents as $items) {
-					foreach ($items as $line_item_id => $item) {
-						// we will subtract events that require pre-approval from the event queue totals since these will not be getting purchased right now
-						$total_items = $total_items - $item['qty'];
-						$grand_total = $grand_total - $item['price'];
-						$template_args['events_requiring_pre_approval'] .= '<li>' . $item['name'] . '</li>';
-					}
-				}
-			}
-			$template_args['events_requiring_pre_approval'] = rtrim($template_args['events_requiring_pre_approval'], ', ');
-		}
+//		if (!empty($events_requiring_pre_approval)) {
+//
+//			// echo printr( $events_requiring_pre_approval, '$events_requiring_pre_approval' );
+//			// cycle through array of events requiring pre approval
+//			foreach ($events_requiring_pre_approval as $cart_type => $cart_contents) {
+//				foreach ($cart_contents as $items) {
+//					foreach ($items as $line_item_id => $item) {
+//						// we will subtract events that require pre-approval from the event queue totals since these will not be getting purchased right now
+//						//$total_items = $total_items - $item['qty'];
+//						$grand_total = $grand_total - $item['price'];
+//						$template_args['events_requiring_pre_approval'] .= '<li>' . $item['name'] . '</li>';
+//					}
+//				}
+//			}
+//			$template_args['events_requiring_pre_approval'] = rtrim($template_args['events_requiring_pre_approval'], ', ');
+//		}
 
 
 		//  GOT COUPONS ?
 		$template_args['events_that_use_coupon_codes'] = '';
+		$template_args['use_coupon_codes'] = FALSE;
 		// do we have any events that use them ?
-		if (!empty($events_that_use_coupon_codes)) {
+/*		if (!empty($events_that_use_coupon_codes)) {
 
 			//echo printr( $events_that_use_coupon_codes, '$events_that_use_coupon_codes' );
 			$template_args['use_coupon_codes'] = TRUE;
@@ -587,13 +598,14 @@ class EE_Single_Page_Checkout {
 			$template_args['events_that_use_coupon_codes'] = rtrim($template_args['events_that_use_coupon_codes'], ',');
 		} else {
 			$template_args['use_coupon_codes'] = FALSE;
-		}
+		}*/
 
 
 		// Groupons ?
 		$template_args['events_that_use_groupon_codes'] = '';
+		$template_args['use_groupon_codes'] = FALSE;
 		// do we have any events that use them ?
-		if (!empty($events_that_use_groupon_codes)) {
+/*		if (!empty($events_that_use_groupon_codes)) {
 
 			//echo printr( $events_that_use_groupon_codes, '$events_that_use_groupon_codes' );
 			$template_args['use_groupon_codes'] = TRUE;
@@ -611,7 +623,7 @@ class EE_Single_Page_Checkout {
 			$template_args['events_that_use_groupon_codes'] = rtrim($template_args['events_that_use_groupon_codes'], ',');
 		} else {
 			$template_args['use_groupon_codes'] = FALSE;
-		}
+		}*/
 
 
 		$template_args['mer_reg_page_ajax_coupons_url'] = add_query_arg(array('e_reg' => 'apply_coupon'), $this->_reg_page_base_url);
@@ -619,7 +631,7 @@ class EE_Single_Page_Checkout {
 
 		$template_args['target_inputs'] = rtrim($target_inputs, '&&');
 
-		$template_args['print_copy_info'] = TRUE;
+		$template_args['print_copy_info'] = $additional_attendee_forms ? TRUE : FALSE;
 		$template_args['additional_attendees'] = $additional_attendees;
 
 		$template_args['total_items'] = $total_items;
@@ -686,7 +698,7 @@ class EE_Single_Page_Checkout {
 
 		$template_args['registration_steps'] = $registration_page_step_1 . $registration_page_step_2 . $registration_page_step_3;
 
-//		printr( $EE_Session->get_session_data(), '$EE_Session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//printr( $EE_Session->get_session_data(), '$EE_Session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		espresso_display_template($this->_templates['registration_page_wrapper'], $template_args);
 	}
@@ -788,7 +800,7 @@ class EE_Single_Page_Checkout {
 
 		array_walk_recursive( $_POST, array( $this, 'sanitize_text_field_for_array_walk' ));
 		$valid_data = $_POST;
-		$valid_data = apply_filters('filter_hook_espresso__EE_Single_Page_Checkout__process_registration_step_1__valid_data',$valid_data);
+		$valid_data = apply_filters( 'filter_hook_espresso__EE_Single_Page_Checkout__process_registration_step_1__valid_data', $valid_data );
 		//printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// if we don't have a qstn field then something went TERRIBLY WRONG !!! AHHHHHHHH!!!!!!!
@@ -987,6 +999,13 @@ class EE_Single_Page_Checkout {
 				$template_args['events'][$line_item_id]['ticket-price'] = $event['options']['price_desc'];
 	
 				foreach ($event['attendees'] as $att_nmbr => $attendee) {
+					// if attendee has no name, then use primary attendee's details
+					$attendee = isset( $attendee['1'] ) && $att_nmbr > 1 ? $attendee : $event['attendees'][1];
+					//reset price paid to original in case it was different
+					$attendee['price_paid'] = $event['attendees'][$att_nmbr]['price_paid'];
+
+//					echo '<h4>$att_nmbr : ' . $att_nmbr . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//					printr( $attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	
 					$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['name'] = $attendee['1'] . ' ' . $attendee['2'];
 					$extra_att_details = array();
@@ -999,7 +1018,7 @@ class EE_Single_Page_Checkout {
 								break;
 	
 							default:
-								if (!in_array($key, $exclude_attendee_info) && !is_numeric($key) && $value != '') {
+								if (!in_array($key, $exclude_attendee_info) /*&& !is_numeric($key)*/ && $value != '') {
 									array_push($extra_att_details, $value);
 								}
 						}
@@ -1010,6 +1029,7 @@ class EE_Single_Page_Checkout {
 					} else {
 						$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['extra_att_detail'] = '<span class="small-text lt-grey-text">' . __('no attendee details submitted', 'event_espresso') . '</span>';
 					}
+
 				}
 			}
 		}
@@ -1129,7 +1149,9 @@ class EE_Single_Page_Checkout {
 				// cycle through attendees
 				foreach ($event['attendees'] as $att_nmbr => $attendee) {
 
-
+					// if attendee has no name, then use primary attendee's details
+					$attendee = isset( $attendee['1'] ) && $att_nmbr > 1 ? $attendee : $event['attendees'][1];
+					
 					// grab main attendee details
 					$ATT_fname = isset($attendee[1]) ? $attendee[1] : '';
 					$ATT_lname = isset($attendee[2]) ? $attendee[2] : '';
@@ -1215,6 +1237,7 @@ class EE_Single_Page_Checkout {
 						$REG->delete(array('REG_ID' => $prev_reg->ID()));
 
 					}
+					$default_reg_status = isset( $org_options['default_reg_status'] ) ? $org_options['default_reg_status'] : 'RPN';
 
 					// now create a new registration for the attendee
 					require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Registration.class.php' );
@@ -1225,7 +1248,7 @@ class EE_Single_Page_Checkout {
 													$txn_results['new-ID'],
 													$DTT_ID,
 													$PRC_ID,
-													$price_paid > 0 ? 'RPN' : 'RAP',
+													$default_reg_status,
 													time(),
 													$price_paid,
 													$session['id'],

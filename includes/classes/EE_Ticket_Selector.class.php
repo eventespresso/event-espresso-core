@@ -291,10 +291,9 @@ class EE_Ticket_Selector extends EE_BASE {
 	* 	@return		array  or FALSE
 	*/	
 	public static function process_ticket_selections( $registration_url = FALSE, $return = FALSE ) {
-
+		
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		//echo printr($_POST, '$_POST' );
-		//$event_queue_request = ( isset( $_REQUEST['e_reg'] ) && $_REQUEST['e_reg'] == 'event_queue' ) ? TRUE : FALSE;
+		
 		// do we have an event id?
 		if ( isset($_POST['tkt-slctr-event-id'] )) {
 		
@@ -356,7 +355,10 @@ class EE_Ticket_Selector extends EE_BASE {
 						}
 					} 
 				}
-
+				
+//$cart = EE_Cart::instance()->whats_in_the_cart();
+//printr( $cart, '$cart  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//die();
 				if ( $tckts_slctd ) {				
 					if ( $success ) {
 						if ( $return ) {
@@ -365,6 +367,12 @@ class EE_Ticket_Selector extends EE_BASE {
 							if ( ! $registration_url ) {
 								$registration_url = add_query_arg( array( 'e_reg'=>'register', 'step' => 1 ), espresso_get_reg_page_full_url() );
 							}
+//echo '<h4>$registration_url : ' . $registration_url . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//$cart = EE_Cart::instance()->whats_in_the_cart();
+//printr( $cart, '$cart  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//printr( EE_Session::instance()->get_session_data(), '$EE_Session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//
+//die();
 							wp_safe_redirect($registration_url);
 							exit();
 						}
@@ -579,7 +587,7 @@ class EE_Ticket_Selector extends EE_BASE {
 			return FALSE;
 		}
 
-		//echo printr( $valid_data, '$valid_data' );die();
+		//printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' ); die();
 		return $valid_data;
 	}
 
@@ -680,13 +688,15 @@ class EE_Ticket_Selector extends EE_BASE {
 	*/
 	public static function get_available_spaces($event_id) {
 
-		global $wpdb;
+		global $wpdb, $org_options;
 
 		$nmbr_attendees = 0;
 		$available_spaces = 0;
 
 		// first get the number of attendees already registered
-		$SQL = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id=%d AND (payment_status='Completed' OR payment_status='Pending')";
+		$SQL = 'SELECT COUNT(REG_ID) quantity FROM ' . $wpdb->prefix . 'esp_registration ';
+		$SQL .= 'WHERE EVT_ID=%d AND (STS_ID="RAP"';
+		$SQL .= $org_options['pending_counts_reg_limit'] ? ' OR STS_ID="RPN")' : ')';		
 
 		$wpdb->get_results($wpdb->prepare($SQL, $event_id));
 
@@ -700,8 +710,7 @@ class EE_Ticket_Selector extends EE_BASE {
 		//return $reg_limit;  <<< check this
 
 		// then determine how many spaces are left
-		$available_spaces = $reg_limit - $nmbr_attendees;
-		$available_spaces = max( $available_spaces, 0 );
+		$available_spaces = max(( $reg_limit - $nmbr_attendees ), 0 );
 		return $available_spaces;
 	}
 

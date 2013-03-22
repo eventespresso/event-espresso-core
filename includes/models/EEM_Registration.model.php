@@ -777,11 +777,12 @@ class EEM_Registration extends EEM_TempBase {
 			EE_Error::add_error( $user_msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		global $wpdb;
+		global $wpdb, $org_options;
 		
 		$SQL = 'SELECT COUNT(reg.EVT_ID) FROM ' . $this->table_name . ' reg';
 		$SQL .= $for_incomplete_payments ? ' JOIN ' . $wpdb->prefix . 'esp_transaction txn ON txn.TXN_ID = reg.TXN_ID' : '';
-		$SQL .= ' WHERE reg.EVT_ID=%d AND ( reg.STS_ID="RAP" OR reg.STS_ID="RPN" )';
+		$SQL .= ' WHERE reg.EVT_ID=%d AND ( reg.STS_ID="RAP"';
+		$SQL .= $org_options['pending_counts_reg_limit'] ? ' OR reg.STS_ID="RPN")' : ')';		
 		$SQL .= $for_incomplete_payments ? ' AND txn.STS_ID <> "TCM"' : '';
 
 		$reg_count = $wpdb->get_var( $wpdb->prepare( $SQL, $EVT_ID ));

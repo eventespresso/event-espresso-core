@@ -493,7 +493,7 @@ class EEM_Transaction extends EEM_TempBase {
 	 */
 	public function get_transaction_from_reg_url_link( $reg_url_link = NULL ){
 		if( NULL == $reg_url_link ){
-			$reg_url_link = $_REQUEST['reg_url_link'];
+			$reg_url_link = $_REQUEST['e_reg_url_link'];
 		}
 		require_once('EEM_Registration.model.php');
 		$regmodel=  EEM_Registration::instance();

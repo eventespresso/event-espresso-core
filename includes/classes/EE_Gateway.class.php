@@ -235,7 +235,7 @@ abstract class EE_Gateway {
 		}
 		//get a registration that's currently getting processed
 		/*@var $registration EE_Registration */
-		$url=add_query_arg(array('reg_url_link'=>$registration->reg_url_link()),
+		$url=add_query_arg(array('e_reg_url_link'=>$registration->reg_url_link()),
 				get_permalink($org_options['return_url']));
 		if($urlencode){
 			$url=urlencode($url);
