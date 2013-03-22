@@ -82,3 +82,14 @@ li.mt-tab h4 { margin: 0 0 0.4em; cursor: move; }
 .ui-helper-clearfix {
     clear: both;
 }
+
+li.mt-tab .mt-handlediv {
+    float: right;
+    height: 15px;
+    width: 15px;
+}
+
+li.mt-tab:hover .mt-handlediv {
+    background: transparent url(../../../../../../../../wp-admin/images/arrows.png) no-repeat top right;
+    cursor: pointer;
+}
