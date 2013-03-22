@@ -5,6 +5,9 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 //If you would like to add your own shortcodes, please puchasse the custom shortcodes addon from http://eventespresso.com/download/plugins-and-addons/custom-files-addon/
 //For a list and description of available shortcodes, please refer to http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/
 
+	
+	
+	
 /**
  * Single Event
  * Displays a single event
@@ -50,6 +53,8 @@ if (!function_exists('show_event_category')) {
 		global $load_espresso_scripts;
 		$load_espresso_scripts = true; //This tells the plugin to load the required scripts
 		ob_start();
+		espresso_require_template('init.php');
+		require_once(espresso_get_event_list_template());
 		display_event_espresso_categories($event_category_id, $css_class); //This function is called from the "/templates/event_list.php" file.
 		$buffer = ob_get_contents();
 		ob_end_clean();
