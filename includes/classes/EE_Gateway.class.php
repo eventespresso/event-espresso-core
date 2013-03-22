@@ -699,9 +699,9 @@ abstract class EE_Gateway {
 	 * Other gateways may want to override this, such as offline gateways.
 	 * @return string
 	 */
-	public function get_payment_overview_content(){
+	public function get_payment_overview_content(EE_Payment $payment){
 		//stubb
-		echo " ";//just echo out a single space, so the output buffer that's listening doesnt complain its empty
+		echo "";//just echo out a single space, so the output buffer that's listening doesnt complain its empty
 	}
 
 }

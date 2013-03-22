@@ -133,8 +133,11 @@ Class EE_Bank extends EE_Offline_Gateway {
 	protected function _display_settings_help() {
 		
 	}
-
-	public function get_payment_overview_content() {
+	/**
+	 * 
+	 * @param EE_Payment $payment
+	 */
+	public function get_payment_overview_content(EE_Payment $payment) {
 		?>
 		<div class="event-display-boxes">
 			<h4 id="page_title" class="payment_type_title section-heading"><?php echo stripslashes_deep(empty($this->_payment_settings['page_title']) ? '' : $this->_payment_settings['page_title']) ?></h4>

@@ -354,11 +354,13 @@ abstract class EE_Base_Class {
 					break;
 				case 'date':
 					
-					$format = get_option('date_format');
+					$date_format = get_option('date_format');
+					$time_format = get_option('time_format');//time's good, but 
+					//it's in the server's local time which might confuse peopel
 					if ( empty( $value )) {
 						_e("Unknown",'event_espresso');
 					} else {
-						echo date_i18n( $format, strtotime( $value )); 
+						echo date_i18n( $date_format, strtotime( $value )); 
 					}
 					break;
 				case 'enum':

@@ -88,7 +88,6 @@ class EE_Thank_You_Page{
 	 * performs business logic on page load, like maybe forgetting some session info etc
 	 */
 	function handle_thank_you_page(){
-		
 		$this->_GATEWAYS->thank_you_page_logic($this->_current_transaction);
 	}
 	
@@ -117,7 +116,6 @@ class EE_Thank_You_Page{
 		//prepare variables for displaying
 		//get teh transaction. yes, we had it during 'handle_thank_you_page', but it may have been updated
 		$transaction = $this->_current_transaction;
-		$gateway_payment_overview_content = $this->_GATEWAYS->get_payment_overview_content($transaction);
 		$registrations = $transaction->registrations();
 		$event_names = array();
 		foreach($registrations as $registration){
@@ -127,12 +125,12 @@ class EE_Thank_You_Page{
 		$template_args=array();
 		//update the trsansaction, in case we just updated it.
 		$template_args['transaction']=$this->_TXN->get_transaction($transaction->ID());
-		$template_args['payments'] = $this->_PAY->get_approved_payments_for_transaction($transaction->ID());
+		$template_args['payments'] = $transaction->payments();//$this->_PAY->get_approved_payments_for_transaction($transaction->ID());
 		$template_args['primary_registrant'] = $this->_REG->get_primary_registration_for_transaction_ID($transaction->ID());
 		$template_args['event_names']=$event_names;
 		$template_args['currency_symbol']=$org_options['currency_symbol'];
 		$template_args['SPCO_step_2_url']= add_query_arg(array('e_reg'=>'register','step'=>'2'),get_permalink($org_options['event_page_id']));
-		return $gateway_payment_overview_content . espresso_display_template(EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/payment_overview.template.php',$template_args,true);
+		return  espresso_display_template(EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/payment_overview.template.php',$template_args,true);
 		
 	}
 }

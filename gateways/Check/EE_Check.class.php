@@ -148,9 +148,9 @@ Class EE_Check extends EE_Offline_Gateway {
 	}
 	/**
 	 * Handles teh thank you page logic given this specific transaction 
-	 * @param EE_Transaction $transaction
+	 * @param EE_Payment $payment
 	 */
-	public function get_payment_overview_content(EE_Transaction $transaction) {
+	public function get_payment_overview_content(EE_Payment $payment) {
 		?>
 		<div class="event-display-boxes">
 			<h4 id="check_title" class="payment_type_title section-heading"><?php echo stripslashes_deep(empty($this->_payment_settings['check_title']) ? '' : $this->_payment_settings['check_title']) ?></h4>

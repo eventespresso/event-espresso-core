@@ -23,9 +23,10 @@ EE_Template_Validator::verify_isnt_null($SPCO_step_2_url, '$SPCO_step_2_url');
 		<?php if ( empty($payments)){?>
 			<?php _e("No payment have yet been made toward this registration.",'event_espresso')?>
 		<?php }else{?>
-		<table class='ee-table'>
-			<tbody>
-				<?php foreach ($payments as $payment) { ?>
+		
+			<?php foreach ($payments as $payment) { ?>
+			<table class='ee-table'>
+				<tbody>
 					<tr>
 						<td>
 							<label><?php _e('Payment Type:', 'event_espresso'); ?></label>
@@ -55,12 +56,26 @@ EE_Template_Validator::verify_isnt_null($SPCO_step_2_url, '$SPCO_step_2_url');
 							<label><?php _e("Payment Status: ", 'event_espresso') ?></label>
 						</td>
 						<td>
+							<?php if ($payment->is_approved()) { ?>
+								<img class="espresso-paid-status-icon-img" align="absmiddle" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/accept.png" width="16" height="16" alt="<?php $payment->e_pretty_status() ?>" title="<?php $payment->e_pretty_status() ?>" />
+							<?php } elseif($payment->is_pending()) { ?>
+								<img class="espresso-unpaid-status-icon-img" align="absmiddle" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/error.png" width="16" height="16" alt="<?php $payment->e_pretty_status() ?>" title="<?php $payment->e_pretty_status() ?>" />
+							<?php }else{?>
+								<img class="espresso-unpaid-status-icon-img" align="absmiddle" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/exclamation.png" width="16" height="16" alt="<?php $payment->e_pretty_status() ?>" title="<?php $payment->e_pretty_status() ?>" />
+							<?php } ?>
 							<?php $payment->e_pretty_status() ?>
 						</td>
 					</tr>
-				<?php } ?>
-			</tbody>
-		</table>
+					<?php $gateway_payment_content = $payment->gateway_payment_overview_content();
+					if (!empty($gateway_payment_content)){?>
+					<tr>
+						<td colspan=2><?php echo $gateway_payment_content?></td>
+					</tr>
+					<?php }?>
+					</tbody>
+				</table>
+			<?php } ?>
+			
 		<?php }?>
 	</div>
 	<br/>
