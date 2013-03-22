@@ -79,6 +79,12 @@ EE_Template_Validator::verify_isnt_null($SPCO_step_2_url, '$SPCO_step_2_url');
 		<?php }?>
 	</div>
 	<br/>
+	<?php
+			if (!$transaction->is_completed() && !$transaction->is_pending()) {
+				?>
+			<a href='<?php echo $SPCO_step_2_url?>'><?php _e("Return to Payment Options", 'event_espresso'); ?></a>
+				<?php }
+			?>
 
 	<h3>
 		<?php _e('Transaction Status', 'event_espresso'); ?>
@@ -168,12 +174,7 @@ EE_Template_Validator::verify_isnt_null($SPCO_step_2_url, '$SPCO_step_2_url');
 					<?php } ?>
 				</tbody>
 			</table>
-			<?php
-			if (!$transaction->is_completed()) {
-				?>
-			<a href='<?php echo $SPCO_step_2_url?>'><?php _e("Try payment again", 'event_espresso'); ?></a>
-				<?php }
-			?>
+			
 		</div><!-- / .reg-gen-details -->
 	</div><!-- / .event-data-display -->
 </div><!-- / .event-display-boxes -->

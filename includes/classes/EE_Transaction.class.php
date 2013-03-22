@@ -561,11 +561,17 @@ class EE_Transaction extends EE_Base_Class{
 	
 	
 	/**
-	 * gets payments for this transaction
+	 * Gets payments for this transaction. Unlike other such functions, order by 'DESC' by default
+	 * @param type $where_col_n_vals all parameters just like EEM_Base's select_all_where
+	 * @param type $orderby
+	 * @param type $order
+	 * @param type $operators
+	 * @param type $limit
+	 * @param type $output
 	 * @return EE_Payment[]
 	 */
-	public function payments(){
-		return $this->get_many_related('Payments');
+	public function payments($where_col_n_vals = array(), $orderby = null, $order = 'DESC',$operators = '=', $limit = null, $output= 'OBJECT_K' ){
+		return $this->get_many_related('Payments',$where_col_n_vals,$orderby,$order,$operators,$limit,$output);
 	}
 	
 	
