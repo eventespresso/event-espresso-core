@@ -21,9 +21,9 @@
 	
 	$counter = 1;
 	
-	foreach ( $event_queue as $cart_type => $cart ) : 
-		if ( $cart['has_items'] ) :
-			foreach ( $cart['items'] as $line_item => $item ) :
+	foreach ( $event_queue as $cart_type => $cart ) {
+		if ( $cart['has_items'] ) {
+			foreach ( $cart['items'] as $line_item => $item ) {
 			
 ?>
 
@@ -33,20 +33,21 @@
 					<a href="<?php //echo $registration_url; ?>" id="a_event_title-<?php echo $item['id'] ?>" class="a_event_title" title="<?php echo $item['name'] ?>"><?php echo $item['name'] ?></a>
 				</h3>
 
-		<?php foreach( $item['attendee_questions'][ $line_item ] as $att_nmbr => $attendee_questions ) : ?>
-			<?php if ( ! empty( $attendee_questions )) : ?>
-	
+		<?php foreach( $item['attendee_questions'][ $line_item ] as $att_nmbr => $attendee_questions ) { ?>
+
 				<fieldset id="mer-reg-page-attendee-wrap-<?php echo $item['id'] . '-' . $counter;?>" class="mer-reg-page-attendee-wrap-fs">
 	  				<legend class="mer-reg-page-attendee-lgnd smaller-text lt-grey-text"><?php echo $item['attendee_headings'][ $line_item ][$att_nmbr]?></legend>
-					<?php //do an action before the questions output, including the item and count 
+
+			<?php if ( ! empty( $attendee_questions )) { ?>
+						<?php //do an action before the questions output, including the item and count 
 					echo do_action('action_hook_espresso_registration_page_step_1_before_questions',$item, $counter);?>
 					<?php echo $attendee_questions;?>
 					
-				<?php if ( $att_nmbr == 1 && $print_copy_info ) : ?>
+				<?php if ( $att_nmbr == 1 && $print_copy_info ) { ?>
 	
 						<input type="hidden" id="primary-attendee" name="qstn<?php echo $prmy_att_input_name ?>[primary_attendee]" value="1" />
 	
-					<?php if ( count( $additional_attendees )) : ?>	
+					<?php if ( count( $additional_attendees )) { ?>	
 					
 						<div id="mer-reg-page-copy-attendee-dv" class="hide-if-no-js">
 						
@@ -65,12 +66,12 @@
 								<p class="mer-reg-page-copy-attendee-pg"><?php _e('The following checkboxes allow you to use the above information for only the selected additional event attendees.', 'event_espresso'); ?></p>
 	
 						<?php 						
-								foreach ( $additional_attendees as $attendee ) :
-									foreach ( $attendee as $att ) :	
+								foreach ( $additional_attendees as $attendee ) {
+									foreach ( $attendee as $att ) {
 								
-										if ( $att['event_hdr'] ) : ?>
+										if ( $att['event_hdr'] ) { ?>
 								<h6 class="mer-reg-page-copy-attendee-event-hdr"><?php echo $att['event_hdr']; ?></h6>										
-							<?php	endif; ?>										
+										<?php	} ?>										
 	
 								<p class="event_form_field mer-reg-page-copy-attendee-chk-pg">
 									<label><?php echo __('Attendee #', 'event_espresso') . $att['att_nmbr'];?>
@@ -83,23 +84,20 @@
 									</label>
 								</p>							
 																	
-						<?php	endforeach; ?>
+						<?php	} ?>
 								<div class="clear-float"></div>
 								<hr class="mer-reg-page-copy-attendee-hr" />
-					<?php	endforeach; ?>											
+					<?php	} ?>											
 							</div>
 							<div class="clear-float"></div>					
 						</div>
 				<?php
-							endif;
+							}
 							$print_copy_info = FALSE;
-						 endif; 
-				?>			
-				</fieldset>
-				<?php	
+						}
 						$counter++;
-					else :
-						 if ( $att_nmbr == 1 && $print_copy_info ) : 
+					} else {
+						 if ( $att_nmbr == 1 && $print_copy_info ) {
 				?>
 					<br />
 					<h3><?php _e('No information is required to attend this event. Please proceed to Step 2', 'event_espresso'); ?></h3>
@@ -109,16 +107,20 @@
 							name="qstn[]"
 							value="0"
 					/>					
-		<?php			$print_copy_info = FALSE;
-						endif;
-					endif;
-				 endforeach;
+				<?php
+							$print_copy_info = FALSE;
+						} 
+					}
+				?>			
+				</fieldset>
+				<?php	
+				 }
 		?>
 			</div>			
 	<?php			
-			 endforeach; // $cart['items'] as $line_item 
-		 endif; // $cart['has_items'] 
-	endforeach; // $event_queue as $cart_type
+			 } // $cart['items'] as $line_item 
+		 } // $cart['has_items'] 
+	} // $event_queue as $cart_type
 ?>
 
 			
