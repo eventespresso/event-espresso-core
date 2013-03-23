@@ -64,6 +64,8 @@ jQuery(document).ready(function($) {
 					$('.ajax-loader-grey').hide();
 					if ( resp.success ) {
 						MSG_helper.switch_types( $item, status );
+					} else {
+						MSG_helper.switch_types( $item, status, true );
 					}
 				}
 			});
@@ -72,11 +74,15 @@ jQuery(document).ready(function($) {
 		},
 
 
-
-		switch_types: function( $item, status ) {
+		switch_types: function( $item, status, reverse ) {
 			//convert status if necessary
 			if ( status == 'on' || status == 'off' ) {
 				status = status == 'on' ? 'activate' : 'deactivate';
+			}
+
+			//if reverse is true (not undefined) then we want to reverse the status
+			if ( typeof(reverse) !== 'undefined' && reverse ) {
+				status = status == 'activate' ? 'deactivate' : 'activate';
 			}
 
 			$item.fadeOut(function() {
@@ -299,7 +305,7 @@ jQuery(document).ready(function($) {
 	$( document ).on('click', '#inactive-message-types .mt-handlediv', function() {
 		console.log('here2');
 		MSG_helper.slide(this);
-	})
+	});
 
 	//make sure inactives are draggable too
 	$( "li", $inactive_mts ).draggable({
