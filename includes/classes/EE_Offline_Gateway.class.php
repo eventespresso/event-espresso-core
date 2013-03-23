@@ -59,7 +59,6 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 			$payment = new EE_Payment($transaction->ID(), EEM_Payment::status_id_pending, $transaction->datetime(), 'CART', $transaction->total(), $this->gateway(), __("Payment is pending. Your registration is not complete until payment is received",'event_espresso'),null,null,null,false,array());
 			$payment->save();
 			$success = $this->update_transaction_with_payment($transaction, $payment);
-
 			$EE_Session->set_session_data(array('txn_results' => serialize($transaction->details())), 'session_data');
 			$session = $EE_Session->get_session_data();
 			//prevent trying to serialize a recursive relationship

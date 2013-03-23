@@ -258,14 +258,14 @@ Class EE_Invoice extends EE_Offline_Gateway {
 		<?php
 	}
 
-
-	public function get_payment_overview_content(EE_Transaction $transaction) {
-		global $EE_Session;
-		$session_data = $EE_Session->get_session_data();
-		//printr( $session_data, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 
-		
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Registration.class.php' );
-		$registration = $session_data['registration'][$session_data['primary_attendee']['line_item_id']];
+	/**
+	 * Gets content for displaying about the payment done using this gateway
+	 * @param EE_Payment $payment
+	 * @return type
+	 */
+	public function get_payment_overview_content(EE_Payment $payment) {
+		$registration = $payment->transaction()->primary_registration();
+		//$registration = $session_data['registration'][$session_data['primary_attendee']['line_item_id']];
 		
 		if (!$this->_payment_settings['show'])
 			return;
@@ -294,9 +294,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 			}
 			?>
 		</div>
-		<?php
-		//$this->_EEM_Gateways->reset_session_data();
-		
+		<?php		
 	}
 
 	public function espresso_display_payment_gateways() {

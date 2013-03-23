@@ -648,6 +648,39 @@ Class EEM_Gateways {
 		
 		return TRUE;
 	}
+	
+	/**
+	 * Requires the given gateway for later use. Does not instantiate the gateway, however.
+	 * By default, searches for the gateway named $gateway in 
+	 * wp-uploads/espresso/gateways/$gateway/EE_$gateway.class.php
+	 * next in
+	 * wp-content/plugins/{event-espresso}/gateawys/$gateway/EE_$gateway}.class.php.
+	 * Gateway developers may use filter_hook_espresso__EEM_Gateways__get_gateway_filepath__default_filepath to override the filepath,
+	 * or filter_hook_espresso__EEM_Gateways__get_gateway_filepath__filename to override the file's name,
+	 * or filter_hook_espresso__EEM_Gateways__get_gateway_filepath__classname to override the class's name, given the gateway's name.
+	 * Each of these filters is passed the gateway's name.
+	 * 
+	 * @param string $gateway_name usually the folder's name where the gateway is stored. Eg, Paypal_Standard, 2checkout, Check, etc.
+	 * @return void just requires the gateway. Doesn't return it
+	 */
+	/*public static function require_gateway($gateway_name){
+		$classname = apply_filters('filter_hook_espresso__EEM_Gateways__get_gateway_filepath__classname', 'EE_' . $gateway_name,$gateway_name);
+		$filename = apply_filters('filter_hook_espresso__EEM_Gateways__get_gateway_filepath__filename',$classname . '.class.php',$gateway_name);
+		$default_gateway_filepath = apply_filters('filter_hook_espresso__EEM_Gateways__get_gateway_filepath__default_filepath',EVENT_ESPRESSO_GATEWAY_DIR . $gateway_name . DS . $filename,$gateway_name);
+		if (file_exists($default_gateway_filepath)) {
+			require_once($default_gateway_filepath);
+		} else if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway_name . DS . $filename)) {
+			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway_name . DS . $filename);
+		} else {
+			$msg = sprintf(
+					__( 'The file : %s could not be located in either : %s or %s', 'event_espresso'), 
+					'<b>' . $filename . '</b>',
+					'<b>' . EVENT_ESPRESSO_GATEWAY_DIR . $gateway_name . DS . '</b>',
+					'<b>' . EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway_name . DS . '</b>'
+			);
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );	
+		}
+	}*/
 
 
 
@@ -851,15 +884,16 @@ Class EEM_Gateways {
 	 * Gets the HTML from the currently-selected gateway to display the payment's overview, specific to this gateway.
 	 * Content to be shown may include errors, notes about the payment, and further payment instructions (often the case for offline gateways).
 	 * 
+	 * @param string gateway name (usually the folder's name where the main gateway file is located inside the gateways folder), eg Paypal_Standard
 	 * @param EE_Transaction $transaction
 	 * @return string of HTML to be displayed above the payment overview, usually on the thank you page
 	 */
-	public function get_payment_overview_content(EE_Transaction $transaction){
+	public function get_payment_overview_content($gateway_name, EE_Payment $payment){
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		if (!empty($this->_selected_gateway)
-						&& !empty($this->_gateway_instances[ $this->_selected_gateway ])) {
+		if (!empty($gateway_name)
+						&& !empty($this->_gateway_instances[ $gateway_name ])) {
 				ob_start();
-				$this->_gateway_instances[ $this->_selected_gateway ]->get_payment_overview_content($transaction);
+				$this->_gateway_instances[ $gateway_name ]->get_payment_overview_content($payment);
 				$output = ob_get_clean();
 				return $output;
 		}
@@ -873,8 +907,7 @@ Class EEM_Gateways {
 	public function check_for_completed_transaction(EE_Transaction $transaction){
 		//throw new Exception("unfinished. This functino should check for a completed transaction .If completed, clear some session etc
 		require_once('EEM_Transaction.model.php');
-		if($transaction->status_ID() == EEM_Transaction::complete_status_code
-				|| $transaction->status_ID() == EEM_Transaction::pending_status_code){
+		if($transaction->status_ID() == EEM_Transaction::complete_status_code){
 			$this->reset_session_data();
 		}
 	}

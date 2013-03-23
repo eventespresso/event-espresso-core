@@ -226,12 +226,14 @@ function event_espresso_get_event_details( $attributes = array()) {
 
 	
 	foreach ($events as $event) {
+			
+//		printr( $event, '$event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	
 		$event_id = $event->id;
 		// add event id to list of event ids to be used for the query cache transient key
-		$event_name = stripslashes_deep($event->event_name);
-		$event_desc = stripslashes_deep($event->event_desc);
-		$event_desc = str_replace('<p></p>', '', $event_desc);
+		$event_name = stripslashes($event->event_name);
+		$event_desc = stripslashes($event->event_desc);
+		//$event_desc = str_replace('<p></p>', '', $event_desc);
 		$overflow_event_id = $event->overflow_event_id;
 
 
@@ -281,6 +283,14 @@ function event_espresso_get_event_details( $attributes = array()) {
 		$display_available_spaces = ( $event->display_reg_form && $event->externalURL == '' ) ? TRUE : FALSE;
 		$available_spaces = get_number_of_attendees_reg_limit( $event_id, 'available_spaces', $event->reg_limit );
 
+		$venue_title 			= isset( $event->venue_title ) ? $event->venue_title : '';
+		$event_address 		= isset( $event->address ) ? $event->address : '';
+		$event_address2 	= isset( $event->address2 ) ? $event->address2 : '';
+		$event_city 			= isset( $event->city ) ? $event->city : '';
+		$event_state 			= isset( $event->state ) ? $event->state : '';
+		$event_zip 				= isset( $event->zip ) ? $event->zip : '';
+		$event_country 		= isset( $event->country ) ? $event->country : '';
+		
 		//Venue information
 		if ($use_venues) {
 			if (isset($all_venues[$event->venue_id])) {
@@ -317,12 +327,6 @@ function event_espresso_get_event_details( $attributes = array()) {
 			}
 		}
 
-		$event_address = empty($event_address) ? '' : $event_address;
-		$event_address2 = empty($event_address2) ? '' : $event_address2;
-		$event_city = empty($event_city) ? '' : $event_city;
-		$event_state = empty($event_state) ? '' : $event_state;
-		$event_zip = empty($event_zip) ? '' : $event_zip;
-		$event_country = empty($event_country) ? '' : $event_country;
 		//Address formatting
 		$venue_address_elements = $event_address . ',';
 		$venue_address_elements .= $event_address2 . ',';
@@ -331,13 +335,13 @@ function event_espresso_get_event_details( $attributes = array()) {
 		$venue_address_elements .= $event_zip . ',';
 		$venue_address_elements .= $event_country . ',';
 
-		$location = ! empty( $event_address2 ) ? $event_address . '<br />' : '';
+		$location = ! empty( $venue_title ) ? '<strong>' . $venue_title . '</strong><br />' : '';
+		$location .= ! empty( $event_address ) ? $event_address . '<br />' : '';
 		$location .= ! empty( $event_address2 ) ? $event_address2 . '<br />' : '';
 		$location .= ! empty( $event_city ) ? $event_city . ', ' : '';
 		$location .= ! empty( $event_state ) ? $event_state . '<br />' : '';
 		$location .= ! empty( $event_country ) ? $event_country . '<br />' : '';
 		$location .= ! empty( $event_zip ) ? $event_zip . '<br />' : '';
-
 
 		//Google map link creation
 		$google_map_link = espresso_google_map_link(array(
@@ -408,9 +412,8 @@ function event_espresso_get_event_details( $attributes = array()) {
 
 		$display_thumb_in_list = ( isset($event_meta['display_thumb_in_lists']) && $event_meta['display_thumb_in_lists'] && !empty($event_meta['event_thumbnail_url']) ) ? TRUE : FALSE;
 
-
+		
 		$display_address = ( ! empty( $location) && isset( $org_options['template_settings']['display_address_in_event_list'] ) && $org_options['template_settings']['display_address_in_event_list']) ? TRUE : FALSE;
-
 
 		//Event description
 		if (!empty($event_desc)) {
@@ -506,20 +509,16 @@ function event_espresso_get_event_details( $attributes = array()) {
 						break;
 
 					case 'PENDING':
-
-						if (current_user_can('administrator') || function_exists('espresso_member_data') && espresso_can_view_event($event_id) == true) {
-							echo '<div class="pending_event">';
-							include(espresso_get_event_list_display_template());
-							echo '</div>';
-						}
-
+							if (current_user_can('administrator') || function_exists('espresso_member_data') && espresso_can_view_event($event_id) == true) {
+								echo '<div class="pending_event">';
+								include(espresso_get_event_list_display_template());
+								echo '</div>';
+							}
 						break;
 
 					case 'ACTIVE':
 					default:
-
-						include(espresso_get_event_list_display_template());
-
+							include(espresso_get_event_list_display_template());
 						break;
 				}
 			}

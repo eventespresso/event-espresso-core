@@ -100,7 +100,7 @@
 		</div>
 	</div>
 
-<?php if ($display_desc) { ?>
+<?php if ( $display_address || $display_desc ) { ?>
 
 	<div class="event-list-ticket-info-dv event-display-boxes">
 		<h3 class="ui-widget-header ui-corner-top"><?php echo __('Event Information', 'event_espresso'); ?></h3>
@@ -109,20 +109,21 @@
 		<?php if ($display_address) { ?>
 			<div id="event_address-<?php echo $event_id ?>"  class="event-address-pg">
 				<h6><?php echo __('Address:', 'event_espresso'); ?></h6>
-				<?php echo stripslashes_deep($location); ?>
+				<?php echo $location; ?>
 				<?php echo $google_map_link; ?>
 			</div>
 			<div class="clear"></div>
+			<?php echo $google_map; ?>
+			<div class="clear"></div>
 		<?php } ?>
 
-		<?php echo $google_map; ?>
-		<div class="clear"></div>
-
+		<?php if ($display_desc) { ?>
 			<div  id="event-<?php echo $event_id; ?>-desc-dv" class="event-desc  clear-float">
 				<h6><?php echo __('Description: ', 'event_espresso'); ?></h6>
 				<?php echo $event_desc; ?>
 			</div>
 			<div class="clear"></div>
+		<?php } ?>
 
 			<div class="event-more-info-dv clear-float">
 				<a 	id="event-more-info-btn-lnk-<?php echo $event_id ?>"

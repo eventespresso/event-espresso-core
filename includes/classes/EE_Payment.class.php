@@ -238,6 +238,17 @@ class EE_Payment extends EE_Base_Class{
 		$this->_TXN_ID = absint( $TXN_ID );
 		return TRUE;
 	}
+	
+	
+	
+	
+	/**
+	 * Gets the transaction related to this payment
+	 * @return EE_Transaction
+	 */
+	public function transaction(){
+		return $this->get_first_related('Transaction');
+	}
 
 
 
@@ -687,6 +698,8 @@ class EE_Payment extends EE_Base_Class{
 		switch($this->STS_ID()){
 			case EEM_Payment::status_id_approved:
 				return __("Accepted",'event_espresso');
+			case EEM_Payment::status_id_pending:
+				return __("Pending",'event_espresso');
 			case EEM_Payment::status_id_cancelled:
 				return __('Cancelled','event_espresso');
 			case EEM_Payment::status_id_declined:
@@ -706,6 +719,93 @@ class EE_Payment extends EE_Base_Class{
 	 */
 	public function e_pretty_status(){
 		echo $this->pretty_status();
+	}
+	
+	
+	
+	
+	/**
+	 * Generally determines if teh status of this payment equals
+	 * the $STS_ID string
+	 * @param string $STS_ID an ID from the esp_status table/
+	 * one of the status_id_* on the EEM_Payment model
+	 * @return boolean whether the status of this payment equals the status id
+	 */
+	protected function status_is($STS_ID){
+		if($STS_ID == $this->STS_ID()){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	/**
+	 * For determining the statsu of teh payment
+	 * @return boolean whether the payment is approved or not
+	 */
+	public function is_approved(){
+		return $this->status_is(EEM_Payment::status_id_approved);
+	}
+	
+	
+	
+	
+	/**
+	 * For determining the statsu of teh payment
+	 * @return boolean whether the payment is pending or not
+	 */
+	public function is_pending(){
+		return $this->status_is(EEM_Payment::status_id_pending);
+	}
+	
+	
+	
+	
+	/**
+	 * For determining the statsu of teh payment
+	 * @return boolean
+	 */
+	public function is_cancelled(){
+		return $this->status_is(EEM_Payment::status_id_cancelled);
+	}
+	
+	
+	
+	/**
+	 * For determining the statsu of teh payment
+	 * @return boolean
+	 */
+	public function is_declined(){
+		return $this->status_is(EEM_Payment::status_id_declined);
+	}
+	
+	
+	
+	
+	/**
+	 * For determining the statsu of teh payment
+	 * @return boolean
+	 */
+	public function is_failed(){
+		return $this->status_is(EEM_Payment::status_id_failed);
+	}
+	
+	
+	/**
+	 * Echoes out the payment overview HTML from the gateway used on this payment
+	 */
+	public function e_gateway_payment_overview_content(){
+		echo $this->gateway_payment_overview_content();
+	}
+	
+	/**
+	 * Gets the payment overview content from the gateway used on this payment.
+	 * @return string
+	 */
+	public function gateway_payment_overview_content(){
+		$gateway_name = $this->gateway();
+		$EEM_Gateways = EEM_Gateways::instance();	
+		//call its render payment results, feeding it the current payment
+		return $EEM_Gateways->get_payment_overview_content($gateway_name,$this);
 	}
 
 
