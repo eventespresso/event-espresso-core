@@ -1140,7 +1140,6 @@ class EE_Single_Page_Checkout {
 					$grand_total += $taxes;
 				}
 			}
-
 			// start the transaction record
 			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Transaction.class.php' );
 			$txn_status = $grand_total > 0 ? 'TIN' : 'TCM';
@@ -1306,7 +1305,9 @@ class EE_Single_Page_Checkout {
 			}
 			//$updated_session=$EE_Session->get_session_data();
 			$transaction->set_txn_session_data( $session );
-			$transaction->update();
+			$transaction->save();
+			//remove the session from teh transaction befores saving it to teh session... otherwise we'll ahve a recursive relationship! bad!!
+			$transaction->set_txn_session_data(null);
 			//var_dump($EE_Session->get_session_data());
 			$EE_Session->set_session_data(array( 'registration' => $saved_registrations, 'transaction' => $transaction ), 'session_data');
 			$EE_Session->_update_espresso_session();

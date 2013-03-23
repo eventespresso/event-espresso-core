@@ -91,7 +91,7 @@ class EEM_Transaction extends EEM_TempBase {
 		$this->_related_models = array(
 			'Payments' =>		new EE_Model_Relation('hasMany', 'Payment', 'TXN_ID'),
 			'Registrations' =>	new EE_Model_Relation('hasMany', 'Registration', 'TXN_ID'),
-			'Status' =>			new EE_Model_Relation('belongsTo','Status','STS_ID')
+			//'Status' =>			new EE_Model_Relation('belongsTo','Status','STS_ID')
 		);
 		parent::__construct();
 	

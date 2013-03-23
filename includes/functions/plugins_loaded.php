@@ -351,7 +351,7 @@ add_action( 'action_hook_espresso_before_event_list', 'espresso_clear_session' )
 function espresso_printr_session() {
 	$user = wp_get_current_user();
 	$wp_user_id = isset( $user->data->ID ) ? $user->data->ID : NULL;
-	//$_REQUEST['ee_session'] = TRUE;
+	$_REQUEST['ee_session'] = TRUE;
 	if ( isset( $_REQUEST['ee_session'] ) && $wp_user_id <= 1 ) {	
 		global $EE_Session;
 		echo '<pre style="height:auto;border:2px solid lightblue;">';

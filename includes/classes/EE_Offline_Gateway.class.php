@@ -49,7 +49,6 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 	 */
 	public function thank_you_page_logic(EE_Transaction $transaction) {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		
 		global $EE_Session;
 		//check for an existing payment from this gateway
 		$payments = $this->_PAY->get_all_where(array('PAY_gateway'=>$this->gateway(),'TXN_ID'=>$transaction->ID()));
