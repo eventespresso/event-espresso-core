@@ -466,6 +466,8 @@ abstract class EE_messenger extends EE_Base {
 				$switch_query_args = array(
 					'action' => 'add_new_message_template',
 					'evt_id' => $event_id,
+					'messenger' => $this->name,
+					'message_type' => $template->message_type(),
 					'add_new_message_template_nonce' => wp_create_nonce('add_new_message_template_nonce')
 					);
 			} else {

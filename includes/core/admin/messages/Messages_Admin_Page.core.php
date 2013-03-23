@@ -378,7 +378,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _ee_messages_overview_list_table() {
-		$this->_admin_page_title .= $this->_get_action_link_or_button('add_new_message_template', 'add', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
@@ -482,22 +481,28 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * _add_message_template
+	 *
+	 * For now this is ONLY used when creating custom event templates.
 	 * 
 	 * @access  protected
 	 * @return void
 	 */
 	protected function _add_message_template() {
-		$events = array();
-		//we need to ask for a messenger and message type in order to generate the templates.
 		
-		//is this for a custom evt?
+		//we need messenger and message type.  They should be coming from the event editor. If not here then return error
+		if ( !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['message_type'] ) )
+			throw new EE_error('Sorry, but we can\'t create new templates because we\'re missing the messenger or message type', 'event_espresso');
+		
 		$EVT_ID = isset( $this->_req_data['evt_id'] ) && !empty( $this->_req_data['evt_id'] ) ? absint( $this->_req_data['evt_id'] ) : FALSE;
 
-		//if we've got an empty EVT_ID then we need to get the list of Events for selection.
+		//if we've got an empty EVT_ID then we need to get out
 		if ( empty($EVT_ID ) ) {
-			$events = $this->_get_active_events();
+			throw new EE_Error('Sorry, but we can\'t create a custom template for this event because no event id is given', 'event_espresso');
+			//$events = $this->_get_active_events();
 		}
 		
+		/** remove the below for now because its not needed **/
+		/*
 		$this->_template_args['EVT_ID'] = $EVT_ID ? $EVT_ID : FALSE;
 		$this->_template_args['event_name'] = $EVT_ID ? $this->_event_name($EVT_ID) : FALSE;
 		$this->_template_args['active_messengers'] = $this->_active_messengers;
@@ -534,6 +539,16 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//final template wrapper
 		$this->display_admin_page_with_sidebar();
+		/**/
+
+
+		//let's just make sure the tempalte gets generated!
+		
+		//we need to reassign some variables for what the insert is expecting
+		$this->_req_data['MTP_messenger'] = $this->_req_data['messenger'];
+		$this->_req_data['MTP_message_type'] = $this->_req_data['message_type'];
+		$this->_req_data['EVT_ID'] = $this->_req_data['evt_id'];
+		$this->_insert_or_update_message_template(TRUE);
 
 	}
 
