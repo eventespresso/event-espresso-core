@@ -566,6 +566,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$EVT_ID = isset( $this->_req_data['evt_id'] ) && !empty( $this->_req_data['evt_id'] ) ? absint( $this->_req_data['evt_id'] ) : FALSE;
 
+
 		$this->_set_shortcodes(); //this also sets the _message_template property.
 		$message_template = $this->_message_template;
 		$c_label = $message_template->context_label();
