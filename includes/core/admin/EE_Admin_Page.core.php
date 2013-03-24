@@ -1901,17 +1901,20 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		$data = isset( $this->_template_args['data'] ) ? $this->_template_args['data'] : array();
+		unset($this->_template_args['data']);
 		$json = array(
 			'error' => isset( $this->_template_args['error'] ) ? $this->_template_args['error'] : FALSE,
 			'success' => isset( $this->_template_args['success'] ) ? $this->_template_args['success'] : FALSE,
 			'notices' => EE_Error::get_notices(),
-			'content' => $this->_template_args['admin_page_content'],
+			'content' => utf8_encode($this->_template_args['admin_page_content']),
 			'data' => array_merge( $data, array('template_args' => $this->_template_args ) )
 			);
+
 
 		// make sure there are no php errors or headers_sent.  Then we can set correct json header.
 		if ( NULL === error_get_last() || ! headers_sent() )
 			header('Content-Type: application/json');
+
 		echo json_encode( $json );
 		exit();
 	}
@@ -1962,8 +1965,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		// load settings page wrapper template
 		$template_path = !defined( 'DOING_AJAX' ) ? EE_CORE_ADMIN . 'admin_wrapper.template.php' : EE_CORE_ADMIN . 'admin_wrapper_ajax.template.php';
 
+
 		if ( defined( 'DOING_AJAX' ) ) {
 			$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
+
 			$this->_return_json();
 		} else {
 			espresso_display_template( $template_path, $this->_template_args );

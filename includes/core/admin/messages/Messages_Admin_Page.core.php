@@ -1049,6 +1049,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$preview = $MSG->preview_message( $this->_req_data['message_type'], $this->_req_data['context'], $this->_req_data['messenger'] );
 
 
+
 		//let's add a button to go back to the edit view
 		$query_args = array(
 			'id' => $this->_req_data['msg_id'],
