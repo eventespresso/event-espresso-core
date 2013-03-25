@@ -72,6 +72,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_active_messengers = get_option('ee_active_messengers');
 		$this->_active_messengers = !empty($this->_active_messengers) ?  $this->_active_messengers : array();
 		$this->_active_message_types = !empty($this->_active_messenger) ? $this->_active_messengers[$this->_active_messenger]['settings'][$this->_active_messenger . '-message_types'] : array();
+		
 
 		//what about saving the objects in the active_messengers and active_message_types?
 		$this->_load_active_messenger_objects();
@@ -478,6 +479,29 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	}
 
 
+
+
+	/**
+	 * filters etc might need a list of installed message_types
+	 * @return array an array of message type objects
+	 */
+	public function get_installed_message_types() {
+		$installed_objects = $this->_get_installed_message_objects();
+		return $installed_objects['message_types'];
+	}
+
+
+
+	/**
+	 * The purpose of this function is to return all installed message objects (messengers and message type regardless of whether they are ACTIVE or not)
+	 * @return array array consisting of installed messenger objects and installed message type objects.
+	 */
+	private function _get_installed_message_objects() {
+		//get all installed messengers and message_types
+		$EE_MSG = new EE_messages();
+		$installed_message_objects = $EE_MSG->get_installed();
+		return $installed_message_objects;
+	}
 
 
 	/**
@@ -1737,8 +1761,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$selected_messenger = isset( $this->_req_data['selected_messenger'] ) ? $this->_req_data['selected_messenger'] : 'email';
 		
 		//get all installed messengers and message_types
-		$EE_MSG = new EE_messages();
-		$installed_message_objects = $EE_MSG->get_installed();
+		$installed_message_objects = $this->_get_installed_message_objects();
 
 		$messengers = $installed_message_objects['messengers'];
 		$message_types = $installed_message_objects['message_types'];
