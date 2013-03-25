@@ -155,7 +155,17 @@ class EEM_Message_Template extends EEM_Base {
 		
 		//we have to make sure we're only returning "ACTIVE" templates unless the $active has explicitly been set to false.  If active has been set to 'all' then we DON'T set the active parameter.
 		$where_cols_n_values = !$active ? array( 'MTP_is_active' => 0 ) : array( 'MTP_is_active' => 1);
-		$where_cols_n_values = $active == 'all' ? '' : $where_cols_n_values;
+		$where_cols_n_values = $active == 'all' ? array() : $where_cols_n_values;
+
+		//let's check if there are any filters in here
+		$filters = array();
+		if ( isset( $_REQUEST['ee_messenger_filter_by'] ) )
+			$filters['MTP_messenger'] = $_REQUEST['ee_messenger_filter_by'];
+		if ( isset( $_REQUEST['ee_message_type_filter_by'] ) )
+			$filters['MTP_message_type'] = $_REQUEST['ee_message_type_filter_by'];
+
+		//merge any extra parameters
+		$where_cols_n_values = array_merge($filters, $where_cols_n_values);
 		
 
 		if ($templates = $this->select_all_where($where_cols_n_values, $orderby, $order)) {
@@ -197,6 +207,16 @@ class EEM_Message_Template extends EEM_Base {
 		}
 
 		$where_cols_n_values = array_merge( $active, $where_cols_n_values );
+
+		//let's check if there are any filters in here
+		$filters = array();
+		if ( isset( $_REQUEST['ee_messenger_filter_by'] ) )
+			$filters['MTP_messenger'] = $_REQUEST['ee_messenger_filter_by'];
+		if ( isset( $_REQUEST['ee_message_type_filter_by'] ) )
+			$filters['MTP_message_type'] = $_REQUEST['ee_message_type_filter_by'];
+
+		//merge any extra parameters
+		$where_cols_n_values = array_merge($filters, $where_cols_n_values);
 
 		// retrieve all templates
 		if ($templates = $this->select_all_where( $where_cols_n_values, $orderby, $order )) {
