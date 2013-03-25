@@ -2171,7 +2171,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			}
 
 			//update settings in database
-			update_user_meta( $espresso_wp_user, 'ee_active_messengers', $this->_active_messengers );
+			update_option( 'ee_active_messengers', $this->_active_messengers );
 			
 
 			//generate new templates (if necessary)
@@ -2182,7 +2182,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			//if generation failed then we need to remove the active messenger.
 			if ( !$templates ) {
 				unset($this->_active_messengers[$messenger]);
-				update_user_meta($espresso_wp_user, 'ee_active_messengers', $this->_active_messengers);
+				update_option('ee_active_messengers', $this->_active_messengers);
 			} else {
 				//all is good let's do a success message
 				$success_msg = $message_type ? sprintf( __('%s message type has been successfully activated with the %s messenger', 'event_espresso'),ucwords($this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'][$message_type]['obj']->label['singular']), ucwords( $this->_active_messengers[$messenger]['obj']->label['singular'] ) ) :sprintf( __('%s messenger has been successfully activated', 'event_espresso'), ucwords( $this->_active_messengers[$messenger]['obj']->label['singular'] ) );
@@ -2253,7 +2253,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				unset( $this->_active_messengers[$messenger] );
 			}
 
-			update_user_meta($espresso_wp_user, 'ee_active_messengers', $this->_active_messengers);
+			update_option('ee_active_messengers', $this->_active_messengers);
 
 			$success_msg = $message_type ? sprintf( __('%s %s has been successfully deactivated', 'event_espresso'), ucwords($this->_m_mt_settings['message_type_tabs'][$messenger]['active'][$message_type]['obj']->label['singular']), __('Message Type', 'event_espresso') ) : sprintf( __('%s %s has been successfully deactivated', 'event_espresso'), ucwords($messenger_obj->label['singular'] ) , __('Messenger', 'event_espresso') );
 			
