@@ -64,13 +64,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->page_label = __('Messages System', 'event_espresso');
 
 		$this->_activate_state = isset($this->_req_data['activate_state']) ? (array) $this->_req_data['activate_state'] : array();
+
+		$this->_active_messenger = isset( $this->_req_data['messenger'] ) ? $this->_req_data['messenger'] : NULL;
 	
 
 		//we're also going to set the active messengers and active message types in here.
-		$this->_active_messengers = get_user_meta($espresso_wp_user, 'ee_active_messengers', true);
+		$this->_active_messengers = get_option('ee_active_messengers');
 		$this->_active_messengers = !empty($this->_active_messengers) ?  $this->_active_messengers : array();
-		$this->_active_message_types = get_user_meta($espresso_wp_user, 'ee_active_message_types', true);
-		$this->_active_message_types = !empty($this->_active_message_types ) ? $this->_active_message_types : array();
+		$this->_active_message_types = !empty($this->_active_messenger) ? $this->_active_messengers[$this->_active_messenger]['settings'][$this->_active_messenger . '-message_types'] : array();
 
 		//what about saving the objects in the active_messengers and active_message_types?
 		$this->_load_active_messenger_objects();
