@@ -64,13 +64,15 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->page_label = __('Messages System', 'event_espresso');
 
 		$this->_activate_state = isset($this->_req_data['activate_state']) ? (array) $this->_req_data['activate_state'] : array();
+
+		$this->_active_messenger = isset( $this->_req_data['messenger'] ) ? $this->_req_data['messenger'] : NULL;
 	
 
 		//we're also going to set the active messengers and active message types in here.
-		$this->_active_messengers = get_user_meta($espresso_wp_user, 'ee_active_messengers', true);
+		$this->_active_messengers = get_option('ee_active_messengers');
 		$this->_active_messengers = !empty($this->_active_messengers) ?  $this->_active_messengers : array();
-		$this->_active_message_types = get_user_meta($espresso_wp_user, 'ee_active_message_types', true);
-		$this->_active_message_types = !empty($this->_active_message_types ) ? $this->_active_message_types : array();
+		$this->_active_message_types = !empty($this->_active_messenger) && !empty($this->_active_messengers[$this->_active_messenger]) ? array_keys($this->_active_messengers[$this->_active_messenger]['settings'][$this->_active_messenger . '-message_types']) : array();
+		
 
 		//what about saving the objects in the active_messengers and active_message_types?
 		$this->_load_active_messenger_objects();
@@ -110,7 +112,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @return void 
 	 */
 	private function _load_active_message_type_objects() {
-		foreach ( $this->_active_message_types as $message_type => $values ) {
+		if ( empty($this->_active_message_types) ) return;
+		foreach ( $this->_active_message_types as $message_type ) {
 			$ref = ucwords( str_replace( '_' , ' ', $message_type) );
 			$ref = str_replace( ' ', '_', $ref );
 			$classname = 'EE_' . $ref . '_message_type';
@@ -477,6 +480,36 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	}
 
 
+
+
+	/**
+	 * filters etc might need a list of installed message_types
+	 * @return array an array of message type objects
+	 */
+	public function get_installed_message_types() {
+		$installed_objects = $this->_get_installed_message_objects();
+		$imts = $installed_objects['message_types'];
+		$installed = array();
+
+		foreach ( $imts as $message_type ) {
+			$installed[$message_type->name]['obj'] = $message_type;
+		}
+
+		return $installed;
+	}
+
+
+
+	/**
+	 * The purpose of this function is to return all installed message objects (messengers and message type regardless of whether they are ACTIVE or not)
+	 * @return array array consisting of installed messenger objects and installed message type objects.
+	 */
+	private function _get_installed_message_objects() {
+		//get all installed messengers and message_types
+		$EE_MSG = new EE_messages();
+		$installed_message_objects = $EE_MSG->get_installed();
+		return $installed_message_objects;
+	}
 
 
 	/**
@@ -1736,8 +1769,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$selected_messenger = isset( $this->_req_data['selected_messenger'] ) ? $this->_req_data['selected_messenger'] : 'email';
 		
 		//get all installed messengers and message_types
-		$EE_MSG = new EE_messages();
-		$installed_message_objects = $EE_MSG->get_installed();
+		$installed_message_objects = $this->_get_installed_message_objects();
 
 		$messengers = $installed_message_objects['messengers'];
 		$message_types = $installed_message_objects['message_types'];
@@ -2112,7 +2144,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * This just updates the active_messengers usermeta field when a messenger or message type is activated/deactivated. 
-	 * NOTE: deactivating will remove the messenger (or message type) from the active_messengers user_meta field so all saved settings WILL be lost for the messenger AND message_types associated with that messenger (or message type).
+	 * NOTE: deactivating will remove the messenger (or message type) from the active_messengers wp_options field so all saved settings WILL be lost for the messenger AND message_types associated with that messenger (or message type).
 	 *
 	 * @param  string  $messenger What messenger we're toggling
 	 * @param  boolean $deactivate if true then we deactivate
@@ -2139,7 +2171,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			}
 
 			//update settings in database
-			update_user_meta( $espresso_wp_user, 'ee_active_messengers', $this->_active_messengers );
+			update_option( 'ee_active_messengers', $this->_active_messengers );
 			
 
 			//generate new templates (if necessary)
@@ -2150,7 +2182,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			//if generation failed then we need to remove the active messenger.
 			if ( !$templates ) {
 				unset($this->_active_messengers[$messenger]);
-				update_user_meta($espresso_wp_user, 'ee_active_messengers', $this->_active_messengers);
+				update_option('ee_active_messengers', $this->_active_messengers);
 			} else {
 				//all is good let's do a success message
 				$success_msg = $message_type ? sprintf( __('%s message type has been successfully activated with the %s messenger', 'event_espresso'),ucwords($this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'][$message_type]['obj']->label['singular']), ucwords( $this->_active_messengers[$messenger]['obj']->label['singular'] ) ) :sprintf( __('%s messenger has been successfully activated', 'event_espresso'), ucwords( $this->_active_messengers[$messenger]['obj']->label['singular'] ) );
@@ -2221,7 +2253,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				unset( $this->_active_messengers[$messenger] );
 			}
 
-			update_user_meta($espresso_wp_user, 'ee_active_messengers', $this->_active_messengers);
+			update_option('ee_active_messengers', $this->_active_messengers);
 
 			$success_msg = $message_type ? sprintf( __('%s %s has been successfully deactivated', 'event_espresso'), ucwords($this->_m_mt_settings['message_type_tabs'][$messenger]['active'][$message_type]['obj']->label['singular']), __('Message Type', 'event_espresso') ) : sprintf( __('%s %s has been successfully deactivated', 'event_espresso'), ucwords($messenger_obj->label['singular'] ) , __('Messenger', 'event_espresso') );
 			

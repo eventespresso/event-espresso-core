@@ -82,7 +82,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 		$filters = array();
 		require_once EE_FF_HELPER;
 		$messengers = $this->_admin_page->get_active_messengers();
-		$message_types = $this->_admin_page->get_active_message_types();
+		$message_types = $this->_admin_page->get_installed_message_types();
 
 
 		//setup messengers for selects
