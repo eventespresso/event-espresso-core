@@ -1431,3 +1431,60 @@ function espresso_delete_unused_db_tables() {
 	$wpdb->query( 'DROP TABLE IF EXISTS '. $wpdb->prefix . 'events_status' );
 }
 
+
+
+function espresso_default_message_templates() {
+	$templates = FALSE;
+	$settings = $installed_messengers = array();
+
+	//let's first setup an array of what we consider to be the default messengers.
+	$default_messengers = array( 'email' );
+
+	//let's determine if we've already got an active messengers option
+	$active_messengers = get_option('ee_active_messengers');
+
+	//do an initial loop to determine if we need to continue
+	$def_ms = array();
+	foreach ( $default_messengers as $msgr ) {
+		if ( isset($active_messengers[$msgr] ) ) continue;
+		$def_ms[] = $msgr;
+	}
+
+	//continue?
+	if ( empty( $def_ms ) ) return false;
+
+	//include our helper
+	require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_MSG_Template.helper.php');
+
+	//get all installed messenger objects
+	$installed = EE_MSG_Template::get_installed_message_objects('messengers');
+
+	//let's setup the $installed messengers in an array
+	foreach ( $installed as $msgr ) {
+		$installed_messengers[$msgr->name] = $msgr;
+	}
+
+	//loop through default array
+	foreach ( $def_ms as $messenger ) {
+		//all is good so let's setup the default stuff. We need to use the given messenger object (if exists) to get the default message type for the messenger.
+		if ( !isset( $installed_messengers[$messenger] ) ) continue;
+
+		$default_mts = $installed_messengers[$messenger]->get_default_message_types();
+
+		$active_messengers[$messenger]['obj'] = $installed_messengers[$messenger];
+		foreach ( $default_mts as $mt ) {
+			$active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt] = 1;
+		}
+		//now let's save the settings for this messenger!
+		update_option( 'ee_active_messengers', $active_messengers );
+
+
+		//let's generate all the templates
+		$templates = EE_MSG_Template::generate_new_templates( $messenger, $default_mts, '', TRUE );
+
+	}
+
+	//that's it!  //maybe we'll return $templates for possible display of error or help message later?
+	return $templates;
+}
+

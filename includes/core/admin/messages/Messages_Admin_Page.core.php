@@ -1500,66 +1500,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _generate_new_templates($messenger, $message_types, $evt_id = NULL, $global = FALSE) {
 
-		//make sure message_type is an array.
-		$message_types = (array) $message_types;
-		$templates = array();
-		$success = TRUE;
+		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_MSG_Template.helper.php');
 
-		if ( empty($messenger) ) {
-			throw new EE_Error( __('We need a messenger to generate templates!', 'event_espresso') );
-		}
-
-		//if we STILL have empty $message_types then we need to generate an error message b/c we NEED message types to do the template files.
-		if ( empty($message_types) ) {
-			throw new EE_Error( __('We need at least one message type to generate templates!', 'event_espresso') );
-		}
-
-		$MSG = new EE_messages();
-
-		foreach ( $message_types as $message_type ) {
-			//first let's determine if we already HAVE global templates for this messenger and message_type combination.  If we do then NO generation!!
-			if ( $this->_already_generated($messenger, $message_type, $evt_id ) ) {
-				$templates = TRUE;
-				continue; //get out we've already got generated templates for this.
-			}
-			$new_message_template_group = $MSG->create_new_templates($messenger, $message_type, $evt_id, $global);
-			if ( !$new_message_template_group ) {
-				$success = FALSE;
-				continue;
-			}
-			if ( $templates === TRUE ) $templates = array();
-			$templates[] = $new_message_template_group;
-		}
-		
-		return ($success) ? $templates : $success;
+		return EE_MSG_Template::generate_new_templates($messenger, $message_types, $evt_id, $global);
 
 	}
-
-
-
-
-	/**
-	 * The purpose of this method is to determine if there are already generated templates in the database for the given variables.
-	 * @param  string $messenger     messenger
-	 * @param  string $message_type message type
-	 * @param  int $evt_id        Event ID ( if an event specific template)
-	 * @return bool                true = generated, false = hasn't been generated.
-	 */
-	private function _already_generated( $messenger, $message_type, $evt_id = NULL ) {
-		require_once EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php';
-		$MTP = EEM_Message_Template::instance();
-
-		//what method we use depends on whether we have an evt_id or not
-		$count = !empty( $evt_id) ? $MTP->get_event_message_templates_by_m_and_mt_and_evt( $messenger, $message_type, $evt_id, 'GRP_ID', 'ASC', NULL, TRUE, FALSE ) : $MTP->get_global_message_template_by_m_and_mt( $messenger, $message_type, 'GRP_ID', 'ASC', NULL, TRUE, 'all');
-
-		//if the count is greater than 0 then we need to update the templates so they are active.
-		if ( $count > 0 ) {
-			$MTP->update( array('MTP_is_active' => 1), array('MTP_messenger' => $messenger, 'MTP_message_type' => $message_type ) );
-		}
-
-		return ( $count > 0 ) ? TRUE : FALSE;
-	}
-
 
 
 

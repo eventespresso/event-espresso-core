@@ -42,8 +42,6 @@ class EE_messages {
 	private $_EEM_data;
 	// main controller
 	function __construct() {
-		global $espresso_wp_user;
-		
 		// get list of active messengers and active message types
 		$this->_EEM_data = EEM_Message_Template::instance();
 		$this->_get_active_messengers();
