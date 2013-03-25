@@ -17,6 +17,9 @@ function espresso_plugin_activation() {
 		// define tables and pathing
 		espresso_define_tables_and_paths();
 		espresso_get_user_id();
+		//include autoloaders
+		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/plugins_loaded.php');
+		espresso_autoload();
 		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/activation.php');
 		events_data_tables_install();
 		espresso_initialize_system_questions();
@@ -28,6 +31,7 @@ function espresso_plugin_activation() {
 		espresso_default_price_types();
 		espresso_default_status_codes();
 		espresso_delete_unused_db_tables();
+		espresso_default_message_templates();
 	}
 }
 
