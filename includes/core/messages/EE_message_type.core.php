@@ -349,7 +349,8 @@ abstract class EE_message_type extends EE_Base {
 	 */
 	protected function _set_existing_admin_settings( $messenger ) {
 		global $espresso_wp_user;
-		$active_message_types = get_user_meta($espresso_wp_user, 'ee_active_message_types', true);
+		$active_messengers = get_option( 'ee_active_messengers' );
+		$active_message_types = $active_messengers[$messenger]['settings'][$messenger . '-message_types'];
 
 		//if there are no setting fields then there won't be any existing admin settings either.
 		if ( !isset($active_message_types[$this->name]) && empty($this->_admin_settings_fields) )

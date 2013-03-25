@@ -71,7 +71,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//we're also going to set the active messengers and active message types in here.
 		$this->_active_messengers = get_option('ee_active_messengers');
 		$this->_active_messengers = !empty($this->_active_messengers) ?  $this->_active_messengers : array();
-		$this->_active_message_types = !empty($this->_active_messenger) ? $this->_active_messengers[$this->_active_messenger]['settings'][$this->_active_messenger . '-message_types'] : array();
+		$this->_active_message_types = !empty($this->_active_messenger) && !empty($this->_active_messengers[$this->_active_messenger]) ? array_keys($this->_active_messengers[$this->_active_messenger]['settings'][$this->_active_messenger . '-message_types']) : array();
 		
 
 		//what about saving the objects in the active_messengers and active_message_types?
@@ -112,7 +112,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @return void 
 	 */
 	private function _load_active_message_type_objects() {
-		foreach ( $this->_active_message_types as $message_type => $values ) {
+		if ( empty($this->_active_message_types) ) return;
+		foreach ( $this->_active_message_types as $message_type ) {
 			$ref = ucwords( str_replace( '_' , ' ', $message_type) );
 			$ref = str_replace( ' ', '_', $ref );
 			$classname = 'EE_' . $ref . '_message_type';
@@ -487,7 +488,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	public function get_installed_message_types() {
 		$installed_objects = $this->_get_installed_message_objects();
-		return $installed_objects['message_types'];
+		$imts = $installed_objects['message_types'];
+		$installed = array();
+
+		foreach ( $imts as $message_type ) {
+			$installed[$message_type->name]['obj'] = $message_type;
+		}
+
+		return $installed;
 	}
 
 
@@ -2136,7 +2144,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * This just updates the active_messengers usermeta field when a messenger or message type is activated/deactivated. 
-	 * NOTE: deactivating will remove the messenger (or message type) from the active_messengers user_meta field so all saved settings WILL be lost for the messenger AND message_types associated with that messenger (or message type).
+	 * NOTE: deactivating will remove the messenger (or message type) from the active_messengers wp_options field so all saved settings WILL be lost for the messenger AND message_types associated with that messenger (or message type).
 	 *
 	 * @param  string  $messenger What messenger we're toggling
 	 * @param  boolean $deactivate if true then we deactivate
