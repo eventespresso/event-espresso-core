@@ -534,6 +534,7 @@ abstract class EE_message_type extends EE_Base {
 			} elseif ( !empty( $event_templates) && empty( $global_override ) ) {
 				$this->_templates = $event_templates;
 
+
 			//hmph looks like we have event templates and global overrides present.  So its down to the wire, lets take a snapshot and see who wins.
 			} else {
 				foreach ( $event_templates as $field => $contexts ) {
@@ -541,6 +542,11 @@ abstract class EE_message_type extends EE_Base {
 						$this->_templates[$field][$context] = isset( $global_override[$context] ) ? $global_templates[$field][$context] : $event_templates[$field][$context];
 					}
 				}
+			}
+
+			//hang on, not done yet.  If this is a PREVIEW being generated (and there is no evt_id in the request) then we want to make sure global always wins (even if the generated events happen to have a custom template) because peopel need to see what the global template looks like.
+			if ( $this->_preview && empty($_REQUEST['evt_id'] ) ) {
+				$this->_templates = $global_templates;
 			}
 		}
 	}

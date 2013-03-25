@@ -185,7 +185,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 		$c_configs = $item->contexts_config(); 
 		foreach ( $item->context_templates() as $context => $template_fields ) {
 			$context_title = ucwords($c_configs[$context]['label']);
-			$edit_link = EE_Admin_Page::add_query_args_and_nonce( array('action'=>'edit_message_template', 'id'=>$item->GRP_ID(), 'context' => $context), EE_MSG_ADMIN_URL );
+			$edit_link = EE_Admin_Page::add_query_args_and_nonce( array('action'=>'edit_message_template', 'id'=>$item->GRP_ID(), 'evt_id' => $item->event(), 'context' => $context), EE_MSG_ADMIN_URL );
 			$ctxt[] = '<a href="'. $edit_link . '" title="' . __('Edit Context', 'event_espresso') . '">' . $context_title . '</a>';
 		}
 

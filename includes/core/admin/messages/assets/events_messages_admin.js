@@ -36,6 +36,7 @@ jQuery(document).ready(function($) {
 				url: ajaxurl,
 				data: queryobj,
 				success: function(response, status, xhr) {
+					console.log(response);
 					var ct = xhr.getResponseHeader("content-type") || "";
 					console.log( ct );
 					if (ct.indexOf('html') > -1) {
