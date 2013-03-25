@@ -435,6 +435,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$offset = ($current_page-1)*$per_page;
 		$limit = $all ? NULL : array( $offset, $per_page );
 
+
 		//options will match what is in the _views array property
 		switch( $type ) {
 

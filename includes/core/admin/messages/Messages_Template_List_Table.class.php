@@ -86,7 +86,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 
 
 		//setup messengers for selects
-		$i=0;
+		$i=1;
 		foreach ( $messengers as $messenger => $args ) {
 			$m_values[$i]['id'] = $messenger;
 			$m_values[$i]['text'] = ucwords($args['obj']->label['singular']);
@@ -94,27 +94,45 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 		}
 		
 		//lets do the same for message types
-		$i=0;
+		$i=1;
 		foreach ( $message_types as $message_type => $args ) {
 			$mt_values[$i]['id'] = $message_type;
 			$mt_values[$i]['text'] = ucwords($args['obj']->label['singular']);
 			$i++;
 		}
 
-		if ( empty($m_values ) )
-			$m_values[] = array(
+		$msgr_default[0] = array(
+			'id' => 'none_selected',
+			'text' => __('Show All', 'event_espresso')
+			);
+
+		$mt_default[0] = array(
+			'id' => 'none_selected',
+			'text' => __('Show All', 'event_espresso')
+			);
+
+		$msgr_filters = array_merge( $msgr_default, $m_values );
+		$mt_filters = array_merge( $mt_default, $mt_values ); 
+
+		if ( empty( $m_values ) )
+			$msgr_filters[0] = array(
 				'id' => 'no_messenger_options',
 				'text' => __('No Messengers active', 'event_espresso')
 				);
 
 		if ( empty($mt_values) )
-			$mt_values[] = array(
+			$mt_filters[0] = array(
 				'id' => 'no_message_type_options',
 				'text' => __('No Message Types active', 'event_espresso')
 				);
+
+		if ( count( $messengers ) >= 1  && !empty( $m_values ) ) {
+			unset( $msgr_filters[0] );
+			$msgr_filters = array_values( $msgr_filters ); //reindex keys
+		}
 		
-		$filters[] = EE_Form_Fields::select_input('ee_messenger_filter_by', $m_values, isset($this->_req_data['ee_messenger_filter_by']) ? sanitize_key( $this->_req_data['ee_messenger_filter_by']) : '' );
-		$filters[] = EE_Form_Fields::select_input('ee_message_type_filter_by', $mt_values, isset($this->_req_data['ee_message_type_filter_by']) ? sanitize_key( $this->_req_data['ee_message_type_filter_by']) : '');
+		$filters[] = EE_Form_Fields::select_input('ee_messenger_filter_by', $msgr_filters, isset($this->_req_data['ee_messenger_filter_by']) ? sanitize_key( $this->_req_data['ee_messenger_filter_by']) : '' );
+		$filters[] = EE_Form_Fields::select_input('ee_message_type_filter_by', $mt_filters, isset($this->_req_data['ee_message_type_filter_by']) ? sanitize_key( $this->_req_data['ee_message_type_filter_by']) : '');
 		return $filters;
 	}
 
