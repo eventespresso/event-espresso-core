@@ -132,6 +132,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		add_action('wp_ajax_activate_messenger', array($this, 'activate_messenger_toggle' ) );
 		add_action('wp_ajax_activate_mt', array( $this, 'activate_mt_toggle') );
 		add_action('wp_ajax_ee_msgs_save_settings', array( $this, 'save_settings') );
+		add_action('wp_ajax_ee_msgs_update_mt_form', array( $this, 'update_mt_form' ) );
 	}
 
 
@@ -2123,7 +2124,27 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$default_types = $message_type ? (array) $message_type : $this->_active_messengers[$messenger]['obj']->get_default_message_types();
 
 			foreach ( $default_types as $type ) {
-				$this->_active_messengers[$messenger]['settings'][$messenger . '-message_types'][$type] = 1;
+				$settings_fields = $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'][$type]['obj']->get_admin_settings_fields();
+				if ( !empty( $settings_fields ) ) {
+					//we have fields for this message type so let's get the defaults for saving.
+					foreach ( $settings_fields as $field => $values ) {
+						$settings[$field] = $values['default'];
+					}
+					//let's set the data for reloading this message type form in ajax
+					$this->_template_args['data']['mt_reload'][] = $type;
+				} else {
+					$settings = array();
+				}
+				$this->_active_messengers[$messenger]['settings'][$messenger . '-message_types'][$type]['settings'] =  $settings;
+			}
+
+			//any default settings for the messenger?
+			$msgr_settings = $this->_active_messengers[$messenger]['obj']->get_admin_settings_fields();
+
+			if ( !empty( $msgr_settings ) ) {
+				foreach ( $msgr_settings as $field => $value ) {
+					$this->_active_messengers[$messenger]['settings'][$field] = $value;
+				}
 			}
 
 			//update settings in database
@@ -2217,6 +2238,30 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		EE_Error::overwrite_success();
 		if ( $templates ) EE_Error::add_success($success_msg);
 		return true;
+	}
+
+
+
+
+	/**
+	 * handles updating a message type form on messenger activation IF the message type has settings fields. (via ajax)
+	 * @return string html data
+	 */
+	public function update_mt_form() {
+		if ( !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['message_type'] ) ) {
+			EE_Error::add_error( __('Require message type or messenger to send an updated form'));
+			$this->_return_json();
+		}
+
+		$message_types = $this->get_installed_message_types();
+
+		$message_type = $message_types[$this->_req_data['message_type']]['obj'];
+		$messenger = $this->_active_messengers[$this->_req_data['messenger']]['obj'];
+
+		$content = $this->_message_type_settings_content ( $message_type, $messenger, TRUE, TRUE );
+		$this->_template_args['success'] = true;
+		$this->_template_args['content'] = $content;
+		$this->_return_json();
 	}
 
 
