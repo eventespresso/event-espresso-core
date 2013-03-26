@@ -2645,8 +2645,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$phone = esc_html($this->_req_data['phone']);
 		$externalURL = esc_html($this->_req_data['externalURL']);
 
-		$post_type = $this->_req_data['post_type'];
-
 		// thumbnail image options
 		$event_meta['event_thumbnail_url'] = array_key_exists('upload_image',$this->_req_data) ? $this->_req_data['upload_image'] : '';
 		$event_meta['display_thumb_in_lists'] = array_key_exists('show_thumb_in_lists', $this->_req_data) ? $this->_req_data['show_thumb_in_lists'] : '';
@@ -2998,7 +2996,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		/// Create Event Post Code Here
 		if ( isset( $this->_req_data['create_post'] ) && $this->_req_data['create_post'] == 1 ) {
 
-			$post_type = $this->_req_data['post_type'];
+			$post_type = isset( $this->_req_data['post_type'] ) && ! empty( $this->_req_data['post_type'] ) ? $this->_req_data['post_type'] : 'espresso_event';
 			
 			
 			if ($post_type == 'post') {
@@ -3577,7 +3575,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 		
 			if ( $this->_req_data['create_post'] ) {
 			
-				$post_type = $this->_req_data['post_type'];
+				$post_type = isset( $this->_req_data['post_type'] ) && ! empty( $this->_req_data['post_type'] ) ? $this->_req_data['post_type'] : 'espresso_event';
+
 				if ($post_type == 'post') {
 					if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php") || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/event_post.php")) {
 						// Load message from template into message post variable
@@ -3611,8 +3610,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 					$wpdb->get_results($sql);
 					$post_id = $wpdb->last_result[0]->post_id;
 				}
-
-				$post_type = $this->_req_data['post_type'];
 
 				if ($post_id > 0)
 					$my_post['ID'] = $post_id;
