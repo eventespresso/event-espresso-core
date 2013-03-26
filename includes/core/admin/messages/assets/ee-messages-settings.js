@@ -248,6 +248,7 @@ jQuery(document).ready(function($) {
 
 
 		display_notices: function(content) {
+			$('.ajax-loader-grey').hide();
 			$('#ajax-notices-container').html(content);
 		},
 
@@ -274,6 +275,17 @@ jQuery(document).ready(function($) {
 				mt = $( $item ).attr('id').replace('-messagetype-'+msgr+'-handle','');
 			
 			$( '.mt-settings-content', '.'+msgr+'-content #'+mt+'-messagetype-'+msgr ).slideToggle();
+		},
+
+
+		submit_form: function( type, $item ) {
+			var queryparts = $($item).serializeFullArray();
+			queryparts.page = 'espresso_messages';
+			queryparts.action = 'ee_msgs_save_settings';
+
+			$('.ajax-loader-grey').toggle();
+
+			this.do_ajax(queryparts);
 		}
 	};
 	
@@ -298,12 +310,10 @@ jQuery(document).ready(function($) {
 
 	//toggle slide
 	$( document ).on('click', '#active-message-types .mt-handlediv', function() {
-		console.log('here');
 		MSG_helper.slide(this);
 	});
 
 	$( document ).on('click', '#inactive-message-types .mt-handlediv', function() {
-		console.log('here2');
 		MSG_helper.slide(this);
 	});
 
@@ -360,6 +370,19 @@ jQuery(document).ready(function($) {
 		var messenger = $(this).attr('id').replace('on-off-',''),
 		status = $(this).attr('value').replace('messenger-','');
 		MSG_helper.messenger_toggle(messenger, status);
+	});
+
+
+	$(document).on('submit', '.mt-settings-form', function(e) {
+		e.preventDefault();
+		console.log('here');
+		MSG_helper.submit_form('message_type', this);
+	});
+
+
+	$('.messenger-settings', document).on('submit', '.mt-settings-form', function(e) {
+		e.preventDefault();
+		MSG_helper.submit_form('messenger', this);
 	});
 
 });
