@@ -3819,8 +3819,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$data = array();
 		$data['expire_on_registration_end'] = isset( $this->_req_data['expire_on_registration_end'] ) ? absint( $this->_req_data['expire_on_registration_end'] ) : FALSE;
 		$data['default_reg_status'] = isset( $this->_req_data['default_reg_status'] ) ? sanitize_text_field( $this->_req_data['default_reg_status'] ) : 'RPN';
-		$data['pending_counts_reg_limit'] = isset( $this->_req_data['pending_counts_reg_limit'] ) ? absint( $this->_req_data['pending_counts_reg_limit'] ) : FALSE;
-		$data['use_attendee_pre_approval'] = isset( $this->_req_data['use_attendee_pre_approval'] ) ? absint( $this->_req_data['use_attendee_pre_approval'] ) : FALSE;
+		$data['pending_counts_reg_limit'] = isset( $this->_req_data['pending_counts_reg_limit'] ) ? absint( $this->_req_data['pending_counts_reg_limit'] ) : TRUE;
+		$data['use_attendee_pre_approval'] = isset( $this->_req_data['use_attendee_pre_approval'] ) ? absint( $this->_req_data['use_attendee_pre_approval'] ) : TRUE;
 
 		$data = apply_filters('filter_hook_espresso_default_event_settings_save', $data);	
 		

@@ -353,161 +353,69 @@ function espresso_initialize_system_questions() {
 function espresso_org_option_initialization() {
 	global $wpdb, $espresso_wp_user;
 
-	$table_name = $wpdb->prefix . "events_organization";
-	//Check to see if upgrading from an earlier version.
-	$test = get_user_meta($espresso_wp_user, 'events_organization_settings', true);
-	if (empty($test)) {
-		if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+	$default_org_options = array(
+			'organization' => get_bloginfo('name'),
+			'organization_street1' => '123 Onna Road',
+			'organization_street2' => '',
+			'organization_city' => 'Inna City',
+			'organization_state' => 'AZ',
+			'organization_country' => '64',
+			'organization_zip' => '84128',
+			'country_id' => '',
+			'contact_email' => get_bloginfo('admin_email'),
+			'default_mail' => true,
+			'currency_symbol' => '$',
+			'default_logo_url' => '',
+			'default_reg_status' => 'RPN',
+			'pending_counts_reg_limit' => TRUE,
+			'surcharge' => '0.00',
+			'surcharge_type' => 'flat_rate',
+			'events_in_dasboard' => '30',
+			'use_captcha' => false,
+			'expire_on_registration_end' => true,
+			'email_before_payment' => false,
+			'email_fancy_headers' => false,
+			'enable_default_style' => true,
+			'event_ssl_active' => false,
+			'use_venue_manager' => true,
+			'use_personnel_manager' => false,
+			'show_reg_footer' => true,
+			'use_attendee_pre_approval' => false,
+			'time_reg_limit' => false,
+			'espresso_url_rewrite_activated' => false,
+			'template_settings' => array(
+					'use_custom_post_types' => false,
+					'display_address_in_regform' => false,
+					'display_short_description_in_event_list' => true,
+					'display_address_in_event_list' => false,
+					'display_description_on_multi_reg_page' => false,
+					'display_description_in_event_list' => false,
+					'use_custom_templates' => false
+			),
+			'map_settings' => array(
+					'ee_map_width_single' => '300',
+					'ee_map_height_single' => '300',
+					'ee_map_zoom_single' => '12',
+					'ee_map_nav_display_single' => false,
+					'ee_map_nav_size_single' => 'default',
+					'ee_map_type_control_single' => 'default',
+					'ee_map_align_single' => '',
+					'ee_map_width' => '200',
+					'ee_map_height' => '200',
+					'ee_map_zoom' => '12',
+					'ee_map_nav_display' => false,
+					'ee_map_nav_size' => 'default',
+					'ee_map_type_control' => 'default',
+					'ee_map_align' => ''
+			),
+	);
+	
+	$existing_org_options = get_user_meta( $espresso_wp_user, 'events_organization_settings', TRUE );
+	$existing_org_options = is_array( $existing_org_options ) ? $existing_org_options : array();
+	$new_org_options = array_merge( $default_org_options, $existing_org_options );
 
-			$new_org_options = array(
-					'organization' => get_bloginfo('name'),
-					'organization_street1' => '123 Onna Road',
-					'organization_street2' => '',
-					'organization_city' => 'Inna City',
-					'organization_state' => 'AZ',
-					'organization_country' => '64',
-					'organization_zip' => '84128',
-					'country_id' => '',
-					'contact_email' => get_bloginfo('admin_email'),
-					'default_mail' => true,
-					'currency_symbol' => '$',
-					'default_logo_url' => '',
-					'default_reg_status' => 'RPN',
-					'surcharge' => '0.00',
-					'surcharge_type' => 'flat_rate',
-					'events_in_dasboard' => '30',
-					'use_captcha' => false,
-					'expire_on_registration_end' => true,
-					'email_before_payment' => false,
-					'email_fancy_headers' => false,
-					'enable_default_style' => true,
-					'event_ssl_active' => false,
-					'use_venue_manager' => true,
-					'use_personnel_manager' => false,
-					'show_reg_footer' => true,
-					'use_attendee_pre_approval' => false,
-					'time_reg_limit' => false,
-					'espresso_url_rewrite_activated' => false,
-					'template_settings' => array(
-							'use_custom_post_types' => false,
-							'display_address_in_regform' => false,
-							'display_short_description_in_event_list' => true,
-							'display_address_in_event_list' => false,
-							'display_description_on_multi_reg_page' => false,
-							'display_description_in_event_list' => false,
-							'use_custom_templates' => false
-					),
-					'map_settings' => array(
-							'ee_map_width_single' => '300',
-							'ee_map_height_single' => '300',
-							'ee_map_zoom_single' => '12',
-							'ee_map_nav_display_single' => false,
-							'ee_map_nav_size_single' => 'default',
-							'ee_map_type_control_single' => 'default',
-							'ee_map_align_single' => '',
-							'ee_map_width' => '200',
-							'ee_map_height' => '200',
-							'ee_map_zoom' => '12',
-							'ee_map_nav_display' => false,
-							'ee_map_nav_size' => 'default',
-							'ee_map_type_control' => 'default',
-							'ee_map_align' => ''
-					),
-			);
+	update_user_meta( $espresso_wp_user, 'events_organization_settings', $new_org_options );
 
-			update_user_meta($espresso_wp_user, 'events_organization_settings', $new_org_options);
-
-			//If an earlier version of Event Espresso is found, then we need to create the organization options.
-		} else if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name) {
-			$results = $wpdb->get_results("SELECT * FROM " . EVENTS_ORGANIZATION_TABLE . " WHERE id='1'");
-			foreach ($results as $result) {
-				$org_id = $result->id;
-				$Organization = $result->organization;
-				$Organization_street1 = $result->organization_street1;
-				$Organization_street2 = $result->organization_street2;
-				$Organization_city = $result->organization_city;
-				$Organization_state = $result->organization_state;
-				$Organization_zip = $result->organization_zip;
-				$contact = $result->contact_email;
-				$registrar = $result->contact_email;
-				$paypal_id = $result->paypal_id;
-				$paypal_cur = $result->currency_format;
-				$event_page_id = $result->event_page_id;
-				$return_url = $result->return_url;
-				$cancel_return = $result->cancel_return;
-				$notify_url = $result->notify_url;
-				$use_sandbox = $result->use_sandbox;
-				$image_url = $result->image_url;
-				$default_mail = $result->default_mail;
-				$payment_subject = $result->payment_subject;
-				$payment_message = $result->payment_message;
-				$message = $result->message;
-			}
-
-			switch ($paypal_cur) {
-				case 'USD':
-				case 'HKD':
-				case 'NZD':
-				case 'SGD':
-					$currency_symbol = '$';
-					break;
-
-				case 'AUD':
-					$currency_symbol = 'A $';
-					break;
-
-				case 'GBP':
-					$currency_symbol = '&pound;';
-					break;
-
-				case 'CAD':
-					$currency_symbol = 'C $';
-					break;
-
-				case 'EUR':
-					$currency_symbol = '&#8364;';
-					break;
-
-				case 'JPY':
-					$currency_symbol = '&yen;';
-					break;
-
-				default:
-					$currency_symbol = '$';
-					break;
-			}
-
-			//DO NOT Create new settings here
-			$org_options = array(
-					'organization' => $Organization,
-					'organization_street1' => $Organization_street1,
-					'organization_street2' => $Organization_street2,
-					'organization_city' => $Organization_city,
-					'organization_state' => $Organization_state,
-					'organization_zip' => $Organization_zip,
-					'contact_email' => $contact,
-					'paypal_id' => $paypal_id,
-					'currency_format' => $paypal_cur,
-					'currency_symbol' => $currency_symbol,
-					'event_page_id' => $event_page_id,
-					'return_url' => $return_url,
-					'cancel_return' => $cancel_return,
-					'notify_url' => $notify_url,
-					'use_sandbox' => $use_sandbox,
-					'image_url' => $image_url,
-					'default_mail' => $default_mail,
-					'payment_subject' => $payment_subject,
-					'payment_message' => $payment_message,
-					'message' => $message,
-							//DO NOT Create new settings here
-			);
-
-			update_user_meta($espresso_wp_user, 'events_organization_settings', $org_options);
-
-			//Delete the table
-			$wpdb->query("DROP TABLE IF EXISTS $table_name");
-		}
-	}
 }
 
 //This function installs all the required database tables
