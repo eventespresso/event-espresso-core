@@ -151,7 +151,7 @@ class EE_messages {
 			foreach ( $this->_active_messengers as $active_messenger ) {
 
 				//we ONLY continue if the given messenger has that message type active with it.
-				if ( !isset( $this->_active_message_types[$active_messenger][$type] ) )
+				if ( !isset( $this->_active_message_types[$active_messenger->name][$type] ) )
 					return false;
 
 				// create message data
