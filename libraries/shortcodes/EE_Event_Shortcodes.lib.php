@@ -89,11 +89,11 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[EVENT_LINK]' :
-				return isset($this->_data['meta']['event_link']) ? $this->_data['meta']['event_link'] : '';
+				return $this->_get_event_link();
 				break;
 
 			case '[EVENT_URL]' :
-				return isset($this->_data['meta']['event_url']) ? $this->_data['meta']['event_url'] : '';
+				return $this->_get_event_link(FALSE);
 				break;
 
 			case '[VIRTUAL_URL]' :
@@ -183,6 +183,9 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			case 'desc' :
 				$what = 'e.event_desc';
 				break;
+			case 'slug' :
+				$what = 'e.slug';
+				break;
 		}
 
 		$select = "SELECT $what FROM " . EVENTS_DETAIL_TABLE . " AS e WHERE e.id = %s";
@@ -191,6 +194,23 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 
 		return $result;
 
+	}
+
+
+
+
+	/**
+	 * returns the link to the event
+	 * @param  boolean $full_link if TRUE (default) we return the html for the name of the event linked to the event.  Otherwise we just return the url of the event.
+	 * @return string             
+	 */
+	private function _get_event_link( $full_link = TRUE ) {
+		if ( !isset( $this->_data['ID'] ) ) return ''; //no event id get out.
+		//get event slug
+		$slug = $this->_event('slug');
+		$url = espresso_reg_url($this->_data['ID'], $slug);
+
+		return $full_link ? '<a href="' . $url . '">' . $this->_data['name'] . '</a>' : $url;
 	}
 
 
