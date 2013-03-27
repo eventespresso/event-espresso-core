@@ -156,9 +156,9 @@ class EE_messages {
 
 				// create message data
 				$messages = $this->_installed_message_types[$type];
-				$messages->set_messages( $vars, $active_messenger );
+				$exit = $messages->set_messages( $vars, $active_messenger );
 
-				if ( is_wp_error($messages) ) {
+				if ( is_wp_error($messages) || !$messages ) {
 					//we've got an error so let's bubble up the error_object to be caught by caller.
 					//todo: would be better to just catch the errors and then return any aggregated errors later.
 					return $messages;

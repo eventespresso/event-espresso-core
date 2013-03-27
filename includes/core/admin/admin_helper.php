@@ -38,7 +38,6 @@ function espresso_tiny_mce() {
 
 //function to delete event
 //From now on I am making events disapear instead of deleting completely.
-//If an event is active and has active attendees, it will send the attendees an email notification of the cancelled event.
 //@param optional pass an event id to delete
 if (!function_exists('event_espresso_delete_event')) {
 
