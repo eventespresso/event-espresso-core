@@ -558,8 +558,6 @@ function espresso_load_reg_page_files() {
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Single_Page_Checkout.class.php');
 						global $Single_Page_Checkout;
 						$Single_Page_Checkout = EE_Single_Page_Checkout::instance();	
-						//Process email confirmations
-//						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/email.php');
 						define("ESPRESSO_REG_PAGE_FILES_LOADED", "true");
 					}
 
