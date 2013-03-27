@@ -260,20 +260,7 @@ class EE_Email_messenger extends EE_messenger  {
 	/**
 	 * setting up admin_settings_fields for messenger.
 	 */
-	protected function _set_admin_settings_fields() {
-		$this->_admin_settings_fields = array(
-			'from' => array(
-					'field_type' => 'text',
-					'label' => __('Default From Address', 'event_espresso'),
-					'default' => '[ADMIN_EMAIL]',
-					'value_type' => 'string',
-					'format' => '%s',
-					'validation' => FALSE,
-					'required' => TRUE
-				),
-
-		);
-	}
+	protected function _set_admin_settings_fields() {}
 
 	/**
 	 * We just deliver the messages don't kill us!!  
