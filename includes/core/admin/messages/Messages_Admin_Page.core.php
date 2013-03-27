@@ -202,7 +202,29 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'label' => __('Overview', 'event_espresso'),
 					'order' => 10 
 					),
-			'list_table' => 'Messages_Template_List_Table'
+				'list_table' => 'Messages_Template_List_Table',
+				'help_tabs' => array(
+					'about-messages' => array(
+						'title' => __('About Messages', 'event_espresso'),
+						'callback' => 'messages_help_tab'
+						),
+					'about-messengers' => array(
+						'title' => __('About Messengers', 'event_espresso'),
+						'callback' => 'messengers_help_tab',
+					),
+					'about-message-types' => array(
+						'title' => __('About Message Types', 'event_espresso'),
+						'callback' => 'message_types_help_tab'
+					),
+					'about-overview' => array(
+						'title' => __('About the Overview', 'event_espresso'),
+						'callback' => 'messages_overview_help_tab'
+						),
+					'about-message-templates' => array(
+						'title' => __('About Message Templates', 'event_espresso'),
+						'callback' => 'message_templates_help_tab'
+						)
+				)
 			),
 			'add_new_message_template' => array(
 				'nav' => array(
@@ -267,13 +289,44 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	//none of the below group are currently used for Messages
-	protected function _add_help_tabs() {}
 	protected function _add_feature_pointers() {}
 	public function admin_init() {}
 	public function admin_notices() {}
 	public function admin_footer_scripts() {}
 
 
+
+
+
+
+	public function messages_help_tab() {
+		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_help_tab.template.php';
+		espresso_display_template( $templatepath, array());
+	}
+
+
+
+	public function messengers_help_tab() {
+		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_messenger_help_tab.template.php';
+		espresso_display_template( $templatepath, array());
+	}
+
+
+	public function message_types_help_tab() {
+		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_message_type_help_tab.template.php';
+		espresso_display_template( $templatepath, array());
+	}
+
+
+	public function messages_overview_help_tab() {
+		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_overview_help_tab.template.php';
+		espresso_display_template( $templatepath, array());
+	}
+
+	public function message_templates_help_tab() {
+		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_message_templates_help_tab.template.php';
+		espresso_display_template( $templatepath, array());
+	}
 
 
 
