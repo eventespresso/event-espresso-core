@@ -748,9 +748,36 @@ class EE_Registration extends EE_Base_Class {
 	public function reg_url_link() {
 		return $this->_REG_url_link;
 	}
+	
+	
+	
+	
+	
+	/**
+	 * Echoes out invoice_url()
+	 * @return void
+	 */
+	public function e_invoice_url(){
+		echo $this->invoice_url();
+	}
+	
+	
+	
+	
+	
+	/**
+	 * Gets the string which represents the URL for the invoice PDF for this registration.
+	 * Dependant on code in ee/includes/functions/init espresso_export_invoice
+	 * @return string
+	 */
+	public function invoice_url(){
+		return home_url() . '/?invoice_launch=true&amp;id=' . $this->reg_url_link();
+	}
 
 
 
+	
+	
 	/**
 	*		get  Attendee Number
 	* 		@access		public
