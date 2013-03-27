@@ -37,9 +37,33 @@ class EE_Registration_message_type extends EE_message_type {
 			'singular' => __('registration', 'event_espresso'),
 			'plural' => __('regisgrations', 'event_espresso')
 			);
-		$this->_data_handler = 'EE_Session';
 
 		parent::__construct();
+	}
+
+
+
+	protected function _trigger_exit() {
+
+		//first is this a preview?
+		if ( empty( $this->_data ) )
+			return FALSE;
+
+		//if email_on_payment is set then we'll trigger an exit when incoming data is an EE_Session object.
+		$settings = $this->get_existing_admin_settings($this->_active_messenger->name);
+		$delay = isset($settings['email_before_payment']) && $settings['email_before_payment'] == 'yes' ? FALSE : TRUE; //default is TRUE (yes we want to delay)! 
+
+
+		if ( is_a( $this->_data, 'EE_Session' ) ) {
+			//for SPCO trigger
+			$return = $delay ? TRUE : FALSE;
+		} else {
+			//gateway trigger.  We need to know if payment is complete.
+			$txn = $this->_data[0];
+			$return = $txn->is_completed() ? FALSE : TRUE;
+		}
+
+		return $return;		
 	}
 
 
@@ -53,6 +77,17 @@ class EE_Registration_message_type extends EE_message_type {
 	protected function _get_admin_content_events_edit_for_messenger( EE_Messenger $messenger ) {
 		//this is just a test
 		return $this->name . ' Message Type for ' . $messenger->name . ' Messenger ';
+	}
+
+
+
+
+	protected function _set_data_handler() {
+		//this message type might be delayed for payment, so let's get what is set.
+		$message_settings = $this->get_existing_admin_settings( $this->_active_messenger->name );
+		$delay = isset($message_settings['email_before_payment']) && $message_settings['email_before_payment'] == 'yes' ? FALSE : TRUE; //default is TRUE (yes we want to delay)!
+
+		$this->_data_handler = $delay ? 'Gateways' : 'EE_Session';
 	}
 
 
@@ -120,6 +155,9 @@ class EE_Registration_message_type extends EE_message_type {
 
 		return $tcontent;
 	}
+
+
+
 
 
 

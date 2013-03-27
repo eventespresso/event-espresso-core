@@ -1913,10 +1913,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	private function _get_messenger_box_content( $messenger ) {
 
 		$fields = $messenger->get_admin_settings_fields();
-		$settings_template_args['template_form_fields'] = array();
+		$settings_template_args['template_form_fields'] = '';
 
 		//is $messenger active?
 		$settings_template_args['active'] = isset($this->_active_messengers[$messenger->name]) ? TRUE : FALSE;
+
 
 		if ( !empty( $fields ) ) {
 
@@ -1936,34 +1937,34 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'format' => $fldprops['format']
 					);
 			}
-
-			//we also need some hidden fields
-			$settings_template_args['hidden_fields'] = array(
-				'messenger_settings[messenger]' => array(
-					'type' => 'hidden',
-					'value' => $messenger->name
-					),
-				'type' => array(
-					'type' => 'hidden',
-					'value' => 'messenger'
-					)
-				);
-
-			//make sure any active message types that are existing are included in the hidden fields
-			if ( isset( $this->_m_mt_settings['message_type_tabs'][$messenger->name]['active'] ) ) {
-				foreach ( $this->_m_mt_settings['message_type_tabs'][$messenger->name]['active'] as $mt => $values ) {
-					$settings_template_args['hidden_fields']['messenger_settings[message_types]['.$mt.']'] = array(
-							'type' => 'hidden',
-							'value' => $mt
-						);
-				}
-			}
-
-			$settings_template_args['hidden_fields'] = $this->_generate_admin_form_fields( $settings_template_args['hidden_fields'], 'array' );
 			
 
 			$settings_template_args['template_form_fields'] = !empty($template_form_field) ? $this->_generate_admin_form_fields( $template_form_field, 'string', 'ee_m_activate_form' ) : '';
 		}
+
+		//we also need some hidden fields
+		$settings_template_args['hidden_fields'] = array(
+			'messenger_settings[messenger]' => array(
+				'type' => 'hidden',
+				'value' => $messenger->name
+				),
+			'type' => array(
+				'type' => 'hidden',
+				'value' => 'messenger'
+				)
+			);
+
+		//make sure any active message types that are existing are included in the hidden fields
+		if ( isset( $this->_m_mt_settings['message_type_tabs'][$messenger->name]['active'] ) ) {
+			foreach ( $this->_m_mt_settings['message_type_tabs'][$messenger->name]['active'] as $mt => $values ) {
+				$settings_template_args['hidden_fields']['messenger_settings[message_types]['.$mt.']'] = array(
+						'type' => 'hidden',
+						'value' => $mt
+					);
+			}
+		}
+
+		$settings_template_args['hidden_fields'] = $this->_generate_admin_form_fields( $settings_template_args['hidden_fields'], 'array' );
 
 		$active = isset( $this->_active_messengers[$messenger->name] ) ? TRUE : FALSE;
 
@@ -1971,7 +1972,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$settings_template_args['description'] = $messenger->description;
 		$settings_template_args['show_hide_edit_form'] = $active ? '' : ' hidden';
 
-		$settings_template_args['show_hide_edit_form'] = isset( $this->_active_messengers[$messenger->name] ) ? '' : ' hidden';
+		$settings_template_args['show_hide_edit_form'] = empty( $settings_template_args['template_form_fields'] ) ? ' hidden' : $settings_template_args['show_hide_edit_form'];
+
+		$settings_template_args['show_hide_edit_form'] = isset( $this->_active_messengers[$messenger->name] ) ? $settings_template_args['show_hide_edit_form'] : ' hidden';
 
 
 		$settings_template_args['on_off_action'] = $active ? 'messenger-off' : 'messenger-on';

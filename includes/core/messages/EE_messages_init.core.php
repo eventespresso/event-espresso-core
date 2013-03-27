@@ -64,6 +64,8 @@ class EE_messages_init extends EE_Base {
 	private function _do_actions() {
 		add_action( 'action_hook_espresso__EE_Gateway__update_transaction_with_payment__done', array( $this, 'payment' ), 10, 2 );
 		add_action( 'action_hook_espresso__EE_Single_Page_Checkout__process_registration_step_3__before_gateway', array( $this, 'registration' ), 10 );
+
+		//note we also add registration to the gateways hook because if the 'email_before_payment' setting is set to FALSE then registration emails are sent on a complete payment (not pending or fail);
 	}
 
 
@@ -78,6 +80,9 @@ class EE_messages_init extends EE_Base {
 		$this->_load_controller();
 		$data = array( $transaction, $payment );
 		$this->_EEMSG->send_message( 'payment', $data);
+
+		//we might be doing registration confirmations in here as well.
+		$this->_EEMSG->send_message( 'registration', $data );
 	}
 
 
