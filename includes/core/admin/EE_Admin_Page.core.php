@@ -235,8 +235,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *     		'has_help_popups' => false //defaults(true) //this boolean flag can simply be used to indicate if the given route has help popups setup and if it does then we need to make sure thickbox is enqueued.
 	 *     		'columns' => array(4, 2), //this key triggers the setup of a page that uses columns (metaboxes).  The array indicates the max number of columns (4) and the default number of columns on page load (2).  There is an option in the "screen_options" dropdown that is setup so users can pick what columns they want to display.
 	 *     		'help_tabs' => array( //this is used for adding help tabs to a page
-	 *     			'tab_title' => 'callback_method_for_content',
-	 *     			'tab2_title' => 'callback_method_for_content',
+	 *     			'tab_id' => array(
+	 *     				'title' => 'tab_title',
+	 *     				'callback' => 'callback_method_for_content'
+	 *     				),
+	 *     			'tab2_id' => array(
+	 *     			 	'title' => 'tab2 title',
+	 *     			 	'callback' => 'callback_method_for_content',
+	 *     			 )
 	 *     		)
 	 * 			
 	 * )
@@ -759,18 +765,32 @@ abstract class EE_Admin_Page extends EE_BASE {
 		foreach ( $this->_page_config as $slug => $config ) {
 			if ( !is_array( $config ) || ( is_array( $config ) && !isset( $config['help_tabs'] ) ) ) continue; //no help tabs for this config
 
-			foreach ( $config['help_tabs'] as $tab_title => $callback ) {
+			foreach ( $config['help_tabs'] as $tab_id => $cfg ) {
 				//we're here so there ARE help tabs!
-				$id = $this->page_slug . '-' . $slug . '-' . sanitize_key( $tab_title);
-				$this->_current_screen->add_help_tab( array(
+				
+				//make sure we've got what we need
+				if ( !isset( $cfg['title'] ) )
+					throw new EE_Error( __('The _page_config array is not set up properly for help tabs.  It is missing a title', 'event_espresso') );
+
+				if ( !isset( $cfg['callback'] ) )
+					throw new EE_Error( __('The _page_config array is not setup properly for help tabs. It is missing a callback reference', 'event_espresso') );
+
+				//chekc if callback is valid
+				if ( !method_exists( $this, $cfg['callback'] ) ) 
+					throw new EE_Error( sprintf( __('The callback given for the %s help tab does not have a corresponding method.  Check the spelling or make sure the method is present.  This method is used to get the content for the tab.', 'event_espresso'), $cfg['title'] ) );
+		
+					
+				//setup config array for help tab method
+				$id = $this->page_slug . '-' . $slug . '-' . $tab_id;
+				$_ht = array(
 					'id' => $id,
-					'title' => $tab_title,
-					'callback' => array( $this, $callback)
-					)
-				);
+					'title' => $cfg['title'],
+					'callback' => array( $this, $cfg['callback'] )
+					);
+
+				$this->_current_screen->add_help_tab( $_ht );
 			}
 		}
-
 	}
 
 
