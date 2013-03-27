@@ -433,7 +433,7 @@ Class EEM_Gateways {
 		return TRUE;
 
 	}
-
+	
 
 
 	/**
@@ -644,7 +644,10 @@ Class EEM_Gateways {
 						'gateway_data'
 				);
 						
-		espresso_clear_session();
+		//espresso_clear_session(); this seemed silly. we just expelled
+		//all this effort clearing specific gateway items in the session, and now
+		//we're clearing teh whole thing? no, that must have been an error.
+		//so says Mike, March 27th 2013
 		
 		return TRUE;
 	}

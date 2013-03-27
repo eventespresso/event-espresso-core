@@ -89,6 +89,7 @@ class EE_Thank_You_Page{
 	 */
 	function handle_thank_you_page(){
 		$this->_GATEWAYS->thank_you_page_logic($this->_current_transaction);
+		$this->_GATEWAYS->reset_session_data();
 	}
 	
 	/**
