@@ -256,24 +256,35 @@
 		});
 	}	
 
-
-
-	// Registration Steps
-
-	// hide and display steps
-	function hide_step_goto( step_to_hide, step_to_show, msg ) {
-		//alert('hide_step '+step_to_hide+', goto '+step_to_show);
+	
+	/**
+	 * Hides the step specified by step_to_hide
+	 * @param int step_to_hide 1, 2, or 3
+	 * @return void
+	 **/
+	function hide_step(step_to_hide){
 		$('#mer-reg-page-step-'+step_to_hide+'-dv').slideUp( function() {				
 			$('#mer-reg-page-step-'+step_to_hide+'-dv').height(0);
 			$('#mer-reg-page-edit-step-'+step_to_hide+'-lnk').removeClass('hidden');		
-			$('#mer-reg-page-step-'+step_to_show+'-dv').css('display','none').removeClass('hidden').slideDown( function() {
-				scroll_to_top_of_form( msg );
-			});
+			
 		});	
+	}
+	
+	/**
+	 * opens the the SPCO step specified by step_to_show
+	 * shows msg as a notification
+	 * @param int step_to_show either step 1, 2, or 3
+	 * @param string msg message to show
+	 * @return void
+	 **/
+	function go_to_step(step_to_show,msg){
 		$('.mer-reg-page-step-display-dv').removeClass('active-step').addClass('inactive-step');	
 		$('#mer-reg-page-step-'+step_to_show+'-display-dv').removeClass('inactive-step').addClass('active-step');
 		$('#mer-reg-page-edit-step-'+step_to_show+'-lnk').addClass('hidden');	
 		$('#mer-ajax-loading').fadeOut('fast');
+		$('#mer-reg-page-step-'+step_to_show+'-dv').css('display','none').removeClass('hidden').slideDown( function() {
+			scroll_to_top_of_form( msg );
+		});
 	}
 	
 	
@@ -286,14 +297,9 @@
 		}
 		// set step 1 back to auto height 
 		$('#mer-reg-page-step-1-dv').css( 'height', 'auto' );
-		// if step 2 is expanded 
-		if ( $('#mer-reg-page-step-2-dv').height() > 0 ) {
-			// hide step 2
-			hide_step_goto( 2, 1, msg );
-		} else {
-			// must be step 3 that is expanded
-			hide_step_goto( 3, 1, msg );
-		}	
+		hide_step(2);
+		hide_step(3);
+		go_to_step(1,msg);
 	}
 
 
@@ -310,14 +316,9 @@
 		$('#mer-reg-page-step-2-dv').css({ 'display' : 'none' }).removeClass('hidden');
 		// set step 2 back to auto height 
 		$('#mer-reg-page-step-2-dv').css( 'height', 'auto' );
-		// if step 1 is expanded
-		if ( $('#mer-reg-page-step-1-dv').height() > 0 ) {
-			// hide step 1		
-			hide_step_goto( 1, 2, msg );	
-		} else {		
-			// must be step 3 that is expanded
-			hide_step_goto( 3, 2, msg );		
-		}	
+		hide_step(1);
+		hide_step(3);
+		go_to_step(2,msg);
 	}
 
 
@@ -332,14 +333,9 @@
 		$('#mer-reg-page-step-3-dv').css({ 'display' : 'none' }).removeClass('hidden');		
 		// set step 3 back to auto height 
 		$('#mer-reg-page-step-3-dv').css( 'height', 'auto' );	
-		// if step 1 is expanded
-		if ( $('#mer-reg-page-step-1-dv').height() > 0 ) {
-			// hide step 1		
-			hide_step_goto( 1, 3, msg );	
-		} else {
-			// must be step 2 that is expanded
-			hide_step_goto( 2, 3, msg );	
-		}	
+		hide_step(1);
+		hide_step(2);
+		go_to_step(3,msg);
 
 	}
 
