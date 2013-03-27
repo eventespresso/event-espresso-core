@@ -129,6 +129,7 @@ class EE_Thank_You_Page{
 		$template_args['payments'] = $transaction->payments();//$this->_PAY->get_approved_payments_for_transaction($transaction->ID());
 		$template_args['primary_registrant'] = $this->_REG->get_primary_registration_for_transaction_ID($transaction->ID());
 		$template_args['event_names']=$event_names;
+		$template_args['show_try_pay_again_link'] = $transaction->is_completed() || ($transaction->is_pending() && $org_options['show_pending_payment_options']);
 		$template_args['currency_symbol']=$org_options['currency_symbol'];
 		$template_args['SPCO_step_2_url']= add_query_arg(array('e_reg'=>'register','step'=>'2'),get_permalink($org_options['event_page_id']));
 		return  espresso_display_template(EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/payment_overview.template.php',$template_args,true);
