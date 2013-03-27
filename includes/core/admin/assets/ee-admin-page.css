@@ -408,3 +408,7 @@ table .espresso-radio-btn-options-ul .small-lbl,
 	height: 18px;
 	margin: 2px 3px 0 0;
 }
+
+.help-tab-content img {
+	border: 2px solid #e7e7e7;
+}
