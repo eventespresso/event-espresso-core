@@ -100,6 +100,12 @@ abstract class EE_Base_Class {
 		if(array_key_exists($fieldName,$fieldSettings)){
 			$value=$this->$privateFieldName;
 			$thisFieldSettings=$fieldSettings[$fieldName];
+			if( $thisFieldSettings->nullable() && $value == null){
+				return null;
+			}elseif(!$thisFieldSettings->nullable() && $value == null){
+				EE_Error::add_error(sprintf(__("Some data is missing||The field named %s on %s is null, but it shouldnt be. The complete object is:%s",'event_espresso'),$fieldName,get_class($this),  print_r($this, true)), $file, $func, $line);
+				return null;
+			}
 			switch($thisFieldSettings->type()){
 				case 'primary_key':
 				case 'foreign_key':
@@ -127,7 +133,7 @@ abstract class EE_Base_Class {
 					if(is_array($value)){
 						return $value;
 					}else{
-						return unserialize($value);
+						return @unserialize($value);
 					}
 			}
 		}else{

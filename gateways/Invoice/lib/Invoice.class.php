@@ -101,8 +101,10 @@ class Invoice {
 		if ($template_args['amount_pd'] != $template_args['total_cost']) {
 			$template_args['net_total'] = $this->espressoInvoiceTotals( __('SubTotal', 'event_espresso'), $this->transaction->total());//$this->session_data['cart']['REG']['sub_total']);
 			$tax_data = $this->transaction->tax();
-			foreach ($tax_data['taxes'] as $tax) {
-				$template_args['net_total'] .= $this->espressoInvoiceTotals( $tax['name'], $tax['amount']);
+			if(!empty($tax_data) && array_key_exists('taxes',$tax_data)){
+				foreach ($tax_data['taxes'] as $tax) {
+					$template_args['net_total'] .= $this->espressoInvoiceTotals( $tax['name'], $tax['amount']);
+				}
 			}
 						
 			$difference = $template_args['amount_pd'] - $template_args['total_cost'];
