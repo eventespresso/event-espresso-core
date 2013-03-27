@@ -763,7 +763,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected function _add_help_tabs() {
 
 		foreach ( $this->_page_config as $slug => $config ) {
-			if ( !is_array( $config ) || ( is_array( $config ) && !isset( $config['help_tabs'] ) ) ) continue; //no help tabs for this config
+			if ( !is_array( $config ) || ( is_array( $config ) && !isset( $config['help_tabs'] ) ) || $slug != $this->_req_action ) continue; //no help tabs for this config
 
 			foreach ( $config['help_tabs'] as $tab_id => $cfg ) {
 				//we're here so there ARE help tabs!
