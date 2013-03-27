@@ -175,7 +175,7 @@ class EEM_Datetime extends EEM_Base {
 		if ( $datetimes = $this->select_all_where( $where ) ) {
 			//load Datetime object class file
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Datetime.class.php');
-			$datetime = $datetimes[0];
+			$datetime = array_shift($datetimes);
 			$date_time_obj = new EE_Datetime(
 					$datetime->EVT_ID,
 					$datetime->DTT_is_primary,

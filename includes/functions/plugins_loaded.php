@@ -268,8 +268,31 @@ function espresso_get_user_id() {
  */
 function espresso_load_org_options() {
 	global $org_options, $espresso_wp_user;
-	$org_options = get_user_meta($espresso_wp_user, 'events_organization_settings', true);
-	//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Log.class.php');
+	// grab org options based on current admin user
+	$org_options = get_user_meta( $espresso_wp_user, 'events_organization_settings', TRUE );
+	// do settings for this user exist ?
+	if ( empty( $org_options )) {
+		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/activation.php');
+		espresso_org_option_initialization();		
+	} else {
+		// list of critical org_options
+		$critical_org_options = array( 
+			'contact_email',
+			'currency_symbol',
+			'espresso_url_rewrite_activated'
+		);
+		// cycle thru critical org_options
+		foreach ( $critical_org_options as $critical_org_option ) {
+			// make sure each one actually exists 
+			if ( ! array_key_exists( $critical_org_option, $org_options )) {
+				// reinitialize the org options
+				require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/activation.php');
+				espresso_org_option_initialization( TRUE );
+				break;	
+			}
+		}
+	}
+		
 	require_once( 'EE_Log.class.php' );
 	do_action('action_hook_espresso_debug_file');
 	$req_vars = '';

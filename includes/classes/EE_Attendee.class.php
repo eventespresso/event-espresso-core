@@ -609,7 +609,32 @@ class EE_Attendee extends EE_Base_Class{
 	public function fname() {
 		return $this->_ATT_fname;
 	}
+	
+	
+	
+	
+	
+	/**
+	 * echoes out the attendee's first name
+	 */
+	public function e_full_name(){
+		echo $this->full_name();
+	}
+	
+	
+	
+	
+	
+	/**
+	 * Returns the first and last name concatenated together with a space.
+	 * @return string
+	 */
+	public function full_name(){
+		return stripslashes_deep($this->_ATT_fname . " " . $this->_ATT_lname);
+	}
 
+	
+	
 
 
 	/**

@@ -147,29 +147,15 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 	protected function _gateway_settings() {
 		
-		global $EE_Session, $EEM_Gateways, $caffeinated;
-		
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Tabbed_Content.helper.php' ;
-		
-		if (isset($this->_req_data['_wp_http_referer']) || in_array(TRUE, $_GET)) {
-			$EE_Session->set_session_data(
-				array(
-						'active_gateways'=>array(),
-						'payment_settings'=>array(),
-						'selected_gateway'=>'',
-						'hide_other_gateways'=>FALSE,
-						'type'=>'',
-						'html_data'=>array(),
-						'transaction_dateTime'=>'',
-						'off-site-form'=>array()
-						),
-				'gateway_data');
-		}
-		
-		if (!defined('ESPRESSO_GATEWAYS')) {
+		global $EE_Session, $caffeinated, $EEM_Gateways;
+
+		if ( ! defined( 'ESPRESSO_GATEWAYS' )) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
 			$EEM_Gateways = EEM_Gateways::instance();
+			$EEM_Gateways->set_active_gateways();
 		}
+		
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Tabbed_Content.helper.php' ;
 		
 		$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
 		//printr( $gateway_data, '$gateway_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
