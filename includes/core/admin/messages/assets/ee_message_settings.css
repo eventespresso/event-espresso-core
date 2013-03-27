@@ -93,3 +93,7 @@ li.mt-tab:hover .mt-handlediv {
     background: transparent url(../../../../../../../../wp-admin/images/arrows.png) no-repeat top right;
     cursor: pointer;
 }
+
+.activate_messages_on_off_toggle_container {
+    float:right;
+}
