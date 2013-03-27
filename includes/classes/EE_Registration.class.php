@@ -788,6 +788,18 @@ class EE_Registration extends EE_Base_Class {
 	public function date() {
 		return $this->_REG_date;
 	}
+	
+	/**
+	 * get datetime object for this registration
+	 *
+	 * @access public
+	 * @return EE_Datetime
+	 */
+	public function date_obj() {
+		require_once('EEM_Datetime.model.php');
+		$EEMD = EEM_Datetime::instance();
+		return $EEMD->get_date_time_by_dtt_id( $this->_DTT_ID );
+	}
 
 
 

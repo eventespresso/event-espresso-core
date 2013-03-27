@@ -238,14 +238,23 @@ abstract class EE_message_type extends EE_Base {
 	 * @return void      
 	 */
 	public function set_messages($data, $active_messenger, $context = FALSE ) {
+
+		$this->_active_messenger = $active_messenger;
+		$this->_data = $data;
+
+		//this is a special method that allows child message types to trigger an exit from generating messages early (in cases where there may be a delay on send). 
+		$exit = $this->_trigger_exit();
+		if ( $exit && !$context ) return false;
+
 		//todo: need to move require into registration hook but for now we'll require here.
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Parse_Shortcodes.helper.php';
 		//get shortcode_replace instance- set when _get_messages is called in child...
 		$this->_shortcode_replace = new EE_Parse_Shortcodes();
-		$this->_active_messenger = $active_messenger;
-		$this->_data = $data;
+		
 
 		//if there is a context available then we're going to reset the datahandler to the Preview_incoming_data handler
+		$this->_set_data_handler();
+
 		$this->_data_handler = !$context ? $this->_data_handler : 'Preview';
 		$this->_set_contexts;
 
@@ -266,6 +275,10 @@ abstract class EE_message_type extends EE_Base {
 
 
 
+
+
+
+
 	/**
 	 * This sets the _default_field_content property which needs to be defined by child classes.
 	 * 
@@ -274,6 +287,19 @@ abstract class EE_message_type extends EE_Base {
 	 * @return void
 	 */
 	abstract protected function _set_default_field_content();
+
+
+
+
+
+	/**
+	 * This sets the data handler for the message type.  It must be used to define the _data_handler property.  It is called when messages are setup.
+	 *
+	 * @abstract
+	 * @access protected
+	 * @return void
+	 */
+	abstract protected function _set_data_handler();
 
 
 	/**
@@ -340,6 +366,22 @@ abstract class EE_message_type extends EE_Base {
 		return $content;
 	}
 
+
+
+
+
+	/**
+	 * This method can be overridden by child classes to do any special conditionals that might triger an exit from generating messages (that might happen with delays etc).
+	 * @return bool   TRUE will trigger an exit, FALSE will continue the code execution.
+	 */
+	protected function _trigger_exit() {
+		return FALSE;
+	}
+
+
+
+
+
 	/**
 	 * sets the _existing_admin_settings property can be overridden by child classes.  We do this so we only do database calls if needed.
 	 *
@@ -356,7 +398,7 @@ abstract class EE_message_type extends EE_Base {
 		if ( !isset($active_message_types[$this->name]) && empty($this->_admin_settings_fields) )
 			return $this->_existing_admin_settings = NULL;
 		
-		$this->_existing_admin_settings = isset($active_message_types[$this->name][$messenger]['settings'] ) ?  $active_message_types[$this->name][$messenger]['settings'] : null;
+		$this->_existing_admin_settings = isset($active_message_types[$this->name]['settings'] ) ?  $active_message_types[$this->name]['settings'] : null;
 
 	}
 
