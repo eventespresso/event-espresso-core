@@ -278,7 +278,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 			}
 
 			?>
-			<p><a href="<?php echo home_url() . '/?invoice_launch=true&amp;id=' . $registration->reg_url_link(); ?>" class="inline-button ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" target="_blank">
+			<p><a href="<?php $registration->e_invoice_url() ?>" class="inline-button ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" target="_blank">
 					<?php _e('Download PDF Invoice', 'event_espresso'); ?>
 				</a></p>
 			<?php

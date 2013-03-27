@@ -655,7 +655,7 @@ Class EEM_Gateways {
 						'gateway_data'
 				);
 						
-		espresso_clear_session();
+		espresso_clear_session( __CLASS__, __FUNCTION__ );
 		
 		return TRUE;
 	}
