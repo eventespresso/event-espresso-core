@@ -774,6 +774,31 @@ class EE_Registration extends EE_Base_Class {
 		return home_url() . '/?invoice_launch=true&amp;id=' . $this->reg_url_link();
 	}
 
+	
+	
+	
+	
+	
+	/**
+	 * Echoes out payment_overview_url
+	 */
+	public function e_payment_overview_url(){
+		echo $this->payment_overview_url();
+	}
+	
+	
+	
+	
+	
+	/**
+	 * Gets the URL of the thank you page with this registraiton REG_url_link added as
+	 * a query parameter
+	 * @return string
+	 */
+	public function payment_overview_url(){
+		global $org_options;
+		return add_query_arg(array('e_reg_url_link'=>$this->reg_url_link()),get_permalink($org_options['return_url']));
+	}
 
 
 	
