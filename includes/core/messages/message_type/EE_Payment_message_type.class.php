@@ -39,7 +39,6 @@ class EE_Payment_message_type extends EE_message_type {
 			'singular' => __('payment', 'event_espresso'),
 			'plural' => __('payments', 'event_espresso')
 			);
-		$this->_data_handler = 'Gateways';
 
 		parent::__construct();
 	
@@ -54,6 +53,14 @@ class EE_Payment_message_type extends EE_message_type {
 			'events_edit' => true
 			); 
 	}
+
+
+
+	protected function _set_data_handler() {
+		$this->_data_handler = 'Gateways';
+	}
+
+
 
 	protected function _get_admin_content_events_edit_for_messenger( EE_Messenger $messenger ) {
 		//this is just a test

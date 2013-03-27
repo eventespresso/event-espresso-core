@@ -233,7 +233,17 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *     		'metaboxes' => array('metabox1', 'metabox2'), //if present this key indicates we want to load metaboxes set for eventespresso admin pages. 
 	 *     		'has_metaboxes' => true, //this boolean flag can simply be used to indicate if the route will have metaboxes.  Typically this is used if the 'metaboxes' index is not used because metaboxes are added later.  We just use this flag to make sure the necessary js gets enqueued on page load.
 	 *     		'has_help_popups' => false //defaults(true) //this boolean flag can simply be used to indicate if the given route has help popups setup and if it does then we need to make sure thickbox is enqueued.
-	 *     		'columns' => array(4, 2) //this key triggers the setup of a page that uses columns (metaboxes).  The array indicates the max number of columns (4) and the default number of columns on page load (2).  There is an option in the "screen_options" dropdown that is setup so users can pick what columns they want to display.
+	 *     		'columns' => array(4, 2), //this key triggers the setup of a page that uses columns (metaboxes).  The array indicates the max number of columns (4) and the default number of columns on page load (2).  There is an option in the "screen_options" dropdown that is setup so users can pick what columns they want to display.
+	 *     		'help_tabs' => array( //this is used for adding help tabs to a page
+	 *     			'tab_id' => array(
+	 *     				'title' => 'tab_title',
+	 *     				'callback' => 'callback_method_for_content'
+	 *     				),
+	 *     			'tab2_id' => array(
+	 *     			 	'title' => 'tab2 title',
+	 *     			 	'callback' => 'callback_method_for_content',
+	 *     			 )
+	 *     		)
 	 * 			
 	 * )
 	 * 
@@ -265,18 +275,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
-
-	/**
-	 * _add_help_tabs
-	 * Child classes can add any help_tabs within this method using built-in WP functions/methods for doing so.
-	 * Note child classes can also define _add_help_tabs_($this->_current_view) to limit screen options to a particular view.
-	 * @link http://codex.wordpress.org/Function_Reference/add_help_tab
-	 *
-	 * @abstract
-	 * @access protected
-	 * @return void
-	 */
-	abstract protected function _add_help_tabs();
 
 
 
@@ -500,17 +498,15 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( method_exists( $this, '_add_screen_options_' . $this->_current_view ) )
 			call_user_func( array( $this, '_add_screen_options_' . $this->_current_view ) );
 
-		//add help tab(s) - global, page child class, and view specific
+		//add help tab(s) - set via page_config.
 		$this->_add_help_tabs();
-		$this->_add_global_help_tabs();
-		if ( method_exists( $this, '_add_help_tabs_' . $this->_current_view ) )
-			call_user_func( array( $this, '_add_help_tabs_' . $this->_current_view ) );
+
 
 		//add feature_pointers - global, page child class, and view specific
 		$this->_add_feature_pointers();
 		$this->_add_global_feature_pointers();
-		if ( method_exists( $this, '_add_help_tabs_' . $this->_current_view ) )
-			call_user_func( array( $this, '_add_help_tabs_' . $this->_current_view ) );
+		if ( method_exists( $this, '_add_feature_pointer_' . $this->_current_view ) )
+			call_user_func( array( $this, '_add_feature_pointer_' . $this->_current_view ) );
 
 		//enqueue scripts/styles - global, page class, and view specific
 		add_action('admin_enqueue_scripts', array($this, 'load_global_scripts_styles'), 5 );
@@ -750,6 +746,51 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 		return add_query_arg( $args, $url );
 		
+	}
+
+
+
+
+	/**
+	 * _add_help_tabs
+	 * 
+	 * Note child classes define their help tabs within the page_config array.
+	 * @link http://codex.wordpress.org/Function_Reference/add_help_tab
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function _add_help_tabs() {
+
+		foreach ( $this->_page_config as $slug => $config ) {
+			if ( !is_array( $config ) || ( is_array( $config ) && !isset( $config['help_tabs'] ) ) ) continue; //no help tabs for this config
+
+			foreach ( $config['help_tabs'] as $tab_id => $cfg ) {
+				//we're here so there ARE help tabs!
+				
+				//make sure we've got what we need
+				if ( !isset( $cfg['title'] ) )
+					throw new EE_Error( __('The _page_config array is not set up properly for help tabs.  It is missing a title', 'event_espresso') );
+
+				if ( !isset( $cfg['callback'] ) )
+					throw new EE_Error( __('The _page_config array is not setup properly for help tabs. It is missing a callback reference', 'event_espresso') );
+
+				//chekc if callback is valid
+				if ( !method_exists( $this, $cfg['callback'] ) ) 
+					throw new EE_Error( sprintf( __('The callback given for the %s help tab does not have a corresponding method.  Check the spelling or make sure the method is present.  This method is used to get the content for the tab.', 'event_espresso'), $cfg['title'] ) );
+		
+					
+				//setup config array for help tab method
+				$id = $this->page_slug . '-' . $slug . '-' . $tab_id;
+				$_ht = array(
+					'id' => $id,
+					'title' => $cfg['title'],
+					'callback' => array( $this, $cfg['callback'] )
+					);
+
+				$this->_current_screen->add_help_tab( $_ht );
+			}
+		}
 	}
 
 
@@ -1033,19 +1074,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
-
-
-	/**
-	 * _add_global_help_tabs
-	 *  Adds any help_tabs within this method using built-in WP functions/methods for doing so.
-	 * This particular method will add help tabs for ALL EE_Admin pages
-	 * @link http://codex.wordpress.org/Function_Reference/add_help_tab
-	 *
-	 * @abstract
-	 * @access private
-	 * @return void
-	 */
-	private function _add_global_help_tabs() {}
 
 
 
@@ -1901,17 +1929,20 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		$data = isset( $this->_template_args['data'] ) ? $this->_template_args['data'] : array();
+		unset($this->_template_args['data']);
 		$json = array(
 			'error' => isset( $this->_template_args['error'] ) ? $this->_template_args['error'] : FALSE,
 			'success' => isset( $this->_template_args['success'] ) ? $this->_template_args['success'] : FALSE,
 			'notices' => EE_Error::get_notices(),
-			'content' => $this->_template_args['admin_page_content'],
+			'content' => utf8_encode($this->_template_args['admin_page_content']),
 			'data' => array_merge( $data, array('template_args' => $this->_template_args ) )
 			);
+
 
 		// make sure there are no php errors or headers_sent.  Then we can set correct json header.
 		if ( NULL === error_get_last() || ! headers_sent() )
 			header('Content-Type: application/json');
+
 		echo json_encode( $json );
 		exit();
 	}
@@ -1962,8 +1993,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		// load settings page wrapper template
 		$template_path = !defined( 'DOING_AJAX' ) ? EE_CORE_ADMIN . 'admin_wrapper.template.php' : EE_CORE_ADMIN . 'admin_wrapper_ajax.template.php';
 
+
 		if ( defined( 'DOING_AJAX' ) ) {
 			$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
+
 			$this->_return_json();
 		} else {
 			espresso_display_template( $template_path, $this->_template_args );

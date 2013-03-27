@@ -55,6 +55,7 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 			'last_access'
 		);
 
+
 		//primary attendee data
 		$this->_add_primary_attendee_data();
 
@@ -126,6 +127,16 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 				}
 			}
 		}
+
+		//if we don't have any primary attendee data let's get some from the attendee list.
+		if ( empty( $this->_primary_attendee_data ) ) {
+			foreach ( $this->attendees as $attnum => $details ) {
+				$att_obj = $details['att_obj'];
+				$this->_primary_attendee_data['fname'] = $att_obj->fname();
+				$this->_primary_attendee_data['lname'] = $att_obj->lname();
+				$this->_primary_attendee_data['email'] = $att_obj->email();
+			}
+		}
 	}
 
 
@@ -137,6 +148,12 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 	 * @return array array of primary attendee data
 	 */
 	protected function _add_primary_attendee_data() {
+
+		//sigh. it appears there are some times where primary_attendee is not set.
+		if ( !isset( $this->_data['primary_attendee'] ) ) {
+			$this->primary_attendee_data = NULL;
+			return;
+		}
 
 		foreach ( $this->_data['primary_attendee'] as $key => $val ) {
 			if ( $key == 'email') {

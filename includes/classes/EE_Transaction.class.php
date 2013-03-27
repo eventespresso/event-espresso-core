@@ -514,7 +514,7 @@ class EE_Transaction extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function tax() {
-		return $this->_TXN_tax_data;
+		return $this->get('TXN_tax_data');
 	}
 
 

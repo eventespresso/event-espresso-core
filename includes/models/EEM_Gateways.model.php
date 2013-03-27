@@ -101,6 +101,17 @@ Class EEM_Gateways {
 
 
 	/**
+	 * 		set_active_gateways
+	 * 		@access public
+	 * 		@return void
+	 */
+	public function set_active_gateways() {
+		$this->_set_active_gateways();
+	}
+
+
+
+	/**
 	 * 		_set_active_gateways
 	 * 		@access private
 	 * 		@return void

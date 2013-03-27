@@ -234,7 +234,7 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 	 */
 	final private function _init() {
 		$active_messengers = $this->_EE_MSG->get_active_messengers();
-		$active_message_types = $this->_EE_MSG->get_active_message_types();
+		$active_message_types = $this->_EE_MSG->get_installed_message_types();
 
 		//check if messenger is active
 		if ( !isset($active_messengers[$this->_m_name] ) ) {
@@ -243,9 +243,9 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 			throw new EE_Error( implode( '||', $msg ) );
 		}
 
-		//check if message type is active
+		//check if message type is installed
 		if ( !isset($active_messengers[$this->_m_name] ) ) {
-			$msg[] = __('Message Templates cannot be generated because the given message type is not active', 'event_espresso');
+			$msg[] = __('Message Templates cannot be generated because the given message type is not installed', 'event_espresso');
 			$msg[] = sprintf( __('The "$_mt_name" property has "%s" as it\'s value.  Check the spelling and make sure it matches an available message type', 'event_espresso'), $this->_mt_name );
 			throw new EE_Error( implode( '||', $msg ) );
 		}

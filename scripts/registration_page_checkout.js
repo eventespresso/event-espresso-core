@@ -28,7 +28,7 @@
 			this.css({ 'max-width' : '600px' });
 		}
 		return this;
-	}
+	};
 
 
 

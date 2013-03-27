@@ -4,21 +4,7 @@
 </div>
 
 <div style="display: none;">
-	<?php
-	/**
-	 * Pre-existing Emails Help Box
-	 */
-	?>
-	<div id="email_manager_info" class="pop-help" >
-		<div class="TB-ee-frame">
-			<h2>
-				<?php _e('Pre-existing Emails', 'event_espresso'); ?>
-			</h2>
-			<p>
-				<?php _e('These emails will override the custom email if a pre-existing email is selected. You must select "Yes" in the "Send custom confirmation emails for this event?" above.', 'event_espresso'); ?>
-			</p>
-		</div>
-	</div>
+	
 	<?php
 	/**
 	 * Coupon/Promo Code Help Box
@@ -262,21 +248,6 @@ add_filter( 'filter_hook_espresso_filter_default_event_meta', 'my_event_meta' );
 			</pre>
 
 			<p> <?php echo __('Further information on shortcodes is available ', 'event_espresso') . "<a href='" . admin_url('admin.php?page=espresso_support#shortcodes') . " '>" . __('on the Help &amp; Support page', 'event_espresso') . "</a>" . __(' or from the', 'event_espreso') . " <a href='http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/'>" . __('forums', 'event_espresso') . "</a>."; ?> </p>
-		</div>
-	</div>
-
-	<?php ########## help box ########## ?>
-	<div id="event_custom_emails" class="pop-help" >
-		<div class="TB-ee-frame">
-			<h2>
-				<?php _e("Using Custom Emails Editor", "event_espresso"); ?>
-			</h2>
-			<p>
-				<?php _e("This area is used to add a  customized email to your registration. You must select \"Yes\" in the \"Send custom confirmation emails for this event?\" and nothing should be selected in the \"Use a pre-existing email?\" dropdown.", "event_espresso"); ?>
-			</p>
-			<p>
-				<?php _e("Please be aware that clicking the HTML will destroy all formatting.", "event_espresso") ?>
-			</p>
 		</div>
 	</div>
 	<?php

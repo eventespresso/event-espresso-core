@@ -208,6 +208,9 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 	private function _get_some_events( $event_ids = array() ) {
 		global $wpdb;
 
+		//HEY, if we have an evt_id then we want to make sure we use that for the preview (because a specific event template is being viewed);
+		$event_ids = isset( $_REQUEST['evt_id'] ) ? array( $_REQUEST['evt_id'] ) : array();
+
 		$limit = !empty( $event_ids ) ? '' : apply_filters( 'filter_hook_espresso_EE_Messages_Preview_incoming_data_get_some_events_limit', ' LIMIT 0,1' );
 
 		$SQL = "SELECT e.id AS ID, e.event_name AS name, e.event_meta AS meta, e.event_status AS status, e.require_pre_approval AS pre_approval, dtt.DTT_ID AS daytime_id FROM " . EVENTS_DETAIL_TABLE . " AS e LEFT JOIN " . ESP_DATETIME . " AS dtt ON dtt.EVT_ID = e.id WHERE dtt.DTT_is_primary = '1' AND";

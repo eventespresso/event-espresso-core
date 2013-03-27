@@ -238,14 +238,23 @@ abstract class EE_message_type extends EE_Base {
 	 * @return void      
 	 */
 	public function set_messages($data, $active_messenger, $context = FALSE ) {
+
+		$this->_active_messenger = $active_messenger;
+		$this->_data = $data;
+
+		//this is a special method that allows child message types to trigger an exit from generating messages early (in cases where there may be a delay on send). 
+		$exit = $this->_trigger_exit();
+		if ( $exit && !$context ) return false;
+
 		//todo: need to move require into registration hook but for now we'll require here.
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Parse_Shortcodes.helper.php';
 		//get shortcode_replace instance- set when _get_messages is called in child...
 		$this->_shortcode_replace = new EE_Parse_Shortcodes();
-		$this->_active_messenger = $active_messenger;
-		$this->_data = $data;
+		
 
 		//if there is a context available then we're going to reset the datahandler to the Preview_incoming_data handler
+		$this->_set_data_handler();
+
 		$this->_data_handler = !$context ? $this->_data_handler : 'Preview';
 		$this->_set_contexts;
 
@@ -266,6 +275,10 @@ abstract class EE_message_type extends EE_Base {
 
 
 
+
+
+
+
 	/**
 	 * This sets the _default_field_content property which needs to be defined by child classes.
 	 * 
@@ -274,6 +287,19 @@ abstract class EE_message_type extends EE_Base {
 	 * @return void
 	 */
 	abstract protected function _set_default_field_content();
+
+
+
+
+
+	/**
+	 * This sets the data handler for the message type.  It must be used to define the _data_handler property.  It is called when messages are setup.
+	 *
+	 * @abstract
+	 * @access protected
+	 * @return void
+	 */
+	abstract protected function _set_data_handler();
 
 
 	/**
@@ -340,6 +366,22 @@ abstract class EE_message_type extends EE_Base {
 		return $content;
 	}
 
+
+
+
+
+	/**
+	 * This method can be overridden by child classes to do any special conditionals that might triger an exit from generating messages (that might happen with delays etc).
+	 * @return bool   TRUE will trigger an exit, FALSE will continue the code execution.
+	 */
+	protected function _trigger_exit() {
+		return FALSE;
+	}
+
+
+
+
+
 	/**
 	 * sets the _existing_admin_settings property can be overridden by child classes.  We do this so we only do database calls if needed.
 	 *
@@ -349,13 +391,14 @@ abstract class EE_message_type extends EE_Base {
 	 */
 	protected function _set_existing_admin_settings( $messenger ) {
 		global $espresso_wp_user;
-		$active_message_types = get_user_meta($espresso_wp_user, 'ee_active_message_types', true);
+		$active_messengers = get_option( 'ee_active_messengers' );
+		$active_message_types = $active_messengers[$messenger]['settings'][$messenger . '-message_types'];
 
 		//if there are no setting fields then there won't be any existing admin settings either.
 		if ( !isset($active_message_types[$this->name]) && empty($this->_admin_settings_fields) )
 			return $this->_existing_admin_settings = NULL;
 		
-		$this->_existing_admin_settings = isset($active_message_types[$this->name][$messenger]['settings'] ) ?  $active_message_types[$this->name][$messenger]['settings'] : null;
+		$this->_existing_admin_settings = isset($active_message_types[$this->name]['settings'] ) ?  $active_message_types[$this->name]['settings'] : null;
 
 	}
 
@@ -534,6 +577,7 @@ abstract class EE_message_type extends EE_Base {
 			} elseif ( !empty( $event_templates) && empty( $global_override ) ) {
 				$this->_templates = $event_templates;
 
+
 			//hmph looks like we have event templates and global overrides present.  So its down to the wire, lets take a snapshot and see who wins.
 			} else {
 				foreach ( $event_templates as $field => $contexts ) {
@@ -541,6 +585,11 @@ abstract class EE_message_type extends EE_Base {
 						$this->_templates[$field][$context] = isset( $global_override[$context] ) ? $global_templates[$field][$context] : $event_templates[$field][$context];
 					}
 				}
+			}
+
+			//hang on, not done yet.  If this is a PREVIEW being generated (and there is no evt_id in the request) then we want to make sure global always wins (even if the generated events happen to have a custom template) because peopel need to see what the global template looks like.
+			if ( $this->_preview && empty($_REQUEST['evt_id'] ) ) {
+				$this->_templates = $global_templates;
 			}
 		}
 	}

@@ -5,7 +5,6 @@ class Invoice {
 
 	private $registration;
 	private $transaction;
-	private $session_data;
 	private $invoice_settings;
 
 	public function __construct($url_link = 0) {
@@ -15,8 +14,10 @@ class Invoice {
 		$TXN = EEM_Transaction::instance();
 		if ( $this->registration = $REG->get_registration(array('REG_url_link' => $url_link))) {
 			$this->transaction = $TXN->get_transaction($this->registration->transaction_ID());
-			$this->session_data = $this->transaction->session_data();
-			$this->invoice_settings = $this->session_data['gateway_data']['payment_settings']['Invoice'];
+			
+			global $espresso_wp_user;
+			$payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', TRUE);
+			$this->invoice_settings = $payment_settings['Invoice'];
 		} else {
 			echo "error message";
 		}
@@ -70,6 +71,7 @@ class Invoice {
 		} else {
 			$template_args['base_url'] = EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/invoice/lib/templates/';
 		}
+		$primary_attendee = $this->transaction->primary_registration()->attendee();
 		
 		$template_args['organization'] = stripslashes_deep($org_options['organization']);
 		$template_args['street'] = empty($org_options['organization_street2']) ? $org_options['organization_street1'] : $org_options['organization_street1'] . '<br>' . $org_options['organization_street2'];
@@ -80,13 +82,12 @@ class Invoice {
 		$template_args['download_link'] = home_url() . '/?invoice_launch=true&amp;id=' . $this->registration->reg_url_link();
 		$template_args['registration_code'] = $this->registration->reg_code();
 		$template_args['registration_date'] = date_i18n(get_option('date_format'), $this->registration->date());
-		$template_args['name'] = stripslashes_deep($this->session_data['primary_attendee']['fname'] . ' ' . $this->session_data['primary_attendee']['lname']);
-		$attendee = $this->session_data['cart']['REG']['items'][$this->session_data['primary_attendee']['line_item_id']]['attendees']['1'];
-		$template_args['attendee_address'] = empty($attendee['address']) ? '' : stripslashes_deep($attendee['address']);
-		$template_args['attendee_address'] = empty($attendee['address2']) ? $template_args['attendee_address'] : $template_args['attendee_address'] . '<br/>' . stripslashes_deep($attendee['address2']);
-		$template_args['attendee_city'] = empty($attendee['city']) ? '' : stripslashes_deep($attendee['city']);
-		$template_args['attendee_state'] = empty($attendee['state']) ? '' : stripslashes_deep($attendee['state']);
-		$template_args['attendee_zip'] = empty($attendee['zip']) ? '' : stripslashes_deep($attendee['zip']);
+		$template_args['name'] = $primary_attendee->full_name();
+		$template_args['attendee_address'] = $primary_attendee->address();//empty($attendee['address']) ? '' : stripslashes_deep($attendee['address']);
+		$template_args['attendee_address2'] = $primary_attendee->address2();//empty($attendee['address2']) ? $template_args['attendee_address'] : $template_args['attendee_address'] . '<br/>' . stripslashes_deep($attendee['address2']);
+		$template_args['attendee_city'] = $primary_attendee->city();// empty($attendee['city']) ? '' : stripslashes_deep($attendee['city']);
+		$template_args['attendee_state'] = $primary_attendee->state_ID();//empty($attendee['state']) ? '' : stripslashes_deep($attendee['state']);
+		$template_args['attendee_zip'] = $primary_attendee->zip();//empty($attendee['zip']) ? '' : stripslashes_deep($attendee['zip']);
 		
 		$template_args['ship_name'] = $template_args['name'];
 		$template_args['ship_address'] = $template_args['attendee_address'];
@@ -94,13 +95,16 @@ class Invoice {
 		$template_args['ship_state'] = $template_args['attendee_state'];
 		$template_args['ship_zip'] = $template_args['attendee_zip'];
 		
-		$template_args['total_cost'] = $this->transaction->total();
+		$template_args['total_cost'] = number_format($this->transaction->total(), 2, '.', '');
 		$template_args['amount_pd'] = $this->transaction->paid();
 		
 		if ($template_args['amount_pd'] != $template_args['total_cost']) {
-			$template_args['net_total'] = $this->espressoInvoiceTotals( __('SubTotal', 'event_espresso'), $this->session_data['cart']['REG']['sub_total']);
-			foreach ($this->session_data['taxes'] as $tax) {
-				$template_args['net_total'] .= $this->espressoInvoiceTotals( $tax['name'], $tax['amount']);
+			$template_args['net_total'] = $this->espressoInvoiceTotals( __('SubTotal', 'event_espresso'), $this->transaction->total());//$this->session_data['cart']['REG']['sub_total']);
+			$tax_data = $this->transaction->tax();
+			if(!empty($tax_data) && array_key_exists('taxes',$tax_data)){
+				foreach ($tax_data['taxes'] as $tax) {
+					$template_args['net_total'] .= $this->espressoInvoiceTotals( $tax['name'], $tax['amount']);
+				}
 			}
 						
 			$difference = $template_args['amount_pd'] - $template_args['total_cost'];
@@ -178,11 +182,11 @@ class Invoice {
 				"[email]",
 				"[registration_date]"
 		);
-
+		$primary_attendee = $this->transaction->primary_registration()->attendee();
 		$ReplaceValues = array(
 				stripslashes_deep($org_options['organization']),
 				$this->registration->reg_code(),
-				stripslashes_deep($this->session_data['primary_attendee']['fname'] . ' ' . $this->session_data['primary_attendee']['lname']),
+				$primary_attendee->full_name(),//stripslashes_deep($this->session_data['primary_attendee']['fname'] . ' ' . $this->session_data['primary_attendee']['lname']),
 				(is_dir(EVENT_ESPRESSO_GATEWAY_DIR . '/invoice')) ? EVENT_ESPRESSO_GATEWAY_URL . 'invoice/lib/templates/' : EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/invoice/lib/templates/',
 				home_url() . '/?download_invoice=true&amp;id=' . $this->registration->reg_url_link(),
 				$invoice_logo_image,
@@ -214,7 +218,18 @@ class Invoice {
 //		printr( $this->session_data['cart']['REG']['items'], 'items' );
 //		echo '</div>';
 		//Data
-		foreach ($this->session_data['cart']['REG']['items'] as $line_item ) {
+		foreach($this->transaction->registrations() as $registration){
+			/*@var $registration EE_Registration*/
+			$html .= '<tr class="item ' . (($c = !$c) ? ' odd' : '') . '">';
+			$html .= '<td class="item_l">1</td>';
+			$html .= '<td class="item_l">' . $registration->event_name() . '</td>';
+			$html .= '<td class="item_l">' .$registration->price_obj()->name(). '</td>';
+			$html .= '<td class="item_l">' . $registration->date_obj()->start_date_and_time() . '</td>';
+			$html .= '<td class="item_l">' . $registration->attendee()->full_name() . '</td>';
+			$html .= '<td class="item_r"><span class="crncy-sign">' . $org_options['currency_symbol'] . '</span>' . $registration->price_paid() . '</td>';
+			$html .= '</tr>';
+		}
+		 /* foreach ($this->session_data['cart']['REG']['items'] as $line_item ) {
 			//printr( $line_item, '$line_item  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			foreach ( $line_item['attendees'] as $attendee) {
 				$html .= '<tr class="item ' . (($c = !$c) ? ' odd' : '') . '">';
@@ -226,7 +241,7 @@ class Invoice {
 				$html .= '<td class="item_r"><span class="crncy-sign">' . $org_options['currency_symbol'] . '</span>' . $attendee['price_paid'] . '</td>';
 				$html .= '</tr>';
 			}
-		}
+		}*/
 		return $html;
 	}
 

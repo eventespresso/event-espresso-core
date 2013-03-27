@@ -268,8 +268,31 @@ function espresso_get_user_id() {
  */
 function espresso_load_org_options() {
 	global $org_options, $espresso_wp_user;
-	$org_options = get_user_meta($espresso_wp_user, 'events_organization_settings', true);
-	//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Log.class.php');
+	// grab org options based on current admin user
+	$org_options = get_user_meta( $espresso_wp_user, 'events_organization_settings', TRUE );
+	// do settings for this user exist ?
+	if ( empty( $org_options )) {
+		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/activation.php');
+		espresso_org_option_initialization();		
+	} else {
+		// list of critical org_options
+		$critical_org_options = array( 
+			'contact_email',
+			'currency_symbol',
+			'espresso_url_rewrite_activated'
+		);
+		// cycle thru critical org_options
+		foreach ( $critical_org_options as $critical_org_option ) {
+			// make sure each one actually exists 
+			if ( ! array_key_exists( $critical_org_option, $org_options )) {
+				// reinitialize the org options
+				require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/activation.php');
+				espresso_org_option_initialization( TRUE );
+				break;	
+			}
+		}
+	}
+		
 	require_once( 'EE_Log.class.php' );
 	do_action('action_hook_espresso_debug_file');
 	$req_vars = '';
@@ -296,7 +319,7 @@ function espresso_EE_Session() {
 	// instantiate !!!
 	$EE_Session = EE_Session::instance();
 	if (!empty($_POST['clear_cart'])) {
-		espresso_clear_session();
+		espresso_clear_session( __CLASS__, __FUNCTION__ );
 	}
 }
 
@@ -310,7 +333,8 @@ function espresso_EE_Session() {
  * 		@access public
  * 		@return void
  */
-function espresso_clear_session() {
+function espresso_clear_session( $class = '', $func = '' ) {
+	//echo '<h3>'. $class . ' -> ' . $func . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	global $EE_Session;
 	$EE_Session->reset_data( 
 			array(
@@ -336,7 +360,7 @@ function espresso_clear_session() {
 	);
 
 }
-add_action( 'action_hook_espresso_before_event_list', 'espresso_clear_session' );
+add_action( 'action_hook_espresso_before_event_list', 'espresso_clear_session', 10, 2 );
 
 
 
@@ -417,10 +441,9 @@ function espresso_init() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . "functions/main.php");
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/time_date.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/actions.php');
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');
-	
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');	
 
-	do_action('action_hook_espresso_coupon_codes');
+	//do_action('action_hook_espresso_coupon_codes');
 }
 
 
@@ -535,8 +558,6 @@ function espresso_load_reg_page_files() {
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Single_Page_Checkout.class.php');
 						global $Single_Page_Checkout;
 						$Single_Page_Checkout = EE_Single_Page_Checkout::instance();	
-						//Process email confirmations
-//						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/email.php');
 						define("ESPRESSO_REG_PAGE_FILES_LOADED", "true");
 					}
 

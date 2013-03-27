@@ -120,7 +120,7 @@ function espresso_display_reg_page($data) {
 
 
 				/* Display the address and google map link if available */
-				if ($data['location'] != '' && (empty($data['org_options']['template_settings']['display_address_in_regform']) || $data['org_options']['template_settings']['display_address_in_regform'])) {
+				if ($data['location'] != '' && (isset($data['org_options']['template_settings']['display_address_in_regform']) && $data['org_options']['template_settings']['display_address_in_regform'])) {
 					?>
 					<p class="event_address" id="event_address-<?php echo $data['event_id'] ?>"><span class="section-title"><?php echo __('Address:', 'event_espresso'); ?></span> <br />
 						<span class="address-block"> <?php echo stripslashes_deep($data['location']); ?><br />

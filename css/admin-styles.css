@@ -16,7 +16,6 @@
 * -1.6 Question Groups
 * -1.7 Categories
 * -1.8 Disounts
-* -1.9 Email manager
 * -1.10 Template Settings
 * -1.11 Calendar Settings
 * -1.12 Payment Settings
@@ -327,9 +326,7 @@ li.time-date .run-in {
 .current-date { color:#d54e21; margin-left:5px; }
 .change-date-time { margin: 8px 15px 5px;
 }
-#post-body #payment-conf-email {/*postbox*/
-	margin-bottom: 30px;
-}
+
 /***  recaptcha settings ***/
 
 .admin-recaptcha-settings-tr {
@@ -626,11 +623,7 @@ select.wide {
 	font-weight: bold;
 	width: 6em;
 }
-#confirmation-email .email-conf-opts {
-	float: left;
-	margin-bottom: -20px;
-	width: 50%;
-}
+
 #set-featured-image #image-display img {width: 100%;}
 
 /*#ticket-manager-dv {
@@ -700,7 +693,7 @@ select.wide {
 #categorydescriptiondivrich {
 	margin-top: 20px;
 }
-/*** Editor Styles (email settings panel) ***/
+/*** Editor Styles ***/
 #edit-slug-box {
 	height: 2.5em;
 }
@@ -767,7 +760,7 @@ select.wide {
 	margin-top: 5px;
 	width:99.9%;
 }
-textarea#event_desc, textarea#conf_mail, #category_desc_new, textarea#description, textarea#email_text, textarea#category_desc{
+textarea#event_desc, textarea#conf_mail, #category_desc_new, textarea#description, textarea#category_desc{
 	width: 100%;
 	border-color: #dfdfdf;
 }
@@ -775,7 +768,7 @@ textarea#conf_mail, .postbox textarea.std-textarea {
 	color: #000;
 	min-height: 150px;
 }
-#email-confirmation-form, #payment-confirmation-form, #cat-descr-add-form, #venue-descr-add-form, #staff-descr-add-form, #staff-descr-edit-form, #manage-event-email-form {
+#payment-confirmation-form, #cat-descr-add-form, #venue-descr-add-form, #staff-descr-add-form, #staff-descr-edit-form {
 	border-width: 0 1px 1px;
 	border-style: none solid solid;
 	width: 100%;
@@ -788,17 +781,17 @@ textarea#conf_mail, .postbox textarea.std-textarea {
 	border-bottom-right-radius: 6px;
 	border-color: #dfdfdf;
 }
-#email-confirmation-form td, #payment-confirmation-form td, #cat-descr-add-form td, #staff-descr-add-form td #staff-descr-edit-form td, #manage-event-email-form td {
+#payment-confirmation-form td, #cat-descr-add-form td, #staff-descr-add-form td #staff-descr-edit-form td {
 	font-size: 11px;
 }
 .autosave-info {
 	padding: 6px 2px;
 	text-align: left;
 }
-#editorcontent #email-confirmation-form, #editorcontent #payment-confirmation-form, #editorcontent #cat-descr-add-form {
+#editorcontent #payment-confirmation-form, #editorcontent #cat-descr-add-form {
 	border: none;
 }
-#email-confirmation-form, #payment-confirmation-form, #cat-descr-add-form, #venue-descr-add-form, #staff-descr-add-form, #staff-descr-edit-form, #manage-event-email-form {
+#payment-confirmation-form, #cat-descr-add-form, #venue-descr-add-form, #staff-descr-add-form, #staff-descr-edit-form {
 	background-color: #ededed;
 }
 .aer-word-count {
@@ -963,12 +956,7 @@ div#gmap-reg-events { padding-left: 3%;}
 ul#quick-links ul{
 	padding-left: 20px;
 }
-.email-settings-img {
-	margin: 10px;
-}
-#post-body .help-support .emails-not-sent {
-	margin: 40px 0;
-}
+
 #faqs dd {
 	border-bottom: 1px solid #bebebe;
 }
@@ -1535,7 +1523,7 @@ body p label {
 	display: inline;
 	float: none;
 }
-#confirmation-email label,
+
 #event-post label {
 	display: block;
 	margin-bottom: 4px;
@@ -1556,7 +1544,7 @@ form.espresso_form legend {
 textarea {
 	resize: vertical;
 }
-form.espresso_form legend, form.espresso_form label, #new-question-form label, #edit-new-question-form label, #add-edit-new-event-email label {
+form.espresso_form legend, form.espresso_form label, #new-question-form label, #edit-new-question-form label {
 	/*display:block;
 	font-size:11px;
 	font-weight:bold;

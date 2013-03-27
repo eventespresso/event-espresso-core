@@ -54,7 +54,7 @@
 
 li.mt-tab {
     float: left;
-    width: 15%;
+    width: 25%;
     padding: 0.6em;
     margin: 0 0.4em 0.4em 0;
     text-align: left;
@@ -92,4 +92,8 @@ li.mt-tab .mt-handlediv {
 li.mt-tab:hover .mt-handlediv {
     background: transparent url(../../../../../../../../wp-admin/images/arrows.png) no-repeat top right;
     cursor: pointer;
+}
+
+.activate_messages_on_off_toggle_container {
+    float:right;
 }

@@ -231,7 +231,7 @@ class EE_Email_messenger extends EE_messenger  {
 	protected function _set_default_field_content() {
 		$this->_default_field_content = array(
 			'to' => '[ATTENDEE_EMAIL]',
-			'from' => isset($this->_existing_admin_settings[$this->name . '-from']) ? $this->_existing_admin_settings[$this->name . '-from'] : '[ADMIN_EMAIL]',
+			'from' => '[ADMIN_EMAIL]',
 			'subject' => '',
 			'content' => array(
 				'main' => 'This contains the main content for the message going out.  It\'s specific to message type so you will want to replace this in the template',
@@ -260,20 +260,7 @@ class EE_Email_messenger extends EE_messenger  {
 	/**
 	 * setting up admin_settings_fields for messenger.
 	 */
-	protected function _set_admin_settings_fields() {
-		$this->_admin_settings_fields = array(
-			'from' => array(
-					'field_type' => 'text',
-					'label' => __('Default From Address', 'event_espresso'),
-					'default' => '[ADMIN_EMAIL]',
-					'value_type' => 'string',
-					'format' => '%s',
-					'validation' => FALSE,
-					'required' => TRUE
-				),
-
-		);
-	}
+	protected function _set_admin_settings_fields() {}
 
 	/**
 	 * We just deliver the messages don't kill us!!  

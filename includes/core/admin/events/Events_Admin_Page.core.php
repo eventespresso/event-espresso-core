@@ -1638,36 +1638,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 
-	public function email_metabox() {
-		//todo: this needs to be moved into the the Messages_Admin_Page.core.php once the events_admin has been reworked to be in the new admin system.
-
-		//let's get the active messengers (b/c messenger objects have the active message templates)
-		$EEM_controller = new EE_Messages;
-		$active_messengers = $EEM_controller->get_active_messengers();
-		$tabs = array();
-
-		//get content for active messengers
-		foreach ( $active_messengers as $name => $messenger ) {
-			$tabs[$name] = $messenger->get_messenger_admin_page_content('events', 'edit', array('event' => $this->_event) );
-		}
-
-
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Tabbed_Content.helper.php';
-		//we want this to be tabbed content so let's use the EE_Tabbed_Content::display helper.
-		$tabbed_content = EE_Tabbed_Content::display($tabs);
-		if ( is_wp_error($tabbed_content) ) {
-			$tabbed_content = $tabbed_content->get_error_message();
-		}
-		
-		echo $tabbed_content;
-	}
-
-
-
-
-
-
-
 
 	/**
 	 * _premium_event_editor_meta_boxes
@@ -2645,8 +2615,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$phone = esc_html($this->_req_data['phone']);
 		$externalURL = esc_html($this->_req_data['externalURL']);
 
-		$post_type = $this->_req_data['post_type'];
-
 		// thumbnail image options
 		$event_meta['event_thumbnail_url'] = array_key_exists('upload_image',$this->_req_data) ? $this->_req_data['upload_image'] : '';
 		$event_meta['display_thumb_in_lists'] = array_key_exists('show_thumb_in_lists', $this->_req_data) ? $this->_req_data['show_thumb_in_lists'] : '';
@@ -2998,7 +2966,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		/// Create Event Post Code Here
 		if ( isset( $this->_req_data['create_post'] ) && $this->_req_data['create_post'] == 1 ) {
 
-			$post_type = $this->_req_data['post_type'];
+			$post_type = isset( $this->_req_data['post_type'] ) && ! empty( $this->_req_data['post_type'] ) ? $this->_req_data['post_type'] : 'espresso_event';
 			
 			
 			if ($post_type == 'post') {
@@ -3577,7 +3545,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 		
 			if ( $this->_req_data['create_post'] ) {
 			
-				$post_type = $this->_req_data['post_type'];
+				$post_type = isset( $this->_req_data['post_type'] ) && ! empty( $this->_req_data['post_type'] ) ? $this->_req_data['post_type'] : 'espresso_event';
+
 				if ($post_type == 'post') {
 					if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php") || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/event_post.php")) {
 						// Load message from template into message post variable
@@ -3611,8 +3580,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 					$wpdb->get_results($sql);
 					$post_id = $wpdb->last_result[0]->post_id;
 				}
-
-				$post_type = $this->_req_data['post_type'];
 
 				if ($post_id > 0)
 					$my_post['ID'] = $post_id;
@@ -3819,8 +3786,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$data = array();
 		$data['expire_on_registration_end'] = isset( $this->_req_data['expire_on_registration_end'] ) ? absint( $this->_req_data['expire_on_registration_end'] ) : FALSE;
 		$data['default_reg_status'] = isset( $this->_req_data['default_reg_status'] ) ? sanitize_text_field( $this->_req_data['default_reg_status'] ) : 'RPN';
-		$data['pending_counts_reg_limit'] = isset( $this->_req_data['pending_counts_reg_limit'] ) ? absint( $this->_req_data['pending_counts_reg_limit'] ) : FALSE;
-		$data['use_attendee_pre_approval'] = isset( $this->_req_data['use_attendee_pre_approval'] ) ? absint( $this->_req_data['use_attendee_pre_approval'] ) : FALSE;
+		$data['pending_counts_reg_limit'] = isset( $this->_req_data['pending_counts_reg_limit'] ) ? absint( $this->_req_data['pending_counts_reg_limit'] ) : TRUE;
+		$data['use_attendee_pre_approval'] = isset( $this->_req_data['use_attendee_pre_approval'] ) ? absint( $this->_req_data['use_attendee_pre_approval'] ) : TRUE;
 
 		$data = apply_filters('filter_hook_espresso_default_event_settings_save', $data);	
 		

@@ -124,8 +124,9 @@ class EE_Form_Fields {
 					}
 
 					foreach ($options as $key => $value) {
+						$selected = isset( $input_value['value'] ) && $input_value['value'] == $key ? 'selected=selected' : '';
 						//$key = str_replace( ' ', '_', sanitize_key( $value ));
-						$output .= "\n\t\t\t\t" . '<option value="' . $key . '">' . $value . '</option>';
+						$output .= "\n\t\t\t\t" . '<option '. $selected . ' value="' . $key . '">' . $value . '</option>';
 					}
 					$output .= "\n\t\t\t" . '</select>';
 
