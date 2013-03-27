@@ -196,6 +196,25 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$event_query_args = isset($this->_req_data['evt_id']) ? array('evt_id' => $this->_req_data['evt_id'] ) : array();
 		$edit_query_args = array_merge( $group_query_args, $event_query_args );
 
+		$default_msg_help_tabs = array(
+			'about-messages' => array(
+				'title' => __('About Messages', 'event_espresso'),
+				'callback' => 'messages_help_tab'
+				),
+			'about-messengers' => array(
+				'title' => __('About Messengers', 'event_espresso'),
+				'callback' => 'messengers_help_tab',
+			),
+			'about-message-types' => array(
+				'title' => __('About Message Types', 'event_espresso'),
+				'callback' => 'message_types_help_tab'
+			),
+			'about-message-templates' => array(
+				'title' => __('About Message Templates', 'event_espresso'),
+				'callback' => 'message_templates_help_tab'
+				)
+		);
+
 		$this->_page_config = array(
 			'default' => array(
 				'nav' => array(
@@ -203,26 +222,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'order' => 10 
 					),
 				'list_table' => 'Messages_Template_List_Table',
-				'help_tabs' => array(
-					'about-messages' => array(
-						'title' => __('About Messages', 'event_espresso'),
-						'callback' => 'messages_help_tab'
-						),
-					'about-messengers' => array(
-						'title' => __('About Messengers', 'event_espresso'),
-						'callback' => 'messengers_help_tab',
-					),
-					'about-message-types' => array(
-						'title' => __('About Message Types', 'event_espresso'),
-						'callback' => 'message_types_help_tab'
-					),
-					'about-overview' => array(
-						'title' => __('About the Overview', 'event_espresso'),
-						'callback' => 'messages_overview_help_tab'
-						),
-					'about-message-templates' => array(
-						'title' => __('About Message Templates', 'event_espresso'),
-						'callback' => 'message_templates_help_tab'
+				'help_tabs' => array_merge( $default_msg_help_tabs, array(
+						'about-overview' => array(
+							'title' => __('About the Overview', 'event_espresso'),
+							'callback' => 'messages_overview_help_tab'
+							),
 						)
 				)
 			),
