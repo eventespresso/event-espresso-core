@@ -64,6 +64,12 @@ jQuery(document).ready(function($) {
 					$('.ajax-loader-grey').hide();
 					if ( resp.success ) {
 						MSG_helper.switch_types( $item, status );
+						//do we need to reload mt?
+						if ( typeof(resp.data.mt_reload) !== 'undefined' ) {
+							$(resp.data.mt_reload).each(function(index, value) {
+								MSG_helper.update_mt_form(value, msgr);
+							});
+						}
 					} else {
 						MSG_helper.switch_types( $item, status, true );
 					}
@@ -87,7 +93,7 @@ jQuery(document).ready(function($) {
 
 			$item.fadeOut(function() {
 				var $list = status == 'activate' ? $( "ul", $active_mts ) : $( "ul", $inactive_mts),
-				css_width = status == 'activate' ? '15%' : '50%',
+				css_width = status == 'activate' ? '25%' : '50%',
 				list_width = status == 'deactivate' ? $( $list ).width(): '';
 
 				$item
@@ -161,6 +167,41 @@ jQuery(document).ready(function($) {
 					//let's handle toggling all the elements if we had a successful switch!
 					if ( resp.success ) {
 						MSG_helper.toggle_msg_elements( messenger, status, resp.data.active_mts );
+						//do we need to reload mt?
+						if ( typeof(resp.data.mt_reload) !== 'undefined' ) {
+							$(resp.data.mt_reload).each(function(index, value) {
+								MSG_helper.update_mt_form(value, messenger);
+							});
+						}
+					}
+				}
+			});
+
+			this.do_ajax(data);
+		},
+
+
+
+		update_mt_form: function( mt, messenger ) {
+			var data = {
+				messenger: messenger,
+				message_type: mt,
+				action: 'ee_msgs_update_mt_form',
+				page: 'espresso_messages'
+			};
+
+			$(document).ajaxSuccess( function( event, xhr, ajaxoptions ) {
+				//we can get the response from xhr
+				var ct = xhr.getResponseHeader("content-type") || "";
+				if ( ct.indexOf('json') > -1 ) {
+					var resp = xhr.responseText;
+					resp = $.parseJSON(resp);
+					console.log(resp);
+					//let's handle toggling all the elements if we had a successful switch!
+					if ( resp.success ) {
+						$('.mt-settings-content', '.'+messenger+'-content #'+mt+'-messagetype-'+messenger).replaceWith(resp.data.template_args.content).slideToggle();
+						//unbind any existing ajax success handler so we don't get repeat fires
+						$(document).unbind('ajaxSuccess');
 					}
 				}
 			});
@@ -248,6 +289,7 @@ jQuery(document).ready(function($) {
 
 
 		display_notices: function(content) {
+			$('.ajax-loader-grey').hide();
 			$('#ajax-notices-container').html(content);
 		},
 
@@ -274,6 +316,17 @@ jQuery(document).ready(function($) {
 				mt = $( $item ).attr('id').replace('-messagetype-'+msgr+'-handle','');
 			
 			$( '.mt-settings-content', '.'+msgr+'-content #'+mt+'-messagetype-'+msgr ).slideToggle();
+		},
+
+
+		submit_form: function( type, $item ) {
+			var queryparts = $($item).serializeFullArray();
+			queryparts.page = 'espresso_messages';
+			queryparts.action = 'ee_msgs_save_settings';
+
+			$('.ajax-loader-grey').toggle();
+
+			this.do_ajax(queryparts);
 		}
 	};
 	
@@ -298,12 +351,10 @@ jQuery(document).ready(function($) {
 
 	//toggle slide
 	$( document ).on('click', '#active-message-types .mt-handlediv', function() {
-		console.log('here');
 		MSG_helper.slide(this);
 	});
 
 	$( document ).on('click', '#inactive-message-types .mt-handlediv', function() {
-		console.log('here2');
 		MSG_helper.slide(this);
 	});
 
@@ -360,6 +411,19 @@ jQuery(document).ready(function($) {
 		var messenger = $(this).attr('id').replace('on-off-',''),
 		status = $(this).attr('value').replace('messenger-','');
 		MSG_helper.messenger_toggle(messenger, status);
+	});
+
+
+	$(document).on('submit', '.mt-settings-form', function(e) {
+		e.preventDefault();
+		console.log('here');
+		MSG_helper.submit_form('message_type', this);
+	});
+
+
+	$('.messenger-settings', document).on('submit', '.mt-settings-form', function(e) {
+		e.preventDefault();
+		MSG_helper.submit_form('messenger', this);
 	});
 
 });

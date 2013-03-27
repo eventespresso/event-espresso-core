@@ -58,10 +58,24 @@ class EE_Registration_message_type extends EE_message_type {
 
 
 	/**
-	 * This message type doesn't need any settings so we are just setting to empty array.
+	 * Setup admin settings for this message type.
 	 */
 	protected function _set_admin_settings_fields() {
-		$this->_admin_settings_fields = array();
+		$this->_admin_settings_fields = array(
+			'email_before_payment' => array(
+				'field_type' => 'select',
+				'label' => __('Send registration confirmation emails before payment is received?', 'event_espresso'),
+				'default' => 'no',
+				'options' => array(
+					'yes' => __('Yes', 'event_espresso'),
+					'no' => __('No', 'event_espresso')
+					),
+				'value_type' => 'string',
+				'format' => '%s',
+				'validation' => FALSE,
+				'required' => TRUE
+				)
+			);
 	}
 
 

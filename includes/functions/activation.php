@@ -1368,11 +1368,19 @@ function espresso_default_message_templates() {
 	require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_MSG_Template.helper.php');
 
 	//get all installed messenger objects
-	$installed = EE_MSG_Template::get_installed_message_objects('messengers');
+	$installed = EE_MSG_Template::get_installed_message_objects();
+
+	$inst_msgrs = $installed['messengers'];
+	$inst_mts = $installed['message_types'];
 
 	//let's setup the $installed messengers in an array
-	foreach ( $installed as $msgr ) {
+	foreach ( $inst_msgrs as $msgr ) {
 		$installed_messengers[$msgr->name] = $msgr;
+	}
+
+	//setup the $installed_mts in an array
+	foreach ( $inst_mts as $imt ) {
+		$installed_mts[$imt->name] = $imt;
 	}
 
 	//loop through default array
@@ -1384,8 +1392,28 @@ function espresso_default_message_templates() {
 
 		$active_messengers[$messenger]['obj'] = $installed_messengers[$messenger];
 		foreach ( $default_mts as $mt ) {
-			$active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt] = 1;
+			//we need to setup any initial settings for message types
+			$settings_fields = $installed_mts[$mt]->get_admin_settings_fields();
+			if ( !empty( $settings_fields ) ) {
+				foreach ( $settings_fields as $field => $values ) {
+					$settings[$field] = $values['default'];
+				}
+			} else {
+				$settings = array();
+			}
+
+			$active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt]['settings'] = $settings;
 		}
+
+		//setup any initial settings for the messenger
+		$msgr_settings = $installed_messengers[$messenger]->get_admin_settings_fields();
+
+		if ( !empty( $msgr_settings ) ) {
+			foreach ( $msgr_settings as $field => $value ) {
+				$active_messengers[$messenger]['settings'][$field] = $value;
+			}
+		}
+
 		//now let's save the settings for this messenger!
 		update_option( 'ee_active_messengers', $active_messengers );
 

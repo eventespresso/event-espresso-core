@@ -356,7 +356,7 @@ abstract class EE_message_type extends EE_Base {
 		if ( !isset($active_message_types[$this->name]) && empty($this->_admin_settings_fields) )
 			return $this->_existing_admin_settings = NULL;
 		
-		$this->_existing_admin_settings = isset($active_message_types[$this->name][$messenger]['settings'] ) ?  $active_message_types[$this->name][$messenger]['settings'] : null;
+		$this->_existing_admin_settings = isset($active_message_types[$this->name]['settings'] ) ?  $active_message_types[$this->name]['settings'] : null;
 
 	}
 
