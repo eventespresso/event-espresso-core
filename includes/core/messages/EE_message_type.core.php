@@ -242,10 +242,11 @@ abstract class EE_message_type extends EE_Base {
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Parse_Shortcodes.helper.php';
 		//get shortcode_replace instance- set when _get_messages is called in child...
 		$this->_shortcode_replace = new EE_Parse_Shortcodes();
-		$this->_active_messenger = $active_messenger;
-		$this->_data = $data;
+		
 
 		//if there is a context available then we're going to reset the datahandler to the Preview_incoming_data handler
+		$this->_set_data_handler();
+
 		$this->_data_handler = !$context ? $this->_data_handler : 'Preview';
 		$this->_set_contexts;
 
@@ -266,6 +267,10 @@ abstract class EE_message_type extends EE_Base {
 
 
 
+
+
+
+
 	/**
 	 * This sets the _default_field_content property which needs to be defined by child classes.
 	 * 
@@ -274,6 +279,19 @@ abstract class EE_message_type extends EE_Base {
 	 * @return void
 	 */
 	abstract protected function _set_default_field_content();
+
+
+
+
+
+	/**
+	 * This sets the data handler for the message type.  It must be used to define the _data_handler property.  It is called when messages are setup.
+	 *
+	 * @abstract
+	 * @access protected
+	 * @return void
+	 */
+	abstract protected function _set_data_handler();
 
 
 	/**

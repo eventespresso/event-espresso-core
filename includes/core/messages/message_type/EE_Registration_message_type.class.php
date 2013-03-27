@@ -37,7 +37,6 @@ class EE_Registration_message_type extends EE_message_type {
 			'singular' => __('registration', 'event_espresso'),
 			'plural' => __('regisgrations', 'event_espresso')
 			);
-		$this->_data_handler = 'EE_Session';
 
 		parent::__construct();
 	}
@@ -53,6 +52,17 @@ class EE_Registration_message_type extends EE_message_type {
 	protected function _get_admin_content_events_edit_for_messenger( EE_Messenger $messenger ) {
 		//this is just a test
 		return $this->name . ' Message Type for ' . $messenger->name . ' Messenger ';
+	}
+
+
+
+
+	protected function _set_data_handler() {
+		//this message type might be delayed for payment, so let's get what is set.
+		$message_settings = $this->get_existing_admin_settings( $this->_active_messenger->name );
+		$delay = isset($message_settings['email_before_payment']) && $message_settings['email_before_payment'] == 'yes' ? FALSE : TRUE; //default is TRUE (yes we want to delay)!
+
+		$this->_data_handler = $delay ? 'Gateways' : 'EE_Session';
 	}
 
 
@@ -120,6 +130,9 @@ class EE_Registration_message_type extends EE_message_type {
 
 		return $tcontent;
 	}
+
+
+
 
 
 
