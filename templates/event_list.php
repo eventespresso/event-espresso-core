@@ -65,7 +65,7 @@ function event_espresso_get_event_details( $attributes = array()) {
 	//printr( $org_options, '$org_options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	do_action( 'action_hook_espresso_before_event_list' );
+	do_action( 'action_hook_espresso_before_event_list', __FILE__, __FUNCTION__ );
 
 	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/gmap_display.helper.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/event_details.helper.php');

@@ -296,7 +296,7 @@ function espresso_EE_Session() {
 	// instantiate !!!
 	$EE_Session = EE_Session::instance();
 	if (!empty($_POST['clear_cart'])) {
-		espresso_clear_session();
+		espresso_clear_session( __CLASS__, __FUNCTION__ );
 	}
 }
 
@@ -310,7 +310,8 @@ function espresso_EE_Session() {
  * 		@access public
  * 		@return void
  */
-function espresso_clear_session() {
+function espresso_clear_session( $class = '', $func = '' ) {
+	//echo '<h3>'. $class . ' -> ' . $func . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	global $EE_Session;
 	$EE_Session->reset_data( 
 			array(
@@ -336,7 +337,7 @@ function espresso_clear_session() {
 	);
 
 }
-add_action( 'action_hook_espresso_before_event_list', 'espresso_clear_session' );
+add_action( 'action_hook_espresso_before_event_list', 'espresso_clear_session', 10, 2 );
 
 
 
@@ -351,7 +352,7 @@ add_action( 'action_hook_espresso_before_event_list', 'espresso_clear_session' )
 function espresso_printr_session() {
 	$user = wp_get_current_user();
 	$wp_user_id = isset( $user->data->ID ) ? $user->data->ID : NULL;
-	//$_REQUEST['ee_session'] = TRUE;
+	$_REQUEST['ee_session'] = TRUE;
 	if ( isset( $_REQUEST['ee_session'] ) && $wp_user_id <= 1 ) {	
 		global $EE_Session;
 		echo '<pre style="height:auto;border:2px solid lightblue;">';
@@ -417,10 +418,9 @@ function espresso_init() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . "functions/main.php");
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/time_date.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/actions.php');
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');
-	
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');	
 
-	do_action('action_hook_espresso_coupon_codes');
+	//do_action('action_hook_espresso_coupon_codes');
 }
 
 
