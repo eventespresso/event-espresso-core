@@ -1140,7 +1140,7 @@ class EE_Single_Page_Checkout {
 			// start the transaction record
 			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Transaction.class.php' );
 			$txn_status = $grand_total > 0 ? 'TIN' : 'TCM';
-			$transaction = new EE_Transaction( time(), $grand_total, 0, $txn_status, NULL, $session, NULL, NULL );
+			$transaction = new EE_Transaction( time(), $grand_total, 0, $txn_status, NULL, $session, NULL, array('tax_totals'=>$session['tax_totals'],'taxes'=>$session['taxes']) );
 			$txn_results = $transaction->insert();
 
 			// cycle through items in session
