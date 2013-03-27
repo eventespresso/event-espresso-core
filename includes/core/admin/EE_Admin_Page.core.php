@@ -233,7 +233,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *     		'metaboxes' => array('metabox1', 'metabox2'), //if present this key indicates we want to load metaboxes set for eventespresso admin pages. 
 	 *     		'has_metaboxes' => true, //this boolean flag can simply be used to indicate if the route will have metaboxes.  Typically this is used if the 'metaboxes' index is not used because metaboxes are added later.  We just use this flag to make sure the necessary js gets enqueued on page load.
 	 *     		'has_help_popups' => false //defaults(true) //this boolean flag can simply be used to indicate if the given route has help popups setup and if it does then we need to make sure thickbox is enqueued.
-	 *     		'columns' => array(4, 2) //this key triggers the setup of a page that uses columns (metaboxes).  The array indicates the max number of columns (4) and the default number of columns on page load (2).  There is an option in the "screen_options" dropdown that is setup so users can pick what columns they want to display.
+	 *     		'columns' => array(4, 2), //this key triggers the setup of a page that uses columns (metaboxes).  The array indicates the max number of columns (4) and the default number of columns on page load (2).  There is an option in the "screen_options" dropdown that is setup so users can pick what columns they want to display.
+	 *     		'help_tabs' => array( //this is used for adding help tabs to a page
+	 *     			'tab_title' => 'callback_method_for_content',
+	 *     			'tab2_title' => 'callback_method_for_content',
+	 *     		)
 	 * 			
 	 * )
 	 * 
@@ -265,18 +269,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
-
-	/**
-	 * _add_help_tabs
-	 * Child classes can add any help_tabs within this method using built-in WP functions/methods for doing so.
-	 * Note child classes can also define _add_help_tabs_($this->_current_view) to limit screen options to a particular view.
-	 * @link http://codex.wordpress.org/Function_Reference/add_help_tab
-	 *
-	 * @abstract
-	 * @access protected
-	 * @return void
-	 */
-	abstract protected function _add_help_tabs();
 
 
 
@@ -500,17 +492,15 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( method_exists( $this, '_add_screen_options_' . $this->_current_view ) )
 			call_user_func( array( $this, '_add_screen_options_' . $this->_current_view ) );
 
-		//add help tab(s) - global, page child class, and view specific
+		//add help tab(s) - set via page_config.
 		$this->_add_help_tabs();
-		$this->_add_global_help_tabs();
-		if ( method_exists( $this, '_add_help_tabs_' . $this->_current_view ) )
-			call_user_func( array( $this, '_add_help_tabs_' . $this->_current_view ) );
+
 
 		//add feature_pointers - global, page child class, and view specific
 		$this->_add_feature_pointers();
 		$this->_add_global_feature_pointers();
-		if ( method_exists( $this, '_add_help_tabs_' . $this->_current_view ) )
-			call_user_func( array( $this, '_add_help_tabs_' . $this->_current_view ) );
+		if ( method_exists( $this, '_add_feature_pointer_' . $this->_current_view ) )
+			call_user_func( array( $this, '_add_feature_pointer_' . $this->_current_view ) );
 
 		//enqueue scripts/styles - global, page class, and view specific
 		add_action('admin_enqueue_scripts', array($this, 'load_global_scripts_styles'), 5 );
@@ -750,6 +740,37 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 		return add_query_arg( $args, $url );
 		
+	}
+
+
+
+
+	/**
+	 * _add_help_tabs
+	 * 
+	 * Note child classes define their help tabs within the page_config array.
+	 * @link http://codex.wordpress.org/Function_Reference/add_help_tab
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function _add_help_tabs() {
+
+		foreach ( $this->_page_config as $slug => $config ) {
+			if ( !is_array( $config ) || ( is_array( $config ) && !isset( $config['help_tabs'] ) ) ) continue; //no help tabs for this config
+
+			foreach ( $config['help_tabs'] as $tab_title => $callback ) {
+				//we're here so there ARE help tabs!
+				$id = $this->page_slug . '-' . $slug . '-' . sanitize_key( $tab_title);
+				$this->_current_screen->add_help_tab( array(
+					'id' => $id,
+					'title' => $tab_title,
+					'callback' => array( $this, $callback)
+					)
+				);
+			}
+		}
+
 	}
 
 
@@ -1033,19 +1054,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
-
-
-	/**
-	 * _add_global_help_tabs
-	 *  Adds any help_tabs within this method using built-in WP functions/methods for doing so.
-	 * This particular method will add help tabs for ALL EE_Admin pages
-	 * @link http://codex.wordpress.org/Function_Reference/add_help_tab
-	 *
-	 * @abstract
-	 * @access private
-	 * @return void
-	 */
-	private function _add_global_help_tabs() {}
 
 
 
