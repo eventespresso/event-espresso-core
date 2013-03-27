@@ -213,8 +213,10 @@ class EE_Single_Page_Checkout {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $event_page_id . '|' . $this->_reg_page_base_url);
 
 		// set pathing based on regevent request
-		if (isset($_REQUEST['e_reg']) && ( $_REQUEST['e_reg'] != '' )) {
-
+		if ( isset($_REQUEST['e_reg']) && ! empty( $_REQUEST['e_reg'] )) {
+			
+//			echo '<h4>e_reg : ' . $_REQUEST['e_reg'] . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+			
 			switch ($_REQUEST['e_reg']) {
 
 				case 'register' :
@@ -477,8 +479,8 @@ class EE_Single_Page_Checkout {
 						// show this attendee form?
 						if ( empty( $att_questions )) {
 							$additional_attendee_forms = FALSE;
+							$att_questions .= '<p>' . __('This event does not require registration information for additional attendees.', 'event_espresso') . '</p>';
 						}
-						$att_questions .= empty( $att_questions ) ? '<p>' . __('This event does not require registration information for additional attendees.', 'event_espresso') . '</p>' : '';
 
 						$att_questions .= '
 							<input
@@ -698,7 +700,7 @@ class EE_Single_Page_Checkout {
 
 		$template_args['registration_steps'] = $registration_page_step_1 . $registration_page_step_2 . $registration_page_step_3;
 
-		//printr( $EE_Session->get_session_data(), '$EE_Session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $EE_Session->get_session_data(), '$EE_Session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		espresso_display_template($this->_templates['registration_page_wrapper'], $template_args);
 	}
@@ -797,11 +799,13 @@ class EE_Single_Page_Checkout {
 //				$valid_data[$key] = sanitize_text_field( $value );
 //			}
 //		}
+//		printr( $EE_Session, '$EE_Session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		array_walk_recursive( $_POST, array( $this, 'sanitize_text_field_for_array_walk' ));
 		$valid_data = $_POST;
 		$valid_data = apply_filters( 'filter_hook_espresso__EE_Single_Page_Checkout__process_registration_step_1__valid_data', $valid_data );
-		//printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $EE_Session, '$EE_Session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// if we don't have a qstn field then something went TERRIBLY WRONG !!! AHHHHHHHH!!!!!!!
 		if (isset($valid_data['qstn'])) {
@@ -825,6 +829,7 @@ class EE_Single_Page_Checkout {
 									$input_value = htmlentities($input_value, ENT_QUOTES, 'UTF-8');
 
 									$line_item_id = $att_details['line_item_id'];
+
 									$cart_contents = $this->cart->whats_in_the_cart('REG', $line_item_id);
 
 									// $registration_id = uniqid( $event_id.'-', TRUE );
@@ -1140,7 +1145,7 @@ class EE_Single_Page_Checkout {
 			// start the transaction record
 			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Transaction.class.php' );
 			$txn_status = $grand_total > 0 ? 'TIN' : 'TCM';
-			$transaction = new EE_Transaction( time(), $grand_total, 0, $txn_status, NULL, $session, NULL, NULL );
+			$transaction = new EE_Transaction( time(), $grand_total, 0, $txn_status, NULL, $session, NULL, array('tax_totals'=>$session['tax_totals'],'taxes'=>$session['taxes']) );
 			$txn_results = $transaction->insert();
 
 			// cycle through items in session
