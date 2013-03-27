@@ -1638,36 +1638,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 
-	public function email_metabox() {
-		//todo: this needs to be moved into the the Messages_Admin_Page.core.php once the events_admin has been reworked to be in the new admin system.
-
-		//let's get the active messengers (b/c messenger objects have the active message templates)
-		$EEM_controller = new EE_Messages;
-		$active_messengers = $EEM_controller->get_active_messengers();
-		$tabs = array();
-
-		//get content for active messengers
-		foreach ( $active_messengers as $name => $messenger ) {
-			$tabs[$name] = $messenger->get_messenger_admin_page_content('events', 'edit', array('event' => $this->_event) );
-		}
-
-
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Tabbed_Content.helper.php';
-		//we want this to be tabbed content so let's use the EE_Tabbed_Content::display helper.
-		$tabbed_content = EE_Tabbed_Content::display($tabs);
-		if ( is_wp_error($tabbed_content) ) {
-			$tabbed_content = $tabbed_content->get_error_message();
-		}
-		
-		echo $tabbed_content;
-	}
-
-
-
-
-
-
-
 
 	/**
 	 * _premium_event_editor_meta_boxes

@@ -75,8 +75,6 @@ function espresso_fix_org_options() {
 
 	$org_options['default_mail'] = $org_options['default_mail'] || $org_options['default_mail'] == 'Y' ? true : false;
 	$org_options['expire_on_registration_end'] = $org_options['expire_on_registration_end'] || $org_options['expire_on_registration_end'] == 'Y' ? true : false;
-	$org_options['email_before_payment'] = $org_options['email_before_payment'] || $org_options['email_before_payment'] == 'Y' ? true : false;
-	$org_options['email_fancy_headers'] = $org_options['email_fancy_headers'] || $org_options['email_fancy_headers'] == 'Y' ? true : false;
 	$org_options['enable_default_style'] = $org_options['enable_default_style'] || $org_options['enable_default_style'] == 'Y' ? true : false;
 	$org_options['event_ssl_active'] = $org_options['event_ssl_active'] || $org_options['event_ssl_active'] == 'Y' ? true : false;
 	$org_options['use_venue_manager'] = $org_options['use_venue_manager'] || $org_options['use_venue_manager'] == 'Y' ? true : false;
@@ -377,8 +375,6 @@ function espresso_org_option_initialization( $missing_options = FALSE ) {
 				'events_in_dasboard' => '30',
 				'use_captcha' => false,
 				'expire_on_registration_end' => true,
-				'email_before_payment' => false,
-				'email_fancy_headers' => false,
 				'enable_default_style' => true,
 				'event_ssl_active' => false,
 				'use_venue_manager' => true,
