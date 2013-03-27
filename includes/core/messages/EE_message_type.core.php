@@ -238,6 +238,14 @@ abstract class EE_message_type extends EE_Base {
 	 * @return void      
 	 */
 	public function set_messages($data, $active_messenger, $context = FALSE ) {
+
+		$this->_active_messenger = $active_messenger;
+		$this->_data = $data;
+
+		//this is a special method that allows child message types to trigger an exit from generating messages early (in cases where there may be a delay on send). 
+		$exit = $this->_trigger_exit();
+		if ( $exit && !$context ) return false;
+
 		//todo: need to move require into registration hook but for now we'll require here.
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Parse_Shortcodes.helper.php';
 		//get shortcode_replace instance- set when _get_messages is called in child...
@@ -357,6 +365,22 @@ abstract class EE_message_type extends EE_Base {
 		}		
 		return $content;
 	}
+
+
+
+
+
+	/**
+	 * This method can be overridden by child classes to do any special conditionals that might triger an exit from generating messages (that might happen with delays etc).
+	 * @return bool   TRUE will trigger an exit, FALSE will continue the code execution.
+	 */
+	protected function _trigger_exit() {
+		return FALSE;
+	}
+
+
+
+
 
 	/**
 	 * sets the _existing_admin_settings property can be overridden by child classes.  We do this so we only do database calls if needed.

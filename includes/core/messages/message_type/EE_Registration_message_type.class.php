@@ -42,6 +42,31 @@ class EE_Registration_message_type extends EE_message_type {
 	}
 
 
+
+	protected function _trigger_exit() {
+
+		//first is this a preview?
+		if ( empty( $this->_data ) )
+			return FALSE;
+
+		//if email_on_payment is set then we'll trigger an exit when incoming data is an EE_Session object.
+		$settings = $this->get_existing_admin_settings($this->_active_messenger->name);
+		$delay = isset($settings['email_before_payment']) && $settings['email_before_payment'] == 'yes' ? FALSE : TRUE; //default is TRUE (yes we want to delay)! 
+
+
+		if ( is_a( $this->_data, 'EE_Session' ) ) {
+			//for SPCO trigger
+			$return = $delay ? TRUE : FALSE;
+		} else {
+			//gateway trigger.  We need to know if payment is complete.
+			$txn = $this->_data[0];
+			$return = $txn->is_completed() ? FALSE : TRUE;
+		}
+
+		return $return;		
+	}
+
+
 	protected function _set_admin_pages() {
 		$this->admin_registered_pages = array(
 			'events_edit' => TRUE
