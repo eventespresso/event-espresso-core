@@ -412,3 +412,15 @@ table .espresso-radio-btn-options-ul .small-lbl,
 .help-tab-content img {
 	border: 2px solid #e7e7e7;
 }
+
+.help-tab-content .left {
+	float: left;
+	margin-right: 10px;
+	margin-bottom: 10px;
+}
+
+.help-tab-content .right {
+	float: right;
+	margin-left: 10px;
+	margin-bottom: 10px;
+}
