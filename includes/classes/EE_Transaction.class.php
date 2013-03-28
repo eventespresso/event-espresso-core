@@ -658,6 +658,36 @@ class EE_Transaction extends EE_Base_Class{
 	}
 
 
+
+	/**
+	 * This returns the url for the invoice of this transaction
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function invoice_url() {
+		$REG = $this->primary_registration();
+		if ( empty( $REG ) ) return false;
+		return $REG->invoice_url();
+	}
+
+
+
+	/**
+	 * Gets the URL of the thank you page with this registraiton REG_url_link added as
+	 * a query parameter
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function payment_overview_url() {
+		$REG = $this->primary_registration();
+		if ( empty($REG) ) return false;
+		return $REG->payment_overview_url();
+	}
+
+
+
 }
 
 
