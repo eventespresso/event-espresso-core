@@ -222,12 +222,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'order' => 10 
 					),
 				'list_table' => 'Messages_Template_List_Table',
-				'help_tabs' => array_merge( $default_msg_help_tabs, array(
+				'help_tabs' => array_merge( array(
 						'about-overview' => array(
 							'title' => __('About the Overview', 'event_espresso'),
 							'callback' => 'messages_overview_help_tab'
 							),
-						)
+						), $default_msg_help_tabs
 				)
 			),
 			'add_new_message_template' => array(
@@ -245,7 +245,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'url' => !empty($edit_query_args) ? add_query_arg( $edit_query_args, $this->_current_page_view_url ) : $this->_admin_base_url
 					),
 				'metaboxes' => array('_publish_post_box', '_register_edit_meta_boxes'),
-				'has_metaboxes' => TRUE
+				'has_metaboxes' => TRUE,
+				'help_tabs' => array_merge( array(
+						'about-editor' => array(
+							'title' => __('About Template Editor', 'event_espresso'),
+							'callback' => 'messages_template_editor_help_tab'
+							)
+						), $default_msg_help_tabs
+					)
 				),
 			'preview_message' => array(
 				'nav' => array(
