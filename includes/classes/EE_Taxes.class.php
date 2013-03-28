@@ -289,7 +289,7 @@ class EE_Total extends EE_Ticket_Price {
 		// use the following to unencode price objects:
 		// unserialize( gzinflate( base64_decode( $obfuscatedString )))
 		// OR call EE_Ticket_Price::unobfuscate( $obfuscatedString );		
-		return base64_encode( gzdeflate( serialize( $this )));
+		return base64_encode( serialize( $this ));
 	}
 	
 

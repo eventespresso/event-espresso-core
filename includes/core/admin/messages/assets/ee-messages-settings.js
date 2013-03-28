@@ -220,8 +220,9 @@ jQuery(document).ready(function($) {
 				$inactive_mts = $('#inactive-message-types'),
 				$inactive_on_msg = $('.inactive-on-message', '.' + messenger + '-content'),
 				$inactive_off_msg = $('.inactive-off-message', '.' + messenger + '-content'),
-				$active_on_msg = $('.active-on-message', '.' + messenger + '-content');
-
+				$active_on_msg = $('.active-on-message', '.' + messenger + '-content'),
+				$msgr_link = $('.item_display');
+			
 			if ( status == 'on' ) {
 				$( $on_off_button ).attr('value','messenger-off').attr('class', 'on-off-active on-off-action');
 				$( $messenger_settings ).removeClass('hidden');
@@ -230,6 +231,7 @@ jQuery(document).ready(function($) {
 				$( $inactive_on_msg ).removeClass('hidden');
 				$( $inactive_off_msg ).addClass('hidden');
 				$( $active_on_msg ).removeClass('hidden');
+				$( $msgr_link ).addClass('messenger-active');
 			} else if ( status == 'off' ) {
 				$( $on_off_button ).attr('value', 'messenger-on').attr('class','on-off-inactive on-off-action');
 				$( $messenger_settings ).addClass('hidden');
@@ -238,6 +240,7 @@ jQuery(document).ready(function($) {
 				$( $inactive_on_msg ).addClass('hidden');
 				$( $inactive_off_msg ).removeClass('hidden');
 				$( $active_on_msg ).addClass('hidden');
+				$( $msgr_link ).removeClass('messenger-active');
 			}
 
 			//unbind any existing ajax success handler so we don't get repeat fires

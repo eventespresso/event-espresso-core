@@ -12,7 +12,7 @@ global $org_options;
 					<th class="jst-left"><?php _e( 'REG ID', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'TXN ID', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Reg Code', 'event_espresso' );?></th>
-					<th class="jst-rght"><?php _e( 'Price Paid', 'event_espresso' );?></th>
+					<th class="jst-rght"><?php _e( 'Ticket Price', 'event_espresso' );?></th>
 				</tr>
 			</thead>
 			<tbody>

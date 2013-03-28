@@ -412,11 +412,10 @@ add_action('activated_plugin', 'espresso_plugin_activation_errors');
 function espresso_init() {
 
 	//Globals used throughout the site
-	global $caffeinated, $is_UI_request, $is_ajax_request, $espresso_content;
+	global $caffeinated, $is_UI_request, $espresso_content;
 	// is this request for UI or backend 
 	$is_UI_request = ( ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' ) ? TRUE : FALSE;
-	$is_ajax_request = ( isset( $_REQUEST['espresso_ajax'] ) && $_REQUEST['espresso_ajax'] == 1 ) ? TRUE : FALSE;
-	if ( $is_ajax_request ) {
+	if ( defined('DOING_AJAX') ) {
 		remove_action( 'shutdown', 'espresso_printr_session' );
 	}
 

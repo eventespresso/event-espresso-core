@@ -31,3 +31,11 @@
 .messages-preview-button {
     display: inline-block;
 }
+
+#espresso_espresso_messages_editor_overview #minor-publishing {
+    border: none;
+}
+
+#minor-publishing ul li {
+    text-align: right;
+}

@@ -266,7 +266,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'label' => __('Settings', 'event_espresso'),
 					'order' => 20
 					),
-				'metaboxes' => array('_messages_settings_metaboxes')
+				'metaboxes' => array('_messages_settings_metaboxes'),
+				'help_tabs' => array_merge( array(
+						'about-settings' => array(
+							'title' => __('About Message Settings', 'event_espresso'),
+							'callback' => 'messages_settings_help_tab'
+							)
+						), $default_msg_help_tabs
+					)
 				),
 			'reports' => array(
 				'nav' => array(
@@ -344,8 +351,22 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_templates_editor_help_tab.template.php';
 		$args['img1'] = '<img src="' . EE_MSG_ASSETS_URL . 'images/editor.png' . '" alt="' . __('Editor Title', 'event_espresso') . '" />';
 		$args['img2'] = '<img src="' . EE_MSG_ASSETS_URL . 'images/switch-context.png' . '" alt="' . __('Context Switcher and Preview', 'event_espresso') . '" />';
-		$args['img3'] = '<img class="left" src="' . EE_MSG_ASSETS_URL . 'images/form-fields.png' . '" alt="' . __('Context Switcher and Preview', 'event_espresso') . '" />';
-		$args['img4'] = '<img class="right" src="' . EE_MSG_ASSETS_URL . 'images/shortcodes-metabox.png' . '" alt="' . __('Context Switcher and Preview', 'event_espresso') . '" />';
+		$args['img3'] = '<img class="left" src="' . EE_MSG_ASSETS_URL . 'images/form-fields.png' . '" alt="' . __('Message Template Form Fields', 'event_espresso') . '" />';
+		$args['img4'] = '<img class="right" src="' . EE_MSG_ASSETS_URL . 'images/shortcodes-metabox.png' . '" alt="' . __('Shortcodes Metabox', 'event_espresso') . '" />';
+		$args['img5'] = '<img class="right" src="' . EE_MSG_ASSETS_URL . 'images/publish-meta-box.png' . '" alt="' . __('Publish Metabox', 'event_espresso') . '" />';
+		espresso_display_template( $templatepath, $args);
+	}
+
+
+
+
+	public function messages_settings_help_tab() {
+		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_settings_help_tab.template.php';
+		$args['img1'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'images/email-tab-active.png' . '" alt="' . __('Active Email Tab', 'event_espresso') . '" />';
+		$args['img2'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'images/email-tab-inactive.png' . '" alt="' . __('Inactive Email Tab', 'event_espresso') . '" />';
+		$args['img3'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'on-toggle.png' . '" alt="' . __('On Toggle Image', 'event_espresso') . '" />';
+		$args['img4'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'off-toggle.png' . '" alt="' . __('Off Toggle Image', 'event_espresso') . '" />';
+		$args['img5'] = '<img class="right" src="' . EE_MSG_ASSETS_URL . 'images/publish-meta-box.png' . '" alt="' . __('Publish Metabox', 'event_espresso') . '" />';
 		espresso_display_template( $templatepath, $args);
 	}
 
