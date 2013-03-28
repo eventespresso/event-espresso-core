@@ -111,8 +111,8 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 			'text' => __('Show All', 'event_espresso')
 			);
 
-		$msgr_filters = array_merge( $msgr_default, $m_values );
-		$mt_filters = array_merge( $mt_default, $mt_values ); 
+		$msgr_filters = !empty($m_values) ? array_merge( $msgr_default, $m_values ) : array();
+		$mt_filters = !empty($mt_values) ? array_merge( $mt_default, $mt_values ) : array(); 
 
 		if ( empty( $m_values ) )
 			$msgr_filters[0] = array(
