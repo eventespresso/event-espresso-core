@@ -82,7 +82,7 @@ EE_Template_Validator::verify_isnt_null($show_try_pay_again_link, '$show_try_pay
 	</div>
 	<br/>
 	<?php 
-			if ($show_try_pay_again_link) {
+			if ( $show_try_pay_again_link) {
 				?>
 			<a href='<?php echo $SPCO_step_2_url?>'><?php _e("Try Another Payment Method", 'event_espresso'); ?></a>
 				<?php }

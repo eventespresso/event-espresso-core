@@ -194,7 +194,7 @@ class EE_Transaction extends EE_Base_Class{
 		$this->_TXN_details 				= $TXN_details;
 		$this->_TXN_session_data	= maybe_serialize($TXN_session_data);
 		$this->_TXN_hash_salt 			= $TXN_hash_salt;
-		$this->_TXN_tax_data 			= $TXN_tax_data;
+		$this->_TXN_tax_data 			= maybe_serialize( $TXN_tax_data );
 	}
 
 
