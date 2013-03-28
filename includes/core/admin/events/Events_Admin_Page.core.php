@@ -798,7 +798,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 			<br class="clear"/>
 			<?php if ( $caffeinated ) : ?>
 			<!--<input type="button" id="add-time" class="button dtm-inp-btn" value="<?php _e('Add Additional Time', 'event_espresso'); ?>" />-->
-			<a id="add-new-date-time" class="button dtm-inp-btn" ><?php _e('Add New Dates &amp; Times', 'event_espresso'); ?></a>
+			<input id="edit_event_save_prices" class="button-primary save" type="submit" name="save" value="Save Prices">
+			<a id="add-new-date-time" class="button-secondary dtm-inp-btn" ><?php _e('Add New Dates &amp; Times', 'event_espresso'); ?></a>
 			<br class="clear"/>
 			<?php endif; ?>
 
@@ -810,8 +811,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 			<?php if ((!isset($org_options['use_event_timezones']) || $org_options['use_event_timezones'] ) && $caffeinated === TRUE) : ?>
 				<span class="run-in"> <?php _e('Current Time:', 'event_espresso'); ?> </span>
 				<span class="current-date"> <?php echo date(get_option('date_format')) . ' ' . date(get_option('time_format')); ?></span>
-				<?php do_action('action_hook_espresso_help', 'current_time_info'); ?>
-				<a class="change-date-time" href="options-general.php" target="_blank"><?php _e('Change timezone and date format settings?', 'event_espresso'); ?></a>
+				<?php //do_action('action_hook_espresso_help', 'current_time_info'); ?>
+				<a id="change-date-time-lnk" href="options-general.php" target="_blank"><?php _e('Change timezone and date format settings?', 'event_espresso'); ?></a>
 			<?php endif; ?>
 
 			<?php if (!empty($org_options['use_event_timezones']) && $caffeinated === TRUE) : ?>
@@ -1379,6 +1380,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 						<tr valign="top">
 							<th></th>
 							<td>
+								<input id="edit_event_save_price" class="button-primary save" type="submit" name="save" value="Save Price">
 								<a id="hide-add-new-ticket-price" class="cancel-event-price-btn button-secondary hidden" rel="add-new-ticket-price" ><?php _e('cancel', 'event_espresso');?></a>
 							</td>
 						</tr>
@@ -1388,10 +1390,12 @@ class Events_Admin_Page extends EE_Admin_Page {
 				<br/>
 				
 			</div>
-			
+
 			<a id="display-add-new-ticket-price" class="button-secondary display-the-hidden" rel="add-new-ticket-price">
 				<?php _e('Add New Event Price', 'event_espresso'); ?>
 			</a>
+			<input id="edit_event_save_prices" class="button-primary save right" type="submit" name="save" value="Save Prices">
+			
 			<br class="clear"/><br/>
 			
 			<input id="edited-ticket-price-IDs" name="edited_ticket_price_IDs" type="hidden" value="" />

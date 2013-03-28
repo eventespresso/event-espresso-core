@@ -196,13 +196,39 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$event_query_args = isset($this->_req_data['evt_id']) ? array('evt_id' => $this->_req_data['evt_id'] ) : array();
 		$edit_query_args = array_merge( $group_query_args, $event_query_args );
 
+		$default_msg_help_tabs = array(
+			'about-messages' => array(
+				'title' => __('About Messages', 'event_espresso'),
+				'callback' => 'messages_help_tab'
+				),
+			'about-messengers' => array(
+				'title' => __('About Messengers', 'event_espresso'),
+				'callback' => 'messengers_help_tab',
+			),
+			'about-message-types' => array(
+				'title' => __('About Message Types', 'event_espresso'),
+				'callback' => 'message_types_help_tab'
+			),
+			'about-message-templates' => array(
+				'title' => __('About Message Templates', 'event_espresso'),
+				'callback' => 'message_templates_help_tab'
+				)
+		);
+
 		$this->_page_config = array(
 			'default' => array(
 				'nav' => array(
 					'label' => __('Overview', 'event_espresso'),
 					'order' => 10 
 					),
-			'list_table' => 'Messages_Template_List_Table'
+				'list_table' => 'Messages_Template_List_Table',
+				'help_tabs' => array_merge( array(
+						'about-overview' => array(
+							'title' => __('About the Overview', 'event_espresso'),
+							'callback' => 'messages_overview_help_tab'
+							),
+						), $default_msg_help_tabs
+				)
 			),
 			'add_new_message_template' => array(
 				'nav' => array(
@@ -219,7 +245,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'url' => !empty($edit_query_args) ? add_query_arg( $edit_query_args, $this->_current_page_view_url ) : $this->_admin_base_url
 					),
 				'metaboxes' => array('_publish_post_box', '_register_edit_meta_boxes'),
-				'has_metaboxes' => TRUE
+				'has_metaboxes' => TRUE,
+				'help_tabs' => array_merge( array(
+						'about-editor' => array(
+							'title' => __('About Template Editor', 'event_espresso'),
+							'callback' => 'messages_template_editor_help_tab'
+							)
+						), $default_msg_help_tabs
+					)
 				),
 			'preview_message' => array(
 				'nav' => array(
@@ -267,13 +300,54 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	//none of the below group are currently used for Messages
-	protected function _add_help_tabs() {}
 	protected function _add_feature_pointers() {}
 	public function admin_init() {}
 	public function admin_notices() {}
 	public function admin_footer_scripts() {}
 
 
+
+
+
+
+	public function messages_help_tab() {
+		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_help_tab.template.php';
+		espresso_display_template( $templatepath, array());
+	}
+
+
+
+	public function messengers_help_tab() {
+		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_messenger_help_tab.template.php';
+		espresso_display_template( $templatepath, array());
+	}
+
+
+	public function message_types_help_tab() {
+		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_message_type_help_tab.template.php';
+		espresso_display_template( $templatepath, array());
+	}
+
+
+	public function messages_overview_help_tab() {
+		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_overview_help_tab.template.php';
+		espresso_display_template( $templatepath, array());
+	}
+
+	public function message_templates_help_tab() {
+		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_message_templates_help_tab.template.php';
+		espresso_display_template( $templatepath, array());
+	}
+
+
+	public function messages_template_editor_help_tab() {
+		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_templates_editor_help_tab.template.php';
+		$args['img1'] = '<img src="' . EE_MSG_ASSETS_URL . 'images/editor.png' . '" alt="' . __('Editor Title', 'event_espresso') . '" />';
+		$args['img2'] = '<img src="' . EE_MSG_ASSETS_URL . 'images/switch-context.png' . '" alt="' . __('Context Switcher and Preview', 'event_espresso') . '" />';
+		$args['img3'] = '<img class="left" src="' . EE_MSG_ASSETS_URL . 'images/form-fields.png' . '" alt="' . __('Context Switcher and Preview', 'event_espresso') . '" />';
+		$args['img4'] = '<img class="right" src="' . EE_MSG_ASSETS_URL . 'images/shortcodes-metabox.png' . '" alt="' . __('Context Switcher and Preview', 'event_espresso') . '" />';
+		espresso_display_template( $templatepath, $args);
+	}
 
 
 
@@ -641,10 +715,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$v_fields = !empty($validators) ? array_keys($validators) : array();
 
 
-		//todo: we need to assemble the title from Various details
+		//we need to assemble the title from Various details
 		$context_label = sprintf( __('(%s %s)', 'event_espresso'), $c_config[$context]['label'], ucwords($c_label['label'] ));
 
-		//todo: we should eventually display the event title instead of ID.
+		//we should eventually display the event title instead of ID.
 		$event_label = isset($event_name) && !empty($event_name) ? sprintf( __('for Event: %s', 'event_espresso'), $event_name) : '';
 		$title = sprintf( __(' %s %s Template %s %s', 'event_espresso'), ucwords(str_replace('_', ' ', $message_template->messenger()) ), ucwords(str_replace('_', ' ', $message_template->message_type()) ), $context_label, $event_label );
 

@@ -249,3 +249,184 @@ table .espresso-radio-btn-options-ul .small-lbl,
 .ee-upload-form-dv {
 	margin: 2em 0;
 }
+
+
+.button-primary + .button-primary,
+.button-primary + .button-secondary,
+.button-secondary + .button-primary,
+.button-secondary + .button-secondary  {
+	margin-left: 2em; margin-right: 2em;
+}
+
+.view_btn {
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	margin: 2px 3px 0 0;
+	background: url(../../../../images/magnifier.png) no-repeat;
+	text-indent: -9000px;
+	outline: none;
+}
+.view_btn:hover {
+	margin: 4px 3px 0 0;
+	height: 20px;
+}
+.edit_btn {
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	margin: 2px 3px 0 0;
+	background: url(../../../../images/calendar_edit.png) no-repeat;
+	text-indent: -9000px;
+	outline: none;
+}
+/*.edit_btn:hover { background-position: -72px -18px; }*/
+.edit_btn:hover {
+	margin: 4px 3px 0 0;
+	height: 20px;
+}
+.resume_btn {
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	margin: 2px 3px 0 0;
+	background: url(../../../../images/btn_sprite.png) no-repeat -126px 0;
+	text-indent: -9000px;
+	outline: none;
+}
+.resume_btn:hover {
+	background-position: -126px -18px;
+}
+.complete_btn {
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	margin: 2px 3px 0 0;
+	background: url(../../../../images/group.png) no-repeat;
+	text-indent: -9000px;
+	outline: none;
+}
+/*.complete_btn:hover { background-position: -36px -18px; }*/
+.complete_btn:hover {
+	margin: 4px 3px 0 0;
+	height: 20px;
+}
+.delete_btn {
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	margin: 2px 3px 0 0;
+	background: url(../../../../images/btn_sprite.png) no-repeat -54px 0;
+	text-indent: -9000px;
+	outline: none;
+}
+.delete_btn:hover {
+	background-position: -54px -18px;
+	height: 18px;
+}
+.options_btn {
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	margin: 2px 3px 0 0;
+	background: url(../../../../images/cog.png) no-repeat;
+	text-indent: -9000px;
+	outline: none;
+}
+.options_btn:hover {
+	margin: 4px 3px 0 0;
+	height: 20px;
+}
+.excel_exp_btn {
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	margin: 2px 3px 0 0;
+	background: url(../../../../images/excel_icon.png) no-repeat;
+	text-indent: -9000px;
+	outline: none;
+}
+.excel_exp_btn:hover {
+	margin: 4px 3px 0 0;
+	height: 20px;
+}
+.csv_exp_btn {
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	margin: 2px 3px 0 0;
+	background: url(../../../../images/csv_icon_sm.gif) no-repeat;
+	text-indent: -9000px;
+	outline: none;
+}
+.csv_exp_btn:hover {
+	margin: 4px 3px 0 0;
+	height: 20px;
+}
+.newsletter_btn {
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	margin: 2px 3px 0 0;
+	background: url(../../../../images/email_go.png) no-repeat;
+	text-indent: -9000px;
+	outline: none;
+}
+.newsletter_btn:hover {
+	margin: 4px 3px 0 0;
+	height: 20px;
+}
+.reports_btn {
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	margin: 2px 3px 0 0;
+	background: url(../../../../images/chart_bar.png) no-repeat;
+	text-indent: -9000px;
+	outline: none;
+}
+.shortcode_btn {
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	margin: 2px 3px 0 0;
+	background: url(../../../../images/tag.png) no-repeat;
+	text-indent: -9000px;
+	outline: none;
+}
+.shortcode_btn:hover {
+	margin: 4px 3px 0 0;
+	height: 20px;
+}
+/*fixing this -  what does this mean?*/
+.view_btn:hover, .edit_btn:hover, .complete_btn:hover, .shortcode_btn:hover, .excel_exp_btn:hover, .csv_exp_btn:hover, .newsletter_btn:hover {
+	height: 18px;
+	margin: 2px 3px 0 0;
+}
+
+.help-tab-content img {
+	border: 2px solid #e7e7e7;
+}
+
+.help-tab-content .left {
+	float: left;
+	margin-right: 10px;
+	margin-bottom: 10px;
+}
+
+.help-tab-content .right {
+	float: right;
+	margin-left: 10px;
+	margin-bottom: 10px;
+}

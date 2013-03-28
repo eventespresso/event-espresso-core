@@ -192,9 +192,9 @@ class EE_Transaction extends EE_Base_Class{
 		$this->_TXN_paid 					= floatval( preg_replace( "/^[^0-9\.]-/", "", preg_replace( "/,/", ".", $TXN_paid ) ));
 		$this->_STS_ID 						= wp_strip_all_tags( $STS_ID );
 		$this->_TXN_details 				= $TXN_details;
-		$this->_TXN_session_data	= $TXN_session_data;
+		$this->_TXN_session_data	= maybe_serialize($TXN_session_data);
 		$this->_TXN_hash_salt 			= $TXN_hash_salt;
-		$this->_TXN_tax_data 			= $TXN_tax_data;
+		$this->_TXN_tax_data 			= maybe_serialize( $TXN_tax_data );
 	}
 
 
@@ -561,11 +561,17 @@ class EE_Transaction extends EE_Base_Class{
 	
 	
 	/**
-	 * gets payments for this transaction
+	 * Gets payments for this transaction. Unlike other such functions, order by 'DESC' by default
+	 * @param type $where_col_n_vals all parameters just like EEM_Base's select_all_where
+	 * @param type $orderby
+	 * @param type $order
+	 * @param type $operators
+	 * @param type $limit
+	 * @param type $output
 	 * @return EE_Payment[]
 	 */
-	public function payments(){
-		return $this->get_many_related('Payments');
+	public function payments($where_col_n_vals = array(), $orderby = null, $order = 'DESC',$operators = '=', $limit = null, $output= 'OBJECT_K' ){
+		return $this->get_many_related('Payments',$where_col_n_vals,$orderby,$order,$operators,$limit,$output);
 	}
 	
 	

@@ -89,6 +89,7 @@ class EE_Thank_You_Page{
 	 */
 	function handle_thank_you_page(){
 		$this->_GATEWAYS->thank_you_page_logic($this->_current_transaction);
+		$this->_GATEWAYS->reset_session_data();
 	}
 	
 	/**
@@ -128,6 +129,18 @@ class EE_Thank_You_Page{
 		$template_args['payments'] = $transaction->payments();//$this->_PAY->get_approved_payments_for_transaction($transaction->ID());
 		$template_args['primary_registrant'] = $this->_REG->get_primary_registration_for_transaction_ID($transaction->ID());
 		$template_args['event_names']=$event_names;
+		$consider_pending_payments_as_incomplete = array_key_exists('show_pending_payment_options',$org_options) && $org_options['show_pending_payment_options'] == '1';
+		if($transaction->is_completed()){
+			$template_args['show_try_pay_again_link'] = false;
+		}elseif($transaction->is_incomplete()){
+			$template_args['show_try_pay_again_link'] = true;
+		}else{//its pending
+			if($consider_pending_payments_as_incomplete){
+				$template_args['show_try_pay_again_link'] = true;
+			}else{
+				$template_args['show_try_pay_again_link'] = false;
+			}
+		}
 		$template_args['currency_symbol']=$org_options['currency_symbol'];
 		$template_args['SPCO_step_2_url']= add_query_arg(array('e_reg'=>'register','step'=>'2'),get_permalink($org_options['event_page_id']));
 		return  espresso_display_template(EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/payment_overview.template.php',$template_args,true);

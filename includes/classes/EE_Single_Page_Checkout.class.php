@@ -474,6 +474,7 @@ class EE_Single_Page_Checkout {
 						add_filter( 'filter_hook_espresso_form_field_input_html', array( $this, 'reg_form_form_field_input__wrap' ), 10, 1 );
 						
 						$questions_and_groups = EEM_Event::instance()->get_event_questions_and_groups( $question_meta );
+						//echo "spco475";var_dump($questions_and_groups[1]['QSG_questions']);
 						$att_questions = EE_Form_Fields::generate_question_groups_html( $questions_and_groups, 'div' );
 
 						// show this attendee form?
@@ -1102,7 +1103,9 @@ class EE_Single_Page_Checkout {
 			}
 		}
 		global $EE_Session;
-
+		// grab session data
+		$session = $EE_Session->get_session_data();
+		
 		if ($continue_reg) {
 
 			do_action('action_hook_espresso_begin_reg');
@@ -1116,22 +1119,23 @@ class EE_Single_Page_Checkout {
 			$TXN = EEM_Transaction::instance();
 			$ATT = EEM_Attendee::instance();
 
-			// grab session data
-			$session = $EE_Session->get_session_data();
+			
 			//printr( $session, '$session ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
 
 			$reg_items = $session['cart']['REG']['items'];
 
 			// in case of back button shenanigans or multiple orders in the same session , we'll remove these so that duplicates don't pile up'
-			if ( isset( $session['registration'] )) {
-				unset( $session['registration'] );
-			}
-			if ( isset( $session['transaction'] )) {
-				unset( $session['transaction'] );
-			}
-			if ( isset( $session['txn_results'] )) {
-				unset( $session['txn_results'] );
-			}
+			// removed by mike in 3.2-ALPHA, because these actually encourage duplicates I think.
+			// If we forget which transaction is in the session, then we ahve no way of knowing if this is a duplicate...
+//			if ( isset( $session['registration'] )) {
+//				unset( $session['registration'] );
+//			}
+//			if ( isset( $session['transaction'] )) {
+//				unset( $session['transaction'] );
+//			}
+//			if ( isset( $session['txn_results'] )) {
+//				unset( $session['txn_results'] );
+//			}
 //			printr( $session, '$session ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
 
 			$grand_total = $session['_cart_grand_total_amount'];
@@ -1141,14 +1145,23 @@ class EE_Single_Page_Checkout {
 					$grand_total += $taxes;
 				}
 			}
-
 			// start the transaction record
 			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Transaction.class.php' );
 			$txn_status = $grand_total > 0 ? 'TIN' : 'TCM';
-			$transaction = new EE_Transaction( time(), $grand_total, 0, $txn_status, NULL, $session, NULL, array('tax_totals'=>$session['tax_totals'],'taxes'=>$session['taxes']) );
-			$txn_results = $transaction->insert();
+			$transaction_exists = array_key_exists('transaction',$session) && !empty($session['transaction']);
+			if($transaction_exists){
+				$transaction = $session['transaction'];
+				//var_dump($transaction);
+				//delete all old registrations on this transaction, because we're going to re-add them according to the updated data in the session now
+				$REG->delete(array('TXN_ID'=>$transaction->ID()));
+			}else{
+				$transaction = new EE_Transaction( time(), $grand_total, 0, $txn_status, NULL, $session, NULL, array('tax_totals'=>$session['tax_totals'],'taxes'=>$session['taxes']) );
+				$transaction->save();
+			}
 
 			// cycle through items in session
+			
+			
 			foreach ($reg_items as $line_item_id => $event) {
 
 				// cycle through attendees
@@ -1200,9 +1213,9 @@ class EE_Single_Page_Checkout {
 
 					$session_snip =  substr( $session['id'], 0, 3 ) . substr( $session['id'], -3 );
 
-//					$new_reg_code = $txn_results['new-ID'] . '-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session_snip;
-					$new_reg_code = $txn_results['new-ID'] . '-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 ));
-//					$new_reg_code = $txn_results['new-ID'] . '-' . $att_nmbr . '-' . $session_snip;
+
+					
+					$new_reg_code = $transaction->ID() . '-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 ));
 					
 					$new_reg_code = apply_filters( 'filter_hook_espresso_new_registration_code', $new_reg_code );
 					
@@ -1213,9 +1226,12 @@ class EE_Single_Page_Checkout {
 						$prev_reg_code = '%-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 )) . '%';
 //						$prev_reg_code = '%-' . $att_nmbr . '-' . $session_snip . '%';
 					}					
-
+					
+					//Mike comments: this code is good in spirit, but Brent said the reg code probably isn't a good
+					//indicator of a duplicate registration, because there's a time element on the end fo it now
+					//making it always unique.
 					// check for existing registration attempt, taking filtered reg_codes into consideration
-					if ( $prev_reg = $REG->find_existing_registrations_LIKE( $prev_reg_code ) ) {
+					/*if ( $prev_reg = $REG->find_existing_registrations_LIKE( $prev_reg_code ) ) {
 
 						// get previous transaction
 						$prev_txn_ID = $prev_reg->transaction_ID();
@@ -1241,7 +1257,7 @@ class EE_Single_Page_Checkout {
 						// ( it's ok - we're tracking the failed transactions, and if they don't retry the transaction, then we will still have this record won't we? )
 						$REG->delete(array('REG_ID' => $prev_reg->ID()));
 
-					}
+					}*/
 					$default_reg_status = isset( $org_options['default_reg_status'] ) ? $org_options['default_reg_status'] : 'RPN';
 
 					// now create a new registration for the attendee
@@ -1250,7 +1266,7 @@ class EE_Single_Page_Checkout {
 					$saved_registrations[$line_item_id] = new EE_Registration(
 													$event['id'],
 													$ATT_ID,
-													$txn_results['new-ID'],
+													$transaction->ID(),
 													$DTT_ID,
 													$PRC_ID,
 													$default_reg_status,
@@ -1294,7 +1310,9 @@ class EE_Single_Page_Checkout {
 			}
 			//$updated_session=$EE_Session->get_session_data();
 			$transaction->set_txn_session_data( $session );
-			$transaction->update();
+			$transaction->save();
+			//remove the session from teh transaction befores saving it to teh session... otherwise we'll ahve a recursive relationship! bad!!
+			$transaction->set_txn_session_data(null);
 			//var_dump($EE_Session->get_session_data());
 			$EE_Session->set_session_data(array( 'registration' => $saved_registrations, 'transaction' => $transaction ), 'session_data');
 			$EE_Session->_update_espresso_session();
