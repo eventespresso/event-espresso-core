@@ -712,10 +712,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$v_fields = !empty($validators) ? array_keys($validators) : array();
 
 
-		//todo: we need to assemble the title from Various details
+		//we need to assemble the title from Various details
 		$context_label = sprintf( __('(%s %s)', 'event_espresso'), $c_config[$context]['label'], ucwords($c_label['label'] ));
 
-		//todo: we should eventually display the event title instead of ID.
+		//we should eventually display the event title instead of ID.
 		$event_label = isset($event_name) && !empty($event_name) ? sprintf( __('for Event: %s', 'event_espresso'), $event_name) : '';
 		$title = sprintf( __(' %s %s Template %s %s', 'event_espresso'), ucwords(str_replace('_', ' ', $message_template->messenger()) ), ucwords(str_replace('_', ' ', $message_template->message_type()) ), $context_label, $event_label );
 
