@@ -259,6 +259,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'label' => __('Message Preview', 'event_espresso'),
 					'order' => 5,
 					'persistent' => FALSE
+					),
+				'help_tabs' => array_merge( array(
+						'about-preview' => array(
+							'title' => __('About Previews', 'event_espresso'),
+							'callback' => 'messages_preview_help_tab'
+							)
+						), $default_msg_help_tabs
 					)
 				),
 			'settings' => array(
@@ -275,12 +282,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 						), $default_msg_help_tabs
 					)
 				),
-			'reports' => array(
+			/*'reports' => array(
 				'nav' => array(
 					'label' => __('Reports', 'event_espresso'),
 					'order' => 30
 					)
-				)
+				)*/
 		);
 
 	}
@@ -366,8 +373,15 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$args['img2'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'images/email-tab-inactive.png' . '" alt="' . __('Inactive Email Tab', 'event_espresso') . '" />';
 		$args['img3'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'on-toggle.png' . '" alt="' . __('On Toggle Image', 'event_espresso') . '" />';
 		$args['img4'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'off-toggle.png' . '" alt="' . __('Off Toggle Image', 'event_espresso') . '" />';
-		$args['img5'] = '<img class="right" src="' . EE_MSG_ASSETS_URL . 'images/publish-meta-box.png' . '" alt="' . __('Publish Metabox', 'event_espresso') . '" />';
 		espresso_display_template( $templatepath, $args);
+	}
+
+
+
+
+	public function messages_preview_help_tab() {
+		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_preview_help_tab.template.php';
+		espresso_display_template( $templatepath, array());
 	}
 
 
