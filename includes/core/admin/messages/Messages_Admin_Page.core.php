@@ -340,6 +340,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	}
 
 
+	public function messages_template_editor_help_tab() {
+		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_templates_editor_help_tab.template.php';
+		$args['img1'] = '<img src="' . EE_MSG_ASSETS_URL . 'images/editor.png' . '" alt="' . __('Editor Title', 'event_espresso') . '" />';
+		espresso_display_template( $templatepath, $args);
+	}
+
+
 
 
 	public function load_scripts_styles() {
