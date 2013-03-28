@@ -5,6 +5,7 @@ EE_Template_Validator::verify_is_array_of($payments, '$payments', 'EE_Payment');
 EE_Template_Validator::verify_is_array($event_names, '$event_names');
 EE_Template_Validator::verify_isnt_null($currency_symbol, '$currency_symbol');
 EE_Template_Validator::verify_isnt_null($SPCO_step_2_url, '$SPCO_step_2_url');
+EE_Template_Validator::verify_isnt_null($show_try_pay_again_link, '$show_try_pay_again_link');
 /**
  * @var $transaction EE_Transaction
  * @var $primary_registrant EE_Registration
@@ -12,6 +13,7 @@ EE_Template_Validator::verify_isnt_null($SPCO_step_2_url, '$SPCO_step_2_url');
  * @var $event_names array of strings of only event names
  * @var $currency_symbol string
  * @var $SPCO_step_2_url string
+ * @var $show_try_pay_again_link boolean whether or not to show the link back to SPCO step 2 to retry paying
  */
 ?>
 <div class="espresso_payment_overview event-display-boxes ui-widget" >
@@ -79,6 +81,12 @@ EE_Template_Validator::verify_isnt_null($SPCO_step_2_url, '$SPCO_step_2_url');
 		<?php }?>
 	</div>
 	<br/>
+	<?php 
+			if ( $show_try_pay_again_link) {
+				?>
+			<a href='<?php echo $SPCO_step_2_url?>'><?php _e("Try Another Payment Method", 'event_espresso'); ?></a>
+				<?php }
+			?>
 
 	<h3>
 		<?php _e('Transaction Status', 'event_espresso'); ?>
@@ -168,12 +176,7 @@ EE_Template_Validator::verify_isnt_null($SPCO_step_2_url, '$SPCO_step_2_url');
 					<?php } ?>
 				</tbody>
 			</table>
-			<?php
-			if (!$transaction->is_completed()) {
-				?>
-			<a href='<?php echo $SPCO_step_2_url?>'><?php _e("Try payment again", 'event_espresso'); ?></a>
-				<?php }
-			?>
+			
 		</div><!-- / .reg-gen-details -->
 	</div><!-- / .event-data-display -->
 </div><!-- / .event-display-boxes -->

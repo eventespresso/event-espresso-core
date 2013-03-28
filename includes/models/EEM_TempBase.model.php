@@ -142,7 +142,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	/**
 	 * For internal use in order to avoid duplicated code. This is used to get the table data types
 	 * on both THIS model's fields, and the data types on the join_tables related to it.
-	 * @param string $tableName without the prefixed 'wp_esp_'. Eg 'question', or 'question_group_question'
+	 * @param string $tableName with the prefixed 'wp_esp_'. Eg 'wp_esp_question', or 'wp_esp_3question_group_question'
 	 * @param EE_Model_Field[] $fields where the keys are the column names
 	 * @return type
 	 */
@@ -373,7 +373,7 @@ abstract class EEM_TempBase extends EEM_Base{
 					$where_col_n_values[$thisTablePK]=$modelObject->ID();
 				}
 				$rows=$relatedModel->select_all_join_where($joinSQL,
-													$this->_get_table_data_types_for($relatedModelInfo->join_table(), $relatedModelInfo->join_table_fields()), 
+													$relatedModel->_get_table_data_types() + $this->_get_table_data_types_for($relatedModelInfo->join_table(), $relatedModelInfo->join_table_fields()), 
 													$where_col_n_values,
 													$orderby,
 													$order,
@@ -390,7 +390,7 @@ abstract class EEM_TempBase extends EEM_Base{
 				break;
 		}
 		$className=get_class($this);
-		return apply_filters('filter_hook_espresso__{$className}__get_many_related',$relatedObjects,$this,$modelObject,$relationName,$where_col_n_values,$order,$orderby,$operators,$limit,$output);
+		return apply_filters("filter_hook_espresso__{$className}__get_many_related",$relatedObjects,$this,$modelObject,$relationName,$where_col_n_values,$order,$orderby,$operators,$limit,$output);
 	}
 	/**
 	 * Removes a relationship of the correct type between $modelObject and $otherModelObject. 

@@ -562,7 +562,7 @@ class EE_Price {
 	* @return 		string
 	*/
 	public function name() {
-		return $this->_PRC_name;
+		return stripslashes( $this->_PRC_name );
 	}
 
 
