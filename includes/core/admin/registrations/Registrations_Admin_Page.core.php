@@ -1620,7 +1620,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$action_desc = __( 'updated', 'event_espresso' );
 		}
 		
-		$this->_redirect_after_action( $success, __( 'Attendee', 'event_espresso' ), $action_desc, array() );
+		$this->_redirect_after_action( $success, __( 'Attendee', 'event_espresso' ), $action_desc, array( 'action' => 'edit_attendee', 'id' => $this->_req_data['ATT_ID'] ) );
 			
 	}
  
