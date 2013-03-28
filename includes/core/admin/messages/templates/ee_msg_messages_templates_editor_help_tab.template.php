@@ -21,3 +21,10 @@
 </p>
 <p><?php _e('This box is at a fixed height, but contents are scrollable.  You can click the little question mark to find out what the given shortcode will parse to when used in your template.', 'event_espresso'); ?></p>
 <p><?php _e('<strong>An important note:</strong> The system has been designed so that when you save the template, checks will be performed on each field to make sure that only valid shortcodes (or values) are used within them.  You will get a warning box with clear instructions if you\'ve tried to use a particular shortcode in a field that does not support it.  Also, you\'ll want to try the Preview button if you\'ve made any changes to the template to see if the changes are as you expected!', 'event_espresso'); ?></p>
+<div style="clear:both"></div>
+
+<h3><?php _e('5. Override all custom option', 'event_espresso'); ?></h3>
+<p>
+	<?php echo $img5; ?>
+	<?php _e('When you are editing a template that is a global template (not a custom event template), you\'ll see an option in the Publish metabox in the right column labelled "Override all custom".   When this option is selected, what happens is even if there are custom event templates for that <em>messenger</em>, <em>message type</em>, and <em>context</em>, they will be ignored and the global template is used instead. Why would you want to do this?  Well, for this given example, you may want to be able to allow custom event templates to be able to modify the looks and content of what goes out to Primary Attendees but to never affect what the Event Administrator recieves (as set by the global template).', 'event_espresso'); ?>
+</p>
