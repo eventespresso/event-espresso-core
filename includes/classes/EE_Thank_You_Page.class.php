@@ -129,7 +129,7 @@ class EE_Thank_You_Page{
 		$template_args['payments'] = $transaction->payments();//$this->_PAY->get_approved_payments_for_transaction($transaction->ID());
 		$template_args['primary_registrant'] = $this->_REG->get_primary_registration_for_transaction_ID($transaction->ID());
 		$template_args['event_names']=$event_names;
-		$consider_pending_payments_as_incomplete = $org_options['show_pending_payment_options'] == '1';
+		$consider_pending_payments_as_incomplete = array_key_exists('show_pending_payment_options',$org_options) && $org_options['show_pending_payment_options'] == '1';
 		if($transaction->is_completed()){
 			$template_args['show_try_pay_again_link'] = false;
 		}elseif($transaction->is_incomplete()){
