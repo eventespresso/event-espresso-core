@@ -430,3 +430,9 @@ table .espresso-radio-btn-options-ul .small-lbl,
 	margin-left: 10px;
 	margin-bottom: 10px;
 }
+
+.help-tab-content .inline-text {
+    vertical-align: middle;
+    margin-right: 5px;
+    margin-left: 5px;
+}
