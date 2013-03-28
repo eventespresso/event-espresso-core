@@ -52,18 +52,21 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 	protected function _parser( $shortcode ) {
+
 		switch ( $shortcode ) {
 			case '[TXN_ID]' :
 				return isset($this->_data->txn->ID) ? $this->_data->txn->ID : '';
 				break;
 
-			/*case '[PAYMENT_URL]' :
-				return isset($this->_data->payment_link) ? $this->_data->payment_link : ''; //todo this needs to be setup via the message type and I'm assuming its for when the payment has not been made yet... this directs to a place to pay.
+			case '[PAYMENT_URL]' :
+				$payment_url = $this->_data->txn->payment_overview_url();
+				return empty( $payment_url ) ? __( 'http://dummypaymenturlforpreview.com', 'event_espresso') : $payment_url;
 				break;
 
 			case '[INVOICE_LINK]' :
-				return isset($this->_data->invoice_link) ? $this->_data->invoice_link : ''; //todo this nees to be setup via the message type.
-				break; **/
+				$invoice_link = $this->_data->txn->invoice_url();
+				return empty( $invoice_link ) ? __('http://dummyinvoicelinkforpreview.com', 'event_espresso') : $invoice_link;
+				break; /**/
 
 
 			case "[TOTAL_COST]" :
