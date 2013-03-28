@@ -99,8 +99,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		if ( !is_object( $this->_data->txn ) )
 			return '';
 
-		$payment = $this->_data->txn->approved_payments();
-		return !empty($payment) ? $payment->gateway() : '';
+		$details = $this->_data->txn->details();
+		return isset( $details['gateway'] ) ? $details['gateway'] : 'Gateway not selected';
 	}
 
 } //end EE_Transaction Shortcodes library
