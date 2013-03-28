@@ -251,6 +251,12 @@ table .espresso-radio-btn-options-ul .small-lbl,
 }
 
 
+.button-primary + .button-primary,
+.button-primary + .button-secondary,
+.button-secondary + .button-primary,
+.button-secondary + .button-secondary  {
+	margin-left: 2em; margin-right: 2em;
+}
 
 .view_btn {
 	display: block;

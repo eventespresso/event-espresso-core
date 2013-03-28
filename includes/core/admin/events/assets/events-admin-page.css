@@ -17,6 +17,14 @@
 #event-dates-and-times { }
 #event-dates-and-times .dtm-inp { width:200px; margin-right:1em; }
 
+#timezones-datetimes-dv {
+	margin: 2em 0 1em;
+}
+
+#change-date-time-lnk{
+	margin-left: 2em;
+}
+
 @media only screen and (max-width: 1425px) { #event-dates-and-times .dtm-inp { width:175px; } }
 @media only screen and (max-width: 1325px) { #event-dates-and-times .dtm-inp { width:150px; } }
 @media only screen and (max-width: 1225px) { #event-dates-and-times .dtm-inp { width:125px; } }
@@ -70,6 +78,7 @@
 }
 #no-ticket-prices-msg-dv p { padding: 2px; margin: 0.5em 0; }
 
+#add-new-ticket-price-dv,
 .event-price-settings-dv {
 	padding:5px 60px 10px 15px; margin:10px 0 20px; 
 	background:#fcfcfc; border:1px solid #C8E1EC; border-radius:5px;
