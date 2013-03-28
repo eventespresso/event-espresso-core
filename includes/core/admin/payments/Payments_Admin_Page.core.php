@@ -147,7 +147,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 	protected function _gateway_settings() {
 		
-		global $EE_Session, $caffeinated, $EEM_Gateways;
+		global $EE_Session, $caffeinated, $EEM_Gateways, $current_user;
 
 		if ( ! defined( 'ESPRESSO_GATEWAYS' )) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
@@ -158,13 +158,18 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Tabbed_Content.helper.php' ;
 		
 		$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
+		$payment_settings = array_key_exists('payment_settings',$gateway_data) ? $gateway_data['payment_settings'] : null;
+		/* if there are no payment settings in the session yet, add them from the DB */
+		if (  empty($gateway_data['payment_settings']) ){
+			$payment_settings = get_user_meta($current_user->ID, 'payment_settings', true);
+		}
+		
 		//printr( $gateway_data, '$gateway_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
 		$activate_trigger = $deactivate_trigger = FALSE;
 		$gateways = array();
 		$default_gateways = array( 'Bank', 'Check', 'Invoice', 'Paypal_Standard' );
 		//let's assemble the array for the _tab_text_links helper
-		foreach ( $gateway_data['payment_settings'] as $gateway => $settings ) {
+		foreach ( $payment_settings as $gateway => $settings ) {
 
 			if (( $caffeinated || in_array( $gateway, $default_gateways ))){		
 				// activate this gateway ?
