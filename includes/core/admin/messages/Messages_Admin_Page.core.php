@@ -282,12 +282,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 						), $default_msg_help_tabs
 					)
 				),
-			'reports' => array(
+			/*'reports' => array(
 				'nav' => array(
 					'label' => __('Reports', 'event_espresso'),
 					'order' => 30
 					)
-				)
+				)*/
 		);
 
 	}
