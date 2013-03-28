@@ -345,7 +345,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$this->_session = maybe_unserialize( $this->_transaction ->TXN_session_data );
 			//printr( $this->_session, '$this->_session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			if ( ! is_array( $this->_session )) {
-				$this->_session = unserialize( base64_decode( $this->_session ));
+				//$this->_session = maybe_unserialize( base64_decode( $this->_session ));
+				$this->_session = EE_Ticket_Prices::unobfuscate( $this->_session );
 				//printr( $this->_session, '$this->_session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			}			
 			
