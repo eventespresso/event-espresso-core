@@ -90,7 +90,7 @@
 	 *			@return mixed - array on success - multi dimensional with headers as keys (if headers exist) OR string on fail - error message
 	 */	
 	public function import_csv_to_array( $table_list, $path_to_file, $table = FALSE, $first_row_is_headers = TRUE ) {
-		
+				
 		// first check to see if file exists
 		if (file_exists($path_to_file)) { 
 		
@@ -172,9 +172,9 @@
 					// PHP 5.3+ version
 
 					// loop through each row of the file
-					while (($data = fgetcsv($file_handle, 0, ',', '"', '\\' )) !== FALSE) {
-			
-						// add fail dafe to prevent infinite looping in case of errors
+					while (( $data = fgetcsv( $file_handle, 0, ',', '"', '\\' )) !== FALSE ) {
+
+						// add fail safe to prevent infinite looping in case of errors
 						if ( $row > 1000 ) {
 							break;
 						}
@@ -205,7 +205,6 @@
 								// no headers just store csv data
 								$csv_data[$table][$row][$headers[$i]] = $data[$i];
 							}
-							
 						}
 						// advance to next row
 						$row++;
@@ -225,10 +224,7 @@
 			// delete the uploaded file
 			unlink($path_to_file);
 	
-//echo '<h4>csv_data</h4>';
-//echo '<pre>';
-//echo print_r($csv_data);
-//echo '</pre>';
+//echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $csv_data, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 //die();
 
 			// it's good to give back
@@ -268,9 +264,20 @@
 		$success = FALSE;
 		$error = FALSE;
 		
+		//save inital value so we can reset this later
+		$initial_columns_to_save_value = $columns_to_save;
+
+//echo '<h1>$table_list  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
+//echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $table_list, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';		
+		
+//echo '<h1>$csv_data_array  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
+//echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $csv_data_array, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';		
+		
 		// loop through each row of data
 		foreach ( $csv_data_array as $table_name => $table_data ) {		
 				
+//echo '<h1>$table_name : ' . $table_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
+
 			// check for and set table name ?
 			if ( in_array( (string)$table_name, $table_list )) {
 				// we have a table info in the array
@@ -278,6 +285,8 @@
 				$table = $table_name;
 				// get columns for appropriate table directly from db
 				$columns_to_save = $this->list_db_table_fields($table);
+//echo '<h2>$columns_to_save  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h2>';
+//echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $columns_to_save, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';			
 			} else if ( $table ) {
 				// first level of array is not table information but a table name was passed to the function
 				// array is only two levels deep, so let's fix that by adding a level, else the next steps will fail
@@ -286,6 +295,8 @@
 				if ( ! $columns_to_save ) {
 					$columns_to_save = $this->list_db_table_fields($table);
 				}
+//echo '<h2>$columns_to_save  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h2>';
+//echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $columns_to_save, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';			
 			} else {
 				// no table info in the array and no table name passed to the function?? FAIL
 				$this->_notices['errors'][] = 'No table information was specified and/or found, therefore the import could not be completed';
@@ -295,6 +306,9 @@
 	
 			// flip the array so we can check against it's data
 			$save_to_columns = array_flip($columns_to_save);
+
+//echo '<h2>$save_to_columns  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h2>';
+//echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $save_to_columns, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';			
 								
 			$row_counter = 1;
 		
@@ -358,7 +372,7 @@
 					
 				}
 
-//echo '<h4>this->_primary_keys[$table]</h4>';
+//echo '<h4>this->_primary_keys['.$table.']</h4>';
 //echo '<pre>';
 //echo print_r($this->_primary_keys[$table]);
 //echo '</pre>';
@@ -423,7 +437,7 @@
 //echo '<h3> query : ' . $query . '</h3>';
 				
 				// check if primary key(s) exist in table
-				$result = $wpdb->get_results( $wpdb->prepare( $query ));
+				$result = $wpdb->get_results( $wpdb->prepare( $query, NULL ));
 
 				if ($wpdb->num_rows > 0) {
 //echo '<h3>UPDATE</h3>';
@@ -462,6 +476,10 @@
 				}
 				$row_counter++;
 			}
+			
+			// reset 
+			$columns_to_save = $initial_columns_to_save_value;
+			
 		}
 	
 //echo '<h3>success 1 - total_updates = '.$total_updates.'</h3>';
@@ -498,12 +516,12 @@
 	
 	
 	/**
-	 *			@Export contents of a database table to csv file
-	 *		  @access public
-	 *			@param array $table - the database table to be converted to csv and exported 
-	 *			@param string $filename - name for newly created csv file
-	 *			@param array $prev_export - an array from a previous table export to be merged with these results
-	 *			@return TRUE on success, FALSE on fail
+	 *	@Export contents of a database table to csv file
+	 *	@access public
+	 *	@param array $table - the database table to be converted to csv and exported 
+	 *	@param array $prev_export - an array from a previous table export to be merged with these results
+	 *	@param string $query - custom query for pulling data from table
+	 *	@return TRUE on success, FALSE on fail
 	 */	
 	public function export_table_to_array ( $table = FALSE, $prev_export = FALSE, $query = FALSE ) {
 		
@@ -529,7 +547,7 @@
 		if ( ! $query ) {
 			$query = "SELECT * FROM " . $table;
 		}
-		$result = $wpdb->get_results( $wpdb->prepare( $query ));
+		$result = $wpdb->get_results( $wpdb->prepare( $query, NULL ));
 		
 		if ($wpdb->num_rows > 0) {
 			$i = 1;
@@ -691,10 +709,15 @@
 		// somebody told me i might need this ???
 		global $wpdb;
 		
-		$prefix = $wpdb->prefix . 'events_%';
-		$sql = "select TABLE_NAME from information_schema.tables WHERE TABLE_SCHEMA = '".DB_NAME."' AND TABLE_NAME LIKE '".$prefix."'";
+		$pattern1 = $wpdb->prefix . 'events_%';
+		$pattern2 = $wpdb->prefix . 'esp_%';
+		//$sql = "select TABLE_NAME from information_schema.tables WHERE TABLE_SCHEMA = '".DB_NAME."' AND TABLE_NAME LIKE '".$prefix."'";
+		$SQL = 'SHOW TABLES FROM `' . DB_NAME . '` ';
+		$SQL .= 'WHERE `Tables_in_'. DB_NAME . '` LIKE "' . $pattern1 . '" ';
+		$SQL .= 'OR `Tables_in_'. DB_NAME . '` LIKE "' . $pattern2 . '"';
 	
-		$result = $wpdb->get_col($sql);
+	
+		$result = $wpdb->get_col( $SQL );
 		if ($wpdb->num_rows > 0) {
 			return $result;
 		} else {
