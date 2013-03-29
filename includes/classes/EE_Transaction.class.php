@@ -549,6 +549,18 @@ class EE_Transaction extends EE_Base_Class{
 	}
 	
 	/**
+	 * Gets all the attendees for this transaction (handy for use with EE_Attendee's get_registrations_for_event function
+	 * for getting attendees and how many registrations they each have for an event)
+	 * @param string $output like 'OBJECT_K' or 'COUNT', like EEM_Base's select_all_where's $output parameter
+	 * @return mixed EE_Attendee[] by default, int if $output is set to 'COUNT'
+	 */
+	public function attendees($output='OBJECT_K'){
+		require_once('EEM_Attendee.model.php');
+		$ATT = EEM_Attendee::instance();
+		return $ATT->get_attendees_for_transaction($this,$output);
+	}
+	
+	/**
 	 * Gets teh primary registration only
 	 * @return EE_Registration
 	 */
