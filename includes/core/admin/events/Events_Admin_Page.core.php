@@ -988,8 +988,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 									<td class="order-column ticket-price-quick-edit-column"> 
 										<?php //echo $PRT->type[$price->type()]->order(); ?>
 										<div class="small-screen-table-label"><?php echo __('Order', 'event_espresso') ?></div>
-										<input class="edit-ticket-price-input quick-edit small-text jst-rght<?php echo $disabled_class;?>" type="text" id="quick-edit-ticket-price-PRC_order-<?php echo $price->ID(); ?>" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_order]" value="<?php echo $PRT->type[$price->type()]->order(); ?>"<?php echo $disabled; ?>/>							
-									</td> 
+										<input class="edit-ticket-price-input quick-edit small-text jst-rght<?php echo $disabled_class;?>" type="text" id="quick-edit-ticket-price-PRC_order-<?php echo $price->ID(); ?>" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_order]" value="<?php echo $price->order(); ?>"<?php echo $disabled; ?>/>							
+									</td> <?php //echo $PRT->type[$price->type()]->order(); ?>
 									
 									<td class="name-column ticket-price-quick-edit-column"> 
 										<?php //echo $price->name(); ?>
@@ -3434,7 +3434,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		
 		$ticket_prices_to_save = array();
 		$quick_edit_ticket_price = isset($this->_req_data['quick_edit_ticket_price']) ? $this->_req_data['quick_edit_ticket_price'] : array();
-		//printr( $quick_edit_ticket_price, '$quick_edit_ticket_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $quick_edit_ticket_price, '$quick_edit_ticket_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// grab list of edited ticket prices
 		if ($edited_ticket_price_IDs = isset($this->_req_data['edited_ticket_price_IDs']) ? $this->_req_data['edited_ticket_price_IDs'] : FALSE) {
@@ -3452,13 +3452,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 //					echo printr( $edited_ticket_prices, '$edited_ticket_prices' );
 				// cycle thru list                    
 				foreach ($edited_ticket_prices as $PRC_ID => $edited_ticket_price) {
-//						echo printr( $edited_ticket_price, '$edited_ticket_price' );	
+//					echo printr( $edited_ticket_price, '$edited_ticket_price' );	
 					// add edited ticket prices to list of ticket prices to save
 					if (in_array($PRC_ID, $edited_ticket_price_IDs)) {
-//							echo printr( $quick_edit_ticket_price[$PRC_ID], '$quick_edit_ticket_price[$PRC_ID]' );
+//						echo printr( $quick_edit_ticket_price[$PRC_ID], '$quick_edit_ticket_price[$PRC_ID]' );
 						if ( isset( $quick_edit_ticket_price[$PRC_ID] ) && is_array( $quick_edit_ticket_price[$PRC_ID] )) {
 							$edited_ticket_price = array_merge( $quick_edit_ticket_price[$PRC_ID], $edited_ticket_price );
-//								echo printr( $edited_ticket_price, '$edited_ticket_price' );	
+//							echo printr( $edited_ticket_price, '$edited_ticket_price' );	
 						}
 						$ticket_prices_to_save[$PRC_ID] = $edited_ticket_price;
 					}
@@ -3511,14 +3511,15 @@ class Events_Admin_Page extends EE_Admin_Page {
 												isset( $ticket_price['PRC_end_date'] ) ? $ticket_price['PRC_end_date'] : FALSE,
 												$ticket_price['PRC_is_active'] ? TRUE : FALSE,
 												$overrides,
-												$ticket_price['PRT_ID'] < 3 ? 0 : $ticket_price['PRC_order'],
+//												$ticket_price['PRT_ID'] < 3 ? 0 : $ticket_price['PRC_order'],
+												$ticket_price['PRC_order'],
 												isset( $ticket_price['PRC_deleted'] ) ? $ticket_price['PRC_deleted'] : FALSE,
 												$ticket_price['PRT_is_global'] == 1 &&  ! isset ( $PRC_ID ) ? 0 : $PRC_ID
 				);
 				
 //				printr( $ticket_price, '$ticket_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //				printr( $new_price, '$new_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
+//die();
 
 				if (!$new_price->ID()) {
 //echo '<h1>insert !!!</h1>';
