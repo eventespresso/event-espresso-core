@@ -120,7 +120,9 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[EVENT_PRICE]' :
-				return isset($this->_data['price']) ? $this->_data['price'] : '';
+				global $org_options;
+				$currency_symbol = isset( $org_options['currency_symbol'] ) ? $org_options['currency_symbol'] : '';
+				return isset($this->_data['price']) ? $currency_symbol . number_format($this->_data['price'], 2) : '';
 				break;
 		}
 	}

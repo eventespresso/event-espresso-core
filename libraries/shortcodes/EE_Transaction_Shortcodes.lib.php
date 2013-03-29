@@ -70,12 +70,16 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 			case "[TOTAL_COST]" :
+				global $org_options;
+				$currency_symbol = isset( $org_options['currency_symbol'] ) ? $org_options['currency_symbol'] : '';
 				$total = $this->_data->txn->total();
-				return !empty($total) ? $total : '';
+				return !empty($total) ? $currency_symbol . number_format($total, 2) : '';
 				break;
 
 			case "[EVENT_PRICE]" :
-				return isset($this->_data['price']) ? $this->_data['price'] : '';
+				global $org_options;
+				$currency_symbol = isset( $org_options['currency_symbol'] ) ? $org_options['currency_symbol'] : '';
+				return isset($this->_data['price']) ? $currency_symbol . number_format($this->_data['price'], 2) : '';
 				break;
 
 			case "[PAYMENT_STATUS]" :
@@ -95,8 +99,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		if ( !is_object( $this->_data->txn ) )
 			return '';
 
-		$payment = $this->_data->txn->approved_payments();
-		return !empty($payment) ? $payment->gateway() : '';
+		$details = $this->_data->txn->details();
+		return isset( $details['gateway'] ) ? $details['gateway'] : 'Gateway not selected';
 	}
 
 } //end EE_Transaction Shortcodes library
