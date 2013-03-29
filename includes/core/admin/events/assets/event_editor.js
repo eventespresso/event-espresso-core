@@ -473,7 +473,13 @@ jQuery(document).ready(function($) {
 	});
 
 
+	$('#display-add-new-ticket-price').on( 'click', function(){
+		$('#edit_event_save_prices_btn').slideUp(500);
+	});
 
+	$('#hide-add-new-ticket-price').on( 'click', function(){
+		$('#edit_event_save_prices_btn').delay(450).fadeIn(50);
+	});
 
 // ===================================================================
 // Author: Matt Kruse <matt@mattkruse.com>

@@ -797,7 +797,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			<br class="clear"/>
 			<?php if ( $caffeinated ) : ?>
 			<!--<input type="button" id="add-time" class="button dtm-inp-btn" value="<?php _e('Add Additional Time', 'event_espresso'); ?>" />-->
-			<input id="edit_event_save_prices" class="button-primary save" type="submit" name="save" value="Save Prices">
+			<input id="edit_event_datetimes_save_btn" class="button-primary save" type="submit" name="save" value="Save Dates &amp; Times">
 			<a id="add-new-date-time" class="button-secondary dtm-inp-btn" ><?php _e('Add New Dates &amp; Times', 'event_espresso'); ?></a>
 			<br class="clear"/>
 			<?php endif; ?>
@@ -1393,7 +1393,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			<a id="display-add-new-ticket-price" class="button-secondary display-the-hidden" rel="add-new-ticket-price">
 				<?php _e('Add New Event Price', 'event_espresso'); ?>
 			</a>
-			<input id="edit_event_save_prices" class="button-primary save right" type="submit" name="save" value="Save Prices">
+			<input id="edit_event_save_prices_btn" class="button-primary save right" type="submit" name="save" value="Save Prices">
 			
 			<br class="clear"/><br/>
 			
