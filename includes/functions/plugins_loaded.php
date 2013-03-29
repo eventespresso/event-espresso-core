@@ -415,7 +415,7 @@ function espresso_init() {
 	global $caffeinated, $is_UI_request, $espresso_content;
 	// is this request for UI or backend 
 	$is_UI_request = ( ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' ) ? TRUE : FALSE;
-	if ( defined('DOING_AJAX') ) {
+	if ( defined('DOING_AJAX') || ! $is_UI_request ) {
 		remove_action( 'shutdown', 'espresso_printr_session' );
 	}
 
