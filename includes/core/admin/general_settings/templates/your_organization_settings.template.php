@@ -17,12 +17,16 @@
 					<input name="site_license_key" id="site_license_key" size="10" class="regular-text" type="text" value="<?php echo isset($org_options['site_license_key']) && $org_options['site_license_key'] != '' ? stripslashes_deep($org_options['site_license_key']) : '0'; ?>" /><br/>
 					<p class="description">
 						<?php _e('Adding a valid Support License Key will enable automatic update notifications and backend updates for Event Espresso Core and any installed addons.'); ?>
-					</p>
+					</p>			
 				</td>
 			</tr>
 
 		</tbody>
 	</table>
+	
+	<p class="ee-attention">
+		<?php _e('If this is a Development or Test site, <strong>DO NOT</strong> enter your Support License Key . Save it for the Live Production Site, otherwise you will unnecessarily run into issues with needing to have your Key reset.', 'event_espresso'); ?>
+	</p>		
 
 	<h4 class="ee-admin-settings-hdr">
 		<?php _e('Contact Information', 'event_espresso'); ?>
