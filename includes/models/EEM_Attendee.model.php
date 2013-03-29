@@ -307,8 +307,46 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 
 
 
-	
-
+	/**
+	 * Gets all the attendees for a transaction (by using the esp_registration as a join table)
+	 * @param EE_Transaction/int $transaction_id_or_obj EE_Transaction or its ID
+	 * @param string $output
+	 * @return EE_Attendee[] or int (if $output=='COUNT')
+	 */
+	public function get_attendees_for_transaction($transaction_id_or_obj,$output='OBJECT_K'){
+		global $wpdb;
+		//make sure we have a real transaction object
+		require_once('EE_Transaction.class.php');
+		if( ! $transaction_id_or_obj instanceof EE_Transaction){
+			//its just an ID, we want the real object because its easy
+			require_once('EEM_Transaction.model.php');
+			$TXN = EEM_Transaction::instance();
+			$transaction = $TXN->get_one_by_ID($transaction_id_or_obj);
+		}else{
+			$transaction = $transaction_id_or_obj;
+		}
+		
+		//we could do a big join query, but I decided to just do consecutive smaller queries using models
+		
+		//get registrations for this transaction
+		$registrations=$transaction->registrations();
+		
+		//get attendee IDs that relate to each transaction
+		$attendee_ids=array();
+		foreach($registrations as $registration){
+			$attendee_ids[]=$registration->attendee_ID();
+		}
+		$attendee_ids_csv = implode(",",$attendee_ids);
+		
+		//run a query with a special IN clause to find 
+		$query = "SELECT * FROM ".$this->table_name." WHERE ATT_ID in (".$attendee_ids_csv.")";
+		$results = $wpdb->get_results($query,$output);
+		if($output == 'COUNT'){
+			return $results;
+		}else{
+			return $this->_create_objects($results);
+		}
+	}
 
 
 

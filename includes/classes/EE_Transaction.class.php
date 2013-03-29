@@ -549,6 +549,18 @@ class EE_Transaction extends EE_Base_Class{
 	}
 	
 	/**
+	 * Gets all the attendees for this transaction (handy for use with EE_Attendee's get_registrations_for_event function
+	 * for getting attendees and how many registrations they each have for an event)
+	 * @param string $output like 'OBJECT_K' or 'COUNT', like EEM_Base's select_all_where's $output parameter
+	 * @return mixed EE_Attendee[] by default, int if $output is set to 'COUNT'
+	 */
+	public function attendees($output='OBJECT_K'){
+		require_once('EEM_Attendee.model.php');
+		$ATT = EEM_Attendee::instance();
+		return $ATT->get_attendees_for_transaction($this,$output);
+	}
+	
+	/**
 	 * Gets teh primary registration only
 	 * @return EE_Registration
 	 */
@@ -656,6 +668,36 @@ class EE_Transaction extends EE_Base_Class{
 			return false;
 		}
 	}
+
+
+
+	/**
+	 * This returns the url for the invoice of this transaction
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function invoice_url() {
+		$REG = $this->primary_registration();
+		if ( empty( $REG ) ) return false;
+		return $REG->invoice_url();
+	}
+
+
+
+	/**
+	 * Gets the URL of the thank you page with this registraiton REG_url_link added as
+	 * a query parameter
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function payment_overview_url() {
+		$REG = $this->primary_registration();
+		if ( empty($REG) ) return false;
+		return $REG->payment_overview_url();
+	}
+
 
 
 }

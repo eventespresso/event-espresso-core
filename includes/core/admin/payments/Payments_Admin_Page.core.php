@@ -147,7 +147,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 	protected function _gateway_settings() {
 		
-		global $EE_Session, $caffeinated, $EEM_Gateways;
+		global $EE_Session, $caffeinated, $EEM_Gateways, $current_user;
 
 		if ( ! defined( 'ESPRESSO_GATEWAYS' )) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
@@ -158,13 +158,18 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Tabbed_Content.helper.php' ;
 		
 		$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
+		$payment_settings = array_key_exists('payment_settings',$gateway_data) ? $gateway_data['payment_settings'] : null;
+		/* if there are no payment settings in the session yet, add them from the DB */
+		if (  empty($gateway_data['payment_settings']) ){
+			$payment_settings = get_user_meta($current_user->ID, 'payment_settings', true);
+		}
+		
 		//printr( $gateway_data, '$gateway_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
 		$activate_trigger = $deactivate_trigger = FALSE;
 		$gateways = array();
 		$default_gateways = array( 'Bank', 'Check', 'Invoice', 'Paypal_Standard' );
 		//let's assemble the array for the _tab_text_links helper
-		foreach ( $gateway_data['payment_settings'] as $gateway => $settings ) {
+		foreach ( $payment_settings as $gateway => $settings ) {
 
 			if (( $caffeinated || in_array( $gateway, $default_gateways ))){		
 				// activate this gateway ?
@@ -401,7 +406,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		
 		$options = array(
 			'header' => htmlentities( sprintf( __( 'Before the opening %s tag of every page on the website', 'event_espresso' ), '<body>' ), ENT_QUOTES, 'UTF-8' ), 
-			'purchase_comfirmation' => __( 'On the purchase confirmation page after completed purchase', 'event_espresso' ), 
+			'purchase_confirmation' => __( 'On the purchase confirmation page after completed purchase', 'event_espresso' ), 
 			'footer' => htmlentities( sprintf( __( 'Before the closing %s tag of every page on the website', 'event_espresso' ), '</body>' ), ENT_QUOTES, 'UTF-8' )
 		);
 		
@@ -429,7 +434,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 							$checked = $opt == $payment_settings['affiliate']['hook_into'] ? ' checked="checked"' : '';
 						?>
 							<label class="ee-admin-radio-long-lbl">
-								<input type="radio" name="aff_hook_into[]" id="affiliate_hook_into_header" value="<?php echo $opt; ?>"<?php echo $checked; ?> /> 
+								<input type="radio" name="aff_hook_into" id="affiliate_hook_into_header" value="<?php echo $opt; ?>"<?php echo $checked; ?> /> 
 								<?php echo $description; ?>
 							</label>
 							<br/>
@@ -455,7 +460,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 		if ( isset( $this->_req_data['update_affiliate_settings'] ) ) {
 			$payment_settings['affiliate']['script'] = $this->_req_data['aff_script'];
-			$payment_settings['affiliate']['hook_into'] = (array) $this->_req_data['aff_hook_into'];
+			$payment_settings['affiliate']['hook_into'] = $this->_req_data['aff_hook_into'];
 			if ( update_option('payment_data_' . $espresso_wp_user, $payment_settings) === true ) {
 				$msg = __('Affiliate Settings Updated!', 'event_espresso');
 				EE_Error::add_success($msg);

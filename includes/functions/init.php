@@ -323,7 +323,7 @@ function espresso_export_invoice() {
 	if (isset($_REQUEST['invoice_launch']) && $_REQUEST['invoice_launch'] == 'true') {
 		if (isset($_REQUEST['id'])) {
 			$_REQUEST['id'] = sanitize_key( $_REQUEST['id'] );
-			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/lib/Invoice.class.php");
+			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/Invoice/lib/Invoice.class.php");
 			$invoice = new Invoice($_REQUEST['id']);
 			$invoice->send_invoice();
 		}
