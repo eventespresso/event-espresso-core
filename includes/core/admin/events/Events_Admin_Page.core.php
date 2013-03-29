@@ -140,14 +140,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'noheader' => true
 				),
 
-			'export_payments' => array(
-				'func' => '_payment_export',
-				'noheader' => true
-				),
-
-			'import_events' => '_import_events',
+//			'export_payments' => array(
+//				'func' => '_payment_export',
+//				'noheader' => true
+//				),
 
 			'import' => '_import_events',
+			'import_events' => '_import_events',
 
 			'default_event_settings' => '_default_event_settings',
 
@@ -297,7 +296,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'bulk_action' => array(
 					'delete_events' => __('Delete Permanently', 'event_espresso'),
 					'export_events' => __('Export Events', 'event_espresso'),
-					'export_payments' => __('Export Payments', 'event_espresso')
+//					'export_payments' => __('Export Payments', 'event_espresso')
 					)
 				),
 			'today' => array(
@@ -307,7 +306,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'bulk_action' => array(
 					'delete_events' => __('Delete Permanently', 'event_espresso'),
 					'export_events' => __('Export Events', 'event_espresso'),
-					'export_payments' => __('Export Payments', 'event_espresso')
+//					'export_payments' => __('Export Payments', 'event_espresso')
 					)
 				),
 			'month' => array(
@@ -317,7 +316,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'bulk_action' => array(
 					'delete_events' => __('Delete Permanently', 'event_espresso'),
 					'export_events' => __('Export Events', 'event_espresso'),
-					'export_payments' => __('Export Payments', 'event_espresso')
+//					'export_payments' => __('Export Payments', 'event_espresso')
 					)
 				)
 			);
@@ -3856,15 +3855,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
 		$new_request_args = array(
 			'export' => 'report',
-			'action' => 'event',
+			'action' => 'all_event_data',
 			'event_id' => $this->_req_data['EVT_ID'],
 			);
 		$this->_req_data = array_merge( $this->_req_data, $new_request_args);
-
 		
 		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php')) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
-			$EE_Export = EE_Export::instance();
+			$EE_Export = EE_Export::instance( $this->_req_data );
 			$EE_Export->export();
 		}
 	}
@@ -3883,7 +3881,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$new_request_args = array(
 			'export' => 'report',
 			'action' => 'payment',
-			'type' => 'excel',
+			'type' => 'csv',
 			'event_id' => $this->_req_data['EVT_ID'],
 			);
 		$this->_req_data = array_merge( $this->_req_data, $new_request_args );
@@ -3914,10 +3912,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		$title = __( 'Import Events', 'event_espresso' );
 		$intro = __( 'If you have a previously exported list of Event Details in a Comma Separated Value (CSV) file format, you can upload the file here: ', 'event_espresso' );
-		$page = EVENTS_PG_SLUG;
+		$form_url = EVENTS_ADMIN_URL;
 		$action = 'import_events';
 		$type = 'csv';
-		$content = EE_Import::instance()->upload_form( $title, $intro, $page, $action, $type );
+		$content = EE_Import::instance()->upload_form( $title, $intro, $form_url, $action, $type );
 
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_event', 'add', array(), 'button add-new-h2');
 		$this->_template_args['admin_page_content'] = $content;	
