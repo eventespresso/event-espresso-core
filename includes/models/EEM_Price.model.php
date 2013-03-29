@@ -553,35 +553,68 @@ class EEM_Price extends EEM_Base {
 		//echo printr( $prices, 'prices');
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 		
-		if( ! function_exists( 'sort_event_prices' )) {
-			function sort_event_prices($price_a, $price_b) {
-				$PRT = EEM_Price_Type::instance();
-				if ($PRT->type[$price_a->type()]->order() == $PRT->type[$price_b->type()]->order()) {
-					return sort_event_prices_by_start_date($price_a, $price_b);
-				}
-				return ($PRT->type[$price_a->type()]->order() < $PRT->type[$price_b->type()]->order()) ? -1 : 1;
-			}
-		}
+		uasort( $prices, array( $this, '_sort_event_prices_by_type' ));
 		
-
-		function sort_event_prices_by_start_date($price_a, $price_b) {
-			if ( $price_a->start_date( FALSE ) == $price_b->start_date( FALSE )) {
-				return 0;
-			}
-			return ($price_a->start_date( FALSE ) < $price_b->start_date( FALSE )) ? -1 : 1;
-		}
-
-		
-		uasort($prices, 'sort_event_prices');
-		
-		if (!empty($prices)) {
-			foreach ($prices as $price) {
+		if ( ! empty( $prices )) {
+			foreach ( $prices as $price ) {
 				$array_of_price_objects[ $price->type() ][] = $price;
 			}
 			return $array_of_price_objects;
 		} else {
 			return FALSE;
 		}
+	}
+
+
+
+
+
+	/**
+	 * 		_sort_event_prices_by_type
+	 *
+	 * 		@access		private
+	 * 		@return 		boolean			false on fail
+	 */
+	private function _sort_event_prices_by_type( $price_a, $price_b ) {
+		$PRT = EEM_Price_Type::instance();
+		if ( $PRT->type[ $price_a->type() ]->order() == $PRT->type[ $price_b->type() ]->order() ) {
+			return $this->_sort_event_prices_by_order( $price_a, $price_b );
+		}
+		return $PRT->type[ $price_a->type() ]->order() < $PRT->type[ $price_b->type() ]->order() ? -1 : 1;
+	}
+
+
+
+
+
+	/**
+	 * 		_sort_event_prices_by_order
+	 *
+	 * 		@access		private
+	 * 		@return 		boolean			false on fail
+	 */
+	private function _sort_event_prices_by_order($price_a, $price_b) {
+		if ( $price_a->order() == $price_b->order() ) {
+			return $this->_sort_event_prices_by_start_date( $price_a, $price_b );
+		}
+		return $price_a->order() < $price_b->order() ? -1 : 1;
+	}
+
+
+
+
+
+	/**
+	 * 		sort_event_prices_by_start_date
+	 *
+	 * 		@access		private
+	 * 		@return 		boolean			false on fail
+	 */
+	private function _sort_event_prices_by_start_date($price_a, $price_b) {
+		if ( $price_a->start_date( FALSE ) == $price_b->start_date( FALSE )) {
+			return 0;
+		}
+		return $price_a->start_date( FALSE ) < $price_b->start_date( FALSE ) ? -1 : 1;
 	}
 
 
