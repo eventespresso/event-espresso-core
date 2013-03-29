@@ -406,7 +406,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		
 		$options = array(
 			'header' => htmlentities( sprintf( __( 'Before the opening %s tag of every page on the website', 'event_espresso' ), '<body>' ), ENT_QUOTES, 'UTF-8' ), 
-			'purchase_comfirmation' => __( 'On the purchase confirmation page after completed purchase', 'event_espresso' ), 
+			'purchase_confirmation' => __( 'On the purchase confirmation page after completed purchase', 'event_espresso' ), 
 			'footer' => htmlentities( sprintf( __( 'Before the closing %s tag of every page on the website', 'event_espresso' ), '</body>' ), ENT_QUOTES, 'UTF-8' )
 		);
 		
@@ -434,7 +434,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 							$checked = $opt == $payment_settings['affiliate']['hook_into'] ? ' checked="checked"' : '';
 						?>
 							<label class="ee-admin-radio-long-lbl">
-								<input type="radio" name="aff_hook_into[]" id="affiliate_hook_into_header" value="<?php echo $opt; ?>"<?php echo $checked; ?> /> 
+								<input type="radio" name="aff_hook_into" id="affiliate_hook_into_header" value="<?php echo $opt; ?>"<?php echo $checked; ?> /> 
 								<?php echo $description; ?>
 							</label>
 							<br/>
@@ -460,7 +460,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 		if ( isset( $this->_req_data['update_affiliate_settings'] ) ) {
 			$payment_settings['affiliate']['script'] = $this->_req_data['aff_script'];
-			$payment_settings['affiliate']['hook_into'] = (array) $this->_req_data['aff_hook_into'];
+			$payment_settings['affiliate']['hook_into'] = $this->_req_data['aff_hook_into'];
 			if ( update_option('payment_data_' . $espresso_wp_user, $payment_settings) === true ) {
 				$msg = __('Affiliate Settings Updated!', 'event_espresso');
 				EE_Error::add_success($msg);
