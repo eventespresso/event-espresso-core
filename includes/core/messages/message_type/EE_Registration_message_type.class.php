@@ -35,7 +35,7 @@ class EE_Registration_message_type extends EE_message_type {
 		$this->description = __('Sets up registration messages when a successful registration has been completed through frontend checkout', 'event_espresso');
 		$this->label = array(
 			'singular' => __('registration', 'event_espresso'),
-			'plural' => __('regisgrations', 'event_espresso')
+			'plural' => __('registrations', 'event_espresso')
 			);
 
 		parent::__construct();

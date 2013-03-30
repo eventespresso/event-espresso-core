@@ -2134,7 +2134,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *	@access protected
 	 *	@return void
 	 */
-	protected function _redirect_after_action( $success = FALSE, $what = 'item', $action_desc = 'processed', $query_args = array() ) {
+	protected function _redirect_after_action( $success = FALSE, $what = 'item', $action_desc = 'processed', $query_args = array(), $override_overwrite = FALSE ) {
 
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
@@ -2143,13 +2143,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		// how many records affected ? more than one record ? or just one ?
 		if ( $success == 2 ) {
-			// overwrite default success messages
-			EE_Error::overwrite_success();
+			// overwrite default success messages //BUT ONLY if overwrite not overridden
+			if ( !$override_overwrite ) EE_Error::overwrite_success();
 			// set plural msg
 			EE_Error::add_success( sprintf( __('The %s have been successfully %s.', 'event_espresso'), $what, $action_desc ), __FILE__, __FUNCTION__, __LINE__);
 		} else if ( $success == 1 ) {
 			// overwrite default success messages
-			EE_Error::overwrite_success();
+			if ( !$override_overwrite )  EE_Error::overwrite_success();
 			// set singular msg
 			EE_Error::add_success( sprintf( __('The %s has been successfully %s.', 'event_espresso'), $what, $action_desc), __FILE__, __FUNCTION__, __LINE__ );
 		}
@@ -2623,6 +2623,80 @@ abstract class EE_Admin_Page extends EE_BASE {
 			
 	}
 
+
+
+	//below are some messages related methods that should be available across the EE_Admin system.  Note, these methods are NOT page specific
+	
+
+
+
+	/**
+	 * This processes an request to resend a registration and assumes we have a _REG_ID for doing so. So if the caller knows that the _REG_ID isn't in the req_data array but CAN obtain it, the caller should ADD the _REG_ID to the _req_data array.
+	 * @return bool success/fail
+	 */
+	protected function _process_resend_registration() {
+		$success = TRUE;
+		//first let's make sure we have the reg id (needed for resending!);
+		if ( !isset( $this->_req_data['_REG_ID'] ) ) {
+			EE_Error::add_error( __('Something went wrong because we\'re missing the registration ID', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			$success = FALSE;
+		}
+
+		if ( $success ) {
+			$EE_MSG = new EE_messages();
+			$success = $EE_MSG->send_message( 'resend_registration', $this->_req_data );
+		}
+
+		if ( $success ) {
+			EE_Error::add_success( __('The registration confirmation has been sent', 'event_espresso') );
+		} else {
+			EE_Error::add_error( __('Something went wrong and the registration confirmation was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		}
+		
+
+		$this->_template_args['success'] = $success;
+		return $success;
+	}
+
+
+	/**
+	 * This automatically processes any payment message notifications when manual payment has been applied.
+	 *
+	 * @access protected
+	 * @return bool success/fail
+	 */
+	protected function _process_payment_notification( EE_Payment $payment ) {
+		$success = TRUE;
+		$reg_success = TRUE;
+
+		//we need to get the transaction object
+		$transaction = $payment->transaction();
+
+		$data = array( $transaction, $payment );
+
+		if ( $success ) {
+			$EE_MSG = new EE_messages();
+			$success = $EE_MSG->send_message( 'payment', $data );
+			//let's trigger a registration confirmation (note this will only actually complete if registration confirmations are delayed until complete payment)
+			$reg_success = $EE_MSG->send_message( 'registration', $data );
+		}
+
+		if ( $success ) {
+			EE_Error::add_success( __('The payment confirmation has been sent', 'event_espresso') );
+		} else {
+			EE_Error::add_error( __('Something went wrong and the payment confirmation was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		}
+
+		if ( $reg_success ) {
+			EE_Error::add_success( __('Complete payment has been made for the transaction so registration confirmations have been sent', 'event_espresso') );
+		} else {
+			EE_Error::add_success( __('Registration confirmations are delayed until the amount oweing has been completely paid.', 'event_espresso') );
+		}
+		
+
+		$this->_template_args['success'] = $success;
+		return $success;
+	}
 
 
 }

@@ -244,7 +244,7 @@ abstract class EE_message_type extends EE_Base {
 
 		//this is a special method that allows child message types to trigger an exit from generating messages early (in cases where there may be a delay on send). 
 		$exit = $this->_trigger_exit();
-		if ( $exit && !$context ) return false;
+		if ( $exit && !$context ) return FALSE;
 
 		//todo: need to move require into registration hook but for now we'll require here.
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Parse_Shortcodes.helper.php';
