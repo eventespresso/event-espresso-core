@@ -741,7 +741,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	public function _approve_or_decline_reg_status( $REG_status = FALSE ) {
-		
+		$override = FALSE;
 		$success = FALSE;
 		$REG_ID = ( ! empty( $this->_req_data['_REG_ID'] )) ? absint( $this->_req_data['_REG_ID'] ) : FALSE;			
 		if ( $REG_ID && array_key_exists( $REG_status, self::$_reg_status )) {
@@ -750,10 +750,16 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				$success = $registration->update();		
 			}
 		}
+
+		if ( $success && $REG_status == 'RAP' ) {
+			$override = TRUE;
+			EE_Error::overwrite_success();
+			$this->_process_resend_registration();
+		}
 		
 		$what = 'Attendee Registration Status';
 		$route = $REG_ID ? array( 'action' => 'view_registration', '_REG_ID' => $REG_ID ) : array( 'action' => 'default' );
-		$this->_redirect_after_action( $success, $what, 'updated', $route );
+		$this->_redirect_after_action( $success, $what, 'updated', $route, $override );
 	}
 
 
