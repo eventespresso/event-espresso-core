@@ -60,7 +60,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 			'event' => __( 'Event', 'event_espresso'),
 			'message_type' => __('Message Type', 'event_espresso'),
 			'messenger' => __( 'Messenger', 'event_espresso'),
-			'messages_sent' => __( 'Total Sent', 'event_espresso' )
+			//'messages_sent' => __( 'Total Sent', 'event_espresso' ) //todo this will come later when we've got message tracking in place.
 			);
 
 		$this->_sortable_columns = array(
