@@ -2134,7 +2134,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *	@access protected
 	 *	@return void
 	 */
-	protected function _redirect_after_action( $success = FALSE, $what = 'item', $action_desc = 'processed', $query_args = array() ) {
+	protected function _redirect_after_action( $success = FALSE, $what = 'item', $action_desc = 'processed', $query_args = array(), $override_overwrite = FALSE ) {
 
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
@@ -2143,13 +2143,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		// how many records affected ? more than one record ? or just one ?
 		if ( $success == 2 ) {
-			// overwrite default success messages
-			EE_Error::overwrite_success();
+			// overwrite default success messages //BUT ONLY if overwrite not overridden
+			if ( !$override_overwrite ) EE_Error::overwrite_success();
 			// set plural msg
 			EE_Error::add_success( sprintf( __('The %s have been successfully %s.', 'event_espresso'), $what, $action_desc ), __FILE__, __FUNCTION__, __LINE__);
 		} else if ( $success == 1 ) {
 			// overwrite default success messages
-			EE_Error::overwrite_success();
+			if ( !$override_overwrite )  EE_Error::overwrite_success();
 			// set singular msg
 			EE_Error::add_success( sprintf( __('The %s has been successfully %s.', 'event_espresso'), $what, $action_desc), __FILE__, __FUNCTION__, __LINE__ );
 		}
