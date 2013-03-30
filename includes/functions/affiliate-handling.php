@@ -17,8 +17,8 @@ class espresso_Affiliate_handling {
 	}
 
 	function hook_into_wp() {
-		foreach ( $this->settings['hook_into'] as $hook_where ) {
-			switch ( $hook_where ) {
+		//foreach ( $this->settings['hook_into'] as $hook_where ) {
+			switch ( $this->settings['hook_into'] ) {
 				case 'header' :
 					add_action('wp_head', array(&$this, 'print_aff') );
 					break;
@@ -28,7 +28,7 @@ class espresso_Affiliate_handling {
 				case 'footer' :
 					add_action('wp_footer', array(&$this, 'print_aff'));
 			}
-		}
+		//}
 	}
 
 	function print_aff() {
