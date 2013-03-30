@@ -60,7 +60,7 @@ class EE_Resend_Registration_message_type extends EE_message_type {
 
 
 	protected function _set_data_handler() {
-		$this->_data_handler = 'Events_Admin';
+		$this->_data_handler = 'REGID';
 	}
 
 
@@ -167,8 +167,18 @@ class EE_Resend_Registration_message_type extends EE_message_type {
 	 */
 	protected function _attendee_addressees() {
 		$add = array();
-		//we just have to loop through the attendees.  We'll also set the attached events for each attendee.
+		$multi_same_att_check = array();
+		
 		foreach ( $this->_data->attendees as $index => $values ) {
+			//ONLY continue if this attendee matches the registration
+			if ( $this->_data->reg_obj->attendee_ID() != $this->_data->attendees[$index]['att_obj']->ID()) continue;
+
+			$attendee_id = $this->_data->reg_obj->attendee_ID();
+			if ( !empty( $multi_same_att_check ) && in_array($attendee_id, $multi_same_att_check) )
+				continue; //we're not going to send multiple attendee emails to the same person!
+
+			$multi_same_att_check[$attendee_id] = $attendee_id;
+
 			//set the attendee array to blank on each loop;
 			$aee = array();
 			foreach ( $values as $field => $value ) {
@@ -177,14 +187,6 @@ class EE_Resend_Registration_message_type extends EE_message_type {
 					foreach ( $value as $line_ref ) {
 						$aee['events'][$line_ref] = $this->_data->events[$line_ref];
 					}
-				}
-
-				if ( $field == 'email' ) {
-					$aee['attendee_email'] = $value;
-				}
-
-				if ( $field == 'registration_id' ) {
-					$aee['attendee_registration_id'] = $value;
 				}
 			}
 
