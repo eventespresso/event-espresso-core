@@ -140,14 +140,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'noheader' => true
 				),
 
-			'export_payments' => array(
-				'func' => '_payment_export',
-				'noheader' => true
-				),
-
-			'import_events' => '_import_events',
+//			'export_payments' => array(
+//				'func' => '_payment_export',
+//				'noheader' => true
+//				),
 
 			'import' => '_import_events',
+			'import_events' => '_import_events',
 
 			'default_event_settings' => '_default_event_settings',
 
@@ -297,7 +296,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'bulk_action' => array(
 					'delete_events' => __('Delete Permanently', 'event_espresso'),
 					'export_events' => __('Export Events', 'event_espresso'),
-					'export_payments' => __('Export Payments', 'event_espresso')
+//					'export_payments' => __('Export Payments', 'event_espresso')
 					)
 				),
 			'today' => array(
@@ -307,7 +306,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'bulk_action' => array(
 					'delete_events' => __('Delete Permanently', 'event_espresso'),
 					'export_events' => __('Export Events', 'event_espresso'),
-					'export_payments' => __('Export Payments', 'event_espresso')
+//					'export_payments' => __('Export Payments', 'event_espresso')
 					)
 				),
 			'month' => array(
@@ -317,7 +316,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'bulk_action' => array(
 					'delete_events' => __('Delete Permanently', 'event_espresso'),
 					'export_events' => __('Export Events', 'event_espresso'),
-					'export_payments' => __('Export Payments', 'event_espresso')
+//					'export_payments' => __('Export Payments', 'event_espresso')
 					)
 				)
 			);
@@ -798,7 +797,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			<br class="clear"/>
 			<?php if ( $caffeinated ) : ?>
 			<!--<input type="button" id="add-time" class="button dtm-inp-btn" value="<?php _e('Add Additional Time', 'event_espresso'); ?>" />-->
-			<input id="edit_event_save_prices" class="button-primary save" type="submit" name="save" value="Save Prices">
+			<input id="edit_event_datetimes_save_btn" class="button-primary save" type="submit" name="save" value="Save Dates &amp; Times">
 			<a id="add-new-date-time" class="button-secondary dtm-inp-btn" ><?php _e('Add New Dates &amp; Times', 'event_espresso'); ?></a>
 			<br class="clear"/>
 			<?php endif; ?>
@@ -989,8 +988,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 									<td class="order-column ticket-price-quick-edit-column"> 
 										<?php //echo $PRT->type[$price->type()]->order(); ?>
 										<div class="small-screen-table-label"><?php echo __('Order', 'event_espresso') ?></div>
-										<input class="edit-ticket-price-input quick-edit small-text jst-rght<?php echo $disabled_class;?>" type="text" id="quick-edit-ticket-price-PRC_order-<?php echo $price->ID(); ?>" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_order]" value="<?php echo $PRT->type[$price->type()]->order(); ?>"<?php echo $disabled; ?>/>							
-									</td> 
+										<input class="edit-ticket-price-input quick-edit small-text jst-rght<?php echo $disabled_class;?>" type="text" id="quick-edit-ticket-price-PRC_order-<?php echo $price->ID(); ?>" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_order]" value="<?php echo $price->order(); ?>"<?php echo $disabled; ?>/>							
+									</td> <?php //echo $PRT->type[$price->type()]->order(); ?>
 									
 									<td class="name-column ticket-price-quick-edit-column"> 
 										<?php //echo $price->name(); ?>
@@ -1394,7 +1393,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			<a id="display-add-new-ticket-price" class="button-secondary display-the-hidden" rel="add-new-ticket-price">
 				<?php _e('Add New Event Price', 'event_espresso'); ?>
 			</a>
-			<input id="edit_event_save_prices" class="button-primary save right" type="submit" name="save" value="Save Prices">
+			<input id="edit_event_save_prices_btn" class="button-primary save right" type="submit" name="save" value="Save Prices">
 			
 			<br class="clear"/><br/>
 			
@@ -3435,7 +3434,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		
 		$ticket_prices_to_save = array();
 		$quick_edit_ticket_price = isset($this->_req_data['quick_edit_ticket_price']) ? $this->_req_data['quick_edit_ticket_price'] : array();
-		//printr( $quick_edit_ticket_price, '$quick_edit_ticket_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $quick_edit_ticket_price, '$quick_edit_ticket_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// grab list of edited ticket prices
 		if ($edited_ticket_price_IDs = isset($this->_req_data['edited_ticket_price_IDs']) ? $this->_req_data['edited_ticket_price_IDs'] : FALSE) {
@@ -3453,13 +3452,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 //					echo printr( $edited_ticket_prices, '$edited_ticket_prices' );
 				// cycle thru list                    
 				foreach ($edited_ticket_prices as $PRC_ID => $edited_ticket_price) {
-//						echo printr( $edited_ticket_price, '$edited_ticket_price' );	
+//					echo printr( $edited_ticket_price, '$edited_ticket_price' );	
 					// add edited ticket prices to list of ticket prices to save
 					if (in_array($PRC_ID, $edited_ticket_price_IDs)) {
-//							echo printr( $quick_edit_ticket_price[$PRC_ID], '$quick_edit_ticket_price[$PRC_ID]' );
+//						echo printr( $quick_edit_ticket_price[$PRC_ID], '$quick_edit_ticket_price[$PRC_ID]' );
 						if ( isset( $quick_edit_ticket_price[$PRC_ID] ) && is_array( $quick_edit_ticket_price[$PRC_ID] )) {
 							$edited_ticket_price = array_merge( $quick_edit_ticket_price[$PRC_ID], $edited_ticket_price );
-//								echo printr( $edited_ticket_price, '$edited_ticket_price' );	
+//							echo printr( $edited_ticket_price, '$edited_ticket_price' );	
 						}
 						$ticket_prices_to_save[$PRC_ID] = $edited_ticket_price;
 					}
@@ -3512,14 +3511,15 @@ class Events_Admin_Page extends EE_Admin_Page {
 												isset( $ticket_price['PRC_end_date'] ) ? $ticket_price['PRC_end_date'] : FALSE,
 												$ticket_price['PRC_is_active'] ? TRUE : FALSE,
 												$overrides,
-												$ticket_price['PRT_ID'] < 3 ? 0 : $ticket_price['PRC_order'],
+//												$ticket_price['PRT_ID'] < 3 ? 0 : $ticket_price['PRC_order'],
+												$ticket_price['PRC_order'],
 												isset( $ticket_price['PRC_deleted'] ) ? $ticket_price['PRC_deleted'] : FALSE,
 												$ticket_price['PRT_is_global'] == 1 &&  ! isset ( $PRC_ID ) ? 0 : $PRC_ID
 				);
 				
 //				printr( $ticket_price, '$ticket_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //				printr( $new_price, '$new_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
+//die();
 
 				if (!$new_price->ID()) {
 //echo '<h1>insert !!!</h1>';
@@ -3856,15 +3856,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
 		$new_request_args = array(
 			'export' => 'report',
-			'action' => 'event',
+			'action' => 'all_event_data',
 			'event_id' => $this->_req_data['EVT_ID'],
 			);
 		$this->_req_data = array_merge( $this->_req_data, $new_request_args);
-
 		
 		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php')) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
-			$EE_Export = EE_Export::instance();
+			$EE_Export = EE_Export::instance( $this->_req_data );
 			$EE_Export->export();
 		}
 	}
@@ -3883,7 +3882,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$new_request_args = array(
 			'export' => 'report',
 			'action' => 'payment',
-			'type' => 'excel',
+			'type' => 'csv',
 			'event_id' => $this->_req_data['EVT_ID'],
 			);
 		$this->_req_data = array_merge( $this->_req_data, $new_request_args );
@@ -3914,10 +3913,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		$title = __( 'Import Events', 'event_espresso' );
 		$intro = __( 'If you have a previously exported list of Event Details in a Comma Separated Value (CSV) file format, you can upload the file here: ', 'event_espresso' );
-		$page = EVENTS_PG_SLUG;
+		$form_url = EVENTS_ADMIN_URL;
 		$action = 'import_events';
 		$type = 'csv';
-		$content = EE_Import::instance()->upload_form( $title, $intro, $page, $action, $type );
+		$content = EE_Import::instance()->upload_form( $title, $intro, $form_url, $action, $type );
 
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_event', 'add', array(), 'button add-new-h2');
 		$this->_template_args['admin_page_content'] = $content;	

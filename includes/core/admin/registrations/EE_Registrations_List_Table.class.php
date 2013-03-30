@@ -180,7 +180,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$actions = array();
 
         //Build row actions
-		$view_details_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL );
+		$view_details_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', 'REG_ID'=>$item->REG_ID ), REG_ADMIN_URL );
         $actions['view_details'] = '
 			<a href="'.$view_details_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . __( 'View Reg Details', 'event_espresso' ) . '</a>';
  		$check_in_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'event_registrations', 'event_id'=>$item->EVT_ID ), REG_ADMIN_URL );
@@ -265,7 +265,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * 		REG_date
 	*/
 	function column_REG_date($item){
-		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL );	
+		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', 'REG_ID'=>$item->REG_ID ), REG_ADMIN_URL );	
 		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . date( 'D M j, Y  g:i a',	$item->REG_date ) . '</a>';	
 		return $REG_date;	
 	}
@@ -366,12 +366,12 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	function column_actions($item) {
 
 	        //Build row actions
-		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL );
+		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', 'REG_ID'=>$item->REG_ID ), REG_ADMIN_URL );
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'id'=>$item->ATT_ID ), REG_ADMIN_URL );
 		
 		// page=attendees&event_admin_reports=resend_email&registration_id=43653465634&event_id=2&form_action=resend_email
-		//$resend_reg_lnk_url_params = array( 'action'=>'resend_registration', 'reg'=>$item->REG_ID );
-		$resend_reg_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL );
+		//$resend_reg_lnk_url_params = array( 'action'=>'resend_registration', 'REG_ID'=>$item->REG_ID );
+		$resend_reg_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', 'REG_ID'=>$item->REG_ID ), REG_ADMIN_URL );
 		
 
 	        //Build row actions
@@ -398,7 +398,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 	         $dl_tckt_lnk = '
 		<li>
-			<a href="' . add_query_arg( array( 'ticket_launch'=>'true', 'reg'=>$item->REG_url_link,  'html'=>'true' ), site_url() ) . '" target="_blank" title="' . __( 'Download Ticket', 'event_espresso' ) . '">
+			<a href="' . add_query_arg( array( 'ticket_launch'=>'true', 'REG_ID'=>$item->REG_url_link,  'html'=>'true' ), site_url() ) . '" target="_blank" title="' . __( 'Download Ticket', 'event_espresso' ) . '">
 				<img width="16" height="16" alt="' . __( 'Download Ticket', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/ticket-arrow-icon.png">
 			</a>
 		</li>';

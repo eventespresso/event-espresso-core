@@ -180,3 +180,7 @@ EE_Template_Validator::verify_isnt_null($show_try_pay_again_link, '$show_try_pay
 		</div><!-- / .reg-gen-details -->
 	</div><!-- / .event-data-display -->
 </div><!-- / .event-display-boxes -->
+<?php 
+//insert affiliate code here (see includes/functions/affiliate-handling.php)
+do_action( 'action_hook_espresso_reg_completed' );
+?>

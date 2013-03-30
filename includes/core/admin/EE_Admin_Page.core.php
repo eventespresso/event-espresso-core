@@ -660,7 +660,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			// these are not the droids you are looking for !!!
 			$msg = sprintf(__('%sNonce Fail.%s' , 'event_espresso'), '<a href="http://www.youtube.com/watch?v=56_S0WeTkzs">', '</a>' );
 			if ( WP_DEBUG ) {
-				$msg .= "\n" . sprintf( __('In order to dynamically generate nonces for your actions, use the %s->_add_query_arg method. May the Nonce be with you!', 'event_espresso' ), __CLASS__  );
+				$msg .= "\n  " . sprintf( __('In order to dynamically generate nonces for your actions, use the %s::add_query_args_and_nonce() method. May the Nonce be with you!', 'event_espresso' ), __CLASS__  );
 			}
 			if ( ! defined( 'DOING_AJAX' )) {
 				wp_die( $msg );
@@ -731,9 +731,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	public static function add_query_args_and_nonce( $args = array(), $url = FALSE ) {
 		if ( ! $url ) {
-			$user_msg = __('An error occured. A URL is a required parameter for the _add_query_arg method.', 'event_espresso' );
+			$user_msg = __('An error occured. A URL is a required parameter for the add_query_args_and_nonce method.', 'event_espresso' );
 			$dev_msg = $user_msg . "\n" . sprintf( 
-					__('In order to dynamically generate nonces for your actions, you need to supply a valid URL as a second parameter for the %s->_add_query_arg method.', 'event_espresso' ),
+					__('In order to dynamically generate nonces for your actions, you need to supply a valid URL as a second parameter for the %s::add_query_args_and_nonce method.', 'event_espresso' ),
 					__CLASS__ 
 				);
 			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );				

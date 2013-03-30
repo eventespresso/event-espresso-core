@@ -909,7 +909,7 @@ class EE_Registration extends EE_Base_Class {
 	 * get price object for this registration
 	 *
 	 * @access public
-	 * @return object
+	 * @return EE_Price
 	 */
 	public function price_obj() {
 		require_once('EEM_Price.model.php');
