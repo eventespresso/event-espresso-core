@@ -350,7 +350,7 @@ function espresso_export_invoice() {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	//Version 2.0
 	if (isset($_REQUEST['ticket_launch']) && $_REQUEST['ticket_launch'] == 'true') {
-		$reg_url_link = isset( $_REQUEST['REG_ID'] ) ?  sanitize_key( $_REQUEST['REG_ID'] ) : FALSE;
+		$reg_url_link = isset( $_REQUEST['_REG_ID'] ) ?  sanitize_key( $_REQUEST['_REG_ID'] ) : FALSE;
 		if ( $reg_url_link ) {
 			echo '<h4>$reg_url_link : ' . $reg_url_link . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 			echo espresso_ticket_launch();

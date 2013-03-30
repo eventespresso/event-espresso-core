@@ -66,7 +66,7 @@ class EE_Messages_Events_Admin_incoming_data extends EE_Messages_incoming_data {
 		//assign properties
 		$this->_event_id = isset($data['evt_id']) ? $data['evt_id'] : NULL;
 		$this->_att_id = isset($data['att_id']) ? $data['att_id'] : NULL;
-		$this->_reg_id = isset($data['REG_ID']) ? $data['REG_ID'] : NULL;
+		$this->_reg_id = isset($data['_REG_ID']) ? $data['_REG_ID'] : NULL;
 
 		//if all of the above are NULL we can't do anything so get out!
 		if ( empty( $this->_event_id) && empty( $this->_att_id ) && empty( $this->_reg_id ) ) return FALSE;

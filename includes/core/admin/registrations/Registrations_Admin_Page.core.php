@@ -227,7 +227,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				'nav' => array(
 					'label' => __('REG Details', 'event_espresso'),
 					'order' => 15,
-					'url' => isset($this->_req_data['REG_ID']) ? add_query_arg(array('REG_ID' => $this->_req_data['REG_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
+					'url' => isset($this->_req_data['_REG_ID']) ? add_query_arg(array('_REG_ID' => $this->_req_data['_REG_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
 					'persistent' => FALSE
 					),
 				'metaboxes' => array( '_registration_details_metaboxes', '_espresso_news_post_box', '_espresso_links_post_box' )
@@ -495,7 +495,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
 	    $REG = EEM_Registration::instance();
 
-		$REG_ID = ( ! empty( $this->_req_data['REG_ID'] )) ? absint( $this->_req_data['REG_ID'] ) : FALSE;
+		$REG_ID = ( ! empty( $this->_req_data['_REG_ID'] )) ? absint( $this->_req_data['_REG_ID'] ) : FALSE;
 
 		if ( $this->_registration = $REG->get_registration_for_admin_page( $REG_ID ) )
 			return TRUE;
@@ -695,24 +695,24 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			switch ( $this->_registration->REG_status ) {
 				
 				case 'RAP' :
-					$pending_url = self::add_query_args_and_nonce( array( 'action'=>'set_pending_reg_status', 'REG_ID'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
-					$decline_url = self::add_query_args_and_nonce( array( 'action'=>'decline_reg_status', 'REG_ID'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
+					$pending_url = self::add_query_args_and_nonce( array( 'action'=>'set_pending_reg_status', '_REG_ID'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
+					$decline_url = self::add_query_args_and_nonce( array( 'action'=>'decline_reg_status', '_REG_ID'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
 					$approve_decline_reg_status_buttons = '
 			<a id="reg-admin-pending-reg-status-lnk" class="button-secondary" href="' . $pending_url . '">' . __( 'Set this Registration to Pending', 'event_espresso' ) . '</a>
 			<a id="reg-admin-decline-reg-status-lnk" class="button-secondary" href="' . $decline_url . '">' . __( 'Decline this Registration', 'event_espresso' ) . '</a>';
 					break;
 				
 				case 'RPN' :
-					$aprove_url = self::add_query_args_and_nonce( array( 'action'=>'approve_reg_status', 'REG_ID'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
-					$decline_url = self::add_query_args_and_nonce( array( 'action'=>'decline_reg_status', 'REG_ID'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
+					$aprove_url = self::add_query_args_and_nonce( array( 'action'=>'approve_reg_status', '_REG_ID'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
+					$decline_url = self::add_query_args_and_nonce( array( 'action'=>'decline_reg_status', '_REG_ID'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
 					$approve_decline_reg_status_buttons = '
 			<a id="reg-admin-approve-reg-status-lnk" class="espresso-button-green button-primary" href="' . $aprove_url . '">' . __( 'Approve this Registration', 'event_espresso' ) . '</a>
 			<a id="reg-admin-decline-reg-status-lnk" class="button-secondary" href="' . $decline_url . '">' . __( 'Decline this Registration', 'event_espresso' ) . '</a>';
 					break;
 				
 				case 'RNA' :
-					$aprove_url = self::add_query_args_and_nonce( array( 'action'=>'approve_reg_status', 'REG_ID'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
-					$pending_url = self::add_query_args_and_nonce( array( 'action'=>'set_pending_reg_status', 'REG_ID'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
+					$aprove_url = self::add_query_args_and_nonce( array( 'action'=>'approve_reg_status', '_REG_ID'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
+					$pending_url = self::add_query_args_and_nonce( array( 'action'=>'set_pending_reg_status', '_REG_ID'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
 					$approve_decline_reg_status_buttons = '
 			<a id="reg-admin-approve-reg-status-lnk" class="espresso-button-green button-primary" href="' . $aprove_url . '">' . __( 'Approve this Registration', 'event_espresso' ) . '</a>
 			<a id="reg-admin-pending-reg-status-lnk" class="button-secondary" href="' . $pending_url . '">' . __( 'Set this Registration to Pending', 'event_espresso' ) . '</a>';
@@ -739,7 +739,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	public function _approve_or_decline_reg_status( $REG_status = FALSE ) {
 		
 		$success = FALSE;
-		$REG_ID = ( ! empty( $this->_req_data['REG_ID'] )) ? absint( $this->_req_data['REG_ID'] ) : FALSE;			
+		$REG_ID = ( ! empty( $this->_req_data['_REG_ID'] )) ? absint( $this->_req_data['_REG_ID'] ) : FALSE;			
 		if ( $REG_ID && array_key_exists( $REG_status, self::$_reg_status )) {
 			if ( $registration = EEM_Registration::instance()->get_registration_by_ID( $REG_ID )) {
 				$registration->set_status( $REG_status );
@@ -748,7 +748,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		}
 		
 		$what = 'Attendee Registration Status';
-		$route = $REG_ID ? array( 'action' => 'view_registration', 'REG_ID' => $REG_ID ) : array( 'action' => 'default' );
+		$route = $REG_ID ? array( 'action' => 'view_registration', '_REG_ID' => $REG_ID ) : array( 'action' => 'default' );
 		$this->_redirect_after_action( $success, $what, 'updated', $route );
 	}
 
@@ -1011,7 +1011,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		$success = TRUE;
 		$qstns = isset( $this->_req_data['qstn'] ) ? $this->_req_data['qstn'] : FALSE;
-		$REG_ID = isset( $this->_req_data['REG_ID'] ) ? absint( $this->_req_data['REG_ID'] ) : FALSE;
+		$REG_ID = isset( $this->_req_data['_REG_ID'] ) ? absint( $this->_req_data['_REG_ID'] ) : FALSE;
 		$qstns = apply_filters('filter_hook_espresso_reg_admin_attendee_registration_form', $qstns);	
 		
 		if ( $qstns ) {			
@@ -1037,7 +1037,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			}
 		}
 		$what = __('Attendee Registration Form', 'event_espresso');
-		$route = $REG_ID ? array( 'action' => 'view_registration', 'REG_ID' => $REG_ID ) : array( 'action' => 'default' );
+		$route = $REG_ID ? array( 'action' => 'view_registration', '_REG_ID' => $REG_ID ) : array( 'action' => 'default' );
 		$this->_redirect_after_action( $success, $what, __('updated', 'event_espresso'), $route );
 
 	}
@@ -1457,7 +1457,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			
 			$success = FALSE;
 			//echo '<h4>$REG_ID : ' . $REG_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-			$REG_url_link = ! empty($this->_req_data['REG_ID']) ? sanitize_text_field( $this->_req_data['REG_ID'] ) : FALSE;
+			$REG_url_link = ! empty($this->_req_data['_REG_ID']) ? sanitize_text_field( $this->_req_data['_REG_ID'] ) : FALSE;
 			//$REG_att_checked_in = ! empty($this->_req_data['check_in']) ? absint( $this->_req_data['check_in'] ) : 0;
 			
 			if ( $REG = EEM_Registration::instance()->get_one( array( 'REG_ID' => absint( $REG_ID ), 'REG_url_link' => $REG_url_link ))) {
