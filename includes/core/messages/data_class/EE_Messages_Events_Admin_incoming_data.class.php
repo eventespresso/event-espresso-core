@@ -35,18 +35,51 @@ class EE_Messages_Events_Admin_incoming_data extends EE_Messages_incoming_data {
 	//some specific properties we need for this class
 	private $_events = array();
 	private $_attendees = array();
-	private $_running_total = 0;
+
+	//will hold any incoming data that might be available here.
+	private $_event_id;
+	private $_att_id;
+	private $_reg_id;
+
+	//for models used in here
+	private $_EEM_att;
+	private $_EEM_reg;
+
+
+	//hold objects that might be created
+	private $_reg_obj;
+	private $_att_obj;
 
 
 	/**
-	 * For the constructor of this special preview class.  We're either looking for an event id or empty data.  If we have an event id (or ids) then we'll use that as the source for the "dummy" data.  If the data is empty then we'll get the first three published events from the users database and use that as a source.
+	 * For the constructor of this special preview class. 
+	 *
+	 * The data is expected to be an array that came from the $_POST and $_GET and should have at least one property from the list looked for.
+	 * 
 	 * @param array $data
 	 */
-	public function __construct( $data = array() ) {
+	public function __construct( $data ) {
 		
-		$data = empty($data) ? array() : $data['event_ids'];
+		//make sure data is an array.
+		if ( !is_array($data) ) return FALSE;
+
+		//assign properties
+		$this->_event_id = isset($data['evt_id']) ? $data['evt_id'] : NULL;
+		$this->_att_id = isset($data['att_id']) ? $data['att_id'] : NULL;
+		$this->_reg_id = isset($data['REG_ID']) ? $data['REG_ID'] : NULL;
+
+		//if all of the above are NULL we can't do anything so get out!
+		if ( empty( $this->_event_id) && empty( $this->_att_id ) && empty( $this->_reg_id ) ) return FALSE;
+
+		//made it here so lets continue!
 		$this->_setup_attendees_events();
 		parent::__construct($data);
+
+		//require the models we need;
+		require_once 'EEM_Attendee.model.php';
+		require_once 'EEM_Registration.model.php';
+		$this->_EEM_att = EEM_Attendee::instance();	
+		$this->_EEM_reg = EEM_Registration::instance();
 	}
 
 
@@ -57,12 +90,9 @@ class EE_Messages_Events_Admin_incoming_data extends EE_Messages_incoming_data {
 	 */
 	private function _setup_attendees_events() {
 
-		//setup some attendee objects
-		$attendees = $this->_get_some_attendees();
+		$events = $this->_get_some_events();
 
-		//if empty $data we'll do a query to get some events from the server. otherwise we'll retrieve the event data for the given ids.
-		$events = empty($this->_data) ? $this->_get_some_events() : $this->_get_some_events($this->_data);
-
+		$this->reg_objs = array();
 
 
 		//now let's loop and set up the _events property.  At the same time we'll set up attendee properties.
@@ -71,7 +101,7 @@ class EE_Messages_Events_Admin_incoming_data extends EE_Messages_incoming_data {
 		$line_items = array_fill( 1, count( $events ), 'dummy' );
 		$line_items = array_keys( $line_items );
 
-		//some variable for tracking things we can use later;
+		//a variable for tracking totals
 		$running_total = 0;
 
 		//include Ticket Prices class for getting price obj for event.
@@ -99,19 +129,22 @@ class EE_Messages_Events_Admin_incoming_data extends EE_Messages_incoming_data {
 			$this->_events[$line_item]['price'] = $final_tkt_prices[$tkt_key]->price();
 			$this->_events[$line_item]['price_id'] = $id_list[0];
 			$this->_events[$line_item]['price_desc'] = $final_tkt_prices[$tkt_key]->name();
-			$this->_events[$line_item]['pre_approval'] = 0; //we're going to ignore the event settings for this.
+			$this->_events[$line_item]['pre_approval'] = $events[$key]->pre_approval; 
 			$this->_events[$line_item]['meta'] = unserialize( $events[$key]->meta );
 			$line_total = count( $attendees ) * $final_tkt_prices[$tkt_key]->price();
 			$this->_events[$line_item]['line_total'] = $line_total;
-			$this->_events[$line_item]['total_attendees'] = count( $attendees );
-
 			$running_total = $running_total + $line_total;
 
-			//let's also setup the dummy attendees property!
-			foreach ( $attendees as $att_key => $attendee ) {
-				$this->_attendees[$att_key]['line_ref'][] = $line_item;  //so later it can be determined what events this attendee registered for!
-				$this->_attendees[$att_key]['att_obj'] = $attendee;
+			//now let's setup attendees using what attendees are attached to this event
+			$reg_objs = $this->_EEM_reg->get_all_registrations_for_event( $events[$key]->ID );
+			if ( !empty( $regs ) ) {
+				foreach ( $regs as $reg ) {
+					$this->_attendees[$key]['line_ref'] = $line_item;
+					$this->_attendees[$key]['att_obj'] = $this->_EEM_att->get_attendee_by_ID( $reg->attendee_ID() );
+				}
 			}
+
+			$this->reg_objs = array_merge( $reg_objs, $this->reg_objs );
 		}
 
 		$this->_running_total = $running_total;
@@ -121,106 +154,36 @@ class EE_Messages_Events_Admin_incoming_data extends EE_Messages_incoming_data {
 
 
 	/**
-	 * This just returns an array of dummy attendee objects that we'll use to attach to events for our preview data
-	 *
-	 * @access private
-	 * @return array an array of attendee objects
-	 */
-	private function _get_some_attendees() {
-		//let's just setup a dummy array of various attendee details
-		$dummy_attendees = array(
-			0 => array(
-				'Luke',
-				'Skywalker',
-				'804 Bantha Dr.',
-				'',
-				'Mos Eisley',
-				'Section 7',
-				'Tatooine',
-				'f0r3e',
-				'farfaraway@galaxy.sp',
-				'',
-				'',
-				'',
-				'',
-				FALSE,
-				'999999991'
-				),
-			1 => array(
-				'Princess',
-				'Leia',
-				'1456 Valley Way Boulevard',
-				'',
-				'Aldera',
-				'Alvoli Isle',
-				'Alderaan',
-				'c1h2c',
-				'buns@fcn.al',
-				'',
-				'',
-				'',
-				'',
-				FALSE,
-				'999999992'
-				),
-			2 => array(
-				'Yoda',
-				'I Am',
-				'4th Tree',
-				'',
-				'Marsh',
-				'Swampland',
-				'Dantooine',
-				'l18n',
-				'arrivenot@emailbad.fr',
-				'',
-				'',
-				'',
-				'',
-				FALSE,
-				'999999993'
-				),
-		);
-
-		//let's generate the attendee objects
-		$attendees = array();
-		$var_array = array('fname','lname','address','address2','city','staid','cntry','zip','email','phone','social','comments','notes','deleted','attid');
-
-		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php');
-		foreach ( $dummy_attendees as $dummy ) {
-			$att = array_combine( $var_array, $dummy );
-			extract($att);
-			$attendees[] = new EE_Attendee($fname, $lname, $address, $address2, $city, $staid, $cntry, $zip, $email, $phone, $social, $comments, $notes, $deleted, $attid);
-		}
-
-		return $attendees;
-	}
-
-
-	/**
 	 * Return an array of event objects from the database
 	 *
-	 * If event ids are not included then we'll just retrieve the first published event from the database.
 	 * 
-	 * @param  array  $event_ids if set, this will be an array of event ids to obtain events for.
 	 * @return array    An array of event objects from the db.
 	 */
-	private function _get_some_events( $event_ids = array() ) {
+	private function _get_some_events() {
 		global $wpdb;
+		$events = array();
 
-		//HEY, if we have an evt_id then we want to make sure we use that for the preview (because a specific event template is being viewed);
-		$event_ids = isset( $_REQUEST['evt_id'] ) ? array( $_REQUEST['evt_id'] ) : array();
+		//we need to determine where we're getting the evt_id(s) from!
+		if ( !empty( $this->_event_id ) ) {
+			$event_ids = array($this->_event_id);
+			$SQL = "SELECT e.id AS ID, e.event_name AS name, e.event_meta AS meta, e.event_status AS status, e.require_pre_approval AS pre_approval, dtt.DTT_ID AS daytime_id FROM " . EVENTS_DETAIL_TABLE . " AS e LEFT JOIN " . ESP_DATETIME . " AS dtt ON dtt.EVT_ID = e.id WHERE dtt.DTT_is_primary = '1' AND";
 
-		$limit = !empty( $event_ids ) ? '' : apply_filters( 'filter_hook_espresso_EE_Messages_Events_Admin_incoming_data_get_some_events_limit', ' LIMIT 0,1' );
+			$where = !empty( $event_ids ) ?  " e.id IN ('" . implode(",'", $event_ids ) . "')" : " e.is_active = '1'";
 
-		$SQL = "SELECT e.id AS ID, e.event_name AS name, e.event_meta AS meta, e.event_status AS status, e.require_pre_approval AS pre_approval, dtt.DTT_ID AS daytime_id FROM " . EVENTS_DETAIL_TABLE . " AS e LEFT JOIN " . ESP_DATETIME . " AS dtt ON dtt.EVT_ID = e.id WHERE dtt.DTT_is_primary = '1' AND";
+			$events = $wpdb->get_results( $SQL . $where );
+		 
+		} 
 
-		$where = !empty( $event_ids ) ?  " e.id IN ('" . implode(",'", $event_ids ) . "')" : " e.is_active = '1'";
+		else if ( !empty( $this->_reg_id ) ) {
+			$this->_reg_obj = $this->_EEM_reg->get_registration_by_ID( $this->_reg_id );
+			$events[] = $this->_reg_obj->event();
+		}
 
-		//make sure we get only active events!
-		$where .= " AND e.event_status = 'A'";
+		else if ( !empty( $this->_att_id ) ) {
+			$this->_att_obj = $this->_EEM_att->get_attendee_by_ID( $this->_att_id );
+			$events = $this->_att_obj->events();
+		}
 
-		$events = $wpdb->get_results( $SQL . $where . $limit );
 		
 		return $events;
 	}
@@ -232,81 +195,27 @@ class EE_Messages_Events_Admin_incoming_data extends EE_Messages_incoming_data {
 
 	protected function _setup_data() {
 		global $org_options;
-		
 
-		//okay we can now calculate the taxes and setup a "grand_total" we'll use in the dummy txn object
-		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Taxes.class.php' );
-		$this->taxes = EE_Taxes::calculate_taxes( $this->_running_total );
-		$grand_total = apply_filters( 'espresso_filter_hook_grand_total_after_taxes', $this->_running_total );
-
-		//guess what?  The EE_Session now has the grand total object and other stuff!  Why, because EE_Taxes::_calculate_taxes added the info to it.
-		global $EE_Session;
-		$session_data = $EE_Session->get_session_data();
-		$this->grand_total_price_object = $session_data['grand_total_price_object'];
-
-
-
-		//setup billing property
-		//todo:  I'm only using this format for the array because its how the gateways currently setup this data.  I HATE IT and it needs fixed but I have no idea how many places in the code this data structure currently touches.  Once its fixed we'll have to fix it here and in the shortcode parsing where this particular property is accessed.  (See https://events.codebasehq.com/projects/event-espresso/tickets/2271) for related ticket.
-		$this->billing = array(
-			'first name' => 'Luke',
-			'last name' => 'Skywalker',
-			'email address' => 'farfaraway@galaxy.com',
-			'address' => '804 Bantha Dr.',
-			'city' => 'Mos Eisley',
-			'state' => 'Section 7',
-			'country' => 'Tatooine',
-			'zip' => 'f0r3e',
-			'ccv code' => 'xxx',
-			'credit card #' => '999999xxxxxxxx',
-			'expiry date' => '12 / 3000',
-			'total_due' => $grand_total 
-			);
-
-
-
-		//setup txn property
-		$this->txn = new EE_Transaction(
-			time(), //unix timestamp
-			$grand_total, //txn_total
-			$grand_total, //txn_paid
-			'PAP', //sts_id
-			'Transaction was approved', //notes regarding transaction
-			NULL, //dump of txn session object (we're just going to leave blank here)
-			NULL, //hash salt blank as well
-			$this->taxes,
-			999999
-			);
-
-		//setup reg_objects
-		//note we're seting up a reg object for each attendee in each event but ALSO adding to the reg_object array.
-		$this->reg_objs = array();
-		foreach ( $this->_attendees as $key => $attendee ) {
-			//note we need to setup reg_objects for each event this attendee belongs to
-			foreach ( $attendee['line_ref'] as $line_ref ) {
-				$reg_array = array(
-					$this->_events[$line_ref]['ID'],
-					$attendee['att_obj']->ID(),
-					$this->txn->ID(),
-					$this->_events[$line_ref]['daytime_id'],
-					$this->_events[$line_ref]['price_id'],
-					'RAP',
-					time(),
-					$this->_events[$line_ref]['price'],
-					'dummy_session_id',
-					'1-dummy_generated_reg_code',
-					'http://dummyregurllink.com',
-					$key,
-					$this->_events[$line_ref]['total_attendees'],
-					TRUE,
-					FALSE,
-					9999990 + (int) $line_ref
-					);
-				$REG_OBJ = new EE_Registration( $reg_array );
-				$this->_attendees[$key]['reg_objs'][$this->_events[$line_ref]['ID']] = $REG_OBJ;
-				$this->reg_objs[] = $REG_OBJ;
-			}
+		//let's get the transaction object!
+		if ( !empty( $this->_reg_id ) ) {
+			$this->txn = $this->_reg_obj->transaction();
 		}
+
+		else if ( !empty( $this->_event_id ) ) {
+			$reg_obj = $this->_reg_objs[0];
+			$this->txn = $this->_reg_obj->transaction();
+		}
+
+		else {
+			//we'll just get the transaction for the first reg_obj?
+			$reg_obj = $this->_reg_objs[0];
+			$this->txn = $this->_reg_obj->transaction();
+		}
+
+		$this->taxes = $this->txn->tax();
+		$grand_total = $this->txn->total();
+		$this->billing = $this->txn->details();
+
 
 		//events and attendees
 		$this->events = $this->_events;
@@ -323,13 +232,14 @@ class EE_Messages_Events_Admin_incoming_data extends EE_Messages_incoming_data {
 		//note this isn't referenced by any shortcode parsers so we'll ignore for now.
 		$this->reg_info = array();
 
+		//get txn session data
+		$session = $this->txn->session_data();
 
-		//the below are just dummy items.
-		$this->user_id = 1;
-		$this->ip_address = '192.0.2.1';
-		$this->user_agent = '';
-		$this->init_access = time();
-		$this->last_access = time();
+		$this->user_id = isset($session['user_id']) ? $session['user_id'] : NULL;
+		$this->ip_address =	isset($session['ip_address']) ? $session['ip_address'] : NULL;
+		$this->user_agent = isset($session['user_agent']) ? $session['user_agent'] : NULL;
+		$this->init_access = isset($session['init_access']) ? $session['init_access'] : NULL;
+		$this->last_access = isset($session['last_access']) ? $session['last_access'] : NULL;
 
 	}
 
