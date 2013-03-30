@@ -1442,32 +1442,13 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	 * @return void
 	 */
 	protected function _resend_registration() {
-		$success = TRUE;
-		//first let's make sure we have the reg id (needed for resending!);
-		if ( !isset( $this->_req_data['_REG_ID'] ) ) {
-			EE_Error::add_error( __('Something went wrong because we\'re missing the registration ID', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-			$success = FALSE;
-		}
-
-		if ( $success ) {
-			$EE_MSG = new EE_messages();
-			$success = $EE_MSG->send_message( 'resend_registration', $this->_req_data );
-		}
-
-
-		if ( $success ) {
-			EE_Error::add_success( __('The registration confirmation has been sent', 'event_espresso') );
-		} else {
-			EE_Error::add_error( __('Something went wrong and the registration confirmation was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-		}
-		
+		$this->_process_resend_registration();
 		$query_args = array(
 			'action' => 'default'
 		);
-
-		$this->_template_args['success'] = $success;
 		$this->_redirect_after_action();
 	}
+
 
 
 

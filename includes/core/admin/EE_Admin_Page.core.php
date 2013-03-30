@@ -2625,6 +2625,41 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+	//below are some messages related methods that should be available across the EE_Admin system.  Note, these methods are NOT page specific
+	
+
+
+
+	/**
+	 * This processes an request to resend a registration and assumes we have a _REG_ID for doing so. So if the caller knows that the _REG_ID isn't in the req_data array but CAN obtain it, the caller should ADD the _REG_ID to the _req_data array.
+	 * @return bool success/fail
+	 */
+	protected function _process_resend_registration() {
+		$success = TRUE;
+		//first let's make sure we have the reg id (needed for resending!);
+		if ( !isset( $this->_req_data['_REG_ID'] ) ) {
+			EE_Error::add_error( __('Something went wrong because we\'re missing the registration ID', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			$success = FALSE;
+		}
+
+		if ( $success ) {
+			$EE_MSG = new EE_messages();
+			$success = $EE_MSG->send_message( 'resend_registration', $this->_req_data );
+		}
+
+		if ( $success ) {
+			EE_Error::add_success( __('The registration confirmation has been sent', 'event_espresso') );
+		} else {
+			EE_Error::add_error( __('Something went wrong and the registration confirmation was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		}
+		
+
+		$this->_template_args['success'] = $success;
+		return $success;
+	}
+
+
+
 }
 
 	
