@@ -182,7 +182,7 @@ class EEM_Registration extends EEM_TempBase {
 	public function get_all_registrations_for_event( $EVT_ID ) {
 		$EVT_ID = (int) $EVT_ID;
 		$where_cols_n_values = array( 'EVT_ID' => $EVT_ID );
-		return $this->get_all_registrations( $where_cols_n_value );
+		return $this->get_all_registrations( $where_cols_n_values );
 	}
 
 
