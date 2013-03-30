@@ -2659,6 +2659,36 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 
+	/**
+	 * This automatically processes any payment message notifications when manual payment has been applied.
+	 *
+	 * @access protected
+	 * @return bool success/fail
+	 */
+	protected function _process_payment_notification( EE_Payment $payment ) {
+		$success = TRUE;
+
+		//we need to get the transaction object
+		$transaction = $payment->transaction();
+
+		$data = array( $transaction, $payment );
+
+		if ( $success ) {
+			$EE_MSG = new EE_messages();
+			$success = $EE_MSG->send_message( 'payment', $data );
+		}
+
+		if ( $success ) {
+			EE_Error::add_success( __('The payment confirmation has been sent', 'event_espresso') );
+		} else {
+			EE_Error::add_error( __('Something went wrong and the payment confirmation was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		}
+		
+
+		$this->_template_args['success'] = $success;
+		return $success;
+	}
+
 
 }
 
