@@ -26,7 +26,7 @@ global $org_options;
 					</th>
 					<th class="jst-left">
 					<?php 
-							$reg_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', 'reg'=>$registration->ID() ), REG_ADMIN_URL );	
+							$reg_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', 'REG_ID'=>$registration->ID() ), REG_ADMIN_URL );	
 							echo '
 							<a href="'.$reg_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">
 								View Registration ' . $registration->ID() . '  

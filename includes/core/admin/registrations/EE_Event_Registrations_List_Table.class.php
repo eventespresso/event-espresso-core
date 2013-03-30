@@ -99,13 +99,13 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	*/
 	function column_REG_att_checked_in($item){		
 		if ( $item->REG_att_checked_in ) {
-			$chk_out_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'attendee_check_out', 'id'=>$item->REG_ID, 'reg'=>$item->REG_url_link, 'event_id'=>$item->EVT_ID ), REG_ADMIN_URL );
+			$chk_out_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'attendee_check_out', 'id'=>$item->REG_ID, 'REG_ID'=>$item->REG_url_link, 'event_id'=>$item->EVT_ID ), REG_ADMIN_URL );
 			return '
 			<a class="attendee-check-in-lnk" href="'.$chk_out_url.'" title="' . __( 'Click here to toggle the Check In status of this attendee for this event', 'event_espresso' ) . '">
 				<img class="" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/check-in-16x16.png" width="16" height="16" alt="' . __( 'Checked In', 'event_espresso' ) . '"/>
 			</a>';
 		} else {
-			$chk_in_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'attendee_check_in', 'id'=>$item->REG_ID, 'reg'=>$item->REG_url_link, 'event_id'=>$item->EVT_ID ), REG_ADMIN_URL );
+			$chk_in_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'attendee_check_in', 'id'=>$item->REG_ID, 'REG_ID'=>$item->REG_url_link, 'event_id'=>$item->EVT_ID ), REG_ADMIN_URL );
 			return '
 			<a class="attendee-check-in-lnk" href="'.$chk_in_url.'" title="' . __( 'Click here to toggle the Check In status of this attendee for this event', 'event_espresso' ) . '">
 				<img class="" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/check-out-16x16.png" width="16" height="16" alt="' . __( 'Checked In Status', 'event_espresso' ) . '"/>
@@ -152,7 +152,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	function column_REG_date($item) {
-		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL );	
+		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', 'REG_ID'=>$item->REG_ID ), REG_ADMIN_URL );	
 		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . date( 'D M j, Y  g:i a',	$item->REG_date ) . '</a>';	
 		return $REG_date;	
 	}
