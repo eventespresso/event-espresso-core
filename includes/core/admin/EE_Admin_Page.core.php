@@ -2667,6 +2667,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	protected function _process_payment_notification( EE_Payment $payment ) {
 		$success = TRUE;
+		$reg_success = TRUE;
 
 		//we need to get the transaction object
 		$transaction = $payment->transaction();
@@ -2676,12 +2677,20 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( $success ) {
 			$EE_MSG = new EE_messages();
 			$success = $EE_MSG->send_message( 'payment', $data );
+			//let's trigger a registration confirmation (note this will only actually complete if registration confirmations are delayed until complete payment)
+			$reg_success = $EE_MSG->send_message( 'registration', $data );
 		}
 
 		if ( $success ) {
 			EE_Error::add_success( __('The payment confirmation has been sent', 'event_espresso') );
 		} else {
 			EE_Error::add_error( __('Something went wrong and the payment confirmation was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		}
+
+		if ( $reg_success ) {
+			EE_Error::add_success( __('Complete payment has been made for the transaction so registration confirmations have been sent', 'event_espresso') );
+		} else {
+			EE_Error::add_success( __('Registration confirmations are delayed until the amount oweing has been completely paid.', 'event_espresso') );
 		}
 		
 
