@@ -136,8 +136,13 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 		return $filters;
 	}
 
-
-
+	/**
+	 * we're just removing the search box for message tempaltes, not needed.
+	 * @return string (empty);
+	 */
+	function search_box() {
+		return '';
+	}
 
 
 	protected function _add_view_counts() {
