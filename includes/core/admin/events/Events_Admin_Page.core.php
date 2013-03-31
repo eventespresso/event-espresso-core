@@ -205,6 +205,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 					'label' => __('Default Settings', 'event_esprsso'),
 					'order' => 40
 					),
+				'labels' => array(
+					'publishbox' => __('Update Settings', 'event_espresso')
+					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' )
 				)
 			);
