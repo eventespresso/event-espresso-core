@@ -2260,10 +2260,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		$url = self::add_query_args_and_nonce( $query_args, $_base_url );
 
-		$button = '<a href="' . $url . '" class="' . $class . '">' . $this->_labels['buttons'][$type] . '</a>';
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Template.helper.php';
+		$button = EE_Template::get_button_or_link( $url, $this->_labels['buttons'][$type], $class );
 
 		return $button;
 	}
+	
 
 
 
