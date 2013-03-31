@@ -1238,6 +1238,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//all good, let's add a success message!
 		if ( $success && !empty( $templates ) ) {
+			EE_Error::overwrite_success();
 			EE_Error::add_success( __('Templates have been reset to defaults.', 'event_espresso') );
 		}
 
