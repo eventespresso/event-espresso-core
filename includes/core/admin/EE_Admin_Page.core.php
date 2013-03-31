@@ -221,7 +221,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 					'add' => __('label for adding item'),
 	 * 				 	'edit' => __('label for editing item'),
 	 * 				  	'delete' => __('label for deleting item')
-	 * 			    )
+	 * 			    ),
+	 * 			    'publishbox' => __('Localized Title for Publish metabox', 'event_espresso')
 	 * 			), //optional an array of custom labels for various automatically generated elements to use on the page. If this isn't present then the defaults will be used as set for the $this->_labels in _define_page_props() method
 	 * 			'nav' => array(
 	 * 				'label' => __('Label for Tab', 'event_espresso').
@@ -623,6 +624,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//wait a minute... we might have a noheader in the route array
 		$this->_is_UI_request = is_array($this->_route) && isset($this->_route['noheader'] ) && $this->_route['noheader'] ? FALSE : $this->_is_UI_request;
 
+		$this->_set_current_labels();
+
 	}
 
 
@@ -693,7 +696,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}		
 
 		$this->_set_nav_tabs(); //set the nav_tabs array
-		$this->_set_current_labels();
 		$args = array();	
 
 		
@@ -1603,7 +1605,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$meta_box_ref = 'espresso_' . $this->page_slug . '_editor_overview';
 
 		//if there is a array('label' => array('publishbox' => 'some title') ) present in the _page_config array then we'll use that for the metabox label.  Otherwise we'll just use publish
-		$label = isset( $this->_route_config['labels']['publishbox'] ) ? $this->_route_config['labels']['publishbox'] : __('Publish', 'event_espresso');
+		$label = isset( $this->_labels['publishbox'] ) ? $this->_labels['publishbox'] : __('Publish', 'event_espresso');
 
 		add_meta_box( $meta_box_ref, $label, array( $this, 'editor_overview' ), $this->_current_screen_id, 'side', 'high' );
 

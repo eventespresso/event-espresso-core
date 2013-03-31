@@ -148,7 +148,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'add' => __('Add New Message Template', 'event_espresso'),
 				'edit' => __('Edit Message Template', 'event_espresso'),
 				'delete' => __('Delete Message Template', 'event_espresso')
-			)
+			),
+			'publishbox' => __('Update Actions', 'event_espresso')
 		);
 	}
 
