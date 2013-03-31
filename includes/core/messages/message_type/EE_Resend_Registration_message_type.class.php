@@ -171,9 +171,9 @@ class EE_Resend_Registration_message_type extends EE_message_type {
 		
 		foreach ( $this->_data->attendees as $index => $values ) {
 			//ONLY continue if this attendee matches the registration
-			if ( $this->_data->reg_obj->attendee_ID() != $this->_data->attendees[$index]['att_obj']->ID()) continue;
+			if ( isset( $this->_data->reg_obj ) && ( $this->_data->reg_obj->attendee_ID() != $this->_data->attendees[$index]['att_obj']->ID() ) ) continue;
 
-			$attendee_id = $this->_data->reg_obj->attendee_ID();
+			$attendee_id = isset( $this->_data->reg_obj ) ? $this->_data->reg_obj->attendee_ID() : NULL;
 			if ( !empty( $multi_same_att_check ) && in_array($attendee_id, $multi_same_att_check) )
 				continue; //we're not going to send multiple attendee emails to the same person!
 
