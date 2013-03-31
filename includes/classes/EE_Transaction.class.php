@@ -464,6 +464,18 @@ class EE_Transaction extends EE_Base_Class{
 
 
 
+	/**
+	 * calculate the amount remaining for this transaction and return;
+	 *
+	 * @access public
+	 * @return float amount remaining
+	 */
+	public function remaining() {
+		return $this->total() - $this->paid();
+	}
+
+
+
 
 	/**
 	*		get Transaction Status 
