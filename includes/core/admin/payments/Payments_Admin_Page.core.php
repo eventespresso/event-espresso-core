@@ -52,7 +52,9 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	protected function _define_page_props() {
 		$this->_admin_base_url = EE_PAYMENTS_ADMIN_URL;
 		$this->_admin_page_title = $this->page_label;
-		$this->_labels = array();
+		$this->_labels = array(
+			'publishbox' => __('Update Settings', 'event_espresso')
+			);
 	}
 
 
