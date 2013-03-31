@@ -118,6 +118,7 @@ abstract class EE_Messages_incoming_data {
 
 
 
+
 	/**
 	 * Will hold the label for the txn status
 	 * @var string
