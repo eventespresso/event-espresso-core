@@ -2635,25 +2635,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return bool success/fail
 	 */
 	protected function _process_resend_registration() {
-		$success = TRUE;
-		//first let's make sure we have the reg id (needed for resending!);
-		if ( !isset( $this->_req_data['_REG_ID'] ) ) {
-			EE_Error::add_error( __('Something went wrong because we\'re missing the registration ID', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-			$success = FALSE;
-		}
-
-		if ( $success ) {
-			$EE_MSG = new EE_messages();
-			$success = $EE_MSG->send_message( 'resend_registration', $this->_req_data );
-		}
-
-		if ( $success ) {
-			EE_Error::add_success( __('The registration confirmation has been sent', 'event_espresso') );
-		} else {
-			EE_Error::add_error( __('Something went wrong and the registration confirmation was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-		}
-		
-
+		$success = apply_filters('filter_hook_espresso_process_resend_registration_message', FALSE, $this->_req_data);
 		$this->_template_args['success'] = $success;
 		return $success;
 	}
@@ -2666,34 +2648,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return bool success/fail
 	 */
 	protected function _process_payment_notification( EE_Payment $payment ) {
-		$success = TRUE;
-		$reg_success = TRUE;
-
-		//we need to get the transaction object
-		$transaction = $payment->transaction();
-
-		$data = array( $transaction, $payment );
-
-		if ( $success ) {
-			$EE_MSG = new EE_messages();
-			$success = $EE_MSG->send_message( 'payment', $data );
-			//let's trigger a registration confirmation (note this will only actually complete if registration confirmations are delayed until complete payment)
-			$reg_success = $EE_MSG->send_message( 'registration', $data );
-		}
-
-		if ( $success ) {
-			EE_Error::add_success( __('The payment confirmation has been sent', 'event_espresso') );
-		} else {
-			EE_Error::add_error( __('Something went wrong and the payment confirmation was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-		}
-
-		if ( $reg_success ) {
-			EE_Error::add_success( __('Complete payment has been made for the transaction so registration confirmations have been sent', 'event_espresso') );
-		} else {
-			EE_Error::add_success( __('Registration confirmations are delayed until the amount oweing has been completely paid.', 'event_espresso') );
-		}
-		
-
+		$success = apply_filters( 'filter_hook_espresso_process_admin_payment_message', FALSE, $payment );
 		$this->_template_args['success'] = $success;
 		return $success;
 	}
