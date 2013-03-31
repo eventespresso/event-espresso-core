@@ -1601,7 +1601,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	private function _publish_post_box() {
 		$meta_box_ref = 'espresso_' . $this->page_slug . '_editor_overview';
-		add_meta_box( $meta_box_ref, __('Publish', 'event_espresso'), array( $this, 'editor_overview' ), $this->_current_screen_id, 'side', 'high' );
+
+		//if there is a array('label' => array('publishbox' => 'some title') ) present in the _page_config array then we'll use that for the metabox label.  Otherwise we'll just use publish
+		$label = isset( $this->_route_config['labels']['publishbox'] ) ? $this->_route_config['labels']['publishbox'] : __('Publish', 'event_espresso');
+
+		add_meta_box( $meta_box_ref, $label, array( $this, 'editor_overview' ), $this->_current_screen_id, 'side', 'high' );
 
 	}
 

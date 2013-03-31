@@ -242,7 +242,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'labels' => array(
 					'buttons' => array(
 						'reset' => __('Reset Templates'),
-					)
+					),
+					'publishbox' => __('Update Actions', 'event_espresso')
 				),
 				'nav' => array(
 					'label' => __('Edit Message Templates', 'event_espresso'),
