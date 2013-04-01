@@ -34,7 +34,7 @@ class EE_Payment_message_type extends EE_message_type {
 
 		//setup type details for reference
 		$this->name = 'payment';
-		$this->description = __('Sets up payment messages when triggered by a payment via gateway', 'event_espresso'); 
+		$this->description = __('This message type is used for all payment notification messages that go out including any manual payments entered by an event administrator.', 'event_espresso'); 
 		$this->label = array(
 			'singular' => __('payment', 'event_espresso'),
 			'plural' => __('payments', 'event_espresso')

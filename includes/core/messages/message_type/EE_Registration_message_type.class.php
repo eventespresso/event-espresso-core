@@ -32,7 +32,7 @@ class EE_Registration_message_type extends EE_message_type {
 
 	public function __construct() {
 		$this->name = 'registration';
-		$this->description = __('Sets up registration messages when a successful registration has been completed through frontend checkout', 'event_espresso');
+		$this->description = __('This message type is for registation confirmation messages that include information about the event someone has registered for.  This message type does have one setting that you can use to indicate if registration confirmations are delayed until full payments are made for an event (default setting).', 'event_espresso');
 		$this->label = array(
 			'singular' => __('registration', 'event_espresso'),
 			'plural' => __('registrations', 'event_espresso')

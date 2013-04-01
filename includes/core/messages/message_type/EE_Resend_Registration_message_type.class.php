@@ -32,7 +32,7 @@ class EE_Resend_Registration_message_type extends EE_message_type {
 
 	public function __construct() {
 		$this->name = 'resend_registration';
-		$this->description = __('This message type is for registration confirmations that are resent later OR after a registration has been manually entered by an administrator.', 'event_espresso');
+		$this->description = __('This message type is for registration confirmations that are resent later.  When activated, this message type uses the same templates as the <code>Registration</code> message type so you may want to differentiate the templates for this one.', 'event_espresso');
 		$this->label = array(
 			'singular' => __('resend registration', 'event_espresso'),
 			'plural' => __('resend registrations', 'event_espresso')
