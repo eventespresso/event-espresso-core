@@ -167,7 +167,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 * The below methods aren't used by this class currently
 	 */
 	protected function _add_screen_options() {}
-	protected function _add_help_tabs() {}
 	protected function _add_feature_pointers() {}
 	public function admin_init() {}
 	public function admin_notices() {}

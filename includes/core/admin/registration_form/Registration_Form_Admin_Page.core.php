@@ -305,7 +305,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	}
 
 	//none of the below group are currently used for Event Categories
-	protected function _add_help_tabs() {}
 	protected function _add_feature_pointers() {}
 	public function load_scripts_styles() {
 		wp_register_style( 'espresso_registration', REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.css', array(), EVENT_ESPRESSO_VERSION );		

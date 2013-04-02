@@ -109,7 +109,6 @@ class Support_Admin_Page extends EE_Admin_Page {
 
 	//none of the below group are currently used for Support pages
 	protected function _add_screen_options() {}
-	protected function _add_help_tabs() {}
 	protected function _add_feature_pointers() {}
 	public function admin_init() {}
 	public function admin_notices() {}
