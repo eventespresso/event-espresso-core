@@ -148,7 +148,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'add' => __('Add New Message Template', 'event_espresso'),
 				'edit' => __('Edit Message Template', 'event_espresso'),
 				'delete' => __('Delete Message Template', 'event_espresso')
-			)
+			),
+			'publishbox' => __('Update Actions', 'event_espresso')
 		);
 	}
 
@@ -177,6 +178,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'restore_message_template' => array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => FALSE, 'all' => TRUE ), 'noheader' => TRUE ),
 				'restore_message_template_context' => array( 'func' => '_trash_or_restore_message_template' , 'args' => array('trash' => FALSE), 'noheader' => TRUE  ),
 				'delete_message_template' => array( 'func' => '_delete_message_template', 'noheader' => TRUE ),
+				'reset_to_default' => array( 'func' => '_reset_to_default_template', 'noheader' => TRUE ),
 				'settings' => '_settings',
 				'reports' => '_messages_reports'
 		);
@@ -238,6 +240,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					)
 				),
 			'edit_message_template' => array(
+				'labels' => array(
+					'buttons' => array(
+						'reset' => __('Reset Templates'),
+					),
+					'publishbox' => __('Update Actions', 'event_espresso')
+				),
 				'nav' => array(
 					'label' => __('Edit Message Templates', 'event_espresso'),
 					'order' => 5,
@@ -281,7 +289,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							)
 						), $default_msg_help_tabs
 					)
-				),
+				)
 			/*'reports' => array(
 				'nav' => array(
 					'label' => __('Reports', 'event_espresso'),
@@ -410,7 +418,17 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	public function load_scripts_styles_edit_message_template() {
+		global $eei18n_js_strings;
+		$this->_set_shortcodes();
+		$eei18n_js_strings['confirm_default_reset'] = sprintf( __('Are you sure you want to reset the %s %s message templates?  Remember continuing will reset the templates for all contexts in this messenger and message type group.', 'event_espresso'), $this->_message_template->messenger_obj()->label['singular'], $this->_message_template->message_type_obj()->label['singular'] );
+
+
+		wp_register_script('ee_msgs_edit_js', EE_MSG_ASSETS_URL . 'ee_message_editor.js', array('jquery'), EVENT_ESPRESSO_VERSION );
+
 		wp_enqueue_script('ee_admin_js');
+		wp_enqueue_script('ee_msgs_edit_js');
+
+		wp_localize_script( 'ee_msgs_edit_js', 'eei18n', $eei18n_js_strings );
 	}
 
 
@@ -1176,6 +1194,64 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	/**
+	 * This handles resetting the template for the given messenger/message_type so that users can start from scratch if they want.
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function _reset_to_default_template() {
+		$success = TRUE;
+		$templates = array();
+		//we need to make sure we've got the info we need.
+		if ( !isset( $this->_req_data['msgr'] ) && !isset( $this->_req_data['mt'] ) && !isset( $this->_req_data['GRP_ID'] ) ) {
+			EE_Error::add_error( __('In order to reset the template to its default we require the messenger, message type, and message template GRP_ID to know what is being reset.  At least one of these is missing.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			$success = FALSE;
+		}
+
+		$EVT_ID = isset( $this->_req_data['EVT_ID'] ) ? $this->_req_data['EVT_ID'] : NULL;
+		$global = empty( $EVT_ID ) ? TRUE : FALSE;
+
+		if ( $success ) {
+			//first we need to delete the existing templates
+			require_once 'EEM_Message_Template.model.php';
+			$EEM = EEM_Message_Template::instance();
+
+			$success = isset( $this->_req_data['GRP_ID'] ) ? $EEM->delete_by_id( absint($this->_req_data['GRP_ID']) ) : FALSE;
+
+			//if successfully deleted, lets generate the new ones
+			if ( $success ) {
+				$templates = $this->_generate_new_templates( $this->_req_data['msgr'], $this->_req_data['mt'], $EVT_ID, $global );
+			}
+		}
+
+		//any error messages?
+		if ( !$success ) {
+			EE_Error::add_error( __('Something went wrong with deleting existing templates. Unable to reset to default', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		}
+
+		if ( $success && empty( $templates ) ) {
+			EE_Error::add_error( __('Successfully deleted existing templates but unable to regenerate default templates. You can try regenerating by deactivating and reactivating the messenger in the messenger settings page, if that doesn\'t work please contact support', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		}
+
+		//all good, let's add a success message!
+		if ( $success && !empty( $templates ) ) {
+			EE_Error::overwrite_success();
+			EE_Error::add_success( __('Templates have been reset to defaults.', 'event_espresso') );
+		}
+
+		$query_args = array(
+			'id' => isset( $templates['GRP_ID'] ) ? $templates['GRP_ID'] : NULL,
+			'evt_id' => isset( $templates['EVT_ID'] ) ? $templates['EVT_ID'] : NULL,
+			'context' => isset( $templates['MTP_context'] ) ? $templates['MTP_context'] : NULL,
+			'action' => isset( $templates['GRP_ID'] ) ? 'edit_message_template' : 'default'
+			);
+
+		$this->_redirect_after_action( FALSE, '', '', $query_args );
+	}
+
+
+
+	/**
 	 * Retrieve and set the message preview for display.
 	 * @return void
 	 */
@@ -1225,6 +1301,28 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _register_edit_meta_boxes() {
 		add_meta_box( 'mtp_valid_shortcodes', __('Valid Shortcodes', 'event_espresso'), array( $this, 'shortcode_meta_box' ), $this->_current_screen->id, 'side', 'default' );
+		add_meta_box( 'mtp_extra_actions', __('Extra Actions', 'event_espresso'), array( $this, 'extra_actions_meta_box' ), $this->_current_screen->id, 'side', 'high' );
+	}
+
+
+
+	/**
+	 * This meta box holds any extra actions related to Message Templates
+	 * For now, this includes Resetting templates to defaults and sending a test email.
+	 *
+	 * @access  public
+	 * @return void
+	 */
+	public function extra_actions_meta_box() {
+		$extra_args = array(
+			'msgr' => $this->_message_template->messenger(),
+			'mt' => $this->_message_template->message_type(),
+			'GRP_ID' => $this->_message_template->GRP_ID(),
+			'EVT_ID' => $this->_message_template->event()
+			);
+
+		$button = $this->_get_action_link_or_button( 'reset_to_default', 'reset', $extra_args, 'button-primary reset-default-button' );
+		echo '<div class="publishing-action alignright">' . $button . '</div><div style="clear:both"></div>';
 	}
 
 

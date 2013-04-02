@@ -66,7 +66,7 @@ class EE_Tabbed_Content {
 		}
 		/*
 		sample content for testing
-		 */
+		 
 		$all_tabs .= '<a class="nav-tab" rel="ee-tab-anothertab" href="#anothertab">Another Tab</a>';
 		$all_tabs_content .= '<div class="nav-tab-content hidden" id="ee-tab-anothertab">This is just some sample content to show another tab<div style="clear:both"></div></div>';
 		//end sample content /**/

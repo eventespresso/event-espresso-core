@@ -221,7 +221,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 					'add' => __('label for adding item'),
 	 * 				 	'edit' => __('label for editing item'),
 	 * 				  	'delete' => __('label for deleting item')
-	 * 			    )
+	 * 			    ),
+	 * 			    'publishbox' => __('Localized Title for Publish metabox', 'event_espresso')
 	 * 			), //optional an array of custom labels for various automatically generated elements to use on the page. If this isn't present then the defaults will be used as set for the $this->_labels in _define_page_props() method
 	 * 			'nav' => array(
 	 * 				'label' => __('Label for Tab', 'event_espresso').
@@ -623,6 +624,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//wait a minute... we might have a noheader in the route array
 		$this->_is_UI_request = is_array($this->_route) && isset($this->_route['noheader'] ) && $this->_route['noheader'] ? FALSE : $this->_is_UI_request;
 
+		$this->_set_current_labels();
+
 	}
 
 
@@ -693,7 +696,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}		
 
 		$this->_set_nav_tabs(); //set the nav_tabs array
-		$this->_set_current_labels();
 		$args = array();	
 
 		
@@ -1601,7 +1603,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	private function _publish_post_box() {
 		$meta_box_ref = 'espresso_' . $this->page_slug . '_editor_overview';
-		add_meta_box( $meta_box_ref, __('Publish', 'event_espresso'), array( $this, 'editor_overview' ), $this->_current_screen_id, 'side', 'high' );
+
+		//if there is a array('label' => array('publishbox' => 'some title') ) present in the _page_config array then we'll use that for the metabox label.  Otherwise we'll just use publish
+		$label = isset( $this->_labels['publishbox'] ) ? $this->_labels['publishbox'] : __('Publish', 'event_espresso');
+
+		add_meta_box( $meta_box_ref, $label, array( $this, 'editor_overview' ), $this->_current_screen_id, 'side', 'high' );
 
 	}
 
@@ -2134,7 +2140,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *	@access protected
 	 *	@return void
 	 */
-	protected function _redirect_after_action( $success = FALSE, $what = 'item', $action_desc = 'processed', $query_args = array() ) {
+	protected function _redirect_after_action( $success = FALSE, $what = 'item', $action_desc = 'processed', $query_args = array(), $override_overwrite = FALSE ) {
 
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
@@ -2143,13 +2149,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		// how many records affected ? more than one record ? or just one ?
 		if ( $success == 2 ) {
-			// overwrite default success messages
-			EE_Error::overwrite_success();
+			// overwrite default success messages //BUT ONLY if overwrite not overridden
+			if ( !$override_overwrite ) EE_Error::overwrite_success();
 			// set plural msg
 			EE_Error::add_success( sprintf( __('The %s have been successfully %s.', 'event_espresso'), $what, $action_desc ), __FILE__, __FUNCTION__, __LINE__);
 		} else if ( $success == 1 ) {
 			// overwrite default success messages
-			EE_Error::overwrite_success();
+			if ( !$override_overwrite )  EE_Error::overwrite_success();
 			// set singular msg
 			EE_Error::add_success( sprintf( __('The %s has been successfully %s.', 'event_espresso'), $what, $action_desc), __FILE__, __FUNCTION__, __LINE__ );
 		}
@@ -2260,10 +2266,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		$url = self::add_query_args_and_nonce( $query_args, $_base_url );
 
-		$button = '<a href="' . $url . '" class="' . $class . '">' . $this->_labels['buttons'][$type] . '</a>';
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Template.helper.php';
+		$button = EE_Template::get_button_or_link( $url, $this->_labels['buttons'][$type], $class );
 
 		return $button;
 	}
+	
 
 
 
@@ -2623,6 +2631,35 @@ abstract class EE_Admin_Page extends EE_BASE {
 			
 	}
 
+
+
+	//below are some messages related methods that should be available across the EE_Admin system.  Note, these methods are NOT page specific
+	
+
+
+
+	/**
+	 * This processes an request to resend a registration and assumes we have a _REG_ID for doing so. So if the caller knows that the _REG_ID isn't in the req_data array but CAN obtain it, the caller should ADD the _REG_ID to the _req_data array.
+	 * @return bool success/fail
+	 */
+	protected function _process_resend_registration() {
+		$success = apply_filters('filter_hook_espresso_process_resend_registration_message', FALSE, $this->_req_data);
+		$this->_template_args['success'] = $success;
+		return $success;
+	}
+
+
+	/**
+	 * This automatically processes any payment message notifications when manual payment has been applied.
+	 *
+	 * @access protected
+	 * @return bool success/fail
+	 */
+	protected function _process_payment_notification( EE_Payment $payment ) {
+		$success = apply_filters( 'filter_hook_espresso_process_admin_payment_message', FALSE, $payment );
+		$this->_template_args['success'] = $success;
+		return $success;
+	}
 
 
 }

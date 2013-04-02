@@ -174,6 +174,19 @@ class EEM_Registration extends EEM_TempBase {
 
 
 
+	/**
+	 * this retrieves all the registrations for a particular event
+	 * @param  int $EVT_ID the event id of the event we're retrieving registrations for
+	 * @return array         array of registration objects
+	 */
+	public function get_all_registrations_for_event( $EVT_ID ) {
+		$EVT_ID = (int) $EVT_ID;
+		$where_cols_n_values = array( 'EVT_ID' => $EVT_ID );
+		return $this->get_all_registrations( $where_cols_n_values );
+	}
+
+
+
 
 	/**
 	*		retreive a single registration from db

@@ -71,6 +71,7 @@ class EE_Messages_Addressee extends EE_Base {
 	public $billing;
 	public $taxes;
 	public $txn;
+	public $payment;
 	public $txn_objs;
 	public $reg_objs;
 

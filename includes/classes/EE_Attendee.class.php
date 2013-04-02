@@ -807,10 +807,23 @@ class EE_Attendee extends EE_Base_Class{
 
 
 	/**
-	 * returns any events attached to this attendee ($_Event property);
+	 * returns any events attached to this attendee ($_Events property);
 	 * @return array 
 	 */
 	public function events() {
+
+		if ( empty( $this->_Events ) ) {
+			//first we'd have to get all the registrations for this attendee
+			$registrations = $this->get_registrations();
+
+			//now we have to loop through each registration and assemble an array of events
+			foreach ( $registrations as $reg ) {
+				$this->_Events[] = $reg->event();
+			}
+			
+		}
+
+
 		return $this->_Events;
 	}
 }

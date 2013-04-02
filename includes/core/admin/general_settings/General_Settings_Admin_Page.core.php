@@ -65,7 +65,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	protected function _define_page_props() {
 		$this->_admin_base_url = GEN_SET_ADMIN_URL;
 		$this->_admin_page_title = GEN_SET_LABEL;
-		$this->_labels = array();
+		$this->_labels = array(
+			'publishbox' => __('Update Settings', 'event_espresso')
+			);
 	}
 
 

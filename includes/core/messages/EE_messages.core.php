@@ -143,7 +143,8 @@ class EE_messages {
 	 * @return void           
 	 */
 	public function send_message( $type, $vars ) {
-	
+		$success = FALSE;
+		$error = FALSE;
 
 		// is that a real class ?
 		if ( isset(  $this->_installed_message_types[$type] ) ) {
@@ -158,10 +159,11 @@ class EE_messages {
 				$messages = $this->_installed_message_types[$type];
 				$exit = $messages->set_messages( $vars, $active_messenger );
 
-				if ( is_wp_error($messages) || !$messages ) {
+				if ( is_wp_error($messages) || $messages === FALSE || $exit === FALSE ) {
 					//we've got an error so let's bubble up the error_object to be caught by caller.
 					//todo: would be better to just catch the errors and then return any aggregated errors later.
-					return $messages;
+					$error = TRUE;
+					continue;
 				}
 
 				if ( $messages->count === 0 ) continue; //it is possible that the user has the messenger turned off for this type.
@@ -171,13 +173,18 @@ class EE_messages {
 				//else...
 				foreach ( $messages->messages as $message ) {
 					//todo: should we do some reporting on messages gone out at some point?  I think we could have the $active_messenger object return bool for whether message was sent or not and we can compile a report based on that.
-					$active_messenger->send_message( $message );
+					$success = $active_messenger->send_message( $message );
+					if ( $success === FALSE  ) {
+						$error = TRUE;
+					}
 				}
 				unset($messages);
 			}
 		} else {
 			return EE_Error::add_error( sprintf( __('Message type: %s does not exist', 'event_espresso'), $type ), __FILE__, __FUNCTION__, __LINE__ );
 		}
+
+		return $error ? FALSE : TRUE; //yeah backwards eh?  Really what we're returning is if there is a total success for all the messages or not.  We'll modify this once we get message recording in place.
 	}
 
 

@@ -884,6 +884,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$return_data['po_number'] = $payment->po_number();
 			$return_data['extra_accntng'] = $payment->extra_accntng();
 
+			$this->_process_payment_notification( $payment );
+
 		} else {
 			$msg = __( 'An error occured. The payment form data could not be loaded.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			

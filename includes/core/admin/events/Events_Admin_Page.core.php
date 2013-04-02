@@ -214,6 +214,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 					'order' => 40
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' ),
+				'labels' => array(
+					'publishbox' => __('Update Settings', 'event_espresso')
+					),
 				'help_tabs' => array(
 					'events_expire_on_reg_end_date_help_tab' => array(
 						'title' => __('Events Expire on Reg End Date', 'event_espresso'),

@@ -64,8 +64,20 @@ class EE_messages_init extends EE_Base {
 	private function _do_actions() {
 		add_action( 'action_hook_espresso__EE_Gateway__update_transaction_with_payment__done', array( $this, 'payment' ), 10, 2 );
 		add_action( 'action_hook_espresso__EE_Single_Page_Checkout__process_registration_step_3__before_gateway', array( $this, 'registration' ), 10 );
+	}
 
-		//note we also add registration to the gateways hook because if the 'email_before_payment' setting is set to FALSE then registration emails are sent on a complete payment (not pending or fail);
+
+
+	/**
+	 * This is just for adding all the filters (if any!)
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _do_filters() {
+		//EE_Admin filters
+		add_filter( 'filter_hook_espresso_process_resend_registration_message', array( $this, 'process_resend' ), 10, 2 );
+		add_filter( 'filter_hook_espresso_process_admin_payment_message', array( $this, 'process_admin_payment'), 10, 2 );
 	}
 
 
@@ -101,13 +113,75 @@ class EE_messages_init extends EE_Base {
 
 
 
+	/**
+	 * Message triggers for a resend registration confirmation (in admin)
+	 *
+	 * @access public
+	 * @param  bool $success incoming success value (we return true or false on success/fail)
+	 * @param arrray $req_data This is the $_POST & $_GET data sent from EE_Admin Pages
+	 * @return bool          success/fail
+	 */
+	public function process_resend( $success, $req_data ) {
+		$success = TRUE;
+		//first let's make sure we have the reg id (needed for resending!);
+		if ( !isset( $req_data['_REG_ID'] ) ) {
+			EE_Error::add_error( __('Something went wrong because we\'re missing the registration ID', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			$success = FALSE;
+		}
+
+		$this->_load_controller();
+
+		if ( $success ) {
+			$success = $this->_EEMSG->send_message( 'resend_registration', $req_data );
+		}
+
+		if ( $success ) {
+			EE_Error::add_success( __('The registration confirmation has been sent', 'event_espresso') );
+		} else {
+			EE_Error::add_error( __('Something went wrong and the registration confirmation was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		}
+		
+		return $success;
+	}
+
+
+
+
 
 	/**
-	 * This is just for adding all the filters (if any!)
-	 *
-	 * @access private
-	 * @return void
+	 * Message triggers for manual payment applied by admin
+	 * @param  bool     $success incoming success value
+	 * @param  EE_Payment $payment EE_payment object
+	 * @return bool              success/fail
 	 */
-	private function _do_filters() {}
+	public function process_admin_payment( $success, EE_Payment $payment ) {
+		$success = TRUE;
+		$reg_success = TRUE;
+
+		//we need to get the transaction object
+		$transaction = $payment->transaction();
+
+		$data = array( $transaction, $payment );
+
+		$this->_load_controller();
+		$success = $this->_EEMSG->send_message( 'payment', $data );
+		//let's trigger a registration confirmation (note this will only actually complete if registration confirmations are delayed until complete payment)
+		$reg_success = $this->_EEMSG->send_message( 'registration', $data );
+
+		if ( $success ) {
+			EE_Error::add_success( __('The payment confirmation has been sent', 'event_espresso') );
+		} else {
+			EE_Error::add_error( __('Something went wrong and the payment confirmation was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		}
+
+		if ( $reg_success ) {
+			EE_Error::add_success( __('Complete payment has been made for the transaction so registration confirmations have been sent', 'event_espresso') );
+		} else {
+			EE_Error::add_success( __('Registration confirmations are delayed until the amount oweing has been completely paid.', 'event_espresso') );
+		}
+		return $success;
+	}
+
+
 
 } //end EE_messages_init
