@@ -323,7 +323,7 @@ function espresso_export_invoice() {
 	if (isset($_REQUEST['invoice_launch']) && $_REQUEST['invoice_launch'] == 'true') {
 		if (isset($_REQUEST['id'])) {
 			$_REQUEST['id'] = sanitize_key( $_REQUEST['id'] );
-			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/lib/Invoice.class.php");
+			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/Invoice/lib/Invoice.class.php");
 			$invoice = new Invoice($_REQUEST['id']);
 			$invoice->send_invoice();
 		}
@@ -350,7 +350,7 @@ function espresso_export_invoice() {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	//Version 2.0
 	if (isset($_REQUEST['ticket_launch']) && $_REQUEST['ticket_launch'] == 'true') {
-		$reg_url_link = isset( $_REQUEST['reg'] ) ?  sanitize_key( $_REQUEST['reg'] ) : FALSE;
+		$reg_url_link = isset( $_REQUEST['_REG_ID'] ) ?  sanitize_key( $_REQUEST['_REG_ID'] ) : FALSE;
 		if ( $reg_url_link ) {
 			echo '<h4>$reg_url_link : ' . $reg_url_link . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 			echo espresso_ticket_launch();

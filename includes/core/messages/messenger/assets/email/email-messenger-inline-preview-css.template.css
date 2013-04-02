@@ -51,6 +51,7 @@
 	margin-bottom:10px;
 	margin-left:0;
 	/*@editable*/ text-align:left;
+	padding:0;
 }
 
 /**
@@ -71,6 +72,7 @@
 	margin-bottom:10px;
 	margin-left:0;
 	/*@editable*/ text-align:left;
+	padding:0;
 }
 
 /**
@@ -91,6 +93,7 @@
 	margin-bottom:10px;
 	margin-left:0;
 	/*@editable*/ text-align:left;
+	padding:0;
 }
 
 /**
@@ -109,8 +112,9 @@
 	margin-top:0;
 	margin-right:0;
 	margin-bottom:10px;
-	margin-left:20px;
+	margin-left:0;
 	/*@editable*/ text-align:left;
+	padding:0;
 }
 
 /* /\/\/\/\/\/\/\/\/\/\ STANDARD STYLING: PREHEADER /\/\/\/\/\/\/\/\/\/\ */

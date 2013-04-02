@@ -29,7 +29,7 @@
 				<td class="jst-rght"><?php echo $currency_sign . '&nbsp;' . number_format( $item['line_total'], 2 );?></td>
 			</tr>
 		<?php endforeach; // $items?>
-		<?php if ( $taxes ) : ?>
+		<?php if ( is_array($taxes) ) : ?>
 			<?php foreach ( $taxes as $tax ) : ?>
 				<tr class="admin-primary-mbox-taxes-tr">
 					<th class=" jst-rght" colspan="6"><?php echo $tax['name'];?></th>

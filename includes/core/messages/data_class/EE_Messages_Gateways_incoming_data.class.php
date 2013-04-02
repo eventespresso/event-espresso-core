@@ -30,6 +30,12 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 
 class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 
+	/**
+	 * This holds the incoming payment object
+	 * @var EE_Payment
+	 */
+	public $payment;
+
 	
 	/**
 	 * incoming data is expected to be a EE_Transaction object and EE_Payment object in an array.  
@@ -55,6 +61,8 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 		$this->reg_info = array();
 
 		$this->txn = $this->_data['txn_obj'];
+		$this->payment = $this->_data['pmt_obj'];
+		$this->incoming_data = $this->_data;
 		$this->taxes = $this->txn->tax();
 
 		$this->grand_total_price_object = ''; //not available and not needed?
@@ -67,7 +75,7 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 		$this->user_agent = isset( $session['user_agent'] ) ? $session['user_agent'] : '';
 		$this->init_access = $this->last_access = '';
 
-		$this->billing = $this->_data['pmt_obj']->details();
+		$this->billing = $this->payment->details();
 		$this->billing['total_due'] = isset( $this->billing['total'] ) ? $org_options['currency_symbol'] . $this->billing['total'] : '';
 
 		//let's get all the registrations associated with this txn

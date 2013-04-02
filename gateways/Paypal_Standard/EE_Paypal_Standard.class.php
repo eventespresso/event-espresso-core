@@ -312,7 +312,20 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$no_shipping = $paypal_settings['no_shipping'];
 
 		$item_num = 1;
-		$registrations = $session_data['cart']['REG']['items'];
+		
+		/* @var $transaction EE_Transaction */
+		$transaction = $session_data['transaction'];
+		foreach($transaction->registrations() as $registration){
+			/* @var $registration EE_Registration */
+			$this->addField('item_name_' . $item_num, $registration->attendee()->full_name() . ' attending ' . $registration->event_name()  . ' on ' . $registration->date_obj()->end_date_and_time() .', ' . $registration->price_obj()->name());
+			$this->addField('amount_' . $item_num, $registration->price_paid());
+			$this->addField('quantity_' . $item_num, '1');
+			$item_num++;
+		}
+		/*
+		 * //this code actually worked fine, except for some reason weird characters were showing up
+		 * //I tried encoding it in different formats etc etc and it never quite worked. Whatever
+		 * $registrations = $session_data['cart']['REG']['items'];
 		require_once('EEM_Attendee.model.php');
 		foreach ($registrations as $registration) {
 			foreach ($registration['attendees'] as $attendee) {
@@ -324,7 +337,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 				$this->addField('quantity_' . $item_num, '1');
 				$item_num++;
 			}
-		}
+		}*/
 
 		$total = $session_data['_cart_grand_total_amount'];
 		if (isset($session_data['tax_totals'])) {

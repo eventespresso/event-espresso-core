@@ -49,6 +49,7 @@ h1, .h1{
 	margin-right:0;
 	margin-bottom:10px;
 	margin-left:0;
+	padding:0;
 	/*@editable*/ text-align:left;
 }
 
@@ -69,6 +70,7 @@ h2, .h2{
 	margin-right:0;
 	margin-bottom:10px;
 	margin-left:0;
+	padding:0;
 	/*@editable*/ text-align:left;
 }
 
@@ -89,6 +91,7 @@ h3, .h3{
 	margin-right:0;
 	margin-bottom:10px;
 	margin-left:0;
+	padding:0;
 	/*@editable*/ text-align:left;
 }
 
@@ -108,7 +111,8 @@ h4, .h4{
 	margin-top:0;
 	margin-right:0;
 	margin-bottom:10px;
-	margin-left:20px;
+	margin-left:0px;
+	padding:0;
 	/*@editable*/ text-align:left;
 }
 

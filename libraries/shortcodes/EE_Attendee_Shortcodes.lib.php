@@ -54,12 +54,14 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 			
 			case '[FNAME]' :
 				$fname = !empty( $this->_data->fname ) ? $this->_data->fname : '';
-				return is_object($this->_data) ? $this->_data->fname() : $fname;
+				$fname = is_object($this->_data) && method_exists( $this->_data, 'fname') ? $this->_data->fname() : $fname;
+				return isset($this->_data->att_obj) && is_object($this->_data->att_obj) ? $this->_data->att_obj->fname() : $fname;
 				break;
 
 			case '[LNAME]' :
 				$lname = !empty( $this->_data->lname ) ? $this->_data->lname : '';
-				return is_object($this->_data) ? $this->_data->lname() : $lname;
+				$lname = is_object($this->_data) && method_exists( $this->_data, 'lname') ? $this->_data->lname() : $lname;
+				return isset($this->_data->att_obj) && is_object($this->_data->att_obj) ? $this->_data->att_obj->lname() : $lname;
 				break;
 
 			case '[EDIT_ATTENDEE_LINK]' :

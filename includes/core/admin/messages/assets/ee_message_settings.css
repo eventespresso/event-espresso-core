@@ -39,7 +39,6 @@
 
 
 #active-message-types, #inactive-message-types {
-    width: 95%;
     min-height: 10em;
     margin: 0 0.4em, 0.4em, 0;
     padding: 8px;

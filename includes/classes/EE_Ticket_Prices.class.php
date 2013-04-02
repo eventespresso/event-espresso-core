@@ -238,17 +238,18 @@ class EE_Ticket_Prices extends EE_BASE {
 
 	/**
 	* 	serialize and encode object for use in forms, etc.
+	* 	usage EE_Ticket_Prices::obfuscate( $thing_to_obfuscate );
 	* 
 	* 	@access 		public
-	* 	@param 		string $string_to_obfuscate
+	* 	@param 		string $thing_to_obfuscate
 	* 	@return 		string
 	*/
-	public static function obfuscate( $string_to_obfuscate = '' ) {
+	public static function obfuscate( $thing_to_obfuscate = '' ) {
 		// use the following to unencode price objects:
-		// unserialize( gzinflate( base64_decode( $obfuscatedString )))
-		// OR call EE_Ticket_Prices::unobfuscate( $obfuscatedString );		
-		return base64_encode( serialize( $string_to_obfuscate ));
-//		return gzdeflate( base64_encode( serialize( $string_to_obfuscate )));
+		// unserialize( gzinflate( base64_decode( $obfuscatedThing )))
+		// OR call EE_Ticket_Prices::unobfuscate( $obfuscatedThing );		
+		return base64_encode( serialize( $thing_to_obfuscate ));
+//		return gzdeflate( base64_encode( serialize( $thing_to_obfuscate )));
 	}
 
 
@@ -256,14 +257,15 @@ class EE_Ticket_Prices extends EE_BASE {
 
 	/**
 	*	undo obfuscation of price object
+	* 	usage EE_Ticket_Prices::unobfuscate( $obfuscatedThing );	
 	* 
 	* @access 		public
-	* @param 		string $obfuscatedString
+	* @param 		string $obfuscatedThing
 	* @return 		string
 	*/
-	public static function unobfuscate ( $obfuscatedString = '' ) {
-		return unserialize( base64_decode( $obfuscatedString ));
-//		return unserialize( base64_decode( gzinflate( $obfuscatedString )));
+	public static function unobfuscate ( $obfuscatedThing = '' ) {
+		return unserialize( base64_decode( $obfuscatedThing ));
+//		return unserialize( base64_decode( gzinflate( $obfuscatedThing )));
 	}
 
 
@@ -461,7 +463,7 @@ class EE_Ticket_Price_Base extends EE_Ticket_Price {
 	public function obfuscate() {
 		// use the following to unencode price objects:
 		// unserialize( gzinflate( base64_decode( $obfuscatedString )))
-		// OR call EE_Ticket_Price::unobfuscate( $obfuscatedString );		
+		// OR call EE_Ticket_Prices::unobfuscate( $obfuscatedString );		
 		return base64_encode( serialize( $this ));
 //		return gzdeflate( base64_encode( serialize( $this )));
 	}
@@ -702,7 +704,7 @@ class EE_Ticket_Price_Modifier extends EE_Price_Modifier {
 	public function obfuscate() {
 		// use the following to unencode price objects:
 		// unserialize( gzinflate( base64_decode( $obfuscatedString )))
-		// OR call EE_Ticket_Price::unobfuscate( $obfuscatedString );		
+		// OR call EE_Ticket_Prices::unobfuscate( $obfuscatedString );		
 		return base64_encode( serialize( $this ));
 	}
 

@@ -33,7 +33,7 @@ class EE_Template {
 
 
 	/**
-	 * load and dislpay a template
+	 * load and display a template
 	 * @param  string $path_to_file  server path to the file to be loaded, including file name and extension
 	 * @param  boolean $template_args an array of arguments to be extracted for use in the template
 	 * @param  boolean $return_string whether to send output immediately to screen, or capture and return as a string
@@ -63,6 +63,22 @@ class EE_Template {
 		} else {
 			include( $path_to_file );
 		}
+	}
+
+
+
+	
+
+	/**
+	 * This helper just returns a button or link for the given parameters
+	 * @param  string $url   the url for the link
+	 * @param  string $class what class is used for the button (defaults to 'button-primary')
+	 * @param  string $label What is the label you want displayed for the button
+	 * @return string        the html output for the button
+	 */
+	public static function get_button_or_link( $url, $label, $class = 'button-primary' ) {
+		$button = '<a href="' . $url . '" class="' . $class . '">' . $label . '</a>';
+		return $button;
 	}
 
 

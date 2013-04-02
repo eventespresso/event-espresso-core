@@ -29,6 +29,7 @@
                             <tr>
                                 <td valign="top" colspan="2">
                                     <h3>Your Payment Details:</h3>
+                                    <p>Thank for your payment for your event registration</p>
                                 </td>
                             </tr>
                             <tr>
@@ -42,13 +43,15 @@
                                         <li>Payment status: [PAYMENT_STATUS]</li>
                                         <li>Payment gateway: [PAYMENT_GATEWAY]</li>
                                         <li>Total Cost: [TOTAL_COST]</li>
+                                        <li>Payment Made: [AMOUNT_PAID]</li>
+                                        <li>Total Oweing: [TOTAL_OWEING]</li>
                                     </ol>
                                 </td>
                             </tr>
                             <tr>
                                 <td valign="top" colspan="2">
                                     <div>
-                                        <h4>Thank you for your purchase!</h4>
+                                        <h4>Thank you again for your payment!</h4>
                                         <blockquote>If you have any questions about any  payment, please contact us!</blockquote>
                                     </div>
                                 </td>

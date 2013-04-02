@@ -772,8 +772,8 @@ class EE_Attendee extends EE_Base_Class{
 	 * Gets a maximum of 100 related registrations
 	 * @return EE_Registration[] UNLESS $output='count', in which case INT
 	 */
-	public function get_registrations($limit=100,$ouput='OBJECT_K'){
-		return $this->get_many_related('Registrations', null, null, 'ASC', '=', $limit, $ouput);
+	public function get_registrations($limit=100,$output='OBJECT_K'){
+		return $this->get_many_related('Registrations', null, null, 'ASC', '=', $limit, $output);
 	}
 	
 	/**
@@ -782,6 +782,17 @@ class EE_Attendee extends EE_Base_Class{
 	 */
 	public function get_most_recent_registration(){
 		return $this->get_first_related('Registrations', null, 'REG_date', 'DESC', '=', 'OBJECT_K');
+	}
+	
+	
+	/**
+	 * Gets all the registrations of this attendee for an event
+	 * @param int $event_id the ID of the event
+	 * @param string $output usually either 'OBJECT_K' or 'COUNT', like on EEM_Base's select_all_where function
+	 * @return EE_Registration[]
+	 */
+	public function get_registrations_for_event($event_id, $output='OBJECT_K'){
+		return $this->get_many_related('Registrations', array('EVT_ID'=>$event_id), null, 'ASC', '=', null, $output);
 	}
 
 
@@ -796,10 +807,23 @@ class EE_Attendee extends EE_Base_Class{
 
 
 	/**
-	 * returns any events attached to this attendee ($_Event property);
+	 * returns any events attached to this attendee ($_Events property);
 	 * @return array 
 	 */
 	public function events() {
+
+		if ( empty( $this->_Events ) ) {
+			//first we'd have to get all the registrations for this attendee
+			$registrations = $this->get_registrations();
+
+			//now we have to loop through each registration and assemble an array of events
+			foreach ( $registrations as $reg ) {
+				$this->_Events[] = $reg->event();
+			}
+			
+		}
+
+
 		return $this->_Events;
 	}
 }

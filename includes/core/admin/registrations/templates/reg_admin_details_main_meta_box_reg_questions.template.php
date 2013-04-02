@@ -4,7 +4,7 @@
 		<?php wp_nonce_field( $reg_questions_form_action . '_nonce', $reg_questions_form_action . '_nonce' ); ?>
 		<input  type="hidden" name="page" value="<?php echo REG_PG_SLUG; ?>"/>
 		<input  type="hidden" name="action" value="<?php echo $reg_questions_form_action; ?>"/>
-		<input  type="hidden" name="reg" value="<?php echo $REG_ID; ?>"/>
+		<input  type="hidden" name="REG_ID" value="<?php echo $REG_ID; ?>"/>
 		<input  type="hidden" name="espresso_ajax" id="espresso-ajax" value="0"/>
 		<input  type="hidden" name="noheader" id="reg-admin-noheader-inp" value="true"/>
 		<?php echo $att_questions; ?>

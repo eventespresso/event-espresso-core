@@ -262,7 +262,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
         //Build row actions	
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'txn'=>$item['TXN_ID'] ), TXN_ADMIN_URL );
 		$dl_invoice_lnk_url = add_query_arg( array( 'invoice_launch'=>'true', 'id'=>$item['REG_url_link'], 'html'=>'true', 'admin'=>'true' ), home_url() );
-		$view_reg_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', 'reg'=>$item['REG_ID'] ), REG_ADMIN_URL );
+		$view_reg_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item['REG_ID'] ), REG_ADMIN_URL );
 		$send_pay_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'send_payment_reminder', 'txn'=>$item['TXN_ID'] ), TXN_ADMIN_URL );
 		
         //Build row actions

@@ -601,10 +601,10 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 		$title = __( 'Import Event Categories', 'event_espresso' );
 		$intro = __( 'If you have a previously exported list of Event Categories in a Comma Separated Value (CSV) file format, you can upload the file here: ', 'event_espresso' );
-		$page = 'event_categories';
-		$action = 'import_categories(';
+		$form_url = EE_CATS_ADMIN_URL;
+		$action = 'import_categories';
 		$type = 'csv';
-		$content = EE_Import::instance()->upload_form( $title, $intro, $page, $action, $type );
+		$content = EE_Import::instance()->upload_form( $title, $intro, $form_url, $action, $type );
 
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_category', 'add', array(), 'button add-new-h2');
 		$this->_template_args['admin_page_content'] = $content;	
