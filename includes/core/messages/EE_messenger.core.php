@@ -503,10 +503,8 @@ abstract class EE_messenger extends EE_Base {
 	 * @access protected
 	 * @return void
 	 */
-	protected function _set_existing_admin_settings() {
-		global $espresso_wp_user;
-			
-		$active_messengers = get_user_meta($espresso_wp_user, 'ee_active_messengers', true);
+	protected function _set_existing_admin_settings() {		
+		$active_messengers = get_option('ee_active_messengers', true);
 
 		//if there are no setting fields then there won't be any existing admin settings either.
 		if ( !isset($active_messengers[$this->name]) && empty($this->_admin_settings_fields) )
