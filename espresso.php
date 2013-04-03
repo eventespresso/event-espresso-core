@@ -91,6 +91,7 @@ if ( is_admin() ) {
 	add_action('admin_bar_menu', 'espresso_toolbar_items', 100);
 	add_filter('plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2);
 	add_action( 'admin_enqueue_scripts', 'espresso_load_scripts_styles' );
+	do_action('action_hook_espresso_pue_update');
 	
 } else {
 	add_action('init', 'espresso_export_certificate', 30);
