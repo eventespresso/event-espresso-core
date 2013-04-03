@@ -605,11 +605,23 @@ abstract class EE_messenger extends EE_Base {
 	/**
 	 * Sets up and returns message preview
 	 * @param  object $message incoming message object
+	 * @param  bool   $send    true we will actually use the _send method (for test sends). FALSE we just return preview
 	 * @return string          return the message html content
 	 */
-	public function get_preview( $message ) {
+	public function get_preview( $message, $send = FALSE ) {
 		$this->_validate_and_setup( $message );
-		return $this->_preview();
+
+		if ( $send ) {
+			//are we overriding any existing template fields?
+			$settings = $this->get_existing_test_settings();
+			if ( !empty( $settings ) ) {
+				foreach( $settings as $field => $value ) {
+					$this->_set_template_value( $field, $value );
+				}
+			}
+		}
+
+		return $send ? $this->_send_message() : $this->_preview();
 	}
 
 
