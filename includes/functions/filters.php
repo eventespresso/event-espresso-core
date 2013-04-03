@@ -11,18 +11,33 @@ add_filter('admin_footer_text', 'espresso_admin_footer');
 
 
 
-function espresso_help_popup($name) {
-	wp_enqueue_style('thickbox');
-	wp_enqueue_script('media-upload');
-	wp_enqueue_script('thickbox');
+function espresso_help_tab_links( $help_tab = FALSE, $action = FALSE, $page = FALSE, $help_text = '' ) {
+	
+	if ( ! $page ) {
+		$page = isset( $_REQUEST['page'] ) && ! empty( $_REQUEST['page'] ) ? sanitize_key( $_REQUEST['page'] ) : $page;
+	}
+	
+	if ( ! $action ) {
+		$action = isset( $_REQUEST['action'] ) && ! empty( $_REQUEST['action'] ) ? sanitize_key( $_REQUEST['action'] ) : $action;
+	}
+
+	if ( ! $help_tab ) {
+		$help_tab = isset( $_REQUEST['action'] ) && ! empty( $_REQUEST['action'] ) ? sanitize_key( $_REQUEST['action'] ) . '_help_tab' : $help_tab;
+	}
+	
+//	echo '<h4>$page : ' . $page . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//	echo '<h4>$action : ' . $action . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//	echo '<h4>$help_tab : ' . $help_tab . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+	
+	$help_tab_lnk = $page . '-' . $action . '-' . $help_tab;
+	$icon_style = empty( $help_text ) ? ' help_img' : '';
+	$help_text = ! empty( $help_text ) ? $help_text : 'click for help';
+//	$help_icon_img = $custom_image ? $custom_image : '<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/subtle_help.png" width="16" height="16" alt="help" />';
+	
 	echo '
-	<a class="thickbox" href="#TB_inline?height=400&amp;width=500&amp;inlineId=' . $name . '" target="_blank">
-		<span class="question">
-			<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/subtle_help.png" width="16" height="16" alt="help" />
-		</span>
-	</a>';
+	<a id="' . $help_tab_lnk . '" class="espresso-help-tab-lnk' . $icon_style . '" title="click to open the \'Help\' tab for more information about this feature" > ' . $help_text . ' </a>';
 }
-add_action('action_hook_espresso_help', 'espresso_help_popup');
+add_action( 'action_hook_espresso_help', 'espresso_help_tab_links', 10, 4 );
 
 
 

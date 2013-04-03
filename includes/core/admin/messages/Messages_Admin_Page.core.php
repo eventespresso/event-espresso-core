@@ -225,7 +225,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'list_table' => 'Messages_Template_List_Table',
 				'help_tabs' => array_merge( array(
-						'about-overview' => array(
+						'messages_overview' => array(
 							'title' => __('About the Overview', 'event_espresso'),
 							'callback' => 'messages_overview_help_tab'
 							),
@@ -255,9 +255,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'metaboxes' => array('_publish_post_box', '_register_edit_meta_boxes'),
 				'has_metaboxes' => TRUE,
 				'help_tabs' => array_merge( array(
-						'about-editor' => array(
+						'edit_message_template' => array(
 							'title' => __('About Template Editor', 'event_espresso'),
-							'callback' => 'messages_template_editor_help_tab'
+							'callback' => 'edit_message_template_help_tab'
 							)
 						), $default_msg_help_tabs
 					)
@@ -269,9 +269,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'persistent' => FALSE
 					),
 				'help_tabs' => array_merge( array(
-						'about-preview' => array(
+						'preview_message' => array(
 							'title' => __('About Previews', 'event_espresso'),
-							'callback' => 'messages_preview_help_tab'
+							'callback' => 'preview_message_help_tab'
 							)
 						), $default_msg_help_tabs
 					)
@@ -283,9 +283,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array('_messages_settings_metaboxes'),
 				'help_tabs' => array_merge( array(
-						'about-settings' => array(
+						'settings' => array(
 							'title' => __('About Message Settings', 'event_espresso'),
-							'callback' => 'messages_settings_help_tab'
+							'callback' => 'settings_help_tab'
 							)
 						), $default_msg_help_tabs
 					)
@@ -338,7 +338,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	}
 
 
-
 	public function messengers_help_tab() {
 		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_messenger_help_tab.template.php';
 		espresso_display_template( $templatepath, array());
@@ -356,13 +355,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		espresso_display_template( $templatepath, array());
 	}
 
+
 	public function message_templates_help_tab() {
 		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_message_templates_help_tab.template.php';
 		espresso_display_template( $templatepath, array());
 	}
 
 
-	public function messages_template_editor_help_tab() {
+	public function edit_message_template_help_tab() {
 		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_templates_editor_help_tab.template.php';
 		$args['img1'] = '<img src="' . EE_MSG_ASSETS_URL . 'images/editor.png' . '" alt="' . __('Editor Title', 'event_espresso') . '" />';
 		$args['img2'] = '<img src="' . EE_MSG_ASSETS_URL . 'images/switch-context.png' . '" alt="' . __('Context Switcher and Preview', 'event_espresso') . '" />';
@@ -373,9 +373,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	}
 
 
+	public function preview_message_help_tab() {
+		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_preview_help_tab.template.php';
+		espresso_display_template( $templatepath, array());
+	}
 
 
-	public function messages_settings_help_tab() {
+	public function settings_help_tab() {
 		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_settings_help_tab.template.php';
 		$args['img1'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'images/email-tab-active.png' . '" alt="' . __('Active Email Tab', 'event_espresso') . '" />';
 		$args['img2'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'images/email-tab-inactive.png' . '" alt="' . __('Inactive Email Tab', 'event_espresso') . '" />';
@@ -384,13 +388,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		espresso_display_template( $templatepath, $args);
 	}
 
-
-
-
-	public function messages_preview_help_tab() {
-		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_preview_help_tab.template.php';
-		espresso_display_template( $templatepath, array());
-	}
 
 
 
@@ -1256,9 +1253,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * Retrieve and set the message preview for display.
+	 *
+	 * @param bool $send if TRUE then we are doing an actual TEST send with the results of the preview.
 	 * @return void
 	 */
-	public function _preview_message() {
+	public function _preview_message( $send = FALSE ) {
 		//first make sure we've got the necessary parameters
 		if ( !isset( $this->_req_data['message_type'] ) || !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['msg_id'] ) ) {
 			EE_Error::add_error( __('Missing necessary parameters for displaying preview', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
@@ -1267,9 +1266,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$MSG = new EE_messages();
 
 		//get the preview!
-		$preview = $MSG->preview_message( $this->_req_data['message_type'], $this->_req_data['context'], $this->_req_data['messenger'] );
+		$preview = $MSG->preview_message( $this->_req_data['message_type'], $this->_req_data['context'], $this->_req_data['messenger'], $send );
 
-
+		if ( $send ) {
+			return $preview;
+		}
 
 		//let's add a button to go back to the edit view
 		$query_args = array(
@@ -1317,6 +1318,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @return void
 	 */
 	public function extra_actions_meta_box() {
+		$template_form_fields = array();
+
 		$extra_args = array(
 			'msgr' => $this->_message_template->messenger(),
 			'mt' => $this->_message_template->message_type(),
@@ -1325,7 +1328,48 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			);
 
 		$button = $this->_get_action_link_or_button( 'reset_to_default', 'reset', $extra_args, 'button-primary reset-default-button' );
-		echo '<div class="publishing-action alignright">' . $button . '</div><div style="clear:both"></div>';
+		
+
+		//test button
+		//first we need to see if there are any fields
+		$fields = $this->_message_template->messenger_obj()->get_test_settings_fields();
+		if ( !empty( $fields ) ) {
+			//yup there be fields
+			foreach ( $fields as $field => $config ) {
+				$field_id = $this->_message_template->messenger() . '_' . $field;
+				$existing = $this->_message_template->messenger_obj()->get_existing_test_settings();
+				$default = isset( $config['default'] ) ? $config['default'] : '';
+				$default = isset( $config['value'] ) ? $config['value'] : $default;
+
+				//if type is hidden and the value is empty something may have gone wrong so let's correct with the defaults
+				$fix = $config['input'] == 'hidden' && isset($existing[$field]) && empty($existing[$field]) ? $default : '';
+				$existing[$field] = isset( $existing[$field] ) && empty( $fix ) ? $existing[$field] : $fix;
+
+				$template_form_fields[$field_id] = array(
+					'name' => 'test_settings_fld[' . $field . ']',
+					'label' => $config['label'],
+					'input' => $config['input'],
+					'type' => $config['type'],
+					'required' => $config['required'],
+					'validation' => $config['validation'],
+					'value' => isset( $existing[$field] ) ? $existing[$field] : $default,
+					'css_class' => $config['css_class'],
+					'options' => isset( $config['options'] ) ? $config['options'] : array(),
+					'default' => $default,
+					'format' => $config['format']
+					);
+			}
+		}
+
+		$test_settings_fields = !empty( $template_form_fields) ? $this->_generate_admin_form_fields( $template_form_fields, 'string', 'ee_tst_settings_flds' ) : '';
+
+		//print out $test_settings_fields
+		if ( !empty( $test_settings_fields ) ) {
+			echo $test_settings_fields;
+		}
+
+		//and button
+		echo '<input type="submit" class="button-primary mtp-test-button alignright" name="test_button" value="' . __('Test Send', 'event_espresso') . '" /><div class="publishing-action alignright resetbutton">' . $button . '</div><div style="clear:both"></div>';
 	}
 
 
@@ -1560,6 +1604,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		
 		do_action ( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$success = 0;
+		$override = FALSE;
 
 		//setup notices description	
 		$messenger = !empty($this->_req_data['MTP_messenger']) ? ucwords(str_replace('_', ' ', $this->_req_data['MTP_messenger'] ) ) : false;
@@ -1659,6 +1704,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$this->_check_template_switch();
 		}
 
+
+		//was a test send triggered?
+		if ( isset( $this->_req_data['test_button'] ) ) {
+			EE_Error::overwrite_success();
+			$this->_do_test_send( $this->_req_data['MTP_context'],  $this->_req_data['MTP_messenger'], $this->_req_data['MTP_message_type'], $this->_req_data['EVT_ID'] );
+			$override = TRUE;
+		}
+
 		if ( empty( $query_args ) ) {
 			$query_args = array(
 				'id' => $this->_req_data['GRP_ID'],
@@ -1668,9 +1721,41 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				);
 		}
 
-		$this->_redirect_after_action( $success, $item_desc, $action_desc, $query_args );
+		$this->_redirect_after_action( $success, $item_desc, $action_desc, $query_args, $override );
 	}
 
+
+
+
+	/**
+	 * processes a test send request to do an actual messenger delivery test for the given message tempalte being tested
+	 * @param  string $context      what context being tested
+	 * @param  string $messenger  	messenger being tested
+	 * @param  string $message_type message type being tested
+	 * @param  int $event_id     	event_id (if present) being tested
+	 * @return void
+	 */
+	protected function _do_test_send( $context, $messenger, $message_type, $event_id = NULL ) {
+		//set things up for preview
+		$this->_req_data['messenger'] = $messenger;
+		$this->_req_data['message_type'] = $message_type;
+		$this->_req_data['context'] = $context;
+		$this->_req_data['msg_id'] = isset($this->_req_data['GRP_ID'] ) ? $this->_req_data['GRP_ID'] : '';
+		$this->_req_data['evt_id'] = $event_id;
+
+		//let's save any existing fields that might be required by the messenger
+		if ( isset( $this->_req_data['test_settings_fld'] ) ) {
+			$this->_active_messengers[$messenger]['obj']->set_existing_test_settings( $this->_req_data['test_settings_fld'] );
+		}
+
+		$success = $this->_preview_message(TRUE);
+
+		if ( $success ) {
+			EE_Error::add_success( __('Test message sent', 'event_espresso') );
+		} else {
+			EE_Error::add_error( __('The test message was not sent', 'event_espresso' ) );
+		}
+	}
 
 
 

@@ -137,6 +137,24 @@ abstract class EE_messenger extends EE_Base {
 
 
 
+
+
+	/**
+	 * This property will hold the configuration for any test settings fields that are required for the "test" button that is used to trigger an actual test of this messenger
+	 *
+	 * @protected
+	 * @var array
+	 */
+	protected $_test_settings_fields = array();
+
+
+
+
+
+
+
+
+
 	/**
 	 * this property will hold an array of valid shortcodes for this messenger.  This is an array of strings that correspond to defined EE_Shortcode libraries per field.  For example:
 	 * array('subject' => array('transaction', 'event', 'attendee')) corresponds to 'EE_Transaction_Shortcodes.lib.php, EE_Event_Shortcodes.lib.php, EE_Attendee_Shortcodes.lib.php' for the 'subject' field;
@@ -159,6 +177,7 @@ abstract class EE_messenger extends EE_Base {
 		$this->_EEM_data = EEM_Message_Template::instance(); //todo might move this into the constructor and typehint
 		$this->_set_admin_settings_fields();
 		$this->_set_existing_admin_settings();
+		$this->_set_test_settings_fields();
 		$this->_set_templates();	
 		$this->_set_template_fields();
 		$this->_set_default_field_content();
@@ -503,10 +522,8 @@ abstract class EE_messenger extends EE_Base {
 	 * @access protected
 	 * @return void
 	 */
-	protected function _set_existing_admin_settings() {
-		global $espresso_wp_user;
-			
-		$active_messengers = get_user_meta($espresso_wp_user, 'ee_active_messengers', true);
+	protected function _set_existing_admin_settings() {		
+		$active_messengers = get_option('ee_active_messengers', true);
 
 		//if there are no setting fields then there won't be any existing admin settings either.
 		if ( !isset($active_messengers[$this->name]) && empty($this->_admin_settings_fields) )
@@ -588,11 +605,23 @@ abstract class EE_messenger extends EE_Base {
 	/**
 	 * Sets up and returns message preview
 	 * @param  object $message incoming message object
+	 * @param  bool   $send    true we will actually use the _send method (for test sends). FALSE we just return preview
 	 * @return string          return the message html content
 	 */
-	public function get_preview( $message ) {
+	public function get_preview( $message, $send = FALSE ) {
 		$this->_validate_and_setup( $message );
-		return $this->_preview();
+
+		if ( $send ) {
+			//are we overriding any existing template fields?
+			$settings = $this->get_existing_test_settings();
+			if ( !empty( $settings ) ) {
+				foreach( $settings as $field => $value ) {
+					$this->_set_template_value( $field, $value );
+				}
+			}
+		}
+
+		return $send ? $this->_send_message() : $this->_preview();
 	}
 
 
@@ -640,6 +669,58 @@ abstract class EE_messenger extends EE_Base {
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Template.helper.php';
 		return EE_Template::display_template( $wrapper_template, $this->_template_args, TRUE );
 	}
+
+
+
+	/**
+	 * set the _test_settings_fields property
+	 *
+	 * @access protected
+	 * @return void 
+	 */
+	protected function _set_test_settings_fields() {
+		$this->_test_settings_fields = array();
+	}
+
+
+
+	/**
+	 * return the _test_settings_fields property
+	 * @return array
+	 */
+	public function get_test_settings_fields() {
+		return $this->_test_settings_fields;
+	}
+
+
+
+
+	/**
+	 * This just returns any existing test settings that might be saved in the database
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public function get_existing_test_settings() {
+		$settings = get_option('ee_active_messengers', true);
+		return isset( $settings[$this->name]['test_settings'] ) ? $settings[$this->name]['test_settings'] : array();
+	}
+
+
+
+	/**
+	 * All this does is set the existing test settings (in the db) for the messenger
+	 *
+	 * @access public
+	 * @return bool 	success/fail
+	 */
+	public function set_existing_test_settings( $settings ) {
+		$existing = get_option('ee_active_messengers', true);
+		$existing[$this->name]['test_settings'] = $settings;
+		return update_option('ee_active_messengers', $existing);
+	}
+
+
 
 	/**
 	 * We just deliver the messages don't kill us!!  This method will need to be modified by child classes for whatever action is taken to actually send a message.  
