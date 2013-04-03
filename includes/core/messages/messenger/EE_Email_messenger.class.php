@@ -81,6 +81,10 @@ class EE_Email_messenger extends EE_messenger  {
 
 
 
+
+
+
+
 	/**
 	 * see abstract declaration in parent class for details
 	 *
@@ -137,6 +141,52 @@ class EE_Email_messenger extends EE_messenger  {
 		}
 		
 		return $url ? EVENT_ESPRESSO_PLUGINFULLURL . 'includes/core/' . $base : EE_CORE . $base;
+	}
+
+
+
+
+	/**
+	 * See parent for details
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function _set_test_settings_fields() {
+		$this->_test_settings_fields = array(
+			'to' => array(
+				'input' => 'text',
+				'label' => __('To', 'event_espresso'),
+				'type' => 'email',
+				'required' => TRUE,
+				'validation' => TRUE,
+				'css_class' => 'large-text',
+				'format' => '%s',
+				'default' => get_bloginfo('admin_email')
+				),
+			'from' => array(
+				'input' => 'hidden',
+				'label' => '',
+				'type' => 'string',
+				'required' => FALSE,
+				'validation' => FALSE,
+				'format' => '%s',
+				'value' => get_bloginfo('admin_email'),
+				'default' => '',
+				'css_class' => ''
+				),
+			'subject' => array(
+				'input' => 'hidden',
+				'label' => '',
+				'type' => 'string',
+				'required' => FALSE,
+				'validation' => FALSE,
+				'format' => '%s',
+				'value' => sprintf( __('Test email sent from %s', 'event_espresso'), get_bloginfo('name') ),
+				'default'=> '',
+				'css_class' => ''
+				)
+			);
 	}
 
 
@@ -271,6 +321,7 @@ class EE_Email_messenger extends EE_messenger  {
 	protected function _send_message() {
 		
 		$success = @wp_mail(html_entity_decode($this->_to), stripslashes_deep(html_entity_decode($this->_subject, ENT_QUOTES, "UTF-8")), $this->_body(), $this->_headers());
+		
 		return $success;
 
 	}
