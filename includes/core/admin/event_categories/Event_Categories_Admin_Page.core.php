@@ -183,7 +183,6 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 
 	//none of the below group are currently used for Event Categories
-	protected function _add_help_tabs() {}
 	protected function _add_feature_pointers() {}
 	public function load_scripts_styles() {}
 	public function admin_init() {}

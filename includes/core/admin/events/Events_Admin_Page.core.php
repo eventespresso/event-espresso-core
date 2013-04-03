@@ -162,7 +162,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _set_page_config() {
+
+						
 		$this->_page_config = array(
+		
 			'default' => array(
 				'nav' => array(
 					'label' => __('Overview', 'event_espresso'),
@@ -170,12 +173,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 					),
 				'list_table' => 'Events_Admin_List_Table'
 				),
-			'view_report' => array(
-				'nav' => array(
-					'label' => __('Report', 'event_espresso'),
-					'order' => 20
-					)
-				),
+				
+//			'view_report' => array(
+//				'nav' => array(
+//					'label' => __('Report', 'event_espresso'),
+//					'order' => 20
+//					)
+//				),
+
 			'import_events' => array(
 				'nav' => array(
 					'label' => __('Import', 'event_esprsso'),
@@ -183,6 +188,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
 				),
+				
 			'add_event' => array(
 				'nav' => array(
 					'label' => __('Add Event', 'event_espresso'),
@@ -191,6 +197,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array( '_publish_post_box', '_register_event_editor_meta_boxes', '_premium_event_editor_meta_boxes' )
 				),
+				
 			'edit_event' => array(
 				'nav' => array(
 					'label' => __('Edit Event', 'event_espresso'),
@@ -200,16 +207,28 @@ class Events_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array( '_publish_post_box', '_register_event_editor_meta_boxes', '_premium_event_editor_meta_boxes' )
 				),
+				
 			'default_event_settings' => array(
 				'nav' => array(
 					'label' => __('Default Settings', 'event_esprsso'),
 					'order' => 40
 					),
+				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' ),
 				'labels' => array(
 					'publishbox' => __('Update Settings', 'event_espresso')
 					),
-				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' )
+				'help_tabs' => array(
+					'events_expire_on_reg_end_date_help_tab' => array(
+						'title' => __('Events Expire on Reg End Date', 'event_espresso'),
+						'callback' => 'events_expire_on_reg_end_date_help_tab'
+						),
+					'default_payment_status_help_tab' => array(
+						'title' => __('Default Payment Status', 'event_espresso'),
+						'callback' => 'default_payment_status_help_tab'
+						)
+					)
 				)
+				
 			);
 	}
 
@@ -226,21 +245,31 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 
-
-	protected function _add_help_tabs() {
-		//todo
-	}
-
-
-
-
-
 	protected function _add_feature_pointers() {
 		//todo
 	}
 
 
 
+
+	/**
+	 * 		default_event_settings_help_tab
+	*		@access public
+	*		@return void
+	*/
+	public function default_event_settings_help_tab( $tab_name ) {
+		require_once( EVENTS_TEMPLATE_PATH . 'default_event_settings_help_tab.template.php' );
+		$template = call_user_func( $tab_name . '_html' );
+		espresso_display_template( $template, array() );
+	}
+	public function events_expire_on_reg_end_date_help_tab() { $this->default_event_settings_help_tab( __FUNCTION__ ); }
+	public function default_payment_status_help_tab() { $this->default_event_settings_help_tab( __FUNCTION__ ); }
+
+	
+
+
+
+	
 
 
 	public function load_scripts_styles() {
@@ -3803,6 +3832,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'default_event_settings' ) );
 				
 	}
+
 
 
 

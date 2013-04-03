@@ -164,7 +164,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_per_page_screen_option();
 	}
 
-	protected function _add_help_tabs() {}
 	protected function _add_feature_pointers() {}
 	public function load_scripts_styles() {
 		//styles

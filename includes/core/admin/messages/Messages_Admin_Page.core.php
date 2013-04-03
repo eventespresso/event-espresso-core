@@ -225,7 +225,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'list_table' => 'Messages_Template_List_Table',
 				'help_tabs' => array_merge( array(
-						'about-overview' => array(
+						'messages_overview' => array(
 							'title' => __('About the Overview', 'event_espresso'),
 							'callback' => 'messages_overview_help_tab'
 							),
@@ -255,9 +255,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'metaboxes' => array('_publish_post_box', '_register_edit_meta_boxes'),
 				'has_metaboxes' => TRUE,
 				'help_tabs' => array_merge( array(
-						'about-editor' => array(
+						'edit_message_template' => array(
 							'title' => __('About Template Editor', 'event_espresso'),
-							'callback' => 'messages_template_editor_help_tab'
+							'callback' => 'edit_message_template_help_tab'
 							)
 						), $default_msg_help_tabs
 					)
@@ -269,9 +269,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'persistent' => FALSE
 					),
 				'help_tabs' => array_merge( array(
-						'about-preview' => array(
+						'preview_message' => array(
 							'title' => __('About Previews', 'event_espresso'),
-							'callback' => 'messages_preview_help_tab'
+							'callback' => 'preview_message_help_tab'
 							)
 						), $default_msg_help_tabs
 					)
@@ -283,9 +283,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array('_messages_settings_metaboxes'),
 				'help_tabs' => array_merge( array(
-						'about-settings' => array(
+						'settings' => array(
 							'title' => __('About Message Settings', 'event_espresso'),
-							'callback' => 'messages_settings_help_tab'
+							'callback' => 'settings_help_tab'
 							)
 						), $default_msg_help_tabs
 					)
@@ -338,7 +338,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	}
 
 
-
 	public function messengers_help_tab() {
 		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_messenger_help_tab.template.php';
 		espresso_display_template( $templatepath, array());
@@ -356,13 +355,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		espresso_display_template( $templatepath, array());
 	}
 
+
 	public function message_templates_help_tab() {
 		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_message_templates_help_tab.template.php';
 		espresso_display_template( $templatepath, array());
 	}
 
 
-	public function messages_template_editor_help_tab() {
+	public function edit_message_template_help_tab() {
 		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_templates_editor_help_tab.template.php';
 		$args['img1'] = '<img src="' . EE_MSG_ASSETS_URL . 'images/editor.png' . '" alt="' . __('Editor Title', 'event_espresso') . '" />';
 		$args['img2'] = '<img src="' . EE_MSG_ASSETS_URL . 'images/switch-context.png' . '" alt="' . __('Context Switcher and Preview', 'event_espresso') . '" />';
@@ -373,9 +373,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	}
 
 
+	public function preview_message_help_tab() {
+		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_preview_help_tab.template.php';
+		espresso_display_template( $templatepath, array());
+	}
 
 
-	public function messages_settings_help_tab() {
+	public function settings_help_tab() {
 		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_settings_help_tab.template.php';
 		$args['img1'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'images/email-tab-active.png' . '" alt="' . __('Active Email Tab', 'event_espresso') . '" />';
 		$args['img2'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'images/email-tab-inactive.png' . '" alt="' . __('Inactive Email Tab', 'event_espresso') . '" />';
@@ -384,13 +388,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		espresso_display_template( $templatepath, $args);
 	}
 
-
-
-
-	public function messages_preview_help_tab() {
-		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_preview_help_tab.template.php';
-		espresso_display_template( $templatepath, array());
-	}
 
 
 

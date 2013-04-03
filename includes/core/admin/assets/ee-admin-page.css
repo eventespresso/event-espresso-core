@@ -146,6 +146,17 @@ table .espresso-radio-btn-options-ul .small-lbl,
 .bigger-text { font-size:1.5em; line-height:2em; }
 .huge-text { font-size:2em; line-height:2.4em; }
 
+
+.espresso-help-tab-lnk.help_img {
+	display: inline-block; position: relative; top:3px; width: 16px; height: 16px; margin: 0 0 0 .25em;
+	background: transparent url(../../../../images/help.png) bottom left no-repeat; text-indent:-999em; overflow: hidden;
+}
+.espresso-help-tab-lnk.help_img:hover { background-position: top left; }
+.espresso-help-tab-lnk.help_img.help2 { background-image: url(../../../../images/help2.png); }
+.espresso-help-tab-lnk.help_img.help2 { background-image: url(../../../../images/help2.png); }
+
+
+
 /*.medium-text  { width: 50%; }*/
 
 .display-the-hidden { float:right; cursor:pointer; }
@@ -172,7 +183,7 @@ table .espresso-radio-btn-options-ul .small-lbl,
 
 #adminmenuwrap { z-index:100; }
 
-.ee-pop-help {
+/*.ee-pop-help {
 	position:absolute; top:50px; left:25%; width:75%; height:auto; padding:3em 4em 2em; z-index:9999;
 	background:#fff; border:1px solid #ddd; border-radius:5px;
 }
@@ -183,7 +194,7 @@ table .espresso-radio-btn-options-ul .small-lbl,
 	margin-left: 3px;
 	width: 26px;
 	height: 26px;
-}
+}*/
 
 .validate-error, input.validate-error {
 	border-color: red;
