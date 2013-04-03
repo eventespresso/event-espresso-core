@@ -441,7 +441,7 @@ function espresso_init() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/time_date.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');	
 
-	//do_action('action_hook_espresso_coupon_codes');
+	do_action('action_hook_espresso_pue_update');
 }
 
 
