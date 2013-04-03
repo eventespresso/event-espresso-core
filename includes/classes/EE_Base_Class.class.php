@@ -430,7 +430,6 @@ abstract class EE_Base_Class {
 				$save_cols_n_values[$fieldName] = $this->$attributeName;
 			}	
 		}
-		echo "eebaseclass save 433, cols:";var_dump($save_cols_n_values);
 		if ( $save_cols_n_values[$this->_get_primary_key_name()]!=null ){
 			$results = $this->_get_model()->update ( $save_cols_n_values, array($this->_get_primary_key_name()=>$this->get_primary_key()) );
 		} else {
