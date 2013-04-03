@@ -196,6 +196,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	protected function _espresso_page_settings() {
 	
 		global $org_options;
+		$this->_transient_garbage_collection();
 		$this->_template_args['values'] = $this->_yes_no_values;
 		$this->_template_args['event_ssl_active'] = isset( $org_options['event_ssl_active'] ) && ! empty( $org_options['event_ssl_active'] ) ? $org_options['event_ssl_active'] : FALSE;
 
