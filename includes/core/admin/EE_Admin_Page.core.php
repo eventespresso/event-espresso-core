@@ -2379,6 +2379,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$route = !$route ? $this->_req_action : $route;
 		$transient = $notices ? 'rte_n_tx_' . $route . '_' . $user_id : 'rte_tx_' . $route . '_' . $user_id;
 		$data = get_transient( $transient );
+		//delete transient after retrieval (just in case it hasn't expired);
+		delete_transient( $transient );
 		return $notices ? $data['notices'] : $data;
 	}
 
