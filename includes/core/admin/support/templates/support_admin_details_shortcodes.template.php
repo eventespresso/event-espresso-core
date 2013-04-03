@@ -4,6 +4,7 @@
 		<br />
 		<a href="http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/" target="_blank">http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/</a></p>
 	<hr />
+	
 	<div class="shortcode-box">
 		<h4>
 			<?php _e('Single Events', 'event_espresso'); ?>
@@ -13,6 +14,8 @@
 		</p>
 		<p ><span class="highlight">[SINGLEEVENT single_event_id="your_event_identifier"]</span></p>
 	</div>
+
+<?php /* ?>	
 	<div class="shortcode-box">
 		<h4>
 			<?php _e('Add Events to Cart', 'event_espresso'); ?>
@@ -31,6 +34,8 @@
 <?php _e('(Same as above, but uses the event_id paramter and can be added to a page or post.)', 'event_espresso'); ?>
 		</p>
 	</div>
+<?php */ ?>	
+	
 	<div class="shortcode-box">
 		<h4>
 			<?php _e('Event List', 'event_espresso'); ?>
@@ -70,6 +75,7 @@
 <?php _e('The [EVENT_LIST] shortcode should not be used as a replacement for the [ESPRESSO_EVENTS] shortcode. Replacing the [ESPRESSO_EVENTS] shortcode will break your registration pages.', 'event_espresso'); ?>
 		</p>
 	</div>
+	
 	<div class="shortcode-box">
 		<h4>
 <?php _e('Attendee Listings', 'event_espresso'); ?>
@@ -89,6 +95,8 @@
 <?php _e('For more information about the attendee listing shortcodes and customizations. Please view the <a href="http://eventespresso.com/wiki/shortcodes-template-variables/">Attendee Listing Shortcodes</a> page.', 'event_espresso'); ?>
 		</p>
 	</div>
+
+<?php /* ?>	
 	<div class="shortcode-box">
 		<h4>
 			<?php _e('Venue Shortcodes', 'event_espresso'); ?>
@@ -160,6 +168,9 @@
 		</dl> 
 
 	</div>
+<?php */ ?>	
+
+<?php /* ?>	
 	<div class="shortcode-box">
 		<h4>
 			<?php _e('Staff Shortcodes', 'event_espresso'); ?>
@@ -209,6 +220,7 @@
 			<li>show_description = show the description? (true|false default true)</li>
 		</ul>
 	</div>
+	
 	<div class="shortcode-box">
 		<h4><?php _e('Calendar Shortcodes', 'event_espresso'); ?></h4>
 		<ul>
@@ -219,9 +231,12 @@
 			<li><span class="highlight">[ESPRESSO_CALENDAR cal_view="month"] (Available parameters: month, basicWeek, basicDay, agendaWeek, agendaDay)</span></li>
 		</ul>
 	</div>
+<?php */ ?>
+	
 	<div class="shortcode-box">
 		<h4><?php _e('Category Shortcodes', 'event_espresso'); ?></h4>
 		<p><span class="highlight">[EVENT_ESPRESSO_CATEGORY event_category_id="your_category_indentifier"]</span></p>
 	</div>
+	
 </div>
 <!-- / .padding --> 
