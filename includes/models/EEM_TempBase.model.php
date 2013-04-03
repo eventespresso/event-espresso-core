@@ -82,7 +82,7 @@ abstract class EEM_TempBase extends EEM_Base{
 		$class=new ReflectionClass($className);
 		//call the constructor of the EE_Base_Class, passing it an array of all the fields, except
 		//the ID, because we set that later
-		$classInstance=$class->newInstanceArgs($cols_n_values);
+		$classInstance=$class->newInstanceArgs(array($cols_n_values));
 		
 		/* @var $classInstance EE_Base_Class */
 		//now set the ID on this new EE_Base_Class instance, so we realize it's 
@@ -163,9 +163,11 @@ abstract class EEM_TempBase extends EEM_Base{
 				case 'plaintext':
 				case 'simplehtml':
 				case 'fullhtml':
+				case 'all_caps_key':
 				case 'primary_text_key':
 				case 'foreign_text_key':
 				case 'enum':
+				case 'email':
 				case 'serialized_text':
 				case 'date':
 				
@@ -765,7 +767,7 @@ class EE_Model_Field{
 	 * all the types of ModelFields which are allowed
 	 * @var type 
 	 */
-	private $_allowed_types=array('primary_key','primary_text_key','foreign_key','foreign_text_key','int','float','date', 'plaintext','simplehtml','fullhtml','enum','bool','deleted_flag','serialized_text');
+	private $_allowed_types=array('primary_key','primary_text_key','foreign_key','foreign_text_key','int','float','date', 'plaintext','simplehtml','fullhtml','email','all_caps_key', 'enum','bool','deleted_flag','serialized_text');
 	
 	
 	
@@ -851,11 +853,17 @@ class EE_Model_Field{
 					
 	 *				fullhtml (allows all strings, and does not filter HTML tags at all)
 	 * 
+	 *				email (string, but email-like)
+	 * 
+	 *				all_caps_key (allows only capital-lettered keys)
+	 * 
 	 *				serialized_text (an array that gets serialized into a string when setting and saving ot db, and unserialized when retrieved from db)
 	 * 
 	 *				enum (allows only a limited set of values. $allowedEnumValues MUST be set for this type)
 	 * 
 	 *				bool (boolean, only allows 1 or 0)
+	 * 
+	 *				
 	 * 
 	 *				deleted_flag (special bool used to indicate whehter a modelhas been deleted or not)
 	 * @param boolean $nullable whehter this field should be allowed to be null or not. If not, 
@@ -912,31 +920,7 @@ class EE_Model_Field{
 	
 	
 	/**
-	 * Returns teh type of the field. Allowed values include: 
-	 *				
-	 *				primary_key (only allows positive integer, and is the primary key of the model)
-	 *												
-	 *				primary_text_key (allows strings, and is the primary key of the model),
-	 *						
-					foreign_key (only allows positive integers, and is the primary key of a different Model. $class MUST be set for this type)
-	 * 
-	 *				foreign_text_key (allows strings, and is the primary key of a differnet model. $class MUST be set for this type)
-					
-	 *				int (only allows integers)
-					
-	 *				float (only allows floats)
-					
-	 *				plaintext (allows strings, but filters out all HTML tags)
-					
-	 *				simplehtml (like plaintext, but allows a few basic HTML tags)
-					
-	 *				fullhtml (allows all strings, and does not filter HTML tags at all)
-	 * 
-	 *				enum (allows only a limited set of values. $allowedEnumValues MUST be set for this type)
-	 * 
-	 *				bool (allows only true or false)
-	 * 
-	 *				deleted_flag (allows true or false)
+	 * Returns teh type of the field. see EE_Model_Field::_allowed_types for allowed strings
 	 * @return string
 	 */
 	public function type(){

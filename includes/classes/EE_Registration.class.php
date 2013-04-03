@@ -266,7 +266,7 @@ class EE_Registration extends EE_Base_Class {
 	*  Registration constructor
 	*
 	* @access 		public
-	* @param 		int 				$EVT_ID 							Event ID
+	* @param 		int/array 				$EVT_ID 							Event ID or array of column-values, where keys are column names
 	* @param 		int 				$ATT_ID 							Attendee ID
 	* @param 		int 				$TXN_ID 							Transaction ID
 	* @param 		int 				$DTT_ID 							Transaction ID
@@ -301,24 +301,34 @@ class EE_Registration extends EE_Base_Class {
 													$REG_att_checked_in = NULL, 
 													$REG_ID = NULL 
 												) {
-												
+		if(is_array($EVT_ID)){
+			parent::__construct($EVT_ID);
+			return;
+		}
+		$reflector = new ReflectionMethod($this,'__construct');	
+		$arrayForParent=array();
+		foreach($reflector->getParameters() as $param){
+			$paramName=$param->name;
+			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
+		}
+		parent::__construct($arrayForParent);											
 		// REG_ID 	EVT_ID 	ATT_ID 	TXN_ID 	DTT_ID 	PRC_ID 	STS_ID 	REG_date 	REG_session 	REG_code 	REG_count 	REG_group_size 	REG_att_is_going 	REG_att_checked_in
-		$this->_REG_ID 						= $REG_ID;
-		$this->_EVT_ID 						= $EVT_ID;
-		$this->_ATT_ID 						= $ATT_ID;
-		$this->_TXN_ID 						= $TXN_ID;
-		$this->_DTT_ID 						= $DTT_ID;
-		$this->_PRC_ID 						= $PRC_ID;
-		$this->_STS_ID 						= $STS_ID;
-		$this->_REG_date 					= $REG_date;
-		$this->_REG_final_price			= $REG_final_price;
-		$this->_REG_session 				= $REG_session;
-		$this->_REG_code					= $REG_code;
-		$this->_REG_url_link				= $REG_url_link;
-		$this->_REG_count 					= $REG_count;
-		$this->_REG_group_size 		= $REG_group_size;
-		$this->_REG_att_is_going 		= $REG_att_is_going;
-		$this->_REG_att_checked_in	= $REG_att_checked_in;
+//		$this->_REG_ID 						= $REG_ID;
+//		$this->_EVT_ID 						= $EVT_ID;
+//		$this->_ATT_ID 						= $ATT_ID;
+//		$this->_TXN_ID 						= $TXN_ID;
+//		$this->_DTT_ID 						= $DTT_ID;
+//		$this->_PRC_ID 						= $PRC_ID;
+//		$this->_STS_ID 						= $STS_ID;
+//		$this->_REG_date 					= $REG_date;
+//		$this->_REG_final_price			= $REG_final_price;
+//		$this->_REG_session 				= $REG_session;
+//		$this->_REG_code					= $REG_code;
+//		$this->_REG_url_link				= $REG_url_link;
+//		$this->_REG_count 					= $REG_count;
+//		$this->_REG_group_size 		= $REG_group_size;
+//		$this->_REG_att_is_going 		= $REG_att_is_going;
+//		$this->_REG_att_checked_in	= $REG_att_checked_in;
 	}
 
 

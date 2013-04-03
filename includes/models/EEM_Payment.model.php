@@ -98,7 +98,7 @@ class EEM_Payment extends EEM_TempBase {
 			'TXN_ID'=>				new EE_Model_Field('Tranaction ID related to payment', 'foreign_key', false, null, null, 'Transaction'),
 			'STS_ID'=>				new EE_Model_Field('Status of payment', 'foreign_text_key', false, EEM_Payment::status_id_failed,null,'Status'),
 			'PAY_timestamp'=>		new EE_Model_Field('Unix Timestamp of when Payment occured','date',false,time()),
-			'PAY_method'=>			new EE_Model_Field('String stating method of payment', 'plaintext', true,'CART'),
+			'PAY_method'=>			new EE_Model_Field('String stating method of payment', 'all_caps_key', true,'CART'),
 			'PAY_amount'=>			new EE_Model_Field('Amount this payment is for', 'float', false, 0),
 			'PAY_gateway'=>			new EE_Model_Field('Gateway name used for payment', 'plaintext', true, 'PayPal_Standard'),
 			'PAY_gateway_response'=>new EE_Model_Field('Response text from gateway that users would want to see', 'simplehtml', true,''),

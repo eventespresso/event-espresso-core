@@ -85,8 +85,8 @@ class EEM_Registration extends EEM_TempBase {
 			'REG_session'=>new EE_Model_Field('Session of Original Registration','plaintext',false),
 			'REG_code'=>new EE_Model_Field('Unique Registration Code', 'plaintext', true, ''),
 			'REG_url_link'=>new EE_Model_Field('URL Link of Registration','plaintext',true,''),
-			'REG_count'=>new EE_Model_Field('Flag indicating whether Registration is Unique','bool',false,false),
-			'REG_group_size'=>new EE_Model_Field('Flag indicating whether is part of a group registration', 'bool', false, false),
+			'REG_count'=>new EE_Model_Field('Flag indicating whether Registration is Unique','int',false,1),
+			'REG_group_size'=>new EE_Model_Field('Flag indicating whether is part of a group registration', 'int', false, 1),
 			'REG_att_is_going'=>new EE_Model_Field('Flag indicating if Person is going', 'bool', false, true),
 			'REG_att_checked_in'=>new EE_Model_Field('Flag indicating whether attendee has checked in','bool',false,false)				
 			);

@@ -186,7 +186,7 @@ class EE_Attendee extends EE_Base_Class{
 	*  Attendee constructor
 	*
 	* @access 		public
-	* @param 		string 				$ATT_fname				Attendee First Name
+	* @param 		string/array 				$ATT_fname				Attendee First Name, or array of all field values, keys being column names
 	* @param 		string				$ATT_lname  				Attendee Last Name
 	* @param 		string 				$ATT_address  			Attendee Address
 	* @param 		string				$ATT_address2 			Attendee Address2
@@ -206,22 +206,33 @@ class EE_Attendee extends EE_Base_Class{
 		/* @todo consolidate this logic by using constructor like EE_Answer, and ensuring each of EEM_Attendee's _field_settings has a type that performs the logic
 		 * of removing html tags, encoding htmlentities, etc.
 		 */
-		$this->_ATT_ID 					= absint( $ATT_ID );
-		$this->_ATT_fname 			= 	htmlentities( wp_strip_all_tags( $ATT_fname ), ENT_QUOTES, 'UTF-8' ); 
-		$this->_ATT_lname 			= htmlentities( wp_strip_all_tags( $ATT_lname ), ENT_QUOTES, 'UTF-8' );
-		$this->_ATT_address			= htmlentities( wp_strip_all_tags( $ATT_address ), ENT_QUOTES, 'UTF-8' );
-		$this->_ATT_address2		= htmlentities( wp_strip_all_tags( $ATT_address2 ), ENT_QUOTES, 'UTF-8' );
-		$this->_ATT_city				= htmlentities( wp_strip_all_tags( $ATT_city ), ENT_QUOTES, 'UTF-8' );
-		$this->_STA_ID					= wp_strip_all_tags( $STA_ID );
-		$this->_CNT_ISO				= wp_strip_all_tags( $CNT_ISO );
-		$this->_ATT_zip					= wp_strip_all_tags( $ATT_zip );
-		$this->_ATT_email				= sanitize_email( $ATT_email );
-		$this->_ATT_phone			= htmlentities( wp_strip_all_tags( $ATT_phone ), ENT_QUOTES, 'UTF-8' );
-		$this->_ATT_social				= htmlentities( wp_strip_all_tags( $ATT_social ), ENT_QUOTES, 'UTF-8' );
-		$this->_ATT_comments	= htmlentities( wp_strip_all_tags( $ATT_comments ), ENT_QUOTES, 'UTF-8' );
-		$this->_ATT_notes				= htmlentities( wp_strip_all_tags( $ATT_notes ), ENT_QUOTES, 'UTF-8' );
-		$this->_ATT_deleted			= absint( $ATT_deleted ) === 1 ? TRUE : FALSE;
-		parent::__construct();
+		if(is_array($ATT_fname)){
+			parent::__construct($ATT_fname);
+			return;
+		}
+		$reflector = new ReflectionMethod($this,'__construct');	
+		$arrayForParent=array();
+		foreach($reflector->getParameters() as $param){
+			$paramName=$param->name;
+			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
+		}
+		parent::__construct($arrayForParent);
+//		$this->_ATT_ID 					= absint( $ATT_ID );
+//		$this->_ATT_fname 			= 	htmlentities( wp_strip_all_tags( $ATT_fname ), ENT_QUOTES, 'UTF-8' ); 
+//		$this->_ATT_lname 			= htmlentities( wp_strip_all_tags( $ATT_lname ), ENT_QUOTES, 'UTF-8' );
+//		$this->_ATT_address			= htmlentities( wp_strip_all_tags( $ATT_address ), ENT_QUOTES, 'UTF-8' );
+//		$this->_ATT_address2		= htmlentities( wp_strip_all_tags( $ATT_address2 ), ENT_QUOTES, 'UTF-8' );
+//		$this->_ATT_city				= htmlentities( wp_strip_all_tags( $ATT_city ), ENT_QUOTES, 'UTF-8' );
+//		$this->_STA_ID					= wp_strip_all_tags( $STA_ID );
+//		$this->_CNT_ISO				= wp_strip_all_tags( $CNT_ISO );
+//		$this->_ATT_zip					= wp_strip_all_tags( $ATT_zip );
+//		$this->_ATT_email				= sanitize_email( $ATT_email );
+//		$this->_ATT_phone			= htmlentities( wp_strip_all_tags( $ATT_phone ), ENT_QUOTES, 'UTF-8' );
+//		$this->_ATT_social				= htmlentities( wp_strip_all_tags( $ATT_social ), ENT_QUOTES, 'UTF-8' );
+//		$this->_ATT_comments	= htmlentities( wp_strip_all_tags( $ATT_comments ), ENT_QUOTES, 'UTF-8' );
+//		$this->_ATT_notes				= htmlentities( wp_strip_all_tags( $ATT_notes ), ENT_QUOTES, 'UTF-8' );
+//		$this->_ATT_deleted			= absint( $ATT_deleted ) === 1 ? TRUE : FALSE;
+//		parent::__construct();
 	}
 
 
@@ -467,14 +478,14 @@ class EE_Attendee extends EE_Base_Class{
 	*		@param		string		$comments
 	*/	
 	public function set_comments( $comments = FALSE ) {
-		
-		if ( ! $comments ) {
+		$this->set('ATT_comments',$comments);
+		/*if ( ! $comments ) {
 			$msg = __( 'No comments were supplied.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		$this->_ATT_phone = wp_strip_all_tags( $comments );
-		return TRUE;
+		return TRUE;*/
 	}
 
 
