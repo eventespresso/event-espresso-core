@@ -439,7 +439,6 @@ function espresso_init() {
 	$caffeinated = apply_filters( 'filter_hook_espresso_systems_check', $caffeinated );
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . "functions/main.php");
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/time_date.php');
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/actions.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');	
 
 	//do_action('action_hook_espresso_coupon_codes');
