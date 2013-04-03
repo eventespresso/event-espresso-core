@@ -380,7 +380,7 @@ class EE_Transaction extends EE_Base_Class{
 				'STS_ID' 						=> $this->_STS_ID,
 				'TXN_details' 				=> !is_serialized( $this->_TXN_details) ?maybe_serialize( $this->_TXN_details ) : $this->_TXN_details,
 				'TXN_tax_data' 			=> !is_serialized( $this->_TXN_tax_data) ? maybe_serialize( $this->_TXN_tax_data ) : $this->_TXN_tax_data,
-				'TXN_session_data'	=> !is_serialized( $this->_TXN_session_data ) ? maybe_serialize( $this->_TXN_session_data ) : $this->_TXN_session_data,
+				'TXN_session_data'		=> !is_serialized( $this->_TXN_session_data ) ? maybe_serialize( $this->_TXN_session_data ) : $this->_TXN_session_data,
 				'TXN_hash_salt' 			=> $this->_TXN_hash_salt
 		);
 

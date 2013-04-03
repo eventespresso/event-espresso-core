@@ -1147,7 +1147,9 @@ class EE_Single_Page_Checkout {
 			}
 			// start the transaction record
 			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Transaction.class.php' );
+			// totals over 0 initially get set to Incomlete, whereas Free Events get set to complete
 			$txn_status = $grand_total > 0 ? 'TIN' : 'TCM';
+			//check for existing transaction in the session
 			$transaction_exists = array_key_exists('transaction',$session) && !empty($session['transaction']);
 			if($transaction_exists){
 				$transaction = $session['transaction'];
@@ -1155,7 +1157,19 @@ class EE_Single_Page_Checkout {
 				//delete all old registrations on this transaction, because we're going to re-add them according to the updated data in the session now
 				$REG->delete(array('TXN_ID'=>$transaction->ID()));
 			}else{
-				$transaction = new EE_Transaction( time(), $grand_total, 0, $txn_status, NULL, $session, NULL, array('tax_totals'=>$session['tax_totals'],'taxes'=>$session['taxes']) );
+				$transaction = new EE_Transaction( 
+					time(), 
+					$grand_total, 
+					0, 
+					$txn_status, 
+					NULL, 
+					$session, 
+					NULL, 
+					array(
+						'tax_totals'=>$session['tax_totals'],
+						'taxes'=>$session['taxes']
+					) 
+				);
 				$transaction->save();
 			}
 

@@ -624,7 +624,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			
 			//printr( $this->_registration, '$this->_registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
-			$this->_session = maybe_unserialize( maybe_unserialize( $this->_registration->TXN_session_data ));
+			$this->_session = maybe_unserialize( unserialize( $this->_registration->TXN_session_data ));
 
 			$title = __( ucwords( str_replace( '_', ' ', $this->_req_action )), 'event_espresso' );
 			// add PRC_ID to title if editing 
@@ -776,6 +776,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 		global $wpdb, $org_options;
 
+		//printr( $this->_session, '$this->_session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// process items in cart
 		$cart_items = $this->_session['cart']['REG']['items'];

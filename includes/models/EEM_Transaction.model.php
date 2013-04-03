@@ -78,19 +78,19 @@ class EEM_Transaction extends EEM_TempBase {
 			'TXN_tax_data'			=> '%s'	
 		);*/
 		$this->_fields_settings = array(
-			'TXN_ID' =>			new EE_Model_Field('Transaction ID', 'primary_key', false),
-			'TXN_timestamp' =>	new EE_Model_Field('Transaction Teimstamp', 'int', false,time()),
-			'TXN_total' =>		new EE_Model_Field('Total amount due for this transaction', 'float', true,0),
-			'TXN_paid' =>		new EE_Model_Field('Total amoutn paid so far', 'float', false,0),
-			'STS_ID' =>			new EE_Model_Field('Status of Transaction.','foreign_text_key',false,  EEM_Transaction::incomplete_status_code,null,'Status'),
-			'TXN_details' =>	new EE_Model_Field('Mishmash of Info about the Transaction', 'serialized_text', true, null),
-			'TXN_tax_data' =>	new EE_Model_Field('Mishmash of tax data', 'serialized_text', true, null),
-			'TXN_session_data'=>new EE_Model_Field('Mishmash of session data', 'serialized_text', true, null),
-			'TXN_hash_salt' =>	new EE_Model_Field('Who knows', 'plaintext', true,null)
+			'TXN_ID' 			=> new EE_Model_Field('Transaction ID', 'primary_key', false),
+			'TXN_timestamp' 	=> new EE_Model_Field('Transaction Teimstamp', 'int', false,time()),
+			'TXN_total' 		=> new EE_Model_Field('Total amount due for this transaction', 'float', true,0),
+			'TXN_paid' 			=> new EE_Model_Field('Total amoutn paid so far', 'float', false,0),
+			'STS_ID' 			=> new EE_Model_Field('Status of Transaction.','foreign_text_key',false,  EEM_Transaction::incomplete_status_code,null,'Status'),
+			'TXN_details' 		=> new EE_Model_Field('Serialized array of Transaction details as returned from the Payment Gateway', 'serialized_text', true, null),
+			'TXN_tax_data' 		=> new EE_Model_Field('Serialized array of tax data', 'serialized_text', true, null),
+			'TXN_session_data'	=> new EE_Model_Field('Serialized array of session data', 'serialized_text', true, null),
+			'TXN_hash_salt' 	=> new EE_Model_Field('Payment Gateway hash salt value. Possibly deprecated.', 'plaintext', true,null)
 		);
 		$this->_related_models = array(
-			'Payments' =>		new EE_Model_Relation('hasMany', 'Payment', 'TXN_ID'),
-			'Registrations' =>	new EE_Model_Relation('hasMany', 'Registration', 'TXN_ID'),
+			'Payments' 		=> new EE_Model_Relation('hasMany', 'Payment', 'TXN_ID'),
+			'Registrations' => new EE_Model_Relation('hasMany', 'Registration', 'TXN_ID'),
 			//'Status' =>			new EE_Model_Relation('belongsTo','Status','STS_ID')
 		);
 		parent::__construct();
