@@ -676,8 +676,8 @@ abstract class EE_Gateway {
 				'raw_response' => $payment_details,
 				'amount' => $payment->amount(),
 				'method' => 'CART',
-				'auth_code' => array_key_exists('payer_id',$payment_details) ? $payment_details['payer_id'] : '',
-				'md5_hash' => array_key_exists('verify_sign',$payment_details) ? $payment_details['verify_sign'] : '',
+				'auth_code' => ($payment_details && array_key_exists('payer_id',$payment_details)) ? $payment_details['payer_id'] : '',
+				'md5_hash' => ($payment_details && array_key_exists('verify_sign',$payment_details)) ? $payment_details['verify_sign'] : '',
 				//'invoice_number' => sanitize_text_field($_POST['invoice_id']),
 				//'transaction_id' => sanitize_text_field($_POST['ipn_track_id'])
 			);
