@@ -1682,11 +1682,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * @return void 
 	 */
 	protected function _premium_event_editor_meta_boxes() {
-		global $org_options;
+		global $org_options, $caffeinated;
 		$this->_set_event_object();
 
-		add_meta_box('espresso_event_editor_event_meta', __('Event Meta', 'event_espresso'), array( $this, 'event_meta_metabox'), $this->_current_screen->id, 'advanced', 'high');
-
+		if ( $caffeniated ) {
+			add_meta_box('espresso_event_editor_event_meta', __('Event Meta', 'event_espresso'), array( $this, 'event_meta_metabox'), $this->_current_screen->id, 'advanced', 'high');
+		}
+		
 		//add_meta_box('espresso_event_editor_event_post', __('Create a Post', 'event_espresso'), array( $this, 'event_post_metabox'), $this->_current_screen->id, 'advanced', 'core');
 
 		add_meta_box('espresso_event_editor_event_options', __('Event Registration Options', 'event_espresso'), array( $this, 'registration_options_meta_box' ), $this->_current_screen->id, 'side', 'high');
@@ -1710,9 +1712,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 	public function event_meta_metabox() {
-		global $wpdb, $org_options;
+		global $wpdb, $org_options, $caffeinated;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $caffeinated;
+
 		if ($caffeinated != true)
 			return;
 

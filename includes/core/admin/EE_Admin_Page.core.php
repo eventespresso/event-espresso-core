@@ -2379,7 +2379,31 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$route = !$route ? $this->_req_action : $route;
 		$transient = $notices ? 'rte_n_tx_' . $route . '_' . $user_id : 'rte_tx_' . $route . '_' . $user_id;
 		$data = get_transient( $transient );
+		//delete transient after retrieval (just in case it hasn't expired);
+		delete_transient( $transient );
 		return $notices ? $data['notices'] : $data;
+	}
+
+
+
+
+	/**
+	 * The purpose of this method is just to run garbage collection on any EE transients that might have expired but would not be called later.
+	 *
+	 * This will be assigned to run on a specific EE Admin page. (place the method in the default route callback on the EE_Admin page you want it run.)
+	 * @return void
+	 */
+	protected function _transient_garbage_collection() {
+		global $wpdb;
+
+		//retrieve all existing transients
+		$query = "SELECT option_name FROM $wpdb->options WHERE option_name LIKE '%rte_tx_%' OR option_name LIKE '%rte_n_tx_%'";
+		if ( $results = $wpdb->get_results( $query ) ) {
+			foreach ( $results as $result ) {
+				$transient = str_replace( '_transient_', '', $result->option_name );
+				get_transient( $transient );
+			}
+		}
 	}
 
 

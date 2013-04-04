@@ -86,40 +86,52 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
+		
 			'default' => '_overview_list_table',
+			
 			'edit_category' => array(
 				'func' => '_category_details',
 				'args' => array('edit')
 				),
+
 			'add_category' => array(
 				'func' => '_category_details',
 				'args' => array('add')
 				),
+
 			'delete_categories' => array(
 				'func' => '_delete_categories', 
 				'noheader' => TRUE 
 				),
+
 			'delete_category' => array(
 				'func' => '_delete_categories', 
 				'noheader' => TRUE
 				),
+
 			'insert_category' => array(
 				'func' => '_insert_or_update_category',
 				'args' => array('new_category' => TRUE),
 				'noheader' => TRUE
 				),
+
 			'update_category' => array(
 				'func' => '_insert_or_update_category',
 				'args' => array('new_category' => FALSE),
 				'noheader' => TRUE
 				),
+
 			'export_categories' => array(
 				'func' => '_categories_export',
 				'noheader' => TRUE
 				),
+
 			'import_categories' => '_import_categories',
+
 			'import' => '_import_categories'
+
 		);
+
 	}
 
 
@@ -127,6 +139,7 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_config() {
 		$this->_page_config = array(
+		
 			'default' => array(
 				'nav' => array(
 					'label' => __('Overview', 'event_espresso'),
@@ -135,13 +148,21 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 				'list_table' => 'Event_Categories_Admin_List_Table',
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box'),
 				),
+
 			'add_category' => array(
 				'nav' => array(
 					'label' => __('Add Category', 'event_espresso'),
 					'order' => 5,
 					'persistent' => false),
-				'metaboxes' => array('_publish_post_box')
+				'metaboxes' => array('_publish_post_box'),
+				'help_tabs' => array(
+					'unique_id_help_tab' => array(
+						'title' => __('Unique ID', 'event_espresso'),
+						'callback' => 'unique_id_help_tab'
+						)
+					)
 				),
+
 			'edit_category' => array(
 				'nav' => array(
 					'label' => __('Edit Category', 'event_espresso'),
@@ -151,6 +172,7 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array('_publish_post_box')
 				),
+
 			'import_categories' => array(
 				'nav' => array(
 					'label' => __('Import', 'event_espresso'),
@@ -158,7 +180,9 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
 				)
+
 		);
+		
 	}
 
 
@@ -289,7 +313,7 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 				<tr>
 					<th><label for="cat_id">
 							<?php _e('Unique ID', 'event_espresso'); ?>
-							<?php do_action('action_hook_espresso_help', 'unique_id_info'); ?>
+							<?php do_action('action_hook_espresso_help', 'unique_id_help_tab'); ?>
 						</label></th>
 					<td><input id="cat_id"  type="text" name="category_identifier" /></td>
 				</tr>
@@ -325,15 +349,26 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 		</table>
 				
 		<div id="unique_id_info" style="display:none">
-			<h2><?php _e('Unique Category Identifier', 'event_espresso'); ?></h2>
-			<p><?php _e('This should be a unique identifier for the category. Example: "category1" (without qoutes.)', 'event_espresso'); ?></p>
-			<p>The<?php _e(' unique ID can also be used in individual pages using the', 'event_espresso'); ?>  	[EVENT_ESPRESSO_CATEGORY event_category_id="category_identifier"] <?php _e('shortcode', 'event_espresso'); ?>.</p>
+
 		</div>	
 		
 		<?php 
 		$content = ob_get_contents();
 		ob_end_clean();
 		return $content;
+	}
+
+
+
+
+
+
+	public function unique_id_help_tab() {
+		?>		
+			<h2><?php _e('Unique Category Identifier', 'event_espresso'); ?></h2>
+			<p><?php _e('This should be a unique identifier for the category. Example: "category1" (without qoutes.)', 'event_espresso'); ?></p>
+			<p><?php echo sprintf( __('The unique ID can also be used in individual pages using the %s shortcode', 'event_espresso'), '[EVENT_ESPRESSO_CATEGORY event_category_id="category_identifier"]' ); ?>.</p>		
+		<?php
 	}
 
 
