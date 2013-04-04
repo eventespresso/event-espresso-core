@@ -78,13 +78,13 @@ jQuery(document).ready(function($) {
 	
 
 	// EVENT START DATEPICKER
-	$('#event-datetimes-dv').on( 'focusin', '.dtm-es-picker', function () {	
+	$('#event-datetimes-dv').on( 'focusin', '.dtm-es-picker', function () {
 		
 		var row = $(this).next().val();
 		var eventEnd = $('#event-end-'+row).val();
-		if ( eventEnd != '' ) {
-			eventEnd = getDateFromFormat( eventEnd, 'yyyy-MM-dd  hh:mm a' );
-			eventEnd = new Date( eventEnd );			
+		if ( eventEnd !== '' ) {
+			eventEnd = getDateFromFormat( eventEnd, 'yyyy-MM-dd  h:mm a' );
+			eventEnd = new Date( eventEnd );
 		} else {
 			eventEnd = new Date();
 			var year = eventEnd.getFullYear();
@@ -93,47 +93,49 @@ jQuery(document).ready(function($) {
 			eventEnd.setMinutes(0);
 			eventEnd.setSeconds(0);
 		}
+
+		//get start date if already exists
+		var eventStart = $('#event-start-'+row).val();
+		if ( eventStart !== '' ) {
+			eventStart = getDateFromFormat( eventStart, 'yyyy-MM-dd  h:mm a' );
+			eventStart = new Date( eventStart );
+		} else {
+			eventStart = new Date();
+		}
 			
 		$(this).datetimepicker({
 
 			dateFormat : 'yy-mm-dd',
-			timeFormat: 'hh:mm tt',
+			timeFormat: 'h:mm tt',
 			ampm: true,
 			separator: '  ',
 			stepHour: 1,
 			stepMinute: 5,
 			hourGrid: 2,
 			minuteGrid: 5,
-			numberOfMonths: 2,			
-			minDate: new Date(),
+			numberOfMonths: 2,
 			showOn:'focus',
 	
 			onClose: function(dateText, inst) {
 			
 				var eventEndsOn = $('#event-end-'+row).val();
 
-				if ( eventEndsOn != '' ) {	
-					var newStartDate = new Date( getDateFromFormat( dateText, 'yyyy-MM-dd  hh:mm a' ) );
-					var newEndDate = new Date( getDateFromFormat( eventEndsOn, 'yyyy-MM-dd  hh:mm a' )  );
-					if ( newStartDate > newEndDate ) {
+				var StartDate = new Date( getDateFromFormat( dateText, 'yyyy-MM-dd  h:mm a' ) );
+
+				if ( eventEndsOn !== '' ) {
+					var newEndDate = new Date( getDateFromFormat( eventEndsOn, 'yyyy-MM-dd  h:mm a' )  );
+					if ( StartDate > newEndDate ) {
 						$('#event-end-'+row).val( dateText );
 					}
 											
 				} else {
 					$('#event-end-'+row).val( dateText );
 				}
-				
-				var StartDate = new Date( getDateFromFormat( dateText, 'yyyy-MM-dd  hh:mm a' ) );						
-//				$('#event-end-'+row).focusin().datetimepicker('option', 'minDate', StartDate ).focusout();
-//				$('#reg-start-'+row).focusin().datetimepicker('option', 'maxDate', StartDate ).focusout();
-				//alert( 'StartDate : ' + StartDate );
-				$('#event-end-'+row).datetimepicker('option', 'minDate', StartDate );
-				$('#reg-start-'+row).datetimepicker('option', 'maxDate', StartDate );
 			
 			}
 			
-		});			 
-	});	
+		});
+	});
 	
 	
 
@@ -143,15 +145,24 @@ jQuery(document).ready(function($) {
 		var row = $(this).next().val();
 		var eventStart = $('#event-start-'+row).val();
 		if ( eventStart != '' ) {
-			eventStart = getDateFromFormat( eventStart, 'yyyy-MM-dd  hh:mm a' );
+			eventStart = getDateFromFormat( eventStart, 'yyyy-MM-dd  h:mm a' );
 			eventStart = new Date( eventStart );			
 			//alert( 'eventStart : ' + eventStart );
+		}
+
+		//get end date if it already exists otherwise we use the eventStart date
+		var eventEnd = $('#event-end-'+row).val();
+		if ( eventEnd !== '' ) {
+			eventEnd = getDateFromFormat( eventEnd, 'yyyy-MM-dd  h:mm a' );
+			eventEnd = new Date( eventEnd );
+		} else {
+			eventEnd = eventStart;
 		}
 						
 		$(this).datetimepicker({
 		
 			dateFormat : 'yy-mm-dd',
-			timeFormat: 'hh:mm tt',
+			timeFormat: 'h:mm tt',
 			ampm: true,
 			separator: '  ',
 			stepHour: 1,
@@ -159,6 +170,8 @@ jQuery(document).ready(function($) {
 			hourGrid: 2,
 			minuteGrid: 5,
 			numberOfMonths: 2,
+			hour: eventEnd.getHours(),
+			minute: eventEnd.getMinutes(),
 			minDate: eventStart,
 			maxDate: new Date( 'Dec 31, 2100' ),
 			showOn:'focus',
@@ -166,26 +179,17 @@ jQuery(document).ready(function($) {
 			onClose: function( dateText, inst ) {
 
 				var eventStartsOn = $('#event-start-'+row).val();
+				var EndDate = new Date( getDateFromFormat( dateText, 'yyyy-MM-dd  h:mm a' ) );
 				if ( eventStartsOn != '' ) {
-					var newStartDate = new Date( getDateFromFormat( eventStartsOn, 'yyyy-MM-dd  hh:mm a' ) );
-					var newEndDate = new Date( getDateFromFormat( dateText, 'yyyy-MM-dd  hh:mm a' ) );
-					if ( newStartDate > newEndDate ) {
+					var newStartDate = new Date( getDateFromFormat( eventStartsOn, 'yyyy-MM-dd  h:mm a' ) );
+					if ( newStartDate > EndDate ) {
 						$('#event-start-'+row).val( dateText );
 						$('#reg-end-'+row).val( dateText );
 					}						
 				} else {
 					$('#event-start-'+row).val( dateText );
 					$('#reg-end-'+row).val( dateText );
-				}	
-
-				var EndDate = new Date( getDateFromFormat( dateText, 'yyyy-MM-dd  hh:mm a' ) );
-				//alert( 'EndDate : ' + EndDate );
-				
-//				$('#event-start-'+row).focusin().datetimepicker('option', 'maxDate', EndDate ).focusout();
-//				$('#reg-end-'+row).focusin().datetimepicker('option', 'maxDate', EndDate ).focusout();
-
-				$('#event-start-'+row).datetimepicker('option', 'maxDate', EndDate );
-				$('#reg-end-'+row).datetimepicker('option', 'maxDate', EndDate );
+				}
 
 			}
 
@@ -209,44 +213,55 @@ jQuery(document).ready(function($) {
 
 		var eventStart = $('#event-start-'+row).val();
 		if ( eventStart != '' ) {
-			eventStart = getDateFromFormat( eventStart, 'yyyy-MM-dd  hh:mm a' );
+			eventStart = getDateFromFormat( eventStart, 'yyyy-MM-dd  h:mm a' );
 			eventStart = new Date( eventStart );			
+		}
+
+		//get any current RegStart date if present
+		var RegStart = $('#reg-start-'+row).val();
+		if ( RegStart !== '' ) {
+			RegStart = getDateFromFormat( RegStart, 'yyyy-MM-dd  h:mm a');
+			RegStart = new Date( RegStart );
+		} else {
+			RegStart = today;
+		}
+
+		//wait a minute, what if the user changed the Event Start to a later date than RegStart?
+		if ( RegStart > eventStart ) {
+			RegStart = today;
 		}
 		
 		$(this).datetimepicker({
 		
 			dateFormat : 'yy-mm-dd',
-			timeFormat: 'hh:mm tt',
+			timeFormat: 'h:mm tt',
 			ampm: true,
 			separator: '  ',
 			stepHour: 1,
 			stepMinute: 5,
 			hourGrid: 2,
 			minuteGrid: 5,
-			numberOfMonths: 2,		
-			minDate: today,	
+			numberOfMonths: 2,
+			hour: RegStart.getHours(),
+			minute: RegStart.getMinutes(),
+			minDateTime: null,			
 			maxDate: eventStart,	
 			showOn:'focus',			
 	
 			onClose: function(dateText, inst) {
 			
 				var eventEndsOn = $('#reg-end-'+row).val();
+				var RegStartDate = new Date( getDateFromFormat( dateText, 'yyyy-MM-dd  h:mm a' ) );
 
 				if ( eventEndsOn != '' ) {	
-					var newStartDate = new Date( getDateFromFormat( dateText, 'yyyy-MM-dd  hh:mm a' ) );
-					var newEndDate = new Date( getDateFromFormat( eventEndsOn, 'yyyy-MM-dd  hh:mm a' ) );
-					if ( newStartDate > newEndDate ) {
+					var newEndDate = new Date( getDateFromFormat( eventEndsOn, 'yyyy-MM-dd  h:mm a' ) );
+					if ( RegStartDate > newEndDate ) {
 						$('#reg-end-'+row).val( dateText );
 					}
 											
 				} else {
 					$('#reg-end-'+row).val( dateText );
 				}
-
-				var RegStartDate = new Date( getDateFromFormat( dateText, 'yyyy-MM-dd  hh:mm a' ) );
-				//alert( 'RegStartDate : ' + RegStartDate );
-//				$('#reg-end-'+row).focusin().datetimepicker('option', 'minDate', RegStartDate ).focusout();
-				$('#reg-end-'+row).datetimepicker('option', 'minDate', RegStartDate );
 			
 			}
 
@@ -261,22 +276,36 @@ jQuery(document).ready(function($) {
 		var row = $(this).next().val();
 		var regStart = $('#reg-start-'+row).val();
 		if ( regStart != '' ) {
-			regStart = getDateFromFormat( regStart, 'yyyy-MM-dd  hh:mm a' );
+			regStart = getDateFromFormat( regStart, 'yyyy-MM-dd  h:mm a' );
 			regStart = new Date( regStart );			
 		}
 			
 		var eventEnd = $('#event-end-'+row).val();
 		if ( eventEnd != '' ) {
-			eventEnd = getDateFromFormat( eventEnd, 'yyyy-MM-dd  hh:mm a' );
+			eventEnd = getDateFromFormat( eventEnd, 'yyyy-MM-dd  h:mm a' );
 			eventEnd = new Date( eventEnd );			
 		} else {
 			eventEnd = new Date( 'Dec 31, 2100' );
+		}
+
+		//if we HAVE regEnd already set then we need to use it unless its now behind regStart
+		var regEnd = $('#reg-end-'+row).val();
+		if ( regEnd !== '' ) {
+			regEnd = getDateFromFormat( regEnd, 'yyyy-MM-dd  h:mm a' );
+			regEnd = new Date( regEnd );
+		} else {
+			regEnd = regStart;
+		}
+
+		//wait!  did the use change the regStart and is it now ahead of regEnd?
+		if ( regEnd < regStart ) {
+			regEnd = regStart;
 		}
 			
 		$(this).datetimepicker({
 		
 			dateFormat : 'yy-mm-dd',
-			timeFormat: 'hh:mm tt',
+			timeFormat: 'h:mm tt',
 			ampm: true,
 			separator: '  ',
 			stepHour: 1,
@@ -284,6 +313,8 @@ jQuery(document).ready(function($) {
 			hourGrid: 2,
 			minuteGrid: 5,
 			numberOfMonths: 2,
+			hour: regEnd.getHours(),
+			minute: regEnd.getMinutes(),
 			minDate: regStart,
 			maxDate: eventEnd,
 			showOn:'focus',
@@ -291,10 +322,10 @@ jQuery(document).ready(function($) {
 			onClose: function( dateText, inst ) {
 
 				var eventStartsOn = $('#reg-start-'+row).val();
+				var RegEndDate = new Date( getDateFromFormat( dateText, 'yyyy-MM-dd  h:mm a' ) );
 				if ( eventStartsOn != '' ) {
-					var newStartDate = new Date( getDateFromFormat( eventStartsOn, 'yyyy-MM-dd  hh:mm a' ) );
-					var newEndDate = new Date( getDateFromFormat( dateText, 'yyyy-MM-dd  hh:mm a' ) );
-					if ( newStartDate > newEndDate ) {
+					var newStartDate = new Date( getDateFromFormat( eventStartsOn, 'yyyy-MM-dd  h:mm a' ) );
+					if ( newStartDate > RegEndDate ) {
 						$('#reg-start-'+row).val( dateText );
 					}						
 				}
@@ -302,18 +333,10 @@ jQuery(document).ready(function($) {
 					$('#reg-start-'+row).val( dateText );
 				}	
 
-				var RegEndDate = new Date( getDateFromFormat( dateText, 'yyyy-MM-dd  hh:mm a' ) );
-				//alert( 'RegEndDate : ' + RegEndDate );
-//				$('#reg-start-'+row).focusin().datetimepicker('option', 'maxDate', RegEndDate ).focusout();
-				$('#reg-start-'+row).datetimepicker('option', 'maxDate', RegEndDate );
-
 			}
 
 		});	
 	});	
-
-
-
 
 
 
