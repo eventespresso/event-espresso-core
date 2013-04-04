@@ -146,7 +146,7 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 					'order' => 10
 					),
 				'list_table' => 'Event_Categories_Admin_List_Table',
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box'),
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				),
 
 			'add_category' => array(
@@ -178,7 +178,7 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 					'label' => __('Import', 'event_espresso'),
 					'order' => 30
 					),
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box')
 				)
 
 		);
