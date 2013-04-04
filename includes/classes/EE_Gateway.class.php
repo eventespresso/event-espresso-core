@@ -262,6 +262,18 @@ abstract class EE_Gateway {
 		}
 	}
 
+
+	protected function _help_content() {
+		return '';
+	}
+
+
+	public function get_help_tab_content() {
+		return $this->_help_content();
+	}
+
+
+
 	public function settings_meta_box() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $espresso_premium;

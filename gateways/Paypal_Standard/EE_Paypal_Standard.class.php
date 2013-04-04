@@ -74,6 +74,36 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';	
 	}
 
+
+	protected function _help_content() {
+		?>
+		<div id="currency_info">
+			<h2>
+				<?php _e('PayPal Currency', 'event_espresso'); ?>
+			</h2>
+			<p>
+				<?php _e('PayPal uses 3-character ISO-4217 codes for specifying currencies in fields and variables. </p><p>The default currency code is US Dollars (USD). If you want to require or accept payments in other currencies, select the currency you wish to use. The dropdown lists all currencies that PayPal (currently) supports.', 'event_espresso'); ?>
+			</p>
+		</div>
+		<div id="surcharge">
+			<h2>
+				<?php _e('Payment Surcharge', 'event_espresso'); ?>
+			</h2>
+			<p>
+				<?php _e('Please enter a decimal number indicating a percent surcharge. For example, if you enter 3.00, 3% will be added to the final price of the event during the checkout. If the event price is initially $100, the price with the surcharge will be $103.<br /> This surcharge will apply to all new events.  However, you will have the ability to change this value during the event creation.', 'event_espresso'); ?>
+			</p>
+		</div>
+		<div id="no_shipping">
+			<h2>
+				<?php _e('Shipping Address', 'event_espresso'); ?>
+			</h2>
+			<p>
+				<?php _e('By default, PayPal will display shipping address information on the PayPal payment screen. If you plan on shipping items to a registrant (shirts, invoices, etc) then use this option. Otherwise it should not be used, as it will require a shipping address when someone registers for an event.', 'event_espresso'); ?>
+			</p>
+		</div>
+		<?php
+	}
+
 	protected function _display_settings() {
 		?>
 		<tr>
@@ -273,30 +303,6 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			</p>
 			<p>
 				<?php _e('Default - Your business name, if you have a Business account, or your email address, if you have Premier or Personal account.', 'event_espresso'); ?>
-			</p>
-		</div>
-		<div id="currency_info" style="display:none">
-			<h2>
-				<?php _e('PayPal Currency', 'event_espresso'); ?>
-			</h2>
-			<p>
-				<?php _e('PayPal uses 3-character ISO-4217 codes for specifying currencies in fields and variables. </p><p>The default currency code is US Dollars (USD). If you want to require or accept payments in other currencies, select the currency you wish to use. The dropdown lists all currencies that PayPal (currently) supports.', 'event_espresso'); ?>
-			</p>
-		</div>
-		<div id="surcharge" style="display:none">
-			<h2>
-				<?php _e('Payment Surcharge', 'event_espresso'); ?>
-			</h2>
-			<p>
-				<?php _e('Please enter a decimal number indicating a percent surcharge. For example, if you enter 3.00, 3% will be added to the final price of the event during the checkout. If the event price is initially $100, the price with the surcharge will be $103.<br /> This surcharge will apply to all new events.  However, you will have the ability to change this value during the event creation.', 'event_espresso'); ?>
-			</p>
-		</div>
-		<div id="no_shipping" style="display:none">
-			<h2>
-				<?php _e('Shipping Address', 'event_espresso'); ?>
-			</h2>
-			<p>
-				<?php _e('By default, PayPal will display shipping address information on the PayPal payment screen. If you plan on shipping items to a registrant (shirts, invoices, etc) then use this option. Otherwise it should not be used, as it will require a shipping address when someone registers for an event.', 'event_espresso'); ?>
 			</p>
 		</div>
 		<?php
