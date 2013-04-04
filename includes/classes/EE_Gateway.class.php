@@ -688,7 +688,7 @@ abstract class EE_Gateway {
 			//The tax data should be added on the thankyou page, not here, as this may be an IPN.
 			//updating teh transaction in the session should be done on the thank you page, as taht's where the session is always available.
 		}	
-		$transaction->update();
+		$transaction->save();
 		do_action( 'action_hook_espresso__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
 		return true;
 	}
