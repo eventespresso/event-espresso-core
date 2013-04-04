@@ -118,35 +118,35 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'label' => __('Critical Pages'),
 					'order' => 20
 					),
-				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' )
+				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
 				),
 			'template_settings' => array(
 				'nav' => array(
 					'label' => __('Templates'),
 					'order' => 30
 					),
-				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' )
+				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
 				),
 			'google_map_settings' => array(
 				'nav' => array(
 					'label' => __('Google Maps'),
 					'order' => 40
 					),
-				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box' )
+				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
 				),
 			'your_organization_settings' => array(
 				'nav' => array(
 					'label' => __('Your Organization'),
 					'order' => 50
 					),
-				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box' )
+				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
 				),
 			'admin_option_settings' => array(
 				'nav' => array(
 					'label' => __('Admin Options'),
 					'order' => 60
 					),
-				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' )
+				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
 				)
 			);
 	}

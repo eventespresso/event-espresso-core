@@ -230,7 +230,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'order' => 10
 					),
 				'list_table' => 'Registration_Form_Questions_Admin_List_Table',
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box')
 				),
 
 			'question_groups' => array(
@@ -239,7 +239,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'order' => 20
 					),
 				'list_table' => 'Registration_Form_Question_Groups_Admin_List_Table',
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box')
 				),
 
 			'add_question' => array(
@@ -248,7 +248,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'order' => 5,
 					'persistent' => FALSE
 					),
-				'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' )
+				'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
 				),
 
 			'edit_question' => array(
@@ -258,7 +258,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['question_id']) ? add_query_arg(array('question_id' => $this->_req_data['question_id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
-				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box' )
+				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
 				),
 
 			'add_question_group' => array(
@@ -267,7 +267,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'order' => 5,
 					'persistent' => FALSE
 					),
-				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box' )
+				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
 				),
 
 			'edit_question_group' => array(
@@ -277,7 +277,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['question_group_id']) ? add_query_arg(array('question_group_id' => $this->_req_data['question_group_id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
-				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box' ),
+				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
 				),
 
 			'view_reg_form_settings' => array(
@@ -288,7 +288,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				'labels' => array(
 					'publishbox' => __('Update Settings', 'event_espresso')
 					),
-				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' )
+				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
 				)
 			);
 	}

@@ -186,7 +186,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 					'label' => __('Import', 'event_esprsso'),
 					'order' => 30
 					),
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box')
 				),
 				
 			'add_event' => array(
@@ -213,7 +213,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 					'label' => __('Default Settings', 'event_esprsso'),
 					'order' => 40
 					),
-				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' ),
+				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
 				'labels' => array(
 					'publishbox' => __('Update Settings', 'event_espresso')
 					),
