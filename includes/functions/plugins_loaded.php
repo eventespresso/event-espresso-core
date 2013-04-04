@@ -378,13 +378,55 @@ function espresso_printr_session() {
 	$_REQUEST['ee_session'] = TRUE;
 	if ( isset( $_REQUEST['ee_session'] ) && $wp_user_id <= 1 ) {	
 		global $EE_Session;
-		echo '<pre style="height:auto;border:2px solid lightblue;">';
+		echo '<pre style="height:auto;padding:1em;border:2px solid lightblue;">';
 		echo print_r( $EE_Session, TRUE );
+		$ee_list_hooks = isset( $_REQUEST['ee_list_hooks'] ) && ! empty( $_REQUEST['ee_list_hooks'] ) ? $_REQUEST['ee_list_hooks'] : FALSE;
+		list_hooked_functions();
 		echo '</pre><br /><span style="font-size:10px;font-weight:normal;">';
-		echo __FILE__ . '<br />line no: ' . __LINE__ . '</span>';	
+		echo __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 	}
 }
 add_action( 'shutdown', 'espresso_printr_session' );
+
+
+
+
+
+/**
+ * 		List All Hooked Functions
+ * 		to list all functions for a specific hook, add ee_list_hooks={hook-name} to URL
+ *		http://wp.smashingmagazine.com/2009/08/18/10-useful-wordpress-hook-hacks/  
+ *
+ * 		@access public
+ * 		@return void
+ */
+function list_hooked_functions( $tag=FALSE ){
+	global $wp_filter;
+	echo '<br/><br/><br/><h3>Hooked Functions</h3>';
+	if ( $tag ) {
+		$hook[$tag]=$wp_filter[$tag];
+		if ( ! is_array( $hook[$tag] )) {
+			trigger_error( "Nothing found for '$tag' hook", E_USER_WARNING );
+			return;
+		}
+		echo '<h5>For Tag: '. $tag .'</h5>';
+	}
+	else {
+		$hook=$wp_filter;
+		ksort( $hook );
+	}
+	foreach( $hook as $tag => $priority ) {
+		echo "<br />&gt;&gt;&gt;&gt;&gt;\t<strong>$tag</strong><br />";
+		ksort( $priority );
+		foreach( $priority as $priority => $function ){
+			echo $priority;
+			foreach( $function as $name => $properties ) echo "\t$name<br />";
+		}
+	}
+	return;
+}
+
+
 
 
 
