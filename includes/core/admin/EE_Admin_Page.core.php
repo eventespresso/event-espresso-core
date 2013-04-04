@@ -365,6 +365,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	final protected function _page_setup() {
 
+		//requires?
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Template.helper.php';
+
 		//set early because incoming requests could be ajax related and we need to register those hooks.
 		$this->_ajax_hooks();
 
@@ -764,8 +767,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return string              generated link
 	 */
 	protected function _get_help_tab_link( $help_tab_id, $icon_style = FALSE, $help_text = FALSE ) {
-		require_once 'helpers/EE_Template.helper.php';
-		return EE_Template::get_help_tab_link( $this->page_slug, $this->_req_action, $help_tab_id, $icon_style, $help_text );
+		return EE_Template::get_help_tab_link( $help_tab_id, $this->page_slug, $this->_req_action, $icon_style, $help_text );
 	}
 
 

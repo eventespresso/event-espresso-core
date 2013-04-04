@@ -313,7 +313,7 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 				<tr>
 					<th><label for="cat_id">
 							<?php _e('Unique ID', 'event_espresso'); ?>
-							<?php do_action('action_hook_espresso_help', 'unique_id_help_tab'); ?>
+							<?php echo $this->_get_help_tab_link('unique_id_help_tab'); ?>
 						</label></th>
 					<td><input id="cat_id"  type="text" name="category_identifier" /></td>
 				</tr>
@@ -395,7 +395,7 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 				<tr>
 					<th><label for="cat_id">
 							<?php _e('Unique ID', 'event_espresso'); ?>
-							<?php do_action('action_hook_espresso_help', 'unique_id_info'); ?>
+							<?php echo $this->_get_help_tab_link('unique_id_info'); ?>
 						</label></th>
 					<td><input id="cat_id"  type="text" name="category_identifier" value="<?php echo $this->_category->category_identifier;?>" /></td>
 				</tr>

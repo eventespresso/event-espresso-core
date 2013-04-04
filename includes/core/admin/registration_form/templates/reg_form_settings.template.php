@@ -1,7 +1,8 @@
 <div class="padding">
 
 	<h4 class="ee-admin-settings-hdr">
-		<?php _e('reCAPTCHA Anti-spam Settings', 'event_espresso'); ?><?php do_action('action_hook_espresso_help', 'recaptcha_info'); ?>
+		<?php _e('reCAPTCHA Anti-spam Settings', 'event_espresso'); ?>
+		<?php echo EE_Template::get_help_tab_link('recaptcha_info'); ?>
 	</h4>
 
 	<table class="form-table">
