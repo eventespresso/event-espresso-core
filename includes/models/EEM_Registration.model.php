@@ -458,10 +458,10 @@ class EEM_Registration extends EEM_TempBase {
 		global $wpdb;
 
 		//Dates
-		$curdate = date('Y-m-d');
-		$this_year_r = date('Y');
-		$this_month_r = date('m');
-		$days_this_month = date( 't' );
+		$curdate = date('Y-m-d', current_time('timestamp'));
+		$this_year_r = date('Y', current_time('timestamp'));
+		$this_month_r = date('m', current_time('timestamp'));
+		$days_this_month = date( 't', current_time('timestamp') );
 		$time_start = ' 00:00:00';
 		$time_end = ' 23:59:59';
 
@@ -511,6 +511,7 @@ class EEM_Registration extends EEM_TempBase {
 				$sql_clause = ' AND ';
 			}
 
+
 			if ( $month_range ) {
 				$pieces = explode('-', $month_range, 3);
 				$year_r = $pieces[0];
@@ -526,8 +527,9 @@ class EEM_Registration extends EEM_TempBase {
 				$sql_clause = ' AND ';
 			}
 
+
 			if ( $today_a ) {
-				$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . $curdate . $time_start . '" AND "' . $curdate . $time_end  . '"';
+				$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . strtotime($curdate . $time_start) . '" AND "' . strtotime($curdate . $time_end)  . '"';
 				$sql_clause = ' AND ';
 			}
 
@@ -589,7 +591,7 @@ class EEM_Registration extends EEM_TempBase {
 		}
 
 		if ( $today_a ) {
-			$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . $curdate . $time_start . '" AND "' . $curdate . $time_end  . '"';
+			$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . strtotime($curdate . $time_start) . '" AND "' . strtotime($curdate . $time_end)  . '"';
 			$sql_clause = ' AND ';
 		}
 
@@ -604,6 +606,8 @@ class EEM_Registration extends EEM_TempBase {
 		}
 
 		$SQL .= ' AND evt.event_status != "D" ';
+
+
 
 		//let's setup orderby
 		switch ( $orderby ) {
