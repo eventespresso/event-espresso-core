@@ -128,7 +128,7 @@ class Support_Admin_Page extends EE_Admin_Page {
 
 	protected function _installation_boxes() {
 		$callback_args = array('template_path' => EE_SUPPORT_ADMIN_TEMPLATE_PATH . 'support_admin_details_additional_information.template.php');
-		add_meta_box( 'espresso_additional_information_support', __('Additional Information', 'event_espresso'), create_function('$post, $metabox', 'echo espresso_display_template( $metabox["args"]["template_path"], "", TRUE);' ), $this->_current_screen_id, 'normal', 'high', $callback_args);
+		//add_meta_box( 'espresso_additional_information_support', __('Additional Information', 'event_espresso'), create_function('$post, $metabox', 'echo espresso_display_template( $metabox["args"]["template_path"], "", TRUE);' ), $this->_current_screen_id, 'normal', 'high', $callback_args);
 	}
 
 
