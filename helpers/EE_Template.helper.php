@@ -96,7 +96,7 @@ class EE_Template {
 	 * @param  string $help_text (optional) send help text you want to use for the link if default not to be used
 	 * @return string              generated link
 	 */
-	public static function get_help_tab_link( $help_tab_id, $page = FALSE, $action = FALSE, $help_tab_id, $icon_style = FALSE, $help_text = FALSE ) {
+	public static function get_help_tab_link( $help_tab_id, $page = FALSE, $action = FALSE, $icon_style = FALSE, $help_text = FALSE ) {
 
 		if ( ! $page ) 
 			$page = isset( $_REQUEST['page'] ) && ! empty( $_REQUEST['page'] ) ? sanitize_key( $_REQUEST['page'] ) : $page;
