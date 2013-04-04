@@ -754,6 +754,24 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 	/**
+	 * This returns a generated link that will load the related help tab.
+	 *
+	 * 		
+	 * @param  string $help_tab_id the id for the connected help tab
+	 * @param  string $icon_style (optional) include css class for the style you want to use for the help icon.
+	 * @param  string $help_text (optional) send help text you want to use for the link if default not to be used
+	 * @uses EE_Template::get_help_tab_link()
+	 * @return string              generated link
+	 */
+	protected function _get_help_tab_link( $help_tab_id, $icon_style = FALSE, $help_text = FALSE ) {
+		require_once 'helpers/EE_Template.helper.php';
+		return EE_Template::get_help_tab_link( $this->page_slug, $this->_req_action, $help_tab_id, $icon_style, $help_text );
+	}
+
+
+
+
+	/**
 	 * _add_help_tabs
 	 * 
 	 * Note child classes define their help tabs within the page_config array.
