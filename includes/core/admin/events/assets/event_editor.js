@@ -72,12 +72,6 @@ jQuery(document).ready(function($) {
 	$('.dtm-inp-btn').click( function() {
 		$('#process_datetimes').val(1);
 	});
-
-
-	$('.dtm-es-picker').datetimepicker();
-	$('.dtm-ee-picker').datetimepicker();
-	$('.dtm-rs-picker').datetimepicker();
-	$('.dtm-re-picker').datetimepicker();
 	
 	
 	
