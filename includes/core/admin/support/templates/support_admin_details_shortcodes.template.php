@@ -2,7 +2,7 @@
 	<p>
 <?php _e('For more information, please visit:', 'event_espresso'); ?>
 		<br />
-		<a href="http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/" target="_blank">http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/</a></p>
+		<a href="http://eventespresso.com/wiki/shortcodes-template-variables/" target="_blank">http://eventespresso.com/wiki/shortcodes-template-variables/</a></p>
 	<hr />
 	
 	<div class="shortcode-box">
@@ -91,9 +91,6 @@
 			<li><span class="highlight">[LISTATTENDEES category_identifier="your_category_identifier"]</span> //Show a group of events in a category using the category identifier</li>
 			<li><span class="highlight">[LISTATTENDEES staff_id="staff_id_number"]</span> //Show a list of events that are assigned to a staff member</li>
 		</ul>
-		<p>
-<?php _e('For more information about the attendee listing shortcodes and customizations. Please view the <a href="http://eventespresso.com/wiki/shortcodes-template-variables/">Attendee Listing Shortcodes</a> page.', 'event_espresso'); ?>
-		</p>
 	</div>
 
 <?php /* ?>	
