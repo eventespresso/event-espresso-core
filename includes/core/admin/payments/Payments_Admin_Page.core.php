@@ -86,14 +86,14 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					'label' => __('Payment Methods', 'event_espresso'),
 					'order' => 10
 					),
-				'metaboxes' => array( '_espresso_news_post_box'),
+				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				),
 			'payment_settings' => array(
 				'nav' => array(
 					'label' => __('Settings', 'event_espresso'),
 					'order' => 10
 					),
-				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box'),
+				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				),
 //			'developers' => array(
 //				'nav' => array(
@@ -107,7 +107,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					'label' => __('Affiliate Settings', 'event_espresso'),
 					'order' => 30
 					),
-				'metaboxes' => array('_aff_settings_meta_box','_espresso_news_post_box')
+				'metaboxes' => array('_aff_settings_meta_box','_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box')
 				)
 			);
 	}
