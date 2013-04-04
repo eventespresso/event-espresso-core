@@ -634,7 +634,7 @@ class EE_Single_Page_Checkout {
 
 		$template_args['target_inputs'] = rtrim($target_inputs, '&&');
 
-		$template_args['print_copy_info'] = $additional_attendee_forms ? TRUE : FALSE;
+		$template_args['print_copy_info'] = $additional_attendee_forms || $x > 2 ? TRUE : FALSE;
 		$template_args['additional_attendees'] = $additional_attendees;
 
 		$template_args['total_items'] = $total_items;
