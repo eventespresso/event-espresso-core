@@ -831,34 +831,15 @@ class EE_Payment extends EE_Base_Class{
 	* 		@param		boolean 		$via_admin
 	* 		@access		public
 	*/
-	public function apply_payment_to_transaction( $via_admin = FALSE ) {
-
-		// is this an existing payment ?			
-		if ( $this->_PAY_ID ) {
-			$payment_made = $this->update();
-		} else {
-			$payment_made = $this->insert();
+	public function apply_payment_to_transaction( $via_admin = FALSE ) {		
+		if( ! $this->ID()){
+			$this->save();
 		}
-		
-		if ( $payment_made ) {
-
-			// recalculate and set  total paid
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
-			$PAY_MODEL = EEM_Payment::instance();
-			$return_data = $PAY_MODEL->update_payment_transaction( $this, 'processed' );
-			return $return_data;
-						
-		} else {
-		
-			if ( $via_admin ) {
-				$msg = __( 'An error occured. The payment has not been processed succesfully.', 'event_espresso' );
-				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-				return FALSE;
-			} else {
-				return __('There was a problem inserting your payment into our records. Do not attempt the transaction again. Please contact support.', 'event_espresso');
-			}
-		}
-		
+		// recalculate and set  total paid
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
+		$PAY_MODEL = EEM_Payment::instance();
+		$success = $PAY_MODEL->update_payment_transaction( $this, 'processed' );
+		return $success;
 	}
 
 

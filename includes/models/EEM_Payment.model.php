@@ -203,24 +203,28 @@ class EEM_Payment extends EEM_TempBase {
 
 
 	/**
-	*		retreive  all payments from db for a particular transaction
+	*		retreive  all payments from db for a particular transaction, optionally with
+	 *		a particular status
 	* 
 	* 		@access		public
 	* 		@param		$TXN_ID		
-	*		@return 		mixed		array on success, FALSE on fail
+	 *		@param	string	$status_of_payment one of EEM_Payment::status_id_*, like 'PAP','PCN',etc
+	*		@return		EE_Payment[]
 	*/	
-	public function get_payments_for_transaction( $TXN_ID = FALSE ) {
+	public function get_payments_for_transaction( $TXN_ID = FALSE, $status_of_payment = null ) {
 
 		if ( ! $TXN_ID ) {
 			$msg = __('No Transaction ID was supplied.', 'event_espresso');
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ ); 
-			return FALSE;
+			return array();
 		}
-
-		// retreive payments
 		$where_cols_n_values = array( 'TXN_ID' => $TXN_ID );
-		
-		 return $this->get_all_where ( $where_cols_n_values, 'PAY_timestamp' );		
+		//if provided with a status, search specifically for that status. Otherwise get them all
+		if($status_of_payment){
+			$where_cols_n_values['STS_ID'] = $status_of_payment;
+		}
+		// retreive payments
+		return $this->get_all_where ( $where_cols_n_values, 'PAY_timestamp' );		
 	}
 	
 	public function get_approved_payments_for_transaction( $TXN_ID = FALSE){
@@ -239,52 +243,26 @@ class EEM_Payment extends EEM_TempBase {
 	
 
 	/**
-	*		recalculate_total_payments_for_transaction
+	*		Applies $payment to its associated EE_Transaction. This should update
+	 *		its EE_Transaction's status and TXN_paid.
 	* 		@access		public
 	* 		@param		$payment		payment object
 	* 		@param		$what				text to describe action performed, used in notices
-	*		@return 		mixed				array on success, FALSE on fail
+	*		@return		boolean success of updating the transaction or not. Note: returning 'true' doesnt necessarily mean the
+	 * transaction has been changed, it just means what's saved to teh db has been successful
 	*/
 	public function update_payment_transaction( EE_Payment $payment, $what ) {
 
-		if ( ! is_object( $payment ) && ! $payment->ID() ) {
+		if ( ! is_object( $payment ) || ! $payment->ID() ) {
 			$msg = __('A vaild payment object was not supplied.', 'event_espresso');
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ ); 
 			return FALSE;
 		}
-
-		// get transaction that this payment is being applied to
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php');
-		$TXN_MODEL = EEM_Transaction::instance();
-		$transaction = $TXN_MODEL->get_transaction( $payment->TXN_ID() );
-
-		// recalculate and set  total paid
-		$total_paid = $this->recalculate_total_payments_for_transaction( $payment->TXN_ID() );
-		$transaction->set_paid( $total_paid );
-
-		// set transaction status to complete if paid in full or the event was a freebie
-		if ( $total_paid == $transaction->total() || $transaction->total() == 0 ) {
-			$transaction->set_status(EEM_Transaction::complete_status_code);
-		} else {
-			$transaction->set_status(EEM_Transaction::incomplete_status_code);
-		}
-
-		// update transaction and return results
-		if ( $transaction->update() ) {
-			$msg = sprintf( __('The payment has been %s succesfully.', 'event_espresso'), $what );
-			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return array( 
-									'amount' => $payment->amount(), 
-									'total_paid' => $transaction->paid(), 
-									'txn_status' => $transaction->status_ID(),
-									'pay_status' => $payment->STS_ID() 
-								);
-		} else {
-			$msg = sprintf( __( 'An error occured. The payment was %s succesfully but the amount paid for the transaction was not updated.', 'event_espresso'), $what );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-
+		$transaction = $payment->transaction();
+		// recalculate and set total paid, and how much is pending
+		$success = $transaction->update_based_on_payments();
+		$payment->clear_relation_cache('Transaction');
+		return $success;
 	}
 
 
@@ -295,9 +273,10 @@ class EEM_Payment extends EEM_TempBase {
 	*		recalculate_total_payments_for_transaction
 	* 		@access		public
 	* 		@param		$TXN_ID		
+	 *		@param	string	$status_of_payments, one of EEM_Payment's statuses, like 'PAP' (Approved)
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
-	public function recalculate_total_payments_for_transaction( $TXN_ID = FALSE ) {
+	public function recalculate_total_payments_for_transaction( $TXN_ID = FALSE , $status_of_payments = 'PAP') {
 
 		if ( ! $TXN_ID ) {
 			$msg = __( 'No Transaction ID was supplied.', 'event_espresso');
@@ -305,17 +284,17 @@ class EEM_Payment extends EEM_TempBase {
 			return FALSE;
 		}
 
-		$total_paid = 0;
-		if( $payments = $this->get_payments_for_transaction( $TXN_ID ) ) {
+		$value_of_payments = 0;
+		if( $payments = $this->get_payments_for_transaction( $TXN_ID, $status_of_payments) ) {
 			foreach ( $payments as $payment ) {
-				// only add successfully completed payments to the total paid
-				if ( $payment->STS_ID() == 'PAP' ) {
-					$total_paid += $payment->amount();
+				// only add payments of teh specified status (eg, only approved payment)
+				if ( $payment->STS_ID() == $status_of_payments ) {
+					$value_of_payments += $payment->amount();
 				}				
 			}			
 		}
 
-		return $total_paid;
+		return $value_of_payments;
 	}
 
 

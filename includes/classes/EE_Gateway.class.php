@@ -635,18 +635,12 @@ abstract class EE_Gateway {
 	 * @return boolean success
 	 */
 	public function update_transaction_with_payment($transaction,$payment){
-		//@todo this could really use the payment's apply_payment_to_transaction method,
-		//but there are some subtle differences... especially regarding the legacy txn_details\
-		//getting set on the transaction. once those are remoevd, the transition would be easier
 		if(empty($transaction)){
 			return false;
 		}
-		if( ! $transaction instanceof EE_Transaction){
-			$transaction = $this->_TXN->get_transaction($transaction);
-		}
-		if( ! $payment instanceof EE_Payment){
-			$payment = $this->_PAY->get_payment_by_ID($payment);
-		}
+		$transaction = $this->_TXN->ensure_is_obj($transaction);
+		$payment = $this->_PAY->ensure_is_obj($payment);
+		
 		//now, if teh payment's empty, we're going to update the transaction accordingly
 		if(empty($payment)){
 			$transaction->set_status($this->_TXN->pending_status_code);
@@ -666,17 +660,7 @@ abstract class EE_Gateway {
 			$transaction->set_details($legacy_txn_details);
 		}else{
 			//ok, now process the transaction according to the payment
-			//NOTE: if we allow multiple payments someday, then we'll need to tally up all previous payments
-			//to determine if the transactin oshould be marked as complete.
-			if ( $transaction->total() == 0 || 
-					( $payment->amount() >= $transaction->total() && $payment->STS_ID()==EEM_Payment::status_id_approved)) {
-				$transaction->set_status(EEM_Transaction::complete_status_code);
-				$transaction->set_paid($payment->amount());
-			}else if ($payment->STS_ID() == EEM_Payment::status_id_pending){
-				$transaction->set_status(EEM_Transaction::pending_status_code);
-			}else{
-				$transaction->set_status(EEM_Transaction::incomplete_status_code);
-			}
+			$transaction->update_based_on_payments();
 			
 			
 			//create the legacy transaction details. Really this data is a duplication of the 

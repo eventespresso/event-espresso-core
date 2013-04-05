@@ -852,7 +852,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					break;
 
 			}
-		 
+			//savea  the new payment
 			$payment = new EE_Payment( 
 				$payment['TXN_ID'], 
 				$payment['status'],
@@ -868,10 +868,26 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				$payment,
 				$payment['PAY_ID']
 			);
-
-			$return_data = $payment->apply_payment_to_transaction( TRUE );	
-																
+			if( ! $payment->save() ){
+				$msg = __( 'An error occured. The payment has not been processed succesfully.', 'event_espresso' );
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			}
+			//update the transaction with this payment
+			if( $payment->apply_payment_to_transaction( TRUE ) ){
+				$msg =__('The payment has been processed succesfully.', 'event_espresso');
+				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			}else{
+				$msg = __( 'An error occured. The payment was processed succesfully but the amount paid for the transaction was not updated.', 'event_espresso');
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			}
+			
+			//prepare to render page
+			$transaction = $payment->transaction();
 			$this->_get_payment_status_array();
+			$return_data['amount'] = $payment->amount();
+			$return_data['total_paid'] = $transaction->total();
+			$return_data['txn_status'] = $transaction->status_ID();
+			$return_data['pay_status'] = $payment->STS_ID();
 			$return_data['PAY_ID'] = $payment->ID();
 			$return_data['STS_ID'] = $payment->STS_ID();
 			$return_data['status'] = self::$_pay_status[ $payment->STS_ID() ];

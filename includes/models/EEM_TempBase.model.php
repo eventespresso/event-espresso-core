@@ -707,6 +707,26 @@ abstract class EEM_TempBase extends EEM_Base{
 		return $objects;
 	}
 	
+	
+	
+	
+	
+	/**
+	 * Ensures $base_class_obj_or_id is of the EE_Base_Class child that corresponds ot this model.
+	 * If not, assumes its an ID, and uses $this->get_one_by_ID() to get the EE_Base_Class.
+	 * @param EE_Base_Class/int $base_class_obj_or_id either teh EE_Base_Class taht corresponds to this Model, or its ID
+	 * @return EE_Base_Class
+	 */
+	public function ensure_is_obj($base_class_obj_or_id){ 
+		if(is_a($base_class_obj_or_id,$this->_getClassName())){
+			return $base_class_obj_or_id;
+		}elseif(is_int($base_class_obj_or_id)){//assume it's an ID
+			return $this->get_one_by_ID($base_class_obj_or_id);
+		}else{
+			throw new EE_Exception(sprintf(__("'%s' is neither an object of type %s, nor an ID!",'event_espresso'),$base_class_obj_or_id,$this->_getClasssName()));
+		}
+	}
+	
 	/**
 	 * Very handy general function to allow for plugins to extend any child of EE_TempBase.
 	 * If a method is called on a child of EE_TempBase that doesn't exist, this function is called (http://www.garfieldtech.com/blog/php-magic-call)
@@ -1193,6 +1213,7 @@ class EE_Model_Relation{
 	public function join_table_fields(){
 		return $this->join_table_fields;
 	}
+
 	
 	
 	

@@ -719,6 +719,18 @@ class EE_Transaction extends EE_Base_Class{
 		if ( empty($REG) ) return false;
 		return $REG->payment_overview_url();
 	}
+	
+	
+	
+	
+	/**
+	 * Updates the transaction's status and total_paid based on all the payments
+	 * taht apply to it
+	 * @return boolean success of the application
+	 */
+	public function update_based_on_payments(){
+		return $this->_get_model()->update_based_on_payments($this);
+	}
 
 
 
