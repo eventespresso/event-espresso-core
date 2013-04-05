@@ -150,19 +150,20 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		
 		global $EE_Session, $caffeinated, $EEM_Gateways, $current_user;
 
-		if ( ! defined( 'ESPRESSO_GATEWAYS' )) {
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
-			$EEM_Gateways = EEM_Gateways::instance();
-			$EEM_Gateways->set_active_gateways();
-		}
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
+		$EEM_Gateways = EEM_Gateways::instance();
+		$EEM_Gateways->set_active_gateways();
 		
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Tabbed_Content.helper.php' ;
 		
 		$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
 		$payment_settings = array_key_exists('payment_settings',$gateway_data) ? $gateway_data['payment_settings'] : null;
-		/* if there are no payment settings in the session yet, add them from the DB */
+		/* if there are no payment settings in the session yet, add them from the DB. This fixes a bug where on first page load
+		 * of the payment admin page, the gateways info wouldn't show because payment_settings was always blank.
+		 * To reproduce that error, clear your cookies and delete the entry for 'payment_settings' in the usermeta table */
 		if (  empty($gateway_data['payment_settings']) ){
 			$payment_settings = get_user_meta($current_user->ID, 'payment_settings', true);
+			$EE_Session->set_session_data($payment_settings,'payment_settings');
 		}
 		
 		//printr( $gateway_data, '$gateway_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -180,10 +181,14 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				// now add or remove gateways from list
 				if ( isset( $this->_req_data['activate_' . $gateway] )) {
 					$gateway_data['active_gateways'][$gateway] = array();
+					//bandaid to fix bug where gateways wouldn't appear active on firsrt pag eload after activating them
+					$EEM_Gateways->set_active($gateway);
 				}
 				if ( isset( $this->_req_data['deactivate_' . $gateway] )) {
 					unset($gateway_data['active_gateways'][$gateway]);
-			}				
+					//bandaid to fix bug where gateways wouldn't appear active on firsrt pag eload after activating them
+					$EEM_Gateways->unset_active($gateway);
+				}		
 
 				$gateways[$gateway] = array(
 					'label' => isset($settings['display_name']) ? $settings['display_name'] : ucwords( str_replace( '_', ' ', $gateway ) ),
@@ -195,19 +200,21 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			}
 			
 		}
+		//bandaid to fix bug where gateways wouldn't appear active on firsrt pag eload after activating them
+		$EE_Session->set_session_data($gateway_data,'gateway_data');
 
-		$default = $activate_trigger ? $activate_trigger : FALSE;
-		$default = $deactivate_trigger ? $deactivate_trigger : $activate_trigger;
+		$selected_gateway_name = $activate_trigger ? $activate_trigger : FALSE;
+		$selected_gateway_name = $deactivate_trigger ? $deactivate_trigger : $activate_trigger;
 
-		if ( ! $default ) {
+		if ( ! $selected_gateway_name ) {
 //			$default = !empty( $gateway_data['active_gateways'] ) ? key($gateway_data['active_gateways']) : 'Paypal_Standard';
-			$default = !empty( $gateways ) ? key($gateways) : 'Paypal_Standard';
+			$selected_gateway_name = !empty( $gateways ) ? key($gateways) : 'Paypal_Standard';
 		}
 
 		//$gateways = isset( $gateways ) ? $gateways : array();
 		//printr( $gateways, '$gateways  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-			
-		$this->_template_args['admin_page_header'] = EE_Tabbed_Content::tab_text_links( $gateways, 'gateway_links', '|', $default );
+		
+		$this->_template_args['admin_page_header'] = EE_Tabbed_Content::tab_text_links( $gateways, 'gateway_links', '|', $selected_gateway_name );
 		$this->display_admin_page_with_sidebar();
 
 	}
@@ -215,7 +222,6 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _payment_settings() {
-
 		global $org_options;
 		$this->_template_args['values'] = $this->_yes_no_values;
 		

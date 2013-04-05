@@ -1685,7 +1685,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		global $org_options, $caffeinated;
 		$this->_set_event_object();
 
-		if ( $caffeniated ) {
+		if ( $caffeinated ) {
 			add_meta_box('espresso_event_editor_event_meta', __('Event Meta', 'event_espresso'), array( $this, 'event_meta_metabox'), $this->_current_screen->id, 'advanced', 'high');
 		}
 		
