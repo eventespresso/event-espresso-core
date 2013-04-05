@@ -646,8 +646,9 @@ function events_data_tables_install() {
 	$sql = "STS_ID varchar(3) COLLATE utf8_bin NOT NULL,
 				  STS_code varchar(45) COLLATE utf8_bin NOT NULL,
 				  STS_type set('event','registration','transaction','payment','email') COLLATE utf8_bin NOT NULL,
-				  STS_can_edit tinyint(1) NOT NULL DEFAULT '0',
+				  STS_can_edit tinyint(1) NOT NULL DEFAULT 0,
 				  STS_desc tinytext COLLATE utf8_bin,
+				  STS_open tinyint(1) NOT NULL DEFAULT 1,
 				  UNIQUE KEY STS_ID_UNIQUE (STS_ID),
 				  KEY STS_type (STS_type)";
 	event_espresso_run_install($table_name, $table_version, $sql );
@@ -1290,37 +1291,38 @@ function espresso_default_status_codes() {
 	global $wpdb;
 
 	if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_STATUS_TABLE . "'") == ESP_STATUS_TABLE) {
-		$SQL = "DELETE FROM " . ESP_STATUS_TABLE . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPN', 'RCN', 'RAP', 'RNA', 'TIN', 'TPN', 'TCM', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN' );";
+		$SQL = "DELETE FROM " . ESP_STATUS_TABLE . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPN', 'RCN', 'RAP', 'RNA', 'TIN', 'TPN', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN' );";
 		$wpdb->query($SQL);
 		
 		$SQL = "INSERT INTO " . ESP_STATUS_TABLE . " 
-				(STS_ID, STS_code, STS_type, STS_can_edit, STS_desc) VALUES
-				('ACT', 'ACTIVE', 'event', 0, NULL),
-				('NAC', 'NOT_ACTIVE', 'event', 0, NULL),
-				('NOP', 'REGISTRATION_NOT_OPEN', 'event', 0, NULL),
-				('OPN', 'REGISTRATION_OPEN', 'event', 0, NULL),
-				('CLS', 'REGISTRATION_CLOSED', 'event', 0, NULL),
-				('PND', 'PENDING', 'event', 0, NULL),
-				('ONG', 'ONGOING', 'event', 0, NULL),
-				('SEC', 'SECONDARY', 'event', 0, NULL),
-				('DRF', 'DRAFT', 'event', 0, NULL),
-				('DEL', 'DELETED', 'event', 0, NULL),
-				('DEN', 'DENIED', 'event', 0, NULL),
-				('EXP', 'EXPIRED', 'event', 0, NULL),
-				('RPN', 'PENDING', 'registration', 0, NULL),
-				('RCN', 'CANCELLED', 'registration', 0, NULL),
-				('RAP', 'APPROVED', 'registration', 0, NULL),
-				('RNA', 'NOT_APPROVED', 'registration', 0, NULL),
-				('TIN', 'INCOMPLETE', 'transaction', 0, NULL),
-				('TPN', 'PENDING', 'transaction', 0, NULL),
-				('TCM', 'COMPLETE', 'transaction', 0, NULL),
-				('PAP', 'APPROVED', 'payment', 0, NULL),
-				('PCN', 'CANCELLED', 'payment', 0, NULL),
-				('PFL', 'FAILED', 'payment', 0, NULL),
-				('PDC', 'DECLINED', 'payment', 0, NULL),
-				('PPN', 'PENDING', 'payment', 0, NULL),
-				('EDR', 'DRAFT', 'email', 0, NULL),
-				('ESN', 'SENT', 'email', 0, NULL);";
+				(STS_ID, STS_code, STS_type, STS_can_edit, STS_desc, STS_open) VALUES
+				('ACT', 'ACTIVE', 'event', 0, NULL, 1),
+				('NAC', 'NOT_ACTIVE', 'event', 0, NULL, 0),
+				('NOP', 'REGISTRATION_NOT_OPEN', 'event', 0, NULL, 1),
+				('OPN', 'REGISTRATION_OPEN', 'event', 0, NULL, 1),
+				('CLS', 'REGISTRATION_CLOSED', 'event', 0, NULL, 0),
+				('PND', 'PENDING', 'event', 0, NULL, 1),
+				('ONG', 'ONGOING', 'event', 0, NULL, 1),
+				('SEC', 'SECONDARY', 'event', 0, NULL, 1),
+				('DRF', 'DRAFT', 'event', 0, NULL, 0),
+				('DEL', 'DELETED', 'event', 0, NULL, 0),
+				('DEN', 'DENIED', 'event', 0, NULL, 0),
+				('EXP', 'EXPIRED', 'event', 0, NULL, 0),
+				('RPN', 'PENDING', 'registration', 0, NULL, 1),
+				('RCN', 'CANCELLED', 'registration', 0, NULL, 0),
+				('RAP', 'APPROVED', 'registration', 0, NULL, 1),
+				('RNA', 'NOT_APPROVED', 'registration', 0, NULL, 1),
+				('TIN', 'INCOMPLETE', 'transaction', 0, NULL, 0),
+				('TPN', 'PENDING', 'transaction', 0, NULL, 1),
+				('TCM', 'COMPLETE', 'transaction', 0, NULL, 1),
+				('TOP',	'OVERPAID', 'transaction', 0, NULL, 1),
+				('PAP', 'APPROVED', 'payment', 0, NULL, 1),
+				('PCN', 'CANCELLED', 'payment', 0, NULL, 0),
+				('PFL', 'FAILED', 'payment', 0, NULL, 0),
+				('PDC', 'DECLINED', 'payment', 0, NULL, 0),
+				('PPN', 'PENDING', 'payment', 0, NULL, 1),
+				('EDR', 'DRAFT', 'email', 0, NULL, 0),
+				('ESN', 'SENT', 'email', 0, NULL, 1);";
 		$wpdb->query($SQL);
 		
 		
