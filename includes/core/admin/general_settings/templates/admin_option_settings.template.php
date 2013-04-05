@@ -130,7 +130,8 @@
 
 			<tr>
 				<th>
-					<?php _e('Enable Full Logging', 'event_espresso'); ?> <?php do_action('action_hook_espresso_help', 'full_logging_info'); ?>
+					<?php _e('Enable Full Logging', 'event_espresso'); ?>
+					<?php echo EE_Template::get_help_tab_link('full_logging_info'); ?>
 				</th>
 				<td>
 					<?php echo EE_Form_Fields::select_input('full_logging', $values, $full_logging ); ?>
@@ -147,7 +148,7 @@
 			<tr>
 				<th>
 					<?php _e('Enable Remote Logging', 'event_espresso'); ?>
-					<?php do_action('action_hook_espresso_help', 'remote_logging_info'); ?>
+					<?php echo EE_Template::get_help_tab_link('remote_logging_info'); ?>
 				</th>
 				<td>
 					<?php echo EE_Form_Fields::select_input('remote_logging', $values, $remote_logging ); ?>
@@ -160,7 +161,7 @@
 			<tr>
 				<th>
 					<?php _e('Remote Logging URL', 'event_espresso'); ?>
-					<?php do_action('action_hook_espresso_help', 'remote_logging_url_info'); ?>
+					<?php echo EE_Template::get_help_tab_link('remote_logging_url_info'); ?>
 				</th>
 				<td>
 					<input name="remote_logging_url" id="remote_logging_url" size="20" class="regular-text" type="text" value="<?php echo $remote_logging_url;?>" />
@@ -185,7 +186,7 @@
 				<th>
 					<label>
 						<?php _e('Link to Event Espresso in your Registration Page', 'event_espresso'); ?>
-						<?php do_action('action_hook_espresso_help', 'affiliate_info'); ?>
+						<?php echo EE_Template::get_help_tab_link('affiliate_info'); ?>
 					</label>
 				</th>
 				<td>

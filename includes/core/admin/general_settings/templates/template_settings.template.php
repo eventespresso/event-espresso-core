@@ -109,7 +109,7 @@
 				<th>
 					<label>
 						<?php _e('Use Built-in Style Sheets', 'event_espresso'); ?>
-						<?php do_action('action_hook_espresso_help', 'enable_styles_info'); ?>
+						<?php echo EE_Template::get_help_tab_link('enable_styles_info'); ?>
 					</label>
 				</th>
 				<td>
@@ -122,7 +122,9 @@
 
 			<tr>
 				<th>
-					<?php _e('ThemeRoller Style ', 'event_espresso'); ?><?php do_action('action_hook_espresso_help', 'themeroller_info'); ?>
+					<?php _e('ThemeRoller Style ', 'event_espresso'); ?>
+					<?php echo EE_Template::get_help_tab_link('themeroller_info'); ?>
+					
 				</th>
 				<td>
 					<?php //printr( $themeroller_themes, '$themeroller_themes < br /><span style = "font - size:10px;font - weight:normal;" > ' . __FILE__ . ' < br />line no: ' . __LINE__ . '</span > ', 'auto' ); ?>
@@ -205,7 +207,7 @@
 					<th>
 						<label for="use_custom_templates">
 							<?php _e('Enable Custom Templates', 'event_espresso'); ?>
-							<?php add_action('action_hook_espresso_help', 'custom_templates_info'); ?>
+							<?php echo EE_Template::get_help_tab_link('custom_templates_info'); ?>
 						</label>
 					</th>
 					<td>

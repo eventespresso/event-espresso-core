@@ -146,7 +146,7 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 					'order' => 10
 					),
 				'list_table' => 'Event_Categories_Admin_List_Table',
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box'),
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				),
 
 			'add_category' => array(
@@ -170,7 +170,13 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['EVT_CAT_ID']) ? add_query_arg(array('EVT_CAT_ID' => $this->_req_data['EVT_CAT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
-				'metaboxes' => array('_publish_post_box')
+				'metaboxes' => array('_publish_post_box'),
+				'help_tabs' => array(
+					'unique_id_help_tab' => array(
+						'title' => __('Unique ID', 'event_espresso'),
+						'callback' => 'unique_id_help_tab'
+						)
+					)
 				),
 
 			'import_categories' => array(
@@ -178,7 +184,7 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 					'label' => __('Import', 'event_espresso'),
 					'order' => 30
 					),
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box')
 				)
 
 		);
@@ -313,7 +319,7 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 				<tr>
 					<th><label for="cat_id">
 							<?php _e('Unique ID', 'event_espresso'); ?>
-							<?php do_action('action_hook_espresso_help', 'unique_id_help_tab'); ?>
+							<?php echo $this->_get_help_tab_link('unique_id_help_tab'); ?>
 						</label></th>
 					<td><input id="cat_id"  type="text" name="category_identifier" /></td>
 				</tr>
@@ -395,7 +401,7 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 				<tr>
 					<th><label for="cat_id">
 							<?php _e('Unique ID', 'event_espresso'); ?>
-							<?php do_action('action_hook_espresso_help', 'unique_id_info'); ?>
+							<?php echo $this->_get_help_tab_link('unique_id_info'); ?>
 						</label></th>
 					<td><input id="cat_id"  type="text" name="category_identifier" value="<?php echo $this->_category->category_identifier;?>" /></td>
 				</tr>
