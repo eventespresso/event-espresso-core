@@ -89,6 +89,7 @@ class Support_Admin_Page extends EE_Admin_Page {
 					'label' => __('Shortcodes', 'event_espresso'),
 					'order' => 30),
 				'metaboxes' => array('_shortcodes_boxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'require_nonce' => FALSE
 				),
 			'contact_support' => array(
 				'nav' => array(

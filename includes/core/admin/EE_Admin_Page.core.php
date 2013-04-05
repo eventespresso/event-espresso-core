@@ -243,7 +243,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *     			'tab2_id' => array(
 	 *     			 	'title' => 'tab2 title',
 	 *     			 	'callback' => 'callback_method_for_content',
-	 *     			 )
+	 *     			 ),
+	 *     		'require_nonce' => TRUE //this is used if you want to set a route to NOT require a nonce (default is true if it isn't present).  To remove the requirement for a nonce check when this route is visited just set 'require_nonce' to FALSE
 	 *     		)
 	 * 			
 	 * )
@@ -692,7 +693,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		$this->_verify_routes();
 
-		if ( $this->_req_action != 'default' ) {
+		$nonce_check = isset( $this->_route_config['require_nonce'] ) ? $this->_route_config['require_nonce'] : TRUE; 
+
+		if ( $this->_req_action != 'default' && $nonce_check ) {
 			// set nonce from post data
 			$nonce = isset($this->_req_data[ $this->_req_nonce  ]) ? sanitize_text_field( $this->_req_data[ $this->_req_nonce  ] ) : '';
 			$this->_verify_nonce( $nonce, $this->_req_nonce );	
