@@ -399,8 +399,8 @@ class EE_Single_Page_Checkout {
 					$step_1_line_items .= '#mer-reg-page-line-item-' . $item['id'];
 					
 					$event_queue[$cart_type]['items'][$item['line_item']]['id'] = $item['id'];
-					$event_queue[$cart_type]['items'][$item['line_item']]['name'] = $item['name'];
-					$event_queue[$cart_type]['items'][$item['line_item']]['price_desc'] = $item['options']['price_desc'];
+					$event_queue[$cart_type]['items'][$item['line_item']]['name'] = stripslashes( $item['name'] );
+					$event_queue[$cart_type]['items'][$item['line_item']]['price_desc'] = stripslashes( $item['options']['price_desc'] );
 					$event_queue[$cart_type]['items'][$item['line_item']]['price'] = $item['price'];
 					$event_queue[$cart_type]['items'][$item['line_item']]['qty'] = $item['qty'];
 					$event_queue[$cart_type]['items'][$item['line_item']]['line_total'] = number_format($item['line_total'], 2, '.', '');
@@ -509,14 +509,15 @@ class EE_Single_Page_Checkout {
 									'input_name' => $input_name
 							);
 							$target_inputs .= $input_id . '&&';
-
+							
+							$item_name = $item['name'] . ' - ' . stripslashes( $item['options']['price_desc'] );
 
 							if ($att_nmbr == 1) {
 								// if this is the first attendee for an event then display a heading
-								$additional_attendees[$item['line_item']][$att_nmbr]['event_hdr'] = $item['name'] . ' - ' . html_entity_decode($item['options']['price_desc'], ENT_QUOTES, 'utf-8');
+								$additional_attendees[$item['line_item']][$att_nmbr]['event_hdr'] = $item_name;
 							} elseif ($att_nmbr == 2 && $x == 1) {
 								// OR the very first additional attendee after the primary attendee
-								$additional_attendees[$item['line_item']][$att_nmbr]['event_hdr'] = $item['name'] . ' - ' . html_entity_decode($item['options']['price_desc'], ENT_QUOTES, 'utf-8');
+								$additional_attendees[$item['line_item']][$att_nmbr]['event_hdr'] = $item_name;
 							} else {
 								// no heading
 								$additional_attendees[$item['line_item']][$att_nmbr]['event_hdr'] = FALSE;
@@ -634,7 +635,7 @@ class EE_Single_Page_Checkout {
 
 		$template_args['target_inputs'] = rtrim($target_inputs, '&&');
 
-		$template_args['print_copy_info'] = $additional_attendee_forms ? TRUE : FALSE;
+		$template_args['print_copy_info'] = $additional_attendee_forms || $x > 2 ? TRUE : FALSE;
 		$template_args['additional_attendees'] = $additional_attendees;
 
 		$template_args['total_items'] = $total_items;
