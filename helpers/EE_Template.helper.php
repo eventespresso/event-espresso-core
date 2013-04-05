@@ -103,7 +103,8 @@ class EE_Template {
 		
 		if ( ! $action )
 			$action = isset( $_REQUEST['action'] ) && ! empty( $_REQUEST['action'] ) ? sanitize_key( $_REQUEST['action'] ) : $action;
-
+		
+		$action = empty($action) ? 'default' : $action;
 
 
 		$help_tab_lnk = $page . '-' . $action . '-' . $help_tab_id;

@@ -158,7 +158,7 @@
 						<b>
 							<?php _e('Cancel/Return page', 'event_espresso'); ?>
 						</b>
-						<?php echo EE_Template::get_help_tab_link('return_url_info'); ?>
+						<?php echo EE_Template::get_help_tab_link('cancel_return_info'); ?>
 						<br />
 						<?php echo General_Settings_Admin_Page::edit_view_links( $cancel_return );?>
 					</label>
