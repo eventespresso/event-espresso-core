@@ -76,6 +76,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 
 
 	protected function _help_content() {
+		ob_start();
 		?>
 		<div id="currency_info">
 			<h2>
@@ -101,7 +102,50 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 				<?php _e('By default, PayPal will display shipping address information on the PayPal payment screen. If you plan on shipping items to a registrant (shirts, invoices, etc) then use this option. Otherwise it should not be used, as it will require a shipping address when someone registers for an event.', 'event_espresso'); ?>
 			</p>
 		</div>
+		<div id="sandbox_info">
+			<h2>
+				<?php _e('PayPal Sandbox', 'event_espresso'); ?>
+			</h2>
+			<p>
+				<?php _e('In addition to using the PayPal Sandbox fetaure. The debugging feature will also output the form varibales to the payment page, send an email to the admin that contains the all PayPal variables.', 'event_espresso'); ?>
+			</p>
+			<hr />
+			<p>
+				<?php _e('The PayPal Sandbox is a testing environment that is a duplicate of the live PayPal site, except that no real money changes hands. The Sandbox allows you to test your entire integration before submitting transactions to the live PayPal environment. Create and manage test accounts, and view emails and API credentials for those test accounts.', 'event_espresso'); ?>
+			</p>
+			<hr />
+			<p><strong><?php _e('Helpful Links', 'event_espresso'); ?></strong></p>
+			<ul>
+				<li><a href="https://developer.paypal.com/devscr?cmd=_home" target="_blank"><?php _e('PayPal Sandbox Login', 'event_espresso'); ?></a></li>
+				<li><a href="https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox" target="_blank"><?php _e('Sandbox Tutorial', 'event_espresso'); ?></a></li>
+				<li><a href="https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox_get_started" target="_blank"><?php _e('Getting Started with PayPal Sandbox', 'event_espresso'); ?></a></li>
+			</ul>
+		</div>
+		<div id="paypal_button_image">
+			<h2>
+				<?php _e('Button Image URL', 'event_espresso'); ?>
+			</h2>
+			<p>
+				<?php _e('A default payment button is provided. A custom payment button may be used, choose your image or upload a new one, and just copy the "file url" here (optional.)', 'event_espresso'); ?>
+			</p>
+			<p><?php _e('Current Button Image', 'event_espresso'); ?></p>
+			<p><?php echo '<img src="' . $this->_payment_settings['button_url'] . '" />'; ?></p>
+		</div>
+		<div id="paypal_image_url_info">
+			<h2>
+				<?php _e('PayPal Image URL (logo for payment page)', 'event_espresso'); ?>
+			</h2>
+			<p>
+				<?php _e('The URL of the 150x50-pixel image displayed as your logo in the upper left corner of the PayPal checkout pages.', 'event_espresso'); ?>
+			</p>
+			<p>
+				<?php _e('Default - Your business name, if you have a Business account, or your email address, if you have Premier or Personal account.', 'event_espresso'); ?>
+			</p>
+		</div>
 		<?php
+		$content = ob_get_contents();
+		ob_end_clean();
+		return $content;
 	}
 
 	protected function _display_settings() {
@@ -129,7 +173,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		<tr>
 			<th><label for="currency_format">
 					<?php _e('Country Currency', 'event_espresso'); ?>
-					<?php echo EE_Template::get_help_tab_link( 'ee_paypal_help' ); ?>
+					<?php echo EE_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
 				</label></th>
 			<td><select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
 					<option value="<?php echo $this->_payment_settings['currency_format']; ?>"><?php echo $this->_payment_settings['currency_format']; ?></option>
@@ -211,7 +255,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		<tr>
 			<th><label for="pp_image_url">
 					<?php _e('Image URL', 'event_espresso'); ?>
-					<?php echo EE_Template::get_help_tab_link( 'ee_paypal_help' ); ?>
+					<?php echo EE_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
 				</label></th>
 			<td><input class="regular-text" type="text" name="image_url" id="pp_image_url" size="35" value="<?php echo $this->_payment_settings['image_url']; ?>" />
 				<br />
@@ -223,7 +267,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		<tr>
 			<th><label for="use_sandbox">
 					<?php _e('Use the Debugging Feature and the PayPal Sandbox', 'event_espresso'); ?>
-					<?php echo EE_Template::get_help_tab_link( 'ee_paypal_help' ); ?>
+					<?php echo EE_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
 				</label></th>
 			<td><?php echo EE_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
 		</tr>
@@ -232,7 +276,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			<th>
 				<label for="no_shipping">
 					<?php _e('Shipping Address Options', 'event_espresso'); ?>
-					<?php echo EE_Template::get_help_tab_link( 'ee_paypal_help' ); ?>
+					<?php echo EE_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
 				</label>
 			</th>
 			<td>

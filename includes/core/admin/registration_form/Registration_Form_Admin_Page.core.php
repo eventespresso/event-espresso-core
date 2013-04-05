@@ -288,7 +288,13 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				'labels' => array(
 					'publishbox' => __('Update Settings', 'event_espresso')
 					),
-				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
+				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'help_tabs' => array(
+					'recaptcha_info' => array(
+						'title' => __('reCAPTCHA Information', 'event_espresso'),
+						'callback' => 'recaptcha_info_help_tab'
+						)
+					)
 				)
 			);
 	}
@@ -345,6 +351,14 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	}
 	public function load_scripts_styles_edit_question_group() {
 		$this->load_scripts_styles_forms();
+	}
+
+
+
+
+	public function recaptcha_info_help_tab() {
+		$template = REGISTRATION_FORM_TEMPLATE_PATH . 'recaptcha_info_help_tab.template.php';
+		espresso_display_template($template, array());
 	}
 
 

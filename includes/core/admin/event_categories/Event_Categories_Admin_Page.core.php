@@ -170,7 +170,13 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['EVT_CAT_ID']) ? add_query_arg(array('EVT_CAT_ID' => $this->_req_data['EVT_CAT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
-				'metaboxes' => array('_publish_post_box')
+				'metaboxes' => array('_publish_post_box'),
+				'help_tabs' => array(
+					'unique_id_help_tab' => array(
+						'title' => __('Unique ID', 'event_espresso'),
+						'callback' => 'unique_id_help_tab'
+						)
+					)
 				),
 
 			'import_categories' => array(

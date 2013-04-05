@@ -89,7 +89,7 @@
 						<b>
 							<?php _e('Thank You page', 'event_espresso'); ?>
 						</b>
-						<?php echo EE_Template::get_help_tab_link('registration_page_info'); ?>
+						<?php echo EE_Template::get_help_tab_link('return_url_info'); ?>
 						<br />
 						<?php echo General_Settings_Admin_Page::edit_view_links( $return_url );?>
 					</label>
@@ -123,7 +123,7 @@
 						<b>
 							<?php _e('Transactions page', 'event_espresso'); ?>
 						</b>
-						<?php echo EE_Template::get_help_tab_link('registration_page_info'); ?>
+						<?php echo EE_Template::get_help_tab_link('notify_url_info'); ?>
 						<br />
 						<span class="lt-grey-text"><?php _e('Notify URL (processes payments)', 'event_espresso'); ?></span><br/>
 						<?php echo General_Settings_Admin_Page::edit_view_links( $notify_url );?>
@@ -158,7 +158,7 @@
 						<b>
 							<?php _e('Cancel/Return page', 'event_espresso'); ?>
 						</b>
-						<?php echo EE_Template::get_help_tab_link('registration_page_info'); ?>
+						<?php echo EE_Template::get_help_tab_link('return_url_info'); ?>
 						<br />
 						<?php echo General_Settings_Admin_Page::edit_view_links( $cancel_return );?>
 					</label>

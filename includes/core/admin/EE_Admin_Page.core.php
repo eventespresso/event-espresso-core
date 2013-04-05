@@ -794,22 +794,22 @@ abstract class EE_Admin_Page extends EE_BASE {
 				if ( !isset( $cfg['title'] ) )
 					throw new EE_Error( __('The _page_config array is not set up properly for help tabs.  It is missing a title', 'event_espresso') );
 
-				if ( !isset( $cfg['callback'] ) )
-					throw new EE_Error( __('The _page_config array is not setup properly for help tabs. It is missing a callback reference', 'event_espresso') );
+				if ( !isset( $cfg['callback'] ) && !isset( $cfg['content'] ) )
+					throw new EE_Error( __('The _page_config array is not setup properly for help tabs. It is missing a callback reference and a content reference so there is no way to know the content for the help tab', 'event_espresso') );
 
 				//chekc if callback is valid
-				if ( !method_exists( $this, $cfg['callback'] ) ) 
+				if ( empty($cfg['content']) && !method_exists( $this, $cfg['callback'] ) ) 
 					throw new EE_Error( sprintf( __('The callback given for the %s help tab does not have a corresponding method.  Check the spelling or make sure the method is present.  This method is used to get the content for the tab.', 'event_espresso'), $cfg['title'] ) );
-		
 					
 				//setup config array for help tab method
 				$id = $this->page_slug . '-' . $slug . '-' . $tab_id;
 				$_ht = array(
 					'id' => $id,
 					'title' => $cfg['title'],
-					'callback' => array( $this, $cfg['callback'] )
+					'callback' => isset( $cfg['callback'] ) ? array( $this, $cfg['callback'] ) : NULL,
+					'content' => isset($cfg['content']) ? $cfg['content'] : ''
 					);
-
+				
 				$this->_current_screen->add_help_tab( $_ht );
 			}
 		}

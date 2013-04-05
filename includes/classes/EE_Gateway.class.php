@@ -166,7 +166,6 @@ abstract class EE_Gateway {
 
 		//require helpers
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Template.helper.php';
-		$this->add_settings_page_meta_box();
 		// if our current path is empty or doesn't match what's in the db, then maybe something changed?
 		if ($this->_payment_settings['current_path'] == '' || $this->_payment_settings['current_path'] != $this->_path) {
 			$this->_reset_button_url();

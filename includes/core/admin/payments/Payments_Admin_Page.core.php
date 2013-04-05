@@ -87,6 +87,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					'order' => 10
 					),
 				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'help_tabs' => $this->_get_gateway_help_tabs(),
 				),
 			'payment_settings' => array(
 				'nav' => array(
@@ -145,6 +146,48 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 
+	/**
+	 * returns the help tab array for all the gateway settings
+	 * @return array an array of help tabs for the gateways.
+	 */
+	protected function _get_gateway_help_tabs() {
+		global $EE_Session, $caffeinated, $EEM_Gateways, $current_user;
+		$help_tabs = array();
+		if ( ! defined( 'ESPRESSO_GATEWAYS' )) {
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
+			$EEM_Gateways = EEM_Gateways::instance();
+			$EEM_Gateways->set_active_gateways();
+		}
+
+		$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
+		$gateway_instances = $EEM_Gateways->get_gateway_instances();
+		$payment_settings = array_key_exists('payment_settings',$gateway_data) ? $gateway_data['payment_settings'] : null;
+
+		//we only really need to generate help tabs for the given gateways
+		
+		if ( empty( $gateway_data['payment_settings']) ){
+			$payment_settings = get_user_meta( $current_user->ID, 'payment_settings', TRUE );
+		}
+
+		$default_gateways = array( 'Bank', 'Check', 'Invoice', 'Paypal_Standard' );
+
+		foreach ( $payment_settings as $gateway => $settings ) {
+			if ( $caffeinated || in_array( $gateway, $default_gateways) ) {
+				$ht_content = $gateway_instances[$gateway]->get_help_tab_content();
+				$ht_ref = 'ee_' . $gateway . '_help';
+				if ( !empty( $ht_content) )
+					$help_tabs[$ht_ref] = array(
+						'title' => $settings['display_name'] . __(' Help', 'event_espresso'),
+						'content' => $ht_content
+						);
+			}
+		}
+
+		return $help_tabs;
+	}
+
+
+
 
 	protected function _gateway_settings() {
 		
@@ -159,11 +202,18 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Tabbed_Content.helper.php' ;
 		
 		$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
+		$gateway_instances = $EEM_Gateways->get_gateway_instances();
 		$payment_settings = array_key_exists('payment_settings',$gateway_data) ? $gateway_data['payment_settings'] : null;
 		/* if there are no payment settings in the session yet, add them from the DB */
 		if (  empty($gateway_data['payment_settings']) ){
 			$payment_settings = get_user_meta($current_user->ID, 'payment_settings', true);
 		}
+
+		//lets add all the metaboxes
+		foreach( $gateway_instances as $gate_obj ) {
+			$gate_obj->add_settings_page_meta_box();
+		}
+		
 		
 		//printr( $gateway_data, '$gateway_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$activate_trigger = $deactivate_trigger = FALSE;

@@ -195,7 +195,17 @@ class Events_Admin_Page extends EE_Admin_Page {
 					'order' => 5,
 					'persistent' => false
 					),
-				'metaboxes' => array( '_publish_post_box', '_register_event_editor_meta_boxes', '_premium_event_editor_meta_boxes' )
+				'metaboxes' => array( '_publish_post_box', '_register_event_editor_meta_boxes', '_premium_event_editor_meta_boxes' ),
+				'help_tabs' => array(
+					'event_date_info' => array(
+						'title' => __('Event Date', 'event_espresso'),
+						'callback' => 'event_date_info_help_tab'
+						),
+					'reg_date_info' => array(
+						'title' => __('Registration Dates/Times', 'event_espresso'),
+						'callback' => 'reg_date_info_help_tab'
+						)
+					)
 				),
 				
 			'edit_event' => array(
@@ -205,7 +215,17 @@ class Events_Admin_Page extends EE_Admin_Page {
 					'persistent' => false,
 					'url' => isset($this->_req_data['EVT_ID']) ? add_query_arg(array('EVT_ID' => $this->_req_data['EVT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
-				'metaboxes' => array( '_publish_post_box', '_register_event_editor_meta_boxes', '_premium_event_editor_meta_boxes' )
+				'metaboxes' => array( '_publish_post_box', '_register_event_editor_meta_boxes', '_premium_event_editor_meta_boxes' ),
+				'help_tabs' => array(
+					'event_date_info' => array(
+						'title' => __('Event Date', 'event_espresso'),
+						'callback' => 'event_date_info_help_tab'
+						),
+					'reg_date_info' => array(
+						'title' => __('Registration Dates/Times', 'event_espresso'),
+						'callback' => 'reg_date_info_help_tab'
+						)
+					)
 				),
 				
 			'default_event_settings' => array(
@@ -265,6 +285,23 @@ class Events_Admin_Page extends EE_Admin_Page {
 	public function events_expire_on_reg_end_date_help_tab() { $this->default_event_settings_help_tab( __FUNCTION__ ); }
 	public function default_payment_status_help_tab() { $this->default_event_settings_help_tab( __FUNCTION__ ); }
 
+
+	/**
+	 * event edit help tabs
+	 * @access public
+	 * @return void
+	 */
+	public function event_edit_help_tab( $tab_name ) {
+		require_once EVENTS_TEMPLATE_PATH . 'event_edit_help_tab.template.php';
+		$template = call_user_func( $tab_name . '_html' );
+		espresso_display_template( $template, array() );
+	}
+	public function event_date_info_help_tab(){
+		$this->event_edit_help_tab( __FUNCTION__ );
+	}
+	public function reg_date_info_help_tab(){
+		$this->event_edit_help_tab( __FUNCTION__ );
+	}
 	
 
 
@@ -397,9 +434,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$route = $view == 'edit' ? 'update_event' : 'insert_event';
 		$this->_set_add_edit_form_tags($route);
 
-		//any specific javascript here.
-		//todo: this needs to be done properly via an enqueue and wp_localize_scripts() for vars
-		add_action( 'action_hook_espresso_event_editor_footer', array($this, 'event_editor_footer_js') );
 
 		$this->_generate_event_title_and_desc();
 		$this->_generate_publish_box_extra_content();
@@ -465,20 +499,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 	}
 
 
-
-
-	/**
-	 * [event_editor_footer_js description]
-	 * @return string
-	 */
-	public function event_editor_footer_js($content) {
-		ob_start();
-		include_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin_screens/events/help.php');
-		$n_content = ob_get_contents();
-		ob_end_clean();
-		$content .= $n_content;
-		return $content;
-	}
 
 
 
@@ -1512,17 +1532,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 				$div .= "</fieldset>";
 			}
 			$field .= "</select>";
-			$help_div .= '<div id="venue_info" style="display:none">';
-			$help_div .= '<div class="TB-ee-frame">';
-			$help_div .= '<h2>' . __('Venue Shortcode', 'event_espresso') . '</h2>';
-			$help_div .= '<p>' . __('Add the following shortcode into the description to show the venue for this event.', 'event_espresso') . '<br/>';
-			$help_div .= '[ESPRESSO_VENUE]<br/>';
-			$help_div .=  __('To use this venue in a page or post. Use the following shortcode.', 'event_espresso') . '<br/>';
-			$help_div .= '[ESPRESSO_VENUE id="selected_venue_id"]</p>';
-			$help_div .= '<p>Example with Optional Parameters:<br />[ESPRESSO_VENUE outside_wrapper="div" outside_wrapper_class="event_venue"]</p>';
-			$help_div .= '<p><strong><a href="http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/#venue_shortcode" target="_blank">More Examples</a></strong></p>';
-			$help_div .= '</div>';
-			$help_div .= '</div>';
 			ob_start();
 			?>
 			<script>
@@ -1536,7 +1545,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			<?php
 			$js = ob_get_contents();
 			ob_end_clean();
-			$html = '<table><tr><td>' . $field . '</td></tr><tr><td>' . $div . '</td></tr></table>' . $help_div . $js;
+			$html = '<table><tr><td>' . $field . '</td></tr><tr><td>' . $div . '</td></tr></table>' . $js;
 			return $html;
 		}
 	}
@@ -2157,7 +2166,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$event_id = !empty($this->_event->id) ? $this->_event->id : 0;
 		$originally_submitted_by = !empty($this->_event->event_meta['originally_submitted_by']) ? $this->_event->event_meta['originally_submitted_by'] : 0;
 		$orig_event_staff = !empty($this->_event->event_meta['orig_event_staff']) ? $this->_event->event_meta['orig_event_staff'] : 0;
-		require_once( EE_CORE . 'admin/admin_helper.php');
 		?>
 		<div class="inside">
 			<?php echo espresso_personnel_cb($event_id, $originally_submitted_by, $orig_event_staff); ?>
