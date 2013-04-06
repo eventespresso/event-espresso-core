@@ -73,11 +73,23 @@
 					<td class="tckt-slctr-tbl-td-date"><?php echo $date_display; ?></td>
 					<td class="tckt-slctr-tbl-td-time"><?php echo $time_display; ?></td>
 					<td class="tckt-slctr-tbl-td-desc"><?php echo $price['option']; ?></td>	
-					<td class="tckt-slctr-tbl-td-qty">					
-						<select name="tkt-slctr-qty-<?php echo $event_id; ?>[]" id="ticket-selector-tbl-qty-slct-<?php echo $event_id ?>" class="ticket-selector-tbl-qty-slct ui-widget-content ui-corner-all">
+					<td class="tckt-slctr-tbl-td-qty">
+					<?php if ( $max_atndz > 1 ) { ?>
+						<select name="tkt-slctr-qty-<?php echo $event_id; ?>[]" id="ticket-selector-tbl-qty-slct-<?php echo $event_id . '-' . $row; ?>" class="ticket-selector-tbl-qty-slct ui-widget-content ui-corner-all">
 <?php for ($i = 0; $i <= $max_atndz; $i++) { ?>
 							<option value="<?php echo $i; ?>" <?php do_action('action_hook_espresso_ticket_selector_option',$event_id,$datetime,$price,$i,$max_atndz);?>>&nbsp;<?php echo $i; ?>&nbsp;</option><?php } ?>
-						</select>												
+						</select>
+					<?php } else { ?>
+						<label>
+							<input type="radio" 
+										name="tkt-slctr-qty-<?php echo $event_id; ?>" 
+										id="ticket-selector-tbl-qty-slct-<?php echo $event_id . '-' . $row; ?>" 
+										class="ticket-selector-tbl-qty-slct ui-widget-content ui-corner-all"
+										value="<?php echo $row . '-'; ?>1"
+										<?php echo $row == 0 ? ' checked="checked"' : ''; ?>
+							/>
+						</label>
+					<?php } ?>											
 						<input type="hidden"
 									name="tkt-slctr-date-<?php echo $event_id; ?>[]"
 									value="<?php echo $datetime['start_date']; ?>"
