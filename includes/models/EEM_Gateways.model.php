@@ -120,6 +120,7 @@ Class EEM_Gateways {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if (!empty($this->_session_gateway_data['active_gateways'])) {
 			$this->_active_gateways = $this->_session_gateway_data['active_gateways'];
+			
 		} else {
 			global $espresso_wp_user, $EE_Session;
 			$this->_active_gateways = get_user_meta($espresso_wp_user, 'active_gateways', TRUE);

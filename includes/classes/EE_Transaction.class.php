@@ -164,7 +164,7 @@ class EE_Transaction extends EE_Base_Class{
 	*  Transaction constructor
 	*
 	* @access 		public
-	* @param 		timestamp 		$TXN_timestamp 		Unix timestamp
+	* @param 		timestamp/array 		$TXN_timestamp 		Unix timestamp or array where keys are column names
 	* @param 		float 				$TXN_total 					Transaction Total
 	* @param 		float 				$TXN_paid 					Total Amount Paid to Date
 	* @param 		string				$STS_ID  						Transaction Status - foreign key from status type table
@@ -185,16 +185,26 @@ class EE_Transaction extends EE_Base_Class{
 														$TXN_tax_data = NULL, 
 														$TXN_ID = FALSE 
 													) {
-													
-		$this->_TXN_ID 						= absint( $TXN_ID );
-		$this->_TXN_timestamp 		= $TXN_timestamp != NULL ? ( is_numeric( $TXN_timestamp ) ? absint( $TXN_timestamp ) : strtotime( $TXN_timestamp )) : time();
-		$this->_TXN_total 					= floatval( preg_replace( "/^[^0-9\.]-/", "", preg_replace( "/,/", ".", $TXN_total ) ));
-		$this->_TXN_paid 					= floatval( preg_replace( "/^[^0-9\.]-/", "", preg_replace( "/,/", ".", $TXN_paid ) ));
-		$this->_STS_ID 						= wp_strip_all_tags( $STS_ID );
-		$this->_TXN_details 				= $TXN_details;
-		$this->_TXN_session_data	= !is_serialized( $TXN_session_data ) ? maybe_serialize($TXN_session_data) : $TXN_session_data;
-		$this->_TXN_hash_salt 			= $TXN_hash_salt;
-		$this->_TXN_tax_data 			= !is_serialized( $TXN_tax_data ) ? maybe_serialize( $TXN_tax_data ) : $TXN_tax_data;
+		if(is_array($TXN_timestamp)){
+			parent::__construct($TXN_timestamp);
+			return;
+		}
+		$reflector = new ReflectionMethod($this,'__construct');	
+		$arrayForParent=array();
+		foreach($reflector->getParameters() as $param){
+			$paramName=$param->name;
+			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
+		}
+		parent::__construct($arrayForParent);											
+//		$this->_TXN_ID 						= absint( $TXN_ID );
+//		$this->_TXN_timestamp 		= $TXN_timestamp != NULL ? ( is_numeric( $TXN_timestamp ) ? absint( $TXN_timestamp ) : strtotime( $TXN_timestamp )) : time();
+//		$this->_TXN_total 					= floatval( preg_replace( "/^[^0-9\.]-/", "", preg_replace( "/,/", ".", $TXN_total ) ));
+//		$this->_TXN_paid 					= floatval( preg_replace( "/^[^0-9\.]-/", "", preg_replace( "/,/", ".", $TXN_paid ) ));
+//		$this->_STS_ID 						= wp_strip_all_tags( $STS_ID );
+//		$this->_TXN_details 				= maybe_unserialize($TXN_details);
+//		$this->_TXN_session_data	= maybe_unserialize($TXN_session_data); //!is_serialized( $TXN_session_data ) ? maybe_serialize($TXN_session_data) : $TXN_session_data;
+//		$this->_TXN_hash_salt 			= $TXN_hash_salt;
+//		$this->_TXN_tax_data 			= maybe_unserialize($TXN_tax_data);//!is_serialized( $TXN_tax_data ) ? maybe_serialize( $TXN_tax_data ) : $TXN_tax_data;
 	}
 
 
@@ -708,6 +718,18 @@ class EE_Transaction extends EE_Base_Class{
 		$REG = $this->primary_registration();
 		if ( empty($REG) ) return false;
 		return $REG->payment_overview_url();
+	}
+	
+	
+	
+	
+	/**
+	 * Updates the transaction's status and total_paid based on all the payments
+	 * taht apply to it
+	 * @return boolean success of the application
+	 */
+	public function update_based_on_payments(){
+		return $this->_get_model()->update_based_on_payments($this);
 	}
 
 
