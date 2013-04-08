@@ -280,12 +280,12 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 			</a>
 		</li>';
       
-	       $send_pay_lnk = '
+	       /**$send_pay_lnk = '
 		<li>
 			<a href="'.$send_pay_lnk_url.'" title="' . __( 'Send Payment Reminder', 'event_espresso' ) . '">
 				<img width="20" height="20" alt="' . __( 'Send Payment Reminder', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/payment-reminder-20x20.png">
 			</a>
-		</li>';
+		</li>';**/
 		
 	        $view_reg_lnk = '
 		<li>
@@ -296,7 +296,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 
 			$actions = '
 		<ul class="txn-overview-actions-ul">' . 
-		$view_lnk . $dl_invoice_lnk . $send_pay_lnk . $view_reg_lnk . '
+		$view_lnk . $dl_invoice_lnk . /*$send_pay_lnk .*/ $view_reg_lnk . '
 		</ul>';
 			
 			return $actions;
