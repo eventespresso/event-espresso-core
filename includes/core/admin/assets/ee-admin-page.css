@@ -447,3 +447,28 @@ table .espresso-radio-btn-options-ul .small-lbl,
     margin-right: 5px;
     margin-left: 5px;
 }
+
+/** LIST-TABLE-LEGEND **/
+.ee-list-table-legend {
+    margin-top: 0;
+    padding: 5px;   
+    margin-right: 20px;
+}
+
+.ee-list-table-legend dt {
+    line-height: 25px;
+}
+
+.ee-list-table-legend-container h4 {
+    margin-bottom: 5px;
+}
+
+.ee-legend-img-container {
+   width: 13px;
+   height: 13px;
+   float: left;
+}
+
+.ee-legend-description {
+    margin-left: 10px;
+}
