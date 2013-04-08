@@ -394,6 +394,45 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 
+
+	protected function _event_legend_items() {
+		$items = array(
+			'view_details' => array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'images/magnifier.png',
+				'desc' => __('View Event', 'event_espresso')
+				),
+			'edit_event' => array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'images/calendar_edit.png',
+				'desc' => __('Edit Event Details', 'event_espresso')
+				),
+			'view_attendees' => array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'images/group.png',
+				'desc' => __('View Registrations for Event', 'event_espresso')
+				),
+			'event_reports' => array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'images/chart_bar.png',
+				'desc' => __('View Event Reports.', 'event_espresso')
+				),
+			'event_shortcode' => array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/tag.png',
+				'desc' => __('Get ShortURL/Shortcode for Event', 'event_espresso')
+				),
+			'excel_export' => array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/excel_icon.png',
+				'desc' => __('Export Event details to excel', 'event_espresso')
+				),
+			'csv_export' => array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/csv_icon_sm.gif',
+				'desc' => __('Export Event details to csv', 'event_espresso')
+				)
+			);
+		return $items;
+	}
+
+
+
+
+
 	/**
 	 * _events_overview_list_table
 	 * This contains the logic for showing the events_overview list
@@ -403,6 +442,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _events_overview_list_table() {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		$this->_template_args['after_list_table'] = $this->_display_legend( $this->_event_legend_items() );
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_event', 'add', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
