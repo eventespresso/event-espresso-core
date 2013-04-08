@@ -1115,29 +1115,10 @@ class EE_Single_Page_Checkout {
 			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
 			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
-			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php' );
 			$REG = EEM_Registration::instance();
 			$TXN = EEM_Transaction::instance();
-			$ATT = EEM_Attendee::instance();
-
-			
-			//printr( $session, '$session ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
 
 			$reg_items = $session['cart']['REG']['items'];
-
-			// in case of back button shenanigans or multiple orders in the same session , we'll remove these so that duplicates don't pile up'
-			// removed by mike in 3.2-ALPHA, because these actually encourage duplicates I think.
-			// If we forget which transaction is in the session, then we ahve no way of knowing if this is a duplicate...
-//			if ( isset( $session['registration'] )) {
-//				unset( $session['registration'] );
-//			}
-//			if ( isset( $session['transaction'] )) {
-//				unset( $session['transaction'] );
-//			}
-//			if ( isset( $session['txn_results'] )) {
-//				unset( $session['txn_results'] );
-//			}
-//			printr( $session, '$session ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
 
 			$grand_total = $session['_cart_grand_total_amount'];
 			// add taxes
@@ -1174,155 +1155,8 @@ class EE_Single_Page_Checkout {
 				$transaction->save();
 			}
 
-			// cycle through items in session
+			$saved_registrations = self::save_registration_items( $reg_items );
 			
-			
-			foreach ($reg_items as $line_item_id => $event) {
-
-				// cycle through attendees
-				foreach ($event['attendees'] as $att_nmbr => $attendee) {
-
-					// if attendee has no name, then use primary attendee's details
-					$attendee = isset( $attendee['1'] ) && $att_nmbr > 1 ? $attendee : $event['attendees'][1];
-					
-					// grab main attendee details
-					$ATT_fname = isset($attendee[1]) ? $attendee[1] : '';
-					$ATT_lname = isset($attendee[2]) ? $attendee[2] : '';
-					$ATT_email = isset($attendee[3]) ? $attendee[3] : '';
-					// create array for query where statement
-					$where_cols_n_values = array('ATT_fname' => $ATT_fname, 'ATT_lname' => $ATT_lname, 'ATT_email' => $ATT_email);
-					// do we already have an existing record for this attendee ?
-					if ( $existing_attendee = $ATT->find_existing_attendee( $where_cols_n_values )) {
-						$ATT_ID = $existing_attendee->ID();
-						$att[$att_nmbr] = $existing_attendee;
-					} else {
-						// create attendee
-						$att[$att_nmbr] = new EE_Attendee(
-														$ATT_fname,
-														$ATT_lname,
-														isset($attendee[4]) ? $attendee[4] : NULL,		// address
-														isset($attendee[5]) ? $attendee[5] : NULL,		// address2
-														isset($attendee[6]) ? $attendee[6] : NULL,		// city
-														isset($attendee[7]) ? $attendee[7] : NULL,		// state
-														isset($attendee[8]) ? $attendee[8] : NULL,		// country
-														isset($attendee[9]) ? $attendee[9] : NULL,		// zip
-														$ATT_email,		// address
-														isset($attendee[10]) ? $attendee[10] : NULL,		// phone
-														NULL		// social
-						);
-						
-						//add attendee to db
-						$att_results = $att[$att_nmbr]->save();
-						$ATT_ID = $att[$att_nmbr]->ID();//$att_results['new-ID'];
-						do_action('action_hook_espresso__EE_Single_Page_Checkout__process_registration_step_3__after_attendee_save',$att_nmbr,$att[$att_nmbr]);
-					}
-					
-					
-					// add attendee object to attendee info in session
-					$session['cart']['REG']['items'][$line_item_id]['attendees'][$att_nmbr]['att_obj'] = base64_encode( serialize( $att[$att_nmbr] ));
-
-					$DTT_ID = $event['options']['dtt_id'];
-					$PRC_ID = explode( ',', $event['options']['price_id'] );
-					$PRC_ID = $PRC_ID[0];
-					$price_paid = $attendee['price_paid'];
-
-					$session_snip =  substr( $session['id'], 0, 3 ) . substr( $session['id'], -3 );
-
-
-					
-					$new_reg_code = $transaction->ID() . '-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 ));
-					
-					$new_reg_code = apply_filters( 'filter_hook_espresso_new_registration_code', $new_reg_code );
-					
-					if ( has_filter( 'filter_hook_espresso_new_registration_code' ) ) {
-						$prev_reg_code = $new_reg_code;
-					} else {
-//						$prev_reg_code = '%-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session_snip . '%';
-						$prev_reg_code = '%-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 )) . '%';
-//						$prev_reg_code = '%-' . $att_nmbr . '-' . $session_snip . '%';
-					}					
-					
-					//Mike comments: this code is good in spirit, but Brent said the reg code probably isn't a good
-					//indicator of a duplicate registration, because there's a time element on the end fo it now
-					//making it always unique.
-					// check for existing registration attempt, taking filtered reg_codes into consideration
-					/*if ( $prev_reg = $REG->find_existing_registrations_LIKE( $prev_reg_code ) ) {
-
-						// get previous transaction
-						$prev_txn_ID = $prev_reg->transaction_ID();
-						$prev_txn = $TXN->get_transaction($prev_txn_ID);
-						if ($prev_txn) {
-							// get txn details
-							$prev_txn_details = $prev_txn->details();
-							//echo "prevtxndetails:";var_dump($prev_txn_details);
-							if(!is_array($prev_txn_details)){
-								$prev_txn_details = array();
-							}
-							if (!array_key_exists('REDO_TXN',$prev_txn_details)) {
-								
-								$prev_txn_details['REDO_TXN'] = array();
-							}
-							// update with new TXN_ID
-							$prev_txn_details['REDO_TXN'][] = $txn_results['new-ID'];
-							$prev_txn->set_status('TFL');
-							$prev_txn->set_details( $prev_txn_details );
-							$prev_txn->update();
-						}
-						// delete prev registration so that they don't pile up in the DB
-						// ( it's ok - we're tracking the failed transactions, and if they don't retry the transaction, then we will still have this record won't we? )
-						$REG->delete(array('REG_ID' => $prev_reg->ID()));
-
-					}*/
-					$default_reg_status = isset( $org_options['default_reg_status'] ) ? $org_options['default_reg_status'] : 'RPN';
-
-					// now create a new registration for the attendee
-					require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Registration.class.php' );
-					$reg_url_link=md5($new_reg_code);
-					$saved_registrations[$line_item_id] = new EE_Registration(
-													$event['id'],
-													$ATT_ID,
-													$transaction->ID(),
-													$DTT_ID,
-													$PRC_ID,
-													$default_reg_status,
-													time(),
-													$price_paid,
-													$session['id'],
-													$new_reg_code,
-													$reg_url_link,
-													$att_nmbr,
-													count($event['attendees']),
-													FALSE,
-													FALSE
-							);
-					//printr( $reg[$line_item_id], '$reg[$line_item_id] ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' );die();
-
-					$reg_results = $saved_registrations[$line_item_id]->save();
-					$REG_ID = $saved_registrations[$line_item_id]->ID();
-
-					// add attendee object to attendee info in session
-					$session['cart']['REG']['items'][$line_item_id]['attendees'][$att_nmbr]['reg_obj'] = base64_encode( serialize( $saved_registrations[$line_item_id] ));
-
-					// add registration id to session for the primary attendee
-					if (isset($attendee['primary_attendee']) && $attendee['primary_attendee'] == 1) {
-						$primary_attendee = $session['primary_attendee'];
-						$primary_attendee['registration_id'] = $new_reg_code;
-						$EE_Session->set_session_data(array('primary_attendee' => $primary_attendee), 'session_data');
-					}
-					
-					$EE_Session->set_session_data( $session['cart'] );
-
-					// save attendee question answerss
-					$exclude = array( 'price_paid', 'primary_attendee', 'att_obj', 'reg_obj' );
-					foreach ( $reg_items[ $line_item_id ]['attendees'][ $att_nmbr ] as $QST_ID => $answer ) {
-						if ( ! in_array( $QST_ID, $exclude ) && ! empty( $answer )) {
-							EEM_Answer::instance()->insert( array( 'REG_ID' =>$REG_ID, 'QST_ID' =>$QST_ID, 'ANS_value' =>sanitize_text_field( $answer )));
-						}
-					}
-					
-					
-				}
-			}
 			//$updated_session=$EE_Session->get_session_data();
 			$transaction->set_txn_session_data( $session );
 			$transaction->save();
@@ -1357,6 +1191,142 @@ class EE_Single_Page_Checkout {
 			wp_safe_redirect($reg_page_step_3_url);
 			exit();
 		}
+	}
+
+
+
+
+
+	
+	/**
+	 * 		save_registration_items
+	 *
+	 * 		@access 		public
+	 * 		@param 		array 		$reg_items
+	 * 		@return 		void
+	 */
+	static public function save_registration_items( $reg_items = array(), EE_Transaction $transaction ) {
+		
+		if( empty( $reg_items )) {
+				EE_Error::add_error( __( 'An error occured. No registration items were received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );	
+				return array();			
+		}
+
+		global $EE_Session;
+		// grab session data
+		$session = $EE_Session->get_session_data();
+		// get some class would ya !
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Registration.class.php' );
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php' );
+		$ATT = EEM_Attendee::instance();
+		$saved_registrations = array();
+		// cycle through items in session			
+		foreach ($reg_items as $line_item_id => $event) {
+
+			// cycle through attendees
+			foreach ($event['attendees'] as $att_nmbr => $attendee) {
+
+				// if attendee has no name, then use primary attendee's details
+				$attendee = isset( $attendee['1'] ) && $att_nmbr > 1 ? $attendee : $event['attendees'][1];
+				
+				// grab main attendee details
+				$ATT_fname = isset($attendee[1]) ? $attendee[1] : '';
+				$ATT_lname = isset($attendee[2]) ? $attendee[2] : '';
+				$ATT_email = isset($attendee[3]) ? $attendee[3] : '';
+				// create array for query where statement
+				$where_cols_n_values = array('ATT_fname' => $ATT_fname, 'ATT_lname' => $ATT_lname, 'ATT_email' => $ATT_email);
+				// do we already have an existing record for this attendee ?
+				if ( $existing_attendee = $ATT->find_existing_attendee( $where_cols_n_values )) {
+					$ATT_ID = $existing_attendee->ID();
+					$att[$att_nmbr] = $existing_attendee;
+				} else {
+					// create attendee
+					$att[$att_nmbr] = new EE_Attendee(
+													$ATT_fname,
+													$ATT_lname,
+													isset($attendee[4]) ? $attendee[4] : NULL,		// address
+													isset($attendee[5]) ? $attendee[5] : NULL,		// address2
+													isset($attendee[6]) ? $attendee[6] : NULL,		// city
+													isset($attendee[7]) ? $attendee[7] : NULL,		// state
+													isset($attendee[8]) ? $attendee[8] : NULL,		// country
+													isset($attendee[9]) ? $attendee[9] : NULL,		// zip
+													$ATT_email,		// address
+													isset($attendee[10]) ? $attendee[10] : NULL,		// phone
+													NULL		// social
+					);
+					
+					//add attendee to db
+					$att_results = $att[$att_nmbr]->save();
+					$ATT_ID = $att[$att_nmbr]->ID();
+					do_action('action_hook_espresso__EE_Single_Page_Checkout__process_registration_step_3__after_attendee_save',$att_nmbr,$att[$att_nmbr]);
+				}				
+				
+				// add attendee object to attendee info in session
+				$session['cart']['REG']['items'][$line_item_id]['attendees'][$att_nmbr]['att_obj'] = base64_encode( serialize( $att[$att_nmbr] ));
+
+				$DTT_ID = $event['options']['dtt_id'];
+				$PRC_ID = explode( ',', $event['options']['price_id'] );
+				$PRC_ID = $PRC_ID[0];
+				$price_paid = $attendee['price_paid'];
+
+				$session_snip =  substr( $session['id'], 0, 3 ) . substr( $session['id'], -3 );				
+				$new_reg_code = $transaction->ID() . '-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 ));				
+				$new_reg_code = apply_filters( 'filter_hook_espresso_new_registration_code', $new_reg_code );
+				
+				if ( has_filter( 'filter_hook_espresso_new_registration_code' ) ) {
+					$prev_reg_code = $new_reg_code;
+				} else {
+					$prev_reg_code = '%-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 )) . '%';
+				}					
+
+				$default_reg_status = isset( $org_options['default_reg_status'] ) ? $org_options['default_reg_status'] : 'RPN';
+
+				// now create a new registration for the attendee
+				$reg_url_link=md5($new_reg_code);
+				$saved_registrations[$line_item_id] = new EE_Registration(
+												$event['id'],
+												$ATT_ID,
+												$transaction->ID(),
+												$DTT_ID,
+												$PRC_ID,
+												$default_reg_status,
+												time(),
+												$price_paid,
+												$session['id'],
+												$new_reg_code,
+												$reg_url_link,
+												$att_nmbr,
+												count($event['attendees']),
+												FALSE,
+												FALSE
+						);
+				//printr( $reg[$line_item_id], '$reg[$line_item_id] ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' );die();
+
+				$reg_results = $saved_registrations[$line_item_id]->save();
+				$REG_ID = $saved_registrations[$line_item_id]->ID();
+
+				// add attendee object to attendee info in session
+				$session['cart']['REG']['items'][$line_item_id]['attendees'][$att_nmbr]['reg_obj'] = base64_encode( serialize( $saved_registrations[$line_item_id] ));
+
+				// add registration id to session for the primary attendee
+				if (isset($attendee['primary_attendee']) && $attendee['primary_attendee'] == 1) {
+					$primary_attendee = $session['primary_attendee'];
+					$primary_attendee['registration_id'] = $new_reg_code;
+					$EE_Session->set_session_data(array('primary_attendee' => $primary_attendee), 'session_data');
+				}
+				
+				$EE_Session->set_session_data( $session['cart'] );
+
+				// save attendee question answerss
+				$exclude = array( 'price_paid', 'primary_attendee', 'att_obj', 'reg_obj' );
+				foreach ( $reg_items[ $line_item_id ]['attendees'][ $att_nmbr ] as $QST_ID => $answer ) {
+					if ( ! in_array( $QST_ID, $exclude ) && ! empty( $answer )) {
+						EEM_Answer::instance()->insert( array( 'REG_ID' =>$REG_ID, 'QST_ID' =>$QST_ID, 'ANS_value' =>sanitize_text_field( $answer )));
+					}
+				}
+			}
+		}
+		return $saved_registrations;
 	}
 
 
