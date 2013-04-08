@@ -1284,6 +1284,13 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*/
 	protected function _event_registrations_list_table() {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		$legend_items = array(
+			'star-icon' => array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/star-8x8.png',
+				'desc' => __('This indicates that the Attendee is the Primary Attendee', 'event_espresso')
+				)
+			);
+		$this->_template_args['after_list_table'] = $this->_display_legend( $legend_items );
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_new_attendee', 'add', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
