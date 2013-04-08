@@ -8,7 +8,7 @@
 					<th class="jst-left"><?php _e( '#', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Event Name', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Attendee', 'event_espresso' );?></th>
-					<th class="jst-rght"><?php _e( 'Price Paid', 'event_espresso' );?></th>
+					<th class="jst-rght"><?php _e( 'Ticket Price', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Email', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Address', 'event_espresso' );?></th>
 				</tr>
@@ -23,7 +23,7 @@
 					?>
 				<tr>
 					<td class="jst-left"><?php echo$att_nmbr;?></td>
-					<td class="jst-left"><?php echo $event;?></td>
+					<td class="jst-left"><?php echo stripslashes( $event );?></td>
 					<td class="jst-left">
 						<?php 
 						$attendee_name = $att->fname() != '' ? $att->fname() : $attendee['fname'];
