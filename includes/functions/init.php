@@ -372,48 +372,6 @@ function espresso_export_invoice() {
 
 
 
-function espresso_add_rewrite_rules() {
-
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-	global $wpdb, $org_options;
-
-	if (empty($org_options['event_page_id'])) {
-		return;
-	}
-	$reg_page_id = $org_options['event_page_id'];
-//	echo '<h4>$reg_page_id : ' . $reg_page_id . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-	$use_pretty_permalinks = espresso_use_pretty_permalinks();
-//	echo '<h4>$use_pretty_permalinks : ' . $use_pretty_permalinks . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-
-	if ($use_pretty_permalinks) {
-		// create pretty permalinks
-		$SQL = 'SELECT post_name  FROM ' . $wpdb->prefix . 'posts WHERE ID = %d';
-		$reg_page_url_slug = $wpdb->get_var($wpdb->prepare($SQL, $reg_page_id));
-//		echo '<h4>$reg_page_url_slug : ' . $reg_page_url_slug . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-
-		// rules for event slug pretty links
-		add_rewrite_rule( $reg_page_url_slug . '/([^/]+)/?$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top');
-		//add_rewrite_rule( $reg_page_url_slug . '/([^/]+)/?$', 'index.php?pagename=' . $reg_page_url_slug . '&e_reg=$matches[1]', 'top');
-	}
-	
-}
-
-
-
-
-
-function espresso_flush_rewrite_rules() {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-	global $pagenow;
-	if ( is_admin() && (( isset($_REQUEST['page']) && $_REQUEST['page'] == 'event_espresso' ) || ( $pagenow == 'options-permalink.php' ))) {
-		espresso_add_rewrite_rules();
-		flush_rewrite_rules();
-	}
-}
-
-
-
-
 
 function espresso_dashboard_init() {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );

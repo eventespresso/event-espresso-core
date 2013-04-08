@@ -60,6 +60,7 @@ class EE_Thank_You_Page{
 		$this->load_classes();
 		
 		$transaction = $this->_TXN->get_transaction_from_reg_url_link($_GET['e_reg_url_link']);
+		//printr( $transaction, '$transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$this->_current_transaction = $transaction;
 	}
 	

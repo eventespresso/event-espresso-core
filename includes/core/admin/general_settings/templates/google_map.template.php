@@ -1,7 +1,8 @@
 <div class="padding">
 
 	<h4 class="ee-admin-settings-hdr">
-		<?php _e('Reg Page Map Settings', 'event_espresso'); ?><?php do_action('action_hook_espresso_help', 'gmaps_info'); ?>
+		<?php _e('Reg Page Map Settings', 'event_espresso'); ?>
+		<?php echo EE_Template::get_help_tab_link('gmaps_info'); ?>
 	</h4>
 
 	<table class="form-table">

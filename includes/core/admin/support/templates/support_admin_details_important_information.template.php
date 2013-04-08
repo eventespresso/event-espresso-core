@@ -17,24 +17,7 @@
 		echo '<p class="red_alert">' . __('Your version of MySQL is out of date, please update to the latest version of MySQL. <br>Required version of MySQL:', 'event_espresso') . ' ' . $mysql_req_version . '</p>';
 	}
 	
-	
-	if ($verify_attendee) {
-						?>
-	  <a name="attendee_data" id="attendee_data"></a>
-	  <p class="red_text"><strong>
-		<?php _e('Attendee information is outdated', 'event_espresso'); ?>
-		</strong></p>
-	  <p>
-		<?php _e('Due to recent changes in the way attendee information is handled, attendee data may appear to be missing from some events. In order to reassign attendees to events, please run the attendee update script by pressing the button below.', 'event_espresso'); ?>
-	  </p>
-	  <form action="<?php echo $_SERVER["REQUEST_URI"] ?>" method="post" name="form" id="form">
-		<p>
-		  <input type="hidden" name="action" value="event_espresso_update_attendee_data" />
-		  <input class="button-primary" type="submit" name="event_espresso_update_attendee_data_button" value="<?php _e('Run Attendee Update Script', 'event_espresso'); ?>" id="event_espresso_update_attendee_data_button"/>
-		</p>
-	  </form>
-  <?php
-	}
+
   ?>
 	<div class="localhost-information">
 		<dl>

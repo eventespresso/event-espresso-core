@@ -118,37 +118,173 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'label' => __('Critical Pages'),
 					'order' => 20
 					),
-				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' )
+				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'help_tabs' => array(
+					'registration_page_info' => array(
+						'title' => __('Event Registration Page', 'event_espresso'),
+						'callback' => 'registration_page_info_help_tab'
+						),
+					'return_url_info' => array(
+						'title' => __('Thank You Page', 'event_espresso'),
+						'callback' => 'return_url_info_help_tab'
+						),
+					'cancel_return_info' => array(
+						'title' => __('Cancel/Return Page', 'event_espresso'),
+						'callback' => 'cancel_return_info_help_tab'
+						),
+					'notify_url_info' => array(
+						'title' => __('Transaction Page', 'event_espresso'),
+						'callback' => 'notify_url_info_help_tab'
+						),
+					)
 				),
 			'template_settings' => array(
 				'nav' => array(
 					'label' => __('Templates'),
 					'order' => 30
 					),
-				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' )
+				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'help_tabs' => array(
+					'enable_styles_info' => array(
+						'title' => __('Enable Styles', 'event_espresso'),
+						'callback' => 'enable_styles_info_help_tab'
+						),
+					'themeroller_info' => array(
+						'title' => __('Themeroller', 'event_espresso'),
+						'callback' => 'themeroller_info_help_tab'
+						),
+					'custom_templates_info' => array(
+						'title' => __('Custom Templates', 'event_espresso'),
+						'callback' => 'custom_templates_info_help_tab'
+						),
+					)
 				),
-/*			'google_map_settings' => array(
+			'google_map_settings' => array(
 				'nav' => array(
 					'label' => __('Google Maps'),
 					'order' => 40
 					),
-				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box' )
-				),*/
+				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'help_tabs' => array(
+					'gmaps_info' => array(
+						'title' => __('Google Maps Configuration', 'event_espresso'),
+						'callback' => 'gmaps_info_help_tab'
+						)
+					)
+				),
 			'your_organization_settings' => array(
 				'nav' => array(
 					'label' => __('Your Organization'),
 					'order' => 50
 					),
-				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box' )
+				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
 				),
 			'admin_option_settings' => array(
 				'nav' => array(
 					'label' => __('Admin Options'),
 					'order' => 60
 					),
-				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box' )
+				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'help_tabs' => array(
+					'full_logging_info' => array(
+						'title' => __('Full Logging', 'event_espresso'),
+						'callback' => 'full_logging_info_help_tab'
+						),
+					'remote_logging_info' => array(
+						'title' => __('Remote Logging', 'event_espresso'),
+						'callback' => 'remote_logging_info_help_tab'
+						),
+					'remote_logging_url_info' => array(
+						'title' => __("Remote Logging URL", 'event_espresso'),
+						'callback' => 'remote_logging_url_info_help_tab'
+						),
+					'affiliate_info' => array(
+						'title' => __('Affiliate', 'event_espresso'),
+						'callback' => 'affiliate_info_help_tab'
+						),
+					)
 				)
 			);
+	}
+
+
+
+	/**
+	 * general settings critical pages help tabs
+	 * @param  string $tab what tab content to retrieve
+	 * @return string      html content for help tab
+	 */
+	public function general_settings_critical_pages_help_tabs( $tab ) {
+		require_once GEN_SET_TEMPLATE_PATH . 'general_settings_critical_pages_help_tabs.template.php';
+		$template = call_user_func( $tab . '_html' );
+		espresso_display_template($template);
+	}
+	public function registration_page_info_help_tab(){
+		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
+	}
+	public function return_url_info_help_tab(){
+		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
+	}
+	public function cancel_return_info_help_tab(){
+		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
+	}
+	public function notify_url_info_help_tab() {
+		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
+	}
+
+
+
+
+	/**
+	 * template settins help tabs
+	 * @param  string $tab what tab content to retrieve
+	 * @return string      html content for help tab
+	 */
+	public function template_settings_help_tabs( $tab ) {
+		require_once GEN_SET_TEMPLATE_PATH . 'template_settings_help_tabs.template.php';
+		$template = call_user_func( $tab . '_html' );
+		espresso_display_template( $template );
+	}
+	public function enable_styles_info_help_tab() {
+		$this->template_settings_help_tabs( __FUNCTION__ );
+	}
+	public function themeroller_info_help_tab() {
+		$this->template_settings_help_tabs( __FUNCTION__ );
+	}
+	public function custom_templates_info_help_tab() {
+		$this->template_settings_help_tabs( __FUNCTION__ );
+	}
+
+
+
+	public function gmaps_info_help_tab() {
+		$template = GEN_SET_TEMPLATE_PATH . 'map_confg_help.php';
+		espresso_display_template( $template );
+	}
+
+
+
+	/**
+	 * admin options help tabs
+	 * @param  string $tab what tab content to retrieve
+	 * @return string      html content for tab 
+	 */
+	public function admin_options_help_tabs( $tab ) {
+		require_once GEN_SET_TEMPLATE_PATH . 'admin_options_help_tabs.template.php';
+		$template = call_user_func( $tab . '_html' );
+		espresso_display_template( $template );
+	}
+	public function full_logging_info_help_tab() {
+		$this->admin_options_help_tabs( __FUNCTION__ );
+	}
+	public function remote_logging_info_help_tab() {
+		$this->admin_options_help_tabs( __FUNCTION__ );
+	}
+	public function remote_logging_url_info_help_tab() {
+		$this->admin_options_help_tabs( __FUNCTION__ );
+	}
+	public function affiliate_info_help_tab() {
+		$this->admin_options_help_tabs( __FUNCTION__ );
 	}
 
 
@@ -196,6 +332,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	protected function _espresso_page_settings() {
 	
 		global $org_options;
+		$this->_transient_garbage_collection();
 		$this->_template_args['values'] = $this->_yes_no_values;
 		$this->_template_args['event_ssl_active'] = isset( $org_options['event_ssl_active'] ) && ! empty( $org_options['event_ssl_active'] ) ? $org_options['event_ssl_active'] : FALSE;
 
@@ -228,6 +365,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data['cancel_return'] = isset( $this->_req_data['cancel_return'] ) ? absint( $this->_req_data['cancel_return'] ) : NULL;
 		$data['notify_url'] = isset( $this->_req_data['notify_url'] ) ? absint( $this->_req_data['notify_url'] ) : NULL;
 		$data['espresso_url_rewrite_activated'] = isset( $this->_req_data['espresso_url_rewrite_activated'] ) ? absint( $this->_req_data['espresso_url_rewrite_activated'] ) : NULL;
+		// flush rewrite rules
+		$this->_add_espresso_rewrite_rules( $data['espresso_url_rewrite_activated'] );
 
 		$data = apply_filters('filter_hook_espresso_page_settings_save', $data);
 		
@@ -237,6 +376,31 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		
 	}
 
+
+
+
+
+
+	private function _add_espresso_rewrite_rules( $use_pretty_permalinks = FALSE ) {
+
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		global $wpdb, $org_options;
+
+		if (empty($org_options['event_page_id'])) {
+			return;
+		}
+
+		if ( $use_pretty_permalinks ) {
+			// create pretty permalinks
+			$SQL = 'SELECT post_name  FROM ' . $wpdb->prefix . 'posts WHERE ID = %d';
+			$reg_page_url_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $org_options['event_page_id'] ));
+			// rules for event slug pretty links
+			add_rewrite_rule( $reg_page_url_slug . '/([^/]+)/?$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top');
+			//add_rewrite_rule( $reg_page_url_slug . '/([^/]+)/?$', 'index.php?pagename=' . $reg_page_url_slug . '&e_reg=$matches[1]', 'top');
+		}
+		flush_rewrite_rules();
+		
+	}
 
 
 	/*************		Templates 		*************/

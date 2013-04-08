@@ -82,4 +82,37 @@ class EE_Template {
 	}
 
 
+
+
+
+	/**
+	 * This returns a generated link that will load the related help tab on admin pages.
+	 *
+	 *
+	 * @param  string $page The page identifier for the page the help tab is on
+	 * @param  string $action The action (route) for the admin page the help tab is on.
+	 * @param  string $help_tab_id the id for the connected help tab
+	 * @param  string $icon_style (optional) include css class for the style you want to use for the help icon.
+	 * @param  string $help_text (optional) send help text you want to use for the link if default not to be used
+	 * @return string              generated link
+	 */
+	public static function get_help_tab_link( $help_tab_id, $page = FALSE, $action = FALSE, $icon_style = FALSE, $help_text = FALSE ) {
+
+		if ( ! $page ) 
+			$page = isset( $_REQUEST['page'] ) && ! empty( $_REQUEST['page'] ) ? sanitize_key( $_REQUEST['page'] ) : $page;
+		
+		if ( ! $action )
+			$action = isset( $_REQUEST['action'] ) && ! empty( $_REQUEST['action'] ) ? sanitize_key( $_REQUEST['action'] ) : $action;
+		
+		$action = empty($action) ? 'default' : $action;
+
+
+		$help_tab_lnk = $page . '-' . $action . '-' . $help_tab_id;
+		$icon = !$icon_style ? ' help_img' : $icon_style;
+		$help_text = !$help_text ? __('click for help', 'event_espresso') : $help_text;
+		return '<a id="' . $help_tab_lnk . '" class="espresso-help-tab-lnk' . $icon . '" title="click to open the \'Help\' tab for more information about this feature" > ' . $help_text . ' </a>';
+	}
+
+
+
 } //end EE_Template class

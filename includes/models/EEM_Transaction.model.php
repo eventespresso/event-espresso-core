@@ -52,6 +52,19 @@ class EEM_Transaction extends EEM_TempBase {
 	 */
 	const pending_status_code = 'TPN';
 
+	
+	
+	/**
+	 *  Status ID(STS_ID on esp_status table) to indicate the transaction is overpaid.
+	 *  This is the same as complete, but site admins actually owe clients the moneys!
+	 * from an offline gateway. 
+	 */
+	const overpaid_status_code = 'TOP';
+	
+	
+	
+	
+	
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
@@ -78,19 +91,19 @@ class EEM_Transaction extends EEM_TempBase {
 			'TXN_tax_data'			=> '%s'	
 		);*/
 		$this->_fields_settings = array(
-			'TXN_ID' =>			new EE_Model_Field('Transaction ID', 'primary_key', false),
-			'TXN_timestamp' =>	new EE_Model_Field('Transaction Teimstamp', 'int', false,time()),
-			'TXN_total' =>		new EE_Model_Field('Total amount due for this transaction', 'float', true,0),
-			'TXN_paid' =>		new EE_Model_Field('Total amoutn paid so far', 'float', false,0),
-			'STS_ID' =>			new EE_Model_Field('Status of Transaction.','foreign_text_key',false,  EEM_Transaction::incomplete_status_code,null,'Status'),
-			'TXN_details' =>	new EE_Model_Field('Mishmash of Info about the Transaction', 'serialized_text', true, null),
-			'TXN_tax_data' =>	new EE_Model_Field('Mishmash of tax data', 'serialized_text', true, null),
-			'TXN_session_data'=>new EE_Model_Field('Mishmash of session data', 'serialized_text', true, null),
-			'TXN_hash_salt' =>	new EE_Model_Field('Who knows', 'plaintext', true,null)
+			'TXN_ID' 			=> new EE_Model_Field('Transaction ID', 'primary_key', false),
+			'TXN_timestamp' 	=> new EE_Model_Field('Transaction Teimstamp', 'int', false,time()),
+			'TXN_total' 		=> new EE_Model_Field('Total amount due for this transaction', 'float', true,0),
+			'TXN_paid' 			=> new EE_Model_Field('Total amoutn paid so far', 'float', false,0),
+			'STS_ID' 			=> new EE_Model_Field('Status of Transaction.','foreign_text_key',false,  EEM_Transaction::incomplete_status_code,null,'Status'),
+			'TXN_details' 		=> new EE_Model_Field('Serialized array of Transaction details as returned from the Payment Gateway', 'serialized_text', true, null),
+			'TXN_tax_data' 		=> new EE_Model_Field('Serialized array of tax data', 'serialized_text', true, null),
+			'TXN_session_data'	=> new EE_Model_Field('Serialized array of session data', 'serialized_text', true, null),
+			'TXN_hash_salt' 	=> new EE_Model_Field('Payment Gateway hash salt value. Possibly deprecated.', 'plaintext', true,null)
 		);
 		$this->_related_models = array(
-			'Payments' =>		new EE_Model_Relation('hasMany', 'Payment', 'TXN_ID'),
-			'Registrations' =>	new EE_Model_Relation('hasMany', 'Registration', 'TXN_ID'),
+			'Payments' 		=> new EE_Model_Relation('hasMany', 'Payment', 'TXN_ID'),
+			'Registrations' => new EE_Model_Relation('hasMany', 'Registration', 'TXN_ID'),
 			//'Status' =>			new EE_Model_Relation('belongsTo','Status','STS_ID')
 		);
 		parent::__construct();
@@ -504,6 +517,40 @@ class EEM_Transaction extends EEM_TempBase {
 		}else{
 			return NULL;
 		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * Updates teh provided EE_Transaction with all the applicable payments 
+	 * (or fetche the EE_Transaction from its ID)
+	 * @param EE_Transaction/int $transaction_obj_or_id EE_Transaction or its ID
+	 * @return boolean success
+	 */
+	public function update_based_on_payments($transaction_obj_or_id){
+		$transaction = $this->ensure_is_obj($transaction_obj_or_id);
+		require_once('EEM_Payment.model.php');
+		$PAY = EEM_Payment::instance();
+		$total_paid = $PAY->recalculate_total_payments_for_transaction( $transaction->ID(),  EEM_Payment::status_id_approved );
+		$total_pending = $PAY->recalculate_total_payments_for_transaction( $transaction->ID(),  EEM_Payment::status_id_pending );
+		$transaction->set_paid( $total_paid );
+		// set transaction status to complete if paid in full or the event was a freebie
+		if($total_paid > $transaction->total()){
+			$transaction->set_status(EEM_Transaction::overpaid_status_code);
+		}elseif ( $total_paid == $transaction->total() ) {
+			$transaction->set_status(EEM_Transaction::complete_status_code);
+		} elseif($total_paid + $total_pending >= $transaction->total()) {
+			$transaction->set_status(EEM_Transaction::pending_status_code);
+		}else{
+			$transaction->set_status(EEM_Transaction::incomplete_status_code);
+		}
+		
+		// update transaction and return results
+		return $transaction->save();
 	}
 
 

@@ -243,7 +243,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *     			'tab2_id' => array(
 	 *     			 	'title' => 'tab2 title',
 	 *     			 	'callback' => 'callback_method_for_content',
-	 *     			 )
+	 *     			 ),
+	 *     		'require_nonce' => TRUE //this is used if you want to set a route to NOT require a nonce (default is true if it isn't present).  To remove the requirement for a nonce check when this route is visited just set 'require_nonce' to FALSE
 	 *     		)
 	 * 			
 	 * )
@@ -364,6 +365,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	final protected function _page_setup() {
+
+		//requires?
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Template.helper.php';
 
 		//set early because incoming requests could be ajax related and we need to register those hooks.
 		$this->_ajax_hooks();
@@ -689,7 +693,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		$this->_verify_routes();
 
-		if ( $this->_req_action != 'default' ) {
+		$nonce_check = isset( $this->_route_config['require_nonce'] ) ? $this->_route_config['require_nonce'] : TRUE; 
+
+		if ( $this->_req_action != 'default' && $nonce_check ) {
 			// set nonce from post data
 			$nonce = isset($this->_req_data[ $this->_req_nonce  ]) ? sanitize_text_field( $this->_req_data[ $this->_req_nonce  ] ) : '';
 			$this->_verify_nonce( $nonce, $this->_req_nonce );	
@@ -754,6 +760,23 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 	/**
+	 * This returns a generated link that will load the related help tab.
+	 *
+	 * 		
+	 * @param  string $help_tab_id the id for the connected help tab
+	 * @param  string $icon_style (optional) include css class for the style you want to use for the help icon.
+	 * @param  string $help_text (optional) send help text you want to use for the link if default not to be used
+	 * @uses EE_Template::get_help_tab_link()
+	 * @return string              generated link
+	 */
+	protected function _get_help_tab_link( $help_tab_id, $icon_style = FALSE, $help_text = FALSE ) {
+		return EE_Template::get_help_tab_link( $help_tab_id, $this->page_slug, $this->_req_action, $icon_style, $help_text );
+	}
+
+
+
+
+	/**
 	 * _add_help_tabs
 	 * 
 	 * Note child classes define their help tabs within the page_config array.
@@ -774,22 +797,22 @@ abstract class EE_Admin_Page extends EE_BASE {
 				if ( !isset( $cfg['title'] ) )
 					throw new EE_Error( __('The _page_config array is not set up properly for help tabs.  It is missing a title', 'event_espresso') );
 
-				if ( !isset( $cfg['callback'] ) )
-					throw new EE_Error( __('The _page_config array is not setup properly for help tabs. It is missing a callback reference', 'event_espresso') );
+				if ( !isset( $cfg['callback'] ) && !isset( $cfg['content'] ) )
+					throw new EE_Error( __('The _page_config array is not setup properly for help tabs. It is missing a callback reference and a content reference so there is no way to know the content for the help tab', 'event_espresso') );
 
 				//chekc if callback is valid
-				if ( !method_exists( $this, $cfg['callback'] ) ) 
+				if ( empty($cfg['content']) && !method_exists( $this, $cfg['callback'] ) ) 
 					throw new EE_Error( sprintf( __('The callback given for the %s help tab does not have a corresponding method.  Check the spelling or make sure the method is present.  This method is used to get the content for the tab.', 'event_espresso'), $cfg['title'] ) );
-		
 					
 				//setup config array for help tab method
 				$id = $this->page_slug . '-' . $slug . '-' . $tab_id;
 				$_ht = array(
 					'id' => $id,
 					'title' => $cfg['title'],
-					'callback' => array( $this, $cfg['callback'] )
+					'callback' => isset( $cfg['callback'] ) ? array( $this, $cfg['callback'] ) : NULL,
+					'content' => isset($cfg['content']) ? $cfg['content'] : ''
 					);
-
+				
 				$this->_current_screen->add_help_tab( $_ht );
 			}
 		}
@@ -1496,8 +1519,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	  <div class="padding">
 	  	<div class="infolinks">
 	  		<?php
-	  		echo '<h4 style="margin:0">' . __('From the Blog', 'event_espresso') . '</h4>';
-
 	  		// Get RSS Feed(s)
 	  		@wp_widget_rss_output('http://eventespresso.com/feed/', array('show_date'=> 0,'items'    => 5));
 
@@ -1519,84 +1540,23 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	private function _espresso_links_post_box() {
 		function espresso_links_post_box() {
-?>
-	   <div class="padding">
-	   	<ul class="infolinks">
-	   		<li>
-	   			<?php echo '<a href="http://eventespresso.com/wiki/installation/" target="_blank">'.__('Installation', 'event_espresso') . '</a>  &amp; <a href="http://eventespresso.com/wiki/setting-up-event-espresso/" target="_blank">' . __('Usage Guide').'</a>'; ?>
-	   		</li>
-	   		<li>
-		   		<a href="http://eventespresso.com/wiki/put-custom-templates/" target="_blank">
-	   				<?php _e('Template Customization', 'event_espresso'); ?>
-	   			</a>
-	   		</li>
-	   		<li>
-		   		<a href="http://eventespresso.com/support/forums/" target="_blank">
-	   				<?php _e('Support Forums', 'event_espresso'); ?>
-	   			</a>
-	   		</li>
-
-	   		<li>
-		   		<a href="http://eventespresso.com/wiki/change-log/" target="_blank">
-	   				<?php _e('Changelog', 'event_espresso'); ?>
-	   			</a>
-	   		</li>
-	   		<li>
-		   		<a href="http://eventespresso.com/about/" target="_blank">
-	   				<?php _e('Meet the Team', 'event_espresso'); ?>
-	   			</a>
-	   		</li>
-	   		<li>
-		   		<a href="http://eventespresso.com/rich-features/sponsor-new-features/" target="_blank">
-	   				<?php _e('Sponsor New Features!', 'event_espresso'); ?>
-	   			</a>
-	   		</li>
-	   		<li>
-	   			<?php echo '<a href="http://eventespresso.com/pricing/" target="_blank">'.__('Plugins', 'event_espresso'). '</a> &amp; <a href="http://eventespresso.com/add-ons/" target="_blank">' .__('Addons', 'event_espresso').'</a>'; ?><br />
-	   			<br />
-	   			<ol>
-	   				<li>
-		   				<a href="http://eventespresso.com/product/espresso-ticketing/" target="_blank">
-		   					<?php _e('Ticket Scanning', 'event_espresso'); ?>
-	   					</a>
-	   				</li>
-	   				<li>
-		   				<a href="http://eventespresso.com/product/espresso-multiple/" target="_blank">
-		   					<?php _e('Multiple Event Registration', 'event_espresso'); ?>
-	   					</a>
-	   				</li>
-	   				<li>
-		   				<a href="http://eventespresso.com/product/espresso-members/" target="_blank">
-		   					<?php _e('WP User Integration', 'event_espresso'); ?>
-	   					</a>
-	   				</li>
-	   				<li>
-		   				<a href="http://eventespresso.com/product/espresso-seating/" target="_blank">
-		   					<?php _e('Seating Chart', 'event_espresso'); ?>
-	   					</a>
-	   				</li>
-	   			</ol>
-	   		</li>
-	   	</ul>
-	</div>
-		   <?php
-		   global $caffeinated;
-		   if ( ! $caffeinated ) {
-		   	?>
-   	<div id="submitdiv2" class="postbox " >
-   		<h3>
-   			<?php _e('Sponsors', 'event_espresso'); ?>
-   		</h3>
-   		<div class="inside">
-   			<div class="padding">
-   				<?php echo wp_remote_retrieve_body(wp_remote_get('http://ee-updates.s3.amazonaws.com/plugin-sponsors.html')); ?>
-   			</div>
-   		</div>
-   	</div>
-		   	<?php
-			}			
+		   $templatepath = EE_CORE_ADMIN . 'admin_general_metabox_contents_espresso_links.template.php';
+			espresso_display_template( $templatepath );	
 		}
 		add_meta_box('espresso_links_post_box', __('Helpful Plugin Links', 'event_espresso'), 'espresso_links_post_box', $this->_wp_page_slug, 'side');
+	}
+
+
+
+	private function _espresso_sponsors_post_box() {
+		function espresso_sponsors_post_box() {
+			$templatepath = EE_CORE_ADMIN . 'admin_general_metabox_contents_espresso_sponsors.template.php';
+			espresso_display_template( $templatepath );
+		}
+
+		global $caffeinated;
+		if ( !$caffeinated )
+			add_meta_box('espresso_sponsors_post_box', __('Sponsors', 'event_espresso'), 'espresso_sponsors_post_box', $this->_wp_page_slug, 'side');
 	}
 
 
@@ -1907,6 +1867,27 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$this->display_admin_page_with_sidebar();
 		else
 			$this->display_admin_page_with_no_sidebar();
+	}
+
+
+
+	/**
+	 * This just prepares a legend using the given items and the admin_details_legend.template.php file and returns the html string for the legend.
+	 *
+	 * $items are expected in an array in the following format:
+	 * $legend_items = array(
+	 * 		'item_id' => array(
+	 * 			'icon' => 'http://url_to_icon_being_described.png',
+	 * 			'desc' => __('localized description of item');
+	 * 		)
+	 * );
+	 * @param  array $items  see above for format of array
+	 * @return string        html string of legend
+	 */
+	protected function _display_legend( $items ) {
+		$template_args['items'] = (array) $items;
+		$legend_template = EE_CORE_ADMIN . 'admin_details_legend.template.php';
+		return espresso_display_template($legend_template, $template_args, TRUE);
 	}
 
 
@@ -2379,7 +2360,31 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$route = !$route ? $this->_req_action : $route;
 		$transient = $notices ? 'rte_n_tx_' . $route . '_' . $user_id : 'rte_tx_' . $route . '_' . $user_id;
 		$data = get_transient( $transient );
+		//delete transient after retrieval (just in case it hasn't expired);
+		delete_transient( $transient );
 		return $notices ? $data['notices'] : $data;
+	}
+
+
+
+
+	/**
+	 * The purpose of this method is just to run garbage collection on any EE transients that might have expired but would not be called later.
+	 *
+	 * This will be assigned to run on a specific EE Admin page. (place the method in the default route callback on the EE_Admin page you want it run.)
+	 * @return void
+	 */
+	protected function _transient_garbage_collection() {
+		global $wpdb;
+
+		//retrieve all existing transients
+		$query = "SELECT option_name FROM $wpdb->options WHERE option_name LIKE '%rte_tx_%' OR option_name LIKE '%rte_n_tx_%'";
+		if ( $results = $wpdb->get_results( $query ) ) {
+			foreach ( $results as $result ) {
+				$transient = str_replace( '_transient_', '', $result->option_name );
+				get_transient( $transient );
+			}
+		}
 	}
 
 

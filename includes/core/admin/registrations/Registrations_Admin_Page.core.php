@@ -234,7 +234,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					'url' => isset($this->_req_data['_REG_ID']) ? add_query_arg(array('_REG_ID' => $this->_req_data['_REG_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
 					'persistent' => FALSE
 					),
-				'metaboxes' => array( '_registration_details_metaboxes', '_espresso_news_post_box', '_espresso_links_post_box' )
+				'metaboxes' => array( '_registration_details_metaboxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
 				),
 				
 			'add_new_attendee' => array(
@@ -243,7 +243,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					'order' => 15,
 					'persistent' => FALSE
 					),
-					'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box')
+					'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box')
 				),
 				
 			'edit_attendee' => array(
@@ -253,7 +253,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['id']) ? add_query_arg(array('id' => $this->_req_data['id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
-					'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box')
+					'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box')
 				),
 				
 			'contact_list' => array(
@@ -468,6 +468,34 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 
+	protected function _registration_legend_items() {
+		$items = array(
+			'star-icon' => array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/star-8x8.png',
+				'desc' => __('This indicates that the Attendee is the Primary Attendee', 'event_espresso')
+				),
+			'view_details' => array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'/images/magnifier.png',
+				'desc' => __('View Registration Details', 'event_espresso')
+				),
+			'edit_attendee' => array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'/images/user_edit.png',
+				'desc' => __('Edit Attendee Details', 'event_espresso')
+				),
+			'resend_registration' => array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'/images/email_go.png',
+				'desc' => __('Resend registration details to attendee', 'event_espresso')
+				),
+			'view_transaction' => array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'/images/money.png',
+				'desc' => __('View Transaction details.', 'event_espresso')
+				)
+			);
+		return $items;
+	}
+
+
+
 	/***************************************		REGISTRATION OVERVIEW 		***************************************/
 
 
@@ -476,10 +504,10 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _registrations_overview_list_table() {
+		$this->_template_args['after_list_table'] = $this->_display_legend( $this->_registration_legend_items() );
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_new_attendee', 'add', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
-
 
 
 
@@ -561,6 +589,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$offset = ($current_page-1)*$per_page;
 		$limit = array( $offset, $per_page );
 
+
 		$registrations = EEM_Registration::instance()->get_registrations_for_admin_page( $EVT_ID, $CAT_ID, $reg_status, $month_range, $today_a, $this_month_a, $start_date, $end_date, $orderby, $sort, $limit, $count );
 		//printr( $registrations, '$registrations  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
@@ -624,7 +653,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			
 			//printr( $this->_registration, '$this->_registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
-			$this->_session = maybe_unserialize( maybe_unserialize( $this->_registration->TXN_session_data ));
+			$this->_session = maybe_unserialize( unserialize( $this->_registration->TXN_session_data ));
 
 			$title = __( ucwords( str_replace( '_', ' ', $this->_req_action )), 'event_espresso' );
 			// add PRC_ID to title if editing 
@@ -776,6 +805,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 		global $wpdb, $org_options;
 
+		//printr( $this->_session, '$this->_session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// process items in cart
 		$cart_items = $this->_session['cart']['REG']['items'];
@@ -1254,6 +1284,13 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*/
 	protected function _event_registrations_list_table() {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		$legend_items = array(
+			'star-icon' => array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/star-8x8.png',
+				'desc' => __('This indicates that the Attendee is the Primary Attendee', 'event_espresso')
+				)
+			);
+		$this->_template_args['after_list_table'] = $this->_display_legend( $legend_items );
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_new_attendee', 'add', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
