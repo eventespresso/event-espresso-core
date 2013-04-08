@@ -1311,7 +1311,7 @@ function espresso_default_status_codes() {
 				('RPN', 'PENDING', 'registration', 0, NULL, 1),
 				('RCN', 'CANCELLED', 'registration', 0, NULL, 0),
 				('RAP', 'APPROVED', 'registration', 0, NULL, 1),
-				('RNA', 'NOT_APPROVED', 'registration', 0, NULL, 1),
+				('RNA', 'NOT_APPROVED', 'registration', 0, NULL, 0),
 				('TIN', 'INCOMPLETE', 'transaction', 0, NULL, 0),
 				('TPN', 'PENDING', 'transaction', 0, NULL, 1),
 				('TCM', 'COMPLETE', 'transaction', 0, NULL, 1),
