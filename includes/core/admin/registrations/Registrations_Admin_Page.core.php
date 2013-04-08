@@ -113,6 +113,11 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					
 				'new_registration' => '_new_registration',
 					
+				'save_new_registration'	=> array(
+						'func' => '_save_new_registration',
+						'noheader' => TRUE
+					),
+					
 				'delete_registration'	=> array(
 						'func' => '_delete_registration',
 						'noheader' => TRUE
@@ -1045,33 +1050,48 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$qstns = isset( $this->_req_data['qstn'] ) ? $this->_req_data['qstn'] : FALSE;
 		$REG_ID = isset( $this->_req_data['_REG_ID'] ) ? absint( $this->_req_data['_REG_ID'] ) : FALSE;
 		$qstns = apply_filters('filter_hook_espresso_reg_admin_attendee_registration_form', $qstns);	
-		
-		if ( $qstns ) {			
-
-			global $wpdb;
-
-			foreach ( $qstns as $QST_ID => $qstn ) {
-				foreach ( $qstn as $ANS_ID => $ANS_value ) {
-//					echo '<h4>$QST_ID : ' . $QST_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//					echo '<h4>$ANS_ID : ' . $ANS_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//					echo '<h4>$ANS_value : ' . $ANS_value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-
-					if ( ! $wpdb->update(
-						$wpdb->prefix . 'esp_answer',
-						array( 'ANS_value' => sanitize_text_field( $ANS_value )),
-						array( 'ANS_ID' => absint( $ANS_ID )),
-						array( '%s' ),
-						array( '%d' )
-					)) {
-						$success = FALSE;
-					}
-				}
-			}
-		}
+		$success = $this->_save_attendee_registration_form( $qstns );
 		$what = __('Attendee Registration Form', 'event_espresso');
 		$route = $REG_ID ? array( 'action' => 'view_registration', '_REG_ID' => $REG_ID ) : array( 'action' => 'default' );
 		$this->_redirect_after_action( $success, $what, __('updated', 'event_espresso'), $route );
 
+	}
+
+
+
+
+
+	/**
+	 * 		_save_attendee_registration_form
+	*		@access private
+	*		@return void
+	*/
+	private function _save_attendee_registration_form( $qstns = FALSE ) {
+		
+		if ( ! $qstns ) {	
+			return FALSE;
+		}		
+		
+		$success = TRUE;
+		global $wpdb;
+		// loop thru questions
+		foreach ( $qstns as $QST_ID => $qstn ) {
+			foreach ( $qstn as $ANS_ID => $ANS_value ) {
+//					echo '<h4>$QST_ID : ' . $QST_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//					echo '<h4>$ANS_ID : ' . $ANS_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//					echo '<h4>$ANS_value : ' . $ANS_value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+
+				if ( ! $wpdb->update(
+					$wpdb->prefix . 'esp_answer',
+					array( 'ANS_value' => sanitize_text_field( $ANS_value )),
+					array( 'ANS_ID' => absint( $ANS_ID )),
+					array( '%s' ),
+					array( '%d' )
+				)) {
+					$success = FALSE;
+				}
+			}
+		}
 	}
 
 
@@ -1274,7 +1294,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		if ( ! $this->_set_reg_event() ) {
 			return FALSE;
 		}
-
+		// gotta start with a clean slate
+		espresso_clear_session();
 		$this->_template_args['event_name'] = '' ;
 		// event name
 		if ( $this->_reg_event ) {
@@ -1489,12 +1510,173 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * 		save_new_registration
+	 * 		_save_new_registration
 	 *
 	 * 		@access 		public
 	 * 		@return 		string
 	 */
-	public function save_new_registration() {	
+	public function _save_new_registration() {	
+			
+		// grab event id
+		$EVT_ID = isset( $this->_req_data['tkt-slctr-event-id'] ) ? absint( $this->_req_data['tkt-slctr-event-id'] ) : FALSE;		
+		if ( ! $EVT_ID ) {
+			$error_msg = __( 'An error occured. No Event ID or an  invalid Event ID was submitted.', 'event_espresso' );
+			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+			$this->_redirect_after_action( 
+				FALSE, 
+				__('New Attendee Registration', 'event_espresso'), 
+				__('created', 'event_espresso'), 
+				array( 'action' => 'default' ) 
+			);
+		}
+		
+		// process Ticket Option
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Selector.class.php');
+		// get ticket option added to cart, which adds it to session, etc, etc
+		if ( ! EE_Ticket_Selector::process_ticket_selections( FALSE, TRUE )) {
+			$error_msg = __( 'An error occured. The ticket option could not be processed for the registration.', 'event_espresso' );
+			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+			$this->_redirect_after_action( 
+				FALSE, 
+				__('New Attendee Registration', 'event_espresso'), 
+				__('created', 'event_espresso'), 
+				array( 'action' => 'default', 'event_id' => $EVT_ID ) 
+			);
+		}
+		
+		if ( ! defined( 'ESPRESSO_CART' )) {
+			require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Cart.class.php' );
+		}
+		// grab cart item
+		$cart = EE_Cart::instance()->whats_in_the_cart();
+		//grab first (and only) item
+		$item = array_pop( $cart['items'] );
+		// grab line item id
+		$line_item_id = $item['line_item'];
+		
+		//grab session
+		global $EE_Session;
+		$EE_Session->set_session_data( array( 'fill' => TRUE ), 'billing_info' );
+			
+		// load gateways
+		if ( ! defined( 'ESPRESSO_GATEWAYS' )) {
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
+		}
+		$EEM_Gateways = EEM_Gateways::instance();
+		
+
+		// set some defaults
+		$attendees = array();
+		$primary_attendee = array();
+		$att_nmbr = 1;
+
+		// grab a bunch of data directly from the ticket selector
+		$requires_pre_approval = isset( $this->_req_data['tkt-slctr-pre-approval-' . $EVT_ID] ) ? absint( $this->_req_data['tkt-slctr-pre-approval-' . $EVT_ID] ) : FALSE;
+		if ( isset( $this->_req_data['tkt-slctr-qty-' . $EVT_ID] )) {
+			$ts_row = explode( '-', $this->_req_data['tkt-slctr-qty-' . $EVT_ID] );
+			$ts_row = absint( $ts_row[0] );
+		} else {
+			$ts_row = 0;
+		}
+		// datetime ID
+		$DTT_ID = isset( $this->_req_data['tkt-slctr-dtt-id-' . $EVT_ID][ $ts_row ] ) ? absint( $this->_req_data['tkt-slctr-dtt-id-' . $EVT_ID][ $ts_row ] ) : FALSE;
+		// date string
+		$event_date = isset( $this->_req_data['tkt-slctr-date-id-' . $EVT_ID][ $ts_row ] ) ? sanitize_text_field( $this->_req_data['tkt-slctr-date-id-' . $EVT_ID][ $ts_row ] ) : FALSE;
+		// time string
+		$event_time = isset( $this->_req_data['tkt-slctr-time-id-' . $EVT_ID][ $ts_row ] ) ? date( 'Gi', absint( $this->_req_data['tkt-slctr-time-id-' . $EVT_ID][ $ts_row ] )) : FALSE;
+		// price string
+		$tckt_price = isset( $this->_req_data['tkt-slctr-price-id-' . $EVT_ID][ $ts_row ] ) ? sanitize_text_field( $this->_req_data['tkt-slctr-price-id-' . $EVT_ID][ $ts_row ] ) : FALSE;
+		// total ticket cost
+		$price_paid = isset( $this->_req_data['tkt-slctr-price-' . $EVT_ID][ $ts_row ] ) ? ( $this->_req_data['tkt-slctr-price-' . $EVT_ID][ $ts_row ] ) : FALSE;		
+				
+//		printr( $_POST, '$_POST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+		if ( isset( $this->_req_data['qstn'] )) {
+			$qstns = apply_filters('filter_hook_espresso_reg_admin_new_registration_form', $this->_req_data['qstn']);	
+			// sanitize reg form questions
+			array_walk_recursive( $qstns, array( $this, 'sanitize_text_field_for_array_walk' ));
+			// add questions
+			foreach ( $qstns as $form_input => $input_value) {
+				// get rid of htmlentities
+				$input_value = html_entity_decode($input_value, ENT_QUOTES, 'UTF-8');
+				// add ticket price to the array
+				$attendees['attendees'][1]['price_paid'] = number_format( $price_paid, 2, '.', '' );
+				// now add all other post data that was generated by attendee questions
+				$attendees['attendees'][1][$form_input] = $input_value;
+				unset( $attendees['attendees'][1]['line_item_id'] );		
+			}
+			
+			// now save the attendee data
+			if ( ! EE_Cart::instance()->set_line_item_details( $attendees, $line_item_id )) {
+				$notices = EE_Error::get_notices(FALSE);
+				$error_msg = $notices['errors'];
+			}
+
+			// and store a bit of data about the primary attendee
+			$primary_attendee['line_item_id'] = $line_item_id;
+			$primary_attendee['fname'] = $qstns['1'];
+			$primary_attendee['lname'] = $qstns['2'];
+			$primary_attendee['email'] = $qstns['3'];
+			$EE_Session->set_session_data(array('primary_attendee' => $primary_attendee), 'session_data');
+
+		}
+		// update attendee details
+		EE_Cart::instance()->_save_cart();
+		// grab cart item
+		$cart = EE_Cart::instance()->whats_in_the_cart();
+		//printr( $cart, '$cart  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			
+		// taxes ?
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Taxes.class.php' );
+		add_filter( 'espresso_filter_hook_calculate_taxes', array( 'EE_Taxes', 'calculate_taxes' ));
+		$taxes = EE_Taxes::calculate_taxes( $price_paid );
+		$price_paid = apply_filters( 'espresso_filter_hook_calculate_taxes', $price_paid );
+		// totals over 0 initially get set to Incomlete, whereas Free Events get set to complete
+		$txn_status = $price_paid > 0 ? 'TIN' : 'TCM';
+		// grab session data
+		$session = $EE_Session->get_session_data();
+		// start the transaction record
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Transaction.class.php' );
+		// create TXN object
+		$transaction = new EE_Transaction( 
+			time(), 
+			$price_paid, 
+			0, 
+			$txn_status, 
+			NULL, 
+			$session, 
+			NULL, 
+			array(
+				'tax_totals'=>$session['tax_totals'],
+				'taxes'=>$session['taxes']
+			) 
+		);
+		$transaction->save();
+
+		$reg_items = $session['cart']['REG']['items'];
+		$saved_registrations = EE_Single_Page_Checkout::save_registration_items( $reg_items, $transaction );
+
+		$transaction->set_txn_session_data( $session );
+		$transaction->save();
+		//remove the session from teh transaction befores saving it to teh session... otherwise we'll ahve a recursive relationship! bad!!
+		$transaction->set_txn_session_data(null);
+		//var_dump($EE_Session->get_session_data());
+		$EE_Session->set_session_data(array( 'registration' => $saved_registrations, 'transaction' => $transaction ), 'session_data');
+		$EE_Session->_update_espresso_session();
+			
+		$txn_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'txn'=>$transaction->ID() ), TXN_ADMIN_URL );
+//		printr( $EE_Session, '$EE_Session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		die();
+
+		wp_safe_redirect( $txn_url );
+	
+	}
+
+
+
+
+	function sanitize_text_field_for_array_walk( &$item, &$key ) {
+	   $item = sanitize_text_field( $item );
 	}
 
 
