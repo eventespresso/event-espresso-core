@@ -66,9 +66,11 @@
 					<!-- #shipping-details vcard -->
 				</td>
 			</tr>
+			
 		</table>
-
+		
 		<table id="invoice-amount">
+			
 			<thead>
 				<tr id="header_row">
 					<th class="quantity_th"><span class=""><?php _e('Qty', 'event_espresso'); ?></span></th>
@@ -80,8 +82,16 @@
 				</tr>
 			</thead>
 			<tbody>
-				<!-- Create the table rows for data -->
-				<?php echo $table_output;?>
+				<?php $c=false; foreach($transaction->registrations() as $registration){?>
+					<tr class="item <?php echo ($c = !$c) ? ' odd' : ''; ?>">
+						<td class="item_l">1</td>
+						<td class="item_l"><?php echo $registration->event_name() ?></td>
+						<td class="item_l"><?php echo $registration->price_obj()->name() ?></td>
+						<td class="item_l"><?php echo $registration->date_obj()->start_date_and_time() ?></td>
+						<td class="item_l"><?php echo $registration->attendee()->full_name() ?></td>
+						<td class="item_r"><?php echo EE_Formatter::price($registration->price_paid())?></td>
+					</tr>
+				<?php } ?>
 			</tbody>
 			<tfoot>
 				<?php echo $net_total; ?>
@@ -92,7 +102,54 @@
 					<td class="total"><span class="crncy-sign"><?php echo $currency_symbol?></span><?php echo $total_cost ?></td>
 				</tr>
 			</tfoot>
-		</table>			
+		</table>		
+		
+		<table id="invoice-amount">
+			<thead>
+				<tr id="header_row">
+					<th ><span class=""><?php _e('Payment Method', 'event_espresso'); ?></span></th>
+					<th class='left datetime_th'><?php _e("Date",'event_espresso')?></th>
+					<th ><span class=""><?php _e('Transaction Id / Cheque #', 'event_espresso'); ?></span></th>
+					<th ><span class=""><?php _e('P.O. / S.O.#', 'event_espresso'); ?></span></th>
+					<th ><span class=""><?php _e('Status', 'event_espresso'); ?></span></th>
+					<th ><?php _e('Amount', 'event_espresso'); ?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php 
+				$c = false;
+				if(!empty($payments)){
+					foreach($payments as $payment){
+						/* @var $payment EE_Payment */?>
+					<tr class='item <?php echo (($c = !$c) ? ' odd' : '')?>'>
+						<td><?php $payment->e('PAY_gateway')?></td>
+						<td><?php echo $payment->timestamp('D M j, Y')?></td>
+						<td><?php $payment->e('PAY_txn_id_chq_nmbr')?></td>
+						<td><?php $payment->e('PAY_po_number')?></td>
+						<td><?php $payment->e_pretty_status()?></td>
+						<td class='item_r'><?php echo EE_Formatter::price($payment->amount());?></td>
+					</tr>
+					<?php }
+				}else{?>
+					<tr class='item'>
+						<td class='aln-cntr' colspan=6><?php _e("No approved payments have been received",'event_espresso')?></td>
+					</tr>
+				<?php }
+?>
+			</tbody>
+			<tfoot>
+				<tr><td colspan="4">&nbsp;</td>
+					<td class="item_r"><?php _e('Total Paid','event_espresso')?></td>
+					<td class="item_r"><?php echo EE_Formatter::price($amount_pd)?> </td>
+				</tr>
+				<?php //echo $discount; ?>
+				<tr id="total_tr">
+					<td colspan="4">&nbsp;</td>
+					<td class="total" id="total_currency"><?php _e('Amount Owed', 'event_espresso'); ?></td>
+					<td class="total"><span class="crncy-sign"><?php echo EE_Formatter::price($total_cost)?></td>
+				</tr>
+			</tfoot>
+		</table>
 		<!-- invoice-amount -->
 		
 		<table class="not-really-a-table">

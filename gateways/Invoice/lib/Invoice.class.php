@@ -96,8 +96,9 @@ class Invoice {
 		$template_args['ship_zip'] = $template_args['attendee_zip'];
 		
 		$template_args['total_cost'] = number_format($this->transaction->total(), 2, '.', '');
+		$template_args['transaction'] = $this->transaction;
 		$template_args['amount_pd'] = $this->transaction->paid();
-		
+		$template_args['payments'] = $this->transaction->approved_payments();
 		if ($template_args['amount_pd'] != $template_args['total_cost']) {
 			$template_args['net_total'] = $this->espressoInvoiceTotals( __('SubTotal', 'event_espresso'), $this->transaction->total());//$this->session_data['cart']['REG']['sub_total']);
 			$tax_data = $this->transaction->tax();
@@ -117,9 +118,11 @@ class Invoice {
 		}
 		
 		$template_args['currency_symbol'] = $org_options['currency_symbol'];
-		$template_args['table_output'] = $this->espressoImprovedTable();
 		$template_args['pdf_instructions'] = wpautop(stripslashes_deep(html_entity_decode($this->invoice_settings['pdf_instructions'], ENT_QUOTES)));
 
+		//require helpers
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
+		
 		//Get the HTML as an object
 		$template_header = espresso_display_template( dirname(__FILE__) . '/templates/invoice_header.template.php', $template_args, TRUE );
 		$template_body = espresso_display_template( dirname(__FILE__) . '/templates/invoice_body.template.php', $template_args, TRUE );
@@ -140,16 +143,19 @@ class Invoice {
 		}
 		$invoice_name = $template_args['organization'] . ' ' . __('Invoice #', 'event_espresso') . $template_args['registration_code'] . __(' for ', 'event_espresso') . $template_args['name'];
 		$invoice_name = str_replace( ' ', '_', $invoice_name );
-		
 		//Create the PDF
-		define('DOMPDF_ENABLE_REMOTE', TRUE);
-		define('DOMPDF_ENABLE_JAVASCRIPT', FALSE);
-		define('DOMPDF_ENABLE_CSS_FLOAT', TRUE);
-		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . '/tpc/dompdf/dompdf_config.inc.php');
-		$dompdf = new DOMPDF();
-		$dompdf->load_html($content);
-		$dompdf->render();		
-		$dompdf->stream($invoice_name . ".pdf", array( 'Attachment' => $download ));
+		if(array_key_exists('html',$_GET)){
+			echo $content;
+		}else{
+			define('DOMPDF_ENABLE_REMOTE', TRUE);
+			define('DOMPDF_ENABLE_JAVASCRIPT', FALSE);
+			define('DOMPDF_ENABLE_CSS_FLOAT', TRUE);
+			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . '/tpc/dompdf/dompdf_config.inc.php');
+			$dompdf = new DOMPDF();
+			$dompdf->load_html($content);
+			$dompdf->render();		
+			$dompdf->stream($invoice_name . ".pdf", array( 'Attachment' => $download ));
+		}
 		exit(0);
 	}
 
@@ -210,40 +216,7 @@ class Invoice {
 		return $data;
 	}
 
-	public function espressoImprovedTable() {
-		global $org_options;
-		$html = '';
-		$c = false;
-//		echo '<div style="font-size:1.5em">';
-//		printr( $this->session_data['cart']['REG']['items'], 'items' );
-//		echo '</div>';
-		//Data
-		foreach($this->transaction->registrations() as $registration){
-			/*@var $registration EE_Registration*/
-			$html .= '<tr class="item ' . (($c = !$c) ? ' odd' : '') . '">';
-			$html .= '<td class="item_l">1</td>';
-			$html .= '<td class="item_l">' . $registration->event_name() . '</td>';
-			$html .= '<td class="item_l">' .$registration->price_obj()->name(). '</td>';
-			$html .= '<td class="item_l">' . $registration->date_obj()->start_date_and_time() . '</td>';
-			$html .= '<td class="item_l">' . $registration->attendee()->full_name() . '</td>';
-			$html .= '<td class="item_r"><span class="crncy-sign">' . $org_options['currency_symbol'] . '</span>' . $registration->price_paid() . '</td>';
-			$html .= '</tr>';
-		}
-		 /* foreach ($this->session_data['cart']['REG']['items'] as $line_item ) {
-			//printr( $line_item, '$line_item  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-			foreach ( $line_item['attendees'] as $attendee) {
-				$html .= '<tr class="item ' . (($c = !$c) ? ' odd' : '') . '">';
-				$html .= '<td class="item_l">1</td>';
-				$html .= '<td class="item_l">' . $line_item['name'] . '</td>';
-				$html .= '<td class="item_l">' . $line_item['options']['price_desc'] . '</td>';
-				$html .= '<td class="item_l">' . $line_item['options']['date'] . ' @ ' . $line_item['options']['time'] . '</td>';
-				$html .= '<td class="item_l">' . $attendee[1] . ' ' . $attendee[1] . '</td>';
-				$html .= '<td class="item_r"><span class="crncy-sign">' . $org_options['currency_symbol'] . '</span>' . $attendee['price_paid'] . '</td>';
-				$html .= '</tr>';
-			}
-		}*/
-		return $html;
-	}
+	
 
 	public function espressoInvoiceTotals($text, $total_cost) {
 		global $org_options;
