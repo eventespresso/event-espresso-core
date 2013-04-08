@@ -100,7 +100,7 @@ class Invoice {
 		$template_args['amount_pd'] = $this->transaction->paid();
 		$template_args['payments'] = $this->transaction->approved_payments();
 		if ($template_args['amount_pd'] != $template_args['total_cost']) {
-			$template_args['net_total'] = $this->espressoInvoiceTotals( __('SubTotal', 'event_espresso'), $this->transaction->total());//$this->session_data['cart']['REG']['sub_total']);
+			//$template_args['net_total'] = $this->espressoInvoiceTotals( __('SubTotal', 'event_espresso'), $this->transaction->total());//$this->session_data['cart']['REG']['sub_total']);
 			$tax_data = $this->transaction->tax();
 			if(!empty($tax_data) && array_key_exists('taxes',$tax_data)){
 				foreach ($tax_data['taxes'] as $tax) {

@@ -615,7 +615,7 @@ class EE_Transaction extends EE_Base_Class{
 	 */
 	public function approved_payments(){
 		require_once('EEM_Payment.model.php');
-		return $this->get_first_related('Payments', array('STS_ID'=>  EEM_Payment::status_id_approved), 'PAY_timestamp', 'DESC');
+		return $this->get_many_related('Payments', array('STS_ID'=>  EEM_Payment::status_id_approved), 'PAY_timestamp', 'DESC');
 	}
 	
 	

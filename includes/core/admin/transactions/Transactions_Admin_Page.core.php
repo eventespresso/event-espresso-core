@@ -856,18 +856,21 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				
 				case 'PP' :
 					$payment['gateway'] = 'PayPal';
+					$payment['gateway_response'] = '';
 					break;
 
 				case 'CC' :
+					$payment['gateway'] = 'Credit_Card';
+					$payment['gateway_response'] = '';
 					break;
 
 				case 'CHQ' :
-					$payment['gateway'] = '';
+					$payment['gateway'] = 'Cheque';
 					$payment['gateway_response'] = '';
 					break;
 
 				case 'CSH' :
-					$payment['gateway'] = '';
+					$payment['gateway'] = 'Cash';
 					$payment['txn_id_chq_nmbr'] = '';
 					$payment['gateway_response'] = '';
 					break;
