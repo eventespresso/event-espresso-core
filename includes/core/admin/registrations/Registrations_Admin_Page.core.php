@@ -370,13 +370,20 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		//styles
 		wp_enqueue_style('jquery-ui-style');
 		wp_enqueue_style('jquery-ui-style-datepicker-css');
-
 		//scripts
 		global $eei18n_js_strings;
 		$eei18n_js_strings['update_att_qstns'] = __( 'click "Update Attendee Questions" to save your changes', 'event_espresso' );
 		wp_localize_script( 'espresso_reg', 'eei18n', $eei18n_js_strings );
+	}
 
 
+
+
+
+
+	public function load_scripts_styles_new_registration() {
+		wp_register_script( 'espresso-validate-new-reg', REG_ASSETS_URL . 'espresso-validate-new-reg.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE);
+		wp_enqueue_script('espresso-validate-new-reg');
 	}
 
 
@@ -1680,12 +1687,16 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			) 
 		);
 		$transaction->save();
+//		echo '<h4>$results : ' . $results . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		printr( $transaction, '$transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		$reg_items = $session['cart']['REG']['items'];
 		$saved_registrations = EE_Single_Page_Checkout::save_registration_items( $reg_items, $transaction );
 
 		$transaction->set_txn_session_data( $session );
-		$transaction->save();
+		$success = $transaction->save();
+//		echo '<h4>$results : ' . $results . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		printr( $transaction, '$transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		//remove the session from teh transaction befores saving it to teh session... otherwise we'll ahve a recursive relationship! bad!!
 //		$transaction->set_txn_session_data(null);
@@ -1693,11 +1704,14 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 //		$EE_Session->set_session_data(array( 'registration' => $saved_registrations, 'transaction' => $transaction ), 'session_data');
 //		$EE_Session->_update_espresso_session();
 			
-		$txn_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'txn'=>$transaction->ID() ), TXN_ADMIN_URL );
 //		printr( $EE_Session, '$EE_Session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		die();
-
+//		$this->_req_data = array();
+//		
+		$txn_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'txn'=>$transaction->ID() ), TXN_ADMIN_URL );
 		wp_safe_redirect( $txn_url );
+		exit();
+//		$this->_redirect_after_action( $success, __( 'New Registration', 'event_espresso' ), 'created', array( 'action' => 'view_transaction', 'txn'=>$transaction->ID() ), TXN_ADMIN_URL );
 	
 	}
 
