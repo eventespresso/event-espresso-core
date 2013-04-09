@@ -1155,7 +1155,7 @@ class EE_Single_Page_Checkout {
 				$transaction->save();
 			}
 
-			$saved_registrations = self::save_registration_items( $reg_items );
+			$saved_registrations = self::save_registration_items( $reg_items, $transaction );
 			
 			//$updated_session=$EE_Session->get_session_data();
 			$transaction->set_txn_session_data( $session );
