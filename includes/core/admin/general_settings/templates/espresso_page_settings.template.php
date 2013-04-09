@@ -52,18 +52,18 @@
 			<tr>
 				<th>
 					<label for="event_page_id">
-						<b>
-							<?php _e('Event Registration page', 'event_espresso'); ?>
-						</b>
+						<strong>
+							<?php _e('Event Registration Page', 'event_espresso'); ?>
+						</strong>
 						<?php echo EE_Template::get_help_tab_link('registration_page_info'); ?>
 						<br />
 						<?php echo General_Settings_Admin_Page::edit_view_links( $event_page_id );?>
 					</label>
 				</th>
 				<td>
-					<select name="event_page_id" data-placeholder="Choose a page..." class="chzn-select wide">
+					<select name="event_page_id" data-placeholder="Choose a page...">
 						<option value="0">
-							<?php _e('Main page', 'event_espresso'); ?>
+							<?php _e('Main Page', 'event_espresso'); ?>
 						</option>
 						<?php General_Settings_Admin_Page::page_settings_dropdown( $event_page_id ); ?>
 					</select>
@@ -86,18 +86,18 @@
 			<tr>
 				<th>
 					<label for="return_url">
-						<b>
-							<?php _e('Thank You page', 'event_espresso'); ?>
-						</b>
+						<strong>
+							<?php _e('Thank You Page', 'event_espresso'); ?>
+						</strong>
 						<?php echo EE_Template::get_help_tab_link('return_url_info'); ?>
 						<br />
 						<?php echo General_Settings_Admin_Page::edit_view_links( $return_url );?>
 					</label>
 				</th>
 				<td>
-					<select name="return_url" data-placeholder="Choose a page..." class="chzn-select wide">
+					<select name="return_url" data-placeholder="Choose a page...">
 						<option value="0">
-							<?php _e('Main page', 'event_espresso'); ?>
+							<?php _e('Main Page', 'event_espresso'); ?>
 						</option>
 						<?php General_Settings_Admin_Page::page_settings_dropdown( $return_url ); ?>
 					</select>
@@ -120,9 +120,9 @@
 			<tr>
 				<th>
 					<label for="notify_url">
-						<b>
-							<?php _e('Transactions page', 'event_espresso'); ?>
-						</b>
+						<strong>
+							<?php _e('Transactions Page', 'event_espresso'); ?>
+						</strong>
 						<?php echo EE_Template::get_help_tab_link('notify_url_info'); ?>
 						<br />
 						<span class="lt-grey-text"><?php _e('Notify URL (processes payments)', 'event_espresso'); ?></span><br/>
@@ -130,9 +130,9 @@
 					</label>
 				</th>
 				<td>
-					<select name="notify_url" data-placeholder="Choose a page..." class="chzn-select wide">
+					<select name="notify_url" data-placeholder="Choose a page...">
 						<option value="0">
-							<?php _e('Main page', 'event_espresso'); ?>
+							<?php _e('Main Page', 'event_espresso'); ?>
 						</option>
 						<?php General_Settings_Admin_Page::page_settings_dropdown( $notify_url ); ?>
 					</select>
@@ -155,18 +155,18 @@
 			<tr>
 				<th>
 					<label for="cancel_return">
-						<b>
-							<?php _e('Cancel/Return page', 'event_espresso'); ?>
-						</b>
+						<strong>
+							<?php _e('Cancel/Return Page', 'event_espresso'); ?>
+						</strong>
 						<?php echo EE_Template::get_help_tab_link('cancel_return_info'); ?>
 						<br />
 						<?php echo General_Settings_Admin_Page::edit_view_links( $cancel_return );?>
 					</label>
 				</th>
 				<td>
-					<select name="cancel_return" data-placeholder="Choose a page..." class="chzn-select wide">
+					<select name="cancel_return" data-placeholder="Choose a page...">
 						<option value="0">
-							<?php _e('Main page', 'event_espresso'); ?>
+							<?php _e('Main Page', 'event_espresso'); ?>
 						</option>
 						<?php General_Settings_Admin_Page::page_settings_dropdown( $cancel_return ); ?>
 					</select>
@@ -205,10 +205,9 @@
 					<p class="description">
 						<?php
 						echo sprintf(
-							__('makes URLs look like: %s/event-registration/your-event-name%s instead of: %s', 'event_espresso'),
-							'"<b>'. home_url(),
-							'</b>"',
-							'"<b>' . home_url() . '?page_id=4&ee=12</b>"'
+							__('Makes the URLs look like: %s/event-registration/your-event-name/, instead of: %s', 'event_espresso'),
+							home_url(),
+							home_url() . '?page_id=4&ee=12'
 						);
 						?>
 					</p>
@@ -224,7 +223,7 @@
 			__('You MUST have %sWordPress Permalinks%s turned on, and mod_rewrite (or similar) active on your server for "Pretty" Permalinks to function.%sIf your permalinks stop working and/or get disrupted for some reason (by other plugins, etc), then simply return to this page and they will be automagically reset.', 'event_espresso'),
 			'<a style="color:#f00;" href="'. home_url('/') .'wp-admin/options-permalink.php">',
 			'</a>',
-			'<br />'
+			'<br /><br />'
 		);
 		?>
 	</p>
