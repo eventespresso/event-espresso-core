@@ -33,7 +33,7 @@ abstract class EEM_Experimental_Base{
 		}
 	}
 	
-	function get_all($query_params){
+	function get_all($query_params = null){
 		global $wpdb;
 		$SQL ="SELECT * FROM ".$this->_construct_internal_join()."WHERE ID=1";
 		echo "sql to run:$SQL";
@@ -41,7 +41,7 @@ abstract class EEM_Experimental_Base{
 		
 	}
 	
-	function get_related($relation_name){
+	function get_related($relation_name, $query_params = null){
 		//join
 		global $wpdb;
 		$SQL = "SELECT * FROM ".$this->_construct_internal_join().$this->_construct_join_with($relation_name)." WHERE ID=1";
@@ -149,7 +149,7 @@ abstract class EE_Text_Field_Base extends EE_Exp_Model_Field_Base{
 		return '%s';
 	}
 }
-abstract class EE_Integer_Base extends EE_Exp_Model_Field_Base{
+abstract class EE_Integer_Field_Base extends EE_Exp_Model_Field_Base{
 	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value){
 		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value);
 	}
