@@ -60,10 +60,10 @@ class Support_Admin_Page extends EE_Admin_Page {
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
 			'default' => '_installation',
-			'resources' => '_resources',
 			'shortcodes' => '_shortcodes',
+			'resources' => '_resources',
 			'contact_support' => '_contact_support',
-			'faq' => '_faq'
+			//'faq' => '_faq'
 			);
 	}
 
@@ -97,12 +97,12 @@ class Support_Admin_Page extends EE_Admin_Page {
 					'order' => 40),
 				'metaboxes' => array('_support_boxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				),
-			'faq' => array(
+			/*'faq' => array(
 				'nav' => array(
 					'label' => __('FAQ', 'event_espresso'),
 					'order' => 50),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
-				)
+				)*/
 			);
 	}
 
@@ -165,8 +165,8 @@ class Support_Admin_Page extends EE_Admin_Page {
 
 	
 	protected function _shortcodes() {
-		$template_path = EE_SUPPORT_ADMIN_TEMPLATE_PATH . 'support_admin_details_shortcodes.template.php';
-		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, '', TRUE);
+		//$template_path = EE_SUPPORT_ADMIN_TEMPLATE_PATH . 'support_admin_details_shortcodes.template.php';
+		//$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, '', TRUE);
 		$this->display_admin_page_with_sidebar();
 	}
 
@@ -174,7 +174,20 @@ class Support_Admin_Page extends EE_Admin_Page {
 
 
 
-	protected function _shortcodes_boxes() { /*nothing at the moment*/ }
+	protected function _shortcodes_boxes() { 
+	$boxes = array(
+			'shortcodes_single_events' => __('Single Events', 'event_espresso'),
+			'shortcodes_event_listings' => __('Event Listings', 'event_espresso'),
+			'shortcodes_attendee_listings' => __('Attendee Listings', 'event_espresso'),
+			'shortcodes_category' => __('Category Shortcodes', 'event_espresso'),
+			);
+
+		foreach ( $boxes as $box => $label ) {
+			$template_path = EE_SUPPORT_ADMIN_TEMPLATE_PATH . 'support_admin_details_' . $box . '.template.php';
+			$callback_args = array('template_path' => $template_path);
+			add_meta_box( 'espresso_' . $box . '_settings', $label, create_function('$post, $metabox', 'echo espresso_display_template( $metabox["args"]["template_path"], "", TRUE );'), $this->_current_screen_id, 'normal', 'high', $callback_args);
+		}
+	}
 
 
 
@@ -200,13 +213,13 @@ class Support_Admin_Page extends EE_Admin_Page {
 
 
 
-	protected function _faq() {
+	/*protected function _faq() {
 
 		$template_path = EE_SUPPORT_ADMIN_TEMPLATE_PATH . 'support_admin_details_faq.template.php';
 		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, '', TRUE);
 		$this->display_admin_page_with_sidebar();
 
-	}
+	}*/
 
 
 
