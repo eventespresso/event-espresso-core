@@ -33,9 +33,14 @@ abstract class EEM_Experimental_Base{
 		}
 	}
 	
-	function get_all($query_params = null){
+	function get_all($query_params = array()){
 		global $wpdb;
-		$SQL ="SELECT * FROM ".$this->_construct_internal_join()."WHERE ID=1";
+		if(array_key_exists('where',$query_params)){
+			$where_clause = $this->construct_where_clause($query_params['where']);
+		}else{
+			$where_clause = '';
+		}
+		$SQL ="SELECT * FROM ".$this->_construct_internal_join()."WHERE $where_clause";
 		echo "sql to run:$SQL";
 		return $wpdb->get_results($SQL);
 		
@@ -47,6 +52,29 @@ abstract class EEM_Experimental_Base{
 		$SQL = "SELECT * FROM ".$this->_construct_internal_join().$this->_construct_join_with($relation_name)." WHERE ID=1";
 		echo "get_related query:".$SQL;
 		return $wpdb->get_results($SQL);
+	}
+	
+	function construct_where_clause($where_params){
+		global $wpdb;
+		//@todo pop off the top-layer arguments in future. For now assume single layer
+		//@todo also assume only querying on current model
+		$data_types = $this->_get_data_types();
+		$glue = ' AND ';
+		$where_clauses=array();
+		foreach($where_params as $query_param_name_and_op => $value){
+			//@todo split out model names, and op
+			$op = '=';
+			$field_name = $query_param_name_and_op;
+			$field_obj = $this->_fields[$field_name];
+			$where_clauses[] = $wpdb->prepare( $field_obj->get_qualified_column().$op.$data_types[$field_obj->get_qualified_column()],$value);
+		}
+		$SQL = implode($glue,$where_clauses);
+		return $SQL;
+		//replace with SQL and recurse
+		
+		//each time we find a 'ModelA__ModelB' we need to ensure ModelB is joined
+		
+		//
 	}
 	
 	function _construct_internal_join(){
@@ -78,18 +106,30 @@ abstract class EEM_Experimental_Base{
 			}
 			return $SQL;
 	}
+	
+	function _get_data_types(){
+		$data_types = array();
+		foreach($this->_fields as $field_name => $field_obj){
+			$data_types[$field_obj->get_table_column()] = $field_obj->get_wpdb_data_type();
+			$data_types[$field_obj->get_qualified_column()] = $field_obj->get_wpdb_data_type();
+		}
+		return $data_types;
+	}
+	
+	
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //concrete children of EEM_Experimental_Base
 class EEM_Exp_Event extends EEM_Experimental_Base{
 	function __construct(){
 		$this->_tables = array(
-		'Event' => new EE_Table('posts'),
-		'Event_Meta' => new EE_Table('postmeta','ID','post_id',"Event.post_type = 'page'"));
+			'Event' => new EE_Table('posts'),
+			'Event_Meta' => new EE_Table('postmeta','ID','post_id',"Event.post_type = 'page'"));
 		$this->_related_models = array(
-			'Registrations'=>new EE_Exp_Has_Many('Exp_Registration', 'Event', 'ID', 'Registration', 'EVT_ID')
-		);
-		
+			'Registrations'=>new EE_Exp_Has_Many('Exp_Registration', 'Event', 'ID', 'Registration', 'EVT_ID'));
+		$this->_fields = array(
+			'EVT_ID'=>new EE_Primary_Key_Field('Event', 'ID', 'Event ID', false, 0),
+			'EVT_desc'=>new EE_HTML_Field('Event','post_content','Event Description',true,''));
 		parent::__construct();
 	}
 }
@@ -98,7 +138,13 @@ class EEM_Exp_Registration extends EEM_Experimental_Base{
 		$this->_tables = array(
 			'Registration'=>new EE_Table('esp_registration')
 		);
-		$this->_related_models = array();
+		$this->_related_models = array(
+			//woudl add a BelongsTorelation to events and other relations here
+		);
+		$this->_fields = array(
+			'REG_ID'=>new EE_Primary_Key_Field('Registration', 'REG_ID', 'Registration ID', false, 0),
+			'STS_ID'=>new EE_Enum_Field('Registration','STS_ID','Status Code',false,'RNA',array('RAP','RCN','RNA','RPN'))
+		);
 	}
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -139,6 +185,9 @@ abstract class EE_Exp_Model_Field_Base{
 	function get_default_value(){
 		return $this->_default_value;
 	}
+	function get_qualified_column(){
+		return $this->get_table_alias().".".$this->get_table_column();
+	}
 	abstract function get_wpdb_data_type();
 }
 abstract class EE_Text_Field_Base extends EE_Exp_Model_Field_Base{
@@ -155,6 +204,19 @@ abstract class EE_Integer_Field_Base extends EE_Exp_Model_Field_Base{
 	}
 	function get_wpdb_data_type(){
 		return '%d';
+	}
+}
+abstract class EE_Float_Field_Base extends EE_Exp_Model_Field_Base{
+	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value){
+		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value);
+	}
+	function get_wpdb_data_type(){
+		return '%f';
+	}
+}
+class EE_Primary_Key_Field extends EE_Integer_Field_Base{
+	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value){
+		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value);
 	}
 }
 class EE_HTML_Field extends EE_Text_Field_Base{

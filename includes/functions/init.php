@@ -301,8 +301,10 @@ function return_espresso_content() {
 	global $espresso_content;
 	require_once('EEM_Experimental_Base.model.php');
 	$POST = new EEM_Exp_Event();
-	$posts = $POST->get_related('Registrations');
-	var_dump($posts);
+	var_dump($POST->get_all(array('where'=>array('EVT_ID'=>1))));
+//	$posts = $POST->get_related('Registrations');
+//	var_dump( $POST->_get_data_types());
+//	var_dump($posts);
 	return $espresso_content;
 }
 
