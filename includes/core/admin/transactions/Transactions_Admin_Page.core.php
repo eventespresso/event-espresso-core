@@ -333,7 +333,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		if ( is_object( $this->_transaction) )
 			return; //get out we've already set the object
 
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 	    $TXN = EEM_Transaction::instance();
 
@@ -1023,7 +1022,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		
 		wp_enqueue_script( $report_JS, TXN_ASSETS_URL . $report_JS . '_report.js', array('jqplot-all'), '1.0', TRUE);
 
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 	    $TXN = EEM_Transaction::instance();
 	 	
@@ -1078,7 +1076,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		
 		wp_enqueue_script( $report_JS, TXN_ASSETS_URL . $report_JS . '_report.js', array('jqplot-all'), '1.0', TRUE);
 
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 	    $TXN = EEM_Transaction::instance();
 	 
@@ -1116,7 +1113,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 * @return mixed (int|array)           int = count || array of transaction objects
 	 */
 	public function get_transactions( $perpage, $count = FALSE ) {
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 	    $TXN = EEM_Transaction::instance();
 
@@ -1155,7 +1151,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 
 	public function get_all_transactions_count() {
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 	    $TXN = EEM_Transaction::instance();
 

@@ -573,7 +573,7 @@ class EE_Transaction extends EE_Base_Class{
 	/**
 	 * Gets all the attendees for this transaction (handy for use with EE_Attendee's get_registrations_for_event function
 	 * for getting attendees and how many registrations they each have for an event)
-	 * @param string $output like 'OBJECT_K' or 'COUNT', like EEM_Base's select_all_where's $output parameter
+	 * @param string $output like 'OBJECT_K' or 'COUNT', like EEM_Custom_Table_Base's select_all_where's $output parameter
 	 * @return mixed EE_Attendee[] by default, int if $output is set to 'COUNT'
 	 */
 	public function attendees($output='OBJECT_K'){
@@ -596,7 +596,7 @@ class EE_Transaction extends EE_Base_Class{
 	
 	/**
 	 * Gets payments for this transaction. Unlike other such functions, order by 'DESC' by default
-	 * @param type $where_col_n_vals all parameters just like EEM_Base's select_all_where
+	 * @param type $where_col_n_vals all parameters just like EEM_Custom_Table_Base's select_all_where
 	 * @param type $orderby
 	 * @param type $order
 	 * @param type $operators

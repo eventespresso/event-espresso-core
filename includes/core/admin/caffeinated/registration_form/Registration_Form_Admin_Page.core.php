@@ -416,7 +416,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	 * Extracts the question field's values from the POST request to update or insert them
 	 * @return array where each key is the name of a model's field/db column, and each value is its value.
 	 */
-	private function _set_column_values_for(EEM_Base $model){
+	private function _set_column_values_for(EEM_Custom_Table_Base $model){
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		$set_column_values=array();
 		foreach($model->fields_settings() as $fieldName=>$settings){

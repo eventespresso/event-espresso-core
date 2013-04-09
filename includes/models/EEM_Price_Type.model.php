@@ -21,9 +21,9 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Custom_Table_Base.model.php' );
 
-class EEM_Price_Type extends EEM_Base {
+class EEM_Price_Type extends EEM_Custom_Table_Base {
 
 	// private instance of the Price Type object
 	private static $_instance = NULL;

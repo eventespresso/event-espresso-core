@@ -24,9 +24,9 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Custom_Table_Base.model.php' );
 
-class EEM_Message_Template extends EEM_Base {
+class EEM_Message_Template extends EEM_Custom_Table_Base {
 	//private instance of the EEM_Message_Template object
 	private static $_instance = NULL;
 

@@ -21,8 +21,8 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once('EEM_Base.model.php');
-abstract class EEM_TempBase extends EEM_Base{ 
+require_once('EEM_Custom_Table_Base.model.php');
+abstract class EEM_TempBase extends EEM_Custom_Table_Base{ 
 	/**
 	 * arary for defining all the fields on a model. May not replace all the 
 	 * individual setters and getters, as these are convenient for PHP docs and developing,

@@ -522,7 +522,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		if ( is_object($this->_registration) )
 			return TRUE; //get out we've already set the object
 
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
 	    $REG = EEM_Registration::instance();
 
@@ -1829,7 +1828,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		
 		wp_enqueue_script( $report_JS, REG_ASSETS_URL . $report_JS . '_report.js', array('jquery', 'jqplot'), EVENT_ESPRESSO_VERSION, TRUE);
 
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
 	    $REG = EEM_Registration::instance();
 	 

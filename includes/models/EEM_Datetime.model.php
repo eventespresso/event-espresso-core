@@ -21,10 +21,10 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Custom_Table_Base.model.php' );
 require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Datetime.class.php' );
 
-class EEM_Datetime extends EEM_Base {
+class EEM_Datetime extends EEM_Custom_Table_Base {
 
   	// private instance of the Event_datetime object
 	private static $_instance = NULL;
