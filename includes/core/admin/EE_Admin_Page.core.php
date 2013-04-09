@@ -1871,6 +1871,27 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+	/**
+	 * This just prepares a legend using the given items and the admin_details_legend.template.php file and returns the html string for the legend.
+	 *
+	 * $items are expected in an array in the following format:
+	 * $legend_items = array(
+	 * 		'item_id' => array(
+	 * 			'icon' => 'http://url_to_icon_being_described.png',
+	 * 			'desc' => __('localized description of item');
+	 * 		)
+	 * );
+	 * @param  array $items  see above for format of array
+	 * @return string        html string of legend
+	 */
+	protected function _display_legend( $items ) {
+		$template_args['items'] = (array) $items;
+		$legend_template = EE_CORE_ADMIN . 'admin_details_legend.template.php';
+		return espresso_display_template($legend_template, $template_args, TRUE);
+	}
+
+
+
 
 	/**
 	 * this is used whenever we're DOING_AJAX to return a formatted json array that our calling javascript can expect

@@ -52,6 +52,19 @@ class EEM_Transaction extends EEM_TempBase {
 	 */
 	const pending_status_code = 'TPN';
 
+	
+	
+	/**
+	 *  Status ID(STS_ID on esp_status table) to indicate the transaction is overpaid.
+	 *  This is the same as complete, but site admins actually owe clients the moneys!
+	 * from an offline gateway. 
+	 */
+	const overpaid_status_code = 'TOP';
+	
+	
+	
+	
+	
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
@@ -526,7 +539,9 @@ class EEM_Transaction extends EEM_TempBase {
 		$total_pending = $PAY->recalculate_total_payments_for_transaction( $transaction->ID(),  EEM_Payment::status_id_pending );
 		$transaction->set_paid( $total_paid );
 		// set transaction status to complete if paid in full or the event was a freebie
-		if ( $total_paid >= $transaction->total() ) {
+		if($total_paid > $transaction->total()){
+			$transaction->set_status(EEM_Transaction::overpaid_status_code);
+		}elseif ( $total_paid == $transaction->total() ) {
 			$transaction->set_status(EEM_Transaction::complete_status_code);
 		} elseif($total_paid + $total_pending >= $transaction->total()) {
 			$transaction->set_status(EEM_Transaction::pending_status_code);

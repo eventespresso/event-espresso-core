@@ -366,7 +366,28 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 
 
+	protected function _transaction_legend_items() {
+		$items = array(
+			'view_details' => array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'images/magnifier.png',
+				'desc' => __('View Transaction Details', 'event_espresso')
+				),
+			'download_invoice' => array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'images/invoice-1-16x16.png',
+				'desc' => __('Download Invoice for Transaction.', 'event_espresso')
+				),
+			'view_registration' => array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'images/edit.png',
+				'desc' => __('View Registration Details', 'event_espresso')
+				)
+		);
+		return $items;
+	}
+
+
+
 	protected function _transactions_overview_list_table() {
+		$this->_template_args['after_list_table'] = $this->_display_legend( $this->_transaction_legend_items() );
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
@@ -836,18 +857,21 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				
 				case 'PP' :
 					$payment['gateway'] = 'PayPal';
+					$payment['gateway_response'] = '';
 					break;
 
 				case 'CC' :
+					$payment['gateway'] = 'Credit_Card';
+					$payment['gateway_response'] = '';
 					break;
 
 				case 'CHQ' :
-					$payment['gateway'] = '';
+					$payment['gateway'] = 'Cheque';
 					$payment['gateway_response'] = '';
 					break;
 
 				case 'CSH' :
-					$payment['gateway'] = '';
+					$payment['gateway'] = 'Cash';
 					$payment['txn_id_chq_nmbr'] = '';
 					$payment['gateway_response'] = '';
 					break;

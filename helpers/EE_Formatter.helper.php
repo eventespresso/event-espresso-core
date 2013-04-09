@@ -126,5 +126,19 @@ class EE_Formatter {
 			return date_i18n( $format, strtotime( $date )); 
 		}
 	}
+	
+	
+	/**
+	* Formats $amount (an integer or float) in the normal ee-fashion, and returns a string (including the currency symbol).
+	* For example, ee_price_string(34.4) would return "$34.40". (And if we decide that a particular locale should change the format,
+	* that can be centralized here.)
+	* @param float/int $amount
+	* @return string
+	*/
+   static function price($amount){
+	   global $org_options;
+	   $currency_symbol = isset( $org_options['currency_symbol'] ) ? $org_options['currency_symbol'] : '';
+	   return  $currency_symbol . number_format($amount, 2);
+   }
 
 }//end class EE_Form_Fields
