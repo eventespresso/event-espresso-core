@@ -89,6 +89,7 @@ function espresso_calendar_install() {
 			'time_format' => get_option('time_format'),
 			'show_time' => true,
 			'throttle' => array('enable'=>true, 'amount'=>100),
+			'disable_categories' => false,
 			'show_attendee_limit' => false,
 			//'use_themeroller' => false,
 			'espresso_calendar_titleFormat' => "month: 'MMMM yyyy', week: 'MMM dS[ yyyy] - {[ MMM] dS yyyy}', day: 'dddd, MMM dS, yyyy'",
@@ -244,28 +245,22 @@ function espresso_calendar_do_stuff($show_expired) {
 		global $this_event_id;
 		$this_event_id = $event->id;
 		
-		//Debug:
-		//Print the category id for each event.
-		//print_r( espresso_event_category_data($event->id) );
-		//Get details about the category of the event
-		$category_data = espresso_event_category_data($event->id);
+		if (isset($espresso_calendar['disable_categories']) && $espresso_calendar['disable_categories'] == false) {
 		
-		$category_data['category_meta'] = unserialize($category_data['category_meta']);
-		//Debug:
-		//echo "<pre>".print_r($category_data,true)."</pre>";
+			//Get details about the category of the event
+			$category_data = espresso_event_category_data($event->id);
+			$category_data['category_meta'] = unserialize($category_data['category_meta']);
 		
-		//Assign colors to events by category
-		if( isset($category_data['category_meta']) && $category_data['category_meta']['use_pickers'] == 'Y' ){
-			
-			$eventArray['color'] = $category_data['category_meta']['event_background'];
-			$eventArray['textColor'] = $category_data['category_meta']['event_text_color'];
-			
+			//Assign colors to events by category
+			if( isset($category_data['category_meta']) && $category_data['category_meta']['use_pickers'] == 'Y' ){
+				
+				$eventArray['color'] = $category_data['category_meta']['event_background'];
+				$eventArray['textColor'] = $category_data['category_meta']['event_text_color'];
+				
+			}
 		}
 		
 		$event_meta = unserialize($event->event_meta);
-
-		//Debug:
-		//var_dump($event);
 		
 		//If the version of Event Espresso is 3.2 or older, we need to use the new permalink structure. If not, then we need to default to the structure.
 		if ( function_exists('espresso_version') ) {
@@ -380,16 +375,16 @@ function espresso_calendar_do_stuff($show_expired) {
 		//This decalares the category ID as the CSS class name
 		$eventArray['className'] = '';
 		$eventArray['eventType'] = '';
-		if (isset($espresso_calendar['enable_cat_classes']) && $espresso_calendar['enable_cat_classes'] == true) {
-			//Debug
-			//var_dump($category_data);
-			//This is the class
-			$eventArray['className'] = isset($category_data['category_identifier']) && !empty($category_data['category_identifier']) ? $category_data['category_identifier'] : '';
-
-			//This can be used to use the category id as the event type
-			$eventArray['eventType'] = isset($category_data['category_name']) && !empty($category_data['category_name']) ? $category_data['category_name'] : '';
-		}//end if user enabled cat for classes
-		//End custom fields
+		if (isset($espresso_calendar['disable_categories']) && $espresso_calendar['disable_categories'] == false) {
+			if (isset($espresso_calendar['enable_cat_classes']) && $espresso_calendar['enable_cat_classes'] == true) {
+				//This is the css class name
+				$eventArray['className'] = isset($category_data['category_identifier']) && !empty($category_data['category_identifier']) ? $category_data['category_identifier'] : '';
+	
+				//This can be used to use the category id as the event type
+				$eventArray['eventType'] = isset($category_data['category_name']) && !empty($category_data['category_name']) ? $category_data['category_name'] : '';
+			}
+		}
+		
 		//If set to true, events will be shown as all day events
 		$eventArray['allDay'] = FALSE;
 		//Array of the event details

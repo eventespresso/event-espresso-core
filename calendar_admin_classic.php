@@ -47,6 +47,7 @@ function espresso_calendar_config_mnu() {
 		$espresso_calendar['show_time'] = $_POST['show_time'];
 		$espresso_calendar['throttle']['enable'] = $_POST['throttle_enable'];
 		$espresso_calendar['throttle']['amount'] = $_POST['throttle_amount'];
+		$espresso_calendar['disable_categories'] = $_POST['disable_categories'];
 		$espresso_calendar['show_attendee_limit'] = $_POST['show_attendee_limit'];
 		$espresso_calendar['time_format'] = $_POST['time_format_custom'];
 		$espresso_calendar['espresso_use_pickers'] = $_POST['espresso_use_pickers'];
@@ -202,7 +203,10 @@ function espresso_calendar_config_mnu() {
 	<?php _e('Show Weekends', 'event_espresso'); ?>
 											</label>
 										</th>
-										<td><?php echo select_input('espresso_calendar_weekends', $values, $espresso_calendar['espresso_calendar_weekends'], 'id="espresso_calendar_weekends"'); ?></td>
+										<td><?php echo select_input('espresso_calendar_weekends', $values, $espresso_calendar['espresso_calendar_weekends'], 'id="espresso_calendar_weekends"'); ?><br />
+											<span class="description">
+	<?php _e('This setting allows you to remove the weekends from your calendar views. This may be useful if you don\'t have events on weekends.', 'event_espresso'); ?>
+											</span></td>
 									</tr>
 								</tbody>
 							</table>
@@ -230,7 +234,7 @@ function espresso_calendar_config_mnu() {
 										<td><input id="calendar_pages" type="text" name="calendar_pages" size="100" maxlength="100" value="<?php echo isset($espresso_calendar['calendar_pages']) && !empty($espresso_calendar['calendar_pages']) ? $espresso_calendar['calendar_pages'] : 0; ?>" />
 											<br />
 											<span class="description">
-	<?php _e('This tells the plugin to load the calendar CSS file on specific pages. This should be a comma seperated list of page ids.', 'event_espresso'); ?>
+	<?php _e('This tells the plugin to load the calendar CSS file on specific pages. This should be a comma separated list of page id\'s. If left to the default of 0, the calendar stylesheet will load on every page of the site. You can find Page ID\'s by going to the WordPress menu Pages > All Pages, and hovering your mouse over the Page title, at the bottom of your browser a small box will appear with some code in it. Where it says post= then a number (post=4), that number is the Page ID. You can improve site performance and reduce conflicts by specifying which page/s have calendars on them.', 'event_espresso'); ?>
 											</span></td>
 									</tr>
 									<tr>
@@ -240,7 +244,7 @@ function espresso_calendar_config_mnu() {
 										</th>
 										<td><?php echo select_input('espresso_page_post', array(array('id' => 'R', 'text' => __('Registration Page', 'event_espresso')), array('id' => 'P', 'text' => __('Post', 'event_espresso'))), $espresso_calendar['espresso_page_post'], 'id="calendar_page_post"'); ?> <br />
 											<span class="description">
-	<?php _e('If you are using the "Create a Post" feature. Use this option to link to the posts that are created by Event Espresso.', 'event_espresso'); ?>
+	<?php _e('If you are using the "Create a Post" feature. Use this option to link to the posts that are created by Event Espresso, or select the link to go to the standard registration page.', 'event_espresso'); ?>
 											</span></td>
 									</tr>
 									<tr>
@@ -249,7 +253,10 @@ function espresso_calendar_config_mnu() {
 											</label>
 										</th>
 										<td><?php echo select_input('enable_calendar_thumbs', $values, isset($espresso_calendar['enable_calendar_thumbs']) && !empty($espresso_calendar['enable_calendar_thumbs']) ?  $espresso_calendar['enable_calendar_thumbs']: 0, 'id="enable-calendar-thumbs"'); ?>
-											</li></td>
+											<br />
+											<span class="description">
+	<?php _e('The "Featured Image" box in the event editor handles the thumbnail image URLs for each event. After setting the "Enable Calendar images" option to "Yes" in the calendar settings, upload an event image in the built-in WordPress media uploader, then click the Insert into post button on the media uploader.', 'event_espresso'); ?>
+											</span></td>
 									</tr>
 								</tbody>
 							</table>
@@ -259,12 +266,25 @@ function espresso_calendar_config_mnu() {
 
 							<table class="form-table">
 								<tbody>
+								<tr>
+										<th> <label for="enable-cat-classes">
+	<?php _e('Enable CSS for Categories', 'event_espresso'); ?>
+											</label>
+										</th>
+										<td><?php echo select_input('enable_cat_classes', $values, $espresso_calendar['enable_cat_classes'], 'id="enable-cat-classes"'); ?><br />
+											<span class="description">
+	<?php _e('This setting allows you to set each category to display a different color. Set each category color in Event Espresso > Categories.', 'event_espresso'); ?>
+											</span></td>
+									</tr>
 									<tr>
 										<th> <label for="espresso_use_pickers">
 	<?php _e('Use Color Pickers', 'event_espresso'); ?>
 											</label>
 										</th>
-										<td><?php echo select_input('espresso_use_pickers', $values, $espresso_calendar['espresso_use_pickers'], 'id="espresso_use_pickers"'); ?></td>
+										<td><?php echo select_input('espresso_use_pickers', $values, $espresso_calendar['espresso_use_pickers'], 'id="espresso_use_pickers"'); ?><br />
+											<span class="description">
+	<?php _e('This allows you to customize the event background color and text color.', 'event_espresso'); ?>
+											</span></td>
 									</tr>
 									<tr class="color-picker-selections">
 										<th class="color-picker-style"> <label for="background-color">
@@ -290,7 +310,10 @@ function espresso_calendar_config_mnu() {
 											</label>
 										</th>
 										<td>
-											<?php echo select_input('show_tooltips', $values, $espresso_calendar['show_tooltips'], 'id="show_tooltips"'); ?>
+											<?php echo select_input('show_tooltips', $values, $espresso_calendar['show_tooltips'], 'id="show_tooltips"'); ?><br />
+											<span class="description">
+	<?php _e('This allows you to display a short description of the event on hover. The "display short descriptions" feature set in Event Espresso>Template settings should be switched on when using this feature. Be sure to use the <code>&lt;!--more--&gt;</code> tag to separate the short description from the entire event description.', 'event_espresso'); ?>
+											</span>
 										</td>
 									</tr>
 							<?php 
@@ -333,13 +356,7 @@ function espresso_calendar_config_mnu() {
 											</span>
 										</td>
 									</tr>
-									<tr>
-										<th> <label for="enable-cat-classes">
-	<?php _e('Enable CSS for Categories', 'event_espresso'); ?>
-											</label>
-										</th>
-										<td><?php echo select_input('enable_cat_classes', $values, $espresso_calendar['enable_cat_classes'], 'id="enable-cat-classes"'); ?></td>
-									</tr>
+									
 								</tbody>
 							</table>
 							<p>
@@ -476,6 +493,17 @@ function espresso_calendar_config_mnu() {
 										</td>
 									</tr>
 									
+									<tr>
+										<th> <label for="disable_categories">
+	<?php _e('Disable Categories?', 'event_espresso'); ?>
+											</label>
+										</th>
+										<td><?php echo select_input('disable_categories', $values, !empty($espresso_calendar['disable_categories']) ? $espresso_calendar['disable_categories'] : false, 'id="disable_categories"'); ?><br />
+										<span class="description">
+	<?php _e('Disabling categories in the calendar may potentially speed up the calendar and allow you to load more events, but you will not be able to use the category colors and css class options.', 'event_espresso'); ?>
+											</span>
+										</td>
+									</tr>
 									
 								</tbody>
 							</table>
