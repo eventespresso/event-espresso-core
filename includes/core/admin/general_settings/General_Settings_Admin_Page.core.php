@@ -159,7 +159,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 						),
 					)
 				),
-/*			'google_map_settings' => array(
+			'google_map_settings' => array(
 				'nav' => array(
 					'label' => __('Google Maps'),
 					'order' => 40
