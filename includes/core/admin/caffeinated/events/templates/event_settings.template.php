@@ -20,7 +20,7 @@
 				<th>
 					<label for="default_reg_status">
 						<?php _e(' Default Registration Status', 'event_espresso'); ?>
-						<?php do_action('action_hook_espresso_help', 'payment_status_info') ?>
+						<?php echo EE_Template::get_help_tab_link('payment_status_info'); ?>
 					</label>
 				</th>
 				<td>

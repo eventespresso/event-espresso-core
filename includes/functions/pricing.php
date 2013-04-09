@@ -499,3 +499,6 @@ function get_reg_total_price($registration_id) {
 
 }
 
+
+
+

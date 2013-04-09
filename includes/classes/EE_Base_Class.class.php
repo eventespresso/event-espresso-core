@@ -10,14 +10,7 @@
  *
  * @author mnelson4
  */
-abstract class EE_Base_Class {
-	/**
-	 * Instance of model that corresponds to this class.
-	 * This should be lazy-loaded to avoid recursive loop
-	 * @var EEM_TempBase 
-	 */
-	private $_model;
-	
+abstract class EE_Base_Class {	
 	/**
 	 * basic constructor for Event Espresso classes, performs any necessary initialization,
 	 * and verifies it's children play nice
@@ -25,7 +18,7 @@ abstract class EE_Base_Class {
 	public function __construct($fieldValues=null){
 		$className=get_class($this);
 		do_action("action_hook_espresso__{$className}__construct",$this,$fieldValues);
-		$this->_model=$this->_get_model();
+		$model=$this->_get_model();
 		if($fieldValues!=null){
 			foreach($fieldValues as  $fieldName=>$fieldValue){
 				//"<br>set $fieldName to $fieldValue";
@@ -33,20 +26,19 @@ abstract class EE_Base_Class {
 			}
 		}
 		//verify we have all the attributes required in teh model
-		foreach($this->_model->fields_settings() as $fieldName=>$fieldSettings){
+		foreach($model->fields_settings() as $fieldName=>$fieldSettings){
 			if(!property_exists($this,$this->_get_private_attribute_name($fieldName))){
 				throw new EE_Error(sprintf(__('You have added an attribute titled \'%s\' to your model %s, but have not set a corresponding
 					attribute on %s. Please add $%s to %s','event_espresso'),
-						$fieldName,get_class($this->_model),get_class($this),$this->_get_private_attribute_name($fieldName),get_class($this)));
+						$fieldName,get_class($model),get_class($this),$this->_get_private_attribute_name($fieldName),get_class($this)));
 			}
 		}
 		//verify we have all the model relations
-		foreach($this->_model->relation_settings() as $relationName=>$relationSettings){
-			$privateAttributeName=$this->_get_private_attribute_name($relationName);
+		foreach($model->relation_settings() as $relationName=>$relationSettings){
 			if(!property_exists($this,$this->_get_private_attribute_name($relationName))){
 				throw new EE_Error(sprintf(__('You have added a relation titled \'%s\' to your model %s, but have not set a corresponding
 					attribute on %s. Please add protected $%s to %s','event_espresso'),
-						$relationName,get_class($this->_model),get_class($this),$this->_get_private_attribute_name($relationName),get_class($this)));
+						$relationName,get_class($model),get_class($this),$this->_get_private_attribute_name($relationName),get_class($this)));
 			}
 		}
 	}
@@ -57,14 +49,12 @@ abstract class EE_Base_Class {
 	 * @return EEM_TempBase
 	 */
 	public function  _get_model(){
-		if(!$this->_model){
-			//find model for this class
-			$modelName=$this->_get_model_name();
-			require_once($modelName.".model.php");
-			//$modelObject=new $modelName;
-			$this->_model=call_user_func($modelName."::instance");
-		}
-		return $this->_model;
+		//find model for this class
+		$modelName=$this->_get_model_name();
+		require_once($modelName.".model.php");
+		//$modelObject=new $modelName;
+		$model=call_user_func($modelName."::instance");
+		return $model;
 	}
 	
 	/**
@@ -103,7 +93,7 @@ abstract class EE_Base_Class {
 			if( $thisFieldSettings->nullable() && $value == null){
 				return null;
 			}elseif(!$thisFieldSettings->nullable() && $value == null){
-				EE_Error::add_error(sprintf(__("Some data is missing||The field named %s on %s is null, but it shouldnt be. The complete object is:%s",'event_espresso'),$fieldName,get_class($this),  print_r($this, true)), $file, $func, $line);
+				EE_Error::add_error( sprintf( __("Some data is missing||The field named %s on %s is null, but it shouldnt be. The complete object is:%s",'event_espresso'),$fieldName,get_class($this),  print_r($this, true)), __FILE__, __FUNCTION__, __LINE__ );
 				return null;
 			}
 			switch($thisFieldSettings->type()){
@@ -121,6 +111,8 @@ abstract class EE_Base_Class {
 				case 'plaintext':
 				case 'simplehtml':
 				case 'fullhtml':
+				case 'email':
+				case 'all_caps_key':
 					return $value;
 				case 'float':
 					return floatval($value);
@@ -129,12 +121,10 @@ abstract class EE_Base_Class {
 				case 'enum':
 					return $value;
 					break;
-				case 'serialized_text'://accept anything. even if it's not an array, or if it's not yet serialized. we'll deal with it.
-					if(is_array($value)){
-						return $value;
-					}else{
-						return @unserialize($value);
-					}
+				case 'serialized_text':
+					//a serialized_text field SHOULD be an array right now,
+					//but in case it isn't unserialize it
+					return maybe_unserialize($value);
 			}
 		}else{
 			EE_Error::add_error(sprintf(__("You have requested a field named %s on model %s",'event_espresso'),$fieldName,get_class($this)), __FILE__, __FUNCTION__, __LINE__);
@@ -190,9 +180,9 @@ abstract class EE_Base_Class {
 	
 	/**
 	 * Sanitizes (or cleans) the value. Ie, 
-	 * @param type $value
-	 * @param type $fieldSettings
-	 * @return type
+	 * @param mixed $value
+	 * @param EE_Model_Field $fieldSettings
+	 * @return boolean of success
 	 * @throws EE_Error
 	 */
 	protected function _sanitize_field_input($value,$fieldSettings){
@@ -230,24 +220,37 @@ abstract class EE_Base_Class {
 			case 'fullhtml':
 				$return= htmlentities("$value",ENT_QUOTES,'UTF-8');
 				break;
+			case 'email':
+				$return = sanitize_email($value);
+				break;
+			case 'all_caps_key':
+				$return = strtoupper( sanitize_key($value));
+				break;
 			case 'float':
-				$return=floatval($value);
+				$return=floatval( preg_replace( "/^[^0-9\.]-/", "", preg_replace( "/,/", ".", $value ) ));
 				break;
 			case 'date':
 				//check if we've been given a string representing a time.
-				if(intval($value)!==0 && intval($value)!==1){
+				if(!is_numeric($value)){
 					//if so, try to convert it to unix timestamp
 					$value=strtotime($value);
 				}
 				$return = intval($value);
 				break;
 			case 'enum':
+				if($value!==null && !in_array($value,$fieldSettings->allowed_enum_values())){
+					$msg = sprintf(__("System is assigning imcompatible value '%s' to field '%s'",'event_espresso'),$value,$fieldSettings->nicename());
+					$msg2 = sprintf(__("Allowed values for '%s' are %s",'event_espresso'),$fieldSettings->nicename(),$fieldSettings->allowed_enum_values());
+					throw new EE_Error("$msg||$msg2");
+				}
 				$return=$value;
 				break;
 			case 'serialized_text':
-				if(is_array($value)){
-					$value=serialize($value);
-				}
+				//serialized_text should be an array at this point. Right before saving, we'll serialize it
+				//so in case someone's already serialized it, unserialize it.
+				//also, if we've just fetched this from the DB, it's serialized. Unserialized it.
+				$value = maybe_unserialize($value);
+				
 				$return=$value;
 				break;
 		}
@@ -287,12 +290,14 @@ abstract class EE_Base_Class {
 			case 'plaintext':
 			case 'simplehtml':
 			case 'fullhtml':
+			case 'email':
+			case 'all_caps_key':
 				if(is_string($value)){
 					$return= true;
 				}
 				break;
 			case 'float':
-				if(is_float($value)){
+				if(is_numeric($value)){
 					$return= true;
 				}
 				break;
@@ -303,7 +308,7 @@ abstract class EE_Base_Class {
 				if(is_int($value) || is_string($value)){
 					$return = true;
 				}
-				break;
+				break;				
 			case 'enum':
 				$allowedValues=$fieldSettings->allowed_enum_values();
 				if(in_array($value,$allowedValues) || in_array(intval($value),$allowedValues)){
@@ -353,6 +358,8 @@ abstract class EE_Base_Class {
 				case 'plaintext':
 				case 'simplehtml':
 				case 'fullhtml':
+				case 'email':
+				case 'all_caps_key':
 					echo stripslashes($value);
 					break;
 				case 'float':
@@ -387,7 +394,7 @@ abstract class EE_Base_Class {
 	
 	/**
 	 * retrieves all the fieldSettings on this class
-	 * @return array
+	 * @return EE_Model_Field[]
 	 * @throws EE_Error
 	 */
 	public function get_fields_settings(){
@@ -408,13 +415,20 @@ abstract class EE_Base_Class {
 	
 	*/	
 	public function save($set_cols_n_values=array()) {
+		//set attributes as provided in $set_cols_n_values
 		foreach($set_cols_n_values as $column=>$value){
 			$this->set($column,$value);
 		}
+		//now get current attribute values
 		$save_cols_n_values = array();
-		foreach(array_keys($this->get_fields_settings()) as $fieldName){
+		foreach($this->get_fields_settings() as $fieldName=>$fieldSettings){
 			$attributeName=$this->_get_private_attribute_name($fieldName);
-			$save_cols_n_values[$fieldName]=$this->$attributeName;
+			if($fieldSettings->type() == 'serialized_text'){
+				//serialized_text fields should be arrays/objects 
+				$save_cols_n_values[$fieldName] = maybe_serialize($this->$attributeName);
+			}else{
+				$save_cols_n_values[$fieldName] = $this->$attributeName;
+			}	
 		}
 		if ( $save_cols_n_values[$this->_get_primary_key_name()]!=null ){
 			$results = $this->_get_model()->update ( $save_cols_n_values, array($this->_get_primary_key_name()=>$this->get_primary_key()) );

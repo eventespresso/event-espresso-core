@@ -195,9 +195,10 @@ class EE_messages {
 	 * @param  string $type    This should correspond with a valid message type
 	 * @param  string $context This should correspond with a valid context for the message type
 	 * @param  string $messenger This should correspond with a valid messenger.
+	 * @param bool 	$send true we will do a test send using the messenger delivery, false we just do a regular preview
 	 * @return string          The body of the message.
 	 */
-	public function preview_message( $type, $context, $messenger ) {
+	public function preview_message( $type, $context, $messenger, $send = FALSE ) {
 
 		//does the given type match an actual message type class.
 		if ( isset(  $this->_installed_message_types[$type] ) ) {
@@ -215,7 +216,7 @@ class EE_messages {
 				$message->set_messages( array(), $messenger, $context );
 
 				//let's GET the message body from the messenger (instead of the normal send_message)
-				return $messenger->get_preview( $message->messages[0] );
+				return $messenger->get_preview( $message->messages[0], $send );
 
 			} else {
 				EE_Error::add_error( sprintf( __('Messenger: %s does not exist', 'event_espresso'), $messenger ), __FILE__, __FUNCTION__, __LINE__ );

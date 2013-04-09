@@ -4,3 +4,4 @@
     	<?php echo $list_table->search_box($search['btn_label'], $current_page); ?>
 		<?php echo $list_table->display(); ?>
     </form>
+    <?php echo isset($after_list_table) ? $after_list_table : ''; ?>

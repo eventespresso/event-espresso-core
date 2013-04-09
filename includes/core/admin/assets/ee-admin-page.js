@@ -303,14 +303,16 @@ jQuery(document).ready(function($) {
 	});
 
 
-	// add functions to global scope
-//	window.overlay = overlay;
-//	window.eeTimeout = eeTimeout;
-//	window.position_overlay = position_overlay;
-//	window.position_dialog = position_dialog;
-//	window.doneResizing = doneResizing;
-//	window.do_before_admin_page_ajax = do_before_admin_page_ajax;
-//	window.show_admin_page_ajax_msg = show_admin_page_ajax_msg;
-	
+
+	$('#wpcontent').on( 'click', '.espresso-help-tab-lnk', function(){
+		var target_help_tab = '#tab-link-' + $(this).attr('id') + ' a';
+		if ( $('#contextual-help-wrap').css('display') == 'none' ) {
+			$('#contextual-help-link').trigger('click');
+		}		
+		$(target_help_tab).trigger('click');
+	});
+
+
+
 });
 

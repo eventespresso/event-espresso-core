@@ -65,7 +65,7 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 									'STA_ID'=>new EE_Model_Field('State ID','foreign_key',true,0,null,'State'),
 									'CNT_ISO'=>new EE_Model_Field('Country Code','foreign_key',true,0,null,'Country'),
 									'ATT_zip'=>new EE_Model_Field('Zip/Postal Code', 'plaintext', true, ''),
-									'ATT_email'=>new EE_Model_Field('Email', 'plaintext', false, ''),
+									'ATT_email'=>new EE_Model_Field('Email', 'email', false, ''),
 									'ATT_phone'=>new EE_Model_Field('Phone', 'plaintext', true),
 									'ATT_social'=>new EE_Model_Field('Social Media Details','serialized_text',true),
 									'ATT_comments'=>new EE_Model_Field('Comments','simplehtml',true),

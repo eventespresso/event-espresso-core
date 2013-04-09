@@ -36,7 +36,7 @@
 		<?php foreach( $item['attendee_questions'][ $line_item ] as $att_nmbr => $attendee_questions ) { ?>
 
 				<fieldset id="mer-reg-page-attendee-wrap-<?php echo $item['id'] . '-' . $counter;?>" class="mer-reg-page-attendee-wrap-fs">
-	  				<legend class="mer-reg-page-attendee-lgnd smaller-text lt-grey-text"><?php echo $item['attendee_headings'][ $line_item ][$att_nmbr]?></legend>
+	  				<legend class="mer-reg-page-attendee-lgnd smaller-text lt-grey-text"><?php echo $item['attendee_headings'][ $line_item ][$att_nmbr] . ' : ' . $item['price_desc']?></legend>
 
 			<?php if ( ! empty( $attendee_questions )) { ?>
 						<?php //do an action before the questions output, including the item and count 
@@ -57,7 +57,7 @@
 								</label>
 							</p>					
 	
-							<p class="mer-reg-page-copy-attendee-pg"><?php _e('This option allows you to use the above information for all additional attendee question fields. <span>( Please note that some events may have additional questions that you may still be required to answer in order to complete your registration. )</span>', 'event_espresso'); ?></p>
+							<p class="mer-reg-page-copy-attendee-pg"><?php _e('This option allows you to use the above information for all additional attendee question fields. <span>(&nbsp;Please note that some events may have additional questions that you may still be required to answer in order to complete your registration.&nbsp;)</span>', 'event_espresso'); ?></p>
 							
 							<a id="display-more-attendee-copy-options" class="display-the-hidden smaller-text float-right" rel="more-attendee-copy-options" ><?php  _e('more options', 'event_espresso');?></a>
 	

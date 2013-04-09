@@ -75,32 +75,33 @@ class Support_Admin_Page extends EE_Admin_Page {
 				'nav' => array(
 					'label' => __('Installation', 'event_espresso'),
 					'order' => 10),
-				'metaboxes' => array('_installation_boxes', '_espresso_news_post_box'),
+				'metaboxes' => array('_installation_boxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				),
 			'resources' => array(
 				'nav' => array(
 					'label' => __('Resources', 'event_espresso'),
 					'order' => 20
 					),
-				'metaboxes' => array('_resources_boxes', '_espresso_news_post_box')
+				'metaboxes' => array('_resources_boxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box')
 				),
 			'shortcodes' => array(
 				'nav' => array(
 					'label' => __('Shortcodes', 'event_espresso'),
 					'order' => 30),
-				'metaboxes' => array('_shortcodes_boxes', '_espresso_news_post_box'),
+				'metaboxes' => array('_shortcodes_boxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'require_nonce' => FALSE
 				),
 			'contact_support' => array(
 				'nav' => array(
 					'label' => __('Support', 'event_espresso'),
 					'order' => 40),
-				'metaboxes' => array('_support_boxes', '_espresso_news_post_box'),
+				'metaboxes' => array('_support_boxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				),
 			'faq' => array(
 				'nav' => array(
 					'label' => __('FAQ', 'event_espresso'),
 					'order' => 50),
-				'metaboxes' => array('_espresso_news_post_box'),
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				)
 			);
 	}
@@ -109,7 +110,6 @@ class Support_Admin_Page extends EE_Admin_Page {
 
 	//none of the below group are currently used for Support pages
 	protected function _add_screen_options() {}
-	protected function _add_help_tabs() {}
 	protected function _add_feature_pointers() {}
 	public function admin_init() {}
 	public function admin_notices() {}
@@ -129,7 +129,7 @@ class Support_Admin_Page extends EE_Admin_Page {
 
 	protected function _installation_boxes() {
 		$callback_args = array('template_path' => EE_SUPPORT_ADMIN_TEMPLATE_PATH . 'support_admin_details_additional_information.template.php');
-		add_meta_box( 'espresso_additional_information_support', __('Additional Information', 'event_espresso'), create_function('$post, $metabox', 'echo espresso_display_template( $metabox["args"]["template_path"], "", TRUE);' ), $this->_current_screen_id, 'normal', 'high', $callback_args);
+		//add_meta_box( 'espresso_additional_information_support', __('Additional Information', 'event_espresso'), create_function('$post, $metabox', 'echo espresso_display_template( $metabox["args"]["template_path"], "", TRUE);' ), $this->_current_screen_id, 'normal', 'high', $callback_args);
 	}
 
 
@@ -192,7 +192,6 @@ class Support_Admin_Page extends EE_Admin_Page {
 			);
 
 		foreach ( $boxes as $box => $label ) {
-			$this->_template_args['verify_attendee'] = $this->_event_espresso_verify_attendee_data();
 			$template_path = EE_SUPPORT_ADMIN_TEMPLATE_PATH . 'support_admin_details_' . $box . '.template.php';
 			$callback_args = array('template_path' => $template_path, 'template_args' => $this->_template_args);
 			add_meta_box( 'espresso_' . $box . '_settings', $label, create_function('$post, $metabox', 'echo espresso_display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );'), $this->_current_screen_id, 'normal', 'high', $callback_args);
@@ -209,17 +208,6 @@ class Support_Admin_Page extends EE_Admin_Page {
 
 	}
 
-
-	//Function to check if registration ids are missing
-	protected function _event_espresso_verify_attendee_data() {
-		global $wpdb;
-		$sql = "SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id IS NULL OR registration_id = '' OR registration_id = '0' OR quantity IS NULL OR quantity = '' OR quantity = '0' ";
-		$wpdb->get_results($sql);
-		if ($wpdb->num_rows > 0) {
-			return true;
-		}
-		return FALSE;
-	}
 
 
 

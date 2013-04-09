@@ -167,7 +167,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 * The below methods aren't used by this class currently
 	 */
 	protected function _add_screen_options() {}
-	protected function _add_help_tabs() {}
 	protected function _add_feature_pointers() {}
 	public function admin_init() {}
 	public function admin_notices() {}
@@ -367,7 +366,28 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 
 
+	protected function _transaction_legend_items() {
+		$items = array(
+			'view_details' => array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'images/magnifier.png',
+				'desc' => __('View Transaction Details', 'event_espresso')
+				),
+			'download_invoice' => array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'images/invoice-1-16x16.png',
+				'desc' => __('Download Invoice for Transaction.', 'event_espresso')
+				),
+			'view_registration' => array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'images/edit.png',
+				'desc' => __('View Registration Details', 'event_espresso')
+				)
+		);
+		return $items;
+	}
+
+
+
 	protected function _transactions_overview_list_table() {
+		$this->_template_args['after_list_table'] = $this->_display_legend( $this->_transaction_legend_items() );
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
@@ -836,24 +856,27 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				
 				case 'PP' :
 					$payment['gateway'] = 'PayPal';
+					$payment['gateway_response'] = '';
 					break;
 
 				case 'CC' :
+					$payment['gateway'] = 'Credit_Card';
+					$payment['gateway_response'] = '';
 					break;
 
 				case 'CHQ' :
-					$payment['gateway'] = '';
+					$payment['gateway'] = 'Cheque';
 					$payment['gateway_response'] = '';
 					break;
 
 				case 'CSH' :
-					$payment['gateway'] = '';
+					$payment['gateway'] = 'Cash';
 					$payment['txn_id_chq_nmbr'] = '';
 					$payment['gateway_response'] = '';
 					break;
 
 			}
-		 
+			//savea  the new payment
 			$payment = new EE_Payment( 
 				$payment['TXN_ID'], 
 				$payment['status'],
@@ -869,10 +892,26 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				$payment,
 				$payment['PAY_ID']
 			);
-
-			$return_data = $payment->apply_payment_to_transaction( TRUE );	
-																
+			if( ! $payment->save() ){
+				$msg = __( 'An error occured. The payment has not been processed succesfully.', 'event_espresso' );
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			}
+			//update the transaction with this payment
+			if( $payment->apply_payment_to_transaction( TRUE ) ){
+				$msg =__('The payment has been processed succesfully.', 'event_espresso');
+				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			}else{
+				$msg = __( 'An error occured. The payment was processed succesfully but the amount paid for the transaction was not updated.', 'event_espresso');
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			}
+			
+			//prepare to render page
+			$transaction = $payment->transaction();
 			$this->_get_payment_status_array();
+			$return_data['amount'] = $payment->amount();
+			$return_data['total_paid'] = $transaction->total();
+			$return_data['txn_status'] = $transaction->status_ID();
+			$return_data['pay_status'] = $payment->STS_ID();
 			$return_data['PAY_ID'] = $payment->ID();
 			$return_data['STS_ID'] = $payment->STS_ID();
 			$return_data['status'] = self::$_pay_status[ $payment->STS_ID() ];
@@ -1103,7 +1142,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		$sort = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'DESC';
 		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
-		$per_page = isset( $per_page ) && !empty( $per_page ) ? $per_page : 10;
+		$per_page = isset( $perpage ) && !empty( $perpage ) ? $perpage : 10;
 		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $per_page;
 
 		$offset = ($current_page-1)*$per_page;

@@ -378,13 +378,55 @@ function espresso_printr_session() {
 	$_REQUEST['ee_session'] = TRUE;
 	if ( isset( $_REQUEST['ee_session'] ) && $wp_user_id <= 1 ) {	
 		global $EE_Session;
-		echo '<pre style="height:auto;border:2px solid lightblue;">';
+		echo '<pre style="height:auto;padding:1em;border:2px solid lightblue;">';
 		echo print_r( $EE_Session, TRUE );
+		$ee_list_hooks = isset( $_REQUEST['ee_list_hooks'] ) && ! empty( $_REQUEST['ee_list_hooks'] ) ? $_REQUEST['ee_list_hooks'] : FALSE;
+		list_hooked_functions();
 		echo '</pre><br /><span style="font-size:10px;font-weight:normal;">';
-		echo __FILE__ . '<br />line no: ' . __LINE__ . '</span>';	
+		echo __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 	}
 }
 add_action( 'shutdown', 'espresso_printr_session' );
+
+
+
+
+
+/**
+ * 		List All Hooked Functions
+ * 		to list all functions for a specific hook, add ee_list_hooks={hook-name} to URL
+ *		http://wp.smashingmagazine.com/2009/08/18/10-useful-wordpress-hook-hacks/  
+ *
+ * 		@access public
+ * 		@return void
+ */
+function list_hooked_functions( $tag=FALSE ){
+	global $wp_filter;
+	echo '<br/><br/><br/><h3>Hooked Functions</h3>';
+	if ( $tag ) {
+		$hook[$tag]=$wp_filter[$tag];
+		if ( ! is_array( $hook[$tag] )) {
+			trigger_error( "Nothing found for '$tag' hook", E_USER_WARNING );
+			return;
+		}
+		echo '<h5>For Tag: '. $tag .'</h5>';
+	}
+	else {
+		$hook=$wp_filter;
+		ksort( $hook );
+	}
+	foreach( $hook as $tag => $priority ) {
+		echo "<br />&gt;&gt;&gt;&gt;&gt;\t<strong>$tag</strong><br />";
+		ksort( $priority );
+		foreach( $priority as $priority => $function ){
+			echo $priority;
+			foreach( $function as $name => $properties ) echo "\t$name<br />";
+		}
+	}
+	return;
+}
+
+
 
 
 
@@ -439,10 +481,9 @@ function espresso_init() {
 	$caffeinated = apply_filters( 'filter_hook_espresso_systems_check', $caffeinated );
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . "functions/main.php");
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/time_date.php');
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/actions.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');	
 
-	//do_action('action_hook_espresso_coupon_codes');
+	do_action('action_hook_espresso_pue_update');
 }
 
 
@@ -695,3 +736,28 @@ function espresso_load_scripts_styles() {
 function espresso_clear_output_buffer() {
 	ob_end_clean();
 }
+
+
+
+function espresso_site_license() {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	global $org_options;
+// PUE Auto Upgrades stuff
+	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'libraries/pue/pue-client.php')) { //include the file 
+		require(EVENT_ESPRESSO_PLUGINFULLPATH . 'libraries/pue/pue-client.php' );
+		$api_key = isset($org_options['site_license_key']) ? $org_options['site_license_key'] : '';
+		$host_server_url = 'http://eventespresso.com'; //this needs to be the host server where plugin update engine is installed.
+		$plugin_slug = 'event-espresso-core-pr'; //this needs to be the slug of the plugin/addon that you want updated (and that pue-client.php is included with).  This slug should match what you've set as the value for plugin-slug when adding the plugin to the plugin list via plugin-update-engine on your server.
+		//$options needs to be an array with the included keys as listed.
+		$options = array(
+		//	'optionName' => '', //(optional) - used as the reference for saving update information in the clients options table.  Will be automatically set if left blank.
+			'apikey' => $api_key, //(required), you will need to obtain the apikey that the client gets from your site and then saves in their sites options table (see 'getting an api-key' below)
+			'lang_domain' => 'event_espresso', //(optional) - put here whatever reference you are using for the localization of your plugin (if it's localized).  That way strings in this file will be included in the translation for your plugin.
+			'checkPeriod' => '12', //(optional) - use this parameter to indicate how often you want the client's install to ping your server for update checks.  The integer indicates hours.  If you don't include this parameter it will default to 12 hours.
+			'option_key' => 'site_license_key', //this is what is used to reference the api_key in your plugin options.  PUE uses this to trigger updating your information message whenever this option_key is modified.
+			'options_page_slug' => 'event_espresso'
+		);
+		$check_for_updates = new PluginUpdateEngineChecker($host_server_url, $plugin_slug, $options); //initiate the class and start the plugin update engine!
+	}
+}
+add_action('action_hook_espresso_pue_update', 'espresso_site_license');

@@ -131,6 +131,7 @@ if (!function_exists('event_registration')) {
 				$event_id = $event->id;
 				$this_event_id = $event_id;
 
+
 				$event_name = stripslashes($event->event_name);
 				$event_desc = stripslashes($event->event_desc);
 				$display_desc = $event->display_desc;
@@ -281,7 +282,7 @@ if (!function_exists('event_registration')) {
 						'event_cost' => empty($event->event_cost) ? '' : $event->event_cost
 				);
 
-				$event->meta = array_merge( $more_meta, $event_meta );
+				$event->meta = is_array( $event_meta ) ? array_merge( $more_meta, $event_meta ) : $more_meta;
 
 				$is_active = array();
 				$is_active = event_espresso_get_is_active($event_id);

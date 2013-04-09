@@ -163,7 +163,9 @@ abstract class EE_Gateway {
 
 	private function _gateways_admin() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		$this->add_settings_page_meta_box();
+
+		//require helpers
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Template.helper.php';
 		// if our current path is empty or doesn't match what's in the db, then maybe something changed?
 		if ($this->_payment_settings['current_path'] == '' || $this->_payment_settings['current_path'] != $this->_path) {
 			$this->_reset_button_url();
@@ -258,6 +260,18 @@ abstract class EE_Gateway {
 			);
 		}
 	}
+
+
+	protected function _help_content() {
+		return '';
+	}
+
+
+	public function get_help_tab_content() {
+		return $this->_help_content();
+	}
+
+
 
 	public function settings_meta_box() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
@@ -621,18 +635,12 @@ abstract class EE_Gateway {
 	 * @return boolean success
 	 */
 	public function update_transaction_with_payment($transaction,$payment){
-		//@todo this could really use the payment's apply_payment_to_transaction method,
-		//but there are some subtle differences... especially regarding the legacy txn_details\
-		//getting set on the transaction. once those are remoevd, the transition would be easier
 		if(empty($transaction)){
 			return false;
 		}
-		if( ! $transaction instanceof EE_Transaction){
-			$transaction = $this->_TXN->get_transaction($transaction);
-		}
-		if( ! $payment instanceof EE_Payment){
-			$payment = $this->_PAY->get_payment_by_ID($payment);
-		}
+		$transaction = $this->_TXN->ensure_is_obj($transaction);
+		$payment = $this->_PAY->ensure_is_obj($payment);
+		
 		//now, if teh payment's empty, we're going to update the transaction accordingly
 		if(empty($payment)){
 			$transaction->set_status($this->_TXN->pending_status_code);
@@ -652,17 +660,7 @@ abstract class EE_Gateway {
 			$transaction->set_details($legacy_txn_details);
 		}else{
 			//ok, now process the transaction according to the payment
-			//NOTE: if we allow multiple payments someday, then we'll need to tally up all previous payments
-			//to determine if the transactin oshould be marked as complete.
-			if ( $transaction->total() == 0 || 
-					( $payment->amount() >= $transaction->total() && $payment->STS_ID()==EEM_Payment::status_id_approved)) {
-				$transaction->set_status(EEM_Transaction::complete_status_code);
-				$transaction->set_paid($payment->amount());
-			}else if ($payment->STS_ID() == EEM_Payment::status_id_pending){
-				$transaction->set_status(EEM_Transaction::pending_status_code);
-			}else{
-				$transaction->set_status(EEM_Transaction::incomplete_status_code);
-			}
+			$transaction->update_based_on_payments();
 			
 			
 			//create the legacy transaction details. Really this data is a duplication of the 
@@ -676,8 +674,8 @@ abstract class EE_Gateway {
 				'raw_response' => $payment_details,
 				'amount' => $payment->amount(),
 				'method' => 'CART',
-				'auth_code' => array_key_exists('payer_id',$payment_details) ? $payment_details['payer_id'] : '',
-				'md5_hash' => array_key_exists('verify_sign',$payment_details) ? $payment_details['verify_sign'] : '',
+				'auth_code' => ($payment_details && array_key_exists('payer_id',$payment_details)) ? $payment_details['payer_id'] : '',
+				'md5_hash' => ($payment_details && array_key_exists('verify_sign',$payment_details)) ? $payment_details['verify_sign'] : '',
 				//'invoice_number' => sanitize_text_field($_POST['invoice_id']),
 				//'transaction_id' => sanitize_text_field($_POST['ipn_track_id'])
 			);
@@ -688,7 +686,7 @@ abstract class EE_Gateway {
 			//The tax data should be added on the thankyou page, not here, as this may be an IPN.
 			//updating teh transaction in the session should be done on the thank you page, as taht's where the session is always available.
 		}	
-		$transaction->update();
+		$transaction->save();
 		do_action( 'action_hook_espresso__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
 		return true;
 	}
