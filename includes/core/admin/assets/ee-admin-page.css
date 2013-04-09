@@ -196,12 +196,18 @@ table .espresso-radio-btn-options-ul .small-lbl,
 	height: 26px;
 }*/
 
-.validate-error, input.validate-error {
+.validate-error,
+input.validate-error {
 	border-color: red;
 }
-.validation-notice-dv { display:none; padding:0; margin:0; color:red; }
+.validation-notice-dv { display:none; padding:0; margin:0; color:#FE2A00; }
+
+label em { font-weight: bold; font-size:1.2em; color:#FE2A00; }
+
+input.error,
 .requires-value { border:1px solid #FE2A00 !important; }
 
+label.error  { display: block; color: #FE2A00 !important; }
 
 
 
