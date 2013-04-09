@@ -212,4 +212,3 @@
 
 
 </div>
-<?php include_once( GEN_SET_TEMPLATE_PATH . 'admin_options_help.php' ); ?>
