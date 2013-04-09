@@ -299,6 +299,10 @@ function event_espresso_run() {
 
 function return_espresso_content() {
 	global $espresso_content;
+	require_once('EEM_Experimental_Base.model.php');
+	$POST = new EEM_Exp_Event();
+	$posts = $POST->get_related('Registrations');
+	var_dump($posts);
 	return $espresso_content;
 }
 
