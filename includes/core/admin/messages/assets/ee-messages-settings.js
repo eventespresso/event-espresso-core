@@ -221,11 +221,13 @@ jQuery(document).ready(function($) {
 				$inactive_on_msg = $('.inactive-on-message', '.' + messenger + '-content'),
 				$inactive_off_msg = $('.inactive-off-message', '.' + messenger + '-content'),
 				$active_on_msg = $('.active-on-message', '.' + messenger + '-content'),
-				$msgr_link = $('.item_display');
+				$msgr_link = $('.item_display'),
+				show_hide_msgr_form = $('#has_form_class').text();
 			
 			if ( status == 'on' ) {
 				$( $on_off_button ).attr('value','messenger-off').attr('class', 'on-off-active on-off-action');
-				$( $messenger_settings ).removeClass('hidden');
+				if ( show_hide_msgr_form !== 'hidden' )
+					$( $messenger_settings ).removeClass('hidden');
 				$( $active_mts ).removeClass('hidden');
 				$( $inactive_mts ).removeClass('hidden');
 				$( $inactive_on_msg ).removeClass('hidden');
