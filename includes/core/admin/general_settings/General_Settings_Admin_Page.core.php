@@ -128,13 +128,13 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 						'title' => __('Thank You Page', 'event_espresso'),
 						'callback' => 'return_url_info_help_tab'
 						),
-					'cancel_return_info' => array(
-						'title' => __('Cancel/Return Page', 'event_espresso'),
-						'callback' => 'cancel_return_info_help_tab'
-						),
 					'notify_url_info' => array(
 						'title' => __('Transaction Page', 'event_espresso'),
 						'callback' => 'notify_url_info_help_tab'
+						),
+					'cancel_return_info' => array(
+						'title' => __('Cancel/Return Page', 'event_espresso'),
+						'callback' => 'cancel_return_info_help_tab'
 						),
 					)
 				),

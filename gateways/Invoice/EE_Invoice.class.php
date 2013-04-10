@@ -108,7 +108,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 						<label for="base-invoice-select"><?php _e('Select Stylesheet', 'event_espresso'); ?></label>
 					</th>
 					<td>
-						<select id="base-invoice-select" class="chzn-select wide" name="invoice_css">
+						<select id="base-invoice-select" name="invoice_css">
 						<?php 
 						$this->_payment_settings['invoice_css'] = ! empty( $this->_payment_settings['invoice_css'] ) ? $this->_payment_settings['invoice_css'] : 'simple.css';
 						foreach ($themes as $theme) { 
