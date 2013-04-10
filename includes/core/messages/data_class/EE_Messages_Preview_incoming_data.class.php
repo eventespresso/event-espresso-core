@@ -63,6 +63,10 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		//if empty $data we'll do a query to get some events from the server. otherwise we'll retrieve the event data for the given ids.
 		$events = empty($this->_data) ? $this->_get_some_events() : $this->_get_some_events($this->_data);
 
+		if ( count( $events ) < 1 ) {
+			throw new EE_Error( __('We can\'t generate a preview for you because there are no active events in your database', 'event_espresso' ) );
+		}
+
 
 
 		//now let's loop and set up the _events property.  At the same time we'll set up attendee properties.
