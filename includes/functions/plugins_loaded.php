@@ -386,7 +386,7 @@ function espresso_printr_session() {
 		echo __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 	}
 }
-add_action( 'shutdown', 'espresso_printr_session' );
+//add_action( 'shutdown', 'espresso_printr_session' );
 
 
 
