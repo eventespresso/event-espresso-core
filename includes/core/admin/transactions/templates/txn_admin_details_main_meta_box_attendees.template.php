@@ -26,8 +26,8 @@
 					<td class="jst-left"><?php echo stripslashes( $event );?></td>
 					<td class="jst-left">
 						<?php 
-						$attendee_name = $att->fname() != '' ? $att->fname() : $attendee['fname'];
-						$attendee_name .= $att->lname() != '' ? ' ' . $att->lname() : ' ' . $attendee['lname'];
+						$attendee_name = $att->fname() != '' ? $att->fname() : $attendee[1];
+						$attendee_name .= $att->lname() != '' ? ' ' . $att->lname() : ' ' . $attendee[2];
 						$att_link = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'id'=>$att->ID() ), REG_ADMIN_URL ); 
 						?>
 						<a href="<?php echo $att_link; ?>" title="<?php _e( 'View details for this attendee', 'event_espresso' );?>">
@@ -36,7 +36,7 @@
 					</td>
 					<?php $price_paid = is_object( $reg ) && $reg->price_paid() != '' ? $reg->price_paid() : $attendee['price_paid']; ?>
 					<td class="jst-rght"><?php echo $currency_sign . ' ' . number_format( $price_paid, 2 );?></td>
-					<td class="jst-left"><?php echo $att->email() != '' ? $att->email() : $attendee['email'];?></td>
+					<td class="jst-left"><?php echo $att->email() != '' ? $att->email() : $attendee[3];?></td>
 					<td class="jst-left">
 						<?php
 							echo $att->address() != '' ? $att->address() . ', ' : '';
