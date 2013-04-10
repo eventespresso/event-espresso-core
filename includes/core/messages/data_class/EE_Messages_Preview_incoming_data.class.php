@@ -289,24 +289,24 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			//note we need to setup reg_objects for each event this attendee belongs to
 			foreach ( $attendee['line_ref'] as $line_ref ) {
 				$reg_array = array(
-					$this->_events[$line_ref]['ID'],
-					$attendee['att_obj']->ID(),
-					$this->txn->ID(),
-					$this->_events[$line_ref]['daytime_id'],
-					$this->_events[$line_ref]['price_id'],
-					'RAP',
-					time(),
-					$this->_events[$line_ref]['price'],
-					'dummy_session_id',
-					'1-dummy_generated_reg_code',
-					'http://dummyregurllink.com',
-					$key,
-					$this->_events[$line_ref]['total_attendees'],
-					TRUE,
-					FALSE,
-					9999990 + (int) $line_ref
+					'EVT_ID' => $this->_events[$line_ref]['ID'],
+					'ATT_ID' => $attendee['att_obj']->ID(),
+					'TXN_ID' => $this->txn->ID(),
+					'DTT_ID' => $this->_events[$line_ref]['daytime_id'],
+					'PRC_ID' => $this->_events[$line_ref]['price_id'],
+					'STS_ID' => 'RAP',
+					'REG_date' => time(),
+					'REG_final_price' => $this->_events[$line_ref]['price'],
+					'REG_session' => 'dummy_session_id',
+					'REG_code' => '1-dummy_generated_reg_code',
+					'REG_url_link' => 'http://dummyregurllink.com',
+					'REG_count' => $key,
+					'REG_group_size' => $this->_events[$line_ref]['total_attendees'],
+					'REG_att_is_going' => TRUE,
+					'REG_att_checked_in' => FALSE,
+					'REG_ID' => 9999990 + (int) $line_ref
 					);
-				$REG_OBJ = new EE_Registration( $reg_array );
+				$REG_OBJ = new EE_Registration( extract($reg_array) );
 				$this->_attendees[$key]['reg_objs'][$this->_events[$line_ref]['ID']] = $REG_OBJ;
 				$this->reg_objs[] = $REG_OBJ;
 			}
