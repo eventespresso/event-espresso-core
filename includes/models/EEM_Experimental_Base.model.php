@@ -336,10 +336,10 @@ abstract class EEM_Experimental_Base{
 	/**
 	 * gets the name of the field of type 'primary_key' from the fieldsSettings attribute.
 	 * Eg, on EE_Anwer that would be ANS_ID
-	 * @return string
+	 * @return EE_Exp_Model_Field
 	 * @throws EE_Error
 	 */
-	public function get_primary_key(){
+	public function get_primary_key_field(){
 		foreach($this->_fields as $field){
 			if($field instanceof EE_Primary_Key_Field){
 				return $field;
@@ -467,10 +467,87 @@ class EEM_Exp_Event extends EEM_Experimental_Base{
 			'Event' => new EE_Table('posts'),
 			'Event_Meta' => new EE_Table('postmeta','ID','post_id',"Event.post_type = 'page'"));
 		$this->_model_relations = array(
-			'Registration'=>new EE_Exp_Has_Many());
+			'Registration'=>new EE_Exp_Has_Many(),
+			'Question_Group'=>new EE_Exp_HABTM('Event_Question_Group'));
 		$this->_fields = array(
 			'EVT_ID'=>new EE_Primary_Key_Int_Field('Event', 'ID', 'Event ID', false, 0),
 			'EVT_desc'=>new EE_HTML_Field('Event','post_content','Event Description',true,''));
+		parent::__construct();
+	}
+}
+class EEM_Exp_Question_Group extends EEM_Experimental_Base{
+	// private instance of the Attendee object
+	private static $_instance = NULL;
+
+	/**
+	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
+	 *
+	 *		@access public
+	 *		@return EEM_Attendee instance
+	 */	
+	public static function instance(){
+	
+		// check if instance of EEM_Attendee already exists
+		if ( self::$_instance === NULL ) {
+			// instantiate Espresso_model 
+			self::$_instance = new self();
+		}
+		// EEM_Attendee object
+		return self::$_instance;
+	}
+
+	function __construct(){
+		$this->_tables = array(
+			'Question_Group'=>new EE_Table('esp_question_group')
+		);
+		$this->_model_relations = array(
+			//woudl add a BelongsTorelation to events and other relations here
+			'Event'=> new EE_Exp_HABTM('Event_Question_Group'),
+		);
+		$this->_fields = array(
+			'QSG_ID'=>new EE_Primary_Key_Int_Field('Question_Group', 'QSG_ID', 'Question Group ID', false, 0),
+			'QSG_name'=>new EE_HTML_Field('Datetime', 'DTT_EVT_start', 'Event Start', false, time()),
+		);
+		parent::__construct();
+	}
+}
+//model for the joining between events and question groups
+class EEM_Exp_Event_Question_Group extends EEM_Experimental_Base{
+	// private instance of the Attendee object
+	private static $_instance = NULL;
+
+	/**
+	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
+	 *
+	 *		@access public
+	 *		@return EEM_Attendee instance
+	 */	
+	public static function instance(){
+	
+		// check if instance of EEM_Attendee already exists
+		if ( self::$_instance === NULL ) {
+			// instantiate Espresso_model 
+			self::$_instance = new self();
+		}
+		// EEM_Attendee object
+		return self::$_instance;
+	}
+
+	function __construct(){
+		$this->_tables = array(
+			'Event_Question_Group'=>new EE_Table('esp_event_question_group')
+		);
+		$this->_model_relations = array(
+			//woudl add a BelongsTorelation to events and other relations here
+			'Question_Group'=> new EE_Exp_Belongs_To(),
+			'Event'=>new EE_Exp_Belongs_To()
+		);
+		$this->_fields = array(
+			'EQG_ID'=>new EE_Primary_Key_Int_Field('Event_Question_Group', 'EQG_ID', 'Relation ID between Event and Question Group', false, 0),
+			'EVT_ID'=>new EE_Foreign_Key_Int_Field('Event_Question_Group', 'EVT_ID', 'Event ID', false, 0, 'Event'),
+			'QSG_ID'=>new EE_Foreign_Key_Int_Field('Event_Question_Group','QSG_ID','Question Group ID',false, 0, 'Question_Group'),
+			'EQG_primary'=>new EE_Integer_Field_Base('Event_Question_Group','EQG_primary','Whether this Question Group only applies to primary attendees',false,0)
+		);
 		parent::__construct();
 	}
 }
@@ -601,7 +678,7 @@ abstract class EE_Text_Field_Base extends EE_Exp_Model_Field_Base{
 		return '%s';
 	}
 }
-abstract class EE_Integer_Field_Base extends EE_Exp_Model_Field_Base{
+class EE_Integer_Field_Base extends EE_Exp_Model_Field_Base{
 	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value){
 		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value);
 	}
@@ -709,25 +786,34 @@ abstract class EE_Exp_Model_Relation{
 	 * @return EE_Experimental_Base
 	 */
 	function get_this_model(){
-		$modelInstance=call_user_func("EEM_Exp_".$this->_this_model_name."::instance");
-		return $modelInstance;
+		return $this->_get_model($this->_this_model_name);
 	}
 	/**
 	 * 
 	 * @return EE_Experimental_Base
 	 */
 	function get_other_model(){
-		$modelInstance=call_user_func("EEM_Exp_".$this->_other_model_name."::instance");
+		return $this->_get_model($this->_other_model_name);
+	}
+	/**
+	 * 
+	 * @param string $model_name like Event, Question_Group, etc. omit the EEM_Exp_
+	 * @return EE_Experimental_Base
+	 */
+	protected function _get_model($model_name){
+		$modelInstance=call_user_func("EEM_Exp_".$model_name."::instance");
 		return $modelInstance;
 	}
 	
 	
-	protected function _left_join($other_table,$other_table_alias,$other_table_column,$this_table_alias,$this_table_join_column, $extra_join_sql){
+	protected function _left_join($other_table,$other_table_alias,$other_table_column,$this_table_alias,$this_table_join_column, $extra_join_sql = ''){
 		return " LEFT JOIN ".$other_table." AS ".$other_table_alias. " ON ".$other_table_alias.".".$other_table_column."=".$this_table_alias.".".$this_table_join_column." ".$extra_join_sql." ";
 	}
 	abstract function get_join_statement();
 }
-
+/**
+ * In this relation, the OTHER model ahs the foreign key pointing to this model
+ */
 class EE_Exp_Has_Many extends EE_Exp_Model_Relation{	
 	function __construct($extra_join_conditions = null){
 		parent::__construct($extra_join_conditions);
@@ -735,7 +821,7 @@ class EE_Exp_Has_Many extends EE_Exp_Model_Relation{
 	function get_join_statement(){
 		//create the sql string like
 		// LEFT JOIN other_table AS table_alias ON this_table_alias.pk = other_table_alias.fk extra_join_conditions
-		$this_table_pk_field = $this->get_this_model()->get_primary_key();
+		$this_table_pk_field = $this->get_this_model()->get_primary_key_field();
 		$other_table_fk_field = $this->get_other_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
 		$pk_table_alias = $this_table_pk_field->get_table_alias();
 		$fk_table_alias = $other_table_fk_field->get_table_alias();
@@ -756,7 +842,7 @@ class EE_Exp_Belongs_To extends EE_Exp_Model_Relation{
 		//create the sql string like
 		// LEFT JOIN other_table AS table_alias ON this_table_alias.pk = other_table_alias.fk extra_join_conditions
 		$this_table_fk_field = $this->get_this_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
-		$other_table_pk_field = $this->get_other_model()->get_primary_key();
+		$other_table_pk_field = $this->get_other_model()->get_primary_key_field();
 		$this_table_alias = $this_table_fk_field->get_table_alias();
 		$other_table_alias = $other_table_pk_field->get_table_alias();
 		$other_table = $this->get_other_model()->get_table_for_alias($other_table_alias);		
@@ -765,6 +851,48 @@ class EE_Exp_Belongs_To extends EE_Exp_Model_Relation{
 	//so far EE_Exp_Belongs_To is identical to EE_Exp_Has_Many
 	//this is probably because we're explicitly requiring the relation
 	//to identify the private key and foreign keys, where those could be determined from the models themselves
+}
+
+class EE_Exp_HABTM extends EE_Exp_Model_Relation{
+	/**
+	 * Model whicih defines the relation between two other models. Eg, the EE_Exp_Event_Question_Group model,
+	 * which joins EE_Exp_Event and EE_Question_Group
+	 * @var EEM_Experimental_Base
+	 */
+	private $_joining_model_name;
+	function __construct($joining_model_name,$extra_join_conditions =''){
+		$this->_joining_model_name = $joining_model_name;
+		parent::__construct($extra_join_conditions);
+	}
+	/**
+	 * Gets the joining model's object
+	 * @return EEM_Experimental_Base
+	 */
+	private function get_join_model(){
+		return $this->_get_model($this->_joining_model_name);
+	}
+	function get_join_statement(){
+		//create sql like
+		//LEFT JOIN join_table AS join_table_alias ON this_table_alias.this_table_pk = join_table_alias.join_table_fk_to_this
+		//LEFT JOIN other_table AS other_table_alias ON join_table_alias.join_table_fk_to_other = other_table_alias.other_table_pk
+		
+		$this_table_pk_field = $this->get_this_model()->get_primary_key_field();//get_foreign_key_to($this->get_other_model()->get_this_model_name());
+		$join_table_fk_field_to_this_table = $this->get_join_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
+		$this_table_alias = $this_table_pk_field->get_table_alias();
+		
+		$join_table_alias = $join_table_fk_field_to_this_table->get_table_alias();
+		$join_table = $this->get_join_model()->get_table_for_alias($join_table_alias);	
+		
+		$other_table_pk_field = $this->get_other_model()->get_primary_key_field();
+		$join_table_fk_field_to_other_table = $this->get_join_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
+		$other_table_alias = $other_table_pk_field->get_table_alias();
+		$other_table = $this->get_other_model()->get_table_for_alias($other_table_alias);
+		//phew! ok, we have all the info we need, now we can create the SQL join string
+		$SQL = $this->_left_join($join_table, $join_table_alias, $join_table_fk_field_to_this_table->get_table_column(), $this_table_alias, $this_table_pk_field->get_table_column())
+				.
+				$this->_left_join($other_table, $other_table_alias, $other_table_pk_field->get_table_column(), $join_table_alias, $join_table_fk_field_to_other_table->get_table_column(), $this->_extra_join_conditions);
+		return $SQL;
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
