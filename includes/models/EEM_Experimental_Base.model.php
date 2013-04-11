@@ -24,6 +24,36 @@ abstract class EEM_Experimental_Base{
 	 */
 	var $_model_relations;
 	
+	/**
+	 *	List of valid operators that can be used for querying.
+	 * The keys are all operators we'll accept, the values are the real SQL
+	 * operators used
+	 * @var array 
+	 */
+	protected $_valid_operators = array(
+		'='=>'=',
+		'<='=>'<=',
+		'<'=>'<',
+		'>='=>'>=',
+		'>'=>'>',
+		'LIKE'=>'LIKE',
+		'like'=>'LIKE',
+		'NOT_LIKE'=>'NOT LIKE',
+		'not_like'=>'NOT LIKE',
+		'NOT LIKE'=>'NOT LIKE',
+		'not like'=>'NOT LIKE',
+		'IN'=>'IN',
+		'in'=>'IN',
+		'NOT_IN'=>'NOT IN',
+		'not_in'=>'NOT IN',
+		'NOT IN'=>'NOT IN',
+		'not in'=>'NOT IN');
+	/**
+	 * operators that work like 'IN', accepting a comma-seperated list of values inside brackets. Eg '(1,2,3)'
+	 * @var string 
+	 */
+	protected $_in_style_operators = array('IN','NOT_IN');
+	
 	function __construct(){
 		foreach($this->_tables as $table_alias => $table_obj){
 			$table_obj->_construct_finalize_with_alias($table_alias);
@@ -31,8 +61,8 @@ abstract class EEM_Experimental_Base{
 		foreach($this->_fields as $field_name => $field_obj){
 			$field_obj->_construct_finalize_name($field_name);
 		}
-		foreach($this->_model_relations as $relation_name => $relation_obj){
-			$relation_obj->_construct_finalize_name($relation_name);
+		foreach($this->_model_relations as $model_name => $relation_obj){
+			$relation_obj->_construct_finalize_set_models($this->get_this_model_name(), $model_name);
 		}
 	}
 	
@@ -54,12 +84,30 @@ abstract class EEM_Experimental_Base{
 		
 	}
 	
-	function get_related($relation_name, $query_params = null){
-		//join
-		global $wpdb;
-		$SQL = "SELECT * FROM ".$this->_construct_internal_join().$this->_construct_join_with($relation_name)." WHERE ID=1";
-		echo "get_related query:".$SQL;
-		return $wpdb->get_results($SQL);
+	/**
+	 * 
+	 * @global type $wpdb
+	 * @param mixed $id_or_obj EE_Base_Class child or its ID
+	 * @param string $model_name like 'Event', 'Registration', etc. always singular
+	 * @param array $query_params like EEM_Experimental_Base::get_all
+	 * @return EE_Base_Class
+	 */
+	function get_related($id_or_obj, $model_name, $query_params = null){
+		//get that related model
+		$related_model = $this->get_related_model_obj($model_name);
+		//we're just going to use teh query params on the related model's normal get_all query,
+		//except add a condition to say to match the curren't mod
+		
+		$query_params['where']['Event.EVT_ID']=$id_or_obj;
+		return $related_model->get_all($query_params);
+	}
+	
+	/**
+	 * Gets the model's name as it's expected in queries. For example, if this is EEM_Exp_Event model, that would be Event
+	 * @return string
+	 */
+	function get_this_model_name(){
+		return str_replace("EEM_Exp_","",get_class($this));
 	}
 	
 	/**
@@ -98,14 +146,12 @@ abstract class EEM_Experimental_Base{
 				$query_param = str_replace($valid_related_model_name.".","",$query_param);
 				//get that related model's join info and data types
 				$join_sql = $this->_construct_join_with($valid_related_model_name);
-				$related_model_obj = $this->_get_related_model_obj($valid_related_model_name);
+				$related_model_obj = $this->get_related_model_obj($valid_related_model_name);
 				$data_types = $related_model_obj->_get_data_types();
 				$new_join_sql_and_data_types = new EEM_Exp_Related_Model_Info_Carrier(array($valid_related_model_name), $join_sql, $data_types);
 				$join_sql_and_data_types->merge( $new_join_sql_and_data_types  );
 				//recurse, passing along the growing $join_sql_and_data_types object
 				$related_model_obj->_extract_related_model_info_from_query_param($query_param, $join_sql_and_data_types);
-				
-				
 			}
 		}
 	}
@@ -215,40 +261,12 @@ abstract class EEM_Experimental_Base{
 		}else{// $number_of_parts >= 2
 			//the last part is the column name, and there are only 2parts. tehrefore...
 			$field_name = $last_query_param_part;
-			$model_obj = $this->_get_related_model_obj( $query_param_parts[ $number_of_parts - 2 ]);
+			$model_obj = $this->get_related_model_obj( $query_param_parts[ $number_of_parts - 2 ]);
 		}
 		return $model_obj->_get_qualified_column_for_field($field_name);
 	}
 	
-	/**
-	 *	List of valid operators that can be used for querying.
-	 * The keys are all operators we'll accept, the values are the real SQL
-	 * operators used
-	 * @var array 
-	 */
-	protected $_valid_operators = array(
-		'='=>'=',
-		'<='=>'<=',
-		'<'=>'<',
-		'>='=>'>=',
-		'>'=>'>',
-		'LIKE'=>'LIKE',
-		'like'=>'LIKE',
-		'NOT_LIKE'=>'NOT LIKE',
-		'not_like'=>'NOT LIKE',
-		'NOT LIKE'=>'NOT LIKE',
-		'not like'=>'NOT LIKE',
-		'IN'=>'IN',
-		'in'=>'IN',
-		'NOT_IN'=>'NOT IN',
-		'not_in'=>'NOT IN',
-		'NOT IN'=>'NOT IN',
-		'not in'=>'NOT IN');
-	/**
-	 * operators that work like 'IN', accepting a comma-seperated list of values inside brackets. Eg '(1,2,3)'
-	 * @var string 
-	 */
-	protected $_in_style_operators = array('IN','NOT_IN');
+	
 	/**
 	 * Givena field's name (ie, a key in $this->_fields), uses the EE_Model_Field object to get the table's alias and column
 	 * which corresponds to it
@@ -277,14 +295,15 @@ abstract class EEM_Experimental_Base{
 	
 	function _construct_join_with($relation_name){
 		$relation_obj = $this->_model_relations[$relation_name];
-		if($relation_obj instanceof EE_Exp_Has_Many || $relation_obj instanceof EE_Exp_Belongs_To){
-			$other_table_alias = $relation_obj->get_other_model_table_alias();
-			$other_model = $this->_get_related_model_obj($relation_name);
-			/* @var $other_model EEM_Experimental_Base */
-			$other_table_name = $other_model->_tables[$other_table_alias]->get_table_name();
-				$SQL = "LEFT JOIN ".$other_table_name." AS ".$other_table_alias." ON ".$relation_obj->get_join_conditions().SP;
-		}
-			return $SQL;
+		return $relation_obj->get_join_statement();
+//		if($relation_obj instanceof EE_Exp_Has_Many || $relation_obj instanceof EE_Exp_Belongs_To){
+//			$other_table_alias = $relation_obj->get_other_model_table_alias();
+//			$other_model = $this->get_related_model_obj($relation_name);
+//			/* @var $other_model EEM_Experimental_Base */
+//			$other_table_name = $other_model->_tables[$other_table_alias]->get_table_name();
+//				$SQL = "LEFT JOIN ".$other_table_name." AS ".$other_table_alias." ON ".$relation_obj->get_join_conditions().SP;
+//		}
+//			return $SQL;
 	}
 	
 	/**
@@ -306,13 +325,52 @@ abstract class EEM_Experimental_Base{
 	 * @param type $model_name
 	 * @return EEM_Experimental_Base
 	 */
-	function _get_related_model_obj($model_name){
+	function get_related_model_obj($model_name){
 		
-		$other_model_name = "EEM_Exp_".$model_name;
-		$other_model = new $other_model_name;
-		return $other_model;
+		$model_classname = "EEM_Exp_".$model_name;
+		$model_obj = call_user_func($model_classname."::instance");
+		return $model_obj;
 	}
+
 	
+	/**
+	 * gets the name of the field of type 'primary_key' from the fieldsSettings attribute.
+	 * Eg, on EE_Anwer that would be ANS_ID
+	 * @return string
+	 * @throws EE_Error
+	 */
+	public function get_primary_key(){
+		foreach($this->_fields as $field){
+			if($field instanceof EE_Primary_Key_Field){
+				return $field;
+			}
+		}
+		throw new EE_Error(sprintf(__("There is no Primary Key defined on model %s",'event_espresso'),get_class($this)));
+	}
+	/**
+	 * Gets a foreign key field pointing to model. 
+	 * @param string $model_name eg Event, Registration, not EEM_Exp_Event
+	 * @return EE_Foreign_Key_Field
+	 * @throws EE_Error
+	 */
+	public function get_foreign_key_to($model_name){
+		foreach($this->_fields as $field){
+			if($field instanceof EE_Foreign_Key_Field 
+					&&
+					$field->get_model_name_pointed_to() == $model_name){
+				return $field;
+			}
+		}
+		throw new EE_Error(sprintf(__("There is no foreign key field pointing to model %s on model %s",'event_espresso'),$model_name,get_class($this)));
+	}
+	/**
+	 * Gets the actual table for the table alias
+	 * @param string $table_alias eg Event, Event_Meta, Registration, Transaction
+	 * @return string
+	 */
+	function get_table_for_alias($table_alias){
+		return $this->_tables[$table_alias]->get_table_name();
+	}
 	
 }
 /**
@@ -383,44 +441,110 @@ class EEM_Exp_Related_Model_Info_Carrier extends EE_Base{
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //concrete children of EEM_Experimental_Base
 class EEM_Exp_Event extends EEM_Experimental_Base{
+	// private instance of the Attendee object
+	private static $_instance = NULL;
+
+	/**
+	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
+	 *
+	 *		@access public
+	 *		@return EEM_Attendee instance
+	 */	
+	public static function instance(){
+	
+		// check if instance of EEM_Attendee already exists
+		if ( self::$_instance === NULL ) {
+			// instantiate Espresso_model 
+			self::$_instance = new self();
+		}
+		// EEM_Attendee object
+		return self::$_instance;
+	}
+
+	
 	function __construct(){
 		$this->_tables = array(
 			'Event' => new EE_Table('posts'),
 			'Event_Meta' => new EE_Table('postmeta','ID','post_id',"Event.post_type = 'page'"));
 		$this->_model_relations = array(
-			'Registration'=>new EE_Exp_Has_Many('Event', 'ID', 'Registration', 'EVT_ID'));
+			'Registration'=>new EE_Exp_Has_Many());
 		$this->_fields = array(
-			'EVT_ID'=>new EE_Primary_Key_Field('Event', 'ID', 'Event ID', false, 0),
+			'EVT_ID'=>new EE_Primary_Key_Int_Field('Event', 'ID', 'Event ID', false, 0),
 			'EVT_desc'=>new EE_HTML_Field('Event','post_content','Event Description',true,''));
 		parent::__construct();
 	}
 }
 class EEM_Exp_Registration extends EEM_Experimental_Base{
+	// private instance of the Attendee object
+	private static $_instance = NULL;
+
+	/**
+	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
+	 *
+	 *		@access public
+	 *		@return EEM_Attendee instance
+	 */	
+	public static function instance(){
+	
+		// check if instance of EEM_Attendee already exists
+		if ( self::$_instance === NULL ) {
+			// instantiate Espresso_model 
+			self::$_instance = new self();
+		}
+		// EEM_Attendee object
+		return self::$_instance;
+	}
+
 	function __construct(){
 		$this->_tables = array(
 			'Registration'=>new EE_Table('esp_registration')
 		);
 		$this->_model_relations = array(
 			//woudl add a BelongsTorelation to events and other relations here
-			'Transaction'=> new EE_Exp_Belongs_To('Registration','TXN_ID','Transaction','TXN_ID')
+			'Transaction'=> new EE_Exp_Belongs_To(),
+			'Event'=>new EE_Exp_Belongs_To()
 		);
 		$this->_fields = array(
-			'REG_ID'=>new EE_Primary_Key_Field('Registration', 'REG_ID', 'Registration ID', false, 0),
+			'REG_ID'=>new EE_Primary_Key_Int_Field('Registration', 'REG_ID', 'Registration ID', false, 0),
+			'EVT_ID'=>new EE_Foreign_Key_Int_Field('Registration', 'EVT_ID', 'Event ID', false, 0, 'Event'),
+			'TXN_ID'=>new EE_Foreign_Key_Int_Field('Registration','TXN_ID','Transaction ID',false, 0, 'Transaction'),
 			'STS_ID'=>new EE_Enum_Field('Registration','STS_ID','Status Code',false,'RNA',array('RAP','RCN','RNA','RPN'))
 		);
 		parent::__construct();
 	}
 }
 class EEM_Exp_Transaction extends EEM_Experimental_Base{
+	// private instance of the Attendee object
+	private static $_instance = NULL;
+
+	/**
+	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
+	 *
+	 *		@access public
+	 *		@return EEM_Attendee instance
+	 */	
+	public static function instance(){
+	
+		// check if instance of EEM_Attendee already exists
+		if ( self::$_instance === NULL ) {
+			// instantiate Espresso_model 
+			self::$_instance = new self();
+		}
+		// EEM_Attendee object
+		return self::$_instance;
+	}
+
+	
 	function __construct(){
 		$this->_tables = array(
 			'Transaction'=>new EE_Table('esp_transaction')
 		);
 		$this->_model_relations = array(
+			'Registration'=>new EE_Exp_Has_Many(),
 			//woudl add a BelongsTorelation to events and other relations here
 		);
 		$this->_fields = array(
-			'TXN_ID'=>new EE_Primary_Key_Field('Transaction', 'TXN_ID', 'Transaction ID', false, 0),
+			'TXN_ID'=>new EE_Primary_Key_Int_Field('Transaction', 'TXN_ID', 'Transaction ID', false, 0),
 			'STS_ID'=>new EE_Enum_Field('Transaction','STS_ID','Status Code',false,'RNA',array('TIN','TCM','TPN','TOP'))
 		);
 		parent::__construct();
@@ -493,9 +617,51 @@ abstract class EE_Float_Field_Base extends EE_Exp_Model_Field_Base{
 		return '%f';
 	}
 }
-class EE_Primary_Key_Field extends EE_Integer_Field_Base{
+abstract class EE_Primary_Key_Field extends EE_Exp_Model_Field_Base{
 	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value){
 		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value);
+	}
+}
+class EE_Primary_Key_Int_Field extends EE_Primary_Key_Field{
+	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value){
+		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value);
+	}
+	function get_wpdb_data_type(){
+		return '%d';
+	}
+}
+class EE_Primary_Key_String_Field extends EE_Primary_Key_Field{
+	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value){
+		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value);
+	}
+	function get_wpdb_data_type(){
+		return '%s';
+	}
+}
+abstract class EE_Foreign_Key_Field extends EE_Exp_Model_Field_Base{
+	protected $_model_name;
+	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value,$model_name){
+		$this->_model_name = $model_name;
+		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value);	
+	}
+	function get_model_name_pointed_to(){
+		return $this->_model_name;
+	}
+}
+class EE_Foreign_Key_Int_Field extends EE_Foreign_Key_Field{
+	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value,$model_name){
+		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value,$model_name);	
+	}
+	function get_wpdb_data_type(){
+		return '%d';
+	}
+}
+class EE_Foreign_Key_String_Field extends EE_Foreign_Key_Field{
+	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value,$model_name){
+		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value,$model_name);	
+	}
+	function get_wpdb_data_type(){
+		return '%s';
 	}
 }
 class EE_HTML_Field extends EE_Text_Field_Base{
@@ -520,71 +686,81 @@ class EE_Serialized_text_field extends EE_Text_Field_Base{
 //model relation classes
 
 abstract class EE_Exp_Model_Relation{
-	var $_model_name;
-	function __construct(){}
-	function _construct_finalize_name($model_name){
-		$this->_model_name = $model_name;
+	/**
+	 *
+	 * @var string 
+	 */
+	private $_this_model_name;
+	/**
+	 *
+	 * @var string 
+	 */
+	private $_other_model_name;
+	protected $_extra_join_conditions;
+	function __construct($extra_join_conditions){
+		$this->_extra_join_conditions=$extra_join_conditions;
 	}
-	function get_model_name(){
-		if(!$this->_model_name){
-			throw new EE_Error(sprintf(__("You must call _construct_finalize_name on %s this model relation. This is done automatically in EEM_Experimental_Base's constructor, did you forget to call it?",'event_espresso'),get_class($this))); 
-		}
-		return $this->_model_name;
+	function _construct_finalize_set_models($this_model_name, $other_model_name){
+		$this->_this_model_name = $this_model_name;
+		$this->_other_model_name = $other_model_name;
 	}
-}
-
-class EE_Exp_Has_Many extends EE_Exp_Model_Relation{
-	var $_this_model_table_alias;
-	var $_this_model_table_pk;
-	var $_other_model_table_alias;
-	var $_other_model_table_fk;
-	var $_extra_join_conditions;
-	function __construct($this_model_table_alias, $this_model_pk,$other_model_table_alias, $foreign_key_on_other_model,$extra_join_conditions = null){
-		$this->_this_model_table_alias = $this_model_table_alias;
-		$this->_this_model_table_pk = $this_model_pk;
-		$this->_other_model_table_alias = $other_model_table_alias;
-		$this->_other_model_table_fk = $foreign_key_on_other_model;
-		$this->_extra_join_conditions = $extra_join_conditions;
-		parent::__construct();
+	/**
+	 * 
+	 * @return EE_Experimental_Base
+	 */
+	function get_this_model(){
+		$modelInstance=call_user_func("EEM_Exp_".$this->_this_model_name."::instance");
+		return $modelInstance;
+	}
+	/**
+	 * 
+	 * @return EE_Experimental_Base
+	 */
+	function get_other_model(){
+		$modelInstance=call_user_func("EEM_Exp_".$this->_other_model_name."::instance");
+		return $modelInstance;
 	}
 	
-	function get_this_model_table_alias(){
-		return $this->_this_model_table_alias;
+	
+	protected function _left_join($other_table,$other_table_alias,$other_table_column,$this_table_alias,$this_table_join_column, $extra_join_sql){
+		return " LEFT JOIN ".$other_table." AS ".$other_table_alias. " ON ".$other_table_alias.".".$other_table_column."=".$this_table_alias.".".$this_table_join_column." ".$extra_join_sql." ";
 	}
-	function get_this_model_table_pk(){
-		return $this->_this_model_table_pk;
+	abstract function get_join_statement();
+}
+
+class EE_Exp_Has_Many extends EE_Exp_Model_Relation{	
+	function __construct($extra_join_conditions = null){
+		parent::__construct($extra_join_conditions);
 	}
-	function get_other_model_table_alias(){
-		return $this->_other_model_table_alias;
-	}
-	function get_other_model_table_fk(){
-		return $this->_other_model_table_fk;
-	}
-	function get_extra_join_conditions(){
-		return $this->_extra_join_conditions;
-	}
-	function get_this_model_qualified_join_column(){
-		return $this->get_this_model_table_alias().".".$this->get_this_model_table_pk();
-	}
-	function get_other_model_qualified_join_column(){
-		return $this->get_other_model_table_alias().".".$this->get_other_model_table_fk();
-	}
-	function get_join_conditions(){
-		$join_conditions = $this->get_this_model_qualified_join_column()."=".$this->get_other_model_qualified_join_column();
-		if( $this->get_extra_join_conditions()){
-			$join_conditions .= "AND ".$this->get_extra_join_conditions().SP;
-		}
-		return $join_conditions;
+	function get_join_statement(){
+		//create the sql string like
+		// LEFT JOIN other_table AS table_alias ON this_table_alias.pk = other_table_alias.fk extra_join_conditions
+		$this_table_pk_field = $this->get_this_model()->get_primary_key();
+		$other_table_fk_field = $this->get_other_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
+		$pk_table_alias = $this_table_pk_field->get_table_alias();
+		$fk_table_alias = $other_table_fk_field->get_table_alias();
+		$fk_table = $this->get_other_model()->get_table_for_alias($fk_table_alias);
+		
+		return $this->_left_join($fk_table, $fk_table_alias, $other_table_fk_field->get_table_column(), $pk_table_alias, $this_table_pk_field->get_table_column(), $this->_extra_join_conditions);
 	}
 }
-class EE_Exp_Belongs_To extends EE_Exp_Has_Many{
-	function __construct($this_model_table_alias, $this_model_pk,$other_model_table_alias, $foreign_key_on_other_model,$extra_join_conditions = null){
-		$this->_this_model_table_alias = $this_model_table_alias;
-		$this->_this_model_table_pk = $this_model_pk;
-		$this->_other_model_table_alias = $other_model_table_alias;
-		$this->_other_model_table_fk = $foreign_key_on_other_model;
-		$this->_extra_join_conditions = $extra_join_conditions;
-		parent::__construct($this_model_table_alias, $this_model_pk,$other_model_table_alias, $foreign_key_on_other_model,$extra_join_conditions);
+/**
+ * The current model has the foreign key pointing to the other model. Eg, Registration belongs to Transaction 
+ * (because Registration's TXN_ID field is on Registration, and points to teh Transaction's PK) 
+ */
+class EE_Exp_Belongs_To extends EE_Exp_Model_Relation{
+	function __construct($extra_join_conditions = null){
+		parent::__construct($extra_join_conditions);
+	}
+	function get_join_statement(){
+		//create the sql string like
+		// LEFT JOIN other_table AS table_alias ON this_table_alias.pk = other_table_alias.fk extra_join_conditions
+		$this_table_fk_field = $this->get_this_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
+		$other_table_pk_field = $this->get_other_model()->get_primary_key();
+		$this_table_alias = $this_table_fk_field->get_table_alias();
+		$other_table_alias = $other_table_pk_field->get_table_alias();
+		$other_table = $this->get_other_model()->get_table_for_alias($other_table_alias);		
+		return $this->_left_join($other_table, $other_table_alias, $other_table_pk_field->get_table_column(), $this_table_alias, $this_table_fk_field->get_table_column(), $this->_extra_join_conditions);
 	}
 	//so far EE_Exp_Belongs_To is identical to EE_Exp_Has_Many
 	//this is probably because we're explicitly requiring the relation

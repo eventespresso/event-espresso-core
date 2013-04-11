@@ -301,10 +301,10 @@ function return_espresso_content() {
 	global $espresso_content;
 	require_once('EEM_Experimental_Base.model.php');
 	$POST = new EEM_Exp_Event();
-	var_dump($POST->get_all(array('where'=>array('Registration.Transaction.TXN_ID__>='=>1,'Registration.REG_ID'=>2))));
-//	$posts = $POST->get_related('Registrations');
+//	var_dump($POST->get_all(array('where'=>array('Registration.Transaction.TXN_ID__>='=>1,'Registration.REG_ID'=>2))));
+	$posts = $POST->get_related(1, 'Registration');
 //	var_dump( $POST->_get_data_types());
-//	var_dump($posts);
+	var_dump($posts);
 	return $espresso_content;
 }
 
