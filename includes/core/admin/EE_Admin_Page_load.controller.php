@@ -418,7 +418,7 @@ class EE_Admin_Page_load {
 	 * In this method there are three checks being done:
 	 * 1. Do we have any NEW admin page sets.  If we do, lets add them into the menu setup (via the $installed_refs array) etc.  (new page sets are found in caffeinated/new/{page})
 	 * 2. Do we have any EXTENDED page sets.  Basically an extended EE_Admin Page extends the core {child}_Admin_Page class.  eg. would be caffeinated/extend/events/Extend_Events_Admin_Page.core.php and in there would be a class: Extend_Events_Admin_Page extends Events_Admin_Page.
-	 * 3. Do we have any files just for setting up hooks into other core pages.  The files can be any name in "caffeinated/hooks" EXCEPT they need a ".hook.php" extension and the file name must correspond with the classname inside.  These classes are instantiated really early so that any hooks in them are run before the corresponding apply_filters/do_actions that are found in any future loaded EE_Admin pages (INCLUDING caffeinated admin_pages)
+	 * 3. Do we have any files just for setting up hooks into other core pages.  The files can be any name in "caffeinated/hooks" EXCEPT they need a ".class.php" extension and the file name must correspond with the classname inside.  These classes are instantiated really early so that any hooks in them are run before the corresponding apply_filters/do_actions that are found in any future loaded EE_Admin pages (INCLUDING caffeinated admin_pages)
 	 *
 	 * 
 	 * 
