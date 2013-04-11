@@ -128,6 +128,104 @@ abstract class EEM_Experimental_Base{
 	function get_this_model_name(){
 		return str_replace("EEM_Exp_","",get_class($this));
 	}
+	/**
+	 * Inserts a new entry into the database, for each table
+	 * @global type $wpdb
+	 * @param type $cols_n_values
+	 * @return int primary key on main table from insertions
+	 * @throws EE_Error
+	 */
+	function insert($cols_n_values){
+		$main_table = $this->_get_main_table();
+		$new_id = $this->_insert_into_specific_table($main_table, $cols_n_values);
+		foreach($this->_get_other_tables() as $other_table){
+			$this->_insert_into_specific_table($other_table, $cols_n_values,$new_id);
+		}
+		return $new_id;
+	}
+	/**
+	 * Inserts a new row in $table, using the $cols_n_values which apply to that table.
+	 * If a $new_id is supplied and if $table is an EE_Other_Table, we assume
+	 * we need to add a foreign key column to point to $new_id (which should be the primary key's value
+	 * on the main table)
+	 * @param EE_Table $table
+	 * @param array $cols_n_values each key should be in _fields's keys, and value should be an int, string or float
+	 * @param int $new_id for now we assume only int keys
+	 * @return int ID of new row inserted
+	 * @throws EE_Error
+	 */
+	private function _insert_into_specific_table(EE_Table $table, $cols_n_values, $new_id = false){
+		global $wpdb;
+		$insertion_col_n_values = array();
+		$format_for_insertion = array();
+		$fields_on_table = $this->_get_fields_for_table($table->get_table_alias());
+		foreach($fields_on_table as $field_name => $field_obj){
+			if(array_key_exists($field_name, $cols_n_values)){
+				//they have specified teh value for thi sfield, so use it
+				$insertion_col_n_values[$field_obj->get_table_column()] = $cols_n_values[$field_name];
+			}else{
+				//they didnt include this field. so just use default
+				$insertion_col_n_values[$field_obj->get_table_column()] = $field_obj->get_default_value();
+			}
+			$format_for_insertion[] = $field_obj->get_wpdb_data_type();
+		}
+
+		if($table instanceof EE_Other_Table && $new_id){
+			//its not the main table, so we should have already saved teh main table's PK which we just inserted
+			//so add the fk to the main table as a column
+			$insertion_col_n_values[$table->get_fk_on_table()] = $new_id;
+			$format_for_insertion[]='%d';//yes right now we're only allowing these foreign keys to be INTs
+		}
+		//insert the new entry
+		$result = $wpdb->insert($table->get_table_name(),$insertion_col_n_values,$format_for_insertion);
+		if(!$result){
+			throw new EE_Error(sprintf(__("Error inserting values %s for columns %s, using data types %s, into table %s",'event_espresso'),
+					implode(",",$insertion_col_n_values),
+					implode(",",array_keys($insertion_col_n_values)),
+					implode(",",$format_for_insertion)));
+		}
+		return $wpdb->insert_id;
+	}	
+	/**
+	 * Returns the main table on this model
+	 * @return EE_Main_Table
+	 * @throws EE_Error
+	 */
+	protected function _get_main_table(){
+		foreach($this->_tables as $table){
+			if($table instanceof EE_Main_Table){
+				return $table;
+			}
+		}
+		throw new EE_Error(sprintf(__("THere are no main tables on %s. They should be added to _tables array in the constructor",'event_espresso'),get_class($this)));
+	}
+	/**
+	 * Gets all the tables of type EE_Other_Table from EEM_Experimental_Model::_tables
+	 * @return EE_Other_Table[]
+	 */
+	protected function _get_other_tables(){
+		$other_tables =array();
+		foreach($this->_tables as $table_alias => $table){
+			if($table instanceof EE_Other_Table){
+				$other_tables[$table_alias] = $table;
+			}
+		}
+		return $other_tables;
+	}
+	/**
+	 * Finds all the fields that correspond to the given table
+	 * @param string $table_alias, array key in EEM_Experimental_Base::_tables
+	 * @return EE_Exp_Model_Field[]
+	 */
+	function _get_fields_for_table($table_alias){
+		$fields_on_table = array();
+		foreach($this->_fields as $field_name=>$field_obj){
+			if( $field_obj->get_table_alias() == $table_alias){
+				$fields_on_table[$field_name] = $field_obj;
+			}
+		}
+		return $fields_on_table;
+	}
 	
 	/**
 	 * Recurses through all the where parameters, and finds all the related models we'll need
@@ -310,18 +408,20 @@ abstract class EEM_Experimental_Base{
 		$field = $this->_fields[$field_name];
 		return $field->get_qualified_column();
 	}
+	
+	/**
+	 * Constructs the internal join if there are multiple tables, or simply the table's name and alias
+	 * Eg "wp_post AS Event" or "wp_post AS Event INNER JOIN wp_postmeta Event_Meta ON Event.ID = Event_Meta.post_id"
+	 * @return string SQL 
+	 */
 	function _construct_internal_join(){
 		$SQL = '';
-		$first = true;
-		foreach($this->_tables as $table){
-			if( ! $first){
-				$SQL .= " LEFT JOIN ".$table->get_table_name()." AS ".$table->get_table_alias() ." ON ". $table->get_join_column_on_prev_table() ."=". $table->get_join_column_on_next_table() .SP;
-				if( $table->get_extra_join_conditions()){
-					$SQL .= "AND ".$table->get_extra_join_conditions().SP;
-				}
-			}else{
-				$SQL.= $table->get_table_name().SP.$table->get_table_alias().SP;
-				$first = FALSE;
+//		$first = true;
+		foreach($this->_tables as $table_obj){
+			if($table_obj instanceof EE_Main_Table){
+				$SQL .= SP.$table_obj->get_table_name()." AS ".$table_obj->get_table_alias().SP;
+			}elseif($table_obj instanceof EE_Other_Table){
+				$SQL .= SP.$table_obj->get_join_sql().SP;
 			}
 		}
 		return $SQL;
@@ -395,71 +495,7 @@ abstract class EEM_Experimental_Base{
 	}
 	
 }
-/**
-* Internal class for simply carrying data during the EEM_Experimental_Base::_extract_related_model_info_from_query_param method.
-* We could have returned an array
-* with two keys 'join_sql' and 'data_types', but this better-defines the data being passed around
-*/
-class EEM_Exp_Related_Model_Info_Carrier extends EE_Base{
-   /**
-	* @var string SQL for performing joins (Eg, "INNER JOIN blah ON blah=blah INNER JOIN FOO ON foo=foo...")
-	*/
-   private $_join_sql;
-   /**
-	*
-	* @var array an array of data types like returned from EEM_Experimental_Base::_get_data_types() 
-	*/
-   private  $_data_types;
-   /**
-    *
-    * @var array numerically-indexed array stating all the models that have been included thus far,so we don't get duplicates
-    */
-   private $_models_included;
-   public function __construct($model_included_name= array(), $join_sql = '', $data_types =array()){
-	   $this->_models_included = $model_included_name;
-	   $this->_join_sql = $join_sql;
-	   $this->_data_types = $data_types;
-   }
-   
-   /**
-    * Merges info from the other EEM_Exp_Related_Model_Info_Carrier into this one.
-    * @param EEM_Exp_Related_Model_Info_Carrier $other_join_sql_and_data_types_carrier
-    */
-   public function merge( $other_join_sql_and_data_types_carrier ){
-	   if( $other_join_sql_and_data_types_carrier && ! $this->_have_already_included_one_of_these_models($other_join_sql_and_data_types_carrier->get_model_names_included())){
-		   $model_included_on_other_join_sql_and_data_types_carrier =  $other_join_sql_and_data_types_carrier->get_model_names_included();
-		   $this->_models_included = array_merge( $this->_models_included, $model_included_on_other_join_sql_and_data_types_carrier );
-			$this->_join_sql .= $other_join_sql_and_data_types_carrier->get_join_sql();
-			$this->_data_types = $this->_data_types + $other_join_sql_and_data_types_carrier->get_data_types();
-	   }
-	   //otherwise don't merge our data.
-	   //yes, this means that we must immediately merge any model data into our grand list
-	   //as soon as we get some from ONE model, or else we could reject a EEM_Exp_Related_Model_Info_Carrier
-	   //which is carrying info from two models WHERE one is already included but the other is NOT
-	  
-   }
-   protected function  _have_already_included_one_of_these_models($model_names){
-	   foreach($this->_models_included as $model_included){
-		   if(in_array($model_included, $model_names)){
-			   return true;
-		   }
-	   }
-	   return false;
-   }
-   
-   protected function get_first_model_name_included(){
-	   return array_shift($this->_models_included);
-   }
-   public function get_model_names_included(){
-	   return $this->_models_included;
-   }
-   public function get_join_sql(){
-	   return $this->_join_sql;
-   }
-   public function get_data_types(){
-	   return $this->_data_types;
-   }
-}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //concrete children of EEM_Experimental_Base
 class EEM_Exp_Event extends EEM_Experimental_Base{
@@ -486,15 +522,17 @@ class EEM_Exp_Event extends EEM_Experimental_Base{
 	
 	function __construct(){
 		$this->_tables = array(
-			'Event' => new EE_Table('posts'),
-			'Event_Meta' => new EE_Table('postmeta','ID','post_id',"Event.post_type = 'page'"));
+			'Event' => new EE_Main_Table('posts','ID'),
+			'Event_Meta' => new EE_Other_Table('postmeta','post_id',"Event.post_type = 'page'"));
 		$this->_model_relations = array(
 			'Registration'=>new EE_Exp_Has_Many(),
 			'Question_Group'=>new EE_Exp_HABTM('Event_Question_Group'),
 			'Event_Question_Group'=>new EE_Exp_Has_Many());
 		$this->_fields = array(
 			'EVT_ID'=>new EE_Primary_Key_Int_Field('Event', 'ID', 'Event ID', false, 0),
-			'EVT_desc'=>new EE_HTML_Field('Event','post_content','Event Description',true,''));
+			'EVT_desc'=>new EE_HTML_Field('Event','post_content','Event Description',true,''),
+			'EVT_metakey1'=>new EE_HTML_Field('Event_Meta','meta_key','Dunno',true,'foobar'),
+			'EVT_metaval1'=>new EE_HTML_Field('Event_Meta', 'meta_value', 'DUnnoeither', true, 'foobrarval'));
 		parent::__construct();
 	}
 }
@@ -521,7 +559,7 @@ class EEM_Exp_Question_Group extends EEM_Experimental_Base{
 
 	function __construct(){
 		$this->_tables = array(
-			'Question_Group'=>new EE_Table('esp_question_group')
+			'Question_Group'=>new EE_Main_Table('esp_question_group','QSG_ID')
 		);
 		$this->_model_relations = array(
 			//woudl add a BelongsTorelation to events and other relations here
@@ -558,7 +596,7 @@ class EEM_Exp_Event_Question_Group extends EEM_Experimental_Base{
 
 	function __construct(){
 		$this->_tables = array(
-			'Event_Question_Group'=>new EE_Table('esp_event_question_group')
+			'Event_Question_Group'=>new EE_Main_Table('esp_event_question_group','EQG_ID')
 		);
 		$this->_model_relations = array(
 			//woudl add a BelongsTorelation to events and other relations here
@@ -597,7 +635,7 @@ class EEM_Exp_Registration extends EEM_Experimental_Base{
 
 	function __construct(){
 		$this->_tables = array(
-			'Registration'=>new EE_Table('esp_registration')
+			'Registration'=>new EE_Main_Table('esp_registration','REG_ID')
 		);
 		$this->_model_relations = array(
 			//woudl add a BelongsTorelation to events and other relations here
@@ -637,7 +675,7 @@ class EEM_Exp_Transaction extends EEM_Experimental_Base{
 	
 	function __construct(){
 		$this->_tables = array(
-			'Transaction'=>new EE_Table('esp_transaction')
+			'Transaction'=>new EE_Main_Table('esp_transaction','TXN_ID')
 		);
 		$this->_model_relations = array(
 			'Registration'=>new EE_Exp_Has_Many(),
@@ -977,20 +1015,19 @@ class EE_Exp_HABTM extends EE_Exp_Model_Relation{
 	}
 }
 
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //model table classes
-class EE_Table{
+abstract class EE_Table{
 	var $_table_name;
-	var $_join_column_on_prev_table;
-	var $_join_column_on_this_table;
+	var $_table_alias;
 	var $_extra_join_conditions;
 	
-	function __construct($table_name, $join_column_on_prev_table = null, $join_column_on_this_table = null, $extra_join_conditions = null){
+	function __construct($table_name, $extra_join_conditions = null){
 		global $wpdb;
 		$this->_table_name = $wpdb->prefix . $table_name;
-
-		$this->_join_column_on_prev_table = $join_column_on_prev_table;
-		$this->_join_column_on_this_table = $join_column_on_this_table;
+		
 		$this->_extra_join_conditions = $extra_join_conditions;
 	}
 	
@@ -1007,13 +1044,130 @@ class EE_Table{
 		}
 		return $this->_table_alias;
 	}
-	function get_join_column_on_prev_table(){
-		return $this->_join_column_on_prev_table;
-	}
-	function get_join_column_on_next_table(){
-		return $this->_join_column_on_this_table;
-	}
+	
 	function get_extra_join_conditions(){
 		return $this->_extra_join_conditions;
 	}
+}
+
+class EE_Other_Table extends EE_Table{
+	protected $_fk_on_table;
+	/**
+	 * 
+	 * @var EE_Main_Table 
+	 */
+	protected $_table_to_join_with;
+	function __construct($table_name, $fk_column = null, $extra_join_conditions = null){
+		$this->_fk_on_table = $fk_column;
+		parent::__construct($table_name, $extra_join_conditions);
+	}
+	function get_fk_on_table(){
+		return $this->_fk_on_table;
+	}
+	function _construct_finalize_set_table_to_join_with(EE_Table $table){
+		$this->_table_to_join_with = $table;
+	}
+	/**
+	 * 
+	 * @return EE_Main_Table
+	 */
+	function get_table_to_join_with(){
+		return $this->_table_to_join_with;
+	}
+	/**
+	 * gets SQL like "LEFT JOIN table_name AS table_alias ON other_table_alias.pk = table_alias.fk
+	 * @return string of SQL
+	 */
+	function get_join_sql(){
+		
+		$table_name = $this->get_table_name();
+		$table_alias = $this->get_table_alias();
+		$other_table_alias = $this->get_table_to_join_with()->get_table_alias();
+		$other_table_pk = $this->get_table_to_join_with()->get_pk();
+		$fk = $this->get_fk_on_table();
+		return " LEFT JOIN $table_name AS $table_alias ON $other_table_alias.$other_table_pk = $table_alias.$fk ";
+	}
+}
+class EE_Main_Table extends EE_Table{
+	/**
+	 *
+	 * @var string
+	 */
+	protected $_pk_column;
+	function __construct($table_name, $pk_column = null, $extra_join_conditions = null){
+		$this->_pk_column = $pk_column;
+		parent::__construct($table_name, $extra_join_conditions);
+	}
+	/**
+	 * 
+	 * @return string name of column of PK
+	 */
+	function get_pk_column(){
+		return $this->_pk_column;
+	}
+}
+/**
+* Internal class for simply carrying data during the EEM_Experimental_Base::_extract_related_model_info_from_query_param method.
+* We could have returned an array
+* with two keys 'join_sql' and 'data_types', but this better-defines the data being passed around
+*/
+class EEM_Exp_Related_Model_Info_Carrier extends EE_Base{
+   /**
+	* @var string SQL for performing joins (Eg, "INNER JOIN blah ON blah=blah INNER JOIN FOO ON foo=foo...")
+	*/
+   private $_join_sql;
+   /**
+	*
+	* @var array an array of data types like returned from EEM_Experimental_Base::_get_data_types() 
+	*/
+   private  $_data_types;
+   /**
+    *
+    * @var array numerically-indexed array stating all the models that have been included thus far,so we don't get duplicates
+    */
+   private $_models_included;
+   public function __construct($model_included_name= array(), $join_sql = '', $data_types =array()){
+	   $this->_models_included = $model_included_name;
+	   $this->_join_sql = $join_sql;
+	   $this->_data_types = $data_types;
+   }
+   
+   /**
+    * Merges info from the other EEM_Exp_Related_Model_Info_Carrier into this one.
+    * @param EEM_Exp_Related_Model_Info_Carrier $other_join_sql_and_data_types_carrier
+    */
+   public function merge( $other_join_sql_and_data_types_carrier ){
+	   if( $other_join_sql_and_data_types_carrier && ! $this->_have_already_included_one_of_these_models($other_join_sql_and_data_types_carrier->get_model_names_included())){
+		   $model_included_on_other_join_sql_and_data_types_carrier =  $other_join_sql_and_data_types_carrier->get_model_names_included();
+		   $this->_models_included = array_merge( $this->_models_included, $model_included_on_other_join_sql_and_data_types_carrier );
+			$this->_join_sql .= $other_join_sql_and_data_types_carrier->get_join_sql();
+			$this->_data_types = $this->_data_types + $other_join_sql_and_data_types_carrier->get_data_types();
+	   }
+	   //otherwise don't merge our data.
+	   //yes, this means that we must immediately merge any model data into our grand list
+	   //as soon as we get some from ONE model, or else we could reject a EEM_Exp_Related_Model_Info_Carrier
+	   //which is carrying info from two models WHERE one is already included but the other is NOT
+	  
+   }
+   protected function  _have_already_included_one_of_these_models($model_names){
+	   foreach($this->_models_included as $model_included){
+		   if(in_array($model_included, $model_names)){
+			   return true;
+		   }
+	   }
+	   return false;
+   }
+   
+   protected function get_first_model_name_included(){
+	   return array_shift($this->_models_included);
+   }
+   public function get_model_names_included(){
+	   return $this->_models_included;
+   }
+   public function get_join_sql(){
+	   return $this->_join_sql;
+   }
+   public function get_data_types(){
+	   return $this->_data_types;
+   }
 }
