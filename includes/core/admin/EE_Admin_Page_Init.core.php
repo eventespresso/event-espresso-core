@@ -278,12 +278,13 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 		//we don't need to do a page_request check here because it's only called via WP menu system.
 		$admin_page = $this->_file_name . '_Admin_Page';
+		$hook_suffix = $this->menu_slug . '_' . $admin_page;
+		$admin_page = apply_filters("filter_hooks_espresso_admin_page_for_{$hook_suffix}", $admin_page);
 		
 		// define requested admin page class name then load the file and instantiate
 		$path_to_file = str_replace( array( '\\', '/' ), DS, EE_CORE_ADMIN . $this->_folder_name . DS . $admin_page . '.core.php' );
-		$path_to_file=apply_filters("filter_hooks_espresso_path_to_{$this->menu_slug}_{$admin_page}",$path_to_file);//so if the file would be in EE_CORE_ADMIN/attendees/Attendee_Admin_Page.core.php, the filter would be filter_hooks_espresso_path_to_attendees_Attendee_Admin_Page
+		$path_to_file=apply_filters("filter_hooks_espresso_path_to_{$hook_suffix}",$path_to_file );//so if the file would be in EE_CORE_ADMIN/attendees/Attendee_Admin_Page.core.php, the filter would be filter_hooks_espresso_path_to_attendees_Attendee_Admin_Page
 		if ( is_readable( $path_to_file )) {					
-			
 			/**
 			 * This is a place where EE plugins can hook in to make sure their own files are required in the appropriate place
 			 */
@@ -296,6 +297,12 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 		do_action( 'action_hook_espresso_after_initialize_admin_page' );
 		do_action( 'action_hook_espresso_after_initialize_admin_page_' . $this->menu_slug );
+	}
+
+
+
+	public function get_admin_page_name() {
+		return $this->_file_name . '_Admin_Page';
 	}
 
 

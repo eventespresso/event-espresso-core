@@ -39,6 +39,35 @@ class EE_Admin_Page_load {
 
 
 
+
+	/**
+	 * _caffeinated_extends
+	 * This array is the generated configuration array for which core EE_Admin pages are extended (and the bits and pieces needed to do so).  This property is defined in the _set_caffeinated method.
+	 * @var array
+	 */
+	private $_caffeinated_extends = array();
+
+
+
+	/**
+	 * _current_caf_extend_slug
+	 * This property is used for holding the page slug that is required for referencing the correct _caffeinated_extends index when the corresponding core child EE_Admin_Page_init hooks are executed.
+	 * @var array
+	 */
+	private $_current_caf_extend_slug;
+
+
+
+
+	/**
+	 * _caf_autoloader
+	 * This property is used for holding an array of folder names of any NEW EE_Admin_Pages found in the caffeinated/new directory.  This array is then used to setup a corresponding dynamic autoloader for these pages classes.
+	 * @var array
+	 */
+	private $_caf_autoloader = array();
+
+
+
 	/**
 	 * _prepped_installed_pages
 	 * This is the prepared array of installed pages for adding to the admin_menu.
@@ -107,6 +136,20 @@ class EE_Admin_Page_load {
 		define( 'EE_CORE_ADMIN_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'includes/core/admin/' );
 		define( 'WP_AJAX_URL', get_bloginfo('url') . '/wp-admin/admin-ajax.php' );
 		define( 'JQPLOT_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/' );
+	}
+
+
+
+
+	/**
+	 * When caffeinated system is detected, this method is called to setup the caffeinated directory constants used by files in the caffeinated folder.
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _define_caffeinated_constants() {
+		define( 'EE_CORE_CAF_ADMIN', EE_CORE_ADMIN . 'caffeinated/');
+		define( 'EE_CORE_CAF_ADMIN_URL', EE_CORE_ADMIN_URL . 'caffeinated/');
 	}
 
 
@@ -187,12 +230,25 @@ class EE_Admin_Page_load {
 			throw new EE_Error( implode( '||', $error_msg ));
 		}
 
+		//this just checks the caffeinated folder and takes care of setting up any caffeinated stuff.
+		$installed_refs = $this->_set_caffeinated($installed_refs);
+
 		//allow plugins to add in their own pages (note at this point they will need to have an autoloader defined for their class);
 		$installed_refs = apply_filters( 'filter_hook_espresso_admin_pages_array', $installed_refs );
+
 
 		//loop through admin pages and setup the $_installed_pages array.
 		foreach ( $installed_refs as $page ) {
 			$this->_installed_pages[$page] = $this->_load_admin_page( $page );
+
+			//now that we've got the admin_init objects... lets see if there are any caffeinated pages extending the originals.  If there are then let's hook into the init admin filter and load our extend instead.
+			if ( isset( $this->_caffeinated_extends[$page] ) ) {
+				$this->_current_caf_extend_slug = $page;
+				$path_hook = 'filter_hooks_espresso_path_to_' . $this->_installed_pages[$page]->menu_slug . '_' . $this->_installed_pages[$page]->get_admin_page_name();
+				$page_hook = 'filter_hooks_espresso_admin_page_for_' . $this->_installed_pages[$page]->menu_slug . '_' . $this->_installed_pages[$page]->get_admin_page_name();
+				add_filter( $path_hook, array( $this, 'add_caffeinated_extend_path' ) );
+				add_filter( $page_hook, array( $this, 'add_caffeinated_extend_page' ) );
+			}
 
 			//let's do the registered hooks first
 			$this->_installed_pages[$page]->register_hooks();
@@ -203,6 +259,10 @@ class EE_Admin_Page_load {
 			$this->_installed_pages[$page]->do_initial_loads();
 		}
 	}
+
+
+
+
 
 
 
@@ -346,6 +406,158 @@ class EE_Admin_Page_load {
 
 		
 	}
+
+
+
+
+
+
+	/**
+	 * This method is the "workhorse" for detecting and setting up caffeinated functionality.
+	 *
+	 * In this method there are three checks being done:
+	 * 1. Do we have any NEW admin page sets.  If we do, lets add them into the menu setup (via the $installed_refs array) etc.  (new page sets are found in caffeinated/new/{page})
+	 * 2. Do we have any EXTENDED page sets.  Basically an extended EE_Admin Page extends the core {child}_Admin_Page class.  eg. would be caffeinated/extend/events/Extend_Events_Admin_Page.core.php and in there would be a class: Extend_Events_Admin_Page extends Events_Admin_Page.
+	 * 3. Do we have any files just for setting up hooks into other core pages.  The files can be any name in "caffeinated/hooks" EXCEPT they need a ".hook.php" extension and the file name must correspond with the classname inside.  These classes are instantiated really early so that any hooks in them are run before the corresponding apply_filters/do_actions that are found in any future loaded EE_Admin pages (INCLUDING caffeinated admin_pages)
+	 *
+	 * 
+	 * 
+	 * @param array $installed_refs the original installed_refs array that may contain our NEW EE_Admin_Pages to be loaded.
+	 */
+	private function _set_caffeinated( $installed_refs ) {
+
+		//first let's check if there IS a caffeinated folder. If there is not then lets get out.
+		if ( !is_dir( EE_CORE_ADMIN . 'caffeinated' ) ) return $installed_refs;
+
+		$this->_define_caffeinated_constants();
+
+		$exclude = array();
+
+		//okay let's setup an "New" pages first (we'll return installed refs later)
+		if ( $new_admin_screens = glob( EE_CORE_ADMIN . 'caffeinated/new/*', GLOB_ONLYDIR ) ) {
+
+			foreach( $new_admin_screens as $admin_screen ) {
+				// files and anything in the exclude array need not apply
+				if ( is_dir( $admin_screen ) && !in_array( basename($admin_screen), $exclude )) {
+					// these folders represent the different NEW EE admin pages
+					$installed_refs[] = basename( $admin_screen );
+					$this->_caf_autoloader[] = basename( $admin_screen );
+				}
+			}
+		}
+
+		//let's see if there are any EXTENDS to setup in the $_caffeinated_extends array (that will be used later for hooking into the _initialize_admin_age in the related core_init admin page)
+		if ( $extends = glob( EE_CORE_ADMIN . 'caffeinated/extend/*', GLOB_ONLYDIR ) ) {
+			foreach( $extends as $extend ) {
+				if ( is_dir( $extend ) ) {
+					$extend_ref = basename( $extend );
+					//now let's make sure there is a file that matches the expected format
+					$filename = str_replace(' ', '_', ucwords( str_replace('_', ' ', $extend_ref ) ) );
+					$filename = 'Extend_' . $filename . '_Admin_Page';
+					$this->_caffeinated_extends[$extend_ref]['path'] = str_replace( array( '\\', '/' ), DS, EE_CORE_ADMIN . 'caffeinated' . DS . 'extend' . DS . $extend_ref . DS . $filename . '.core.php' );
+					$this->_caffeinated_extends[$extend_ref]['admin_page'] = $filename;
+				}
+			}
+		}
+
+		//let's see if there are any HOOK files and instantiate them if there are (so that hooks are loaded early!).
+		$ee_admin_hooks = array();
+		if ( $hooks = glob( EE_CORE_ADMIN . 'caffeinated/hooks/*.class.php' ) ) {
+			foreach ( $hooks as $hook ) {
+				if ( is_readable( $hook ) ) {
+					require_once EE_CORE_ADMIN . 'hooks/' . $hook;
+					$classname = str_replace('.class.php', '', $hook);
+					if ( class_exists( $classname ) ) {
+						$a = new ReflectionClass( $classname );
+						$ee_admin_hooks[] = $a->newInstance();
+					}
+				}
+			}
+		}
+
+		//if we've got _caf_autoloaders set then let's register the autoloader method
+		if ( !empty( $this->_caf_autoloader ) ) {
+			spl_autoload_register(array( $this, 'caffeinated_autoloaders') );
+		}
+
+		return $installed_refs;
+
+	}
+
+
+
+
+
+	/**
+	 * This is the callback for the core {child}_Admin_Page_Init that replaces the path of the core Admin_Page that is being extended with the path of the NEW replacing Admin_Page (again that just extends the other one).
+	 *
+	 * @access public
+	 * @param string $path_to_file old path
+	 * @return string path to new file.
+	 */
+	public function add_caffeinated_extend_path( $path_to_file ) {
+		return $this->_caffeinated_extends[$this->_current_caf_extend_slug]['path'];
+	}
+
+
+
+
+
+
+	/**
+	 * This is the callback for the core {child}_Admin_Page_Init that replaces the name of the page to be called with the one extended the core.
+	 *
+	 * @access public
+	 * @param string $admin_page old admin page name
+	 * @return string NEW admin page name (that is extending the old)
+	 */
+	public function add_caffeinated_extend_page( $admin_page ) {
+		return $this->_caffeinated_extends[$this->_current_caf_extend_slug]['admin_page'];
+	}
+
+
+
+
+
+
+
+	/**
+	 * This method takes care of setting up the autoloader dynamically for any NEW EE_Admin pages found in the caffeinated folders.
+	 *
+	 * @access public
+	 * @param  string $className in coming classname being called
+	 * @return void
+	 */
+	public function caffeinated_autoloaders( $className ) {
+		//let's setup an array of paths to check (for each subsystem)
+		$root = dirname(espresso_main_file()) . '/includes/core/admin/caffeinated/';
+
+		$dir_ref = array();
+		foreach ( $this->_caf_autoloader as $cafa ) {
+			$dir_ref['new' . DS . $cafa . DS] = array('core', 'class');
+		}
+
+		//assemble a list of filenames
+		foreach ( $dir_ref as $dir => $types ) {
+			if ( is_array($types) ) {
+				foreach ( $types as $type) {
+					$filenames[] = ( $dir == 'root' ) ? $root . $className . '.' . $type . '.php' : $root . $dir . $className . '.' . $type . '.php';
+				}
+			} else {
+				$filenames[] = ( $dir == 'root' ) ? $root . $className . '.' . $types . '.php' : $root . $dir . $className . '.' . $types . '.php';
+			}
+		}
+
+		//now loop through assembled filenames and require as available
+		foreach ( $filenames as $filename ) {
+			if ( is_readable($filename) )
+				require_once( $filename );
+		}
+	}
+
+
+
+
 
 
 
