@@ -35,4 +35,23 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		parent::__construct();
 	}
 
+
+	protected function _extend_page_config() {
+		$this->_page_routes['new_route'] = '_new_route_callback';
+
+		$this->_page_config['new_route'] = array(
+			'nav' => array(
+				'label' => __('New Tab', 'event_espresso'),
+				'order' => 60
+				),
+			);
+	}
+
+
+
+	protected function _new_route_callback() {
+		$this->_template_args['admin_page_content'] =  'this is a test';
+		$this->display_admin_page_with_no_sidebar();
+	}
+
 } //end class Events_Admin_Page

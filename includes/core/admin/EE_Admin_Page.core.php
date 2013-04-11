@@ -407,6 +407,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_set_page_routes();
 		$this->_set_page_config();
 
+		//for caffeinated functionality.  If there is a _extend_page_config method then let's run that to modify the all the various page configuration arrays
+		if ( method_exists( $this, '_extend_page_config' ) )
+			$this->_extend_page_config();
+
 
 		//next route only if routing enabled
 		if ( $this->_routing && !defined('DOING_AJAX') ) {
