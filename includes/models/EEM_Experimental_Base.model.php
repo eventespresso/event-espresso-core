@@ -138,18 +138,32 @@ abstract class EEM_Experimental_Base{
 	 * @return void only modifies the EEM_Exp_Related_Model_Info_Carrier passed into it
 	 */
 	function _extract_related_model_info_from_query_param($query_param, EEM_Exp_Related_Model_Info_Carrier $join_sql_and_data_types){
-		foreach(array_keys($this->_model_relations) as $valid_related_model_name){
+		foreach($this->_model_relations as $valid_related_model_name=>$relation_obj){
 			//check to see if the $query_param starts with $valid_related_model_name
 			//eg if 'Registration' is at the start of 'Registration.Transaction.TXN_ID'
 			if(strpos($query_param, $valid_related_model_name) === 0){
 				//it is, so pop it off
 				$query_param = str_replace($valid_related_model_name.".","",$query_param);
 				//get that related model's join info and data types
-				$join_sql = $this->_construct_join_with($valid_related_model_name);
+				
 				$related_model_obj = $this->get_related_model_obj($valid_related_model_name);
-				$data_types = $related_model_obj->_get_data_types();
-				$new_join_sql_and_data_types = new EEM_Exp_Related_Model_Info_Carrier(array($valid_related_model_name), $join_sql, $data_types);
+				//check if teh relation is HABTM, because then we're essentially doing two joins
+				//If so, join first to the JOIN table, and add its data types, and then continue as normal
+				if($relation_obj instanceof EE_Exp_HABTM){
+					$join_model_obj = $relation_obj->get_join_model();
+					$new_join_sql_and_data_types = new EEM_Exp_Related_Model_Info_Carrier(
+							array($join_model_obj->get_this_model_name()), 
+							$relation_obj->get_join_to_intermediate_model_statement(), 
+							$join_model_obj->_get_data_types());
+					$join_sql_and_data_types->merge( $new_join_sql_and_data_types  );
+				}
+				//now just join to the other table pointed to by the relation object, and add its data types
+				$new_join_sql_and_data_types = new EEM_Exp_Related_Model_Info_Carrier(
+						array($valid_related_model_name), 
+						$relation_obj->get_join_statement(), 
+						$related_model_obj->_get_data_types());
 				$join_sql_and_data_types->merge( $new_join_sql_and_data_types  );
+				
 				//recurse, passing along the growing $join_sql_and_data_types object
 				$related_model_obj->_extract_related_model_info_from_query_param($query_param, $join_sql_and_data_types);
 			}
@@ -163,6 +177,7 @@ abstract class EEM_Experimental_Base{
 		global $wpdb;
 		//@todo pop off the top-layer arguments in future. For now assume single layer
 		$data_types = $this->_get_data_types() + $joined_data_types;
+		echo "data types used:"; var_dump($data_types);
 		$glue = ' AND ';
 		$where_clauses=array();
 		foreach($where_params as $query_param_name_and_op => $value){
@@ -293,18 +308,6 @@ abstract class EEM_Experimental_Base{
 		return $SQL;
 	}
 	
-	function _construct_join_with($relation_name){
-		$relation_obj = $this->_model_relations[$relation_name];
-		return $relation_obj->get_join_statement();
-//		if($relation_obj instanceof EE_Exp_Has_Many || $relation_obj instanceof EE_Exp_Belongs_To){
-//			$other_table_alias = $relation_obj->get_other_model_table_alias();
-//			$other_model = $this->get_related_model_obj($relation_name);
-//			/* @var $other_model EEM_Experimental_Base */
-//			$other_table_name = $other_model->_tables[$other_table_alias]->get_table_name();
-//				$SQL = "LEFT JOIN ".$other_table_name." AS ".$other_table_alias." ON ".$relation_obj->get_join_conditions().SP;
-//		}
-//			return $SQL;
-	}
 	
 	/**
 	 * Gets an array for storing all the data types on the next-to-be-executed-query. 
@@ -314,7 +317,7 @@ abstract class EEM_Experimental_Base{
 	function _get_data_types(){
 		$data_types = array();
 		foreach(array_values($this->_fields) as $field_obj){
-			$data_types[$field_obj->get_table_column()] = $field_obj->get_wpdb_data_type();
+			//$data_types[$field_obj->get_table_column()] = $field_obj->get_wpdb_data_type();
 			$data_types[$field_obj->get_qualified_column()] = $field_obj->get_wpdb_data_type();
 		}
 		return $data_types;
@@ -468,7 +471,8 @@ class EEM_Exp_Event extends EEM_Experimental_Base{
 			'Event_Meta' => new EE_Table('postmeta','ID','post_id',"Event.post_type = 'page'"));
 		$this->_model_relations = array(
 			'Registration'=>new EE_Exp_Has_Many(),
-			'Question_Group'=>new EE_Exp_HABTM('Event_Question_Group'));
+			'Question_Group'=>new EE_Exp_HABTM('Event_Question_Group'),
+			'Event_Question_Group'=>new EE_Exp_Has_Many());
 		$this->_fields = array(
 			'EVT_ID'=>new EE_Primary_Key_Int_Field('Event', 'ID', 'Event ID', false, 0),
 			'EVT_desc'=>new EE_HTML_Field('Event','post_content','Event Description',true,''));
@@ -506,7 +510,7 @@ class EEM_Exp_Question_Group extends EEM_Experimental_Base{
 		);
 		$this->_fields = array(
 			'QSG_ID'=>new EE_Primary_Key_Int_Field('Question_Group', 'QSG_ID', 'Question Group ID', false, 0),
-			'QSG_name'=>new EE_HTML_Field('Datetime', 'DTT_EVT_start', 'Event Start', false, time()),
+			'QSG_name'=>new EE_HTML_Field('Question_Group', 'QSG_name', 'Question Gruop Name', false, time()),
 		);
 		parent::__construct();
 	}
@@ -809,8 +813,10 @@ abstract class EE_Exp_Model_Relation{
 	protected function _left_join($other_table,$other_table_alias,$other_table_column,$this_table_alias,$this_table_join_column, $extra_join_sql = ''){
 		return " LEFT JOIN ".$other_table." AS ".$other_table_alias. " ON ".$other_table_alias.".".$other_table_column."=".$this_table_alias.".".$this_table_join_column." ".$extra_join_sql." ";
 	}
+	
 	abstract function get_join_statement();
 }
+
 /**
  * In this relation, the OTHER model ahs the foreign key pointing to this model
  */
@@ -830,6 +836,7 @@ class EE_Exp_Has_Many extends EE_Exp_Model_Relation{
 		return $this->_left_join($fk_table, $fk_table_alias, $other_table_fk_field->get_table_column(), $pk_table_alias, $this_table_pk_field->get_table_column(), $this->_extra_join_conditions);
 	}
 }
+
 /**
  * The current model has the foreign key pointing to the other model. Eg, Registration belongs to Transaction 
  * (because Registration's TXN_ID field is on Registration, and points to teh Transaction's PK) 
@@ -868,10 +875,14 @@ class EE_Exp_HABTM extends EE_Exp_Model_Relation{
 	 * Gets the joining model's object
 	 * @return EEM_Experimental_Base
 	 */
-	private function get_join_model(){
+	function get_join_model(){
 		return $this->_get_model($this->_joining_model_name);
 	}
-	function get_join_statement(){
+	/**
+	 * Gets the SQL string for joining the main model's table containing the pk to the join table. Eg "LEFT JOIN real_join_table AS join_table_alias ON this_table_alias.pk = join_table_alias.fk_to_this_table"
+	 * @return string of SQL
+	 */
+	function get_join_to_intermediate_model_statement(){
 		//create sql like
 		//LEFT JOIN join_table AS join_table_alias ON this_table_alias.this_table_pk = join_table_alias.join_table_fk_to_this
 		//LEFT JOIN other_table AS other_table_alias ON join_table_alias.join_table_fk_to_other = other_table_alias.other_table_pk
@@ -883,14 +894,28 @@ class EE_Exp_HABTM extends EE_Exp_Model_Relation{
 		$join_table_alias = $join_table_fk_field_to_this_table->get_table_alias();
 		$join_table = $this->get_join_model()->get_table_for_alias($join_table_alias);	
 		
+		//phew! ok, we have all the info we need, now we can create the SQL join string
+		$SQL = $this->_left_join($join_table, $join_table_alias, $join_table_fk_field_to_this_table->get_table_column(), $this_table_alias, $this_table_pk_field->get_table_column());
+				
+		return $SQL;
+	}
+	/**
+	 * Gets the SQL string for joining the join table to the other model's pk's table. Eg "LEFT JOIN real_other_table AS other_table_alias ON join_table_alias.fk_to_other_table = other_table_alias.pk"
+	 * If you want to join between modelA -> joinModelAB -> modelB (eg, Event -> Event_Question_Group -> Question_Group),
+	 * you shoudl prepend the result of this function with results from get_join_to_intermediate_model_statement(),
+	 * so that you join first to the intermediate join table, and then to the other model's pk's table
+	 * @return string of SQL
+	 */
+	function get_join_statement(){
+		$join_table_fk_field_to_this_table = $this->get_join_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
+		$join_table_alias = $join_table_fk_field_to_this_table->get_table_alias();
+		
 		$other_table_pk_field = $this->get_other_model()->get_primary_key_field();
 		$join_table_fk_field_to_other_table = $this->get_join_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
 		$other_table_alias = $other_table_pk_field->get_table_alias();
 		$other_table = $this->get_other_model()->get_table_for_alias($other_table_alias);
-		//phew! ok, we have all the info we need, now we can create the SQL join string
-		$SQL = $this->_left_join($join_table, $join_table_alias, $join_table_fk_field_to_this_table->get_table_column(), $this_table_alias, $this_table_pk_field->get_table_column())
-				.
-				$this->_left_join($other_table, $other_table_alias, $other_table_pk_field->get_table_column(), $join_table_alias, $join_table_fk_field_to_other_table->get_table_column(), $this->_extra_join_conditions);
+		
+		$SQL = $this->_left_join($other_table, $other_table_alias, $other_table_pk_field->get_table_column(), $join_table_alias, $join_table_fk_field_to_other_table->get_table_column(), $this->_extra_join_conditions);
 		return $SQL;
 	}
 }
