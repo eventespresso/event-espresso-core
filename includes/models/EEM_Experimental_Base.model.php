@@ -54,6 +54,19 @@ abstract class EEM_Experimental_Base{
 	 */
 	protected $_in_style_operators = array('IN','NOT_IN');
 	
+	/**
+	 * Should ALWAYS be called after child constructor.
+	 * In order to make the child constructors to be as simple as possible, this parent constructor
+	 * finalizes constructing all the object's attributes. 
+	 * Generally, rather than requiring a child to code
+	 * $this->_tables = array(
+	 *		'Event_Post_Table' => new EE_Table('Event_Post_Table','wp_posts')
+	 *		...);
+	 *  (thus repeating itself in the array key and in the constructor of the new EE_Table,)
+	 * each EE_Table has a function to set the table's alias after the constructor, using
+	 * the array key ('Event_Post_Table'), instead of repeating it. The model fields and model relations
+	 * do something similar.
+	 */
 	function __construct(){
 		foreach($this->_tables as $table_alias => $table_obj){
 			$table_obj->_construct_finalize_with_alias($table_alias);
@@ -68,11 +81,17 @@ abstract class EEM_Experimental_Base{
 	
 	function get_all($query_params = array()){
 		global $wpdb;
-		
 		if(array_key_exists('where',$query_params)){
-			$join_sql_and_data_types = $this->_extract_related_models_from_query($query_params['where']);
+			$where_array = $query_params['where'];
+		}elseif(array_key_exists(0,$query_params)){
+			$where_array = $query_params[0];
+		}else{
+			$where_array = array();
+		}
+		if($where_array){
+			$join_sql_and_data_types = $this->_extract_related_models_from_query($where_array);
 			$extra_joins = $join_sql_and_data_types->get_join_sql();
-			$where_clause = $this->_construct_where_clause($query_params['where'], $join_sql_and_data_types->get_data_types());
+			$where_clause = $this->_construct_where_clause($where_array, $join_sql_and_data_types->get_data_types());
 		}else{
 			$where_clause = '';
 			$extra_joins = '';
@@ -122,7 +141,7 @@ abstract class EEM_Experimental_Base{
 		$join_sql_and_data_types = new EEM_Exp_Related_Model_Info_Carrier();
 		if(!empty($where_params)){
 			foreach(array_keys($where_params) as $param){
-				//$param could be simply 'EVT_ID', or it could be 'Registrations.REG_ID__<', or even 'Registrations.Transactions.Payments.PAY_amount__LIKE'
+				//$param could be simply 'EVT_ID', or it could be 'Registrations.REG_ID', or even 'Registrations.Transactions.Payments.PAY_amount'
 				$this->_extract_related_model_info_from_query_param( $param, $join_sql_and_data_types);
 			}
 		}
@@ -177,23 +196,25 @@ abstract class EEM_Experimental_Base{
 		global $wpdb;
 		//@todo pop off the top-layer arguments in future. For now assume single layer
 		$data_types = $this->_get_data_types() + $joined_data_types;
-		echo "data types used:"; var_dump($data_types);
 		$glue = ' AND ';
 		$where_clauses=array();
-		foreach($where_params as $query_param_name_and_op => $value){
+		foreach($where_params as $query_param => $op_and_value){
 			//@todo split out model names, and op
-			$operator = $this->_extract_operator($query_param_name_and_op);
-			$qualified_column = $this->_deduce_table_and_column_name($query_param_name_and_op);
-			//check for special case of 'in' operators like 'IN' or 'NOT_IN'
-			if(in_array($operator, $this->_in_style_operators)){
-				//in this case, the value should be an array, or at least a comma-seperated list
-				//it will need to handle a little differently
-				$cleaned_value = $this->_construct_in_value($value, $data_types[$qualified_column]);
-				//note: $cleaned_value has already been run through $wpdb->prepare()
-				$where_clauses[] = $wpdb->prepare( $qualified_column.$operator).$cleaned_value;
-			}else{
-				$where_clauses[] = $wpdb->prepare( $qualified_column.$operator.$data_types[$qualified_column],$value);
-			}
+//			$operator = $this->_extract_operator($query_param);
+			$qualified_column_sql = $this->_deduce_table_and_column_name($query_param);
+			$data_type = $data_types[$qualified_column_sql];
+			$op_and_value_sql = $this->_construct_op_and_value($op_and_value, $data_type);
+			$where_clauses[]=$qualified_column_sql.SP.$op_and_value_sql;
+//			//check for special case of 'in' operators like 'IN' or 'NOT_IN'
+//			if(in_array($operator, $this->_in_style_operators)){
+//				//in this case, the value should be an array, or at least a comma-seperated list
+//				//it will need to handle a little differently
+//				$cleaned_value = $this->_construct_in_value($op_and_value, $data_types[$qualified_column_sql]);
+//				//note: $cleaned_value has already been run through $wpdb->prepare()
+//				$where_clauses[] = $wpdb->prepare( $qualified_column_sql.$operator).$cleaned_value;
+//			}else{
+//				$where_clauses[] = $wpdb->prepare( $qualified_column_sql.$operator.$data_types[$qualified_column_sql],$op_and_value);
+//			}
 		}
 		$SQL = implode($glue,$where_clauses);
 		return $SQL;
@@ -201,7 +222,34 @@ abstract class EEM_Experimental_Base{
 		
 	}
 	
-	
+	/**
+	 * creates the SQL 
+	 * @param type $op_and_value
+	 * @param type $data_type
+	 */
+	private function _construct_op_and_value($op_and_value, $data_type){
+		
+		//check if teh value is an array
+		if(is_array($op_and_value)){
+			//assume first arg is an aray
+			$operator = $op_and_value[0];
+			$value = $op_and_value[1];
+		}else{
+			$operator = '=';
+			$value = $op_and_value;
+		}
+		
+		if(in_array($operator, $this->_in_style_operators)){
+				//in this case, the value should be an array, or at least a comma-seperated list
+				//it will need to handle a little differently
+				$cleaned_value = $this->_construct_in_value($value, $data_type);
+				//note: $cleaned_value has already been run through $wpdb->prepare()
+				return $operator.SP.$cleaned_value;
+			}else{
+				global $wpdb;
+				return $wpdb->prepare($operator.SP.$data_type, $value);
+			}
+	}
 	
 	/**
 	 * Takes an array or a comma-seperated list of $values and cleans them 
@@ -223,45 +271,16 @@ abstract class EEM_Experimental_Base{
 		foreach($values as $value){
 			$cleaned_values[] = $wpdb->prepare($data_type,$value);
 		}
-		return $cleaned_values;
+		return "(".implode(",",$cleaned_values).")";
 	}
 	
-	/**
-	 * Takes teh same input as _deduce_table_and_column_name, namely a key in teh 'where' array of $query_params passed to EEM_Experimental_Base::get_all(),
-	 * eg Registration.Transaction.TXN_ID__<
-	 * Extracts the operator, or if none is provided, assumes it's =
-	 * @param string $query_param_name
-	 * @return string mysql operator
-	 */
-	function _extract_operator($query_param_name){
-		$parts = explode("__",$query_param_name);
-		if( count($parts) == 2 ){
-			//there are two parts, so teh 2nd must be the operator
-			if(array_key_exists($parts[1], $this->_valid_operators)){
-				//confirmed: it's an operator
-				$last_part = $parts[1];
-				return $this->_valid_operators[$last_part];
-			}else{
-				//it should have been an operator, but it didn't match any of teh vali dones
-				throw new EE_Error(sprintf(__("%s is not a valid operator, provided in %s",'event_espresso'),$parts[1],$query_param_name));
-			}
-		}elseif( count($parts) == 1 ){
-			//no operator provided
-			return '=';
-		}else{
-			//what the?! they submited something like Registration__Transaction.TXN_ID__< when it hsould ahve been like Registration.Transaction.TXN_ID__<
-			throw new EE_Error(sprintf(__("Invalid query parameter. Doubel underscore __) is only used to precede an operator, and periods (.) are used to seperate model names. You provided %s",'event_espresso'),$query_param_name));
-		}
-	}
+	
 	/**
 	 * Takes the input parameter and extract the table name (alias) and column name
-	 * @param string $query_param_name like Registration__Transaction__TXN_ID, Event__Datetime__start_time__<, or REG_ID
+	 * @param string $query_param_name like Registration__Transaction__TXN_ID, Event__Datetime__start_time, or REG_ID
 	 * @return string table alias and column name for SQL, eg "Transaction.TXN_ID"
 	 */
 	function _deduce_table_and_column_name($query_param_name){
-		//remove the operator, we don't care about that here
-		$query_param_and_operator = explode("__",$query_param_name);
-		$query_param_name = $query_param_and_operator[0];
 		//ok, now proceed with deducing which part is the model's name, and which is the field's name
 		//which will help us find the database table and column
 		$query_param_parts = explode(".",$query_param_name);
@@ -763,20 +782,58 @@ class EE_Serialized_text_field extends EE_Text_Field_Base{
 		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value);
 	}
 }
+/**
+ * Field for DB columns which don't correspond to model fields. Eg, on the Event model, which
+ * should use the wp_posts and wp_esp_events_detail tables, there will be many fields on the wp_posts
+ * table that don't correspond to any event model fields (eg, post_password). We may want to provide
+ * special defautl values for them, or some other column-specific functionality. So we can add them as fields,
+ * but db-only ones
+ */
+abstract class EE_DB_Only_Field extends EE_Exp_Model_Field_Base{
+	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value){
+		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value);
+	}
+}
+class EE_DB_Only_Int_Field extends EE_DB_Only_Field{
+	function get_wpdb_data_type(){
+		return '%d';
+	}
+}
+class EE_DB_Only_Text_Field extends EE_DB_Only_Field{
+	function get_wpdb_data_type(){
+		return '%s';
+	}
+}
+class EE_DB_Only_Float_Field extends EE_DB_Only_Field{
+	function get_wpdb_data_type(){
+		return '%f';
+	}
+}
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //model relation classes
 
+/**
+ * Model Relation classes are for defining relationships between models, and facilitating JOINs
+ * between them during querying. They require knowing at least the model names of the two models
+ * they join, and require each to have proper Private and Foreign key fields setup. (HABTM are different)
+ * Once those two models are setup correctly, and the relation object has the names of each, it can
+ * magically figure out what tables must be joined on what fields during querying.
+ */
 abstract class EE_Exp_Model_Relation{
 	/**
-	 *
-	 * @var string 
+	 * The model name of which this relation is a component (ie, the model taht called new EE_Exp_Model_Relation)
+	 * @var string eg Event, Question_Group, Registration
 	 */
 	private $_this_model_name;
 	/**
-	 *
-	 * @var string 
+	 * The model name pointed to by this relation (ie, the model we want to establish a relationship to)
+	 * @var string eg Event, Question_Group, Registration
 	 */
 	private $_other_model_name;
+	/**
+	 * Any extra SQL that we'd like to add when joining to the other model. Eg " AND Event.post_type = 'monkey'"
+	 * @var string 
+	 */
 	protected $_extra_join_conditions;
 	function __construct($extra_join_conditions){
 		$this->_extra_join_conditions=$extra_join_conditions;
@@ -928,12 +985,12 @@ class EE_Table{
 	var $_join_column_on_this_table;
 	var $_extra_join_conditions;
 	
-	function __construct($table_name, $join_table_on_prev_table = null, $join_table_on_this_table = null, $extra_join_conditions = null){
+	function __construct($table_name, $join_column_on_prev_table = null, $join_column_on_this_table = null, $extra_join_conditions = null){
 		global $wpdb;
 		$this->_table_name = $wpdb->prefix . $table_name;
 
-		$this->_join_column_on_prev_table = $join_table_on_prev_table;
-		$this->_join_column_on_this_table = $join_table_on_this_table;
+		$this->_join_column_on_prev_table = $join_column_on_prev_table;
+		$this->_join_column_on_this_table = $join_column_on_this_table;
 		$this->_extra_join_conditions = $extra_join_conditions;
 	}
 	

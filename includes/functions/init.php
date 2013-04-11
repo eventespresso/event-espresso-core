@@ -301,7 +301,7 @@ function return_espresso_content() {
 	global $espresso_content;
 	require_once('EEM_Experimental_Base.model.php');
 	$POST = new EEM_Exp_Event();
-	var_dump($POST->get_all(array('where'=>array('Question_Group.QSG_ID'=>1,'Event_Question_Group.EQG_primary'=>0))));//causes error
+	var_dump($POST->get_all(array(array('Question_Group.QSG_ID'=>array('IN',array(1,2,3)),'Event_Question_Group.EQG_primary'=>0))));//causes error
 //	var_dump($POST->get_all(array('where'=>array('Event_Question_Group.EQG_primary'=>0,'Event_Question_Group.Question_Group.QSG_ID'=>1))));//works fine though
 //	var_dump($POST->get_all(array('where'=>array('Registration.Transaction.TXN_ID__>='=>1,'Registration.REG_ID'=>2))));
 	//$posts = $POST->get_related(1, 'Registration');
