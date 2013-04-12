@@ -74,9 +74,13 @@ abstract class EEM_Experimental_Base{
 				$table_obj->_construct_finalize_set_table_to_join_with($this->_get_main_table());
 			}
 		}
-		foreach($this->_fields as $field_name => $field_obj){
-			$field_obj->_construct_finalize_name($field_name);
+		foreach($this->_fields as $table_alis => $fields_for_table){
+			foreach($fields_for_table as $field_name => $field_obj){
+				$field_obj->_construct_finalize($table_alis,$field_name);
+			}
 		}
+				
+			
 		foreach($this->_model_relations as $model_name => $relation_obj){
 			$relation_obj->_construct_finalize_set_models($this->get_this_model_name(), $model_name);
 		}
@@ -295,13 +299,7 @@ abstract class EEM_Experimental_Base{
 	 * @return EE_Exp_Model_Field[]
 	 */
 	function _get_fields_for_table($table_alias){
-		$fields_on_table = array();
-		foreach($this->_fields as $field_name=>$field_obj){
-			if( $field_obj->get_table_alias() == $table_alias){
-				$fields_on_table[$field_name] = $field_obj;
-			}
-		}
-		return $fields_on_table;
+		return $this->_fields[$table_alias];
 	}
 	
 	/**
@@ -485,12 +483,13 @@ abstract class EEM_Experimental_Base{
 	
 	
 	/**
-	 * Givena field's name (ie, a key in $this->_fields), uses the EE_Model_Field object to get the table's alias and column
+	 * Givena field's name (ie, a key in $this->_get_all_fields()), uses the EE_Model_Field object to get the table's alias and column
 	 * which corresponds to it
 	 * @param string $field_name
 	 */
 	function _get_qualified_column_for_field($field_name){
-		$field = $this->_fields[$field_name];
+		$all_fields = $this->_get_all_fields();
+		$field = $all_fields[$field_name];
 		return $field->get_qualified_column();
 	}
 	
@@ -520,7 +519,7 @@ abstract class EEM_Experimental_Base{
 	 */
 	function _get_data_types(){
 		$data_types = array();
-		foreach(array_values($this->_fields) as $field_obj){
+		foreach(array_values($this->_get_all_fields()) as $field_obj){
 			//$data_types[$field_obj->get_table_column()] = $field_obj->get_wpdb_data_type();
 			$data_types[$field_obj->get_qualified_column()] = $field_obj->get_wpdb_data_type();
 		}
@@ -547,7 +546,7 @@ abstract class EEM_Experimental_Base{
 	 * @throws EE_Error
 	 */
 	public function get_primary_key_field(){
-		foreach($this->_fields as $field){
+		foreach($this->_get_all_fields() as $field){
 			if($field instanceof EE_Primary_Key_Field){
 				return $field;
 			}
@@ -561,7 +560,7 @@ abstract class EEM_Experimental_Base{
 	 * @throws EE_Error
 	 */
 	public function get_foreign_key_to($model_name){
-		foreach($this->_fields as $field){
+		foreach($this->_get_all_fields() as $field){
 			if($field instanceof EE_Foreign_Key_Field 
 					&&
 					$field->get_model_name_pointed_to() == $model_name){
@@ -577,6 +576,20 @@ abstract class EEM_Experimental_Base{
 	 */
 	function get_table_for_alias($table_alias){
 		return $this->_tables[$table_alias]->get_table_name();
+	}
+	/**
+	 * Returns a flat array of all field son this model, instead of organizing them 
+	 * by table_alias as they are in the constructor. 
+	 * @return EE_Exp_Model_Field[] where the keys are the field's name
+	 */
+	protected function _get_all_fields(){
+		$all_fields = array();
+		foreach($this->_fields as $table_alias => $fields_corresponding_to_table){
+			foreach($fields_corresponding_to_table as $field_name => $field_obj){
+				$all_fields[$field_name]=$field_obj;
+			}
+		}
+		return $all_fields;
 	}
 	
 }
@@ -613,10 +626,15 @@ class EEM_Exp_Event extends EEM_Experimental_Base{
 			'Question_Group'=>new EE_Exp_HABTM('Event_Question_Group'),
 			'Event_Question_Group'=>new EE_Exp_Has_Many());
 		$this->_fields = array(
-			'EVT_ID'=>new EE_Primary_Key_Int_Field('Event', 'ID', 'Event ID', false, 0),
-			'EVT_desc'=>new EE_HTML_Field('Event','post_content','Event Description',true,''),
-			'EVT_metakey1'=>new EE_HTML_Field('Event_Meta','meta_key','Dunno',true,'foobar'),
-			'EVT_metaval1'=>new EE_HTML_Field('Event_Meta', 'meta_value', 'DUnnoeither', true, 'foobrarval'));
+				'Event'=>array(
+					'EVT_ID'=>new EE_Primary_Key_Int_Field('ID', 'Event ID', false, 0),
+					'EVT_desc'=>new EE_HTML_Field('post_content','Event Description',true,''),),
+				'Event_Meta'=>array(
+					'EVT_metakey1'=>new EE_HTML_Field('meta_key','Dunno',true,'foobar'),
+					'EVT_metaval1'=>new EE_HTML_Field('meta_value', 'DUnnoeither', true, 'foobrarval')
+				)
+			
+			);
 		parent::__construct();
 	}
 }
@@ -650,8 +668,10 @@ class EEM_Exp_Question_Group extends EEM_Experimental_Base{
 			'Event'=> new EE_Exp_HABTM('Event_Question_Group'),
 		);
 		$this->_fields = array(
-			'QSG_ID'=>new EE_Primary_Key_Int_Field('Question_Group', 'QSG_ID', 'Question Group ID', false, 0),
-			'QSG_name'=>new EE_HTML_Field('Question_Group', 'QSG_name', 'Question Gruop Name', false, time()),
+			'Question_Group'=>array(
+				'QSG_ID'=>new EE_Primary_Key_Int_Field('QSG_ID', 'Question Group ID', false, 0),
+				'QSG_name'=>new EE_HTML_Field('QSG_name', 'Question Gruop Name', false, time())
+			)
 		);
 		parent::__construct();
 	}
@@ -688,10 +708,12 @@ class EEM_Exp_Event_Question_Group extends EEM_Experimental_Base{
 			'Event'=>new EE_Exp_Belongs_To()
 		);
 		$this->_fields = array(
-			'EQG_ID'=>new EE_Primary_Key_Int_Field('Event_Question_Group', 'EQG_ID', 'Relation ID between Event and Question Group', false, 0),
-			'EVT_ID'=>new EE_Foreign_Key_Int_Field('Event_Question_Group', 'EVT_ID', 'Event ID', false, 0, 'Event'),
-			'QSG_ID'=>new EE_Foreign_Key_Int_Field('Event_Question_Group','QSG_ID','Question Group ID',false, 0, 'Question_Group'),
-			'EQG_primary'=>new EE_Integer_Field_Base('Event_Question_Group','EQG_primary','Whether this Question Group only applies to primary attendees',false,0)
+			'Event_Question_Group'=>array(
+				'EQG_ID'=>new EE_Primary_Key_Int_Field('EQG_ID', 'Relation ID between Event and Question Group', false, 0),
+				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', 'Event ID', false, 0, 'Event'),
+				'QSG_ID'=>new EE_Foreign_Key_Int_Field('QSG_ID','Question Group ID',false, 0, 'Question_Group'),
+				'EQG_primary'=>new EE_Integer_Field_Base('EQG_primary','Whether this Question Group only applies to primary attendees',false,0)
+			)
 		);
 		parent::__construct();
 	}
@@ -727,10 +749,13 @@ class EEM_Exp_Registration extends EEM_Experimental_Base{
 			'Event'=>new EE_Exp_Belongs_To()
 		);
 		$this->_fields = array(
-			'REG_ID'=>new EE_Primary_Key_Int_Field('Registration', 'REG_ID', 'Registration ID', false, 0),
-			'EVT_ID'=>new EE_Foreign_Key_Int_Field('Registration', 'EVT_ID', 'Event ID', false, 0, 'Event'),
-			'TXN_ID'=>new EE_Foreign_Key_Int_Field('Registration','TXN_ID','Transaction ID',false, 0, 'Transaction'),
-			'STS_ID'=>new EE_Enum_Field('Registration','STS_ID','Status Code',false,'RNA',array('RAP','RCN','RNA','RPN'))
+			'Registration'=>array(
+				'REG_ID'=>new EE_Primary_Key_Int_Field('REG_ID', 'Registration ID', false, 0),
+				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', 'Event ID', false, 0, 'Event'),
+				'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID','Transaction ID',false, 0, 'Transaction'),
+				'STS_ID'=>new EE_Enum_Field('STS_ID','Status Code',false,'RNA',array('RAP','RCN','RNA','RPN'))
+			)
+			
 		);
 		parent::__construct();
 	}
@@ -766,8 +791,11 @@ class EEM_Exp_Transaction extends EEM_Experimental_Base{
 			//woudl add a BelongsTorelation to events and other relations here
 		);
 		$this->_fields = array(
-			'TXN_ID'=>new EE_Primary_Key_Int_Field('Transaction', 'TXN_ID', 'Transaction ID', false, 0),
-			'STS_ID'=>new EE_Enum_Field('Transaction','STS_ID','Status Code',false,'RNA',array('TIN','TCM','TPN','TOP'))
+			'Transaction'=>array(
+				'TXN_ID'=>new EE_Primary_Key_Int_Field('TXN_ID', 'Transaction ID', false, 0),
+				'STS_ID'=>new EE_Enum_Field('STS_ID','Status Code',false,'RNA',array('TIN','TCM','TPN','TOP'))
+			)
+			
 		);
 		parent::__construct();
 	}
@@ -782,14 +810,14 @@ abstract class EE_Exp_Model_Field_Base{
 	var $_nullable;
 	var $_default_value;
 	var $_other_config;
-	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value){
-		$this->_table_alias = $table_alias;
+	function __construct($table_column, $nicename, $nullable, $default_value){
 		$this->_table_column = $table_column;
 		$this->_nicename = $nicename;
 		$this->_nullable = $nullable;
 		$this->_default_value = $default_value;
 	}
-	function _construct_finalize_name($name){
+	function _construct_finalize($table_alias, $name){
+				$this->_table_alias = $table_alias;
 		$this->_name = $name;
 	}
 	function get_table_alias(){
@@ -816,45 +844,45 @@ abstract class EE_Exp_Model_Field_Base{
 	abstract function get_wpdb_data_type();
 }
 abstract class EE_Text_Field_Base extends EE_Exp_Model_Field_Base{
-	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value){
-		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value);
+	function __construct($table_column, $nicename, $nullable, $default_value){
+		parent::__construct($table_column, $nicename, $nullable, $default_value);
 	}
 	function get_wpdb_data_type(){
 		return '%s';
 	}
 }
 class EE_Integer_Field_Base extends EE_Exp_Model_Field_Base{
-	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value){
-		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value);
+	function __construct($table_column, $nicename, $nullable, $default_value){
+		parent::__construct($table_column, $nicename, $nullable, $default_value);
 	}
 	function get_wpdb_data_type(){
 		return '%d';
 	}
 }
 abstract class EE_Float_Field_Base extends EE_Exp_Model_Field_Base{
-	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value){
-		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value);
+	function __construct($table_column, $nicename, $nullable, $default_value){
+		parent::__construct($table_column, $nicename, $nullable, $default_value);
 	}
 	function get_wpdb_data_type(){
 		return '%f';
 	}
 }
 abstract class EE_Primary_Key_Field extends EE_Exp_Model_Field_Base{
-	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value){
-		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value);
+	function __construct($table_column, $nicename, $nullable, $default_value){
+		parent::__construct( $table_column, $nicename, $nullable, $default_value);
 	}
 }
 class EE_Primary_Key_Int_Field extends EE_Primary_Key_Field{
-	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value){
-		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value);
+	function __construct($table_column, $nicename, $nullable, $default_value){
+		parent::__construct($table_column, $nicename, $nullable, $default_value);
 	}
 	function get_wpdb_data_type(){
 		return '%d';
 	}
 }
 class EE_Primary_Key_String_Field extends EE_Primary_Key_Field{
-	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value){
-		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value);
+	function __construct($table_column, $nicename, $nullable, $default_value){
+		parent::__construct($table_column, $nicename, $nullable, $default_value);
 	}
 	function get_wpdb_data_type(){
 		return '%s';
@@ -862,46 +890,46 @@ class EE_Primary_Key_String_Field extends EE_Primary_Key_Field{
 }
 abstract class EE_Foreign_Key_Field extends EE_Exp_Model_Field_Base{
 	protected $_model_name;
-	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value,$model_name){
+	function __construct($table_column, $nicename, $nullable, $default_value,$model_name){
 		$this->_model_name = $model_name;
-		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value);	
+		parent::__construct($table_column, $nicename, $nullable, $default_value);	
 	}
 	function get_model_name_pointed_to(){
 		return $this->_model_name;
 	}
 }
 class EE_Foreign_Key_Int_Field extends EE_Foreign_Key_Field{
-	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value,$model_name){
-		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value,$model_name);	
+	function __construct($table_column, $nicename, $nullable, $default_value,$model_name){
+		parent::__construct($table_column, $nicename, $nullable, $default_value,$model_name);	
 	}
 	function get_wpdb_data_type(){
 		return '%d';
 	}
 }
 class EE_Foreign_Key_String_Field extends EE_Foreign_Key_Field{
-	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value,$model_name){
-		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value,$model_name);	
+	function __construct($table_column, $nicename, $nullable, $default_value,$model_name){
+		parent::__construct($table_column, $nicename, $nullable, $default_value,$model_name);	
 	}
 	function get_wpdb_data_type(){
 		return '%s';
 	}
 }
 class EE_HTML_Field extends EE_Text_Field_Base{
-	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value){
-		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value);
+	function __construct($table_column, $nicename, $nullable, $default_value){
+		parent::__construct($table_column, $nicename, $nullable, $default_value);
 	}
 }
 class EE_Enum_Field extends EE_Text_Field_Base{
 	var $_allowed_enum_values;
-	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value, $allowed_enum_values){
+	function __construct($table_column, $nicename, $nullable, $default_value, $allowed_enum_values){
 		$this->_allowed_enum_values = $allowed_enum_values;
-		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value);
+		parent::__construct($table_column, $nicename, $nullable, $default_value);
 	}
 }
 
 class EE_Serialized_text_field extends EE_Text_Field_Base{
-	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value){
-		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value);
+	function __construct($table_column, $nicename, $nullable, $default_value){
+		parent::__construct($table_column, $nicename, $nullable, $default_value);
 	}
 }
 /**
@@ -912,8 +940,8 @@ class EE_Serialized_text_field extends EE_Text_Field_Base{
  * but db-only ones
  */
 abstract class EE_DB_Only_Field extends EE_Exp_Model_Field_Base{
-	function __construct($table_alias, $table_column, $nicename, $nullable, $default_value){
-		parent::__construct($table_alias, $table_column, $nicename, $nullable, $default_value);
+	function __construct($table_column, $nicename, $nullable, $default_value){
+		parent::__construct($table_column, $nicename, $nullable, $default_value);
 	}
 }
 class EE_DB_Only_Int_Field extends EE_DB_Only_Field{
