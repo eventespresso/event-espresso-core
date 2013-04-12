@@ -70,6 +70,9 @@ abstract class EEM_Experimental_Base{
 	function __construct(){
 		foreach($this->_tables as $table_alias => $table_obj){
 			$table_obj->_construct_finalize_with_alias($table_alias);
+			if($table_obj instanceof EE_Other_Table){
+				$table_obj->_construct_finalize_set_table_to_join_with($this->_get_main_table());
+			}
 		}
 		foreach($this->_fields as $field_name => $field_obj){
 			$field_obj->_construct_finalize_name($field_name);
@@ -81,27 +84,83 @@ abstract class EEM_Experimental_Base{
 	
 	function get_all($query_params = array()){
 		global $wpdb;
-		if(array_key_exists('where',$query_params)){
-			$where_array = $query_params['where'];
-		}elseif(array_key_exists(0,$query_params)){
-			$where_array = $query_params[0];
-		}else{
-			$where_array = array();
-		}
-		if($where_array){
-			$join_sql_and_data_types = $this->_extract_related_models_from_query($where_array);
-			$extra_joins = $join_sql_and_data_types->get_join_sql();
-			$where_clause = $this->_construct_where_clause($where_array, $join_sql_and_data_types->get_data_types());
-		}else{
-			$where_clause = '';
-			$extra_joins = '';
-		}
-		
-		$SQL ="SELECT * FROM ".$this->_construct_internal_join().$extra_joins." WHERE $where_clause";
+		$model_query_info = $this->_create_model_query_info_carrier($query_params);
+		$SQL ="SELECT * FROM ".$model_query_info->get_full_join_sql()." WHERE ".$model_query_info->get_where_sql();
 		echo "sql to run:$SQL";
 		return $wpdb->get_results($SQL);
 		
 	}
+	
+	function _extract_where_parameters($query_params){
+		if(array_key_exists(0,$query_params)){
+			$where_array = $query_params[0];
+		}else{
+			$where_array = array();
+		}
+		return $where_array;
+	}
+	/**
+	 * 
+	 * @param array $cols_n_values keys are model fields (exactly like keys in EEM_Experimental::_fields), values are strings, ints, floats, and maybe arrays if theyare to be serialized
+	 * @param array $query_params very much like EEM_Experimental_Base::get_all's $query_params
+	 * @return int how many rows got updated
+	 */
+	function update($cols_n_values, $query_params){
+		$model_query_info = $this->_create_model_query_info_carrier($query_params);
+		//$SQL =
+		EE_Error::add_error("EEM_ExperimetnaL_Base::update not yet implemented");
+		return 25;//how many supposedly got updated
+	}
+	/**
+	 * 
+	 * @param array $query_params very much like EEM_Experimental_Base::get_all's $query_params
+	 * @return int how many rows got deleted
+	 */
+	function delete($query_params){
+		EE_Error::add_error("EEM_ExperimetnaL_Base::delete not yet implemented");
+		return 23;//how many supposedly got delteed
+	}
+	/**
+	 * Adds a relationship of the correct type between $modelObject and $otherModelObject. 
+	 * There are the 3 cases:
+	 * 
+	 * 'belongsTo' relationship: sets $modelObject's foreign_key to be $otherModelObejct's primary_key. If $otherModelObject has no ID, it is first saved.
+	 * 
+	 * 'hasMany' relationship: sets $otherModelObject's foreign_key to be $modelObject's primary_key. If $modelObject has no ID, it is first saved.
+	 * 
+	 * 'hasAndBelongsToMany' relationships: checks that there isn't already an entry in the join table, and adds one.
+	 * If one of the model Objects has not yet been saved to teh database, it is saved before adding the entry in the join table
+	 * 
+	 * @param EE_Base_Class $thisModelObject
+	 * @param mixed $id_or_obj EE_base_Class or ID of other Model Object
+	 * @param string $relationName
+	 * @param array $extraColumnsForHABTM mapping from column/attribute names to values for JOIN tables with extra columns. Eg, when adding 
+	 * an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specificy array('role-column-name'=>'role-id')
+	 * @return boolean of success
+	 */
+	public function add_relation_to($id_or_obj,$otherModelObjectOrID, $relationName,$extraColumnsForHABTM=null){
+		EE_Error::add_error("EEM_ExperimetnaL_Base::add_relation_to not yet implemented");
+	}
+	
+	/**
+	 * Removes a relationship of the correct type between $modelObject and $otherModelObject. 
+	 * There are the 3 cases:
+	 * 
+	 * 'belongsTo' relationship: sets $modelObject's foreign_key to null, if that field is nullable.Otherwise throws an error
+	 * 
+	 * 'hasMany' relationship: sets $otherModelObject's foreign_key to null,if that field is nullable.Otherwise throws an error
+	 * 
+	 * 'hasAndBelongsToMany' relationships:remoevs any existing entry in the join table between the two models.
+	 * 
+	 * @param EE_TempBase $id_or_obj
+	 * @param mixed $otherModelObjectOrID EE_base_Class or ID of other Model Object
+	 * @param string $relationName
+	 * @return boolean of success
+	 */
+	public function remove_relationship_to($id_or_obj,  $otherModelObjectOrID, $relationName){
+		EE_Error::add_error("EEM_ExperimetnaL_Base::remove_relation_to not yet implemented");
+	}
+	
 	
 	/**
 	 * 
@@ -111,7 +170,7 @@ abstract class EEM_Experimental_Base{
 	 * @param array $query_params like EEM_Experimental_Base::get_all
 	 * @return EE_Base_Class
 	 */
-	function get_related($id_or_obj, $model_name, $query_params = null){
+	function get_all_related($id_or_obj, $model_name, $query_params = null){
 		//get that related model
 		$related_model = $this->get_related_model_obj($model_name);
 		//we're just going to use teh query params on the related model's normal get_all query,
@@ -119,6 +178,18 @@ abstract class EEM_Experimental_Base{
 		
 		$query_params['where']['Event.EVT_ID']=$id_or_obj;
 		return $related_model->get_all($query_params);
+	}
+	/**
+	 * Uses $this->_relatedModels info to find the first related model object of relation $relationName to the given $modelObject
+	 * @param EE_Base_Class'child $modelObject one of EE_Answer, EE_Attendee, etc. 
+	 * @param mixed $id_or_obj EE_Base_Class child or its ID
+	 * @param string $other_model_name, key in $this->_relatedModels, eg 'Registration', or 'Events'
+	 * @return EE_Base_Class
+	 */
+	public function get_first_related(EE_Base_Class $id_or_obj,$other_model_name,$query_params){
+		$query_params['limit']=1;
+		$results = get_all_related($id_or_obj,$other_model_name,$query_params);
+		return array_shift($results);
 	}
 	
 	/**
@@ -143,6 +214,8 @@ abstract class EEM_Experimental_Base{
 		}
 		return $new_id;
 	}
+	
+	
 	/**
 	 * Inserts a new row in $table, using the $cols_n_values which apply to that table.
 	 * If a $new_id is supplied and if $table is an EE_Other_Table, we assume
@@ -160,6 +233,10 @@ abstract class EEM_Experimental_Base{
 		$format_for_insertion = array();
 		$fields_on_table = $this->_get_fields_for_table($table->get_table_alias());
 		foreach($fields_on_table as $field_name => $field_obj){
+			//first check if this is a primary key field. If so, that should be auto-incremented, not set during insertion
+			if($field_obj instanceof EE_Primary_Key_Int_Field){
+				continue;
+			}
 			if(array_key_exists($field_name, $cols_n_values)){
 				//they have specified teh value for thi sfield, so use it
 				$insertion_col_n_values[$field_obj->get_table_column()] = $cols_n_values[$field_name];
@@ -233,16 +310,36 @@ abstract class EEM_Experimental_Base{
 	 * related models. But if the array were array('Registrations.REG_ID'=>3), we'd need the related Registration model.
 	 * If it were array('Registrations.Transactions.Payments.PAY_ID'=>3), then we'd need the related Registration, Tranaction, and Payment models.
 	 * @param array $where_paramslike EEM_Experimental_Base::get_all's $query_parameters['where']
-	 * @return EEM_Exp_Related_Model_Info_Carrier
+	 * @return EE_Model_Query_Info_Carrier
 	 */
 	function _extract_related_models_from_query($where_params){
-		$join_sql_and_data_types = new EEM_Exp_Related_Model_Info_Carrier();
+		$join_sql_and_data_types = new EE_Model_Query_Info_Carrier();
 		if(!empty($where_params)){
 			foreach(array_keys($where_params) as $param){
 				//$param could be simply 'EVT_ID', or it could be 'Registrations.REG_ID', or even 'Registrations.Transactions.Payments.PAY_amount'
 				$this->_extract_related_model_info_from_query_param( $param, $join_sql_and_data_types);
 			}
 		}
+		return $join_sql_and_data_types;
+	}
+	
+	/**
+	 * Extract all the query parts from $query_params (an array like whats passed to EEM_Experimental_Base::get_all)
+	 * and put into a EEM_Exp_Related_Model_Info_Carrier for easy extraction into SQL. We create this object
+	 * instead of directly constructing teh SQL because often we need to extract info from the $query_params
+	 * but use them in a different order. Eg, we need to know what models we are querying
+	 * before we know what joins to perform. However, we need to know what data types correspond to which fields on other
+	 * models before we can finalize the where clause SQL.
+	 * @param array $query_params
+	 * @return EE_Model_Query_Info_Carrier
+	 */
+	function _create_model_query_info_carrier($query_params){
+		$where_array = $this->_extract_where_parameters($query_params);
+		if($where_array){
+			$join_sql_and_data_types = $this->_extract_related_models_from_query($where_array);
+			$join_sql_and_data_types->set_where_sql( $this->_construct_where_clause($where_array, $join_sql_and_data_types->get_data_types()));
+		}
+		$join_sql_and_data_types->set_main_model_join_sql($this->_construct_internal_join());
 		return $join_sql_and_data_types;
 	}
 	
@@ -254,7 +351,7 @@ abstract class EEM_Experimental_Base{
 	 * @param string $query_param like Registration.Transaction.TXN_ID
 	 * @return void only modifies the EEM_Exp_Related_Model_Info_Carrier passed into it
 	 */
-	function _extract_related_model_info_from_query_param($query_param, EEM_Exp_Related_Model_Info_Carrier $join_sql_and_data_types){
+	function _extract_related_model_info_from_query_param($query_param, EE_Model_Query_Info_Carrier $join_sql_and_data_types){
 		foreach($this->_model_relations as $valid_related_model_name=>$relation_obj){
 			//check to see if the $query_param starts with $valid_related_model_name
 			//eg if 'Registration' is at the start of 'Registration.Transaction.TXN_ID'
@@ -268,14 +365,14 @@ abstract class EEM_Experimental_Base{
 				//If so, join first to the JOIN table, and add its data types, and then continue as normal
 				if($relation_obj instanceof EE_Exp_HABTM){
 					$join_model_obj = $relation_obj->get_join_model();
-					$new_join_sql_and_data_types = new EEM_Exp_Related_Model_Info_Carrier(
+					$new_join_sql_and_data_types = new EE_Model_Query_Info_Carrier(
 							array($join_model_obj->get_this_model_name()), 
 							$relation_obj->get_join_to_intermediate_model_statement(), 
 							$join_model_obj->_get_data_types());
 					$join_sql_and_data_types->merge( $new_join_sql_and_data_types  );
 				}
 				//now just join to the other table pointed to by the relation object, and add its data types
-				$new_join_sql_and_data_types = new EEM_Exp_Related_Model_Info_Carrier(
+				$new_join_sql_and_data_types = new EE_Model_Query_Info_Carrier(
 						array($valid_related_model_name), 
 						$relation_obj->get_join_statement(), 
 						$related_model_obj->_get_data_types());
@@ -303,21 +400,9 @@ abstract class EEM_Experimental_Base{
 			$data_type = $data_types[$qualified_column_sql];
 			$op_and_value_sql = $this->_construct_op_and_value($op_and_value, $data_type);
 			$where_clauses[]=$qualified_column_sql.SP.$op_and_value_sql;
-//			//check for special case of 'in' operators like 'IN' or 'NOT_IN'
-//			if(in_array($operator, $this->_in_style_operators)){
-//				//in this case, the value should be an array, or at least a comma-seperated list
-//				//it will need to handle a little differently
-//				$cleaned_value = $this->_construct_in_value($op_and_value, $data_types[$qualified_column_sql]);
-//				//note: $cleaned_value has already been run through $wpdb->prepare()
-//				$where_clauses[] = $wpdb->prepare( $qualified_column_sql.$operator).$cleaned_value;
-//			}else{
-//				$where_clauses[] = $wpdb->prepare( $qualified_column_sql.$operator.$data_types[$qualified_column_sql],$op_and_value);
-//			}
 		}
 		$SQL = implode($glue,$where_clauses);
 		return $SQL;
-		//@todo recurse
-		
 	}
 	
 	/**
@@ -495,7 +580,6 @@ abstract class EEM_Experimental_Base{
 	}
 	
 }
-
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //concrete children of EEM_Experimental_Base
 class EEM_Exp_Event extends EEM_Experimental_Base{
@@ -1083,7 +1167,7 @@ class EE_Other_Table extends EE_Table{
 		$table_name = $this->get_table_name();
 		$table_alias = $this->get_table_alias();
 		$other_table_alias = $this->get_table_to_join_with()->get_table_alias();
-		$other_table_pk = $this->get_table_to_join_with()->get_pk();
+		$other_table_pk = $this->get_table_to_join_with()->get_pk_column();
 		$fk = $this->get_fk_on_table();
 		return " LEFT JOIN $table_name AS $table_alias ON $other_table_alias.$other_table_pk = $table_alias.$fk ";
 	}
@@ -1111,7 +1195,7 @@ class EE_Main_Table extends EE_Table{
 * We could have returned an array
 * with two keys 'join_sql' and 'data_types', but this better-defines the data being passed around
 */
-class EEM_Exp_Related_Model_Info_Carrier extends EE_Base{
+class EE_Model_Query_Info_Carrier extends EE_Base{
    /**
 	* @var string SQL for performing joins (Eg, "INNER JOIN blah ON blah=blah INNER JOIN FOO ON foo=foo...")
 	*/
@@ -1126,6 +1210,23 @@ class EEM_Exp_Related_Model_Info_Carrier extends EE_Base{
     * @var array numerically-indexed array stating all the models that have been included thus far,so we don't get duplicates
     */
    private $_models_included;
+   /**
+    * After we've acquired all the data types, we can create this sql.
+    * @var string 
+    */
+   private $_where_sql;
+   /**
+    * Full join sql. Eg, in a select query, that's everything after the "FROM", and before the "WHERE", so it includes
+    * the declaration of the main model's tables, and then appends all the joining sql to other models
+    * @var string 
+    */
+   private $_main_join_sql;
+   /**
+    * 
+    * @param type $model_included_name
+    * @param type $join_sql
+    * @param type $data_types
+    */
    public function __construct($model_included_name= array(), $join_sql = '', $data_types =array()){
 	   $this->_models_included = $model_included_name;
 	   $this->_join_sql = $join_sql;
@@ -1134,13 +1235,13 @@ class EEM_Exp_Related_Model_Info_Carrier extends EE_Base{
    
    /**
     * Merges info from the other EEM_Exp_Related_Model_Info_Carrier into this one.
-    * @param EEM_Exp_Related_Model_Info_Carrier $other_join_sql_and_data_types_carrier
+    * @param EE_Model_Query_Info_Carrier $other_join_sql_and_data_types_carrier
     */
    public function merge( $other_join_sql_and_data_types_carrier ){
 	   if( $other_join_sql_and_data_types_carrier && ! $this->_have_already_included_one_of_these_models($other_join_sql_and_data_types_carrier->get_model_names_included())){
 		   $model_included_on_other_join_sql_and_data_types_carrier =  $other_join_sql_and_data_types_carrier->get_model_names_included();
 		   $this->_models_included = array_merge( $this->_models_included, $model_included_on_other_join_sql_and_data_types_carrier );
-			$this->_join_sql .= $other_join_sql_and_data_types_carrier->get_join_sql();
+			$this->_join_sql .= $other_join_sql_and_data_types_carrier->_join_sql;
 			$this->_data_types = $this->_data_types + $other_join_sql_and_data_types_carrier->get_data_types();
 	   }
 	   //otherwise don't merge our data.
@@ -1164,10 +1265,30 @@ class EEM_Exp_Related_Model_Info_Carrier extends EE_Base{
    public function get_model_names_included(){
 	   return $this->_models_included;
    }
-   public function get_join_sql(){
-	   return $this->_join_sql;
-   }
    public function get_data_types(){
 	   return $this->_data_types;
+   }
+   /**
+    * sets the $where_sql for later use from client code
+    * @param string $where_sql
+    */
+   public function set_where_sql($where_sql){
+	   $this->_where_sql = $where_sql;
+   }
+   public function get_where_sql(){
+	   return $this->_where_sql;
+   }
+   /**
+    * Prepends the main model join sql onto the already-added other-model-join-sql,
+    * to make the full join sql statement (in a select, that's everything after the FROM and before
+    * the WHERE. In an update that's everything after the UPDATE and before the SET. In a delete, that's
+    * after the FROM and before the WHERE.)
+    * @param string $join_sql
+    */
+   public function set_main_model_join_sql($join_sql){
+	   $this->_main_join_sql = $join_sql;
+   }
+   public function get_full_join_sql(){
+	   return $this->_main_join_sql . $this->_join_sql;
    }
 }
