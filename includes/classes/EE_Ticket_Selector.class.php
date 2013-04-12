@@ -33,6 +33,16 @@ class EE_Ticket_Selector extends EE_BASE {
 
 
 
+	/**
+	* whether the registration is being added by an admin
+	*
+	* @access protected
+	* @var boolean
+	*/
+	protected $_added_by_admin = NULL;
+
+
+
 
 
 
@@ -41,9 +51,10 @@ class EE_Ticket_Selector extends EE_BASE {
 	* 	@Constructor
 	* 	@access 	public
 	* 	@param	object 			$event  
+	* 	@param	boolean 		$added_by_admin  whether the registration is being added by an admin
 	* 	@return 	void
 	*/
-	public function __construct( $event = FALSE ) {
+	public function __construct( $event = FALSE, $added_by_admin = FALSE ) {
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		
 		if ( ! $event ) {
@@ -58,6 +69,7 @@ class EE_Ticket_Selector extends EE_BASE {
 		}		
 		
 		$this->_event = $event;
+		$this->_added_by_admin = $added_by_admin;
 		$this->load_tckt_slctr_js();
 		$this->_display_ticket_selector();
 
@@ -72,9 +84,10 @@ class EE_Ticket_Selector extends EE_BASE {
 	*
 	*	@access 	public
 	* 	@param	object 			$event  
+	* 	@param	boolean 		$added_by_admin  whether the registration is being added by an admin
 	* 	@return 	void	
 	*/
-	public static function init( $event = FALSE ) {	
+	public static function init( $event = FALSE, $added_by_admin = FALSE ) {	
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	
 		if ( ! $event ) {
@@ -84,7 +97,7 @@ class EE_Ticket_Selector extends EE_BASE {
 			return FALSE;
 		}
 	
-		new self( $event );
+		new self( $event, $added_by_admin );
 	}
 
 
@@ -298,6 +311,8 @@ class EE_Ticket_Selector extends EE_BASE {
 		
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		
+		//printr( $_POST, '$_POST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		
 		// do we have an event id?
 		if ( isset($_POST['tkt-slctr-event-id'] )) {
 		
@@ -328,7 +343,7 @@ class EE_Ticket_Selector extends EE_BASE {
 				for ( $x = 0; $x < $valid['rows']; $x++ ) {
 		
 					// does this row actually contain a ticket quantity?
-					if ($valid['qty'][$x] > 0) {		
+					if ( isset( $valid['qty'][$x] ) && $valid['qty'][$x] > 0 ) {		
 						// YES we have a ticket quantity				
 						$tckts_slctd = TRUE;
 						// throw valid data into a new array
@@ -392,7 +407,7 @@ class EE_Ticket_Selector extends EE_BASE {
 					EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 				}				
 			}
-
+//die();
 			if ( isset( $_POST['tkt-slctr-return-url-'.$valid['id']] )) {
 				$return_url = add_query_arg( EE_Error::get_notices( FALSE, TRUE ), $_POST['tkt-slctr-return-url-'.$valid['id']] );
 				wp_safe_redirect( $return_url );
@@ -481,21 +496,45 @@ class EE_Ticket_Selector extends EE_BASE {
 						break;
 
 					// arrays of integers
-					case 'dtt_id':
-					case 'time':
 					case 'qty':
 						// grab the array
-						$ints = $_POST[$input_to_clean . $id];
+						$row_qty =$_POST[$input_to_clean . $id];						
+//						$ints = is_array( $_POST[$input_to_clean . $id] ) ? $_POST[$input_to_clean . $id] : array( $_POST[$input_to_clean . $id] );						
+						// if qty is coming from a radio button input, then we need to assemble an array of rows
+						if( ! is_array( $_POST[$input_to_clean . $id] )) {
+							// get number of rows
+							$rows = isset( $_POST['tkt-slctr-rows-' . $id] ) ? absint( $_POST['tkt-slctr-rows-' . $id] ) : 1;
+							//echo '<h4>$rows : ' . $rows . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+							// explode ints by the dash
+							$row_qty = explode( '-', $row_qty );
+							$row = isset( $row_qty[0] ) ? ( absint( $row_qty[0] )+1 ) : 1;
+							$qty = isset( $row_qty[1] ) ? absint( $row_qty[1] ) : 0;
+							$row_qty = array( $row => $qty );
+							//printr( $row_qty, '$row_qty  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+							for( $x = 1; $x <= $rows; $x++ ) {
+								if ( ! isset( $row_qty[$x] )) {
+									$row_qty[$x] = 0;
+								}
+							}
+						}
+						ksort( $row_qty );
+						//printr( $row_qty, '$row_qty  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+						// cycle thru values
+						foreach ($row_qty as $qty) {
+							// sanitize as integers
+							$valid_data[$what][] = absint($qty);
+							$valid_data['total_tickets'] = $valid_data['total_tickets'] + absint($qty);
+						}
+						break;
+						
+					case 'dtt_id':
+					case 'time':
+						// grab the array
+						$ints =$_POST[$input_to_clean . $id];						
 						// cycle thru values
 						foreach ($ints as $int) {
 							switch ($what ) {
-								case 'qty' :
-									// sanitize as integers
-									$valid_data[$what][] = absint($int);
-									$qty = absint($int);
-									$valid_data['total_tickets'] = $valid_data['total_tickets'] + $qty;
-									break;
-									
+																	
 								case 'time' :
 									$time = absint($int);
 									$valid_data[$what][] = date( 'g:i a', $time);

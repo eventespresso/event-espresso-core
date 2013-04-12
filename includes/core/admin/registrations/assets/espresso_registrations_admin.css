@@ -119,3 +119,8 @@
 .display-the-hidden { float:right; padding-left:16px; cursor:pointer; }
 .hide-the-displayed { float:right; padding-left:16px; cursor:pointer; }
 
+.tkt-slctr-tbl { min-width:530px; margin-bottom:1em; border:none; border-bottom: 1px solid #EDEDED; border-collapse: collapse; border-spacing: 0;}
+.tkt-slctr-tbl th { padding:.5em 1em .5em 0; border:none; font-size:1em; line-height:1em; text-align:left; }
+.tkt-slctr-tbl td { padding:.5em 1em .5em 0; border:none; border-top: 1px solid #EDEDED; font-size:1em; line-height:1em; }
+.tkt-slctr-tbl .tckt-slctr-tbl-td-qty { padding-right:0; }
+

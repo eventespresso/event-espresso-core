@@ -539,6 +539,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		}
 
 		$this->_template_args['grand_total'] = $this->_transaction->TXN_total;
+		$this->_template_args['TXN_status'] = $this->_transaction->STS_ID;
 
 
 		$this->_template_args['currency_sign'] = $org_options['currency_symbol'];

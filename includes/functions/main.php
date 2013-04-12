@@ -1396,7 +1396,7 @@ function getCountryFullData($id, $lang = "en") {
 function printCountriesSelector($name, $selected) {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$selected = intval($selected);
-	$countries = getCountriesArray("es");
+	$countries = getCountriesArray("en");
 
 	echo "<select name='" . $name . "'>";
 	for ($t = 0; $t < sizeof($countries); $t++) {

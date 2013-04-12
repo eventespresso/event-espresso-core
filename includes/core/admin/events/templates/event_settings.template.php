@@ -11,7 +11,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input( 'expire_on_registration_end', $values, $expire_on_registration_end ); ?>
+					<p><?php echo EE_Form_Fields::select_input( 'expire_on_registration_end', $values, $expire_on_registration_end ); ?></p>
 					<p class="description">
 						<?php _e('If set to "Yes", then as soon as an event\'s registration end date has passed, the event will become inactive, and will no longer appear in your event listings.', 'event_espresso'); ?>
 					</p>
@@ -26,7 +26,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('default_reg_status', $reg_status_array, $default_reg_status ) ?>
+					<p><?php echo EE_Form_Fields::select_input('default_reg_status', $reg_status_array, $default_reg_status ) ?></p>
 					<p class="description">
 						<?php _e('This value will be automatically filled in for each person\'s registration status, until payment is made, for each event.', 'event_espresso'); ?>
 					</p>
@@ -37,11 +37,11 @@
 				<th>
 					<label for="pending_counts_reg_limit">
 						<?php _e('Pending Registrations Count Towards Registration Limits', 'event_espresso'); ?>
-						<?php echo EE_Template::get_help_tab_link('payment_status_info'); ?>
+						<?php //echo EE_Template::get_help_tab_link('payment_status_info'); ?>
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('pending_counts_reg_limit', $values, $pending_counts_reg_limit) ?>
+					<p><?php echo EE_Form_Fields::select_input('pending_counts_reg_limit', $values, $pending_counts_reg_limit) ?></p>
 					<p class="description">
 						<?php _e('If set to "Yes", then attendee\'s whose registration status is set to "Pending" will still count towards an Event\'s registration limit, and therefore also affect the number of spaces available, tickets left, and seating options (if applicable).', 'event_espresso'); ?>
 					</p>
@@ -56,7 +56,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('use_attendee_pre_approval', $values, $use_attendee_pre_approval ); ?>
+					<p><?php echo EE_Form_Fields::select_input('use_attendee_pre_approval', $values, $use_attendee_pre_approval ); ?></p>
 					<p class="description">
 						<?php _e('Attendeess will be marked as pending approval, until an administrator manually changes their status to approved via the Registrations Admin page.', 'event_espresso'); ?>
 					</p>

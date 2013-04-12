@@ -12,7 +12,7 @@
 					<th class="jst-left"><?php _e( 'Event Name', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Event Date', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Ticket Option', 'event_espresso' );?></th>
-					<th class="jst-cntr"><?php _e( 'Price Paid', 'event_espresso' );?></th>
+					<th class="jst-cntr"><?php _e( 'Ticket Price', 'event_espresso' );?></th>
 					<th class="jst-cntr"><?php _e( 'Qty', 'event_espresso' );?></th>
 					<th class="jst-cntr"><?php _e( 'Line Total', 'event_espresso' );?></th>
 				</tr>
@@ -23,7 +23,7 @@
 				<td class="jst-left"><?php echo $item['line_item'];?></td>
 				<td class="jst-left"><?php echo $item['name'];?></td>
 				<td class="jst-left"><?php echo date( 'D M j, Y', $item['date'] ) . ',    ' . date( 'g:i a', $item['time'] );?></td>
-				<td class="jst-left"><?php echo $item['price_desc'];?></td>
+				<td class="jst-left"><?php echo stripslashes( $item['price_desc'] );?></td>
 				<td class="jst-rght"><?php echo $currency_sign . '&nbsp;' . number_format( $item['price'], 2 );?></td>
 				<td class="jst-rght"><?php echo $item['qty'];?></td>
 				<td class="jst-rght"><?php echo $currency_sign . '&nbsp;' . number_format( $item['line_total'], 2 );?></td>
@@ -79,7 +79,7 @@
 	<br class="clear"/>
 	
 
-	<?php if ( $grand_total > 0 ) : ?>
+	<?php if ( $grand_total > 0 || $TXN_status != 'TCM' ) : ?>
 
 	<h4 class="admin-primary-mbox-h4 hdr-has-icon">
 		<img id="cash-single" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/cash-single-16x16.png" alt="" /><?php _e( 'Payment Details', 'event_espresso' );?>

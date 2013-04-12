@@ -250,7 +250,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'label' => __('Edit Message Templates', 'event_espresso'),
 					'order' => 5,
 					'persistent' => FALSE,
-					'url' => !empty($edit_query_args) ? add_query_arg( $edit_query_args, $this->_current_page_view_url ) : $this->_admin_base_url
+					'url' => ''
 					),
 				'metaboxes' => array('_publish_post_box', '_register_edit_meta_boxes'),
 				'has_metaboxes' => TRUE,
@@ -2264,9 +2264,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$settings_template_args['description'] = $messenger->description;
 		$settings_template_args['show_hide_edit_form'] = $active ? '' : ' hidden';
 
-		$settings_template_args['show_hide_edit_form'] = empty( $settings_template_args['template_form_fields'] ) ? ' hidden' : $settings_template_args['show_hide_edit_form'];
 
 		$settings_template_args['show_hide_edit_form'] = isset( $this->_active_messengers[$messenger->name] ) ? $settings_template_args['show_hide_edit_form'] : ' hidden';
+
+		$settings_template_args['show_hide_edit_form'] = empty( $settings_template_args['template_form_fields'] ) ? ' hidden' : $settings_template_args['show_hide_edit_form'];
 
 
 		$settings_template_args['on_off_action'] = $active ? 'messenger-off' : 'messenger-on';

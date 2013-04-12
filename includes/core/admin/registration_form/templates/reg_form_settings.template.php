@@ -15,7 +15,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input( 'use_captcha', $values, $use_captcha, 'id="admin-recaptcha-settings-slct"' ); ?>
+					<p><?php echo EE_Form_Fields::select_input( 'use_captcha', $values, $use_captcha, 'id="admin-recaptcha-settings-slct"' ); ?></p>
 					<p class="description">
 						<?php 
 							echo sprintf( 
@@ -58,7 +58,7 @@
 		</tbody>
 	</table>
 
-	<h4 class="ee-admin-settings-hdr">
+	<h4 class="ee-admin-settings-hdr admin-recaptcha-settings-hdr">
 		<?php _e('reCAPTCHA Appearance', 'event_espresso'); ?>
 	</h4>
 				

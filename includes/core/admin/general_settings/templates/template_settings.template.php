@@ -358,5 +358,3 @@
 	} ?>
 
 </div>
-
-<?php include_once( GEN_SET_TEMPLATE_PATH . 'templates_help.php' ); ?>

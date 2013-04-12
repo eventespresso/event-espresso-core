@@ -380,7 +380,7 @@ if (!function_exists('espresso_secondary_events_dd')) {
 		$num_rows = $wpdb->num_rows;
 		//return print_r( $events );
 		if ($num_rows > 0) {
-			$field = '<select name="overflow_event_id" id="overflow_event_id" class="chzn-select wide">\n';
+			$field = '<select name="overflow_event_id" id="overflow_event_id">\n';
 			$field .= '<option value="0">Select an event</option>';
 
 			foreach ($events as $event) {
@@ -422,7 +422,7 @@ function espresso_db_dropdown($intIdField, $strNameField, $strTableName, $strOrd
 	//print_r($data);
 	$strDDName = $strDDName != "" ? $strDDName : $strNameField;
 	if ($wpdb->num_rows > 0) {
-		echo '<select name="' . $strDDName . '" class="chzn-select wide">';
+		echo '<select name="' . $strDDName . '">';
 		echo '<option value="">' . __('Select Value', 'event_espresso') . '</option>';
 
 		/*		 * * loop over the results ** */

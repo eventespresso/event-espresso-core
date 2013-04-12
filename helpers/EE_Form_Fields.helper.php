@@ -446,6 +446,8 @@ class EE_Form_Fields {
 			return;
 		}
 		
+		//printr( $question, '$question  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		
 		$display_text = isset( $question['QST_display_text'] ) ? $question['QST_display_text'] : FALSE;
 		$answer = isset( $question['ANS_value'] ) ? $question['ANS_value'] : '';
 		$input_name = isset( $question['QST_input_name'] ) ? $question['QST_input_name'] : FALSE;
@@ -456,31 +458,32 @@ class EE_Form_Fields {
 		$required = $question['QST_required'] ? array( 'label' => $required_label, 'class' => 'required', 'title' => $question['QST_required'] ) : array();
 		$label_class = 'espresso-form-input-lbl';		
 		$options = isset( $question['QST_options'] ) ? self::prep_answer_options( $question['QST_options'] ) : array();
+		$system_ID = isset( $question['QST_system_ID'] ) ? $question['QST_system_ID'] : FALSE;
 
 		switch ( $question['QST_type'] ){
 			
 			case 'TEXT' :
-					return self::text( $display_text, $answer, $input_name, $input_id, $input_class, $required, $label_class, $disabled );
+					return self::text( $display_text, $answer, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID );
 				break;
 
 			case 'TEXTAREA' :
-					return self::textarea( $display_text, $answer, $input_name, $input_id, $input_class, array(), $required, $label_class, $disabled );
+					return self::textarea( $display_text, $answer, $input_name, $input_id, $input_class, array(), $required, $label_class, $disabled, $system_ID );
 				break;
 
 			case 'DROPDOWN' :
-					return self::select( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled );
+					return self::select( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID );
 				break;
 
 			case 'SINGLE' :
-					return self::radio( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled );
+					return self::radio( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID );
 				break;
 
 			case 'MULTIPLE' :
-					return self::checkbox( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled );
+					return self::checkbox( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID );
 				break;
 
 			case 'DATE' :
-					return self::datepicker( $display_text, $answer, $input_name, $input_id, $input_class, $required, $label_class, $disabled );
+					return self::datepicker( $display_text, $answer, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID );
 				break;
 
 		}
@@ -506,7 +509,7 @@ class EE_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function text( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '' ) {
+	static function text( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE ) {
 		// need these
 		if ( ! $question || ! $name ) {
 			return NULL;
@@ -520,6 +523,7 @@ class EE_Form_Fields {
 		// ya gots ta have style man!!!
 		$txt_class = is_admin() ? 'regular-text' : 'espresso-text-inp';
 		$class = empty( $class ) ? $txt_class : $class;
+		$class = $system_ID == 3 ? $class . ' email' : $class;
 		$extra = apply_filters( 'filter_hook_espresso_additional_form_field_attributes', '' );
 
 		$label_html = "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
@@ -550,7 +554,7 @@ class EE_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function textarea( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $dimensions = FALSE, $required = FALSE, $label_class = '', $disabled = '' ) {
+	static function textarea( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $dimensions = FALSE, $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE ) {
 		// need these
 		if ( ! $question || ! $name ) {
 			return NULL;
@@ -599,7 +603,7 @@ class EE_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function select( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '' ) {
+	static function select( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE ) {
 		// need these
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
 			return NULL;
@@ -653,7 +657,7 @@ class EE_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function radio( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $label_b4 = FALSE ) {
+	static function radio( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $label_b4 = FALSE, $system_ID = FALSE ) {
 		// need these
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
 			return NULL;
@@ -718,7 +722,7 @@ class EE_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function checkbox( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $label_b4 = FALSE ) {
+	static function checkbox( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $label_b4 = FALSE, $system_ID = FALSE ) {
 		// need these
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
 			return NULL;
@@ -788,7 +792,7 @@ class EE_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function datepicker( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '' ) {
+	static function datepicker( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE ) {
 		// need these
 		if ( ! $question || ! $name ) {
 			return NULL;

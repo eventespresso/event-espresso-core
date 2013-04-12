@@ -60,7 +60,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 				EEM_Payment::status_id_pending, 
 				$transaction->datetime(), 
 				'CART', // this should be the type of payment as in Invoice, Money Order, Credit Card, PayPal, etc
-				$transaction->total(), 
+				NULL, 
 				$this->gateway(), 
 				__("Payment is pending. Your registration is not complete until payment is received",'event_espresso'),
 				null,

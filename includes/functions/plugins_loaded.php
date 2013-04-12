@@ -386,7 +386,7 @@ function espresso_printr_session() {
 		echo __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 	}
 }
-add_action( 'shutdown', 'espresso_printr_session' );
+//add_action( 'shutdown', 'espresso_printr_session' );
 
 
 
@@ -753,7 +753,7 @@ function espresso_site_license() {
 		//	'optionName' => '', //(optional) - used as the reference for saving update information in the clients options table.  Will be automatically set if left blank.
 			'apikey' => $api_key, //(required), you will need to obtain the apikey that the client gets from your site and then saves in their sites options table (see 'getting an api-key' below)
 			'lang_domain' => 'event_espresso', //(optional) - put here whatever reference you are using for the localization of your plugin (if it's localized).  That way strings in this file will be included in the translation for your plugin.
-			'checkPeriod' => '12', //(optional) - use this parameter to indicate how often you want the client's install to ping your server for update checks.  The integer indicates hours.  If you don't include this parameter it will default to 12 hours.
+			'checkPeriod' => '24', //(optional) - use this parameter to indicate how often you want the client's install to ping your server for update checks.  The integer indicates hours.  If you don't include this parameter it will default to 12 hours.
 			'option_key' => 'site_license_key', //this is what is used to reference the api_key in your plugin options.  PUE uses this to trigger updating your information message whenever this option_key is modified.
 			'options_page_slug' => 'event_espresso'
 		);
