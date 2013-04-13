@@ -15,7 +15,9 @@ abstract class EEM_Experimental_Base{
 	
 	/**
 	 *
-	 * @var EE_Exp_Model_Field_Base[] fieldson this model
+	 * @var array with two levels: top-leve has array keys which are database table aliases (ie, keys in _tables)
+	 * and the value is an array. Each of those sub-arrays have keys of field names (eg 'ATT_ID', which should also be variable names
+	 * on the model objects (eg, EE_Attendee), and the keys should be children of EE_Exp_Model_Field
 	 */
 	var $_fields;
 	/**
@@ -55,6 +57,8 @@ abstract class EEM_Experimental_Base{
 	protected $_in_style_operators = array('IN','NOT_IN');
 	
 	/**
+	 * About all child constructors:
+	 * they should define the _tables, _fields and _model_relations arrays. 
 	 * Should ALWAYS be called after child constructor.
 	 * In order to make the child constructors to be as simple as possible, this parent constructor
 	 * finalizes constructing all the object's attributes. 
@@ -75,6 +79,9 @@ abstract class EEM_Experimental_Base{
 			}
 		}
 		foreach($this->_fields as $table_alis => $fields_for_table){
+			if(!array_key_exists($table_alias,$this->_tables)){
+				throw new EE_Error(sprintf(__("Table alias %s does not exist in EEM_Experimental_Base child's _tables array. Only tables defined are %s",'event_espresso'),$table_alias,implode(",",$this->_fields)));
+			}
 			foreach($fields_for_table as $field_name => $field_obj){
 				$field_obj->_construct_finalize($table_alis,$field_name);
 			}
