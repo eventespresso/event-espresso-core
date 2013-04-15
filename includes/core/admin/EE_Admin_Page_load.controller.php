@@ -148,8 +148,8 @@ class EE_Admin_Page_load {
 	 * @return void
 	 */
 	private function _define_caffeinated_constants() {
-		define( 'EE_CORE_CAF_ADMIN', EE_CORE_ADMIN . 'caffeinated/');
-		define( 'EE_CORE_CAF_ADMIN_URL', EE_CORE_ADMIN_URL . 'caffeinated/');
+		define( 'EE_CORE_CAF_ADMIN', EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/admin/');
+		define( 'EE_CORE_CAF_ADMIN_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'caffeinated/admin/');
 	}
 
 
@@ -212,7 +212,7 @@ class EE_Admin_Page_load {
 	 */
 	private function _get_installed_pages() {
 		$installed_refs = array();
-		$exclude = array( 'assets', 'caffeinated');
+		$exclude = array( 'assets' );
 		// grab everything in the  admin core directory
 		if ( $admin_screens = glob( EE_CORE_ADMIN . '*', GLOB_ONLYDIR )) {
 			foreach( $admin_screens as $admin_screen ) {
@@ -427,14 +427,14 @@ class EE_Admin_Page_load {
 	private function _set_caffeinated( $installed_refs ) {
 
 		//first let's check if there IS a caffeinated folder. If there is not then lets get out.
-		if ( !is_dir( EE_CORE_ADMIN . 'caffeinated' ) ) return $installed_refs;
+		if ( !is_dir( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/admin' ) ) return $installed_refs;
 
 		$this->_define_caffeinated_constants();
 
 		$exclude = array();
 
 		//okay let's setup an "New" pages first (we'll return installed refs later)
-		if ( $new_admin_screens = glob( EE_CORE_ADMIN . 'caffeinated/new/*', GLOB_ONLYDIR ) ) {
+		if ( $new_admin_screens = glob( EE_CORE_CAF_ADMIN . 'new/*', GLOB_ONLYDIR ) ) {
 
 			foreach( $new_admin_screens as $admin_screen ) {
 				// files and anything in the exclude array need not apply
@@ -447,14 +447,14 @@ class EE_Admin_Page_load {
 		}
 
 		//let's see if there are any EXTENDS to setup in the $_caffeinated_extends array (that will be used later for hooking into the _initialize_admin_age in the related core_init admin page)
-		if ( $extends = glob( EE_CORE_ADMIN . 'caffeinated/extend/*', GLOB_ONLYDIR ) ) {
+		if ( $extends = glob( EE_CORE_CAF_ADMIN . 'extend/*', GLOB_ONLYDIR ) ) {
 			foreach( $extends as $extend ) {
 				if ( is_dir( $extend ) ) {
 					$extend_ref = basename( $extend );
 					//now let's make sure there is a file that matches the expected format
 					$filename = str_replace(' ', '_', ucwords( str_replace('_', ' ', $extend_ref ) ) );
 					$filename = 'Extend_' . $filename . '_Admin_Page';
-					$this->_caffeinated_extends[$extend_ref]['path'] = str_replace( array( '\\', '/' ), DS, EE_CORE_ADMIN . 'caffeinated' . DS . 'extend' . DS . $extend_ref . DS . $filename . '.core.php' );
+					$this->_caffeinated_extends[$extend_ref]['path'] = str_replace( array( '\\', '/' ), DS, EE_CORE_CAF_ADMIN . DS . 'extend' . DS . $extend_ref . DS . $filename . '.core.php' );
 					$this->_caffeinated_extends[$extend_ref]['admin_page'] = $filename;
 				}
 			}
@@ -462,10 +462,10 @@ class EE_Admin_Page_load {
 
 		//let's see if there are any HOOK files and instantiate them if there are (so that hooks are loaded early!).
 		$ee_admin_hooks = array();
-		if ( $hooks = glob( EE_CORE_ADMIN . 'caffeinated/hooks/*.class.php' ) ) {
+		if ( $hooks = glob( EE_CORE_CAF_ADMIN . 'hooks/*.class.php' ) ) {
 			foreach ( $hooks as $hook ) {
 				if ( is_readable( $hook ) ) {
-					require_once EE_CORE_ADMIN . 'hooks/' . $hook;
+					require_once EE_CORE_CAF_ADMIN . 'hooks/' . $hook;
 					$classname = str_replace('.class.php', '', $hook);
 					if ( class_exists( $classname ) ) {
 						$a = new ReflectionClass( $classname );
@@ -530,7 +530,7 @@ class EE_Admin_Page_load {
 	 */
 	public function caffeinated_autoloaders( $className ) {
 		//let's setup an array of paths to check (for each subsystem)
-		$root = dirname(espresso_main_file()) . '/includes/core/admin/caffeinated/';
+		$root = EE_CORE_CAF_ADMIN;
 
 		$dir_ref = array();
 		foreach ( $this->_caf_autoloader as $cafa ) {
