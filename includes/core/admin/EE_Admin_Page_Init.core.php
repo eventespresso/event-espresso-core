@@ -37,6 +37,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 	//set in _set_defaults
 	protected $_folder_name;
+	protected $_folder_path;
 	protected $_file_name;
 	public $hook_file;
 	protected $_wp_page_slug;
@@ -229,6 +230,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 		//we're using this to get the actual folder name of the CALLING class (i.e. the child class that extends this).  Why?  Because $this->menu_slug may be different than the folder name (to avoid conflicts with other plugins)
 		$this->_folder_name = basename(dirname($bt[1]['file']));
+		$this->_folder_path = EE_CORE_ADMIN . $this->_folder_name . DS;
 
 		$this->_file_name = preg_replace( '/^ee/' , 'EE', $this->_folder_name );
 		$this->_file_name = ucwords( str_replace('_', ' ', $this->_file_name) );
@@ -245,10 +247,11 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	public function register_hooks() {
 
 		//get a list of files in the directory that have the "Hook" in their name
-		if ( $hook_files = glob( EE_CORE_ADMIN . $this->_folder_name . DS . '*' . $this->_file_name . '_Hooks.class.php' ) ) {
+		$hook_files_glob_path = apply_filters('filter_hook_espresso_admin_hook_files_glob_path', $this->_folder_path . '*' . $this->_file_name . '_Hooks.class.php' );
+		if ( $hook_files = glob( $hook_files_glob_path ) ) {
 			foreach ( $hook_files as $file ) {
 				//lets get the linked admin.
-				$this->hook_file = str_replace(EE_CORE_ADMIN . $this->_folder_name . DS, '', $file );
+				$this->hook_file = str_replace($this->_folder_path, '', $file );
 				$rel_admin = str_replace( '_' . $this->_file_name . '_Hooks.class.php', '', $this->hook_file);
 				$rel_admin = strtolower($rel_admin);
 				$rel_admin_hook = 'filter_hook_espresso_do_other_page_hooks_' . $rel_admin;
@@ -282,7 +285,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		$admin_page = apply_filters("filter_hooks_espresso_admin_page_for_{$hook_suffix}", $admin_page);
 		
 		// define requested admin page class name then load the file and instantiate
-		$path_to_file = str_replace( array( '\\', '/' ), DS, EE_CORE_ADMIN . $this->_folder_name . DS . $admin_page . '.core.php' );
+		$path_to_file = str_replace( array( '\\', '/' ), DS, $this->_folder_path . $admin_page . '.core.php' );
 		$path_to_file=apply_filters("filter_hooks_espresso_path_to_{$hook_suffix}",$path_to_file );//so if the file would be in EE_CORE_ADMIN/attendees/Attendee_Admin_Page.core.php, the filter would be filter_hooks_espresso_path_to_attendees_Attendee_Admin_Page
 		if ( is_readable( $path_to_file )) {					
 			/**
@@ -324,8 +327,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		}
 
 		return true;
-	}
-	
+	}	
 
 }
 
