@@ -279,8 +279,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
 				),
-
-			'view_reg_form_settings' => array(
+			//todo add below in for 4.1
+			/*'view_reg_form_settings' => array(
 				'nav' => array(
 					'label' => __('Reg Form Settings', 'event_espresso'),
 					'order' => 40
@@ -295,7 +295,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 						'callback' => 'recaptcha_info_help_tab'
 						)
 					)
-				)
+				) */
 			);
 	}
 
