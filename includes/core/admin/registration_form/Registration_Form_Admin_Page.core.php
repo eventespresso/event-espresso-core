@@ -233,14 +233,15 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box')
 				),
 
-			'question_groups' => array(
+			//todo add back in question_groups route in caffeinated in 4.1
+			/*'question_groups' => array(
 				'nav' => array(
 					'label' => __('Question Groups'),
 					'order' => 20
 					),
 				'list_table' => 'Registration_Form_Question_Groups_Admin_List_Table',
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box')
-				),
+				),*/
 
 			'add_question' => array(
 				'nav' => array(
@@ -450,7 +451,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _questions_overview_list_table() {
-		$this->_admin_page_title .= $this->_get_action_link_or_button('add_question', 'add_question', array(), 'button add-new-h2');
+		//todo add back in "Add New Question" in 4.1 dev for caffeinated version
+		//$this->_admin_page_title .= $this->_get_action_link_or_button('add_question', 'add_question', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
 
