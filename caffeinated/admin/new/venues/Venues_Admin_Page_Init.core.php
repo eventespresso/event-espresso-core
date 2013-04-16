@@ -35,7 +35,7 @@ class Venues_Admin_Page_Init extends EE_Admin_Page_Init {
 		//define some event categories related constants
 		define( 'EE_VENUES_PG_SLUG', 'espresso_venues' );	
 		define( 'EE_VENUES_ADMIN_URL', admin_url('admin.php?page=' . EE_VENUES_PG_SLUG ));
-		define( 'EE_VENUES_ASSETS_URL', EE_CORE_CAF_ADMIN_URL . 'venues/assets/');
+		define( 'EE_VENUES_ASSETS_URL', EE_CORE_CAF_ADMIN_URL . 'new/venues/assets/');
 
 		parent::__construct();
 		$this->_folder_path = EE_CORE_CAF_ADMIN . 'new/' . $this->_folder_name . DS;
