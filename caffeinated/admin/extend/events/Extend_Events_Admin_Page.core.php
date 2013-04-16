@@ -44,6 +44,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 //				'func' => '_payment_export',
 //				'noheader' => true
 //				),
+//			'view_report' => '_view_report',
 			);
 
 		$this->_page_routes = array_merge( $this->_page_routes, $new_page_routes );
@@ -104,6 +105,19 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, EVENTS_ADMIN_URL );
 		$actions[] = '<a href="' . $reports_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="reports_btn"></div></a>';*/
 		return $actions;
+	}
+
+
+
+	/**
+	 * _view_report
+	 * Shows the report page for events
+	 * @return string html for the report page
+	 */
+	protected function _view_report() {
+		$this->_admin_page_title .= $this->_get_action_link_or_button('add_event', 'add', array(), 'button add-new-h2');
+		$this->_template_args['admin_page_content'] = 'in here';
+		$this->display_admin_page_with_sidebar();
 	}
 
 

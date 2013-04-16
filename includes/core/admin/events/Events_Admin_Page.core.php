@@ -132,8 +132,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'noheader' => true
 				),
 
-			'view_report' => '_view_report',
-
 			'export_events' => array(
 				'func' => '_events_export',
 				'noheader' => true
@@ -3674,18 +3672,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 	}
 
 
-
-
-	/**
-	 * _view_report
-	 * Shows the report page for events
-	 * @return string html for the report page
-	 */
-	protected function _view_report() {
-		$this->_admin_page_title .= $this->_get_action_link_or_button('add_event', 'add', array(), 'button add-new-h2');
-		$this->_template_args['admin_page_content'] = 'in here';
-		$this->display_admin_page_with_sidebar();
-	}
 
 
 
