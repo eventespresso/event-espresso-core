@@ -16,13 +16,13 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * events_Messages_Hooks
+ * espresso_events_Messages_Hooks
  * Hooks various messages logic so that it runs on indicated Events Admin Pages.
  * Commenting/docs common to all children classes is found in the EE_Admin_Hooks parent.
  * 
  *
- * @package		events_Messages_Hooks
- * @subpackage	includes/core/admin/messages/events_Messages_Hooks.class.php
+ * @package		espresso_events_Messages_Hooks
+ * @subpackage	includes/core/admin/messages/espresso_events_Messages_Hooks.class.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
