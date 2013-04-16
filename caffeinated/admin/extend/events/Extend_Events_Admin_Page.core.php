@@ -66,11 +66,22 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$this->_page_config['add_event']['metaboxes'][] = '_premium_event_editor_meta_boxes';
 		$this->_page_config['default_event_settings']['metaboxes'] = array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box') );
 
+		//add filters and actions
+		//modifying _views
+		add_filter('filter_hook_espresso_list_table_views_espresso_events', array( $this, 'list_table_views') );
+
 	}
 
 
 
+
+	public function list_table_views( $views ) {
+		/*$views['all']['bulk_action']['export_payments'] =  __('Export Payments', 'event_espresso');
+		$views['today']['bulk_action']['export_payments'] =  __('Export Payments', 'event_espresso');
+		$views['month']['bulk_action']['export_payments'] =  __('Export Payments', 'event_espresso');*/
+		return $views;
 	}
+
 
 
 } //end class Events_Admin_Page

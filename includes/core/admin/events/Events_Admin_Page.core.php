@@ -352,8 +352,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'count' => 0,
 				'bulk_action' => array(
 					'delete_events' => __('Delete Permanently', 'event_espresso'),
-					'export_events' => __('Export Events', 'event_espresso'),
-//					'export_payments' => __('Export Payments', 'event_espresso')
+					'export_events' => __('Export Events', 'event_espresso')
 					)
 				),
 			'today' => array(
@@ -363,7 +362,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'bulk_action' => array(
 					'delete_events' => __('Delete Permanently', 'event_espresso'),
 					'export_events' => __('Export Events', 'event_espresso'),
-//					'export_payments' => __('Export Payments', 'event_espresso')
 					)
 				),
 			'month' => array(
@@ -373,7 +371,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'bulk_action' => array(
 					'delete_events' => __('Delete Permanently', 'event_espresso'),
 					'export_events' => __('Export Events', 'event_espresso'),
-//					'export_payments' => __('Export Payments', 'event_espresso')
 					)
 				)
 			);
