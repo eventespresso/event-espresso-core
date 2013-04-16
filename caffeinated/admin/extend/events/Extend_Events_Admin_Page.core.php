@@ -70,6 +70,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		//modifying _views
 		add_filter('filter_hook_espresso_list_table_views_espresso_events', array( $this, 'list_table_views'), 10 );
 		add_filter('filter_hook_espresso_event_legend_items', array( $this, 'event_legend_items'), 10 );
+		add_filter('filter_hook_espresso_list_table_events_actions_column_action_links', array( $this, 'overview_table_action_links' ), 10, 2 );
 
 	}
 
@@ -92,6 +93,17 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				'desc' => __('View Event Reports.', 'event_espresso')
 				);*/
 		return $items;
+	}
+
+
+	public function overview_table_action_links( $actions, $item ) {
+		/*$reports_query_args = array(
+				'action' => 'view_report',
+				'event_id' => $item->event_id
+			);
+		$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, EVENTS_ADMIN_URL );
+		$actions[] = '<a href="' . $reports_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="reports_btn"></div></a>';*/
+		return $actions;
 	}
 
 
