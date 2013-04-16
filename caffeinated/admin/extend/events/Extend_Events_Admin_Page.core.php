@@ -40,7 +40,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		//new routes and new configs (or complete route overrides)
 		$new_page_routes = array(
-			'new_route' => '_new_route_callback',
 //			'export_payments' => array(
 //				'func' => '_payment_export',
 //				'noheader' => true
@@ -50,18 +49,13 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$this->_page_routes = array_merge( $this->_page_routes, $new_page_routes );
 
 		$new_page_config = array(
-			'new_route' => array(
-				'nav' => array(
-					'label' => __('New Tab', 'event_espresso'),
-					'order' => 60
-					),
 //			'view_report' => array(
 //				'nav' => array(
 //					'label' => __('Report', 'event_espresso'),
 //					'order' => 20
 //					)
 //				),
-			)
+			//)
 		);
 
 		$this->_page_config = array_merge( $this->_page_config, $new_page_config );
@@ -76,9 +70,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 
-	protected function _new_route_callback() {
-		$this->_template_args['admin_page_content'] =  'this is a test';
-		$this->display_admin_page_with_no_sidebar();
 	}
 
 
