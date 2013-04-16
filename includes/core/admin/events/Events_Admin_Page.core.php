@@ -576,6 +576,17 @@ class Events_Admin_Page extends EE_Admin_Page {
 	}
 
 
+	/**
+	 * This just returns whatever is set as the _event object property
+	 *
+	 * //todo this will become obsolete once the models are in place
+	 * @return object
+	 */
+	public function get_event_object() {
+		return $this->_event;
+	}
+
+
 
 
 	/**
