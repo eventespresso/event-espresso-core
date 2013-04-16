@@ -36,20 +36,20 @@ class Pricing_Admin_Page_Init extends EE_Admin_Page_Init  {
 	 */
 	public function __construct() { 
 		
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 		define( 'PRICING_PG_SLUG', 'pricing' );	
 		define( 'PRICING_LABEL', __('Pricing', 'event_espresso'));	
 		define( 'PRICING_PG_NAME', ucwords( str_replace( '_', '', PRICING_PG_SLUG )));	
-		define( 'PRICING_ADMIN', EE_CORE_ADMIN . PRICING_PG_SLUG . DS );	
+		define( 'PRICING_ADMIN', EE_CORE_CAF_ADMIN . 'new' . DS . PRICING_PG_SLUG . DS );	
 		define( 'PRICING_ADMIN_URL', admin_url( 'admin.php?page=' . PRICING_PG_SLUG ));	
 		define( 'PRICING_ASSETS_PATH', PRICING_ADMIN . 'assets' . DS );		
-		define( 'PRICING_ASSETS_URL', EE_CORE_ADMIN_URL . PRICING_PG_SLUG .'/assets/' );	
+		define( 'PRICING_ASSETS_URL', EE_CORE_CAF_ADMIN_URL . 'new' . DS . PRICING_PG_SLUG .'/assets/' );	
 		define( 'PRICING_TEMPLATE_PATH', PRICING_ADMIN . 'templates' . DS );	
-		define( 'PRICING_TEMPLATE_URL', EE_CORE_ADMIN_URL . PRICING_PG_SLUG . DS . 'templates/' );
+		define( 'PRICING_TEMPLATE_URL', EE_CORE_CAF_ADMIN_URL . 'new' . DS . PRICING_PG_SLUG . DS . 'templates/' );
 
 		parent::__construct();
+		$this->_folder_path = EE_CORE_CAF_ADMIN . 'new' . DS . $this->_folder_name . DS;
 
 	}
 
