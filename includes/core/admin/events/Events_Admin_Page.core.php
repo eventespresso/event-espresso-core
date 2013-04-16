@@ -394,10 +394,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'images/group.png',
 				'desc' => __('View Registrations for Event', 'event_espresso')
 				),
-			'event_reports' => array(
-				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'images/chart_bar.png',
-				'desc' => __('View Event Reports.', 'event_espresso')
-				),
 			'event_shortcode' => array(
 				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/tag.png',
 				'desc' => __('Get ShortURL/Shortcode for Event', 'event_espresso')
@@ -411,7 +407,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'desc' => __('Export Event details to csv', 'event_espresso')
 				)
 			);
-		return $items;
+		return apply_filters('filter_hook_espresso_event_legend_items', $items);
 	}
 
 

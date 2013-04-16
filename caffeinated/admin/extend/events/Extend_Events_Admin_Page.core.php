@@ -68,7 +68,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		//add filters and actions
 		//modifying _views
-		add_filter('filter_hook_espresso_list_table_views_espresso_events', array( $this, 'list_table_views') );
+		add_filter('filter_hook_espresso_list_table_views_espresso_events', array( $this, 'list_table_views'), 10 );
+		add_filter('filter_hook_espresso_event_legend_items', array( $this, 'event_legend_items'), 10 );
 
 	}
 
@@ -80,6 +81,17 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$views['today']['bulk_action']['export_payments'] =  __('Export Payments', 'event_espresso');
 		$views['month']['bulk_action']['export_payments'] =  __('Export Payments', 'event_espresso');*/
 		return $views;
+	}
+
+
+
+
+	public function event_legend_items( $items ) {
+		/*$items['event_reports'] =  array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'images/chart_bar.png',
+				'desc' => __('View Event Reports.', 'event_espresso')
+				);*/
+		return $items;
 	}
 
 
