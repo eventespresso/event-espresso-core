@@ -157,7 +157,10 @@ class espresso_events_Messages_Hooks extends EE_Admin_Hooks {
 
 
 
-
+	/**
+	 * This is the dynamic method for this class that will end up hooking into the 'admin_footer' hook on the 'edit_event' route in the events page.
+	 * @return string (admin_footer contents)
+	 */
 	public function edit_event_admin_footer() {
 		//dialog container
 		$d_cont = '<div id="messages-change-edit-templates-dv" class="messages-change-edit-templates-option auto-hide hidden">' . "\n";
