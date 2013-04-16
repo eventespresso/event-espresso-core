@@ -352,6 +352,21 @@ abstract class EE_Admin_Hooks extends EE_Base {
 				'type' => 'action',
 				'argnum' => 1,
 				'priority' => 10
+				),
+			'filter_hook_espresso_list_table_views_' . $this->_adminpage_obj->page_slug . '_' . $this->_current_route => array(
+				'type' => 'filter',
+				'argnum' => 1,
+				'priority' => 10
+				),
+			'filter_hook_espresso_list_table_views_' . $this->_adminpage_obj->page_slug => array(
+				'type' => 'filter',
+				'argnum' => 1,
+				'priority' => 10
+				),
+			'filter_hook_espresso_list_table_views' => array(
+				'type' => 'filter',
+				'argnum' => 1,
+				'priority' => 10
 				)
 			);
 
