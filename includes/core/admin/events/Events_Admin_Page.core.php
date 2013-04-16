@@ -523,20 +523,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 
-	protected function _publish_box_extra_content() {
-		ob_start();
-		?>
-		<?php
-		$content = ob_get_contents();
-		ob_end_clean();
-		return $content;
-	}
-
-
-
-
-
-
 	/**
 	 * _set_event_object
 	 * this sets the _event property for the event details screen.
