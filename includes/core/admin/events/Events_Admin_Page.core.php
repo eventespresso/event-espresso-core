@@ -138,12 +138,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'func' => '_events_export',
 				'noheader' => true
 				),
-
-//			'export_payments' => array(
-//				'func' => '_payment_export',
-//				'noheader' => true
-//				),
-
 			'import' => '_import_events',
 			'import_events' => '_import_events',
 
@@ -162,6 +156,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_config() {
 
+		$default_espresso_boxes = $this->_default_espresso_metaboxes;
+		$default_espresso_boxes[] = '_espresso_sponsors_post_box';
 						
 		$this->_page_config = array(
 		
@@ -172,20 +168,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 					),
 				'list_table' => 'Events_Admin_List_Table'
 				),
-				
-//			'view_report' => array(
-//				'nav' => array(
-//					'label' => __('Report', 'event_espresso'),
-//					'order' => 20
-//					)
-//				),
 
 			'import_events' => array(
 				'nav' => array(
 					'label' => __('Import', 'event_esprsso'),
 					'order' => 30
 					),
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box')
+				'metaboxes' => $default_espresso_boxes
 				),
 				
 			'add_event' => array(
@@ -194,7 +183,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 					'order' => 5,
 					'persistent' => false
 					),
-				'metaboxes' => array( '_publish_post_box', '_register_event_editor_meta_boxes', '_premium_event_editor_meta_boxes' ),
+				'metaboxes' => array( '_publish_post_box', '_register_event_editor_meta_boxes' ),
 				'help_tabs' => array(
 					'event_date_info' => array(
 						'title' => __('Event Date', 'event_espresso'),
@@ -214,7 +203,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 					'persistent' => false,
 					'url' => isset($this->_req_data['EVT_ID']) ? add_query_arg(array('EVT_ID' => $this->_req_data['EVT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
-				'metaboxes' => array( '_publish_post_box', '_register_event_editor_meta_boxes', '_premium_event_editor_meta_boxes' ),
+				'metaboxes' => array( '_publish_post_box', '_register_event_editor_meta_boxes' ),
 				'help_tabs' => array(
 					'event_date_info' => array(
 						'title' => __('Event Date', 'event_espresso'),
@@ -232,7 +221,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 					'label' => __('Default Settings', 'event_esprsso'),
 					'order' => 40
 					),
-				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'metaboxes' => array_merge( $default_espresso_boxes, array('_publish_post_box') ),
 				'labels' => array(
 					'publishbox' => __('Update Settings', 'event_espresso')
 					),

@@ -37,15 +37,40 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 	protected function _extend_page_config() {
-		$this->_page_routes['new_route'] = '_new_route_callback';
 
-		//demo remove once we add the stuff!
-		$this->_page_config['new_route'] = array(
-			'nav' => array(
-				'label' => __('New Tab', 'event_espresso'),
-				'order' => 60
-				),
+		//new routes and new configs (or complete route overrides)
+		$new_page_routes = array(
+			'new_route' => '_new_route_callback',
+//			'export_payments' => array(
+//				'func' => '_payment_export',
+//				'noheader' => true
+//				),
 			);
+
+		$this->_page_routes = array_merge( $this->_page_routes, $new_page_routes );
+
+		$new_page_config = array(
+			'new_route' => array(
+				'nav' => array(
+					'label' => __('New Tab', 'event_espresso'),
+					'order' => 60
+					),
+//			'view_report' => array(
+//				'nav' => array(
+//					'label' => __('Report', 'event_espresso'),
+//					'order' => 20
+//					)
+//				),
+			)
+		);
+
+		$this->_page_config = array_merge( $this->_page_config, $new_page_config );
+
+		//partial route/config override
+		$this->_page_config['import_events']['metaboxes'] = $this->_default_espresso_metaboxes;
+		$this->_page_config['add_event']['metaboxes'][] = '_premium_event_editor_meta_boxes';
+		$this->_page_config['add_event']['metaboxes'][] = '_premium_event_editor_meta_boxes';
+		$this->_page_config['default_event_settings']['metaboxes'] = array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box') );
 
 	}
 
