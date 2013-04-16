@@ -2258,7 +2258,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			}
 			?>
 			<p>
-				<a href="admin.php?page=event_categories" target="_blank">
+				<a href="admin.php?page=espresso_event_categories" target="_blank">
 					<?php _e('Manage Categories', 'event_espresso'); ?>
 				</a>
 			</p>
