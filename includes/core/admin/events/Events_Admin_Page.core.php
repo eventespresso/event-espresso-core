@@ -40,8 +40,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 	protected $_event;
 
 
-	public function __construct() {
-		parent::__construct();
+	public function __construct( $routing = TRUE ) {
+		parent::__construct( $routing );
 	}
 
 

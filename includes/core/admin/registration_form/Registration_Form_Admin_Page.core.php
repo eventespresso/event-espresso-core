@@ -58,12 +58,12 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 
-	public function __construct() {
+	public function __construct( $routing = TRUE ) {
 		require_once('EEM_Question.model.php');
 		require_once('EEM_Question_Group.model.php');
 		$this->_question_model=  EEM_Question::instance();
 		$this->_question_group_model=EEM_Question_Group::instance();
-		parent::__construct();
+		parent::__construct( $routing );
 	}
 
 

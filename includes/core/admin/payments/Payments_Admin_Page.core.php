@@ -30,8 +30,8 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Payments_Admin_Page extends EE_Admin_Page {
 
 
-	public function __construct() {
-		parent::__construct();
+	public function __construct( $routing = TRUE ) {
+		parent::__construct( $routing );
 	}
 
 
