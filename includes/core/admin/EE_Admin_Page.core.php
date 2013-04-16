@@ -1311,6 +1311,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 			throw new EE_Error( $error_msg );
 		}
 
+		//let's provide the ability to filter the views per PAGE AND ROUTE, per PAGE, and globally
+		$this->_views = apply_filters( 'filter_hook_espresso_list_table_views_' . $this->page_slug . '_' . $this->_req_action, $this->_views );
+		$this->_views = apply_filters( 'filter_hook_espresso_list_table_views_' . $this->page_slug, $this->_views );
+		$this->_views = apply_filters( 'filter_hook_espresso_list_table_views', $this->_views );
+
 
 		$this->_set_list_table_view();
 		$this->_set_list_table_object();
