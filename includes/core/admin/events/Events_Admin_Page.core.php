@@ -20,7 +20,6 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * This contains the logic for setting up the Events related pages.  Any methods without phpdoc comments have inline docs with parent class. 
  *
- * NOTE:  TODO: This is a straight conversion from the legacy 3.1 events related pages.  It is NOT optimized and will need modification to fully use the new system (and also will need adjusted when Events model is setup)
  *
  * @package		Events_Admin_Page
  * @subpackage	includes/core/admin/Events_Admin_Page.core.php
@@ -1174,9 +1173,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 									<tr valign="top">
 										<th><label for="edit-ticket-price-PRC_desc"><?php _e('Description', 'event_espresso'); ?></label></th>
 										<td>
-											<?php 
-											/*<input class="edit-ticket-price-input widefat" type="text" id="edit-ticket-price-PRC_desc-<?php echo $price->ID(); ?>" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_desc]" value="<?php echo stripslashes( $price->desc() ); ?>"/><br/> */
-											?>
 											<textarea class="edit-ticket-price-input widefat" id="edit-ticket-price-PRC_desc-<?php echo $price->ID(); ?>" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_desc]"><?php echo stripslashes( $price->desc() ); ?></textarea><br/>
 											<p class="description"><?php _e('A brief description for this Price. More for your benefit, as it is currently not displayed to site visitors.', 'event_espresso'); ?></p>
 										</td>							
@@ -2027,7 +2023,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			}
 			?>
 			<p>
-				<a href="admin.php?page=event_categories" target="_blank">
+				<a href="admin.php?page=espresso_event_categories" target="_blank">
 					<?php _e('Manage Categories', 'event_espresso'); ?>
 				</a>
 			</p>
