@@ -44,6 +44,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected $_nav_tabs;
 	protected $_default_nav_tab_name;
 
+
 	//template variables (used by templates)
 	protected $_template_path;
 	protected $_column_template_path;
@@ -95,6 +96,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected $_yes_no_values = array();
 
 
+	//some default things shared by all child classes
+	protected $_default_espresso_metaboxes;
 
 
 	/**
@@ -402,6 +405,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_define_page_props();
 
 		$this->_current_page_view_url = add_query_arg( array( 'page' => $this->_current_page, 'action' => $this->_current_view ),  $this->_admin_base_url );
+
+		//default things
+		$this->_default_espresso_metaboxes = array('_espresso_news_post_box', '_espresso_links_post_box');
 
 		//set page configs
 		$this->_set_page_routes();
