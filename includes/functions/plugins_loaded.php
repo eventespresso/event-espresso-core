@@ -497,8 +497,11 @@ function espresso_init() {
  * 		@return void
  */
 function espresso_systems_check( ) {
-	if ( file_exists( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' )) {
-		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' );
+	// ... why aren't we using EVENT_ESPRESSO_PLUGIN_FULL_URL?  because if we define that here then we have to do a check in espresso_define_tables_and_paths which would only be needed on plugin_activation.  So we'll just define this temporary variable.
+	$path = defined( 'EVENT_ESPRESSO_PLUGINFULLPATH' ) ? EVENT_ESPRESSO_PLUGINFULLPATH : plugin_dir_path( espresso_main_file() );
+
+	if ( file_exists( $path . 'caffeinated/init.php' )) {
+		require_once( $path . 'caffeinated/init.php' );
 	}
 	return function_exists( 'espresso_system_check' ) ? espresso_system_check() : FALSE;
 }

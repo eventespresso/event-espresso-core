@@ -6,17 +6,26 @@
 		return $caffeinated;
 	}
 
+	//make sure EVENT_ESPRESSO_UPLOAD_DIR is defined
+
+	if ( !defined('EVENT_ESPRESSO_UPLOAD_DIR' ) ) {
+		$uploads = wp_upload_dir();
+		$upload_dir = $uploads['basedir'] . DIRECTORY_SEPARATOR . 'espresso' . DIRECTORY_SEPARATOR;
+	} else {
+		$upload_dir = EVENT_ESPRESSO_UPLOAD_DIR;
+	}
+
 	//Custom includes support
-	if (file_exists( EVENT_ESPRESSO_UPLOAD_DIR . "custom_includes.php")){
-		require_once(EVENT_ESPRESSO_UPLOAD_DIR . "custom_includes.php");
+	if (file_exists( $upload_dir . "custom_includes.php")){
+		require_once($upload_dir . "custom_includes.php");
 	}
 
 	//Custom functions support
-	if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "custom_functions.php")){
-		require_once(EVENT_ESPRESSO_UPLOAD_DIR . "custom_functions.php");
+	if (file_exists($upload_dir . "custom_functions.php")){
+		require_once($upload_dir . "custom_functions.php");
 	}
 
 	//Custom shortcode support
-	if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "custom_shortcodes.php")){
-		require_once(EVENT_ESPRESSO_UPLOAD_DIR . "custom_shortcodes.php");
+	if (file_exists($upload_dir . "custom_shortcodes.php")){
+		require_once($upload_dir . "custom_shortcodes.php");
 	}

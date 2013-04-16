@@ -3,8 +3,9 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 
 
 function espresso_plugin_activation() {
-
+	global $caffeinated;
 	$prev_version = get_option( 'events_detail_tbl_version' );
+	$caffeinated = apply_filters( 'filter_hook_espresso_systems_check', $caffeinated );
 	if ( $prev_version && version_compare( $prev_version, '3.2.0', '<' )) {
 	
 		wp_die( '
