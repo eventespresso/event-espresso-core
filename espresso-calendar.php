@@ -214,8 +214,12 @@ function espresso_calendar_do_stuff($show_expired) {
 	} else {
 		//Get all events
 		$type = 'all';
-		$sql = "SELECT e.*, ese.start_time, ese.end_time FROM " . EVENTS_DETAIL_TABLE . " e ";
+		$sql = "SELECT e.*, ese.start_time, ese.end_time, c.category_meta FROM " . EVENTS_DETAIL_TABLE . " e ";
 		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
+		if (isset($espresso_calendar['disable_categories']) && $espresso_calendar['disable_categories'] == false) {
+			$sql .= " LEFT JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
+			$sql .= " LEFT JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = r.cat_id ";
+		}
 		if ( function_exists('espresso_version') ) {
 			if ( espresso_version() >= '3.2.P' ) { // if we're using ee 3.2+, is_active is true/false
 				$sql .= " WHERE e.is_active != false ";
@@ -248,9 +252,8 @@ function espresso_calendar_do_stuff($show_expired) {
 		if (isset($espresso_calendar['disable_categories']) && $espresso_calendar['disable_categories'] == false) {
 		
 			//Get details about the category of the event
-			$category_data = espresso_event_category_data($event->id);
-			$category_data['category_meta'] = unserialize($category_data['category_meta']);
-		
+			$category_data['category_meta'] = unserialize($event->category_meta);
+			
 			//Assign colors to events by category
 			if( isset($category_data['category_meta']) && $category_data['category_meta']['use_pickers'] == 'Y' ){
 				
