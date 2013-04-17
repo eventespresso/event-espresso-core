@@ -600,18 +600,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'default_reg_status' => '',
 				//'add_attendee_question_groups' => array('1'),
 				'originally_submitted_by' => $current_user->ID);
-		$this->_event->wp_user = $current_user->ID;
-		
-/*		$this->_event->question_groups = array();
-		$sql = "SELECT qg.* FROM " . EVENTS_QST_GROUP_TABLE . " qg JOIN " . EVENTS_QST_GROUP_REL_TABLE . " qgr ON qg.id = qgr.group_id ";
-		$sql2 = apply_filters('filter_hook_espresso_event_editor_question_groups_sql', " WHERE wp_user = '0' OR wp_user = '1' ", $this->_event->id);
-		$sql .= $sql2 . " GROUP BY qg.id ORDER BY qg.group_order";
-		$sql = apply_filters('filter_hook_espresso_question_group_sql', $sql);
-		//Debug:
-		//echo $sql;
-		$this->_event->q_groups = $wpdb->get_results($sql);		
-		$this->_event->num_rows = $wpdb->num_rows;*/
-		
+		$this->_event->wp_user = $current_user->ID;		
 		$this->_event->reg_limit = '';
 		$this->_event->allow_multiple = false;
 		$this->_event->additional_limit = 0;
@@ -619,7 +608,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$this->_event->event_status = 'A';
 		$this->_event->display_desc = true;
 		$this->_event->display_reg_form = true;
-		//$this->_event->alt_email = '';
 		$this->_event->require_pre_approval = false;
 		$this->_event->member_only = false;
 		$this->_event->ticket_id = 0;
@@ -680,12 +668,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$this->_event->event_desc = stripslashes_deep($this->_event->event_desc);
 		$this->_event->phone = stripslashes_deep($this->_event->phone);
 		$this->_event->externalURL = stripslashes_deep($this->_event->externalURL);
-		//$this->_event->early_disc = stripslashes_deep($this->_event->early_disc);
-		//$this->_event->early_disc_date = stripslashes_deep($this->_event->early_disc_date);
-		//$this->_event->early_disc_percentage = stripslashes_deep($this->_event->early_disc_percentage);
 		$this->_event->event_identifier = stripslashes_deep($this->_event->event_identifier);
-	//	$this->_event->start_time = isset($this->_event->start_time) ? $this->_event->start_time : '';
-	//	$this->_event->end_time = isset($this->_event->end_time) ? $this->_event->end_time : '';
 		$this->_event->status = array();
 		$this->_event->status = event_espresso_get_is_active($this->_event->id);
 		$this->_event->address = stripslashes_deep($this->_event->address);
@@ -703,16 +686,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 			$this->_event->event_meta['default_reg_status'] = $this->_event->event_meta['default_payment_status'];
 			unset( $this->_event->event_meta['default_payment_status'] );
 		}
-
-/*		$this->_event->question_groups = unserialize($this->_event->question_groups);
-		$sql = "SELECT qg.* FROM " . EVENTS_QST_GROUP_TABLE . " qg JOIN " . EVENTS_QST_GROUP_REL_TABLE . " qgr ON qg.id = qgr.group_id ";
-		$sql2 = apply_filters('filter_hook_espresso_event_editor_question_groups_sql', " WHERE wp_user = '0' OR wp_user = '1' ", $this->_event->id);
-		$sql .= $sql2 . " GROUP BY qg.id ORDER BY qg.group_order";
-		$sql = apply_filters('filter_hook_espresso_question_group_sql', $sql);
-		//Debug:
-		//echo $sql;
-		$this->_event->q_groups = $wpdb->get_results($sql);		
-		$this->_event->num_rows = $wpdb->num_rows;*/
 		
 		$this->_event->page_url = get_permalink($org_options['event_page_id']);
 	}
@@ -723,7 +696,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 	/***************/
 	/** METABOXES **/
-
 
 
 	/**
@@ -955,7 +927,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		if ( empty( $all_prices[1] ) && empty( $all_prices[2] )) {
 			$show_no_event_price_msg = TRUE;
 		}
-		//printr( $all_prices, '$all_prices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		
 
 		foreach ($PRT->type as $type) {
 			$all_price_types[] = array( 'id' => $type->ID(), 'text' => $type->name(), 'order' => $type->order() );
@@ -965,7 +937,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 				$price_types[] = array( 'id' => $type->ID(), 'text' => $type->name(), 'order' => $type->order() );
 			}						
 		}
-		//echo printr( $global_price_types, '$global_price_types' );
 		
 		$table_class = apply_filters('filter_hook_espresso_pricing_table_class_filter', 'event_editor_pricing');
 		?>
