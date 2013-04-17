@@ -474,7 +474,7 @@ function espresso_calendar_config_mnu() {
 											</label>
 										</th>
 										<td>
-											<?php echo select_input('throttle_enable', $values, !empty($espresso_calendar['throttle']['enable']) ? $espresso_calendar['throttle']['enable'] : true, 'id="throttle_enable"'); ?> <?php echo select_input('throttle_amount', $throttle_values, !empty($espresso_calendar['throttle']['amount']) ? $espresso_calendar['throttle']['amount'] : '250', 'id="throttle_amount"'); ?><br />
+											<?php echo select_input('throttle_enable', $values, !empty($espresso_calendar['throttle']['enable']) ? $espresso_calendar['throttle']['enable'] : false, 'id="throttle_enable"'); ?> <?php echo select_input('throttle_amount', $throttle_values, !empty($espresso_calendar['throttle']['amount']) ? $espresso_calendar['throttle']['amount'] : '250', 'id="throttle_amount"'); ?><br />
 										<span class="description">
 	<?php _e('Enabling this setting allows you to limit the amount of records retrieved from the database .', 'event_espresso'); ?>
 											</span>
