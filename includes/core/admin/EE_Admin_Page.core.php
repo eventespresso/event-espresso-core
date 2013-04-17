@@ -1804,6 +1804,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	private function _display_admin_page($sidebar = false) {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
+		//custom remove metaboxes hook to add or remove any metaboxes to/from Admin pages.
+		do_action('action_hook_espresso_metaboxes');
+
 		// set current wp page slug - looks like: event-espresso_page_event_categories
 		$this->_template_args['current_page'] = $this->_wp_page_slug;
 		$template_path = $sidebar ?  EE_CORE_ADMIN . 'admin_details_wrapper.template.php' : EE_CORE_ADMIN . 'admin_details_wrapper_no_sidebar.template.php';
