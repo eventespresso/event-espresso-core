@@ -72,7 +72,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	/**
 	 * This is an array of methods that output metabox content for the given page route.  Use the following format:
 	 * array(
-	 * 	[0] => array(
+	 * 	0 => array(
 	 * 		'page_route' => 'string_for_page_route', //must correspond to a page route in the class being connected with (i.e. "edit_event");
 	 * 		'func' =>  'executing_method',  //must be public (i.e. public function executing_method($post, $callback_args){} ).  Note if you include callback args in the array then you need to declare them in the method arguments.
 	 * 		'id' => 'identifier_for_metabox', //so it can be removed by addons (optional, class will set it automatically)
@@ -81,6 +81,9 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * 		'context' => 'advanced' //advanced is default (optional),
 	 *   	'callback_args' => array() //any callback args to include (optional)
 	 * )
+	 *
+	 * Why are we indexing numerically?  Because it's possible there may be more than one metabox per page_route.
+	 * 
 	 * @var array
 	 */
 	protected $_metaboxes;
@@ -89,7 +92,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 
 	/**
-	 * This parent class takes care of loading the scripts and styles if the child class has set the properties for them in the following format.  It's important that the child classes have already registered the scripts using the "wp_register_[style|script]" wp function.  Note, the first array index ('register') is for defining all the registers.  The second array index is for indicating what routes each script/style loads on.
+	 * This parent class takes care of loading the scripts and styles if the child class has set the properties for them in the following format.  Note, the first array index ('register') is for defining all the registers.  The second array index is for indicating what routes each script/style loads on.
 	 * array(
 	 * 'registers' => array(
 	 * 		'script_ref' => array( // if more than one script is to be loaded its best to use the 'dependency' argument to link scripts together.
