@@ -367,6 +367,11 @@ abstract class EE_Admin_Hooks extends EE_Base {
 				'type' => 'filter',
 				'argnum' => 1,
 				'priority' => 10
+				),
+			'action_hook_espresso_metaboxes' => array(
+				'type' => 'action',
+				'argnum' => 1,
+				'priority' => 10
 				)
 			);
 
