@@ -73,7 +73,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * This is an array of methods that output metabox content for the given page route.  Use the following format:
 	 * array(
 	 * 	0 => array(
-	 * 		'page_route' => 'string_for_page_route', //must correspond to a page route in the class being connected with (i.e. "edit_event");
+	 * 		'page_route' => 'string_for_page_route', //must correspond to a page route in the class being connected with (i.e. "edit_event") If this is in an array then the same params below will be used but the metabox will be added to each route.
 	 * 		'func' =>  'executing_method',  //must be public (i.e. public function executing_method($post, $callback_args){} ).  Note if you include callback args in the array then you need to declare them in the method arguments.
 	 * 		'id' => 'identifier_for_metabox', //so it can be removed by addons (optional, class will set it automatically)
 	 * 		'priority' => 'default', //default 'default' (optional)
@@ -458,9 +458,17 @@ abstract class EE_Admin_Hooks extends EE_Base {
 			return; //get out we don't have any metaboxes to set for this connection
 
 		foreach ( $this->_metaboxes as $box ) {
-			if ( !isset($box['page_route']) || ( isset($box['page_route']) && $box['page_route'] != $this->_current_route ) )
-				continue; //we only add metaboxes for the set route
-			$this->_add_metabox($box);
+			if ( !isset($box['page_route']) )
+				continue; //we dont' have a valid array
+
+			//let's make sure $box['page_route'] is an array so the "foreach" will work.
+			$box['page_route'] = (array) $box['page_route'];
+
+			foreach ( $box['page_route'] as $route ) {
+				if ( $route != $this->_current_route )
+					continue; //get out we only add metaboxes for set route.
+				$this->_add_metabox($box);
+			}
 		}			
 
 	}

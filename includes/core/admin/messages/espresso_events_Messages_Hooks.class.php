@@ -44,13 +44,7 @@ class espresso_events_Messages_Hooks extends EE_Admin_Hooks {
 			);
 		$this->_metaboxes = array(
 			0 => array(
-				'page_route' => 'edit_event',
-				'func' => 'messages_metabox',
-				'label' => __('Notifications', 'event_espresso'),
-				'priority' => 'core'
-				),
-			1 => array(
-				'page_route' => 'add_event',
+				'page_route' => array('edit_event','add_event'),
 				'func' => 'messages_metabox',
 				'label' => __('Notifications', 'event_espresso'),
 				'priority' => 'core'

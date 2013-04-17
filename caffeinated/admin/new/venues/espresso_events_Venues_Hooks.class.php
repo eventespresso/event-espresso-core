@@ -42,20 +42,13 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 		$this->_name = 'venues';
 		$this->_metaboxes = array(
 			0 => array(
-				'page_route' => 'edit_event',
-				'func' => 'venue_metabox',
-				'label' => __('Venue Details', 'event_espresso'),
-				'priority' => 'core',
-				'context' => 'normal'
-				),
-			1 => array(
-				'page_route' => 'add_event',
+				'page_route' => array('edit_event', 'add_event'),
 				'func' => 'venue_metabox',
 				'label' => __('Venue Details', 'event_espresso'),
 				'priority' => 'core',
 				'context' => 'normal'
 				)
-			);
+		);
 	}
 
 
