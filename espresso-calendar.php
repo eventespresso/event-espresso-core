@@ -322,7 +322,7 @@ function espresso_calendar_do_stuff($show_expired) {
 			$num_completed = $parse_limits[0];
 			$reg_limit = $parse_limits[1];
 			if ($reg_limit >= 999999){
-				$eventArray['attendee_limit'] = __('Unlimited', 'event_espresso');
+				$eventArray['attendee_limit'] = __('UNL', 'event_espresso');
 			}else{
 				$eventArray['attendee_limit'] = $num_completed.'/'.$reg_limit;
 			}
