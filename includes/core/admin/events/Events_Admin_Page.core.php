@@ -716,6 +716,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		add_meta_box('espresso_event_editor_pricing', __('Event Pricing', 'event_espresso'), array( $this, 'pricing_metabox' ), $this->_current_screen->id, 'normal', 'core');
 
+		add_meta_box('espresso_event_editor_event_options', __('Event Registration Options', 'event_espresso'), array( $this, 'registration_options_meta_box' ), $this->_current_screen->id, 'side', 'high');
+
 		//note if you're looking for other metaboxes in here, where a metabox has a related management page in the admin you will find it setup in the related management page's "_Hooks" file.  i.e. messages metabox is found in "espresso_events_Messages_Hooks.class.php".
 	}
 
@@ -1133,7 +1135,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 	public function registration_options_meta_box() {
 		
-		global $org_options, $caffeinated;
+		global $org_options;
 		
 		$yes_no_values = array(
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
@@ -1155,79 +1157,18 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		$default_reg_status_values = $this->_get_reg_status_array( array( 'RCN', 'RNA' ));
 		array_unshift( $default_reg_status_values, array( 'id' => "", 'text' => __('No Change', 'event_espresso')));
+		$template_args['is_active_select'] = EE_Form_Fields::select_input('is_active', $yes_no_values, $this->_event->is_active);
+		$template_args['event_status_select'] = EE_Form_Fields::select_input('new_event_status', $event_status_values, $this->_event->event_status, '', '', false);
+		$template_args['_event'] = $this->_event;
+		$template_args['allow_group_reg_select'] = EE_Form_Fields::select_input('allow_multiple', $yes_no_values, $this->_event->allow_multiple, 'id="group-reg"', '', false);
+		$template_args['additional_attendee_select'] = EE_Form_Fields::select_input('additional_attendee_reg_info', $additional_attendee_reg_info_values, $this->_event->event_meta['additional_attendee_reg_info']);
+		$template_args['additional_registration_options'] = apply_filters('filter_hook_espresso_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $additional_attendee_reg_info_values, $event_status_values, $default_reg_status_values);
+		$template_args['default_payment_status'] = EE_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_event->event_meta['default_reg_status']);
+		$template_args['display_description'] = EE_Form_Fields::select_input('display_desc', $yes_no_values, $this->_event->display_desc);
+		$template_args['display_registration_form'] = EE_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_event->display_reg_form, '', '', false);
+		$templatepath = EVENTS_TEMPLATE_PATH . 'event_registration_options.template.php';
+		espresso_display_template( $templatepath, $template_args );
 		
-		?>
-		<p>
-			<label><?php _e('Event is Active', 'event_espresso'); ?></label>
-			<?php echo EE_Form_Fields::select_input('is_active', $yes_no_values, $this->_event->is_active); ?>
-		</p>
-		
-		<p>
-			<label><?php _e('Event Status', 'event_espresso'); ?></label>
-			<?php echo EE_Form_Fields::select_input('new_event_status', $event_status_values, $this->_event->event_status, '', '', false); ?>
-		</p>
-		
-		<p>
-			<label for="reg-limit">
-				<?php _e('Attendee Limit: ', 'event_espresso'); ?>
-			</label>
-			<input id="reg-limit" name="reg_limit"  size="10" type="text" value="<?php echo $this->_event->reg_limit; ?>" /><br />
-			<span>(<?php _e('leave blank for unlimited', 'event_espresso'); ?>)</span>
-		</p>
-		
-		<p class="clearfix" style="clear: both;">
-			<label for="group-reg"><?php _e('Allow group registrations? ', 'event_espresso'); ?></label>
-			<?php echo EE_Form_Fields::select_input('allow_multiple', $yes_no_values, $this->_event->allow_multiple, 'id="group-reg"', '', false); ?>
-		</p>
-		
-		<p>
-			<label for="max-registrants"><?php _e('Max Group Registrants: ', 'event_espresso'); ?></label>
-			<input type="text" id="max-registrants" name="additional_limit" value="<?php echo $this->_event->additional_limit; ?>" size="4" />
-		</p>
-		
-		<p>
-			<label><?php _e('Additional Attendee Registration info?', 'event_espresso'); ?></label>
-			<?php echo EE_Form_Fields::select_input('additional_attendee_reg_info', $additional_attendee_reg_info_values, $this->_event->event_meta['additional_attendee_reg_info']); ?>
-		</p>
-		
-		<?php if ( $caffeinated && $org_options['use_attendee_pre_approval'] ) : ?>
-		<p>
-			<label><?php _e('Attendee pre-approval required?', 'event_espresso'); ?></label>
-			<?php
-			echo EE_Form_Fields::select_input("require_pre_approval", $yes_no_values, $this->_event->require_pre_approval);
-			?>
-		</p>
-		<?php endif; ?>
-		
-		<p>
-			<label><?php _e('Default Payment Status', 'event_espresso'); ?></label>
-			<?php echo EE_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_event->event_meta['default_reg_status']); ?>
-		</p>
-		
-		<p>
-			<label><?php _e('Display  Description', 'event_espresso'); ?></label>
-			<?php echo EE_Form_Fields::select_input('display_desc', $yes_no_values, $this->_event->display_desc); ?>
-		</p>
-		
-		<p>
-			<label><?php _e('Display  Registration Form', 'event_espresso'); ?></label>
-			<?php echo EE_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_event->display_reg_form, '', '', false); ?>
-		</p>
-		
-		<p>
-			<label><?php _e('Alternate Registration Page', 'event_espresso'); ?></label>
-			<input name="externalURL" size="20" type="text" value="<?php echo $this->_event->externalURL; ?>">
-		</p>
-		
-		<?php /*<p>
-			<label><?php _e('Alternate Email Address', 'event_espresso'); ?>
-				<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=alt_email_info">
-					<span class="question">[?]</span>
-				</a>
-			</label>
-			<input name="alt_email" size="20" type="text" value="<?php echo $this->_event->alt_email; ?>">
-		</p> /**/ ?>
-		<?php
 	}
 
 
