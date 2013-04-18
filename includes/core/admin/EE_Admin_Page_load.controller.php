@@ -150,6 +150,10 @@ class EE_Admin_Page_load {
 	private function _define_caffeinated_constants() {
 		define( 'EE_CORE_CAF_ADMIN', EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/admin/');
 		define( 'EE_CORE_CAF_ADMIN_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'caffeinated/admin/');
+		define( 'EE_CORE_CAF_ADMIN_NEW', EE_CORE_CAF_ADMIN . 'new/');
+		define( 'EE_CORE_CAF_ADMIN_EXTEND', EE_CORE_CAF_ADMIN . 'extend/');
+		define( 'EE_CORE_CAF_ADMIN_EXTEND_URL', EE_CORE_CAF_ADMIN_URL . 'extend/');
+		define( 'EE_CORE_CAF_ADMIN_HOOKS', EE_CORE_CAF_ADMIN . 'hooks/');
 	}
 
 
