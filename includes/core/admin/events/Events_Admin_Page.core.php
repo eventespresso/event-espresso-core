@@ -717,7 +717,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		add_meta_box('espresso_event_editor_pricing', __('Event Pricing', 'event_espresso'), array( $this, 'pricing_metabox' ), $this->_current_screen->id, 'normal', 'core');
 		
-		add_meta_box('espresso_event_editor_primary_questions', __('Questions for Primary Attendee', 'event_espresso'), array( $this, 'primary_questions_group_meta_box' ), $this->_current_screen->id, 'side', 'core');
 
 		//todo this should get added by the Event Categories admin pages.
 		add_meta_box('espresso_event_editor_categories', __('Event Category', 'event_espresso'), array( $this, 'categories_meta_box' ), $this->_current_screen->id, 'side', 'default');
@@ -1234,52 +1233,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 		<?php
 	}
 
-
-
-
-
-	public function primary_questions_group_meta_box() {
-		?>
-		<div class="inside">
-			<p><strong>
-					<?php _e('Question Groups', 'event_espresso'); ?>
-				</strong><br />
-				<?php _e('Add a pre-populated', 'event_espresso'); ?>
-				<a href="admin.php?page=espresso_registration_form" target="_blank">
-					<?php _e('group of questions', 'event_espresso'); ?>
-				</a>
-				<?php _e('to your event. The personal information group is required for all events.', 'event_espresso'); ?>
-			</p>
-			<?php
-			$QSGs = EEM_Event::instance()->get_all_question_groups();
-			$EQGs = EEM_Event::instance()->get_event_question_groups( $this->_event->id );
-			$EQGs = is_array( $EQGs ) ? $EQGs : array();
-
-			if ( ! empty( $QSGs )) {
- 				$html = count( $QSGs ) > 10 ? '<div style="height:250px;overflow:auto;">' : '';
-				foreach ( $QSGs as $QSG ) {
-
-					$checked = ( in_array( $QSG->QSG_ID, $EQGs ) || $QSG->QSG_system_ID == 1 ) ? ' checked="checked"' : '';
-					$visibility = $QSG->QSG_system_ID == 1 ? ' style="visibility:hidden"' : '';
-					$edit_link = self::add_query_args_and_nonce( array( 'action' => 'edit_question_group', 'QSG_ID' => $QSG->QSG_ID ), EE_FORMS_ADMIN_URL );
-					
-					$html .= '
-					<p id="event-question-group-' . $QSG->QSG_ID . '">
-						<input value="' . $QSG->QSG_ID . '" type="checkbox"' . $visibility . ' name="question_groups[' . $QSG->QSG_ID . ']"' . $checked . ' /> 
-						<a href="' . $edit_link . '" title="Edit ' . $QSG->QSG_name . ' Group" target="_blank">' . $QSG->QSG_name . '</a>
-					</p>';
-				}
-				$html .= count( $QSGs ) > 10 ? '</div>' : '';
-
-				echo $html;
-			} else {
-				echo __('There seems to be a problem with your questions. Please contact support@eventespresso.com', 'event_espresso');
-			}
-			do_action('action_hook_espresso_event_editor_questions_notice');
-			?>
-		</div>
-		<?php
-	}
 
 
 
