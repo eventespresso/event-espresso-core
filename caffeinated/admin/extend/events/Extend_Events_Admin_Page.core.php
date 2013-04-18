@@ -75,7 +75,63 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		add_filter('filter_hook_espresso_list_table_views_espresso_events', array( $this, 'list_table_views'), 10 );
 		add_filter('filter_hook_espresso_event_legend_items', array( $this, 'event_legend_items'), 10 );
 		add_filter('filter_hook_espresso_list_table_events_actions_column_action_links', array( $this, 'overview_table_action_links' ), 10, 2 );
+		add_filter('filter_hook_espresso_event_datetime_metabox_add_additional_date_time_template', array( $this, 'add_additional_datetime_button' ), 10, 2 );
+		add_filter('filter_hook_espresso_event_datetime_metabox_clone_button_template', array( $this, 'add_datetime_clone_button' ), 10, 2 );
+		add_filter('filter_hook_espresso_event_datetime_metabox_timezones_template', array( $this, 'datetime_timezones_template'), 10, 2 );
 
+	}
+
+
+
+
+
+	public function load_scripts_styles_edit_event() {
+		//styles
+		wp_enqueue_style('jquery-ui-style');
+		wp_enqueue_style('jquery-ui-style-datepicker-css');
+
+		
+		wp_enqueue_script('event_editor_js');
+		global $eei18n_js_strings;
+		$new_strings = array(
+			'image_confirm' => __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso'),
+			'event_starts_on' => __('Event Starts on', 'event_espresso'),
+			'event_ends_on' => __('Event Ends on', 'event_espresso'),
+			'registration_starts_on' => __('Registration Starts on', 'event_espresso'),
+			'registration_ends_on' => __('Registration Ends on', 'event_espresso'),
+			'event_datetime_actions' => __('Actions', 'event_espresso'),
+			'event_clone_dt_msg' => __('Clone this Event Date and Time', 'event_espresso'),
+			'remove_event_dt_msg' => __('Remove this Event Time', 'event_espresso'),
+			'clone_trooper_img_src' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/clone-trooper-16x16.png',
+			'clone_trooper_img_alt' => __('clone', 'event_espresso'),
+			'trash_img_src' => EVENT_ESPRESSO_PLUGINFULLURL .'images/trash-16x16.png',
+			'trash_img_alt' => __('trash', 'event_espresso')
+			);
+
+		$eei18n_js_strings = array_merge( $eei18n_js_strings, $new_strings);
+
+		wp_register_script('event_datetime_js', EVENTS_CAF_ASSETS_URL . 'js/ee_events_datetime.js', array('event_editor_js'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_localize_script( 'event_datetime_js', 'eei18n', $eei18n_js_strings );
+		wp_enqueue_script('event_datetime_js');
+	}
+
+
+
+
+	public function add_additional_datetime_button( $template, $template_args ) {
+		return espresso_display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_datetime_add_additional_time.template.php', $template_args, TRUE);
+	}
+
+
+
+	public function add_datetime_clone_button( $template, $template_args ) {
+		return espresso_display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_datetime_metabox_clone_button.template.php', $template_args, TRUE );
+	}
+
+
+
+	public function datetime_timezones_template( $template, $template_args ) {
+		return espresso_display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_datetime_timezones.template.php', $template_args, TRUE );
 	}
 
 
