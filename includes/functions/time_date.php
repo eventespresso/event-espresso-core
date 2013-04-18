@@ -571,7 +571,7 @@ function event_espresso_mysqldatetime2datetime($mysql_datetime) {// "2010-12-25 
 function eventespresso_ddtimezone($event_id = 0) {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	global $wpdb;
-	$tz_event = $wpdb->get_var($wpdb->prepare("SELECT timezone_string FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $event_id . "'"));
+	$tz_event = $wpdb->get_var($wpdb->prepare("SELECT timezone_string FROM " . EVENTS_DETAIL_TABLE . " WHERE id = %s", $event_id ));
 
 	$timezone_format = _x('Y-m-d G:i:s', 'timezone date format');
 
