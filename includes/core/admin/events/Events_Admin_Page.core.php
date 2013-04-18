@@ -712,14 +712,11 @@ class Events_Admin_Page extends EE_Admin_Page {
 		
 		$this->_set_event_object();
 
-		//todo left off here
 		add_meta_box('espresso_event_editor_date_time', __('Dates &amp; Times', 'event_espresso'), array( $this, 'date_time_metabox' ), $this->_current_screen->id, 'normal', 'high');
 
 		add_meta_box('espresso_event_editor_pricing', __('Event Pricing', 'event_espresso'), array( $this, 'pricing_metabox' ), $this->_current_screen->id, 'normal', 'core');
-		
 
-		//todo this should get added by the Event Categories admin pages.
-		add_meta_box('espresso_event_editor_categories', __('Event Category', 'event_espresso'), array( $this, 'categories_meta_box' ), $this->_current_screen->id, 'side', 'default');
+		//note if you're looking for other metaboxes in here, where a metabox has a related management page in the admin you will find it setup in the related management page's "_Hooks" file.  i.e. messages metabox is found in "espresso_events_Messages_Hooks.class.php".
 	}
 
 
@@ -1297,62 +1294,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 		</div>
 		<?php
 	}
-
-
-
-
-
-	public function categories_meta_box() {
-		$event_id = $this->_event->id;
-		global $wpdb;
-		?>
-		<div class="inside">
-			<?php
-			$sql = "SELECT * FROM " . EVENTS_CATEGORY_TABLE;
-			$sql = apply_filters('filter_hook_espresso_event_editor_categories_sql', $sql);
-			$event_categories = $wpdb->get_results($sql);
-			$num_rows = $wpdb->num_rows;
-			if ($num_rows > 0) {
-				if ($num_rows > 10) {
-					echo '<div style="height:250px;overflow:auto;">';
-				}
-				foreach ($event_categories as $category) {
-					$category_id = $category->id;
-					$category_name = $category->category_name;
-
-					$in_event_categories = $wpdb->get_results("SELECT * FROM " . EVENTS_CATEGORY_REL_TABLE . " WHERE event_id='" . $event_id . "' AND cat_id='" . $category_id . "'");
-					foreach ($in_event_categories as $in_category) {
-						$in_event_category = $in_category->cat_id;
-					}
-					if (empty($in_event_category))
-						$in_event_category = '';
-					?>
-					<p id="event-category-<?php echo $category_id; ?>">
-						<label for="in-event-category-<?php echo $category_id; ?>" class="selectit">
-							<input value="<?php echo $category_id; ?>" type="checkbox" name="event_category[]" id="in-event-category-<?php echo $category_id; ?>"<?php echo ($in_event_category == $category_id ? ' checked="checked"' : "" ); ?>/>
-							<?php echo $category_name; ?>
-						</label>
-					</p>
-					<?php
-				}
-				if ($num_rows > 10) {
-					echo '</div>';
-				}
-			} else {
-				_e('No Categories', 'event_espresso');
-			}
-			?>
-			<p>
-				<a href="admin.php?page=espresso_event_categories" target="_blank">
-					<?php _e('Manage Categories', 'event_espresso'); ?>
-				</a>
-			</p>
-		</div>
-		<?php
-	}
-
-
-
 
 
 
