@@ -531,10 +531,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * _set_event_object
 	 * this sets the _event property for the event details screen.
 	 *
-	 * @access private
+	 * @access protected
 	 * @return void
 	 */
-	private function _set_event_object() {
+	protected function _set_event_object() {
 		if ( is_object($this->_event) )
 			return; //get out we've already set the object
 
