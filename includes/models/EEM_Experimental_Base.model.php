@@ -101,6 +101,32 @@ abstract class EEM_Experimental_Base{
 		return $this->_create_objects($wpdb->get_results($SQL));
 	}
 	
+	/**
+	 * Gets a single item for this model from the DB, given only its ID (or null if none is found).
+	 * @param mixed $id int or string, depending on the type of the model's primary key
+	 * @return EE_Exp_Base_Class
+	 */
+	function get_one_by_ID($id){
+		$primary_key_name = $this->get_primary_key_field()->get_name();
+		return $this->get_one(array(array($primary_key_name => $id)));
+	}
+	/**
+	 * Gets a single item for this model from the DB, given the $query_params. Only returns a single class, not an array. If no item is found,
+	 * null is rturned.
+	 * @param array $query_params like EEM_Experimental_Base's $query_params variable.
+	 * @return EE_Exp_Base_Class
+	 */
+	function get_one($query_params = array()){
+		$query_params['limit'] = 1;
+		$items = $this->get_all($query_params);
+		if(empty($items)){
+			return null;
+		}else{
+			return array_shift($items);
+		}
+	}
+	
+	
 	function _extract_where_parameters($query_params){
 		if(array_key_exists(0,$query_params)){
 			$where_array = $query_params[0];
@@ -148,8 +174,9 @@ abstract class EEM_Experimental_Base{
 	 * an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specificy array('role-column-name'=>'role-id')
 	 * @return boolean of success
 	 */
-	public function add_relation_to($id_or_obj,$otherModelObjectOrID, $relationName,$extraColumnsForHABTM=null){
+	public function add_relationship_to($id_or_obj,$otherModelObjectOrID, $relationName,$extraColumnsForHABTM=null){
 		EE_Error::add_error("EEM_ExperimetnaL_Base::add_relation_to not yet implemented");
+		
 	}
 	
 	/**
@@ -695,6 +722,54 @@ abstract class EEM_Experimental_Base{
 	 */
 	private function _get_class_name(){
 		return "EE_Exp_".$this->get_this_model_name();
+	}
+	
+	/**
+	 * Very handy general function to allow for plugins to extend any child of EE_TempBase.
+	 * If a method is called on a child of EE_TempBase that doesn't exist, this function is called (http://www.garfieldtech.com/blog/php-magic-call)
+	 * and passed the method's name and arguments.
+	 * Instead of requiring a plugin to extend the EE_TempBase (which works fine is there's only 1 plugin, but when will that happen?)
+	 * they can add a hook onto 'filters_hook_espresso__{className}__{methodName}' (eg, filters_hook_espresso__EE_Answer__my_great_function)
+	 * and accepts 2 arguments: the object on which teh function was called, and an array of the original arguments passed to the function. Whatever their callbackfunction returns will be returned by this function.
+	 * Example: in functions.php (or in a plugin):
+	 * add_filter('filter_hook_espresso__EE_Answer__my_callback','my_callback',10,3);
+	 * function my_callback($previousReturnValue,EE_TempBase $object,$argsArray){
+			$returnString= "you called my_callback! and passed args:".implode(",",$argsArray);
+	 *		return $previousReturnValue.$returnString;
+	 * }
+	 * require('EEM_Answer.model.php');
+	 * $answer=EEM_Answer::instace();
+	 * echo $answer->my_callback('monkeys',100);
+	 * //will output "you called my_callback! and passed args:monkeys,100"
+	 * @param string $methodName name of method which was called on a child of EE_TempBase, but which 
+	 * @param array $args array of original arguments passed to the function
+	 * @return mixed whatever the plugin which calls add_filter decides
+	 */
+	public function __call($methodName,$args){
+		$className=get_class($this);
+		$tagName="filter_hook_espresso__{$className}__{$methodName}";
+		if(!has_filter($tagName)){
+			throw new EE_Error(sprintf(__("Method %s on model %s does not exist! You can create one with the following code in functions.php or in a plugin: add_filter('%s','my_callback',10,3);function my_callback(\$previousReturnValue,EEM_TempBase \$object\$argsArray=null){/*function body*/return \$whatever;}","event_espresso"),
+										$methodName,$className,$tagName));
+		}
+		
+		return apply_filters($tagName,null,$this,$args);
+	}
+	
+	/**
+	 * Ensures $base_class_obj_or_id is of the EE_Base_Class child that corresponds ot this model.
+	 * If not, assumes its an ID, and uses $this->get_one_by_ID() to get the EE_Base_Class.
+	 * @param EE_Base_Class/int $base_class_obj_or_id either teh EE_Base_Class taht corresponds to this Model, or its ID
+	 * @return EE_Base_Class
+	 */
+	public function ensure_is_obj($base_class_obj_or_id){ 
+		if(is_a($base_class_obj_or_id,$this->_get_class_name())){
+			return $base_class_obj_or_id;
+		}elseif(is_int($base_class_obj_or_id)){//assume it's an ID
+			return $this->get_one_by_ID($base_class_obj_or_id);
+		}else{
+			throw new EE_Exception(sprintf(__("'%s' is neither an object of type %s, nor an ID!",'event_espresso'),$base_class_obj_or_id,$this->_getClasssName()));
+		}
 	}
 	
 	
