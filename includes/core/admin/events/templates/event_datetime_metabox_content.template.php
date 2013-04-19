@@ -80,6 +80,7 @@
 						<img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/trash-16x16.png' width='16' height='16' alt='<?php _e('trash', 'event_espresso'); ?>'/>
 					</a>
 			<?php endif; ?>
+					</div>
 				</td>
 				
 			</tr>
@@ -96,4 +97,4 @@
 
 <input  type="hidden" name="datetime_IDs" value="<?php echo serialize( $datetime_IDs ); ?>"/>
 <input  type="hidden" id="process_datetimes" name="process_datetimes" value="1"/>
-<input type="hidden" name="datetime_total_rows" value="<?php echo $row; ?>"
+<input type="hidden" name="datetime_total_rows" value="<?php echo $row; ?>" />
