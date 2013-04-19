@@ -504,6 +504,6 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		}
 
 		//everything checks out so lets add the metabox
-		add_meta_box( $id, $label, array( $this, $func), $current_screen->id, $context, $priority, $callback_args);
+		add_meta_box( $id, $label, array( $this, $func ), $current_screen->id, $context, $priority, $callback_args);
 	}
 }
