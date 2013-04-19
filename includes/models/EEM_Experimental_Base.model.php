@@ -96,10 +96,9 @@ abstract class EEM_Experimental_Base{
 	function get_all($query_params = array()){
 		global $wpdb;
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
-		$SQL ="SELECT * FROM ".$model_query_info->get_full_join_sql()." WHERE ".$model_query_info->get_where_sql();
-		echo "sql to run:$SQL";
-		return $wpdb->get_results($SQL);
-		
+		$SQL ="SELECT ".$this->_construct_select_sql_for_this_model()." FROM ".$model_query_info->get_full_join_sql()." WHERE ".$model_query_info->get_where_sql();
+		//echo "sql to run:$SQL";
+		return $this->_create_objects($wpdb->get_results($SQL));
 	}
 	
 	function _extract_where_parameters($query_params){
@@ -341,11 +340,25 @@ abstract class EEM_Experimental_Base{
 	function _create_model_query_info_carrier($query_params){
 		$where_array = $this->_extract_where_parameters($query_params);
 		if($where_array){
-			$join_sql_and_data_types = $this->_extract_related_models_from_query($where_array);
-			$join_sql_and_data_types->set_where_sql( $this->_construct_where_clause($where_array, $join_sql_and_data_types->get_data_types()));
+			$query_objects = $this->_extract_related_models_from_query($where_array);
+			$query_objects->set_where_sql( $this->_construct_where_clause($where_array, $query_objects->get_data_types()));
 		}
-		$join_sql_and_data_types->set_main_model_join_sql($this->_construct_internal_join());
-		return $join_sql_and_data_types;
+		$query_objects->set_main_model_join_sql($this->_construct_internal_join());
+		return $query_objects;
+	}
+	
+	/**
+	 * Creates the string of SQL for the select part of a select query, everything behind SELECT and before FROM.
+	 * Eg, "Event.post_id, Event.post_name,Event_Detail.EVT_ID..."
+	 * @return string
+	 */
+	public function _construct_select_sql_for_this_model(){
+		$fields = $this->_get_all_fields();
+		$selects = array();
+		foreach($fields as $field_name => $field_obj){
+			$selects[] = $field_obj->get_table_alias().".".$field_obj->get_table_column()." AS '".$field_obj->get_table_alias().".".$field_obj->get_table_column()."'";
+		}
+		return implode(", ",$selects);
 	}
 	
 	/**
@@ -587,7 +600,7 @@ abstract class EEM_Experimental_Base{
 	/**
 	 * Returns a flat array of all field son this model, instead of organizing them 
 	 * by table_alias as they are in the constructor. 
-	 * @return EE_Exp_Model_Field[] where the keys are the field's name
+	 * @return EE_Exp_Model_Field_Base[] where the keys are the field's name
 	 */
 	protected function _get_all_fields(){
 		$all_fields = array();
@@ -598,6 +611,93 @@ abstract class EEM_Experimental_Base{
 		}
 		return $all_fields;
 	}
+	
+	/**
+	*		cycle though array of attendees and create objects out of each item
+	* 
+	* 		@access		private
+	* 		@param		array		$attendees		
+	*		@return 	EE_Base_Class[]		array on success, FALSE on fail
+	*/	
+	protected function _create_objects( $rows = array() ) {
+		$this->_include_php_class();
+		$array_of_objects=array();
+		if(empty($rows)){
+			return array();
+		}
+		foreach ( $rows as $row ) {
+			if(empty($row)){//wp did its weird thing where it returns an array like array(0=>null), which is totally not helpful...
+				return array();
+			}
+			$classInstance=$this->instantiate_class_from_array_or_object($row);
+			$array_of_objects[$classInstance->ID()]=$classInstance;
+		}
+		return $array_of_objects;	
+	}
+	/**
+	 * takes care of including the PHP file with the corresponding .class file to this model.
+	 */
+	private function _include_php_class(){
+		$className=$this->_get_class_name();
+		if(!class_exists($className)){
+			require_once($className.".class.php");
+		}
+	}
+	
+	/**
+	 * 
+	 * @param mixed $cols_n_values either an array of where each key is the name of a field, and the value is its value
+	 * or an stdClass where each property is the name of a column,
+	 * @return EE_Base_Class
+	 */
+	public function instantiate_class_from_array_or_object($cols_n_values){
+		if(!is_array($cols_n_values)){
+			$cols_n_values=get_object_vars($cols_n_values);
+		}
+		//make sure the array only has keys that are fields/columns on this model
+		$this_model_fields_n_values = array();
+		foreach($cols_n_values as $col => $val){
+			foreach($this->_get_all_fields() as $field_name => $field_obj){
+				//ask the field what it think it's table_name.column_name should be, and call it the "qualified column"
+				$field_qualified_column = $field_obj->get_qualified_column();
+				//does the field on the model relate to this column retrieved from teh db?
+				if($field_qualified_column == $col){
+					//OK, this field apparently relates to this model.
+					//now we can add it to the array 
+					$this_model_fields_n_values[$field_name] = $val;
+				}
+			}
+		}
+		
+		//get the ID of the object, and remove it from cols_n_values for now
+//		$pkName=$this->get_primary_key_field()->get_name();
+//		$pkValue=$cols_n_values[$pkName];
+//		unset($cols_n_values[$pkName]);
+		
+		//get the required info to instantiate the class whcih relates to this model.
+		$className=$this->_get_class_name();
+		$class=new ReflectionClass($className);
+		//call the constructor of the EE_Base_Class, passing it an array of all the fields, except
+		//the ID, because we set that later
+		$classInstance=$class->newInstanceArgs(array($this_model_fields_n_values));
+		
+		/* @var $classInstance EE_Base_Class */
+		//now set the ID on this new EE_Base_Class instance, so we realize it's 
+		//already in teh DB
+		//$classInstance->set($pkName,$pkValue);
+		return $classInstance;
+	}
+	/**
+	 * Gets the EE class that corresponds to this model. Eg, for EEM_Answer that
+	 * would be EE_Answer.To import that class, you'd just add ".class.php" to the name, like so
+	 * require_once($this->_getClassName().".class.php");
+	 * @return string
+	 */
+	private function _get_class_name(){
+		return "EE_Exp_".$this->get_this_model_name();
+	}
+	
+	
 	
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -1326,4 +1426,151 @@ class EE_Model_Query_Info_Carrier extends EE_Base{
    public function get_full_join_sql(){
 	   return $this->_main_join_sql . $this->_join_sql;
    }
+}
+
+class EE_Exp_Base_Class{
+	/**
+	 * basic constructor for Event Espresso classes, performs any necessary initialization,
+	 * and verifies it's children play nice
+	 */
+	public function __construct($fieldValues=null){
+		$className=get_class($this);
+		do_action("action_hook_espresso__{$className}__construct",$this,$fieldValues);
+		//$model=$this->_get_model();
+		if($fieldValues!=null){
+			foreach($fieldValues as  $fieldName=>$fieldValue){
+				//"<br>set $fieldName to $fieldValue";
+				$this->set($fieldName,$fieldValue,true);
+			}
+		}
+		//verify we have all the attributes required in teh model
+//		foreach($model->fields_settings() as $fieldName=>$fieldSettings){
+//			if(!property_exists($this,$this->_get_private_attribute_name($fieldName))){
+//				throw new EE_Error(sprintf(__('You have added an attribute titled \'%s\' to your model %s, but have not set a corresponding
+//					attribute on %s. Please add $%s to %s','event_espresso'),
+//						$fieldName,get_class($model),get_class($this),$this->_get_private_attribute_name($fieldName),get_class($this)));
+//			}
+//		}
+//		//verify we have all the model relations
+//		foreach($model->relation_settings() as $relationName=>$relationSettings){
+//			if(!property_exists($this,$this->_get_private_attribute_name($relationName))){
+//				throw new EE_Error(sprintf(__('You have added a relation titled \'%s\' to your model %s, but have not set a corresponding
+//					attribute on %s. Please add protected $%s to %s','event_espresso'),
+//						$relationName,get_class($model),get_class($this),$this->_get_private_attribute_name($relationName),get_class($this)));
+//			}
+//		}
+	}
+	/**
+	 * Overrides parent because parent expects old models.
+	 * This also doesn't do any validation, and won't work for serialized arrays
+	 * @param type $field_name
+	 * @param type $field_value
+	 * @param type $use_default
+	 */
+	public function set($field_name,$field_value,$use_default= false){
+		$privateAttributeName=$this->_get_private_attribute_name($field_name);
+		$this->$privateAttributeName = $field_value;
+	}
+	/**
+	 * converts a field name to the private attribute's name on teh class.
+	 * Eg, converts "ANS_ID" to "_ANS_ID", which can be used like so $attr="_ANS_ID"; $this->$attr;
+	 * @param string $fieldName
+	 * @return string
+	 */
+	private function _get_private_attribute_name($fieldName){
+		return "_".$fieldName;
+	}
+	/**
+	 * Gets the EEM_*_Model for this class
+	 * @access public now, as this is more convenient 
+	 * @return EEM_Experimental_Base
+	 */
+	public function  _get_model(){
+		//find model for this class
+		$modelName=$this->_get_model_name();
+		//@todo: make all these classes exist, so requiring WILL be appropriate require_once($modelName.".model.php");
+		//include_once($modelName.".model.php");
+		//$modelObject=new $modelName;
+		$model=call_user_func($modelName."::instance");
+		return $model;
+	}
+	/**
+	 * Gets the model's name for this class. Eg, if this class' name is 
+	 * EE_Answer, it will return EEM_Answer.
+	 * @return string
+	 */
+	private function _get_model_name(){
+		$className=get_class($this);
+		$modelName=str_replace("EE_","EEM_",$className);
+		return $modelName;
+	}
+	
+	/**
+	 * returns the name of the primary key attribute
+	 * @return string
+	 */
+	protected function _get_primary_key_name(){
+		return $this->_get_model()->get_primary_key_field()->get_name();
+	}
+	/**
+	 * Gets the value of the primary key.
+	 * @return mixed, if the primary key is of type INT it'll be an int. Otherwise it could be a string
+	 */
+	public function ID(){
+		//get the name of teh primary key for this class' model, then find what php class attribute's name
+		$pk_field_parameter = $this->_get_private_attribute_name($this->_get_primary_key_name());
+		//now that we know the name of the variable, use a variable variable to get its value and return its 
+		return $this->$pk_field_parameter;
+	}
+	
+	
+}
+
+/**
+ * Small example class for Events.
+ */
+class EE_Exp_Event extends EE_Exp_Base_Class{
+	protected $_EVT_ID;
+	protected $_EVT_desc;
+	protected $_EVT_metakey1;
+	protected $_EVT_metaval1;
+	/**
+	 *
+	 * @var EE_Registration[]
+	 */
+	protected $_Registration;
+	/**
+	 *
+	 * @var EE_Event_Question_Group[]
+	 */
+	protected $_Event_Question_Group;
+	/**
+	 * @var EE_Question_Group
+	 */
+	protected $_Question_Group;
+	/**
+	 * Constructor
+	 * @param int $REG_ID registration ID OR an array of all field values, where keys match these arguments' names
+	 * @param int $QST_ID question ID
+	 * @param string $ANS_value text representing the answer. Could be CSV'd
+	 */
+	public function __construct( $EVT_ID=NULL, $EVT_desc=NULL, $EVT_metakey1='', $_EVT_metaval1 ='') {
+		//if the first parameter is an array, assume it's an array of key-value pairs for this object
+		//@todo: need to generalize constructor
+		if(is_array($EVT_ID)){
+			parent::__construct($EVT_ID);
+			return;
+		}
+		$reflector = new ReflectionMethod($this,'__construct');	
+		$arrayForParent=array();
+		foreach($reflector->getParameters() as $param){
+			$paramName=$param->name;
+			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
+		}
+		parent::__construct($arrayForParent);
+		
+	}
+	
+	
+	
 }
