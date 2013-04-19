@@ -380,7 +380,7 @@ abstract class EEM_Experimental_Base{
 	 * @return string
 	 */
 	public function _construct_select_sql_for_this_model(){
-		$fields = $this->_get_all_fields();
+		$fields = $this->field_settings();
 		$selects = array();
 		foreach($fields as $field_name => $field_obj){
 			$selects[] = $field_obj->get_table_alias().".".$field_obj->get_table_column()." AS '".$field_obj->get_table_alias().".".$field_obj->get_table_column()."'";
@@ -530,12 +530,12 @@ abstract class EEM_Experimental_Base{
 	
 	
 	/**
-	 * Givena field's name (ie, a key in $this->_get_all_fields()), uses the EE_Model_Field object to get the table's alias and column
+	 * Givena field's name (ie, a key in $this->field_settings()), uses the EE_Model_Field object to get the table's alias and column
 	 * which corresponds to it
 	 * @param string $field_name
 	 */
 	function _get_qualified_column_for_field($field_name){
-		$all_fields = $this->_get_all_fields();
+		$all_fields = $this->field_settings();
 		$field = $all_fields[$field_name];
 		return $field->get_qualified_column();
 	}
@@ -566,7 +566,7 @@ abstract class EEM_Experimental_Base{
 	 */
 	function _get_data_types(){
 		$data_types = array();
-		foreach(array_values($this->_get_all_fields()) as $field_obj){
+		foreach(array_values($this->field_settings()) as $field_obj){
 			//$data_types[$field_obj->get_table_column()] = $field_obj->get_wpdb_data_type();
 			$data_types[$field_obj->get_qualified_column()] = $field_obj->get_wpdb_data_type();
 		}
@@ -584,6 +584,46 @@ abstract class EEM_Experimental_Base{
 		$model_obj = call_user_func($model_classname."::instance");
 		return $model_obj;
 	}
+	
+	
+	/**
+	 * Returns the array of EE_ModelRelations for this model.
+	 * @return EE_Exp_Model_Relation[]
+	 */
+	public function relation_settings(){
+		return $this->_model_relations;
+	}
+	
+	
+	
+	/**
+	 * Returns the specified EE_Exp_Model_Relation, or throws an exception
+	 * @param string $relation_name name of relation, key in $this->_relatedModels
+	 * @return EE_Model_Relation
+	 */
+	public function related_settings_for($relation_name){
+		$relatedModels=$this->relation_settings();
+		if(!array_key_exists($relation_name,$relatedModels)){
+			throw new EE_Error(sprintf(__('Cannot get %s related to %s. There is no model relation of that type. There is, however, %s...','event_espresso'),$relation_name,  $this->_getClassName(),implode(array_keys($relatedModels))));
+		}
+		return $relatedModels[$relation_name];
+	}
+	
+	
+	
+	/**
+	 * A convenience method for getting a specific field's settings, instead of getting all field settings for all fields
+	 * @param string $fieldName
+	 * @return EE_Model_Field
+	 */
+	public function field_settings_for($fieldName){
+		$fieldSettings=$this->field_settings();
+		if(!array_key_exists($fieldName,$fieldSettings)){
+			throw new EE_Error(sprintf(__('There is no field/column %s on %s','event_espresso'),$fieldName,get_class($this)));
+		}
+		return $fieldSettings[$fieldName];
+	}
+	
 
 	
 	/**
@@ -593,7 +633,7 @@ abstract class EEM_Experimental_Base{
 	 * @throws EE_Error
 	 */
 	public function get_primary_key_field(){
-		foreach($this->_get_all_fields() as $field){
+		foreach($this->field_settings() as $field){
 			if($field instanceof EE_Primary_Key_Field){
 				return $field;
 			}
@@ -607,7 +647,7 @@ abstract class EEM_Experimental_Base{
 	 * @throws EE_Error
 	 */
 	public function get_foreign_key_to($model_name){
-		foreach($this->_get_all_fields() as $field){
+		foreach($this->field_settings() as $field){
 			if($field instanceof EE_Foreign_Key_Field 
 					&&
 					$field->get_model_name_pointed_to() == $model_name){
@@ -629,7 +669,7 @@ abstract class EEM_Experimental_Base{
 	 * by table_alias as they are in the constructor. 
 	 * @return EE_Exp_Model_Field_Base[] where the keys are the field's name
 	 */
-	protected function _get_all_fields(){
+	public function field_settings(){
 		$all_fields = array();
 		foreach($this->_fields as $table_alias => $fields_corresponding_to_table){
 			foreach($fields_corresponding_to_table as $field_name => $field_obj){
@@ -684,7 +724,7 @@ abstract class EEM_Experimental_Base{
 		//make sure the array only has keys that are fields/columns on this model
 		$this_model_fields_n_values = array();
 		foreach($cols_n_values as $col => $val){
-			foreach($this->_get_all_fields() as $field_name => $field_obj){
+			foreach($this->field_settings() as $field_name => $field_obj){
 				//ask the field what it think it's table_name.column_name should be, and call it the "qualified column"
 				$field_qualified_column = $field_obj->get_qualified_column();
 				//does the field on the model relate to this column retrieved from teh db?
