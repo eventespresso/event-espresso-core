@@ -487,7 +487,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	public function load_page_dependencies() {
-
+		//let's set the current_screen and screen options to override what WP set
 		$this->_current_screen = get_current_screen();
 			
 		
@@ -538,6 +538,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( method_exists( $this, 'admin_footer_scripts_' . $this->_current_view ) )
 			add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_' . $this->_current_view ), 101 );
 		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_eei18n_js_strings' ), 102 );
+		
+
+		do_action('filter_hook_espresso_admin_load_page_dependencies');
+		
 	}
 
 	
