@@ -41,6 +41,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	protected $_file_name;
 	public $hook_file;
 	protected $_wp_page_slug;
+	protected $_routing;
 
 
 	//will hold page object.
@@ -155,7 +156,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	 */
 	private function _set_defaults() {
 		$this->_file_name = $this->_folder_name = $this->_wp_page_slug = $this->capability = NULL;
-		$this->show_on_menu = TRUE;
+		$this->show_on_menu = $this->_routing = TRUE;
 		$this->_load_page = FALSE;
 	}
 
@@ -275,7 +276,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	protected function _initialize_admin_page() {		
 		
 		//JUST CHECK WE'RE ON RIGHT PAGE.
-		if ( !isset( $_REQUEST['page'] ) || $_REQUEST['page'] != $this->menu_slug )
+		if ( (!isset( $_REQUEST['page'] ) || $_REQUEST['page'] != $this->menu_slug) && $this->_routing )
 			return; //not on the right page so let's get out.
 		$this->_load_page = TRUE;
 
@@ -295,7 +296,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 			do_action( 'action_hook_espresso_before_initialize_admin_page_' . $this->menu_slug );
 			require_once( $path_to_file );
 			$a = new ReflectionClass( $admin_page );
-			$this->_loaded_page_object = $a->newInstance();				
+			$this->_loaded_page_object = $a->newInstance( $this->_routing );				
 		}
 
 		do_action( 'action_hook_espresso_after_initialize_admin_page' );
