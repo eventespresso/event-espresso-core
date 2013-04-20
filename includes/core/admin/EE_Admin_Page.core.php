@@ -614,7 +614,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 			// developer error msg
 			$error_msg .=  '||' . $error_msg . __( ' Make sure the "set_page_routes()" method exists, and is seting the "_page_routes" array properly.', 'event_espresso' );
 			throw new EE_Error( $error_msg );
-		} 							
+		} 
+					
 	
 		// and that the requested page route exists 
 		if ( array_key_exists( $this->_req_action, $this->_page_routes )) {
@@ -1304,6 +1305,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	protected function _set_list_table() {
+
 		//first is this a list_table view?
 		if ( !isset($this->_route_config['list_table']) )
 			return; //not a list_table view so get out.
@@ -1359,6 +1361,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * WP_List_Table objects need to be loaded fairly early so automatic stuff WP does is taken care of.
 	 */
 	protected function _set_list_table_object() {
+
 		if ( isset($this->_route_config['list_table'] ) ) {
 			$a = new ReflectionClass($this->_route_config['list_table']);
 			$this->_list_table_object = $a->newInstance($this);

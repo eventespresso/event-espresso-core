@@ -9,6 +9,7 @@ class Books_Admin_Page_Init extends EE_Admin_Page_CPT_Init {
 		define( 'BOOKS_ADMIN_URL', admin_url( 'admin.php?page=' . BOOKS_PG_SLUG ));	
 		define( 'BOOKS_TEMPLATE_PATH', BOOKS_ADMIN . 'templates' . DS );	
 		define( 'BOOKS_ASSETS_URL', EE_CORE_ADMIN_URL . 'books/assets/' );	
+
 		parent::__construct();
 	}
 

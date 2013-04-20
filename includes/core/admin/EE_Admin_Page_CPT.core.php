@@ -11,6 +11,14 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 
+	/**
+	 * a boolean flag to set whether the current route is a cpt route or not.
+	 * @var bool
+	 */
+	protected $_cpt_route = FALSE;
+
+
+
 	public function __construct( $routing = TRUE ) {
 		parent::__construct( $routing );
 	}
@@ -32,6 +40,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 				
 
 		$this->_cpt_object = get_post_type_object( $this->page_slug );
+		$this->_cpt_route = $this->_req_action == 'create_new' || $this->_req_action == 'edit' ? TRUE : FALSE;
 		add_action('filter_hook_espresso_admin_load_page_dependencies', array( $this, 'modify_current_screen') );
 
 
@@ -42,10 +51,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 		$this->_page_routes = array_merge( array(
-			'default' => '_create_new_cpt_item', //todo this needs to be changed to the default overview page eventually.  We're just using this for testing purposes.
 			'create_new' => '_create_new_cpt_item',
 			'edit' => '_edit_cpt_item'
 			), $this->_page_routes );
+
 
 		$this->_page_config = array_merge( array(
 			'create_new' => array(
@@ -61,10 +70,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 					'persistent' => false,
 					'url' => ''
 					)
-				),
-			$this->_page_config )
+				) ),
+			$this->_page_config
 		);
 
+		
 
 
 		//now let's do some automatic filters into the wp_system and we'll check to make sure the CHILD class automatically has the required methods in place.
@@ -128,6 +138,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 	public function modify_current_screen() {
+		//ONLY do this if the current page_route IS a cpt route
+		if ( !$this->_cpt_route ) return;
 		//routeing things REALLY early b/c this is a cpt admin page
 		set_current_screen( $this->page_slug );
 		$this->_current_screen = get_current_screen();
@@ -142,7 +154,14 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 
-	public function route_admin_request() {}
+	public function route_admin_request() {
+		if ( $this->_cpt_route ) return;
+		try {
+			$this->_route_admin_request();
+		} catch ( EE_Error $e ) {
+			$e->get_error();
+		}
+	}
 
 
 
@@ -221,10 +240,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 
-	/**
-	 * BELOW ARE SOME CUSTOM POST TYPE DEFAULT ROUTE METHODS
-	 * Child classes that flag the $_is_cpt property as true, do NOT need to declare these routes or methods.  However, they can override them if they need to for some reason.
-	 */
+
+
+
 
 	/**
 	 * default method for the 'create_new' route for cpt admin pages.
