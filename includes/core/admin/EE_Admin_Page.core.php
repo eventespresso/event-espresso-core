@@ -578,7 +578,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void|exception error
 	 */
 	public function route_admin_request() {
-
 		try {
 			$this->_route_admin_request();
 		} catch ( EE_Error $e ) {
@@ -596,17 +595,17 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * _verify_routes
 	 * All this method does is verify the incoming request and make sure that routes exist for it.  We do this early so we know if we need to drop out.
 	 *
-	 * @access private
+	 * @access protected
 	 * @return void
 	 */
-	private function _verify_routes() {
+	protected function _verify_routes() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 		if ( !$this->_current_page && !defined( 'DOING_AJAX')) return FALSE;
 
 		$this->_route = FALSE;
 		$func = FALSE;
-		$args = array();	
+		$args = array();
 		
 		// check that the page_routes array is not empty
 		if ( empty( $this->_page_routes )) {
@@ -651,17 +650,18 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+
 	/**
 	 * this method simply verifies a given route and makes sure its an actual route available for the loaded page
 	 * @param  string $route the route name we're verifying
 	 * @return mixed  (bool|Exception)      we'll throw an exception if this isn't a valid route.
 	 */
-	private function _verify_route( $route ) {
+	protected function _verify_route( $route ) {
 		if ( array_key_exists( $this->_req_action, $this->_page_routes )) {
 			return true;
 		} else {
 			// user error msg
-			$error_msg =  sprintf( __( 'The given page route does not exist for the %s admin page.', 'primal-plugin' ), $this->_admin_page_title );
+			$error_msg =  sprintf( __( 'The given page route does not exist for the %s admin page.', 'event_espresso' ), $this->_admin_page_title );
 			// developer error msg
 			$error_msg .=  '||' . $error_msg . sprintf( __( ' Check the route you are using in your method (%s) and make sure it matches a route set in your "_page_routes" array property', 'event_espresso' ), $route );
 			throw new PRM_Error( $error_msg );
@@ -703,10 +703,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * Meat and potatoes of the class.  Basically, this dude checks out what's being requested and sees if theres are some doodads to work the magic and handle the flingjangy.
 	 * Translation:  Checks if the requested action is listed in the page routes and then will try to load the corresponding method.
 	 *
-	 * @access private
+	 * @access protected
 	 * @return void
 	 */
-	private function _route_admin_request() {
+	protected function _route_admin_request() {
 
 		$this->_verify_routes();
 
@@ -1892,6 +1892,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		else
 			$this->display_admin_page_with_no_sidebar();
 	}
+
+
 
 
 
