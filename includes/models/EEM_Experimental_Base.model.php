@@ -96,7 +96,7 @@ abstract class EEM_Experimental_Base{
 	function get_all($query_params = array()){
 		global $wpdb;
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
-		$SQL ="SELECT ".$this->_construct_select_sql_for_this_model()." FROM ".$model_query_info->get_full_join_sql()." WHERE ".$model_query_info->get_where_sql();
+		$SQL ="SELECT ".$this->_construct_select_sql()." FROM ".$model_query_info->get_full_join_sql()." WHERE ".$model_query_info->get_where_sql();
 		//echo "sql to run:$SQL";
 		return $this->_create_objects($wpdb->get_results($SQL));
 	}
@@ -141,11 +141,31 @@ abstract class EEM_Experimental_Base{
 	 * @param array $query_params very much like EEM_Experimental_Base::get_all's $query_params
 	 * @return int how many rows got updated
 	 */
-	function update($cols_n_values, $query_params){
+	function update($fields_n_values, $query_params){
+		global $wpdb;
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
-		//$SQL =
-		EE_Error::add_error("EEM_ExperimetnaL_Base::update not yet implemented");
-		return 25;//how many supposedly got updated
+		$SQL = "UPDATE ".$model_query_info->get_full_join_sql()." SET ".$this->_construct_update_sql($fields_n_values)." WHERE ".$model_query_info->get_where_sql();
+		$rows_affected = $wpdb->query($SQL);
+		return $rows_affected;//how many supposedly got updated
+	}	
+	
+	
+	/**
+	 * Makes the SQL for after "UPDATE tablex inner join tabley..." and before "...WHERE". Eg "Question.name='party time?', Question.desc='what do you think?',..."
+	 * Values are filtered through wpdb->prepare to avoid against SQL injection, but currently no further filtering is done
+	 * @global type $wpdb
+	 * @param array $fields_n_values array keys are field names on this model, and values are what those fields should be updated to in the DB
+	 * @return string of SQL 
+	 */
+	function _construct_update_sql($fields_n_values){
+		global $wpdb;
+		$cols_n_values = array();
+		foreach($fields_n_values as $field_name => $value){
+			$field = $this->field_settings_for($field_name);
+			$cols_n_values[] = $field->get_qualified_column()."=".$wpdb->prepare($field->get_wpdb_data_type(),$value);
+		}
+		return implode(",",$cols_n_values);
+		
 	}
 	/**
 	 * 
@@ -239,15 +259,15 @@ abstract class EEM_Experimental_Base{
 	/**
 	 * Inserts a new entry into the database, for each table
 	 * @global type $wpdb
-	 * @param type $cols_n_values
+	 * @param type $field_n_values
 	 * @return int primary key on main table from insertions
 	 * @throws EE_Error
 	 */
-	function insert($cols_n_values){
+	function insert($field_n_values){
 		$main_table = $this->_get_main_table();
-		$new_id = $this->_insert_into_specific_table($main_table, $cols_n_values);
+		$new_id = $this->_insert_into_specific_table($main_table, $field_n_values);
 		foreach($this->_get_other_tables() as $other_table){
-			$this->_insert_into_specific_table($other_table, $cols_n_values,$new_id);
+			$this->_insert_into_specific_table($other_table, $field_n_values,$new_id);
 		}
 		return $new_id;
 	}
@@ -379,7 +399,7 @@ abstract class EEM_Experimental_Base{
 	 * Eg, "Event.post_id, Event.post_name,Event_Detail.EVT_ID..."
 	 * @return string
 	 */
-	public function _construct_select_sql_for_this_model(){
+	public function _construct_select_sql(){
 		$fields = $this->field_settings();
 		$selects = array();
 		foreach($fields as $field_name => $field_obj){
