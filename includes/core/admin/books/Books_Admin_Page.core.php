@@ -77,14 +77,29 @@ class Books_Admin_Page extends EE_Admin_Page_CPT {
 					),
 				'list_table' => 'Event_Categories_Admin_List_Table',
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
-				)
+				),
+			'create_new' => array(
+				'nav' => array(
+					'label' => $this->_cpt_object->labels->add_new_item,
+					'order' => 5
+					),
+				'metaboxes' => array('_metabox_test')
+				),
 
 		);
 		
 	}
 
 
+	//this is just a test function to make sure we can still add metaboxes to cpt routes
+	protected function _metabox_test() {
+		add_meta_box( 'book_test_metabox', 'Book Test Metabox', array( $this, 'book_test_metabox'), $this->page_slug, 'side' );
+	}
 
+
+	public function book_test_metabox() {
+		echo 'It works!!';
+	}
 
 
 	protected function _add_screen_options() {
