@@ -36,6 +36,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected $_admin_base_url;
 	protected $_admin_page_title;
 	protected $_labels;
+
 	
 	//set early within EE_Admin_Init
 	protected $_wp_page_slug;
@@ -108,7 +109,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 		@return void
 	 */
 	public function __construct( $routing = TRUE ) {
-
 		$this->_yes_no_values = array(
 			array('id' => TRUE, 'text' => __('Yes', 'event_espresso')),
 			array('id' => FALSE, 'text' => __('No', 'event_espresso'))
@@ -380,11 +380,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_do_other_page_hooks();
 
 
-		//first verify if we need to load anything...
-		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
-
-		if ( !$this->_current_page && !defined( 'DOING_AJAX') ) return FALSE;
-
 
 		//next let's just check user_access and kill if no access
 		$this->_check_user_access();
@@ -413,10 +408,19 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_set_page_routes();
 		$this->_set_page_config();
 
+
+
 		//for caffeinated functionality.  If there is a _extend_page_config method then let's run that to modify the all the various page configuration arrays
 		if ( method_exists( $this, '_extend_page_config' ) )
 			$this->_extend_page_config();
 
+		//admin_init stuff - global
+		add_action( 'admin_init', array( $this, 'admin_init_global' ), 5 );
+
+		//next verify if we need to load anything...
+		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
+
+		if ( !$this->_current_page && !defined( 'DOING_AJAX') ) return FALSE;
 
 		//next route only if routing enabled
 		if ( $this->_routing && !defined('DOING_AJAX') ) {
@@ -425,7 +429,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 			if ( $this->_is_UI_request ) {
 				//admin_init stuff - global, all views for this page class, specific view
-				add_action( 'admin_init', array( $this, 'admin_init_global' ), 5 );
 				add_action( 'admin_init', array( $this, 'admin_init' ), 10 );
 				if ( method_exists( $this, 'admin_init_' . $this->_current_view )) {
 					add_action( 'admin_init', array( $this, 'admin_init_' . $this->_current_view ), 15 );
