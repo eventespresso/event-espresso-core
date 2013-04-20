@@ -74,7 +74,7 @@ abstract class EEM_Experimental_Base{
 	function __construct(){
 		foreach($this->_tables as $table_alias => $table_obj){
 			$table_obj->_construct_finalize_with_alias($table_alias);
-			if($table_obj instanceof EE_Other_Table){
+			if($table_obj instanceof EE_Secondary_Table){
 				$table_obj->_construct_finalize_set_table_to_join_with($this->_get_main_table());
 			}
 		}
@@ -159,8 +159,14 @@ abstract class EEM_Experimental_Base{
 		return $this->_tables;
 	}
 	/**
-	 * 
-	 * @param array $cols_n_values keys are model fields (exactly like keys in EEM_Experimental::_fields), values are strings, ints, floats, and maybe arrays if theyare to be serialized
+	 * Updates all the entries (in each table for this model) according to $fields_n_values, where the criteria expressed in $query_params are met..
+	 * Also note: if this model has multiple tables, this update verifies all the secondary tables have an entry for each row (in the primary table) we're trying to update; if not,
+	 * it inserts an entry in the secondary table.
+	 * Eg: if our model has 2 tables: wp_posts (primary), and wp_esp_event (seconary). Let's say we are trying to update a model object with EVT_ID = 1 
+	 * (which means where wp_posts has ID = 1, because wp_posts.ID is the primary key's column), which exists, but there is no entry in wp_esp_event for this entry in wp_posts.
+	 * So, this update script will insert a row into wp_esp_event, using any available parameters from $fields_n_values (eg, if "EVT_limit" => 40 is in $fields_n_values,
+	 * the new entry in wp_esp_event will set EVT_limit = 40, and use default for other columns which are not specified)
+	 * @param array $fields_n_values keys are model fields (exactly like keys in EEM_Experimental::_fields, NOT db columns!), values are strings, ints, floats, and maybe arrays if they are to be serialized
 	 * @param array $query_params very much like EEM_Experimental_Base::get_all's $query_params
 	 * @return int how many rows got updated
 	 */
@@ -366,7 +372,7 @@ abstract class EEM_Experimental_Base{
 			$format_for_insertion[] = $field_obj->get_wpdb_data_type();
 		}
 
-		if($table instanceof EE_Other_Table && $new_id){
+		if($table instanceof EE_Secondary_Table && $new_id){
 			//its not the main table, so we should have already saved teh main table's PK which we just inserted
 			//so add the fk to the main table as a column
 			$insertion_col_n_values[$table->get_fk_on_table()] = $new_id;
@@ -397,12 +403,12 @@ abstract class EEM_Experimental_Base{
 	}
 	/**
 	 * Gets all the tables of type EE_Other_Table from EEM_Experimental_Model::_tables
-	 * @return EE_Other_Table[]
+	 * @return EE_Secondary_Table[]
 	 */
 	protected function _get_other_tables(){
 		$other_tables =array();
 		foreach($this->_tables as $table_alias => $table){
-			if($table instanceof EE_Other_Table){
+			if($table instanceof EE_Secondary_Table){
 				$other_tables[$table_alias] = $table;
 			}
 		}
@@ -643,7 +649,7 @@ abstract class EEM_Experimental_Base{
 		foreach($this->_tables as $table_obj){
 			if($table_obj instanceof EE_Main_Table){
 				$SQL .= SP.$table_obj->get_table_name()." AS ".$table_obj->get_table_alias().SP;
-			}elseif($table_obj instanceof EE_Other_Table){
+			}elseif($table_obj instanceof EE_Secondary_Table){
 				$SQL .= SP.$table_obj->get_join_sql().SP;
 			}
 		}
@@ -934,7 +940,7 @@ class EEM_Exp_Event extends EEM_Experimental_Base{
 	function __construct(){
 		$this->_tables = array(
 			'Event' => new EE_Main_Table('posts','ID'),
-			'Event_Meta' => new EE_Other_Table('postmeta','meta_id', 'post_id',"Event.post_type = 'page'"));
+			'Event_Meta' => new EE_Secondary_Table('postmeta','meta_id', 'post_id',"Event.post_type = 'page'"));
 		$this->_model_relations = array(
 			'Registration'=>new EE_Exp_Has_Many(),
 			'Question_Group'=>new EE_Exp_HABTM('Event_Question_Group'),
@@ -1501,7 +1507,7 @@ abstract class EE_Table{
 	}
 }
 
-class EE_Other_Table extends EE_Table{
+class EE_Secondary_Table extends EE_Table{
 	protected $_fk_on_table;
 	/**
 	 * 
