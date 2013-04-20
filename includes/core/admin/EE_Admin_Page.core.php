@@ -127,6 +127,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//set global defaults
 		$this->_set_defaults();
 
+		//This just allows us to have extending clases do something specific before the parent constructor runs _page_setup.
+		if ( method_exists( $this, '_before_page_setup' ) )
+			$this->_before_page_setup();
+
 		//set up page dependencies
 		$this->_page_setup();
 
@@ -139,6 +143,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * _init_page_props
 	 * Child classes use to set at least the following properties:
 	 * $page_slug.
+	 * $page_label.
 	 *
 	 * @abstract
 	 * @access protected
@@ -410,7 +415,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
-		//for caffeinated functionality.  If there is a _extend_page_config method then let's run that to modify the all the various page configuration arrays
+		//for caffeinated and other extended functionality.  If there is a _extend_page_config method then let's run that to modify the all the various page configuration arrays
 		if ( method_exists( $this, '_extend_page_config' ) )
 			$this->_extend_page_config();
 
@@ -615,7 +620,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$error_msg .=  '||' . $error_msg . __( ' Make sure the "set_page_routes()" method exists, and is seting the "_page_routes" array properly.', 'event_espresso' );
 			throw new EE_Error( $error_msg );
 		} 
-					
+
 	
 		// and that the requested page route exists 
 		if ( array_key_exists( $this->_req_action, $this->_page_routes )) {
