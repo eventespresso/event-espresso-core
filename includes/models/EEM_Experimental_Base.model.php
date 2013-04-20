@@ -173,8 +173,23 @@ abstract class EEM_Experimental_Base{
 	 * @return int how many rows got deleted
 	 */
 	function delete($query_params){
-		EE_Error::add_error("EEM_ExperimetnaL_Base::delete not yet implemented");
-		return 23;//how many supposedly got delteed
+		global $wpdb;
+		//some MySQL databases may be running safe mode, which may restrict
+		//deletion if there is no KEY column used in the WHERE statement of a deletion.
+		//to get around this, we first do a SELECT, get all the IDs, and then run another query
+		//to delete them
+		$objects_for_deletion = $this->get_all($query_params);
+		//echo "objects for deletion:";var_dump($objects_for_deletion);
+		$model_query_info = $this->_create_model_query_info_carrier($query_params);
+		$table_aliases = array();
+		foreach(array_keys($this->_tables) as $table_alias){
+			$table_aliases[] = $table_alias;
+		}
+		$SQL = "DELETE ".implode(", ",$table_aliases)." FROM ".$model_query_info->get_full_join_sql()." WHERE ".$this->get_primary_key_field()->get_qualified_column()." IN (".implode(",",array_keys($objects_for_deletion)).")";
+//		/echo "delete sql:$SQL";
+		$rows_deleted = $wpdb->query($SQL);
+		//$wpdb->print_error();
+		return $rows_deleted;//how many supposedly got updated
 	}
 	/**
 	 * Adds a relationship of the correct type between $modelObject and $otherModelObject. 
