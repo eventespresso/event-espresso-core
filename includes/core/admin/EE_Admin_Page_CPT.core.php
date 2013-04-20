@@ -138,12 +138,19 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	public function admin_init_global() {
 		add_filter('redirect_post_location', array( $this, 'cpt_post_location_redirect'), 10, 2 );
-		//$post_id, $post
-		add_action('save_post', array( $this, 'insert_update_cpt_item'), 10, 2 );
-		//$post_id
-		add_action('trashed_post', array( $this, 'trash_cpt_item' ), 10 );
-		add_action('untrashed_post', array( $this, 'restore_cpt_item'), 10 );
-		add_action('after_delete_post', array( $this, 'delete_cpt_item'), 10 );
+
+		//NOTE we ONLY want to run these hooks if we're on the right class for the given post type.  Otherwise we could see some really freaky things happen!
+		//try to get post type from $_POST data
+		$post_type = isset( $this->_req_data['post_type'] ) ? $this->_req_data['post_type'] : FALSE;
+
+		if ( $post_type && $post_type == $this->page_slug ) {
+			//$post_id, $post
+			add_action('save_post', array( $this, 'insert_update_cpt_item'), 10, 2 );
+			//$post_id
+			add_action('trashed_post', array( $this, 'trash_cpt_item' ), 10 );
+			add_action('untrashed_post', array( $this, 'restore_cpt_item'), 10 );
+			add_action('after_delete_post', array( $this, 'delete_cpt_item'), 10 );
+		}
 	}
 
 
