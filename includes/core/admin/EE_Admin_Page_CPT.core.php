@@ -32,14 +32,26 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 
+
+	/**
+	 * Just utilizing the method EE_Admin exposes for doing things before page setup.
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function _before_page_setup() {
+		$this->_cpt_object = get_post_type_object( $this->page_slug );
+	}
+
+
+
+
 	/**
 	 * if this page is flagged as a cpt admin system... then we will add some default page_routes and config!
 	 * @return void
 	 */
 	protected function _extend_page_config() {
 				
-
-		$this->_cpt_object = get_post_type_object( $this->page_slug );
 		$this->_cpt_route = $this->_req_action == 'create_new' || $this->_req_action == 'edit' ? TRUE : FALSE;
 		add_action('filter_hook_espresso_admin_load_page_dependencies', array( $this, 'modify_current_screen') );
 
