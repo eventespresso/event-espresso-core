@@ -385,6 +385,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_do_other_page_hooks();
 
 
+		//admin_init stuff - global - we're setting this REALLY early so if EE_Admin pages have to hook into other WP pages they can.  But keep in mind, not everything is available from the EE_Admin Page object at this point.
+		add_action( 'admin_init', array( $this, 'admin_init_global' ), 5 );
+
+		//next verify if we need to load anything...
+		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
+
+		if ( !$this->_current_page && !defined( 'DOING_AJAX') ) return FALSE;
+
 
 		//next let's just check user_access and kill if no access
 		$this->_check_user_access();
@@ -419,13 +427,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( method_exists( $this, '_extend_page_config' ) )
 			$this->_extend_page_config();
 
-		//admin_init stuff - global
-		add_action( 'admin_init', array( $this, 'admin_init_global' ), 5 );
-
-		//next verify if we need to load anything...
-		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
-
-		if ( !$this->_current_page && !defined( 'DOING_AJAX') ) return FALSE;
 
 		//next route only if routing enabled
 		if ( $this->_routing && !defined('DOING_AJAX') ) {
