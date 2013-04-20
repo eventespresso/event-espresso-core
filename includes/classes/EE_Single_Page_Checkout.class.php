@@ -9,7 +9,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link					http://www.eventespresso.com
- * @ version		 	3.2.P
+ * @ version		 	4.0
  *
  * ------------------------------------------------------------------------
  *

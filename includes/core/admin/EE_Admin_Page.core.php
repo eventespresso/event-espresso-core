@@ -9,7 +9,7 @@
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
  * @ link				{@link http://www.eventespresso.com}
- * @ since		 		3.2.P
+ * @ since		 		4.0
  *
  * ------------------------------------------------------------------------
  */
@@ -2025,7 +2025,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
-
+	/**
+	 * This returns the admin_nav tabs html using the configuration in the _nav_tabs property
+	 * @return string html
+	 */
 	protected function _get_main_nav_tabs() {
 		//let's generate the html using the EE_Tabbed_Content helper.  We do this here so that it's possible for child classes to add in nav tabs dynamically at the last minute (rather than setting in the page_routes array)
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Tabbed_Content.helper.php' ;
@@ -2711,6 +2714,4 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 }
-
-	
 // end of file:  includes/core/admin/EE_Admin_Page.core.php
