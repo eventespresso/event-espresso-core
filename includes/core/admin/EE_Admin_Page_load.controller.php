@@ -134,6 +134,7 @@ class EE_Admin_Page_load {
 	private function _define_all_constants() {
 		define( 'EE_CORE_ADMIN', EE_CORE . 'admin' . DS );
 		define( 'EE_CORE_ADMIN_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'includes/core/admin/' );
+		define( 'WP_ADMIN_PATH', ABSPATH . 'wp-admin/' );
 		define( 'WP_AJAX_URL', get_bloginfo('url') . '/wp-admin/admin-ajax.php' );
 		define( 'JQPLOT_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/' );
 	}
@@ -257,6 +258,7 @@ class EE_Admin_Page_load {
 			//let's do the registered hooks first
 			$this->_installed_pages[$page]->register_hooks();
 		}
+
 
 		//we need to loop again to run any early code
 		foreach ( $installed_refs as $page ) {
