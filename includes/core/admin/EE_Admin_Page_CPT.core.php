@@ -81,36 +81,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		
 		//the following filters are for setting all the redirects on DEFAULT WP custom post type actions	
 		//let's add a hidden input to the post-edit form so we know when we have to trigger our custom redirects!  Otherwise the redirects will happen on ALL post saves which wouldn't be good of course!
+		
 		add_action('edit_form_after_title', array( $this, 'cpt_post_form_hidden_input') );
 		add_action('post_edit_form_tag', array( $this, 'inject_nav_tabs' ) );
+		add_action('post_updated_messages', array( $this, 'post_update_messages' ), 10 );
 
-
-		//temp comment out below b/c we'll make them abstract classes.
-		/*
-		//hooking into various cpt actions which requires that the related methods be set by the child
-		$required_methods = array(
-			'insert_update_cpt_item', //hooked in save_post
-			'trash_cpt_item', //hooked in to trashed_post
-			'restore_cpt_item', //hoked in to untrashed_post
-			'delete_cpt_item', //hooked in to after_delete_post
-			);
-
-		$err_msg = sprintf( __('In order for the %s pages to function properly with the WordPress Custom Post Type integration, the following methods must be defined in this page\'s class.', 'event_espresso'), $this->_admin_page_title );
-		$err_msg .= '<ul>';
-		$has_err = FALSE;
-
-		foreach ( $required_methods as $rm ) {
-			if ( !method_exists( $this, $rm ) ) {
-				$err_msg .= '<li>' . $rm . '</li>';
-				$has_err = TRUE;
-			}
-		}
-
-		if ( $has_err ) {
-			$err_msg .= '</ul>';
-			throw new EE_Error( $err_msg );
-		}
-		 */
 		
 	}
 
@@ -237,6 +212,34 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		echo $html;
 	}
 
+
+
+
+	/**
+	 * This just sets up the post update messages when an update form is loaded
+	 * @param  array $messages the original messages array
+	 * @return array           the new messages array
+	 */
+	public function post_update_messages( $messages ) {
+		global $post;
+		$id = isset( $this->_req_data['id'] ) ? $this->_req_data['id'] : NULL;
+		$id = empty( $id ) && is_object( $post ) ? $post->ID : NULL;
+
+		$messages[$this->page_slug] = array(
+			0 => '', //Unused. Messages start at index 1.
+			1 => sprintf( __( '%1$s updated. <a href="%2$s">View %1$s</a>', 'event_espresso'), $this->_cpt_object->labels->singular_name, esc_url( get_permalink( $id ) ) ),
+			2 => __('Custom field updated'),
+			3 => __('Custom field deleted.'),
+			4 => sprintf( __( '%1$s updated.', 'event_espresso'), $this->_cpt_object->labels->singular_name ),
+			5 => isset( $_GET['revision'] ) ? sprintf( __('%s restored to revision from %s', 'event_espresso'), $this->_cpt_object->labels->singular_name, wp_post_revision_title( (int) $_GET['revision'], FALSE ) ) : FALSE,
+			6 => sprintf( __( '%1$s published. <a href="%2$s">View %1$s</a>', 'event_espresso'), $this->_cpt_object->labels->singular_name, esc_url( get_permalink( $id ) ) ),
+			7 => sprintf( __( '%1$s saved.', 'event_espresso'), $this->_cpt_object->labels->singular_name ),
+			8 => sprintf( __('%1$s submitted. <a target="_blank" href="%s">Preview %1$s</a>'), $this->_cpt_object->labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink($id) ) ) ),
+			9 => sprintf( __('%1$s scheduled for: <strong>%2$s</strong>. <a target="_blank" href="%3$s">Preview %1$s</a>'), $this->_cpt_object->labels->singular_name, date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink($id) ) ),
+			10 => sprintf( __('%1$s draft updated. <a target="_blank" href="%s">Preview page</a>'), $this->_cpt_object->labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink($id) ) ) )
+			);
+		return $messages;
+	}
 
 
 
