@@ -1988,10 +1988,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');	
 
-		//setup nav-tab html
-		//let's generate the html using the EE_Tabbed_Content helper.  We do this here so that it's possible for child classes to add in nav tabs dynamically at the last minute (rather than setting in the page_routes array)
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Tabbed_Content.helper.php' ;
-		$this->_nav_tabs = EE_Tabbed_Content::display_admin_nav_tabs($this->_nav_tabs);
+		$this->_nav_tabs = $this->_get_main_nav_tabs();
 
 		$this->_template_args['nav_tabs'] = $this->_nav_tabs;
 		$this->_template_args['admin_page_title'] = $this->_admin_page_title;
@@ -2016,6 +2013,17 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 	}
+
+
+
+
+	protected function _get_main_nav_tabs() {
+		//let's generate the html using the EE_Tabbed_Content helper.  We do this here so that it's possible for child classes to add in nav tabs dynamically at the last minute (rather than setting in the page_routes array)
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Tabbed_Content.helper.php' ;
+		return EE_Tabbed_Content::display_admin_nav_tabs($this->_nav_tabs);
+	}
+
+
 
 
 
