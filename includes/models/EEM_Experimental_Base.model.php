@@ -92,13 +92,29 @@ abstract class EEM_Experimental_Base{
 			$relation_obj->_construct_finalize_set_models($this->get_this_model_name(), $model_name);
 		}
 	}
-	
+	/**
+	 * Gets an array of objects that correspond to the current model according to the $query_params
+	 * @param array $query_params
+	 * @return EE_Exp_Base_Class[]
+	 */
 	function get_all($query_params = array()){
+		return $this->_create_objects($this->_get_all_wpdb_results($query_params));
+	}
+	
+	
+	
+	/**
+	 * Used internally to get WPDB results, because other functions, besides get_all, may want to do some queries, but may want to
+	 * preserve the WPDB results (eg, update, which first queries to make sure we have all the tables on the model)
+	 * @global type $wpdb
+	 * @param array $query_params like EEM_Experimental_Base::get_all's $query_params
+	 * @return stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
+	 */
+	private function _get_all_wpdb_results($query_params = array()){
 		global $wpdb;
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 		$SQL ="SELECT ".$this->_construct_select_sql()." FROM ".$model_query_info->get_full_join_sql()." WHERE ".$model_query_info->get_where_sql();
-		//echo "sql to run:$SQL";
-		return $this->_create_objects($wpdb->get_results($SQL));
+		return $wpdb->get_results($SQL, ARRAY_A);
 	}
 	
 	/**
@@ -136,6 +152,13 @@ abstract class EEM_Experimental_Base{
 		return $where_array;
 	}
 	/**
+	 * Gets all the tables comprising this model. Array keys are the table aliases, and values are EE_Table objects
+	 * @return EE_Table[]
+	 */
+	function get_tables(){
+		return $this->_tables;
+	}
+	/**
 	 * 
 	 * @param array $cols_n_values keys are model fields (exactly like keys in EEM_Experimental::_fields), values are strings, ints, floats, and maybe arrays if theyare to be serialized
 	 * @param array $query_params very much like EEM_Experimental_Base::get_all's $query_params
@@ -143,6 +166,30 @@ abstract class EEM_Experimental_Base{
 	 */
 	function update($fields_n_values, $query_params){
 		global $wpdb;
+		//need to verify there are entries for each table
+		//to do that, for each table, verify that it's PK isn't null.
+		$tables= $this->get_tables();
+		//if there are more than 1 tables, we'll want to verify that each table for this model has an entry in the other tables
+		//and if the other tables don't have a row for each table-to-be-updated, we'll insert one with whatever values available in the current update query
+		if(count($tables) > 1){
+			$wpdb_select_results = $this->_get_all_wpdb_results($query_params);
+			foreach($wpdb_select_results as $wpdb_result){
+				//get the model object's PK, as we'll want this if we need to insert a row into secondary tables
+				$main_table_pk_column = $this->get_primary_key_field()->get_qualified_column();
+				$main_table_pk_value = $wpdb_result[ $main_table_pk_column ];
+				//foreach matching row in the DB, ensure that each table's PK isn't null. If so, there must not be an entry 
+				//in that table, and so we'll want to insert one
+				foreach($tables as $table_alias => $table_obj){
+					$this_table_pk_column = $table_obj->get_fully_qualified_pk_column();
+					//if there is no private key for this table on the results, it means there's no entry
+					//in this table, right? so insert a row in the current table, using any fields available
+					if( ! (array_key_exists($this_table_pk_column, $wpdb_result)  &&  $wpdb_result[ $this_table_pk_column ]) ){
+						$this->_insert_into_specific_table($table_obj, $fields_n_values, $main_table_pk_value);
+					}
+				}
+			}
+		}
+		
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 		$SQL = "UPDATE ".$model_query_info->get_full_join_sql()." SET ".$this->_construct_update_sql($fields_n_values)." WHERE ".$model_query_info->get_where_sql();
 		$rows_affected = $wpdb->query($SQL);
@@ -419,6 +466,16 @@ abstract class EEM_Experimental_Base{
 		$selects = array();
 		foreach($fields as $field_name => $field_obj){
 			$selects[] = $field_obj->get_table_alias().".".$field_obj->get_table_column()." AS '".$field_obj->get_table_alias().".".$field_obj->get_table_column()."'";
+		}
+		//make sure we are also getting the PKs of each table
+		$tables = $this->get_tables();
+		if(count($tables) > 1){
+			foreach($tables as $table_alias => $table_obj){
+				$qualified_pk_column = $table_obj->get_fully_qualified_pk_column();
+				if( ! in_array($qualified_pk_column,$selects)){
+					$selects[] = "$qualified_pk_column AS '$qualified_pk_column'";
+				}
+			}
 		}
 		return implode(", ",$selects);
 	}
@@ -877,7 +934,7 @@ class EEM_Exp_Event extends EEM_Experimental_Base{
 	function __construct(){
 		$this->_tables = array(
 			'Event' => new EE_Main_Table('posts','ID'),
-			'Event_Meta' => new EE_Other_Table('postmeta','post_id',"Event.post_type = 'page'"));
+			'Event_Meta' => new EE_Other_Table('postmeta','meta_id', 'post_id',"Event.post_type = 'page'"));
 		$this->_model_relations = array(
 			'Registration'=>new EE_Exp_Has_Many(),
 			'Question_Group'=>new EE_Exp_HABTM('Event_Question_Group'),
@@ -1392,10 +1449,16 @@ abstract class EE_Table{
 	var $_table_name;
 	var $_table_alias;
 	var $_extra_join_conditions;
+	/**
+	 * Table's private key column
+	 * @var string
+	 */
+	protected $_pk_column;
 	
-	function __construct($table_name, $extra_join_conditions = null){
+	function __construct($table_name, $pk_column, $extra_join_conditions = null){
 		global $wpdb;
 		$this->_table_name = $wpdb->prefix . $table_name;
+		$this->_pk_column = $pk_column;
 		
 		$this->_extra_join_conditions = $extra_join_conditions;
 	}
@@ -1417,6 +1480,25 @@ abstract class EE_Table{
 	function get_extra_join_conditions(){
 		return $this->_extra_join_conditions;
 	}
+	
+	/**
+	 * 
+	 * @return string name of column of PK
+	 */
+	function get_pk_column(){
+		return $this->_pk_column;
+	}
+	
+	
+	
+	/**
+	 * returns a string with the table alias, a period, and the private key's column.
+	 * @return string
+	 */
+	function get_fully_qualified_pk_column(){
+		$sql =  $this->get_table_alias().".".$this->get_pk_column();
+		return $sql;
+	}
 }
 
 class EE_Other_Table extends EE_Table{
@@ -1426,9 +1508,9 @@ class EE_Other_Table extends EE_Table{
 	 * @var EE_Main_Table 
 	 */
 	protected $_table_to_join_with;
-	function __construct($table_name, $fk_column = null, $extra_join_conditions = null){
+	function __construct($table_name, $pk_column,  $fk_column = null, $extra_join_conditions = null){
 		$this->_fk_on_table = $fk_column;
-		parent::__construct($table_name, $extra_join_conditions);
+		parent::__construct($table_name, $pk_column, $extra_join_conditions);
 	}
 	function get_fk_on_table(){
 		return $this->_fk_on_table;
@@ -1458,22 +1540,11 @@ class EE_Other_Table extends EE_Table{
 	}
 }
 class EE_Main_Table extends EE_Table{
-	/**
-	 *
-	 * @var string
-	 */
-	protected $_pk_column;
+	
 	function __construct($table_name, $pk_column = null, $extra_join_conditions = null){
-		$this->_pk_column = $pk_column;
-		parent::__construct($table_name, $extra_join_conditions);
+		parent::__construct($table_name, $pk_column,  $extra_join_conditions);
 	}
-	/**
-	 * 
-	 * @return string name of column of PK
-	 */
-	function get_pk_column(){
-		return $this->_pk_column;
-	}
+	
 }
 /**
 * Internal class for simply carrying data during the EEM_Experimental_Base::_extract_related_model_info_from_query_param method.
