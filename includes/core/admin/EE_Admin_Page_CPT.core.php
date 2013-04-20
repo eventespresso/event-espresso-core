@@ -93,7 +93,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		
 		//the following filters are for setting all the redirects on DEFAULT WP custom post type actions	
 		//let's add a hidden input to the post-edit form so we know when we have to trigger our custom redirects!  Otherwise the redirects will happen on ALL post saves which wouldn't be good of course!
-		
 		add_action('edit_form_after_title', array( $this, 'cpt_post_form_hidden_input') );
 		add_action('post_edit_form_tag', array( $this, 'inject_nav_tabs' ) );
 		add_action('post_updated_messages', array( $this, 'post_update_messages' ), 10 );
@@ -170,7 +169,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	public function cpt_post_location_redirect( $location, $post_id ) {
 		//first let's see if we should even do a redirect
 		if ( !isset( $this->_req_data['ee_cpt_item_redirect_url'] ) )
-			return;
+			return $location;
 
 
 		//shared query_args
