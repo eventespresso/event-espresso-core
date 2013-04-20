@@ -228,9 +228,17 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	 */
 	private function _set_file_and_folder_name() {
 		$bt = debug_backtrace();
-
+		//for more reliable determination of folder name
 		//we're using this to get the actual folder name of the CALLING class (i.e. the child class that extends this).  Why?  Because $this->menu_slug may be different than the folder name (to avoid conflicts with other plugins)
-		$this->_folder_name = basename(dirname($bt[1]['file']));
+		$class = get_class( $this );
+		foreach ( $bt as $index => $values ) {
+			if ( isset( $values['class'] ) && $values['class'] == $class ) {
+				$file_index = $index - 1;
+				$this->_folder_name = basename(dirname($bt[$file_index]['file']) );
+				if ( !empty( $this->_folder_name ) ) break;
+			}
+		}
+
 		$this->_folder_path = EE_CORE_ADMIN . $this->_folder_name . DS;
 
 		$this->_file_name = preg_replace( '/^ee/' , 'EE', $this->_folder_name );
