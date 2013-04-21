@@ -745,7 +745,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		// grab reg times
 		//$reg_times = $DTM_MDL->get_all_reg_dates($this->_event->id);
 		
-		$datetime_IDs = array();
+		$template_args['datetime_IDs'] = array();
 		$template_args['event_date_help_link'] = $this->_get_help_tab_link('event_date_info');
 		$template_args['registration_date_help_link'] = $this->_get_help_tab_link('reg_date_info');
 		$template_args['times'] = $times;
