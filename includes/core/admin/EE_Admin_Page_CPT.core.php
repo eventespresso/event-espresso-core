@@ -13,12 +13,22 @@
  *
  * ------------------------------------------------------------------------
  */
-
+	
 
 
 /**
  * EE_Admin_Page_CPT class
  *
+ * This class is for child classes that utilize core WP CPT views for add/edit pages.  All you have to do is extend this class instead of the usual EE_Admin_Page class for your child.
+ *
+ * Please not the following caveats:
+ *
+ * 1. When using add_meta_box() - it must use $this->wp_page_slug as the screen_id for the page NOT $this->_current_screen->id.  This is b/c there is a bug with how WP renders its custom post type pages that doesn't accept the default current_screen for metaboxes.
+ *
+ * 2. the same is true for any help_tabs or screen_options you want to add to custom post type views.
+ *
+ * 3. it is EXPECTED that $this->page_slug will be IDENTICAL to what slug/id was used when doing register_post_type().  So for instance, if you registered a "books" post type then $this->page_slug = 'espresso_books'  would NOT be valid.  So the correct id for the new post type would be "espresso_books".  Remember, you can still use something totally different for front-end rewrite slugs in your configuration array for the register post type.
+ * 
  * @package		Event Espresso
  * @subpackage 	includes/core/admin/EE_Admin_Page.core.php
  * @abstract
@@ -46,15 +56,65 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 
+
+
+
 	public function __construct( $routing = TRUE ) {
 		parent::__construct( $routing );
 	}
 
 
 
+
+
+
+	/**
+	 * This is hooked into the WordPress do_action('save_post') hook and runs after the custom post type has been saved.  Child classes are required to declare this method.  Typically you would use this to save any additional data.
+	 *
+	 * Keep in mind also that "save_post" runs on EVERY post update to the database.  
+	 * ALSO very important.  When a post transitions from scheduled to published, the save_post action is fired but you will NOT have any _POST data containing any extra info you may have from other meta saves.  So MAKE sure that you handle this accordingly.
+	 *
+	 * @access public
+	 * @abstract
+	 * @param  string $post_id The ID of the cpt that was saved (so you can link relationally)
+	 * @param  object $post    The post object of the cpt that was saved. 
+	 * @return void          
+	 */
 	abstract public function insert_update_cpt_item( $post_id, $post );
+
+
+
+
+	/**
+	 * This is hooked into the WordPress do_action('trashed_post') hook and runs after a cpt has been trashed.
+	 *
+	 * @abstract
+	 * @access public
+	 * @param  string $post_id The ID of the cpt that was trashed
+	 * @return void
+	 */
 	abstract public function trash_cpt_item( $post_id );
+
+
+
+
+
+	/**
+	 * This is hooked into the WordPress do_action('untrashed_post') hook and runs after a cpt has been untrashed
+	 * @param  string $post_id theID of the cpt that was untrashed
+	 * @return void
+	 */
 	abstract public function restore_cpt_item( $post_id );
+
+
+
+
+
+	/**
+	 * This is hooked into the WordPress do_action('delete_cpt_item') hook and runs after a cpt has been fully deleted from the db
+	 * @param  string $post_id the ID of the cpt that was deleted
+	 * @return void
+	 */
 	abstract public function delete_cpt_item( $post_id );
 
 
@@ -74,7 +134,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 	/**
-	 * if this page is flagged as a cpt admin system... then we will add some default page_routes and config!
+	 * This takes care of setting up default routes and pages that utilize the core WP admin pages.  Child classes can override the defaults (in cases for adding metaboxes etc.) but take care that you include the defaults here otherwise your core WP admin pages for the cpt won't work!
+	 *
+	 * @access protected
 	 * @return void
 	 */
 	protected function _extend_page_config() {
@@ -121,7 +183,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		//the following filters are for setting all the redirects on DEFAULT WP custom post type actions	
 		//let's add a hidden input to the post-edit form so we know when we have to trigger our custom redirects!  Otherwise the redirects will happen on ALL post saves which wouldn't be good of course!
 		add_action('edit_form_after_title', array( $this, 'cpt_post_form_hidden_input') );
+
+		//inject our Admin page nav tabs...
 		add_action('post_edit_form_tag', array( $this, 'inject_nav_tabs' ) );
+
+		//modify the post_updated messages array
 		add_action('post_updated_messages', array( $this, 'post_update_messages' ), 10 );
 
 		
@@ -144,6 +210,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		$post_type = isset( $this->_req_data['post_type'] ) ? $this->_req_data['post_type'] : FALSE;
 
 		if ( $post_type && $post_type == $this->page_slug ) {
+
+			if ( has_action('save_post', array( $this, 'insert_update_cpt_item') ) ) {
+				var_dump('yup');
+			}
+
 			//$post_id, $post
 			add_action('save_post', array( $this, 'insert_update_cpt_item'), 10, 2 );
 			//$post_id
@@ -156,7 +227,13 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 
-
+	/**
+	 * Execution of this method is added to the end of the load_page_dependencies method in the parent, so that we can fix a bug where default core metaboxes weren't being called in the sidebar.  To fix we have to reset the current_screen using the page_slug (which is identical - or should be - to our registered_post_type id.)
+	 *
+	 * Also, since the core WP file loads the admin_header.php for WP (and there are a bunch of other things edit-form-advanced.php loads that need to happen really early) we need to load it NOW, hence our _route_admin_request in here. (Otherwise screen options won't be set).
+	 * 
+	 * @return void
+	 */
 	public function modify_current_screen() {
 		//ONLY do this if the current page_route IS a cpt route
 		if ( !$this->_cpt_route ) return;
@@ -174,6 +251,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 
+	/**
+	 * overriding the parent route_admin_request method so we DON'T run the route twice on cpt core page loads (it's already run in modify_current_screen())
+	 * @return void
+	 */
 	public function route_admin_request() {
 		if ( $this->_cpt_route ) return;
 		try {
@@ -186,7 +267,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 
-
+	/**
+	 * Add a hidden form input to cpt core pages so that we know to do redirects to our routes on saves
+	 * @return string html
+	 */
 	public function cpt_post_form_hidden_input() {
 		echo '<input type="hidden" name="ee_cpt_item_redirect_url" value="' . $this->_admin_base_url . '" />';
 	}
@@ -246,6 +330,12 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 
+	/**
+	 * This method is called to inject nav tabs on core WP cpt pages
+	 *
+	 * @access public
+	 * @return string html
+	 */
 	public function inject_nav_tabs() {
 		//can we hijack and insert the nav_tabs?
 		$nav_tabs = $this->_get_main_nav_tabs();
@@ -262,6 +352,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 	/**
 	 * This just sets up the post update messages when an update form is loaded
+	 *
+	 * @access public
 	 * @param  array $messages the original messages array
 	 * @return array           the new messages array
 	 */
