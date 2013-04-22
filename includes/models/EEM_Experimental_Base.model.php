@@ -172,7 +172,7 @@ abstract class EEM_Experimental_Base{
 	 */
 	function update($fields_n_values, $query_params){
 		global $wpdb;
-		//need to verify there are entries for each table
+		//need to verify that, for any entry we want to update, there are entries in each secondary table.
 		//to do that, for each table, verify that it's PK isn't null.
 		$tables= $this->get_tables();
 		//if there are more than 1 tables, we'll want to verify that each table for this model has an entry in the other tables
@@ -262,9 +262,10 @@ abstract class EEM_Experimental_Base{
 	 * an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specificy array('role-column-name'=>'role-id')
 	 * @return boolean of success
 	 */
-	public function add_relationship_to($id_or_obj,$otherModelObjectOrID, $relationName,$extraColumnsForHABTM=null){
+	public function add_relationship_to($id_or_obj,$other_model_id_or_obj, $relationName,$extraColumnsForHABTM=null){
 		EE_Error::add_error("EEM_ExperimetnaL_Base::add_relation_to not yet implemented");
-		
+		$relation_obj = $this->related_settings_for($relationName);
+		//$relation_obj->
 	}
 	
 	/**
@@ -897,17 +898,23 @@ abstract class EEM_Experimental_Base{
 	/**
 	 * Ensures $base_class_obj_or_id is of the EE_Base_Class child that corresponds ot this model.
 	 * If not, assumes its an ID, and uses $this->get_one_by_ID() to get the EE_Base_Class.
-	 * @param EE_Base_Class/int $base_class_obj_or_id either teh EE_Base_Class taht corresponds to this Model, or its ID
-	 * @return EE_Base_Class
+	 * @param EE_Exp_Base_Class/int $base_class_obj_or_id either teh EE_Base_Class taht corresponds to this Model, or its ID
+	 * @param boolean $ensure_is_in_db if set, we will also verify this model object exists in the database. If it does not, we add it
+	 * @return EE_Exp_Base_Class
 	 */
-	public function ensure_is_obj($base_class_obj_or_id){ 
+	public function ensure_is_obj($base_class_obj_or_id, $ensure_is_in_db = false){ 
 		if(is_a($base_class_obj_or_id,$this->_get_class_name())){
-			return $base_class_obj_or_id;
+			$model_object = $base_class_obj_or_id;
 		}elseif(is_int($base_class_obj_or_id)){//assume it's an ID
-			return $this->get_one_by_ID($base_class_obj_or_id);
+			$model_object = $this->get_one_by_ID($base_class_obj_or_id);
 		}else{
 			throw new EE_Exception(sprintf(__("'%s' is neither an object of type %s, nor an ID!",'event_espresso'),$base_class_obj_or_id,$this->_getClasssName()));
 		}
+		if($ensure_is_in_db){
+			$model_object->save();
+		}
+		return $model_object;
+		
 	}
 	
 	
@@ -1314,14 +1321,14 @@ abstract class EE_Exp_Model_Relation{
 	}
 	/**
 	 * 
-	 * @return EE_Experimental_Base
+	 * @return EEM_Experimental_Base
 	 */
 	function get_this_model(){
 		return $this->_get_model($this->_this_model_name);
 	}
 	/**
 	 * 
-	 * @return EE_Experimental_Base
+	 * @return EEM_Experimental_Base
 	 */
 	function get_other_model(){
 		return $this->_get_model($this->_other_model_name);
@@ -1329,7 +1336,7 @@ abstract class EE_Exp_Model_Relation{
 	/**
 	 * 
 	 * @param string $model_name like Event, Question_Group, etc. omit the EEM_Exp_
-	 * @return EE_Experimental_Base
+	 * @return EEM_Experimental_Base
 	 */
 	protected function _get_model($model_name){
 		$modelInstance=call_user_func("EEM_Exp_".$model_name."::instance");
@@ -1340,8 +1347,23 @@ abstract class EE_Exp_Model_Relation{
 	protected function _left_join($other_table,$other_table_alias,$other_table_column,$this_table_alias,$this_table_join_column, $extra_join_sql = ''){
 		return " LEFT JOIN ".$other_table." AS ".$other_table_alias. " ON ".$other_table_alias.".".$other_table_column."=".$this_table_alias.".".$this_table_join_column." ".$extra_join_sql." ";
 	}
-	
+	/**
+	 * Gets the SQL string for performing the join between this model and the other model.
+	 * @return string of SQL, eg "LEFT JOIN table_name AS table_alias ON this_model_primary_table.pk = other_model_primary_table.fk" etc
+	 */
 	abstract function get_join_statement();
+	
+	
+	/**
+	 * Adds a reltionships between the two model objects provided. Each type of relationship handles this differently (EE_Exp_Belongs_To is a 
+	 * slight exception, it should more accurately be called set_relation_to(...), as this relationship only allows this model to be related
+	 * to a signel other model of this type)
+	 */
+	abstract function add_relation_to($this_obj_or_id, $other_obj_or_id);
+	/**
+	 * Similar to 'add_relation_to(...)', performs the opposite action of removing the relationship between the two model objects
+	 */
+	abstract function remove_relation_to($this_obj_or_id, $other_obj_or_id);
 }
 
 /**
@@ -1362,6 +1384,36 @@ class EE_Exp_Has_Many extends EE_Exp_Model_Relation{
 		
 		return $this->_left_join($fk_table, $fk_table_alias, $other_table_fk_field->get_table_column(), $pk_table_alias, $this_table_pk_field->get_table_column(), $this->_extra_join_conditions);
 	}
+	/**
+	 * Sets the other model object's foreign key to this model object's primary key. Feel free to do this manually if you like.
+	 * @param EE_Exp_Base_Class/int $this_obj_or_id
+	 * @param EE_Exp_Base_Class/int $other_obj_or_id
+	 * @return void
+	 */
+	 function add_relation_to($this_obj_or_id, $other_obj_or_id ){
+		 $this_model_obj = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);
+		 $other_model_obj = $this->get_other_model()->ensure_is_obj($other_obj_or_id, true);
+		 
+		 //find the field on th eother model which is a foreign key to this model
+		 $fk_field_on_other_model = $other_model_obj->get_foreign_key_to($this->get_this_model()->get_this_model_name());
+		 //set that field on the other model to this model's ID
+		 $other_model_obj->set($fk_field_on_other_model->get_name(), $this_model_obj->ID());
+		 $other_model_obj->save();
+	 }
+	/**
+	 * Sets the other model object's foreign key to its default, instead of pointing to this model object
+	 * @param EE_Exp_Base_Class/int $this_obj_or_id
+	 * @param EE_Exp_Base_Class/int $other_obj_or_id
+	 * @return void
+	 */
+	 function remove_relation_to($this_obj_or_id, $other_obj_or_id){
+		 $other_model_obj = $this->get_other_model()->ensure_is_obj($other_obj_or_id, true);
+		 //find the field on th eother model which is a foreign key to this model
+		 $fk_field_on_other_model = $other_model_obj->get_foreign_key_to($this->get_this_model()->get_this_model_name());
+		 //set that field on the other model to this model's ID
+		 $other_model_obj->set($fk_field_on_other_model->get_name(),null, true);
+		 $other_model_obj->save();
+	 }
 }
 
 /**
@@ -1382,9 +1434,35 @@ class EE_Exp_Belongs_To extends EE_Exp_Model_Relation{
 		$other_table = $this->get_other_model()->get_table_for_alias($other_table_alias);		
 		return $this->_left_join($other_table, $other_table_alias, $other_table_pk_field->get_table_column(), $this_table_alias, $this_table_fk_field->get_table_column(), $this->_extra_join_conditions);
 	}
-	//so far EE_Exp_Belongs_To is identical to EE_Exp_Has_Many
-	//this is probably because we're explicitly requiring the relation
-	//to identify the private key and foreign keys, where those could be determined from the models themselves
+	/**
+	 * Sets this model object's foreign key to the other model object's primary key. Feel free to do this manually if you like.
+	 * @param EE_Exp_Base_Class/int $this_obj_or_id
+	 * @param EE_Exp_Base_Class/int $other_obj_or_id
+	 * @return void
+	 */
+	 function add_relation_to($this_obj_or_id, $other_obj_or_id ){
+		 $this_model_obj = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);
+		 $other_model_obj = $this->get_other_model()->ensure_is_obj($other_obj_or_id, true);
+		 //find the field on th eother model which is a foreign key to this model
+		 $fk_on_this_model = $this_model_obj->get_foreign_key_to($this->get_other_model()->get_this_model_name());
+		 //set that field on the other model to this model's ID
+		 $this_model_obj->set($fk_on_this_model->get_name(), $other_model_obj->ID());
+		 $this_model_obj->save();
+	 }
+	/**
+	 * Sets the this model object's foreign key to its default, instead of pointing to the other model object
+	 * @param EE_Exp_Base_Class/int $this_obj_or_id
+	 * @param EE_Exp_Base_Class/int $other_obj_or_id
+	 * @return void
+	 */
+	 function remove_relation_to($this_obj_or_id, $other_obj_or_id){
+		 $this_model_obj = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);
+		 //find the field on th eother model which is a foreign key to this model
+		 $fk_on_this_model = $this_model_obj->get_foreign_key_to($this->get_other_model()->get_this_model_name());
+		 //set that field on the other model to this model's ID
+		 $this_model_obj->set($fk_on_this_model->get_name(),null, true);
+		 $this_model_obj->save();
+	 }
 }
 
 class EE_Exp_HABTM extends EE_Exp_Model_Relation{
@@ -1445,6 +1523,54 @@ class EE_Exp_HABTM extends EE_Exp_Model_Relation{
 		$SQL = $this->_left_join($other_table, $other_table_alias, $other_table_pk_field->get_table_column(), $join_table_alias, $join_table_fk_field_to_other_table->get_table_column(), $this->_extra_join_conditions);
 		return $SQL;
 	}
+	
+	/**
+	 * Ensures there is an entry in the join table between these two models. Feel free to do this manually if you like.
+	 * If the join table has additional columns (eg, the Event_Question_Group table has a is_primary column), then you'll
+	 * want to directly use the EEM_Exp_Event_Question_Group model to add the entry to the table and set those other columns' values
+	 * @param EE_Exp_Base_Class/int $this_obj_or_id
+	 * @param EE_Exp_Base_Class/int $other_obj_or_id
+	 * @return void
+	 */
+	 function add_relation_to($this_obj_or_id, $other_obj_or_id ){
+		 $this_model_obj = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);
+		 $other_model_obj = $this->get_other_model()->ensure_is_obj($other_obj_or_id, true);
+		//check if such a relationship already exists
+		 $join_model_fk_to_this_model = $this->get_join_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
+		 $join_model_fk_to_other_model = $this->get_join_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
+		 $existing_entry_in_join_table = $this->get_join_model()->get_one(array(
+			 array(
+				 $join_model_fk_to_this_model->get_name() => $this_model_obj->ID(),
+				 $join_model_fk_to_other_model->get_name() => $other_model_obj->ID())));
+		//if there is already an entry in the join table, indicating a relationship, we're done
+		 //again, if you want more sophisticated logic or insertions (handling more columns than just 2 foreign keys to
+		 //the other tables, use the joining model directly!
+		 if( ! $existing_entry_in_join_table ){
+			$this->get_join_model()->insert(
+					array(
+						$join_model_fk_to_this_model->get_name() => $this_model_obj->ID(),
+						$join_model_fk_to_other_model->get_name() => $other_model_obj->ID()
+					));
+		}
+	 }
+	/**
+	 * Deletes any rows in the join table that have foreign keys matching the other model objects specified
+	 * @param EE_Exp_Base_Class/int $this_obj_or_id
+	 * @param EE_Exp_Base_Class/int $other_obj_or_id
+	 * @return void
+	 */
+	 function remove_relation_to($this_obj_or_id, $other_obj_or_id){
+		  $this_model_obj = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);
+		 $other_model_obj = $this->get_other_model()->ensure_is_obj($other_obj_or_id, true);
+		//check if such a relationship already exists
+		 $join_model_fk_to_this_model = $this->get_join_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
+		 $join_model_fk_to_other_model = $this->get_join_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
+		 $existing_entry_in_join_table = $this->get_join_model()->delete(array(
+			 array(
+				 $join_model_fk_to_this_model->get_name() => $this_model_obj->ID(),
+				 $join_model_fk_to_other_model->get_name() => $other_model_obj->ID())));
+		
+	 }
 }
 
 
