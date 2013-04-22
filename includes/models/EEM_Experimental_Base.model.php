@@ -255,17 +255,15 @@ abstract class EEM_Experimental_Base{
 	 * 'hasAndBelongsToMany' relationships: checks that there isn't already an entry in the join table, and adds one.
 	 * If one of the model Objects has not yet been saved to teh database, it is saved before adding the entry in the join table
 	 * 
-	 * @param EE_Base_Class $thisModelObject
-	 * @param mixed $id_or_obj EE_base_Class or ID of other Model Object
-	 * @param string $relationName
-	 * @param array $extraColumnsForHABTM mapping from column/attribute names to values for JOIN tables with extra columns. Eg, when adding 
+	 * @param EE_Exp_Base_Class/int $thisModelObject
+	 * @param EE_Exp_Base_Class/int $id_or_obj EE_base_Class or ID of other Model Object
+	 * @param string $relationName, key in EEM_Experimental_Base::_relations
 	 * an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specificy array('role-column-name'=>'role-id')
 	 * @return boolean of success
 	 */
-	public function add_relationship_to($id_or_obj,$other_model_id_or_obj, $relationName,$extraColumnsForHABTM=null){
-		EE_Error::add_error("EEM_ExperimetnaL_Base::add_relation_to not yet implemented");
+	public function add_relationship_to($id_or_obj,$other_model_id_or_obj, $relationName){
 		$relation_obj = $this->related_settings_for($relationName);
-		//$relation_obj->
+		$relation_obj->add_relation_to($id_or_obj, $other_model_id_or_obj);
 	}
 	
 	/**
@@ -278,13 +276,14 @@ abstract class EEM_Experimental_Base{
 	 * 
 	 * 'hasAndBelongsToMany' relationships:remoevs any existing entry in the join table between the two models.
 	 * 
-	 * @param EE_TempBase $id_or_obj
-	 * @param mixed $otherModelObjectOrID EE_base_Class or ID of other Model Object
-	 * @param string $relationName
+	 * @param EE_Exp_Base_Class/int $id_or_obj
+	 * @param EE_Exp_Base_Class/int $other_model_id_or_obj EE_Exp_Base_Class or ID of other Model Object
+	 * @param string $relationName key in EEM_Experimental_Base::_relations
 	 * @return boolean of success
 	 */
-	public function remove_relationship_to($id_or_obj,  $otherModelObjectOrID, $relationName){
-		EE_Error::add_error("EEM_ExperimetnaL_Base::remove_relation_to not yet implemented");
+	public function remove_relationship_to($id_or_obj,  $other_model_id_or_obj, $relationName){
+		$relation_obj = $this->related_settings_for($relationName);
+		$relation_obj->remove_relation_to_relation_to($id_or_obj, $other_model_id_or_obj);
 	}
 	
 	
