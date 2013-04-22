@@ -277,13 +277,14 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 
 
-	protected function _register_hook_files( $hook_files_glob_path ) {
+	protected function _register_hook_files( $hook_files_glob_path, $extend = FALSE ) {
 
 		if ( $hook_files = glob( $hook_files_glob_path ) ) {
 			foreach ( $hook_files as $file ) {
 				//lets get the linked admin.
 				$this->hook_file = str_replace($this->_folder_path, '', $file );
-				$rel_admin = str_replace( '_' . $this->_file_name . '_Hooks.class.php', '', $this->hook_file);
+				$replace = $extend ? '_' . $this->_file_name . '_Hooks_Extend.class.php' : '_' . $this->_file_name . '_Hooks.class.php';
+				$rel_admin = str_replace( $replace, '', $this->hook_file);
 				$rel_admin = strtolower($rel_admin);
 				//make sure we haven't already got a hook setup for this page path
 				if ( in_array( $rel_admin, $this->_files_hooked ) )
