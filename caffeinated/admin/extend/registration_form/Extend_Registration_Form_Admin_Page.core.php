@@ -123,10 +123,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				'noheader' => TRUE
 				),
 
-			'espresso_update_question_order' => array(
-				'func' => 'update_question_order',
-				'noheader' => TRUE
-				),
 
 			'espresso_update_question_group_order' => array(
 				'func' => 'update_question_group_order',
@@ -235,12 +231,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	public function load_scripts_styles_add_question() {
 		$this->load_scripts_styles_forms();
-		wp_register_script( 'espresso_registration_form_single', REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'espresso_registration_form_single', REGISTRATION_FORM_CAF_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script( 'espresso_registration_form_single' );	
 	}
 	public function load_scripts_styles_edit_question() {
 		$this->load_scripts_styles_forms();
-		wp_register_script( 'espresso_registration_form_single', REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'espresso_registration_form_single', REGISTRATION_FORM_CAF_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script( 'espresso_registration_form_single' );	
 		
 	}
@@ -255,7 +251,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	public function recaptcha_info_help_tab() {
-		$template = REGISTRATION_FORM_TEMPLATE_PATH . 'recaptcha_info_help_tab.template.php';
+		$template = REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'recaptcha_info_help_tab.template.php';
 		espresso_display_template($template, array());
 	}
 
@@ -382,38 +378,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		}
 		$this->_redirect_after_action( $success, $model->item_name($success), 'deleted permanently', array( 'action'=>'default', 'status'=>'all' ));
 	}
-	
-
-
-	/**
-	 * method for performing updates to question order
-	 * @return array results array
-	 */	
-	public function update_question_order() {
-
-		$success = __( 'Question order was updated successfully.', 'event_espresso' );
-		
-		// grab our row IDs
-		$row_ids = isset( $this->_req_data['row_ids'] ) && ! empty( $this->_req_data['row_ids'] ) ? explode( ',', wp_strip_all_tags( $this->_req_data['row_ids'] )) : FALSE;
-
-		if ( is_array( $row_ids )) {
-			global $wpdb;
-			for ( $i = 0; $i < count( $row_ids ); $i++ ) {
-				//Update the questions when re-ordering
-				if ( ! EEM_Question::instance()->update ( array( 'QST_order' => $i+1 ), array( 'QST_ID' => $row_ids[$i] ) )) {
-					$success = FALSE;
-				} 
-			}
-		} else {
-			$success = FALSE;
-		}
-		
-		$errors = ! $success ? __( 'An error occured. The question order was not updated.', 'event_espresso' ) : FALSE;
-		
-		echo json_encode( array( 'return_data' => FALSE, 'success' => $success, 'errors' => $errors ));
-		die();
-		
-	}
 
 
 
@@ -444,7 +408,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		
 		$redirect_URL = add_query_arg( array( 'action' => 'question_groups'), $this->_admin_base_url );
 		$this->_set_publish_post_box_vars( 'id', $ID, FALSE, $redirect_URL  );
-		$this->_template_args['admin_page_content'] = espresso_display_template( REGISTRATION_FORM_TEMPLATE_PATH . 'question_groups_main_meta_box.template.php', $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = espresso_display_template( REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'question_groups_main_meta_box.template.php', $this->_template_args, TRUE );
 
 		// the details template wrapper
 		$this->display_admin_page_with_sidebar();	
@@ -685,7 +649,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 		$this->_set_add_edit_form_tags( 'update_reg_form_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
-		$this->_template_args['admin_page_content'] = espresso_display_template( REGISTRATION_FORM_TEMPLATE_PATH . 'reg_form_settings.template.php', $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = espresso_display_template( REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'reg_form_settings.template.php', $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();	
 	}
 
