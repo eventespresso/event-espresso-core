@@ -906,57 +906,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 
-
-
-	public function additional_attendees_question_groups_meta_box() {
-
-		?>
-		<div class="inside">
-			<p><strong>
-					<?php _e('Question Groups', 'event_espresso'); ?>
-				</strong><br />
-				<?php _e('Add a pre-populated', 'event_espresso'); ?>
-				<a href="admin.php?page=espresso_registration_form" target="_blank">
-					<?php _e('group of questions', 'event_espresso'); ?>
-				</a>
-				<?php _e('to your event. The personal information group is required for all events.', 'event_espresso'); ?>
-			</p>
-			<?php
-			$QSGs = EEM_Event::instance()->get_all_question_groups();
-			$EQGs = EEM_Event::instance()->get_event_question_groups( $this->_event->id, TRUE );
-			$EQGs = is_array( $EQGs ) ? $EQGs : array();
-
-			if ( ! empty( $QSGs )) {
- 				$html = count( $QSGs ) > 10 ? '<div style="height:250px;overflow:auto;">' : '';
-				foreach ( $QSGs as $QSG ) {
-
-					$checked = in_array( $QSG->QSG_ID, $EQGs ) || $QSG->QSG_system_ID == 1 ? ' checked="checked" ' : '';
-					$visibility = $QSG->QSG_system_ID == 1 ? ' style=" visibility:hidden"' : '';
-					$edit_link = self::add_query_args_and_nonce( array( 'action' => 'edit_question_group', 'QSG_ID' => $QSG->QSG_ID ), EE_FORMS_ADMIN_URL );
-
-					$html .= '
-					<p id="event-question-group-' . $QSG->QSG_ID . '">
-						<input value="' . $QSG->QSG_ID . '" type="checkbox"' . $visibility . ' name="add_attendee_question_groups[' . $QSG->QSG_ID . ']"' . $checked . ' /> 
-						<a href="' . $edit_link . '" title="Edit ' . $QSG->QSG_name . ' Group" target="_blank">' . $QSG->QSG_name . '</a>
-					</p>';
-				}
-				$html .= count( $QSGs ) > 10 ? '</div>' : '';
-
-				echo $html;
-
-			} else {
-				echo __('There seems to be a problem with your questions. Please contact support@eventespresso.com', 'event_espresso');
-			}
-			?>
-		</div>
-		<?php
-	}
-
-
-
-
-
-
 	public function personnel_metabox() {
 		$event_id = !empty($this->_event->id) ? $this->_event->id : 0;
 		$originally_submitted_by = !empty($this->_event->event_meta['originally_submitted_by']) ? $this->_event->event_meta['originally_submitted_by'] : 0;
