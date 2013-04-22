@@ -261,6 +261,7 @@ class EE_Admin_Page_load {
 				
 				add_filter( $path_hook, $hook_function_path );
 				add_filter( $page_hook, $hook_function_page );
+				$extend = TRUE;
 			}
 
 			//let's do the registered hooks
