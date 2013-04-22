@@ -16,14 +16,13 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * Events_Admin_Page
+ * Extend_Events_Admin_Page
  *
- * This contains the logic for setting up the Events related pages.  Any methods without phpdoc comments have inline docs with parent class. 
+ * This is the Events Caffeinated admin page.
  *
- * NOTE:  TODO: This is a straight conversion from the legacy 3.1 events related pages.  It is NOT optimized and will need modification to fully use the new system (and also will need adjusted when Events model is setup)
  *
- * @package		Events_Admin_Page
- * @subpackage	includes/core/admin/Events_Admin_Page.core.php
+ * @package		Extend_Events_Admin_Page
+ * @subpackage	includes/core/admin/Extend_Events_Admin_Page.core.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
@@ -191,8 +190,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$this->_set_event_object();
 
 	
-		add_meta_box('espresso_event_editor_event_meta', __('Event Meta', 'event_espresso'), array( $this, 'event_meta_metabox'), $this->_current_screen->id, 'advanced', 'high');
-		
+		//todo taking this out because events are becoming cpts
 		//add_meta_box('espresso_event_editor_event_post', __('Create a Post', 'event_espresso'), array( $this, 'event_post_metabox'), $this->_current_screen->id, 'advanced', 'core');
 
 		add_meta_box('espresso_event_editor_event_options', __('Event Registration Options', 'event_espresso'), array( $this, 'registration_options_meta_box' ), $this->_current_screen->id, 'side', 'high');
@@ -326,6 +324,130 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			}
 		</script>
 	<?php
+	}
+
+
+
+
+
+	/**
+	 * @todo: This is going to be replaced when Events are CPT's
+	 * @return [type] [description]
+	 */
+	public function event_post_metabox() {
+		$values = array(
+			array('id' => true, 'text' => __('Yes', 'event_espresso')),
+			array('id' => false, 'text' => __('No', 'event_espresso')));
+		if (function_exists('espresso_member_data')) {
+			global $espresso_manager;
+			$is_admin = (espresso_member_data('role') == "administrator" || espresso_member_data('role') == 'espresso_event_admin') ? true : false;
+			if (!$espresso_manager['event_manager_create_post'] && !$is_admin) {
+				return;
+			}
+		}
+		?>
+		<div class="inside">
+			<?php
+			if (strlen($this->_event->post_id) > 1) {
+				$create_post = true; //If a post was created previously, default to yes on the update post.
+			} else {
+				$create_post = false; //If a post was NOT created previously, default to no so we do not create a post on accident.
+			}
+			global $current_user;
+			get_currentuserinfo();
+			?>
+			<table class="form-table">
+				<tbody>
+					<tr>
+						<th class="middle">
+							<label>
+								<?php echo __('Add/Update post for this event?', 'event_espresso') ?>
+							</label>
+						</th>
+						<td class="med">
+							<?php
+							echo EE_Form_Fields::select_input('create_post', $values, $create_post);
+							if (strlen($this->_event->post_id) > 1) {
+								echo '<p>' . __('If no, delete current post?', 'event_espresso');
+								?>
+								<input name="delete_post" type="checkbox" value="true" />
+							<?php } ?>
+							</p>
+							<input type="hidden" name="post_id" value="<?php if (isset($this->_event->post_id)) echo $this->_event->post_id; ?>">
+							<?php /* ?><p><?php _e('Category:', 'event_espresso'); ?> <?php wp_dropdown_categories(array('orderby'=> 'name','order' => 'ASC', 'selected' => $category, 'hide_empty' => 0 )); ?></p><?php */ ?>
+						<td>
+					</tr>
+					<tr>
+						<th class="middle">
+
+							<?php
+							if (!empty($this->_event->post_id)) {
+								$post_data = get_post($this->_event->post_id);
+								$tags = get_the_tags($this->_event->post_id);
+								if ($tags) {
+									foreach ($tags as $k => $v) {
+										$tag[$k] = $v->name;
+									}
+									$tags = join(', ', $tag);
+								}
+							} else {
+								$post_data = new stdClass();
+								$post_data->ID = 0;
+								$tags = '';
+							}
+							$box = array();
+
+							$custom_post_array = array(array('id' => 'espresso_event', 'text' => __('Espresso Event', 'event_espresso')));
+							$post_page_array = array(array('id' => 'post', 'text' => __('Post', 'event_espresso')), array('id' => 'page', 'text' => __('Page', 'event_espresso')));
+							$post_page_array = !empty($org_options['template_settings']['use_custom_post_types']) ? array_merge($custom_post_array, $post_page_array) : $post_page_array;
+							//print_r($post_page_array);
+
+							$post_types = $post_page_array;
+							?>
+
+							<label>
+								<?php _e('Author', 'event_espresso: '); ?>
+							</label>
+						</th>
+						<td class="med">
+							<?php wp_dropdown_users(array('who' => 'authors', 'selected' => $current_user->ID)); ?>
+						</td>
+					</tr>
+					<tr>
+						<th class="middle">
+							<label>
+								<?php _e('Post Type', 'event_espresso: '); ?>
+							</label>
+						</th>
+						<td class="med">
+							<?php echo EE_Form_Fields::select_input('post_type', $post_types, 'espresso_event') ?>
+						</td>
+					</tr>
+					<tr>
+						<th class="middle">
+							<label>
+								<?php _e('Tags', 'event_espresso: '); ?>
+							</label>
+						</th>
+						<td class="med">
+							<input id="post_tags" name="post_tags" size="20" type="text" value="<?php echo $tags; ?>" />
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+
+
+			<p class="section-heading"><?php _e('Post Categories:', 'event_espresso'); ?> </p>
+			<?php
+			require_once( 'includes/meta-boxes.php');
+			post_categories_meta_box($post_data, $box);
+			?>
+
+			<!-- if post templates installed, post template -->
+
+		</div>
+		<?php
 	}
 
 
