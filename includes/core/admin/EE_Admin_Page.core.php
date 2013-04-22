@@ -1584,8 +1584,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 			espresso_display_template( $templatepath );
 		}
 
-		global $caffeinated;
-		if ( !$caffeinated )
+		$show_sponsors = apply_filters('filter_hook_espresso_show_sponsors_meta_box', TRUE );
+		if ( $show_sponsors )
 			add_meta_box('espresso_sponsors_post_box', __('Sponsors', 'event_espresso'), 'espresso_sponsors_post_box', $this->_wp_page_slug, 'side');
 	}
 

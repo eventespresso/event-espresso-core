@@ -487,8 +487,9 @@ class EE_Admin_Page_load {
 		if ( $hooks = glob( EE_CORE_CAF_ADMIN . 'hooks/*.class.php' ) ) {
 			foreach ( $hooks as $hook ) {
 				if ( is_readable( $hook ) ) {
-					require_once EE_CORE_CAF_ADMIN . 'hooks/' . $hook;
-					$classname = str_replace('.class.php', '', $hook);
+					require_once $hook;
+					$classname = str_replace( EE_CORE_CAF_ADMIN . 'hooks/', '', $hook );
+					$classname = str_replace('.class.php', '', $classname);
 					if ( class_exists( $classname ) ) {
 						$a = new ReflectionClass( $classname );
 						$ee_admin_hooks[] = $a->newInstance();
