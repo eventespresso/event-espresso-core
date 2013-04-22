@@ -173,6 +173,11 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 		$this->_set_defaults();
 		$this->_set_hooks_properties();
+
+		//allow for extends to modify properties
+		if ( method_exists( $this, '_extend_properties' ) )
+			$this->_extend_properties();
+
 		$this->_set_page_object();
 		$this->_init_hooks();
 
