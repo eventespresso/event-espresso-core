@@ -246,17 +246,25 @@ class EE_Admin_Page_load {
 		foreach ( $installed_refs as $page ) {
 			$this->_installed_pages[$page] = $this->_load_admin_page( $page );
 
+			$extend = FALSE; //flag for register hooks on extended pages b/c extended pages use the default INIT.
+
 			//now that we've got the admin_init objects... lets see if there are any caffeinated pages extending the originals.  If there are then let's hook into the init admin filter and load our extend instead.
 			if ( isset( $this->_caffeinated_extends[$page] ) ) {
 				$this->_current_caf_extend_slug = $page;
 				$path_hook = 'filter_hooks_espresso_path_to_' . $this->_installed_pages[$page]->menu_slug . '_' . $this->_installed_pages[$page]->get_admin_page_name();
+				$path_runtime = 'return "' . $this->_caffeinated_extends[$this->_current_caf_extend_slug]["path"] . '";';
 				$page_hook = 'filter_hooks_espresso_admin_page_for_' . $this->_installed_pages[$page]->menu_slug . '_' . $this->_installed_pages[$page]->get_admin_page_name();
-				add_filter( $path_hook, array( $this, 'add_caffeinated_extend_path' ) );
-				add_filter( $page_hook, array( $this, 'add_caffeinated_extend_page' ) );
+				$page_runtime = 'return "' . $this->_caffeinated_extends[$this->_current_caf_extend_slug]["admin_page"] . '";';
+
+				$hook_function_path = create_function( '$path_to_file', $path_runtime);
+				$hook_function_page = create_function( '$admin_page', $page_runtime );
+				
+				add_filter( $path_hook, $hook_function_path );
+				add_filter( $page_hook, $hook_function_page );
 			}
 
-			//let's do the registered hooks first
-			$this->_installed_pages[$page]->register_hooks();
+			//let's do the registered hooks
+			$this->_installed_pages[$page]->register_hooks( $extend );
 		}
 
 
@@ -447,7 +455,10 @@ class EE_Admin_Page_load {
 				if ( is_dir( $admin_screen ) && !in_array( basename($admin_screen), $exclude )) {
 					// these folders represent the different NEW EE admin pages
 					$installed_refs[] = basename( $admin_screen );
-					$this->_caf_autoloader[] = basename( $admin_screen );
+					$this->_caf_autoloader[] = array(
+						'dir' => 'new',
+						'folder' => basename( $admin_screen )
+						);
 				}
 			}
 		}
@@ -460,8 +471,12 @@ class EE_Admin_Page_load {
 					//now let's make sure there is a file that matches the expected format
 					$filename = str_replace(' ', '_', ucwords( str_replace('_', ' ', $extend_ref ) ) );
 					$filename = 'Extend_' . $filename . '_Admin_Page';
-					$this->_caffeinated_extends[$extend_ref]['path'] = str_replace( array( '\\', '/' ), DS, EE_CORE_CAF_ADMIN . DS . 'extend' . DS . $extend_ref . DS . $filename . '.core.php' );
+					$this->_caffeinated_extends[$extend_ref]['path'] = str_replace( array( '\\', '/' ), DS, EE_CORE_CAF_ADMIN . 'extend' . DS . $extend_ref . DS . $filename . '.core.php' );
 					$this->_caffeinated_extends[$extend_ref]['admin_page'] = $filename;
+					$this->_caf_autoloader[] = array(
+						'dir' => 'extend',
+						'folder' => $extend_ref
+						);/**/
 				}
 			}
 		}
@@ -494,35 +509,6 @@ class EE_Admin_Page_load {
 
 
 
-	/**
-	 * This is the callback for the core {child}_Admin_Page_Init that replaces the path of the core Admin_Page that is being extended with the path of the NEW replacing Admin_Page (again that just extends the other one).
-	 *
-	 * @access public
-	 * @param string $path_to_file old path
-	 * @return string path to new file.
-	 */
-	public function add_caffeinated_extend_path( $path_to_file ) {
-		return $this->_caffeinated_extends[$this->_current_caf_extend_slug]['path'];
-	}
-
-
-
-
-
-
-	/**
-	 * This is the callback for the core {child}_Admin_Page_Init that replaces the name of the page to be called with the one extended the core.
-	 *
-	 * @access public
-	 * @param string $admin_page old admin page name
-	 * @return string NEW admin page name (that is extending the old)
-	 */
-	public function add_caffeinated_extend_page( $admin_page ) {
-		return $this->_caffeinated_extends[$this->_current_caf_extend_slug]['admin_page'];
-	}
-
-
-
 
 
 
@@ -539,8 +525,8 @@ class EE_Admin_Page_load {
 		$root = EE_CORE_CAF_ADMIN;
 
 		$dir_ref = array();
-		foreach ( $this->_caf_autoloader as $cafa ) {
-			$dir_ref['new' . DS . $cafa . DS] = array('core', 'class');
+		foreach ( $this->_caf_autoloader as $pathinfo) {
+			$dir_ref[$pathinfo['dir'] . DS . $pathinfo['folder'] . DS] = array('core', 'class');
 		}
 
 		//assemble a list of filenames

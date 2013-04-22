@@ -47,6 +47,10 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	//will hold page object.
 	protected $_loaded_page_object;
 
+
+	//for caf
+	protected $_files_hooked;
+
 	//load_page?
 	private $_load_page;
 
@@ -158,6 +162,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		$this->_file_name = $this->_folder_name = $this->_wp_page_slug = $this->capability = NULL;
 		$this->show_on_menu = $this->_routing = TRUE;
 		$this->_load_page = FALSE;
+		$this->_files_hooked = array();
 	}
 
 
@@ -250,23 +255,45 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	/**
 	 * This automatically checks if we have a hook class in the loaded child directory.  If we DO then we will register it with the appropriate pages.  That way all we have to do is make sure the file is named correctly and "dropped" in.  
 	 * Example: if we wanted to set this up for Messages hooking into Events then we would do:  events_Messages_Hooks.class.php
-	 * 
+	 *
+	 * @param bool $extend This indicates whether we're checking the extend directory for any register_hooks files/classes
 	 * @return void
 	 */
-	public function register_hooks() {
+	public function register_hooks( $extend = FALSE ) {
 
-		//get a list of files in the directory that have the "Hook" in their name
+		//get a list of files in the directory that have the "Hook" in their name an
+
+		//if this is an extended check (i.e. caf is active) then we will scan the caffeinated/extend directory first and any hook files that are found will be have their reference added to the $_files_hook array property.  Then, we make sure that when we loop through the core decaf directories to find hook files that we skip over any hooks files that have already been set by caf.
+		if ( $extend ) {
+			$hook_files_glob_path = apply_filters('filter_hook_espresso_admin_hook_files_glob_path', EE_CORE_CAF_ADMIN_EXTEND . $this->_folder_path . '*' . $this->_file_name . '_Hooks_Extend.class.php' );
+			$this->_register_hook_files( $hook_files_glob_path );
+		}
+
+		//loop through decaf folders
 		$hook_files_glob_path = apply_filters('filter_hook_espresso_admin_hook_files_glob_path', $this->_folder_path . '*' . $this->_file_name . '_Hooks.class.php' );
+		$this->_register_hook_files( $hook_files_glob_path );
+		
+	}
+
+
+
+	protected function _register_hook_files( $hook_files_glob_path ) {
+
 		if ( $hook_files = glob( $hook_files_glob_path ) ) {
 			foreach ( $hook_files as $file ) {
 				//lets get the linked admin.
 				$this->hook_file = str_replace($this->_folder_path, '', $file );
 				$rel_admin = str_replace( '_' . $this->_file_name . '_Hooks.class.php', '', $this->hook_file);
 				$rel_admin = strtolower($rel_admin);
+				//make sure we haven't already got a hook setup for this page path
+				if ( in_array( $rel_admin, $this->_files_hooked ) )
+					continue;
 				$rel_admin_hook = 'filter_hook_espresso_do_other_page_hooks_' . $rel_admin;
 				$filter = add_filter( $rel_admin_hook, array($this, 'load_admin_hook') );
+				$this->_files_hooked[] = $rel_admin;
 			}
-		}
+		} 
+
 	}
 
 
@@ -296,6 +323,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		// define requested admin page class name then load the file and instantiate
 		$path_to_file = str_replace( array( '\\', '/' ), DS, $this->_folder_path . $admin_page . '.core.php' );
 		$path_to_file=apply_filters("filter_hooks_espresso_path_to_{$hook_suffix}",$path_to_file );//so if the file would be in EE_CORE_ADMIN/attendees/Attendee_Admin_Page.core.php, the filter would be filter_hooks_espresso_path_to_attendees_Attendee_Admin_Page
+
 		if ( is_readable( $path_to_file )) {					
 			/**
 			 * This is a place where EE plugins can hook in to make sure their own files are required in the appropriate place
