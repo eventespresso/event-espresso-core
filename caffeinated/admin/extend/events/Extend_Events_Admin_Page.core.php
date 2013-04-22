@@ -195,15 +195,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		add_meta_box('espresso_event_editor_event_options', __('Event Registration Options', 'event_espresso'), array( $this, 'registration_options_meta_box' ), $this->_current_screen->id, 'side', 'high');
 
-
+		//todo feature in progress
 		//add_meta_box('espresso_event_editor_promo_box', __('Event Promotions', 'event_espresso'), array( $this, 'promotions_meta_box' ), $this->_current_screen->id, 'side', 'core');
 
-		//add_meta_box('espresso_event_editor_featured_image_box', __('Featured Image', 'event_espresso'), array( $this, 'featured_image_meta_box' ), $this->_current_screen->id, 'side', 'default');
-
-		//		if ($org_options['use_attendee_pre_approval']) {
-		//			add_meta_box('espresso_event_editor_preapproval_box', __('Attendee Pre-Approval', 'event_espresso'), array( $this, 'preapproval_metabox' ), $this->_current_screen->id, 'side', 'default');
-		//		}
-
+		//todo, this will morph into the "Person" metabox once events are converted to cpts and we have the persons cpt in place.
 		if ($org_options['use_personnel_manager']) {
 			add_meta_box('espresso_event_editor_personnel_box', __('Event Staff / Speakers', 'event_espresso'), array( $this, 'personnel_metabox' ), $this->_current_screen->id, 'side', 'default');
 		}
@@ -324,6 +319,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		</script>
 	<?php
 	}
+
 
 
 
