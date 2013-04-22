@@ -37,6 +37,15 @@ class Global_EE_Caf_Hooks {
 
 	private function _do_hooks() {
 		add_filter('filter_hook_espresso_show_sponsors_meta_box', create_function('$show_sponsors', 'return FALSE;' ), 10 );
+		add_action('action_hook_espresso_news_meta_box_extra_content', array( $this, 'extra_news_box_content' ), 10 );
+	}
+
+
+
+
+	public function extra_news_box_content( $content ) {
+		echo '<h4 style="margin:0">' . __('From the Forums', 'event_espresso') . '</h4>';
+		@wp_widget_rss_output('http://eventespresso.com/forum/event-espresso-support/feed/', array('show_date' => 0, 'items' => 4));
 	}
 
 } //end class Global_EE_Caf_Hooks

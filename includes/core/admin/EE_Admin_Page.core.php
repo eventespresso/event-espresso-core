@@ -1552,13 +1552,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	  		// Get RSS Feed(s)
 	  		@wp_widget_rss_output('http://eventespresso.com/feed/', array('show_date'=> 0,'items'    => 5));
 
-	  		/*echo '<h4 style="margin:0">' . __('From the Forums', 'event_espresso') . '</h4>';
-
-	  		if ($caffeinated == true){
-	  		@wp_widget_rss_output('http://eventespresso.com/forum/event-espresso-support/feed', array('show_date' => 0, 'items' => 4));
-	  		}else{
-	  		@wp_widget_rss_output('http://eventespresso.com/forum/event-espresso-public/feed', array('show_date' => 0, 'items' => 4));
-	  		}*/
+	  		do_action( 'action_hook_espresso_news_meta_box_extra_content');
+	  		
 	  		?>
 	  	</div>
 	  </div>
