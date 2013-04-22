@@ -455,15 +455,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					'attendee_check_in' => __('Toggle Attendees Check In', 'event_espresso'),
 					)
 				),
-//			'trash' => array(
-//				'slug' => 'trash',
-//				'label' => __('Trash', 'event_espresso'),
-//				'count' => 0,
-//				'bulk_action' => array(
-//					'restore_attendees' => __('Restore from Trash', 'event_espresso'),
-//					'delete_attendees' => __('Delete Permanently', 'event_espresso')
-//					)
-//				)
 			);
 	}
 
