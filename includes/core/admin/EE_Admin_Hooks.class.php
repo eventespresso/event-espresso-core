@@ -487,11 +487,12 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 */
 	private function _add_metabox( $args ) {
 		$current_screen = get_current_screen();
+		$func = isset( $args['func'] ) ? $args['func'] : 'some_invalid_callback';
 
 		//set defaults
 		$defaults = array(
-			'func' => 'some_breaking_link',
-			'id' => $this->_current_route . '_' . $this->caller . '_metabox',
+			'func' => $func,
+			'id' => $this->_current_route . '_' . $this->caller . '_' . $func . '_metabox',
 			'priority' => 'default',
 			'label' => $this->caller,
 			'context' => 'advanced',
@@ -500,6 +501,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 		$args = wp_parse_args( $args, $defaults );
 		extract($args);
+
 
 		//make sure method exists
 		if ( !method_exists($this, $func) ) {
