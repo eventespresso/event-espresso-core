@@ -298,15 +298,38 @@ function event_espresso_run() {
 
 
 function return_espresso_content() {
+	//@todo add extra join condition
 	global $espresso_content;
 	require_once('EEM_Experimental_Base.model.php');
-	$EVT = new EEM_Exp_Event();
-//	var_dump($EVT->get_all(array(array('Question_Group.QSG_ID'=>array('IN',array(1,2,3)),'Event_Question_Group.EQG_primary'=>0))));//causes error
+	$EVT = EEM_Exp_Event::instance();
+	//var_dump($EVT->get_all(array(array('Question_Group.QSG_ID'=>array('IN',array(1,2,3)),'Event_Question_Group.EQG_primary'=>0))));//causes error
+	//var_dump($EVT->get_all(array(array('Event_Question_Group.Question_Group.QSG_ID'=>array('IN',array(1,2,3)),'Event_Question_Group.EQG_primary'=>0))));//causes error
+	var_dump($EVT->get_all(array(array('Registration.Transaction.TXN_ID'=>2))));
 //	var_dump($EVT->get_one_by_ID(1));
-	$EVT->update(array('EVT_metakey1'=>'success!'), array(array('EVT_desc'=>'foo_bar')));
+//	$EVT->update(array('EVT_metakey1'=>'success!'), array(array('EVT_desc'=>'foo_bar')));
 	//$result = $EVT->insert(array('EVT_desc'=>'foo_bar','EVT_metakey1'=>'inserted_key','EVT_metaval1'=>'inserted_value'));
 	//$result = $EVT->delete(array(array('EVT_desc'=>'foo_bar')));
-	echo "result:$result";
+//	echo "result:$result";
+//	$e1 = new EE_Exp_Event('biggest party of all year', 'party_catchphrase<html></html>', '<b>tonight we gonna party like it dec 31</b>');
+//	
+//	var_dump($e1);
+//	$qg1 = new EE_Exp_Question_Group('Questions about the universe2S');
+//	var_dump($qg1);
+//	$e1->_add_relation_to($qg1, 'Question_Group');
+	
+//	$r1 = new EE_Exp_Registration(null, null, null);
+//	var_dump($r1);
+//	//$e1->_add_relation_to($r1, 'Registration');
+//	$r1->_add_relation_to($e1, 'Event');
+//	var_dump($r1);
+//	$e1->_remove_relation_to($r1, 'Registration');
+//	echo "remove relation now:";var_dump($r1);
+	
+	//get related
+//	$EVT = EEM_Exp_Event::instance();
+//	$e1 = $EVT->get_one_by_ID($id);
+//	echo "event with id 49:";var_dump($e1);
+//	echo "events question groups:";
 	return $espresso_content;
 }
 

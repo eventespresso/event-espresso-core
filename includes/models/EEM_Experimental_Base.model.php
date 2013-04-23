@@ -71,7 +71,7 @@ abstract class EEM_Experimental_Base{
 	 * the array key ('Event_Post_Table'), instead of repeating it. The model fields and model relations
 	 * do something similar.
 	 */
-	function __construct(){
+	protected function __construct(){
 		foreach($this->_tables as $table_alias => $table_obj){
 			$table_obj->_construct_finalize_with_alias($table_alias);
 			if($table_obj instanceof EE_Secondary_Table){
@@ -114,6 +114,7 @@ abstract class EEM_Experimental_Base{
 		global $wpdb;
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 		$SQL ="SELECT ".$this->_construct_select_sql()." FROM ".$model_query_info->get_full_join_sql()." WHERE ".$model_query_info->get_where_sql();
+		echo "get all SQL:".$SQL;
 		return $wpdb->get_results($SQL, ARRAY_A);
 	}
 	
@@ -283,7 +284,7 @@ abstract class EEM_Experimental_Base{
 	 */
 	public function remove_relationship_to($id_or_obj,  $other_model_id_or_obj, $relationName){
 		$relation_obj = $this->related_settings_for($relationName);
-		$relation_obj->remove_relation_to_relation_to($id_or_obj, $other_model_id_or_obj);
+		$relation_obj->remove_relation_to($id_or_obj, $other_model_id_or_obj);
 	}
 	
 	
@@ -381,10 +382,13 @@ abstract class EEM_Experimental_Base{
 		//insert the new entry
 		$result = $wpdb->insert($table->get_table_name(),$insertion_col_n_values,$format_for_insertion);
 		if(!$result){
-			throw new EE_Error(sprintf(__("Error inserting values %s for columns %s, using data types %s, into table %s",'event_espresso'),
+			throw new EE_Error(sprintf(__("Error inserting values %s for columns %s, using data types %s, into table %s. Error was %s",'event_espresso'),
 					implode(",",$insertion_col_n_values),
 					implode(",",array_keys($insertion_col_n_values)),
-					implode(",",$format_for_insertion)));
+					implode(",",$format_for_insertion),
+					$table->get_table_name(),
+					$wpdb->last_error
+					));
 		}
 		return $wpdb->insert_id;
 	}	
@@ -455,11 +459,13 @@ abstract class EEM_Experimental_Base{
 	function _create_model_query_info_carrier($query_params){
 		$where_array = $this->_extract_where_parameters($query_params);
 		if($where_array){
-			$query_objects = $this->_extract_related_models_from_query($where_array);
-			$query_objects->set_where_sql( $this->_construct_where_clause($where_array, $query_objects->get_data_types()));
+			$query_object = $this->_extract_related_models_from_query($where_array);
+			$query_object->set_where_sql( $this->_construct_where_clause($where_array, $query_object->get_data_types()));
+		}else{
+			$query_object = $this->_extract_related_models_from_query(array());
 		}
-		$query_objects->set_main_model_join_sql($this->_construct_internal_join());
-		return $query_objects;
+		$query_object->set_main_model_join_sql($this->_construct_internal_join());
+		return $query_object;
 	}
 	
 	/**
@@ -804,8 +810,16 @@ abstract class EEM_Experimental_Base{
 	 */
 	private function _include_php_class(){
 		$className=$this->_get_class_name();
+		$filepath = $className.".class.php";
 		if(!class_exists($className)){
-			require_once($className.".class.php");
+			if(file_exists($filepath)){
+				require_once($filepath);
+			}else{
+				throw new EE_Error(sprintf(__('There is no file titled %s, nor class %s. They must exist in order for %s to work','event_espresso'),$filepath,$className, get_class($this)));
+			}
+		}
+		if(!class_exists($className)){
+			throw new EE_Error(sprintf(__('There is class with name %s contained in file %s.class.php. You must create one','event_espresso'),$className,$className));
 		}
 	}
 	
@@ -825,10 +839,11 @@ abstract class EEM_Experimental_Base{
 			foreach($this->field_settings() as $field_name => $field_obj){
 				//ask the field what it think it's table_name.column_name should be, and call it the "qualified column"
 				$field_qualified_column = $field_obj->get_qualified_column();
-				//does the field on the model relate to this column retrieved from teh db?
-				if($field_qualified_column == $col){
+				//does the field on the model relate to this column retrieved from teh db? 
+				//or is it a db-only field? (not relating to the model)
+				if($field_qualified_column == $col && !$field_obj->is_db_only_field()){
 					//OK, this field apparently relates to this model.
-					//now we can add it to the array 
+					//now we can add it to the array
 					$this_model_fields_n_values[$field_name] = $val;
 				}
 			}
@@ -909,7 +924,7 @@ abstract class EEM_Experimental_Base{
 		}else{
 			throw new EE_Exception(sprintf(__("'%s' is neither an object of type %s, nor an ID!",'event_espresso'),$base_class_obj_or_id,$this->_getClasssName()));
 		}
-		if($ensure_is_in_db){
+		if( $model_object->ID() == NULL && $ensure_is_in_db){
 			$model_object->save();
 		}
 		return $model_object;
@@ -943,7 +958,7 @@ class EEM_Exp_Event extends EEM_Experimental_Base{
 	}
 
 	
-	function __construct(){
+	protected function __construct(){
 		$this->_tables = array(
 			'Event' => new EE_Main_Table('posts','ID'),
 			'Event_Meta' => new EE_Secondary_Table('postmeta','meta_id', 'post_id',"Event.post_type = 'page'"));
@@ -954,12 +969,12 @@ class EEM_Exp_Event extends EEM_Experimental_Base{
 		$this->_fields = array(
 				'Event'=>array(
 					'EVT_ID'=>new EE_Primary_Key_Int_Field('ID', 'Event ID', false, 0),
-					'EVT_desc'=>new EE_HTML_Field('post_content','Event Description',true,''),),
+					'EVT_desc'=>new EE_HTML_Field('post_content','Event Description',true,''),
+					'db_only_post_type'=>new EE_DB_Only_Text_Field('post_type','All Post types for Events should be \'event\'',false,'event')),
 				'Event_Meta'=>array(
-					'EVT_metakey1'=>new EE_HTML_Field('meta_key','Dunno',true,'foobar'),
+					'EVT_metakey1'=>new EE_Plain_Text_Field('meta_key','Dunno',true,'foobarplaintext'),
 					'EVT_metaval1'=>new EE_HTML_Field('meta_value', 'DUnnoeither', true, 'foobrarval')
-				)
-			
+				)			
 			);
 		parent::__construct();
 	}
@@ -985,7 +1000,7 @@ class EEM_Exp_Question_Group extends EEM_Experimental_Base{
 		return self::$_instance;
 	}
 
-	function __construct(){
+	protected function __construct(){
 		$this->_tables = array(
 			'Question_Group'=>new EE_Main_Table('esp_question_group','QSG_ID')
 		);
@@ -996,7 +1011,8 @@ class EEM_Exp_Question_Group extends EEM_Experimental_Base{
 		$this->_fields = array(
 			'Question_Group'=>array(
 				'QSG_ID'=>new EE_Primary_Key_Int_Field('QSG_ID', 'Question Group ID', false, 0),
-				'QSG_name'=>new EE_HTML_Field('QSG_name', 'Question Gruop Name', false, time())
+				'QSG_name'=>new EE_HTML_Field('QSG_name', 'Question Gruop Name', false, time()),
+				'QSG_identifier'=>new EE_Plain_Text_Field('QSG_identifier', 'Unique ID for Question Group', false, time())
 			)
 		);
 		parent::__construct();
@@ -1024,7 +1040,7 @@ class EEM_Exp_Event_Question_Group extends EEM_Experimental_Base{
 		return self::$_instance;
 	}
 
-	function __construct(){
+	protected function __construct(){
 		$this->_tables = array(
 			'Event_Question_Group'=>new EE_Main_Table('esp_event_question_group','EQG_ID')
 		);
@@ -1065,7 +1081,7 @@ class EEM_Exp_Registration extends EEM_Experimental_Base{
 		return self::$_instance;
 	}
 
-	function __construct(){
+	protected function __construct(){
 		$this->_tables = array(
 			'Registration'=>new EE_Main_Table('esp_registration','REG_ID')
 		);
@@ -1108,7 +1124,7 @@ class EEM_Exp_Transaction extends EEM_Experimental_Base{
 	}
 
 	
-	function __construct(){
+	protected function __construct(){
 		$this->_tables = array(
 			'Transaction'=>new EE_Main_Table('esp_transaction','TXN_ID')
 		);
@@ -1233,6 +1249,19 @@ abstract class EE_Exp_Model_Field_Base{
 	}
 	
 	abstract function get_wpdb_data_type();
+	
+	/**
+	 * Some fields are in the database-only, (ie, used in queries etc), but shouldn't necessarily be part
+	 * of the model objects (ie, client code shouldn't care to ever see their value... if client code does
+	 * want to see their value, then they shouldn't be db-only fields!)
+	 * Eg, when doing events as custom post types, querying the post_type is essential, but
+	 * post_type is irrelevant for EE_Exp_Event objects (because they will ALL be of post_type 'esp_event').
+	 * By default, all fields aren't db-only.
+	 * @return boolean
+	 */
+	function is_db_only_field(){
+		return false;
+	}
 }
 /**
  * Text_Fields is a base class for any fields which are have text value. (Exception: foreign and private key fields. Wish PHP had multiple-inheritance for this...)
@@ -1319,6 +1348,19 @@ class EE_HTML_Field extends EE_Text_Field_Base{
 		parent::__construct($table_column, $nicename, $nullable, $default_value);
 	}
 }
+class EE_Plain_Text_Field extends EE_Text_Field_Base{
+	function __construct($table_column, $nicename, $nullable, $default_value){
+		parent::__construct($table_column, $nicename, $nullable, $default_value);
+	}
+	/**
+	 * removes all tags when setting
+	 * @param string $value_inputted_for_field_on_model_object
+	 * @return string
+	 */
+	function prepare_for_set($value_inputted_for_field_on_model_object) {
+		return strip_tags($value_inputted_for_field_on_model_object);
+	}
+}
 class EE_Enum_Field extends EE_Text_Field_Base{
 	var $_allowed_enum_values;
 	function __construct($table_column, $nicename, $nullable, $default_value, $allowed_enum_values){
@@ -1363,6 +1405,15 @@ class EE_Serialized_Text_Field extends EE_Text_Field_Base{
 abstract class EE_DB_Only_Field extends EE_Exp_Model_Field_Base{
 	function __construct($table_column, $nicename, $nullable, $default_value){
 		parent::__construct($table_column, $nicename, $nullable, $default_value);
+	}
+	/**
+	 * All these children classes are for the db-only (meaning, we should select them
+	 * on get_all queries, update, delete, and will still want to set their default value
+	 * on inserts, but the model object won't have reference to these fields)
+	 * @return boolean
+	 */
+	function is_db_only_field() {
+		return true;
 	}
 }
 class EE_DB_Only_Int_Field extends EE_DB_Only_Field{
@@ -1489,7 +1540,7 @@ class EE_Exp_Has_Many extends EE_Exp_Model_Relation{
 		 $other_model_obj = $this->get_other_model()->ensure_is_obj($other_obj_or_id, true);
 		 
 		 //find the field on th eother model which is a foreign key to this model
-		 $fk_field_on_other_model = $other_model_obj->get_foreign_key_to($this->get_this_model()->get_this_model_name());
+		 $fk_field_on_other_model = $this->get_other_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
 		 //set that field on the other model to this model's ID
 		 $other_model_obj->set($fk_field_on_other_model->get_name(), $this_model_obj->ID());
 		 $other_model_obj->save();
@@ -1503,7 +1554,7 @@ class EE_Exp_Has_Many extends EE_Exp_Model_Relation{
 	 function remove_relation_to($this_obj_or_id, $other_obj_or_id){
 		 $other_model_obj = $this->get_other_model()->ensure_is_obj($other_obj_or_id, true);
 		 //find the field on th eother model which is a foreign key to this model
-		 $fk_field_on_other_model = $other_model_obj->get_foreign_key_to($this->get_this_model()->get_this_model_name());
+		 $fk_field_on_other_model = $this->get_other_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
 		 //set that field on the other model to this model's ID
 		 $other_model_obj->set($fk_field_on_other_model->get_name(),null, true);
 		 $other_model_obj->save();
@@ -1538,7 +1589,7 @@ class EE_Exp_Belongs_To extends EE_Exp_Model_Relation{
 		 $this_model_obj = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);
 		 $other_model_obj = $this->get_other_model()->ensure_is_obj($other_obj_or_id, true);
 		 //find the field on th eother model which is a foreign key to this model
-		 $fk_on_this_model = $this_model_obj->get_foreign_key_to($this->get_other_model()->get_this_model_name());
+		 $fk_on_this_model = $this->get_this_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
 		 //set that field on the other model to this model's ID
 		 $this_model_obj->set($fk_on_this_model->get_name(), $other_model_obj->ID());
 		 $this_model_obj->save();
@@ -1552,7 +1603,7 @@ class EE_Exp_Belongs_To extends EE_Exp_Model_Relation{
 	 function remove_relation_to($this_obj_or_id, $other_obj_or_id){
 		 $this_model_obj = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);
 		 //find the field on th eother model which is a foreign key to this model
-		 $fk_on_this_model = $this_model_obj->get_foreign_key_to($this->get_other_model()->get_this_model_name());
+		 $fk_on_this_model = $this->get_this_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
 		 //set that field on the other model to this model's ID
 		 $this_model_obj->set($fk_on_this_model->get_name(),null, true);
 		 $this_model_obj->save();
@@ -1628,6 +1679,7 @@ class EE_Exp_HABTM extends EE_Exp_Model_Relation{
 	 */
 	 function add_relation_to($this_obj_or_id, $other_obj_or_id ){
 		 $this_model_obj = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);
+		 echo "this model obj";var_dump($this_model_obj);
 		 $other_model_obj = $this->get_other_model()->ensure_is_obj($other_obj_or_id, true);
 		//check if such a relationship already exists
 		 $join_model_fk_to_this_model = $this->get_join_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
@@ -1674,19 +1726,16 @@ class EE_Exp_HABTM extends EE_Exp_Model_Relation{
 abstract class EE_Table{
 	var $_table_name;
 	var $_table_alias;
-	var $_extra_join_conditions;
 	/**
 	 * Table's private key column
 	 * @var string
 	 */
 	protected $_pk_column;
 	
-	function __construct($table_name, $pk_column, $extra_join_conditions = null){
+	function __construct($table_name, $pk_column){
 		global $wpdb;
 		$this->_table_name = $wpdb->prefix . $table_name;
 		$this->_pk_column = $pk_column;
-		
-		$this->_extra_join_conditions = $extra_join_conditions;
 	}
 	
 	function _construct_finalize_with_alias($table_alias){
@@ -1701,10 +1750,6 @@ abstract class EE_Table{
 			throw new EE_Error("You must call _construct_finalize_with_alias before using thie EE_Table. Did you forget to call parent::__construct at the end of your EEM_Experimental_Base child's __construct?");
 		}
 		return $this->_table_alias;
-	}
-	
-	function get_extra_join_conditions(){
-		return $this->_extra_join_conditions;
 	}
 	
 	/**
@@ -1729,6 +1774,7 @@ abstract class EE_Table{
 
 class EE_Secondary_Table extends EE_Table{
 	protected $_fk_on_table;
+	protected $_extra_join_conditions;
 	/**
 	 * 
 	 * @var EE_Main_Table 
@@ -1736,13 +1782,22 @@ class EE_Secondary_Table extends EE_Table{
 	protected $_table_to_join_with;
 	function __construct($table_name, $pk_column,  $fk_column = null, $extra_join_conditions = null){
 		$this->_fk_on_table = $fk_column;
-		parent::__construct($table_name, $pk_column, $extra_join_conditions);
+		$this->_extra_join_conditions = $extra_join_conditions;
+		parent::__construct($table_name, $pk_column);
 	}
 	function get_fk_on_table(){
 		return $this->_fk_on_table;
 	}
 	function _construct_finalize_set_table_to_join_with(EE_Table $table){
 		$this->_table_to_join_with = $table;
+	}
+	/**
+	 * 
+	 * @return string of sql like "Event.post_type = 'event'", which gets added to
+	 * the end of the join statement with the primary table
+	 */
+	function get_extra_join_conditions(){
+		return $this->_extra_join_conditions;
 	}
 	/**
 	 * 
@@ -1762,7 +1817,11 @@ class EE_Secondary_Table extends EE_Table{
 		$other_table_alias = $this->get_table_to_join_with()->get_table_alias();
 		$other_table_pk = $this->get_table_to_join_with()->get_pk_column();
 		$fk = $this->get_fk_on_table();
-		return " LEFT JOIN $table_name AS $table_alias ON $other_table_alias.$other_table_pk = $table_alias.$fk ";
+		$join_sql = " LEFT JOIN $table_name AS $table_alias ON $other_table_alias.$other_table_pk = $table_alias.$fk ";
+		if($this->get_extra_join_conditions()){
+			$join_sql.="AND ".$this->get_extra_join_conditions();
+		}
+		return $join_sql;
 	}
 }
 class EE_Main_Table extends EE_Table{
@@ -1879,6 +1938,8 @@ class EE_Exp_Base_Class{
 	/**
 	 * basic constructor for Event Espresso classes, performs any necessary initialization,
 	 * and verifies it's children play nice
+	 * @param array $fieldValues where each key is a field (ie, array key in the 2nd layer of the model's _fields array, (eg, EVT_ID, TXN_amount, QST_name, etc)
+	 * and valuse are their values
 	 */
 	public function __construct($fieldValues=null){
 		$className=get_class($this);
@@ -1901,8 +1962,8 @@ class EE_Exp_Base_Class{
 			}
 		}
 		//verify we have all the attributes required in teh model
-		foreach($model->fields_settings() as $fieldName=>$fieldSettings){
-			if(!property_exists($this,$this->_get_private_attribute_name($fieldName))){
+		foreach($model->field_settings() as $fieldName=>$field_obj){
+			if( ! $field_obj->is_db_only_field() && ! property_exists($this,$this->_get_private_attribute_name($fieldName))){
 				throw new EE_Error(sprintf(__('You have added an attribute titled \'%s\' to your model %s, but have not set a corresponding
 					attribute on %s. Please add $%s to %s','event_espresso'),
 						$fieldName,get_class($model),get_class($this),$this->_get_private_attribute_name($fieldName),get_class($this)));
@@ -1927,7 +1988,13 @@ class EE_Exp_Base_Class{
 	public function set($field_name,$field_value,$use_default= false){
 		$privateAttributeName=$this->_get_private_attribute_name($field_name);
 		$field_obj = $this->_get_model()->field_settings_for($field_name);
-		$this->$privateAttributeName = $field_obj->prepare_for_set($field_value);
+		 $holder_of_value = $field_obj->prepare_for_set($field_value);
+		 if( ($holder_of_value === NULL || $holder_of_value ==='') && $use_default){
+			 $this->$privateAttributeName = $field_obj->get_default_value();
+		 }else{
+			$this->$privateAttributeName = $holder_of_value; 
+		 }
+		 
 	}
 	
 	
@@ -2001,19 +2068,19 @@ class EE_Exp_Base_Class{
 		}
 		//now get current attribute values
 		$save_cols_n_values = array();
-		foreach($this->field_settings() as $fieldName=>$field_obj){
+		foreach($this->_get_model()->field_settings() as $fieldName=>$field_obj){
 			$attributeName=$this->_get_private_attribute_name($fieldName);
 			$save_cols_n_values[$fieldName] = $field_obj->prepare_for_insertion_into_db($this->$attributeName);
 	
 		}
-		if ( $save_cols_n_values[$this->_get_primary_key_name()]!=null ){
-			$results = $this->_get_model()->update ( $save_cols_n_values, array($this->_get_primary_key_name()=>$this->get_primary_key()) );
+		//if the object already has an ID, update it. Otherwise, insert it
+		if ( $save_cols_n_values[$this->_get_primary_key_name()] != null ){
+			$results = $this->_get_model()->update ( $save_cols_n_values, array(array($this->_get_primary_key_name()=>$this->ID())) );
 		} else {
 			unset($save_cols_n_values[$this->_get_primary_key_name()]);
 			
 			$results = $this->_get_model()->insert ( $save_cols_n_values );
 			if($results){//if successful, set the primary key
-				$results=$results['new-ID'];
 				$this->set($this->_get_primary_key_name(),$results);//for some reason the new ID is returned as part of an array,
 				//where teh only key is 'new-ID', and it's value is the new ID.
 			}
@@ -2101,6 +2168,14 @@ class EE_Exp_Base_Class{
 		$this->_get_model()->remove_relationship_to($this, $otherObjectModelObjectOrID, $relationName);
 	}
 	
+	/**
+	 * 
+	 * @param type $relationName
+	 * @param type $query_params
+	 */
+	public function get_many_related($relationName,$query_params){
+		$this->_get_model()->get_all_related($this, $relationName, $query_params);
+	}
 	
 	/**
 	 * Very handy general function to allow for plugins to extend any child of EE_Base_Class.
@@ -2164,7 +2239,65 @@ class EE_Exp_Event extends EE_Exp_Base_Class{
 	 * @param int $QST_ID question ID
 	 * @param string $ANS_value text representing the answer. Could be CSV'd
 	 */
-	public function __construct( $EVT_ID=NULL, $EVT_desc=NULL, $EVT_metakey1='', $_EVT_metaval1 ='') {
+	public function __construct( $EVT_desc=NULL, $EVT_metakey1='', $EVT_metaval1 ='') {
+		//if the first parameter is an array, assume it's an array of key-value pairs for this object
+		//@todo: need to generalize constructor
+		if(is_array($EVT_desc)){
+			parent::__construct($EVT_desc);
+			return;
+		}
+		$reflector = new ReflectionMethod($this,'__construct');	
+		$arrayForParent=array();
+		foreach($reflector->getParameters() as $param){
+			$paramName=$param->name;
+			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
+		}
+		parent::__construct($arrayForParent);
+		
+	}
+	
+	
+	
+}
+
+class EE_Exp_Question_Group extends EE_Exp_Base_Class{
+	protected $_Event;
+	protected $_QSG_ID;
+	protected $_QSG_name;
+	protected $_QSG_identifier;
+	
+/**
+	 * Constructor
+	 * @param int $REG_ID registration ID OR an array of all field values, where keys match these arguments' names
+	 * @param int $QST_ID question ID
+	 * @param string $ANS_value text representing the answer. Could be CSV'd
+	 */
+	public function __construct( $QSG_name=NULL, $QSG_identifier = NULL) {
+		//if the first parameter is an array, assume it's an array of key-value pairs for this object
+		//@todo: need to generalize constructor
+		if(is_array($QSG_name)){
+			parent::__construct($QSG_name);
+			return;
+		}
+		$reflector = new ReflectionMethod($this,'__construct');	
+		$arrayForParent=array();
+		foreach($reflector->getParameters() as $param){
+			$paramName=$param->name;
+			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
+		}
+		parent::__construct($arrayForParent);
+		
+	}
+}
+
+class EE_Exp_Event_Question_Group extends EE_Exp_Base_Class{
+	protected $_Question_Group;
+	protected $_Event;
+	protected $_EQG_ID;
+	protected $_EVT_ID;
+	protected $_QSG_II;
+	protected $_EQG_primary;
+	public function __construct( $EVT_ID=NULL, $QSG_ID = NULL, $EQG_primary = NULL) {
 		//if the first parameter is an array, assume it's an array of key-value pairs for this object
 		//@todo: need to generalize constructor
 		if(is_array($EVT_ID)){
@@ -2180,7 +2313,43 @@ class EE_Exp_Event extends EE_Exp_Base_Class{
 		parent::__construct($arrayForParent);
 		
 	}
-	
-	
-	
+}
+
+class EE_Exp_Registration extends EE_Exp_Base_Class{
+	protected $_Transaction;
+	protected $_Event;
+	protected $_REG_ID;
+	protected $_EVT_ID;
+	protected $_TXN_ID;
+	protected $_STS_ID;
+	public function __construct( $EVT_ID=NULL, $TXN_ID = NULL, $STS_ID = NULL) {
+		//if the first parameter is an array, assume it's an array of key-value pairs for this object
+		//@todo: need to generalize constructor
+		if(is_array($EVT_ID)){
+			parent::__construct($EVT_ID);
+			return;
+		}
+		$reflector = new ReflectionMethod($this,'__construct');	
+		$arrayForParent=array();
+		foreach($reflector->getParameters() as $param){
+			$paramName=$param->name;
+			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
+		}
+		parent::__construct($arrayForParent);
+		
+	}
+//		$this->_model_relations = array(
+//			//woudl add a BelongsTorelation to events and other relations here
+//			'Transaction'=> new EE_Exp_Belongs_To(),
+//			'Event'=>new EE_Exp_Belongs_To()
+//		);
+//		$this->_fields = array(
+//			'Registration'=>array(
+//				'REG_ID'=>new EE_Primary_Key_Int_Field('REG_ID', 'Registration ID', false, 0),
+//				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', 'Event ID', false, 0, 'Event'),
+//				'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID','Transaction ID',false, 0, 'Transaction'),
+//				'STS_ID'=>new EE_Enum_Field('STS_ID','Status Code',false,'RNA',array('RAP','RCN','RNA','RPN'))
+//			)
+//			
+//		);
 }

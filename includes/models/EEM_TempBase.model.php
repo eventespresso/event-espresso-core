@@ -593,7 +593,7 @@ abstract class EEM_TempBase extends EEM_Custom_Table_Base{
 	* 
 	* 		@access		public
 	* 		@param		$id		
-	*		@return 	EE_Base_Class or FALSE on fail
+	*		@return 	EE_Exp_Base_Class or FALSE on fail
 	*/	
 	public function get_one_by_ID( $id = FALSE ) {
 
