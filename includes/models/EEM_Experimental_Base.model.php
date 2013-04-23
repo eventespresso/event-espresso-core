@@ -113,7 +113,7 @@ abstract class EEM_Experimental_Base{
 	private function _get_all_wpdb_results($query_params = array()){
 		global $wpdb;
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
-		$SQL ="SELECT ".$this->_construct_select_sql()." FROM ".$model_query_info->get_full_join_sql()." WHERE ".$model_query_info->get_where_sql();
+		$SQL ="SELECT ".$this->_construct_select_sql()." FROM ".$model_query_info->get_full_join_sql().$model_query_info->get_where_sql();
 		echo "get all SQL:".$SQL;
 		return $wpdb->get_results($SQL, ARRAY_A);
 	}
@@ -198,7 +198,7 @@ abstract class EEM_Experimental_Base{
 		}
 		
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
-		$SQL = "UPDATE ".$model_query_info->get_full_join_sql()." SET ".$this->_construct_update_sql($fields_n_values)." WHERE ".$model_query_info->get_where_sql();
+		$SQL = "UPDATE ".$model_query_info->get_full_join_sql()." SET ".$this->_construct_update_sql($fields_n_values).$model_query_info->get_where_sql();
 		$rows_affected = $wpdb->query($SQL);
 		return $rows_affected;//how many supposedly got updated
 	}	
@@ -239,11 +239,58 @@ abstract class EEM_Experimental_Base{
 		foreach(array_keys($this->_tables) as $table_alias){
 			$table_aliases[] = $table_alias;
 		}
-		$SQL = "DELETE ".implode(", ",$table_aliases)." FROM ".$model_query_info->get_full_join_sql()." WHERE ".$this->get_primary_key_field()->get_qualified_column()." IN (".implode(",",array_keys($objects_for_deletion)).")";
+		$SQL = "DELETE ".implode(", ",$table_aliases)." FROM ".$model_query_info->get_full_join_sql().$this->get_primary_key_field()->get_qualified_column()." IN (".implode(",",array_keys($objects_for_deletion)).")";
 //		/echo "delete sql:$SQL";
 		$rows_deleted = $wpdb->query($SQL);
 		//$wpdb->print_error();
 		return $rows_deleted;//how many supposedly got updated
+	}
+	/**
+	 * Count all the rows that match criteria expressed in $query_params (an array just like arg to EEM_Experimental_Base::get_all).
+	 * If $field_to_count isn't provided, the model's primary key is used. Otherwise, we count by field_to_count's column
+	 * @param array $query_params like EEM_Experimental_Base::get_all's
+	 * @param type $field_to_count field on model to count by (not column name)
+	 */
+	function count($query_params,$field_to_count = NULL){
+		global $wpdb;
+		$model_query_info = $this->_create_model_query_info_carrier($query_params);
+		if($field_to_count){
+			$field_obj = $this->field_settings_for($field_to_count);
+			$column_to_count = $field_obj->get_qualified_column();
+		}else{
+			$pk_field_obj = $this->get_primary_key_field();
+			$column_to_count = $pk_field_obj->get_qualified_column();
+		}
+		$SQL ="SELECT COUNT(".$column_to_count.") FROM ".$model_query_info->get_full_join_sql().$model_query_info->get_where_sql();
+		return (int)$wpdb->get_var($SQL);
+	}
+	
+	/**
+	 * Sums up the value of the $field_to_sum (defaults to the primary key, which isn't terribly useful)
+	 * 
+	 * @param array $query_params like EEM_Experimental_Base::get_all
+	 * @param string $field_to_sum name of field (array key in $_fields array)
+	 * @return int
+	 */
+	function sum($query_params, $field_to_sum = NULL){
+		global $wpdb;
+		$model_query_info = $this->_create_model_query_info_carrier($query_params);
+		
+		if($field_to_sum){
+			$field_obj = $this->field_settings_for($field_to_sum);
+			
+		}else{
+			$field_obj = $this->get_primary_key_field();
+		}
+		$column_to_count = $field_obj->get_qualified_column();
+
+		$SQL ="SELECT SUM(".$column_to_count.") FROM ".$model_query_info->get_full_join_sql().$model_query_info->get_where_sql();
+		$return_value = $wpdb->get_var($SQL);
+		if($field_obj->get_wpdb_data_type() == '%d' || $field_obj->get_wpdb_data_type() == '%s' ){
+			return (int)$return_value;
+		}else{//must be %f
+			return (float)$return_value;
+		}
 	}
 	/**
 	 * Adds a relationship of the correct type between $modelObject and $otherModelObject. 
@@ -535,7 +582,13 @@ abstract class EEM_Experimental_Base{
 	
 	
 	
-	
+	/**
+	 * Constructs SQL for where clause, like "WHERE Event.ID = 23 AND Transaction.amount > 100" etc.
+	 * @global type $wpdb
+	 * @param array $where_params like EEM_Experimental_Base::get_all
+	 * @param array  $joined_data_types keys are qualified column names, values are their wpdb data type (%d,%s,%f)
+	 * @return string of SQL
+	 */
 	function _construct_where_clause($where_params, $joined_data_types = null){
 		global $wpdb;
 		//@todo pop off the top-layer arguments in future. For now assume single layer
@@ -550,7 +603,11 @@ abstract class EEM_Experimental_Base{
 			$op_and_value_sql = $this->_construct_op_and_value($op_and_value, $data_type);
 			$where_clauses[]=$qualified_column_sql.SP.$op_and_value_sql;
 		}
-		$SQL = implode($glue,$where_clauses);
+		if($where_clauses){
+			$SQL = " WHERE ".implode($glue,$where_clauses);
+		}else{
+			$SQL = '';
+		}
 		return $SQL;
 	}
 	

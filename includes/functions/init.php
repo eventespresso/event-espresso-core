@@ -304,7 +304,7 @@ function return_espresso_content() {
 	$EVT = EEM_Exp_Event::instance();
 	//var_dump($EVT->get_all(array(array('Question_Group.QSG_ID'=>array('IN',array(1,2,3)),'Event_Question_Group.EQG_primary'=>0))));//causes error
 	//var_dump($EVT->get_all(array(array('Event_Question_Group.Question_Group.QSG_ID'=>array('IN',array(1,2,3)),'Event_Question_Group.EQG_primary'=>0))));//causes error
-	var_dump($EVT->get_all(array(array('Registration.Transaction.TXN_ID'=>2))));
+	var_dump($EVT->sum(array()));
 //	var_dump($EVT->get_one_by_ID(1));
 //	$EVT->update(array('EVT_metakey1'=>'success!'), array(array('EVT_desc'=>'foo_bar')));
 	//$result = $EVT->insert(array('EVT_desc'=>'foo_bar','EVT_metakey1'=>'inserted_key','EVT_metaval1'=>'inserted_value'));
