@@ -1,4 +1,3 @@
-<?php global $caffeinated; ?>
 <div class="padding">
 	<table class="form-table">
 		<tbody>
@@ -48,21 +47,7 @@
 				</td>
 			</tr>
 
-		<?php if ( $caffeinated ) : ?>
-			<tr>
-				<th>
-					<label for="use_attendee_pre_approval">
-						<?php _e('Enable Attendee Pre-approval', 'event_espresso'); ?>
-					</label>
-				</th>
-				<td>
-					<p><?php echo EE_Form_Fields::select_input('use_attendee_pre_approval', $values, $use_attendee_pre_approval ); ?></p>
-					<p class="description">
-						<?php _e('Attendeess will be marked as pending approval, until an administrator manually changes their status to approved via the Registrations Admin page.', 'event_espresso'); ?>
-					</p>
-				</td>
-			</tr>
-		<?php endif; ?>
+		<?php do_action('action_hook_espresso_event_settings_template_extra_content', $template_args ); ?>
 
 		</tbody>
 	</table>

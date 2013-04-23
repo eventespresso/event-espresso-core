@@ -79,6 +79,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		add_filter('filter_hook_espresso_event_datetime_metabox_timezones_template', array( $this, 'datetime_timezones_template'), 10, 2 );
 		add_filter('filter_hook_espresso_additional_registration_options_event_edit_page', array( $this, 'additional_registration_options'), 10, 6);
 
+		//event settings
+		add_action('action_hook_espresso_event_settings_template_extra_content', array( $this, 'enable_attendee_pre_approval'), 10 );
+
 	}
 
 
@@ -140,6 +143,14 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$template_args['use_attendee_pre_approval'] = $org_options['use_attendee_pre_approval'];
 		$template_args['attendee_pre_approval_required'] = $org_options['use_attendee_pre_approval'] ? EE_Form_Fields::select_input("require_pre_approval", $yes_no_values, $this->_event->require_pre_approval) : '';
 		return espresso_display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_additional_registration_options.template.php', $template_args, TRUE);
+	}
+
+
+
+	public function enable_attendee_pre_approval( $template_args ) {
+		$_args['attendee_pre_approval_select'] = EE_Form_Fields::select_input('use_attendee_pre_approval', $template_args['values'], $template_args['use_attendee_pre_approval'] );
+		$template = EVENTS_CAF_TEMPLATE_PATH . 'event_settings_enable_attendee_pre_approval.template.php';
+		espresso_display_template( $template, $_args );
 	}
 
 

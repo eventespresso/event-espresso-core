@@ -2507,6 +2507,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		$this->_template_args['use_attendee_pre_approval'] = isset( $org_options['use_attendee_pre_approval'] ) ? absint( $org_options['use_attendee_pre_approval'] ) : FALSE;
 
+		$this->_template_args['template_args'] = $this->_template_args;
+
 		$this->_set_add_edit_form_tags( 'update_default_event_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = espresso_display_template( EVENTS_TEMPLATE_PATH . 'event_settings.template.php', $this->_template_args, TRUE );
