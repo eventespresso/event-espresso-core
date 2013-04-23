@@ -442,7 +442,7 @@ class EE_Admin_Page_load {
 	private function _set_caffeinated( $installed_refs ) {
 
 		//first let's check if there IS a caffeinated folder. If there is not then lets get out.
-		if ( !is_dir( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/admin' ) ) return $installed_refs;
+		if ( !is_dir( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/admin' ) || ( defined('EE_CAFFEINATED') && EE_CAFFEINATED === FALSE ) ) return $installed_refs;
 
 		$this->_define_caffeinated_constants();
 
