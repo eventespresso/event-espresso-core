@@ -1128,6 +1128,16 @@ class EEM_Exp_Transaction extends EEM_Experimental_Base{
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //model field classes
+/**
+ * Base class for all EE_Exp_*_Field classes. These classes are for providing information and functions specific to each
+ * field. They define the field's data type for insertion into the db (eg, if the value should be treated as an int, float, or string),
+ * what values for the field are acceptable (eg, if setting EVT_ID to a float is acceptable), and generally any functionality within 
+ * EEM_Experimental_Base or EE_Exp_Base_Class which depend on the field's type. (ie, you shouldn't need any logic within your model
+ * or model object which are dependent on the field's type, ideally). For example, EE_Serialized_Text_Field, specifies that any fields of this type
+ * should be serialized before insertion into the db (prepare_for_insertion_into_db()), 
+ * should be considered a string when inserting, updating, or using in a where clause for any queries (get_wpdb_data_type()),
+ * should be unserialized when being retrieved from the db (prepare_for_set_from_db()), and whatever else.
+ */
 abstract class EE_Exp_Model_Field_Base{
 	var $_table_alias;
 	var $_table_column;
@@ -1167,8 +1177,66 @@ abstract class EE_Exp_Model_Field_Base{
 	function get_qualified_column(){
 		return $this->get_table_alias().".".$this->get_table_column();
 	}
+	/**
+	 * When get() is called on a model object (eg EE_Event), before returning its value,
+	 * call this function on it, allowing us to customize the returned value based on
+	 * the field's type. Eg, we may want ot serialize it, strip tags, etc. By default,
+	 * we simply return it.
+	 * @param mixed $value_of_field_on_model_object
+	 * @return mixed
+	 */
+	function prepare_for_get($value_of_field_on_model_object){
+		return $value_of_field_on_model_object;
+	}
+	/**
+	 * When inserting or updating a field on a model object, run this function on each
+	 * value to prepare it for insertion into the db. We may want to add slashes, serialize it, etc.
+	 * By default, we do nothing.
+	 * @param mixed $value_of_field_on_model_object
+	 * @return mixed
+	 */
+	function prepare_for_insertion_into_db($value_of_field_on_model_object){
+		return $value_of_field_on_model_object;
+	}
+	
+	/**
+	 * When creating a brand-new model object, or setting a particular value for one of its fields, this function
+	 * is called before setting it on the model object. We may want to strip slashes, unserialize the value, etc.
+	 * By default, we do nothing.
+	 * @param mixed $value_inputted_for_field_on_model_object
+	 * @return mixed
+	 */
+	function prepare_for_set($value_inputted_for_field_on_model_object){
+		return $value_inputted_for_field_on_model_object;
+	}
+	
+	
+	/**
+	 * When instantiating a model object from DB results, this function is called before setting each field.
+	 * We may want to serialize the value, etc. By default, we do nothing.
+	 * @param mixed $value_found_in_db_for_model_object
+	 * @return mixed
+	 */
+	function prepare_for_set_from_db($value_found_in_db_for_model_object){
+		return $value_found_in_db_for_model_object;
+	}
+	
+	/**
+	 * When echoing a field's value on a model object, this function is run to prepare the value for presentation in a webpage.
+	 * For example, we may want to output floats with 2 decimal places by default, dates as "Monday Jan 12, 2013, at 3:23pm" instead of
+	 * "8765678632", or any other modifications to how the value should be displayed, but not modified itself. 
+	 * @param mixed $value_on_field_to_be_outputted
+	 * @return mixed
+	 */
+	function prepare_for_pretty_echoing($value_on_field_to_be_outputted){
+		return $value_on_field_to_be_outputted;
+	}
+	
 	abstract function get_wpdb_data_type();
 }
+/**
+ * Text_Fields is a base class for any fields which are have text value. (Exception: foreign and private key fields. Wish PHP had multiple-inheritance for this...)
+ */
 abstract class EE_Text_Field_Base extends EE_Exp_Model_Field_Base{
 	function __construct($table_column, $nicename, $nullable, $default_value){
 		parent::__construct($table_column, $nicename, $nullable, $default_value);
@@ -1177,6 +1245,9 @@ abstract class EE_Text_Field_Base extends EE_Exp_Model_Field_Base{
 		return '%s';
 	}
 }
+/**
+ * Text_Fields is a base class for any fields which are have integer value. (Exception: foreign and private key fields. Wish PHP had multiple-inheritance for this...)
+ */
 class EE_Integer_Field_Base extends EE_Exp_Model_Field_Base{
 	function __construct($table_column, $nicename, $nullable, $default_value){
 		parent::__construct($table_column, $nicename, $nullable, $default_value);
@@ -1185,6 +1256,9 @@ class EE_Integer_Field_Base extends EE_Exp_Model_Field_Base{
 		return '%d';
 	}
 }
+/**
+ * Text_Fields is a base class for any fields which are have float value. (Exception: foreign and private key fields. Wish PHP had multiple-inheritance for this...)
+ */
 abstract class EE_Float_Field_Base extends EE_Exp_Model_Field_Base{
 	function __construct($table_column, $nicename, $nullable, $default_value){
 		parent::__construct($table_column, $nicename, $nullable, $default_value);
@@ -1252,10 +1326,31 @@ class EE_Enum_Field extends EE_Text_Field_Base{
 		parent::__construct($table_column, $nicename, $nullable, $default_value);
 	}
 }
-
-class EE_Serialized_text_field extends EE_Text_Field_Base{
+/**
+ * Serialized text field should basically: accept either an array or serialized text as input.
+ * When initally set by client code (ie, not EEM_Experimental_Base or children), the value should remain an array.
+ * However, when inserting into the DB, it should be serialized.
+ * Upon retrieval from the DB, it should be unserialized back into an array.
+ */
+class EE_Serialized_Text_Field extends EE_Text_Field_Base{
 	function __construct($table_column, $nicename, $nullable, $default_value){
 		parent::__construct($table_column, $nicename, $nullable, $default_value);
+	}
+	/**
+	 * Value SHOULD be an array, and we want to now convert it to a serialized string
+	 * @param array $value_of_field_on_model_object
+	 * @return string
+	 */
+	function prepare_for_insertion_into_db($value_of_field_on_model_object) {
+		return maybe_serialize($value_of_field_on_model_object);
+	}
+	/**
+	 * Value provided should definetely be a serialized string. We should unserialize into an array
+	 * @param string $value_found_in_db_for_model_object
+	 * @return array
+	 */
+	function prepare_for_set_from_db($value_found_in_db_for_model_object) {
+		return maybe_unserialize($value_found_in_db_for_model_object);
 	}
 }
 /**
@@ -1788,29 +1883,39 @@ class EE_Exp_Base_Class{
 	public function __construct($fieldValues=null){
 		$className=get_class($this);
 		do_action("action_hook_espresso__{$className}__construct",$this,$fieldValues);
-		//$model=$this->_get_model();
-		if($fieldValues!=null){
-			foreach($fieldValues as  $fieldName=>$fieldValue){
-				//"<br>set $fieldName to $fieldValue";
+		$model=$this->_get_model();
+		//if the primary key field is provided in $fieldValues, assume we're constructing it from DB results
+		//and call prepare_for_set_from_db instead of prepare_for_set on the field object
+		$pk_field_obj = $this->_get_model()->get_primary_key_field();
+		if(array_key_exists($pk_field_obj->get_name(), $fieldValues)){
+			//the primary key is in the constructor's first arg's array, so assume we're constructing from teh DB
+			//(otherwise: why would we already know the primary key's value, unless we fetched it from the DB?)
+			foreach($fieldValues as $field_name => $field_value_from_db){
+				$this->set_from_db($field_name,$field_value_from_db);
+			}
+		}else{
+			//the primary key  isn't in the constructor's first arg's array, so assume we're constructing a brand
+			//new instance of the model object. Generally, this means we'll need to do more field validation
+			foreach($fieldValues as $fieldName => $fieldValue){
 				$this->set($fieldName,$fieldValue,true);
 			}
 		}
 		//verify we have all the attributes required in teh model
-//		foreach($model->fields_settings() as $fieldName=>$fieldSettings){
-//			if(!property_exists($this,$this->_get_private_attribute_name($fieldName))){
-//				throw new EE_Error(sprintf(__('You have added an attribute titled \'%s\' to your model %s, but have not set a corresponding
-//					attribute on %s. Please add $%s to %s','event_espresso'),
-//						$fieldName,get_class($model),get_class($this),$this->_get_private_attribute_name($fieldName),get_class($this)));
-//			}
-//		}
+		foreach($model->fields_settings() as $fieldName=>$fieldSettings){
+			if(!property_exists($this,$this->_get_private_attribute_name($fieldName))){
+				throw new EE_Error(sprintf(__('You have added an attribute titled \'%s\' to your model %s, but have not set a corresponding
+					attribute on %s. Please add $%s to %s','event_espresso'),
+						$fieldName,get_class($model),get_class($this),$this->_get_private_attribute_name($fieldName),get_class($this)));
+			}
+		}
 //		//verify we have all the model relations
-//		foreach($model->relation_settings() as $relationName=>$relationSettings){
-//			if(!property_exists($this,$this->_get_private_attribute_name($relationName))){
-//				throw new EE_Error(sprintf(__('You have added a relation titled \'%s\' to your model %s, but have not set a corresponding
-//					attribute on %s. Please add protected $%s to %s','event_espresso'),
-//						$relationName,get_class($model),get_class($this),$this->_get_private_attribute_name($relationName),get_class($this)));
-//			}
-//		}
+		foreach($model->relation_settings() as $relationName=>$relationSettings){
+			if(!property_exists($this,$this->_get_private_attribute_name($relationName))){
+				throw new EE_Error(sprintf(__('You have added a relation titled \'%s\' to your model %s, but have not set a corresponding
+					attribute on %s. Please add protected $%s to %s','event_espresso'),
+						$relationName,get_class($model),get_class($this),$this->_get_private_attribute_name($relationName),get_class($this)));
+			}
+		}
 	}
 	/**
 	 * Overrides parent because parent expects old models.
@@ -1821,8 +1926,103 @@ class EE_Exp_Base_Class{
 	 */
 	public function set($field_name,$field_value,$use_default= false){
 		$privateAttributeName=$this->_get_private_attribute_name($field_name);
-		$this->$privateAttributeName = $field_value;
+		$field_obj = $this->_get_model()->field_settings_for($field_name);
+		$this->$privateAttributeName = $field_obj->prepare_for_set($field_value);
 	}
+	
+	
+	/**
+	 * Overrides parent because parent expects old models.
+	 * This also doesn't do any validation, and won't work for serialized arrays
+	 * @param type $field_name
+	 * @param type $field_value_from_db
+	 * @param type $use_default
+	 */
+	public function set_from_db($field_name,$field_value_from_db){
+		$privateAttributeName=$this->_get_private_attribute_name($field_name);
+		$field_obj = $this->_get_model()->field_settings_for($field_name);
+		$this->$privateAttributeName = $field_obj->prepare_for_set_from_db($field_value_from_db);
+	}
+	
+	
+	/**
+	 * gets the field (class attribute) specified by teh given name
+	 * @param string $fieldName if the field you want is named $_ATT_ID, use 'ATT_ID' (omit preceding underscore)
+	 * @return mixed
+	 */
+	public function get($fieldName){
+		$privateAttributeName=$this->_get_private_attribute_name($field_name);
+		$field_obj = $this->_get_model()->field_settings_for($field_name);
+		return $field_obj->prepare_for_get($this->$privateAttributeName);
+	}
+	
+	/**
+	 * To be used in template to immediately echo out the value, and format it for output.
+	 * Eg, shoudl call stripslashes and whatnought before echoing
+	 * @param string $field_name the name of the field as it appears in teh DB
+	 * @return void
+	 */
+	public function e($field_name){
+		$field_value = $this->get($field_name);
+		$field_obj = $this->_get_model()->field_settings_for($field_name);
+		echo $field_obj->prepare_for_pretty_echoing($field_value);
+	}
+	
+	/**
+	 * Deletes this model object. That may mean just 'soft deleting' it though.
+	 * @return boolean success
+	 */
+	public function delete(){
+		$model=$this->_get_model();
+		$result=$model->delete_by_ID($this->ID());
+		if($result){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	
+	
+	/**
+	*		Saves this object to teh database. An array may be supplied to set some values on this
+	 * object just before saving.
+	* 
+	* 		@access		public
+	* 		@param		array		$set_cols_n_values		
+	*		@return int, 1 on a successful update, the ID of
+	*					the new entry on insert; 0 on failure		
+	
+	*/	
+	public function save($set_cols_n_values=array()) {
+		//set attributes as provided in $set_cols_n_values
+		foreach($set_cols_n_values as $column=>$value){
+			$this->set($column,$value);
+		}
+		//now get current attribute values
+		$save_cols_n_values = array();
+		foreach($this->field_settings() as $fieldName=>$field_obj){
+			$attributeName=$this->_get_private_attribute_name($fieldName);
+			$save_cols_n_values[$fieldName] = $field_obj->prepare_for_insertion_into_db($this->$attributeName);
+	
+		}
+		if ( $save_cols_n_values[$this->_get_primary_key_name()]!=null ){
+			$results = $this->_get_model()->update ( $save_cols_n_values, array($this->_get_primary_key_name()=>$this->get_primary_key()) );
+		} else {
+			unset($save_cols_n_values[$this->_get_primary_key_name()]);
+			
+			$results = $this->_get_model()->insert ( $save_cols_n_values );
+			if($results){//if successful, set the primary key
+				$results=$results['new-ID'];
+				$this->set($this->_get_primary_key_name(),$results);//for some reason the new ID is returned as part of an array,
+				//where teh only key is 'new-ID', and it's value is the new ID.
+			}
+		}
+		
+		return $results;
+	}
+	
+	
 	/**
 	 * converts a field name to the private attribute's name on teh class.
 	 * Eg, converts "ANS_ID" to "_ANS_ID", which can be used like so $attr="_ANS_ID"; $this->$attr;
@@ -1873,6 +2073,64 @@ class EE_Exp_Base_Class{
 		$pk_field_parameter = $this->_get_private_attribute_name($this->_get_primary_key_name());
 		//now that we know the name of the variable, use a variable variable to get its value and return its 
 		return $this->$pk_field_parameter;
+	}
+	
+	/**
+	 * Adds a relationship to the specified EE_Base_Class object, given the relationship's name. Eg, if the curren tmodel is related
+	 * to a group of events, the $relationName should be 'Events', and should be a key in the EE Model's $_model_relations array
+	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object
+	 * @param string $relationName eg 'Events','Question',etc.
+	 * an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specificy array('role-column-name'=>'role-id')
+	 
+	 * @return boolean success
+	 */
+	public function _add_relation_to($otherObjectModelObjectOrID,$relationName){
+		$this->_get_model()->add_relationship_to($this, $otherObjectModelObjectOrID, $relationName);
+	}
+	
+	
+	
+	/**
+	 * Removes a relationship to the psecified EE_Base_Class object, given the relationships' name. Eg, if the curren tmodel is related
+	 * to a group of events, the $relationName should be 'Events', and should be a key in the EE Model's $_model_relations array
+	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object
+	 * @param string $relationName
+	 * @return boolean success
+	 */
+	public function _remove_relation_to($otherObjectModelObjectOrID,$relationName){
+		$this->_get_model()->remove_relationship_to($this, $otherObjectModelObjectOrID, $relationName);
+	}
+	
+	
+	/**
+	 * Very handy general function to allow for plugins to extend any child of EE_Base_Class.
+	 * If a method is called on a child of EE_Base_Class that doesn't exist, this function is called (http://www.garfieldtech.com/blog/php-magic-call)
+	 * and passed the method's name and arguments.
+	 * Instead of requiring a plugin to extend the EE_Base_Class (which works fine is there's only 1 plugin, but when will that happen?)
+	 * they can add a hook onto 'filters_hook_espresso__{className}__{methodName}' (eg, filters_hook_espresso__EE_Answer__my_great_function)
+	 * and accepts 2 arguments: the object on which teh function was called, and an array of the original arguments passed to the function. Whatever their callbackfunction returns will be returned by this function.
+	 * Example: in functions.php (or in a plugin):
+	 * add_filter('filter_hook_espresso__EE_Answer__my_callback','my_callback',10,3);
+	 * function my_callback($previousReturnValue,EE_Base_Class $object,$argsArray){
+			$returnString= "you called my_callback! and passed args:".implode(",",$argsArray);
+	 *		return $previousReturnValue.$returnString;
+	 * }
+	 * require('EE_Answer.class.php');
+	 * $answer=new EE_Answer(2,3,'The answer is 42');
+	 * echo $answer->my_callback('monkeys',100);
+	 * //will output "you called my_callback! and passed args:monkeys,100"
+	 * @param string $methodName name of method which was called on a child of EE_Base_Class, but which 
+	 * @param array $args array of original arguments passed to the function
+	 * @return mixed whatever the plugin which calls add_filter decides
+	 */
+	public function __call($methodName,$args){
+		$className=get_class($this);
+		$tagName="filter_hook_espresso__{$className}__{$methodName}";
+		if(!has_filter($tagName)){
+			throw new EE_Error(sprintf(__("Method %s on class %s does not exist! You can create one with the following code in functions.php or in a plugin: add_filter('%s','my_callback',10,3);function my_callback(\$previousReturnValue,EE_Base_Class \$object, \$argsArray){/*function body*/return \$whatever;}","event_espresso"),
+										$methodName,$className,$tagName));
+		}
+		return apply_filters($tagName,null,$this,$args);
 	}
 	
 	
