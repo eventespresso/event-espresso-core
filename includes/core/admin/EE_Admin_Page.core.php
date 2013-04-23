@@ -1838,6 +1838,20 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 
+
+
+
+
+	public function display_admin_caf_preview_page() {
+		//let's generate a default preview action button if there isn't one already present.
+		$this->_labels['buttons']['buy_now'] = __('Buy Now', 'event_espresso');
+		$this->_template_args['preview_action_button'] = !isset($this->_template_args['preview_action_button'] ) ? $this->_get_action_link_or_button( '', 'buy_now', array(), 'button-primary button-large', 'http://eventespresso.com/pricing' ) : $this->_template_args['preview_action_button'];
+		$template_path = EE_CORE_ADMIN . 'admin_caf_full_page_preview.template.php';
+		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
+		$this->admin_page_wrapper();
+	}
+
+
 	/**
 	 * display_admin_list_table_page_with_sidebar
 	 * generates HTML wrapper for an admin_page with list_table

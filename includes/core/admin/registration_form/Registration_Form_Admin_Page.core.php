@@ -107,6 +107,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				'args' => array('edit')
 				),
 
+			'question_groups' => '_questions_groups_preview',
+
 			'update_question' => array(
 				'func' => '_insert_or_update_question',
 				'args' => array('new_question' => FALSE ),
@@ -134,6 +136,13 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					),
 				'list_table' => 'Registration_Form_Questions_Admin_List_Table',
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box')
+				),
+
+			'question_groups' => array(
+				'nav' => array(
+					'label' => __('Question Groups'),
+					'order' => 20
+					)
 				),
 
 			'edit_question' => array(
@@ -189,6 +198,18 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				'count' => 0,
 				)
 		);
+	}
+
+
+
+	/**
+	 * This just previews the question groups tab that comes in caffeinated.
+	 * @return string html
+	 */
+	protected function _questions_groups_preview() {
+		$this->_template_args['preview_img'] = '<img src="' . REGISTRATION_FORM_ASSETS_URL . 'caf_reg_form_preview.png" alt="Preview Question Groups Overview List Table screenshot" />';
+		$this->_template_args['preview_text'] = __( 'Question Groups is a feature only availble in the Caffeinated version of Event Espresso.  With the Question Groups feature you are able to: create new question groups, edit existing question groups, and also create and edit new questions and add them to question groups', 'event_espresso' );
+		$this->display_admin_caf_preview_page();
 	}
 
 
