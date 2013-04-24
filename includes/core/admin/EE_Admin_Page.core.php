@@ -1010,7 +1010,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$content = '';
 
 		$help_array = empty( $help_array ) ? $this->_get_help_content() : $help_array;
-		$template_path = EE_CORE_ADMIN . 'admin_help_popup.template.php';
+		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_help_popup.template.php';
 
 
 		//loop through the array and setup content
@@ -1526,7 +1526,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$this->_template_args['current_screen_widget_class'] = 'columns-' . $total_columns;
 			$this->_template_args['current_page'] = $this->_wp_page_slug;
 			$this->_template_args['screen'] = $this->_current_screen;
-			$this->_column_template_path = EE_CORE_ADMIN . 'admin_details_metabox_column_wrapper.template.php';
+			$this->_column_template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_details_metabox_column_wrapper.template.php';
 
 			//finally if we don't have has_metaboxes set in the route config let's make sure it IS set other wise the necessary hidden fields for this won't be loaded.
 			$this->_route_config['has_metaboxes'] = TRUE;
@@ -1564,7 +1564,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	private function _espresso_links_post_box() {
 		function espresso_links_post_box() {
-		   $templatepath = EE_CORE_ADMIN . 'admin_general_metabox_contents_espresso_links.template.php';
+		   $templatepath = EE_CORE_ADMIN_TEMPLATE . 'admin_general_metabox_contents_espresso_links.template.php';
 			espresso_display_template( $templatepath );	
 		}
 		add_meta_box('espresso_links_post_box', __('Helpful Plugin Links', 'event_espresso'), 'espresso_links_post_box', $this->_wp_page_slug, 'side');
@@ -1574,7 +1574,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	private function _espresso_sponsors_post_box() {
 		function espresso_sponsors_post_box() {
-			$templatepath = EE_CORE_ADMIN . 'admin_general_metabox_contents_espresso_sponsors.template.php';
+			$templatepath = EE_CORE_ADMIN_TEMPLATE . 'admin_general_metabox_contents_espresso_sponsors.template.php';
 			espresso_display_template( $templatepath );
 		}
 
@@ -1600,7 +1600,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	public function editor_overview() {
 		//if we have extra content set let's add it in if not make sure its empty
 		$this->_template_args['publish_box_extra_content'] = isset( $this->_template_args['publish_box_extra_content'] ) ? $this->_template_args['publish_box_extra_content'] : '';
-		$template_path = EE_CORE_ADMIN . 'admin_details_publish_metabox.template.php';
+		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_details_publish_metabox.template.php';
 		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
 	}
 
@@ -1819,10 +1819,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		// set current wp page slug - looks like: event-espresso_page_event_categories
 		$this->_template_args['current_page'] = $this->_wp_page_slug;
-		$template_path = $sidebar ?  EE_CORE_ADMIN . 'admin_details_wrapper.template.php' : EE_CORE_ADMIN . 'admin_details_wrapper_no_sidebar.template.php';
+		$template_path = $sidebar ?  EE_CORE_ADMIN_TEMPLATE . 'admin_details_wrapper.template.php' : EE_CORE_ADMIN_TEMPLATE . 'admin_details_wrapper_no_sidebar.template.php';
 
 		if ( defined('DOING_AJAX' ) )
-			$template_path = EE_CORE_ADMIN . 'admin_details_wrapper_no_sidebar_ajax.template.php';
+			$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_details_wrapper_no_sidebar_ajax.template.php';
 
 		$template_path = !empty($this->_column_template_path) ? $this->_column_template_path : $template_path;
 
@@ -1845,7 +1845,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//let's generate a default preview action button if there isn't one already present.
 		$this->_labels['buttons']['buy_now'] = __('Buy Now', 'event_espresso');
 		$this->_template_args['preview_action_button'] = !isset($this->_template_args['preview_action_button'] ) ? $this->_get_action_link_or_button( '', 'buy_now', array(), 'button-primary button-large', 'http://eventespresso.com/pricing' ) : $this->_template_args['preview_action_button'];
-		$template_path = EE_CORE_ADMIN . 'admin_caf_full_page_preview.template.php';
+		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_caf_full_page_preview.template.php';
 		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
 		$this->admin_page_wrapper();
 	}
@@ -1883,7 +1883,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	private function _display_admin_list_table_page( $sidebar = false ) {
 		$this->_template_args['current_page'] = $this->_wp_page_slug;
-		$template_path = EE_CORE_ADMIN . 'admin_list_wrapper.template.php';
+		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_list_wrapper.template.php';
 
 		$this->_template_args['table_url'] = defined( 'DOING_AJAX') ? add_query_arg( array( 'noheader' => 'true'), $this->_admin_base_url ) : $this->_admin_base_url;
 		$this->_template_args['list_table'] = $this->_list_table_object;
@@ -1929,7 +1929,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	protected function _display_legend( $items ) {
 		$template_args['items'] = (array) $items;
-		$legend_template = EE_CORE_ADMIN . 'admin_details_legend.template.php';
+		$legend_template = EE_CORE_ADMIN_TEMPLATE . 'admin_details_legend.template.php';
 		return espresso_display_template($legend_template, $template_args, TRUE);
 	}
 
@@ -2018,7 +2018,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		
 		
 		// load settings page wrapper template
-		$template_path = !defined( 'DOING_AJAX' ) ? EE_CORE_ADMIN . 'admin_wrapper.template.php' : EE_CORE_ADMIN . 'admin_wrapper_ajax.template.php';
+		$template_path = !defined( 'DOING_AJAX' ) ? EE_CORE_ADMIN_TEMPLATE . 'admin_wrapper.template.php' : EE_CORE_ADMIN_TEMPLATE . 'admin_wrapper_ajax.template.php';
 
 
 		if ( defined( 'DOING_AJAX' ) ) {

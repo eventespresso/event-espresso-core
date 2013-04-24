@@ -2248,7 +2248,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$page_args['admin_reports'][] = $this->_get_registrations_per_event_report( '-1 month' ); //  option: '-1 week', '-2 weeks' defaults to '-1 month'
 //		$page_args['admin_reports'][] = 'chart1';
 		
-		$template_path = EE_CORE_ADMIN . 'admin_reports.template.php';
+		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_reports.template.php';
 		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $page_args, TRUE );
 		
 //		printr( $page_args, '$page_args' );

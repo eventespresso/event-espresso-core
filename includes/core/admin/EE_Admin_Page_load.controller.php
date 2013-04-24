@@ -138,6 +138,7 @@ class EE_Admin_Page_load {
 	private function _define_all_constants() {
 		define( 'EE_CORE_ADMIN', EE_CORE . 'admin' . DS );
 		define( 'EE_CORE_ADMIN_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'includes/core/admin/' );
+		define( 'EE_CORE_ADMIN_TEMPLATE', EE_CORE_ADMIN . 'templates' . DS );
 		define( 'WP_ADMIN_PATH', ABSPATH . 'wp-admin/' );
 		define( 'WP_AJAX_URL', get_bloginfo('url') . '/wp-admin/admin-ajax.php' );
 		define( 'JQPLOT_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/' );
@@ -221,7 +222,7 @@ class EE_Admin_Page_load {
 	 */
 	private function _get_installed_pages() {
 		$installed_refs = array();
-		$exclude = array( 'assets' );
+		$exclude = array( 'assets', 'templates' );
 		// grab everything in the  admin core directory
 		if ( $admin_screens = glob( EE_CORE_ADMIN . '*', GLOB_ONLYDIR )) {
 			foreach( $admin_screens as $admin_screen ) {
