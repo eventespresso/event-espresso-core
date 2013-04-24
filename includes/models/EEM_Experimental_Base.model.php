@@ -113,7 +113,7 @@ abstract class EEM_Experimental_Base{
 	private function _get_all_wpdb_results($query_params = array()){
 		global $wpdb;
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
-		$SQL ="SELECT ".$this->_construct_select_sql()." FROM ".$model_query_info->get_full_join_sql().$model_query_info->get_where_sql();
+		$SQL ="SELECT ".$this->_construct_select_sql().$this->_construct_2nd_half_of_select_query($model_query_info);
 		echo "get all SQL:".$SQL;
 		return $wpdb->get_results($SQL, ARRAY_A);
 	}
@@ -198,7 +198,7 @@ abstract class EEM_Experimental_Base{
 		}
 		
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
-		$SQL = "UPDATE ".$model_query_info->get_full_join_sql()." SET ".$this->_construct_update_sql($fields_n_values).$model_query_info->get_where_sql();
+		$SQL = "UPDATE ".$model_query_info->get_full_join_sql()." SET ".$this->_construct_update_sql($fields_n_values).$model_query_info->get_where_sql();//note: doesn't use _construct_2nd_half_of_select_query() because doesn't accept LIMIT, ORDER BY, etc.
 		$rows_affected = $wpdb->query($SQL);
 		return $rows_affected;//how many supposedly got updated
 	}	
@@ -261,7 +261,7 @@ abstract class EEM_Experimental_Base{
 			$pk_field_obj = $this->get_primary_key_field();
 			$column_to_count = $pk_field_obj->get_qualified_column();
 		}
-		$SQL ="SELECT COUNT(".$column_to_count.") FROM ".$model_query_info->get_full_join_sql().$model_query_info->get_where_sql();
+		$SQL ="SELECT COUNT(".$column_to_count.")" . $this->_construct_2nd_half_of_select_query($model_query_info);
 		return (int)$wpdb->get_var($SQL);
 	}
 	
@@ -284,13 +284,24 @@ abstract class EEM_Experimental_Base{
 		}
 		$column_to_count = $field_obj->get_qualified_column();
 
-		$SQL ="SELECT SUM(".$column_to_count.") FROM ".$model_query_info->get_full_join_sql().$model_query_info->get_where_sql();
+		$SQL ="SELECT SUM(".$column_to_count.")" . $this->_construct_2nd_half_of_select_query($model_query_info);
 		$return_value = $wpdb->get_var($SQL);
 		if($field_obj->get_wpdb_data_type() == '%d' || $field_obj->get_wpdb_data_type() == '%s' ){
 			return (int)$return_value;
 		}else{//must be %f
 			return (float)$return_value;
 		}
+	}
+	
+	/**
+	 * In order to avoid repeating this code for the get_all, sum, and count functions, put the code parts
+	 * that are identical in here. Returns a string of SQL of everything in a SELECT query except the beginning
+	 * SELECT clause, eg " FROM wp_posts AS Event INNER JOIN ... WHERE ... ORDER BY ... LIMIT ... GROUP BY ... HAVING ..."
+	 * @param EE_Model_Query_Info_Carrier $model_query_info
+	 * @return string
+	 */
+	private function _construct_2nd_half_of_select_query(EE_Model_Query_Info_Carrier $model_query_info){
+		return " FROM ".$model_query_info->get_full_join_sql().$model_query_info->get_where_sql();
 	}
 	/**
 	 * Adds a relationship of the correct type between $modelObject and $otherModelObject. 

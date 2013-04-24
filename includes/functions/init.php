@@ -302,7 +302,7 @@ function return_espresso_content() {
 	global $espresso_content;
 	require_once('EEM_Experimental_Base.model.php');
 	$EVT = EEM_Exp_Event::instance();
-	//var_dump($EVT->get_all(array(array('Question_Group.QSG_ID'=>array('IN',array(1,2,3)),'Event_Question_Group.EQG_primary'=>0))));//causes error
+	var_dump($EVT->get_all(array(array('Question_Group.QSG_ID'=>array('IN',array(1,2,3)),'Event_Question_Group.EQG_primary'=>0))));//causes error
 	//var_dump($EVT->get_all(array(array('Event_Question_Group.Question_Group.QSG_ID'=>array('IN',array(1,2,3)),'Event_Question_Group.EQG_primary'=>0))));//causes error
 	var_dump($EVT->sum(array()));
 //	var_dump($EVT->get_one_by_ID(1));
