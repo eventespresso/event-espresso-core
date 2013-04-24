@@ -10,8 +10,8 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * @ package			Event Espresso
  * @ author				Seth Shoultes
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license				http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
+ * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ link				http://www.eventespresso.com
  * @ version		 	4.0
  *
  * ------------------------------------------------------------------------
@@ -22,49 +22,12 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * Different messengers (i.e. email, sms) can be setup by extending this class and adding them to the /includes/core/messages/messengers' directory. View examples there.
  *
  * @package			Event Espresso
- * @subpackage	includes/core/messages
- * @author				Darren Ethier, Brent Christensen
+ * @subpackage		includes/core/messages
+ * @author			Darren Ethier, Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
-abstract class EE_messenger extends EE_Base {
-	/** DETAILS PROPERTIES **/
-	/** 
-	 * The following are used to hold details on the type for reference (i.e. on admin screens) and also used by the EE_message_type object to figure out where to get template data.
-	 */
-	public $name;
-	public $description;
-
-
-	/**
-	 * This is an array describing the ui facing labels that will be used whenever the messenger is referenced in the ui
-	 *
-	 * array(
-	 * 	'singular' => __('something'),
-	 * 	'plural' => __('somethings')
-	 * )
-	 * 
-	 * @var array
-	 */
-	public $label;
-
-	/**
-	 * This property when set will hold the slugs of all EE admin pages that we will need to retrieve fields for (and used to determine which callback method to call from the childclass)
-	 *
-	 * structure should be
-	 * array(
-	 * 'page_action' => true
-	 * )
-	 * @var array
-	 */
-	public $admin_registered_pages = array();
-
-	/**
-	 * there are certain template fields that are global across all messengers.  This will hold the default content for those global template fields that will be added 
-	 * @var array
-	 */
-	protected $_default_field_content = array();
-
+abstract class EE_messenger extends EE_Messages_Base {
 
 
 
@@ -105,6 +68,8 @@ abstract class EE_messenger extends EE_Base {
 	 */
 	protected $_EEM_data;
 
+	
+
 	/**
 	 * this property just holds an array of the various template refs.
 	 * @var array
@@ -123,20 +88,6 @@ abstract class EE_messenger extends EE_Base {
 
 
 
-	/**
-	 * this property holds any specific fields for holding any settings related to a messenger (if any needed)
-	 * @var array
-	 */
-	protected $_admin_settings_fields = array();
-
-	/**
-	 * this property will hold any existing settings that may have been set in the admin.
-	 * @var array
-	 */
-	protected $_existing_admin_settings = array();
-
-
-
 
 
 	/**
@@ -151,22 +102,12 @@ abstract class EE_messenger extends EE_Base {
 
 
 
-
-
-
-
 	/**
-	 * this property will hold an array of valid shortcodes for this messenger.  This is an array of strings that correspond to defined EE_Shortcode libraries per field.  For example:
-	 * array('subject' => array('transaction', 'event', 'attendee')) corresponds to 'EE_Transaction_Shortcodes.lib.php, EE_Event_Shortcodes.lib.php, EE_Attendee_Shortcodes.lib.php' for the 'subject' field;
-	 * NOTE:  by default, with messengers, if the valid shortcodes for a field is left blank,  that field will inherit whatever are set as valid shortcodes by message_type.  This is so messenger can set specific valid codes for fields and leave other valid shortcodes up to the message type matched with the messenger.
+	 * holds all the active templates saved in the database
+	 * @access public
 	 * @var array
 	 */
-	protected $_valid_shortcodes = array();
-
-
-
-
-	public $active_templates = array(); //holds all the active templates saved in the database.
+	public $active_templates = array();
 
 
 
@@ -174,17 +115,16 @@ abstract class EE_messenger extends EE_Base {
 
 
 	public function __construct() {
-		$this->_EEM_data = EEM_Message_Template::instance(); //todo might move this into the constructor and typehint
-		$this->_set_admin_settings_fields();
-		$this->_set_existing_admin_settings();
+		$this->_EEM_data = EEM_Message_Template::instance();
+		$this->_messages_item_type = 'messenger';
+		
+		parent::__construct();
+
 		$this->_set_test_settings_fields();
 		$this->_set_templates();	
 		$this->_set_template_fields();
-		$this->_set_default_field_content();
 		$this->_set_default_message_types();
-		$this->_set_valid_shortcodes();
 		$this->_set_validator_config();
-		$this->_set_admin_pages();
 	}
 
 
@@ -205,17 +145,6 @@ abstract class EE_messenger extends EE_Base {
 
 
 
-	/**
-	 * _set_default_field_content
-	 * child classes need to define this function to set the _default_field_content property (what gets added in the default templates).
-	 * 
-	 * @abstract
-	 * @access protected
-	 * @return void
-	 */
-	abstract protected function _set_default_field_content();
-
-
 
 
 
@@ -233,55 +162,8 @@ abstract class EE_messenger extends EE_Base {
 
 
 
-	/**
-	 * sets the _admin_settings_fields property which needs to be defined by child classes.
-	 * You will want to set the _admin_settings_fields properties as a multi-dimensional array with the following format
-	 * array(
-	 * 		{field_name - also used for setting index} => array(
-	 * 			'field_type' => {type of field: 'text', 'textarea', 'checkbox'},
-	 * 			'value_type' => {type of value: 'string', 'int', 'array', 'bool'},
-	 * 			'required' => {bool, required or not},
-	 * 			'validation' => {bool, true if we want validation, false if not},
-	 * 			'format' => {%d, or %s},
-	 * 			'label' => {label for the field, make sure it's localized},
-	 * 			'default' => {default value for the setting}
-	 * 		),
-	 * );
-	 *
-	 * @abstract
-	 * @access protected
-	 * @return void
-	 */
-	abstract protected function _set_admin_settings_fields();
 
 
-
-
-
-
-
-	/**
-	 * sets any properties on whether a message type interface shows up on a ee administration page.  Child classes have to define this method but don't necessarily have to set the flags as they will be set to false by default.
-	 *
-	 * Child classes use this method to set the `_admin_registered_page` property.  That property is to indicate what EE admin pages we have a corresponding callback for in the child class so Message Type fields/content is included on that admin page. 
-	 *
-	 * @abstract
-	 * @access protected
-	 * @return void
-	 */
-	abstract protected function _set_admin_pages();
-
-
-
-
-	/**
-	 * Child classes must declare the $_valid_shortcodes property using this method.
-	 * See comments for $_valid_shortcodes property for details on what it is used for.
-	 *
-	 * @access protected
-	 * @return void
-	 */
-	abstract protected function _set_valid_shortcodes();
 
 
 
@@ -315,15 +197,27 @@ abstract class EE_messenger extends EE_Base {
 
 
 
+
 	/**
-	 * This returns the array of valid shortcodes for a message type as set by the child in the $_valid_shortcode property.
-	 *
-	 * @access public
-	 * @return array   an array of valid shortcodes.
+	 * We just deliver the messages don't kill us!!  This method will need to be modified by child classes for whatever action is taken to actually send a message.  
+	 * @return void
+	 * @todo  at some point we may want to return success or fail so we know whether a message has gone off okay and we can assemble reporting.
 	 */
-	public function get_valid_shortcodes() {
-		return $this->_valid_shortcodes;
-	}
+	abstract protected function _send_message();
+
+
+
+
+	/**
+	 * We give you pretty previews of the messages!
+	 * @return string html body for message content.
+	 */
+	abstract protected function _preview();
+
+
+
+
+
 
 
 
@@ -376,22 +270,17 @@ abstract class EE_messenger extends EE_Base {
 	 * @param string $action the page action (to allow for more specific handling - i.e. edit vs. add pages)
 	 * @param array $extra  This is just an extra argument that can be used to pass additional data for setting up page content.
 	 * @access public
-	 * @return void
+	 * @return string content for page
 	 */
 	public function get_messenger_admin_page_content( $page, $action = null, $extra = array(), $message_types = array() ) {
-		//we can also further refine the context by action (if present).
-		if ( !empty($action) ) {
-			$page = $page . '_' . $action;
-		}
-
-		if ( !isset( $this->admin_registered_pages[$page]) ) return false; //todo: a place to throw an exception?  We need to indicate there is no registered page so this function is not being called correctly.
-
-		//k made it here so let's call the method
-		if ( FALSE === ( $content = call_user_func_array( array( $this, '_get_admin_content_' . $page), array($message_types, $extra) ) ) ) {
-			return false; //todo this needs to be an exception once we've got exceptions in place.
-		}		
-		return $content;
+		return $this->_get_admin_page_content( $page, $action, $extra, $message_types );
 	}
+
+
+
+
+
+
 
 	protected function _get_admin_content_events_edit( $message_types, $extra ) {
 		//we don't need message types here so we're just going to ignore. we do, however, expect the event id here. The event id is needed to provide a link to setup a custom template for this event.
@@ -516,46 +405,10 @@ abstract class EE_messenger extends EE_Base {
 		return $content;
 	}
 
-	/**
-	 * sets the _existing_admin_settings property can be overridden by child classes.  We do this so we only do database calls if needed.
-	 *
-	 * @access protected
-	 * @return void
-	 */
-	protected function _set_existing_admin_settings() {		
-		$active_messengers = get_option('ee_active_messengers', true);
+	
 
-		//if there are no setting fields then there won't be any existing admin settings either.
-		if ( !isset($active_messengers[$this->name]) && empty($this->_admin_settings_fields) )
-			return $this->_existing_admin_settings = NULL;
-		
-		$this->_existing_admin_settings = isset($active_messengers[$this->name]) ? $active_messengers[$this->name]['settings'] : null;
-	}
 
-	/**
-	 * get_existing_admin_settings
-	 * (if needed) sets and returns the _existing_admin_settings property.
-	 *
-	 * @access public
-	 * @return array          settings
-	 */
-	public function get_existing_admin_settings() {
-		// if admin_settings property empty lets try setting it.
-		if ( method_exists($this, '_set_existing_admin_settings()') && empty( $this->_existing_admin_settings ) )
-			$this->_set_existing_admin_settings();
 
-		return property_exists($this, '_existing_admin_settings') ? $this->_existing_admin_settings : null;
-	}
-
-	/**
-	 * getter that returns the protected admin_settings_fields property
-	 * 
-	 * @access public
-	 * @return array admin settings fields
-	 */
-	public function get_admin_settings_fields() {
-		return $this->_admin_settings_fields;
-	}
 
 	/**
 	 * get_template_fields
@@ -567,9 +420,10 @@ abstract class EE_messenger extends EE_Base {
 		return $this->_template_fields;
 	}
 
-	public function get_default_field_content() {
-		return $this->_default_field_content;
-	}
+
+
+
+
 
 	/**
 	 * This sets the active templates for the messenger.  
@@ -720,23 +574,6 @@ abstract class EE_messenger extends EE_Base {
 		return update_option('ee_active_messengers', $existing);
 	}
 
-
-
-	/**
-	 * We just deliver the messages don't kill us!!  This method will need to be modified by child classes for whatever action is taken to actually send a message.  
-	 * @return void
-	 * @todo  at some point we may want to return success or fail so we know whether a message has gone off okay and we can assemble reporting.
-	 */
-	abstract protected function _send_message();
-
-
-
-
-	/**
-	 * We give you pretty previews of the messages!
-	 * @return string html body for message content.
-	 */
-	abstract protected function _preview();
 
 	
 
