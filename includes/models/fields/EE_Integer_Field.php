@@ -11,4 +11,7 @@ class EE_Integer_Field extends EE_Model_Field_Base{
 	function get_wpdb_data_type(){
 		return '%d';
 	}
+	function prepare_for_set($value_inputted_for_field_on_model_object) {
+		return intval($value_inputted_for_field_on_model_object);
+	}
 }

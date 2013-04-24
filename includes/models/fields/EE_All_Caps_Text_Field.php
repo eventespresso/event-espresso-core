@@ -11,4 +11,13 @@ class EE_All_Caps_Text_Field_Base extends EE_Text_Field_Base{
 	function get_wpdb_data_type(){
 		return '%s';
 	}
+	
+	/**
+	 * makes it all upper case, and key-like
+	 * @param string $value_inputted_for_field_on_model_object
+	 * @return string
+	 */
+	function prepare_for_set($value_inputted_for_field_on_model_object) {
+		return strtoupper( sanitize_key($value_inputted_for_field_on_model_object));
+	}
 }

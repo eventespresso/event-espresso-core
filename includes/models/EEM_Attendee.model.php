@@ -88,7 +88,7 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 				'STA_ID'=>new EE_Plain_Text_Field('STA_ID', 'State', true, ''),
 				'CNT_ISO'=>new EE_Plain_Text_Field('CNT_ISO', 'Country', true, ''),
 				'ATT_zip'=>new EE_Plain_Text_Field('ATT_zip', 'ZIP/Postal Code', true, ''),
-				'ATT_email'=>new EE_Plain_Text_Field('ATT_email', 'Email Address', true, ''),
+				'ATT_email'=>new EE_Email_Field('ATT_email', 'Email Address', true, ''),
 				'ATT_phone'=>new EE_Plain_Text_Field('ATT_phone', 'Phone', true, ''),
 				'ATT_social'=>new EE_Serialized_Text_Field('ATT_social', 'Serialized array of social media info', true, ''),
 				'ATT_comments'=>new EE_Simple_HTML_Field('ATT_comments', 'Comments about Attendee', true, ''),

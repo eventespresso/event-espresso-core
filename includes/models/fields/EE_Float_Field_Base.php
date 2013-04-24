@@ -10,4 +10,8 @@ abstract class EE_Float_Field_Base extends EE_Model_Field_Base{
 	function get_wpdb_data_type(){
 		return '%f';
 	}
+	function prepare_for_set($value_inputted_for_field_on_model_object) {
+		return floatval( preg_replace( "/^[^0-9\.]-/", "", preg_replace( "/,/", ".", $value_inputted_for_field_on_model_object ) ));
+	}
+	
 }
