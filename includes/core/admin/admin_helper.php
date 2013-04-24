@@ -10,8 +10,8 @@ function espresso_admin_format_content($content = '') {
 //This loads the the tinymce script into the header
 function espresso_tiny_mce() {
 	global $wp_version;
-	$wp_min_version = '3.2';
-	//If the version of WordPress is lower than 3.2, then we load the fallback script.
+	$wp_min_version = '4.0';
+	//If the version of WordPress is lower than 4.0, then we load the fallback script.
 	if (!version_compare($wp_version, $wp_min_version, '>=')) {
 		//If this is an older version of WordPress, then we need to load this.
 		if (function_exists('wp_tiny_mce_preload_dialogs')) {

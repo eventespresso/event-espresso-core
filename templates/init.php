@@ -17,7 +17,7 @@ function espresso_display_template_error() {
  * the use of {@link locate_template()}. Allows for more generic template location
  * without the use of the other get_*_template() functions.
  *
- * @since 3.2
+ * @since 4.0
  *
  * @param string $type Filename without extension.
  * @param array $templates An optional list of template candidates
@@ -37,7 +37,7 @@ function espresso_get_query_template( $type, $templates = array() ) {
  * Searches in the EVENT_ESPRESSO_TEMPLATE_DIR before EVENT_ESPRESSO_PLUGINFULLPATH so that templates which
  * inherit from a parent theme can just overload one file.
  *
- * @since 3.2
+ * @since 4.0
  *
  * @param string|array $template_names Template file(s) to search for, in order.
  * @param bool $load If true the template file will be loaded if it is found.
@@ -66,7 +66,7 @@ function espresso_locate_template( $template_names ) {
 /**
  * Retrieve path of registration page template in current or parent template.
  *
- * @since 3.2
+ * @since 4.0
  *
  * @return string
  */
@@ -82,7 +82,7 @@ function espresso_get_registration_page_template() {
 /**
  * Retrieve path of registration display template in current or parent template.
  *
- * @since 3.2
+ * @since 4.0
  *
  * @return string
  */
@@ -98,7 +98,7 @@ function espresso_get_registration_display_template() {
 /**
  * Retrieve path of event list template in current or parent template.
  *
- * @since 3.2
+ * @since 4.0
  *
  * @return string
  */
@@ -114,7 +114,7 @@ function espresso_get_event_list_template() {
 /**
  * Retrieve path of event_list_display template in current or parent template.
  *
- * @since 3.2
+ * @since 4.0
  *
  * @return string
  */
@@ -130,7 +130,7 @@ function espresso_get_event_list_display_template() {
 /**
  * Retrieve path of attendee list template in current or parent template.
  *
- * @since 3.2
+ * @since 4.0
  *
  * @return string
  */
@@ -146,7 +146,7 @@ function espresso_get_attendee_list_template() {
 /**
  * Retrieve path of shopping cart template in current or parent template.
  *
- * @since 3.2
+ * @since 4.0
  *
  * @return string
  */
@@ -162,7 +162,7 @@ function espresso_get_shopping_cart_template() {
 /**
  * Retrieve path of widget template in current or parent template.
  *
- * @since 3.2
+ * @since 4.0
  *
  * @return string
  */
@@ -178,7 +178,7 @@ function espresso_get_widget_template() {
 /**
  * Retrieve path of confirmation display template in current or parent template.
  *
- * @since 3.2
+ * @since 4.0
  *
  * @return string
  */
@@ -194,7 +194,7 @@ function espresso_get_confirmation_display_template() {
 /**
  * Retrieve path of payment page template in current or parent template.
  *
- * @since 3.2
+ * @since 4.0
  *
  * @return string
  */
@@ -210,7 +210,7 @@ function espresso_get_payment_page_template() {
 /**
  * Retrieve path of payment_overview template in current or parent template.
  *
- * @since 3.2
+ * @since 4.0
  *
  * @return string
  */
@@ -226,7 +226,7 @@ function espresso_get_payment_overview_template() {
 /**
  * Retrieve path of return_payment template in current or parent template.
  *
- * @since 3.2
+ * @since 4.0
  *
  * @return string
  */

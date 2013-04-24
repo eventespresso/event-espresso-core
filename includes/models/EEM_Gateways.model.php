@@ -10,7 +10,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license				http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link					http://www.eventespresso.com
- * @ version		 	3.1.P.7
+ * @ version		 	4.0
  *
  * ------------------------------------------------------------------------
  *
@@ -259,7 +259,7 @@ Class EEM_Gateways {
 						'<b>' . EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . '</b>',
 						'<b>' . EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . '</b>'
 				);
-				$msg .= '||' . __( 'For the time being, the following error only indicates that the Gateway has yet to be converted over to 3.2 : ', 'event_espresso') . '<br />' . $msg;
+				$msg .= '||' . __( 'For the time being, the following error only indicates that the Gateway has yet to be converted over to 4.0 : ', 'event_espresso') . '<br />' . $msg;
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
 

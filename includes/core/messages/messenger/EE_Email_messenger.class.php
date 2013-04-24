@@ -13,7 +13,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * @ copyright			(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link				http://www.eventespresso.com
- * @ version		 	3.2
+ * @ version		 	4.0
  *
  * ------------------------------------------------------------------------
  *

@@ -6,7 +6,7 @@ function espresso_plugin_activation() {
 	global $caffeinated;
 	$prev_version = get_option( 'events_detail_tbl_version' );
 	$caffeinated = apply_filters( 'filter_hook_espresso_systems_check', $caffeinated );
-	if ( $prev_version && version_compare( $prev_version, '3.2.0', '<' )) {
+	if ( $prev_version && version_compare( $prev_version, '4.0.0', '<' )) {
 	
 		wp_die( '
 		<h2 style="color:red; font-size:2em; text-align:center;">' . __( 'Warning!', 'event_espresso' ) . '</h2>
