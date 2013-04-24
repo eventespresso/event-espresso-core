@@ -502,6 +502,7 @@ function espresso_init_admin_pages() {
 	}
 
 	//this loads the controller for the admin pages which will setup routing etc
+	require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'core/admin/EE_Admin_Page_load.controller.php');
 	try {
 		$EEAdmin = new EE_Admin_Page_load();
 	} catch ( EE_Error $e ) {

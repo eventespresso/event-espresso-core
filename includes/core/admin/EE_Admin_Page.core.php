@@ -9,7 +9,7 @@
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
  * @ link				{@link http://www.eventespresso.com}
- * @ since		 		3.2.P
+ * @ since		 		4.0
  *
  * ------------------------------------------------------------------------
  */
@@ -36,6 +36,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected $_admin_base_url;
 	protected $_admin_page_title;
 	protected $_labels;
+
 	
 	//set early within EE_Admin_Init
 	protected $_wp_page_slug;
@@ -43,6 +44,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	//navtabs
 	protected $_nav_tabs;
 	protected $_default_nav_tab_name;
+
 
 	//template variables (used by templates)
 	protected $_template_path;
@@ -95,6 +97,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected $_yes_no_values = array();
 
 
+	//some default things shared by all child classes
+	protected $_default_espresso_metaboxes;
 
 
 	/**
@@ -105,7 +109,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 		@return void
 	 */
 	public function __construct( $routing = TRUE ) {
-
 		$this->_yes_no_values = array(
 			array('id' => TRUE, 'text' => __('Yes', 'event_espresso')),
 			array('id' => FALSE, 'text' => __('No', 'event_espresso'))
@@ -124,6 +127,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//set global defaults
 		$this->_set_defaults();
 
+		//This just allows us to have extending clases do something specific before the parent constructor runs _page_setup.
+		if ( method_exists( $this, '_before_page_setup' ) )
+			$this->_before_page_setup();
+
 		//set up page dependencies
 		$this->_page_setup();
 
@@ -136,6 +143,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * _init_page_props
 	 * Child classes use to set at least the following properties:
 	 * $page_slug.
+	 * $page_label.
 	 *
 	 * @abstract
 	 * @access protected
@@ -377,7 +385,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_do_other_page_hooks();
 
 
-		//first verify if we need to load anything...
+		//admin_init stuff - global - we're setting this REALLY early so if EE_Admin pages have to hook into other WP pages they can.  But keep in mind, not everything is available from the EE_Admin Page object at this point.
+		add_action( 'admin_init', array( $this, 'admin_init_global' ), 5 );
+
+		//next verify if we need to load anything...
 		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
 
 		if ( !$this->_current_page && !defined( 'DOING_AJAX') ) return FALSE;
@@ -403,9 +414,18 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		$this->_current_page_view_url = add_query_arg( array( 'page' => $this->_current_page, 'action' => $this->_current_view ),  $this->_admin_base_url );
 
+		//default things
+		$this->_default_espresso_metaboxes = array('_espresso_news_post_box', '_espresso_links_post_box');
+
 		//set page configs
 		$this->_set_page_routes();
 		$this->_set_page_config();
+
+
+
+		//for caffeinated and other extended functionality.  If there is a _extend_page_config method then let's run that to modify the all the various page configuration arrays
+		if ( method_exists( $this, '_extend_page_config' ) )
+			$this->_extend_page_config();
 
 
 		//next route only if routing enabled
@@ -415,7 +435,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 			if ( $this->_is_UI_request ) {
 				//admin_init stuff - global, all views for this page class, specific view
-				add_action( 'admin_init', array( $this, 'admin_init_global' ), 5 );
 				add_action( 'admin_init', array( $this, 'admin_init' ), 10 );
 				if ( method_exists( $this, 'admin_init_' . $this->_current_view )) {
 					add_action( 'admin_init', array( $this, 'admin_init_' . $this->_current_view ), 15 );
@@ -474,7 +493,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	public function load_page_dependencies() {
-
+		//let's set the current_screen and screen options to override what WP set
 		$this->_current_screen = get_current_screen();
 			
 		
@@ -525,6 +544,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( method_exists( $this, 'admin_footer_scripts_' . $this->_current_view ) )
 			add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_' . $this->_current_view ), 101 );
 		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_eei18n_js_strings' ), 102 );
+		
+
+		do_action('filter_hook_espresso_admin_load_page_dependencies');
+		
 	}
 
 	
@@ -561,7 +584,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void|exception error
 	 */
 	public function route_admin_request() {
-
 		try {
 			$this->_route_admin_request();
 		} catch ( EE_Error $e ) {
@@ -579,17 +601,17 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * _verify_routes
 	 * All this method does is verify the incoming request and make sure that routes exist for it.  We do this early so we know if we need to drop out.
 	 *
-	 * @access private
+	 * @access protected
 	 * @return void
 	 */
-	private function _verify_routes() {
+	protected function _verify_routes() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 		if ( !$this->_current_page && !defined( 'DOING_AJAX')) return FALSE;
 
 		$this->_route = FALSE;
 		$func = FALSE;
-		$args = array();	
+		$args = array();
 		
 		// check that the page_routes array is not empty
 		if ( empty( $this->_page_routes )) {
@@ -598,7 +620,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 			// developer error msg
 			$error_msg .=  '||' . $error_msg . __( ' Make sure the "set_page_routes()" method exists, and is seting the "_page_routes" array properly.', 'event_espresso' );
 			throw new EE_Error( $error_msg );
-		} 							
+		} 
+
 	
 		// and that the requested page route exists 
 		if ( array_key_exists( $this->_req_action, $this->_page_routes )) {
@@ -634,17 +657,18 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+
 	/**
 	 * this method simply verifies a given route and makes sure its an actual route available for the loaded page
 	 * @param  string $route the route name we're verifying
 	 * @return mixed  (bool|Exception)      we'll throw an exception if this isn't a valid route.
 	 */
-	private function _verify_route( $route ) {
+	protected function _verify_route( $route ) {
 		if ( array_key_exists( $this->_req_action, $this->_page_routes )) {
 			return true;
 		} else {
 			// user error msg
-			$error_msg =  sprintf( __( 'The given page route does not exist for the %s admin page.', 'primal-plugin' ), $this->_admin_page_title );
+			$error_msg =  sprintf( __( 'The given page route does not exist for the %s admin page.', 'event_espresso' ), $this->_admin_page_title );
 			// developer error msg
 			$error_msg .=  '||' . $error_msg . sprintf( __( ' Check the route you are using in your method (%s) and make sure it matches a route set in your "_page_routes" array property', 'event_espresso' ), $route );
 			throw new PRM_Error( $error_msg );
@@ -686,10 +710,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * Meat and potatoes of the class.  Basically, this dude checks out what's being requested and sees if theres are some doodads to work the magic and handle the flingjangy.
 	 * Translation:  Checks if the requested action is listed in the page routes and then will try to load the corresponding method.
 	 *
-	 * @access private
+	 * @access protected
 	 * @return void
 	 */
-	private function _route_admin_request() {
+	protected function _route_admin_request() {
 
 		$this->_verify_routes();
 
@@ -986,7 +1010,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$content = '';
 
 		$help_array = empty( $help_array ) ? $this->_get_help_content() : $help_array;
-		$template_path = EE_CORE_ADMIN . 'admin_help_popup.template.php';
+		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_help_popup.template.php';
 
 
 		//loop through the array and setup content
@@ -1287,6 +1311,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	protected function _set_list_table() {
+
 		//first is this a list_table view?
 		if ( !isset($this->_route_config['list_table']) )
 			return; //not a list_table view so get out.
@@ -1301,7 +1326,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 			throw new EE_Error( $error_msg );
 		}
 
-
+		//let's provide the ability to filter the views per PAGE AND ROUTE, per PAGE, and globally
+		$this->_views = apply_filters( 'filter_hook_espresso_list_table_views_' . $this->page_slug . '_' . $this->_req_action, $this->_views );
+		$this->_views = apply_filters( 'filter_hook_espresso_list_table_views_' . $this->page_slug, $this->_views );
+		$this->_views = apply_filters( 'filter_hook_espresso_list_table_views', $this->_views );
+		
 		$this->_set_list_table_view();
 		$this->_set_list_table_object();
 
@@ -1497,7 +1526,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$this->_template_args['current_screen_widget_class'] = 'columns-' . $total_columns;
 			$this->_template_args['current_page'] = $this->_wp_page_slug;
 			$this->_template_args['screen'] = $this->_current_screen;
-			$this->_column_template_path = EE_CORE_ADMIN . 'admin_details_metabox_column_wrapper.template.php';
+			$this->_column_template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_details_metabox_column_wrapper.template.php';
 
 			//finally if we don't have has_metaboxes set in the route config let's make sure it IS set other wise the necessary hidden fields for this won't be loaded.
 			$this->_route_config['has_metaboxes'] = TRUE;
@@ -1522,13 +1551,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	  		// Get RSS Feed(s)
 	  		@wp_widget_rss_output('http://eventespresso.com/feed/', array('show_date'=> 0,'items'    => 5));
 
-	  		/*echo '<h4 style="margin:0">' . __('From the Forums', 'event_espresso') . '</h4>';
-
-	  		if ($caffeinated == true){
-	  		@wp_widget_rss_output('http://eventespresso.com/forum/event-espresso-support/feed', array('show_date' => 0, 'items' => 4));
-	  		}else{
-	  		@wp_widget_rss_output('http://eventespresso.com/forum/event-espresso-public/feed', array('show_date' => 0, 'items' => 4));
-	  		}*/
+	  		do_action( 'action_hook_espresso_news_meta_box_extra_content');
+	  		
 	  		?>
 	  	</div>
 	  </div>
@@ -1540,7 +1564,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	private function _espresso_links_post_box() {
 		function espresso_links_post_box() {
-		   $templatepath = EE_CORE_ADMIN . 'admin_general_metabox_contents_espresso_links.template.php';
+		   $templatepath = EE_CORE_ADMIN_TEMPLATE . 'admin_general_metabox_contents_espresso_links.template.php';
 			espresso_display_template( $templatepath );	
 		}
 		add_meta_box('espresso_links_post_box', __('Helpful Plugin Links', 'event_espresso'), 'espresso_links_post_box', $this->_wp_page_slug, 'side');
@@ -1550,12 +1574,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	private function _espresso_sponsors_post_box() {
 		function espresso_sponsors_post_box() {
-			$templatepath = EE_CORE_ADMIN . 'admin_general_metabox_contents_espresso_sponsors.template.php';
+			$templatepath = EE_CORE_ADMIN_TEMPLATE . 'admin_general_metabox_contents_espresso_sponsors.template.php';
 			espresso_display_template( $templatepath );
 		}
 
-		global $caffeinated;
-		if ( !$caffeinated )
+		$show_sponsors = apply_filters('filter_hook_espresso_show_sponsors_meta_box', TRUE );
+		if ( $show_sponsors )
 			add_meta_box('espresso_sponsors_post_box', __('Sponsors', 'event_espresso'), 'espresso_sponsors_post_box', $this->_wp_page_slug, 'side');
 	}
 
@@ -1576,7 +1600,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	public function editor_overview() {
 		//if we have extra content set let's add it in if not make sure its empty
 		$this->_template_args['publish_box_extra_content'] = isset( $this->_template_args['publish_box_extra_content'] ) ? $this->_template_args['publish_box_extra_content'] : '';
-		$template_path = EE_CORE_ADMIN . 'admin_details_publish_metabox.template.php';
+		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_details_publish_metabox.template.php';
 		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
 	}
 
@@ -1790,12 +1814,15 @@ abstract class EE_Admin_Page extends EE_BASE {
 	private function _display_admin_page($sidebar = false) {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
+		//custom remove metaboxes hook to add or remove any metaboxes to/from Admin pages.
+		do_action('action_hook_espresso_metaboxes');
+
 		// set current wp page slug - looks like: event-espresso_page_event_categories
 		$this->_template_args['current_page'] = $this->_wp_page_slug;
-		$template_path = $sidebar ?  EE_CORE_ADMIN . 'admin_details_wrapper.template.php' : EE_CORE_ADMIN . 'admin_details_wrapper_no_sidebar.template.php';
+		$template_path = $sidebar ?  EE_CORE_ADMIN_TEMPLATE . 'admin_details_wrapper.template.php' : EE_CORE_ADMIN_TEMPLATE . 'admin_details_wrapper_no_sidebar.template.php';
 
 		if ( defined('DOING_AJAX' ) )
-			$template_path = EE_CORE_ADMIN . 'admin_details_wrapper_no_sidebar_ajax.template.php';
+			$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_details_wrapper_no_sidebar_ajax.template.php';
 
 		$template_path = !empty($this->_column_template_path) ? $this->_column_template_path : $template_path;
 
@@ -1806,6 +1833,20 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		// the final template wrapper
+		$this->admin_page_wrapper();
+	}
+
+
+
+
+
+
+	public function display_admin_caf_preview_page() {
+		//let's generate a default preview action button if there isn't one already present.
+		$this->_labels['buttons']['buy_now'] = __('Buy Now', 'event_espresso');
+		$this->_template_args['preview_action_button'] = !isset($this->_template_args['preview_action_button'] ) ? $this->_get_action_link_or_button( '', 'buy_now', array(), 'button-primary button-large', 'http://eventespresso.com/pricing' ) : $this->_template_args['preview_action_button'];
+		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_caf_full_page_preview.template.php';
+		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
 		$this->admin_page_wrapper();
 	}
 
@@ -1842,7 +1883,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	private function _display_admin_list_table_page( $sidebar = false ) {
 		$this->_template_args['current_page'] = $this->_wp_page_slug;
-		$template_path = EE_CORE_ADMIN . 'admin_list_wrapper.template.php';
+		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_list_wrapper.template.php';
 
 		$this->_template_args['table_url'] = defined( 'DOING_AJAX') ? add_query_arg( array( 'noheader' => 'true'), $this->_admin_base_url ) : $this->_admin_base_url;
 		$this->_template_args['list_table'] = $this->_list_table_object;
@@ -1871,6 +1912,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+
+
 	/**
 	 * This just prepares a legend using the given items and the admin_details_legend.template.php file and returns the html string for the legend.
 	 *
@@ -1886,7 +1929,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	protected function _display_legend( $items ) {
 		$template_args['items'] = (array) $items;
-		$legend_template = EE_CORE_ADMIN . 'admin_details_legend.template.php';
+		$legend_template = EE_CORE_ADMIN_TEMPLATE . 'admin_details_legend.template.php';
 		return espresso_display_template($legend_template, $template_args, TRUE);
 	}
 
@@ -1962,10 +2005,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');	
 
-		//setup nav-tab html
-		//let's generate the html using the EE_Tabbed_Content helper.  We do this here so that it's possible for child classes to add in nav tabs dynamically at the last minute (rather than setting in the page_routes array)
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Tabbed_Content.helper.php' ;
-		$this->_nav_tabs = EE_Tabbed_Content::display_admin_nav_tabs($this->_nav_tabs);
+		$this->_nav_tabs = $this->_get_main_nav_tabs();
 
 		$this->_template_args['nav_tabs'] = $this->_nav_tabs;
 		$this->_template_args['admin_page_title'] = $this->_admin_page_title;
@@ -1978,7 +2018,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		
 		
 		// load settings page wrapper template
-		$template_path = !defined( 'DOING_AJAX' ) ? EE_CORE_ADMIN . 'admin_wrapper.template.php' : EE_CORE_ADMIN . 'admin_wrapper_ajax.template.php';
+		$template_path = !defined( 'DOING_AJAX' ) ? EE_CORE_ADMIN_TEMPLATE . 'admin_wrapper.template.php' : EE_CORE_ADMIN_TEMPLATE . 'admin_wrapper_ajax.template.php';
 
 
 		if ( defined( 'DOING_AJAX' ) ) {
@@ -1990,6 +2030,20 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 	}
+
+
+
+	/**
+	 * This returns the admin_nav tabs html using the configuration in the _nav_tabs property
+	 * @return string html
+	 */
+	protected function _get_main_nav_tabs() {
+		//let's generate the html using the EE_Tabbed_Content helper.  We do this here so that it's possible for child classes to add in nav tabs dynamically at the last minute (rather than setting in the page_routes array)
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Tabbed_Content.helper.php' ;
+		return EE_Tabbed_Content::display_admin_nav_tabs($this->_nav_tabs);
+	}
+
+
 
 
 
@@ -2668,6 +2722,4 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 }
-
-	
 // end of file:  includes/core/admin/EE_Admin_Page.core.php

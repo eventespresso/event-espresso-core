@@ -8,6 +8,7 @@
 		<p><?php echo $description; ?></p>
 	</div>
 	<div class="messenger-settings<?php echo $show_hide_edit_form; ?>">
+		<span id="has_form_class" class="hidden"><?php echo trim($show_hide_edit_form); ?></span>
 		<form method="POST" action="" class="mt-settings-form">
 			<?php echo $template_form_fields; ?>
 			<?php foreach ( $hidden_fields as $name => $field ) {

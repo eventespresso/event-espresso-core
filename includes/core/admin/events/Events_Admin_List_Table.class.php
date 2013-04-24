@@ -12,7 +12,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * @copyright	(c)2009-2012 Event Espresso All Rights Reserved.
  * @license		http://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing **
  * @link		http://www.eventespresso.com
- * @version		3.2.P
+ * @version		4.0
  *
  * ------------------------------------------------------------------------
  *
@@ -249,6 +249,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		//todo: remove when attendees is active
 		if ( !defined('REG_ADMIN_URL') )
 			define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
+		$actionlinks = array();
 
 		$edit_query_args = array(
 				'action' => 'edit_event',
@@ -265,10 +266,6 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 				'event_id' => $item->event_id
 			);
 
-		$reports_query_args = array(
-				'action' => 'view_report',
-				'event_id' => $item->event_id
-			);
 
 		$export_query_args = array(
 				'action' => 'export_events',
@@ -280,21 +277,23 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$view_link = espresso_reg_url( $item->event_id, $item->slug );
 		$delete_link = EE_Admin_Page::add_query_args_and_nonce( $delete_query_args, EVENTS_ADMIN_URL );
 		$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );
-		$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, EVENTS_ADMIN_URL );
 		$export_event_link = EE_Admin_Page::add_query_args_and_nonce( $export_query_args, EVENTS_ADMIN_URL );
+
+		$actionlinks[] = '<a href="' .  $view_link . '" title="' . __('View Event', 'event_espresso') . '" target="_blank">';
+		$actionlinks[] = '<div class="view_btn"></div></a>';
+		$actionlinks[] = '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '"><div class="edit_btn"></div></a>';
+		$actionlinks[] = '<a href="' . $attendees_link . '" title="' . __('View Attendees', 'event_espresso') . '"><div class="complete_btn"></div></a>';
+		$actionlinks[] = '<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=unique_id_info_' . $item->event_id  . '" title="' . __('Get Short URL/Shortcode', 'event_espresso') . '"><div class="shortcode_btn"></div></a>';
+		$actionlinks[] = '<a href="#" onclick="window.location=\'' . $export_event_link . '\'" title="' . __('Export to Excel', 'event_espresso') . '"><div class="excel_exp_btn"></div></a>';
+		$actionlinks[] = '<a href="#" onclick="window.location=\'' . $export_event_link . '\'" title="' . __('Export to CSV', 'event_espresso') . '"><div class="csv_exp_btn"></div>
+			</a>';
+
+		$actionlinks = apply_filters('filter_hook_espresso_list_table_events_actions_column_action_links', $actionlinks, $item );
 		
 		$content = '<div style="width:180px;">' . "\n\t";
-		$content .= '<a href="' .  $view_link . '" title="' . __('View Event', 'event_espresso') . '" target="_blank">' . "\n\t";
-		$content .= '<div class="view_btn"></div></a>' . "\n\t";
-		$content .= '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '"><div class="edit_btn"></div></a>' . "\n\t";
-		$content .= '<a href="' . $attendees_link . '" title="' . __('View Attendees', 'event_espresso') . '"><div class="complete_btn"></div></a>' . "\n\t";
-		$content .= '<a href="' . $export_event_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="reports_btn"></div></a>' . "\n\t";
-		$content .= '<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=unique_id_info_' . $item->event_id  . '" title="' . __('Get Short URL/Shortcode', 'event_espresso') . '"><div class="shortcode_btn"></div></a>' . "\n\t";
-		$content .= '<a href="#" onclick="window.location=\'' . $export_event_link . '\'" title="' . __('Export to Excel', 'event_espresso') . '"><div class="excel_exp_btn"></div></a>' . "\n\t";
-		$content .= '<a href="#" onclick="window.location=\'' . $reports_link . '\'" title="' . __('Export to CSV', 'event_espresso') . '"><div class="csv_exp_btn"></div>
-			</a>' . "\n";
+		$content .= implode( "\n\t", $actionlinks );
 		//todo: we need to put back in a email attendees link via the new messages system
-		$content .= '</div>' . "\n";
+		$content .= "\n" . '</div>' . "\n";
 		$content .= '<div id="unique_id_info_' . $item->event_id . '" style="display:none">' . "\n\t";
 		$content .= sprintf( __('<h2>Short URL/Shortcode</h2><p>This is the short URL to this event:</p><p><span  class="updated fade">%s</span></p><p>This will show the registration form for this event just about anywhere. Copy and paste the following shortcode into any page or post.</p><p><span  class="updated fade">[SINGLEEVENT single_event_id="%s"]</span></p> <p class="red_text"> Do not use in place of the main events page that is set in the Organization Settings page.', 'event_espresso'), $view_link, stripslashes_deep($item->event_identifier) );
 		$content .= "\n";

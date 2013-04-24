@@ -543,7 +543,7 @@ class EEM_Transaction extends EEM_TempBase {
 			$transaction->set_status(EEM_Transaction::overpaid_status_code);
 		}elseif ( $total_paid == $transaction->total() ) {
 			$transaction->set_status(EEM_Transaction::complete_status_code);
-		} elseif($total_paid + $total_pending >= $transaction->total()) {
+		} elseif( $total_paid < $transaction->total() ) {
 			$transaction->set_status(EEM_Transaction::pending_status_code);
 		}else{
 			$transaction->set_status(EEM_Transaction::incomplete_status_code);

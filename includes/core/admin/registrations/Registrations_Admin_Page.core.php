@@ -9,7 +9,7 @@
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
  * @ link					{@link http://www.eventespresso.com}
- * @ since		 		3.2.P
+ * @ since		 		4.0
  *
  * ------------------------------------------------------------------------
  *
@@ -24,6 +24,7 @@
 class Registrations_Admin_Page extends EE_Admin_Page {
 
 	private $_registration;
+	private $_reg_event;
 	private $_session;
 	private static $_reg_status;
 
@@ -37,8 +38,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	 * 		@access public
 	 * 		@return void
 	 */
-	public function __construct() {
-		parent::__construct();
+	public function __construct( $routing = TRUE ) {
+		parent::__construct( $routing );
 	}
 
 
@@ -69,9 +70,10 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$this->_admin_page_title = $this->page_label;
 		$this->_labels = array(
 			'buttons' => array(
-				'add' => __('Add New Attendee', 'event_espresso'),
-				'edit' => __('Edit Attendee', 'event_espresso'),
-				'delete' => __('Delete Attendee', 'event_espresso')
+					'add-registrant' => __('Register New Attendee', 'event_espresso'),
+					'add-attendee' => __('Add New Attendee', 'event_espresso'),
+					'edit' => __('Edit Attendee', 'event_espresso'),
+					'delete' => __('Delete Attendee', 'event_espresso')
 				)
 			);
 	}
@@ -106,8 +108,14 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					
 				'update_attendee_registration_form'	=> array( 
 						'func' => '_update_attendee_registration_form', 
-						'noheader' => TRUE 
-						
+						'noheader' => TRUE						
+					),
+					
+				'new_registration' => '_new_registration',
+					
+				'save_new_registration'	=> array(
+						'func' => '_save_new_registration',
+						'noheader' => TRUE
 					),
 					
 				'delete_registration'	=> array(
@@ -194,6 +202,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					), 
 					'noheader' => TRUE 
 				),
+				
 				'resend_registration' => array(
 					'func' => '_resend_registration',
 					'noheader' => TRUE
@@ -235,6 +244,18 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					'persistent' => FALSE
 					),
 				'metaboxes' => array( '_registration_details_metaboxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
+				),
+				
+			'new_registration' => array(
+				'nav' => array(
+					'label' => __('Register New Attendee', 'event_espresso'),
+					'order' => 15,
+					'persistent' => FALSE
+					),
+				'metaboxes' => array( 'new_registration_metaboxes', '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'labels' => array(
+					'publishbox' => __('Save Registration', 'event_espresso')
+					)
 				),
 				
 			'add_new_attendee' => array(
@@ -349,13 +370,20 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		//styles
 		wp_enqueue_style('jquery-ui-style');
 		wp_enqueue_style('jquery-ui-style-datepicker-css');
-
 		//scripts
 		global $eei18n_js_strings;
 		$eei18n_js_strings['update_att_qstns'] = __( 'click "Update Attendee Questions" to save your changes', 'event_espresso' );
 		wp_localize_script( 'espresso_reg', 'eei18n', $eei18n_js_strings );
+	}
 
 
+
+
+
+
+	public function load_scripts_styles_new_registration() {
+		wp_register_script( 'espresso-validate-new-reg', REG_ASSETS_URL . 'espresso-validate-new-reg.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE);
+		wp_enqueue_script('espresso-validate-new-reg');
 	}
 
 
@@ -427,15 +455,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					'attendee_check_in' => __('Toggle Attendees Check In', 'event_espresso'),
 					)
 				),
-//			'trash' => array(
-//				'slug' => 'trash',
-//				'label' => __('Trash', 'event_espresso'),
-//				'count' => 0,
-//				'bulk_action' => array(
-//					'restore_attendees' => __('Restore from Trash', 'event_espresso'),
-//					'delete_attendees' => __('Delete Permanently', 'event_espresso')
-//					)
-//				)
 			);
 	}
 
@@ -504,8 +523,11 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _registrations_overview_list_table() {
+		$EVT_ID = ( ! empty( $this->_req_data['event_id'] )) ? absint( $this->_req_data['event_id'] ) : FALSE;
+		if ( $EVT_ID ) {
+			$this->_admin_page_title .= $this->_get_action_link_or_button( 'new_registration', 'add-registrant', array( 'event_id' => $EVT_ID ), 'button add-new-h2' );
+		}		
 		$this->_template_args['after_list_table'] = $this->_display_legend( $this->_registration_legend_items() );
-		$this->_admin_page_title .= $this->_get_action_link_or_button('add_new_attendee', 'add', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
@@ -519,15 +541,17 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	 * @return void
 	 */
 	private function _set_registration_object() {
-		if ( is_object($this->_registration) )
-			return TRUE; //get out we've already set the object
+		//get out if we've already set the object
+		if ( is_object( $this->_registration )) {
+			return TRUE; 			
+		}
 
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
 	    $REG = EEM_Registration::instance();
 
 		$REG_ID = ( ! empty( $this->_req_data['_REG_ID'] )) ? absint( $this->_req_data['_REG_ID'] ) : FALSE;
 
-		if ( $this->_registration = $REG->get_registration_for_admin_page( $REG_ID ) )
+		if ( $this->_registration = $REG->get_registration_for_admin_page( $REG_ID ))
 			return TRUE;
 		else {
 			$error_msg = sprintf( __('An error occured and the details for Registration ID #%s could not be retreived.', 'event_espresso'), $REG_ID );
@@ -1051,33 +1075,48 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$qstns = isset( $this->_req_data['qstn'] ) ? $this->_req_data['qstn'] : FALSE;
 		$REG_ID = isset( $this->_req_data['_REG_ID'] ) ? absint( $this->_req_data['_REG_ID'] ) : FALSE;
 		$qstns = apply_filters('filter_hook_espresso_reg_admin_attendee_registration_form', $qstns);	
-		
-		if ( $qstns ) {			
-
-			global $wpdb;
-
-			foreach ( $qstns as $QST_ID => $qstn ) {
-				foreach ( $qstn as $ANS_ID => $ANS_value ) {
-//					echo '<h4>$QST_ID : ' . $QST_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//					echo '<h4>$ANS_ID : ' . $ANS_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//					echo '<h4>$ANS_value : ' . $ANS_value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-
-					if ( ! $wpdb->update(
-						$wpdb->prefix . 'esp_answer',
-						array( 'ANS_value' => sanitize_text_field( $ANS_value )),
-						array( 'ANS_ID' => absint( $ANS_ID )),
-						array( '%s' ),
-						array( '%d' )
-					)) {
-						$success = FALSE;
-					}
-				}
-			}
-		}
+		$success = $this->_save_attendee_registration_form( $qstns );
 		$what = __('Attendee Registration Form', 'event_espresso');
 		$route = $REG_ID ? array( 'action' => 'view_registration', '_REG_ID' => $REG_ID ) : array( 'action' => 'default' );
 		$this->_redirect_after_action( $success, $what, __('updated', 'event_espresso'), $route );
 
+	}
+
+
+
+
+
+	/**
+	 * 		_save_attendee_registration_form
+	*		@access private
+	*		@return void
+	*/
+	private function _save_attendee_registration_form( $qstns = FALSE ) {
+		
+		if ( ! $qstns ) {	
+			return FALSE;
+		}		
+		
+		$success = TRUE;
+		global $wpdb;
+		// loop thru questions
+		foreach ( $qstns as $QST_ID => $qstn ) {
+			foreach ( $qstn as $ANS_ID => $ANS_value ) {
+//					echo '<h4>$QST_ID : ' . $QST_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//					echo '<h4>$ANS_ID : ' . $ANS_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//					echo '<h4>$ANS_value : ' . $ANS_value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+
+				if ( ! $wpdb->update(
+					$wpdb->prefix . 'esp_answer',
+					array( 'ANS_value' => sanitize_text_field( $ANS_value )),
+					array( 'ANS_ID' => absint( $ANS_ID )),
+					array( '%s' ),
+					array( '%d' )
+				)) {
+					$success = FALSE;
+				}
+			}
+		}
 	}
 
 
@@ -1270,6 +1309,414 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 
+	/**
+	 * 		generates HTML for the Register New Attendee Admin page
+	*		@access private
+	*		@return void
+	*/
+	public function _new_registration() {
+		
+		if ( ! $this->_set_reg_event() ) {
+			return FALSE;
+		}
+		// gotta start with a clean slate
+		espresso_clear_session();
+		$this->_template_args['event_name'] = '' ;
+		// event name
+		if ( $this->_reg_event ) {
+			$this->_template_args['event_name'] = $this->_reg_event->event_name;
+			$edit_event_url = self::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$this->_reg_event->id ), EVENTS_ADMIN_URL );	
+			$edit_event_lnk = '<a href="'.$edit_event_url.'" title="' . __( 'Edit ', 'event_espresso' ) . $this->_reg_event->event_name . '">' . __( 'Edit Event', 'event_espresso' ) . '</a>';	
+			$this->_template_args['event_name'] .= ' <span class="admin-page-header-edit-lnk not-bold">' . $edit_event_lnk . '</span>' ;
+		}
+
+		// grab header
+		$template_path = REG_TEMPLATE_PATH . 'reg_admin_register_new_attendee.template.php';
+		$this->_template_args['admin_page_header'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
+
+		$this->_set_add_edit_form_tags( 'save_new_registration' );
+		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
+		// the details template wrapper
+		$this->display_admin_page_with_sidebar();	
+	}
+
+
+
+
+
+	/**
+	 * 		set_reg_event
+	*		@access private
+	*		@return void
+	*/
+	private function _set_reg_event() {
+		if ( is_object( $this->_reg_event )) {
+			return TRUE;
+		}
+		$EVT_ID = ( ! empty( $this->_req_data['event_id'] )) ? absint( $this->_req_data['event_id'] ) : FALSE;
+		if ( ! $EVT_ID ) {
+			return FALSE;
+		}
+		global $wpdb;
+		$SQL = 'SELECT * FROM ' . EVENTS_DETAIL_TABLE . ' ';
+		$SQL .= 'WHERE id = %d';
+		$this->_reg_event = $wpdb->get_row(  $wpdb->prepare( $SQL, $EVT_ID ));
+		return TRUE;
+	}
+
+
+
+
+
+	/**
+	 * 		generates metaboxes for
+	*		@access private
+	*		@return void
+	*/
+	protected function new_registration_metaboxes() {
+		
+		$EVT_ID = ( ! empty( $this->_req_data['event_id'] )) ? absint( $this->_req_data['event_id'] ) : FALSE;
+		if ( ! $EVT_ID ) {
+			return FALSE;
+		}
+		
+		add_meta_box( 
+			'reg-new-att-tickets-mbox', 
+			__( 'Date, Time, &amp; Price Selection', 'event_espresso' ), 
+			array( $this, '_reg_new_att_tickets_meta_box' ), 
+			$this->wp_page_slug, 
+			'normal', 
+			'high', 
+			array( 'EVT_ID' => $EVT_ID )
+		);
+		
+		add_meta_box( 
+			'reg-new-att-questions-mbox', 
+			__( 'Registration Form Questions', 'event_espresso' ), 
+			array( $this, '_reg_new_att_questions_meta_box' ), 
+			$this->wp_page_slug, 
+			'normal', 
+			'high', 
+			array( 'EVT_ID' => $EVT_ID )
+		);
+	}
+
+
+
+
+
+	/**
+	 * 		generates HTML for the Register New Attendee Admin Page Ticket Selector meta box
+	*		@access private
+	*		@return void
+	*/
+	public function _reg_new_att_tickets_meta_box( $post, $metabox = array( 'args' => array()) ) {
+		
+		global $wpdb, $org_options;	
+		extract( $metabox['args'] );		
+		
+		if ( ! $this->_set_reg_event() ) {
+			return FALSE;
+		}
+
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/event_details.helper.php');
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
+		$this->_reg_event->datetimes = EEM_Datetime::instance()->get_all_event_dates( $EVT_ID );
+
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Prices.class.php' );
+		$TKT_PRCs = new EE_Ticket_Prices( $EVT_ID );
+		$this->_reg_event->prices = $TKT_PRCs->get_all_final_event_prices();
+
+		$this->_reg_event->currency_symbol = $org_options['currency_symbol'];
+
+		$this->_reg_event->available_spaces = get_number_of_attendees_reg_limit( $EVT_ID, 'available_spaces' );
+		$this->_reg_event->allow_multiple = FALSE;
+		$this->_template_args['event'] = $this->_reg_event;
+		
+		// ticket selector
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Selector.class.php');
+		echo EE_Ticket_Selector::init( $this->_reg_event, TRUE ); 
+		echo '<br />';
+
+	}
+
+
+
+
+
+	/**
+	 * 		generates HTML for the Register New Attendee Admin Page Questions
+	*		@access private
+	*		@return void
+	*/
+	public function _reg_new_att_questions_meta_box( $post, $metabox = array( 'args' => array()) ) {
+		
+		global $wpdb, $org_options;	
+		extract( $metabox['args'] );		
+
+		// event question groups
+		$SQL = 'SELECT QSG.*, EQG.EVT_ID FROM ' . $wpdb->prefix . 'esp_event_question_group EQG '; 
+		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_question_group QSG ON  EQG.QSG_ID = QSG.QSG_ID ';
+		$SQL .= 'WHERE EQG.EVT_ID = %d AND QSG.QSG_deleted = 0 '; 
+		$SQL .= 'ORDER BY QSG.QSG_order'; 
+		$QSGs = $wpdb->get_results( $wpdb->prepare( $SQL, $EVT_ID ), 'OBJECT_K' );
+		//echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		//printr( $QSGs, '$QSGs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		$QSG_IDs = implode( array_keys( $QSGs ), ',' );
+		//echo '<h4>$QSG_IDs : ' . $QSG_IDs . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+
+		// attendee questions
+		$SQL = 'SELECT QST.*, QGQ.QSG_ID FROM ' . $wpdb->prefix . 'esp_question_group_question QGQ '; 
+		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_question QST ON QGQ.QST_ID = QST.QST_ID '; 
+		$SQL .= 'WHERE QGQ.QSG_ID IN (' . $QSG_IDs . ') '; 
+		$SQL .= 'ORDER BY QST.QST_order'; 
+		$QSTs = $wpdb->get_results( $SQL, 'OBJECT_K' );
+		//echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		//printr( $QSTs, '$QSTs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+		// csv list of QST IDs
+		$QST_IDs = implode( array_keys( $QSTs ), ',' );
+		// get Question Options
+		$QSOs = EEM_Event::instance()->get_options_for_question( $QST_IDs );
+		//printr( $QSOs, '$QSOs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+		add_filter( 'filter_hook_espresso_form_before_question_group_questions', array( $this, 'form_before_question_group' ), 10, 1 );
+		add_filter( 'filter_hook_espresso_form_after_question_group_questions', array( $this, 'form_after_question_group_new_reg' ), 10, 1 );	
+		add_filter( 'filter_hook_espresso_form_field_label_html', array( $this, 'form_form_field_label_wrap' ), 10, 1 );
+		add_filter( 'filter_hook_espresso_form_field_input_html', array( $this, 'form_form_field_input_wrap_new_reg' ), 10, 1 );
+
+		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( $QSGs, $QSTs, $QSOs );
+		//printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
+		echo EE_Form_Fields::generate_question_groups_html( $question_groups );
+
+	}
+
+
+
+
+	/**
+	 * 		form_after_question_group
+	 *
+	 * 		@access 		public
+	 * 		@param 		string 		$output
+	 * 		@return 		string
+	 */
+	public function form_after_question_group_new_reg( $output ) {
+		return  '
+		</tbody>
+	</table>
+';		
+	}
+
+
+
+
+
+
+	/**
+	 * 		form_form_field_input__wrap
+	 *
+	 * 		@access 		public
+	 * 		@param 		string 		$label
+	 * 		@return 		string
+	 */
+	public function form_form_field_input_wrap_new_reg( $input ) {
+		return '
+				<td class="reg-admin-new-attendee-input-td">
+					' . $input . ' 
+				</td>
+			</tr>';		
+	}
+
+
+
+
+
+	/**
+	 * 		_save_new_registration
+	 *
+	 * 		@access 		public
+	 * 		@return 		string
+	 */
+	public function _save_new_registration() {	
+			
+		// grab event id
+		$EVT_ID = isset( $this->_req_data['tkt-slctr-event-id'] ) ? absint( $this->_req_data['tkt-slctr-event-id'] ) : FALSE;		
+		if ( ! $EVT_ID ) {
+			$error_msg = __( 'An error occured. No Event ID or an  invalid Event ID was submitted.', 'event_espresso' );
+			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+			$this->_redirect_after_action( 
+				FALSE, 
+				__('New Attendee Registration', 'event_espresso'), 
+				__('created', 'event_espresso'), 
+				array( 'action' => 'default' ) 
+			);
+		}
+		
+		// process Ticket Option
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Selector.class.php');
+		// get ticket option added to cart, which adds it to session, etc, etc
+		if ( ! EE_Ticket_Selector::process_ticket_selections( FALSE, TRUE )) {
+			$error_msg = __( 'An error occured. The ticket option could not be processed for the registration.', 'event_espresso' );
+			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+			$this->_redirect_after_action( 
+				FALSE, 
+				__('New Attendee Registration', 'event_espresso'), 
+				__('created', 'event_espresso'), 
+				array( 'action' => 'default', 'event_id' => $EVT_ID ) 
+			);
+		}
+		
+		if ( ! defined( 'ESPRESSO_CART' )) {
+			require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Cart.class.php' );
+		}
+		// grab cart item
+		$cart = EE_Cart::instance()->whats_in_the_cart();
+		//grab first (and only) item
+		$item = array_pop( $cart['items'] );
+		// grab line item id
+		$line_item_id = $item['line_item'];
+		
+		//grab session
+		global $EE_Session;
+		$EE_Session->set_session_data( array( 'fill' => TRUE ), 'billing_info' );
+			
+		// load gateways
+		if ( ! defined( 'ESPRESSO_GATEWAYS' )) {
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
+		}
+		$EEM_Gateways = EEM_Gateways::instance();
+		
+
+		// set some defaults
+		$attendees = array();
+		$primary_attendee = array();
+		$att_nmbr = 1;
+
+		// grab a bunch of data directly from the ticket selector
+		$requires_pre_approval = isset( $this->_req_data['tkt-slctr-pre-approval-' . $EVT_ID] ) ? absint( $this->_req_data['tkt-slctr-pre-approval-' . $EVT_ID] ) : FALSE;
+		if ( isset( $this->_req_data['tkt-slctr-qty-' . $EVT_ID] )) {
+			$ts_row = explode( '-', $this->_req_data['tkt-slctr-qty-' . $EVT_ID] );
+			$ts_row = absint( $ts_row[0] );
+		} else {
+			$ts_row = 0;
+		}
+		// datetime ID
+		$DTT_ID = isset( $this->_req_data['tkt-slctr-dtt-id-' . $EVT_ID][ $ts_row ] ) ? absint( $this->_req_data['tkt-slctr-dtt-id-' . $EVT_ID][ $ts_row ] ) : FALSE;
+		// date string
+		$event_date = isset( $this->_req_data['tkt-slctr-date-id-' . $EVT_ID][ $ts_row ] ) ? sanitize_text_field( $this->_req_data['tkt-slctr-date-id-' . $EVT_ID][ $ts_row ] ) : FALSE;
+		// time string
+		$event_time = isset( $this->_req_data['tkt-slctr-time-id-' . $EVT_ID][ $ts_row ] ) ? date( 'Gi', absint( $this->_req_data['tkt-slctr-time-id-' . $EVT_ID][ $ts_row ] )) : FALSE;
+		// price string
+		$tckt_price = isset( $this->_req_data['tkt-slctr-price-id-' . $EVT_ID][ $ts_row ] ) ? sanitize_text_field( $this->_req_data['tkt-slctr-price-id-' . $EVT_ID][ $ts_row ] ) : FALSE;
+		// total ticket cost
+		$grand_total = isset( $this->_req_data['tkt-slctr-price-' . $EVT_ID][ $ts_row ] ) ? ( $this->_req_data['tkt-slctr-price-' . $EVT_ID][ $ts_row ] ) : FALSE;		
+				
+//		printr( $_POST, '$_POST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+		if ( isset( $this->_req_data['qstn'] )) {
+			$qstns = apply_filters('filter_hook_espresso_reg_admin_new_registration_form', $this->_req_data['qstn']);	
+			// sanitize reg form questions
+			array_walk_recursive( $qstns, array( $this, 'sanitize_text_field_for_array_walk' ));
+			// add questions
+			foreach ( $qstns as $form_input => $input_value) {
+				// get rid of htmlentities
+				$input_value = html_entity_decode($input_value, ENT_QUOTES, 'UTF-8');
+				// add ticket price to the array
+				$attendees['attendees'][1]['price_paid'] = number_format( $grand_total, 2, '.', '' );
+				// now add all other post data that was generated by attendee questions
+				$attendees['attendees'][1][$form_input] = $input_value;
+				unset( $attendees['attendees'][1]['line_item_id'] );		
+			}
+			
+			// now save the attendee data
+			if ( ! EE_Cart::instance()->set_line_item_details( $attendees, $line_item_id )) {
+				$notices = EE_Error::get_notices(FALSE);
+				$error_msg = $notices['errors'];
+			}
+
+			// and store a bit of data about the primary attendee
+			$primary_attendee['line_item_id'] = $line_item_id;
+			$primary_attendee['fname'] = $qstns['1'];
+			$primary_attendee['lname'] = $qstns['2'];
+			$primary_attendee['email'] = $qstns['3'];
+			$EE_Session->set_session_data(array('primary_attendee' => $primary_attendee), 'session_data');
+
+		}
+		// update attendee details
+		EE_Cart::instance()->_save_cart();
+		// grab cart item
+		$cart = EE_Cart::instance()->whats_in_the_cart();
+		//printr( $cart, '$cart  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			
+		// taxes ?
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Taxes.class.php' );
+		$taxes = EE_Taxes::calculate_taxes( $grand_total );
+		$grand_total = apply_filters( 'espresso_filter_hook_grand_total_after_taxes', $grand_total );
+		// totals over 0 initially get set to Incomlete, whereas Free Events get set to complete
+		$txn_status = $grand_total > 0 ? 'TPN' : 'TCM';
+
+		// grab session data
+		$session = $EE_Session->get_session_data();
+		// start the transaction record
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Transaction.class.php' );
+		// create TXN object
+		$transaction = new EE_Transaction( 
+			time(), 
+			$grand_total, 
+			0, 
+			$txn_status, 
+			NULL, 
+			$session, 
+			NULL, 
+			array(
+				'tax_totals'=>$session['tax_totals'],
+				'taxes'=>$session['taxes']
+			) 
+		);
+		$transaction->save();
+//		echo '<h4>$results : ' . $results . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		printr( $transaction, '$transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+		$reg_items = $session['cart']['REG']['items'];
+		$saved_registrations = EE_Single_Page_Checkout::save_registration_items( $reg_items, $transaction );
+
+		$transaction->set_txn_session_data( $session );
+		$success = $transaction->save();
+//		echo '<h4>$results : ' . $results . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		printr( $transaction, '$transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+		//remove the session from teh transaction befores saving it to teh session... otherwise we'll ahve a recursive relationship! bad!!
+//		$transaction->set_txn_session_data(null);
+//		//var_dump($EE_Session->get_session_data());
+//		$EE_Session->set_session_data(array( 'registration' => $saved_registrations, 'transaction' => $transaction ), 'session_data');
+//		$EE_Session->_update_espresso_session();
+			
+//		printr( $EE_Session, '$EE_Session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		die();
+//		$this->_req_data = array();
+//		
+		$txn_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'txn'=>$transaction->ID() ), TXN_ADMIN_URL );
+		wp_safe_redirect( $txn_url );
+		exit();
+//		$this->_redirect_after_action( $success, __( 'New Registration', 'event_espresso' ), 'created', array( 'action' => 'view_transaction', 'txn'=>$transaction->ID() ), TXN_ADMIN_URL );
+	
+	}
+
+
+
+
+	function sanitize_text_field_for_array_walk( &$item, &$key ) {
+	   $item = sanitize_text_field( $item );
+	}
+
+
+
+
+
+
 	/***************************************		EVENT REGISTRATIONS 		***************************************/
 
 
@@ -1283,6 +1730,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*/
 	protected function _event_registrations_list_table() {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		$this->_admin_page_title .= $this->_get_action_link_or_button('new_registration', 'add-registrant', array(), 'button add-new-h2');
 		$legend_items = array(
 			'star-icon' => array(
 				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/star-8x8.png',
@@ -1290,7 +1738,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				)
 			);
 		$this->_template_args['after_list_table'] = $this->_display_legend( $legend_items );
-		$this->_admin_page_title .= $this->_get_action_link_or_button('add_new_attendee', 'add', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
@@ -1378,7 +1825,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*/
 	protected function _attendee_contact_list_table() {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-		$this->_admin_page_title .= $this->_get_action_link_or_button('add_new_attendee', 'add', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->_get_action_link_or_button('add_new_attendee', 'add-attendee', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
@@ -1801,7 +2248,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$page_args['admin_reports'][] = $this->_get_registrations_per_event_report( '-1 month' ); //  option: '-1 week', '-2 weeks' defaults to '-1 month'
 //		$page_args['admin_reports'][] = 'chart1';
 		
-		$template_path = EE_CORE_ADMIN . 'admin_reports.template.php';
+		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_reports.template.php';
 		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $page_args, TRUE );
 		
 //		printr( $page_args, '$page_args' );

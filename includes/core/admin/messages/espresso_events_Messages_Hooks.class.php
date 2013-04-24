@@ -12,17 +12,17 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * @copyright	(c)2009-2012 Event Espresso All Rights Reserved.
  * @license		http://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing **
  * @link		http://www.eventespresso.com
- * @version		3.2.P
+ * @version		4.0
  *
  * ------------------------------------------------------------------------
  *
- * events_Messages_Hooks
+ * espresso_events_Messages_Hooks
  * Hooks various messages logic so that it runs on indicated Events Admin Pages.
  * Commenting/docs common to all children classes is found in the EE_Admin_Hooks parent.
  * 
  *
- * @package		events_Messages_Hooks
- * @subpackage	includes/core/admin/messages/events_Messages_Hooks.class.php
+ * @package		espresso_events_Messages_Hooks
+ * @subpackage	includes/core/admin/messages/espresso_events_Messages_Hooks.class.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
@@ -44,13 +44,7 @@ class espresso_events_Messages_Hooks extends EE_Admin_Hooks {
 			);
 		$this->_metaboxes = array(
 			0 => array(
-				'page_route' => 'edit_event',
-				'func' => 'messages_metabox',
-				'label' => __('Notifications', 'event_espresso'),
-				'priority' => 'core'
-				),
-			1 => array(
-				'page_route' => 'add_event',
+				'page_route' => array('edit_event','add_event'),
 				'func' => 'messages_metabox',
 				'label' => __('Notifications', 'event_espresso'),
 				'priority' => 'core'
@@ -157,7 +151,10 @@ class espresso_events_Messages_Hooks extends EE_Admin_Hooks {
 
 
 
-
+	/**
+	 * This is the dynamic method for this class that will end up hooking into the 'admin_footer' hook on the 'edit_event' route in the events page.
+	 * @return string (admin_footer contents)
+	 */
 	public function edit_event_admin_footer() {
 		//dialog container
 		$d_cont = '<div id="messages-change-edit-templates-dv" class="messages-change-edit-templates-option auto-hide hidden">' . "\n";

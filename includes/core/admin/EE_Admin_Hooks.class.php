@@ -12,7 +12,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * @copyright	(c)2009-2012 Event Espresso All Rights Reserved.
  * @license		http://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing **
  * @link		http://www.eventespresso.com
- * @version		3.2.P
+ * @version		4.0
  *
  * ------------------------------------------------------------------------
  *
@@ -35,6 +35,14 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * @var string
 	 */
 	public $caller;
+
+
+
+	/**
+	 * this is just a flag set automatically to indicate whether we've got an extended hook class running (i.e. espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Registration_Form_Hooks).  This flag is used later to make sure we require the needed files.
+	 * @var bool
+	 */
+	protected $_extend;
 
 
 
@@ -72,8 +80,8 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	/**
 	 * This is an array of methods that output metabox content for the given page route.  Use the following format:
 	 * array(
-	 * 	[0] => array(
-	 * 		'page_route' => 'string_for_page_route', //must correspond to a page route in the class being connected with (i.e. "edit_event");
+	 * 	0 => array(
+	 * 		'page_route' => 'string_for_page_route', //must correspond to a page route in the class being connected with (i.e. "edit_event") If this is in an array then the same params below will be used but the metabox will be added to each route.
 	 * 		'func' =>  'executing_method',  //must be public (i.e. public function executing_method($post, $callback_args){} ).  Note if you include callback args in the array then you need to declare them in the method arguments.
 	 * 		'id' => 'identifier_for_metabox', //so it can be removed by addons (optional, class will set it automatically)
 	 * 		'priority' => 'default', //default 'default' (optional)
@@ -81,6 +89,9 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * 		'context' => 'advanced' //advanced is default (optional),
 	 *   	'callback_args' => array() //any callback args to include (optional)
 	 * )
+	 *
+	 * Why are we indexing numerically?  Because it's possible there may be more than one metabox per page_route.
+	 * 
 	 * @var array
 	 */
 	protected $_metaboxes;
@@ -89,7 +100,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 
 	/**
-	 * This parent class takes care of loading the scripts and styles if the child class has set the properties for them in the following format.  It's important that the child classes have already registered the scripts using the "wp_register_[style|script]" wp function.  Note, the first array index ('register') is for defining all the registers.  The second array index is for indicating what routes each script/style loads on.
+	 * This parent class takes care of loading the scripts and styles if the child class has set the properties for them in the following format.  Note, the first array index ('register') is for defining all the registers.  The second array index is for indicating what routes each script/style loads on.
 	 * array(
 	 * 'registers' => array(
 	 * 		'script_ref' => array( // if more than one script is to be loaded its best to use the 'dependency' argument to link scripts together.
@@ -170,6 +181,11 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 		$this->_set_defaults();
 		$this->_set_hooks_properties();
+
+		//allow for extends to modify properties
+		if ( method_exists( $this, '_extend_properties' ) )
+			$this->_extend_properties();
+
 		$this->_set_page_object();
 		$this->_init_hooks();
 
@@ -272,6 +288,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		$this->_current_route = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : 'default';
 		$this->_req_data = array_merge($_GET, $_POST);
 		$this->caller = get_class($this);
+		$this->_extend = stripos($this->caller, 'Extend') ? TRUE : FALSE;
 	}
 
 
@@ -293,6 +310,20 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 		$ref = str_replace('_' , ' ', $this->_name); //take the_message -> the message
 		$ref = str_replace(' ', '_', ucwords($ref) ) . '_Admin_Page'; //take the message -> The_Message
+
+		//first default file (if exists)
+		$decaf_file = EE_CORE_ADMIN . $this->_name . DS . $ref . '.core.php';
+		if ( is_readable( $decaf_file ) )
+		require_once( $decaf_file );
+
+		//now we have to do require for extended file (if needed)
+		if ( $this->_extend ) {
+			require_once( EE_CORE_CAF_ADMIN_EXTEND . $this->_name . DS . 'Extend_' . $ref . '.core.php' );
+		}
+		
+
+		//if we've got an extended class we use that!
+		$ref = $this->_extend ? 'Extend_' . $ref : $ref;
 
 		//let's make sure the class exists
 		if ( !class_exists( $ref ) ) {
@@ -349,6 +380,26 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		//this array provides the hook action names that will be referenced.  Key is the action. Value is an array with the type (action or filter) and the number of parameters for the hook.  We'll default all priorities for automatic hooks to 10.
 		$hook_filter_array = array(
 			'admin_footer' => array(
+				'type' => 'action',
+				'argnum' => 1,
+				'priority' => 10
+				),
+			'filter_hook_espresso_list_table_views_' . $this->_adminpage_obj->page_slug . '_' . $this->_current_route => array(
+				'type' => 'filter',
+				'argnum' => 1,
+				'priority' => 10
+				),
+			'filter_hook_espresso_list_table_views_' . $this->_adminpage_obj->page_slug => array(
+				'type' => 'filter',
+				'argnum' => 1,
+				'priority' => 10
+				),
+			'filter_hook_espresso_list_table_views' => array(
+				'type' => 'filter',
+				'argnum' => 1,
+				'priority' => 10
+				),
+			'action_hook_espresso_metaboxes' => array(
 				'type' => 'action',
 				'argnum' => 1,
 				'priority' => 10
@@ -435,9 +486,17 @@ abstract class EE_Admin_Hooks extends EE_Base {
 			return; //get out we don't have any metaboxes to set for this connection
 
 		foreach ( $this->_metaboxes as $box ) {
-			if ( !isset($box['page_route']) || ( isset($box['page_route']) && $box['page_route'] != $this->_current_route ) )
-				continue; //we only add metaboxes for the set route
-			$this->_add_metabox($box);
+			if ( !isset($box['page_route']) )
+				continue; //we dont' have a valid array
+
+			//let's make sure $box['page_route'] is an array so the "foreach" will work.
+			$box['page_route'] = (array) $box['page_route'];
+
+			foreach ( $box['page_route'] as $route ) {
+				if ( $route != $this->_current_route )
+					continue; //get out we only add metaboxes for set route.
+				$this->_add_metabox($box);
+			}
 		}			
 
 	}
@@ -451,11 +510,12 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 */
 	private function _add_metabox( $args ) {
 		$current_screen = get_current_screen();
+		$func = isset( $args['func'] ) ? $args['func'] : 'some_invalid_callback';
 
 		//set defaults
 		$defaults = array(
-			'func' => 'some_breaking_link',
-			'id' => $this->_current_route . '_' . $this->caller . '_metabox',
+			'func' => $func,
+			'id' => $this->_current_route . '_' . $this->caller . '_' . $func . '_metabox',
 			'priority' => 'default',
 			'label' => $this->caller,
 			'context' => 'advanced',
@@ -465,6 +525,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		$args = wp_parse_args( $args, $defaults );
 		extract($args);
 
+
 		//make sure method exists
 		if ( !method_exists($this, $func) ) {
 			$msg[] = __('There is no corresponding method to display the metabox content', 'event_espresso') . '<br />';
@@ -473,6 +534,6 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		}
 
 		//everything checks out so lets add the metabox
-		add_meta_box( $id, $label, array( $this, $func), $current_screen->id, $context, $priority, $callback_args);
+		add_meta_box( $id, $label, array( $this, $func ), $current_screen->id, $context, $priority, $callback_args);
 	}
 }

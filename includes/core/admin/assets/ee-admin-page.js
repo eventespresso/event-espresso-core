@@ -44,9 +44,11 @@ jQuery(document).ready(function($) {
 		if ( $(this).val() == 1 ) {
 			$('.admin-recaptcha-settings-tr').find('.maybe-required').removeClass('maybe-required').addClass('required');
 			$('.admin-recaptcha-settings-tr').show();
+			$('.admin-recaptcha-settings-hdr').show();
 		} else {
 			$('.admin-recaptcha-settings-tr').find('.required').removeClass('required').addClass('maybe-required');
 			$('.admin-recaptcha-settings-tr').hide();
+			$('.admin-recaptcha-settings-hdr').hide();
 		}
 	});
 				

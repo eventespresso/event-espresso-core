@@ -12,7 +12,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * @copyright	(c)2009-2012 Event Espresso All Rights Reserved.
  * @license		http://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing **
  * @link		http://www.eventespresso.com
- * @version		3.2.P
+ * @version		4.0
  *
  * ------------------------------------------------------------------------
  *
@@ -22,7 +22,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  *
  * @package		Support_Admin_Page
- * @subpackage	includes/core/admin/Support_Admin_Page.core.php
+ * @subpackage	includes/core/admin/support/Support_Admin_Page.core.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
@@ -30,8 +30,8 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Support_Admin_Page extends EE_Admin_Page {
 
 
-	public function __construct() {
-		parent::__construct();
+	public function __construct( $routing = TRUE ) {
+		parent::__construct( $routing );
 	}
 
 
@@ -60,10 +60,9 @@ class Support_Admin_Page extends EE_Admin_Page {
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
 			'default' => '_installation',
-			'resources' => '_resources',
 			'shortcodes' => '_shortcodes',
-			'contact_support' => '_contact_support',
-			'faq' => '_faq'
+			'resources' => '_resources',
+			'contact_support' => '_contact_support'
 			);
 	}
 
@@ -75,7 +74,7 @@ class Support_Admin_Page extends EE_Admin_Page {
 				'nav' => array(
 					'label' => __('Installation', 'event_espresso'),
 					'order' => 10),
-				'metaboxes' => array('_installation_boxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				),
 			'resources' => array(
 				'nav' => array(
@@ -97,12 +96,6 @@ class Support_Admin_Page extends EE_Admin_Page {
 					'order' => 40),
 				'metaboxes' => array('_support_boxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				),
-			'faq' => array(
-				'nav' => array(
-					'label' => __('FAQ', 'event_espresso'),
-					'order' => 50),
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
-				)
 			);
 	}
 
@@ -126,11 +119,6 @@ class Support_Admin_Page extends EE_Admin_Page {
 		$this->display_admin_page_with_sidebar();
 	}
 
-
-	protected function _installation_boxes() {
-		$callback_args = array('template_path' => EE_SUPPORT_ADMIN_TEMPLATE_PATH . 'support_admin_details_additional_information.template.php');
-		//add_meta_box( 'espresso_additional_information_support', __('Additional Information', 'event_espresso'), create_function('$post, $metabox', 'echo espresso_display_template( $metabox["args"]["template_path"], "", TRUE);' ), $this->_current_screen_id, 'normal', 'high', $callback_args);
-	}
 
 
 
@@ -165,8 +153,6 @@ class Support_Admin_Page extends EE_Admin_Page {
 
 	
 	protected function _shortcodes() {
-		$template_path = EE_SUPPORT_ADMIN_TEMPLATE_PATH . 'support_admin_details_shortcodes.template.php';
-		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, '', TRUE);
 		$this->display_admin_page_with_sidebar();
 	}
 
@@ -174,7 +160,20 @@ class Support_Admin_Page extends EE_Admin_Page {
 
 
 
-	protected function _shortcodes_boxes() { /*nothing at the moment*/ }
+	protected function _shortcodes_boxes() { 
+	$boxes = array(
+			'shortcodes_single_events' => __('Single Events', 'event_espresso'),
+			'shortcodes_event_listings' => __('Event Listings', 'event_espresso'),
+			'shortcodes_attendee_listings' => __('Attendee Listings', 'event_espresso'),
+			'shortcodes_category' => __('Category Shortcodes', 'event_espresso'),
+			);
+
+		foreach ( $boxes as $box => $label ) {
+			$template_path = EE_SUPPORT_ADMIN_TEMPLATE_PATH . 'support_admin_details_' . $box . '.template.php';
+			$callback_args = array('template_path' => $template_path);
+			add_meta_box( 'espresso_' . $box . '_settings', $label, create_function('$post, $metabox', 'echo espresso_display_template( $metabox["args"]["template_path"], "", TRUE );'), $this->_current_screen_id, 'normal', 'high', $callback_args);
+		}
+	}
 
 
 
@@ -197,18 +196,6 @@ class Support_Admin_Page extends EE_Admin_Page {
 			add_meta_box( 'espresso_' . $box . '_settings', $label, create_function('$post, $metabox', 'echo espresso_display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );'), $this->_current_screen_id, 'normal', 'high', $callback_args);
 		}
 	}
-
-
-
-	protected function _faq() {
-
-		$template_path = EE_SUPPORT_ADMIN_TEMPLATE_PATH . 'support_admin_details_faq.template.php';
-		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, '', TRUE);
-		$this->display_admin_page_with_sidebar();
-
-	}
-
-
 
 
 

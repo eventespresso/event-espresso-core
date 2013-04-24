@@ -196,12 +196,18 @@ table .espresso-radio-btn-options-ul .small-lbl,
 	height: 26px;
 }*/
 
-.validate-error, input.validate-error {
+.validate-error,
+input.validate-error {
 	border-color: red;
 }
-.validation-notice-dv { display:none; padding:0; margin:0; color:red; }
+.validation-notice-dv { display:none; padding:0; margin:0; color:#FE2A00; }
+
+label em { font-weight: bold; font-size:1.2em; color:#FE2A00; }
+
+input.error,
 .requires-value { border:1px solid #FE2A00 !important; }
 
+label.error  { display: block; color: #FE2A00 !important; }
 
 
 
@@ -471,4 +477,31 @@ table .espresso-radio-btn-options-ul .small-lbl,
 
 .ee-legend-description {
     margin-left: 10px;
+}
+
+
+/** CAFFEINATED PREVIEW CSS **/
+.ee-admin-caf-preview-contents {
+    padding: 10px;
+    background: #e6e6e6;
+}
+
+.ee-caf-preview-text {
+   float: left;
+   width: 90%;
+}
+
+.ee-caf-preview-action-box {
+    float: left;
+    /*border: 2px solid #b2b2b2;*/
+    padding: 10px;
+    /*background-color: #f8f8f8;*/
+}
+
+#ee-admin-caf-preview-container .button-large {
+    height: 50px;
+    width: 100px;
+    font-size: 1.5em;
+    padding-top: 10px;
+    padding-left: 15px;
 }

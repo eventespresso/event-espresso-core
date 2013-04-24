@@ -12,7 +12,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * @copyright	(c)2009-2012 Event Espresso All Rights Reserved.
  * @license		http://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing **
  * @link		http://www.eventespresso.com
- * @version		3.2.P
+ * @version		4.0
  *
  * ------------------------------------------------------------------------
  *
@@ -23,7 +23,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * NOTE:  TODO: This is a straight conversion from the legacy 3.1 settings page.  It is NOT optimized and will need modification to fully use the new system (and also will need adjusted when Questions and Questions groups model is implemented)
  *
  * @package		General_Settings_Admin_Page
- * @subpackage	includes/core/admin/General_Settings_Admin_Page.core.php
+ * @subpackage	includes/core/admin/general_settings/General_Settings_Admin_Page.core.php
  * @author			Brent Christensen
  *
  * ------------------------------------------------------------------------
@@ -40,8 +40,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 
 
-	public function __construct() {
-		parent::__construct();
+	public function __construct( $routing = TRUE ) {
+		parent::__construct( $routing );
 	}
 
 
@@ -128,13 +128,13 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 						'title' => __('Thank You Page', 'event_espresso'),
 						'callback' => 'return_url_info_help_tab'
 						),
-					'cancel_return_info' => array(
-						'title' => __('Cancel/Return Page', 'event_espresso'),
-						'callback' => 'cancel_return_info_help_tab'
-						),
 					'notify_url_info' => array(
 						'title' => __('Transaction Page', 'event_espresso'),
 						'callback' => 'notify_url_info_help_tab'
+						),
+					'cancel_return_info' => array(
+						'title' => __('Cancel/Return Page', 'event_espresso'),
+						'callback' => 'cancel_return_info_help_tab'
 						),
 					)
 				),
@@ -780,6 +780,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		
 		$this->_set_add_edit_form_tags( 'update_admin_option_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
+		$this->_template_args['template_args'] = $this->_template_args;
 		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'admin_option_settings.template.php', $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();	
 	}

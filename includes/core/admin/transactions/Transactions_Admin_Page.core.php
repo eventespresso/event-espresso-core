@@ -9,7 +9,7 @@
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
  * @ link					{@link http://www.eventespresso.com}
- * @ since		 		3.2.P
+ * @ since		 		4.0
  *
  * ------------------------------------------------------------------------
  *
@@ -37,8 +37,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 * 		@access public
 	 * 		@return void
 	 */
-	public function __construct() {
-		parent::__construct();
+	public function __construct( $routing = TRUE ) {
+		parent::__construct( $routing );
 	}
 
 
@@ -539,6 +539,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		}
 
 		$this->_template_args['grand_total'] = $this->_transaction->TXN_total;
+		$this->_template_args['TXN_status'] = $this->_transaction->STS_ID;
 
 
 		$this->_template_args['currency_sign'] = $org_options['currency_symbol'];
@@ -996,7 +997,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$page_args['admin_reports'][] = $this->_revenue_per_event_report( '-1 month' ); //  option: '-1 week', '-2 weeks' defaults to '-1 month'
 //		$page_args['admin_reports'][] = 'chart1';
 		
-		$template_path = EE_CORE_ADMIN . 'admin_reports.template.php';
+		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_reports.template.php';
 		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $page_args, TRUE );
 		
 		

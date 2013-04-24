@@ -19,6 +19,7 @@ function espresso_define_tables_and_paths() {
 		dirname( espresso_main_file() ) . DS . 'includes' . DS . 'classes' . DS . PS .
 		dirname( espresso_main_file() ) . DS . 'includes' . DS . 'functions' . DS . PS .
 		dirname( espresso_main_file() ) . DS . 'gateways' . DS . PS .
+		dirname( espresso_main_file() ) . DS . 'helpers' . DS . PS .
 		get_include_path()
 	);
 
@@ -103,7 +104,6 @@ function espresso_autoload() {
 	spl_autoload_register('espresso_libraries_autoload');
 	spl_autoload_register('espresso_classes_autoload');
 	spl_autoload_register('espresso_classes_core_autoload');	
-	spl_autoload_register('espresso_core_admin_autoload');
 }
 
 function espresso_models_autoload($className) {
@@ -184,44 +184,7 @@ function espresso_classes_core_autoload($className) {
 	}
 }
 
-function espresso_core_admin_autoload($className) {
-	//let's setup an array of paths to check (for each subsystem)
-	$root = dirname(espresso_main_file()) . '/includes/core/admin/';
-	
-	//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
-	$dir_ref = array(
-		'root' => array('core', 'class', 'controller'),
-		'attendees/' => array('core', 'class'),
-		'events/' => array('core','class'),
-		'event_categories/' => array('core','class'),
-		'registration_form/' => array('core', 'class'),
-		'general_settings/' => array('core','class'),
-		'messages/' => array('core', 'class'),
-		'payments/' => array('core', 'class'),
-		'pricing/' => array('core', 'class'),
-		'registrations/' => array('core','class'),
-		'support/' => array('core', 'class'),
-		'transactions/' => array('core', 'class'),
-		'venues/' => array('core', 'class')
-		);
 
-	//assemble a list of filenames
-	foreach ( $dir_ref as $dir => $types ) {
-		if ( is_array($types) ) {
-			foreach ( $types as $type) {
-				$filenames[] = ( $dir == 'root' ) ? $root . $className . '.' . $type . '.php' : $root . $dir . $className . '.' . $type . '.php';
-			}
-		} else {
-			$filenames[] = ( $dir == 'root' ) ? $root . $className . '.' . $types . '.php' : $root . $dir . $className . '.' . $types . '.php';
-		}
-	}
-
-	//now loop through assembled filenames and require as available
-	foreach ( $filenames as $filename ) {
-		if ( is_readable($filename) )
-			require_once( $filename );
-	}
-}
 
 function espresso_display_exception( $excptn ) {
 	echo '
@@ -386,7 +349,7 @@ function espresso_printr_session() {
 		echo __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 	}
 }
-add_action( 'shutdown', 'espresso_printr_session' );
+//add_action( 'shutdown', 'espresso_printr_session' );
 
 
 
@@ -497,8 +460,11 @@ function espresso_init() {
  * 		@return void
  */
 function espresso_systems_check( ) {
-	if ( file_exists( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' )) {
-		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' );
+	// ... why aren't we using EVENT_ESPRESSO_PLUGIN_FULL_URL?  because if we define that here then we have to do a check in espresso_define_tables_and_paths which would only be needed on plugin_activation.  So we'll just define this temporary variable.
+	$path = defined( 'EVENT_ESPRESSO_PLUGINFULLPATH' ) ? EVENT_ESPRESSO_PLUGINFULLPATH : plugin_dir_path( espresso_main_file() );
+
+	if ( file_exists( $path . 'caffeinated/init.php' )) {
+		require_once( $path . 'caffeinated/init.php' );
 	}
 	return function_exists( 'espresso_system_check' ) ? espresso_system_check() : FALSE;
 }
@@ -753,7 +719,7 @@ function espresso_site_license() {
 		//	'optionName' => '', //(optional) - used as the reference for saving update information in the clients options table.  Will be automatically set if left blank.
 			'apikey' => $api_key, //(required), you will need to obtain the apikey that the client gets from your site and then saves in their sites options table (see 'getting an api-key' below)
 			'lang_domain' => 'event_espresso', //(optional) - put here whatever reference you are using for the localization of your plugin (if it's localized).  That way strings in this file will be included in the translation for your plugin.
-			'checkPeriod' => '12', //(optional) - use this parameter to indicate how often you want the client's install to ping your server for update checks.  The integer indicates hours.  If you don't include this parameter it will default to 12 hours.
+			'checkPeriod' => '24', //(optional) - use this parameter to indicate how often you want the client's install to ping your server for update checks.  The integer indicates hours.  If you don't include this parameter it will default to 12 hours.
 			'option_key' => 'site_license_key', //this is what is used to reference the api_key in your plugin options.  PUE uses this to trigger updating your information message whenever this option_key is modified.
 			'options_page_slug' => 'event_espresso'
 		);

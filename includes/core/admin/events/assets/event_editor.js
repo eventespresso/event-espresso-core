@@ -1,4 +1,3 @@
-		
 jQuery(document).ready(function($) {
 
 //	$('.display-ticket-manager').on('click', function(){

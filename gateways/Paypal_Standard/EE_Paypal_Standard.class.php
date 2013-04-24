@@ -175,7 +175,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 					<?php _e('Country Currency', 'event_espresso'); ?>
 					<?php echo EE_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
 				</label></th>
-			<td><select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
+			<td><select name="currency_format" data-placeholder="Choose a currency...">
 					<option value="<?php echo $this->_payment_settings['currency_format']; ?>"><?php echo $this->_payment_settings['currency_format']; ?></option>
 					<option value="USD">
 						<?php _e('U.S. Dollars ($)', 'event_espresso'); ?>
