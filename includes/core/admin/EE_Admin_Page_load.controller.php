@@ -107,6 +107,7 @@ class EE_Admin_Page_load {
 	 * @return void
 	 */
 	public function __construct() {
+
 		//first define global EE_Admin constants
 		$this->_define_all_constants();
 
@@ -117,8 +118,10 @@ class EE_Admin_Page_load {
 		//let's set default autoloaders.  Note that this just sets autoloaders for root admin files.
 		spl_autoload_register( array( $this, 'init_autoloaders') );
 
+
 		//let's do a scan and see what installed pages we have
 		$this->_get_installed_pages();
+
 
 
 		//set menus (has to be done on every load - we're not actually loading the page just setting the menus and where they point to).

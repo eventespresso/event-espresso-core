@@ -204,9 +204,10 @@ class EEM_Message_Template extends EEM_Custom_Table_Base {
 		//however if the active reference IS set and it == 'all' then we don't send ANY filter on active
 		if ( isset( $where_cols_n_values['MTP_is_active'] ) && $where_cols_n_values['MTP_is_active'] == 'all' ) {
 			$active = array();
+			unset( $where_cols_n_values['MTP_is_active'] );
 		}
 
-		$where_cols_n_values = array_merge( $active, $where_cols_n_values );
+		$where_cols_n_values = array_merge( $where_cols_n_values, $active );
 
 		//let's check if there are any filters in here
 		$filters = array();
