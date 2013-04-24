@@ -21,8 +21,8 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once('EEM_TempBase.model.php');
-class EEM_Soft_Delete_Base extends EEM_TempBase{
+require_once('EEM_Base.model.php');
+class EEM_Soft_Delete_Base extends EEM_Base{
 	/**
 	 * Searches for field on this model of type 'deleted_flag'. if it is found,
 	 * returns it's name.

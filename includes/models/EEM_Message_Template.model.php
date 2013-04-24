@@ -24,9 +24,9 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Custom_Table_Base.model.php' );
+require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 
-class EEM_Message_Template extends EEM_Custom_Table_Base {
+class EEM_Message_Template extends EEM_Base {
 	//private instance of the EEM_Message_Template object
 	private static $_instance = NULL;
 
@@ -46,7 +46,11 @@ class EEM_Message_Template extends EEM_Custom_Table_Base {
 		// EEM_Price object
 		return self::$_instance;
 	}
-
+	
+	private $_allowed_messengers = array('email');
+	private $_allowed_messenger_types = array('payment','registration','resend_registration');
+	private $_allowed_template_fields = array('to','from','subject','content');
+	private $_allowed_contexts = array('admin','attendee','primary_attendee');
 	/**
 	 * 		private constructor to prevent direct creation
 	 * 		@Constructor
@@ -54,32 +58,49 @@ class EEM_Message_Template extends EEM_Custom_Table_Base {
 	 * 		@return void
 	 */
 	protected function __construct() {
-		global $wpdb;
-		// set table name
-		$this->table_name = $wpdb->prefix . 'esp_message_template';
-		// set item names
 		$this->singlular_item = __('Message Template','event_espresso');
 		$this->plural_item = __('Message Templates','event_espresso');		
 		// array representation of the price table and the data types for each field
-		$this->table_data_types = array(
-				'MTP_ID' => '%d',
-				'EVT_ID' => '%d',
-				'GRP_ID' => '%d',
-				'MTP_user_id' => '%d',
-				'MTP_messenger'	=> '%s',
-				'MTP_message_type' => '%s',
-				'MTP_template_field' => '%s',
-				'MTP_context' => '%s',
-				'MTP_content' => '%s',
-				'MTP_is_global' => '%d',
-				'MTP_is_override' => '%d',
-				'MTP_deleted' => '%d',
-				'MTP_is_active' => '%d'
+//		$this->table_data_types = array(
+//				'MTP_ID' => '%d',
+//				'EVT_ID' => '%d',
+//				'GRP_ID' => '%d',
+//				'MTP_user_id' => '%d',
+//				'MTP_messenger'	=> '%s',
+//				'MTP_message_type' => '%s',
+//				'MTP_template_field' => '%s',
+//				'MTP_context' => '%s',
+//				'MTP_content' => '%s',
+//				'MTP_is_global' => '%d',
+//				'MTP_is_override' => '%d',
+//				'MTP_deleted' => '%d',
+//				'MTP_is_active' => '%d'
+//		);
+		$this->_tables = array(
+			'Message_Template'=> new EE_Primary_Table('esp_message_template', 'ATT_ID')
 		);
-
-
+		$this->_fields = array(
+			'Message_Template'=>array(
+				'MTP_ID'=>new EE_Primary_Key_Int_Field('MTP_ID', 'Message Type ID', false, 0),
+				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID','Event ID',false,0,'Event'),
+				'GRP_ID'=>new EE_Integer_Field('GRP_ID', 'Group ID? No idea', false, 1),
+				'MTP_user_id'=>new EE_Integer_Field('MTP_user_id', 'User ID of Message Type', false, 1),
+				'MTP_messenger'=>new EE_Enum_Field('MTP_messenger', 'Messneger Used for Template', false, 'email', $this->_allowed_messengers),
+				'MTP_message_type'=>new EE_Enum_Field('MTP_message_type','Message Type',false,'registration',$this->_allowed_messenger_types),
+				'MTP_template_field'=>new EE_Enum_Field('MTP_template_field', 'Field of Template to Fill', false, 'content', $this->_allowed_template_fields),
+				'MTP_context'=>new EE_Enum_Field('MTP_context','Context for filling out template',false,'admin',$this->_allowed_contexts),
+				'MTP_content'=>new EE_Full_HTML_Field('MTP_content', 'Template Content to Replace', false, ''),
+				'MTP_is_global'=>new EE_Boolean_Field('MTP_is_global', 'Flag indicating if Template is Global', false, true),
+				'MTP_is_override'=>new EE_Boolean_Field('MTP_is_override', 'Flag indicating if Template is overriding another', false, false),
+				'MTP_deleted'=>new EE_Trashed_Flag_Field('MTP_deleted', 'Flag indicating whether this has been trashed', false, false),
+				'MTP_is_active'=>new EE_Boolean_Field('MTP_is_active', 'Flag indicating whether template is active', false, true)
+			));
+		$this->_model_relations = array(
+			'Event'=>new EE_Belongs_To_Relation()
+		);
+		parent::__construct();
 		// load Message Template object class file
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Message_Template.class.php');
+//		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Message_Template.class.php');
 	}
 
 	/**

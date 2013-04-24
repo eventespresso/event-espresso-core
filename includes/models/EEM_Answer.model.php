@@ -21,9 +21,9 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_TempBase.model.php' );
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 
-class EEM_Answer extends EEM_TempBase {
+class EEM_Answer extends EEM_Base {
 
   	// private instance of the Attendee object
 	private static $_instance = NULL;
@@ -48,16 +48,20 @@ class EEM_Answer extends EEM_TempBase {
 	protected function __construct(){
 		$this->singlular_item = __('Answer','event_espresso');
 		$this->plural_item = __('Answers','event_espresso');
-		$this->_fields_settings=array(
-				'ANS_ID'=>new EE_Model_Field('Answer ID', 'primary_key', false),
-				'REG_ID'=>new EE_Model_Field('Registration ID', 'foreign_key', false,0,null,'Registration'),
-				'QST_ID'=>new EE_Model_Field('Question ID', 'foreign_key', false,0,null,'Question'),
-				'ANS_value'=>new EE_Model_Field('Answer Value/Text', 'simplehtml', false,'')
-			);
-		$this->_related_models=array(
-				'Registration'=>new EE_Model_Relation('belongsTo', 'Registration', 'REG_ID'),
-				'Question'=>new EE_Model_Relation('belongsTo', 'Question', 'QST_ID')
-			);
+		$this->_tables = array(
+			'Answer'=> new EE_Primary_Table('esp_answer', 'ANS_ID')
+		);
+		$this->_fields = array(
+			'Answer'=>array(
+				'ANS_ID'=> new EE_Primary_Key_Int_Field('ANS_ID', 'Answer ID', false, 0),
+				'REG_ID'=>new EE_Foreign_Key_Int_Field('REG_ID', 'Registration ID', false, 0, 'Registration'),
+				'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', 'Quesetion ID', false, 0, 'Question'),
+				'ANS_value'=>new EE_Simple_HTML_Field('ANS_value', 'Answer Value', false, '')
+			));
+		$this->_model_relations = array(
+			'Registration'=>new EE_Belongs_To_Relation(),
+			'Question'=>new EE_Belongs_To_Relation()
+		);
 		
 		parent::__construct();
 	}

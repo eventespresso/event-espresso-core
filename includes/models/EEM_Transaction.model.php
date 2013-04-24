@@ -21,10 +21,10 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Custom_Table_Base.model.php' );
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 
 
-class EEM_Transaction extends EEM_TempBase {
+class EEM_Transaction extends EEM_Base {
 
   	// private instance of the Transaction object
 	private static $_instance = NULL;
@@ -90,21 +90,41 @@ class EEM_Transaction extends EEM_TempBase {
 			'TXN_hash_salt'			=> '%s',
 			'TXN_tax_data'			=> '%s'	
 		);*/
-		$this->_fields_settings = array(
-			'TXN_ID' 			=> new EE_Model_Field('Transaction ID', 'primary_key', false),
-			'TXN_timestamp' 	=> new EE_Model_Field('Transaction Teimstamp', 'int', false,time()),
-			'TXN_total' 		=> new EE_Model_Field('Total amount due for this transaction', 'float', true,0),
-			'TXN_paid' 			=> new EE_Model_Field('Total amoutn paid so far', 'float', false,0),
-			'STS_ID' 			=> new EE_Model_Field('Status of Transaction.','foreign_text_key',false,  EEM_Transaction::incomplete_status_code,null,'Status'),
-			'TXN_details' 		=> new EE_Model_Field('Serialized array of Transaction details as returned from the Payment Gateway', 'serialized_text', true, null),
-			'TXN_tax_data' 		=> new EE_Model_Field('Serialized array of tax data', 'serialized_text', true, null),
-			'TXN_session_data'	=> new EE_Model_Field('Serialized array of session data', 'serialized_text', true, null),
-			'TXN_hash_salt' 	=> new EE_Model_Field('Payment Gateway hash salt value. Possibly deprecated.', 'plaintext', true,null)
+//		$this->_fields_settings = array(
+//			'TXN_ID' 			=> new EE_Model_Field('Transaction ID', 'primary_key', false),
+//			'TXN_timestamp' 	=> new EE_Model_Field('Transaction Teimstamp', 'int', false,time()),
+//			'TXN_total' 		=> new EE_Model_Field('Total amount due for this transaction', 'float', true,0),
+//			'TXN_paid' 			=> new EE_Model_Field('Total amoutn paid so far', 'float', false,0),
+//			'STS_ID' 			=> new EE_Model_Field('Status of Transaction.','foreign_text_key',false,  EEM_Transaction::incomplete_status_code,null,'Status'),
+//			'TXN_details' 		=> new EE_Model_Field('Serialized array of Transaction details as returned from the Payment Gateway', 'serialized_text', true, null),
+//			'TXN_tax_data' 		=> new EE_Model_Field('Serialized array of tax data', 'serialized_text', true, null),
+//			'TXN_session_data'	=> new EE_Model_Field('Serialized array of session data', 'serialized_text', true, null),
+//			'TXN_hash_salt' 	=> new EE_Model_Field('Payment Gateway hash salt value. Possibly deprecated.', 'plaintext', true,null)
+//		);
+//		$this->_related_models = array(
+//			'Payments' 		=> new EE_Model_Relation('hasMany', 'Payment', 'TXN_ID'),
+//			'Registrations' => new EE_Model_Relation('hasMany', 'Registration', 'TXN_ID'),
+//			//'Status' =>			new EE_Model_Relation('belongsTo','Status','STS_ID')
+//		);
+		$this->_tables = array(
+			'Transaction'=>new EE_Primary_Table('esp_transaction','TXN_ID')
 		);
-		$this->_related_models = array(
-			'Payments' 		=> new EE_Model_Relation('hasMany', 'Payment', 'TXN_ID'),
-			'Registrations' => new EE_Model_Relation('hasMany', 'Registration', 'TXN_ID'),
-			//'Status' =>			new EE_Model_Relation('belongsTo','Status','STS_ID')
+		$this->_fields = array(
+			'Transaction'=>array(
+				'TXN_ID'=>new EE_Primary_Key_Int_Field('TXN_ID', 'Transaction ID', false, 0),
+				'TXN_timestamp'=>new EE_Datetime_Field('TXN_timestamp', 'date when transaction was created', false, current_time('timestamp')),
+				'TXN_total'=>new EE_Money_Field('TXN_total', 'Total value of Transaction', false, 0),
+				'TXN_paid'=>new EE_Money_Field('TXN_paid', 'Amount paid towards transaction to date', false, 0),
+				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', 'Status ID', false, EEM_Transaction::incomplete_status_code, 'Status'),
+				'TXN_details'=>new EE_Serialized_Text_Field('TXN_details', 'Serialized Mess of details about the last payment on this transaction', true, ''),
+				'TXN_tax_data'=>new EE_Serialized_Text_Field('TXN_tax_data', 'Serialized mess of tax data', true, ''),
+				'TXN_session_data'=>new EE_Serialized_Text_Field('TXN_session_data', 'Serialized mess of session data', true, ''),
+				'TXN_hash_salt'=>new EE_Plain_Text_Field('TXN_hash_salt', 'Transaction Hash Salt', true, '')
+			)
+		);
+		$this->_model_relations = array(
+			'Registration'=>new EE_Has_Many_Relation(),
+			'Payment'=>new EE_Has_Many_Relation()
 		);
 		parent::__construct();
 	

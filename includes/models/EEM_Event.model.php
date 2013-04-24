@@ -21,11 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-//NOTE! Until this notice is removed, this model is still in construction. Many, if not almost all,
-//the inherited functions from EEM_TempBase don't work. They will work once the databse structure
-//has been brought into compliance with new naming structure, and once it defines its _field_settings and _related_models arrays,
-//and we've created an EE_Event class.
-class EEM_Event  extends EEM_TempBase{
+class EEM_Event  extends EEM_Base{
 	//extends EEM_TempBase
 
   	// private instance of the Event object
@@ -51,8 +47,21 @@ class EEM_Event  extends EEM_TempBase{
 	protected function __construct(){
 		$this->singular_item = __('Event','event_espresso');
 		$this->plural_item = __('Events','event_espresso');
-		$this->table_name='events_detail';
-		$this->data_types=array();
+		$this->_tables = array(
+			'Event_Detail'=> new EE_Primary_Table('events_detail', 'DTT_ID')
+		);
+		$this->_fields = array(
+			'Event_Detail'=>array(
+				'EVT_ID'=> new EE_Primary_Key_Int_Field('id', 'Event ID', false, 0),
+				//...
+			));
+		$this->_model_relations = array(
+			'Registration'=>new EE_Has_Many_Relation(),
+			'Datetime'=>new EE_Has_Many_Relation(),
+			'Price'=>new EE_Has_Many_Relation(),
+			'Question_Group'=>new EE_HABTM_Relation('Event_Question_Group')
+		);
+		parent::__construct();
 	}
 
 	/**

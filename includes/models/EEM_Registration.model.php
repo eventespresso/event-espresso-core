@@ -21,10 +21,10 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_TempBase.model.php' );
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 
 
-class EEM_Registration extends EEM_TempBase {
+class EEM_Registration extends EEM_Base {
 
   	// private instance of the Registration object
 	private static $_instance = NULL;
@@ -70,38 +70,67 @@ class EEM_Registration extends EEM_TempBase {
 		$this->singular_item = __('Registration','event_espresso');
 		$this->plural_item = __('Registrations','event_espresso');
 		$this->_get_registration_status_array();
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Registration.class.php');
+//		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Registration.class.php');
 		$this->_allowed_statuses=apply_filters('filter_hook_espresso__EEM_Registration__allowed_statuses', self::$_reg_status );
-		$this->_fields_settings=array(
-			'REG_ID'=>new EE_Model_Field('Registration ID','primary_key',false),
-			'EVT_ID'=>new EE_Model_Field('Event ID','foreign_key',false,null,null,'Event'),
-			'ATT_ID'=>new EE_Model_Field('Attendee ID', 'foreign_key', false,null,null,'Attendee'),
-			'TXN_ID'=>new EE_Model_Field('Transaction ID', 'foreign_key', false, null, null, 'Transaction'),
-			'DTT_ID'=>new EE_Model_Field('Datetime ID','foreign_key',false,null,null,'Datetime'),
-			'PRC_ID'=>new EE_model_Field('Price ID','foreign_key',false,null,null,'Price'),
-			'STS_ID'=>new EE_Model_Field('Status ID', 'foreign_text_key', false, 'RNA', $this->_allowed_statuses, 'Status'),
-			'REG_date'=>new EE_Model_Field('Registration Date','int',false,0),
-			'REG_final_price'=>new EE_Model_Field('Final Price', 'float', false, 0),
-			'REG_session'=>new EE_Model_Field('Session of Original Registration','plaintext',false),
-			'REG_code'=>new EE_Model_Field('Unique Registration Code', 'plaintext', true, ''),
-			'REG_url_link'=>new EE_Model_Field('URL Link of Registration','plaintext',true,''),
-			'REG_count'=>new EE_Model_Field('Flag indicating whether Registration is Unique','int',false,1),
-			'REG_group_size'=>new EE_Model_Field('Flag indicating whether is part of a group registration', 'int', false, 1),
-			'REG_att_is_going'=>new EE_Model_Field('Flag indicating if Person is going', 'bool', false, true),
-			'REG_att_checked_in'=>new EE_Model_Field('Flag indicating whether attendee has checked in','bool',false,false)				
-			);
-		$this->_related_models=array(
-								//'Event'=>new EE_Model_Relation('belongsTo', 'Event', 'EVT_ID'),//no such classes or model yet created
-								'Attendee'=>new EE_Model_Relation('belongsTo', 'Attendee', 'ATT_ID'),
-								'Transaction'=>new EE_Model_Relation('belongsTo', 'Transaction', 'TXN_ID'),
-								'Datetime'=>new EE_Model_Relation('belongsTo', 'Datetime', 'DTT_ID'),
-								'Price'=>new EE_Model_Relation('belongsTo', 'Price', 'PRC_ID'),
-								'Status'=>new EE_Model_Relation('belongsTo', 'Status','STS_ID'),
-								'Answers'=>new EE_Model_Relation('hasMany','Answer','REG_ID'));
+//		$this->_fields_settings=array(
+//			'REG_ID'=>new EE_Model_Field('Registration ID','primary_key',false),
+//			'EVT_ID'=>new EE_Model_Field('Event ID','foreign_key',false,null,null,'Event'),
+//			'ATT_ID'=>new EE_Model_Field('Attendee ID', 'foreign_key', false,null,null,'Attendee'),
+//			'TXN_ID'=>new EE_Model_Field('Transaction ID', 'foreign_key', false, null, null, 'Transaction'),
+//			'DTT_ID'=>new EE_Model_Field('Datetime ID','foreign_key',false,null,null,'Datetime'),
+//			'PRC_ID'=>new EE_model_Field('Price ID','foreign_key',false,null,null,'Price'),
+//			'STS_ID'=>new EE_Model_Field('Status ID', 'foreign_text_key', false, 'RNA', $this->_allowed_statuses, 'Status'),
+//			'REG_date'=>new EE_Model_Field('Registration Date','int',false,0),
+//			'REG_final_price'=>new EE_Model_Field('Final Price', 'float', false, 0),
+//			'REG_session'=>new EE_Model_Field('Session of Original Registration','plaintext',false),
+//			'REG_code'=>new EE_Model_Field('Unique Registration Code', 'plaintext', true, ''),
+//			'REG_url_link'=>new EE_Model_Field('URL Link of Registration','plaintext',true,''),
+//			'REG_count'=>new EE_Model_Field('Flag indicating whether Registration is Unique','int',false,1),
+//			'REG_group_size'=>new EE_Model_Field('Flag indicating whether is part of a group registration', 'int', false, 1),
+//			'REG_att_is_going'=>new EE_Model_Field('Flag indicating if Person is going', 'bool', false, true),
+//			'REG_att_checked_in'=>new EE_Model_Field('Flag indicating whether attendee has checked in','bool',false,false)				
+//			);
+//		$this->_related_models=array(
+//								//'Event'=>new EE_Model_Relation('belongsTo', 'Event', 'EVT_ID'),//no such classes or model yet created
+//								'Attendee'=>new EE_Model_Relation('belongsTo', 'Attendee', 'ATT_ID'),
+//								'Transaction'=>new EE_Model_Relation('belongsTo', 'Transaction', 'TXN_ID'),
+//								'Datetime'=>new EE_Model_Relation('belongsTo', 'Datetime', 'DTT_ID'),
+//								'Price'=>new EE_Model_Relation('belongsTo', 'Price', 'PRC_ID'),
+//								'Status'=>new EE_Model_Relation('belongsTo', 'Status','STS_ID'),
+//								'Answers'=>new EE_Model_Relation('hasMany','Answer','REG_ID'));
+		$this->_tables = array(
+			'Registration'=>new EE_Primary_Table('esp_registration','REG_ID')
+		);
+		$this->_fields = array(
+			'Registration'=>array(
+				'REG_ID'=>new EE_Primary_Key_Int_Field('REG_ID', 'Registration ID', false, 0),
+				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', 'Even tID', false, 0, 'Event'),
+				'ATT_ID'=>new EE_Foreign_Key_Int_Field('ATT_ID', 'Attendee ID', false, 0, 'Attendee'),
+				'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID', 'Transaction ID', false, 0, 'Transaction'),
+				'DTT_ID'=>new EE_Foreign_Key_Int_Field('DTT_ID', 'Datetime ID', false, 0, 'Datetime'),
+				'PRC_ID'=>new EE_Foreign_Key_Int_Field('PRC_ID', 'Price ID', false, 0, 'Price'),
+				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', 'Status ID', false, EEM_Registration::status_id_not_approved, 'Status'),
+				'REG_date'=>new EE_Datetime_Field('REG_date', 'Time registration occured', false, current_time('timestamp')),
+				'REG_final_price'=>new EE_Money_Field('REG_final_price', 'Final Price of registration', false, 0),
+				'REG_session'=>new EE_Plain_Text_Field('REG_session', 'Session ID of registration', false, ''),
+				'REG_code'=>new EE_Plain_Text_Field('REG_code', 'Unique Code for this registration', false, ''),
+				'REG_url_link'=>new EE_Plain_Text_Field('REG_url_link', 'String to be used in URL for identifying registration', false, ''),
+				'REG_count'=>new EE_Integer_Field('REG_count', 'Count of this registration in the group registraion ', ture, 1),
+				'REG_group_size'=>new EE_Integer_Field('REG_group_size', 'Number of registrations on this group', false, 1),
+				'REG_att_is_going'=>new EE_Boolean_Field('REG_att_is_going', 'Flag indicating the registrant plans on attending', false, false),
+				'REG_att_checked_in'=>new EE_Boolean_Field('REG_att_checked_in', 'Flag indicating the registrant has checked in', false, false),
+			)
+		);
+		$this->_model_relations = array(
+			'Event'=>new EE_Belongs_To_Relation(),
+			'Attendee'=>new EE_Belongs_To_Relation(),
+			'Transaction'=>new EE_Belongs_To_Relation(),
+			'Datetime'=>new EE_Belongs_To_Relation(),
+			'Price'=>new EE_Belongs_To_Relation(),
+			'Status'=>new EE_Belongs_To_Relation()
+		);
+		
 		parent::__construct();
-		// uncomment these for example code samples of how to use them
-		//			$this->how_to_use_insert();
-		//			$this->how_to_use_update();
 	}
 
 	/**

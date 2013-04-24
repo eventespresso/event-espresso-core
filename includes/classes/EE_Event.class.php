@@ -21,10 +21,49 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Event { 
+class EE_Event extends EE_Base_Class{ 
+	protected $_EVT_ID;
+	
+	/**
+	 *
+	 * @var EE_Registration[] 
+	 */
+	protected $_Registration;
+	
+	/**
+	 *
+	 * @var EE_Datetime[] 
+	 */
+	protected $_Datetime;
+	
+	/**
+	 *
+	 * @var EE_Price[] 
+	 */
+	protected $_Price;
+	
+	/**
+	 *
+	 * @var EE_Question_Group[] 
+	 */
+	protected $_Question_Group;
+	
+	
+	public function __construct($EVT_ID = null) {
+		//if the first parameter is an array, assume it's an array of key-value pairs for this object
+		if(is_array($EVT_ID)){
+			parent::__construct($EVT_ID);
+			return;
+		}
+		$reflector = new ReflectionMethod($this,'__construct');	
+		$arrayForParent=array();
+		foreach($reflector->getParameters() as $param){
+			$paramName=$param->name;
+			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
+		}
+		parent::__construct($arrayForParent);
+	}
 
-	
-	
 	
 	
 	

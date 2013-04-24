@@ -168,15 +168,15 @@ class EE_Attendee extends EE_Base_Class{
 	 *
 	 * @var EE_Registration[]
 	 */
-	protected $_Registrations=NULL;
+	protected $_Registration=NULL;
 
 
 
 	/**
 	 * Will hold an array of events attached to this attendee (attached by others not on instantiating)
-	 * @var array
+	 * @var EE_Event[]
 	 */
-	protected $_Events = array();
+	protected $_Event = array();
 
 
 

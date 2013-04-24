@@ -55,25 +55,52 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 		$this->singlular_item = __('Attendee','event_espresso');
 		$this->plural_item = __('Attendees','event_espresso');
 		// load Attendee object class file
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php');
-		$this->_fields_settings=array('ATT_ID'=>new EE_Model_Field('Attendee ID', 'primary_key', false),
-									'ATT_fname'=>new EE_Model_Field('First Name', 'plaintext', false),
-									'ATT_lname'=>new EE_Model_Field('Last Name','plaintext',false),
-									'ATT_address'=>new EE_Model_Field('Address1','plaintext',true),
-									'ATT_address2'=>new EE_Model_Field('Address2','plaintext',true),
-									'ATT_city'=>new EE_Model_Field('City','plaintext',true),
-									'STA_ID'=>new EE_Model_Field('State ID','foreign_key',true,0,null,'State'),
-									'CNT_ISO'=>new EE_Model_Field('Country Code','foreign_key',true,0,null,'Country'),
-									'ATT_zip'=>new EE_Model_Field('Zip/Postal Code', 'plaintext', true, ''),
-									'ATT_email'=>new EE_Model_Field('Email', 'email', false, ''),
-									'ATT_phone'=>new EE_Model_Field('Phone', 'plaintext', true),
-									'ATT_social'=>new EE_Model_Field('Social Media Details','serialized_text',true),
-									'ATT_comments'=>new EE_Model_Field('Comments','simplehtml',true),
-									'ATT_notes'=>new EE_Model_Field('Notes', 'simplehtml', true),
-									'ATT_deleted'=>new EE_Model_Field('Deleted flag', 'deleted_flag', false,0),
-			);
-		$this->_related_models=array(
-								'Registrations'=>new EE_Model_Relation('belongsTo', 'Registration', 'ATT_ID'));
+//		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php');
+//		$this->_fields_settings=array('ATT_ID'=>new EE_Model_Field('Attendee ID', 'primary_key', false),
+//									'ATT_fname'=>new EE_Model_Field('First Name', 'plaintext', false),
+//									'ATT_lname'=>new EE_Model_Field('Last Name','plaintext',false),
+//									'ATT_address'=>new EE_Model_Field('Address1','plaintext',true),
+//									'ATT_address2'=>new EE_Model_Field('Address2','plaintext',true),
+//									'ATT_city'=>new EE_Model_Field('City','plaintext',true),
+//									'STA_ID'=>new EE_Model_Field('State ID','foreign_key',true,0,null,'State'),
+//									'CNT_ISO'=>new EE_Model_Field('Country Code','foreign_key',true,0,null,'Country'),
+//									'ATT_zip'=>new EE_Model_Field('Zip/Postal Code', 'plaintext', true, ''),
+//									'ATT_email'=>new EE_Model_Field('Email', 'email', false, ''),
+//									'ATT_phone'=>new EE_Model_Field('Phone', 'plaintext', true),
+//									'ATT_social'=>new EE_Model_Field('Social Media Details','serialized_text',true),
+//									'ATT_comments'=>new EE_Model_Field('Comments','simplehtml',true),
+//									'ATT_notes'=>new EE_Model_Field('Notes', 'simplehtml', true),
+//									'ATT_deleted'=>new EE_Model_Field('Deleted flag', 'deleted_flag', false,0),
+//			);
+//		$this->_related_models=array(
+//								'Registrations'=>new EE_Model_Relation('belongsTo', 'Registration', 'ATT_ID'));
+		$this->_tables = array(
+			'Attendee'=> new EE_Primary_Table('esp_attendee', 'ATT_ID')
+		);
+		$this->_fields = array(
+			'Attendee'=>array(
+				'ATT_ID'=> new EE_Primary_Key_Int_Field('ATT_ID', 'Attendee ID', false, 0),
+				'ATT_fname'=>new EE_Plain_Text_Field('ATT_fname', 'First Name', true, ''),
+				'ATT_lname'=>new EE_Plain_Text_Field('ATT_lname', 'Last Name', true, ''),
+				'ATT_address'=>new EE_Plain_Text_Field('ATT_address', 'Address Part 1', true, ''),
+				'ATT_address2'=>new EE_Plain_Text_Field('ATT_address2', 'Address Part 2', true, ''),
+				'ATT_city'=>new EE_Plain_Text_Field('ATT_city', 'City', true, ''),
+				'STA_ID'=>new EE_Plain_Text_Field('STA_ID', 'State', true, ''),
+				'CNT_ISO'=>new EE_Plain_Text_Field('CNT_ISO', 'Country', true, ''),
+				'ATT_zip'=>new EE_Plain_Text_Field('ATT_zip', 'ZIP/Postal Code', true, ''),
+				'ATT_email'=>new EE_Plain_Text_Field('ATT_email', 'Email Address', true, ''),
+				'ATT_phone'=>new EE_Plain_Text_Field('ATT_phone', 'Phone', true, ''),
+				'ATT_social'=>new EE_Serialized_Text_Field('ATT_social', 'Serialized array of social media info', true, ''),
+				'ATT_comments'=>new EE_Simple_HTML_Field('ATT_comments', 'Comments about Attendee', true, ''),
+				'ATT_notes'=>new EE_Simple_HTML_Field('ATT_notes', 'Notes about Attendee', true, ''),
+				'ATT_deleted'=>new EE_Trashed_Flag_Field('ATT_deleted', 'Whether the attendee has been deleted or not', true, false),
+				
+				
+				
+			));
+		$this->_model_relations = array(
+			'Registration'=>new EE_Has_Many_Relation()
+		);
 		parent::__construct();
 		
 	}

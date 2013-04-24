@@ -21,9 +21,9 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Custom_Table_Base.model.php' );
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 
-class EEM_Price extends EEM_Custom_Table_Base {
+class EEM_Price extends EEM_Base {
 
 	// private instance of the EEM_Price object
 	private static $_instance = NULL;
@@ -56,33 +56,60 @@ class EEM_Price extends EEM_Custom_Table_Base {
 	 * 		@return void
 	 */
 	protected function __construct() {
-		global $wpdb;
+//		global $wpdb;
 		// set table name
-		$this->table_name = $wpdb->prefix . 'esp_price';
+//		$this->table_name = $wpdb->prefix . 'esp_price';
 		// set item names
 		$this->singlular_item = __('Price','event_espresso');
 		$this->plural_item = __('Prices','event_espresso');		
 		// array representation of the price table and the data types for each field
-		$this->table_data_types = array(
-				'PRC_ID'						=> '%d',
-				'PRT_ID'						=> '%d',
-				'EVT_ID'						=> '%d',
-				'PRC_amount'				=> '%f',
-				'PRC_name'				=> '%s',
-				'PRC_desc'					=> '%s',
-				'PRC_reg_limit'			=> '%d',
-				'PRC_tckts_left'			=> '%d',
-				'PRC_use_dates'			=> '%d',
-				'PRC_start_date'			=> '%d',
-				'PRC_end_date'			=> '%d',
-				'PRC_is_active' 			=> '%d',
-				'PRC_overrides' 			=> '%d',
-				'PRC_order' 				=> '%d',
-				'PRC_deleted' 			=> '%d'
-		);
+//		$this->table_data_types = array(
+//				'PRC_ID'						=> '%d',
+//				'PRT_ID'						=> '%d',
+//				'EVT_ID'						=> '%d',
+//				'PRC_amount'				=> '%f',
+//				'PRC_name'				=> '%s',
+//				'PRC_desc'					=> '%s',
+//				'PRC_reg_limit'			=> '%d',
+//				'PRC_tckts_left'			=> '%d',
+//				'PRC_use_dates'			=> '%d',
+//				'PRC_start_date'			=> '%d',
+//				'PRC_end_date'			=> '%d',
+//				'PRC_is_active' 			=> '%d',
+//				'PRC_overrides' 			=> '%d',
+//				'PRC_order' 				=> '%d',
+//				'PRC_deleted' 			=> '%d'
+//		);
 		// load Price object class file
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Price.class.php');
-
+//		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Price.class.php');
+		$this->_tables = array(
+			'Price'=>new EE_Primary_Table('esp_price','PRC_ID')
+		);
+		$this->_fields = array(
+			'Price'=> array(
+				'PRC_ID'=>new EE_Primary_Key_Int_Field('PRC_ID', 'Price ID', false, 0),
+				'PRT_ID'=>new EE_Foreign_Key_Int_Field('PRT_ID', 'Price type Id', false, 1, 'Price_Type'),
+				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', 'Event ID', false, 0, 'Event'),
+				'PRC_amount'=>new EE_Money_Field('PRC_amount', 'Price Amount', false, 0),
+				'PRC_name'=>new EE_Plain_Text_Field('PRC_name', 'Name of Price', false, ''),
+				'PRC_desc'=>new EE_Simple_HTML_Field('PRC_desc', 'Price Description', false, ''),
+				'PRC_reg_limit'=>new EE_Integer_Field('PRC_reg_limit', 'Limit to how many tickets can be sold at this price', true, 999999),
+				'PRC_tckts_left'=>new EE_Integer_Field('PRC_tckts_left', 'Tickets remaining at this price', ture, 999999),
+				'PRC_use_dates'=>new EE_Boolean_Field('PRC_use_dates', 'Flag indicating whether to use dates for this price', false, false),
+				'PRC_start_date'=>new EE_Datetime_Field('PRC_start_date', 'If using dates, when this price becomes available', true, current_time('timestamp')),
+				'PRC_end_date'=>new EE_Datetime_Field('PRC_end_date', 'If using dates, when this price is no longer available', true, current_time('timestamp')),
+				'PRC_is_active'=>new EE_Boolean_Field('PRC_is_active', 'Flag indicating whether price is active', false, true),
+				'PRC_overrides'=>new EE_Integer_Field('PRC_overrides', 'Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )', true, 0),
+				'PRC_order'=>new EE_Integer_Field('PRC_order', 'Order of Application of Price (lower numbers apply first?)', false, 1),
+				'PRC_deleted'=>new EE_Trashed_Flag_Field('PRC_deleted', 'Flag Indicating if this has been deleted or not', false, false)
+			)
+		);
+		$this->_model_relations = array(
+			'Event'=>new EE_Belongs_To_Relation(),
+			'Price_Type'=>new EE_Belongs_To_Relation(),
+			'Registration'=>new EE_Has_Many_Relation()
+		);
+		parent::__construct();
 	}
 
 

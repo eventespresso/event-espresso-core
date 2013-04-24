@@ -4,7 +4,14 @@ require_once('EE_Base.php');/*
  * Experimental new multi-table model. Especially handles joins when querying.
  */
 define('SP',' ');
-require_once('helpers/EE_Model_Query_Info_Carrier.php');
+//require all field, relation, and helper files, because we'll want 90% of them on every request using EEM_Base anyways.
+$field_files = glob(dirname(__FILE__) . '/fields/*.php');
+$helper_files = glob(dirname(__FILE__) . '/helpers/*.php');
+$relation_files = glob(dirname(__FILE__) . '/relations/*.php');
+$files = $field_files + $helper_files + $relation_files;
+foreach ($files as $file) {
+    require_once($file);   
+}
 abstract class EEM_Base extends EE_Base{
 	
 	/**
@@ -127,15 +134,44 @@ abstract class EEM_Base extends EE_Base{
 	 * preserve the WPDB results (eg, update, which first queries to make sure we have all the tables on the model)
 	 * @global type $wpdb
 	 * @param array $query_params like EEMerimental_Base::get_all's $query_params
+	 * @param string $output ARRAY_A, OBJECT_K, etc. Just like
+	 * @param boolean $columns_to_select, What columns to select. By default, we select all columns specified by the fields on the model,
+	 * and the models we joined to in the query. However, you can override this and set the select to "*", or a specific column name, like "ATT_ID", etc.
 	 * @return stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
 	 */
-	private function _get_all_wpdb_results($query_params = array()){
+	protected function _get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null){
 		global $wpdb;
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
-		$SQL ="SELECT ".$this->_construct_select_sql().$this->_construct_2nd_half_of_select_query($model_query_info);
+		$select_expressions = $columns_to_select ? $columns_to_select : $this->_construct_select_sql();
+		$SQL ="SELECT $select_expressions ".$this->_construct_2nd_half_of_select_query($model_query_info);
 		echo "get all SQL:".$SQL;
-		return $wpdb->get_results($SQL, ARRAY_A);
+		return $wpdb->get_results($SQL, $output);
 	}
+//	/**
+//	 * @deprecated
+//	 * @param type $orderby
+//	 * @param type $sort
+//	 * @param type $limit
+//	 * @param type $output
+//	 */
+//	protected function select_all ( $orderby=FALSE, $sort=FALSE, $limit = FALSE, $output='OBJECT_K' ) {
+//		return select_all_where(false,false,$sort,false,$limit,$output);
+//	}
+//	protected function select_all_where ( $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $limit = FALSE, $output = 'OBJECT_K' ) {
+//		$query_params 
+//	}
+//	protected function select_row_where ( $where_cols_n_values=FALSE, $operator = '=', $output = 'OBJECT' ) {
+//		
+//	}
+//	protected function select_value_where ( $select=FALSE, $where_cols_n_values=FALSE, $operator = '=' ) {
+//		
+//	}
+//	protected function get_key_value_array ( $key=FALSE, $value=FALSE, $orderby = FALSE, $sort = 'ASC', $output = 'ARRAY_A' ) {
+//		
+//	}
+//	protected function get_key_value_array_where( $key=FALSE, $value=FALSE, $where_cols_n_values=FALSE, $orderby=FALSE, $sort='ASC', $operator='=' ) {
+//		
+//	}
 	
 	/**
 	 * Gets a single item for this model from the DB, given only its ID (or null if none is found).

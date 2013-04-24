@@ -24,7 +24,7 @@
 require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Custom_Table_Base.model.php' );
 require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Datetime.class.php' );
 
-class EEM_Datetime extends EEM_Custom_Table_Base {
+class EEM_Datetime extends EEM_Base {
 
   	// private instance of the Event_datetime object
 	private static $_instance = NULL;
@@ -51,26 +51,43 @@ class EEM_Datetime extends EEM_Custom_Table_Base {
 	protected function __construct() {
 		global $wpdb;
 		// set table name
-		$this->table_name = $wpdb->prefix . 'esp_datetime';
+//		$this->table_name = $wpdb->prefix . 'esp_datetime';
 		// set item names
 		$this->singlular_item = __('Datetime','event_espresso');
 		$this->plural_item = __('Datetimes','event_espresso');		
 		// array representation of the datetime table and the data types for each field
-		$this->table_data_types = array (
-			'DTT_ID' 					=> '%d',
-			'EVT_ID' 					=> '%d',
-			'DTT_is_primary' 	=> '%d',
-			'DTT_EVT_start' 		=> '%d',
-			'DTT_EVT_end' 		=> '%d',
-			'DTT_REG_start' 		=> '%d',
-			'DTT_REG_end' 		=> '%d',
-			'DTT_reg_limit' 		=> '%d',
-			'DTT_tckts_left'	=> '%d'
+//		$this->table_data_types = array (
+//			'DTT_ID' 					=> '%d',
+//			'EVT_ID' 					=> '%d',
+//			'DTT_is_primary' 	=> '%d',
+//			'DTT_EVT_start' 		=> '%d',
+//			'DTT_EVT_end' 		=> '%d',
+//			'DTT_REG_start' 		=> '%d',
+//			'DTT_REG_end' 		=> '%d',
+//			'DTT_reg_limit' 		=> '%d',
+//			'DTT_tckts_left'	=> '%d'
+//		);
+		$this->_tables = array(
+			'Datetime'=> new EE_Primary_Table('esp_datetime', 'DTT_ID')
+		);
+		$this->_fields = array(
+			'Datetime'=>array(
+				'DTT_ID'=> new EE_Primary_Key_Int_Field('DTT_ID', 'Datetime ID', false, 0),
+				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', 'Event ID', false, 0, 'Event'),
+				'DTT_is_primary'=>new EE_Boolean_Field('DTT_is_primary', 'Flag indicating Primary Event Time', false, true),
+				'DTT_EVT_start'=>new EE_Datetime_Field('DTT_EVT_start', 'Start time/date of Event', false, current_time('timestamp')),
+				'DTT_EVT_end'=>new EE_Datetime_Field('DTT_EVT_end', 'End time/date of Event', false, current_time('timestamp')),
+				'DTT_REG_start'=>new EE_Datetime_Field('DTT_REG_start', 'Start time/date of Registration for Event', false, current_time('timestamp')),
+				'DTT_REG_end'=>new EE_Datetime_Field('DTT_REG_end', 'End time/date of Registration for Event', false, current_time('timestamp')),
+				'DTT_reg_limit'=>new EE_Integer_Field('DTT_reg_limit', 'Registration LImit for this time', true, 999999),
+				'DTT_tckts_left'=>new EE_Integer_Field('DTT_tckts_left', 'Calculated Tickets Remaining', true, 999999)
+			));
+		$this->_model_relations = array(
+			'Registration'=>new EE_Has_Many_Relation(),
+			'Event'=>new EE_Belongs_To_Relation()
 		);
 
-		// uncomment these for example code samples of how to use them
-		//			self::how_to_use_insert();
-		//			self::how_to_use_update();
+		parent::__construct();
 	}
 
 

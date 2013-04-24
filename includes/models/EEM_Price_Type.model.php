@@ -23,7 +23,7 @@
  */
 require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Custom_Table_Base.model.php' );
 
-class EEM_Price_Type extends EEM_Custom_Table_Base {
+class EEM_Price_Type extends EEM_Base {
 
 	// private instance of the Price Type object
 	private static $_instance = NULL;
@@ -48,28 +48,45 @@ class EEM_Price_Type extends EEM_Custom_Table_Base {
 	 * 		@return void
 	 */
 	protected function __construct() {
-		global $wpdb;
+//		global $wpdb;
 		// set table name
-		$this->table_name = $wpdb->prefix . 'esp_price_type';
+//		$this->table_name = $wpdb->prefix . 'esp_price_type';
 		// set item names
 		$this->singlular_item = __('Price Type','event_espresso');
 		$this->plural_item = __('Price Types','event_espresso');		
 		// array representation of the price type table and the data types for each field
-		$this->table_data_types = array(
-				'PRT_ID' 					=> '%d',
-				'PRT_name' 			=> '%s',
-				'PBT_ID' 					=> '%d',
-				'PRT_is_member' 	=> '%d',
-				'PRT_is_discount' 	=> '%d',
-				'PRT_is_tax' 			=> '%d',
-				'PRT_is_percent' 	=> '%d',
-				'PRT_is_global' 		=> '%d',
-				'PRT_order' 			=> '%d',
-				'PRT_deleted'			=> '%d'
+//		$this->table_data_types = array(
+//				'PRT_ID' 					=> '%d',
+//				'PRT_name' 			=> '%s',
+//				'PBT_ID' 					=> '%d',
+//				'PRT_is_member' 	=> '%d',
+//				'PRT_is_discount' 	=> '%d',
+//				'PRT_is_tax' 			=> '%d',
+//				'PRT_is_percent' 	=> '%d',
+//				'PRT_is_global' 		=> '%d',
+//				'PRT_order' 			=> '%d',
+//				'PRT_deleted'			=> '%d'
+//		);
+		$this->_tables = array(
+			'Price_Type'=>new EE_Primary_Table('esp_price_type','PRT_ID')
 		);
-		// load Price_Type object class file
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Price_Type.class.php');
-
+		$this->_fields = array(
+			'Price_Type'=>array(
+				'PRT_ID'=>new EE_Primary_Key_Int_Field('PRT_ID', 'Price Type ID', false, 0),
+				'PRT_name'=>new EE_Plain_Text_Field('PRT_name', 'Price Type Name', false, ''),
+				'PBT_ID'=>new EE_Integer_Field('PBT_ID', 'Price Base type ID, 1 = Event Price , 2 = Discount , 3 = Surcharge , 4 = Tax', false, 1),
+				'PRT_is_member'=>new EE_Boolean_Field('PRT_is_member', 'Flag indicating price is only for members', false, false),
+				'PRT_is_percent'=>new EE_Boolean_Field('PRT_is_percent', 'Flag indicating price is a percentage', false, false),
+				'PRT_is_global'=>new EE_Boolean_Field('PRT_is_global', 'Flag indicating price shoudl automatically be added to all events', false, false),
+				'PRT_order'=>new EE_Integer_Field('PRT_order', 'Order in which price should be applied. ', false, 0),
+				'PRT_deleted'=>new EE_Trashed_Flag_Field('PRT_deleted', 'Flag indicating price type has been trahsed', false, false)
+			)
+		);
+		$this->_model_relations = array(
+			'Price'=>new EE_Has_Many_Relation(),
+		);
+		
+		parent::__construct();
 		$this->type = $this->get_all_price_types();
 
 	}
