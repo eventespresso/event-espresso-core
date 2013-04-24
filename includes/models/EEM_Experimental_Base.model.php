@@ -52,10 +52,28 @@ abstract class EEM_Experimental_Base{
 		'not in'=>'NOT IN');
 	/**
 	 * operators that work like 'IN', accepting a comma-seperated list of values inside brackets. Eg '(1,2,3)'
-	 * @var string 
+	 * @var array 
 	 */
 	protected $_in_style_operators = array('IN','NOT_IN');
 	
+	/**
+	 * Allowed values for $query_params['order'] for ordering in queries
+	 * @var array
+	 */
+	protected $_allowed_order_values = array('asc','desc','ASC','DESC');
+	
+	/**
+	 * When these are keys in a WHERE or HAVING clause, they are handled much differently
+	 * than regular field names. It is assumed that their values are an array of WHERE conditions
+	 * @var array
+	 */
+	protected $_special_where_param_keys = array('not', 'and', 'or', 'NOT', 'AND', 'OR');
+	/**
+	 * Allowed keys in $query_params arrays passed into queries. Note that 0 is meant to always be a 
+	 * 'where', but 'where' clauses are so common that we thought we'd omit it
+	 * @var array
+	 */
+	protected $_allowed_query_params = array(0, 'limit','order_by','order','group_by','having');
 	/**
 	 * About all child constructors:
 	 * they should define the _tables, _fields and _model_relations arrays. 
@@ -143,15 +161,6 @@ abstract class EEM_Experimental_Base{
 		}
 	}
 	
-	
-	function _extract_where_parameters($query_params){
-		if(array_key_exists(0,$query_params)){
-			$where_array = $query_params[0];
-		}else{
-			$where_array = array();
-		}
-		return $where_array;
-	}
 	/**
 	 * Gets all the tables comprising this model. Array keys are the table aliases, and values are EE_Table objects
 	 * @return EE_Table[]
@@ -506,7 +515,7 @@ abstract class EEM_Experimental_Base{
 	
 	/**
 	 * Extract all the query parts from $query_params (an array like whats passed to EEM_Experimental_Base::get_all)
-	 * and put into a EEM_Exp_Related_Model_Info_Carrier for easy extraction into SQL. We create this object
+	 * and put into a EEM_Exp_Related_Model_Info_Carrier for easy extraction into a query. We create this object
 	 * instead of directly constructing teh SQL because often we need to extract info from the $query_params
 	 * but use them in a different order. Eg, we need to know what models we are querying
 	 * before we know what joins to perform. However, we need to know what data types correspond to which fields on other
@@ -515,12 +524,60 @@ abstract class EEM_Experimental_Base{
 	 * @return EE_Model_Query_Info_Carrier
 	 */
 	function _create_model_query_info_carrier($query_params){
-		$where_array = $this->_extract_where_parameters($query_params);
-		if($where_array){
-			$query_object = $this->_extract_related_models_from_query($where_array);
-			$query_object->set_where_sql( $this->_construct_where_clause($where_array, $query_object->get_data_types()));
+		if(array_key_exists(0,$query_params)){
+			$query_object = $this->_extract_related_models_from_query($query_params[0]);
+			$query_object->set_where_sql( $this->_construct_where_clause($query_params[0], $query_object->get_data_types()));
 		}else{
 			$query_object = $this->_extract_related_models_from_query(array());
+		}
+		//set limit
+		if(array_key_exists('limit',$query_params)){
+			if(is_array($query_params['limit'])){
+				//they passed us an array for the limit. Assume it's like array(50,25), meaning offset by 50, and get 25
+				$query_object->set_limit_sql(" LIMIT ".$query_params['limit'][0].",".$query_params['limit'][1]);
+			}else{
+				$query_object->set_limit_sql((" LIMIT ".$query_params['limit']));
+			}
+		}
+		//set order by
+		if(array_key_exists('order_by',$query_params)){
+			if(is_array($query_params['order_by'])){
+				//assume it's an array of fields to order by
+				$order_array = array();
+				foreach($query_params['order_by'] as $field_name_to_order_by){
+					$field_obj = $this->field_settings_for($field_name);
+					$order_array[] = $field_obj->get_qualified_column();
+				}
+				$query_object->set_order_by_sql(" ORDER BY ".implode(",",$order_array));
+			}else{
+				$query_object->set_order_by_sql(" ORDER BY ".$query_params['order_by']);
+			}
+		}
+		//set order
+		if(array_key_exists('order',$query_params)){	
+			if(in_array($query_params['order'],$this->_allowed_order_values)){
+				$query_object->set_order_sql(" ".$query_params['order']);
+			}else{
+				throw new EE_Error(sprintf(__("Invalid order parameter supplied: '%s'. Only allowed order parameters: %s",'event_espresso'),$query_params['order'],implode(",",$this->_allowed_order_values)));
+			}
+		}
+		//set group by
+		if(array_key_exists('group_by',$query_params)){
+			if(is_array($query_params['group_by'])){
+				//it's an array, so assume we'll be grouping by a bunch of stuff
+				$group_by_array = array();
+				foreach($query_params['group_by'] as $field_name_to_group_by){
+					$field_obj = $this->field_settings_for($field_name_to_group_by);
+					$group_by_array[] = $field_obj->get_qualified_column();
+				}
+				$query_object->set_group_by_sql(" GROUP BY ".implode(",",$group_by_array));
+			}else{
+				$query_object->set_group_by_sql(" GROUP BY ".$query_params['group_by']);
+			}
+		}
+		//set having
+		if(array_key_exists('having',$query_params)){
+			
 		}
 		$query_object->set_main_model_join_sql($this->_construct_internal_join());
 		return $query_object;
@@ -600,22 +657,57 @@ abstract class EEM_Experimental_Base{
 	 * @param array  $joined_data_types keys are qualified column names, values are their wpdb data type (%d,%s,%f)
 	 * @return string of SQL
 	 */
-	function _construct_where_clause($where_params, $joined_data_types = null){
+	private function _construct_where_clause($where_params, $joined_data_types = null){
 		global $wpdb;
 		//@todo pop off the top-layer arguments in future. For now assume single layer
 		$data_types = $this->_get_data_types() + $joined_data_types;
-		$glue = ' AND ';
+		$SQL = $this->_construct_condition_clause_recursive($where_params,$data_types, ' AND ');
+		return " WHERE ". $SQL;
+	}
+	
+	private function _construct_having_clause($having_params, $joined_data_types = null){
+		global $wpdb;
+		//@todo pop off the top-layer arguments in future. For now assume single layer
+		$data_types = $this->_get_data_types() + $joined_data_types;
+		$SQL = $this->_construct_condition_clause_recursive($having_params,$data_types, ' AND ');
+		return " HAVING ". $SQL;
+	}
+	
+	/**
+	 * Used for creating nested WHERE conditions. Eg "WHERE ! (Event.ID = 3 OR ( Event_Meta.meta_key = 'bob' AND Event_Meta.meta_value = 'foo'))"
+	 * @param array $where_params see EEM_Experimental_Base::get_all for documentation
+	 * @param array $data_types keys are field names, values are their wpdb data type (eg %s, %d, %f)
+	 * @param string $glue joins each subclause together. Should really only be " AND " or " OR "...
+	 * @return string of SQL
+	 */
+	private function _construct_condition_clause_recursive($where_params,$data_types, $glue = ' AND'){
 		$where_clauses=array();
-		foreach($where_params as $query_param => $op_and_value){
-			//@todo split out model names, and op
-//			$operator = $this->_extract_operator($query_param);
-			$qualified_column_sql = $this->_deduce_table_and_column_name($query_param);
-			$data_type = $data_types[$qualified_column_sql];
-			$op_and_value_sql = $this->_construct_op_and_value($op_and_value, $data_type);
-			$where_clauses[]=$qualified_column_sql.SP.$op_and_value_sql;
+		foreach($where_params as $query_param => $op_and_value_or_sub_condition){
+			if(in_array($query_param,$this->_special_where_param_keys)){
+				//the query param is 'and',  'or', or 'not'
+				switch($query_param){
+					case 'not':
+					case 'NOT':
+						$where_clauses[] = "! (". $this->_construct_condition_clause_recursive($op_and_value_or_sub_condition, $data_types, $glue).")";
+						break;
+					case 'and':
+					case 'AND':
+						$where_clauses[] = " (". $this->_construct_condition_clause_recursive($op_and_value_or_sub_condition, $data_types, ' AND ') .")";
+						break;
+					case 'or':
+					case 'OR':
+						$where_clauses[] = " (". $this->_construct_condition_clause_recursive($op_and_value_or_sub_condition, $data_types, ' OR ') .")";
+						break;
+				}
+			}else{
+				$qualified_column_sql = $this->_deduce_table_and_column_name($query_param);
+				$data_type = $data_types[$qualified_column_sql];
+				$op_and_value_sql = $this->_construct_op_and_value($op_and_value_or_sub_condition, $data_type);
+				$where_clauses[]=$qualified_column_sql.SP.$op_and_value_sql;
+			}
 		}
 		if($where_clauses){
-			$SQL = " WHERE ".implode($glue,$where_clauses);
+			$SQL = implode($glue,$where_clauses);
 		}else{
 			$SQL = '';
 		}
@@ -753,6 +845,9 @@ abstract class EEM_Experimental_Base{
 	function get_related_model_obj($model_name){
 		
 		$model_classname = "EEM_Exp_".$model_name;
+		if(!class_exists($model_classname)){
+			throw new EE_Error(sprintf(__("You specified a related model named %s in your query. No such model exists, if it did, it would have the classname %s",'event_espresso'),$model_name,$model_classname));
+		}
 		$model_obj = call_user_func($model_classname."::instance");
 		return $model_obj;
 	}
@@ -1930,6 +2025,49 @@ class EE_Model_Query_Info_Carrier extends EE_Base{
     * @var string 
     */
    private $_main_join_sql;
+   
+   
+   private $_limit_sql;
+   
+   private $_order_sql;
+   
+   private $_order_by_sql;
+   
+   private $_having_sql;
+   
+   private $_group_by_sql;
+   
+   function set_limit_sql($limit_sql){
+	   $this->_limit_sql = $limit_sql;
+	}
+	
+	function set_order_sql($order_sql){
+		$this->_order_sql = $order_sql;
+	}
+	function set_order_by_sql($order_by_sql){
+		$this->_order_by_sql = $order_by_sql;
+	}
+	function set_group_by_sql($group_by_sql){
+		$this->_group_by_sql = $group_by_sql;
+	}
+	function set_having_sql($having_sql){
+		$this->_having_sql = $having_sql;
+	}
+	function get_limit_sql(){
+		return $this->_limit_sql;
+	}
+	function get_order_sql(){
+		return $this->_order_sql;
+	}
+	function get_order_by_sql(){
+		return $this->_order_by_sql;
+	}
+	function get_group_by_sql(){
+		return $this->_group_by_sql;
+	}
+	function get_having_sql(){
+		return $this->_having_sql;
+	}
    /**
     * 
     * @param type $model_included_name
