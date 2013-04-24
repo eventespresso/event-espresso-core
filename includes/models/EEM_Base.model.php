@@ -1,6 +1,7 @@
 <?php
 
-require_once('EE_Base.php');/*
+//require_once('EE_Base.php');
+/*
  * Experimental new multi-table model. Especially handles joins when querying.
  */
 define('SP',' ');
@@ -8,8 +9,9 @@ define('SP',' ');
 $field_files = glob(dirname(__FILE__) . '/fields/*.php');
 $helper_files = glob(dirname(__FILE__) . '/helpers/*.php');
 $relation_files = glob(dirname(__FILE__) . '/relations/*.php');
-$files = $field_files + $helper_files + $relation_files;
-foreach ($files as $file) {
+$files =  array_merge( array_merge($field_files, $relation_files), $helper_files) ;
+
+foreach ($files as $file){
     require_once($file);   
 }
 abstract class EEM_Base extends EE_Base{
@@ -154,24 +156,20 @@ abstract class EEM_Base extends EE_Base{
 //	 * @param type $limit
 //	 * @param type $output
 //	 */
-//	protected function select_all ( $orderby=FALSE, $sort=FALSE, $limit = FALSE, $output='OBJECT_K' ) {
-//		return select_all_where(false,false,$sort,false,$limit,$output);
-//	}
-//	protected function select_all_where ( $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $limit = FALSE, $output = 'OBJECT_K' ) {
-//		$query_params 
-//	}
-//	protected function select_row_where ( $where_cols_n_values=FALSE, $operator = '=', $output = 'OBJECT' ) {
-//		
-//	}
-//	protected function select_value_where ( $select=FALSE, $where_cols_n_values=FALSE, $operator = '=' ) {
-//		
-//	}
-//	protected function get_key_value_array ( $key=FALSE, $value=FALSE, $orderby = FALSE, $sort = 'ASC', $output = 'ARRAY_A' ) {
-//		
-//	}
-//	protected function get_key_value_array_where( $key=FALSE, $value=FALSE, $where_cols_n_values=FALSE, $orderby=FALSE, $sort='ASC', $operator='=' ) {
-//		
-//	}
+	protected function select_all ( $orderby=FALSE, $sort=FALSE, $limit = FALSE, $output='OBJECT_K' ) {
+		//return select_all_where(false,false,$sort,false,$limit,$output);
+		throw new EE_Error(__FUNCTION__." is not implemented");
+	}
+	protected function select_all_where ( $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $limit = FALSE, $output = 'OBJECT_K' ) {	
+		throw new EE_Error(__FUNCTION__." is not implemented");
+		
+	}
+	protected function select_row_where ( $where_cols_n_values=FALSE, $operator = '=', $output = 'OBJECT' ) {
+		throw new EE_Error(__FUNCTION__." is not implemented");
+	}
+	protected function select_value_where ( $select=FALSE, $where_cols_n_values=FALSE, $operator = '=' ) {
+		throw new EE_Error(__FUNCTION__." is not implemented");
+	}
 	
 	/**
 	 * Gets a single item for this model from the DB, given only its ID (or null if none is found).
