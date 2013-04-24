@@ -1885,9 +1885,9 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$limit = array( $offset, $per_page );
 
 		if ( $trash )
-			$all_attendees = $count ? $ATT_MDL->get_all_trashed_attendees( $orderby, $sort, $limit, 'COUNT' ) : $ATT_MDL->get_all_trashed_attendees( $orderby, $sort, $limit );
+			$all_attendees = $count ? $ATT_MDL->count_deleted( array('order_by'=>$orderby,'order'=>$sort,'limit'=>$limit)): $ATT_MDL->get_all_deleted( array('order_by'=>$orderby,'order'=>$sort,'limit'=>$limit));
 		else
-			$all_attendees = $count ? $ATT_MDL->get_all_inuse_attendees( $orderby, $sort, $limit, 'COUNT' ) : $ATT_MDL->get_all_inuse_attendees( $orderby, $sort, $limit );
+			$all_attendees = $count ? $ATT_MDL->count( array('order_by'=>$orderby,'order'=>$sort,'limit'=>$limit)) : $ATT_MDL->get_all( array('order_by'=>$orderby,'order'=>$sort,'limit'=>$limit) );
 
 		return $all_attendees;
 	}
@@ -2022,7 +2022,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 		if ( $ATT_ID ) {
 		
-			$attendee = $ATT_MDL->get_attendee_by_ID( $ATT_ID );
+			$attendee = $ATT_MDL->get_one_by_ID( $ATT_ID );
 			$action = 'update_attendee';
 			
 		} else {
@@ -2204,7 +2204,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
 			// cycle thru bulk action checkboxes
 			while ( list( $ATT_ID, $value ) = each( $this->_req_data['checkbox'] )) {
-				if ( ! $ATT_MDL->delete_attendee_by_ID( absint( $ATT_ID ))) {
+				if ( ! $ATT_MDL->delete_by_ID( absint( $ATT_ID ))) {
 					$success = 0;
 				}
 			}
@@ -2212,7 +2212,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		} else {
 			// grab single id and delete
 			$ATT_ID = absint( $this->_req_data['id'] );
-			if ( ! $ATT_MDL->delete_attendee_by_ID( $ATT_ID )) {
+			if ( ! $ATT_MDL->delete_by_ID( $ATT_ID )) {
 				$success = 0;
 			}
 			

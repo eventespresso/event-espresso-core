@@ -65,35 +65,6 @@ class EEM_Answer extends EEM_Base {
 		
 		parent::__construct();
 	}
-
-
-	/**
-	*		delete  a single answer from db via their ID
-	* 
-	* 		@access		public
-	* 		@param		$ANS_ID		
-	*		@return 		mixed		array on success, FALSE on fail
-	*/	
-	public function delete_by_ID( $ANS_ID = FALSE ) {
-
-		if ( ! $ANS_ID ) {
-			return FALSE;
-		}
-				
-		// retreive a particular transaction
-		$where_cols_n_values = array( 'ANS_ID' => $ANS_ID );
-		if ( $answer = $this->delete ( $where_cols_n_values )) {
-			return TRUE;
-		} else {
-			return FALSE;
-		}
-
-	}
-	
-
-
-
-
 }
 // End of file EEM_Answer.model.php
 // Location: /includes/models/EEM_Answer.model.php

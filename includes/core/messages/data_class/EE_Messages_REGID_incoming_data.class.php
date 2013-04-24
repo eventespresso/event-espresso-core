@@ -139,7 +139,7 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 			if ( !empty( $this->reg_objs ) ) {
 				foreach ( $this->reg_objs as $reg ) {
 					$this->_attendees[$att_count]['line_ref'][] = $line_item;
-					$this->_attendees[$att_count]['att_obj'] = $this->_EEM_att->get_attendee_by_ID( $reg->attendee_ID() );
+					$this->_attendees[$att_count]['att_obj'] = $this->_EEM_att->get_one_by_ID( $reg->attendee_ID() );
 					$this->_attendees[$att_count]['reg_objs'][$events[$key]->id] = $reg;
 					$att_count++;
 				}

@@ -289,6 +289,19 @@ abstract class EEM_Base extends EE_Base{
 		//$wpdb->print_error();
 		return $rows_deleted;//how many supposedly got updated
 	}
+	
+	/**
+	 * Deletes a single row from the DB given the model object's primary key value. (eg, EE_Attendee->ID()'s value).
+	 * Wrapper for EEM_Base::delete()
+	 * @param mixed $id
+	 * @return boolean whether the row got deleted or not
+	 */
+	function delete_by_ID($id){
+		$query_params = array();
+		$query_params[0] = array($this->get_primary_key_field()->get_name() => $id);
+		$query_params['limit'] = 1;
+		return $this->delete($query_params);
+	}
 	/**
 	 * Count all the rows that match criteria expressed in $query_params (an array just like arg to EEMerimental_Base::get_all).
 	 * If $field_to_count isn't provided, the model's primary key is used. Otherwise, we count by field_to_count's column
@@ -566,7 +579,7 @@ abstract class EEM_Base extends EE_Base{
 			$query_object = $this->_extract_related_models_from_query(array());
 		}
 		//set limit
-		if(array_key_exists('limit',$query_params)){
+		if(array_key_exists('limit',$query_params) && $query_params['limit']){
 			if(is_array($query_params['limit'])){
 				//they passed us an array for the limit. Assume it's like array(50,25), meaning offset by 50, and get 25
 				$query_object->set_limit_sql(" LIMIT ".$query_params['limit'][0].",".$query_params['limit'][1]);
@@ -575,7 +588,7 @@ abstract class EEM_Base extends EE_Base{
 			}
 		}
 		//set order by
-		if(array_key_exists('order_by',$query_params)){
+		if(array_key_exists('order_by',$query_params) && $query_params['order_by']){
 			if(is_array($query_params['order_by'])){
 				//assume it's an array of fields to order by
 				$order_array = array();
@@ -589,7 +602,7 @@ abstract class EEM_Base extends EE_Base{
 			}
 		}
 		//set order
-		if(array_key_exists('order',$query_params)){	
+		if(array_key_exists('order',$query_params) && $query_params['order']){	
 			if(in_array($query_params['order'],$this->_allowed_order_values)){
 				$query_object->set_order_sql(" ".$query_params['order']);
 			}else{
@@ -597,7 +610,7 @@ abstract class EEM_Base extends EE_Base{
 			}
 		}
 		//set group by
-		if(array_key_exists('group_by',$query_params)){
+		if(array_key_exists('group_by',$query_params) && $query_params['group_by']){
 			if(is_array($query_params['group_by'])){
 				//it's an array, so assume we'll be grouping by a bunch of stuff
 				$group_by_array = array();
@@ -611,8 +624,8 @@ abstract class EEM_Base extends EE_Base{
 			}
 		}
 		//set having
-		if(array_key_exists('having',$query_params)){
-			
+		if(array_key_exists('having',$query_params) && $query_params['having']){
+			throw new EE_Error("Having clause is not yet supported. It should be an easy add though");
 		}
 		$query_object->set_main_model_join_sql($this->_construct_internal_join());
 		return $query_object;
@@ -931,16 +944,31 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * gets the name of the field of type 'primary_key' from the fieldsSettings attribute.
 	 * Eg, on EE_Anwer that would be ANS_ID
-	 * @return EE_Model_Field
+	 * @return EE_Model_Field_Base
 	 * @throws EE_Error
 	 */
 	public function get_primary_key_field(){
+		$field = $this->get_a_field_of_type('EE_Primary_Key_Field');
+		if(!$field){
+			throw new EE_Error(sprintf(__("There is no Primary Key defined on model %s",'event_espresso'),get_class($this)));
+		}else{
+			return $field;
+		}
+	}
+	
+	/**
+	 * Finds the first field of type $field_class_name.
+	 * @param string $field_class_name class name of field that you want to find. Eg, EE_Datetime_Field, EE_Foreign_Key_Field, etc
+	 * @return EE_Model_Field_Base or null if none is found
+	 */
+	public function get_a_field_of_type($field_class_name){
 		foreach($this->field_settings() as $field){
-			if($field instanceof EE_Primary_Key_Field){
+			if(is_a($field,  $field_class_name)){
 				return $field;
 			}
 		}
-		throw new EE_Error(sprintf(__("There is no Primary Key defined on model %s",'event_espresso'),get_class($this)));
+		return null;
+		
 	}
 	/**
 	 * Gets a foreign key field pointing to model. 

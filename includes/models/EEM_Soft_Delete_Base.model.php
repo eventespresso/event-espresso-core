@@ -30,7 +30,12 @@ class EEM_Soft_Delete_Base extends EEM_Base{
 	 * @throws EE_Error
 	 */
 	public function deleted_field_name(){
-		return $this->_get_field_of_types(array('deleted_flag'));
+		$field = $this->get_a_field_of_type('EE_Trashed_Flag_Field');
+		if($field){
+			return $field->get_name();
+		}else{
+			throw new EE_Error(sprintf(__('We are trying to find the deleted flag field on %s, but none was found. Are you sure there is a field of type EE_Trashed_Flag_Field in %s constructor?','event_espresso'),get_class($this),get_class($this)));
+		}
 	}
 	
 	/**
@@ -39,92 +44,111 @@ class EEM_Soft_Delete_Base extends EEM_Base{
 	 * For 'soft deletable' models, gets all whicha re not yet deleted.
 	 * NOTE get_all() calls get_all_where(), so get_all() is also filtered to only return undeleted model objects.
 	 * If you want all deleted and undeleted model objects, call get_all_deleted_and_undeleted()
-	 * @param array $where_cols_n_values keys are column names, values are column values
-	 * @param string $orderby name of a column
-	 * @param string $sort 'ASC' or 'DESC'
-	 * @param mixed $operators string for a single operator, or an array of operators
-	 * @param string $limit
-	 * @return mixed EE_Base_Class is output='OBJECT_K', int is output='count'
-	 */
-	public function get_all_where($where_cols_n_values,$orderby=null,$sort='ASC',$operators='=',$limit=null,$output='OBJECT_K'){
+	 * @param array $query_params like EEM_Base::get_all
+	 * @return EE_Base_Class
+	 */	
+	public function get_all($query_params = array()){
 		$deletedFlagFieldName=$this->deleted_field_name();
-		$where_cols_n_values[$deletedFlagFieldName]=false;
-		return parent::get_all_where($where_cols_n_values,$orderby,$sort,$operators,$limit,$output);
+		$query_params[0][$deletedFlagFieldName]=false;
+		return parent::get_all($query_params);
 	}
 	
-	public function get_all($orderby=null,$sort='ASC',$limit=null,$output='OBJECT_K'){
-		return $this->get_all_where(array(),$orderby,$sort,'=',$limit,$output);
+	/**
+	 * Count all the undeleted items.
+	 * @param array $query_params like EEM_Base::get_all
+	 * @param string $field_to_count
+	 * @return int
+	 */
+	public function count($query_params = null, $field_to_count = null){
+		$deletedFlagFieldName=$this->deleted_field_name();
+		$query_params[0][$deletedFlagFieldName]=false;
+		return parent::count($query_params, $field_to_count);
+	}
+	/**
+	 * Counts all the deleted/trashed items
+	 * @param array $query_params like EEM_Base::get_all
+	 * @param string $field_to_count
+	 * @return int
+	 */
+	public function count_deleted($query_params = null, $field_to_count = null){
+		$deletedFlagFieldName=$this->deleted_field_name();
+		$query_params[0][$deletedFlagFieldName]=true;
+		return parent::count($query_params, $field_to_count);
+	}
+	
+	/**
+	 * Counts all deleeted and undeleted items
+	 * @param array $query_params like EEM_Base::get_all
+	 * @param string $field_to_count
+	 * @return int
+	 */
+	public function count_deleted_and_undeleted($query_params = null, $field_to_count = null){
+		return parent::count($query_params,$field_to_count);
+	}
+	
+	
+	/**
+	 * Sum all the undeleted items.
+	 * @param array $query_params like EEM_Base::get_all
+	 * @param string $field_to_sum
+	 * @return int
+	 */
+	public function sum($query_params = null, $field_to_sum = null){
+		$deletedFlagFieldName=$this->deleted_field_name();
+		$query_params[0][$deletedFlagFieldName]=false;
+		return parent::sum($query_params, $field_to_sum);
+	}
+	
+	
+	/**
+	 * Sum all the deleted items.
+	 * @param array $query_params like EEM_Base::get_all
+	 * @param string $field_to_sum
+	 * @return int
+	 */
+	public function sum_deleted($query_params = null, $field_to_sum = null){
+		$deletedFlagFieldName=$this->deleted_field_name();
+		$query_params[0][$deletedFlagFieldName]=true;
+		return parent::sum($query_params, $field_to_sum);
+	}
+	
+	/**
+	 * Sums all the deleted and undeleted items.
+	 * @param array $query_params lik eEEM_Base::get_all
+	 * @param string $field_to_sum
+	 * @reutrn int
+	 */
+	public function sum_deleted_and_undeleted($query_params = null, $field_to_sum = null){
+		parent::sum($query_params, $field_to_sum);
 	}
 	/**
 	 * Gets all deleted and undeleted mode objects from teh db taht meet the criteria.
-	 * @param array $where_cols_n_values keys are column names, values are column values
-	 * @param string $orderby name of a column
-	 * @param string $sort 'ASC' or 'DESC'
-	 * @param mixed $operators string for a single operator, or an array of operators
-	 * @param string $limit
-	 * @return mixed EE_Base_Class is output='OBJECT_K', int is output='count'
+	 * @param array $query_params like EEM_Base::get_all
+	 * @return EE_Base_Class
 	 */
-	public function get_all_where_deleted_and_undeleted($where_cols_n_values,$orderby=null,$sort='ASC',$operators='',$limit=null,$output='OBJECT_K'){
-		return parent::get_all_where($where_cols_n_values,$orderby,$sort,$operators,$limit,$output);
-	}
-	
-	/**
-	*		retreive  ALL objects of this model from db, regardless of whether they've been deletd or not
-	* 
-	* 		@access		public
-	*		@return mixed EE_Base_Class is output='OBJECT_K', int is output='count'
-	*/	
-	public function get_all_deleted_and_undeleted( $orderby = null, $order = 'ASC',$limit=array(0,10),$output='OBJECT_K' ) {
-		return $this->get_all_where_deleted_and_undeleted ( 
-				array(),
-				$orderby, 
-				$order, 
-				'=', 
-				$limit,
-				$output
-			);
+	public function get_all_deleted_and_undeleted($query_params = array()){
+		return parent::get_all($query_params);
 	}
 	
 	/**
 	 * For 'soft deletable' models, gets all which ARE deleted, according to some conditions.
-	 * @param array $where_cols_n_values keys are column names, values are column values
-	 * @param string $orderby name of a column
-	 * @param string $sort 'ASC' or 'DESC'
-	 * @param mixed $operators string for a single operator, or an array of operators
-	 * @param string $limit
-	 * @return mixed EE_Base_Class is output='OBJECT_K', int is output='count'
+	 * @param array $query_params like EEM_Base::get_all
+	 * @return EE_Base_Class
 	 */
-	public function get_all_where_deleted($where_cols_n_values,$orderby=null,$sort='ASC',$operators='=',$limit=null,$output='OBJECT_K'){
+	public function get_all_deleted($query_params = array()){
 		$deletedFlagFieldName=$this->deleted_field_name();
-		$where_cols_n_values[$deletedFlagFieldName]=true;	
-		return parent::get_all_where($where_cols_n_values,$orderby,$sort,$operators,$limit,$output);
+		$query_params[0][$deletedFlagFieldName]=true;
+		return parent::get_all($query_params);
 	}
 	
-	/**
-	 * 
-	 * For 'soft deletable' models, gets all which ARE deleted.
-	 * @param array $where_cols_n_values keys are column names, values are column values
-	 * @param string $orderby name of a column
-	 * @param string $sort 'ASC' or 'DESC'
-	 * @param mixed $operators string for a single operator, or an array of operators
-	 * @param string $limit
-	 * @return mixed EE_Base_Class is output='OBJECT_K', int is output='count'
-	 */
-	public function get_all_deleted($orderby=null,$sort='asc',$limit=null,$output='OBJECT_K'){
-		return get_all_where_deleted(array(),$orderby,$sort,'=',$limit,$output);
-	}
 	
 	/**
 	 * Permanently deletes teh selected rows
-	 * @param array $where_cols_n_values
-	 * @param mixed $operator
+	 * @param array $query_params like EEM_Base::get_all
 	 * @return boolean success
 	 */
-	public function delete_permanently($where_cols_n_values=FALSE,$operator='='){
-		if(empty($where_cols_n_values)){
-			return FALSE;
-		}
-		return parent::delete($where_cols_n_values,$operator);
+	public function delete_permanently($query_params = array()){
+		return parent::delete($query_params);
 	}
 	
 	/**
@@ -136,9 +160,7 @@ class EEM_Soft_Delete_Base extends EEM_Base{
 		if ( ! $ID ) {
 			return FALSE;
 		}
-		$primaryKeyName=$this->primary_key_name();
-		$where_cols_n_values = array( $primaryKeyName => $ID );
-		return $this->delete_permanently($where_cols_n_values,'=');
+		return parent::delete_by_ID($ID);
 	}
 	
 	/**
@@ -169,8 +191,9 @@ class EEM_Soft_Delete_Base extends EEM_Base{
 		}
 		$primaryKeyName=$this->primary_key_name();
 		// retreive a particular transaction
-		$where_cols_n_values = array( $primaryKeyName => $ID );
-		if ( $this->delete_or_restore ($delete, $where_cols_n_values )) {
+		$query_params = array();
+		$query_params[0] = array( $primaryKeyName => $ID );
+		if ( $this->delete_or_restore ($delete, $query_params )) {
 			return TRUE;
 		} else {
 			return FALSE;
@@ -179,41 +202,36 @@ class EEM_Soft_Delete_Base extends EEM_Base{
 	/**
 	 * Overrides parent's 'delete' method to instead do a soft delete on all rows that 
 	 * meet the criteria in $where_col_n_values
-	 * @param array $where_col_n_values
-	 * @param mixed $operator string or array of strings
+	 * @param array $query_params like EEM_Base::get_all
 	 * @return boolean success
 	 */
-	public function delete($where_cols_n_values=FALSE,$operator='='){
-		return $this->delete_or_restore(true, $where_cols_n_values, $operator);
+	public function delete($query_params = array()){
+		return $this->delete_or_restore(true, $query_params);
 	}
 	
 	/**
 	 * 'Undeletes' the chosen items.
-	 * @param array $where_cols_n_values
-	 * @param mixed $operator string or array of strings
+	 * @param array $query_params like EEM_Base::get_all
 	 * @return type
 	 */
-	public function restore($where_cols_n_values=FALSE,$operator='='){
-		return $this->delete_or_restore(false, $where_cols_n_values, $operator);
+	public function restore($query_params = array()){
+		return $this->delete_or_restore(false, $query_params);
 	}
 	/**
 	 * Performs deletes or restores on items.
 	 * @param boolean $delete true to indicate deletion, false to indicate restoration
-	 * @param array $where_cols_n_values
-	 * @param mixed $operator string or array of strings
+	 * @param array $query_params like EEM_Base::get_all
 	 * @return boolean success
 	 */
-	function delete_or_restore($delete=true,$where_cols_n_values=FALSE,$operator='='){
-		if ( ! $where_cols_n_values ) {
+	function delete_or_restore($delete=true,$query_params = array()){
+		if ( ! $query_params ) {
 			return FALSE;
 		}
 		$deletedFlagFieldName=$this->deleted_field_name();
-		if ( $this->update (array($deletedFlagFieldName=>$delete), $where_cols_n_values )) {
+		if ( $this->update (array($deletedFlagFieldName=>$delete), $query_params )) {
 			return TRUE;
 		} else {
 			return FALSE;
 		}
 	}
 }
-
-?>
