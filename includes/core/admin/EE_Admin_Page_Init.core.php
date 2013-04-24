@@ -50,6 +50,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 	//for caf
 	protected $_files_hooked;
+	protected $_hook_paths;
 
 	//load_page?
 	private $_load_page;
@@ -162,7 +163,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		$this->_file_name = $this->_folder_name = $this->_wp_page_slug = $this->capability = NULL;
 		$this->show_on_menu = $this->_routing = TRUE;
 		$this->_load_page = FALSE;
-		$this->_files_hooked = array();
+		$this->_files_hooked = $this->_hook_paths = array();
 	}
 
 
@@ -266,18 +267,21 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		//if this is an extended check (i.e. caf is active) then we will scan the caffeinated/extend directory first and any hook files that are found will be have their reference added to the $_files_hook array property.  Then, we make sure that when we loop through the core decaf directories to find hook files that we skip over any hooks files that have already been set by caf.
 		if ( $extend ) {
 			$hook_files_glob_path = apply_filters('filter_hook_espresso_admin_hook_files_glob_path', EE_CORE_CAF_ADMIN_EXTEND . $this->_folder_name . DS . '*' . $this->_file_name . '_Hooks_Extend.class.php' );
-			$this->_register_hook_files( $hook_files_glob_path, $extend );
+			$this->_hook_paths = $this->_register_hook_files( $hook_files_glob_path, $extend );
 		}
 
 		//loop through decaf folders
 		$hook_files_glob_path = apply_filters('filter_hook_espresso_admin_hook_files_glob_path', $this->_folder_path . '*' . $this->_file_name . '_Hooks.class.php' );
-		$this->_register_hook_files( $hook_files_glob_path );
+		$this->_hook_paths = array_merge( $this->_register_hook_files( $hook_files_glob_path ), $this->_hook_paths );  //making sure any extended hook paths are later in the array than the core hook paths!
+
+		return $this->_hook_paths;
 		
 	}
 
 
 
 	protected function _register_hook_files( $hook_files_glob_path, $extend = FALSE ) {
+		$hook_paths = array();
 		if ( $hook_files = glob( $hook_files_glob_path ) ) {
 			foreach ( $hook_files as $file ) {
 				//lets get the linked admin.
@@ -285,15 +289,20 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 				$replace = $extend ? '_' . $this->_file_name . '_Hooks_Extend.class.php' : '_' . $this->_file_name . '_Hooks.class.php';
 				$rel_admin = str_replace( $replace, '', $hook_file);
 				$rel_admin = strtolower($rel_admin);
+				$hook_paths[] = $file;
+				
 				//make sure we haven't already got a hook setup for this page path
 				if ( in_array( $rel_admin, $this->_files_hooked ) )
 					continue;
+				
 				$this->hook_file = $hook_file;
 				$rel_admin_hook = 'filter_hook_espresso_do_other_page_hooks_' . $rel_admin;
 				$filter = add_filter( $rel_admin_hook, array($this, 'load_admin_hook') );
 				$this->_files_hooked[] = $rel_admin;
 			}
 		} 
+
+		return $hook_paths;
 
 	}
 
@@ -316,6 +325,9 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		if ( (!isset( $_REQUEST['page'] ) || $_REQUEST['page'] != $this->menu_slug) && $this->_routing )
 			return; //not on the right page so let's get out.
 		$this->_load_page = TRUE;
+
+		//let's set page specific autoloaders.  Note that this just sets autoloaders for THIS set of admin pages.
+		spl_autoload_register(array( $this, 'set_autoloaders') );
 
 		//we don't need to do a page_request check here because it's only called via WP menu system.
 		$admin_page = $this->_file_name . '_Admin_Page';
@@ -348,6 +360,16 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	}
 
 
+
+
+
+	public function set_autoloaders( $className ) {
+		$dir_ref = array(
+			$this->_folder_path => array('core','class')
+			);
+		require_once( 'EE_Autoloader.helper.php' );
+		EE_Autoloader::try_autoload($dir_ref, $className );
+	}
 
 
 

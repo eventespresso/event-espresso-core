@@ -19,6 +19,7 @@ function espresso_define_tables_and_paths() {
 		dirname( espresso_main_file() ) . DS . 'includes' . DS . 'classes' . DS . PS .
 		dirname( espresso_main_file() ) . DS . 'includes' . DS . 'functions' . DS . PS .
 		dirname( espresso_main_file() ) . DS . 'gateways' . DS . PS .
+		dirname( espresso_main_file() ) . DS . 'helpers' . DS . PS .
 		get_include_path()
 	);
 
@@ -103,7 +104,6 @@ function espresso_autoload() {
 	spl_autoload_register('espresso_libraries_autoload');
 	spl_autoload_register('espresso_classes_autoload');
 	spl_autoload_register('espresso_classes_core_autoload');	
-	spl_autoload_register('espresso_core_admin_autoload');
 }
 
 function espresso_models_autoload($className) {
@@ -184,45 +184,7 @@ function espresso_classes_core_autoload($className) {
 	}
 }
 
-function espresso_core_admin_autoload($className) {
-	//let's setup an array of paths to check (for each subsystem)
-	$root = dirname(espresso_main_file()) . '/includes/core/admin/';
-	
-	//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
-	$dir_ref = array(
-		'root' => array('core', 'class', 'controller'),
-		'attendees/' => array('core', 'class'),
-		'events/' => array('core','class'),
-		'event_categories/' => array('core','class'),
-		'registration_form/' => array('core', 'class'),
-		'general_settings/' => array('core','class'),
-		'messages/' => array('core', 'class'),
-		'payments/' => array('core', 'class'),
-		'pricing/' => array('core', 'class'),
-		'registrations/' => array('core','class'),
-		'support/' => array('core', 'class'),
-		'transactions/' => array('core', 'class'),
-		'venues/' => array('core', 'class'),
-		'books/' => array('core', 'class'),
-		);
 
-	//assemble a list of filenames
-	foreach ( $dir_ref as $dir => $types ) {
-		if ( is_array($types) ) {
-			foreach ( $types as $type) {
-				$filenames[] = ( $dir == 'root' ) ? $root . $className . '.' . $type . '.php' : $root . $dir . $className . '.' . $type . '.php';
-			}
-		} else {
-			$filenames[] = ( $dir == 'root' ) ? $root . $className . '.' . $types . '.php' : $root . $dir . $className . '.' . $types . '.php';
-		}
-	}
-
-	//now loop through assembled filenames and require as available
-	foreach ( $filenames as $filename ) {
-		if ( is_readable($filename) )
-			require_once( $filename );
-	}
-}
 
 function espresso_display_exception( $excptn ) {
 	echo '

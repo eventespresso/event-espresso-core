@@ -38,6 +38,14 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 
 
+	/**
+	 * this is just a flag set automatically to indicate whether we've got an extended hook class running (i.e. espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Registration_Form_Hooks).  This flag is used later to make sure we require the needed files.
+	 * @var bool
+	 */
+	protected $_extend;
+
+
+
 
 	/**
 	 * child classes MUST set this property so that the page object can be loaded correctly	
@@ -280,6 +288,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		$this->_current_route = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : 'default';
 		$this->_req_data = array_merge($_GET, $_POST);
 		$this->caller = get_class($this);
+		$this->_extend = stripos($this->caller, 'Extend') ? TRUE : FALSE;
 	}
 
 
@@ -301,6 +310,20 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 		$ref = str_replace('_' , ' ', $this->_name); //take the_message -> the message
 		$ref = str_replace(' ', '_', ucwords($ref) ) . '_Admin_Page'; //take the message -> The_Message
+
+		//first default file (if exists)
+		$decaf_file = EE_CORE_ADMIN . $this->_name . DS . $ref . '.core.php';
+		if ( is_readable( $decaf_file ) )
+		require_once( $decaf_file );
+
+		//now we have to do require for extended file (if needed)
+		if ( $this->_extend ) {
+			require_once( EE_CORE_CAF_ADMIN_EXTEND . $this->_name . DS . 'Extend_' . $ref . '.core.php' );
+		}
+		
+
+		//if we've got an extended class we use that!
+		$ref = $this->_extend ? 'Extend_' . $ref : $ref;
 
 		//let's make sure the class exists
 		if ( !class_exists( $ref ) ) {

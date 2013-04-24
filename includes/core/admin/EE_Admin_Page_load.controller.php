@@ -114,8 +114,12 @@ class EE_Admin_Page_load {
 		$this->_set_menu_groups();
 
 
+		//let's set default autoloaders.  Note that this just sets autoloaders for root admin files.
+		spl_autoload_register( array( $this, 'init_autoloaders') );
+
 		//let's do a scan and see what installed pages we have
 		$this->_get_installed_pages();
+
 
 		//set menus (has to be done on every load - we're not actually loading the page just setting the menus and where they point to).
 		add_action('admin_menu', array($this, 'set_menus') );
@@ -243,6 +247,7 @@ class EE_Admin_Page_load {
 
 
 		//loop through admin pages and setup the $_installed_pages array.
+		$hooks_ref = array();
 		foreach ( $installed_refs as $page ) {
 			$this->_installed_pages[$page] = $this->_load_admin_page( $page );
 
@@ -265,9 +270,18 @@ class EE_Admin_Page_load {
 			}
 
 			//let's do the registered hooks
-			$this->_installed_pages[$page]->register_hooks( $extend );
+			$extended_hooks = $this->_installed_pages[$page]->register_hooks( $extend );
+			$hooks_ref = array_merge($hooks_ref, $extended_hooks);
 		}
 
+		//the hooks_ref is all the pages where we have $extended _Hooks files that will extend a class in a different folder.  So we want to make sure we load the file for the parent.
+		//first make sure we've got unique values
+		$hooks_ref = array_unique( $hooks_ref );
+
+		//now let's loop and require!
+		foreach ( $hooks_ref as $path ) {
+			require_once( $path );
+		}
 
 		//we need to loop again to run any early code
 		foreach ( $installed_refs as $page ) {
@@ -288,10 +302,11 @@ class EE_Admin_Page_load {
 	 * @return object|bool  return page object if valid, bool false if not.
 	 */
 	private function _load_admin_page( $page ) {
-		$page = str_replace('_', ' ', strtolower( $page ) );
-		$class_name = str_replace(' ', '_', ucwords($page) ) . '_Admin_Page_Init';
+		$classpage = str_replace('_', ' ', strtolower( $page ) );
+		$class_name = str_replace(' ', '_', ucwords($classpage) ) . '_Admin_Page_Init';
 		//echo '<h4>$class_name : ' . $class_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
- 
+ 		require_once( 'EE_Autoloader.helper.php' );
+ 		EE_Autoloader::load_admin_core($page, $class_name);
 		if ( !class_exists($class_name )) {
 			$error_msg[] = sprintf( __('Something went wrong with loading the %s admin page.', 'event_espresso' ), $page);
 			$error_msg[] = $error_msg[0] . "\r\n" . sprintf( __( 'There is no Init class in place for the %s admin page.', 'event_espresso') . '<br />' . __( 'Make sure you have <strong>%s</strong> defined. If this is a non-EE-core admin page then you also must have an autoloader in place for your class', 'event_espresso'), $page, $class_name );
@@ -509,6 +524,20 @@ class EE_Admin_Page_load {
 
 
 
+	/**
+	 * Initial autoloader registration
+	 * This just sets up the autoloader for the root admin files
+	 * @param  string $className incoming classname to check for autoload
+	 * @return void
+	 */
+	public function init_autoloaders( $className ) {
+		$root = EE_CORE_ADMIN;
+		$dir_ref = array(
+			$root => array('core', 'controller', 'class')
+			);
+		require_once( 'EE_Autoloader.helper.php' );
+		EE_Autoloader::try_autoload($dir_ref, $className );
+	}
 
 
 
@@ -528,25 +557,11 @@ class EE_Admin_Page_load {
 
 		$dir_ref = array();
 		foreach ( $this->_caf_autoloader as $pathinfo) {
-			$dir_ref[$pathinfo['dir'] . DS . $pathinfo['folder'] . DS] = array('core', 'class');
+			$dir_ref[$root . $pathinfo['dir'] . DS . $pathinfo['folder'] . DS] = array('core', 'class');
 		}
 
-		//assemble a list of filenames
-		foreach ( $dir_ref as $dir => $types ) {
-			if ( is_array($types) ) {
-				foreach ( $types as $type) {
-					$filenames[] = ( $dir == 'root' ) ? $root . $className . '.' . $type . '.php' : $root . $dir . $className . '.' . $type . '.php';
-				}
-			} else {
-				$filenames[] = ( $dir == 'root' ) ? $root . $className . '.' . $types . '.php' : $root . $dir . $className . '.' . $types . '.php';
-			}
-		}
-
-		//now loop through assembled filenames and require as available
-		foreach ( $filenames as $filename ) {
-			if ( is_readable($filename) )
-				require_once( $filename );
-		}
+		require_once( 'EE_Autoloader.helper.php' );
+		EE_Autoloader::try_autoload($dir_ref, $className );
 	}
 
 
