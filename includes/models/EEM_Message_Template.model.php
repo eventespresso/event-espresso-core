@@ -33,16 +33,16 @@ class EEM_Message_Template extends EEM_Base {
 	private static $_instance = NULL;
 
 	/**
-	 * 		This funtion is a singleton method used to instantiate the EEM_Attendee object
+	 * 		This function is a singleton method used to instantiate the EEM_Message_Template object
 	 *
 	 * 		@access public
-	 * 		@return EEM_Price instance
+	 * 		@return EEM_Message_Template instance
 	 */
 	public static function instance() {
 
-		// check if instance of EEM_Price already exists
+		// check if instance of EEM_Message_Template already exists
 		if (self::$_instance === NULL) {
-			// instantiate Price_model
+			// instantiate Message Template Model
 			self::$_instance = new self();
 		}
 		// EEM_Price object
@@ -79,15 +79,15 @@ class EEM_Message_Template extends EEM_Base {
 //				'MTP_is_active' => '%d'
 //		);
 		$this->_tables = array(
-			'Message_Template'=> new EE_Primary_Table('esp_message_template', 'ATT_ID')
+			'Message_Template'=> new EE_Primary_Table('esp_message_template', 'MTP_ID' )
 		);
 		$this->_fields = array(
-			'Message_Template'=>array(
-				'MTP_ID'=>new EE_Primary_Key_Int_Field('MTP_ID', 'Message Type ID', false, 0),
-				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID','Event ID',false,0,'Event'),
-				'GRP_ID'=>new EE_Integer_Field('GRP_ID', 'Group ID? No idea', false, 1),
-				'MTP_user_id'=>new EE_Integer_Field('MTP_user_id', 'User ID of Message Type', false, 1),
-				'MTP_messenger'=>new EE_Enum_Field('MTP_messenger', 'Messneger Used for Template', false, 'email', $this->_allowed_messengers),
+			'Message_Template'=> array(
+				'MTP_ID'=> new EE_Primary_Key_Int_Field('MTP_ID', __('Message Template ID', 'event_espresso'), FALSE, 0),
+				'EVT_ID'=> new EE_Foreign_Key_Int_Field('EVT_ID',__('Event ID', 'event_espresso'),FALSE,0, 'Event' ),
+				'GRP_ID'=> new EE_Integer_Field( 'GRP_ID', __('Message Template Group ID', 'event_espresso' ), FALSE, 1),
+				'MTP_user_id'=> new EE_Integer_Field('MTP_user_id', __('User who created this template', 'event_espresso'), FALSE, 1 ),
+				'MTP_messenger'=>new EE_Plain_Text_Field('MTP_messenger', __('Messenger Used for Template', 'event_espresso'), FALSE, 'email', $this->_allowed_messengers),
 				'MTP_message_type'=>new EE_Enum_Field('MTP_message_type','Message Type',false,'registration',$this->_allowed_messenger_types),
 				'MTP_template_field'=>new EE_Enum_Field('MTP_template_field', 'Field of Template to Fill', false, 'content', $this->_allowed_template_fields),
 				'MTP_context'=>new EE_Enum_Field('MTP_context','Context for filling out template',false,'admin',$this->_allowed_contexts),
