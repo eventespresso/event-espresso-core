@@ -109,7 +109,7 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 				$this->events[$line_item_id]['name'] = $event['name'];
 				$this->events[$line_item_id]['daytime_id'] = $event['options']['dtt_id'];
 				$this->events[$line_item_id]['price'] = $event['price'];
-				$this->events[$line_item_id]['price_obj'] = unserialize( gzinflate( base64_decode( $event['price_obj'] )));
+				$this->events[$line_item_id]['price_obj'] = unserialize( base64_decode( $event['price_obj'] ));
 				$this->events[$line_item_id]['price_desc'] = $event['options']['price_desc'];
 				$this->events[$line_item_id]['pre_approval'] = $event['options']['pre_approval'];
 				$this->events[$line_item_id]['price_id'] = $event['options']['price_id'];
