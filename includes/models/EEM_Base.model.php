@@ -864,6 +864,7 @@ abstract class EEM_Base extends EE_Base {
 
 		$single_op = ! is_array($operator) ? TRUE : FALSE;
 
+
 		foreach ( $where_cols_n_values as $column_name => $value ) {
 
 			// change non array operator to array with the correct key
