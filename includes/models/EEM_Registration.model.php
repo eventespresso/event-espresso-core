@@ -29,6 +29,11 @@ class EEM_Registration extends EEM_Base {
   	// private instance of the Registration object
 	private static $_instance = NULL;
 
+	/**
+	 * Keys are the status IDs for registrations (eg, RAP, RCN, etc), and the values 
+	 * are status codes (eg, approved, cancelled, etc)
+	 * @var array 
+	 */
 	private static $_reg_status;
 
 	/**
@@ -178,103 +183,17 @@ class EEM_Registration extends EEM_Base {
 
 
 	/**
-	*		retreive ALL registrations from db
-	*
-	* 		@access		public
-	* 		@param		array		$where_cols_n_values
-	*		@return 		mixed		array on success, FALSE on fail
-	*/
-	public function get_all_registrations( $where_cols_n_values = array() ) {
-
-		$orderby = 'REG_date';
-		// retreive all transactions
-		if ( ! empty ( $where_cols_n_values )) {
-			$registrations = $this->select_all_where ( $where_cols_n_values );
-		} else {
-			$registrations = $this->select_all ( $orderby );
-		}
-
-		if ( $registrations ) {
-			return $this->_create_objects( $registrations );
-		} else {
-			return FALSE;
-		}
-	}
-
-
-
-	/**
-	 * this retrieves all the registrations for a particular event
-	 * @param  int $EVT_ID the event id of the event we're retrieving registrations for
-	 * @return array         array of registration objects
-	 */
-	public function get_all_registrations_for_event( $EVT_ID ) {
-		$EVT_ID = (int) $EVT_ID;
-		$where_cols_n_values = array( 'EVT_ID' => $EVT_ID );
-		return $this->get_all_registrations( $where_cols_n_values );
-	}
-
-
-
-
-	/**
-	*		retreive a single registration from db
-	*
-	* 		@access		public
-	* 		@param		array		$where_cols_n_values
-	*		@return 		mixed		array on success, FALSE on fail
-	*/
-	public function get_registration( $where_cols_n_values = array() ) {
-		// retreive a particular registration
-		if ( $registration = $this->select_row_where ( $where_cols_n_values )) {
-			$reg_array = $this->_create_objects( array( $registration ));
-			return array_shift($reg_array);
-		} else {
-			return FALSE;
-		}
-	}
-
-
-
-
-	/**
-	*		retreive a single registration from db by the ID
-	*
-	* 		@access		public
-	* 		@param		array		$REG_ID
-	*		@return 		mixed		array on success, FALSE on fail
-	*/
-	public function get_registration_by_ID( $REG_ID = FALSE ) {
-		if ( ! $REG_ID ) {
-			return FALSE;
-		}
-		
-		// retreive a particular registration
-		if ( $registration = $this->select_row_where ( array( 'REG_ID' => $REG_ID ))) {
-			$reg_array = $this->_create_objects( array( $registration ));
-			return array_shift($reg_array);
-		} else {
-			return FALSE;
-		}
-	}
-
-
-
-
-
-
-	/**
 	*		retreive ALL registrations for a particular Attendee from db
 	* 		@access		public
 	* 		@param		int		$ATT_ID
-	*		@return 		mixed		array on success, FALSE on fail
+	*		@return 	EE_Registration[]
 	*/
 	public function get_all_registrations_for_attendee( $ATT_ID = FALSE ) {
 
 		if ( ! $ATT_ID ) {
 			return FALSE;
 		}
-		if ( $registrations = $this->get_all_registrations( array( 'ATT_ID' => $ATT_ID ))) {
+		if ( $registrations = $this->get_all( array( array( 'ATT_ID' => $ATT_ID )))) {
 			return $registrations;
 		} else {
 			return FALSE;
@@ -291,31 +210,7 @@ class EEM_Registration extends EEM_Base {
 		if(!$REG_url_link){
 			return false;
 		}
-		return $this->get_one(array('REG_url_link'=>$REG_url_link));
-	}
-
-
-
-
-	/**
-	*		retreive ALL registrations for a specific transaction from db
-	* 
-	* 		@access		public
-	* 		@param		$TXN_ID		
-	*		@return 		mixed		array on success, FALSE on fail
-	*/	
-	public function get_all_registrations_for_transaction( $TXN_ID = FALSE ) {
-	
-		if ( ! $TXN_ID ) {
-			return FALSE;
-		}
-		// retreive all registrations	
-		if ( $registrations = $this->select_all_where ( array( 'TXN_ID' => $TXN_ID ), 'REG_ID' )) {
-			return $this->_create_objects( $registrations );
-		} else {
-			return FALSE;
-		}
-		
+		return $this->get_one(array(array('REG_url_link'=>$REG_url_link)));
 	}
 
 
@@ -331,153 +226,18 @@ class EEM_Registration extends EEM_Base {
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
 	public function get_registration_for_transaction_attendee( $TXN_ID = FALSE, $ATT_ID = FALSE, $att_nmbr = FALSE ) {
-
-		if ( ! $TXN_ID && ! $ATT_ID && ! $att_nmbr ) {
-			return FALSE;
-		}
-		// retreive all registrations
-		if ( $registrations = $this->select_all_where ( array( 'TXN_ID' => $TXN_ID, 'ATT_ID' => $ATT_ID ), 'REG_ID' )) {
-			$registrations = $this->_create_objects( $registrations );
-			// need to reduce $att_nmbr which starts at 1 to match array keys that start at 0
-			$att_nmbr--;
-			// just grab 1 element from array starting at $att_nmbr
-			$registration = array_slice( $registrations, $att_nmbr, 1 );
-			//printr( $registration );
-			return isset( $registration[0] ) ? $registration[0] : $registration;
-		} else {
-			return FALSE;
-		}
-
+		return $this->get_one(array(
+			array(
+				'TXN_ID'=>$TXN_ID,
+				'ATT_ID'=>$ATT_ID),
+			'limit'=>array($att_nmbr-1,1)
+		));
 	}
 
 
 
 
-
-
-	/**
-	*		Search for an existing registration record in the DB using SQL LIKE clause - so go ahead - get wildcards !
-	* 		@access		public
-	* 		@param		string		$REG_code
-	*		@return 		mixed		array on success, FALSE on fail
-	*/
-	public function find_existing_registrations_LIKE( $REG_code = FALSE ) {
-
-		// no search params means registration object already exists
-		if ( ! $REG_code ) {
-			$REG_code = $this->_REG_code;
-		}
-
-		global $wpdb;
-		// we're using LIKE with wildcards so that partial REG_codes can be used
-		$SQL = 'SELECT * FROM ' . $this->table_name . ' WHERE REG_code LIKE "'.$REG_code.'" ORDER BY TXN_ID';
-
-		if ( $registrations = $wpdb->get_results( $SQL )) {
-			// if there's more than one, then we'll just grab the last one
-			if ( is_array( $registrations )) {
-				$registrations = array_pop( $registrations );
-			}
-			$registration = $this->_create_objects( array( $registrations ));
-			return array_shift( $registration );
-
-		} else {
-			return FALSE;
-		}
-
-	}
-
-
-
-
-
-
-	/**
-	*		check whether a registration is checked in
-	* 		@access		public
-	* 		@param		string		$REG_ID
-	*		@return 		mixed		boolean on success, NULL on fail
-	*/
-	public function is_registration_checked_in( $REG_ID = FALSE ) {
-
-		// no $REG_ID !?!? get outta here!!!
-		if ( ! $REG_ID ) {
-			return NULL;
-		}
-
-		global $wpdb;
-		$SQL = 'SELECT REG_att_checked_in FROM ' . $this->table_name . ' WHERE REG_ID = %d';
-		if ( $checked_in = $wpdb->get_row( $wpdb->prepare( $SQL, $REG_ID ))) {
-			return $checked_in;
-		} else {
-			return NULL;
-		}
-	}
-
-
-
-
-
-
-	/**
-	*		check in a registration
-	* 		@access		public
-	* 		@param		string			$REG_ID
-	* 		@param		boolean		$check_IO
-	*		@return 		mixed			boolean on success, NULL on fail
-	*/
-	public function registration_check_in_check_out( $REG_ID = FALSE, $check_IO = NULL ) {
-
-		// no $REG_ID or $check_IO !?!? get outta here!!!
-		if ( ! $REG_ID || $check_IO == NULL ) {
-			return NULL;
-		}
-
-		global $wpdb;
-
-		$set_column_values = array( 'REG_att_checked_in' => $check_IO );
-		$where_cols_n_values = array( 'REG_ID' => $REG_ID );
-
-
-		if ( $checked = $this->update ( $set_column_values, $where_cols_n_values )) {
-			return $checked;
-		} else {
-			return NULL;
-		}
-	}
-
-
-
-
-
-
-	/**
-	*		return all registration data for the Admin Registration Overview including attendee, and ticket info
-	* 		@access		public
-	*		@return 		mixed		array on success, FALSE on fail
-	*/
-	public function get_registrations_for_overview() {
-
-		global $wpdb;
-		$SQL = 'SELECT evt.event_name, reg.*, att.*, dtt.*';
-		$SQL .= ' FROM ' . EVENTS_DETAIL_TABLE . ' evt ';
-		$SQL .= ' LEFT JOIN ' . $this->table_name .'reg ON reg.EVT_ID = evt.id';
-		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_attendee att ON att.ATT_ID = reg.ATT_ID';
-		$SQL .= ' JOIN ' . $wpdb->prefix . 'wp_esp_datetime dtt ON dtt.id = reg.EVT_ID';
-		$SQL .= ' ORDER BY REG_date';
-
-		if ( $registrations = $wpdb->get_results( $SQL )) {
-			return $registrations;
-		} else {
-			return FALSE;
-		}
-
-	}
-
-
-
-
-
-
+	
 	/**
 	*		return a list of attendees for a specific locale for the Registration Overview Admin page
 	* 		@access		public
@@ -765,7 +525,7 @@ class EEM_Registration extends EEM_Base {
 		if( ! $TXN_ID ){
 			return false;
 		}
-		return $this->get_one(array('TXN_ID'=>$TXN_ID,'REG_count'=>  EEM_Registration::PRIMARY_REGISTRANT_COUNT));
+		return $this->get_one(array(array('TXN_ID'=>$TXN_ID,'REG_count'=>  EEM_Registration::PRIMARY_REGISTRANT_COUNT)));
 	}
 
 	/**
@@ -842,49 +602,6 @@ class EEM_Registration extends EEM_Base {
 		}		
 			
 	}
-
-
-
-
-
-
-	/**
-	 *		This function inserts table data
-	 *
-	 *		@access public
-	 *		@param array $set_column_values - array of column names and values for the SQL INSERT
-	 *		@return array
-	 */
-	public function insert ($set_column_values) {
-		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		return $this->_insert( $this->table_name, $this->table_data_types, $set_column_values );
-	}
-
-
-
-
-
-
-
-
-
-
-	/**
-	 *		This function updates table data
-	 *
-	 *		@access public
-	 *		@param array $set_column_values - array of column names and values for the SQL SET clause
-	 *		@param array $where_cols_n_values - column names and values for the SQL WHERE clause
-	 *		@return array
-	 */
-	public function update ($set_column_values, $where_cols_n_values) {
-		//$this->display_vars( __FUNCTION__, array( 'set_column_values' => $set_column_values, 'where' => $where ) );
-		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		return $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );
-	}
-
-
-
 }
 // End of file EEM_Registration.model.php
 // Location: /includes/models/EEM_Registration.model.php

@@ -166,7 +166,7 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 		global $wpdb;
 		$events = array();
 
-		$this->reg_obj = $this->_EEM_reg->get_registration_by_ID( $this->_reg_id );
+		$this->reg_obj = $this->_EEM_reg->get_one_by_ID( $this->_reg_id );
 		$events[] = $this->reg_obj->event();
 		
 		return $events;

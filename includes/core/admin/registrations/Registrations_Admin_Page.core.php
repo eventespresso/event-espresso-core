@@ -796,7 +796,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$success = FALSE;
 		$REG_ID = ( ! empty( $this->_req_data['_REG_ID'] )) ? absint( $this->_req_data['_REG_ID'] ) : FALSE;			
 		if ( $REG_ID && array_key_exists( $REG_status, self::$_reg_status )) {
-			if ( $registration = EEM_Registration::instance()->get_registration_by_ID( $REG_ID )) {
+			if ( $registration = EEM_Registration::instance()->get_one_by_ID( $REG_ID )) {
 				$registration->set_status( $REG_status );
 				$success = $registration->update();		
 			}
@@ -1887,7 +1887,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		if ( $trash )
 			$all_attendees = $count ? $ATT_MDL->count_deleted( array('order_by'=>array($orderby=>$sort), 'limit'=>$limit)): $ATT_MDL->get_all_deleted( array('order_by'=>array($orderby=>$sort), 'limit'=>$limit));
 		else
-			$all_attendees = $count ? $ATT_MDL->count( array('order_by'=>array($orderby=>$sort),'limit'=>$limit)) : $ATT_MDL->get_all( array('order_by'=>array($orderby=>$sort), limit'=>$limit) );
+			$all_attendees = $count ? $ATT_MDL->count( array('order_by'=>array($orderby=>$sort),'limit'=>$limit)) : $ATT_MDL->get_all( array('order_by'=>array($orderby=>$sort), 'limit'=>$limit) );
 
 		return $all_attendees;
 	}
