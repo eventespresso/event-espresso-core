@@ -13,7 +13,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license				http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link					http://www.eventespresso.com
- * @ version		 	3.2
+ * @ version		 	4.0
  *
  * ------------------------------------------------------------------------
  *
@@ -42,6 +42,7 @@ class EE_messages {
 	private $_EEM_data;
 	// main controller
 	function __construct() {
+		
 		// get list of active messengers and active message types
 		$this->_EEM_data = EEM_Message_Template::instance();
 		$this->_get_active_messengers();

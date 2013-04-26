@@ -2227,6 +2227,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		$redirect_url = apply_filters( 'filter_hook_espresso_redirect_' . $classname . $this->_req_action, self::add_query_args_and_nonce( $query_args, $redirect_url ), $query_args ); 
 
+
 		// check if we're doing ajax.  If we are then lets just return the results and js can handle how it wants.
 		if ( defined('DOING_AJAX' ) ) {
 			$default_data = array(

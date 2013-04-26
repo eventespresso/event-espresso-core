@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Event Espresso 3.2\n"
+"Project-Id-Version: Event Espresso 4.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-05-16 16:19-0700\n"
 "PO-Revision-Date: \n"

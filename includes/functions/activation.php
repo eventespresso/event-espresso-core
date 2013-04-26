@@ -25,7 +25,7 @@ function event_espresso_rename_tables($old_table_name, $new_table_name) {
 	}
 }
 
-//This function updates the org_options from < EE 3.2
+//This function updates the org_options from < EE 4.0
 function espresso_fix_org_options() {
 	global $org_options, $espresso_wp_user;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
@@ -483,23 +483,30 @@ function events_data_tables_install() {
 
 	$table_name = 'esp_message_template';
 	$sql = "MTP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-				  EVT_ID int(10) unsigned DEFAULT NULL,
-				  GRP_ID int(10) unsigned NOT NULL,
-				  MTP_user_id int(10) NOT NULL DEFAULT '1',
-				  MTP_messenger varchar(30) NOT NULL,
-				  MTP_message_type varchar(50) NOT NULL,
-				  MTP_template_field varchar(30) NOT NULL,
-				  MTP_context varchar(50) NOT NULL,
-				  MTP_content text NOT NULL,
-				  MTP_is_global tinyint(1) NOT NULL DEFAULT '0',
-				  MTP_is_override tinyint(1) NOT NULL DEFAULT '0',
-				  MTP_deleted tinyint(1) NOT NULL DEFAULT '0',
-				  MTP_is_active tinyint(1) NOT NULL DEFAULT '1',
-				  PRIMARY KEY  (MTP_ID),
-				  KEY GRP_ID (GRP_ID),
-				  KEY EVT_ID (EVT_ID),
-				  KEY MTP_user_id (MTP_user_id)";
+				GRP_ID int(10) unsigned NOT NULL,
+				MTP_context varchar(50) NOT NULL,
+				MTP_template_field varchar(30) NOT NULL,
+				MTP_content text NOT NULL,
+				PRIMARY KEY  (MTP_ID),
+				KEY (GRP_ID)";
 	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
+
+
+
+	$table_name = 'esp_message_template_group';
+	$sql = "GRP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+				EVT_ID int(10) unsigned DEFAULT NULL,
+				MTP_user_id int(10) NOT NULL DEFAULT '1',
+				MTP_messenger varchar(30) NOT NULL,
+				MTP_message_type varchar(50) NOT NULL,
+				MTP_is_global tinyint(1) NOT NULL DEFAULT '0',
+				MTP_is_override tinyint(1) NOT NULL DEFAULT '0',
+				MTP_deleted tinyint(1) NOT NULL DEFAULT '0',
+				MTP_is_active tinyint(1) NOT NULL DEFAULT '1',
+				PRIMARY KEY  (GRP_ID),
+				KEY EVT_ID (EVT_ID),
+				KEY MTP_user_id (MTP_user_id)";
+	event_espresso_run_install( $table_name, $table_version, $sql, 'ENGINE=InnoDB ');
 
 
 
@@ -866,7 +873,7 @@ function espresso_update_active_gateways() {
 	//upgrade script for those updating from versions prior to 3.1.16.P
 	//hooked to plugin activation
 	//
-	// Have to get a list of users already using the 3.2 system
+	// Have to get a list of users already using the 4.0 system
 
 	global $wpdb;
 	$sql = "SELECT user_id FROM " . $wpdb->usermeta . " WHERE meta_key='events_organization_settings'";
@@ -880,7 +887,7 @@ function espresso_update_active_gateways() {
 	$sql = "SELECT user_id FROM " . $wpdb->usermeta . " WHERE meta_key='payment_settings'";
 	$users = $wpdb->get_col($sql);
 
-	// Payment settings prior to 3.2 have been independent wp_options in the db
+	// Payment settings prior to 4.0 have been independent wp_options in the db
 	// This part takes the independent options and puts them into the payment
 	// settings for the default ee_user, number 1.
 	if (empty($users)) {
@@ -1075,7 +1082,7 @@ function espresso_update_active_gateways() {
 		update_user_meta($user, 'payment_settings', $payment_settings);
 	}
 	// This one has to cover three senarios:
-	// 1. If they are upgrading from 3.2 or later, just update the paths stored in the active gateways
+	// 1. If they are upgrading from 4.0 or later, just update the paths stored in the active gateways
 	// 2. If they are upgrading from 3.1.17+, make the active gateways option the one for the admin
 	// 3. If they are upgrading from prior to 3.1.16, take the individual active gateway settings and
 	//    put them into an array and make it the active gateways option for the admin

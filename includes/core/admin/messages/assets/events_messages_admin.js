@@ -113,7 +113,7 @@ jQuery(document).ready(function($) {
 			if ( ( content === '' || typeof(content) === 'undefined' ) && type != 'notices' )
 				return;
 			
-			var main_container = type == 'content' ? $('.messages-tabs-content', '#edit_event_espresso_events_Messages_Hooks_metabox') : $('.ee-notices', '#edit_event_espresso_events_Messages_Hooks_metabox');
+			var main_container = type == 'content' ? $('.messages-tabs-content', '#edit_event_espresso_events_Messages_Hooks_messages_metabox_metabox') : $('.ee-notices', '#edit_event_espresso_events_Messages_Hooks_messages_metabox_metabox');
 			var dialog_container = type == 'content' ? $('.messages-change-edit-templates-content') : $('.ee-notices', '.messages-change-edit-templates-content');
 			var content_div = where == 'main' ? main_container : dialog_container;
 
@@ -130,7 +130,7 @@ jQuery(document).ready(function($) {
 	};
 
 
-	$('#edit_event_espresso_events_Messages_Hooks_metabox').on('click', '.template_picker', function(e) {
+	$('#edit_event_espresso_events_Messages_Hooks_messages_metabox_metabox').on('click', '.template_picker', function(e) {
 		e.preventDefault();
 		EE_messages_evt_helper.get_template_content(this);
 	});

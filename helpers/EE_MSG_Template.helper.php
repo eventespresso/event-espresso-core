@@ -13,7 +13,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link				http://www.eventespresso.com
- * @ version		 	3.2
+ * @ version		 	4.0
  *
  * ------------------------------------------------------------------------
  *
@@ -86,6 +86,7 @@ class EE_MSG_Template {
 	 */
 	public static function already_generated( $messenger, $message_type, $evt_id = NULL ) {
 		$MTP = EEM_Message_Template::instance();
+
 
 		//what method we use depends on whether we have an evt_id or not
 		$count = !empty( $evt_id) ? $MTP->get_event_message_templates_by_m_and_mt_and_evt( $messenger, $message_type, $evt_id, 'GRP_ID', 'ASC', NULL, TRUE, FALSE ) : $MTP->get_global_message_template_by_m_and_mt( $messenger, $message_type, 'GRP_ID', 'ASC', NULL, TRUE, 'all');
