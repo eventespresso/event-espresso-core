@@ -159,51 +159,9 @@ class EEM_Payment extends EEM_Base {
 		return self::$_instance;
 	}
 
-
-	/**
-	*		retreive  ALL payments from db
-	* 
-	* 		@access		public
-	*		@return 		mixed		array on success, FALSE on fail
-	*/	
-	public function get_all_payments() { 
 	
-		$orderby = 'PAY_timestamp';
-		// retreive all payments	
-		if ( $payments = $this->select_all ( $orderby )) {
-			return $this->_create_objects( $payments );
-		} else {
-			return FALSE;
-		}
+	
 		
-	}
-
-
-
-
-	/**
-	*		retreive  a single payment from db via it's' ID
-	* 
-	* 		@access		public
-	* 		@param		$PAY_ID		
-	*		@return 		mixed		array on success, FALSE on fail
-	*/	
-	public function get_payment_by_ID( $PAY_ID = FALSE ) {
-
-		if ( ! $PAY_ID ) {
-			return FALSE;
-		}
-		// retreive a particular payment
-		$where_cols_n_values = array( 'PAY_ID' => $PAY_ID );
-		if ( $payment = $this->select_row_where ( $where_cols_n_values )) {
-			$payment_array = $this->_create_objects( array( $payment ));
-			return array_shift( $payment_array );
-		} else {
-			return FALSE;
-		}
-
-	}
-	
 	/**
 	 * Gets the payment by the gateway server's unique ID. Eg, the unique ID PayPal assigned
 	 * to the payment. This is handy for verifying an IPN hasn't already been processed.
@@ -211,16 +169,7 @@ class EEM_Payment extends EEM_Base {
 	 * @return EE_Payment
 	 */
 	public function get_payment_by_txn_id_chq_nmbr($PAY_txn_id_chq_nmbr){
-		if ( ! $PAY_txn_id_chq_nmbr ) {
-			return FALSE;
-		}
-		$where_cols_n_values = array( 'PAY_txn_id_chq_nmbr' => $PAY_txn_id_chq_nmbr );
-		if ( $payment_row = $this->select_row_where ( $where_cols_n_values )) {
-			$payment_objects = $this->_create_objects( array( $payment_row ));
-			return array_shift( $payment_objects );
-		} else {
-			return array();
-		}
+		return $this->get_one(array(array('PAY_txn_id_chq_nmbr'=>$PAY_txn_id_chq_nmbr)));
 	}
 
 
@@ -232,35 +181,28 @@ class EEM_Payment extends EEM_Base {
 	* 
 	* 		@access		public
 	* 		@param		$TXN_ID		
-	 *		@param	string	$status_of_payment one of EEM_Payment::status_id_*, like 'PAP','PCN',etc
+	 *		@param	string	$status_of_payment one of EEM_Payment::status_id_*, like 'PAP','PCN',etc. If none is provided, gets
+	 *		payments with any status
 	*		@return		EE_Payment[]
 	*/	
 	public function get_payments_for_transaction( $TXN_ID = FALSE, $status_of_payment = null ) {
-
-		if ( ! $TXN_ID ) {
-			$msg = __('No Transaction ID was supplied.', 'event_espresso');
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ ); 
-			return array();
-		}
-		$where_cols_n_values = array( 'TXN_ID' => $TXN_ID );
+		$query_params = array(array('TXN_ID'=>$TXN_ID),'order_by'=>array('PAY_timestamp'=>'ASC'));
+		
 		//if provided with a status, search specifically for that status. Otherwise get them all
 		if($status_of_payment){
-			$where_cols_n_values['STS_ID'] = $status_of_payment;
+			$query_params[0]['STS_ID'] = $status_of_payment;
 		}
 		// retreive payments
-		return $this->get_all_where ( $where_cols_n_values, 'PAY_timestamp' );		
+		return $this->get_all ( $query_params );		
 	}
 	
+	/**
+	 * Only gets payments which have been approved
+	 * @param type $TXN_ID
+	 * @return type
+	 */
 	public function get_approved_payments_for_transaction( $TXN_ID = FALSE){
-		if ( ! $TXN_ID ) {
-			$msg = __('No Transaction ID was supplied.', 'event_espresso');
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ ); 
-			return FALSE;
-		}
-		// retreive payments
-		$where_cols_n_values = array( 'TXN_ID' => $TXN_ID,'STS_ID'=> EEM_Payment::status_id_approved );
-
-		return $this->get_all_where ( $where_cols_n_values, 'PAY_timestamp' );	
+		return $this->get_payments_for_transaction($TXN_ID, EEM_Payment::status_id_approved);
 		
 	}
 	
@@ -271,22 +213,22 @@ class EEM_Payment extends EEM_Base {
 	 *		its EE_Transaction's status and TXN_paid.
 	* 		@access		public
 	* 		@param		$payment		payment object
-	* 		@param		$what				text to describe action performed, used in notices
 	*		@return		boolean success of updating the transaction or not. Note: returning 'true' doesnt necessarily mean the
 	 * transaction has been changed, it just means what's saved to teh db has been successful
 	*/
-	public function update_payment_transaction( EE_Payment $payment, $what ) {
+	public function update_payment_transaction( EE_Payment $payment ) {
 
-		if ( ! is_object( $payment ) || ! $payment->ID() ) {
-			$msg = __('A vaild payment object was not supplied.', 'event_espresso');
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ ); 
-			return FALSE;
-		}
+		$payment = $this->ensure_is_obj($payment);
 		$transaction = $payment->transaction();
-		// recalculate and set total paid, and how much is pending
-		$success = $transaction->update_based_on_payments();
-		$payment->clear_relation_cache('Transaction');
-		return $success;
+		if( $transaction){
+			// recalculate and set total paid, and how much is pending
+			$success = $transaction->update_based_on_payments();
+			return $success;
+		}else{
+			return false;
+		}
+		
+		
 	}
 
 
@@ -297,28 +239,11 @@ class EEM_Payment extends EEM_Base {
 	*		recalculate_total_payments_for_transaction
 	* 		@access		public
 	* 		@param		$TXN_ID		
-	 *		@param	string	$status_of_payments, one of EEM_Payment's statuses, like 'PAP' (Approved)
+	 *		@param	string	$status_of_payments, one of EEM_Payment's statuses, like 'PAP' (Approved). By default, searches for approved payments
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
-	public function recalculate_total_payments_for_transaction( $TXN_ID = FALSE , $status_of_payments = 'PAP') {
-
-		if ( ! $TXN_ID ) {
-			$msg = __( 'No Transaction ID was supplied.', 'event_espresso');
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-
-		$value_of_payments = 0;
-		if( $payments = $this->get_payments_for_transaction( $TXN_ID, $status_of_payments) ) {
-			foreach ( $payments as $payment ) {
-				// only add payments of teh specified status (eg, only approved payment)
-				if ( $payment->STS_ID() == $status_of_payments ) {
-					$value_of_payments += $payment->amount();
-				}				
-			}			
-		}
-
-		return $value_of_payments;
+	public function recalculate_total_payments_for_transaction( $TXN_ID = FALSE , $status_of_payments = EEM_Payment::status_id_approved) {
+		return $this->sum(array(array('TXN_ID'=>$TXN_ID,'STS_ID'=>$status_of_payments)), 'PAY_amount');
 	}
 
 
@@ -329,34 +254,16 @@ class EEM_Payment extends EEM_Base {
 	*		Delete a Payment, update all totals, and save info to db
 	* 		@access		public
 	*/
-	public function delete_payment( $PAY_ID ) {
-
-		if ( ! $PAY_ID ) {
-			$msg = __('No Payment ID was supplied.', 'event_espresso');
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
+	public function delete_by_ID($id) {
+		$payment_obj = $this->ensure_is_obj($id);
+		$transaction_id = $payment_obj->TXN_ID();
+		$success = parent::delete_by_ID($id);
+		if($success){
+			require_once('EEM_Transaction.model.php');
+			$success = EEM_Transaction::instance()->update_based_on_payments($transaction_id);
 		}
-		
-		if( $payment = $this->get_payment_by_ID( $PAY_ID )) {
-			//printr( $payment, '$payment' );
-			if ( $this->delete ( array( 'PAY_ID' => $payment->ID() ))) {
-				// recalculate and set total paid
-				return $this->update_payment_transaction( $payment, 'deleted' );
-				
-			} else {
-				$msg = __('An error occured. The payment has not been deleted succesfully.', 'event_espresso');
-				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-				return FALSE;
-			}
-			
-		} else {
-			$msg = __('An error occured. The database record for the payment could not be located for deletion.', 'event_espresso');
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
+		return $success;
 		}
-		
-
-	}
 
 
 
@@ -368,16 +275,15 @@ class EEM_Payment extends EEM_Base {
 	* 		@access		public
 	* 		@param		string		$start_date		
 	* 		@param		string		$end_date		
-	*		@return 		mixed		array on success, FALSE on fail
+	*		@return 	EE_Payment[]
 	*/	
 	public function get_payments_made_between_dates( $start_date = FALSE, $end_date = FALSE ) {
-
 		if ( ! $start_date ) {
-			$start_date = date('Y-m-d');
+			$start_date = date('Y-m-d',current_time('timestamp'));
 		}
 
 		if ( ! $end_date ) {
-			$end_date = date('Y-m-d');
+			$end_date = date('Y-m-d',current_time('timestamp'));
 		}
 		
 //echo '<h3>$start_date : ' . $start_date . '  <span style="margin:0 0 0 3em;font-size:12px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h3>';
@@ -401,60 +307,8 @@ class EEM_Payment extends EEM_Base {
 		
 //echo '<h3>$start_date : ' . $start_date . '  <span style="margin:0 0 0 3em;font-size:12px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h3>';
 //echo '<h3>$end_date : ' . $end_date . '  <span style="margin:0 0 0 3em;font-size:12px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h3>';
-		
-		$SQL = 'SELECT * FROM '. $this->table_name .' WHERE PAY_timestamp >= %d AND PAY_timestamp <= %d  ORDER BY PAY_timestamp ASC';
-		global $wpdb;
-
-		if ( $payments = $wpdb->get_results( $wpdb->prepare( $SQL, $start_date, $end_date ))) {
-//			echo $wpdb->last_query;
-//			printr( $payments );
-			return $payments;
-		} else {
-			return FALSE;
-		}
-
+		return $this->get_all(array(array('PAY_timestamp'=>array('>=',$start_date),'PAY_timestamp*'=>array('<=',$end_date))));
 	}
-
-
-
-
-	/**
-	 *		This function inserts table data
-	 *		
-	 *		@access public
-	 *		@param array $set_column_values - array of column names and values for the SQL INSERT 
-	 *		@return array
-	 */	
-	public function insert ($set_column_values) {
-
-		//$this->display_vars( __FUNCTION__, array( 'set_column_values' => $set_column_values ) );
-		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		return $this->_insert( $this->table_name, $this->table_data_types, $set_column_values );
-	
-	}
-
-
-
-
-
-	/**
-	 *		This function updates table data
-	 *		
-	 *		@access public
-	 *		@param array $set_column_values - array of column names and values for the SQL SET clause
-	 *		@param array $where_cols_n_values - column names and values for the SQL WHERE clause
-	 *		@return array
-	 */	
-	public function update ($set_column_values, $where_cols_n_values) {
-		//$this->display_vars( __FUNCTION__, array( 'set_column_values' => $set_column_values, 'where' => $where ) );
-		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		return $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );
-	}
-
-
-
-
-
 }
 
 // End of file EEM_Payment.model.php

@@ -109,7 +109,7 @@ class EE_Ticket_Prices extends EE_BASE {
 			$event_prices = array();
 		}
 		// get default (global)  prices and modifiers
-		if ( ! $default_prices = $this->_PRC_MDL->get_all_event_default_prices()) {
+		if ( ! $default_prices = $this->_PRC_MDL->get_all_default_prices()) {
 			$default_prices = array();
 		}
 		// merge price lists

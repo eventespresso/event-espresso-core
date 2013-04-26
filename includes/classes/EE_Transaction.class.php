@@ -577,9 +577,7 @@ class EE_Transaction extends EE_Base_Class{
 	 * @return mixed EE_Attendee[] by default, int if $output is set to 'COUNT'
 	 */
 	public function attendees($output='OBJECT_K'){
-		require_once('EEM_Attendee.model.php');
-		$ATT = EEM_Attendee::instance();
-		return $ATT->get_attendees_for_transaction($this,$output);
+		return $this->get_many_related('Attendee', array(array('Registration.Transaction.TXN_ID'=>$this->ID())));
 	}
 	
 	/**

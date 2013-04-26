@@ -121,9 +121,43 @@ abstract class EEM_Base extends EE_Base{
 		}
 	}
 	/**
-	 * Gets an array of objects that correspond to the current model according to the $query_params
-	 * @param array $query_params
-	 * @return EE_Base_Class[]
+	 * Gets all the EE_Base_Class objects which match the $query_params, by querying the DB.
+	 * @param array $query_params array with the following array key indexes:
+	 *		key			|					value
+	 * -------------------------------------------------------------------------
+	 *		where		|	an array of key-value pairs in its most basic form. Eg array('QST_display_text'=>'Are you bob?','QST_admin_text'=>'Determine if user is bob'
+	 *					|	(which becomes SQL "...WHERE QST_display_text = 'Are you bob?' AND QST_admin_text = 'Determine if user is bob'...")
+	 *					|	however, to change the operator (from the default of '='), change the value to an numerically-indexed array, where the
+	 *					|	first item in the list is the operator. 
+	 *					|	eg array( 'QST_display_text' => array('LIKE','%bob%'), 'QST_ID' => array('<',34), 'QST_wp_user' => array('in',array(1,2,7,23))) becomes
+	 *					|	SQL "...WHERE QST_display_text LIKE '%bob%' AND QST_ID < 34 AND QST_wp_user IN (1,2,7,23)...".
+	 *					|	Valid operators so far: =, !=, <, <=, >, >=, LIKE, NOT LIKE, IN (followed by numeric-indexed array), NOT IN (dido), others?
+	 *					|	Also, by default all the where conditions are AND'd together. To override this, add an array key 'OR' (or 'AND') and the
+	 *					|	array to be OR'd together. Eg array('OR'=>array('TXN_ID' => 23 , 'TXN_timestamp__>' => 345678912)), which becomes SQL 
+	 *					|	"...WHERE TXN_ID = 23 OR TXN_timestamp = 345678912...". 
+	 *					|	Also, to negate an entire set of
+	 *					|	conditions, user 'NOT' as an array key. Eg array('NOT'=>array('TXN_total' => 50, 'TXN_paid'=>23) which becomes SQL to "...where ! (TXN_total =50 AND TXN_paid =23) 
+	 *					|	They can be nested indefinetely. 
+	 *					|	eg array('OR'=>array('TXN_total' => 23, 'NOT'=> array( 'TXN_timestamp'=> 345678912, 'AND'=>array('TXN_paid' => 53, 'STS_ID' => 'TIN)))) which 
+	 *					|	becomes SQL: "...WHERE TXN_total = 23 OR ! (TXN_timestmap = 345678912 OR (TXN_paid = 53 AND STS_ID = 'TIN'))..."
+	 *					|	GOTCHA: because this is an array, array keys must be unique, making it impossible to place two or more where conditions
+	 *					|	applying to the same field. Eg: array('PAY_timestamp'=>array('>',$start_date),'PAY_timestamp'=>array('<',$end_date),'PAY_timestamp'=>array('!=',$special_date)),
+	 *					|	as PHP enforces that the array keys must be unique, thus removing the first two array entries
+	 *					|	with key 'PAY_timestamp'. (producign SQL "PAY_timestamp !=  4234232", ignoring the first two PAY_timestmap conditions).
+	 *					|	To overcome this, you can add '*' characters to the end of the field's name.
+	 *					|	These will be removed when generating the SQL string, but allow for the array keys to be unique.
+	 *					|	Eg, you could rewrite the previous query as:
+	 *					|	array('PAY_timestamp'=>array('>',$start_date),'PAY_timestamp*'=>array('<',$end_date),'PAY_timestamp**'=>array('!=',$special_date))
+	 *					|	which will correctly generate SQL like "PAY_timestamp > 123412341 AND PAY_timestamp < 2354235235234 AND PAY_timestamp != 1241234123"
+	 *		limit		|	adds a limit to the query just like the SQL limit clause, so limits of "23", "25,50" are both valid would become 
+	 *					|	SQL "...LIMIT 23", "...LIMIT 25,50" respectively
+	 *		order_by	|	name of a column to order by, or an array where keys are field names and values are either 'ASC' or 'DESC'. 'limit'=>array('STS_ID'=>'ASC','REG_date'=>'DESC'),
+	 *					|	which would becomes SQL "...ORDER BY TXN_timestamp..." and "...ORDER BY STS_ID ASC, REG_date DESC..." respectively.
+	 *					|	Like the 'where' conditions, these fields can be on related models. 
+	 *					|	Eg 'order_by'=>array('Registration.Tranaction.TXN_amount'=>'ASC') is perfectly valid from any model related to 'Registration' (like Event, Attendee, Price, Datetime, etc.)
+	 *		group_by	|	name of column to group by
+	 *		having		|	exactl like WHERE parameters array, except these conditions apply to the grouped results (whereas WHERE conditions apply to the pre-grouped results)
+	 * Possible future keys: 'having' for SQL having cluases, 'select' for limiting the queryset to a subset, 
 	 */
 	function get_all($query_params = array()){
 		return $this->_create_objects($this->_get_all_wpdb_results($query_params));
@@ -149,28 +183,7 @@ abstract class EEM_Base extends EE_Base{
 		echo "get all SQL:".$SQL;
 		return $wpdb->get_results($SQL, $output);
 	}
-//	/**
-//	 * @deprecated
-//	 * @param type $orderby
-//	 * @param type $sort
-//	 * @param type $limit
-//	 * @param type $output
-//	 */
-	protected function select_all ( $orderby=FALSE, $sort=FALSE, $limit = FALSE, $output='OBJECT_K' ) {
-		//return select_all_where(false,false,$sort,false,$limit,$output);
-		throw new EE_Error(__FUNCTION__." is not implemented");
-	}
-	protected function select_all_where ( $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $limit = FALSE, $output = 'OBJECT_K' ) {	
-		throw new EE_Error(__FUNCTION__." is not implemented");
-		
-	}
-	protected function select_row_where ( $where_cols_n_values=FALSE, $operator = '=', $output = 'OBJECT' ) {
-		throw new EE_Error(__FUNCTION__." is not implemented");
-	}
-	protected function select_value_where ( $select=FALSE, $where_cols_n_values=FALSE, $operator = '=' ) {
-		throw new EE_Error(__FUNCTION__." is not implemented");
-	}
-	
+
 	/**
 	 * Gets a single item for this model from the DB, given only its ID (or null if none is found).
 	 * @param mixed $id int or string, depending on the type of the model's primary key
@@ -289,6 +302,19 @@ abstract class EEM_Base extends EE_Base{
 		//$wpdb->print_error();
 		return $rows_deleted;//how many supposedly got updated
 	}
+	
+	/**
+	 * Deletes a single row from the DB given the model object's primary key value. (eg, EE_Attendee->ID()'s value).
+	 * Wrapper for EEM_Base::delete()
+	 * @param mixed $id
+	 * @return boolean whether the row got deleted or not
+	 */
+	function delete_by_ID($id){
+		$query_params = array();
+		$query_params[0] = array($this->get_primary_key_field()->get_name() => $id);
+		$query_params['limit'] = 1;
+		return $this->delete($query_params);
+	}
 	/**
 	 * Count all the rows that match criteria expressed in $query_params (an array just like arg to EEMerimental_Base::get_all).
 	 * If $field_to_count isn't provided, the model's primary key is used. Otherwise, we count by field_to_count's column
@@ -345,7 +371,12 @@ abstract class EEM_Base extends EE_Base{
 	 * @return string
 	 */
 	private function _construct_2nd_half_of_select_query(EE_Model_Query_Info_Carrier $model_query_info){
-		return " FROM ".$model_query_info->get_full_join_sql().$model_query_info->get_where_sql();
+		return " FROM ".$model_query_info->get_full_join_sql().
+				$model_query_info->get_where_sql().
+				$model_query_info->get_group_by_sql().
+				$model_query_info->get_having_sql().
+				$model_query_info->get_order_by_sql().
+				$model_query_info->get_limit_sql();
 	}
 	/**
 	 * Adds a relationship of the correct type between $modelObject and $otherModelObject. 
@@ -566,7 +597,7 @@ abstract class EEM_Base extends EE_Base{
 			$query_object = $this->_extract_related_models_from_query(array());
 		}
 		//set limit
-		if(array_key_exists('limit',$query_params)){
+		if(array_key_exists('limit',$query_params) && $query_params['limit']){
 			if(is_array($query_params['limit'])){
 				//they passed us an array for the limit. Assume it's like array(50,25), meaning offset by 50, and get 25
 				$query_object->set_limit_sql(" LIMIT ".$query_params['limit'][0].",".$query_params['limit'][1]);
@@ -575,29 +606,27 @@ abstract class EEM_Base extends EE_Base{
 			}
 		}
 		//set order by
-		if(array_key_exists('order_by',$query_params)){
+		if(array_key_exists('order_by',$query_params) && $query_params['order_by']){
 			if(is_array($query_params['order_by'])){
 				//assume it's an array of fields to order by
 				$order_array = array();
-				foreach($query_params['order_by'] as $field_name_to_order_by){
-					$field_obj = $this->field_settings_for($field_name);
-					$order_array[] = $field_obj->get_qualified_column();
+				foreach($query_params['order_by'] as $field_name_to_order_by => $order){
+					$qualified_column_to_order_by = $this->_deduce_table_and_column_name($field_name_to_order_by);
+					if($order == 'asc' || $order == 'ASC'){
+						$order = ' ASC ';
+					}else{
+						$order = ' DESC ';
+					}
+					$order_array[] = $qualified_column_to_order_by . $order ;
 				}
 				$query_object->set_order_by_sql(" ORDER BY ".implode(",",$order_array));
 			}else{
 				$query_object->set_order_by_sql(" ORDER BY ".$query_params['order_by']);
 			}
 		}
-		//set order
-		if(array_key_exists('order',$query_params)){	
-			if(in_array($query_params['order'],$this->_allowed_order_values)){
-				$query_object->set_order_sql(" ".$query_params['order']);
-			}else{
-				throw new EE_Error(sprintf(__("Invalid order parameter supplied: '%s'. Only allowed order parameters: %s",'event_espresso'),$query_params['order'],implode(",",$this->_allowed_order_values)));
-			}
-		}
+		
 		//set group by
-		if(array_key_exists('group_by',$query_params)){
+		if(array_key_exists('group_by',$query_params) && $query_params['group_by']){
 			if(is_array($query_params['group_by'])){
 				//it's an array, so assume we'll be grouping by a bunch of stuff
 				$group_by_array = array();
@@ -611,8 +640,14 @@ abstract class EEM_Base extends EE_Base{
 			}
 		}
 		//set having
-		if(array_key_exists('having',$query_params)){
-			
+		if(array_key_exists('having',$query_params) && $query_params['having']){
+			throw new EE_Error("Having clause is not yet supported. It should be an easy add though");
+		}
+		//now, just verify they didnt pass anything wack
+		foreach($query_params as $query_key => $query_value){
+			if(in_array($query_key,$this->_allowed_query_params)){
+				throw new EE_Error(sprintf(__("You passed %s as a query parameter to %s, which is illegal!",'event_espresso'),$query_key,get_class($this)));
+			}
 		}
 		$query_object->set_main_model_join_sql($this->_construct_internal_join());
 		return $query_object;
@@ -719,7 +754,15 @@ abstract class EEM_Base extends EE_Base{
 		$where_clauses=array();
 		foreach($where_params as $query_param => $op_and_value_or_sub_condition){
 			if(in_array($query_param,$this->_special_where_param_keys)){
+				//first off: remoev any *s from the query params name, as
+				//these are used to make the array keys unique,
+				//allowign for multiple conditions based on the same field.
+				//Eg, a valid $where_params array could look like 
+				//array('PAY_timestamp'=>array('>',$start_date),
+				//		'PAY_timestamp*'=>array('<',$end_date),
+				//		'PAY_timestamp**'=>array('!=',$special_date))
 				//the query param is 'and',  'or', or 'not'
+				$query_param = str_replace("*",'',$query_param);
 				switch($query_param){
 					case 'not':
 					case 'NOT':
@@ -804,12 +847,13 @@ abstract class EEM_Base extends EE_Base{
 	
 	/**
 	 * Takes the input parameter and extract the table name (alias) and column name
-	 * @param string $query_param_name like Registration__Transaction__TXN_ID, Event__Datetime__start_time, or REG_ID
+	 * @param string $query_param_name like Registration.Transaction.TXN_ID, Event.Datetime.start_time, or REG_ID
 	 * @return string table alias and column name for SQL, eg "Transaction.TXN_ID"
 	 */
-	function _deduce_table_and_column_name($query_param_name){
+	protected function _deduce_table_and_column_name($query_param_name){
 		//ok, now proceed with deducing which part is the model's name, and which is the field's name
 		//which will help us find the database table and column
+		
 		$query_param_parts = explode(".",$query_param_name);
 		if(empty($query_param_parts)){
 			throw new EE_Error(sprintf(__("_extract_column_name is empty when trying to extract column and table name from %s",'event_espresso'),$query_param_name));
@@ -931,16 +975,31 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * gets the name of the field of type 'primary_key' from the fieldsSettings attribute.
 	 * Eg, on EE_Anwer that would be ANS_ID
-	 * @return EE_Model_Field
+	 * @return EE_Model_Field_Base
 	 * @throws EE_Error
 	 */
 	public function get_primary_key_field(){
+		$field = $this->get_a_field_of_type('EE_Primary_Key_Field');
+		if(!$field){
+			throw new EE_Error(sprintf(__("There is no Primary Key defined on model %s",'event_espresso'),get_class($this)));
+		}else{
+			return $field;
+		}
+	}
+	
+	/**
+	 * Finds the first field of type $field_class_name.
+	 * @param string $field_class_name class name of field that you want to find. Eg, EE_Datetime_Field, EE_Foreign_Key_Field, etc
+	 * @return EE_Model_Field_Base or null if none is found
+	 */
+	public function get_a_field_of_type($field_class_name){
 		foreach($this->field_settings() as $field){
-			if($field instanceof EE_Primary_Key_Field){
+			if(is_a($field,  $field_class_name)){
 				return $field;
 			}
 		}
-		throw new EE_Error(sprintf(__("There is no Primary Key defined on model %s",'event_espresso'),get_class($this)));
+		return null;
+		
 	}
 	/**
 	 * Gets a foreign key field pointing to model. 

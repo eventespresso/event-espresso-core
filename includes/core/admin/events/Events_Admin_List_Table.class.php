@@ -235,10 +235,6 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 				'event_id' => $item->event_id
 			);
 		$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );	
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
-//		$registered_attendees = EEM_Attendee::instance()->get_event_attendees( $item->event_id, FALSE, FALSE, FALSE, 'REG_date', 'DESC', FALSE, 'COUNT' );
-//		$registered_attendees = $registered_attendees ? $registered_attendees : 0;
-//		return '<a href="' . $attendees_link . '">' . $registered_attendees . '/' . $item->reg_limit . '</a>';
 		$registered_attendees = get_number_of_attendees_reg_limit( $item->EVT_ID, 'num_attendees_slash_reg_limit', $item->reg_limit ); 
 		return '<a href="' . $attendees_link . '">' . $registered_attendees . '</a>';
 	}

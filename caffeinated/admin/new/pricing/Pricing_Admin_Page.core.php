@@ -357,31 +357,40 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		//$PRC = EEM_Price::instance();
 		
 		$this->_req_data['orderby'] = empty($this->_req_data['orderby']) ? '' : $this->_req_data['orderby'];
+		$order = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
 		
 		switch ($this->_req_data['orderby']) {
 			case 'name':
-				$orderby = 'prc.PRC_name';
+				$orderby = array('PRC_name'=>$order);
 				break;
 			case 'type':
-				$orderby = 'prt.PRT_name';
+				$orderby = array('Price_Type.PRT_name'=>$order);
 				break;
 			case 'amount':
-				$orderby = 'prc.PRC_amount';
+				$orderby = array('PRC_amount'=>$order);
 				break;
 			default:
-				$orderby = array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' );
+				$orderby = array( 'Price_Type.PRT_order'=>$order, 'PRC_order'=>$order, 'PRC_ID'=>$order);
 		}		
 
-		$order = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
 		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
 		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $per_page;
 
 		$offset = ($current_page-1)*$per_page;
 		$limit = array( $offset, $per_page );
+		$query_params = array(
+			array(
+				'Price_Type.PRT_is_global'=>true,
+				'PRC_deleted'=>$trashed),
+			'order_by'=>$orderby,
+			'limit'=>$limit
+			);
 
-		$prices = EEM_Price::instance()->get_all_prices_that_are_global( $trashed, $orderby, $order, $limit, $count );
-		return $prices;
-		
+		if($count){
+			return EEM_Price::instance()->count_deleted_and_undeleted($query_params);
+		}else{
+			return EEM_Price::instance()->get_all_deleted_and_undeleted($query_params);
+		}		
 	}
 
 
@@ -409,7 +418,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$PRC = EEM_Price::instance();
 
 		if ( $PRC_ID ) {
-			$price = $PRC->get_price_by_ID( $PRC_ID );
+			$price = $PRC->get_one_by_ID( $PRC_ID );
 			$additional_hidden_fields = array( 
 					'PRC_ID' => array( 'type' => 'hidden', 'value' => $PRC_ID )
 				);
@@ -630,7 +639,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
 			// cycle thru bulk action checkboxes
 			while (list( $PRC_ID, $value ) = each($this->_req_data['checkbox'])) {
-				if (!$PRC->delete_by_id(absint($PRC_ID))) {
+				if (!$PRC->delete_by_ID(absint($PRC_ID))) {
 					$success = 0;
 				}
 			}
@@ -638,7 +647,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		} else {
 			// grab single id and delete
 			$PRC_ID = absint($this->_req_data['id']);
-			if ( ! $PRC->delete_by_id($PRC_ID)) {
+			if ( ! $PRC->delete_by_ID($PRC_ID)) {
 				$success = 0;
 			}
 			
@@ -1007,7 +1016,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			$what = count( $this->_req_data['checkbox'] ) > 1 ? 'Prices' : 'Price';
 			// cycle thru bulk action checkboxes
 			while (list( $PRT_ID, $value ) = each($this->_req_data['checkbox'])) {
-				if (!$PRT->delete_by_id(absint($PRT_ID))) {
+				if (!$PRT->delete_by_ID(absint($PRT_ID))) {
 					$success = 0;
 				}
 			}
@@ -1015,7 +1024,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		} else {
 			// grab single id and delete
 			$PRT_ID = absint($this->_req_data['id']);
-			if ( ! $PRT->delete_by_id($PRT_ID)) {
+			if ( ! $PRT->delete_by_ID($PRT_ID)) {
 				$success = 0;
 			}
 			$what = 'Price';

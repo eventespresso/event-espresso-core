@@ -36,11 +36,21 @@ class EEM_Price_Type extends EEM_Base {
 	*	@access	private
 	*	@var int
 	*/
-	public static $base_types = array( 1 => 'Event Price', 2 => 'Discount', 3 => 'Surcharge', 4 => 'Tax' );
+	public $base_types = null; 
 
-
-
-
+	/**
+	 * return an array of Base types. Keys are INTs which are used in teh database,
+	 * values are text-representations of the base type.
+	 * @return array
+	 */
+	public function get_base_types(){
+		return $this->base_types;
+	}
+	
+	const base_type_event_price = 1;
+	const base_type_discount = 2;
+	const base_type_surcharge = 3;
+	const base_type_tax = 4;
 	/**
 	 * 		private constructor to prevent direct creation
 	 * 		@Constructor
@@ -52,6 +62,11 @@ class EEM_Price_Type extends EEM_Base {
 		// set table name
 //		$this->table_name = $wpdb->prefix . 'esp_price_type';
 		// set item names
+		$this->base_types = array( 
+			EEM_Price_Type::base_type_event_price => __('Event Price','event_espresso'), 
+			EEM_Price_Type::base_type_discount => __('Discount','event_espresso'), 
+			EEM_Price_Type::base_type_surcharge => __('Surcharge','event_espresso'), 
+			EEM_Price_Type::base_type_tax => __('Tax','event_espresso') );
 		$this->singlular_item = __('Price Type','event_espresso');
 		$this->plural_item = __('Price Types','event_espresso');		
 		// array representation of the price type table and the data types for each field
@@ -299,24 +314,18 @@ class EEM_Price_Type extends EEM_Base {
 
 
 
-	public function delete_by_id($ID) {
+	public function delete_by_ID($ID) {
 		if (!$ID) {
 			return FALSE;
 		}
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
-		$PRC = EEM_Price::instance();
 		//check if any prices use this price type
-		if ( $prices = $PRC->get_all_prices_that_are_type($ID)) {
+		if ( $prices = $this->get_all_related($ID,'Price')) {
 			$msg = __('The Price Type could not be deleted because there are existing Prices that currently use this Price Type.  If you still wish to delete this Price Type, then either delete those Prices or change them to use other Price Types.', 'event_espresso');
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ ); 
 			return FALSE;
 		} 
 		
-		if ( $this->delete(array('PRT_ID' => $ID))) {
-			return TRUE;
-		} else {
-			return FALSE;
-		}
+		return parent::delete_by_ID($ID);
 
 	}
 

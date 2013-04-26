@@ -111,107 +111,6 @@ class EEM_Datetime extends EEM_Base {
 		return self::$_instance;
 	}
 
-
-
-
-	/**
-	*		get event times from db
-	*
-	* 		@access		private
-	* 		@param		int 				$EVT_ID
-	* 		@param		boolean 		$primary
-	*		@return 		mixed		array on success, FALSE on fail
-	*/
-	private function _get_event_datetimes( $EVT_ID = FALSE, $primary = FALSE ) {
-
-		if ( ! $EVT_ID ) {
-			$msg = __( 'No Event datetimes could be retreived because no event ID was received.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-
-		$where = array( 'EVT_ID' => $EVT_ID );
-		
-		if ( $primary ) {
-			$where['DTT_is_primary'] = 1;
-		}
-
-		$orderby = array( 'DTT_is_primary', 'DTT_EVT_start' );
-		$sort = array( 'DESC', 'ASC' );
-
-		if ( $datetimes = $this->select_all_where ( $where, $orderby, $sort )) {
-
-			// load Datetime object class file
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Datetime.class.php');
-
-			foreach ( $datetimes as $datetime ) {
-					$array_of_objects[ $datetime->DTT_ID ] = new EE_Datetime(
-																															$datetime->EVT_ID,
-																															$datetime->DTT_is_primary,
-																															$datetime->DTT_EVT_start,
-																															$datetime->DTT_EVT_end,
-																															$datetime->DTT_REG_start,
-																															$datetime->DTT_REG_end,
-																															/*$datetime->DTT_reg_limit,
-																															$datetime->DTT_tckts_left,*/
-																															$datetime->DTT_ID
-																													 	);
-			}
-			// sort dates from earliest to latest
-			uasort( $array_of_objects, array( $this, '_compare_order' ));	
-			return $array_of_objects;
-
-		} else {
-			return FALSE;
-		}
-
-	}
-
-	private function _compare_order( $A, $B ) {
-		return ( $A->start() == $B->start() ) ? 0 : $A->start() < $B->start() ? -1 : 1;
-	}
-
-
-
-
-
-	/**
-	 * This returns the date time for the given DTT_ID
-	 * @param  mixed (bool|int) $DTT_ID if false then we return empty
-	 * @return mixed (object|bool)          DTT object or false
-	 */
-	private function _get_date_time_by_dtt_id( $DTT_ID = FALSE ) {
-		if ( ! $DTT_ID ) {
-			$msg = __( 'No Event datetimescould be retrieved because no Date Time ID (DTT_ID) was received.', 'event_espresso');
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-
-		$where = array( 'DTT_ID' => $DTT_ID );
-
-		if ( $datetimes = $this->select_all_where( $where ) ) {
-			//load Datetime object class file
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Datetime.class.php');
-			$datetime = array_shift($datetimes);
-			$date_time_obj = new EE_Datetime(
-					$datetime->EVT_ID,
-					$datetime->DTT_is_primary,
-					$datetime->DTT_EVT_start,
-					$datetime->DTT_EVT_end,
-					$datetime->DTT_REG_start,
-					$datetime->DTT_REG_end,
-					$datetime->DTT_ID
-				);
-			return $date_time_obj;
-		} else {
-			return FALSE;
-		}
-	}	
-
-
-
-
-
 	/**
 	*		create new blank datetime
 	*
@@ -253,55 +152,37 @@ class EEM_Datetime extends EEM_Base {
 		if ( ! $EVT_ID ) { // on add_new_event event_id gets set to 0
 			return $this->create_new_blank_datetime();
 		}
-		return $this->_get_event_datetimes( $EVT_ID );
+		return $this->get_datetimes_for_event_ordered_by_importance($EVT_ID);
 	}
-
-
-
-
 
 	/**
-	*		get event start date from db
-	*
-	* 		@access		public
-	* 		@param		int 			$EVT_ID
-	*		@return 		mixed		array on success, FALSE on fail
-	*/
-	public function get_event_start_dates( $EVT_ID = FALSE ) {
-		return $this->_get_event_datetimes( $EVT_ID, TRUE );
+	 * Gets the datetimes for the event (with the given limit), and orders them by "importance". By importance, we mean
+	 * that the primary datetimes are most important, and then the earlier datetimes are the most important. Maybe we'll want
+	 * this to take into account datetimes that haven't already passed, but we don't yet.
+	 * @param int $EVT_ID
+	 * @param int $limit
+	 * @return EE_Datetime[]
+	 */
+	public function get_datetimes_for_event_ordered_by_importance( $EVT_ID = FALSE, $limit = NULL){
+		$this->get_all( array(array('Event.EVT_ID'=>$EVT_ID),
+			'limit'=>$limit,
+			'order_by'=>array('DTT_is_primary'=>'DESC','DTT_EVT_start'=>'ASC')));
 	}
-
-
-
 
 	/**
-	*		get event start date from db
-	*
-	* 		@access		public
-	* 		@param		int 			$EVT_ID
-	*		@return 		mixed		array on success, FALSE on fail
-	*/
-	public function get_event_start_date( $EVT_ID = FALSE ) {
-		$start_date = array_shift( $this->_get_event_datetimes( $EVT_ID, TRUE ));
-		return $start_date->start_date();
+	 * Gets the most important datetime for a particular event (ie, the primary event usually. But if for some WACK
+	 * reason it doesn't exist, we consider teh earliest event the most important)
+	 * @param int $EVT_ID
+	 * @return EE_Datetime
+	 */
+	public function get_most_important_datetime_for_event($EVT_ID){
+		$results = $this->get_datetimes_for_event_ordered_by_importance($EVT_ID, 1);
+		if($results){
+			return array_shift($results);
+		}else{
+			return null;
+		}
 	}
-
-	
-
-
-	/**
-	*		get event start date from db
-	*
-	* 		@access		public
-	* 		@param		int 			$EVT_ID
-	*		@return 		mixed		array on success, FALSE on fail
-	*/
-	public function get_event_end_dates( $EVT_ID = FALSE ) {
-		return $this->_get_event_datetimes( $EVT_ID, TRUE );
-	}
-
-
-
 
 
 	/**
@@ -318,7 +199,7 @@ class EEM_Datetime extends EEM_Base {
 			$reg_times[0]->set_end_time("11:59:59PM");
 			return $reg_times;
 		}
-		return $this->_get_event_datetimes( $EVT_ID );
+		return $this->get_datetimes_for_event_ordered_by_importance( $EVT_ID );
 	}
 
 
@@ -335,56 +216,15 @@ class EEM_Datetime extends EEM_Base {
 		if (empty($EVT_ID)) { // on add_new_event event_id gets set to 0
 			return FALSE;
 		}
-		return $this->_get_event_datetimes( $EVT_ID, TRUE );
+		return $this->get_datetimes_for_event_ordered_by_importance( $EVT_ID, 1 );
 	}
 
 
-
 	/**
-	*		get registration start date from db
-	*
-	* 		@access		public
-	* 		@param		int 			$EVT_ID
-	*		@return 		mixed		array on success, FALSE on fail
-	*/
-	public function get_reg_start_dates( $EVT_ID = FALSE ) {
-		return $this->_get_event_datetimes( $EVT_ID, TRUE );
-	}
-
-
-
-
-
-	/**
-	*		get registration start date from db
-	*
-	* 		@access		public
-	* 		@param		int 			$EVT_ID
-	*		@return 		mixed		array on success, FALSE on fail
-	*/
-	public function get_reg_end_dates( $EVT_ID = FALSE ) {
-		return $this->_get_event_datetimes( $EVT_ID, TRUE );
-	}
-
-
-
-
-
-	/**
-	 * get datetime object for the given datetime ID
-	 * 
-	 * @param  boolean $DTT_ID 		Date Time ID
-	 * @return mixed (object|bool)  Date Time object or FALSE
+	 * @todo delete this
+	 * Any idea what this is for? It's not used anywhere. I guess it's for 3.1->4.0 conversion? mike, april 25th 2013
+	 * @global type $wpdb
 	 */
-	public function get_date_time_by_dtt_id( $DTT_ID = FALSE ) {
-		return $this->_get_date_time_by_dtt_id( $DTT_ID );
-	}
-
-
-
-
-
-
 	function convert_converted_event_datetimes() {
 
 		global $wpdb;
@@ -423,7 +263,11 @@ class EEM_Datetime extends EEM_Base {
 
 
 
-
+/**
+	 * @todo delete this
+	 * Any idea what this is for? It's not used anywhere. I guess it's for 3.1->4.0 conversion? mike, april 25th 2013
+	 * @global type $wpdb
+	 */
 	function convert_existing_event_datetimes() {
 
 		global $wpdb;
@@ -510,80 +354,6 @@ class EEM_Datetime extends EEM_Base {
 		echo EE_Error::get_notices();
 
 	}
-
-
-
-
-
-	public function delete_datetime( $DTT_ID = FALSE ) {
-		if ( ! $DTT_ID ) {
-			return FALSE;
-		}
-		return $this->delete( array( 'DTT_ID' => $DTT_ID ));
-	}
-
-
-
-
-
-	public function delete_all_event_datetimes( $EVT_ID = FALSE ) {
-		if ( ! $EVT_ID ) {
-			return FALSE;
-		}
-		return $this->delete( array( 'EVT_ID' => $EVT_ID ));
-	}
-
-
-
-
-	public function delete_all_where( $where_cols_n_values = FALSE ) {
-		if ( ! $where_cols_n_values ) {
-			return FALSE;
-		}
-		return $this->delete( $where_cols_n_values );
-	}
-
-
-
-
-	/**
-	 *		This function inserts table data
-	 *
-	 *		@access public
-	 *		@param array $set_column_values - array of column names and values for the SQL INSERT
-	 *		@return array
-	 */
-	public function insert ($set_column_values) {
-		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		return $this->_insert( $this->table_name, $this->table_data_types, $set_column_values );
-	}
-
-
-
-
-
-
-
-
-
-
-	/**
-	 *		This function updates table data
-	 *
-	 *		@access public
-	 *		@param array $set_column_values - array of column names and values for the SQL SET clause
-	 *		@param array $where_cols_n_values - column names and values for the SQL WHERE clause
-	 *		@return array
-	 */
-	public function update ($set_column_values, $where_cols_n_values) {
-		//$this->display_vars( __FUNCTION__, array( 'set_column_values' => $set_column_values, '$where_cols_n_values' => $where_cols_n_values ) );
-		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		return $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );
-	}
-
-
-
-
 }
 // End of file EEM_Datetime.model.php
 // Location: /includes/models/EEM_Datetime.model.php

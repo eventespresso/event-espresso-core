@@ -21,9 +21,9 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Soft_Delete_Base.model.php' );
 
-class EEM_Price extends EEM_Base {
+class EEM_Price extends EEM_Soft_Delete_Base {
 
 	// private instance of the EEM_Price object
 	private static $_instance = NULL;
@@ -56,10 +56,7 @@ class EEM_Price extends EEM_Base {
 	 * 		@return void
 	 */
 	protected function __construct() {
-//		global $wpdb;
-		// set table name
-//		$this->table_name = $wpdb->prefix . 'esp_price';
-		// set item names
+		require_once('EEM_Price_Type.model.php');
 		$this->singlular_item = __('Price','event_espresso');
 		$this->plural_item = __('Prices','event_espresso');		
 		// array representation of the price table and the data types for each field
@@ -114,54 +111,6 @@ class EEM_Price extends EEM_Base {
 
 
 
-
-
-
-	/**
-	 * 		cycle though array of prices and create objects out of each item
-	 *
-	 * 		@access		private
-	 * 		@param		array		$prices
-	 * 		@return 	mixed		array on success, FALSE on fail
-	 */
-	private function _create_objects($prices = FALSE) {
-		
-		if (!$prices) {
-			return FALSE;
-		}
-
-		if (is_object($prices)) {
-			$prices = array($prices);
-		}
-		
-		foreach ($prices as $price) {
-
-			$array_of_objects[$price->PRC_ID] = new EE_Price(
-											$price->PRT_ID,
-											$price->EVT_ID,
-											$price->PRC_amount,
-											$price->PRC_name,
-											$price->PRC_desc,
-											$price->PRC_reg_limit,
-											$price->PRC_tckts_left,
-											$price->PRC_use_dates,
-											$price->PRC_start_date,
-											$price->PRC_end_date,
-											$price->PRC_is_active,
-											$price->PRC_overrides,
-											$price->PRC_order,
-											$price->PRC_deleted,
-											$price->PRC_ID
-			);
-		}
-
-		return $array_of_objects;
-	}
-
-
-
-
-
 	/**
 	 * 		instantiate a new price object with blank/empty properties
 	 *
@@ -180,164 +129,11 @@ class EEM_Price extends EEM_Base {
 	 * 		retreive  ALL prices from db
 	 *
 	 * 		@access		public
-	 * 		@return		mixed		array on success, FALSE on fail
+	 * 		@return		EE_PRice[]
 	 */
 	public function get_all_prices() {
-
-		$orderby = 'PRC_amount';
 		// retreive all prices
-		if ($prices = $this->select_all($orderby)) {
-			return $this->_create_objects($prices);
-		} else {
-			return FALSE;
-		}
-	}
-
-
-
-
-
-	/**
-	 * 		get all prices from db where...
-	 *
-	 * 		@access		public
-	 * 		@param		array		$where_cols_n_values
-	 * 		@return		mixed		array on success, FALSE on fail
-	 */
-	public function get_all_prices_where( $where_cols_n_values = FALSE ) {
-
-		if (!$where_cols_n_values) {
-			return FALSE;
-		}
-
-		$orderby = 'PRC_amount';
-		// retreive all prices
-		if ($prices = $this->select_all_where( $where_cols_n_values, $orderby )) {
-			return $this->_create_objects($prices);
-		} else {
-			return FALSE;
-		}
-	}
-
-
-
-
-	/**
-	 * 		retreive  a single price from db via it's ID
-	 *
-	 * 		@access		public
-	 * 		@param		int 			$PRC_ID
-	 * 		@return		mixed		array on success, FALSE on fail
-	 */
-	public function get_price_by_ID($PRC_ID = FALSE) {
-
-		if (!$PRC_ID) {
-			return FALSE;
-		}
-		// retreive a particular price
-		$where_cols_n_values = array('PRC_ID' => $PRC_ID);
-		if ($price = $this->select_row_where($where_cols_n_values)) {
-			$price_array = $this->_create_objects(array($price));
-			return array_shift($price_array);
-		} else {
-			return FALSE;
-		}
-	}
-
-
-
-
-
-	/**
-	 * 		retreive a single price from db via it's column values
-	 *
-	 * 		@access		public
-	 * 		@param		array		$where_cols_n_values
-	 * 		@return 		mixed		array on success, FALSE on fail
-	 */
-	public function get_price( $where_cols_n_values = FALSE ) {
-
-		if (!$where_cols_n_values) {
-			return FALSE;
-		}
-
-		if ($price = $this->select_row_where($where_cols_n_values)) {
-			$price_array = $this->_create_objects(array($price));
-			return array_shift($price_array);
-		} else {
-			return FALSE;
-		}
-	}
-
-
-
-
-
-	/**
-	 * 		retreive prices from db 
-	 *
-	 * 		@access		public
-	 * 		@param		array							$where_cols_n_values
-	 * 		@param		mixed 	string|array		$orderby
-	 * 		@param		mixed 	string|array		$order
-	 * 		@param		mixed  string|array		$operator
-	 * 		@return 		mixed array on success, FALSE on fail
-	 */
-	private function _select_all_prices_where ( 
-			$where_cols_n_values=FALSE, $orderby=array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' ), $order='ASC', $operator = '=', $limit = NULL, $count = FALSE ) {
-	
-		$em_table_data_types = array(
-				'prt.PRT_ID'						=> '%d',
-				'prt.PRT_name'				=> '%s',
-				'prt.PRT_is_member'		=> '%d',
-				'prt.PBT_ID'						=> '%d',
-				'prt.PRT_is_percent'		=> '%d',
-				'prt.PRT_is_global'			=> '%d',
-				'prt.PRT_order'				=> '%d',
-				'prc.PRC_ID'					=> '%d',
-				'prc.PRT_ID'					=> '%d',
-				'prc.EVT_ID'					=> '%d',
-				'prc.PRC_amount'			=> '%f',
-				'prc.PRC_name'				=> '%s',
-				'prc.PRC_desc'				=> '%s',
-				'prc.PRC_reg_limit' 		=> '%d',
-				'prc.PRC_tckts_left' 		=> '%d',
-				'prc.PRC_use_dates'		=> '%d',
-				'prc.PRC_start_date'		=> '%d',
-				'prc.PRC_end_date'		=> '%d',
-				'prc.PRC_is_active' 			=> '%d',
-				'prc.PRC_overrides' 		=> '%d',
-				'prc.PRC_order' 				=> '%d',
-				'prc.PRC_deleted' 			=> '%d'
-		);
-
-		global $wpdb;
-		
-		$SQL = $count ? 'SELECT COUNT(prc.PRC_ID) ' : 'SELECT * ';
-		$SQL .= 'FROM '. $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prt.PRT_ID = prc.PRT_ID';
-
-		if ( $where_cols_n_values ) {
-			$prepped = $this->_prepare_where ($where_cols_n_values, $em_table_data_types, $operator);
-			$SQL .= $prepped['where'];
-			$VAL = $prepped['value'];
-		}
-
-		$SQL .= $this->_orderby_n_sort ( $orderby, $order );
-
-		if ( $limit && is_array($limit) && ! $count ) {
-			$SQL .=	' LIMIT ' . $limit[0] . ',' . $limit[1];
-		}
-		// get count ? or get data?
-		$results = $count ? $wpdb->get_var( $wpdb->prepare( $SQL, $VAL )) : $wpdb->get_results( $wpdb->prepare( $SQL, $VAL ), 'OBJECT' );
-		//echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		// bad results
-		if ( empty( $results ) || $results === FALSE || is_wp_error( $results )) {
-			return FALSE;
-		}			
-		//  return the count OR create objects out of data
-		$results = $count ? $results : $this->_create_objects($results);
-		return $results;
-
+		return $this->get_all(array('order_by'=>array('PRC_amount'=>'ASC')));
 	}
 
 
@@ -350,12 +146,20 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 		boolean			false on fail
 	 */
 	public function get_all_event_prices( $EVT_ID ) {
-		return $this->_select_all_prices_where( 
-				array( 'prc.EVT_ID' =>$EVT_ID, 'prc.PRC_is_active' => TRUE, 'prc.PRC_deleted' => FALSE, 'prt.PBT_ID' => 4 ), 
-				array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' ), 
-				'ASC', 
-				array( 'prc.EVT_ID' =>'=', 'prc.PRC_is_active' => '=', 'prc.PRC_deleted' => '=', 'prt.PBT_ID' => '!=' )
-		);
+		return $this->get_all(array(
+			array(
+				'EVT_ID'=>$EVT_ID,
+				'PRC_is_active'=>true,
+				'Price_Type.PBT_ID'=>array('!=',  EEM_Price_Type::base_type_tax)
+			),
+			'order_by'=>$this->_order_by_array_for_get_all_method()
+		));
+//		return $this->_select_all_prices_where( 
+//				array( 'prc.EVT_ID' =>$EVT_ID, 'prc.PRC_is_active' => TRUE, 'prc.PRC_deleted' => FALSE, 'prt.PBT_ID' => 4 ), 
+//				array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' ), 
+//				'ASC', 
+//				array( 'prc.EVT_ID' =>'=', 'prc.PRC_is_active' => '=', 'prc.PRC_deleted' => '=', 'prt.PBT_ID' => '!=' )
+//		);
 	}
 
 
@@ -366,13 +170,15 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 		array				on success
 	 * 		@return 		boolean			false on fail
 	 */
-	public function get_all_event_default_prices() {
-		return $this->_select_all_prices_where( 
-				array( 'prc.EVT_ID' =>0, 'prc.PRC_is_active' => TRUE, 'prc.PRC_deleted' => FALSE, 'prt.PBT_ID' => 4 ), 
-				array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' ), 
-				'ASC', 
-				array( 'prc.EVT_ID' =>'=', 'prc.PRC_is_active' => '=', 'prc.PRC_deleted' => '=', 'prt.PBT_ID' => '!=' )
-		);
+	public function get_all_default_prices() {
+		return $this->get_all(array(
+							array(
+								'EVT_ID'=>0,
+								'Price_Type.PRT_is_global'=>true,
+								'Price_Type.PBT_ID'=>array('!=',4),
+								'PRC_is_active'=>true),
+							'order_by'=>$this->_order_by_array_for_get_all_method()
+						));
 	}
 
 
@@ -381,40 +187,27 @@ class EEM_Price extends EEM_Base {
 	 * 		retreive all prices that are member prices
 	 *
 	 * 		@access		public
-	 * 		@return 		array				on success
-	 * 		@return 		boolean			false on fail
+	 * 		@return 		EE_Price[]
 	 */
 	public function get_all_prices_that_are_member_prices() {
-		return $this->_select_all_prices_where(array('prt.PRT_is_member' => TRUE ));
+		return $this->get_all(array(array('Price_Type.PRT_is_member' => TRUE )));
 	}
 
-	public function get_all_prices_that_are_not_member_prices() {
-		return $this->_select_all_prices_where(array('prt.PRT_is_member' => FALSE ));
-	}
-
-
-
-
-
+	
 	/**
-	 * 		retreive all prices that are discounts
+	 * 		retreive all prices that are member prices
 	 *
 	 * 		@access		public
-	 * 		@return 		array				on success
-	 * 		@return 		boolean			false on fail
+	 * 		@return 		EE_Price[]
 	 */
-	public function get_all_prices_that_are_discounts() {
-		return $this->_select_all_prices_where(array('prt.PBT_ID' => 2 ));
+	public function get_all_prices_that_are_not_member_prices() {
+		return $this->get_all(array(array('Price_Type.PRT_is_member' => FALSE )));
 	}
 
-	public function get_all_prices_that_are_not_discounts() {
-		return $this->_select_all_prices_where(
-				array( 'prt.PBT_ID' => 2 ), 
-				array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' ), 
-				'ASC', 
-				array( 'prt.PBT_ID' => '!=' )
-		);
-	}
+
+
+
+
 
 
 
@@ -425,95 +218,23 @@ class EEM_Price extends EEM_Base {
 	 *
 	 * 		@access		public
 	 * 		@return 		array				on success
-	 * 		@return 		boolean			false on fail
+	 * 		@return 		array top-level keys are the price's order and their values are an array,
+	 *						next-level keys are the price's ID, and their values are EE_Price objects
 	 */
 	public function get_all_prices_that_are_taxes() {
 		$taxes = array();
-		$all_taxes = $this->_select_all_prices_where( 
-				array( 'prt.PBT_ID' => 4, 'prc.PRC_is_active' => TRUE, 'prc.PRC_deleted' => FALSE )	
-		);
-		$all_taxes = ! empty( $all_taxes ) ? $all_taxes : array();
+		$all_taxes = $this->get_all(array(
+			array(
+				'Price_Type'=>  EEM_Price_Type::base_type_tax,
+				'PRC_is_active'=> true)
+		));
+//		$all_taxes = $this->_select_all_prices_where( 
+//				array( 'prt.PBT_ID' => 4, 'prc.PRC_is_active' => TRUE, 'prc.PRC_deleted' => FALSE )	
+//		);
 		foreach ( $all_taxes as $tax ) {
 			$taxes[ $tax->order() ][ $tax->ID() ] = $tax;
 		}
 		return $taxes;
-	}
-
-	public function get_all_prices_that_are_not_taxes() {
-		return $this->_select_all_prices_where(
-				array( 'prt.PBT_ID' => 4, 'prc.PRC_is_active' => TRUE, 'prc.PRC_deleted' => FALSE ), 
-				array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' ), 
-				'ASC', 
-				array( 'prt.PBT_ID' => '!=', 'prc.PRC_is_active' => '=', 'prc.PRC_deleted' => '=' )
-		);
-	}
-
-
-
-
-
-	/**
-	 * 		retreive all prices that are percentages
-	 *
-	 * 		@access		public
-	 * 		@return 		array				on success
-	 * 		@return 		boolean			false on fail
-	 */
-	public function get_all_prices_that_are_percentages() {
-		return $this->_select_all_prices_where(array('prt.PRT_is_percent' => TRUE ));
-	}
-
-	public function get_all_prices_that_are_not_percentages() {
-		return $this->_select_all_prices_where(array('prt.PRT_is_percent' => FALSE ));
-	}
-
-
-
-
-
-	/**
-	 * 	retreive all prices that are global
-	 *
-	 * 	@access		public
-	 * 	@return 		boolean	$trashed				return deleted records or just active non-deleted ones ?
-	 * 	@return 		string		$orderby				sorting column
-	 * 	@return 		string		$order					sort ASC or DESC ?
-	 * 	@return 		array		$limit					query limit and offset
-	 * 	@return 		boolean	$count					return count or results ?
-	 * 	@return 		array		on success
-	 * 	@return 		boolean	false on fail
-	 */
-	public function get_all_prices_that_are_global( $trashed = FALSE, $orderby=array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' ), $order='ASC', $limit = NULL, $count = FALSE ) {
-		
-		return $this->_select_all_prices_where( 
-				array( 'prt.PRT_is_global' => TRUE, 'prc.PRC_deleted' => $trashed ),
-				$orderby,
-				$order,
-				'=',
-				$limit, 
-				$count 
-			);
-
-	}
-
-	public function get_all_prices_that_are_not_global() {
-		return $this->_select_all_prices_where(array('prt.PRT_is_global' => FALSE ));
-	}
-
-	/**
-	 * 		retreive all prices that are of a particular order #
-	 *
-	 * 		@access		public
-	 * 		@param 		int 			$order the level or order that the prices are applied
-	 * 		@return 		array				on success
-	 * 		@return 		boolean			false on fail
-	 */
-	public function get_all_prices_that_are_order_nmbr($order) {
-		return $this->_select_all_prices_where(array('prt.PRT_order' => $order ));
-	}
-
-	public function get_all_prices_that_are_not_order_nmbr($order) {
-		return $this->_select_all_prices_where(array('prt.PRT_order' => $order ), '!=' );
 	}
 
 
@@ -527,18 +248,22 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 		boolean			false on fail
 	 */
 	public function get_all_event_prices_for_admin( $EVT_ID = FALSE ) {
-
+		//if there is no evt_id, get prices with no event ID, are global, are not a tax, and are active
+		//return taht list
+		$global_prices =	$this->get_all_default_prices();
+		
 		if ( ! $EVT_ID ) {
-			 $prices = $this->_select_all_prices_where(
-					array( 'prc.EVT_ID' => 0, 'prt.PRT_is_global' => TRUE, 'prt.PBT_ID' => 4, 'prc.PRC_is_active'=>TRUE ), 
-					array( 'PRC_start_date' ), 
-					array( 'DESC' ),
-					array( 'prc.EVT_ID' =>'=', 'prt.PRT_is_global' => '=', 'prt.PBT_ID' => '!=', 'prc.PRC_is_active'=>'=' )
-			);
+			
+//			$this->_select_all_prices_where(
+//					array( 'prc.EVT_ID' => 0, 'prt.PRT_is_global' => TRUE, 'prt.PBT_ID' => 4, 'prc.PRC_is_active'=>TRUE ), 
+//					array( 'PRC_start_date' ), 
+//					array( 'DESC' ),
+//					array( 'prc.EVT_ID' =>'=', 'prt.PRT_is_global' => '=', 'prt.PBT_ID' => '!=', 'prc.PRC_is_active'=>'=' )
+//			);
 			//printr( $prices, '$prices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-			if ( $prices ) {
-				$array_of_is_active_and_price_objects = array();
-				foreach ($prices as $price) {
+			if ( $global_prices ) {
+				$array_of_price_objects = array();
+				foreach ($global_prices as $price) {
 						$array_of_price_objects[ $price->type() ][] = $price;
 				}
 				return $array_of_price_objects;
@@ -547,21 +272,24 @@ class EEM_Price extends EEM_Base {
 			}
 			
 		}
+
 		
-		$globals = $this->_select_all_prices_where(
-				array( 'prc.EVT_ID' => 0, 'prt.PRT_is_global' => TRUE, 'prt.PBT_ID' => 4, 'prc.PRC_is_active'=>TRUE, 'prc.PRC_deleted'=>FALSE ), 
-				array( 'PRC_start_date' ), 
-				array( 'DESC' ),
-				array( 'prc.EVT_ID' =>'=', 'prt.PRT_is_global' => '=', 'prt.PBT_ID' => '!=', 'prc.PRC_is_active'=>'=', 'prc.PRC_deleted'=>'=' )
-		);
-		if ( ! $globals ) {
-			$globals = array();
-		}
+//		$globals = $this->_select_all_prices_where(
+//				array( 'prc.EVT_ID' => 0, 'prt.PRT_is_global' => TRUE, 'prt.PBT_ID' => 4, 'prc.PRC_is_active'=>TRUE, 'prc.PRC_deleted'=>FALSE ), 
+//				array( 'PRC_start_date' ), 
+//				array( 'DESC' ),
+//				array( 'prc.EVT_ID' =>'=', 'prt.PRT_is_global' => '=', 'prt.PBT_ID' => '!=', 'prc.PRC_is_active'=>'=', 'prc.PRC_deleted'=>'=' )
+//		);
 		
-		$event_prices = $this->_select_all_prices_where(array('prc.EVT_ID' => $EVT_ID, 'prc.PRC_deleted'=>FALSE ), array('PRC_start_date'), array('DESC'));
-		if ( ! $event_prices ) {
-			$event_prices = array();
-		}
+		$event_prices = $this->get_all(array(
+			array(
+				'EVT_ID'=>$EVT_ID
+				),
+			'order_by'=>$this->_order_by_array_for_get_all_method()
+		));
+		
+		
+		//$this->_select_all_prices_where(array('prc.EVT_ID' => $EVT_ID, 'prc.PRC_deleted'=>FALSE ), array('PRC_start_date'), array('DESC'));
 //		echo printr( $event_prices, '$event_prices' ); 
 //		echo printr( $globals, '$globals' ); 
 
@@ -572,11 +300,11 @@ class EEM_Price extends EEM_Base {
 			}
 		}
 		foreach ($overrides as $override) {
-			if (array_key_exists($override, $globals)) {
-				unset( $globals[$override] );
+			if (array_key_exists($override, $global_prices)) {
+				unset( $global_prices[$override] );
 			}
 		}
-		$prices = array_merge( $event_prices, $globals);
+		$prices = array_merge( $event_prices, $global_prices);
 		//echo printr( $prices, 'prices');
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 		
@@ -647,31 +375,6 @@ class EEM_Price extends EEM_Base {
 
 
 
-
-	/**
-	 * 		retreive all prices that are global, but not taxes
-	 *
-	 * 		@access		public
-	 * 		@return 		boolean			false on fail
-	 */
-	public function get_all_prices_for_pricing_admin() {
-
-		global $wpdb;
-		// retreive prices
-		$SQL = 'SELECT prc.*, prt.* FROM ' . $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prt.PRT_ID = prc.PRT_ID WHERE prt.PBT_ID != 4 ORDER BY PRT_order';
-
-		if ($prices = $wpdb->get_results($wpdb->prepare($SQL))) {
-			//echo printr($prices, '$prices' );
-			return $this->_create_objects($prices);
-		} else {
-			return FALSE;
-		}
-	}
-
-
-
-
-
 	/**
 	 * 		get all prices of a specific type
 	 *
@@ -680,70 +383,25 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 		boolean		false on fail
 	 */
 	public function get_all_prices_that_are_type($type = FALSE) {
-		if ( ! $type || ! is_int( $type )) {
-			return FALSE;
-		}
-		if ( $prices = $this->select_all_where(array('PRT_ID' => $type))) {
-			return $prices;
-		} else {
-			return FALSE;
-		}
+		return $this->get_all(array(
+			array(
+				'PRT_ID'=>$type
+			),
+			'order_by'=>$this->_order_by_array_for_get_all_method()
+		));
 	}
-
-
-
-
 
 	/**
-	 * 		delete price by ID
-	 *
-	 * 		@access		public
-	 * 		@param 		int 				$PRC_ID - price ID
-	 * 		@return 		boolean		false on fail
+	 * Returns an array of the normal 'order_by' query parameter provided to the get_all query.
+	 * Of course you don't have to use it, but this is the order we usually want to sort prices by
+	 * @return array which can be used like so: $this->get_all(array(array(...where stuff...),'order_by'=>$this->_order_by_array_for_get_all_method()));
 	 */
-	public function delete_by_id($PRC_ID) {
-		if ( ! $PRC_ID || ! is_int( $PRC_ID )) {
-			return FALSE;
-		}
-		if ( $this->delete(array('PRC_ID' => $PRC_ID))) {
-			return TRUE;
-		}		
+	public function _order_by_array_for_get_all_method(){
+		return array(
+				'Price_Type.PRT_order'=>'ASC',
+				'PRC_order'=>'ASC',
+				'PRC_ID'=>'ASC');
 	}
-
-
-
-
-
-	/**
-	 * 		This function inserts table data
-	 *
-	 * 		@access public
-	 * 		@param array $set_column_values - array of column names and values for the SQL INSERT
-	 * 		@return array
-	 */
-	public function insert($set_column_values) {
-		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		return $this->_insert($this->table_name, $this->table_data_types, $set_column_values);
-	}
-
-
-
-
-
-	/**
-	 * 		This function updates table data
-	 *
-	 * 		@access public
-	 * 		@param array $set_column_values - array of column names and values for the SQL SET clause
-	 * 		@param array $where_cols_n_values - column names and values for the SQL WHERE clause
-	 * 		@return array
-	 */
-	public function update($set_column_values, $where_cols_n_values) {
-		//$this->display_vars( __FUNCTION__, array( 'set_column_values' => $set_column_values, 'where' => $where ) );
-		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		return $this->_update($this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values);
-	}
-
 }
 
 // End of file EEM_Price.model.php

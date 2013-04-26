@@ -39,8 +39,6 @@ class EE_Model_Query_Info_Carrier extends EE_Base{
    
    private $_limit_sql;
    
-   private $_order_sql;
-   
    private $_order_by_sql;
    
    private $_having_sql;
@@ -51,9 +49,6 @@ class EE_Model_Query_Info_Carrier extends EE_Base{
 	   $this->_limit_sql = $limit_sql;
 	}
 	
-	function set_order_sql($order_sql){
-		$this->_order_sql = $order_sql;
-	}
 	function set_order_by_sql($order_by_sql){
 		$this->_order_by_sql = $order_by_sql;
 	}
@@ -65,9 +60,6 @@ class EE_Model_Query_Info_Carrier extends EE_Base{
 	}
 	function get_limit_sql(){
 		return $this->_limit_sql;
-	}
-	function get_order_sql(){
-		return $this->_order_sql;
 	}
 	function get_order_by_sql(){
 		return $this->_order_by_sql;
