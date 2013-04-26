@@ -483,23 +483,30 @@ function events_data_tables_install() {
 
 	$table_name = 'esp_message_template';
 	$sql = "MTP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-				  EVT_ID int(10) unsigned DEFAULT NULL,
-				  GRP_ID int(10) unsigned NOT NULL,
-				  MTP_user_id int(10) NOT NULL DEFAULT '1',
-				  MTP_messenger varchar(30) NOT NULL,
-				  MTP_message_type varchar(50) NOT NULL,
-				  MTP_template_field varchar(30) NOT NULL,
-				  MTP_context varchar(50) NOT NULL,
-				  MTP_content text NOT NULL,
-				  MTP_is_global tinyint(1) NOT NULL DEFAULT '0',
-				  MTP_is_override tinyint(1) NOT NULL DEFAULT '0',
-				  MTP_deleted tinyint(1) NOT NULL DEFAULT '0',
-				  MTP_is_active tinyint(1) NOT NULL DEFAULT '1',
-				  PRIMARY KEY  (MTP_ID),
-				  KEY GRP_ID (GRP_ID),
-				  KEY EVT_ID (EVT_ID),
-				  KEY MTP_user_id (MTP_user_id)";
+				GRP_ID int(10) unsigned NOT NULL,
+				MTP_context varchar(50) NOT NULL,
+				MTP_template_field varchar(30) NOT NULL,
+				MTP_content text NOT NULL,
+				PRIMARY KEY  (MTP_ID),
+				KEY (GRP_ID)";
 	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
+
+
+
+	$table_name = 'esp_message_template_group';
+	$sql = "GRP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+				EVT_ID int(10) unsigned DEFAULT NULL,
+				MTP_user_id int(10) NOT NULL DEFAULT '1',
+				MTP_messenger varchar(30) NOT NULL,
+				MTP_message_type varchar(50) NOT NULL,
+				MTP_is_global tinyint(1) NOT NULL DEFAULT '0',
+				MTP_is_override tinyint(1) NOT NULL DEFAULT '0',
+				MTP_deleted tinyint(1) NOT NULL DEFAULT '0',
+				MTP_is_active tinyint(1) NOT NULL DEFAULT '1',
+				PRIMARY KEY  (GRP_ID),
+				KEY EVT_ID (EVT_ID),
+				KEY MTP_user_id (MTP_user_id)";
+	event_espresso_run_install( $table_name, $table_version, $sql, 'ENGINE=InnoDB ');
 
 
 
