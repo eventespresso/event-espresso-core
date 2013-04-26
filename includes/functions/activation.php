@@ -508,7 +508,7 @@ function events_data_tables_install() {
 				MTP_content text NOT NULL,
 				PRIMARY KEY  (MTP_ID),
 				KEY (GRP_ID)";
-	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
+	event_espresso_run_install($table_name, $sql, 'ENGINE=InnoDB ');
 
 
 
@@ -525,7 +525,7 @@ function events_data_tables_install() {
 				PRIMARY KEY  (GRP_ID),
 				KEY EVT_ID (EVT_ID),
 				KEY MTP_user_id (MTP_user_id)";
-	event_espresso_run_install( $table_name, $table_version, $sql, 'ENGINE=InnoDB ');
+	event_espresso_run_install( $table_name, $sql, 'ENGINE=InnoDB ');
 
 
 
