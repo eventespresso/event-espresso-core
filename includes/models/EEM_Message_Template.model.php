@@ -22,6 +22,8 @@
  * @subpackage	includes/models/EEM_Message_Template.modle.php
  * @author		Darren Ethier
  *
+ * //DARREN IS WORKING ON//
+ *
  * ------------------------------------------------------------------------
  */
 require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
