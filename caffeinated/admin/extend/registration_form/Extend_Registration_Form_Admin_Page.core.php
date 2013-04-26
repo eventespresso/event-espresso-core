@@ -362,7 +362,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 
-	private function _delete_items(EEM_TempBase $model){
+	private function _delete_items(EEM_Base $model){
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {			
 			// if array has more than one element than success message should be plural
@@ -478,10 +478,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	/**
 	 * Interally used to delete or restore items, using the request data. Meant to be 
 	 * flexible between question or question gruops
-	 * @param EEM_TempBase $model
+	 * @param EEM_Base $model
 	 * @param boolean $trash wehter to trash or restore
 	 */
-	private function _trash_or_restore_items( EEM_TempBase $model, $trash = TRUE ) {
+	private function _trash_or_restore_items( EEM_Base $model, $trash = TRUE ) {
 		
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		

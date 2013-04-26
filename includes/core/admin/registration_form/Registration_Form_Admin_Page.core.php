@@ -218,7 +218,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	 * Extracts the question field's values from the POST request to update or insert them
 	 * @return array where each key is the name of a model's field/db column, and each value is its value.
 	 */
-	protected function _set_column_values_for(EEM_Custom_Table_Base $model){
+	protected function _set_column_values_for(EEM_Base $model){
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		$set_column_values=array();
 		foreach($model->fields_settings() as $fieldName=>$settings){
@@ -397,7 +397,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	/**
 	 * For internal use in getting all the query parameters (because it's pretty well the same between question, question groups, and
 	 * for both when searchign for trahsed and untrahse dones)
-	 * @param EEM_TempBase $model either EEM_Question or EEM_Question_Group
+	 * @param EEM_Base $model either EEM_Question or EEM_Question_Group
 	 * @return array($order,$limit,$output,$searchString)
 	 */
 	protected function get_query_params($model,$per_page=10,$current_page=10,$count=FALSE){

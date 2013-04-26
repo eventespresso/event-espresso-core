@@ -46,7 +46,7 @@
 //	/**
 //	 * Gets the EEM_*_Model for this class
 //	 * @access public now, as this is more convenient 
-//	 * @return EEM_TempBase
+//	 * @return EEM_Base
 //	 */
 //	public function  _get_model(){
 //		//find model for this class
@@ -138,7 +138,7 @@
 //	 * Uses the _fieldSettings attribute to 
 //	 * @param string $attributeName, as it appears on teh DB column (no _ prefix)
 //	 * @param mixed $value
-//	 * @param boolean $useDefault if $value is null and $useDefault is true, retrieve a default value from the EEM_TempBase's EE_Model_Field.
+//	 * @param boolean $useDefault if $value is null and $useDefault is true, retrieve a default value from the EEM_Base's EE_Model_Field.
 //	 * @return null
 //	 */
 //	public function set($fieldName,$value,$useDefault=false){

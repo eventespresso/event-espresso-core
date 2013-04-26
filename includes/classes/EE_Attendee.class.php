@@ -799,7 +799,7 @@ class EE_Attendee extends EE_Base_Class{
 	/**
 	 * Gets all the registrations of this attendee for an event
 	 * @param int $event_id the ID of the event
-	 * @param string $output usually either 'OBJECT_K' or 'COUNT', like on EEM_Custom_Table_Base's select_all_where function
+	 * @param string $output usually either 'OBJECT_K' or 'COUNT', like on EEM_Base's select_all_where function
 	 * @return EE_Registration[]
 	 */
 	public function get_registrations_for_event($event_id, $output='OBJECT_K'){

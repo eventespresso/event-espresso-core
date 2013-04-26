@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_TempBase.model.php' );
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 class EEM_Payment extends EEM_Base {
 
   	// private instance of the Payment object

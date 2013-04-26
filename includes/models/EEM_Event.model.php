@@ -22,7 +22,7 @@
  * ------------------------------------------------------------------------
  */
 class EEM_Event  extends EEM_Base{
-	//extends EEM_TempBase
+	//extends EEM_Base
 
   	// private instance of the Event object
 	private static $_instance = NULL;
@@ -68,7 +68,7 @@ class EEM_Event  extends EEM_Base{
 	 * Gets all the question groups related to this event. Has almost teh same inputs as EEM_TEmpBase->get_many_related
 	 * @global type $wpdb
 	 * @param int $EVT_ID
-	 * @param array $where_col_n_values all the following parameters are just like EEM_TempBase's get_all_where
+	 * @param array $where_col_n_values all the following parameters are just like EEM_Base's get_all_where
 	 * @param string $orderby
 	 * @param string $order
 	 * @param mixed $operators array/string. 
@@ -77,7 +77,7 @@ class EEM_Event  extends EEM_Base{
 	 */
 	public function get_related_question_groups($EVT_ID, $where_col_n_values=array(),$orderby=null,$order='ASC',$operators='=',$limit=null,$output='OBJECT_K'){
 		
-		//trying to duplicate EEM_TempBase's get_many_related in teh HABTM case, to allow for easier transition when EEM_Events inherits EEM_TempBase
+		//trying to duplicate EEM_Base's get_many_related in teh HABTM case, to allow for easier transition when EEM_Events inherits EEM_Base
 		global $wpdb;
 		
 		require_once('EEM_Question_Group.model.php');

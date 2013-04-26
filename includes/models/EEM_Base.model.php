@@ -1160,7 +1160,7 @@ abstract class EEM_Base extends EE_Base{
 		$className=get_class($this);
 		$tagName="filter_hook_espresso__{$className}__{$methodName}";
 		if(!has_filter($tagName)){
-			throw new EE_Error(sprintf(__("Method %s on model %s does not exist! You can create one with the following code in functions.php or in a plugin: add_filter('%s','my_callback',10,3);function my_callback(\$previousReturnValue,EEM_TempBase \$object\$argsArray=null){/*function body*/return \$whatever;}","event_espresso"),
+			throw new EE_Error(sprintf(__("Method %s on model %s does not exist! You can create one with the following code in functions.php or in a plugin: add_filter('%s','my_callback',10,3);function my_callback(\$previousReturnValue,EEM_Base \$object\$argsArray=null){/*function body*/return \$whatever;}","event_espresso"),
 										$methodName,$className,$tagName));
 		}
 		
