@@ -858,9 +858,7 @@ class EE_Registration extends EE_Base_Class {
 	 * @return EE_Datetime
 	 */
 	public function date_obj() {
-		require_once('EEM_Datetime.model.php');
-		$EEMD = EEM_Datetime::instance();
-		return $EEMD->get_date_time_by_dtt_id( $this->_DTT_ID );
+		return $this->get_first_related('Datetime');
 	}
 
 

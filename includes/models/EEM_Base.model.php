@@ -358,7 +358,12 @@ abstract class EEM_Base extends EE_Base{
 	 * @return string
 	 */
 	private function _construct_2nd_half_of_select_query(EE_Model_Query_Info_Carrier $model_query_info){
-		return " FROM ".$model_query_info->get_full_join_sql().$model_query_info->get_where_sql();
+		return " FROM ".$model_query_info->get_full_join_sql().
+				$model_query_info->get_where_sql().
+				$model_query_info->get_group_by_sql().
+				$model_query_info->get_having_sql().
+				$model_query_info->get_order_by_sql().
+				$model_query_info->get_limit_sql();
 	}
 	/**
 	 * Adds a relationship of the correct type between $modelObject and $otherModelObject. 
@@ -592,23 +597,21 @@ abstract class EEM_Base extends EE_Base{
 			if(is_array($query_params['order_by'])){
 				//assume it's an array of fields to order by
 				$order_array = array();
-				foreach($query_params['order_by'] as $field_name_to_order_by){
+				foreach($query_params['order_by'] as $field_name_to_order_by => $order){
 					$field_obj = $this->field_settings_for($field_name);
-					$order_array[] = $field_obj->get_qualified_column();
+					if($order == 'asc' || $order == 'ASC'){
+						$order = 'ASC';
+					}else{
+						$order = 'DESC';
+					}
+					$order_array[] = $field_obj->get_qualified_column() . $order ;
 				}
 				$query_object->set_order_by_sql(" ORDER BY ".implode(",",$order_array));
 			}else{
 				$query_object->set_order_by_sql(" ORDER BY ".$query_params['order_by']);
 			}
 		}
-		//set order
-		if(array_key_exists('order',$query_params) && $query_params['order']){	
-			if(in_array($query_params['order'],$this->_allowed_order_values)){
-				$query_object->set_order_sql(" ".$query_params['order']);
-			}else{
-				throw new EE_Error(sprintf(__("Invalid order parameter supplied: '%s'. Only allowed order parameters: %s",'event_espresso'),$query_params['order'],implode(",",$this->_allowed_order_values)));
-			}
-		}
+		
 		//set group by
 		if(array_key_exists('group_by',$query_params) && $query_params['group_by']){
 			if(is_array($query_params['group_by'])){
@@ -626,6 +629,12 @@ abstract class EEM_Base extends EE_Base{
 		//set having
 		if(array_key_exists('having',$query_params) && $query_params['having']){
 			throw new EE_Error("Having clause is not yet supported. It should be an easy add though");
+		}
+		//now, just verify they didnt pass anything wack
+		foreach($query_params as $query_key => $query_value){
+			if(in_array($query_key,$this->_allowed_query_params)){
+				throw new EE_Error(sprintf(__("You passed %s as a query parameter to %s, which is illegal!",'event_espresso'),$query_key,get_class($this)));
+			}
 		}
 		$query_object->set_main_model_join_sql($this->_construct_internal_join());
 		return $query_object;

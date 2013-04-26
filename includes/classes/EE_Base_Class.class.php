@@ -857,12 +857,31 @@ class EE_Base_Class{
 	}
 	
 	/**
-	 * 
-	 * @param type $relationName
-	 * @param type $query_params
+	 * Gets all the related model objects of the specified type. Eg, if the current class if
+	 * EE_Event, you could call $this->get_many_related('Registration') to get an array of all the
+	 * EE_Registration objects which related to this event.
+	 * @param string $relationName key in the model's _model_relations array
+	 * @param array $query_paramslike EEM_Base::get_all
+	 * @return EE_Base_Class[]
 	 */
-	public function get_many_related($relationName,$query_params){
+	public function get_many_related($relationName,$query_params = array()){
 		$this->_get_model()->get_all_related($this, $relationName, $query_params);
+	}
+	
+	/**
+	 * Gets the first (ie, one) related model object of the specified type.
+	 * @param string $relationName key in the model's _model_relations array
+	 * @param array $query_paramslike EEM_Base::get_all
+	 * @return EE_Base_Class (not an array, a single object)
+	 */
+	public function get_first_related($relationName,$query_params = array()){
+		$query_params['limit']=1;
+		$results = $this->get_many_related($relationName, $query_params);
+		if($results){
+			return array_shift($results);
+		}else{
+			return null;
+		}
 	}
 	
 	/**

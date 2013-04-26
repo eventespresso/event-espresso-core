@@ -1885,9 +1885,9 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$limit = array( $offset, $per_page );
 
 		if ( $trash )
-			$all_attendees = $count ? $ATT_MDL->count_deleted( array('order_by'=>$orderby,'order'=>$sort,'limit'=>$limit)): $ATT_MDL->get_all_deleted( array('order_by'=>$orderby,'order'=>$sort,'limit'=>$limit));
+			$all_attendees = $count ? $ATT_MDL->count_deleted( array('order_by'=>array($orderby=>$sort), 'limit'=>$limit)): $ATT_MDL->get_all_deleted( array('order_by'=>array($orderby=>$sort), 'limit'=>$limit));
 		else
-			$all_attendees = $count ? $ATT_MDL->count( array('order_by'=>$orderby,'order'=>$sort,'limit'=>$limit)) : $ATT_MDL->get_all( array('order_by'=>$orderby,'order'=>$sort,'limit'=>$limit) );
+			$all_attendees = $count ? $ATT_MDL->count( array('order_by'=>array($orderby=>$sort),'limit'=>$limit)) : $ATT_MDL->get_all( array('order_by'=>array($orderby=>$sort), limit'=>$limit) );
 
 		return $all_attendees;
 	}

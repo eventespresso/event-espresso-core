@@ -663,7 +663,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		
 		// grab event times
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
-		$this->_event->start_date = EEM_Datetime::instance()->get_event_start_date( $this->_event->id );
+		$this->_event->start_date = EEM_Datetime::instance()->get_most_important_datetime_for_event( $this->_event->id )->start_date();
 		
 		//Debug
 		//echo "<pre>".print_r($event,true)."</pre>";
@@ -2162,7 +2162,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 			// delete any Datetimes that are not being resaved
 			foreach ($datetime_IDs as $datetime_ID => $bunk) {
-				$DTM->delete_datetime($datetime_ID);
+				$DTM->delete_by_ID($datetime_ID);
 			}
 //			}	// end if process_datetimes
 

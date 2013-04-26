@@ -1111,29 +1111,6 @@ class EE_Datetime {
 
 }
 
-
-/*
-	EXAMPLE USAGE
-
-	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/Espresso_base.model.php' );
-	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/Event_datetime.model.php' );
-	$EVT_DTT = Event_datetime::instance();
-//	$EVT_DTT->convert_existing_event_datetimes();	
-
-	$start_dates = $EVT_DTT->get_event_start_dates( 8 );
-	$end_dates = $EVT_DTT->get_event_end_dates( 8 );
-	$reg_start_dates = $EVT_DTT->get_reg_start_dates( 8 );
-	$reg_end_dates = $EVT_DTT->get_reg_end_dates( 8 );
-	
-	foreach( $start_dates as $start_date ) {
-		echo $start_date->show_date() . '<br />';
-		echo $start_date->show_time() . '<br />';
-		echo $start_date->show_date_and_time() . '<br />';
-		echo $start_date->show_date_and_time( 'l \t\h\e jS \of F, Y,', '\a\t h:i:s A' ) . '<br />';
-	}
-*/
-
-
 /* End of file EE_Datetime.class.php */
 /* Location: includes/classes/EE_Datetime.class.php */	
 	

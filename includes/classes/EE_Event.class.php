@@ -64,6 +64,15 @@ class EE_Event extends EE_Base_Class{
 		parent::__construct($arrayForParent);
 	}
 
+	/**
+	 * Gets all the datetimes for this event, first the primary datetime, and
+	 * then ordered by date (earliest first)
+	 * @return EE_Datetime[]
+	 */
+	public function datetimes(){
+		require_once('EEM_Datetime.model.php');
+		return EEM_Datetime::instance()->get_all_event_dates($this->ID);
+	}
 	
 	
 	
