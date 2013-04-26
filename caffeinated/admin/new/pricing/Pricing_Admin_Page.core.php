@@ -699,32 +699,37 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		// start with an empty array
-		$event_pricing = array();
 		
 		require_once( PRICING_ADMIN . 'Price_Types_List_Table.class.php' );
 		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php' );
 		
 		$this->_req_data['orderby'] = empty($this->_req_data['orderby']) ? '' : $this->_req_data['orderby'];
-		
+		$order = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
 		switch ($this->_req_data['orderby']) {
 			case 'name':
-				$orderby = 'PRT_name';
+				$orderby = array( 'PRT_name' => $order);
 				break;
 			default:
-				$orderby = 'PRT_order';
+				$orderby = array( 'PRT_order' => $order);
 		}		
 
-		$order = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
+		
 		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
 		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $per_page;
 
 		$offset = ($current_page-1)*$per_page;
 		$limit = array( $offset, $per_page );
-
-		$price_types = EEM_Price_Type::instance()->get_all_price_types( $orderby, $order, $limit, $count, $trashed );
-		//printr( $price_types, '$price_types  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		return $price_types;
-		
+		$query_params = array(
+			array('PRT_deleted'=>$trashed),
+			'order_by'=>$orderby,
+			'limit'=>$limit);
+		if($count){
+			return EEM_Price_Type::instance()->count_deleted_and_undeleted($query_params);
+		}else{
+			return EEM_Price_Type::instance()->get_all_deleted_and_undeleted($query_params);
+		}
+				
+		//printr( $price_types, '$price_types  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );		
 	}
 
 
@@ -752,7 +757,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 //		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 	
 		if ( $PRT_ID ) {		
-			$price_type = EEM_Price_Type::instance()->get_price_type_by_ID( $PRT_ID );
+			$price_type = EEM_Price_Type::instance()->get_one_by_ID( $PRT_ID );
 			$additional_hidden_fields = array( 'PRT_ID' => array( 'type' => 'hidden', 'value' => $PRT_ID ));
 			$this->_set_add_edit_form_tags( 'update_price_type', $additional_hidden_fields );
 		} else {

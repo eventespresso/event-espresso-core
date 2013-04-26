@@ -435,16 +435,16 @@ class EE_Price_Type {
 	*		Search for an existing DB record for this Price Type
 	* 		@access		public
 	*/
-	public function find_existing_price_type( $where_cols_n_values = FALSE ) {
+	public function find_existing_price_type( $where_fields_n_values = FALSE ) {
 		// load model
 		$MODEL = EEM_Price_Type::instance();
 		// no search params means price type object already exists
-		if ( ! $where_cols_n_values ) {
+		if ( ! $where_fields_n_values ) {
 			// search by combo of name and order
-			$where_cols_n_values = array( 'PRT_name'=>$this->_PRT_name, 'PRT_order'=>$this->_PRT_order );
+			$where_fields_n_values = array( 'PRT_name'=>$this->_PRT_name, 'PRT_order'=>$this->_PRT_order );
 		}
 
-		if ( $price_type = $MODEL->get_price_type( $where_cols_n_values )) {
+		if ( $price_type = $MODEL->get_one( array( $where_fields_n_values) )) {
 			return $price_type;
 		} else {
 			return FALSE;

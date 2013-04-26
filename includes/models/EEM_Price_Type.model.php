@@ -21,9 +21,9 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Custom_Table_Base.model.php' );
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Soft_Delete_Base.model.php' );
 
-class EEM_Price_Type extends EEM_Base {
+class EEM_Price_Type extends EEM_Soft_Delete_Base {
 
 	// private instance of the Price Type object
 	private static $_instance = NULL;
@@ -47,6 +47,17 @@ class EEM_Price_Type extends EEM_Base {
 		return $this->base_types;
 	}
 	
+	/**
+	 * constants for price base types. In the DB, we decided to store the price base type
+	 * as an integer. So, to avoid just having magic numbers everwhere (eg, querying for 
+	 * all price types with PBT_ID = 2), we define these constants, to make code more understandable.
+	 * So, as an example, to query for all price types that are a tax, we'd do
+	 * EEM_PRice_Type::instance()->get_all(array(array('PBT_ID'=>EEM_Price_Type::base_type_tax)))
+	 * instead of 
+	 * EEM_Price_Type::instance()->get_all(array(array('PBT_ID'=>2)))
+	 * Although the 2nd is shorter, it's much less obvious what it's doing. Also, should these magic IDs ever
+	 * change, we can continue to use the constant, by simply change its value.
+	 */
 	const base_type_event_price = 1;
 	const base_type_discount = 2;
 	const base_type_surcharge = 3;
@@ -130,39 +141,6 @@ class EEM_Price_Type extends EEM_Base {
 
 
 
-
-	/**
-	 * 		cycle though array of price types and create objects out of each item
-	 *
-	 * 		@access		private
-	 * 		@param		array		$price_types
-	 * 		@return 	mixed		array on success, FALSE on fail
-	 */
-	private function _create_objects($price_types = FALSE) {
-
-		if (!$price_types) {
-			return FALSE;
-		}
-
-		foreach ($price_types as $price_type) {
-			$array_of_objects[$price_type->PRT_ID] = new EE_Price_Type(
-											$price_type->PRT_name,
-											$price_type->PBT_ID,
-											$price_type->PRT_is_member,
-											$price_type->PRT_is_percent,
-											$price_type->PRT_is_global,
-											$price_type->PRT_order,
-											$price_type->PRT_deleted,
-											$price_type->PRT_ID
-			);
-		}
-		return $array_of_objects;
-	}
-
-
-
-
-
 	/**
 	 * 		instantiate a new price type object with blank/empty properties
 	 *
@@ -226,89 +204,12 @@ class EEM_Price_Type extends EEM_Base {
 
 
 
-	/**
-	 * 		retreive  a single price type from db via it's ID
-	 *
-	 * 		@access		public
-	 * 		@param		$PRT_ID
-	 * 		@return		mixed		array on success, FALSE on fail
-	 */
-	public function get_price_type_by_ID($PRT_ID = FALSE) {
-
-		if (!$PRT_ID) {
-			return FALSE;
-		}
-		// retreive a particular price
-		$where_cols_n_values = array('PRT_ID' => $PRT_ID);
-		if ($price_type = $this->select_row_where($where_cols_n_values)) {
-			$price_type_array = $this->_create_objects(array($price_type));
-			return array_shift($price_type_array);
-		} else {
-			return FALSE;
-		}
-	}
 
 
 
 
 
-	/**
-	 * 		retreive a single price type from db via it's column values
-	 *
-	 * 	@access		public
-	 * 	@param		array
-	 * 		@return 	mixed		array on success, FALSE on fail
-	 */
-	public function get_price_type($where_cols_n_values = FALSE) {
 
-		if (!$where_cols_n_values) {
-			return FALSE;
-		}
-
-		if ($price_type = $this->select_row_where($where_cols_n_values)) {
-			$price_type_array = $this->_create_objects(array($price_type));
-			return array_shift($price_type_array);
-		} else {
-			return FALSE;
-		}
-	}
-
-
-
-
-
-	/**
-	 * 		This function inserts table data
-	 *
-	 * 		@access public
-	 * 		@param array $set_column_values - array of column names and values for the SQL INSERT
-	 * 		@return array
-	 */
-	public function insert($set_column_values) {
-		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		$results = $this->_insert($this->table_name, $this->table_data_types, $set_column_values);
-		$this->type = $this->get_all_price_types();
-		return $results;
-	}
-
-
-
-
-
-	/**
-	 * 		This function updates table data
-	 *
-	 * 		@access public
-	 * 		@param array $set_column_values - array of column names and values for the SQL SET clause
-	 * 		@param array $where_cols_n_values - column names and values for the SQL WHERE clause
-	 * 		@return array
-	 */
-	public function update($set_column_values, $where_cols_n_values) {
-//		echo printr( $set_column_values, '$set_column_values' );
-//		echo printr( $where_cols_n_values, '$where_cols_n_values' );
-		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		return $this->_update($this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values);
-	}
 
 
 
