@@ -312,10 +312,9 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 
 		//necessary properties are set, let's save the default templates
 
-		$template_data =  array(
+		$main_template_data =  array(
 			'MTP_messenger' => $this->_messenger->name,
 			'MTP_message_type' => $this->_message_type->name,
-			'GRP_ID' => $this->_EEM_data->generate_grp_id(),
 			'EVT_ID' => $evt_id,
 			'MTP_is_override' => 0,
 			'MTP_deleted' => 0,
@@ -323,6 +322,13 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 			'MTP_user_id' => get_current_user_id(),
 			'MTP_is_active' => 1,
 			);
+
+		//let's insert the above and get our GRP_ID, then reset the template data array to just include the GRP_ID
+		$results = $this->_EEM_data->insert( $main_template_data );
+		
+		$template_data = $results ? array( 'GRP_ID' => $results ) : FALSE;
+
+		if ( ! $template_data ) return $results;
 
 		foreach ( $this->_contexts as $context => $details ) {
 			foreach ( $this->_fields as $field => $field_type ) {
@@ -340,8 +346,8 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 		}
 
 		$success_array = array(
-			'GRP_ID' => $template_data['GRP_ID'],
-			'EVT_ID' => $template_data['EVT_ID'],
+			'GRP_ID' => $results,
+			'EVT_ID' => $main_template_data['EVT_ID'],
 			'MTP_context' => key($this->_contexts)
 		);	
 
