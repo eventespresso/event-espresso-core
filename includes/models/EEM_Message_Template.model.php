@@ -109,11 +109,11 @@ class EEM_Message_Template extends EEM_Base {
 		);
 
 		$this->_join_table_columns = array(
-			'GRP_ID',
-			'MTP_ID',
-			'MTP_context',
-			'MTP_template_field',
-			'MTP_content'
+			'GRP_ID' => '%d',
+			'MTP_ID' => '%d',
+			'MTP_context' => '%s',
+			'MTP_template_field' => '%s',
+			'MTP_content' => '%s'
 			);
 
 
@@ -562,7 +562,7 @@ class EEM_Message_Template extends EEM_Base {
 
 		//first we have to set the columns into their related tables.
 		foreach ( $set_column_values as $name => $value ) {
-			if ( in_array( $name, $this->_join_table_columns ) ) {
+			if ( in_array( $name, array_keys( $this->_join_table_columns ) ) ) {
 				$join_table[$name] = $value;
 			} else {
 				$main_table[$name] = $value;
@@ -577,7 +577,7 @@ class EEM_Message_Template extends EEM_Base {
 		if ( $results && !empty($join_table) ) {
 			$GRP_ID = isset($results['new-ID']) ? $results['new-ID'] : $results;
 			$join_table['GRP_ID'] = $GRP_ID;
-			$results = $this->_insert( $this->_join_table_name, $this->table_data_types, $join_table );
+			$results = $this->_insert( $this->_join_table_name, $this->_join_table_columns, $join_table );
 		}
 
 		return $results ? $results['new-ID'] : FALSE;
@@ -598,7 +598,7 @@ class EEM_Message_Template extends EEM_Base {
 
 		//split up the set_cols_n_values AND where_cols_n_values
 		foreach ( $set_column_values as $name => $value ) {
-			if ( in_array( $name, $this->_join_table_columns ) ) {
+			if ( in_array( $name, array_keys( $this->_join_table_columns ) ) ) {
 				$join_table[$name] = $value;
 			} else {
 				$main_table[$name] = $value;
@@ -606,19 +606,25 @@ class EEM_Message_Template extends EEM_Base {
 		}
 
 		foreach ( $where_cols_n_values as $name => $value ) {
-			if ( in_array( $name, $this->_join_table_columns ) ) {
+			if ( in_array( $name, array_keys( $this->_join_table_columns ) ) ) {
 				$join_table_where[$name] = $value;
 			} else {
 				$main_table_where[$name] = $value;
 			}
 		}
 
-		if ( !empty( $main_table ) )
+		/*var_dump($main_table);
+		var_dump($main_table_where);
+		var_dump($join_table);
+		var_dump($join_table_where);/**/
+
+
+		if ( !empty( $main_table ) && !empty( $main_table_where ) )
 			$results = $this->_update( $this->table_name, $this->table_data_types, $main_table, $main_table_where );
 
 
-		if ( !empty( $join_table ) )
-			$results = $this->_update( $this->_join_table_name, $this->table_data_types, $join_table, $join_table_where );
+		if ( !empty( $join_table ) && !empty( $join_table_where ) )
+			$results = $this->_update( $this->_join_table_name, $this->_join_table_columns, $join_table, $join_table_where );
 
 		return $results;
 	}
