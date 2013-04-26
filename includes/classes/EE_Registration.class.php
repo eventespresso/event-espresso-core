@@ -920,9 +920,7 @@ class EE_Registration extends EE_Base_Class {
 	 * @return EE_Price
 	 */
 	public function price_obj() {
-		require_once('EEM_Price.model.php');
-		$EEMP = EEM_Price::instance();
-		return $EEMP->get_price_by_ID( $this->_PRC_ID );
+		return $this->get_first_related('Price');
 	}
 
 

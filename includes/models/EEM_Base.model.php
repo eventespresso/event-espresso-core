@@ -152,7 +152,9 @@ abstract class EEM_Base extends EE_Base{
 	 *		limit		|	adds a limit to the query just like the SQL limit clause, so limits of "23", "25,50" are both valid would become 
 	 *					|	SQL "...LIMIT 23", "...LIMIT 25,50" respectively
 	 *		order_by	|	name of a column to order by, or an array where keys are field names and values are either 'ASC' or 'DESC'. 'limit'=>array('STS_ID'=>'ASC','REG_date'=>'DESC'),
-	 *					|	which would becomes SQL "...ORDER BY TXN_timestamp..." and "...ORDER BY STS_ID ASC, REG_date DESC..." respectively
+	 *					|	which would becomes SQL "...ORDER BY TXN_timestamp..." and "...ORDER BY STS_ID ASC, REG_date DESC..." respectively.
+	 *					|	Like the 'where' conditions, these fields can be on related models. 
+	 *					|	Eg 'order_by'=>array('Registration.Tranaction.TXN_amount'=>'ASC') is perfectly valid from any model related to 'Registration' (like Event, Attendee, Price, Datetime, etc.)
 	 *		group_by	|	name of column to group by
 	 *		having		|	exactl like WHERE parameters array, except these conditions apply to the grouped results (whereas WHERE conditions apply to the pre-grouped results)
 	 * Possible future keys: 'having' for SQL having cluases, 'select' for limiting the queryset to a subset, 
@@ -609,13 +611,13 @@ abstract class EEM_Base extends EE_Base{
 				//assume it's an array of fields to order by
 				$order_array = array();
 				foreach($query_params['order_by'] as $field_name_to_order_by => $order){
-					$field_obj = $this->field_settings_for($field_name);
+					$qualified_column_to_order_by = $this->_deduce_table_and_column_name($field_name_to_order_by);
 					if($order == 'asc' || $order == 'ASC'){
-						$order = 'ASC';
+						$order = ' ASC ';
 					}else{
-						$order = 'DESC';
+						$order = ' DESC ';
 					}
-					$order_array[] = $field_obj->get_qualified_column() . $order ;
+					$order_array[] = $qualified_column_to_order_by . $order ;
 				}
 				$query_object->set_order_by_sql(" ORDER BY ".implode(",",$order_array));
 			}else{
@@ -845,10 +847,10 @@ abstract class EEM_Base extends EE_Base{
 	
 	/**
 	 * Takes the input parameter and extract the table name (alias) and column name
-	 * @param string $query_param_name like Registration__Transaction__TXN_ID, Event__Datetime__start_time, or REG_ID
+	 * @param string $query_param_name like Registration.Transaction.TXN_ID, Event.Datetime.start_time, or REG_ID
 	 * @return string table alias and column name for SQL, eg "Transaction.TXN_ID"
 	 */
-	function _deduce_table_and_column_name($query_param_name){
+	protected function _deduce_table_and_column_name($query_param_name){
 		//ok, now proceed with deducing which part is the model's name, and which is the field's name
 		//which will help us find the database table and column
 		
