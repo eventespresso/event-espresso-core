@@ -955,7 +955,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			if ( $PAY_ID = absint( $this->_req_data['ID'] )) {
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
 				$PAY_MODEL = EEM_Payment::instance();
-				$return_data = $PAY_MODEL->delete_payment( $PAY_ID );
+				$return_data = $PAY_MODEL->delete_by_ID( $PAY_ID );
 				$return_data['PAY_ID'] = $PAY_ID;
 			}
 		} else {

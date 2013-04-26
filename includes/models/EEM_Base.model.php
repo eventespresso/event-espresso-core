@@ -140,6 +140,15 @@ abstract class EEM_Base extends EE_Base{
 	 *					|	They can be nested indefinetely. 
 	 *					|	eg array('OR'=>array('TXN_total' => 23, 'NOT'=> array( 'TXN_timestamp'=> 345678912, 'AND'=>array('TXN_paid' => 53, 'STS_ID' => 'TIN)))) which 
 	 *					|	becomes SQL: "...WHERE TXN_total = 23 OR ! (TXN_timestmap = 345678912 OR (TXN_paid = 53 AND STS_ID = 'TIN'))..."
+	 *					|	GOTCHA: because this is an array, array keys must be unique, making it impossible to place two or more where conditions
+	 *					|	applying to the same field. Eg: array('PAY_timestamp'=>array('>',$start_date),'PAY_timestamp'=>array('<',$end_date),'PAY_timestamp'=>array('!=',$special_date)),
+	 *					|	as PHP enforces that the array keys must be unique, thus removing the first two array entries
+	 *					|	with key 'PAY_timestamp'. (producign SQL "PAY_timestamp !=  4234232", ignoring the first two PAY_timestmap conditions).
+	 *					|	To overcome this, you can add '*' characters to the end of the field's name.
+	 *					|	These will be removed when generating the SQL string, but allow for the array keys to be unique.
+	 *					|	Eg, you could rewrite the previous query as:
+	 *					|	array('PAY_timestamp'=>array('>',$start_date),'PAY_timestamp*'=>array('<',$end_date),'PAY_timestamp**'=>array('!=',$special_date))
+	 *					|	which will correctly generate SQL like "PAY_timestamp > 123412341 AND PAY_timestamp < 2354235235234 AND PAY_timestamp != 1241234123"
 	 *		limit		|	adds a limit to the query just like the SQL limit clause, so limits of "23", "25,50" are both valid would become 
 	 *					|	SQL "...LIMIT 23", "...LIMIT 25,50" respectively
 	 *		order_by	|	name of a column to order by, or an array where keys are field names and values are either 'ASC' or 'DESC'. 'limit'=>array('STS_ID'=>'ASC','REG_date'=>'DESC'),
@@ -743,7 +752,15 @@ abstract class EEM_Base extends EE_Base{
 		$where_clauses=array();
 		foreach($where_params as $query_param => $op_and_value_or_sub_condition){
 			if(in_array($query_param,$this->_special_where_param_keys)){
+				//first off: remoev any *s from the query params name, as
+				//these are used to make the array keys unique,
+				//allowign for multiple conditions based on the same field.
+				//Eg, a valid $where_params array could look like 
+				//array('PAY_timestamp'=>array('>',$start_date),
+				//		'PAY_timestamp*'=>array('<',$end_date),
+				//		'PAY_timestamp**'=>array('!=',$special_date))
 				//the query param is 'and',  'or', or 'not'
+				$query_param = str_replace("*",'',$query_param);
 				switch($query_param){
 					case 'not':
 					case 'NOT':
@@ -834,6 +851,7 @@ abstract class EEM_Base extends EE_Base{
 	function _deduce_table_and_column_name($query_param_name){
 		//ok, now proceed with deducing which part is the model's name, and which is the field's name
 		//which will help us find the database table and column
+		
 		$query_param_parts = explode(".",$query_param_name);
 		if(empty($query_param_parts)){
 			throw new EE_Error(sprintf(__("_extract_column_name is empty when trying to extract column and table name from %s",'event_espresso'),$query_param_name));
