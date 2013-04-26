@@ -663,17 +663,22 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					// check for attendee object
 					$attendee['att_obj'] = isset( $attendee['att_obj'] ) && is_object( $attendee['att_obj'] ) ? $attendee['att_obj'] : FALSE;
 					if ( ! $attendee['att_obj'] ) {
-						$where_cols_n_values = array( 'ATT_fname' => $attendee[1], 'ATT_lname' => $attendee[2], 'ATT_email' => $attendee[3] );
-					    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php' );
-					    $ATT_MDL = EEM_Attendee::instance();
-						if ( ! $attendee['att_obj'] = $ATT_MDL->find_existing_attendee( $where_cols_n_values )) {
+						if ( isset( $attendee[1] ) && isset( $attendee[2] ) && isset( $attendee[3] )) {
+							$where_cols_n_values = array( 'ATT_fname' => $attendee[1], 'ATT_lname' => $attendee[2], 'ATT_email' => $attendee[3] );
+						    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php' );
+						    $ATT_MDL = EEM_Attendee::instance();
+							$attendee['att_obj'] = $ATT_MDL->find_existing_attendee( $where_cols_n_values );
+						} else {
+							$attendee['att_obj'] = FALSE;
+						}
+						if ( ! $attendee['att_obj'] ) {
 							$attendee['att_obj'] = new EE_Attendee;
 						}	 
 					}
 					// check for reg object
 					$attendee['reg_obj'] = isset( $attendee['reg_obj'] ) && is_object( $attendee['reg_obj'] ) ? $attendee['reg_obj'] : FALSE;		
 					if ( ! $attendee['reg_obj'] ) {
-						$where_cols_n_values = array( 'ATT_fname' => $attendee[1], 'ATT_lname' => $attendee[2], 'ATT_email' => $attendee[3] );
+						//$where_cols_n_values = array( 'ATT_fname' => $attendee[1], 'ATT_lname' => $attendee[2], 'ATT_email' => $attendee[3] );
 					    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
 					    $REG_MDL = EEM_Registration::instance();
 						if ( ! $attendee['reg_obj'] = $REG_MDL->get_registration_for_transaction_attendee( $TXN_ID, $attendee['att_obj']->ID(), $att_nmbr )) {

@@ -17,9 +17,13 @@
 		<?php if ( isset( $event_attendees ) && is_array( $event_attendees )) : ?>
 			<?php foreach ( $event_attendees as $event => $attendees ) : ?>
 				<?php foreach ( $attendees as $att_nmbr => $attendee ) : ?>
-					<?php //echo printr( $attendee, '$attendee' ); 
+					<?php 
+						//printr( $attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 						$att = $attendee['att_obj'];
 						$reg = $attendee['reg_obj'];
+						$attendee[1] = isset( $attendee[1] ) ? $attendee[1] : $attendees[1][1];
+						$attendee[2] = isset( $attendee[2] ) ? $attendee[2] : $attendees[1][2];
+						$attendee[3] = isset( $attendee[3] ) ? $attendee[3] : $attendees[1][3];						
 					?>
 				<tr>
 					<td class="jst-left"><?php echo$att_nmbr;?></td>
