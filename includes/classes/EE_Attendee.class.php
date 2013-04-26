@@ -247,14 +247,7 @@ class EE_Attendee extends EE_Base_Class{
 	*		@param		string		$fname
 	*/	
 	public function set_fname( $fname = FALSE ) {
-		
-		if ( ! $fname ) {
-			$msg = __( 'No first name was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_ATT_fname = wp_strip_all_tags( $fname );
-		return TRUE;
+		$this->set('ATT_fname',$fname);
 	}
 
 
@@ -268,14 +261,7 @@ class EE_Attendee extends EE_Base_Class{
 	*		@param		string		$lname
 	*/	
 	public function set_lname( $lname = FALSE ) {
-		
-		if ( ! $lname ) {
-			$msg = __( 'No last name was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_ATT_lname = wp_strip_all_tags( $lname );
-		return TRUE;
+		$this->set('ATT_lname',$lname);
 	}
 
 
@@ -289,14 +275,7 @@ class EE_Attendee extends EE_Base_Class{
 	*		@param		string		$address
 	*/	
 	public function set_address( $address = FALSE ) {
-		
-		if ( ! $lname ) {
-			$msg = __( 'No address was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_ATT_address = wp_strip_all_tags( $address );
-		return TRUE;
+		$this->set('ATT_address',$address);
 	}
 
 
@@ -310,14 +289,7 @@ class EE_Attendee extends EE_Base_Class{
 	*		@param		string		$address2
 	*/	
 	public function set_address2( $address2 = FALSE ) {
-		
-		if ( ! $address2 ) {
-			$msg = __( 'No second address was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_ATT_address2 = wp_strip_all_tags( $address2 );
-		return TRUE;
+		$this->set('ATT_address2',$address2);
 	}
 
 
@@ -332,13 +304,7 @@ class EE_Attendee extends EE_Base_Class{
 	*/	
 	public function set_city( $city = FALSE ) {
 		
-		if ( ! $city ) {
-			$msg = __( 'No city was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_ATT_city = wp_strip_all_tags( $city );
-		return TRUE;
+		$this->set('ATT_city',$city);
 	}
 
 
@@ -353,13 +319,7 @@ class EE_Attendee extends EE_Base_Class{
 	*/	
 	public function set_state( $STA_ID = FALSE ) {
 		
-		if ( ! $STA_ID ) {
-			$msg = __( 'No state ID was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_STA_ID = wp_strip_all_tags( $STA_ID );
-		return TRUE;
+		$this->set('STA_ID',$STA_ID);
 	}
 
 
@@ -374,13 +334,7 @@ class EE_Attendee extends EE_Base_Class{
 	*/	
 	public function set_country( $CNT_ISO = FALSE ) {
 		
-		if ( ! $CNT_ISO ) {
-			$msg = __( 'No country ISO code was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_CNT_ISO = wp_strip_all_tags( $CNT_ISO );
-		return TRUE;
+		$this->set('CNT_ISO',$CNT_ISO);
 	}
 
 
@@ -394,14 +348,7 @@ class EE_Attendee extends EE_Base_Class{
 	*		@param		string		$zip
 	*/	
 	public function set_zip( $zip = FALSE ) {
-		
-		if ( ! $zip ) {
-			$msg = __( 'No zip/postal code was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_ATT_zip = wp_strip_all_tags( $zip );
-		return TRUE;
+		$this->set('ATT_zip',$zip);
 	}
 
 
@@ -415,14 +362,7 @@ class EE_Attendee extends EE_Base_Class{
 	*		@param		string		$email
 	*/	
 	public function set_email( $email = FALSE ) {
-		
-		if ( ! $email ) {
-			$msg = __( 'No email address was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_ATT_email = sanitize_email( $email );
-		return TRUE;
+		$this->set('ATT_email',$email);
 	}
 
 
@@ -437,13 +377,7 @@ class EE_Attendee extends EE_Base_Class{
 	*/	
 	public function set_phone( $phone = FALSE ) {
 		
-		if ( ! $phone ) {
-			$msg = __( 'No phone number was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_ATT_phone = wp_strip_all_tags( $phone );
-		return TRUE;
+		$this->set('ATT_phone',$phone);
 	}
 
 
@@ -458,13 +392,7 @@ class EE_Attendee extends EE_Base_Class{
 	*/	
 	public function set_social( $social = FALSE ) {
 		
-		if ( ! $social ) {
-			$msg = __( 'No social networking details were supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_ATT_social = wp_kses_data( $social );
-		return TRUE;
+		$this->set('ATT_social',$social);
 	}
 
 
@@ -479,13 +407,6 @@ class EE_Attendee extends EE_Base_Class{
 	*/	
 	public function set_comments( $comments = FALSE ) {
 		$this->set('ATT_comments',$comments);
-		/*if ( ! $comments ) {
-			$msg = __( 'No comments were supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_ATT_phone = wp_strip_all_tags( $comments );
-		return TRUE;*/
 	}
 
 
@@ -499,14 +420,7 @@ class EE_Attendee extends EE_Base_Class{
 	*		@param		string		$notes
 	*/	
 	public function set_notes( $notes = FALSE ) {
-		
-		if ( ! $notes ) {
-			$msg = __( 'No notes were supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_ATT_notes = wp_strip_all_tags( $notes );
-		return TRUE;
+		$this->set('ATT_notes',$notes);
 	}
 
 
@@ -520,97 +434,8 @@ class EE_Attendee extends EE_Base_Class{
 	*		@param		bool		ATT_deleted
 	*/
 	public function set_deleted( $ATT_deleted = NULL ) {
-
-		if ( $ATT_deleted == NULL ) {
-			$msg = __( 'No deleted boolean flag was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_ATT_deleted = (bool)absint( $ATT_deleted );
-		return TRUE;
+		$this->set('ATT_deleted',$ATT_deleted);
 	}
-
-
-
-
-
-	/**
-	*		save object to db
-	* 
-	* 		@access		private
-	* 		@param		array		$where_cols_n_values		
-	*/	
-	private function _save_to_db( $where_cols_n_values = FALSE ) {
-		
-		 $MODEL = EEM_Attendee::instance();
-		
-		$set_column_values = array(		
-				'ATT_fname' 			=> $this->_ATT_fname,
-				'ATT_lname' 			=> $this->_ATT_lname,
-				'ATT_address'			=> $this->_ATT_address,
-				'ATT_address2'		=> $this->_ATT_address2,
-				'ATT_city'					=> $this->_ATT_city,
-				'STA_ID'					=> $this->_STA_ID,
-				'CNT_ISO'				=> $this->_CNT_ISO,
-				'ATT_zip'					=> $this->_ATT_zip,
-				'ATT_email'				=> $this->_ATT_email,
-				'ATT_phone'			=> $this->_ATT_phone,
-				'ATT_social'				=> $this->_ATT_social,
-				'ATT_comments'		=> $this->_ATT_comments,
-				'ATT_notes'				=> $this->_ATT_notes,
-				'ATT_deleted'			=> $this->_ATT_deleted
-		);
-
-		if ( $where_cols_n_values ){
-			$results = $MODEL->update ( $set_column_values, $where_cols_n_values );
-		} else {
-			$results = $MODEL->insert ( $set_column_values );
-		}
-		
-		return $results;
-	}
-
-
-
-
-
-
-	/**
-	*		update existing db record
-	* 
-	* 		@access		public
-	*/	
-	public function update() {
-		return $this->_save_to_db( array( 'ATT_ID' => $this->_ATT_ID ));
-	}
-
-
-
-
-
-
-	/**
-	*		insert new db record
-	* 
-	* 		@access		public
-	*/	
-	public function insert() {
-		return $this->_save_to_db();
-	}
-
-
-
-
-
-
-	/**
-	*		get Attendee ID
-	* 		@access		public
-	*/	
-	public function ID() {
-		return $this->_ATT_ID;
-	}
-
 
 
 	/**
@@ -618,7 +443,7 @@ class EE_Attendee extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function fname() {
-		return $this->_ATT_fname;
+		return $this->get('ATT_fname');
 	}
 	
 	
@@ -641,7 +466,7 @@ class EE_Attendee extends EE_Base_Class{
 	 * @return string
 	 */
 	public function full_name(){
-		return stripslashes_deep($this->_ATT_fname . " " . $this->_ATT_lname);
+		return $this->fname()." ".$this->lname();
 	}
 
 	
@@ -653,7 +478,7 @@ class EE_Attendee extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function lname() {
-		return $this->_ATT_lname;
+		return $this->get('ATT_lname');
 	}
 
 
@@ -663,7 +488,7 @@ class EE_Attendee extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function address() {
-		return $this->_ATT_address;
+		return $this->get('ATT_address');
 	}
 
 
@@ -673,7 +498,7 @@ class EE_Attendee extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function address2() {
-		return $this->_ATT_address2;
+		return $this->get('ATT_address2');
 	}
 
 
@@ -683,7 +508,7 @@ class EE_Attendee extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function city() {
-		return $this->_ATT_city;
+		return $this->get('ATT_city');
 	}
 
 
@@ -693,7 +518,7 @@ class EE_Attendee extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function state_ID() {
-		return ! empty( $this->_STA_ID ) ? $this->_STA_ID : '';
+		return $this->get('STA_ID');
 	}
 
 
@@ -703,7 +528,7 @@ class EE_Attendee extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function country_ISO() {
-		return $this->_CNT_ISO;
+		return $this->get('CNT_ISO');
 	}
 
 
@@ -713,7 +538,7 @@ class EE_Attendee extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function zip() {
-		return $this->_ATT_zip;
+		return $this->get('ATT_zip');
 	}
 
 
@@ -723,7 +548,7 @@ class EE_Attendee extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function email() {
-		return $this->_ATT_email;
+		return $this->get('ATT_email');
 	}
 
 
@@ -733,7 +558,7 @@ class EE_Attendee extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function phone() {
-		return $this->_ATT_phone;
+		return $this->get('ATT_phone');
 	}
 
 
@@ -743,7 +568,7 @@ class EE_Attendee extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function social() {
-		return $this->_ATT_social;
+		return $this->get('ATT_social');
 	}
 
 
@@ -753,7 +578,7 @@ class EE_Attendee extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function comments() {
-		return $this->_ATT_comments;
+		return $this->get('ATT_comments');
 	}
 
 
@@ -763,7 +588,7 @@ class EE_Attendee extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function notes() {
-		return $this->_ATT_notes;
+		return $this->get('ATT_notes');
 	}
 
 
@@ -773,7 +598,7 @@ class EE_Attendee extends EE_Base_Class{
 	* 	@return 		bool
 	*/
 	public function deleted() {
-		return $this->_ATT_deleted;
+		return $this->get('ATT_deleted');
 	}
 
 
@@ -783,59 +608,37 @@ class EE_Attendee extends EE_Base_Class{
 	 * Gets a maximum of 100 related registrations
 	 * @return EE_Registration[] UNLESS $output='count', in which case INT
 	 */
-	public function get_registrations($limit=100,$output='OBJECT_K'){
-		return $this->get_many_related('Registrations', null, null, 'ASC', '=', $limit, $output);
+	public function get_registrations($query_params = array()){
+		return $this->get_many_related('Registration',$query_params);
 	}
 	
 	/**
 	 * Gets the most recent registration of this attendee
-	 * @return EE_Registration[]
+	 * @return EE_Registration
 	 */
 	public function get_most_recent_registration(){
-		return $this->get_first_related('Registrations', null, 'REG_date', 'DESC', '=', 'OBJECT_K');
-	}
-	
-	
-	/**
-	 * Gets all the registrations of this attendee for an event
-	 * @param int $event_id the ID of the event
-	 * @param string $output usually either 'OBJECT_K' or 'COUNT', like on EEM_Base's select_all_where function
-	 * @return EE_Registration[]
-	 */
-	public function get_registrations_for_event($event_id, $output='OBJECT_K'){
-		return $this->get_many_related('Registrations', array('EVT_ID'=>$event_id), null, 'ASC', '=', null, $output);
+		return $this->get_first_related('Registration', array('order_by'=>array('REG_date'=>'DESC')));//null, 'REG_date', 'DESC', '=', 'OBJECT_K');
 	}
 
-
 	/**
-	 * Attaches events to this attendee and sets the $_Events property
-	 * @param  array $events an array of events (each event is an array of event details)
-	 * @return void
-	 */
-	public function attach_events( $events ) {
-		$this->_Events = $events;
-	}
-
-
-	/**
-	 * returns any events attached to this attendee ($_Events property);
+	 * returns any events attached to this attendee ($_Event property);
 	 * @return array 
 	 */
 	public function events() {
 
-		if ( empty( $this->_Events ) ) {
+		if ( empty( $this->_Event ) ){
 			//first we'd have to get all the registrations for this attendee
 			$registrations = $this->get_registrations();
 
 			//now we have to loop through each registration and assemble an array of events
 			foreach ( $registrations as $reg ) {
-				$this->_Events[] = $reg->event();
+				$this->_Event[] = $reg->event();
 			}
 			
 		}
 
 
-		return $this->_Events;
+		return $this->_Event;
 	}
 }
 

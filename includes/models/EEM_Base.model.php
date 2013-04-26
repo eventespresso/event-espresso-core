@@ -435,10 +435,53 @@ abstract class EEM_Base extends EE_Base{
 		$related_model = $this->get_related_model_obj($model_name);
 		//we're just going to use teh query params on the related model's normal get_all query,
 		//except add a condition to say to match the curren't mod
-		
-		$query_params['where']['Event.EVT_ID']=$id_or_obj;
+		$this_model_name = $this->get_this_model_name();
+		$this_pk_field_name = $this->get_primary_key_field()->get_name();
+		$query_params[0][$this_model_name.".".$this_pk_field_name]=$id_or_obj;
 		return $related_model->get_all($query_params);
 	}
+	
+	/**
+	 * Insetad of getting the related model objects, simply counts them. 
+	 * @param int/EE_Base_Class $id_or_obj
+	 * @param string $model_name like 'Event', or 'Registration'
+	 * @param array $query_params like EEM_Base::get_all's
+	 * @param string $field_to_count name of field to count by. By default, uses primary key
+	 * @return int
+	 */
+	function count_related($id_or_obj,$model_name,$query_params,$field_to_count = null){
+		$related_model = $this->get_related_model_obj($model_name);
+		//we're just going to use teh query params on the related model's normal get_all query,
+		//except add a condition to say to match the curren't mod
+		
+		$this_model_name = $this->get_this_model_name();
+		$this_pk_field_name = $this->get_primary_key_field()->get_name();
+		$query_params[0][$this_model_name.".".$this_pk_field_name]=$id_or_obj;
+		return $related_model->count($query_params,$field_to_count);
+	}
+	
+	
+	
+	/**
+	 * Insetad of getting the related model objects, simply sums up the values of the specified field.
+	 * @param int/EE_Base_Class $id_or_obj
+	 * @param string $model_name like 'Event', or 'Registration'
+	 * @param array $query_params like EEM_Base::get_all's
+	 * @param string $field_to_sum name of field to count by. By default, uses primary key
+	 * @return int
+	 */
+	function sum_related($id_or_obj,$model_name,$query_params,$field_to_sum = null){
+		$related_model = $this->get_related_model_obj($model_name);
+		//we're just going to use teh query params on the related model's normal get_all query,
+		//except add a condition to say to match the curren't mod
+		
+		$this_model_name = $this->get_this_model_name();
+		$this_pk_field_name = $this->get_primary_key_field()->get_name();
+		$query_params[0][$this_model_name.".".$this_pk_field_name]=$id_or_obj;
+		return $related_model->sum($query_params,$field_to_sum);
+	}
+	
+	
 	/**
 	 * Uses $this->_relatedModels info to find the first related model object of relation $relationName to the given $modelObject
 	 * @param EE_Base_Class'child $modelObject one of EE_Answer, EE_Attendee, etc. 
@@ -920,7 +963,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Gets the model object given the relation's name / model's name (eg, 'Event', 'Registration',etc. Always singular)
 	 * @param type $model_name
-	 * @return EEMerimental_Base
+	 * @return EEM_Base
 	 */
 	function get_related_model_obj($model_name){
 		
