@@ -164,7 +164,7 @@ class EEM_Datetime extends EEM_Base {
 	 * @return EE_Datetime[]
 	 */
 	public function get_datetimes_for_event_ordered_by_importance( $EVT_ID = FALSE, $limit = NULL){
-		$this->get_all( array(array('Event.EVT_ID'=>$EVT_ID),
+		return $this->get_all( array(array('Event.EVT_ID'=>$EVT_ID),
 			'limit'=>$limit,
 			'order_by'=>array('DTT_is_primary'=>'DESC','DTT_EVT_start'=>'ASC')));
 	}

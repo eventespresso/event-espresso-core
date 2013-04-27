@@ -162,7 +162,7 @@ class EE_Ticket_Prices extends EE_BASE {
 		$price_modifiers = array();
 		$today = time();
 		// grab array of price types
-		$types = $this->_PRT_MDL->type;
+		$types = $this->_PRT_MDL->get_all();
 		
 		// cycle thru events
 		foreach ( $this->_all_event_prices as $event_price ) {

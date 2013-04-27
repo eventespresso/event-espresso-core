@@ -28,14 +28,14 @@
 					
 					<td class="amount-column ticket-price-quick-edit-column"> 
 						<div class="small-screen-table-label"><?php echo __('Amount', 'event_espresso') ?></div>
-						<span class="cur-sign jst-rght"><?php echo ($PRT->type[$price->type()]->is_percent()) ?  '' : $org_options['currency_symbol']; ?></span>
+						<span class="cur-sign jst-rght"><?php echo  $price->type_obj()->is_percent() ?  '' : $org_options['currency_symbol']; ?></span>
 
 						<input class="edit-ticket-price-input quick-edit small-text jst-rght<?php echo $disabled_class;?>" type="text" id="quick-edit-ticket-price-PRC_amount-<?php echo $price->ID(); ?>" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_amount]" value="<?php echo $price_amount; ?>"<?php echo $disabled; ?>/>
-						<span class="percent-sign jst-left"><?php echo ($PRT->type[$price->type()]->is_percent()) ? '%' : ''; ?></span>
+						<span class="percent-sign jst-left"><?php echo $price->type_obj()->is_percent() ? '%' : ''; ?></span>
 					</td> 
 					
 					<!--<td class="percent-column ticket-price-quick-edit-column"> 
-						<?php echo ($PRT->type[$price->type()]->is_percent()) ? '%' : ''; ?>
+						<?php echo $price->type_obj()->is_percent() ? '%' : ''; ?>
 					</td> -->
 					
 					<?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS
@@ -93,7 +93,7 @@
 							<input name="edit_ticket_price[<?php echo $price->ID()?>][PRT_is_global]" type="hidden" value="<?php echo $price_type?>"/>
 							<input name="edit_ticket_price[<?php echo $price->ID()?>][PRC_overrides]" type="hidden" value="<?php echo $price->overrides()?>"/>
 							<input name="edit_ticket_price[<?php echo $price->ID()?>][PRC_deleted]" id="edit-ticket-price-PRC_deleted-<?php echo $price->ID(); ?>" type="hidden" value="<?php echo $price->deleted()?>"/>										
-							<input name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_order]" id="edit-ticket-price-PRC_order-<?php echo $price->ID(); ?>" type="hidden"  value="<?php echo $PRT->type[$price->type()]->order(); ?>"/>										
+							<input name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_order]" id="edit-ticket-price-PRC_order-<?php echo $price->ID(); ?>" type="hidden"  value="<?php echo $price->type_obj()->order(); ?>"/>										
 							<input name="edit_ticket_price[<?php echo $price->ID()?>][use_quick_edit]" type="hidden" value="1"/>										
 						</td>
 					</tr>

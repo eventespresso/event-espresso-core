@@ -120,7 +120,7 @@ class EEM_Registration extends EEM_Base {
 				'REG_session'=>new EE_Plain_Text_Field('REG_session', 'Session ID of registration', false, ''),
 				'REG_code'=>new EE_Plain_Text_Field('REG_code', 'Unique Code for this registration', false, ''),
 				'REG_url_link'=>new EE_Plain_Text_Field('REG_url_link', 'String to be used in URL for identifying registration', false, ''),
-				'REG_count'=>new EE_Integer_Field('REG_count', 'Count of this registration in the group registraion ', ture, 1),
+				'REG_count'=>new EE_Integer_Field('REG_count', 'Count of this registration in the group registraion ', true, 1),
 				'REG_group_size'=>new EE_Integer_Field('REG_group_size', 'Number of registrations on this group', false, 1),
 				'REG_att_is_going'=>new EE_Boolean_Field('REG_att_is_going', 'Flag indicating the registrant plans on attending', false, false),
 				'REG_att_checked_in'=>new EE_Boolean_Field('REG_att_checked_in', 'Flag indicating the registrant has checked in', false, false),
@@ -577,30 +577,36 @@ class EEM_Registration extends EEM_Base {
 	 *		@return int
 	 */
 	public function get_event_registration_count ( $EVT_ID, $for_incomplete_payments = FALSE ) {		
-		
-		if ( ! $EVT_ID ) {
-			$user_msg = __('An error occurred. The event registration count could not be calculated because an event ID was not received.', 'event_espresso');
-			EE_Error::add_error( $user_msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
+		$query_params = array(
+			array(
+				'EVT_ID'=>$EVT_ID,
+			)
+		);
+		if($for_incomplete_payments){
+			$query_params[0]['Transaction.STS_ID']=array('!=',  EEM_Transaction::complete_status_code);
 		}
-		global $wpdb, $org_options;
-		
-		$SQL = 'SELECT COUNT(reg.EVT_ID) FROM ' . $this->table_name . ' reg';
-		$SQL .= $for_incomplete_payments ? ' JOIN ' . $wpdb->prefix . 'esp_transaction txn ON txn.TXN_ID = reg.TXN_ID' : '';
-		$SQL .= ' WHERE reg.EVT_ID=%d AND ( reg.STS_ID="RAP"';
-		$SQL .= $org_options['pending_counts_reg_limit'] ? ' OR reg.STS_ID="RPN")' : ')';		
-		$SQL .= $for_incomplete_payments ? ' AND txn.STS_ID <> "TCM"' : '';
+		global $org_options;
+		if($org_options['pending_counts_reg_limit']){
+			$query_params[0]['STS_ID']=  EEM_Registration::status_id_pending;
+		}
+		return $this->count($query_params);
 
-		$reg_count = $wpdb->get_var( $wpdb->prepare( $SQL, $EVT_ID ));
-		
-		if ( $reg_count !== FALSE ) {
-			return $reg_count;
-		} else {
-			$user_msg = __('An error occurred. The event registration count could not be calculated because of a database error.', 'event_espresso');
-			EE_Error::add_error( $user_msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}		
-			
+//		$SQL = 'SELECT COUNT(reg.EVT_ID) FROM ' . $this->table_name . ' reg';
+//		$SQL .= $for_incomplete_payments ? ' JOIN ' . $wpdb->prefix . 'esp_transaction txn ON txn.TXN_ID = reg.TXN_ID' : '';
+//		$SQL .= ' WHERE reg.EVT_ID=%d AND ( reg.STS_ID="RAP"';
+//		$SQL .= $org_options['pending_counts_reg_limit'] ? ' OR reg.STS_ID="RPN")' : ')';		
+//		$SQL .= $for_incomplete_payments ? ' AND txn.STS_ID <> "TCM"' : '';
+//
+//		$reg_count = $wpdb->get_var( $wpdb->prepare( $SQL, $EVT_ID ));
+//		
+//		if ( $reg_count !== FALSE ) {
+//			return $reg_count;
+//		} else {
+//			$user_msg = __('An error occurred. The event registration count could not be calculated because of a database error.', 'event_espresso');
+//			EE_Error::add_error( $user_msg, __FILE__, __FUNCTION__, __LINE__ );
+//			return FALSE;
+//		}		
+//			
 	}
 }
 // End of file EEM_Registration.model.php

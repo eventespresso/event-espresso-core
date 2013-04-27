@@ -435,12 +435,12 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
 		
-		if (empty($PRT->type)) {
+		if (empty($PRT->_price_types)) {
 			$msg = __( 'You have no price types defined. Please add a price type before adding a price.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			exit();
 		} else {
-			foreach ($PRT->type as $type) {
+			foreach ($PRT->_price_types as $type) {
 				if ($type->is_global()) {
 					$price_types[] = array('id' => $type->ID(), 'text' => $type->name());
 				}

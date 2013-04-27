@@ -113,7 +113,7 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 		);
 		
 		parent::__construct();
-		$this->type = $this->get_all_price_types();
+		//$this->type = $this->get_all();
 
 	}
 
@@ -150,56 +150,6 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 	public function get_new_price_type() {
 		return new EE_Price_Type( '', 1, FALSE, FALSE, FALSE, 0, FALSE );
 	}
-
-
-
-
-
-	/**
-	 * 	retreive  ALL price types from db
-	 *
-	 * 	@access		public
-	 * 	@return 		string		$orderby				sorting column
-	 * 	@return 		string		$order					sort ASC or DESC ?
-	 * 	@return 		array		$limit					query limit and offset
-	 * 	@return 		boolean	$output				return count or results ?
-	 * 	@return 		boolean	$trashed				return deleted records or just active non-deleted ones ?
-	 * 	@return		mixed		array on success, FALSE on fail
-	 */
-	public function get_all_price_types( $orderby='PRT_order', $order='ASC', $limit = array(0,10), $output = 'OBJECT_K' , $trashed = FALSE ) {
-		
-		$output = $output === TRUE ? 'COUNT' :  'OBJECT_K';
-		
-		// retreive all price types
-		$price_types = $this->select_all_where ( 
-				array( 'PRT_deleted' => $trashed ),
-				$orderby, 
-				$order, 
-				'=', 
-				$limit,
-				$output
-			);
-
-//		echo '<h1>XXXXXXXX  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
-//		echo '<h4>$orderby : ' . $orderby . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$order : ' . $order . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		printr( $limit, '$limit  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		echo '<h4>$output : ' . $output . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$trashed : ' . $trashed . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		 printr( $price_types, '$price_types  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		// bad results ?
-		if ( empty( $price_types ) || $price_types === FALSE || is_wp_error( $price_types )) {
-			return FALSE;
-		}			
-
-		//  return the count OR create objects out of data
-		$price_types = $output == 'COUNT' ? $price_types : $this->_create_objects($price_types);
-		return $price_types;
-
-		
-	}
-
 
 
 

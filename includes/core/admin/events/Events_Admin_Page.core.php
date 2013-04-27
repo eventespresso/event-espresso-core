@@ -790,7 +790,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		}
 		
 
-		foreach ($PRT->type as $type) {
+		foreach ($PRT->get_all() as $type) {
 			$all_price_types[] = array( 'id' => $type->ID(), 'text' => $type->name(), 'order' => $type->order() );
 			if ( $type->is_global() ) {
 				$global_price_types[ $type->ID() ] = $type;
@@ -832,15 +832,15 @@ class Events_Admin_Page extends EE_Admin_Page {
 						} else {
 							$price_date_status = '';
 						}
-
-						$row_args['type_label'] = $PRT->type[$price->type()]->name() . ' ' . $price_date_status;
+						$price_type = $price->type_obj();
+						$row_args['type_label'] = $price_type->name() . ' ' . $price_date_status;
 						$row_args['price'] = $price;
-						$row_args['price_amount'] = ($PRT->type[$price->type()]->is_percent()) ? number_format( $price->amount(), 1 ) : number_format( $price->amount(), 2 );
+						$row_args['price_amount'] = $price_type->is_percent() ? number_format( $price->amount(), 1 ) : number_format( $price->amount(), 2 );
 
 						$select_name = 'edit_ticket_price['. $price->ID() .'][PRT_ID]';
 						$row_args['edit_ticket_price_select'] =EE_Form_Fields::select_input( $select_name, $all_price_types, $price->type(), 'id="edit-ticket-price-type-ID-'.$price->ID().'" style="width:auto;"', 'edit-ticket-price-input' );
 						$row_args['price_type'] = isset( $global_price_types[$price->type()] ) ? $global_price_types[$price->type()]->is_global() : FALSE;
-						$row_args['price_amount'] = ($PRT->type[$price->type()]->is_percent()) ? number_format( $price->amount(), 1 ) : number_format( $price->amount(), 2 );
+						$row_args['price_amount'] = $price_type->is_percent() ? number_format( $price->amount(), 1 ) : number_format( $price->amount(), 2 );
 
 						$row_args['counter'] = count($prices);
 						$template_args['price_rows'][] = espresso_display_template($row_template, $row_args, TRUE);

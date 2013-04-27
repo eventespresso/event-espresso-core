@@ -91,7 +91,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 				'PRC_name'=>new EE_Plain_Text_Field('PRC_name', 'Name of Price', false, ''),
 				'PRC_desc'=>new EE_Simple_HTML_Field('PRC_desc', 'Price Description', false, ''),
 				'PRC_reg_limit'=>new EE_Integer_Field('PRC_reg_limit', 'Limit to how many tickets can be sold at this price', true, 999999),
-				'PRC_tckts_left'=>new EE_Integer_Field('PRC_tckts_left', 'Tickets remaining at this price', ture, 999999),
+				'PRC_tckts_left'=>new EE_Integer_Field('PRC_tckts_left', 'Tickets remaining at this price', true, 999999),
 				'PRC_use_dates'=>new EE_Boolean_Field('PRC_use_dates', 'Flag indicating whether to use dates for this price', false, false),
 				'PRC_start_date'=>new EE_Datetime_Field('PRC_start_date', 'If using dates, when this price becomes available', true, current_time('timestamp')),
 				'PRC_end_date'=>new EE_Datetime_Field('PRC_end_date', 'If using dates, when this price is no longer available', true, current_time('timestamp')),
@@ -332,10 +332,10 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 	 */
 	private function _sort_event_prices_by_type( $price_a, $price_b ) {
 		$PRT = EEM_Price_Type::instance();
-		if ( $PRT->type[ $price_a->type() ]->order() == $PRT->type[ $price_b->type() ]->order() ) {
+		if ( $price_a->type_obj()->order() == $price_b->type_obj()->order() ) {
 			return $this->_sort_event_prices_by_order( $price_a, $price_b );
 		}
-		return $PRT->type[ $price_a->type() ]->order() < $PRT->type[ $price_b->type() ]->order() ? -1 : 1;
+		return $price_a->type_obj()->order() < $price_b->type_obj()->order() ? -1 : 1;
 	}
 
 

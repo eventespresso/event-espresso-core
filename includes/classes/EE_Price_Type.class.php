@@ -124,7 +124,7 @@ class EE_Price_Type extends EE_Base_Class{
 	* @param	int 		$PRT_order				Price Type order
 	* @param	int		$PRT_ID					Price type ID
 	*/
-	public function __construct( $PRT_name='', $PBT_ID=FALSE, $PRT_is_member=FALSE, $PRT_is_percent=FALSE, $PRT_is_global=FALSE, $PRT_order=0, $PRT_deleted, $PRT_ID=FALSE ) {
+	public function __construct( $PRT_name='', $PBT_ID=FALSE, $PRT_is_member=FALSE, $PRT_is_percent=FALSE, $PRT_is_global=FALSE, $PRT_order=0, $PRT_deleted = false, $PRT_ID=FALSE ) {
 	
 		if(is_array($PRT_name)){
 			parent::__construct($PRT_name);

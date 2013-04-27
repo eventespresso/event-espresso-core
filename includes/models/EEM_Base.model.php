@@ -180,7 +180,7 @@ abstract class EEM_Base extends EE_Base{
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 		$select_expressions = $columns_to_select ? $columns_to_select : $this->_construct_select_sql();
 		$SQL ="SELECT $select_expressions ".$this->_construct_2nd_half_of_select_query($model_query_info);
-		echo "get all SQL:".$SQL;
+		//echo "get all SQL:".$SQL;
 		return $wpdb->get_results($SQL, $output);
 	}
 
@@ -689,7 +689,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 		//now, just verify they didnt pass anything wack
 		foreach($query_params as $query_key => $query_value){
-			if(in_array($query_key,$this->_allowed_query_params)){
+			if( ! in_array($query_key,$this->_allowed_query_params)){
 				throw new EE_Error(sprintf(__("You passed %s as a query parameter to %s, which is illegal!",'event_espresso'),$query_key,get_class($this)));
 			}
 		}
@@ -936,7 +936,7 @@ abstract class EEM_Base extends EE_Base{
 		$SQL = '';
 //		$first = true;
 		foreach($this->_tables as $table_obj){
-			if($table_obj instanceof EE_Main_Table){
+			if($table_obj instanceof EE_Primary_Table){
 				$SQL .= SP.$table_obj->get_table_name()." AS ".$table_obj->get_table_alias().SP;
 			}elseif($table_obj instanceof EE_Secondary_Table){
 				$SQL .= SP.$table_obj->get_join_sql().SP;
@@ -1023,7 +1023,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @throws EE_Error
 	 */
 	public function get_primary_key_field(){
-		$field = $this->get_a_field_of_type('EE_Primary_Key_Field');
+		$field = $this->get_a_field_of_type('EE_Primary_Key_Field_Base');
 		if(!$field){
 			throw new EE_Error(sprintf(__("There is no Primary Key defined on model %s",'event_espresso'),get_class($this)));
 		}else{
@@ -1052,10 +1052,9 @@ abstract class EEM_Base extends EE_Base{
 	 * @throws EE_Error
 	 */
 	public function get_foreign_key_to($model_name){
-		foreach($this->field_settings() as $field){
-			if($field instanceof EE_Foreign_Key_Field 
-					&&
-					$field->get_model_name_pointed_to() == $model_name){
+		foreach($this->field_settings() as $field){			
+			if(is_subclass_of($field, 'EE_Foreign_Key_Field_Base')
+					&& $field->get_model_name_pointed_to() == $model_name){
 				return $field;
 			}
 		}

@@ -170,8 +170,14 @@ class EE_Price extends EE_Base_Class{
 	 * @var EE_Registration
 	 */
 	protected $_Registration;
-
 	
+	
+	
+	/**
+	 *
+	 * @var EE_Price_Type
+	 */
+	protected $_Price_Type;
 	
 	
 	/**
@@ -539,6 +545,10 @@ class EE_Price extends EE_Base_Class{
 	*/
 	public function type() {
 		return $this->_PRT_ID;
+	}
+	
+	public function type_obj(){
+		return $this->get_first_related('Price_Type');
 	}
 
 	/**

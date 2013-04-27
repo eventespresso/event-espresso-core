@@ -29,11 +29,18 @@
 class Prices_List_Table extends EE_Admin_List_Table {
 
 	private $_PRT;
+	
+	/**
+	 * Array of price types.
+	 * @var EE_Price_Type[]
+	 */
+	protected $_price_types = array();
 
 	public function __construct( $admin_page ) {
 		parent::__construct($admin_page);
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 		$this->_PRT = EEM_Price_Type::instance();
+		$this->_price_types = $this->_PRT->get_all();
 	}
 
 
@@ -151,7 +158,7 @@ class Prices_List_Table extends EE_Admin_List_Table {
 
 
 	function column_type($item) {
-		return $this->_PRT->type[$item->type()]->name();
+		return $this->_price_types[$item->type()]->name();
 	}
 
 
@@ -168,7 +175,7 @@ class Prices_List_Table extends EE_Admin_List_Table {
 
 	function column_amount($item) {
 		global $org_options;
-		if ($this->_PRT->type[$item->type()]->is_percent()) {
+		if ($this->_price_types[$item->type()]->is_percent()) {
 			return '<div class="pad-amnt-rght">' . number_format($item->amount(), 1) . '%</div>';
 		} else {
 			return '<div class="pad-amnt-rght">' . $org_options['currency_symbol'] . number_format($item->amount(), 2) . '</div>';
