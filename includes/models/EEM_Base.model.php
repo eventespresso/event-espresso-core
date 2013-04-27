@@ -183,6 +183,14 @@ abstract class EEM_Base extends EE_Base{
 		//echo "get all SQL:".$SQL;
 		return $wpdb->get_results($SQL, $output);
 	}
+	
+	/**
+	 * Convenient wrapper for getting the primary key field's name. Eg, on Registration, this would be 'REG_ID'
+	 * @return string
+	 */
+	function primary_key_name(){
+		return $this->get_primary_key_field()->get_name();
+	}
 
 	/**
 	 * Gets a single item for this model from the DB, given only its ID (or null if none is found).
@@ -297,7 +305,7 @@ abstract class EEM_Base extends EE_Base{
 		foreach(array_keys($this->_tables) as $table_alias){
 			$table_aliases[] = $table_alias;
 		}
-		$SQL = "DELETE ".implode(", ",$table_aliases)." FROM ".$model_query_info->get_full_join_sql().$this->get_primary_key_field()->get_qualified_column()." IN (".implode(",",array_keys($objects_for_deletion)).")";
+		$SQL = "DELETE ".implode(", ",$table_aliases)." FROM ".$model_query_info->get_full_join_sql()." WHERE ".$this->get_primary_key_field()->get_qualified_column()." IN (".implode(",",array_keys($objects_for_deletion)).")";
 //		/echo "delete sql:$SQL";
 		$rows_deleted = $wpdb->query($SQL);
 		//$wpdb->print_error();
@@ -524,13 +532,13 @@ abstract class EEM_Base extends EE_Base{
 	 * If a $new_id is supplied and if $table is an EE_Other_Table, we assume
 	 * we need to add a foreign key column to point to $new_id (which should be the primary key's value
 	 * on the main table)
-	 * @param EE_Table $table
+	 * @param EE_Table_Base $table
 	 * @param array $cols_n_values each key should be in _fields's keys, and value should be an int, string or float
 	 * @param int $new_id for now we assume only int keys
 	 * @return int ID of new row inserted
 	 * @throws EE_Error
 	 */
-	private function _insert_into_specific_table(EE_Table $table, $cols_n_values, $new_id = false){
+	private function _insert_into_specific_table(EE_Table_Base $table, $cols_n_values, $new_id = false){
 		global $wpdb;
 		$insertion_col_n_values = array();
 		$format_for_insertion = array();
@@ -576,7 +584,7 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	protected function _get_main_table(){
 		foreach($this->_tables as $table){
-			if($table instanceof EE_Main_Table){
+			if($table instanceof EE_Primary_Table){
 				return $table;
 			}
 		}
@@ -734,7 +742,7 @@ abstract class EEM_Base extends EE_Base{
 		foreach($this->_model_relations as $valid_related_model_name=>$relation_obj){
 			//check to see if the $query_param starts with $valid_related_model_name
 			//eg if 'Registration' is at the start of 'Registration.Transaction.TXN_ID'
-			if(strpos($query_param, $valid_related_model_name) === 0){
+			if(strpos($query_param, $valid_related_model_name.".") === 0){
 				//it is, so pop it off
 				$query_param = str_replace($valid_related_model_name.".","",$query_param);
 				//get that related model's join info and data types
@@ -925,7 +933,11 @@ abstract class EEM_Base extends EE_Base{
 	function _get_qualified_column_for_field($field_name){
 		$all_fields = $this->field_settings();
 		$field = $all_fields[$field_name];
-		return $field->get_qualified_column();
+		if($field){
+			return $field->get_qualified_column();
+		}else{
+			throw new EE_Error(sprintf(__("There is no field titled %s on model %s. Either the query trying to use it is bad, or you need to add it to the list of fields on the model.",'event_espresos'),$field_name,get_class($this)));
+		}
 	}
 	
 	/**

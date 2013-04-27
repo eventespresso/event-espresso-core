@@ -1236,7 +1236,7 @@ class EE_Single_Page_Checkout {
 				// create array for query where statement
 				$where_fields_n_values = array('ATT_fname' => $ATT_fname, 'ATT_lname' => $ATT_lname, 'ATT_email' => $ATT_email);
 				// do we already have an existing record for this attendee ?
-				if ( $existing_attendee = $ATT->find_one( array( $where_fields_n_values ))) {
+				if ( $existing_attendee = $ATT->get_one( array( $where_fields_n_values ))) {
 					$ATT_ID = $existing_attendee->ID();
 					$att[$att_nmbr] = $existing_attendee;
 				} else {

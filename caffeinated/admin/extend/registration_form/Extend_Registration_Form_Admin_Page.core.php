@@ -427,13 +427,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$set_column_values=$this->_set_column_values_for($this->_question_group_model);
 		require_once('EE_Question_Group.class.php');
 		if($new_question_group){
-			$results=$this->_question_group_model->insert($set_column_values);
-			if($results){
+			$ID=$this->_question_group_model->insert($set_column_values);
+			if($ID){
 				$success=1;
-				$ID=$results['new-ID'];
 			}else{
 				$success=0;
-				$ID=false;
 			}
 			$action_desc='created';
 		}else{
@@ -441,7 +439,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			$pk=$this->_question_group_model->primary_key_name();
 			$wheres=array($pk=>$ID);
 			unset($set_column_values[$pk]);
-			$success= $this->_question_group_model->update($set_column_values,$wheres);
+			$success= $this->_question_group_model->update($set_column_values,array($wheres));
 			$action_desc='updated';
 		}
 		//save the related questions
@@ -590,7 +588,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			global $wpdb;
 			for ( $i = 0; $i < count( $row_ids ); $i++ ) {
 				//Update the questions when re-ordering
-				if ( ! EEM_Question_Group::instance()->update ( array( 'QSG_order' => $i+1 ), array( 'QSG_ID' => $row_ids[$i] ) )) {
+				if ( ! EEM_Question_Group::instance()->update ( array( 'QSG_order' => $i+1 ), array(array( 'QSG_ID' => $row_ids[$i] )))) {
 					$success = FALSE;
 				} 
 			}

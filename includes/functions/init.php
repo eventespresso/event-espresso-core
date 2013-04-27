@@ -300,9 +300,9 @@ function event_espresso_run() {
 function return_espresso_content() {
 	//@todo add extra join condition
 	global $espresso_content;
-	require_once('EEM_Event.model.php');
-	$EVT = EEM_Event::instance();
-	var_dump($EVT->get_all());
+//	require_once('EEM_Event.model.php');
+//	$EVT = EEM_Event::instance();
+//	var_dump($EVT->get_all());
 	
 //	var_dump($EVT->get_all(array(
 //		array(

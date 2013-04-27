@@ -556,72 +556,8 @@ class EE_Registration extends EE_Base_Class {
 	}
 
 
-
-
-
-
-	/**
-	*		save object to db
-	* 
-	* 		@access		private
-	* 		@param		array		$where_cols_n_values
-	*		@return int, 1 on a successful update, the ID of
-	*					the new entry on insert; 0 on failure				
-	*/	
-	private function _save_to_db( $where_cols_n_values = FALSE ) {
-		
-		 $MODEL = EEM_Registration::instance();
-		
-		$set_column_values = array(		
-				'EVT_ID' 						=> $this->_EVT_ID,
-				'ATT_ID' 						=> $this->_ATT_ID,
-				'TXN_ID' 					=> $this->_TXN_ID,
-				'DTT_ID' 						=> $this->_DTT_ID,
-				'PRC_ID' 						=> $this->_PRC_ID,
-				'STS_ID' 						=> $this->_STS_ID,
-				'REG_date' 					=> $this->_REG_date,
-				'REG_final_price' 		=> $this->_REG_final_price,
-				'REG_session' 			=> $this->_REG_session,
-				'REG_code'					=> $this->_REG_code,
-				'REG_url_link'				=> $this->_REG_url_link,
-				'REG_count' 				=> $this->_REG_count,
-				'REG_group_size' 		=> $this->_REG_group_size,
-				'REG_att_is_going' 	=> $this->_REG_att_is_going,
-				'REG_att_checked_in' => $this->_REG_att_checked_in
-		);
-
-		if ( $where_cols_n_values ){
-			$results = $MODEL->update ( $set_column_values, $where_cols_n_values );
-		} else {
-			$results = $MODEL->insert ( $set_column_values );
-		}
-		
-		return $results;
-	}
-
-
-
-
-
-	/**
-	*		update existing db record
-	* 
-	* 		@access		public
-	*/	
-	public function update() {
-		return $this->_save_to_db( array( 'REG_ID' => $this->_REG_ID ));
-	}
-
-
-	/**
-	*	insert new db record
-	*
-	* @access		public
-	*/
-	public function insert() {
-		return $this->_save_to_db();
-	}
-
+	
+	
 	/**
 	 * Returns the related EE_Transaction to this registration
 	 * @return EE_Transaction	 

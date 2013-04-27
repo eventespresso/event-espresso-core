@@ -798,7 +798,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		if ( $REG_ID && array_key_exists( $REG_status, self::$_reg_status )) {
 			if ( $registration = EEM_Registration::instance()->get_one_by_ID( $REG_ID )) {
 				$registration->set_status( $REG_status );
-				$success = $registration->update();		
+				$success = $registration->save();		
 			}
 		}
 
@@ -1959,7 +1959,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
 			// cycle thru checkboxes 
 			while ( list( $REG_ID, $value ) = each($this->_req_data['checkbox'])) {
-				if ( ! EEM_Registration::instance()->update( array( 'REG_att_checked_in' => $REG_att_checked_in ), array( 'REG_ID' => absint( $REG_ID )))) {
+				if ( ! EEM_Registration::instance()->update( array( 'REG_att_checked_in' => $REG_att_checked_in ), array(array( 'REG_ID' => absint( $REG_ID ))))) {
 					$success = FALSE;
 				}
 			}
@@ -1971,11 +1971,11 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$REG_url_link = ! empty($this->_req_data['_REG_ID']) ? sanitize_text_field( $this->_req_data['_REG_ID'] ) : FALSE;
 			//$REG_att_checked_in = ! empty($this->_req_data['check_in']) ? absint( $this->_req_data['check_in'] ) : 0;
 			
-			if ( $REG = EEM_Registration::instance()->get_one( array( 'REG_ID' => absint( $REG_ID ), 'REG_url_link' => $REG_url_link ))) {
+			if ( $reg_obj = EEM_Registration::instance()->get_one( array( 'REG_ID' => absint( $REG_ID ), 'REG_url_link' => $REG_url_link ))) {
 				//echo '<h4>$REG ID : ' . $REG->ID() . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-				if ( $REG->set_att_checked_in( $REG_att_checked_in )) {
+				if ( $reg_obj->set_att_checked_in( $REG_att_checked_in )) {
 					//echo '<h1>set_att_checked_in<br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
-					$success = $REG->update();
+					$success = $reg_obj->save();
 				}
 			}		
 				
@@ -2118,17 +2118,14 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				
 		// is this a new Attendee ?
 		if ( $new_attendee ) {
-			// run the insert
-			if ( $attendee->insert() ) {
-				$success = 1;
-			} 
 			$action_desc = __( 'created', 'event_espresso' );
 		} else {
-			// run the update
-			if ( $attendee->update() ) {
-				$success = 1;
-			}
 			$action_desc = __( 'updated', 'event_espresso' );
+		}
+		if ( $attendee->save() ) {
+			$success = 1;
+		}else{
+			$success = 0;
 		}
 		
 		$this->_redirect_after_action( $success, __( 'Attendee', 'event_espresso' ), $action_desc, array( 'action' => 'edit_attendee', 'id' => $this->_req_data['ATT_ID'] ) );
@@ -2160,7 +2157,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
 			// cycle thru checkboxes 
 			while (list( $ATT_ID, $value ) = each($this->_req_data['checkbox'])) {
-				if ( ! $ATT_MDL->update(array('ATT_deleted' => $ATT_deleted), array('ATT_ID' => absint($ATT_ID)))) {
+				if ( ! $ATT_MDL->update(array('ATT_deleted' => $ATT_deleted), array(array('ATT_ID' => absint($ATT_ID))))) {
 					$success = 0;
 				}
 			}
@@ -2168,7 +2165,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		} else {
 			// grab single id and delete
 			$ATT_ID = absint($this->_req_data['id']);
-			if ( ! $ATT_MDL->update(array('ATT_deleted' => $ATT_deleted), array('ATT_ID' => absint($ATT_ID)))) {
+			if ( ! $ATT_MDL->update(array('ATT_deleted' => $ATT_deleted), array(array('ATT_ID' => absint($ATT_ID))))) {
 				$success = 0;
 			}
 			

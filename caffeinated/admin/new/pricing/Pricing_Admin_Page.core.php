@@ -546,18 +546,18 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		// is this a new Price ?
 		if ( $insert ) {
 			// run the insert
-			if ( $results = $PRC->insert( $set_column_values )) {
+			if ( $PRC_ID = $PRC->insert( $set_column_values )) {
 				$success = 1;
-				$PRC_ID = $results['new-ID'];
 			} else {
 				$PRC_ID = FALSE;
+				$success = 0;
 			}
 			$action_desc = 'created';
 		} else {
 			$PRC_ID = absint( $this->_req_data['PRC_ID'] );
 			// run the update
 			$where_cols_n_values = array( 'PRC_ID' => $PRC_ID );
-			if ( $PRC->update( $set_column_values, $where_cols_n_values )) {
+			if ( $PRC->update( $set_column_values, array($where_cols_n_values))) {
 				$success = 1;
 			}
 			$action_desc = 'updated';
@@ -595,7 +595,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
 			// cycle thru checkboxes 
 			while (list( $PRC_ID, $value ) = each($this->_req_data['checkbox'])) {
-				if ( ! $PRC->update(array('PRC_deleted' => $PRC_deleted), array('PRC_ID' => absint($PRC_ID)))) {
+				if ( ! $PRC->update(array('PRC_deleted' => $PRC_deleted), array(array('PRC_ID' => absint($PRC_ID))))) {
 					$success = 0;
 				}
 			}
@@ -603,7 +603,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		} else {
 			// grab single id and delete
 			$PRC_ID = absint($this->_req_data['id']);
-			if ( ! $PRC->update(array('PRC_deleted' => $PRC_deleted), array('PRC_ID' => absint($PRC_ID)))) {
+			if ( ! $PRC->update(array('PRC_deleted' => $PRC_deleted), array(array('PRC_ID' => absint($PRC_ID))))) {
 				$success = 0;
 			}
 			
@@ -936,7 +936,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			$PRT_ID = absint($this->_req_data['PRT_ID']);
 			// run the update
 			$where_cols_n_values = array('PRT_ID' => $PRT_ID );
-			if ( $PRT->update( $set_column_values, $where_cols_n_values )) {
+			if ( $PRT->update( $set_column_values, array( $where_cols_n_values ))) {
 				$success = 1;
 			}
 			$action_desc = 'updated';
@@ -974,7 +974,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			$what = count( $this->_req_data['checkbox'] ) > 1 ? 'Price Types' : 'Price Type';
 			// cycle thru checkboxes 
 			while (list( $PRT_ID, $value ) = each($this->_req_data['checkbox'])) {
-				if ( ! $PRT->update(array('PRT_deleted' => $PRT_deleted), array('PRT_ID' => absint($PRT_ID)))) {
+				if ( ! $PRT->update(array('PRT_deleted' => $PRT_deleted), array(array('PRT_ID' => absint($PRT_ID))))) {
 					$success = 0;
 				}
 			}
@@ -982,7 +982,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		} else {
 			// grab single id and delete
 			$PRT_ID = absint($this->_req_data['id']);
-			if ( ! $PRT->update(array('PRT_deleted' => $PRT_deleted), array('PRT_ID' => absint($PRT_ID)))) {
+			if ( ! $PRT->update(array('PRT_deleted' => $PRT_deleted), array(array('PRT_ID' => absint($PRT_ID))))) {
 				$success = 0;
 			}
 			$what = 'Price Type';

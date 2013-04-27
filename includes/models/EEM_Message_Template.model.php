@@ -112,7 +112,7 @@ class EEM_Message_Template extends EEM_Base {
 	 * 	@param	array $prices
 	 * 	@return mixed array on success, FALSE on fail
 	 */
-	private function _create_objects($templates = FALSE) {
+	protected function _create_objects($templates = FALSE) {
 
 		//init $a_temp value
 		$a_temp = array();

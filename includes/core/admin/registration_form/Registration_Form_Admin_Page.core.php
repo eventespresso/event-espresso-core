@@ -258,7 +258,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			global $wpdb;
 			for ( $i = 0; $i < count( $row_ids ); $i++ ) {
 				//Update the questions when re-ordering
-				if ( ! EEM_Question::instance()->update ( array( 'QST_order' => $i+1 ), array( 'QST_ID' => $row_ids[$i] ) )) {
+				if ( ! EEM_Question::instance()->update ( array( 'QST_order' => $i+1 ), array(array( 'QST_ID' => $row_ids[$i] ) ))) {
 					$success = FALSE;
 				} 
 			}
@@ -330,7 +330,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			$pk=$this->_question_model->primary_key_name();
 			$wheres=array($pk=>$ID);
 			unset($set_column_values[$pk]);
-			$success= $this->_question_model->update($set_column_values,$wheres);
+			$success= $this->_question_model->update($set_column_values,array($wheres));
 			$action_desc='updated';
 		}
 		//save the related options

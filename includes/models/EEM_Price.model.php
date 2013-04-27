@@ -225,7 +225,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 		$taxes = array();
 		$all_taxes = $this->get_all(array(
 			array(
-				'Price_Type'=>  EEM_Price_Type::base_type_tax,
+				'Price_Type.PBT_ID'=>  EEM_Price_Type::base_type_tax,
 				'PRC_is_active'=> true)
 		));
 //		$all_taxes = $this->_select_all_prices_where( 

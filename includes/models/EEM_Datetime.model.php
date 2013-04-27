@@ -243,7 +243,7 @@ class EEM_Datetime extends EEM_Base {
 			if ( in_array( $DTM->DTT_ID, $end_dates )) {
 				$set_column_values = array( 'DTT_end' => $DTM->DTT_start  );
 				$where_cols_n_values = array( 'DTT_ID' => $start_dates[ $DTM->DTT_ID ] );
-				if ( $results = $this->update ( $set_column_values, $where_cols_n_values )) {
+				if ( $results = $this->update ( $set_column_values, array($where_cols_n_values ))) {
 					echo '<h4>copy successful DTT_ID : ' . $DTM->DTT_ID . '</h4>';
 				} else {
 					echo '<h2 style="color:red;">COPY ERROR  DTT_ID : ' . $DTM->DTT_ID . '</h2>';

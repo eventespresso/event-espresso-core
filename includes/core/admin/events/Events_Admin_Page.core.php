@@ -1695,7 +1695,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 //                    echo printr( $ticket_price, '$ticket_price' );
 //                    echo printr( $new_price, '$new_price' );
 
-				$results = $new_price->insert();
+				$new_price->save();
 
 			}
 		}
@@ -2146,17 +2146,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 //echo '<h4>end_date_and_time : ' . $new_event_date->end_date_and_time() . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 //echo '<h4>reg_start_date_and_time : ' . $new_event_date->reg_start_date_and_time() . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 //echo '<h4>reg_end_date_and_time : ' . $new_event_date->reg_end_date_and_time() . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-
-					// if an ID exists then update
-					if ($new_event_date->ID()) {
-						// remove this ID from list of datetime IDs - any remainders will get deleted afterwards
-						if (array_key_exists($new_event_date->ID(), $datetime_IDs)) {
-							unset($datetime_IDs[$new_event_date->ID()]);
-						}
-						$update = $new_event_date->update();
-					} else {
-						$insert = $new_event_date->insert();
-					}
+					$new_event_date->save();
 				}
 			}
 
@@ -2257,16 +2247,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 //				printr( $ticket_price, '$ticket_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //				printr( $new_price, '$new_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //die();
-
-				if (!$new_price->ID()) {
-//echo '<h1>insert !!!</h1>';
-//echo '<h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-					$results = $new_price->insert();
-				} else {
-//echo '<h1>update !!!</h1>';
-//echo '<h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-					$results = $new_price->update();
-				}
+				$new_price->save();
 			}
 		}
 

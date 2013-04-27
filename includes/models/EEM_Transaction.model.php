@@ -480,43 +480,6 @@ class EEM_Transaction extends EEM_Base {
 	
 
 
-
-
-	/**
-	 *		This function inserts table data
-	 *		
-	 *		@access public
-	 *		@param array $set_column_values - array of column names and values for the SQL INSERT 
-	 *		@return array
-	 */	
-	public function insert ($set_column_values) {
-		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		return $this->_insert( $this->table_name, $this->table_data_types, $set_column_values );
-	}
-
-
-
-
-
-
-
-
-
-
-	/**
-	 *		This function updates table data
-	 *		
-	 *		@access public
-	 *		@param array $set_column_values - array of column names and values for the SQL SET clause
-	 *		@param array $where_cols_n_values - column names and values for the SQL WHERE clause
-	 *		@return array
-	 */	
-	public function update ($set_column_values, $where_cols_n_values) {
-//		$this->display_vars( __FUNCTION__, array( 'set_column_values' => $set_column_values, 'where' => $where_cols_n_values ) );
-		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		return $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );
-	}
-	
 	/**
 	 * Gets teh current transaction given teh reg_url_link, or assumes the reg_url_link is in the
 	 * $_REQUEST global variable. Either way, tries to find the current transaction (through
