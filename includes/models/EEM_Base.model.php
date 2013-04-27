@@ -687,6 +687,7 @@ abstract class EEM_Base extends EE_Base{
 		if(array_key_exists('having',$query_params) && $query_params['having']){
 			throw new EE_Error("Having clause is not yet supported. It should be an easy add though");
 		}
+
 		//now, just verify they didnt pass anything wack
 		foreach($query_params as $query_key => $query_value){
 			if( ! in_array($query_key,$this->_allowed_query_params)){
