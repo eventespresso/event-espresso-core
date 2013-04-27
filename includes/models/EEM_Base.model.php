@@ -937,7 +937,7 @@ abstract class EEM_Base extends EE_Base{
 		$SQL = '';
 //		$first = true;
 		foreach($this->_tables as $table_obj){
-			if($table_obj instanceof EE_Main_Table){
+			if($table_obj instanceof EE_Primary_Table){
 				$SQL .= SP.$table_obj->get_table_name()." AS ".$table_obj->get_table_alias().SP;
 			}elseif($table_obj instanceof EE_Secondary_Table){
 				$SQL .= SP.$table_obj->get_join_sql().SP;
@@ -1024,7 +1024,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @throws EE_Error
 	 */
 	public function get_primary_key_field(){
-		$field = $this->get_a_field_of_type('EE_Primary_Key_Field');
+		$field = $this->get_a_field_of_type('EE_Primary_Key_Field_Base');
 		if(!$field){
 			throw new EE_Error(sprintf(__("There is no Primary Key defined on model %s",'event_espresso'),get_class($this)));
 		}else{
@@ -1054,7 +1054,7 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	public function get_foreign_key_to($model_name){
 		foreach($this->field_settings() as $field){
-			if($field instanceof EE_Foreign_Key_Field 
+			if($field instanceof EE_Foreign_Key_Field_Base 
 					&&
 					$field->get_model_name_pointed_to() == $model_name){
 				return $field;
