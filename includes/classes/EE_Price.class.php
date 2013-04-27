@@ -21,148 +21,159 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Price {
+class EE_Price extends EE_Base_Class{
 	
 	/**
 	*		Price ID
 	*
 	* 	primary key
 	*
-	* 	@access	private
+	* 	@access	protected
 	*		@var int
 	*/
-	private $_PRC_ID = FALSE;
+	protected $_PRC_ID = FALSE;
 
 
 	/**
 	*	Price Type ID
 	*
-	*	@access	private
+	*	@access	protected
 	*	@var int
 	*/
-	private $_PRT_ID = NULL;
+	protected $_PRT_ID = NULL;
 
 
 	/**
 	 * Event ID
 	 *
-	 * @access private
+	 * @access protected
 	 * @var int
 	 */
-	private $_EVT_ID = NULL;
+	protected $_EVT_ID = NULL;
 
 
 	/**
 	*	Price amount
 	*
-	*	@access	private
+	*	@access	protected
 	*	@var int
 	*/
-	private $_PRC_amount = NULL;
+	protected $_PRC_amount = NULL;
 
 
 	/**
 	*	Price name
 	*
-	*	@access	private
+	*	@access	protected
 	*	@var string
 	*/
-	private $_PRC_name = NULL;
+	protected $_PRC_name = NULL;
 
 
 	/**
 	*	Price description
 	*
-	*	@access	private
+	*	@access	protected
 	*	@var string
 	*/
-	private $_PRC_desc = NULL;
+	protected $_PRC_desc = NULL;
 
 
 	/**
 	*	Registration Limit for this Price Level
 	*
-	*	@access	private
+	*	@access	protected
 	*	@var int
 	*/
-	private $_PRC_reg_limit = NULL; 				
+	protected $_PRC_reg_limit = NULL; 				
 
 
 	/**
 	*	Number of tickets left or spaces available at this Price Level
 	*
-	*	@access	private
+	*	@access	protected
 	*	@var int
 	*/
-	private $_PRC_tckts_left = NULL; 				
+	protected $_PRC_tckts_left = NULL; 				
 
 
 	/**
 	*	Whether to use dates to control when pricing starts and ends
 	*
-	*	@access	private
+	*	@access	protected
 	*	@var boolean
 	*/
-	private $_PRC_use_dates = NULL;
+	protected $_PRC_use_dates = NULL;
 
 
 	/**
 	*	If use dates is active, this is when this price becomes active
 	*
-	*	@access	private
+	*	@access	protected
 	*	@var int
 	*/
-	private $_PRC_start_date	 = NULL;
+	protected $_PRC_start_date	 = NULL;
 
 
 	/**
 	*	If use dates is active, this is when this price becomes inactive
 	*
-	*	@access	private
+	*	@access	protected
 	*	@var int
 	*/
-	private $_PRC_end_date = NULL;
+	protected $_PRC_end_date = NULL;
 
 
 	/**
 	*	Price globally active?
 	*
-	*	@access	private
+	*	@access	protected
 	*	@var boolean
 	*/
-	private $_PRC_is_active = NULL;
+	protected $_PRC_is_active = NULL;
 
 
 	/**
 	*	Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )
 	*
-	*	@access	private
+	*	@access	protected
 	*	@var int
 	*/
-	private $_PRC_overrides = NULL;
+	protected $_PRC_overrides = NULL;
 
 
 	/**
 	*	Order that this price is applied ( overrides price type order )
 	*
-	*	@access	private
+	*	@access	protected
 	*	@var int
 	*/
-	private $_PRC_order = NULL;
+	protected $_PRC_order = NULL;
 
 
 	/**
 	*	Whether this Price has been moved to the trash
 	*
-	*	@access	private
+	*	@access	protected
 	*	@var boolean
 	*/
-	private $_PRC_deleted = NULL;
+	protected $_PRC_deleted = NULL;
 
+	/**
+	 *
+	 * @var EE_Event
+	 */
+	protected $_Event;
+	
+	
+	/**
+	 * @var EE_Registration
+	 */
+	protected $_Registration;
 
-
-
-
+	
+	
+	
 	/**
 	*  Price constructor
 	*
@@ -199,23 +210,17 @@ class EE_Price {
 					$PRC_order=NULL,
 					$PRC_deleted=NULL,
 					$PRC_ID=FALSE ) {
-	
-		$this->_PRC_ID							= absint($PRC_ID);
-		$this->_EVT_ID							= absint($EVT_ID);
-		$this->_PRT_ID							= absint($PRT_ID);
-		$this->_PRC_amount				= (float)abs($PRC_amount);
-		$this->_PRC_name					= wp_strip_all_tags($PRC_name);
-		$this->_PRC_desc						= wp_strip_all_tags($PRC_desc);
-		$this->_PRC_reg_limit				= $PRC_reg_limit != NULL ? absint( $PRC_reg_limit ) : NULL;
-		$this->_PRC_tckts_left				= $PRC_tckts_left != NULL ? absint( $PRC_tckts_left ) : NULL;
-		$this->_PRC_use_dates				= absint( $PRC_use_dates ) ? TRUE : FALSE;
-		$this->_PRC_start_date				= is_numeric( $PRC_start_date ) ? absint( $PRC_start_date ) : strtotime( $PRC_start_date );
-		$this->_PRC_end_date				= is_numeric( $PRC_end_date ) ? absint( $PRC_end_date ) : strtotime( $PRC_end_date );
-		$this->_PRC_is_active				= absint( $PRC_is_active ) ? TRUE : FALSE;
-		$this->_PRC_overrides				= $PRC_overrides != NULL ? absint($PRC_overrides) : FALSE;
-		$this->_PRC_deleted					= $PRC_deleted != NULL ? absint($PRC_deleted) : FALSE;
-		$this->_PRC_order						= $PRC_order != NULL ? absint($PRC_order) : NULL;
-
+	if(is_array($PRT_ID)){
+			parent::__construct($PRT_ID);
+			return;
+		}
+		$reflector = new ReflectionMethod($this,'__construct');	
+		$arrayForParent=array();
+		foreach($reflector->getParameters() as $param){
+			$paramName=$param->name;
+			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
+		}
+		parent::__construct($arrayForParent);	
 		// load Price model file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 	}

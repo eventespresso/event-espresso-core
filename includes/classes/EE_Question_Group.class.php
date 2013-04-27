@@ -100,14 +100,14 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 * @access protected
 	 * @var EE_Question 
 	 */
-	protected $_Questions;
+	protected $_Question;
 	
 	/**
 	 * Related Events
 	 * @access protected
 	 * @var EE_Event
 	 */
-	protected $_Events;
+	protected $_Event;
 	/**
 	 * 
 	 * @param string/array $QSG_name name of question group  OR an array of all field values, where keys match these arguments' names
@@ -229,7 +229,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 * @return EE_Question[]
 	 */
 	public function questions(){
-		return $this->get_many_related('Questions');
+		return $this->get_many_related('Question');
 	}
 	
 	/**
@@ -238,7 +238,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 */
 	public function events(){
 		throw new EE_Error(__("Question Group->events() not yet implemetned","event_esresso"));
-		return $this->get_many_related('Events');
+		return $this->get_many_related('Event');
 	}
 	
 	/**

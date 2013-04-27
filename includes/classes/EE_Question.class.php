@@ -117,19 +117,19 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * realted answers, lazy-loaded
 	 * @var EE_Answer[] 
 	 */
-	protected $_Answers;
+	protected $_Answer;
 	
 	/**
 	 * related question groups, lazy-loaded
 	 * @var EE_Question_Group[] 
 	 */
-	protected $_Question_Groups;
+	protected $_Question_Group;
 	
 	/**
 	 * related question options, lazy-loaded
 	 * @var EE_Question_Option[] 
 	 */
-	protected $_Question_Options;
+	protected $_Question_Option;
 	
 	/**
 	 * constructor for questions
@@ -394,7 +394,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * @return EE_Answer[]
 	 */
 	public function answers(){
-		return $this->get_many_related('Answers');
+		return $this->get_many_related('Answer');
 	}
 	
 	/**
@@ -402,7 +402,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * @return EE_Question_Group[]
 	 */
 	public function question_groups(){
-		return $this->get_many_related('Question_Groups');
+		return $this->get_many_related('Question_Group');
 	}
 	
 	/**
@@ -412,9 +412,9 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 */
 	public function options($notDeletedOptionsOnly=true){
 		if($notDeletedOptionsOnly){
-			return  $this->get_many_related('Question_Options', array('QSO_deleted'=>false));
+			return  $this->get_many_related('Question_Option', array(array('QSO_deleted'=>false)));
 		}else{
-			return $this->get_many_related('Question_Options');
+			return $this->get_many_related('Question_Option');
 		}
 	}
 	/**

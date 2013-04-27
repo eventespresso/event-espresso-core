@@ -147,7 +147,7 @@ class EE_Transaction extends EE_Base_Class{
 	 * Registrations on this transaction
 	 * @var EE_Registration[]
 	 */
-	protected $_Registrations = NULL;
+	protected $_Registration = NULL;
 	
 	
 	
@@ -155,7 +155,7 @@ class EE_Transaction extends EE_Base_Class{
 	 * Payments for this transaction
 	 * @var EE_Payment[]
 	 */
-	protected $_Payments = NULL;
+	protected $_Payment = NULL;
 
 
 
@@ -567,7 +567,7 @@ class EE_Transaction extends EE_Base_Class{
 	 * @return EE_Registration[]
 	 */
 	public function registrations(){
-		return $this->get_many_related('Registrations');
+		return $this->get_many_related('Registration');
 	}
 	
 	/**
@@ -576,7 +576,7 @@ class EE_Transaction extends EE_Base_Class{
 	 * @param string $output like 'OBJECT_K' or 'COUNT', like EEM_Base's select_all_where's $output parameter
 	 * @return mixed EE_Attendee[] by default, int if $output is set to 'COUNT'
 	 */
-	public function attendees($output='OBJECT_K'){
+	public function attendees(){
 		return $this->get_many_related('Attendee', array(array('Registration.Transaction.TXN_ID'=>$this->ID())));
 	}
 	
@@ -602,8 +602,8 @@ class EE_Transaction extends EE_Base_Class{
 	 * @param type $output
 	 * @return EE_Payment[]
 	 */
-	public function payments($where_col_n_vals = array(), $orderby = null, $order = 'DESC',$operators = '=', $limit = null, $output= 'OBJECT_K' ){
-		return $this->get_many_related('Payments',$where_col_n_vals,$orderby,$order,$operators,$limit,$output);
+	public function payments($query_params = array() ){
+		return $this->get_many_related('Payment',$query_params);
 	}
 	
 	
@@ -613,7 +613,7 @@ class EE_Transaction extends EE_Base_Class{
 	 */
 	public function approved_payments(){
 		require_once('EEM_Payment.model.php');
-		return $this->get_many_related('Payments', array('STS_ID'=>  EEM_Payment::status_id_approved), 'PAY_timestamp', 'DESC');
+		return $this->get_many_related('Payment', array(array('STS_ID'=>  EEM_Payment::status_id_approved), 'order_by'=>array('PAY_timestamp' =>'DESC')));
 	}
 	
 	

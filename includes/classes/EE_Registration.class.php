@@ -209,7 +209,7 @@ class EE_Registration extends EE_Base_Class {
 	 * Event for which this registration is for
 	 * 
 	 * @access protected
-	 * @var object (should be EE_Event, but its not create dyet)
+	 * @var EE_Event
 	 */
 	protected $_Event = NULL;
 	
@@ -259,7 +259,7 @@ class EE_Registration extends EE_Base_Class {
 	 * @access protected 
 	 * @var EE_Answer[]
 	 */
-	protected $_Answers = NULL;
+	protected $_Answer = NULL;
 
 
 	/**
@@ -942,28 +942,6 @@ class EE_Registration extends EE_Base_Class {
 	public function att_checked_in() {
 		return $this->_REG_att_checked_in;
 	}
-
-	/**
-	 * Gets all the answers for this registration, and prepopulates their related
-	 * questions onto each EE_Answer object
-	 * @param array $where_col_n_values
-	 * @param string $orderby
-	 * @param string $order
-	 * @param array $operators
-	 * @param mixed $limit
-	 * @param string $output
-	 * @return EE_Answer[]
-	 */
-	public function answers_and_questions( $where_col_n_values=null, $orderby=null, $order=null, $operators='=', $limit=null, $output='OBJECT_K'){
-		$answers= $this->get_many_related('Answers', $where_col_n_values, $orderby, $order, $operators, $limit, $output);
-		$reg_model=$this->_get_model();
-		$answers_with_questions=$reg_model->preload_related_models_of_type_onto('Question', $answers);
-		return $answers_with_questions;
-	}
-
-
-
-
 }
 
 

@@ -22,17 +22,17 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
  *
  * ------------------------------------------------------------------------
  */
-class EE_Datetime {
+class EE_Datetime extends EE_Base_Class{
 	
     /**
     *	Datetime ID
 	* 
 	* 	primary key
 	*	
-	* 	@access	private
+	* 	@access	protected
     *	@var int	
     */
-	private $_DTT_ID;
+	protected $_DTT_ID;
 	
 	
 	
@@ -41,10 +41,10 @@ class EE_Datetime {
 	* 
 	* 	foreign key
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var int	
     */
-	private $_EVT_ID;
+	protected $_EVT_ID;
 	
 	
 	
@@ -53,10 +53,10 @@ class EE_Datetime {
 	* 
 	* 	foreign key
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var int	
     */
-	private $_DTT_is_primary = NULL;
+	protected $_DTT_is_primary = NULL;
 	
 	
 	
@@ -65,10 +65,10 @@ class EE_Datetime {
 	* 
 	*	date / time
 	*  
-	*	@access	private
+	*	@access	protected
     *	@var int	
     */
-	private $_DTT_EVT_start;
+	protected $_DTT_EVT_start;
 	
 	
 	
@@ -77,10 +77,10 @@ class EE_Datetime {
 	* 
 	*	date / time
 	*  
-	*	@access	private
+	*	@access	protected
     *	@var int	
     */
-	private $_DTT_EVT_end;
+	protected $_DTT_EVT_end;
 	
 	
 	
@@ -92,10 +92,10 @@ class EE_Datetime {
 	* 
 	*	date / time
 	*  
-	*	@access	private
+	*	@access	protected
     *	@var int	
     */
-	private $_DTT_REG_start;
+	protected $_DTT_REG_start;
 	
 	
 	
@@ -104,10 +104,10 @@ class EE_Datetime {
 	* 
 	*	date / time
 	*  
-	*	@access	private
+	*	@access	protected
     *	@var int	
     */
-	private $_DTT_REG_end;
+	protected $_DTT_REG_end;
 		
 	
 	
@@ -116,10 +116,10 @@ class EE_Datetime {
 	* 
     *	registration limit for this date/time slot
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var int	
     */
-	private $_DTT_reg_limit = NULL;	
+	protected $_DTT_reg_limit = NULL;	
 		
 	
 	
@@ -128,10 +128,10 @@ class EE_Datetime {
 	* 
     *	registration limit for this date/time slot
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var int	
     */
-	private $_DTT_tckts_left = NULL;	
+	protected $_DTT_tckts_left = NULL;	
 	
 	
 	
@@ -140,10 +140,10 @@ class EE_Datetime {
 	* 
     *	pattern or format for displaying dates
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_dt_frmt = 'F j, Y';	
+	protected $_dt_frmt = 'F j, Y';	
 	
 	
 	
@@ -152,15 +152,27 @@ class EE_Datetime {
 	* 
     *	pattern or format for displaying time
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_tm_frmt = 'g:i a';
+	protected $_tm_frmt = 'g:i a';
 
 
+	/**
+	 *
+	 * @var EE_Event
+	 */
+	protected $_Event;
+	
+	
+	/**
+	 *
+	 * @var EE_Registration[]
+	 */
+	protected $_Registration;
 
-
-
+	
+	
 
 
 	/**
@@ -190,151 +202,18 @@ class EE_Datetime {
 														$DTT_ID = NULL 
 												) {
 	
-		global $org_options;
-		
-		$date_format							= get_option('date_format');
-		$this->_dt_frmt						= $date_format ? $date_format : 'F j, Y';	
-		
-		$time_format							= get_option('time_format');
-		$this->_tm_frmt						= $time_format ? $time_format : 'g:i a';
-		
-//echo '<h1>B4 !!!</h1>';
-//echo '<h4>$DTT_EVT_start : ' . strtotime( $DTT_EVT_start ) . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-//echo '<h4>$DTT_EVT_end : ' . $DTT_EVT_end . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-//echo '<h4>$DTT_REG_start : ' . $DTT_REG_start . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-//echo '<h4>$DTT_REG_end : ' . $DTT_REG_end . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-
-		$DTT_EVT_start						= is_numeric( $DTT_EVT_start ) ? absint( $DTT_EVT_start ) : strtotime( wp_strip_all_tags( $DTT_EVT_start ));
-		$DTT_EVT_end						= is_numeric( $DTT_EVT_end ) ? absint( $DTT_EVT_end ) : strtotime( wp_strip_all_tags( $DTT_EVT_end ));		
-		$DTT_REG_start						= is_numeric( $DTT_REG_start ) ? absint( $DTT_REG_start ) : strtotime( wp_strip_all_tags( $DTT_REG_start ));
-		$DTT_REG_end						= is_numeric( $DTT_REG_end ) ? absint( $DTT_REG_end ) : strtotime( wp_strip_all_tags( $DTT_REG_end ));		
-		$DTT_is_primary						= absint( $DTT_is_primary ) ? TRUE : FALSE;
-
-//echo '<h1>AFTER !!!</h1>';
-//echo '<h4>$DTT_EVT_start : ' . $DTT_EVT_start . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-//echo '<h4>$DTT_EVT_end : ' . $DTT_EVT_end . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-//echo '<h4>$DTT_REG_start : ' . $DTT_REG_start . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-//echo '<h4>$DTT_REG_end : ' . $DTT_REG_end . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-
-		$this->_EVT_ID						= absint( $EVT_ID );
-		$this->_DTT_is_primary			= $DTT_is_primary;
-		$this->_DTT_EVT_start			= $DTT_EVT_start;
-		$this->_DTT_EVT_end			= $DTT_EVT_end;
-		$this->_DTT_REG_start			= $DTT_REG_start;
-		$this->_DTT_REG_end			= $DTT_REG_end;
-		/* DO NOT DELETE - NEW FEATURE IN PROGRESS 
-		$this->_DTT_reg_limit			= absint( $DTT_reg_limit );
-		$this->_DTT_tckts_left		= absint( $DTT_tckts_left );*/
-		$this->_DTT_ID						= absint( $DTT_ID );
-
-	}
-
-
-
-
-
-
-	/**
-	*		Set the $EVT_ID for the event that this datetime belongs to
-	* 
-	* 		@access		private		
-	*		@param		int			$EVT_ID
-	*		@return 	boolean	TRUE on success, FALSE on fail
-	*/	
-	private function _set_event_ID( $EVT_ID = FALSE ) {
-		if ( $EVT_ID === FALSE or ! is_numeric($EVT_ID)){
-			return FALSE;
-		} else {
-			$this->_EVT_ID = absint( $EVT_ID );
-			return TRUE;
+	if(is_array($EVT_ID)){
+			parent::__construct($EVT_ID);
+			return;
 		}
-	}
-
-
-
-
-
-
-
-	/**
-	*		Get event start date
-	* 
-	*		get the start date for an event 
-	* 
-	* 		@access		private		
-	*		@return		mixed 	string on success, FALSE if no existing start date
-	*/	
-	private function _EVT_start_date() {
-		// check for existing event date AND verify that it NOT an end date
-		if ( isset( $this->_DTT_EVT_start )) {
-			return date_i18n( $this->_dt_frmt, $this->_DTT_EVT_start );
-		} else {
-			return FALSE;
+		$reflector = new ReflectionMethod($this,'__construct');	
+		$arrayForParent=array();
+		foreach($reflector->getParameters() as $param){
+			$paramName=$param->name;
+			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
 		}
-	}
+		parent::__construct($arrayForParent);
 
-
-
-
-
-	/**
-	*		Get event start time
-	* 
-	*		get the start time for an event 
-	* 
-	* 		@access		private		
-	*		@return		mixed 	string on success, FALSE if no existing start time
-	*/	
-	private function _EVT_start_time() {
-		// check for existing event time
-		if ( isset( $this->_DTT_EVT_start )) {
-			return date_i18n( $this->_tm_frmt, $this->_DTT_EVT_start );
-		} else {
-			return FALSE;
-		}
-	}
-
-
-
-
-
-
-	/**
-	*		Get event end date
-	* 
-	*		get the end date for an event 
-	* 
-	* 		@access		private		
-	*		@return		mixed 	string on success, FALSE if no existing end date
-	*/	
-	private function _EVT_end_date() {
-		// check for existing event date AND verify that it NOT an end date
-		if ( isset( $this->_DTT_EVT_end )) {
-			return date_i18n( $this->_dt_frmt, $this->_DTT_EVT_end );
-		} else {
-			return FALSE;
-		}
-	}
-
-
-
-
-
-	/**
-	*		Get event end time
-	* 
-	*		get the end time for an event 
-	* 
-	* 		@access		private		
-	*		@return		mixed 	string on success, FALSE if no existing end time
-	*/	
-	private function _EVT_end_time() {
-		// check for existing event time
-		if ( isset( $this->_DTT_EVT_end )) {
-			return date_i18n( $this->_tm_frmt, $this->_DTT_EVT_end );
-		} else {
-			return FALSE;
-		}
 	}
 
 
@@ -343,92 +222,12 @@ class EE_Datetime {
 
 
 
-	/**
-	*		Get REG start date
-	* 
-	*		get the registration start date for an event 
-	* 
-	* 		@access		private		
-	*		@return		mixed 	string on success, FALSE if no existing start date
-	*/	
-	private function _REG_start_date() {
-		// check for existing event date AND verify that it NOT an end date
-		if ( isset( $this->_DTT_REG_start )) {
-			return date_i18n( $this->_dt_frmt, $this->_DTT_REG_start );
-		} else {
-			return FALSE;
-		}
-	}
+	
 
 
 
 
-
-	/**
-	*		Get registration start time
-	* 
-	*		get the registration start time for an event 
-	* 
-	* 		@access		private		
-	*		@return		mixed 	string on success, FALSE if no existing start time
-	*/	
-	private function _REG_start_time() {
-		// check for existing event time
-		if ( isset( $this->_DTT_REG_start )) {
-			return date_i18n( $this->_tm_frmt, $this->_DTT_REG_start );
-		} else {
-			return FALSE;
-		}
-	}
-
-
-
-
-
-
-	/**
-	*		Get registration end date
-	* 
-	*		get the registration end date for an event 
-	* 
-	* 		@access		private		
-	*		@return		mixed 	string on success, FALSE if no existing end date
-	*/	
-	private function _REG_end_date() {
-		// check for existing event date AND verify that it NOT an end date
-		if ( isset( $this->_DTT_REG_end )) {
-			return date_i18n( $this->_dt_frmt, $this->_DTT_REG_end );
-		} else {
-			return FALSE;
-		}
-	}
-
-
-
-
-
-	/**
-	*		Get registration end time
-	* 
-	*		get the registration end time for an event 
-	* 
-	* 		@access		private		
-	*		@return		mixed 	string on success, FALSE if no existing end time
-	*/	
-	private function _REG_end_time() {
-		// check for existing event time
-		if ( isset( $this->_DTT_REG_end )) {
-			return date_i18n( $this->_tm_frmt, $this->_DTT_REG_end );
-		} else {
-			return FALSE;
-		}
-	}
-
-
-
-
-
-	/**
+		/**
 	*		Set event date
 	* 
 	*		set the date for an event - use time() if no date is provided

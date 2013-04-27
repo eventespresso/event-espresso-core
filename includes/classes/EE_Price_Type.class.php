@@ -21,93 +21,95 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Price_Type {
+class EE_Price_Type extends EE_Base_Class{
 
 	/**
 	*	Price Type ID
 	* 	primary key
 	*
-	* 	@access	private
+	* 	@access	protected
 	*		@var int
 	*/
-	private $_PRT_ID = FALSE;
+	protected $_PRT_ID = FALSE;
 
 	/**
 	*	Price Type name
 	*
-	*	@access	private
+	*	@access	protected
 	*	@var string
 	*/
-	private $_PRT_name = NULL;
+	protected $_PRT_name = NULL;
 
 	/**
 	*	Price Base Type ID
 	* 	1 = Event Price , 2 = Discount , 3 = Surcharge , 4 = Tax
 	*
-	*	@access	private
+	*	@access	protected
 	*	@var int
 	*/
-	private $_PBT_ID = NULL;
+	protected $_PBT_ID = NULL;
 
 	/**
 	*	Price type a member Price?
 	*
-	*	@access	private
+	*	@access	protected
 	*	@var bool
 	*/
-	private $_PRT_is_member = NULL;
+	protected $_PRT_is_member = NULL;
 
 	/**
 	*	Price type a discount?
 	*
-	*	@access	private
+	*	@access	protected
 	*	@var bool
 	*/
-	private $_PRT_is_discount = NULL;
+	protected $_PRT_is_discount = NULL;
 
 	/**
 	*	Price type a tax?
 	*
-	*	@access	private
+	*	@access	protected
 	*	@var bool
 	*/
-	private $_PRT_is_tax = NULL;
+	protected $_PRT_is_tax = NULL;
 
   /**
   *	Price type a percentage?
 	*
-	*	@access	private
+	*	@access	protected
   *	@var bool
   */
-	private $_PRT_is_percent = NULL;
+	protected $_PRT_is_percent = NULL;
 
 	/**
 	*	Price type a global?
 	*
-	*	@access	private
+	*	@access	protected
 	*	@var bool
 	*/
-	private $_PRT_is_global = NULL;
+	protected $_PRT_is_global = NULL;
 
 	/**
 	*	Price type order
 	*
-	*	@access	private
+	*	@access	protected
 	*	@var int
 	*/
-	private $_PRT_order = NULL;
+	protected $_PRT_order = NULL;
 
 	/**
 	*	is Price type deleted
 	*
-	*	@access	private
+	*	@access	protected
 	*	@var int
 	*/
-	private $_PRT_deleted = NULL;
+	protected $_PRT_deleted = NULL;
 
-
-
-
+	/**
+	 *
+	 * @var EE_Price[]
+	 */
+	protected $_Price;
 
 
 		/**
@@ -124,14 +126,17 @@ class EE_Price_Type {
 	*/
 	public function __construct( $PRT_name='', $PBT_ID=FALSE, $PRT_is_member=FALSE, $PRT_is_percent=FALSE, $PRT_is_global=FALSE, $PRT_order=0, $PRT_deleted, $PRT_ID=FALSE ) {
 	
-		$this->_PRT_ID					= $PRT_ID;
-		$this->_PRT_name			= $PRT_name;
-		$this->_PBT_ID					= $PBT_ID;
-		$this->_PRT_is_member	= $PRT_is_member;
-		$this->_PRT_is_percent		= $PRT_is_percent;
-		$this->_PRT_is_global		= $PRT_is_global;
-		$this->_PRT_order				= $PRT_order;
-		$this->_PRT_deleted			= $PRT_deleted;
+		if(is_array($PRT_name)){
+			parent::__construct($PRT_name);
+			return;
+		}
+		$reflector = new ReflectionMethod($this,'__construct');	
+		$arrayForParent=array();
+		foreach($reflector->getParameters() as $param){
+			$paramName=$param->name;
+			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
+		}
+		parent::__construct($arrayForParent);	
 
 		// load Price model object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
@@ -293,71 +298,8 @@ class EE_Price_Type {
 	}
 
 
-	/**
-	*		save object to db
-	*
-	* 		@access		private
-	* 		@param		array		$where_cols_n_values
-	*/
-	private function _save_to_db( $where_cols_n_values = FALSE ) {
-
-		 $MODEL = EEM_Price_Type::instance();
-
-		$set_column_values = array(
-				'PRT_name'				=> $this->_PRT_name,
-				'PBT_ID'					=> $this->_PBT_ID,
-				'PRT_is_member'	=> $this->_PRT_is_member,
-				'PRT_is_percent'		=> $this->_PRT_is_percent,
-				'PRT_is_global'		=> $this->_PRT_is_global,
-				'PRT_order'				=> $this->_PRT_order,
-				'PRT_deleted'			=> $this->_PRT_deleted
-		);
-
-		if ( $where_cols_n_values ){
-			$results = $MODEL->update ( $set_column_values, $where_cols_n_values );
-		} else {
-			$results = $MODEL->insert ( $set_column_values );
-		}
-
-		return $results;
-	}
 
 
-
-
-
-
-	/**
-	*		update existing db record
-	*
-	* 		@access		public
-	*/
-	public function update() {
-		return $this->_save_to_db( array( 'PRT_ID' => $this->_PRT_ID ));
-	}
-
-
-
-
-
-
-	/**
-	*		insert new db record
-	*
-	* 		@access		public
-	*/
-	public function insert() {
-		return $this->_save_to_db();
-	}
-
-
-	/**
-	*		get Price Type ID
-	* 		@access		public
-	*/
-	public function ID() {
-		return $this->_PRT_ID;
-	}
 
 
 
