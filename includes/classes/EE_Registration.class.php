@@ -878,6 +878,15 @@ class EE_Registration extends EE_Base_Class {
 	public function att_checked_in() {
 		return $this->_REG_att_checked_in;
 	}
+	
+	/**
+	 * Gets related answers
+	 * @param array $query_params like EEM_Base::get_all
+	 * @return EE_Answer[]
+	 */
+	public function answers($query_params = null){
+		return $this->get_many_related('Answer',$query_params);
+	}
 }
 
 

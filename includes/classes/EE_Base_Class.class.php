@@ -685,6 +685,106 @@ class EE_Base_Class{
 		 
 	}
 	
+	/**
+	 * Remembers the model object on the current model object. In certain circumstances,
+	 * we can use this cached model object instead of querying for another one entirely.
+	 * @param EE_Base_Class $object_to_cache that has a relation to this model object. (Eg, 
+	 * if this is a Transaction, that could be a payment or a registration)
+	 * @param string $relationName one of the keys in the _model_relations array on the model. Eg 'Registration'
+	 * assocaited with this model object
+	 * @return boolean success
+	 */
+	public function cache($relationName,$object_to_cache){
+		$relationNameClassAttribute = $this->_get_private_attribute_name($relationName);
+		$relationship_to_model = $this->_get_model()->related_settings_for($relationName);
+		if( ! $relationship_to_model){
+			throw new EE_Error(sprintf(__("There is no relationship to %s on a %s. Cannot cache it",'event_espresso'),$relationName,get_class($this)));
+		}
+		if($relationship_to_model instanceof EE_Belongs_To_Relation){
+			//if it's a belongs to relationship, there's only one of those model objects
+			//for each of these model objects (eg, if this is a registration, there's only 1 attendee for it)
+			//so, just set it to be cached
+			$this->$relationNameClassAttribute = $object_to_cache;
+		}else{
+			//there can be many of those other objects for this one.
+			//just add it to the array of related objects of that type.
+			//eg: if this is an event, there are many registrations to that event
+			if( ! is_array($this->$relationNameClassAttribute)){
+				$this->$relationNameClassAttribute = array();
+			}
+			$this->{$relationNameClassAttribute}[$object_to_cache->ID()]=$object_to_cache;
+		}
+		return true;
+	}
+	
+	/**
+	 * Forgets the cached model of the given relation Name. So the next time we request it, 
+	 * we will fetch it again from teh database. (Handy if you know it's changed somehow).
+	 * If a specific object is supplied, and the relationship to it is either a HasMany or HABTM,
+	 * then only remove that one object from our cached array. Otherwise, clear the entire list.
+	 * @param string $relationName one of the keys in the _model_relations array on the model. Eg 'Registration'
+	 * @param EE_Base_Class $object_to_remove_from_cache
+	 * @return boolean success
+	 */
+	public function clear_cache($relationName, $object_to_remove_from_cache = null){
+		$relationship_to_model = $this->_get_model()->related_settings_for($relationName);
+		if( ! $relationship_to_model){
+			throw new EE_Error(sprintf(__("There is no relationship to %s on a %s. Cannot clear that cache",'event_espresso'),$relationName,get_class($this)));
+		}
+		if($object_to_remove_from_cache !== null && ! ($object_to_remove_from_cache instanceof EE_Base_Class)){
+			throw new EE_Error(sprintf(__("You have requested to remove the cached relationship to %s, but have not provided a model object. Instead you provided a %s",'event_espresso'),$relationName,get_class($object_to_remove_from_cache)));
+		}
+		$relationNameClassAttribute = $this->_get_private_attribute_name($relationName);
+		if($relationship_to_model instanceof EE_Belongs_To_Relation){
+			$this->$relationNameClassAttribute  = null;
+		}else{
+			if($object_to_remove_from_cache){
+				//throw new EE_Error("removing an individual item from teh cahce not fully working yet");
+				unset($this->{$relationNameClassAttribute}[$object_to_remove_from_cache->ID()]);
+			}else{
+				$this->$relationNameClassAttribute = null;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Fetches a single EE_Base_Class on that relation. (If the relation is of type
+	 * BelongsTo, it will only ever have 1 object. However, other relations could have an array of objects)
+	 * 
+	 * @param string $relationName
+	 * @return EE_Base_Class
+	 */
+	public function get_one_from_cache($relationName){
+		$relationNameClassAttribute = $this->_get_private_attribute_name($relationName);
+		$cached_array_or_object =  $this->$relationNameClassAttribute;
+		if(is_array($cached_array_or_object)){
+			return array_shift($cached_array_or_object);
+		}else{
+			return $cached_array_or_object;
+		}
+	}
+	
+	
+	
+	/**
+	 * Fetches a single EE_Base_Class on that relation. (If the relation is of type
+	 * BelongsTo, it will only ever have 1 object. However, other relations could have an array of objects)
+	 * @param string $relationName
+	 * @return EE_Base_Class[]
+	 */
+	public function get_all_from_cache($relationName){
+		$relationNameClassAttribute = $this->_get_private_attribute_name($relationName);
+		$cached_array_or_object =  $this->$relationNameClassAttribute;
+		if(is_array($cached_array_or_object)){
+			return $cached_array_or_object;
+		}elseif($cached_array_or_object){//if the result isnt an array, but exists, make it an array
+			return array($cached_array_or_object);
+		}else{//if nothing was found, return an empty array
+			return array();
+		}
+	}
+	
 	
 	/**
 	 * Overrides parent because parent expects old models.
@@ -790,7 +890,7 @@ class EE_Base_Class{
 	/**
 	 * Gets the EEM_*_Model for this class
 	 * @access public now, as this is more convenient 
-	 * @return EEMerimental_Base
+	 * @return EEM_Base
 	 */
 	public function  _get_model(){
 		//find model for this class
@@ -841,6 +941,7 @@ class EE_Base_Class{
 	 */
 	public function _add_relation_to($otherObjectModelObjectOrID,$relationName){
 		$this->_get_model()->add_relationship_to($this, $otherObjectModelObjectOrID, $relationName);
+		$this->cache( $relationName, $otherObjectModelObjectOrID );
 	}
 	
 	
@@ -854,6 +955,7 @@ class EE_Base_Class{
 	 */
 	public function _remove_relation_to($otherObjectModelObjectOrID,$relationName){
 		$this->_get_model()->remove_relationship_to($this, $otherObjectModelObjectOrID, $relationName);
+		$this->clear_cache($relationName, $otherObjectModelObjectOrID);
 	}
 	
 	/**
@@ -865,7 +967,24 @@ class EE_Base_Class{
 	 * @return EE_Base_Class[]
 	 */
 	public function get_many_related($relationName,$query_params = array()){
-		$this->_get_model()->get_all_related($this, $relationName, $query_params);
+		//if there are query parameters, forget about caching the related model objects.
+		if( $query_params ){
+			$related_model_objects = $this->_get_model()->get_all_related($this, $relationName, $query_params);
+		}else{
+			//did we already cache the result of this query?
+			$cached_results = $this->get_all_from_cache($relationName);
+			if ( ! $cached_results ){
+				$related_model_objects = $this->_get_model()->get_all_related($this, $relationName, $query_params);
+				//if no query parameters were passed, then we got all the related model objects
+				//for that relation. We can cache them then.
+				foreach($related_model_objects as $related_model_object){
+					$this->cache($relationName, $related_model_object);
+				}
+			}else{
+				$related_model_objects = $cached_results;
+			}
+		}
+		return $related_model_objects;
 	}
 	
 	/**
@@ -875,13 +994,19 @@ class EE_Base_Class{
 	 * @return EE_Base_Class (not an array, a single object)
 	 */
 	public function get_first_related($relationName,$query_params = array()){
-		$query_params['limit']=1;
-		$results = $this->get_many_related($relationName, $query_params);
-		if($results){
-			return array_shift($results);
+		if ($query_params){
+			$related_model_object =  $this->_get_model()->get_first_related($this, $relationName, $query_params);
 		}else{
-			return null;
+			//first, check if we've already cached the result of this query
+			$cached_result = $this->get_one_from_cache($relationName);
+			if ( ! $cached_result ){
+				$related_model_object = $this->_get_model()->get_first_related($this, $relationName, $query_params);
+				$this->cache($relationName,$related_model_object);
+			}else{
+				$related_model_object = $cached_result;
+			}
 		}
+		return $related_model_object;
 	}
 	
 	/**

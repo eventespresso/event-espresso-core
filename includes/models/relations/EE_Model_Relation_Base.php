@@ -32,14 +32,14 @@ abstract class EE_Model_Relation_Base{
 	}
 	/**
 	 * 
-	 * @return EEMerimental_Base
+	 * @return EEM_Base
 	 */
 	function get_this_model(){
 		return $this->_get_model($this->_this_model_name);
 	}
 	/**
 	 * 
-	 * @return EEMerimental_Base
+	 * @return EEM_Base
 	 */
 	function get_other_model(){
 		return $this->_get_model($this->_other_model_name);

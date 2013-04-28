@@ -132,7 +132,8 @@ class EEM_Registration extends EEM_Base {
 			'Transaction'=>new EE_Belongs_To_Relation(),
 			'Datetime'=>new EE_Belongs_To_Relation(),
 			'Price'=>new EE_Belongs_To_Relation(),
-			'Status'=>new EE_Belongs_To_Relation()
+			//'Status'=>new EE_Belongs_To_Relation(),
+			'Answer'=>new EE_Has_Many_Relation()
 		);
 		
 		parent::__construct();

@@ -99,7 +99,7 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 				
 			));
 		$this->_model_relations = array(
-			'Registration'=>new EE_Has_Many_Relation()
+			'Registration'=>new EE_Has_Many_Relation(),
 		);
 		parent::__construct();
 		

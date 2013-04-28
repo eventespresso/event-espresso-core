@@ -178,10 +178,12 @@ abstract class EEM_Base extends EE_Base{
 	protected function _get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null){
 		global $wpdb;
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
-		$select_expressions = $columns_to_select ? $columns_to_select : $this->_construct_select_sql();
+		$select_expressions = $columns_to_select ? $columns_to_select : $this->_construct_select_sql($model_query_info);
 		$SQL ="SELECT $select_expressions ".$this->_construct_2nd_half_of_select_query($model_query_info);
 		//echo "get all SQL:".$SQL;
-		return $wpdb->get_results($SQL, $output);
+		$results =  $wpdb->get_results($SQL, $output);
+		//echo "wpdb results:";var_dump($results);
+		return $results;
 	}
 	
 	/**
@@ -487,13 +489,14 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Base_Class
 	 */
 	function get_all_related($id_or_obj, $model_name, $query_params = null){
+		$model_obj = $this->ensure_is_obj($id_or_obj);
 		//get that related model
 		$related_model = $this->get_related_model_obj($model_name);
 		//we're just going to use teh query params on the related model's normal get_all query,
 		//except add a condition to say to match the curren't mod
 		$this_model_name = $this->get_this_model_name();
 		$this_pk_field_name = $this->get_primary_key_field()->get_name();
-		$query_params[0][$this_model_name.".".$this_pk_field_name]=$id_or_obj;
+		$query_params[0][$this_model_name.".".$this_pk_field_name]=$model_obj->ID();
 		return $related_model->get_all($query_params);
 	}
 	
@@ -547,8 +550,13 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	public function get_first_related(EE_Base_Class $id_or_obj,$other_model_name,$query_params){
 		$query_params['limit']=1;
-		$results = get_all_related($id_or_obj,$other_model_name,$query_params);
-		return array_shift($results);
+		$results = $this->get_all_related($id_or_obj,$other_model_name,$query_params);
+		if( $results ){
+			return array_shift($results);
+		}else{
+			return null;
+		}
+		
 	}
 	
 	/**
@@ -757,9 +765,24 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Creates the string of SQL for the select part of a select query, everything behind SELECT and before FROM.
 	 * Eg, "Event.post_id, Event.post_name,Event_Detail.EVT_ID..."
+	 * @param EE_Model_Query_Info_Carrier $model_query_info
 	 * @return string
 	 */
-	public function _construct_select_sql(){
+	public function _construct_select_sql(EE_Model_Query_Info_Carrier $model_query_info){
+		$selects = $this->_get_columns_to_select_for_this_model();
+		foreach($model_query_info->get_model_names_included() as $name_of_other_model_included){
+			$other_model_included = $this->get_related_model_obj($name_of_other_model_included);
+			$selects = array_merge($selects, $other_model_included->_get_columns_to_select_for_this_model());
+		}
+		return implode(", ",$selects);
+	}
+	
+	/**
+	 * Gets an array of columns to select for this model, which are necessary for it to create its objects.
+	 * So that's going to be the columsn for all the fields on the model
+	 * @return array numerically indexed, values are columns to select and rename, eg "Event.ID AS 'Event.ID'"
+	 */
+	public function _get_columns_to_select_for_this_model(){
 		$fields = $this->field_settings();
 		$selects = array();
 		foreach($fields as $field_name => $field_obj){
@@ -775,7 +798,7 @@ abstract class EEM_Base extends EE_Base{
 				}
 			}
 		}
-		return implode(", ",$selects);
+		return $selects;
 	}
 	
 	/**
@@ -1055,7 +1078,7 @@ abstract class EEM_Base extends EE_Base{
 	public function related_settings_for($relation_name){
 		$relatedModels=$this->relation_settings();
 		if(!array_key_exists($relation_name,$relatedModels)){
-			throw new EE_Error(sprintf(__('Cannot get %s related to %s. There is no model relation of that type. There is, however, %s...','event_espresso'),$relation_name,  $this->_getClassName(),implode(array_keys($relatedModels))));
+			throw new EE_Error(sprintf(__('Cannot get %s related to %s. There is no model relation of that type. There is, however, %s...','event_espresso'),$relation_name,  $this->_get_class_name(),implode(array_keys($relatedModels))));
 		}
 		return $relatedModels[$relation_name];
 	}
@@ -1163,6 +1186,22 @@ abstract class EEM_Base extends EE_Base{
 			}
 			$classInstance=$this->instantiate_class_from_array_or_object($row);
 			$array_of_objects[$classInstance->ID()]=$classInstance;
+			//also, for all the relations of type BelgonsTo, see if we can cache
+			//those related models
+			//(we could do this for other relations too, but if there are conditions
+			//that filtered out some fo the results, then we'd be caching an incomplete set
+			//so it requires a little more thought than just caching them immeidately...)
+			foreach($this->_model_relations as $modelName => $relation_obj){
+				if( $relation_obj instanceof EE_Belongs_To_Relation){
+					//check if this model's INFO is present. If so, cache it on the model
+					$other_model = $relation_obj->get_other_model();
+					$other_model_obj_maybe = $other_model->instantiate_class_from_array_or_object($row);
+					//if we managed to make a model object from the results, cache it on the main model object
+					if( $other_model_obj_maybe ){
+						$classInstance->cache($modelName, $other_model_obj_maybe);
+					}
+				}
+			}
 		}
 		return $array_of_objects;	
 	}
@@ -1209,23 +1248,18 @@ abstract class EEM_Base extends EE_Base{
 				}
 			}
 		}
-		
-		//get the ID of the object, and remove it from cols_n_values for now
-//		$pkName=$this->get_primary_key_field()->get_name();
-//		$pkValue=$cols_n_values[$pkName];
-//		unset($cols_n_values[$pkName]);
-		
+		//check we actually foudn results that we can use to build our model object
+		//if not, return null
+		if( ! $this_model_fields_n_values){
+			return null;
+		}
+				
 		//get the required info to instantiate the class whcih relates to this model.
 		$className=$this->_get_class_name();
 		$class=new ReflectionClass($className);
 		//call the constructor of the EE_Base_Class, passing it an array of all the fields, except
 		//the ID, because we set that later
 		$classInstance=$class->newInstanceArgs(array($this_model_fields_n_values));
-		
-		/* @var $classInstance EE_Base_Class */
-		//now set the ID on this new EE_Base_Class instance, so we realize it's 
-		//already in teh DB
-		//$classInstance->set($pkName,$pkValue);
 		return $classInstance;
 	}
 	/**
@@ -1283,7 +1317,7 @@ abstract class EEM_Base extends EE_Base{
 		}elseif(is_int($base_class_obj_or_id)){//assume it's an ID
 			$model_object = $this->get_one_by_ID($base_class_obj_or_id);
 		}else{
-			throw new EE_Exception(sprintf(__("'%s' is neither an object of type %s, nor an ID!",'event_espresso'),$base_class_obj_or_id,$this->_getClasssName()));
+			throw new EE_Error(sprintf(__("'%s' is neither an object of type %s, nor an ID!",'event_espresso'),$base_class_obj_or_id,$this->_get_class_name()));
 		}
 		if( $model_object->ID() == NULL && $ensure_is_in_db){
 			$model_object->save();

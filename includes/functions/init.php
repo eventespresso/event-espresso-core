@@ -300,6 +300,28 @@ function event_espresso_run() {
 function return_espresso_content() {
 	//@todo add extra join condition
 	global $espresso_content;
+//	require_once('EEM_Registration.model.php');
+//	$reg1 = EEM_Registration::instance()->get_one(array(array('Attendee.ATT_ID'=>3)));
+//	var_dump($reg1->answers());
+//	$answer1 = $reg1->get_first_related('Answer');
+//	require_once('EEM_Answer.model.php');
+//	$ans2 = EEM_Answer::instance()->get_one_by_ID(21);
+//	//var_dump($ans2);
+//	$reg1->_add_relation_to($ans2, 'Answer');
+//	//$reg1->clear_cache('Answer',$answer1);
+//	var_dump($reg1->answers());
+	//testing caching of single related objet
+//	require_once('EEM_Registration.model.php');
+//	$reg1 = EEM_Registration::instance()->get_one();
+////	var_dump($reg1);
+////	var_dump($reg1->attendee());
+////	var_dump($reg1->attendee());
+////	$reg1->clear_cache('Attendee');
+//	//var_dump($reg1->attendee());
+//	var_dump($reg1->answers());
+//	$answer = $reg1->get_first_related('Answer');
+//	$reg1->clear_cache('Answer',$answer);
+	//var_dump($reg1);
 //	require_once('EEM_Event.model.php');
 //	$EVT = EEM_Event::instance();
 //	var_dump($EVT->get_all());

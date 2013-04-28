@@ -180,8 +180,6 @@ class EE_Attendee extends EE_Base_Class{
 
 
 
-
-
 	/**
 	*  Attendee constructor
 	*
@@ -640,6 +638,7 @@ class EE_Attendee extends EE_Base_Class{
 
 		return $this->_Event;
 	}
+	
 }
 
 /* End of file EE_Attendee.class.php */
