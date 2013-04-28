@@ -51,4 +51,16 @@ class EE_Secondary_Table extends EE_Table_Base{
 		}
 		return $join_sql;
 	}
+
+	function get_fully_qualified_fk_column() {
+		$table_alias = $this->get_table_alias();
+		$fk = $this->get_fk_on_table();
+		return $table_alias . '.' . $fk;
+	}
+
+	function get_fully_qualified_pk_on_fk_table() {
+		$table_alias = $this->get_table_to_join_with()->get_table_alias();
+		$pk = $this->get_table_to_join_with()->get_pk_column();
+		return $table_alias . '.' . $pk;
+	}
 }

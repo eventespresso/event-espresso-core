@@ -298,18 +298,66 @@ abstract class EEM_Base extends EE_Base{
 		//deletion if there is no KEY column used in the WHERE statement of a deletion.
 		//to get around this, we first do a SELECT, get all the IDs, and then run another query
 		//to delete them
-		$objects_for_deletion = $this->get_all($query_params);
+		$deletion_where = $this->_setup_ids_for_delete( $this->_get_all_wpdb_results($query_params) );
+	
 		//echo "objects for deletion:";var_dump($objects_for_deletion);
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 		$table_aliases = array();
 		foreach(array_keys($this->_tables) as $table_alias){
 			$table_aliases[] = $table_alias;
 		}
-		$SQL = "DELETE ".implode(", ",$table_aliases)." FROM ".$model_query_info->get_full_join_sql()." WHERE ".$this->get_primary_key_field()->get_qualified_column()." IN (".implode(",",array_keys($objects_for_deletion)).")";
+		$SQL = "DELETE ".implode(", ",$table_aliases)." FROM ".$model_query_info->get_full_join_sql()." WHERE ".$deletion_where;
+
 //		/echo "delete sql:$SQL";
 		$rows_deleted = $wpdb->query($SQL);
 		//$wpdb->print_error();
 		return $rows_deleted;//how many supposedly got updated
+	}
+
+
+
+	/**
+	 * This sets up our delete where sql and accounts for if we have secondary tables that will have rows deleted as well.
+	 * @param  array  $objects_for_deletion This should be the values returned by $this->_get_all_wpdb_results()
+	 * @return string 	everything that comes after the WHERE statment.
+	 */
+	protected function _setup_ids_for_delete( $objects_for_deletion ) {
+		$primary_table = $this->_get_main_table();
+		$other_tables = $this->_get_other_tables();
+		$deletes = array();
+		
+		foreach ( $objects_for_deletion as $deobj ) {
+			//primary table deletes
+			if ( isset( $deobj[$primary_table->get_fully_qualified_pk_column()] ) )
+				$deletes[$primary_table->get_fully_qualified_pk_column()][] = $deobj[$primary_table->get_fully_qualified_pk_column()];
+
+			//other tables
+			if ( !empty( $other_tables ) ) {
+				foreach ( $other_tables as $ot ) {
+
+					//first check if we've got the foreign key column here.
+					if ( isset( $deobj[$ot->get_fully_qualified_fk_column()] ) )
+						$deletes[$ot->get_fully_qualified_pk_column()][] = $deobj[$ot->get_fully_qualified_fk_column()];
+
+					//wait! it's entirely possible that we'll have a the primary key for this table in here if it's a foreign key for one of the other secondary tables
+					if ( isset( $deobj[$ot->get_fully_qualified_pk_column()] ) )
+						$deletes[$ot->get_fully_qualified_pk_column()][] = $deobj[$ot->get_fully_qualified_pk_column()];
+
+					//finally, it is possible that the fk for this table is found in the fully qualified pk column for the fk table, so let's see if that's there!
+					if ( isset( $deobj[$ot->get_fully_qualified_pk_on_fk_table()]) ) 
+						$deletes[$ot->get_fully_qualified_pk_column()][] = $deobj[$ot->get_fully_qualified_pk_column()];
+				}
+			}
+		}
+		
+		//we should have deletes now, so let's just go through and setup the where statement
+		foreach ( $deletes as $column => $values ) {
+			//make sure we have unique $values;
+			$values = array_unique($values);
+			$query[] = $column . ' IN(' . implode(",",$values) . ')';
+		}
+
+		return implode(' AND ', $query );
 	}
 	
 	/**
