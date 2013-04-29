@@ -273,7 +273,7 @@ class EEM_Registration extends EEM_Base {
 
 			$SQL .= $count ? "SELECT COUNT(reg.ATT_ID)" : "SELECT att.*, reg.*, dtt.*, reg.STS_ID REG_status, CONCAT(ATT_fname, ' ', ATT_lname) as REG_att_name, evt.id event_id, evt.event_name, evt.require_pre_approval, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.STS_ID AS txn_status, txn.TXN_details, txn.TXN_tax_data, txn.TXN_paid, PRC_amount, PRC_name";
 			$SQL .= ' FROM ' . $wpdb->prefix . 'esp_attendee att';
-			$SQL .= ' JOIN ' . $this->_get_main_table()->get__get_main_table()->get_table_name()() . ' reg ON reg.ATT_ID = att.ATT_ID';
+			$SQL .= ' JOIN ' . $this->_get_main_table()->get_table_name() . ' reg ON reg.ATT_ID = att.ATT_ID';
 			$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID ';
 			$SQL .= ' LEFT JOIN ' . $wpdb->prefix . 'esp_transaction txn ON txn.TXN_ID = reg.TXN_ID';
 			$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_price prc ON prc.PRC_ID = reg.PRC_ID';
@@ -342,7 +342,7 @@ class EEM_Registration extends EEM_Base {
 
 		$SQL .= $count ? "SELECT COUNT(reg.ATT_ID)" : "SELECT att.*, reg.*, dtt.*, reg.STS_ID REG_status, evt.id event_id, evt.event_name, CONCAT(ATT_fname, ' ', ATT_lname) as REG_att_name, evt.require_pre_approval, txn.TXN_ID, TXN_timestamp, TXN_total, txn.STS_ID AS txn_status, TXN_details, TXN_tax_data, txn.TXN_paid, PRC_amount, PRC_name";
 		$SQL .= ' FROM ' . $wpdb->prefix . 'esp_attendee att';
-		$SQL .= ' LEFT JOIN ' . $this->_get_main_table()->get__get_main_table()->get_table_name()() . ' reg ON reg.ATT_ID = att.ATT_ID';
+		$SQL .= ' LEFT JOIN ' . $this->_get_main_table()->get_table_name() . ' reg ON reg.ATT_ID = att.ATT_ID';
 		$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID';
 		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_transaction txn ON txn.TXN_ID = reg.TXN_ID';
 		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_price prc ON prc.PRC_ID = reg.PRC_ID';
