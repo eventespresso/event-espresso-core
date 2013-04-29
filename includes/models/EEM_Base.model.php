@@ -379,9 +379,10 @@ abstract class EEM_Base extends EE_Base{
 	 * Count all the rows that match criteria expressed in $query_params (an array just like arg to EEMerimental_Base::get_all).
 	 * If $field_to_count isn't provided, the model's primary key is used. Otherwise, we count by field_to_count's column
 	 * @param array $query_params like EEMerimental_Base::get_all's
-	 * @param type $field_to_count field on model to count by (not column name)
+	 * @param string $field_to_count field on model to count by (not column name)
+	 * @param bool 	 $distinct if we want to only count the distinct values for the column then you can trigger that by the setting $distinct to TRUE;
 	 */
-	function count($query_params,$field_to_count = NULL){
+	function count($query_params,$field_to_count = NULL, $distinct = FALSE){
 		global $wpdb;
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 		if($field_to_count){
@@ -391,6 +392,8 @@ abstract class EEM_Base extends EE_Base{
 			$pk_field_obj = $this->get_primary_key_field();
 			$column_to_count = $pk_field_obj->get_qualified_column();
 		}
+
+		$column_to_count = $distinct ? "DISTINCT (" . $column_to_count . " )" : $column_to_count;
 		$SQL ="SELECT COUNT(".$column_to_count.")" . $this->_construct_2nd_half_of_select_query($model_query_info);
 		return (int)$wpdb->get_var($SQL);
 	}

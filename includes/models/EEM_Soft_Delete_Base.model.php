@@ -57,33 +57,36 @@ class EEM_Soft_Delete_Base extends EEM_Base{
 	 * Count all the undeleted items.
 	 * @param array $query_params like EEM_Base::get_all
 	 * @param string $field_to_count
+	 * @param bool 	 $distinct if we want to only count the distinct values for the column then you can trigger that by the setting $distinct to TRUE;
 	 * @return int
 	 */
-	public function count($query_params = null, $field_to_count = null){
+	public function count($query_params = null, $field_to_count = null, $distinct = FALSE){
 		$deletedFlagFieldName=$this->deleted_field_name();
 		$query_params[0][$deletedFlagFieldName]=false;
-		return parent::count($query_params, $field_to_count);
+		return parent::count($query_params, $field_to_count, $distinct);
 	}
 	/**
 	 * Counts all the deleted/trashed items
 	 * @param array $query_params like EEM_Base::get_all
 	 * @param string $field_to_count
+	 * @param bool 	 $distinct if we want to only count the distinct values for the column then you can trigger that by the setting $distinct to TRUE;
 	 * @return int
 	 */
-	public function count_deleted($query_params = null, $field_to_count = null){
+	public function count_deleted($query_params = null, $field_to_count = null, $distinct = FALSE){
 		$deletedFlagFieldName=$this->deleted_field_name();
 		$query_params[0][$deletedFlagFieldName]=true;
-		return parent::count($query_params, $field_to_count);
+		return parent::count($query_params, $field_to_count, $distinct);
 	}
 	
 	/**
 	 * Counts all deleeted and undeleted items
 	 * @param array $query_params like EEM_Base::get_all
 	 * @param string $field_to_count
+	 * @param bool 	 $distinct if we want to only count the distinct values for the column then you can trigger that by the setting $distinct to TRUE;
 	 * @return int
 	 */
-	public function count_deleted_and_undeleted($query_params = null, $field_to_count = null){
-		return parent::count($query_params,$field_to_count);
+	public function count_deleted_and_undeleted($query_params = null, $field_to_count = null, $distinct = FALSE){
+		return parent::count($query_params,$field_to_count, $distinct);
 	}
 	
 	
