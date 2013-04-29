@@ -440,6 +440,34 @@ class EEM_Message_Template extends EEM_Soft_Delete_Base {
 		}		
 	}/**/
 
+
+
+
+	public function trash_mtp_by_id( $GRP_ID ) {
+		$id = (int) $GRP_ID;
+		return $this->delete_by_ID( $id );
+	}
+
+
+
+	public function restore_mtp_by_id( $GRP_ID ) {
+		$id = (int) $GRP_ID;
+		return $this->restore_by_ID( $GRP_ID );
+	}
+
+
+
+	public function trash_mtp( $query_params ) {
+		return $this->delete( $query_params );
+	}
+
+
+
+	public function restore_mtp ( $query_params ) {
+		return $this->restore( $query_params );
+	}
+
+
 	/**
 	 * 	This function inserts table data
 	 *

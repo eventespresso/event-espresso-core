@@ -1678,7 +1678,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					foreach ( $this->_req_data['MTP_template_fields'] as $template_field => $content ) {
 						$set_column_values = $this->_set_message_template_column_values($template_field);
 						$where_cols_n_values = array( 'MTP_ID' => $this->_req_data['MTP_template_fields'][$template_field]['MTP_ID']);
-						if ( $updated = $MTP->update( $set_column_values, $where_cols_n_values ) ) {
+						if ( $updated = $MTP->update( $set_column_values, array( $where_cols_n_values ) ) ) {
 							if ( !$updated ) {
 								$msg = sprintf( __('%s field was NOT updated for some reason', 'event_espresso') );
 								EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -1831,29 +1831,19 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 				//cycle through checkboxes
 				while ( list( $GRP_ID, $value ) = each ($this->_req_data['checkbox']) ) {
-					if ( ! $MTP->update(array('MTP_deleted' => $MTP_deleted), array('GRP_ID' => absint($GRP_ID) ) ) ) {
+					if ( ! $MTP->trash_mtp_by_id($GRP_ID) ) {
 						$success = 0;
 					}
 				}
 			} else {
 				//grab single GRP_ID and handle
 				$GRP_ID = absint($this->_req_data['id']);
-				if ( !$MTP->update(array('MTP_deleted' => $MTP_deleted), array('GRP_ID' => $GRP_ID ) ) ) {
+				if ( !$MTP->trash_mtp_by_id($GRP_ID ) ) {
 					$success = 0;
 				}
 			}
-		//not entire GRP, just individual context
-		} else {
-			//we should only have the MTP_id for the context,
-			//todo: will probably need to make sure we have a nonce here?
-			$GRP_ID = absint( $this->_req_data['id'] );
-			$MTP_message_type = strtolower( $this->_req_data['message_type']);
-			$MTP_context = strtolower( $this->_req_data['context'] );
-			
-			if ( !$MTP->update(array('MTP_deleted' => $MTP_deleted), array('GRP_ID' => $GRP_ID, 'MTP_message_type' => $MTP_message_type, 'MTP_context' => $MTP_context ) ) ) {
-				$success = 0;
-			}
-		}
+		
+		} 
 
 		$action_desc = $trash ? 'moved to the trash' : 'restored';
 		$item_desc = $all ? 'Message Template Group' : 'Message Template Context';
@@ -1891,7 +1881,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 			//cycle through bulk action checkboxes
 			while ( list( $GRP_ID, $value ) = each($this->_req_data['checkbox'] ) ) {
-				if ( ! $MTP->delete_by_id(absint($GRP_ID) ) ) {
+				if ( ! $MTP->delete_by_id($GRP_ID) ) {
 					$success = 0;
 				}
 			}
@@ -2515,7 +2505,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				$update_array['MTP_message_type'] = $message_type;
 			}
 			
-			$success = $MTP->update( array( 'MTP_is_active' => 0 ), $update_array );
+			$success = $MTP->update( array( 'MTP_is_active' => 0 ), array($update_array) );
 
 			$messenger_obj = $this->_active_messengers[$messenger]['obj'];
 
