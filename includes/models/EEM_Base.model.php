@@ -1020,7 +1020,7 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	function _get_qualified_column_for_field($field_name){
 		$all_fields = $this->field_settings();
-		$field = $all_fields[$field_name];
+		$field = isset($all_fields[$field_name]) ? $all_fields[$field_name] : FALSE;
 		if($field){
 			return $field->get_qualified_column();
 		}else{
