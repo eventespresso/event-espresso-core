@@ -2,6 +2,94 @@
 do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 
 
+/**
+* espresso_check_data_tables
+* 
+* ensures that the database has been updated to the current version
+* and also ensures that all necessary data migration scripts have been applied
+* in order to bring the content of the database up to snuff as well
+* 
+* @since 3.1.28
+* @return void
+*/
+function espresso_check_data_tables() {
+
+	// check if db has been updated, cuz autoupdates don't trigger database install script
+	$espresso_db_update = get_option( 'espresso_db_update' );
+	// chech that option is an array
+	if( ! is_array( $espresso_db_update )) {
+		// if option is FALSE, then it never existed
+		if ( $espresso_db_update === FALSE ) {
+			// make $espresso_db_update an array and save option with autoload OFF
+			$espresso_db_update =  array();
+			add_option( 'espresso_db_update', $espresso_db_update, '', 'no' );
+		} else {
+			// option is NOT FALSE but also is NOT an array, so make it an array and save it
+			$espresso_db_update =  array( $espresso_db_update );
+			update_option( 'espresso_db_update', $espresso_db_update );
+		}
+	}
+	
+	// if current EE version is NOT in list of db updates, then update the db
+	if ( ! in_array( EVENT_ESPRESSO_VERSION, $espresso_db_update )) {
+		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/activation.php');
+		events_data_tables_install();
+	}	
+	
+	// grab list of any existing data migrations from db
+	if ( ! $existing_data_migrations = get_option( 'espresso_data_migrations' )) {
+		// or initialize as an empty array
+		$existing_data_migrations = array();
+		// and set WP option
+		add_option( 'espresso_data_migrations', array(), '', 'no' );
+	}
+
+	// array of all previous data migrations to date
+	// using the name of the callback function for the value
+	$espresso_data_migrations = array(
+	);
+	
+	// temp array to track scripts we need to run 
+	$scripts_to_run = array();
+	// for tracking script errors
+	$previous_script = '';
+	// if we don't need them, don't load them
+	$load_data_migration_scripts = FALSE;
+	// have we already performed some data migrations ?
+	if ( ! empty( $existing_data_migrations )) {	
+		// loop through all previous migrations
+		foreach ( $existing_data_migrations as $ver => $migrations ) {
+			// ensure that migrations is an array, then loop thru it
+			$migrations = is_array( $migrations ) ? $migrations : array( $migrations );
+			foreach ( $migrations as $migration_func => $errors_array ) {
+				// make sure they have been executed
+				if ( ! in_array( $migration_func, $espresso_data_migrations )) {		
+					// ok NOW load the scripts
+					$load_data_migration_scripts = TRUE;
+					$scripts_to_run[ $migration_func ] = $migration_func;
+				} 
+			}
+		}		
+		
+	} else {
+		$load_data_migration_scripts = TRUE;
+		$scripts_to_run = $espresso_data_migrations;
+	}
+
+	if ( $load_data_migration_scripts && ! empty( $scripts_to_run )) {
+		require_once( 'includes/functions/data_migration_scripts.php' );		
+		// run the appropriate migration script
+		foreach( $scripts_to_run as $migration_func ) {
+			if ( function_exists( $migration_func )) {
+				call_user_func( $migration_func );
+			}		
+		}
+	}
+
+
+}
+
+
 function espresso_plugin_activation() {
 	global $caffeinated;
 	$prev_version = get_option( 'events_detail_tbl_version' );
@@ -19,10 +107,9 @@ function espresso_plugin_activation() {
 		espresso_define_tables_and_paths();
 		espresso_get_user_id();
 		//include autoloaders
-		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/plugins_loaded.php');
 		espresso_autoload();
 		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/activation.php');
-		events_data_tables_install();
+		espresso_check_data_tables();
 		espresso_initialize_system_questions();
 		event_espresso_create_upload_directories();
 		espresso_org_option_initialization();
@@ -33,6 +120,8 @@ function espresso_plugin_activation() {
 		espresso_default_status_codes();
 		espresso_delete_unused_db_tables();
 		espresso_default_message_templates();
+		espresso_default_countries();
+		espresso_default_states();
 	}
 }
 
