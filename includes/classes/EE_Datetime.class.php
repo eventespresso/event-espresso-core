@@ -244,26 +244,17 @@ class EE_Datetime extends EE_Base_Class{
 		} else {
 			$event_date = date_i18n( $this->_dt_frmt, strtotime($date) );
 		}
-		
-		if( $start_or_end == 'start' ) {
-			// get existing event start time
-			$function_name = "_{$EVT_or_REG}_start_time";
-			if ( $event_time = $this->$function_name() ) {
-				// or if no time is set, use 1 second after midnight
-				$event_time = '00:00:01';
-			}
 
-		} else {
-			// get existing event end time
-			$function_name = "_{$EVT_or_REG}_end_time";
-			if ( ! $event_time = $this->$function_name() ) {
-				// or if no time is set, use 1 second before midnight
-				$event_time = '23:59:59';
-			}
+		// get existing time
+		$function_name = "_{$EVT_or_REG}_{$start_or_end}_time";
+		if ( ! $event_time = $this->$function_name() ) {
+			// or if no time is set, use 1 second after midnight for start times,
+			// or 1 second before midnight for end times
+			$event_time = $start_or_end == 'start' ? '00:00:01' : '23:59:59';
 		}
 
 		$var_name = "_DTT_{$EVT_or_REG}_{$start_or_end}";
-		$this->$var_name = strtotime( $event_date . ' ' . $event_time );
+		$this->{$var_name} = strtotime( $event_date . ' ' . $event_time );
 				
 	}
 
