@@ -9,7 +9,7 @@ function espresso_define_tables_and_paths() {
 
 	global $wpdb;
 
-	define( 'DS', DIRECTORY_SEPARATOR );
+	define( 'DS', '/' );
 	define( 'PS', PATH_SEPARATOR );
 	
 	// add ESPRESSO directories to include_path
