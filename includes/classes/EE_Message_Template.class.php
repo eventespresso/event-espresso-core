@@ -158,7 +158,7 @@ class EE_Message_Template {
 	 * @return void
 	 */
 	public function __construct($template_group) {
-		
+	
 		if ( isset($template_group['new_template']) && $template_group['new_template'] ) {
 			//let's loop through the included keys first
 		 	foreach ( $template_group as $key => $value ) {

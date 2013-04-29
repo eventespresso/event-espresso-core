@@ -14,21 +14,23 @@
  *
  * ------------------------------------------------------------------------
  *
- * EE Message Template Model
+ * EEM_Message_Template
  *
  * 
  *
  * @package		Event Espresso
- * @subpackage	includes/models/EEM_Message_Template.modle.php
+ * @subpackage	includes/models/EEM_Message_Template.model.php
  * @author		Darren Ethier
  *
  * //DARREN IS WORKING ON//
  *
+ * //todo - what we want to do is try to do the primary/secondary table thing here because it looks like it already sets up the joins!!!
+ *
  * ------------------------------------------------------------------------
  */
-require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Soft_Delete_Base.model.php' );
 
-class EEM_Message_Template extends EEM_Base {
+class EEM_Message_Template extends EEM_Soft_Delete_Base {
 	//private instance of the EEM_Message_Template object
 	private static $_instance = NULL;
 
@@ -49,10 +51,12 @@ class EEM_Message_Template extends EEM_Base {
 		return self::$_instance;
 	}
 	
-	private $_allowed_messengers = array('email');
-	private $_allowed_messenger_types = array('payment','registration','resend_registration');
-	private $_allowed_template_fields = array('to','from','subject','content');
-	private $_allowed_contexts = array('admin','attendee','primary_attendee');
+	
+
+
+
+
+
 	/**
 	 * 		private constructor to prevent direct creation
 	 * 		@Constructor
@@ -62,53 +66,39 @@ class EEM_Message_Template extends EEM_Base {
 	protected function __construct() {
 		$this->singlular_item = __('Message Template','event_espresso');
 		$this->plural_item = __('Message Templates','event_espresso');		
-		// array representation of the price table and the data types for each field
-//		$this->table_data_types = array(
-//				'MTP_ID' => '%d',
-//				'EVT_ID' => '%d',
-//				'GRP_ID' => '%d',
-//				'MTP_user_id' => '%d',
-//				'MTP_messenger'	=> '%s',
-//				'MTP_message_type' => '%s',
-//				'MTP_template_field' => '%s',
-//				'MTP_context' => '%s',
-//				'MTP_content' => '%s',
-//				'MTP_is_global' => '%d',
-//				'MTP_is_override' => '%d',
-//				'MTP_deleted' => '%d',
-//				'MTP_is_active' => '%d'
-//		);
+		
 		$this->_tables = array(
-			'Message_Template'=> new EE_Primary_Table('esp_message_template', 'MTP_ID' )
+			'Message_Template_Group'=> new EE_Primary_Table('esp_message_template_group', 'GRP_ID' ),
+			'Message_Template' => new EE_Secondary_Table('esp_message_template', 'MTP_ID', 'GRP_ID' )
 		);
 		$this->_fields = array(
 			'Message_Template'=> array(
 				'MTP_ID'=> new EE_Primary_Key_Int_Field('MTP_ID', __('Message Template ID', 'event_espresso'), FALSE, 0),
+				'GRP_ID' => new EE_Foreign_Key_Int_Field('GRP_ID', __('Message Template Group ID', 'event_espresso'), FALSE, 0, 'Message_Template_Group' ),
+				'MTP_template_field'=>new EE_Plain_Text_Field('MTP_template_field', __('Field Name for this Template', 'event_espresso'), false, 'default' ),
+				'MTP_context'=>new EE_Plain_Text_Field('MTP_context', __('Message Type Context for this field', 'event_espresso'),false,'admin' ),
+				'MTP_content'=>new EE_Serialized_Text_Field('MTP_content', __('The field content for the template', 'event_espresso'), false, ''),
+				),
+			'Message_Template_Group' => array(
+				'GRP_ID' => new EE_Primary_Key_Int_Field('GRP_ID', __('Message Template Group ID', 'event_espresso'), FALSE, 0), 
 				'EVT_ID'=> new EE_Foreign_Key_Int_Field('EVT_ID',__('Event ID', 'event_espresso'),FALSE,0, 'Event' ),
-				'GRP_ID'=> new EE_Integer_Field( 'GRP_ID', __('Message Template Group ID', 'event_espresso' ), FALSE, 1),
 				'MTP_user_id'=> new EE_Integer_Field('MTP_user_id', __('User who created this template', 'event_espresso'), FALSE, 1 ),
-				'MTP_messenger'=>new EE_Plain_Text_Field('MTP_messenger', __('Messenger Used for Template', 'event_espresso'), FALSE, 'email', $this->_allowed_messengers),
-				'MTP_message_type'=>new EE_Enum_Field('MTP_message_type','Message Type',false,'registration',$this->_allowed_messenger_types),
-				'MTP_template_field'=>new EE_Enum_Field('MTP_template_field', 'Field of Template to Fill', false, 'content', $this->_allowed_template_fields),
-				'MTP_context'=>new EE_Enum_Field('MTP_context','Context for filling out template',false,'admin',$this->_allowed_contexts),
-				'MTP_content'=>new EE_Full_HTML_Field('MTP_content', 'Template Content to Replace', false, ''),
-				'MTP_is_global'=>new EE_Boolean_Field('MTP_is_global', 'Flag indicating if Template is Global', false, true),
-				'MTP_is_override'=>new EE_Boolean_Field('MTP_is_override', 'Flag indicating if Template is overriding another', false, false),
-				'MTP_deleted'=>new EE_Trashed_Flag_Field('MTP_deleted', 'Flag indicating whether this has been trashed', false, false),
-				'MTP_is_active'=>new EE_Boolean_Field('MTP_is_active', 'Flag indicating whether template is active', false, true)
-			));
-		$this->_model_relations = array(
-			'Event'=>new EE_Belongs_To_Relation()
+				'MTP_messenger'=>new EE_Plain_Text_Field('MTP_messenger', __('Messenger Used for Template', 'event_espresso'), FALSE, 'email' ),
+				'MTP_message_type'=>new EE_Plain_Text_Field('MTP_message_type', __('Message Type', 'event_espresso'),false,'registration'),
+				'MTP_is_global'=>new EE_Boolean_Field('MTP_is_global', __('Flag indicating if Template Group is Global', 'event_espresso'), false, true),
+				'MTP_is_override'=>new EE_Boolean_Field('MTP_is_override', __('Flag indicating if Template Group overrides any other Templates for the messenger/messagetype combination', 'event_espresso'), false, false),
+				'MTP_deleted'=>new EE_Trashed_Flag_Field('MTP_deleted', __('Flag indicating whether this has been trashed', 'event_espresso'), false, false),
+				'MTP_is_active'=>new EE_Boolean_Field('MTP_is_active', __('Flag indicating whether template group is active', 'event_espresso'), false, true)
+				)
 		);
+		$this->_model_relations = array();
 		parent::__construct();
-		// load Message Template object class file
-//		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Message_Template.class.php');
 	}
 
 	/**
-	 * 		cycle though array of message_templates and create objects out of each item.  
+	 * 		cycle though array of message_templates and create objects out of each item.  This overrides the _create_objects for EEM_Base
 	 *
-	 * 	@access	private
+	 * 	@access	protected
 	 * 	@param	array $prices
 	 * 	@return mixed array on success, FALSE on fail
 	 */
@@ -126,7 +116,12 @@ class EEM_Message_Template extends EEM_Base {
 		}
 
 		//first we have to assemble the grouped array of templates.
-		foreach ($templates as $template) {
+		foreach ( $templates as $template ) {
+			$template_keys = array_map(create_function('$item', '$item = str_replace("Message_Template.", "", $item); $item = str_replace("Message_Template_Group.","",$item); return $item;'), array_keys($template) );
+			$template_values = array_values( $template );
+			$template = array_combine( $template_keys, $template_values );
+			$template = (object) $template;
+
 			//below will be items common to all templates in a template group.  Templates are grouped by messenger AND message type.  So all templates within a group will have the same messenger and message type and user_id and event_id (and of course group_id);
 			$a_temp[$template->GRP_ID]['GRP_ID'] = $template->GRP_ID;
 			$a_temp[$template->GRP_ID]['MTP_messenger'] = $template->MTP_messenger;
@@ -151,7 +146,7 @@ class EEM_Message_Template extends EEM_Base {
 			$array_of_objects[$group_id] = new EE_Message_Template($template_group);
 		}
 		return $array_of_objects;
-	}
+	}/**/
 
 	/**
 	 * 	instantiate a new message_template object with blank/empty properties
@@ -176,9 +171,24 @@ class EEM_Message_Template extends EEM_Base {
 		// retrieve all templates
 		// we have to use limit and count later because we're not getting by rows.  So we have to retrieve all templates first.
 		
+		$query_params = $this->_mt_query_params( array(), $orderby, $order, $limit, $count, $active );
+
+		$r_templates = $count ? $this->count_deleted_and_undeleted($query_params, 'GRP_ID', TRUE ) : $this->get_all_deleted_and_undeleted( $query_params );
+		
+		return $r_templates;
+	}
+
+
+	/**
+	 * This method just takes incoming args and spits out the query_params neede for all message template queries.
+	 * @return array query_params
+	 */
+	protected function _mt_query_params( $query_params = array(),  $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE, $active = TRUE ) {
 		//we have to make sure we're only returning "ACTIVE" templates unless the $active has explicitly been set to false.  If active has been set to 'all' then we DON'T set the active parameter.
-		$where_cols_n_values = !$active ? array( 'MTP_is_active' => 0 ) : array( 'MTP_is_active' => 1);
-		$where_cols_n_values = $active == 'all' ? array() : $where_cols_n_values;
+		$query_params = !$active || empty( $active ) ? array_merge( $query_params, array( 'MTP_is_active' => 0 ) ) : array_merge( $query_params, array( 'MTP_is_active' => 1 ) );
+
+		if ( $active == 'all' )
+			unset( $query_params['MTP_is_active'] );
 
 		//let's check if there are any filters in here
 		$filters = array();
@@ -188,72 +198,40 @@ class EEM_Message_Template extends EEM_Base {
 			$filters['MTP_message_type'] = $_REQUEST['ee_message_type_filter_by'];
 
 		//merge any extra parameters
-		$where_cols_n_values = array_merge($filters, $where_cols_n_values);
+		$query_params = array_merge($filters, $query_params);
+
+		//now we need to make sure $query_params (which are up until now the $where_cols_n_values ) are added to an array.
+		$query_params = !empty($query_params) ? array( $query_params ) : array();
+
+		//set up the on_join_limit for multi_table paging.
+		$query_params = !empty( $limit ) && !$count ? array_merge( $query_params, array('on_join_limit' => array('Message_Template_Group', $limit ) ) ) : $query_params;
 		
-
-		if ($templates = $this->select_all_where($where_cols_n_values, $orderby, $order)) {
-			$r_templates = $this->_create_objects($templates);
-		} else {
-			return FALSE;
-		}
-
-		//now let's select the data to return
-		if ( empty( $limit) || !is_array($limit) )
-			return $count ? count($r_templates) : $r_templates;
-
-		$r_templates = array_slice( $r_templates, $limit[0], $limit[1]);
-		return $count ? count($r_templates) : $r_templates;
+		//orderby
+		$query_params = array_merge( $query_params, array('order_by' => array($orderby => $order ) ) );
+		return $query_params;
 	}
 
 	/**
 	 * 	get all message_templates from db where...
 	 *
 	 * 	@access	public
-	 * 	@param	array	$where_cols_n_values
+	 * 	@param	array	$query_params
 	 * 	@return	mixed	array on success, FALSE on fail
 	 */
-	public function get_all_message_templates_where( $where_cols_n_values = FALSE, $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE ) {
+	public function get_all_message_templates_where( $query_params = FALSE, $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE ) {
 		$active = array();
 		
-		if (!$where_cols_n_values) {
+		if (!$query_params) {
 			return FALSE;
 		}
 
-		//if the active reference IS not set then we're assuming we only want active templates
-		if ( !isset( $where_cols_n_values['MTP_is_active'] ) ) {
-			$active = array( 'MTP_is_active' => 1 );
-		}
+		$query_params = $this->_mt_query_params( $query_params, $orderby, $order, $limit, $count, $active );
 
-		//however if the active reference IS set and it == 'all' then we don't send ANY filter on active
-		if ( isset( $where_cols_n_values['MTP_is_active'] ) && $where_cols_n_values['MTP_is_active'] == 'all' ) {
-			$active = array();
-		}
+		$r_templates = $count ? $this->count_deleted_and_undeleted($query_params, 'GRP_ID', TRUE ) : $this->get_all_deleted_and_undeleted( $query_params );
 
-		$where_cols_n_values = array_merge( $active, $where_cols_n_values );
-
-		//let's check if there are any filters in here
-		$filters = array();
-		if ( isset( $_REQUEST['ee_messenger_filter_by'] ) )
-			$filters['MTP_messenger'] = $_REQUEST['ee_messenger_filter_by'];
-		if ( isset( $_REQUEST['ee_message_type_filter_by'] ) )
-			$filters['MTP_message_type'] = $_REQUEST['ee_message_type_filter_by'];
-
-		//merge any extra parameters
-		$where_cols_n_values = array_merge($filters, $where_cols_n_values);
-
-		// retrieve all templates
-		if ($templates = $this->select_all_where( $where_cols_n_values, $orderby, $order )) {
-			$r_templates = $this->_create_objects($templates);
-		} else {
-			return FALSE;
-		}
+		return $r_templates;
 		
-		//now let's select the data to return
-		if ( empty( $limit) || !is_array($limit) )
-			return $count ? count($r_templates) : $r_templates;
-
-		$r_templates = array_slice( $r_templates, $limit[0], $limit[1]);
-		return $count ? count($r_templates) : $r_templates;
+		return FALSE;
 	}
 
 	/**
@@ -272,64 +250,14 @@ class EEM_Message_Template extends EEM_Base {
 		// retrieve a particular template group (but only if active);
 		
 		$where_cols_n_values = array('GRP_ID' => $GRP_ID, 'MTP_is_active' => 1);
-		if ($template = $this->select_all_where($where_cols_n_values)) {
-			$tmplt = $this->_create_objects( $template );
+		if ($tmplt = $this->get_all($where_cols_n_values)) {
 			return $tmplt[$GRP_ID];
 		} else {
 			return FALSE;
 		}
 	}
 
-	/**
-	 * 	retrieve a single template group from db via it's column values
-	 *  What we'll do is get the grp_id for the templates matching the search.  Then we'll do another query to pull in all the templates within the group that matches the query. (note this might not work as expected in the cases where there are templates in other groups that share the same values in the search.  Only the first matching group will be returned).
-	 * 	@access		public
-	 * 	@param		array	$where_cols_n_values
-	 * 	@return 	mixed	array on success, FALSE on fail
-	 */
-	public function get_message_template( $where_cols_n_values = FALSE ) {
-
-		if (!$where_cols_n_values) {
-			return FALSE;
-		}
-
-		//need to make sure we only return ACTIVE templates BUT only if the 'MTP_is_active' reference isn't already in the where array.
-		if ( !isset( $where_cols_n_values['MTP_is_active'] ) ) {
-			$active = array( 'MTP_is_active' => 1 );
-			$where_cols_n_values = array_merge( $active, $where_cols_n_values );
-		}
-
-		//get group_id
-		$group_id = $this->get_message_template_grp_ID( $where_cols_n_values );
-
-		$new_where = array('GRP_ID' => $group_id);
-
-		if ( $template = $this->select_all_where($new_where) ) {
-			return $this->_create_objects( $template );
-		} else {
-			return FALSE;
-		}
-	}
-
-	/**
-	 * Has one purpose.  Return the grp_id for the template matching the where values.
-	 * @param  array $where_cols_n_values 
-	 * @return mixed int on success, false on fail
-	 */
-	public function get_message_template_grp_ID ( $where_cols_n_values = FALSE ) {
-		if ( !$where_cols_n_values) {
-			return FALSE;
-		}
-
-		//need to make sure we only return ACTIVE templates BUT only if the 'MTP_is_active' reference isn't already in the where array.
-		if ( !isset( $where_cols_n_values['MTP_is_active'] ) ) {
-			$active = array( 'MTP_is_active' => 1 );
-			$where_cols_n_values = array_merge( $active, $where_cols_n_values );
-		}
-
-		global $wpdb;
-		return $this->select_value_where($this->table_name, $this->table_data_types, 'GRP_ID', $where_cols_n_values );
-	}
+	
 
 	/**
 	 * get_all_message_templates_by_messenger
@@ -347,7 +275,8 @@ class EEM_Message_Template extends EEM_Base {
 	 * @return array  all active (non_trashed, active) message template objects
 	 */
 	public function get_all_active_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE ) {
-		return $this->get_all_message_templates_where( array('MTP_deleted' => FALSE ), $orderby, $order, $limit, $count );
+		$query_params = $this->_mt_query_params( array(), $orderby, $order, $limit, $count );
+		return $count ? $this->count($query_params, 'GRP_ID', TRUE ) : $this->get_all($query_params);
 	}
 
 	/**
@@ -355,8 +284,9 @@ class EEM_Message_Template extends EEM_Base {
 	 * @access  public
 	 * @return  array all active (non trashed, active) message template objects for the given messenger
 	 */
-	public function get_all_active_message_templates_by_messenger($messenger, $orderby = 'GRP_ID', $order = 'ASC') {
-		return $this->get_all_message_templates_where(array('MTP_deleted' => FALSE, 'MTP_messenger' => $messenger), $orderby, $order );
+	public function get_all_active_message_templates_by_messenger($messenger, $orderby = 'GRP_ID', $order = 'ASC') {	
+		$query_params = $this->_mt_query_params( array('MTP_messenger' => $messenger), $orderby, $order );
+		return $this->get_all($query_params);
 	}
 
 	/**
@@ -365,7 +295,8 @@ class EEM_Message_Template extends EEM_Base {
 	 * @return array all message template objects that are trashed.
 	 */
 	public function get_all_trashed_message_templates($orderby = 'GRP_ID', $order = 'ASC') {
-		return $this->get_all_message_templates_where( array('MTP_deleted' => TRUE ), $orderby, $order );
+		return $this->get_all_deleted(array('orderby' => array( $orderby => $order ) ) );
+		//return $this->get_all_message_templates_where( array('MTP_deleted' => TRUE ), $orderby, $order );
 	}
 
 	/**
@@ -378,26 +309,18 @@ class EEM_Message_Template extends EEM_Base {
 	 */
 	public function get_all_trashed_grouped_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE) {
 		$msg_tmps = array();
+
+		$query_params = $this->_mt_query_params( array(), $orderby, $order, $limit, $count );
 		
-		//first let's get all the templates
-		$message_templates = $this->get_all_message_templates($orderby, $order);
+		$msg_tmps = $count ? $this->count_deleted($query_params, 'GRP_ID', TRUE ) : $this->get_all_deleted( $query_params );
 
-		//now let's loop through the templates and assemble an array that has NO active contexts.
-		if ( $message_templates ) {
-			foreach ( $message_templates as $template_group ) {
-				if ( $template_group->is_trashed_count() > 0 )
-				$msg_tmps[] = $template_group;
-			}
-		}
-
-		//now let's select the data to return
-		if ( empty( $limit) || !is_array($limit) )
-			return $count ? count($msg_tmps) : $msg_tmps;
-
-		$r_templates = array_slice( $msg_tmps, $limit[0], $limit[1]);
-		return $count ? count($msg_tmps) : $msg_tmps;
+		return $msg_tmps;
 
 	}
+
+
+
+
 
 	/**
 	 * get_all_non_trashed_message_templates
@@ -405,7 +328,7 @@ class EEM_Message_Template extends EEM_Base {
 	 * @return array message template objects that aren't trashed (could be active or non-active)
 	 */
 	public function get_all_non_trashed_message_templates($orderby = 'GRP_ID', $order = 'ASC') {
-		return $this->get_all_message_templates_where( array('MTP_deleted' => FALSE ), $orderby, $order );
+		return $this->get_all( array('orderby' => array($orderby => $order) ) );
 	}
 
 	/**
@@ -414,7 +337,8 @@ class EEM_Message_Template extends EEM_Base {
 	 * @return array all message templates that are global (i.e. non-event)
 	 */
 	public function get_all_global_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE ) {
-		return $this->get_all_message_templates_where( array('MTP_is_global' => TRUE, 'MTP_deleted' => FALSE ), $orderby, $order, $limit, $count );
+		$query_params = $this->_mt_query_params( array('MTP_is_global' => TRUE), $orderby, $order, $limit, $count );
+		return $count ? $this->count( $query_params, 'GRP_ID', TRUE ) : $this->get_all($query_params);
 	}
 
 	/**
@@ -430,15 +354,12 @@ class EEM_Message_Template extends EEM_Base {
 	 */
 	public function get_global_message_template_by_m_and_mt($messenger, $message_type, $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE, $active = TRUE ) {
 		$_where = array(
-			'MTP_deleted' => FALSE,
 			'MTP_messenger' => $messenger,
 			'MTP_message_type' => $message_type,
-			'MTP_is_global' => TRUE
+			'MTP_is_global' => TRUE,
+			'MTP_is_active' => $active
 			);
 
-		$_where['MTP_is_active'] = $active;
-
-		
 		return $this->get_all_message_templates_where($_where, $orderby, $order, $limit, $count );
 	}
 
@@ -459,7 +380,6 @@ class EEM_Message_Template extends EEM_Base {
 	public function get_event_message_templates_by_m_and_mt_and_evt( $messenger, $message_type, $evt_id, $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE, $active = TRUE ) {
 
 		$_where = array(
-			'MTP_deleted' => FALSE,
 			'MTP_messenger' => $messenger,
 			'MTP_message_type' => $message_type,
 			'EVT_ID' => $evt_id,
@@ -479,7 +399,7 @@ class EEM_Message_Template extends EEM_Base {
 	 * @return array all message templates that are non-global and are event specific
 	 */
 	public function get_all_event_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE ) {
-		return $this->get_all_message_templates_where( array( 'MTP_is_global' => FALSE, 'MTP_deleted' => FALSE ), $orderby, $order, $limit, $count );
+		return $this->get_all_message_templates_where( array( 'MTP_is_global' => FALSE ), $orderby, $order, $limit, $count );
 	}
 
 	/**
@@ -489,7 +409,7 @@ class EEM_Message_Template extends EEM_Base {
 	 * @return array         message template objects that are attached to a specific event.
 	 */
 	public function get_all_message_templates_by_event($EVT_ID, $orderby = 'GRP_ID', $order = 'ASC', $limit=NULL, $count = FALSE) {
-		return $this->get_all_message_templates_where( array( 'EVT_ID' => $EVT_ID, 'MTP_deleted' => FALSE ), $orderby, $order, $limit, $count );
+		return $this->get_all_message_templates_where( array( 'EVT_ID' => $EVT_ID ), $orderby, $order, $limit, $count );
 	}
 
 	/**
@@ -499,7 +419,8 @@ class EEM_Message_Template extends EEM_Base {
 	 * @return array   message template objects that are attached to a specific event.
 	 */
 	public function get_all_trashed_message_templates_by_event($EVT_ID, $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE) {
-		return $this->get_all_message_templates_where( array( 'EVT_ID' => $EVT_ID, 'MTP_deleted' => TRUE ), $orderby, $order, NULL, FALSE);
+		$query_params = $this->_mt_query_params( array('EVT_ID' => $EVT_ID), $orderby, $order, $limit, $count );
+		return $count ? $this->count_deleted( $query_params, 'GRP_ID', TRUE ) : $this->get_all_deleted( $query_params );
 	}
 
 	/**
@@ -514,10 +435,10 @@ class EEM_Message_Template extends EEM_Base {
 		if ( ! $GRP_ID || ! is_int( $GRP_ID )) {
 			return FALSE;
 		}
-		if ( $this->delete(array('GRP_ID' => $GRP_ID))) {
+		if ( $this->delete_permanently_by_ID($GRP_ID) ) {
 			return TRUE;
 		}		
-	}
+	}/**/
 
 	/**
 	 * 	This function inserts table data
@@ -528,7 +449,8 @@ class EEM_Message_Template extends EEM_Base {
 	 */
 	public function insert($set_column_values) {
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		return $this->_insert($this->table_name, $this->table_data_types, $set_column_values);
+		$insert_id = array_key_exists( 'GRP_ID', $set_column_values ) ? $this->_insert_into_specific_table( $this->_tables['Message_Template'], $set_column_values, $set_column_values['GRP_ID'] ) : $this->_insert_into_specific_table( $this->_tables['Message_Template_Group'], $set_column_values );
+		return $insert_id;
 	}
 
 	/**
@@ -539,28 +461,12 @@ class EEM_Message_Template extends EEM_Base {
 	 * 	@param array $where_cols_n_values - column names and values for the SQL WHERE clause
 	 * 	@return array
 	 */
-	public function update($set_column_values, $where_cols_n_values) {
+	/*public function update($set_column_values, $where_cols_n_values) {
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
 		return $this->_update($this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values);
-	}
+	}/**/
 
 	
-	/**
-	 * generates a unique group id for any new templates being added.
-	 * we need to do this because we already have an auto_incrementing column (MTP_ID).
-	 * @return int unique grp_id
-	 */
-	public function generate_grp_id() {
-		global $wpdb;
-		//first let's find out whether there is already a max value
-		$query = "SELECT MAX(GRP_ID) FROM " . $this->table_name . ";";
-		$max_grp_id = $wpdb->get_var( $query );
-		if ( empty($max_grp_id) || $max_grp_id === 0 )
-			$max_grp_id = 0;
-		$max_grp_id++;
-		return $max_grp_id;
-	}
-
 
 
 	/**
