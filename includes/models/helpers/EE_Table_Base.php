@@ -51,4 +51,15 @@ abstract class EE_Table_Base{
 		$sql =  $this->get_table_alias().".".$this->get_pk_column();
 		return $sql;
 	}
+
+
+	/**
+	 * returns the special sql for a inner select with a limit.
+	 * @return string    SQL select
+	 */
+	public function get_select_join_limit( $limit ) {
+		$limit = is_array( $limit ) ? 'LIMIT ' . implode(',', array_map( 'intval', $limit ) ) : 'LIMIT ' . (int) $limit;
+		$SQL = SP . '(SELECT * FROM ' . $this->_table_name . SP . $limit . ') AS ' . $this->_table_alias;
+		return $SQL;
+	}
 }

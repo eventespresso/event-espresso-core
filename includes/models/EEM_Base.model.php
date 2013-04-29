@@ -151,6 +151,7 @@ abstract class EEM_Base extends EE_Base{
 	 *					|	which will correctly generate SQL like "PAY_timestamp > 123412341 AND PAY_timestamp < 2354235235234 AND PAY_timestamp != 1241234123"
 	 *		limit		|	adds a limit to the query just like the SQL limit clause, so limits of "23", "25,50" are both valid would become 
 	 *					|	SQL "...LIMIT 23", "...LIMIT 25,50" respectively
+	 *	 on_join_limit	|	allows the setting of a special select join with a internal limit so you can do paging on one-to-many multi-table-joins. Send an array in the following format array('on_join_limit' => array( 'table_alias', array(1,2) ) ).	
 	 *		order_by	|	name of a column to order by, or an array where keys are field names and values are either 'ASC' or 'DESC'. 'limit'=>array('STS_ID'=>'ASC','REG_date'=>'DESC'),
 	 *					|	which would becomes SQL "...ORDER BY TXN_timestamp..." and "...ORDER BY STS_ID ASC, REG_date DESC..." respectively.
 	 *					|	Like the 'where' conditions, these fields can be on related models. 
@@ -704,6 +705,15 @@ abstract class EEM_Base extends EE_Base{
 		}else{
 			$query_object = $this->_extract_related_models_from_query(array());
 		}
+
+
+		//if this is a "on_join_limit" then we are limiting on on a specific table in a multi_table join.  So we need to setup a subquery and use that for the main join.  Note for now this only works on the primary table for the model.  So for instance, you could set the limit array like this:
+		//array( 'on_join_limit' => array('Primary_Table_Alias', array(1,10) ) )
+		if ( array_key_exists('on_join_limit', $query_params ) && $query_params['on_join_limit'] ) {
+			$query_object->set_main_model_join_sql( $this->_construct_limit_join_select( $query_params['on_join_limit'][0], $query_params['on_join_limit'][1] ) );
+		}
+
+
 		//set limit
 		if(array_key_exists('limit',$query_params) && $query_params['limit']){
 			if(is_array($query_params['limit'])){
@@ -758,7 +768,9 @@ abstract class EEM_Base extends EE_Base{
 				throw new EE_Error(sprintf(__("You passed %s as a query parameter to %s, which is illegal!",'event_espresso'),$query_key,get_class($this)));
 			}
 		}
-		$query_object->set_main_model_join_sql($this->_construct_internal_join());
+		$main_model_join_sql = $query_object->get_main_model_join_sql();
+		if ( empty( $main_model_join_sql ) )
+			$query_object->set_main_model_join_sql($this->_construct_internal_join());
 		return $query_object;
 	}
 	
@@ -1010,6 +1022,31 @@ abstract class EEM_Base extends EE_Base{
 			throw new EE_Error(sprintf(__("There is no field titled %s on model %s. Either the query trying to use it is bad, or you need to add it to the list of fields on the model.",'event_espresos'),$field_name,get_class($this)));
 		}
 	}
+
+
+
+
+	/**
+	 * constructs the select use on special limit joins
+	 * NOTE: for now this has only been tested and will work when the  table alias is for the PRIMARY table. Although its setup so the select query will be setup on and just doing the special select join off of the primary table (as that is typically where the limits would be set).
+	 * @param  string $table_alias The table the select is being built for
+	 * @param  mixed|string $limit The limit for this select
+	 * @return string 				The final select join element for the query.
+	 */
+	function _construct_limit_join_select( $table_alias, $limit ) {
+		$SQL = '';
+		
+		foreach ( $this->_tables as $table_obj ) {
+			if ( $table_obj instanceof EE_Primary_Table ) {
+				$SQL .= $table_alias == $table_obj->get_table_alias() ? $table_obj->get_select_join_limit( $limit ) : SP.$table_obj->get_table_name()." AS ".$table_obj->get_table_alias().SP;
+			} elseif ( $table_obj instanceof EE_Secondary_Table ) {
+				$SQL .= $table_alias == $table_obj->get_table_alias() ? $table_obj->get_select_join_limit_join($limit) : SP . $table_obj->get_join_sql().SP;
+			}
+		}
+		return $SQL;
+	}
+
+
 	
 	/**
 	 * Constructs the internal join if there are multiple tables, or simply the table's name and alias

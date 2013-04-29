@@ -127,6 +127,12 @@ class EE_Model_Query_Info_Carrier extends EE_Base{
    public function get_where_sql(){
 	   return $this->_where_sql;
    }
+
+  public function get_main_model_join_sql() {
+    return $this->_main_join_sql;
+  }
+
+
    /**
     * Prepends the main model join sql onto the already-added other-model-join-sql,
     * to make the full join sql statement (in a select, that's everything after the FROM and before

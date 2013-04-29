@@ -36,11 +36,13 @@ class EE_Secondary_Table extends EE_Table_Base{
 	}
 	/**
 	 * gets SQL like "LEFT JOIN table_name AS table_alias ON other_table_alias.pk = table_alias.fk
+	 *
+	 * @param string $table allows us to set special conditions on the $table_name portion of the join query (i.e. doing a subquery)
 	 * @return string of SQL
 	 */
-	function get_join_sql(){
+	function get_join_sql( $table = NULL ){
 		
-		$table_name = $this->get_table_name();
+		$table_name = empty($table) ? $this->get_table_name() : $table;
 		$table_alias = $this->get_table_alias();
 		$other_table_alias = $this->get_table_to_join_with()->get_table_alias();
 		$other_table_pk = $this->get_table_to_join_with()->get_pk_column();
@@ -51,6 +53,22 @@ class EE_Secondary_Table extends EE_Table_Base{
 		}
 		return $join_sql;
 	}
+
+
+
+	/**
+	 * This prepares the join on the other table using a select with a internal limit.
+	 * @param  mixed (array|string) $limit limit
+	 * @return string             			SQL to return
+	 */		
+	public function get_select_join_limit_join($limit) {
+		//first get the select
+		$select = $this->get_select_join_limit($limit);
+		$join_sql = $this->get_join_sql( $select );
+		return $join_sql;
+	}
+
+
 
 	function get_fully_qualified_fk_column() {
 		$table_alias = $this->get_table_alias();
