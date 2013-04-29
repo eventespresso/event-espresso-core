@@ -439,7 +439,8 @@ class EEM_Message_Template extends EEM_Soft_Delete_Base {
 		if ( ! $GRP_ID || ! is_int( $GRP_ID )) {
 			return FALSE;
 		}
-		if ( $this->delete_permanently_by_ID($GRP_ID) ) {
+		$query_params = array( array('GRP_ID' => $GRP_ID ) );
+		if ( $this->delete_permanently($query_params) ) {
 			return TRUE;
 		}		
 	}/**/
@@ -449,14 +450,16 @@ class EEM_Message_Template extends EEM_Soft_Delete_Base {
 
 	public function trash_mtp_by_id( $GRP_ID ) {
 		$id = (int) $GRP_ID;
-		return $this->delete_by_ID( $id );
+		$query_params = array( array('GRP_ID' => $GRP_ID ) );
+		return $this->delete( $query_params );
 	}
 
 
 
 	public function restore_mtp_by_id( $GRP_ID ) {
 		$id = (int) $GRP_ID;
-		return $this->restore_by_ID( $GRP_ID );
+		$query_params = array( array( 'GRP_ID' => $GRP_ID ) );
+		return $this->restore( $query_params );
 	}
 
 
