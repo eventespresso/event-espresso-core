@@ -592,13 +592,15 @@ abstract class EEM_Base extends EE_Base{
 	 * If a $new_id is supplied and if $table is an EE_Other_Table, we assume
 	 * we need to add a foreign key column to point to $new_id (which should be the primary key's value
 	 * on the main table)
+	 * This is protected rather than private because private is not accessible to any child methods and there MAY be cases where we want to call it directly rather than via insert().
+	 * @access protected
 	 * @param EE_Table_Base $table
 	 * @param array $cols_n_values each key should be in _fields's keys, and value should be an int, string or float
 	 * @param int $new_id for now we assume only int keys
 	 * @return int ID of new row inserted
 	 * @throws EE_Error
 	 */
-	private function _insert_into_specific_table(EE_Table_Base $table, $cols_n_values, $new_id = false){
+	protected function _insert_into_specific_table(EE_Table_Base $table, $cols_n_values, $new_id = false){
 		global $wpdb;
 		$insertion_col_n_values = array();
 		$format_for_insertion = array();
