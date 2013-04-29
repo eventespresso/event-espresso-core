@@ -64,49 +64,7 @@ class EEM_Event  extends EEM_Base{
 		parent::__construct();
 	}
 
-	/**
-	 * Gets all the question groups related to this event. Has almost teh same inputs as EEM_TEmpBase->get_many_related
-	 * @global type $wpdb
-	 * @param int $EVT_ID
-	 * @param array $where_col_n_values all the following parameters are just like EEM_Base's get_all_where
-	 * @param string $orderby
-	 * @param string $order
-	 * @param mixed $operators array/string. 
-	 * @param int $limit
-	 * @param string $output
-	 */
-	public function get_related_question_groups($EVT_ID, $where_col_n_values=array(),$orderby=null,$order='ASC',$operators='=',$limit=null,$output='OBJECT_K'){
-		
-		//trying to duplicate EEM_Base's get_many_related in teh HABTM case, to allow for easier transition when EEM_Events inherits EEM_Base
-		global $wpdb;
-		
-		require_once('EEM_Question_Group.model.php');
-		$relatedModel = EEM_Question_Group::instance();
-		$joinTable = $wpdb->prefix."esp_"."event_question_group";
-		$otherTableName = $relatedModel->_get_table_name();
-		$otherTablePK = $relatedModel->primary_key_name();
-		$joinSQL = "$joinTable LEFT JOIN $otherTableName ON $joinTable.$otherTablePK=$otherTableName.$otherTablePK ";
-		$thisTablePK = "EVT_ID";
-		if( !is_array($where_col_n_values) || !array_key_exists($thisTablePK,$where_col_n_values )){
-			$where_col_n_values[$thisTablePK]=$EVT_ID;
-		}
-		$rows=$relatedModel->select_all_join_where($joinSQL,
-											$relatedModel->_get_table_data_types() + array('EQG_ID'=>'%d','EVT_ID'=>'%d', 'QSG_ID'=>'%d', 'EQG_primary'=>'%d'), 
-											$where_col_n_values,
-											$orderby,
-											$order,
-											$operators,
-											$limit,
-											$output);
-		//if we're only wanting to count them, then $rows is actually just an integer
-		//so we only want ot return it.
-		if($output!=='COUNT'){
-			$relatedObjects=$relatedModel->_create_objects($rows);
-		}else{
-			$relatedObjects=$rows;
-		}
-		return $relatedObjects;
-	}
+
 	/**
 	*		retrieve all active Questions and Groups for an Event via the Event's ID
 	* 

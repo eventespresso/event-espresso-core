@@ -502,7 +502,7 @@ class EE_Transaction extends EE_Base_Class{
 	 */
 	public function primary_registration( $return_obj = FALSE ){
 		require_once('EEM_Registration.model.php');
-		$result = $this->get_first_related('Registrations', array('REG_count'=>  EEM_Registration::PRIMARY_REGISTRANT_COUNT));
+		$result = $this->get_first_related('Registration', array(array('REG_count'=>  EEM_Registration::PRIMARY_REGISTRANT_COUNT)));
 		return $result;//$return_obj ? array_shift($result) : $result;
 	}
 	
@@ -510,12 +510,7 @@ class EE_Transaction extends EE_Base_Class{
 	
 	/**
 	 * Gets payments for this transaction. Unlike other such functions, order by 'DESC' by default
-	 * @param type $where_col_n_vals all parameters just like EEM_Base's select_all_where
-	 * @param type $orderby
-	 * @param type $order
-	 * @param type $operators
-	 * @param type $limit
-	 * @param type $output
+	 * @param array $query_params like EEM_Base::get_all
 	 * @return EE_Payment[]
 	 */
 	public function payments($query_params = array() ){

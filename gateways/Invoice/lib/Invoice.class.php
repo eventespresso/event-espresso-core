@@ -12,8 +12,8 @@ class Invoice {
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 		$REG = EEM_Registration::instance();
 		$TXN = EEM_Transaction::instance();
-		if ( $this->registration = $REG->get_registration(array('REG_url_link' => $url_link))) {
-			$this->transaction = $TXN->get_transaction($this->registration->transaction_ID());
+		if ( $this->registration = $REG->get_registration_for_reg_url_link( $url_link)) {
+			$this->transaction = $this->registration->transaction();
 			
 			global $espresso_wp_user;
 			$payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', TRUE);
@@ -99,6 +99,7 @@ class Invoice {
 		$template_args['transaction'] = $this->transaction;
 		$template_args['amount_pd'] = $this->transaction->paid();
 		$template_args['payments'] = $this->transaction->approved_payments();
+		$template_args['net_total'] = '';
 		if ($template_args['amount_pd'] != $template_args['total_cost']) {
 			//$template_args['net_total'] = $this->espressoInvoiceTotals( __('SubTotal', 'event_espresso'), $this->transaction->total());//$this->session_data['cart']['REG']['sub_total']);
 			$tax_data = $this->transaction->tax();

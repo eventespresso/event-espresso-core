@@ -125,7 +125,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param array $query_params array with the following array key indexes:
 	 *		key			|					value
 	 * -------------------------------------------------------------------------
-	 *		where		|	an array of key-value pairs in its most basic form. Eg array('QST_display_text'=>'Are you bob?','QST_admin_text'=>'Determine if user is bob'
+	 *		0 (where)	|	an array of key-value pairs in its most basic form. Eg array('QST_display_text'=>'Are you bob?','QST_admin_text'=>'Determine if user is bob'
 	 *					|	(which becomes SQL "...WHERE QST_display_text = 'Are you bob?' AND QST_admin_text = 'Determine if user is bob'...")
 	 *					|	however, to change the operator (from the default of '='), change the value to an numerically-indexed array, where the
 	 *					|	first item in the list is the operator. 
@@ -159,6 +159,23 @@ abstract class EEM_Base extends EE_Base{
 	 *		group_by	|	name of column to group by
 	 *		having		|	exactl like WHERE parameters array, except these conditions apply to the grouped results (whereas WHERE conditions apply to the pre-grouped results)
 	 * Possible future keys: 'having' for SQL having cluases, 'select' for limiting the queryset to a subset, 
+	 * 
+	 * Some full examples:
+	 * get 10 transactions which have Scottish attendees:
+	 * EEM_Transaction::instance()->get_all(array(
+	 *		array(
+	 *			'Registration.Attendee.ATT_fname'=>('like','Mc%'),
+	 *		'limit'=>10,
+	 *		'group_by'=>'TXN_ID'));
+	 * get all the answers to the question titled "shirt size" for event iwth id 12, ordered by their answer
+	 * EEM_Answer::instance()->get_all(array(
+	 *		array(
+	 *			'Question.QST_display_text'=>'shirt size',
+	 *			'Registration.Event.EVT_ID'=>12),
+	 *		'order_by'=>array('ANS_value'=>'ASC')
+	 *		);
+	 * 
+	 *				
 	 */
 	function get_all($query_params = array()){
 		return $this->_create_objects($this->_get_all_wpdb_results($query_params));

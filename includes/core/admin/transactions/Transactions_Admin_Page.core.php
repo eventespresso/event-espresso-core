@@ -1150,14 +1150,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 	}
 
-
-	public function get_all_transactions_count() {
-	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
-	    $TXN = EEM_Transaction::instance();
-
-	    return $TXN->get_all_transactions(TRUE);
-	}
-
 	
 
 }

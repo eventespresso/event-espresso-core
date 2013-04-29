@@ -486,9 +486,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			return false;
 		}
 		//if the transaction's just an ID, swap it for a real EE_Transaction
-		if( ! $transaction instanceof EE_Transaction){
-			$transaction = $this->_TXN->get_transaction($transaction);
-		}
+		$transaction = $this->_TXN->ensure_is_obj($transaction);
 		//verify the transaction exists
 		if(empty($transaction)){
 			return false;

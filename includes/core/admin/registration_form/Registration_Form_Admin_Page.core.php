@@ -398,31 +398,39 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	 * For internal use in getting all the query parameters (because it's pretty well the same between question, question groups, and
 	 * for both when searchign for trahsed and untrahse dones)
 	 * @param EEM_Base $model either EEM_Question or EEM_Question_Group
-	 * @return array($order,$limit,$output,$searchString)
+	 * @return array lik EEM_Base::get_all
 	 */
-	protected function get_query_params($model,$per_page=10,$current_page=10,$count=FALSE){
+	protected function get_query_params($model, $per_page=10,$current_page=10){
+		$query_params = array();
 		$offset=($current_page-1)*$per_page;
-		$limit=array($offset,$per_page);
-		$output=$count?'COUNT':'OBJECT_K';
+		$query_params['limit']=array($offset,$per_page);
 		$order = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
-		$searchString=empty($this->_req_data['s'])?'':$this->_req_data['s'];
-		$return= array($order,$limit,$output,$searchString);
-		return $return;
+		$field_to_order_by = empty($this->_req_data['orderby']) ? $model->get_primary_key_field()->get_name() : $this->_req_data['orderby'];	
+		$query_params['order_by']=array( $field_to_order_by => $order );
+		$search_string = $this->_req_data['s'];
+		if(! empty($search_string)){
+			if($model instanceof EEM_Question_Group){
+				$query_params[0]=array(
+					'OR'=>array(
+						'QSG_name'=>array('LIKE',"%$search_string%"),
+						'QSG_desc'=>array('LIKE',"%$search_string%"))
+					);
+			}else{
+				$query_params[0]=array(
+					'QST_display_text'=>array('LIKE',"%$search_string%"));
+			}
+		}
+		
+		return $query_params;
 		
 	}
 
 
 
-	public function get_questions( $per_page=10,$current_page = 1, $count = FALSE ) {		
-		list($order,$limit,$output,$searchString)=$this->get_query_params(EEM_Question::instance(),$per_page,$current_page,$count);		
-		$orderby = empty($this->_req_data['orderby']) ? 'QST_order' : $this->_req_data['orderby'];		
-		if(!empty($searchString)){
-			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
-			$questions=EEM_Question::instance()->get_all_where(array('QST_display_text'=>'%'.$searchString.'%'), $orderby, $order, 'LIKE', $limit,$output);
-		}else{
-			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
-			$questions=EEM_Question::instance()->get_all_where(null, $orderby, $order, '=', $limit,$output);
-		}
+	public function get_questions( $per_page=10,$current_page = 1, $count = FALSE ) {
+		$QST = EEM_Question::instance();
+		$query_params = $this->get_query_params($QST, $per_page, $current_page);
+		$questions = $QST->get_all($query_params);
 		return $questions;
 		
 	}

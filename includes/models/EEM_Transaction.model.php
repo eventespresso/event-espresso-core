@@ -159,135 +159,6 @@ class EEM_Transaction extends EEM_Base {
 
 
 	/**
-	*		retreive  a single transaction from db
-	* 
-	* 		@access		public
-	* 		@param		$TXN_ID		
-	*		@return 		mixed		array on success, FALSE on fail
-	*/	
-	public function get_transaction( $TXN_ID = FALSE ) {
-
-		if ( ! $TXN_ID ) {
-			return FALSE;
-		}
-		// retreive a particular transaction
-		$where_cols_n_values = array( 'TXN_ID' => $TXN_ID );
-		if ( $transaction = $this->select_row_where ( $where_cols_n_values )) {
-			$transaction_array = $this->_create_objects( array( $transaction ));
-			return array_shift( $transaction_array );
-		} else {
-			return FALSE;
-		}
-
-	}
-
-
-
-
-
-	/**
-	*		retreive  ALL transactions from db
-	* 
-	* 		@access		public
-	* 		@param bool $count return count or objects
-	*		@return 		mixed		array on success, FALSE on fail
-	*/	
-	public function get_all_transactions($count = FALSE) {
-	
-		$orderby = 'TXN_timestamp';
-		$type =  ( $count ) ? 'COUNT' : 'OBJECT_K';
-		// retreive all transactions	
-		if ( $transactions = $this->select_all ( $orderby, FALSE, FALSE, $type )) {
-			return !$count ? $this->_create_objects( $transactions ) : $transactions;
-		} else {
-			return FALSE;
-		}
-		
-	}
-
-
-
-
-
-	/**
-	*		retreive transactions from db via foreign key from Registration table
-	* 
-	* 		@access		private
-	* 		@param		$REG_ID		Registration ID
-	* 		@param		$EVT_ID		Event ID
-	* 		@param		$ATT_ID		Attendee ID
-	*		@return 		mixed			array on success, FALSE on fail
-	*/	
-	private function _get_transactions_via_reg_table_foreign_key( $REG_ID = FALSE, $EVT_ID = FALSE, $ATT_ID = FALSE ) {
-		
-		// you gimme nothing??? you get nothing!!!
-		if ( ! $REG_ID &&  ! $EVT_ID &&  ! $ATT_ID ) {
-			return FALSE;
-		}
-		
-		// determine what we will be searching for via trickle down conditionals - it's just like PLINKO only better!
-		$what = $REG_ID ? 'REG_ID' : ( $EVT_ID ? 'EVT_ID' : 'ATT_ID' );
-		$ID = $REG_ID ? $REG_ID : ( $EVT_ID ? $EVT_ID : $ATT_ID );
-		
-		global $wpdb;
-		// retreive transaction
-		$SQL = 'SELECT reg.TXN_ID, txn.* FROM ' . $wpdb->prefix . 'esp_registration reg LEFT JOIN ' . $this->table_name . ' txn ON reg.TXN_ID = txn.TXN_ID WHERE reg.'. $what .' = %d';	
-		if ( $transactions = $wpdb->get_results( $wpdb->prepare( $SQL, $ID ))) {
-			return $this->_create_objects( $transactions );
-		} else {
-			return FALSE;
-		}
-		
-	}
-
-
-
-
-
-	/**
-	*		retreive  transaction from db for a specific registration
-	* 
-	* 		@access		public
-	* 		@param		$REG_ID		Registration ID
-	*		@return 		mixed			array on success, FALSE on fail
-	*/	
-	public function get_transaction_for_registration( $REG_ID = FALSE ) {	
-		return $this->_get_transactions_via_reg_table_foreign_key( $REG_ID );		
-	}
-
-
-
-
-
-	/**
-	*		retreive  ALL transactions from db for a specific event
-	* 
-	* 		@access		public
-	* 		@param		$REG_ID		Registration ID
-	*		@return 		mixed			array on success, FALSE on fail
-	*/	
-	public function get_all_transactions_for_event( $EVT_ID = FALSE ) {	
-		return $this->_get_transactions_via_reg_table_foreign_key( FALSE, $EVT_ID );
-	}
-
-
-
-
-	/**
-	*		retreive  ALL transactions from db for a specific attendee
-	* 
-	* 		@access		public
-	* 		@param		$ATT_ID		Registration ID
-	*		@return 		mixed			array on success, FALSE on fail
-	*/	
-	public function get_all_transactions_for_attendee( $ATT_ID = FALSE ) {	
-		return $this->_get_transactions_via_reg_table_foreign_key( FALSE, FALSE, $ATT_ID );
-	}
-
-
-
-
-	/**
 	*		retreive  all transactions from db between two dates
 	* 
 	* 		@access		public
@@ -491,15 +362,8 @@ class EEM_Transaction extends EEM_Base {
 		if( NULL == $reg_url_link ){
 			$reg_url_link = $_REQUEST['e_reg_url_link'];
 		}
-		require_once('EEM_Registration.model.php');
-		$regmodel=  EEM_Registration::instance();
-		$registration=$regmodel->get_registration_for_reg_url_link($reg_url_link);
-		if(!empty($registration)){
-			$transaction = $this->get_transaction($registration->transaction_ID());
-			return $transaction;
-		}else{
-			return NULL;
-		}
+		$transaction = $this->get_one(array(array('Registration.REG_url_link'=>$reg_url_link)));
+		return $transaction;
 	}
 	
 	
