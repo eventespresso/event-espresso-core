@@ -236,8 +236,8 @@ class EE_Error extends Exception {
 		<div class="ee-error-dev-msg-dv">
 			<p class="ee-error-dev-msg-pg">
 				<strong class="ee-error-dev-msg-str">An ' . $ex['name'] . ' exception was thrown!</strong>  &nbsp; <span>code: ' . $ex['code'] . '</span><br />
-				<span class="big-text">"' . trim( $ex['msg'] ) . '"</span><br />
-				'.$ex['file'].' &nbsp; ( line no: '.$ex['line'].' )  &nbsp; <a class="display-ee-error-trace-lnk" rel="ee-error-trace-' . self::$_error_count . $time . '">' . __( 'click to view backtrace and class/method details', 'event_espresso' ) . '</a>
+				<span class="big-text">"' . trim( $ex['msg'] ) . '"</span>  &nbsp; <a class="display-ee-error-trace-lnk" rel="ee-error-trace-' . self::$_error_count . $time . '">' . __( 'click to view backtrace and class/method details', 'event_espresso' ) . '</a><br />
+				'.$ex['file'].' &nbsp; ( line no: '.$ex['line'].' )
 			</p>
 			<div id="ee-error-trace-' . self::$_error_count . $time . '" class="ee-error-trace-dv">
 				' . $trace_details;
