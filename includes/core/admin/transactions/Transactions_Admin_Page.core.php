@@ -665,7 +665,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 						$where_fields_n_values = array( 'ATT_fname' => $attendee[1], 'ATT_lname' => $attendee[2], 'ATT_email' => $attendee[3] );
 					    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php' );
 					    $ATT_MDL = EEM_Attendee::instance();
-						if ( ! $attendee['att_obj'] = $ATT_MDL->find_one( array( $where_fields_n_values ) )) {
+						if ( ! $attendee['att_obj'] = $ATT_MDL->get_one( array( $where_fields_n_values ) )) {
 							$attendee['att_obj'] = new EE_Attendee;
 						}	 
 					}
