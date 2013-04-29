@@ -126,7 +126,7 @@ class EE_Thank_You_Page{
 		
 		$template_args=array();
 		//update the trsansaction, in case we just updated it.
-		$template_args['transaction']=$this->_TXN->get_transaction($transaction->ID());
+		$template_args['transaction']=$this->_TXN->get_one_by_ID($transaction->ID());
 		$template_args['payments'] = $transaction->payments();//$this->_PAY->get_approved_payments_for_transaction($transaction->ID());
 		$template_args['primary_registrant'] = $this->_REG->get_primary_registration_for_transaction_ID($transaction->ID());
 		$template_args['event_names']=$event_names;

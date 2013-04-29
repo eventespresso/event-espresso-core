@@ -510,12 +510,7 @@ class EE_Transaction extends EE_Base_Class{
 	
 	/**
 	 * Gets payments for this transaction. Unlike other such functions, order by 'DESC' by default
-	 * @param type $where_col_n_vals all parameters just like EEM_Base's select_all_where
-	 * @param type $orderby
-	 * @param type $order
-	 * @param type $operators
-	 * @param type $limit
-	 * @param type $output
+	 * @param array $query_params like EEM_Base::get_all
 	 * @return EE_Payment[]
 	 */
 	public function payments($query_params = array() ){

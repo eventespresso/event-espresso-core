@@ -383,7 +383,8 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				'Price_Type.PRT_is_global'=>true,
 				'PRC_deleted'=>$trashed),
 			'order_by'=>$orderby,
-			'limit'=>$limit
+			'limit'=>$limit,
+			'group_by'=>'PRC_ID'
 			);
 
 		if($count){
