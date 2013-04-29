@@ -75,7 +75,7 @@ class EEM_Transaction extends EEM_Base {
 		$this->singlular_item = __('Transaction','event_espresso');
 		$this->plural_item = __('Transactions','event_espresso');		
 		// set table name
-		/*$this->table_name = $wpdb->prefix . 'esp_transaction';
+		/*$this->_get_main_table()->get_table_name() = $wpdb->prefix . 'esp_transaction';
 		// set item names
 		
 		// array representation of the transaction table and the data types for each field 
@@ -195,7 +195,7 @@ class EEM_Transaction extends EEM_Base {
 		$SQL .= 'FROM ' . $wpdb->prefix . 'esp_registration reg ';
 		$SQL .= 'LEFT JOIN ' . $wpdb->prefix . 'esp_attendee att ON reg.ATT_ID = att.ATT_ID ';
 		$SQL .= 'JOIN ' . $wpdb->prefix . 'events_detail evt ON reg.EVT_ID = evt.id ';
-		$SQL .= 'RIGHT JOIN ' . $this->table_name . ' txn ON reg.TXN_ID = txn.TXN_ID ';
+		$SQL .= 'RIGHT JOIN ' . $this->_get_main_table()->get_table_name() . ' txn ON reg.TXN_ID = txn.TXN_ID ';
 		$SQL .= 'WHERE TXN_timestamp >= %d ';
 		$SQL .= 'AND TXN_timestamp <= %d ';
 		$SQL .= 'AND reg.REG_count = 1 ';
@@ -263,7 +263,7 @@ class EEM_Transaction extends EEM_Base {
 		$SQL .= 'FROM ' . $wpdb->prefix . 'esp_registration reg ';
 		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'events_detail evt ON reg.EVT_ID = evt.id ';
 		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_attendee att ON reg.ATT_ID = att.ATT_ID ';
-		$SQL .= 'INNER JOIN ' . $this->table_name . ' txn ON reg.TXN_ID = txn.TXN_ID ';
+		$SQL .= 'INNER JOIN ' . $this->_get_main_table()->get_table_name() . ' txn ON reg.TXN_ID = txn.TXN_ID ';
 		$SQL .= 'WHERE txn.TXN_ID = %d ';
 		$SQL .= 'AND reg.REG_count = 1 ';
 		$SQL .= 'ORDER BY TXN_timestamp DESC';
@@ -293,7 +293,7 @@ class EEM_Transaction extends EEM_Base {
 		$date_mod = strtotime( $period );
 
 		$SQL = 'SELECT DATE(FROM_UNIXTIME(TXN_timestamp)) AS txnDate, SUM(TXN_paid) AS revenue';
-		$SQL .= ' FROM ' . $this->table_name;
+		$SQL .= ' FROM ' . $this->_get_main_table()->get_table_name();
 		$SQL .= ' WHERE TXN_timestamp >= %d';
 		$SQL .= ' GROUP BY `txnDate`';
 		$SQL .= ' ORDER BY TXN_timestamp DESC';
@@ -318,7 +318,7 @@ class EEM_Transaction extends EEM_Base {
 		$date_mod = strtotime( '-1 ' . $period );
 
 		$SQL = 'SELECT event_name, SUM(TXN_paid) AS revenue';
-		$SQL .= ' FROM ' . $this->table_name . ' txn';
+		$SQL .= ' FROM ' . $this->_get_main_table()->get_table_name() . ' txn';
 		$SQL .= ' LEFT JOIN ' . $wpdb->prefix . 'esp_registration reg ON reg.TXN_ID = txn.TXN_ID';
 		$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID';
 		$SQL .= ' WHERE REG_date >= %d';
