@@ -488,7 +488,7 @@ function events_data_tables_install() {
 				MTP_template_field varchar(30) NOT NULL,
 				MTP_content text NOT NULL,
 				PRIMARY KEY  (MTP_ID),
-				KEY (GRP_ID)";
+				KEY GRP_ID (GRP_ID)";
 	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
 
 

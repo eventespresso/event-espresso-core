@@ -203,6 +203,9 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 			//k we're setting up a custom event template so let's just copy what's currently in the active global template for this messenger and message_type
 			//first let's get all templates for this messenger
 			$all_templates = $this->_EEM_data->get_all_message_templates_by_messenger($this->_messenger->name);
+			/*global $wpdb;
+			print_r($wpdb->last_query);
+			var_dump($all_templates);/**/
 			foreach ( $all_templates as $template_object ) {
 				$mt = $template_object->message_type();
 				$e_id = $template_object->event();

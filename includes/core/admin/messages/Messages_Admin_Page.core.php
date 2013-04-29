@@ -1819,7 +1819,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$MTP = EEM_Message_Template::instance();
 
 		$success = 1;
-		$MTP_deleted = $trash ? TRUE : FALSE;
 
 		//incoming GRP_IDs
 		if ( $all ) {
@@ -1831,14 +1830,16 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 				//cycle through checkboxes
 				while ( list( $GRP_ID, $value ) = each ($this->_req_data['checkbox']) ) {
-					if ( ! $MTP->trash_mtp_by_id($GRP_ID) ) {
+					$trashed_or_restored = $trash ? $MTP->trash_mtp_by_id( $GRP_ID ) : $MTP->restore_mtp_by_id( $GRP_ID );
+					if ( ! $trashed_or_restored ) {
 						$success = 0;
 					}
 				}
 			} else {
 				//grab single GRP_ID and handle
 				$GRP_ID = absint($this->_req_data['id']);
-				if ( !$MTP->trash_mtp_by_id($GRP_ID ) ) {
+				$trashed_or_restored = $trash ? $MTP->trash_mtp_by_id( $GRP_ID ) : $MTP->restore_mtp_by_id( $GRP_ID );
+				if ( ! $trashed_or_restored ) {
 					$success = 0;
 				}
 			}

@@ -183,12 +183,16 @@ class EEM_Message_Template extends EEM_Soft_Delete_Base {
 	 * This method just takes incoming args and spits out the query_params neede for all message template queries.
 	 * @return array query_params
 	 */
-	protected function _mt_query_params( $query_params = array(),  $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE, $active = TRUE ) {
+	protected function _mt_query_params( $query_params = array(),  $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE,  $active = TRUE ) {
+
+		$active = isset( $query_params['MTP_is_active'] ) ? $query_params['MTP_is_active'] : $active;
+
 		//we have to make sure we're only returning "ACTIVE" templates unless the $active has explicitly been set to false.  If active has been set to 'all' then we DON'T set the active parameter.
 		$query_params = !$active || empty( $active ) ? array_merge( $query_params, array( 'MTP_is_active' => 0 ) ) : array_merge( $query_params, array( 'MTP_is_active' => 1 ) );
 
-		if ( $active == 'all' )
+		if ( $active === 'all' )
 			unset( $query_params['MTP_is_active'] );
+
 
 		//let's check if there are any filters in here
 		$filters = array();
@@ -219,13 +223,13 @@ class EEM_Message_Template extends EEM_Soft_Delete_Base {
 	 * 	@return	mixed	array on success, FALSE on fail
 	 */
 	public function get_all_message_templates_where( $query_params = FALSE, $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE ) {
-		$active = array();
-		
+
 		if (!$query_params) {
 			return FALSE;
 		}
 
-		$query_params = $this->_mt_query_params( $query_params, $orderby, $order, $limit, $count, $active );
+		$query_params = $this->_mt_query_params( $query_params, $orderby, $order, $limit, $count );
+
 
 		$r_templates = $count ? $this->count_deleted_and_undeleted($query_params, 'GRP_ID', TRUE ) : $this->get_all_deleted_and_undeleted( $query_params );
 
@@ -266,7 +270,7 @@ class EEM_Message_Template extends EEM_Soft_Delete_Base {
 	 * @return array all (including trashed or inactive) message tempalte objects for the given messenger
 	 */
 	public function get_all_message_templates_by_messenger($messenger, $orderby = 'GRP_ID', $order = 'ASC' ) {
-		return $this->get_all_message_templates_where(array('MTP_messenger' => $messenger), $orderby, $order );
+		return $this->get_all_message_templates_where(array('MTP_messenger' => $messenger, 'MTP_is_active' => 'all'), $orderby, $order );
 	}
 
 	/**
@@ -435,7 +439,8 @@ class EEM_Message_Template extends EEM_Soft_Delete_Base {
 		if ( ! $GRP_ID || ! is_int( $GRP_ID )) {
 			return FALSE;
 		}
-		if ( $this->delete_permanently_by_ID($GRP_ID) ) {
+		$query_params = array( array('GRP_ID' => $GRP_ID ) );
+		if ( $this->delete_permanently($query_params) ) {
 			return TRUE;
 		}		
 	}/**/
@@ -445,14 +450,16 @@ class EEM_Message_Template extends EEM_Soft_Delete_Base {
 
 	public function trash_mtp_by_id( $GRP_ID ) {
 		$id = (int) $GRP_ID;
-		return $this->delete_by_ID( $id );
+		$query_params = array( array('GRP_ID' => $GRP_ID ) );
+		return $this->delete( $query_params );
 	}
 
 
 
 	public function restore_mtp_by_id( $GRP_ID ) {
 		$id = (int) $GRP_ID;
-		return $this->restore_by_ID( $GRP_ID );
+		$query_params = array( array( 'GRP_ID' => $GRP_ID ) );
+		return $this->restore( $query_params );
 	}
 
 
