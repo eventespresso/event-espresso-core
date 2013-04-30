@@ -13,7 +13,7 @@ class EE_Datetime_Field extends EE_Integer_Field{
 //		check if we've been given a string representing a time.
 		if(!is_numeric($value_inputted_for_field_on_model_object)){
 			//if so, try to convert it to unix timestamp
-			$value=strtotime($value);
+			$value=strtotime($value_inputted_for_field_on_model_object);
 		}
 		return intval($value);
 	}
