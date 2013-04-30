@@ -781,6 +781,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$show_no_event_price_msg = FALSE;		
 		
 		global $all_prices;
+		
 		if ( ! $all_prices = $PRC->get_all_event_prices_for_admin( $this->_event->id )) {
 			$all_prices = array();
 		}

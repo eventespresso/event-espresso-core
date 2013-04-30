@@ -285,7 +285,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 			array(
 				'EVT_ID'=>$EVT_ID
 				),
-			'order_by'=>$this->_order_by_array_for_get_all_method()
+			'order_by'=> array('PRC_order' => 'ASC')
 		));
 		
 		
