@@ -273,7 +273,7 @@ class EEM_Registration extends EEM_Base {
 
 			$SQL .= $count ? "SELECT COUNT(reg.ATT_ID)" : "SELECT att.*, reg.*, dtt.*, reg.STS_ID REG_status, CONCAT(ATT_fname, ' ', ATT_lname) as REG_att_name, evt.id event_id, evt.event_name, evt.require_pre_approval, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.STS_ID AS txn_status, txn.TXN_details, txn.TXN_tax_data, txn.TXN_paid, PRC_amount, PRC_name";
 			$SQL .= ' FROM ' . $wpdb->prefix . 'esp_attendee att';
-			$SQL .= ' JOIN ' . $this->table_name . ' reg ON reg.ATT_ID = att.ATT_ID';
+			$SQL .= ' JOIN ' . $this->_get_main_table()->get_table_name() . ' reg ON reg.ATT_ID = att.ATT_ID';
 			$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID ';
 			$SQL .= ' LEFT JOIN ' . $wpdb->prefix . 'esp_transaction txn ON txn.TXN_ID = reg.TXN_ID';
 			$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_price prc ON prc.PRC_ID = reg.PRC_ID';
@@ -342,7 +342,7 @@ class EEM_Registration extends EEM_Base {
 
 		$SQL .= $count ? "SELECT COUNT(reg.ATT_ID)" : "SELECT att.*, reg.*, dtt.*, reg.STS_ID REG_status, evt.id event_id, evt.event_name, CONCAT(ATT_fname, ' ', ATT_lname) as REG_att_name, evt.require_pre_approval, txn.TXN_ID, TXN_timestamp, TXN_total, txn.STS_ID AS txn_status, TXN_details, TXN_tax_data, txn.TXN_paid, PRC_amount, PRC_name";
 		$SQL .= ' FROM ' . $wpdb->prefix . 'esp_attendee att';
-		$SQL .= ' LEFT JOIN ' . $this->table_name . ' reg ON reg.ATT_ID = att.ATT_ID';
+		$SQL .= ' LEFT JOIN ' . $this->_get_main_table()->get_table_name() . ' reg ON reg.ATT_ID = att.ATT_ID';
 		$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID';
 		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_transaction txn ON txn.TXN_ID = reg.TXN_ID';
 		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_price prc ON prc.PRC_ID = reg.PRC_ID';
@@ -453,7 +453,7 @@ class EEM_Registration extends EEM_Base {
 
 		$SQL = 'SELECT att.*, reg.*, evt.*, txn.*, prc.*, dtt.*, reg.STS_ID REG_status, txn.STS_ID txn_status';
 		$SQL .= ' FROM ' . $wpdb->prefix . 'esp_attendee att';
-		$SQL .= ' RIGHT JOIN ' . $this->table_name . ' reg ON reg.ATT_ID = att.ATT_ID';
+		$SQL .= ' RIGHT JOIN ' . $this->_get_main_table()->get_table_name() . ' reg ON reg.ATT_ID = att.ATT_ID';
 		$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID';
 		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_transaction txn ON txn.TXN_ID = reg.TXN_ID';
 		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_price prc ON prc.PRC_ID = reg.PRC_ID';
@@ -480,7 +480,7 @@ class EEM_Registration extends EEM_Base {
 		$date_mod = strtotime( $period );
 
 		$SQL = "SELECT DATE(FROM_UNIXTIME(reg.REG_date)) AS 'regDate', COUNT(REG_ID) AS total";
-		$SQL .= ' FROM ' . $this->table_name . ' reg';
+		$SQL .= ' FROM ' . $this->_get_main_table()->get_table_name() . ' reg';
 		$SQL .= ' WHERE REG_date >= %d';
 		$SQL .= ' GROUP BY `regDate`';
 		$SQL .= ' ORDER BY REG_date DESC';
@@ -503,7 +503,7 @@ class EEM_Registration extends EEM_Base {
 		$date_mod = strtotime( $period );
 
 		$SQL = "SELECT event_name, reg_limit, COUNT(REG_ID) AS total";
-		$SQL .= ' FROM ' . $this->table_name . ' reg';
+		$SQL .= ' FROM ' . $this->_get_main_table()->get_table_name() . ' reg';
 		$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID';
 		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_datetime dtt ON dtt.DTT_ID = reg.DTT_ID';
 		$SQL .= ' WHERE REG_date >= %d';
@@ -547,7 +547,7 @@ class EEM_Registration extends EEM_Base {
 
 		$SQL = 'SELECT att.*, reg.*';
 		$SQL .= ' FROM ' . $wpdb->prefix . 'esp_attendee att';
-		$SQL .= ' RIGHT JOIN ' . $this->table_name . ' reg ON reg.ATT_ID = att.ATT_ID';
+		$SQL .= ' RIGHT JOIN ' . $this->_get_main_table()->get_table_name() . ' reg ON reg.ATT_ID = att.ATT_ID';
 		$SQL .= ' WHERE reg.TXN_ID = %d';
 		
 		if ( $REG_ID ) {
@@ -592,7 +592,7 @@ class EEM_Registration extends EEM_Base {
 		}
 		return $this->count($query_params);
 
-//		$SQL = 'SELECT COUNT(reg.EVT_ID) FROM ' . $this->table_name . ' reg';
+//		$SQL = 'SELECT COUNT(reg.EVT_ID) FROM ' . $this->_get_main_table()->get_table_name() . ' reg';
 //		$SQL .= $for_incomplete_payments ? ' JOIN ' . $wpdb->prefix . 'esp_transaction txn ON txn.TXN_ID = reg.TXN_ID' : '';
 //		$SQL .= ' WHERE reg.EVT_ID=%d AND ( reg.STS_ID="RAP"';
 //		$SQL .= $org_options['pending_counts_reg_limit'] ? ' OR reg.STS_ID="RPN")' : ')';		
