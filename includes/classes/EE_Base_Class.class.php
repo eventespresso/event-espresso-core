@@ -636,7 +636,7 @@ class EE_Base_Class{
 		//if the primary key field is provided in $fieldValues, assume we're constructing it from DB results
 		//and call prepare_for_set_from_db instead of prepare_for_set on the field object
 		$pk_field_obj = $this->_get_model()->get_primary_key_field();
-		if(array_key_exists($pk_field_obj->get_name(), $fieldValues)){
+		if( array_key_exists($pk_field_obj->get_name(), $fieldValues) && !empty($fieldValues[$pk_field_obj->get_name()]) ){
 			//the primary key is in the constructor's first arg's array, so assume we're constructing from teh DB
 			//(otherwise: why would we already know the primary key's value, unless we fetched it from the DB?)
 			foreach($fieldValues as $field_name => $field_value_from_db){
