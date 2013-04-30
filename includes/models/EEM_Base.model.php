@@ -344,7 +344,7 @@ abstract class EEM_Base extends EE_Base{
 	protected function _setup_ids_for_delete( $objects_for_deletion ) {
 		$primary_table = $this->_get_main_table();
 		$other_tables = $this->_get_other_tables();
-		$deletes = array();
+		$deletes = $query = array();
 		
 		foreach ( $objects_for_deletion as $deobj ) {
 			//primary table deletes
@@ -377,7 +377,7 @@ abstract class EEM_Base extends EE_Base{
 			$query[] = $column . ' IN(' . implode(",",$values) . ')';
 		}
 
-		return implode(' AND ', $query );
+		return !empty($query) ? implode(' AND ', $query ) : '';
 	}
 	
 	/**
@@ -1318,7 +1318,7 @@ abstract class EEM_Base extends EE_Base{
 		$class=new ReflectionClass($className);
 		//call the constructor of the EE_Base_Class, passing it an array of all the fields, except
 		//the ID, because we set that later
-		$classInstance=$class->newInstanceArgs(array($this_model_fields_n_values), TRUE );
+		$classInstance=$class->newInstanceArgs(array($this_model_fields_n_values, TRUE) );
 		return $classInstance;
 	}
 	/**
