@@ -1318,7 +1318,7 @@ abstract class EEM_Base extends EE_Base{
 		$class=new ReflectionClass($className);
 		//call the constructor of the EE_Base_Class, passing it an array of all the fields, except
 		//the ID, because we set that later
-		$classInstance=$class->newInstanceArgs(array($this_model_fields_n_values));
+		$classInstance=$class->newInstanceArgs(array($this_model_fields_n_values), TRUE );
 		return $classInstance;
 	}
 	/**
