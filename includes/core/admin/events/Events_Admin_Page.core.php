@@ -2082,10 +2082,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Datetime.class.php');
 			$DTM = EEM_Datetime::instance();
-
 			// grab list of all datetime ID's we are processing
 			if (isset($this->_req_data['datetime_IDs'])) {
-				$datetime_IDs = unserialize( $this->_req_data['datetime_IDs'] );
+				$datetime_IDs = unserialize( stripslashes( $this->_req_data['datetime_IDs'] ) );
 				array_walk( $datetime_IDs, 'absint');
 				$datetime_IDs = array_flip($datetime_IDs);
 			} else {

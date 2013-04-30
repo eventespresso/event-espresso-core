@@ -94,7 +94,7 @@
 
 
 <?php echo $use_event_timezones_template; ?>
-
-<input  type="hidden" name="datetime_IDs" value="<?php echo serialize( $datetime_IDs ); ?>"/>
+<?php $datetimeids = serialize( $datetime_IDs ); ?>
+<input  type="hidden" name="datetime_IDs" value='<?php echo $datetimeids; ?>' />
 <input  type="hidden" id="process_datetimes" name="process_datetimes" value="1"/>
 <input type="hidden" name="datetime_total_rows" value="<?php echo $row; ?>" />
