@@ -2147,6 +2147,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 //echo '<h4>reg_start_date_and_time : ' . $new_event_date->reg_start_date_and_time() . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 //echo '<h4>reg_end_date_and_time : ' . $new_event_date->reg_end_date_and_time() . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 					$new_event_date->save();
+					//make sure we unset the saved dtm_id from the $datetime_IDs so it doesn't get deleted!
+					unset( $datetime_IDs[$dtm['ID']] );
 				}
 			}
 
