@@ -981,8 +981,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 		if ( empty( $all_prices[1] ) && empty( $all_prices[2] )) {
 			$show_no_event_price_msg = TRUE;
 		}
-		//printr( $all_prices, '$all_prices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
+//		printr( $all_prices, '$all_prices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $PRT->type, '$PRT->type  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		foreach ($PRT->type as $type) {
 			$all_price_types[] = array( 'id' => $type->ID(), 'text' => $type->name(), 'order' => $type->order() );
 			if ( $type->is_global() ) {
@@ -991,7 +991,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				$price_types[] = array( 'id' => $type->ID(), 'text' => $type->name(), 'order' => $type->order() );
 			}						
 		}
-		//echo printr( $global_price_types, '$global_price_types' );
+//		echo printr( $global_price_types, '$global_price_types' );
 		
 		$table_class = apply_filters('filter_hook_espresso_pricing_table_class_filter', 'event_editor_pricing');
 		?>
@@ -1040,7 +1040,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		if ( ! empty( $all_prices )) :
 		foreach ( $all_prices as $price_type => $prices ) :
 			foreach ( $prices as $price ) :
-				if ( ! $price->deleted() ) :
+				if ( ! $price->deleted() && isset( $PRT->type[$price->type()] )) :
 					//printr( $price, '$price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 					$disabled = ! $price->is_active() ? ' disabled="disabled"' : ''; 
 					$disabled_class = ! $price->is_active() ? ' input-disabled' : ''; 
