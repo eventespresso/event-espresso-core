@@ -693,6 +693,8 @@ function espresso_get_fields_on_table($table_name = null) {
 
 function espresso_load_scripts_styles() {
 	wp_register_script('ee_error_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/EE_Error.js', array('jquery'), EVENT_ESPRESSO_VERSION, false);
+	
+	wp_localize_script('ee_error_js','ee_settings',array('wp_debug'=>WP_DEBUG));
 	wp_enqueue_script('ee_error_js');
 }
 

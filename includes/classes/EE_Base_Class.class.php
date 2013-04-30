@@ -884,7 +884,7 @@ class EE_Base_Class{
 	 * @param string $fieldName
 	 * @return string
 	 */
-	private function _get_private_attribute_name($fieldName){
+	protected function _get_private_attribute_name($fieldName){
 		return "_".$fieldName;
 	}
 	/**

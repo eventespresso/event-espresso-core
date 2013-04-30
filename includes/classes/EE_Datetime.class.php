@@ -219,83 +219,6 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
-
-
-
-	
-
-
-
-
-		/**
-	*		Set event date
-	* 
-	*		set the date for an event - use time() if no date is provided
-	* 
-	* 		@access		private		
-	*		@param		string		$date 					a string representation of the event's date ex:  Dec. 25, 2025 or 12-25-2025
-	*		@param		string		$start				 	whether to set start or end dates
-	*/	
-	private function _set_date( $date = FALSE, $start_or_end = 'start', $EVT_or_REG = 'EVT' ) {
-	
-		// if no date is set then use today
-		if ( ! $date ){
-			$event_date = date_i18n( $this->_dt_frmt, time());
-		} else {
-			$event_date = date_i18n( $this->_dt_frmt, strtotime($date) );
-		}
-
-		// get existing time
-		$function_name = "_{$EVT_or_REG}_{$start_or_end}_time";
-		if ( ! $event_time = $this->$function_name() ) {
-			// or if no time is set, use 1 second after midnight for start times,
-			// or 1 second before midnight for end times
-			$event_time = $start_or_end == 'start' ? '00:00:01' : '23:59:59';
-		}
-
-		$var_name = "_DTT_{$EVT_or_REG}_{$start_or_end}";
-		$this->{$var_name} = strtotime( $event_date . ' ' . $event_time );
-				
-	}
-
-
-
-
-
-	/**
-	*		Set event time
-	* 
-	*		set the time for an event
-	* 
-	* 		@access		private		
-	*		@param		string		$time 					a string representation of the event time ex:  9am  or  7:30 PM
-	*		@param		string		$start				 	whether to set start or end times
-	*/	
-	private function _set_time( $time = FALSE, $start_or_end = 'start', $EVT_or_REG = 'EVT' ) {
-	
-		// if no time is set, then use RIGHT NOW!!!!
-		if ( ! $time ){
-			$event_time = date_i18n( $this->_tm_frmt, time());
-		} else {
-			$event_time = date_i18n( $this->_tm_frmt, strtotime($time) );
-		}
-
-		$function_name = "_{$EVT_or_REG}_{$start_or_end}_date";
-		if ( ! $event_date = $this->$function_name() ) {
-			// or if no date is set, then use RIGHT NOW!!!!
-			$event_date = date_i18n( $this->_dt_frmt, time());
-		}
-			
-		$var_name = "_DTT_{$EVT_or_REG}_{$start_or_end}";
-		$this->$var_name = strtotime( $event_date . ' ' . $event_time );
-
-					
-	}
-
-
-
-
-
 	/**
 	*		Set event start date
 	* 
@@ -305,7 +228,7 @@ class EE_Datetime extends EE_Base_Class{
 	*		@param		string		$date 		a string representation of the event's date ex:  Dec. 25, 2025 or 12-25-2025
 	*/	
 	public function set_start_date( $date ) {
-		$this->_set_date( $date, 'start', 'EVT' );
+		$this->_set_date_for($date, 'DTT_EVT_start');
 	}
 
 
@@ -321,7 +244,7 @@ class EE_Datetime extends EE_Base_Class{
 	*		@param		string		$time 		a string representation of the event time ex:  9am  or  7:30 PM
 	*/	
 	public function set_start_time( $time ) {
-		$this->_set_time( $time, 'start', 'EVT' );
+		$this->_set_time_for($time,'DTT_EVT_start');
 	}
 
 
@@ -336,7 +259,7 @@ class EE_Datetime extends EE_Base_Class{
 	*		@param		string		$date 		a string representation of the event's date ex:  Dec. 25, 2025 or 12-25-2025
 	*/	
 	public function set_end_date( $date ) {
-		$this->_set_date( $date, 'end', 'EVT' );
+		$this->_set_date_for($date,'DTT_EVT_end');
 	}
 
 
@@ -352,9 +275,32 @@ class EE_Datetime extends EE_Base_Class{
 	*		@param		string		$time 		a string representation of the event time ex:  9am  or  7:30 PM
 	*/	
 	public function set_end_time( $time ) {
-		$this->_set_time( $time, 'end', 'EVT' );
+		$this->_set_time_for($time,'DTT_EVT_end');
 	}
-
+	
+	/**
+	 * Privately used to set the time on the specified field. IE, doesnt change the date part thats already set 
+	 * @param string $time representation of the time, eg 9am
+	 * @param string $field_name like DTT_EVT_end
+	 */
+	private function _set_time_for($time,$field_name){
+		$field = $this->_get_model()->field_settings_for($field_name);
+		$attribute_field_name = $this->_get_private_attribute_name($field_name);
+		$this->$attribute_field_name = $field->prepare_for_set_with_new_time($time, $this->$attribute_field_name);
+	}
+	
+	
+	
+	/**
+	 *  Privately used to set the date on the specified field. IE, doesn't change the time part thats already set
+	 * @param string $date repsentation of the date, eg 2013-03-12
+	 * @param string $field_name like DTT_REG_start
+	 */
+	private function _set_date_for($date,$field_name){
+		$field = $this->_get_model()->field_settings_for($field_name);
+		$attribute_field_name = $this->_get_private_attribute_name($field_name);
+		$this->$attribute_field_name = $field->prepare_for_set_with_new_date($date, $this->$attribute_field_name);
+	}
 
 
 
@@ -368,7 +314,7 @@ class EE_Datetime extends EE_Base_Class{
 	*		@param		string		$date 		a string representation of the event's date ex:  Dec. 25, 2025 or 12-25-2025
 	*/	
 	public function set_reg_start_date( $date ) {
-		$this->_set_date( $date, 'start', 'REG' );
+		$this->_set_date_for( $date, 'DTT_REG_start' );
 	}
 
 
@@ -384,7 +330,7 @@ class EE_Datetime extends EE_Base_Class{
 	*		@param		string		$time 		a string representation of the event time ex:  9am  or  7:30 PM
 	*/	
 	public function set_reg_start_time( $time ) {
-		$this->_set_time( $time, 'start', 'REG' );
+		$this->_set_time_for( $time, 'DTT_REG_start' );
 	}
 
 
@@ -399,7 +345,7 @@ class EE_Datetime extends EE_Base_Class{
 	*		@param		string		$date 		a string representation of the event's date ex:  Dec. 25, 2025 or 12-25-2025
 	*/	
 	public function set_reg_end_date( $date ) {
-		$this->_set_date( $date, 'end', 'REG' );
+		$this->_set_date_for( $date, 'DTT_REG_end' );
 	}
 
 
@@ -415,7 +361,7 @@ class EE_Datetime extends EE_Base_Class{
 	*		@param		string		$time 		a string representation of the event time ex:  9am  or  7:30 PM
 	*/	
 	public function set_reg_end_time( $time ) {
-		$this->_set_time( $time, 'end', 'REG' );
+		$this->_set_time_for( $time, 'DTT_REG_end' );
 	}
 
 
