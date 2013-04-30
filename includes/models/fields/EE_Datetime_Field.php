@@ -38,9 +38,9 @@ class EE_Datetime_Field extends EE_Integer_Field{
 			$time_formated = date_i18n( $this->_time_format, strtotime($time_to_set_string) );
 		}
 		if (isset($current_datetime_value)){
-			$date_formatted = date_i18n($this->_time_format, $current_datetime_value);
+			$date_formatted = date_i18n($this->_date_format, $current_datetime_value);
 		}else{
-			$date_formatted = date_i18n( $this->_time_format, time());
+			$date_formatted = date_i18n( $this->_date_format, time());
 		}
 		return $this->prepare_for_set($date_formatted." ".$time_formated);
 	}

@@ -115,7 +115,7 @@ class EEM_Datetime extends EEM_Base {
 	*		create new blank datetime
 	*
 	* 		@access		public
-	*		@return 		mixed		array on success, FALSE on fail
+	*		@return 		EE_Datetime[]		array on success, FALSE on fail
 	*/
 	public function create_new_blank_datetime() {
 		$times = array( 
