@@ -102,10 +102,15 @@ function espresso_plugin_activation() {
 		</p>');
 
 	} else {
-		// define tables and pathing
-		espresso_define_tables_and_paths();
+		
+		if ( file_exists( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' )) {
+			require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' );
+			espresso_caffeinated_activation();
+		}
+
 		espresso_get_user_id();
 		//include autoloaders
+		require_once(  EVENT_ESPRESSO_INCLUDES_DIR . 'functions/plugins_loaded.php');
 		espresso_autoload();
 		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/activation.php');
 		espresso_check_data_tables();
