@@ -428,14 +428,14 @@ function espresso_init() {
 
 	//Set the default time zone
 	//If the default time zone is set up in the WP Settings, then we will use that as the default.
-	if (get_option('timezone_string') != '') {
+	/*if (get_option('timezone_string') != '') {
 		date_default_timezone_set(get_option('timezone_string'));
-	}
+	}/**/
 
 	//Wordpress function for setting the locale.
 	//print get_locale();
 	//setlocale(LC_ALL, get_locale());
-	setlocale(LC_TIME, get_locale());
+	//setlocale(LC_TIME, get_locale());
 
 	//Get language files
 	load_plugin_textdomain('event_espresso', false, dirname(plugin_basename(__FILE__)) . '/languages/');
