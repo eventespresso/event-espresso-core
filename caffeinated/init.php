@@ -22,7 +22,7 @@ if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "custom_shortcodes.php")){
 }
 
 function espresso_caffeinated_activation() {
-	if (  ! EE_DECAF && file_exists( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/admin/activation.php' )) {
+	if (  ! defined('EE_DECAF') && file_exists( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/admin/activation.php' )) {
 		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/admin/activation.php' );
 	}
 }
