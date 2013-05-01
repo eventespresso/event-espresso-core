@@ -35,6 +35,8 @@ function espresso_version() {
 
 
 define("EVENT_ESPRESSO_VERSION", espresso_version());
+define('EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION);
+
 
 //Returns the template version
 function espresso_template_version() {
@@ -49,10 +51,75 @@ function espresso_main_file() {
 	return $main_file;
 }
 
-global $eei18n_js_strings;
+global $wpdb, $eei18n_js_strings;
 $eei18n_js_strings = array();
 
+global $wpdb;
 
+if ( ! defined( 'DS' )) {
+	define( 'DS', DIRECTORY_SEPARATOR );
+}
+if ( ! defined( 'PS' )) {
+	define( 'PS', PATH_SEPARATOR );
+}
+
+// Define all plugin database tables
+define("EVENTS_ANSWER_TABLE", $wpdb->prefix . "events_answer");
+define("EVENTS_ATTENDEE_TABLE", $wpdb->prefix . "events_attendee");
+define("EVENTS_ATTENDEE_COST_TABLE", $wpdb->prefix . "events_attendee_cost");
+define("EVENTS_CATEGORY_TABLE", $wpdb->prefix . "events_category_detail");
+define("EVENTS_CATEGORY_REL_TABLE", $wpdb->prefix . "events_category_rel");
+define("EVENTS_DETAIL_TABLE", $wpdb->prefix . "events_detail");
+define("EVENTS_DISCOUNT_CODES_TABLE", $wpdb->prefix . "events_discount_codes");
+define("EVENTS_DISCOUNT_REL_TABLE", $wpdb->prefix . "events_discount_rel");
+define("EVENTS_EMAIL_TABLE", $wpdb->prefix . "events_email");
+define("EVENTS_LOCALE_TABLE", $wpdb->prefix . "events_locale");
+define("EVENTS_LOCALE_REL_TABLE", $wpdb->prefix . "events_locale_rel");
+define("EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE", $wpdb->prefix . "events_multi_event_registration_id_group");
+define("EVENTS_PERSONNEL_TABLE", $wpdb->prefix . "events_personnel");
+define("EVENTS_PERSONNEL_REL_TABLE", $wpdb->prefix . "events_personnel_rel");
+define("ESP_PRICE_TABLE", $wpdb->prefix . "esp_price");
+define("ESP_PRICE_TYPE", $wpdb->prefix . "esp_price_type");
+define("ESP_COUNTRY", $wpdb->prefix . "esp_country");
+define("ESP_DATETIME", $wpdb->prefix . "esp_datetime");
+define("ESP_STATUS_TABLE", $wpdb->prefix . "esp_status");
+define("EVENTS_QST_GROUP_TABLE", $wpdb->prefix . "events_qst_group");
+define("EVENTS_QST_GROUP_REL_TABLE", $wpdb->prefix . "events_qst_group_rel");
+define("EVENTS_QUESTION_TABLE", $wpdb->prefix . "events_question");
+define("EVENTS_START_END_TABLE", $wpdb->prefix . "events_start_end");
+define("ESP_STATE", $wpdb->prefix . "esp_state");
+define("EVENTS_VENUE_TABLE", $wpdb->prefix . "events_venue");
+define("EVENTS_VENUE_REL_TABLE", $wpdb->prefix . "events_venue_rel");
+// End table definitions
+
+
+//Define the plugin directory and path
+define("EVENT_ESPRESSO_PLUGINPATH", DS . plugin_basename(__FILE__) . DS);
+define("EVENT_ESPRESSO_PLUGINFULLPATH", plugin_dir_path(__FILE__));
+define("EVENT_ESPRESSO_PLUGINFULLURL", plugin_dir_url(__FILE__));
+
+//Define the includes directory
+define("EVENT_ESPRESSO_INCLUDES_DIR", EVENT_ESPRESSO_PLUGINFULLPATH . 'includes' . DS );
+define("EVENT_ESPRESSO_TEMPLATES", EVENT_ESPRESSO_PLUGINFULLPATH . 'templates' . DS );
+define( 'EE_CORE', EVENT_ESPRESSO_INCLUDES_DIR . 'core' . DS );
+define( 'EE_HELPERS', EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers' . DS );
+
+
+//Define directory structure for uploads
+//Create the paths
+$uploads = wp_upload_dir();
+
+//Define the uploads directory and url
+define("EVENT_ESPRESSO_UPLOAD_DIR", $uploads['basedir'] . DS . 'espresso' . DS);
+define("EVENT_ESPRESSO_UPLOAD_URL", $uploads['baseurl'] . '/espresso/' );
+
+//Define the templates dirrectory and url
+define("EVENT_ESPRESSO_TEMPLATE_DIR", $uploads['basedir'] . DS . 'espresso' . DS . 'templates' . DS);
+define("EVENT_ESPRESSO_TEMPLATE_URL", $uploads['baseurl'] . '/espresso/templates/' );
+
+//Define the gateway directory and url
+define("EVENT_ESPRESSO_GATEWAY_DIR", $uploads['basedir'] . DS . 'espresso' . DS . 'gateways' . DS);
+define("EVENT_ESPRESSO_GATEWAY_URL", $uploads['baseurl'] .'/espresso/gateways/' );
 
 /**
  * The following are the WordPress actions for a typical request
@@ -72,7 +139,6 @@ require_once(dirname(__FILE__) . '/includes/functions/wp_hooks.php');
 //espresso_autoload();
 
 
-add_action('plugins_loaded', 'espresso_define_tables_and_paths', 1);
 add_action('plugins_loaded', 'espresso_autoload', 2);
 add_action('plugins_loaded', 'espresso_get_user_id', 3);
 add_action('plugins_loaded', 'espresso_load_org_options', 4);
