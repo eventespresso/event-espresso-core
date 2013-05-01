@@ -152,7 +152,8 @@ class EEM_Datetime extends EEM_Base {
 		if ( ! $EVT_ID ) { // on add_new_event event_id gets set to 0
 			return $this->create_new_blank_datetime();
 		}
-		return $this->get_datetimes_for_event_ordered_by_importance($EVT_ID);
+		$results =  $this->get_datetimes_for_event_ordered_by_importance($EVT_ID);
+		return $results;
 	}
 
 	/**

@@ -4,7 +4,7 @@
  * Base class for all EE_*_Field classes. These classes are for providing information and functions specific to each
  * field. They define the field's data type for insertion into the db (eg, if the value should be treated as an int, float, or string),
  * what values for the field are acceptable (eg, if setting EVT_ID to a float is acceptable), and generally any functionality within 
- * EEMerimental_Base or EE_Base_Class which depend on the field's type. (ie, you shouldn't need any logic within your model
+ * EEM_Base or EE_Base_Class which depend on the field's type. (ie, you shouldn't need any logic within your model
  * or model object which are dependent on the field's type, ideally). For example, EE_Serialized_Text_Field, specifies that any fields of this type
  * should be serialized before insertion into the db (prepare_for_insertion_into_db()), 
  * should be considered a string when inserting, updating, or using in a where clause for any queries (get_wpdb_data_type()),
@@ -43,6 +43,11 @@ abstract class EE_Model_Field_Base{
 	function get_nullable(){
 		return $this->_nullable;
 	}
+	/**
+	 * The default value in the model object's value domain. See lengthy comment about
+	 * value domains at teh top of EEM_Base
+	 * @return mixed
+	 */
 	function get_default_value(){
 		return $this->_default_value;
 	}
@@ -67,7 +72,7 @@ abstract class EE_Model_Field_Base{
 	 * @param mixed $value_of_field_on_model_object
 	 * @return mixed
 	 */
-	function prepare_for_insertion_into_db($value_of_field_on_model_object){
+	function prepare_for_use_in_db($value_of_field_on_model_object){
 		return $value_of_field_on_model_object;
 	}
 	

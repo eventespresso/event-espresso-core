@@ -17,7 +17,7 @@ class EE_Serialized_Text_Field extends EE_Text_Field_Base{
 	 * @param array $value_of_field_on_model_object
 	 * @return string
 	 */
-	function prepare_for_insertion_into_db($value_of_field_on_model_object) {
+	function prepare_for_use_in_db($value_of_field_on_model_object) {
 		return maybe_serialize($value_of_field_on_model_object);
 	}
 	/**

@@ -15,11 +15,6 @@ class EE_Model_Query_Info_Carrier extends EE_Base{
 	*/
    private $_join_sql;
    /**
-	*
-	* @var array an array of data types like returned from EEMerimental_Base::_get_data_types() 
-	*/
-   private  $_data_types;
-   /**
     *
     * @var array numerically-indexed array stating all the models that have been included thus far,so we don't get duplicates
     */
@@ -76,10 +71,9 @@ class EE_Model_Query_Info_Carrier extends EE_Base{
     * @param type $join_sql
     * @param type $data_types
     */
-   public function __construct($model_included_name= array(), $join_sql = '', $data_types =array()){
+   public function __construct($model_included_name= array(), $join_sql = ''){
 	   $this->_models_included = $model_included_name;
 	   $this->_join_sql = $join_sql;
-	   $this->_data_types = $data_types;
    }
    
    /**
@@ -91,7 +85,6 @@ class EE_Model_Query_Info_Carrier extends EE_Base{
 		   $model_included_on_other_join_sql_and_data_types_carrier =  $other_join_sql_and_data_types_carrier->get_model_names_included();
 		   $this->_models_included = array_merge( $this->_models_included, $model_included_on_other_join_sql_and_data_types_carrier );
 			$this->_join_sql .= $other_join_sql_and_data_types_carrier->_join_sql;
-			$this->_data_types = $this->_data_types + $other_join_sql_and_data_types_carrier->get_data_types();
 	   }
 	   //otherwise don't merge our data.
 	   //yes, this means that we must immediately merge any model data into our grand list
@@ -113,9 +106,6 @@ class EE_Model_Query_Info_Carrier extends EE_Base{
    }
    public function get_model_names_included(){
 	   return $this->_models_included;
-   }
-   public function get_data_types(){
-	   return $this->_data_types;
    }
    /**
     * sets the $where_sql for later use from client code

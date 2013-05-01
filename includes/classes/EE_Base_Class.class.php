@@ -858,7 +858,7 @@ class EE_Base_Class{
 		$save_cols_n_values = array();
 		foreach($this->_get_model()->field_settings() as $fieldName=>$field_obj){
 			$attributeName=$this->_get_private_attribute_name($fieldName);
-			$save_cols_n_values[$fieldName] = $field_obj->prepare_for_insertion_into_db($this->$attributeName);
+			$save_cols_n_values[$fieldName] = $this->$attributeName;
 	
 		}
 		//if the object already has an ID, update it. Otherwise, insert it
