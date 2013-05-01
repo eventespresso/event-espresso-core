@@ -13,16 +13,19 @@ class EE_Datetime_Field extends EE_Integer_Field{
 		$this->_time_format = $time_format;
 	}
 	
-	function prepare_for_set($value_inputted_for_field_on_model_object) {
-//		check if we've been given a string representing a time.
-		if(!is_numeric($value_inputted_for_field_on_model_object)){
-		//if so, try to convert it to unix timestamp
-			$value=strtotime($value_inputted_for_field_on_model_object);
-		}else{
-			$value = $value_inputted_for_field_on_model_object;
-		}
-		return intval($value);
+
+	/**
+	 * this prepares any incoming date data and make sure its converted to a utc unix timestamp
+	 * @param  string|int $value_inputted_for_field_on_model_object could be a string formatted date time or int unixtimestamp
+	 * @param  string $timezone                                 optionally include a valid timezone string. If this isn't included then we will default to the website's set timezone_string option.  If that isn't set then we'll default to the server's default time.
+	 * @return int                                           unix timestamp (utc)
+	 */
+	function prepare_for_set($value_inputted_for_field_on_model_object, $timezone = NULL) {
+		return $this->_convert_to_utc_unixtimestamp( $value_inputted_for_field_on_model_object, $timezone );
 	}
+
+
+
 	
 	/**
 	 * Only sets the time portion of the datetime. 
@@ -30,19 +33,13 @@ class EE_Datetime_Field extends EE_Integer_Field{
 	 * @param int $current_datetime_value current value of the datetime field (timestamp)
 	 * @return int updated timestamp
 	 */
-	function prepare_for_set_with_new_time($time_to_set_string, $current_datetime_value){
-		//get time formatted in our usual manner
-		if ( ! $time_to_set_string ){
-			$time_formated = date_i18n( $this->_time_format, time());
-		} else {
-			$time_formated = date_i18n( $this->_time_format, strtotime($time_to_set_string) );
-		}
-		if (isset($current_datetime_value)){
-			$date_formatted = date_i18n($this->_date_format, $current_datetime_value);
-		}else{
-			$date_formatted = date_i18n( $this->_date_format, time());
-		}
-		return $this->prepare_for_set($date_formatted." ".$time_formated);
+	function prepare_for_set_with_new_time($time_to_set_string, $current_datetime_value, $timezone = 'UTC' ){
+		$_to_set = array(
+			'time' => $time_to_set_string,
+			'date' => $current_date_time_value
+			);
+
+		return $this->_prepare_for_set_new( $_to_set, $timezone );
 	}
 	
 	/**
@@ -51,18 +48,65 @@ class EE_Datetime_Field extends EE_Integer_Field{
 	 * @param int $current_datetime_value current value of the datetime field (timestamp)
 	 * @return int updated timestamp
 	 */
-	function prepare_for_set_with_new_date($date_to_set_string, $current_datetime_value){
-		//get time formatted in our usual manner
-		if ( ! $date_to_set_string ){
-			$date_formmated = date_i18n( $this->_date_format, time());
-		} else {
-			$date_formmated = date_i18n( $this->_date_format, strtotime($date_to_set_string) );
+	function prepare_for_set_with_new_date($date_to_set_string, $current_datetime_value, $timezone = 'UTC' ){
+		$_to_set = array(
+			'time' => $current_datetime_value,
+			'date' => $date_to_set_string
+			);
+		return $this->_prepare_for_set_new( $_to_set, $timezone );
+	}
+
+
+	private function _prepare_for_set_new( $datetimearray, $timezone ) {
+		foreach ( $datetimearray as $type => $value ) {
+			$format = '_' . $type . '_format';
+			$datetimearray[$type] = empty( $value ) ? date( $this->{$format} ) : date( $this->{$format}, $value );
 		}
-		if (isset($current_datetime_value)){
-			$time_formmated = date_i18n($this->_time_format, $current_datetime_value);
-		}else{
-			$time_formmated = date_i18n( $this->_time_format, time());
-		}
-		return $this->prepare_for_set($date_formmated." ".$time_formmated);
+		return $this->prepare_for_set( $datetimearray['date']. " ".$datetimearray['time'], $timezone );
+	}
+
+
+	/**
+	 * This simply takes an incoming timestamp and timezone and spits out the unix timestamp for the given timezone.  If timezone IS not included then we attempt to set the time via the websites set timezone (get_option('timezone_string']) ) If THAT isn't set then we just use the default timezone set fro the blog as the assumed base time.	
+	 * @param  string|int $datetime This can be either an integer timestamp (in which case this method will convert from int to string first to make sure we get the right timezone setup )
+	 * @param  string $timezone any accepted formatted timezones as per http://www.php.net/manual/en/timezones.php
+	 * @return string 		unix timestampe for utc
+	 */
+	private function _convert_to_utc_unixtimestamp( $datetime, $timezone = NULL ) {
+
+		//if timezone is still empty after this then whatever the current set php timezone is (date_default_timezone_set) is what is assumed as the timezone.
+		$tz = !empty( $timezone ) ? $timezone : get_option( 'timezone_string' );
+
+		$timestamp = is_numeric( $datetime ) ? $this->_convert_from_numeric_value_to_utc_unixtimestamp( $datetime, $tz ) : $this->_convert_from_string_value_to_utc_unixtimestamp( $datetime, $timezone );
+		return $timestamp;
+	}
+
+
+	private function _convert_from_numeric_value_to_utc_unixtimestamp( $datetime, $timezone ) {
+		$datetime = (int) $datetime;
+		date_default_timezone_set( $timezone );
+		$datetime = date( 'Y-m-d H:i:s', $datetime );
+		//if we don't have a datetime at this point then something has gone wrong 
+		if ( !$datetime )
+			throw new EE_Error( __('Something went wrong with setting the date/time.  Likely, either there is an invalid timezone string or invalid timestamp being used.', 'event_espresso' ) );
+
+		//return to defautl for PHP
+		date_default_timezone_set('UTC');
+
+		//now that we have the string we can send this over to our string value conversion
+		return $this->_convert_from_string_value_to_utc_unixtimestamp( $datetime, $timezone );
+	}
+
+
+	private function _convert_from_string_value_to_utc_unixtimestamp( $datetime, $timezone ) {
+		//create a new datetime object using the given string and timezone
+		$date = new DateTime( $datetime, new DateTimeZone( $timezone ) );
+
+		if ( !$date )
+			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
+
+		$date->setTimezone( new DateTimeZone('UTC') );
+		return $date->format('U');
+
 	}
 }
