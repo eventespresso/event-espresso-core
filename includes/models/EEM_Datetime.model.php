@@ -122,10 +122,10 @@ class EEM_Datetime extends EEM_Base {
 				new EE_Datetime( 
 						0, 
 						true, 
-						time() + (60 * 60 * 24 * 30), 
-						time() + (60 * 60 * 24 * 30), 
-						time(), 
-						time() + (60 * 60 * 24 * 30) 
+						current_time('timestamp') + (60 * 60 * 24 * 30), 
+						current_time('timestamp') + (60 * 60 * 24 * 30), 
+						current_time('timestamp'), 
+						current_time('timestamp') + (60 * 60 * 24 * 30) 
 						/*NULL,
 						NULL*/
 				)
