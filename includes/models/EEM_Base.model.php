@@ -189,7 +189,7 @@ abstract class EEM_Base extends EE_Base{
 	 * 
 	 *				
 	 */
-	function get_all($query_params = array(), $values_already_prepared_by_model_object = false){
+	function get_all($query_params = array(), $values_already_prepared_by_model_object = false){	
 		return $this->_create_objects($this->_get_all_wpdb_results($query_params, ARRAY_A, NULL, $values_already_prepared_by_model_object));
 	}
 	
