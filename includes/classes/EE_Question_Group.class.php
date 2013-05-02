@@ -108,6 +108,14 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 * @var EE_Event
 	 */
 	protected $_Event;
+	
+	/**
+	 * Join model object between events and question groups. Mostly just useful for finding
+	 * which question gruops apply to primary attendees
+	 * @access protected
+	 * @var EE_Event_Question_Group
+	 */
+	protected $_Event_Question_Group;
 	/**
 	 * 
 	 * @param string/array $QSG_name name of question group  OR an array of all field values, where keys match these arguments' names

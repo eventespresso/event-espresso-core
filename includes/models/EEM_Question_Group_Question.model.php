@@ -38,7 +38,7 @@ class EEM_Question_Group_Question extends EEM_Base {
 			'Question_Group_Question'=>array(
 				'QGQ_ID'=>new EE_Primary_Key_Int_Field('QGQ_ID', __('Question Gruop to Question Link ID','event_espresso'), false, 0),
 				'QSG_ID'=>new EE_Foreign_Key_Int_Field('QSG_ID', __('Question Gruop ID','event_espresso'), false, 0, 'Question_Group'),
-				'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', __('QUestion Id','event_espresso'), falsee, 0, 'Question')
+				'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', __('Question Id','event_espresso'), false, 0, 'Question')
 			)
 		);
 		parent::__construct();
