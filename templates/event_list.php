@@ -263,7 +263,7 @@ function event_espresso_get_event_details( $attributes = array()) {
 		$status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' - <span class="espresso_closed">' . __('Regsitration is Closed', 'event_espresso') . '</span>' : $status['status'];
 		$status['status'] = str_replace('_', ' ', $status['status']);
 
-
+		
 		// EVENT TIMES
 		if ( $event->datetimes = $edts = $DTM_MDL->get_all_event_dates($event->id) ) {
 			//echo printr($event->datetimes, 'EVENT TIMES for '. $event_name.'  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );	
@@ -271,7 +271,7 @@ function event_espresso_get_event_details( $attributes = array()) {
 		} else {
 			$display_event_date = FALSE;
 		}
-
+//echo "DISPLAY EVENT DATES";DIE;
 		$event->event_cost = empty($event->event_cost) ? '' : $event->event_cost;
 
 		// EVENT PRICING
