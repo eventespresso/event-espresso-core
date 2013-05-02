@@ -63,6 +63,18 @@ if ( ! defined( 'PS' )) {
 	define( 'PS', PATH_SEPARATOR );
 }
 
+// add ESPRESSO directories to include_path
+set_include_path(
+	dirname( espresso_main_file() ) . DS . 'includes' . DS . 'core' . DS . PS .
+	dirname( espresso_main_file() ) . DS . 'includes' . DS . 'models' . DS . PS .
+	dirname( espresso_main_file() ) . DS . 'includes' . DS . 'classes' . DS . PS .
+	dirname( espresso_main_file() ) . DS . 'includes' . DS . 'functions' . DS . PS .
+	dirname( espresso_main_file() ) . DS . 'gateways' . DS . PS .
+	dirname( espresso_main_file() ) . DS . 'helpers' . DS . PS .
+	get_include_path()
+);
+
+
 // Define all plugin database tables
 define("EVENTS_ANSWER_TABLE", $wpdb->prefix . "events_answer");
 define("EVENTS_ATTENDEE_TABLE", $wpdb->prefix . "events_attendee");
