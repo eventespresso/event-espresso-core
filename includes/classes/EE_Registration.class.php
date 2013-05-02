@@ -342,9 +342,7 @@ class EE_Registration extends EE_Base_Class {
 	*		@param		int		$EVT_ID 		Event ID
 	*/	
 	public function set_event( $EVT_ID = FALSE ) {		
-		if ( ! $this->_check_for( $EVT_ID, 'Event ID' )) { return FALSE; }
-		$this->_EVT_ID = absint( $EVT_ID );
-		return TRUE;
+		$this->set('EVT_ID',$EVT_ID);
 	}
 
 
@@ -355,10 +353,8 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public		
 	*		@param		int		$ATT_ID 		Attendee ID
 	*/	
-	public function set_attendee( $ATT_ID = FALSE ) {		
-		if ( ! $this->_check_for( $ATT_ID, 'Attendee ID' )) { return FALSE; }
-		$this->_ATT_ID = absint( $ATT_ID );
-		return TRUE;
+	public function set_attendee_id( $ATT_ID = FALSE ) {		
+		$this->set('ATT_ID',$ATT_ID);
 	}
 
 
@@ -370,9 +366,7 @@ class EE_Registration extends EE_Base_Class {
 	*		@param		int		$TXN_ID 		Transaction ID
 	*/	
 	public function set_transaction_id( $TXN_ID = FALSE ) {		
-		if ( ! $this->_check_for( $TXN_ID, 'Transaction ID' )) { return FALSE; }
-		$this->_TXN_ID = absint( $TXN_ID );
-		return TRUE;
+		$this->set('TXN_ID',$TXN_ID);
 	}
 
 
@@ -384,9 +378,7 @@ class EE_Registration extends EE_Base_Class {
 	*		@param		string		$REG_session 		PHP Session ID
 	*/	
 	public function set_session( $REG_session = FALSE ) {		
-		if ( ! $this->_check_for( $REG_session, 'PHP Session ID' )) { return FALSE; }
-		$this->_REG_session = wp_strip_all_tags( $REG_session );
-		return TRUE;
+		$this->set('REG_session',$REG_session);
 	}
 
 
@@ -398,9 +390,7 @@ class EE_Registration extends EE_Base_Class {
 	*		@param		string		$REG_code 		Registration Code
 	*/	
 	public function set_reg_code( $REG_code = FALSE ) {		
-		if ( ! $this->_check_for( $REG_code, 'Registration Code' )) { return FALSE; }
-		$this->_REG_code = wp_strip_all_tags( $REG_code );
-		return TRUE;
+		$this->set('REG_code',$REG_code);
 	}
 
 
@@ -412,9 +402,7 @@ class EE_Registration extends EE_Base_Class {
 	*		@param		string		$REG_url_link 		Registration URL Link 
 	*/	
 	public function set_reg_url_link( $REG_url_link = FALSE ) {		
-		if ( ! $this->_check_for( $REG_url_link, 'Registration URL Link' )) { return FALSE; }
-		$this->_REG_url_link = wp_strip_all_tags( $REG_url_link );
-		return TRUE;
+		$this->set('REG_url_link',$REG_url_link);
 	}
 
 
@@ -426,9 +414,7 @@ class EE_Registration extends EE_Base_Class {
 	*		@param		boolean		$REG_count 		Primary Attendee
 	*/	
 	public function set_count( $REG_count = FALSE ) {		
-		if ( ! $this->_check_for( $REG_count, 'Attendee Count' )) { return FALSE; }
-		$this->_REG_count = absint( $REG_count );
-		return TRUE;
+		$this->set('REG_count',$REG_count);
 	}
 
 
@@ -440,9 +426,7 @@ class EE_Registration extends EE_Base_Class {
 	*		@param		boolean		$REG_group_size 		Group Registration
 	*/	
 	public function set_group_size( $REG_group_size = FALSE ) {		
-		if ( ! $this->_check_for( $REG_group_size, 'Group Size' )) { return FALSE; }
-		$this->_REG_group_size = absint( $REG_group_size );
-		return TRUE;
+		$this->set('REG_group_size',$REG_group_size);
 	}
 
 
@@ -454,9 +438,7 @@ class EE_Registration extends EE_Base_Class {
 	*		@param		int		$STS_ID 		Status ID
 	*/	
 	public function set_status( $STS_ID = FALSE ) {		
-		if ( ! $this->_check_for( $STS_ID, 'Status ID' )) { return FALSE; }
-		$this->_STS_ID = strtoupper( sanitize_key( $STS_ID ));
-		return TRUE;
+		$this->set('STS_ID',$STS_ID);
 	}
 
 
@@ -468,14 +450,7 @@ class EE_Registration extends EE_Base_Class {
 	*		@param		mixed ( int or string )		$REG_date 		Registration Date - Unix timestamp or string representation of Date
 	*/	
 	public function set_reg_date( $REG_date = FALSE ) {		
-		if ( ! $this->_check_for( $REG_date, 'Registration Date' )) { return FALSE; }
-		// check if supplied date is a timestamp
-		if( is_numeric( $REG_date )) {
-			$this->_REG_date = absint( $REG_date );
-		} else {
-			$this->_REG_date = strtotime( $REG_date );
-		}
-		return TRUE;
+		$this->set('REG_date',$REG_date);
 	}
 
 
@@ -487,9 +462,7 @@ class EE_Registration extends EE_Base_Class {
 	*		@param		float		$REG_final_price 		Price Paid
 	*/	
 	public function set_price_paid( $REG_final_price = FALSE ) {		
-		if ( ! $REG_final_price ) { return FALSE; }
-		$this->_REG_final_price = abs( $REG_final_price );
-		return TRUE;
+		$this->set('REG_final_price',$REG_final_price);
 	}
 
 
@@ -500,10 +473,8 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public		
 	*		@param		float		$PRC_ID 		Price ID
 	*/	
-	public function set_price( $PRC_ID = FALSE ) {		
-		if ( ! $this->_check_for( $PRC_ID, 'Price ID' )) { return FALSE; }
-		$this->_PRC_ID = preg_replace('/^[0-9.]+$/', '', $PRC_ID);
-		return TRUE;
+	public function set_price_id( $PRC_ID = FALSE ) {		
+		$this->set('PRC_ID',$PRC_ID);
 	}
 
 
@@ -515,9 +486,7 @@ class EE_Registration extends EE_Base_Class {
 	*		@param		boolean		$REG_att_is_going 		Attendee Is Going
 	*/	
 	public function set_att_is_going( $REG_att_is_going = NULL ) {		
-		if ( $REG_att_is_going == NULL ) { return FALSE; }
-		$this->_REG_att_is_going = absint( $REG_att_is_going );
-		return TRUE;
+		$this->set('REG_att_is_going',$REG_att_is_going);
 	}
 
 
@@ -529,34 +498,10 @@ class EE_Registration extends EE_Base_Class {
 	*		@param		boolean		$REG_att_checked_in 		Attendee Checked In
 	*/	
 	public function set_att_checked_in( $REG_att_checked_in = NULL ) {		
-		if ( $REG_att_checked_in === NULL ) { return FALSE; }
-		$this->_REG_att_checked_in = absint( $REG_att_checked_in );
-		return TRUE;
+		$this->set('REG_att_checked_in',$REG_att_checked_in);
 	}
 
 
-
-
-
-
-	/**
-	*		check that var has been passed to method
-	* 
-	* 		@access		private
-	*/	
-	private function _check_for( $var = FALSE, $var_name ) {
-
-		if ( ! $var ) {
-			$msg = sprintf( __( 'No value for %s was supplied.', 'event_espresso' ), $var_name );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		} else {
-			return TRUE;
-		}
-	}
-
-
-	
 	
 	/**
 	 * Returns the related EE_Transaction to this registration
@@ -575,13 +520,6 @@ class EE_Registration extends EE_Base_Class {
 		return $this->get_first_related('Attendee');
 	}
 
-	/**
-	*		get Registration ID
-	* 		@access		public
-	*/	
-	public function ID() {
-		return $this->_REG_ID;
-	}
 
 
 
@@ -590,7 +528,7 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public
 	*/	
 	public function event_ID() {
-		return $this->_EVT_ID;
+		return $this->get('EVT_ID');
 	}
 
 
@@ -641,8 +579,8 @@ class EE_Registration extends EE_Base_Class {
 
 		global $wpdb;
 		$SQL = "SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id = %s";
-		$event = $wpdb->get_results( $wpdb->prepare( $SQL, $this->_EVT_ID ) );
-		return $event[0];
+		$event = $wpdb->get_row( $wpdb->prepare( $SQL, $this->_EVT_ID ) );
+		return $event;
 	}
 
 
@@ -652,7 +590,7 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public
 	*/	
 	public function attendee_ID() {
-		return $this->_ATT_ID;
+		return $this->get('ATT_ID');
 	}
 
 
@@ -662,7 +600,7 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public
 	*/	
 	public function transaction_ID() {
-		return $this->_TXN_ID;
+		return $this->get('TXN_ID');
 	}
 
 
@@ -672,7 +610,7 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public
 	*/	
 	public function session_ID() {
-		return $this->_REG_session;
+		return $this->get('REG_session');
 	}
 
 
@@ -682,7 +620,7 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public
 	*/	
 	public function reg_code() {
-		return $this->_REG_code;
+		return $this->get('REG_code');
 	}
 
 
@@ -692,7 +630,7 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public
 	*/	
 	public function reg_url_link() {
-		return $this->_REG_url_link;
+		return $this->get('REG_url_link');
 	}
 	
 	
@@ -754,7 +692,7 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public
 	*/	
 	public function count() {
-		return $this->_REG_count;
+		return $this->get('REG_count');
 	}
 
 
@@ -764,7 +702,7 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public
 	*/	
 	public function group_size() {
-		return $this->_REG_group_size;
+		return $this->get('REG_group_size');
 	}
 
 
@@ -774,7 +712,7 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public
 	*/	
 	public function status_ID() {
-		return $this->_STS_ID;
+		return $this->get('STS_ID');
 	}
 
 
@@ -784,7 +722,7 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public
 	*/	
 	public function date() {
-		return $this->_REG_date;
+		return $this->get('REG_date');
 	}
 	
 	/**
@@ -804,7 +742,7 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public
 	*/	
 	public function price_paid() {
-		return $this->_REG_final_price;
+		return $this->get('REG_final_price');
 	}
 	
 	
@@ -844,7 +782,7 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public
 	*/	
 	public function price_ID() {
-		return $this->_PRC_ID;
+		return $this->get('PRC_ID');
 	}
 
 
@@ -866,7 +804,7 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public
 	*/	
 	public function att_is_going() {
-		return $this->_REG_att_is_going;
+		return $this->get('REG_att_is_going');
 	}
 
 
@@ -876,7 +814,7 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public
 	*/	
 	public function att_checked_in() {
-		return $this->_REG_att_checked_in;
+		return $this->get('REG_att_checked_in');
 	}
 	
 	/**

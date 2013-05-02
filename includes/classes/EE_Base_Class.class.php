@@ -818,9 +818,18 @@ class EE_Base_Class{
 	 * @return void
 	 */
 	public function e($field_name){
+		echo $this->get_pretty($field_name);
+	}
+	
+	/**
+	 * 
+	 * @param string $field_name
+	 * @return mixed
+	 */
+	public function get_pretty($field_name){
 		$field_value = $this->get($field_name);
 		$field_obj = $this->_get_model()->field_settings_for($field_name);
-		echo $field_obj->prepare_for_pretty_echoing($field_value);
+		return  $field_obj->prepare_for_pretty_echoing($field_value);
 	}
 	
 	/**

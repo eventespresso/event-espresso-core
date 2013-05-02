@@ -424,7 +424,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * @return boolean success
 	 */
 	public function add_option(EE_Question_Option $option){
-		return $this->_add_relation_to($option, 'Question_Options');
+		return $this->_add_relation_to($option, 'Question_Option');
 	}
 	
 	/**
@@ -433,7 +433,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * @return boolean success
 	 */
 	public function remove_option(EE_Question_Option $option){
-		return $this->_remove_relation_to($option, 'Question_Options');
+		return $this->_remove_relation_to($option, 'Question_Option');
 	}
 
 

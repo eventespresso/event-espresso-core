@@ -109,7 +109,7 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 			'Price_Type'=>array(
 				'PRT_ID'=>new EE_Primary_Key_Int_Field('PRT_ID', 'Price Type ID', false, 0),
 				'PRT_name'=>new EE_Plain_Text_Field('PRT_name', 'Price Type Name', false, ''),
-				'PBT_ID'=>new EE_Integer_Field('PBT_ID', 'Price Base type ID, 1 = Event Price , 2 = Discount , 3 = Surcharge , 4 = Tax', false, 1),
+				'PBT_ID'=>new EE_Enum_Field('PBT_ID', 'Price Base type ID, 1 = Event Price , 2 = Discount , 3 = Surcharge , 4 = Tax', false, 1, $this->base_types,true),
 				'PRT_is_member'=>new EE_Boolean_Field('PRT_is_member', 'Flag indicating price is only for members', false, false),
 				'PRT_is_percent'=>new EE_Boolean_Field('PRT_is_percent', 'Flag indicating price is a percentage', false, false),
 				'PRT_is_global'=>new EE_Boolean_Field('PRT_is_global', 'Flag indicating price shoudl automatically be added to all events', false, false),

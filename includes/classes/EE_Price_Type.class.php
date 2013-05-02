@@ -273,7 +273,7 @@ class EE_Price_Type extends EE_Base_Class{
 	}
 	
 	public function base_type_name(){
-		return $this->_get_model()->base_types[$this->get('PBT_ID')];
+		return $this->get_pretty('PBT_ID');
 	}
 
 
