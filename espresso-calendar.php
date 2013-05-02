@@ -38,7 +38,7 @@ function ee_calendar_load_pue_update() {
 		require(EVENT_ESPRESSO_PLUGINFULLPATH . 'class/pue/pue-client.php' );
 		$api_key = $org_options['site_license_key'];
 		$host_server_url = 'http://eventespresso.com';
-		$plugin_slug = 'espresso-calendar-pr';
+		$plugin_slug = 'espresso-calendar';
 		$options = array(
 			'apikey' => $api_key,
 			'lang_domain' => 'event_espresso',
