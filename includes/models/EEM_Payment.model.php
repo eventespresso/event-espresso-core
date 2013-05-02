@@ -124,7 +124,7 @@ class EEM_Payment extends EEM_Base {
 				'PAY_method'=>new EE_All_Caps_Text_Field_Base('PAY_method', 'User-friendly description of payment', false, 'CART'),
 				'PAY_amount'=>new EE_Money_Field('PAY_amount', 'Amount Payment should be for', false, 0),
 				'PAY_gateway'=>new EE_Plain_Text_Field('PAY_gateway', 'Gateway name used for payment', false, __('Unspecified','event_espresso')),
-				'PAY_gateway_response'=>new EE_Full_HTML_Field('PAY_gateway_response', 'Response from Gateway about the payment', false, ''),
+				'PAY_gateway_response'=>new EE_Plain_Text_Field('PAY_gateway_response', 'Response from Gateway about the payment', false, ''),
 				'PAY_txn_id_chq_nmbr'=>new EE_Plain_Text_Field('PAY_txn_id_chq_nmbr', 'Transaction ID or Cheque Number', true, ''),
 				'PAY_po_number'=>new EE_Plain_Text_Field('PAY_po_number', 'Purchase or Sales Number', true, ''),
 				'PAY_extra_accntng'=>new EE_Simple_HTML_Field('PAY_extra_accntng', 'Extra Account Info', true, ''),

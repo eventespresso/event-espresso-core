@@ -369,7 +369,7 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public		
 	*		@param		int		$TXN_ID 		Transaction ID
 	*/	
-	public function set_transaction( $TXN_ID = FALSE ) {		
+	public function set_transaction_id( $TXN_ID = FALSE ) {		
 		if ( ! $this->_check_for( $TXN_ID, 'Transaction ID' )) { return FALSE; }
 		$this->_TXN_ID = absint( $TXN_ID );
 		return TRUE;
