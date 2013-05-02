@@ -1,3 +1,3 @@
-.form-table .postbox {
-	border: none;
-}
+.form-table .postbox { border: none; }
+table.eventcategories th.column-id { width:7.5%; }
+table.eventcategories th.column-name { width:25%; }
