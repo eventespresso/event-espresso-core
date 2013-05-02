@@ -863,11 +863,11 @@ class EE_Base_Class{
 		}
 		//if the object already has an ID, update it. Otherwise, insert it
 		if ( !empty( $save_cols_n_values[$this->_get_primary_key_name()] ) ){
-			$results = $this->_get_model()->update ( $save_cols_n_values, array(array($this->_get_primary_key_name()=>$this->ID())) );
+			$results = $this->_get_model()->update ( $save_cols_n_values, array(array($this->_get_primary_key_name()=>$this->ID())), true );
 		} else {
 			unset($save_cols_n_values[$this->_get_primary_key_name()]);
 			
-			$results = $this->_get_model()->insert ( $save_cols_n_values );
+			$results = $this->_get_model()->insert ( $save_cols_n_values, true);
 			if($results){//if successful, set the primary key
 				$this->set($this->_get_primary_key_name(),$results);//for some reason the new ID is returned as part of an array,
 				//where teh only key is 'new-ID', and it's value is the new ID.
