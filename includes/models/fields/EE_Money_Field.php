@@ -10,4 +10,7 @@ class EE_Money_Field extends EE_Float_Field_Base{
 	function get_wpdb_data_type(){
 		return '%f';
 	}
+	function prepare_for_pretty_echoing($value_on_field_to_be_outputted){
+		return "$".parent::prepare_for_get($value_on_field_to_be_outputted);
+	}
 }

@@ -218,18 +218,7 @@ class EE_Transaction extends EE_Base_Class{
 	*		@param		float		$total 		total value of transaction 
 	*/	
 	public function set_total( $total = FALSE ) {
-		
-		if ( $total === FALSE || ! is_numeric( $total )) {
-			$msg = __( 'No total or an invalid total was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		// change commas to decimals
-		$total = ( preg_replace( '/,/', '.', $total ));
-		// remove all other characters and cast as float
-		$this->_TXN_total = floatval( preg_replace( '/[^-0-9.]*/', '', $total ));
-
-		return TRUE;
+		$this->set('TXN_total',$total);
 	}
 
 
@@ -243,18 +232,7 @@ class EE_Transaction extends EE_Base_Class{
 	*		@param		float		$total_paid 		total amount paid to date (sum of all payments)
 	*/	
 	public function set_paid( $total_paid = FALSE ) {
-		
-		if ( $total_paid === FALSE || ! is_numeric( $total_paid )) {
-			$msg = __( 'No payment amount or an invalid payment amount was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		// change commas to decimals
-		$total_paid = ( preg_replace( '/,/', '.', $total_paid ));
-		// remove all other characters and cast as float
-		$this->_TXN_paid = floatval( preg_replace( '/[^-0-9.]*/', '', $total_paid ));
-
-		return TRUE;
+		$this->set('TXN_paid',$total_paid);
 	}
 
 
@@ -268,14 +246,7 @@ class EE_Transaction extends EE_Base_Class{
 	*		@param		string		$status 		whether the transaction is open, declined, accepted, or any number of custom values that can be set
 	*/	
 	public function set_status( $status = FALSE ) {
-		
-		if ( ! $status ) {
-			$msg = __( 'No status was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_STS_ID = wp_strip_all_tags( $status );
-		return TRUE;
+		$this->set('STS_ID',$status);
 	}
 
 
@@ -291,14 +262,6 @@ class EE_Transaction extends EE_Base_Class{
 	*/	
 	public function set_details( $details = FALSE ) {
 		return $this->set('TXN_details',$details);
-		/*
-		if ( ! $details ) {
-			$msg = __( 'No details were supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_TXN_details = $details;
-		return TRUE;*/
 	}
 
 
@@ -314,13 +277,6 @@ class EE_Transaction extends EE_Base_Class{
 	*/	
 	public function set_txn_session_data( $session_data = FALSE ) {	
 		return	$this->set('TXN_session_data',$session_data);
-		/*if ( ! $session_data ) {
-			$msg = __( 'No session data was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_TXN_session_data = $session_data;
-		return TRUE;*/
 	}
 
 
@@ -334,14 +290,7 @@ class EE_Transaction extends EE_Base_Class{
 	*		@param		string		$hash_salt 		required for some payment gateways
 	*/	
 	public function set_hash_salt( $hash_salt = FALSE ) {
-		
-		if ( ! $hash_salt ) {
-			$msg = __( 'No hash salt was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_TXN_hash_salt = wp_strip_all_tags( $hash_salt );
-		return TRUE;
+		$this->set('TXN_hash_salt',$hash_salt);
 	}
 
 
@@ -356,14 +305,7 @@ class EE_Transaction extends EE_Base_Class{
 	*		@param		string		$tax_data 		information regarding taxes
 	*/	
 	public function set_tax_data( $tax_data = FALSE ) {
-		
-		if ( ! $tax_data ) {
-			$msg = __( 'No tax data was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		$this->_TXN_tax_data = $tax_data; 
-		return TRUE;
+		$this->set('TXN_tax_data');
 	}
 
 
@@ -372,7 +314,7 @@ class EE_Transaction extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function total() {
-		return (float)$this->_TXN_total;
+		return $this->get('TXN_total');
 	}
 
 
@@ -385,7 +327,7 @@ class EE_Transaction extends EE_Base_Class{
 	*		@return float
 	*/	
 	public function paid() {
-		return (float)$this->_TXN_paid;
+		return $this->get('TXN_paid');
 	}
 
 
@@ -408,7 +350,7 @@ class EE_Transaction extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function status_ID() {
-		return $this->_STS_ID;
+		return $this->get('STS_ID');
 	}
 
 
@@ -430,7 +372,7 @@ class EE_Transaction extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function session_data() {
-		return maybe_unserialize( $this->_TXN_session_data );
+		return $this->get('TXN_session_data' );
 	}
 
 
@@ -441,7 +383,7 @@ class EE_Transaction extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function hash_salt_() {
-		return $this->_TXN_hash_salt;
+		return $this->get('TXN_hash_salt');
 	}
 
 
@@ -465,14 +407,7 @@ class EE_Transaction extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function datetime( $format = FALSE, $dt_frmt = FALSE ) {
-		if ( $format ) {
-			// set datetime format
-			$dt_frmt = $dt_frmt ? $dt_frmt : $this->dt_frmt;		
-			return date( $dt_frmt, $this->_TXN_timestamp );
-		} else {
-			return $this->_TXN_timestamp;
-		}
-
+		return $this->get('TXN_timestamp');
 	}	
 	
 	

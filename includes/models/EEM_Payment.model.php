@@ -249,21 +249,27 @@ class EEM_Payment extends EEM_Base {
 
 
 
-
 	/**
-	*		Delete a Payment, update all totals, and save info to db
-	* 		@access		public
-	*/
-	public function delete_by_ID($id) {
-		$payment_obj = $this->ensure_is_obj($id);
-		$transaction_id = $payment_obj->TXN_ID();
-		$success = parent::delete_by_ID($id);
-		if($success){
-			require_once('EEM_Transaction.model.php');
-			$success = EEM_Transaction::instance()->update_based_on_payments($transaction_id);
+	 * Before deletign the selected payments, we fetch their transactions, 
+	 * then delete the payments, and update the transactions' amount paid.
+	 * This may be a somewhat expensive operation which could be optimized, but we'll deal with that
+	 * if it's a noticeable problem.
+	 * @param array $query_params lik eEEM_Base::get_all
+	 * @return int number of paymetn deleted
+	 */
+	public function delete($query_params) {
+		$payments_to_be_deleted = $this->get_all($query_params);
+		$transactions = array();
+		foreach($payments_to_be_deleted as $payment){
+			$transactions[$payment->transaction()->ID()] = $payment->transaction();
+		}
+		$success = parent::delete($query_params);
+		foreach($transactions as $transaction){
+			/* @var $transaction EE_Transaction */
+			$transaction->update_based_on_payments();
 		}
 		return $success;
-		}
+	}
 
 
 
