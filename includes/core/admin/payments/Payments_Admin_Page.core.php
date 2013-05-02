@@ -161,7 +161,9 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 		$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
 		$gateway_instances = $EEM_Gateways->get_gateway_instances();
+		//printr( $gateway_instances, '$gateway_instances  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$payment_settings = array_key_exists('payment_settings',$gateway_data) ? $gateway_data['payment_settings'] : null;
+		//printr( $payment_settings, '$payment_settings  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		//we only really need to generate help tabs for the given gateways
 		
@@ -173,13 +175,14 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 		foreach ( $payment_settings as $gateway => $settings ) {
 			if ( $caffeinated || in_array( $gateway, $default_gateways) ) {
-				$ht_content = $gateway_instances[$gateway]->get_help_tab_content();
-				$ht_ref = 'ee_' . $gateway . '_help';
-				if ( !empty( $ht_content) )
+				$ht_content = isset( $gateway_instances[$gateway] ) ? $gateway_instances[$gateway]->get_help_tab_content() : FALSE;
+				if ( $ht_content ) {
+					$ht_ref = 'ee_' . $gateway . '_help';
 					$help_tabs[$ht_ref] = array(
 						'title' => $settings['display_name'] . __(' Help', 'event_espresso'),
 						'content' => $ht_content
-						);
+						);					
+				}
 			}
 		}
 
