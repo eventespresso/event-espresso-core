@@ -26,7 +26,7 @@
 //			}
 //		}
 //		//verify we have all the attributes required in teh model
-//		foreach($model->fields_settings() as $fieldName=>$fieldSettings){
+//		foreach($model->field_settings() as $fieldName=>$fieldSettings){
 //			if(!property_exists($this,$this->_get_private_attribute_name($fieldName))){
 //				throw new EE_Error(sprintf(__('You have added an attribute titled \'%s\' to your model %s, but have not set a corresponding
 //					attribute on %s. Please add $%s to %s','event_espresso'),
@@ -86,7 +86,7 @@
 //	 */
 //	public function get($fieldName){
 //		$privateFieldName=$this->_get_private_attribute_name($fieldName);
-//		$fieldSettings=$this->get_fields_settings();
+//		$fieldSettings=$this->get_field_settings();
 //		if(array_key_exists($fieldName,$fieldSettings)){
 //			$value=$this->$privateFieldName;
 //			$thisFieldSettings=$fieldSettings[$fieldName];
@@ -142,7 +142,7 @@
 //	 * @return null
 //	 */
 //	public function set($fieldName,$value,$useDefault=false){
-//		$fields=$this->get_fields_settings();
+//		$fields=$this->get_field_settings();
 //		if(!array_key_exists($fieldName, $fields)){
 //			throw new EE_Error(sprintf(__("An internal Event Espresso error has occured. Please contact Event Espresso.||The field %s doesnt exist on Event Espresso class %s",'event_espresso'),$fieldName,get_class($this)));
 //		}
@@ -150,7 +150,7 @@
 //		//if this field doesn't allow nulls, check it isn't null
 //		if($value===null && $useDefault){
 //			$privateAttributeName=$this->_get_private_attribute_name($fieldName);
-//			$modelFields=$this->_get_model()->fields_settings();
+//			$modelFields=$this->_get_model()->field_settings();
 //			$defaultValue=$modelFields[$fieldName]->default_value();
 //			$this->$privateAttributeName=$defaultValue;
 //			return true;
@@ -335,7 +335,7 @@
 //	 */
 //	public function e($fieldName){
 //		$privateFieldName=$this->_get_private_attribute_name($fieldName);
-//		$fieldSettings=$this->get_fields_settings();
+//		$fieldSettings=$this->get_field_settings();
 //		if(array_key_exists($fieldName,$fieldSettings)){
 //			$value=$this->$privateFieldName;
 //			$thisFieldSettings=$fieldSettings[$fieldName];
@@ -397,11 +397,11 @@
 //	 * @return EE_Model_Field[]
 //	 * @throws EE_Error
 //	 */
-//	public function get_fields_settings(){
-//		if($this->_get_model()->fields_settings()==null){
+//	public function get_field_settings(){
+//		if($this->_get_model()->field_settings()==null){
 //			throw new EE_Error(sprintf("An unexpected error has occured with Event Espresso.||An Event Espresso class has not been fully implemented. %s does not override the \$_fieldSettings attribute.",get_class($this)),"event_espresso");
 //		}
-//		return $this->_get_model()->fields_settings();
+//		return $this->_get_model()->field_settings();
 //	}
 //	
 //	/**
@@ -421,7 +421,7 @@
 //		}
 //		//now get current attribute values
 //		$save_cols_n_values = array();
-//		foreach($this->get_fields_settings() as $fieldName=>$fieldSettings){
+//		foreach($this->get_field_settings() as $fieldName=>$fieldSettings){
 //			$attributeName=$this->_get_private_attribute_name($fieldName);
 //			if($fieldSettings->type() == 'serialized_text'){
 //				//serialized_text fields should be arrays/objects 

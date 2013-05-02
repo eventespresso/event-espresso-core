@@ -15,7 +15,8 @@ foreach ($files as $file){
     require_once($file);   
 }
 abstract class EEM_Base extends EE_Base{
-	
+	var $singular_item = 'Item';
+	var $plural_item = 'Items';
 	/**
 	 * @var EE_Table[] $_tables  array of EE_Table objects for defining which tables comprise this model.
 	 */
@@ -1329,6 +1330,21 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	private function _get_class_name(){
 		return "EE_".$this->get_this_model_name();
+	}
+	
+	/**
+	 * Get the name of the items this model repesents, for teh quanitity specified. Eg, 
+	 * if $quantity==1, on EEM_Event, it would 'Event' (internationalized), otherwise 
+	 * it would be 'Events'.
+	 * @param int $quantity
+	 * @return string
+	 */
+	public function item_name($quantity = 1){
+		if($quantity == 1){
+			return $this->singular_item;
+		}else{
+			return $this->plural_item;
+		}
 	}
 	
 	/**
