@@ -214,7 +214,10 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 	//none of the below group are currently used for Event Categories
 	protected function _add_feature_pointers() {}
-	public function load_scripts_styles() {}
+	public function load_scripts_styles() {
+		wp_register_style('ee-cat-admin', EE_CORE_ADMIN_URL . 'event_categories/assets/ee-cat-admin.css', array(), EVENT_ESPRESSO_VERSION );
+		wp_enqueue_style('ee-cat-admin');
+	}
 	public function admin_init() {}
 	public function admin_notices() {}
 	public function admin_footer_scripts() {}
@@ -234,8 +237,7 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles_edit_category() {
 		//styles
-		wp_enqueue_style('jquery-ui-style');
-		wp_enqueue_style('ee_cat_admin', EE_CORE_ADMIN_URL . 'event_categories/assets/ee-cat-admin.css', array(), EVENT_ESPRESSO_VERSION );
+		//wp_enqueue_style('jquery-ui-style');
 
 		//scripts
 		wp_enqueue_script( 'ee_cat_admin_js', EE_CORE_ADMIN_URL . 'event_categories/assets/ee-cat-admin.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );

@@ -2123,8 +2123,8 @@ class Events_Admin_Page extends EE_Admin_Page {
  				$html = count( $QSGs ) > 10 ? '<div style="height:250px;overflow:auto;">' : '';
 				foreach ( $QSGs as $QSG ) {
 
-					$checked = ( in_array( $QSG->QSG_ID, $EQGs ) || $QSG->QSG_system_ID == 1 ) ? ' checked="checked"' : '';
-					$visibility = $QSG->QSG_system_ID == 1 ? ' style="visibility:hidden"' : '';
+					$checked = ( in_array( $QSG->QSG_ID, $EQGs ) || $QSG->QST_system == 1 ) ? ' checked="checked"' : '';
+					$visibility = $QSG->QST_system == 1 ? ' style="visibility:hidden"' : '';
 					$edit_link = self::add_query_args_and_nonce( array( 'action' => 'edit_question_group', 'QSG_ID' => $QSG->QSG_ID ), EE_FORMS_ADMIN_URL );
 					
 					$html .= '
@@ -2171,8 +2171,8 @@ class Events_Admin_Page extends EE_Admin_Page {
  				$html = count( $QSGs ) > 10 ? '<div style="height:250px;overflow:auto;">' : '';
 				foreach ( $QSGs as $QSG ) {
 
-					$checked = in_array( $QSG->QSG_ID, $EQGs ) || $QSG->QSG_system_ID == 1 ? ' checked="checked" ' : '';
-					$visibility = $QSG->QSG_system_ID == 1 ? ' style=" visibility:hidden"' : '';
+					$checked = in_array( $QSG->QSG_ID, $EQGs ) || $QSG->QST_system == 1 ? ' checked="checked" ' : '';
+					$visibility = $QSG->QST_system == 1 ? ' style=" visibility:hidden"' : '';
 					$edit_link = self::add_query_args_and_nonce( array( 'action' => 'edit_question_group', 'QSG_ID' => $QSG->QSG_ID ), EE_FORMS_ADMIN_URL );
 
 					$html .= '

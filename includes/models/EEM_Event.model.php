@@ -258,7 +258,7 @@ class EEM_Event  extends EEM_TempBase{
 //		if ( empty( $QSGs )) {
 //			$SQL = 'SELECT QSG.* FROM ' . $wpdb->prefix . 'esp_event_question_group EQG '; 
 //			$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_question_group QSG ON  EQG.QSG_ID = QSG.QSG_ID ';
-//			$SQL .= 'WHERE QSG.QSG_system_ID = 1';
+//			$SQL .= 'WHERE QSG.QST_system = 1';
 //			$QSGs = $wpdb->get_results( $wpdb->prepare( $SQL, $EVT_ID, $system_ID ), 'OBJECT_K' );		
 //		}
 		
@@ -358,7 +358,7 @@ class EEM_Event  extends EEM_TempBase{
 					foreach ( $QSTs as $QST_ID => $QST ) {
 						if ( $QST->QSG_ID == $QSG_ID ) {
 							
-							$qst_name = $qst_id = $QST->QST_system_ID ? $QST->QST_system_ID : $QST->QST_ID;
+							$qst_name = $qstn_id = $QST->QST_system ? $QST->QST_system : $QST_ID;
 							$qst_name = isset( $QST->ANS_ID ) ? '[' . $qst_name . '][' . $QST->ANS_ID . ']' : '[' . $qst_name . ']';
 							$input_name = isset( $q_meta['input_name'] ) ? $q_meta['input_name']  : '';
 							$input_id = isset( $q_meta['input_id'] ) ? $q_meta['input_id'] : sanitize_key( $QST->QST_display_text );
@@ -367,7 +367,7 @@ class EEM_Event  extends EEM_TempBase{
 							//printr( $QST, '$QST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );	
 							$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ] = (array)$QST;
 							$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_input_name'] = 'qstn' . $input_name . $qst_name;
-							$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_input_id'] = $input_id . '-' . $qst_id;
+							$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_input_id'] = $input_id . '-' . $qstn_id;
 							$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_input_class'] = $input_class;
 							$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_options'] = array();
 							
@@ -405,9 +405,9 @@ class EEM_Event  extends EEM_TempBase{
 	*/	
 	private function _generate_question_input_name( $QST ) {
 
-		if ( $QST->QST_system_ID ) {
-			$qst_name = $QST->QST_system_ID;
-/*			switch( $QST->QST_system_ID ) {
+		if ( $QST->QST_system ) {
+			$qst_name = $QST->QST_system;
+/*			switch( $QST->QST_system ) {
 				
 				case 1 :
 						$qst_name = $QST->QST_ID . '-fname';

@@ -56,7 +56,7 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base {
 					'QSG_order'=>new EE_Model_Field('Question Order','int',false,0,null,null),
 					'QSG_show_group_name'=>new EE_Model_Field('Show Question Group Name?', 'bool', false, true, null, null),
 					'QSG_show_group_desc'=>new EE_Model_Field('Show Question Group Description?', 'bool', false, true, null, null),
-					'QSG_system_ID'=>new EE_Model_Field('Is an internal-system Question Group', 'bool', false, false, null, null),
+					'QST_system'=>new EE_Model_Field('Is an internal-system Question Group', 'bool', false, false, null, null),
 					'QSG_deleted'=>new EE_Model_Field('Is Question Group deleted?', 'deleted_flag', false, false, null, null)
 				);
 		$this->_related_models=array(

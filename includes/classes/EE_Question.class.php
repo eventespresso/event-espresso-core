@@ -54,7 +54,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * @access protected
 	 * @var string
 	 */
-	protected $_QST_system_ID=NULL;
+	protected $_QST_system=NULL;
 	
 	
 	/**
@@ -135,7 +135,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * constructor for questions
 	 * @param string/array $QST_display_text text for displaying the question (eg, "what is your name?") OR an array of all field values, where keys match these arguments' names
 	 * @param string $QST_admin_label administrative label for a question
-	 * @param string $QST_system_ID if this is a system question, it's internal name
+	 * @param string $QST_system if this is a system question, it's internal name
 	 * @param string $QST_type one of 'text','textarea',etc.
 	 * @param boolean $QST_required indicates whether this question must be answered
 	 * @param string $QST_required_text text that's displayed if teh question isn't answered
@@ -148,7 +148,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	public function __construct( 
 			$QST_display_text=NULL, 
 			$QST_admin_label=NULL, 
-			$QST_system_ID=NULL, 
+			$QST_system=NULL, 
 			$QST_type=NULL, 
 			$QST_required=NULL,
 			$QST_required_text=NULL,
@@ -198,10 +198,10 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	*		Set	system name
 	* 
 	* 		@access		public		
-	*		@param		int		$QST_system_ID
+	*		@param		int		$QST_system
 	*/	
-	public function set_system_ID( $QST_system_ID = FALSE ) {
-		return $this->set('QST_system_ID',$QST_system_ID);
+	public function set_system_ID( $QST_system = NULL ) {
+		return $this->set('QST_system',$QST_system);
 	}
 	
 	/**
@@ -320,8 +320,8 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * @access public
 	 * @return string
 	 */
-	public function system_name(){
-		return $this->get('QST_system_name');
+	public function system_ID(){
+		return $this->get('QST_system');
 	}
 	
 	/**
@@ -330,7 +330,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	public function required(){
-		return $this->get('QST_type');
+		return $this->get('QST_required');
 	}
 	
 	/**

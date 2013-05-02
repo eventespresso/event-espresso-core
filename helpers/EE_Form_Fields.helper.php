@@ -458,7 +458,7 @@ class EE_Form_Fields {
 		$required = $question['QST_required'] ? array( 'label' => $required_label, 'class' => 'required', 'title' => $question['QST_required'] ) : array();
 		$label_class = 'espresso-form-input-lbl';		
 		$options = isset( $question['QST_options'] ) ? self::prep_answer_options( $question['QST_options'] ) : array();
-		$system_ID = isset( $question['QST_system_ID'] ) ? $question['QST_system_ID'] : FALSE;
+		$system_ID = isset( $question['QST_system'] ) ? $question['QST_system'] : NULL;
 
 		switch ( $question['QST_type'] ){
 			
@@ -523,7 +523,7 @@ class EE_Form_Fields {
 		// ya gots ta have style man!!!
 		$txt_class = is_admin() ? 'regular-text' : 'espresso-text-inp';
 		$class = empty( $class ) ? $txt_class : $class;
-		$class = $system_ID == 3 ? $class . ' email' : $class;
+		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
 		$extra = apply_filters( 'filter_hook_espresso_additional_form_field_attributes', '' );
 
 		$label_html = "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
@@ -572,6 +572,7 @@ class EE_Form_Fields {
 		// ya gots ta have style man!!!
 		$txt_class = is_admin() ? 'regular-text' : 'espresso-textarea-inp';
 		$class = empty( $class ) ? $txt_class : $class;
+		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
 		$extra = apply_filters( 'filter_hook_espresso_additional_form_field_attributes', '' );
 		
 		$label_html = "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
@@ -617,6 +618,7 @@ class EE_Form_Fields {
 		// ya gots ta have style man!!!
 		$txt_class = is_admin() ? 'wide' : 'espresso-select-inp';
 		$class = empty( $class ) ? $txt_class : $class;
+		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
 		$extra = apply_filters( 'filter_hook_espresso_additional_form_field_attributes', '' );
 		
 		$label_html = "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
@@ -671,6 +673,7 @@ class EE_Form_Fields {
 		// ya gots ta have style man!!!
 		$rdio_class = is_admin() ? 'ee-admin-radio-lbl' : $label_class;		
 		$class = empty( $class ) ? 'espresso-radio-btn-inp' : $class;
+		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
 		$extra = apply_filters( 'filter_hook_espresso_additional_form_field_attributes', '' );
 		
 		$label_html = "\n\t\t\t" . '<label class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
@@ -741,6 +744,7 @@ class EE_Form_Fields {
 		// ya gots ta have style man!!!
 		$rdio_class = is_admin() ? 'ee-admin-radio-lbl' : $label_class;		
 		$class = empty( $class ) ? 'espresso-radio-btn-inp' : $class;
+		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
 		$extra = apply_filters( 'filter_hook_espresso_additional_form_field_attributes', '' );
 		
 		$label_html = "\n\t\t\t" . '<label class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
@@ -806,6 +810,7 @@ class EE_Form_Fields {
 		// ya gots ta have style man!!!
 		$txt_class = is_admin() ? 'regular-text' : 'espresso-datepicker-inp';
 		$class = empty( $class ) ? $txt_class : $class;
+		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
 		$extra = apply_filters( 'filter_hook_espresso_additional_form_field_attributes', '' );
 
 		$label_html = "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
@@ -911,13 +916,13 @@ class EE_Form_Fields {
 
 
 
-/*			switch ( $question['QST_system_ID'] ) {
+/*			switch ( $question['QST_system'] ) {
 				
 				case 1:
 						$QST_values = array( 
 								'QST_display_text' => 'First Name',
 								'QST_admin_label' => 'First Name - System Question',
-								'QST_system_ID' => 1,
+								'QST_system' => 1,
 								'QST_type' => 'TEXT',
 								'QST_required' => 1,
 								'QST_required_text' => 'This field is required',
@@ -932,7 +937,7 @@ class EE_Form_Fields {
 						$QST_values = array( 
 								'QST_display_text' => 'Last Name',
 								'QST_admin_label' => 'Last Name - System Question',
-								'QST_system_ID' => 2,
+								'QST_system' => 2,
 								'QST_type' => 'TEXT',
 								'QST_required' => 1,
 								'QST_required_text' => 'This field is required',
@@ -947,7 +952,7 @@ class EE_Form_Fields {
 						$QST_values = array( 
 								'QST_display_text' => 'Email Address',
 								'QST_admin_label' => 'Email Address - System Question',
-								'QST_system_ID' => 3,
+								'QST_system' => 3,
 								'QST_type' => 'TEXT',
 								'QST_required' => 1,
 								'QST_required_text' => 'This field is required',
@@ -962,7 +967,7 @@ class EE_Form_Fields {
 						$QST_values = array( 
 								'QST_display_text' => 'Address',
 								'QST_admin_label' => 'Address - System Question',
-								'QST_system_ID' => 4,
+								'QST_system' => 4,
 								'QST_type' => 'TEXT',
 								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
@@ -977,7 +982,7 @@ class EE_Form_Fields {
 						$QST_values = array( 
 								'QST_display_text' => 'Address2',
 								'QST_admin_label' => 'FirAddress2 - System Question',
-								'QST_system_ID' => 5,
+								'QST_system' => 5,
 								'QST_type' => 'TEXT',
 								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
@@ -992,7 +997,7 @@ class EE_Form_Fields {
 						$QST_values = array( 
 								'QST_display_text' => 'City',
 								'QST_admin_label' => 'City - System Question',
-								'QST_system_ID' => 6,
+								'QST_system' => 6,
 								'QST_type' => 'TEXT',
 								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
@@ -1007,7 +1012,7 @@ class EE_Form_Fields {
 						$QST_values = array( 
 								'QST_display_text' => 'State / Province',
 								'QST_admin_label' => 'State / Province - System Question',
-								'QST_system_ID' => 7,
+								'QST_system' => 7,
 								'QST_type' => 'TEXT',
 								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
@@ -1022,7 +1027,7 @@ class EE_Form_Fields {
 						$QST_values = array( 
 								'QST_display_text' => 'Zip / Postal Code',
 								'QST_admin_label' => 'Zip / Postal Code - System Question',
-								'QST_system_ID' => 8,
+								'QST_system' => 8,
 								'QST_type' => 'TEXT',
 								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
@@ -1037,7 +1042,7 @@ class EE_Form_Fields {
 						$QST_values = array( 
 								'QST_display_text' => 'Country',
 								'QST_admin_label' => 'Country - System Question',
-								'QST_system_ID' => 9,
+								'QST_system' => 9,
 								'QST_type' => 'TEXT',
 								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
@@ -1052,7 +1057,7 @@ class EE_Form_Fields {
 						$QST_values = array( 
 								'QST_display_text' => 'Phone Number',
 								'QST_admin_label' => 'Phone Number - System Question',
-								'QST_system_ID' => 10,
+								'QST_system' => 10,
 								'QST_type' => 'TEXT',
 								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',

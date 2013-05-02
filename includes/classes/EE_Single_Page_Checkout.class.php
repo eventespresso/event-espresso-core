@@ -846,15 +846,15 @@ class EE_Single_Page_Checkout {
 									if ($form_input == 'primary_attendee' && $input_value == 1) {
 										$primary_attendee['line_item_id'] = $line_item_id;
 										//$primary_attendee['registration_id'] = $registration_id;
-										$primary_attendee['fname'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['1'];
-										$primary_attendee['lname'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['2'];
-										$primary_attendee['email'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['3'];
+										$primary_attendee['fname'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['fname'];
+										$primary_attendee['lname'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['lname'];
+										$primary_attendee['email'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['email'];
 										$EE_Session->set_session_data(array('primary_attendee' => $primary_attendee), 'session_data');
 									} else if ( $form_input == 'additional_attendee_reg_info' && $input_value == 1 ) {
 										// we need to copy basic info from primary attendee
-										$attendees[$line_item_id][$event_id]['attendees'][$att_nmbr][1] = $attendees[$line_item_id][$event_id]['attendees'][1][1];
-										$attendees[$line_item_id][$event_id]['attendees'][$att_nmbr][2] = $attendees[$line_item_id][$event_id]['attendees'][1][2];
-										$attendees[$line_item_id][$event_id]['attendees'][$att_nmbr][3] = $attendees[$line_item_id][$event_id]['attendees'][1][3];
+										$attendees[$line_item_id][$event_id]['attendees'][$att_nmbr][1] = $attendees[$line_item_id][$event_id]['attendees'][1]['fname'];
+										$attendees[$line_item_id][$event_id]['attendees'][$att_nmbr][2] = $attendees[$line_item_id][$event_id]['attendees'][1]['lname'];
+										$attendees[$line_item_id][$event_id]['attendees'][$att_nmbr][3] = $attendees[$line_item_id][$event_id]['attendees'][1]['email'];
 									}
 								}
 							}
@@ -1008,21 +1008,21 @@ class EE_Single_Page_Checkout {
 	
 				foreach ($event['attendees'] as $att_nmbr => $attendee) {
 					// if attendee has no name, then use primary attendee's details
-					$attendee = isset( $attendee['1'] ) && $att_nmbr > 1 ? $attendee : $event['attendees'][1];
+					$attendee = isset( $attendee['fname'] ) && $att_nmbr > 1 ? $attendee : $event['attendees'][1];
 					//reset price paid to original in case it was different
 					$attendee['price_paid'] = $event['attendees'][$att_nmbr]['price_paid'];
 
 //					echo '<h4>$att_nmbr : ' . $att_nmbr . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //					printr( $attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	
-					$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['name'] = $attendee['1'] . ' ' . $attendee['2'];
+					$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['name'] = $attendee['fname'] . ' ' . $attendee['lname'];
 					$extra_att_details = array();
 	
 					foreach ($attendee as $key => $value) {
 						switch ($key) {
 	
-							case '1' :
-							case '2' :
+							case 'fname' :
+							case 'lname' :
 								break;
 	
 							default:
@@ -1228,12 +1228,12 @@ class EE_Single_Page_Checkout {
 			foreach ($event['attendees'] as $att_nmbr => $attendee) {
 
 				// if attendee has no name, then use primary attendee's details
-				$attendee = isset( $attendee['1'] ) && $att_nmbr > 1 ? $attendee : $event['attendees'][1];
+				$attendee = isset( $attendee['fname'] ) && $att_nmbr > 1 ? $attendee : $event['attendees'][1];
 				
 				// grab main attendee details
-				$ATT_fname = isset($attendee[1]) ? $attendee[1] : '';
-				$ATT_lname = isset($attendee[2]) ? $attendee[2] : '';
-				$ATT_email = isset($attendee[3]) ? $attendee[3] : '';
+				$ATT_fname = isset($attendee['fname']) ? $attendee['fname'] : '';
+				$ATT_lname = isset($attendee['lname']) ? $attendee['lname'] : '';
+				$ATT_email = isset($attendee['email']) ? $attendee['email'] : '';
 				// create array for query where statement
 				$where_cols_n_values = array('ATT_fname' => $ATT_fname, 'ATT_lname' => $ATT_lname, 'ATT_email' => $ATT_email);
 				// do we already have an existing record for this attendee ?
@@ -1245,14 +1245,14 @@ class EE_Single_Page_Checkout {
 					$att[$att_nmbr] = new EE_Attendee(
 													$ATT_fname,
 													$ATT_lname,
-													isset($attendee[4]) ? $attendee[4] : NULL,		// address
-													isset($attendee[5]) ? $attendee[5] : NULL,		// address2
-													isset($attendee[6]) ? $attendee[6] : NULL,		// city
-													isset($attendee[7]) ? $attendee[7] : NULL,		// state
-													isset($attendee[8]) ? $attendee[8] : NULL,		// country
-													isset($attendee[9]) ? $attendee[9] : NULL,		// zip
+													isset($attendee['address']) ? $attendee['address'] : NULL,		// address
+													isset($attendee['address2']) ? $attendee['address2'] : NULL,		// address2
+													isset($attendee['city']) ? $attendee['city'] : NULL,		// city
+													isset($attendee['state']) ? $attendee['state'] : NULL,		// state
+													isset($attendee['country']) ? $attendee['country'] : NULL,		// country
+													isset($attendee['zip']) ? $attendee['zip'] : NULL,		// zip
 													$ATT_email,		// address
-													isset($attendee[10]) ? $attendee[10] : NULL,		// phone
+													isset($attendee['phone']) ? $attendee['phone'] : NULL,		// phone
 													NULL		// social
 					);
 					

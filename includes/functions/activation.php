@@ -101,19 +101,19 @@ function espresso_initialize_system_questions() {
 	
 	// QUESTION GROUPS
 	global $wpdb;
-	$SQL = 'SELECT QSG_system_ID FROM ' . $wpdb->prefix . 'esp_question_group WHERE QSG_system_ID != 0';
+	$SQL = 'SELECT QST_system FROM ' . $wpdb->prefix . 'esp_question_group WHERE QST_system != 0';
 	// what we have
 	$question_groups = $wpdb->get_col( $SQL );
 	// check the reponse
 	$question_groups = is_array( $question_groups ) ? $question_groups : array();
 	// what we should have
-	$QSG_system_IDs = array( 1, 2 );
+	$QST_systems = array( 1, 2 );
 	// loop thru what we should have and compare to what we have
-	foreach ( $QSG_system_IDs as $QSG_system_ID ) {
+	foreach ( $QST_systems as $QST_system ) {
 		// if we don't have what we should have
-		if ( ! in_array( $QSG_system_ID, $question_groups )) {
+		if ( ! in_array( $QST_system, $question_groups )) {
 			// add it
-			switch ( $QSG_system_ID ) {
+			switch ( $QST_system ) {
 				
 				case 1:
 						$QSG_values = array( 
@@ -123,7 +123,7 @@ function espresso_initialize_system_questions() {
 								'QSG_order' => 1,
 								'QSG_show_group_name' => 1,
 								'QSG_show_group_desc' => 1,
-								'QSG_system_ID' => 1,
+								'QST_system' => 1,
 								'QSG_deleted' => 0
 							);
 					break;
@@ -136,7 +136,7 @@ function espresso_initialize_system_questions() {
 								'QSG_order' => 2,
 								'QSG_show_group_name' => 1,
 								'QSG_show_group_desc' => 1,
-								'QSG_system_ID' => 2,
+								'QST_system' => 2,
 								'QSG_deleted' => 0
 							);
 					break;
@@ -148,7 +148,7 @@ function espresso_initialize_system_questions() {
 				$QSG_values, 
 				array('%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d' )
 			);
-			$QSG_IDs[ $QSG_system_ID ] = $wpdb->insert_id;		
+			$QSG_IDs[ $QST_system ] = $wpdb->insert_id;		
 		}
 	}
 
@@ -156,23 +156,34 @@ function espresso_initialize_system_questions() {
 	
 	// QUESTIONS
 	global $wpdb;
-	$SQL = 'SELECT QST_system_ID FROM ' . $wpdb->prefix . 'esp_question WHERE QST_system_ID != 0';
+	$SQL = 'SELECT QST_system FROM ' . $wpdb->prefix . 'esp_question WHERE QST_system != 0';
 	// what we have
 	$questions = $wpdb->get_col( $SQL );
 	// what we should have
-	$QST_system_IDs = array( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
+	$QST_systems = array( 
+		'fname', 
+		'lname', 
+		'email', 
+		'address', 
+		'address2', 
+		'city', 
+		'state', 
+		'country', 
+		'zip', 
+		'phone' 
+	);
 	// loop thru what we should have and compare to what we have
-	foreach ( $QST_system_IDs as $QST_system_ID ) {
+	foreach ( $QST_systems as $QST_system ) {
 		// if we don't have what we should have
-		if ( ! in_array( $QST_system_ID, $questions )) {
+		if ( ! in_array( $QST_system, $questions )) {
 			// add it
-			switch ( $QST_system_ID ) {
+			switch ( $QST_system ) {
 				
-				case 1:
+				case 'fname':
 						$QST_values = array( 
 								'QST_display_text' => 'First Name',
 								'QST_admin_label' => 'First Name - System Question',
-								'QST_system_ID' => 1,
+								'QST_system' => 'fname',
 								'QST_type' => 'TEXT',
 								'QST_required' => 1,
 								'QST_required_text' => 'This field is required',
@@ -183,11 +194,11 @@ function espresso_initialize_system_questions() {
 							);
 					break;
 					
-				case 2:
+				case 'lname':
 						$QST_values = array( 
 								'QST_display_text' => 'Last Name',
 								'QST_admin_label' => 'Last Name - System Question',
-								'QST_system_ID' => 2,
+								'QST_system' => 'lname',
 								'QST_type' => 'TEXT',
 								'QST_required' => 1,
 								'QST_required_text' => 'This field is required',
@@ -198,11 +209,11 @@ function espresso_initialize_system_questions() {
 							);
 					break;
 					
-				case 3:
+				case 'email':
 						$QST_values = array( 
 								'QST_display_text' => 'Email Address',
 								'QST_admin_label' => 'Email Address - System Question',
-								'QST_system_ID' => 3,
+								'QST_system' => 'email',
 								'QST_type' => 'TEXT',
 								'QST_required' => 1,
 								'QST_required_text' => 'This field is required',
@@ -213,11 +224,11 @@ function espresso_initialize_system_questions() {
 							);
 					break;
 					
-				case 4:
+				case 'address':
 						$QST_values = array( 
 								'QST_display_text' => 'Address',
 								'QST_admin_label' => 'Address - System Question',
-								'QST_system_ID' => 4,
+								'QST_system' => 'address',
 								'QST_type' => 'TEXT',
 								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
@@ -228,11 +239,11 @@ function espresso_initialize_system_questions() {
 							);
 					break;
 					
-				case 5:
+				case 'address2':
 						$QST_values = array( 
 								'QST_display_text' => 'Address2',
 								'QST_admin_label' => 'FirAddress2 - System Question',
-								'QST_system_ID' => 5,
+								'QST_system' => 'address2',
 								'QST_type' => 'TEXT',
 								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
@@ -243,11 +254,11 @@ function espresso_initialize_system_questions() {
 							);
 					break;
 					
-				case 6:
+				case 'city':
 						$QST_values = array( 
 								'QST_display_text' => 'City',
 								'QST_admin_label' => 'City - System Question',
-								'QST_system_ID' => 6,
+								'QST_system' => 'city',
 								'QST_type' => 'TEXT',
 								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
@@ -258,11 +269,11 @@ function espresso_initialize_system_questions() {
 							);
 					break;
 					
-				case 7:
+				case 'state':
 						$QST_values = array( 
 								'QST_display_text' => 'State / Province',
 								'QST_admin_label' => 'State / Province - System Question',
-								'QST_system_ID' => 7,
+								'QST_system' => 'state',
 								'QST_type' => 'TEXT',
 								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
@@ -273,11 +284,11 @@ function espresso_initialize_system_questions() {
 							);
 					break;
 					
-				case 8 : 
+				case 'country' : 
 						$QST_values = array( 
 								'QST_display_text' => 'Country',
 								'QST_admin_label' => 'Country - System Question',
-								'QST_system_ID' => 8,
+								'QST_system' => 'country',
 								'QST_type' => 'TEXT',
 								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
@@ -288,11 +299,11 @@ function espresso_initialize_system_questions() {
 							);
 					break;
 					
-				case 9:
+				case 'zip':
 						$QST_values = array( 
 								'QST_display_text' => 'Zip / Postal Code',
 								'QST_admin_label' => 'Zip / Postal Code - System Question',
-								'QST_system_ID' => 9,
+								'QST_system' => 'zip',
 								'QST_type' => 'TEXT',
 								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
@@ -303,11 +314,11 @@ function espresso_initialize_system_questions() {
 							);
 					break;
 					
-				case 10:
+				case 'phone':
 						$QST_values = array( 
 								'QST_display_text' => 'Phone Number',
 								'QST_admin_label' => 'Phone Number - System Question',
-								'QST_system_ID' => 10,
+								'QST_system' => 'phone',
 								'QST_type' => 'TEXT',
 								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
@@ -330,7 +341,7 @@ function espresso_initialize_system_questions() {
 			// QUESTION GROUP QUESTIONS 
 			
 			// questions 1-3 go in group 1, the rest go in 2
-			$QSG_ID = $QST_system_ID < 4 ? 1 : 2;			
+			$QSG_ID = $QST_system < 4 ? 1 : 2;			
 			// add system questions to groups
 			$wpdb->insert(
 				$wpdb->prefix . 'esp_question_group_question', 
@@ -590,7 +601,7 @@ function events_data_tables_install() {
 	$sql='QST_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
 				QST_display_text VARCHAR(100) NOT NULL,
 				QST_admin_label VARCHAR(100) NOT NULL,
-				QST_system_ID TINYINT(3) UNSIGNED NOT NULL,
+				QST_system varchar(25) DEFAULT NULL,
 				QST_type VARCHAR(25) NOT NULL DEFAULT "TEXT",
 				QST_required TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 				QST_required_text VARCHAR(100) NULL,
@@ -614,7 +625,7 @@ function events_data_tables_install() {
 				QSG_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
 				QSG_show_group_name TINYINT(1) NOT NULL,
 				QSG_show_group_desc TINYINT(1) NOT NULL,
-				QSG_system_ID TINYINT(3) UNSIGNED NOT NULL,
+				QSG_system VARCHAR(25) NULL,
 				QSG_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 				PRIMARY KEY  (QSG_ID),
 				UNIQUE KEY QSG_identifier_UNIQUE (QSG_identifier ASC)';
