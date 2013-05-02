@@ -4,6 +4,10 @@
  * Text_Fields is a base class for any fields which are have integer value. (Exception: foreign and private key fields. Wish PHP had multiple-inheritance for this...)
  */
 require_once('fields/EE_Integer_Field.php');
+/**
+ * EE_Datetime fields do quite a bit of type juggling. Client-code is assumed to be strings that
+ * strtotime can understand (see http://www.php.net/manual/en/datetime.formats.php), they are then internally stored as 
+ */
 class EE_Datetime_Field extends EE_Integer_Field{
 	protected $_date_format;
 	protected $_time_format;
@@ -12,6 +16,40 @@ class EE_Datetime_Field extends EE_Integer_Field{
 		$this->_date_format = $date_format;
 		$this->_time_format = $time_format;
 	}
+	
+	/**
+	 * Returns the time in the default format, or an overriding format can be supplied
+	 * @param mixed $value_of_field_on_model_object, current value of teh datetime field on the model object
+	 * @param string $date_time_format see http://www.php.net/manual/en/datetime.formats.php
+	 * @return string formatted according to $date_time_format, or the default datetime format set on the field
+	 */
+	function prepare_for_get($value_of_field_on_model_object, $date_time_format = null) {
+		if( ! $date_time_format){
+			$date_time_format = '';
+			if($this->_date_format){
+				$date_time_format = $this->_date_format;
+			}
+			if($this->_time_format){
+				$date_time_format.= " ".$this->_time_format;
+			}
+		}
+		return date_i18n($date_time_format, $value_of_field_on_model_object);
+	}
+	
+	function prepare_for_get_date_only($value_of_field_on_model_object, $date_format = null){
+		if( ! $date_format ){
+			$date_format = $this->_date_format;
+		}
+		return date_i18n($date_format, $value_of_field_on_model_object);
+	}
+	
+	function prepare_for_get_time_only($value_of_field_on_model_object, $time_format = null){
+		if( ! $time_format ){
+			$time_format = $this->_time_format;
+		}
+		return date_i18n($time_format, $value_of_field_on_model_object);
+	}
+	
 	
 	function prepare_for_set($value_inputted_for_field_on_model_object) {
 //		check if we've been given a string representing a time.

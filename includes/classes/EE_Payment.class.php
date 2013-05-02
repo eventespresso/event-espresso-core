@@ -442,9 +442,7 @@ class EE_Payment extends EE_Base_Class{
 	* 		@access		public
 	*/
 	public function timestamp( $dt_frmt = FALSE ) {
-		//fewfwefew
-		$dt_frmt = $dt_frmt ? $dt_frmt : 'D M j, Y,    g:i a';
-		return date( $dt_frmt, $this->_PAY_timestamp );
+		return $this->get('PAY_timestamp');
 	}
 
 
