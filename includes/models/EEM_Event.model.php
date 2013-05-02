@@ -52,7 +52,7 @@ class EEM_Event  extends EEM_Base{
 		);
 		$this->_fields = array(
 			'Event_Detail'=>array(
-				'EVT_ID'=> new EE_Primary_Key_Int_Field('id', 'Event ID', false, 0),
+				'EVT_ID'=> new EE_Primary_Key_Int_Field('id', __('Event ID','event_espresso'), false, 0),
 				//...
 			));
 		$this->_model_relations = array(

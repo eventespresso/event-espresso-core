@@ -79,21 +79,21 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 		);
 		$this->_fields = array(
 			'Attendee'=>array(
-				'ATT_ID'=> new EE_Primary_Key_Int_Field('ATT_ID', 'Attendee ID', false, 0),
-				'ATT_fname'=>new EE_Plain_Text_Field('ATT_fname', 'First Name', true, ''),
-				'ATT_lname'=>new EE_Plain_Text_Field('ATT_lname', 'Last Name', true, ''),
-				'ATT_address'=>new EE_Plain_Text_Field('ATT_address', 'Address Part 1', true, ''),
-				'ATT_address2'=>new EE_Plain_Text_Field('ATT_address2', 'Address Part 2', true, ''),
-				'ATT_city'=>new EE_Plain_Text_Field('ATT_city', 'City', true, ''),
-				'STA_ID'=>new EE_Plain_Text_Field('STA_ID', 'State', true, ''),
-				'CNT_ISO'=>new EE_Plain_Text_Field('CNT_ISO', 'Country', true, ''),
-				'ATT_zip'=>new EE_Plain_Text_Field('ATT_zip', 'ZIP/Postal Code', true, ''),
-				'ATT_email'=>new EE_Email_Field('ATT_email', 'Email Address', true, ''),
-				'ATT_phone'=>new EE_Plain_Text_Field('ATT_phone', 'Phone', true, ''),
-				'ATT_social'=>new EE_Serialized_Text_Field('ATT_social', 'Serialized array of social media info', true, ''),
-				'ATT_comments'=>new EE_Simple_HTML_Field('ATT_comments', 'Comments about Attendee', true, ''),
-				'ATT_notes'=>new EE_Simple_HTML_Field('ATT_notes', 'Notes about Attendee', true, ''),
-				'ATT_deleted'=>new EE_Trashed_Flag_Field('ATT_deleted', 'Whether the attendee has been deleted or not', true, false),
+				'ATT_ID'=> new EE_Primary_Key_Int_Field('ATT_ID', __('Attendee ID','event_espresso'), false, 0),
+				'ATT_fname'=>new EE_Plain_Text_Field('ATT_fname', __('First Name','event_espresso'), true, ''),
+				'ATT_lname'=>new EE_Plain_Text_Field('ATT_lname', __('Last Name','event_espresso'), true, ''),
+				'ATT_address'=>new EE_Plain_Text_Field('ATT_address', __('Address Part 1','event_espresso'), true, ''),
+				'ATT_address2'=>new EE_Plain_Text_Field('ATT_address2', __('Address Part 2','event_espresso'), true, ''),
+				'ATT_city'=>new EE_Plain_Text_Field('ATT_city', __('City','event_espresso'), true, ''),
+				'STA_ID'=>new EE_Plain_Text_Field('STA_ID', __('State','event_espresso'), true, ''),
+				'CNT_ISO'=>new EE_Plain_Text_Field('CNT_ISO', __('Country','event_espresso'), true, ''),
+				'ATT_zip'=>new EE_Plain_Text_Field('ATT_zip', __('ZIP/Postal Code','event_espresso'), true, ''),
+				'ATT_email'=>new EE_Email_Field('ATT_email', __('Email Address','event_espresso'), true, ''),
+				'ATT_phone'=>new EE_Plain_Text_Field('ATT_phone', __('Phone','event_espresso'), true, ''),
+				'ATT_social'=>new EE_Serialized_Text_Field('ATT_social', __('Serialized array of social media info','event_espresso'), true, ''),
+				'ATT_comments'=>new EE_Simple_HTML_Field('ATT_comments', __('Comments about Attendee','event_espresso'), true, ''),
+				'ATT_notes'=>new EE_Simple_HTML_Field('ATT_notes', __('Notes about Attendee','event_espresso'), true, ''),
+				'ATT_deleted'=>new EE_Trashed_Flag_Field('ATT_deleted', __('Whether the attendee has been deleted or not','event_espresso'), true, false),
 				
 				
 				

@@ -320,8 +320,8 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * @access public
 	 * @return string
 	 */
-	public function system_name(){
-		return $this->get('QST_system_name');
+	public function system_ID(){
+		return $this->get('QST_system_ID');
 	}
 	
 	/**

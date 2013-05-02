@@ -34,10 +34,10 @@ class EEM_Event_Question_Group extends EEM_Base{
 		);
 		$this->_fields = array(
 			'Event_Question_Group'=>array(
-				'EQG_ID'=>new EE_Primary_Key_Int_Field('EQG_ID', 'Event to Question Group Link ID', false, 0),
-				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', 'Event ID', false, 0, 'Event'),
-				'QSG_ID'=>new EE_Foreign_Key_Int_Field('QSG_ID', 'QUestion Gruop Id', false, 0, 'Question_Group'),
-				'EQG_primary'=>new EE_Boolean_Field('EQG_primary', 'Flag indicating question is only for primary attendees', false, false)
+				'EQG_ID'=>new EE_Primary_Key_Int_Field('EQG_ID', __('Event to Question Group Link ID','event_espresso'), false, 0),
+				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID','event_espresso'), false, 0, 'Event'),
+				'QSG_ID'=>new EE_Foreign_Key_Int_Field('QSG_ID', __('QUestion Gruop Id','event_espresso'), false, 0, 'Question_Group'),
+				'EQG_primary'=>new EE_Boolean_Field('EQG_primary', __('Flag indicating question is only for primary attendees','event_espresso'), false, false)
 			)
 		);
 		$this->_model_relations = array(

@@ -97,17 +97,17 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 		);
 		$this->_fields = array(
 			'Question'=>array(
-				'QST_ID'=>new EE_Primary_Key_Int_Field('QST_ID', 'Question ID', false, 0),
-				'QST_display_text'=>new EE_Full_HTML_Field('QST_display_text', 'Text for displaying Question', true, ''),
-				'QST_admin_label'=>new EE_Simple_HTML_Field('QST_admin_label', 'Label given to question for admin', true, ''),
-				'QST_system_ID'=>new EE_Integer_Field('QST_system_ID', 'Internal string ID for question', true, 0),
-				'QST_type'=>new EE_Enum_Field('QST_type', 'type of Question', false, 'TEXT',$this->_allowed_question_types),
-				'QST_required'=>new EE_Boolean_Field('QST_required', 'Flag indicating if question is required', false, false),
-				'QST_required_text'=>new EE_Simple_HTML_Field('QST_required_text', 'Text to display is user doesnt answer question', true, ''),
-				'QST_order'=>new EE_Integer_Field('QST_order', 'Question Order', false, 0),
-				'QST_admin_only'=>new EE_Boolean_Field('QST_admin_only', 'Flag indicating whether question is only for admin', false, false),
-				'QST_wp_user'=>new EE_Integer_Field('QST_wp_user', 'Wp User ID who created question', false, 1),
-				'QST_deleted'=>new EE_Trashed_Flag_Field('QST_deleted', 'Flag Indicating question was deleted', false, false)
+				'QST_ID'=>new EE_Primary_Key_Int_Field('QST_ID', __('Question ID','event_espresso'), false, 0),
+				'QST_display_text'=>new EE_Full_HTML_Field('QST_display_text', __('Question Text','event_espresso'), true, ''),
+				'QST_admin_label'=>new EE_Simple_HTML_Field('QST_admin_label', __('Questino Label (admin-only)','event_espresso'), true, ''),
+				'QST_system_ID'=>new EE_Integer_Field('QST_system_ID', __('Internal string ID for question','event_espresso'), true, 0),
+				'QST_type'=>new EE_Enum_Field('QST_type', __('Question Type','event_espresso'),false, 'TEXT',$this->_allowed_question_types),
+				'QST_required'=>new EE_Boolean_Field('QST_required', __('Required Question?','event_espresso'), false, false),
+				'QST_required_text'=>new EE_Simple_HTML_Field('QST_required_text', __('Text to Display if Not Provided','event_espresso'), true, ''),
+				'QST_order'=>new EE_Integer_Field('QST_order', __('Question Order','event_espresso'), false, 0),
+				'QST_admin_only'=>new EE_Boolean_Field('QST_admin_only', __('Admin-Only Question?','event_espresso'), false, false),
+				'QST_wp_user'=>new EE_Integer_Field('QST_wp_user', __('Wp User ID who created question','event_espresso'), false, 1),
+				'QST_deleted'=>new EE_Trashed_Flag_Field('QST_deleted', __('Flag Indicating question was deleted','event_espresso'), false, false)
 			)
 		);
 		$this->_model_relations = array(

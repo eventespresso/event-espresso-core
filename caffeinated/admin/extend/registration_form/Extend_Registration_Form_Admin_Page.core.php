@@ -528,16 +528,16 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	public function get_trashed_questions( $per_page,$current_page = 1, $count = FALSE ) {
-		list($order,$limit,$output,$searchString)=$this->get_query_params(EEM_Question::instance(),$per_page,$current_page,$count);
-		$orderby = empty($this->_req_data['orderby']) ? 'QST_order' : $this->_req_data['orderby'];		
-		if(!empty($searchString)){
+		$query_params = $this->get_query_params(EEM_Question::instance(), $per_page, $current_page);
+		
+		if( $count ){
 			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
-			$questions=EEM_Question::instance()->get_all_where_deleted(array('QST_display_text'=>'%'.$searchString.'%'), $orderby, $order, 'LIKE', $limit,$output);
+			$results=EEM_Question::instance()->count_deleted($query_params);
 		}else{
 			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
-			$questions=EEM_Question::instance()->get_all_where_deleted(null, $orderby, $order, '=', $limit,$output);
+			$results=EEM_Question::instance()->get_all_deleted($query_params);
 		}
-		return $questions;
+		return $results;
 	}
 
 
@@ -545,8 +545,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	public function get_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
 		$questionGroupModel=EEM_Question_Group::instance();
 		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
-		$questionGroups = $questionGroupModel->get_all($query_params);
-		return $questionGroups;
+		if ($count){
+			$results = $questionGroupModel->count($query_params);
+		}else{
+			$results = $questionGroupModel->get_all($query_params);
+		}
+		return $results;
 	}
 
 
@@ -554,8 +558,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	public function get_trashed_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
 		$questionGroupModel=EEM_Question_Group::instance();
 		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
-		$questionGroups = $questionGroupModel->get_all_deleted($query_params);
-		return $questionGroups;
+		if($count){
+			$results = $questionGroupModel->count_deleted($query_params);
+		}else{
+			$results = $questionGroupModel->get_all_deleted($query_params);
+		}
+		return $results;
 	}
 
 

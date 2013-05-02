@@ -117,19 +117,19 @@ class EEM_Payment extends EEM_Base {
 		);
 		$this->_fields = array(
 			'Payment'=>array(
-				'PAY_ID'=>new EE_Primary_Key_Int_Field('PAY_ID', 'Payment ID', false, 0),
-				'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID', 'Transaction ID', false, 0, 'Transaction'),
-				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', 'STatus ID', false, EEM_Payment::status_id_cancelled, 'Status'),
-				'PAY_timestamp'=> new EE_Datetime_Field('PAY_timestamp', 'Timestamp of when payment was attemped', false, current_time('timestamp')),
-				'PAY_method'=>new EE_All_Caps_Text_Field_Base('PAY_method', 'User-friendly description of payment', false, 'CART'),
-				'PAY_amount'=>new EE_Money_Field('PAY_amount', 'Amount Payment should be for', false, 0),
-				'PAY_gateway'=>new EE_Plain_Text_Field('PAY_gateway', 'Gateway name used for payment', false, __('Unspecified','event_espresso')),
-				'PAY_gateway_response'=>new EE_Plain_Text_Field('PAY_gateway_response', 'Response from Gateway about the payment', false, ''),
-				'PAY_txn_id_chq_nmbr'=>new EE_Plain_Text_Field('PAY_txn_id_chq_nmbr', 'Transaction ID or Cheque Number', true, ''),
-				'PAY_po_number'=>new EE_Plain_Text_Field('PAY_po_number', 'Purchase or Sales Number', true, ''),
-				'PAY_extra_accntng'=>new EE_Simple_HTML_Field('PAY_extra_accntng', 'Extra Account Info', true, ''),
-				'PAY_via_admin'=>new EE_Boolean_Field('PAY_via_admin', 'Whehter payment made via admin', false, false),
-				'PAY_details'=>new EE_Serialized_Text_Field('PAY_details', 'Full Gateway response about payment', true, '')
+				'PAY_ID'=>new EE_Primary_Key_Int_Field('PAY_ID', __('Payment ID','event_espresso'), false, 0),
+				'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID', __('Transaction ID','event_espresso'), false, 0, 'Transaction'),
+				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('STatus ID','event_espresso'), false, EEM_Payment::status_id_cancelled, 'Status'),
+				'PAY_timestamp'=> new EE_Datetime_Field('PAY_timestamp', __('Timestamp of when payment was attemped','event_espresso'), false, current_time('timestamp')),
+				'PAY_method'=>new EE_All_Caps_Text_Field_Base('PAY_method', __('User-friendly description of payment','event_espresso'), false, 'CART'),
+				'PAY_amount'=>new EE_Money_Field('PAY_amount', __('Amount Payment should be for','event_espresso'), false, 0),
+				'PAY_gateway'=>new EE_Plain_Text_Field('PAY_gateway', __('Gateway name used for payment', false, __('Unspecified','event_espresso'),'event_espresso')),
+				'PAY_gateway_response'=>new EE_Plain_Text_Field('PAY_gateway_response', __('Response from Gateway about the payment','event_espresso'), false, ''),
+				'PAY_txn_id_chq_nmbr'=>new EE_Plain_Text_Field('PAY_txn_id_chq_nmbr', __('Transaction ID or Cheque Number','event_espresso'), true, ''),
+				'PAY_po_number'=>new EE_Plain_Text_Field('PAY_po_number', __('Purchase or Sales Number','event_espresso'), true, ''),
+				'PAY_extra_accntng'=>new EE_Simple_HTML_Field('PAY_extra_accntng', __('Extra Account Info','event_espresso'), true, ''),
+				'PAY_via_admin'=>new EE_Boolean_Field('PAY_via_admin', __('Whehter payment made via admin','event_espresso'), false, false),
+				'PAY_details'=>new EE_Serialized_Text_Field('PAY_details', __('Full Gateway response about payment','event_espresso'), true, '')
 			)
 		);
 		$this->_model_relations = array(

@@ -292,8 +292,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		}
 		$questionTypes=array();
 		$count=0;
-		foreach($this->_question_model->allowed_question_types() as $type){
-			$questionTypes[$count]=array('id'=>$type,'text'=>$type);
+		foreach($this->_question_model->allowed_question_types() as $db_name => $nice_text){
+			$questionTypes[$count]=array('id'=>$db_name,'text'=>$nice_text);
 			$count++;
 		}
 		$this->_template_args['QST_ID']=$ID;
@@ -407,7 +407,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$order = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
 		$field_to_order_by = empty($this->_req_data['orderby']) ? $model->get_primary_key_field()->get_name() : $this->_req_data['orderby'];	
 		$query_params['order_by']=array( $field_to_order_by => $order );
-		$search_string = $this->_req_data['s'];
+		$search_string = array_key_exists('s',$this->_req_data) ? $this->_req_data['s'] : null;
 		if(! empty($search_string)){
 			if($model instanceof EEM_Question_Group){
 				$query_params[0]=array(
@@ -430,8 +430,12 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	public function get_questions( $per_page=10,$current_page = 1, $count = FALSE ) {
 		$QST = EEM_Question::instance();
 		$query_params = $this->get_query_params($QST, $per_page, $current_page);
-		$questions = $QST->get_all($query_params);
-		return $questions;
+		if ($count){
+			$results = $QST->count($query_params);
+		}else{
+			$results = $QST->get_all($query_params);
+		}
+		return $results;
 		
 	}
 
