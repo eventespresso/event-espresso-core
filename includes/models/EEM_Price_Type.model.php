@@ -48,6 +48,15 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 	}
 	
 	/**
+	 * Gets the naem of teh base 
+	 * @param type $base_type_int
+	 * @return type
+	 */
+	public function get_base_type_name($base_type_int){
+		return $this->base_types[$base_type_int];
+	}
+	
+	/**
 	 * constants for price base types. In the DB, we decided to store the price base type
 	 * as an integer. So, to avoid just having magic numbers everwhere (eg, querying for 
 	 * all price types with PBT_ID = 2), we define these constants, to make code more understandable.
