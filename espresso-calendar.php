@@ -214,7 +214,11 @@ function espresso_calendar_do_stuff($show_expired) {
 	} else {
 		//Get all events
 		$type = 'all';
-		$sql = "SELECT e.*, ese.start_time, ese.end_time, c.category_meta FROM " . EVENTS_DETAIL_TABLE . " e ";
+		$sql = "SELECT e.*, ese.start_time, ese.end_time";
+		if (isset($espresso_calendar['disable_categories']) && $espresso_calendar['disable_categories'] == false) {
+			$sql .= ", c.category_meta ";
+		}
+		$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
 		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
 		if (isset($espresso_calendar['disable_categories']) && $espresso_calendar['disable_categories'] == false) {
 			$sql .= " LEFT JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
