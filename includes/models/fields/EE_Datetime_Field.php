@@ -109,4 +109,6 @@ class EE_Datetime_Field extends EE_Integer_Field{
 		return $date->format('U');
 
 	}
+
+	//todo prepare_for_gets and make sure the prepare_for_db_set is done correctly.
 }
