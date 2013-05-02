@@ -171,7 +171,7 @@ abstract class EEM_Base extends EE_Base{
 	 *		group_by	|	name of column to group by
 	 *		having		|	exactl like WHERE parameters array, except these conditions apply to the grouped results (whereas WHERE conditions apply to the pre-grouped results)
 	 * Possible future keys: 'having' for SQL having cluases, 'select' for limiting the queryset to a subset, 
-	 * 
+	 * @param boolean $values_already_prepared_by_model_object
 	 * Some full examples:
 	 * get 10 transactions which have Scottish attendees:
 	 * EEM_Transaction::instance()->get_all(array(
