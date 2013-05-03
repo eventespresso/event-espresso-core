@@ -230,7 +230,7 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	function get_one_by_ID($id, $values_already_prepared_by_model_object = false){
 		$primary_key_name = $this->get_primary_key_field()->get_name();
-		return $this->get_one(array(array($primary_key_name => $id)));
+		return $this->get_one(array(array($primary_key_name => $id)), $values_already_prepared_by_model_object);
 	}
 	/**
 	 * Gets a single item for this model from the DB, given the $query_params. Only returns a single class, not an array. If no item is found,
@@ -1453,8 +1453,7 @@ abstract class EEM_Base extends EE_Base{
 		if( $model_object->ID() == NULL && $ensure_is_in_db){
 			$model_object->save();
 		}
-		return $model_object;
-		
+		return $model_object;	
 	}
 	
 	

@@ -989,9 +989,15 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			$what = 'Price Type';
 			
 		}
-		
-		$action_desc = $trash ? 'moved to the trash' : 'restored';
-		$query_args = array( 'action'=> 'price_types' );
+		if($trash){
+			$action_desc = 'trashed';
+			$status = 'trashed';
+		}else{
+			$action_desc = 'restored';
+			$status = 'all';
+		}
+		$action_desc = $trash ? 'trashed' : 'restored';
+		$query_args = array( 'action'=> 'price_types', 'status'=>$status );
 		$this->_redirect_after_action( $success, $what, $action_desc, $query_args );
 		
 	}

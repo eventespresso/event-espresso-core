@@ -357,11 +357,16 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	protected function _delete_questions() {
-		$this->_delete_items($this->_question_model);
+		$success = $this->_delete_items($this->_question_model);
+		$this->_redirect_after_action( $success, $this->_question_model->item_name($success), 'deleted permanently', array( 'action'=>'default', 'status'=>'trash' ));
 	}
 
 
-
+/**
+ * 
+ * @param EEM_Base $model
+ * @return int number of items deleted permanenetly
+ */
 	private function _delete_items(EEM_Base $model){
 		
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
@@ -377,7 +382,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			}
 	
 		}
-		$this->_redirect_after_action( $success, $model->item_name($success), 'deleted permanently', array( 'action'=>'default', 'status'=>'all' ));
+		return $success;
 	}
 
 
@@ -419,7 +424,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	protected function _delete_question_groups() {
-		$this->_delete_items($this->_question_group_model);
+		$success = $this->_delete_items($this->_question_group_model);
+		$this->_redirect_after_action( $success, $this->_question_group_model->item_name($success), 'deleted permanently', array( 'action'=>'question_groups', 'status'=>'trash' ));
 	}
 
 
@@ -520,11 +526,17 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		}
 		
 
-		$action = strtolower( $model->item_name() . 's' );
-		$action = 'questions' ? 'default' : $action;
-		$action_desc = $trash?'trashed':'restored';
-		
-		$this->_redirect_after_action( $success, $model->item_name($success), $action_desc, array( 'action' => $action, 'status'=>'all' ) );
+		$action = $model instanceof EEM_Question ? 'questions' : 'question_groups';//strtolower( $model->item_name(2) );
+		//echo "action :$action";
+		//$action = 'questions' ? 'default' : $action;
+		if($trash){
+			$action_desc = 'trashed';
+			$status = 'trash';
+		}else{
+			$action_desc = 'restored';
+			$status = 'all';
+		}
+		$this->_redirect_after_action( $success, $model->item_name($success), $action_desc, array( 'action' => $action, 'status'=>$status ) );
 	}
 
 
