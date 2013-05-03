@@ -896,7 +896,7 @@ abstract class EEM_Base extends EE_Base{
 				$related_model_obj = $this->get_related_model_obj($valid_related_model_name);
 				//check if teh relation is HABTM, because then we're essentially doing two joins
 				//If so, join first to the JOIN table, and add its data types, and then continue as normal
-				if($relation_obj instanceof EE_HABTM){
+				if($relation_obj instanceof EE_HABTM_Relation){
 					$join_model_obj = $relation_obj->get_join_model();
 					$new_query_info = new EE_Model_Query_Info_Carrier(
 							array($join_model_obj->get_this_model_name()), 
@@ -1442,6 +1442,8 @@ abstract class EEM_Base extends EE_Base{
 			$model_object = $base_class_obj_or_id;
 		}elseif(is_int($base_class_obj_or_id)){//assume it's an ID
 			$model_object = $this->get_one_by_ID($base_class_obj_or_id);
+		}elseif(is_string($base_class_obj_or_id) && intval($base_class_obj_or_id)){//assume its a string representation of the object
+			$model_object = $this->get_one_by_ID(intval($base_class_obj_or_id));
 		}else{
 			throw new EE_Error(sprintf(__("'%s' is neither an object of type %s, nor an ID!",'event_espresso'),$base_class_obj_or_id,$this->_get_class_name()));
 		}

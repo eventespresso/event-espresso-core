@@ -300,6 +300,7 @@ function event_espresso_run() {
 function return_espresso_content() {
 	//@todo add extra join condition
 	global $espresso_content;
+	require_once('EEM_Registration.model.php');
 //	require_once('EEM_Registration.model.php');
 //	$reg1 = EEM_Registration::instance()->get_one(array(array('Attendee.ATT_ID'=>3)));
 //	var_dump($reg1->answers());

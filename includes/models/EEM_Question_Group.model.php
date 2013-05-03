@@ -85,7 +85,7 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base {
 			)
 		);
 		$this->_model_relations = array(
-			'Question'=>new EE_Has_Many_Relation(),
+			'Question'=>new EE_HABTM_Relation('Question_Group_Question'),
 			'Event'=>new EE_HABTM_Relation('Event_Question_Group'),
 			'Event_Question_Group'=>new EE_Has_Many_Relation()
 		);

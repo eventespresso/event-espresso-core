@@ -63,14 +63,13 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base{
 	/**
 	 * Ensures there is an entry in the join table between these two models. Feel free to do this manually if you like.
 	 * If the join table has additional columns (eg, the Event_Question_Group table has a is_primary column), then you'll
-	 * want to directly use the EEM_Event_Question_Group model to add the entry to the table and set those other columns' values
+	 * want to directly use the EEM_Event_Question_Group model to add the entry to the table and set those extra columns' values
 	 * @param EE_Base_Class/int $this_obj_or_id
 	 * @param EE_Base_Class/int $other_obj_or_id
 	 * @return void
 	 */
 	 function add_relation_to($this_obj_or_id, $other_obj_or_id ){
 		 $this_model_obj = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);
-		 echo "this model obj";var_dump($this_model_obj);
 		 $other_model_obj = $this->get_other_model()->ensure_is_obj($other_obj_or_id, true);
 		//check if such a relationship already exists
 		 $join_model_fk_to_this_model = $this->get_join_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());

@@ -41,6 +41,10 @@ class EEM_Question_Group_Question extends EEM_Base {
 				'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', __('Question Id','event_espresso'), false, 0, 'Question')
 			)
 		);
+		$this->_model_relations = array(
+			'Question_Group'=>new EE_Belongs_To_Relation(),
+			'Question'=>new EE_Belongs_To_Relation()
+		);
 		parent::__construct();
 	}
 }

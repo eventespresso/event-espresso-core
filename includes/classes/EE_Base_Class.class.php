@@ -718,6 +718,18 @@ class EE_Base_Class{
 	}
 	
 	/**
+	 * Ensures that this related thing is a model object.
+	 * @param mixed $object_or_id EE_base_Class/int/string either a rellate dmodel object, or its ID
+	 * @param string $model_name name of the related thing, eg 'Attendee',
+	 * @return EE_Base_Class
+	 */
+	protected function ensure_related_thing_is_model_obj($object_or_id,$model_name){
+		$other_model_instance = $this->_get_model_instance_with_name($this->_get_model_classname($model_name));
+		$model_obj = $other_model_instance->ensure_is_obj($object_or_id);
+		return $model_obj;
+	}
+	
+	/**
 	 * Forgets the cached model of the given relation Name. So the next time we request it, 
 	 * we will fetch it again from teh database. (Handy if you know it's changed somehow).
 	 * If a specific object is supplied, and the relationship to it is either a HasMany or HABTM,
@@ -727,6 +739,7 @@ class EE_Base_Class{
 	 * @return boolean success
 	 */
 	public function clear_cache($relationName, $object_to_remove_from_cache = null){
+		$object_to_remove_from_cache = $this->ensure_related_thing_is_model_obj($object_to_remove_from_cache, $relationName);
 		$relationship_to_model = $this->_get_model()->related_settings_for($relationName);
 		if( ! $relationship_to_model){
 			throw new EE_Error(sprintf(__("There is no relationship to %s on a %s. Cannot clear that cache",'event_espresso'),$relationName,get_class($this)));
@@ -903,20 +916,28 @@ class EE_Base_Class{
 	 */
 	public function  _get_model(){
 		//find model for this class
-		$modelName=$this->_get_model_name();
-		//@todo: make all these classes exist, so requiring WILL be appropriate require_once($modelName.".model.php");
-		//include_once($modelName.".model.php");
-		//$modelObject=new $modelName;
-		$model=call_user_func($modelName."::instance");
+		$modelName=$this->_get_model_classname();
+		return $this->_get_model_instance_with_name($modelName);
+	}
+	/**
+	 * Gets the model instance (eg instance of EEM_Attendee) given its classname (eg EE_Attendee)
+	 * @return EEM_Base
+	 */
+	protected function _get_model_instance_with_name($model_classname){
+		$model=call_user_func($model_classname."::instance");
 		return $model;
 	}
 	/**
-	 * Gets the model's name for this class. Eg, if this class' name is 
-	 * EE_Answer, it will return EEM_Answer.
+	 * If no model name is provided, gets the model classname (eg EEM_Attendee) for this model object.
+	 * If a model name is provided (eg Registration), gets the model classname for that model.
 	 * @return string
 	 */
-	private function _get_model_name(){
-		$className=get_class($this);
+	private function _get_model_classname( $model_name = null){
+		if($model_name){
+			$className = "EE_".$model_name;
+		}else{
+			$className=get_class($this);
+		}
 		$modelName=str_replace("EE_","EEM_",$className);
 		return $modelName;
 	}
@@ -949,7 +970,9 @@ class EE_Base_Class{
 	 * @return boolean success
 	 */
 	public function _add_relation_to($otherObjectModelObjectOrID,$relationName){
+		$otherObjectModelObjectOrID = $this->ensure_related_thing_is_model_obj($otherObjectModelObjectOrID,$relationName);
 		$this->_get_model()->add_relationship_to($this, $otherObjectModelObjectOrID, $relationName);
+		
 		$this->cache( $relationName, $otherObjectModelObjectOrID );
 	}
 	
@@ -963,6 +986,7 @@ class EE_Base_Class{
 	 * @return boolean success
 	 */
 	public function _remove_relation_to($otherObjectModelObjectOrID,$relationName){
+		$otherObjectModelObjectOrID = $this->ensure_related_thing_is_model_obj($otherObjectModelObjectOrID, $relationName);
 		$this->_get_model()->remove_relationship_to($this, $otherObjectModelObjectOrID, $relationName);
 		$this->clear_cache($relationName, $otherObjectModelObjectOrID);
 	}
