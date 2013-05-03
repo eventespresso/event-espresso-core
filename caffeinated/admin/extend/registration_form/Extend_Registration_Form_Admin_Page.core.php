@@ -417,7 +417,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 
-	protected function _delete_question_groups() {}
+	protected function _delete_question_groups() {
+		$this->_delete_items($this->_question_group_model);
+	}
 
 
 
