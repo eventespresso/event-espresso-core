@@ -111,13 +111,13 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				'noheader' => TRUE,
 				),
 
-			'trash_question_group' => array(
+			'trash_question_groups' => array(
 				'func' => '_trash_or_restore_question_groups',
 				'args' => array('trash' => TRUE),
 				'noheader' => array('trash' => FALSE)
 				),
 
-			'restore_question_group' => array(
+			'restore_question_groups' => array(
 				'func' => '_trash_or_restore_question_groups',
 				'args' => array('trash' => FALSE),
 				'noheader' => TRUE
@@ -532,10 +532,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		
 		if( $count ){
 			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
-			$results=EEM_Question::instance()->count_deleted($query_params);
+			$results=$this->_question_model->count_deleted($query_params);
 		}else{
 			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
-			$results=EEM_Question::instance()->get_all_deleted($query_params);
+			$results=$this->_question_model->get_all_deleted($query_params);
 		}
 		return $results;
 	}

@@ -1399,7 +1399,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			}
 			
 			$query_args['action'] = $this->_req_action;
-			$query_args['_wpnonce'] = wp_create_nonce( $query_args['action'] . '_nonce' );
+			$query_args[$this->_req_action.'_nonce'] = wp_create_nonce( $query_args['action'] . '_nonce' );
 			$query_args['status'] = $view['slug'];
 			$this->_views[ $key ]['url'] = add_query_arg( $query_args, $this->_admin_base_url );
 		}
