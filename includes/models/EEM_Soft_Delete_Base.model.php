@@ -160,10 +160,10 @@ class EEM_Soft_Delete_Base extends EEM_Base{
 	 * @return boolean success
 	 */
 	public function delete_permanently_by_ID($ID=FALSE){
-		if ( ! $ID ) {
-			return FALSE;
-		}
-		return parent::delete_by_ID($ID);
+		$query_params = array();
+		$query_params[0] = array($this->get_primary_key_field()->get_name() => $ID);
+		$query_params['limit'] = 1;
+		return parent::delete($query_params);
 	}
 	
 	/**

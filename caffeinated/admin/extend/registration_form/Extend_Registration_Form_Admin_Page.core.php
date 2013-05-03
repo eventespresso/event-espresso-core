@@ -363,6 +363,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	private function _delete_items(EEM_Base $model){
+		
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {			
 			// if array has more than one element than success message should be plural

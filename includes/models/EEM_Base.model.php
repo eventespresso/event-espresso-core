@@ -343,18 +343,21 @@ abstract class EEM_Base extends EE_Base{
 		//to get around this, we first do a SELECT, get all the IDs, and then run another query
 		//to delete them
 		$deletion_where = $this->_setup_ids_for_delete( $this->_get_all_wpdb_results($query_params) );
-	
-		//echo "objects for deletion:";var_dump($objects_for_deletion);
-		$model_query_info = $this->_create_model_query_info_carrier($query_params);
-		$table_aliases = array();
-		foreach(array_keys($this->_tables) as $table_alias){
-			$table_aliases[] = $table_alias;
-		}
-		$SQL = "DELETE ".implode(", ",$table_aliases)." FROM ".$model_query_info->get_full_join_sql()." WHERE ".$deletion_where;
+		if($deletion_where){
+			//echo "objects for deletion:";var_dump($objects_for_deletion);
+			$model_query_info = $this->_create_model_query_info_carrier($query_params);
+			$table_aliases = array();
+			foreach(array_keys($this->_tables) as $table_alias){
+				$table_aliases[] = $table_alias;
+			}
+			$SQL = "DELETE ".implode(", ",$table_aliases)." FROM ".$model_query_info->get_full_join_sql()." WHERE ".$deletion_where;
 
-//		/echo "delete sql:$SQL";
-		$rows_deleted = $wpdb->query($SQL);
-		//$wpdb->print_error();
+	//		/echo "delete sql:$SQL";
+			$rows_deleted = $wpdb->query($SQL);
+			//$wpdb->print_error();
+		}else{
+			$rows_deleted = 0;
+		}
 		return $rows_deleted;//how many supposedly got updated
 	}
 
