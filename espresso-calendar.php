@@ -770,7 +770,7 @@ if (!function_exists('espresso_calendar')) {
 								$(this).css({ 'height' : 0 });
 							});
 							
-							$('.fc-view-month .fc-widget-content').each(function(index) {	
+							$('.fc-view-month td').each(function(index) {	
 								setMonth = thisMonth;
 								if ( $(this).closest('tr').hasClass('fc-first') && $(this).hasClass('fc-other-month') ){
 									setMonth = prevMonth;
