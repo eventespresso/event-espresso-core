@@ -174,13 +174,19 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 
 
 
-	public function delete_by_ID($ID) {
-		if (!$ID) {
-			return FALSE;
-		}
+	public function delete_permanently($query_params = array()) {
+		
+		$would_be_deleted_price_types = $this->get_all_deleted_and_undeleted($query_params);
+		$would_be_deleted_price_type_ids = array_keys($would_be_deleted_price_types);
 		//check if any prices use this price type
-		if ( $prices = $this->get_all_related($ID,'Price')) {
-			$msg = __('The Price Type could not be deleted because there are existing Prices that currently use this Price Type.  If you still wish to delete this Price Type, then either delete those Prices or change them to use other Price Types.', 'event_espresso');
+		$query_params = array(array('PRT_ID'=>array('IN',$would_be_deleted_price_type_ids)));
+		if ( $prices = $this->get_all_related($ID,'Price',$query_params)) {
+			$prices_names_and_ids = array();
+			foreach($prices as $price){
+				/* @var $price EE_Price */
+				$prices_names_and_ids[] = $price->name()."(".$price->ID().")";
+			}
+			$msg = sprintf(__('The Price Type(s) could not be deleted because there are existing Prices that currently use this Price Type.  If you still wish to delete this Price Type, then either delete those Prices or change them to use other Price Types.The prices are: %s', 'event_espresso'),implode(",",$prices_names_and_ids));
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ ); 
 			return FALSE;
 		} 

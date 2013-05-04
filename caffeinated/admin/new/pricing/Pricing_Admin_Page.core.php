@@ -380,7 +380,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$limit = array( $offset, $per_page );
 		$query_params = array(
 			array(
-				'Price_Type.PRT_is_global'=>true,
+				//'Price_Type.PRT_is_global'=>true,
 				'PRC_deleted'=>$trashed),
 			'order_by'=>$orderby,
 			'limit'=>$limit,
@@ -404,8 +404,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@access protected
 	*		@return void
 	*/
-	protected function _edit_price_details() {		
-	
+	protected function _edit_price_details() {	
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		// grab price ID
 		$PRC_ID = isset( $this->_req_data['id'] ) && ! empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
@@ -435,26 +434,26 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		// get price types
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
-		
-		if (empty($PRT->_price_types)) {
+		$price_types = $PRT->get_all();
+		$price_type_names = array();
+		if (empty($price_types)) {
 			$msg = __( 'You have no price types defined. Please add a price type before adding a price.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			exit();
 		} else {
-			foreach ($PRT->_price_types as $type) {
-				if ($type->is_global()) {
-					$price_types[] = array('id' => $type->ID(), 'text' => $type->name());
-				}
+			foreach ($price_types as $type) {
+//				if ($type->is_global()) {
+					$price_type_names[] = array('id' => $type->ID(), 'text' => $type->name());
+//				}
 			}
 		}
 
-		$this->_template_args['price_types'] = $price_types;
+		$this->_template_args['price_types'] = $price_type_names;
 		$this->_template_args['learn_more_about_pricing_link'] = $this->_learn_more_about_pricing_link();
 
 		$this->_set_publish_post_box_vars( 'id', $PRC_ID );
 		// the details template wrapper
 		$this->display_admin_page_with_sidebar();	
-		
 	}
 
 
@@ -640,7 +639,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
 			// cycle thru bulk action checkboxes
 			while (list( $PRC_ID, $value ) = each($this->_req_data['checkbox'])) {
-				if (!$PRC->delete_by_ID(absint($PRC_ID))) {
+				if (!$PRC->delete_permanently_by_ID(absint($PRC_ID))) {
 					$success = 0;
 				}
 			}
@@ -648,7 +647,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		} else {
 			// grab single id and delete
 			$PRC_ID = absint($this->_req_data['id']);
-			if ( ! $PRC->delete_by_ID($PRC_ID)) {
+			if ( ! $PRC->delete_permanently_by_ID($PRC_ID)) {
 				$success = 0;
 			}
 			
@@ -929,7 +928,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		// is this a new Price ?
 		if ( $new_price_type ) {
 			// run the insert
-			if ( $PRT->insert( $set_column_values )) {
+			if ( $PRT_ID = $PRT->insert( $set_column_values )) {
 				$success = 1;
 			} 
 			$action_desc = 'created';
@@ -1022,25 +1021,17 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		
 		$success = 1;
 		//Checkboxes
-		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
+		if (!empty($this->_req_data['checkbox'])) {
 			// if array has more than one element than success message should be plural
 			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
-			$what = count( $this->_req_data['checkbox'] ) > 1 ? 'Prices' : 'Price';
+			$what = $PRT->item_name($success);
 			// cycle thru bulk action checkboxes
 			while (list( $PRT_ID, $value ) = each($this->_req_data['checkbox'])) {
-				if (!$PRT->delete_by_ID(absint($PRT_ID))) {
+				if (!$PRT->delete_permanently_by_ID(absint($PRT_ID))) {
 					$success = 0;
 				}
 			}
 	
-		} else {
-			// grab single id and delete
-			$PRT_ID = absint($this->_req_data['id']);
-			if ( ! $PRT->delete_by_ID($PRT_ID)) {
-				$success = 0;
-			}
-			$what = 'Price';
-			
 		}
 
 		
