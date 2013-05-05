@@ -159,13 +159,6 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
-	/**
-	 * Timezone
-	 * This gets set by the "set_timezone()" method so that we know what timezone incoming strings|timestamps are in.  This can also be used before a get to set what timezone you want strings coming out of the object to be in.
-	 * @var string
-	 */
-	protected $_timezone = NULL;
-
 
 	/**
 	 *
@@ -226,35 +219,6 @@ class EE_Datetime extends EE_Base_Class{
 	}
 
 
-
-
-
-	/**
-	 * See $_timezone property for description of what the timezone property is for.  This SETS the timezone internally for being able to refernece what timezone we are running conversions on when converting TO the internal timezone (UTC Unix Timestamp) for the object OR when converting FROM the internal timezone (UTC Unix Timestamp).
-	 *
-	 *
-	 * @access public
-	 * @param string $timezone A valid timezone string as described by @link http://www.php.net/manual/en/timezones.php
-	 * @return void
-	 */
-	public function set_timezone( $timezone ) {
-		$timezone = empty( $timezone ) ? get_option( 'timezone_string' ) : $timezone;
-		EE_Datetime_Field::validate_timezone( $timezone ); //just running validation on the timezone.
-		$this->_timezone = $timezone;
-	}
-
-
-
-
-	/**
-	 * This just returns whatever is set for the current timezone.
-	 *
-	 * @access public
-	 * @return string timezone string
-	 */
-	public function get_timezone() {
-		return $this->_timezone;
-	}
 
 
 

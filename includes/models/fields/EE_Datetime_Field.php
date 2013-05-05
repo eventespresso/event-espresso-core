@@ -50,6 +50,10 @@ class EE_Datetime_Field extends EE_Integer_Field{
 		return $this->_prepare_for_set_new( $time_to_set_string, $timezone, TRUE );
 	}
 	
+
+
+
+
 	/**
 	 * Only sets the date portion of the datetime. 
 	 * @param string $date_to_set_string like 8am, 
@@ -60,6 +64,10 @@ class EE_Datetime_Field extends EE_Integer_Field{
 		$this->_set_date_obj( date( $this->_date_format  . ' ' . $this->_time_format, $current_datetime_value ), 'UTC' );
 		return $this->_prepare_for_set_new( $date_to_set_string, $timezone );
 	}
+
+
+
+
 
 
 	/**
@@ -76,9 +84,17 @@ class EE_Datetime_Field extends EE_Integer_Field{
 	}
 
 
+
+
+
+
 	public function prepare_for_prety_echoing( $datetimevalue, $format = NULL, $timezone = NULL ) {
 		echo $this->prepare_for_get( $datetimevalue, $format, $timezone );
 	}
+
+
+
+
 
 
 
@@ -139,6 +155,10 @@ class EE_Datetime_Field extends EE_Integer_Field{
 	}
 
 
+
+
+
+
 	/**
 	 * This simply takes an incoming timestamp and timezone and spits out the unix timestamp for the given timezone.  If timezone IS not included then we attempt to set the time via the websites set timezone (get_option('timezone_string']) ) If THAT isn't set then we just use the default timezone set fro the blog as the assumed base time.	
 	 * @param  string|int $datetime This can be either an integer timestamp (in which case this method will convert from int to string first to make sure we get the right timezone setup )
@@ -153,6 +173,10 @@ class EE_Datetime_Field extends EE_Integer_Field{
 		$timestamp = is_numeric( $datetime ) ? $this->_convert_from_numeric_value_to_utc_unixtimestamp( $datetime, $tz ) : $this->_convert_from_string_value_to_utc_unixtimestamp( $datetime, $tz );
 		return $timestamp;
 	}
+
+
+
+
 
 
 	private function _convert_from_numeric_value_to_utc_unixtimestamp( $datetime, $timezone ) {
@@ -173,10 +197,14 @@ class EE_Datetime_Field extends EE_Integer_Field{
 	}
 
 
+
+
+
+
 	private function _convert_from_string_value_to_utc_unixtimestamp( $datetime, $timezone ) {
 		//create a new datetime object using the given string and timezone
 		$this->_set_date_obj( $datetime, $timezone );
-		
+
 		if ( !$this->_date )
 			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
 
@@ -184,6 +212,10 @@ class EE_Datetime_Field extends EE_Integer_Field{
 		return $this->_date->format('U');
 
 	}
+
+
+
+
 
 
 
@@ -202,6 +234,8 @@ class EE_Datetime_Field extends EE_Integer_Field{
 		else
 			throw new EE_Error( sprintf( __('The timezone given (%s), is invalid, please check with %sthis list%s for what valid timezones can be used', 'event_espresso'), $timezone, '<a href="http://www.php.net/manual/en/timezones.php">', '</a>' ) );
 	}
+
+
 
 
 
