@@ -158,6 +158,15 @@ class EE_Datetime extends EE_Base_Class{
 	protected $_tm_frmt = 'g:i a';
 
 
+
+	/**
+	 * Timezone
+	 * This gets set by the "set_timezone()" method so that we know what timezone incoming strings|timestamps are in.  This can also be used before a get to set what timezone you want strings coming out of the object to be in.
+	 * @var string
+	 */
+	protected $_timezone = NULL;
+
+
 	/**
 	 *
 	 * @var EE_Event
@@ -214,6 +223,37 @@ class EE_Datetime extends EE_Base_Class{
 		}
 		parent::__construct($arrayForParent);
 
+	}
+
+
+
+
+
+	/**
+	 * See $_timezone property for description of what the timezone property is for.  This SETS the timezone internally for being able to refernece what timezone we are running conversions on when converting TO the internal timezone (UTC Unix Timestamp) for the object OR when converting FROM the internal timezone (UTC Unix Timestamp).
+	 *
+	 *
+	 * @access public
+	 * @param string $timezone A valid timezone string as described by @link http://www.php.net/manual/en/timezones.php
+	 * @return void
+	 */
+	public function set_timezone( $timezone ) {
+		$timezone = empty( $timezone ) ? get_option( 'timezone_string' ) : $timezone;
+		EE_Datetime_Field::validate_timezone( $timezone ); //just running validation on the timezone.
+		$this->_timezone = $timezone;
+	}
+
+
+
+
+	/**
+	 * This just returns whatever is set for the current timezone.
+	 *
+	 * @access public
+	 * @return string timezone string
+	 */
+	public function get_timezone() {
+		return $this->_timezone;
 	}
 
 
@@ -286,7 +326,7 @@ class EE_Datetime extends EE_Base_Class{
 	private function _set_time_for($time,$field_name){
 		$field = $this->_get_model()->field_settings_for($field_name);
 		$attribute_field_name = $this->_get_private_attribute_name($field_name);
-		$this->$attribute_field_name = $field->prepare_for_set_with_new_time($time, $this->$attribute_field_name);
+		$this->$attribute_field_name = $field->prepare_for_set_with_new_time($time, $this->$attribute_field_name, $this->_timezone);
 	}
 	
 	
@@ -299,7 +339,7 @@ class EE_Datetime extends EE_Base_Class{
 	private function _set_date_for($date,$field_name){
 		$field = $this->_get_model()->field_settings_for($field_name);
 		$attribute_field_name = $this->_get_private_attribute_name($field_name);
-		$this->$attribute_field_name = $field->prepare_for_set_with_new_date($date, $this->$attribute_field_name);
+		$this->$attribute_field_name = $field->prepare_for_set_with_new_date($date, $this->$attribute_field_name, $this->_timezone );
 	}
 
 
@@ -493,20 +533,20 @@ class EE_Datetime extends EE_Base_Class{
 		}
 
 		$var_name = "_DTT_{$EVT_or_REG}_{$start_or_end}";
+		$field = $this->_get_model()->field_settings_for($var_name);
 		
 		switch ( $date_or_time ) {
 			
 			case 'D' :
-				return date_i18n( $dt_frmt, $this->{$var_name} );
+				return $field->prepare_for_get( $this->{$var_name}, $dt_frmt, $this->_timezone );
 				break;
 			
 			case 'T' :
-				return date_i18n( $tm_format, $this->{$var_name} );
+				return $field->prepare_for_get( $this->{$var_name}, $tm_format, $this->_timezone );
 				break;
 			
 			default :
-				return date_i18n( $dt_frmt . ' ' . $tm_format, $this->{$var_name} );
-				
+				return $field->prepare_for_get( $this->{$var_name}, $dt_frmt . ' ' . $tm_format, $this->_timezone );
 		}
 
 	}
