@@ -40,7 +40,7 @@ class Prices_List_Table extends EE_Admin_List_Table {
 		parent::__construct($admin_page);
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 		$this->_PRT = EEM_Price_Type::instance();
-		$this->_price_types = $this->_PRT->get_all();
+		$this->_price_types = $this->_PRT->get_all_deleted_and_undeleted();
 	}
 
 

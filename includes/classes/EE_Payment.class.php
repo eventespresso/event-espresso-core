@@ -238,15 +238,8 @@ class EE_Payment extends EE_Base_Class{
 	* 		@access		public
 	*		@param		int		$TXN_ID
 	*/
-	public function set_transaction( $TXN_ID = FALSE ) {
-
-		if ( ! $TXN_ID ) {
-			$msg = __( 'No Transaction ID was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_TXN_ID = absint( $TXN_ID );
-		return TRUE;
+	public function set_transaction_id( $TXN_ID = FALSE ) {
+		$this->set('TXN_ID',$TXN_ID);
 	}
 	
 	
@@ -273,13 +266,7 @@ class EE_Payment extends EE_Base_Class{
 	*/
 	public function set_status( $STS_ID = FALSE ) {
 
-		if ( ! $STS_ID ) {
-			$msg = __( 'No Status was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_STS_ID = strtoupper( wp_strip_all_tags( $STS_ID ));
-		return TRUE;
+		$this->set('STS_ID',$STS_ID);
 	}
 
 
@@ -294,13 +281,7 @@ class EE_Payment extends EE_Base_Class{
 	*/
 	public function set_timestamp( $timestamp = FALSE ) {
 
-		if ( ! $timestamp ) {
-			$msg = __( 'No Timestamp was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PAY_timestamp = absint( $timestamp );
-		return TRUE;
+		$this->set('PAY_timestamp',$timestamp);
 	}
 
 
@@ -313,15 +294,8 @@ class EE_Payment extends EE_Base_Class{
 	* 		@access		public
 	*		@param		string		$pay_method
 	*/
-	public function set__method( $pay_method = FALSE ) {
-
-		if ( ! $pay_method ) {
-			$msg = __( 'No Payment Method was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PAY_method = wp_strip_all_tags( $pay_method );
-		return TRUE;
+	public function set_method( $pay_method = FALSE ) {
+		$this->set('PAY_method',$pay_method);
 	}
 
 
@@ -335,17 +309,7 @@ class EE_Payment extends EE_Base_Class{
 	*		@param		float		$amount
 	*/
 	public function set_amount( $amount = FALSE ) {
-
-		if (  $amount === FALSE || ! is_numeric( $amount ) ) {
-			$msg = __( 'No Payment Amount or an invalid Payment Amount was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		// change commas to decimals
-		$amount = ( preg_replace( '/,/', '.', $amount ));
-		// remove all other characters and cast as float
-		$this->_PAY_amount = floatval( preg_replace( '/[^-0-9.]*/', '', $amount ));
-		return TRUE;
+		$this->set('PAY_amount',$amount);
 	}
 
 
@@ -359,14 +323,7 @@ class EE_Payment extends EE_Base_Class{
 	*		@param		string		$gateway
 	*/
 	public function set_gateway( $gateway = FALSE ) {
-
-		if ( ! $gateway ) {
-			$msg = __( 'No Payment Gateway was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PAY_gateway = wp_strip_all_tags( $gateway );
-		return TRUE;
+		$this->set('PAY_gateway',$gateway);
 	}
 
 
@@ -380,14 +337,7 @@ class EE_Payment extends EE_Base_Class{
 	*		@param		string		$gateway_response
 	*/
 	public function set_gateway_response( $gateway_response = FALSE ) {
-
-		if ( ! $gateway_response ) {
-			$msg = __( 'No Payment Gateway Response was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PAY_gateway_response = htmlentities( wp_strip_all_tags( $gateway_response ), ENT_QUOTES, 'UTF-8' );
-		return TRUE;
+		$this->set('PAY_gateway_response',$gateway_response);
 	}
 
 
@@ -401,14 +351,7 @@ class EE_Payment extends EE_Base_Class{
 	*		@param		string		$txn_id_chq_nmbr
 	*/
 	public function set_txn_id_chq_nmbr( $txn_id_chq_nmbr = FALSE ) {
-
-		if ( ! $txn_id_chq_nmbr ) {
-			$msg = __( 'No Gateway Transaction ID or Cheque # was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PAY_txn_id_chq_nmbr = wp_strip_all_tags( $txn_id_chq_nmbr );
-		return TRUE;
+		$this->set('PAY_txn_id_chq_nmbr',$txn_id_chq_nmbr);
 	}
 
 
@@ -421,14 +364,7 @@ class EE_Payment extends EE_Base_Class{
 	*		@param		string		$po_number
 	*/
 	public function set_po_number( $po_number = FALSE ) {
-
-		if ( ! $po_number ) {
-			$msg = __( 'No Purchase Order Number info was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PAY_po_number = wp_strip_all_tags( $po_number );
-		return TRUE;
+		$this->set('PAY_po_number',$po_number);
 	}
 
 
@@ -442,14 +378,7 @@ class EE_Payment extends EE_Base_Class{
 	*		@param		string		$extra_accntng
 	*/
 	public function set_extra_accntng( $extra_accntng = FALSE ) {
-
-		if ( ! $extra_accntng ) {
-			$msg = __( 'No Notes or Extra Accounting Field info was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PAY_extra_accntng = wp_strip_all_tags( $extra_accntng );
-		return TRUE;
+		$this->set('PAY_extra_accntng',$extra_accntng);
 	}
 
 
@@ -463,14 +392,7 @@ class EE_Payment extends EE_Base_Class{
 	*		@param		string		$via_admin
 	*/
 	public function set_payment_made_via_admin( $via_admin = FALSE ) {
-
-		if ( ! is_bool( $via_admin )) {
-			$msg = __( 'The supplied value for the "payment made via admin" flag was not a boolean.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PAY_via_admin = (bool)absint( $via_admin );
-		return TRUE;
+		$this->set('PAY_via_admin',$via_admin);
 	}
 
 
@@ -500,7 +422,7 @@ class EE_Payment extends EE_Base_Class{
 	* 		@access		public
 	*/
 	public function TXN_ID() {
-		return $this->_TXN_ID;
+		return $this->get('TXN_ID');
 	}
 
 
@@ -510,7 +432,7 @@ class EE_Payment extends EE_Base_Class{
 	* 		@access		public
 	*/
 	public function STS_ID() {
-		return $this->_STS_ID;
+		return $this->get('STS_ID');
 	}
 
 
@@ -520,8 +442,7 @@ class EE_Payment extends EE_Base_Class{
 	* 		@access		public
 	*/
 	public function timestamp( $dt_frmt = FALSE ) {
-		$dt_frmt = $dt_frmt ? $dt_frmt : 'D M j, Y,    g:i a';
-		return date( $dt_frmt, $this->_PAY_timestamp );
+		return $this->get('PAY_timestamp');
 	}
 
 
@@ -531,7 +452,7 @@ class EE_Payment extends EE_Base_Class{
 	* 		@access		public
 	*/
 	public function method() {
-		return $this->_PAY_method;
+		return $this->get('PAY_method');
 	}
 
 
@@ -541,7 +462,7 @@ class EE_Payment extends EE_Base_Class{
 	* 		@access		public
 	*/
 	public function amount() {
-		return $this->_PAY_amount;
+		return $this->get('PAY_amount');
 	}
 
 
@@ -551,7 +472,7 @@ class EE_Payment extends EE_Base_Class{
 	* 		@access		public
 	*/
 	public function gateway() {
-		return $this->_PAY_gateway;
+		return $this->get('PAY_gateway');
 	}
 
 
@@ -561,7 +482,7 @@ class EE_Payment extends EE_Base_Class{
 	* 		@access		public
 	*/
 	public function gateway_response() {
-		return $this->_PAY_gateway_response ? stripslashes( html_entity_decode( $this->_PAY_gateway_response, ENT_QUOTES, 'UTF-8' )) : '';
+		return $this->get('PAY_gateway_response');
 	}
 
 
@@ -571,7 +492,7 @@ class EE_Payment extends EE_Base_Class{
 	* 		@access		public
 	*/
 	public function txn_id_chq_nmbr() {
-		return $this->_PAY_txn_id_chq_nmbr ? $this->_PAY_txn_id_chq_nmbr : '';
+		return $this->get('PAY_txn_id_chq_nmbr');
 	}
 
 
@@ -581,7 +502,7 @@ class EE_Payment extends EE_Base_Class{
 	* 		@access		public
 	*/
 	public function po_number() {
-		return $this->_PAY_po_number ? $this->_PAY_po_number : '';
+		return $this->get('PAY_po_number');
 	}
 
 
@@ -591,7 +512,7 @@ class EE_Payment extends EE_Base_Class{
 	* 		@access		public
 	*/
 	public function extra_accntng() {
-		return $this->_PAY_extra_accntng ? $this->_PAY_extra_accntng : '';
+		return $this->get('PAY_extra_accntng'); 
 	}
 
 
@@ -601,7 +522,7 @@ class EE_Payment extends EE_Base_Class{
 	* 		@access		public
 	*/
 	public function payment_made_via_admin() {
-		return $this->_PAY_via_admin;
+		return $this->get('PAY_via_admin');
 	}
 
 

@@ -146,7 +146,7 @@ class Price_Types_List_Table extends EE_Admin_List_Table {
 
 
 	function column_base_type($item) {
-		return '<div class="jst-cntr">' . EEM_Price_Type::$base_types[ $item->base_type() ] . '</div>';
+		return '<div class="jst-cntr">' . $item->base_type_name()  . '</div>';
 	}
 
 

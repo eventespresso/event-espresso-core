@@ -207,7 +207,7 @@ class Text_Frame_Reflower extends Frame_Reflower {
 	  break;
 
 	case "nowrap":
-	  $this->_frame->set_text( $text = $this->_collapse_white_space($text) );
+	  $this->_frame->set_name( $text = $this->_collapse_white_space($text) );
 	  break;
 
 	case "pre-wrap":

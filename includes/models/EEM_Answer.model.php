@@ -53,10 +53,10 @@ class EEM_Answer extends EEM_Base {
 		);
 		$this->_fields = array(
 			'Answer'=>array(
-				'ANS_ID'=> new EE_Primary_Key_Int_Field('ANS_ID', 'Answer ID', false, 0),
-				'REG_ID'=>new EE_Foreign_Key_Int_Field('REG_ID', 'Registration ID', false, 0, 'Registration'),
-				'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', 'Quesetion ID', false, 0, 'Question'),
-				'ANS_value'=>new EE_Simple_HTML_Field('ANS_value', 'Answer Value', false, '')
+				'ANS_ID'=> new EE_Primary_Key_Int_Field('ANS_ID', __('Answer ID','event_espresso'), false, 0),
+				'REG_ID'=>new EE_Foreign_Key_Int_Field('REG_ID', __('Registration ID','event_espresso'), false, 0, 'Registration'),
+				'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', __('Quesetion ID','event_espresso'), false, 0, 'Question'),
+				'ANS_value'=>new EE_Simple_HTML_Field('ANS_value', __('Answer Value','event_espresso'), false, '')
 			));
 		$this->_model_relations = array(
 			'Registration'=>new EE_Belongs_To_Relation(),

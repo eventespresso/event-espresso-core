@@ -221,7 +221,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	protected function _set_column_values_for(EEM_Base $model){
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		$set_column_values=array();
-		foreach($model->fields_settings() as $fieldName=>$settings){
+		foreach($model->field_settings() as $fieldName=>$settings){
 			// basically if QSG_identifier is empty or not set
 			if ( $fieldName == 'QSG_identifier' && ( isset( $this->_req_data['QSG_identifier'] ) && empty( $this->_req_data['QSG_identifier'] ) || ! isset( $this->_req_data['QSG_identifier'] ) )) {
 				$QSG_name = isset( $this->_req_data['QSG_name'] ) ? $this->_req_data['QSG_name'] : '' ;
@@ -292,8 +292,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		}
 		$questionTypes=array();
 		$count=0;
-		foreach($this->_question_model->allowed_question_types() as $type){
-			$questionTypes[$count]=array('id'=>$type,'text'=>$type);
+		foreach($this->_question_model->allowed_question_types() as $db_name => $nice_text){
+			$questionTypes[$count]=array('id'=>$db_name,'text'=>$nice_text);
 			$count++;
 		}
 		$this->_template_args['QST_ID']=$ID;
@@ -316,10 +316,10 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$set_column_values=$this->_set_column_values_for($this->_question_model);
 		require_once('EE_Question.class.php');
 		if($new_question){
-			$results=$this->_question_model->insert($set_column_values);
-			if($results){
+			$new_id=$this->_question_model->insert($set_column_values);
+			if($new_id){
 				$success=1;
-				$ID=$results['new-ID'];
+				$ID=$new_id;
 			}else{
 				$success=0;
 				$ID=false;
@@ -333,33 +333,35 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			$success= $this->_question_model->update($set_column_values,array($wheres));
 			$action_desc='updated';
 		}
-		//save the related options
-		//trash removed options, save old ones
-			//get list of all options
-		$question=$this->_question_model->get_one_by_ID($ID);
-		$options=$question->options();
-		if(!empty($options)){
-			foreach($options as $option_ID=>$option){
-				$option_req_index=$this->_get_option_req_data_index($option_ID);
-				if($option_req_index!==FALSE){
-					$option->save($this->_req_data['question_options'][$option_req_index]);
-				}else{
-					//not found, remove it
-					$option->delete();
+		if ($ID){
+			//save the related options
+			//trash removed options, save old ones
+				//get list of all options
+			$question=$this->_question_model->get_one_by_ID($ID);
+			$options=$question->options();
+			if(!empty($options)){
+				foreach($options as $option_ID=>$option){
+					$option_req_index=$this->_get_option_req_data_index($option_ID);
+					if($option_req_index!==FALSE){
+						$option->save($this->_req_data['question_options'][$option_req_index]);
+					}else{
+						//not found, remove it
+						$option->delete();
+					}
 				}
 			}
-		}
-		//save new related options
-		foreach($this->_req_data['question_options'] as $index=>$option_req_data){
-			if(empty($option_req_data['QSO_ID']) && (!empty($option_req_data['QSO_name']) || !empty($option_req_data['QSO_value']))){//no ID! save it!
-				if(empty($option_req_data['QSO_value'])){
-					$option_req_data['QSO_value']=$option_req_data['QSO_name'];
+			//save new related options
+			foreach($this->_req_data['question_options'] as $index=>$option_req_data){
+				if(empty($option_req_data['QSO_ID']) && (!empty($option_req_data['QSO_name']) || !empty($option_req_data['QSO_value']))){//no ID! save it!
+					if(empty($option_req_data['QSO_value'])){
+						$option_req_data['QSO_value']=$option_req_data['QSO_name'];
+					}
+					if(empty($option_req_data['QSO_name'])){
+						$option_req_data['QSO_name']=$option_req_data['QSO_value'];
+					}
+					$new_option=new EE_Question_Option($option_req_data['QSO_name'], $option_req_data['QSO_value'], $question->ID());
+					$new_option->save();
 				}
-				if(empty($option_req_data['QSO_name'])){
-					$option_req_data['QSO_name']=$option_req_data['QSO_value'];
-				}
-				$new_option=new EE_Question_Option($option_req_data['QSO_name'], $option_req_data['QSO_value'], $question->ID());
-				$new_option->save();
 			}
 		}
 		$query_args=array('action'=>'edit_question','QST_ID'=>$ID);
@@ -407,7 +409,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$order = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
 		$field_to_order_by = empty($this->_req_data['orderby']) ? $model->get_primary_key_field()->get_name() : $this->_req_data['orderby'];	
 		$query_params['order_by']=array( $field_to_order_by => $order );
-		$search_string = $this->_req_data['s'];
+		$search_string = array_key_exists('s',$this->_req_data) ? $this->_req_data['s'] : null;
 		if(! empty($search_string)){
 			if($model instanceof EEM_Question_Group){
 				$query_params[0]=array(
@@ -430,8 +432,12 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	public function get_questions( $per_page=10,$current_page = 1, $count = FALSE ) {
 		$QST = EEM_Question::instance();
 		$query_params = $this->get_query_params($QST, $per_page, $current_page);
-		$questions = $QST->get_all($query_params);
-		return $questions;
+		if ($count){
+			$results = $QST->count($query_params);
+		}else{
+			$results = $QST->get_all($query_params);
+		}
+		return $results;
 		
 	}
 

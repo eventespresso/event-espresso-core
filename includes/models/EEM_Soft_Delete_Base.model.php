@@ -54,6 +54,24 @@ class EEM_Soft_Delete_Base extends EEM_Base{
 	}
 	
 	/**
+	 * Unlike many other soft delete functions, get_one_by_ID returns the one item requested, regardless
+	 * of whether it's been flagged as deleted or not.
+	 * @param mixed $id int/string
+	 * @param boolean $values_already_prepared_by_model_object
+	 * @return EE_Base_Class
+	 */
+	public function get_one_by_ID($id, $values_already_prepared_by_model_object = false) {
+		$query_params[0] = array($this->get_primary_key_field()->get_name() => $id);
+		$query_params['limit'] = 1;
+		$results = parent::get_all($query_params);
+		if($results){
+			return array_shift($results);
+		}else{
+			return null;
+		}
+	}
+	
+	/**
 	 * Count all the undeleted items.
 	 * @param array $query_params like EEM_Base::get_all
 	 * @param string $field_to_count
@@ -160,10 +178,10 @@ class EEM_Soft_Delete_Base extends EEM_Base{
 	 * @return boolean success
 	 */
 	public function delete_permanently_by_ID($ID=FALSE){
-		if ( ! $ID ) {
-			return FALSE;
-		}
-		return parent::delete_by_ID($ID);
+		$query_params = array();
+		$query_params[0] = array($this->get_primary_key_field()->get_name() => $ID);
+		$query_params['limit'] = 1;
+		return parent::delete($query_params);
 	}
 	
 	/**

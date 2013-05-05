@@ -6,7 +6,7 @@ assert($question instanceof EE_Question);
 assert($question_types);
 
 //start output
-echo EE_Form_Fields::hidden_input('QST_system_ID', $question->system_name());
+echo EE_Form_Fields::hidden_input('QST_system_ID', $question->system_ID());
 echo EE_Form_Fields::hidden_input('QST_wp_user', $question->wp_user());
 echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 
@@ -15,15 +15,15 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 <div class="padding">
 	<table class="form-table">
 		<tbody>
-			<?php 
-			foreach($question->get_fields_settings() as $fieldName=>$settings){
+			<?php require_once('EEM_Question.model.php');
+			foreach(EEM_Question::instance()->field_settings() as $fieldName=>$settings){
 				if( in_array( $fieldName, array( 'QST_ID', 'QST_system_ID','QST_wp_user','QST_deleted', 'QST_order' ))) {
 					continue;
 				}
 			?>
 			<tr>
 				<th>
-					<label for="<?php echo $fieldName?>"><?php echo $settings->nicename();?></label>
+					<label for="<?php echo $fieldName?>"><?php echo $settings->get_nicename();?></label>
 				</th>
 				<td>
 					<?php 
@@ -99,7 +99,7 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 									<input type="text" name="question_options[xxcountxx][QSO_value]" class="option-name medium-text">
 								</td>
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
-									<input type="text" name="question_options[xxcountxx][QSO_text]" class="option-value regular-text">
+									<input type="text" name="question_options[xxcountxx][QSO_value]" class="option-value regular-text">
 								</td>
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
 									<a class="remove-option remove-item">
@@ -115,10 +115,10 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 							?>
 								<tr class="question-option">
 									<td style="padding: 0 10px 10px 0; line-height: 1em;">
-										<input type="text" class="regular-text" name="question_options[<?php echo $count?>][QSO_value]" value="<?php echo $option->value()?>">
+										<input type="text" class="regular-text" name="question_options[<?php echo $count?>][QSO_name]" value="<?php echo $option->name()?>">
 									</td>
 									<td style="padding: 0 10px 10px 0; line-height: 1em;">
-										<input type="text" class="regular-text" name="question_options[<?php echo $count?>][QSO_text]" value="<?php echo $option->text()?>">
+										<input type="text" class="regular-text" name="question_options[<?php echo $count?>][QSO_value]" value="<?php echo $option->value()?>">
 									</td>
 									<?php if( $count > 0 ){ ?>
 									<td style="padding: 0 10px 10px 0; line-height: 1em;">
@@ -140,10 +140,10 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 							?>
 							<tr class="question-option">
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
-									<input type="text" name="question_options[0][QSO_value]" class="option-name regular-text">
+									<input type="text" name="question_options[0][QSO_name]" class="option-name regular-text">
 								</td>
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
-									<input type="text" name="question_options[0][QSO_text]" class="option-value regular-text">
+									<input type="text" name="question_options[0][QSO_value]" class="option-value regular-text">
 								</td>
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
 								</td>
@@ -166,7 +166,7 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 					<?php break;
 					
 					case 'QST_required':
-					$requiredOptions=array(0=>array('text'=>'Required','id'=>'1'),1=>array('text'=>'Optional','id'=>0));
+					$requiredOptions=array(0=>array('text'=>'Required','id'=>'1'),1=>array('text'=>'Optional','id'=>'0'));
 					echo EE_Form_Fields::select_input('QST_required', $requiredOptions,$question->required());?>
 					<br/>
 					<p class="description">

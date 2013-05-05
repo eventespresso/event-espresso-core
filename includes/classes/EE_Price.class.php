@@ -242,14 +242,7 @@ class EE_Price extends EE_Base_Class{
 	*		@param		int			$PRT_ID
 	*/
 	public function set_type( $PRT_ID = FALSE ) {
-
-		if ( ! $PRT_ID ) {
-			$msg = __( 'No price type was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PRT_ID = absint( $PRT_ID );
-		return TRUE;
+		$this->set('PRT_ID',$PRT_ID);
 	}
 
 
@@ -263,14 +256,7 @@ class EE_Price extends EE_Base_Class{
 	*		@param		float		$PRC_amount
 	*/
 	public function set_amount( $PRC_amount = FALSE ) {
-
-		if ( ! $PRC_amount ) {
-			$msg = __( 'No amount was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PRC_amount = abs( $PRC_amount );
-		return TRUE;
+		$this->set('PRC_amount',$PRC_amount);
 	}
 
 
@@ -284,14 +270,7 @@ class EE_Price extends EE_Base_Class{
 	*		@param		string		$PRC_name
 	*/
 	public function set_name( $PRC_name = FALSE ) {
-
-		if ( ! $PRC_name ) {
-			$msg = __( 'No name was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PRC_name = wp_strip_all_tags( $PRC_name );
-		return TRUE;
+		$this->set('PRC_name',$PRC_name);
 	}
 
 
@@ -305,14 +284,7 @@ class EE_Price extends EE_Base_Class{
 	*		@param		string		$PRC_desc
 	*/
 	public function set_description( $PRC_desc = FALSE ) {
-
-		if ( ! $PRC_desc ) {
-			$msg = __( 'No description was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PRC_desc = wp_strip_all_tags( $PRC_desc );
-		return TRUE;
+		$this->Set('PRC_desc',$PRC_desc);
 	}
 
 
@@ -326,14 +298,7 @@ class EE_Price extends EE_Base_Class{
 	*		@param		string		$PRC_desc
 	*/
 	public function set_reg_limit( $PRC_reg_limit = FALSE ) {
-
-		if ( ! $PRC_reg_limit ) {
-			$msg = __( 'No registration limit was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PRC_reg_limit = absint( $PRC_reg_limit );
-		return TRUE;
+		$this->set('PRC_reg_limit',$PRC_reg_limit);
 	}
 
 
@@ -347,14 +312,7 @@ class EE_Price extends EE_Base_Class{
 	*		@param		string		$PRC_desc
 	*/
 	public function set_tckts_left( $PRC_tckts_left = FALSE ) {
-
-		if ( ! $PRC_tckts_left ) {
-			$msg = __( 'No tickets left quantity was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PRC_tckts_left = absint( $PRC_tckts_left );
-		return TRUE;
+		$this->set('PRC_tckts_left',$PRC_tckts_left);
 	}
 
 
@@ -368,14 +326,7 @@ class EE_Price extends EE_Base_Class{
 	*		@param		boolean		$PRC_use_dates
 	*/
 	public function set_use_dates( $PRC_use_dates = NULL ) {
-
-		if ( ! is_bool( $PRC_use_dates )) {
-			$msg = __( 'No use dates boolean flag was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PRC_use_dates = (bool)absint( $PRC_use_dates );
-		return TRUE;
+		$this->set('PRC_use_dates',$PRC_use_dates);
 	}
 
 
@@ -389,15 +340,7 @@ class EE_Price extends EE_Base_Class{
 	*		@param		mixed		$PRC_start_date
 	*/
 	public function set_start_date( $PRC_start_date = NULL ) {
-
-		if ( ! $PRC_start_date ) {
-			$msg = __( 'No start date was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		
-		$this->_PRC_start_date = is_numeric( $PRC_start_date ) ? absint( $PRC_start_date ) : strtotime( wp_strip_all_tags( $PRC_start_date ));
-		return TRUE;
+		$this->set('PRC_start_date',$PRC_start_date);
 	}
 
 
@@ -411,15 +354,7 @@ class EE_Price extends EE_Base_Class{
 	*		@param		mixed		$PRC_use_dates
 	*/
 	public function set_end_date( $PRC_end_date = NULL ) {
-
-		if ( ! $PRC_end_date ) {
-			$msg = __( 'No end date was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		
-		$this->_PRC_end_date = is_numeric( $PRC_end_date ) ? absint( $PRC_end_date ) : strtotime( wp_strip_all_tags( $PRC_end_date ));
-		return TRUE;
+		$this->set('PRC_end_date',$PRC_end_date);
 	}
 
 
@@ -433,14 +368,7 @@ class EE_Price extends EE_Base_Class{
 	*		@param		bool		$PRC_is_active
 	*/
 	public function set_globally_active( $PRC_is_active = NULL ) {
-
-		if ( ! is_bool( $PRC_is_active )) {
-			$msg = __( 'No globally active boolean flag was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PRC_is_active = (bool)absint( $PRC_is_active );
-		return TRUE;
+		$this->set('PRC_is_active',$PRC_is_active);
 	}
 
 
@@ -454,14 +382,7 @@ class EE_Price extends EE_Base_Class{
 	*		@param		bool		PRC_deleted
 	*/
 	public function set_deleted( $PRC_deleted = NULL ) {
-
-		if ( $PRC_deleted == NULL ) {
-			$msg = __( 'No deleted boolean flag was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PRC_deleted = (bool)absint( $PRC_deleted );
-		return TRUE;
+		$this->set('PRC_deleted',$PRC_deleted);
 	}
 
 
@@ -473,7 +394,7 @@ class EE_Price extends EE_Base_Class{
 	* @return 		int
 	*/
 	public function type() {
-		return $this->_PRT_ID;
+		return $this->get('PRT_ID');
 	}
 	
 	public function type_obj(){
@@ -486,7 +407,7 @@ class EE_Price extends EE_Base_Class{
 	* @return 		int
 	*/
 	public function event() {
-		return $this->_EVT_ID;
+		return $this->get('EVT_ID');
 	}
 
 
@@ -496,7 +417,7 @@ class EE_Price extends EE_Base_Class{
 	* @return 		float
 	*/
 	public function amount() {
-		return $this->_PRC_amount;
+		return $this->get('PRC_amount');
 	}
 
 
@@ -506,7 +427,7 @@ class EE_Price extends EE_Base_Class{
 	* @return 		string
 	*/
 	public function name() {
-		return stripslashes( $this->_PRC_name );
+		return $this->get('PRC_name' );
 	}
 
 
@@ -526,7 +447,7 @@ class EE_Price extends EE_Base_Class{
 	* @return 		string
 	*/
 	public function reg_limit() {
-		return $this->_PRC_reg_limit;
+		return $this->get('PRC_reg_limit');
 	}
 
 
@@ -536,7 +457,7 @@ class EE_Price extends EE_Base_Class{
 	* @return 		string
 	*/
 	public function tckts_left() {
-		return $this->_PRC_tckts_left;
+		return $this->get('PRC_tckts_left');
 	}
 
 
@@ -546,7 +467,7 @@ class EE_Price extends EE_Base_Class{
 	* @return 		string
 	*/
 	public function use_dates() {
-		return $this->_PRC_use_dates ? TRUE : FALSE;
+		return $this->get('PRC_use_dates');
 	}
 
 
@@ -557,15 +478,7 @@ class EE_Price extends EE_Base_Class{
 	* @return 		string
 	*/
 	public function start_date( $format = 'Y-m-d' ) {
-		if ( $this->_PRC_start_date ) {
-			if ( $format === FALSE ) {
-				return $this->_PRC_start_date;
-			} else {
-				return date( $format, $this->_PRC_start_date );
-			}
-		} else {
-			return NULL;
-		}		
+		return $this->get('PRC_start_date');
 	}
 
 
@@ -576,15 +489,7 @@ class EE_Price extends EE_Base_Class{
 	* @return 		string
 	*/
 	public function end_date( $format = 'Y-m-d' ) {
-		if ( $this->_PRC_end_date ) {
-			if ( $format === FALSE ) {
-				return $this->_PRC_end_date;
-			} else {
-				return date( $format, $this->_PRC_end_date );
-			}			
-		} else {
-			return NULL;
-		}		
+		return $this->get('PRC_end_date');
 	}
 
 
@@ -594,7 +499,7 @@ class EE_Price extends EE_Base_Class{
 	* @return 		bool
 	*/
 	public function is_active() {
-		return $this->_PRC_is_active;
+		return $this->get('PRC_is_active');
 	}
 
 
@@ -604,7 +509,7 @@ class EE_Price extends EE_Base_Class{
 	* 	@return 		int
 	*/
 	public function overrides() {
-		return $this->_PRC_overrides;
+		return $this->get('PRC_overrides');
 	}
 
 
@@ -614,7 +519,7 @@ class EE_Price extends EE_Base_Class{
 	* 	@return 		int
 	*/
 	public function order() {
-		return $this->_PRC_order;
+		return $this->get('PRC_order');
 	}
 
 
@@ -624,7 +529,7 @@ class EE_Price extends EE_Base_Class{
 	* 	@return 		bool
 	*/
 	public function deleted() {
-		return $this->_PRC_deleted;
+		return $this->get('PRC_deleted');
 	}
 
 

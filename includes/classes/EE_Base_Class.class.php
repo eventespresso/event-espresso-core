@@ -26,7 +26,7 @@
 //			}
 //		}
 //		//verify we have all the attributes required in teh model
-//		foreach($model->fields_settings() as $fieldName=>$fieldSettings){
+//		foreach($model->field_settings() as $fieldName=>$fieldSettings){
 //			if(!property_exists($this,$this->_get_private_attribute_name($fieldName))){
 //				throw new EE_Error(sprintf(__('You have added an attribute titled \'%s\' to your model %s, but have not set a corresponding
 //					attribute on %s. Please add $%s to %s','event_espresso'),
@@ -86,7 +86,7 @@
 //	 */
 //	public function get($fieldName){
 //		$privateFieldName=$this->_get_private_attribute_name($fieldName);
-//		$fieldSettings=$this->get_fields_settings();
+//		$fieldSettings=$this->get_field_settings();
 //		if(array_key_exists($fieldName,$fieldSettings)){
 //			$value=$this->$privateFieldName;
 //			$thisFieldSettings=$fieldSettings[$fieldName];
@@ -142,7 +142,7 @@
 //	 * @return null
 //	 */
 //	public function set($fieldName,$value,$useDefault=false){
-//		$fields=$this->get_fields_settings();
+//		$fields=$this->get_field_settings();
 //		if(!array_key_exists($fieldName, $fields)){
 //			throw new EE_Error(sprintf(__("An internal Event Espresso error has occured. Please contact Event Espresso.||The field %s doesnt exist on Event Espresso class %s",'event_espresso'),$fieldName,get_class($this)));
 //		}
@@ -150,7 +150,7 @@
 //		//if this field doesn't allow nulls, check it isn't null
 //		if($value===null && $useDefault){
 //			$privateAttributeName=$this->_get_private_attribute_name($fieldName);
-//			$modelFields=$this->_get_model()->fields_settings();
+//			$modelFields=$this->_get_model()->field_settings();
 //			$defaultValue=$modelFields[$fieldName]->default_value();
 //			$this->$privateAttributeName=$defaultValue;
 //			return true;
@@ -335,7 +335,7 @@
 //	 */
 //	public function e($fieldName){
 //		$privateFieldName=$this->_get_private_attribute_name($fieldName);
-//		$fieldSettings=$this->get_fields_settings();
+//		$fieldSettings=$this->get_field_settings();
 //		if(array_key_exists($fieldName,$fieldSettings)){
 //			$value=$this->$privateFieldName;
 //			$thisFieldSettings=$fieldSettings[$fieldName];
@@ -397,11 +397,11 @@
 //	 * @return EE_Model_Field[]
 //	 * @throws EE_Error
 //	 */
-//	public function get_fields_settings(){
-//		if($this->_get_model()->fields_settings()==null){
+//	public function get_field_settings(){
+//		if($this->_get_model()->field_settings()==null){
 //			throw new EE_Error(sprintf("An unexpected error has occured with Event Espresso.||An Event Espresso class has not been fully implemented. %s does not override the \$_fieldSettings attribute.",get_class($this)),"event_espresso");
 //		}
-//		return $this->_get_model()->fields_settings();
+//		return $this->_get_model()->field_settings();
 //	}
 //	
 //	/**
@@ -421,7 +421,7 @@
 //		}
 //		//now get current attribute values
 //		$save_cols_n_values = array();
-//		foreach($this->get_fields_settings() as $fieldName=>$fieldSettings){
+//		foreach($this->get_field_settings() as $fieldName=>$fieldSettings){
 //			$attributeName=$this->_get_private_attribute_name($fieldName);
 //			if($fieldSettings->type() == 'serialized_text'){
 //				//serialized_text fields should be arrays/objects 
@@ -718,6 +718,18 @@ class EE_Base_Class{
 	}
 	
 	/**
+	 * Ensures that this related thing is a model object.
+	 * @param mixed $object_or_id EE_base_Class/int/string either a rellate dmodel object, or its ID
+	 * @param string $model_name name of the related thing, eg 'Attendee',
+	 * @return EE_Base_Class
+	 */
+	protected function ensure_related_thing_is_model_obj($object_or_id,$model_name){
+		$other_model_instance = $this->_get_model_instance_with_name($this->_get_model_classname($model_name));
+		$model_obj = $other_model_instance->ensure_is_obj($object_or_id);
+		return $model_obj;
+	}
+	
+	/**
 	 * Forgets the cached model of the given relation Name. So the next time we request it, 
 	 * we will fetch it again from teh database. (Handy if you know it's changed somehow).
 	 * If a specific object is supplied, and the relationship to it is either a HasMany or HABTM,
@@ -727,6 +739,7 @@ class EE_Base_Class{
 	 * @return boolean success
 	 */
 	public function clear_cache($relationName, $object_to_remove_from_cache = null){
+		$object_to_remove_from_cache = $this->ensure_related_thing_is_model_obj($object_to_remove_from_cache, $relationName);
 		$relationship_to_model = $this->_get_model()->related_settings_for($relationName);
 		if( ! $relationship_to_model){
 			throw new EE_Error(sprintf(__("There is no relationship to %s on a %s. Cannot clear that cache",'event_espresso'),$relationName,get_class($this)));
@@ -818,9 +831,18 @@ class EE_Base_Class{
 	 * @return void
 	 */
 	public function e($field_name){
+		echo $this->get_pretty($field_name);
+	}
+	
+	/**
+	 * 
+	 * @param string $field_name
+	 * @return mixed
+	 */
+	public function get_pretty($field_name){
 		$field_value = $this->get($field_name);
 		$field_obj = $this->_get_model()->field_settings_for($field_name);
-		echo $field_obj->prepare_for_pretty_echoing($field_value);
+		return  $field_obj->prepare_for_pretty_echoing($field_value);
 	}
 	
 	/**
@@ -858,16 +880,16 @@ class EE_Base_Class{
 		$save_cols_n_values = array();
 		foreach($this->_get_model()->field_settings() as $fieldName=>$field_obj){
 			$attributeName=$this->_get_private_attribute_name($fieldName);
-			$save_cols_n_values[$fieldName] = $field_obj->prepare_for_insertion_into_db($this->$attributeName);
+			$save_cols_n_values[$fieldName] = $this->$attributeName;
 	
 		}
 		//if the object already has an ID, update it. Otherwise, insert it
 		if ( !empty( $save_cols_n_values[$this->_get_primary_key_name()] ) ){
-			$results = $this->_get_model()->update ( $save_cols_n_values, array(array($this->_get_primary_key_name()=>$this->ID())) );
+			$results = $this->_get_model()->update ( $save_cols_n_values, array(array($this->_get_primary_key_name()=>$this->ID())), true );
 		} else {
 			unset($save_cols_n_values[$this->_get_primary_key_name()]);
 			
-			$results = $this->_get_model()->insert ( $save_cols_n_values );
+			$results = $this->_get_model()->insert ( $save_cols_n_values, true);
 			if($results){//if successful, set the primary key
 				$this->set($this->_get_primary_key_name(),$results);//for some reason the new ID is returned as part of an array,
 				//where teh only key is 'new-ID', and it's value is the new ID.
@@ -894,20 +916,28 @@ class EE_Base_Class{
 	 */
 	public function  _get_model(){
 		//find model for this class
-		$modelName=$this->_get_model_name();
-		//@todo: make all these classes exist, so requiring WILL be appropriate require_once($modelName.".model.php");
-		//include_once($modelName.".model.php");
-		//$modelObject=new $modelName;
-		$model=call_user_func($modelName."::instance");
+		$modelName=$this->_get_model_classname();
+		return $this->_get_model_instance_with_name($modelName);
+	}
+	/**
+	 * Gets the model instance (eg instance of EEM_Attendee) given its classname (eg EE_Attendee)
+	 * @return EEM_Base
+	 */
+	protected function _get_model_instance_with_name($model_classname){
+		$model=call_user_func($model_classname."::instance");
 		return $model;
 	}
 	/**
-	 * Gets the model's name for this class. Eg, if this class' name is 
-	 * EE_Answer, it will return EEM_Answer.
+	 * If no model name is provided, gets the model classname (eg EEM_Attendee) for this model object.
+	 * If a model name is provided (eg Registration), gets the model classname for that model.
 	 * @return string
 	 */
-	private function _get_model_name(){
-		$className=get_class($this);
+	private function _get_model_classname( $model_name = null){
+		if($model_name){
+			$className = "EE_".$model_name;
+		}else{
+			$className=get_class($this);
+		}
 		$modelName=str_replace("EE_","EEM_",$className);
 		return $modelName;
 	}
@@ -940,7 +970,9 @@ class EE_Base_Class{
 	 * @return boolean success
 	 */
 	public function _add_relation_to($otherObjectModelObjectOrID,$relationName){
+		$otherObjectModelObjectOrID = $this->ensure_related_thing_is_model_obj($otherObjectModelObjectOrID,$relationName);
 		$this->_get_model()->add_relationship_to($this, $otherObjectModelObjectOrID, $relationName);
+		
 		$this->cache( $relationName, $otherObjectModelObjectOrID );
 	}
 	
@@ -954,6 +986,7 @@ class EE_Base_Class{
 	 * @return boolean success
 	 */
 	public function _remove_relation_to($otherObjectModelObjectOrID,$relationName){
+		$otherObjectModelObjectOrID = $this->ensure_related_thing_is_model_obj($otherObjectModelObjectOrID, $relationName);
 		$this->_get_model()->remove_relationship_to($this, $otherObjectModelObjectOrID, $relationName);
 		$this->clear_cache($relationName, $otherObjectModelObjectOrID);
 	}

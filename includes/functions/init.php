@@ -300,6 +300,27 @@ function event_espresso_run() {
 function return_espresso_content() {
 	//@todo add extra join condition
 	global $espresso_content;
+//	require_once('EEM_Question.model.php');
+//	$qs = EEM_Question::instance()->get_all(
+//			array(
+//				'group_by'=>'Question_Group.QSG_ID'
+//			));
+//	var_dump($qs);
+//	require_once('EEM_Registration.model.php');
+//	echo "<hr><hr>";
+//	$regs = EEM_Registration::instance()->get_all(array(
+//		array('Attendee.ATT_fname'=>array('LIKE','%f%')),
+//		'force_join'=>array('Transaction'),
+//		'order_by'=>array('Price.Price_Type.PRT_ID'=>'ASC')
+//	));
+//	$regs = EEM_Registration::instance()->get_all(array(
+//		array('OR'=>array(
+//				'Attendee.ATT_fname'=>array('LIKE','%f'),
+//				'NOT'=>array(
+//					'Transaction.TXN_ID'=>array('>',34))
+//				)			
+//	)));
+//	var_dump($regs);
 //	require_once('EEM_Registration.model.php');
 //	$reg1 = EEM_Registration::instance()->get_one(array(array('Attendee.ATT_ID'=>3)));
 //	var_dump($reg1->answers());

@@ -73,19 +73,19 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base {
 		);
 		$this->_fields = array(
 			'Question_Group'=>array(
-				'QSG_ID'=>new EE_Primary_Key_Int_Field('QSG_ID', 'Question Group ID', false, 0),
-				'QSG_name'=>new EE_Plain_Text_Field('QSG_name', 'Question Group Name', false, ''),
-				'QSG_identifier'=>new EE_Plain_Text_Field('QSG_identifier', 'Text ID for question Group', false, ''),
-				'QSG_desc'=>new EE_Full_HTML_Field('QSG_desc', 'Description of Question Group', true, ''),
-				'QSG_order'=>new EE_Integer_Field('QSG_order', 'Order in which to show the question group', true, 0),
-				'QSG_show_group_name'=>new EE_Boolean_Field('QSG_show_group_name', 'Flag indicating whether to show the group\'s name on the registration page', false, false),
-				'QSG_show_group_desc'=>new EE_Boolean_Field('QSG_show_group_desc', 'Flag indicating whether to show the group\s description on the registration apge', false, false),
-				'QSG_system_ID'=>new EE_Integer_Field('QSG_system_ID', 'Unique ID indicating the question group is essential', false, 0),
-				'QSG_deleted'=>new EE_Trashed_Flag_Field('QSG_deleted', 'Flag indicating this question group was deleted', false, false)
+				'QSG_ID'=>new EE_Primary_Key_Int_Field('QSG_ID', __('Question Group ID','event_espresso'), false, 0),
+				'QSG_name'=>new EE_Plain_Text_Field('QSG_name', __('Question Group Name','event_espresso'), false, ''),
+				'QSG_identifier'=>new EE_Plain_Text_Field('QSG_identifier', __('Text ID for question Group','event_espresso'), false, ''),
+				'QSG_desc'=>new EE_Full_HTML_Field('QSG_desc', __('Description of Question Group','event_espresso'), true, ''),
+				'QSG_order'=>new EE_Integer_Field('QSG_order', __('Order in which to show the question group','event_espresso'), true, 0),
+				'QSG_show_group_name'=>new EE_Boolean_Field('QSG_show_group_name', __('Flag indicating whether to show the group\'s name on the registration page','event_espresso'), false, false),
+				'QSG_show_group_desc'=>new EE_Boolean_Field('QSG_show_group_desc', __('Flag indicating whether to show the group\s description on the registration apge','event_espresso'), false, false),
+				'QSG_system_ID'=>new EE_Integer_Field('QSG_system_ID', __('Unique ID indicating the question group is essential','event_espresso'), false, 0),
+				'QSG_deleted'=>new EE_Trashed_Flag_Field('QSG_deleted', __('Flag indicating this question group was deleted','event_espresso'), false, false)
 			)
 		);
 		$this->_model_relations = array(
-			'Question'=>new EE_Has_Many_Relation(),
+			'Question'=>new EE_HABTM_Relation('Question_Group_Question'),
 			'Event'=>new EE_HABTM_Relation('Event_Question_Group'),
 			'Event_Question_Group'=>new EE_Has_Many_Relation()
 		);

@@ -111,13 +111,13 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				'noheader' => TRUE,
 				),
 
-			'trash_question_group' => array(
+			'trash_question_groups' => array(
 				'func' => '_trash_or_restore_question_groups',
 				'args' => array('trash' => TRUE),
 				'noheader' => array('trash' => FALSE)
 				),
 
-			'restore_question_group' => array(
+			'restore_question_groups' => array(
 				'func' => '_trash_or_restore_question_groups',
 				'args' => array('trash' => FALSE),
 				'noheader' => TRUE
@@ -357,12 +357,18 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	protected function _delete_questions() {
-		$this->_delete_items($this->_question_model);
+		$success = $this->_delete_items($this->_question_model);
+		$this->_redirect_after_action( $success, $this->_question_model->item_name($success), 'deleted permanently', array( 'action'=>'default', 'status'=>'trash' ));
 	}
 
 
-
+/**
+ * 
+ * @param EEM_Base $model
+ * @return int number of items deleted permanenetly
+ */
 	private function _delete_items(EEM_Base $model){
+		
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {			
 			// if array has more than one element than success message should be plural
@@ -376,7 +382,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			}
 	
 		}
-		$this->_redirect_after_action( $success, $model->item_name($success), 'deleted permanently', array( 'action'=>'default', 'status'=>'all' ));
+		return $success;
 	}
 
 
@@ -417,7 +423,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 
-	protected function _delete_question_groups() {}
+	protected function _delete_question_groups() {
+		$success = $this->_delete_items($this->_question_group_model);
+		$this->_redirect_after_action( $success, $this->_question_group_model->item_name($success), 'deleted permanently', array( 'action'=>'question_groups', 'status'=>'trash' ));
+	}
 
 
 
@@ -517,27 +526,33 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		}
 		
 
-		$action = strtolower( $model->item_name() . 's' );
-		$action = 'questions' ? 'default' : $action;
-		$action_desc = $trash?'trashed':'restored';
-		
-		$this->_redirect_after_action( $success, $model->item_name($success), $action_desc, array( 'action' => $action, 'status'=>'all' ) );
+		$action = $model instanceof EEM_Question ? 'questions' : 'question_groups';//strtolower( $model->item_name(2) );
+		//echo "action :$action";
+		//$action = 'questions' ? 'default' : $action;
+		if($trash){
+			$action_desc = 'trashed';
+			$status = 'trash';
+		}else{
+			$action_desc = 'restored';
+			$status = 'all';
+		}
+		$this->_redirect_after_action( $success, $model->item_name($success), $action_desc, array( 'action' => $action, 'status'=>$status ) );
 	}
 
 
 
 
 	public function get_trashed_questions( $per_page,$current_page = 1, $count = FALSE ) {
-		list($order,$limit,$output,$searchString)=$this->get_query_params(EEM_Question::instance(),$per_page,$current_page,$count);
-		$orderby = empty($this->_req_data['orderby']) ? 'QST_order' : $this->_req_data['orderby'];		
-		if(!empty($searchString)){
+		$query_params = $this->get_query_params(EEM_Question::instance(), $per_page, $current_page);
+		
+		if( $count ){
 			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
-			$questions=EEM_Question::instance()->get_all_where_deleted(array('QST_display_text'=>'%'.$searchString.'%'), $orderby, $order, 'LIKE', $limit,$output);
+			$results=$this->_question_model->count_deleted($query_params);
 		}else{
 			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
-			$questions=EEM_Question::instance()->get_all_where_deleted(null, $orderby, $order, '=', $limit,$output);
+			$results=$this->_question_model->get_all_deleted($query_params);
 		}
-		return $questions;
+		return $results;
 	}
 
 
@@ -545,8 +560,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	public function get_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
 		$questionGroupModel=EEM_Question_Group::instance();
 		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
-		$questionGroups = $questionGroupModel->get_all($query_params);
-		return $questionGroups;
+		if ($count){
+			$results = $questionGroupModel->count($query_params);
+		}else{
+			$results = $questionGroupModel->get_all($query_params);
+		}
+		return $results;
 	}
 
 
@@ -554,8 +573,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	public function get_trashed_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
 		$questionGroupModel=EEM_Question_Group::instance();
 		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
-		$questionGroups = $questionGroupModel->get_all_deleted($query_params);
-		return $questionGroups;
+		if($count){
+			$results = $questionGroupModel->count_deleted($query_params);
+		}else{
+			$results = $questionGroupModel->get_all_deleted($query_params);
+		}
+		return $results;
 	}
 
 

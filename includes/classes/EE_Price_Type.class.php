@@ -153,14 +153,7 @@ class EE_Price_Type extends EE_Base_Class{
 	*		@param		string		$PRT_name
 	*/
 	public function set_name( $PRT_name = FALSE ) {
-
-		if ( ! $PRT_name ) {
-			$msg = __( 'No name was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PRT_name = wp_strip_all_tags( $PRT_name );
-		return TRUE;
+		$this->set('PRT_name',$PRT_name);
 	}
 
 
@@ -174,14 +167,7 @@ class EE_Price_Type extends EE_Base_Class{
 	*		@param		bool		$PRT_is_member
 	*/
 	public function set_is_member( $PRT_is_member = NULL ) {
-
-		if (!is_bool($PRT_is_member)) {
-			$msg = __( 'No member flag was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PRT_is_member = $PRT_is_member;
-		return TRUE;
+		$this->set('PRT_is_member',$PRT_is_member);
 	}
 
 
@@ -195,14 +181,7 @@ class EE_Price_Type extends EE_Base_Class{
 	*		@param		bool		$PRT_is_discount
 	*/
 	public function set_is_discount( $PRT_is_discount = NULL ) {
-
-		if (!is_bool($PRT_is_discount)) {
-			$msg = __( 'No discount flag was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PRT_is_discount = $PRT_is_discount;
-		return TRUE;
+		$this->set('PRT_is_discount',$PRT_is_discount);
 	}
 
 
@@ -216,14 +195,7 @@ class EE_Price_Type extends EE_Base_Class{
 	*		@param		bool		$PRT_is_tax
 	*/
 	public function set_is_tax( $PRT_is_tax = NULL ) {
-
-		if (!is_bool($PRT_is_tax)) {
-			$msg = __( 'No tax flag was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PRT_is_tax = $PRT_is_tax;
-		return TRUE;
+		$this->set('PRT_is_tax',$PRT_is_tax);
 	}
 
 
@@ -237,14 +209,7 @@ class EE_Price_Type extends EE_Base_Class{
 	*		@param		bool		$PRT_is_percent
 	*/
 	public function set_is_percent( $PRT_is_percent = NULL ) {
-
-		if (!is_bool($PRT_is_percent)) {
-			$msg = __( 'No percent flag was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PRT_is_percent = $PRT_is_percent;
-		return TRUE;
+		$this->set('PRT_is_percent',$PRT_is_percent);
 	}
 
 
@@ -258,14 +223,7 @@ class EE_Price_Type extends EE_Base_Class{
 	*		@param		bool		$PRT_is_global
 	*/
 	public function set_is_global ( $PRT_is_global = NULL ) {
-
-		if (!is_bool($PRT_is_global)) {
-			$msg = __( 'No global flag was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PRT_is_global = $PRT_is_global;
-		return TRUE;
+		$this->set('PRT_is_global',$PRT_is_global);
 	}
 
 
@@ -279,22 +237,15 @@ class EE_Price_Type extends EE_Base_Class{
 	*		@param		bool		$PRT_order
 	*/
 	public function set_order( $PRT_order = FALSE ) {
-
-		if ( ! $PRT_order ) {
-			$msg = __( 'No order was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-		$this->_PRT_order = absint( $PRT_order );
-		return TRUE;
+		$this->set('PRT_order',$PRT_order);
 	}
 
 	public function move_to_trash() {
-		$this->_PRT_deleted = TRUE;
+		$this->set('PRT_deleted',true);
 	}
 
 	public function restore_from_trash() {
-		$this->_PRT_deleted = FALSE;
+		$this->set('PRT_deleted',false);
 	}
 
 
@@ -308,7 +259,7 @@ class EE_Price_Type extends EE_Base_Class{
 	* 		@access		public
 	*/
 	public function name() {
-		return $this->_PRT_name;
+		return $this->get('PRT_name');
 	}
 
 
@@ -318,7 +269,11 @@ class EE_Price_Type extends EE_Base_Class{
 	* 		@access		public
 	*/
 	public function base_type() {
-		return $this->_PBT_ID;
+		return $this->get('PBT_ID');
+	}
+	
+	public function base_type_name(){
+		return $this->get_pretty('PBT_ID');
 	}
 
 
@@ -328,7 +283,7 @@ class EE_Price_Type extends EE_Base_Class{
 	* 		@access		public
 	*/
 	public function is_member() {
-		return $this->_PRT_is_member;
+		return $this->get('PRT_is_member');
 	}
 
 
@@ -339,7 +294,7 @@ class EE_Price_Type extends EE_Base_Class{
 	* 		@access		public
 	*/
 	public function is_percent() {
-		return $this->_PRT_is_percent;
+		return $this->get('PRT_is_percent');
 	}
 
 
@@ -348,7 +303,7 @@ class EE_Price_Type extends EE_Base_Class{
 	* 		@access		public
 	*/
 	public function is_global() {
-		return $this->_PRT_is_global;
+		return $this->get('PRT_is_global');
 	}
 
 
@@ -357,7 +312,7 @@ class EE_Price_Type extends EE_Base_Class{
 	* 		@access		public
 	*/
 	public function order() {
-		return $this->_PRT_order;
+		return $this->get('PRT_order');
 	}
 
 
@@ -366,35 +321,8 @@ class EE_Price_Type extends EE_Base_Class{
 	* 		@access		public
 	*/
 	public function deleted() {
-		return $this->_PRT_deleted;
+		return $this->get('PRT_deleted');
 	}
-
-
-
-
-
-	/**
-	*		Search for an existing DB record for this Price Type
-	* 		@access		public
-	*/
-	public function find_existing_price_type( $where_fields_n_values = FALSE ) {
-		// load model
-		$MODEL = EEM_Price_Type::instance();
-		// no search params means price type object already exists
-		if ( ! $where_fields_n_values ) {
-			// search by combo of name and order
-			$where_fields_n_values = array( 'PRT_name'=>$this->_PRT_name, 'PRT_order'=>$this->_PRT_order );
-		}
-
-		if ( $price_type = $MODEL->get_one( array( $where_fields_n_values) )) {
-			return $price_type;
-		} else {
-			return FALSE;
-		}
-
-	}
-
-
 }
 
 /* End of file EE_Price_Type.class.php */

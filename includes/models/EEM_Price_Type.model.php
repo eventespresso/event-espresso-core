@@ -48,6 +48,15 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 	}
 	
 	/**
+	 * Gets the naem of teh base 
+	 * @param type $base_type_int
+	 * @return type
+	 */
+	public function get_base_type_name($base_type_int){
+		return $this->base_types[$base_type_int];
+	}
+	
+	/**
 	 * constants for price base types. In the DB, we decided to store the price base type
 	 * as an integer. So, to avoid just having magic numbers everwhere (eg, querying for 
 	 * all price types with PBT_ID = 2), we define these constants, to make code more understandable.
@@ -98,14 +107,14 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 		);
 		$this->_fields = array(
 			'Price_Type'=>array(
-				'PRT_ID'=>new EE_Primary_Key_Int_Field('PRT_ID', 'Price Type ID', false, 0),
-				'PRT_name'=>new EE_Plain_Text_Field('PRT_name', 'Price Type Name', false, ''),
-				'PBT_ID'=>new EE_Integer_Field('PBT_ID', 'Price Base type ID, 1 = Event Price , 2 = Discount , 3 = Surcharge , 4 = Tax', false, 1),
-				'PRT_is_member'=>new EE_Boolean_Field('PRT_is_member', 'Flag indicating price is only for members', false, false),
-				'PRT_is_percent'=>new EE_Boolean_Field('PRT_is_percent', 'Flag indicating price is a percentage', false, false),
-				'PRT_is_global'=>new EE_Boolean_Field('PRT_is_global', 'Flag indicating price shoudl automatically be added to all events', false, false),
-				'PRT_order'=>new EE_Integer_Field('PRT_order', 'Order in which price should be applied. ', false, 0),
-				'PRT_deleted'=>new EE_Trashed_Flag_Field('PRT_deleted', 'Flag indicating price type has been trahsed', false, false)
+				'PRT_ID'=>new EE_Primary_Key_Int_Field('PRT_ID', __('Price Type ID','event_espresso'), false, 0),
+				'PRT_name'=>new EE_Plain_Text_Field('PRT_name', __('Price Type Name','event_espresso'), false, ''),
+				'PBT_ID'=>new EE_Enum_Field('PBT_ID', __('Price Base type ID, 1 = Event Price , 2 = Discount , 3 = Surcharge , 4 = Tax','event_espresso'), false, 1, $this->base_types,true),
+				'PRT_is_member'=>new EE_Boolean_Field('PRT_is_member', __('Flag indicating price is only for members','event_espresso'), false, false),
+				'PRT_is_percent'=>new EE_Boolean_Field('PRT_is_percent', __('Flag indicating price is a percentage','event_espresso'), false, false),
+				'PRT_is_global'=>new EE_Boolean_Field('PRT_is_global', __('Flag indicating price shoudl automatically be added to all events','event_espresso'), false, false),
+				'PRT_order'=>new EE_Integer_Field('PRT_order', __('Order in which price should be applied. ','event_espresso'), false, 0),
+				'PRT_deleted'=>new EE_Trashed_Flag_Field('PRT_deleted', __('Flag indicating price type has been trahsed','event_espresso'), false, false)
 			)
 		);
 		$this->_model_relations = array(
@@ -165,13 +174,19 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 
 
 
-	public function delete_by_ID($ID) {
-		if (!$ID) {
-			return FALSE;
-		}
+	public function delete_permanently($query_params = array()) {
+		
+		$would_be_deleted_price_types = $this->get_all_deleted_and_undeleted($query_params);
+		$would_be_deleted_price_type_ids = array_keys($would_be_deleted_price_types);
 		//check if any prices use this price type
-		if ( $prices = $this->get_all_related($ID,'Price')) {
-			$msg = __('The Price Type could not be deleted because there are existing Prices that currently use this Price Type.  If you still wish to delete this Price Type, then either delete those Prices or change them to use other Price Types.', 'event_espresso');
+		$query_params = array(array('PRT_ID'=>array('IN',$would_be_deleted_price_type_ids)));
+		if ( $prices = $this->get_all_related($ID,'Price',$query_params)) {
+			$prices_names_and_ids = array();
+			foreach($prices as $price){
+				/* @var $price EE_Price */
+				$prices_names_and_ids[] = $price->name()."(".$price->ID().")";
+			}
+			$msg = sprintf(__('The Price Type(s) could not be deleted because there are existing Prices that currently use this Price Type.  If you still wish to delete this Price Type, then either delete those Prices or change them to use other Price Types.The prices are: %s', 'event_espresso'),implode(",",$prices_names_and_ids));
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ ); 
 			return FALSE;
 		} 

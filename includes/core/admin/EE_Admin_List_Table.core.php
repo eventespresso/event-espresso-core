@@ -399,7 +399,6 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		$this->process_bulk_action();
 
 		$this->items = $this->_data;
-
 		$this->set_pagination_args(
 			array(
 				'total_items' => $total_items,

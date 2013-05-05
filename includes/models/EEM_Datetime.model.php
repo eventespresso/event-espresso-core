@@ -72,15 +72,15 @@ class EEM_Datetime extends EEM_Base {
 		);
 		$this->_fields = array(
 			'Datetime'=>array(
-				'DTT_ID'=> new EE_Primary_Key_Int_Field('DTT_ID', 'Datetime ID', false, 0),
-				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', 'Event ID', false, 0, 'Event'),
-				'DTT_is_primary'=>new EE_Boolean_Field('DTT_is_primary', 'Flag indicating Primary Event Time', false, true),
-				'DTT_EVT_start'=>new EE_Datetime_Field('DTT_EVT_start', 'Start time/date of Event', false, current_time('timestamp')),
-				'DTT_EVT_end'=>new EE_Datetime_Field('DTT_EVT_end', 'End time/date of Event', false, current_time('timestamp')),
-				'DTT_REG_start'=>new EE_Datetime_Field('DTT_REG_start', 'Start time/date of Registration for Event', false, current_time('timestamp')),
-				'DTT_REG_end'=>new EE_Datetime_Field('DTT_REG_end', 'End time/date of Registration for Event', false, current_time('timestamp')),
-				'DTT_reg_limit'=>new EE_Integer_Field('DTT_reg_limit', 'Registration LImit for this time', true, 999999),
-				'DTT_tckts_left'=>new EE_Integer_Field('DTT_tckts_left', 'Calculated Tickets Remaining', true, 999999)
+				'DTT_ID'=> new EE_Primary_Key_Int_Field('DTT_ID', __('Datetime ID','event_espresso'), false, 0),
+				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID','event_espresso'), false, 0, 'Event'),
+				'DTT_is_primary'=>new EE_Boolean_Field('DTT_is_primary', __('Flag indicating Primary Event Time','event_espresso'), false, true),
+				'DTT_EVT_start'=>new EE_Datetime_Field('DTT_EVT_start', __('Start time/date of Event','event_espresso'), false, current_time('timestamp')),
+				'DTT_EVT_end'=>new EE_Datetime_Field('DTT_EVT_end', __('End time/date of Event','event_espresso'), false, current_time('timestamp')),
+				'DTT_REG_start'=>new EE_Datetime_Field('DTT_REG_start', __('Start time/date of Registration for Event','event_espresso'), false, current_time('timestamp')),
+				'DTT_REG_end'=>new EE_Datetime_Field('DTT_REG_end', __('End time/date of Registration for Event','event_espresso'), false, current_time('timestamp')),
+				'DTT_reg_limit'=>new EE_Integer_Field('DTT_reg_limit', __('Registration LImit for this time','event_espresso'), true, 999999),
+				'DTT_tckts_left'=>new EE_Integer_Field('DTT_tckts_left', __('Calculated Tickets Remaining','event_espresso'), true, 999999)
 			));
 		$this->_model_relations = array(
 			'Registration'=>new EE_Has_Many_Relation(),
@@ -152,7 +152,8 @@ class EEM_Datetime extends EEM_Base {
 		if ( ! $EVT_ID ) { // on add_new_event event_id gets set to 0
 			return $this->create_new_blank_datetime();
 		}
-		return $this->get_datetimes_for_event_ordered_by_importance($EVT_ID);
+		$results =  $this->get_datetimes_for_event_ordered_by_importance($EVT_ID);
+		return $results;
 	}
 
 	/**

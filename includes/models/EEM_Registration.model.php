@@ -108,22 +108,22 @@ class EEM_Registration extends EEM_Base {
 		);
 		$this->_fields = array(
 			'Registration'=>array(
-				'REG_ID'=>new EE_Primary_Key_Int_Field('REG_ID', 'Registration ID', false, 0),
-				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', 'Even tID', false, 0, 'Event'),
-				'ATT_ID'=>new EE_Foreign_Key_Int_Field('ATT_ID', 'Attendee ID', false, 0, 'Attendee'),
-				'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID', 'Transaction ID', false, 0, 'Transaction'),
-				'DTT_ID'=>new EE_Foreign_Key_Int_Field('DTT_ID', 'Datetime ID', false, 0, 'Datetime'),
-				'PRC_ID'=>new EE_Foreign_Key_Int_Field('PRC_ID', 'Price ID', false, 0, 'Price'),
-				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', 'Status ID', false, EEM_Registration::status_id_not_approved, 'Status'),
-				'REG_date'=>new EE_Datetime_Field('REG_date', 'Time registration occured', false, current_time('timestamp')),
-				'REG_final_price'=>new EE_Money_Field('REG_final_price', 'Final Price of registration', false, 0),
-				'REG_session'=>new EE_Plain_Text_Field('REG_session', 'Session ID of registration', false, ''),
-				'REG_code'=>new EE_Plain_Text_Field('REG_code', 'Unique Code for this registration', false, ''),
-				'REG_url_link'=>new EE_Plain_Text_Field('REG_url_link', 'String to be used in URL for identifying registration', false, ''),
-				'REG_count'=>new EE_Integer_Field('REG_count', 'Count of this registration in the group registraion ', true, 1),
-				'REG_group_size'=>new EE_Integer_Field('REG_group_size', 'Number of registrations on this group', false, 1),
-				'REG_att_is_going'=>new EE_Boolean_Field('REG_att_is_going', 'Flag indicating the registrant plans on attending', false, false),
-				'REG_att_checked_in'=>new EE_Boolean_Field('REG_att_checked_in', 'Flag indicating the registrant has checked in', false, false),
+				'REG_ID'=>new EE_Primary_Key_Int_Field('REG_ID', __('Registration ID','event_espresso'), false, 0),
+				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', __('Even tID','event_espresso'), false, 0, 'Event'),
+				'ATT_ID'=>new EE_Foreign_Key_Int_Field('ATT_ID', __('Attendee ID','event_espresso'), false, 0, 'Attendee'),
+				'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID', __('Transaction ID','event_espresso'), false, 0, 'Transaction'),
+				'DTT_ID'=>new EE_Foreign_Key_Int_Field('DTT_ID', __('Datetime ID','event_espresso'), false, 0, 'Datetime'),
+				'PRC_ID'=>new EE_Foreign_Key_Int_Field('PRC_ID', __('Price ID','event_espresso'), false, 0, 'Price'),
+				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false, EEM_Registration::status_id_not_approved, 'Status'),
+				'REG_date'=>new EE_Datetime_Field('REG_date', __('Time registration occured','event_espresso'), false, current_time('timestamp')),
+				'REG_final_price'=>new EE_Money_Field('REG_final_price', __('Final Price of registration','event_espresso'), false, 0),
+				'REG_session'=>new EE_Plain_Text_Field('REG_session', __('Session ID of registration','event_espresso'), false, ''),
+				'REG_code'=>new EE_Plain_Text_Field('REG_code', __('Unique Code for this registration','event_espresso'), false, ''),
+				'REG_url_link'=>new EE_Plain_Text_Field('REG_url_link', __('String to be used in URL for identifying registration','event_espresso'), false, ''),
+				'REG_count'=>new EE_Integer_Field('REG_count', __('Count of this registration in the group registraion ','event_espresso'), true, 1),
+				'REG_group_size'=>new EE_Integer_Field('REG_group_size', __('Number of registrations on this group','event_espresso'), false, 1),
+				'REG_att_is_going'=>new EE_Boolean_Field('REG_att_is_going', __('Flag indicating the registrant plans on attending','event_espresso'), false, false),
+				'REG_att_checked_in'=>new EE_Boolean_Field('REG_att_checked_in', __('Flag indicating the registrant has checked in','event_espresso'), false, false),
 			)
 		);
 		$this->_model_relations = array(

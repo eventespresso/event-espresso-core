@@ -52,7 +52,7 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base {
 //		$this->_fields_settings=array(
 //				'QSO_ID'=>new EE_Model_Field('Question Option ID', 'primary_key', false, null, null, null),
 //				'QSO_value'=>new EE_Model_Field('Question Option Key Value', 'plaintext', false, '', null, null),
-//				'QSO_text'=>new EE_Model_Field('Question Option Display Text', 'simplehtml', false, '', null, null),
+//				'QSO_value'=>new EE_Model_Field('Question Option Display Text', 'simplehtml', false, '', null, null),
 //				'QST_ID'=>new EE_Model_Field('Related Question ID', 'foreign_key', false, null, null, 'Question'),
 //				'QSO_deleted'=>new EE_Model_Field('Whether the option has been deleted', 'deleted_flag', false, false, null, null)
 //			);
@@ -64,10 +64,11 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base {
 		);
 		$this->_fields = array(
 			'Question_Option'=>array(
-					'QSO_ID'=>new EE_Primary_Key_Int_Field('QSO_ID', 'Question OPtion ID', false, 0),
-					'QSO_name'=>new EE_Simple_HTML_Field('QSO_ID', 'Question Option Name', false, ''),
-					'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', 'Question ID', false, 0, 'Question'),
-					'QSO_deleted'=>new EE_Trashed_Flag_Field('QSO_deleted', 'Flag indicating Option was trashed', false, false)
+					'QSO_ID'=>new EE_Primary_Key_Int_Field('QSO_ID', __('Question OPtion ID','event_espresso'), false, 0),
+					'QSO_name'=>new EE_Simple_HTML_Field('QSO_name', __('Question Option Name','event_espresso'), false, ''),
+					'QSO_value'=>new EE_Simple_HTML_Field('QSO_value','Question Option Value',false,''),
+					'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', __('Question ID','event_espresso'), false, 0, 'Question'),
+					'QSO_deleted'=>new EE_Trashed_Flag_Field('QSO_deleted', __('Flag indicating Option was trashed','event_espresso'), false, false)
 				)
 		);
 		$this->_model_relations = array(

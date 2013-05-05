@@ -108,6 +108,14 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 * @var EE_Event
 	 */
 	protected $_Event;
+	
+	/**
+	 * Join model object between events and question groups. Mostly just useful for finding
+	 * which question gruops apply to primary attendees
+	 * @access protected
+	 * @var EE_Event_Question_Group
+	 */
+	protected $_Event_Question_Group;
 	/**
 	 * 
 	 * @param string/array $QSG_name name of question group  OR an array of all field values, where keys match these arguments' names
@@ -230,7 +238,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 */
 	public function questions(){
 		return $this->get_many_related('Question');
-	}
+		}
 	
 	/**
 	 * Gets all events which 
@@ -247,7 +255,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 * @return boolean if successful
 	 */
 	public function add_question($questionObjectOrID){
-		return $this->_add_relation_to($questionObjectOrID, 'Questions');
+		return $this->_add_relation_to($questionObjectOrID, 'Question');
 	}
 	/**
 	 * Removes the question from this question group
@@ -255,6 +263,6 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 * @return boolean of success
 	 */
 	public function remove_question($questionObjectOrID){
-		return $this->_remove_relation_to($questionObjectOrID, 'Questions');
+		return $this->_remove_relation_to($questionObjectOrID, 'Question');
 	}
 }

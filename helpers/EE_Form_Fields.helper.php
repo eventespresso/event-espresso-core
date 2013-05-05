@@ -876,7 +876,7 @@ class EE_Form_Fields {
 		if ( is_array( $option_values ) && ! empty( $option_values )) {
 			foreach( $option_values as $option_value ) {
 				if ( ! $option_value['QSO_deleted'] ) {
-					$options[ $option_value['QSO_value'] ] = $option_value['QSO_text'];
+					$options[ $option_value['QSO_value'] ] = $option_value['QSO_value'];
 				}				
 			}	
 		}
