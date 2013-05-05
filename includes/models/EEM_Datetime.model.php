@@ -122,18 +122,19 @@ class EEM_Datetime extends EEM_Base {
 				new EE_Datetime( 
 						0, 
 						true, 
-						current_time('timestamp') + (60 * 60 * 24 * 30), 
-						current_time('timestamp') + (60 * 60 * 24 * 30), 
-						current_time('timestamp'), 
-						current_time('timestamp') + (60 * 60 * 24 * 30) 
+						time('timestamp') + (60 * 60 * 24 * 30), 
+						time('timestamp') + (60 * 60 * 24 * 30), 
+						time('timestamp'), 
+						time('timestamp') + (60 * 60 * 24 * 30) 
 						/*NULL,
 						NULL*/
 				)
 		);
+
 		$times[0]->set_start_time("8am");
 		$times[0]->set_end_time("5pm");
 		$times[0]->set_reg_start_time("8am");
-		$times[0]->set_reg_end_time("5pm");
+		$times[0]->set_reg_end_time("5pm");/**/
 		return $times;
 	}
 

@@ -533,7 +533,7 @@ class EE_Datetime extends EE_Base_Class{
 		}
 
 		$var_name = "_DTT_{$EVT_or_REG}_{$start_or_end}";
-		$field = $this->_get_model()->field_settings_for($var_name);
+		$field = $this->_get_model()->field_settings_for(ltrim($var_name, '_'));
 		
 		switch ( $date_or_time ) {
 			

@@ -7,6 +7,14 @@ require_once('fields/EE_Integer_Field.php');
 class EE_Datetime_Field extends EE_Integer_Field{
 	protected $_date_format;
 	protected $_time_format;
+
+	/**
+	 * This is used for holding the date objects set internally when doing date calculations/changes
+	 * @var object
+	 */
+	private $_date;
+
+
 	
 	public function __construct($table_column, $nicename, $nullable, $default_value, $date_format = 'F j, Y', $time_format ='g:i a'){
 		parent::__construct($table_column, $nicename, $nullable, $default_value);
@@ -37,12 +45,9 @@ class EE_Datetime_Field extends EE_Integer_Field{
 	 * @return int updated timestamp
 	 */
 	public function prepare_for_set_with_new_time($time_to_set_string, $current_datetime_value, $timezone = 'UTC' ){
-		$_to_set = array(
-			'time' => $this->prepare_for_set($time_to_set_string, $timezone),
-			'date' => $current_date_time_value
-			);
-
-		return $this->_prepare_for_set_new( $_to_set, $timezone );
+		//todo: This is WRONG and won't work because we are dealing with two unixtime strings and we want to make sure that we end up with just ONE.
+		$this->_set_date_obj( date($this->_date_format, $current_datetime_value), 'UTC' );
+		return $this->_prepare_for_set_new( $time_to_set_string, $timezone, TRUE );
 	}
 	
 	/**
@@ -52,11 +57,8 @@ class EE_Datetime_Field extends EE_Integer_Field{
 	 * @return int updated timestamp
 	 */
 	public function prepare_for_set_with_new_date($date_to_set_string, $current_datetime_value, $timezone = 'UTC' ){
-		$_to_set = array(
-			'time' => $current_datetime_value,
-			'date' => $this->prepare_for_set($date_to_set_string, $timezone)
-			);
-		return $this->_prepare_for_set_new( $_to_set, $timezone );
+		$this->_set_date_obj( date( $this->_date_format  . ' ' . $this->_time_format, $current_datetime_value ), 'UTC' );
+		return $this->_prepare_for_set_new( $date_to_set_string, $timezone );
 	}
 
 
@@ -68,7 +70,7 @@ class EE_Datetime_Field extends EE_Integer_Field{
 	 * @return string                formatted date time for given timezone
 	 */
 	public function prepare_for_get( $datetimevalue, $format = NULL, $timezone = NULL ) {
-		$foramt_string = empty( $format ) ? $this->_date_format . " " . $this->_time_format : $format;
+		$format_string = empty( $format ) ? $this->_date_format . " " . $this->_time_format : $format;
 		//send this to our formatter to return localized time for the timezone
 		return $this->_convert_to_timezone_from_utc_unix_timestamp( $datetimevalue, $format_string, $timezone );
 	}
@@ -88,17 +90,52 @@ class EE_Datetime_Field extends EE_Integer_Field{
 	 * @return string           final converted date-time-zone.
 	 */
 	private function _convert_to_timezone_from_utc_unix_timestamp( $dtvalue, $format, $timezone ) {
+		$dtvalue = (int) $dtvalue;
+		$datetime = date( $format, $dtvalue );	
+		$this->_set_date_obj( $datetime, 'UTC' );
 		$timezone = empty( $timezone ) ? get_option( 'timezone_string' ) : $timezone;
-		$dt_value = (int) $dt_value;
-		$datetime = date( $format, $dtvalue );
-		$utc_timestamp_converted = $this->_convert_from_string_value_to_utc_unixtimestamp( $datetime, $timezone );
-		return date_i18n( $format, $utc_timestamp_converted );
+		$this->_date->setTimezone( new DateTimeZone( $timezone ) );
+		
+		return $this->_date->format( $format );
 	}
 
 
 
-	private function _prepare_for_set_new( $datetimearray, $timezone ) {
-		return $datetimearray['date']. " ".$datetimearray['time'];
+
+
+
+
+	/**
+	 * This adjusts the current date object to whatever the new time or date should be
+	 *
+	 * @uses date_parse() to get the parsed date info from the incoming string
+	 * @access private
+	 * @param  string  $datetimeadjustment The time OR date string that is being adjusted within the current date_time_object
+	 * @param  string  $timezone           The timezone of the incoming datetimeadjustment string
+	 * @param  boolean $is_time            If this is a time adjustment set this boolean flag to true, otherwise it is a date adjustment
+	 * @return int                         UTC UnixTimestamp
+	 */
+	private function _prepare_for_set_new( $datetimeadjustment, $timezone, $is_time = FALSE ) {
+		//first let's parse the incoming string
+		$parsed = date_parse( $datetimeadjustment );
+
+		$timezone = empty( $timezone ) ? get_option( 'timezone_string' ) : $timezone;
+
+		//set the timezone to the incoming timezone for the current date_object
+		$this->_date->setTimezone( new DateTimeZone( $timezone ) );
+
+		//let's adjust the time or date depending on our $is_time boolean
+		if ( $is_time ) {
+			$this->_date->setTime( $parsed['hour'], $parsed['minute'] );
+		} else {
+			$this->_date->setDate( $parsed['year'], $parsed['month'], $parsed['day'] );
+		}
+
+		//return to UTC time
+		$this->_date->setTimezone( new DateTimeZone( 'UTC' ) );
+
+		//return unix timestamp
+		return $this->_date->format('U');
 	}
 
 
@@ -113,15 +150,17 @@ class EE_Datetime_Field extends EE_Integer_Field{
 		//if timezone is still empty after this then whatever the current set php timezone is (date_default_timezone_set) is what is assumed as the timezone.
 		$tz = !empty( $timezone ) ? $timezone : get_option( 'timezone_string' );
 
-		$timestamp = is_numeric( $datetime ) ? $this->_convert_from_numeric_value_to_utc_unixtimestamp( $datetime, $tz ) : $this->_convert_from_string_value_to_utc_unixtimestamp( $datetime, $timezone );
+		$timestamp = is_numeric( $datetime ) ? $this->_convert_from_numeric_value_to_utc_unixtimestamp( $datetime, $tz ) : $this->_convert_from_string_value_to_utc_unixtimestamp( $datetime, $tz );
 		return $timestamp;
 	}
 
 
 	private function _convert_from_numeric_value_to_utc_unixtimestamp( $datetime, $timezone ) {
 		$datetime = (int) $datetime;
+
 		date_default_timezone_set( $timezone );
 		$datetime = date( 'Y-m-d H:i:s', $datetime );
+
 		//if we don't have a datetime at this point then something has gone wrong 
 		if ( !$datetime )
 			throw new EE_Error( __('Something went wrong with setting the date/time.  Likely, either there is an invalid timezone string or invalid timestamp being used.', 'event_espresso' ) );
@@ -136,13 +175,13 @@ class EE_Datetime_Field extends EE_Integer_Field{
 
 	private function _convert_from_string_value_to_utc_unixtimestamp( $datetime, $timezone ) {
 		//create a new datetime object using the given string and timezone
-		$date = new DateTime( $datetime, new DateTimeZone( $timezone ) );
-
-		if ( !$date )
+		$this->_set_date_obj( $datetime, $timezone );
+		
+		if ( !$this->_date )
 			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
 
-		$date->setTimezone( new DateTimeZone('UTC') );
-		return $date->format('U');
+		$this->_date->setTimezone( new DateTimeZone('UTC') );
+		return $this->_date->format('U');
 
 	}
 
@@ -162,6 +201,18 @@ class EE_Datetime_Field extends EE_Integer_Field{
 
 		else
 			throw new EE_Error( sprintf( __('The timezone given (%s), is invalid, please check with %sthis list%s for what valid timezones can be used', 'event_espresso'), $timezone, '<a href="http://www.php.net/manual/en/timezones.php">', '</a>' ) );
+	}
+
+
+
+
+	/**
+	 * This is used to set the $_date property using the PHP DateTime object for internal calcluations and timezone settings
+	 * @param string $datestring Incoming date/time string in an acceptable format
+	 * @param string $timezone   Valid Timezone for dates
+	 */
+	private function _set_date_obj( $datestring, $timezone ) {
+		$this->_date = new DateTime( $datestring, new DateTimeZone( $timezone ) );
 	}
 
 	

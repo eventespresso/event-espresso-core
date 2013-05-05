@@ -738,6 +738,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	//	$TKT_MDL = EEM_Ticket::instance();
 	//	
 	//	$all_event_tickets = $TKT_MDL->get_all_event_tickets( $event->id );
+	
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
 		$DTM_MDL = EEM_Datetime::instance();
