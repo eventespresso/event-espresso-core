@@ -562,11 +562,11 @@
 			} else {
 				
 				// is this field an email address ?
-				if ( $(this).prev().attr('for') == 'email' ) {
+				if ( $(this).hasClass('email') ) {
 					// grab the addy
 					var email_address = $(this).val();
 					// send addy for validation
-					if ( validate_email_address( email_address ) ) {
+					if ( validate_email_address( email_address )) {
 						// good email addy
 						$(this).removeClass('requires-value');
 					} else {
