@@ -7,6 +7,8 @@
 
 
 	//$('#mer-registration-frm-1').validate();
+	
+	$('.close-event-queue-msg').show();
 
 
 	// move notifications from top of reg form to just before closing body tag
