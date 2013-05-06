@@ -112,7 +112,11 @@ jQuery(document).ready(function($) {
 			stepMinute: 5,
 			hourGrid: 2,
 			minuteGrid: 5,
+			minDate: null,
+			maxDate: null,
 			numberOfMonths: 2,
+			hour: eventStart.getHours(),
+			minute: eventStart.getMinutes(),
 			showOn:'focus',
 	
 			onClose: function(dateText, inst) {
@@ -139,13 +143,13 @@ jQuery(document).ready(function($) {
 	
 
 	// EVENT END DATEPICKER
-	$('#event-datetimes-dv').on( 'focusin', '.dtm-ee-picker', function () {	
+	$('#event-datetimes-dv').on( 'focusin', '.dtm-ee-picker', function () {
 
 		var row = $(this).next().val();
 		var eventStart = $('#event-start-'+row).val();
-		if ( eventStart != '' ) {
+		if ( eventStart !== '' ) {
 			eventStart = getDateFromFormat( eventStart, 'yyyy-MM-dd  h:mm a' );
-			eventStart = new Date( eventStart );			
+			eventStart = new Date( eventStart );
 			//alert( 'eventStart : ' + eventStart );
 		}
 
@@ -179,12 +183,12 @@ jQuery(document).ready(function($) {
 
 				var eventStartsOn = $('#event-start-'+row).val();
 				var EndDate = new Date( getDateFromFormat( dateText, 'yyyy-MM-dd  h:mm a' ) );
-				if ( eventStartsOn != '' ) {
+				if ( eventStartsOn !== '' ) {
 					var newStartDate = new Date( getDateFromFormat( eventStartsOn, 'yyyy-MM-dd  h:mm a' ) );
 					if ( newStartDate > EndDate ) {
 						$('#event-start-'+row).val( dateText );
 						$('#reg-end-'+row).val( dateText );
-					}						
+					}
 				} else {
 					$('#event-start-'+row).val( dateText );
 					$('#reg-end-'+row).val( dateText );
@@ -192,8 +196,8 @@ jQuery(document).ready(function($) {
 
 			}
 
-		});	
-	});	
+		});
+	});
 
 
 
@@ -202,7 +206,7 @@ jQuery(document).ready(function($) {
 
 
 	// REG START DATEPICKER
-	$('#event-datetimes-dv').on( 'focusin', '.dtm-rs-picker', function () {	
+	$('#event-datetimes-dv').on( 'focusin', '.dtm-rs-picker', function () {
 		
 		var row = $(this).next().val();
 		var today = new Date();
@@ -211,9 +215,9 @@ jQuery(document).ready(function($) {
 		today.setSeconds(0);
 
 		var eventStart = $('#event-start-'+row).val();
-		if ( eventStart != '' ) {
+		if ( eventStart !== '' ) {
 			eventStart = getDateFromFormat( eventStart, 'yyyy-MM-dd  h:mm a' );
-			eventStart = new Date( eventStart );			
+			eventStart = new Date( eventStart );
 		}
 
 		//get any current RegStart date if present
@@ -243,16 +247,17 @@ jQuery(document).ready(function($) {
 			numberOfMonths: 2,
 			hour: RegStart.getHours(),
 			minute: RegStart.getMinutes(),
-			minDateTime: null,			
-			maxDate: eventStart,	
-			showOn:'focus',			
+			minDateTime: null,
+			minDate: null,
+			maxDate: eventStart,
+			showOn:'focus',
 	
 			onClose: function(dateText, inst) {
 			
 				var eventEndsOn = $('#reg-end-'+row).val();
 				var RegStartDate = new Date( getDateFromFormat( dateText, 'yyyy-MM-dd  h:mm a' ) );
 
-				if ( eventEndsOn != '' ) {	
+				if ( eventEndsOn !== '' ) {
 					var newEndDate = new Date( getDateFromFormat( eventEndsOn, 'yyyy-MM-dd  h:mm a' ) );
 					if ( RegStartDate > newEndDate ) {
 						$('#reg-end-'+row).val( dateText );
@@ -264,25 +269,25 @@ jQuery(document).ready(function($) {
 			
 			}
 
-		});			 
-	});	
+		});
+	});
 	
 	
 
 	// REG END DATEPICKER
-	$('#event-datetimes-dv').on( 'focusin', '.dtm-re-picker', function () {	
+	$('#event-datetimes-dv').on( 'focusin', '.dtm-re-picker', function () {
 		
 		var row = $(this).next().val();
 		var regStart = $('#reg-start-'+row).val();
-		if ( regStart != '' ) {
+		if ( regStart !== '' ) {
 			regStart = getDateFromFormat( regStart, 'yyyy-MM-dd  h:mm a' );
-			regStart = new Date( regStart );			
+			regStart = new Date( regStart );
 		}
 			
 		var eventEnd = $('#event-end-'+row).val();
-		if ( eventEnd != '' ) {
+		if ( eventEnd !== '' ) {
 			eventEnd = getDateFromFormat( eventEnd, 'yyyy-MM-dd  h:mm a' );
-			eventEnd = new Date( eventEnd );			
+			eventEnd = new Date( eventEnd );
 		} else {
 			eventEnd = new Date( 'Dec 31, 2100' );
 		}
@@ -322,20 +327,20 @@ jQuery(document).ready(function($) {
 
 				var eventStartsOn = $('#reg-start-'+row).val();
 				var RegEndDate = new Date( getDateFromFormat( dateText, 'yyyy-MM-dd  h:mm a' ) );
-				if ( eventStartsOn != '' ) {
+				if ( eventStartsOn !== '' ) {
 					var newStartDate = new Date( getDateFromFormat( eventStartsOn, 'yyyy-MM-dd  h:mm a' ) );
 					if ( newStartDate > RegEndDate ) {
 						$('#reg-start-'+row).val( dateText );
-					}						
+					}
 				}
 				else {
 					$('#reg-start-'+row).val( dateText );
-				}	
+				}
 
 			}
 
-		});	
-	});	
+		});
+	});
 
 
 
