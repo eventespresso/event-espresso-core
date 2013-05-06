@@ -662,10 +662,15 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					// check for attendee object
 					$attendee['att_obj'] = isset( $attendee['att_obj'] ) && is_object( $attendee['att_obj'] ) ? $attendee['att_obj'] : FALSE;
 					if ( ! $attendee['att_obj'] ) {
+						if ( isset( $attendee[1] ) && isset( $attendee[2] ) && isset( $attendee[3] )) {
 						$where_fields_n_values = array( 'ATT_fname' => $attendee[1], 'ATT_lname' => $attendee[2], 'ATT_email' => $attendee[3] );
 					    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php' );
 					    $ATT_MDL = EEM_Attendee::instance();
 						if ( ! $attendee['att_obj'] = $ATT_MDL->get_one( array( $where_fields_n_values ) )) {
+						} else {
+							$attendee['att_obj'] = FALSE;
+						}
+						if ( ! $attendee['att_obj'] ) {
 							$attendee['att_obj'] = new EE_Attendee;
 						}	 
 					}
