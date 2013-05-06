@@ -634,6 +634,19 @@ class EE_Base_Class{
 	protected $_timezone = NULL;
 
 
+
+
+	/**
+	 * This property is for holding a cached array of object properties indexed by property name as the key.
+	 * The purpose of this is for setting a cache on properties that may have calculated values after a prepare_for_get.  That way the cache can be checked first and the calculated property returned instead of having to recalculate.
+	 *
+	 * Used by _set_cached_property() and _get_cached_property() methods.
+	 * @access protected
+	 * @var array
+	 */
+	protected $_cached_properties = array();
+
+
 	/**
 	 * basic constructor for Event Espresso classes, performs any necessary initialization,
 	 * and verifies it's children play nice
@@ -693,6 +706,10 @@ class EE_Base_Class{
 		 }else{
 			$this->$privateAttributeName = $holder_of_value; 
 		 }
+
+		 //let's unset any cache for this field_name from the $_cached_properties property.
+		 if ( isset( $this->_cached_properties[$privateAttributeName] ) )
+		 	unset( $this->_cached_properties[$private_AttributeName] );
 		 
 	}
 
@@ -711,6 +728,8 @@ class EE_Base_Class{
 		$timezone = empty( $timezone ) ? get_option( 'timezone_string' ) : $timezone;
 		EE_Datetime_Field::validate_timezone( $timezone ); //just running validation on the timezone.
 		$this->_timezone = $timezone;
+		//make sure we clear all cached properties because they won't be relevant now
+		$this->_clear_cached_properties();
 	}
 
 
@@ -761,6 +780,64 @@ class EE_Base_Class{
 		}
 		return true;
 	}
+
+
+
+
+	/**
+	 * For adding an item to the cached_properties property.
+	 *
+	 * @access protected
+	 * @param string $propertyname the property item the corresponding value is for.
+	 * @param mixed  $value        The value we are caching.
+	 * @return void
+	 */
+	protected function _set_cached_property( $propertyname, $value ) {
+		//first make sure this property exists
+		if ( !property_exists( $this, $propertyname ) )
+			throw new EE_Error( sprintf( __('Trying to cache a non-existent property (%s).  Doublecheck the spelling please', 'event_espresso'), $propertyname ) );
+		$this->_cached_properties[$propertyname] = $value;
+	}
+
+
+
+
+
+	/**
+	 * This returns the value cached property if it exists OR the actual property value if the cache doesn't exist.
+	 * This also SETS the cache if we return the actual property!
+	 * @param  string $propertyname the name of the property we're trying to retrieve
+	 * @return mixed                whatever the value for the property is we're retrieving
+	 */
+	protected function _get_cached_property( $propertyname ) {
+		//first make sure this property exists
+		if ( !property_exists( $this, $propertyname ) )
+			throw new EE_Error( sprintf( __('Trying to retrieve a non-existent property (%s).  Doublecheck the spelling please', 'event_espresso'), $propertyname ) );
+
+		if ( isset( $this->_cached_properties[$property_name] ) ) {
+			return $this->_cached_properties[$property_name];
+		}
+
+		//otherwise let's return the property
+		$field_name = ltrim( $propertyname, '_' );
+		$field_obj = $this->_get_model()->field_settings_for($field_name);
+		$value = $field_obj->prepare_for_get($this->$privateAttributeName );
+		$this->_set_cached_property( $property_name, $value );
+		return $value;
+	}
+
+
+
+
+	/**
+	 * This just takes care of clearing out the cached_properties 
+	 * @return void
+	 */
+	protected function _clear_cached_properties() {
+		$this->_cached_properties = array();
+	}
+
+
 	
 	/**
 	 * Ensures that this related thing is a model object.
@@ -865,8 +942,7 @@ class EE_Base_Class{
 	 */
 	public function get($field_name){
 		$privateAttributeName=$this->_get_private_attribute_name($field_name);
-		$field_obj = $this->_get_model()->field_settings_for($field_name);
-		return $field_obj->prepare_for_get($this->$privateAttributeName);
+		return $this->_get_cached_property( $privateAttributeName );
 	}
 	
 	/**
@@ -913,8 +989,7 @@ class EE_Base_Class{
 	* 		@access		public
 	* 		@param		array		$set_cols_n_values		
 	*		@return int, 1 on a successful update, the ID of
-	*					the new entry on insert; 0 on failure		
-	
+	*					the new entry on insert; 0 on failure	
 	*/	
 	public function save($set_cols_n_values=array()) {
 		//set attributes as provided in $set_cols_n_values
