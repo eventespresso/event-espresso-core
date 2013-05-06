@@ -83,7 +83,7 @@ class EE_Attendee extends EE_Base_Class{
     /**
     *	State ID
 	* 
-	*	foreign key from state table
+	*	state text (used to be foreign key to eventually-to-be-created state table)
 	*  
 	*	@access	protected
     *	@var int	
@@ -94,7 +94,7 @@ class EE_Attendee extends EE_Base_Class{
     /**
     *	Country ISO Code
 	* 
-	*	foreign key from country table
+	*	country text (used to be foreign key to eventually-to-be-created country table)
 	*  
 	*	@access	protected
     *	@var string	
@@ -191,8 +191,8 @@ class EE_Attendee extends EE_Base_Class{
 	* @param 		string 				$ATT_address  			Attendee Address
 	* @param 		string				$ATT_address2 			Attendee Address2
 	* @param 		string				$ATT_city 					Attendee City
-	* @param 		int					$STA_ID		 				Attendee State ID
-	* @param 		string 				$CNT_ISO 					Attendee Country ISO Code
+	* @param 		int					$STA_ID		 				Attendee State 
+	* @param 		string 				$CNT_ISO 					Attendee Country
 	* @param 		string 				$ATT_zip 					Attendee Zip/Postal Code
 	* @param 		string 				$ATT_email 				Attendee Email Address
 	* @param 		string 				$ATT_phone 				Attendee Phone #

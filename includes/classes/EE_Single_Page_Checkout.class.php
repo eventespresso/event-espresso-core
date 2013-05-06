@@ -1317,12 +1317,24 @@ class EE_Single_Page_Checkout {
 				}
 				
 				$EE_Session->set_session_data( $session['cart'] );
-
 				// save attendee question answerss
+				require_once('EEM_Question.model.php');
 				$exclude = array( 'price_paid', 'primary_attendee', 'att_obj', 'reg_obj' );
 				foreach ( $reg_items[ $line_item_id ]['attendees'][ $att_nmbr ] as $QST_ID => $answer ) {
 					if ( ! in_array( $QST_ID, $exclude ) && ! empty( $answer )) {
+						//sanitize question Id
+						if ( is_int($QST_ID) || intval($QST_ID) ){
+							//it's a non-system question, because they would be a string (their SYSTEM_ID)
+							//@todo: verify this is a real question?
+						}else{
+							//it should be a system question, but all we know so far it's a string... it could be SQL for all we know...
+							$QST_ID = sanitize_key($QST_ID);
+							$QST_ID = EEM_Question::instance()->get_Question_ID_from_system_string($QST_ID);
+						}
 						EEM_Answer::instance()->insert( array( 'REG_ID' =>$REG_ID, 'QST_ID' =>$QST_ID, 'ANS_value' =>sanitize_text_field( $answer )));
+						
+						//check that this is a real question
+						
 					}
 				}
 			}

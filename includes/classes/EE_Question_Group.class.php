@@ -84,7 +84,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 * @access protected
 	 * @var boolean 
 	 */
-	protected $_QST_system=NULL;
+	protected $_QSG_system=NULL;
 	
 	/**
 	 * Boolean which indicates whether thsi question group
@@ -116,7 +116,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 * @param int $QSG_order int to indicate where this question gruop should be displayed relative to others
 	 * @param boolean $QSG_show_group_name whether to show the question group name on the frontend
 	 * @param boolean $QSG_show_group_desc whether to show the question gruop description on teh frontend
-	 * @param string $QST_system boolean indicates whether this question group is integral to the system, or an extra one
+	 * @param string $QSG_system boolean indicates whether this question group is integral to the system, or an extra one
 	 * @param boolean $QSG_deleted indicates whether this question gruop has been 'deleted'
 	 * @access public
 	 */
@@ -127,7 +127,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 			$QSG_order=NULL,
 			$QSG_show_group_name=NULL,
 			$QSG_show_group_desc=NULL,
-			$QST_system=NULL,
+			$QSG_system=NULL,
 			$QSG_deleted=NULL) {
 		//if the first parameter is an array, assume it's an array of key-value pairs for this object
 		if(is_array($QSG_name)){
@@ -211,7 +211,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	public function system_group(){
-		return $this->get('QST_system');
+		return $this->get('QSG_system');
 	}
 	
 	/**

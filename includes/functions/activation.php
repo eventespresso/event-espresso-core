@@ -101,19 +101,19 @@ function espresso_initialize_system_questions() {
 	
 	// QUESTION GROUPS
 	global $wpdb;
-	$SQL = 'SELECT QST_system FROM ' . $wpdb->prefix . 'esp_question_group WHERE QST_system != 0';
+	$SQL = 'SELECT QSG_system FROM ' . $wpdb->prefix . 'esp_question_group WHERE QSG_system != 0';
 	// what we have
 	$question_groups = $wpdb->get_col( $SQL );
 	// check the reponse
 	$question_groups = is_array( $question_groups ) ? $question_groups : array();
 	// what we should have
-	$QST_systems = array( 1, 2 );
+	$QSG_systems = array( 1, 2 );
 	// loop thru what we should have and compare to what we have
-	foreach ( $QST_systems as $QST_system ) {
+	foreach ( $QSG_systems as $QSG_system ) {
 		// if we don't have what we should have
-		if ( ! in_array( $QST_system, $question_groups )) {
+		if ( ! in_array( $QSG_system, $question_groups )) {
 			// add it
-			switch ( $QST_system ) {
+			switch ( $QSG_system ) {
 				
 				case 1:
 						$QSG_values = array( 
@@ -123,7 +123,7 @@ function espresso_initialize_system_questions() {
 								'QSG_order' => 1,
 								'QSG_show_group_name' => 1,
 								'QSG_show_group_desc' => 1,
-								'QST_system' => 1,
+								'QSG_system' => 1,
 								'QSG_deleted' => 0
 							);
 					break;
@@ -136,7 +136,7 @@ function espresso_initialize_system_questions() {
 								'QSG_order' => 2,
 								'QSG_show_group_name' => 1,
 								'QSG_show_group_desc' => 1,
-								'QST_system' => 2,
+								'QSG_system' => 2,
 								'QSG_deleted' => 0
 							);
 					break;
@@ -148,7 +148,7 @@ function espresso_initialize_system_questions() {
 				$QSG_values, 
 				array('%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d' )
 			);
-			$QSG_IDs[ $QST_system ] = $wpdb->insert_id;		
+			$QSG_IDs[ $QSG_system ] = $wpdb->insert_id;		
 		}
 	}
 
@@ -334,7 +334,7 @@ function espresso_initialize_system_questions() {
 			$wpdb->insert(
 				$wpdb->prefix . 'esp_question', 
 				$QST_values, 
-				array( '%s', '%s', '%d', '%s', '%d', '%s', '%d', '%d', '%d', '%d' )
+				array( '%s', '%s', '%s', '%s', '%d', '%s', '%d', '%d', '%d', '%d' )
 			);
 			$QST_ID = $wpdb->insert_id;	
 			

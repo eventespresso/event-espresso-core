@@ -42,6 +42,7 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 	const zip_question_id=9;
 	const phone_question_id=10;
 
+	
 
 
 
@@ -62,8 +63,8 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 									'ATT_address'=>new EE_Model_Field('Address1','plaintext',true),
 									'ATT_address2'=>new EE_Model_Field('Address2','plaintext',true),
 									'ATT_city'=>new EE_Model_Field('City','plaintext',true),
-									'STA_ID'=>new EE_Model_Field('State ID','foreign_key',true,0,null,'State'),
-									'CNT_ISO'=>new EE_Model_Field('Country Code','foreign_key',true,0,null,'Country'),
+									'STA_ID'=>new EE_Model_Field('State ID','plaintext',true,0,null,'State'),
+									'CNT_ISO'=>new EE_Model_Field('Country Code','plaintext',true,0,null,'Country'),
 									'ATT_zip'=>new EE_Model_Field('Zip/Postal Code', 'plaintext', true, ''),
 									'ATT_email'=>new EE_Model_Field('Email', 'email', false, ''),
 									'ATT_phone'=>new EE_Model_Field('Phone', 'plaintext', true),
