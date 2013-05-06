@@ -332,16 +332,25 @@ abstract class EE_Gateway {
 						<?php endif; ?>
 					
 						<?php $this->_display_settings(); ?>
-					
+						
 						<tr>
 							<th>
-								<label><?php _e('Current Button Image', 'event_espresso'); ?></label>
+								<label for="<?php echo $this->_gateway_name; ?>_button_url">
+									<?php _e('Button Image URL', 'event_espresso'); ?>
+								</label>
 							</th>
 							<td>
-					<?php echo '<img src="' . $this->_payment_settings['button_url'] . '" />'; ?>
+								<?php 
+								$this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
+
+								<span class='ee_media_uploader_area'>
+									<img class="ee_media_image" src="<?php echo $this->_payment_settings['button_url']; ?>" />
+									<input class="ee_media_url" type="text" name="button_url" size='34' value="<?php echo $this->_payment_settings['button_url']; ?>">
+									<a href="#" class="ee_media_upload"><img src="images/media-button-image.gif" alt="Add an Image"></a>
+								</span><br/>
 							</td>
 						</tr>
-
+						
 						<tr>
 							<th></th>
 							<td>
@@ -435,7 +444,6 @@ abstract class EE_Gateway {
 
 	protected function _reset_button_url() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		
 		$in_uploads = $this->_EEM_Gateways->is_in_uploads($this->_gateway_name);
 		if (is_array($in_uploads) && $in_uploads[$this->_gateway_name]) {
 			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/" . $this->_gateway_name . '/lib/' . $this->_button_base;
