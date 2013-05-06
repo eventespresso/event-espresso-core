@@ -370,6 +370,11 @@ class EEM_Event  extends EEM_TempBase{
 							$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_input_id'] = $input_id . '-' . $qstn_id;
 							$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_input_class'] = $input_class;
 							$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_options'] = array();
+							// check for answer in $_GET in case we are reprocessing a form after an error
+							if ( isset( $q_meta['EVT_ID'] ) && isset( $q_meta['att_nmbr'] ) && isset( $q_meta['date'] ) && isset( $q_meta['time'] ) && isset( $q_meta['price_id'] )) {
+								$answer = isset( $_GET['qstn'][ $q_meta['EVT_ID'] ][ $q_meta['att_nmbr'] ][ $q_meta['date'] ][ $q_meta['time'] ][ $q_meta['price_id'] ][ $qstn_id ] ) ? $_GET['qstn'][ $q_meta['EVT_ID'] ][ $q_meta['att_nmbr'] ][ $q_meta['date'] ][ $q_meta['time'] ][ $q_meta['price_id'] ][ $qstn_id ] : '';
+								$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['ANS_value'] = $answer;
+							}
 							
 							if ( $QST->QST_type == 'SINGLE' ||$QST->QST_type == 'MULTIPLE' ||$QST->QST_type == 'DROPDOWN' ) {
 								if ( is_array( $QSOs )) {
