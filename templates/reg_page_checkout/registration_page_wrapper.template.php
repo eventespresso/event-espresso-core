@@ -6,14 +6,14 @@
 			<img src="<?php echo $images_dir_url;?>ajax-loader-grey.gif" /><span><?php _e('loading...', 'event_espresso'); ?></span>
 		</div>
 
-		<div id="mer-success-msg" class="event-queue-msg ui-widget-content ui-state-highlight ui-corner-all<?php echo $success_msg_class;?>" style="display:none;">
+		<div id="mer-success-msg" class="event-queue-msg ui-widget-content ui-state-highlight ui-corner-all<?php echo $success_msg_class;?>">
 			<span class="ui-icon ui-icon-circle-check"></span>&nbsp;<span class="msg"><?php echo $success_msg;?></span>
-			<a class="close-event-queue-msg">x</a>
+			<a class="close-event-queue-msg" style="display:none;">x</a>
 		</div>
 
-		<div id="mer-error-msg" class="event-queue-msg ui-widget-content ui-state-error ui-corner-all<?php echo $error_msg_class;?>" style="display:none;">
+		<div id="mer-error-msg" class="event-queue-msg ui-widget-content ui-state-error ui-corner-all<?php echo $error_msg_class;?>">
 			<span class="ui-icon ui-icon-notice"></span>&nbsp;<span class="msg"><?php echo $error_msg;?></span>
-			<a class="close-event-queue-msg">x</a>
+			<a class="close-event-queue-msg" style="display:none;">x</a>
 		</div>
 		
 	</div>
