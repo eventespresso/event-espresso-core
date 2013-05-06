@@ -672,7 +672,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 							$attendee['att_obj'] = FALSE;
 						}
 						if ( ! $attendee['att_obj'] ) {
-							$attendee['att_obj'] = new EE_Attendee;
+							$attendee['att_obj'] = new EE_Attendee();
 						}	 
 					}
 					// check for reg object
@@ -682,7 +682,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
 					    $REG_MDL = EEM_Registration::instance();
 						if ( ! $attendee['reg_obj'] = $REG_MDL->get_registration_for_transaction_attendee( $TXN_ID, $attendee['att_obj']->ID(), $att_nmbr )) {
-							$attendee['reg_obj'] = new EE_Registration;
+							$attendee['reg_obj'] = new EE_Registration();
 						}	 
 					}
 					
