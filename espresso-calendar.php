@@ -783,7 +783,7 @@ if (!function_exists('espresso_calendar')) {
 								$(this).find('.fc-day-content > div').attr( 'id', setID );
 							});
 
-							$('.fc-event').each( function(index){ 						
+							$('.fc-view-month .fc-event').each( function(index){ 						
 								// determine what month and day this event is on
 								monthDay = $(this).attr( 'rel' );
 								//console.log( 'monthDay: ' + monthDay );
