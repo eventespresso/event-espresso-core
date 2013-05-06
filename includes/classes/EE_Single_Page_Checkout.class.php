@@ -1320,7 +1320,6 @@ class EE_Single_Page_Checkout {
 				}
 				
 				$EE_Session->set_session_data( $session['cart'] );
-
 				// save attendee question answerss
 				$exclude = array( 'price_paid', 'primary_attendee', 'att_obj', 'reg_obj', 'additional_attendee_reg_info' );
 				$system_IDs = array(
@@ -1340,7 +1339,10 @@ class EE_Single_Page_Checkout {
 					if ( ! in_array( $QST_ID, $exclude ) && ! empty( $answer )) {
 						// convert system string QST_IDs like 'fname' to their numeric equivalents
 						$QST_ID = array_key_exists( $QST_ID, $system_IDs ) ? $system_IDs[ $QST_ID ] : $QST_ID;
-						EEM_Answer::instance()->insert( array( 'REG_ID' =>$REG_ID, 'QST_ID' =>$QST_ID, 'ANS_value' =>sanitize_text_field( $answer )));
+						EEM_Answer::instance()->insert( array( 'REG_ID' => $REG_ID, 'QST_ID' => sanitize_key($QST_ID), 'ANS_value' => sanitize_text_field( $answer )));
+						
+						//check that this is a real question
+						
 					}
 				}
 			}
