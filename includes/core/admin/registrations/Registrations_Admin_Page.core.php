@@ -976,7 +976,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		add_filter( 'filter_hook_espresso_form_after_question_group_questions', array( $this, 'form_after_question_group' ), 10, 1 );	
 		add_filter( 'filter_hook_espresso_form_field_label_html', array( $this, 'form_form_field_label_wrap' ), 10, 1 );
 		add_filter( 'filter_hook_espresso_form_field_input_html', array( $this, 'form_form_field_input__wrap' ), 10, 1 );
-
+		
 		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( $QSGs, $QSTs, $QSOs );
 		//printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
@@ -1083,9 +1083,9 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		$success = TRUE;
 		$qstns = isset( $this->_req_data['qstn'] ) ? $this->_req_data['qstn'] : FALSE;
-		$REG_ID = isset( $this->_req_data['_REG_ID'] ) ? absint( $this->_req_data['_REG_ID'] ) : FALSE;
+		$REG_ID = isset( $this->_req_data['REG_ID'] ) ? absint( $this->_req_data['REG_ID'] ) : FALSE;
 		$qstns = apply_filters('filter_hook_espresso_reg_admin_attendee_registration_form', $qstns);	
-		$success = $this->_save_attendee_registration_form( $qstns );
+		$success = $this->_save_attendee_registration_form( $REG_ID, $qstns );
 		$what = __('Attendee Registration Form', 'event_espresso');
 		$route = $REG_ID ? array( 'action' => 'view_registration', '_REG_ID' => $REG_ID ) : array( 'action' => 'default' );
 		$this->_redirect_after_action( $success, $what, __('updated', 'event_espresso'), $route );
@@ -1101,21 +1101,110 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*		@access private
 	*		@return void
 	*/
-	private function _save_attendee_registration_form( $qstns = FALSE ) {
+	private function _save_attendee_registration_form( $REG_ID = FALSE, $qstns = FALSE ) {
 		
-		if ( ! $qstns ) {	
-			return FALSE;
-		}		
-		
+		if ( ! $REG_ID || ! $qstns ) {	
+			EE_Error::add_error( __('An error occured. No registration ID and/or registration questions were received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		}
 		$success = TRUE;
 		global $wpdb;
-		// loop thru questions
+		// grab values for fname, lname, and email from qstns
+		$QST_fname 	= isset( $qstns['fname'] ) && ! empty( $qstns['fname'] ) ? array_shift( array_values( $qstns['fname'] )) : FALSE;
+		$QST_lname 	= isset( $qstns['lname'] ) && ! empty( $qstns['lname'] ) ? array_shift( array_values( $qstns['lname'] )) : FALSE;
+		$QST_email 	= isset( $qstns['email'] ) && ! empty( $qstns['email'] ) ? array_shift( array_values( $qstns['email'] )) : FALSE;
+		// check if fname, lname, and email were set (and possibly changed)
+		if ( $QST_fname && $QST_lname && $QST_email ) {		
+			// load REG model
+		    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
+		    $REG = EEM_Registration::instance();
+			// get registration
+			$registration = $REG->get_one_by_ID( $REG_ID );
+			// and then get this registration's attendee details
+			$attendee = $registration->attendee();
+			// check if the critical attendee details were changed
+			if ( $QST_fname != $attendee->fname() || $QST_lname != $attendee->lname() || $QST_email != $attendee->email() ) {
+				// we're either updating an already existing attendee or creating an entirely new attendee 
+				//so grab the rest of the details
+				$QST_address 		= isset( $qstns['address'] ) && ! empty( $qstns['address'] ) ? array_shift( array_values( $qstns['address'] )) : NULL;
+				$QST_address2 	= isset( $qstns['address2'] ) && ! empty( $qstns['address2'] ) ? array_shift( array_values( $qstns['address2'] )) : NULL;
+				$QST_city 				= isset( $qstns['city'] ) && ! empty( $qstns['city'] ) ? array_shift( array_values( $qstns['city'] )) : NULL;
+				$QST_state 			= isset( $qstns['state'] ) && ! empty( $qstns['state'] ) ? array_shift( array_values( $qstns['state'] )) : NULL;
+				$QST_country 		= isset( $qstns['country'] ) && ! empty( $qstns['country'] ) ? array_shift( array_values( $qstns['country'] )) : NULL;
+				$QST_zip 				= isset( $qstns['zip'] ) && ! empty( $qstns['zip'] ) ? array_shift( array_values( $qstns['zip'] )) : NULL;
+				$QST_phone 		= isset( $qstns['phone'] ) && ! empty( $qstns['phone'] ) ? array_shift( array_values( $qstns['phone'] )) : NULL;	
+				// load attendee model
+				require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php' );
+				$ATT = EEM_Attendee::instance();
+				// create array for query where statement
+				$where_cols_n_values = array('ATT_fname' => $QST_fname, 'ATT_lname' => $QST_lname, 'ATT_email' => $QST_email);
+				// do we already have an existing record for this "new" attendee ?
+				if ( $existing_attendee = $ATT->find_existing_attendee( $where_cols_n_values )) {
+					// found a match
+					// copy details from existing attendee
+					$attendee = $existing_attendee;
+					// in case other details were updated
+					$attendee->set( 'ATT_address', $QST_address );
+					$attendee->set( 'ATT_address2', $QST_address2 );
+					$attendee->set( 'ATT_city', $QST_city );
+					// is state a string or a foreign key ?
+					if ( ! is_numeric( $QST_state )) {
+						if ( $STA_ID = $wpdb->get_var( $wpdb-> prepare( 'SELECT STA_ID FROM ' . $wpdb->prefix . 'esp_state WHERE STA_name = %s', $QST_state ))) {
+							$QST_state = $STA_ID;
+						}
+					}
+					$attendee->set( 'STA_ID', $QST_state );
+					// is country a string or a foreign key ?
+					if ( ! is_numeric( $QST_country )) {
+						if ( $CNT_ISO = $wpdb->get_var( $wpdb-> prepare( 'SELECT CNT_ISO FROM ' . $wpdb->prefix . 'esp_country WHERE CNT_name = %s', $QST_country ))) {
+							$QST_country = $CNT_ISO;
+						}
+					}
+					$attendee->set( 'CNT_ISO', $QST_country );
+					$attendee->set( 'ATT_zip', $QST_zip );
+					$attendee->set( 'ATT_phone', $QST_phone );
+					// save to the db
+					$attendee->update();
+				} else {
+					// no existing attendee exists so create a new one
+					$attendee = new EE_Attendee( 
+						$QST_fname,
+						$QST_lname,
+						$QST_email,
+						$QST_address,
+						$QST_address2,
+						$QST_city,
+						$QST_state,
+						$QST_country,
+						$QST_zip,
+						$QST_phone
+					);
+					// save to db
+					$results = $attendee->insert();
+					// grab and set the new ID
+					if ( isset( $results['new-ID'] ) && ! empty( $results['new-ID'] )) {
+						$attendee->set( 'ATT_ID', absint( $results['new-ID'] ));
+						$attendee->update();
+					} else {
+						$success = FALSE;
+						EE_Error::add_error( __('An error occured. An ID for the new attendee could not be retreived.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+					}					
+				}
+				if ( $attendee->ID() ) {
+//					echo '<h1>$attendee->ID()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
+//					var_dump( $attendee->ID() );
+					// now update the registration with the "new" attendee ID
+					$registration->set( 'ATT_ID', $attendee->ID() );
+					$registration->update();
+				}
+			}
+		}
+//		echo '<h1>$attendee->ID()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
+//		var_dump( $attendee->ID() );
+		// allow others to get in on this awesome fun   :D
+		do_action( 'action_hook_espresso_save_attendee_registration_form', $registration, $qstns );
+		// loop thru questions... FINALLY!!!
 		foreach ( $qstns as $QST_ID => $qstn ) {
 			foreach ( $qstn as $ANS_ID => $ANS_value ) {
-//					echo '<h4>$QST_ID : ' . $QST_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//					echo '<h4>$ANS_ID : ' . $ANS_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//					echo '<h4>$ANS_value : ' . $ANS_value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-
 				if ( ! $wpdb->update(
 					$wpdb->prefix . 'esp_answer',
 					array( 'ANS_value' => sanitize_text_field( $ANS_value )),
@@ -1127,6 +1216,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				}
 			}
 		}
+		return $success;
 	}
 
 
@@ -2111,13 +2201,13 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$attendee = new EE_Attendee(
 						$this->_req_data['ATT_fname'],
 						$this->_req_data['ATT_lname'],
+						$this->_req_data['ATT_email'],
 						$this->_req_data['ATT_address'],
 						$this->_req_data['ATT_address2'],
 						$this->_req_data['ATT_city'],
 						$this->_req_data['STA_ID'],
 						$this->_req_data['CNT_ISO'],
 						$this->_req_data['ATT_zip'],
-						$this->_req_data['ATT_email'],
 						$this->_req_data['ATT_phone'],
 						$this->_req_data['ATT_social'],
 						$this->_req_data['ATT_comments'],
