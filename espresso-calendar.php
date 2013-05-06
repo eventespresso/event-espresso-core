@@ -216,7 +216,7 @@ function espresso_calendar_do_stuff($show_expired) {
 		$type = 'all';
 		$sql = "SELECT e.*, ese.start_time, ese.end_time";
 		if (isset($espresso_calendar['disable_categories']) && $espresso_calendar['disable_categories'] == false) {
-			$sql .= ", c.category_meta ";
+			$sql .= ", c.category_meta, c.category_identifier, c.category_name, c.category_desc, c.display_desc ";
 		}
 		$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
 		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
@@ -248,7 +248,6 @@ function espresso_calendar_do_stuff($show_expired) {
 
 	$events = array();
 	$events_data = $wpdb->get_results($wpdb->prepare($sql, ''));
-	
 	foreach ($events_data as $event) {
 		global $this_event_id;
 		$this_event_id = $event->id;
@@ -387,10 +386,10 @@ function espresso_calendar_do_stuff($show_expired) {
 		if (isset($espresso_calendar['disable_categories']) && $espresso_calendar['disable_categories'] == false) {
 			if (isset($espresso_calendar['enable_cat_classes']) && $espresso_calendar['enable_cat_classes'] == true) {
 				//This is the css class name
-				$eventArray['className'] = isset($category_data['category_identifier']) && !empty($category_data['category_identifier']) ? $category_data['category_identifier'] : '';
+				$eventArray['className'] = isset($event->category_identifier) && !empty($event->category_identifier) ? $event->category_identifier : '';
 	
 				//This can be used to use the category id as the event type
-				$eventArray['eventType'] = isset($category_data['category_name']) && !empty($category_data['category_name']) ? $category_data['category_name'] : '';
+				$eventArray['eventType'] = isset($event->category_name) && !empty($event->category_name) ? $event->category_name : '';
 			}
 		}
 		
