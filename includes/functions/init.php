@@ -299,6 +299,8 @@ function event_espresso_run() {
 
 function return_espresso_content() {
 	global $espresso_content;
+//	require_once('activation.php');
+//	espresso_initialize_system_questions();
 	return $espresso_content;
 }
 

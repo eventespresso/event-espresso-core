@@ -340,12 +340,12 @@ function espresso_initialize_system_questions() {
 			
 			// QUESTION GROUP QUESTIONS 
 			
-			// questions 1-3 go in group 1, the rest go in 2
-			$QSG_ID = $QST_system < 4 ? 1 : 2;			
+			$QSG_ID = in_array( $QST_system,
+					array('fname','lname','email')) ? 1 : 2;			
 			// add system questions to groups
 			$wpdb->insert(
 				$wpdb->prefix . 'esp_question_group_question', 
-				array( 'QSG_ID' => $QSG_IDs[ $QSG_ID ], 'QST_ID' => $QST_ID ), 
+				array( 'QSG_ID' => $QSG_ID , 'QST_ID' => $QST_ID ), 
 				array( '%d', '%d' )
 			);			
 			
