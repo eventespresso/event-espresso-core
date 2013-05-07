@@ -999,6 +999,9 @@ class EE_Single_Page_Checkout {
 		$reg_info = $session_data['cart']['REG'];
 		$template_args = array();
 		$exclude_attendee_info = array('registration_id', 'price_paid', 'primary_attendee');
+		
+		$countries = EEM_Country::instance()->get_all_where( array( 'CNT_active' => TRUE ));
+		$states = EEM_State::instance()->get_all_where( array( 'CNT_ISO' => array_keys( $countries ), 'STA_active' => 1 ), NULL, 'ASC', array( 'CNT_ISO' => 'IN', 'STA_active' => '=' ));
 
 		if ( isset( $reg_info['items'] )) {
 			
@@ -1028,6 +1031,16 @@ class EE_Single_Page_Checkout {
 							case 'lname' :
 								break;
 	
+							case 'state' :
+								if (!in_array($key, $exclude_attendee_info) /*&& !is_numeric($key)*/ && $value != '') {
+									if ( isset( $states[ $value ] )) {
+										array_push( $extra_att_details, $states[ $value ]->get( 'STA_abbrev' ) );
+									} else {
+										array_push( $extra_att_details, $value );
+									}									
+								}
+								break;
+	
 							default:
 								if (!in_array($key, $exclude_attendee_info) /*&& !is_numeric($key)*/ && $value != '') {
 									array_push($extra_att_details, $value);
@@ -1036,9 +1049,9 @@ class EE_Single_Page_Checkout {
 					}
 	
 					if (!empty($extra_att_details)) {
-						$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['extra_att_detail'] = '<span class="small-text lt-grey-text">' . implode(', ', $extra_att_details) . '</span>';
+						$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['extra_att_detail'] = '<br/><span class="small-text lt-grey-text">' . implode(', ', $extra_att_details) . '</span>';
 					} else {
-						$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['extra_att_detail'] = '<span class="small-text lt-grey-text">' . __('no attendee details submitted', 'event_espresso') . '</span>';
+						$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['extra_att_detail'] = '<br/><span class="small-text lt-grey-text">' . __('no attendee details submitted', 'event_espresso') . '</span>';
 					}
 
 				}
