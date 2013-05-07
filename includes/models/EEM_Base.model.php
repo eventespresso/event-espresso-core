@@ -858,38 +858,42 @@ abstract class EEM_Base extends EE_Base {
 			return FALSE;
 		}
 
+		$prepped = array();
+
 		// in my book, any good WHERE clause should start with the word "WHERE"
-		$WHR = ' WHERE ';
+		$prepped['where'] = ' WHERE ';
 		$value_parameters = array();
 
 		$single_op = ! is_array($operator) ? TRUE : FALSE;
 
-
+		$WHR = array();
 		foreach ( $where_cols_n_values as $column_name => $value ) {
 
 			// change non array operator to array with the correct key
 			if ( $single_op ) {
 				$operator = array( $column_name => $operator );
 			}
-			// build this segment of the WHERE clause
-			$WHR .= $column_name . ' ' . $operator[$column_name] .  $em_table_data_types[$column_name] ;
-			$value_parameters[ $column_name ] = $value;
+			if ( $operator[$column_name] == 'IN' && is_array( $value )) {
+				// build this segment of the WHERE IN clause
+				$WHR[] = $column_name . " IN ( '" . implode( "', '", $value ) . "' )";
+			} else {
+				// build this segment of the WHERE clause
+				$WHR[] = $column_name . ' ' . $operator[$column_name] .  $em_table_data_types[$column_name] ;
+				$value_parameters[ $column_name ] = $value;
+			}
 
-			// add the AND before adding the next segment of the WHERE clause
-			$WHR .= ' AND ';
 			// convert single operator back to non-array with default value so that next iteration will assign the correct key
 			if ( $single_op ) {
 				$operator = '=';
 			}
 
 		}
-		// remove the last " AND " since there are no more column value pairs
-		$WHR = substr( $WHR, 0, -5);
+//		// remove the last " AND " since there are no more column value pairs
+//		$WHR = substr( $WHR, 0, -5);
 
-
-		$prepped = array();
-		$prepped['where'] = $WHR;
-		$prepped['value'] = $value_parameters;
+		// add the AND before adding the next segment of the WHERE clause
+		$prepped['where'] .= implode( ' AND ', $WHR );
+		$prepped['value'] = ! empty( $value_parameters ) ? $value_parameters : NULL;
 		return $prepped;
 
 	}
