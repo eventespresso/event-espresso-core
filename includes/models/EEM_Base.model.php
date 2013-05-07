@@ -1417,11 +1417,13 @@ abstract class EEM_Base extends EE_Base{
 				if( $relation_obj instanceof EE_Belongs_To_Relation){
 					//check if this model's INFO is present. If so, cache it on the model
 					$other_model = $relation_obj->get_other_model();
+
 					$other_model_obj_maybe = $other_model->instantiate_class_from_array_or_object($row);
-					//let's set the timezone on the other model so we are consistent!
-					$other_model_obj_maybe->set_timezone( $this->_timezone );
+
 					//if we managed to make a model object from the results, cache it on the main model object
 					if( $other_model_obj_maybe ){
+						//set timezone on these other model objects if they are present
+						$other_model_obj_maybe->set_timezone( $this->_timezone );
 						$classInstance->cache($modelName, $other_model_obj_maybe);
 					}
 				}
@@ -1454,7 +1456,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Base_Class
 	 */
 	public function instantiate_class_from_array_or_object($cols_n_values){
-		if(!is_array($cols_n_values)){
+		if(!is_array($cols_n_values) && is_object( $cols_n_values ) ){
 			$cols_n_values=get_object_vars($cols_n_values);
 		}
 		//make sure the array only has keys that are fields/columns on this model
@@ -1480,6 +1482,7 @@ abstract class EEM_Base extends EE_Base{
 				
 		//get the required info to instantiate the class whcih relates to this model.
 		$className=$this->_get_class_name();
+
 		$class=new ReflectionClass($className);
 		//call the constructor of the EE_Base_Class, passing it an array of all the fields, except
 		//the ID, because we set that later
