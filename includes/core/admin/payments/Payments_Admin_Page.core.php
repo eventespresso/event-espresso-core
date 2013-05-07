@@ -228,11 +228,13 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		//let's assemble the array for the _tab_text_links helper
 		foreach ( $payment_settings as $gateway => $settings ) {
 
-			if (( $caffeinated || in_array( $gateway, $default_gateways ))){		
-				// activate this gateway ?
-				$activate_trigger = isset($this->_req_data['activate_' . $gateway]) && !$activate_trigger ? $gateway : $activate_trigger;
-				// or deactivate this gateway ?
-				$deactivate_trigger = isset($this->_req_data['deactivate_' . $gateway]) && !$deactivate_trigger ? $gateway : $deactivate_trigger;
+			if (( $caffeinated || in_array( $gateway, $default_gateways ))){				
+				if(	isset($this->_req_data['activate_' . $gateway]) ||
+					isset($this->_req_data['deactivate_' . $gateway]) ||
+					isset($this->_req_data['update_' . $gateway])){
+					$selected_gateway_name =  $gateway;
+				}
+				
 				// now add or remove gateways from list
 				if ( isset( $this->_req_data['activate_' . $gateway] )) {
 					$gateway_data['active_gateways'][$gateway] = array();
@@ -257,10 +259,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		}
 		//bandaid to fix bug where gateways wouldn't appear active on firsrt pag eload after activating them
 		$EE_Session->set_session_data($gateway_data,'gateway_data');
-
-		$selected_gateway_name = $activate_trigger ? $activate_trigger : FALSE;
-		$selected_gateway_name = $deactivate_trigger ? $deactivate_trigger : $activate_trigger;
-
+		
 		if ( ! $selected_gateway_name ) {
 //			$default = !empty( $gateway_data['active_gateways'] ) ? key($gateway_data['active_gateways']) : 'Paypal_Standard';
 			$selected_gateway_name = !empty( $gateways ) ? key($gateways) : 'Paypal_Standard';
