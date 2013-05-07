@@ -72,7 +72,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 				'QST_required_text'=>new EE_Model_Field( __('Required Text','event_espresso'), 'simplehtml', true,  __('This field is required','event_espresso'), null, null),
 				'QST_order'=>new EE_Model_Field( __('Order','event_espresso'), 'int', false, 0, null, null),
 				'QST_admin_only'=>new EE_Model_Field( __('For Admins Only','event_espresso'),'bool',false,false,null,null),
-				'QST_wp_user'=>new EE_Model_Field( __('WP User ID','event_espresso'), 'foreign_key', true, 1, null, 'WP_User'),
+				'QST_wp_user'=>new EE_Model_Field( __('WP User ID','event_espresso'), 'int', true, 1, null),//yes this should be a foreign key, but we don't have a model for WP_Users yet...
 				'QST_deleted'=>new EE_Model_Field( __('Deleted','event_espresso'),'deleted_flag',false,false,null,null)
 			);
 		$this->_related_models=array(
