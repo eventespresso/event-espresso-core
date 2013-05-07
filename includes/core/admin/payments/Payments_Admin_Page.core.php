@@ -196,7 +196,6 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _gateway_settings() {
-		
 		global $EE_Session, $caffeinated, $EEM_Gateways, $current_user;
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
@@ -300,7 +299,6 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	*		@return array
 	*/
 	protected function _update_payment_settings() {	
-
 		$data = array();
 		$data['show_pending_payment_options'] = isset( $this->_req_data['show_pending_payment_options'] ) ? absint( $this->_req_data['show_pending_payment_options'] ) : FALSE;
 		$data = apply_filters('filter_hook_espresso_payment_settings_save', $data);	

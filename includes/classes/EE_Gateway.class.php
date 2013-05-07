@@ -145,9 +145,7 @@ abstract class EE_Gateway {
 
 	private function _handle_payment_settings() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-
 		if (!$this->_payment_settings = $this->_EEM_Gateways->payment_settings($this->_gateway_name)) {
-			
 			$this->_default_settings();
 			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway_name, $this->_payment_settings)) {
 				$msg = sprintf( __( '%s payment settings initialized.', 'event_espresso' ), $this->_payment_settings['display_name'] );
@@ -161,6 +159,10 @@ abstract class EE_Gateway {
 		}
 	}
 
+	/**
+	 * performs activating, deactivating, and updating gateways if proper $_POST parameters are sent
+	 * This should probably be done in Payment_Admin_page on a seperate route, not a function called by teh gateway's constructor
+	 */
 	private function _gateways_admin() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
@@ -709,6 +711,5 @@ abstract class EE_Gateway {
 		//stubb
 		echo "";//just echo out a single space, so the output buffer that's listening doesnt complain its empty
 	}
-
-}
+} 
 
