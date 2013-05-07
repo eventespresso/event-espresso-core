@@ -145,9 +145,7 @@ abstract class EE_Gateway {
 
 	private function _handle_payment_settings() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-
 		if (!$this->_payment_settings = $this->_EEM_Gateways->payment_settings($this->_gateway_name)) {
-			
 			$this->_default_settings();
 			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway_name, $this->_payment_settings)) {
 				$msg = sprintf( __( '%s payment settings initialized.', 'event_espresso' ), $this->_payment_settings['display_name'] );
@@ -161,6 +159,10 @@ abstract class EE_Gateway {
 		}
 	}
 
+	/**
+	 * performs activating, deactivating, and updating gateways if proper $_POST parameters are sent
+	 * This should probably be done in Payment_Admin_page on a seperate route, not a function called by teh gateway's constructor
+	 */
 	private function _gateways_admin() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
@@ -332,16 +334,25 @@ abstract class EE_Gateway {
 						<?php endif; ?>
 					
 						<?php $this->_display_settings(); ?>
-					
+						
 						<tr>
 							<th>
-								<label><?php _e('Current Button Image', 'event_espresso'); ?></label>
+								<label for="<?php echo $this->_gateway_name; ?>_button_url">
+									<?php _e('Button Image URL', 'event_espresso'); ?>
+								</label>
 							</th>
 							<td>
-					<?php echo '<img src="' . $this->_payment_settings['button_url'] . '" />'; ?>
+								<?php 
+								$this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
+
+								<span class='ee_media_uploader_area'>
+									<img class="ee_media_image" src="<?php echo $this->_payment_settings['button_url']; ?>" />
+									<input class="ee_media_url" type="text" name="button_url" size='34' value="<?php echo $this->_payment_settings['button_url']; ?>">
+									<a href="#" class="ee_media_upload"><img src="images/media-button-image.gif" alt="Add an Image"></a>
+								</span><br/>
 							</td>
 						</tr>
-
+						
 						<tr>
 							<th></th>
 							<td>
@@ -435,7 +446,6 @@ abstract class EE_Gateway {
 
 	protected function _reset_button_url() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		
 		$in_uploads = $this->_EEM_Gateways->is_in_uploads($this->_gateway_name);
 		if (is_array($in_uploads) && $in_uploads[$this->_gateway_name]) {
 			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/" . $this->_gateway_name . '/lib/' . $this->_button_base;
@@ -701,6 +711,5 @@ abstract class EE_Gateway {
 		//stubb
 		echo "";//just echo out a single space, so the output buffer that's listening doesnt complain its empty
 	}
-
-}
+} 
 
