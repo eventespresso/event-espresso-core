@@ -67,9 +67,10 @@ class EEM_Payment extends EEM_Base {
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
 	 *		@access protected
+	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
 	 *		@return void
 	 */	
-	protected function __construct() {	  
+	protected function __construct( $timezone ) {	  
 		//global $wpdb;
 		// set table name
 		/*$this->table_name = $wpdb->prefix . 'esp_payment';
@@ -120,7 +121,7 @@ class EEM_Payment extends EEM_Base {
 				'PAY_ID'=>new EE_Primary_Key_Int_Field('PAY_ID', __('Payment ID','event_espresso'), false, 0),
 				'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID', __('Transaction ID','event_espresso'), false, 0, 'Transaction'),
 				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('STatus ID','event_espresso'), false, EEM_Payment::status_id_cancelled, 'Status'),
-				'PAY_timestamp'=> new EE_Datetime_Field('PAY_timestamp', __('Timestamp of when payment was attemped','event_espresso'), false, current_time('timestamp')),
+				'PAY_timestamp'=> new EE_Datetime_Field('PAY_timestamp', __('Timestamp of when payment was attemped','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'PAY_method'=>new EE_All_Caps_Text_Field_Base('PAY_method', __('User-friendly description of payment','event_espresso'), false, 'CART'),
 				'PAY_amount'=>new EE_Money_Field('PAY_amount', __('Amount Payment should be for','event_espresso'), false, 0),
 				'PAY_gateway'=>new EE_Plain_Text_Field('PAY_gateway', __('Gateway name used for payment','event_espresso'), false, __('Unspecified','event_espresso')),
@@ -133,27 +134,28 @@ class EEM_Payment extends EEM_Base {
 			)
 		);
 		$this->_model_relations = array(
-			'Transaction'=>new EE_Belongs_To_Relation()
+			'Transaction'=> new EE_Belongs_To_Relation()
 		);
 		
 		
 		// load Payment object class file
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Payment.class.php');
-		parent::__construct();
+		parent::__construct( $timezone );
 	}
 
 	/**
 	 *		This funtion is a singleton method used to instantiate the EEM_Payment object
 	 *
 	 *		@access public
+	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
 	 *		@return EEM_Payment instance
 	 */	
-	public static function instance(){
+	public static function instance( $timezone = NULL ){
 	
 		// check if instance of EEM_Payment already exists
 		if ( self::$_instance === NULL ) {
 			// instantiate Espresso_model 
-			self::$_instance = new self();
+			self::$_instance = new self( $timezone );
 		}
 		// EEM_Payment object
 		return self::$_instance;

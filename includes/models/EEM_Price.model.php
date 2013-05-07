@@ -34,14 +34,15 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 	 * 		This funtion is a singleton method used to instantiate the EEM_Attendee object
 	 *
 	 * 		@access public
+	 * 		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
 	 * 		@return EEM_Price instance
 	 */
-	public static function instance() {
+	public static function instance( $timezone = NULL ) {
 
 		// check if instance of EEM_Price already exists
 		if (self::$_instance === NULL) {
 			// instantiate Price_model
-			self::$_instance = new self();
+			self::$_instance = new self( $timezone );
 		}
 		// EEM_Price object
 		return self::$_instance;
@@ -53,9 +54,10 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 	 * 		private constructor to prevent direct creation
 	 * 		@Constructor
 	 * 		@access protected
+	 * 		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
 	 * 		@return void
 	 */
-	protected function __construct() {
+	protected function __construct( $timezone ) {
 		require_once('EEM_Price_Type.model.php');
 		$this->singlular_item = __('Price','event_espresso');
 		$this->plural_item = __('Prices','event_espresso');		
@@ -93,8 +95,8 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 				'PRC_reg_limit'=>new EE_Integer_Field('PRC_reg_limit', 'Limit to how many tickets can be sold at this price', true, 999999),
 				'PRC_tckts_left'=>new EE_Integer_Field('PRC_tckts_left', 'Tickets remaining at this price', true, 999999),
 				'PRC_use_dates'=>new EE_Boolean_Field('PRC_use_dates', 'Flag indicating whether to use dates for this price', false, false),
-				'PRC_start_date'=>new EE_Datetime_Field('PRC_start_date', 'If using dates, when this price becomes available', true, current_time('timestamp')),
-				'PRC_end_date'=>new EE_Datetime_Field('PRC_end_date', 'If using dates, when this price is no longer available', true, current_time('timestamp')),
+				'PRC_start_date'=>new EE_Datetime_Field('PRC_start_date', 'If using dates, when this price becomes available', true, current_time('timestamp'), $timezone ),
+				'PRC_end_date'=>new EE_Datetime_Field('PRC_end_date', 'If using dates, when this price is no longer available', true, current_time('timestamp'), $timezone ),
 				'PRC_is_active'=>new EE_Boolean_Field('PRC_is_active', 'Flag indicating whether price is active', false, true),
 				'PRC_overrides'=>new EE_Integer_Field('PRC_overrides', 'Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )', true, 0),
 				'PRC_order'=>new EE_Integer_Field('PRC_order', 'Order of Application of Price (lower numbers apply first?)', false, 1),
@@ -106,7 +108,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 			'Price_Type'=>new EE_Belongs_To_Relation(),
 			'Registration'=>new EE_Has_Many_Relation()
 		);
-		parent::__construct();
+		parent::__construct( $timezone );
 	}
 
 

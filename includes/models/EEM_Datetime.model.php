@@ -46,9 +46,10 @@ class EEM_Datetime extends EEM_Base {
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
 	 *		@access private
+	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
 	 *		@return void
 	 */
-	protected function __construct() {
+	protected function __construct( $timezone ) {
 		global $wpdb;
 		// set table name
 //		$this->table_name = $wpdb->prefix . 'esp_datetime';
@@ -75,10 +76,10 @@ class EEM_Datetime extends EEM_Base {
 				'DTT_ID'=> new EE_Primary_Key_Int_Field('DTT_ID', __('Datetime ID','event_espresso'), false, 0),
 				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID','event_espresso'), false, 0, 'Event'),
 				'DTT_is_primary'=>new EE_Boolean_Field('DTT_is_primary', __('Flag indicating Primary Event Time','event_espresso'), false, true),
-				'DTT_EVT_start'=>new EE_Datetime_Field('DTT_EVT_start', __('Start time/date of Event','event_espresso'), false, current_time('timestamp')),
-				'DTT_EVT_end'=>new EE_Datetime_Field('DTT_EVT_end', __('End time/date of Event','event_espresso'), false, current_time('timestamp')),
-				'DTT_REG_start'=>new EE_Datetime_Field('DTT_REG_start', __('Start time/date of Registration for Event','event_espresso'), false, current_time('timestamp')),
-				'DTT_REG_end'=>new EE_Datetime_Field('DTT_REG_end', __('End time/date of Registration for Event','event_espresso'), false, current_time('timestamp')),
+				'DTT_EVT_start'=>new EE_Datetime_Field('DTT_EVT_start', __('Start time/date of Event','event_espresso'), false, current_time('timestamp'), $timezone ),
+				'DTT_EVT_end'=>new EE_Datetime_Field('DTT_EVT_end', __('End time/date of Event','event_espresso'), false, current_time('timestamp'), $timezone ),
+				'DTT_REG_start'=>new EE_Datetime_Field('DTT_REG_start', __('Start time/date of Registration for Event','event_espresso'), false, current_time('timestamp'), $timezone ),
+				'DTT_REG_end'=>new EE_Datetime_Field('DTT_REG_end', __('End time/date of Registration for Event','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'DTT_reg_limit'=>new EE_Integer_Field('DTT_reg_limit', __('Registration LImit for this time','event_espresso'), true, 999999),
 				'DTT_tckts_left'=>new EE_Integer_Field('DTT_tckts_left', __('Calculated Tickets Remaining','event_espresso'), true, 999999)
 			));
@@ -87,7 +88,7 @@ class EEM_Datetime extends EEM_Base {
 			'Event'=>new EE_Belongs_To_Relation()
 		);
 
-		parent::__construct();
+		parent::__construct( $timezone );
 	}
 
 
@@ -98,14 +99,15 @@ class EEM_Datetime extends EEM_Base {
 	 *		This funtion is a singleton method used to instantiate the Espresso_model object
 	 *
 	 *		@access public
+	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
 	 *		@return EEM_Datetime instance
 	 */
-	public static function instance(){
+	public static function instance( $timezone = NULL ){
 
 		// check if instance of Espresso_model already exists
 		if ( self::$_instance === NULL ) {
 			// instantiate Espresso_model
-			self::$_instance = new self();
+			self::$_instance = new self( $timezone );
 		}
 		// Espresso_model object
 		return self::$_instance;
@@ -203,6 +205,7 @@ class EEM_Datetime extends EEM_Base {
 		}
 		return $this->get_datetimes_for_event_ordered_by_importance( $EVT_ID );
 	}
+
 
 
 

@@ -69,9 +69,10 @@ class EEM_Registration extends EEM_Base {
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
 	 *		@access protected
+	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
 	 *		@return void
 	 */
-	protected function __construct() {
+	protected function __construct( $timezone ) {
 		$this->singular_item = __('Registration','event_espresso');
 		$this->plural_item = __('Registrations','event_espresso');
 		$this->_get_registration_status_array();
@@ -115,7 +116,7 @@ class EEM_Registration extends EEM_Base {
 				'DTT_ID'=>new EE_Foreign_Key_Int_Field('DTT_ID', __('Datetime ID','event_espresso'), false, 0, 'Datetime'),
 				'PRC_ID'=>new EE_Foreign_Key_Int_Field('PRC_ID', __('Price ID','event_espresso'), false, 0, 'Price'),
 				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false, EEM_Registration::status_id_not_approved, 'Status'),
-				'REG_date'=>new EE_Datetime_Field('REG_date', __('Time registration occured','event_espresso'), false, current_time('timestamp')),
+				'REG_date'=>new EE_Datetime_Field('REG_date', __('Time registration occured','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'REG_final_price'=>new EE_Money_Field('REG_final_price', __('Final Price of registration','event_espresso'), false, 0),
 				'REG_session'=>new EE_Plain_Text_Field('REG_session', __('Session ID of registration','event_espresso'), false, ''),
 				'REG_code'=>new EE_Plain_Text_Field('REG_code', __('Unique Code for this registration','event_espresso'), false, ''),
@@ -136,21 +137,22 @@ class EEM_Registration extends EEM_Base {
 			'Answer'=>new EE_Has_Many_Relation()
 		);
 		
-		parent::__construct();
+		parent::__construct( $timezone );
 	}
 
 	/**
 	 *		This funtion is a singleton method used to instantiate the Espresso_model object
 	 *
 	 *		@access public
+	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
 	 *		@return EEM_Registration instance
 	 */
-	public static function instance(){
+	public static function instance( $timezone = NULL ){
 
 		// check if instance of Espresso_model already exists
 		if ( self::$_instance === NULL ) {
 			// instantiate Espresso_model
-			self::$_instance = new self();
+			self::$_instance = new self( $timezone );
 		}
 		// Espresso_model object
 		return self::$_instance;

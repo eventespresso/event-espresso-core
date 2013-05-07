@@ -41,7 +41,7 @@ class EE_Datetime_Field extends EE_Integer_Field{
 
 
 	
-	public function __construct( $table_column, $nicename, $nullable, $default_value, $date_format = NULL, $time_format = NULL, $pretty_date_format = NULL, $pretty_time_format = NULL, $timezone = NULL ){
+	public function __construct( $table_column, $nicename, $nullable, $default_value, $timezone = NULL, $date_format = NULL, $time_format = NULL, $pretty_date_format = NULL, $pretty_time_format = NULL ){
 		parent::__construct($table_column, $nicename, $nullable, $default_value);
 		$this->_date_format = empty($date_format) ? 'Y-m-d' : $date_format;
 		$this->_time_format = empty($time_format) ? 'H:i:s' : $time_format;

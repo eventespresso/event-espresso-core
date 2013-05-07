@@ -48,6 +48,20 @@ abstract class EEM_Base extends EE_Base{
 	 * @var EE_Model_Relation[] array of different kidns of relations
 	 */
 	var $_model_relations;
+
+
+
+
+	/**
+	 * Timezone
+	 * This gets set via the constructor so that we know what timezone incoming strings|timestamps are in when there are EE_Datetime_Fields in use.  This can also be used before a get to set what timezone you want strings coming out of the created objects.  NOT all EEM_Base child classes use this property but any that use a EE_Datetime_Field data type will have access to it.
+	 * @var string
+	 */
+	protected $_timezone;
+
+
+
+
 	
 	/**
 	 *	List of valid operators that can be used for querying.
@@ -112,7 +126,7 @@ abstract class EEM_Base extends EE_Base{
 	 * the array key ('Event_Post_Table'), instead of repeating it. The model fields and model relations
 	 * do something similar.
 	 */
-	protected function __construct(){
+	protected function __construct( $timezone = NULL ){
 		foreach($this->_tables as $table_alias => $table_obj){
 			$table_obj->_construct_finalize_with_alias($table_alias);
 			if($table_obj instanceof EE_Secondary_Table){
@@ -132,6 +146,8 @@ abstract class EEM_Base extends EE_Base{
 		foreach($this->_model_relations as $model_name => $relation_obj){
 			$relation_obj->_construct_finalize_set_models($this->get_this_model_name(), $model_name);
 		}
+
+		$this->_timezone = $timezone;
 	}
 	/**
 	 * Gets all the EE_Base_Class objects which match the $query_params, by querying the DB.
@@ -254,6 +270,25 @@ abstract class EEM_Base extends EE_Base{
 			return array_shift($items);
 		}
 	}
+
+
+
+
+
+	/**
+	 * This just returns whatever is set for the current timezone.
+	 *
+	 * @access public
+	 * @return string timezone string
+	 */
+	public function get_timezone() {
+		return $this->_timezone;
+	}
+
+
+
+
+
 	
 	/**
 	 * Gets all the tables comprising this model. Array keys are the table aliases, and values are EE_Table objects
@@ -1367,6 +1402,11 @@ abstract class EEM_Base extends EE_Base{
 				return array();
 			}
 			$classInstance=$this->instantiate_class_from_array_or_object($row);
+
+			//set the timezone on the instantiated objects
+			$classInstance->set_timezone( $this->_timezone );
+
+			//make sure if there is any timezone setting present that we set the timezone for the object
 			$array_of_objects[$classInstance->ID()]=$classInstance;
 			//also, for all the relations of type BelgonsTo, see if we can cache
 			//those related models
@@ -1378,6 +1418,8 @@ abstract class EEM_Base extends EE_Base{
 					//check if this model's INFO is present. If so, cache it on the model
 					$other_model = $relation_obj->get_other_model();
 					$other_model_obj_maybe = $other_model->instantiate_class_from_array_or_object($row);
+					//let's set the timezone on the other model so we are consistent!
+					$other_model_obj_maybe->set_timezone( $this->_timezone );
 					//if we managed to make a model object from the results, cache it on the main model object
 					if( $other_model_obj_maybe ){
 						$classInstance->cache($modelName, $other_model_obj_maybe);
