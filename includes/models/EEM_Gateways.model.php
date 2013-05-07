@@ -452,7 +452,7 @@ Class EEM_Gateways {
 
 	/**
 	 * just return the gateway_instances for usage
-	 * @return array EE_Gateway objects
+	 * @return EE_Gateway[]
 	 */
 	public function get_gateway_instances() {
 		return $this->_gateway_instances;

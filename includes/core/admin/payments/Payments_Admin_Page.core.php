@@ -222,7 +222,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		
 		
 		//printr( $gateway_data, '$gateway_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$activate_trigger = $deactivate_trigger = FALSE;
+		$selected_gateway_name = null;
 		$gateways = array();
 		$default_gateways = array( 'Bank', 'Check', 'Invoice', 'Paypal_Standard' );
 		//let's assemble the array for the _tab_text_links helper

@@ -64,7 +64,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 		$this->_payment_settings['show'] = true;
 		$this->_payment_settings['invoice_css'] = '';
 		$this->_payment_settings['type'] = 'off-line';
-		$this->_payment_settings['display_name'] = 'Invoice';
+		$this->_payment_settings['display_name'] = __('Invoice','event_espresso');
 		$this->_payment_settings['current_path'] = '';
 		$this->_payment_settings['button_url'] = $this->_btn_img;
 	}

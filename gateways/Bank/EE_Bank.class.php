@@ -54,7 +54,7 @@ Class EE_Bank extends EE_Offline_Gateway {
 			'bank_name' => '',
 			'account_number' => '',
 			'bank_address' => '',
-			'display_name' => 'Bank Draft',
+			'display_name' => __('Bank Draft','event_espresso'),
 			'type' => 'off-line',
 			'current_path' => '',
 			'button_url' => $this->_btn_img

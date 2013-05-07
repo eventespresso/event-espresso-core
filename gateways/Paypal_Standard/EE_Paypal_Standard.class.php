@@ -60,7 +60,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$this->_payment_settings['use_sandbox'] = false;
 		$this->_payment_settings['no_shipping'] = '0';
 		$this->_payment_settings['type'] = 'off-site';
-		$this->_payment_settings['display_name'] = 'Paypal';
+		$this->_payment_settings['display_name'] = __('Paypal','event_espresso');
 		$this->_payment_settings['current_path'] = '';
 		$this->_payment_settings['button_url'] = $this->_btn_img;
 	}
