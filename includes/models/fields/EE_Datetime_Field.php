@@ -99,7 +99,7 @@ class EE_Datetime_Field extends EE_Integer_Field{
 	 * @param string $what acceptable values are 'time' or 'date'.  Any other value will be set but will always result in both 'date' and 'time' being returned.
 	 * @return void
 	 */
-	public function set_date_time_output( $what ) {
+	public function set_date_time_output( $what = NULL ) {
 		$this->_date_time_output = $what;
 	}
 
