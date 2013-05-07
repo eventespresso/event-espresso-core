@@ -708,8 +708,7 @@ class EE_Base_Class{
 		 }
 
 		 //let's unset any cache for this field_name from the $_cached_properties property.
-		 if ( isset( $this->_cached_properties[$privateAttributeName] ) )
-		 	unset( $this->_cached_properties[$private_AttributeName] );
+		 $this->_clear_cached_property( $privateAttributeName );
 		 
 	}
 
@@ -835,6 +834,20 @@ class EE_Base_Class{
 	 */
 	protected function _clear_cached_properties() {
 		$this->_cached_properties = array();
+	}
+
+
+
+
+
+	/**
+	 * This just clears out ONE property if it exists in the cache
+	 * @param  string $propertyname the property to remove if it exists (from the _cached_properties array)
+	 * @return void               
+	 */
+	protected function _clear_cached_property( $propertyname ) {
+		if ( isset( $this->_cached_properties[$propertyname] ) )
+			unset( $this->_cached_properteis[$propertyname] );
 	}
 
 
