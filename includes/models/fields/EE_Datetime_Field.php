@@ -15,6 +15,16 @@ class EE_Datetime_Field extends EE_Integer_Field{
 	private $_pretty_date_format = NULL;
 	private $_pretty_time_format = NULL;
 
+
+
+	/**
+	 * This property holds how we want the output returned when getting a datetime string.  It is set for the set_date_time_output() method.  By default this is empty.  When empty, we are assuming that we want both date and time returned via getters.
+	 * @var mixed (null|string)
+	 */
+	private $_date_time_output = NULL;
+
+	
+
 	/**
 	 * This is used for holding the date objects set internally when doing date calculations/changes
 	 * @var object
@@ -51,6 +61,47 @@ class EE_Datetime_Field extends EE_Integer_Field{
 		return $this->_convert_to_utc_unixtimestamp( $value_inputted_for_field_on_model_object);
 	}
 
+
+
+
+
+	/**
+	 * This returns the format string to be used by getters depending on what the $_date_time_output property is set at.
+	 *
+	 * getters need to know whether we're just returning the date or the time or both.  By default we return both.
+	 *
+	 * @access private
+	 * @param bool $pretty If we're returning the pretty formats or standard format string.
+	 * @return string    The final assembled format string.
+	 */
+	private function _get_date_time_output( $pretty = FALSE ) {
+		switch ( $this->_date_time_output ) {
+			case 'time' :
+				return $pretty ? $this->_pretty_time_format : $this->_time_format;
+				break;
+
+			case 'date' :
+				return $pretty ? $this->_pretty_date_format : $this->_date_format;
+				break;
+
+			default :
+				return $pretty ? $this->_pretty_date_format . ' ' . $this->_pretty_time_format : $this->_date_format . ' ' . $this->_time_format;
+		}
+	}
+
+
+
+
+	/**
+	 * This just sets the $_date_time_output property so we can flag how date and times are formatted before being returned (using the format properties)
+	 *
+	 * @access public
+	 * @param string $what acceptable values are 'time' or 'date'.  Any other value will be set but will always result in both 'date' and 'time' being returned.
+	 * @return void
+	 */
+	public function set_date_time_output( $what ) {
+		$this->_date_time_output = $what;
+	}
 
 
 
@@ -151,7 +202,7 @@ class EE_Datetime_Field extends EE_Integer_Field{
 	 * @return int updated timestamp
 	 */
 	public function prepare_for_set_with_new_time($time_to_set_string, $current_datetime_value ){
-		$this->_set_date_obj( date($this->_date_format, $current_datetime_value), 'UTC' );
+		$this->_set_date_obj( date( $this->_date_format . ' ' . $this->_time_format, $current_datetime_value), 'UTC' );
 		return $this->_prepare_for_set_new( $time_to_set_string, TRUE );
 	}
 	
@@ -181,7 +232,7 @@ class EE_Datetime_Field extends EE_Integer_Field{
 	 * @return string                formatted date time for given timezone
 	 */
 	public function prepare_for_get( $datetimevalue ) {
-		$format_string = $this->_date_format . " " . $this->_time_format;
+		$format_string = $this->_get_date_time_output();
 		//send this to our formatter to return localized time for the timezone
 		return $this->_convert_to_timezone_from_utc_unix_timestamp( $datetimevalue, $format_string );
 	}
@@ -192,7 +243,7 @@ class EE_Datetime_Field extends EE_Integer_Field{
 
 
 	public function prepare_for_prety_echoing( $datetimevalue ) {
-		$format_string = $this->_pretty_date_format . " " . $this->_pretty_time_format;
+		$format_string = $this->_get_date_time_output();
 		echo $this->_convert_to_timezone_from_utc_unix_timestamp( $datetimevalue, $format_string );
 	}
 
