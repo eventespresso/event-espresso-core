@@ -383,7 +383,7 @@ class EE_Datetime extends EE_Base_Class{
 	*		@param		string		$primary 		True or False ?
 	*/	
 	public function set_primary( $primary ) {
-		$this->set('_DTT_is_primary') = (bool)absint( $primary );
+		$this->set('_DTT_is_primary', (bool) absint( $primary ) );
 	}
 
 
@@ -399,7 +399,7 @@ class EE_Datetime extends EE_Base_Class{
 	*		@param		int		$reg_limit 	
 	*/	
 	public function set_reg_limit( $reg_limit ) {
-		$this->set('DTT_reg_limit') = absint( $reg_limit );
+		$this->set('DTT_reg_limit', absint( $reg_limit ));
 	}
 
 
@@ -415,7 +415,7 @@ class EE_Datetime extends EE_Base_Class{
 	*		@param		int		$tckts_left 
 	*/	
 	public function set_tckts_left( $tckts_left ) {
-		$this->set('DTT_tckts_left') = absint( $tckts_left );
+		$this->set('DTT_tckts_left', absint( $tckts_left ) );
 	}
 
 
@@ -466,7 +466,7 @@ class EE_Datetime extends EE_Base_Class{
 	*/	
 	public function is_primary() {
 		$dtt_is_primary = $this->get('DTT_is_primary');
-		if ( is_bool( $dtt_is_primary ) {
+		if ( is_bool( $dtt_is_primary ) ) {
 			return $dtt_is_primary ? TRUE : FALSE;
 		} else {
 			return 'NOT SET';
