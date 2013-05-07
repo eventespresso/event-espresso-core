@@ -987,6 +987,7 @@ class EE_Form_Fields {
 		
 		// make sure required is an array
 		switch ( $question['QST_system'] ) {
+			
 			case 'country' :
 			
 				if ( $countries = self::get_countries() ) {
@@ -1005,36 +1006,36 @@ class EE_Form_Fields {
 			case 'state' :
 			
 				if ( $countries = self::get_countries() ) {
-					$states = EEM_State::instance()->get_all_where( array( 'CNT_ISO' => array_keys( $countries ), 'STA_active' => 1 ), NULL, 'ASC', array( 'CNT_ISO' => 'IN', 'STA_active' => '=' ));
-					//printr( $states, '$states  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-					$question['QST_type'] = 'DROPDOWN';
-					// if multiple countries, we'll create option groups within the dropdown
-					if ( count( $countries ) > 1 ) {
-						// loop thru countries
-						foreach ( $countries as $CNT_ISO => $country ) {
-							// first gather states/provs
-							$state_options = array();
-							foreach ( $states as $STA_ID => $state ) {
-								// only adds states/provs for this country
-								if ( $state->get( 'CNT_ISO' ) == $CNT_ISO ) {
-									$state_options[ $state->get( 'STA_ID' ) ] = array (
-										'QSO_value' => $state->get( 'STA_ID' ),
-										'QSO_text' => $state->get( 'STA_name' ),
-										'QSO_deleted' => FALSE
-									);
-									// remove state from $states array so we don't have to loop over it again
-									unset( $states[ $STA_ID ] );						
-								}			
-							}	
-							// then create the option group for the country
-							$question['QST_options'][] = array (
-								'QSO_value' => $country->get( 'CNT_name' ),
-								'QSO_text' => $state_options,
-								'QSO_deleted' => FALSE
-							);															
-						}						
-					} else {
-						// just create options out of the states
+					if ( $states = EEM_State::instance()->get_all_where( array( 'CNT_ISO' => array_keys( $countries ), 'STA_active' => 1 ), NULL, 'ASC', array( 'CNT_ISO' => 'IN', 'STA_active' => '=' ))) {
+						//printr( $states, '$states  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+						$question['QST_type'] = 'DROPDOWN';
+						// if multiple countries, we'll create option groups within the dropdown
+						if ( count( $countries ) > 1 ) {
+							// loop thru countries
+							foreach ( $countries as $CNT_ISO => $country ) {
+								// first gather states/provs
+								$state_options = array();
+								foreach ( $states as $STA_ID => $state ) {
+									// only adds states/provs for this country
+									if ( $state->get( 'CNT_ISO' ) == $CNT_ISO ) {
+										$state_options[ $state->get( 'STA_ID' ) ] = array (
+											'QSO_value' => $state->get( 'STA_ID' ),
+											'QSO_text' => $state->get( 'STA_name' ),
+											'QSO_deleted' => FALSE
+										);
+										// remove state from $states array so we don't have to loop over it again
+										unset( $states[ $STA_ID ] );						
+									}			
+								}	
+								// then create the option group for the country
+								$question['QST_options'][] = array (
+									'QSO_value' => $country->get( 'CNT_name' ),
+									'QSO_text' => $state_options,
+									'QSO_deleted' => FALSE
+								);															
+							}						
+						} else {
+							// just create options out of the states
 							foreach ( $states as $STA_ID => $state ) {
 								$question['QST_options'][] = array (
 									'QSO_value' => $state->get( 'STA_ID' ),
@@ -1042,8 +1043,8 @@ class EE_Form_Fields {
 									'QSO_deleted' => FALSE
 								);				
 							}
+						}						
 					}
-
 				}
 				
 			break;
