@@ -290,7 +290,8 @@ class EE_Datetime extends EE_Base_Class{
 	private function _set_time_for($time,$field_name){
 		$field = $this->_get_model()->field_settings_for($field_name);
 		$attribute_field_name = $this->_get_private_attribute_name($field_name);
-		$this->$attribute_field_name = $field->prepare_for_set_with_new_time($time, $this->$attribute_field_name, $this->_timezone);
+		$field->set_timezone( $this->_timezone );
+		$this->$attribute_field_name = $field->prepare_for_set_with_new_time($time, $this->$attribute_field_name );
 		$this->_clear_cached_property($attribute_field_name);
 	}
 	
@@ -303,8 +304,9 @@ class EE_Datetime extends EE_Base_Class{
 	 */
 	private function _set_date_for($date,$field_name){
 		$field = $this->_get_model()->field_settings_for($field_name);
+		$field->set_timezone( $this->_timezone );
 		$attribute_field_name = $this->_get_private_attribute_name($field_name);
-		$this->$attribute_field_name = $field->prepare_for_set_with_new_date($date, $this->$attribute_field_name, $this->_timezone );
+		$this->$attribute_field_name = $field->prepare_for_set_with_new_date($date, $this->$attribute_field_name );
 		$this->_clear_cached_property( $attrivute_field_name );
 	}
 
@@ -537,9 +539,9 @@ class EE_Datetime extends EE_Base_Class{
 		}
 
 		if ( $echo )
-			$this->e( $this->{$var_name} );
+			$this->e( ltrim( $var_name, '_' ) );
 		else
-			return $this->get( $this->{$var_name} );
+			return $this->get( ltrim( $var_name, '_' ) );
 
 	}
 
