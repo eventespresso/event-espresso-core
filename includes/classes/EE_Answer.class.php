@@ -75,19 +75,22 @@ class EE_Answer extends EE_Base_Class{
 	 * @param int $QST_ID question ID
 	 * @param string $ANS_value text representing the answer. Could be CSV'd
 	 */
-	public function __construct( $REG_ID=NULL, $QST_ID=NULL, $ANS_value='') {
-		//if the first parameter is an array, assume it's an array of key-value pairs for this object
-		if(is_array($REG_ID)){
-			parent::__construct($REG_ID);
-			return;
-		}
-		$reflector = new ReflectionMethod($this,'__construct');	
-		$arrayForParent=array();
-		foreach($reflector->getParameters() as $param){
-			$paramName=$param->name;
-			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
-		}
-		parent::__construct($arrayForParent);
+	public function __construct( $fieldValues = NULL, $bydb = FALSE ) {
+		parent::__construct($fieldValues, $bydb);
+	}
+
+
+
+
+	public static function new_instance( $props_n_values = array() ) {
+		$classname = get_class( self );
+		$has_object = parent::_check_for_object( $props_n_values, $classname );
+		return $has_object ? $has_object : self::__construct( $props_n_values);
+	}
+
+
+	public static function new_instance_from_db ( $props_n_values = array() ) {
+		self::__construct( $props_n_values, TRUE );
 	}
 
 
