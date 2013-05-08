@@ -26,7 +26,7 @@ abstract class EE_Soft_Delete_Base_Class extends EE_Base_Class{
 	 * @return boolean success
 	 */
 	public function delete_or_restore($delete=true){
-		$model=$this->_get_model();
+		$model=$this->get_model();
 		return $model->delete_or_restore_by_ID($delete,$this->ID());
 	}
 }
