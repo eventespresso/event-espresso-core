@@ -354,10 +354,8 @@ abstract class EE_Gateway {
 						</tr>
 						
 						<tr>
-							<th></th>
-							<td>
-								<p>
-									<input type="hidden" name="update_<?php echo $this->_gateway_name; ?>" value="1">
+							<th>
+								<input type="hidden" name="update_<?php echo $this->_gateway_name; ?>" value="1">
 									<input 
 											id="save_<?php echo $this->_gateway_name; ?>_settings"
 											class="button-primary" 
@@ -366,6 +364,10 @@ abstract class EE_Gateway {
 											value="<?php echo __('Update', 'event_espresso') . ' ' . $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso');?>" 
 											style="margin:1em 4em 2em 0"
 										/>
+							</th>
+							<td>
+								<p>
+									
 									<?php $deactivate = add_query_arg(array('deactivate_' . $this->_gateway_name => 'true'), GATEWAYS_ADMIN_URL) . '#' . $this->_gateway_name; ?>
 									<a id="deactivate_<?php echo $this->_gateway_name; ?>" class="espresso-button button-secondary" type="submit" onclick="location.href='<?php echo $deactivate; ?>'">
 										<?php echo __('Deactivate', 'event_espresso') . ' ' . $this->_payment_settings['display_name'] . ' ' . __('Payments?'); ?>

@@ -1335,27 +1335,15 @@ class EE_Single_Page_Checkout {
 				$EE_Session->set_session_data( $session['cart'] );
 				// save attendee question answerss
 				$exclude = array( 'price_paid', 'primary_attendee', 'att_obj', 'reg_obj', 'additional_attendee_reg_info' );
-				$system_IDs = array(
-						'fname'		=> 1,
-						'lname'		=> 2,
-						'email'			=> 3,
-						'address'		=> 4,
-						'address2'	=> 5,
-						'city'				=> 6,
-						'state'			=> 7,
-						'country'		=> 8,
-						'zip'				=> 9,
-						'phone'		=> 10
-				);
 //				printr( $reg_items, '$reg_items  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 				foreach ( $reg_items[ $line_item_id ]['attendees'][ $att_nmbr ] as $QST_ID => $answer ) {
 					if ( ! in_array( $QST_ID, $exclude ) && ! empty( $answer )) {
 						// convert system string QST_IDs like 'fname' to their numeric equivalents
-						$QST_ID = array_key_exists( $QST_ID, $system_IDs ) ? $system_IDs[ $QST_ID ] : $QST_ID;
-						EEM_Answer::instance()->insert( array( 'REG_ID' => $REG_ID, 'QST_ID' => sanitize_key($QST_ID), 'ANS_value' => sanitize_text_field( $answer )));
-						
-						//check that this is a real question
-						
+						if(! is_int($QST_ID) && ! intval($QST_ID)){
+							$QST_ID = EEM_Question::instance()->get_Question_ID_from_system_string($QST_ID);//array_key_exists( $QST_ID, $system_IDs ) ? $system_IDs[ $QST_ID ] : $QST_ID;
+						}
+						$ans = new EE_Answer($REG_ID, $QST_ID, $answer);//use model object because it handles validation
+						$ans->save();
 					}
 				}
 			}

@@ -59,7 +59,7 @@ Class EE_Check extends EE_Offline_Gateway {
 				'check_instructions' => __('Please send Check/Money Order to the address below. Payment must be received within 48 hours of event date.', 'event_espresso'),
 				'payable_to' => $org_options['organization'],
 				'payment_address' => $default_address,
-				'display_name' => 'Check',
+				'display_name' => __('Check','event_espresso'),
 				'type' => 'off-line',
 				'current_path' => '',
 				'button_url' => $this->_btn_img
