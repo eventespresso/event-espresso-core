@@ -191,10 +191,10 @@ class EE_Datetime extends EE_Base_Class{
 	}
 
 
-	public static function new_instance( $props_n_values = array() ) {
+	public static function new_instance( $props_n_values = array(), $timezone = NULL ) {
 		$classname = get_class( self );
 		$has_object = parent::_check_for_object( $props_n_values, $classname );
-		return $has_object ? $has_object : self::__construct( $props_n_values);
+		return $has_object ? $has_object : self::__construct( $props_n_values, FALSE, $timezone );
 	}
 
 
