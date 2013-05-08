@@ -187,7 +187,7 @@ class EE_Transaction extends EE_Base_Class{
 
 
 	public static function new_instance_from_db ( $props_n_values = array() ) {
-		new self( $props_n_values, TRUE );
+		return new self( $props_n_values, TRUE );
 	}
 
 
