@@ -73,24 +73,32 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * Constructor
-	 * @param string/array $QSO_name OR an array of all fields' display text, where keys match these arguments' values
-	 * @param string $
-	 * @param int $QST_ID
+	 *
+	 * @access protected
+	 * @param array array of values indexed by property name (without the leading underscore)
+	 * @param bool  $bydb indicates whether the model is instantiating this class or not
+	 * @return void
 	 */
-	public function __construct($QSO_name=null, $QSO_value=null, $QST_ID=null) {
-		//if the first parameter is an array, assume it's an array of key-value pairs for this object
-		if(is_array($QSO_name)){
-			parent::__construct($QSO_name);
-			return;
-		}
-		$reflector = new ReflectionMethod($this,'__construct');	
-		$arrayForParent=array();
-		foreach($reflector->getParameters() as $param){
-			$paramName=$param->name;
-			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
-		}
-		parent::__construct($arrayForParent);
+	protected function __construct( $fieldValues = array(), $bydb = FALSE ) {
+		parent::__construct($fieldValues, $bydb);
 	}
+	
+	
+
+	public static function new_instance( $props_n_values = array() ) {
+		$classname = get_class( self );
+		$has_object = parent::_check_for_object( $props_n_values, $classname );
+		return $has_object ? $has_object : self::__construct( $props_n_values );
+	}
+
+
+
+
+	public static function new_instance_from_db ( $props_n_values = array() ) {
+		self::__construct( $props_n_values, TRUE );
+	}
+
+	
 	
 	/**
 	 * Sets the option's key value
