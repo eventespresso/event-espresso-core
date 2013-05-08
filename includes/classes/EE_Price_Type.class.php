@@ -112,35 +112,34 @@ class EE_Price_Type extends EE_Base_Class{
 	protected $_Price;
 
 
-		/**
-	*  Attendee constructor
-	*
-	* @access 	public
-	* @param	string	$PRT_name			Price Type name
-	* @param	int		$PBT_ID	 				Price Base Type ID
-	* @param	bool	$PRT_is_member	is price type a member price?
-	* @param	bool	$PRT_is_percent		is price type a percent?
-	* @param	bool	$PRT_is_global		is price type a global?
-	* @param	int 		$PRT_order				Price Type order
-	* @param	int		$PRT_ID					Price type ID
-	*/
-	public function __construct( $PRT_name='', $PBT_ID=FALSE, $PRT_is_member=FALSE, $PRT_is_percent=FALSE, $PRT_is_global=FALSE, $PRT_order=0, $PRT_deleted = false, $PRT_ID=FALSE ) {
-	
-		if(is_array($PRT_name)){
-			parent::__construct($PRT_name);
-			return;
-		}
-		$reflector = new ReflectionMethod($this,'__construct');	
-		$arrayForParent=array();
-		foreach($reflector->getParameters() as $param){
-			$paramName=$param->name;
-			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
-		}
-		parent::__construct($arrayForParent);	
-
-		// load Price model object class file
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+	/**
+	 * Constructor
+	 *
+	 * @access protected
+	 * @param array array of values indexed by property name (without the leading underscore)
+	 * @param bool  $bydb indicates whether the model is instantiating this class or not
+	 * @param string $timezone valid timezone string (optional)
+	 * @return void
+	 */
+	protected function __construct( $fieldValues = array(), $bydb = FALSE ) {
+		parent::__construct($fieldValues, $bydb);
 	}
+
+
+
+	public static function new_instance( $props_n_values = array() ) {
+		$classname = get_class( self );
+		$has_object = parent::_check_for_object( $props_n_values, $classname );
+		return $has_object ? $has_object : self::__construct( $props_n_values );
+	}
+
+
+
+
+	public static function new_instance_from_db ( $props_n_values = array() ) {
+		self::__construct( $props_n_values, TRUE );
+	}
+
 
 
 
