@@ -132,44 +132,35 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	protected $_Question_Option;
 	
 	/**
-	 * constructor for questions
-	 * @param string/array $QST_display_text text for displaying the question (eg, "what is your name?") OR an array of all field values, where keys match these arguments' names
-	 * @param string $QST_admin_label administrative label for a question
-	 * @param string $QST_system_ID if this is a system question, it's internal name
-	 * @param string $QST_type one of 'text','textarea',etc.
-	 * @param boolean $QST_required indicates whether this question must be answered
-	 * @param string $QST_required_text text that's displayed if teh question isn't answered
-	 * @param int $QST_order indicates the order in which this question should be displayed relative to others
-	 * @param boolean $QST_admin_only indicates whether this question should only been seen by wp admins
-	 * @param int $QST_wp_user wordpress user id of the question creator
-	 * @param boolean $QST_deleted indicates whether this question has been 'deleted'
-	 * @access public
+	 * Constructor
+	 *
+	 * @access protected
+	 * @param array array of values indexed by property name (without the leading underscore)
+	 * @param bool  $bydb indicates whether the model is instantiating this class or not
+	 * @return void
 	 */
-	public function __construct( 
-			$QST_display_text=NULL, 
-			$QST_admin_label=NULL, 
-			$QST_system_ID=NULL, 
-			$QST_type=NULL, 
-			$QST_required=NULL,
-			$QST_required_text=NULL,
-			$QST_order=NULL,
-			$QST_admin_only=NULL,
-			$QST_wp_user=NULL,
-			$QST_deleted=NULL){
-		//if the first parameter is an array, assume it's an array of key-value pairs for this object
-		if(is_array($QST_display_text)){
-			parent::__construct($QST_display_text);
-			return;
-		}
-		$reflector = new ReflectionMethod($this,'__construct');	
-		$arrayForParent=array();
-		foreach($reflector->getParameters() as $param){
-			$paramName=$param->name;
-			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
-		}
-		parent::__construct($arrayForParent);
+	protected function __construct( $fieldValues = array(), $bydb = FALSE ) {
+		parent::__construct($fieldValues, $bydb);
 	}
 	
+	
+
+	public static function new_instance( $props_n_values = array() ) {
+		$classname = get_class( self );
+		$has_object = parent::_check_for_object( $props_n_values, $classname );
+		return $has_object ? $has_object : self::__construct( $props_n_values );
+	}
+
+
+
+
+	public static function new_instance_from_db ( $props_n_values = array() ) {
+		self::__construct( $props_n_values, TRUE );
+	}
+
+
+
+
 	/**
 	*		Set	Question display text
 	* 
@@ -219,7 +210,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * @return string[]
 	 */
 	private function _allowed_question_types(){
-		$questionModel=$this->_get_model();
+		$questionModel=$this->get_model();
 		/* @var $questionModel EEM_Question*/
 		return $questionModel->allowed_question_types();
 	}
@@ -283,7 +274,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	/**
 	*		Sets whether teh question has been deleted
 	*		(we use this boolean isntead of actually
-			deleting it because when users delete this question
+	*		deleting it because when users delete this question
 	*		they really want to remove the question from future
 	*		forms, BUT keep their old answers which depend
 	*		on this record actually existing.
