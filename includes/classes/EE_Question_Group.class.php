@@ -116,40 +116,34 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 * @var EE_Event_Question_Group
 	 */
 	protected $_Event_Question_Group;
+	
+
+
 	/**
-	 * 
-	 * @param string/array $QSG_name name of question group  OR an array of all field values, where keys match these arguments' names
-	 * @param string $QSG_identifier string ofr identifying the question group internally
-	 * @param string $QSG_desc description
-	 * @param int $QSG_order int to indicate where this question gruop should be displayed relative to others
-	 * @param boolean $QSG_show_group_name whether to show the question group name on the frontend
-	 * @param boolean $QSG_show_group_desc whether to show the question gruop description on teh frontend
-	 * @param string $QSG_system_ID boolean indicates whether this question group is integral to the system, or an extra one
-	 * @param boolean $QSG_deleted indicates whether this question gruop has been 'deleted'
-	 * @access public
+	 * Constructor
+	 *
+	 * @access protected
+	 * @param array array of values indexed by property name (without the leading underscore)
+	 * @param bool  $bydb indicates whether the model is instantiating this class or not
+	 * @return void
 	 */
-	public function __construct(
-			$QSG_name=NULL,
-			$QSG_identifier=NULL,
-			$QSG_desc=NULL,
-			$QSG_order=NULL,
-			$QSG_show_group_name=NULL,
-			$QSG_show_group_desc=NULL,
-			$QSG_system_ID=NULL,
-			$QSG_deleted=NULL) {
-		//if the first parameter is an array, assume it's an array of key-value pairs for this object
-		if(is_array($QSG_name)){
-			parent::__construct($QSG_name);
-			return;
-		}
-		$reflector = new ReflectionMethod($this,'__construct');	
-		$arrayForParent=array();
-		foreach($reflector->getParameters() as $param){
-			$paramName=$param->name;
-			$arrayForParent[$paramName]=${$paramName};
-			//yes, that's using a variable variable. { } added by br3nt to make it even more obvious ;D
-		}
-		parent::__construct($arrayForParent);
+	protected function __construct( $fieldValues = array(), $bydb = FALSE ) {
+		parent::__construct($fieldValues, $bydb);
+	}
+	
+	
+
+	public static function new_instance( $props_n_values = array() ) {
+		$classname = get_class( self );
+		$has_object = parent::_check_for_object( $props_n_values, $classname );
+		return $has_object ? $has_object : self::__construct( $props_n_values );
+	}
+
+
+
+
+	public static function new_instance_from_db ( $props_n_values = array() ) {
+		self::__construct( $props_n_values, TRUE );
 	}
 	
 	
