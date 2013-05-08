@@ -356,8 +356,15 @@ function espresso_calendar_do_stuff($show_expired) {
 		//important! time must be in iso8601 format 2010-05-10T08:30!!
 		$eventArray['start'] = date("c", strtotime($event->start_date . ' ' . event_date_display($event->start_time, get_option('time_format'))));
 		$eventArray['end'] = date("c", strtotime($event->end_date . ' ' . event_date_display($event->end_time, get_option('time_format'))));
-		$eventArray['day'] = date("j", strtotime($event->end_date));
-		$eventArray['month'] = date("n", strtotime($event->end_date));
+		$tempTimestamp = strtotime($event->start_date);
+		$endTimestamp = strtotime($event->end_date);
+		$eventArray['month_day'] = "";
+		$secInDay = 60 * 60 * 24;
+		while ($tempTimestamp <= $endTimestamp) {
+			$eventArray['month_day'] = $eventArray['month_day'] . date("n-j ", $tempTimestamp);
+			$tempTimestamp += $secInDay;
+		}
+		$eventArray['month_day'] = rtrim($eventArray['month_day']);
 		if ( $eventArray['end'] < date('Y-m-d') ) {
 			$eventArray['expired'] = 'expired';
 		} else {
@@ -562,8 +569,7 @@ if (!function_exists('espresso_calendar')) {
 							}
 						}
 						?>
-						var month_day = event.month + '-' + event.day;
-						element.attr( 'rel', month_day ).attr( 'id', 'EVT_ID-'+event.id );
+						element.attr( 'rel', event.month_day ).attr( 'id', 'EVT_ID-'+event.id );
 
 
 						if(event.event_img_thumb){
@@ -712,7 +718,7 @@ if (!function_exists('espresso_calendar')) {
 					//Abbreviated names of days-of-week.
 					dayNamesShort: [<?php echo stripslashes_deep($espresso_calendar['espresso_calendar_dayNamesShort']); ?>/*'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'*/],
 
-					//Load the events into json feed
+					//Load the events into event object
 					events: <?php echo json_encode($events) ?>,
 					
 					viewDisplay: function(view) {
@@ -786,43 +792,48 @@ if (!function_exists('espresso_calendar')) {
 							$('.fc-view-month .fc-event').each( function(index){ 						
 								// determine what month and day this event is on
 								monthDay = $(this).attr( 'rel' );
-								//console.log( 'monthDay: ' + monthDay );
-								// find day container in calendar
-								dayCnt = $('#md-'+monthDay);
-								dayCntHTML = dayCnt.html();
+								var monthDays = monthDay.split(" ");
+								for (index = 0; index < monthDays.length; ++index) {
+									monthDay = monthDays[index];
+								
+									console.log( 'monthDay: ' + monthDay );
+									// find day container in calendar
+									dayCnt = $('#md-'+monthDay);
+									dayCntHTML = dayCnt.html();
 
-								if ( dayCntHTML != null && dayCntHTML != undefined ) {
-									if ( dayCntHTML == '&nbsp;' ) {
-										dayCntHTML = '';
-										dayCnt.html( dayCntHTML );
-										dayCnt.css({ 'height' : 0 });
-									}
+									if ( dayCntHTML != null && dayCntHTML != undefined ) {
+										if ( dayCntHTML == '&nbsp;' ) {
+											dayCntHTML = '';
+											dayCnt.html( dayCntHTML );
+											dayCnt.css({ 'height' : 0 });
+										}
 
-									// grab offset for dayCnt
-									dayCntPos = dayCnt.position();
-									//console.log( 'dayCntPos.top = ' + dayCntPos.top + '\n' + 'dayCntPos.left = ' + dayCntPos.left );
-									dayCntHgt = dayCnt.css( 'height' );
-									if ( dayCntHgt == undefined ){
-										dayCntHgt = '0px';
-									}
-									dayCntHgt = dayCntHgt.replace( 'px', '' );
-									dayCntHgt = parseInt( dayCntHgt );
-									newTop = dayCntPos.top + dayCntHgt;
-									//console.log( 'newTop = ' + newTop + ' = dayCntPos.top ( ' + dayCntPos.top + ' ) + dayCntHgt ( ' + dayCntHgt + ' )' );
-									$(this).css({ 'top' : newTop });
-									linkHeight = parseInt( $(this).find('.fc-event-inner').outerHeight() );
-									//console.log( 'linkHeight = ' + linkHeight );
-									newHeight = dayCntHgt + linkHeight + 3;
-									dayCnt.height( newHeight ).css({ 'height' : newHeight + 'px' });
-									//console.log( 'newHeight = ' + newHeight );
-									var parentHeight = dayCnt.parents('tr').outerHeight();
-									//console.log( 'parentHeight = ' + parentHeight );
-									//dayCnt.parents('tr').css({ 'background' : 'pink' });
-									if( parentHeight < newHeight ) {
-										newHeight = newHeight + 30;
-										dayCnt.parents('tr').height( newHeight ).css({ 'height' : newHeight + 'px' });
-									}
+										// grab offset for dayCnt
+										dayCntPos = dayCnt.position();
+										//console.log( 'dayCntPos.top = ' + dayCntPos.top + '\n' + 'dayCntPos.left = ' + dayCntPos.left );
+										dayCntHgt = dayCnt.css( 'height' );
+										if ( dayCntHgt == undefined ){
+											dayCntHgt = '0px';
+										}
+										dayCntHgt = dayCntHgt.replace( 'px', '' );
+										dayCntHgt = parseInt( dayCntHgt );
+										newTop = dayCntPos.top + dayCntHgt;
+										//console.log( 'newTop = ' + newTop + ' = dayCntPos.top ( ' + dayCntPos.top + ' ) + dayCntHgt ( ' + dayCntHgt + ' )' );
+										$(this).css({ 'top' : newTop });
+										linkHeight = parseInt( $(this).find('.fc-event-inner').outerHeight() );
+										//console.log( 'linkHeight = ' + linkHeight );
+										newHeight = dayCntHgt + linkHeight + 3;
+										dayCnt.height( newHeight ).css({ 'height' : newHeight + 'px' });
+										//console.log( 'newHeight = ' + newHeight );
+										var parentHeight = dayCnt.parents('tr').outerHeight();
+										//console.log( 'parentHeight = ' + parentHeight );
+										//dayCnt.parents('tr').css({ 'background' : 'pink' });
+										if( parentHeight < newHeight ) {
+											newHeight = newHeight + 30;
+											dayCnt.parents('tr').height( newHeight ).css({ 'height' : newHeight + 'px' });
+										}
 
+									}
 								}
 							});
 
