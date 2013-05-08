@@ -186,7 +186,7 @@ class EE_Datetime extends EE_Base_Class{
 	 * @param string $timezone valid timezone string (optional)
 	 * @return void
 	 */
-	protected function __construct( $fieldValues = NULL, $bydb = FALSE, $timezone = NULL ) {
+	protected function __construct( $fieldValues = array(), $bydb = FALSE, $timezone = NULL ) {
 		parent::__construct($fieldValues, $bydb, $timezone);
 	}
 

@@ -188,7 +188,7 @@ class EE_Attendee extends EE_Base_Class{
 	 * @param bool  $bydb indicates whether the model is instantiating this class or not
 	 * @return void
 	 */
-	protected function __construct( $fieldValues = NULL, $bydb = FALSE ) {
+	protected function __construct( $fieldValues = array(), $bydb = FALSE ) {
 		parent::__construct( $fieldValues, $bydb );
 	}
 

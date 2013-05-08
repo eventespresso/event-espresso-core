@@ -59,7 +59,7 @@ class EE_Event extends EE_Base_Class{
 	 * @param string $timezone valid timezone string (optional)
 	 * @return void
 	 */
-	protected function __construct( $fieldValues = nULL, $bydb = FALSE, $timezone = NULL ) {
+	protected function __construct( $fieldValues = array(), $bydb = FALSE, $timezone = NULL ) {
 		parent::__construct( $fieldValues, $bydb, $timezone );
 	}
 
@@ -74,7 +74,7 @@ class EE_Event extends EE_Base_Class{
 	public static function new_instance_from_db ( $props_n_values = array() ) {
 		self::__construct( $props_n_values, TRUE );
 	}
-	
+
 
 	/**
 	 * Gets all the datetimes for this event, first the primary datetime, and
