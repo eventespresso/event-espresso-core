@@ -181,54 +181,32 @@ class EE_Price extends EE_Base_Class{
 	
 	
 	/**
-	*  Price constructor
-	*
-	* @access 			public
-	* @param				int					$PRT_ID							Price type ID
-	* @param				int					$EVT_ID							Event ID
-	* @param				float					$PRC_amount				Price amount
-	* @param				string 				$PRC_name					Price name
-	* @param				string				$PRC_desc						Price description
-	* @param				int					$PRC_reg_limit				Registration Limit for this Price Level
-	* @param				int					$PRC_tckts_left				Registration Limit for this Price Level
-	* @param				bool					$PRC_use_dates				Whether to use dates to control when pricing starts and ends
-	* @param				int					$PRC_start_date				If use dates is active, this is when this price becomes active
-	* @param				int					$PRC_end_date				If use dates is active, this is when this price becomes inactive
-	* @param				bool					$PRC_is_active				is the Price globally active
-	* @param				int 					$PRC_overrides				Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )
-	* @param				int 					$PRC_order						Order that this price is applied ( overrides price type order )
-	* @param				int 					$PRC_deleted					Whether this Price has been moved to the trash
-	* @param				int 					$PRC_ID							Price ID
-	*/
-	public function __construct( 
-					$PRT_ID=NULL,
-					$EVT_ID=NULL,
-					$PRC_amount=0,
-					$PRC_name='',
-					$PRC_desc='',
-					$PRC_reg_limit=NULL,
-					$PRC_tckts_left=NULL,
-					$PRC_use_dates=FALSE,
-					$PRC_start_date=NULL,
-					$PRC_end_date=NULL,
-					$PRC_is_active=TRUE,
-					$PRC_overrides=NULL,
-					$PRC_order=NULL,
-					$PRC_deleted=NULL,
-					$PRC_ID=FALSE ) {
-	if(is_array($PRT_ID)){
-			parent::__construct($PRT_ID);
-			return;
-		}
-		$reflector = new ReflectionMethod($this,'__construct');	
-		$arrayForParent=array();
-		foreach($reflector->getParameters() as $param){
-			$paramName=$param->name;
-			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
-		}
-		parent::__construct($arrayForParent);	
-		// load Price model file
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
+	 * Constructor
+	 *
+	 * @access protected
+	 * @param array array of values indexed by property name (without the leading underscore)
+	 * @param bool  $bydb indicates whether the model is instantiating this class or not
+	 * @param string $timezone valid timezone string (optional)
+	 * @return void
+	 */
+	protected function __construct( $fieldValues = array(), $bydb = FALSE, $timezone = NULL ) {
+		parent::__construct($fieldValues, $bydb, $timezone);	
+	}
+
+
+
+
+	public static function new_instance( $props_n_values = array(), $timezone = NULL ) {
+		$classname = get_class( self );
+		$has_object = parent::_check_for_object( $props_n_values, $classname );
+		return $has_object ? $has_object : self::__construct( $props_n_values, FALSE, $timezone );
+	}
+
+
+
+
+	public static function new_instance_from_db ( $props_n_values = array() ) {
+		self::__construct( $props_n_values, TRUE );
 	}
 
 
