@@ -71,11 +71,13 @@ class EE_Answer extends EE_Base_Class{
 
 	/**
 	 * Constructor
-	 * @param int $REG_ID registration ID OR an array of all field values, where keys match these arguments' names
-	 * @param int $QST_ID question ID
-	 * @param string $ANS_value text representing the answer. Could be CSV'd
+	 *
+	 * @access protected
+	 * @param array array of values indexed by property name (without the leading underscore)
+	 * @param bool  $bydb indicates whether the model is instantiating this class or not
+	 * @return void
 	 */
-	public function __construct( $fieldValues = NULL, $bydb = FALSE ) {
+	protected function __construct( $fieldValues = NULL, $bydb = FALSE ) {
 		parent::__construct($fieldValues, $bydb);
 	}
 

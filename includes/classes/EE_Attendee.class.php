@@ -181,26 +181,14 @@ class EE_Attendee extends EE_Base_Class{
 
 
 	/**
-	*  Attendee constructor
-	*
-	* @access 		public
-	* @param 		string/array 				$ATT_fname				Attendee First Name, or array of all field values, keys being column names
-	* @param 		string				$ATT_lname  				Attendee Last Name
-	* @param 		string 				$ATT_address  			Attendee Address
-	* @param 		string				$ATT_address2 			Attendee Address2
-	* @param 		string				$ATT_city 					Attendee City
-	* @param 		int					$STA_ID		 				Attendee State ID
-	* @param 		string 				$CNT_ISO 					Attendee Country ISO Code
-	* @param 		string 				$ATT_zip 					Attendee Zip/Postal Code
-	* @param 		string 				$ATT_email 				Attendee Email Address
-	* @param 		string 				$ATT_phone 				Attendee Phone #
-	* @param 		string		 		$ATT_social 				Attendee Social Networking details
-	* @param 		string		 		$ATT_comments 		Attendee Comments (by the attendee)
-	* @param 		string		 		$ATT_notes					Attendee Notes (about the attendee)
-	* @param 		string		 		$ATT_deleted					Whether this Attendee has been moved to the trash
-	* @param 		int 					$ATT_ID 						Attendee ID
-	*/
-	public function __construct( $fieldValues = NULL, $bydb = FALSE ) {
+	 * Constructor
+	 *
+	 * @access protected
+	 * @param array array of values indexed by property name (without the leading underscore)
+	 * @param bool  $bydb indicates whether the model is instantiating this class or not
+	 * @return void
+	 */
+	protected function __construct( $fieldValues = NULL, $bydb = FALSE ) {
 		parent::__construct( $fieldValues, $bydb );
 	}
 
