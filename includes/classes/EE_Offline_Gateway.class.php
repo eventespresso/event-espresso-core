@@ -51,7 +51,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $EE_Session;
 		//check for an existing payment from this gateway
-		$payments = $this->_PAY->get_all_where(array('PAY_gateway'=>$this->gateway(),'TXN_ID'=>$transaction->ID()));
+/*		$payments = $this->_PAY->get_all_where(array('PAY_gateway'=>$this->gateway(),'TXN_ID'=>$transaction->ID()));
 		//if it already exists, short-circuit updating the transaction
 		if(empty($payments)){
 			//no payment so far, create one
@@ -76,7 +76,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 			//prevent trying to serialize a recursive relationship
 			unset($session['transaction']);
 			$transaction->set_txn_session_data( $session );
-		}
+		}*/
 		parent::thank_you_page_logic($transaction);
 		//check that there's still a transaction in the session.
 		//if there isn't, maybe we've cleared it (session ended with the thank you page)
@@ -111,7 +111,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 		$transaction->set_paid($txn_results['amount']);
 		$transaction->set_details( $txn_results );
 		//$txn_status = $this->_TXN->pending_status_code;//'TPN';
-		$transaction->set_status(EEM_Transaction::pending_status_code);
+		$transaction->set_status(EEM_Transaction::open_status_code);
 		//update our local session data with what's in teh session singleton
 		$session = $EE_Session->get_session_data();
 		unset( $session['transaction'] );

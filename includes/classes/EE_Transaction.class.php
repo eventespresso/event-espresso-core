@@ -629,7 +629,7 @@ class EE_Transaction extends EE_Base_Class{
 				return __("Complete",'event_espresso');
 			case EEM_Transaction::incomplete_status_code:
 				return __('Incomplete','event_espresso');
-			case EEM_Transaction::pending_status_code:
+			case EEM_Transaction::open_status_code:
 				return __('Pending Payment','event_espresso');
 			default:
 				return __('Unknown','event_espresso');
@@ -668,7 +668,7 @@ class EE_Transaction extends EE_Base_Class{
 	 * @return boolean
 	 */
 	public function is_pending(){
-		if($this->status_ID() == EEM_Transaction::pending_status_code){
+		if($this->status_ID() == EEM_Transaction::open_status_code){
 			return true;
 		}else{
 			return false;

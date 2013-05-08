@@ -50,7 +50,7 @@ class EEM_Transaction extends EEM_TempBase {
 	 * but payment is pending. This is the state for transactions where payment is promised
 	 * from an offline gateway. 
 	 */
-	const pending_status_code = 'TPN';
+	const open_status_code = 'TPN';
 
 	
 	
@@ -536,7 +536,7 @@ class EEM_Transaction extends EEM_TempBase {
 		require_once('EEM_Payment.model.php');
 		$PAY = EEM_Payment::instance();
 		$total_paid = $PAY->recalculate_total_payments_for_transaction( $transaction->ID(),  EEM_Payment::status_id_approved );
-		$total_pending = $PAY->recalculate_total_payments_for_transaction( $transaction->ID(),  EEM_Payment::status_id_pending );
+		//$total_pending = $PAY->recalculate_total_payments_for_transaction( $transaction->ID(),  EEM_Payment::status_id_pending );
 		$transaction->set_paid( $total_paid );
 		// set transaction status to complete if paid in full or the event was a freebie
 		if($total_paid > $transaction->total()){
@@ -544,9 +544,7 @@ class EEM_Transaction extends EEM_TempBase {
 		}elseif ( $total_paid == $transaction->total() ) {
 			$transaction->set_status(EEM_Transaction::complete_status_code);
 		} elseif( $total_paid < $transaction->total() ) {
-			$transaction->set_status(EEM_Transaction::pending_status_code);
-		}else{
-			$transaction->set_status(EEM_Transaction::incomplete_status_code);
+			$transaction->set_status(EEM_Transaction::open_status_code);
 		}
 		
 		// update transaction and return results

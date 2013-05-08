@@ -592,7 +592,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 	 * @param EE_Transaction $transaction
 	 */
 	/*public function get_payment_overview_content(EE_Transaction $transaction){
-			if($transaction->status_ID() == EEM_Transaction::pending_status_code){
+			if($transaction->status_ID() == EEM_Transaction::open_status_code){
 				?>
 		<h1><?php _e('Awaiting Payment Response from Paypal...','event_espresso')?></h1>
 		<p><?php _e('Paypal has notified us that your payment is in progress. You will be notified when payment is accepted.')?></p>
