@@ -391,7 +391,7 @@ table.fc-border-separate {
 	/*float: right;
 	padding: 0 2px;*/
 	float: left;
-	padding: 5px 10px;
+	padding: 5px 5px;
 	
 	/* Enable this code to place the day numbers in nice looking boxes*/
 	/*background: -moz-linear-gradient(270deg, white 0%, #e9f5f4 100%) #ebebeb;
@@ -632,8 +632,9 @@ a.fc-event { line-height: 100%; }
 }
 
 .espresso_calendar_widget a.fc-event-skin div {
-	/*background: url('images/tick-circle-frame.png') no-repeat 6px -24px;*//* add an image instead */
-	background: no-repeat 6px -24px; 
+	background: url('images/tick-circle-frame.png') no-repeat 6px -24px;
+	/*add an image instead*/
+	/*background: no-repeat 6px -24px;*/
 }
 .espresso_calendar_widget .fc-day-content { min-width: 26px; }
 .espresso_calendar_widget a.fc-event-skin div:hover { background-position:6px 0px!important; }
