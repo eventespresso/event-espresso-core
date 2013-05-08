@@ -178,48 +178,29 @@ class EE_Datetime extends EE_Base_Class{
 
 
 	/**
-	* Event Datetime constructor
-	*
-	* @access 		public
-	* @param			int								$EVT_ID 						Event ID
-	* @param			int								$DTT_is_primary 		Marks this as a Primary Date time - the first event or reg date
-	* @param			mixed int | string 		$DTT_EVT_start 			Unix timestamp or date string for the event beginning
-	* @param			mixed int | string		$DTT_EVT_end			Unix timestamp or date string for the event  end
-	* @param			mixed int | string 		$DTT_REG_start 			Unix timestamp or date string for the registration beginning
-	* @param			mixed int | string		$DTT_REG_end			Unix timestamp or date string for the registration end
-	* @param			mixed int | NULL		$DTT_reg_limit 			Registration Limit for this time period - int for limit, NULL for no limit
-	* @param			mixed int | NULL		$DTT_tckts_left 		Spaces left for this timeslot - int for limit, NULL for no limit
-	* @param			int								$DTT_ID 						Event Datetime ID
-	*/
-	public function __construct( 
-														$EVT_ID = NULL, 
-														$DTT_is_primary = 0, 
-														$DTT_EVT_start = NULL, 
-														$DTT_EVT_end = NULL, 
-														$DTT_REG_start = NULL, 
-														$DTT_REG_end = NULL, 
-														/* DO NOT DELETE - NEW FEATURE IN PROGRESS 
-														$DTT_reg_limit = NULL, 
-														$DTT_tckts_left = NULL, */
-														$DTT_ID = NULL 
-												) {
-	
-	if(is_array($EVT_ID)){
-			parent::__construct($EVT_ID);
-			return;
-		}
-		$reflector = new ReflectionMethod($this,'__construct');	
-		$arrayForParent=array();
-		foreach($reflector->getParameters() as $param){
-			$paramName=$param->name;
-			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
-		}
-		parent::__construct($arrayForParent);
-
+	 * Constructor
+	 *
+	 * @access protected
+	 * @param array array of values indexed by property name (without the leading underscore)
+	 * @param bool  $bydb indicates whether the model is instantiating this class or not
+	 * @param string $timezone valid timezone string (optional)
+	 * @return void
+	 */
+	protected function __construct( $fieldValues = NULL, $bydb = FALSE, $timezone = NULL ) {
+		parent::__construct($fieldValues, $bydb, $timezone);
 	}
 
 
+	public static function new_instance( $props_n_values = array() ) {
+		$classname = get_class( self );
+		$has_object = parent::_check_for_object( $props_n_values, $classname );
+		return $has_object ? $has_object : self::__construct( $props_n_values);
+	}
 
+
+	public static function new_instance_from_db ( $props_n_values = array() ) {
+		self::__construct( $props_n_values, TRUE );
+	}
 
 
 
@@ -288,7 +269,7 @@ class EE_Datetime extends EE_Base_Class{
 	 * @param string $field_name like DTT_EVT_end
 	 */
 	private function _set_time_for($time,$field_name){
-		$field = $this->_get_model()->field_settings_for($field_name);
+		$field = $this->get_model()->field_settings_for($field_name);
 		$attribute_field_name = $this->_get_private_attribute_name($field_name);
 		$field->set_timezone( $this->_timezone );
 		$this->$attribute_field_name = $field->prepare_for_set_with_new_time($time, $this->$attribute_field_name );
@@ -303,7 +284,7 @@ class EE_Datetime extends EE_Base_Class{
 	 * @param string $field_name like DTT_REG_start
 	 */
 	private function _set_date_for($date,$field_name){
-		$field = $this->_get_model()->field_settings_for($field_name);
+		$field = $this->get_model()->field_settings_for($field_name);
 		$field->set_timezone( $this->_timezone );
 		$attribute_field_name = $this->_get_private_attribute_name($field_name);
 		$this->$attribute_field_name = $field->prepare_for_set_with_new_date($date, $this->$attribute_field_name );
@@ -502,14 +483,14 @@ class EE_Datetime extends EE_Base_Class{
 		}
 
 		$var_name = "_DTT_{$EVT_or_REG}_{$start_or_end}";
-		$field = $this->_get_model()->field_settings_for(ltrim($var_name, '_'));
+		$field = $this->get_model()->field_settings_for(ltrim($var_name, '_'));
 
-		if ( $dt_format ) {
+		if ( $dt_frmt ) {
 			$this->_clear_cached_property( $var_name );
 			if ( $echo )
-				$field->set_pretty_date_format( $dt_format );
+				$field->set_pretty_date_format( $dt_frmt );
 			else 
-				$field->set_date_format( $dt_format );
+				$field->set_date_format( $dt_frmt );
 		}
 
 		if ( $tm_format ) {
