@@ -101,19 +101,19 @@ function espresso_initialize_system_questions() {
 	
 	// QUESTION GROUPS
 	global $wpdb;
-	$SQL = 'SELECT QSG_system_ID FROM ' . $wpdb->prefix . 'esp_question_group WHERE QSG_system_ID != 0';
+	$SQL = 'SELECT QSG_system FROM ' . $wpdb->prefix . 'esp_question_group WHERE QSG_system != 0';
 	// what we have
 	$question_groups = $wpdb->get_col( $SQL );
 	// check the reponse
 	$question_groups = is_array( $question_groups ) ? $question_groups : array();
 	// what we should have
-	$QSG_system_IDs = array( 1, 2 );
+	$QSG_systems = array( 1, 2 );
 	// loop thru what we should have and compare to what we have
-	foreach ( $QSG_system_IDs as $QSG_system_ID ) {
+	foreach ( $QSG_systems as $QSG_system ) {
 		// if we don't have what we should have
-		if ( ! in_array( $QSG_system_ID, $question_groups )) {
+		if ( ! in_array( $QSG_system, $question_groups )) {
 			// add it
-			switch ( $QSG_system_ID ) {
+			switch ( $QSG_system ) {
 				
 				case 1:
 						$QSG_values = array( 
@@ -123,7 +123,7 @@ function espresso_initialize_system_questions() {
 								'QSG_order' => 1,
 								'QSG_show_group_name' => 1,
 								'QSG_show_group_desc' => 1,
-								'QSG_system_ID' => 1,
+								'QSG_system' => 1,
 								'QSG_deleted' => 0
 							);
 					break;
@@ -136,7 +136,7 @@ function espresso_initialize_system_questions() {
 								'QSG_order' => 2,
 								'QSG_show_group_name' => 1,
 								'QSG_show_group_desc' => 1,
-								'QSG_system_ID' => 2,
+								'QSG_system' => 2,
 								'QSG_deleted' => 0
 							);
 					break;
@@ -148,7 +148,7 @@ function espresso_initialize_system_questions() {
 				$QSG_values, 
 				array('%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d' )
 			);
-			$QSG_IDs[ $QSG_system_ID ] = $wpdb->insert_id;		
+			$QSG_IDs[ $QSG_system ] = $wpdb->insert_id;		
 		}
 	}
 
@@ -156,23 +156,34 @@ function espresso_initialize_system_questions() {
 	
 	// QUESTIONS
 	global $wpdb;
-	$SQL = 'SELECT QST_system_ID FROM ' . $wpdb->prefix . 'esp_question WHERE QST_system_ID != 0';
+	$SQL = 'SELECT QST_system FROM ' . $wpdb->prefix . 'esp_question WHERE QST_system != 0';
 	// what we have
 	$questions = $wpdb->get_col( $SQL );
 	// what we should have
-	$QST_system_IDs = array( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
+	$QST_systems = array( 
+		'fname', 
+		'lname', 
+		'email', 
+		'address', 
+		'address2', 
+		'city', 
+		'state', 
+		'country', 
+		'zip', 
+		'phone' 
+	);
 	// loop thru what we should have and compare to what we have
-	foreach ( $QST_system_IDs as $QST_system_ID ) {
+	foreach ( $QST_systems as $QST_system ) {
 		// if we don't have what we should have
-		if ( ! in_array( $QST_system_ID, $questions )) {
+		if ( ! in_array( $QST_system, $questions )) {
 			// add it
-			switch ( $QST_system_ID ) {
+			switch ( $QST_system ) {
 				
-				case 1:
+				case 'fname':
 						$QST_values = array( 
 								'QST_display_text' => 'First Name',
 								'QST_admin_label' => 'First Name - System Question',
-								'QST_system_ID' => 1,
+								'QST_system' => 'fname',
 								'QST_type' => 'TEXT',
 								'QST_required' => 1,
 								'QST_required_text' => 'This field is required',
@@ -183,11 +194,11 @@ function espresso_initialize_system_questions() {
 							);
 					break;
 					
-				case 2:
+				case 'lname':
 						$QST_values = array( 
 								'QST_display_text' => 'Last Name',
 								'QST_admin_label' => 'Last Name - System Question',
-								'QST_system_ID' => 2,
+								'QST_system' => 'lname',
 								'QST_type' => 'TEXT',
 								'QST_required' => 1,
 								'QST_required_text' => 'This field is required',
@@ -198,11 +209,11 @@ function espresso_initialize_system_questions() {
 							);
 					break;
 					
-				case 3:
+				case 'email':
 						$QST_values = array( 
 								'QST_display_text' => 'Email Address',
 								'QST_admin_label' => 'Email Address - System Question',
-								'QST_system_ID' => 3,
+								'QST_system' => 'email',
 								'QST_type' => 'TEXT',
 								'QST_required' => 1,
 								'QST_required_text' => 'This field is required',
@@ -213,11 +224,11 @@ function espresso_initialize_system_questions() {
 							);
 					break;
 					
-				case 4:
+				case 'address':
 						$QST_values = array( 
 								'QST_display_text' => 'Address',
 								'QST_admin_label' => 'Address - System Question',
-								'QST_system_ID' => 4,
+								'QST_system' => 'address',
 								'QST_type' => 'TEXT',
 								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
@@ -228,11 +239,11 @@ function espresso_initialize_system_questions() {
 							);
 					break;
 					
-				case 5:
+				case 'address2':
 						$QST_values = array( 
 								'QST_display_text' => 'Address2',
 								'QST_admin_label' => 'FirAddress2 - System Question',
-								'QST_system_ID' => 5,
+								'QST_system' => 'address2',
 								'QST_type' => 'TEXT',
 								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
@@ -243,11 +254,11 @@ function espresso_initialize_system_questions() {
 							);
 					break;
 					
-				case 6:
+				case 'city':
 						$QST_values = array( 
 								'QST_display_text' => 'City',
 								'QST_admin_label' => 'City - System Question',
-								'QST_system_ID' => 6,
+								'QST_system' => 'city',
 								'QST_type' => 'TEXT',
 								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
@@ -258,11 +269,11 @@ function espresso_initialize_system_questions() {
 							);
 					break;
 					
-				case 7:
+				case 'state':
 						$QST_values = array( 
 								'QST_display_text' => 'State / Province',
 								'QST_admin_label' => 'State / Province - System Question',
-								'QST_system_ID' => 7,
+								'QST_system' => 'state',
 								'QST_type' => 'TEXT',
 								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
@@ -273,11 +284,11 @@ function espresso_initialize_system_questions() {
 							);
 					break;
 					
-				case 8 : 
+				case 'country' : 
 						$QST_values = array( 
 								'QST_display_text' => 'Country',
 								'QST_admin_label' => 'Country - System Question',
-								'QST_system_ID' => 8,
+								'QST_system' => 'country',
 								'QST_type' => 'TEXT',
 								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
@@ -288,11 +299,11 @@ function espresso_initialize_system_questions() {
 							);
 					break;
 					
-				case 9:
+				case 'zip':
 						$QST_values = array( 
 								'QST_display_text' => 'Zip / Postal Code',
 								'QST_admin_label' => 'Zip / Postal Code - System Question',
-								'QST_system_ID' => 9,
+								'QST_system' => 'zip',
 								'QST_type' => 'TEXT',
 								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
@@ -303,11 +314,11 @@ function espresso_initialize_system_questions() {
 							);
 					break;
 					
-				case 10:
+				case 'phone':
 						$QST_values = array( 
 								'QST_display_text' => 'Phone Number',
 								'QST_admin_label' => 'Phone Number - System Question',
-								'QST_system_ID' => 10,
+								'QST_system' => 'phone',
 								'QST_type' => 'TEXT',
 								'QST_required' => 0,
 								'QST_required_text' => 'This field is required',
@@ -323,18 +334,18 @@ function espresso_initialize_system_questions() {
 			$wpdb->insert(
 				$wpdb->prefix . 'esp_question', 
 				$QST_values, 
-				array( '%s', '%s', '%d', '%s', '%d', '%s', '%d', '%d', '%d', '%d' )
+				array( '%s', '%s', '%s', '%s', '%d', '%s', '%d', '%d', '%d', '%d' )
 			);
 			$QST_ID = $wpdb->insert_id;	
 			
 			// QUESTION GROUP QUESTIONS 
 			
-			// questions 1-3 go in group 1, the rest go in 2
-			$QSG_ID = $QST_system_ID < 4 ? 1 : 2;			
+			$QSG_ID = in_array( $QST_system,
+					array('fname','lname','email')) ? 1 : 2;			
 			// add system questions to groups
 			$wpdb->insert(
 				$wpdb->prefix . 'esp_question_group_question', 
-				array( 'QSG_ID' => $QSG_IDs[ $QSG_ID ], 'QST_ID' => $QST_ID ), 
+				array( 'QSG_ID' => $QSG_ID , 'QST_ID' => $QST_ID ), 
 				array( '%d', '%d' )
 			);			
 			
@@ -464,7 +475,9 @@ function events_data_tables_install() {
 				  CNT_cur_plural varchar(45) COLLATE utf8_bin DEFAULT 'dollars',
 				  CNT_cur_sign varchar(45) COLLATE utf8_bin DEFAULT '$',
 				  CNT_cur_sign_b4 tinyint(1) DEFAULT '1',
-				  CNT_cur_dec tinyint(3) unsigned NOT NULL DEFAULT '2',
+				  CNT_cur_dec_plc tinyint(3) unsigned NOT NULL DEFAULT '2',
+				  CNT_cur_dec_mrk varchar(1) COLLATE utf8_bin NOT NULL DEFAULT '.',
+				  CNT_cur_thsnds varchar(1) COLLATE utf8_bin NOT NULL DEFAULT ',',
 				  CNT_tel_code varchar(12) COLLATE utf8_bin DEFAULT NULL,
 				  CNT_is_EU tinyint(1) DEFAULT '0',
 				  CNT_active tinyint(1) DEFAULT '0',
@@ -590,7 +603,7 @@ function events_data_tables_install() {
 	$sql='QST_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
 				QST_display_text VARCHAR(100) NOT NULL,
 				QST_admin_label VARCHAR(100) NOT NULL,
-				QST_system_ID TINYINT(3) UNSIGNED NOT NULL,
+				QST_system varchar(25) DEFAULT NULL,
 				QST_type VARCHAR(25) NOT NULL DEFAULT "TEXT",
 				QST_required TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 				QST_required_text VARCHAR(100) NULL,
@@ -614,7 +627,7 @@ function events_data_tables_install() {
 				QSG_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
 				QSG_show_group_name TINYINT(1) NOT NULL,
 				QSG_show_group_desc TINYINT(1) NOT NULL,
-				QSG_system_ID TINYINT(3) UNSIGNED NOT NULL,
+				QSG_system VARCHAR(25) NULL,
 				QSG_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 				PRIMARY KEY  (QSG_ID),
 				UNIQUE KEY QSG_identifier_UNIQUE (QSG_identifier ASC)';
@@ -1277,31 +1290,22 @@ function espresso_default_price_types() {
 
 	if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_PRICE_TYPE . "'") == ESP_PRICE_TYPE) {
 
-		$SQL = 'DELETE FROM ' . ESP_PRICE_TYPE . ' WHERE PRT_ID < 8';
-		$wpdb->query( $SQL );
-	
-		$SQL = "INSERT INTO " . ESP_PRICE_TYPE . " ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_is_global, PRT_order, PRT_deleted ) VALUES";
-
-		$SQL .= $caffeinated ? "
-					(1, 'Default Event Price', 1, 0, 0, 1, 0, 0),
-					(2, 'Event Price', 1, 0, 0, 0, 0, 0),
-					(3, 'Default Member % Discount', 2, 1, 1, 1, 10, 0),
-					(4, 'Default Early Bird % Discount', 2, 0, 1, 1, 20, 0),
-					(5, 'Default Surcharge', 3, 0, 0, 1, 30, 0),
-					(6, 'Regional Tax', 4, 0, 1, 1, 40, 0),
-					(7, 'Federal Tax', 4, 0, 1, 1, 50, 0);"
-					: "
-					(1, 'Default Event Price', 1, 0, 0, 1, 0, 1),
-					(2, 'Event Price', 1, 0, 0, 0, 0, 0),
-					(3, 'Member % Discount', 2, 1, 1, 0, 10, 0),
-					(4, 'Early Bird % Discount', 2, 0, 1, 0, 20, 0),
-					(5, 'Surcharge', 3, 0, 0, 0, 30, 0),
-					(6, 'Regional Tax', 4, 0, 1, 1, 40, 1),
-					(7, 'Federal Tax', 4, 0, 1, 1, 50, 1);";
-
-		$wpdb->query( $SQL );	
+		$SQL = 'SELECT COUNT(PRT_ID) FROM ' . ESP_PRICE_TYPE;
+		$price_types_exist = $wpdb->get_var( $SQL );
+		
+		if ( ! $price_types_exist ) {
+			$SQL = "INSERT INTO " . ESP_PRICE_TYPE . " ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_is_global, PRT_order, PRT_deleted ) VALUES
+						(1, 'Default Event Price', 1, 0, 0, 1, 0, 1),
+						(2, 'Event Price', 1, 0, 0, 0, 0, 0),
+						(3, 'Member % Discount', 2, 1, 1, 0, 10, 0),
+						(4, 'Early Bird % Discount', 2, 0, 1, 0, 20, 0),
+						(5, 'Surcharge', 3, 0, 0, 0, 30, 0),
+						(6, 'Regional Tax', 4, 0, 1, 1, 40, 1),
+						(7, 'Federal Tax', 4, 0, 1, 1, 50, 1);";
+			$SQL = apply_filters( 'filter_hook_espresso_default_price_types_activation_sql', $SQL );
+			$wpdb->query( $SQL );	
+		}
 	}
-
 }
 
 
@@ -1311,26 +1315,23 @@ function espresso_default_prices() {
 	global $wpdb, $caffeinated;
 	
 	if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_PRICE_TABLE . "'") == ESP_PRICE_TABLE) {
-	
-		$SQL = 'DELETE FROM ' . ESP_PRICE_TABLE . ' WHERE PRC_ID < 7';
-		$wpdb->query( $SQL );
-	
-		$SQL = "INSERT INTO " . ESP_PRICE_TABLE . "
-					(PRC_ID, PRT_ID, EVT_ID, PRC_amount, PRC_name, PRC_desc, PRC_use_dates, PRC_start_date, PRC_end_date, PRC_is_active, PRC_overrides, PRC_order, PRC_deleted ) VALUES
-					(1, 1, 0, '10.00', 'General Admission', 'Regular price for all Events. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 0, 0),
-					(2, 3, 0, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 10, 0),
-					(3, 4, 0, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price. Example content - delete if you want to',  1, NULL, NULL, 1, NULL, 20, 0),
-					(4, 5, 0, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 30, 0)";
-		$SQL .= $caffeinated ? ",
-					(5, 6, 0, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 40, 0),
-					(6, 7, 0, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 50, 0);" 
-					: ",
-					(5, 6, 0, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 40, 1),
-					(6, 7, 0, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 50, 1);";
 		
-		$wpdb->query($SQL);
-	}
-	
+		$SQL = 'SELECT COUNT(PRC_ID) FROM ' . ESP_PRICE_TABLE;
+		$prices_exist = $wpdb->get_var( $SQL );
+		
+		if ( ! $prices_exist ) {
+			$SQL = "INSERT INTO " . ESP_PRICE_TABLE . "
+						(PRC_ID, PRT_ID, EVT_ID, PRC_amount, PRC_name, PRC_desc, PRC_use_dates, PRC_start_date, PRC_end_date, PRC_is_active, PRC_overrides, PRC_order, PRC_deleted ) VALUES
+						(1, 1, 0, '10.00', 'General Admission', 'Regular price for all Events. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 0, 0),
+						(2, 3, 0, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 10, 0),
+						(3, 4, 0, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price. Example content - delete if you want to',  1, NULL, NULL, 1, NULL, 20, 0),
+						(4, 5, 0, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 30, 0)
+						(5, 6, 0, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 40, 1),
+						(6, 7, 0, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 50, 1);";			
+			$SQL = apply_filters( 'filter_hook_espresso_default_prices_activation_sql', $SQL );
+			$wpdb->query($SQL);			
+		}
+	}	
 }
 
 
@@ -1358,18 +1359,18 @@ function espresso_default_status_codes() {
 				('DEN', 'DENIED', 'event', 0, NULL, 0),
 				('EXP', 'EXPIRED', 'event', 0, NULL, 0),
 				('RPN', 'PENDING', 'registration', 0, NULL, 1),
-				('RCN', 'CANCELLED', 'registration', 0, NULL, 0),
 				('RAP', 'APPROVED', 'registration', 0, NULL, 1),
+				('RCN', 'CANCELLED', 'registration', 0, NULL, 0),
 				('RNA', 'NOT_APPROVED', 'registration', 0, NULL, 0),
 				('TIN', 'INCOMPLETE', 'transaction', 0, NULL, 0),
 				('TPN', 'PENDING', 'transaction', 0, NULL, 1),
 				('TCM', 'COMPLETE', 'transaction', 0, NULL, 1),
 				('TOP',	'OVERPAID', 'transaction', 0, NULL, 1),
 				('PAP', 'APPROVED', 'payment', 0, NULL, 1),
+				('PPN', 'PENDING', 'payment', 0, NULL, 1),
 				('PCN', 'CANCELLED', 'payment', 0, NULL, 0),
 				('PFL', 'FAILED', 'payment', 0, NULL, 0),
 				('PDC', 'DECLINED', 'payment', 0, NULL, 0),
-				('PPN', 'PENDING', 'payment', 0, NULL, 1),
 				('EDR', 'DRAFT', 'email', 0, NULL, 0),
 				('ESN', 'SENT', 'email', 0, NULL, 1);";
 		$wpdb->query($SQL);		

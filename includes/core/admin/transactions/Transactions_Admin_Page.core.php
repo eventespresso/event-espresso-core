@@ -413,6 +413,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['transactions_page'] = $this->wp_page_slug;  
 
 	    $this->_set_transaction_object();
+	 	$this->_transaction->TXN_details = maybe_unserialize( $this->_transaction ->TXN_details );
 	
 		$this->_template_args['txn_nmbr']['value'] = $this->_transaction->TXN_ID;
 		$this->_template_args['txn_nmbr']['label'] = __( 'Transaction Number', 'event_espresso' );
@@ -448,6 +449,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$this->_template_args['amount_due'] =  FALSE;
 		}
 
+		$this->_template_args['method_of_payment'] = isset( $this->_transaction->TXN_details['gateway'] ) && ! empty( $this->_transaction->TXN_details['gateway'] ) ? $this->_transaction->TXN_details['gateway'] : FALSE;
 		$this->_template_args['currency_sign'] = $org_options['currency_symbol'];
 		// link back to overview
 		$this->_template_args['txn_overview_url'] = ! empty ( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : TXN_ADMIN_URL;  
@@ -545,8 +547,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['currency_sign'] = $org_options['currency_symbol'];
 		$txn_status_class = 'status-' . $this->_transaction->STS_ID;
 		
-		$txn_details = maybe_unserialize( $this->_transaction ->TXN_details );
-		
 		// process payment details
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php' );
 	    $PAY = EEM_Payment::instance();
@@ -557,8 +557,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['edit_payment_url'] = add_query_arg( array( 'action' => 'edit_payment'  ), TXN_ADMIN_URL );
 		$this->_template_args['delete_payment_url'] = add_query_arg( array( 'action' => 'delete_payment' ), TXN_ADMIN_URL );
 
-		if ( isset( $txn_details['invoice_number'] )) {
-			$this->_template_args['txn_details']['invoice_number']['value'] = $txn_details['invoice_number'];
+		if ( isset( $this->_transaction->TXN_details['invoice_number'] )) {
+			$this->_template_args['txn_details']['invoice_number']['value'] = $this->_transaction->TXN_details['invoice_number'];
 			$this->_template_args['txn_details']['invoice_number']['label'] = __( 'Invoice Number', 'event_espresso' );
 			$this->_template_args['txn_details']['invoice_number']['class'] = 'regular-text';
 		} 
@@ -671,7 +671,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 							$attendee['att_obj'] = FALSE;
 						}
 						if ( ! $attendee['att_obj'] ) {
-							$attendee['att_obj'] = new EE_Attendee;
+							$attendee['att_obj'] = new EE_Attendee();
 						}	 
 					}
 					// check for reg object
@@ -681,7 +681,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
 					    $REG_MDL = EEM_Registration::instance();
 						if ( ! $attendee['reg_obj'] = $REG_MDL->get_registration_for_transaction_attendee( $TXN_ID, $attendee['att_obj']->ID(), $att_nmbr )) {
-							$attendee['reg_obj'] = new EE_Registration;
+							$attendee['reg_obj'] = new EE_Registration();
 						}	 
 					}
 					

@@ -140,16 +140,16 @@ Class EEM_Gateways {
 	 */
 	private function _load_payment_settings() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		if (!empty($this->_session_gateway_data['payment_settings'])) {
-			$this->_payment_settings = $this->_session_gateway_data['payment_settings'];
-		} else {
+//		if (!empty($this->_session_gateway_data['payment_settings'])) {
+//			$this->_payment_settings = $this->_session_gateway_data['payment_settings'];
+//		} else {
 			global $espresso_wp_user, $EE_Session;
 			$this->_payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', TRUE);
 			if (!is_array($this->_payment_settings)) {
 				$this->_payment_settings = array();
 			}
 			$EE_Session->set_session_data(array('payment_settings' => $this->_payment_settings), 'gateway_data');
-		}
+//		}
 
 		//echo printr( $this->_payment_settings, __CLASS__ . ' ->' . __FUNCTION__ . ' ( line #' .  __LINE__ . ' )' );
 	}
@@ -295,19 +295,22 @@ Class EEM_Gateways {
 	 * 		update payment settings for specific gateway
 	 * 		@access public
 	* 		@param	string	$gateway
-	* 		@param	array	$settings
+	* 		@param	array	$new_gateway_settings
 	 * 		@return 	boolean	TRUE on success FALSE on fail
 	 */
-	public function update_payment_settings($gateway = FALSE, $settings = FALSE) {
+	public function update_payment_settings($gateway = FALSE, $new_gateway_settings = FALSE) {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		if (!$gateway || !$settings) {
+		if (!$gateway || !$new_gateway_settings) {
 			return FALSE;
 		}
-		$this->_payment_settings[$gateway] = $settings;
-
+		//$this->_payment_settings[$gateway] = $new_gateway_settings;
 		global $espresso_wp_user;
-
+		//echo "updateing usermeta with paymetn settings";var_dump($this->_payment_settings);
+		$old_payment_settings = get_user_meta($espresso_wp_user, 'payment_settings',true);
+		$old_payment_settings[$gateway] = $new_gateway_settings;
+		$this->_payment_settings = $old_payment_settings;
 		if (update_user_meta($espresso_wp_user, 'payment_settings', $this->_payment_settings)) {
+
 			$msg = __('Payment Settings Updated!', 'event_espresso');
 			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return TRUE;
@@ -449,7 +452,7 @@ Class EEM_Gateways {
 
 	/**
 	 * just return the gateway_instances for usage
-	 * @return array EE_Gateway objects
+	 * @return EE_Gateway[]
 	 */
 	public function get_gateway_instances() {
 		return $this->_gateway_instances;

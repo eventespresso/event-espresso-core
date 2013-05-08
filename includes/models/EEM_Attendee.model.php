@@ -29,7 +29,7 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 	private static $_instance = NULL;
 	
 	/**
-	 * QST_ID and QST_system_IDs that relate to attendee attributes.
+	 * QST_ID and QST_systems that relate to attendee attributes.
 	 */
 	const fname_question_id=1;
 	const lname_question_id=2;
@@ -42,6 +42,7 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 	const zip_question_id=9;
 	const phone_question_id=10;
 
+	
 
 
 
@@ -56,24 +57,24 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 		$this->plural_item = __('Attendees','event_espresso');
 		// load Attendee object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php');
-		$this->_fields_settings=array('ATT_ID'=>new EE_Model_Field('Attendee ID', 'primary_key', false),
-									'ATT_fname'=>new EE_Model_Field('First Name', 'plaintext', false),
-									'ATT_lname'=>new EE_Model_Field('Last Name','plaintext',false),
-									'ATT_address'=>new EE_Model_Field('Address1','plaintext',true),
-									'ATT_address2'=>new EE_Model_Field('Address2','plaintext',true),
-									'ATT_city'=>new EE_Model_Field('City','plaintext',true),
-									'STA_ID'=>new EE_Model_Field('State ID','foreign_key',true,0,null,'State'),
-									'CNT_ISO'=>new EE_Model_Field('Country Code','foreign_key',true,0,null,'Country'),
-									'ATT_zip'=>new EE_Model_Field('Zip/Postal Code', 'plaintext', true, ''),
-									'ATT_email'=>new EE_Model_Field('Email', 'email', false, ''),
-									'ATT_phone'=>new EE_Model_Field('Phone', 'plaintext', true),
-									'ATT_social'=>new EE_Model_Field('Social Media Details','serialized_text',true),
-									'ATT_comments'=>new EE_Model_Field('Comments','simplehtml',true),
-									'ATT_notes'=>new EE_Model_Field('Notes', 'simplehtml', true),
-									'ATT_deleted'=>new EE_Model_Field('Deleted flag', 'deleted_flag', false,0),
+		$this->_fields_settings=array(
+				'ATT_ID'=>new EE_Model_Field('Attendee ID', 'primary_key', false),
+				'ATT_fname'=>new EE_Model_Field('First Name', 'plaintext', false),
+				'ATT_lname'=>new EE_Model_Field('Last Name','plaintext',false),
+				'ATT_address'=>new EE_Model_Field('Address1','plaintext',true),
+				'ATT_address2'=>new EE_Model_Field('Address2','plaintext',true),
+				'ATT_city'=>new EE_Model_Field('City','plaintext',true),
+				'STA_ID'=>new EE_Model_Field('State ID','foreign_key',true,0,null,'State'),
+				'CNT_ISO'=>new EE_Model_Field('Country ISO Code','foreign_text_key',true,NULL,null,'Country'),
+				'ATT_zip'=>new EE_Model_Field('Zip/Postal Code', 'plaintext', true, ''),
+				'ATT_email'=>new EE_Model_Field('Email', 'email', false, ''),
+				'ATT_phone'=>new EE_Model_Field('Phone', 'plaintext', true),
+				'ATT_social'=>new EE_Model_Field('Social Media Details','serialized_text',true),
+				'ATT_comments'=>new EE_Model_Field('Comments','simplehtml',true),
+				'ATT_notes'=>new EE_Model_Field('Notes', 'simplehtml', true),
+				'ATT_deleted'=>new EE_Model_Field('Deleted flag', 'deleted_flag', false,0)
 			);
-		$this->_related_models=array(
-								'Registrations'=>new EE_Model_Relation('belongsTo', 'Registration', 'ATT_ID'));
+		$this->_related_models=array( 'Registrations'=>new EE_Model_Relation( 'belongsTo', 'Registration', 'ATT_ID' ));
 		parent::__construct();
 		
 	}
@@ -113,13 +114,13 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 				$array_of_objects[ $attendee->ATT_ID ] = new EE_Attendee(
 						$attendee->ATT_fname,
 						$attendee->ATT_lname,
+						$attendee->ATT_email,
 						$attendee->ATT_address,
 						$attendee->ATT_address2,
 						$attendee->ATT_city,
 						$attendee->STA_ID,
 						$attendee->CNT_ISO,
 						$attendee->ATT_zip,
-						$attendee->ATT_email,
 						$attendee->ATT_phone,
 						$attendee->ATT_social,
 						$attendee->ATT_comments,

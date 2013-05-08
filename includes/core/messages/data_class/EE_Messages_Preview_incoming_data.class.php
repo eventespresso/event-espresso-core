@@ -136,13 +136,13 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			0 => array(
 				'Luke',
 				'Skywalker',
+				'farfaraway@galaxy.sp',
 				'804 Bantha Dr.',
 				'',
 				'Mos Eisley',
 				'Section 7',
 				'Tatooine',
 				'f0r3e',
-				'farfaraway@galaxy.sp',
 				'',
 				'',
 				'',
@@ -153,13 +153,13 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			1 => array(
 				'Princess',
 				'Leia',
+				'buns@fcn.al',
 				'1456 Valley Way Boulevard',
 				'',
 				'Aldera',
 				'Alvoli Isle',
 				'Alderaan',
 				'c1h2c',
-				'buns@fcn.al',
 				'',
 				'',
 				'',
@@ -170,13 +170,13 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			2 => array(
 				'Yoda',
 				'I Am',
+				'arrivenot@emailbad.fr',
 				'4th Tree',
 				'',
 				'Marsh',
 				'Swampland',
 				'Dantooine',
 				'l18n',
-				'arrivenot@emailbad.fr',
 				'',
 				'',
 				'',
@@ -188,13 +188,13 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 		//let's generate the attendee objects
 		$attendees = array();
-		$var_array = array('fname','lname','address','address2','city','staid','cntry','zip','email','phone','social','comments','notes','deleted','attid');
+		$var_array = array('fname','lname','email','address','address2','city','staid','cntry','zip','phone','social','comments','notes','deleted','attid');
 
 		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php');
 		foreach ( $dummy_attendees as $dummy ) {
 			$att = array_combine( $var_array, $dummy );
 			extract($att);
-			$attendees[] = new EE_Attendee($fname, $lname, $address, $address2, $city, $staid, $cntry, $zip, $email, $phone, $social, $comments, $notes, $deleted, $attid);
+			$attendees[] = new EE_Attendee($fname, $lname, $email, $address, $address2, $city, $staid, $cntry, $zip, $phone, $social, $comments, $notes, $deleted, $attid);
 		}
 
 		return $attendees;

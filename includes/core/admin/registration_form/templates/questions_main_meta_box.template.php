@@ -6,9 +6,10 @@ assert($question instanceof EE_Question);
 assert($question_types);
 
 //start output
-echo EE_Form_Fields::hidden_input('QST_system_ID', $question->system_name());
+echo EE_Form_Fields::hidden_input('QST_system', $question->system_ID());
 echo EE_Form_Fields::hidden_input('QST_wp_user', $question->wp_user());
 echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
+$QST_system = $question->system_ID();
 
 ?>
 
@@ -17,7 +18,7 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 		<tbody>
 			<?php 
 			foreach($question->get_fields_settings() as $fieldName=>$settings){
-				if( in_array( $fieldName, array( 'QST_ID', 'QST_system_ID','QST_wp_user','QST_deleted', 'QST_order' ))) {
+				if( in_array( $fieldName, array( 'QST_ID', 'QST_system','QST_wp_user','QST_deleted', 'QST_order' ))) {
 					continue;
 				}
 			?>
@@ -39,15 +40,22 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 					
 						case 'QST_admin_label': 
 					?>
-					<input type="text" class="regular-text" id="<?php echo $fieldName?>" name="<?php echo $fieldName?>" value="<?php echo $question->admin_label()?>"/>
+					<?php $disabled = ! empty( $QST_system ) ? ' disabled="disabled"' : ''; ?>
+					<input type="text" class="regular-text" id="<?php echo $fieldName?>" name="<?php echo $fieldName?>" value="<?php echo $question->admin_label()?>"<?php echo $disabled?>/>
 					<br/>
 					<p class="description">
+					<?php if ( ! empty( $QST_system )) { ?>
+					<span class="description" style="color:#D54E21;">
+						<?php _e('System questions will always be used internally for their intended purpose and any attempts to change them to something else may result in errors. For example, changing the sytem question for "Email" to ask for anything other than an email address will cause registration form validation errors, because the system will still be expecting that field to contain an email address. Admin Labels for System questions can not be edited','event_espresso')?>
+					</span><br/>
+					<?php } ?>
 						<?php _e('An administrative label for this question to help you differentiate between two questions that may appear the same to registrants (but are for different events). For example: You could have two questions that simply ask the registrant to choose a "Size", then use this field to label one "T-shirt Size" and the other "Shoe Size".','event_espresso')?>
 					</p>					
 					<?php break;
 					
 						case 'QST_type':
-								echo EE_Form_fields::select_input( 'QST_type', $question_types, $question->type(), 'id="QST_type"' );
+								$disabled = ! empty( $QST_system ) ? ' disabled="disabled"' : ''; 
+								echo EE_Form_fields::select_input( 'QST_type', $question_types, $question->type(), 'id="QST_type"' . $disabled );
 					?>
 					<br/>
 					<p class="description">
@@ -166,8 +174,13 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 					<?php break;
 					
 					case 'QST_required':
-					$requiredOptions=array(0=>array('text'=>'Required','id'=>'1'),1=>array('text'=>'Optional','id'=>0));
-					echo EE_Form_Fields::select_input('QST_required', $requiredOptions,$question->required());?>
+					$system_required = array( 'fname', 'lname', 'email' );
+					$disabled = in_array( $QST_system, $system_required ) ? ' disabled="disabled"' : ''; 
+					$requiredOptions=array( 
+						array('text'=>'Optional','id'=>0), 
+						array('text'=>'Required','id'=>1)
+					);
+					echo EE_Form_Fields::select_input('QST_required', $requiredOptions, $question->required(), $disabled );?>
 					<br/>
 					<p class="description">
 						<?php _e("Whether registrants are required to answer this question.",'event_espress');?>
@@ -183,7 +196,10 @@ echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 					<?php break;
 					
 					case 'QST_admin_only':
-					$adminOnlyOptions=array(array('text'=>'Only Admins can See','id'=>1),array('text'=>'All Can See','id'=>0));
+					$adminOnlyOptions=array(
+						array('text'=>'All Can See','id'=>0),
+						array('text'=>'Only Admins can See','id'=>1)
+					);
 					echo EE_Form_Fields::select_input('QST_admin_only',$adminOnlyOptions,$question->admin_only());?>
 					<br/>
 					<p class="description">

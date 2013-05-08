@@ -269,7 +269,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 		$export_query_args = array(
 				'action' => 'export_events',
-				'event_id' => $item->event_id
+				'EVT_ID' => $item->event_id
 			);
 
 
@@ -298,6 +298,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$content .= sprintf( __('<h2>Short URL/Shortcode</h2><p>This is the short URL to this event:</p><p><span  class="updated fade">%s</span></p><p>This will show the registration form for this event just about anywhere. Copy and paste the following shortcode into any page or post.</p><p><span  class="updated fade">[SINGLEEVENT single_event_id="%s"]</span></p> <p class="red_text"> Do not use in place of the main events page that is set in the Organization Settings page.', 'event_espresso'), $view_link, stripslashes_deep($item->event_identifier) );
 		$content .= "\n";
 		$content .= '</div>';
+		$content .= '<input id="shortcode-' . $item->event_id . '" type="hidden" value="[SINGLEEVENT single_event_id='.stripslashes_deep($item->event_identifier).']">';	
 		return $content;
 	}
 

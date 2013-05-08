@@ -7,6 +7,8 @@
 
 
 	//$('#mer-registration-frm-1').validate();
+	
+	$('.close-event-queue-msg').show();
 
 
 	// move notifications from top of reg form to just before closing body tag
@@ -562,11 +564,11 @@
 			} else {
 				
 				// is this field an email address ?
-				if ( $(this).prev().attr('for') == 'email' ) {
+				if ( $(this).hasClass('email') ) {
 					// grab the addy
 					var email_address = $(this).val();
 					// send addy for validation
-					if ( validate_email_address( email_address ) ) {
+					if ( validate_email_address( email_address )) {
 						// good email addy
 						$(this).removeClass('requires-value');
 					} else {

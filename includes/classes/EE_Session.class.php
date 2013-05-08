@@ -284,7 +284,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 			$session_data = $this->encryption->decrypt( $session_data );
 
 			// unserialize
-			$this->_session_data = unserialize( $session_data );
+			$this->_session_data = maybe_unserialize( $session_data );
 
 			// just a check to make sure the sesion array is indeed an array
 			if ( ! is_array( $session_data ) ) {

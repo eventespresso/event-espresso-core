@@ -64,7 +64,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 		$this->_payment_settings['show'] = true;
 		$this->_payment_settings['invoice_css'] = '';
 		$this->_payment_settings['type'] = 'off-line';
-		$this->_payment_settings['display_name'] = 'Invoice';
+		$this->_payment_settings['display_name'] = __('Invoice','event_espresso');
 		$this->_payment_settings['current_path'] = '';
 		$this->_payment_settings['button_url'] = $this->_btn_img;
 	}
@@ -135,14 +135,14 @@ Class EE_Invoice extends EE_Offline_Gateway {
 					</th>
 					<td>
 						<p id="invoice-logo-image">
-							<input id="invoice_logo_url" type="text" size="36" name="invoice_logo_url" value="<?php echo $this->_payment_settings['invoice_logo_url']; ?>" />
-							<input id="upload_image_button" type="button" value="<?php _e('Upload Image', 'event_espresso'); ?>" />
-							<span class="description"><?php _e('(logo for the top left of the invoice)', 'event_espresso'); ?></span>
+							<span class='ee_media_uploader_area'>
+								<img class="ee_media_image" src="<?php echo $this->_payment_settings['invoice_logo_url']; ?>" />
+								<input class="ee_media_url" type="text" name="invoice_logo_url" size='34' value="<?php echo $this->_payment_settings['invoice_logo_url']; ?>">
+								<a href="#" class="ee_media_upload"><img src="images/media-button-image.gif" alt="Add an Image"></a>
+							</span><br/>
+							
+							<span class="description"><?php _e('(Logo for the top left of the invoice)', 'event_espresso'); ?></span>
 						</p>
-						<p class="invoice-logo"><img src="<?php echo $this->_payment_settings['invoice_logo_url']; ?>" alt="" /></p>
-						<!--<a id='remove-image' href='#' title='<?php _e('Remove this image', 'event_espresso'); ?>' onclick='return false;'>
-							<?php _e('Remove Image', 'event_espresso'); ?>
-						</a>-->
 					</td>
 				</tr>
 				
@@ -198,21 +198,6 @@ Class EE_Invoice extends EE_Offline_Gateway {
 						<textarea name="payment_address" cols="50" rows="5"><?php echo trim($this->_payment_settings['payment_address']); ?></textarea>
 					</td>
 				</tr>
-
-				<tr>
-					<th>
-						<label for="<?php echo $this->_gateway_name; ?>_button_url">
-							<?php _e('Button Image URL', 'event_espresso'); ?>
-						</label>
-					</th>
-					<td>
-						<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
-						<input class="regular-text" type="text" name="button_url" id="<?php echo $this->_gateway_name; ?>_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
-						<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
-					</td>
-				</tr>
-
-
 		<?php
 	}
 	

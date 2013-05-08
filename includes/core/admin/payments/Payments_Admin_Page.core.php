@@ -128,6 +128,9 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles() {
 		wp_enqueue_script('ee_admin_js');
+		wp_enqueue_media();
+		wp_enqueue_script('media-upload');
+		wp_enqueue_script('ee-payments',EE_PAYMENTS_ASSETS_URL.'/ee-payments.js');
 	}
 
 
@@ -161,7 +164,9 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 		$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
 		$gateway_instances = $EEM_Gateways->get_gateway_instances();
+		//printr( $gateway_instances, '$gateway_instances  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$payment_settings = array_key_exists('payment_settings',$gateway_data) ? $gateway_data['payment_settings'] : null;
+		//printr( $payment_settings, '$payment_settings  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		//we only really need to generate help tabs for the given gateways
 		
@@ -173,13 +178,14 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 		foreach ( $payment_settings as $gateway => $settings ) {
 			if ( $caffeinated || in_array( $gateway, $default_gateways) ) {
-				$ht_content = $gateway_instances[$gateway]->get_help_tab_content();
-				$ht_ref = 'ee_' . $gateway . '_help';
-				if ( !empty( $ht_content) )
+				$ht_content = isset( $gateway_instances[$gateway] ) ? $gateway_instances[$gateway]->get_help_tab_content() : FALSE;
+				if ( $ht_content ) {
+					$ht_ref = 'ee_' . $gateway . '_help';
 					$help_tabs[$ht_ref] = array(
 						'title' => $settings['display_name'] . __(' Help', 'event_espresso'),
 						'content' => $ht_content
-						);
+						);					
+				}
 			}
 		}
 
@@ -190,7 +196,6 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _gateway_settings() {
-		
 		global $EE_Session, $caffeinated, $EEM_Gateways, $current_user;
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
@@ -217,17 +222,19 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		
 		
 		//printr( $gateway_data, '$gateway_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$activate_trigger = $deactivate_trigger = FALSE;
+		$selected_gateway_name = null;
 		$gateways = array();
 		$default_gateways = array( 'Bank', 'Check', 'Invoice', 'Paypal_Standard' );
 		//let's assemble the array for the _tab_text_links helper
 		foreach ( $payment_settings as $gateway => $settings ) {
 
-			if (( $caffeinated || in_array( $gateway, $default_gateways ))){		
-				// activate this gateway ?
-				$activate_trigger = isset($this->_req_data['activate_' . $gateway]) && !$activate_trigger ? $gateway : $activate_trigger;
-				// or deactivate this gateway ?
-				$deactivate_trigger = isset($this->_req_data['deactivate_' . $gateway]) && !$deactivate_trigger ? $gateway : $deactivate_trigger;
+			if (( $caffeinated || in_array( $gateway, $default_gateways ))){				
+				if(	isset($this->_req_data['activate_' . $gateway]) ||
+					isset($this->_req_data['deactivate_' . $gateway]) ||
+					isset($this->_req_data['update_' . $gateway])){
+					$selected_gateway_name =  $gateway;
+				}
+				
 				// now add or remove gateways from list
 				if ( isset( $this->_req_data['activate_' . $gateway] )) {
 					$gateway_data['active_gateways'][$gateway] = array();
@@ -252,10 +259,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		}
 		//bandaid to fix bug where gateways wouldn't appear active on firsrt pag eload after activating them
 		$EE_Session->set_session_data($gateway_data,'gateway_data');
-
-		$selected_gateway_name = $activate_trigger ? $activate_trigger : FALSE;
-		$selected_gateway_name = $deactivate_trigger ? $deactivate_trigger : $activate_trigger;
-
+		
 		if ( ! $selected_gateway_name ) {
 //			$default = !empty( $gateway_data['active_gateways'] ) ? key($gateway_data['active_gateways']) : 'Paypal_Standard';
 			$selected_gateway_name = !empty( $gateways ) ? key($gateways) : 'Paypal_Standard';
@@ -294,7 +298,6 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	*		@return array
 	*/
 	protected function _update_payment_settings() {	
-
 		$data = array();
 		$data['show_pending_payment_options'] = isset( $this->_req_data['show_pending_payment_options'] ) ? absint( $this->_req_data['show_pending_payment_options'] ) : FALSE;
 		$data = apply_filters('filter_hook_espresso_payment_settings_save', $data);	

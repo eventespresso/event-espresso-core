@@ -29,3 +29,11 @@ if (file_exists($upload_dir . "custom_functions.php")){
 if (file_exists($upload_dir . "custom_shortcodes.php")){
 	require_once($upload_dir . "custom_shortcodes.php");
 }
+
+function espresso_caffeinated_activation() {
+	if (  ! defined('EE_DECAF') && file_exists( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/admin/activation.php' )) {
+		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/admin/activation.php' );
+	}
+}
+
+
