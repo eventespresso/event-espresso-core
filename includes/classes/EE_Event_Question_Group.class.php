@@ -9,20 +9,28 @@ class EE_Event_Question_Group extends EE_Base_Class{
 	protected $_EQG_primary = null;
 	protected $_Event;
 	protected $_Question_Group;
-	public function __construct( $EVT_ID = null, $QSG_ID = null ) {
-		/* @todo consolidate this logic by using constructor like EE_Answer, and ensuring each of EEM_Attendee's _field_settings has a type that performs the logic
-		 * of removing html tags, encoding htmlentities, etc.
-		 */
-		if(is_array($EVT_ID)){
-			parent::__construct($EVT_ID);
-			return;
-		}
-		$reflector = new ReflectionMethod($this,'__construct');	
-		$arrayForParent=array();
-		foreach($reflector->getParameters() as $param){
-			$paramName=$param->name;
-			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
-		}
-		parent::__construct($arrayForParent);
+
+
+	/**
+	 * Constructor
+	 *
+	 * @access protected
+	 * @param array array of values indexed by property name (without the leading underscore)
+	 * @param bool  $bydb indicates whether the model is instantiating this class or not
+	 * @return void
+	 */
+	protected function __construct( $fieldValues = array(), $bydb = FALSE ) {
+		parent::__construct( $fieldValues, $bydb );
+	}
+
+	public static function new_instance( $props_n_values = array() ) {
+		$classname = get_class( self );
+		$has_object = parent::_check_for_object( $props_n_values, $classname );
+		return $has_object ? $has_object : self::__construct( $props_n_values);
+	}
+
+
+	public static function new_instance_from_db ( $props_n_values = array() ) {
+		self::__construct( $props_n_values, TRUE );
 	}
 }
