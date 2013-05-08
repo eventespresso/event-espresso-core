@@ -356,7 +356,7 @@ function espresso_updated_pages() {
 }
 
 function espresso_page_problems() {
-	if ( $_GET['page'] != 'espresso_general_settings' ) {
+	if ( isset( $_GET['page'] ) && $_GET['page'] != 'espresso_general_settings' ) {
 		echo '<div class="updated"><p><strong>' . __('A potential issue has been detected with one or more of your Event Espresso pages. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=espresso_general_settings') . '">' . __('Event Espresso Critical Pages Settings', 'event_espresso') . '</a>  ' . __('to view your Event Espresso pages.', 'event_espresso') . '</strong></p></div>';
 	}
 }
