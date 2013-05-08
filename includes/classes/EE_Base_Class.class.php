@@ -91,6 +91,7 @@ class EE_Base_Class{
 						$relationName,get_class($model),get_class($this),$this->_get_private_attribute_name($relationName),get_class($this)));
 			}
 		}
+		$this->_timezone = $timezone;
 	}
 
 
@@ -106,6 +107,8 @@ class EE_Base_Class{
 	public function set($field_name,$field_value,$use_default= false){
 		$privateAttributeName=$this->_get_private_attribute_name($field_name);
 		$field_obj = $this->get_model()->field_settings_for($field_name);
+		if ( method_exists( $field_obj, 'set_timezone' ) )
+			$field_obj->set_timezone( $this->_timezone );
 		 $holder_of_value = $field_obj->prepare_for_set($field_value);
 		 if( ($holder_of_value === NULL || $holder_of_value ==='') && $use_default){
 			 $this->$privateAttributeName = $field_obj->get_default_value();
