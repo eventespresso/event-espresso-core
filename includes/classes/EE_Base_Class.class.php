@@ -459,6 +459,36 @@ class EE_Base_Class{
 	}
 
 
+
+
+	/**
+	 * This is called by child static "new_instance" method and we'll check to see if there is an existing db entry for the primary key (if present in incoming values).  If there is a key in the incoming array that matches the primary key for the model AND it is not null, then we check the db. If there's a an object we return it.  If not we return false.
+	 * @param  array  $props_n_values incoming array of properties and their values
+	 * @param  string $classname      the classname of the child class
+	 * @return mixed (EE_Base_Class|bool)
+	 */
+	protected static function _check_for_object( $props_n_values, $classname ) {
+		$primary_id_ref = self::_get_primary_key_name( $classname );
+
+		if ( array_key_exists( $primary_id_ref, $props_n_values ) && !empty( $props_n_valuse[$primary_id_ref] ) ) {
+			$existing = self::_get_model($classname)->get_one_by_ID( $props_n_values[$primary_id_ref] );
+			if ( $existing ) {
+				foreach ( $props_n_values as $property => $field_value ) {
+					$existing->set( $property, $field_value );
+				}
+				return $existing;
+			} else {
+				return FALSE;
+			}
+		}
+		return FALSE;
+	}
+
+
+
+
+
+
 	/**
 	 * Gets the EEM_*_Model for this class
 	 * @access public now, as this is more convenient 
