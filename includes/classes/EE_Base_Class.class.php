@@ -554,7 +554,6 @@ class EE_Base_Class{
 	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object
 	 * @param string $relationName eg 'Events','Question',etc.
 	 * an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specificy array('role-column-name'=>'role-id')
-	 
 	 * @return boolean success
 	 */
 	public function _add_relation_to($otherObjectModelObjectOrID,$relationName){

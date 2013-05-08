@@ -263,72 +263,32 @@ class EE_Registration extends EE_Base_Class {
 
 
 	/**
-	*  Registration constructor
-	*
-	* @access 		public
-	* @param 		int/array 				$EVT_ID 							Event ID or array of column-values, where keys are column names
-	* @param 		int 				$ATT_ID 							Attendee ID
-	* @param 		int 				$TXN_ID 							Transaction ID
-	* @param 		int 				$DTT_ID 							Transaction ID
-	* @param 		int 				$PRC_ID 							Transaction ID
-	* @param 		int				$STS_ID		 					Status ID
-	* @param 		int				$REG_date					 	Registration Date
-	* @param 		float				$REG_final_price			Price Paid
-	* @param 		string			$REG_session  				PHP Session ID
-	* @param 		string 			$REG_code  					Registration Code
-	* @param 		string 			$REG_url_link					Registration URL Link
-	* @param 		int				$REG_count 					Attendee Counter
-	* @param 		boolean		$REG_group_size			Group Size
-	* @param 		boolean		$REG_att_is_going		 	Attendee Is Going
-	* @param 		boolean		$REG_att_checked_in	Attendee Checked In
-	* @param 		int 				$REG_ID 							Registration ID
-	*/
-	public function __construct( 
-													$EVT_ID = NULL, 
-													$ATT_ID = NULL, 
-													$TXN_ID = NULL, 
-													$DTT_ID = NULL, 
-													$PRC_ID = NULL, 
-													$STS_ID = NULL, 
-													$REG_date = NULL, 
-													$REG_final_price = NULL, 
-													$REG_session = NULL, 
-													$REG_code = NULL, 
-													$REG_url_link = NULL, 
-													$REG_count = 1, 
-													$REG_group_size = 1, 
-													$REG_att_is_going = NULL, 
-													$REG_att_checked_in = NULL, 
-													$REG_ID = NULL 
-												) {
-		if(is_array($EVT_ID)){
-			parent::__construct($EVT_ID);
-			return;
-		}
-		$reflector = new ReflectionMethod($this,'__construct');	
-		$arrayForParent=array();
-		foreach($reflector->getParameters() as $param){
-			$paramName=$param->name;
-			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
-		}
-		parent::__construct($arrayForParent);											
-		// REG_ID 	EVT_ID 	ATT_ID 	TXN_ID 	DTT_ID 	PRC_ID 	STS_ID 	REG_date 	REG_session 	REG_code 	REG_count 	REG_group_size 	REG_att_is_going 	REG_att_checked_in
-//		$this->_REG_ID 						= $REG_ID;
-//		$this->_EVT_ID 						= $EVT_ID;
-//		$this->_ATT_ID 						= $ATT_ID;
-//		$this->_TXN_ID 						= $TXN_ID;
-//		$this->_DTT_ID 						= $DTT_ID;
-//		$this->_PRC_ID 						= $PRC_ID;
-//		$this->_STS_ID 						= $STS_ID;
-//		$this->_REG_date 					= $REG_date;
-//		$this->_REG_final_price			= $REG_final_price;
-//		$this->_REG_session 				= $REG_session;
-//		$this->_REG_code					= $REG_code;
-//		$this->_REG_url_link				= $REG_url_link;
-//		$this->_REG_count 					= $REG_count;
-//		$this->_REG_group_size 		= $REG_group_size;
-//		$this->_REG_att_is_going 		= $REG_att_is_going;
-//		$this->_REG_att_checked_in	= $REG_att_checked_in;
+	 * Constructor
+	 *
+	 * @access protected
+	 * @param array array of values indexed by property name (without the leading underscore)
+	 * @param bool  $bydb indicates whether the model is instantiating this class or not
+	 * @param string $timezone valid timezone string (optional)
+	 * @return void
+	 */
+	protected function __construct( $fieldValues = array(), $bydb = FALSE, $timezone = NULL ) {
+		parent::__construct($fieldValues, $bydb, $timezone);	
+	}
+
+
+
+
+	public static function new_instance( $props_n_values = array(), $timezone = NULL ) {
+		$classname = get_class( self );
+		$has_object = parent::_check_for_object( $props_n_values, $classname );
+		return $has_object ? $has_object : self::__construct( $props_n_values, FALSE, $timezone );
+	}
+
+
+
+
+	public static function new_instance_from_db ( $props_n_values = array() ) {
+		self::__construct( $props_n_values, TRUE );
 	}
 
 
