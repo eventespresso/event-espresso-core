@@ -163,72 +163,31 @@ class EE_Payment extends EE_Base_Class{
 
 
 	/**
-	*  Payment constructor
-	*
-	* @access 		public
-	* @param 		int/array				$TXN_ID		 							Transaction ID or array of all column values, where keys are column names
-	* @param 		string				$STS_ID		 							Payment Status
-	* @param 		int 					$PAY_timestamp 					Payment Timestamp
-	* @param 		string 				$PAY_method							Payment Method
-	* @param 		float 				$PAY_amount							Payment Amount
-	* @param 		string 				$PAY_gateway						Payment Gateway 
-	* @param 		string 				$PAY_gateway_response		Payment Gateway Response
-	* @param 		string 				$PAY_txn_id_chq_nmbr			Payment Gateway Transaction ID
-	* @param 		string 				$PAY_po_number					Payment Purchase Order Number
-	* @param 		string 				$PAY_extra_accntng				Payment Extra Accounting Field
-	* @param 		string 				$PAY_via_admin						Payment made via admin
-	* @param 		string 				$PAY_details							Payment Details
-	* @param 		int 					$PAY_ID 									Payment ID
-	*/
-	public function __construct( 
-														$TXN_ID = FALSE, 
-														$STS_ID = FALSE, 
-														$PAY_timestamp = NULL, 
-														$PAY_method = NULL, 
-														$PAY_amount = NULL, 
-														$PAY_gateway = NULL, 
-														$PAY_gateway_response = NULL, 
-														$PAY_txn_id_chq_nmbr = NULL, 
-														$PAY_po_number = NULL, 
-														$PAY_extra_accntng = NULL, 
-														$PAY_via_admin = NULL, 
-														$PAY_details = NULL, 
-														$PAY_ID = FALSE 
-													) {
-		if(is_array($TXN_ID)){
-			parent::__construct($TXN_ID);
-			return;
-		}
-		$reflector = new ReflectionMethod($this,'__construct');	
-		$arrayForParent=array();
-		foreach($reflector->getParameters() as $param){
-			$paramName=$param->name;
-			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
-		}
-		parent::__construct($arrayForParent);											
-		// filter out unwanted junk from Pay_details
-//		if ( is_array( $PAY_details )) {
-//			array_walk_recursive( $PAY_details, array( $this, '_strip_all_tags_within_array' ));
-//		} else {
-//			$PAY_details =  wp_strip_all_tags( $PAY_details );
-//		}
-//
-//		$this->_PAY_ID 								= absint( $PAY_ID );
-//		$this->_TXN_ID 								= absint( $TXN_ID );
-//		$this->_STS_ID 								= strtoupper( sanitize_key( $STS_ID ));
-//		$this->_PAY_timestamp			 	= $PAY_timestamp != NULL ? ( is_numeric( $PAY_timestamp ) ? absint( $PAY_timestamp ) : strtotime( $PAY_timestamp )) : time();
-//		$this->_PAY_method 					= strtoupper( sanitize_key( $PAY_method ));
-//		$this->_PAY_amount					= floatval( preg_replace( '/[^-0-9.]*/', '', preg_replace( '/,/', '.', $PAY_amount )));
-//		$this->_PAY_gateway					= wp_strip_all_tags( $PAY_gateway );
-//		$this->_PAY_gateway_response	= htmlentities( wp_strip_all_tags( $PAY_gateway_response ), ENT_QUOTES, 'UTF-8' ); 
-//		$this->_PAY_txn_id_chq_nmbr		=  wp_strip_all_tags( $PAY_txn_id_chq_nmbr );
-//		$this->_PAY_po_number				=  wp_strip_all_tags( $PAY_po_number ) ;
-//		$this->_PAY_extra_accntng			= wp_strip_all_tags( $PAY_extra_accntng );
-//		$this->_PAY_via_admin				= absint( $PAY_via_admin ) ? TRUE : FALSE;
-//		$this->_PAY_details						= maybe_serialize( $PAY_details );
+	 * Constructor
+	 *
+	 * @access protected
+	 * @param array array of values indexed by property name (without the leading underscore)
+	 * @param bool  $bydb indicates whether the model is instantiating this class or not
+	 * @param string $timezone valid timezone string (optional)
+	 * @return void
+	 */
+	protected function __construct( $fieldValues = array(), $bydb = FALSE, $timezone = NULL ) {
+		parent::__construct($fieldValues, $bydb, $timezone );											
 	}
 
 
+
+
+	public static function new_instance( $props_n_values = array() ) {
+		$classname = get_class( self );
+		$has_object = parent::_check_for_object( $props_n_values, $classname );
+		return $has_object ? $has_object : self::__construct( $props_n_values);
+	}
+
+
+	public static function new_instance_from_db ( $props_n_values = array() ) {
+		self::__construct( $props_n_values, TRUE );
+	}
 
 
 
@@ -668,7 +627,7 @@ class EE_Payment extends EE_Base_Class{
 		}
 		// recalculate and set  total paid
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
-		$PAY_MODEL = EEM_Payment::instance();
+		$PAY_MODEL = EEM_Payment::instance( $this->_timezone );
 		$success = $PAY_MODEL->update_payment_transaction( $this, 'processed' );
 		return $success;
 	}
