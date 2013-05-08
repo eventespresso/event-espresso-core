@@ -60,7 +60,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$this->_payment_settings['use_sandbox'] = false;
 		$this->_payment_settings['no_shipping'] = '0';
 		$this->_payment_settings['type'] = 'off-site';
-		$this->_payment_settings['display_name'] = 'Paypal';
+		$this->_payment_settings['display_name'] = __('Paypal','event_espresso');
 		$this->_payment_settings['current_path'] = '';
 		$this->_payment_settings['button_url'] = $this->_btn_img;
 	}
@@ -253,15 +253,22 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		</tr>
 
 		<tr>
-			<th><label for="pp_image_url">
+			<th>
+				<label for="pp_image_url">
 					<?php _e('Image URL', 'event_espresso'); ?>
 					<?php echo EE_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
-				</label></th>
-			<td><input class="regular-text" type="text" name="image_url" id="pp_image_url" size="35" value="<?php echo $this->_payment_settings['image_url']; ?>" />
-				<br />
+				</label>
+			</th>
+			<td>
+				<span class='ee_media_uploader_area'>
+					<img class="ee_media_image" src="<?php echo $this->_payment_settings['image_url']; ?>" />
+					<input class="ee_media_url" type="text" name="image_url" size='34' value="<?php echo $this->_payment_settings['image_url']; ?>">
+					<a href="#" class="ee_media_upload"><img src="images/media-button-image.gif" alt="Add an Image"></a>
+				</span><br/>
 				<span class="description">
 					<?php _e('Used for your business/personal logo on the PayPal page', 'event_espresso'); ?>
-				</span></td>
+				</span>
+			</td>
 		</tr>
 		
 		<tr>
@@ -290,25 +297,11 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			?>
 			</td>
 		</tr>
-
-		<tr>
-			<th>
-				<label for="<?php echo $this->_gateway_name; ?>_button_url">
-					<?php _e('Button Image URL', 'event_espresso'); ?>
-				</label>
-			</th>
-			<td>
-				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
-				<input class="regular-text" type="text" name="button_url" id="<?php echo $this->_gateway_name; ?>_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
-				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
-			</td>
-		</tr>
 		<?php
 	}
 
 	protected function _display_settings_help() {
-		?>
-			
+		?>		
 		<div id="sandbox_info" style="display:none">
 			<h2>
 				<?php _e('PayPal Sandbox', 'event_espresso'); ?>

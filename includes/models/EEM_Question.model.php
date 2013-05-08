@@ -72,7 +72,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 				'QST_required_text'=>new EE_Model_Field( __('Required Text','event_espresso'), 'simplehtml', true,  __('This field is required','event_espresso'), null, null),
 				'QST_order'=>new EE_Model_Field( __('Order','event_espresso'), 'int', false, 0, null, null),
 				'QST_admin_only'=>new EE_Model_Field( __('For Admins Only','event_espresso'),'bool',false,false,null,null),
-				'QST_wp_user'=>new EE_Model_Field( __('WP User ID','event_espresso'), 'foreign_key', true, 1, null, 'WP_User'),
+				'QST_wp_user'=>new EE_Model_Field( __('WP User ID','event_espresso'), 'int', true, 1, null),//yes this should be a foreign key, but we don't have a model for WP_Users yet...
 				'QST_deleted'=>new EE_Model_Field( __('Deleted','event_espresso'),'deleted_flag',false,false,null,null)
 			);
 		$this->_related_models=array(
@@ -87,6 +87,31 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 			);
 		
 		parent::__construct();
+	}
+	
+	/**
+	 * Gets an array for converting between QST_system and QST_IDs for system questions. Eg, if you want to know 
+	 * which system question QST_ID corresponds to the QST_system 'city', use EEM_Question::instance()->get_Question_ID_from_system_string('city');
+	 * @return int of QST_ID for the question that corresponds to that QST_system
+	 */
+	public function get_Question_ID_from_system_string($QST_system){
+		 $conversion_array = array(
+			'fname'=> EEM_Attendee::fname_question_id,
+			'lname'=> EEM_Attendee::lname_question_id,
+			'email'=> EEM_Attendee::email_question_id,
+			'address'=> EEM_Attendee::address_question_id,
+			'address2'=> EEM_Attendee::address2_question_id,
+			'city'=> EEM_Attendee::city_question_id,
+			'state'=> EEM_Attendee::state_question_id,
+			'country'=> EEM_Attendee::country_question_id,
+			'zip'=> EEM_Attendee::zip_question_id,
+			'phone'=> EEM_Attendee::phone_question_id
+		);
+		 if(array_key_exists($QST_system, $conversion_array)){
+			return $conversion_array[$QST_system];
+		 }else{
+			 return null;
+		 }
 	}
 	
 	

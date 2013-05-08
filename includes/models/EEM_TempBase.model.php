@@ -907,14 +907,14 @@ class EE_Model_Field{
 		if(!in_array($type,$this->_allowed_types)){
 			throw new EE_Error(sprintf(__("Event Espresso error. Field %s is of type %s, but only these are the only allowed types %s",'event_espresso'),$nicename,$type,implode(",",$this->_allowed_types)));
 		}
-		if($type=='foreign_key' || $type=='foreign_text_field'){
-			if(!$class){
+		if($type=='foreign_key' || $type=='foreign_text_key'){
+			if( empty( $class )){
 				throw new EE_Error(sprintf(__("Event Espresso error. Field %s is of type 'foreign_key', but is missing the 'class' setting",'event_espresso'),$nicename));
 			}
 			//next verify the class is real
-			$phpFilePath="EE_".$class.".class.php";
-			if(file_exists($phpFilePath)){
-				throw new EE_Error(sprintf(__("Event Espresso error. Class %s on field %s in class %s doesn't have a php file!",'event_espresso'),$phpFilePath,$nicename));
+			$phpFilePath="EE_$class.class.php";
+			if( ! file_exists( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/' . $phpFilePath )){
+				throw new EE_Error(sprintf(__("Event Espresso error. Field %s in class %s doesn't have a corresponding %s file!",'event_espresso'), $nicename, "EE_$class", "EE_$class.class.php" ));
 			}
 		}
 		if($type=='enum' && !$allowedEnumValues){
