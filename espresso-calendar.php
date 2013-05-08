@@ -712,7 +712,7 @@ if (!function_exists('espresso_calendar')) {
 					//Abbreviated names of days-of-week.
 					dayNamesShort: [<?php echo stripslashes_deep($espresso_calendar['espresso_calendar_dayNamesShort']); ?>/*'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'*/],
 
-					//Load the events into json srrsy
+					//Load the events into json feed
 					events: <?php echo json_encode($events) ?>,
 					
 					viewDisplay: function(view) {
