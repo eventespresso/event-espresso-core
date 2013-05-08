@@ -1363,7 +1363,7 @@ function espresso_default_status_codes() {
 				('RCN', 'CANCELLED', 'registration', 0, NULL, 0),
 				('RNA', 'NOT_APPROVED', 'registration', 0, NULL, 0),
 				('TIN', 'INCOMPLETE', 'transaction', 0, NULL, 0),
-				('TPN', 'PENDING', 'transaction', 0, NULL, 1),
+				('TPN', 'OPEN', 'transaction', 0, NULL, 1),
 				('TCM', 'COMPLETE', 'transaction', 0, NULL, 1),
 				('TOP',	'OVERPAID', 'transaction', 0, NULL, 1),
 				('PAP', 'APPROVED', 'payment', 0, NULL, 1),
@@ -1477,7 +1477,7 @@ function espresso_default_countries() {
 		$countries = $wpdb->get_var($SQL);
 		if ( ! $countries ) {
 			$SQL = "INSERT INTO " . ESP_COUNTRY . " 
-			(CNT_ISO, CNT_ISO3, RGN_ID, CNT_name, CNT_cur_code, CNT_cur_single, CNT_cur_plural, CNT_cur_sign, CNT_cur_sign_b4, CNT_cur_dec, CNT_tel_code, CNT_is_EU, CNT_active) VALUES
+			(CNT_ISO, CNT_ISO3, RGN_ID, CNT_name, CNT_cur_code, CNT_cur_single, CNT_cur_plural, CNT_cur_sign, CNT_cur_sign_b4, CNT_cur_dec_plc, CNT_tel_code, CNT_is_EU, CNT_active) VALUES
 			('AD', 'AND', 0, 'Andorra', 'EUR', 'Euro', 'Euros', '&#8364;', 1, 2, '+376', 0, 0),
 			('AE', 'ARE', 0, 'United Arab Emirates', 'AED', 'Dirham', 'Dirhams', '&#1583;.&#1573;', 1, 2, '+971', 0, 0),
 			('AF', 'AFG', 0, 'Afghanistan', 'AFN', 'Afghani', 'Afghanis', '&#1547;', 1, 2, '+93', 0, 0),
