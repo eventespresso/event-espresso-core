@@ -1483,10 +1483,8 @@ abstract class EEM_Base extends EE_Base{
 		//get the required info to instantiate the class whcih relates to this model.
 		$className=$this->_get_class_name();
 
-		$class=new ReflectionClass($className);
-		//call the constructor of the EE_Base_Class, passing it an array of all the fields, except
-		//the ID, because we set that later
-		$classInstance=$class->newInstanceArgs(array($this_model_fields_n_values, TRUE) );
+		$classInstance = call_user_func_array( array( $className, 'new_instance_from_db' ), array( $this_model_fields_n_values, TRUE ) );
+
 		return $classInstance;
 	}
 	/**
