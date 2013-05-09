@@ -425,14 +425,14 @@ class EE_Base_Class{
 	
 		}
 		//if the object already has an ID, update it. Otherwise, insert it
-		if ( !empty( $save_cols_n_values[self::_get_primary_key_name()] ) ){
+		if ( !empty( $save_cols_n_values[self::_get_primary_key_name( get_class($this) )] ) ){
 			$results = $this->_get_model()->update ( $save_cols_n_values, array(array(self::_get_primary_key_name()=>$this->ID())), true );
 		} else {
-			unset($save_cols_n_values[self::_get_primary_key_name()]);
+			unset($save_cols_n_values[self::_get_primary_key_name( get_class( $this) )]);
 			
 			$results = $this->get_model()->insert ( $save_cols_n_values, true);
 			if($results){//if successful, set the primary key
-				$this->set(self::_get_primary_key_name(),$results);//for some reason the new ID is returned as part of an array,
+				$this->set(self::_get_primary_key_name( get_class($this) ),$results);//for some reason the new ID is returned as part of an array,
 				//where teh only key is 'new-ID', and it's value is the new ID.
 			}
 		}
@@ -457,7 +457,7 @@ class EE_Base_Class{
 	 * @return EEM_Base model object
 	 */
 	public function get_model() {
-		$modelName = self::_get_model_classname();
+		$modelName = self::_get_model_classname( get_class($this) );
 		return self::_get_model_instance_with_name($modelName);
 	}
 
@@ -521,12 +521,7 @@ class EE_Base_Class{
 	 * @return string
 	 */
 	private static function _get_model_classname( $model_name = null){
-		if($model_name){
-			$className = "EE_".$model_name;
-		}else{
-			$className=get_class($this);
-		}
-		$modelName=str_replace("EE_","EEM_",$className);
+		$modelName=str_replace("EE_","EEM_",$model_name);
 		return $modelName;
 	}
 	
@@ -543,7 +538,7 @@ class EE_Base_Class{
 	 */
 	public function ID(){
 		//get the name of teh primary key for this class' model, then find what php class attribute's name
-		$pk_field_parameter = $this->_get_private_attribute_name(self::_get_primary_key_name());
+		$pk_field_parameter = $this->_get_private_attribute_name(self::_get_primary_key_name( get_class($this) ));
 		//now that we know the name of the variable, use a variable variable to get its value and return its 
 		return $this->$pk_field_parameter;
 	}
