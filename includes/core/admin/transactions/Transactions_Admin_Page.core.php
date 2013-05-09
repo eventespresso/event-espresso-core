@@ -721,7 +721,13 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['prime_reg_address'] = $this->_transaction->ATT_address;
 		$this->_template_args['prime_reg_address2'] = ( ! empty ( $this->_transaction->ATT_address2 )) ? '<br />' . $this->_transaction->ATT_address2 : '';
 		$this->_template_args['prime_reg_city'] = ( ! empty ( $this->_transaction->ATT_city )) ? '<br />' . $this->_transaction->ATT_city : '';
-		$this->_template_args['prime_reg_state'] = ( ! empty ( $this->_transaction->STA_ID )) ? '<br />' . $this->_transaction->STA_ID . ', ' : '';
+		$STA_ID = ! empty ( $this->_transaction->STA_ID ) ? $this->_transaction->STA_ID : FALSE;
+		if ( $STA_ID ) {
+			$state = EEM_State::instance()->get_one_by_ID( $STA_ID );
+			$this->_template_args['prime_reg_state'] = '<br />' . $state->get( 'STA_name' ) . ', ';
+		} else {
+			$this->_template_args['prime_reg_state'] = '<br />';
+		}
 		$this->_template_args['prime_reg_country'] = ( ! empty ( $this->_transaction->CNT_ISO )) ? $this->_transaction->CNT_ISO : '';
 		$this->_template_args['prime_reg_zip'] = ( ! empty ( $this->_transaction->ATT_zip )) ? '<br />' . $this->_transaction->ATT_zip : '';
 		$this->_template_args['prime_reg_phone'] = $this->_transaction->ATT_phone;
@@ -915,7 +921,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$transaction = $payment->transaction();
 			$this->_get_payment_status_array();
 			$return_data['amount'] = $payment->amount();
-			$return_data['total_paid'] = $transaction->total();
+			$return_data['total_paid'] = $transaction->paid();
 			$return_data['txn_status'] = $transaction->status_ID();
 			$return_data['pay_status'] = $payment->STS_ID();
 			$return_data['PAY_ID'] = $payment->ID();
@@ -955,18 +961,19 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*/
 	public function delete_payment() {
 	
-		$return_data = FALSE;
+		$return_data = array();
 		
 		if ( isset( $this->_req_data['ID'] )) {
 			if ( $PAY_ID = absint( $this->_req_data['ID'] )) {
-				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
-				$PAY_MODEL = EEM_Payment::instance();
-				$return_data = $PAY_MODEL->delete_payment( $PAY_ID );
-				$return_data['PAY_ID'] = $PAY_ID;
+				//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
+				if ( $return_data = EEM_Payment::instance()->delete_payment( $PAY_ID )) {
+					$return_data['PAY_ID'] = $PAY_ID;
+				}	
 			}
 		} else {
 			$msg = __( 'An error occured. The payment form data could not be loaded.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );		
+			$return_data = FALSE;	
 		}
 		$notices = EE_Error::get_notices( FALSE, FALSE, FALSE );
 
