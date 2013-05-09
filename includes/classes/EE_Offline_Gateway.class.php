@@ -51,32 +51,12 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $EE_Session;
 		//check for an existing payment from this gateway
-/*		$payments = $this->_PAY->get_all_where(array('PAY_gateway'=>$this->gateway(),'TXN_ID'=>$transaction->ID()));
+		$payments = $this->_PAY->get_all_where(array('PAY_gateway'=>$this->gateway(),'TXN_ID'=>$transaction->ID()));
 		//if it already exists, short-circuit updating the transaction
-		if(empty($payments)){
-			//no payment so far, create one
-			$payment = new EE_Payment(
-				$transaction->ID(), 
-				EEM_Payment::status_id_pending, 
-				$transaction->datetime(), 
-				'CART', // this should be the type of payment as in Invoice, Money Order, Credit Card, PayPal, etc
-				NULL, 
-				$this->gateway(), 
-				__("Payment is pending. Your registration is not complete until payment is received",'event_espresso'),
-				null,
-				null,
-				null,
-				false,
-				array()
-			);
-			$payment->save();
-			$success = $this->update_transaction_with_payment($transaction, $payment);
-			$EE_Session->set_session_data(array('txn_results' => serialize($transaction->details())), 'session_data');
-			$session = $EE_Session->get_session_data();
-			//prevent trying to serialize a recursive relationship
-			unset($session['transaction']);
-			$transaction->set_txn_session_data( $session );
-		}*/
+		if( empty( $payments )){
+			$transaction->set_status('TPN');
+			$transaction->save();
+		}
 		parent::thank_you_page_logic($transaction);
 		//check that there's still a transaction in the session.
 		//if there isn't, maybe we've cleared it (session ended with the thank you page)
