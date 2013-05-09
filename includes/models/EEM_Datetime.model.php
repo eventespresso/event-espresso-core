@@ -121,15 +121,17 @@ class EEM_Datetime extends EEM_Base {
 	*/
 	public function create_new_blank_datetime() {
 		$times = array( 
-				new EE_Datetime( 
-						0, 
-						true, 
-						time('timestamp') + (60 * 60 * 24 * 30), 
-						time('timestamp') + (60 * 60 * 24 * 30), 
-						time('timestamp'), 
-						time('timestamp') + (60 * 60 * 24 * 30) 
+				EE_Datetime::new_instance_from_db( 
+					array(
+						'EVT_ID' => 0, 
+						'DTT_is_primary' => true, 
+						'DTT_EVT_start' => time('timestamp') + (60 * 60 * 24 * 30), 
+						'DTT_EVT_end' => time('timestamp') + (60 * 60 * 24 * 30), 
+						'DTT_REG_start' => time('timestamp'), 
+						'DTT_REG_end' => time('timestamp') + (60 * 60 * 24 * 30) 
 						/*NULL,
 						NULL*/
+					)
 				)
 		);
 

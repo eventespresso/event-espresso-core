@@ -1572,9 +1572,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
-		$DTM = EEM_Datetime::instance();
+		//set timezone
+		$timezone = isset( $this->_req_data['timezone_string'] ) ? $this->_req_data['timezone_string'] : NULL;
+		$DTM = EEM_Datetime::instance( $timezone );
+
 
 //		printr( $this->_req_data['event_datetimes'] ); die();
+
 
 		$q = 1;
 		foreach ($this->_req_data['event_datetimes'] as $event_datetime) {
@@ -1658,7 +1662,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 			//echo printr( $new_ticket_price, '$new_ticket_price' );
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
-			$PRC = EEM_Price::instance();
+			$PRC = EEM_Price::instance( $timezone );
 
 			global $current_user;
 			get_currentuserinfo();
@@ -1672,26 +1676,29 @@ class Events_Admin_Page extends EE_Admin_Page {
 				$overrides = $ticket_price['PRC_overrides'] ? absint($ticket_price['PRC_overrides']) : $overrides;
 //echo '<h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 				// create ticket object
-				$new_price = new EE_Price(
-												$ticket_price['PRT_ID'],
-												absint($last_event_id),
-												$ticket_price['PRC_amount'],
-												$ticket_price['PRC_name'],
-												$ticket_price['PRC_desc'],
-												isset( $ticket_price['PRC_reg_limit'] ) ? $ticket_price['PRC_reg_limit'] : NULL,
-												NULL,
-												$ticket_price['PRC_use_dates'] ? TRUE : FALSE,
-												$ticket_price['PRC_start_date'],
-												$ticket_price['PRC_end_date'],
+				$new_price = EE_Price::new_instance(
+					array(
+						'PRT_ID' => $ticket_price['PRT_ID'],
+						'EVT_ID' => absint($last_event_id),
+						'PRC_amount' => $ticket_price['PRC_amount'],
+						'PRC_name' => $ticket_price['PRC_name'],
+						'PRC_desc' => $ticket_price['PRC_desc'],
+						'PRC_reg_limit' => isset( $ticket_price['PRC_reg_limit'] ) ? $ticket_price['PRC_reg_limit'] : NULL,
+						'PRC_tckts_left' => NULL,
+						'PRC_use_dates' => $ticket_price['PRC_use_dates'] ? TRUE : FALSE,
+						'PRC_start_date' => $ticket_price['PRC_start_date'],
+						'PRC_end_date' => $ticket_price['PRC_end_date'],
 /*												FALSE,
-												FALSE,
-												0,
-												TRUE,
-												$current_user->ID,*/
-												$ticket_price['PRC_is_active'] ? TRUE : FALSE,
-												$overrides,
-												$ticket_price['PRT_ID'] < 3 ? 0 : $ticket_price['PRC_order'],
-												$ticket_price['PRC_deleted']
+						FALSE,
+						0,
+						TRUE,
+						$current_user->ID,*/
+						'PRC_is_active' => $ticket_price['PRC_is_active'] ? TRUE : FALSE,
+						'PRC_overrides' => $overrides,
+						'PRC_order' => $ticket_price['PRT_ID'] < 3 ? 0 : $ticket_price['PRC_order'],
+						'PRC_deleted' => $ticket_price['PRC_deleted']
+					),
+					$timezone
 				);
 
 //                    echo printr( $ticket_price, '$ticket_price' );
@@ -2114,18 +2121,20 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 					//	EVT_ID 	DTT_is_primary 	DTT_EVT_start 	DTT_EVT_end 	DTT_REG_start 	DTT_REG_end 	DTT_event_or_reg 	DTT_reg_limit 	DTT_tckts_left 	 DTT_ID
-					$new_event_date = new EE_Datetime(
-													$event_id,
-													$dtm['is_primary'],
-													$dtm['evt_start'],
-													$dtm['evt_end'],
-													$dtm['reg_start'],
-													$dtm['reg_end'],
-													/* DO NOT DELETE - NEW FEATURE IN PROGRESS 
-													$dtm['reg_limit'],
-													$dtm['tckts_left'],
-													DO NOT DELETE - NEW FEATURE IN PROGRESS   */
-													isset( $dtm['ID'] ) ? $dtm['ID'] : NULL
+					$new_event_date = EE_Datetime::new_instance(
+						array(
+							'EVT_ID' => $event_id,
+							'DTT_is_primary' => $dtm['is_primary'],
+							'DTT_EVT_start' => $dtm['evt_start'],
+							'DTT_EVT_end' => $dtm['evt_end'],
+							'DTT_REG_start' => $dtm['reg_start'],
+							'DTT_REG_end' => $dtm['reg_end'],
+							/* DO NOT DELETE - NEW FEATURE IN PROGRESS 
+							$dtm['reg_limit'],
+							$dtm['tckts_left'],
+							DO NOT DELETE - NEW FEATURE IN PROGRESS   */
+							'DTT_ID' => isset( $dtm['ID'] ) ? $dtm['ID'] : NULL
+						), $timezone_string
 					);
 					
 					// copy primary datetime info for event post
@@ -2228,23 +2237,25 @@ class Events_Admin_Page extends EE_Admin_Page {
 				$overrides = $ticket_price['PRC_overrides'] ? absint($ticket_price['PRC_overrides']) : $overrides;
 //echo '<h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 				$ticket_price['PRC_order'] = $PRC_ID ? $ticket_price['PRC_order'] : $ticket_price['PRC_order'][ $ticket_price['PRT_ID'] ];
-				$new_price = new EE_Price(
-												$ticket_price['PRT_ID'],
-												absint($event_id),
-												$ticket_price['PRC_amount'],
-												$ticket_price['PRC_name'],
-												$ticket_price['PRC_desc'],
-												isset( $ticket_price['PRC_reg_limit'] ) ? $ticket_price['PRC_reg_limit'] : NULL,
-												isset( $ticket_price['PRC_tckts_left'] ) ? $ticket_price['PRC_tckts_left'] : NULL,
-												isset( $ticket_price['PRC_use_dates'] ) ? $ticket_price['PRC_use_dates'] : FALSE,
-												isset( $ticket_price['PRC_start_date'] ) ? $ticket_price['PRC_start_date'] : FALSE,
-												isset( $ticket_price['PRC_end_date'] ) ? $ticket_price['PRC_end_date'] : FALSE,
-												$ticket_price['PRC_is_active'] ? TRUE : FALSE,
-												$overrides,
+				$new_price = EE_Price::new_instance(
+					array(
+						'PRT_ID' => $ticket_price['PRT_ID'],
+						'EVT_ID' => absint($event_id),
+						'PRC_amount' => $ticket_price['PRC_amount'],
+						'PRC_name' => $ticket_price['PRC_name'],
+						'PRC_desc' => $ticket_price['PRC_desc'],
+						'PRC_reg_limit' => isset( $ticket_price['PRC_reg_limit'] ) ? $ticket_price['PRC_reg_limit'] : NULL,
+						'PRC_tckts_left' => isset( $ticket_price['PRC_tckts_left'] ) ? $ticket_price['PRC_tckts_left'] : NULL,
+						'PRC_use_dates' => isset( $ticket_price['PRC_use_dates'] ) ? $ticket_price['PRC_use_dates'] : FALSE,
+						'PRC_start_date' => isset( $ticket_price['PRC_start_date'] ) ? $ticket_price['PRC_start_date'] : FALSE,
+						'PRC_end_date' => isset( $ticket_price['PRC_end_date'] ) ? $ticket_price['PRC_end_date'] : FALSE,
+						'PRC_is_active' => $ticket_price['PRC_is_active'] ? TRUE : FALSE,
+						'PRC_overrides' => $overrides,
 //												$ticket_price['PRT_ID'] < 3 ? 0 : $ticket_price['PRC_order'],
-												$ticket_price['PRC_order'],
-												isset( $ticket_price['PRC_deleted'] ) ? $ticket_price['PRC_deleted'] : FALSE,
-												$ticket_price['PRT_is_global'] == 1 &&  ! isset ( $PRC_ID ) ? 0 : $PRC_ID
+						'PRC_order' => $ticket_price['PRC_order'],
+						'PRC_deleted' => isset( $ticket_price['PRC_deleted'] ) ? $ticket_price['PRC_deleted'] : FALSE,
+						'PRC_ID' => $ticket_price['PRT_is_global'] == 1 &&  ! isset ( $PRC_ID ) ? 0 : $PRC_ID
+					), $timezone_string
 				);
 				
 //				printr( $ticket_price, '$ticket_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );

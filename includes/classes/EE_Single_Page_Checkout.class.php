@@ -1139,18 +1139,20 @@ class EE_Single_Page_Checkout {
 				//delete all old registrations on this transaction, because we're going to re-add them according to the updated data in the session now
 				$REG->delete(array('TXN_ID'=>$transaction->ID()));
 			}else{
-				$transaction = new EE_Transaction( 
-					time(), 
-					$grand_total, 
-					0, 
-					$txn_status, 
-					NULL, 
-					$session, 
-					NULL, 
+				$transaction = EE_Transaction::new_instance( 
 					array(
-						'tax_totals'=>$session['tax_totals'],
-						'taxes'=>$session['taxes']
-					) 
+						'TXN_timestamp' => current_time(), 
+						'TXN_total' => $grand_total, 
+						'TXN_paid' => 0, 
+						'STS_ID' => $txn_status, 
+						'TXN_details' => NULL, 
+						'TXN_session_data' => $session, 
+						'TXN_hash_salt' => NULL, 
+						'TXN_tax_data' => array(
+							'tax_totals'=>$session['tax_totals'],
+							'taxes'=>$session['taxes']
+							) 
+					)
 				);
 				$transaction->save();
 			}
@@ -1241,18 +1243,20 @@ class EE_Single_Page_Checkout {
 					$att[$att_nmbr] = $existing_attendee;
 				} else {
 					// create attendee
-					$att[$att_nmbr] = new EE_Attendee(
-													$ATT_fname,
-													$ATT_lname,
-													isset($attendee[4]) ? $attendee[4] : NULL,		// address
-													isset($attendee[5]) ? $attendee[5] : NULL,		// address2
-													isset($attendee[6]) ? $attendee[6] : NULL,		// city
-													isset($attendee[7]) ? $attendee[7] : NULL,		// state
-													isset($attendee[8]) ? $attendee[8] : NULL,		// country
-													isset($attendee[9]) ? $attendee[9] : NULL,		// zip
-													$ATT_email,		// address
-													isset($attendee[10]) ? $attendee[10] : NULL,		// phone
-													NULL		// social
+					$att[$att_nmbr] = EE_Attendee::new_instance(
+						array(
+							'ATT_fname' => $ATT_fname,
+							'ATT_lname' => $ATT_lname,
+							'ATT_address' => isset($attendee[4]) ? $attendee[4] : NULL,		// address
+							'ATT_address2' => isset($attendee[5]) ? $attendee[5] : NULL,		// address2
+							'ATT_city' => isset($attendee[6]) ? $attendee[6] : NULL,		// city
+							'STA_ID' => isset($attendee[7]) ? $attendee[7] : NULL,		// state
+							'CNT_ISO' => isset($attendee[8]) ? $attendee[8] : NULL,		// country
+							'ATT_zip' => isset($attendee[9]) ? $attendee[9] : NULL,		// zip
+							'ATT_email' => $ATT_email,		// address
+							'ATT_phone' => isset($attendee[10]) ? $attendee[10] : NULL,		// phone
+							'ATT_social' => NULL		// social
+						)
 					);
 					
 					//add attendee to db
@@ -1283,23 +1287,25 @@ class EE_Single_Page_Checkout {
 
 				// now create a new registration for the attendee
 				$reg_url_link=md5($new_reg_code);
-				$saved_registrations[$line_item_id] = new EE_Registration(
-												$event['id'],
-												$ATT_ID,
-												$transaction->ID(),
-												$DTT_ID,
-												$PRC_ID,
-												$default_reg_status,
-												time(),
-												$price_paid,
-												$session['id'],
-												$new_reg_code,
-												$reg_url_link,
-												$att_nmbr,
-												count($event['attendees']),
-												FALSE,
-												FALSE
-						);
+				$saved_registrations[$line_item_id] = EE_Registration::new_instance(
+						array(	
+							'EVT_ID' => $event['id'],
+							'ATT_ID' => $ATT_ID,
+							'TXN_ID' => $transaction->ID(),
+							'DTT_ID' => $DTT_ID,
+							'PRC_ID' => $PRC_ID,
+							'STS_ID' => $default_reg_status,
+							'REG_DATE' => current_time(),
+							'REG_final_price' => $price_paid,
+							'REG_session' => $session['id'],
+							'REG_code' => $new_reg_code,
+							'REG_url_link' => $reg_url_link,
+							'REG_count' => $att_nmbr,
+							'REG_group_size' => count($event['attendees']),
+							'REG_att_is_going' => FALSE,
+							'REG_att_checked_in' => FALSE
+						)
+					);
 				//printr( $reg[$line_item_id], '$reg[$line_item_id] ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' );die();
 
 				$reg_results = $saved_registrations[$line_item_id]->save();

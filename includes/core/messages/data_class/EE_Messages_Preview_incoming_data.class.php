@@ -194,7 +194,25 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		foreach ( $dummy_attendees as $dummy ) {
 			$att = array_combine( $var_array, $dummy );
 			extract($att);
-			$attendees[] = new EE_Attendee($fname, $lname, $address, $address2, $city, $staid, $cntry, $zip, $email, $phone, $social, $comments, $notes, $deleted, $attid);
+			$attendees[] = EE_Attendee::new_instance(
+				array(
+					'ATT_fname' => $fname,
+					'ATT_lname' => $lname,
+					'ATT_address' => $address,
+					'ATT_address2' => $address2,
+					'ATT_city' => $city,
+					'STA_ID' => $staid,
+					'CNT_ISO' => $cntry,
+					'ATT_zip' => $zip,
+					'ATT_email' => $email,
+					'ATT_phone' => $phone,
+					'ATT_social' => $social,
+					'ATT_comments' => $comments,
+					'ATT_notes' => $notes,
+					'ATT_deleted' => $deleted,
+					'ATT_ID' => $attid
+				)
+			);
 		}
 
 		return $attendees;
@@ -270,17 +288,19 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 
 		//setup txn property
-		$this->txn = new EE_Transaction(
-			time(), //unix timestamp
-			$grand_total, //txn_total
-			$grand_total, //txn_paid
-			'PAP', //sts_id
-			'Transaction was approved', //notes regarding transaction
-			NULL, //dump of txn session object (we're just going to leave blank here)
-			NULL, //hash salt blank as well
-			$this->taxes,
-			999999
-			);
+		$this->txn = EE_Transaction::new_instance(
+			array(
+				'TXN_timestamp' => current_time(), //unix timestamp
+				'TXN_total' => $grand_total, //txn_total
+				'TXN_paid' => $grand_total, //txn_paid
+				'STS_ID' => 'PAP', //sts_id
+				'TXN_details' => 'Transaction was approved', //notes regarding transaction
+				'TXN_session_data' => NULL, //dump of txn session object (we're just going to leave blank here)
+				'TXN_hash_salt' => NULL, //hash salt blank as well
+				'TXN_tax_data' => $this->taxes,
+				'TXN_ID' => 999999
+			)
+		);
 
 		//setup reg_objects
 		//note we're seting up a reg object for each attendee in each event but ALSO adding to the reg_object array.
@@ -295,7 +315,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 					'DTT_ID' => $this->_events[$line_ref]['daytime_id'],
 					'PRC_ID' => $this->_events[$line_ref]['price_id'],
 					'STS_ID' => 'RAP',
-					'REG_date' => time(),
+					'REG_date' => current_time(),
 					'REG_final_price' => $this->_events[$line_ref]['price'],
 					'REG_session' => 'dummy_session_id',
 					'REG_code' => '1-dummy_generated_reg_code',
@@ -306,7 +326,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 					'REG_att_checked_in' => FALSE,
 					'REG_ID' => 9999990 + (int) $line_ref
 					);
-				$REG_OBJ = new EE_Registration( extract($reg_array) );
+				$REG_OBJ =  EE_Registration::new_instance( $reg_array );
 				$this->_attendees[$key]['reg_objs'][$this->_events[$line_ref]['ID']] = $REG_OBJ;
 				$this->reg_objs[] = $REG_OBJ;
 			}
@@ -332,8 +352,8 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$this->user_id = 1;
 		$this->ip_address = '192.0.2.1';
 		$this->user_agent = '';
-		$this->init_access = time();
-		$this->last_access = time();
+		$this->init_access = current_time();
+		$this->last_access = current_time();
 
 	}
 

@@ -287,7 +287,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			$additional_hidden_fields=array('QST_ID'=>array('type'=>'hidden','value'=>$ID));
 			$this->_set_add_edit_form_tags('update_question', $additional_hidden_fields);
 		}else{
-			$question=new EE_Question();
+			$question= EE_Question::new_instance();
 			$this->_set_add_edit_form_tags('insert_question');
 		}
 		$questionTypes=array();
@@ -359,7 +359,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					if(empty($option_req_data['QSO_name'])){
 						$option_req_data['QSO_name']=$option_req_data['QSO_value'];
 					}
-					$new_option=new EE_Question_Option($option_req_data['QSO_name'], $option_req_data['QSO_value'], $question->ID());
+					$new_option=EE_Question_Option::new_instance( array( 'QSO_name' => $option_req_data['QSO_name'], 'QSO_value' => $option_req_data['QSO_value'], 'QST_ID' => $question->ID()));
 					$new_option->save();
 				}
 			}

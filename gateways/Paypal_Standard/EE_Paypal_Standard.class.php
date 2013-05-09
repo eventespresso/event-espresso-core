@@ -528,18 +528,18 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			$primary_registrant = $transaction->primary_registration();
 			$primary_registration_code = !empty($primary_registrant) ? $primary_registrant->reg_code() : '';
 			
-			$payment = new EE_Payment($transaction->ID(), 
-				$status, 
-				$transaction->datetime(), 
-				sanitize_text_field($_POST['txn_type']), 
-				floatval($_REQUEST['mc_gross']), 
-				$this->_gateway_name, 
-				$gateway_response, 
-				$_POST['txn_id'], 
-				NULL,
-				$primary_registration_code, 
-				false, 
-				$_POST);
+			$payment = EE_Payment::new_instance(array('TXN_ID' => $transaction->ID(), 
+				'STS_ID' => $status, 
+				'PAY_timestamp' => $transaction->datetime(), 
+				'PAY_method' => sanitize_text_field($_POST['txn_type']), 
+				'PAY_amount' => floatval($_REQUEST['mc_gross']), 
+				'PAY_gateway' => $this->_gateway_name, 
+				'PAY_gateway_response' => $gateway_response, 
+				'PAY_txn_id_chq_nmbr' => $_POST['txn_id'], 
+				'PAY_po_number' => NULL,
+				'PAY_extra_accounting' => $primary_registration_code, 
+				'PAY_via_admin' => false, 
+				'PAY_details' => $_POST));
 		
 		}
 		

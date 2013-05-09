@@ -671,7 +671,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 							$attendee['att_obj'] = FALSE;
 						}
 						if ( ! $attendee['att_obj'] ) {
-							$attendee['att_obj'] = new EE_Attendee;
+							$attendee['att_obj'] = EE_Attendee::new_instance();
 						}	 
 					}
 					// check for reg object
@@ -681,7 +681,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
 					    $REG_MDL = EEM_Registration::instance();
 						if ( ! $attendee['reg_obj'] = $REG_MDL->get_registration_for_transaction_attendee( $TXN_ID, $attendee['att_obj']->ID(), $att_nmbr )) {
-							$attendee['reg_obj'] = new EE_Registration;
+							$attendee['reg_obj'] = EE_Registration::new_instance();
 						}	 
 					}
 					
@@ -882,20 +882,22 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 			}
 			//savea  the new payment
-			$payment = new EE_Payment( 
-				$payment['TXN_ID'], 
-				$payment['status'],
-				$payment['date'], 
-				$payment['method'], 
-				$amount,
-				$payment['gateway'],
-				$payment['gateway_response'],
-				$payment['txn_id_chq_nmbr'],
-				$payment['po_number'], 
-				$payment['accounting'], 
-				true, 
-				$payment,
-				$payment['PAY_ID']
+			$payment = EE_Payment::new_instance( 
+				array(
+					'TXN_ID' => $payment['TXN_ID'], 
+					'STS_ID' => $payment['status'],
+					'PAY_timestamp' => $payment['date'], 
+					'PAY_method' => $payment['method'], 
+					'PAY_amount' => $amount,
+					'PAY_gateway' => $payment['gateway'],
+					'PAY_gateway_reponse' => $payment['gateway_response'],
+					'PAY_txn_id_chq_nmbr' => $payment['txn_id_chq_nmbr'],
+					'PAY_po_number' => $payment['po_number'], 
+					'PAY_extra_accounting' => $payment['accounting'], 
+					'PAY_via_admin' => true, 
+					'PAY_details' => $payment,
+					'PAY_ID' => $payment['PAY_ID']
+				)
 			);
 			if( ! $payment->save() ){
 				$msg = __( 'An error occured. The payment has not been processed succesfully.', 'event_espresso' );

@@ -1663,17 +1663,19 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		// start the transaction record
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Transaction.class.php' );
 		// create TXN object
-		$transaction = new EE_Transaction( 
-			time(), 
-			$grand_total, 
-			0, 
-			$txn_status, 
-			NULL, 
-			$session, 
-			NULL, 
-			array(
-				'tax_totals'=>$session['tax_totals'],
-				'taxes'=>$session['taxes']
+		$transaction = EE_Transaction::new_instance(
+			array( 
+				'TXN_timestamp' => current_time(), 
+				'TXN_total' => $grand_total, 
+				'TXN_paid' => 0, 
+				'STS_ID' => $txn_status, 
+				'TXN_details' => NULL, 
+				'TXN_session_data' => $session, 
+				'TXN_hash_salt' => NULL, 
+				'TXN_tax_data' => array(
+					'tax_totals'=>$session['tax_totals'],
+					'taxes'=>$session['taxes']
+					)
 			) 
 		);
 		$transaction->save();
@@ -2026,7 +2028,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$action = 'update_attendee';
 			
 		} else {
-			$attendee = new EE_Attendee();
+			$attendee = EE_Attendee::new_instance();
 			$action = 'insert_attendee';
 		}
 
@@ -2098,23 +2100,25 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		// why be so pessimistic ???  : (
 		$success = 0;
 		//create attendee object
-		$attendee = new EE_Attendee(
-						$this->_req_data['ATT_fname'],
-						$this->_req_data['ATT_lname'],
-						$this->_req_data['ATT_address'],
-						$this->_req_data['ATT_address2'],
-						$this->_req_data['ATT_city'],
-						$this->_req_data['STA_ID'],
-						$this->_req_data['CNT_ISO'],
-						$this->_req_data['ATT_zip'],
-						$this->_req_data['ATT_email'],
-						$this->_req_data['ATT_phone'],
-						$this->_req_data['ATT_social'],
-						$this->_req_data['ATT_comments'],
-						$this->_req_data['ATT_notes'],
-						isset($this->_req_data['ATT_deleted']) ? $this->_req_data['ATT_deleted'] : 0,
-						$this->_req_data['ATT_ID']
-				);
+		$attendee = EE_Attendee::new_instance(
+			array(
+				'ATT_fname' => $this->_req_data['ATT_fname'],
+				'ATT_lname' => $this->_req_data['ATT_lname'],
+				'ATT_address' => $this->_req_data['ATT_address'],
+				'ATT_address2' => $this->_req_data['ATT_address2'],
+				'ATT_city' => $this->_req_data['ATT_city'],
+				'STA_ID' => $this->_req_data['STA_ID'],
+				'CNT_ISO' => $this->_req_data['CNT_ISO'],
+				'ATT_zip' => $this->_req_data['ATT_zip'],
+				'ATT_email' => $this->_req_data['ATT_email'],
+				'ATT_phone' => $this->_req_data['ATT_phone'],
+				'ATT_social' => $this->_req_data['ATT_social'],
+				'ATT_comments' => $this->_req_data['ATT_comments'],
+				'ATT_notes' => $this->_req_data['ATT_notes'],
+				'ATT_deleted' => isset($this->_req_data['ATT_deleted']) ? $this->_req_data['ATT_deleted'] : 0,
+				'ATT_ID' => $this->_req_data['ATT_ID']
+				)
+			);
 				
 		// is this a new Attendee ?
 		if ( $new_attendee ) {

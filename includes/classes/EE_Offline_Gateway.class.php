@@ -55,19 +55,21 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 		//if it already exists, short-circuit updating the transaction
 		if(empty($payments)){
 			//no payment so far, create one
-			$payment = new EE_Payment(
-				$transaction->ID(), 
-				EEM_Payment::status_id_pending, 
-				$transaction->datetime(), 
-				'CART', // this should be the type of payment as in Invoice, Money Order, Credit Card, PayPal, etc
-				NULL, 
-				$this->gateway(), 
-				__("Payment is pending. Your registration is not complete until payment is received",'event_espresso'),
-				null,
-				null,
-				null,
-				false,
-				array()
+			$payment = EE_Payment::new_instance(
+				array(
+					'TXN_ID' => $transaction->ID(), 
+					'STS_ID' => EEM_Payment::status_id_pending, 
+					'PAY_timestamp' => $transaction->datetime(), 
+					'PAY_method' => 'CART', // this should be the type of payment as in Invoice, Money Order, Credit Card, PayPal, etc
+					'PAY_amount' => NULL, 
+					'PAY_gateway' => $this->gateway(), 
+					'PAY_gateway_response' => __("Payment is pending. Your registration is not complete until payment is received",'event_espresso'),
+					'PAY_txn_id_chq_nmbr' => null,
+					'PAY_po_number' => null,
+					'PAY_extra_accounting' => null,
+					'PAY_via_admin' => false,
+					'PAY_details' => array(),
+				)
 			);
 			$payment->save();
 			$success = $this->update_transaction_with_payment($transaction, $payment);

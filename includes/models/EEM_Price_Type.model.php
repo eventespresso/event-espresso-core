@@ -157,7 +157,7 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 	 * 		@return		mixed		array on success, FALSE on fail
 	 */
 	public function get_new_price_type() {
-		return new EE_Price_Type( '', 1, FALSE, FALSE, FALSE, 0, FALSE );
+		return EE_Price_Type::new_instance();
 	}
 
 
