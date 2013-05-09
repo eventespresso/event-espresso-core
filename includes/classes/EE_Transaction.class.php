@@ -270,11 +270,15 @@ class EE_Transaction extends EE_Base_Class{
 	public function set_status( $status = FALSE ) {
 		
 		if ( ! $status ) {
-			$msg = __( 'No status was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'No status was supplied.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
-		}	
-		$this->_STS_ID = wp_strip_all_tags( $status );
+		}
+		$status_array = EEM_Transaction::instance()->status_array();
+		if ( ! isset( $status_array[ $status ]  )) {
+			EE_Error::add_error( __( 'Invalid Status.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}
+		$this->_STS_ID = $status;
 		return TRUE;
 	}
 
