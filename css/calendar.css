@@ -653,10 +653,6 @@ a.fc-event { line-height: 100%; }
 	height: 16px;
 }
 
-.espresso_calendar_widget a.fc-event-skin div {
-	/*background: url('images/tick-circle-frame.png') no-repeat 6px -24px;*//* add an image instead */
-	background: no-repeat 6px -24px; 
-}
 .espresso_calendar_widget .fc-day-content { min-width: 26px; }
 .espresso_calendar_widget a.fc-event-skin div:hover { background-position:6px 0px!important; }
 /* fugue icon pack can be downloaded here: http://randyjensenonline.com/thoughts/wordpress-custom-post-type-fugue-icons/ */
@@ -688,3 +684,7 @@ a.fc-event.themeroller.ui-widget-header p.time-display-block { font-weight: norm
 .espresso_calendar_widget .fc-button-content .ui-icon { margin-top: -50%; }
 .espresso_calendar_widget span.ui-icon { margin: 0; } /* this resets the style of the themeroller < > icons */
 
+
+.espresso_calendar_widget .fc-button {
+	height:auto;
+}
