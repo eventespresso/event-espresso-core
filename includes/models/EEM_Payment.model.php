@@ -260,9 +260,22 @@ class EEM_Payment extends EEM_TempBase {
 		}
 		$transaction = $payment->transaction();
 		// recalculate and set total paid, and how much is pending
-		$success = $transaction->update_based_on_payments();
-		$payment->clear_relation_cache('Transaction');
-		return $success;
+		if( $transaction->update_based_on_payments() ) {
+			$payment->clear_relation_cache('Transaction');
+			$msg = sprintf( __('The payment has been %s succesfully.', 'event_espresso'), $what );
+			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return array( 
+						'amount' => $payment->amount(), 
+						'total_paid' => $transaction->paid(), 
+						'txn_status' => $transaction->status_ID(),
+						'pay_status' => $payment->STS_ID() 
+					);
+		} else {
+			$payment->clear_relation_cache('Transaction');
+			$msg = sprintf( __( 'An error occured. The payment was %s succesfully, but the amount paid for the transaction was not updated.', 'event_espresso'), $what );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}		
 	}
 
 
