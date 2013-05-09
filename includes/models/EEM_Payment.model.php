@@ -264,12 +264,7 @@ class EEM_Payment extends EEM_TempBase {
 			$payment->clear_relation_cache('Transaction');
 			$msg = sprintf( __('The payment has been %s succesfully.', 'event_espresso'), $what );
 			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return array( 
-						'amount' => $payment->amount(), 
-						'total_paid' => $transaction->paid(), 
-						'txn_status' => $transaction->status_ID(),
-						'pay_status' => $payment->STS_ID() 
-					);
+			return $transaction;
 		} else {
 			$payment->clear_relation_cache('Transaction');
 			$msg = sprintf( __( 'An error occured. The payment was %s succesfully, but the amount paid for the transaction was not updated.', 'event_espresso'), $what );
@@ -318,32 +313,31 @@ class EEM_Payment extends EEM_TempBase {
 	*		Delete a Payment, update all totals, and save info to db
 	* 		@access		public
 	*/
-	public function delete_payment( $PAY_ID ) {
+	public function delete_payment( $payment = FALSE ) {
 
-		if ( ! $PAY_ID ) {
-			$msg = __('No Payment ID was supplied.', 'event_espresso');
+		if ( ! $payment ) {
+			$msg = __('No Payment ID or Object was supplied.', 'event_espresso');
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		
-		if( $payment = $this->get_payment_by_ID( $PAY_ID )) {
-			//printr( $payment, '$payment' );
-			if ( $this->delete ( array( 'PAY_ID' => $payment->ID() ))) {
-				// recalculate and set total paid
-				return $this->update_payment_transaction( $payment, 'deleted' );
-				
-			} else {
-				$msg = __('An error occured. The payment has not been deleted succesfully.', 'event_espresso');
+		// check  if object or PAY_ID
+		if ( ! is_a( $payment, 'EE_Payment' )) {
+			// retreive payment object
+			if( ! $payment = $this->get_payment_by_ID( absint( $payment ))) {
+				$msg = __('An error occured. The database record for the payment could not be located for deletion.', 'event_espresso');
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return FALSE;
 			}
-			
+		}
+		//printr( $payment, '$payment' );
+		if ( $this->delete ( array( 'PAY_ID' => $payment->ID() ))) {
+			// recalculate and set total paid
+			return $this->update_payment_transaction( $payment, 'deleted' );						
 		} else {
-			$msg = __('An error occured. The database record for the payment could not be located for deletion.', 'event_espresso');
+			$msg = __('An error occured. The payment has not been deleted succesfully.', 'event_espresso');
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
-		}
-		
+		}	
 
 	}
 
