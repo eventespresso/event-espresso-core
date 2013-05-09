@@ -635,6 +635,7 @@ class EE_Form_Fields {
 		$input_html .= "\n\t\t\t\t" . '<option value=""' . $selected . '>' . __(' - please select - ', 'event_espresso') . '</option>';
 
 		foreach ( $options as $key => $value ) {
+			// if value is an array, then create option groups, else create regular ol' options
 			$input_html .= is_array( $value ) ? self::_generate_select_option_group( $key, $value, $answer ) : self::_generate_select_option( $key, $value, $answer );
 		}
 
@@ -648,17 +649,17 @@ class EE_Form_Fields {
 
 
 	/**
-	 * 	prep_answer
+	 * 	_generate_select_option_group
+	 * 
+	 * 	if  $value for a select box is an array, then the key will be used as the optgroup label
+	 * 	and the value array will be looped thru and the elements sent to _generate_select_option
+	 * 
 	 * @param mixed $key
 	 * @param mixed $value
+	 * @param mixed $answer
 	 * @return string 
 	 */
 	private static function _generate_select_option_group( $key, $value, $answer ){
-		
-//		echo '<h4>$key : ' . $key . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$answer : ' . $answer . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		printr( $value, '$value  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		
 		$html = "\n\t\t\t\t" . '<optgroup label="' . self::prep_option_value( $key ) . '">';
 		foreach ( $value as $option ) {			
 			$html .= self::_generate_select_option( $option['QSO_value'], $option['QSO_text'], $answer );
@@ -670,15 +671,17 @@ class EE_Form_Fields {
 
 
 	/**
-	 * 	prep_answer
+	 * 	_generate_select_option
 	 * @param mixed $key
 	 * @param mixed $value
+	 * @param mixed $answer
 	 * @return string 
 	 */
 	private static function _generate_select_option( $key, $value, $answer ){
 			$value = self::prep_answer( $value );
-			$selected = ( $value == $answer ) ? ' selected="selected"' : '';
-			return "\n\t\t\t\t" . '<option value="' . self::prep_option_value( $key ) . '"' . $selected . '> ' . $value . '</option>';					
+			$key = self::prep_answer( $key );
+			$selected = ( $answer == $key ) ? ' selected="selected"' : '';
+			return "\n\t\t\t\t" . '<option value="' . self::prep_option_value( $key ) . '"' . $selected . '> ' . $value . '&nbsp;&nbsp;&nbsp;</option>';					
 	}
 
 
@@ -906,9 +909,9 @@ class EE_Form_Fields {
 	 * @return string 
 	 */
 	static function prep_answer( $answer ){
-		if ( is_array( $answer )) {
-			printr( $answer, '$answer  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		}
+//		if ( is_array( $answer )) {
+//			printr( $answer, '$answer  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		}
 		return htmlspecialchars( trim( stripslashes( $answer )), ENT_QUOTES, 'UTF-8' );
 	}
 
