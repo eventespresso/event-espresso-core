@@ -115,6 +115,7 @@ table .espresso-radio-btn-options-ul .small-lbl,
 
 #admin-page-header { clear: both; padding:.25em 0 0; }
 .admin-page-header-edit-lnk  { margin:0 0 0 1em; font-size:10px; }
+.admin-page-header-go-back-lnk  { margin:0 0 0 1em; font-size:12px; }
 
 #espresso-admin-page-ajax-loading { display:none; position:absolute; top:18px; left:50%; margin-left:-15px; padding:0; z-index:99999; }
 #espresso-admin-page-ajax-loading span { display:none; }
