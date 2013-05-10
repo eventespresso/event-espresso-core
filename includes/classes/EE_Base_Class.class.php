@@ -17,7 +17,7 @@ abstract class EE_Base_Class {
 	 */
 	public function __construct($fieldValues=null){
 		$className=get_class($this);
-		do_action("action_hook_espresso__{$className}__construct",$this,$fieldValues);
+		do_action("AHEE__{$className}__construct",$this,$fieldValues);
 		$model=$this->_get_model();
 		if($fieldValues!=null){
 			foreach($fieldValues as  $fieldName=>$fieldValue){
@@ -254,7 +254,7 @@ abstract class EE_Base_Class {
 				$return=$value;
 				break;
 		}
-		$return=apply_filters('filter_hook_espresso_sanitizeFieldInput',$return,$value,$fieldSettings);//allow to be overridden
+		$return=apply_filters('FHEE_sanitizeFieldInput',$return,$value,$fieldSettings);//allow to be overridden
 		if(is_null($return)){
 			throw new EE_Error(sprintf(__("Internal Event Espresso error. Field %s on class %s is of type %s","event_espresso"),$fieldSettings->nicename(),get_class($this),$fieldSettings->type()));
 		}
@@ -318,7 +318,7 @@ abstract class EE_Base_Class {
 			case 'serialized_text'://accept anything. even if it's not an array, or if it's not yet serialized. we'll deal with it.
 				$return=true;
 		}
-		$return= apply_filters('filter_hook_espresso_verifyFieldIsOfCorrectType',$return,$value,$fieldSettings);//allow to be overridden
+		$return= apply_filters('FHEE_verifyFieldIsOfCorrectType',$return,$value,$fieldSettings);//allow to be overridden
 		if(is_null($return)){
 			throw new EE_Error(sprintf(__("Internal Event Espresso error. Field %s on class %s is of type %s","event_espresso"),$fieldSettings->nicename,get_class($this),$fieldSettings->type()));
 		}
@@ -596,7 +596,7 @@ abstract class EE_Base_Class {
 	 * they can add a hook onto 'filters_hook_espresso__{className}__{methodName}' (eg, filters_hook_espresso__EE_Answer__my_great_function)
 	 * and accepts 2 arguments: the object on which teh function was called, and an array of the original arguments passed to the function. Whatever their callbackfunction returns will be returned by this function.
 	 * Example: in functions.php (or in a plugin):
-	 * add_filter('filter_hook_espresso__EE_Answer__my_callback','my_callback',10,3);
+	 * add_filter('FHEE__EE_Answer__my_callback','my_callback',10,3);
 	 * function my_callback($previousReturnValue,EE_Base_Class $object,$argsArray){
 			$returnString= "you called my_callback! and passed args:".implode(",",$argsArray);
 	 *		return $previousReturnValue.$returnString;
@@ -611,7 +611,7 @@ abstract class EE_Base_Class {
 	 */
 	public function __call($methodName,$args){
 		$className=get_class($this);
-		$tagName="filter_hook_espresso__{$className}__{$methodName}";
+		$tagName="FHEE__{$className}__{$methodName}";
 		if(!has_filter($tagName)){
 			throw new EE_Error(sprintf(__("Method %s on class %s does not exist! You can create one with the following code in functions.php or in a plugin: add_filter('%s','my_callback',10,3);function my_callback(\$previousReturnValue,EE_Base_Class \$object, \$argsArray){/*function body*/return \$whatever;}","event_espresso"),
 										$methodName,$className,$tagName));

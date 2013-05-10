@@ -10,7 +10,7 @@ function espresso_event_list_get_category($cat_identifier = FALSE) {
 
 	global $wpdb, $org_options;
 	// error logging
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 	$category = FALSE;
 //	echo '<h1>$cat_identifier : ' . $cat_identifier . '</h1>'; die();

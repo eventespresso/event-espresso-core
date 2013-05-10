@@ -44,7 +44,7 @@ class EE_Thank_You_Page{
 	 * 		@return class instance
 	 */
 	public static function instance() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		// check if class object is instantiated
 		if (self::$_instance === NULL or !is_object(self::$_instance) or !is_a(self::$_instance, __CLASS__)) {
 			self::$_instance = new self();
@@ -53,7 +53,7 @@ class EE_Thank_You_Page{
 	}
 	
 	protected function __construct(){
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		
 		add_action('init',array($this,'handle_thank_you_page'),30);
 		add_action( 'wp', array($this,'display_payment_overview'), 102 );

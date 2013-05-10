@@ -30,7 +30,7 @@ class EE_Transaction_Page{
 	 * 		@return class instance
 	 */
 	public static function instance() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		// check if class object is instantiated
 		if (self::$_instance === NULL or !is_object(self::$_instance) or !is_a(self::$_instance, __CLASS__)) {
 			self::$_instance = new self();
@@ -39,7 +39,7 @@ class EE_Transaction_Page{
 	}
 	
 	protected function __construct(){
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		
 		if ( isset($_POST['espresso_ajax']) && $_POST['espresso_ajax'] == 1 ) {
 			$this->_ajax = TRUE;

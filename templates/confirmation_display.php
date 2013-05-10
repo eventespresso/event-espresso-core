@@ -6,8 +6,8 @@
 //Payment confirmation block
 function espresso_display_confirmation_page($conf_page_data) {
 	global $org_options, $wpdb;
-	add_filter('filter_hook_espresso_get_total_cost', 'espresso_get_total_cost');
-	$conf_page_data = apply_filters('filter_hook_espresso_get_total_cost', $conf_page_data);
+	add_filter('FHEE_get_total_cost', 'espresso_get_total_cost');
+	$conf_page_data = apply_filters('FHEE_get_total_cost', $conf_page_data);
 	$attendee_num = 1;
 	?>
 	<form id="form1" name="form1" method="post" action="<?php echo espresso_get_reg_page_full_url(); ?>">
@@ -121,4 +121,4 @@ function espresso_display_confirmation_page($conf_page_data) {
 	<?php
 }
 
-add_action('action_hook_espresso_display_confirmation_page', 'espresso_display_confirmation_page');
+add_action('AHEE_display_confirmation_page', 'espresso_display_confirmation_page');

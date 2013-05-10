@@ -272,7 +272,7 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _overview_list_table() {
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_category', 'add', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
@@ -663,13 +663,13 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 		global $wpdb;
 
 		$offset = ($current_page-1)*$per_page; 
-		$limit = apply_filters('filter_hook_espresso_category_list_limit', $count ? '' : ' LIMIT ' . $offset . ',' . $per_page, $offset, $per_page);
-		$orderby = apply_filters( 'filter_hook_espresso_category_list_orderby', isset($this->_req_data['orderby']) ? " ORDER BY " . $this->_req_data['orderby'] : " ORDER BY c.category_name", $this->_req_data );
-		$order = apply_filters( 'filter_hook_espresso_category_list_order', isset($this->_req_data['order']) ? " " . $this->_req_data['order'] : " DESC", $this->_req_data);
+		$limit = apply_filters('FHEE_category_list_limit', $count ? '' : ' LIMIT ' . $offset . ',' . $per_page, $offset, $per_page);
+		$orderby = apply_filters( 'FHEE_category_list_orderby', isset($this->_req_data['orderby']) ? " ORDER BY " . $this->_req_data['orderby'] : " ORDER BY c.category_name", $this->_req_data );
+		$order = apply_filters( 'FHEE_category_list_order', isset($this->_req_data['order']) ? " " . $this->_req_data['order'] : " DESC", $this->_req_data);
 
 		$sql = $count ? "SELECT COUNT(c.id) FROM " . EVENTS_CATEGORY_TABLE . " c" : "SELECT * FROM " . EVENTS_CATEGORY_TABLE . " c";
 
-		$sql = apply_filters('filter_hook_espresso_category_list_sql', $sql);
+		$sql = apply_filters('FHEE_category_list_sql', $sql);
 		$sql .= !$count ? " GROUP BY c.id " . $orderby . $order . $limit : '';
 
 		$categories = $count ? $wpdb->get_var( $sql ) : $wpdb->get_results( $sql );

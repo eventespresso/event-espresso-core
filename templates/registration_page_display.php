@@ -73,13 +73,13 @@ function espresso_display_reg_page($data) {
 						if ($data['display_reg_form']) {
 
 
-							do_action( 'action_hook_espresso_ticket_selector', $data['event'] );
+							do_action( 'AHEE_ticket_selector', $data['event'] );
 
 							//Added for seating chart addon. Creates a field to select a seat from a popup.
-							do_action('action_hook_espresso_seating_chart_select', $data['event_id']);
+							do_action('AHEE_seating_chart_select', $data['event_id']);
 
 							/* Displays the social media buttons */
-							do_action('action_hook_espresso_social_display_buttons', $data['event_id']);
+							do_action('AHEE_social_display_buttons', $data['event_id']);
 
 							//Coupons
 							if (function_exists('event_espresso_coupon_registration_page') && $data['use_coupon_code']) {

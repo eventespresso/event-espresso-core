@@ -228,7 +228,7 @@ class Venues_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _overview_list_table() {
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_venue', 'add', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
@@ -397,7 +397,7 @@ class Venues_Admin_Page extends EE_Admin_Page {
 								<th>
 									<label for="locale">
 										<?php _e('Locale/Region ','event_espresso'); ?>
-										<?php apply_filters( 'filter_hook_espresso_help', 'venue_locale'); ?>
+										<?php apply_filters( 'FHEE_help', 'venue_locale'); ?>
 									</label>
 								</th>
 								<td>
@@ -462,7 +462,7 @@ class Venues_Admin_Page extends EE_Admin_Page {
 							<th>
 								<label for="enable-ven-gmaps">
 									<?php _e('Enable Venue for Google Maps', 'event_espresso')  ?>
-									<?php apply_filters( 'filter_hook_espresso_help', 'venue_gmap'); ?>
+									<?php apply_filters( 'FHEE_help', 'venue_gmap'); ?>
 								</label>
 							</th>
 							<td>
@@ -691,7 +691,7 @@ class Venues_Admin_Page extends EE_Admin_Page {
 	 							<th>
 		 							<label for="locale">
 	 									<?php _e('Locale/Region ', 'event_espresso'); ?>
-	 									<?php apply_filters('filter_hook_espresso_help', 'venue_locale'); ?>
+	 									<?php apply_filters('FHEE_help', 'venue_locale'); ?>
 	 								</label>
 	 							</th>
 	 							<td>

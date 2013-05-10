@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
+do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 /**
  * Event Espresso
  *
@@ -58,7 +58,7 @@ Class EEM_Gateways {
 	 * 		@return void
 	 */
 	private function __construct() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		//so client code can check for instatiation b4 including
 		define('ESPRESSO_GATEWAYS', TRUE);
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Gateway.class.php');
@@ -81,7 +81,7 @@ Class EEM_Gateways {
 	 * 		@return void
 	 */
 	private function _load_session_gateway_data() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		global $EE_Session;
 		$this->_session_gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
 		if (!empty($this->_session_gateway_data['selected_gateway'])) {
@@ -117,7 +117,7 @@ Class EEM_Gateways {
 	 * 		@return void
 	 */
 	private function _set_active_gateways() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		if (!empty($this->_session_gateway_data['active_gateways'])) {
 			$this->_active_gateways = $this->_session_gateway_data['active_gateways'];
 			
@@ -139,7 +139,7 @@ Class EEM_Gateways {
 	 * 		@return void
 	 */
 	private function _load_payment_settings() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 //		if (!empty($this->_session_gateway_data['payment_settings'])) {
 //			$this->_payment_settings = $this->_session_gateway_data['payment_settings'];
 //		} else {
@@ -163,7 +163,7 @@ Class EEM_Gateways {
 	 * 		@return void
 	 */
 	private function _scan_and_load_all_gateways() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		// on the settings page, scan and load all the gateways
 		if (is_admin() && !empty($_GET['page']) && $_GET['page'] == 'espresso_payment_settings') {
 			$this->_load_all_gateway_files();
@@ -209,7 +209,7 @@ Class EEM_Gateways {
 	 * 		@return void
 	 */
 	private function _load_all_gateway_files() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		
 		$gateways = array();
 		$upload_gateways = array();
@@ -281,7 +281,7 @@ Class EEM_Gateways {
 	 * 		@return 	mixed	array on success FALSE on fail
 	 */
 	public function payment_settings($gateway = FALSE) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		if (!empty($this->_payment_settings[$gateway])) {
 			return $this->_payment_settings[$gateway];
 		} else {
@@ -299,7 +299,7 @@ Class EEM_Gateways {
 	 * 		@return 	boolean	TRUE on success FALSE on fail
 	 */
 	public function update_payment_settings($gateway = FALSE, $new_gateway_settings = FALSE) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		if (!$gateway || !$new_gateway_settings) {
 			return FALSE;
 		}
@@ -330,7 +330,7 @@ Class EEM_Gateways {
 	 * 		@return 	mixed	array on success FALSE on fail
 	 */
 	public function is_active($gateway = FALSE) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		if (!$gateway) {
 			return FALSE;
 		}
@@ -350,7 +350,7 @@ Class EEM_Gateways {
 	 * 		@return 	mixed	array on success FALSE on fail
 	 */
 	public function is_in_uploads($gateway = FALSE) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		if (!$gateway) {
 			return FALSE;
 		}
@@ -370,7 +370,7 @@ Class EEM_Gateways {
 	 * 		@return 	boolean	TRUE on success FALSE on fail
 	 */
 	public function set_active($gateway = FALSE) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		if (!$gateway) {
 			return FALSE;
 		}
@@ -400,7 +400,7 @@ Class EEM_Gateways {
 	 * 		@return 	boolean	TRUE on success FALSE on fail
 	 */
 	public function unset_active($gateway = FALSE) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		if (!$gateway) {
 			return FALSE;
 		}
@@ -430,7 +430,7 @@ Class EEM_Gateways {
 	 * 		@return 	boolean	TRUE on success FALSE on fail
 	 */
 	public function set_selected_gateway($gateway = FALSE) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		if (!$gateway || !array_key_exists($gateway, $this->_active_gateways)) {
 			return FALSE;
 		} 
@@ -466,7 +466,7 @@ Class EEM_Gateways {
 	 * 		@return 	boolean	TRUE 
 	 */
 	public function unset_selected_gateway() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$this->_selected_gateway = NULL;
 		$this->_hide_other_gateways = FALSE;
 		$this->_set_session_data();
@@ -484,7 +484,7 @@ Class EEM_Gateways {
 	 * 		@return 	string
 	 */
 	public function selected_gateway() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		return $this->_selected_gateway;
 	}
 
@@ -497,7 +497,7 @@ Class EEM_Gateways {
 	 * 		@return 	boolean	TRUE on success FALSE on fail
 	 */
 	public function set_form_url($base_url = FALSE) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		if (!$base_url) {
 			return FALSE;
 		}
@@ -519,7 +519,7 @@ Class EEM_Gateways {
 	 * 		@return 	mixed	string on success FALSE on fail
 	 */
 	public function type() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		if (!empty($this->_payment_settings[$this->_selected_gateway]['type'])) {
 			return $this->_payment_settings[$this->_selected_gateway]['type'];
 		} else {
@@ -535,7 +535,7 @@ Class EEM_Gateways {
 	 * 		@return 	mixed	string on success FALSE on fail
 	 */
 	public function display_name() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		if (!empty($this->_payment_settings[$this->_selected_gateway]['display_name'])) {
 			return $this->_payment_settings[$this->_selected_gateway]['display_name'];
 		} else {
@@ -551,7 +551,7 @@ Class EEM_Gateways {
 	 * 		@return 	mixed	string on success FALSE on fail
 	 */
 	public function off_site_form() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		if (!empty($this->_off_site_form)) {
 			return $this->_off_site_form;
 		} else {
@@ -568,7 +568,7 @@ Class EEM_Gateways {
 	 * 		@return 	boolean	TRUE on success FALSE on fail
 	 */
 	public function set_off_site_form($form_data = FALSE) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		if (!$form_data) {
 			return FALSE;
 		}
@@ -585,7 +585,7 @@ Class EEM_Gateways {
 	 * 		@return 	boolean	TRUE on success FALSE on fail
 	 */
 	private function _set_session_data() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		global $EE_Session;
 		
 		$session_data = array(
@@ -608,7 +608,7 @@ Class EEM_Gateways {
 	 * 		@return 	boolean	TRUE on success FALSE on fail
 	 */
 	public function set_ajax( $on_or_off ) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		if ( ! is_bool( $on_or_off )) {
 			$this->_notices['errors'][] = __( 'An error occured. Set Ajax requires a boolean paramater.', 'event_espresso' );
 			return FALSE;
@@ -638,7 +638,7 @@ Class EEM_Gateways {
 	 */
 	public function reset_session_data() {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		global $EE_Session;
 	
 		foreach ($this->_active_gateways as $gateway => $in_uploads) {
@@ -682,18 +682,18 @@ Class EEM_Gateways {
 	 * wp-uploads/espresso/gateways/$gateway/EE_$gateway.class.php
 	 * next in
 	 * wp-content/plugins/{event-espresso}/gateawys/$gateway/EE_$gateway}.class.php.
-	 * Gateway developers may use filter_hook_espresso__EEM_Gateways__get_gateway_filepath__default_filepath to override the filepath,
-	 * or filter_hook_espresso__EEM_Gateways__get_gateway_filepath__filename to override the file's name,
-	 * or filter_hook_espresso__EEM_Gateways__get_gateway_filepath__classname to override the class's name, given the gateway's name.
+	 * Gateway developers may use FHEE__EEM_Gateways__get_gateway_filepath__default_filepath to override the filepath,
+	 * or FHEE__EEM_Gateways__get_gateway_filepath__filename to override the file's name,
+	 * or FHEE__EEM_Gateways__get_gateway_filepath__classname to override the class's name, given the gateway's name.
 	 * Each of these filters is passed the gateway's name.
 	 * 
 	 * @param string $gateway_name usually the folder's name where the gateway is stored. Eg, Paypal_Standard, 2checkout, Check, etc.
 	 * @return void just requires the gateway. Doesn't return it
 	 */
 	/*public static function require_gateway($gateway_name){
-		$classname = apply_filters('filter_hook_espresso__EEM_Gateways__get_gateway_filepath__classname', 'EE_' . $gateway_name,$gateway_name);
-		$filename = apply_filters('filter_hook_espresso__EEM_Gateways__get_gateway_filepath__filename',$classname . '.class.php',$gateway_name);
-		$default_gateway_filepath = apply_filters('filter_hook_espresso__EEM_Gateways__get_gateway_filepath__default_filepath',EVENT_ESPRESSO_GATEWAY_DIR . $gateway_name . DS . $filename,$gateway_name);
+		$classname = apply_filters('FHEE__EEM_Gateways__get_gateway_filepath__classname', 'EE_' . $gateway_name,$gateway_name);
+		$filename = apply_filters('FHEE__EEM_Gateways__get_gateway_filepath__filename',$classname . '.class.php',$gateway_name);
+		$default_gateway_filepath = apply_filters('FHEE__EEM_Gateways__get_gateway_filepath__default_filepath',EVENT_ESPRESSO_GATEWAY_DIR . $gateway_name . DS . $filename,$gateway_name);
 		if (file_exists($default_gateway_filepath)) {
 			require_once($default_gateway_filepath);
 		} else if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway_name . DS . $filename)) {
@@ -718,7 +718,7 @@ Class EEM_Gateways {
 	 * 		@return 	boolean	TRUE on success FALSE on fail
 	 */
 	public function send_invoice($id) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$gateway = 'Invoice';
 		$classname = 'EE_' . $gateway;
 		$filename = $classname . '.class.php';
@@ -755,7 +755,7 @@ Class EEM_Gateways {
 	 * 		@return 	mixed	array on success or FALSE on fail
 	 */
 	public function process_gateway_selection() {	
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		// check for off site payment
 		if ( isset( $_POST['selected_gateway'] ) && ! empty( $_POST['selected_gateway'] )) {
 			$this->set_selected_gateway(sanitize_text_field( $_POST['selected_gateway'] ));
@@ -776,7 +776,7 @@ Class EEM_Gateways {
 	 * 		@return 	mixed	array on success or FALSE on fail
 	 */
 	public function set_billing_info_for_confirmation( $billing_info = FALSE ) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		if( ! is_array( $billing_info )) {
 			return FALSE;
 		}
@@ -795,7 +795,7 @@ Class EEM_Gateways {
 	 * 		@return 	mixed	void or FALSE on fail
 	 */
 	public function process_reg_step_3() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$return_page_url = $this->_get_return_page_url();
 		// free event?
 		if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
@@ -833,7 +833,7 @@ Class EEM_Gateways {
 	 * 		@return 		void
 	 */
 	private function _get_return_page_url() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		global $org_options,$EE_Session;
 		$session_data=$EE_Session->get_session_data();
 		$a_current_registration=current($session_data['registration']);
@@ -853,7 +853,7 @@ Class EEM_Gateways {
 	 * @return string The masked credit card number
 	 */
 	function MaskCreditCard($cc){
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		// Get the cc Length
 		$cc_length = strlen($cc);
 		// Replace all characters of credit card except the last four and dashes
@@ -873,7 +873,7 @@ Class EEM_Gateways {
 	 * @return string The credit card with dashes.
 	 */
 	function FormatCreditCard($cc) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		// Clean out extra data that might be in the cc
 		$cc = str_replace(array('-',' '),'',$cc);
 		// Get the CC Length
@@ -899,7 +899,7 @@ Class EEM_Gateways {
 	 * @param type $transaction
 	 */
 	public function thank_you_page_logic(EE_Transaction $transaction) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		if (!empty($this->_selected_gateway)
 						&& !empty($this->_gateway_instances[ $this->_selected_gateway ])) {
 			$this->_gateway_instances[ $this->_selected_gateway ]->thank_you_page_logic($transaction);
@@ -916,7 +916,7 @@ Class EEM_Gateways {
 	 * @return string of HTML to be displayed above the payment overview, usually on the thank you page
 	 */
 	public function get_payment_overview_content($gateway_name, EE_Payment $payment){
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		if (!empty($gateway_name)
 						&& !empty($this->_gateway_instances[ $gateway_name ])) {
 				ob_start();
@@ -947,7 +947,7 @@ Class EEM_Gateways {
 	 */
 	public function handle_ipn_for_transaction($transaction){
 		global $org_options;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$current_gateway=(!empty($this->_selected_gateway))?$this->_gateway_instances[$this->_selected_gateway] : null;
 		//echo "eemgateway, handle ipn for transaction";
 		//echo "current gawtay:";var_dump($current_gateway);
@@ -975,7 +975,7 @@ Class EEM_Gateways {
 	 */
 	public function get_country_ISO2_codes() {
 	
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		return array(
 					'US' => 'United States',
 					'AU' => 'Australia',

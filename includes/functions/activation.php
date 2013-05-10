@@ -28,7 +28,7 @@ function event_espresso_rename_tables($old_table_name, $new_table_name) {
 //This function updates the org_options from < EE 3.2
 function espresso_fix_org_options() {
 	global $org_options, $espresso_wp_user;
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	if (empty($org_options))
 		return;
 
@@ -1302,7 +1302,7 @@ function espresso_default_price_types() {
 						(5, 'Surcharge', 3, 0, 0, 0, 30, 0),
 						(6, 'Regional Tax', 4, 0, 1, 1, 40, 1),
 						(7, 'Federal Tax', 4, 0, 1, 1, 50, 1);";
-			$SQL = apply_filters( 'filter_hook_espresso_default_price_types_activation_sql', $SQL );
+			$SQL = apply_filters( 'FHEE_default_price_types_activation_sql', $SQL );
 			$wpdb->query( $SQL );	
 		}
 	}
@@ -1328,7 +1328,7 @@ function espresso_default_prices() {
 						(4, 5, 0, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 30, 0)
 						(5, 6, 0, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 40, 1),
 						(6, 7, 0, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 50, 1);";			
-			$SQL = apply_filters( 'filter_hook_espresso_default_prices_activation_sql', $SQL );
+			$SQL = apply_filters( 'FHEE_default_prices_activation_sql', $SQL );
 			$wpdb->query($SQL);			
 		}
 	}	

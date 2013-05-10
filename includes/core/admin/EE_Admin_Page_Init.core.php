@@ -162,7 +162,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 	protected function _set_capability() {
 		$capability = empty($this->capability) ? 'administrator' : $this->capability;
-		$this->capability = apply_filters('filter_hook_espresso_' . $this->menu_slug . '_capability', $capability);
+		$this->capability = apply_filters('FHEE_' . $this->menu_slug . '_capability', $capability);
 	}
 
 
@@ -251,7 +251,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 				$this->hook_file = str_replace(EE_CORE_ADMIN . $this->_folder_name . DS, '', $file );
 				$rel_admin = str_replace( '_' . $this->_file_name . '_Hooks.class.php', '', $this->hook_file);
 				$rel_admin = strtolower($rel_admin);
-				$rel_admin_hook = 'filter_hook_espresso_do_other_page_hooks_' . $rel_admin;
+				$rel_admin_hook = 'FHEE_do_other_page_hooks_' . $rel_admin;
 				$filter = add_filter( $rel_admin_hook, array($this, 'load_admin_hook') );
 			}
 		}
@@ -287,15 +287,15 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 			/**
 			 * This is a place where EE plugins can hook in to make sure their own files are required in the appropriate place
 			 */
-			do_action( 'action_hook_espresso_before_initialize_admin_page' );
-			do_action( 'action_hook_espresso_before_initialize_admin_page_' . $this->menu_slug );
+			do_action( 'AHEE_before_initialize_admin_page' );
+			do_action( 'AHEE_before_initialize_admin_page_' . $this->menu_slug );
 			require_once( $path_to_file );
 			$a = new ReflectionClass( $admin_page );
 			$this->_loaded_page_object = $a->newInstance();				
 		}
 
-		do_action( 'action_hook_espresso_after_initialize_admin_page' );
-		do_action( 'action_hook_espresso_after_initialize_admin_page_' . $this->menu_slug );
+		do_action( 'AHEE_after_initialize_admin_page' );
+		do_action( 'AHEE_after_initialize_admin_page_' . $this->menu_slug );
 	}
 
 

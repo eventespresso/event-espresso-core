@@ -399,8 +399,8 @@ class EE_Form_Fields {
 	static function generate_question_groups_html( $question_groups = array(), $group_wrapper = 'fieldset' ) {
 			
 		$html = '';
-		$before_question_group_questions = apply_filters( 'filter_hook_espresso_form_before_question_group_questions', '' );
-		$after_question_group_questions = apply_filters( 'filter_hook_espresso_form_after_question_group_questions', '' );		
+		$before_question_group_questions = apply_filters( 'FHEE_form_before_question_group_questions', '' );
+		$after_question_group_questions = apply_filters( 'FHEE_form_after_question_group_questions', '' );		
 
 			
 		if ( ! empty( $question_groups )) {
@@ -459,7 +459,7 @@ class EE_Form_Fields {
 		$input_id = isset( $question['QST_input_id'] ) ? $question['QST_input_id'] : '';
 		$input_class = isset( $question['QST_input_class'] ) ? $question['QST_input_class'] : '';
 		$disabled = isset( $question['disabled'] ) ? $question['disabled'] : '';
-		$required_label = apply_filters( 'filter_hook_espresso_required_form_input_label', '<em>*</em>' );
+		$required_label = apply_filters( 'FHEE_required_form_input_label', '<em>*</em>' );
 		$required = $question['QST_required'] ? array( 'label' => $required_label, 'class' => 'required', 'title' => $question['QST_required'] ) : array();
 		$label_class = 'espresso-form-input-lbl';		
 		$options = isset( $question['QST_options'] ) ? self::prep_answer_options( $question['QST_options'] ) : array();
@@ -530,13 +530,13 @@ class EE_Form_Fields {
 		$txt_class = is_admin() ? 'regular-text' : 'espresso-text-inp';
 		$class = empty( $class ) ? $txt_class : $class;
 		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
-		$extra = apply_filters( 'filter_hook_espresso_additional_form_field_attributes', '' );
+		$extra = apply_filters( 'FHEE_additional_form_field_attributes', '' );
 
 		$label_html = "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
-		$label_html = apply_filters( 'filter_hook_espresso_form_field_label_html', $label_html );
+		$label_html = apply_filters( 'FHEE_form_field_label_html', $label_html );
 		
 		$input_html = "\n\t\t\t" . '<input type="text" name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" value="' . $answer . '"  title="' . $required['msg'] . '" ' . $disabled .' ' . $extra . '/>';
-		$input_html = apply_filters( 'filter_hook_espresso_form_field_input_html', $input_html );
+		$input_html = apply_filters( 'FHEE_form_field_input_html', $input_html );
 		
 		return $label_html . $input_html;		
 		
@@ -579,13 +579,13 @@ class EE_Form_Fields {
 		$txt_class = is_admin() ? 'regular-text' : 'espresso-textarea-inp';
 		$class = empty( $class ) ? $txt_class : $class;
 		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
-		$extra = apply_filters( 'filter_hook_espresso_additional_form_field_attributes', '' );
+		$extra = apply_filters( 'FHEE_additional_form_field_attributes', '' );
 		
 		$label_html = "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
-		$label_html = apply_filters( 'filter_hook_espresso_form_field_label_html', $label_html );
+		$label_html = apply_filters( 'FHEE_form_field_label_html', $label_html );
 
 		$input_html = "\n\t\t\t" . '<textarea name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" rows="' . $dimensions['rows'] . '" cols="' . $dimensions['cols'] . '"  title="' . $required['msg'] . '" ' . $disabled . ' ' . $extra . '/>' . $answer . '</textarea>';
-		$input_html = apply_filters( 'filter_hook_espresso_form_field_input_html', $input_html );
+		$input_html = apply_filters( 'FHEE_form_field_input_html', $input_html );
 		
 		return $label_html . $input_html;		
 		
@@ -625,10 +625,10 @@ class EE_Form_Fields {
 		$txt_class = is_admin() ? 'wide' : 'espresso-select-inp';
 		$class = empty( $class ) ? $txt_class : $class;
 		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
-		$extra = apply_filters( 'filter_hook_espresso_additional_form_field_attributes', '' );
+		$extra = apply_filters( 'FHEE_additional_form_field_attributes', '' );
 		
 		$label_html = "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
-		$label_html = apply_filters( 'filter_hook_espresso_form_field_label_html', $label_html );
+		$label_html = apply_filters( 'FHEE_form_field_label_html', $label_html );
 		
 		$input_html = "\n\t\t\t" . '<select name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" title="' . $required['msg'] . '" ' . $disabled . ' ' . $extra . '/>';
 		$selected = ( empty( $answer )) ? ' selected="selected"' : '';
@@ -640,7 +640,7 @@ class EE_Form_Fields {
 		}
 
 		$input_html .= "\n\t\t\t" . '</select>';
-		$input_html = apply_filters( 'filter_hook_espresso_form_field_input_html', $input_html );
+		$input_html = apply_filters( 'FHEE_form_field_input_html', $input_html );
 		
 		return $label_html . $input_html;		
 		
@@ -717,10 +717,10 @@ class EE_Form_Fields {
 		$rdio_class = is_admin() ? 'ee-admin-radio-lbl' : $label_class;		
 		$class = empty( $class ) ? 'espresso-radio-btn-inp' : $class;
 		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
-		$extra = apply_filters( 'filter_hook_espresso_additional_form_field_attributes', '' );
+		$extra = apply_filters( 'FHEE_additional_form_field_attributes', '' );
 		
 		$label_html = "\n\t\t\t" . '<label class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
-		$label_html = apply_filters( 'filter_hook_espresso_form_field_label_html', $label_html );
+		$label_html = apply_filters( 'FHEE_form_field_label_html', $label_html );
 		
 		$input_html = "\n\t\t\t" . '<ul class="espresso-radio-btn-options-ul ' . $label_class . '">';
 		
@@ -743,7 +743,7 @@ class EE_Form_Fields {
 		}
 
 		$input_html .= "\n\t\t\t" . '</ul>';
-		$input_html = apply_filters( 'filter_hook_espresso_form_field_input_html', $input_html );
+		$input_html = apply_filters( 'FHEE_form_field_input_html', $input_html );
 		
 		return $label_html . $input_html;		
 
@@ -788,10 +788,10 @@ class EE_Form_Fields {
 		$rdio_class = is_admin() ? 'ee-admin-radio-lbl' : $label_class;		
 		$class = empty( $class ) ? 'espresso-radio-btn-inp' : $class;
 		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
-		$extra = apply_filters( 'filter_hook_espresso_additional_form_field_attributes', '' );
+		$extra = apply_filters( 'FHEE_additional_form_field_attributes', '' );
 		
 		$label_html = "\n\t\t\t" . '<label class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
-		$label_html = apply_filters( 'filter_hook_espresso_form_field_label_html', $label_html );
+		$label_html = apply_filters( 'FHEE_form_field_label_html', $label_html );
 
 		$input_html = "\n\t\t\t" . '<ul class="espresso-checkbox-options-ul ' . $label_class . '">';
 		
@@ -815,7 +815,7 @@ class EE_Form_Fields {
 		}
 
 		$input_html .= "\n\t\t\t" . '</ul>';
-		$input_html = apply_filters( 'filter_hook_espresso_form_field_input_html', $input_html );
+		$input_html = apply_filters( 'FHEE_form_field_input_html', $input_html );
 		
 		return $label_html . $input_html;		
 
@@ -854,13 +854,13 @@ class EE_Form_Fields {
 		$txt_class = is_admin() ? 'regular-text' : 'espresso-datepicker-inp';
 		$class = empty( $class ) ? $txt_class : $class;
 		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
-		$extra = apply_filters( 'filter_hook_espresso_additional_form_field_attributes', '' );
+		$extra = apply_filters( 'FHEE_additional_form_field_attributes', '' );
 
 		$label_html = "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
-		$label_html = apply_filters( 'filter_hook_espresso_form_field_label_html', $label_html );
+		$label_html = apply_filters( 'FHEE_form_field_label_html', $label_html );
 		
 		$input_html = "\n\t\t\t" . '<input type="text" name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . ' datepicker" value="' . $answer . '"  title="' . $required['msg'] . '" ' . $disabled . ' ' . $extra . '/>';
-		$input_html = apply_filters( 'filter_hook_espresso_form_field_input_html', $input_html );
+		$input_html = apply_filters( 'FHEE_form_field_input_html', $input_html );
 		
 		// enqueue scripts
 		wp_register_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css', array(),EVENT_ESPRESSO_VERSION );

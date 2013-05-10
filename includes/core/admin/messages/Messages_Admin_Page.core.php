@@ -735,7 +735,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _edit_message_template() {
 
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '');
 		$GRP_ID = isset( $this->_req_data['id'] ) && !empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
 
 		$EVT_ID = isset( $this->_req_data['evt_id'] ) && !empty( $this->_req_data['evt_id'] ) ? absint( $this->_req_data['evt_id'] ) : FALSE;
@@ -1569,7 +1569,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	protected function _insert_or_update_message_template($new = FALSE ) {
 		
-		do_action ( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action ( 'AHEE_log', __FILE__, __FUNCTION__, '');
 		$success = 0;
 		$override = FALSE;
 
@@ -1781,7 +1781,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @return void
 	 */
 	protected function _trash_or_restore_message_template($trash = TRUE, $all = FALSE ) {
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
 			$MTP = EEM_Message_Template::instance();
 
@@ -1845,7 +1845,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @return void
 	 */
 	protected function _delete_message_template() {
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
 			$MTP = EEM_Message_Template::instance();
 
