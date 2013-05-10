@@ -670,9 +670,8 @@ abstract class EE_Gateway {
 				'transaction_id' => ''
 			);
 			$transaction->set_details($legacy_txn_details);
-			//createa hackey payment object, but dont save it
-			$payment = new EE_Payment($transaction->ID(), EEM_Payment::status_id_pending, current_time('timestamp'), array(), $transaction->total(), $this->_gateway_name, array(), null, null, null);
-		
+			$transaction->save();
+			do_action( 'action_hook_espresso__EE_Gateway__update_transaction_with_payment__no_payment', $transaction );
 		}else{
 			//ok, now process the transaction according to the payment
 			$transaction->update_based_on_payments();
@@ -700,10 +699,12 @@ abstract class EE_Gateway {
 			//the hash_salt doesn't seem to be used anywhere. 
 			//The tax data should be added on the thankyou page, not here, as this may be an IPN.
 			//updating teh transaction in the session should be done on the thank you page, as taht's where the session is always available.
+			$transaction->save();
+			do_action( 'action_hook_espresso__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
 		}	
-		$transaction->save();
 		
-		do_action( 'action_hook_espresso__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
+		
+		
 		return true;
 	}
 	
