@@ -49,14 +49,17 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 	 */
 	public function thank_you_page_logic(EE_Transaction $transaction) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		global $EE_Session;
 		//check for an existing payment from this gateway
 		$payments = $this->_PAY->get_all_where(array('PAY_gateway'=>$this->gateway(),'TXN_ID'=>$transaction->ID()));
 		//if it already exists, short-circuit updating the transaction
 		if( empty( $payments )){
-			$transaction->set_status('TPN');
+			$this->update_transaction_with_payment($transaction, null);
 			$transaction->save();
 		}
+		//createa hackey payment object, but dont save it
+		$payment = new EE_Payment($transaction->ID(), EEM_Payment::status_id_pending, current_time('timestamp'), array(), $transaction->total(), $this->_gateway_name, array(), null, null, null);
+		
+		do_action( 'action_hook_espresso__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
 		parent::thank_you_page_logic($transaction);
 		//check that there's still a transaction in the session.
 		//if there isn't, maybe we've cleared it (session ended with the thank you page)

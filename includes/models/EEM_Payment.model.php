@@ -248,8 +248,7 @@ class EEM_Payment extends EEM_TempBase {
 	* 		@access		public
 	* 		@param		$payment		payment object
 	* 		@param		$what				text to describe action performed, used in notices
-	*		@return		boolean success of updating the transaction or not. Note: returning 'true' doesnt necessarily mean the
-	 * transaction has been changed, it just means what's saved to teh db has been successful
+	*		@return		EE_Transaction related to teh payment which got deleted
 	*/
 	public function update_payment_transaction( EE_Payment $payment, $what ) {
 
@@ -312,6 +311,7 @@ class EEM_Payment extends EEM_TempBase {
 	/**
 	*		Delete a Payment, update all totals, and save info to db
 	* 		@access		public
+	 *		@return EE_Transaction related to the payment deleted (after it's been updated to reflect the deletion)
 	*/
 	public function delete_payment( $payment = FALSE ) {
 

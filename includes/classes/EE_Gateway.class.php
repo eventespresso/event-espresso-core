@@ -655,9 +655,9 @@ abstract class EE_Gateway {
 		
 		//now, if teh payment's empty, we're going to update the transaction accordingly
 		if(empty($payment)){
-			$transaction->set_status($this->_TXN->pending_status_code);
+			$transaction->set_status(EEM_Transaction::open_status_code);
 			$legacy_txn_details = array(
-				'gateway' => $this->_payment_settings['display_name'],
+				'gateway' => $this->_gateway_name,
 				'approved' => FALSE,
 				'response_msg' => __('You\'re registration will be marked as complete once your payment is received.', 'event_espresso'),
 				'status' => 'Open',
@@ -670,6 +670,8 @@ abstract class EE_Gateway {
 				'transaction_id' => ''
 			);
 			$transaction->set_details($legacy_txn_details);
+			$transaction->save();
+			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', $transaction );
 		}else{
 			//ok, now process the transaction according to the payment
 			$transaction->update_based_on_payments();
@@ -697,9 +699,12 @@ abstract class EE_Gateway {
 			//the hash_salt doesn't seem to be used anywhere. 
 			//The tax data should be added on the thankyou page, not here, as this may be an IPN.
 			//updating teh transaction in the session should be done on the thank you page, as taht's where the session is always available.
+			$transaction->save();
+			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
 		}	
-		$transaction->save();
-		do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
+		
+		
+		
 		return true;
 	}
 	
