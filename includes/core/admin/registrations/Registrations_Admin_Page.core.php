@@ -118,8 +118,13 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 						'noheader' => TRUE
 					),
 					
-				'delete_registration'	=> array(
-						'func' => '_delete_registration',
+				'cancel_registration'	=> array(
+						'func' => 'cancel_registration',
+						'noheader' => TRUE
+					),
+					
+				'cancel_registrations'	=> array(
+						'func' => 'cancel_registrations',
 						'noheader' => TRUE
 					),
 					
@@ -420,7 +425,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				'label' => __('All Registrations', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'delete_registration' => __('Delete Registrations', 'event_espresso'),
+					'cancel_registrations' => __('Cancel Registrations', 'event_espresso'),
 					)
 				),
 			'month' => array(
@@ -428,7 +433,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				'label' => __('This Month', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'delete_registration' => __('Delete Registrations', 'event_espresso'),
+					'cancel_registrations' => __('Cancel Registrations', 'event_espresso'),
 					)
 				),
 			'today' => array(
@@ -436,7 +441,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				'label' => sprintf( __('Today - %s', 'event_espresso'), date('M d, Y', current_time('timestamp', 0) ) ),
 				'count' => 0,
 				'bulk_action' => array(
-					'delete_registration' => __('Delete Registrations', 'event_espresso'),
+					'cancel_registrations' => __('Cancel Registrations', 'event_espresso'),
 					)
 				)
 			);
@@ -624,6 +629,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 		$registrations = EEM_Registration::instance()->get_registrations_for_admin_page( $EVT_ID, $CAT_ID, $reg_status, $month_range, $today_a, $this_month_a, $start_date, $end_date, $orderby, $sort, $limit, $count );
+//		global $wpdb;
+//		echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		//printr( $registrations, '$registrations  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
 		if ( $EVT_ID && isset( $registrations[0] ) && isset( $registrations[0]->event_name )) {
@@ -762,25 +769,31 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				case 'RAP' :
 					$pending_url = self::add_query_args_and_nonce( array( 'action'=>'set_pending_reg_status', '_REG_ID'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
 					$decline_url = self::add_query_args_and_nonce( array( 'action'=>'decline_reg_status', '_REG_ID'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
+					$cancel_url = self::add_query_args_and_nonce( array( 'action'=>'cancel_registration', '_REG_ID'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
 					$approve_decline_reg_status_buttons = '
 			<a id="reg-admin-pending-reg-status-lnk" class="button-secondary" href="' . $pending_url . '">' . __( 'Set this Registration to Pending', 'event_espresso' ) . '</a>
-			<a id="reg-admin-decline-reg-status-lnk" class="button-secondary" href="' . $decline_url . '">' . __( 'Decline this Registration', 'event_espresso' ) . '</a>';
+			<a id="reg-admin-decline-reg-status-lnk" class="button-secondary" href="' . $decline_url . '">' . __( 'Decline this Registration', 'event_espresso' ) . '</a>
+			<a id="reg-admin-cancel-reg-status-lnk" class="button-secondary" href="' . $cancel_url . '">' . __( 'Cancel this Registration', 'event_espresso' ) . '</a>';
 					break;
 				
 				case 'RPN' :
 					$aprove_url = self::add_query_args_and_nonce( array( 'action'=>'approve_reg_status', '_REG_ID'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
 					$decline_url = self::add_query_args_and_nonce( array( 'action'=>'decline_reg_status', '_REG_ID'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
+					$cancel_url = self::add_query_args_and_nonce( array( 'action'=>'cancel_registration', '_REG_ID'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
 					$approve_decline_reg_status_buttons = '
 			<a id="reg-admin-approve-reg-status-lnk" class="espresso-button-green button-primary" href="' . $aprove_url . '">' . __( 'Approve this Registration', 'event_espresso' ) . '</a>
-			<a id="reg-admin-decline-reg-status-lnk" class="button-secondary" href="' . $decline_url . '">' . __( 'Decline this Registration', 'event_espresso' ) . '</a>';
+			<a id="reg-admin-decline-reg-status-lnk" class="button-secondary" href="' . $decline_url . '">' . __( 'Decline this Registration', 'event_espresso' ) . '</a>
+			<a id="reg-admin-cancel-reg-status-lnk" class="button-secondary" href="' . $cancel_url . '">' . __( 'Cancel this Registration', 'event_espresso' ) . '</a>';
 					break;
 				
 				case 'RNA' :
 					$aprove_url = self::add_query_args_and_nonce( array( 'action'=>'approve_reg_status', '_REG_ID'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
 					$pending_url = self::add_query_args_and_nonce( array( 'action'=>'set_pending_reg_status', '_REG_ID'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
+					$cancel_url = self::add_query_args_and_nonce( array( 'action'=>'cancel_registration', '_REG_ID'=>$this->_registration->REG_ID ), REG_ADMIN_URL );
 					$approve_decline_reg_status_buttons = '
 			<a id="reg-admin-approve-reg-status-lnk" class="espresso-button-green button-primary" href="' . $aprove_url . '">' . __( 'Approve this Registration', 'event_espresso' ) . '</a>
-			<a id="reg-admin-pending-reg-status-lnk" class="button-secondary" href="' . $pending_url . '">' . __( 'Set this Registration to Pending', 'event_espresso' ) . '</a>';
+			<a id="reg-admin-pending-reg-status-lnk" class="button-secondary" href="' . $pending_url . '">' . __( 'Set this Registration to Pending', 'event_espresso' ) . '</a>
+			<a id="reg-admin-cancel-reg-status-lnk" class="button-secondary" href="' . $cancel_url . '">' . __( 'Cancel this Registration', 'event_espresso' ) . '</a>';
 					break;
 				
 			}		
@@ -1397,12 +1410,56 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * 		generates HTML for the View Registration Details Admin page
+	 * 		cancel_registration
 	*		@access private
 	*		@return void
 	*/
-	private function _delete_registration() {
-		_e('Registrations can not be deleted', 'event_espresso');
+	private function _cancel_registration( $REG_ID = FALSE ) {
+		if ( absint( $REG_ID )) {
+			$registration = EEM_Registration::instance()->get_registration_by_ID( $REG_ID );
+			$registration->set_status( EEM_Registration::status_id_cancelled );
+			return $registration->update();
+		} else {
+			return FALSE;
+		}	
+	}
+
+
+
+
+
+
+
+	/**
+	 * 		cancel_registration
+	*		@access protected
+	*		@return void
+	*/
+	protected function cancel_registration() {
+		$REG_ID = isset( $this->_req_data['_REG_ID'] ) ? $this->_req_data['_REG_ID'] : FALSE;
+		$success = $this->_cancel_registration($REG_ID);
+		$this->_redirect_after_action( $success, 'registration', 'cancelled', array( 'action' => 'default' ));
+	}
+
+
+
+
+
+
+	/**
+	 * 		cancel_registrations
+	*		@access protected
+	*		@return void
+	*/
+	protected function cancel_registrations() {
+		$success = TRUE;
+		//determine the REG_ID and set to array.
+		$REG_IDs = isset( $this->_req_data['REG_ID'] ) ? (array) $this->_req_data['REG_ID'] : array();
+		foreach ( $REG_IDs as $REG_ID ) {
+			$result = $this->_cancel_registration($REG_ID);
+			$success = $result ? $success : FALSE;
+		}
+		$this->_redirect_after_action( $success, 'registration', 'cancelled', array( 'action' => 'default' ));
 	}
 
 
