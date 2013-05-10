@@ -655,9 +655,9 @@ abstract class EE_Gateway {
 		
 		//now, if teh payment's empty, we're going to update the transaction accordingly
 		if(empty($payment)){
-			$transaction->set_status($this->_TXN->pending_status_code);
+			$transaction->set_status(EEM_Transaction::open_status_code);
 			$legacy_txn_details = array(
-				'gateway' => $this->_payment_settings['display_name'],
+				'gateway' => $this->_gateway_name,
 				'approved' => FALSE,
 				'response_msg' => __('You\'re registration will be marked as complete once your payment is received.', 'event_espresso'),
 				'status' => 'Incomplete',
@@ -670,6 +670,9 @@ abstract class EE_Gateway {
 				'transaction_id' => ''
 			);
 			$transaction->set_details($legacy_txn_details);
+			//createa hackey payment object, but dont save it
+			$payment = new EE_Payment($transaction->ID(), EEM_Payment::status_id_pending, current_time('timestamp'), array(), $transaction->total(), $this->_gateway_name, array(), null, null, null);
+		
 		}else{
 			//ok, now process the transaction according to the payment
 			$transaction->update_based_on_payments();
@@ -699,6 +702,7 @@ abstract class EE_Gateway {
 			//updating teh transaction in the session should be done on the thank you page, as taht's where the session is always available.
 		}	
 		$transaction->save();
+		
 		do_action( 'action_hook_espresso__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
 		return true;
 	}

@@ -722,6 +722,8 @@ abstract class EEM_TempBase extends EEM_Base{
 			return $base_class_obj_or_id;
 		}elseif(is_int($base_class_obj_or_id)){//assume it's an ID
 			return $this->get_one_by_ID($base_class_obj_or_id);
+		}elseif(is_null($base_class_obj_or_id)){
+			return null;
 		}else{
 			throw new EE_Exception(sprintf(__("'%s' is neither an object of type %s, nor an ID!",'event_espresso'),$base_class_obj_or_id,$this->_getClasssName()));
 		}
