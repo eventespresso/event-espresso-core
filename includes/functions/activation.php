@@ -156,7 +156,7 @@ function espresso_initialize_system_questions() {
 	
 	// QUESTIONS
 	global $wpdb;
-	$SQL = 'SELECT QST_system FROM ' . $wpdb->prefix . 'esp_question WHERE QST_system != 0';
+	$SQL = 'SELECT QST_system FROM ' . $wpdb->prefix . "esp_question WHERE QST_system != ''";
 	// what we have
 	$questions = $wpdb->get_col( $SQL );
 	// what we should have
@@ -172,6 +172,7 @@ function espresso_initialize_system_questions() {
 		'zip', 
 		'phone' 
 	);
+	
 	// loop thru what we should have and compare to what we have
 	foreach ( $QST_systems as $QST_system ) {
 		// if we don't have what we should have
@@ -340,8 +341,7 @@ function espresso_initialize_system_questions() {
 			
 			// QUESTION GROUP QUESTIONS 
 			
-			$QSG_ID = in_array( $QST_system,
-					array('fname','lname','email')) ? 1 : 2;			
+			$QSG_ID = in_array( $QST_system, array('fname','lname','email')) ? 1 : 2;			
 			// add system questions to groups
 			$wpdb->insert(
 				$wpdb->prefix . 'esp_question_group_question', 
