@@ -507,7 +507,10 @@ class EEM_Registration extends EEM_TempBase {
 			}
 
 			if ( $reg_status ) {
-				$SQL .= $sql_clause .' reg.STS_ID = "' . $reg_status   . '"';
+				$SQL .= $sql_clause ." reg.STS_ID = '$reg_status'";
+				$sql_clause = ' AND ';
+			} else {
+				$SQL .= $sql_clause ." reg.STS_ID != 'RCN'";
 				$sql_clause = ' AND ';
 			}
 
@@ -571,7 +574,10 @@ class EEM_Registration extends EEM_TempBase {
 		}
 
 		if ( $reg_status ) {
-			$SQL .= $sql_clause .'reg.STS_ID = "' . $reg_status  . '"';
+			$SQL .= $sql_clause ." reg.STS_ID = '$reg_status'";
+			$sql_clause = ' AND ';
+		} else {
+			$SQL .= $sql_clause ." reg.STS_ID != 'RCN'";
 			$sql_clause = ' AND ';
 		}
 
