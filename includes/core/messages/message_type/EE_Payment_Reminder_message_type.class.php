@@ -17,27 +17,27 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * EE_Payment_message_type extends EE_message_type
+ * EE_Payment_Reminder_message_type extends EE_message_type
  *
- * Handles frontend payment notification messages
+ * Handles triggered payment reminder notification messages.
  *
  * @package		Event Espresso
- * @subpackage	includes/core/messages/message_type/EE_Payment_message_type.class.php
+ * @subpackage	includes/core/messages/message_type/EE_Payment_Reminder_message_type.class.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
 
-class EE_Payment_message_type extends EE_message_type {
+class EE_Payment_Reminder_message_type extends EE_message_type {
 
 	public function __construct() {
 
 		//setup type details for reference
-		$this->name = 'payment';
-		$this->description = __('This message type is used for all payment notification messages that go out including any manual payments entered by an event administrator.', 'event_espresso'); 
+		$this->name = 'payment_reminder';
+		$this->description = __('This message type is used for all payment reminder messages.  These are triggered when an offline gateway registration is completed or when manually triggered via event administrators via the transaction admin page(s).', 'event_espresso'); 
 		$this->label = array(
-			'singular' => __('payment', 'event_espresso'),
-			'plural' => __('payments', 'event_espresso')
+			'singular' => __('payment reminder', 'event_espresso'),
+			'plural' => __('payment reminders', 'event_espresso')
 			);
 
 		parent::__construct();
@@ -88,13 +88,13 @@ class EE_Payment_message_type extends EE_message_type {
 
 	protected function _default_template_field_subject() {
 		foreach ( $this->_contexts as $context => $details ) {
-			$content[$context] = 'Event Payment Details';
+			$content[$context] = 'Event Payment Reminder';
 		};
 		return $content;
 	}
 
 	protected function _default_template_field_content() {
-		$content = file_get_contents( EE_CORE . 'messages/message_type/assets/defaults/payment-message-type-content.template.php');
+		$content = file_get_contents( EE_CORE . 'messages/message_type/assets/defaults/payment-reminder-message-type-content.template.php');
 
 		foreach ( $this->_contexts as $context => $details ) {
 			$tcontent[$context]['main'] = $content;

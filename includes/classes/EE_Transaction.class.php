@@ -738,6 +738,13 @@ class EE_Transaction extends EE_Base_Class{
 
 
 
+	public function selected_gateway() {
+		$details = $this->details();
+		return $details['gateway'];
+	}
+
+
+
 }
 
 
