@@ -745,6 +745,13 @@ class EE_Transaction extends EE_Base_Class{
 
 
 
+	public function gateway_response_on_transaction() {
+		$details = $this->details();
+		return $details['response_msg'];
+	}
+
+
+
 }
 
 

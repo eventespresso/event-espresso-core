@@ -65,9 +65,9 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 	private function _get_empty_payment_obj( EE_Transaction $txn ) {
 		$PMT = new EE_Payment( array(
 			'STS_ID' => EEM_Payment::status_id_pending,
-			'PAY_timestamp' => current_time(),
+			'PAY_timestamp' => current_time('timestamp'),
 			'PAY_gateway' => $txn->selected_gateway(),
-			'PAY_gateway_response' => $txn->details['response_msg'],
+			'PAY_gateway_response' => $txn->gateway_response_on_transaction(),
 			)
 		 );
 		return $PMT;
