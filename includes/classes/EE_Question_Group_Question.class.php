@@ -11,17 +11,6 @@ class EE_Question_Group_Question extends EE_Base_Class{
 	
 
 
-	/**
-	 * Constructor
-	 *
-	 * @access protected
-	 * @param array array of values indexed by property name (without the leading underscore)
-	 * @param bool  $bydb indicates whether the model is instantiating this class or not
-	 * @return void
-	 */
-	protected function __construct( $fieldValues = array(), $bydb = FALSE ) {
-		parent::__construct($fieldValues, $bydb);
-	}
 	
 	
 

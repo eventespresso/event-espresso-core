@@ -177,20 +177,6 @@ class EE_Datetime extends EE_Base_Class{
 	
 
 
-	/**
-	 * Constructor
-	 *
-	 * @access protected
-	 * @param array array of values indexed by property name (without the leading underscore)
-	 * @param bool  $bydb indicates whether the model is instantiating this class or not
-	 * @param string $timezone valid timezone string (optional)
-	 * @return void
-	 */
-	protected function __construct( $fieldValues = array(), $bydb = FALSE, $timezone = NULL ) {
-		parent::__construct($fieldValues, $bydb, $timezone);
-	}
-
-
 	public static function new_instance( $props_n_values = array(), $timezone = NULL ) {
 		$classname = get_class( self );
 		$has_object = parent::_check_for_object( $props_n_values, $classname );

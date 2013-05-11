@@ -11,18 +11,6 @@ class EE_Event_Question_Group extends EE_Base_Class{
 	protected $_Question_Group;
 
 
-	/**
-	 * Constructor
-	 *
-	 * @access protected
-	 * @param array array of values indexed by property name (without the leading underscore)
-	 * @param bool  $bydb indicates whether the model is instantiating this class or not
-	 * @return void
-	 */
-	protected function __construct( $fieldValues = array(), $bydb = FALSE ) {
-		parent::__construct( $fieldValues, $bydb );
-	}
-
 	public static function new_instance( $props_n_values = array() ) {
 		$classname = get_class( self );
 		$has_object = parent::_check_for_object( $props_n_values, $classname );

@@ -178,20 +178,6 @@ class EE_Price extends EE_Base_Class{
 	 * @var EE_Price_Type
 	 */
 	protected $_Price_Type;
-	
-	
-	/**
-	 * Constructor
-	 *
-	 * @access protected
-	 * @param array array of values indexed by property name (without the leading underscore)
-	 * @param bool  $bydb indicates whether the model is instantiating this class or not
-	 * @param string $timezone valid timezone string (optional)
-	 * @return void
-	 */
-	protected function __construct( $fieldValues = array(), $bydb = FALSE, $timezone = NULL ) {
-		parent::__construct($fieldValues, $bydb, $timezone);	
-	}
 
 
 

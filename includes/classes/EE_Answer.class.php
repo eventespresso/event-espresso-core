@@ -69,19 +69,6 @@ class EE_Answer extends EE_Base_Class{
 	protected $_Registration;
 
 
-	/**
-	 * Constructor
-	 *
-	 * @access protected
-	 * @param array array of values indexed by property name (without the leading underscore)
-	 * @param bool  $bydb indicates whether the model is instantiating this class or not
-	 * @return void
-	 */
-	protected function __construct( $fieldValues = array(), $bydb = FALSE ) {
-		parent::__construct($fieldValues, $bydb);
-	}
-
-
 
 
 	public static function new_instance( $props_n_values = array() ) {
