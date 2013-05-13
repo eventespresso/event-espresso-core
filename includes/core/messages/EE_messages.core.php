@@ -145,7 +145,6 @@ class EE_messages {
 	public function send_message( $type, $vars ) {
 		$success = FALSE;
 		$error = FALSE;
-
 		// is that a real class ?
 		if ( isset(  $this->_installed_message_types[$type] ) ) {
 			// then send it
@@ -183,7 +182,11 @@ class EE_messages {
 		} else {
 			return EE_Error::add_error( sprintf( __('Message type: %s does not exist', 'event_espresso'), $type ), __FILE__, __FUNCTION__, __LINE__ );
 		}
-
+		// add a success message
+		if ( ! $error ) {
+			EE_Error::add_success( sprintf( __( 'The %s has been succesfully sent.', 'event_espresso'), str_replace( '_', ' ', $type )), __FILE__, __FUNCTION__, __LINE__ );
+		}
+		
 		return $error ? FALSE : TRUE; //yeah backwards eh?  Really what we're returning is if there is a total success for all the messages or not.  We'll modify this once we get message recording in place.
 	}
 
