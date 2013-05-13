@@ -336,6 +336,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
+		$this->_session_data = isset( $this->_session_data ) && is_array( $this->_session_data ) ? $this->_session_data : array();
+		
 		foreach ( $this->_session_data as $key => $value ) {
 
 			switch( $key ) {
