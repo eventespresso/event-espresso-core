@@ -447,7 +447,7 @@ class EE_Registration extends EE_Base_Class {
 			$this->_STS_ID = strtoupper( sanitize_key( $STS_ID ));
 			return TRUE;
 		} else {
-			$txn_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'txn'=>$this->_TXN_ID ), TXN_ADMIN_URL );
+			$txn_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$this->_TXN_ID ), TXN_ADMIN_URL );
 			$txn_link = '
 			<a id="reg-admin-sts-error-txn-lnk" href="' . $txn_url . '" title="' . __( 'View transaction #', 'event_espresso' ) . $this->_TXN_ID . '">
 				' . __( 'View the Transaction for this Registration', 'event_espresso' ) . '

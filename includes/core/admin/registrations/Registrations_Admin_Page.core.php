@@ -1929,10 +1929,10 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 //		die();
 //		$this->_req_data = array();
 //		
-		$txn_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'txn'=>$transaction->ID() ), TXN_ADMIN_URL );
+		$txn_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$transaction->ID() ), TXN_ADMIN_URL );
 		wp_safe_redirect( $txn_url );
 		exit();
-//		$this->_redirect_after_action( $success, __( 'New Registration', 'event_espresso' ), 'created', array( 'action' => 'view_transaction', 'txn'=>$transaction->ID() ), TXN_ADMIN_URL );
+//		$this->_redirect_after_action( $success, __( 'New Registration', 'event_espresso' ), 'created', array( 'action' => 'view_transaction', 'TXN_ID'=>$transaction->ID() ), TXN_ADMIN_URL );
 	
 	}
 

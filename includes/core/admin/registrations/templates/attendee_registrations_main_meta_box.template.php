@@ -36,7 +36,7 @@ global $org_options;
 					</th>
 					<th class="jst-left">
 					<?php 
-						$txn_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'txn'=>$registration->transaction_ID() ), TXN_ADMIN_URL );
+						$txn_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$registration->transaction_ID() ), TXN_ADMIN_URL );
 						echo '
 						<a href="'.$txn_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">
 							View Transaction ' . $registration->transaction_ID() . '  
