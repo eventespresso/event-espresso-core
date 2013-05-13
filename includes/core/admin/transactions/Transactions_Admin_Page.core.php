@@ -144,7 +144,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'nav' => array(
 					'label' => __('View Transaction', 'event_espresso'),
 					'order' => 5,
-					'url' => isset($this->_req_data['txn']) ? add_query_arg(array('txn' => $this->_req_data['txn'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
+					'url' => isset($this->_req_data['TXN_ID']) ? add_query_arg(array('TXN_ID' => $this->_req_data['TXN_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
 					'persistent' => FALSE
 					),
 				'metaboxes' => array('_transaction_details_metaboxes')
@@ -337,7 +337,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 	    $TXN = EEM_Transaction::instance();
 
-	    $TXN_ID = ( ! empty( $_REQUEST['txn'] )) ? absint( $_REQUEST['txn'] ) : FALSE;
+	    $TXN_ID = ( ! empty( $_REQUEST['TXN_ID'] )) ? absint( $_REQUEST['TXN_ID'] ) : FALSE;
 
 	    if ( $transaction = $TXN->get_transaction_for_admin_page( $TXN_ID ) ) {
 	    	$this->_transaction = array_shift( $transaction ); 
@@ -997,7 +997,10 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _send_payment_reminder() {
-		echo '<div style="margin:2em auto; text-align:center;">Vinnie da Finger says: <h1>"YO!!!"</h1><h1>"Time to PAY UP!!!</h1></div>';
+	    $TXN_ID = ( ! empty( $_REQUEST['TXN_ID'] )) ? absint( $_REQUEST['TXN_ID'] ) : FALSE;
+		$trasaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
+		do_action( 'AHEE_process_admin_payment_reminder', $trasaction );
+		$this->_redirect_after_action( FALSE, 'payment reminder', 'sent', array(), TRUE );
 	}
 
 
