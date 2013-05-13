@@ -130,15 +130,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		$extra_default_session_vars = apply_filters( 'FHEE_default_session_vars', $extra_default_session_vars );
 		array_merge( $this->_default_session_vars, $extra_default_session_vars );
 
-		// set some defaults
-		foreach ( $this->_default_session_vars as $key => $default_var ) {
-			if ( is_array( $default_var )) {
-				$this->_session_data[ $key ] = array();
-			} else {
-				$this->_session_data[ $key ] = '';
-			}
-			
-		}
+		$this->_set_defaults();
+
 
 		// check for existing session and retreive it from db
 		if ( ! $this->_espresso_session() ) {
@@ -155,6 +148,26 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		// once everything is all said and done,
 		add_action( 'shutdown', array( &$this, '_update_espresso_session' ), 100);
 
+	}
+
+
+
+	/**
+	 * This just sets some defaults for the _session data property
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _set_defaults() {
+		// set some defaults
+		foreach ( $this->_default_session_vars as $key => $default_var ) {
+			if ( is_array( $default_var )) {
+				$this->_session_data[ $key ] = array();
+			} else {
+				$this->_session_data[ $key ] = '';
+			}
+			
+		}
 	}
 
 
@@ -335,8 +348,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	public function _update_espresso_session( $new_session = FALSE ) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
-
-		$this->_session_data = isset( $this->_session_data ) && is_array( $this->_session_data ) ? $this->_session_data : array();
+		$this->_session_data = isset( $this->_session_data ) && is_array( $this->_session_data ) && isset( $this->_session_data['id']) ? $this->_session_data : NULL;
+		if ( empty( $this->_session_data ) )
+			$this->_set_defaults();
 		
 		foreach ( $this->_session_data as $key => $value ) {
 
