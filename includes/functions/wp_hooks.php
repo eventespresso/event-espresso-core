@@ -126,6 +126,7 @@ function espresso_plugin_activation() {
 		espresso_default_message_templates();
 		espresso_default_countries();
 		espresso_default_states();
+		espresso_create_no_ticket_prices_array();
 	}
 }
 
