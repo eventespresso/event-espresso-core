@@ -75,7 +75,7 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	
 
 	public static function new_instance( $props_n_values = array() ) {
-		$classname = get_class( self );
+		$classname = __CLASS__;
 		$has_object = parent::_check_for_object( $props_n_values, $classname );
 		return $has_object ? $has_object : new self( $props_n_values );
 	}

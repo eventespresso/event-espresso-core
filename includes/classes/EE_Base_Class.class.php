@@ -426,7 +426,7 @@ class EE_Base_Class{
 		}
 		//if the object already has an ID, update it. Otherwise, insert it
 		if ( !empty( $save_cols_n_values[self::_get_primary_key_name( get_class($this) )] ) ){
-			$results = $this->_get_model()->update ( $save_cols_n_values, array(array(self::_get_primary_key_name()=>$this->ID())), true );
+			$results = $this->get_model()->update ( $save_cols_n_values, array(array(self::_get_primary_key_name(get_class($this))=>$this->ID())), true );
 		} else {
 			unset($save_cols_n_values[self::_get_primary_key_name( get_class( $this) )]);
 			
