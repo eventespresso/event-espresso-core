@@ -339,8 +339,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_style('jquery-ui-style-datepicker-css');
 
 		//scripts
-		wp_register_script('event_editor_js', EVENTS_ASSETS_URL . 'event_editor.js', array('ee_admin_js', 'jquery-ui-slider', 'jquery-ui-timepicker-addon'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script('event_editor_js', EVENTS_ASSETS_URL . 'event_editor.js', array( 'ee_admin_js', 'jquery-ui-slider', 'jquery-ui-timepicker-addon', 'jquery-validate' ), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script('event_editor_js');
+		
 		global $eei18n_js_strings;
 		$eei18n_js_strings['image_confirm'] = __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso');
 		wp_localize_script( 'event_editor_js', 'eei18n', $eei18n_js_strings );	
@@ -1088,14 +1089,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 									<td class="name-column ticket-price-quick-edit-column"> 
 										<?php //echo $price->name(); ?>
 										<div class="small-screen-table-label"><?php echo __('Name', 'event_espresso') ?></div>
-										<input class="edit-ticket-price-input quick-edit regular-text<?php echo $disabled_class;?>" type="text" id="quick-edit-ticket-price-PRC_name-<?php echo $price->ID(); ?>" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_name]" value="<?php echo $price->name(); ?>" <?php echo $disabled; ?>/>
+										<input class="edit-ticket-price-input quick-edit regular-text required<?php echo $disabled_class;?>" type="text" id="quick-edit-ticket-price-PRC_name-<?php echo $price->ID(); ?>" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_name]" value="<?php echo $price->name(); ?>" <?php echo $disabled; ?>/>
 									</td> 
 									
 									<td class="amount-column ticket-price-quick-edit-column"> 
 										<div class="small-screen-table-label"><?php echo __('Amount', 'event_espresso') ?></div>
 										<span class="cur-sign jst-rght"><?php echo ($PRT->type[$price->type()]->is_percent()) ?  '' : $org_options['currency_symbol']; ?></span>
 										<?php $price_amount =  ($PRT->type[$price->type()]->is_percent()) ? number_format( $price->amount(), 1 ) : number_format( $price->amount(), 2 ); ?>
-										<input class="edit-ticket-price-input quick-edit small-text jst-rght<?php echo $disabled_class;?>" type="text" id="quick-edit-ticket-price-PRC_amount-<?php echo $price->ID(); ?>" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_amount]" value="<?php echo $price_amount; ?>"<?php echo $disabled; ?>/>
+										<input class="edit-ticket-price-input quick-edit small-text jst-rght required<?php echo $disabled_class;?>" type="text" id="quick-edit-ticket-price-PRC_amount-<?php echo $price->ID(); ?>" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_amount]" value="<?php echo $price_amount; ?>"<?php echo $disabled; ?>/>
 										<span class="percent-sign jst-left"><?php echo ($PRT->type[$price->type()]->is_percent()) ? '%' : ''; ?></span>
 									</td> 
 									
@@ -1393,7 +1394,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 						</tr>
 						
 						<tr valign="top">
-							<th><label for="new-ticket-price-PRC_name"><?php _e('Name', 'event_espresso'); ?></label></th>
+							<th><label for="new-ticket-price-PRC_name"><?php _e('Name', 'event_espresso'); ?><em>*</em></label></th>
 							<td>
 								<input class="add-new-ticket-price-input regular-text" type="text" id="new-ticket-price-PRC_name" name="new_ticket_price[PRC_name]" value=""/>
 								<p class="description">&nbsp;&nbsp;<?php _e('The name that site visitors will see for this Price.', 'event_espresso'); ?></p>
@@ -1409,9 +1410,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 						</tr>
 						
 						<tr valign="top">
-							<th><label for="new-ticket-price-PRC_amount"><?php _e('Amount', 'event_espresso'); ?></label></th>
+							<th><label for="new-ticket-price-PRC_amount"><?php _e('Amount', 'event_espresso'); ?><em>*</em></label></th>
 							<td>
-								<input class="add-new-ticket-price-input small-text" type="text" id="new-ticket-price[PRC_amount]" name="new_ticket_price[PRC_amount]" style="text-align:right;" value=""/>
+								<input class="add-new-ticket-price-input small-text required" type="text" id="new-ticket-price[PRC_amount]" name="new_ticket_price[PRC_amount]" style="text-align:right;" value=""/>
 								<p class="description">&nbsp;&nbsp;<?php _e('The dollar or percentage amount for this Price.', 'event_espresso'); ?></p>
 							</td>
 						</tr>
@@ -2678,7 +2679,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$this->_espresso_reset_cache();
 		
 	/* @var $espresso_wp_user type array*/
-		global $wpdb, $espresso_wp_user, $caffeinated;
+		global $wpdb, $org_options, $espresso_wp_user, $caffeinated;
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		$wpdb->show_errors();
@@ -2996,9 +2997,16 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		// add new tickets if any
 		if ($new_ticket_price = isset($this->_req_data['new_ticket_price']) ? $this->_req_data['new_ticket_price'] : array('PRC_name' => NULL)) {
-			if ( ! empty($new_ticket_price['PRC_name'])) {
+			if ( ! empty( $new_ticket_price['PRC_amount'] ) && ! empty( $new_ticket_price['PRC_name'] )) {
 				$ticket_prices_to_save[0] = $new_ticket_price;
+			} else if ( empty( $new_ticket_price['PRC_amount'] ) && ! empty( $new_ticket_price['PRC_name'] )) {
+				$msg = __( 'Event prices require an amount before they can be saved. Please make sure you enter an amount for the new event price before attempting to save it.', 'event_espresso' );
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );		
+			} else if ( ! empty( $new_ticket_price['PRC_amount'] ) && empty( $new_ticket_price['PRC_name'] )) {
+				$msg = __( 'Event prices require a name before they can be saved. Please make sure you enter a name for the new event price before attempting to save it.', 'event_espresso' );
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );		
 			}
+
 		}
 //		printr( $ticket_prices_to_save, '$ticket_prices_to_save  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
@@ -3020,11 +3028,12 @@ class Events_Admin_Page extends EE_Admin_Page {
 				// or whether it was already overriding a global from before
 				$overrides = $ticket_price['PRC_overrides'] ? absint($ticket_price['PRC_overrides']) : $overrides;
 //echo '<h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+				
 				// create ticket object
 				$new_price = new EE_Price(
 												$ticket_price['PRT_ID'],
 												$last_event_id,
-												$ticket_price['PRC_amount'],
+												preg_replace( '/[^0-9,.]/', '', $ticket_price['PRC_amount'] ),
 												$ticket_price['PRC_name'],
 												$ticket_price['PRC_desc'],
 												isset( $ticket_price['PRC_reg_limit'] ) ? $ticket_price['PRC_reg_limit'] : NULL,
@@ -3169,7 +3178,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	private function _update_event() {
 		//print_r($this->_req_data);
 
-		global $wpdb, $espresso_wp_user, $caffeinated;
+		global $wpdb, $org_options, $espresso_wp_user, $caffeinated;
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		$wpdb->show_errors();
@@ -3568,8 +3577,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		// add new tickets if any
 		if ($new_ticket_price = isset($this->_req_data['new_ticket_price']) ? $this->_req_data['new_ticket_price'] : array('PRC_name' => NULL)) {
-			if (!empty($new_ticket_price['PRC_name'])) {
+			if ( ! empty( $new_ticket_price['PRC_amount'] ) && ! empty( $new_ticket_price['PRC_name'] )) {
 				$ticket_prices_to_save[0] = $new_ticket_price;
+			} else if ( empty( $new_ticket_price['PRC_amount'] ) && ! empty( $new_ticket_price['PRC_name'] )) {
+				$msg = __( 'Event prices require an amount before they can be saved. Please make sure you enter an amount for the new event price before attempting to save it.', 'event_espresso' );
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );		
+			} else if ( ! empty( $new_ticket_price['PRC_amount'] ) && empty( $new_ticket_price['PRC_name'] )) {
+				$msg = __( 'Event prices require a name before they can be saved. Please make sure you enter a name for the new event price before attempting to save it.', 'event_espresso' );
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );		
 			}
 		}
 		
@@ -3599,7 +3614,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				$new_price = new EE_Price(
 												$ticket_price['PRT_ID'],
 												absint($event_id),
-												$ticket_price['PRC_amount'],
+												preg_replace( '/[^0-9,.]/', '', $ticket_price['PRC_amount'] ),
 												$ticket_price['PRC_name'],
 												$ticket_price['PRC_desc'],
 												isset( $ticket_price['PRC_reg_limit'] ) ? $ticket_price['PRC_reg_limit'] : NULL,
