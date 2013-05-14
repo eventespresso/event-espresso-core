@@ -5,7 +5,7 @@
 /** overview table styles **/
 
 .column-messenger {
-	width: 66%;
+	width: 14%;
 }
 
 .column-event {
@@ -18,6 +18,10 @@
 
 .column-messages_sent {
 	width: 10%;
+}
+
+.column-description {
+	width: 52%;
 }
 
 #mtp_valid_shortcodes .inside {
