@@ -659,7 +659,7 @@ abstract class EE_Gateway {
 			$legacy_txn_details = array(
 				'gateway' => $this->_gateway_name,
 				'approved' => FALSE,
-				'response_msg' => __('You\'re registration will be marked as complete once your payment is received.', 'event_espresso'),
+				'response_msg' => __('Your registration will be marked as complete once your payment is received.', 'event_espresso'),
 				'status' => 'Open',
 				'raw_response' => serialize($_REQUEST),
 				'amount' => 0.00,
