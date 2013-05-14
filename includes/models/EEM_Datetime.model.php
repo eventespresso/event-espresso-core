@@ -48,13 +48,13 @@ class EEM_Datetime extends EEM_Base {
 	 *		@access private
 	 *		@return void
 	 */
-	private function __construct() {
+	protected function __construct() {
 		global $wpdb;
 		// set table name
 		$this->table_name = $wpdb->prefix . 'esp_datetime';
 		// set item names
-		$this->singlular_item = 'Datetime';
-		$this->plual_item = 'Datetimes';		
+		$this->singlular_item = __('Datetime','event_espresso');
+		$this->plural_item = __('Datetimes','event_espresso');		
 		// array representation of the datetime table and the data types for each field
 		$this->table_data_types = array (
 			'DTT_ID' 					=> '%d',
@@ -108,8 +108,8 @@ class EEM_Datetime extends EEM_Base {
 	private function _get_event_datetimes( $EVT_ID = FALSE, $primary = FALSE ) {
 
 		if ( ! $EVT_ID ) {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = 'No Event datetimes could be retreived because no event ID was received. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'No Event datetimes could be retreived because no event ID was received.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -152,6 +152,43 @@ class EEM_Datetime extends EEM_Base {
 
 	private function _compare_order( $A, $B ) {
 		return ( $A->start() == $B->start() ) ? 0 : $A->start() < $B->start() ? -1 : 1;
+	}
+
+
+
+
+
+	/**
+	 * This returns the date time for the given DTT_ID
+	 * @param  mixed (bool|int) $DTT_ID if false then we return empty
+	 * @return mixed (object|bool)          DTT object or false
+	 */
+	private function _get_date_time_by_dtt_id( $DTT_ID = FALSE ) {
+		if ( ! $DTT_ID ) {
+			$msg = __( 'No Event datetimescould be retrieved because no Date Time ID (DTT_ID) was received.', 'event_espresso');
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}
+
+		$where = array( 'DTT_ID' => $DTT_ID );
+
+		if ( $datetimes = $this->select_all_where( $where ) ) {
+			//load Datetime object class file
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Datetime.class.php');
+			$datetime = array_shift($datetimes);
+			$date_time_obj = new EE_Datetime(
+					$datetime->EVT_ID,
+					$datetime->DTT_is_primary,
+					$datetime->DTT_EVT_start,
+					$datetime->DTT_EVT_end,
+					$datetime->DTT_REG_start,
+					$datetime->DTT_REG_end,
+					$datetime->DTT_ID
+				);
+			return $date_time_obj;
+		} else {
+			return FALSE;
+		}
 	}	
 
 
@@ -219,6 +256,20 @@ class EEM_Datetime extends EEM_Base {
 
 
 
+
+	/**
+	*		get event start date from db
+	*
+	* 		@access		public
+	* 		@param		int 			$EVT_ID
+	*		@return 		mixed		array on success, FALSE on fail
+	*/
+	public function get_event_start_date( $EVT_ID = FALSE ) {
+		$start_date = array_shift( $this->_get_event_datetimes( $EVT_ID, TRUE ));
+		return $start_date->start_date();
+	}
+
+	
 
 
 	/**
@@ -302,6 +353,21 @@ class EEM_Datetime extends EEM_Base {
 
 
 
+	/**
+	 * get datetime object for the given datetime ID
+	 * 
+	 * @param  boolean $DTT_ID 		Date Time ID
+	 * @return mixed (object|bool)  Date Time object or FALSE
+	 */
+	public function get_date_time_by_dtt_id( $DTT_ID = FALSE ) {
+		return $this->_get_date_time_by_dtt_id( $DTT_ID );
+	}
+
+
+
+
+
+
 	function convert_converted_event_datetimes() {
 
 		global $wpdb;
@@ -357,11 +423,6 @@ class EEM_Datetime extends EEM_Base {
 
 			$SQL = 'SELECT * FROM wp_events_start_end WHERE event_id = '. $id .' ORDER BY start_time, end_time';
 			$event_times = $wpdb->get_results( $SQL, OBJECT_K );
-
-			if( $event->recurrence_id ) {
-//				$SQL = 'SELECT * FROM wp_events_start_end WHERE event_id = '. $id .' ORDER BY start_time, end_time';
-//				$event_times = $wpdb->get_results( $SQL, OBJECT_K );
-			}
 
 			if ( $event_times ) {
 
@@ -429,7 +490,7 @@ class EEM_Datetime extends EEM_Base {
 
 		}
 
-		echo espresso_get_notices();
+		echo EE_Error::get_notices();
 
 	}
 

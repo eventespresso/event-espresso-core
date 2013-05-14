@@ -24,28 +24,60 @@
 require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 
 
-class EEM_Transaction extends EEM_Base {
+class EEM_Transaction extends EEM_TempBase {
 
   	// private instance of the Transaction object
 	private static $_instance = NULL;
 
+	
+	
+	/**
+	 * Status ID (STS_ID on esp_status table) to indicate a complete transaction.
+	 */
+	const complete_status_code = 'TCM';
+	
+	
+	
+	/**
+	 * STatus ID(STS_ID on esp_status table) to indicate an incomplete transaction
+	 */
+	const incomplete_status_code = 'TIN';
+	
+	
+	
+	/**
+	 * Status ID(STS_ID on esp_status table) to indicate the transaction is complete,
+	 * but payment is pending. This is the state for transactions where payment is promised
+	 * from an offline gateway. 
+	 */
+	const open_status_code = 'TPN';
 
-
-
-
+	
+	
+	/**
+	 *  Status ID(STS_ID on esp_status table) to indicate the transaction is overpaid.
+	 *  This is the same as complete, but site admins actually owe clients the moneys!
+	 * from an offline gateway. 
+	 */
+	const overpaid_status_code = 'TOP';
+	
+	
+	
+	
+	
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
-	 *		@access private
+	 *		@access protected
 	 *		@return void
 	 */	
-	private function __construct() {	
-		global $wpdb;
+	protected function __construct() {	
+		$this->singlular_item = __('Transaction','event_espresso');
+		$this->plural_item = __('Transactions','event_espresso');		
 		// set table name
-		$this->table_name = $wpdb->prefix . 'esp_transaction';
+		/*$this->table_name = $wpdb->prefix . 'esp_transaction';
 		// set item names
-		$this->singlular_item = 'Transaction';
-		$this->plual_item = 'Transactions';		
+		
 		// array representation of the transaction table and the data types for each field 
 		$this->table_data_types = array (	
 			'TXN_ID' 						=> '%d', 	
@@ -57,7 +89,24 @@ class EEM_Transaction extends EEM_Base {
 			'TXN_session_data'		=> '%s',
 			'TXN_hash_salt'			=> '%s',
 			'TXN_tax_data'			=> '%s'	
-		);		
+		);*/
+		$this->_fields_settings = array(
+			'TXN_ID' 			=> new EE_Model_Field('Transaction ID', 'primary_key', false),
+			'TXN_timestamp' 	=> new EE_Model_Field('Transaction Teimstamp', 'int', false,time()),
+			'TXN_total' 		=> new EE_Model_Field('Total amount due for this transaction', 'float', true,0),
+			'TXN_paid' 			=> new EE_Model_Field('Total amoutn paid so far', 'float', false,0),
+			'STS_ID' 			=> new EE_Model_Field('Status of Transaction.','foreign_text_key',false,  EEM_Transaction::incomplete_status_code,null,'Status'),
+			'TXN_details' 		=> new EE_Model_Field('Serialized array of Transaction details as returned from the Payment Gateway', 'serialized_text', true, null),
+			'TXN_tax_data' 		=> new EE_Model_Field('Serialized array of tax data', 'serialized_text', true, null),
+			'TXN_session_data'	=> new EE_Model_Field('Serialized array of session data', 'serialized_text', true, null),
+			'TXN_hash_salt' 	=> new EE_Model_Field('Payment Gateway hash salt value. Possibly deprecated.', 'plaintext', true,null)
+		);
+		$this->_related_models = array(
+			'Payments' 		=> new EE_Model_Relation('hasMany', 'Payment', 'TXN_ID'),
+			'Registrations' => new EE_Model_Relation('hasMany', 'Registration', 'TXN_ID'),
+			//'Status' =>			new EE_Model_Relation('belongsTo','Status','STS_ID')
+		);
+		parent::__construct();
 	
 		// uncomment these for example code samples of how to use them
 		//			self::how_to_use_insert();
@@ -84,41 +133,7 @@ class EEM_Transaction extends EEM_Base {
 
 
 
-	/**
-	*		cycle though array of transactions and create objects out of each item
-	* 
-	* 		@access		private
-	* 		@param		array		$transactions		
-	*		@return 		mixed		array on success, FALSE on fail
-	*/	
-	private function _create_objects( $transactions = FALSE ) {
-
-		if ( ! $transactions ) {
-			return FALSE;
-		} 		
-		
-		if ( is_object( $transactions )){
-			$transactions = array( $transactions );
-		}
-
-
-		foreach ( $transactions as $transaction ) {
-				$array_of_objects[ $transaction->TXN_ID ] = new EE_Transaction(
-						$transaction->TXN_timestamp, 
-						$transaction->TXN_total, 
-						$transaction->TXN_paid, 
-						$transaction->STS_ID, 
-						maybe_unserialize( $transaction->TXN_details ), 
-						maybe_unserialize( $transaction->TXN_session_data ), 
-						$transaction->TXN_hash_salt,
-						maybe_unserialize( $transaction->TXN_tax_data ),
-						$transaction->TXN_ID
-				 	);
-		}	
-		return $array_of_objects;	
-
-	}
-
+	
 
 
 
@@ -154,14 +169,16 @@ class EEM_Transaction extends EEM_Base {
 	*		retreive  ALL transactions from db
 	* 
 	* 		@access		public
+	* 		@param bool $count return count or objects
 	*		@return 		mixed		array on success, FALSE on fail
 	*/	
-	public function get_all_transactions() {
+	public function get_all_transactions($count = FALSE) {
 	
 		$orderby = 'TXN_timestamp';
+		$type =  ( $count ) ? 'COUNT' : 'OBJECT_K';
 		// retreive all transactions	
-		if ( $transactions = $this->select_all ( $orderby )) {
-			return $this->_create_objects( $transactions );
+		if ( $transactions = $this->select_all ( $orderby, FALSE, FALSE, $type )) {
+			return !$count ? $this->_create_objects( $transactions ) : $transactions;
 		} else {
 			return FALSE;
 		}
@@ -258,7 +275,7 @@ class EEM_Transaction extends EEM_Base {
 	* 		@param		string		$end_date		
 	*		@return 		mixed		array on success, FALSE on fail
 	*/	
-	public function get_transactions_for_admin_page( $start_date = FALSE, $end_date = FALSE ) { 
+	public function get_transactions_for_admin_page( $start_date = FALSE, $end_date = FALSE, $orderby = 'TXN_timestamp', $order = 'DESC', $limit = NULL, $count = FALSE ) { 
 
 		if ( ! $start_date ) {
 			$start_date = date('Y-m-d', strtotime( 'Jan 1, 2010' ));
@@ -282,7 +299,7 @@ class EEM_Transaction extends EEM_Base {
 
 		global $wpdb;
 		
-		$SQL = 'SELECT att.ATT_ID, att.ATT_fname, att.ATT_lname, att.ATT_email, evt.id, evt.event_name, evt.slug, reg.REG_ID, reg.REG_url_link, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.TXN_paid, txn.STS_ID, txn.TXN_details ';		
+		$SQL = $count ? "SELECT COUNT(txn.TXN_ID) " : "SELECT att.ATT_ID, CONCAT(att.ATT_fname, ' ', att.ATT_lname) as TXN_att_name, att.ATT_email, evt.id, evt.event_name, evt.slug, reg.REG_ID, reg.REG_url_link, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.TXN_paid, txn.STS_ID, txn.TXN_details ";		
 
 		$SQL .= 'FROM ' . $wpdb->prefix . 'esp_registration reg ';
 		$SQL .= 'LEFT JOIN ' . $wpdb->prefix . 'esp_attendee att ON reg.ATT_ID = att.ATT_ID ';
@@ -290,20 +307,41 @@ class EEM_Transaction extends EEM_Base {
 		$SQL .= 'RIGHT JOIN ' . $this->table_name . ' txn ON reg.TXN_ID = txn.TXN_ID ';
 		$SQL .= 'WHERE TXN_timestamp >= %d ';
 		$SQL .= 'AND TXN_timestamp <= %d ';
-		$SQL .= 'AND reg.REG_is_primary = 1 ';
-		$SQL .= 'ORDER BY TXN_timestamp DESC';
+		$SQL .= 'AND reg.REG_count = 1 ';
 
-		if ( $results = $wpdb->get_results( $wpdb->prepare( $SQL, $start_date, $end_date ), ARRAY_A )) {
-//			echo $wpdb->last_query;
-//			echo printr( $payments );
-			$transactions = array();
-			foreach ( $results as $transaction ) {
-				$transactions[ $transaction['TXN_ID'] ] = $transaction;
+		//setup orderby
+		switch ( $orderby ) {
+			case 'TXN_ID':
+				$orderby = 'txn.TXN_ID';
+				break;
+			case 'TXN_att_name':
+				$orderby = 'TXN_att_name';
+				break;
+			case 'event_name':
+				$orderby = 'evt.event_name';
+				break;
+			default: //'TXN_timestamp'
+				$orderby = 'txn.TXN_timestamp';
+		}
+
+
+		//let's set limit
+		$limit = !empty($limit) ? 'LIMIT ' . implode(',', $limit) : '';
+		$SQL .= $count ? '' : "ORDER BY $orderby $order $limit";
+
+		$results = $count ? $wpdb->get_var( $wpdb->prepare( $SQL, $start_date, $end_date ) ) : $wpdb->get_results( $wpdb->prepare( $SQL, $start_date, $end_date ), ARRAY_A );
+
+		if ( $results ) {
+			if ( !$count ) {
+				$transactions = array();
+				foreach ( $results as $transaction ) {
+					$transactions[ $transaction['TXN_ID'] ] = $transaction;
+				}
+			} else {
+				$transactions = $results;
 			}
 			return $transactions;
 		} else {
-//			global $espresso_notices;
-//			$espresso_notices['errors'][] = $wpdb->print_error();
 			return FALSE;
 		}
 
@@ -322,10 +360,9 @@ class EEM_Transaction extends EEM_Base {
 	*/	
 	public function get_transaction_for_admin_page( $TXN_ID = FALSE ) { 
 
-		global $espresso_notices;
-
 		if ( ! $TXN_ID ) {
-			$espresso_notices['errors'][] = 'No Transaction ID was received.';
+			$msg = __( 'No Transaction ID was received.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		
@@ -337,7 +374,7 @@ class EEM_Transaction extends EEM_Base {
 		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_attendee att ON reg.ATT_ID = att.ATT_ID ';
 		$SQL .= 'INNER JOIN ' . $this->table_name . ' txn ON reg.TXN_ID = txn.TXN_ID ';
 		$SQL .= 'WHERE txn.TXN_ID = %d ';
-		$SQL .= 'AND reg.REG_is_primary = 1 ';
+		$SQL .= 'AND reg.REG_count = 1 ';
 		$SQL .= 'ORDER BY TXN_timestamp DESC';
 
 		if ( $transaction = $wpdb->get_results( $wpdb->prepare( $SQL, $TXN_ID ))) {
@@ -345,7 +382,7 @@ class EEM_Transaction extends EEM_Base {
 //			echo printr( $payments );
 			return $transaction;
 		} else {
-			$espresso_notices['errors'][] = $wpdb->print_error();
+//			EE_Error::add_error( $wpdb->print_error(), __FILE__, __FUNCTION__, __LINE__ ); print_error echos immediately  >:()
 			return FALSE;
 		}
 
@@ -402,6 +439,23 @@ class EEM_Transaction extends EEM_Base {
 
 	}
 
+
+
+	/**
+	 * retrieve the status details from esp_status table as an array.
+	 * @return array 
+	 */
+	 public function status_array() {
+	 	global $wpdb;
+	 	$SQL = 'SELECT STS_ID, STS_code FROM '. $wpdb->prefix . 'esp_status WHERE STS_type = "transaction"';
+	 	$results = $wpdb->get_results( $SQL );
+	 	$txn_status = array();
+	 	foreach ( $results as $status ) {
+            $txn_status[ $status->STS_ID ] = __( $status->STS_code, 'event_espresso' );
+        }
+        return $txn_status;
+    }
+
 	
 	
 
@@ -442,7 +496,60 @@ class EEM_Transaction extends EEM_Base {
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
 		return $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );
 	}
-
+	
+	/**
+	 * Gets teh current transaction given teh reg_url_link, or assumes the reg_url_link is in the
+	 * $_REQUEST global variable. Either way, tries to find the current transaction (through
+	 * teh registration poitned to by reg_url_link), if not reutrns null
+	 * @param string $reg_url_link
+	 * @return EE_Transaction
+	 */
+	public function get_transaction_from_reg_url_link( $reg_url_link = NULL ){
+		if( NULL == $reg_url_link ){
+			$reg_url_link = $_REQUEST['e_reg_url_link'];
+		}
+		require_once('EEM_Registration.model.php');
+		$regmodel=  EEM_Registration::instance();
+		$registration=$regmodel->get_registration_for_reg_url_link($reg_url_link);
+		if(!empty($registration)){
+			$transaction = $this->get_transaction($registration->transaction_ID());
+			return $transaction;
+		}else{
+			return NULL;
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * Updates teh provided EE_Transaction with all the applicable payments 
+	 * (or fetche the EE_Transaction from its ID)
+	 * @param EE_Transaction/int $transaction_obj_or_id EE_Transaction or its ID
+	 * @return boolean success
+	 */
+	public function update_based_on_payments($transaction_obj_or_id){
+		$transaction = $this->ensure_is_obj($transaction_obj_or_id);
+		require_once('EEM_Payment.model.php');
+		$PAY = EEM_Payment::instance();
+		$total_paid = $PAY->recalculate_total_payments_for_transaction( $transaction->ID(),  EEM_Payment::status_id_approved );
+		//$total_pending = $PAY->recalculate_total_payments_for_transaction( $transaction->ID(),  EEM_Payment::status_id_pending );
+		$transaction->set_paid( $total_paid );
+		// set transaction status to complete if paid in full or the event was a freebie
+		if($total_paid > $transaction->total()){
+			$transaction->set_status(EEM_Transaction::overpaid_status_code);
+		}elseif ( $total_paid == $transaction->total() ) {
+			$transaction->set_status(EEM_Transaction::complete_status_code);
+		} elseif( $total_paid < $transaction->total() ) {
+			$transaction->set_status(EEM_Transaction::open_status_code);
+		}
+		
+		// update transaction and return results
+		return $transaction->save();
+	}
 
 
 

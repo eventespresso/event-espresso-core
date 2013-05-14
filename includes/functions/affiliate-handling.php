@@ -11,23 +11,24 @@ class espresso_Affiliate_handling {
 	function __construct() {
 		global $espresso_wp_user;
 		$payment_settings = get_option('payment_data_' . $espresso_wp_user);
-		$this->settings = $payment_settings['affiliate'];
-		$this->hook_into_wp();
+		$this->settings = isset($payment_settings['affiliate']) ? $payment_settings['affiliate'] : null;
+		if ( !empty($this->settings) )
+			$this->hook_into_wp();
 	}
 
 	function hook_into_wp() {
-		foreach ( $this->settings['hook_into'] as $hook_where ) {
-			switch ( $hook_where ) {
+		//foreach ( $this->settings['hook_into'] as $hook_where ) {
+			switch ( $this->settings['hook_into'] ) {
 				case 'header' :
 					add_action('wp_head', array(&$this, 'print_aff') );
 					break;
 				case 'purchase_confirmation' :
-					add_action('action_hook_espresso_reg_completed', array(&$this, 'print_aff') );
+					add_action('AHEE_reg_completed', array(&$this, 'print_aff') );
 					break;
 				case 'footer' :
 					add_action('wp_footer', array(&$this, 'print_aff'));
 			}
-		}
+		//}
 	}
 
 	function print_aff() {

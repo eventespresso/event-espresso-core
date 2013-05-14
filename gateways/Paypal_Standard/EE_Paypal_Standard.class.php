@@ -38,13 +38,19 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 	}
 
 	protected function __construct(EEM_Gateways &$model) {
-		$this->_gateway = 'Paypal_Standard';
-		$this->_button_base = 'paypal.gif';
+		$this->_gateway_name = 'Paypal_Standard';
+		$this->_button_base = 'paypal-logo.png';
 		$this->_path = str_replace('\\', '/', __FILE__);
-		$this->gatewayUrl = 'https://www.paypal.com/cgi-bin/webscr';
+		
 		$this->addField('rm', '2');		 // Return method = POST
 		$this->addField('cmd', '_xclick');
+		$this->_btn_img = file_exists( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway_name . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
+		if(!$this->_payment_settings['use_sandbox']){
+			$this->_gatewayUrl = 'https://www.paypal.com/cgi-bin/webscr';
+		}else{
+			$this->_gatewayUrl = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
+		}
 	}
 
 	protected function _default_settings() {
@@ -54,8 +60,9 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$this->_payment_settings['use_sandbox'] = false;
 		$this->_payment_settings['no_shipping'] = '0';
 		$this->_payment_settings['type'] = 'off-site';
-		$this->_payment_settings['display_name'] = 'Paypal';
+		$this->_payment_settings['display_name'] = __('Paypal','event_espresso');
 		$this->_payment_settings['current_path'] = '';
+		$this->_payment_settings['button_url'] = $this->_btn_img;
 	}
 
 	protected function _update_settings() {
@@ -64,11 +71,94 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$this->_payment_settings['currency_format'] = $_POST['currency_format'];
 		$this->_payment_settings['no_shipping'] = $_POST['no_shipping'];
 		$this->_payment_settings['use_sandbox'] = $_POST['use_sandbox'];
-		$this->_payment_settings['button_url'] = $_POST['button_url'];
+		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';	
+	}
+
+
+	protected function _help_content() {
+		ob_start();
+		?>
+		<div id="currency_info">
+			<h2>
+				<?php _e('PayPal Currency', 'event_espresso'); ?>
+			</h2>
+			<p>
+				<?php _e('PayPal uses 3-character ISO-4217 codes for specifying currencies in fields and variables. </p><p>The default currency code is US Dollars (USD). If you want to require or accept payments in other currencies, select the currency you wish to use. The dropdown lists all currencies that PayPal (currently) supports.', 'event_espresso'); ?>
+			</p>
+		</div>
+		<div id="surcharge">
+			<h2>
+				<?php _e('Payment Surcharge', 'event_espresso'); ?>
+			</h2>
+			<p>
+				<?php _e('Please enter a decimal number indicating a percent surcharge. For example, if you enter 3.00, 3% will be added to the final price of the event during the checkout. If the event price is initially $100, the price with the surcharge will be $103.<br /> This surcharge will apply to all new events.  However, you will have the ability to change this value during the event creation.', 'event_espresso'); ?>
+			</p>
+		</div>
+		<div id="no_shipping">
+			<h2>
+				<?php _e('Shipping Address', 'event_espresso'); ?>
+			</h2>
+			<p>
+				<?php _e('By default, PayPal will display shipping address information on the PayPal payment screen. If you plan on shipping items to a registrant (shirts, invoices, etc) then use this option. Otherwise it should not be used, as it will require a shipping address when someone registers for an event.', 'event_espresso'); ?>
+			</p>
+		</div>
+		<div id="sandbox_info">
+			<h2>
+				<?php _e('PayPal Sandbox', 'event_espresso'); ?>
+			</h2>
+			<p>
+				<?php _e('In addition to using the PayPal Sandbox fetaure. The debugging feature will also output the form varibales to the payment page, send an email to the admin that contains the all PayPal variables.', 'event_espresso'); ?>
+			</p>
+			<hr />
+			<p>
+				<?php _e('The PayPal Sandbox is a testing environment that is a duplicate of the live PayPal site, except that no real money changes hands. The Sandbox allows you to test your entire integration before submitting transactions to the live PayPal environment. Create and manage test accounts, and view emails and API credentials for those test accounts.', 'event_espresso'); ?>
+			</p>
+			<hr />
+			<p><strong><?php _e('Helpful Links', 'event_espresso'); ?></strong></p>
+			<ul>
+				<li><a href="https://developer.paypal.com/devscr?cmd=_home" target="_blank"><?php _e('PayPal Sandbox Login', 'event_espresso'); ?></a></li>
+				<li><a href="https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox" target="_blank"><?php _e('Sandbox Tutorial', 'event_espresso'); ?></a></li>
+				<li><a href="https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox_get_started" target="_blank"><?php _e('Getting Started with PayPal Sandbox', 'event_espresso'); ?></a></li>
+			</ul>
+		</div>
+		<div id="paypal_button_image">
+			<h2>
+				<?php _e('Button Image URL', 'event_espresso'); ?>
+			</h2>
+			<p>
+				<?php _e('A default payment button is provided. A custom payment button may be used, choose your image or upload a new one, and just copy the "file url" here (optional.)', 'event_espresso'); ?>
+			</p>
+			<p><?php _e('Current Button Image', 'event_espresso'); ?></p>
+			<p><?php echo '<img src="' . $this->_payment_settings['button_url'] . '" />'; ?></p>
+		</div>
+		<div id="paypal_image_url_info">
+			<h2>
+				<?php _e('PayPal Image URL (logo for payment page)', 'event_espresso'); ?>
+			</h2>
+			<p>
+				<?php _e('The URL of the 150x50-pixel image displayed as your logo in the upper left corner of the PayPal checkout pages.', 'event_espresso'); ?>
+			</p>
+			<p>
+				<?php _e('Default - Your business name, if you have a Business account, or your email address, if you have Premier or Personal account.', 'event_espresso'); ?>
+			</p>
+		</div>
+		<?php
+		$content = ob_get_contents();
+		ob_end_clean();
+		return $content;
 	}
 
 	protected function _display_settings() {
 		?>
+		<tr>
+			<th>
+				<label><strong style="color:#F00"><?php _e('Please Note', 'event_espresso'); ?></strong></label>
+			</th>
+			<td>				
+				<?php _e('For PayPal IPN to work, you need a Business or Premier account.', 'event_espresso'); ?>
+			</td>
+		</tr>
+
 		<tr>
 			<th><label for="paypal_id">
 					<?php _e('PayPal ID', 'event_espresso'); ?>
@@ -79,12 +169,13 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 					<?php _e('Typically payment@yourdomain.com', 'event_espresso'); ?>
 				</span></td>
 		</tr>
+		
 		<tr>
 			<th><label for="currency_format">
 					<?php _e('Country Currency', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'currency_info'); ?>
+					<?php echo EE_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
 				</label></th>
-			<td><select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
+			<td><select name="currency_format" data-placeholder="Choose a currency...">
 					<option value="<?php echo $this->_payment_settings['currency_format']; ?>"><?php echo $this->_payment_settings['currency_format']; ?></option>
 					<option value="USD">
 						<?php _e('U.S. Dollars ($)', 'event_espresso'); ?>
@@ -162,55 +253,55 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		</tr>
 
 		<tr>
-			<th><label for="pp_button_url">
-					<?php _e('Button Image URL', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'paypal_button_image'); ?>
-				</label></th>
-			<td><input class="regular-text" type="text" name="button_url" id="pp_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" /><br /><span class="description">
-					<?php _e('URL to the payment button.', 'event_espresso'); ?>
+			<th>
+				<label for="pp_image_url">
+					<?php _e('Image URL', 'event_espresso'); ?>
+					<?php echo EE_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
+				</label>
+			</th>
+			<td>
+				<span class='ee_media_uploader_area'>
+					<img class="ee_media_image" src="<?php echo $this->_payment_settings['image_url']; ?>" />
+					<input class="ee_media_url" type="text" name="image_url" size='34' value="<?php echo $this->_payment_settings['image_url']; ?>">
+					<a href="#" class="ee_media_upload"><img src="images/media-button-image.gif" alt="Add an Image"></a>
+				</span><br/>
+				<span class="description">
+					<?php _e('Used for your business/personal logo on the PayPal page', 'event_espresso'); ?>
 				</span>
 			</td>
 		</tr>
-		<tr>
-			<th><label for="pp_image_url">
-					<?php _e('Image URL', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'paypal_image_url_info'); ?>
-				</label></th>
-			<td><input class="regular-text" type="text" name="image_url" id="pp_image_url" size="35" value="<?php echo $this->_payment_settings['image_url']; ?>" />
-				<br />
-				<span class="description">
-					<?php _e('Used for your business/personal logo on the PayPal page', 'event_espresso'); ?>
-				</span></td>
-		</tr>
+		
 		<tr>
 			<th><label for="use_sandbox">
 					<?php _e('Use the Debugging Feature and the PayPal Sandbox', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'sandbox_info'); ?>
+					<?php echo EE_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
 				</label></th>
-			<td><?php echo select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
+			<td><?php echo EE_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
 		</tr>
+		
 		<tr>
-			<th><label for="no_shipping">
+			<th>
+				<label for="no_shipping">
 					<?php _e('Shipping Address Options', 'event_espresso'); ?>
-					<?php echo apply_filters('filter_hook_espresso_help', 'no_shipping'); ?>
-				</label></th>
-			<td><?php
-			$shipping_values = array(
-					array('id' => '1', 'text' => __('Do not prompt for an address', 'event_espresso')),
-					array('id' => '0', 'text' => __('Prompt for an address, but do not require one', 'event_espresso')),
-					array('id' => '2', 'text' => __('Prompt for an address, and require one', 'event_espresso')));
-			echo select_input('no_shipping', $shipping_values, $this->_payment_settings['no_shipping']);
-					?></td>
+					<?php echo EE_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
+				</label>
+			</th>
+			<td>
+			<?php
+				$shipping_values = array(
+						array('id' => '1', 'text' => __('Do not prompt for an address', 'event_espresso')),
+						array('id' => '0', 'text' => __('Prompt for an address, but do not require one', 'event_espresso')),
+						array('id' => '2', 'text' => __('Prompt for an address, and require one', 'event_espresso'))
+					);
+				echo EE_Form_Fields::select_input('no_shipping', $shipping_values, $this->_payment_settings['no_shipping']);
+			?>
+			</td>
 		</tr>
 		<?php
 	}
 
 	protected function _display_settings_help() {
-		?>
-		<p><strong style="color:#F00">
-				<?php _e('PayPal Notes', 'event_espresso'); ?>
-			</strong><br />
-			<?php _e('For PayPal IPN to work, you need a Business or Premier account.', 'event_espresso'); ?></p>
+		?>		
 		<div id="sandbox_info" style="display:none">
 			<h2>
 				<?php _e('PayPal Sandbox', 'event_espresso'); ?>
@@ -251,30 +342,6 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 				<?php _e('Default - Your business name, if you have a Business account, or your email address, if you have Premier or Personal account.', 'event_espresso'); ?>
 			</p>
 		</div>
-		<div id="currency_info" style="display:none">
-			<h2>
-				<?php _e('PayPal Currency', 'event_espresso'); ?>
-			</h2>
-			<p>
-				<?php _e('PayPal uses 3-character ISO-4217 codes for specifying currencies in fields and variables. </p><p>The default currency code is US Dollars (USD). If you want to require or accept payments in other currencies, select the currency you wish to use. The dropdown lists all currencies that PayPal (currently) supports.', 'event_espresso'); ?>
-			</p>
-		</div>
-		<div id="surcharge" style="display:none">
-			<h2>
-				<?php _e('Payment Surcharge', 'event_espresso'); ?>
-			</h2>
-			<p>
-				<?php _e('Please enter a decimal number indicating a percent surcharge. For example, if you enter 3.00, 3% will be added to the final price of the event during the checkout. If the event price is initially $100, the price with the surcharge will be $103.<br /> This surcharge will apply to all new events.  However, you will have the ability to change this value during the event creation.', 'event_espresso'); ?>
-			</p>
-		</div>
-		<div id="no_shipping" style="display:none">
-			<h2>
-				<?php _e('Shipping Address', 'event_espresso'); ?>
-			</h2>
-			<p>
-				<?php _e('By default, PayPal will display shipping address information on the PayPal payment screen. If you plan on shipping items to a registrant (shirts, invoices, etc) then use this option. Otherwise it should not be used, as it will require a shipping address when someone registers for an event.', 'event_espresso'); ?>
-			</p>
-		</div>
 		<?php
 	}
 
@@ -286,20 +353,34 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$paypal_id = $paypal_settings['paypal_id'];
 		$paypal_cur = $paypal_settings['currency_format'];
 		$no_shipping = $paypal_settings['no_shipping'];
-		if ($paypal_settings['use_sandbox']) {
-			$this->_gatewayUrl = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
-		}
 
 		$item_num = 1;
-		$registrations = $session_data['cart']['REG']['items'];
+		
+		/* @var $transaction EE_Transaction */
+		$transaction = $session_data['transaction'];
+		foreach($transaction->registrations() as $registration){
+			/* @var $registration EE_Registration */
+			$this->addField('item_name_' . $item_num, $registration->attendee()->full_name() . ' attending ' . $registration->event_name()  . ' on ' . $registration->date_obj()->end_date_and_time() .', ' . $registration->price_obj()->name());
+			$this->addField('amount_' . $item_num, $registration->price_paid());
+			$this->addField('quantity_' . $item_num, '1');
+			$item_num++;
+		}
+		/*
+		 * //this code actually worked fine, except for some reason weird characters were showing up
+		 * //I tried encoding it in different formats etc etc and it never quite worked. Whatever
+		 * $registrations = $session_data['cart']['REG']['items'];
+		require_once('EEM_Attendee.model.php');
 		foreach ($registrations as $registration) {
 			foreach ($registration['attendees'] as $attendee) {
-				$this->addField('item_name_' . $item_num, $attendee['fname'] . ' ' . $attendee['lname'] . ' attending ' . $registration['name'] . ' on ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc']);
+				//echo "paypal standard, attendee<br>\r\n";
+				//var_dump($attendee);
+				$this->addField('item_name_' . $item_num, $attendee[EEM_Attendee::fname_question_id] . ' ' 
+						. $attendee[EEM_Attendee::lname_question_id] . ' attending ' . $registration['name'] . ' on ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc']);
 				$this->addField('amount_' . $item_num, $attendee['price_paid']);
 				$this->addField('quantity_' . $item_num, '1');
 				$item_num++;
 			}
-		}
+		}*/
 
 		$total = $session_data['_cart_grand_total_amount'];
 		if (isset($session_data['tax_totals'])) {
@@ -311,22 +392,25 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 				$item_num++;
 			}
 		}
+		//get any of the current registrations, 
+		$a_current_registration = current($session_data['registration']);
 		$this->addField('business', $paypal_id);
-		$this->addField('return', home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment');
+		$this->addField('return',  $this->_get_return_url($a_current_registration));
 		$this->addField('cancel_return', home_url() . '/?page_id=' . $org_options['cancel_return']);
-		$this->addField('notify_url', home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment');
+		$this->addField('notify_url', $this->_get_notify_url($a_current_registration));
 		$this->addField('cmd', '_cart');
 		$this->addField('upload', '1');
 		$this->addField('currency_code', $paypal_cur);
 		$this->addField('image_url', empty($paypal_settings['image_url']) ? '' : $paypal_settings['image_url']);
 		$this->addField('no_shipping ', $no_shipping);
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)));
+		do_action('AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)));
 		$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
 		$this->redirect_after_reg_step_3();
 	}
 
-	public function thank_you_page() {
+	/*public function thank_you_page() {
 		global $EE_Session;
+		//printr( $_POST, '$_POST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$txn_details = array(
 				'gateway' => $this->_payment_settings['display_name'],
 				'approved' => FALSE,
@@ -337,8 +421,8 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 				'method' => sanitize_text_field($_POST['txn_type']),
 				'auth_code' => sanitize_text_field($_POST['payer_id']),
 				'md5_hash' => sanitize_text_field($_POST['verify_sign']),
-				'invoice_number' => sanitize_text_field($_POST['invoice_id']),
-				'transaction_id' => sanitize_text_field($_POST['ipn_track_id'])
+				//'invoice_number' => sanitize_text_field($_POST['invoice_id']),
+				//'transaction_id' => sanitize_text_field($_POST['ipn_track_id'])
 		);
 		$this->ipnLog = TRUE;
 		if ($this->_payment_settings['use_sandbox']) {
@@ -356,20 +440,117 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		}
 		$EE_Session->set_session_data(array('txn_results' => $txn_details), 'session_data');
 
+		$success = $txn_details['approved'];
+
+		do_action( 'AHEE_after_payment', $EE_Session, $success );
+
 		if ($txn_details['approved'] == TRUE && $this->_payment_settings['use_sandbox']) {
-			do_action('action_hook_espresso_mail_successful_transaction_debugging_output');
+			do_action('AHEE_mail_successful_transaction_debugging_output');
 		} else {
-			do_action('action_hook_espresso_mail_failed_transaction_debugging_output');
+			do_action('AHEE_mail_failed_transaction_debugging_output');
 		}
 		parent::thank_you_page();
+	}*/
+	
+	/**
+	 * Handles a paypal IPN, verifies we haven't already processed this IPN, creates a payment (regardless of success or not)
+	 * and updates the provided transaction, and saves to DB
+	 * @param EE_Transaction or ID $transaction
+	 * @return boolean
+	 */
+	public function handle_ipn_for_transaction(EE_Transaction $transaction){
+		$this->_debug_log("<hr><br>".get_class($this).":start handle_ipn_for_transaction on transaction:".($transaction instanceof EE_Transaction)?$transaction->ID():'unknown');
+		
+		//@todo just for debugging. remove in production
+//		if($_GET['payment_status'] && $_GET['txn_id']){
+//			echo "<br>NOTE! payment_staut and txn_id overridden!!!";
+//			$_POST['payment_status']=$_GET['payment_status'];
+//			$_POST['txn_id']=$_GET['txn_id'];
+//		}
+		//verify there's payment data that's been sent
+		if(empty($_POST['payment_status']) || empty($_POST['txn_id'])){
+			return false;
+		}
+			$this->_debug_log( "<hr><br>".get_class($this).": payment_status and txn_id sent properly. payment_status:".$_POST['payment_status'].", txn_id:".$_POST['txn_id']);
+		//ok, then validate the IPN. Even if we've already processed this payment, let paypal know we don't want to hear from them anymore!
+		if(!$this->validateIpn()){
+			//huh, something's wack... the IPN didn't validate. We must have replied to teh IPN incorrectly,
+			//or their API must ahve changed: http://www.paypalobjects.com/en_US/ebook/PP_OrderManagement_IntegrationGuide/ipn.html
+			return false;
+		}
+		//if the transaction's just an ID, swap it for a real EE_Transaction
+		if( ! $transaction instanceof EE_Transaction){
+			$transaction = $this->_TXN->get_transaction($transaction);
+		}
+		//verify the transaction exists
+		if(empty($transaction)){
+			return false;
+		}
+		
+		
+		//ok, well let's process this payment then!
+		if($_POST['payment_status']=='Completed'){ //the old code considered 'Pending' as completed too..
+			$status = EEM_Payment::status_id_approved;//approved
+			$gateway_response = __('Your payment is approved.', 'event_espresso');
+		}elseif($_POST['payment_status']=='Pending'){
+			$status = EEM_Payment::status_id_pending;//approved
+			$gateway_response = __('Your payment is in progress. Another message will be sent when paymente is approved.', 'event_espresso');
+		}else{
+			$status = EEM_Payment::status_id_declined;//declined
+			$gateway_response = __('Your payment has been declined.', 'event_espresso');
+		}
+		$this->_debug_log( "<hr>Payment is interpreted as $status, and teh gateway's response set to '$gateway_response'");
+		//check if we've already processed this payment
+		
+		$payment = $this->_PAY->get_payment_by_txn_id_chq_nmbr($_POST['txn_id']);
+		
+		if(!empty($payment)){
+			//payment exists. if this has the exact same status and amount, don't bother updating. just return
+			if($payment->STS_ID() == $status && $payment->amount() == $_POST['mc_gross']){
+				//echo "duplicated ipn! dont bother updating transaction foo!";
+				$this->_debug_log( "<hr>Duplicated IPN! ignore it...");
+				return false;
+			}else{
+				$this->_debug_log( "<hr>Existing IPN for this paypal trasaction, but its got some new info. Old status:".$payment->STS_ID().", old amount:".$payment->amount());
+				$payment->set_status($status);
+				$payment->set_amount($_POST['mc_gross']);
+				$payment->set_gateway_response($gateway_response);
+				$payment->set_details($_POST);
+			}
+		}else{
+			$this->_debug_log( "<hr>No Previous IPN payment received. Create a new one");
+			//no previous payment exists, create one
+			$primary_registrant = $transaction->primary_registration();
+			$primary_registration_code = !empty($primary_registrant) ? $primary_registrant->reg_code() : '';
+			
+			$payment = new EE_Payment($transaction->ID(), 
+				$status, 
+				$transaction->datetime(), 
+				sanitize_text_field($_POST['txn_type']), 
+				floatval($_REQUEST['mc_gross']), 
+				$this->_gateway_name, 
+				$gateway_response, 
+				$_POST['txn_id'], 
+				NULL,
+				$primary_registration_code, 
+				false, 
+				$_POST);
+		
+		}
+		
+		$payment->save();
+		return parent::update_transaction_with_payment($transaction,$payment);	
 	}
+	
+	
+	
 
 	public function espresso_display_payment_gateways() {
 		echo $this->_generate_payment_gateway_selection_button();
 		?>
 
 
-		<div id="reg-page-billing-info-<?php echo $this->_gateway; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
+		<div id="reg-page-billing-info-<?php echo $this->_gateway_name; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
 			<?php _e('After confirming the details of your registration in Step 3, you will be transferred to the PayPal.com website where your payment will be securely processed.', 'event_espresso'); ?>
 		</div>
 
@@ -383,112 +564,41 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 	 * @return boolean
 	 */
 	public function validateIpn() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		if (function_exists('curl_init')) {
-			//new paypal code//
-			// parse the paypal URL
-			$urlParsed = parse_url($this->_gatewayUrl);
-
-			// generate the post string from the _POST vars
-			$req = '';
-
-			$errors = "\nUsing BUILT-IN PHP curl methods\n";
-			// Run through the posted array
-			foreach ($_POST as $key => $value) {
-				$this->ipnData["$key"] = $value;
-				$errors .= "key = " . $key . "\nvalue = " . $value . "\n";
-				$value = urlencode(stripslashes($value));
-				$value = preg_replace('/(.*[^%^0^D])(%0A)(.*)/i', '${1}%0D%0A${3}', $value); // IPN fix
-				$req .= $key . '=' . $value . '&';
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		
+		$this->ipnData=$_POST;
+		$response_post_data=$_POST + array('cmd'=>'_notify-validate');
+		$result= wp_remote_post($this->_gatewayUrl, array('body' => $response_post_data, 'sslverify' => false, 'timeout' => 60));
+		//echo "eepaypstandard results:";print_r($result);
+		
+		if (!is_wp_error($result) && array_key_exists('body',$result) && strcmp($result['body'], "VERIFIED") == 0) { 
+			//echo "eepaypalstandard success!";
+			$this->ipnResponse = $result['body'];
+			return true;
+		}else{
+			$this->lastError = "IPN Validation Failed . $this->_gatewayUrl with response:".print_r($result['body'],true);
+			//echo "eepaypalstandard error:".is_wp_error($result).", body equals VERIFIED:".(strcmp($result['body'], "VERIFIED") == 0);
+			$this->ipnResponse=$result['body'];
+			if($this->_debug_mode){
+				echo "error!".print_r($this->lastError,true);
 			}
-			$req .= 'cmd=_notify-validate';
-			$url = $this->_gatewayUrl;
-			$ch = curl_init(); // Starts the curl handler
-			$error = array();
-			$error["set_host"] = curl_setopt($ch, CURLOPT_URL, $url); // Sets the paypal address for curl
-			$error["set_fail_on_error"] = curl_setopt($ch, CURLOPT_FAILONERROR, 1);
-			$error["set_return_transfer"] = curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // Returns result to a variable instead of echoing
-			$error["set_timeout"] = curl_setopt($ch, CURLOPT_TIMEOUT, 45); // Sets a time limit for curl in seconds (do not set too low)
-			$error["set_post"] = curl_setopt($ch, CURLOPT_POST, 1); // Set curl to send data using post
-			$error["set_post_fields"] = curl_setopt($ch, CURLOPT_POSTFIELDS, $req); // Add the request parameters to the post
-			$errors .= $error["set_host"] ? "Success" : "Failure";
-			$errors .= " Setting host: " . $url . "\n";
-			$errors .= $error["set_post"] ? "Success" : "Failure";
-			$errors .= " Setting request type to post\n";
-			$errors .= $error["set_post_fields"] ? "Success" : "Failure";
-			$errors .= " Setting post fields: " . htmlspecialchars($req) . "\n";
-			$errors .= $error["set_fail_on_error"] ? "Success" : "Failure";
-			$errors .= " Setting Fain On Error\n";
-			$errors .= $error["set_return_transfer"] ? "Success" : "Failure";
-			$errors .= " Setting return transfer\n";
-			$errors .= $error["set_timeout"] ? "Success" : "Failure";
-			$errors .= " Setting Timeout\n";
-			$error["set_verbose"] = curl_setopt($ch, CURLOPT_VERBOSE, 1);
-			$errors .= $error["set_verbose"] ? "Success" : "Failure";
-			$errors .= " Setting verbose mode\n";
-			$result = curl_exec($ch); // run the curl process (and return the result to $result
-			$this->ipnResponse = $result;
-			$error["result"] = curl_error($ch);
-			curl_close($ch);
-			$errors .= "Errors resulting from the execution of curl transfer: " . $error["result"];
-
-			if (strcmp($result, "VERIFIED") == 0) { // It may seem strange but this function returns 0 if the result matches the string So you MUST check it is 0 and not just do strcmp ($result, "VERIFIED") (the if will fail as it will equate the result as false)
-				// Do some checks to ensure that the payment has been sent to the correct person
-				// Check and ensure currency and amount are correct
-				// Check that the transaction has not been processed before
-				// Ensure the payment is complete
-				// Valid IPN transaction.
-				return true;
-			} else {
-				// Log an invalid request to look into
-				// Invalid IPN transaction.  Check the log for details.
-				$this->lastError = "IPN Validation Failed . $urlParsed[path] : $urlParsed[host]";
-				return false;
-			}
-		} else {
-
-			//Old paypal code
-			// parse the paypal URL
-			$urlParsed = parse_url($this->_gatewayUrl);
-			// generate the post string from the _POST vars
-			$postString = '';
-			foreach ($_POST as $key => $value) {
-				$this->ipnData["$key"] = $value;
-				$value = urlencode(stripslashes($value));
-				$value = preg_replace('/(.*[^%^0^D])(%0A)(.*)/i', '${1}%0D%0A${3}', $value); // IPN fix
-				$postString .= $key . '=' . $value . '&';
-			}
-			$postString .="cmd=_notify-validate"; // append ipn command
-			// open the connection to paypal
-			$fp = fsockopen($urlParsed[host], "80", $errNum, $errStr, 30);
-			if (!$fp) {
-				// Could not open the connection, log error if enabled
-				$this->lastError = "fsockopen error no. $errNum: $errStr";
-				return false;
-			} else {
-				// Post the data back to paypal
-				fputs($fp, "POST $urlParsed[path] HTTP/1.1\r\n");
-				fputs($fp, "Host: $urlParsed[host]\r\n");
-				fputs($fp, "Content-type: application/x-www-form-urlencoded\r\n");
-				fputs($fp, "Content-length: " . strlen($postString) . "\r\n");
-				fputs($fp, "Connection: close\r\n\r\n");
-				fputs($fp, $postString . "\r\n\r\n");
-				// loop through the response from the server and append to variable
-				while (!feof($fp)) {
-					$this->ipnResponse .= fgets($fp, 1024);
-				}
-				fclose($fp); // close connection
-			}
-			if (eregi("VERIFIED", $this->ipnResponse)) {
-				// Valid IPN transaction.
-				return true;
-			} else {
-				// Invalid IPN transaction.  Check the log for details.
-				$this->lastError = "IPN Validation Failed . $urlParsed[path] : $urlParsed[host]";
-				return false;
-			}
+			return false;
 		}
 	}
+	
+	/**
+	 * We only really want to exlain to users why they'r epayment is pending, if that's teh case.
+	 * Otherwise, they probably don't want to know anything.
+	 * @param EE_Transaction $transaction
+	 */
+	/*public function get_payment_overview_content(EE_Transaction $transaction){
+			if($transaction->status_ID() == EEM_Transaction::open_status_code){
+				?>
+		<h1><?php _e('Awaiting Payment Response from Paypal...','event_espresso')?></h1>
+		<p><?php _e('Paypal has notified us that your payment is in progress. You will be notified when payment is accepted.')?></p>
+		<?php
+			}
+	}*/
 
 }
 

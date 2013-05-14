@@ -21,17 +21,18 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Transaction {
+require_once('EE_Base_Class.class.php');
+class EE_Transaction extends EE_Base_Class{
 	
     /**
     *	Transaction ID
 	* 
 	* 	primary key
 	*	
-	* 	@access	private
+	* 	@access	protected
     *	@var int	
     */
-	private $_TXN_ID = FALSE;
+	protected $_TXN_ID = FALSE;
 
 	
 	
@@ -41,10 +42,10 @@ class EE_Transaction {
 	* 
 	*	date / time
 	*  
-	*	@access	private
+	*	@access	protected
     *	@var timestamp	
     */
-	private $_TXN_timestamp = NULL;
+	protected $_TXN_timestamp = NULL;
 	
 	
 	
@@ -53,10 +54,10 @@ class EE_Transaction {
 	* 
 	* 	note: always use Decimal(10,2) as SQL type for money
 	*
-	*	@access	private
+	*	@access	protected
     *	@var float	
     */
-	private $_TXN_total = 0;	
+	protected $_TXN_total = 0;	
 	
 	
 	
@@ -65,10 +66,10 @@ class EE_Transaction {
 	* 
 	* 	note: always use Decimal(10,2) as SQL type for money
 	*
-	*	@access	private
+	*	@access	protected
     *	@var float	
     */
-	private $_TXN_paid = 0;	
+	protected $_TXN_paid = 0;	
 	
 	
     /**
@@ -76,10 +77,10 @@ class EE_Transaction {
 	*
 	*	foreign key from status type table - 3 character string
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_STS_ID = NULL;
+	protected $_STS_ID = NULL;
 	
 	
 	
@@ -88,10 +89,10 @@ class EE_Transaction {
 	* 
     *	notes regarding the transaction
 	*  
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_TXN_details = NULL;	
+	protected $_TXN_details = NULL;	
 	
 	
 	
@@ -100,10 +101,10 @@ class EE_Transaction {
 	* 
     *	dump off the entire session object 
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_TXN_session_data = NULL;	
+	protected $_TXN_session_data = NULL;	
 	
 	
 	
@@ -112,10 +113,10 @@ class EE_Transaction {
 	* 
     *	required for some payment gateways
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_TXN_hash_salt = NULL;		
+	protected $_TXN_hash_salt = NULL;		
 
 
 
@@ -124,10 +125,10 @@ class EE_Transaction {
 	* 
     *	information regarding taxes
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var array	
     */
-	private $_TXN_tax_data = NULL;	
+	protected $_TXN_tax_data = NULL;	
 
 
 
@@ -141,7 +142,20 @@ class EE_Transaction {
     */
 	private $dt_frmt = 'F j, Y g:i a';	
 
-
+	
+	/**
+	 * Registrations on this transaction
+	 * @var EE_Registration[]
+	 */
+	protected $_Registrations = NULL;
+	
+	
+	
+	/**
+	 * Payments for this transaction
+	 * @var EE_Payment[]
+	 */
+	protected $_Payments = NULL;
 
 
 
@@ -150,7 +164,7 @@ class EE_Transaction {
 	*  Transaction constructor
 	*
 	* @access 		public
-	* @param 		timestamp 		$TXN_timestamp 		Unix timestamp
+	* @param 		timestamp/array 		$TXN_timestamp 		Unix timestamp or array where keys are column names
 	* @param 		float 				$TXN_total 					Transaction Total
 	* @param 		float 				$TXN_paid 					Total Amount Paid to Date
 	* @param 		string				$STS_ID  						Transaction Status - foreign key from status type table
@@ -171,16 +185,26 @@ class EE_Transaction {
 														$TXN_tax_data = NULL, 
 														$TXN_ID = FALSE 
 													) {
-													
-		$this->_TXN_ID 						= absint( $TXN_ID );
-		$this->_TXN_timestamp 		= $TXN_timestamp != NULL ? ( is_numeric( $TXN_timestamp ) ? absint( $TXN_timestamp ) : strtotime( $TXN_timestamp )) : time();
-		$this->_TXN_total 					= floatval( preg_replace( "/^[^0-9\.]-/", "", preg_replace( "/,/", ".", $TXN_total ) ));
-		$this->_TXN_paid 					= floatval( preg_replace( "/^[^0-9\.]-/", "", preg_replace( "/,/", ".", $TXN_paid ) ));
-		$this->_STS_ID 						= wp_strip_all_tags( $STS_ID );
-		$this->_TXN_details 				= $TXN_details;
-		$this->_TXN_session_data	= $TXN_session_data;
-		$this->_TXN_hash_salt 			= $TXN_hash_salt;
-		$this->_TXN_tax_data 			= $TXN_tax_data;
+		if(is_array($TXN_timestamp)){
+			parent::__construct($TXN_timestamp);
+			return;
+		}
+		$reflector = new ReflectionMethod($this,'__construct');	
+		$arrayForParent=array();
+		foreach($reflector->getParameters() as $param){
+			$paramName=$param->name;
+			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
+		}
+		parent::__construct($arrayForParent);											
+//		$this->_TXN_ID 						= absint( $TXN_ID );
+//		$this->_TXN_timestamp 		= $TXN_timestamp != NULL ? ( is_numeric( $TXN_timestamp ) ? absint( $TXN_timestamp ) : strtotime( $TXN_timestamp )) : time();
+//		$this->_TXN_total 					= floatval( preg_replace( "/^[^0-9\.]-/", "", preg_replace( "/,/", ".", $TXN_total ) ));
+//		$this->_TXN_paid 					= floatval( preg_replace( "/^[^0-9\.]-/", "", preg_replace( "/,/", ".", $TXN_paid ) ));
+//		$this->_STS_ID 						= wp_strip_all_tags( $STS_ID );
+//		$this->_TXN_details 				= maybe_unserialize($TXN_details);
+//		$this->_TXN_session_data	= maybe_unserialize($TXN_session_data); //!is_serialized( $TXN_session_data ) ? maybe_serialize($TXN_session_data) : $TXN_session_data;
+//		$this->_TXN_hash_salt 			= $TXN_hash_salt;
+//		$this->_TXN_tax_data 			= maybe_unserialize($TXN_tax_data);//!is_serialized( $TXN_tax_data ) ? maybe_serialize( $TXN_tax_data ) : $TXN_tax_data;
 	}
 
 
@@ -196,8 +220,8 @@ class EE_Transaction {
 	public function set_total( $total = FALSE ) {
 		
 		if ( $total === FALSE || ! is_numeric( $total )) {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = 'No total or an invalid total was supplied.';
+			$msg = __( 'No total or an invalid total was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		// change commas to decimals
@@ -221,8 +245,8 @@ class EE_Transaction {
 	public function set_paid( $total_paid = FALSE ) {
 		
 		if ( $total_paid === FALSE || ! is_numeric( $total_paid )) {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = 'No payment amount or an invalid payment amount was supplied.';
+			$msg = __( 'No payment amount or an invalid payment amount was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		// change commas to decimals
@@ -246,11 +270,15 @@ class EE_Transaction {
 	public function set_status( $status = FALSE ) {
 		
 		if ( ! $status ) {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = 'No status was supplied.';
+			EE_Error::add_error( __( 'No status was supplied.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
-		}	
-		$this->_STS_ID = wp_strip_all_tags( $status );
+		}
+		$status_array = EEM_Transaction::instance()->status_array();
+		if ( ! isset( $status_array[ $status ]  )) {
+			EE_Error::add_error( __( 'Invalid Status.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}
+		$this->_STS_ID = $status;
 		return TRUE;
 	}
 
@@ -266,14 +294,15 @@ class EE_Transaction {
 	*		@param		string		$details 		notes regarding the transaction
 	*/	
 	public function set_details( $details = FALSE ) {
-		
+		return $this->set('TXN_details',$details);
+		/*
 		if ( ! $details ) {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = 'No details were supplied.';
+			$msg = __( 'No details were supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_TXN_details = $details;
-		return TRUE;
+		return TRUE;*/
 	}
 
 
@@ -287,15 +316,15 @@ class EE_Transaction {
 	* 		@access		public		
 	*		@param		string		$details 		dump off the entire session object 
 	*/	
-	public function set_txn_session_data( $session_data = FALSE ) {
-		
-		if ( ! $session_data ) {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = 'No session data was supplied.';
+	public function set_txn_session_data( $session_data = FALSE ) {	
+		return	$this->set('TXN_session_data',$session_data);
+		/*if ( ! $session_data ) {
+			$msg = __( 'No session data was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		$this->_TXN_session_data = $session_data;
-		return TRUE;
+		return TRUE;*/
 	}
 
 
@@ -311,8 +340,8 @@ class EE_Transaction {
 	public function set_hash_salt( $hash_salt = FALSE ) {
 		
 		if ( ! $hash_salt ) {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = 'No hash salt was supplied.';
+			$msg = __( 'No hash salt was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		$this->_TXN_hash_salt = wp_strip_all_tags( $hash_salt );
@@ -333,8 +362,8 @@ class EE_Transaction {
 	public function set_tax_data( $tax_data = FALSE ) {
 		
 		if ( ! $tax_data ) {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = 'No session data was supplied.';
+			$msg = __( 'No tax data was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}	
 		$this->_TXN_tax_data = $tax_data; 
@@ -363,9 +392,9 @@ class EE_Transaction {
 				'TXN_total' 					=> $this->_TXN_total,
 				'TXN_paid' 					=> $this->_TXN_paid,
 				'STS_ID' 						=> $this->_STS_ID,
-				'TXN_details' 				=> maybe_serialize( $this->_TXN_details ),
-				'TXN_tax_data' 			=> maybe_serialize( $this->_TXN_tax_data ),
-				'TXN_session_data'	=> maybe_serialize( $this->_TXN_session_data ),
+				'TXN_details' 				=> !is_serialized( $this->_TXN_details) ?maybe_serialize( $this->_TXN_details ) : $this->_TXN_details,
+				'TXN_tax_data' 			=> !is_serialized( $this->_TXN_tax_data) ? maybe_serialize( $this->_TXN_tax_data ) : $this->_TXN_tax_data,
+				'TXN_session_data'		=> !is_serialized( $this->_TXN_session_data ) ? maybe_serialize( $this->_TXN_session_data ) : $this->_TXN_session_data,
 				'TXN_hash_salt' 			=> $this->_TXN_hash_salt
 		);
 
@@ -441,9 +470,22 @@ class EE_Transaction {
 	/**
 	*		get Total Amount Paid to Date
 	* 		@access		public
+	*		@return float
 	*/	
 	public function paid() {
 		return (float)$this->_TXN_paid;
+	}
+
+
+
+	/**
+	 * calculate the amount remaining for this transaction and return;
+	 *
+	 * @access public
+	 * @return float amount remaining
+	 */
+	public function remaining() {
+		return $this->total() - $this->paid();
 	}
 
 
@@ -465,7 +507,7 @@ class EE_Transaction {
 	* 		@access		public
 	*/	
 	public function details() {
-		return maybe_unserialize( $this->_TXN_details );
+		return $this->get('TXN_details');
 	}
 
 
@@ -498,7 +540,7 @@ class EE_Transaction {
 	* 		@access		public
 	*/	
 	public function tax() {
-		return $this->_TXN_tax_data;
+		return $this->get('TXN_tax_data');
 	}
 
 
@@ -523,48 +565,211 @@ class EE_Transaction {
 	
 	
 	
+	
+	/**
+	 * Gets registrations on this transaction
+	 * @return EE_Registration[]
+	 */
+	public function registrations(){
+		return $this->get_many_related('Registrations');
+	}
+	
+	/**
+	 * Gets all the attendees for this transaction (handy for use with EE_Attendee's get_registrations_for_event function
+	 * for getting attendees and how many registrations they each have for an event)
+	 * @param string $output like 'OBJECT_K' or 'COUNT', like EEM_Base's select_all_where's $output parameter
+	 * @return mixed EE_Attendee[] by default, int if $output is set to 'COUNT'
+	 */
+	public function attendees($output='OBJECT_K'){
+		require_once('EEM_Attendee.model.php');
+		$ATT = EEM_Attendee::instance();
+		return $ATT->get_attendees_for_transaction($this,$output);
+	}
+	
+	/**
+	 * Gets teh primary registration only
+	 * @return EE_Registration
+	 */
+	public function primary_registration( $return_obj = FALSE ){
+		require_once('EEM_Registration.model.php');
+		$result = $this->get_first_related('Registrations', array('REG_count'=>  EEM_Registration::PRIMARY_REGISTRANT_COUNT));
+		return $result;//$return_obj ? array_shift($result) : $result;
+	}
+	
+	
+	
+	/**
+	 * Gets payments for this transaction. Unlike other such functions, order by 'DESC' by default
+	 * @param type $where_col_n_vals all parameters just like EEM_Base's select_all_where
+	 * @param type $orderby
+	 * @param type $order
+	 * @param type $operators
+	 * @param type $limit
+	 * @param type $output
+	 * @return EE_Payment[]
+	 */
+	public function payments($where_col_n_vals = array(), $orderby = null, $order = 'DESC',$operators = '=', $limit = null, $output= 'OBJECT_K' ){
+		return $this->get_many_related('Payments',$where_col_n_vals,$orderby,$order,$operators,$limit,$output);
+	}
+	
+	
+	/**
+	 * gets only approved payments for this transaction
+	 * @return EE_Payment[]
+	 */
+	public function approved_payments(){
+		require_once('EEM_Payment.model.php');
+		return $this->get_many_related('Payments', array('STS_ID'=>  EEM_Payment::status_id_approved), 'PAY_timestamp', 'DESC');
+	}
+	
+	
+	/**
+	 * returns a pretty version of the status, good for displayign to users
+	 * @return string
+	 */
+	public function pretty_status(){
+		switch($this->status_ID()){
+			case EEM_Transaction::complete_status_code:
+				return __("Complete",'event_espresso');
+			case EEM_Transaction::incomplete_status_code:
+				return __('Incomplete','event_espresso');
+			case EEM_Transaction::open_status_code:
+				return __('Pending Payment','event_espresso');
+			case EEM_Transaction::overpaid_status_code:
+				return __('Overpaid','event_espresso');
+			default:
+				return __('Unknown','event_espresso');
+		}
+	}
+	
+	
+	/**
+	 * echoes $this->pretty_status()
+	 * @return void
+	 */
+	public function e_pretty_status(){
+		echo $this->pretty_status();
+	}
+	
+	
+	
+	/**
+	 * Returns whether this transaction is complete
+	 * Useful in templates and other logic for deciding if we should ask for another payment...
+	 * @return boolean
+	 */
+	public function is_completed(){
+		if($this->status_ID()==EEM_Transaction::complete_status_code){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	
+	
+	/**
+	 * Returns whether this transaction is pending
+	 * Useful in templates and other logic for deciding if we should ask for another payment...
+	 * @return boolean
+	 */
+	public function is_pending(){
+		if($this->status_ID() == EEM_Transaction::open_status_code){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	
+	
+	
+	/**
+	 * Returns whether this transaction is incomplete
+	 * Useful in templates and other logic for deciding if we should ask for another payment...
+	 * @return boolean
+	 */
+	public function is_incomplete(){
+		if($this->status_ID() == EEM_Transaction::incomplete_status_code){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	/**
+	 * Returns whether this transaction is overpaid
+	 * Useful in templates and other logic for deciding if we should ask for another payment...
+	 * @return boolean
+	 */
+	public function is_overpaid(){
+		if($this->status_ID() == EEM_Transaction::overpaid_status_code){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
 
 
 	/**
-	 *		@ override magic methods
-	 *		@ return void
-	 */	
-	public function __get($a) { return FALSE; }
-	public function __set($a,$b) { return FALSE; }
-	public function __unset($a) { return FALSE; }
-	public function __clone() { return FALSE; }
-	public function __wakeup() { return FALSE; }
+	 * This returns the url for the invoice of this transaction
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function invoice_url() {
+		$REG = $this->primary_registration();
+		if ( empty( $REG ) ) return false;
+		return $REG->invoice_url();
+	}
+
+
+
+	/**
+	 * Gets the URL of the thank you page with this registraiton REG_url_link added as
+	 * a query parameter
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function payment_overview_url() {
+		$REG = $this->primary_registration();
+		if ( empty($REG) ) return false;
+		return $REG->payment_overview_url();
+	}
+	
+	
+	
+	
+	/**
+	 * Updates the transaction's status and total_paid based on all the payments
+	 * taht apply to it
+	 * @return boolean success of the application
+	 */
+	public function update_based_on_payments(){
+		return $this->_get_model()->update_based_on_payments($this);
+	}
+
+
+
+	public function selected_gateway() {
+		$details = $this->details();
+		return $details['gateway'];
+	}
+
+
+
+	public function gateway_response_on_transaction() {
+		$details = $this->details();
+		return $details['response_msg'];
+	}
 
 
 
 }
 
 
-/*
-	EXAMPLE USAGE
-
-	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
-	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
-	$TXN = EEM_Transaction::instance();	
-
-	$txn_1 = new EE_Transaction( '80.00', 'TPN', 'some txn details', array('session-data'), md5('some hash salt'),'some tax details' );
-	$results = $txn_1->insert();
-	
-	$txn_2 = new EE_Transaction( '400.00', 'TPN', 'some more txn details', array('different session data'), md5('some other hash salt'),'some other tax details' );
-	$results = $txn_2->insert();
-	
-	$transactions = $TXN->get_all_transactions();
-	echo printr( $transactions, 'get_all_transactions' );
-
-	$transaction = $TXN->get_transaction( 1 );
-	echo printr( $transaction, 'get_transaction( 1 )' );
-
-	$transaction = $TXN->get_transaction( 2 );
-	echo printr( $transaction, 'get_transaction( 2 )' );
-	
-*/
-
 
 /* End of file EE_Transaction.class.php */
-/* Location: includes/classes/EE_Transaction.class.php */	
-	
+/* Location: includes/classes/EE_Transaction.class.php */		

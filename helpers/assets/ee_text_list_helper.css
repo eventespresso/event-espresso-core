@@ -1,0 +1,5 @@
+.ee-text-links li {
+	display: inline;
+	padding-right: 10px;
+}
+.ee-text-link { outline:none !important; }

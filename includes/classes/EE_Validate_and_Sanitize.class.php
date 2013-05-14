@@ -27,9 +27,6 @@
 
   // instance of the EE_VnS object
 	private static $_instance = NULL;
- 	// global error notices
-	public $_notices = array( 'success' => FALSE, 'errors' => FALSE ); 
-
 
 
 
@@ -59,9 +56,8 @@
 	 */
 	private function __construct() {	
 		// Sidney is watching me...  { : \
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		define( 'EE_Validate_and_Sanitize', TRUE );
-
 	}
 
 
@@ -75,14 +71,13 @@
 	*		@return 		array
 	*/	
 	public function validate_and_sanitize_post_inputs( $post_inputs = array(), $save_to = 'db' ) {
-	
 		// Sidney is watching me...  { : \
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	
 		// compare $_POST vars against whitelist of expected post vars above and sanitize input values
 		if ( $clean_data = $this->_whitelist_and_sanitize( $post_inputs, 'post' ) ) {		
 			// now verify that all required fields have been filled out and prepare data for db
-			if ( $valid_data = $this->_validate_post_data( $clean_data )) { 				
+			if ( $valid_data = $this->_validate_post_data( $clean_data )) { 		
 					return $valid_data;
 			} else {
 				return FALSE;
@@ -104,7 +99,7 @@
 	private function _whitelist_and_sanitize( $input_array = array(), $what = 'get' ) {
 	
 		// Sidney is watching me...  { : \
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		
 		
 		if ( ! isset( $input_array ) or empty( $input_array ) or ! is_array( $input_array )) {
@@ -124,17 +119,41 @@
 			case 'session' : 	$input_source = $_SESSION;	 	break;				
 		}		
 
-//		echo printr( $input, 'VSC $input', 'auto' );
-//		echo printr( $input_data, 'VSC $input_data', 'auto' );									 
-												
 		// check if any input vars exist
 		if ( isset( $input_source ) && ! empty( $input_source )) {
+		
+//			printr( $_SESSION, '$_SESSION  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//			echo '<h4>$input_source : ' . $what . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//			printr( $input_source, $what .' array  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );						 
+//			printr( $input_array, 'VSC $input_array  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );						 
+			
+			$gateway = isset( $input_source['selected_gateway'] ) ? $input_source['selected_gateway'] : FALSE;
+			unset( $input_source['espresso_ajax'] );
+			unset( $input_source['noheader'] );
+			unset( $input_source['selected_gateway'] );
+			unset( $input_source['selected_gateway_name'] );
+													
 			//cycle thru $_GET vars and check for parameters inside our $input_data array
 			foreach ( $input_source as $key => $value ) {
 				// for some reason WP isn't removing this
 				$key = str_replace( 'amp;', '', $key );
-				// start by looking for input name in our array of accetable post inputs
-				if ( array_key_exists( $key, $input_array )) {
+				//check if processing a reg page by checking for gateway
+				if ( $gateway ) {
+					if ( strpos( $key, $gateway )) {
+//						echo '<h4>'. $key . ': ' . $value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+						// strip gateway name from key
+						//$key = str_replace( '-' . $gateway, '', $key );
+						// start by looking for input name in our array of accetable post inputs, but ONLY grab ones that have the gateway name in them
+	 					if ( array_key_exists( $key, $input_array )) { 		
+						// add it to $valid input array
+							if ( $value = $this->_sanitize_this( $value, $input_array[$key] )) {
+								$input_array[$key] = $value;		
+							} 						
+						} 							
+					}
+					
+				} else if ( array_key_exists( $key, $input_array )) { // start by looking for input name in our array of accetable post inputs
+					
 					// add it to $valid input array
 					if ( $value = $this->_sanitize_this( $value, $input_array[$key] )) {
 						$input_array[$key] = $value;		
@@ -161,7 +180,7 @@
 	private function _sanitize_this( $value = FALSE, $input_data = array() ) {
 		
 		// Sidney is watching me...  { : \
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		
 		// you gimme nuttin - YOU GET NUTTIN !!
 		if ( ! $value or empty( $input_data )) {
@@ -268,7 +287,7 @@
 								}
 								break;		
 								
-							case 'mm-dd-yyyy' :												
+						case 'mm-dd-yyyy' :												
 								if ( preg_match( '/(0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])[- \/.](19|20)[0-9]{2}/', $value, $matches )) {
 									if ( checkdate($matches[2], $matches[1], $matches[3])) {
 										$input_data['value'] = $matches[1];
@@ -329,18 +348,22 @@
 	private function _validate_post_data( $post_inputs = array() ) {
 	
 		// Sidney is watching me...  { : \
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 				
 		if ( empty( $post_inputs )) {
-			$this->_notices['errors'][] = __( 'An error occured! No post data was passed to the validator. Please click your browser\'s back button and try again. If the problem persists, contact customer support.', 'event_espresso' );
+			$msg = __( 'An error occured! No post data was passed to the validator. Please click your browser\'s back button and try again. If the problem persists, contact customer support.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			
 			return FALSE;
 		}
+		
+		//printr( $post_inputs, '$post_inputs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			
 		// until proven guilty...
 		$required_fields_filled_in = TRUE;				
 		$missing_fields = 0; 
-					
-		// cycle through post inputs						
+		$msg = '';
+
+		// cycle through post inputs
 		foreach ( $post_inputs as $input_name => $post_input ) {
 			// was a post input actually submitted ?
 			if ( empty( $post_input['value'] )) {
@@ -350,11 +373,12 @@
 					$required_fields_filled_in = FALSE;
 					// is this the first missing field ?
 					if ( $missing_fields == 0 ) {
-						$this->_notices['errors'][] = 'The following fields are either blank or contain invalid data:';
-					} 
+						$msg = '<strong>' . __( 'The following fields are either blank or contain invalid data:', 'event_espresso' ) . '</strong><br />';
+					}
 					$label = $post_input['label'] != FALSE ? $post_input['label'] : $input_name;
+					$label = str_replace( ' ', '&nbsp;', $label  );
 					// now add the name of the missing fields
-					$this->_notices['errors'][] = '&nbsp;&middot;&nbsp;' . $label;
+					$msg .= $label . ',    ';
 					$missing_fields++;
 				}
 			}
@@ -363,17 +387,15 @@
 		if ( $required_fields_filled_in ) {
 			return $post_inputs;
 		} else {
-			$this->_notices['errors'][] = 'Please answer them correctly in order to continue.';
+			$msg = rtrim( $msg, ', ' );		
+			$msg .= '<br /><strong>' . __( 'Please answer them correctly in order to continue.', 'event_espresso' ) . '</strong><br />';
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			
 			return FALSE;
 		}
 	
 	}
 
 
-
-	function return_notices(){
-		return $this->_notices;
-	}
 
 
 

@@ -6,6 +6,11 @@
 	$(window).unload( function() {}); 
 
 
+	//$('#mer-registration-frm-1').validate();
+	
+	$('.close-event-queue-msg').show();
+
+
 	// move notifications from top of reg form to just before closing body tag
 	// so that notifications can easily be centered on screen regardless of resolution or scroll position
 	var notifications = $('#multi-event-registration-notifications').html();
@@ -25,7 +30,8 @@
 			this.css({ 'max-width' : '600px' });
 		}
 		return this;
-	}
+	};
+
 
 
 
@@ -43,7 +49,7 @@
 
 	// apply coupon button
 	$('#mer-reg-page-apply-coupon-btn').on( 'click', function() {
-		var error_msg = "We're sorry but that coupon code does not appear to be vaild. If this is incorrect, please contact the site administrator.";
+		var error_msg = eei18n.invalid_coupon;
 		show_event_queue_ajax_error_msg( error_msg );
 		return false;
 	});
@@ -72,7 +78,7 @@
 		});
 		var good_to_go = verify_all_questions_answered('#mer-registration-frm-1');
 		
-		if ( good_to_go != true && good_to_go != '' ) {
+		if ( good_to_go != true && good_to_go != '' && typeof( error_msg ) === 'object' ) {
 			show_event_queue_ajax_error_msg( good_to_go );
 		}
 	});
@@ -88,9 +94,10 @@
 		
 		// the primary attendee question group
 		var prmry_att_qstn_grp = $(this).val();
+		//alert( 'prmry_att_qstn_grp = ' + prmry_att_qstn_grp );
 		// find all of the primaray attendee's questions for this event
-		var prmry_att_questions = $( '#mer-reg-page-attendee-wrap-' + prmry_att_qstn_grp ).children( '.event_questions' ).find('input');		
-		//$( '#mer-reg-page-attendee-wrap-' + prmry_att_qstn_grp ).children( '.event_questions' ).find('input').css('background','pink');		
+		var prmry_att_questions = $( '#mer-reg-page-attendee-wrap-' + prmry_att_qstn_grp ).children( '.espresso-question-group-wrap' ).find('input');		
+		//$( '#mer-reg-page-attendee-wrap-' + prmry_att_qstn_grp ).children( '.espresso-question-group-wrap' ).find('input').css('background','pink');		
 
 		// the targeted attendee question group
 		var trgt_att_qstn_grp = $(this).attr('rel');
@@ -127,11 +134,11 @@
 					var lbl = $(this).prev('label');
 					// grab it's text
 					var lbl_txt = $(lbl).html();
-					//alert(lbl_txt);
+					//alert('lbl_txt = ' + lbl_txt);
 					// remove "<em>*</em>" from end
 					lbl_txt = lbl_txt.substring(0, lbl_txt.length - 10);
 					// show an error msg
-					var error_msg = 'The ' + lbl_txt + ' input is a required field. Please enter a value for this field and all other required fields before preceeding.';
+					var error_msg = lbl_txt + eei18n.required_field;
 					//show_reg_page_copy_attendee_error( event_id, error_msg );	
 					show_event_queue_ajax_error_msg( error_msg );	
 					// uncheck the checkbox that was clicked
@@ -142,10 +149,21 @@
 				} else {
 	
 					new_input_id = '#' + trgt_att_qstn_grp + '-' +  input_id_array[5];
-	//				alert ( 'new_input_id = ' + new_input_id  ); // + '\n' + 'att_nmbr = ' + trgt_att_nmbr
+					if ( input_id_array[6] != undefined ) {
+						new_input_id = new_input_id + '-' +  input_id_array[6];
+					}
+					//alert ( 'new_input_id = ' + new_input_id + '\n' + 'input_id = ' + input_id ); // + '\n' + 'att_nmbr = ' + trgt_att_nmbr
 					
 					if ( $(new_input_id).length > 0 ){
-						$(new_input_id).val(input_value);
+						if ( $(new_input_id).is(':radio') && $('#' + input_id).is(':checked') === true ) {
+							//alert ( 'radio = ' + new_input_id  );
+					       $(new_input_id).prop('checked', true);
+					    } else if ( $(new_input_id).is(':checkbox') && $('#' + input_id).is(':checked') === true ) {
+							//alert ( 'checkbox = ' + new_input_id  );
+					        $(new_input_id).prop('checked', true);
+					    } else {
+							$(new_input_id).val(input_value);
+						}						
 					}
 	
 					var billing = '#reg-page-billing-' + input_id_array[5];
@@ -201,11 +219,12 @@
 	function show_event_queue_ajax_error_msg( error_msg ) {
 			
 		if ( error_msg != undefined && error_msg != '' ) {
-		
-			if ( error_msg.error != undefined ) {
-				error_msg = error_msg.error;
+			//alert( 'typeof( error_msg ) = '+ typeof( error_msg ) );
+			
+			if ( typeof( error_msg ) === 'object' && error_msg.error != undefined && error_msg.error != '' ) {
+				error_msg = error_msg.error;				
 			} 
-			//alert( 'show_event_queue_ajax_error_msg = '+ error_msg);
+			//alert( '209) show_event_queue_ajax_error_msg = '+ error_msg);
 						
 			$('#mer-error-msg').center();				
 			$('#mer-error-msg > .msg').html( error_msg );
@@ -239,24 +258,35 @@
 		});
 	}	
 
-
-
-	// Registration Steps
-
-	// hide and display steps
-	function hide_step_goto( step_to_hide, step_to_show, msg ) {
-		//alert('hide_step '+step_to_hide+', goto '+step_to_show);
+	
+	/**
+	 * Hides the step specified by step_to_hide
+	 * @param int step_to_hide 1, 2, or 3
+	 * @return void
+	 **/
+	function hide_step(step_to_hide){
 		$('#mer-reg-page-step-'+step_to_hide+'-dv').slideUp( function() {				
 			$('#mer-reg-page-step-'+step_to_hide+'-dv').height(0);
 			$('#mer-reg-page-edit-step-'+step_to_hide+'-lnk').removeClass('hidden');		
-			$('#mer-reg-page-step-'+step_to_show+'-dv').css('display','none').removeClass('hidden').slideDown( function() {
-				scroll_to_top_of_form( msg );
-			});
+			
 		});	
+	}
+	
+	/**
+	 * opens the the SPCO step specified by step_to_show
+	 * shows msg as a notification
+	 * @param int step_to_show either step 1, 2, or 3
+	 * @param string msg message to show
+	 * @return void
+	 **/
+	function go_to_step(step_to_show,msg){
 		$('.mer-reg-page-step-display-dv').removeClass('active-step').addClass('inactive-step');	
 		$('#mer-reg-page-step-'+step_to_show+'-display-dv').removeClass('inactive-step').addClass('active-step');
 		$('#mer-reg-page-edit-step-'+step_to_show+'-lnk').addClass('hidden');	
 		$('#mer-ajax-loading').fadeOut('fast');
+		$('#mer-reg-page-step-'+step_to_show+'-dv').css('display','none').removeClass('hidden').slideDown( function() {
+			scroll_to_top_of_form( msg );
+		});
 	}
 	
 	
@@ -269,14 +299,9 @@
 		}
 		// set step 1 back to auto height 
 		$('#mer-reg-page-step-1-dv').css( 'height', 'auto' );
-		// if step 2 is expanded 
-		if ( $('#mer-reg-page-step-2-dv').height() > 0 ) {
-			// hide step 2
-			hide_step_goto( 2, 1, msg );
-		} else {
-			// must be step 3 that is expanded
-			hide_step_goto( 3, 1, msg );
-		}	
+		hide_step(2);
+		hide_step(3);
+		go_to_step(1,msg);
 	}
 
 
@@ -288,19 +313,14 @@
 			msg ='';
 		}
 		$('.reg-page-billing-info-dv').addClass('hidden');
-		$('.reg-page-payment-option-lnk').removeClass('hidden');
+		$('.reg-page-payment-option-dv').removeClass('hidden');
 		//	$('.mer-reg-page-go-to-step-2').on( 'click', function() {
 		$('#mer-reg-page-step-2-dv').css({ 'display' : 'none' }).removeClass('hidden');
 		// set step 2 back to auto height 
 		$('#mer-reg-page-step-2-dv').css( 'height', 'auto' );
-		// if step 1 is expanded
-		if ( $('#mer-reg-page-step-1-dv').height() > 0 ) {
-			// hide step 1		
-			hide_step_goto( 1, 2, msg );	
-		} else {		
-			// must be step 3 that is expanded
-			hide_step_goto( 3, 2, msg );		
-		}	
+		hide_step(1);
+		hide_step(3);
+		go_to_step(2,msg);
 	}
 
 
@@ -315,14 +335,9 @@
 		$('#mer-reg-page-step-3-dv').css({ 'display' : 'none' }).removeClass('hidden');		
 		// set step 3 back to auto height 
 		$('#mer-reg-page-step-3-dv').css( 'height', 'auto' );	
-		// if step 1 is expanded
-		if ( $('#mer-reg-page-step-1-dv').height() > 0 ) {
-			// hide step 1		
-			hide_step_goto( 1, 3, msg );	
-		} else {
-			// must be step 2 that is expanded
-			hide_step_goto( 2, 3, msg );	
-		}	
+		hide_step(1);
+		hide_step(2);
+		go_to_step(3,msg);
 
 	}
 
@@ -429,7 +444,7 @@
 		}
 		
 		var good_to_go = verify_all_questions_answered( form_to_check );
-		//alert( 'good_to_go = ' + good_to_go );
+//		alert( '433) good_to_go = ' + good_to_go );
 
 		if ( good_to_go === true ) {
 
@@ -439,12 +454,12 @@
 			var form_data = $('#mer-registration-frm-'+step).serialize();
 //alert	(form_data);
 //alert( '#mer-reg-page-step-'+step+'-action = ' + $('#mer-reg-page-step-'+step+'-action').val() );
-//alert( 'event_espresso.ajax_url = ' + event_espresso.ajax_url );
+//alert( 'eei18n.ajax_url = ' + eei18n.ajax_url );
 
 
 			$.ajax({
 						type: "POST",
-						url:  event_espresso.ajax_url,
+						url:  eei18n.ajax_url,
 						data: form_data,
 						dataType: "json",
 						beforeSend: function() {
@@ -452,7 +467,7 @@
 						}, 
 						success: function(response){	
 							var next = parseInt(step) + 1;
-//alert( 'step = ' + step + '\n' + 'response.return_data = ' + response.return_data + '\n' + 'response.success = ' + response.success + '\n' + 'response.error = ' + response.error );
+							//alert( 'step = ' + step + '\n' + 'response.return_data = ' + response.return_data + '\n' + 'response.success = ' + response.success + '\n' + 'response.error = ' + response.error );
 							if ( response.return_data != undefined ) {
 								process_return_data( next, response );
 							} else {
@@ -460,9 +475,9 @@
 							}								
 						},
 						error: function(response) {
-							//alert( dump( response ) );
+							//console.log( dump( response ) );
 							msg = new Object();
-							msg.error = 'An error occured! Registration Step '+step+' could not be completed. Please refresh the page and try again.';
+							msg.error = eei18n.reg_step_error;
 							show_event_queue_ajax_error_msg( msg );
 						}			
 				});	
@@ -492,7 +507,7 @@
 				window.location.replace( response.return_data[key] );
 				return;
 			} else if ( key == 'off-site-redirect') {
-				$( '#reg-page-confirmation-dv' ).html( response.return_data[key] );
+				$( '#reg-page-confirmation-dv-and-whats-next-button' ).html( response.return_data[key] );
 				document.forms['gateway_form'].submit();
 			}
 		}
@@ -539,9 +554,9 @@
 			
 				// set error messages
 				if ( good_to_go === true ) {
-					good_to_go = 'You need to answer all required questions before you can proceed.';
-				} else if ( good_to_go == 'You must enter a valid email address.' ) {
-					good_to_go = 'You must enter a valid email address and answer all other required questions before you can proceed.';
+					good_to_go = eei18n.answer_required_questions;
+				} else if ( good_to_go == eei18n.enter_valid_email ) {
+					good_to_go = eei18n.valid_email_and_questions;
 				} 
 				
 				$(this).addClass('requires-value');
@@ -549,11 +564,11 @@
 			} else {
 				
 				// is this field an email address ?
-				if ( $(this).prev().attr('for') == 'email' ) {
+				if ( $(this).hasClass('email') ) {
 					// grab the addy
 					var email_address = $(this).val();
 					// send addy for validation
-					if ( validate_email_address( email_address ) ) {
+					if ( validate_email_address( email_address )) {
 						// good email addy
 						$(this).removeClass('requires-value');
 					} else {
@@ -561,9 +576,9 @@
 						$(this).addClass('requires-value');
 						// set error messages
 						if ( good_to_go === true ) {
-							good_to_go = 'You must enter a valid email address.';
-						} else if ( good_to_go == 'You need to answer all required questions before you can proceed.' ) {
-							good_to_go = 'You must enter a valid email address and answer all other required questions before you can proceed.';
+							good_to_go = eei18n.enter_valid_email;
+						} else if ( good_to_go == eei18n.answer_required_questions ) {
+							good_to_go = eei18n.valid_email_and_questions;
 						} 						
 					}								
 							
@@ -574,16 +589,25 @@
 			}	
 		});
 			
-		if ( good_to_go === true && $('#mer-reg-page-copy-all-attendee-chk').prop('checked') ) {
-			$('.event_questions').slideUp();
+		// does copy all attendees checkbox exist ?
+		if ( $('#mer-reg-page-copy-all-attendee-chk').size() ) {
+			// get value of copy all attendees checkbox
+			var allAttendeesChk = $('#mer-reg-page-copy-all-attendee-chk').prop('checked');
+		} else {
+			// only one attendee, so let's say this is checked
+			var allAttendeesChk = true;
+		}		
+		
+		if ( good_to_go === true && allAttendeesChk ) {
+			$('.espresso-question-group-wrap').slideUp(); 
 			$('#mer-reg-page-copy-attendee-dv').slideUp();
 			$('#mer-reg-page-display-event-questions-lnk').removeClass('hidden');
-		} else if ( good_to_go != '' ) {
+		} else if ( good_to_go != '' && good_to_go!==true ) {
 			msg = new Object();
 			msg.error = good_to_go;
 			good_to_go = msg;
 		}
-		//alert( 'good_to_go = ' + good_to_go );
+
 		return good_to_go;
 				
 	}
@@ -592,7 +616,7 @@
 
 	// show event questions
 	$('#mer-reg-page-display-event-questions-lnk').on( 'click', function() {
-		$('.event_questions').slideDown();
+		$('.espresso-question-group-wrap').slideDown();
 		$('#mer-reg-page-copy-attendee-dv').slideDown();
 		$(this).addClass('hidden');
 	});
@@ -612,16 +636,16 @@
 
 
 
-	$('.reg-page-payment-option-lnk').on( 'click', function() {
+	$('.reg-page-payment-option-dv').on( 'click', function() {
 	
-		var selected_payment_option = $(this);
-		var selected_gateway = $(this).attr('id');
+		var selected_payment_option = $(this).find('.reg-page-payment-option-lnk');
+		var selected_gateway = selected_payment_option.attr('id');
 		$('#reg-page-select-other-gateway-lnk').attr( 'rel', selected_gateway );
 		
 		$('#methods-of-payment').slideUp( 250, function() {
 
-			$('.reg-page-payment-option-lnk').each(function() {
-				if ( $(this).attr('id') != selected_gateway ) {
+			$('.reg-page-payment-option-dv').each(function() {
+				if ( $(this).find('.reg-page-payment-option-lnk').attr('id') != selected_gateway ) {
 					$(this).toggleClass( 'hidden' );
 				}			
 			});		

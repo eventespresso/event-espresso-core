@@ -1,16 +1,18 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
+do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
+
+
 
 
 function espresso_edit_attendee($registration_id, $attendee_id, $event_id = 0, $type = '', $text = '') {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	global $org_options;
 	$html = '';
 	if ($text == '')
 		$text = __('Edit Attendee', 'event_espresso');
 	switch ($type) {
 		case'admin':
-			$html .= '<a href="' . get_admin_url() . 'admin.php?page=attendees&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&form_action=edit_attendee&id=' . $attendee_id . '&registration_id=' . $registration_id . '">' . $text . '</a>';
+			$html .= '<a href="' . get_admin_url() . 'admin.php?page=espresso_registrations&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&form_action=edit_attendee&id=' . $attendee_id . '&registration_id=' . $registration_id . '">' . $text . '</a>';
 			break;
 		case'attendee':
 		default:
@@ -26,7 +28,7 @@ function espresso_edit_attendee($registration_id, $attendee_id, $event_id = 0, $
 
 
 function espresso_invoice_url($attendee_id, $registration_id, $extra = '') {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	$extra = empty($extra) ? '' : '&amp;' . $extra;
 	return home_url() . '/?invoice_launch=true&amp;id=' . $attendee_id . '&amp;r_id=' . $registration_id . '&amp;html=true' . $extra;
 }
@@ -34,14 +36,14 @@ function espresso_invoice_url($attendee_id, $registration_id, $extra = '') {
 
 
 function espresso_get_reg_page_full_url() {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	global $org_options;
 	$reg_page_url = get_permalink($org_options['event_page_id']);
 	return $reg_page_url;
 }
 
 function espresso_use_pretty_permalinks() {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	global $org_options;
 	// check if option exists
 	if (isset($org_options['espresso_url_rewrite_activated'])) {
@@ -58,9 +60,9 @@ function espresso_use_pretty_permalinks() {
 }
 
 function espresso_reg_url($event_id = FALSE, $event_slug = FALSE) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	global $wpdb, $org_options;
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 	$registration_url = rtrim(get_permalink($org_options['event_page_id']), '/');
 	$use_pretty_permalinks = espresso_use_pretty_permalinks();
@@ -108,7 +110,7 @@ function espresso_reg_url($event_id = FALSE, $event_slug = FALSE) {
 	} else
 		$registration_url = '';
 
-	return $registration_url;
+	return stripslashes_deep($registration_url);
 }
 
 //Text formatting function.
@@ -128,7 +130,7 @@ function espresso_format_content($content = '') {
 
 //Function to display additional attendee fields.
 function event_espresso_get_event_meta($event_id) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	global $wpdb;
 	$event_meta = array();
 	$sql = "SELECT event_meta  FROM " . EVENTS_DETAIL_TABLE . " e WHERE e.id = '" . $event_id . "' LIMIT 0,1";
@@ -214,7 +216,7 @@ if (!function_exists('event_espresso_additional_attendees')) {
 			} else {
 				$html .= event_espresso_add_question_groups($event_meta['add_attendee_question_groups'], '', null, 0, array("x_attendee" => true));
 			}
-			$html .= '<a href="#" class="add" rel=".clone" title="' . __('Add an Additonal Attendee', 'event_espresso') . '"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/add.png" alt="' . __('Add an Additonal Attendee', 'event_espresso') . '" /></a>';
+			$html .= '<a href="#" class="add" rel=".clone" title="' . __('Add an Additonal Attendee', 'event_espresso') . '"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/add.png" alt="' . __('Add an Additonal Attendee', 'event_espresso') . '" /></a>';
 			$html .= '</div>';
 			$html .= '<hr />';
 			$html .= '</div>';
@@ -224,7 +226,7 @@ if (!function_exists('event_espresso_additional_attendees')) {
 	$jaer = jQuery.noConflict();
 	jQuery(document).ready(function($jaer) { 
 		$jaer(function(){
-			var removeLink = '<a style="" class="remove" href="#" onclick="$jaer(this).parent().slideUp(function(){ $jaer(this).remove() }); return false"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL . "images/icons/remove.gif"; ?>" alt="<?php _e('Remove Attendee', 'event_espresso'); ?>" /></a>';
+			var removeLink = '<a style="" class="remove" href="#" onclick="$jaer(this).parent().slideUp(function(){ $jaer(this).remove() }); return false"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL . "images/remove.gif"; ?>" alt="<?php _e('Remove Attendee', 'event_espresso'); ?>" /></a>';
 			$jaer('a.add').relCopy({
 				limit: <?php echo $i; ?>, 
 				append: removeLink
@@ -253,7 +255,7 @@ if (!function_exists('event_espresso_get_is_active')) {
 
 	function event_espresso_get_is_active( $event_id, $event_meta = '', $is_active = FALSE, $event_status = FALSE ) {
 		global $wpdb;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		
 		if ( $is_active === FALSE || $event_status === FALSE ) {
 			$sql = "SELECT is_active, event_status ";
@@ -271,9 +273,8 @@ if (!function_exists('event_espresso_get_is_active')) {
 		$regstart = 10000000000;
 		$end = 0;
 		$regend = 0;
-		if ( ! is_array( $datetimes )) {
-			$datetimes = array( $datetimes );
-		}
+		
+		$datetimes = is_array( $datetimes ) ? $datetimes : array( $datetimes );
 		foreach ($datetimes as $datetime) {
 			$start = min(array($start, $datetime->start()));
 			$end = max(array($end, $datetime->end()));
@@ -334,7 +335,7 @@ if (!function_exists('event_espresso_get_is_active')) {
 
 		//If the registration start date is less than the current date
 		elseif ($is_active && $regstart <= $now && $event_status != "D") {
-			$event_status = array('status' => 'REGISTRATION_OPEN', 'display' => __('OPEN', 'event_espresso'), 'display_custom' => '<span class="espresso_open">' . __('Open', 'event_espresso') . '</span>');
+			$event_status = array('status' => 'REGISTRATION_OPEN', 'display' => __('OPEN', 'event_espresso'), 'display_custom' => '<span class="espresso_open">' . __('Registration Open', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
 		}
@@ -376,7 +377,7 @@ if (!function_exists('event_espresso_get_is_active')) {
 if (!function_exists('event_espresso_get_status')) {
 
 	function event_espresso_get_status($event_id, $event_meta = '') {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$event_status = event_espresso_get_is_active($event_id, $event_meta);
 		switch ($event_status['status']) {
 			case 'EXPIRED':
@@ -423,8 +424,8 @@ if (!function_exists('event_espresso_get_status')) {
  */
 if (!function_exists('get_number_of_attendees_reg_limit')) {
 
-	function get_number_of_attendees_reg_limit($event_id, $type = 'NULL') {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	function get_number_of_attendees_reg_limit( $event_id, $type = 'NULL', $reg_limit = 999 ) {
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		global $wpdb;
 
 		switch ($type) {
@@ -434,13 +435,8 @@ if (!function_exists('get_number_of_attendees_reg_limit')) {
 			case 'number_available_spaces' :
 			case 'num_completed_slash_incomplete' :
 			case 'num_attendees_slash_reg_limit' :
-			case 'avail_spaces_slash_reg_limit' :
-				$num_attendees = 0;
-				$a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND (payment_status='Completed' OR payment_status='Pending') ";
-				$wpdb->get_results($a_sql, ARRAY_A);
-				if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
-					$num_attendees = $wpdb->last_result[0]->quantity;
-				}
+			case 'avail_spaces_slash_reg_limit' :		
+				$num_attendees = EEM_Registration::instance()->get_event_registration_count( $event_id );
 			//break;
 
 			case 'reg_limit' :
@@ -448,11 +444,7 @@ if (!function_exists('get_number_of_attendees_reg_limit')) {
 			case 'number_available_spaces' :
 			case 'avail_spaces_slash_reg_limit' :
 			case 'num_attendees_slash_reg_limit' :
-				$number_available_spaces = 0;
-				$sql_reg_limit = "SELECT reg_limit FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'";
-				$reg_limit = $wpdb->get_var($sql_reg_limit);
-				if (empty($num_attendees))
-					$num_attendees = 0;
+				$number_available_spaces = $reg_limit;
 				if ($reg_limit > $num_attendees) {
 					$number_available_spaces = $reg_limit - $num_attendees;
 				}
@@ -460,12 +452,7 @@ if (!function_exists('get_number_of_attendees_reg_limit')) {
 
 			case 'num_incomplete' :
 			case 'num_completed_slash_incomplete' :
-				$num_incomplete = 0;
-				$a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND payment_status='Incomplete'";
-				$wpdb->get_results($a_sql);
-				if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
-					$num_incomplete = $wpdb->last_result[0]->quantity;
-				}
+				$num_incomplete = EEM_Registration::instance()->get_event_registration_count( $event_id, TRUE );
 			//break;
 		}
 
@@ -475,7 +462,7 @@ if (!function_exists('get_number_of_attendees_reg_limit')) {
 				break;
 			case 'available_spaces' :
 				if ($reg_limit >= 999) {
-					$number_available_spaces = "Unlimited";
+					$number_available_spaces = __('Unlimited', 'event_espresso');
 				}
 				return $number_available_spaces;
 				break;
@@ -540,16 +527,16 @@ if (!function_exists('get_number_of_attendees_reg_limit')) {
 }
 
 function espresso_registration_footer() {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	global $espresso_premium, $org_options;
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+	global $caffeinated, $org_options;
 	$url = (!isset($org_options['affiliate_id']) || $org_options['affiliate_id'] == '' || $org_options['affiliate_id'] == 0) ? 'http://eventespresso.com/' : 'https://www.e-junkie.com/ecom/gb.php?cl=113214&c=ib&aff=' . $org_options['affiliate_id'];
-	if (!$espresso_premium || !empty($org_options['show_reg_footer'])) {
+	if (!$caffeinated || !empty($org_options['show_reg_footer'])) {
 		return '<p style="font-size: 12px;"><a href="' . $url . '" title="Event Registration Powered by Event Espresso" target="_blank">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress" target="_blank">Event Espresso</a></p>';
 	}
 }
 
 function espresso_display_questions($questions, $attendee) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	if (defined( 'EVENT_ESPRESSO_MEMBERS_DIR' )) {
 		global $current_user;
 		global $user_email;
@@ -637,8 +624,8 @@ function espresso_display_questions($questions, $attendee) {
 				case "DATE" :
 					//Load scripts and styles
 					wp_register_style('jquery-ui-style-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css');
-					wp_print_styles('jquery-ui-style-datepicker');
-					wp_print_scripts('jquery-ui-datepicker');
+					wp_enqueue_style('jquery-ui-style-datepicker');
+					wp_enqueue_script('jquery-ui-datepicker');
 
 					$html .= '<p class="event_form_field">' . $label;
 					$html .= '<input type="text" ' . $required . ' id="' . $field_name . '-' . $attendee . '"  name="' . $field_name . '" size="40" /></p>';
@@ -696,11 +683,16 @@ function espresso_display_questions($questions, $attendee) {
 	return $html;
 }
 
+
+
+
+
+
 //Build the form questions. This function can be overridden using the custom files addon
-if (!function_exists('event_espresso_add_question_groups')) {
+/*if (!function_exists('event_espresso_add_question_groups')) {
 
 	function event_espresso_add_question_groups($question_groups, $answer = '', $event_id = null, $multi_reg = 0, $meta = array()) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		global $wpdb;
 		$event_id = empty($_REQUEST['event_id']) ? $event_id : $_REQUEST['event_id'];
 		if (count($question_groups) > 0) {
@@ -757,7 +749,7 @@ if (!function_exists('event_espresso_add_question_groups')) {
 							$html .= $question->show_group_description != 0 && true == $question->group_description ? "<p class='quest-group-descript'>$question->group_description</p>" : '';
 							$group_name = $question->group_name;
 						}
-						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/form_build.php');
+//						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/form_build.php');
 						$html .= event_form_build($question, $answer, $event_id, $multi_reg, $meta);
 					}
 					$html .= $counter == $num_rows ? '</div>' : '';
@@ -770,10 +762,15 @@ if (!function_exists('event_espresso_add_question_groups')) {
 	}
 
 }
+*/
+
+
+
+
 
 //Simple function to return the meta an event, venue, staff etc.
 function ee_show_meta($meta, $name) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	if (empty($meta)) {
 		return FALSE;
 	}
@@ -786,7 +783,7 @@ function ee_show_meta($meta, $name) {
 if (!function_exists('espresso_event_category_data')) {
 
 	function espresso_event_category_data($event_id, $all_cats = FALSE) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		global $wpdb;
 		$sql = "SELECT c.category_identifier, c.category_name, c.category_desc, c.display_desc FROM " . EVENTS_DETAIL_TABLE . " e ";
 		$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
@@ -819,7 +816,7 @@ if (!function_exists('espresso_event_category_data')) {
 if (!function_exists('espresso_registration_id')) {
 
 	function espresso_registration_id($attendee_id) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		global $wpdb;
 		return $wpdb->get_var($wpdb->prepare("SELECT registration_id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id ='" . $attendee_id . "'"));
 	}
@@ -830,7 +827,7 @@ if (!function_exists('espresso_registration_id')) {
 if (!function_exists('espresso_google_map_link')) {
 
 	function espresso_google_map_link($atts) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		extract($atts);
 
 		$address = "{$address}";
@@ -870,7 +867,7 @@ if (!function_exists('espresso_google_map_link')) {
 
 //escape the commas in csv file export
 function escape_csv_val($val) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 	$type = ($_REQUEST['type']) ? $_REQUEST['type'] : '';
 	if (preg_match('/,/', $val) && $type == 'csv') {
@@ -899,9 +896,9 @@ function escape_csv_val($val) {
 if (!function_exists('espresso_show_personnel')) {
 
 	function espresso_show_personnel($event_id, $atts) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $espresso_premium;
-		if ($espresso_premium != true)
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		global $caffeinated;
+		if ($caffeinated != true)
 			return;
 		global $wpdb;
 		extract($atts, EXTR_PREFIX_ALL, "v");
@@ -959,7 +956,7 @@ if (!function_exists('event_espresso_require_gateway')) {
 	 * Usage: event_espresso_require_gateway('PaymentGateway.php')
 	 */
 	function event_espresso_require_gateway($template_file_name, $must_exist = true, $as_require_once = true) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		event_espresso_require_file($template_file_name, EVENT_ESPRESSO_GATEWAY_DIR . '/', EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/', $must_exist, $as_require_once);
 	}
 
@@ -981,7 +978,7 @@ if (!function_exists('event_espresso_require_file')) {
 	 * Usage: event_espresso_require_file('shopping_cart.php',EVENT_ESPRESSO_TEMPLATE_DIR,EVENT_ESPRESSO_PLUGINFULLPATH.'templates/')
 	 */
 	function event_espresso_require_file($template_file_name, $path_first, $path_else, $must_exist = true, $as_require_once = true) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, ' $template_file_name = ' . $template_file_name );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, ' $template_file_name = ' . $template_file_name );
 		if (file_exists($path_first . $template_file_name)) {
 			// Use the template file in the user's upload folder
 			$full_path = $path_first . $template_file_name;
@@ -1006,7 +1003,7 @@ if (!function_exists('event_espresso_cleanup_multi_event_registration_id_group_d
 	 * Usage: event_espresso_cleanup_multi_event_registration_id_group_data()
 	 */
 //	function event_espresso_cleanup_multi_event_registration_id_group_data() {
-//	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+//	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 //		global $wpdb;
 //		$wpdb->query(" delete emerig from " . EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE . " emerig left join " . EVENTS_ATTENDEE_TABLE . "  ea on emerig.registration_id = ea.registration_id where ea.registration_id is null ");
 //	}
@@ -1029,7 +1026,7 @@ if (!function_exists('event_espresso_cleanup_attendee_cost_data')) {
 }
 
 function espresso_check_scripts() {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	if (function_exists('wp_script_is')) {
 		if (!wp_script_is('jquery')) {
 			echo '<div class="event_espresso_error"><p><em>' . __('Jquery is not loaded!', 'event_espresso') . '</em><br />' . __('Event Espresso is unable to load Jquery do to a conflict with your theme or another plugin.', 'event_espresso') . '</p></div>';
@@ -1045,9 +1042,9 @@ function espresso_check_scripts() {
 
 //These functions were moved here from admin.php on 08-30-2011 by Seth
 function espresso_edit_this($event_id) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	global $espresso_premium;
-	if ($espresso_premium != true)
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+	global $caffeinated;
+	if ($caffeinated != true)
 		return;
 	$curauth = wp_get_current_user();
 	$user_id = $curauth->ID;
@@ -1096,8 +1093,8 @@ function espresso_edit_this($event_id) {
 //	}
 //}
 
-function espresso_ticket_links($registration_id, $attendee_id) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+/*function espresso_ticket_links($registration_id, $attendee_id) {
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	global $wpdb;
 	$sql = "SELECT id, registration_id, fname, lname  FROM " . EVENTS_ATTENDEE_TABLE;
 	if (espresso_is_primary_attendee($attendee_id) != true) {
@@ -1120,10 +1117,10 @@ function espresso_ticket_links($registration_id, $attendee_id) {
 		}
 		return '<p>' . $group . $ticket_link . '</p>';
 	}
-}
+}*/
 
 function getCountriesArray($lang = "en") {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	//first code, country_id
 	//seconde code, country name
 	//third code, ISO country id with two chars
@@ -1360,7 +1357,7 @@ function getCountriesArray($lang = "en") {
 }
 
 function getCountryZoneId($country_id) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	//1 for the rest of the world
 	//2 is for european union
 	$countries = getCountriesArray();
@@ -1371,7 +1368,7 @@ function getCountryZoneId($country_id) {
 }
 
 function getCountryName($id, $lang = "en") {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	$countries = getCountriesArray($lang);
 	for ($t = 0; $t < sizeof($countries); $t++)
 		if ($id == $countries[$t][0])
@@ -1380,7 +1377,7 @@ function getCountryName($id, $lang = "en") {
 }
 
 function getCountryFullData($id, $lang = "en") {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	$countries = getCountriesArray($lang);
 	for ($t = 0; $t < sizeof($countries); $t++)
 		if ($id == $countries[$t][0])
@@ -1397,9 +1394,9 @@ function getCountryFullData($id, $lang = "en") {
 }
 
 function printCountriesSelector($name, $selected) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	$selected = intval($selected);
-	$countries = getCountriesArray("es");
+	$countries = getCountriesArray("en");
 
 	echo "<select name='" . $name . "'>";
 	for ($t = 0; $t < sizeof($countries); $t++) {
@@ -1444,221 +1441,18 @@ function printr( $var, $var_name = FALSE, $height = 'auto', $die = FALSE ) {
 	}
 }
 
-/**
- * 		compile all error or success messages into one string
- *
- * 		@param		boolean		$format_output		whether or not to format the messages for display in the WP admin
- * 		@param		boolean		$url_encode			whether or not to urlencode messages for use as REQUEST vars
- * 		@param		boolean		$remove_empty		whether or not to unset empty messages
- * 		@return 		array
- */
-function espresso_get_notices( $format_output = TRUE, $url_encode = FALSE, $remove_empty = TRUE ) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-
-	global $espresso_notices;
-
-	$success_messages = '';
-	$error_messages = '';
-
-	//echo printr($espresso_notices, '$espresso_notices' );
-	// grab any notices that have been sent via REQUEST vars
-	if (isset($_REQUEST['success']) && $_REQUEST['success'] != '') {
-		$espresso_notices['success'][] = urldecode($_REQUEST['success']);
-	}
-	if (isset($_REQUEST['errors']) && $_REQUEST['errors'] != '') {
-		$espresso_notices['errors'][] = urldecode($_REQUEST['errors']);
-	}
-
-	// check for success messages
-	//if ( isset( $espresso_notices['success'] ) && is_array( $espresso_notices['success'] ) && ! empty( $espresso_notices['success'] )) {
-	if ($espresso_notices['success']) {
-		// cycle through all of them
-		foreach ($espresso_notices['success'] as $success) {
-			// compile them into one string of paragraphs
-			$success_messages .= $success . '<br />';
-		}
-		// remove last linebreak
-		$success_messages = substr($success_messages, 0, ( count($success_messages) - 7));
-		// possibly encode for url transmission
-		$success_messages = $url_encode ? urlencode($success_messages) : $success_messages;
-	}
-
-	// check for error messages
-	//if ( isset( $espresso_notices['errors'] ) && is_array( $espresso_notices['errors'] ) && ! empty( $espresso_notices['errors'] )) {
-	if ($espresso_notices['errors']) {
-		// cycle through all of them
-		foreach ($espresso_notices['errors'] as $error) {
-			// compile them into one string of paragraphs
-			$error_messages .= $error . '<br />';
-		}
-		// remove last linebreak
-		$error_messages = substr($error_messages, 0, ( count($error_messages) - 7));
-		$error_messages = $url_encode ? urlencode($error_messages) : $error_messages;
-	}
-
-	if ($format_output) {
-
-		$notices = '';
-
-		if ($success_messages != '') {
-			//showMessage( $success_messages );
-			$notices = '<div id="message" class="updated fade"><p>' . $success_messages . '</p></div>';
-		}
-
-		if ($error_messages != '') {
-			//showMessage( $error_messages, TRUE );
-			$notices .= '<div id="message" class="error fade fade-away"><p>' . $error_messages . '</p></div>';
-		}
-	} else {
-
-		$notices = array(
-				'success' => $success_messages,
-				'errors' => $error_messages
-		);
-		
-		if ( $remove_empty ) {
-			// remove empty notices						
-			foreach ($notices as $type => $notice) {
-				if (empty($notice)) {
-					unset($notices[$type]);
-				}
-			}
-		}
-
-	}
-
-	return $notices;
-}
 
 /**
  * 		load and display a template
- *
- * 		@param 		string			$path_to_file		server path to the file to be loaded, including the file name and extension
- * 		@param 		array			$template_args	an array of arguments to be extracted for use in the template
- * 		@param 		boolean		$return_string	whether to send ouput immediately to screen, or capture and return as a string
+ * 		This is a wrapper for the EE_Template::display_template helper.
  * 		@return 		void
  */
 function espresso_display_template($path_to_file = FALSE, $template_args = FALSE, $return_string = FALSE) {
-
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	// you gimme nuttin - YOU GET NUTTIN !!
-	if (!$path_to_file) {
-		return FALSE;
-	}
-	// if $template_args are not in an array, then make it so
-	if (!is_array($template_args)) {
-		$template_args = array($template_args);
-	}
-
-	extract($template_args);
-
-	if ($return_string) {
-		// becuz we want to return a string, we are going to capture the output
-		ob_start();
-		include( $path_to_file );
-		$output = ob_get_clean();
-		return $output;
-	} else {
-		include( $path_to_file );
-	}
-}
-
-
-
-
-
-
-
-/**
- *		create error code from filepath, function name,
- *		and line number where exception or error was thrown
- * 
- *		@ param string $file
- *		@ param string $func
- *		@ param string $line
- *		@ return string
- */
-function espresso_get_error_code (  $file, $func, $line ) {
-
-//echo '<h4>$file : ' . $file . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-//echo '<h4>$func : ' . $func . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-//echo '<h4>$line : ' . $line . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-
-	$error_code = '';
-	$code_bits = array( 0 => $file, 1 => $func, 2 => $line );
-
-	foreach ( $code_bits as $key => $code_bit ) {
-		switch ( $key ) {
-
-			case 0:
-				$code_bit = str_replace( '\\', '/', $code_bit );
-				// break filepath up by the /
-				$code_bit = explode ( '/', $code_bit );
-				// filename is the last segment
-				$file = $code_bit[ count($code_bit)-1 ];
-				// folder is the second to the last segment
-				$folder = $code_bit[ count($code_bit)-2 ];
-				//change all dashes to underscores
-				$folder = str_replace ( '-', '_', $folder );
-				//strip vowels
-				$folder = str_replace ( array( 'a', 'A', 'e', 'E', 'i', 'I', 'o', 'O', 'u', 'U' ), array( '', '', '', '', '', '', '', '', '', '',  ), $folder );
-				// break it up by the _
-				$folder_bits = explode( '_', $folder);
-				$folder = '';
-				foreach ( $folder_bits as $folder_bit ) {
-					// grab the first 2 characters from each word
-					$folder .= substr($folder_bit, 0, 3);
-				}
-				$error_code .= $folder . '-';
-
-				// break filename by the dots - to get at the first bit
-				$code_bit = explode('.', $file);
-				// remove EE_ from the filename
-				$code_bit = str_replace ( 'EE_', '', $code_bit[0] );
-				// and EEM_ 
-				$code_bit = str_replace ( 'EEM_', '', $code_bit );
-				// remove all non-alpha characters
-				$code_bit = preg_replace( '[A-Za-z]', '', $code_bit );
-				//change all dashes to underscores
-				$file = str_replace ( '-', '_', $code_bit );
-				//strip vowels
-				$file = str_replace ( array( 'a', 'A', 'e', 'E', 'i', 'I', 'o', 'O', 'u', 'U' ), array( '', '', '', '', '', '', '', '', '', '',  ), $file );
-				// break it up by the _
-				$file_bits = explode( '_', $file);
-				$file = '';
-				foreach ( $file_bits as $file_bit ) {
-					// grab the first 2 characters from each word
-					$error_code .= substr($file_bit, 0, 3);
-				}
-				$error_code .= '-';
-
-			break;
-
-			case 1:
-				//change all dashes to underscores
-				$code_bit = str_replace ( '-', '_', $code_bit );
-				// break function name by the underscore if there are any
-				$func_bits = explode('_', $code_bit);
-				// split camelCase
-				// preg_match_all('/((?:^|[A-Z])[a-z]+)/',$str,$matches);
-				$func = '';
-				$x = 0;
-				foreach ( $func_bits as $func_bit ) {
-					$error_code .= substr($func_bit, 0, 3);
-				}
-				// convert to uppercase
-				$error_code = strtoupper( $error_code ) . '-';
-			break;
-
-			case 2:
-				// i can't figure this one out
-				$error_code .= $code_bit;
-			break;
-
-		}
-	}
-	return '<sup>' . $error_code . '</sup>';
-}
+	//require the template helper 
+	require_once(EVENT_ESPRESSO_PLUGINFULLPATH.'/helpers/EE_Template.helper.php');
+	if ( $return_string )
+		return EE_Template::display_template( $path_to_file, $template_args, $return_string );
+	else
+		EE_Template::display_template( $path_to_file, $template_args, $return_string );
+}		
 

@@ -1,14 +1,5 @@
 jQuery(document).ready(function($) {
 
-	$.ajaxSetup ({ cache: false });
-
-	// clear firefox and safari cache
-	$(window).unload( function() {}); 
-	
-	// close postboxes that should be closed
-	$('.if-js-closed').removeClass('if-js-closed').addClass('closed');
-	// postboxes setup
-	postboxes.add_postbox_toggles('event-espresso_page_transactions');
 
 	$('#entries-per-page-slct').on( 'change', function() {
 		var per_page = $(this).val();
@@ -27,50 +18,12 @@ jQuery(document).ready(function($) {
 
 	$('.confirm-delete').on( 'click', function() {
 		var what = $(this).attr('rel');
-		var answer = confirm('Are you absolutely sure you want to delete this '+what+'?\nThis action will delete ALL DATA asscociated with this '+what+'!!!\nThis can NOT be undone!!!');
+		var answer = confirm( eei18n.confirm_delete );
   		return answer;
 	});
 
 	$('.updated.fade').delay(5000).fadeOut();
 
-
-	// generic click event for displaying and giving focus to an element and hiding control 
-	$('.display-the-hidden').on( 'click', function() {
-		$('.auto-hide').slideUp(500);
-		// get target element from "this" (the control element's) "rel" attribute
-		var item_to_display = $(this).attr("rel"); 
-		var control = $(this);
-		// display the target's div container - use slideToggle or removeClass
-		$('#'+item_to_display+'-dv').slideToggle(500, function() {		
-			if ( ! control.hasClass('no-hide') ){
-				// hide the control element
-				control.addClass('hidden'); 
-			} 
-			// display the target div's hide link
-			$('#hide-'+item_to_display).removeClass('hidden'); 
-			// if hiding/showing a form input, then id of the form input must = item_to_display
-			//$('#'+item_to_display).focus(); // add focus to the target
-		}); 
-		return false;
-	});
-
-	// generic click event for re-hiding an element and displaying it's display control 
-	$('.hide-the-displayed').on( 'click', function() {
-		// get target element from "this" (the control element's) "rel" attribute
-		var item_to_hide = $(this).attr("rel"); 
-		var control = $(this);
-		// hide the target's div container - use slideToggle or addClass
-		$('#'+item_to_hide+'-dv').slideToggle(500, function() {
-			//$('#'+item_to_hide+'-dv').delay(250).addClass('hidden'); 
-			if ( ! control.hasClass('no-hide') ){
-				// hide the control element
-				control.addClass('hidden'); 
-			}
-			// display the control element that toggles display of this element
-			$('#display-'+item_to_hide).removeClass('hidden');  
-		}); 
-		return false;
-	});	
 
 
 
@@ -82,11 +35,9 @@ jQuery(document).ready(function($) {
 
 
 
-
-	// modal dialog box elements
-	var overlay = $( "#espresso-admin-page-overlay-dv" );
 	var dialog = $( "#txn-admin-apply-payment-dv" ).draggable();
-	var eeTimeout = false;
+	// send to global space
+	window.dialog = dialog;
 
 
 
@@ -145,6 +96,7 @@ jQuery(document).ready(function($) {
 		$('#message').hide();
 		position_overlay();
 		position_dialog();
+		$('#txn-admin-payment-method-slct').trigger('change');
 		overlay.on('click', function() {
 			dialog.fadeOut( 'fast');
 			overlay.fadeOut('fast', function(){
@@ -170,50 +122,6 @@ jQuery(document).ready(function($) {
 			});
 		});	
 	}
-
-
-	function position_dialog() {
-		var wndwWidth = parseInt( $(window).width() );
-		var wndwHeight = parseInt( $(window).height() );		
-		var scrllTp = $('html').scrollTop();
-		$('#txn-admin-payment-method-slct').trigger('change');
-		var parOff = dialog.parent().offset();
-		var dialogTop =  ( wndwHeight / 10 ) - parOff.top + scrllTp;
-		var dialogLeft = ( wndwWidth / 4 - parOff.left );
-		var dialogWidth = wndwWidth / 2;
-		dialog.css({ 'top' : dialogTop, 'left' : dialogLeft, 'width' : dialogWidth }).fadeIn('fast');		
-	}
-
-
-
-	function position_overlay() {
-		var dcmntWidth = parseInt($(document).width() );
-		var dcmntHeight = parseInt($(document).height() );
-		$(window).scrollTop(0);
-		var ovrParOff = overlay.parent().offset();
-		var ovrlyTop = ovrParOff.top * (-1);
-		var ovrlyLeft = ovrParOff.left * (-1);
-		overlay.css({ 'top' : ovrlyTop, 'left' : ovrlyLeft, 'width' : dcmntWidth, 'height' : dcmntHeight }).fadeIn('fast').addClass('active');
-	}
-
-
-
-	function doneResizing(){
-		if ( overlay.hasClass('active') ) {
-			position_overlay( $( "#admin-page-overlay-dv" ), false ); 
-			position_dialog( $( "#txn-admin-apply-payment-dv" ) ); 
-			eeTimeout = false;	
-		}
-	}
-
-
-
-	$(window).resize(function(){	
-		 if( eeTimeout !== false) {
-		    clearTimeout(eeTimeout);
-		}
-		eeTimeout = setTimeout(doneResizing, 200);
-	});
 
 
 
@@ -272,7 +180,8 @@ jQuery(document).ready(function($) {
 		$('#txn-admin-noheader-inp').val('true');
 		var formData = $('#txn-admin-apply-payment-frm').serialize();
 		//alert( 'formURL = ' + formURL + '\n\n' + 'formData = ' + formData );
-		response = new Object();
+//		console.log(formData);
+//		response = new Object();
 
 		$.ajax({
 					type: "POST",
@@ -283,19 +192,21 @@ jQuery(document).ready(function($) {
 						do_before_admin_page_ajax();
 					},
 					success: function( response ) {
+						console.log(response);
 						if ( response.return_data != undefined && response.return_data != false && response.return_data != null ) {
 							response.edit_or_apply = editOrApply;
 							process_return_data( response );
 						} else if ( response.errors ) {
 							show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );
 						} else {
-							response.errors = 'An error occured! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.';
+							response.errors = eei18n.invalid_server_response;
 							show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 						}
 					},
 					error: function(response) {
+						console.log(response);
 						if ( response.errors == undefined ) {
-							response.errors = 'An error occured! Please refresh the page and try again.';
+							response.errors = eei18n.error_occured;
 						}
 						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 					}
@@ -312,13 +223,14 @@ jQuery(document).ready(function($) {
 		var formURL = $('#txn-admin-delete-payment-form-url-inp').val();
 		var PAY_ID = $(this).attr('rel');
 		//alert( 'formURL = ' + formURL + '\n' + 'PAY_ID = ' + PAY_ID );
+		console.log( 'formURL = ' + formURL + '\n' + 'PAY_ID = ' + PAY_ID );
 		var delBtn = $( this );
 
 		
 		$.ajax({
 					type: "POST",
 					url:  formURL,
-					data: { ID : PAY_ID, espresso_ajax : 1 },
+					data: { ID : PAY_ID, espresso_ajax : 1, noheader : 'true' },
 					dataType: "json",
 					beforeSend: function() {
 						do_before_admin_page_ajax();
@@ -331,13 +243,13 @@ jQuery(document).ready(function($) {
 							show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper' );
 						} else {
 							response = new Object();
-							response.errors = 'An error occured! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.';					
+							response.errors = eei18n.invalid_server_response;
 							show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', true );
 						}
 					},
 					error: function(response) {
 						if ( response.errors == undefined ) {
-							response.errors = 'An error occured! Please refresh the page and try again.';
+							response.errors = eei18n.error_occured;
 						}
 						show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', true );
 					}
@@ -419,7 +331,7 @@ jQuery(document).ready(function($) {
 		//$('#txn-admin-total-amount-due').html( totalAmountDue.toFixed(2) );
 		$('#txn-amount-due-h2 > span').html( totalAmountDue.toFixed(2) );
 
-		$('#txn-status').html( txn_status_array[ response.return_data.txn_status ] );
+		$('#txn-status').html( eei18n.txn_status_array[ response.return_data.txn_status ] );
 		$('#txn-status').removeClass().addClass( 'status-' + response.return_data.txn_status  );
 
 		if ( totalPaid == txnTotal ) {
@@ -464,13 +376,7 @@ jQuery(document).ready(function($) {
 
 
 	function process_delete_payment( response ) {
-	
-		// return data
-		// [amount] => 1000
-	   	// [total_paid] => 579.9
-	    // [txn_status] => TOP
-	    // [PAY_ID] => 73	
-	 
+
 		// grab PAY ID from return data
 		var PAY_ID = response.return_data.PAY_ID;
 		update_payment_totals( response );
@@ -487,75 +393,7 @@ jQuery(document).ready(function($) {
 
 
 
-	function do_before_admin_page_ajax() {
-		// stop any message alerts that are in progress
-		$('#message').stop().hide();
-		// spinny things pacify the masses
-		var st = $('html').scrollTop();
-		var po = $('#espresso-admin-page-ajax-loading').parent().offset();		
-		var mal_top = ( st+( parseInt( $(window).height() )/3 )-po.top ) - 15;
-		var ww = $('#espresso-admin-page-ajax-loading').parent().width();
-		var mal_left = ( ww/2 ) -15;		
-		$('#espresso-admin-page-ajax-loading').css({ 'top' : mal_top, 'left' : mal_left }).show();
 		
-	}		
-		
-
-
-	function show_admin_page_ajax_msg( response, beforeWhat, closeModal ) {
-			
-		$('#espresso-admin-page-ajax-loading').fadeOut('fast');
-		//alert( response.toSource() );
-		if (( response.success != undefined && response.success != '' ) || ( response.errors != undefined && response.errors != '' )) {
-		
-			if ( closeModal == undefined ) {
-				closeModal = false;
-			}
-
-			var fadeaway = true;
-
-			if ( response.success != undefined && response.success != '' ) {
-				msg = '<div id="message" class="updated hidden"><p>' + response.success + '</p></div>';
-				//closeModal = true;
-			}
-		
-			if ( response.errors != undefined && response.errors != '' ) {
-				msg = '<div id="message" class="error hidden"><p>' + response.errors + '</p></div>';
-				//closeModal = false;
-				fadeaway = false;
-			}
-			// display message
-			$( beforeWhat ).before( msg );
-			if ( fadeaway == true ) {
-				$('#message').removeClass('hidden').show().delay(8000).fadeOut();
-//				$('#message').removeClass('hidden').show().delay(8000).fadeOut( function(){
-//						if ( closeModal ) {
-//							overlay.trigger('click');
-//						}
-//				});
-			} else {
-				$('#message').removeClass('hidden').show();
-//				$('#message').removeClass('hidden').show().delay(8000).queue( function() {
-//						if ( closeModal ) {
-//							overlay.trigger('click');
-//						}
-//				});
-			}
-
-		} 
-		
-//		response.success = '';
-//		response.errors = '';
-		//response = null;
-			
-		
-	}
-
-
-
-
-
-	
 	
 });
 

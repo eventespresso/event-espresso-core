@@ -21,29 +21,60 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
-class EEM_Payment extends EEM_Base {
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_TempBase.model.php' );
+class EEM_Payment extends EEM_TempBase {
 
   	// private instance of the Payment object
 	private static $_instance = NULL;
 
 
 
-
+/**
+	 * Status id in esp_status table that represents an approved payment
+	 */
+	const status_id_approved = 'PAP';
+	
+	
+	/**
+	 * Status id in esp_status table that represents a pending payment
+	 */
+	const status_id_pending = 'PPN';
+	
+	
+	/**
+	 * Status id in esp_status table that represents a canceleld payment (eg, the
+	 * user went to PayPal, but on the paypal site decided to cancel teh payment)
+	 */
+	const status_id_cancelled = 'PCN';
+	
+	
+	
+	/**
+	 * Status id in esp_status table that represents a payment taht was declined by
+	 * the gateway. (eg, the user's card had no funds, or it was a fraudulent card)
+	 */
+	const status_id_declined = 'PDC';
+	
+	
+	
+	/**
+	 * Status id in esp_status table that represents a payment that failed for technical reasons.
+	 * (Eg, there was some error in communicating with the payment gateway.)
+	 */
+	const status_id_failed = 'PFL';
 
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
-	 *		@access private
+	 *		@access protected
 	 *		@return void
 	 */	
-	private function __construct() {	  
-		global $wpdb;
+	protected function __construct() {	  
+		//global $wpdb;
 		// set table name
-		$this->table_name = $wpdb->prefix . 'esp_payment';
+		/*$this->table_name = $wpdb->prefix . 'esp_payment';
 		// set item names
-		$this->singlular_item = 'Payment';
-		$this->plual_item = 'Payments';		
+				
 		// array representation of the payment table and the data types for each field 
 		$this->table_data_types = array (	
 			'PAY_ID' 								=> '%d',
@@ -59,11 +90,32 @@ class EEM_Payment extends EEM_Base {
 			'PAY_extra_accntng'			=> '%s',
 			'PAY_via_admin'					=> '%d',
 			'PAY_details'						=> '%s'
+		);*/
+		$this->singlular_item = __('Payment','event_espresso');
+		$this->plural_item = __('Payments','event_espresso');
+		$this->_fields_settings = array(
+			'PAY_ID'=>				new EE_Model_Field('Payment ID', 'primary_key', false),
+			'TXN_ID'=>				new EE_Model_Field('Tranaction ID related to payment', 'foreign_key', false, null, null, 'Transaction'),
+			'STS_ID'=>				new EE_Model_Field('Status of payment', 'foreign_text_key', false, EEM_Payment::status_id_failed,null,'Status'),
+			'PAY_timestamp'=>		new EE_Model_Field('Unix Timestamp of when Payment occured','date',false,time()),
+			'PAY_method'=>			new EE_Model_Field('String stating method of payment', 'all_caps_key', true,'CART'),
+			'PAY_amount'=>			new EE_Model_Field('Amount this payment is for', 'float', false, 0),
+			'PAY_gateway'=>			new EE_Model_Field('Gateway name used for payment', 'plaintext', true, 'PayPal_Standard'),
+			'PAY_gateway_response'=>new EE_Model_Field('Response text from gateway that users would want to see', 'simplehtml', true,''),
+			'PAY_txn_id_chq_nmbr'=>	new EE_Model_Field('Unique ID for this payment in gateway, or cheque number', 'plaintext', true,''),
+			'PAY_po_number'=>		new EE_Model_Field('Purhcase or Sales Order Number','plaintext',true,''),
+			'PAY_extra_accntng'=>	new EE_Model_Field('Extra Accounting Info for Payment','simplehtml',true,''),
+			'PAY_via_admin'=>		new EE_Model_Field('Whether this payment was made via the admin', 'bool', false,false),
+			'PAY_details'=>			new EE_Model_Field('Full Response from Gateway concernign Payment', 'serialized_text', true,'')
+		);
+		$this->_related_models = array(
+			'Transaction'=>			new EE_Model_Relation('belongsTo', 'Transaction', 'TXN_ID'),
+			'Status'=>				new EE_Model_Relation('belongsTo', 'Status', 'STS_ID')
 		);
 		
 		// load Payment object class file
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Payment.class.php');
-
+		parent::__construct();
 	}
 
 	/**
@@ -82,51 +134,6 @@ class EEM_Payment extends EEM_Base {
 		// EEM_Payment object
 		return self::$_instance;
 	}
-
-
-
-
-	/**
-	*		cycle though array of payments and create objects out of each item
-	* 
-	* 		@access		private
-	* 		@param		array		$payments		
-	*		@return 		mixed		array on success, FALSE on fail
-	*/	
-	private function _create_objects( $payments = FALSE ) {
-
-		if ( ! $payments ) {
-			return FALSE;
-		} 		
-
-		if ( ! is_array( $payments )) {
-			$payments = array( $payments );
-		} 	
-		
-	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Payment.class.php' );
-
-		foreach ( $payments as $payment ) {
-				$array_of_objects[ $payment->PAY_ID ] = new EE_Payment(
-						$payment->TXN_ID,
-						$payment->STS_ID,
-						$payment->PAY_timestamp,
-						$payment->PAY_method,
-						$payment->PAY_amount,
-						$payment->PAY_gateway,
-						$payment->PAY_gateway_response,
-						$payment->PAY_txn_id_chq_nmbr,
-						$payment->PAY_po_number,
-						$payment->PAY_extra_accntng,
-						$payment->PAY_via_admin,
-						$payment->PAY_details,
-						$payment->PAY_ID
-				 	);
-		}	
-		return $array_of_objects;	
-
-	}
-
-
 
 
 	/**
@@ -172,86 +179,97 @@ class EEM_Payment extends EEM_Base {
 		}
 
 	}
+	
+	/**
+	 * Gets the payment by the gateway server's unique ID. Eg, the unique ID PayPal assigned
+	 * to the payment. This is handy for verifying an IPN hasn't already been processed.
+	 * @param string $txn_id_chq_nmbr
+	 * @return EE_Payment
+	 */
+	public function get_payment_by_txn_id_chq_nmbr($PAY_txn_id_chq_nmbr){
+		if ( ! $PAY_txn_id_chq_nmbr ) {
+			return FALSE;
+		}
+		$where_cols_n_values = array( 'PAY_txn_id_chq_nmbr' => $PAY_txn_id_chq_nmbr );
+		if ( $payment_row = $this->select_row_where ( $where_cols_n_values )) {
+			$payment_objects = $this->_create_objects( array( $payment_row ));
+			return array_shift( $payment_objects );
+		} else {
+			return array();
+		}
+	}
 
 
 
 
 	/**
-	*		retreive  all payments from db for a particular transaction
+	*		retreive  all payments from db for a particular transaction, optionally with
+	 *		a particular status
 	* 
 	* 		@access		public
 	* 		@param		$TXN_ID		
-	*		@return 		mixed		array on success, FALSE on fail
+	 *		@param	string	$status_of_payment one of EEM_Payment::status_id_*, like 'PAP','PCN',etc
+	*		@return		EE_Payment[]
 	*/	
-	public function get_payments_for_transaction( $TXN_ID = FALSE ) {
+	public function get_payments_for_transaction( $TXN_ID = FALSE, $status_of_payment = null ) {
 
 		if ( ! $TXN_ID ) {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = __('No Transaction ID was supplied.', 'event_espresso') . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
+			$msg = __('No Transaction ID was supplied.', 'event_espresso');
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ ); 
+			return array();
 		}
-
-		// retreive payments
 		$where_cols_n_values = array( 'TXN_ID' => $TXN_ID );
-		
-		if ( $payments = $this->select_all_where ( $where_cols_n_values, 'PAY_timestamp' )) {		
-			return $this->_create_objects( $payments );
-		} else {
+		//if provided with a status, search specifically for that status. Otherwise get them all
+		if($status_of_payment){
+			$where_cols_n_values['STS_ID'] = $status_of_payment;
+		}
+		// retreive payments
+		return $this->get_all_where ( $where_cols_n_values, 'PAY_timestamp' );		
+	}
+	
+	public function get_approved_payments_for_transaction( $TXN_ID = FALSE){
+		if ( ! $TXN_ID ) {
+			$msg = __('No Transaction ID was supplied.', 'event_espresso');
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ ); 
 			return FALSE;
 		}
+		// retreive payments
+		$where_cols_n_values = array( 'TXN_ID' => $TXN_ID,'STS_ID'=> EEM_Payment::status_id_approved );
 
+		return $this->get_all_where ( $where_cols_n_values, 'PAY_timestamp' );	
+		
 	}
-
-
-
-
+	
+	
 
 	/**
-	*		recalculate_total_payments_for_transaction
+	*		Applies $payment to its associated EE_Transaction. This should update
+	 *		its EE_Transaction's status and TXN_paid.
 	* 		@access		public
 	* 		@param		$payment		payment object
 	* 		@param		$what				text to describe action performed, used in notices
-	*		@return 		mixed				array on success, FALSE on fail
+	*		@return		EE_Transaction related to teh payment which got deleted
 	*/
 	public function update_payment_transaction( EE_Payment $payment, $what ) {
 
-		global $espresso_notices;
-		if ( ! is_object( $payment ) && ! $payment->ID() ) {
-			$espresso_notices['errors'][] = __('A vaild payment object was not supplied.', 'event_espresso') . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+		if ( ! is_object( $payment ) || ! $payment->ID() ) {
+			$msg = __('A vaild payment object was not supplied.', 'event_espresso');
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ ); 
 			return FALSE;
 		}
-
-		// get transaction that this payment is being applied to
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php');
-		$TXN_MODEL = EEM_Transaction::instance();
-		$transaction = $TXN_MODEL->get_transaction( $payment->TXN_ID() );
-
-		// recalculate and set  total paid
-		$total_paid = $this->recalculate_total_payments_for_transaction( $payment->TXN_ID() );
-		$transaction->set_paid( $total_paid );
-
-		// set transaction status to complete if paid in full or the event was a freebie
-		if ( $total_paid == $transaction->total() || $transaction->total() == 0 ) {
-			$transaction->set_status('TCM');
+		$transaction = $payment->transaction();
+		// recalculate and set total paid, and how much is pending
+		if( $transaction->update_based_on_payments() ) {
+			$payment->clear_relation_cache('Transaction');
+			$msg = sprintf( __('The payment has been %s succesfully.', 'event_espresso'), $what );
+			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return $transaction;
 		} else {
-			$transaction->set_status('TPN');
-		}
-
-		// update transaction and return results
-		if ( $transaction->update() ) {
-			$espresso_notices['success'] = array();
-			$espresso_notices['success'][] = __('The payment has been ' . $what . ' succesfully.', 'event_espresso');
-			return array( 
-									'amount' => $payment->amount(), 
-									'total_paid' => $transaction->paid(), 
-									'txn_status' => $transaction->status_ID(),
-									'pay_status' => $payment->STS_ID() 
-								);
-		} else {
-			$espresso_notices['errors'][] = __('An error occured. The payment was ' . $what . ' succesfully but the amount paid for the transaction was not updated.', 'event_espresso') . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$payment->clear_relation_cache('Transaction');
+			$msg = sprintf( __( 'An error occured. The payment was %s succesfully, but the amount paid for the transaction was not updated.', 'event_espresso'), $what );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
-		}
-
+		}		
 	}
 
 
@@ -262,27 +280,28 @@ class EEM_Payment extends EEM_Base {
 	*		recalculate_total_payments_for_transaction
 	* 		@access		public
 	* 		@param		$TXN_ID		
+	 *		@param	string	$status_of_payments, one of EEM_Payment's statuses, like 'PAP' (Approved)
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
-	public function recalculate_total_payments_for_transaction( $TXN_ID = FALSE ) {
+	public function recalculate_total_payments_for_transaction( $TXN_ID = FALSE , $status_of_payments = 'PAP') {
 
 		if ( ! $TXN_ID ) {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = 'No Transaction ID was supplied.' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'No Transaction ID was supplied.', 'event_espresso');
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
-		$total_paid = 0;
-		if( $payments = $this->get_payments_for_transaction( $TXN_ID ) ) {
+		$value_of_payments = 0;
+		if( $payments = $this->get_payments_for_transaction( $TXN_ID, $status_of_payments) ) {
 			foreach ( $payments as $payment ) {
-				// only add successfully completed payments to the total paid
-				if ( $payment->STS_ID() == 'PAP' ) {
-					$total_paid += $payment->amount();
+				// only add payments of teh specified status (eg, only approved payment)
+				if ( $payment->STS_ID() == $status_of_payments ) {
+					$value_of_payments += $payment->amount();
 				}				
 			}			
 		}
 
-		return $total_paid;
+		return $value_of_payments;
 	}
 
 
@@ -292,33 +311,33 @@ class EEM_Payment extends EEM_Base {
 	/**
 	*		Delete a Payment, update all totals, and save info to db
 	* 		@access		public
+	 *		@return EE_Transaction related to the payment deleted (after it's been updated to reflect the deletion)
 	*/
-	public function delete_payment( $PAY_ID ) {
+	public function delete_payment( $payment = FALSE ) {
 
-		global $espresso_notices;
-		if ( ! $PAY_ID ) {
-			$espresso_notices['errors'][] = __('No Payment ID was supplied.', 'event_espresso') . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+		if ( ! $payment ) {
+			$msg = __('No Payment ID or Object was supplied.', 'event_espresso');
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		
-		if( $payment = $this->get_payment_by_ID( $PAY_ID )) {
-			//printr( $payment, '$payment' );
-			if ( $this->delete ( array( 'PAY_ID' => $payment->ID() ))) {
-				// recalculate and set total paid
-				return $this->update_payment_transaction( $payment, 'deleted' );
-				
-			} else {
-				$espresso_notices['errors'][] = __('An error occured. The payment has not been deleted succesfully.', 'event_espresso') . 
-																	$this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+		// check  if object or PAY_ID
+		if ( ! is_a( $payment, 'EE_Payment' )) {
+			// retreive payment object
+			if( ! $payment = $this->get_payment_by_ID( absint( $payment ))) {
+				$msg = __('An error occured. The database record for the payment could not be located for deletion.', 'event_espresso');
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return FALSE;
 			}
-			
-		} else {
-			$espresso_notices['errors'][] = __('An error occured. The database record for the payment could not be located for deletion.', 'event_espresso') . 
-																$this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
 		}
-		
+		//printr( $payment, '$payment' );
+		if ( $this->delete ( array( 'PAY_ID' => $payment->ID() ))) {
+			// recalculate and set total paid
+			return $this->update_payment_transaction( $payment, 'deleted' );						
+		} else {
+			$msg = __('An error occured. The payment has not been deleted succesfully.', 'event_espresso');
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}	
 
 	}
 

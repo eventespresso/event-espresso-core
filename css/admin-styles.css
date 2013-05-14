@@ -16,7 +16,6 @@
 * -1.6 Question Groups
 * -1.7 Categories
 * -1.8 Disounts
-* -1.9 Email manager
 * -1.10 Template Settings
 * -1.11 Calendar Settings
 * -1.12 Payment Settings
@@ -62,6 +61,46 @@ dt {font-weight: bold; margin: 15px 0 10px ;}
 
 .validation-notice-dv { display:none; padding:0; margin:0; color:red; }
 .requires-value { border:1px solid #FE2A00 !important; }
+
+
+/*  
+	standard WP primary button colours
+	colours after arrows are the :hover colours
+	background-color: #21759B;	  =>	278ab7
+    background-image: linear-gradient(to bottom, #2A95C5, #21759B); 	=>	2e9fd2		21759b
+    border-color: #21759B #21759B #1E6A8D;  =>   1b607f
+    box-shadow: 0 1px 0 rgba(120, 200, 230, 0.5) inset;  => no change except opacity = 0.6	
+*/
+
+
+
+.espresso-button-red {
+    background-color: #A32615 !important;
+    background-image: linear-gradient(to bottom, #D22C1A, #A32615) !important;
+    border-color: #A32615 #A32615 #8E2112 !important;
+	box-shadow: 0 1px 0 rgba(230, 116, 103, 0.5) inset !important;
+}
+.espresso-button-red:hover {
+    background-color: #B82818 !important;
+    background-image: linear-gradient(to bottom, #DB2E1B, #A32615) !important;
+    border-color: #7E1D10 !important;
+	box-shadow: 0 1px 0 rgba(230, 116, 103, 0.6) inset !important;
+}
+
+
+.espresso-button-green {
+    background-color: #2f7f0f !important;
+    background-image: linear-gradient(to bottom, #3AA012, #2F7F0F) !important;
+    border-color: #2F7F0F #2F7F0F #286A0C !important;
+	box-shadow: 0 1px 0 rgba(110, 193, 75, 0.5) inset !important;
+} 
+.espresso-button-green:hover {
+    background-color: #399811 !important;
+    background-image: linear-gradient(to bottom, #42AF14, #2f7f0f) !important;
+    border-color: #225A0A !important;
+	box-shadow: 0 1px 0 rgba(110, 193, 75, 0.6) inset !important;
+}
+
 
 /*___ Structure ___*/
 
@@ -287,9 +326,7 @@ li.time-date .run-in {
 .current-date { color:#d54e21; margin-left:5px; }
 .change-date-time { margin: 8px 15px 5px;
 }
-#post-body #payment-conf-email {/*postbox*/
-	margin-bottom: 30px;
-}
+
 /***  recaptcha settings ***/
 
 .admin-recaptcha-settings-tr {
@@ -311,13 +348,34 @@ ul.ee_subsubsub + ul.ee_subsubsub {
 div.tablenav {
 	clear: both;
 	line-height: 1.4;
-	margin-bottom: 30px;
 	min-height: 30px;
 	height: auto;
 }
+
+.manage-column.column-id {
+	width: 30px;
+}
+
+.manage-column.column-status {
+	width: 80px;
+}
+
+
+.manage-column.column-attendees {
+	width: 100px;
+}
+
+.button.add-new-h2 {
+	margin-left: 15px;
+}
+
+select.wide {
+	margin-right: 10px;
+}
+
 /*** Add new events / Edit events ***/
 
-#event_editor_major_buttons_wrapper{
+#espresso_major_buttons_wrapper{
     border-top: medium none;
     clear: both;
     padding: 10px 0 8px;	
@@ -331,18 +389,18 @@ div.tablenav {
 	background:rgba(255,230,0,.2);
 }
 
-/*#event_editor_major_buttons_wrapper input, #event_editor_major_buttons_wrapper a {
+/*#espresso_major_buttons_wrapper input, #espresso_major_buttons_wrapper a {
 	padding: 3px;
 	margin: 5px 0;
 }*/
 
-#event_editor_major_buttons_wrapper .delete-event {
+#espresso_major_buttons_wrapper .delete-event {
 	/*background-image: url('../images/red-button-grad.png');*/
 	background:#D54E21;
 	border:1px solid #D54E21;
 	color:#fff; text-shadow:none;
 }
-#event_editor_major_buttons_wrapper .delete-event:hover {
+#espresso_major_buttons_wrapper .delete-event:hover {
 	border-color:#A41200;
 }
 
@@ -396,23 +454,6 @@ div.tablenav {
 #event-dates-and-times .dtm-inp.small-text { width:75px; }
 
 
-/*#event-date-time .recurring-available {
-	bottom: -10px;
-	clear: both;
-	left: 0;
-	position: relative;
-}
-#event-date-time .recurring-available a:hover {
-	color: #C8AE34;
-}
-#recurring_event_wrapper .ui-corner-all {
-	margin-bottom: 5px;
-}
-.recurring_events_details p span {
-	display: block;
-	margin: 5px 0;
-}*/
-
 
 /*  TICKET PRICES  */
 
@@ -423,12 +464,12 @@ div.tablenav {
 
 .event-price-settings-dv {
 	padding:5px 60px 10px 15px; margin:10px 0 20px; 
-	background:#fcfcfc; border:1px solid #eee; border-radius:5px;
+	background:#fcfcfc; border:1px solid #C8E1EC; border-radius:5px;
 }
 
 .cancel-event-price-btn {
 	display:inline-block; float:right; position:relative; top:5px; right:-50px; padding:3px 6px; 
-	background:#fff; border:1px solid #dfdfdf; border-radius:3px;
+	background:#fff; border:1px solid #C8E1EC; border-radius:3px;
 	color:#666; cursor:pointer;
 }
 .cancel-event-price-btn:hover { border-color:#D54E21; }
@@ -582,11 +623,7 @@ div.tablenav {
 	font-weight: bold;
 	width: 6em;
 }
-#confirmation-email .email-conf-opts {
-	float: left;
-	margin-bottom: -20px;
-	width: 50%;
-}
+
 #set-featured-image #image-display img {width: 100%;}
 
 /*#ticket-manager-dv {
@@ -656,7 +693,7 @@ div.tablenav {
 #categorydescriptiondivrich {
 	margin-top: 20px;
 }
-/*** Editor Styles (email settings panel) ***/
+/*** Editor Styles ***/
 #edit-slug-box {
 	height: 2.5em;
 }
@@ -723,7 +760,7 @@ div.tablenav {
 	margin-top: 5px;
 	width:99.9%;
 }
-textarea#event_desc, textarea#conf_mail, #category_desc_new, textarea#description, textarea#email_text, textarea#category_desc{
+textarea#event_desc, textarea#conf_mail, #category_desc_new, textarea#description, textarea#category_desc{
 	width: 100%;
 	border-color: #dfdfdf;
 }
@@ -731,7 +768,7 @@ textarea#conf_mail, .postbox textarea.std-textarea {
 	color: #000;
 	min-height: 150px;
 }
-#email-confirmation-form, #payment-confirmation-form, #cat-descr-add-form, #venue-descr-add-form, #staff-descr-add-form, #staff-descr-edit-form, #manage-event-email-form {
+#payment-confirmation-form, #cat-descr-add-form, #venue-descr-add-form, #staff-descr-add-form, #staff-descr-edit-form {
 	border-width: 0 1px 1px;
 	border-style: none solid solid;
 	width: 100%;
@@ -744,17 +781,17 @@ textarea#conf_mail, .postbox textarea.std-textarea {
 	border-bottom-right-radius: 6px;
 	border-color: #dfdfdf;
 }
-#email-confirmation-form td, #payment-confirmation-form td, #cat-descr-add-form td, #staff-descr-add-form td #staff-descr-edit-form td, #manage-event-email-form td {
+#payment-confirmation-form td, #cat-descr-add-form td, #staff-descr-add-form td #staff-descr-edit-form td {
 	font-size: 11px;
 }
 .autosave-info {
 	padding: 6px 2px;
 	text-align: left;
 }
-#editorcontent #email-confirmation-form, #editorcontent #payment-confirmation-form, #editorcontent #cat-descr-add-form {
+#editorcontent #payment-confirmation-form, #editorcontent #cat-descr-add-form {
 	border: none;
 }
-#email-confirmation-form, #payment-confirmation-form, #cat-descr-add-form, #venue-descr-add-form, #staff-descr-add-form, #staff-descr-edit-form, #manage-event-email-form {
+#payment-confirmation-form, #cat-descr-add-form, #venue-descr-add-form, #staff-descr-add-form, #staff-descr-edit-form {
 	background-color: #ededed;
 }
 .aer-word-count {
@@ -919,12 +956,7 @@ div#gmap-reg-events { padding-left: 3%;}
 ul#quick-links ul{
 	padding-left: 20px;
 }
-.email-settings-img {
-	margin: 10px;
-}
-#post-body .help-support .emails-not-sent {
-	margin: 40px 0;
-}
+
 #faqs dd {
 	border-bottom: 1px solid #bebebe;
 }
@@ -1491,7 +1523,7 @@ body p label {
 	display: inline;
 	float: none;
 }
-#confirmation-email label,
+
 #event-post label {
 	display: block;
 	margin-bottom: 4px;
@@ -1512,7 +1544,7 @@ form.espresso_form legend {
 textarea {
 	resize: vertical;
 }
-form.espresso_form legend, form.espresso_form label, #new-question-form label, #edit-new-question-form label, #add-edit-new-event-email label {
+form.espresso_form legend, form.espresso_form label, #new-question-form label, #edit-new-question-form label {
 	/*display:block;
 	font-size:11px;
 	font-weight:bold;
@@ -1696,7 +1728,7 @@ select.wide, td.wide select, td.wide input {width: 175px;}
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../images/icons/magnifier.png) no-repeat;
+	background: url(../images/magnifier.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -1710,7 +1742,7 @@ select.wide, td.wide select, td.wide input {width: 175px;}
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../images/icons/calendar_edit.png) no-repeat;
+	background: url(../images/calendar_edit.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -1738,7 +1770,7 @@ select.wide, td.wide select, td.wide input {width: 175px;}
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../images/icons/group.png) no-repeat;
+	background: url(../images/group.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -1767,7 +1799,7 @@ select.wide, td.wide select, td.wide input {width: 175px;}
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../images/icons/cog.png) no-repeat;
+	background: url(../images/cog.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -1781,7 +1813,7 @@ select.wide, td.wide select, td.wide input {width: 175px;}
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../images/icons/excel_icon.png) no-repeat;
+	background: url(../images/excel_icon.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -1795,7 +1827,7 @@ select.wide, td.wide select, td.wide input {width: 175px;}
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../images/icons/csv_icon_sm.gif) no-repeat;
+	background: url(../images/csv_icon_sm.gif) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -1809,7 +1841,7 @@ select.wide, td.wide select, td.wide input {width: 175px;}
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../images/icons/email_go.png) no-repeat;
+	background: url(../images/email_go.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -1823,7 +1855,7 @@ select.wide, td.wide select, td.wide input {width: 175px;}
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../images/icons/chart_bar.png) no-repeat;
+	background: url(../images/chart_bar.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -1833,7 +1865,7 @@ select.wide, td.wide select, td.wide input {width: 175px;}
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../images/icons/tag.png) no-repeat;
+	background: url(../images/tag.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -2182,3 +2214,32 @@ pre {
 		font-size: 22px; font-weight: bold; line-height: .5; color: #aaa; text-shadow: 0 -1px 1px rbga(0,0,0,.6);		
 		cursor: pointer;
 		} 
+
+#poststuff .ee-nav-tabs .nav-tab-wrapper, .ee-nav-tabs .nav-tab-wrapper {
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+}
+
+#poststuff .ee-nav-tabs .nav-tab-content, .ee-nav-tabs .nav-tab-content {
+	margin: 5px;
+	margin-bottom: 15px;
+}
+
+#poststuff .ee-nav-tabs-small .nav-tab, .ee-nav-tabs-small .nav-tab {
+	font-size: 12px;
+	height: 18px;
+	line-height: 18px;
+}
+
+.message-type-text {
+	padding: 5px;
+	-webkit-border-radius: 3px;
+	-webkit-appearance: none;
+	border-radius: 3px;
+	white-space: nowrap;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing:    border-box;
+	box-sizing:         border-box;
+	background: #f3f3f3;
+	font-weight: bold;
+}

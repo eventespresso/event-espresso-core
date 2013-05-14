@@ -1,6 +1,1 @@
-<?php
-
-class EE_Status {
-	public $id;
-	public $code;
-}
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');?>

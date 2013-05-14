@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
+do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
  *
  * Event Espresso
  *
@@ -35,7 +35,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 	private $_session_data = array();
 
 	// default session expiration 2 hours
-	private $_expiration = 7200;
+	private $_expiration = 172800;
 
 	// current time with GMT offset
 	private $_time;
@@ -96,7 +96,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 	 */
 	private function __construct() {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		define( 'ESPRESSO_SESSION', TRUE );
 		global $EE_Session, $org_options, $notices;
@@ -127,18 +127,11 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 
 		$extra_default_session_vars = array();
 		// filter hook allows outside functions/classes/plugins to change default empty cart
-		$extra_default_session_vars = apply_filters( 'filter_hook_espresso_default_session_vars', $extra_default_session_vars );
+		$extra_default_session_vars = apply_filters( 'FHEE_default_session_vars', $extra_default_session_vars );
 		array_merge( $this->_default_session_vars, $extra_default_session_vars );
 
-		// set some defaults
-		foreach ( $this->_default_session_vars as $key => $default_var ) {
-			if ( is_array( $default_var )) {
-				$this->_session_data[ $key ] = array();
-			} else {
-				$this->_session_data[ $key ] = '';
-			}
-			
-		}
+		$this->_set_defaults();
+
 
 		// check for existing session and retreive it from db
 		if ( ! $this->_espresso_session() ) {
@@ -152,10 +145,29 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 //				$this->reset_data( array() );
 //			}
 //		}
-
 		// once everything is all said and done,
 		add_action( 'shutdown', array( &$this, '_update_espresso_session' ), 100);
 
+	}
+
+
+
+	/**
+	 * This just sets some defaults for the _session data property
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _set_defaults() {
+		// set some defaults
+		foreach ( $this->_default_session_vars as $key => $default_var ) {
+			if ( is_array( $default_var )) {
+				$this->_session_data[ $key ] = array();
+			} else {
+				$this->_session_data[ $key ] = '';
+			}
+			
+		}
 	}
 
 
@@ -186,7 +198,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 	 */
 	public function get_session_data( $key = FALSE, $section = FALSE ) {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		if ( $section != FALSE && $key != FALSE ) {
@@ -219,7 +231,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 	 */
 	public function set_session_data( $data, $section = 'cart' ) {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		// nothing ??? go home!
@@ -253,7 +265,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 	 */
 	private function _espresso_session() {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		// starts a new session if one doesn't already exist, or reinitiates an existing one
 		if (isset($_GET['session_id'])) {
 			session_id(sanitize_key($_GET['session_id']));
@@ -285,7 +297,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 			$session_data = $this->encryption->decrypt( $session_data );
 
 			// unserialize
-			$this->_session_data = unserialize( $session_data );
+			$this->_session_data = maybe_unserialize( $session_data );
 
 			// just a check to make sure the sesion array is indeed an array
 			if ( ! is_array( $session_data ) ) {
@@ -334,10 +346,12 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 	 *		@return TRUE on success, FALSE on fail
 	 */
 	public function _update_espresso_session( $new_session = FALSE ) {
-
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
-
+		$this->_session_data = isset( $this->_session_data ) && is_array( $this->_session_data ) && isset( $this->_session_data['id']) ? $this->_session_data : NULL;
+		if ( empty( $this->_session_data ) )
+			$this->_set_defaults();
+		
 		foreach ( $this->_session_data as $key => $value ) {
 
 			switch( $key ) {
@@ -396,7 +410,6 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 				return FALSE;
 			}
 		} 
-
 		// meh, why not?
 		return TRUE;
 
@@ -413,7 +426,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 	 */
 	private function _create_espresso_session( ) {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		// use the update function for now with $new_session arg set to TRUE
@@ -432,7 +445,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 	 */
 	private function _save_session_to_db() {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 //		echo printr( $this->_session_data, 'session_data' );
 
@@ -446,7 +459,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 
 		// we're using the Transient API for storing session data, cuz it's so damn simple -> set_transient(  transient ID, data, expiry )
 		set_transient( $this->_sid, $session_data, $this->_expiration );
-		die();
+		//die();
 		return set_transient( $this->_sid, $session_data, $this->_expiration ) ? TRUE : FALSE;
 
 	}
@@ -462,7 +475,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 	 */
 	private function _visitor_ip() {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		$visitor_ip = '0:0:0:0';
@@ -516,7 +529,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 	 */
 	public function _get_page_visit() {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		$page_visit = home_url('/') . 'wp-admin/admin-ajax.php';
 		
@@ -590,7 +603,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 		// if I need to explain the following lines of code, then you shouldn't be looking at this!
 		$user = wp_get_current_user();
 		$this->_wp_user_id = isset( $user->data->ID ) ? $user->data->ID : NULL;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, ' wp_user_id = ' . $this->_wp_user_id );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, ' wp_user_id = ' . $this->_wp_user_id );
 		return $this->_wp_user_id;
 	}
 
@@ -605,7 +618,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 	 */
 	public function reset_data( $data_to_reset = FALSE ) {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		// nothing ??? go home!
@@ -659,7 +672,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 	 */
 	private function _session_time() {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 ////		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		// what time is it Mr Wolf?

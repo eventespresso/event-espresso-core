@@ -18,44 +18,7 @@
 	var $_notices = array( 'updates' => array(), 'errors' => array() );
 
 
-	var $_primary_keys = array(
-																						EVENTS_ANSWER_TABLE	=> array( 'id' ),
-																						EVENTS_ATTENDEE_TABLE	=> array( 'id' ),
-																						EVENTS_ATTENDEE_COST_TABLE	=> array( 'attendee_id' ),
-																						//EVENTS_ATTENDEE_META_TABLE	=> array( 'ameta_id' ),
-																						EVENTS_CATEGORY_TABLE	=> array( 'id' ),
-																						EVENTS_CATEGORY_REL_TABLE	=> array( 'id' ),
-																						'wp_events_certificate_templates' =>  array( 'emeta_id' ),
-																						EVENTS_DETAIL_TABLE	=> array( 'id' ),
-																						EVENTS_DISCOUNT_CODES_TABLE	=> array( 'id' ),
-																						EVENTS_DISCOUNT_REL_TABLE	=> array( 'id' ),
-																						EVENTS_EMAIL_TABLE	=> array( 'id' ),
-																						'wp_events_groupon_codes' =>  array( 'emeta_id' ),
-																						EVENTS_LOCALE_TABLE	=> array( 'id' ),
-																						EVENTS_LOCALE_REL_TABLE	=> array( 'id' ),
-																						'wp_events_mailchimp_attendee_rel' =>  array( 'id' ),
-																						'wp_events_mailchimp_event_rel' =>  array( 'id' ),
-																						'wp_events_member_rel' =>  array( 'id' ),
-																						'wp_events_meta' =>  array( 'emeta_id' ),
-																						EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE	=> array( 'primary_registration_id', 'registration_id' ),
-																						EVENTS_PERSONNEL_TABLE	=> array( 'id' ),
-																						EVENTS_PERSONNEL_REL_TABLE	=> array( 'id' ),
-																						EVENTS_PRICES_TABLE	=> array( 'id' ),
-																						EVENTS_QST_GROUP_TABLE	=> array( 'id' ),
-																						EVENTS_QST_GROUP_REL_TABLE	=> array( 'id' ),
-																						EVENTS_QUESTION_TABLE	=> array( 'id' ),
-																						'wp_events_recurrence' =>  array( 'recurrence_id ' ),
-																						'wp_events_seating_chart' =>  array( 'id ' ),
-																						'wp_events_seating_chart_event' =>  array( 'event_id', 'seating_chart_id' ),
-																						'wp_events_seating_chart_event_seat' =>  array( 'id ' ),
-																						'wp_events_seating_chart_level_section_alignment' =>  array( 'seating_chart_id ' ),
-																						'wp_events_seating_chart_seat' =>  array( 'id ' ),
-																						EVENTS_START_END_TABLE	=> array( 'id' ),
-																						'wp_events_ticket_templates' =>  array( 'id ' ),
-																						EVENTS_VENUE_TABLE	=> array( 'id' ),
-																						EVENTS_VENUE_REL_TABLE	=> array( 'id' ),
-																						'wp_fbevents_events' =>  array( 'id ' ),
-																					);
+	private $_primary_keys;
 
 
 
@@ -65,7 +28,38 @@
 	 *		@access private
 	 *		@return void
 	 */	
-  private function __construct() {
+ 	private function __construct() {
+		
+		global $wpdb;
+
+		$this->_primary_keys = array(
+				$wpdb->prefix . 'esp_answer' => array( 'ANS_ID' ),
+				$wpdb->prefix . 'esp_attendee' => array( 'ATT_ID' ),
+				$wpdb->prefix . 'esp_datetime'	=> array( 'DTT_ID' ),
+				$wpdb->prefix . 'esp_event_question_group'	=> array( 'EQG_ID' ),
+				$wpdb->prefix . 'esp_message_template'	=> array( 'MTP_ID' ),
+				$wpdb->prefix . 'esp_payment'	=> array( 'PAY_ID' ),
+				$wpdb->prefix . 'esp_price'	=> array( 'PRC_ID' ),
+				$wpdb->prefix . 'esp_price_type'	=> array( 'PRT_ID' ),
+				$wpdb->prefix . 'esp_question'	=> array( 'QST_ID' ),
+				$wpdb->prefix . 'esp_question_group'	=> array( 'QSG_ID' ),
+				$wpdb->prefix . 'esp_question_group_question'	=> array( 'QGQ_ID' ),
+				$wpdb->prefix . 'esp_question_option'	=> array( 'QSO_ID' ),
+				$wpdb->prefix . 'esp_registration'	=> array( 'REG_ID' ),
+				$wpdb->prefix . 'esp_status'	=> array( 'STS_ID' ),
+				$wpdb->prefix . 'esp_transaction'	=> array( 'TXN_ID' ),
+				$wpdb->prefix . 'esp_transaction'	=> array( 'TXN_ID' ),
+				$wpdb->prefix . 'events_detail'	=> array( 'id' ),
+				$wpdb->prefix . 'events_category_detail'	=> array( 'id' ),
+				$wpdb->prefix . 'events_category_rel'	=> array( 'id' ),
+				$wpdb->prefix . 'events_venue'	=> array( 'id' ),
+				$wpdb->prefix . 'events_venue_rel' =>  array( 'emeta_id' ),
+				$wpdb->prefix . 'events_locale'	=> array( 'id' ),
+				$wpdb->prefix . 'events_locale_rel'	=> array( 'id' ),
+				$wpdb->prefix . 'events_personnel' =>  array( 'id' ),
+				$wpdb->prefix . 'events_personnel_rel' =>  array( 'id' ),
+			);
+
 	}
 
 
@@ -82,8 +76,10 @@
 		}
 		return self::$_instance;
 	}
+
 	
-	
+
+
 
 	
 	/**
@@ -94,7 +90,7 @@
 	 *			@return mixed - array on success - multi dimensional with headers as keys (if headers exist) OR string on fail - error message
 	 */	
 	public function import_csv_to_array( $table_list, $path_to_file, $table = FALSE, $first_row_is_headers = TRUE ) {
-		
+				
 		// first check to see if file exists
 		if (file_exists($path_to_file)) { 
 		
@@ -176,9 +172,9 @@
 					// PHP 5.3+ version
 
 					// loop through each row of the file
-					while (($data = fgetcsv($file_handle, 0, ',', '"', '\\' )) !== FALSE) {
-			
-						// add fail dafe to prevent infinite looping in case of errors
+					while (( $data = fgetcsv( $file_handle, 0, ',', '"', '\\' )) !== FALSE ) {
+
+						// add fail safe to prevent infinite looping in case of errors
 						if ( $row > 1000 ) {
 							break;
 						}
@@ -209,7 +205,6 @@
 								// no headers just store csv data
 								$csv_data[$table][$row][$headers[$i]] = $data[$i];
 							}
-							
 						}
 						// advance to next row
 						$row++;
@@ -229,10 +224,7 @@
 			// delete the uploaded file
 			unlink($path_to_file);
 	
-//echo '<h4>csv_data</h4>';
-//echo '<pre>';
-//echo print_r($csv_data);
-//echo '</pre>';
+//echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $csv_data, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 //die();
 
 			// it's good to give back
@@ -272,9 +264,20 @@
 		$success = FALSE;
 		$error = FALSE;
 		
+		//save inital value so we can reset this later
+		$initial_columns_to_save_value = $columns_to_save;
+
+//echo '<h1>$table_list  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
+//echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $table_list, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';		
+		
+//echo '<h1>$csv_data_array  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
+//echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $csv_data_array, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';		
+		
 		// loop through each row of data
 		foreach ( $csv_data_array as $table_name => $table_data ) {		
 				
+//echo '<h1>$table_name : ' . $table_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
+
 			// check for and set table name ?
 			if ( in_array( (string)$table_name, $table_list )) {
 				// we have a table info in the array
@@ -282,6 +285,8 @@
 				$table = $table_name;
 				// get columns for appropriate table directly from db
 				$columns_to_save = $this->list_db_table_fields($table);
+//echo '<h2>$columns_to_save  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h2>';
+//echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $columns_to_save, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';			
 			} else if ( $table ) {
 				// first level of array is not table information but a table name was passed to the function
 				// array is only two levels deep, so let's fix that by adding a level, else the next steps will fail
@@ -290,6 +295,8 @@
 				if ( ! $columns_to_save ) {
 					$columns_to_save = $this->list_db_table_fields($table);
 				}
+//echo '<h2>$columns_to_save  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h2>';
+//echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $columns_to_save, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';			
 			} else {
 				// no table info in the array and no table name passed to the function?? FAIL
 				$this->_notices['errors'][] = 'No table information was specified and/or found, therefore the import could not be completed';
@@ -299,6 +306,9 @@
 	
 			// flip the array so we can check against it's data
 			$save_to_columns = array_flip($columns_to_save);
+
+//echo '<h2>$save_to_columns  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h2>';
+//echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $save_to_columns, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';			
 								
 			$row_counter = 1;
 		
@@ -362,7 +372,7 @@
 					
 				}
 
-//echo '<h4>this->_primary_keys[$table]</h4>';
+//echo '<h4>this->_primary_keys['.$table.']</h4>';
 //echo '<pre>';
 //echo print_r($this->_primary_keys[$table]);
 //echo '</pre>';
@@ -427,7 +437,7 @@
 //echo '<h3> query : ' . $query . '</h3>';
 				
 				// check if primary key(s) exist in table
-				$result = $wpdb->get_results( $wpdb->prepare( $query ));
+				$result = $wpdb->get_results( $wpdb->prepare( $query, NULL ));
 
 				if ($wpdb->num_rows > 0) {
 //echo '<h3>UPDATE</h3>';
@@ -466,6 +476,10 @@
 				}
 				$row_counter++;
 			}
+			
+			// reset 
+			$columns_to_save = $initial_columns_to_save_value;
+			
 		}
 	
 //echo '<h3>success 1 - total_updates = '.$total_updates.'</h3>';
@@ -502,12 +516,12 @@
 	
 	
 	/**
-	 *			@Export contents of a database table to csv file
-	 *		  @access public
-	 *			@param array $table - the database table to be converted to csv and exported 
-	 *			@param string $filename - name for newly created csv file
-	 *			@param array $prev_export - an array from a previous table export to be merged with these results
-	 *			@return TRUE on success, FALSE on fail
+	 *	@Export contents of a database table to csv file
+	 *	@access public
+	 *	@param array $table - the database table to be converted to csv and exported 
+	 *	@param array $prev_export - an array from a previous table export to be merged with these results
+	 *	@param string $query - custom query for pulling data from table
+	 *	@return TRUE on success, FALSE on fail
 	 */	
 	public function export_table_to_array ( $table = FALSE, $prev_export = FALSE, $query = FALSE ) {
 		
@@ -533,7 +547,7 @@
 		if ( ! $query ) {
 			$query = "SELECT * FROM " . $table;
 		}
-		$result = $wpdb->get_results( $wpdb->prepare( $query ));
+		$result = $wpdb->get_results( $wpdb->prepare( $query, NULL ));
 		
 		if ($wpdb->num_rows > 0) {
 			$i = 1;
@@ -695,10 +709,15 @@
 		// somebody told me i might need this ???
 		global $wpdb;
 		
-		$prefix = $wpdb->prefix . 'events_%';
-		$sql = "select TABLE_NAME from information_schema.tables WHERE TABLE_SCHEMA = '".DB_NAME."' AND TABLE_NAME LIKE '".$prefix."'";
+		$pattern1 = $wpdb->prefix . 'events_%';
+		$pattern2 = $wpdb->prefix . 'esp_%';
+		//$sql = "select TABLE_NAME from information_schema.tables WHERE TABLE_SCHEMA = '".DB_NAME."' AND TABLE_NAME LIKE '".$prefix."'";
+		$SQL = 'SHOW TABLES FROM `' . DB_NAME . '` ';
+		$SQL .= 'WHERE `Tables_in_'. DB_NAME . '` LIKE "' . $pattern1 . '" ';
+		$SQL .= 'OR `Tables_in_'. DB_NAME . '` LIKE "' . $pattern2 . '"';
 	
-		$result = $wpdb->get_col($sql);
+	
+		$result = $wpdb->get_col( $SQL );
 		if ($wpdb->num_rows > 0) {
 			return $result;
 		} else {

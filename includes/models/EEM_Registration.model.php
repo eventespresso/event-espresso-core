@@ -21,50 +21,84 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_TempBase.model.php' );
 
 
-class EEM_Registration extends EEM_Base {
+class EEM_Registration extends EEM_TempBase {
 
   	// private instance of the Registration object
 	private static $_instance = NULL;
 
+	private static $_reg_status = array();
 
+	/**
+	 * The value of REG_count for a primary registrant
+	 */
+	const PRIMARY_REGISTRANT_COUNT = 1;
 
-
+	
+	
+	/**
+	 * Status ID (STS_ID on esp_status table) to indicate a pending registration
+	 */
+	const status_id_pending = 'RPN';
+	
+	
+	/**
+	 * Status ID (STS_ID on esp_status table) to indicate a cancelled registration
+	 */
+	const status_id_cancelled = 'RCN';
+	
+	
+	/**
+	 * Status ID (STS_ID on esp_status table) to indicate an approved registration
+	 */
+	const status_id_approved = 'RAP';
+	
+	
+	/**
+	 * Status ID (STS_ID on esp_status table) to indicate an unapproved registration
+	 */
+	const status_id_not_approved = 'RNA';
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
-	 *		@access private
+	 *		@access protected
 	 *		@return void
 	 */
-	private function __construct() {
-		global $wpdb;
-		// set table name
-		$this->table_name = $wpdb->prefix . 'esp_registration';
-		// set item names
-		$this->singlular_item = 'Registration';
-		$this->plual_item = 'Registrations';		
-		// array representation of the transaction table and the data types for each field
-		// REG_ID 	EVT_ID 	ATT_ID 	TXN_ID 	DTT_ID 	PRC_ID 	STS_ID 	REG_date 	REG_session 	REG_code 	REG_is_primary 	REG_is_group_reg 	REG_att_is_going 	REG_att_checked_in
-		$this->table_data_types = array (
-			'REG_ID' 						=> '%d',
-			'EVT_ID' 						=> '%d',
-			'ATT_ID' 						=> '%d',
-			'TXN_ID' 						=> '%d',
-			'DTT_ID' 						=> '%d',
-			'PRC_ID' 						=> '%d',
-			'STS_ID' 						=> '%s',
-			'REG_date' 					=> '%d',
-			'REG_final_price' 		=> '%d',
-			'REG_session' 				=> '%s',
-			'REG_code'					=> '%s',
-			'REG_url_link'				=> '%s',
-			'REG_is_primary' 		=> '%d',
-			'REG_is_group_reg' 	=> '%d',
-			'REG_att_is_going' 		=> '%d',
-			'REG_att_checked_in' => '%d',
-		);
+	protected function __construct() {
+		$this->singular_item = __('Registration','event_espresso');
+		$this->plural_item = __('Registrations','event_espresso');
+		$this->_get_registration_status_array();
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Registration.class.php');
+		$this->_allowed_statuses=apply_filters('FHEE__EEM_Registration__allowed_statuses', self::$_reg_status );
+		$this->_fields_settings=array(
+			'REG_ID'=>new EE_Model_Field('Registration ID','primary_key',false),
+			'EVT_ID'=>new EE_Model_Field('Event ID','foreign_key',false,null,null,'Event'),
+			'ATT_ID'=>new EE_Model_Field('Attendee ID', 'foreign_key', false,null,null,'Attendee'),
+			'TXN_ID'=>new EE_Model_Field('Transaction ID', 'foreign_key', false, null, null, 'Transaction'),
+			'DTT_ID'=>new EE_Model_Field('Datetime ID','foreign_key',false,null,null,'Datetime'),
+			'PRC_ID'=>new EE_model_Field('Price ID','foreign_key',false,null,null,'Price'),
+			'STS_ID'=>new EE_Model_Field('Status ID', 'foreign_text_key', false, 'RNA', $this->_allowed_statuses, 'Status'),
+			'REG_date'=>new EE_Model_Field('Registration Date','int',false,0),
+			'REG_final_price'=>new EE_Model_Field('Final Price', 'float', false, 0),
+			'REG_session'=>new EE_Model_Field('Session of Original Registration','plaintext',false),
+			'REG_code'=>new EE_Model_Field('Unique Registration Code', 'plaintext', true, ''),
+			'REG_url_link'=>new EE_Model_Field('URL Link of Registration','plaintext',true,''),
+			'REG_count'=>new EE_Model_Field('Flag indicating whether Registration is Unique','int',false,1),
+			'REG_group_size'=>new EE_Model_Field('Flag indicating whether is part of a group registration', 'int', false, 1),
+			'REG_att_is_going'=>new EE_Model_Field('Flag indicating if Person is going', 'bool', false, true),
+			'REG_att_checked_in'=>new EE_Model_Field('Flag indicating whether attendee has checked in','bool',false,false)				
+			);
+		$this->_related_models=array(
+								//'Event'=>new EE_Model_Relation('belongsTo', 'Event', 'EVT_ID'),//no such classes or model yet created
+								'Attendee'=>new EE_Model_Relation('belongsTo', 'Attendee', 'ATT_ID'),
+								'Transaction'=>new EE_Model_Relation('belongsTo', 'Transaction', 'TXN_ID'),
+								'Datetime'=>new EE_Model_Relation('belongsTo', 'Datetime', 'DTT_ID'),
+								'Price'=>new EE_Model_Relation('belongsTo', 'Price', 'PRC_ID'),
+								'Status'=>new EE_Model_Relation('belongsTo', 'Status','STS_ID'),
+								'Answers'=>new EE_Model_Relation('hasMany','Answer','REG_ID'));
+		parent::__construct();
 		// uncomment these for example code samples of how to use them
 		//			$this->how_to_use_insert();
 		//			$this->how_to_use_update();
@@ -90,42 +124,42 @@ class EEM_Registration extends EEM_Base {
 
 
 
+
+
+
+
 	/**
-	*		cycle though array of transactions and create objects out of each item
-	*
-	* 		@access		private
-	* 		@param		array		$transactions
-	*		@return 		mixed		array on success, FALSE on fail
+	 * 		get list of registration statuses
+	*		@access private
+	*		@return void
 	*/
-	private function _create_objects( $registrations = FALSE ) {
+	public static function reg_status_array() {
+		call_user_func( array( __CLASS__, '_get_registration_status_array' ));
+		return self::$_reg_status;
+	}
 
-		if ( ! $registrations ) {
-			return FALSE;
+
+
+
+
+
+
+
+	/**
+	 * 		get list of registration statuses
+	*		@access private
+	*		@return void
+	*/
+	private function _get_registration_status_array() {
+
+		global $wpdb;
+		$SQL = 'SELECT STS_ID, STS_code FROM '. $wpdb->prefix . 'esp_status WHERE STS_type = "registration"';
+		$results = $wpdb->get_results( $SQL );
+
+		self::$_reg_status = array();
+		foreach ( $results as $status ) {
+			self::$_reg_status[ $status->STS_ID ] = $status->STS_code;
 		}
-
-		foreach ( $registrations as $reg ) {
-				$array_of_objects[ $reg->REG_ID ] = new EE_Registration(
-						$reg->EVT_ID,
-						$reg->ATT_ID,
-						$reg->TXN_ID,
-						$reg->DTT_ID,
-						$reg->PRC_ID,
-						$reg->STS_ID,
-						$reg->REG_date,
-						$reg->REG_final_price,
-						$reg->REG_session,
-						$reg->REG_code,
-						$reg->REG_url_link,
-						$reg->REG_is_primary,
-						$reg->REG_is_group_reg,
-						$reg->REG_att_is_going,
-						$reg->REG_att_checked_in,
-						$reg->REG_ID
-				 	);
-
-		}
-		return $array_of_objects;
-
 	}
 
 
@@ -157,6 +191,19 @@ class EEM_Registration extends EEM_Base {
 
 
 
+	/**
+	 * this retrieves all the registrations for a particular event
+	 * @param  int $EVT_ID the event id of the event we're retrieving registrations for
+	 * @return array         array of registration objects
+	 */
+	public function get_all_registrations_for_event( $EVT_ID ) {
+		$EVT_ID = (int) $EVT_ID;
+		$where_cols_n_values = array( 'EVT_ID' => $EVT_ID );
+		return $this->get_all_registrations( $where_cols_n_values );
+	}
+
+
+
 
 	/**
 	*		retreive a single registration from db
@@ -168,6 +215,30 @@ class EEM_Registration extends EEM_Base {
 	public function get_registration( $where_cols_n_values = array() ) {
 		// retreive a particular registration
 		if ( $registration = $this->select_row_where ( $where_cols_n_values )) {
+			$reg_array = $this->_create_objects( array( $registration ));
+			return array_shift($reg_array);
+		} else {
+			return FALSE;
+		}
+	}
+
+
+
+
+	/**
+	*		retreive a single registration from db by the ID
+	*
+	* 		@access		public
+	* 		@param		array		$REG_ID
+	*		@return 		mixed		array on success, FALSE on fail
+	*/
+	public function get_registration_by_ID( $REG_ID = FALSE ) {
+		if ( ! $REG_ID ) {
+			return FALSE;
+		}
+		
+		// retreive a particular registration
+		if ( $registration = $this->select_row_where ( array( 'REG_ID' => $REG_ID ))) {
 			$reg_array = $this->_create_objects( array( $registration ));
 			return array_shift($reg_array);
 		} else {
@@ -196,6 +267,19 @@ class EEM_Registration extends EEM_Base {
 		} else {
 			return FALSE;
 		}
+	}
+	
+	/**
+	 * Gets a registration given their REG_url_link. Yes, this should usually 
+	 * be passed via a GET parameter.
+	 * @param string $REG_url_link
+	 * @return EE_Registration
+	 */
+	public function get_registration_for_reg_url_link($REG_url_link){
+		if(!$REG_url_link){
+			return false;
+		}
+		return $this->get_one(array('REG_url_link'=>$REG_url_link));
 	}
 
 
@@ -386,15 +470,15 @@ class EEM_Registration extends EEM_Base {
 	*		return a list of attendees for a specific locale for the Registration Overview Admin page
 	* 		@access		public
 	*/
-	public function get_registrations_for_admin_page( $EVT_ID = FALSE, $CAT_ID = FALSE, $reg_status = FALSE, $month_range = FALSE, $today_a = FALSE, $this_month_a = FALSE, $start_date = FALSE, $end_date = FALSE ) {
+	public function get_registrations_for_admin_page( $EVT_ID = FALSE, $CAT_ID = FALSE, $reg_status = FALSE, $month_range = FALSE, $today_a = FALSE, $this_month_a = FALSE, $start_date = FALSE, $end_date = FALSE, $orderby = 'REG_date', $order = 'DESC', $limit = NULL, $count = FALSE ) {
 
 		global $wpdb;
 
 		//Dates
-		$curdate = date('Y-m-d');
-		$this_year_r = date('Y');
-		$this_month_r = date('m');
-		$days_this_month = date( 't' );
+		$curdate = date('Y-m-d', current_time('timestamp'));
+		$this_year_r = date('Y', current_time('timestamp'));
+		$this_month_r = date('m', current_time('timestamp'));
+		$days_this_month = date( 't', current_time('timestamp') );
 		$time_start = ' 00:00:00';
 		$time_end = ' 23:59:59';
 
@@ -414,7 +498,7 @@ class EEM_Registration extends EEM_Base {
 				$locales = FALSE;
 			}
 
-			$SQL .= 'SELECT att.*, reg.*, dtt.*, reg.STS_ID REG_status, evt.id event_id, evt.event_name, evt.require_pre_approval, txn.TXN_ID, TXN_timestamp, TXN_total, txn.STS_ID TXN_status, TXN_details, TXN_tax_data, PRC_amount, PRC_name';
+			$SQL .= $count ? "SELECT COUNT(reg.ATT_ID)" : "SELECT att.*, reg.*, dtt.*, reg.STS_ID REG_status, CONCAT(ATT_fname, ' ', ATT_lname) as REG_att_name, evt.id event_id, evt.event_name, evt.require_pre_approval, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.STS_ID AS txn_status, txn.TXN_details, txn.TXN_tax_data, txn.TXN_paid, PRC_amount, PRC_name";
 			$SQL .= ' FROM ' . $wpdb->prefix . 'esp_attendee att';
 			$SQL .= ' JOIN ' . $this->table_name . ' reg ON reg.ATT_ID = att.ATT_ID';
 			$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID ';
@@ -440,9 +524,13 @@ class EEM_Registration extends EEM_Base {
 			}
 
 			if ( $reg_status ) {
-				$SQL .= $sql_clause .' reg.STS_ID = "' . $reg_status   . '"';
+				$SQL .= $sql_clause ." reg.STS_ID = '$reg_status'";
+				$sql_clause = ' AND ';
+			} else {
+				$SQL .= $sql_clause ." reg.STS_ID != 'RCN'";
 				$sql_clause = ' AND ';
 			}
+
 
 			if ( $month_range ) {
 				$pieces = explode('-', $month_range, 3);
@@ -459,8 +547,9 @@ class EEM_Registration extends EEM_Base {
 				$sql_clause = ' AND ';
 			}
 
+
 			if ( $today_a ) {
-				$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . $curdate . $time_start . '" AND "' . $curdate . $time_end  . '"';
+				$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . strtotime($curdate . $time_start) . '" AND "' . strtotime($curdate . $time_end)  . '"';
 				$sql_clause = ' AND ';
 			}
 
@@ -481,7 +570,7 @@ class EEM_Registration extends EEM_Base {
 
 		}
 
-		$SQL .= 'SELECT att.*, reg.*, dtt.*, reg.STS_ID REG_status, evt.id event_id, evt.event_name, evt.require_pre_approval, txn.TXN_ID, TXN_timestamp, TXN_total, txn.STS_ID txn_status, TXN_details, TXN_tax_data, PRC_amount, PRC_name';
+		$SQL .= $count ? "SELECT COUNT(reg.ATT_ID)" : "SELECT att.*, reg.*, dtt.*, reg.STS_ID REG_status, evt.id event_id, evt.event_name, CONCAT(ATT_fname, ' ', ATT_lname) as REG_att_name, evt.require_pre_approval, txn.TXN_ID, TXN_timestamp, TXN_total, txn.STS_ID AS txn_status, TXN_details, TXN_tax_data, txn.TXN_paid, PRC_amount, PRC_name";
 		$SQL .= ' FROM ' . $wpdb->prefix . 'esp_attendee att';
 		$SQL .= ' LEFT JOIN ' . $this->table_name . ' reg ON reg.ATT_ID = att.ATT_ID';
 		$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID';
@@ -502,7 +591,10 @@ class EEM_Registration extends EEM_Base {
 		}
 
 		if ( $reg_status ) {
-			$SQL .= $sql_clause .'reg.STS_ID = "' . $reg_status  . '"';
+			$SQL .= $sql_clause ." reg.STS_ID = '$reg_status'";
+			$sql_clause = ' AND ';
+		} else {
+			$SQL .= $sql_clause ." reg.STS_ID != 'RCN'";
 			$sql_clause = ' AND ';
 		}
 
@@ -522,7 +614,7 @@ class EEM_Registration extends EEM_Base {
 		}
 
 		if ( $today_a ) {
-			$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . $curdate . $time_start . '" AND "' . $curdate . $time_end  . '"';
+			$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . strtotime($curdate . $time_start) . '" AND "' . strtotime($curdate . $time_end)  . '"';
 			$sql_clause = ' AND ';
 		}
 
@@ -537,13 +629,41 @@ class EEM_Registration extends EEM_Base {
 		}
 
 		$SQL .= ' AND evt.event_status != "D" ';
-		$SQL .= ') ORDER BY reg.REG_date DESC, reg.EVT_ID ASC';
 
-		$registrations = $wpdb->get_results( $SQL );
 
-// echo '<h4>last_query : ' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-// printr( $registrations, '$registrations' );
-// die();
+
+		//let's setup orderby
+		switch ( $orderby ) {
+			
+			case 'REG_ID':
+				$orderby = 'reg.REG_ID ';
+				break;
+				
+			case 'STS_ID':
+				$orderby = 'reg.REG_status ';
+				break;
+				
+			case 'ATT_lname':
+				$orderby = 'att.ATT_lname ';
+				break;
+				
+			case 'event_name':
+				$orderby = 'evt.event_name ';
+				break;
+				
+			case 'DTT_EVT_start':
+				$orderby = 'dtt.DTT_EVT_start ';
+				break;
+				
+			default: //'REG_date'
+				$orderby = 'reg.REG_date ';
+		}
+
+		//let's setup limit
+		$limit = !empty($limit) ? 'LIMIT ' . implode(',', $limit) : '';
+		$SQL .= $count ? ')' : ") ORDER BY $orderby $order $limit";
+
+		$registrations = $count ? $wpdb->get_var( $SQL ) : $wpdb->get_results( $SQL );
 
 		return $registrations;
 	}
@@ -630,8 +750,17 @@ class EEM_Registration extends EEM_Base {
 	}
 
 
-
-
+	/**
+	 * Returns the EE_Registration of the primary attendee on the transaction id provided
+	 * @param int $TXN_ID
+	 * @return EE_Registration
+	 */
+	public function get_primary_registration_for_transaction_ID( $TXN_ID = FALSE){
+		if( ! $TXN_ID ){
+			return false;
+		}
+		return $this->get_one(array('TXN_ID'=>$TXN_ID,'REG_count'=>  EEM_Registration::PRIMARY_REGISTRANT_COUNT));
+	}
 
 	/**
 	*		get all registrations for a specific transaction, possibly excluding one (ie: get all OTHER registrations except this one )
@@ -668,6 +797,46 @@ class EEM_Registration extends EEM_Base {
 		return $attendees;
 		
 	}
+
+
+
+
+
+	/**
+	 *		get_event_registration_count
+	 *
+	 *		@access public
+	 *		@param int $EVT_ID 
+	 *		@param boolean $for_incomplete_payments
+	 *		@return int
+	 */
+	public function get_event_registration_count ( $EVT_ID, $for_incomplete_payments = FALSE ) {		
+		
+		if ( ! $EVT_ID ) {
+			$user_msg = __('An error occurred. The event registration count could not be calculated because an event ID was not received.', 'event_espresso');
+			EE_Error::add_error( $user_msg, __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}
+		global $wpdb, $org_options;
+		
+		$SQL = 'SELECT COUNT(reg.EVT_ID) FROM ' . $this->table_name . ' reg';
+		$SQL .= $for_incomplete_payments ? ' JOIN ' . $wpdb->prefix . 'esp_transaction txn ON txn.TXN_ID = reg.TXN_ID' : '';
+		$SQL .= ' WHERE reg.EVT_ID=%d AND ( reg.STS_ID="RAP"';
+		$SQL .= $org_options['pending_counts_reg_limit'] ? ' OR reg.STS_ID="RPN")' : ')';		
+		$SQL .= $for_incomplete_payments ? ' AND txn.STS_ID <> "TCM"' : '';
+
+		$reg_count = $wpdb->get_var( $wpdb->prepare( $SQL, $EVT_ID ));
+		
+		if ( $reg_count !== FALSE ) {
+			return $reg_count;
+		} else {
+			$user_msg = __('An error occurred. The event registration count could not be calculated because of a database error.', 'event_espresso');
+			EE_Error::add_error( $user_msg, __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}		
+			
+	}
+
 
 
 

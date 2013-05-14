@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Payment {
+class EE_Payment extends EE_Base_Class{
 
 
     /**
@@ -29,121 +29,135 @@ class EE_Payment {
 	*
 	* 	primary key
 	*
-	* 	@access	private
+	* 	@access	protected
     *	@var int
     */
-	private $_PAY_ID = FALSE;
+	protected $_PAY_ID = FALSE;
 
 
     /**
     *	Transaction ID
 	*
-	*	@access	private
+	*	@access	protected
     *	@var int
     */
-	private $_TXN_ID = NULL;
+	protected $_TXN_ID = NULL;
 
 
     /**
     *	Payment Status
 	*
-	*	@access	private
+	*	@access	protected
     *	@var string
     */
-	private $_STS_ID = NULL;
+	protected $_STS_ID = NULL;
 
 
     /**
     *	Payment Timestamp
 	*
-	*	@access	private
+	*	@access	protected
     *	@var int
     */
-	private $_PAY_timestamp = NULL;
+	protected $_PAY_timestamp = NULL;
 
 
     /**
     *	Payment Method
 	*
-	*	@access	private
+	*	@access	protected
     *	@var string
     */
-	private $_PAY_method = NULL;
+	protected $_PAY_method = NULL;
 
 
     /**
     *	Payment Amount
 	*
-	*	@access	private
+	*	@access	protected
     *	@var float
     */
-	private $_PAY_amount = NULL;
+	protected $_PAY_amount = NULL;
 
 
     /**
     *	Payment Gateway utilized 
 	*
-	*	@access	private
+	*	@access	protected
     *	@var string
     */
-	private $_PAY_gateway = NULL;
+	protected $_PAY_gateway = NULL;
 
 
     /**
     *	Gateway Response
 	*
-	*	@access	private
+	*	@access	protected
     *	@var string
     */
-	private $_PAY_gateway_response = NULL;
+	protected $_PAY_gateway_response = NULL;
 
 
     /**
     *	Gateway Transaction ID or Cheque #
 	*
-	*	@access	private
+	*	@access	protected
     *	@var string
     */
-	private $_PAY_txn_id_chq_nmbr = NULL;
+	protected $_PAY_txn_id_chq_nmbr = NULL;
 
  	 	 	
     /**
     *	Purchase Order Number
 	*
-	*	@access	private
+	*	@access	protected
     *	@var string
     */
-	private $_PAY_po_number = NULL;
+	protected $_PAY_po_number = NULL;
 
  	 	 	
     /**
     *	Extra Accounting Field
 	*
-	*	@access	private
+	*	@access	protected
     *	@var string
     */
-	private $_PAY_extra_accntng = NULL;
+	protected $_PAY_extra_accntng = NULL;
 
 
     /**
     *	Payment made via admin
 	*
-	*	@access	private
+	*	@access	protected
     *	@var string
     */
-	private $_PAY_via_admin = NULL;
+	protected $_PAY_via_admin = NULL;
 
 
     /**
     *	Payment Details
 	*
-	*	@access	private
+	*	@access	protected
     *	@var string
     */
-	private $_PAY_details = NULL;
+	protected $_PAY_details = NULL;
 
+	
+	
+	/**
+	 * Transaction this payment was for
+	 * @var EE_Transaction
+	 */
+	protected $_Transaction = NULL;
 
-
+	
+	
+	
+	/**
+	 * Status of this payment
+	 * @var EE_Status
+	 */
+	protected $_Status = NULL;
 
 
 
@@ -152,7 +166,7 @@ class EE_Payment {
 	*  Payment constructor
 	*
 	* @access 		public
-	* @param 		int					$TXN_ID		 							Transaction ID
+	* @param 		int/array				$TXN_ID		 							Transaction ID or array of all column values, where keys are column names
 	* @param 		string				$STS_ID		 							Payment Status
 	* @param 		int 					$PAY_timestamp 					Payment Timestamp
 	* @param 		string 				$PAY_method							Payment Method
@@ -181,27 +195,37 @@ class EE_Payment {
 														$PAY_details = NULL, 
 														$PAY_ID = FALSE 
 													) {
-													
-		// filter out unwanted junk from Pay_details
-		if ( is_array( $PAY_details )) {
-			array_walk_recursive( $PAY_details, array( $this, '_strip_all_tags_within_array' ));
-		} else {
-			$PAY_details =  wp_strip_all_tags( $PAY_details );
+		if(is_array($TXN_ID)){
+			parent::__construct($TXN_ID);
+			return;
 		}
-
-		$this->_PAY_ID 								= absint( $PAY_ID );
-		$this->_TXN_ID 								= absint( $TXN_ID );
-		$this->_STS_ID 								= strtoupper( sanitize_key( $STS_ID ));
-		$this->_PAY_timestamp			 	= $PAY_timestamp != NULL ? ( is_numeric( $PAY_timestamp ) ? absint( $PAY_timestamp ) : strtotime( $PAY_timestamp )) : time();
-		$this->_PAY_method 					= strtoupper( sanitize_key( $PAY_method ));
-		$this->_PAY_amount					= floatval( preg_replace( '/[^-0-9.]*/', '', preg_replace( '/,/', '.', $PAY_amount )));
-		$this->_PAY_gateway					= wp_strip_all_tags( $PAY_gateway );
-		$this->_PAY_gateway_response	= htmlentities( wp_strip_all_tags( $PAY_gateway_response ), ENT_QUOTES, 'UTF-8' ); 
-		$this->_PAY_txn_id_chq_nmbr		= sanitize_key( $PAY_txn_id_chq_nmbr );
-		$this->_PAY_po_number				= sanitize_key( $PAY_po_number );
-		$this->_PAY_extra_accntng			= wp_strip_all_tags( $PAY_extra_accntng );
-		$this->_PAY_via_admin				= absint( $PAY_via_admin ) ? TRUE : FALSE;
-		$this->_PAY_details						= maybe_serialize( $PAY_details );
+		$reflector = new ReflectionMethod($this,'__construct');	
+		$arrayForParent=array();
+		foreach($reflector->getParameters() as $param){
+			$paramName=$param->name;
+			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
+		}
+		parent::__construct($arrayForParent);											
+		// filter out unwanted junk from Pay_details
+//		if ( is_array( $PAY_details )) {
+//			array_walk_recursive( $PAY_details, array( $this, '_strip_all_tags_within_array' ));
+//		} else {
+//			$PAY_details =  wp_strip_all_tags( $PAY_details );
+//		}
+//
+//		$this->_PAY_ID 								= absint( $PAY_ID );
+//		$this->_TXN_ID 								= absint( $TXN_ID );
+//		$this->_STS_ID 								= strtoupper( sanitize_key( $STS_ID ));
+//		$this->_PAY_timestamp			 	= $PAY_timestamp != NULL ? ( is_numeric( $PAY_timestamp ) ? absint( $PAY_timestamp ) : strtotime( $PAY_timestamp )) : time();
+//		$this->_PAY_method 					= strtoupper( sanitize_key( $PAY_method ));
+//		$this->_PAY_amount					= floatval( preg_replace( '/[^-0-9.]*/', '', preg_replace( '/,/', '.', $PAY_amount )));
+//		$this->_PAY_gateway					= wp_strip_all_tags( $PAY_gateway );
+//		$this->_PAY_gateway_response	= htmlentities( wp_strip_all_tags( $PAY_gateway_response ), ENT_QUOTES, 'UTF-8' ); 
+//		$this->_PAY_txn_id_chq_nmbr		=  wp_strip_all_tags( $PAY_txn_id_chq_nmbr );
+//		$this->_PAY_po_number				=  wp_strip_all_tags( $PAY_po_number ) ;
+//		$this->_PAY_extra_accntng			= wp_strip_all_tags( $PAY_extra_accntng );
+//		$this->_PAY_via_admin				= absint( $PAY_via_admin ) ? TRUE : FALSE;
+//		$this->_PAY_details						= maybe_serialize( $PAY_details );
 	}
 
 
@@ -216,13 +240,24 @@ class EE_Payment {
 	*/
 	public function set_transaction( $TXN_ID = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $TXN_ID ) {
-			$espresso_notices['errors'][] = 'No Transaction ID was supplied.';
+			$msg = __( 'No Transaction ID was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_TXN_ID = absint( $TXN_ID );
 		return TRUE;
+	}
+	
+	
+	
+	
+	/**
+	 * Gets the transaction related to this payment
+	 * @return EE_Transaction
+	 */
+	public function transaction(){
+		return $this->get_first_related('Transaction');
 	}
 
 
@@ -238,9 +273,9 @@ class EE_Payment {
 	*/
 	public function set_status( $STS_ID = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $STS_ID ) {
-			$espresso_notices['errors'][] = 'No Status was supplied.';
+			$msg = __( 'No Status was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_STS_ID = strtoupper( wp_strip_all_tags( $STS_ID ));
@@ -259,9 +294,9 @@ class EE_Payment {
 	*/
 	public function set_timestamp( $timestamp = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $timestamp ) {
-			$espresso_notices['errors'][] = 'No Timestamp was supplied.';
+			$msg = __( 'No Timestamp was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PAY_timestamp = absint( $timestamp );
@@ -280,9 +315,9 @@ class EE_Payment {
 	*/
 	public function set__method( $pay_method = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $pay_method ) {
-			$espresso_notices['errors'][] = 'No Payment Method was supplied.';
+			$msg = __( 'No Payment Method was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PAY_method = wp_strip_all_tags( $pay_method );
@@ -301,9 +336,9 @@ class EE_Payment {
 	*/
 	public function set_amount( $amount = FALSE ) {
 
-		global $espresso_notices;
 		if (  $amount === FALSE || ! is_numeric( $amount ) ) {
-			$espresso_notices['errors'][] = 'No Payment Amount or an invalid Payment Amount was supplied.';
+			$msg = __( 'No Payment Amount or an invalid Payment Amount was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		// change commas to decimals
@@ -325,9 +360,9 @@ class EE_Payment {
 	*/
 	public function set_gateway( $gateway = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $gateway ) {
-			$espresso_notices['errors'][] = 'No Payment Gateway was supplied.';
+			$msg = __( 'No Payment Gateway was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PAY_gateway = wp_strip_all_tags( $gateway );
@@ -346,9 +381,9 @@ class EE_Payment {
 	*/
 	public function set_gateway_response( $gateway_response = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $gateway_response ) {
-			$espresso_notices['errors'][] = 'No Payment Gateway Response was supplied.';
+			$msg = __( 'No Payment Gateway Response was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PAY_gateway_response = htmlentities( wp_strip_all_tags( $gateway_response ), ENT_QUOTES, 'UTF-8' );
@@ -367,9 +402,9 @@ class EE_Payment {
 	*/
 	public function set_txn_id_chq_nmbr( $txn_id_chq_nmbr = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $txn_id_chq_nmbr ) {
-			$espresso_notices['errors'][] = 'No Gateway Transaction ID or Cheque # was supplied.';
+			$msg = __( 'No Gateway Transaction ID or Cheque # was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PAY_txn_id_chq_nmbr = wp_strip_all_tags( $txn_id_chq_nmbr );
@@ -387,9 +422,9 @@ class EE_Payment {
 	*/
 	public function set_po_number( $po_number = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $po_number ) {
-			$espresso_notices['errors'][] = 'No Purchase Order Number info was supplied.';
+			$msg = __( 'No Purchase Order Number info was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PAY_po_number = wp_strip_all_tags( $po_number );
@@ -408,9 +443,9 @@ class EE_Payment {
 	*/
 	public function set_extra_accntng( $extra_accntng = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $extra_accntng ) {
-			$espresso_notices['errors'][] = 'No Notes or Extra Accounting Field info was supplied.';
+			$msg = __( 'No Notes or Extra Accounting Field info was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PAY_extra_accntng = wp_strip_all_tags( $extra_accntng );
@@ -429,9 +464,9 @@ class EE_Payment {
 	*/
 	public function set_payment_made_via_admin( $via_admin = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! is_bool( $via_admin )) {
-			$espresso_notices['errors'][] = 'The supplied value for the "payment made via admin" flag was not a boolean.';
+			$msg = __( 'The supplied value for the "payment made via admin" flag was not a boolean.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PAY_via_admin = (bool)absint( $via_admin );
@@ -449,14 +484,12 @@ class EE_Payment {
 	*		@param		string		$details
 	*/
 	public function set_details( $details = FALSE ) {
-
-		global $espresso_notices;
-		if ( ! $details ) {
-			$espresso_notices['errors'][] = 'No Payment Details were supplied.';
-			return FALSE;
+		if ( is_array( $details )) {
+			array_walk_recursive( $details, array( $this, '_strip_all_tags_within_array' ));
+		} else {
+			$details =  wp_strip_all_tags( $details );
 		}
-		$this->_PAY_details = wp_strip_all_tags( $details );
-		return TRUE;
+		return $this->set('PAY_details',$details);
 	}
 
 
@@ -494,7 +527,7 @@ class EE_Payment {
 				'PAY_po_number'				=> $this->_PAY_po_number,
 				'PAY_extra_accntng'			=> $this->_PAY_extra_accntng,
 				'PAY_via_admin'					=> $this->_PAY_via_admin,
-				'PAY_details'						=> $this->_PAY_details
+				'PAY_details'						=> maybe_serialize($this->_PAY_details)
 		);
 
 		if ( $where_cols_n_values ){
@@ -668,9 +701,127 @@ class EE_Payment {
 	* 		@access		public
 	*/
 	public function details() {
-		return $this->_PAY_details;
+		return $this->get('PAY_details');
 	}
-
+	
+	
+	/**
+	 * returns a pretty version of the status, good for displayign to users
+	 * @return string
+	 */
+	public function pretty_status(){
+		switch($this->STS_ID()){
+			case EEM_Payment::status_id_approved:
+				return __("Accepted",'event_espresso');
+			case EEM_Payment::status_id_pending:
+				return __("Pending",'event_espresso');
+			case EEM_Payment::status_id_cancelled:
+				return __('Cancelled','event_espresso');
+			case EEM_Payment::status_id_declined:
+				return __('Declined','event_espresso');
+			case EEM_Payment::status_id_failed:
+				return __('Failed','event_espresso');
+			default:
+				return __('Unknown','event_espresso');
+		}
+	}
+	
+	
+	
+	/**
+	 * echoes $this->pretty_status()
+	 * @return void
+	 */
+	public function e_pretty_status(){
+		echo $this->pretty_status();
+	}
+	
+	
+	
+	
+	/**
+	 * Generally determines if teh status of this payment equals
+	 * the $STS_ID string
+	 * @param string $STS_ID an ID from the esp_status table/
+	 * one of the status_id_* on the EEM_Payment model
+	 * @return boolean whether the status of this payment equals the status id
+	 */
+	protected function status_is($STS_ID){
+		if($STS_ID == $this->STS_ID()){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	/**
+	 * For determining the statsu of teh payment
+	 * @return boolean whether the payment is approved or not
+	 */
+	public function is_approved(){
+		return $this->status_is(EEM_Payment::status_id_approved);
+	}
+	
+	
+	
+	
+	/**
+	 * For determining the statsu of teh payment
+	 * @return boolean whether the payment is pending or not
+	 */
+	public function is_pending(){
+		return $this->status_is(EEM_Payment::status_id_pending);
+	}
+	
+	
+	
+	
+	/**
+	 * For determining the statsu of teh payment
+	 * @return boolean
+	 */
+	public function is_cancelled(){
+		return $this->status_is(EEM_Payment::status_id_cancelled);
+	}
+	
+	
+	
+	/**
+	 * For determining the statsu of teh payment
+	 * @return boolean
+	 */
+	public function is_declined(){
+		return $this->status_is(EEM_Payment::status_id_declined);
+	}
+	
+	
+	
+	
+	/**
+	 * For determining the statsu of teh payment
+	 * @return boolean
+	 */
+	public function is_failed(){
+		return $this->status_is(EEM_Payment::status_id_failed);
+	}
+	
+	
+	/**
+	 * Echoes out the payment overview HTML from the gateway used on this payment
+	 */
+	public function e_gateway_payment_overview_content(){
+		echo $this->gateway_payment_overview_content();
+	}
+	
+	/**
+	 * Gets the payment overview content from the gateway used on this payment.
+	 * @return string
+	 */
+	public function gateway_payment_overview_content(){
+		$gateway_name = $this->gateway();
+		$EEM_Gateways = EEM_Gateways::instance();	
+		//call its render payment results, feeding it the current payment
+		return $EEM_Gateways->get_payment_overview_content($gateway_name,$this);
+	}
 
 
 
@@ -680,35 +831,15 @@ class EE_Payment {
 	* 		@param		boolean 		$via_admin
 	* 		@access		public
 	*/
-	public function apply_payment_to_transaction( $via_admin = FALSE ) {
-
-		global $espresso_notices;
-		
-		// is this an existing payment ?			
-		if ( $this->_PAY_ID ) {
-			$payment_made = $this->update();
-		} else {
-			$payment_made = $this->insert();
+	public function apply_payment_to_transaction( $via_admin = FALSE ) {		
+		if( ! $this->ID()){
+			$this->save();
 		}
-		
-		if ( $payment_made ) {
-
-			// recalculate and set  total paid
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
-			$PAY_MODEL = EEM_Payment::instance();
-			$return_data = $PAY_MODEL->update_payment_transaction( $this, 'processed' );
-			return $return_data;
-						
-		} else {
-		
-			if ( $via_admin ) {
-				$espresso_notices['errors'][] = __('An error occured. The payment has not been processed succesfully.', 'event_espresso');
-				return FALSE;
-			} else {
-				return __('There was a problem inserting your payment into our records. Do not attempt the transaction again. Please contact support.', 'event_espresso');
-			}
-		}
-		
+		// recalculate and set  total paid
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
+		$PAY_MODEL = EEM_Payment::instance();
+		$success = $PAY_MODEL->update_payment_transaction( $this, 'processed' );
+		return $success;
 	}
 
 
@@ -726,22 +857,6 @@ class EE_Payment {
 	        wp_strip_all_tags( $item );
 	}
 
-
-
-
-
-
-
-
-	/**
-	 *		@ override magic methods
-	 *		@ return void
-	 */
-	public function __get($a) { return FALSE; }
-	public function __set($a,$b) { return FALSE; }
-	public function __unset($a) { return FALSE; }
-	public function __clone() { return FALSE; }
-	public function __wakeup() { return FALSE; }
 
 
 }

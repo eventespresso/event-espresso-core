@@ -23,52 +23,55 @@
  */
 class EE_Price_Type {
 
-  /**
-  *		Price Type ID
-	*
+	/**
+	*	Price Type ID
 	* 	primary key
 	*
 	* 	@access	private
-  *		@var int
-  */
+	*		@var int
+	*/
 	private $_PRT_ID = FALSE;
 
-
-  /**
-  *	Price Type name
+	/**
+	*	Price Type name
 	*
 	*	@access	private
-  *	@var string
-  */
+	*	@var string
+	*/
 	private $_PRT_name = NULL;
 
-
-  /**
-  *	Price type a member Price?
+	/**
+	*	Price Base Type ID
+	* 	1 = Event Price , 2 = Discount , 3 = Surcharge , 4 = Tax
 	*
 	*	@access	private
-  *	@var bool
-  */
+	*	@var int
+	*/
+	private $_PBT_ID = NULL;
+
+	/**
+	*	Price type a member Price?
+	*
+	*	@access	private
+	*	@var bool
+	*/
 	private $_PRT_is_member = NULL;
 
-
-  /**
-  *	Price type a discount?
+	/**
+	*	Price type a discount?
 	*
 	*	@access	private
-  *	@var bool
-  */
+	*	@var bool
+	*/
 	private $_PRT_is_discount = NULL;
 
-
-  /**
-  *	Price type a tax?
+	/**
+	*	Price type a tax?
 	*
 	*	@access	private
-  *	@var bool
-  */
+	*	@var bool
+	*/
 	private $_PRT_is_tax = NULL;
-
 
   /**
   *	Price type a percentage?
@@ -78,25 +81,31 @@ class EE_Price_Type {
   */
 	private $_PRT_is_percent = NULL;
 
-
-  /**
-  *	Price type a global?
+	/**
+	*	Price type a global?
 	*
 	*	@access	private
-  *	@var bool
-  */
+	*	@var bool
+	*/
 	private $_PRT_is_global = NULL;
 
-
-  /**
-  *	Price type order
+	/**
+	*	Price type order
 	*
 	*	@access	private
-  *	@var int
-  */
+	*	@var int
+	*/
 	private $_PRT_order = NULL;
 
+	/**
+	*	is Price type deleted
+	*
+	*	@access	private
+	*	@var int
+	*/
 	private $_PRT_deleted = NULL;
+
+
 
 
 
@@ -104,27 +113,25 @@ class EE_Price_Type {
 		/**
 	*  Attendee constructor
 	*
-	* @access 		public
-	* @param			string				$PRT_name						Price Type name
-	* @param			bool	 				$PRT_is_member			is price type a member price?
-	* @param			bool	 				$PRT_is_discount		is price type a discount?
-	* @param			bool	 				$PRT_is_tax					is price type a tax?
-	* @param			bool					$PRT_is_percent			is price type a percent?
-	* @param	 		bool					$PRT_is_global			is price type a global?
-	* @param			int 					$PRT_order					Price Type order
-	* @param			int						$PRT_ID							Price type ID
+	* @access 	public
+	* @param	string	$PRT_name			Price Type name
+	* @param	int		$PBT_ID	 				Price Base Type ID
+	* @param	bool	$PRT_is_member	is price type a member price?
+	* @param	bool	$PRT_is_percent		is price type a percent?
+	* @param	bool	$PRT_is_global		is price type a global?
+	* @param	int 		$PRT_order				Price Type order
+	* @param	int		$PRT_ID					Price type ID
 	*/
-	public function __construct( $PRT_name='', $PRT_is_member=FALSE, $PRT_is_discount=FALSE, $PRT_is_tax=FALSE, $PRT_is_percent=FALSE, $PRT_is_global=FALSE, $PRT_order=0, $PRT_deleted, $PRT_ID=FALSE ) {
+	public function __construct( $PRT_name='', $PBT_ID=FALSE, $PRT_is_member=FALSE, $PRT_is_percent=FALSE, $PRT_is_global=FALSE, $PRT_order=0, $PRT_deleted, $PRT_ID=FALSE ) {
 	
-		$this->_PRT_ID						= $PRT_ID;
-		$this->_PRT_name					= $PRT_name;
-		$this->_PRT_is_member			= $PRT_is_member;
-		$this->_PRT_is_discount		= $PRT_is_discount;
-		$this->_PRT_is_tax				= $PRT_is_tax;
+		$this->_PRT_ID					= $PRT_ID;
+		$this->_PRT_name			= $PRT_name;
+		$this->_PBT_ID					= $PBT_ID;
+		$this->_PRT_is_member	= $PRT_is_member;
 		$this->_PRT_is_percent		= $PRT_is_percent;
-		$this->_PRT_is_global			= $PRT_is_global;
-		$this->_PRT_order					= $PRT_order;
-		$this->_PRT_deleted				= $PRT_deleted;
+		$this->_PRT_is_global		= $PRT_is_global;
+		$this->_PRT_order				= $PRT_order;
+		$this->_PRT_deleted			= $PRT_deleted;
 
 		// load Price model object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
@@ -142,9 +149,9 @@ class EE_Price_Type {
 	*/
 	public function set_name( $PRT_name = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $PRT_name ) {
-			$espresso_notices['errors'][] = 'No name was supplied.';
+			$msg = __( 'No name was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRT_name = wp_strip_all_tags( $PRT_name );
@@ -163,9 +170,9 @@ class EE_Price_Type {
 	*/
 	public function set_is_member( $PRT_is_member = NULL ) {
 
-		global $espresso_notices;
 		if (!is_bool($PRT_is_member)) {
-			$espresso_notices['errors'][] = 'No member flag was supplied.';
+			$msg = __( 'No member flag was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRT_is_member = $PRT_is_member;
@@ -184,9 +191,9 @@ class EE_Price_Type {
 	*/
 	public function set_is_discount( $PRT_is_discount = NULL ) {
 
-		global $espresso_notices;
 		if (!is_bool($PRT_is_discount)) {
-			$espresso_notices['errors'][] = 'No discount flag was supplied.';
+			$msg = __( 'No discount flag was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRT_is_discount = $PRT_is_discount;
@@ -205,9 +212,9 @@ class EE_Price_Type {
 	*/
 	public function set_is_tax( $PRT_is_tax = NULL ) {
 
-		global $espresso_notices;
 		if (!is_bool($PRT_is_tax)) {
-			$espresso_notices['errors'][] = 'No tax flag was supplied.';
+			$msg = __( 'No tax flag was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRT_is_tax = $PRT_is_tax;
@@ -226,9 +233,9 @@ class EE_Price_Type {
 	*/
 	public function set_is_percent( $PRT_is_percent = NULL ) {
 
-		global $espresso_notices;
 		if (!is_bool($PRT_is_percent)) {
-			$espresso_notices['errors'][] = 'No percent flag was supplied.';
+			$msg = __( 'No percent flag was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRT_is_percent = $PRT_is_percent;
@@ -247,9 +254,9 @@ class EE_Price_Type {
 	*/
 	public function set_is_global ( $PRT_is_global = NULL ) {
 
-		global $espresso_notices;
 		if (!is_bool($PRT_is_global)) {
-			$espresso_notices['errors'][] = 'No percent flag was supplied.';
+			$msg = __( 'No global flag was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRT_is_global = $PRT_is_global;
@@ -268,9 +275,9 @@ class EE_Price_Type {
 	*/
 	public function set_order( $PRT_order = FALSE ) {
 
-		global $espresso_notices;
 		if ( ! $PRT_order ) {
-			$espresso_notices['errors'][] = 'No order was supplied.';
+			$msg = __( 'No order was supplied.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$this->_PRT_order = absint( $PRT_order );
@@ -297,14 +304,13 @@ class EE_Price_Type {
 		 $MODEL = EEM_Price_Type::instance();
 
 		$set_column_values = array(
-				'PRT_name'					=> $this->_PRT_name,
-				'PRT_is_member'			=> $this->_PRT_is_member,
-				'PRT_is_discount'		=> $this->_PRT_is_discount,
-				'PRT_is_tax'				=> $this->_PRT_is_tax,
+				'PRT_name'				=> $this->_PRT_name,
+				'PBT_ID'					=> $this->_PBT_ID,
+				'PRT_is_member'	=> $this->_PRT_is_member,
 				'PRT_is_percent'		=> $this->_PRT_is_percent,
-				'PRT_is_global'			=> $this->_PRT_is_global,
-				'PRT_order'					=> $this->_PRT_order,
-				'PRT_deleted'				=> $this->_PRT_deleted
+				'PRT_is_global'		=> $this->_PRT_is_global,
+				'PRT_order'				=> $this->_PRT_order,
+				'PRT_deleted'			=> $this->_PRT_deleted
 		);
 
 		if ( $where_cols_n_values ){
@@ -369,8 +375,8 @@ class EE_Price_Type {
 	*		get is Price Type a discount?
 	* 		@access		public
 	*/
-	public function is_discount() {
-		return $this->_PRT_is_discount;
+	public function base_type() {
+		return $this->_PBT_ID;
 	}
 
 
@@ -383,15 +389,6 @@ class EE_Price_Type {
 		return $this->_PRT_is_member;
 	}
 
-
-
-	/**
-	*		get is Price Type a tax?
-	* 		@access		public
-	*/
-	public function is_tax() {
-		return $this->_PRT_is_tax;
-	}
 
 
 
@@ -421,9 +418,18 @@ class EE_Price_Type {
 		return $this->_PRT_order;
 	}
 
+
+	/**
+	*		get  is Price Type deleted ?
+	* 		@access		public
+	*/
 	public function deleted() {
 		return $this->_PRT_deleted;
 	}
+
+
+
+
 
 	/**
 	*		Search for an existing DB record for this Price Type
@@ -445,17 +451,6 @@ class EE_Price_Type {
 		}
 
 	}
-
-
-	/**
-	 *		@ override magic methods
-	 *		@ return void
-	 */
-	public function __get($a) { return FALSE; }
-	public function __set($a,$b) { return FALSE; }
-	public function __unset($a) { return FALSE; }
-	public function __clone() { return FALSE; }
-	public function __wakeup() { return FALSE; }
 
 
 }

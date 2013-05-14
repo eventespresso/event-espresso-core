@@ -1,5 +1,6 @@
 
 	<div id="invoice">
+		
 		<table id="invoice-header" class="not-really-a-table">
 			<tr>
 				<td id="logo-dv">
@@ -35,17 +36,15 @@
 				<td colspan="4">
 					<div class="vcard" id="client-details">
 						<div class="fn">[name]</div>
-						<!--<div class="org">Client Company</div> -->
+						<!--<div class="org">Client Company</div>--> 
 						<div class="adr">
-							<!-- street-address -->
 							<div class="street-address"><?php echo $attendee_address; ?></div>
 							<div class="locality"><?php echo $attendee_city; ?> <?php echo $attendee_state; ?></div>
 							<div id="client-postcode"><?php echo $attendee_zip; ?></div>
-							<!--<div id="your-tax-number">SALES TAX: 193528491</div> -->
-						</div>
-						<!-- adr --> 
+							<!--<div id="your-tax-number">SALES TAX: 193528491</div>--> 
+						</div> 
 					</div>
-					<!-- #client-details vcard -->
+					 <!--#client-details vcard--> 
 				</td>
 				<td id="ship-to">
 					<?php _e('Ship To:', 'event_espresso')?>
@@ -53,22 +52,21 @@
 				<td colspan="4">
 					<div class="vcard" id="shipping-details">
 						<div class="fn"><?php echo $ship_name ?></div>
-						<!--<div class="org">Client Company</div> -->
+						<!--<div class="org">Client Company</div>--> 
 						<div class="adr">
-							<!-- street-address -->
+							 <!--street-address--> 
 							<div class="street-address"><?php echo $ship_address; ?></div>
 							<div class="locality"><?php echo $ship_city; ?> <?php echo $ship_state; ?></div>
 							<div id="client-postcode"><?php echo $ship_zip; ?></div>
-							<!--<div id="your-tax-number">SALES TAX: 193528491</div> -->
 						</div>
-						<!-- adr --> 
 					</div>
-					<!-- #shipping-details vcard -->
 				</td>
 			</tr>
+			
 		</table>
-
+		<h2><?php _e("Purchases",'event_espresso')?></h2>
 		<table id="invoice-amount">
+			
 			<thead>
 				<tr id="header_row">
 					<th class="quantity_th"><span class=""><?php _e('Qty', 'event_espresso'); ?></span></th>
@@ -80,19 +78,79 @@
 				</tr>
 			</thead>
 			<tbody>
-				<!-- Create the table rows for data -->
-				<?php echo $table_output;?>
+				<?php $c=false; foreach($transaction->registrations() as $registration){?>
+					<tr class="item <?php echo ($c = !$c) ? ' odd' : ''; ?>">
+						<td class="item_l">1</td>
+						<td class="item_l"><?php echo $registration->event_name() ?></td>
+						<td class="item_l"><?php echo $registration->price_obj()->name() ?></td>
+						<td class="item_l"><?php echo $registration->date_obj()->start_date_and_time() ?></td>
+						<td class="item_l"><?php echo $registration->attendee()->full_name() ?></td>
+						<td class="item_r"><?php echo EE_Formatter::price($registration->price_paid())?></td>
+					</tr>
+				<?php } ?>
 			</tbody>
 			<tfoot>
-				<?php echo $net_total; ?>
+				<tr id="total_tr">
+					<td colspan="4">&nbsp;</td>
+					<td class="total" id="total_currency"><?php _e('Sub Total', 'event_espresso'); ?></td>
+					<td class="total"><span class="crncy-sign"><?php echo EE_Formatter::price($total_cost)?></td>
+				</tr>
 				<?php //echo $discount; ?>
 				<tr id="total_tr">
 					<td colspan="4">&nbsp;</td>
 					<td class="total" id="total_currency"><?php _e('Total', 'event_espresso'); ?></td>
-					<td class="total"><span class="crncy-sign"><?php echo $currency_symbol?></span><?php echo $total_cost ?></td>
+					<td class="total"><span class="crncy-sign"><?php echo EE_Formatter::price($total_cost)?></td>
 				</tr>
 			</tfoot>
-		</table>			
+		</table>		
+		<h2><?php _e("Payments",'event_espresso')?></h2>
+		<table id="invoice-amount">
+			<thead>
+				<tr id="header_row">
+					<th ><span class=""><?php _e('Payment Method', 'event_espresso'); ?></span></th>
+					<th class='left datetime_th'><?php _e("Date",'event_espresso')?></th>
+					<th ><span class=""><?php _e('Transaction Id / Cheque #', 'event_espresso'); ?></span></th>
+					<th ><span class=""><?php _e('P.O. / S.O.#', 'event_espresso'); ?></span></th>
+					<th ><span class=""><?php _e('Status', 'event_espresso'); ?></span></th>
+					<th ><?php _e('Amount', 'event_espresso'); ?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php 
+				$c = false;
+				if(!empty($payments)){
+					
+					foreach($payments as $payment){
+						/* @var $payment EE_Payment */?>
+					<tr class='item <?php echo (($c = !$c) ? ' odd' : '')?>'>
+						<td><?php $payment->e('PAY_gateway')?></td>
+						<td><?php echo $payment->timestamp('D M j, Y')?></td>
+						<td><?php $payment->e('PAY_txn_id_chq_nmbr')?></td>
+						<td><?php $payment->e('PAY_po_number')?></td>
+						<td><?php $payment->e_pretty_status()?></td>
+						<td class='item_r'><?php echo EE_Formatter::price($payment->amount());?></td>
+					</tr>
+					<?php }
+				}else{?>
+					<tr class='item'>
+						<td class='aln-cntr' colspan=6><?php _e("No approved payments have been received",'event_espresso')?></td>
+					</tr>
+				<?php }
+?>
+			</tbody>
+			<tfoot>
+				<tr id='total_tr'><td colspan="4">&nbsp;</td>
+					<td class="item_r"><?php _e('Total Paid','event_espresso')?></td>
+					<td class="item_r"><?php echo EE_Formatter::price($amount_pd)?> </td>
+				</tr>
+				<?php //echo $discount; ?>
+				<tr id="total_tr">
+					<td colspan="4">&nbsp;</td>
+					<td class="total" id="total_currency"><?php _e('Amount Owed', 'event_espresso'); ?></td>
+					<td class="total"><?php echo EE_Formatter::price($total_cost - $amount_pd)?></td>
+				</tr>
+			</tfoot>
+		</table>
 		<!-- invoice-amount -->
 		
 		<table class="not-really-a-table">

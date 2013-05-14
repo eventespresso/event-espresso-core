@@ -178,9 +178,9 @@ if ($num_rows > 0) {
 
 
 	//If the coupon code system is intalled then use it
-	if (function_exists('event_espresso_coupon_registration_page')) {
-		$use_coupon_code = $data->event->use_coupon_code;
-	}
+	//if (function_exists('event_espresso_coupon_registration_page')) {
+		//$use_coupon_code = $data->event->use_coupon_code;
+	//}
 
 	//If the groupon code addon is installed, then use it
 	if (function_exists('event_espresso_groupon_payment_page')) {

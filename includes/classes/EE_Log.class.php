@@ -9,6 +9,7 @@
 class espresso_log {
 
 	var $file;
+	var $folder;
 	var $url; //Used for remote logging
 	private static $inst;
 
@@ -16,9 +17,9 @@ class espresso_log {
 	function __construct() {
 		//echo __FILE__;
 		//echo dirname( __FILE__ );
-		$folder = EVENT_ESPRESSO_UPLOAD_DIR . 'logs/';
+		$this->folder = EVENT_ESPRESSO_UPLOAD_DIR . 'logs/';
 		//echo $folder;
-		$this->file = $folder . 'espresso_log.txt';
+		$this->file = $this->folder . 'espresso_log.txt';
 		
 		$uploads = wp_upload_dir();
 		if (!is_dir(EVENT_ESPRESSO_UPLOAD_DIR) && is_writable($uploads['baseurl'])) {
@@ -31,8 +32,8 @@ class espresso_log {
 		if (is_writable(EVENT_ESPRESSO_UPLOAD_DIR.'logs') && !file_exists($this->file)) {
 			touch($this->file);
 		}
-		if (is_writable(EVENT_ESPRESSO_UPLOAD_DIR.'logs') && !file_exists($folder.'espresso_debug.php')) {
-			touch($folder.'espresso_debug.php');
+		if (is_writable(EVENT_ESPRESSO_UPLOAD_DIR.'logs') && !file_exists($this->folder.'espresso_debug.php')) {
+			touch($this->folder.'espresso_debug.php');
 		}
 	}
 
@@ -45,6 +46,14 @@ class espresso_log {
 	}
 
 	public function log($message) {
+		if ( isset( $message['type'] ) ) {
+			$this->file = $this->folder . 'espresso_debug_' . $message['type'] . '.txt';
+			
+			if (is_writable(EVENT_ESPRESSO_UPLOAD_DIR.'logs') && !file_exists($this->file)) {
+				touch($this->file);
+			}
+		}
+
 		if (is_writable($this->file)) {
 			$fh = fopen($this->file, 'a') or die("Cannot open file! " . $this->file);
 			fwrite($fh, '[' . date("m.d.y H:i:s") . '], ' . basename($message['file']) . ' ->' . $message['function'] . ',  ' . $message['status'] . "\n");
@@ -115,9 +124,14 @@ function espresso_log($file, $function, $message) {
 	espresso_log::singleton()->log(array('file' => $file, 'function' => $function, 'status' => $message));
 }
 
+function espresso_log_shortcode_parser( $file, $function, $message ) {
+	espresso_log::singleton()->log(array('file' => $file, 'function' => $function, 'status' => $message, 'type' => 'shortcode_parser') );
+}
+
 if (!empty($org_options['full_logging'])) {
-	add_action('action_hook_espresso_log', 'espresso_log', 10, 3);
-	add_action('action_hook_espresso_debug_file', 'espresso_debug_file');	
+	add_action('AHEE_log', 'espresso_log', 10, 3);
+	add_action('AHEE_log_shortcode_parser', 'espresso_log_shortcode', 10, 3);
+	add_action('AHEE_debug_file', 'espresso_debug_file');	
 }
 
 //Remote logging stuff
@@ -137,7 +151,7 @@ function espresso_send_log() {
 
 if (!empty($org_options['remote_logging'])) {
 	//echo "<pre>".print_r($org_options,true)."</pre>";
-	add_action('action_hook_espresso_log', 'espresso_remote_log', 10, 3);
+	add_action('AHEE_log', 'espresso_remote_log', 10, 3);
 	add_action('wp_footer', 'espresso_send_log');
 }
 
@@ -164,45 +178,3 @@ function espresso_debug_file() {
 	}
 }
 
-
-$hookpoints = array(
-		'setup_theme	',
-		'after_setup_theme',
-		'set_current_user',
-		'init',
-		'widgets_init',
-		'wp_default_scripts',
-		'wp_default_styles',
-		'admin_bar_init',
-		'add_admin_bar_menus',
-		'wp_loaded',
-		'parse_request',
-		'send_headers',
-		'parse_query',
-		'pre_get_posts',
-		'posts_selection',
-		'wp',
-		'template_redirect',
-		'get_header',
-		'wp_head',
-		'wp_enqueue_scripts',
-		'wp_print_styles',
-		'wp_print_scripts',
-		'get_sidebar',
-		'pre_get_posts',
-		'pre_get_comments',
-		'wp_meta',
-		'get_footer',
-		'get_sidebar',
-		'wp_footer',
-		'wp_print_footer_scripts',
-		'admin_bar_menu',
-		'wp_before_admin_bar_render',
-		'wp_after_admin_bar_render',
-		'shutdown'
-	);
-	
-	foreach ( $hookpoints as $hookpoint ) {
-		$mark_hookpoint = create_function('$hookpoint', 'do_action("action_hook_espresso_log", "HOOK", "'.$hookpoint.'", "" );');
-		add_action( $hookpoint, $mark_hookpoint, 1 );		
-	}

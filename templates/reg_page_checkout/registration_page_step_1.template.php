@@ -1,5 +1,5 @@
 <!--**********************************  STEP 1 	**********************************-->		
-
+<?php echo do_action('AHEE_registration_page_step_1_start',$event_queue);?>
 	<h2 id="mer-reg-page-step-title-1-hdr" class="mer-reg-page-step-title-hdr">
 		<?php _e('Step 1 -  Attendee Information', 'event_espresso'); ?>
 		<a id="mer-reg-page-edit-step-1-lnk" class="mer-reg-page-go-to-step-1 mer-reg-page-edit-step-lnk <?php echo $step_1_edit_lnk_class; ?>"  href="<?php echo $reg_page_step_1_url; ?>"><?php _e('edit', 'event_espresso'); ?></a>
@@ -21,9 +21,10 @@
 	
 	$counter = 1;
 	
-	foreach ( $event_queue as $cart_type => $cart ) : 
-		if ( $cart['has_items'] ) :
-			foreach ( $cart['items'] as $line_item => $item ) :
+	foreach ( $event_queue as $cart_type => $cart ) {
+		if ( $cart['has_items'] ) {
+			foreach ( $cart['items'] as $line_item => $item ) {
+			
 ?>
 
 			<div id="mer-reg-page-attendee-panel-dv-<?php echo $line_item;?>" class="mer-reg-page-attendee-panel-dv">		
@@ -32,19 +33,21 @@
 					<a href="<?php //echo $registration_url; ?>" id="a_event_title-<?php echo $item['id'] ?>" class="a_event_title" title="<?php echo $item['name'] ?>"><?php echo $item['name'] ?></a>
 				</h3>
 
-		<?php foreach( $item['attendee_questions'][ $line_item ] as $att_nmbr => $attendee_questions ) : ?>
-			<?php if ( ! empty( $attendee_questions )) : ?>
-	
-				<fieldset id="mer-reg-page-attendee-wrap-<?php echo $item['id'] . '-' . $counter;?>" class="mer-reg-page-attendee-wrap-fs">
-	  				<legend class="mer-reg-page-attendee-lgnd smaller-text lt-grey-text"><?php echo $item['attendee_headings'][ $line_item ][$att_nmbr]?></legend>
+		<?php foreach( $item['attendee_questions'][ $line_item ] as $att_nmbr => $attendee_questions ) { ?>
 
+				<fieldset id="mer-reg-page-attendee-wrap-<?php echo $item['id'] . '-' . $counter;?>" class="mer-reg-page-attendee-wrap-fs">
+	  				<legend class="mer-reg-page-attendee-lgnd smaller-text lt-grey-text"><?php echo $item['attendee_headings'][ $line_item ][$att_nmbr] . ' : ' . $item['price_desc']?></legend>
+
+			<?php if ( ! empty( $attendee_questions )) { ?>
+						<?php //do an action before the questions output, including the item and count 
+					echo do_action('AHEE_registration_page_step_1_before_questions',$item, $counter);?>
 					<?php echo $attendee_questions;?>
 					
-				<?php if ( $att_nmbr == 1 && $print_copy_info ) : ?>
+				<?php if ( $att_nmbr == 1 && $print_copy_info ) { ?>
 	
 						<input type="hidden" id="primary-attendee" name="qstn<?php echo $prmy_att_input_name ?>[primary_attendee]" value="1" />
 	
-					<?php if ( count( $additional_attendees )) : ?>	
+					<?php if ( count( $additional_attendees )) { ?>	
 					
 						<div id="mer-reg-page-copy-attendee-dv" class="hide-if-no-js">
 						
@@ -54,7 +57,7 @@
 								</label>
 							</p>					
 	
-							<p class="mer-reg-page-copy-attendee-pg"><?php _e('This option allows you to use the above information for all additional attendee question fields. <span>( Please note that some events may have additional questions that you may still be required to answer in order to complete your registration. )</span>', 'event_espresso'); ?></p>
+							<p class="mer-reg-page-copy-attendee-pg"><?php _e('This option allows you to use the above information for all additional attendee question fields. <span>(&nbsp;Please note that some events may have additional questions that you may still be required to answer in order to complete your registration.&nbsp;)</span>', 'event_espresso'); ?></p>
 							
 							<a id="display-more-attendee-copy-options" class="display-the-hidden smaller-text float-right" rel="more-attendee-copy-options" ><?php  _e('more options', 'event_espresso');?></a>
 	
@@ -63,12 +66,12 @@
 								<p class="mer-reg-page-copy-attendee-pg"><?php _e('The following checkboxes allow you to use the above information for only the selected additional event attendees.', 'event_espresso'); ?></p>
 	
 						<?php 						
-								foreach ( $additional_attendees as $attendee ) :
-									foreach ( $attendee as $att ) :	
+								foreach ( $additional_attendees as $attendee ) {
+									foreach ( $attendee as $att ) {
 								
-										if ( $att['event_hdr'] ) : ?>
+										if ( $att['event_hdr'] ) { ?>
 								<h6 class="mer-reg-page-copy-attendee-event-hdr"><?php echo $att['event_hdr']; ?></h6>										
-							<?php	endif; ?>										
+										<?php	} ?>										
 	
 								<p class="event_form_field mer-reg-page-copy-attendee-chk-pg">
 									<label><?php echo __('Attendee #', 'event_espresso') . $att['att_nmbr'];?>
@@ -81,23 +84,20 @@
 									</label>
 								</p>							
 																	
-						<?php	endforeach; ?>
+						<?php	} ?>
 								<div class="clear-float"></div>
 								<hr class="mer-reg-page-copy-attendee-hr" />
-					<?php	endforeach; ?>											
+					<?php	} ?>											
 							</div>
 							<div class="clear-float"></div>					
 						</div>
 				<?php
-							endif;
+							}
 							$print_copy_info = FALSE;
-						 endif; 
-				?>			
-				</fieldset>
-				<?php	
+						}
 						$counter++;
-					else :
-						 if ( $att_nmbr == 1 && $print_copy_info ) : 
+					} else {
+						 if ( $att_nmbr == 1 && $print_copy_info ) {
 				?>
 					<br />
 					<h3><?php _e('No information is required to attend this event. Please proceed to Step 2', 'event_espresso'); ?></h3>
@@ -107,16 +107,20 @@
 							name="qstn[]"
 							value="0"
 					/>					
-		<?php			$print_copy_info = FALSE;
-						endif;
-					endif;
-				 endforeach;
+				<?php
+							$print_copy_info = FALSE;
+						} 
+					}
+				?>			
+				</fieldset>
+				<?php	
+				 }
 		?>
 			</div>			
 	<?php			
-			 endforeach; // $cart['items'] as $line_item 
-		 endif; // $cart['has_items'] 
-	endforeach; // $event_queue as $cart_type
+			 } // $cart['items'] as $line_item 
+		 } // $cart['has_items'] 
+	} // $event_queue as $cart_type
 ?>
 
 			

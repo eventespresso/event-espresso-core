@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
+do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 //This is a template file for displaying a list of events on a page. These functions are used with the [ESPRESSO_EVENTS] shortcode.
 //This is an group of functions for querying all of the events in your databse.
@@ -11,16 +11,14 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
  * method long descriptiom
  *
  * @access 		private		private protected public
- * @param 		int 			$var_name 		int float string array object mixed
  * @return 		void			var type
  */
-function display_all_events($show_recurrence = TRUE) {
+function display_all_events() {
 
 	global $org_options;
 	// error logging
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	$attributes = array( 'show_recurrence' => $show_recurrence );
-	event_espresso_get_event_details($attributes); //This function is located below
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+	event_espresso_get_event_details(); //This function is located below
 }
 
 
@@ -40,7 +38,7 @@ function display_event_espresso_categories($category_identifier = 'null', $css_c
 
 	global $org_options;
 	// error logging
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 	$attributes = array(
 			'category_identifier' => $category_identifier,
@@ -61,16 +59,18 @@ function display_event_espresso_categories($category_identifier = 'null', $css_c
  * @param 		boolean 		$allow_override 		int float string array object mixed
  * @return 		void
  */
-function event_espresso_get_event_details($attributes) {
+function event_espresso_get_event_details( $attributes = array()) {
 
-	global $wpdb, $org_options, $events_in_session, $ee_gmaps_opts, $EE_Cart;
+	global $wpdb, $org_options, $events_in_session, $ee_gmaps_opts, $EE_Cart;	
+	//printr( $org_options, '$org_options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	do_action( 'action_hook_espresso_before_event_list' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+	do_action( 'AHEE_before_event_list', __FILE__, __FUNCTION__ );
 
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/gmap_incl.php');
+	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/gmap_display.helper.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/event_details.helper.php');
-	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Price.class.php' );
+	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Prices.class.php' );
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Selector.class.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
 	$DTM_MDL = EEM_Datetime::instance();
 
@@ -84,7 +84,6 @@ function event_espresso_get_event_details($attributes) {
 			'show_expired' => 'false',
 			'show_secondary' => 'false',
 			'show_deleted' => 'false',
-			'show_recurrence' => 'false',
 			'limit' => '0',
 			'order_by' => 'NULL',
 			'css_class' => 'NULL',
@@ -165,7 +164,6 @@ function event_espresso_get_event_details($attributes) {
 	
 	$SQL .= $show_secondary == 'false' ? " AND eventDetails.event_status != 'S'" : '';
 	$SQL .= $show_deleted == 'false' ? " AND eventDetails.event_status != 'D'" : '';
-	$SQL .= $show_recurrence == 'false' ? " AND eventDetails.recurrence_id = '0'" : ' GROUP BY eventDetails.id';
 	$SQL .= $order_by != NULL ? ' ORDER BY ' . $order_by . ' ASC' : ' ORDER BY date(dateTime.DTT_EVT_start), eventDetails.id ASC';
 	$SQL .= $limit > 0 ? ' LIMIT 0,' . $limit . ' ' : '';
 
@@ -184,12 +182,12 @@ function event_espresso_get_event_details($attributes) {
 		// no transient, so let's run the query
 		if ($category) {
 			// use the category id from the attributes
-			$events = $wpdb->get_results($wpdb->prepare($SQL, $category->id));
+			$events = $wpdb->get_results( $wpdb->prepare( $SQL, $category->id ));
 		} elseif ($venue_id) {
 			// use the venue id  from the attributes
-			$events = $wpdb->get_results($wpdb->prepare($SQL, $venue_id));
+			$events = $wpdb->get_results( $wpdb->prepare( $SQL, $venue_id ));
 		} else {
-			$events = $wpdb->get_results($wpdb->prepare($SQL));
+			$events = $wpdb->get_results( $SQL );
 		}
 			
 		// save the newly created transient value
@@ -207,7 +205,7 @@ function event_espresso_get_event_details($attributes) {
 <div id="mer-ajax-loading" style="display:none;">
 	<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/ajax-loader-grey.gif" /><span>loading...</span>
 </div>
-' . espresso_get_notices() . '
+' . EE_Error::get_notices() . '
 <input id="event-queue-poll-server" type="hidden" value="1" name="event-queue-poll-server">
 
 ';
@@ -228,44 +226,29 @@ function event_espresso_get_event_details($attributes) {
 
 	
 	foreach ($events as $event) {
+			
+//		printr( $event, '$event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	
 		$event_id = $event->id;
 		// add event id to list of event ids to be used for the query cache transient key
-		$event_name = stripslashes_deep($event->event_name);
-		$event_desc = stripslashes_deep($event->event_desc);
-		$event_desc = str_replace('<p></p>', '', $event_desc);
+		$event_name = stripslashes($event->event_name);
+		$event_desc = stripslashes($event->event_desc);
+		//$event_desc = str_replace('<p></p>', '', $event_desc);
 		$overflow_event_id = $event->overflow_event_id;
 
-
-		$event->recurring_events = FALSE;
-		// check for a valid recurrence id and that the recurring events table is set
-		if ($show_recurrence && $event->recurrence_id && defined('EVENT_ESPRESSO_RECURRENCE_TABLE')) {
-			//$event->recurring_events = espresso_event_list_get_recurring_events( $event->recurrence_id );
-			//echo pre_arr($event->recurring_events);
-		}
 
 
 		global $event_meta;
 		$event_meta = unserialize($event->event_meta);
 		$event_meta['is_active'] = $event->is_active;
 		$event_meta['event_status'] = $event->event_status;
-//		$event_meta['start_time'] = empty($event->start_time) ? '' : $event->start_time;
-//		$event_meta['start_date'] = $event->start_date;
-//		$event_meta['registration_start'] = $event->registration_start;
-//		$event_meta['registration_startT'] = $event->registration_startT;
-//		$event_meta['registration_end'] = $event->registration_end;
-//		$event_meta['registration_endT'] = $event->registration_endT;
-
-		//$display_event_date = event_date_display( $event->start_date, get_option('date_format'));
-		//$display_event_date = date_i18n( 'l F jS, Y', strtotime( $event->start_date ));
-		//$event->single_date = date_i18n( 'D M jS', strtotime( $event->start_date ));
-		//$event->single_date = date_i18n( 'l F jS, Y', strtotime( $event->start_date ));
 
 
 		//Here we can create messages based on the event status. These variables can be echoed anywhere on the page to display your status message.
 		$status = event_espresso_get_is_active( $event_id, $event_meta, $event->is_active, $event->event_status );
 
 		$status_display = $status['display_custom'];
+	
 		$status_display_open = $status['status'] == 'REGISTRATION_OPEN' ? $status['display_custom'] : $status['status'];
 		$status_display_ongoing = $status['status'] == 'ONGOING' ? $status['display_custom'] : $status['status'];
 		$status_display_secondary = $status['status'] == 'SECONDARY' ? $status['display_custom'] : $status['status']; //Waitlist event
@@ -281,35 +264,33 @@ function event_espresso_get_event_details($attributes) {
 		$status['status'] = str_replace('_', ' ', $status['status']);
 
 
-// EVENT TIMES
+		// EVENT TIMES
 		if ( $event->datetimes = $edts = $DTM_MDL->get_all_event_dates($event->id) ) {
 			//echo printr($event->datetimes, 'EVENT TIMES for '. $event_name.'  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );	
 			$display_event_date = array_shift( $edts );
 		} else {
 			$display_event_date = FALSE;
 		}
-			
-
-//		echo printr( $event->datetimes, 'event->datetimes <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
-//echo '<h4>$display_event_date : ' . $display_event_date->start() . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-
-
 
 		$event->event_cost = empty($event->event_cost) ? '' : $event->event_cost;
 
-// EVENT PRICING
-		// let's start with an empty array'
-		$EVT_Prices = new EE_Event_Prices( $event->id );
-		$event->prices = $EVT_Prices->get_final_event_prices();
-		//echo printr($event->prices, 'EVENT PRICES <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
-
-		//echo $display_event_prices;
+		// EVENT PRICING
+		$TKT_PRCs = new EE_Ticket_Prices( $event->id );
+		$event->prices = $TKT_PRCs->get_all_final_event_prices();
 
 		$event->currency_symbol = $org_options['currency_symbol'];
 
 		$display_available_spaces = ( $event->display_reg_form && $event->externalURL == '' ) ? TRUE : FALSE;
-		$available_spaces = get_number_of_attendees_reg_limit($event_id, 'available_spaces');
+		$available_spaces = get_number_of_attendees_reg_limit( $event_id, 'available_spaces', $event->reg_limit );
 
+		$venue_title 			= isset( $event->venue_title ) ? $event->venue_title : '';
+		$event_address 		= isset( $event->address ) ? $event->address : '';
+		$event_address2 	= isset( $event->address2 ) ? $event->address2 : '';
+		$event_city 			= isset( $event->city ) ? $event->city : '';
+		$event_state 			= isset( $event->state ) ? $event->state : '';
+		$event_zip 				= isset( $event->zip ) ? $event->zip : '';
+		$event_country 		= isset( $event->country ) ? $event->country : '';
+		
 		//Venue information
 		if ($use_venues) {
 			if (isset($all_venues[$event->venue_id])) {
@@ -346,12 +327,6 @@ function event_espresso_get_event_details($attributes) {
 			}
 		}
 
-		$event_address = empty($event_address) ? '' : $event_address;
-		$event_address2 = empty($event_address2) ? '' : $event_address2;
-		$event_city = empty($event_city) ? '' : $event_city;
-		$event_state = empty($event_state) ? '' : $event_state;
-		$event_zip = empty($event_zip) ? '' : $event_zip;
-		$event_country = empty($event_country) ? '' : $event_country;
 		//Address formatting
 		$venue_address_elements = $event_address . ',';
 		$venue_address_elements .= $event_address2 . ',';
@@ -360,13 +335,13 @@ function event_espresso_get_event_details($attributes) {
 		$venue_address_elements .= $event_zip . ',';
 		$venue_address_elements .= $event_country . ',';
 
-		$location = $event_address;
-		$location .= '<br />' . $event_address2;
-		$location .= '<br />' . $event_city;
-		$location .= ', ' . $event_state;
-		$location .= '<br />' . $event_zip;
-		$location .= '<br />' . $event_country;
-
+		$location = ! empty( $venue_title ) ? '<strong>' . $venue_title . '</strong><br />' : '';
+		$location .= ! empty( $event_address ) ? $event_address . '<br />' : '';
+		$location .= ! empty( $event_address2 ) ? $event_address2 . '<br />' : '';
+		$location .= ! empty( $event_city ) ? $event_city . ', ' : '';
+		$location .= ! empty( $event_state ) ? $event_state . '<br />' : '';
+		$location .= ! empty( $event_country ) ? $event_country . '<br />' : '';
+		$location .= ! empty( $event_zip ) ? $event_zip . '<br />' : '';
 
 		//Google map link creation
 		$google_map_link = espresso_google_map_link(array(
@@ -384,64 +359,31 @@ function event_espresso_get_event_details($attributes) {
 		$ee_gmap_location = $venue_address_elements;
 
 		//Create all meta vars
-		$meta_keys = array(
-				'event_name',
-				'event_desc',
-				'event_address',
-				'event_address2',
-				'event_city',
-				'event_state',
-				'event_zip',
-				'event_status',
-				'start_time', // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-				'registration_startT',
-				'registration_start',
-				'registration_endT',
-				'registration_end',
-				'is_active',
-				'event_country',
-				'start_date',
-				'end_date',
-				'time', // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-				'google_map_link',
-				'price',
-				'event_cost',
+		$more_meta = array(
+				'event_name' => $event_name,
+				'event_desc' => $event_desc,
+				'event_address' => $event_address,
+				'event_address2' => $event_address2,
+				'event_city' => $event_state,
+				'event_state' => $event_name,
+				'event_zip' => $event_zip,
+				'event_status' => $event->event_status,
+//				'start_time' => empty($event->start_time) ? '' : $event->start_time, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+//				'registration_startT' => $event->registration_startT,
+//				'registration_start' => $event->registration_start,
+//				'registration_endT' => $event->registration_endT,
+//				'registration_end' => $event->registration_end,
+				'is_active' => empty($event->is_active) ? '' : $event->is_active,
+				'event_country' => $event->country,
+//				'start_date' => event_date_display( $event->start_date ),
+//				'end_date' => event_date_display( $event->end_date ),
+//				'time' => empty($event->start_time) ? '' : $event->start_time, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+				'google_map_link' => $google_map_link,
+				'price' => empty($event->event_cost) ? '' : $event->event_cost,
+				'event_cost' => empty($event->event_cost) ? '' : $event->event_cost
 		);
-		$meta_values = array(
-				$event_name,
-				$event_desc,
-				$event_address,
-				$event_address2,
-				$event_city,
-				$event_state,
-				$event_zip,
-				$event->event_status,
-				empty($event->start_time) ? '' : $event->start_time, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-				$event->registration_startT,
-				$event->registration_start,
-				$event->registration_endT,
-				$event->registration_end,
-				empty($event->is_active) ? '' : $event->is_active,
-				$event->country,
-				event_date_display($event->start_date, get_option('date_format')),
-				event_date_display($event->end_date, get_option('date_format')),
-				empty($event->start_time) ? '' : $event->start_time, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-				htmlentities($google_map_link),
-				empty($event->event_cost) ? '' : $event->event_cost,
-				empty($event->event_cost) ? '' : $event->event_cost,
-		);
-		$meta_key = array();
-		foreach ($event_meta as $key => $value) {
-			$meta_key[] = $key;
-			$meta_value[] = $value;
-		}
-		foreach ($meta_keys as $key=>$meta_key) {
-			$event->meta_keys[$key] = htmlspecialchars($meta_key);
-		}
-		foreach ($meta_values as $key=>$meta_value) {
-			$event->meta_values[$key] = htmlspecialchars($meta_value);
-		}
-
+		
+		$event->meta = array_merge( $more_meta, $event_meta );
 
 		// EE gmaps needs it's own org_options array populated on a per page basis to enable common queries in gmaps api function
 		if (isset($org_options['map_settings']) && !empty($org_options['map_settings'])) {
@@ -470,19 +412,21 @@ function event_espresso_get_event_details($attributes) {
 
 		$display_thumb_in_list = ( isset($event_meta['display_thumb_in_lists']) && $event_meta['display_thumb_in_lists'] && !empty($event_meta['event_thumbnail_url']) ) ? TRUE : FALSE;
 
-
-		$display_address = ( $location != '' && isset( $org_options['template_settings']['display_address_in_event_list'] ) && $org_options['template_settings']['display_address_in_event_list']) ? TRUE : FALSE;
-
+		
+		$display_address = ( ! empty( $location) && isset( $org_options['template_settings']['display_address_in_event_list'] ) && $org_options['template_settings']['display_address_in_event_list']) ? TRUE : FALSE;
 
 		//Event description
 		if (!empty($event_desc)) {
 			if (isset($org_options['template_settings']['display_description_in_event_list']) && $org_options['template_settings']['display_description_in_event_list']) {
+				$display_desc = TRUE;
 				//Show short descriptions
 				if (isset($org_options['template_settings']['display_short_description_in_event_list']) && $org_options['template_settings']['display_short_description_in_event_list']) {
 					$event_desc = explode('<!--more-->', $event_desc);
 					$event_desc = array_shift($event_desc);
 				}
 				$event_desc = espresso_format_content($event_desc);
+			} else {
+				$display_desc = FALSE;
 			}
 		}
 
@@ -525,17 +469,15 @@ function event_espresso_get_event_details($attributes) {
 				$event->reg_btn['extra_attributes'] = '';
 				$event->reg_btn['reg_limit'] = $event->reg_limit;
 				$event->reg_btn['additional_limit'] = $event->additional_limit;
-				//$event->reg_btn['event_cost'] = $event->event_cost;
+				$event->reg_btn['event_cost'] = $event->event_cost;
 				$event->reg_btn['prices'] = $event->prices;
 				$event->reg_btn['require_pre_approval'] = $event->require_pre_approval;
 				//$event->reg_btn['all_meta'] = $all_meta;
 
-
-
-				$event->reg_btn = apply_filters( 'filter_hook_espresso_event_reg_btn', $event->reg_btn );
+				$event->reg_btn = apply_filters( 'FHEE_event_reg_btn', $event->reg_btn );
 
 				$event_reg_link = '
-			<p id="register_link-' . $event_id . '" class="">
+			<p id="register_link-' . $event_id . '" class="register-link">
 				<a	id="a_register_link-' . $event_id . '"
 						class="ui-button ui-button-big ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all float-right"
 						href="' . $event->reg_url . '"
@@ -543,9 +485,10 @@ function event_espresso_get_event_details($attributes) {
 					>
 					' . __('Register Now', 'event_espresso') . '
 				</a>
+				<div class="clear"></div>
 			</p>';
-
-				$event_reg_link = apply_filters( 'filter_hook_espresso_event_reg_link', $event_reg_link, $event->reg_btn );
+				
+				$event_reg_link = apply_filters( 'FHEE_event_reg_link', $event_reg_link, $event->reg_btn );
 
 				// END OF if ( in_array( $event_status, $open_event_status_list ))
 			} else {
@@ -553,6 +496,8 @@ function event_espresso_get_event_details($attributes) {
 				$can_register_for_event = FALSE;
 				$registration_closed_msg = __('This Event is no longer open for registration.', 'event_espresso');
 			}
+
+		$event = array();
 
 			if ($allow_override == 1) {
 				include('event_list_display.php');
@@ -564,21 +509,16 @@ function event_espresso_get_event_details($attributes) {
 						break;
 
 					case 'PENDING':
-
-						if (current_user_can('administrator') || function_exists('espresso_member_data') && espresso_can_view_event($event_id) == true) {
-							echo '<div class="pending_event">';
-							//include('event_list_display.php');
-							include(espresso_get_event_list_display_template());
-							echo '</div>';
-						}
-
+							if (current_user_can('administrator') || function_exists('espresso_member_data') && espresso_can_view_event($event_id) == true) {
+								echo '<div class="pending_event">';
+								include(espresso_get_event_list_display_template());
+								echo '</div>';
+							}
 						break;
 
 					case 'ACTIVE':
 					default:
-
-						include(espresso_get_event_list_display_template());
-
+							include(espresso_get_event_list_display_template());
 						break;
 				}
 			}

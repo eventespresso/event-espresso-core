@@ -21,17 +21,18 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Registration {
+//require_once ( 'EE_Base_Class.class.php' );
+class EE_Registration extends EE_Base_Class {
 	
     /**
     *	Registration ID
 	* 
 	* 	primary key
 	*	
-	* 	@access	private
+	* 	@access	protected
     *	@var int	
     */
-	private $_REG_ID = FALSE;
+	protected $_REG_ID = FALSE;
 
 	
 	
@@ -41,10 +42,10 @@ class EE_Registration {
 	* 
 	*	foreign key from event table
 	*  
-	*	@access	private
+	*	@access	protected
     *	@var int	
     */
-	private $_EVT_ID = NULL;
+	protected $_EVT_ID = NULL;
 	
 	
 	
@@ -53,10 +54,10 @@ class EE_Registration {
 	* 
 	* 	foreign key from attendee table
 	*
-	*	@access	private
+	*	@access	protected
     *	@var int	
     */
-	private $_ATT_ID = NULL;	
+	protected $_ATT_ID = NULL;	
 	
 	
     /**
@@ -64,10 +65,10 @@ class EE_Registration {
 	*
 	*	foreign key from transaction table
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var int	
     */
-	private $_TXN_ID = NULL;
+	protected $_TXN_ID = NULL;
 	
 	
     /**
@@ -75,10 +76,10 @@ class EE_Registration {
 	* 
     *	foreign key from Datetime table
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var int	
     */
-	private $_DTT_ID = NULL;	
+	protected $_DTT_ID = NULL;	
 	
 	
     /**
@@ -86,10 +87,10 @@ class EE_Registration {
 	* 
     *	foreign key from Price table
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var int	
     */
-	private $_PRC_ID = NULL;	
+	protected $_PRC_ID = NULL;	
 	
 	
     /**
@@ -97,10 +98,10 @@ class EE_Registration {
 	* 
     *	registration status code - Pending, Complete, Incomplete
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_STS_ID = NULL;	
+	protected $_STS_ID = NULL;	
 	
 	
     /**
@@ -108,10 +109,10 @@ class EE_Registration {
 	* 
     *	Unix timestamp
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var int	
     */
-	private $_REG_date = NULL;	
+	protected $_REG_date = NULL;	
 	
 	
     /**
@@ -119,20 +120,20 @@ class EE_Registration {
 	* 
     *	Final Price for ticket after all modifications
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var float	
     */
-	private $_REG_final_price = NULL;	
+	protected $_REG_final_price = NULL;	
 	
 	
 	
     /**
     *	PHP Session ID
 	*  
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_REG_session = NULL;	
+	protected $_REG_session = NULL;	
 	
 	
 	
@@ -141,10 +142,10 @@ class EE_Registration {
 	* 
     *	a unique string for public identification ( = existing registration_id )
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_REG_code = NULL;	
+	protected $_REG_code = NULL;	
 	
 	
 	
@@ -153,33 +154,33 @@ class EE_Registration {
 	* 
     *	a unique string for use in email links, etc
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var string	
     */
-	private $_REG_url_link = NULL;	
+	protected $_REG_url_link = NULL;	
 	
 	
 	
     /**
-    *	Is Primary Attendee
+    *	Attendee Number
 	* 
-    *	whether or not this is the primary attendee for a group of registrations
+    *	Simple attendee counter where the Primary Registrant is always #1
 	* 
-	*	@access	private
-    *	@var boolean	
+	*	@access	protected
+    *	@var int	
     */
-	private $_REG_is_primary = NULL;		
+	protected $_REG_count = 1;		
 	
 	
     /**
-    *	Is Group Registration
+    *	Group Size
 	* 
-    *	whether or not this registration is part of a group of registrations
+    *	total number of registrations that were performed in the same session
 	* 
-	*	@access	private
-    *	@var boolean	
+	*	@access	protected
+    *	@var int	
     */
-	private $_REG_is_group_reg = NULL;	
+	protected $_REG_group_size = 1;	
 	
 	
     /**
@@ -187,10 +188,10 @@ class EE_Registration {
 	* 
     *	whether or not the attendee has confirmed they will be going to the event
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var boolean	
     */
-	private $_REG_att_is_going = 0;	
+	protected $_REG_att_is_going = 0;	
 	
 	
     /**
@@ -198,21 +199,74 @@ class EE_Registration {
 	* 
     *	whether or not the attendee checked in at the event
 	* 
-	*	@access	private
+	*	@access	protected
     *	@var boolean	
     */
-	private $_REG_att_checked_in = NULL;	
+	protected $_REG_att_checked_in = NULL;	
 
-
-
-
+	
+	/**
+	 * Event for which this registration is for
+	 * 
+	 * @access protected
+	 * @var object (should be EE_Event, but its not create dyet)
+	 */
+	protected $_Event = NULL;
+	
+	
+	/**
+	 * Attendee data for this registration
+	 * 
+	 * @access protected
+	 * @var EE_Attendee
+	 */
+	protected $_Attendee = NULL;
+	
+	
+	/**
+	 * Transaction of this Registration
+	 * @access protected
+	 * @var EE_Tranaction
+	 */
+	protected $_Transaction = NULL;
+	
+	
+	/**
+	 * Datetime of the Event this registratino is for
+	 * @access protected
+	 * @var EE_Datetime
+	 */
+	protected $_Datetime = NULL;
+	
+	
+	/**
+	 * Price of the Event this registration paid
+	 * @access protected
+	 * @var EE_Price
+	 */
+	protected $_Price = NULL;
+	
+	
+	/**
+	 * Status of the registration
+	 * @access protected
+	 * @var EE_Status (looks unfinished right now)
+	 */
+	protected $_Status = NULL;
+	
+	/**
+	 * Answers made to questions for this registration
+	 * @access protected 
+	 * @var EE_Answer[]
+	 */
+	protected $_Answers = NULL;
 
 
 	/**
 	*  Registration constructor
 	*
 	* @access 		public
-	* @param 		int 				$EVT_ID 							Event ID
+	* @param 		int/array 				$EVT_ID 							Event ID or array of column-values, where keys are column names
 	* @param 		int 				$ATT_ID 							Attendee ID
 	* @param 		int 				$TXN_ID 							Transaction ID
 	* @param 		int 				$DTT_ID 							Transaction ID
@@ -223,8 +277,8 @@ class EE_Registration {
 	* @param 		string			$REG_session  				PHP Session ID
 	* @param 		string 			$REG_code  					Registration Code
 	* @param 		string 			$REG_url_link					Registration URL Link
-	* @param 		boolean		$REG_is_primary 			Is Primary Attendee
-	* @param 		boolean		$REG_is_group_reg		Is Group Registration
+	* @param 		int				$REG_count 					Attendee Counter
+	* @param 		boolean		$REG_group_size			Group Size
 	* @param 		boolean		$REG_att_is_going		 	Attendee Is Going
 	* @param 		boolean		$REG_att_checked_in	Attendee Checked In
 	* @param 		int 				$REG_ID 							Registration ID
@@ -241,30 +295,23 @@ class EE_Registration {
 													$REG_session = NULL, 
 													$REG_code = NULL, 
 													$REG_url_link = NULL, 
-													$REG_is_primary = NULL, 
-													$REG_is_group_reg = NULL, 
+													$REG_count = 1, 
+													$REG_group_size = 1, 
 													$REG_att_is_going = NULL, 
 													$REG_att_checked_in = NULL, 
 													$REG_ID = NULL 
 												) {
-												
-		// REG_ID 	EVT_ID 	ATT_ID 	TXN_ID 	DTT_ID 	PRC_ID 	STS_ID 	REG_date 	REG_session 	REG_code 	REG_is_primary 	REG_is_group_reg 	REG_att_is_going 	REG_att_checked_in
-		$this->_REG_ID 						= $REG_ID;
-		$this->_EVT_ID 						= $EVT_ID;
-		$this->_ATT_ID 						= $ATT_ID;
-		$this->_TXN_ID 						= $TXN_ID;
-		$this->_DTT_ID 						= $DTT_ID;
-		$this->_PRC_ID 						= $PRC_ID;
-		$this->_STS_ID 						= $STS_ID;
-		$this->_REG_date 					= $REG_date;
-		$this->_REG_final_price		= $REG_final_price;
-		$this->_REG_session 				= $REG_session;
-		$this->_REG_code					= $REG_code;
-		$this->_REG_url_link				= $REG_url_link;
-		$this->_REG_is_primary 		= $REG_is_primary;
-		$this->_REG_is_group_reg 	= $REG_is_group_reg;
-		$this->_REG_att_is_going 	= $REG_att_is_going;
-		$this->_REG_att_checked_in= $REG_att_checked_in;
+		if(is_array($EVT_ID)){
+			parent::__construct($EVT_ID);
+			return;
+		}
+		$reflector = new ReflectionMethod($this,'__construct');	
+		$arrayForParent=array();
+		foreach($reflector->getParameters() as $param){
+			$paramName=$param->name;
+			$arrayForParent[$paramName]=${$paramName};
+		}
+		parent::__construct($arrayForParent);											
 	}
 
 
@@ -356,28 +403,28 @@ class EE_Registration {
 
 
 	/**
-	*		Set Is Primary Attendee
+	*		Set Attendee Counter
 	* 
 	* 		@access		public		
-	*		@param		boolean		$REG_is_primary 		Primary Attendee
+	*		@param		boolean		$REG_count 		Primary Attendee
 	*/	
-	public function set_is_primary( $REG_is_primary = FALSE ) {		
-		if ( ! $this->_check_for( $REG_is_primary, 'Primary Attendee' )) { return FALSE; }
-		$this->_REG_is_primary = absint( $REG_is_primary );
+	public function set_count( $REG_count = FALSE ) {		
+		if ( ! $this->_check_for( $REG_count, 'Attendee Count' )) { return FALSE; }
+		$this->_REG_count = absint( $REG_count );
 		return TRUE;
 	}
 
 
 
 	/**
-	*		Set Is Group Registration
+	*		Set Group Size
 	* 
 	* 		@access		public		
-	*		@param		boolean		$REG_is_group_reg 		Group Registration
+	*		@param		boolean		$REG_group_size 		Group Registration
 	*/	
-	public function set_is_group_reg( $REG_is_group_reg = FALSE ) {		
-		if ( ! $this->_check_for( $REG_is_group_reg, 'Group Registration' )) { return FALSE; }
-		$this->_REG_is_group_reg = absint( $REG_is_group_reg );
+	public function set_group_size( $REG_group_size = FALSE ) {		
+		if ( ! $this->_check_for( $REG_group_size, 'Group Size' )) { return FALSE; }
+		$this->_REG_group_size = absint( $REG_group_size );
 		return TRUE;
 	}
 
@@ -390,9 +437,26 @@ class EE_Registration {
 	*		@param		int		$STS_ID 		Status ID
 	*/	
 	public function set_status( $STS_ID = FALSE ) {		
-		if ( ! $this->_check_for( $STS_ID, 'Status ID' )) { return FALSE; }
-		$this->_STS_ID = absint( $STS_ID );
-		return TRUE;
+		if ( ! $this->_check_for( $STS_ID, 'Status ID' )) { 
+			return FALSE; 
+		}
+		//make sure related TXN is set
+		$this->get_first_related('Transaction');
+		// if status is ANYTHING other than approved, OR if it IS approved AND the TXN is paid in full (or free)
+		if ( $STS_ID != EEM_Registration::status_id_approved || ( $STS_ID == EEM_Registration::status_id_approved && $this->_Transaction->is_completed() )) {
+			$this->_STS_ID = strtoupper( sanitize_key( $STS_ID ));
+			return TRUE;
+		} else {
+			$txn_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$this->_TXN_ID ), TXN_ADMIN_URL );
+			$txn_link = '
+			<a id="reg-admin-sts-error-txn-lnk" href="' . $txn_url . '" title="' . __( 'View transaction #', 'event_espresso' ) . $this->_TXN_ID . '">
+				' . __( 'View the Transaction for this Registration', 'event_espresso' ) . '
+			</a>';			
+			$msg =  __( 'Registrations can only be approved if the corresponding transaction is completed and has no monies owing.', 'event_espresso' ) . $txn_link;
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}	
+		
 	}
 
 
@@ -450,8 +514,8 @@ class EE_Registration {
 	* 		@access		public		
 	*		@param		boolean		$REG_att_is_going 		Attendee Is Going
 	*/	
-	public function set_att_is_going( $REG_att_is_going = FALSE ) {		
-		if ( ! $this->_check_for( $REG_att_is_going, 'Attendee Is Going' )) { return FALSE; }
+	public function set_att_is_going( $REG_att_is_going = NULL ) {		
+		if ( $REG_att_is_going == NULL ) { return FALSE; }
 		$this->_REG_att_is_going = absint( $REG_att_is_going );
 		return TRUE;
 	}
@@ -464,11 +528,33 @@ class EE_Registration {
 	* 		@access		public		
 	*		@param		boolean		$REG_att_checked_in 		Attendee Checked In
 	*/	
-	public function set_att_checked_in( $REG_att_checked_in = FALSE ) {		
-		if ( ! $this->_check_for( $REG_att_checked_in, 'Attendee Checked In' )) { return FALSE; }
+	public function set_att_checked_in( $REG_att_checked_in = NULL ) {		
+		if ( $REG_att_checked_in === NULL ) { return FALSE; }
 		$this->_REG_att_checked_in = absint( $REG_att_checked_in );
 		return TRUE;
 	}
+
+
+
+
+
+
+	/**
+	*		check that var has been passed to method
+	* 
+	* 		@access		private
+	*/	
+	private function _check_for( $var = FALSE, $var_name ) {
+
+		if ( ! $var ) {
+			$msg = sprintf( __( 'No value for %s was supplied.', 'event_espresso' ), $var_name );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		} else {
+			return TRUE;
+		}
+	}
+
 
 
 
@@ -478,7 +564,9 @@ class EE_Registration {
 	*		save object to db
 	* 
 	* 		@access		private
-	* 		@param		array		$where_cols_n_values		
+	* 		@param		array		$where_cols_n_values
+	*		@return int, 1 on a successful update, the ID of
+	*					the new entry on insert; 0 on failure				
 	*/	
 	private function _save_to_db( $where_cols_n_values = FALSE ) {
 		
@@ -487,18 +575,18 @@ class EE_Registration {
 		$set_column_values = array(		
 				'EVT_ID' 						=> $this->_EVT_ID,
 				'ATT_ID' 						=> $this->_ATT_ID,
-				'TXN_ID' 						=> $this->_TXN_ID,
+				'TXN_ID' 					=> $this->_TXN_ID,
 				'DTT_ID' 						=> $this->_DTT_ID,
 				'PRC_ID' 						=> $this->_PRC_ID,
 				'STS_ID' 						=> $this->_STS_ID,
 				'REG_date' 					=> $this->_REG_date,
 				'REG_final_price' 		=> $this->_REG_final_price,
-				'REG_session' 				=> $this->_REG_session,
+				'REG_session' 			=> $this->_REG_session,
 				'REG_code'					=> $this->_REG_code,
 				'REG_url_link'				=> $this->_REG_url_link,
-				'REG_is_primary' 		=> $this->_REG_is_primary,
-				'REG_is_group_reg' 	=> $this->_REG_is_group_reg,
-				'REG_att_is_going' 		=> $this->_REG_att_is_going,
+				'REG_count' 				=> $this->_REG_count,
+				'REG_group_size' 		=> $this->_REG_group_size,
+				'REG_att_is_going' 	=> $this->_REG_att_is_going,
 				'REG_att_checked_in' => $this->_REG_att_checked_in
 		);
 
@@ -521,50 +609,35 @@ class EE_Registration {
 	* 		@access		public
 	*/	
 	public function update() {
-		return $this->_save_to_db( array( 'TXN_ID' => $this->_TXN_ID ));
+		return $this->_save_to_db( array( 'REG_ID' => $this->_REG_ID ));
 	}
 
 
-
-
-
 	/**
-	*		insert new db record
-	* 
-	* 		@access		public
-	*/	
+	*	insert new db record
+	*
+	* @access		public
+	*/
 	public function insert() {
 		return $this->_save_to_db();
 	}
 
-
-
-
-
-
 	/**
-	*		check that var has been passed to method
-	* 
-	* 		@access		private
-	*/	
-	private function _check_for( $var = FALSE, $var_name ) {
-		global $espresso_notices;
-		if ( ! $var ) {
-			$espresso_notices['errors'][] = 'No value for '.$var_name.' was supplied.';
-			return FALSE;
-		} else {
-			return TRUE;
-		}
+	 * Returns the related EE_Transaction to this registration
+	 * @return EE_Transaction	 
+	 */
+	public function transaction(){
+		return $this->get_first_related('Transaction');
 	}
-
-
-
-
-
-
-
-
-
+	
+	
+	/**
+	 * Gets the reltaed attendee
+	 * @return EE_Attendee
+	 */
+	public function attendee(){
+		return $this->get_first_related('Attendee');
+	}
 
 	/**
 	*		get Registration ID
@@ -597,6 +670,43 @@ class EE_Registration {
 		global $wpdb;
 		$SQL = 'SELECT event_name, slug FROM ' . $wpdb->prefix . 'events_detail WHERE id = %d';
 		return $wpdb->get_var( $wpdb->prepare( $SQL, $this->_EVT_ID ));
+	}
+
+
+
+	/**
+	 * get Event daytime id
+	 *
+	 * @access public
+	 * @return int
+	 */
+	public function event_daytime_id() {
+		if ( empty( $this->_EVT_ID ) ) {
+			return FALSE;
+		}
+
+		global $wpdb;
+		$SQL = "SELECT DTT_ID FROM " . ESP_DATETIME . " WHERE EVT_ID = %s";
+		return $wpdb->get_var( $wpdb->prepare( $SQL, $this->_EVT_ID ) );
+	}
+
+
+	/**
+	 * just get the entire event
+	 * @todo eventually this will change when events are in a proper model/class and can be retrieved with `get_first_related()`
+	 *
+	 * @access public
+	 * @return object
+	 */
+	public function event() {
+		if ( empty ( $this->_EVT_ID ) ) {
+			return FALSE;
+		}
+
+		global $wpdb;
+		$SQL = "SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id = %s";
+		$event = $wpdb->get_results( $wpdb->prepare( $SQL, $this->_EVT_ID ) );
+		return $event[0];
 	}
 
 
@@ -648,25 +758,77 @@ class EE_Registration {
 	public function reg_url_link() {
 		return $this->_REG_url_link;
 	}
-
-
-
+	
+	
+	
+	
+	
 	/**
-	*		get Is Primary Attendee
+	 * Echoes out invoice_url()
+	 * @return void
+	 */
+	public function e_invoice_url(){
+		echo $this->invoice_url();
+	}
+	
+	
+	
+	
+	
+	/**
+	 * Gets the string which represents the URL for the invoice PDF for this registration.
+	 * Dependant on code in ee/includes/functions/init espresso_export_invoice
+	 * @return string
+	 */
+	public function invoice_url(){
+		return home_url() . '/?invoice_launch=true&amp;id=' . $this->reg_url_link();
+	}
+
+	
+	
+	
+	
+	
+	/**
+	 * Echoes out payment_overview_url
+	 */
+	public function e_payment_overview_url(){
+		echo $this->payment_overview_url();
+	}
+	
+	
+	
+	
+	
+	/**
+	 * Gets the URL of the thank you page with this registraiton REG_url_link added as
+	 * a query parameter
+	 * @return string
+	 */
+	public function payment_overview_url(){
+		global $org_options;
+		return add_query_arg(array('e_reg_url_link'=>$this->reg_url_link()),get_permalink($org_options['return_url']));
+	}
+
+
+	
+	
+	/**
+	*		get  Attendee Number
 	* 		@access		public
 	*/	
-	public function is_primary() {
-		return $this->_REG_is_primary;
+	public function count() {
+		return $this->_REG_count;
 	}
 
 
 
 	/**
-	*		get Is Group Registration
+	*		get Group Size
 	* 		@access		public
 	*/	
-	public function is_group_reg() {
-		return $this->_REG_is_group_reg;
+	public function group_size() {
+		return $this->_REG_group_size;
 	}
 
 
@@ -688,6 +850,18 @@ class EE_Registration {
 	public function date() {
 		return $this->_REG_date;
 	}
+	
+	/**
+	 * get datetime object for this registration
+	 *
+	 * @access public
+	 * @return EE_Datetime
+	 */
+	public function date_obj() {
+		require_once('EEM_Datetime.model.php');
+		$EEMD = EEM_Datetime::instance();
+		return $EEMD->get_date_time_by_dtt_id( $this->_DTT_ID );
+	}
 
 
 
@@ -698,7 +872,37 @@ class EE_Registration {
 	public function price_paid() {
 		return $this->_REG_final_price;
 	}
+	
+	
+	/**
+	 * Returns a nice version of the status for displaying to customers
+	 * @return string
+	 */
+	public function pretty_status(){
+		require_once('EEM_Registration.model.php');
+		switch($this->status_ID()){
+			case EEM_Registration::status_id_approved:
+				return __("Approved",'event_espresso');
+			case EEM_Registration::status_id_not_approved:
+				return __("Not Approved",'event_espresso');
+			case EEM_Registration::status_id_pending:
+				return __("Pending Approval",'event_espresso');
+			case EEM_Registration::status_id_cancelled:
+				return __("Cancelled",'event_espresso');
+			default:
+				return __("Unknown",'event_espresso');
+		}
+	}
 
+	
+	
+	/**
+	 * Prints out the return value of $this->pretty_status()
+	 * @return void
+	 */
+	public function e_pretty_status(){
+		echo $this->pretty_status();
+	}
 
 
 	/**
@@ -707,6 +911,20 @@ class EE_Registration {
 	*/	
 	public function price_ID() {
 		return $this->_PRC_ID;
+	}
+
+
+
+	/**
+	 * get price object for this registration
+	 *
+	 * @access public
+	 * @return EE_Price
+	 */
+	public function price_obj() {
+		require_once('EEM_Price.model.php');
+		$EEMP = EEM_Price::instance();
+		return $EEMP->get_price_by_ID( $this->_PRC_ID );
 	}
 
 
@@ -729,60 +947,29 @@ class EE_Registration {
 		return $this->_REG_att_checked_in;
 	}
 
-
-
-
-
 	/**
-	 *		@ override magic methods
-	 *		@ return void
-	 */	
-	public function __get($a) { return FALSE; }
-	public function __set($a,$b) { return FALSE; }
-	public function __unset($a) { return FALSE; }
-	public function __clone() { return FALSE; }
-	public function __wakeup() { return FALSE; }
+	 * Gets all the answers for this registration, and prepopulates their related
+	 * questions onto each EE_Answer object
+	 * @param array $where_col_n_values
+	 * @param string $orderby
+	 * @param string $order
+	 * @param array $operators
+	 * @param mixed $limit
+	 * @param string $output
+	 * @return EE_Answer[]
+	 */
+	public function answers_and_questions( $where_col_n_values=null, $orderby=null, $order=null, $operators='=', $limit=null, $output='OBJECT_K'){
+		$answers= $this->get_many_related('Answers', $where_col_n_values, $orderby, $order, $operators, $limit, $output);
+		$reg_model=$this->_get_model();
+		$answers_with_questions=$reg_model->preload_related_models_of_type_onto('Question', $answers);
+		return $answers_with_questions;
+	}
+
 
 
 
 }
 
 
-/*
-	EXAMPLE USAGE
-
-	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
-	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
-	$REG = EEM_Registration::instance();	
-
-	// we'll need the PHP Session ID  so let's add the EE Session
-	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Session.class.php' );
-	$SSN = EE_Session::instance();	
-	
-	//$EVT_ID, $ATT_ID, $TXN_ID, $REG_session, $REG_code, $REG_is_primary, $REG_is_group_reg, $STS_ID, $REG_date, $PRC_ID, $REG_att_is_going, $REG_att_checked_in
-	$reg_1 = new EE_Registration( 1, 45, 32, $SSN->id(), '4e7962a15f3b72.67409710', 1, 1, 'RPN', time(), 77, 0, 0 );
-	$results = $reg_1->insert();
-	
-	$reg_2 = new EE_Registration( 1, 46, 32, $SSN->id(), '4e79639b777514.18231129', 0, 1, 'RPN', time(), 77, 0, 0 );
-	$results = $reg_2->insert();
-	
-	$transactions = $REG->get_all_registrations();
-	echo printr( $transactions, 'get all registrations' );
-
-	$where_cols_n_values = array( 'REG_is_primary' => 1 );
-	$transactions = $REG->get_all_registrations( $where_cols_n_values );
-	echo printr( $transactions, 'get primary attendee registrations' );
-
-	$registrations = $REG->get_registration( 1 );
-	echo printr( $registrations, 'get_registration( 1 )' );
-
-	$registrations = $REG->get_registration( 2 );
-	echo printr( $registrations, 'get_registration( 2 )' );
-
-
-*/
-
-
 /* End of file EE_Registration.class.php */
 /* Location: includes/classes/EE_Registration.class.php */	
-	

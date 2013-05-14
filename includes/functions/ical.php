@@ -1,7 +1,7 @@
 <?php
 
 function espresso_ical() {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	$name = $_REQUEST['event_summary'] . ".ics";
 	$output = "BEGIN:VCALENDAR\n" .
 					"PRODID:-//xyz Corp//NONSGML PDA Calendar Version 1.0//EN\n" .
@@ -40,12 +40,12 @@ function espresso_ical() {
 
 function espresso_ical_prepare($attendee_id) {
 	global $org_options, $wpdb;
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	$sql = "SELECT ea.event_id, ed.alt_email, ed.start_date, ed.end_date, ed.event_name, ed.event_desc, ea.event_time, ea.end_time FROM " . EVENTS_ATTENDEE_TABLE . " ea";
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+	$sql = "SELECT ea.event_id, ed.start_date, ed.end_date, ed.event_name, ed.event_desc, ea.event_time, ea.end_time FROM " . EVENTS_ATTENDEE_TABLE . " ea";
 	$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " ed ON ea.event_id = ed.id";
 	$sql .= " WHERE ea.id = '" . $attendee_id . "'";
 	$data = $wpdb->get_row($sql, OBJECT);
-	$contact = ($data->alt_email == '') ? $org_options['contact_email'] : $data->alt_email . ',' . $org_options['contact_email'];
+	$contact = $org_options['contact_email'];
 	$start_date = strtotime($data->start_date . ' ' . $data->event_time);
 	$end_date = strtotime($data->end_date . ' ' . $data->end_time);
 	$sql = "SELECT ec.category_name FROM " . EVENTS_CATEGORY_TABLE . " ec ";
@@ -82,4 +82,4 @@ function espresso_ical_prepare($attendee_id) {
 	echo $output;
 }
 
-add_action('action_hook_espresso_display_add_to_calendar', 'espresso_ical_prepare');
+add_action('AHEE_display_add_to_calendar', 'espresso_ical_prepare');

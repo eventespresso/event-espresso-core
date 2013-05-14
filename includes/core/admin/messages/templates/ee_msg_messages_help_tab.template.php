@@ -1,0 +1,3 @@
+<h2><?php _e('What is the Event Espresso Messages System?', 'event_espresso'); ?></h2>
+<p><?php _e('The Event Espresso Messages system is a powerful framework that Event Espresso uses to prepare <strong>messages</strong> for different types of use (message types) and delivered by different <strong>messengers</strong>.', 'event_espresso'); ?></p>
+<p><?php _e('We\'ve intentionally created this framework so that we have as much flexibility as possible for future ideas that we think of (or customers think of) for the kinds of messages that get sent out related to your events.', 'event_espresso'); ?></p>

@@ -5,14 +5,17 @@
 // The following keys are available in the $data array:
 // event_id, event_name, is_active, registration_url, reg_start_date, display_reg_form, event, use_coupon_code, use_groupon_code, location, org_options, google_map_link, show_ee_gmap_no_shortcode, end_date, start_date, display_desc, event_desc
 function espresso_display_reg_page($data) {
-	?>
+?>
 
 	<div id="event_espresso_registration_form" class="event-display-boxes">
 		<h2 class="event_title ui-widget-header ui-corner-top" id="event_title-<?php echo $data['event_id']; ?>"> <?php echo $data['event_name'] ?> <?php echo $data['is_active']['status'] == 'EXPIRED' ? ' - <span class="expired_event">Event Expired</span>' : ''; ?> <?php echo $data['is_active']['status'] == 'PENDING' ? ' - <span class="expired_event">Event is Pending</span>' : ''; ?> <?php echo $data['is_active']['status'] == 'DRAFT' ? ' - <span class="expired_event">Event is a Draft</span>' : ''; ?> </h2>
 
 		<div class="event_espresso_form_wrapper event-data-display ui-widget-content ui-corner-bottom">
+		
 			<form method="post" action="<?php echo $data['registration_url']; ?>" id="registration_form">
 
+			<?php echo EE_Error::get_notices(); ?>
+			
 				<?php
 				switch ($data['is_active']['status']) {
 					case 'EXPIRED': //only show the event description.
@@ -70,13 +73,13 @@ function espresso_display_reg_page($data) {
 						if ($data['display_reg_form']) {
 
 
-							do_action('action_hook_espresso_ticket_selector', $data['event']);
+							do_action( 'AHEE_ticket_selector', $data['event'] );
 
 							//Added for seating chart addon. Creates a field to select a seat from a popup.
-							do_action('action_hook_espresso_seating_chart_select', $data['event_id']);
+							do_action('AHEE_seating_chart_select', $data['event_id']);
 
 							/* Displays the social media buttons */
-							do_action('action_hook_espresso_social_display_buttons', $data['event_id']);
+							do_action('AHEE_social_display_buttons', $data['event_id']);
 
 							//Coupons
 							if (function_exists('event_espresso_coupon_registration_page') && $data['use_coupon_code']) {
@@ -117,7 +120,7 @@ function espresso_display_reg_page($data) {
 
 
 				/* Display the address and google map link if available */
-				if ($data['location'] != '' && (empty($data['org_options']['template_settings']['display_address_in_regform']) || $data['org_options']['template_settings']['display_address_in_regform'])) {
+				if ($data['location'] != '' && (isset($data['org_options']['template_settings']['display_address_in_regform']) && $data['org_options']['template_settings']['display_address_in_regform'])) {
 					?>
 					<p class="event_address" id="event_address-<?php echo $data['event_id'] ?>"><span class="section-title"><?php echo __('Address:', 'event_espresso'); ?></span> <br />
 						<span class="address-block"> <?php echo stripslashes_deep($data['location']); ?><br />
@@ -177,16 +180,8 @@ function espresso_display_reg_page($data) {
 				//End display description
 				?>
 			</form>
-	<?php echo '<p class="register-link-footer">' . espresso_edit_this($data['event_id']) . '</p>' ?> </div>
-		<form action="" method="post">
-			<input type="hidden" name="clear_cart" value="true"/>
-			<input type="submit"
-				name="clear-cart"
-				class="event-list-reg-link-sbmt-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx float-right"
-				value="<?php _e('Clear Cart', 'event_espresso'); ?>"
-				role="button"
-				/>
-		</form>
+	<?php echo '<p class="register-link-footer">' . espresso_edit_this($data['event_id']) . '</p>' ?> 
 	</div>
-	<?php
+</div>
+<?php
 }

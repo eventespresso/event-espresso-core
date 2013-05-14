@@ -8,26 +8,31 @@
 					<th class="jst-left"><?php _e( '#', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Event Name', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Attendee', 'event_espresso' );?></th>
-					<th class="jst-rght"><?php _e( 'Price Paid', 'event_espresso' );?></th>
+					<th class="jst-rght"><?php _e( 'Ticket Price', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Email', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Address', 'event_espresso' );?></th>
 				</tr>
 			</thead>
 			<tbody>
-		<?php foreach ( $event_attendees as $event => $attendees ) : ?>
-			<?php foreach ( $attendees as $att_nmbr => $attendee ) : ?>
-				<?php //echo printr( $attendee, '$attendee' ); 
-					$att = $attendee['att_obj'];
-					$reg = $attendee['reg_obj'];
-				?>
+		<?php if ( isset( $event_attendees ) && is_array( $event_attendees )) : ?>
+			<?php foreach ( $event_attendees as $event => $attendees ) : ?>
+				<?php foreach ( $attendees as $att_nmbr => $attendee ) : ?>
+					<?php 
+						//printr( $attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+						$att = $attendee['att_obj'];
+						$reg = $attendee['reg_obj'];
+						$attendee['fname'] = isset( $attendee['fname'] ) ? $attendee['fname'] : $attendees[1]['fname'];
+						$attendee['lname'] = isset( $attendee['lname'] ) ? $attendee['lname'] : $attendees[1]['lname'];
+						$attendee['email'] = isset( $attendee['email'] ) ? $attendee['email'] : $attendees[1]['email'];						
+					?>
 				<tr>
 					<td class="jst-left"><?php echo$att_nmbr;?></td>
-					<td class="jst-left"><?php echo $event;?></td>
+					<td class="jst-left"><?php echo stripslashes( $event );?></td>
 					<td class="jst-left">
 						<?php 
 						$attendee_name = $att->fname() != '' ? $att->fname() : $attendee['fname'];
 						$attendee_name .= $att->lname() != '' ? ' ' . $att->lname() : ' ' . $attendee['lname'];
-						$att_link = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$att->ID() ), ATT_ADMIN_URL ), 'edit_attendee_nonce' ); 
+						$att_link = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'id'=>$att->ID() ), REG_ADMIN_URL ); 
 						?>
 						<a href="<?php echo $att_link; ?>" title="<?php _e( 'View details for this attendee', 'event_espresso' );?>">
 							<?php echo $attendee_name;?>
@@ -45,8 +50,9 @@
 						?>
 					</td>
 				</tr>
-			<?php endforeach; // $attendees?>
-		<?php endforeach; // $event_attendees?>
+				<?php endforeach; // $attendees?>
+			<?php endforeach; // $event_attendees?>
+		<?php endif; // isset( $event_attendees )?>
 			</tbody>
 		</table>
 	</div>

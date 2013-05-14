@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-abstract class EEM_Base {
+abstract class EEM_Base extends EE_Base {
 
   	// private instance of the Espresso_model object
 	//private static $_instance = NULL;
@@ -30,16 +30,23 @@ abstract class EEM_Base {
 	// array representation of a table and the data types for each field
 	protected $table_data_types = array();
 
-	protected $singlular_item = 'Item';
-	protected $plual_item = 'Items';
+	protected $singlular_item= NULL;
+	protected $plural_item = NULL;
 
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
-	 *		@access private
+	 *		@access protected
 	 *		@return void
 	 */
-	private function __construct() {
+	protected function __construct() {
+		if(isNull($this->singlular_item)){
+			$this->singlular_item = __('Item','event_espresso');
+		}
+		if(isNull($this->plural_item)){
+			$this->plural_item = __('Items','event_espresso');
+		}
+		
 	}
 
 	function get_table_data_types() {
@@ -56,11 +63,13 @@ abstract class EEM_Base {
 	 *		@access protected
 	 *		@param mixed (string, array) - $orderby - cloumn names to be used for sorting
 	 *		@param mixed (string, array) - $sort - ASC or DESC
-	 *		@param string - $output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N
+	 *		@param array $limit send along limit offset for paging purposes
+	 *		@param string - $output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N, COUNT ( = count of rows)
 	 *		@return mixed (object, array)
 	 */
-	protected function select_all ( $orderby=FALSE, $sort=FALSE, $output='OBJECT_K' ) {
-		$results = $this->_select_all ( $this->table_name, $orderby, $sort, $output );
+	protected function select_all ( $orderby=FALSE, $sort=FALSE, $limit = FALSE, $output='OBJECT_K' ) {
+
+		$results = $this->_select_all ( $this->table_name, $orderby, $sort, $limit, $output );
 		return $results;
 	}
 
@@ -76,13 +85,34 @@ abstract class EEM_Base {
 	 *		@param mixed (string, array) 		$where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause
 	 *		@param mixed (string, array)		$orderby - cloumn names to be used for sorting
 	 *		@param string								$sort - ASC or DESC
+	 *		@param array $limit send along limit offset for paging purposes
 	 *		@param mixed (string, array)		$operator -  operator to be used for WHERE clause  > = <
-	 *		@param string								$output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N
+	 *		@param string								$output - WP output types && count - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N, COUNT (=count of rows);
 	 *		@return mixed (object, array)
 	 */
-	protected function select_all_where ( $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $output = 'OBJECT_K' ) {
-		$results = $this->_select_all_where ( $this->table_name, $this->table_data_types, $where_cols_n_values, $orderby, $sort, $operator, $output );
+	protected function select_all_where ( $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $limit = FALSE, $output = 'OBJECT_K' ) {
+		$results = $this->_select_all_where ( $this->table_name, $this->table_data_types, $where_cols_n_values, $orderby, $sort, $operator, $limit, $output );
 		return $results;
+	}
+	
+	/**
+	 *		Function for running a join query
+	 *		@param string $joinStatement eg "tablex innner join tably on tablex.x=tabley.y"
+	 *		@param array $table_data_types where each key is the name of a column, and each value is its wp data type, eg '%d','%s','%f'
+	 *		@param mixed (string, array) 		$where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause
+	 *		@param mixed (string, array)		$orderby - cloumn names to be used for sorting
+	 *		@param string								$sort - ASC or DESC
+	 *		@param array $limit send along limit offset for paging purposes
+	 *		@param mixed (string, array)		$operator -  operator to be used for WHERE clause  > = <
+	 *		@param string								$output - WP output types && count - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N, COUNT (=count of rows);
+	 *		@return mixed (object, array)
+	 * @return type
+	 */
+	protected function select_all_join_where($joinStatement,$table_data_types=FALSE,$where_cols_n_values=FALSE,$orderby=FALSE,$sort='ASC',$operator='=',$limit=FALSE,$output='OBJECT_K'){
+		if(empty($table_data_types)){
+			$table_data_types=$this->table_data_types;
+		}
+		return $this->_select_all_where($joinStatement, $table_data_types, $where_cols_n_values, $orderby, $sort, $operator, $limit, $output);
 	}
 
 
@@ -205,27 +235,32 @@ abstract class EEM_Base {
 	 *		@param string - $em_table_name -
 	 *		@param mixed (string, array) - $orderby - cloumn names to be used for sorting
 	 *		@param string - $sort - ASC or DESC
-	 *		@param string - $output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N
+	 *		@param array $limit send along limit offset for paging purposes
+	 *		@param string - $output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N, COUNT ( - count of rows )
 	 *		@return mixed (object, array)
 	 */
-	private function _select_all (  $em_table_name=FALSE, $orderby = FALSE, $sort = 'ASC', $output = 'OBJECT_K' )	{
-
-		global $espresso_notices;
+	private function _select_all (  $em_table_name=FALSE, $orderby = FALSE, $sort = 'ASC', $limit = FALSE, $output = 'OBJECT_K' )	{
 
 		// what?? no table name ??? Get outta here!!!
 		if ( ! $em_table_name ) {
-			$espresso_notices['errors'][] = 'No table has been specified. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'No table has been specified.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
-		$SQL = 'SELECT * FROM '.$em_table_name;
+		$SQL = $output == 'COUNT' ? 'SELECT COUNT(*) FROM ' : 'SELECT * FROM ';
+		$SQL .= $em_table_name;
 
-		if ( $orderby ) {
+		if ( $orderby && $output != 'COUNT' ) {
 			$SQL .= $this->_orderby_n_sort ($orderby, $sort);
 		}
 
+		if ( $limit && is_array($limit) && $output != 'COUNT' ) {
+			$SQL .=	' LIMIT ' . $limit[0] . ',' . $limit[1];
+		}
+
 		global $wpdb;
-		$results = $wpdb->get_results( $SQL, $output );
+		$results = $output == 'COUNT' ? $wpdb->get_var( $SQL ) : $wpdb->get_results( $SQL, $output );
 		return $results;
 	}
 
@@ -249,20 +284,22 @@ abstract class EEM_Base {
 	 *		@param mixed (string, array) - $orderby - cloumn names to be used for sorting
 	 *		@param string - $sort - ASC or DESC
 	 *		@param mixed (string, array) - $operator -  operator to be used for WHERE clause  > = <
-	 *		@param string - $output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N
+	 *		@param array $limit send along limit offset for paging purposes
+	 *		@param string - $output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N, COUNT = count of rows
 	 *		@return mixed (object, array)
 	 */
-	private function _select_all_where ( $em_table_name=FALSE, $em_table_data_types=array(), $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $output = 'OBJECT_K' ) {
-
-		global $espresso_notices;
-
+	private function _select_all_where ( $em_table_name=FALSE, $em_table_data_types=array(), $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $limit = FALSE, $output = 'OBJECT_K' ) {
+	
 		// what?? no table name ??? Get outta here!!!
 		if ( ! $em_table_name ) {
-			$espresso_notices['errors'][] = 'No table has been specified. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'No table has been specified.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
-		$SQL = 'SELECT * FROM '.$em_table_name;
+
+		$SQL = $output == 'COUNT' ? 'SELECT COUNT(*) FROM ' : 'SELECT * FROM ';
+		$SQL .= $em_table_name;
 
 		if ( $where_cols_n_values ) {
 			$prepped = $this->_prepare_where ($where_cols_n_values, $em_table_data_types, $operator);
@@ -272,14 +309,20 @@ abstract class EEM_Base {
 			$VAL = '';
 		}
 
-		if ( $orderby ) {
+		if ( $orderby && $output != 'COUNT' ) {
 			$SQL .= $this->_orderby_n_sort ($orderby, $sort);
 		}
 
+		if ( $limit && is_array($limit) && $output != 'COUNT' ) {
+			$SQL .=	' LIMIT ' . $limit[0] . ',' . $limit[1];
+		}
+		
 		global $wpdb;
 		$wpdb->show_errors();
-		$results = $wpdb->get_results( $wpdb->prepare( $SQL, $VAL ), $output );
-
+		//echo "QUERY:".$wpdb->prepare( $SQL, $VAL );
+		//echo "running query:$SQL<hr>";
+		$results = $output == 'COUNT' ? $wpdb->get_var( $wpdb->prepare( $SQL, $VAL ) ) : $wpdb->get_results( $wpdb->prepare( $SQL, $VAL ), $output );
+		//VAR_DUMP($results);
 		return $results;
 	}
 
@@ -306,11 +349,10 @@ abstract class EEM_Base {
 	 */
 	private function _select_row_where ( $em_table_name=FALSE, $em_table_data_types=array(), $where_cols_n_values=FALSE, $operator = '=', $output = 'OBJECT_K' ) {
 
-		global $espresso_notices;
-
 		// what?? no table name ??? Get outta here!!!
 		if ( ! $em_table_name ) {
-			$espresso_notices['errors'][] = 'No table has been specified. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'No table has been specified.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -350,18 +392,17 @@ abstract class EEM_Base {
 	 */
 	private function _select_value_where ( $em_table_name=FALSE, $em_table_data_types=array(), $select=FALSE, $where_cols_n_values=FALSE, $operator = '=' ) {
 
-		global $espresso_notices;
-
 		// what?? no table name ??? Get outta here!!!
 		if ( ! $em_table_name ) {
-			//return array( 'type' =>  'error', 'msg' => 'No table has been specified', 'rows' => FALSE );
-			$espresso_notices['errors'][] = 'No table has been specified. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'No table has been specified.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
 		// ya gotta let us know what you want!!!
 		if ( ! $select ) {
-			$espresso_notices['errors'][] = 'No column name has been specified for the SELECT clause. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'No column name has been specified for the SELECT clause.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -415,17 +456,17 @@ abstract class EEM_Base {
 	 */
 	private function _get_key_value_array ( $em_table_name=FALSE, $em_table_data_types=array(), $key=FALSE, $value=FALSE, $orderby = FALSE, $sort = 'ASC', $output = 'OBJECT_K' ) {
 
-		global $espresso_notices;
-
 		// what?? no table name ??? Get outta here!!!
 		if ( ! $em_table_name ) {
-			$espresso_notices['errors'][] = 'No table has been specified. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'No table has been specified.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
 		// ya gotta let us know what you want!!!
 		if ( ! $key or ! $value ) {
-			$espresso_notices['errors'][] = 'Column names for both the "key" and "value" need to be provided. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'Column names for both the "key" and "value" need to be provided.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -478,17 +519,17 @@ abstract class EEM_Base {
 	 */
 	private function _get_key_value_array_where( $em_table_name=FALSE, $em_table_data_types=array(), $key=FALSE, $value=FALSE, $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $output = 'OBJECT_K' ) {
 
-		global $espresso_notices;
-
 		// what?? no table name ??? Get outta here!!!
 		if ( ! $em_table_name ) {
-			$espresso_notices['errors'][] = 'No table has been specified. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'No table has been specified.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
 		// ya gotta let us know what you want!!!
 		if ( ! $key or ! $value ) {
-			$espresso_notices['errors'][] = 'Column names for both the "key" and "value" need to be provided. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'Column names for both the "key" and "value" need to be provided.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -543,17 +584,17 @@ abstract class EEM_Base {
 	 */
 	protected function _insert( $em_table_name=FALSE, $em_table_data_types=array(), $set_cols_n_values=array() ) {
 
-		global $espresso_notices;
-
 		// if any of the supplied data is empty or missing - send them back with an error
 		if ( ! $em_table_name or empty($em_table_data_types) or empty($set_cols_n_values) ) {
-			$espresso_notices['errors'][] = 'The insert can not be performed because of missing data. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'The insert can not be performed because of missing data.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
 		// if any of the supplied data arrays are not arrays - send them back with an error
 		if ( ! is_array($em_table_data_types) or ! is_array($set_cols_n_values) ) {
-			$espresso_notices['errors'][] = 'The insert can not be performed because the supplied data is of the wrong type. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'The insert can not be performed because the supplied data is of the wrong type.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -570,8 +611,8 @@ abstract class EEM_Base {
 				// and set it's data type
 				$em_upformat[] = $em_table_data_types[$column];
 			} else {
-				//return array( 'type' =>  'error', 'msg' => 'The column name '. $column .' does not exist.', 'rows' => FALSE );
-				$espresso_notices['errors'][] = 'The column name '. $column .' does not exist. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+				$msg = sprintf( __( 'The table column %s does not exist.', 'event_espresso' ), $column );
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return FALSE;
 			}
 		}
@@ -588,19 +629,19 @@ abstract class EEM_Base {
 		// set generic success / error mesasges
 		if ( $row_results == 1 ) {
 			// one row was successfully updated
-			$espresso_notices['success'][] = $this->singlular_item . ' details have been successfully saved to the database.';
-//			$update_results = array( 'type' =>  'updated', 'msg' => 'The record has been successfully created.', 'rows' => $row_results );
+			$msg = sprintf( __( '%s  details have been successfully saved to the database.', 'event_espresso' ), $this->singlular_item );
+			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			$update_results['new-ID'] = $wpdb->insert_id;
 		}
 		elseif ( $row_results > 1 ) {
 			// multiple rows were successfully updated
-			$espresso_notices['success'][] = 'Details for '.$results.' ' . $this->plual_item . ' have been successfully saved to the database.';
-//			$update_results = array( 'type' =>  'updated', 'msg' => $results.' records have been successfully created.', 'rows' => $row_results );
+			$msg = sprintf( __( 'Details for %d %s have been successfully saved to the database.', 'event_espresso' ), $row_results, $this->plural_item );
+			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			$update_results = TRUE;
 		} else {
 			// no result means an error occured
-			$espresso_notices['errors'][] = 'An error occured and the ' . $this->singlular_item . ' has not been saved to the database. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
-//			$update_results = array( 'type' =>  'error', 'msg' => 'An error occured and the record was not created.', 'rows' => 0 );
+			$msg = sprintf( __( 'An error occured and the %s has not been saved to the database.', 'event_espresso' ), $this->singlular_item );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			$update_results = FALSE;
 		}
 
@@ -631,17 +672,17 @@ abstract class EEM_Base {
 
 		//$this->display_vars( __FUNCTION__, array( 'em_table_data_types' => $em_table_data_types, '$set_cols_n_values' => $set_cols_n_values, '$where_cols_n_values' => $where_cols_n_values ) );
 
-		global $espresso_notices;
-
 		// if any of the supplied data is empty or missing - send them back with an error
 		if ( ! $em_table_name or empty($em_table_data_types) or empty($set_cols_n_values) or empty($where_cols_n_values) ) {
-			$espresso_notices['errors'][] = 'The update can not be performed because of missing data. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'The update can not be performed because of missing data.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
 		// if any of the supplied data arrays are not arrays - send them back with an error
 		if ( ! is_array($em_table_data_types) or ! is_array($set_cols_n_values) or ! is_array($where_cols_n_values) ) {
-			$espresso_notices['errors'][] = 'The update can not be performed because the supplied data is of the wrong type. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'The update can not be performed because the supplied data is of the wrong type.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -663,8 +704,8 @@ abstract class EEM_Base {
 				// and set it's data type
 				$em_upformat[] = $em_table_data_types[$column];
 			} else {
-				//return array( 'type' =>  'error', 'msg' => 'The column name '. $column .' does not exist.' );
-				$espresso_notices['errors'][] = 'The column name '. $column .' does not exist. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+				$msg = sprintf( __( 'The table column %s does not exist.', 'event_espresso' ), $column );
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return FALSE;
 			}
 		}
@@ -677,7 +718,8 @@ abstract class EEM_Base {
 				// and set it's data type
 				$em_where_format[] = $em_table_data_types[$column];
 			} else {
-				$espresso_notices['errors'][] = 'The column name '. $column .' used in the WHERE clause, does not exist. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+				$msg = sprintf( __( 'The table column %s used in the WHERE clause, does not exist.', 'event_espresso' ), $column );
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return FALSE;
 			}
 		}
@@ -686,25 +728,24 @@ abstract class EEM_Base {
 		//printr($em_updata, 'updata');
 		//printr($em_upformat, 'upformat');
 		// use $wpdb->update because it automagically escapes and sanitizes data for us
+
 		$row_results = $wpdb->update( $em_table_name, $em_updata, $em_where, $em_upformat, $em_where_format);
 
-		// set generic success / error mesasges
-		if ( $row_results > 1 ) {
+		// set generic success / error messages
+		if ( $row_results === 1 ) {
 			// multiple rows were successfully updated
-			//$update_results = array( 'type' =>  'updated', 'msg' => 'Details for ' . $results . ' ' . $this->plual_item . ' have been successfully updated.', 'rows' => $row_results );
-			$espresso_notices['success'][] = 'Details for ' . $results . ' ' . $this->plual_item . ' have been successfully updated.';
+			$msg = sprintf( __( '%s details have been successfully updated.', 'event_espresso' ), $this->singlular_item );
+			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			
-		} elseif ( $row_results === 1 ) {
+		} elseif ( $row_results > 1 ) {
 			// one row was successfully updated
-			// $update_results = array( 'type' =>  'updated', 'msg' => $this->singlular_item . ' details have been successfully updated.', 'rows' => $row_results );
-			$espresso_notices['success'][] = $this->singlular_item . ' details have been successfully updated.';
+			$msg = sprintf( __( 'Details for %d %s have been successfully updated.', 'event_espresso' ), $row_results, $this->plural_item );
+			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			
 		} elseif ( $row_results === 0 ) {
-			// zero row updated means that the data was identical to the existing record so no update occured
-			//changing this to return 1 becuz returning zero appears as an error
+			// zero rows updated means that the data was identical to the existing record so no update occured
+			//changing this to return 1 becuz returning zero appears as an error, but no notifications will be shown
 			$row_results = 1;
-			//	$update_results = array( 'type' =>  'error', 'msg' => 'The submitted record was identical to existing data, no so update was performed.', 'rows' => 0 );
-			//$espresso_notices['success'][] = 'The submitted record was identical to existing data, no so update was performed.';
 
 		} else {
 			// an actual error occured!
@@ -724,9 +765,9 @@ abstract class EEM_Base {
 			
 			$error = $db_error[0];	
 			
-//			$update_results = array( 'type' =>  'error', 'msg' => "The following error occured and the record was not updated : \n" . $error, 'rows' => FALSE );
-			$espresso_notices['errors'][] = "The following error occured and the record was not updated : \n" . $error;
-			
+			$msg = __( 'The following error occured and the record was not updated : ', 'event_espresso' ) . "\n" . $error;;
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+				
 		}
 
 		return $row_results;
@@ -744,20 +785,19 @@ abstract class EEM_Base {
 	/**
 	 *		This function will delete a row from a table
 	 *
-	 *		@access private
+	 *		@access private --set to protected whiel EEM_TempBase is seperate from EEM_Base
 	 *		@param string - $em_table_name -
 	 *		@param array - $em_table_data_types
 	 *		@param mixed (string, array) - $where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause
 	 *		@param mixed (string, array) - $operator -  operator to be used for WHERE clause  > = <
 	 *		@return mixed (object, array)
 	 */
-	private function _delete ( $em_table_name=FALSE, $em_table_data_types=array(), $where_cols_n_values=FALSE, $operator = '=' ) {
-
-		global $espresso_notices;
+	protected function _delete ( $em_table_name=FALSE, $em_table_data_types=array(), $where_cols_n_values=FALSE, $operator = '=' ) {
 
 		// what?? no table name ??? Get outta here!!!
 		if ( ! $em_table_name ) {
-			$espresso_notices['errors'][] = 'No table has been specified. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'No table has been specified.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -768,7 +808,8 @@ abstract class EEM_Base {
 			$SQL .= $prepped['where'];
 			$VAL = $prepped['value'];
 		} else {
-			$espresso_notices['errors'][] = 'At least one column name and value has to be specified in order to delete data. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'At least one column name and value has to be specified in order to delete data.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -801,53 +842,59 @@ abstract class EEM_Base {
 	 */
 	protected function _prepare_where ( $where_cols_n_values=FALSE, $em_table_data_types=FALSE, $operator = '=' ) {
 
-		global $espresso_notices;
 //		echo printr( $where_cols_n_values, '$where_cols_n_values' );
 //		echo printr( $em_table_data_types, '$em_table_data_types' );
 
 		// what??? no WHERE clause??? get outta here!!
 		if ( ! $where_cols_n_values ) {
-			$espresso_notices['errors'][] = 'No coulmn name was provided for the WHERE clause. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'No column name was provided for the WHERE clause.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
 		// what??? no table data types??? get outta here!!
 		if ( ! $em_table_data_types ) {
-			$espresso_notices['errors'][] = 'The table data types array is missing. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$msg = __( 'The table data types array is missing.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
+		$prepped = array();
+
 		// in my book, any good WHERE clause should start with the word "WHERE"
-		$WHR = ' WHERE ';
+		$prepped['where'] = ' WHERE ';
 		$value_parameters = array();
 
-		$single_op = is_array($operator) ? FALSE : TRUE;
+		$single_op = ! is_array($operator) ? TRUE : FALSE;
 
+		$WHR = array();
 		foreach ( $where_cols_n_values as $column_name => $value ) {
 
 			// change non array operator to array with the correct key
 			if ( $single_op ) {
 				$operator = array( $column_name => $operator );
 			}
-			// build this segment of the WHERE clause
-			$WHR .= $column_name . ' ' . $operator[$column_name] . "'" . $em_table_data_types[$column_name] . "'";
-			$value_parameters[ $column_name ] = $value;
+			if ( $operator[$column_name] == 'IN' && is_array( $value )) {
+				// build this segment of the WHERE IN clause
+				$WHR[] = $column_name . " IN ( '" . implode( "', '", $value ) . "' )";
+			} else {
+				// build this segment of the WHERE clause
+				$WHR[] = $column_name . ' ' . $operator[$column_name] .  $em_table_data_types[$column_name] ;
+				$value_parameters[ $column_name ] = $value;
+			}
 
-			// add the AND before adding the next segment of the WHERE clause
-			$WHR .= ' AND ';
 			// convert single operator back to non-array with default value so that next iteration will assign the correct key
 			if ( $single_op ) {
 				$operator = '=';
 			}
 
 		}
-		// remove the last " AND " since there are no more column value pairs
-		$WHR = substr( $WHR, 0, -5);
+//		// remove the last " AND " since there are no more column value pairs
+//		$WHR = substr( $WHR, 0, -5);
 
-
-		$prepped = array();
-		$prepped['where'] = $WHR;
-		$prepped['value'] = $value_parameters;
+		// add the AND before adding the next segment of the WHERE clause
+		$prepped['where'] .= implode( ' AND ', $WHR );
+		$prepped['value'] = ! empty( $value_parameters ) ? $value_parameters : NULL;
 		return $prepped;
 
 	}
@@ -869,23 +916,19 @@ abstract class EEM_Base {
 	 *		@param mixed (string, array) - $sort
 	 *		@return string
 	 */
-	protected function _orderby_n_sort ($orderby=FALSE, $sort=FALSE) {
+	protected function _orderby_n_sort ($orderby=FALSE, $sort='=') {
 		if ( $orderby ) {
 			$OBS = ' ORDER BY ';
 			if ( is_array($orderby) ) {
 				foreach ( $orderby as $key => $order ) {
 					$OBS .= ' ' . $order . ' ';
-					if ( is_array($sort) ) {
-						$OBS .= $sort[$key] . ',';
-					} else {
-						$OBS .= $sort . ',';
-					}
+					$OBS .=  is_array($sort) ? $sort[$key] . ',' : $sort . ',';
 				}
+				// delete last comma
+				$OBS = substr($OBS, 0, -1);
 			} else {
-				$OBS .= $orderby . ' ' . $sort . ',';
+				$OBS .= $orderby . ' ' . $sort;
 			}
-			// delete last comma
-			$OBS = substr($OBS, 0, -1);
 			return $OBS;
 		}
 	}
@@ -893,232 +936,6 @@ abstract class EEM_Base {
 
 
 
-
-
-
-
-
-
-	/**
-	 *		This function generates a CSV list from an array
-	 *
-	 *		@access private
-	 *		@param array - $array
-	 *		@return string
-	 */
-	private function _array_to_csv ($array=array()) {
-
-		global $espresso_notices;
-
-		if ( empty($array)) {
-			$espresso_notices['errors'][] = 'The supplied array was empty. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-
-		// change array into csv list
-		$csv = '';
-		foreach ($array as $value) {
-			$csv .= $value . ',';
-		}
-
-		// delete last comma
-		$csv = substr($csv, 0, -1);
-
-		return $csv;
-
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	/**
-	 *		@ create error code from filepath, function name,
-	 *		@ and line number where exception or error was thrown
-	 *		@access protected
-	 *		@ param string $file
-	 *		@ param string $func
-	 *		@ param string $line
-	 *		@ return string
-	 */
-	protected function _get_error_code (  $file, $func, $line ) {
-
-//echo '<h4>$file : ' . $file . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-//echo '<h4>$func : ' . $func . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-//echo '<h4>$line : ' . $line . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-
-
-		$error_code = '';
-		$code_bits = array( 0 => $file, 1 => $func, 2 => $line );
-
-		foreach ( $code_bits as $key => $code_bit ) {
-			switch ( $key ) {
-
-				case 0:
-					$code_bit = str_replace( '\\', '/', $code_bit );
-					// break filepath up by the /
-					$code_bit = explode ( '/', $code_bit );
-					// filename is the last segment
-					$file = $code_bit[ count($code_bit)-1 ];
-					// folder is the second to the last segment
-					$folder = $code_bit[ count($code_bit)-2 ];
-					//change all dashes to underscores
-					$folder = str_replace ( '-', '_', $folder );
-					//strip vowels
-					$folder = str_replace ( array( 'a', 'A', 'e', 'E', 'i', 'I', 'o', 'O', 'u', 'U' ), array( '', '', '', '', '', '', '', '', '', '',  ), $folder );
-					// break it up by the _
-					$folder_bits = explode( '_', $folder);
-					$folder = '';
-					foreach ( $folder_bits as $folder_bit ) {
-						// grab the first 2 characters from each word
-						$folder .= substr($folder_bit, 0, 3);
-					}
-					$error_code .= $folder . '-';
-
-					// break filename by the dots - to get at the first bit
-					$code_bit = explode('.', $file);
-					// remove EE_ from the filename
-					$code_bit = str_replace ( 'EE_', '', $code_bit[0] );
-					// and EEM_ 
-					$code_bit = str_replace ( 'EEM_', '', $code_bit );
-					// remove all non-alpha characters
-					$code_bit = preg_replace( '[A-Za-z]', '', $code_bit );
-					//change all dashes to underscores
-					$file = str_replace ( '-', '_', $code_bit );
-					//strip vowels
-					$file = str_replace ( array( 'a', 'A', 'e', 'E', 'i', 'I', 'o', 'O', 'u', 'U' ), array( '', '', '', '', '', '', '', '', '', '',  ), $file );
-					// break it up by the _
-					$file_bits = explode( '_', $file);
-					$file = '';
-					foreach ( $file_bits as $file_bit ) {
-						// grab the first 2 characters from each word
-						$error_code .= substr($file_bit, 0, 3);
-					}
-					$error_code .= '-';
-
-				break;
-
-				case 1:
-					//change all dashes to underscores
-					$code_bit = str_replace ( '-', '_', $code_bit );
-					// break function name by the underscore if there are any
-					$func_bits = explode('_', $code_bit);
-					// split camelCase
-					// preg_match_all('/((?:^|[A-Z])[a-z]+)/',$str,$matches);
-					$func = '';
-					$x = 0;
-					foreach ( $func_bits as $func_bit ) {
-						$error_code .= substr($func_bit, 0, 3);
-					}
-					// convert to uppercase
-					$error_code = strtoupper( $error_code ) . '-';
-				break;
-
-				case 2:
-					// i can't figure this one out
-					$error_code .= $code_bit;
-				break;
-
-			}
-		}
-		return '<sup>' . $error_code . '</sup>';
-	}
-
-
-
-
-
-
-		public function how_to_use_insert() {
-			echo '
-<h2>Cut and paste the following into your code:</h2>
-<pre>
-	// array of column names and values for the SQL INSERT... VALUES clause
-	$set_column_values = array(
-					\'key\' => \'value\',
-					\'key\' => $value,
-				);
-	// model function to perform error checking and then run update
-	$results = $attendee_model->insert ($set_column_values);
-</pre>
-';
-			die();
-		}
-
-
-
-
-
-		public function how_to_use_update() {
-			echo '
-<h2>Cut and paste the following into your code:</h2>
-<pre>
-	// array of column names and values for the SQL SET clause
-	$set_column_values = array(
-					\'key\' => \'value\',
-					\'key\' => $value,
-				);
-	// array of column names and values for the SQL WHERE clause
-	$where = array(
-					\'key\' => \'value\',
-					\'key\' => $value,
-				);
-	// model function to perform error checking and then run update
-	$results = $attendee_model->update ($set_column_values, $where);
-</pre>
-';
-			die();
-		}
-
-
-
-
-
-
-
-
-
-
-
-
-	protected function display_vars( $method, $vars_array ) {
-
-		echo '<h1>Class: '.get_class($this).'</h1>';
-		echo '<h2>Method: '.$method.'</h2>';
-		echo '<h3>TABLE : ' . $this->table_name . '</h3>';
-
-		foreach ( $vars_array as $var => $var_array ) {
-			echo '<h4> ' . $this->table_name . ' ' . $var.'</h4>';
-			echo '<pre>';
-			echo print_r($var_array);
-			echo '</pre>';
-		}
-		die();
-	}
-
-
-
-	/**
-	 *		@ override magic methods
-	 *		@ return void
-	 */
-	public function __get($a) { return FALSE; }
-	public function __set($a,$b) { return FALSE; }
-	public function __unset($a) { return FALSE; }
-	public function __clone() { return FALSE; }
-	public function __wakeup() { return FALSE; }
-
 }
 /* End of file EEM_Base.model.php */
-/* Location: /ee-mvc/models/EEM_Base.model.php */
-?>
+/* Location: /includes/models/EEM_Base.model.php */

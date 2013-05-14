@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
-do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
+do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 //These are the core shortcodes used by the plugin.
 //If you would like to add your own shortcodes, please puchasse the custom shortcodes addon from http://eventespresso.com/download/plugins-and-addons/custom-files-addon/
@@ -13,12 +13,15 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
  */
 if (!function_exists('show_single_event')) {
 	function show_single_event($atts) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		extract(shortcode_atts(array('single_event_id' => __('No ID Supplied', 'event_espresso')), $atts));
 		$single_event_id = "{$single_event_id}";
 		global $load_espresso_scripts;
 		$load_espresso_scripts = true; //This tells the plugin to load the required scripts
 		//echo $single_event_id;
+		espresso_require_template('init.php');
+		require_once(espresso_get_registration_page_template());
+
 		ob_start();
 		event_details_page($single_event_id);
 		$buffer = ob_get_contents();
@@ -40,13 +43,15 @@ add_shortcode('SINGLEEVENT', 'show_single_event');
  */
 if (!function_exists('show_event_category')) {
 	function show_event_category($atts) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		extract(shortcode_atts(array('event_category_id' => __('No Category ID Supplied', 'event_espresso'), 'css_class' => ''), $atts));
 		$event_category_id = "{$event_category_id}";
 		$css_class = "{$css_class}";
 		global $load_espresso_scripts;
 		$load_espresso_scripts = true; //This tells the plugin to load the required scripts
 		ob_start();
+		espresso_require_template('init.php');
+		require_once(espresso_get_event_list_template());
 		display_event_espresso_categories($event_category_id, $css_class); //This function is called from the "/templates/event_list.php" file.
 		$buffer = ob_get_contents();
 		ob_end_clean();
@@ -69,17 +74,15 @@ add_shortcode('EVENT_ESPRESSO_CATEGORY', 'show_event_category');
  * [LISTATTENDEES show_secondary="false"]
  * [LISTATTENDEES show_gravatar="true"]
  * [LISTATTENDEES paid_only="true"]
- * [LISTATTENDEES show_recurrence="false"]
  * [LISTATTENDEES event_identifier="your_event_identifier"]
  * [LISTATTENDEES category_identifier="your_category_identifier"]
  */
 if (!function_exists('event_espresso_attendee_list')) {
 	function event_espresso_attendee_list($event_identifier = 'NULL', $category_identifier = 'NULL', $show_gravatar = 'false', $show_expired = 'false', $show_secondary = 'false', $show_deleted = 'false', $show_recurrence = 'true', $limit = '0', $paid_only = 'false', $sort_by = 'last name') {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		$show_expired = $show_expired == 'false' ? " AND e.start_date >= '" . date('Y-m-d') . "' " : '';
 		$show_secondary = $show_secondary == 'false' ? " AND e.event_status != 'S' " : '';
 		$show_deleted = $show_deleted == 'false' ? " AND e.event_status != 'D' " : '';
-		$show_recurrence = $show_recurrence == 'false' ? " AND e.recurrence_id = '0' " : '';
 		$sort = $sort_by == 'last name' ? " ORDER BY lname " : '';
 		$limit = $limit > 0 ? " LIMIT 0," . $limit . " " : '';
 		if ($event_identifier != 'NULL') {
@@ -88,7 +91,7 @@ if (!function_exists('event_espresso_attendee_list')) {
 			$type = 'category';
 		}
 
-		do_action('action_hook_espresso_require_template', 'init.php');
+		do_action('AHEE_require_template', 'init.php');
 		//List Attendees - Used with the [LISTATTENDEES] shortcode
 		require_once(espresso_get_attendee_list_template());	
 	
@@ -99,7 +102,6 @@ if (!function_exists('event_espresso_attendee_list')) {
 			$sql .= $show_secondary;
 			$sql .= $show_expired;
 			$sql .= $show_deleted;
-			$sql .= $show_recurrence;
 			$sql .= $limit;
 			event_espresso_show_attendess($sql, $show_gravatar, $paid_only, $sort);
 		} else if (!empty($type) && $type == 'category') {
@@ -111,7 +113,6 @@ if (!function_exists('event_espresso_attendee_list')) {
 			$sql .= $show_secondary;
 			$sql .= $show_expired;
 			$sql .= $show_deleted;
-			$sql .= $show_recurrence;
 			$sql .= $limit;
 			event_espresso_show_attendess($sql, $show_gravatar, $paid_only, $sort);
 		} else {
@@ -120,7 +121,6 @@ if (!function_exists('event_espresso_attendee_list')) {
 			$sql .= $show_secondary;
 			$sql .= $show_expired;
 			$sql .= $show_deleted;
-			$sql .= $show_recurrence;
 			$sql .= $limit;
 			event_espresso_show_attendess($sql, $show_gravatar, $paid_only, $sort);
 		}	
@@ -134,8 +134,8 @@ if (!function_exists('event_espresso_attendee_list')) {
 if (!function_exists('event_espresso_list_attendees')) {
 	function event_espresso_list_attendees($atts) {
 		//echo $atts;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-		extract(shortcode_atts(array('event_identifier' => 'NULL', 'category_identifier' => 'NULL', 'event_category_id' => 'NULL', 'show_gravatar' => 'NULL', 'show_expired' => 'NULL', 'show_secondary' => 'NULL', 'show_deleted' => 'NULL', 'show_recurrence' => 'NULL', 'limit' => 'NULL', 'paid_only' => 'NULL'), $atts));
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+		extract(shortcode_atts(array('event_identifier' => 'NULL', 'category_identifier' => 'NULL', 'event_category_id' => 'NULL', 'show_gravatar' => 'NULL', 'show_expired' => 'NULL', 'show_secondary' => 'NULL', 'show_deleted' => 'NULL', 'limit' => 'NULL', 'paid_only' => 'NULL'), $atts));
 		global $load_espresso_scripts;
 		$load_espresso_scripts = true; //This tells the plugin to load the required scripts
 		//get the event identifiers
@@ -152,11 +152,10 @@ if (!function_exists('event_espresso_list_attendees')) {
 		$show_expired = "{$show_expired}";
 		$show_secondary = "{$show_secondary}";
 		$show_deleted = "{$show_deleted}";
-		$show_recurrence = "{$show_recurrence}";
 		$paid_only = "{$paid_only}";
 
 		ob_start();
-		event_espresso_attendee_list($event_identifier, $category_identifier, $show_gravatar, $show_expired, $show_secondary, $show_deleted, $show_recurrence, $limit, $paid_only);
+		event_espresso_attendee_list($event_identifier, $category_identifier, $show_gravatar, $show_expired, $show_secondary, $show_deleted, $limit, $paid_only);
 		$buffer = ob_get_contents();
 		ob_end_clean();
 		return $buffer;
@@ -175,7 +174,7 @@ add_shortcode('LISTATTENDEES', 'event_espresso_list_attendees');
  */
 if (!function_exists('espresso_event_time_sc')) {
 	function espresso_event_time_sc($atts) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		extract(shortcode_atts(array('event_id' => '0', 'type' => '', 'format' => ''), $atts));
 		$event_id = "{$event_id}";
 		$type = "{$type}";
@@ -195,7 +194,7 @@ add_shortcode('EVENT_TIME', 'espresso_event_time_sc');
  */
 if (!function_exists('espresso_reg_page_sc')) {
 	function espresso_reg_page_sc($atts) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		global $wpdb, $org_options, $load_espresso_scripts;
 		$load_espresso_scripts = true; //This tells the plugin to load the required scripts
 		extract(shortcode_atts(array('event_id' => '0'), $atts));
@@ -211,7 +210,7 @@ add_shortcode('ESPRESSO_REG_PAGE', 'espresso_reg_page_sc');
 if (!function_exists('espresso_reg_form_sc')) {
 	function espresso_reg_form_sc($atts) {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		global $wpdb, $org_options, $load_espresso_scripts;
 		$load_espresso_scripts = true; //This tells the plugin to load the required scripts
 		extract(shortcode_atts(array('event_id' => '0'), $atts));
@@ -462,10 +461,10 @@ if (!function_exists('espresso_reg_form_sc')) {
 
 								<?php
 								//Show pricing in a dropdown or text depending on the number of prices added.
-								do_action('action_hook_espresso_price_select', $event_id, array('show_label' => true, 'label' => ''));
+								do_action('AHEE_price_select', $event_id, array('show_label' => true, 'label' => ''));
 
 								//Added for seating chart addon. Creates a field to select a seat from a popup.
-								do_action('action_hook_espresso_seating_chart_select', $event_id);
+								do_action('AHEE_seating_chart_select', $event_id);
 
 								// Displays the social media buttons
 								if (function_exists('espresso_show_social_media')) {
@@ -520,7 +519,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 												&& (empty($_REQUEST['edit_details']) || $_REQUEST['edit_details'] != 'true')
 												&& !is_user_logged_in()) {
 									if (!function_exists('recaptcha_get_html')) {
-										require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/recaptchalib.php');
+										require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/recaptchalib.php');
 									}//End require captcha library
 									# the response from reCAPTCHA
 									$resp = null;
@@ -562,7 +561,7 @@ add_shortcode('ESPRESSO_REG_FORM', 'espresso_reg_form_sc');
 if (!function_exists('espresso_category_name_sc')) {
 	function espresso_category_name_sc($atts) {
 		global $wpdb, $org_options;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		extract(shortcode_atts(array('event_id' => '0'), $atts));
 		$event_id = "{$event_id}";
 		$category_name = espresso_event_category_data($event_id);
@@ -582,7 +581,7 @@ add_shortcode('CATEGORY_NAME', 'espresso_category_name_sc');
 if (!function_exists('espresso_price_dd_sc')) {
 	function espresso_price_dd_sc($atts) {
 		global $wpdb, $org_options;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		extract(shortcode_atts(array('event_id' => '0'), $atts));
 		$event_id = "{$event_id}";
 		$data = event_espresso_price_dropdown($event_id);
@@ -601,7 +600,7 @@ add_shortcode('EVENT_PRICE_DROPDOWN', 'espresso_price_dd_sc');
  */
 if (!function_exists('get_espresso_price_sc')) {
 	function get_espresso_price_sc($atts) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		extract(shortcode_atts(array('event_id' => '0', 'number' => '0'), $atts));
 		$event_id = "{$event_id}";
 		$number = "{$number}";
@@ -621,7 +620,7 @@ add_shortcode('EVENT_PRICE', 'get_espresso_price_sc');
 if (!function_exists('espresso_attendees_data_sc')) {
 	function espresso_attendees_data_sc($atts) {
 		global $wpdb, $org_options;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		extract(shortcode_atts(array('event_id' => '0', 'type' => ''), $atts));
 		$event_id = "{$event_id}";
 		$type = "{$type}";
@@ -644,13 +643,12 @@ add_shortcode('ATTENDEE_NUMBERS', 'espresso_attendees_data_sc');
  * [EVENT_LIST show_expired=true]
  * [EVENT_LIST show_deleted=true]
  * [EVENT_LIST show_secondary=true]
- * [EVENT_LIST show_recurrence=true]
  * [EVENT_LIST category_identifier=your_category_identifier]
  *
  */
 if (!function_exists('display_event_list_sc')) {
 	function display_event_list_sc($atts) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		ob_start();
 		event_espresso_get_event_details( $atts );
 		$buffer = ob_get_contents();
@@ -699,9 +697,9 @@ add_shortcode('EVENT_LIST', 'display_event_list_sc');
 if (!function_exists('espresso_staff_sc')) {
 	function espresso_staff_sc($atts) {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-		global $wpdb, $espresso_premium, $this_event_id;
-		if ($espresso_premium != true)
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+		global $wpdb, $caffeinated, $this_event_id;
+		if ($caffeinated != true)
 			return;
 
 		empty($atts) ? '' : extract($atts);
@@ -860,8 +858,8 @@ add_shortcode('ESPRESSO_STAFF', 'espresso_staff_sc');
 if (!function_exists('espresso_venue_details_sc')) {
 	function espresso_venue_details_sc($atts) {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-		global $wpdb, $this_event_id, $espresso_premium, $espresso_reg_page;
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+		global $wpdb, $this_event_id, $caffeinated, $espresso_reg_page;
 
 		empty($atts) ? '' : extract($atts);
 
@@ -1011,7 +1009,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 				$html .= $show_google_map_link ? '<div class="google-remote-map-link">' . $google_map_link . '</div>' : '';
 				//$html .= var_dump($meta);
 				//If the premium version is installed, then we can laod the map.
-				if ($espresso_premium) {
+				if ($caffeinated) {
 					if (!empty($meta['enable_for_maps'])) {
 						//Adding this check to make sure we are on a registration page. Otherwise it will break regular posts/pages that are loading the [ESPRESSO_VENUE] shortcode.
 						if ($espresso_reg_page) {
@@ -1052,7 +1050,7 @@ add_shortcode('ESPRESSO_VENUE', 'espresso_venue_details_sc');
 
 if (!function_exists('espresso_venue_event_list_sc')) {
 	function espresso_venue_event_list_sc($atts) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		global $wpdb;
 		global $load_espresso_scripts;
 		$load_espresso_scripts = true; //This tells the plugin to load the required scripts
@@ -1107,7 +1105,7 @@ add_shortcode('ESPRESSO_VENUE_EVENTS', 'espresso_venue_event_list_sc');
 
 if (!function_exists('ee_show_meta_sc')) {
 	function ee_show_meta_sc($atts) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		global $event_meta, $venue_meta, $all_meta;
 		//echo '<p>event_meta = '.print_r($event_meta).'</p>';
 		if (empty($atts))
@@ -1143,7 +1141,7 @@ add_shortcode('EE_META', 'ee_show_meta_Sc');
 
 if (!function_exists('espresso_questions_answers')) {
 	function espresso_questions_answers($atts) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		global $wpdb;
 		if (empty($atts))
 			return;
@@ -1172,79 +1170,9 @@ add_shortcode('EE_ANSWER', 'espresso_questions_answers');
 
 
 
-function event_espresso_run() {
-
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-	// grab some globals
-	global $load_espresso_scripts;
-
-	// tell the plugin to load the required scripts
-	$load_espresso_scripts = true;
-
-	// begin output buffering
-	ob_start();
-
-	//Make sure scripts are loading
-	echo espresso_check_scripts();
-
-	// Get action type
-	$e_reg = isset($_REQUEST['e_reg']) ? $_REQUEST['e_reg'] : '';
-
-	switch ($e_reg) {
-
-		case 'process_ticket_selections' :
-			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, ' e_reg = process_ticket_selections'  );
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/ticket_selector.php');
-			espresso_process_ticket_selections();
-			break;
-
-		case 'register' :
-			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, ' e_reg = register'  );
-			remove_all_actions('action_hook_espresso_regevent_default_action');
-			remove_all_actions('action_hook_espresso_event_registration');
-			do_action('action_hook_espresso_event_reg_checkout');
-			break;
-
-		case 'edit_attendee' :
-			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, ' e_reg = edit_attendee'  );
-			remove_all_actions('action_hook_espresso_regevent_default_action');
-			remove_all_actions('action_hook_espresso_event_registration');
-			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/process-registration/attendee_edit_record.php');
-			attendee_edit_record();
-			break;
-
-		default :
-			// check if this is an event list or an event detail page by looking for event slug
-			$event_detail_page = get_query_var('event_slug') ? TRUE : FALSE;
-			espresso_require_template('init.php');
-
-			if ( $event_detail_page or isset($_REQUEST['ee']) ) {
-				do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, ' e_reg = event_detail_page'  );
-				//This is the form page for registering the attendee
-				require_once(espresso_get_registration_page_template());
-				do_action ( 'action_hook_espresso_event_registration' );
-			} else {
-				do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, ' e_reg = event_list'  );
-				require_once(espresso_get_event_list_template());
-				do_action ( 'action_hook_espresso_regevent_default_action', $e_reg );
-			}
-
-	}
-
-	$content = ob_get_clean();
-	echo $content;
-	$headers_to_current = ob_get_clean();
-	return $headers_to_current;
-
-}
-add_shortcode('ESPRESSO_EVENTS', 'event_espresso_run');
-
-
-
-
 
 function espresso_cancelled() {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	global $org_options;
 	$_REQUEST['page_id'] = $org_options['return_url'];
 	//espresso_init_session();

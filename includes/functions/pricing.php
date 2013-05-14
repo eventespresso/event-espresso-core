@@ -1,41 +1,41 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
+do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 //Functions that deal with pricing should be placed here
 
 function event_espresso_paid_status_icon($payment_status = '') {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	switch ($payment_status) {
 		case 'Checkedin':
-			echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/accept.png" width="16" height="16" alt="' . __('Checked-in', 'event_espresso') . '" title="' . __('Checked-in', 'event_espresso') . '" />';
+			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/accept.png" width="16" height="16" alt="' . __('Checked-in', 'event_espresso') . '" title="' . __('Checked-in', 'event_espresso') . '" />';
 			break;
 		case 'NotCheckedin':
-			echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/exclamation.png" width="16" height="16" alt="' . __('Not Checked-in', 'event_espresso') . '" title="' . __('Not Checked-in', 'event_espresso') . '" />';
+			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/exclamation.png" width="16" height="16" alt="' . __('Not Checked-in', 'event_espresso') . '" title="' . __('Not Checked-in', 'event_espresso') . '" />';
 			break;
 		case 'Active':
-			echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/accept.png" width="16" height="16" alt="' . __('Active', 'event_espresso') . '" title="' . __('Active', 'event_espresso') . '" />';
+			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/accept.png" width="16" height="16" alt="' . __('Active', 'event_espresso') . '" title="' . __('Active', 'event_espresso') . '" />';
 			break;
 		case 'Inactive':
-			echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/exclamation.png" width="16" height="16" alt="' . __('Inactive', 'event_espresso') . '" title="' . __('Inactive', 'event_espresso') . '" />';
+			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/exclamation.png" width="16" height="16" alt="' . __('Inactive', 'event_espresso') . '" title="' . __('Inactive', 'event_espresso') . '" />';
 			break;
 //		case 'Checkedin':
-//			echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/accept.png" width="16" height="16" alt="' . __('Checked-in', 'event_espresso') . '" title="' . __('Checked-in', 'event_espresso') . '" />';
+//			echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/accept.png" width="16" height="16" alt="' . __('Checked-in', 'event_espresso') . '" title="' . __('Checked-in', 'event_espresso') . '" />';
 //			break;
 //		case 'NotCheckedin':
-//			echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/exclamation.png" width="16" height="16" alt="' . __('Not Checked-in', 'event_espresso') . '" title="' . __('Not Checked-in', 'event_espresso') . '" />';
+//			echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/exclamation.png" width="16" height="16" alt="' . __('Not Checked-in', 'event_espresso') . '" title="' . __('Not Checked-in', 'event_espresso') . '" />';
 //			break;
 		case 'Approved':
-			echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/accept.png" width="16" height="16" alt="' . __('Completed', 'event_espresso') . '" title="' . __('Completed', 'event_espresso') . '" />';
+			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/accept.png" width="16" height="16" alt="' . __('Completed', 'event_espresso') . '" title="' . __('Completed', 'event_espresso') . '" />';
 			break;
 
 		case 'Pending':
-			echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/error.png" width="16" height="16" alt="' . __('Pending', 'event_espresso') . '" title="' . __('Pending', 'event_espresso') . '" />';
+			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/error.png" width="16" height="16" alt="' . __('Pending', 'event_espresso') . '" title="' . __('Pending', 'event_espresso') . '" />';
 			break;
 		case 'Declined':
-			echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/exclamation.png" width="16" height="16" alt="' . __('Payment Declined', 'event_espresso') . '" title="' . __('Payment Declined', 'event_espresso') . '" />';
+			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/exclamation.png" width="16" height="16" alt="' . __('Payment Declined', 'event_espresso') . '" title="' . __('Payment Declined', 'event_espresso') . '" />';
 			break;
 		default:
-			echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/exclamation.png" width="16" height="16" alt="' . __('Incomplete', 'event_espresso') . '" title="' . __('Incomplete', 'event_espresso') . '" />';
+			echo '<img class="espresso-paid-status-icon-img" align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/exclamation.png" width="16" height="16" alt="' . __('Incomplete', 'event_espresso') . '" title="' . __('Incomplete', 'event_espresso') . '" />';
 			break;
 	}
 }
@@ -45,7 +45,7 @@ if (!function_exists('espresso_return_price')) {
 
 	function espresso_return_single_price($event_id, $number = 0) {
 		global $wpdb, $org_options;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$number = $number == 0 ? '0,1' : $number . ',' . $number;
 
 		$results = $wpdb->get_results("SELECT id, event_cost, surcharge FROM " . EVENTS_PRICES_TABLE . " WHERE event_id='" . $event_id . "' ORDER BY id ASC LIMIT " . $number);
@@ -80,7 +80,7 @@ if (!function_exists('event_espresso_get_price')) {
 
 	function event_espresso_get_price($event_id) {
 		global $wpdb, $org_options;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$results = $wpdb->get_results("SELECT id, event_cost, surcharge, surcharge_type, price_type FROM " . EVENTS_PRICES_TABLE . " WHERE event_id='" . $event_id . "' ORDER BY id ASC LIMIT 1");
 		$surcharge = '';
 		$surcharge_text = isset($org_options['surcharge_text']) ? $org_options['surcharge_text'] : __('Surcharge', 'event_espresso');
@@ -127,7 +127,7 @@ if (!function_exists('event_espresso_get_final_price')) {
 
 	function event_espresso_get_final_price($price_id, $event_id = 0) {
 		global $wpdb, $org_options;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$results = $wpdb->get_results("SELECT id, event_cost, surcharge, surcharge_type FROM " . EVENTS_PRICES_TABLE . " WHERE id='" . $price_id . "' ORDER BY id ASC LIMIT 1");
 		$event_cost = 0.00;
 		foreach ($results as $result) {
@@ -168,7 +168,7 @@ if (!function_exists('early_discount_amount')) {
 
 	function early_discount_amount($event_id, $event_cost, $early_bird_message = '') {
 		global $wpdb, $org_options;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 //$early_bird_message = ' ' . __('Early Pricing','event_espresso');
 		$eventdata = $wpdb->get_results("SELECT early_disc, early_disc_date, early_disc_percentage FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "' LIMIT 1");
 		if ((strlen($eventdata[0]->early_disc) > 0) && (strtotime($eventdata[0]->early_disc_date) > strtotime(date("Y-m-d")))) {
@@ -191,7 +191,7 @@ if (!function_exists('early_discount_amount')) {
 }
 
 function espresso_price_selection($event, $attendee) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	global $org_options;
 	$prices = $event->get_prices();
 	$multiple_quantity = !($event->get_number_of_available_spaces() == 1 || !$event->is_allow_multiple());
@@ -264,7 +264,7 @@ if (!function_exists('event_espresso_price_dropdown')) {
 	 * @return string
 	 */
 	function event_espresso_price_dropdown($event_id, $atts = array()) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		global $org_options;
 		if (!empty($atts)) {
 			extract($atts);
@@ -326,7 +326,7 @@ if (!function_exists('event_espresso_price_dropdown')) {
 //This function gets the first price id associated with an event and displays a hidden field.
 function espresso_hidden_price_id($event_id) {
 	global $wpdb, $org_options;
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	$wpdb->get_results("SELECT id FROM " . EVENTS_PRICES_TABLE . " WHERE event_id='" . $event_id . "' LIMIT 0,1 ");
 	$num_rows = $wpdb->num_rows;
 	if ($num_rows > 0) {
@@ -339,7 +339,7 @@ function espresso_hidden_price_id($event_id) {
 //This function returns the first price id associated with an event
 function espresso_get_price_id($event_id) {
 	global $wpdb, $org_options;
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	$wpdb->get_results("SELECT id FROM " . EVENTS_PRICES_TABLE . " WHERE event_id='" . $event_id . "' LIMIT 0,1 ");
 	$num_rows = $wpdb->num_rows;
 	if ($num_rows > 0) {
@@ -352,7 +352,7 @@ function espresso_get_price_id($event_id) {
 if (!function_exists('espresso_payment_type')) {
 
 	function espresso_payment_type($type) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		switch ($type) {
 			case 'web_accept':
 			case 'cart':
@@ -387,7 +387,7 @@ if (!function_exists('espresso_payment_type')) {
  * @return float|null  the price paid for an event by attendee id or the registration id, if information not found then it will return null
  */
 function espresso_attendee_price($atts) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	global $wpdb;
 	isset($atts) ? extract($atts) : '';
 
@@ -498,4 +498,7 @@ function espresso_attendee_price($atts) {
 function get_reg_total_price($registration_id) {
 
 }
+
+
+
 

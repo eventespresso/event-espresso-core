@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
+do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 //Time and date functions
 
@@ -11,7 +11,7 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
   Return:	$output_countdown
   ------------------------------------------------------------- */
 function espresso_countdown($time_start, $time_end, $expired_message) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	//If the timezome is set in the wordpress database, then lets use it as the default timezone.
 	if (get_option('timezone_string') != '') {
 		date_default_timezone_set(get_option('timezone_string'));
@@ -53,6 +53,11 @@ function espresso_countdown($time_start, $time_end, $expired_message) {
 	return $output_countdown;
 }
 
+
+
+
+
+
 /* -------------------------------------------------------------
   Name:	  espresso_countup
 
@@ -60,9 +65,8 @@ function espresso_countdown($time_start, $time_end, $expired_message) {
   Receive:   $time_start, $time_end, $message
   Return:	$output_archive
   ------------------------------------------------------------- */
-
 function espresso_countup($time_start, $time_end, $expired_message) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	//If the timezome is set in the wordpress database, then lets use it as the default timezone.
 	if (get_option('timezone_string') != '') {
 		date_default_timezone_set(get_option('timezone_string'));
@@ -100,6 +104,11 @@ function espresso_countup($time_start, $time_end, $expired_message) {
 	return $output_archive;
 }
 
+
+
+
+
+
 /* -------------------------------------------------------------
   Name:	  espresso_duration
 
@@ -107,9 +116,8 @@ function espresso_countup($time_start, $time_end, $expired_message) {
   Receive:   $event_start, $event_end, $allday
   Return:	$output_duration
   ------------------------------------------------------------- */
-
 function espresso_duration($event_start, $event_end, $allday) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	//If the timezome is set in the wordpress database, then lets use it as the default timezone.
 	if (get_option('timezone_string') != '') {
 		date_default_timezone_set(get_option('timezone_string'));
@@ -149,11 +157,16 @@ function espresso_duration($event_start, $event_end, $allday) {
 	return $output_duration;
 }
 
+
+
+
+
+
 //This function returns the registration limit associated with a time for an event
 if (!function_exists('espresso_get_time_reg_limit')) {
 
 	function espresso_get_time_reg_limit($time_id=0) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		if ($time_id == 0)
 			return 0;
 		global $wpdb;
@@ -165,12 +178,17 @@ if (!function_exists('espresso_get_time_reg_limit')) {
 
 }
 
+
+
+
+
+
 //Creates a dropdown if multiple times are associated with an event
 if (!function_exists('event_espresso_time_dropdown')) {
 
 	function event_espresso_time_dropdown($event_id = 'NULL', $label = 1, $multi_reg = 0, $value = '') {
 		global $wpdb, $org_options;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$html = '';
 		$cache = true;
 
@@ -268,9 +286,14 @@ if (!function_exists('event_espresso_time_dropdown')) {
 
 }
 
+
+
+
+
+
 function espresso_time_id_hidden_field($event_id, $multi_reg = 0) {
 	global $wpdb, $org_options;
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	//Will make the name an array and put the event id as a key so we
 	//know which event this belongs to
 	$multi_name_adjust = $multi_reg == 1 ? "[$event_id]" : '';
@@ -299,13 +322,18 @@ function espresso_time_id_hidden_field($event_id, $multi_reg = 0) {
 	}
 }
 
+
+
+
+
+
 //Get a single start or end time
 // @params $event_id (required)
 // @params $time (optional, start_time (default) | end_time)
 if (!function_exists('event_espresso_get_time')) {
 
 	function event_espresso_get_time($event_id, $format = 'start_time') {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		global $wpdb;
 		$event_times = $wpdb->get_results("SELECT " . $format . " FROM " . EVENTS_START_END_TABLE . " WHERE event_id='" . $event_id . "' LIMIT 0,1 ");
 		if ($wpdb->num_rows > 0) {
@@ -325,6 +353,9 @@ if (!function_exists('event_espresso_get_time')) {
 }
 
 
+
+
+
 /*
  * Time display function
  * Shows an event time based on time_id
@@ -337,7 +368,7 @@ if (!function_exists('event_espresso_get_time')) {
 if (!function_exists('event_espresso_display_selected_time')) {
 
 	function event_espresso_display_selected_time($time_id = 0, $format = 'NULL') {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		global $wpdb;
 		$html = '';
 		$event_times = $wpdb->get_results("SELECT * FROM " . EVENTS_START_END_TABLE . " WHERE id='" . $time_id . "'");
@@ -362,11 +393,16 @@ if (!function_exists('event_espresso_display_selected_time')) {
 
 }
 
+
+
+
+
+
 //Checks if a date is later than another date
 if (!function_exists('event_espresso_firstdate_later')) {
 
 	function event_espresso_firstdate_later($first_date, $second_date) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		$start = strtotime($first_date);
 		$end = strtotime($second_date);
 		if ($start - $end > 0)
@@ -385,20 +421,25 @@ if (!function_exists('event_espresso_firstdate_later')) {
  * @params string $date
  * @params string $format - format for the date
  */
-if (!function_exists('event_espresso_no_format_date')) {
+//if (!function_exists('event_espresso_no_format_date')) {
+//
+//	function event_espresso_no_format_date($date, $format = '') {
+//		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+//		$format = $format == '' ? get_option('date_format') : $format;
+//		if (empty($date)) {
+//			return NULL;
+//		} else {
+//			$event_date_display = date_i18n($format, strtotime($date)); //Fixed for international use
+//		}
+//		return $event_date_display;
+//	}
+//
+//}
 
-	function event_espresso_no_format_date($date, $format = '') {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-		$format = $format == '' ? get_option('date_format') : $format;
-		if (empty($date)) {
-			return NULL;
-		} else {
-			$event_date_display = date_i18n($format, strtotime($date)); //Fixed for international use
-		}
-		return $event_date_display;
-	}
 
-}
+
+
+
 
 /*
  * Date formatting function
@@ -407,28 +448,28 @@ if (!function_exists('event_espresso_no_format_date')) {
  * @params string $format - format for the date
  */
 if (!function_exists('event_date_display')) {
-
-	function event_date_display($date, $format = '') {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	function event_date_display( $date, $format = '' ) {
 		$format = $format == '' ? get_option('date_format') : $format;
-		if (empty($date)) {
-			$event_date_display = '';
-			//echo '<span style="color:red;">'.__('NO DATE SUPPLIED','event_espresso').'</span>';
+		if ( empty( $date )) {
+			return '';
 		} else {
-			$event_date_display = date_i18n($format, strtotime($date)); //Fixed for international use
+			return date_i18n( $format, strtotime( $date )); 
 		}
-		return $event_date_display;
 	}
-
 }
+
+
+
+
+
 
 
 //This function just returns an event start date
 //@param the event id
-if (!function_exists('event_espresso_event_start_date')) {
+/*if (!function_exists('event_espresso_event_start_date')) {
 
 	function event_espresso_event_start_date($event_id) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		global $wpdb;
 		$sql = "SELECT e.start_date FROM " . EVENTS_DETAIL_TABLE . " e
 		WHERE e.id = '" . $event_id . "'";
@@ -436,14 +477,23 @@ if (!function_exists('event_espresso_event_start_date')) {
 		return event_date_display($wpdb->last_result[0]->start_date);
 	}
 
-}
+}*/
+
+
+
+
+
 
 function event_espresso_datetime2mysqldatetime($datetime) {// "25.12.2010 12:10:00" -> "2010-12-25 12:10:00"
 	return date('Y-m-d H:i:s', strtotime($datetime));	// "25.12.2010" -> "2010-12-25 00:00:00"
 }
 
+
+
+
+
 function event_espresso_mysqldatetime2datetime($mysql_datetime) {// "2010-12-25 12:10:00" -> "25.12.2010 12:10:00"
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	$d = split(' ', $mysql_datetime); // "2010-12-25" -> "25.12.2010"
 	if ($d && count($d) > 1) {
 		list($year, $month, $day) = split("-", $d[0]);
@@ -458,13 +508,18 @@ function event_espresso_mysqldatetime2datetime($mysql_datetime) {// "2010-12-25 
 	return $d;
 }
 
+
+
+
+
+
 //Returns the times and dates of individual events
 // @params $event_id (required)
 // @params $format ( start_date_time (default) | end_date_time | start_time | end_time | start_date | end_date | start_timestamp | end_timestamp )
-if (!function_exists('espresso_event_time')) {
+/*if (!function_exists('espresso_event_time')) {
 
 	function espresso_event_time($event_id, $type, $format = '') {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		global $wpdb;
 
 		$sql = "SELECT e.id, e.start_date start_date, e.end_date end_date, ese.start_time start_time, ese.end_time end_time ";
@@ -506,10 +561,15 @@ if (!function_exists('espresso_event_time')) {
 		}
 	}
 
-}
+}*/
+
+
+
+
+
 
 function eventespresso_ddtimezone($event_id = 0) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	global $wpdb;
 	$tz_event = $wpdb->get_var($wpdb->prepare("SELECT timezone_string FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $event_id . "'"));
 
@@ -592,8 +652,12 @@ function eventespresso_ddtimezone($event_id = 0) {
 	endif;
 }
 
+
+
+
+
 function espresso_ddtimezone_simple($event_id = 0) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	global $wpdb;
 	$tz_event = $wpdb->get_var($wpdb->prepare("SELECT timezone_string FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $event_id . "'"));
 
@@ -625,66 +689,12 @@ function espresso_ddtimezone_simple($event_id = 0) {
 	<?php
 }
 
-/* function eventespresso_ddtimezone($event_id = 0)
-  {
-  global $wpdb;
-  $list = DateTimeZone::listAbbreviations();
-  $idents = DateTimeZone::listIdentifiers();
 
-  $data = $offset = $added = array();
-  foreach ($list as $abbr => $info) {
-  foreach ($info as $zone) {
-  if ( ! empty($zone['timezone_id'])
-  AND
-  ! in_array($zone['timezone_id'], $added)
-  AND
-  in_array($zone['timezone_id'], $idents)) {
-  $z = new DateTimeZone($zone['timezone_id']);
-  $c = new DateTime(null, $z);
-  $zone['time'] = $c->format('h:i A');
-  $data[] = $zone;
-  $offset[] = $z->getOffset($c);
-  $added[] = $zone['timezone_id'];
-  }
-  }
-  }
-  echo '<label for="time_zone">' . __('Choose Event Timezone:','event_espresso') . '</label><br>';
-  echo '<select name="timezone_string" id="timezone_string-">';
 
-  array_multisort($offset, SORT_ASC, $data);
-  $options = array();
 
-  if($event_id>0)
-  {
-  $tz_event = $wpdb->get_var($wpdb->prepare("SELECT timezone_string FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $event_id . "'"));
-
-  foreach ($data as $key => $row) {
-
-  if($tz_event==$row['timezone_id'])
-  {
-  echo '<option selected value="' . $row['timezone_id'] . '">' . $row['time'] . ' - ' . $row['timezone_id'] . '</option>';
-  }
-  else
-  {
-  echo '<option value="' . $row['timezone_id'] . '">' . $row['time'] . ' - ' . $row['timezone_id'] . '</option>';
-  }
-  }
-  }
-  else
-  {
-  foreach ($data as $key => $row) {
-
-  echo '<option value="' . $row['timezone_id'] . '">' . $row['time'] . ' - ' . $row['timezone_id'] . '</option>';
-
-  }
-  }
-  echo '</select>';
-
-  // now you can use $options;
-  } */
 
 function formatOffset($offset) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	$hours = $offset / 3600;
 	$remainder = $offset % 3600;
 	$sign = $hours > 0 ? '+' : '-';
@@ -698,8 +708,13 @@ function formatOffset($offset) {
 					. ':' . str_pad($minutes, 2, '0');
 }
 
+
+
+
+
+
 function date_at_timezone($format, $locale, $timestamp=null) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 //http://php.net/manual/en/function.date.php
 //Examples
 //$t = time();
@@ -730,6 +745,11 @@ function date_at_timezone($format, $locale, $timestamp=null) {
 	return $output;
 }
 
+
+
+
+
+
 //Converts a time to 12 hour format
 if (!function_exists('time_to_12hr')) {
 
@@ -738,6 +758,11 @@ if (!function_exists('time_to_12hr')) {
 	}
 
 }
+
+
+
+
+
 
 //Converts a time to 24 hour format
 if (!function_exists('time_to_24hr')) {
@@ -748,12 +773,18 @@ if (!function_exists('time_to_24hr')) {
 
 }
 
+
+
+
+
+
 function espresso_event_months_dropdown( $current_value = FALSE ) {
 
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	global $wpdb;
 	$eemd = '';
 	$current_value = $current_value ? $current_value : 0;
+
 
 	$SQL = "SELECT DATE_FORMAT( FROM_UNIXTIME( REG_date ), '%Y') AS 'YR', DATE_FORMAT( FROM_UNIXTIME( REG_date ), '%M') AS 'MN' FROM {$wpdb->prefix}esp_registration reg LEFT JOIN {$wpdb->prefix}events_detail evt ON evt.id=reg.EVT_ID WHERE event_status != 'D' GROUP BY YR, MN";
 
@@ -763,7 +794,7 @@ function espresso_event_months_dropdown( $current_value = FALSE ) {
 		$eemd .= '<option value="0">' . __('Select a Month/Year', 'event_espresso') . '</option>';
 
 		foreach ($dates as $date) {
-			$option_date =  $date->YR . '-' . $date->MN;
+			$option_date =  $date->YR . '-' . strtolower($date->MN);
 			$eemd .= '<option value="' . $option_date . '"';
 			$eemd .= $option_date == $current_value ? ' selected="selected"' : '';
 			$eemd .= '>' . $date->MN . ' ' . $date->YR . '</option>' . "\n";
