@@ -1295,7 +1295,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			endforeach;
 		endforeach;
 		else :
-		?>
+	/*	?>
 
 				
 				<tr>
@@ -1327,19 +1327,21 @@ class Events_Admin_Page extends EE_Admin_Page {
 									</td> 
 
 									
-	<?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS
-									<td class="tckts-left-column" style="width:7.5%; height:2.5em; text-align:right;"> 
-										<input class="edit-tickets-left-input quick-edit" type="text" id="quick-edit-ticket-price[XXXXXX][PRC_tckts_left]" name="quick_edit_ticket_price[XXXXXX][PRC_tckts_left]" style="width:100%;text-align:right;" value="<?php echo $price->tckts_left(); ?>" disabled="disabled"/>
-									</td> 
-	 */ ?>
+	<?php  
+	//DO NOT DELETE - NEW FEATURE IN PROGRESS
+//									<td class="tckts-left-column" style="width:7.5%; height:2.5em; text-align:right;"> 
+//										<input class="edit-tickets-left-input quick-edit" type="text" id="quick-edit-ticket-price[XXXXXX][PRC_tckts_left]" name="quick_edit_ticket_price[XXXXXX][PRC_tckts_left]" style="width:100%;text-align:right;" value="<?php echo $price->tckts_left(); ?>" disabled="disabled"/>
+//									</td> 
+	  ?>
 									
 									<td class="edit-column ticket-price-quick-edit-column">
 										<div class="small-screen-table-label"><?php echo __('Actions', 'event_espresso') ?></div>									
-										<?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS
-										<a class='display-price-tickets-left-lnk display-ticket-manager' data-reveal-id="ticket-manager-dv" rel="XXXXXX"  title='Display the Ticket Manager for this Event' style="cursor:pointer;" >
-											<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/tickets-1-16x16.png" width="16" height="16" alt="<?php _e('tickets left', 'event_espresso'); ?>"/>
-										</a>
-										 */ ?>
+										<?php 
+//										 DO NOT DELETE - NEW FEATURE IN PROGRESS
+//										<a class='display-price-tickets-left-lnk display-ticket-manager' data-reveal-id="ticket-manager-dv" rel="XXXXXX"  title='Display the Ticket Manager for this Event' style="cursor:pointer;" >
+//											<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/tickets-1-16x16.png" width="16" height="16" alt="<?php _e('tickets left', 'event_espresso'); ?>"/>
+//										</a>										 
+										 ?>
 										<!--<a class='edit-event-price-lnk evt-prc-btn' rel="XXXXXX"  title="Edit Advanced Settings for this Event Price">
 											<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/settings-16x16.png" width="16" height="16" alt="<?php _e('edit', 'event_espresso'); ?>"/>
 										</a>
@@ -1361,7 +1363,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				</tr>
 
 		
-		<?php
+		<?php*/
 		endif;
 			?>
 			</table>
@@ -1492,6 +1494,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 			<br class="clear"/><br/>
 			
 			<input id="edited-ticket-price-IDs" name="edited_ticket_price_IDs" type="hidden" value="" />
+
+			<input  type="hidden" id="price-count-inp" name="price_count" value="<?php echo $counter - 1;?>"/>
 			
 		</div>
 		<?php
@@ -2343,7 +2347,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 			$msg = __( 'An error occured. The event could not be moved to the trash because a valid event ID was not not supplied.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
-		
 	}
 
 
@@ -2852,7 +2855,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			}
 		}
 
-		$last_event_id = $wpdb->insert_id;
+		$last_event_id = absint( $wpdb->insert_id );
 
 		do_action('AHEE_insert_event_add_ons');
 		############# MailChimp Integration ##############
@@ -3020,7 +3023,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				// create ticket object
 				$new_price = new EE_Price(
 												$ticket_price['PRT_ID'],
-												absint($last_event_id),
+												$last_event_id,
 												$ticket_price['PRC_amount'],
 												$ticket_price['PRC_name'],
 												$ticket_price['PRC_desc'],
@@ -3039,6 +3042,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 												$ticket_price['PRT_ID'] < 3 ? 0 : $ticket_price['PRC_order'],
 												$ticket_price['PRC_deleted']
 				);
+				
+				if ( $new_price->deleted()) {
+					$this->_req_data['price_count']--;
+				} else {
+					$this->_req_data['price_count']++;
+				}
+				
 
 //                    echo printr( $ticket_price, '$ticket_price' );
 //                    echo printr( $new_price, '$new_price' );
@@ -3048,8 +3058,11 @@ class Events_Admin_Page extends EE_Admin_Page {
 			}
 		}
 
-		
-		
+		if ( isset( $this->_req_data['price_count'] ) && absint( $this->_req_data['price_count'] ) < 1 ) {
+			$espresso_no_ticket_prices = get_option( 'espresso_no_ticket_prices', array() );
+			$espresso_no_ticket_prices[ $last_event_id ] = $event_name;
+			update_option( 'espresso_no_ticket_prices', $espresso_no_ticket_prices );
+		}  		
 
 		/// Create Event Post Code Here
 		if ( isset( $this->_req_data['create_post'] ) && $this->_req_data['create_post'] == 1 ) {
@@ -3605,11 +3618,15 @@ class Events_Admin_Page extends EE_Admin_Page {
 //				printr( $ticket_price, '$ticket_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //				printr( $new_price, '$new_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //die();
+				if ( $new_price->deleted() && isset( $this->_req_data['price_count'] ) ) {
+					$this->_req_data['price_count']--;
+				}
 
 				if (!$new_price->ID()) {
 //echo '<h1>insert !!!</h1>';
 //echo '<h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 					$results = $new_price->insert();
+					$this->_req_data['price_count']++;
 				} else {
 //echo '<h1>update !!!</h1>';
 //echo '<h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
@@ -3622,6 +3639,20 @@ class Events_Admin_Page extends EE_Admin_Page {
 //echo printr( $this->_req_data, '$this->_req_data' );	
 //echo EE_Error::get_notices();            
 //die();
+		
+		// if ticket prices have eben set for this event, then remove it from the list of events with no prices,
+		if ( isset( $this->_req_data['price_count'] ) && absint( $this->_req_data['price_count'] ) > 0 ) {
+			$espresso_no_ticket_prices = get_option( 'espresso_no_ticket_prices', array() );
+			if ( isset( $espresso_no_ticket_prices[ $event_id ] )) {
+				unset( $espresso_no_ticket_prices[ $event_id ] );
+				update_option( 'espresso_no_ticket_prices', $espresso_no_ticket_prices );
+			}
+		} else {
+			// event has no set prices, so add it to list for tracking
+			$espresso_no_ticket_prices = get_option( 'espresso_no_ticket_prices', array() );
+			$espresso_no_ticket_prices[ $event_id ] = $event_name;
+			update_option( 'espresso_no_ticket_prices', $espresso_no_ticket_prices );
+		}
 
 
 		############# MailChimp Integration ###############
@@ -4094,7 +4125,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 		
 		
 		$events = $count ? $wpdb->get_var( $sql ) : $wpdb->get_results( $sql );
-
 
 		return $events;
 	}
