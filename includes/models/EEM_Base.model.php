@@ -320,6 +320,7 @@ abstract class EEM_Base extends EE_Base {
 		global $wpdb;
 		$wpdb->show_errors();
 		//echo "QUERY:".$wpdb->prepare( $SQL, $VAL );
+		//echo "running query:$SQL<hr>";
 		$results = $output == 'COUNT' ? $wpdb->get_var( $wpdb->prepare( $SQL, $VAL ) ) : $wpdb->get_results( $wpdb->prepare( $SQL, $VAL ), $output );
 		//VAR_DUMP($results);
 		return $results;

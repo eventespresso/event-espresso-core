@@ -50,7 +50,7 @@ class EE_Answer extends EE_Base_Class{
 	 * Text of answer. This is obvious for text and textarea typed questions.
 	 * For check
 	 * @access protected
-	 * @var text 
+	 * @var string 
 	 */
 	protected $_ANS_value=NULL;
 

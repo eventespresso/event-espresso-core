@@ -564,7 +564,7 @@ function event_espresso_run_install( $table_name, $sql, $engine = 'ENGINE=MyISAM
 
 
 /**
- * Checks if this column already exists on 
+ * Checks if this column already exists on the specified table. Handy for addons which want to add a column
  * @param string $table_name (wihtout "wp_", eg "esp_attendee"
  * @param string $column_name
  * @param string $column_info if your SQL were 'ALTER TABLE table_name ADD price VARCHAR(10)', this would be 'VARCHAR(10)'
@@ -575,7 +575,7 @@ function espresso_add_column_if_it_doesnt_exist($table_name,$column_name,$column
 	$fields = espresso_get_fields_on_table($table_name);
 	if (!in_array($column_name, $fields)){
 		$alter_query="ALTER TABLE $full_table_name ADD $column_name $column_info";
-		echo "alter query:$alter_query";
+		//echo "alter query:$alter_query";
 		return mysql_query($alter_query);
 	}
 	return true;
