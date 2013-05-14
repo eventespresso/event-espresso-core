@@ -473,8 +473,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][9])
 			? TRUE
 			: FALSE;
-
-		$this->_template_args['custom_templates_exist'] = TRUE;
+		//$this->_template_args['custom_templates_exist'] = TRUE;
 		
 		$this->_set_add_edit_form_tags( 'update_template_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
