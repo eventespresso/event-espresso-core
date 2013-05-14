@@ -165,6 +165,7 @@ if ( is_admin() ) {
 	add_action('plugins_loaded', 'espresso_check_for_import');
 	add_action('admin_init', 'espresso_check_data_tables' );
 	add_action('init', 'espresso_init_admin_pages', 100);
+	add_action( 'init', 'espresso_check_no_ticket_prices_array', 101 );
 	add_action('admin_bar_menu', 'espresso_toolbar_items', 100);
 	add_filter('plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2);
 	add_action( 'admin_enqueue_scripts', 'espresso_load_scripts_styles' );
