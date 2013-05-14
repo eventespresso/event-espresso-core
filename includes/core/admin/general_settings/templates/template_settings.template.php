@@ -173,7 +173,7 @@
 	</table>
 	<br/>
 
-	<p class="padding">
+	<p class="ee-attention">
 		<em class="important">
 			<strong>
 				<?php _e('ATTENTION:', 'event_espresso'); ?>
@@ -222,7 +222,7 @@
 		</table>
 
 		<?php
-		if ( ! $template_settings['use_custom_templates']) {
+		if ( $template_settings['use_custom_templates']) {
 			?>
 
 			<p class="ee-attention">
@@ -230,7 +230,7 @@
 			</p>
 
 			<?php
-		}else {
+		} else {
 			?>
 
 			<div class="ee-attention">
@@ -347,10 +347,15 @@
 		</p>
 
 		<?php
-	}else {
+	} else {
 		?>
 
 		<p class="ee-attention">
+			<em class="important">
+				<strong>
+					<?php _e('Custom Templates:', 'event_espresso'); ?>
+				</strong><br />
+			</em>
 			<?php echo sprintf(__('If you plan on modifying the look of your event listings, registration page, or attendee list. You can move the templates located in the templates directory to your "wp-content/uploads/espresso/templates/" directory (%smore information here%s). Please keep in mind, if updates are made or features are added to these templates in the future. You will need to make the updates to your customized templates.', 'event_espresso'), '<a href="http://eventespresso.com/forums/?p=2906" target="_blank">', '</a>'); ?>
 		</p>
 

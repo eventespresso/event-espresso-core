@@ -70,7 +70,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 		$txn_results = array(
 				'gateway' => $this->_payment_settings['display_name'],
 				'approved' => FALSE,
-				'response_msg' => __('You\'re registration will be marked as complete once your payment is received.', 'event_espresso'),
+				'response_msg' => __('Your registration will be marked as complete once your payment is received.', 'event_espresso'),
 				'status' => 'Incomplete',
 				'raw_response' => serialize($_REQUEST),
 				'amount' => 0.00,
