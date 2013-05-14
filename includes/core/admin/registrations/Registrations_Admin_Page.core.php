@@ -1870,9 +1870,9 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 			// and store a bit of data about the primary attendee
 			$primary_attendee['line_item_id'] = $line_item_id;
-			$primary_attendee['fname'] = $qstns['1'];
-			$primary_attendee['lname'] = $qstns['2'];
-			$primary_attendee['email'] = $qstns['3'];
+			$primary_attendee['fname'] = $qstns['fname'];
+			$primary_attendee['lname'] = $qstns['lname'];
+			$primary_attendee['email'] = $qstns['email'];
 			$EE_Session->set_session_data(array('primary_attendee' => $primary_attendee), 'session_data');
 
 		}
