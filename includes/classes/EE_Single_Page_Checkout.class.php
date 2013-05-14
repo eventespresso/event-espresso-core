@@ -1336,6 +1336,7 @@ class EE_Single_Page_Checkout {
 				// save attendee question answerss
 				$exclude = array( 'price_paid', 'primary_attendee', 'att_obj', 'reg_obj', 'additional_attendee_reg_info' );
 //				printr( $reg_items, '$reg_items  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+				
 				foreach ( $reg_items[ $line_item_id ]['attendees'][ $att_nmbr ] as $QST_ID => $answer ) {
 					if ( ! in_array( $QST_ID, $exclude ) && ! empty( $answer )) {
 						// convert system string QST_IDs like 'fname' to their numeric equivalents

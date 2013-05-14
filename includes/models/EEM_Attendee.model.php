@@ -100,43 +100,6 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 
 
 	/**
-	*		cycle though array of attendees and create objects out of each item
-	* 
-	* 		@access		private
-	* 		@param		array		$attendees		
-	*		@return 		mixed		array on success, FALSE on fail
-	*/	
-	protected function _create_objects( $attendees = FALSE ) {
-
-		$array_of_objects=array();
-
-		foreach ( $attendees as $attendee ) {
-				$array_of_objects[ $attendee->ATT_ID ] = new EE_Attendee(
-						$attendee->ATT_fname,
-						$attendee->ATT_lname,
-						$attendee->ATT_email,
-						$attendee->ATT_address,
-						$attendee->ATT_address2,
-						$attendee->ATT_city,
-						$attendee->STA_ID,
-						$attendee->CNT_ISO,
-						$attendee->ATT_zip,
-						$attendee->ATT_phone,
-						$attendee->ATT_social,
-						$attendee->ATT_comments,
-						$attendee->ATT_notes,
-						$attendee->ATT_deleted,
-						$attendee->ATT_ID
-				 	);
-		}	
-		return $array_of_objects;	
-
-	}
-
-
-
-
-	/**
 	*		retreive  ALL attendees from db
 	* 
 	* 		@access		public

@@ -662,7 +662,7 @@ class EE_Form_Fields {
 	private static function _generate_select_option_group( $key, $value, $answer ){
 		$html = "\n\t\t\t\t" . '<optgroup label="' . self::prep_option_value( $key ) . '">';
 		foreach ( $value as $option ) {			
-			$html .= self::_generate_select_option( $option['QSO_value'], $option['QSO_text'], $answer );
+			$html .= self::_generate_select_option( $option['QSO_name'], $option['QSO_value'], $answer );
 		}
 		$html .= "\n\t\t\t\t" . '</optgroup>';
 		return $html;
@@ -927,7 +927,7 @@ class EE_Form_Fields {
 		if ( is_array( $option_values ) && ! empty( $option_values )) {
 			foreach( $option_values as $option_value ) {
 				if ( ! $option_value['QSO_deleted'] ) {
-					$options[ $option_value['QSO_value'] ] = $option_value['QSO_text'];
+					$options[ $option_value['QSO_name'] ] = $option_value['QSO_value'];
 				}				
 			}	
 		}
@@ -997,8 +997,8 @@ class EE_Form_Fields {
 					$question['QST_type'] = 'DROPDOWN';
 					foreach ( $countries as $country ) {
 						$question['QST_options'][] = array (
-							'QSO_value' => $country->get( 'CNT_ISO' ),
-							'QSO_text' => $country->get( 'CNT_name' ),
+							'QSO_name' => $country->get( 'CNT_ISO' ),
+							'QSO_value' => $country->get( 'CNT_name' ),
 							'QSO_deleted' => FALSE
 						);				
 					}
@@ -1022,8 +1022,8 @@ class EE_Form_Fields {
 									// only adds states/provs for this country
 									if ( $state->get( 'CNT_ISO' ) == $CNT_ISO ) {
 										$state_options[ $state->get( 'STA_ID' ) ] = array (
-											'QSO_value' => $state->get( 'STA_ID' ),
-											'QSO_text' => $state->get( 'STA_name' ),
+											'QSO_name' => $state->get( 'STA_ID' ),
+											'QSO_value' => $state->get( 'STA_name' ),
 											'QSO_deleted' => FALSE
 										);
 										// remove state from $states array so we don't have to loop over it again
@@ -1032,8 +1032,8 @@ class EE_Form_Fields {
 								}	
 								// then create the option group for the country
 								$question['QST_options'][] = array (
-									'QSO_value' => $country->get( 'CNT_name' ),
-									'QSO_text' => $state_options,
+									'QSO_name' => $country->get( 'CNT_name' ),
+									'QSO_value' => $state_options,
 									'QSO_deleted' => FALSE
 								);															
 							}						
@@ -1041,8 +1041,8 @@ class EE_Form_Fields {
 							// just create options out of the states
 							foreach ( $states as $STA_ID => $state ) {
 								$question['QST_options'][] = array (
-									'QSO_value' => $state->get( 'STA_ID' ),
-									'QSO_text' => $state->get( 'STA_name' ),
+									'QSO_name' => $state->get( 'STA_ID' ),
+									'QSO_value' => $state->get( 'STA_name' ),
 									'QSO_deleted' => FALSE
 								);				
 							}
