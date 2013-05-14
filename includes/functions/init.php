@@ -475,3 +475,33 @@ function espresso_init_admin_pages() {
 	}
 	
 }
+
+
+
+
+
+function espresso_check_no_ticket_prices_array() {
+	$espresso_no_ticket_prices = get_option( 'espresso_no_ticket_prices', FALSE );
+	//printr( $espresso_no_ticket_prices, '$espresso_no_ticket_prices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+	if ( $espresso_no_ticket_prices ) {
+		$no_ticket_prices_msg = __( '<strong>Warning!</strong> The following events have no ticket prices set for them and will therefore not allow registrations:', 'event_espresso' );
+		foreach ( $espresso_no_ticket_prices as $EVT_ID => $event_name ) {
+			if ( empty( $EVT_ID )) {
+				unset( $espresso_no_ticket_prices[ $EVT_ID ] );
+			} else {
+				$edit_event_url = EE_Admin_Page::add_query_args_and_nonce( array( 'page'=>'espresso_events', 'action'=>'edit_event', 'EVT_ID'=>$EVT_ID ),  admin_url( 'admin.php?' ));
+				$event_name = stripslashes( htmlentities( $event_name, ENT_QUOTES, 'UTF-8' ));
+				$no_ticket_prices_msg .= '<br/><a href="' . $edit_event_url . '" title="' . sprintf( __( 'Edit Event: %s', 'event_espresso' ), $event_name ) .'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>';
+			}
+		}
+		$no_ticket_prices_msg .= '<br/>' . __( 'click on the event name to go to the event editor and correct this issue.', 'event_espresso' );
+		EE_Error::add_error( $no_ticket_prices_msg, __FILE__, __FUNCTION__, __LINE__ );
+		add_action( 'admin_notices', 'espresso_display_admin_notice' );
+		update_option( 'espresso_no_ticket_prices', $espresso_no_ticket_prices );
+	}
+}
+
+
+function espresso_display_admin_notice() {
+	echo EE_Error::get_notices();
+}
