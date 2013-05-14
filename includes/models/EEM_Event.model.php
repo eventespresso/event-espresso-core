@@ -248,12 +248,11 @@ class EEM_Event  extends EEM_TempBase{
 		$SQL .= 'WHERE EQG.EVT_ID = %d AND QSG.QSG_deleted = 0 '; 
 		$SQL .= $for_primary_attendee === TRUE || $for_primary_attendee === 1 ? ' AND EQG.EQG_primary = 1 ' : ' AND EQG.EQG_primary = 0 '; 
 		// system groups only?
-		if ( $system_ID ) {
-			$SQL .= ' AND QSG.QSG_system < %d AND QSG.QSG_system != 0 ';
-		}
+//		if ( $system_ID ) {
+//			$SQL .= ' AND QSG.QSG_system < %d AND QSG.QSG_system != 0 ';
+//		}
 		$SQL .= 'ORDER BY QSG.QSG_order'; 
 		$QSGs = $wpdb->get_results( $wpdb->prepare( $SQL, $EVT_ID, $system_ID ), 'OBJECT_K' );
-
 		// WHAT?!?!? NOTHING?!?!?
 //		if ( empty( $QSGs )) {
 //			$SQL = 'SELECT QSG.* FROM ' . $wpdb->prefix . 'esp_event_question_group EQG '; 
