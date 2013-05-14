@@ -91,9 +91,9 @@ class EEM_Message_Template extends EEM_Base {
 		// set item names
 		$this->singlular_item = __('Message Template','event_espresso');
 		$this->plural_item = __('Message Templates','event_espresso');		
-		// array representation of the price table and the data types for each field
+		// array representation of the message template group table
 		$this->table_data_types = array(
-				'wp_esp_message_template_group.GRP_ID' => '%d',
+				$this->table_name . '.GRP_ID' => '%d',
 				'EVT_ID' => '%d',
 				'MTP_user_id' => '%d',
 				'MTP_messenger'	=> '%s',
@@ -107,6 +107,7 @@ class EEM_Message_Template extends EEM_Base {
 				'MTP_template_field' => '%s',
 				'MTP_content' => '%s'
 		);
+
 
 		$this->_join_table_columns = array(
 			'GRP_ID' => '%d',
@@ -540,6 +541,9 @@ class EEM_Message_Template extends EEM_Base {
 			return FALSE;
 		}
 
+		//NOTE: in conflicts don't use this, the new models win... this is just to get it working with 4.0Beta
+		unset( $this->table_data_types[$this->table_name . '.GRP_ID'] );
+		$this->table_data_types['GRP_ID'] = '%d';
 		$where = array( 'GRP_ID' => $GRP_ID );
 
 		if ( $this->delete($where) && $this->_delete( $this->_join_table_name, $this->table_data_types, $where ) ) {
