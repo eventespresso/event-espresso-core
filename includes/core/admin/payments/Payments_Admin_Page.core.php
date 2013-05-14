@@ -300,7 +300,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	protected function _update_payment_settings() {	
 		$data = array();
 		$data['show_pending_payment_options'] = isset( $this->_req_data['show_pending_payment_options'] ) ? absint( $this->_req_data['show_pending_payment_options'] ) : FALSE;
-		$data = apply_filters('filter_hook_espresso_payment_settings_save', $data);	
+		$data = apply_filters('FHEE_payment_settings_save', $data);	
 		
 		$what = 'Payment Settings';
 		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );

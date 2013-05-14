@@ -28,7 +28,7 @@ function event_espresso_rename_tables($old_table_name, $new_table_name) {
 //This function updates the org_options from < EE 4.0
 function espresso_fix_org_options() {
 	global $org_options, $espresso_wp_user;
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	if (empty($org_options))
 		return;
 
@@ -156,7 +156,7 @@ function espresso_initialize_system_questions() {
 	
 	// QUESTIONS
 	global $wpdb;
-	$SQL = 'SELECT QST_system FROM ' . $wpdb->prefix . 'esp_question WHERE QST_system != 0';
+	$SQL = 'SELECT QST_system FROM ' . $wpdb->prefix . "esp_question WHERE QST_system != ''";
 	// what we have
 	$questions = $wpdb->get_col( $SQL );
 	// what we should have
@@ -172,6 +172,7 @@ function espresso_initialize_system_questions() {
 		'zip', 
 		'phone' 
 	);
+	
 	// loop thru what we should have and compare to what we have
 	foreach ( $QST_systems as $QST_system ) {
 		// if we don't have what we should have
@@ -340,8 +341,7 @@ function espresso_initialize_system_questions() {
 			
 			// QUESTION GROUP QUESTIONS 
 			
-			$QSG_ID = in_array( $QST_system,
-					array('fname','lname','email')) ? 1 : 2;			
+			$QSG_ID = in_array( $QST_system, array('fname','lname','email')) ? 1 : 2;			
 			// add system questions to groups
 			$wpdb->insert(
 				$wpdb->prefix . 'esp_question_group_question', 
@@ -1302,7 +1302,7 @@ function espresso_default_price_types() {
 						(5, 'Surcharge', 3, 0, 0, 0, 30, 0),
 						(6, 'Regional Tax', 4, 0, 1, 1, 40, 1),
 						(7, 'Federal Tax', 4, 0, 1, 1, 50, 1);";
-			$SQL = apply_filters( 'filter_hook_espresso_default_price_types_activation_sql', $SQL );
+			$SQL = apply_filters( 'FHEE_default_price_types_activation_sql', $SQL );
 			$wpdb->query( $SQL );	
 		}
 	}
@@ -1328,7 +1328,7 @@ function espresso_default_prices() {
 						(4, 5, 0, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 30, 0)
 						(5, 6, 0, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 40, 1),
 						(6, 7, 0, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 50, 1);";			
-			$SQL = apply_filters( 'filter_hook_espresso_default_prices_activation_sql', $SQL );
+			$SQL = apply_filters( 'FHEE_default_prices_activation_sql', $SQL );
 			$wpdb->query($SQL);			
 		}
 	}	
@@ -1363,7 +1363,7 @@ function espresso_default_status_codes() {
 				('RCN', 'CANCELLED', 'registration', 0, NULL, 0),
 				('RNA', 'NOT_APPROVED', 'registration', 0, NULL, 0),
 				('TIN', 'INCOMPLETE', 'transaction', 0, NULL, 0),
-				('TPN', 'PENDING', 'transaction', 0, NULL, 1),
+				('TPN', 'OPEN', 'transaction', 0, NULL, 1),
 				('TCM', 'COMPLETE', 'transaction', 0, NULL, 1),
 				('TOP',	'OVERPAID', 'transaction', 0, NULL, 1),
 				('PAP', 'APPROVED', 'payment', 0, NULL, 1),
@@ -1477,7 +1477,7 @@ function espresso_default_countries() {
 		$countries = $wpdb->get_var($SQL);
 		if ( ! $countries ) {
 			$SQL = "INSERT INTO " . ESP_COUNTRY . " 
-			(CNT_ISO, CNT_ISO3, RGN_ID, CNT_name, CNT_cur_code, CNT_cur_single, CNT_cur_plural, CNT_cur_sign, CNT_cur_sign_b4, CNT_cur_dec, CNT_tel_code, CNT_is_EU, CNT_active) VALUES
+			(CNT_ISO, CNT_ISO3, RGN_ID, CNT_name, CNT_cur_code, CNT_cur_single, CNT_cur_plural, CNT_cur_sign, CNT_cur_sign_b4, CNT_cur_dec_plc, CNT_tel_code, CNT_is_EU, CNT_active) VALUES
 			('AD', 'AND', 0, 'Andorra', 'EUR', 'Euro', 'Euros', '&#8364;', 1, 2, '+376', 0, 0),
 			('AE', 'ARE', 0, 'United Arab Emirates', 'AED', 'Dirham', 'Dirhams', '&#1583;.&#1573;', 1, 2, '+971', 0, 0),
 			('AF', 'AFG', 0, 'Afghanistan', 'AFN', 'Afghani', 'Afghanis', '&#1547;', 1, 2, '+93', 0, 0),
@@ -1806,3 +1806,14 @@ function espresso_default_message_templates() {
 	return $templates;
 }
 
+
+
+
+function espresso_create_no_ticket_prices_array(){
+	// this creates an array for tracking events that have no active ticket prices created
+	// this allows us to warn admins of the situation so that it can be corrected
+	$espresso_no_ticket_prices = get_option( 'espresso_no_ticket_prices', FALSE );
+	if ( ! $espresso_no_ticket_prices ) {
+		add_option( 'espresso_no_ticket_prices', array(), '', FALSE );
+	}	
+}

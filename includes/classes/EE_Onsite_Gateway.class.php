@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
+do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 abstract class EE_Onsite_Gateway extends EE_Gateway {
 
@@ -13,14 +13,14 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 	abstract public function espresso_reg_page_billing_inputs();
 
 	protected function __construct(EEM_Gateways &$model) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		// this filter allows whatever function is processing the registration page to know what inputs to expect
-		//add_filter('filter_hook_espresso_reg_page_billing_inputs', array(&$this, 'espresso_reg_page_billing_inputs'));
+		//add_filter('FHEE_reg_page_billing_inputs', array(&$this, 'espresso_reg_page_billing_inputs'));
 		parent::__construct($model);
 	}
 	
 	protected function _set_default_properties() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		parent::_set_default_properties();
 		// list of fields required for capturing the billing address 
 		$this->_billing_info_address_fields = array(
@@ -54,7 +54,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 	 */
 	protected function _generate_billing_info_form_fields($billing_inputs = array(), $section = FALSE) {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		if (empty($billing_inputs) || !$section) {
 			return;
 		}
@@ -150,13 +150,13 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 	 */
 	public function process_gateway_selection() {
 	
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		global $EE_Session;
 		// set  billing inputs in the individual gateways plz
 		$reg_page_billing_inputs = array();
 		// allow others to edit post input array
 		$reg_page_billing_inputs = $this->espresso_reg_page_billing_inputs();
-		$reg_page_billing_inputs = apply_filters( 'filter_hook_espresso_reg_page_billing_inputs', $reg_page_billing_inputs );
+		$reg_page_billing_inputs = apply_filters( 'FHEE_reg_page_billing_inputs', $reg_page_billing_inputs );
 		// if EE_Validate_and_Sanitize is not instantiated
 		if ( ! defined( 'EE_Validate_and_Sanitize' )) {
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_Validate_and_Sanitize.class.php');
@@ -186,7 +186,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 	 * 		@return array
 	 */
 	public function set_billing_info_for_confirmation( $billing_info ) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$confirm_inputs = array(
 				'first name'=>'fname-' . $this->_gateway_name,
 				'last name'=>'lname-' . $this->_gateway_name,

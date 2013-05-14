@@ -29,7 +29,7 @@ class EEM_Registration extends EEM_TempBase {
   	// private instance of the Registration object
 	private static $_instance = NULL;
 
-	private static $_reg_status;
+	private static $_reg_status = array();
 
 	/**
 	 * The value of REG_count for a primary registrant
@@ -71,7 +71,7 @@ class EEM_Registration extends EEM_TempBase {
 		$this->plural_item = __('Registrations','event_espresso');
 		$this->_get_registration_status_array();
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Registration.class.php');
-		$this->_allowed_statuses=apply_filters('filter_hook_espresso__EEM_Registration__allowed_statuses', self::$_reg_status );
+		$this->_allowed_statuses=apply_filters('FHEE__EEM_Registration__allowed_statuses', self::$_reg_status );
 		$this->_fields_settings=array(
 			'REG_ID'=>new EE_Model_Field('Registration ID','primary_key',false),
 			'EVT_ID'=>new EE_Model_Field('Event ID','foreign_key',false,null,null,'Event'),
@@ -119,6 +119,23 @@ class EEM_Registration extends EEM_TempBase {
 		}
 		// Espresso_model object
 		return self::$_instance;
+	}
+
+
+
+
+
+
+
+
+	/**
+	 * 		get list of registration statuses
+	*		@access private
+	*		@return void
+	*/
+	public static function reg_status_array() {
+		call_user_func( array( __CLASS__, '_get_registration_status_array' ));
+		return self::$_reg_status;
 	}
 
 
@@ -507,7 +524,10 @@ class EEM_Registration extends EEM_TempBase {
 			}
 
 			if ( $reg_status ) {
-				$SQL .= $sql_clause .' reg.STS_ID = "' . $reg_status   . '"';
+				$SQL .= $sql_clause ." reg.STS_ID = '$reg_status'";
+				$sql_clause = ' AND ';
+			} else {
+				$SQL .= $sql_clause ." reg.STS_ID != 'RCN'";
 				$sql_clause = ' AND ';
 			}
 
@@ -571,7 +591,10 @@ class EEM_Registration extends EEM_TempBase {
 		}
 
 		if ( $reg_status ) {
-			$SQL .= $sql_clause .'reg.STS_ID = "' . $reg_status  . '"';
+			$SQL .= $sql_clause ." reg.STS_ID = '$reg_status'";
+			$sql_clause = ' AND ';
+		} else {
+			$SQL .= $sql_clause ." reg.STS_ID != 'RCN'";
 			$sql_clause = ' AND ';
 		}
 

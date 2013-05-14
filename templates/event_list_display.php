@@ -17,7 +17,7 @@
 ?>
 
 <div id="event_data-<?php echo $event_id ?>" class="event_data <?php echo $category_identifier; ?> event-list-display-dv">
-	<?php do_action('action_hook_espresso_before_event_list_listing', $event_id); ?>
+	<?php do_action('AHEE_before_event_list_listing', $event_id); ?>
 
 
 	<h3 id="event_title-<?php echo $event_id ?>" class="big-event-title-hdr">
@@ -32,7 +32,7 @@
 
 	<h4 class="event-date-hdr"><?php echo $display_event_date->start_date( 'l F jS, Y' ); ?></h4>
 
-	<?php do_action('action_hook_espresso_social_display_buttons', $event_id); ?>
+	<?php do_action('AHEE_social_display_buttons', $event_id); ?>
 
 	<?php /* These are custom messages that can be displayed based on the event status. Just un-comment the one you want to use. */ ?>
 	<?php //echo $status_display; //Turn this on to display the overall status of the event.  ?>
@@ -53,7 +53,7 @@
 			</p>
 
 			<?php
-			do_action('action_hook_espresso_inside_event_list_listing', $event);
+			do_action('AHEE_inside_event_list_listing', $event);
 			if ($can_register_for_event) {
 				if ($display_available_spaces) {
 					?>
@@ -89,7 +89,7 @@
 					}
 				} else {
 					// event is not sold out
-					do_action( 'action_hook_espresso_ticket_selector', $event );
+					do_action( 'AHEE_ticket_selector', $event );
 					echo $event_reg_link;
 				}
 			} else {	// end if $can_register_for_event
@@ -144,6 +144,6 @@
 
 	<div class="clear-float"><br /></div>
 
-<?php do_action('action_hook_espresso_after_event_list_listing', $event_id); ?>
+<?php do_action('AHEE_after_event_list_listing', $event_id); ?>
 </div>
 <!-- / .event-display-boxes -->

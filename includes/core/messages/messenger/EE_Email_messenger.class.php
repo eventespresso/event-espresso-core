@@ -267,8 +267,8 @@ class EE_Email_messenger extends EE_messenger  {
 			)
 		);
 
-		$this->_template_fields = apply_filters('filter_hook_espresso_set_template_fields_'.$this->name, $this->_template_fields);
-		$this->_template_fields = apply_filters('filter_hook_espresso_set_template_fields_all', $this->_template_fields);	
+		$this->_template_fields = apply_filters('FHEE_set_template_fields_'.$this->name, $this->_template_fields);
+		$this->_template_fields = apply_filters('FHEE_set_template_fields_all', $this->_template_fields);	
 	}
 
 	/**
@@ -301,7 +301,8 @@ class EE_Email_messenger extends EE_messenger  {
 		$this->_default_message_types = array(
 			'payment',
 			'registration',
-			'resend_registration'
+			'resend_registration',
+			'payment_reminder'
 			);
 	}
 

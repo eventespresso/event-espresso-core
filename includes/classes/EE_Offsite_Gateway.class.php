@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
+do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 abstract class EE_Offsite_Gateway extends EE_Gateway {
 
@@ -41,7 +41,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 	}
 	
 	protected function __construct(EEM_Gateways &$model) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		parent::__construct($model);
 	}
 	
@@ -51,7 +51,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 	 * 		@return 	mixed	array on success or FALSE on fail
 	 */
 	public function process_gateway_selection() {	
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$msg = $this->_EEM_Gateways->display_name() . __( ' gateway selected.', 'event_espresso' );
 		EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );		
 	}
@@ -63,7 +63,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 	 * 		@return array
 	 */
 	public function set_billing_info_for_confirmation( $billing_info ) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$confirm_data = array();
 		$confirm_data['gateway'] = $this->_EEM_Gateways->display_name();
 		return $confirm_data;
@@ -77,7 +77,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 	 * 		@return 	mixed	void or echo
 	 */
 	public function redirect_after_reg_step_3() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	
@@ -105,7 +105,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 	 * @return
 	 */
 	public function addField($field, $value) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$this->fields["$field"] = $value;
 	}
 
@@ -120,7 +120,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 	 * @return void
 	 */
 	public function submitPayment() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$pre_form = "<html>\n";
 		$pre_form .= "<head><title>Processing Payment...</title></head>\n";
 		$pre_form .= "<body>\n";
@@ -137,7 +137,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 	}
 	
 	protected function _output_inputs() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$output = '';
 		foreach ($this->fields as $name => $value) {
 			$output .= "<input type=\"hidden\" name=\"$name\" value=\"$value\"/>\n";

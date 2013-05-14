@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
+do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
  * Event Espresso
  *
  * Event Registration and Management Plugin for WordPress
@@ -41,7 +41,7 @@ class EE_Single_Page_Checkout {
 	 * 		@return class instance
 	 */
 	public static function instance() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 // check if class object is instantiated
 		if (self::$_instance === NULL or !is_object(self::$_instance) or !is_a(self::$_instance, __CLASS__)) {
 			self::$_instance = new self();
@@ -57,7 +57,7 @@ class EE_Single_Page_Checkout {
 	 */
 	private function __construct() {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		
 		if ( isset($_POST['espresso_ajax']) && $_POST['espresso_ajax'] == 1 ) {
 			$this->_ajax = 1;
@@ -110,7 +110,7 @@ class EE_Single_Page_Checkout {
 	 * 		@return 		void
 	 */
 	public function load_classes() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		
 		global $EE_Cart, $EEM_Gateways, $EE_Session;
 		
@@ -143,7 +143,7 @@ class EE_Single_Page_Checkout {
 	 * 		@return 		void
 	 */
 	public function set_templates() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$this->_templates['registration_page_wrapper'] = EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/reg_page_checkout/registration_page_wrapper.template.php';
 		$this->_templates['registration_page_step_1'] = EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/reg_page_checkout/registration_page_step_1.template.php';
 		$this->_templates['registration_page_step_2'] = EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/reg_page_checkout/registration_page_step_2.template.php';
@@ -175,7 +175,7 @@ class EE_Single_Page_Checkout {
 	 */
 	public function load_css() {
 //		if (isset($_REQUEST['e_reg']) && ( $_REQUEST['e_reg'] == 'register' && !is_admin() )) {
-			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+			do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 			wp_register_style('single_page_checkout', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/reg_page_checkout/registration_page_checkout.css');
 			wp_enqueue_style('single_page_checkout');
 //		}
@@ -189,7 +189,7 @@ class EE_Single_Page_Checkout {
 	 */
 	public function load_js() {
 //		if (isset($_REQUEST['e_reg']) && ( $_REQUEST['e_reg'] == 'register' && !is_admin() )) {
-			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+			do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 			wp_register_script('single_page_checkout', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/registration_page_checkout.js', array('jquery'), '', TRUE);
 			wp_enqueue_script('single_page_checkout');
 	}
@@ -210,7 +210,7 @@ class EE_Single_Page_Checkout {
 		// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
 		$this->_reg_page_base_url = rtrim(get_permalink($event_page_id), '/').'/';
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $event_page_id . '|' . $this->_reg_page_base_url);
+		do_action('AHEE_log', __FILE__, __FUNCTION__, $event_page_id . '|' . $this->_reg_page_base_url);
 
 		// set pathing based on regevent request
 		if ( isset($_REQUEST['e_reg']) && ! empty( $_REQUEST['e_reg'] )) {
@@ -220,27 +220,27 @@ class EE_Single_Page_Checkout {
 			switch ($_REQUEST['e_reg']) {
 
 				case 'register' :
-					add_action('action_hook_espresso_event_reg_checkout', array(&$this, '_event_reg_single_page_checkout'), 10, 2);
+					add_action('AHEE_event_reg_checkout', array(&$this, '_event_reg_single_page_checkout'), 10, 2);
 					break;
 
 
 				case 'process_reg_step_1' :
-					remove_all_actions('action_hook_espresso_regevent_default_action');
-					remove_all_actions('action_hook_espresso_event_registration');
+					remove_all_actions('AHEE_regevent_default_action');
+					remove_all_actions('AHEE_event_registration');
 					$this->process_registration_step_1();
 					break;
 
 
 				case 'process_reg_step_2' :
-					remove_all_actions('action_hook_espresso_regevent_default_action');
-					remove_all_actions('action_hook_espresso_event_registration');
+					remove_all_actions('AHEE_regevent_default_action');
+					remove_all_actions('AHEE_event_registration');
 					$this->process_registration_step_2();
 					break;
 
 
 				case 'process_reg_step_3' :
-					remove_all_actions('action_hook_espresso_regevent_default_action');
-					remove_all_actions('action_hook_espresso_event_registration');
+					remove_all_actions('AHEE_regevent_default_action');
+					remove_all_actions('AHEE_event_registration');
 					$this->process_registration_step_3();
 					break;
 
@@ -262,7 +262,7 @@ class EE_Single_Page_Checkout {
 	 */
 	public function _event_reg_single_page_checkout() {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 //		printr( $this->cart->whats_in_the_cart(), 'whats_in_the_cart  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		global $org_options, $espresso_wp_user, $EE_Session;
@@ -365,7 +365,7 @@ class EE_Single_Page_Checkout {
 		$step_1_line_items = '';
 
 //		$additional_event_registration_info = new stdClass();
-//		$additional_event_registration_info = apply_filters( 'filter_hook_espresso_additional_event_registration_info_init', $additional_event_registration_info );
+//		$additional_event_registration_info = apply_filters( 'FHEE_additional_event_registration_info_init', $additional_event_registration_info );
 
 		$events_requiring_pre_approval = array();
 		$events_that_use_coupon_codes = array();
@@ -428,7 +428,7 @@ class EE_Single_Page_Checkout {
 //						$events_that_use_groupon_codes[$cart_type]['items'][$item['line_item']] = array('id' => $item['id'], 'name' => $item['name'], 'price' => $item['price'], 'qty' => $item['qty']);
 //					}
 
-					// $additional_event_registration_info = apply_filters( 'filter_hook_espresso_additional_event_registration_info', $additional_event_registration_info );
+					// $additional_event_registration_info = apply_filters( 'FHEE_additional_event_registration_info', $additional_event_registration_info );
 					// $event_queue[$cart_type]['items'][ $item['line_item'] ]['extra_reg_info'] = $additional_event_registration_info;
 
 
@@ -470,8 +470,8 @@ class EE_Single_Page_Checkout {
 								'additional_attendee_reg_info' => $additional_attendee_reg_info
 						);
 
-						add_filter( 'filter_hook_espresso_form_field_label_html', array( $this, 'reg_form_form_field_label_wrap' ), 10, 1 );
-						add_filter( 'filter_hook_espresso_form_field_input_html', array( $this, 'reg_form_form_field_input__wrap' ), 10, 1 );
+						add_filter( 'FHEE_form_field_label_html', array( $this, 'reg_form_form_field_label_wrap' ), 10, 1 );
+						add_filter( 'FHEE_form_field_input_html', array( $this, 'reg_form_form_field_input__wrap' ), 10, 1 );
 						
 						$questions_and_groups = EEM_Event::instance()->get_event_questions_and_groups( $question_meta );
 						//echo "spco475";var_dump($questions_and_groups[1]['QSG_questions']);
@@ -717,7 +717,7 @@ class EE_Single_Page_Checkout {
 	 */
 	private function _get_event_reg_details($event_id) {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		global $wpdb;
 
 		$SQL = "SELECT event_code, category_id, allow_overflow, overflow_event_id, event_meta, require_pre_approval FROM " . EVENTS_DETAIL_TABLE . " WHERE id=%d";
@@ -744,7 +744,7 @@ class EE_Single_Page_Checkout {
 	 */
 	public function process_registration_step_1() {
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		global $EE_Session;
 
 		$success_msg = FALSE;
@@ -762,7 +762,7 @@ class EE_Single_Page_Checkout {
 		// loop through post data and sanitize all elements
 		array_walk_recursive( $_POST, array( $this, 'sanitize_text_field_for_array_walk' ));
 		$valid_data = $_POST;
-		$valid_data = apply_filters( 'filter_hook_espresso__EE_Single_Page_Checkout__process_registration_step_1__valid_data', $valid_data );
+		$valid_data = apply_filters( 'FHEE__EE_Single_Page_Checkout__process_registration_step_1__valid_data', $valid_data );
 //		printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		printr( $EE_Session, '$EE_Session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
@@ -863,7 +863,7 @@ class EE_Single_Page_Checkout {
 		
 		//do action in case a plugin wants to do something with the data submitted in step 1.
 		//passes EE_Single_Page_Checkout, and it's posted data
-		do_action('action_hook_espresso__EE_Single_Page_Checkout__process_registration_step_1__end',$this,$valid_data);
+		do_action('AHEE__EE_Single_Page_Checkout__process_registration_step_1__end',$this,$valid_data);
 
 		if ($this->send_ajax_response($success_msg, $error_msg)) {
 			$reg_page_step_2_url = add_query_arg(array('e_reg' => 'register', 'step' => '2'), $this->_reg_page_base_url);
@@ -910,7 +910,7 @@ class EE_Single_Page_Checkout {
 	 */
 	public function process_registration_step_2() {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		global $EE_Session;
 
 		$success_msg = FALSE;
@@ -964,7 +964,7 @@ class EE_Single_Page_Checkout {
 	private function _send_reg_step_2_ajax_response( $args, $success_msg) {
 
 		// Sidney is watching me...   { : \
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		$confirmation_page = $this->display_data_for_confirmation();
 		$response_data = array(
@@ -990,7 +990,7 @@ class EE_Single_Page_Checkout {
 	 */
 	public function display_data_for_confirmation() {
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		global $org_options, $EE_Session;
 
 		$session_data = $EE_Session->get_session_data();
@@ -1094,7 +1094,7 @@ class EE_Single_Page_Checkout {
 	public function process_registration_step_3() {
 		// Sidney is watching me...   { : \
 		global $EE_Session;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		global $org_options;
 
@@ -1126,7 +1126,7 @@ class EE_Single_Page_Checkout {
 		
 		if ($continue_reg) {
 
-			do_action('action_hook_espresso_begin_reg');
+			do_action('AHEE_begin_reg');
 
 			// load and instantiate models
 			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
@@ -1182,7 +1182,7 @@ class EE_Single_Page_Checkout {
 			$EE_Session->set_session_data(array( 'registration' => $saved_registrations, 'transaction' => $transaction ), 'session_data');
 			$EE_Session->_update_espresso_session();
 			//var_dump($)
-			do_action('action_hook_espresso__EE_Single_Page_Checkout__process_registration_step_3__before_gateway', $this);
+			do_action('AHEE__EE_Single_Page_Checkout__process_registration_step_3__before_gateway', $this);
 			
 
 //			printr( $EE_Session, '$EE_Session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 
@@ -1194,7 +1194,7 @@ class EE_Single_Page_Checkout {
 			$success_msg = $response['msg']['success'];
 		}
 		
-		do_action('action_hook_espresso__EE_Single_Page_Checkout__process_registration_step_3__end', $this);
+		do_action('AHEE__EE_Single_Page_Checkout__process_registration_step_3__end', $this);
 		
 		//$session = $EE_Session->get_session_data();
 		//printr( $session, '$session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 
@@ -1274,7 +1274,7 @@ class EE_Single_Page_Checkout {
 					//add attendee to db
 					$att_results = $att[$att_nmbr]->save();
 					$ATT_ID = $att[$att_nmbr]->ID();
-					do_action('action_hook_espresso__EE_Single_Page_Checkout__process_registration_step_3__after_attendee_save',$att_nmbr,$att[$att_nmbr]);
+					do_action('AHEE__EE_Single_Page_Checkout__process_registration_step_3__after_attendee_save',$att_nmbr,$att[$att_nmbr]);
 				}				
 				
 				// add attendee object to attendee info in session
@@ -1287,9 +1287,9 @@ class EE_Single_Page_Checkout {
 
 				$session_snip =  substr( $session['id'], 0, 3 ) . substr( $session['id'], -3 );				
 				$new_reg_code = $transaction->ID() . '-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 ));				
-				$new_reg_code = apply_filters( 'filter_hook_espresso_new_registration_code', $new_reg_code );
+				$new_reg_code = apply_filters( 'FHEE_new_registration_code', $new_reg_code );
 				
-				if ( has_filter( 'filter_hook_espresso_new_registration_code' ) ) {
+				if ( has_filter( 'FHEE_new_registration_code' ) ) {
 					$prev_reg_code = $new_reg_code;
 				} else {
 					$prev_reg_code = '%-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 )) . '%';
@@ -1335,6 +1335,7 @@ class EE_Single_Page_Checkout {
 				// save attendee question answerss
 				$exclude = array( 'price_paid', 'primary_attendee', 'att_obj', 'reg_obj', 'additional_attendee_reg_info' );
 //				printr( $reg_items, '$reg_items  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+				
 				foreach ( $reg_items[ $line_item_id ]['attendees'][ $att_nmbr ] as $QST_ID => $answer ) {
 					if ( ! in_array( $QST_ID, $exclude ) && ! empty( $answer )) {
 						// convert system string QST_IDs like 'fname' to their numeric equivalents
@@ -1399,7 +1400,7 @@ class EE_Single_Page_Checkout {
 	private function _send_reg_step_3_ajax_response($args, $success_msg) {
 
 		// Sidney is watching me...   { : \
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$response_data = array(
 				'success' => $success_msg,
 				'return_data' => array('redirect-to-thank-you-page' => $this->_return_page_url)
@@ -1420,7 +1421,7 @@ class EE_Single_Page_Checkout {
 	 */
 	public function send_ajax_response($success_msg = FALSE, $error_msg = FALSE, $callback = FALSE, $callback_param = FALSE) {
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$valid_callback = FALSE;
 		// check for valid callback function
 		if ($callback != FALSE && $callback != '' && !function_exists($callback)) {

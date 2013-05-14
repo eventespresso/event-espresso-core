@@ -1,11 +1,11 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
+do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 abstract class EE_Offline_Gateway extends EE_Gateway {
 
 
 	protected function __construct(EEM_Gateways &$model) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		parent::__construct($model);
 	}
 
@@ -15,7 +15,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 	 * 		@return 	mixed	array on success or FALSE on fail
 	 */
 	public function process_gateway_selection() {	
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$msg = $this->_EEM_Gateways->display_name() . __( ' gateway selected.', 'event_espresso' );
 		EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );		
 	}
@@ -29,7 +29,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 	 * 		@return array
 	 */
 	public function set_billing_info_for_confirmation( $billing_info ) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$confirm_data = array();
 		$confirm_data['gateway'] = $this->_EEM_Gateways->display_name();
 		return $confirm_data;
@@ -48,35 +48,18 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 	 * @return void
 	 */
 	public function thank_you_page_logic(EE_Transaction $transaction) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $EE_Session;
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		//check for an existing payment from this gateway
 		$payments = $this->_PAY->get_all_where(array('PAY_gateway'=>$this->gateway(),'TXN_ID'=>$transaction->ID()));
 		//if it already exists, short-circuit updating the transaction
-		if(empty($payments)){
-			//no payment so far, create one
-			$payment = new EE_Payment(
-				$transaction->ID(), 
-				EEM_Payment::status_id_pending, 
-				$transaction->datetime(), 
-				'CART', // this should be the type of payment as in Invoice, Money Order, Credit Card, PayPal, etc
-				NULL, 
-				$this->gateway(), 
-				__("Payment is pending. Your registration is not complete until payment is received",'event_espresso'),
-				null,
-				null,
-				null,
-				false,
-				array()
-			);
-			$payment->save();
-			$success = $this->update_transaction_with_payment($transaction, $payment);
-			$EE_Session->set_session_data(array('txn_results' => serialize($transaction->details())), 'session_data');
-			$session = $EE_Session->get_session_data();
-			//prevent trying to serialize a recursive relationship
-			unset($session['transaction']);
-			$transaction->set_txn_session_data( $session );
+		if( empty( $payments )){
+			$this->update_transaction_with_payment($transaction, null);
+			$transaction->save();
 		}
+		//createa hackey payment object, but dont save it
+		$payment = new EE_Payment($transaction->ID(), EEM_Payment::status_id_pending, current_time('timestamp'), array(), $transaction->total(), $this->_gateway_name, array(), null, null, null);
+		
+		do_action( 'action_hook_espresso__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
 		parent::thank_you_page_logic($transaction);
 		//check that there's still a transaction in the session.
 		//if there isn't, maybe we've cleared it (session ended with the thank you page)
@@ -103,7 +86,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 //		die();	
 
 		/*$success = $txn_results['approved'];
-		do_action( 'action_hook_espresso_after_payment', $EE_Session, $success );
+		do_action( 'AHEE_after_payment', $EE_Session, $success );
 		
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 		$transaction = $session['transaction'];
@@ -111,7 +94,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 		$transaction->set_paid($txn_results['amount']);
 		$transaction->set_details( $txn_results );
 		//$txn_status = $this->_TXN->pending_status_code;//'TPN';
-		$transaction->set_status(EEM_Transaction::pending_status_code);
+		$transaction->set_status(EEM_Transaction::open_status_code);
 		//update our local session data with what's in teh session singleton
 		$session = $EE_Session->get_session_data();
 		unset( $session['transaction'] );

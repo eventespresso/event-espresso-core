@@ -38,7 +38,7 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	 * @access protected
 	 * @var string
 	 */
-	protected $_QSO_value=FALSE;
+	protected $_QSO_name=FALSE;
 	
 	/**
 	 * Question Option Display Text
@@ -46,7 +46,7 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	 * @access protected
 	 * @var int
 	 */
-	protected $_QSO_text=FALSE;
+	protected $_QSO_value=FALSE;
 	
 	/**
 	 * Question ID
@@ -73,14 +73,14 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * Constructor
-	 * @param string/array $QSO_value OR an array of all fields' display text, where keys match these arguments' values
+	 * @param string/array $QSO_name OR an array of all fields' display text, where keys match these arguments' values
 	 * @param string $
 	 * @param int $QST_ID
 	 */
-	public function __construct($QSO_value=null, $QSO_text=null, $QST_ID=null) {
+	public function __construct($QSO_name=null, $QSO_value=null, $QST_ID=null) {
 		//if the first parameter is an array, assume it's an array of key-value pairs for this object
-		if(is_array($QSO_value)){
-			parent::__construct($QSO_value);
+		if(is_array($QSO_name)){
+			parent::__construct($QSO_name);
 			return;
 		}
 		$reflector = new ReflectionMethod($this,'__construct');	
@@ -97,16 +97,16 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	 * @param strig $value
 	 * @return bool success
 	 */
-	public function set_value($value){
-		return $this->set('QSO_value',$value);
+	public function set_name($value){
+		return $this->set('QSO_name',$value);
 	}
 	/**
 	 * Sets the option's Display Text 
 	 * @param string $text
 	 * @return bool success
 	 */
-	public function set_text($text){
-		return $this->set('QSO_text',$text);
+	public function set_value($text){
+		return $this->set('QSO_value',$text);
 	}
 	/**
 	 * Sets the ID of the related questino
@@ -121,16 +121,16 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	 * Gets the option's key value
 	 * @return string
 	 */
-	public function value(){
-		return $this->get('QSO_value');
+	public function name(){
+		return $this->get('QSO_name');
 	}
 
 	/**
 	 * Gets the option's display text
 	 * @return string
 	 */
-	public function text(){
-		return $this->get('QSO_text');
+	public function value(){
+		return $this->get('QSO_value');
 	}
 
 	/**

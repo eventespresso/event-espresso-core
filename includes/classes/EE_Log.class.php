@@ -129,9 +129,9 @@ function espresso_log_shortcode_parser( $file, $function, $message ) {
 }
 
 if (!empty($org_options['full_logging'])) {
-	add_action('action_hook_espresso_log', 'espresso_log', 10, 3);
-	add_action('action_hook_espresso_log_shortcode_parser', 'espresso_log_shortcode', 10, 3);
-	add_action('action_hook_espresso_debug_file', 'espresso_debug_file');	
+	add_action('AHEE_log', 'espresso_log', 10, 3);
+	add_action('AHEE_log_shortcode_parser', 'espresso_log_shortcode', 10, 3);
+	add_action('AHEE_debug_file', 'espresso_debug_file');	
 }
 
 //Remote logging stuff
@@ -151,7 +151,7 @@ function espresso_send_log() {
 
 if (!empty($org_options['remote_logging'])) {
 	//echo "<pre>".print_r($org_options,true)."</pre>";
-	add_action('action_hook_espresso_log', 'espresso_remote_log', 10, 3);
+	add_action('AHEE_log', 'espresso_remote_log', 10, 3);
 	add_action('wp_footer', 'espresso_send_log');
 }
 

@@ -77,7 +77,7 @@
 					<?php if ( $max_atndz > 1 ) { ?>
 						<select name="tkt-slctr-qty-<?php echo $event_id; ?>[]" id="ticket-selector-tbl-qty-slct-<?php echo $event_id . '-' . $row; ?>" class="ticket-selector-tbl-qty-slct ui-widget-content ui-corner-all">
 <?php for ($i = 0; $i <= $max_atndz; $i++) { ?>
-							<option value="<?php echo $i; ?>" <?php do_action('action_hook_espresso_ticket_selector_option',$event_id,$datetime,$price,$i,$max_atndz);?>>&nbsp;<?php echo $i; ?>&nbsp;</option><?php } ?>
+							<option value="<?php echo $i; ?>" <?php do_action('AHEE_ticket_selector_option',$event_id,$datetime,$price,$i,$max_atndz);?>>&nbsp;<?php echo $i; ?>&nbsp;</option><?php } ?>
 						</select>
 					<?php } else { ?>
 						<label>

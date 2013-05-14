@@ -144,7 +144,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'nav' => array(
 					'label' => __('View Transaction', 'event_espresso'),
 					'order' => 5,
-					'url' => isset($this->_req_data['txn']) ? add_query_arg(array('txn' => $this->_req_data['txn'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
+					'url' => isset($this->_req_data['TXN_ID']) ? add_query_arg(array('TXN_ID' => $this->_req_data['TXN_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
 					'persistent' => FALSE
 					),
 				'metaboxes' => array('_transaction_details_metaboxes')
@@ -336,7 +336,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 	    $TXN = EEM_Transaction::instance();
 
-	    $TXN_ID = ( ! empty( $_REQUEST['txn'] )) ? absint( $_REQUEST['txn'] ) : FALSE;
+	    $TXN_ID = ( ! empty( $_REQUEST['TXN_ID'] )) ? absint( $_REQUEST['TXN_ID'] ) : FALSE;
 
 	    if ( $transaction = $TXN->get_transaction_for_admin_page( $TXN_ID ) ) {
 	    	$this->_transaction = array_shift( $transaction ); 
@@ -720,7 +720,13 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['prime_reg_address'] = $this->_transaction->ATT_address;
 		$this->_template_args['prime_reg_address2'] = ( ! empty ( $this->_transaction->ATT_address2 )) ? '<br />' . $this->_transaction->ATT_address2 : '';
 		$this->_template_args['prime_reg_city'] = ( ! empty ( $this->_transaction->ATT_city )) ? '<br />' . $this->_transaction->ATT_city : '';
-		$this->_template_args['prime_reg_state'] = ( ! empty ( $this->_transaction->STA_ID )) ? '<br />' . $this->_transaction->STA_ID . ', ' : '';
+		$STA_ID = ! empty ( $this->_transaction->STA_ID ) ? $this->_transaction->STA_ID : FALSE;
+		if ( $STA_ID ) {
+			$state = EEM_State::instance()->get_one_by_ID( $STA_ID );
+			$this->_template_args['prime_reg_state'] = '<br />' . $state->get( 'STA_name' ) . ', ';
+		} else {
+			$this->_template_args['prime_reg_state'] = '<br />';
+		}
 		$this->_template_args['prime_reg_country'] = ( ! empty ( $this->_transaction->CNT_ISO )) ? $this->_transaction->CNT_ISO : '';
 		$this->_template_args['prime_reg_zip'] = ( ! empty ( $this->_transaction->ATT_zip )) ? '<br />' . $this->_transaction->ATT_zip : '';
 		$this->_template_args['prime_reg_phone'] = $this->_transaction->ATT_phone;
@@ -914,7 +920,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$transaction = $payment->transaction();
 			$this->_get_payment_status_array();
 			$return_data['amount'] = $payment->amount();
-			$return_data['total_paid'] = $transaction->total();
+			$return_data['total_paid'] = $transaction->paid();
 			$return_data['txn_status'] = $transaction->status_ID();
 			$return_data['pay_status'] = $payment->STS_ID();
 			$return_data['PAY_ID'] = $payment->ID();
@@ -954,18 +960,26 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*/
 	public function delete_payment() {
 	
-		$return_data = FALSE;
+		$return_data = array();
 		
 		if ( isset( $this->_req_data['ID'] )) {
 			if ( $PAY_ID = absint( $this->_req_data['ID'] )) {
-				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
-				$PAY_MODEL = EEM_Payment::instance();
-				$return_data = $PAY_MODEL->delete_payment( $PAY_ID );
-				$return_data['PAY_ID'] = $PAY_ID;
+				if ( $payment = EEM_Payment::instance()->get_payment_by_ID( absint( $PAY_ID ))) {
+					if ( $transaction = EEM_Payment::instance()->delete_payment( $PAY_ID )) {
+						$return_data = array( 
+							'amount' => $payment->amount(), 
+							'total_paid' => $transaction->paid(), 
+							'txn_status' => $transaction->status_ID(),
+							'pay_status' => $payment->STS_ID(),
+							'PAY_ID' => $PAY_ID
+						); 						
+					}						
+				}
 			}
 		} else {
 			$msg = __( 'An error occured. The payment form data could not be loaded.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );		
+			$return_data = FALSE;	
 		}
 		$notices = EE_Error::get_notices( FALSE, FALSE, FALSE );
 
@@ -982,7 +996,10 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _send_payment_reminder() {
-		echo '<div style="margin:2em auto; text-align:center;">Vinnie da Finger says: <h1>"YO!!!"</h1><h1>"Time to PAY UP!!!</h1></div>';
+	    $TXN_ID = ( ! empty( $_REQUEST['TXN_ID'] )) ? absint( $_REQUEST['TXN_ID'] ) : FALSE;
+		$trasaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
+		do_action( 'AHEE_process_admin_payment_reminder', $trasaction );
+		$this->_redirect_after_action( FALSE, 'payment reminder', 'sent', array(), TRUE );
 	}
 
 

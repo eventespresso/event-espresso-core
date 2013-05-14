@@ -6,6 +6,7 @@ EE_Template_Validator::verify_is_array($event_names, '$event_names');
 EE_Template_Validator::verify_isnt_null($currency_symbol, '$currency_symbol');
 EE_Template_Validator::verify_isnt_null($SPCO_step_2_url, '$SPCO_step_2_url');
 EE_Template_Validator::verify_isnt_null($show_try_pay_again_link, '$show_try_pay_again_link');
+EE_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 /**
  * @var $transaction EE_Transaction
  * @var $primary_registrant EE_Registration
@@ -14,6 +15,7 @@ EE_Template_Validator::verify_isnt_null($show_try_pay_again_link, '$show_try_pay
  * @var $currency_symbol string
  * @var $SPCO_step_2_url string
  * @var $show_try_pay_again_link boolean whether or not to show the link back to SPCO step 2 to retry paying
+ * @var $gateway_content string of content from the gateway.
  */
 ?>
 <div class="espresso_payment_overview event-display-boxes ui-widget" >
@@ -24,6 +26,7 @@ EE_Template_Validator::verify_isnt_null($show_try_pay_again_link, '$show_try_pay
 	<div class='reg-payment-details'>
 		<?php if ( empty($payments)){?>
 			<?php _e("No payment have yet been made toward this registration.",'event_espresso')?>
+			<?php echo $gateway_content?>
 		<?php }else{?>
 		
 			<?php foreach ($payments as $payment) { ?>
@@ -182,5 +185,5 @@ EE_Template_Validator::verify_isnt_null($show_try_pay_again_link, '$show_try_pay
 </div><!-- / .event-display-boxes -->
 <?php 
 //insert affiliate code here (see includes/functions/affiliate-handling.php)
-do_action( 'action_hook_espresso_reg_completed' );
+do_action( 'AHEE_reg_completed' );
 ?>

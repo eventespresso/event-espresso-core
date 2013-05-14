@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
+do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 //This is a template file for displaying a list of events on a page. These functions are used with the [ESPRESSO_EVENTS] shortcode.
 //This is an group of functions for querying all of the events in your databse.
@@ -17,7 +17,7 @@ function display_all_events() {
 
 	global $org_options;
 	// error logging
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	event_espresso_get_event_details(); //This function is located below
 }
 
@@ -38,7 +38,7 @@ function display_event_espresso_categories($category_identifier = 'null', $css_c
 
 	global $org_options;
 	// error logging
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 	$attributes = array(
 			'category_identifier' => $category_identifier,
@@ -64,8 +64,8 @@ function event_espresso_get_event_details( $attributes = array()) {
 	global $wpdb, $org_options, $events_in_session, $ee_gmaps_opts, $EE_Cart;	
 	//printr( $org_options, '$org_options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	do_action( 'action_hook_espresso_before_event_list', __FILE__, __FUNCTION__ );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+	do_action( 'AHEE_before_event_list', __FILE__, __FUNCTION__ );
 
 	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/gmap_display.helper.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/event_details.helper.php');
@@ -474,7 +474,7 @@ function event_espresso_get_event_details( $attributes = array()) {
 				$event->reg_btn['require_pre_approval'] = $event->require_pre_approval;
 				//$event->reg_btn['all_meta'] = $all_meta;
 
-				$event->reg_btn = apply_filters( 'filter_hook_espresso_event_reg_btn', $event->reg_btn );
+				$event->reg_btn = apply_filters( 'FHEE_event_reg_btn', $event->reg_btn );
 
 				$event_reg_link = '
 			<p id="register_link-' . $event_id . '" class="register-link">
@@ -488,7 +488,7 @@ function event_espresso_get_event_details( $attributes = array()) {
 				<div class="clear"></div>
 			</p>';
 				
-				$event_reg_link = apply_filters( 'filter_hook_espresso_event_reg_link', $event_reg_link, $event->reg_btn );
+				$event_reg_link = apply_filters( 'FHEE_event_reg_link', $event_reg_link, $event->reg_btn );
 
 				// END OF if ( in_array( $event_status, $open_event_status_list ))
 			} else {

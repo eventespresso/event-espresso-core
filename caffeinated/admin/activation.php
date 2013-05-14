@@ -12,7 +12,7 @@ function espresso_default_price_types_activation_sql( $SQL ) {
 				(7, 'Federal Tax', 4, 0, 1, 1, 50, 0);";
 	return $SQL;
 }
-add_filter( 'filter_hook_espresso_default_price_types_activation_sql', 'espresso_default_price_types_activation_sql', 10, 1 );
+add_filter( 'FHEE_default_price_types_activation_sql', 'espresso_default_price_types_activation_sql', 10, 1 );
 
 
 function espresso_default_prices_activation_sql( $SQL ) {
@@ -26,4 +26,4 @@ function espresso_default_prices_activation_sql( $SQL ) {
 				(6, 7, 0, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 50, 0);";
 	return $SQL;
 }
-add_filter( 'filter_hook_espresso_default_prices_activation_sql', 'espresso_default_prices_activation_sql', 10, 1 );
+add_filter( 'FHEE_default_prices_activation_sql', 'espresso_default_prices_activation_sql', 10, 1 );
