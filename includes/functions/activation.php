@@ -1806,3 +1806,14 @@ function espresso_default_message_templates() {
 	return $templates;
 }
 
+
+
+
+function espresso_create_no_ticket_prices_array(){
+	// this creates an array for tracking events that have no active ticket prices created
+	// this allows us to warn admins of the situation so that it can be corrected
+	$espresso_no_ticket_prices = get_option( 'espresso_no_ticket_prices', FALSE );
+	if ( ! $espresso_no_ticket_prices ) {
+		add_option( 'espresso_no_ticket_prices', array(), '', FALSE );
+	}	
+}
