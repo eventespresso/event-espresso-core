@@ -285,7 +285,7 @@ add_action( 'AHEE_before_event_list', 'espresso_clear_session', 10, 2 );
  */
 function espresso_printr_session() {
 	$_REQUEST['ee_session'] = TRUE;
-	if ( isset( $_REQUEST['ee_session'] ) && current_user_can('administrator') ) {	
+	if ( isset( $_REQUEST['ee_session'] ) && current_user_can('administrator') && ( defined('WP_DEBUG') && WP_DEBUG ) ) {	
 		global $EE_Session;
 		echo '<pre style="height:auto;padding:1em;border:2px solid lightblue;">';
 		echo print_r( $EE_Session, TRUE );
