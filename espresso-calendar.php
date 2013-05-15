@@ -355,15 +355,8 @@ function espresso_calendar_do_stuff($show_expired) {
 		//important! time must be in iso8601 format 2010-05-10T08:30!!
 		$eventArray['start'] = date("c", strtotime($event->start_date . ' ' . event_date_display($event->start_time, get_option('time_format'))));
 		$eventArray['end'] = date("c", strtotime($event->end_date . ' ' . event_date_display($event->end_time, get_option('time_format'))));
-		$tempTimestamp = strtotime($event->start_date);
-		$endTimestamp = strtotime($event->end_date);
-		$eventArray['month_day'] = "";
-		$secInDay = 60 * 60 * 24;
-		while ($tempTimestamp <= $endTimestamp) {
-			$eventArray['month_day'] = $eventArray['month_day'] . date("n-j ", $tempTimestamp);
-			$tempTimestamp += $secInDay;
-		}
-		$eventArray['month_day'] = rtrim($eventArray['month_day']);
+		$eventArray['day'] = date("j", strtotime($event->end_date));
+		$eventArray['month'] = date("n", strtotime($event->end_date));
 		if ( $eventArray['end'] < date('Y-m-d') ) {
 			$eventArray['expired'] = 'expired';
 		} else {
@@ -446,7 +439,7 @@ if (!function_exists('espresso_calendar')) {
 
 			jQuery(document).ready(function($) {
 
-				var total_images = 0;
+				var ee_total_images = 0;
 
 				$('#espresso_calendar').fullCalendar({
 
@@ -568,11 +561,12 @@ if (!function_exists('espresso_calendar')) {
 							}
 						}
 						?>
-						element.attr( 'rel', event.month_day ).attr( 'id', 'EVT_ID-'+event.id );
+						var ee_month_day = event.month + '-' + event.day;
+						element.attr( 'rel', ee_month_day ).attr( 'id', 'EVT_ID-'+event.id );
 
 
 						if(event.event_img_thumb){
-							total_images = parseInt( total_images ) + 1;
+							ee_total_images = parseInt( ee_total_images ) + 1;
 							element.addClass('event-has-thumb');							
 							element.find('.fc-event-title').after($('<span class="thumb-wrap"><img class="ee-event-thumb" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
 						}
@@ -717,15 +711,14 @@ if (!function_exists('espresso_calendar')) {
 					//Abbreviated names of days-of-week.
 					dayNamesShort: [<?php echo stripslashes_deep($espresso_calendar['espresso_calendar_dayNamesShort']); ?>/*'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'*/],
 
-					//Load the events into event object
+					//Load the events into json srrsy
 					events: <?php echo json_encode($events) ?>,
 					
 					viewDisplay: function(view) {
 				        $('.ui-state-active').each( function() {
-									$(this).removeClass('ui-state-active');
-								});
+					 		$(this).removeClass('ui-state-active');
+					 	});
 				        $('.fc-today').addClass('ui-state-active').removeClass('ui-state-highlight');
-								resizeForImages(view);
 				    },
 
 						// if an event in the array has already happened, it is expired and we'll give it an 'expired' class
@@ -741,105 +734,96 @@ if (!function_exists('espresso_calendar')) {
 											
 				});
 
-				function resizeForImages(view) {
-					var imgTimeout = total_images * 50;
+				
+				var ee_imgTimeout = ee_total_images * 50;
+				
+				setTimeout(  
+					function() {  
+						
+						// establish vars we need to resize calendar cells properly
+						var ee_day = 0;
+						var ee_month = 0;
+						var ee_thisMonth = 0;
+						var ee_thisYear = 0;
+						var ee_prevMonth = 0;
+						var ee_nextMonth = 0;
+						var ee_newTop = 0;
 
-					setTimeout(  
-						function() {  
+						var ee_months = new Object();
+						var ee_monthNames = new Object();
+						ee_monthNames= [<?php echo stripslashes_deep($espresso_calendar['espresso_calendar_monthNames']); ?>];						
+						for ( i=0; i<12; i++ ) {
+							months[ ee_monthNames[i] ] = i+1;
+						}
 
-							// establish vars we need to resize calendar cells properly
-							var day = 0;
-							var month = 0;
-							var thisMonth = 0;
-							var thisYear = 0;
-							var prevMonth = 0;
-							var nextMonth = 0;
-							var newTop = 0;
+						var ee_monthYear = $('.fc-header-title h2').html();
+						var ee_monthYearArray = ee_monthYear.split(' ');
+						ee_thisMonth = ee_months[ ee_monthYearArray[0] ];
+						ee_thisYear = ee_monthYearArray[1];
+						ee_prevMonth = ee_thisMonth - 1;
+						ee_nextMonth =  ee_thisMonth +1;
+//						console.log( 'prevMonth = ' + prevMonth + '\n' + 'nextMonth = ' + nextMonth );
 
-							var months = new Object();
-							var monthNames = new Object();
-							monthNames= [<?php echo stripslashes_deep($espresso_calendar['espresso_calendar_monthNames']); ?>];						
-							for ( i=0; i<12; i++ ) {
-								months[ monthNames[i] ] = i+1;
+						$('.fc-view-month .fc-widget-content').each(function(index) {	
+							setMonth = ee_thisMonth;
+							if ( $(this).closest('tr').hasClass('fc-first') && $(this).hasClass('fc-other-month') ){
+								setMonth = ee_prevMonth;
+							} else if ( $(this).hasClass('fc-other-month') ){
+								setMonth = ee_nextMonth;
 							}
+							ee_setDay =$(this).find('.fc-day-number').html();
+							ee_setID = 'md-' + setMonth + '-' + ee_setDay;
+							//console.log( 'setID = ' + setID );
+							$(this).find('.fc-day-content > div').attr( 'id', ee_setID );
+						});
+						
+						$('.fc-event').each( function(index){ 						
+							// determine what month and day this event is on
+							ee_monthDay = $(this).attr( 'rel' );
+							//console.log( 'monthDay: ' + monthDay );
+							// find day container in calendar
+							dayCnt = $('#md-'+ee_monthDay);
+							dayCntHTML = dayCnt.html();
+														
+							if ( dayCntHTML != null && dayCntHTML != undefined ) {
+								if ( dayCntHTML == '&nbsp;' ) {
+									dayCntHTML = '';
+									dayCnt.html( dayCntHTML );
+									dayCnt.css({ 'height' : 0 });
+								}
 
-							var monthYear = $('.fc-header-title h2').html();
-							var monthYearArray = monthYear.split(' ');
-							thisMonth = months[ monthYearArray[0] ];
-							thisYear = monthYearArray[1];
-							prevMonth = thisMonth - 1;
-							nextMonth =  thisMonth +1;
-	//						console.log( 'prevMonth = ' + prevMonth + '\n' + 'nextMonth = ' + nextMonth );
-
-							$('.fc-view-month .fc-day-content div').each(function(index) {
-								$(this).css({ 'height' : 0 });
-							});
+								// grab offset for dayCnt
+								dayCntPos = dayCnt.position();
+								//console.log( 'dayCntPos.top = ' + dayCntPos.top + '\n' + 'dayCntPos.left = ' + dayCntPos.left );
+								dayCntHgt = dayCnt.css( 'height' );
+								if ( dayCntHgt == undefined ){
+									dayCntHgt = '0px';
+								}
+								dayCntHgt = dayCntHgt.replace( 'px', '' );
+								dayCntHgt = parseInt( dayCntHgt );
+								ee_newTop = dayCntPos.top + dayCntHgt;
+								//console.log( 'newTop = ' + newTop + ' = dayCntPos.top ( ' + dayCntPos.top + ' ) + dayCntHgt ( ' + dayCntHgt + ' )' );
+								$(this).css({ 'top' : newTop });
+								linkHeight = parseInt( $(this).find('.fc-event-inner').outerHeight() );
+								//console.log( 'linkHeight = ' + linkHeight );
+								ee_newHeight = dayCntHgt + linkHeight + 3;
+								dayCnt.height( newHeight ).css({ 'height' : ee_newHeight + 'px' });
+								//console.log( 'newHeight = ' + newHeight );
+								var ee_parentHeight = dayCnt.parents('tr').outerHeight();
+								//console.log( 'parentHeight = ' + parentHeight );
+								//dayCnt.parents('tr').css({ 'background' : 'pink' });
+								if( parentHeight < ee_newHeight ) {
+									ee_newHeight = ee_newHeight + 30;
+									dayCnt.parents('tr').height( ee_newHeight ).css({ 'height' : ee_newHeight + 'px' });
+								}
 							
-							$('.fc-view-month td').each(function(index) {	
-								setMonth = thisMonth;
-								if ( $(this).closest('tr').hasClass('fc-first') && $(this).hasClass('fc-other-month') ){
-									setMonth = prevMonth;
-								} else if ( $(this).hasClass('fc-other-month') ){
-									setMonth = nextMonth;
-								}
-								setDay =$(this).find('.fc-day-number').html();
-								setID = 'md-' + setMonth + '-' + setDay;
-								//console.log( 'setID = ' + setID );
-								$(this).find('.fc-day-content > div').attr( 'id', setID );
-							});
+							}
+						});
 
-							$('.fc-view-month .fc-event').each( function(index){ 						
-								// determine what month and day this event is on
-								monthDay = $(this).attr( 'rel' );
-								var monthDays = monthDay.split(" ");
-								for (index = 0; index < monthDays.length; ++index) {
-									monthDay = monthDays[index];
-								
-									console.log( 'monthDay: ' + monthDay );
-									// find day container in calendar
-									dayCnt = $('#md-'+monthDay);
-									dayCntHTML = dayCnt.html();
+					},
+					ee_imgTimeout
+				);
 
-									if ( dayCntHTML != null && dayCntHTML != undefined ) {
-										if ( dayCntHTML == '&nbsp;' ) {
-											dayCntHTML = '';
-											dayCnt.html( dayCntHTML );
-											dayCnt.css({ 'height' : 0 });
-										}
-
-										// grab offset for dayCnt
-										dayCntPos = dayCnt.position();
-										//console.log( 'dayCntPos.top = ' + dayCntPos.top + '\n' + 'dayCntPos.left = ' + dayCntPos.left );
-										dayCntHgt = dayCnt.css( 'height' );
-										if ( dayCntHgt == undefined ){
-											dayCntHgt = '0px';
-										}
-										dayCntHgt = dayCntHgt.replace( 'px', '' );
-										dayCntHgt = parseInt( dayCntHgt );
-										newTop = dayCntPos.top + dayCntHgt;
-										//console.log( 'newTop = ' + newTop + ' = dayCntPos.top ( ' + dayCntPos.top + ' ) + dayCntHgt ( ' + dayCntHgt + ' )' );
-										$(this).css({ 'top' : newTop });
-										linkHeight = parseInt( $(this).find('.fc-event-inner').outerHeight() );
-										//console.log( 'linkHeight = ' + linkHeight );
-										newHeight = dayCntHgt + linkHeight + 3;
-										dayCnt.height( newHeight ).css({ 'height' : newHeight + 'px' });
-										//console.log( 'newHeight = ' + newHeight );
-										var parentHeight = dayCnt.parents('tr').outerHeight();
-										//console.log( 'parentHeight = ' + parentHeight );
-										//dayCnt.parents('tr').css({ 'background' : 'pink' });
-										if( parentHeight < newHeight ) {
-											newHeight = newHeight + 30;
-											dayCnt.parents('tr').height( newHeight ).css({ 'height' : newHeight + 'px' });
-										}
-
-									}
-								}
-							});
-
-						},
-						imgTimeout
-					);
-				}
 			});
 
 </script>

@@ -653,6 +653,7 @@ a.fc-event { line-height: 100%; }
 	height: 16px;
 }
 
+
 .espresso_calendar_widget .fc-day-content { min-width: 26px; }
 .espresso_calendar_widget a.fc-event-skin div:hover { background-position:6px 0px!important; }
 /* fugue icon pack can be downloaded here: http://randyjensenonline.com/thoughts/wordpress-custom-post-type-fugue-icons/ */
@@ -687,4 +688,18 @@ a.fc-event.themeroller.ui-widget-header p.time-display-block { font-weight: norm
 
 .espresso_calendar_widget .fc-button {
 	height:auto;
+}
+
+.fc-grid .fc-day-number {
+	/*float: right;
+	padding: 0 2px;*/
+	float: right;
+	padding: 5px 5px;
+	
+	/* Enable this code to place the day numbers in nice looking boxes*/
+	/*background: -moz-linear-gradient(270deg, white 0%, #e9f5f4 100%) #ebebeb;
+	background: -webkit-gradient(linear, left top, left bottom, from(white), to(#e9f5f4)) #ebebeb;
+	-moz-box-shadow: 0 1px 4px #cfcfcf;
+	-webkit-box-shadow: 0 1px 4px #cfcfcf;
+	box-shadow: 0 1px 4px #cfcfcf;*/
 }
