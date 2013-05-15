@@ -350,6 +350,8 @@ function espresso_calendar_do_stuff($show_expired) {
 		if (isset($org_options['display_short_description_in_event_list']) && $org_options['display_short_description_in_event_list'] == 'Y') {
 			$eventArray['description'] = array_shift(explode('<!--more-->', $eventArray['description']));
 		}
+		
+		$eventArray['display_reg_form'] = $event->display_reg_form;
 
 		//Get the start and end times for each event
 		//important! time must be in iso8601 format 2010-05-10T08:30!!
@@ -420,9 +422,7 @@ if (!function_exists('espresso_calendar')) {
 
 	function espresso_calendar($atts) {
 		global $wpdb, $org_options, $espresso_calendar, $load_espresso_calendar_scripts, $event_category_id, $events;
-
 		//print_r($espresso_calendar);
-
 		$load_espresso_calendar_scripts = true; //This tells the plugin to load the required scripts
 
 		extract(shortcode_atts(array('event_category_id' => '', 'show_expired' => false, 'cal_view' => 'month'), $atts));
@@ -591,7 +591,13 @@ if (!function_exists('espresso_calendar')) {
 									if ( event.startTime ) {
 										element.find('.fc-event-title').after($('<p class="time-display-block">' + event.startTime + ' - ' + event.endTime + '</p>'));
 									}
-								} 
+								}
+								
+								if ( event.display_reg_form == 'Y') {
+									event.regButtonText = '<?php _e('Register Now', 'event_espresso'); ?>';
+								} else {
+									event.regButtonText = '<?php _e('View Details', 'event_espresso'); ?>';
+								}
 
 			<?php
 					}
@@ -600,7 +606,7 @@ if (!function_exists('espresso_calendar')) {
 			?>
 										element.qtip({
 											content: {
-												text: event.description + '<div class="qtip_info">' + '<a class="reg_now" href="' + event.url + '">Register Now</a>'  <?php if (isset($espresso_calendar['show_attendee_limit']) && $espresso_calendar['show_attendee_limit'] == true) {?>+' <span class="attendee_limit">' + event.attendee_limit + '</span>' <?php }?> <?php if ($espresso_calendar['show_time'] == true) {?> +(event.startTime != '' ? '<span class="time_cal_qtip">' + event.startTime + ' - ' + event.endTime + '</span>' : '')<?php }?> + '</div>',
+												text: event.description + '<div class="qtip_info">' + '<a class="reg_now" href="' + event.url + '">' + event.regButtonText + '</a>'  <?php if (isset($espresso_calendar['show_attendee_limit']) && $espresso_calendar['show_attendee_limit'] == true) {?>+' <span class="attendee_limit">' + event.attendee_limit + '</span>' <?php }?> <?php if ($espresso_calendar['show_time'] == true) {?> +(event.startTime != '' ? '<span class="time_cal_qtip">' + event.startTime + ' - ' + event.endTime + '</span>' : '')<?php }?> + '</div>',
 												title: {
 													text: '<?php _e('Description', 'event_espresso'); ?>',
 													button: true,
