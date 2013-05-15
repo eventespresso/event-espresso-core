@@ -803,11 +803,11 @@ if (!function_exists('espresso_calendar')) {
 								dayCntHgt = parseInt( dayCntHgt );
 								ee_newTop = dayCntPos.top + dayCntHgt;
 								//console.log( 'newTop = ' + newTop + ' = dayCntPos.top ( ' + dayCntPos.top + ' ) + dayCntHgt ( ' + dayCntHgt + ' )' );
-								$(this).css({ 'top' : newTop });
+								$(this).css({ 'top' : ee_newTop });
 								linkHeight = parseInt( $(this).find('.fc-event-inner').outerHeight() );
 								//console.log( 'linkHeight = ' + linkHeight );
 								ee_newHeight = dayCntHgt + linkHeight + 3;
-								dayCnt.height( newHeight ).css({ 'height' : ee_newHeight + 'px' });
+								dayCnt.height( ee_newHeight ).css({ 'height' : ee_newHeight + 'px' });
 								//console.log( 'newHeight = ' + newHeight );
 								var ee_parentHeight = dayCnt.parents('tr').outerHeight();
 								//console.log( 'parentHeight = ' + parentHeight );
