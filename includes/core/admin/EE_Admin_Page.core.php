@@ -1359,16 +1359,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		// cycle thru views
 		foreach ( $this->_views as $key => $view ) {
 			// check for current view
-			if ( $this->_view == $view['slug']) {
-				$this->_views[ $key ]['class'] = 'current';
-			} else {
-				$this->_views[ $key ]['class'] = '';
-			}
-			
+			$this->_views[ $key ]['class'] = $this->_view == $view['slug'] ? 'current' : '';
 			$query_args['action'] = $this->_req_action;
-			$query_args['_wpnonce'] = wp_create_nonce( $query_args['action'] . '_nonce' );
 			$query_args['status'] = $view['slug'];
-			$this->_views[ $key ]['url'] = add_query_arg( $query_args, $this->_admin_base_url );
+			$this->_views[ $key ]['url'] = EE_Admin_Page::add_query_args_and_nonce( $query_args, $this->_admin_base_url );
 		}
 		
 		return $this->_views;
