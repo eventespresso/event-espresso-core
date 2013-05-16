@@ -274,7 +274,7 @@ abstract class EE_Base_Class {
 			case 'primary_key':
 			case 'foreign_key':
 			case 'int':
-				if(ctype_digit($value) || is_numeric($value)){
+				if(ctype_digit($value) || is_numeric($value) || empty($value)){
 					$return= true;
 				}
 				break;

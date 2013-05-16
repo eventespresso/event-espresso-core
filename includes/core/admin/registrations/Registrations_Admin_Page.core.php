@@ -2264,22 +2264,23 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$this->_set_add_edit_form_tags($action);
 
 		
-		$this->_template_args['ATT_ID'] = $ATT_ID;
-		$this->_template_args['attendee_fname'] = html_entity_decode( stripslashes( $attendee->fname() ), ENT_QUOTES, 'UTF-8' );
-		$this->_template_args['attendee_lname'] = html_entity_decode( stripslashes( $attendee->lname() ), ENT_QUOTES, 'UTF-8' );
-		$this->_template_args['attendee_email'] = $attendee->email();
-		$this->_template_args['attendee_phone'] = $attendee->phone();
-		$this->_template_args['attendee_address'] = html_entity_decode( stripslashes( $attendee->address() ), ENT_QUOTES, 'UTF-8' );
-		$this->_template_args['attendee_address2'] = html_entity_decode( stripslashes( $attendee->address2() ), ENT_QUOTES, 'UTF-8' );
-		$this->_template_args['attendee_city'] = html_entity_decode( stripslashes( $attendee->city() ), ENT_QUOTES, 'UTF-8' );		
-		$this->_template_args['attendee_state_ID'] = $attendee->state_ID();
-		$this->_template_args['attendee_country_ISO'] = $attendee->country_ISO();
-		$this->_template_args['attendee_zip'] = $attendee->zip();
-		$this->_template_args['attendee_social'] = html_entity_decode( stripslashes( $attendee->social() ), ENT_QUOTES, 'UTF-8' );
-		$this->_template_args['attendee_comments'] = html_entity_decode( stripslashes( $attendee->comments() ), ENT_QUOTES, 'UTF-8' );
-		$this->_template_args['attendee_notes'] = html_entity_decode( stripslashes( $attendee->notes() ), ENT_QUOTES, 'UTF-8' );
-
-
+		$this->_template_args['attendee']= $attendee;
+		$this->_template_args['state_html'] = EE_Form_Fields::generate_form_input(
+				array(
+					'QST_display_text'=>' ',
+					'ANS_value'=>$attendee->state_ID(),
+					'QST_input_name'=>'STA_ID',
+					'QST_input_name'=>'STA_ID',
+					'QST_system'=>'state'
+				));
+		$this->_template_args['country_html'] = EE_Form_Fields::generate_form_input(
+				array(
+					'QST_display_text'=>' ',
+					'ANS_value'=>$attendee->country_ISO(),
+					'QST_input_name'=>'CNT_ISO',
+					'QST_input_name'=>'CNT_ISO',
+					'QST_system'=>'country'
+				));
 		//get list of all registrations for this attendee
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php');
 		$REG_MDL = EEM_Registration::instance();		
@@ -2336,33 +2337,31 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 						$this->_req_data['ATT_address'],
 						$this->_req_data['ATT_address2'],
 						$this->_req_data['ATT_city'],
-						$this->_req_data['STA_ID'],
-						$this->_req_data['CNT_ISO'],
+						empty($this->_req_data['STA_ID']) ? null : $this->_req_data['STA_ID'],
+						empty($this->_req_data['CNT_ISO']) ? null : $this->_req_data['CNT_ISO'],
 						$this->_req_data['ATT_zip'],
 						$this->_req_data['ATT_phone'],
 						$this->_req_data['ATT_social'],
 						$this->_req_data['ATT_comments'],
 						$this->_req_data['ATT_notes'],
-						isset($this->_req_data['ATT_deleted']) ? $this->_req_data['ATT_deleted'] : 0,
-						$this->_req_data['ATT_ID']
+						isset($this->_req_data['ATT_deleted']) ? $this->_req_data['ATT_deleted'] : 0
 				);
-				
 		// is this a new Attendee ?
+		
 		if ( $new_attendee ) {
-			// run the insert
-			if ( $attendee->insert() ) {
-				$success = 1;
-			} 
+			
 			$action_desc = __( 'created', 'event_espresso' );
 		} else {
-			// run the update
-			if ( $attendee->update() ) {
-				$success = 1;
+			if($this->_req_data['ATT_ID']){
+				$attendee->set('ATT_ID',$this->_req_data['ATT_ID']);
 			}
+			
 			$action_desc = __( 'updated', 'event_espresso' );
 		}
-		
-		$this->_redirect_after_action( $success, __( 'Attendee', 'event_espresso' ), $action_desc, array( 'action' => 'edit_attendee', 'id' => $this->_req_data['ATT_ID'] ) );
+		$attendee = apply_filters('FHEE_Registrations_Admin_Page__insert_or_update_attendee__before_save',$attendee,$this->_req_data);
+		$success = $attendee->save();
+		do_action('AHEE_Registrations_Admin_Page__insert_or_update_attendee__after_save',$attendee,$this->_req_data);
+		$this->_redirect_after_action( $success, __( 'Attendee', 'event_espresso' ), $action_desc, array( 'action' => 'edit_attendee', 'id' => $attendee->ID() ) );
 			
 	}
  
