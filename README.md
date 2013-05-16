@@ -1,4 +1,4 @@
 event-espresso-core
 ===================
 
-This is the Core for Event Espresso 3.2+
+This is the Core for Event Espresso 4.0+
