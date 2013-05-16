@@ -254,15 +254,18 @@ class EEM_Registration extends EEM_TempBase {
 	/**
 	*		retreive ALL registrations for a particular Attendee from db
 	* 		@access		public
-	* 		@param		int		$ATT_ID
+	* 		@param		int			$ATT_ID
+	* 		@param		array		$status_array  an array of STS_IDs to use in the where clause of the query - will generate multiple "AND" conditions
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
-	public function get_all_registrations_for_attendee( $ATT_ID = FALSE ) {
+	public function get_all_registrations_for_attendee( $ATT_ID = FALSE, $status_array = FALSE ) {
 
 		if ( ! $ATT_ID ) {
 			return FALSE;
 		}
-		if ( $registrations = $this->get_all_registrations( array( 'ATT_ID' => $ATT_ID ))) {
+		$where_cols_n_values = array( 'ATT_ID' => $ATT_ID );
+		$where_cols_n_values = is_array( $status_array ) ? array_merge( $where_cols_n_values, $status_array ) : $where_cols_n_values;
+		if ( $registrations = $this->get_all_registrations( $where_cols_n_values )) {
 			return $registrations;
 		} else {
 			return FALSE;
