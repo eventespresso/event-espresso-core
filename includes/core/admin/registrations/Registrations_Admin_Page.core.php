@@ -184,6 +184,14 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					'noheader' => TRUE 
 				),
 				
+				'restore_attendees'	=> array( 
+					'func' => '_trash_or_restore_attendees', 
+					'args' => array( 
+						'trash' => FALSE 
+					), 
+					'noheader' => TRUE 
+				),
+				
 				'delete_attendees'	=> array( 
 					'func' => '_delete_attendees', 
 					'noheader' => TRUE 
@@ -274,7 +282,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					'label' => __('Edit Attendee', 'event_espresso'),
 					'order' => 15,
 					'persistent' => FALSE,
-					'url' => isset($this->_req_data['id']) ? add_query_arg(array('id' => $this->_req_data['id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
+					'url' => isset($this->_req_data['ATT_ID']) ? add_query_arg(array('ATT_ID' => $this->_req_data['ATT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
 					'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box')
 				),
@@ -1416,7 +1424,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				}
 				$this->_template_args['attendees'][ $att_nmbr ]['address'] = implode( ', ', $address );
 				
-				$this->_template_args['attendees'][ $att_nmbr ]['att_link'] = self::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'id'=>$attendee->ATT_ID ), REG_ADMIN_URL );
+				$this->_template_args['attendees'][ $att_nmbr ]['att_link'] = self::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'ATT_ID'=>$attendee->ATT_ID ), REG_ADMIN_URL );
 				
 				$att_nmbr++;
 			}
@@ -2241,7 +2249,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		
-		$ATT_ID = isset( $this->_req_data['id'] ) && ! empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
+		$ATT_ID = isset( $this->_req_data['ATT_ID'] ) && ! empty( $this->_req_data['ATT_ID'] ) ? absint( $this->_req_data['ATT_ID'] ) : FALSE;
 
 		$title = __( ucwords( str_replace( '_', ' ', $this->_req_action )), 'event_espresso' );
 		// add ATT_ID to title if editing 
@@ -2296,7 +2304,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		//$this->_add_admin_page_meta_box( $action, $title, 'edit_attendee_details', NULL );
 		$this->_template_args['admin_page_content'] = espresso_display_template($this->_template_path, $this->_template_args, TRUE);
 
-		$this->_set_publish_post_box_vars( 'id', $ATT_ID, 'delete_attendees' );
+		$this->_set_publish_post_box_vars( 'ATT_ID', $ATT_ID, 'delete_attendees' );
 
 		// the final template wrapper
 		$this->display_admin_page_with_sidebar();
@@ -2397,7 +2405,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			
 		} else {
 			// grab single id and delete
-			$ATT_ID = absint($this->_req_data['id']);
+			$ATT_ID = absint($this->_req_data['ATT_ID']);
 			if ( ! $ATT_MDL->update(array('ATT_deleted' => $ATT_deleted), array('ATT_ID' => absint($ATT_ID)))) {
 				$success = 0;
 			}
@@ -2406,7 +2414,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 		$what = $success > 1 ? __( 'Attendees', 'event_espresso' ) : __( 'Attendee', 'event_espresso' );
 		$action_desc = $trash ? __( 'moved to the trash', 'event_espresso' ) : __( 'restored', 'event_espresso' );
-		$this->_redirect_after_action( $success, $what, $action_desc, array() );
+		$this->_redirect_after_action( $success, $what, $action_desc, array( 'action' => 'contact_list' ) );
 		
 	}
 
@@ -2426,7 +2434,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
 		$ATT_MDL = EEM_Attendee::instance();
-		
+				
 		$success = 1;
 		//Checkboxes
 		if ( ! empty($this->_req_data['checkbox']) && is_array( $this->_req_data['checkbox'] )) {
@@ -2441,14 +2449,14 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	
 		} else {
 			// grab single id and delete
-			$ATT_ID = absint( $this->_req_data['id'] );
+			$ATT_ID = absint( $this->_req_data['ATT_ID'] );
 			if ( ! $ATT_MDL->delete_attendee_by_ID( $ATT_ID )) {
 				$success = 0;
 			}
 			
 		}
 		$what = $success > 1 ? __( 'Attendees', 'event_espresso' ) : __( 'Attendee', 'event_espresso' );
-		$this->_redirect_after_action( $success, $what, __( 'deleted', 'event_espresso' ), array() );
+		$this->_redirect_after_action( $success, $what, __( 'deleted', 'event_espresso' ), array( 'action' => 'contact_list' ) );
 		
 	}
 
