@@ -56,6 +56,7 @@ class EE_MSG_Template {
 			throw new EE_Error( __('We need at least one message type to generate templates!', 'event_espresso') );
 		}
 
+
 		$MSG = new EE_messages();
 
 		foreach ( $message_types as $message_type ) {

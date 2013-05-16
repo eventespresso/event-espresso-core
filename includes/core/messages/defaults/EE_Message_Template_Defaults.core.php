@@ -195,7 +195,7 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 			foreach ( $this->_contexts as $context => $details ) {
 				foreach ( $this->_fields as $field => $field_type ) {
 					if ( $field !== 'extra' )
-						$this->_templates[$context][$field] = ( isset($this->_defaults['mt'][$field][$context]) ? maybe_serialize($this->_defaults['mt'][$field][$context]) : maybe_serialize($this->_defaults['m'][$field]) );
+						$this->_templates[$context][$field] = ( isset($this->_defaults['mt'][$field][$context]) ? $this->_defaults['mt'][$field][$context] : $this->_defaults['m'][$field] );
 				}
 			}
 
@@ -215,7 +215,6 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 						foreach ( $this->_fields as $field => $field_type ) {
 							if ( $field !== 'extra' ) {
 								$this->_templates[$context][$field] = ( isset($context_templates[$context][$field] ) ) ? $context_templates[$context][$field]['content'] : '';
-								$this->_templates[$context][$field] = (!is_serialized($this->_templates[$context][$field]) ) ? maybe_serialize($this->_templates[$context][$field]) : $this->_templates[$context][$field];
 							}
 						}
 					}
@@ -325,6 +324,7 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 			'MTP_user_id' => get_current_user_id(),
 			'MTP_is_active' => 1,
 			);
+
 
 		//let's insert the above and get our GRP_ID, then reset the template data array to just include the GRP_ID
 		$results = $this->_EEM_data->insert( $main_template_data );
