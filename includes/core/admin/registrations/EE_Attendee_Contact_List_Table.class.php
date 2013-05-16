@@ -162,7 +162,9 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 
 
 	function column_STA_ID($item) {
-		return $item->state_ID() != 0 ? $item->state_ID() : '';
+		return $item->state_ID();
+		$state = isset( EEM_State::$all_states[ $item->state_ID() ] ) ? EEM_State::$all_states[ $item->state_ID() ] : $item->state_ID();
+		return ! is_numeric( $state ) ? $state : '';
 	}
 
 
