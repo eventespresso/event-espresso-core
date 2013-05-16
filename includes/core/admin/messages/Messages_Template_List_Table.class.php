@@ -57,6 +57,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 			);
 
 		$this->_columns = array(
+			'cb' => '<input type="checkbox" />',
 			'event' => __( 'Event', 'event_espresso'),
 			'message_type' => __('Message Type', 'event_espresso'),
 			'messenger' => __( 'Messenger', 'event_espresso'),
@@ -153,6 +154,10 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 
 
 
+	public function column_cb( $item ) {
+		$event_id = $item->event();
+		return !empty( $event_id ) ? sprintf( '<input type="checkbox" name="checkbox[%s] value="1" />', $item->GRP_ID() ) : '';
+	}
 	
 
 
