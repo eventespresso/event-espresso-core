@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
+do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 
 /**
@@ -103,10 +103,15 @@ function espresso_plugin_activation() {
 		</p>');
 
 	} else {
-		// define tables and pathing
-		espresso_define_tables_and_paths();
+		
+		if ( file_exists( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' )) {
+			require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' );
+			espresso_caffeinated_activation();
+		}
+
 		espresso_get_user_id();
 		//include autoloaders
+		require_once(  EVENT_ESPRESSO_INCLUDES_DIR . 'functions/plugins_loaded.php');
 		espresso_autoload();
 		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/activation.php');
 		espresso_check_data_tables();
@@ -122,11 +127,12 @@ function espresso_plugin_activation() {
 		espresso_default_message_templates();
 		espresso_default_countries();
 		espresso_default_states();
+		espresso_create_no_ticket_prices_array();
 	}
 }
 
 function espresso_widget() {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	espresso_require_template('init.php');
 	require(espresso_get_widget_template());
 	//The widget can be over-ridden with the custom files addon
@@ -140,7 +146,7 @@ function espresso_info_header() {
 function add_espresso_stylesheet() {
 	global $org_options;
 
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 	//Load the ThemeRoller styles if enabled
 	if (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] ==true) {
@@ -199,7 +205,7 @@ function add_espresso_stylesheet() {
 }
 
 function espresso_load_javascript_files() {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	global $load_espresso_scripts;
 
 	if (!$load_espresso_scripts)
@@ -235,7 +241,7 @@ function eei18n_js_strings() {
 
 function espresso_toolbar_items($admin_bar) {
 
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	$events_page = get_admin_url() . 'admin.php?page=espresso_events';
 	$registrations_page = get_admin_url() . 'admin.php?page=espresso_registrations';
 	$menu_class = 'espresso_menu_item_class';
@@ -448,7 +454,7 @@ function espresso_toolbar_items($admin_bar) {
 }
 
 function espresso_add_query_vars($query_vars) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	$query_vars[] = 'event_slug';
 	$query_vars[] = 'ee';
 	$query_vars[] = 'e_reg';
@@ -469,7 +475,7 @@ function espresso_add_query_vars($query_vars) {
  * Usage: event_espresso_require_template('shopping_cart.php')
  */
 function espresso_require_template($template_file_name, $must_exist = true, $as_require_once = true) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	event_espresso_require_file($template_file_name, EVENT_ESPRESSO_TEMPLATE_DIR, EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/', $must_exist, $as_require_once);
 }
-add_action('action_hook_espresso_require_template', 'espresso_require_template');
+add_action('AHEE_require_template', 'espresso_require_template');

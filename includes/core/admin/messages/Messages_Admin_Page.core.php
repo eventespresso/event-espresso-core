@@ -258,7 +258,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 						'edit_message_template' => array(
 							'title' => __('About Template Editor', 'event_espresso'),
 							'callback' => 'edit_message_template_help_tab'
-							)
+							),
+						'message_template_shortcodes' => array(
+							'title' => __('Shortcode Descriptions', 'event_epresso'),
+							'callback' => 'message_template_shortcodes_help_tab'
+							),
 						), $default_msg_help_tabs
 					)
 				),
@@ -371,6 +375,16 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$args['img5'] = '<img class="right" src="' . EE_MSG_ASSETS_URL . 'images/publish-meta-box.png' . '" alt="' . __('Publish Metabox', 'event_espresso') . '" />';
 		espresso_display_template( $templatepath, $args);
 	}
+
+
+
+	public function message_template_shortcodes_help_tab() {
+		$this->_set_shortcodes();
+		$args['shortcodes'] = $this->_shortcodes;
+		$template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_shortcodes_help_tab.template.php';
+		espresso_display_template( $template_path, $args );
+	}
+
 
 
 	public function preview_message_help_tab() {
@@ -721,7 +735,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _edit_message_template() {
 
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '');
 		$GRP_ID = isset( $this->_req_data['id'] ) && !empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
 
 		$EVT_ID = isset( $this->_req_data['evt_id'] ) && !empty( $this->_req_data['evt_id'] ) ? absint( $this->_req_data['evt_id'] ) : FALSE;
@@ -1390,11 +1404,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		} else {
 			$alt = 0;
 			?>
+			<div style="float:right; margin-top:10px"><?php echo $this->_get_help_tab_link('message_template_shortcodes'); ?></div><p class="small-text"><?php _e('These are the shortcodes you can use in the templates: ', 'event_espresso' ); ?></p>
 			<table class="widefat ee-shortcode-table">
 			<?php foreach ( $this->_shortcodes as $code => $label ) : ?>
 				<?php $alt_class = !($alt%2) ? 'class="alternate"' : ''; ?>
 				<tr <?php echo $alt_class; ?>>
-					<td><?php $this->_set_help_trigger( 'shortcode_' . $alt, TRUE, array('100', '400') ); echo $code; ?></td>
+					<td><?php echo $code; ?></td>
 				</tr>
 			<?php $alt++; endforeach; ?>
 			</table> <!-- end .ee-shortcode-table -->
@@ -1456,54 +1471,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	}
 
 
-	protected function _help_popup_content_edit_message_template() {
-		$this->_set_shortcodes();
-
-		$help = array();
-
-		$i = 0;
-		//let's setup the $help array for each shortcode
-		foreach ( $this->_shortcodes as $shortcode => $description ) {
-			$help['shortcode_' . $i] = array(
-				'title' => $shortcode,
-				'content' => $description
-				);
-			$i++;
-		}
-
-
-		$context_label = $this->_message_template->context_label();
-		$context_configs = $this->_message_template->contexts_config();
-		reset( $context_configs );
-		$current_context = isset($this->_req_data['context']) ? $this->_req_data['context'] : key($context_configs);
-
-		$content = '<p>' . $context_label['description'] . '</p>';
-		$content .= '<p>' . sprintf( __(' The current %s selected is <strong>%s</strong>', 'event_espresso'), $context_label['label'], $context_configs[$current_context]['label'] ) . '<br />';
-		$content .= '<em>' . $context_configs[$current_context]['description'] . '</em></p>';
-		$content .= '<p>' . sprintf( __('Other %s:', 'event_espresso'), ucwords($context_label['plural']) ) . '</p>';
-
-		foreach ( $context_configs as $ctxt => $details ) {
-			if ( $ctxt == $current_context ) continue;
-			$content .= '<p>' . $details['label'] . '<br />';
-			$content .= '<em>' . $details['description'] . '</em></p>';
-		}
-
-		$title = sprintf( __('What is a %s?', 'event_espresso'), $context_label['label']);
-
-		$help['context_switcher'] = array(
-			'title' => $title,
-			'content' => $content
-		);
-
-		//help for preview button
-		$help['preview_button'] = array(
-			'title' => __('Message Template Preview', 'event_espresso'),
-			'content' => __('Clicking this button will show you a preview of what the current template will look like when received.', 'event_espresso')
-			);
-
-		return $help;
-	}
-
 
 
 	/**
@@ -1542,9 +1509,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					<?php endforeach; endif; ?>
 				</select>
 				<?php $button_text = sprintf( __('Switch %s', 'event_espresso'), ucwords($context_label['label']) ); ?>
-				<input id="submit-msg-context-switcher-sbmt" class="button-secondary" type="submit" value="<?php echo $button_text; ?>"> <?php $this->_set_help_trigger( 'context_switcher' ); ?>
+				<input id="submit-msg-context-switcher-sbmt" class="button-secondary" type="submit" value="<?php echo $button_text; ?>">
 			</form>
-			<?php echo $args['extra']; ?><?php $this->_set_help_trigger( 'preview_button' ); ?>
+			<?php echo $args['extra']; ?>
 		</div> <!-- end .ee-msg-switcher-container -->
 		<?php
 		$output = ob_get_contents();
@@ -1602,7 +1569,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	protected function _insert_or_update_message_template($new = FALSE ) {
 		
-		do_action ( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action ( 'AHEE_log', __FILE__, __FUNCTION__, '');
 		$success = 0;
 		$override = FALSE;
 
@@ -1814,7 +1781,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @return void
 	 */
 	protected function _trash_or_restore_message_template($trash = TRUE, $all = FALSE ) {
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
 			$MTP = EEM_Message_Template::instance();
 
@@ -1878,7 +1845,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @return void
 	 */
 	protected function _delete_message_template() {
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
 			$MTP = EEM_Message_Template::instance();
 

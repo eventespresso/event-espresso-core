@@ -16,15 +16,15 @@
 
 .status-TCM,
 .status-RAP, 
-.reg-overview-full-payment-spn { color:#090;  }
+.reg-overview-full-payment-spn { color:#090; }
 
 .status-TPN,
 .status-RPN, 
-.reg-overview-part-payment-spn { color:#F93;  }
+.reg-overview-part-payment-spn { color:#F93; }
 
 .status-TFL, .status-TIN, .status-TOP,
 .status-RCN, .status-RFL, .status-RNA, 
-.reg-overview-no-payment-spn { color:#F00;  }
+.reg-overview-no-payment-spn { color:#F00; }
 
 .wp-list-table .column-event_name { }
 .wp-list-table .column-REG_date,
@@ -63,7 +63,7 @@
 #reg-admin-reg-details-reg-status-hdr { padding:0; margin:0 0 1em; }
 
 #reg-admin-approve-decline-reg-status-spn { position: relative; top:-4px; }
-#reg-admin-approve-decline-reg-status-spn a { margin-left:1em; vertical-align: baseline; }
+#reg-admin-approve-decline-reg-status-spn a { margin-left:1em; margin-right:1em; vertical-align: baseline; }
 
 .admin-side-mbox-dv { margin:1em 0 2em; }
 .admin-side-mbox-dv p { margin:.5em 0; line-height:1.2em; color:#333; text-shadow:0px 1px 0px #fff; }

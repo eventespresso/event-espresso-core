@@ -88,4 +88,4 @@ function espresso_display_payment_overview_template($data) {
 	<?php
 }
 
-add_action('action_hook_espresso_display_payment_overview_template', 'espresso_display_payment_overview_template');
+add_action('AHEE_display_payment_overview_template', 'espresso_display_payment_overview_template');

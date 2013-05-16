@@ -30,12 +30,6 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class EE_Messages_Email_Payment_Defaults extends EE_Message_Template_Defaults {
 
 
-
-	public function __construct( EE_Messages $messages ) {
-		parent::__construct( $messages );
-	}
-
-
 	protected function _set_props() {
 		$this->_m_name = 'email';
 		$this->_mt_name = 'payment';

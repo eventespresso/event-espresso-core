@@ -149,44 +149,22 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 
 
 	/**
+	 * 		column_TXN_timestamp
+	*/ 
+    function column_TXN_timestamp($item){
+		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item['TXN_ID'] ), TXN_ADMIN_URL );
+		$txn_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details for TXN #', 'event_espresso' ) . $item['TXN_ID'] . '">' . date( 'D M j, Y,    g:i:s a',	$item['TXN_timestamp'] ) .  '</a>'; 
+		return $txn_date;
+	}
+
+
+
+
+	/**
 	 * 		column_STS_ID
 	*/ 
     function column_STS_ID($item){
 		return '<span class="status-'. $item['STS_ID'] .'">' . __( $this->_status[ $item['STS_ID'] ], 'event_espresso' ) . '</span>';
-	}
-
-
-
-
-	/**
-	 * 		column_ATT_fname
-	*/ 
-    function column_ATT_fname($item){
-		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'id'=>$item['ATT_ID'] ), REG_ADMIN_URL );
-		return '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . ucwords( $item['TXN_att_name'] ) . '</a>';
-	}
-
-
-
-
-	/**
-	 * 		column_ATT_email
-	*/ 
-    function column_ATT_email($item){
-		return '<a href="mailto:' . $item['ATT_email'] . '">' . $item['ATT_email'] . '</a>'; 
-	}
-
-
-
-
-
-	/**
-	 * 		column_event_name
-	*/ 
-    function column_event_name($item){	
-		$edit_event_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'txn' => $item['TXN_ID'] ), TXN_ADMIN_URL );  
-		$event_name = stripslashes( html_entity_decode( $item['event_name'], ENT_QUOTES, 'UTF-8' ));		
-		return '<a href="' . $edit_event_url . '" title="' . __( 'Edit TXN #', 'event_espresso' ) . $item['TXN_ID'].'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>'; 
 	}
 
 
@@ -240,15 +218,38 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 
 
 
+	/**
+	 * 		column_ATT_fname
+	*/ 
+    function column_ATT_fname($item){
+		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'id'=>$item['ATT_ID'] ), REG_ADMIN_URL );
+		return '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . ucwords( $item['TXN_att_name'] ) . '</a>';
+	}
+
+
+
 
 	/**
-	 * 		column_TXN_timestamp
+	 * 		column_ATT_email
 	*/ 
-    function column_TXN_timestamp($item){
-		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'txn'=>$item['TXN_ID'] ), TXN_ADMIN_URL );
-		$txn_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">' . date( 'D M j, Y,    g:i:s a',	$item['TXN_timestamp'] ) . '</a>'; 
-		return $txn_date;
+    function column_ATT_email($item){
+		return '<a href="mailto:' . $item['ATT_email'] . '">' . $item['ATT_email'] . '</a>'; 
 	}
+
+
+
+
+
+	/**
+	 * 		column_event_name
+	*/ 
+    function column_event_name($item){	
+		// page=espresso_events&action=edit_event&EVT_ID=2&edit_event_nonce=cf3a7e5b62
+		$edit_event_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$item['id'] ), EVENTS_ADMIN_URL );
+		$event_name = stripslashes( html_entity_decode( $item['event_name'], ENT_QUOTES, 'UTF-8' ));
+		return '<a href="' . $edit_event_url . '" title="' . sprintf( __( 'Edit Event: %s', 'event_espresso' ), $item['event_name'] ) .'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>'; 
+	}
+
 
 
 
@@ -260,10 +261,10 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
     function column_actions($item){
 
         //Build row actions	
-		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'txn'=>$item['TXN_ID'] ), TXN_ADMIN_URL );
+		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item['TXN_ID'] ), TXN_ADMIN_URL );
 		$dl_invoice_lnk_url = add_query_arg( array( 'invoice_launch'=>'true', 'id'=>$item['REG_url_link'], 'html'=>'true', 'admin'=>'true' ), home_url() );
 		$view_reg_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item['REG_ID'] ), REG_ADMIN_URL );
-		$send_pay_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'send_payment_reminder', 'txn'=>$item['TXN_ID'] ), TXN_ADMIN_URL );
+		$send_pay_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'send_payment_reminder', 'TXN_ID'=>$item['TXN_ID'] ), TXN_ADMIN_URL );
 		
         //Build row actions
         $view_lnk = '
@@ -280,12 +281,13 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 			</a>
 		</li>';
       
-	       /**$send_pay_lnk = '
+	       $send_pay_lnk = '
 		<li>
 			<a href="'.$send_pay_lnk_url.'" title="' . __( 'Send Payment Reminder', 'event_espresso' ) . '">
 				<img width="20" height="20" alt="' . __( 'Send Payment Reminder', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/payment-reminder-20x20.png">
 			</a>
-		</li>';**/
+		</li>';
+		$send_pay_lnk = $item['STS_ID'] == 'TPN' ? $send_pay_lnk : '';
 		
 	        $view_reg_lnk = '
 		<li>
@@ -296,7 +298,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 
 			$actions = '
 		<ul class="txn-overview-actions-ul">' . 
-		$view_lnk . $dl_invoice_lnk . /*$send_pay_lnk .*/ $view_reg_lnk . '
+		$view_lnk . $dl_invoice_lnk . $send_pay_lnk . $view_reg_lnk . '
 		</ul>';
 			
 			return $actions;

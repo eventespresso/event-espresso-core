@@ -1,9 +1,9 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
+do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 
 function espresso_load_jquery() {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
     wp_enqueue_script( 'jquery' );
 }
 
@@ -12,7 +12,7 @@ function espresso_load_jquery() {
 
 
 function espresso_load_admin_ajax_callbacks() {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 	function event_list_save_state_callback() {
 		check_ajax_referer('event_list_state', 'nonce');
@@ -36,11 +36,11 @@ function espresso_load_admin_ajax_callbacks() {
 
 function espresso_frontend_init() {
 
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	
 	global $espresso_reg_page;
 	if ( $espresso_reg_page = espresso_test_for_reg_page() ) {
-		do_action('action_hook_espresso_load_reg_page_files');
+		do_action('AHEE_load_reg_page_files');
 	}
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'shortcodes.php');
@@ -55,8 +55,8 @@ function espresso_frontend_init() {
 		require(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/custom_post_type.php');
 	}
 	
-	add_action ( 'action_hook_espresso_regevent_default_action', 'display_all_events', 10, 1 );
-	add_action ( 'action_hook_espresso_event_registration', 'event_details_page', 10, 2 );
+	add_action ( 'AHEE_regevent_default_action', 'display_all_events', 10, 1 );
+	add_action ( 'AHEE_event_registration', 'event_details_page', 10, 2 );
 
 
 	// Export iCal file
@@ -170,7 +170,7 @@ function espresso_verify_default_pages_exist() {
 
 function espresso_test_for_reg_page() {
 
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	global $org_options, $current_ee_page, $this_is_a_reg_page;
 	
 	$this_is_a_reg_page = FALSE;
@@ -228,8 +228,8 @@ function espresso_test_for_reg_page() {
 
 function event_espresso_run() {
 
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-	do_action('action_hook_espresso_event_espresso_run_start');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_event_espresso_run_start');
 	// grab some globals
 	global $load_espresso_scripts, $espresso_content;
 
@@ -248,22 +248,22 @@ function event_espresso_run() {
 	switch ($e_reg) {
 
 		case 'process_ticket_selections' :
-			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, ' e_reg = process_ticket_selections'  );
+			do_action('AHEE_log', __FILE__, __FUNCTION__, ' e_reg = process_ticket_selections'  );
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Selector.class.php');
 			EE_Ticket_Selector::process_ticket_selections();
 			break;
 
 		case 'register' :
-			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, ' e_reg = register'  );
-			remove_all_actions('action_hook_espresso_regevent_default_action');
-			remove_all_actions('action_hook_espresso_event_registration');
-			do_action('action_hook_espresso_event_reg_checkout');
+			do_action('AHEE_log', __FILE__, __FUNCTION__, ' e_reg = register'  );
+			remove_all_actions('AHEE_regevent_default_action');
+			remove_all_actions('AHEE_event_registration');
+			do_action('AHEE_event_reg_checkout');
 			break;
 
 		case 'edit_attendee' :
-			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, ' e_reg = edit_attendee'  );
-			remove_all_actions('action_hook_espresso_regevent_default_action');
-			remove_all_actions('action_hook_espresso_event_registration');
+			do_action('AHEE_log', __FILE__, __FUNCTION__, ' e_reg = edit_attendee'  );
+			remove_all_actions('AHEE_regevent_default_action');
+			remove_all_actions('AHEE_event_registration');
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/process-registration/attendee_edit_record.php');
 			attendee_edit_record();
 			break;
@@ -276,14 +276,14 @@ function event_espresso_run() {
 			$event_detail_page = get_query_var('event_slug') ? TRUE : FALSE;
 
 			if ( $event_detail_page or isset( $_REQUEST['ee'] ) ) {
-				do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, ' e_reg = event_detail_page'  );
+				do_action('AHEE_log', __FILE__, __FUNCTION__, ' e_reg = event_detail_page'  );
 				//This is the form page for registering the attendee
 				require_once(espresso_get_registration_page_template());
-				do_action ( 'action_hook_espresso_event_registration' );
+				do_action ( 'AHEE_event_registration' );
 			} else {
-				do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, ' e_reg = event_list'  );
+				do_action('AHEE_log', __FILE__, __FUNCTION__, ' e_reg = event_list'  );
 				require_once(espresso_get_event_list_template());
-				do_action ( 'action_hook_espresso_regevent_default_action', $e_reg );
+				do_action ( 'AHEE_regevent_default_action', $e_reg );
 			}
 
 	}
@@ -299,6 +299,8 @@ function event_espresso_run() {
 
 function return_espresso_content() {
 	global $espresso_content;
+//	require_once('activation.php');
+//	espresso_initialize_system_questions();
 	return $espresso_content;
 }
 
@@ -307,7 +309,7 @@ function return_espresso_content() {
 
 
 function espresso_export_certificate() {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	if (isset($_REQUEST['certificate_launch']) && $_REQUEST['certificate_launch'] == 'true') {
 		echo espresso_certificate_launch($_REQUEST['id'], $_REQUEST['r_id']);
 	}
@@ -318,7 +320,7 @@ function espresso_export_certificate() {
 
 
 function espresso_export_invoice() {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	//Version 2.0
 	if (isset($_REQUEST['invoice_launch']) && $_REQUEST['invoice_launch'] == 'true') {
 		if (isset($_REQUEST['id'])) {
@@ -347,7 +349,7 @@ function espresso_export_invoice() {
 
 
 /*function espresso_export_ticket() {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	//Version 2.0
 	if (isset($_REQUEST['ticket_launch']) && $_REQUEST['ticket_launch'] == 'true') {
 		$reg_url_link = isset( $_REQUEST['_REG_ID'] ) ?  sanitize_key( $_REQUEST['_REG_ID'] ) : FALSE;
@@ -374,7 +376,7 @@ function espresso_export_invoice() {
 
 
 function espresso_dashboard_init() {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	global $org_options, $caffeinated;
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/dashboard_widget.php');
 	wp_add_dashboard_widget('espresso_news_dashboard_widget', 'Event Espresso News', 'espresso_news_dashboard_widget_function');
@@ -388,7 +390,7 @@ function espresso_dashboard_init() {
 
 
 function ee_update_questions_sequence() {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	global $wpdb;
 	//Update the questions when re-ordering
 	if (!empty($_POST['update_sequence'])) {
@@ -405,7 +407,7 @@ function ee_update_questions_sequence() {
 
 
 function ee_update_question_groups_sequence() {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	global $wpdb;
 	//Update the questions when re-ordering
 	if (!empty($_POST['update_sequence'])) {
@@ -473,4 +475,34 @@ function espresso_init_admin_pages() {
 		$e->get_error();
 	}
 	
+}
+
+
+
+
+
+function espresso_check_no_ticket_prices_array() {
+	$espresso_no_ticket_prices = get_option( 'espresso_no_ticket_prices', FALSE );
+	//printr( $espresso_no_ticket_prices, '$espresso_no_ticket_prices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+	if ( $espresso_no_ticket_prices ) {
+		$no_ticket_prices_msg = __( '<strong>Warning!</strong> The following events have no ticket prices set for them and will therefore not allow registrations:', 'event_espresso' );
+		foreach ( $espresso_no_ticket_prices as $EVT_ID => $event_name ) {
+			if ( empty( $EVT_ID )) {
+				unset( $espresso_no_ticket_prices[ $EVT_ID ] );
+			} else {
+				$edit_event_url = EE_Admin_Page::add_query_args_and_nonce( array( 'page'=>'espresso_events', 'action'=>'edit_event', 'EVT_ID'=>$EVT_ID ),  admin_url( 'admin.php?' ));
+				$event_name = stripslashes( htmlentities( $event_name, ENT_QUOTES, 'UTF-8' ));
+				$no_ticket_prices_msg .= '<br/><a href="' . $edit_event_url . '" title="' . sprintf( __( 'Edit Event: %s', 'event_espresso' ), $event_name ) .'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>';
+			}
+		}
+		$no_ticket_prices_msg .= '<br/>' . __( 'click on the event name to go to the event editor and correct this issue.', 'event_espresso' );
+		EE_Error::add_error( $no_ticket_prices_msg, __FILE__, __FUNCTION__, __LINE__ );
+		add_action( 'admin_notices', 'espresso_display_admin_notice' );
+		update_option( 'espresso_no_ticket_prices', $espresso_no_ticket_prices );
+	}
+}
+
+
+function espresso_display_admin_notice() {
+	echo EE_Error::get_notices();
 }

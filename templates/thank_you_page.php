@@ -1,9 +1,9 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
+do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 function espresso_thank_you_page() {
 
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 	ob_start();
 	global $EE_Session, $EEM_Gateways, $espresso_content;
@@ -42,9 +42,9 @@ function espresso_thank_you_page() {
 		}
 		
 		espresso_require_template('payment_overview.php');
-		do_action('action_hook_espresso_display_payment_overview_template', $data);
+		do_action('AHEE_display_payment_overview_template', $data);
 		//$EEM_Gateways->reset_session_data();
-		do_action( 'action_hook_espresso_reg_completed' );
+		do_action( 'AHEE_reg_completed' );
 
 	} else {
 

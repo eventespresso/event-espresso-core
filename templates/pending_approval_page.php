@@ -2,7 +2,7 @@
 
 function espresso_pending_registration_approval($registration_id) {
 	global $wpdb, $org_options;
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	//Get the event information
 	$events = $wpdb->get_results("SELECT ed.* FROM " . EVENTS_DETAIL_TABLE . " ed
 					JOIN " . EVENTS_ATTENDEE_TABLE . " ea

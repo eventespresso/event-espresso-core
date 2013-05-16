@@ -356,12 +356,12 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		//note that this action hook will have the $query_args value available.
 		$admin_class_name = get_class( $this->_adminpage_obj );
 		if ( method_exists( $this, '_redirect_action_' . $this->_current_route ) ) {
-			add_action( 'action_hook_espresso_redirect_' . $admin_class_name . $this->_current_route, array( $this, '_redirect_action_' . $this->_current_route ), 10 );
+			add_action( 'AHEE_redirect_' . $admin_class_name . $this->_current_route, array( $this, '_redirect_action_' . $this->_current_route ), 10 );
 		}
 
 		//let's hook into the _redirect itself and allow for changing where the user goes after redirect.  This will have $query_args and $redirect_url available.
 		if ( method_exists( $this, '_redirect_filter_' . $this->_current_route ) ) {
-			add_filter( 'filter_hook_espresso_redirect_' . $admin_class_name . $this->_current_route, array( $this, '_redirect_filter_ ' . $this->_current_route ), 10, 2 );
+			add_filter( 'FHEE_redirect_' . $admin_class_name . $this->_current_route, array( $this, '_redirect_filter_ ' . $this->_current_route ), 10, 2 );
 		}
 
 	}

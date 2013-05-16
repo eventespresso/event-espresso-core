@@ -270,11 +270,15 @@ class EE_Transaction extends EE_Base_Class{
 	public function set_status( $status = FALSE ) {
 		
 		if ( ! $status ) {
-			$msg = __( 'No status was supplied.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'No status was supplied.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
-		}	
-		$this->_STS_ID = wp_strip_all_tags( $status );
+		}
+		$status_array = EEM_Transaction::instance()->status_array();
+		if ( ! isset( $status_array[ $status ]  )) {
+			EE_Error::add_error( __( 'Invalid Status.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}
+		$this->_STS_ID = $status;
 		return TRUE;
 	}
 
@@ -629,7 +633,7 @@ class EE_Transaction extends EE_Base_Class{
 				return __("Complete",'event_espresso');
 			case EEM_Transaction::incomplete_status_code:
 				return __('Incomplete','event_espresso');
-			case EEM_Transaction::pending_status_code:
+			case EEM_Transaction::open_status_code:
 				return __('Pending Payment','event_espresso');
 			default:
 				return __('Unknown','event_espresso');
@@ -668,7 +672,7 @@ class EE_Transaction extends EE_Base_Class{
 	 * @return boolean
 	 */
 	public function is_pending(){
-		if($this->status_ID() == EEM_Transaction::pending_status_code){
+		if($this->status_ID() == EEM_Transaction::open_status_code){
 			return true;
 		}else{
 			return false;
@@ -730,6 +734,20 @@ class EE_Transaction extends EE_Base_Class{
 	 */
 	public function update_based_on_payments(){
 		return $this->_get_model()->update_based_on_payments($this);
+	}
+
+
+
+	public function selected_gateway() {
+		$details = $this->details();
+		return $details['gateway'];
+	}
+
+
+
+	public function gateway_response_on_transaction() {
+		$details = $this->details();
+		return $details['response_msg'];
 	}
 
 

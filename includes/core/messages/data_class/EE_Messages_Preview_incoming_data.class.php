@@ -136,13 +136,13 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			0 => array(
 				'Luke',
 				'Skywalker',
+				'farfaraway@galaxy.sp',
 				'804 Bantha Dr.',
 				'',
 				'Mos Eisley',
-				'Section 7',
-				'Tatooine',
+				32,
+				'US',
 				'f0r3e',
-				'farfaraway@galaxy.sp',
 				'',
 				'',
 				'',
@@ -153,13 +153,13 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			1 => array(
 				'Princess',
 				'Leia',
+				'buns@fcn.al',
 				'1456 Valley Way Boulevard',
 				'',
-				'Aldera',
-				'Alvoli Isle',
 				'Alderaan',
+				15,
+				'US',
 				'c1h2c',
-				'buns@fcn.al',
 				'',
 				'',
 				'',
@@ -170,13 +170,13 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			2 => array(
 				'Yoda',
 				'I Am',
+				'arrivenot@emailbad.fr',
 				'4th Tree',
 				'',
 				'Marsh',
-				'Swampland',
-				'Dantooine',
+				22,
+				'US',
 				'l18n',
-				'arrivenot@emailbad.fr',
 				'',
 				'',
 				'',
@@ -188,13 +188,13 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 		//let's generate the attendee objects
 		$attendees = array();
-		$var_array = array('fname','lname','address','address2','city','staid','cntry','zip','email','phone','social','comments','notes','deleted','attid');
+		$var_array = array('fname','lname','email','address','address2','city','staid','cntry','zip','phone','social','comments','notes','deleted','attid');
 
 		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php');
 		foreach ( $dummy_attendees as $dummy ) {
 			$att = array_combine( $var_array, $dummy );
 			extract($att);
-			$attendees[] = new EE_Attendee($fname, $lname, $address, $address2, $city, $staid, $cntry, $zip, $email, $phone, $social, $comments, $notes, $deleted, $attid);
+			$attendees[] = new EE_Attendee($fname, $lname, $email, $address, $address2, $city, $staid, $cntry, $zip, $phone, $social, $comments, $notes, $deleted, $attid);
 		}
 
 		return $attendees;
@@ -215,7 +215,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		//HEY, if we have an evt_id then we want to make sure we use that for the preview (because a specific event template is being viewed);
 		$event_ids = isset( $_REQUEST['evt_id'] ) && !empty($_REQUEST['evt_id'] ) ? array( $_REQUEST['evt_id'] ) : array();
 
-		$limit = !empty( $event_ids ) ? '' : apply_filters( 'filter_hook_espresso_EE_Messages_Preview_incoming_data_get_some_events_limit', ' LIMIT 0,1' );
+		$limit = !empty( $event_ids ) ? '' : apply_filters( 'FHEE_EE_Messages_Preview_incoming_data_get_some_events_limit', ' LIMIT 0,1' );
 
 		$SQL = "SELECT e.id AS ID, e.event_name AS name, e.event_meta AS meta, e.event_status AS status, e.require_pre_approval AS pre_approval, dtt.DTT_ID AS daytime_id FROM " . EVENTS_DETAIL_TABLE . " AS e LEFT JOIN " . ESP_DATETIME . " AS dtt ON dtt.EVT_ID = e.id WHERE dtt.DTT_is_primary = '1' AND";
 

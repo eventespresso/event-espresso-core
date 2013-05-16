@@ -49,4 +49,4 @@ function espresso_display_payment_page_template($data) {
 <?php
 }
 
-add_action('action_hook_espresso_display_payment_page_template', 'espresso_display_payment_page_template');
+add_action('AHEE_display_payment_page_template', 'espresso_display_payment_page_template');

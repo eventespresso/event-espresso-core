@@ -14,7 +14,7 @@ if (!function_exists('event_registration')) {
 		  } */
 
 		global $wpdb, $org_options;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		$event_slug = (get_query_var('event_slug')) ? get_query_var('event_slug') : FALSE;
 
@@ -92,8 +92,8 @@ if (!function_exists('event_registration')) {
 //
 		//Build the registration page
 		//allow addons to override this part
-		do_action('action_hook_espresso__registration_page__begin_display',$event);
-		if(apply_filters('filter_hook_espresso__registration_page__display_normal_reg_page',true,$event)){
+		do_action('AHEE__registration_page__begin_display',$event);
+		if(apply_filters('FHEE__registration_page__display_normal_reg_page',true,$event)){
 			if (!empty($event)) {
 
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
@@ -340,7 +340,7 @@ if (!function_exists('event_registration')) {
 
 						// ticket selector
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Selector.class.php');
-						add_action( 'action_hook_espresso_ticket_selector', array( 'EE_Ticket_Selector', 'init' ), 10, 1 );		
+						add_action( 'AHEE_ticket_selector', array( 'EE_Ticket_Selector', 'init' ), 10, 1 );		
 
 						$registration_url = add_query_arg(array('e_reg' => 'process_ticket_selections'), espresso_get_reg_page_full_url());
 

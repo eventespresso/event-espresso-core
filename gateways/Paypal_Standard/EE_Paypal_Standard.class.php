@@ -60,7 +60,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$this->_payment_settings['use_sandbox'] = false;
 		$this->_payment_settings['no_shipping'] = '0';
 		$this->_payment_settings['type'] = 'off-site';
-		$this->_payment_settings['display_name'] = 'Paypal';
+		$this->_payment_settings['display_name'] = __('Paypal','event_espresso');
 		$this->_payment_settings['current_path'] = '';
 		$this->_payment_settings['button_url'] = $this->_btn_img;
 	}
@@ -253,15 +253,22 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		</tr>
 
 		<tr>
-			<th><label for="pp_image_url">
+			<th>
+				<label for="pp_image_url">
 					<?php _e('Image URL', 'event_espresso'); ?>
 					<?php echo EE_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
-				</label></th>
-			<td><input class="regular-text" type="text" name="image_url" id="pp_image_url" size="35" value="<?php echo $this->_payment_settings['image_url']; ?>" />
-				<br />
+				</label>
+			</th>
+			<td>
+				<span class='ee_media_uploader_area'>
+					<img class="ee_media_image" src="<?php echo $this->_payment_settings['image_url']; ?>" />
+					<input class="ee_media_url" type="text" name="image_url" size='34' value="<?php echo $this->_payment_settings['image_url']; ?>">
+					<a href="#" class="ee_media_upload"><img src="images/media-button-image.gif" alt="Add an Image"></a>
+				</span><br/>
 				<span class="description">
 					<?php _e('Used for your business/personal logo on the PayPal page', 'event_espresso'); ?>
-				</span></td>
+				</span>
+			</td>
 		</tr>
 		
 		<tr>
@@ -290,25 +297,11 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			?>
 			</td>
 		</tr>
-
-		<tr>
-			<th>
-				<label for="<?php echo $this->_gateway_name; ?>_button_url">
-					<?php _e('Button Image URL', 'event_espresso'); ?>
-				</label>
-			</th>
-			<td>
-				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
-				<input class="regular-text" type="text" name="button_url" id="<?php echo $this->_gateway_name; ?>_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
-				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
-			</td>
-		</tr>
 		<?php
 	}
 
 	protected function _display_settings_help() {
-		?>
-			
+		?>		
 		<div id="sandbox_info" style="display:none">
 			<h2>
 				<?php _e('PayPal Sandbox', 'event_espresso'); ?>
@@ -410,7 +403,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$this->addField('currency_code', $paypal_cur);
 		$this->addField('image_url', empty($paypal_settings['image_url']) ? '' : $paypal_settings['image_url']);
 		$this->addField('no_shipping ', $no_shipping);
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)));
+		do_action('AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)));
 		$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
 		$this->redirect_after_reg_step_3();
 	}
@@ -449,12 +442,12 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 
 		$success = $txn_details['approved'];
 
-		do_action( 'action_hook_espresso_after_payment', $EE_Session, $success );
+		do_action( 'AHEE_after_payment', $EE_Session, $success );
 
 		if ($txn_details['approved'] == TRUE && $this->_payment_settings['use_sandbox']) {
-			do_action('action_hook_espresso_mail_successful_transaction_debugging_output');
+			do_action('AHEE_mail_successful_transaction_debugging_output');
 		} else {
-			do_action('action_hook_espresso_mail_failed_transaction_debugging_output');
+			do_action('AHEE_mail_failed_transaction_debugging_output');
 		}
 		parent::thank_you_page();
 	}*/
@@ -571,7 +564,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 	 * @return boolean
 	 */
 	public function validateIpn() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		
 		$this->ipnData=$_POST;
 		$response_post_data=$_POST + array('cmd'=>'_notify-validate');
@@ -599,7 +592,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 	 * @param EE_Transaction $transaction
 	 */
 	/*public function get_payment_overview_content(EE_Transaction $transaction){
-			if($transaction->status_ID() == EEM_Transaction::pending_status_code){
+			if($transaction->status_ID() == EEM_Transaction::open_status_code){
 				?>
 		<h1><?php _e('Awaiting Payment Response from Paypal...','event_espresso')?></h1>
 		<p><?php _e('Paypal has notified us that your payment is in progress. You will be notified when payment is accepted.')?></p>

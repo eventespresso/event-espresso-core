@@ -368,7 +368,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		// flush rewrite rules
 		$this->_add_espresso_rewrite_rules( $data['espresso_url_rewrite_activated'] );
 
-		$data = apply_filters('filter_hook_espresso_page_settings_save', $data);
+		$data = apply_filters('FHEE_page_settings_save', $data);
 		
 		$what = 'Critical Pages & Shortcodes';
 		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
@@ -383,7 +383,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	private function _add_espresso_rewrite_rules( $use_pretty_permalinks = FALSE ) {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		global $wpdb, $org_options;
 
 		if (empty($org_options['event_page_id'])) {
@@ -473,8 +473,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][9])
 			? TRUE
 			: FALSE;
-
-		$this->_template_args['custom_templates_exist'] = TRUE;
+		//$this->_template_args['custom_templates_exist'] = TRUE;
 		
 		$this->_set_add_edit_form_tags( 'update_template_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
@@ -552,7 +551,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				? sanitize_text_field( $this->_req_data['use_custom_templates'] ) 
 				: FALSE;					
 		
-		$data = apply_filters('filter_hook_espresso_template_settings_save', $data);
+		$data = apply_filters('FHEE_template_settings_save', $data);
 		
 		$what = 'Template Settings';
 		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
@@ -706,7 +705,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				? absint( $this->_req_data['ee_display_map_no_shortcodes'] ) 
 				: FALSE;
 
-		$data = apply_filters('filter_hook_espresso_google_map_settings_save', $data);	
+		$data = apply_filters('FHEE_google_map_settings_save', $data);	
 		
 		$what = 'Google Map Settings';
 		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
@@ -752,7 +751,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data['organization_country'] = isset( $this->_req_data['organization_country'] ) ? absint( $this->_req_data['organization_country'] ) : NULL;
 		$data['contact_email'] = isset( $this->_req_data['contact_email'] ) ? sanitize_email( $this->_req_data['contact_email'] ) : NULL;
 
-		$data = apply_filters('filter_hook_espresso_your_organization_settings_save', $data);	
+		$data = apply_filters('FHEE_your_organization_settings_save', $data);	
 		
 		$what = 'Your Organization Settings';
 		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
@@ -800,7 +799,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data['show_reg_footer'] = isset( $this->_req_data['show_reg_footer'] ) ? absint( $this->_req_data['show_reg_footer'] ) : TRUE;
 		$data['affiliate_id'] = isset( $this->_req_data['affiliate_id'] ) ? sanitize_text_field( $this->_req_data['affiliate_id'] ) : NULL;
 		
-		$data = apply_filters('filter_hook_espresso_admin_option_settings_save', $data);	
+		$data = apply_filters('FHEE_admin_option_settings_save', $data);	
 		
 		$what = 'Admin Options';
 		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );

@@ -111,7 +111,7 @@ class EE_Ticket_Selector extends EE_BASE {
 	* 	@return 	string	
 	*/
 	private function _display_ticket_selector() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');		
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');		
 
 		$template_args = array();
 		//printr( $this->_event, '$this->_event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -154,9 +154,9 @@ class EE_Ticket_Selector extends EE_BASE {
 //		printr( $template_args['event_meta'], 'event_meta  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		$template_args['currency_symbol'] = $this->_event->currency_symbol;
-		$template_args = apply_filters('filter_hook_espresso__EE_Ticket_Selector__display_ticket_selector__template_args',$template_args,$this->_event);
+		$template_args = apply_filters('FHEE__EE_Ticket_Selector__display_ticket_selector__template_args',$template_args,$this->_event);
 		
-		$templates['ticket_selector'] =  apply_filters('filter_hook_espresso__EE_Ticket_Selector__display_ticket_selector__template_path',
+		$templates['ticket_selector'] =  apply_filters('FHEE__EE_Ticket_Selector__display_ticket_selector__template_path',
 							EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/ticket_selector/ticket_selector_chart.template.php',$this->_event);
 	//	$templates['ticket_selector'] =  EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/ticket_selector/ticket_selector_multi_selects.template.php';
 	//	$templates['ticket_selector'] =  EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/ticket_selector/ticket_selector_threaded_chart.template.php';
@@ -176,7 +176,7 @@ class EE_Ticket_Selector extends EE_BASE {
 	* 	@return 	string
 	*/
 	private function _format_date( $datetimes ) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		//printr( $datetimes, '$datetimes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// start with an empty array
 		$dates = array();
@@ -204,7 +204,7 @@ class EE_Ticket_Selector extends EE_BASE {
 	* 	@return string
 	*/
 	private function _process_event_times($times) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		// start with an empty array
 		$time_options = array();
 		$tm_frmt = 'g:ia';
@@ -235,7 +235,7 @@ class EE_Ticket_Selector extends EE_BASE {
 	* 	@return string
 	*/
 	private function _process_event_datetimes($datetimes) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		// start with an empty array
 		$datetime_options = array();
 		$tm_frmt = 'g:ia';
@@ -268,7 +268,7 @@ class EE_Ticket_Selector extends EE_BASE {
 	*/
 	private function _process_event_prices( $prices = array(), $currency_symbol = '$', $surcharge_type = 'included' ) {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		//printr( $prices, '$prices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// start with an empty array
@@ -309,7 +309,7 @@ class EE_Ticket_Selector extends EE_BASE {
 	*/	
 	public static function process_ticket_selections( $registration_url = FALSE, $return = FALSE ) {
 		
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		
 		//printr( $_POST, '$_POST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
@@ -449,7 +449,7 @@ class EE_Ticket_Selector extends EE_BASE {
 	* 	@return		array  or FALSE
 	*/
 	private static function _validate_post_data() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		
 		// start with an empty array()
 		$valid_data = array();
@@ -647,7 +647,7 @@ class EE_Ticket_Selector extends EE_BASE {
 	*/
 	private static function _add_event_to_cart( $event = FALSE, $qty = 1, $which_cart = 'REG' ) {
 	
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		
 		global $EE_Cart; 
 		// check that an event has been passed
@@ -770,7 +770,7 @@ class EE_Ticket_Selector extends EE_BASE {
 	*/
 	public function load_tckt_slctr_js() {
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		wp_register_script('ticket_selector', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/ticket_selector.js', array('jquery'), '', TRUE);
 		wp_enqueue_script('ticket_selector');
 	}

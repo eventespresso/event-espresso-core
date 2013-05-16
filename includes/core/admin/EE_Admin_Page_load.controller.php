@@ -210,7 +210,7 @@ class EE_Admin_Page_load {
 				)
 			);
 
-		$this->_admin_menu_groups = apply_filters( 'filter_hook_espresso_admin_menu_groups', $groups );
+		$this->_admin_menu_groups = apply_filters( 'FHEE_admin_menu_groups', $groups );
 	}
 
 
@@ -247,7 +247,7 @@ class EE_Admin_Page_load {
 		$installed_refs = $this->_set_caffeinated($installed_refs);
 
 		//allow plugins to add in their own pages (note at this point they will need to have an autoloader defined for their class);
-		$installed_refs = apply_filters( 'filter_hook_espresso_admin_pages_array', $installed_refs );
+		$installed_refs = apply_filters( 'FHEE_admin_pages_array', $installed_refs );
 
 
 		//loop through admin pages and setup the $_installed_pages array.
@@ -350,7 +350,7 @@ class EE_Admin_Page_load {
 			//if we've got $add_main_menu || $temp_ref then we need to add_menu_page on current item
 			if ( isset($temp_ref) || $add_main_menu ) {
 				$title = __('Event Espresso', 'event_espresso');
-					$wp_main_page_slug = add_menu_page( $title, $title, apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']), $parent_slug, array($installed_page, 'initialize_admin_page'), EVENT_ESPRESSO_PLUGINFULLURL . 'images/events_icon_16.png');
+					$wp_main_page_slug = add_menu_page( $title, $title, apply_filters('FHEE_management_capability', 'administrator', $espresso_manager['espresso_manager_events']), $parent_slug, array($installed_page, 'initialize_admin_page'), EVENT_ESPRESSO_PLUGINFULLURL . 'images/events_icon_16.png');
 				
 				//make sure we add initial header if present
 				if ( isset($temp_ref) ) {

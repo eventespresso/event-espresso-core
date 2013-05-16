@@ -464,7 +464,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	private function _do_other_page_hooks() {
-		$registered_pages = apply_filters('filter_hook_espresso_do_other_page_hooks_' . $this->page_slug, array() );
+		$registered_pages = apply_filters('FHEE_do_other_page_hooks_' . $this->page_slug, array() );
 
 		foreach ( $registered_pages as $page ) {
 
@@ -604,8 +604,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @access protected
 	 * @return void
 	 */
-	protected function _verify_routes() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	private function _verify_routes() {
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		if ( !$this->_current_page && !defined( 'DOING_AJAX')) return FALSE;
 
@@ -923,7 +923,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@return 		void
 	*/
 	private function _check_user_access() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		if ( ! function_exists( 'is_admin' ) or  ! current_user_can( 'manage_options' )) {
 			wp_redirect( home_url('/') . 'wp-admin/' );
 		}
@@ -1351,7 +1351,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@return array
 	*/
 	protected function _set_list_table_view() {		
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		// looking at active items or dumpster diving ?
 		if ( ! isset( $this->_req_data['status'] ) || ! array_key_exists( $this->_req_data['status'], $this->_views )) {
 			$this->_view = isset( $this->_views['in_use'] ) ? 'in_use' : 'all';
@@ -1382,7 +1382,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*/
 	public function get_list_table_view_RLs() {
 	
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$query_args = array();
 
 		if ( empty( $this->_views )) {
@@ -1420,7 +1420,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*/
 	protected function _entries_per_page_dropdown( $max_entries = FALSE ) {
 		
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$values = array( 10, 25, 50, 100 );
 		$per_page = ( ! empty( $this->_req_data['per_page'] )) ? absint( $this->_req_data['per_page'] ) : 10;
 		
@@ -1486,7 +1486,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	*/
 	private function _add_registered_meta_boxes() {	
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		//we only add meta boxes if the page_route calls for it
 		if ( is_array($this->_route_config) && isset( $this->_route_config['metaboxes'] ) && is_array($this->_route_config['metaboxes']) ) {
@@ -1742,7 +1742,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @param boolean $create_func   default is true.  Basically we can say we don't WANT to have the runtime function created but just set our own callback for wp's add_meta_box.
 	 */
 	public function _add_admin_page_meta_box( $action, $title, $callback, $callback_args, $column = 'normal', $priority = 'high', $create_func = true ) {	
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $callback );
+		do_action('AHEE_log', __FILE__, __FUNCTION__, $callback );
 
 		//if we have empty callback args and we want to automatically create the metabox callback then we need to make sure the callback args are generated.
 		if ( empty( $callback_args ) && $create_func ) {
@@ -1753,7 +1753,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		//if $create_func is true (default) then we automatically create the function for displaying the actual meta box.  If false then we take the $callback reference passed through and use it instead (so callers can define their own callback function/method if they wish)
-		$call_back_func = $create_func ? create_function('$post, $metabox', 'do_action( "action_hook_espresso_log", __FILE__, __FUNCTION__, ""); echo espresso_display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );') : $callback;
+		$call_back_func = $create_func ? create_function('$post, $metabox', 'do_action( "AHEE_log", __FILE__, __FUNCTION__, ""); echo espresso_display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );') : $callback;
 
 		add_meta_box( str_replace( '_', '-', $action ) . '-mbox', $title, $call_back_func, $this->_wp_page_slug, $column, $priority, $callback_args );
 	}
@@ -1812,7 +1812,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return html           admin_page
 	 */
 	private function _display_admin_page($sidebar = false) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		//custom remove metaboxes hook to add or remove any metaboxes to/from Admin pages.
 		do_action('action_hook_espresso_metaboxes');
@@ -2003,15 +2003,15 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*/		
 	public function admin_page_wrapper() {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');	
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');	
 
 		$this->_nav_tabs = $this->_get_main_nav_tabs();
 
 		$this->_template_args['nav_tabs'] = $this->_nav_tabs;
 		$this->_template_args['admin_page_title'] = $this->_admin_page_title;
 
-		$this->_template_args['before_admin_page_content'] = apply_filters( 'filter_hook_espresso_before_admin_page_content' . $this->_current_page . $this->_current_view, isset( $this->_template_args['before_admin_page_content'] ) ? $this->_template_args['before_admin_page_content'] : '');
-		$this->_template_args['after_admin_page_content'] = apply_filters( 'filter_hook_espresso_after_admin_page_content' . $this->_current_page . $this->_current_view, isset( $this->_template_args['after_admin_page_content'] ) ? $this->_template_args['after_admin_page_content'] : '');
+		$this->_template_args['before_admin_page_content'] = apply_filters( 'FHEE_before_admin_page_content' . $this->_current_page . $this->_current_view, isset( $this->_template_args['before_admin_page_content'] ) ? $this->_template_args['before_admin_page_content'] : '');
+		$this->_template_args['after_admin_page_content'] = apply_filters( 'FHEE_after_admin_page_content' . $this->_current_page . $this->_current_view, isset( $this->_template_args['after_admin_page_content'] ) ? $this->_template_args['after_admin_page_content'] : '');
 
 		$this->_template_args['after_admin_page_content'] .= $this->_set_help_popup_content();
 
@@ -2056,7 +2056,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@return void
 	*/		
 	private function _sort_nav_tabs( $a, $b ) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		if ($a['order'] == $b['order']) {
 	        return 0;
 	    }
@@ -2177,20 +2177,19 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	protected function _redirect_after_action( $success = FALSE, $what = 'item', $action_desc = 'processed', $query_args = array(), $override_overwrite = FALSE ) {
 
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		$redirect_url = $this->_admin_base_url;
 
+		// overwrite default success messages //BUT ONLY if overwrite not overridden
+		if ( !$override_overwrite ) {
+			EE_Error::overwrite_success();
+		}
 		// how many records affected ? more than one record ? or just one ?
-		if ( $success == 2 ) {
-			// overwrite default success messages //BUT ONLY if overwrite not overridden
-			if ( !$override_overwrite ) EE_Error::overwrite_success();
+		if ( $success > 1 ) {
 			// set plural msg
 			EE_Error::add_success( sprintf( __('The %s have been successfully %s.', 'event_espresso'), $what, $action_desc ), __FILE__, __FUNCTION__, __LINE__);
 		} else if ( $success == 1 ) {
-			// overwrite default success messages
-			if ( !$override_overwrite )  EE_Error::overwrite_success();
 			// set singular msg
 			EE_Error::add_success( sprintf( __('The %s has been successfully %s.', 'event_espresso'), $what, $action_desc), __FILE__, __FUNCTION__, __LINE__ );
 		}
@@ -2223,9 +2222,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//we're adding some hooks and filters in here for processing any things just before redirects (example: an admin page has done an insert or update and we want to run something after that).
 		$classname = get_class($this);
-		do_action( 'action_hook_espresso_redirect_' . $classname . $this->_req_action, $query_args );
+		do_action( 'AHEE_redirect_' . $classname . $this->_req_action, $query_args );
 
-		$redirect_url = apply_filters( 'filter_hook_espresso_redirect_' . $classname . $this->_req_action, self::add_query_args_and_nonce( $query_args, $redirect_url ), $query_args ); 
+		$redirect_url = apply_filters( 'FHEE_redirect_' . $classname . $this->_req_action, self::add_query_args_and_nonce( $query_args, $redirect_url ), $query_args ); 
 
 
 		// check if we're doing ajax.  If we are then lets just return the results and js can handle how it wants.
@@ -2362,7 +2361,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 						return;
 					break;
 				default:
-					$value = apply_filters('filter_hook_espresso_set-screen-option', false, $option, $value);
+					$value = apply_filters('FHEE_set-screen-option', false, $option, $value);
 					if ( false === $value )
 						return;
 					break;
@@ -2602,7 +2601,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		global $wpdb, $org_options, $espresso_wp_user;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		
 		$required_pages = array( 
 				'event_page_id' 	=> __( 'Event Registration', 'event_espresso' ), 
@@ -2703,7 +2702,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return bool success/fail
 	 */
 	protected function _process_resend_registration() {
-		$success = apply_filters('filter_hook_espresso_process_resend_registration_message', FALSE, $this->_req_data);
+		$success = apply_filters('FHEE_process_resend_registration_message', FALSE, $this->_req_data);
 		$this->_template_args['success'] = $success;
 		return $success;
 	}
@@ -2716,7 +2715,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return bool success/fail
 	 */
 	protected function _process_payment_notification( EE_Payment $payment ) {
-		$success = apply_filters( 'filter_hook_espresso_process_admin_payment_message', FALSE, $payment );
+		$success = apply_filters( 'FHEE_process_admin_payment_message', FALSE, $payment );
 		$this->_template_args['success'] = $success;
 		return $success;
 	}

@@ -63,7 +63,7 @@ if (!function_exists('event_espresso_delete_event')) {
 						stripslashes( html_entity_decode( $event->event_name, ENT_QUOTES, 'UTF-8' ))
 				);
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
-				do_action( 'action_hook_espresso_event_moved_to_trash' );
+				do_action( 'AHEE_event_moved_to_trash' );
 				
 			} else {
 				$msg = __( 'An error occured. The event could not be moved to the trash.', 'event_espresso' );
@@ -96,7 +96,7 @@ function event_espresso_empty_event_trash($event_id) {
 		EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 	} else {
 	
-		do_action( 'action_hook_espresso_event_permanently_deleted' );
+		do_action( 'AHEE_event_permanently_deleted' );
 		// remove CPT
 		wp_delete_post($event->post_id);
 
@@ -352,11 +352,13 @@ function event_espresso_admin_news($url) {
 
 //Function to show an admin message if the main pages are not setup.
 function espresso_updated_pages() {
-	echo '<div class="error fade"><p><strong>' . __('In order to function properly Event Espresso has added one or more pages with the corresponding shortcodes. As long as all of the Page Status and Shortcode notices below are OK, then this meassage will dissappear. Please attend to any issues that require attention.', 'event_espresso') . '</strong></p></div>';
+	echo '<div class="updated fade"><p><strong>' . __('In order to function properly Event Espresso has added one or more pages with the corresponding shortcodes. As long as all of the Page Status and Shortcode notices below are OK, then this meassage will dissappear. Please attend to any issues that require attention.', 'event_espresso') . '</strong></p></div>';
 }
 
 function espresso_page_problems() {
-	echo '<div class="error fade"><p><strong>' . __('A problem has been detected with one or more of your Event Espresso pages. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=espresso_general_settings') . '">' . __('Event Espresso Critical Pages Settings', 'event_espresso') . '</a>  ' . __('to view your Event Espresso pages.', 'event_espresso') . '</strong></p></div>';
+	if ( isset( $_GET['page'] ) && $_GET['page'] != 'espresso_general_settings' ) {
+		echo '<div class="updated"><p><strong>' . __('A potential issue has been detected with one or more of your Event Espresso pages. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=espresso_general_settings') . '">' . __('Event Espresso Critical Pages Settings', 'event_espresso') . '</a>  ' . __('to view your Event Espresso pages.', 'event_espresso') . '</strong></p></div>';
+	}
 }
 
 //Function to show an admin message if registration id's are missing.
@@ -389,7 +391,7 @@ if (!function_exists('espresso_secondary_events_dd')) {
 			}
 			$field .= "</select>";
 			$values = array(array('id' => true, 'text' => __('Yes', 'event_espresso')), array('id' => false, 'text' => __('No', 'event_espresso')));
-			$html = '<p><label>' . __('Assign a Waitlist Event? ', 'event_espresso') . '</label> ' . select_input('allow_overflow', $values, $allow_overflow) . ' ' . do_action('action_hook_espresso_help', 'secondary_info') . '</p>' .
+			$html = '<p><label>' . __('Assign a Waitlist Event? ', 'event_espresso') . '</label> ' . select_input('allow_overflow', $values, $allow_overflow) . ' ' . do_action('AHEE_help', 'secondary_info') . '</p>' .
 							'<p class="inputunder"><label>' . __('Overflow Event', 'event_espresso') . ': </label><br />' . $field . '</p>';
 
 			return $html;

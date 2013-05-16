@@ -54,8 +54,8 @@ abstract class EEM_TempBase extends EEM_Custom_Table_Base{
 	protected function __construct() {
 		
 		$className=get_class($this);
-		$this->_fields_settings=apply_filters("filter_hook_espresso__{$className}__field_settings",$this->_fields_settings);
-		$this->_related_models=apply_filters("filter_hook_espresso__{$className}__related_models",$this->_related_models);
+		$this->_fields_settings=apply_filters("FHEE__{$className}__field_settings",$this->_fields_settings);
+		$this->_related_models=apply_filters("FHEE__{$className}__related_models",$this->_related_models);
 		$this->table_name=$this->_get_table_name();
 		$this->table_data_types=$this->_get_table_data_types();
 	}
@@ -174,7 +174,7 @@ abstract class EEM_TempBase extends EEM_Custom_Table_Base{
 					$type='%s';
 					break;
 			}
-			$dataType=apply_filters('filter_hook_espresso_getTableDataType',$type,$tableName,$fields);
+			$dataType=apply_filters('FHEE_getTableDataType',$type,$tableName,$fields);
 			$dataTypes[$fieldName]=$dataType;
 			$dataTypes[$tableName.".".$fieldName]=$dataType;
 		}
@@ -392,7 +392,7 @@ abstract class EEM_TempBase extends EEM_Custom_Table_Base{
 				break;
 		}
 		$className=get_class($this);
-		return apply_filters("filter_hook_espresso__{$className}__get_many_related",$relatedObjects,$this,$modelObject,$relationName,$where_col_n_values,$order,$orderby,$operators,$limit,$output);
+		return apply_filters("FHEE__{$className}__get_many_related",$relatedObjects,$this,$modelObject,$relationName,$where_col_n_values,$order,$orderby,$operators,$limit,$output);
 	}
 	/**
 	 * Removes a relationship of the correct type between $modelObject and $otherModelObject. 
@@ -722,6 +722,8 @@ abstract class EEM_TempBase extends EEM_Custom_Table_Base{
 			return $base_class_obj_or_id;
 		}elseif(is_int($base_class_obj_or_id)){//assume it's an ID
 			return $this->get_one_by_ID($base_class_obj_or_id);
+		}elseif(is_null($base_class_obj_or_id)){
+			return null;
 		}else{
 			throw new EE_Exception(sprintf(__("'%s' is neither an object of type %s, nor an ID!",'event_espresso'),$base_class_obj_or_id,$this->_getClasssName()));
 		}
@@ -735,7 +737,7 @@ abstract class EEM_TempBase extends EEM_Custom_Table_Base{
 	 * they can add a hook onto 'filters_hook_espresso__{className}__{methodName}' (eg, filters_hook_espresso__EE_Answer__my_great_function)
 	 * and accepts 2 arguments: the object on which teh function was called, and an array of the original arguments passed to the function. Whatever their callbackfunction returns will be returned by this function.
 	 * Example: in functions.php (or in a plugin):
-	 * add_filter('filter_hook_espresso__EE_Answer__my_callback','my_callback',10,3);
+	 * add_filter('FHEE__EE_Answer__my_callback','my_callback',10,3);
 	 * function my_callback($previousReturnValue,EE_TempBase $object,$argsArray){
 			$returnString= "you called my_callback! and passed args:".implode(",",$argsArray);
 	 *		return $previousReturnValue.$returnString;
@@ -750,7 +752,7 @@ abstract class EEM_TempBase extends EEM_Custom_Table_Base{
 	 */
 	public function __call($methodName,$args){
 		$className=get_class($this);
-		$tagName="filter_hook_espresso__{$className}__{$methodName}";
+		$tagName="FHEE__{$className}__{$methodName}";
 		if(!has_filter($tagName)){
 			throw new EE_Error(sprintf(__("Method %s on model %s does not exist! You can create one with the following code in functions.php or in a plugin: add_filter('%s','my_callback',10,3);function my_callback(\$previousReturnValue,EEM_TempBase \$object\$argsArray=null){/*function body*/return \$whatever;}","event_espresso"),
 										$methodName,$className,$tagName));
@@ -907,14 +909,14 @@ class EE_Model_Field{
 		if(!in_array($type,$this->_allowed_types)){
 			throw new EE_Error(sprintf(__("Event Espresso error. Field %s is of type %s, but only these are the only allowed types %s",'event_espresso'),$nicename,$type,implode(",",$this->_allowed_types)));
 		}
-		if($type=='foreign_key' || $type=='foreign_text_field'){
-			if(!$class){
+		if($type=='foreign_key' || $type=='foreign_text_key'){
+			if( empty( $class )){
 				throw new EE_Error(sprintf(__("Event Espresso error. Field %s is of type 'foreign_key', but is missing the 'class' setting",'event_espresso'),$nicename));
 			}
 			//next verify the class is real
-			$phpFilePath="EE_".$class.".class.php";
-			if(file_exists($phpFilePath)){
-				throw new EE_Error(sprintf(__("Event Espresso error. Class %s on field %s in class %s doesn't have a php file!",'event_espresso'),$phpFilePath,$nicename));
+			$phpFilePath="EE_$class.class.php";
+			if( ! file_exists( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/' . $phpFilePath )){
+				throw new EE_Error(sprintf(__("Event Espresso error. Field %s in class %s doesn't have a corresponding %s file!",'event_espresso'), $nicename, "EE_$class", "EE_$class.class.php" ));
 			}
 		}
 		if($type=='enum' && !$allowedEnumValues){

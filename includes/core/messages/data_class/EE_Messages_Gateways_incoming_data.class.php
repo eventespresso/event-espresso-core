@@ -38,20 +38,39 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 
 	
 	/**
-	 * incoming data is expected to be a EE_Transaction object and EE_Payment object in an array.  
+	 * incoming data is expected to be a EE_Transaction object and (possibly) EE_Payment object in an array.  
 	 * @param array $data
 	 */
 	public function __construct( $data ) {
 
 		//test for valid params
-		if ( !is_a( $data[0], 'EE_Transaction' ) || !is_a( $data[1], 'EE_Payment') )
-			throw new EE_Error( __('Incoming data for the Gateways data handler is not of a valid type.', 'event_espresso') );
+		if ( !is_a( $data[0], 'EE_Transaction' ) )
+			throw new EE_Error( __('Incoming data for the Gateways data handler must have an EE_Transaction object as the value for the first array index.', 'event_espresso') );
+
+		if ( !is_a( $data[1], 'EE_Payment') )
+			$pmt_obj = $this->_get_empty_payment_obj( $data[0] );
 
 		$data = array(
 			'txn_obj' => $data[0],
-			'pmt_obj' => $data[1],
+			'pmt_obj' => isset($pmt_obj) ? $pmt_obj : $data[1],
 			);
 		parent::__construct( $data );
+	}
+
+
+	/**
+	 * This sets up an empty EE_Payment object for the purpose of shortcode parsing.  Note that this doesn't actually get saved to the db.
+	 * @return EE_Payment 
+	 */
+	private function _get_empty_payment_obj( EE_Transaction $txn ) {
+		$PMT = new EE_Payment( array(
+			'STS_ID' => EEM_Payment::status_id_pending,
+			'PAY_timestamp' => (int) current_time('timestamp'),
+			'PAY_gateway' => $txn->selected_gateway(),
+			'PAY_gateway_response' => $txn->gateway_response_on_transaction(),
+			)
+		 );
+		return $PMT;
 	}
 
 

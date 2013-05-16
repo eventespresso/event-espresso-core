@@ -170,7 +170,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 	protected function _set_capability() {
 		$capability = empty($this->capability) ? 'administrator' : $this->capability;
-		$this->capability = apply_filters('filter_hook_espresso_' . $this->menu_slug . '_capability', $capability);
+		$this->capability = apply_filters('FHEE_' . $this->menu_slug . '_capability', $capability);
 	}
 
 
@@ -289,14 +289,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 				$replace = $extend ? '_' . $this->_file_name . '_Hooks_Extend.class.php' : '_' . $this->_file_name . '_Hooks.class.php';
 				$rel_admin = str_replace( $replace, '', $hook_file);
 				$rel_admin = strtolower($rel_admin);
-				$hook_paths[] = $file;
-				
-				//make sure we haven't already got a hook setup for this page path
-				if ( in_array( $rel_admin, $this->_files_hooked ) )
-					continue;
-				
-				$this->hook_file = $hook_file;
-				$rel_admin_hook = 'filter_hook_espresso_do_other_page_hooks_' . $rel_admin;
+				$rel_admin_hook = 'FHEE_do_other_page_hooks_' . $rel_admin;
 				$filter = add_filter( $rel_admin_hook, array($this, 'load_admin_hook') );
 				$this->_files_hooked[] = $rel_admin;
 			}
@@ -342,15 +335,15 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 			/**
 			 * This is a place where EE plugins can hook in to make sure their own files are required in the appropriate place
 			 */
-			do_action( 'action_hook_espresso_before_initialize_admin_page' );
-			do_action( 'action_hook_espresso_before_initialize_admin_page_' . $this->menu_slug );
+			do_action( 'AHEE_before_initialize_admin_page' );
+			do_action( 'AHEE_before_initialize_admin_page_' . $this->menu_slug );
 			require_once( $path_to_file );
 			$a = new ReflectionClass( $admin_page );
 			$this->_loaded_page_object = $a->newInstance( $this->_routing );				
 		}
 
-		do_action( 'action_hook_espresso_after_initialize_admin_page' );
-		do_action( 'action_hook_espresso_after_initialize_admin_page_' . $this->menu_slug );
+		do_action( 'AHEE_after_initialize_admin_page' );
+		do_action( 'AHEE_after_initialize_admin_page_' . $this->menu_slug );
 	}
 
 

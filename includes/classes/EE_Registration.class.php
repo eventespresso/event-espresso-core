@@ -309,26 +309,9 @@ class EE_Registration extends EE_Base_Class {
 		$arrayForParent=array();
 		foreach($reflector->getParameters() as $param){
 			$paramName=$param->name;
-			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
+			$arrayForParent[$paramName]=${$paramName};
 		}
 		parent::__construct($arrayForParent);											
-		// REG_ID 	EVT_ID 	ATT_ID 	TXN_ID 	DTT_ID 	PRC_ID 	STS_ID 	REG_date 	REG_session 	REG_code 	REG_count 	REG_group_size 	REG_att_is_going 	REG_att_checked_in
-//		$this->_REG_ID 						= $REG_ID;
-//		$this->_EVT_ID 						= $EVT_ID;
-//		$this->_ATT_ID 						= $ATT_ID;
-//		$this->_TXN_ID 						= $TXN_ID;
-//		$this->_DTT_ID 						= $DTT_ID;
-//		$this->_PRC_ID 						= $PRC_ID;
-//		$this->_STS_ID 						= $STS_ID;
-//		$this->_REG_date 					= $REG_date;
-//		$this->_REG_final_price			= $REG_final_price;
-//		$this->_REG_session 				= $REG_session;
-//		$this->_REG_code					= $REG_code;
-//		$this->_REG_url_link				= $REG_url_link;
-//		$this->_REG_count 					= $REG_count;
-//		$this->_REG_group_size 		= $REG_group_size;
-//		$this->_REG_att_is_going 		= $REG_att_is_going;
-//		$this->_REG_att_checked_in	= $REG_att_checked_in;
 	}
 
 
@@ -454,9 +437,26 @@ class EE_Registration extends EE_Base_Class {
 	*		@param		int		$STS_ID 		Status ID
 	*/	
 	public function set_status( $STS_ID = FALSE ) {		
-		if ( ! $this->_check_for( $STS_ID, 'Status ID' )) { return FALSE; }
-		$this->_STS_ID = strtoupper( sanitize_key( $STS_ID ));
-		return TRUE;
+		if ( ! $this->_check_for( $STS_ID, 'Status ID' )) { 
+			return FALSE; 
+		}
+		//make sure related TXN is set
+		$this->get_first_related('Transaction');
+		// if status is ANYTHING other than approved, OR if it IS approved AND the TXN is paid in full (or free)
+		if ( $STS_ID != EEM_Registration::status_id_approved || ( $STS_ID == EEM_Registration::status_id_approved && $this->_Transaction->is_completed() )) {
+			$this->_STS_ID = strtoupper( sanitize_key( $STS_ID ));
+			return TRUE;
+		} else {
+			$txn_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$this->_TXN_ID ), TXN_ADMIN_URL );
+			$txn_link = '
+			<a id="reg-admin-sts-error-txn-lnk" href="' . $txn_url . '" title="' . __( 'View transaction #', 'event_espresso' ) . $this->_TXN_ID . '">
+				' . __( 'View the Transaction for this Registration', 'event_espresso' ) . '
+			</a>';			
+			$msg =  __( 'Registrations can only be approved if the corresponding transaction is completed and has no monies owing.', 'event_espresso' ) . $txn_link;
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}	
+		
 	}
 
 
