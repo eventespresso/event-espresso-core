@@ -284,10 +284,8 @@ add_action( 'AHEE_before_event_list', 'espresso_clear_session', 10, 2 );
  * 		@return void
  */
 function espresso_printr_session() {
-	$user = wp_get_current_user();
-	$wp_user_id = isset( $user->data->ID ) ? $user->data->ID : NULL;
 	$_REQUEST['ee_session'] = TRUE;
-	if ( isset( $_REQUEST['ee_session'] ) && $wp_user_id <= 1 ) {	
+	if ( isset( $_REQUEST['ee_session'] ) && current_user_can('administrator') && ( defined('WP_DEBUG') && WP_DEBUG ) ) {	
 		global $EE_Session;
 		echo '<pre style="height:auto;padding:1em;border:2px solid lightblue;">';
 		echo print_r( $EE_Session, TRUE );

@@ -206,15 +206,24 @@ function add_espresso_stylesheet() {
 function espresso_load_javascript_files() {
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	global $load_espresso_scripts;
-
-	if (!$load_espresso_scripts)
+	if (!$load_espresso_scripts) {
 		return;
+	}
+	espresso_register_jquery_validate();
+}
 
-	wp_register_script('jquery.validate.js', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.min.js"), false, '1.8.1');
-//	wp_enqueue_script('jquery.validate.js');
-//
-//	wp_register_script('validation', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/validation.js"), false, EVENT_ESPRESSO_VERSION);
-//	wp_enqueue_script('validation');
+
+
+
+function espresso_register_jquery_validate() {
+	// load jQuery Validate script from CDN with local fallback
+	$jquery_validate_url = 'http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js'; 
+	// is the URL accessible ?
+	$test_url = @fopen( $jquery_validate_url, 'r' );
+	// use CDN URL or local fallback ?
+	$jquery_validate_url = $test_url !== FALSE ? $jquery_validate_url : EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.validate.min.js';
+	// register jQuery Validate
+	wp_register_script('jquery-validate', $jquery_validate_url, array('jquery'), '1.11.1', TRUE);		
 }
 
 

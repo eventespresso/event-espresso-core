@@ -91,34 +91,39 @@ class EEM_Message_Template extends EEM_Base {
 		// set item names
 		$this->singlular_item = __('Message Template','event_espresso');
 		$this->plural_item = __('Message Templates','event_espresso');		
-		// array representation of the price table and the data types for each field
-		$this->table_data_types = array(
-				'wp_esp_message_template_group.GRP_ID' => '%d',
-				'EVT_ID' => '%d',
-				'MTP_user_id' => '%d',
-				'MTP_messenger'	=> '%s',
-				'MTP_message_type' => '%s',
-				'MTP_context' => '%s',
-				'MTP_is_global' => '%d',
-				'MTP_is_override' => '%d',
-				'MTP_deleted' => '%d',
-				'MTP_is_active' => '%d',
-				'MTP_ID' => '%d',
-				'MTP_template_field' => '%s',
-				'MTP_content' => '%s'
-		);
-
-		$this->_join_table_columns = array(
-			'GRP_ID' => '%d',
-			'MTP_ID' => '%d',
-			'MTP_context' => '%s',
-			'MTP_template_field' => '%s',
-			'MTP_content' => '%s'
-			);
+		
+		//doing this here because we may need to reset table columns later due to this being a singleton
+		$this->_set_table_columns();
 
 
 		// load Message Template object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Message_Template.class.php');
+	}
+
+
+
+	private function _set_table_columns() {
+		// array representation of the message template group table
+		$this->table_data_types = array(
+				$this->table_name . '.GRP_ID' => '%d',
+				$this->table_name . '.EVT_ID' => '%d',
+				$this->table_name . '.MTP_user_id' => '%d',
+				$this->table_name . '.MTP_messenger'	=> '%s',
+				$this->table_name . '.MTP_message_type' => '%s',
+				$this->table_name . '.MTP_is_global' => '%d',
+				$this->table_name . '.MTP_is_override' => '%d',
+				$this->table_name . '.MTP_deleted' => '%d',
+				$this->table_name . '.MTP_is_active' => '%d'
+		);
+
+
+		$this->_join_table_columns = array(
+			$this->_join_table_name . '.GRP_ID' => '%d',
+			$this->_join_table_name . '.MTP_ID' => '%d',
+			$this->_join_table_name . '.MTP_context' => '%s',
+			$this->_join_table_name . '.MTP_template_field' => '%s',
+			$this->_join_table_name . '.MTP_content' => '%s'
+			);
 	}
 
 	/**
@@ -189,19 +194,21 @@ class EEM_Message_Template extends EEM_Base {
 	 */
 	public function get_all_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE, $active = TRUE ) {
 
+		$this->_set_table_columns();
+
 		// retrieve all templates
 		// we have to use limit and count later because we're not getting by rows.  So we have to retrieve all templates first.
 		
 		//we have to make sure we're only returning "ACTIVE" templates unless the $active has explicitly been set to false.  If active has been set to 'all' then we DON'T set the active parameter.
-		$where_cols_n_values = !$active ? array( 'MTP_is_active' => 0 ) : array( 'MTP_is_active' => 1);
+		$where_cols_n_values = !$active ? array( $this->table_name . '.MTP_is_active' => 0 ) : array( $this->table_name . '.MTP_is_active' => 1);
 		$where_cols_n_values = $active == 'all' ? array() : $where_cols_n_values;
 
 		//let's check if there are any filters in here
 		$filters = array();
 		if ( isset( $_REQUEST['ee_messenger_filter_by'] ) )
-			$filters['MTP_messenger'] = $_REQUEST['ee_messenger_filter_by'];
+			$filters[$this->tablename . '.MTP_messenger'] = $_REQUEST['ee_messenger_filter_by'];
 		if ( isset( $_REQUEST['ee_message_type_filter_by'] ) )
-			$filters['MTP_message_type'] = $_REQUEST['ee_message_type_filter_by'];
+			$filters[$this->tablename . '.MTP_message_type'] = $_REQUEST['ee_message_type_filter_by'];
 
 
 
@@ -242,6 +249,8 @@ class EEM_Message_Template extends EEM_Base {
 			return FALSE;
 		}
 
+		$this->_set_table_columns();
+
 		//if the active reference IS not set then we're assuming we only want active templates
 		if ( !isset( $where_cols_n_values['MTP_is_active'] ) ) {
 			$active = array( 'MTP_is_active' => 1 );
@@ -263,6 +272,19 @@ class EEM_Message_Template extends EEM_Base {
 
 		//merge any extra parameters
 		$where_cols_n_values = array_merge($filters, $where_cols_n_values);
+
+
+		//add in table alias to wheres
+		foreach ( $where_cols_n_values as $key => $val ) {
+			if ( in_array( $key, array('MTP_ID', 'MTP_context', 'MTP_template_field', 'MTP_content') ) ) {
+				unset( $where_cols_n_values[$key] );
+				$where_cols_n_values[$this->_join_table_name . '.' . $key] = $val;
+			}
+			else {
+				unset( $where_cols_n_values[$key] );
+				$where_cols_n_values[$this->table_name . '.' . $key] = $val;
+			}
+		}
 
 		$orderby = str_replace( 'GRP_ID', $this->table_name . '.GRP_ID', $orderby );
 
@@ -296,7 +318,8 @@ class EEM_Message_Template extends EEM_Base {
 		}
 		// retrieve a particular template group (but only if active);
 		
-		$where_cols_n_values = array($this->table_name . '.GRP_ID' => $GRP_ID, 'MTP_is_active' => 1 );
+		$where_cols_n_values = array( 'GRP_ID' => $GRP_ID, 'MTP_is_active' => 1 );
+
 		
 		if ($template = $this->get_all_message_templates_where($where_cols_n_values, FALSE, FALSE )) {
 			return $template[$GRP_ID];
@@ -317,6 +340,8 @@ class EEM_Message_Template extends EEM_Base {
 		if (!$where_cols_n_values) {
 			return FALSE;
 		}
+
+		$this->_set_table_columns();
 
 		//need to make sure we only return ACTIVE templates BUT only if the 'MTP_is_active' reference isn't already in the where array.
 		if ( !isset( $where_cols_n_values['MTP_is_active'] ) ) {
@@ -341,6 +366,8 @@ class EEM_Message_Template extends EEM_Base {
 		if ( !$where_cols_n_values) {
 			return FALSE;
 		}
+
+		$this->_set_table_columns();
 
 		//need to make sure we only return ACTIVE templates BUT only if the 'MTP_is_active' reference isn't already in the where array.
 		if ( !isset( $where_cols_n_values['MTP_is_active'] ) ) {
@@ -400,9 +427,13 @@ class EEM_Message_Template extends EEM_Base {
 	public function get_all_trashed_grouped_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE) {
 		$msg_tmps = array();
 
-		$where_cols_n_values = array( 'MTP_deleted' => 1 );
+		$this->_set_table_columns();
+
+		$where_cols_n_values = $count ? array( $this->table_name . '.MTP_deleted' => 1 ) : array('MTP_deleted' => 1 );
 		
 		$results = $count ? $this->select_all_where( $where_cols_n_values, $orderby, $order, '=', $limit, $output = 'COUNT' ) : $this->get_all_message_templates_where( $where_cols_n_values, $orderby, $order, $limit );
+
+		return $results;
 		
 		//first let's get all the templates
 		/*$message_templates = $this->get_all_message_templates($orderby, $order);
@@ -540,6 +571,9 @@ class EEM_Message_Template extends EEM_Base {
 			return FALSE;
 		}
 
+		//NOTE: in conflicts don't use this, the new models win... this is just to get it working with 4.0Beta
+		unset( $this->table_data_types[$this->table_name . '.GRP_ID'] );
+		$this->table_data_types['GRP_ID'] = '%d';
 		$where = array( 'GRP_ID' => $GRP_ID );
 
 		if ( $this->delete($where) && $this->_delete( $this->_join_table_name, $this->table_data_types, $where ) ) {
@@ -560,14 +594,36 @@ class EEM_Message_Template extends EEM_Base {
 		$results = isset( $set_column_values['GRP_ID'] ) ? $set_column_values['GRP_ID'] : FALSE;
 		$GRP_ID = false;
 
-		//first we have to set the columns into their related tables.
+		//split up the set_cols_n_values AND where_cols_n_values
 		foreach ( $set_column_values as $name => $value ) {
-			if ( in_array( $name, array_keys( $this->_join_table_columns ) ) ) {
+			if ( in_array( $name, array( 'MTP_ID', 'MTP_context', 'MTP_template_field', 'MTP_content' ) ) ) {
+				if ( isset($this->_join_table_columns[$this->_join_table_name . '.' . $name] ) ) {
+					$this->_join_table_columns[$name] = $this->_join_table_columns[$this->_join_table_name . '.' . $name];
+					unset( $this->_join_table_columns[$this->_join_table_name . '.' . $name]);
+				}
 				$join_table[$name] = $value;
 			} else {
+				if ( isset($this->table_data_types[$this->table_name . '.' . $name]) ) {
+					$this->table_data_types[$name] = $this->table_data_types[$this->table_name . '.' . $name];
+					unset( $this->table_data_types[$this->table_name . '.' . $name]);
+				}
 				$main_table[$name] = $value;
 			}
 		}
+
+		if ( isset($this->_join_table_columns[$this->_join_table_name . '.' . 'GRP_ID' ] ) ) {
+			$this->_join_table_columns['GRP_ID'] = '%d';
+			$this->_join_table_columns['MTP_ID'] = '%d';
+			unset( $this->_join_table_columns[$this->_join_table_name . '.' . 'GRP_ID' ] );
+			unset( $this->_join_table_columns[$this->_join_table_name . '.' . 'MTP_ID'] );
+		}
+
+
+		/*var_dump('-------------');
+		var_dump($this->table_data_types);
+		var_dump($main_table);
+		var_dump($this->_join_table_columns);
+		var_dump($join_table);/**/
 
 		//first let's insert the main table and get the GRP_ID BUT only if we don't have GRP_ID in the $set_column_values
 		if ( ! $results )
@@ -596,31 +652,47 @@ class EEM_Message_Template extends EEM_Base {
 		$main_table = $join_table = $main_table_where = $join_table_where = array();
 		$results = FALSE;
 
+
 		//split up the set_cols_n_values AND where_cols_n_values
 		foreach ( $set_column_values as $name => $value ) {
-			if ( in_array( $name, array_keys( $this->_join_table_columns ) ) ) {
+			if ( in_array( $name, array( 'MTP_ID', 'MTP_context', 'MTP_template_field', 'MTP_content' ) ) ) {
+				if ( isset($this->_join_table_columns[$this->_join_table_name . '.' . $name] ) ) {
+					$this->_join_table_columns[$name] = $this->_join_table_columns[$this->_join_table_name . '.' . $name];
+					unset( $this->_join_table_columns[$this->_join_table_name . '.' . $name]);
+				}
 				$join_table[$name] = $value;
 			} else {
+				if ( isset($this->table_data_types[$this->table_name . '.' . $name]) ) {
+					$this->table_data_types[$name] = $this->table_data_types[$this->table_name . '.' . $name];
+					unset( $this->table_data_types[$this->table_name . '.' . $name]);
+				}
 				$main_table[$name] = $value;
 			}
 		}
 
+		if ( isset( $this->_join_table_columns[$this->_join_table_name . '.' . 'GRP_ID' ] ) ) {
+			unset( $this->_join_table_columns[$this->_join_table_name . '.' . 'GRP_ID'] );
+			$this->_join_table_columns['GRP_ID'] = '%d';
+		}
+
+		if ( isset( $this->table_data_types[$this->table_name . '.' . 'GRP_ID' ] ) ) {
+			unset( $this->table_data_types[$this->table_name . '.' . 'GRP_ID'] );
+			$this->table_data_types['GRP_ID'] = '%d';
+		}
+
+
 		foreach ( $where_cols_n_values as $name => $value ) {
-			if ( in_array( $name, array_keys( $this->_join_table_columns ) ) ) {
+			if ( in_array( $name, array( 'MTP_ID', 'MTP_context', 'MTP_template_field', 'MTP_content' ) ) ) {
 				$join_table_where[$name] = $value;
 			} else {
 				$main_table_where[$name] = $value;
 			}
 		}
 
-		/*var_dump($main_table);
-		var_dump($main_table_where);
-		var_dump($join_table);
-		var_dump($join_table_where);/**/
 
-
-		if ( !empty( $main_table ) && !empty( $main_table_where ) )
+		if ( !empty( $main_table ) && !empty( $main_table_where ) ) {
 			$results = $this->_update( $this->table_name, $this->table_data_types, $main_table, $main_table_where );
+		}
 
 
 		if ( !empty( $join_table ) && !empty( $join_table_where ) )
