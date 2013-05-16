@@ -206,9 +206,9 @@ class EEM_Message_Template extends EEM_Base {
 		//let's check if there are any filters in here
 		$filters = array();
 		if ( isset( $_REQUEST['ee_messenger_filter_by'] ) )
-			$filters[$this->tablename . '.MTP_messenger'] = $_REQUEST['ee_messenger_filter_by'];
-		if ( isset( $_REQUEST['ee_message_type_filter_by'] ) )
-			$filters[$this->tablename . '.MTP_message_type'] = $_REQUEST['ee_message_type_filter_by'];
+			$filters[$this->table_name . '.MTP_messenger'] = $_REQUEST['ee_messenger_filter_by'];
+		if ( isset( $_REQUEST['ee_message_type_filter_by'] ) && $_REQUEST['ee_message_type_filter_by'] != 'none_selected' )
+			$filters[$this->table_name . '.MTP_message_type'] = $_REQUEST['ee_message_type_filter_by'];
 
 
 
@@ -267,7 +267,7 @@ class EEM_Message_Template extends EEM_Base {
 		$filters = array();
 		if ( isset( $_REQUEST['ee_messenger_filter_by'] ) )
 			$filters['MTP_messenger'] = $_REQUEST['ee_messenger_filter_by'];
-		if ( isset( $_REQUEST['ee_message_type_filter_by'] ) )
+		if ( isset( $_REQUEST['ee_message_type_filter_by'] ) && $_REQUEST['ee_message_type_filter_by'] != 'none_selected' )
 			$filters['MTP_message_type'] = $_REQUEST['ee_message_type_filter_by'];
 
 		//merge any extra parameters
