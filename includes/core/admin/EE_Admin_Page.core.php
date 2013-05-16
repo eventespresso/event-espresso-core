@@ -700,20 +700,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$nonce = isset($this->_req_data[ $this->_req_nonce  ]) ? sanitize_text_field( $this->_req_data[ $this->_req_nonce  ] ) : '';
 			$this->_verify_nonce( $nonce, $this->_req_nonce );	
 		}		
-
-		$this->_set_nav_tabs(); //set the nav_tabs array
-		$args = array();	
-
-		
+		//set the nav_tabs array
+		$this->_set_nav_tabs();		
+		// grab callback function
+		$func = is_array( $this->_route ) ? $this->_route['func'] : $this->_route;
 		// check if callback has args
-		if ( is_array( $this->_route )) {
-			$func = $this->_route['func'];
-			$args = isset( $this->_route['args'] ) ?  $this->_route['args'] : array();
-		} else {
-			$func = $this->_route;
-		}
+		$args = is_array( $this->_route ) && isset( $this->_route['args'] ) ? $this->_route['args'] : array();
 			
-		if ( $func ) {		
+		if ( ! empty( $func )) {
 			// and finally,  try to access page route
 			if ( call_user_func_array( array( $this, &$func  ), $args ) === FALSE ) {
 				// user error msg
