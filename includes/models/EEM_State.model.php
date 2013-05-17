@@ -27,6 +27,12 @@ class EEM_State extends EEM_TempBase {
 
   	// private instance of the Attendee object
 	private static $_instance = NULL;
+  	// array of all states
+	private static $_all_states = FALSE;
+  	// array of all active states
+	private static $_active_states = FALSE;
+
+
 
 	/**
 	 *		This funtion is a singleton method used to instantiate the EEM_State object
@@ -34,8 +40,7 @@ class EEM_State extends EEM_TempBase {
 	 *		@access public
 	 *		@return EEM_State instance
 	 */	
-	public static function instance(){
-	
+	public static function instance() {	
 		// check if instance of EEM_State already exists
 		if ( self::$_instance === NULL ) {
 			// instantiate Espresso_model 
@@ -61,7 +66,37 @@ class EEM_State extends EEM_TempBase {
 			);
 		
 		parent::__construct();
+		
 	}
+
+
+	/**
+	*		_get_states
+	* 
+	* 		@access		private
+	*		@return 		void
+	*/	
+	public function get_all_states() {
+		if ( ! self::$_all_states ) {
+			self::$_all_states = $this->get_all( NULL, 'ASC', array( 0,99999 ));
+		}
+		return self::$_all_states;
+	}
+
+	/**
+	*		_get_states
+	* 
+	* 		@access		private
+	*		@return 		void
+	*/	
+	public function get_all_active_states() {
+		if ( ! self::$_active_states ) {
+			self::$_active_states =  $this->get_all_where( array( 'STA_active' => 1 ), NULL, 'ASC', '=', array( 0,99999 ));
+		}
+		return self::$_active_states;
+	}
+
+
 
 
 	/**

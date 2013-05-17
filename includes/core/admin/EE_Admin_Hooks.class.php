@@ -361,7 +361,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 		//let's hook into the _redirect itself and allow for changing where the user goes after redirect.  This will have $query_args and $redirect_url available.
 		if ( method_exists( $this, '_redirect_filter_' . $this->_current_route ) ) {
-			add_filter( 'FHEE_redirect_' . $admin_class_name . $this->_current_route, array( $this, '_redirect_filter_ ' . $this->_current_route ), 10, 2 );
+			add_filter( 'FHEE_redirect_' . $admin_class_name . $this->_current_route, array( $this, '_redirect_filter_' . $this->_current_route ), 10, 2 );
 		}
 
 	}
