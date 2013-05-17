@@ -1001,10 +1001,10 @@ class EE_Single_Page_Checkout {
 			
 			foreach ($reg_info['items'] as $line_item_id => $event) {
 	
-				$template_args['events'][$line_item_id]['name'] = $event['name'];
+				$template_args['events'][$line_item_id]['name'] = stripslashes( trim( $event['name'] ));
 				$template_args['events'][$line_item_id]['date'] = $event['options']['date'];
 				$template_args['events'][$line_item_id]['time'] = date('g:i a', strtotime($event['options']['time']));
-				$template_args['events'][$line_item_id]['ticket-price'] = $event['options']['price_desc'];
+				$template_args['events'][$line_item_id]['ticket-price'] = stripslashes( trim( $event['options']['price_desc'] ));
 	
 				foreach ($event['attendees'] as $att_nmbr => $attendee) {
 					// if attendee has no name, then use primary attendee's details
@@ -1015,7 +1015,7 @@ class EE_Single_Page_Checkout {
 //					echo '<h4>$att_nmbr : ' . $att_nmbr . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //					printr( $attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	
-					$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['name'] = $attendee['fname'] . ' ' . $attendee['lname'];
+					$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['name'] = stripslashes( trim( $attendee['fname'] . ' ' . $attendee['lname'] ));
 					$extra_att_details = array();
 	
 					foreach ($attendee as $key => $value) {
