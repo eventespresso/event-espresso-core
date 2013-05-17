@@ -23,7 +23,7 @@ class espresso_Affiliate_handling {
 					add_action('wp_head', array(&$this, 'print_aff') );
 					break;
 				case 'purchase_confirmation' :
-					add_action('action_hook_espresso_reg_completed', array(&$this, 'print_aff') );
+					add_action('AHEE_reg_completed', array(&$this, 'print_aff') );
 					break;
 				case 'footer' :
 					add_action('wp_footer', array(&$this, 'print_aff'));

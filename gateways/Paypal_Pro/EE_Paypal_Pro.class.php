@@ -143,7 +143,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 			<th>
 				<label for="paypal_pro_currency_format">
 					<?php _e('Country Currency', 'event_espresso'); ?>
-					<?php do_action('action_hook_espresso_help', 'paypal_pro_currency_info') ?>
+					<?php do_action('AHEE_help', 'paypal_pro_currency_info') ?>
 				</label>
 			</th>
 			<td>
@@ -262,7 +262,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 			<th>
 				<label for="paypal_pro_use_sandbox">
 					<?php _e('Use the Debugging Feature<br/>and the PayPal Sandbox', 'event_espresso'); ?>
-					<?php do_action('action_hook_espresso_help', 'paypal_pro_sandbox_info'); ?>
+					<?php do_action('AHEE_help', 'paypal_pro_sandbox_info'); ?>
 				</label>
 			</th>
 			<td>
@@ -568,7 +568,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 				$success = FALSE;
 			}
 
-			do_action( 'action_hook_espresso_after_payment', $EE_Session, $success );
+			do_action( 'AHEE_after_payment', $EE_Session, $success );
 
 		} // end if ($billing_info != 'no payment required')
 
@@ -767,7 +767,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 	 */
 	public function espresso_display_payment_gateways() {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		echo $this->_generate_payment_gateway_selection_button();
 		?>

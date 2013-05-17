@@ -47,7 +47,7 @@
 				</td>
 			</tr>
 
-		<?php do_action('action_hook_espresso_event_settings_template_extra_content', $template_args ); ?>
+		<?php do_action('AHEE_event_settings_template_extra_content', $template_args ); ?>
 
 		</tbody>
 	</table>

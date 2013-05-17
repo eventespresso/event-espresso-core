@@ -77,7 +77,7 @@ class EEM_Registration extends EEM_Base {
 		$this->plural_item = __('Registrations','event_espresso');
 		$this->_get_registration_status_array();
 //		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Registration.class.php');
-		$this->_allowed_statuses=apply_filters('filter_hook_espresso__EEM_Registration__allowed_statuses', self::$_reg_status );
+		$this->_allowed_statuses=apply_filters('FHEE__EEM_Registration__allowed_statuses', self::$_reg_status );
 //		$this->_fields_settings=array(
 //			'REG_ID'=>new EE_Model_Field('Registration ID','primary_key',false),
 //			'EVT_ID'=>new EE_Model_Field('Event ID','foreign_key',false,null,null,'Event'),

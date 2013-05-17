@@ -284,7 +284,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$actionlinks[] = '<a href="#" onclick="window.location=\'' . $export_event_link . '\'" title="' . __('Export to CSV', 'event_espresso') . '"><div class="csv_exp_btn"></div>
 			</a>';
 
-		$actionlinks = apply_filters('filter_hook_espresso_list_table_events_actions_column_action_links', $actionlinks, $item );
+		$actionlinks = apply_filters('FHEE_list_table_events_actions_column_action_links', $actionlinks, $item );
 		
 		$content = '<div style="width:180px;">' . "\n\t";
 		$content .= implode( "\n\t", $actionlinks );

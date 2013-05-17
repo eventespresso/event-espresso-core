@@ -318,7 +318,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		$columns = $this->get_columns();
 		$hidden = $this->get_hidden_columns();
 		$_sortable = $this->get_sortable_columns();
-		$_sortable = apply_filters( "filter_hook_espresso_manage_{$this->screen->id}_sortable_columns", $_sortable );
+		$_sortable = apply_filters( "FHEE_manage_{$this->screen->id}_sortable_columns", $_sortable );
 
 		$sortable = array();
 		foreach ( $_sortable as $id => $data ) {
@@ -412,7 +412,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 	public function get_columns() {
 		//var_dump($this->screen);
-		$columns = apply_filters('filter_hook_espresso_manage_'.$this->screen->id.'_columns', $this->_columns);
+		$columns = apply_filters('FHEE_manage_'.$this->screen->id.'_columns', $this->_columns);
 		return $this->_columns;
 	}
 
@@ -422,7 +422,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 	public function display_views() {
 		$views = $this->get_views();
-		$views = apply_filters( 'filter_hook_espresso_views_' . $this->screen->id, $views );
+		$views = apply_filters( 'FHEE_views_' . $this->screen->id, $views );
 
 		if ( empty( $views )) {
 			return;

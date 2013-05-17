@@ -1520,7 +1520,7 @@ abstract class EEM_Base extends EE_Base{
 	 * they can add a hook onto 'filters_hook_espresso__{className}__{methodName}' (eg, filters_hook_espresso__EE_Answer__my_great_function)
 	 * and accepts 2 arguments: the object on which teh function was called, and an array of the original arguments passed to the function. Whatever their callbackfunction returns will be returned by this function.
 	 * Example: in functions.php (or in a plugin):
-	 * add_filter('filter_hook_espresso__EE_Answer__my_callback','my_callback',10,3);
+	 * add_filter('FHEE__EE_Answer__my_callback','my_callback',10,3);
 	 * function my_callback($previousReturnValue,EE_TempBase $object,$argsArray){
 			$returnString= "you called my_callback! and passed args:".implode(",",$argsArray);
 	 *		return $previousReturnValue.$returnString;
@@ -1535,7 +1535,7 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	public function __call($methodName,$args){
 		$className=get_class($this);
-		$tagName="filter_hook_espresso__{$className}__{$methodName}";
+		$tagName="FHEE__{$className}__{$methodName}";
 		if(!has_filter($tagName)){
 			throw new EE_Error(sprintf(__("Method %s on model %s does not exist! You can create one with the following code in functions.php or in a plugin: add_filter('%s','my_callback',10,3);function my_callback(\$previousReturnValue,EEM_Base \$object\$argsArray=null){/*function body*/return \$whatever;}","event_espresso"),
 										$methodName,$className,$tagName));

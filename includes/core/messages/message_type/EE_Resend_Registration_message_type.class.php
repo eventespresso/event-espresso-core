@@ -82,7 +82,7 @@ class EE_Resend_Registration_message_type extends EE_message_type {
 			'subject' => $this->_default_template_field_subject(),
 			'content' => $this->_default_template_field_content(),
 		);
-		$this->_default_field_content = apply_filters('filter_hook_espresso_default_field_content_'.$this->name, $this->_default_field_content);
+		$this->_default_field_content = apply_filters('FHEE_default_field_content_'.$this->name, $this->_default_field_content);
 	}
 
 
@@ -141,8 +141,8 @@ class EE_Resend_Registration_message_type extends EE_message_type {
 				)
 			);
 
-		$this->_contexts = apply_filters('filter_hook_espresso_set_contexts_'. $this->name, $this->_contexts);
-		$this->_contexts = apply_filters('filter_hook_espresso_set_contexts_all', $this->_contexts);
+		$this->_contexts = apply_filters('FHEE_set_contexts_'. $this->name, $this->_contexts);
+		$this->_contexts = apply_filters('FHEE_set_contexts_all', $this->_contexts);
 	}
 
 

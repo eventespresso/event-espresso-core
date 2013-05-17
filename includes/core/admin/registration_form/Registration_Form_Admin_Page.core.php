@@ -219,7 +219,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	 * @return array where each key is the name of a model's field/db column, and each value is its value.
 	 */
 	protected function _set_column_values_for(EEM_Base $model){
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$set_column_values=array();
 		foreach($model->field_settings() as $fieldName=>$settings){
 			// basically if QSG_identifier is empty or not set
@@ -276,7 +276,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	
 	protected function _edit_question( $action= 'add' ) {
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$ID=isset( $this->_req_data['QST_ID'] ) && ! empty( $this->_req_data['QST_ID'] ) ? absint( $this->_req_data['QST_ID'] ) : FALSE;
 		
 		$this->_admin_page_title = ucwords( str_replace( '_', ' ', $this->_req_action ));
@@ -311,7 +311,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _insert_or_update_question($new_question = TRUE) {
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$success=0;
 		$set_column_values=$this->_set_column_values_for($this->_question_model);
 		require_once('EE_Question.class.php');

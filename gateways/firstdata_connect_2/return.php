@@ -2,7 +2,7 @@
 
 function espresso_send_to_firstdata_connect_2($EE_Session) {
 	global $org_options;
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	$session_data = $EE_Session->get_session_data();
 	$firstdata_connect_2_settings = $session_data['gateway_data']['payment_settings']['firstdata_connect_2'];
 	include("lib/Fdggutil.php");
@@ -20,12 +20,12 @@ function espresso_send_to_firstdata_connect_2($EE_Session) {
 	$fdggutil->set_returnUrl($org_options['notify_url']);
 	$fdggutil->set_cancelUrl($org_options['cancel_return']);
 	$fdggutil->set_dateTime($EE_Session);
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, serialize(get_object_vars($fdggutil)));
+	do_action('AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($fdggutil)));
 	$session_data['gateway_data']['off-site-form'] = $fdggutil->submitPayment($EE_Session);
 	$EE_Session->set_session_data($session_data['gateway_data'], 'gateway_data');
 }
 
-add_action('action_hook_espresso_gateway_process_step_3', 'espresso_send_to_firstdata_connect_2');
+add_action('AHEE_gateway_process_step_3', 'espresso_send_to_firstdata_connect_2');
 
 function espresso_process_firstdata_connect_2($EE_Session) {
 	$session_data = $EE_Session->get_session_data();

@@ -167,7 +167,7 @@
 					<input type="file" name="css" id="css" />
 				</td>
 			</tr>
-			<?php echo apply_filters('filter_hook_espresso_template_config_template_settings_form_table', ''); ?>
+			<?php echo apply_filters('FHEE_template_config_template_settings_form_table', ''); ?>
 
 		</tbody>
 	</table>

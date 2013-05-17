@@ -348,7 +348,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*/
 	public function get_prices_overview_data( $per_page = 10, $count = FALSE, $trashed = FALSE ) {  
 
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// start with an empty array
 		$event_pricing = array();
 		
@@ -405,7 +405,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _edit_price_details() {	
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// grab price ID
 		$PRC_ID = isset( $this->_req_data['id'] ) && ! empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
 		// change page title based on request action
@@ -495,7 +495,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*/
 	protected function set_price_column_values() {
 	
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		//$this->_req_data['PRC_name'] = ucwords(strtolower($this->_req_data['PRC_name']));
 		$this->_req_data['PRC_name'] = htmlentities(wp_strip_all_tags($this->_req_data['PRC_name']), ENT_QUOTES, 'UTF-8');
@@ -534,7 +534,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	protected function _insert_or_update_price( $insert = FALSE ) {
 		
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 		$PRC = EEM_Price::instance();
@@ -582,7 +582,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	protected function _trash_or_restore_price( $trash = TRUE ) {
 	
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 		$PRC = EEM_Price::instance();
@@ -627,7 +627,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	protected function _delete_price() {
 	
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 		$PRC = EEM_Price::instance();
@@ -697,7 +697,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*/
 	public function get_price_types_overview_data( $per_page = 10, $count = FALSE, $trashed = FALSE ) {  
 
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// start with an empty array
 		
 		require_once( PRICING_ADMIN . 'Price_Types_List_Table.class.php' );
@@ -745,7 +745,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*/
 	protected function _edit_price_type_details() {		
 	
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		// grab price type ID
 		$PRT_ID = isset( $this->_req_data['id'] ) && ! empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
@@ -828,7 +828,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*/
 	protected function set_price_type_column_values() {
 	
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		$base_type = wp_strip_all_tags( $this->_req_data['base_type'] );
 		$name = ucwords( strtolower( wp_strip_all_tags( $this->_req_data['PRT_name'] )));
@@ -916,7 +916,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	protected function _insert_or_update_price_type( $new_price_type = FALSE ) {
 		
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
@@ -960,7 +960,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	protected function _trash_or_restore_price_type( $trash = TRUE ) {
 	
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
@@ -1014,7 +1014,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	protected function _delete_price_type() {
 	
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();

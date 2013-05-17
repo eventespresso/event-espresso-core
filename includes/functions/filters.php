@@ -1,8 +1,8 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
+do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 function espresso_admin_footer() {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	return 'Event Registration and Ticketing Powered by <a href="http://eventespresso.com/" title="Event Registration Powered by Event Espresso" target="_blank">' . EVENT_ESPRESSO_POWERED_BY . '</a>';
 }
 add_filter('admin_footer_text', 'espresso_admin_footer');
@@ -37,14 +37,14 @@ function espresso_help_tab_links( $help_tab = FALSE, $action = FALSE, $page = FA
 	echo '
 	<a id="' . $help_tab_lnk . '" class="espresso-help-tab-lnk' . $icon_style . '" title="click to open the \'Help\' tab for more information about this feature" > ' . $help_text . ' </a>';
 }
-add_action( 'action_hook_espresso_help', 'espresso_help_tab_links', 10, 4 );
+add_action( 'AHEE_help', 'espresso_help_tab_links', 10, 4 );
 
 
 
 
 
 function event_espresso_filter_plugin_actions($links, $file) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	// Static so we don't call plugin_basename on every plugin row.
 	static $this_plugin;
 	if (!$this_plugin)

@@ -71,7 +71,7 @@
 					</a> */ ?>
 					<?php 
 					$template_args['row'] = $row;
-					$clone_button = apply_filters('filter_hook_espresso_event_datetime_metabox_clone_button_template', '', $template_args);
+					$clone_button = apply_filters('FHEE_event_datetime_metabox_clone_button_template', '', $template_args);
 					echo $clone_button;
 					 ?>
 					

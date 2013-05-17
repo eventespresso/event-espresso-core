@@ -369,7 +369,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
  */
 	private function _delete_items(EEM_Base $model){
 		
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {			
 			// if array has more than one element than success message should be plural
 			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
@@ -394,7 +394,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	protected function _edit_question_group( $type = 'add' ) {
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$ID=isset( $this->_req_data['QSG_ID'] ) && ! empty( $this->_req_data['QSG_ID'] ) ? absint( $this->_req_data['QSG_ID'] ) : FALSE;
 		$this->_admin_page_title = ucwords( str_replace( '_', ' ', $this->_req_action ));
 		// add ID to title if editing 
@@ -431,7 +431,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	protected function _insert_or_update_question_group( $new_question_group = TRUE) {
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$success=0;
 		$set_column_values=$this->_set_column_values_for($this->_question_group_model);
 		require_once('EE_Question_Group.class.php');
@@ -490,7 +490,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	 */
 	private function _trash_or_restore_items( EEM_Base $model, $trash = TRUE ) {
 		
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		
 		$success = 1;
 		//Checkboxes
@@ -671,7 +671,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$data['recaptcha_theme'] = isset( $this->_req_data['recaptcha_theme'] ) ? sanitize_text_field( $this->_req_data['recaptcha_theme'] ) : 'clean';
 		$data['recaptcha_language'] = isset( $this->_req_data['recaptcha_language'] ) ? sanitize_text_field( $this->_req_data['recaptcha_language'] ) : 'en';
 		
-		$data = apply_filters('filter_hook_espresso_reg_form_settings_save', $data);	
+		$data = apply_filters('FHEE_reg_form_settings_save', $data);	
 		
 		$what = 'Registration Options';
 		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );

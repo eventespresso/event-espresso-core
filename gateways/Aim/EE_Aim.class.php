@@ -124,21 +124,21 @@ Class EE_Aim extends EE_Onsite_Gateway {
 		<tr>
 			<th><label for="use_sandbox">
 					<?php _e('Is this an account on the Authorize.net development server? ', 'event_espresso'); ?>
-					<?php do_action('action_hook_espresso_help', 'authnet_aim_sandbox'); ?>
+					<?php do_action('AHEE_help', 'authnet_aim_sandbox'); ?>
 				</label></th>
 			<td><?php echo EE_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
 		</tr>
 		<tr>
 			<th><label for="test_transactions">
 					<?php _e('Do you want to submit a test transaction? ', 'event_espresso'); ?>
-					<?php do_action('action_hook_espresso_help', 'authnet_test_transactions') ?>
+					<?php do_action('AHEE_help', 'authnet_test_transactions') ?>
 				</label></th>
 			<td><?php echo EE_Form_Fields::select_input('test_transactions', $this->_yes_no_options, $this->_payment_settings['test_transactions']); ?></td>
 		</tr>
 		<tr>
 			<th><label for="aim_button_url">
 					<?php _e('Button Image URL', 'event_espresso'); ?>
-					<?php do_action('action_hook_espresso_help', 'aim_button_image'); ?>
+					<?php do_action('AHEE_help', 'aim_button_image'); ?>
 				</label></th>
 			<td>
 				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
@@ -276,7 +276,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 			$success = $payment_status == 'Approved' ? TRUE : FALSE;
 
-			do_action( 'action_hook_espresso_after_payment', $EE_Session, $success );
+			do_action( 'AHEE_after_payment', $EE_Session, $success );
 
 		} else {
 			// no payment required
@@ -324,7 +324,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 	public function espresso_display_payment_gateways() {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		global $css_class;
 

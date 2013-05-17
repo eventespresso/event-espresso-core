@@ -446,7 +446,7 @@ class EE_Error extends Exception {
 	* 	@return 		array
 	*/
 	public static function get_notices( $format_output = TRUE, $url_encode = FALSE, $remove_empty = TRUE ) {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		$success_messages = '';
 		$error_messages = '';
@@ -542,7 +542,7 @@ class EE_Error extends Exception {
 	//echo '<h4>$func : ' . $func . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 	//echo '<h4>$line : ' . $line . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		$error_code = '';
 		$code_bits = array( 0 => $file, 1 => $func, 2 => $line );

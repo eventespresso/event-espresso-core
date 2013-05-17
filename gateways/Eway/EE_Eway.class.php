@@ -89,7 +89,7 @@ Class EE_Eway extends EE_Offsite_Gateway {
 		
 		<tr>
 			<th><label for="button_url">
-					<?php _e('Button Image URL: ', 'event_espresso'); ?> <?php do_action('action_hook_espresso_help', 'eway_button_image'); ?>
+					<?php _e('Button Image URL: ', 'event_espresso'); ?> <?php do_action('AHEE_help', 'eway_button_image'); ?>
 				</label></th>
 			<td>
 				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
@@ -100,7 +100,7 @@ Class EE_Eway extends EE_Offsite_Gateway {
 		
 		<tr>
 			<th><label for="image_url">
-					<?php _e('Image URL (logo for payment page):', 'event_espresso'); ?> <?php do_action('action_hook_espresso_help', 'eway_image_url_info'); ?>
+					<?php _e('Image URL (logo for payment page):', 'event_espresso'); ?> <?php do_action('AHEE_help', 'eway_image_url_info'); ?>
 				</label></th>
 			<td><input class="regular-text" type="text" name="image_url" size="35" value="<?php echo $this->_payment_settings['image_url']; ?>" />
 				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=image_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <br />
@@ -114,7 +114,7 @@ Class EE_Eway extends EE_Offsite_Gateway {
 		
 		<tr>
 			<th><label for="currency_format">
-					<?php _e('Select the currency for your country: ', 'event_espresso'); ?> <?php do_action('action_hook_espresso_help', 'eway_currency_info') ?>
+					<?php _e('Select the currency for your country: ', 'event_espresso'); ?> <?php do_action('AHEE_help', 'eway_currency_info') ?>
 				</label></th>
 			<td><select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
 					<option value="<?php echo $this->_payment_settings['currency_format']; ?>"><?php echo $this->_payment_settings['currency_format']; ?>
@@ -151,7 +151,7 @@ Class EE_Eway extends EE_Offsite_Gateway {
 		
 		<tr>
 			<th><label for="use_sandbox">
-					<?php _e('Use the Debugging Feature and the eway Sandbox?', 'event_espresso'); ?> <?php do_action('action_hook_espresso_help', 'eway_sandbox_info'); ?>
+					<?php _e('Use the Debugging Feature and the eway Sandbox?', 'event_espresso'); ?> <?php do_action('AHEE_help', 'eway_sandbox_info'); ?>
 			</label></th>
 		<td><?php
 			echo EE_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']);
@@ -254,7 +254,7 @@ Class EE_Eway extends EE_Offsite_Gateway {
 		$this->addField('MerchantOption2', '');
 		$this->addField('MerchantOption3', '');
 		$this->addField('ModifiableCustomerDetails', 'false');
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)));
+		do_action('AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)));
 		$this->prepareSubmit();
 		$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
 		$this->redirect_after_reg_step_3();
@@ -374,12 +374,12 @@ Class EE_Eway extends EE_Offsite_Gateway {
 
 		$success = $txn_details['approved'];
 
-		do_action( 'action_hook_espresso_after_payment', $EE_Session, $success );
+		do_action( 'AHEE_after_payment', $EE_Session, $success );
 
 		if ($txn_details['approved'] && $this->_payment_settings['use_sandbox']) {
-			do_action('action_hook_espresso_mail_successful_transaction_debugging_output');
+			do_action('AHEE_mail_successful_transaction_debugging_output');
 		} else {
-			do_action('action_hook_espresso_mail_failed_transaction_debugging_output');
+			do_action('AHEE_mail_failed_transaction_debugging_output');
 		}
 		parent::thank_you_page();
 	}

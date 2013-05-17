@@ -2,7 +2,7 @@
 
 function espresso_display_worldpay($attendee_id, $event_id, $event_cost) {
 	global $wpdb, $org_options, $espresso_wp_user;
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	include_once ('Worldpay.php');
 	$myworldpay = new worldpay(); // initiate an instance of the class
 	echo '<!-- Event Espresso worldpay Gateway Version ' . $myworldpay->worldpay_gateway_version . '-->';

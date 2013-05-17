@@ -409,7 +409,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'desc' => __('Export Event details to csv', 'event_espresso')
 				)
 			);
-		return apply_filters('filter_hook_espresso_event_legend_items', $items);
+		return apply_filters('FHEE_event_legend_items', $items);
 	}
 
 
@@ -424,7 +424,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * @return string html for generated table
 	 */
 	protected function _events_overview_list_table() {
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_template_args['after_list_table'] = $this->_display_legend( $this->_event_legend_items() );
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_event', 'add', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
@@ -514,9 +514,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$publish_box_extra_args['event_status_display'] = $this->_event->status['display'];
 		$publish_box_extra_args['view_attendees_url'] = add_query_arg( array( 'action' => 'default', 'event_id' => $this->_event->id ), REG_ADMIN_URL ); 
 		$publish_box_extra_args['attendees_reg_limit'] = get_number_of_attendees_reg_limit($this->_event->id, 'num_attendees_slash_reg_limit', $this->_event->reg_limit ); 
-		$publish_box_extra_args['misc_pub_section_class'] = apply_filters('filter_hook_espresso_event_editor_email_attendees_class', 'misc-pub-section');
+		$publish_box_extra_args['misc_pub_section_class'] = apply_filters('FHEE_event_editor_email_attendees_class', 'misc-pub-section');
 		$publish_box_extra_args['email_attendees_url'] = add_query_arg( array( 'event_admin_reports' => 'event_newsletter', 'event_id' => $this->_event->id ), 'admin.php?page=espresso_registrations' ); 
-		$publish_box_extra_args['event_editor_overview_add'] = do_action( 'action_hook_espresso_event_editor_overview_add', $this->_event ); 
+		$publish_box_extra_args['event_editor_overview_add'] = do_action( 'AHEE_event_editor_overview_add', $this->_event ); 
 		// load template
 		$this->_template_args['publish_box_extra_content'] = espresso_display_template( EVENTS_TEMPLATE_PATH . 'event_publish_box_extras.template.php', $publish_box_extra_args, TRUE );
 	}
@@ -569,7 +569,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	private function _set_add_event_object() {
 		global $wpdb, $org_options, $caffeinated, $current_user;
 		get_currentuserinfo();
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$this->_event = new stdClass();
 		$this->_event->is_new = TRUE;
 		$this->_event->id = 0;
@@ -623,7 +623,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$this->_event->venue_url = '';
 		$this->_event->venue_phone = '';
 		$this->_event->venue_image = '';
-		$this->_event = apply_filters('filter_hook_espresso_new_event_template', $this->_event);
+		$this->_event = apply_filters('FHEE_new_event_template', $this->_event);
 		$this->_event->page_url = get_permalink($org_options['event_page_id']);
 	}
 
@@ -641,7 +641,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 */
 	private function _set_edit_event_object() {
 		global $wpdb, $org_options;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		//check if we have an event_id if not then lets setup defaults for adding an event.
 		if ( !isset($this->_req_data['EVT_ID']) ) {
@@ -732,7 +732,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	public function date_time_metabox() {
 		global $org_options;
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 	//	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Ticket.model.php');
 	//	$TKT_MDL = EEM_Ticket::instance();
@@ -753,12 +753,12 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$template_args['event_date_help_link'] = $this->_get_help_tab_link('event_date_info');
 		$template_args['registration_date_help_link'] = $this->_get_help_tab_link('reg_date_info');
 		$template_args['times'] = $times;
-		$template_args['add_additional_time'] = apply_filters('filter_hook_espresso_event_datetime_metabox_add_additional_date_time_template', '', $template_args);
+		$template_args['add_additional_time'] = apply_filters('FHEE_event_datetime_metabox_add_additional_date_time_template', '', $template_args);
 		$template_args['org_options'] = $org_options;
 		$template_args['current_time_help_link'] = $this->_get_help_tab_link('current_time_info');
 		$template_args['current_date'] = date(get_option('date_format')) . ' ' . date(get_option('time_format'));
 		$template_args['event_timezone'] = eventespresso_ddtimezone($this->_event->id);
-		$template_args['use_event_timezones_template'] = apply_filters('filter_hook_espresso_event_datetime_metabox_timezones_template', '', $template_args);
+		$template_args['use_event_timezones_template'] = apply_filters('FHEE_event_datetime_metabox_timezones_template', '', $template_args);
 		$template_args['template_args'] = $template_args;
 		
 		$template =  EVENTS_TEMPLATE_PATH . 'event_datetime_metabox_content.template.php';
@@ -801,7 +801,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			}						
 		}
 		
-		$table_class = apply_filters('filter_hook_espresso_pricing_table_class_filter', 'event_editor_pricing');
+		$table_class = apply_filters('FHEE_pricing_table_class_filter', 'event_editor_pricing');
 
 		$template_args['show_no_event_price_msg'] = $show_no_event_price_msg;
 		$template_args['no_price_message_error'] = $show_no_event_price_msg ? __('There are currently no Prices set for this Event. Please see the Event Pricing section for more details.', 'event_espresso') : '';
@@ -887,7 +887,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				array('id' => 'R', 'text' => __('Draft', 'event_espresso')),
 				array('id' => 'D', 'text' => __('Deleted', 'event_espresso'))
 		);
-		$event_status_values = apply_filters('filter_hook_espresso_event_status_values', $event_status_values);
+		$event_status_values = apply_filters('FHEE_event_status_values', $event_status_values);
 
 		$default_reg_status_values = $this->_get_reg_status_array( array( 'RCN', 'RNA' ));
 		array_unshift( $default_reg_status_values, array( 'id' => "", 'text' => __('No Change', 'event_espresso')));
@@ -896,7 +896,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$template_args['_event'] = $this->_event;
 		$template_args['allow_group_reg_select'] = EE_Form_Fields::select_input('allow_multiple', $yes_no_values, $this->_event->allow_multiple, 'id="group-reg"', '', false);
 		$template_args['additional_attendee_select'] = EE_Form_Fields::select_input('additional_attendee_reg_info', $additional_attendee_reg_info_values, $this->_event->event_meta['additional_attendee_reg_info']);
-		$template_args['additional_registration_options'] = apply_filters('filter_hook_espresso_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $additional_attendee_reg_info_values, $event_status_values, $default_reg_status_values);
+		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $additional_attendee_reg_info_values, $event_status_values, $default_reg_status_values);
 		$template_args['default_payment_status'] = EE_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_event->event_meta['default_reg_status']);
 		$template_args['display_description'] = EE_Form_Fields::select_input('display_desc', $yes_no_values, $this->_event->display_desc);
 		$template_args['display_registration_form'] = EE_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_event->display_reg_form, '', '', false);
@@ -986,7 +986,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 						stripslashes( html_entity_decode( $event->event_name, ENT_QUOTES, 'UTF-8' ))
 				);
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
-				do_action( 'action_hook_espresso_event_moved_to_trash' );
+				do_action( 'AHEE_event_moved_to_trash' );
 				
 				} else {
 					$msg = __( 'An error occured. The event could not be moved to the trash.', 'event_espresso' );
@@ -1330,7 +1330,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		
 	/* @var $espresso_wp_user type array*/
 		global $wpdb, $espresso_wp_user, $caffeinated;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		$wpdb->show_errors();
 
@@ -1508,7 +1508,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		$last_event_id = $wpdb->insert_id;
 
-		do_action('action_hook_espresso_insert_event_add_ons');
+		do_action('AHEE_insert_event_add_ons');
 		############# MailChimp Integration ##############
 		if (get_option('event_mailchimp_active') == 'true' && $caffeinated == true) {
 			MailChimpController::add_event_list_rel($last_event_id);
@@ -1818,7 +1818,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		//print_r($this->_req_data);
 
 		global $wpdb, $espresso_wp_user, $caffeinated;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		$wpdb->show_errors();
 
@@ -2101,7 +2101,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			
 			$event_datetimes = isset($this->_req_data['event_datetimes']) ? $this->_req_data['event_datetimes'] : array();
 			// add hook so addons can manipulate event datetimes prior to saving			
-			$event_datetimes = apply_filters( 'filter_hook_espresso_update_event_datetimes', $event_datetimes );
+			$event_datetimes = apply_filters( 'FHEE_update_event_datetimes', $event_datetimes );
 
 			if ( $event_datetimes ) {			
 
@@ -2216,7 +2216,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		}
 		
 		// add hook so addons can manipulate event ticket prices prior to saving			
-		$ticket_prices_to_save = apply_filters( 'filter_hook_espresso_update_event_ticket_prices', $ticket_prices_to_save );
+		$ticket_prices_to_save = apply_filters( 'FHEE_update_event_ticket_prices', $ticket_prices_to_save );
 
 		// and now we actually save the ticket prices
 		if (!empty($ticket_prices_to_save)) {
@@ -2528,7 +2528,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$data['pending_counts_reg_limit'] = isset( $this->_req_data['pending_counts_reg_limit'] ) ? absint( $this->_req_data['pending_counts_reg_limit'] ) : TRUE;
 		$data['use_attendee_pre_approval'] = isset( $this->_req_data['use_attendee_pre_approval'] ) ? absint( $this->_req_data['use_attendee_pre_approval'] ) : TRUE;
 
-		$data = apply_filters('filter_hook_espresso_default_event_settings_save', $data);	
+		$data = apply_filters('FHEE_default_event_settings_save', $data);	
 		
 		$what = 'Default Event Settings';
 		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );

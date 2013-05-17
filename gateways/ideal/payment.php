@@ -1,6 +1,6 @@
 <?php
 global $org_options, $wpdb, $espresso_wp_user;
-do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 $payment_settings = get_option('payment_data_' . $espresso_wp_user);
 $ideal_mollie_settings = $payment_settings['ideal'];
 require_once('ideal.class.php');

@@ -28,7 +28,7 @@ function event_espresso_rename_tables($old_table_name, $new_table_name) {
 //This function updates the org_options from < EE 4.0
 function espresso_fix_org_options() {
 	global $org_options, $espresso_wp_user;
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	if (empty($org_options))
 		return;
 

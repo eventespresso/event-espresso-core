@@ -71,16 +71,16 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		//add filters and actions
 		//modifying _views
-		add_filter('filter_hook_espresso_list_table_views_espresso_events', array( $this, 'list_table_views'), 10 );
-		add_filter('filter_hook_espresso_event_legend_items', array( $this, 'event_legend_items'), 10 );
-		add_filter('filter_hook_espresso_list_table_events_actions_column_action_links', array( $this, 'overview_table_action_links' ), 10, 2 );
-		add_filter('filter_hook_espresso_event_datetime_metabox_add_additional_date_time_template', array( $this, 'add_additional_datetime_button' ), 10, 2 );
-		add_filter('filter_hook_espresso_event_datetime_metabox_clone_button_template', array( $this, 'add_datetime_clone_button' ), 10, 2 );
-		add_filter('filter_hook_espresso_event_datetime_metabox_timezones_template', array( $this, 'datetime_timezones_template'), 10, 2 );
-		add_filter('filter_hook_espresso_additional_registration_options_event_edit_page', array( $this, 'additional_registration_options'), 10, 6);
+		add_filter('FHEE_list_table_views_espresso_events', array( $this, 'list_table_views'), 10 );
+		add_filter('FHEE_event_legend_items', array( $this, 'event_legend_items'), 10 );
+		add_filter('FHEE_list_table_events_actions_column_action_links', array( $this, 'overview_table_action_links' ), 10, 2 );
+		add_filter('FHEE_event_datetime_metabox_add_additional_date_time_template', array( $this, 'add_additional_datetime_button' ), 10, 2 );
+		add_filter('FHEE_event_datetime_metabox_clone_button_template', array( $this, 'add_datetime_clone_button' ), 10, 2 );
+		add_filter('FHEE_event_datetime_metabox_timezones_template', array( $this, 'datetime_timezones_template'), 10, 2 );
+		add_filter('FHEE_additional_registration_options_event_edit_page', array( $this, 'additional_registration_options'), 10, 6);
 
 		//event settings
-		add_action('action_hook_espresso_event_settings_template_extra_content', array( $this, 'enable_attendee_pre_approval'), 10 );
+		add_action('AHEE_event_settings_template_extra_content', array( $this, 'enable_attendee_pre_approval'), 10 );
 
 	}
 
@@ -226,7 +226,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 */
 	public function event_meta_metabox() {
 		global $wpdb, $org_options;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		$event_meta = $this->_event->event_meta;
 		
@@ -235,7 +235,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$meta_counter = 1;
 
 		$default_event_meta = array();
-		$default_event_meta = apply_filters('filter_hook_espresso_filter_default_event_meta', $default_event_meta);
+		$default_event_meta = apply_filters('FHEE_filter_default_event_meta', $default_event_meta);
 
 		$default_meta = $event_meta == '' ? $default_event_meta : array();
 		$event_meta = $event_meta == '' ? array() : $event_meta;

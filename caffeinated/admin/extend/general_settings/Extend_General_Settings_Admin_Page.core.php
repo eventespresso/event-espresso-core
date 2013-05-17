@@ -43,7 +43,7 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 
 
 		//filters and action hooks here
-		add_action('action_hook_espresso_general_settings_admin_options_settings_extra_settings', array( $this, 'use_venue_and_staff_manager_settings'), 10 );
+		add_action('AHEE_general_settings_admin_options_settings_extra_settings', array( $this, 'use_venue_and_staff_manager_settings'), 10 );
 	}
 
 

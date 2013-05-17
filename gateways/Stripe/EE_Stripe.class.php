@@ -75,7 +75,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 			</th>
 			<td>
 				<input type="text" name="stripe_secret_key" size="35" value="<?php echo $this->_payment_settings['stripe_secret_key']; ?>"> 
-				<?php do_action('action_hook_espresso_help', 'stripe_secret_key') ?>
+				<?php do_action('AHEE_help', 'stripe_secret_key') ?>
 			</td>
 		</tr>
 		
@@ -85,7 +85,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 			</th>
 			<td>
 				<input type="text" name="stripe_publishable_key" size="35" value="<?php echo $this->_payment_settings['stripe_publishable_key']; ?>"> 
-				<?php do_action('action_hook_espresso_help', 'stripe_publishable_key') ?>
+				<?php do_action('AHEE_help', 'stripe_publishable_key') ?>
 			</td>
 		</tr>
 		
@@ -95,7 +95,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 			</th>
 			<td>
 				<input type="text" name="stripe_currency_symbol" size="35" value="<?php echo $this->_payment_settings['stripe_currency_symbol']; ?>"> 
-				<?php do_action('action_hook_espresso_help', 'stripe_currency_symbol') ?>
+				<?php do_action('AHEE_help', 'stripe_currency_symbol') ?>
 			</td>
 		</tr>
 		
@@ -233,7 +233,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 
 				$success = $payment_status == 'Approved' ? TRUE : FALSE;
 
-				do_action( 'action_hook_espresso_after_payment', $EE_Session, $success );
+				do_action( 'AHEE_after_payment', $EE_Session, $success );
 			} 
 
 		} else {
@@ -247,7 +247,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 
 	public function espresso_display_payment_gateways() {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		global $css_class;
 		echo $this->_generate_payment_gateway_selection_button();

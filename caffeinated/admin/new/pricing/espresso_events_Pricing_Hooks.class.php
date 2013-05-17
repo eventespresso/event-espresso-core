@@ -58,7 +58,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 
-	public function edit_event_action_hook_espresso_metaboxes() {
+	public function edit_event_AHEE_metaboxes() {
 		//if we were going to remove the default metabox we'd add this.
 		//remove_meta_box( 'espresso_event_editor_pricing', $this->_adminpage_obj->get_current_screen()->id, 'normal' );
 		return;

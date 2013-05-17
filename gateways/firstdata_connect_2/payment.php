@@ -19,4 +19,4 @@ function espresso_display_firstdata_connect_2() {
 <?php 
 }
 
-add_action('action_hook_espresso_display_offsite_payment_gateway', 'espresso_display_firstdata_connect_2');
+add_action('AHEE_display_offsite_payment_gateway', 'espresso_display_firstdata_connect_2');

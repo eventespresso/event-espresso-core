@@ -1,6 +1,6 @@
 <?php
 
-do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 echo "<WPDISPLAY ITEM=banner>";
 if ($_REQUEST['transStatus'] == 'Y') {
 	$payment_status = 'Completed';

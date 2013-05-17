@@ -410,7 +410,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$this->addField('currency_code', $paypal_cur);
 		$this->addField('image_url', empty($paypal_settings['image_url']) ? '' : $paypal_settings['image_url']);
 		$this->addField('no_shipping ', $no_shipping);
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)));
+		do_action('AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)));
 		$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
 		$this->redirect_after_reg_step_3();
 	}
@@ -449,12 +449,12 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 
 		$success = $txn_details['approved'];
 
-		do_action( 'action_hook_espresso_after_payment', $EE_Session, $success );
+		do_action( 'AHEE_after_payment', $EE_Session, $success );
 
 		if ($txn_details['approved'] == TRUE && $this->_payment_settings['use_sandbox']) {
-			do_action('action_hook_espresso_mail_successful_transaction_debugging_output');
+			do_action('AHEE_mail_successful_transaction_debugging_output');
 		} else {
-			do_action('action_hook_espresso_mail_failed_transaction_debugging_output');
+			do_action('AHEE_mail_failed_transaction_debugging_output');
 		}
 		parent::thank_you_page();
 	}*/
@@ -569,7 +569,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 	 * @return boolean
 	 */
 	public function validateIpn() {
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		
 		$this->ipnData=$_POST;
 		$response_post_data=$_POST + array('cmd'=>'_notify-validate');

@@ -116,7 +116,7 @@ if ( is_admin() ) {
  * plugins_loaded:
  *	1: espresso_define_tables_and_paths
  *	2: espresso_get_user_id
- *		filter_hook_espresso_get_user_id:
+ *		FHEE_get_user_id:
  *	3: espresso_load_org_options
  *		require_once: classes/EE_Log.class.php
  *	4: espresso_EE_Session

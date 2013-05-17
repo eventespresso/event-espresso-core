@@ -61,7 +61,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	protected function __construct(){
 		$this->singular_item = __('Question','event_espresso');
 		$this->plural_item = __('Questions','event_espresso');
-		$this->_allowed_question_types=apply_filters('filter_hook_espresso_allowed_question_types',
+		$this->_allowed_question_types=apply_filters('FHEE_allowed_question_types',
 					array(
 						'TEXT'=>__('Text','event_espresso'),
 						'TEXTAREA'=>__('Textarea','event_espresso'),

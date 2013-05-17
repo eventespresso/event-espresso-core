@@ -58,7 +58,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 	protected function _ajax_hooks() {
 		//todo: all hooks for registrations ajax goes in here
-		add_action( 'action_hook_espresso_attendee_check_in', array( $this, '_attendee_check_in' ));
+		add_action( 'AHEE_attendee_check_in', array( $this, '_attendee_check_in' ));
 	}
 
 
@@ -962,10 +962,10 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$QSOs = EEM_Event::instance()->get_options_for_question( $QST_IDs );
 		//printr( $QSOs, '$QSOs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-		add_filter( 'filter_hook_espresso_form_before_question_group_questions', array( $this, 'form_before_question_group' ), 10, 1 );
-		add_filter( 'filter_hook_espresso_form_after_question_group_questions', array( $this, 'form_after_question_group' ), 10, 1 );	
-		add_filter( 'filter_hook_espresso_form_field_label_html', array( $this, 'form_form_field_label_wrap' ), 10, 1 );
-		add_filter( 'filter_hook_espresso_form_field_input_html', array( $this, 'form_form_field_input__wrap' ), 10, 1 );
+		add_filter( 'FHEE_form_before_question_group_questions', array( $this, 'form_before_question_group' ), 10, 1 );
+		add_filter( 'FHEE_form_after_question_group_questions', array( $this, 'form_after_question_group' ), 10, 1 );	
+		add_filter( 'FHEE_form_field_label_html', array( $this, 'form_form_field_label_wrap' ), 10, 1 );
+		add_filter( 'FHEE_form_field_input_html', array( $this, 'form_form_field_input__wrap' ), 10, 1 );
 
 		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( $QSGs, $QSTs, $QSOs );
 		//printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -1074,7 +1074,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$success = TRUE;
 		$qstns = isset( $this->_req_data['qstn'] ) ? $this->_req_data['qstn'] : FALSE;
 		$REG_ID = isset( $this->_req_data['_REG_ID'] ) ? absint( $this->_req_data['_REG_ID'] ) : FALSE;
-		$qstns = apply_filters('filter_hook_espresso_reg_admin_attendee_registration_form', $qstns);	
+		$qstns = apply_filters('FHEE_reg_admin_attendee_registration_form', $qstns);	
 		$success = $this->_save_attendee_registration_form( $qstns );
 		$what = __('Attendee Registration Form', 'event_espresso');
 		$route = $REG_ID ? array( 'action' => 'view_registration', '_REG_ID' => $REG_ID ) : array( 'action' => 'default' );
@@ -1480,10 +1480,10 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$QSOs = EEM_Event::instance()->get_options_for_question( $QST_IDs );
 		//printr( $QSOs, '$QSOs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-		add_filter( 'filter_hook_espresso_form_before_question_group_questions', array( $this, 'form_before_question_group' ), 10, 1 );
-		add_filter( 'filter_hook_espresso_form_after_question_group_questions', array( $this, 'form_after_question_group_new_reg' ), 10, 1 );	
-		add_filter( 'filter_hook_espresso_form_field_label_html', array( $this, 'form_form_field_label_wrap' ), 10, 1 );
-		add_filter( 'filter_hook_espresso_form_field_input_html', array( $this, 'form_form_field_input_wrap_new_reg' ), 10, 1 );
+		add_filter( 'FHEE_form_before_question_group_questions', array( $this, 'form_before_question_group' ), 10, 1 );
+		add_filter( 'FHEE_form_after_question_group_questions', array( $this, 'form_after_question_group_new_reg' ), 10, 1 );	
+		add_filter( 'FHEE_form_field_label_html', array( $this, 'form_form_field_label_wrap' ), 10, 1 );
+		add_filter( 'FHEE_form_field_input_html', array( $this, 'form_form_field_input_wrap_new_reg' ), 10, 1 );
 
 		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( $QSGs, $QSTs, $QSOs );
 		//printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -1617,7 +1617,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 //		printr( $_POST, '$_POST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		if ( isset( $this->_req_data['qstn'] )) {
-			$qstns = apply_filters('filter_hook_espresso_reg_admin_new_registration_form', $this->_req_data['qstn']);	
+			$qstns = apply_filters('FHEE_reg_admin_new_registration_form', $this->_req_data['qstn']);	
 			// sanitize reg form questions
 			array_walk_recursive( $qstns, array( $this, 'sanitize_text_field_for_array_walk' ));
 			// add questions
@@ -1731,7 +1731,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _event_registrations_list_table() {
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_admin_page_title .= $this->_get_action_link_or_button('new_registration', 'add-registrant', array(), 'button add-new-h2');
 		$legend_items = array(
 			'star-icon' => array(
@@ -1755,7 +1755,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*/
 	public function get_event_attendees( $per_page = 10, $count = FALSE, $trash = FALSE, $orderby = '' ) {  
 
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// start with an empty array
 		$attendees = array();
 		
@@ -1826,7 +1826,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _attendee_contact_list_table() {
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_new_attendee', 'add-attendee', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
@@ -1843,7 +1843,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*/
 	public function get_attendees( $per_page, $count = FALSE, $trash = FALSE ) {  
 
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// start with an empty array
 		$attendees = array();
 		
@@ -2010,7 +2010,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*/
 	protected function _edit_attendee_details( $new = FALSE ) {		
 	
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		
 		$ATT_ID = isset( $this->_req_data['id'] ) && ! empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
 
@@ -2090,7 +2090,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*/
 	protected function _insert_or_update_attendee( $new_attendee = FALSE ) {
 
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
 		$ATT_MDL = EEM_Attendee::instance();
@@ -2148,7 +2148,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*/
 	protected function _trash_or_restore_attendees( $trash = TRUE ) {
 	
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
 		$ATT_MDL = EEM_Attendee::instance();
@@ -2193,7 +2193,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*/
 	protected function _delete_attendees() {
 	
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
 		$ATT_MDL = EEM_Attendee::instance();
@@ -2241,7 +2241,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*/
 	protected function _registration_reports() {
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	
 		$page_args = array();
 		

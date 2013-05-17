@@ -60,7 +60,7 @@ class Worldpay extends PaymentGateway {
 	 */
 	public function validateIpn() {
 		global $org_options;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		if (function_exists('curl_init')) {
 			//new worldpay code//
 			// parse the worldpay URL

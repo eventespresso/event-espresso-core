@@ -36,8 +36,8 @@ class Global_EE_Caf_Hooks {
 
 
 	private function _do_hooks() {
-		add_filter('filter_hook_espresso_show_sponsors_meta_box', create_function('$show_sponsors', 'return FALSE;' ), 10 );
-		add_action('action_hook_espresso_news_meta_box_extra_content', array( $this, 'extra_news_box_content' ), 10 );
+		add_filter('FHEE_show_sponsors_meta_box', create_function('$show_sponsors', 'return FALSE;' ), 10 );
+		add_action('AHEE_news_meta_box_extra_content', array( $this, 'extra_news_box_content' ), 10 );
 	}
 
 

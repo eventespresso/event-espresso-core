@@ -1,6 +1,6 @@
 <div class="padding">
 	
-	<?php do_action('action_hook_espresso_general_settings_admin_options_settings_extra_settings', $template_args ); ?>
+	<?php do_action('AHEE_general_settings_admin_options_settings_extra_settings', $template_args ); ?>
 
 	<h4 class="ee-admin-settings-hdr">
 		<?php _e('WordPress Dashboard', 'event_espresso'); ?>

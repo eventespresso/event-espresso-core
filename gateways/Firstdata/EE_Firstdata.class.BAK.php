@@ -96,14 +96,14 @@ Class EE_Firstdata extends EE_Gateway {
 		<tr>
 			<th><label for="use_sandbox">
 					<?php _e('Is this an account on the Authorize.net development server? ', 'event_espresso'); ?>
-					<?php do_action('action_hook_espresso_help', 'authnet_aim_sandbox'); ?>
+					<?php do_action('AHEE_help', 'authnet_aim_sandbox'); ?>
 				</label></th>
 			<td><?php echo EE_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
 		</tr>
 		<tr>
 			<th><label for="test_transactions">
 					<?php _e('Do you want to submit a test transaction? ', 'event_espresso'); ?>
-					<?php do_action('action_hook_espresso_help', 'authnet_test_transactions') ?>
+					<?php do_action('AHEE_help', 'authnet_test_transactions') ?>
 				</label></th>
 			<td><?php echo EE_Form_Fields::select_input('test_transactions', $this->_yes_no_options, $this->_payment_settings['test_transactions']); ?></td>
 		</tr>
@@ -221,7 +221,7 @@ Class EE_Firstdata extends EE_Gateway {
 
 				$payment_status = $response->approved ? 'Approved' : 'Declined';
 			}
-			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $payment_data->payment_status);
+			do_action('AHEE_log', __FILE__, __FUNCTION__, $payment_data->payment_status);
 
 			$txn_results = array(
 					'gateway' => $this->_payment_settings['display_name'],
@@ -240,7 +240,7 @@ Class EE_Firstdata extends EE_Gateway {
 
 			$EE_Session->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
 
-			add_action('action_hook_espresso_email_after_payment', 'espresso_email_after_payment'); //<-- Should this be here ? or in the successful txn bit above ( after line 80 ? ) or does this send failed txn info as well /
+			add_action('AHEE_email_after_payment', 'espresso_email_after_payment'); //<-- Should this be here ? or in the successful txn bit above ( after line 80 ? ) or does this send failed txn info as well /
 			// return $payment_data;  <<<<-------  do we need to return success or FALSE or anything ?
 		} else {
 			// no payment required
@@ -257,10 +257,10 @@ Class EE_Firstdata extends EE_Gateway {
 	public function espresso_display_payment_gateways() {
 
 		global $css_class;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		// this filter allows whatever function is processing the registration page to know what inputs to expect
-		add_filter('filter_hook_espresso_reg_page_billing_inputs', array(&$this, 'espresso_reg_page_billing_inputs_aim'));
+		add_filter('FHEE_reg_page_billing_inputs', array(&$this, 'espresso_reg_page_billing_inputs_aim'));
 		$use_sandbox = $this->_payment_settings['use_sandbox'] || $this->_payment_settings['test_transactions'];
 		if ($use_sandbox) {
 			$test_creds = '

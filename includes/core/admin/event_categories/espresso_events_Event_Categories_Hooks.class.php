@@ -58,7 +58,7 @@ class espresso_events_Event_Categories_Hooks extends EE_Admin_Hooks {
 		<div class="inside">
 			<?php
 			$sql = "SELECT * FROM " . EVENTS_CATEGORY_TABLE;
-			$sql = apply_filters('filter_hook_espresso_event_editor_categories_sql', $sql);
+			$sql = apply_filters('FHEE_event_editor_categories_sql', $sql);
 			$event_categories = $wpdb->get_results($sql);
 			$num_rows = $wpdb->num_rows;
 			if ($num_rows > 0) {

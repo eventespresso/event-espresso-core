@@ -142,7 +142,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	protected function _extend_page_config() {
 				
 		$this->_cpt_route = $this->_req_action == 'create_new' || $this->_req_action == 'edit' ? TRUE : FALSE;
-		add_action('filter_hook_espresso_admin_load_page_dependencies', array( $this, 'modify_current_screen') );
+		add_action('FHEE_admin_load_page_dependencies', array( $this, 'modify_current_screen') );
 
 
 		if ( empty( $this->_cpt_object ) ) {
