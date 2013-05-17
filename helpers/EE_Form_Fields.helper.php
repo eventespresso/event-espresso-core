@@ -451,8 +451,7 @@ class EE_Form_Fields {
 		}
 		
 		//printr( $question, '$question  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$system_question = self::_load_system_dropdowns( $question );
-		$question = array_merge($system_question,$question);
+		$question = self::_load_system_dropdowns( $question );
 		//printr( $question, '$question  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$display_text = isset( $question['QST_display_text'] ) ? $question['QST_display_text'] : FALSE;
 		$answer = isset( $question['ANS_value'] ) ? $question['ANS_value'] : '';
