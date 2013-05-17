@@ -300,86 +300,8 @@ function event_espresso_run() {
 function return_espresso_content() {
 	//@todo add extra join condition
 	global $espresso_content;
-//	require_once('EEM_Question.model.php');
-//	$qs = EEM_Question::instance()->get_all(
-//			array(
-//				'group_by'=>'Question_Group.QSG_ID'
-//			));
-//	var_dump($qs);
-//	require_once('EEM_Registration.model.php');
-//	echo "<hr><hr>";
-//	$regs = EEM_Registration::instance()->get_all(array(
-//		array('Attendee.ATT_fname'=>array('LIKE','%f%')),
-//		'force_join'=>array('Transaction'),
-//		'order_by'=>array('Price.Price_Type.PRT_ID'=>'ASC')
-//	));
-//	$regs = EEM_Registration::instance()->get_all(array(
-//		array('OR'=>array(
-//				'Attendee.ATT_fname'=>array('LIKE','%f'),
-//				'NOT'=>array(
-//					'Transaction.TXN_ID'=>array('>',34))
-//				)			
-//	)));
-//	var_dump($regs);
-//	require_once('EEM_Registration.model.php');
-//	$reg1 = EEM_Registration::instance()->get_one(array(array('Attendee.ATT_ID'=>3)));
-//	var_dump($reg1->answers());
-//	$answer1 = $reg1->get_first_related('Answer');
-//	require_once('EEM_Answer.model.php');
-//	$ans2 = EEM_Answer::instance()->get_one_by_ID(21);
-//	//var_dump($ans2);
-//	$reg1->_add_relation_to($ans2, 'Answer');
-//	//$reg1->clear_cache('Answer',$answer1);
-//	var_dump($reg1->answers());
-	//testing caching of single related objet
-//	require_once('EEM_Registration.model.php');
-//	$reg1 = EEM_Registration::instance()->get_one();
-////	var_dump($reg1);
-////	var_dump($reg1->attendee());
-////	var_dump($reg1->attendee());
-////	$reg1->clear_cache('Attendee');
-//	//var_dump($reg1->attendee());
-//	var_dump($reg1->answers());
-//	$answer = $reg1->get_first_related('Answer');
-//	$reg1->clear_cache('Answer',$answer);
-	//var_dump($reg1);
-//	require_once('EEM_Event.model.php');
-//	$EVT = EEM_Event::instance();
-//	var_dump($EVT->get_all());
-	
-//	var_dump($EVT->get_all(array(
-//		array(
-//			'Question_Group.QSG_ID'=>array('IN',array(1,2,3)), 
-//			'NOT'=>array( 
-//				'OR'=>array('Event_Question_Group.QSG_ID'=>0, 'Event_Question_Group.EQG_primary'=>1))))));//causes error
-	//var_dump($EVT->get_all(array(array('Question_Group.QSG_ID'=>array('IN',array(1,2,3)),'Event_Question_Group.EQG_primary'=>0))));//causes error
-	//var_dump($EVT->get_all(array(array('Event_Question_Group.Question_Group.QSG_ID'=>array('IN',array(1,2,3)),'Event_Question_Group.EQG_primary'=>0))));//causes error
-	//var_dump($EVT->sum(array()));
-//	var_dump($EVT->get_one_by_ID(1));
-//	$EVT->update(array('EVT_metakey1'=>'success!'), array(array('EVT_desc'=>'foo_bar')));
-	//$result = $EVT->insert(array('EVT_desc'=>'foo_bar','EVT_metakey1'=>'inserted_key','EVT_metaval1'=>'inserted_value'));
-	//$result = $EVT->delete(array(array('EVT_desc'=>'foo_bar')));
-//	echo "result:$result";
-//	$e1 = new EE_Exp_Event('biggest party of all year', 'party_catchphrase<html></html>', '<b>tonight we gonna party like it dec 31</b>');
-//	
-//	var_dump($e1);
-//	$qg1 = new EE_Exp_Question_Group('Questions about the universe2S');
-//	var_dump($qg1);
-//	$e1->_add_relation_to($qg1, 'Question_Group');
-	
-//	$r1 = new EE_Exp_Registration(null, null, null);
-//	var_dump($r1);
-//	//$e1->_add_relation_to($r1, 'Registration');
-//	$r1->_add_relation_to($e1, 'Event');
-//	var_dump($r1);
-//	$e1->_remove_relation_to($r1, 'Registration');
-//	echo "remove relation now:";var_dump($r1);
-	
-	//get related
-//	$EVT = EEM_Exp_Event::instance();
-//	$e1 = $EVT->get_one_by_ID($id);
-//	echo "event with id 49:";var_dump($e1);
-//	echo "events question groups:";
+//	require_once('activation.php');
+//	espresso_initialize_system_questions();
 	return $espresso_content;
 }
 
@@ -554,4 +476,34 @@ function espresso_init_admin_pages() {
 		$e->get_error();
 	}
 	
+}
+
+
+
+
+
+function espresso_check_no_ticket_prices_array() {
+	$espresso_no_ticket_prices = get_option( 'espresso_no_ticket_prices', FALSE );
+	//printr( $espresso_no_ticket_prices, '$espresso_no_ticket_prices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+	if ( $espresso_no_ticket_prices ) {
+		$no_ticket_prices_msg = __( '<strong>Warning!</strong> The following events have no ticket prices set for them and will therefore not allow registrations:', 'event_espresso' );
+		foreach ( $espresso_no_ticket_prices as $EVT_ID => $event_name ) {
+			if ( empty( $EVT_ID )) {
+				unset( $espresso_no_ticket_prices[ $EVT_ID ] );
+			} else {
+				$edit_event_url = EE_Admin_Page::add_query_args_and_nonce( array( 'page'=>'espresso_events', 'action'=>'edit_event', 'EVT_ID'=>$EVT_ID ),  admin_url( 'admin.php?' ));
+				$event_name = stripslashes( htmlentities( $event_name, ENT_QUOTES, 'UTF-8' ));
+				$no_ticket_prices_msg .= '<br/><a href="' . $edit_event_url . '" title="' . sprintf( __( 'Edit Event: %s', 'event_espresso' ), $event_name ) .'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>';
+			}
+		}
+		$no_ticket_prices_msg .= '<br/>' . __( 'click on the event name to go to the event editor and correct this issue.', 'event_espresso' );
+		EE_Error::add_error( $no_ticket_prices_msg, __FILE__, __FUNCTION__, __LINE__ );
+		add_action( 'admin_notices', 'espresso_display_admin_notice' );
+		update_option( 'espresso_no_ticket_prices', $espresso_no_ticket_prices );
+	}
+}
+
+
+function espresso_display_admin_notice() {
+	echo EE_Error::get_notices();
 }

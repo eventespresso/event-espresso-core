@@ -21,17 +21,17 @@
 						//printr( $attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 						$att = $attendee['att_obj'];
 						$reg = $attendee['reg_obj'];
-						$attendee[1] = isset( $attendee[1] ) ? $attendee[1] : $attendees[1][1];
-						$attendee[2] = isset( $attendee[2] ) ? $attendee[2] : $attendees[1][2];
-						$attendee[3] = isset( $attendee[3] ) ? $attendee[3] : $attendees[1][3];						
+						$attendee['fname'] = isset( $attendee['fname'] ) ? $attendee['fname'] : $attendees[1]['fname'];
+						$attendee['lname'] = isset( $attendee['lname'] ) ? $attendee['lname'] : $attendees[1]['lname'];
+						$attendee['email'] = isset( $attendee['email'] ) ? $attendee['email'] : $attendees[1]['email'];						
 					?>
 				<tr>
 					<td class="jst-left"><?php echo$att_nmbr;?></td>
 					<td class="jst-left"><?php echo stripslashes( $event );?></td>
 					<td class="jst-left">
 						<?php 
-						$attendee_name = $att->fname() != '' ? $att->fname() : $attendee[1];
-						$attendee_name .= $att->lname() != '' ? ' ' . $att->lname() : ' ' . $attendee[2];
+						$attendee_name = $att->fname() != '' ? $att->fname() : $attendee['fname'];
+						$attendee_name .= $att->lname() != '' ? ' ' . $att->lname() : ' ' . $attendee['lname'];
 						$att_link = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'id'=>$att->ID() ), REG_ADMIN_URL ); 
 						?>
 						<a href="<?php echo $att_link; ?>" title="<?php _e( 'View details for this attendee', 'event_espresso' );?>">
@@ -40,7 +40,7 @@
 					</td>
 					<?php $price_paid = is_object( $reg ) && $reg->price_paid() != '' ? $reg->price_paid() : $attendee['price_paid']; ?>
 					<td class="jst-rght"><?php echo $currency_sign . ' ' . number_format( $price_paid, 2 );?></td>
-					<td class="jst-left"><?php echo $att->email() != '' ? $att->email() : $attendee[3];?></td>
+					<td class="jst-left"><?php echo $att->email() != '' ? $att->email() : $attendee['email'];?></td>
 					<td class="jst-left">
 						<?php
 							echo $att->address() != '' ? $att->address() . ', ' : '';

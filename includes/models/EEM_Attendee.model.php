@@ -29,7 +29,7 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 	private static $_instance = NULL;
 	
 	/**
-	 * QST_ID and QST_system_IDs that relate to attendee attributes.
+	 * QST_ID and QST_systems that relate to attendee attributes.
 	 */
 	const fname_question_id=1;
 	const lname_question_id=2;
@@ -42,6 +42,7 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 	const zip_question_id=9;
 	const phone_question_id=10;
 
+	
 
 
 
@@ -217,6 +218,176 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 		return $attendees;
 		
 	}
+
+
+
+	/**
+	 * Gets all the attendees for a transaction (by using the esp_registration as a join table)
+	 * @param EE_Transaction/int $transaction_id_or_obj EE_Transaction or its ID
+	 * @param string $output
+	 * @return EE_Attendee[]
+	 */
+	public function get_attendees_for_transaction($transaction_id_or_obj){
+		if ($transaction_id_or_obj instanceof EE_Transaction){
+			$transaction_id = $transaction_id_or_obj->ID();
+		}else{
+			$transaction_id = $transaction_id;
+		}
+		return $this->get_all(array(array('Registration.Transaction.TXN_ID'=>$transaction_id)));
+	}
+
+
+
+	/**
+	*		retreive  a single attendee from db via their ID
+	* 
+	* 		@access		public
+	* 		@param		$ATT_ID		
+	*		@return 		mixed		array on success, FALSE on fail
+	*/	
+	public function get_attendee_by_ID( $ATT_ID = FALSE ) {
+
+		if ( ! $ATT_ID ) {
+			return FALSE;
+		}
+		// retreive a particular transaction
+		$where_cols_n_values = array( 'ATT_ID' => $ATT_ID );
+		if ( $attendee = $this->select_row_where ( $where_cols_n_values )) {
+			$attendee_array = $this->_create_objects( array( $attendee ));
+			return array_shift( $attendee_array );
+		} else {
+			return FALSE;
+		}
+
+	}
+
+
+
+
+	/**
+	*		retreive  a single attendee from db via their ID
+	* 
+	* 		@access		public
+	* 		@param		$ATT_ID		
+	*		@return 		mixed		array on success, FALSE on fail
+	*/	
+	public function get_attendee( $where_cols_n_values = FALSE ) {
+
+		if ( ! $where_cols_n_values ) {
+			return FALSE;
+		}
+
+		if ( $attendee = $this->select_row_where ( $where_cols_n_values )) {
+			$attendee_array = $this->_create_objects( array( $attendee ));
+			return array_shift( $attendee_array );
+		} else {
+			return FALSE;
+		}
+
+	}
+
+
+
+
+
+
+	/**
+	*		Search for an existing Attendee record in the DB
+	* 		@access		public
+	*/	
+	public function find_existing_attendee( $where_cols_n_values = FALSE ) {
+
+		// no search params means attendee object already exists
+		if ( ! $where_cols_n_values ) {
+			// search by combo of first and last names plus the email address
+			$where_cols_n_values = array( 'ATT_fname' => $this->_ATT_fname, 'ATT_lname' => $this->_ATT_lname, 'ATT_email' => $this->_ATT_email );  	 
+		}
+		
+		if ( $attendee = $this->get_attendee( $where_cols_n_values )) {
+			return $attendee;
+		} else {
+			return FALSE;
+		}
+
+	}
+
+
+
+
+	/**
+	 *		This function inserts table data
+	 *		
+	 *		@access public
+	 *		@param array $set_column_values - array of column names and values for the SQL INSERT 
+	 *		@return array
+	 */	
+	public function insert ($set_column_values) {
+		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
+		return $this->_insert( $this->table_name, $this->table_data_types, $set_column_values );
+	}
+
+
+
+
+
+	/**
+	 *		This function updates table data
+	 *		
+	 *		@access public
+	 *		@param array $set_column_values - array of column names and values for the SQL SET clause
+	 *		@param array $where_cols_n_values - column names and values for the SQL WHERE clause
+	 *		@return array
+	 */	
+	public function update ($set_column_values, $where_cols_n_values) {
+		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
+		return $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );	
+	}
+
+
+
+
+	/**
+	*		delete  a single attendee from db via their ID
+	* 
+	* 		@access		public
+	* 		@param		$ATT_ID		
+	*		@return 		mixed		array on success, FALSE on fail
+	*/	
+	public function delete_attendee_by_ID( $ATT_ID = FALSE ) {
+
+		if ( ! $ATT_ID ) {
+			return FALSE;
+		}
+		
+		$where_cols_n_values = array( 'ATT_ID' => $ATT_ID, 'STS_ID' => array( 'RAP', 'RNA', 'RPN' ));
+		$orderby = 'REG_date';
+		$sort = 'ASC';
+		$operator = array( 'ATT_ID' => '=', 'STS_ID' => 'IN' );
+		
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php');
+		$REG_MDL = EEM_Registration::instance();
+		//check if the attendee is associated with any registrations
+//		if ( $registrations = $REG_MDL->get_all_registrations_for_attendee( $ATT_ID, $status_array )) {
+		if ( $registrations = $REG_MDL->select_all_where ( $where_cols_n_values, $orderby, $sort, $operator )) {
+			$msg = __( 'The Attendee could not be deleted because there are existing Registrations associated with this Attendee.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		} 
+				
+		// retreive a particular transaction
+//		$where_cols_n_values = array( 'ATT_ID' => $ATT_ID );
+//		if ( $attendee = $this->delete ( $where_cols_n_values )) {
+		if ( $attendee = $this->delete_permanently_by_ID ( $ATT_ID )) {
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+
+	}
+
+
+
+
 }
 // End of file EEM_Attendee.model.php
 // Location: /ee-mvc/models/EEM_Attendee.model.php

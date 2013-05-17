@@ -49,36 +49,17 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 	 */
 	public function thank_you_page_logic(EE_Transaction $transaction) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		global $EE_Session;
 		//check for an existing payment from this gateway
 		$payments = $this->_PAY->get_all(array(array('PAY_gateway'=>$this->gateway(),'TXN_ID'=>$transaction->ID())));
 		//if it already exists, short-circuit updating the transaction
-		if(empty($payments)){
-			//no payment so far, create one
-			$payment = EE_Payment::new_instance(
-				array(
-					'TXN_ID' => $transaction->ID(), 
-					'STS_ID' => EEM_Payment::status_id_pending, 
-					'PAY_timestamp' => $transaction->datetime(), 
-					'PAY_method' => 'CART', // this should be the type of payment as in Invoice, Money Order, Credit Card, PayPal, etc
-					'PAY_amount' => NULL, 
-					'PAY_gateway' => $this->gateway(), 
-					'PAY_gateway_response' => __("Payment is pending. Your registration is not complete until payment is received",'event_espresso'),
-					'PAY_txn_id_chq_nmbr' => null,
-					'PAY_po_number' => null,
-					'PAY_extra_accounting' => null,
-					'PAY_via_admin' => false,
-					'PAY_details' => array(),
-				)
-			);
-			$payment->save();
-			$success = $this->update_transaction_with_payment($transaction, $payment);
-			$EE_Session->set_session_data(array('txn_results' => serialize($transaction->details())), 'session_data');
-			$session = $EE_Session->get_session_data();
-			//prevent trying to serialize a recursive relationship
-			unset($session['transaction']);
-			$transaction->set_txn_session_data( $session );
+		if( empty( $payments )){
+			$this->update_transaction_with_payment($transaction, null);
+			$transaction->save();
 		}
+		//createa hackey payment object, but dont save it
+		$payment = new EE_Payment($transaction->ID(), EEM_Payment::status_id_pending, current_time('timestamp'), array(), $transaction->total(), $this->_gateway_name, array(), null, null, null);
+		
+		do_action( 'action_hook_espresso__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
 		parent::thank_you_page_logic($transaction);
 		//check that there's still a transaction in the session.
 		//if there isn't, maybe we've cleared it (session ended with the thank you page)
@@ -89,7 +70,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 		$txn_results = array(
 				'gateway' => $this->_payment_settings['display_name'],
 				'approved' => FALSE,
-				'response_msg' => __('You\'re registration will be marked as complete once your payment is received.', 'event_espresso'),
+				'response_msg' => __('Your registration will be marked as complete once your payment is received.', 'event_espresso'),
 				'status' => 'Incomplete',
 				'raw_response' => serialize($_REQUEST),
 				'amount' => 0.00,
@@ -113,7 +94,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 		$transaction->set_paid($txn_results['amount']);
 		$transaction->set_details( $txn_results );
 		//$txn_status = $this->_TXN->pending_status_code;//'TPN';
-		$transaction->set_status(EEM_Transaction::pending_status_code);
+		$transaction->set_status(EEM_Transaction::open_status_code);
 		//update our local session data with what's in teh session singleton
 		$session = $EE_Session->get_session_data();
 		unset( $session['transaction'] );

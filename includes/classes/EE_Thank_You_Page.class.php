@@ -144,6 +144,20 @@ class EE_Thank_You_Page{
 		}
 		$template_args['currency_symbol']=$org_options['currency_symbol'];
 		$template_args['SPCO_step_2_url']= add_query_arg(array('e_reg'=>'register','step'=>'2'),get_permalink($org_options['event_page_id']));
+		$txn_details = $transaction->details();
+		
+		if($txn_details && array_key_exists('gateway',$txn_details)){
+			
+			//createa hackey payment object, but dont save it
+			$gateway_name = $txn_details['gateway'];
+			$payment = new EE_Payment($transaction->ID(), EEM_Payment::status_id_pending, current_time('timestamp'), array(), $transaction->total(), $gateway_name, array(), null, null, null);
+		
+			$gateway_content = EEM_Gateways::instance()->get_payment_overview_content($gateway_name,$payment);
+			//echo "gateway conten t $gateway_content";
+		}else{
+			$gateway_content = '';
+		}
+		$template_args['gateway_content'] = $gateway_content;
 		return  espresso_display_template(EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/payment_overview.template.php',$template_args,true);
 		
 	}

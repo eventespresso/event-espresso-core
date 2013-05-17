@@ -101,7 +101,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 	function column_ATT_lname($item) {
 
 		// edit attendee link
-		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'id'=>$item->ID() ), REG_ADMIN_URL );
+		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'ATT_ID'=>$item->ID() ), REG_ADMIN_URL );
 		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . html_entity_decode( stripslashes( $item->lname() ), ENT_QUOTES, 'UTF-8' ) . '</a>';
 		return $name_link;
 
@@ -115,23 +115,23 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 		//Build row actions
 		$actions = array();
 		// edit attendee link
-		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'id'=>$item->ID() ), REG_ADMIN_URL );
+		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'ATT_ID'=>$item->ID() ), REG_ADMIN_URL );
 		$actions['edit'] = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . __( 'Edit', 'event_espresso' ) . '</a>';
 
 		if ( $this->_view == 'in_use' ) {
 			// trash attendee link
-			$trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'trash_attendees', 'id'=>$item->ID() ), REG_ADMIN_URL );
+			$trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'trash_attendees', 'ATT_ID'=>$item->ID() ), REG_ADMIN_URL );
 			$actions['trash'] = '<a href="'.$trash_lnk_url.'" title="' . __( 'Move Attendee to Trash', 'event_espresso' ) . '">' . __( 'Move to Trash', 'event_espresso' ) . '</a>';
 		} else {
 			// restore attendee link
-			$restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'restore_attendees', 'id'=>$item->ID() ), REG_ADMIN_URL );
+			$restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'restore_attendees', 'ATT_ID'=>$item->ID() ), REG_ADMIN_URL );
 			$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . __( 'Restore Attendee', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
 			// delete attendee link
-			$delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'delete_attendees', 'id'=>$item->ID() ), REG_ADMIN_URL );
+			$delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'delete_attendees', 'ATT_ID'=>$item->ID() ), REG_ADMIN_URL );
 			$actions['delete'] = '<a href="'.$delete_lnk_url.'" title="' . __( 'Delete Attendee Permanently', 'event_espresso' ) . '">' . __( 'Delete Permanently', 'event_espresso' ) . '</a>';
 		}
 
-		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'id'=>$item->ID() ), REG_ADMIN_URL );
+		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'ATT_ID'=>$item->ID() ), REG_ADMIN_URL );
 		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . html_entity_decode( stripslashes( $item->fname() ), ENT_QUOTES, 'UTF-8' ) . '</a>';
 
 		//Return the name contents
@@ -162,13 +162,18 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 
 
 	function column_STA_ID($item) {
-		return $item->state_ID() != 0 ? $item->state_ID() : '';
+		$states = EEM_State::instance()->get_all_states();
+		$state = isset( $states[ $item->state_ID() ] ) ? $states[ $item->state_ID() ]->get( 'STA_name' ) : $item->state_ID();
+		return ! is_numeric( $state ) ? $state : '';
 	}
 
 
 
 	function column_CNT_ISO($item) {
-		return $item->country_ISO();
+		$countries = EEM_Country::instance()->get_all_countries();
+		//printr( $countries, '$countries  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		$country = isset( $countries[ $item->country_ISO() ] ) ? $countries[ $item->country_ISO() ]->get( 'CNT_name' ) : $item->country_ISO();
+		return ! is_numeric( $country ) ? $country : '';
 	}
 
 

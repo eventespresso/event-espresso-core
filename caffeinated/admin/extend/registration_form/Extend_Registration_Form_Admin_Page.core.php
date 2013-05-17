@@ -321,6 +321,27 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 
+	/**
+	 * Extracts the question field's values from the POST request to update or insert them
+	 * @return array where each key is the name of a model's field/db column, and each value is its value.
+	 */
+	private function _set_column_values_for(EEM_Base $model){
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		$set_column_values=array();
+		foreach($model->fields_settings() as $fieldName=>$settings){
+			// basically if QSG_identifier is empty or not set
+			if ( $fieldName == 'QSG_identifier' && ( isset( $this->_req_data['QSG_identifier'] ) && empty( $this->_req_data['QSG_identifier'] ) || ! isset( $this->_req_data['QSG_identifier'] ) )) {
+				$QSG_name = isset( $this->_req_data['QSG_name'] ) ? $this->_req_data['QSG_name'] : '' ;
+				$this->_req_data['QSG_identifier'] = strtolower( str_replace( ' ', '-', $QSG_name )) . '-' . uniqid();
+			}
+			$set_column_values[$fieldName]=array_key_exists($fieldName,$this->_req_data)?$this->_req_data[$fieldName]:null;
+		}
+		return $set_column_values;//validation fo this data to be performed by the model before insertion.
+	}
+
+
+
+
 	protected function _questions_overview_list_table() {
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_question', 'add_question', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_sidebar();
@@ -335,6 +356,42 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 
+	
+	protected function _edit_question( $action= 'add' ) {
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		$ID=isset( $this->_req_data['QST_ID'] ) && ! empty( $this->_req_data['QST_ID'] ) ? absint( $this->_req_data['QST_ID'] ) : FALSE;
+		
+		$this->_admin_page_title = ucwords( str_replace( '_', ' ', $this->_req_action ));
+		// add PRC_ID to title if editing 
+		$this->_admin_page_title = $ID ? $this->_admin_page_title . ' # ' . $ID : $this->_admin_page_title;
+		if($ID){
+			$question=$this->_question_model->get_one_by_ID($ID);
+			$additional_hidden_fields=array('QST_ID'=>array('type'=>'hidden','value'=>$ID));
+			$this->_set_add_edit_form_tags('update_question', $additional_hidden_fields);
+		}else{
+			$question=new EE_Question();
+			$this->_set_add_edit_form_tags('insert_question');
+		}
+		$questionTypes=array();
+		$count=0;
+		foreach($this->_question_model->allowed_question_types() as $type){
+			$questionTypes[$count]=array('id'=>$type,'text'=>$type);
+			$count++;
+		}
+		$this->_template_args['QST_ID']=$ID;
+		$this->_template_args['question']=$question;
+		$this->_template_args['question_types']=$questionTypes;
+		
+		$this->_set_publish_post_box_vars( 'id', $ID );
+		$this->_template_args['admin_page_content'] = espresso_display_template( REGISTRATION_FORM_TEMPLATE_PATH . 'questions_main_meta_box.template.php', $this->_template_args, TRUE );
+
+		// the details template wrapper
+		$this->display_admin_page_with_sidebar();	
+	}
+
+
+
+	
 	protected function _trash_question(){
 		$success=$this->_question_model->delete_by_ID(intval($this->_req_data['QST_ID']));
 		$query_args=array('action'=>'default','status'=>'all');
@@ -383,6 +440,116 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	
 		}
 		return $success;
+	}
+
+
+
+	protected function _insert_or_update_question($new_question = TRUE) {
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		$success=0;
+		$set_column_values=$this->_set_column_values_for($this->_question_model);
+		require_once('EE_Question.class.php');
+		if($new_question){
+			$results=$this->_question_model->insert($set_column_values);
+			if($results){
+				$success=1;
+				$ID=$results['new-ID'];
+			}else{
+				$success=0;
+				$ID=false;
+			}
+			$action_desc='created';
+		}else{
+			$ID=absint($this->_req_data['QST_ID']);
+			$pk=$this->_question_model->primary_key_name();
+			$wheres=array($pk=>$ID);
+			unset($set_column_values[$pk]);
+			$success= $this->_question_model->update($set_column_values,$wheres);
+			$action_desc='updated';
+		}
+		//save the related options
+		//trash removed options, save old ones
+			//get list of all options
+		$question=$this->_question_model->get_one_by_ID($ID);
+		$options=$question->options();
+		if(!empty($options)){
+			foreach($options as $option_ID=>$option){
+				$option_req_index=$this->_get_option_req_data_index($option_ID);
+				if($option_req_index!==FALSE){
+					$option->save($this->_req_data['question_options'][$option_req_index]);
+				}else{
+					//not found, remove it
+					$option->delete();
+				}
+			}
+		}
+		//save new related options
+		foreach($this->_req_data['question_options'] as $index=>$option_req_data){
+			if(empty($option_req_data['QSO_ID']) && (!empty($option_req_data['QSO_name']) || !empty($option_req_data['QSO_value']))){//no ID! save it!
+				if(empty($option_req_data['QSO_value'])){
+					$option_req_data['QSO_value']=$option_req_data['QSO_name'];
+				}
+				if(empty($option_req_data['QSO_name'])){
+					$option_req_data['QSO_name']=$option_req_data['QSO_value'];
+				}
+				$new_option=new EE_Question_Option($option_req_data['QSO_name'], $option_req_data['QSO_value'], $question->ID());
+				$new_option->save();
+			}
+		}
+		$query_args=array('action'=>'edit_question','QST_ID'=>$ID);
+		$this->_redirect_after_action($success, $this->_question_model->item_name($success), $action_desc, $query_args);
+	}
+
+
+
+	
+	/**
+	 * Upon saving a question, there should be an array of 'question_options'. This array is index numerically, but not by ID 
+	 * (this is done because new question optiosn don't have an ID, but we may want to add multiple simultaneously).
+	 * So, this function gets the index in that request data array called question_options. Returns FALSE if not found.
+	 * @param int $ID of the question option to find
+	 * @return int indexin in question_options array if successful, FALSE if unsuccessful
+	 */
+	private function _get_option_req_data_index($ID){
+		$req_data_for_question_options=$this->_req_data['question_options'];
+		foreach($req_data_for_question_options as $num=>$option_data){
+			if(array_key_exists('QSO_ID',$option_data) && intval($option_data['QSO_ID'])==$ID){
+				return $num;
+			}
+		}
+		return FALSE;
+	}
+
+	
+	
+	/**
+	 * method for performing updates to question order
+	 * @return array results array
+	 */	
+	public function update_question_order() {
+
+		$success = __( 'Question order was updated successfully.', 'event_espresso' );
+		
+		// grab our row IDs
+		$row_ids = isset( $this->_req_data['row_ids'] ) && ! empty( $this->_req_data['row_ids'] ) ? explode( ',', wp_strip_all_tags( $this->_req_data['row_ids'] )) : FALSE;
+
+		if ( is_array( $row_ids )) {
+			global $wpdb;
+			for ( $i = 0; $i < count( $row_ids ); $i++ ) {
+				//Update the questions when re-ordering
+				if ( ! EEM_Question::instance()->update ( array( 'QST_order' => $i+1 ), array( 'QST_ID' => $row_ids[$i] ) )) {
+					$success = FALSE;
+				} 
+			}
+		} else {
+			$success = FALSE;
+		}
+		
+		$errors = ! $success ? __( 'An error occured. The question order was not updated.', 'event_espresso' ) : FALSE;
+		
+		echo json_encode( array( 'return_data' => FALSE, 'success' => $success, 'errors' => $errors ));
+		die();
+		
 	}
 
 

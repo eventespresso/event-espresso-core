@@ -587,7 +587,7 @@ function eventespresso_ddtimezone($event_id = 0) {
 	if (empty($tzstring)) { // Create a UTC+- zone if no timezone string exists
 		$check_zone_info = false;
 		if (0 == $current_offset)
-			$tzstring = 'UTC+0';
+			$tzstring = 'UTC';
 		elseif ($current_offset < 0)
 			$tzstring = 'UTC' . $current_offset;
 		else

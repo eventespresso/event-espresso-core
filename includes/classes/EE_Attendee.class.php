@@ -54,6 +54,15 @@ class EE_Attendee extends EE_Base_Class{
 
 
     /**
+    *	Attendee Email Address
+	* 
+	*	@access	protected
+    *	@var string	
+    */
+	protected $_ATT_email = NULL;
+
+
+    /**
     *	Attendee Address
 	* 
 	*	@access	protected
@@ -83,7 +92,7 @@ class EE_Attendee extends EE_Base_Class{
     /**
     *	State ID
 	* 
-	*	foreign key from state table
+	*	state text (used to be foreign key to eventually-to-be-created state table)
 	*  
 	*	@access	protected
     *	@var int	
@@ -94,7 +103,7 @@ class EE_Attendee extends EE_Base_Class{
     /**
     *	Country ISO Code
 	* 
-	*	foreign key from country table
+	*	country text (used to be foreign key to eventually-to-be-created country table)
 	*  
 	*	@access	protected
     *	@var string	
@@ -109,15 +118,6 @@ class EE_Attendee extends EE_Base_Class{
     *	@var string	
     */
 	protected $_ATT_zip = NULL;
-
-
-    /**
-    *	Attendee Email Address
-	* 
-	*	@access	protected
-    *	@var string	
-    */
-	protected $_ATT_email = NULL;
 
 
     /**

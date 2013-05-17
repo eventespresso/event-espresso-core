@@ -3,7 +3,7 @@
 		
 			<div id="titlewrap">
 				<h5 style="margin: 1em .5em .1em;"><?php _e('Event Title', 'event_espresso'); ?></h5>
-				<input id="title" type="text" autocomplete="off" value="<?php echo $event_name; ?>"  size="30" name="event">
+				<input id="title" class="required" type="text" autocomplete="off" value="<?php echo $event_name; ?>"  size="30" name="event">
 			</div>
 			<!-- /titlewrap -->
 

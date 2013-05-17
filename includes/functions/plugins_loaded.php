@@ -1,96 +1,4 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-/**
- * 		define all event espresso db table names plus directory and url paths
- *
- * 		@access public
- * 		@return void
- */
-function espresso_define_tables_and_paths() {
-
-	global $wpdb;
-
-	define( 'DS', '/' );
-	define( 'PS', PATH_SEPARATOR );
-	
-	// add ESPRESSO directories to include_path
-	set_include_path(
-		dirname( espresso_main_file() ) . DS . 'includes' . DS . 'core' . DS . PS .
-		dirname( espresso_main_file() ) . DS . 'includes' . DS . 'models' . DS . PS .
-		dirname( espresso_main_file() ) . DS . 'includes' . DS . 'classes' . DS . PS .
-		dirname( espresso_main_file() ) . DS . 'includes' . DS . 'functions' . DS . PS .
-		dirname( espresso_main_file() ) . DS . 'gateways' . DS . PS .
-		dirname( espresso_main_file() ) . DS . 'helpers' . DS . PS .
-		get_include_path()
-	);
-
-	
-	// Define all plugin database tables
-	define("EVENTS_ANSWER_TABLE", $wpdb->prefix . "events_answer");
-	define("EVENTS_ATTENDEE_TABLE", $wpdb->prefix . "events_attendee");
-	define("EVENTS_ATTENDEE_COST_TABLE", $wpdb->prefix . "events_attendee_cost");
-	define("EVENTS_CATEGORY_TABLE", $wpdb->prefix . "events_category_detail");
-	define("EVENTS_CATEGORY_REL_TABLE", $wpdb->prefix . "events_category_rel");
-	define("EVENTS_DETAIL_TABLE", $wpdb->prefix . "events_detail");
-	define("EVENTS_DISCOUNT_CODES_TABLE", $wpdb->prefix . "events_discount_codes");
-	define("EVENTS_DISCOUNT_REL_TABLE", $wpdb->prefix . "events_discount_rel");
-	define("EVENTS_EMAIL_TABLE", $wpdb->prefix . "events_email");
-	define("EVENTS_LOCALE_TABLE", $wpdb->prefix . "events_locale");
-	define("EVENTS_LOCALE_REL_TABLE", $wpdb->prefix . "events_locale_rel");
-	define("EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE", $wpdb->prefix . "events_multi_event_registration_id_group");
-	define("EVENTS_PERSONNEL_TABLE", $wpdb->prefix . "events_personnel");
-	define("EVENTS_PERSONNEL_REL_TABLE", $wpdb->prefix . "events_personnel_rel");
-	define("ESP_PRICE_TABLE", $wpdb->prefix . "esp_price");
-	define("ESP_PRICE_TYPE", $wpdb->prefix . "esp_price_type");
-	define("ESP_COUNTRY", $wpdb->prefix . "esp_country");
-	define("ESP_DATETIME", $wpdb->prefix . "esp_datetime");
-	define("ESP_STATUS_TABLE", $wpdb->prefix . "esp_status");
-	define("EVENTS_QST_GROUP_TABLE", $wpdb->prefix . "events_qst_group");
-	define("EVENTS_QST_GROUP_REL_TABLE", $wpdb->prefix . "events_qst_group_rel");
-	define("EVENTS_QUESTION_TABLE", $wpdb->prefix . "events_question");
-	define("EVENTS_START_END_TABLE", $wpdb->prefix . "events_start_end");
-	define("ESP_STATE", $wpdb->prefix . "esp_state");
-	define("EVENTS_VENUE_TABLE", $wpdb->prefix . "events_venue");
-	define("EVENTS_VENUE_REL_TABLE", $wpdb->prefix . "events_venue_rel");
-	// End table definitions
-	
-	//define("EVENTS_PRICES_TABLE", $wpdb->prefix . "events_prices"); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<  ADDED BACK IN UNTIL PRICE TABLE CHANGES ARE COMPLETE
-
-	define('EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION);
-
-	//Define the plugin directory and path
-	$main_file = espresso_main_file();
-	define("EVENT_ESPRESSO_PLUGINPATH", DS . plugin_basename($main_file) . DS);
-	define("EVENT_ESPRESSO_PLUGINFULLPATH", plugin_dir_path($main_file));
-	define("EVENT_ESPRESSO_PLUGINFULLURL", plugin_dir_url($main_file));
-
-	//Define the includes directory
-	define("EVENT_ESPRESSO_INCLUDES_DIR", EVENT_ESPRESSO_PLUGINFULLPATH . 'includes' . DS );
-	define("EVENT_ESPRESSO_TEMPLATES", EVENT_ESPRESSO_PLUGINFULLPATH . 'templates' . DS );
-	define( 'EE_CORE', EVENT_ESPRESSO_INCLUDES_DIR . 'core' . DS );
-	define( 'EE_HELPERS', EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers' . DS );
-
-
-	//Define directory structure for uploads
-	//Create the paths
-	$uploads = wp_upload_dir();
-
-	//Define the uploads directory and url
-	define("EVENT_ESPRESSO_UPLOAD_DIR", $uploads['basedir'] . DS . 'espresso' . DS);
-	define("EVENT_ESPRESSO_UPLOAD_URL", $uploads['baseurl'] . '/espresso/' );
-
-	//Define the templates dirrectory and url
-	define("EVENT_ESPRESSO_TEMPLATE_DIR", $uploads['basedir'] . DS . 'espresso' . DS . 'templates' . DS);
-	define("EVENT_ESPRESSO_TEMPLATE_URL", $uploads['baseurl'] . '/espresso/templates/' );
-
-	//Define the gateway directory and url
-	define("EVENT_ESPRESSO_GATEWAY_DIR", $uploads['basedir'] . DS . 'espresso' . DS . 'gateways' . DS);
-	define("EVENT_ESPRESSO_GATEWAY_URL", $uploads['baseurl'] .'/espresso/gateways/' );
-}
-
-
-
-
-
 
 /**
  * 		Automagically load non-singleton class files - no need to include or require
@@ -145,7 +53,7 @@ function espresso_libraries_autoload($className) {
 }
 
 function espresso_classes_autoload($className) {
-	$filename = dirname(espresso_main_file()) . '/includes/classes/' . $className . '.class.php';
+	$filename = EVENT_ESPRESSO_INCLUDES_DIR . '/classes/' . $className . '.class.php';
 	if ( is_readable($filename) ) {
 		require_once( $filename );
 	}
@@ -153,7 +61,7 @@ function espresso_classes_autoload($className) {
 
 function espresso_classes_core_autoload($className) {
 	//let's setup an array of paths to check (for each subsystem)
-	$root = dirname(espresso_main_file()) . '/includes/core/';
+	$root = EE_CORE;
 	
 	//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
 	$dir_ref = array(
@@ -280,7 +188,7 @@ function espresso_load_org_options() {
 function espresso_EE_Session() {
 	global $EE_Session;
 	//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Session.class.php');
-	require_once( 'EE_Session.class.php' );
+	require_once( EVENT_ESPRESSO_INCLUDES_DIR . '/classes/EE_Session.class.php' );
 	// instantiate !!!
 	$EE_Session = EE_Session::instance();
 	if (!empty($_POST['clear_cart'])) {
@@ -338,10 +246,8 @@ add_action( 'AHEE_before_event_list', 'espresso_clear_session', 10, 2 );
  * 		@return void
  */
 function espresso_printr_session() {
-	$user = wp_get_current_user();
-	$wp_user_id = isset( $user->data->ID ) ? $user->data->ID : NULL;
 	$_REQUEST['ee_session'] = TRUE;
-	if ( isset( $_REQUEST['ee_session'] ) && $wp_user_id <= 1 ) {	
+	if ( isset( $_REQUEST['ee_session'] ) && current_user_can('administrator') && ( defined('WP_DEBUG') && WP_DEBUG ) ) {	
 		global $EE_Session;
 		echo '<pre style="height:auto;padding:1em;border:2px solid lightblue;">';
 		echo print_r( $EE_Session, TRUE );
@@ -621,7 +527,7 @@ function event_espresso_run_install( $table_name, $sql, $engine = 'ENGINE=MyISAM
 
 
 /**
- * Checks if this column already exists on 
+ * Checks if this column already exists on the specified table. Handy for addons which want to add a column
  * @param string $table_name (wihtout "wp_", eg "esp_attendee"
  * @param string $column_name
  * @param string $column_info if your SQL were 'ALTER TABLE table_name ADD price VARCHAR(10)', this would be 'VARCHAR(10)'
@@ -632,7 +538,7 @@ function espresso_add_column_if_it_doesnt_exist($table_name,$column_name,$column
 	$fields = espresso_get_fields_on_table($table_name);
 	if (!in_array($column_name, $fields)){
 		$alter_query="ALTER TABLE $full_table_name ADD $column_name $column_info";
-		echo "alter query:$alter_query";
+		//echo "alter query:$alter_query";
 		return mysql_query($alter_query);
 	}
 	return true;

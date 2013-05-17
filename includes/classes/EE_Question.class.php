@@ -54,7 +54,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * @access protected
 	 * @var string
 	 */
-	protected $_QST_system_ID=NULL;
+	protected $_QST_system=NULL;
 	
 	
 	/**
@@ -179,10 +179,10 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	*		Set	system name
 	* 
 	* 		@access		public		
-	*		@param		int		$QST_system_ID
+	*		@param		int		$QST_system
 	*/	
-	public function set_system_ID( $QST_system_ID = FALSE ) {
-		return $this->set('QST_system_ID',$QST_system_ID);
+	public function set_system_ID( $QST_system = NULL ) {
+		return $this->set('QST_system',$QST_system);
 	}
 	
 	/**
@@ -302,7 +302,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * @return string
 	 */
 	public function system_ID(){
-		return $this->get('QST_system_ID');
+		return $this->get('QST_system');
 	}
 	
 	/**
@@ -311,7 +311,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	public function required(){
-		return $this->get('QST_type');
+		return $this->get('QST_required');
 	}
 	
 	/**

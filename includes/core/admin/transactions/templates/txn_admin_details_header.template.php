@@ -17,4 +17,10 @@
 		</h2>
 	<?php endif; ?>
 				
+	<?php if ( $method_of_payment ) : ?>
+		<h3 id="txn-selected-method-of-payment-h3" style="padding:0;margin:0 0 1em;">
+			<?php echo __( 'Selected Method of Payment: ', 'event_espresso' );?><?php echo $method_of_payment;?>
+		</h3>
+	<?php endif; ?>
+				
 

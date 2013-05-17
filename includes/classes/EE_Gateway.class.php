@@ -147,7 +147,6 @@ abstract class EE_Gateway {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		if (!$this->_payment_settings = $this->_EEM_Gateways->payment_settings($this->_gateway_name)) {
-			
 			$this->_default_settings();
 			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway_name, $this->_payment_settings)) {
 				$msg = sprintf( __( '%s payment settings initialized.', 'event_espresso' ), $this->_payment_settings['display_name'] );
@@ -161,6 +160,10 @@ abstract class EE_Gateway {
 		}
 	}
 
+	/**
+	 * performs activating, deactivating, and updating gateways if proper $_POST parameters are sent
+	 * This should probably be done in Payment_Admin_page on a seperate route, not a function called by teh gateway's constructor
+	 */
 	private function _gateways_admin() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
@@ -332,21 +335,28 @@ abstract class EE_Gateway {
 						<?php endif; ?>
 					
 						<?php $this->_display_settings(); ?>
-					
+						
 						<tr>
 							<th>
-								<label><?php _e('Current Button Image', 'event_espresso'); ?></label>
+								<label for="<?php echo $this->_gateway_name; ?>_button_url">
+									<?php _e('Button Image URL', 'event_espresso'); ?>
+								</label>
 							</th>
 							<td>
-					<?php echo '<img src="' . $this->_payment_settings['button_url'] . '" />'; ?>
+								<?php 
+								$this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
+
+								<span class='ee_media_uploader_area'>
+									<img class="ee_media_image" src="<?php echo $this->_payment_settings['button_url']; ?>" />
+									<input class="ee_media_url" type="text" name="button_url" size='34' value="<?php echo $this->_payment_settings['button_url']; ?>">
+									<a href="#" class="ee_media_upload"><img src="images/media-button-image.gif" alt="Add an Image"></a>
+								</span><br/>
 							</td>
 						</tr>
-
+						
 						<tr>
-							<th></th>
-							<td>
-								<p>
-									<input type="hidden" name="update_<?php echo $this->_gateway_name; ?>" value="1">
+							<th>
+								<input type="hidden" name="update_<?php echo $this->_gateway_name; ?>" value="1">
 									<input 
 											id="save_<?php echo $this->_gateway_name; ?>_settings"
 											class="button-primary" 
@@ -355,6 +365,10 @@ abstract class EE_Gateway {
 											value="<?php echo __('Update', 'event_espresso') . ' ' . $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso');?>" 
 											style="margin:1em 4em 2em 0"
 										/>
+							</th>
+							<td>
+								<p>
+									
 									<?php $deactivate = add_query_arg(array('deactivate_' . $this->_gateway_name => 'true'), GATEWAYS_ADMIN_URL) . '#' . $this->_gateway_name; ?>
 									<a id="deactivate_<?php echo $this->_gateway_name; ?>" class="espresso-button button-secondary" type="submit" onclick="location.href='<?php echo $deactivate; ?>'">
 										<?php echo __('Deactivate', 'event_espresso') . ' ' . $this->_payment_settings['display_name'] . ' ' . __('Payments?'); ?>
@@ -643,12 +657,12 @@ abstract class EE_Gateway {
 		
 		//now, if teh payment's empty, we're going to update the transaction accordingly
 		if(empty($payment)){
-			$transaction->set_status($this->_TXN->pending_status_code);
+			$transaction->set_status(EEM_Transaction::open_status_code);
 			$legacy_txn_details = array(
-				'gateway' => $this->_payment_settings['display_name'],
+				'gateway' => $this->_gateway_name,
 				'approved' => FALSE,
-				'response_msg' => __('You\'re registration will be marked as complete once your payment is received.', 'event_espresso'),
-				'status' => 'Incomplete',
+				'response_msg' => __('Your registration will be marked as complete once your payment is received.', 'event_espresso'),
+				'status' => 'Open',
 				'raw_response' => serialize($_REQUEST),
 				'amount' => 0.00,
 				'method' => 'Off-line',
@@ -658,6 +672,8 @@ abstract class EE_Gateway {
 				'transaction_id' => ''
 			);
 			$transaction->set_details($legacy_txn_details);
+			$transaction->save();
+			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', $transaction );
 		}else{
 			//ok, now process the transaction according to the payment
 			$transaction->update_based_on_payments();
@@ -670,10 +686,10 @@ abstract class EE_Gateway {
 				'gateway' => $payment->gateway(),
 				'approved' => $payment->STS_ID()==EEM_Payment::status_id_approved ? true : false,
 				'response_msg' => $payment->pretty_status(),
-				'status' => in_array($payment->STS_ID(),array(EEM_Payment::status_id_approved)) ? 'Completed' : 'Incomplete',
+				'status' => in_array($payment->STS_ID(),array(EEM_Payment::status_id_approved)) ? 'Completed' : 'Open',
 				'raw_response' => $payment_details,
 				'amount' => $payment->amount(),
-				'method' => 'CART',
+				'method' => 'CART', // TODO : can we capture the credit card type used for this from the gateway (ie: Visa, MC)? or set it to PayPal if applicable
 				'auth_code' => ($payment_details && array_key_exists('payer_id',$payment_details)) ? $payment_details['payer_id'] : '',
 				'md5_hash' => ($payment_details && array_key_exists('verify_sign',$payment_details)) ? $payment_details['verify_sign'] : '',
 				//'invoice_number' => sanitize_text_field($_POST['invoice_id']),
@@ -685,9 +701,9 @@ abstract class EE_Gateway {
 			//the hash_salt doesn't seem to be used anywhere. 
 			//The tax data should be added on the thankyou page, not here, as this may be an IPN.
 			//updating teh transaction in the session should be done on the thank you page, as taht's where the session is always available.
+			$transaction->save();
+			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
 		}	
-		$transaction->save();
-		do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
 		return true;
 	}
 	
@@ -701,6 +717,5 @@ abstract class EE_Gateway {
 		//stubb
 		echo "";//just echo out a single space, so the output buffer that's listening doesnt complain its empty
 	}
-
-}
+} 
 

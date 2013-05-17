@@ -168,6 +168,8 @@ class EEM_Message_Template extends EEM_Soft_Delete_Base {
 	 */
 	public function get_all_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE, $active = TRUE ) {
 
+		$this->_set_table_columns();
+
 		// retrieve all templates
 		// we have to use limit and count later because we're not getting by rows.  So we have to retrieve all templates first.
 		
@@ -197,9 +199,9 @@ class EEM_Message_Template extends EEM_Soft_Delete_Base {
 		//let's check if there are any filters in here
 		$filters = array();
 		if ( isset( $_REQUEST['ee_messenger_filter_by'] ) )
-			$filters['MTP_messenger'] = $_REQUEST['ee_messenger_filter_by'];
-		if ( isset( $_REQUEST['ee_message_type_filter_by'] ) )
-			$filters['MTP_message_type'] = $_REQUEST['ee_message_type_filter_by'];
+			$filters[$this->table_name . '.MTP_messenger'] = $_REQUEST['ee_messenger_filter_by'];
+		if ( isset( $_REQUEST['ee_message_type_filter_by'] ) && $_REQUEST['ee_message_type_filter_by'] != 'none_selected' )
+			$filters[$this->table_name . '.MTP_message_type'] = $_REQUEST['ee_message_type_filter_by'];
 
 		//merge any extra parameters
 		$query_params = array_merge($filters, $query_params);
@@ -261,7 +263,56 @@ class EEM_Message_Template extends EEM_Soft_Delete_Base {
 		}
 	}
 
-	
+	/**
+	 * 	retrieve a single template group from db via it's column values
+	 * 	
+	 * 	@access		public
+	 * 	@param		array	$where_cols_n_values
+	 * 	@return 	mixed	array on success, FALSE on fail
+	 */
+	public function get_message_template( $where_cols_n_values = FALSE ) {
+
+		if (!$where_cols_n_values) {
+			return FALSE;
+		}
+
+		$this->_set_table_columns();
+
+		//need to make sure we only return ACTIVE templates BUT only if the 'MTP_is_active' reference isn't already in the where array.
+		if ( !isset( $where_cols_n_values['MTP_is_active'] ) ) {
+			$active = array( 'MTP_is_active' => 1 );
+			$where_cols_n_values = array_merge( $active, $where_cols_n_values );
+		}
+
+
+		if ( $template = $this->select_all_join_where($this->_join_statment, $this->table_data_types, $new_where) ) {
+			return $this->_create_objects( $template );
+		} else {
+			return FALSE;
+		}
+	}
+
+	/**
+	 * Has one purpose.  Return the grp_id for the template matching the where values.
+	 * @param  array $where_cols_n_values 
+	 * @return mixed int on success, false on fail
+	 */
+	public function get_message_template_grp_ID ( $where_cols_n_values = FALSE ) {
+		if ( !$where_cols_n_values) {
+			return FALSE;
+		}
+
+		$this->_set_table_columns();
+
+		//need to make sure we only return ACTIVE templates BUT only if the 'MTP_is_active' reference isn't already in the where array.
+		if ( !isset( $where_cols_n_values['MTP_is_active'] ) ) {
+			$active = array( 'MTP_is_active' => 1 );
+			$where_cols_n_values = array_merge( $active, $where_cols_n_values );
+		}
+
+		global $wpdb;
+		return $this->select_value_where($this->table_name, $this->table_data_types, 'GRP_ID', $where_cols_n_values );
+	}
 
 	/**
 	 * get_all_message_templates_by_messenger

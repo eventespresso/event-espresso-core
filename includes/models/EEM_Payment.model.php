@@ -214,18 +214,17 @@ class EEM_Payment extends EEM_Base {
 	*		Applies $payment to its associated EE_Transaction. This should update
 	 *		its EE_Transaction's status and TXN_paid.
 	* 		@access		public
-	* 		@param		$payment		payment object
-	*		@return		boolean success of updating the transaction or not. Note: returning 'true' doesnt necessarily mean the
-	 * transaction has been changed, it just means what's saved to teh db has been successful
+	* 		@param		EE_Payment/id $payment
+	*		@return		EE_Transaction that gets updated.
 	*/
-	public function update_payment_transaction( EE_Payment $payment ) {
+	public function update_payment_transaction( $payment ) {
 
 		$payment = $this->ensure_is_obj($payment);
 		$transaction = $payment->transaction();
 		if( $transaction){
 			// recalculate and set total paid, and how much is pending
 			$success = $transaction->update_based_on_payments();
-			return $success;
+			return $transaction;
 		}else{
 			return false;
 		}
@@ -271,6 +270,23 @@ class EEM_Payment extends EEM_Base {
 			$transaction->update_based_on_payments();
 		}
 		return $success;
+	}
+	
+	/**
+	 * Deleted the payment indicated by the paymetn object or id, and returns
+	 * the EE_transaction which gets affected and updated in the process
+	 * @param EE_Payment or id $payment_obj_or_id
+	 * @return EE_Transaction
+	 */
+	public function delete_by_ID($payment_obj_or_id) {
+		$payment_before_deleted = $this->ensure_is_obj($payment_obj_or_id);
+		$query_params = array();
+		$query_params[0] = array($this->get_primary_key_field()->get_name() => $payment_obj_or_id);
+		$query_params['limit'] = 1;
+		parent::delete($query_params);
+		$transaction = $payment_before_deleted->transaction();
+		$transaction->update_based_on_payments();	
+		return $transaction;
 	}
 
 

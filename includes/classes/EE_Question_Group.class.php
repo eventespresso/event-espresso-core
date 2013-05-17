@@ -84,7 +84,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 * @access protected
 	 * @var boolean 
 	 */
-	protected $_QSG_system_ID=NULL;
+	protected $_QSG_system=NULL;
 	
 	/**
 	 * Boolean which indicates whether thsi question group
@@ -201,7 +201,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	public function system_group(){
-		return $this->get('QSG_system_ID');
+		return $this->get('QSG_system');
 	}
 	
 	/**

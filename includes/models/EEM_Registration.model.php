@@ -170,6 +170,23 @@ class EEM_Registration extends EEM_Base {
 	*		@access private
 	*		@return void
 	*/
+	public static function reg_status_array() {
+		call_user_func( array( __CLASS__, '_get_registration_status_array' ));
+		return self::$_reg_status;
+	}
+
+
+
+
+
+
+
+
+	/**
+	 * 		get list of registration statuses
+	*		@access private
+	*		@return void
+	*/
 	private function _get_registration_status_array() {
 
 		global $wpdb;
@@ -191,7 +208,7 @@ class EEM_Registration extends EEM_Base {
 	* 		@param		int		$ATT_ID
 	*		@return 	EE_Registration[]
 	*/
-	public function get_all_registrations_for_attendee( $ATT_ID = FALSE ) {
+	public function get_all_registrations_for_attendee( $ATT_ID = FALSE, $status_array = FALSE ) {
 
 		if ( ! $ATT_ID ) {
 			return FALSE;
@@ -299,7 +316,10 @@ class EEM_Registration extends EEM_Base {
 			}
 
 			if ( $reg_status ) {
-				$SQL .= $sql_clause .' reg.STS_ID = "' . $reg_status   . '"';
+				$SQL .= $sql_clause ." reg.STS_ID = '$reg_status'";
+				$sql_clause = ' AND ';
+			} else {
+				$SQL .= $sql_clause ." reg.STS_ID != 'RCN'";
 				$sql_clause = ' AND ';
 			}
 
@@ -363,7 +383,10 @@ class EEM_Registration extends EEM_Base {
 		}
 
 		if ( $reg_status ) {
-			$SQL .= $sql_clause .'reg.STS_ID = "' . $reg_status  . '"';
+			$SQL .= $sql_clause ." reg.STS_ID = '$reg_status'";
+			$sql_clause = ' AND ';
+		} else {
+			$SQL .= $sql_clause ." reg.STS_ID != 'RCN'";
 			$sql_clause = ' AND ';
 		}
 
