@@ -348,8 +348,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['cancel_return'] = isset( $org_options['cancel_return'] ) ? $org_options['cancel_return'] : NULL;
 		$this->_template_args['cancel_return_page'] = isset( $org_options['cancel_return'] ) ? get_page( $org_options['cancel_return'] ) : FALSE;
 		
-		$this->_template_args['espresso_url_rewrite_activated'] = isset( $org_options['espresso_url_rewrite_activated'] ) ? $org_options['espresso_url_rewrite_activated'] : TRUE;
-		
 		$this->_set_add_edit_form_tags( 'update_espresso_page_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'espresso_page_settings.template.php', $this->_template_args, TRUE );
@@ -364,9 +362,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data['return_url'] = isset( $this->_req_data['return_url'] ) ? absint( $this->_req_data['return_url'] ) : NULL;
 		$data['cancel_return'] = isset( $this->_req_data['cancel_return'] ) ? absint( $this->_req_data['cancel_return'] ) : NULL;
 		$data['notify_url'] = isset( $this->_req_data['notify_url'] ) ? absint( $this->_req_data['notify_url'] ) : NULL;
-		$data['espresso_url_rewrite_activated'] = isset( $this->_req_data['espresso_url_rewrite_activated'] ) ? absint( $this->_req_data['espresso_url_rewrite_activated'] ) : NULL;
-		// flush rewrite rules
-		$this->_add_espresso_rewrite_rules( $data['espresso_url_rewrite_activated'] );
 
 		$data = apply_filters('FHEE_page_settings_save', $data);
 		
@@ -381,26 +376,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 
 
-	private function _add_espresso_rewrite_rules( $use_pretty_permalinks = FALSE ) {
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-		global $wpdb, $org_options;
-
-		if (empty($org_options['event_page_id'])) {
-			return;
-		}
-
-		if ( $use_pretty_permalinks ) {
-			// create pretty permalinks
-			$SQL = 'SELECT post_name  FROM ' . $wpdb->prefix . 'posts WHERE ID = %d';
-			$reg_page_url_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $org_options['event_page_id'] ));
-			// rules for event slug pretty links
-			add_rewrite_rule( $reg_page_url_slug . '/([^/]+)/?$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top');
-			//add_rewrite_rule( $reg_page_url_slug . '/([^/]+)/?$', 'index.php?pagename=' . $reg_page_url_slug . '&e_reg=$matches[1]', 'top');
-		}
-		flush_rewrite_rules();
-		
-	}
 
 
 	/*************		Templates 		*************/
