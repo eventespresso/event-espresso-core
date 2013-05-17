@@ -1037,7 +1037,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		<!--<h5 id="add-new-ticket-price-h5" ><?php _e('All Prices, Discounts and Surcharges that are Currently Active for This Event', 'event_espresso'); ?></h5>-->
 
-		<table id="event_editor_pricing" width="100%" >
+		<table id="event_editor_pricing" class="<?php echo $table_class;?>" width="100%" >
 			<thead>
 				<tr>
 					<td class="event-price-tbl-hdr-type"><b><?php //_e('Type'); ?></b></td>
@@ -1050,13 +1050,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 					<td class="event-price-tbl-hdr-desc"></td>
 				</tr>
 			</thead>
-			<?php 
+<?php 
 		$counter = 1;
 
-		if (  empty( $all_prices )) {
-			//ESP_PRICE_TABLE
-		}
-		if ( ! empty( $all_prices )) :
 		foreach ( $all_prices as $price_type => $prices ) :
 			foreach ( $prices as $price ) :
 				if ( ! $price->deleted() && isset( $PRT->type[$price->type()] )) :
@@ -1313,8 +1309,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				$counter++;
 			endforeach;
 		endforeach;
-		else :
-	/*	?>
+		?>
 
 				
 				<tr>
@@ -1325,41 +1320,41 @@ class Events_Admin_Page extends EE_Admin_Page {
 								
 									<td class="type-column ticket-price-quick-edit-column"> 
 										<div class="small-screen-table-label"><?php echo __('Type', 'event_espresso'); ?></div>
-										<span><?php echo __('Event Price', 'event_espresso'); ?></span>
+										<span><?php echo __('New Event Price', 'event_espresso'); ?></span>
 									</td> 
 									
 									<td class="order-column ticket-price-quick-edit-column"> 
 										<div class="small-screen-table-label"><?php echo __('Order', 'event_espresso'); ?></div>
-										<input class="edit-ticket-price-input quick-edit small-text jst-rght" type="text" id="quick-edit-ticket-price-PRC_order-XXXXXX" name="quick_edit_ticket_price[XXXXXX][PRC_order]" value="" disabled="disabled"/>
+										<input class="edit-ticket-price-input quick-edit small-text jst-rght" type="text" id="quick-edit-ticket-price-PRC_order-XXXXXX" name="quick_edit_ticket_price[XXXXXX][PRC_order]" value="" />
 									</td> 
 									
 									<td class="name-column ticket-price-quick-edit-column"> 
 										<div class="small-screen-table-label"><?php echo __('Name', 'event_espresso'); ?></div>
-										<input class="edit-ticket-price-input quick-edit regular-text" type="text" id="quick-edit-ticket-price-PRC_name-XXXXXX" name="quick_edit_ticket_price[XXXXXX][PRC_name]" value="" disabled="disabled" />
+										<input class="edit-ticket-price-input quick-edit regular-text" type="text" id="quick-edit-ticket-price-PRC_name-XXXXXX" name="quick_edit_ticket_price[XXXXXX][PRC_name]" value="" />
 									</td> 
 									
 									<td class="amount-column ticket-price-quick-edit-column"> 
 										<div class="small-screen-table-label"><?php echo __('Amount', 'event_espresso'); ?></div>
 										<span class="cur-sign jst-rght"><?php echo $org_options['currency_symbol']; ?></span>
-										<input class="edit-ticket-price-input quick-edit small-text jst-rght" type="text" id="quick-edit-ticket-price-PRC_amount-XXXXXX" name="quick_edit_ticket_price[XXXXXX][PRC_amount]" value="" disabled="disabled" />
+										<input class="edit-ticket-price-input quick-edit small-text jst-rght" type="text" id="quick-edit-ticket-price-PRC_amount-XXXXXX" name="quick_edit_ticket_price[XXXXXX][PRC_amount]" value="" />
 										<span class="percent-sign jst-left"></span>
 									</td> 
 
 									
-	<?php  
+	<?php  /*<!--
 	//DO NOT DELETE - NEW FEATURE IN PROGRESS
 //									<td class="tckts-left-column" style="width:7.5%; height:2.5em; text-align:right;"> 
 //										<input class="edit-tickets-left-input quick-edit" type="text" id="quick-edit-ticket-price[XXXXXX][PRC_tckts_left]" name="quick_edit_ticket_price[XXXXXX][PRC_tckts_left]" style="width:100%;text-align:right;" value="<?php echo $price->tckts_left(); ?>" disabled="disabled"/>
-//									</td> 
+//									</td> -->*/
 	  ?>
 									
 									<td class="edit-column ticket-price-quick-edit-column">
 										<div class="small-screen-table-label"><?php echo __('Actions', 'event_espresso') ?></div>									
-										<?php 
+										<?php /*
 //										 DO NOT DELETE - NEW FEATURE IN PROGRESS
 //										<a class='display-price-tickets-left-lnk display-ticket-manager' data-reveal-id="ticket-manager-dv" rel="XXXXXX"  title='Display the Ticket Manager for this Event' style="cursor:pointer;" >
 //											<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/tickets-1-16x16.png" width="16" height="16" alt="<?php _e('tickets left', 'event_espresso'); ?>"/>
-//										</a>										 
+//										</a>		*/								 
 										 ?>
 										<!--<a class='edit-event-price-lnk evt-prc-btn' rel="XXXXXX"  title="Edit Advanced Settings for this Event Price">
 											<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/settings-16x16.png" width="16" height="16" alt="<?php _e('edit', 'event_espresso'); ?>"/>
@@ -1371,20 +1366,15 @@ class Events_Admin_Page extends EE_Admin_Page {
 									
 									<td class="desc-column ticket-price-quick-edit-column"> 
 										<div class="small-screen-table-label"><?php echo __('Description', 'event_espresso') ?></div>		
-										<p class="description"><?php echo __('click "Add New Event Price" to create a ticket price for this event', 'event_espresso') ?></p>
-									</td> 
-									
+										<p class="description"><?php echo __('click "Add New Event Price" for more options when creating a new ticket price for this event', 'event_espresso') ?></p>
+									</td>									
 
 								</tr>
 							</table>
 						</div>
 					</td>				
 				</tr>
-
-		
-		<?php*/
-		endif;
-			?>
+			
 			</table>
 			<br/>
 
@@ -3174,7 +3164,27 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$ticket_prices_to_save = array();
 		$quick_edit_ticket_price = isset($this->_req_data['quick_edit_ticket_price']) ? $this->_req_data['quick_edit_ticket_price'] : array();
 //			echo printr( $quick_edit_ticket_price, '$quick_edit_ticket_price' );
-
+		if ( isset( $quick_edit_ticket_price['XXXXXX'] )) {
+			$new_quick_price = $quick_edit_ticket_price['XXXXXX'];
+			if ( isset( $new_quick_price['PRC_order'] ) && isset( $new_quick_price['PRC_name'] ) && ! empty( $new_quick_price['PRC_name'] ) && isset( $new_quick_price['PRC_amount'] )) {
+				$ticket_prices_to_save[] = array(
+					'PRT_ID' => 2,
+					'EVT_ID' => 4,
+					'PRT_is_global' => FALSE,
+					'PRC_overrides' => 0,
+					'PRC_deleted' => FALSE,
+					'PRC_order' => $new_quick_price['PRC_order'] ? $new_quick_price['PRC_order'] : 0,
+					'PRC_name' => $new_quick_price['PRC_name'] ? $new_quick_price['PRC_name'] : NULL,
+					'PRC_desc' => NULL,
+					'PRC_amount' => $new_quick_price['PRC_amount'] ? $new_quick_price['PRC_amount'] : 0,
+					'PRC_use_dates' => FALSE,
+					'PRC_start_date' => NULL,
+					'PRC_end_date' => NULL,
+					'PRC_is_active' => TRUE			
+				);
+			}
+		}
+		
 		// grab list of edited ticket prices
 		if ($edited_ticket_price_IDs = isset($this->_req_data['edited_ticket_price_IDs']) ? $this->_req_data['edited_ticket_price_IDs'] : FALSE) {
 			// remove last comma
@@ -3753,7 +3763,27 @@ class Events_Admin_Page extends EE_Admin_Page {
 		
 		$ticket_prices_to_save = array();
 		$quick_edit_ticket_price = isset($this->_req_data['quick_edit_ticket_price']) ? $this->_req_data['quick_edit_ticket_price'] : array();
-//		printr( $quick_edit_ticket_price, '$quick_edit_ticket_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		// printr( $quick_edit_ticket_price, '$quick_edit_ticket_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		if ( isset( $quick_edit_ticket_price['XXXXXX'] )) {
+			$new_quick_price = $quick_edit_ticket_price['XXXXXX'];
+			if ( isset( $new_quick_price['PRC_order'] ) && isset( $new_quick_price['PRC_name'] ) && ! empty( $new_quick_price['PRC_name'] ) && isset( $new_quick_price['PRC_amount'] )) {
+				$ticket_prices_to_save[] = array(
+					'PRT_ID' => 2,
+					'EVT_ID' => 4,
+					'PRT_is_global' => FALSE,
+					'PRC_overrides' => 0,
+					'PRC_deleted' => FALSE,
+					'PRC_order' => $new_quick_price['PRC_order'] ? $new_quick_price['PRC_order'] : 0,
+					'PRC_name' => $new_quick_price['PRC_name'] ? $new_quick_price['PRC_name'] : NULL,
+					'PRC_desc' => NULL,
+					'PRC_amount' => $new_quick_price['PRC_amount'] ? $new_quick_price['PRC_amount'] : 0,
+					'PRC_use_dates' => FALSE,
+					'PRC_start_date' => NULL,
+					'PRC_end_date' => NULL,
+					'PRC_is_active' => TRUE			
+				);
+			}
+		}
 
 		// grab list of edited ticket prices
 		if ($edited_ticket_price_IDs = isset($this->_req_data['edited_ticket_price_IDs']) ? $this->_req_data['edited_ticket_price_IDs'] : FALSE) {
@@ -3765,10 +3795,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 			$edited_ticket_price_IDs = array_flip($edited_ticket_price_IDs);
 			// flipper twice - hey!?!?! where did all the duplicate entries go???
 			$edited_ticket_price_IDs = array_flip($edited_ticket_price_IDs);
-//				echo printr( $edited_ticket_price_IDs, '$edited_ticket_price_IDs' );
+			// echo printr( $edited_ticket_price_IDs, '$edited_ticket_price_IDs' );
 			// grab existing ticket price data
 			if ( $edited_ticket_prices = isset($this->_req_data['edit_ticket_price']) ? $this->_req_data['edit_ticket_price'] : array() ) {
-//					echo printr( $edited_ticket_prices, '$edited_ticket_prices' );
+				// echo printr( $edited_ticket_prices, '$edited_ticket_prices' );
 				// cycle thru list                    
 				foreach ($edited_ticket_prices as $PRC_ID => $edited_ticket_price) {
 //					echo printr( $edited_ticket_price, '$edited_ticket_price' );	
@@ -3789,12 +3819,12 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		// add new tickets if any
 		if ($new_ticket_price = isset($this->_req_data['new_ticket_price']) ? $this->_req_data['new_ticket_price'] : array('PRC_name' => NULL)) {
-			if ( ! empty( $new_ticket_price['PRC_amount'] ) && ! empty( $new_ticket_price['PRC_name'] )) {
-				$ticket_prices_to_save[0] = $new_ticket_price;
-			} else if ( empty( $new_ticket_price['PRC_amount'] ) && ! empty( $new_ticket_price['PRC_name'] )) {
+			if ( $new_ticket_price['PRC_amount'] != '' && ! empty( $new_ticket_price['PRC_name'] )) {
+				$ticket_prices_to_save[] = $new_ticket_price;
+			} else if ( $new_ticket_price['PRC_amount'] == '' && ! empty( $new_ticket_price['PRC_name'] )) {
 				$msg = __( 'Event prices require an amount before they can be saved. Please make sure you enter an amount for the new event price before attempting to save it.', 'event_espresso' );
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );		
-			} else if ( ! empty( $new_ticket_price['PRC_amount'] ) && empty( $new_ticket_price['PRC_name'] )) {
+			} else if ( $new_ticket_price['PRC_amount'] != '' && empty( $new_ticket_price['PRC_name'] )) {
 				$msg = __( 'Event prices require a name before they can be saved. Please make sure you enter a name for the new event price before attempting to save it.', 'event_espresso' );
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );		
 			}
@@ -3807,6 +3837,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		if (!empty($ticket_prices_to_save)) {
 
 			//echo printr( $new_ticket_price, '$new_ticket_price' );
+			//printr( $ticket_prices_to_save, '$ticket_prices_to_save  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 			$PRC = EEM_Price::instance();
 
