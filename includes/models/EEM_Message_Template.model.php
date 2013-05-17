@@ -206,9 +206,9 @@ class EEM_Message_Template extends EEM_Base {
 		//let's check if there are any filters in here
 		$filters = array();
 		if ( isset( $_REQUEST['ee_messenger_filter_by'] ) )
-			$filters[$this->tablename . '.MTP_messenger'] = $_REQUEST['ee_messenger_filter_by'];
-		if ( isset( $_REQUEST['ee_message_type_filter_by'] ) )
-			$filters[$this->tablename . '.MTP_message_type'] = $_REQUEST['ee_message_type_filter_by'];
+			$filters[$this->table_name . '.MTP_messenger'] = $_REQUEST['ee_messenger_filter_by'];
+		if ( isset( $_REQUEST['ee_message_type_filter_by'] ) && $_REQUEST['ee_message_type_filter_by'] != 'none_selected' )
+			$filters[$this->table_name . '.MTP_message_type'] = $_REQUEST['ee_message_type_filter_by'];
 
 
 
@@ -267,7 +267,7 @@ class EEM_Message_Template extends EEM_Base {
 		$filters = array();
 		if ( isset( $_REQUEST['ee_messenger_filter_by'] ) )
 			$filters['MTP_messenger'] = $_REQUEST['ee_messenger_filter_by'];
-		if ( isset( $_REQUEST['ee_message_type_filter_by'] ) )
+		if ( isset( $_REQUEST['ee_message_type_filter_by'] ) && $_REQUEST['ee_message_type_filter_by'] != 'none_selected' )
 			$filters['MTP_message_type'] = $_REQUEST['ee_message_type_filter_by'];
 
 		//merge any extra parameters
@@ -594,6 +594,8 @@ class EEM_Message_Template extends EEM_Base {
 		$results = isset( $set_column_values['GRP_ID'] ) ? $set_column_values['GRP_ID'] : FALSE;
 		$GRP_ID = false;
 
+		$this->_set_table_columns();
+
 		//split up the set_cols_n_values AND where_cols_n_values
 		foreach ( $set_column_values as $name => $value ) {
 			if ( in_array( $name, array( 'MTP_ID', 'MTP_context', 'MTP_template_field', 'MTP_content' ) ) ) {
@@ -652,6 +654,7 @@ class EEM_Message_Template extends EEM_Base {
 		$main_table = $join_table = $main_table_where = $join_table_where = array();
 		$results = FALSE;
 
+		$this->_set_table_columns();
 
 		//split up the set_cols_n_values AND where_cols_n_values
 		foreach ( $set_column_values as $name => $value ) {
@@ -683,11 +686,20 @@ class EEM_Message_Template extends EEM_Base {
 
 		foreach ( $where_cols_n_values as $name => $value ) {
 			if ( in_array( $name, array( 'MTP_ID', 'MTP_context', 'MTP_template_field', 'MTP_content' ) ) ) {
+				if ( isset($this->_join_table_columns[$this->_join_table_name . '.' . $name] ) ) {
+					$this->_join_table_columns[$name] = $this->_join_table_columns[$this->_join_table_name . '.' . $name];
+					unset( $this->_join_table_columns[$this->_join_table_name . '.' . $name]);
+				}
 				$join_table_where[$name] = $value;
 			} else {
+				if ( isset($this->table_data_types[$this->table_name . '.' . $name]) ) {
+					$this->table_data_types[$name] = $this->table_data_types[$this->table_name . '.' . $name];
+					unset( $this->table_data_types[$this->table_name . '.' . $name]);
+				}
 				$main_table_where[$name] = $value;
 			}
 		}
+
 
 
 		if ( !empty( $main_table ) && !empty( $main_table_where ) ) {
