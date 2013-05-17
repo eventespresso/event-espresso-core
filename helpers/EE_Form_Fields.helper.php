@@ -910,10 +910,7 @@ class EE_Form_Fields {
 	 * @return string 
 	 */
 	static function prep_answer( $answer ){
-//		if ( is_array( $answer )) {
-//			printr( $answer, '$answer  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		}
-		return htmlspecialchars( trim( stripslashes( $answer )), ENT_QUOTES, 'UTF-8' );
+		return htmlentities( trim( stripslashes( $answer )), ENT_QUOTES, 'UTF-8' );
 	}
 
 
