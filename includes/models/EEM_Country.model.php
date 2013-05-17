@@ -27,6 +27,12 @@ class EEM_Country extends EEM_TempBase {
 
   	// private instance of the Attendee object
 	private static $_instance = NULL;
+  	// array of all countries
+	private static $_all_countries = FALSE;
+  	// array of all active countries
+	private static $_active_countries = FALSE;
+
+
 
 	/**
 	 *		This funtion is a singleton method used to instantiate the EEM_Country object
@@ -71,6 +77,33 @@ class EEM_Country extends EEM_TempBase {
 			);
 		
 		parent::__construct();
+	}
+
+
+	/**
+	*		_get_countries
+	* 
+	* 		@access		private
+	*		@return 		void
+	*/	
+	public function get_all_countries() {
+		if ( ! self::$_all_countries ) {
+			self::$_all_countries = $this->get_all( NULL, 'ASC', array( 0,99999 ));
+		}
+		return self::$_all_countries;
+	}
+
+	/**
+	*		_get_countries
+	* 
+	* 		@access		private
+	*		@return 		void
+	*/	
+	public function get_all_active_countries() {
+		if ( ! self::$_active_countries ) {
+			self::$_active_countries =  $this->get_all_where( array( 'CNT_active' => 1 ), NULL, 'ASC', '=', array( 0,99999 ));
+		}
+		return self::$_active_countries;
 	}
 
 
