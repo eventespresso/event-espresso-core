@@ -184,10 +184,11 @@ function espresso_calendar_do_stuff($show_expired) {
 		if ($espresso_calendar['throttle']['amount'] > 1)
 			$throttle = 'LIMIT ' . $espresso_calendar['throttle']['amount'];
 	}
-	
+	// set boolean for categories 
+	$use_categories = isset( $espresso_calendar['disable_categories'] ) && $espresso_calendar['disable_categories'] == FALSE ? TRUE : FALSE;
 	//Build the SQL to run
 	//Get the categories
-	if ($event_category_id != "") {
+	if ( ! empty( $event_category_id )) {
 		$type = 'cat';
 		$sql = "SELECT e.*, c.category_name, c.category_desc, c.display_desc, ese.start_time, ese.end_time FROM " . EVENTS_DETAIL_TABLE . " e ";
 		$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
@@ -215,15 +216,10 @@ function espresso_calendar_do_stuff($show_expired) {
 		//Get all events
 		$type = 'all';
 		$sql = "SELECT e.*, ese.start_time, ese.end_time";
-		if (isset($espresso_calendar['disable_categories']) && $espresso_calendar['disable_categories'] == false) {
-			$sql .= ", c.category_meta, c.category_identifier, c.category_name, c.category_desc, c.display_desc ";
-		}
+
 		$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
 		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
-		if (isset($espresso_calendar['disable_categories']) && $espresso_calendar['disable_categories'] == false) {
-			$sql .= " LEFT JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
-			$sql .= " LEFT JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = r.cat_id ";
-		}
+
 		if ( function_exists('espresso_version') ) {
 			if ( espresso_version() >= '3.2.P' ) { // if we're using ee 3.2+, is_active is true/false
 				$sql .= " WHERE e.is_active != false ";
@@ -247,22 +243,46 @@ function espresso_calendar_do_stuff($show_expired) {
 	//echo '<h4>$sql : ' . $sql . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4><br /><br /><br />';
 
 	$events = array();
-	$events_data = $wpdb->get_results($wpdb->prepare($sql, ''));
-	foreach ($events_data as $event) {
+	// grab event data with event IDs as the array keys
+	$events_data = $wpdb->get_results( $wpdb->prepare( $sql, '' ), OBJECT_K );
+	//echo '<h3>$events_data</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $events_data, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
+	
+	//Do we need to get Category data ?
+	if ( $use_categories && $type == 'all' ) {
+		// grab event_ids from query results above to use in category query
+		$EVT_IDs = array_keys( $events_data );
+		$SQL = "SELECT event_id, c.category_meta, c.category_identifier, c.category_name, c.category_desc, c.display_desc";
+		$SQL .= " FROM " . EVENTS_CATEGORY_REL_TABLE . ' r ';
+		$SQL .= " LEFT JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = r.cat_id ";
+		$SQL .= " WHERE event_id IN ( '" . implode( "', '", $EVT_IDs ) . "' )";
+		$categories = $wpdb->get_results( $wpdb->prepare( $SQL, '' ));
+		$event_categories = array();
+		foreach ( $categories as $category ) {
+			$event_categories[ $category->event_id ][] = $category;
+		}
+	}
+	
+	foreach ( $events_data as $event ) {
 		global $this_event_id;
 		$this_event_id = $event->id;
-		
-		if (isset($espresso_calendar['disable_categories']) && $espresso_calendar['disable_categories'] == false) {
-		
-			//Get details about the category of the event
-			$category_data['category_meta'] = unserialize($event->category_meta);
-			
+
+		//Get details about the category of the event
+		if ( $use_categories ) {
+			// extract info from separate array of category data ?
+			if ( isset( $event_categories[ $event->id ] )) {
+				// get first element of array without modifying original array
+				$primary_cat = array_shift( array_values( $event_categories[ $event->id ] ));
+				$category_data['category_meta'] = unserialize( $primary_cat->category_meta );
+			} else if ( $type == 'cat' ) {
+				// or was one category set via the shortcode
+				$category_data['category_meta'] = unserialize( $event->category_meta );
+			} else {
+				$category_data['category_meta'] = array();
+			}
 			//Assign colors to events by category
-			if( isset($category_data['category_meta']) && $category_data['category_meta']['use_pickers'] == 'Y' ){
-				
+			if( isset( $category_data['category_meta']['use_pickers'] ) && $category_data['category_meta']['use_pickers'] == 'Y' ){				
 				$eventArray['color'] = $category_data['category_meta']['event_background'];
-				$eventArray['textColor'] = $category_data['category_meta']['event_text_color'];
-				
+				$eventArray['textColor'] = $category_data['category_meta']['event_text_color'];				
 			}
 		}
 		
@@ -385,13 +405,18 @@ function espresso_calendar_do_stuff($show_expired) {
 		//This decalares the category ID as the CSS class name
 		$eventArray['className'] = '';
 		$eventArray['eventType'] = '';
-		if (isset($espresso_calendar['disable_categories']) && $espresso_calendar['disable_categories'] == false) {
-			if (isset($espresso_calendar['enable_cat_classes']) && $espresso_calendar['enable_cat_classes'] == true) {
+		if ( $use_categories ) {
+			if ( isset( $espresso_calendar['enable_cat_classes'] ) && $espresso_calendar['enable_cat_classes'] == TRUE ) {
 				//This is the css class name
-				$eventArray['className'] = isset($event->category_identifier) && !empty($event->category_identifier) ? $event->category_identifier : '';
-	
-				//This can be used to use the category id as the event type
-				$eventArray['eventType'] = isset($event->category_name) && !empty($event->category_name) ? $event->category_name : '';
+				$eventArray['className'] = '';	
+
+				if ( isset( $event_categories[ $event->id ] )) {
+					foreach ( $event_categories[ $event->id ] as $EVT ) {
+						$eventArray['className'] .= ' ' . $EVT->category_identifier;	
+					}
+					// set category id as the event type
+					$eventArray['eventType'] = isset( $primary_cat->category_meta ) && ! empty( $primary_cat->category_meta ) ? $primary_cat->category_meta : '';
+				}		
 			}
 		}
 		
@@ -427,6 +452,7 @@ if (!function_exists('espresso_calendar')) {
 
 		extract(shortcode_atts(array('event_category_id' => '', 'show_expired' => false, 'cal_view' => 'month'), $atts));
 		$event_category_id = "{$event_category_id}";
+		//echo '<h4>$event_category_id : ' . $event_category_id . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		$show_expired = "{$show_expired}";
 		$cal_view = "{$cal_view}";
 		do_action('action_hook_espresso_calendar_do_stuff',$show_expired);
