@@ -320,6 +320,11 @@ abstract class EE_messenger extends EE_Messages_Base {
 		$content = '<div id="message-templates-' . $this->name . '" class="message-templates-container">' . "\n\t";
 		
 		foreach ( $this->active_templates as $template ) {
+			//if this is a template for a different event then get out because we're only showing templates related to THIS event (NOT other events)
+			$this_template_event_id = $template->event();
+			if ( !empty($event_id) && !empty( $this_template_event_id ) && $event_id != $template->event() )
+				continue;
+
 			$et_set = isset($event_template_set[$template->message_type()]) ? true : false;
 			$et_trashed = isset($event_template_trashed[$template->message_type()]) ? true : false;
 			$et_group_id = isset($event_group_id[$template->message_type()]) ? $event_group_id[$template->message_type()] : false;

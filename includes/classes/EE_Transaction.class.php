@@ -635,6 +635,8 @@ class EE_Transaction extends EE_Base_Class{
 				return __('Incomplete','event_espresso');
 			case EEM_Transaction::open_status_code:
 				return __('Pending Payment','event_espresso');
+			case EEM_Transaction::overpaid_status_code:
+				return __('Overpaid','event_espresso');
 			default:
 				return __('Unknown','event_espresso');
 		}
@@ -689,6 +691,19 @@ class EE_Transaction extends EE_Base_Class{
 	 */
 	public function is_incomplete(){
 		if($this->status_ID() == EEM_Transaction::incomplete_status_code){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	/**
+	 * Returns whether this transaction is overpaid
+	 * Useful in templates and other logic for deciding if we should ask for another payment...
+	 * @return boolean
+	 */
+	public function is_overpaid(){
+		if($this->status_ID() == EEM_Transaction::overpaid_status_code){
 			return true;
 		}else{
 			return false;

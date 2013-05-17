@@ -600,6 +600,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		}
 
+		global $wpdb;
+
 		return $templates;
 	}
 
@@ -1822,8 +1824,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			}
 		}
 
-		$action_desc = $trash ? 'moved to the trash' : 'restored';
-		$item_desc = $all ? 'Message Template Group' : 'Message Template Context';
+		$action_desc = $trash ? __('moved to the trash', 'event_espresso') : __('restored', 'event_espresso');
+
+		$item_desc = $all ? _n('Message Template Group', 'Message Template Groups', $success, 'event_espresso') : _n('Message Template Context', 'Message Template Contexts', $success, 'event_espresso');
 
 		if ( defined('DOING_AJAX') ) {
 			$this->_check_template_switch();

@@ -95,7 +95,7 @@ class EE_MSG_Template {
 		if ( $count > 0 ) {
 			$MTP->update( array('MTP_is_active' => 1), array('MTP_messenger' => $messenger, 'MTP_message_type' => $message_type ) );
 		}
-
+		
 		return ( $count > 0 ) ? TRUE : FALSE;
 	}
 

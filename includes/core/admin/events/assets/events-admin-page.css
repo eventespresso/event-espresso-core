@@ -2,13 +2,13 @@
 
 #toplevel_page_espresso_events-table-frm .column-id { width:40px; text-align: right; }
 #toplevel_page_espresso_events-table-frm .column-name { }
-#toplevel_page_espresso_events-table-frm .column-venue  {  }
-#toplevel_page_espresso_events-table-frm .column-start_date { }
+#toplevel_page_espresso_events-table-frm .column-venue  { width:17.5%; }
+#toplevel_page_espresso_events-table-frm .column-start_date { width:10%; }
 #toplevel_page_espresso_events-table-frm .column-start_time { width:7.5%; }
-#toplevel_page_espresso_events-table-frm .column-reg_begins {  }
-#toplevel_page_espresso_events-table-frm .column-status  { width:7.5%; }
+#toplevel_page_espresso_events-table-frm .column-reg_begins { width:15%; }
+#toplevel_page_espresso_events-table-frm .column-status  { width:9%; max-width:84px; }
 #toplevel_page_espresso_events-table-frm .column-attendees { width:5%; }
-#toplevel_page_espresso_events-table-frm .column-actions {  }
+#toplevel_page_espresso_events-table-frm .column-actions { width:10%; }
 
 
 .remove-item { cursor: pointer; vertical-align: middle; }

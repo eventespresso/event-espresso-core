@@ -53,8 +53,8 @@ class EE_Template_Validator {
 	static function verify_is_array_of($variable_to_test,$name_of_variable,$class_name,$allow_null='allow_null'){
 		if(!WP_DEBUG)return;
 		self::verify_argument_is_one_of($allow_null, 'allow_null', array('allow_null','do_not_allow_null'));
-		if('allow_null'!=$allow_null){
-			self::verify_isnt_null($variable_to_test);
+		if('allow_null' == $allow_null && is_null($variable_to_test)){
+			return;
 		}
 		self::verify_is_array($variable_to_test, $name_of_variable);
 		foreach($variable_to_test as $key=>$array_element){
@@ -111,8 +111,12 @@ class EE_Template_Validator {
 	 * @return void
 	 * @throws EE_Error
 	 */
-	static function verify_instanceof($variable_to_test,$name_of_variable,$class_name){
+	static function verify_instanceof($variable_to_test,$name_of_variable,$class_name, $allow_null = 'do_not_allow_null'){
 		if(!WP_DEBUG)return;
+		self::verify_argument_is_one_of($allow_null, 'allow_null', array('allow_null','do_not_allow_null'));
+		if($allow_null == 'allow_null' && is_null($variable_to_test)){
+			return;
+		}
 		if($variable_to_test == NULL ||  !is_a($variable_to_test,$class_name)){
 			$msg[]=__('Variable %s is not of the correct type.','event_espresso');
 			$msg[]=__("It should be of type %s",'event_espresso');

@@ -100,7 +100,7 @@
 		</div>
 	</div>
 
-<?php if ( $display_address || $display_desc ) { ?>
+<?php if ( $display_address || (isset($display_desc) && $display_desc) ) { ?>
 
 	<div class="event-list-ticket-info-dv event-display-boxes">
 		<h3 class="ui-widget-header ui-corner-top"><?php echo __('Event Information', 'event_espresso'); ?></h3>

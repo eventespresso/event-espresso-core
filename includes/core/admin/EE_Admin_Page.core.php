@@ -724,20 +724,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$nonce = isset($this->_req_data[ $this->_req_nonce  ]) ? sanitize_text_field( $this->_req_data[ $this->_req_nonce  ] ) : '';
 			$this->_verify_nonce( $nonce, $this->_req_nonce );	
 		}		
-
-		$this->_set_nav_tabs(); //set the nav_tabs array
-		$args = array();	
-
-		
+		//set the nav_tabs array
+		$this->_set_nav_tabs();		
+		// grab callback function
+		$func = is_array( $this->_route ) ? $this->_route['func'] : $this->_route;
 		// check if callback has args
-		if ( is_array( $this->_route )) {
-			$func = $this->_route['func'];
-			$args = isset( $this->_route['args'] ) ?  $this->_route['args'] : array();
-		} else {
-			$func = $this->_route;
-		}
+		$args = is_array( $this->_route ) && isset( $this->_route['args'] ) ? $this->_route['args'] : array();
 			
-		if ( $func ) {		
+		if ( ! empty( $func )) {
 			// and finally,  try to access page route
 			if ( call_user_func_array( array( $this, &$func  ), $args ) === FALSE ) {
 				// user error msg
@@ -1175,10 +1169,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 		/** SCRIPTS **/
 
 		//register all scripts
+		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('jquery', 'ee-parse-uri'), EVENT_ESPRESSO_VERSION, true );
 		//wp_register_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-datepicker.js', array('jquery-ui-core'), EVENT_ESPRESSO_VERSION, true );
 		wp_register_script('jquery-ui-timepicker-addon', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker'), EVENT_ESPRESSO_VERSION, true );
-		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('jquery', 'ee-parse-uri'), EVENT_ESPRESSO_VERSION, true );
-		wp_register_script('jquery-validate', EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.min.js", array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
+		// register jQuery Validate - see /includes/functions/wp_hooks.php
+		espresso_register_jquery_validate();	
+		//script for sorting tables
 		wp_register_script('espresso_ajax_table_sorting', EE_CORE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js", array('ee_admin_js', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
 		//script for parsing uri's
 		wp_register_script( 'ee-parse-uri', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/parseuri.js', array(), EVENT_ESPRESSO_VERSION, TRUE );
@@ -1392,16 +1388,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		// cycle thru views
 		foreach ( $this->_views as $key => $view ) {
 			// check for current view
-			if ( $this->_view == $view['slug']) {
-				$this->_views[ $key ]['class'] = 'current';
-			} else {
-				$this->_views[ $key ]['class'] = '';
-			}
-			
+			$this->_views[ $key ]['class'] = $this->_view == $view['slug'] ? 'current' : '';
 			$query_args['action'] = $this->_req_action;
-			$query_args['_wpnonce'] = wp_create_nonce( $query_args['action'] . '_nonce' );
 			$query_args['status'] = $view['slug'];
-			$this->_views[ $key ]['url'] = add_query_arg( $query_args, $this->_admin_base_url );
+			$this->_views[ $key ]['url'] = EE_Admin_Page::add_query_args_and_nonce( $query_args, $this->_admin_base_url );
 		}
 		
 		return $this->_views;
