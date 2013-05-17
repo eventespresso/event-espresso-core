@@ -391,6 +391,16 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 
+	public function load_scripts_styles_contact_list() {
+		wp_deregister_style('espresso_reg');
+		wp_register_style('espresso_att', REG_ASSETS_URL . 'espresso_attendees_admin.css', array('ee-admin-css'), EVENT_ESPRESSO_VERSION );
+		wp_enqueue_style('espresso_att');
+	}
+
+
+
+
+
 	public function load_scripts_styles_new_registration() {
 		wp_register_script( 'espresso-validate-new-reg', REG_ASSETS_URL . 'espresso-validate-new-reg.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE);
 		wp_enqueue_script('espresso-validate-new-reg');
