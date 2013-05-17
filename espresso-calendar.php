@@ -190,7 +190,7 @@ function espresso_calendar_do_stuff($show_expired) {
 	//Get the categories
 	if ( ! empty( $event_category_id )) {
 		$type = 'cat';
-		$sql = "SELECT e.*, c.category_name, c.category_desc, c.display_desc, ese.start_time, ese.end_time FROM " . EVENTS_DETAIL_TABLE . " e ";
+		$sql = "SELECT e.*, c.category_meta, c.category_identifier, c.category_name, c.category_desc, c.display_desc, ese.start_time, ese.end_time FROM " . EVENTS_DETAIL_TABLE . " e ";
 		$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
 		$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = r.cat_id ";
 		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
@@ -269,7 +269,7 @@ function espresso_calendar_do_stuff($show_expired) {
 		//Get details about the category of the event
 		if ( $use_categories ) {
 			// extract info from separate array of category data ?
-			if ( isset( $event_categories[ $event->id ] )) {
+			if ( isset( $event_categories[ $event->id ] ) && $type == 'all') {
 				// get first element of array without modifying original array
 				$primary_cat = array_shift( array_values( $event_categories[ $event->id ] ));
 				$category_data['category_meta'] = unserialize( $primary_cat->category_meta );
@@ -407,16 +407,20 @@ function espresso_calendar_do_stuff($show_expired) {
 		$eventArray['eventType'] = '';
 		if ( $use_categories ) {
 			if ( isset( $espresso_calendar['enable_cat_classes'] ) && $espresso_calendar['enable_cat_classes'] == TRUE ) {
-				//This is the css class name
-				$eventArray['className'] = '';	
-
-				if ( isset( $event_categories[ $event->id ] )) {
+				
+				if ( isset( $event_categories[ $event->id ] ) && $type == 'all' ) {
 					foreach ( $event_categories[ $event->id ] as $EVT ) {
+						//This is the css class name
 						$eventArray['className'] .= ' ' . $EVT->category_identifier;	
 					}
-					// set category id as the event type
-					$eventArray['eventType'] = isset( $primary_cat->category_meta ) && ! empty( $primary_cat->category_meta ) ? $primary_cat->category_meta : '';
-				}		
+					// set event type to the category id
+					$eventArray['eventType'] = isset( $primary_cat->category_name ) && ! empty( $primary_cat->category_name ) ? $primary_cat->category_name : '';
+				} else {
+					//This is the css class name
+					$eventArray['className'] .= isset( $event->category_identifier ) ? ' ' . $event->category_identifier : '';
+					// set event type to the category id
+					$eventArray['eventType'] .= isset( $event->category_name ) ? ' ' . $event->category_name : '';
+				}
 			}
 		}
 		
