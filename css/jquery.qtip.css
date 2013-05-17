@@ -259,6 +259,10 @@ span.time_cal_qtip {
 	margin-right: 0;
 }
 
+.reg_now + .time_cal_qtip {
+	margin-left: 10px;
+}
+
 
 /* IE9 fix - removes all filters */
 .ui-tooltip:not(.ie9haxors) div.ui-tooltip-content, .ui-tooltip:not(.ie9haxors) div.ui-tooltip-titlebar {

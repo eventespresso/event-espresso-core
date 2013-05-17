@@ -257,6 +257,7 @@ html .fc,
 	color: #fff;               /* default TEXT color */
 	font-size: .85em;
 	cursor: default;
+	padding: 2px 4px;
 	}
 
 a.fc-event {
