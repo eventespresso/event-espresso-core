@@ -2064,6 +2064,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*/
 	protected function _attendee_contact_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		
+		$STA_MDL = EEM_State::instance();
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_new_attendee', 'add-attendee', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}

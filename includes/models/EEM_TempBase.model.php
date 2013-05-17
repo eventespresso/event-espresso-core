@@ -636,8 +636,11 @@ abstract class EEM_TempBase extends EEM_Base{
 	/**
 	*		retreive  ALL objects of this model from db
 	* 
-	* 		@access		public
-	*		@return mixed EE_Base_Class is output='OBJECT_K', int is output='count'
+	 * @param string $orderby name of a column
+	 * @param string $order 'ASC' or 'DESC'
+	 * @param string $limit
+	* 	@access		public
+	*	@return mixed EE_Base_Class is output='OBJECT_K', int is output='count'
 	*/	
 	public function get_all( $orderby = null, $order = 'ASC',$limit=array(0,10),$output='OBJECT_K' ) {
 		return $this->get_all_where(array(),$orderby,$order,'=',$limit,$output);
