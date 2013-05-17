@@ -53,7 +53,8 @@ abstract class EE_Base_Class {
 		$modelName=$this->_get_model_name();
 		require_once($modelName.".model.php");
 		//$modelObject=new $modelName;
-		$model=call_user_func($modelName."::instance");
+//		$model=call_user_func($modelName."::instance");
+		$model = call_user_func( array( $modelName, 'instance' ));
 		return $model;
 	}
 	
