@@ -505,3 +505,26 @@ function espresso_check_no_ticket_prices_array() {
 function espresso_display_admin_notice() {
 	echo EE_Error::get_notices();
 }
+
+
+
+
+function espresso_add_rewrite_rules() {
+
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+	global $wpdb, $org_options;
+
+	if (empty($org_options['event_page_id'])) {
+		return;
+	}
+
+	if ( get_option('permalink_structure') != '' ) {
+		// create pretty permalinks
+		$SQL = 'SELECT post_name  FROM ' . $wpdb->prefix . 'posts WHERE ID = %d';
+		$reg_page_url_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $org_options['event_page_id'] ));
+		// rules for event slug pretty links
+		add_rewrite_rule( $reg_page_url_slug . '/([^/]+)/?$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top');
+		//add_rewrite_rule( $reg_page_url_slug . '/([^/]+)/?$', 'index.php?pagename=' . $reg_page_url_slug . '&e_reg=$matches[1]', 'top');
+	}
+	
+}
