@@ -101,7 +101,7 @@ abstract class EE_Base_Class {
 				case 'primary_key':
 				case 'foreign_key':
 				case 'int':
-					return intval($value);
+					return stripslashes( intval($value));
 				case 'bool':
 				case 'deleted_flag':
 					//$value=intval($value);
@@ -114,18 +114,18 @@ abstract class EE_Base_Class {
 				case 'fullhtml':
 				case 'email':
 				case 'all_caps_key':
-					return $value;
+					return stripslashes( $value );
 				case 'float':
-					return floatval($value);
+					return stripslashes( floatval($value));
 				case 'date':
 					return intval($value);
 				case 'enum':
-					return $value;
+					return stripslashes( $value );
 					break;
 				case 'serialized_text':
 					//a serialized_text field SHOULD be an array right now,
 					//but in case it isn't unserialize it
-					return maybe_unserialize($value);
+					return stripslashes_deep( maybe_unserialize( $value ));
 			}
 		}else{
 			EE_Error::add_error(sprintf(__("You have requested a field named %s on model %s",'event_espresso'),$fieldName,get_class($this)), __FILE__, __FUNCTION__, __LINE__);
@@ -209,17 +209,17 @@ abstract class EE_Base_Class {
 			case 'plaintext':
 			case 'primary_text_key':
 			case 'foreign_text_key':
-				$return=htmlentities(wp_strip_all_tags("$value"), ENT_QUOTES, 'UTF-8' );
+				$return=html_entity_decode( wp_strip_all_tags( "$value" ), ENT_QUOTES, 'UTF-8' );
 				break;
 			case 'simplehtml':
 				global $allowedtags;
 				$allowedtags['ol']=array();
 				$allowedtags['ul']=array();
 				$allowedtags['li']=array();
-				$return=  htmlentities(wp_kses("$value",$allowedtags),ENT_QUOTES,'UTF-8');
+				$return=  html_entity_decode( wp_kses("$value",$allowedtags),ENT_QUOTES,'UTF-8');
 				break;
 			case 'fullhtml':
-				$return= htmlentities("$value",ENT_QUOTES,'UTF-8');
+				$return= html_entity_decode( "$value",ENT_QUOTES,'UTF-8');
 				break;
 			case 'email':
 				$return = sanitize_email($value);
