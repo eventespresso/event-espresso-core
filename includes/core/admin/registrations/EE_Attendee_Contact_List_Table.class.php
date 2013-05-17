@@ -162,15 +162,18 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 
 
 	function column_STA_ID($item) {
-		return $item->state_ID();
-		$state = isset( EEM_State::$all_states[ $item->state_ID() ] ) ? EEM_State::$all_states[ $item->state_ID() ] : $item->state_ID();
+		$states = EEM_State::instance()->get_all_states();
+		$state = isset( $states[ $item->state_ID() ] ) ? $states[ $item->state_ID() ]->get( 'STA_name' ) : $item->state_ID();
 		return ! is_numeric( $state ) ? $state : '';
 	}
 
 
 
 	function column_CNT_ISO($item) {
-		return $item->country_ISO();
+		$countries = EEM_Country::instance()->get_all_countries();
+		//printr( $countries, '$countries  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		$country = isset( $countries[ $item->country_ISO() ] ) ? $countries[ $item->country_ISO() ]->get( 'CNT_name' ) : $item->country_ISO();
+		return ! is_numeric( $country ) ? $country : '';
 	}
 
 
