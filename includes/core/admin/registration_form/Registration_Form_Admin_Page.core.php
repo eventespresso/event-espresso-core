@@ -434,39 +434,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		return FALSE;
 	}
 
-	
-	
-	/**
-	 * method for performing updates to question order
-	 * @return array results array
-	 */	
-	public function update_question_order() {
-
-		$success = __( 'Question order was updated successfully.', 'event_espresso' );
-		
-		// grab our row IDs
-		$row_ids = isset( $this->_req_data['row_ids'] ) && ! empty( $this->_req_data['row_ids'] ) ? explode( ',', wp_strip_all_tags( $this->_req_data['row_ids'] )) : FALSE;
-
-		if ( is_array( $row_ids )) {
-			global $wpdb;
-			for ( $i = 0; $i < count( $row_ids ); $i++ ) {
-				//Update the questions when re-ordering
-				if ( ! EEM_Question::instance()->update ( array( 'QST_order' => $i+1 ), array( 'QST_ID' => $row_ids[$i] ) )) {
-					$success = FALSE;
-				} 
-			}
-		} else {
-			$success = FALSE;
-		}
-		
-		$errors = ! $success ? __( 'An error occured. The question order was not updated.', 'event_espresso' ) : FALSE;
-		
-		echo json_encode( array( 'return_data' => FALSE, 'success' => $success, 'errors' => $errors ));
-		die();
-		
-	}
-
-
 
 
 	/******************************    QUESTION GROUPS    ******************************/

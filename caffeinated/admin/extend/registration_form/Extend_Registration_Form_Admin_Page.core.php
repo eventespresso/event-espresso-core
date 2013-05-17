@@ -325,7 +325,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	 * Extracts the question field's values from the POST request to update or insert them
 	 * @return array where each key is the name of a model's field/db column, and each value is its value.
 	 */
-	private function _set_column_values_for(EEM_Base $model){
+	protected function _set_column_values_for(EEM_Base $model){
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$set_column_values=array();
 		foreach($model->fields_settings() as $fieldName=>$settings){
@@ -510,7 +510,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	 * @param int $ID of the question option to find
 	 * @return int indexin in question_options array if successful, FALSE if unsuccessful
 	 */
-	private function _get_option_req_data_index($ID){
+	protected function _get_option_req_data_index($ID){
 		$req_data_for_question_options=$this->_req_data['question_options'];
 		foreach($req_data_for_question_options as $num=>$option_data){
 			if(array_key_exists('QSO_ID',$option_data) && intval($option_data['QSO_ID'])==$ID){

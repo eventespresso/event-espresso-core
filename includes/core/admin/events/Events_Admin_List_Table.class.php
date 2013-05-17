@@ -284,6 +284,10 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 				'event_id' => $item->event_id
 			);
 
+		$reports_query_args = array(
+				'action' => 'reports',
+				'EVT_ID' => $item->event_id
+			);
 
 		$export_query_args = array(
 				'action' => 'export_events',
@@ -295,37 +299,50 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$view_link = espresso_reg_url( $item->event_id, $item->slug );
 		$trash_event_link = EE_Admin_Page::add_query_args_and_nonce( $trash_event_query_args, EVENTS_ADMIN_URL );
 		$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );
+		$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, REG_ADMIN_URL );
 		$export_event_link = EE_Admin_Page::add_query_args_and_nonce( $export_query_args, EVENTS_ADMIN_URL );
 
 		$actionlinks[] = '<a href="' .  $view_link . '" title="' . __('View Event', 'event_espresso') . '" target="_blank">';
 		$actionlinks[] = '<div class="view_btn"></div></a>';
 		$actionlinks[] = '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '"><div class="edit_btn"></div></a>';
 		$actionlinks[] = '<a href="' . $attendees_link . '" title="' . __('View Attendees', 'event_espresso') . '"><div class="complete_btn"></div></a>';
+		$actionlinks[] = '<a href="' . $reports_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="reports_btn"></div></a>' . "\n\t";
 		$actionlinks[] = '<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=unique_id_info_' . $item->event_id  . '" title="' . __('Get Short URL/Shortcode', 'event_espresso') . '"><div class="shortcode_btn"></div></a>';
 		$actionlinks[] = '<a href="#" onclick="window.location=\'' . $export_event_link . '\'" title="' . __('Export to Excel', 'event_espresso') . '"><div class="excel_exp_btn"></div></a>';
 		$actionlinks[] = '<a href="#" onclick="window.location=\'' . $export_event_link . '\'" title="' . __('Export to CSV', 'event_espresso') . '"><div class="csv_exp_btn"></div>
 			</a>';
+		$actionlinks[] = '<a href="' . $trash_event_link . '" title="' . __('Trash Event', 'event_espresso') . '">
+				<img width="16" height="16" alt="trash" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/trash-small-16x16.png" style="margin-top:3px;">			
+			</a>' . "\n\t";
 
 		$actionlinks = apply_filters('FHEE_list_table_events_actions_column_action_links', $actionlinks, $item );
-		
-		$content = '<a href="' .  $view_link . '" title="' . __('View Event', 'event_espresso') . '" target="_blank">' . "\n\t";
-		$content .= '<div class="view_btn"></div></a>' . "\n\t";
-		$content .= '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '"><div class="edit_btn"></div></a>' . "\n\t";
-		$content .= '<a href="' . $attendees_link . '" title="' . __('View Attendees', 'event_espresso') . '"><div class="complete_btn"></div></a>' . "\n\t";
-		$content .= '<a href="' . $reports_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="reports_btn"></div></a>' . "\n\t";
-		$content .= '<a href="#" onclick="prompt(\'Shortcode:\', jQuery(\'#shortcode-' . $item->event_id . '\').val()); return false;" title="' . __('Get Short URL/Shortcode', 'event_espresso') . '"><div class="shortcode_btn"></div></a>' . "\n\t";
-		$content .= '<a href="'.$export_event_link.'" title="' . __('Export to CSV', 'event_espresso') . '"><div class="csv_exp_btn"></div></a>' . "\n";
-		$content .= '
-		<a href="' . $trash_event_link . '" title="' . __('Trash Event', 'event_espresso') . '">
-			<img width="16" height="16" alt="trash" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/trash-small-16x16.png" style="margin-top:3px;">			
-		</a>' . "\n\t";
-		
+
+		$content = '<div style="width:180px;">' . "\n\t";
+		$content .= implode( "\n\t", $actionlinks );
 		//todo: we need to put back in a email attendees link via the new messages system
+		$content .= "\n" . '</div>' . "\n";
 		$content .= '<div id="unique_id_info_' . $item->event_id . '" style="display:none">' . "\n\t";
 		$content .= sprintf( __('<h2>Short URL/Shortcode</h2><p>This is the short URL to this event:</p><p><span  class="updated fade">%s</span></p><p>This will show the registration form for this event just about anywhere. Copy and paste the following shortcode into any page or post.</p><p><span  class="updated fade">[SINGLEEVENT single_event_id="%s"]</span></p> <p class="red_text"> Do not use in place of the main events page that is set in the Organization Settings page.', 'event_espresso'), $view_link, stripslashes_deep($item->event_identifier) );
 		$content .= "\n";
 		$content .= '</div>';
-		$content .= '<input id="shortcode-' . $item->event_id . '" type="hidden" value="[SINGLEEVENT single_event_id='.stripslashes_deep($item->event_identifier).']">';	
+//		$content = '<a href="' .  $view_link . '" title="' . __('View Event', 'event_espresso') . '" target="_blank">' . "\n\t";
+//		$content .= '<div class="view_btn"></div></a>' . "\n\t";
+//		$content .= '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '"><div class="edit_btn"></div></a>' . "\n\t";
+//		$content .= '<a href="' . $attendees_link . '" title="' . __('View Attendees', 'event_espresso') . '"><div class="complete_btn"></div></a>' . "\n\t";
+//		$content .= '<a href="' . $reports_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="reports_btn"></div></a>' . "\n\t";
+//		$content .= '<a href="#" onclick="prompt(\'Shortcode:\', jQuery(\'#shortcode-' . $item->event_id . '\').val()); return false;" title="' . __('Get Short URL/Shortcode', 'event_espresso') . '"><div class="shortcode_btn"></div></a>' . "\n\t";
+//		$content .= '<a href="'.$export_event_link.'" title="' . __('Export to CSV', 'event_espresso') . '"><div class="csv_exp_btn"></div></a>' . "\n";
+//		$content .= '
+//		<a href="' . $trash_event_link . '" title="' . __('Trash Event', 'event_espresso') . '">
+//			<img width="16" height="16" alt="trash" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/trash-small-16x16.png" style="margin-top:3px;">			
+//		</a>' . "\n\t";
+//		
+//		//todo: we need to put back in a email attendees link via the new messages system
+//		$content .= '<div id="unique_id_info_' . $item->event_id . '" style="display:none">' . "\n\t";
+//		$content .= sprintf( __('<h2>Short URL/Shortcode</h2><p>This is the short URL to this event:</p><p><span  class="updated fade">%s</span></p><p>This will show the registration form for this event just about anywhere. Copy and paste the following shortcode into any page or post.</p><p><span  class="updated fade">[SINGLEEVENT single_event_id="%s"]</span></p> <p class="red_text"> Do not use in place of the main events page that is set in the Organization Settings page.', 'event_espresso'), $view_link, stripslashes_deep($item->event_identifier) );
+//		$content .= "\n";
+//		$content .= '</div>';
+//		$content .= '<input id="shortcode-' . $item->event_id . '" type="hidden" value="[SINGLEEVENT single_event_id='.stripslashes_deep($item->event_identifier).']">';	
 		return $content;
 	}
 

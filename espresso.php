@@ -57,7 +57,7 @@ $eei18n_js_strings = array();
 global $wpdb;
 
 if ( ! defined( 'DS' )) {
-	define( 'DS', DIRECTORY_SEPARATOR );
+	define( 'DS', '/' );//used to be DIRECTORY_SEPERATOR, but that caused issues on windows
 }
 if ( ! defined( 'PS' )) {
 	define( 'PS', PATH_SEPARATOR );
