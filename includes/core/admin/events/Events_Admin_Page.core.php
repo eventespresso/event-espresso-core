@@ -3379,15 +3379,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 				}
 
 				if (!$new_price->ID()) {
-//echo '<h1>insert !!!</h1>';
-//echo '<h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-					$results = $new_price->insert();
 					$this->_req_data['price_count']++;
-				} else {
-//echo '<h1>update !!!</h1>';
-//echo '<h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-					$results = $new_price->update();
-				}
+				} 
+				$results = $new_price->save();
 			}
 		}
 
