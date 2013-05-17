@@ -454,18 +454,17 @@ class EE_Form_Fields {
 		$system_question = self::_load_system_dropdowns( $question );
 		$question = array_merge($system_question,$question);
 		//printr( $question, '$question  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$display_text = isset($question['QST_display_text'] ) ? $question['QST_display_text'] : FALSE;
-		$answer = isset($question['ANS_value'] ) ? $question['ANS_value'] : '';
-		$input_name = isset($question['QST_input_name'] ) ? $question['QST_input_name'] : FALSE;
+		$display_text = isset( $question['QST_display_text'] ) ? $question['QST_display_text'] : FALSE;
+		$answer = isset( $question['ANS_value'] ) ? $question['ANS_value'] : '';
+		$input_name = isset( $question['QST_input_name'] ) ? $question['QST_input_name'] : FALSE;
 		$input_id = isset( $question['QST_input_id'] ) ? $question['QST_input_id'] : '';
 		$input_class = isset( $question['QST_input_class'] ) ? $question['QST_input_class'] : '';
 		$disabled = isset( $question['disabled'] ) ? $question['disabled'] : '';
 		$required_label = apply_filters( 'FHEE_required_form_input_label', '<em>*</em>' );
-		$required = isset($question['QST_required']) ? array( 'label' => $required_label, 'class' => 'required', 'title' => $question['QST_required'] ) : array();
+		$required = isset( $question['QST_required'] ) && $question['QST_required'] ? array( 'label' => $required_label, 'class' => 'required', 'title' => $question['QST_required'] ) : array();
 		$label_class = 'espresso-form-input-lbl';		
-		$options = isset($question['QST_options']) ? self::prep_answer_options( $question['QST_options'] ) : array();
-		$system_ID = isset($question['QST_system']) ? $question['QST_system'] : NULL;
-		
+		$options = isset( $question['QST_options'] ) ? self::prep_answer_options( $question['QST_options'] ) : array();
+		$system_ID = isset( $question['QST_system'] ) ? $question['QST_system'] : NULL;
 		
 		switch ( $question['QST_type'] ){
 			
