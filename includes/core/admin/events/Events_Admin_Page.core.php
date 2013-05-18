@@ -3773,7 +3773,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 					'PRT_is_global' => FALSE,
 					'PRC_overrides' => 0,
 					'PRC_deleted' => FALSE,
-					'PRC_order' => $new_quick_price['PRC_order'] ? $new_quick_price['PRC_order'] : 0,
+					'PRC_order' => $new_quick_price['PRC_order'] ? array( 2 => $new_quick_price['PRC_order'] ) : array( 2 => 0 ),
 					'PRC_name' => $new_quick_price['PRC_name'] ? $new_quick_price['PRC_name'] : NULL,
 					'PRC_desc' => NULL,
 					'PRC_amount' => $new_quick_price['PRC_amount'] ? $new_quick_price['PRC_amount'] : 0,
