@@ -879,7 +879,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			//echo '<h4>$REG_ID : ' . $REG_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 			$registration = EEM_Registration::instance()->get_registration_by_ID( $REG_ID );
 			$success = $registration->set_status( $status );
-			$registration->update();
+			$registration->save();
 			//printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		} 
 		return array( 'REG_ID' => $REG_ID, 'success' => $success );
@@ -1316,7 +1316,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					$attendee->set( 'ATT_zip', $QST_zip );
 					$attendee->set( 'ATT_phone', $QST_phone );
 					// save to the db
-					$attendee->update();
+					$attendee->save();
 				} else {
 					// no existing attendee exists so create a new one
 					$attendee = new EE_Attendee( 
@@ -1336,7 +1336,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					// grab and set the new ID
 					if ( isset( $results['new-ID'] ) && ! empty( $results['new-ID'] )) {
 						$attendee->set( 'ATT_ID', absint( $results['new-ID'] ));
-						$attendee->update();
+						$attendee->save();
 					} else {
 						$success = FALSE;
 						EE_Error::add_error( __('An error occured. An ID for the new attendee could not be retreived.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
@@ -1347,7 +1347,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 //					var_dump( $attendee->ID() );
 					// now update the registration with the "new" attendee ID
 					$registration->set( 'ATT_ID', $attendee->ID() );
-					$registration->update();
+					$registration->save();
 				}
 			}
 		}

@@ -29,14 +29,6 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
-
-	public function __construct ( EE_Admin_Page $admin_page ) {
-		parent::__construct( $admin_page );
-	}
-
-
-
-
 	protected function _set_hooks_properties() {
 		$this->_name = 'pricing';
 		//if we were going to add our own metaboxes we'd use the below.

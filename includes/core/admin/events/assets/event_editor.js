@@ -504,8 +504,9 @@ jQuery(document).ready(function($) {
 		$('#new-ticket-price-PRC_name').removeClass('required');
 	});
 	
-
-	$('#update_event_event_form').validate();
+	//@todo: why was this validation being called on document ready?? from mike. 
+	//although it works fine in 4.0-BETA, but not in FET-2476-integration
+	//$('#update_event_event_form').validate();
 
 // ===================================================================
 // Author: Matt Kruse <matt@mattkruse.com>
