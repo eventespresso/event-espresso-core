@@ -24,9 +24,13 @@ EE_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 	</h2>
 
 	<div class='reg-payment-details'>
-		<?php if ( empty($payments)){?>
-			<?php _e("No payment have yet been made toward this registration.",'event_espresso')?>
-			<?php echo $gateway_content?>
+		<?php if ( empty($payments)){
+			if($transaction->total()){
+				_e("No payment have yet been made toward this registration.",'event_espresso');
+				echo $gateway_content;
+			}else{
+				 _e("No payment required",'event_espresso');
+			}?>
 		<?php }else{?>
 		
 			<?php foreach ($payments as $payment) { ?>
@@ -68,7 +72,11 @@ EE_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 							<?php }else{?>
 								<img class="espresso-unpaid-status-icon-img" align="absmiddle" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/exclamation.png" width="16" height="16" alt="<?php $payment->e_pretty_status() ?>" title="<?php $payment->e_pretty_status() ?>" />
 							<?php } ?>
-							<?php $payment->e_pretty_status() ?>
+							<?php $payment->e_pretty_status();
+							if ( $show_try_pay_again_link) {?>
+							<a href='<?php echo $SPCO_step_2_url?>'><?php _e("Try Another Payment Method", 'event_espresso'); ?></a>
+								<?php }
+							?>
 						</td>
 					</tr>
 					<?php $gateway_payment_content = $payment->gateway_payment_overview_content();
@@ -84,12 +92,7 @@ EE_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 		<?php }?>
 	</div>
 	<br/>
-	<?php 
-			if ( $show_try_pay_again_link) {
-				?>
-			<a href='<?php echo $SPCO_step_2_url?>'><?php _e("Try Another Payment Method", 'event_espresso'); ?></a>
-				<?php }
-			?>
+	
 
 	<h3>
 		<?php _e('Transaction Status', 'event_espresso'); ?>
@@ -118,14 +121,20 @@ EE_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 						<label><?php _e('Transaction Status: ', 'event_espresso'); ?></label>
 					</td>
 					<td>
-						<?php if ($transaction->is_completed()) { ?>
+						<?php
+						if ($transaction->is_completed()) { ?>
 							<img class="espresso-paid-status-icon-img" align="absmiddle" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/accept.png" width="16" height="16" alt="<?php $transaction->e_pretty_status() ?>" title="<?php $transaction->e_pretty_status() ?>" />
 						<?php } elseif($transaction->is_pending()) { ?>
 							<img class="espresso-unpaid-status-icon-img" align="absmiddle" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/error.png" width="16" height="16" alt="<?php $transaction->e_pretty_status() ?>" title="<?php $transaction->e_pretty_status() ?>" />
 						<?php }else{?>
 							<img class="espresso-unpaid-status-icon-img" align="absmiddle" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/exclamation.png" width="16" height="16" alt="<?php $transaction->e_pretty_status() ?>" title="<?php $transaction->e_pretty_status() ?>" />
 						<?php } ?>
-						<?php $transaction->e_pretty_status(); ?>
+						<?php $transaction->e_pretty_status(); 
+						if ( $show_try_pay_again_link) {
+							?>
+						<a href='<?php echo $SPCO_step_2_url?>'><?php _e("Try Another Payment Method", 'event_espresso'); ?></a>
+							<?php }
+						?>
 					</td>
 				</tr>
 				<tr>
