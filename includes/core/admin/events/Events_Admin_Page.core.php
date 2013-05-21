@@ -1767,7 +1767,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 //			add_meta_box('espresso_event_editor_preapproval_box', __('Attendee Pre-Approval', 'event_espresso'), array( $this, 'preapproval_metabox' ), $this->_current_screen->id, 'side', 'default');
 //		}
 
-		if ($org_options['use_personnel_manager']) {
+		if ( $caffeinated && $org_options['use_personnel_manager'] && function_exists( 'espresso_personnel_cb' )) {
 			add_meta_box('espresso_event_editor_personnel_box', __('Event Staff / Speakers', 'event_espresso'), array( $this, 'personnel_metabox' ), $this->_current_screen->id, 'side', 'default');
 		}
 	}
