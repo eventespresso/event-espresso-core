@@ -1231,12 +1231,16 @@ class EE_Single_Page_Checkout {
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php' );
 		$ATT = EEM_Attendee::instance();
 		$saved_registrations = array();
+		$reg_count = 0;
+		$total_registrations = $session['cart']['REG']['total_items'];
+
 		// cycle through items in session			
 		foreach ($reg_items as $line_item_id => $event) {
 
 			// cycle through attendees
 			foreach ($event['attendees'] as $att_nmbr => $attendee) {
-
+				
+				$reg_count++;
 				// if attendee has no name, then use primary attendee's details
 				$attendee = isset( $attendee['fname'] ) && $att_nmbr > 1 ? $attendee : $event['attendees'][1];
 				
@@ -1306,8 +1310,8 @@ class EE_Single_Page_Checkout {
 												$session['id'],
 												$new_reg_code,
 												$reg_url_link,
-												$att_nmbr,
-												count($event['attendees']),
+												$reg_count,
+												$total_registrations,
 												FALSE,
 												FALSE
 						);
