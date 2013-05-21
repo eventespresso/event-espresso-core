@@ -510,7 +510,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 */
 	private function _generate_event_title_and_desc() {
 		// title and desc content
-		$title_and_desc_args['event_name'] = $this->_event->event_name;
+		$title_and_desc_args['event_name'] = htmlentities( stripslashes( $this->_event->event_name ), ENT_QUOTES, 'UTF-8');
 		$title_and_desc_args['event_page_url'] = $this->_event->page_url;
 		$title_and_desc_args['event_slug'] = $this->_event->slug;
 		$title_and_desc_args['event_is_new'] = $this->_event->is_new;
@@ -2977,7 +2977,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$require_pre_approval = isset( $this->_req_data['require_pre_approval'] ) ? $this->_req_data['require_pre_approval'] : FALSE;
 		################# END #################
 		//Event name
-		$event_name = empty($this->_req_data['event']) ? uniqid($espresso_wp_user . '-') : htmlentities( wp_strip_all_tags( $this->_req_data['event'] ), ENT_QUOTES, 'UTF-8');
+		$event_name = empty($this->_req_data['event']) ? uniqid($espresso_wp_user . '-') : html_entity_decode( wp_strip_all_tags( $this->_req_data['event'] ), ENT_QUOTES, 'UTF-8' );
 
 		//Create the event code and prefix it with the user id
 		$event_code = uniqid($espresso_wp_user . '-');
@@ -3408,7 +3408,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$event_meta = array(); //will be used to hold event meta data
 		$wp_user_id = empty($this->_req_data['wp_user']) ? $espresso_wp_user : $this->_req_data['wp_user'][0];
 		$event_id = isset( $this->_req_data['event_id'] )? absint( $this->_req_data['event_id'] ) : null;
-		$event_name = htmlentities( wp_strip_all_tags( $this->_req_data['event'] ), ENT_QUOTES, 'UTF-8' );
+		$event_name = html_entity_decode( wp_strip_all_tags( $this->_req_data['event'] ), ENT_QUOTES, 'UTF-8' );
 		$event_slug = ($this->_req_data['slug'] == '') ? sanitize_title_with_dashes($event_name . '-' . $event_id) : sanitize_title_with_dashes($this->_req_data['slug']);
 		$event_desc = $this->_req_data['event_desc'];
 		$display_desc = $this->_req_data['display_desc'];
