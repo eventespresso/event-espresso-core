@@ -442,7 +442,10 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				$QSG_name = isset( $this->_req_data['QSG_name'] ) ? $this->_req_data['QSG_name'] : '' ;
 				$this->_req_data['QSG_identifier'] = strtolower( str_replace( ' ', '-', $QSG_name )) . '-' . uniqid();
 			}
-			$set_column_values[$fieldName]=array_key_exists($fieldName,$this->_req_data)?$this->_req_data[$fieldName]:null;
+			//only add a property to the array if it's not null (otherwise the model should just use the defautl value)
+			if(isset($this->_req_data[$fieldName])){
+				$set_column_values[$fieldName]=$this->_req_data[$fieldName];
+			}
 		}
 		return $set_column_values;//validation fo this data to be performed by the model before insertion.
 	}
@@ -554,27 +557,29 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$set_column_values=$this->_set_column_values_for($this->_question_model);
 		require_once('EE_Question.class.php');
 		if($new_question){
-			$results=$this->_question_model->insert($set_column_values);
+			$results = $this->_question_model->insert($set_column_values);
+			$ID = $results['new-ID'];
+			$action_desc=__('created','event_espresso');
 			if($results){
-				$success=1;
-				$ID=$results['new-ID'];
+				$success = true;
 			}else{
-				$success=0;
-				$ID=false;
+				$success = false;
 			}
-			$action_desc='created';
 		}else{
 			$ID=absint($this->_req_data['QST_ID']);
 			$pk=$this->_question_model->primary_key_name();
 			$wheres=array($pk=>$ID);
 			unset($set_column_values[$pk]);
 			$success= $this->_question_model->update($set_column_values,$wheres);
-			$action_desc='updated';
+			$action_desc=__('updated','event_espresso');
 		}
+		$question = $this->_question_model->get_one_by_ID($ID);
+		
+		
 		//save the related options
 		//trash removed options, save old ones
 			//get list of all options
-		$question=$this->_question_model->get_one_by_ID($ID);
+		
 		$options=$question->options();
 		if(!empty($options)){
 			foreach($options as $option_ID=>$option){
@@ -600,7 +605,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				$new_option->save();
 			}
 		}
-		$query_args=array('action'=>'edit_question','QST_ID'=>$ID);
+		$query_args=array('action'=>'edit_question','QST_ID'=>$question->ID());
 		$this->_redirect_after_action($success, $this->_question_model->item_name($success), $action_desc, $query_args);
 	}
 
