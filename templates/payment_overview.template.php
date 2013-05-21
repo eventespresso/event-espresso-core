@@ -74,7 +74,7 @@ EE_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 							<?php } ?>
 							<?php $payment->e_pretty_status();
 							if ( $show_try_pay_again_link) {?>
-							<a href='<?php echo $SPCO_step_2_url?>'><?php _e("Try Another Payment Method", 'event_espresso'); ?></a>
+							<a href='<?php echo $SPCO_step_2_url?>'><?php _e("Retry Payment", 'event_espresso'); ?></a>
 								<?php }
 							?>
 						</td>
@@ -132,7 +132,7 @@ EE_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 						<?php $transaction->e_pretty_status(); 
 						if ( $show_try_pay_again_link) {
 							?>
-						<a href='<?php echo $SPCO_step_2_url?>'><?php _e("Try Another Payment Method", 'event_espresso'); ?></a>
+						<a href='<?php echo $SPCO_step_2_url?>'><?php _e("Retry Payment", 'event_espresso'); ?></a>
 							<?php }
 						?>
 					</td>
