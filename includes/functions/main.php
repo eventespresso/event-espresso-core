@@ -42,22 +42,7 @@ function espresso_get_reg_page_full_url() {
 	return $reg_page_url;
 }
 
-function espresso_use_pretty_permalinks() {
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-	global $org_options;
-	// check if option exists
-	if (isset($org_options['espresso_url_rewrite_activated'])) {
-		$url_rewrite = $org_options['espresso_url_rewrite_activated'];
-	} else {
-		$url_rewrite = FALSE;
-	}
-	// check if permalinks are turned on and both in WP and EE
-	if ($url_rewrite && get_option('permalink_structure') != '') {
-		return TRUE;
-	} else {
-		return FALSE;
-	}
-}
+
 
 function espresso_reg_url($event_id = FALSE, $event_slug = FALSE) {
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
@@ -65,7 +50,7 @@ function espresso_reg_url($event_id = FALSE, $event_slug = FALSE) {
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 	$registration_url = rtrim(get_permalink($org_options['event_page_id']), '/');
-	$use_pretty_permalinks = espresso_use_pretty_permalinks();
+	$use_pretty_permalinks = get_option('permalink_structure') != '' ? TRUE : FALSE;
 
 	if (is_int($event_slug)) {
 		$event_id = $event_slug;

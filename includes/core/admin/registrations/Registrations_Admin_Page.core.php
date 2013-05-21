@@ -391,6 +391,16 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 
+	public function load_scripts_styles_contact_list() {
+		wp_deregister_style('espresso_reg');
+		wp_register_style('espresso_att', REG_ASSETS_URL . 'espresso_attendees_admin.css', array('ee-admin-css'), EVENT_ESPRESSO_VERSION );
+		wp_enqueue_style('espresso_att');
+	}
+
+
+
+
+
 	public function load_scripts_styles_new_registration() {
 		wp_register_script( 'espresso-validate-new-reg', REG_ASSETS_URL . 'espresso-validate-new-reg.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE);
 		wp_enqueue_script('espresso-validate-new-reg');
@@ -2064,6 +2074,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*/
 	protected function _attendee_contact_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		
+		$STA_MDL = EEM_State::instance();
 		$this->_admin_page_title .= $this->_get_action_link_or_button('add_new_attendee', 'add-attendee', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}

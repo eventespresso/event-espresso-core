@@ -133,7 +133,7 @@ EE_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 						<label><?php _e('Primary Registrant:', 'event_espresso'); ?></label>
 					</td>
 					<td>
-						<?php $primary_registrant->attendee()->e('ATT_fname'); ?> <?php $primary_registrant->attendee()->e('ATT_lname'); ?>
+						<?php echo htmlentities( $primary_registrant->attendee()->get('ATT_fname') . ' ' . $primary_registrant->attendee()->get('ATT_lname'), ENT_QUOTES, 'UTF-8' ); ?>
 					</td>
 				</tr>
 			</tbody>
@@ -164,13 +164,13 @@ EE_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 					<?php foreach ($transaction->registrations() as $registration) { ?>
 						<tr>
 							<td>
-								<?php $registration->attendee()->e('ATT_fname')?> <?php $registration->attendee()->e('ATT_lname')?>
+								<?php echo htmlentities( $registration->attendee()->get('ATT_fname') . ' ' . $registration->attendee()->get('ATT_lname'), ENT_QUOTES, 'UTF-8' );?>
 							</td>
 							<td>
 								<?php $registration->e('REG_code') ?>
 							</td>
 							<td>
-								<?php echo $registration->event_name()?>
+								<?php echo htmlentities( $registration->event_name(), ENT_QUOTES, 'UTF-8' );?>
 							</td>
 							<td>
 								<?php $registration->e_pretty_status()?>

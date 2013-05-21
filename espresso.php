@@ -157,6 +157,7 @@ add_action('plugins_loaded', 'espresso_load_org_options', 4);
 add_action('plugins_loaded', 'espresso_EE_Session', 5);
 add_action('plugins_loaded', 'espresso_init', 25);
 add_action('init', 'espresso_load_messages_init', 15);
+add_action('init', 'espresso_add_rewrite_rules');
 add_filter('query_vars', 'espresso_add_query_vars');
 
 if ( is_admin() ) {
@@ -184,90 +185,7 @@ if ( is_admin() ) {
 
 }
 
-/** edit as neccessary
- *------------------------------------------------------------------------------
- * Frontend Action Order
- * -----------------------------------------------------------------------------
- * require_once: /includes/functions/plugins_loaded.php
- * require_once: /includes/functions/init.php
- * require_once: /includes/functions/wp_hooks.php
- *
- * plugins_loaded:
- *	1: espresso_define_tables_and_paths
- *	2: espresso_get_user_id
- *		FHEE_get_user_id:
- *	3: espresso_load_org_options
- *		require_once: classes/EE_Log.class.php
- *	4: espresso_EE_Session
- *		require_once: classes/EE_Session.class.php
- *	25: espresso_init
- * widgets_init:
- *	10: espresso_widget
- * init:
- *	10: espresso_load_jquery
- *	25: espresso_frontend_init
- *	30: espresso_export_certificate
- *	30: espresso_export_invoice
- *	30: espresso_export_ticket
- *	40: espresso_add_rewrite_rules
- *	41: espresso_flush_rewrite_rules
- * wp_head:
- *	10: espresso_info_header
- * wp_print_styles:
- *	20: add_espresso_stylesheet (file includes/functions/wp_hooks.php, line 33)
- * wp_footer:
- *	10: espresso_load_javascript_files
- * admin_bar_menu:
- *	100: espresso_toolbar_items
- * -----------------------------------------------------------------------------
- * Frontend Filters
- * -----------------------------------------------------------------------------
- * query_vars:
- *	10: espresso_add_query_vars
- * -----------------------------------------------------------------------------
- * Admin Action Order
- * -----------------------------------------------------------------------------
- * require_once: /includes/functions/plugins_loaded.php
- * require_once: /includes/functions/init.php
- * require_once: /includes/functions/wp_hooks.php
- *
- * register_activation_hook:
- *	espresso_plugin_activation
- *
- * plugins_loaded:
- *  1: espresso_define_tables_and_paths
- *	2: espresso_get_user_id
- *	3: espresso_load_org_options
- *	4: espresso_EE_Session
- *	10: espresso_check_for_export
- *	10: espresso_check_for_import
- *	25: espresso_init
- *
- * init:
- *	25: espresso_admin_init
- *			require_once /includes/admin-screens/admin.php
- *			require_once /includes/admin-screens/admin_screen.php
- *			require_once /includes/admin-screens/admin_menu.php
- *	25: espresso_load_admin_ajax_callbacks
- *	30: espresso_export_certificate
- *	30: espresso_export_invoice
- *	30: espresso_export_ticket
- *
- * admin_bar_menu:
- *	100: espresso_toolbar_items
- *
- *
- * -----------------------------------------------------------------------------
- * Admin Filters
- * -----------------------------------------------------------------------------
- * query_vars:
- *	10: espresso_add_query_vars
- * plugin_action_links:
- *	10: event_espresso_filter_plugin_actions
- *
- */
-//echo get_option('plugin_error');
-//delete_option('plugin_error');
+
 
 
 class EE_BASE {
@@ -278,6 +196,5 @@ class EE_BASE {
 	public function __get($a) { return FALSE; }
 	public function __set($a,$b) { return FALSE; }
 	public function __unset($a) { return FALSE; }
-	public function __clone() { return FALSE; }
 	public function __wakeup() { return FALSE; }	
 }

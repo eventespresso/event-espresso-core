@@ -8,9 +8,7 @@
 //This fix for this problem:
 //The short and simple solution is to simply check the table exists and then drop the index manually before calling the dbDelta function.
 
-/* if ($wpdb->get_var("SHOW TABLES LIKE $table") == $table) {
-  $wpdb->query("ALTER TABLE $table DROP INDEX date");
-  } */ 
+
 
 //Credit: http://flav36rs.com/2010/04/02/wp-dbdelta-function-cannot-modify-unique-keys/
 //This fixes some tables that may have been named wrong in an earlier version of the plugin
@@ -393,7 +391,6 @@ function espresso_org_option_initialization( $missing_options = FALSE ) {
 				'show_reg_footer' => true,
 				'use_attendee_pre_approval' => false,
 				'time_reg_limit' => false,
-				'espresso_url_rewrite_activated' => false,
 				'template_settings' => array(
 						'use_custom_post_types' => false,
 						'display_address_in_regform' => false,

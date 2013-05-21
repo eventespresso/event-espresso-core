@@ -446,26 +446,24 @@ class EE_Form_Fields {
 	 */
 	static function generate_form_input( $question ) {
 		
-		if ( array_key_exists('QST_admin_only',$question) && $question['QST_admin_only'] && ! is_admin() ) {
+		if ( isset($question['QST_admin_only']) && $question['QST_admin_only'] && ! is_admin() ) {
 			return;
 		}
 		
 		//printr( $question, '$question  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$system_question = self::_load_system_dropdowns( $question );
-		$question = array_merge($system_question,$question);
+		$question = self::_load_system_dropdowns( $question );
 		//printr( $question, '$question  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$display_text = array_key_exists('QST_display_text', $question ) ? $question['QST_display_text'] : FALSE;
-		$answer = array_key_exists('ANS_value', $question ) ? $question['ANS_value'] : '';
-		$input_name = array_key_exists('QST_input_name', $question ) ? $question['QST_input_name'] : FALSE;
-		$input_id = array_key_exists( 'QST_input_id', $question ) ? $question['QST_input_id'] : '';
-		$input_class = array_key_exists( 'QST_input_class', $question ) ? $question['QST_input_class'] : '';
-		$disabled = array_key_exists( 'disabled', $question ) ? $question['disabled'] : '';
+		$display_text = isset( $question['QST_display_text'] ) ? $question['QST_display_text'] : FALSE;
+		$answer = isset( $question['ANS_value'] ) ? $question['ANS_value'] : '';
+		$input_name = isset( $question['QST_input_name'] ) ? $question['QST_input_name'] : FALSE;
+		$input_id = isset( $question['QST_input_id'] ) ? $question['QST_input_id'] : '';
+		$input_class = isset( $question['QST_input_class'] ) ? $question['QST_input_class'] : '';
+		$disabled = isset( $question['disabled'] ) ? $question['disabled'] : '';
 		$required_label = apply_filters( 'FHEE_required_form_input_label', '<em>*</em>' );
-		$required = array_key_exists('QST_required',$question) ? array( 'label' => $required_label, 'class' => 'required', 'title' => $question['QST_required'] ) : array();
+		$required = isset( $question['QST_required'] ) && $question['QST_required'] ? array( 'label' => $required_label, 'class' => 'required', 'title' => $question['QST_required'] ) : array();
 		$label_class = 'espresso-form-input-lbl';		
-		$options = array_key_exists( 'QST_options', $question ) && isset($question['QST_options']) ? self::prep_answer_options( $question['QST_options'] ) : array();
-		$system_ID = array_key_exists( 'QST_system', $question ) && isset($question['QST_system']) ? $question['QST_system'] : NULL;
-		
+		$options = isset( $question['QST_options'] ) ? self::prep_answer_options( $question['QST_options'] ) : array();
+		$system_ID = isset( $question['QST_system'] ) ? $question['QST_system'] : NULL;
 		
 		switch ( $question['QST_type'] ){
 			
@@ -910,10 +908,7 @@ class EE_Form_Fields {
 	 * @return string 
 	 */
 	static function prep_answer( $answer ){
-//		if ( is_array( $answer )) {
-//			printr( $answer, '$answer  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		}
-		return htmlspecialchars( trim( stripslashes( $answer )), ENT_QUOTES, 'UTF-8' );
+		return htmlentities( trim( stripslashes( $answer )), ENT_QUOTES, 'UTF-8' );
 	}
 
 

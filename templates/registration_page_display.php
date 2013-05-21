@@ -122,9 +122,12 @@ function espresso_display_reg_page($data) {
 				/* Display the address and google map link if available */
 				if ($data['location'] != '' && (isset($data['org_options']['template_settings']['display_address_in_regform']) && $data['org_options']['template_settings']['display_address_in_regform'])) {
 					?>
-					<p class="event_address" id="event_address-<?php echo $data['event_id'] ?>"><span class="section-title"><?php echo __('Address:', 'event_espresso'); ?></span> <br />
+					<p class="event_address" id="event_address-<?php echo $data['event_id'] ?>">
+						<span class="section-title"><?php echo __('Address:', 'event_espresso'); ?></span><br />
 						<span class="address-block"> <?php echo stripslashes_deep($data['location']); ?><br />
-							<span class="google-map-link"><?php echo $data['google_map_link']; ?></span></span> </p>
+							<span class="google-map-link"><?php echo $data['google_map_link']; ?></span>
+						</span> 
+					</p>
 					<?php
 				}
 

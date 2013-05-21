@@ -600,6 +600,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		}
 
+		global $wpdb;
+
 		return $templates;
 	}
 

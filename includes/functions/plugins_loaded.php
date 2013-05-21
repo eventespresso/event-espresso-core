@@ -189,8 +189,7 @@ function espresso_load_org_options() {
 		// list of critical org_options
 		$critical_org_options = array( 
 			'contact_email',
-			'currency_symbol',
-			'espresso_url_rewrite_activated'
+			'currency_symbol'
 		);
 		// cycle thru critical org_options
 		foreach ( $critical_org_options as $critical_org_option ) {
@@ -206,11 +205,7 @@ function espresso_load_org_options() {
 		
 	require_once( EVENT_ESPRESSO_INCLUDES_DIR . '/classes/EE_Log.class.php' );
 	do_action('AHEE_debug_file');
-	$req_vars = '';
-	foreach ( $_REQUEST as $k => $v ){
-		$req_vars .= "\n" . $k . ' = ' . (is_array($v))?print_r($v,true):$v;
-	}
-	do_action('AHEE_log', '', '', '$_REQUEST = ' . $req_vars );	
+
 }
 
 
@@ -390,7 +385,7 @@ function espresso_init() {
 	$caffeinated = apply_filters( 'FHEE_systems_check', $caffeinated );
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . "functions/main.php");
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/time_date.php');
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');	
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');
 
 	do_action('AHEE_pue_update');
 }
