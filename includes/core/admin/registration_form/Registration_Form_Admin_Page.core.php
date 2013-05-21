@@ -557,10 +557,10 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$set_column_values=$this->_set_column_values_for($this->_question_model);
 		require_once('EE_Question.class.php');
 		if($new_question){
-			$question = new EE_Question($set_column_values);
-			$question->save();
+			$results = $this->_question_model->insert($set_column_values);
+			$ID = $results['new-ID'];
 			$action_desc=__('created','event_espresso');
-			if($question){
+			if($results){
 				$success = true;
 			}else{
 				$success = false;
@@ -572,9 +572,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			unset($set_column_values[$pk]);
 			$success= $this->_question_model->update($set_column_values,$wheres);
 			$action_desc=__('updated','event_espresso');
-			$question = $this->_question_model->get_one_by_ID($ID);
-			
 		}
+		$question = $this->_question_model->get_one_by_ID($ID);
 		
 		
 		//save the related options
