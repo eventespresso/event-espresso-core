@@ -244,7 +244,7 @@ function event_espresso_run() {
 
 	// Get action type
 	$e_reg = isset($_REQUEST['e_reg']) ? sanitize_text_field( $_REQUEST['e_reg'] ) : '';
-	//echo '<h4>$e_reg : ' . $e_reg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+
 	switch ($e_reg) {
 
 		case 'process_ticket_selections' :
@@ -289,7 +289,12 @@ function event_espresso_run() {
 	}
 
 	$espresso_content =  ob_get_clean();
-	add_shortcode( 'ESPRESSO_EVENTS', 'return_espresso_content' );
+	if ( espresso_events_on_frontpage() ) {
+		add_action( 'the_content', 'return_espresso_content' );
+		remove_filter('template_redirect', 'redirect_canonical'); 
+	} else {
+		add_shortcode( 'ESPRESSO_EVENTS', 'return_espresso_content' );
+	}	
 
 }
 
@@ -297,10 +302,23 @@ function event_espresso_run() {
 
 
 
+function espresso_events_on_frontpage() {
+	// first check if a page is being used for the frontpage
+	if ( get_option('show_on_front') == 'page' ) {
+		global $org_options;
+		// grab that page's id
+		$frontpage = get_option('page_on_front');
+		// compare to event_page_id
+		return  $frontpage == $org_options['event_page_id'] ? TRUE : FALSE;
+	}
+	return FALSE;
+}
+
+
+
+
 function return_espresso_content() {
 	global $espresso_content;
-//	require_once('activation.php');
-//	espresso_initialize_system_questions();
 	return $espresso_content;
 }
 
@@ -523,14 +541,20 @@ function espresso_add_rewrite_rules( $to_flush_or_not_to_flush = FALSE ) {
 	if (empty($org_options['event_page_id'])) {
 		espresso_load_org_options();
 	}
-
+	$to_flush_or_not_to_flush = FALSE;
+	// create pretty permalinks
 	if ( get_option('permalink_structure') != '' ) {
-		// create pretty permalinks
+		// grab slug for event reg page
 		$SQL = 'SELECT post_name  FROM ' . $wpdb->prefix . 'posts WHERE ID = %d';
 		$reg_page_url_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $org_options['event_page_id'] ));
+		// first check if a page is being used for the frontpage
 		// rules for event slug pretty links
-		add_rewrite_rule( $reg_page_url_slug . '/([^/]+)/?$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top');
-		//add_rewrite_rule( $reg_page_url_slug . '/([^/]+)/?$', 'index.php?pagename=' . $reg_page_url_slug . '&e_reg=$matches[1]', 'top');
+		if ( espresso_events_on_frontpage() ) {
+			add_rewrite_rule( '([^/]+)/?$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top');
+		} else {
+			add_rewrite_rule( $reg_page_url_slug . '/([^/]+)/?$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top');
+		}
+		// whether tis nobler on the server to suffer the pings and errors of outrageous flushing
 		if ( $to_flush_or_not_to_flush ) {
 			flush_rewrite_rules();
 		}
