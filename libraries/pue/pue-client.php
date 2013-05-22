@@ -99,7 +99,7 @@ class PluginUpdateEngineChecker {
 			return; //get out because we don't have verified options (and the admin_notice should display);
 
 
-		$verify_slug = $this->set_slug_and_slug_props($slug, $options_verified);
+		$verify_slug = $this->_set_slug_and_slug_props($slug, $options_verified);
 
 		if ( !$verify_slug ) 
 			return; //get out because the slug isn't valid.  An admin notice should show.
