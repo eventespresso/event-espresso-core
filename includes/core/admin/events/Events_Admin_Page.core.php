@@ -510,7 +510,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 */
 	private function _generate_event_title_and_desc() {
 		// title and desc content
-		$title_and_desc_args['event_name'] = $this->_event->event_name;
+		$title_and_desc_args['event_name'] = htmlentities( stripslashes( $this->_event->event_name ), ENT_QUOTES, 'UTF-8');
 		$title_and_desc_args['event_page_url'] = $this->_event->page_url;
 		$title_and_desc_args['event_slug'] = $this->_event->slug;
 		$title_and_desc_args['event_is_new'] = $this->_event->is_new;
@@ -910,8 +910,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 			<br class="clear"/>
 			<?php if ( $caffeinated ) : ?>
 			<!--<input type="button" id="add-time" class="button dtm-inp-btn" value="<?php _e('Add Additional Time', 'event_espresso'); ?>" />-->
-			<input id="edit_event_datetimes_save_btn" class="button-primary save" type="submit" name="save" value="Save Dates &amp; Times">
-			<a id="add-new-date-time" class="button-secondary dtm-inp-btn" ><?php _e('Add New Dates &amp; Times', 'event_espresso'); ?></a>
+			<a id="add-new-date-time" class="button-secondary dtm-inp-btn right" ><?php _e('Add New Dates &amp; Times', 'event_espresso'); ?></a>
+			<input id="edit_event_datetimes_save_btn" class="button-primary save right" type="submit" name="save" value="Save Dates &amp; Times">
 			<br class="clear"/>
 			<?php endif; ?>
 
@@ -1495,10 +1495,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 				
 			</div>
 
-			<a id="display-add-new-ticket-price" class="button-secondary display-the-hidden" rel="add-new-ticket-price">
+			<a id="display-add-new-ticket-price" class="button-secondary display-the-hidden right" rel="add-new-ticket-price">
 				<?php _e('Add New Event Price', 'event_espresso'); ?>
 			</a>
-			<input id="edit_event_save_prices_btn" class="button-primary save right" type="submit" name="save" value="Save Prices">
+			<input id="edit_event_save_prices_btn" class="button-primary save right" type="submit" name="save" value="Save Event Prices">
 			
 			<br class="clear"/><br/>
 			
@@ -1767,7 +1767,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 //			add_meta_box('espresso_event_editor_preapproval_box', __('Attendee Pre-Approval', 'event_espresso'), array( $this, 'preapproval_metabox' ), $this->_current_screen->id, 'side', 'default');
 //		}
 
-		if ($org_options['use_personnel_manager']) {
+		if ( $caffeinated && $org_options['use_personnel_manager'] && function_exists( 'espresso_personnel_cb' )) {
 			add_meta_box('espresso_event_editor_personnel_box', __('Event Staff / Speakers', 'event_espresso'), array( $this, 'personnel_metabox' ), $this->_current_screen->id, 'side', 'default');
 		}
 	}
@@ -2163,6 +2163,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 	public function additional_attendees_question_groups_meta_box() {
+		
+		//printr( $this->_event, '$this->_event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		?>
 		<div class="inside">
@@ -2177,7 +2179,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			</p>
 			<?php
 			$QSGs = EEM_Event::instance()->get_all_question_groups();
-			$EQGs = EEM_Event::instance()->get_event_question_groups( $this->_event->id, TRUE );
+			$EQGs = EEM_Event::instance()->get_event_question_groups( $this->_event->id, FALSE );
 			$EQGs = is_array( $EQGs ) ? $EQGs : array();
 
 			if ( ! empty( $QSGs )) {
@@ -2977,7 +2979,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$require_pre_approval = isset( $this->_req_data['require_pre_approval'] ) ? $this->_req_data['require_pre_approval'] : FALSE;
 		################# END #################
 		//Event name
-		$event_name = empty($this->_req_data['event']) ? uniqid($espresso_wp_user . '-') : htmlentities( wp_strip_all_tags( $this->_req_data['event'] ), ENT_QUOTES, 'UTF-8');
+		$event_name = empty($this->_req_data['event']) ? uniqid($espresso_wp_user . '-') : html_entity_decode( wp_strip_all_tags( $this->_req_data['event'] ), ENT_QUOTES, 'UTF-8' );
 
 		//Create the event code and prefix it with the user id
 		$event_code = uniqid($espresso_wp_user . '-');
@@ -3408,7 +3410,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$event_meta = array(); //will be used to hold event meta data
 		$wp_user_id = empty($this->_req_data['wp_user']) ? $espresso_wp_user : $this->_req_data['wp_user'][0];
 		$event_id = isset( $this->_req_data['event_id'] )? absint( $this->_req_data['event_id'] ) : null;
-		$event_name = htmlentities( wp_strip_all_tags( $this->_req_data['event'] ), ENT_QUOTES, 'UTF-8' );
+		$event_name = html_entity_decode( wp_strip_all_tags( $this->_req_data['event'] ), ENT_QUOTES, 'UTF-8' );
 		$event_slug = ($this->_req_data['slug'] == '') ? sanitize_title_with_dashes($event_name . '-' . $event_id) : sanitize_title_with_dashes($this->_req_data['slug']);
 		$event_desc = $this->_req_data['event_desc'];
 		$display_desc = $this->_req_data['display_desc'];

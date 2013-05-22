@@ -241,8 +241,8 @@ abstract class EE_Base_Class {
 			case 'enum':
 				if($value!==null && !in_array($value,$fieldSettings->allowed_enum_values())){
 					$msg = sprintf(__("System is assigning imcompatible value '%s' to field '%s'",'event_espresso'),$value,$fieldSettings->nicename());
-					$msg2 = sprintf(__("Allowed values for '%s' are %s",'event_espresso'),$fieldSettings->nicename(),$fieldSettings->allowed_enum_values());
-					throw new EE_Error("$msg||$msg2");
+					$msg2 = sprintf(__("Allowed values for '%s' are %s",'event_espresso'),$fieldSettings->nicename(), implode( ', ', $fieldSettings->allowed_enum_values()));
+					throw new EE_Error("$msg||$msg. $msg2");
 				}
 				$return=$value;
 				break;

@@ -13,7 +13,7 @@ if (!function_exists('event_registration')) {
 		  return;
 		  } */
 
-		global $wpdb, $org_options;
+		global $wpdb, $org_options, $caffeinated;
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		$event_slug = (get_query_var('event_slug')) ? get_query_var('event_slug') : FALSE;
@@ -143,7 +143,6 @@ if (!function_exists('event_registration')) {
 				$event_zip = $event->zip;
 				$event_country = $event->country;
 
-
 				$member_only = $event->member_only;
 				$reg_limit = $event->reg_limit;
 
@@ -163,7 +162,7 @@ if (!function_exists('event_registration')) {
 				$event_meta = unserialize($event->event_meta);
 
 				//Venue information
-				if ($org_options['use_venue_manager']) {
+				if ( $caffeinated && isset( $org_options['use_venue_manager'] ) && $org_options['use_venue_manager'] ) {
 					$event_address = $event->venue_address;
 					$event_address2 = $event->venue_address2;
 					$event_city = $event->venue_city;
@@ -191,7 +190,6 @@ if (!function_exists('event_registration')) {
 					$venue_meta = (isset($event->venue_meta) && $event->venue_meta != '') && (isset($add_venue_meta) && $add_venue_meta != '') ? array_merge(unserialize($event->venue_meta), $add_venue_meta) : '';
 					//print_r($venue_meta);
 				}
-
 
 				global $ee_gmaps_opts;
 				// EE gmaps needs it's own org_options array populated on a per page basis to enable common queries in gmaps api function

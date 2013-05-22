@@ -63,7 +63,9 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 			'default' => '_gateway_settings',
 			'payment_settings' => '_payment_settings',
-			'update_payment_settings' => '_update_payment_settings',
+			'update_payment_settings' => array(
+				'func'=>'_update_payment_settings',
+				'noheader'=>TRUE),
 			//'developers' => '_developers_section',
 			'affiliate' => '_affiliate_settings',
 			'save_aff_s' => array(
@@ -302,9 +304,9 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$data['show_pending_payment_options'] = isset( $this->_req_data['show_pending_payment_options'] ) ? absint( $this->_req_data['show_pending_payment_options'] ) : FALSE;
 		$data = apply_filters('FHEE_payment_settings_save', $data);	
 		
-		$what = 'Payment Settings';
+		$what = __('Payment Settings','event_espresso');
 		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
-		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'payment_settings' ) );
+		$this->_redirect_after_action( $success, $what, __('updated','event_espresso'), array( 'action' => 'payment_settings' ) );
 				
 	}
 
@@ -459,7 +461,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			$payment_settings = array(
 				'affiliate' => array( 
 					'script' => '',
-					'hook_into' => ''
+					'hook_into' => 'header'
 				)
 			);
 		}
@@ -490,7 +492,6 @@ class Payments_Admin_Page extends EE_Admin_Page {
 						<?php
 						$ind = 0;
 						foreach ( $options as $opt => $description ) :
-							$payment_settings['affiliate']['hook_into'] = isset( $payment_settings['affiliate']['hook_into'] ) ? $payment_settings['affiliate']['hook_into'] : '';
 							$checked = $opt == $payment_settings['affiliate']['hook_into'] ? ' checked="checked"' : '';
 						?>
 							<label class="ee-admin-radio-long-lbl">
