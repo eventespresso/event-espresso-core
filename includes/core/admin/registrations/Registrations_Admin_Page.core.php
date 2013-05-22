@@ -2381,7 +2381,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$attendee = apply_filters('FHEE_Registrations_Admin_Page__insert_or_update_attendee__before_save',$attendee,$this->_req_data);
 		$success = $attendee->save();
 		do_action('AHEE_Registrations_Admin_Page__insert_or_update_attendee__after_save',$attendee,$this->_req_data);
-		$this->_redirect_after_action( $success, __( 'Attendee', 'event_espresso' ), $action_desc, array( 'action' => 'edit_attendee', 'id' => $attendee->ID() ) );
+		$this->_redirect_after_action( $success, __( 'Attendee', 'event_espresso' ), $action_desc, array( 'action' => 'edit_attendee', 'ATT_ID' => $attendee->ID() ) );
 			
 	}
  
