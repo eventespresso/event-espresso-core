@@ -1332,12 +1332,9 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 						$QST_phone
 					);
 					// save to db
-					$results = $attendee->insert();
+					$new_id = $attendee->save();
 					// grab and set the new ID
-					if ( isset( $results['new-ID'] ) && ! empty( $results['new-ID'] )) {
-						$attendee->set( 'ATT_ID', absint( $results['new-ID'] ));
-						$attendee->save();
-					} else {
+					if ( ! $new_id) {
 						$success = FALSE;
 						EE_Error::add_error( __('An error occured. An ID for the new attendee could not be retreived.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 					}					
@@ -2454,7 +2451,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		} else {
 			// grab single id and delete
 			$ATT_ID = absint( $this->_req_data['ATT_ID'] );
-			if ( ! $ATT_MDL->delete_attendee_by_ID( $ATT_ID )) {
+			if ( ! $ATT_MDL->delete_by_ID( $ATT_ID )) {
 				$success = 0;
 			}
 			

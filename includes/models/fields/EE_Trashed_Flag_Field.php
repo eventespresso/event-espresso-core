@@ -1,7 +1,6 @@
 <?php
 require_once('fields/EE_Boolean_Field.php');
 class EE_Trashed_Flag_Field extends EE_Boolean_Field{
-	function __construct($table_column, $nicename, $nullable, $default_value){
-		parent::__construct($table_column, $nicename, $nullable, $default_value);
-	}
+	//note: some client code simply checks if a field IS an EE_Trashed_Flag_Field
+	//...otherwise, these fields are mostly the same as boolean fields
 }

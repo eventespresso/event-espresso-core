@@ -451,8 +451,7 @@ class EE_Form_Fields {
 		}
 		
 		//printr( $question, '$question  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$system_question = self::_load_system_dropdowns( $question );
-		$question = array_merge($system_question,$question);
+		$question = self::_load_system_dropdowns( $question );
 		//printr( $question, '$question  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$display_text = isset($question['QST_display_text'] ) ? $question['QST_display_text'] : FALSE;
 		$answer = isset($question['ANS_value'] ) ? $question['ANS_value'] : '';
@@ -461,13 +460,14 @@ class EE_Form_Fields {
 		$input_class = isset( $question['QST_input_class'] ) ? $question['QST_input_class'] : '';
 		$disabled = isset( $question['disabled'] ) ? $question['disabled'] : '';
 		$required_label = apply_filters( 'FHEE_required_form_input_label', '<em>*</em>' );
-		$required = $question['QST_required'] ? array( 'label' => $required_label, 'class' => 'required', 'title' => $question['QST_required'] ) : array();
+		$required = isset($question['QST_required']) && $question['QST_required'] ? array( 'label' => $required_label, 'class' => 'required', 'title' => $question['QST_required'] ) : array();
 		$label_class = 'espresso-form-input-lbl';		
 		$options = isset($question['QST_options']) ? self::prep_answer_options( $question['QST_options'] ) : array();
 		$system_ID = isset($question['QST_system']) ? $question['QST_system'] : NULL;
 		
+		$question_type = isset($question['QST_type']) ? $question['QST_type'] : 'TEXT';
 		
-		switch ( $question['QST_type'] ){
+		switch ( $question_type ){
 			
 			case 'TEXT' :
 					return self::text( $display_text, $answer, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID );
@@ -974,7 +974,7 @@ class EE_Form_Fields {
 	 */
 	private static function get_countries(){
 		if ( empty( self::$_countries )) {
-			self::$_countries = EEM_Country::instance()->get_all_where( array( 'CNT_active' => TRUE ));
+			self::$_countries = EEM_Country::instance()->get_all_active_countries();
 			//printr( self::$_countries, 'self::$_countries  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		}
 		return self::$_countries;
@@ -988,7 +988,6 @@ class EE_Form_Fields {
 	 * @return array 
 	 */
 	private static function _load_system_dropdowns( $question ){
-		
 		// make sure required is an array
 		switch ( $question['QST_system'] ) {
 			
@@ -1008,9 +1007,20 @@ class EE_Form_Fields {
 			break;
 			
 			case 'state' :
-			
-				if ( $countries = self::get_countries() ) {
-					if ( $states = EEM_State::instance()->get_all_where( array( 'CNT_ISO' => array_keys( $countries ), 'STA_active' => 1 ), NULL, 'ASC', array( 'CNT_ISO' => 'IN', 'STA_active' => '=' ))) {
+		
+					if ( $states = EEM_State::instance()->get_all( array(
+						array(
+							'Country.CNT_active' => true, 
+							'STA_active' => true )))) {
+						//extract the countries from the above query
+						$countries = array();
+						foreach($states as $state){
+							$cached_related_country = $state->country();
+							if($cached_related_country){
+								$countries[$cached_related_country->ID()] = $cached_related_country;
+							}
+						}
+						
 						//printr( $states, '$states  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 						$question['QST_type'] = 'DROPDOWN';
 						// if multiple countries, we'll create option groups within the dropdown
@@ -1049,7 +1059,6 @@ class EE_Form_Fields {
 							}
 						}						
 					}
-				}
 				
 			break;
 			

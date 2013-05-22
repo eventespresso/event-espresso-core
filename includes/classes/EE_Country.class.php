@@ -43,30 +43,28 @@ class EE_Country extends EE_Base_Class{
 	/**
 	 * Related Region, lazy-loaded
 	 * @access protected
-	 * @var EE_Region[] 
+	 * @var EE_Region
 	 */
 	protected $_Region;
-
-
+	
 	/**
-	 * Constructor
-	 * @param int $REG_ID registration ID OR an array of all field values, where keys match these arguments' names
-	 * @param int $QST_ID question ID
-	 * @param string $ANS_value text representing the Country. Could be CSV'd
+	 * Related states
+	 * @var EE_State[]
 	 */
-	public function __construct( $CNT_ISO=NULL, $CNT_ISO3=NULL, $RGN_ID=NULL, $CNT_name=NULL, $CNT_cur_code='USD', $CNT_cur_single='dollar', $CNT_cur_plural='dollars', $CNT_cur_sign='$', $CNT_cur_sign_b4=TRUE, $CNT_cur_dec_plc=2, $CNT_cur_dec_mrk='.', $CNT_cur_thsnds=',', $CNT_tel_code=NULL, $CNT_is_EU=FALSE, $CNT_active=FALSE ) {
-		//if the first parameter is an array, assume it's an array of key-value pairs for this object
-		if(is_array($CNT_ISO)){
-			parent::__construct($CNT_ISO);
-			return;
-		}
-		$reflector = new ReflectionMethod($this,'__construct');	
-		$arrayForParent=array();
-		foreach($reflector->getParameters() as $param){
-			$paramName=$param->name;
-			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
-		}
-		parent::__construct($arrayForParent);
+	protected $_State;
+
+
+	public static function new_instance( $props_n_values = array() ) {
+		$classname = __CLASS__;
+		$has_object = parent::_check_for_object( $props_n_values, $classname );
+		return $has_object ? $has_object : new self( $props_n_values );
+	}
+
+
+
+
+	public static function new_instance_from_db ( $props_n_values = array() ) {
+		return new self( $props_n_values, TRUE );
 	}
 
 

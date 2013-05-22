@@ -419,7 +419,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 
 
 	public function is_system_question() {
-		$system_ID = $this->get('QST_system_ID');
+		$system_ID = $this->get('QST_system');
 		return !empty( $system_ID ) ? TRUE : FALSE;
 	}
 	

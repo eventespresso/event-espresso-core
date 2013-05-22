@@ -653,7 +653,6 @@ abstract class EE_Gateway {
 			return false;
 		}
 		$transaction = $this->_TXN->ensure_is_obj($transaction);
-		$payment = $this->_PAY->ensure_is_obj($payment);
 		
 		//now, if teh payment's empty, we're going to update the transaction accordingly
 		if(empty($payment)){
@@ -675,6 +674,7 @@ abstract class EE_Gateway {
 			$transaction->save();
 			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', $transaction );
 		}else{
+			$payment = $this->_PAY->ensure_is_obj($payment);
 			//ok, now process the transaction according to the payment
 			$transaction->update_based_on_payments();
 			

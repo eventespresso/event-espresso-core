@@ -999,9 +999,12 @@ class EE_Single_Page_Checkout {
 		$reg_info = $session_data['cart']['REG'];
 		$template_args = array();
 		$exclude_attendee_info = array('registration_id', 'price_paid', 'primary_attendee');
-		
-		$countries = EEM_Country::instance()->get_all_where( array( 'CNT_active' => TRUE ));
-		$states = EEM_State::instance()->get_all_where( array( 'CNT_ISO' => array_keys( $countries ), 'STA_active' => 1 ), NULL, 'ASC', array( 'CNT_ISO' => 'IN', 'STA_active' => '=' ));
+		$states = EEM_State::instance()->get_all( array( 
+				array(
+					'Country.CNT_active'=>true,
+					'STA_active'=>true
+				)));
+			//array( 'CNT_ISO' => array_keys( $countries ), 'STA_active' => 1 ), NULL, 'ASC', array( 'CNT_ISO' => 'IN', 'STA_active' => '=' ));
 
 		if ( isset( $reg_info['items'] )) {
 			
@@ -1311,7 +1314,7 @@ class EE_Single_Page_Checkout {
 							'DTT_ID' => $DTT_ID,
 							'PRC_ID' => $PRC_ID,
 							'STS_ID' => $default_reg_status,
-							'REG_DATE' => current_time(),
+							'REG_date' => current_time('timestamp'),
 							'REG_final_price' => $price_paid,
 							'REG_session' => $session['id'],
 							'REG_code' => $new_reg_code,
@@ -1348,7 +1351,11 @@ class EE_Single_Page_Checkout {
 						if(! is_int($QST_ID) && ! intval($QST_ID)){
 							$QST_ID = EEM_Question::instance()->get_Question_ID_from_system_string($QST_ID);//array_key_exists( $QST_ID, $system_IDs ) ? $system_IDs[ $QST_ID ] : $QST_ID;
 						}
-						$ans = new EE_Answer($REG_ID, $QST_ID, $answer);//use model object because it handles validation
+						$ans = EE_Answer::new_instance(
+								array(
+									'REG_ID'=>$REG_ID, 
+									'QST_ID'=>$QST_ID, 
+									'ANS_value'=>$answer));//use model object because it handles validation
 						$ans->save();
 					}
 				}

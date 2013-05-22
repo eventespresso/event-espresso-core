@@ -21,9 +21,9 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_TempBase.model.php' );
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 
-class EEM_Country extends EEM_TempBase {
+class EEM_Country extends EEM_Base {
 
   	// private instance of the Attendee object
 	private static $_instance = NULL;
@@ -55,26 +55,52 @@ class EEM_Country extends EEM_TempBase {
 		$this->singlular_item = __('Country','event_espresso');
 		$this->plural_item = __('Countries','event_espresso');
 		// CNT_ISO 	CNT_ISO3 	RGN_ID 	CNT_name 	CNT_cur_code 	CNT_cur_single 	CNT_cur_plural 	CNT_cur_sign 	CNT_cur_sign_b4 	CNT_cur_dec 	CNT_tel_code 	CNT_is_EU 	CNT_active
-		$this->_fields_settings=array(
-				'CNT_ISO'					=>new EE_Model_Field( 'Country ISO Code', 'primary_text_key', FALSE ),
-				'CNT_ISO3'				=>new EE_Model_Field( 'Country ISO3 Code', 'plaintext', FALSE ),
-				'RGN_ID'					=>new EE_Model_Field( 'Region ID', 'foreign_key', TRUE, NULL, NULL, 'Region' ),
-				'CNT_name'				=>new EE_Model_Field( 'Country Name', 'plaintext', FALSE ),
-				'CNT_cur_code'			=>new EE_Model_Field( 'Currency Code', 'plaintext', FALSE ),
-				'CNT_cur_single'		=>new EE_Model_Field( 'Currency Name Singular', 'plaintext', FALSE ),
-				'CNT_cur_plural'		=>new EE_Model_Field( 'Currency Name Plural', 'plaintext', FALSE ),
-				'CNT_cur_sign'			=>new EE_Model_Field( 'Currency Sign', 'plaintext', FALSE ),
-				'CNT_cur_sign_b4'	=>new EE_Model_Field( 'Currency Sign Before Number', 'plaintext', FALSE ),
-				'CNT_cur_dec_plc'		=>new EE_Model_Field( 'Currency Decimal Places', 'plaintext', FALSE ),
-				'CNT_cur_dec_mrk'	=>new EE_Model_Field( 'Currency Decimal Mark', 'plaintext', FALSE ),
-				'CNT_cur_thsnds'		=>new EE_Model_Field( 'Currency Thousands Separator', 'plaintext', FALSE ),
-				'CNT_tel_code'			=>new EE_Model_Field( 'Country Telephone Code', 'plaintext', FALSE ),
-				'CNT_is_EU'				=>new EE_Model_Field( 'Country is Member of EU', 'plaintext', FALSE ),
-				'CNT_active'				=>new EE_Model_Field( 'Country Active Flag', 'plaintext', FALSE )
-			);
-		$this->_related_models=array(
-				'Region'=>new EE_Model_Relation('belongsTo', 'Region', 'RGN_ID')
-			);
+//		$this->_fields_settings=array(
+//				'CNT_ISO'					=>new EE_Model_Field( 'Country ISO Code', 'primary_text_key', FALSE ),
+//				'CNT_ISO3'				=>new EE_Model_Field( 'Country ISO3 Code', 'plaintext', FALSE ),
+//				'RGN_ID'					=>new EE_Model_Field( 'Region ID', 'foreign_key', TRUE, NULL, NULL, 'Region' ),
+//				'CNT_name'				=>new EE_Model_Field( 'Country Name', 'plaintext', FALSE ),
+//				'CNT_cur_code'			=>new EE_Model_Field( 'Currency Code', 'plaintext', FALSE ),
+//				'CNT_cur_single'		=>new EE_Model_Field( 'Currency Name Singular', 'plaintext', FALSE ),
+//				'CNT_cur_plural'		=>new EE_Model_Field( 'Currency Name Plural', 'plaintext', FALSE ),
+//				'CNT_cur_sign'			=>new EE_Model_Field( 'Currency Sign', 'plaintext', FALSE ),
+//				'CNT_cur_sign_b4'	=>new EE_Model_Field( 'Currency Sign Before Number', 'plaintext', FALSE ),
+//				'CNT_cur_dec_plc'		=>new EE_Model_Field( 'Currency Decimal Places', 'plaintext', FALSE ),
+//				'CNT_cur_dec_mrk'	=>new EE_Model_Field( 'Currency Decimal Mark', 'plaintext', FALSE ),
+//				'CNT_cur_thsnds'		=>new EE_Model_Field( 'Currency Thousands Separator', 'plaintext', FALSE ),
+//				'CNT_tel_code'			=>new EE_Model_Field( 'Country Telephone Code', 'plaintext', FALSE ),
+//				'CNT_is_EU'				=>new EE_Model_Field( 'Country is Member of EU', 'plaintext', FALSE ),
+//				'CNT_active'				=>new EE_Model_Field( 'Country Active Flag', 'plaintext', FALSE )
+//			);
+//		$this->_related_models=array(
+//				'Region'=>new EE_Model_Relation('belongsTo', 'Region', 'RGN_ID')
+//			);
+		
+		
+		$this->_tables = array(
+			'Country'=> new EE_Primary_Table('esp_country', 'CNT_ISO')
+		);
+		$this->_fields = array(
+			'Country'=>array(
+				'CNT_ISO'=> new EE_Primary_Key_String_Field('CNT_ISO', __('Country ISO Code','event_espresso'), false,''),
+				'CNT_ISO3'=>new EE_All_Caps_Text_Field_Base('CNT_ISO3', __('Country ISO3 Code','event_espresso'), false,''),
+				'RGN_ID'=>new EE_All_Caps_Text_Field_Base('RGN_ID', __('Region ID','event_espresso'), false,0),//should be a foreign key, but no region table exists yet
+				'CNT_name'=>new EE_Plain_Text_Field('CNT_name', __('Country Name','event_espresso'), false,''),
+				'CNT_cur_code'=>new EE_All_Caps_Text_Field_Base('CNT_cur_code', __('Country Currency Code','event_espresso'), false),
+				'CNT_cur_single' => new EE_Plain_Text_Field('CNT_cur_single', __('Currency Name Singular','event_espresso'), false),
+				'CNT_cur_plural' => new EE_Plain_Text_Field('CNT_cur_plural', __('Currency Name Plural','event_espresso'), false),
+				'CNT_cur_sign' => new EE_Plain_Text_Field('CNT_cur_sign', __('Currency Sign','event_espresso'), false),
+				'CNT_cur_sign_b4' => new EE_Boolean_Field('CNT_cur_sign_b4', __('Currency Sign Before Number','event_espresso'), false, true),
+				'CNT_cur_dec_plc' => new EE_Integer_Field('CNT_cur_dec_plc', __('Currency Decimal Places','event_espresso'), false, 2),
+				'CNT_cur_dec_mrk' => new EE_Plain_Text_Field('CNT_cur_dec_mrk', __('Currency Decimal Mark','event_espresso'), false, '.'),
+				'CNT_cur_thsnds' => new EE_Plain_Text_Field('CNT_cur_thsnds', __('Currency Thousands Seperator','event_espresso'), false, ','),
+				'CNT_tel_code' => new EE_Plain_Text_Field('CNT_tel_code', __('Country Telephone Code','event_espresso'), false, ''),
+				'CNT_is_EU' => new EE_Boolean_Field('CNT_is_EU', __('Country is Member of EU','event_espresso'), false, false),
+				'CNT_active' => new EE_Boolean_Field('CNT_active', __('Country Active Flag','event_espresso'), false, true)
+			));
+		$this->_model_relations = array(
+			'State'=>new EE_Has_Many_Relation()
+		);
 		
 		parent::__construct();
 	}
@@ -88,7 +114,7 @@ class EEM_Country extends EEM_TempBase {
 	*/	
 	public function get_all_countries() {
 		if ( ! self::$_all_countries ) {
-			self::$_all_countries = $this->get_all( NULL, 'ASC', array( 0,99999 ));
+			self::$_all_countries = $this->get_all( array( 'order_by'=>array('CNT_ISO'=>'ASC'),'limit'=> array( 0,99999 )));
 		}
 		return self::$_all_countries;
 	}
@@ -101,39 +127,11 @@ class EEM_Country extends EEM_TempBase {
 	*/	
 	public function get_all_active_countries() {
 		if ( ! self::$_active_countries ) {
-			self::$_active_countries =  $this->get_all_where( array( 'CNT_active' => 1 ), NULL, 'ASC', '=', array( 0,99999 ));
+			self::$_active_countries =  $this->get_all( array( array('CNT_active' => 1),'order_by'=>array('CNT_ISO'=>'ASC'),'limit'=>array(0, 99999) ));
 		}
 		return self::$_active_countries;
 	}
-
-
-	/**
-	*		delete  a single answer from db via their ID
-	* 
-	* 		@access		public
-	* 		@param		$CNT_ISO		
-	*		@return 		mixed		array on success, FALSE on fail
-	*/	
-	public function delete_by_ID( $CNT_ISO = FALSE ) {
-
-		if ( ! $CNT_ISO ) {
-			return FALSE;
-		}
-				
-		// retreive a particular transaction
-		$where_cols_n_values = array( 'CNT_ISO' => $CNT_ISO );
-		if ( $answer = $this->delete ( $where_cols_n_values )) {
-			return TRUE;
-		} else {
-			return FALSE;
-		}
-
-	}
 	
-
-
-
-
 }
 // End of file EEM_Country.model.php
 // Location: /includes/models/EEM_Country.model.php

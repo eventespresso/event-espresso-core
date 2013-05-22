@@ -21,9 +21,9 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_TempBase.model.php' );
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 
-class EEM_State extends EEM_TempBase {
+class EEM_State extends EEM_Base {
 
   	// private instance of the Attendee object
 	private static $_instance = NULL;
@@ -54,17 +54,31 @@ class EEM_State extends EEM_TempBase {
 		$this->singlular_item = __('State','event_espresso');
 		$this->plural_item = __('States','event_espresso');
 		//STA_ID 	CNT_ISO 	STA_abbrev 	STA_name 	STA_active
-		$this->_fields_settings=array(
-				'STA_ID'			=>new EE_Model_Field( 'State ID', 'primary_key', FALSE ),
-				'CNT_ISO'		=>new EE_Model_Field( 'Country ISO Code', 'foreign_text_key', FALSE, 1, NULL, 'Country' ),
-				'STA_abbrev'	=>new EE_Model_Field( 'State Abbreviation', 'plaintext', FALSE ),
-				'STA_name'	=>new EE_Model_Field( 'State Name', 'plaintext', FALSE ),
-				'STA_active'	=>new EE_Model_Field( 'State Active Flag', 'plaintext', FALSE )
-			);
-		$this->_related_models=array(
-				'Country'=>new EE_Model_Relation( 'belongsTo', 'Country', 'CNT_ISO' )
-			);
-		
+//		$this->_fields_settings=array(
+//				'STA_ID'			=>new EE_Model_Field( 'State ID', 'primary_key', FALSE ),
+//				'CNT_ISO'		=>new EE_Model_Field( 'Country ISO Code', 'foreign_text_key', FALSE, 1, NULL, 'Country' ),
+//				'STA_abbrev'	=>new EE_Model_Field( 'State Abbreviation', 'plaintext', FALSE ),
+//				'STA_name'	=>new EE_Model_Field( 'State Name', 'plaintext', FALSE ),
+//				'STA_active'	=>new EE_Model_Field( 'State Active Flag', 'plaintext', FALSE )
+//			);
+//		$this->_related_models=array(
+//				'Country'=>new EE_Model_Relation( 'belongsTo', 'Country', 'CNT_ISO' )
+//			);
+		$this->_tables = array(
+			'State'=> new EE_Primary_Table('esp_state', 'STA_ID')
+		);
+				
+		$this->_fields = array(
+			'State'=>array(
+				'STA_ID'=> new EE_Primary_Key_String_Field('STA_ID', __('State ID','event_espresso'), false,0),
+				'CNT_ISO'=> new EE_Foreign_Key_String_Field('CNT_ISO', __('COuntry ISO Code','event_espresso'), false, 1, 'Country'),
+				'STA_abbrev' => new EE_Plain_Text_Field('STA_abbrev', __('State Abbreviation','event_espresso'), false, ''),
+				'STA_name' => new EE_Plain_Text_Field('STA_name', __('State Name','event_espresso'), false, ''),
+				'STA_active'=> new EE_Boolean_Field('STA_active', __("State Active Flag", "event_espresso"), false, false)
+				));
+		$this->_model_relations = array(
+			'Country' => new EE_Belongs_To_Relation()
+		);
 		parent::__construct();
 		
 	}
@@ -91,7 +105,9 @@ class EEM_State extends EEM_TempBase {
 	*/	
 	public function get_all_active_states() {
 		if ( ! self::$_active_states ) {
-			self::$_active_states =  $this->get_all_where( array( 'STA_active' => 1 ), NULL, 'ASC', '=', array( 0,99999 ));
+			self::$_active_states =  $this->get_all( 
+					array(array( 'STA_active' => 1 ), 
+					'limit'=>array(0,99999)));
 		}
 		return self::$_active_states;
 	}

@@ -18,7 +18,7 @@ abstract class EE_Model_Field_Base{
 	var $_nullable;
 	var $_default_value;
 	var $_other_config;
-	function __construct($table_column, $nicename, $nullable, $default_value){
+	function __construct($table_column, $nicename, $nullable, $default_value = null){
 		$this->_table_column = $table_column;
 		$this->_nicename = $nicename;
 		$this->_nullable = $nullable;

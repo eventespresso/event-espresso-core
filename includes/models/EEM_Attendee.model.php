@@ -311,64 +311,28 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 
 	}
 
-
-
-
 	/**
-	 *		This function inserts table data
-	 *		
-	 *		@access public
-	 *		@param array $set_column_values - array of column names and values for the SQL INSERT 
-	 *		@return array
-	 */	
-	public function insert ($set_column_values) {
-		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		return $this->_insert( $this->table_name, $this->table_data_types, $set_column_values );
-	}
-
-
-
-
-
-	/**
-	 *		This function updates table data
-	 *		
-	 *		@access public
-	 *		@param array $set_column_values - array of column names and values for the SQL SET clause
-	 *		@param array $where_cols_n_values - column names and values for the SQL WHERE clause
-	 *		@return array
-	 */	
-	public function update ($set_column_values, $where_cols_n_values) {
-		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		return $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );	
-	}
-
-
-
-
-	/**
-	*		delete  a single attendee from db via their ID
+	*		delete  a single attendee from db via their ID, PERMANENTLY,
+	 * provided there are no registrations using this attendee
 	* 
 	* 		@access		public
 	* 		@param		$ATT_ID		
 	*		@return 		mixed		array on success, FALSE on fail
 	*/	
-	public function delete_attendee_by_ID( $ATT_ID = FALSE ) {
+	public function delete_by_ID( $ATT_ID = FALSE ) {
 
 		if ( ! $ATT_ID ) {
 			return FALSE;
 		}
 		
-		$where_cols_n_values = array( 'ATT_ID' => $ATT_ID, 'STS_ID' => array( 'RAP', 'RNA', 'RPN' ));
-		$orderby = 'REG_date';
-		$sort = 'ASC';
-		$operator = array( 'ATT_ID' => '=', 'STS_ID' => 'IN' );
+		$query_params[0] = array( 'ATT_ID' => $ATT_ID, 'STS_ID' => array('IN',array( 'RAP', 'RNA', 'RPN' )));
+		$query_params['order_by'] = array('REG_date' => 'ASC');
 		
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php');
 		$REG_MDL = EEM_Registration::instance();
 		//check if the attendee is associated with any registrations
 //		if ( $registrations = $REG_MDL->get_all_registrations_for_attendee( $ATT_ID, $status_array )) {
-		if ( $registrations = $REG_MDL->select_all_where ( $where_cols_n_values, $orderby, $sort, $operator )) {
+		if ( $registrations = $REG_MDL->get_all($query_params)) {
 			$msg = __( 'The Attendee could not be deleted because there are existing Registrations associated with this Attendee.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
@@ -377,7 +341,7 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 		// retreive a particular transaction
 //		$where_cols_n_values = array( 'ATT_ID' => $ATT_ID );
 //		if ( $attendee = $this->delete ( $where_cols_n_values )) {
-		if ( $attendee = $this->delete_permanently_by_ID ( $ATT_ID )) {
+		if ( $this->delete_permanently_by_ID ( $ATT_ID )) {
 			return TRUE;
 		} else {
 			return FALSE;

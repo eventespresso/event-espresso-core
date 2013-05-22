@@ -592,7 +592,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	 * For internal use in getting all the query parameters (because it's pretty well the same between question, question groups, and
 	 * for both when searchign for trahsed and untrahse dones)
 	 * @param EEM_Base $model either EEM_Question or EEM_Question_Group
-	 * @return array lik EEM_Base::get_all
+	 * @return array lik EEM_Base::get_all's $query_params parameter
 	 */
 	protected function get_query_params($model, $per_page=10,$current_page=10){
 		$query_params = array();
@@ -636,15 +636,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 	public function get_trashed_questions( $per_page,$current_page = 1, $count = FALSE ) {
-		list($order,$limit,$output,$searchString)=$this->get_query_params(EEM_Question::instance(),$per_page,$current_page,$count);
-		$orderby = empty($this->_req_data['orderby']) ? 'QST_order' : $this->_req_data['orderby'];		
-		if(!empty($searchString)){
-			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
-			$questions=EEM_Question::instance()->get_all_where_deleted(array('QST_display_text'=>'%'.$searchString.'%'), $orderby, $order, 'LIKE', $limit,$output);
-		}else{
-			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
-			$questions=EEM_Question::instance()->get_all_where_deleted(null, $orderby, $order, '=', $limit,$output);
-		}
+		$query_params=$this->get_query_params(EEM_Question::instance(),$per_page,$current_page,$count);
+		$questions=EEM_Question::instance()->get_all_deleted($query_params);
 		return $questions;
 	}
 
@@ -652,15 +645,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	public function get_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
 		$questionGroupModel=EEM_Question_Group::instance();
-		list($order,$limit,$output,$searchString)=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
-		$orderby = empty($this->_req_data['orderby']) ? 'QSG_order' : $this->_req_data['orderby'];		
-		if(!empty($searchString)){
-			$questionGroups=$questionGroupModel->get_all_where(array('QSG_name'=>'%'.$searchString.'%'), $orderby, $order, 'LIKE', $limit,$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
-		}else{
-			$questionGroups=$questionGroupModel->get_all_where(null, $orderby, $order, '=', $limit,$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
-		}
-		
-
+		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);		
+		$questionGroups=$questionGroupModel->get_all($query_params);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
 		return $questionGroups;
 	}
 
@@ -668,15 +654,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	public function get_trashed_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
 		$questionGroupModel=EEM_Question_Group::instance();
-		list($order,$limit,$output,$searchString)=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
-		$orderby = empty($this->_req_data['orderby']) ? 'QSG_order' : $this->_req_data['orderby'];		
-		if(!empty($searchString)){
-			$questionGroups=$questionGroupModel->get_all_where_deleted(array('QSG_name'=>'%'.$searchString.'%'), $orderby, $order, 'LIKE', $limit,$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
-		}else{
-			$questionGroups=$questionGroupModel->get_all_where_deleted(null, $orderby, $order, '=', $limit,$output);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
-		}
-		
-
+		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
+		$questionGroups=$questionGroupModel->get_all_deleted($query_params);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
 		return $questionGroups;
 	}
 

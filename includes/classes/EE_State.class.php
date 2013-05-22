@@ -33,31 +33,48 @@ class EE_State extends EE_Base_Class{
 	/**
 	 * Related Country, lazy-loaded
 	 * @access protected
-	 * @var EE_Country[] 
+	 * @var EE_Country 
 	 */
 	protected $_Country;
+	public static function new_instance( $props_n_values = array() ) {
+		$classname = __CLASS__;
+		$has_object = parent::_check_for_object( $props_n_values, $classname );
+		return $has_object ? $has_object : new self( $props_n_values );
+	}
 
-	/**
-	 * Constructor
-	 * @param int $STA_ID state ID
-	 * @param int $CNT_ISO  Country 2 character ISO code
-	 * @param string $STA_abbrev state abbreviation
-	 * @param string $STA_name state name
-	 * @param boolean $STA_active 
-	 */
-	public function __construct( $STA_ID=NULL, $CNT_ISO=NULL, $STA_abbrev=NULL, $STA_name=NULL, $STA_active=FALSE ) {
-		//if the first parameter is an array, assume it's an array of key-value pairs for this object
-		if(is_array($STA_ID)){
-			parent::__construct($STA_ID);
-			return;
-		}
-		$reflector = new ReflectionMethod($this,'__construct');	
-		$arrayForParent=array();
-		foreach($reflector->getParameters() as $param){
-			$paramName=$param->name;
-			$arrayForParent[$paramName]=$$paramName;//yes, that's using a variable variable.
-		}
-		parent::__construct($arrayForParent);
+
+
+
+	public static function new_instance_from_db ( $props_n_values = array() ) {
+		return new self( $props_n_values, TRUE );
+	}
+	
+	public function country_iso(){
+		return $this->get('CNT_ISO');
+	}
+	public function abbrev(){
+		return $this->get('STA_abbrev');
+	}
+	public function active(){
+		return $this->get('STA_active');
+	}
+	public function name(){
+		return $this->get('STA_name');
+	}
+	public function country(){
+		return $this->get_first_related('Country');
+	}
+	public function set_country_iso($iso){
+		$this->set('CNT_ISO',$iso);
+	}
+	public function set_abbrev($abbrev){
+		$this->set('STA_abbrev',$abbrev);
+	}
+	public function set_active($active){
+		$this->set('STA_active',$active);
+	}
+	public function set_name($name){
+		$this->set('STA_name',$name);
 	}
 
 

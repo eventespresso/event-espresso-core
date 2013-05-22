@@ -57,7 +57,12 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 			$transaction->save();
 		}
 		//createa hackey payment object, but dont save it
-		$payment = new EE_Payment($transaction->ID(), EEM_Payment::status_id_pending, current_time('timestamp'), array(), $transaction->total(), $this->_gateway_name, array(), null, null, null);
+		$payment = EE_Payment::new_instance(array(
+			'TXN_ID'=>$transaction->ID(), 
+			'STS_ID'=>EEM_Payment::status_id_pending, 
+			'PAY_timestamp'=>current_time('timestamp'), 
+			'PAY_amount'=>$transaction->total(), 
+			'PAY_gateway'=>$this->_gateway_name));
 		
 		do_action( 'action_hook_espresso__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
 		parent::thank_you_page_logic($transaction);

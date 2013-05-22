@@ -21,7 +21,7 @@ function espresso_default_prices_activation_sql( $SQL ) {
 				(1, 1, 0, '10.00', 'General Admission', 'Regular price for all Events. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 0, 0),
 				(2, 3, 0, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 10, 0),
 				(3, 4, 0, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price. Example content - delete if you want to',  1, NULL, NULL, 1, NULL, 20, 0),
-				(4, 5, 0, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 30, 0)
+				(4, 5, 0, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 30, 0),
 				(5, 6, 0, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 40, 0),
 				(6, 7, 0, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 50, 0);";
 	return $SQL;

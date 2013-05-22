@@ -886,7 +886,6 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	
 		//$this->_req_data['PRT_name'] = ucwords(strtolower($this->_req_data['PRT_name']));
 		$this->_req_data['PRT_name'] = htmlentities($this->_req_data['PRT_name'], ENT_QUOTES, 'UTF-8');
-	
 		$set_column_values = array(
 				'PRT_name' => $this->_req_data['PRT_name'],
 				'PBT_ID' => absint($this->_req_data['PBT_ID']),
