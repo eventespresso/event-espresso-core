@@ -40,6 +40,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 				'Reg_status' => __( 'Reg Status', 'event_espresso' ),
 				'REG_final_price' => __('Ticket Price', 'event_espresso'),
 				'TXN_paid' => __('Paid', 'event_espresso'),
+				'TXN_total' => __('Total', 'event_espresso'),
 				'PRC_name' => __('Ticket Option', 'event_espresso')
 			);
 
@@ -204,11 +205,32 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 				return '<span class="reg-pad-rght"><img class="" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/check-mark-16x16.png" width="16" height="16" alt="Paid in Full"/></span>';
 			} else {
 				$view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->TXN_ID ), TXN_ADMIN_URL );
-				$owing = number_format( $item->TXN_paid, 2, '.', ',' );
-				return '<span class="reg-pad-rght"><a class="status-'. $item->txn_status .'" href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">' . $org_options['currency_symbol'] . $owing . '</a><span>';
+				return '
+				<span class="reg-pad-rght">
+					<a class="status-'. $item->txn_status .'" href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">
+						' . $org_options['currency_symbol'] . number_format( $item->TXN_paid, 2, '.', ',' ) . '
+					</a>
+				<span>';
 			}			
+		} else {
+			return '<span class="reg-pad-rght"></span>';
 		}
 		
+	}
+
+
+
+
+	/**
+	 * 		column_TXN_total
+	*/
+	function column_TXN_total($item){	
+		if ( $item->REG_count == 1 ) {
+			global $org_options;
+			return '<span class="reg-pad-rght">'. $org_options['currency_symbol'] . abs( $item->TXN_total )  .'</span>';
+		} else {
+			return '<span class="reg-pad-rght"></span>';
+		}		
 	}
 
 
