@@ -653,7 +653,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		
 		if ( $EVT_ID && isset( $registrations[0] ) && isset( $registrations[0]->event_name )) {
 			//printr( $registrations[0], '$registrations  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-			$event_name = isset( $registrations[0]->event_name ) ? $registrations[0]->event_name : '';
+			$event_name = isset( $registrations[0]->event_name ) ? stripslashes( $registrations[0]->event_name ) : '';
 			$event_date = isset( $registrations[0]->DTT_EVT_start ) ? date( 'l F j, Y,    g:i:s a', $registrations[0]->DTT_EVT_start ) : '';
 			// edit event link
 			if ( $event_name != '' ) {
@@ -1441,7 +1441,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 			//printr( $attendees, '$attendees  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
 
-			$this->_template_args['event_name'] = $this->_registration->event_name;
+			$this->_template_args['event_name'] = stripslashes( $this->_registration->event_name );
 			$this->_template_args['currency_sign'] = $org_options['currency_symbol'];
 
 	//			$this->_template_args['registration_form_url'] = add_query_arg( array( 'action' => 'edit_registration', 'process' => 'attendees'  ), REG_ADMIN_URL );
@@ -1573,9 +1573,9 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['event_name'] = '' ;
 		// event name
 		if ( $this->_reg_event ) {
-			$this->_template_args['event_name'] = $this->_reg_event->event_name;
+			$this->_template_args['event_name'] = stripslashes(  $this->_reg_event->event_name );
 			$edit_event_url = self::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$this->_reg_event->id ), EVENTS_ADMIN_URL );	
-			$edit_event_lnk = '<a href="'.$edit_event_url.'" title="' . __( 'Edit ', 'event_espresso' ) . $this->_reg_event->event_name . '">' . __( 'Edit Event', 'event_espresso' ) . '</a>';	
+			$edit_event_lnk = '<a href="'.$edit_event_url.'" title="' . __( 'Edit ', 'event_espresso' ) . stripslashes( $this->_reg_event->event_name ) . '">' . __( 'Edit Event', 'event_espresso' ) . '</a>';	
 			$this->_template_args['event_name'] .= ' <span class="admin-page-header-edit-lnk not-bold">' . $edit_event_lnk . '</span>' ;
 		}
 
@@ -2039,7 +2039,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		if ( isset( $all_attendees[0] ) && isset( $all_attendees[0]->event_name )) {
 			//printr( $all_attendees[0], '$all_attendees[0]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// name
-			$event_name = isset( $all_attendees[0]->event_name ) ? $all_attendees[0]->event_name : '';
+			$event_name = isset( $all_attendees[0]->event_name ) ? stripslashes( $all_attendees[0]->event_name ) : '';
 			$event_date = isset( $all_attendees[0]->DTT_EVT_start ) ? date( 'l F j, Y,    g:i:s a', $all_attendees[0]->DTT_EVT_start ) : '';
 			// edit event link
 			if ( $event_name != '' ) {
