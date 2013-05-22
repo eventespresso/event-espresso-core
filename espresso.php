@@ -64,15 +64,17 @@ if ( ! defined( 'PS' )) {
 	define( 'PS', PATH_SEPARATOR );
 }
 
+$main_dir =dirname( __FILE__ );
 // add ESPRESSO directories to include_path
 set_include_path(
-	dirname( espresso_main_file() ) . DS . 'includes' . DS . 'core' . DS . PS .
-	dirname( espresso_main_file() ) . DS . 'includes' . DS . 'models' . DS . PS .
-	dirname( espresso_main_file() ) . DS . 'includes' . DS . 'classes' . DS . PS .
-	dirname( espresso_main_file() ) . DS . 'includes' . DS . 'functions' . DS . PS .
-	dirname( espresso_main_file() ) . DS . 'gateways' . DS . PS .
-	dirname( espresso_main_file() ) . DS . 'helpers' . DS . PS .
-	get_include_path()
+	get_include_path() . PS .
+	$main_dir . DS . 'includes' . DS . 'core' . DS . PS .
+	$main_dir . DS . 'includes' . DS . 'models' . DS . PS .
+	$main_dir . DS . 'includes' . DS . 'classes' . DS . PS .
+	$main_dir . DS . 'includes' . DS . 'functions' . DS . PS .
+	$main_dir . DS . 'gateways' . DS . PS .
+	$main_dir . DS . 'helpers' . DS
+	
 );
 
 
