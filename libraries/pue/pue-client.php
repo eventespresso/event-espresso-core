@@ -247,7 +247,7 @@ class PluginUpdateEngineChecker {
 	 */
 	private function _set_slug_and_slug_props( $slug, $options ) {
 
-		$this->pluginFile = $options('plugin_basename');
+		$this->pluginFile = $options['plugin_basename'];
 		$this->pluginName = $options['plugin_name'];
 		$this->lang_domain = isset( $options['lang_domain'] ) && !empty($options['lang_domain']) ? $options['lang_domain'] : NULL;
 
