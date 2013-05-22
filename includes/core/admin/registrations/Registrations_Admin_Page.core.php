@@ -71,7 +71,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$this->_labels = array(
 			'buttons' => array(
 					'add-registrant' => __('Register New Attendee', 'event_espresso'),
-					'add-attendee' => __('Add New Attendee', 'event_espresso'),
+					'add-attendee' => __('Add New Attendee Contact Info', 'event_espresso'),
 					'edit' => __('Edit Attendee', 'event_espresso'),
 					'delete' => __('Delete Attendee', 'event_espresso')
 				)
