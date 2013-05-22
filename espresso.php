@@ -11,6 +11,7 @@
   Author: 				Seth Shoultes
   Author URI: 		http://www.eventespresso.com
   License: 				GPLv2
+  TextDomain: event_espresso
 
   Copyright (c) 2008-2011 Event Espresso  All Rights Reserved.
 
