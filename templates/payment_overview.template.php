@@ -73,7 +73,7 @@ EE_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 								<img class="espresso-unpaid-status-icon-img" align="absmiddle" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/exclamation.png" width="16" height="16" alt="<?php $payment->e_pretty_status() ?>" title="<?php $payment->e_pretty_status() ?>" />
 							<?php } ?>
 							<?php $payment->e_pretty_status();
-							if ( $show_try_pay_again_link) {?>
+							if ( $show_try_pay_again_link &&  ! $payment->is_approved()) {?>
 							<a href='<?php echo $SPCO_step_2_url?>'><?php _e("Retry Payment", 'event_espresso'); ?></a>
 								<?php }
 							?>
@@ -148,6 +148,13 @@ EE_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 			</tbody>
 		</table>
 	</div>
+	
+	<?php
+	if ( $show_try_pay_again_link) {
+			?>
+		<a href='<?php echo $SPCO_step_2_url?>'><?php _e("Click here to view Payment Options", 'event_espresso'); ?></a>
+			<?php 	
+	}?>
 	<div class="event-data-display">
 		<h3 class="section-title"><?php _e('Registration  Details:', 'event_espreso'); ?></h3>
 		<div class="reg-gen-details">
