@@ -198,7 +198,7 @@ $fields = $question->get_fields_settings();
 					);
 					echo EE_Form_Fields::select_input('QST_required' . $id, $requiredOptions, $question->required(), 'id="QST_required' . $id . '"' . $disabled );
 					if ( ! empty( $disabled )) { ?>
-						<input type="hidden"  id="QST_required" name="QST_required" value="<?php echo $question->required()?>"/>
+						<input type="hidden"  id="QST_required" name="QST_required" value="1"/>
 					<?php } ?>					
 					<br/>
 					<p class="description">
@@ -232,7 +232,7 @@ $fields = $question->get_fields_settings();
 					);
 					echo EE_Form_Fields::select_input('QST_admin_only' . $id, $adminOnlyOptions, $question->admin_only(), 'id="QST_admin_only' . $id . '"' . $disabled );
 					if ( ! empty( $disabled )) { ?>
-						<input type="hidden"  id="QST_admin_only" name="QST_admin_only" value="<?php echo $question->required()?>"/>
+						<input type="hidden"  id="QST_admin_only" name="QST_admin_only" value="0"/>
 					<?php } ?>					
 					<br/>
 					<p class="description">
