@@ -127,10 +127,7 @@ function espresso_plugin_activation() {
 		espresso_default_countries();
 		espresso_default_states();
 		espresso_create_no_ticket_prices_array();
-		if ( get_option('permalink_structure') != '' ) {
-			espresso_add_rewrite_rules();
-			flush_rewrite_rules();
-		}
+		espresso_add_rewrite_rules( TRUE );			
 	}
 }
 
