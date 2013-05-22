@@ -509,13 +509,19 @@ function espresso_display_admin_notice() {
 
 
 
-function espresso_add_rewrite_rules() {
+/**
+ * 	espresso_add_rewrite_rules
+ *
+ *  @param 	boolean 		$to_flush_or_not_to_flush
+ *  @return 	void
+ */
+function espresso_add_rewrite_rules( $to_flush_or_not_to_flush = FALSE ) {
 
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	global $wpdb, $org_options;
 
 	if (empty($org_options['event_page_id'])) {
-		return;
+		espresso_load_org_options();
 	}
 
 	if ( get_option('permalink_structure') != '' ) {
@@ -525,6 +531,9 @@ function espresso_add_rewrite_rules() {
 		// rules for event slug pretty links
 		add_rewrite_rule( $reg_page_url_slug . '/([^/]+)/?$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top');
 		//add_rewrite_rule( $reg_page_url_slug . '/([^/]+)/?$', 'index.php?pagename=' . $reg_page_url_slug . '&e_reg=$matches[1]', 'top');
+		if ( $to_flush_or_not_to_flush ) {
+			flush_rewrite_rules();
+		}
 	}
 	
 }
