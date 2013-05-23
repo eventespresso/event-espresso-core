@@ -79,20 +79,6 @@
 				</td>
 			</tr>
 
-			<tr>
-				<th>
-					<label for="use_custom_post_types">
-						<?php _e('Use the custom post types feature', 'event_espresso'); ?>
-					</label>
-				</th>
-				<td>
-					<?php echo EE_Form_Fields::select_input('use_custom_post_types', $values, $template_settings['use_custom_post_types'], 'id="use_custom_post_types"'); ?>
-					<p class="description">
-						<?php _e('This merely "copies" your event data over to a WordPress Custom Post Type which can be used by developers for generating custom templates.', 'event_espresso'); ?>
-					</p>
-				</td>
-			</tr>
-
 		</tbody>
 	</table>
 

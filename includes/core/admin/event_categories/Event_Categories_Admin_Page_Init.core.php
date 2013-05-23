@@ -44,8 +44,8 @@ class Event_Categories_Admin_Page_Init extends EE_Admin_Page_Init {
 
 	public function get_menu_map() {
 		$map = array(
-				'group' => 'main',
-				'menu_order' => 5,
+				'group' => 'management',
+				'menu_order' => 100,
 				'show_on_menu' => TRUE,
 				'parent_slug' => 'espresso_events'
 			);

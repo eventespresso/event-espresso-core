@@ -108,7 +108,7 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 .available-spaces-last-update-spn { margin-left:1em; font-size:.7em; letter-spacing:1px; color:#999; }
 .small-text { font-size:.85em; letter-spacing:.5px; line-height:1.5em; }
 .smaller-text { font-size:.7em; letter-spacing:1px; line-height:1.25em; }
-.lt-grey-text { color:#999; }
+.lt-grey-text { color:#a8a8a8; }
 .drk-grey-text { color:#666; }
 .important-notice { font-weight:bold; color:#f59200; }
 .tiny-link { display:block; text-align:right; font-size:.6em; cursor:pointer; }
@@ -131,4 +131,5 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 #message.error { border-color:#EB574D; }
 #message p { margin:0; }
 
+.ee-gmaps img,
 .espresso-paid-status-icon-img { box-shadow: none !important; box-radius: 0 !important;  }

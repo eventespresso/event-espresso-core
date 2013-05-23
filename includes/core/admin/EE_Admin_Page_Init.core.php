@@ -281,19 +281,16 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		
 		// define requested admin page class name then load the file and instantiate
 		$path_to_file = str_replace( array( '\\', '/' ), DS, EE_CORE_ADMIN . $this->_folder_name . DS . $admin_page . '.core.php' );
-		$path_to_file=apply_filters("filter_hooks_espresso_path_to_{$this->menu_slug}_{$admin_page}",$path_to_file);//so if the file would be in EE_CORE_ADMIN/attendees/Attendee_Admin_Page.core.php, the filter would be filter_hooks_espresso_path_to_attendees_Attendee_Admin_Page
-		if ( is_readable( $path_to_file )) {					
-			
-			/**
-			 * This is a place where EE plugins can hook in to make sure their own files are required in the appropriate place
-			 */
+		//so if the file would be in EE_CORE_ADMIN/attendees/Attendee_Admin_Page.core.php, the filter would be FHEE__path_to_attendees_Attendee_Admin_Page
+		$path_to_file=apply_filters("FHEE__path_to_{$this->menu_slug}_{$admin_page}", $path_to_file);
+		if ( is_readable( $path_to_file )) {			
+			// This is a place where EE plugins can hook in to make sure their own files are required in the appropriate place
 			do_action( 'AHEE_before_initialize_admin_page' );
 			do_action( 'AHEE_before_initialize_admin_page_' . $this->menu_slug );
 			require_once( $path_to_file );
 			$a = new ReflectionClass( $admin_page );
 			$this->_loaded_page_object = $a->newInstance();				
 		}
-
 		do_action( 'AHEE_after_initialize_admin_page' );
 		do_action( 'AHEE_after_initialize_admin_page_' . $this->menu_slug );
 	}

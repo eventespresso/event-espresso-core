@@ -7,23 +7,15 @@ if (!function_exists('event_registration')) {
 
 	function event_details_page($single_event_id = NULL, $event_id_sc = 0) {
 
-		/* 		if ((isset($_REQUEST['form_action']) && $_REQUEST['form_action'] == 'edit_attendee') || (isset($_REQUEST['edit_attendee']) && $_REQUEST['edit_attendee'] == 'true')) {
-		  require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/process-registration/attendee_edit_record.php');
-		  attendee_edit_record();
-		  return;
-		  } */
-
 		global $wpdb, $org_options, $caffeinated;
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		$event_slug = (get_query_var('event_slug')) ? get_query_var('event_slug') : FALSE;
 
-
 		if ($event_id_sc != 0) {
 			$SQL = 'SELECT slug  FROM ' . EVENTS_DETAIL_TABLE . ' WHERE id = %d';
 			$event_slug = $wpdb->get_var($wpdb->prepare($SQL, $event_id_sc));
 		}
-
 
 		if (!empty($_REQUEST['event_id_time'])) {
 			$pieces = explode('|', $_REQUEST['event_id_time'], 3);
@@ -40,16 +32,6 @@ if (!function_exists('event_registration')) {
 			$ee_event_id = FALSE;
 		}
 
-
-
-		//The following variables are used to get information about your organization
-
-		if (isset($org_options['map_settings']['ee_display_map_no_shortcodes']) && $org_options['map_settings']['ee_display_map_no_shortcodes']) {
-			$show_ee_gmap_no_shortcode = true;
-			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/gmap_display.helper.php');
-		} else {
-			$show_ee_gmap_no_shortcode = false;
-		}
 		//Build event queries
 		$sql = "SELECT e.*";
 		$org_options['use_venue_manager'] ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
@@ -69,10 +51,6 @@ if (!function_exists('event_registration')) {
 			$sql.= " AND e.slug = '" . $event_slug . "' LIMIT 0,1";
 		}
 
-
-
-
-
 		//Support for diarise
 		if (!empty($_REQUEST['post_event_id'])) {
 			$sql = "SELECT e.* FROM " . EVENTS_DETAIL_TABLE . ' e';
@@ -80,16 +58,10 @@ if (!function_exists('event_registration')) {
 			$sql .= " LIMIT 0,1";
 		}
 
-
-
-//		$event = $wpdb->get_row( $sql );
-//		printr($event, 'event' );
 		$event = $wpdb->get_row($sql);
-//		printr($event, 'event' );
-//		die();
+//		printr( $event, '$event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		
 
-
-//
 		//Build the registration page
 		//allow addons to override this part
 		do_action('AHEE__registration_page__begin_display',$event);
@@ -102,9 +74,7 @@ if (!function_exists('event_registration')) {
 				// grab event times
 				if ( $datetimes = $DTM_MDL->get_all_event_dates( $event->id )) {
 					//printr( $datetimes, '$datetimes' );
-
 					$single_event = count( $datetimes ) == 1 ? TRUE : FALSE;
-
 					$first_event = current( $datetimes );
 
 					if ( $single_event ) {
@@ -114,23 +84,17 @@ if (!function_exists('event_registration')) {
 						$end_date = $last_event->end_date_and_time( get_option('date_format'));
 					}
 
-
-
 					$event->registration_startT = $first_event->reg_start_time();
 					$event->registration_start = $first_event->reg_start_date();
 					$event->registration_endT = $first_event->reg_end_time();
 					$event->registration_end = $first_event->reg_end_date();			
 
 				}
-
-				//Create a log file
-				//espresso_log::singleton()->log( array ( 'file' => __FILE__, 'function' => __FUNCTION__, 'status' => " $sql] [ sqldump = " . var_export($events, true) ) );
 				//These are the variables that can be used throughout the registration page
 				//foreach ($events as $event) {
 				global $this_event_id;
 				$event_id = $event->id;
 				$this_event_id = $event_id;
-
 
 				$event_name = stripslashes($event->event_name);
 				$event_desc = stripslashes($event->event_desc);
@@ -191,7 +155,15 @@ if (!function_exists('event_registration')) {
 					//print_r($venue_meta);
 				}
 
-				global $ee_gmaps_opts;
+				//The following variables are used to get information about your organization
+				if ( isset($org_options['map_settings']['ee_display_map_no_shortcodes']) && $org_options['map_settings']['ee_display_map_no_shortcodes']) {
+					$show_ee_gmap_no_shortcode = true;
+					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/gmap_display.helper.php');
+				} else {
+					$show_ee_gmap_no_shortcode = false;
+				}
+				
+				$gmap_address = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? ' ' . $event_address2 : '') . ($event_city != '' ? ', ' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? ', ' . $event_zip : '') . ($event_country != '' ? ', ' . $event_country : '');
 				// EE gmaps needs it's own org_options array populated on a per page basis to enable common queries in gmaps api function
 				$ee_gmaps_opts = array(
 						'ee_map_width' => empty($org_options['map_settings']['ee_map_width_single']) ? '' : $org_options['map_settings']['ee_map_width_single'],
@@ -202,8 +174,12 @@ if (!function_exists('event_registration')) {
 						'ee_map_type_control' => empty($org_options['map_settings']['ee_map_type_control_single']) ? '' : $org_options['map_settings']['ee_map_type_control_single'],
 						'ee_map_align' => empty($org_options['map_settings']['ee_map_align_single']) ? '' : $org_options['map_settings']['ee_map_align_single'],
 						'ee_static_url' => empty($venue_meta['gmap_static']) ? '' : $venue_meta['gmap_static'],
-						'ee_enable_for_gmap' => empty($event_meta['enable_for_gmap']) ? '' : $event_meta['enable_for_gmap']
+						'ee_enable_for_gmap' => empty($event_meta['enable_for_gmap']) ? '' : $event_meta['enable_for_gmap'],
+						'location' => $gmap_address,
+						'event_id' => $event_id
 				);
+				
+				$show_google_map = $event_meta['enable_for_gmap'] ? TRUE : FALSE;
 
 
 				// display formatting
@@ -359,7 +335,8 @@ if (!function_exists('event_registration')) {
 						$data['location'] = $location;
 						$data['org_options'] = $org_options;
 						$data['google_map_link'] = $google_map_link;
-						$data['show_ee_gmap_no_shortcode'] = $show_ee_gmap_no_shortcode;
+						$data['show_google_map'] = $show_google_map;
+						$data['ee_gmaps_opts'] = $ee_gmaps_opts;
 						$data['end_date'] = $end_date;
 						$data['start_date'] = $start_date;
 						$data['display_desc'] = $display_desc;
