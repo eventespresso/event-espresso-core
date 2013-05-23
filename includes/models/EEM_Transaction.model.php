@@ -278,7 +278,7 @@ class EEM_Transaction extends EEM_TempBase {
 	public function get_transactions_for_admin_page( $start_date = FALSE, $end_date = FALSE, $orderby = 'TXN_timestamp', $order = 'DESC', $limit = NULL, $count = FALSE ) { 
 
 		if ( ! $start_date ) {
-			$start_date = date('Y-m-d', strtotime( 'Jan 1, 2010' ));
+			$start_date = date('Y-m-d', strtotime(  '-10 year' ));
 		}
 
 		if ( ! $end_date ) {
@@ -299,7 +299,11 @@ class EEM_Transaction extends EEM_TempBase {
 
 		global $wpdb;
 		
-		$SQL = $count ? "SELECT COUNT(txn.TXN_ID) " : "SELECT att.ATT_ID, CONCAT(att.ATT_fname, ' ', att.ATT_lname) as TXN_att_name, att.ATT_email, evt.id, evt.event_name, evt.slug, reg.REG_ID, reg.REG_url_link, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.TXN_paid, txn.STS_ID, txn.TXN_details ";		
+		if ( $count ) {
+			$SQL =  'SELECT COUNT(txn.TXN_ID) ';
+		} else {
+			$SQL =  "SELECT att.ATT_ID, CONCAT(att.ATT_fname, ' ', att.ATT_lname) as TXN_att_name, att.ATT_email, evt.id, evt.event_name, evt.slug, reg.REG_ID, reg.REG_url_link, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.TXN_paid, txn.STS_ID, txn.TXN_details ";
+		}
 
 		$SQL .= 'FROM ' . $wpdb->prefix . 'esp_registration reg ';
 		$SQL .= 'LEFT JOIN ' . $wpdb->prefix . 'esp_attendee att ON reg.ATT_ID = att.ATT_ID ';
@@ -329,17 +333,9 @@ class EEM_Transaction extends EEM_TempBase {
 		$limit = !empty($limit) ? 'LIMIT ' . implode(',', $limit) : '';
 		$SQL .= $count ? '' : "ORDER BY $orderby $order $limit";
 
-		$results = $count ? $wpdb->get_var( $wpdb->prepare( $SQL, $start_date, $end_date ) ) : $wpdb->get_results( $wpdb->prepare( $SQL, $start_date, $end_date ), ARRAY_A );
+		$transactions = $count ? $wpdb->get_var( $wpdb->prepare( $SQL, $start_date, $end_date ) ) : $wpdb->get_results( $wpdb->prepare( $SQL, $start_date, $end_date ), ARRAY_A );
 
-		if ( $results ) {
-			if ( !$count ) {
-				$transactions = array();
-				foreach ( $results as $transaction ) {
-					$transactions[ $transaction['TXN_ID'] ] = $transaction;
-				}
-			} else {
-				$transactions = $results;
-			}
+		if ( $transactions ) {
 			return $transactions;
 		} else {
 			return FALSE;

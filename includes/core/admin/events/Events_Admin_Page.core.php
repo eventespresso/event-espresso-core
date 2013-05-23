@@ -2163,6 +2163,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 	public function additional_attendees_question_groups_meta_box() {
+		
+		//printr( $this->_event, '$this->_event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		?>
 		<div class="inside">
@@ -2177,7 +2179,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			</p>
 			<?php
 			$QSGs = EEM_Event::instance()->get_all_question_groups();
-			$EQGs = EEM_Event::instance()->get_event_question_groups( $this->_event->id, TRUE );
+			$EQGs = EEM_Event::instance()->get_event_question_groups( $this->_event->id, FALSE );
 			$EQGs = is_array( $EQGs ) ? $EQGs : array();
 
 			if ( ! empty( $QSGs )) {
