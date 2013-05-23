@@ -1693,7 +1693,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 								<br/>
 							<p>
 								<label for="enable_for_gmap">
-									<?php _e('Enable event address in Google Maps? ', 'event_espresso') ?>
+									<?php _e('Display Google Map for this venue? ', 'event_espresso') ?>
 								</label>
 								<?php echo EE_Form_Fields::select_input('enable_for_gmap', $values, isset($this->_event->event_meta['enable_for_gmap']) ? $this->_event->event_meta['enable_for_gmap'] : '', 'id="enable_for_gmap"') ?> 
 							</p>

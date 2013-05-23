@@ -406,7 +406,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			'display_short_description_in_event_list' => TRUE,
 			'display_address_in_event_list' => FALSE,
 			'display_address_in_regform' => TRUE,			
-			'use_custom_post_types' => FALSE,			
 			'use_custom_templates' => FALSE,		
 		);
 		$this->_template_args['template_settings'] = 
@@ -449,7 +448,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][9])
 			? TRUE
 			: FALSE;
-		//$this->_template_args['custom_templates_exist'] = TRUE;
 		
 		$this->_set_add_edit_form_tags( 'update_template_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
@@ -500,11 +498,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				 isset( $this->_req_data['display_address_in_regform'] ) 
 				? absint( $this->_req_data['display_address_in_regform'] ) 
 				: TRUE;
-
-		$data['template_settings']['use_custom_post_types'] = 
-				 isset( $this->_req_data['use_custom_post_types'] ) 
-				? absint( $this->_req_data['use_custom_post_types'] ) 
-				: FALSE;
 
 		$data['style_settings']['enable_default_style'] = 
 				 isset( $this->_req_data['enable_default_style'] ) 
@@ -573,8 +566,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['values'] = $this->_yes_no_values;
 
 		$default_map_settings = array(
-			'ee_map_width_single' => 595,
-			'ee_map_height_single' => 368,
+			'ee_map_width_single' => 585,
+			'ee_map_height_single' => 362,
 			'ee_map_zoom_single' => 14,
 			'ee_map_nav_display_single' => TRUE,
 			'ee_map_nav_size_single' => FALSE,
@@ -633,12 +626,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 		$data['map_settings']['ee_map_type_control_single'] = 
 				 isset( $this->_req_data['ee_map_type_control_single'] ) 
-				? absint( $this->_req_data['ee_map_type_control_single'] ) 
+				? sanitize_text_field( $this->_req_data['ee_map_type_control_single'] ) 
 				: 'default';
 
 		$data['map_settings']['ee_map_align_single'] = 
 				 isset( $this->_req_data['ee_map_align_single'] ) 
-				? absint( $this->_req_data['ee_map_align_single'] ) 
+				? sanitize_text_field( $this->_req_data['ee_map_align_single'] ) 
 				: 'right';
 
 		$data['map_settings']['ee_map_width'] = 
@@ -668,12 +661,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 		$data['map_settings']['ee_map_type_control'] = 
 				 isset( $this->_req_data['ee_map_type_control'] ) 
-				? absint( $this->_req_data['ee_map_type_control'] ) 
+				? sanitize_text_field( $this->_req_data['ee_map_type_control'] ) 
 				: 'default';
 
 		$data['map_settings']['ee_map_align'] = 
 				 isset( $this->_req_data['ee_map_align'] ) 
-				? absint( $this->_req_data['ee_map_align'] ) 
+				? sanitize_text_field( $this->_req_data['ee_map_align'] ) 
 				: 'right';
 
 		$data['map_settings']['ee_display_map_no_shortcodes'] = 
