@@ -79,7 +79,7 @@
 				</td>
 			</tr>
 
-			<tr>
+<!--			<tr>
 				<th>
 					<label for="use_custom_post_types">
 						<?php _e('Use the custom post types feature', 'event_espresso'); ?>
@@ -91,7 +91,7 @@
 						<?php _e('This merely "copies" your event data over to a WordPress Custom Post Type which can be used by developers for generating custom templates.', 'event_espresso'); ?>
 					</p>
 				</td>
-			</tr>
+			</tr>-->
 
 		</tbody>
 	</table>

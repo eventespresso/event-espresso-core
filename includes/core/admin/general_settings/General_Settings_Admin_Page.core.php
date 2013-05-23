@@ -406,7 +406,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			'display_short_description_in_event_list' => TRUE,
 			'display_address_in_event_list' => FALSE,
 			'display_address_in_regform' => TRUE,			
-			'use_custom_post_types' => FALSE,			
+			//'use_custom_post_types' => FALSE,			
 			'use_custom_templates' => FALSE,		
 		);
 		$this->_template_args['template_settings'] = 
@@ -501,10 +501,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				? absint( $this->_req_data['display_address_in_regform'] ) 
 				: TRUE;
 
-		$data['template_settings']['use_custom_post_types'] = 
-				 isset( $this->_req_data['use_custom_post_types'] ) 
-				? absint( $this->_req_data['use_custom_post_types'] ) 
-				: FALSE;
+//		$data['template_settings']['use_custom_post_types'] = 
+//				 isset( $this->_req_data['use_custom_post_types'] ) 
+//				? absint( $this->_req_data['use_custom_post_types'] ) 
+//				: FALSE;
 
 		$data['style_settings']['enable_default_style'] = 
 				 isset( $this->_req_data['enable_default_style'] ) 
