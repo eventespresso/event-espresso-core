@@ -53,7 +53,7 @@
 			</p>
 
 			<?php
-			do_action('AHEE_inside_event_list_listing', $event);
+			do_action('AHEE_inside_event_list_listing', $event_id);
 			if ($can_register_for_event) {
 				if ($display_available_spaces) {
 					?>
@@ -95,6 +95,7 @@
 			} else {	// end if $can_register_for_event
 				echo $registration_closed_msg;
 			}
+			do_action('AHEE_end_event_list_listing',$event_id);
 			?>
 			<div class="clear"></div>
 		</div>
