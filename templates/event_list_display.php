@@ -111,9 +111,8 @@
 			<div id="event_address-<?php echo $event_id ?>"  class="event-address-pg">
 				<h6><?php echo __('Address:', 'event_espresso'); ?></h6>
 				<?php echo $location; ?>
-				<?php echo $google_map_link; ?>
+				<?php echo $google_map_link; ?>				
 			</div>
-			<div class="clear"></div>
 			<?php echo $google_map; ?>
 			<div class="clear"></div>
 		<?php } ?>
