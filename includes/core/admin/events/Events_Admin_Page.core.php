@@ -2113,14 +2113,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 //			echo printr( $quick_edit_ticket_price, '$quick_edit_ticket_price' );
 		if ( isset( $quick_edit_ticket_price['XXXXXX'] )) {
 			$new_quick_price = $quick_edit_ticket_price['XXXXXX'];
-			if ( isset( $new_quick_price['PRC_order'] ) && isset( $new_quick_price['PRC_name'] ) && ! empty( $new_quick_price['PRC_name'] ) && isset( $new_quick_price['PRC_amount'] )) {
+			if ( isset( $new_quick_price['PRC_name'] ) && ! empty( $new_quick_price['PRC_name'] ) && isset( $new_quick_price['PRC_amount'] )) {
 				$ticket_prices_to_save[] = array(
 					'PRT_ID' => 2,
 					'EVT_ID' => 4,
 					'PRT_is_global' => FALSE,
 					'PRC_overrides' => 0,
 					'PRC_deleted' => FALSE,
-					'PRC_order' => $new_quick_price['PRC_order'] ? $new_quick_price['PRC_order'] : 0,
+					'PRC_order' => isset( $new_quick_price['PRC_order'] ) && $new_quick_price['PRC_order'] ? $new_quick_price['PRC_order'] : 0,
 					'PRC_name' => $new_quick_price['PRC_name'] ? $new_quick_price['PRC_name'] : NULL,
 					'PRC_desc' => NULL,
 					'PRC_amount' => $new_quick_price['PRC_amount'] ? $new_quick_price['PRC_amount'] : 0,
@@ -2544,20 +2544,20 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 		/************************************   PRICING   ******************************************* */
-		
+
 		$ticket_prices_to_save = array();
 		$quick_edit_ticket_price = isset($this->_req_data['quick_edit_ticket_price']) ? $this->_req_data['quick_edit_ticket_price'] : array();
-		// printr( $quick_edit_ticket_price, '$quick_edit_ticket_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//printr( $quick_edit_ticket_price, '$quick_edit_ticket_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		if ( isset( $quick_edit_ticket_price['XXXXXX'] )) {
 			$new_quick_price = $quick_edit_ticket_price['XXXXXX'];
-			if ( isset( $new_quick_price['PRC_order'] ) && isset( $new_quick_price['PRC_name'] ) && ! empty( $new_quick_price['PRC_name'] ) && isset( $new_quick_price['PRC_amount'] )) {
+			if ( isset( $new_quick_price['PRC_name'] ) && ! empty( $new_quick_price['PRC_name'] ) && isset( $new_quick_price['PRC_amount'] )) {
 				$ticket_prices_to_save[] = array(
 					'PRT_ID' => 2,
 					'EVT_ID' => 4,
 					'PRT_is_global' => FALSE,
 					'PRC_overrides' => 0,
 					'PRC_deleted' => FALSE,
-					'PRC_order' => $new_quick_price['PRC_order'] ? array( 2 => $new_quick_price['PRC_order'] ) : array( 2 => 0 ),
+					'PRC_order' =>  isset( $new_quick_price['PRC_order'] ) && $new_quick_price['PRC_order'] ? array( 2 => $new_quick_price['PRC_order'] ) : array( 2 => 0 ),
 					'PRC_name' => $new_quick_price['PRC_name'] ? $new_quick_price['PRC_name'] : NULL,
 					'PRC_desc' => NULL,
 					'PRC_amount' => $new_quick_price['PRC_amount'] ? $new_quick_price['PRC_amount'] : 0,
@@ -2599,10 +2599,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 			}
 		}
 		
-//			echo printr( $ticket_prices_to_save, '$ticket_prices_to_save' );	
+		//printr( $ticket_prices_to_save, '$ticket_prices_to_save  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// add new tickets if any
-		if ($new_ticket_price = isset($this->_req_data['new_ticket_price']) ? $this->_req_data['new_ticket_price'] : array('PRC_name' => NULL)) {
+		if ($new_ticket_price = isset($this->_req_data['new_ticket_price']) ? $this->_req_data['new_ticket_price'] : array( 'PRC_name' => NULL, 'PRC_amount' => NULL )) {
 			if ( $new_ticket_price['PRC_amount'] != '' && ! empty( $new_ticket_price['PRC_name'] )) {
 				$ticket_prices_to_save[] = $new_ticket_price;
 			} else if ( $new_ticket_price['PRC_amount'] == '' && ! empty( $new_ticket_price['PRC_name'] )) {
