@@ -185,13 +185,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 					),
 				'list_table' => 'Events_Admin_List_Table'
 				),
-				
-//			'view_report' => array(
-//				'nav' => array(
-//					'label' => __('Report', 'event_espresso'),
-//					'order' => 20
-//					)
-//				),
 
 			'import_events' => array(
 				'nav' => array(
@@ -204,7 +197,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			'add_event' => array(
 				'nav' => array(
 					'label' => __('Add Event', 'event_espresso'),
-					'order' => 5,
+					'order' => 15,
 					'persistent' => false
 					),
 				'metaboxes' => array( '_publish_post_box', '_register_event_editor_meta_boxes', '_premium_event_editor_meta_boxes' ),
@@ -223,7 +216,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			'edit_event' => array(
 				'nav' => array(
 					'label' => __('Edit Event', 'event_espresso'),
-					'order' => 5,
+					'order' => 15,
 					'persistent' => false,
 					'url' => isset($this->_req_data['EVT_ID']) ? add_query_arg(array('EVT_ID' => $this->_req_data['EVT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
@@ -478,17 +471,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		//load formatter helper
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
-
 		//load field generator helper
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
-
 		//set _event property
 		$this->_set_event_object();
-
 		// form 
 		$route = $view == 'edit' ? 'update_event' : 'insert_event';
 		$this->_set_add_edit_form_tags($route);
-
 
 		$this->_generate_event_title_and_desc();
 		$this->_generate_publish_box_extra_content();
@@ -612,7 +601,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$this->_event->start_date = date( 'Y-m-d', time() + (60 * 60 * 24 * 30));
 		$this->_event->event_desc = '';
 		$this->_event->phone = '';
-		$this->_event->externalURL = '';
+		//$this->_event->externalURL = '';
 		//$this->_event->early_disc = '';
 		//$this->_event->early_disc_date = '';
 		//$this->_event->early_disc_percentage = '';
@@ -736,22 +725,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$this->_event->submitted = $this->_event->submitted != '0000-00-00 00:00:00' ? ( empty( $this->_event->submitted ) ? '' : event_date_display( $this->_event->submitted ) ) : 'N/A';
 		$this->_event->google_map_link = espresso_google_map_link(array('address' => $this->_event->address, 'city' => $this->_event->city, 'state' => $this->_event->state, 'zip' => $this->_event->zip, 'country' => $this->_event->country));
 		$this->_event->event_meta = unserialize($this->_event->event_meta);
-
-		
-		if ( isset( $this->_event->event_meta['default_payment_status'] )) {
-			$this->_event->event_meta['default_reg_status'] = $this->_event->event_meta['default_payment_status'];
-			unset( $this->_event->event_meta['default_payment_status'] );
-		}
-
-/*		$this->_event->question_groups = unserialize($this->_event->question_groups);
-		$sql = "SELECT qg.* FROM " . EVENTS_QST_GROUP_TABLE . " qg JOIN " . EVENTS_QST_GROUP_REL_TABLE . " qgr ON qg.id = qgr.group_id ";
-		$sql2 = apply_filters('FHEE_event_editor_question_groups_sql', " WHERE wp_user = '0' OR wp_user = '1' ", $this->_event->id);
-		$sql .= $sql2 . " GROUP BY qg.id ORDER BY qg.group_order";
-		$sql = apply_filters('FHEE_question_group_sql', $sql);
-		//Debug:
-		//echo $sql;
-		$this->_event->q_groups = $wpdb->get_results($sql);		
-		$this->_event->num_rows = $wpdb->num_rows;*/
 		
 		$this->_event->page_url = get_permalink($org_options['event_page_id']);
 	}
@@ -774,16 +747,15 @@ class Events_Admin_Page extends EE_Admin_Page {
 	protected function _register_event_editor_meta_boxes() {
 		
 		$this->_set_event_object();
-
+		// Dates & Times
 		add_meta_box('espresso_event_editor_date_time', __('Dates &amp; Times', 'event_espresso'), array( $this, 'date_time_metabox' ), $this->_current_screen->id, 'normal', 'high');
-
+		// Event Pricing
 		add_meta_box('espresso_event_editor_pricing', __('Event Pricing', 'event_espresso'), array( $this, 'pricing_metabox' ), $this->_current_screen->id, 'normal', 'core');
-
-		add_meta_box('espresso_event_editor_venue', __('Venue Details', 'event_espresso'), array( $this, 'venue_metabox' ), $this->_current_screen->id, 'normal', 'core');
-
-		
+		// Venue Details
+		add_meta_box('espresso_event_editor_venue', __('Venue Details', 'event_espresso'), array( $this, 'venue_metabox' ), $this->_current_screen->id, 'normal', 'core');		
+		// Questions for Primary Attendee
 		add_meta_box('espresso_event_editor_primary_questions', __('Questions for Primary Attendee', 'event_espresso'), array( $this, 'primary_questions_group_meta_box' ), $this->_current_screen->id, 'side', 'core');
-
+		//Event Category
 		add_meta_box('espresso_event_editor_categories', __('Event Category', 'event_espresso'), array( $this, 'categories_meta_box' ), $this->_current_screen->id, 'side', 'default');
 	}
 
@@ -796,27 +768,16 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 	public function date_time_metabox() {
-		global $org_options, $caffeinated;
-
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
-	//	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Ticket.model.php');
-	//	$TKT_MDL = EEM_Ticket::instance();
-	//	
-	//	$all_event_tickets = $TKT_MDL->get_all_event_tickets( $event->id );
+		global $org_options, $caffeinated, $times;
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
 		$DTM_MDL = EEM_Datetime::instance();
-
-		global $times;
 		// grab event times
 		$times = $DTM_MDL->get_all_event_dates( $this->_event->id );
-		// grab reg times
-		//$reg_times = $DTM_MDL->get_all_reg_dates($this->_event->id);
 		
 		$datetime_IDs = array();
-		
-		//printr( $times, '$times' );
 		?>
 
 		
@@ -847,7 +808,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 							 </div>
 							<input id="event-start-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][evt_start]" type="text" class="dtm-es-picker dtm-inp" value="<?php echo $time->start_date_and_time(  'Y-m-d '  ); ?>"/>
 							<input name="event-start-row-<?php echo $row; ?>" type="hidden" value="<?php echo $row; ?>"/>
-							<?php /* <input id="event-start-max-date-<?php echo $row; ?>" type="hidden" value=""/> */ ?>
 							<?php if ($time->ID()) { ?>
 							<?php $datetime_IDs[$row] = $time->ID(); ?>
 							<input id="ID-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][ID]" type="hidden" value="<?php echo $time->ID(); ?>"/>
@@ -859,7 +819,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 							<div class="small-screen-table-label"><?php echo __('Event Ends on', 'event_espresso') ?></div>
 							<input id="event-end-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][evt_end]" type="text" class="dtm-ee-picker dtm-inp" value="<?php echo $time->end_date_and_time(  'Y-m-d '  ); ?>"/>
 							<input name="event-end-row_<?php echo $row; ?>" type="hidden" value="<?php echo $row; ?>"/>
-							<?php /* <input id="event-end-min-date-<?php echo $row; ?>" type="hidden" value=""/> */ ?>
 						</td>
 						
 						<td class="">
@@ -873,47 +832,12 @@ class Events_Admin_Page extends EE_Admin_Page {
 							<input id="reg-end-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][reg_end]" type="text" class="dtm-re-picker dtm-inp" value="<?php echo $time->reg_end_date_and_time(  'Y-m-d '  ) ?>" />
 							<input name="reg-end-row_<?php echo $row; ?>" type="hidden" value="<?php echo $row; ?>"/>
 						</td>
-			
-						<?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS 
-						<?php if ($org_options['time_reg_limit']) : ?>
-							<td>
-								<input type="text" id="reg-limit-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][reg_limit]" class="small-text dtm-inp" style="text-align:right;" value="<?php echo $time->reg_limit(); ?>"/>
-							</td>
-						<?php endif; // time_reg_limit   ?>
-						  */ ?>
-						
-	<!--					<td>
-							<input type="text" id="tckts-left-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][tckts_left]" class="small-text dtm-inp" style="text-align:right;" value="<?php echo $time->tckts_left(); ?>"/>
-						</td>-->
-																	
-						<td class="">
-							<div class="small-screen-table-label"><?php echo __('Actions', 'event_espresso') ?></div>
-							<?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS <a class='display-dtm-tickets-left-lnk display-ticket-manager' data-reveal-id="ticket-manager-dv" rel="<?php echo $time->ID(); ?>"  title='Display the Ticket Manager for this Date Time' style="position:relative; top:5px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;" >
-								<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/tickets-1-16x16.png" width="16" height="16" alt="<?php _e('tickets left', 'event_espresso'); ?>"/>
-							</a> */ ?>
-							<?php if ( $caffeinated ) : ?>
-							<a class='clone-date-time dtm-inp-btn' rel='<?php echo $row; ?>' title='<?php _e('Clone this Event Date and Time', 'event_espresso'); ?>' style='position:relative; top:5px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'>
-								<img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/clone-trooper-16x16.png' width='16' height='16' alt='<?php _e('clone', 'event_espresso'); ?>'/>
-							</a>
-							<?php endif; ?>
-					<?php if ( $row != 1 ) : ?>
-							<a class='remove-xtra-time dtm-inp-btn' rel='<?php echo $row; ?>' title='<?php _e('Remove this Event Date and Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'>
-								<img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/trash-16x16.png' width='16' height='16' alt='<?php _e('trash', 'event_espresso'); ?>'/>
-							</a>
-					<?php endif; ?>
-						</td>
 						
 					</tr>
 					<?php $row++; ?>
 				<?php endforeach; // ($times as $time)  ?>
 			</table>
 			<br class="clear"/>
-			<?php if ( $caffeinated ) : ?>
-			<!--<input type="button" id="add-time" class="button dtm-inp-btn" value="<?php _e('Add Additional Time', 'event_espresso'); ?>" />-->
-			<a id="add-new-date-time" class="button-secondary dtm-inp-btn right" ><?php _e('Add New Dates &amp; Times', 'event_espresso'); ?></a>
-			<input id="edit_event_datetimes_save_btn" class="button-primary save right" type="submit" name="save" value="Save Dates &amp; Times">
-			<br class="clear"/>
-			<?php endif; ?>
 
 		</div>
 
@@ -937,43 +861,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		<input  type="hidden" name="datetime_IDs" value="<?php echo serialize( $datetime_IDs ); ?>"/>
 		<input  type="hidden" id="process_datetimes" name="process_datetimes" value="1"/>
 
-
-		<?php if ($caffeinated) : ?>
-			<script type="text/javascript">
-				(function($) {
-					var counter = <?php echo $row; ?>;
-
-					$('#add-new-date-time').live('click', function(){
-						var newRow = "<tr valign='top' id='event-dates-and-times-row-"+counter+"'><td><div class='small-screen-table-label'><?php echo __('Event Starts on', 'event_espresso') ?></div><input id='event-start-"+counter+"' name='event_datetimes["+counter+"][evt_start]' type='text' class='dtm-es-picker dtm-inp medium-text' value=''/><input name='event-start-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/><input id='is-primary-"+counter+"' name='event_datetimes["+counter+"][is_primary]' type='hidden' value='' /></td><td><div class='small-screen-table-label'><?php echo __('Event Ends on', 'event_espresso') ?></div><input id='event-end-"+counter+"' name='event_datetimes["+counter+"][evt_end]' type='text' class='dtm-ee-picker dtm-inp medium-text' value=''/><input name='event-end-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/></td><td><div class='small-screen-table-label'><?php echo __('Registration Starts on', 'event_espresso') ?></div><input id='reg-start-"+counter+"' name='event_datetimes["+counter+"][reg_start]' type='text' class='dtm-rs-picker dtm-inp medium-text' value='' /><input name='reg-start-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/></td><td><div class='small-screen-table-label'><?php echo __('Registration Ends on', 'event_espresso') ?></div><input id='reg-end-"+counter+"' name='event_datetimes["+counter+"][reg_end]' type='text' class='dtm-re-picker dtm-inp medium-text' value='' /><input name='reg-end-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/></td><?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS <?php if ($org_options['time_reg_limit']) : ?><td><input type='text' id='reg-limit-"+counter+"' name='event_datetimes["+counter+"][reg_limit]' class='small-text dtm-inp' style='text-align:right;' value=''/></td><?php endif; // time_reg_limit   ?><td><input type='text' id='tckts-left-"+counter+"' name='event_datetimes["+counter+"][tckts_left]' class='small-text dtm-inp' style='text-align:right;' value=''/></td> */ ?><td><div class=small-screen-table-label><?php echo __('Actions', 'event_espresso') ?></div><a class='clone-date-time dtm-inp-btn' rel='"+counter+"' title='<?php _e('Clone this Event Date and Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/clone-trooper-16x16.png' width='16' height='16' alt='<?php _e('clone', 'event_espresso'); ?>'/></a><a class='remove-xtra-time dtm-inp-btn' rel='"+counter+"' title='<?php _e('Remove this Event Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/trash-16x16.png' width='16' height='16' alt='<?php _e('trash', 'event_espresso'); ?>'/></a></td></tr>";
-						$('#event-dates-and-times tr:last').after( newRow );
-						counter++;
-					});
-					
-
-					$('.clone-date-time').live('click', function(){				
-						var cloneRow = $(this).attr('rel');					
-						var newRow = "<tr valign='top' id='event-dates-and-times-row-"+counter+"'><td><div class='small-screen-table-label'><?php echo __('Event Starts on', 'event_espresso') ?></div><input id='event-start-"+counter+"' name='event_datetimes["+counter+"][evt_start]' type='text' class='dtm-es-picker dtm-inp medium-text' value=''/><input name='event-start-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/><input id='is-primary-"+counter+"' name='event_datetimes["+counter+"][is_primary]' type='hidden' value='' /></td><td><div class='small-screen-table-label'><?php echo __('Event Ends on', 'event_espresso') ?></div><input id='event-end-"+counter+"' name='event_datetimes["+counter+"][evt_end]' type='text' class='dtm-ee-picker dtm-inp medium-text' value=''/><input name='event-end-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/></td><td><div class='small-screen-table-label'><?php echo __('Registration Starts on', 'event_espresso') ?></div><input id='reg-start-"+counter+"' name='event_datetimes["+counter+"][reg_start]' type='text' class='dtm-rs-picker dtm-inp medium-text' value='' /><input name='reg-start-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/></td><td><div class='small-screen-table-label'><?php echo __('Registration Ends on', 'event_espresso') ?></div><input id='reg-end-"+counter+"' name='event_datetimes["+counter+"][reg_end]' type='text' class='dtm-re-picker dtm-inp medium-text' value='' /><input name='reg-end-row-<?php echo $row; ?>' type='hidden' value='"+counter+"'/></td><?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS <?php if ($org_options['time_reg_limit']) : ?><td><input type='text' id='reg-limit-"+counter+"' name='event_datetimes["+counter+"][reg_limit]' class='small-text dtm-inp' style='text-align:right;' value=''/></td><?php endif; // time_reg_limit   ?><td><input type='text' id='tckts-left-"+counter+"' name='event_datetimes["+counter+"][tckts_left]' class='small-text dtm-inp' style='text-align:right;' value=''/></td>  */ ?><td><div class=small-screen-table-label><?php echo __('Actions', 'event_espresso') ?></div><a class='clone-date-time dtm-inp-btn' rel='"+counter+"' title='<?php _e('Clone this Event Date and Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/clone-trooper-16x16.png' width='16' height='16' alt='<?php _e('clone', 'event_espresso'); ?>'/></a><a class='remove-xtra-time dtm-inp-btn' rel='"+counter+"' title='<?php _e('Remove this Event Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/trash-16x16.png' width='16' height='16' alt='<?php _e('trash', 'event_espresso'); ?>'/></a></td></tr>";
-						$('#event-dates-and-times-row-'+cloneRow).after( newRow );
-						$('#event-start-'+counter).val( $('#event-start-'+(cloneRow)).val() );
-						$('#event-end-'+counter).val( $('#event-end-'+(cloneRow)).val() );
-						$('#reg-start-'+counter).val( $('#reg-start-'+(cloneRow)).val() );
-						$('#reg-end-'+counter).val( $('#reg-end-'+(cloneRow)).val() );
-						<?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS 
-						$('#reg-limit-'+counter).val( $('#reg-limit-'+(cloneRow)).val() );
-						$('#tckts-left-'+counter).val( $('#tckts-left-'+(cloneRow)).val() );
-						  */ ?>
-						counter++;
-					});
-
-					$('.remove-xtra-time').live("click", function(){
-						var whichRow = '#event-dates-and-times-row-' + $(this).attr('rel');
-						$(whichRow).remove();
-						counter--;
-					});
-
-				})(jQuery);
-			</script>
-		<?php endif; // $caffeinated 
+		<?php
 	}
 
 
@@ -1035,17 +923,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 			</div>
 		<?php endif; ?>
 
-		<!--<h5 id="add-new-ticket-price-h5" ><?php _e('All Prices, Discounts and Surcharges that are Currently Active for This Event', 'event_espresso'); ?></h5>-->
-
 		<table id="event_editor_pricing" class="<?php echo $table_class;?>" width="100%" >
 			<thead>
 				<tr>
 					<td class="event-price-tbl-hdr-type"><b><?php //_e('Type'); ?></b></td>
 					<td class="event-price-tbl-hdr-order"><b><?php _e('Order', 'event_espresso'); ?></b></td>
 					<td class="event-price-tbl-hdr-name"><b><?php _e('Name', 'event_espresso'); ?></b></td>
-					<!--<td style="width:2.5%; text-align:center;"></td>-->
 					<td class="event-price-tbl-hdr-amount"><b><?php _e('Amount', 'event_espresso'); ?></b></td>
-					<!--<td style="width:1%; text-align:center;"></td>-->
 					<td class="event-price-tbl-hdr-actions"></td>
 					<td class="event-price-tbl-hdr-desc"></td>
 				</tr>
@@ -1085,23 +969,16 @@ class Events_Admin_Page extends EE_Admin_Page {
 								<tr>
 								
 									<td class="type-column ticket-price-quick-edit-column"> 
-										<?php
-										 //echo $PRT->type[$price->type()]->name(); 
-										 //$select_name = 'edit_ticket_price['. $price->ID() .'][PRT_ID]'; 
-										//echo EE_Form_Fields::select_input( $select_name, $all_price_types, $price->type(), 'id="quick-edit-ticket-price-type-ID" ', 'edit-ticket-price-input quick-edit' ); 
-										?>
 										<div class="small-screen-table-label"><?php echo __('Type', 'event_espresso') ?></div>
 										<span><?php echo $PRT->type[$price->type()]->name() . ' ' . $price_date_status; ?></span>
 									</td> 
 									
 									<td class="order-column ticket-price-quick-edit-column"> 
-										<?php //echo $PRT->type[$price->type()]->order(); ?>
 										<div class="small-screen-table-label"><?php echo __('Order', 'event_espresso') ?></div>
 										<input class="edit-ticket-price-input quick-edit small-text jst-rght<?php echo $disabled_class;?>" type="text" id="quick-edit-ticket-price-PRC_order-<?php echo $price->ID(); ?>" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_order]" value="<?php echo $price->order(); ?>"<?php echo $disabled; ?>/>							
-									</td> <?php //echo $PRT->type[$price->type()]->order(); ?>
+									</td> 
 									
 									<td class="name-column ticket-price-quick-edit-column"> 
-										<?php //echo $price->name(); ?>
 										<div class="small-screen-table-label"><?php echo __('Name', 'event_espresso') ?></div>
 										<input class="edit-ticket-price-input quick-edit regular-text required<?php echo $disabled_class;?>" type="text" id="quick-edit-ticket-price-PRC_name-<?php echo $price->ID(); ?>" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_name]" value="<?php echo $price->name(); ?>" <?php echo $disabled; ?>/>
 									</td> 
@@ -1114,23 +991,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 										<span class="percent-sign jst-left"><?php echo ($PRT->type[$price->type()]->is_percent()) ? '%' : ''; ?></span>
 									</td> 
 									
-									<!--<td class="percent-column ticket-price-quick-edit-column"> 
-										<?php echo ($PRT->type[$price->type()]->is_percent()) ? '%' : ''; ?>
-									</td> -->
-									
-	<?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS
-									<td class="tckts-left-column" style="width:7.5%; height:2.5em; text-align:right;"> 
-										<input class="edit-tickets-left-input quick-edit" type="text" id="quick-edit-ticket-price[<?php echo $price->ID(); ?>][PRC_tckts_left]" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_tckts_left]" style="width:100%;text-align:right;" value="<?php echo $price->tckts_left(); ?>" disabled="disabled"/>
-									</td> 
-	 */ ?>
-									
 									<td class="edit-column ticket-price-quick-edit-column">
 										<div class="small-screen-table-label"><?php echo __('Actions', 'event_espresso') ?></div>									
-										<?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS
-										<a class='display-price-tickets-left-lnk display-ticket-manager' data-reveal-id="ticket-manager-dv" rel="<?php echo $price->ID(); ?>"  title='Display the Ticket Manager for this Event' style="cursor:pointer;" >
-											<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/tickets-1-16x16.png" width="16" height="16" alt="<?php _e('tickets left', 'event_espresso'); ?>"/>
-										</a>
-										 */ ?>
 										<a class='edit-event-price-lnk evt-prc-btn' rel="<?php echo $price->ID(); ?>"  title="Edit Advanced Settings for this Event Price">
 											<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/settings-16x16.png" width="16" height="16" alt="<?php _e('edit', 'event_espresso'); ?>"/>
 										</a>
@@ -1142,11 +1004,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 									
 									<td class="desc-column ticket-price-quick-edit-column"> 
 										<div class="small-screen-table-label"><?php echo __('Description', 'event_espresso') ?></div>		
-										<?php //echo $price->desc(); ?>
-										<!--<input class="edit-ticket-price-input quick-edit widefat" type="text" id="quick-edit-ticket-price[<?php echo $price->ID(); ?>][PRC_desc]" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_desc]" value="<?php echo $price->desc(); ?>" style="width:100%;"/>-->
 										<p class="description"><?php echo $inactive ? $inactive : implode( ' ', array_slice( explode( ' ', stripslashes( $price->desc() )), 0, 20 )); ?></p>
 									</td> 
-									
 
 								</tr>
 							</table>
@@ -1159,7 +1018,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 						<div id="edit-event-price-<?php echo $price->ID(); ?>" class="event-price-settings-dv">
 						
 							<h4><?php _e('Edit : ', 'event_espresso'); ?><?php echo $price->name(); ?></h4>
-							<?php //echo printr( $price, '$price' ); ?>
 							<table class="form-table" width="100%">
 								<tbody>
 								
@@ -1191,9 +1049,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 									<tr valign="top">
 										<th><label for="edit-ticket-price-PRC_desc"><?php _e('Description', 'event_espresso'); ?></label></th>
 										<td>
-											<?php 
-											/*<input class="edit-ticket-price-input widefat" type="text" id="edit-ticket-price-PRC_desc-<?php echo $price->ID(); ?>" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_desc]" value="<?php echo stripslashes( $price->desc() ); ?>"/><br/> */
-											?>
 											<textarea class="edit-ticket-price-input widefat" id="edit-ticket-price-PRC_desc-<?php echo $price->ID(); ?>" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_desc]"><?php echo stripslashes( $price->desc() ); ?></textarea><br/>
 											<p class="description"><?php _e('A brief description for this Price. More for your benefit, as it is currently not displayed to site visitors.', 'event_espresso'); ?></p>
 										</td>							
@@ -1207,24 +1062,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 											<p class="description">&nbsp;&nbsp;<?php _e('The dollar or percentage amount for this Price.', 'event_espresso'); ?></p>
 										</td>
 									</tr>
-									
-	<?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS 		
-									<tr valign="top">
-										<th><label for="edit-ticket-price-PRC_reg_limit"><?php _e('Registration Limit', 'event_espresso'); ?></label></th>
-										<td>
-											<input type="text" id="edit-ticket-price-PRC_reg_limit-<?php echo $price->ID(); ?>" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_reg_limit]" class="edit-ticket-price-input small-text" style="text-align:right;" value="<?php echo $price->reg_limit(); ?>"/>
-											<p class="description">&nbsp;&nbsp;<?php _e('The maximum number of attendees that can be registratered at this Price Level. Leave blank for no limit.', 'event_espresso'); ?></p>
-										</td>
-									</tr>
-									
-									<tr valign="top">
-										<th><label for="edit-ticket-price-PRC_tckts_left"><?php _e('Tickets Left', 'event_espresso'); ?></label></th>
-										<td>
-											<input type="text" id="edit-ticket-price-PRC_tckts_left-<?php echo $price->ID(); ?>" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_tckts_left]" class="edit-ticket-price-input small-text" style="text-align:right;" value="<?php echo $price->tckts_left(); ?>"/>
-											<p class="description">&nbsp;&nbsp;<?php _e('The number of tickets left, or available spaces, at this Price Level. This field is computed and any changes made to this quatity will have no affect. To change the number of Tickets LEft you will need to manually add Attendees via the Registrations Admin page.', 'event_espresso'); ?></p>
-										</td>
-									</tr>
-	  */ ?>			
 									
 									<tr valign="top" class="edit-ticket-price-use-dates-tbl-row">
 										<th><label><?php _e('Triggered by Date', 'event_espresso'); ?></label></th>
@@ -1339,29 +1176,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 										<input class="edit-ticket-price-input quick-edit small-text jst-rght" type="text" id="quick-edit-ticket-price-PRC_amount-XXXXXX" name="quick_edit_ticket_price[XXXXXX][PRC_amount]" value="" />
 										<span class="percent-sign jst-left"></span>
 									</td> 
-
-									
-	<?php  /*<!--
-	//DO NOT DELETE - NEW FEATURE IN PROGRESS
-//									<td class="tckts-left-column" style="width:7.5%; height:2.5em; text-align:right;"> 
-//										<input class="edit-tickets-left-input quick-edit" type="text" id="quick-edit-ticket-price[XXXXXX][PRC_tckts_left]" name="quick_edit_ticket_price[XXXXXX][PRC_tckts_left]" style="width:100%;text-align:right;" value="<?php echo $price->tckts_left(); ?>" disabled="disabled"/>
-//									</td> -->*/
-	  ?>
 									
 									<td class="edit-column ticket-price-quick-edit-column">
 										<div class="small-screen-table-label"><?php echo __('Actions', 'event_espresso') ?></div>									
-										<?php /*
-//										 DO NOT DELETE - NEW FEATURE IN PROGRESS
-//										<a class='display-price-tickets-left-lnk display-ticket-manager' data-reveal-id="ticket-manager-dv" rel="XXXXXX"  title='Display the Ticket Manager for this Event' style="cursor:pointer;" >
-//											<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/tickets-1-16x16.png" width="16" height="16" alt="<?php _e('tickets left', 'event_espresso'); ?>"/>
-//										</a>		*/								 
-										 ?>
-										<!--<a class='edit-event-price-lnk evt-prc-btn' rel="XXXXXX"  title="Edit Advanced Settings for this Event Price">
-											<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/settings-16x16.png" width="16" height="16" alt="<?php _e('edit', 'event_espresso'); ?>"/>
-										</a>
-										<a class='delete-event-price-lnk evt-prc-btn' rel="XXXXXX" title="Delete this Event Price" >
-											<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/trash-16x16.png" width="16" height="16" alt="<?php _e('trash', 'event_espresso'); ?>"/>
-										</a>-->
 									</td>
 									
 									<td class="desc-column ticket-price-quick-edit-column"> 
@@ -1424,16 +1241,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 								<p class="description">&nbsp;&nbsp;<?php _e('The dollar or percentage amount for this Price.', 'event_espresso'); ?></p>
 							</td>
 						</tr>
-
-	<?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS 
-						<tr valign="top">
-							<th><label for="new-ticket-price-PRC_amount"><?php _e('Registration Limit', 'event_espresso'); ?></label></th>
-							<td>
-								<input type="text" id="new_ticket_price[PRC_reg_limit]" name="new_ticket_price[PRC_reg_limit]" class="add-new-ticket-price-input small-text" style="text-align:right;" value=""/>
-								<p class="description">&nbsp;&nbsp;<?php _e('The maximum number of attendees that can be registratered at this Price Level. Leave blank for no limit.', 'event_espresso'); ?></p>
-							</td>
-						</tr>
-	*/ ?>
 						
 						<tr valign="top">
 							<th><label><?php _e('Triggered by Date', 'event_espresso'); ?></label></th>
@@ -1748,265 +1555,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 	protected function _premium_event_editor_meta_boxes() {
 		global $org_options, $caffeinated;
 		$this->_set_event_object();
-
-		if ( $caffeinated ) {
-			add_meta_box('espresso_event_editor_event_meta', __('Event Meta', 'event_espresso'), array( $this, 'event_meta_metabox'), $this->_current_screen->id, 'advanced', 'high');
-		}
-		
-		//add_meta_box('espresso_event_editor_event_post', __('Create a Post', 'event_espresso'), array( $this, 'event_post_metabox'), $this->_current_screen->id, 'advanced', 'core');
-
 		add_meta_box('espresso_event_editor_event_options', __('Event Registration Options', 'event_espresso'), array( $this, 'registration_options_meta_box' ), $this->_current_screen->id, 'side', 'high');
-
-		add_meta_box('espresso_event_editor_additional_questions', __('Questions for Additional Attendees', 'event_espresso'), array( $this, 'additional_attendees_question_groups_meta_box' ), $this->_current_screen->id, 'side', 'core');
-
-		//add_meta_box('espresso_event_editor_promo_box', __('Event Promotions', 'event_espresso'), array( $this, 'promotions_meta_box' ), $this->_current_screen->id, 'side', 'core');
-
-		//add_meta_box('espresso_event_editor_featured_image_box', __('Featured Image', 'event_espresso'), array( $this, 'featured_image_meta_box' ), $this->_current_screen->id, 'side', 'default');
-
-//		if ($org_options['use_attendee_pre_approval']) {
-//			add_meta_box('espresso_event_editor_preapproval_box', __('Attendee Pre-Approval', 'event_espresso'), array( $this, 'preapproval_metabox' ), $this->_current_screen->id, 'side', 'default');
-//		}
-
-		if ( $caffeinated && $org_options['use_personnel_manager'] && function_exists( 'espresso_personnel_cb' )) {
-			add_meta_box('espresso_event_editor_personnel_box', __('Event Staff / Speakers', 'event_espresso'), array( $this, 'personnel_metabox' ), $this->_current_screen->id, 'side', 'default');
-		}
 	}
 
-
-
-
-	public function event_meta_metabox() {
-		global $wpdb, $org_options, $caffeinated;
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-
-		if ($caffeinated != true)
-			return;
-
-		$event_meta = $this->_event->event_meta;
-		?>
-		<div class="inside">
-		<?php
-			$good_meta = array();
-			$hiddenmeta = array("", "venue_id", "additional_attendee_reg_info", /*"add_attendee_question_groups",*/ "date_submitted", "event_host_terms", "default_reg_status", "display_thumb_in_lists", "display_thumb_in_regpage", "display_thumb_in_calendar", "event_thumbnail_url", "originally_submitted_by", "enable_for_gmap", "orig_event_staff");
-			$meta_counter = 1;
-
-			$default_event_meta = array();
-			$default_event_meta = apply_filters('FHEE_filter_default_event_meta', $default_event_meta);
-
-			$default_meta = $event_meta == '' ? $default_event_meta : array();
-			$event_meta = $event_meta == '' ? array() : $event_meta;
-			$event_meta = array_merge($event_meta, $default_meta);
-			//print_r( $event_meta );
-			$good_meta = $event_meta;
-			//print_r( $good_meta );
-			?>
-			<p>
-				<?php _e('Using Event Meta boxes', 'event_espresso'); ?>
-				<?php echo $this->_get_help_tab_link('event-meta-boxes'); ?>
-			<ul id="dynamicMetaInput">
-				<?php
-				if ($event_meta != '') {
-					foreach ($event_meta as $k => $v) {
-						?>
-						<?php
-						if (in_array($k, $hiddenmeta)) {
-							//echo "<input type='hidden' name='emeta[]' value='{$v}' />";
-							unset($good_meta[$k]);
-						} else {
-							?>
-							<li>
-								<label>
-						<?php _e('Key', 'event_espresso'); ?>
-								</label>
-								<select id="emeta[]" name="emeta[]">
-									<?php foreach ($good_meta as $k2 => $v2) { ?>
-										<option value="<?php echo $k2; ?>" <?php echo ($k2 == $k ? "SELECTED" : null); ?>><?php echo $k2; ?></option>
-						<?php } ?>
-								</select>
-								<label for="meta-value">
-						<?php _e('Value', 'event_espresso'); ?>
-								</label>
-								<input  size="20" type="text" value="<?php echo $v; ?>" name="emetad[]" id="emetad[]" />
-								<?php
-								echo '<img class="remove-item" title="' . __('Remove this meta box', 'event_espresso') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/remove.gif" alt="' . __('Remove Meta', 'event_espresso') . '" />';
-								?>
-							</li>
-							<?php
-							$meta_counter++;
-						}
-						?>
-				<li>
-					<label for="emeta-box">
-						<?php
-					}
-					echo  __('Key', 'event_espresso');
-					?>
-				</label>
-				<input id="emeta-box" size="20" type="text" value="" name="emeta[]" >
-				<label for="emetaad[]">
-				<?php _e('Value', 'event_espresso'); ?>
-				</label>
-				<input size="20" type="text" value="" name="emetad[]" id="emetad[]">
-				<?php
-				echo '<img class="remove-item" title="' . __('Remove this meta box', 'event_espresso') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/remove.gif" alt="' . __('Remove Meta', 'event_espresso') . '" /></li>';
-			} else {
-				echo '<li><label for="emeta[]">' . __('Key', 'event_espresso');
-				?>
-				</label>
-				<input size="20" type="text" value="" name="emeta[]" id="emeta[]">
-				<?php _e('Value', 'event_espresso'); ?>
-				<input size="20" type="text" value="" name="emetad[]" id="emetad[]">
-				<?php
-				echo '<img class="remove-item" title="' . __('Remove this meta box', 'event_espresso') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/remove.gif" alt="' . __('Remove Meta', 'event_espresso') . '" />' . '</li>';
-				// $meta_counter++;
-			}
-			?>
-			</ul>
-			<p>
-				<input type="button" class="button" value="<?php _e('Add A Meta Box', 'event_espresso'); ?>" onClick="addMetaInput('dynamicMetaInput');">
-			</p>
-			<script type="text/javascript">
-				//Dynamic form fields
-				var meta_counter = <?php echo $meta_counter > 1 ? $meta_counter - 1 : $meta_counter++; ?>;
-				function addMetaInput(divName){
-					var next_counter = counter_staticm(meta_counter);
-					var newdiv = document.createElement('li');
-					newdiv.innerHTML = "<label><?php _e('Key', 'event_espresso'); ?></label> <input size='20' type='text' value='' name='emeta[]' id='emeta[]'> <label><?php _e('Value', 'event_espresso'); ?></label> <input size='20' type='text' value='' name='emetad[]' id='emetad[]'><?php echo ' <img class=\"remove-item\" title=\"' . __('Remove this meta box', 'event_espresso') . '\" onclick=\"this.parentNode.parentNode.removeChild(this.parentNode);\" src=\"' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/remove.gif\" alt=\"' . __('Remove Meta', 'event_espresso') . '\" />'; ?>";
-					document.getElementById(divName).appendChild(newdiv);
-					counter++;
-				}
-
-				function counter_staticm(meta_counter) {
-					if ( typeof counter_static.counter == 'undefined' ) {
-
-						counter_static.counter = meta_counter;
-					}
-					return ++counter_static.counter;
-				}
-			</script>
-		</div>
-		<?php
-	}
-
-
-
-
-
-	public function event_post_metabox() {
-		$values = array(
-			array('id' => true, 'text' => __('Yes', 'event_espresso')),
-			array('id' => false, 'text' => __('No', 'event_espresso')));
-		if (function_exists('espresso_member_data')) {
-			global $espresso_manager;
-			$is_admin = (espresso_member_data('role') == "administrator" || espresso_member_data('role') == 'espresso_event_admin') ? true : false;
-			if (!$espresso_manager['event_manager_create_post'] && !$is_admin) {
-				return;
-			}
-		}
-		?>
-		<div class="inside">
-			<?php
-			if (strlen($this->_event->post_id) > 1) {
-				$create_post = true; //If a post was created previously, default to yes on the update post.
-			} else {
-				$create_post = false; //If a post was NOT created previously, default to no so we do not create a post on accident.
-			}
-			global $current_user;
-			get_currentuserinfo();
-			?>
-			<table class="form-table">
-				<tbody>
-					<tr>
-						<th class="middle">
-							<label>
-								<?php echo __('Add/Update post for this event?', 'event_espresso') ?>
-							</label>
-						</th>
-						<td class="med">
-							<?php
-							echo EE_Form_Fields::select_input('create_post', $values, $create_post);
-							if (strlen($this->_event->post_id) > 1) {
-								echo '<p>' . __('If no, delete current post?', 'event_espresso');
-								?>
-								<input name="delete_post" type="checkbox" value="true" />
-							<?php } ?>
-							</p>
-							<input type="hidden" name="post_id" value="<?php if (isset($this->_event->post_id)) echo $this->_event->post_id; ?>">
-							<?php /* ?><p><?php _e('Category:', 'event_espresso'); ?> <?php wp_dropdown_categories(array('orderby'=> 'name','order' => 'ASC', 'selected' => $category, 'hide_empty' => 0 )); ?></p><?php */ ?>
-						<td>
-					</tr>
-					<tr>
-						<th class="middle">
-
-							<?php
-							if (!empty($this->_event->post_id)) {
-								$post_data = get_post($this->_event->post_id);
-								$tags = get_the_tags($this->_event->post_id);
-								if ($tags) {
-									foreach ($tags as $k => $v) {
-										$tag[$k] = $v->name;
-									}
-									$tags = join(', ', $tag);
-								}
-							} else {
-								$post_data = new stdClass();
-								$post_data->ID = 0;
-								$tags = '';
-							}
-							$box = array();
-
-							$custom_post_array = array(array('id' => 'espresso_event', 'text' => __('Espresso Event', 'event_espresso')));
-							$post_page_array = array(array('id' => 'post', 'text' => __('Post', 'event_espresso')), array('id' => 'page', 'text' => __('Page', 'event_espresso')));
-							$post_page_array = !empty($org_options['template_settings']['use_custom_post_types']) ? array_merge($custom_post_array, $post_page_array) : $post_page_array;
-							//print_r($post_page_array);
-
-							$post_types = $post_page_array;
-							?>
-
-							<label>
-								<?php _e('Author', 'event_espresso: '); ?>
-							</label>
-						</th>
-						<td class="med">
-							<?php wp_dropdown_users(array('who' => 'authors', 'selected' => $current_user->ID)); ?>
-						</td>
-					</tr>
-					<tr>
-						<th class="middle">
-							<label>
-								<?php _e('Post Type', 'event_espresso: '); ?>
-							</label>
-						</th>
-						<td class="med">
-							<?php echo EE_Form_Fields::select_input('post_type', $post_types, 'espresso_event') ?>
-						</td>
-					</tr>
-					<tr>
-						<th class="middle">
-							<label>
-								<?php _e('Tags', 'event_espresso: '); ?>
-							</label>
-						</th>
-						<td class="med">
-							<input id="post_tags" name="post_tags" size="20" type="text" value="<?php echo $tags; ?>" />
-						</td>
-					</tr>
-				</tbody>
-			</table>
-
-
-
-			<p class="section-heading"><?php _e('Post Categories:', 'event_espresso'); ?> </p>
-			<?php
-			require_once( 'includes/meta-boxes.php');
-			post_categories_meta_box($post_data, $box);
-			?>
-
-			<!-- if post templates installed, post template -->
-
-		</div>
-		<?php
-	}
 
 
 
@@ -2020,32 +1571,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
-		$additional_attendee_reg_info_values = array(
-				array('id' => '1', 'text' => __('No info required', 'event_espresso')),
-				array('id' => '2', 'text' => __('Personal Information only', 'event_espresso')),
-				array('id' => '3', 'text' => __('Full registration information', 'event_espresso'))
-		);
-		$event_status_values = array(
-				array('id' => 'A', 'text' => __('Public', 'event_espresso')),
-				array('id' => 'S', 'text' => __('Waitlist', 'event_espresso')),
-				array('id' => 'O', 'text' => __('Ongoing', 'event_espresso')),
-				array('id' => 'R', 'text' => __('Draft', 'event_espresso')),
-				array('id' => 'D', 'text' => __('Deleted', 'event_espresso'))
-		);
-		$event_status_values = apply_filters('FHEE_event_status_values', $event_status_values);
-
-		$default_reg_status_values = $this->_get_reg_status_array( array( 'RCN', 'RNA' ));
-		array_unshift( $default_reg_status_values, array( 'id' => "", 'text' => __('No Change', 'event_espresso')));
-		
 		?>
 		<p>
 			<label><?php _e('Event is Active', 'event_espresso'); ?></label>
 			<?php echo EE_Form_Fields::select_input('is_active', $yes_no_values, $this->_event->is_active); ?>
-		</p>
-		
-		<p>
-			<label><?php _e('Event Status', 'event_espresso'); ?></label>
-			<?php echo EE_Form_Fields::select_input('new_event_status', $event_status_values, $this->_event->event_status, '', '', false); ?>
 		</p>
 		
 		<p>
@@ -2067,25 +1596,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 		</p>
 		
 		<p>
-			<label><?php _e('Additional Attendee Registration info?', 'event_espresso'); ?></label>
-			<?php echo EE_Form_Fields::select_input('additional_attendee_reg_info', $additional_attendee_reg_info_values, $this->_event->event_meta['additional_attendee_reg_info']); ?>
-		</p>
-		
-		<?php if ( $caffeinated && $org_options['use_attendee_pre_approval'] ) : ?>
-		<p>
-			<label><?php _e('Attendee pre-approval required?', 'event_espresso'); ?></label>
-			<?php
-			echo EE_Form_Fields::select_input("require_pre_approval", $yes_no_values, $this->_event->require_pre_approval);
-			?>
-		</p>
-		<?php endif; ?>
-		
-		<p>
-			<label><?php _e('Default Payment Status', 'event_espresso'); ?></label>
-			<?php echo EE_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_event->event_meta['default_reg_status']); ?>
-		</p>
-		
-		<p>
 			<label><?php _e('Display  Description', 'event_espresso'); ?></label>
 			<?php echo EE_Form_Fields::select_input('display_desc', $yes_no_values, $this->_event->display_desc); ?>
 		</p>
@@ -2094,20 +1604,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			<label><?php _e('Display  Registration Form', 'event_espresso'); ?></label>
 			<?php echo EE_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_event->display_reg_form, '', '', false); ?>
 		</p>
-		
-		<p>
-			<label><?php _e('Alternate Registration Page', 'event_espresso'); ?></label>
-			<input name="externalURL" size="20" type="text" value="<?php echo $this->_event->externalURL; ?>">
-		</p>
-		
-		<?php /*<p>
-			<label><?php _e('Alternate Email Address', 'event_espresso'); ?>
-				<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=alt_email_info">
-					<span class="question">[?]</span>
-				</a>
-			</label>
-			<input name="alt_email" size="20" type="text" value="<?php echo $this->_event->alt_email; ?>">
-		</p> /**/ ?>
+
 		<?php
 	}
 
@@ -2158,71 +1655,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 		<?php
 	}
 
-
-
-
-
-	public function additional_attendees_question_groups_meta_box() {
-		
-		//printr( $this->_event, '$this->_event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		?>
-		<div class="inside">
-			<p><strong>
-					<?php _e('Question Groups', 'event_espresso'); ?>
-				</strong><br />
-				<?php _e('Add a pre-populated', 'event_espresso'); ?>
-				<a href="admin.php?page=espresso_registration_form" target="_blank">
-					<?php _e('group of questions', 'event_espresso'); ?>
-				</a>
-				<?php _e('to your event. The personal information group is required for all events.', 'event_espresso'); ?>
-			</p>
-			<?php
-			$QSGs = EEM_Event::instance()->get_all_question_groups();
-			$EQGs = EEM_Event::instance()->get_event_question_groups( $this->_event->id, FALSE );
-			$EQGs = is_array( $EQGs ) ? $EQGs : array();
-
-			if ( ! empty( $QSGs )) {
- 				$html = count( $QSGs ) > 10 ? '<div style="height:250px;overflow:auto;">' : '';
-				foreach ( $QSGs as $QSG ) {
-
-					$checked = in_array( $QSG->QSG_ID, $EQGs ) || $QSG->QSG_system == 1 ? ' checked="checked" ' : '';
-					$visibility = $QSG->QSG_system == 1 ? ' style=" visibility:hidden"' : '';
-					$edit_link = self::add_query_args_and_nonce( array( 'action' => 'edit_question_group', 'QSG_ID' => $QSG->QSG_ID ), EE_FORMS_ADMIN_URL );
-
-					$html .= '
-					<p id="event-question-group-' . $QSG->QSG_ID . '">
-						<input value="' . $QSG->QSG_ID . '" type="checkbox"' . $visibility . ' name="add_attendee_question_groups[' . $QSG->QSG_ID . ']"' . $checked . ' /> 
-						<a href="' . $edit_link . '" title="Edit ' . $QSG->QSG_name . ' Group" target="_blank">' . $QSG->QSG_name . '</a>
-					</p>';
-				}
-				$html .= count( $QSGs ) > 10 ? '</div>' : '';
-
-				echo $html;
-
-			} else {
-				echo __('There seems to be a problem with your questions. Please contact support@eventespresso.com', 'event_espresso');
-			}
-			?>
-		</div>
-		<?php
-	}
-
-
-
-
-
-
-	public function personnel_metabox() {
-		$event_id = !empty($this->_event->id) ? $this->_event->id : 0;
-		$originally_submitted_by = !empty($this->_event->event_meta['originally_submitted_by']) ? $this->_event->event_meta['originally_submitted_by'] : 0;
-		$orig_event_staff = !empty($this->_event->event_meta['orig_event_staff']) ? $this->_event->event_meta['orig_event_staff'] : 0;
-		?>
-		<div class="inside">
-			<?php echo espresso_personnel_cb($event_id, $originally_submitted_by, $orig_event_staff); ?>
-		</div>
-		<?php
-	}
 
 
 
@@ -2725,115 +2157,105 @@ class Events_Admin_Page extends EE_Admin_Page {
 			echo '<br />SQL Values: ';	
 			print_r($sql);*/
 		
-			//Add groupon reference if installed
-			if (function_exists('event_espresso_add_event_to_db_groupon')) {
-				$sql = event_espresso_add_event_to_db_groupon($sql, $this->_req_data['use_groupon_code']);
-				//print count ($sql);
-				$sql_data = array_merge((array)$sql_data, (array)'%s');
-				//print count($sql_data);
-				if ( FALSE === $wpdb->insert( EVENTS_DETAIL_TABLE, $sql, $sql_data)){
-					$error = true;
-				}
-			}else{
-				if ( FALSE === $wpdb->insert( EVENTS_DETAIL_TABLE, $sql, $sql_data)){
-					$error = true;
-				}
-			}
 
+		if ( $wpdb->insert( EVENTS_DETAIL_TABLE, $sql, $sql_data) === FALSE ){
+			$error = true;
+		}
 		$new_id = $wpdb->insert_id;
 
 		$event_categories = $wpdb->get_results("SELECT * FROM ". EVENTS_CATEGORY_REL_TABLE ." WHERE event_id = '".$event_id."' ORDER BY id");
-			foreach ($event_categories as $category){
-						if ($category->event_id != ''){
+		foreach ($event_categories as $category){
+			if ($category->event_id != ''){
 
-							foreach (array($category->event_id) as $k=>$v){
-								if($v != '') {
-									$insert_cat = "INSERT INTO ".EVENTS_CATEGORY_REL_TABLE." (event_id, cat_id) VALUES ('".$new_id."', '".$category->cat_id."')";
-									if ( FALSE === $wpdb->query($insert_cat)){
-										$error = true;
-									}
-								}
-							}
+				foreach (array($category->event_id) as $k=>$v){
+					if($v != '') {
+						$insert_cat = "INSERT INTO ".EVENTS_CATEGORY_REL_TABLE." (event_id, cat_id) VALUES ('".$new_id."', '".$category->cat_id."')";
+						if ( FALSE === $wpdb->query($insert_cat)){
+							$error = true;
 						}
 					}
+				}
+			}
+		}
 		
 		$event_venues = $wpdb->get_results("SELECT * FROM ". EVENTS_VENUE_REL_TABLE ." WHERE event_id = '".$event_id."' ORDER BY id");
-			foreach ($event_venues as $venue){
-						if ($venue->event_id != ''){
+		foreach ($event_venues as $venue){
+			if ($venue->event_id != ''){
 
-							foreach (array($venue->event_id) as $k=>$v){
-								if($v != '') {
-									$insert_venue = "INSERT INTO ".EVENTS_VENUE_REL_TABLE." (event_id, venue_id) VALUES ('".$new_id."', '".$venue->venue_id."')";
-									if ( FALSE === $wpdb->query($insert_venue)){
-										$error = true;
-									}
-								}
-							}
+				foreach (array($venue->event_id) as $k=>$v){
+					if($v != '') {
+						$insert_venue = "INSERT INTO ".EVENTS_VENUE_REL_TABLE." (event_id, venue_id) VALUES ('".$new_id."', '".$venue->venue_id."')";
+						if ( FALSE === $wpdb->query($insert_venue)){
+							$error = true;
 						}
 					}
+				}
+			}
+		}
 					
 		$event_persons = $wpdb->get_results("SELECT * FROM ". EVENTS_PERSONNEL_REL_TABLE ." WHERE event_id = '".$event_id."' ORDER BY id");
-			foreach ($event_persons as $person){
-						if ($person->event_id != ''){
+		foreach ($event_persons as $person){
+			if ($person->event_id != ''){
 
-							foreach (array($person->event_id) as $k=>$v){
-								if($v != '') {
-									$insert_person = "INSERT INTO ".EVENTS_PERSONNEL_REL_TABLE." (event_id, person_id) VALUES ('".$new_id."', '".$person->person_id."')";
-									if ( FALSE === $wpdb->query($insert_person)){
-										$error = true;
-									}
-								}
-							}
+				foreach (array($person->event_id) as $k=>$v){
+					if($v != '') {
+						$insert_person = "INSERT INTO ".EVENTS_PERSONNEL_REL_TABLE." (event_id, person_id) VALUES ('".$new_id."', '".$person->person_id."')";
+						if ( FALSE === $wpdb->query($insert_person)){
+							$error = true;
 						}
-					}		
+					}
+				}
+			}
+		}		
 
 			
 		$event_discounts = $wpdb->get_results("SELECT * FROM ". EVENTS_DISCOUNT_REL_TABLE ." WHERE event_id = '".$event_id."' ORDER BY id");
-			foreach ($event_discounts as $discount){
-						if ($discount->event_id != ''){
+		foreach ($event_discounts as $discount){
+			if ($discount->event_id != ''){
 
-							foreach (array($discount->event_id) as $k=>$v){
-								if($v != '') {
-									$insert_discount = "INSERT INTO ".EVENTS_DISCOUNT_REL_TABLE." (event_id, discount_id) VALUES ('".$new_id."', '".$discount->discount_id."')";
-									if ( FALSE === $wpdb->query($insert_discount)){
-										$error = true;
-									}
-								}
-							}
+				foreach (array($discount->event_id) as $k=>$v){
+					if($v != '') {
+						$insert_discount = "INSERT INTO ".EVENTS_DISCOUNT_REL_TABLE." (event_id, discount_id) VALUES ('".$new_id."', '".$discount->discount_id."')";
+						if ( FALSE === $wpdb->query($insert_discount)){
+							$error = true;
 						}
 					}
+				}
+			}
+		}
 
 		$event_times = $wpdb->get_results("SELECT * FROM ". EVENTS_START_END_TABLE ." WHERE event_id = '".$event_id."' ORDER BY id");
-			foreach ($event_times as $event_time){
-						if ($event_time->start_time != ''){
+		foreach ($event_times as $event_time){
+			if ($event_time->start_time != ''){
 
-							foreach (array($event_time->start_time) as $k=>$v){
-								if($v != '') {
-									$sql3="INSERT INTO ".EVENTS_START_END_TABLE." (event_id, start_time, end_time) VALUES ('".$new_id."', '".$v."', '".$event_time->end_time."')";
-									//echo "$sql3 <br>";
-									if ( FALSE === $wpdb->query($sql3)){
-										$error = true;
-									}
-								}
-							}
+				foreach (array($event_time->start_time) as $k=>$v){
+					if($v != '') {
+						$sql3="INSERT INTO ".EVENTS_START_END_TABLE." (event_id, start_time, end_time) VALUES ('".$new_id."', '".$v."', '".$event_time->end_time."')";
+						//echo "$sql3 <br>";
+						if ( FALSE === $wpdb->query($sql3)){
+							$error = true;
 						}
 					}
+				}
+			}
+		}
+		
 		$event_prices = $wpdb->get_results("SELECT * FROM ". EVENTS_PRICES_TABLE ." WHERE event_id = '".$event_id."' ORDER BY id");
-			foreach ($event_prices as $event_price){
-						if ($event_price->event_cost != ''){
-							foreach (array($event_price->event_cost) as $k=>$v){
-								if($v != '') {
-									$prices_sql="INSERT INTO ".EVENTS_PRICES_TABLE." (event_id, event_cost, surcharge, price_type, member_price, member_price_type) VALUES ('".$new_id."', '".$v."', $event_price->surcharge, '".$event_price->price_type."', '".$event_price->member_price."', '".$event_price->member_price_type."')";
-									//echo "$sql6 <br>";
-									if ( FALSE === $wpdb->query($prices_sql)){
-										$error = true;
-									}
-								}
-							}
+		foreach ($event_prices as $event_price){
+			if ($event_price->event_cost != ''){
+				foreach (array($event_price->event_cost) as $k=>$v){
+					if($v != '') {
+						$prices_sql="INSERT INTO ".EVENTS_PRICES_TABLE." (event_id, event_cost, surcharge, price_type, member_price, member_price_type) VALUES ('".$new_id."', '".$v."', $event_price->surcharge, '".$event_price->price_type."', '".$event_price->member_price."', '".$event_price->member_price_type."')";
+						//echo "$sql6 <br>";
+						if ( FALSE === $wpdb->query($prices_sql)){
+							$error = true;
 						}
 					}
+				}
+			}
+		}
 
-		if ($error != true){
+		if ( ! $error ){
 			//overwrite default success messages
 			EE_Error::overwrite_success();
 			$msg = sprintf( __('The event %s has been added', 'event_espresso'), '<a href="' . $_SERVER['REQUEST_URI'] . '#event-id-' . $wpdb->insert_id . '">' . stripslashes($event_name) . '</a>');
@@ -2844,8 +2266,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		 	return false;
 		 }
 
-
-	return $new_id;
+		return $new_id;
 
 	}
 
@@ -2887,16 +2308,12 @@ class Events_Admin_Page extends EE_Admin_Page {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		$wpdb->show_errors();
-
-		$event_meta = array(); //will be used to hold event meta data
-		//If the Espresso Facebook Events is installed, add the event to Facebook
-		//$fb = new FacebookEvents();
-		//echo $fb->espresso_createevent();
-		//echo $this->_req_data['event'];
+		
+		//will be used to hold event meta data
+		$event_meta = array(); 
+		
 		$wp_user_id = empty($this->_req_data['wp_user']) ? $espresso_wp_user : $this->_req_data['wp_user'][0];
-		if ($wp_user_id == 0) {
-			$wp_user_id = 1;
-		}
+		$wp_user_id = $wp_user_id == 0 ? 1 : $wp_user_id;
 
 		$event_desc = $this->_req_data['event_desc'];
 		$display_desc = $this->_req_data['display_desc'];
@@ -2909,15 +2326,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$zip = empty($this->_req_data['zip']) ? '' : esc_html($this->_req_data['zip']);
 		$country = empty($this->_req_data['country']) ? '' : esc_html($this->_req_data['country']);
 		$phone = esc_html($this->_req_data['phone']);
-		$externalURL = esc_html($this->_req_data['externalURL']);
-
-		// thumbnail image options
-		$event_meta['event_thumbnail_url'] = array_key_exists('upload_image',$this->_req_data) ? $this->_req_data['upload_image'] : '';
-		$event_meta['display_thumb_in_lists'] = array_key_exists('show_thumb_in_lists', $this->_req_data) ? $this->_req_data['show_thumb_in_lists'] : '';
-		$event_meta['display_thumb_in_regpage'] = array_key_exists('show_thumb_in_regpage',$this->_req_data) ? $this->_req_data['show_thumb_in_regpage'] : '';
-		if (function_exists('espresso_calendar_config_mnu') && $caffeinated == true) {
-			$event_meta['display_thumb_in_calendar'] = $this->_req_data['show_on_calendar'];
-		}
 
 		// enable event address for Gmaps
 		if (!empty($this->_req_data['venue_id'][0]) || !empty($this->_req_data['zip']) || !empty($this->_req_data['city']) || !empty($this->_req_data['state'])) {
@@ -2926,24 +2334,11 @@ class Events_Admin_Page extends EE_Admin_Page {
 			$event_meta['enable_for_gmap'] = false;
 		}
 
-		//$event_location = $address . ' ' . $city . ', ' . $state . ' ' . $zip;
 		$event_location = ($address != '' ? $address . ' ' : '') . ($address2 != '' ? '<br />' . $address2 : '') . ($city != '' ? '<br />' . $city : '') . ($state != '' ? ', ' . $state : '') . ($zip != '' ? '<br />' . $zip : '') . ($country != '' ? '<br />' . $country : '');
 		$reg_limit = $this->_req_data['reg_limit'];
 		$allow_multiple = $this->_req_data['allow_multiple'];
 		$additional_limit = $this->_req_data['additional_limit'];
-		$member_only = isset($this->_req_data['member_only']) ? $this->_req_data['member_only'] : '';
 		$is_active = $this->_req_data['is_active'];
-		$event_status = $this->_req_data['new_event_status'];
-		$ticket_id = empty($this->_req_data['ticket_id']) ? '' : $this->_req_data['ticket_id'];
-		$certificate_id = empty($this->_req_data['certificate_id']) ? '' : $this->_req_data['certificate_id'];
-
-		//Early discounts
-		//$early_disc = isset($this->_req_data['early_disc']) ? $this->_req_data['early_disc'] : '';
-		//$early_disc_date = isset($this->_req_data['early_disc_date']) ? $this->_req_data['early_disc_data'] : '';
-		//$early_disc_percentage = isset($this->_req_data['early_disc_percentage']) ? $this->_req_data['early_disc_percentage'] : '';
-
-		//$use_coupon_code = isset( $this->_req_data['use_coupon_code'] ) ? $this->_req_data['use_coupon_cod'] : '';
-		//$alt_email = $this->_req_data['alt_email'];
 
 		//Venue Information
 		$venue_title = empty($this->_req_data['venue_title']) ? '' : $this->_req_data['venue_title'];
@@ -2960,10 +2355,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 		}
 
 		$event_meta['venue_id'] = isset($this->_req_data['venue_id']) ? $this->_req_data['venue_id'][0] : '';
-		$event_meta['additional_attendee_reg_info'] = $this->_req_data['additional_attendee_reg_info'];
 		$event_meta['date_submitted'] = date("Y-m-d H:i:s");
 		$event_meta['originally_submitted_by'] = $espresso_wp_user;
-		$event_meta['default_reg_status'] = $this->_req_data['default_reg_status'];
 
 		if ( isset( $this->_req_data['emeta'] ) && ! empty ( $this->_req_data['emeta'] )) {
 			foreach ($this->_req_data['emeta'] as $k => $v) {
@@ -2975,9 +2368,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		$event_meta = serialize($event_meta);
 
-		############ Added by wp-developers ######################
-		$require_pre_approval = isset( $this->_req_data['require_pre_approval'] ) ? $this->_req_data['require_pre_approval'] : FALSE;
-		################# END #################
 		//Event name
 		$event_name = empty($this->_req_data['event']) ? uniqid($espresso_wp_user . '-') : html_entity_decode( wp_strip_all_tags( $this->_req_data['event'] ), ENT_QUOTES, 'UTF-8' );
 
@@ -2991,83 +2381,56 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$event_slug = ($this->_req_data['slug'] == '') ? sanitize_title_with_dashes($event_name) : sanitize_title_with_dashes($this->_req_data['slug']);
 
 		//When adding colums to the following arrays, be sure both arrays have equal values.
-		$sql = array(
-				'event_code' => $event_code,
+		$cols_n_values = array(
+		
+				'event_code' => $event_code, 
 				'event_name' => $event_name,
 				'event_desc' => $event_desc,
 				'display_desc' => $display_desc,
 				'display_reg_form' => $display_reg_form,
+				
 				'event_identifier' => $event_identifier,
 				'slug' => $event_slug,
 				'address' => $address,
 				'address2' => $address2,
 				'city' => $city,
+				
 				'state' => $state,
 				'zip' => $zip,
 				'country' => $country,
 				'phone' => $phone,
 				'virtual_url' => $virtual_url,
+				
 				'virtual_phone' => $virtual_phone,
 				'venue_title' => $venue_title,
 				'venue_url' => $venue_url,
 				'venue_phone' => $venue_phone,
 				'venue_image' => $venue_image,
+				
+				'submitted' => date('Y-m-d H:i:s', time()),
 				'allow_multiple' => $allow_multiple,
 				'is_active' => $is_active,
-				'event_status' => $event_status,
-				//'use_coupon_code' => $use_coupon_code,
-				'member_only' => $member_only,
-				'externalURL' => $externalURL,
-				//'early_disc' => $early_disc,
-				//'early_disc_date' => $early_disc_date,
-				//'early_disc_percentage' => $early_disc_percentage,
-				//'alt_email' => $alt_email,
-				'event_meta' => $event_meta,
-				'require_pre_approval' => $require_pre_approval,
-				'submitted' => date('Y-m-d H:i:s', time()),
 				'reg_limit' => $reg_limit,
-				'additional_limit' => $additional_limit,
-				'wp_user' => $wp_user_id,
-				'ticket_id' => $ticket_id,
-				'certificate_id' => $certificate_id,
+				'additional_limit' => $additional_limit,	
+							
+				'wp_user' => $wp_user_id
 		);
 
-		$sql_data = array(
+		$data_format = array(
 				'%s', '%s', '%s', '%s', '%s',
 				'%s', '%s', '%s', '%s', '%s',
 				'%s', '%s', '%s', '%s', '%s',
-				'%s', '%s', '%s', '%s', '%s',
-				'%s', '%s', '%s', '%s', '%s',
-				'%s', '%s', '%s', '%s', '%s',
-				'%s', '%s', '%s', '%s', '%s',
-				'%s',
-				'%s', '%d', '%d', '%d', '%d',
-				'%d'
+				'%s', '%s', '%s', '%s', '%s',				
+				'%s', '%d', '%s', '%d', '%d',
+				'%s'
 		);
 
-		//Add groupon reference if installed
-		if (function_exists('event_espresso_add_event_to_db_groupon')) {
-			$sql = event_espresso_add_event_to_db_groupon($sql, $this->_req_data['use_groupon_code']);
-			//print count ($sql);
-			$sql_data = array_merge((array) $sql_data, (array) '%s');
-			//print count($sql_data);
-			if ( FALSE === $wpdb->insert(EVENTS_DETAIL_TABLE, $sql, $sql_data)) {
-				$error = true;
-			}
-		} else {
-			if (FALSE === $wpdb->insert(EVENTS_DETAIL_TABLE, $sql, $sql_data)) {
-				$error = true;
-			}
+		if ( $wpdb->insert(EVENTS_DETAIL_TABLE, $cols_n_values, $data_format ) === FALSE ) {
+			$error = true;
 		}
-
 		$last_event_id = absint( $wpdb->insert_id );
 
 		do_action('AHEE_insert_event_add_ons');
-		############# MailChimp Integration ##############
-		if (get_option('event_mailchimp_active') == 'true' && $caffeinated == true) {
-			MailChimpController::add_event_list_rel($last_event_id);
-		}
-
 		
 		// save question groups
 		// firs save primary attendee's question groups
@@ -3076,15 +2439,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 			$wpdb->insert(
 				$wpdb->prefix . 'esp_event_question_group',
 				array( 'EVT_ID' => $last_event_id, 'QSG_ID' => $question_group, 'EQG_primary' => 1 ),
-				array( '%d', '%d', '%d' )
-			);
-		}
-		// now additional attendee question groups
-		$add_attendee_question_groups = isset( $this->_req_data['add_attendee_question_groups'] ) ? $this->_req_data['add_attendee_question_groups'] : array();
-		foreach ( $add_attendee_question_groups as $question_group ) {
-			$wpdb->insert(
-				$wpdb->prefix . 'esp_event_question_group',
-				array( 'EVT_ID' => $last_event_id, 'QSG_ID' => $question_group, 'EQG_primary' => 0 ),
 				array( '%d', '%d', '%d' )
 			);
 		}
@@ -3098,17 +2452,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 					if ( FALSE === $wpdb->query($sql_cat)) {
 						$error = true;
 					}
-				}
-			}
-		}
-
-		if (!empty($this->_req_data['event_person'])) {
-			foreach ($this->_req_data['event_person'] as $k => $v) {
-				if ($v != '') {
-					$sql_ppl = "INSERT INTO " . EVENTS_PERSONNEL_REL_TABLE . " (event_id, person_id) VALUES ('" . $last_event_id . "', '" . $v . "')";
-					//echo "$sql_ppl <br>";
-					if ( FALSE === $wpdb->query($sql_ppl) )
-						$error = true;
 				}
 			}
 		}
@@ -3297,102 +2640,26 @@ class Events_Admin_Page extends EE_Admin_Page {
 			update_option( 'espresso_no_ticket_prices', $espresso_no_ticket_prices );
 		}  		
 
-		/// Create Event Post Code Here
-		if ( isset( $this->_req_data['create_post'] ) && $this->_req_data['create_post'] == 1 ) {
-
-			$post_type = isset( $this->_req_data['post_type'] ) && ! empty( $this->_req_data['post_type'] ) ? $this->_req_data['post_type'] : 'espresso_event';
-			
-			
-			if ($post_type == 'post') {
-				if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php") || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/event_post.php")) {
-					// Load message from template into message post variable
-					ob_start();
-					if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php")) {
-						require_once(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php");
-					} else {
-						require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/event_post.php");
-					}
-					$post_content = ob_get_contents();
-					ob_end_clean();
-				} else {
-					_e('There was error finding a post template. Please verify your post templates are available.', 'event_espresso');
-				}
-				
-			} elseif ($post_type == 'espresso_event') {
-				ob_start();
-				echo $event_desc;
-				$post_content = ob_get_contents();
-				ob_end_clean();
-			}
-			
-			$my_post = array();
-
-			$my_post['post_title'] = esc_html($this->_req_data['event']);
-			$my_post['post_content'] = $post_content;
-			$my_post['post_status'] = 'publish';
-			$my_post['post_author'] = $this->_req_data['user'];
-			$my_post['post_category'] = $this->_req_data['post_category'];
-			$my_post['tags_input'] = $this->_req_data['post_tags'];
-			$my_post['post_type'] = $post_type;
-			//print_r($my_post);
-			// Insert the post into the database
-			$post_id = wp_insert_post($my_post);
-			// Store the POST ID so it can be displayed on the edit page
-			$sql = array('post_id' => $post_id, 'post_type' => $post_type);
-
-			add_post_meta($post_id, 'event_id', $last_event_id);
-			add_post_meta($post_id, 'event_identifier', $event_identifier);
-			add_post_meta($post_id, 'slug', $event_slug);
-			add_post_meta($post_id, 'event_start_date', $this->_req_data['start_date']);
-			add_post_meta($post_id, 'event_end_date', $this->_req_data['end_date']);
-			add_post_meta($post_id, 'event_location', $event_location);
-			add_post_meta($post_id, 'virtual_url', $virtual_url);
-			add_post_meta($post_id, 'virtual_phone', $virtual_phone);
-			add_post_meta($post_id, 'event_address', $address);
-			add_post_meta($post_id, 'event_address2', $address2);
-			add_post_meta($post_id, 'event_city', $city);
-			add_post_meta($post_id, 'event_state', $state);
-			add_post_meta($post_id, 'event_country', $country);
-			add_post_meta($post_id, 'event_phone', $phone);
-			add_post_meta($post_id, 'venue_title', $venue_title);
-			add_post_meta($post_id, 'venue_url', $venue_url);
-			add_post_meta($post_id, 'venue_phone', $venue_phone);
-			add_post_meta($post_id, 'venue_image', $venue_image);
-			add_post_meta($post_id, 'event_externalURL', $externalURL);
-			add_post_meta($post_id, 'event_reg_limit', $reg_limit);
-
-			$sql_data = array('%d', '%s');
-			$update_id = array('id' => $last_event_id);
-			if ( FALSE === $wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d')) )
-				$error = true;
-		}
-
 		
-		if (empty($error)) {	
-			
+		if (empty($error)) {				
 			// overwrite default success messages
 			EE_Error::overwrite_success();
-			//$edit_event_link = add_query_arg(array('action' => 'edit_event', 'event_id' => $last_event_id ), EVENTS_ADMIN_URL);
-			
 			$msg = sprintf( 
 					__( 'The event %s has been added for %s.', 'event_espresso' ), 
 					'<a href=' . espresso_reg_url($last_event_id) . '>' . stripslashes_deep($this->_req_data['event']) . '</a>', 
 					$evt_date 
 			);
 			EE_Error::add_success( $msg );
-
-		} else { 		
-
+		} else { 
 			$msg = sprintf( 
 					__( 'An error occured and the event %s has not been saved to the database.', 'event_espresso' ), 
 					'<a href=' . espresso_reg_url($last_event_id) . '>' . stripslashes_deep($this->_req_data['event']) . '</a>' 
 			);
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			
 		}
 
 		return $last_event_id;
-		// end nonce check
+		
 	}
 
 
@@ -3417,18 +2684,9 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$display_reg_form = $this->_req_data['display_reg_form'];
 		$reg_limit = absint( $this->_req_data['reg_limit'] );
 		$allow_multiple = $this->_req_data['allow_multiple'];
-		$ticket_id = empty($this->_req_data['ticket_id']) ? '' : $this->_req_data['ticket_id'];
-		$certificate_id = empty($this->_req_data['certificate_id']) ? '' : $this->_req_data['certificate_id'];
-
-		$allow_overflow = empty($this->_req_data['allow_overflow']) ? false : $this->_req_data['allow_overflow'];
-
 		$additional_limit = $this->_req_data['additional_limit'];
-		//$member_only=$this->_req_data['member_only'];
-		$member_only = empty($this->_req_data['member_only']) ? false : $this->_req_data['member_only'];
-
 		$is_active = $this->_req_data['is_active'];
-		$event_status = $this->_req_data['new_event_status'];
-
+		
 		$address = !empty($this->_req_data['address']) ? esc_html($this->_req_data['address']) : '';
 		$address2 = !empty($this->_req_data['address2']) ? esc_html($this->_req_data['address2']) : '';
 		$city = !empty($this->_req_data['city']) ? esc_html($this->_req_data['city']) : '';
@@ -3436,35 +2694,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$zip = !empty($this->_req_data['zip']) ? esc_html($this->_req_data['zip']) : '';
 		$country = !empty($this->_req_data['country']) ? esc_html($this->_req_data['country']) : '';
 		$phone = !empty($this->_req_data['phone']) ? esc_html($this->_req_data['phone']) : '';
-		$externalURL = !empty($this->_req_data['externalURL']) ? esc_html($this->_req_data['externalURL']) : '';
-
-		//$event_location = $address . ' ' . $city . ', ' . $state . ' ' . $zip;
 		$event_location = ($address != '' ? $address . ' ' : '') . ($city != '' ? '<br />' . $city : '') . ($state != '' ? ', ' . $state : '') . ($zip != '' ? '<br />' . $zip : '') . ($country != '' ? '<br />' . $country : '');
-
-		//Get the first instance of the start and end times
-		//$start_time = $this->_req_data['start_time'][0];
-		//$end_time = $this->_req_data['end_time'][0];
-		// Add registration times
-		//$registration_startT = event_date_display($this->_req_data['registration_startT'], 'H:i');
-		//$registration_endT = event_date_display($this->_req_data['registration_endT'], 'H:i');
-		//Add timezone
-		$timezone_string = empty($this->_req_data['timezone_string']) ? '' : $this->_req_data['timezone_string'];
-
-		//Early discounts
-		//$early_disc = isset( $this->_req_data['early_disc'] ) ? $this->_req_data['early_disc'] : '';
-		//$early_disc_date = isset( $this->_req_data['early_disc_date'] ) ? $this->_req_data['early_disc_date'] : '';
-		//$early_disc_percentage = isset( $this->_req_data['early_disc_percentage'] ) ? $this->_req_data['early_disc_percentage'] : '';
-
-		//$use_coupon_code = isset( $this->_req_data['use_coupon_code'] ) ? $this->_req_data['use_coupon_code'] : FALSE;
-		//$alt_email = $this->_req_data['alt_email'];
-
 
 		//Venue Information
 		$venue_title = isset($this->_req_data['venue_title']) ? $this->_req_data['venue_title'] : '';
 		$venue_url = isset($this->_req_data['venue_url']) ? $this->_req_data['venue_url'] : '';
 		$venue_phone = isset($this->_req_data['venue_phone']) ? $this->_req_data['venue_phone'] : '';
 		$venue_image = isset($this->_req_data['venue_image']) ? $this->_req_data['venue_image'] : '';
-
 
 		//Virtual location
 		$virtual_url = isset($this->_req_data['virtual_url']) ? $this->_req_data['virtual_url'] : '';
@@ -3474,21 +2710,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 			$reg_limit = 999999;
 		}
 
-		$event_meta['default_reg_status'] = $this->_req_data['default_reg_status'];
 		$event_meta['venue_id'] = empty($this->_req_data['venue_id']) ? '' : $this->_req_data['venue_id'][0];
-		$event_meta['additional_attendee_reg_info'] = $this->_req_data['additional_attendee_reg_info'];
 		$event_meta['date_submitted'] = isset( $this->_req_data['date_submitted'] ) ? $this->_req_data['date_submitted'] : NULL;
 		$event_meta['originally_submitted_by'] = isset( $this->_req_data['originally_submitted_by'] ) ? $this->_req_data['originally_submitted_by'] : NULL;
 
 		if (isset($espresso_wp_user) && $espresso_wp_user != $event_meta['originally_submitted_by']) {
 			$event_meta['orig_event_staff'] = !empty($this->_req_data['event_person']) ? serialize($this->_req_data['event_person']) : '';
 		}
-		//print_r($event_meta['orig_event_staff']);
-		//Thumbnails
-		$event_meta['event_thumbnail_url'] = !empty($this->_req_data['upload_image']) ? $this->_req_data['upload_image'] : '';
-		$event_meta['display_thumb_in_lists'] = !empty($this->_req_data['show_thumb_in_lists']) ? $this->_req_data['show_thumb_in_lists'] : '';
-		$event_meta['display_thumb_in_regpage'] = !empty($this->_req_data['show_thumb_in_regpage']) ? $this->_req_data['show_thumb_in_regpage'] : '';
-		$event_meta['display_thumb_in_calendar'] = !empty($this->_req_data['show_on_calendar']) ? $this->_req_data['show_on_calendar'] : '';
 
 		if (!empty($this->_req_data['venue_id'][0]) || !empty($this->_req_data['zip']) || !empty($this->_req_data['city']) || !empty($this->_req_data['state'])) {
 			$event_meta['enable_for_gmap'] = isset( $this->_req_data['enable_for_gmap'] )  ? $this->_req_data['enable_for_gmap'] : FALSE;
@@ -3496,93 +2724,60 @@ class Events_Admin_Page extends EE_Admin_Page {
 			$event_meta['enable_for_gmap'] = false;
 		}
 
-
-
 		if ( isset( $this->_req_data['emeta'] ) && ! empty ( $this->_req_data['emeta'] )) {
 			foreach ($this->_req_data['emeta'] as $k => $v) {
 				$event_meta[$v] = $this->_req_data['emetad'][$k];
 			}
 		}
 		$event_meta = serialize($event_meta);
-		############ Added by wp-developers ######################
-		$require_pre_approval = 0;
-		if (isset($this->_req_data['require_pre_approval'])) {
-			$require_pre_approval = $this->_req_data['require_pre_approval'];
-		}
 
 		################# END #################
 		//When adding colums to the following arrays, be sure both arrays have equal values.
-		$sql = array(
+		$cols_n_values = array(
+		
 				'event_name' => $event_name,
 				'event_desc' => $event_desc,
 				'display_desc' => $display_desc,
 				'display_reg_form' => $display_reg_form,
 				'slug' => $event_slug,
+				
 				'address' => $address,
 				'address2' => $address2,
 				'city' => $city,
 				'state' => $state,
 				'zip' => $zip,
+				
 				'country' => $country,
 				'phone' => $phone,
 				'virtual_url' => $virtual_url,
 				'virtual_phone' => $virtual_phone,
 				'venue_title' => $venue_title,
+				
 				'venue_url' => $venue_url,
 				'venue_phone' => $venue_phone,
 				'venue_image' => $venue_image,
-
-				'allow_multiple' => $allow_multiple,
-				'is_active' => $is_active,
-				'event_status' => $event_status,
-				//'use_coupon_code' => $use_coupon_code,
-				'member_only' => $member_only,
-				'externalURL' => $externalURL,
-				//'early_disc' => $early_disc,
-				//'early_disc_date' => $early_disc_date,
-				//'early_disc_percentage' => $early_disc_percentage,
-				//'alt_email' => $alt_email,
-				'allow_overflow' => $allow_overflow,
-
 				'event_meta' => $event_meta,
-				'require_pre_approval' => $require_pre_approval,
-				'timezone_string' => $timezone_string,
+				'allow_multiple' => $allow_multiple,
+				
+				'is_active' => $is_active,
 				'reg_limit' => $reg_limit,
 				'additional_limit' => $additional_limit,
 				'wp_user' => $wp_user_id,
-				'ticket_id' => $ticket_id,
-				'certificate_id' => $certificate_id
 		);
 
-
-
-		$sql_data = array(
+		$data_format = array(
 				'%s', '%s', '%s', '%s', '%s',
 				'%s', '%s', '%s', '%s', '%s',
 				'%s', '%s', '%s', '%s', '%s',
 				'%s', '%s', '%s', '%s', '%s', 
-				'%s', '%s', '%s', '%s', 
-				'%s', '%s', '%s',  '%d', '%d', 
-				'%d', '%d', '%d'
+				'%s', '%s', '%s', '%s', '%d', 
+				'%s', '%s', '%s',  '%d'
 		);
 
-		$update_id = array('id' => $event_id);
+		$where_values = array('id' => $event_id);
 
-
-		if (function_exists('event_espresso_add_event_to_db_groupon')) {
-			$sql = event_espresso_add_event_to_db_groupon($sql, $this->_req_data['use_groupon_code']);
-			///print count ($sql);
-			$sql_data = array_merge((array) $sql_data, (array) '%s');
-			//print count($sql_data);
-			if ( FALSE === $wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d')) ) {
-				$error = true;
-			}
-			
-		} else {
-			if ( FALSE === $wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d')) ) {
-				$error = true;
-			}
-			
+		if ( $wpdb->update( EVENTS_DETAIL_TABLE, $cols_n_values, $where_values, $data_format, array('%d')) === FALSE ) {
+			$error = true;
 		}
 
 		$del_cats = "DELETE FROM " . EVENTS_CATEGORY_REL_TABLE . " WHERE event_id = '" . $event_id . "'";
@@ -3596,21 +2791,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 					$sql_cat = "INSERT INTO " . EVENTS_CATEGORY_REL_TABLE . " (event_id, cat_id) VALUES ('" . $event_id . "', '" . $v . "')";
 					//echo "$sql_cat <br>";
 					if ( FALSE === $wpdb->query($sql_cat) )
-						$error = true;
-				}
-			}
-		}
-
-		$del_ppl = "DELETE FROM " . EVENTS_PERSONNEL_REL_TABLE . " WHERE event_id = '" . $event_id . "'";
-		if ( FALSE === $wpdb->query($del_ppl) )
-			$error = true;
-
-		if (!empty($this->_req_data['event_person'])) {
-			foreach ($this->_req_data['event_person'] as $k => $v) {
-				if ($v != '') {
-					$sql_ppl = "INSERT INTO " . EVENTS_PERSONNEL_REL_TABLE . " (event_id, person_id) VALUES ('" . $event_id . "', '" . $v . "')";
-					//echo "$sql_ppl <br>";
-					if ( FALSE === $wpdb->query($sql_ppl) )
 						$error = true;
 				}
 			}
@@ -3914,189 +3094,20 @@ class Events_Admin_Page extends EE_Admin_Page {
 			update_option( 'espresso_no_ticket_prices', $espresso_no_ticket_prices );
 		}
 
-
-		############# MailChimp Integration ###############
-		if (get_option('event_mailchimp_active') == 'true' && $caffeinated == true) {
-			MailChimpController::update_event_list_rel($event_id);
-		}
-
-		/// Create Event Post Code Here
-		if ( isset( $this->_req_data['create_post'] )) {
-		
-			if ( $this->_req_data['create_post'] ) {
-			
-				$post_type = isset( $this->_req_data['post_type'] ) && ! empty( $this->_req_data['post_type'] ) ? $this->_req_data['post_type'] : 'espresso_event';
-
-				if ($post_type == 'post') {
-					if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php") || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/event_post.php")) {
-						// Load message from template into message post variable
-						ob_start();
-						if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php")) {
-							require_once(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php");
-						} else {
-							require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/event_post.php");
-						}
-						$post_content = ob_get_contents();
-						ob_end_clean();
-													
-					} else {
-						_e('There was error finding a post template. Please verify your post templates are available.', 'event_espresso');
-					}
-				} elseif ($post_type == 'espresso_event') {
-					ob_start();
-					echo $event_desc;
-					$post_content = ob_get_contents();
-					ob_end_clean();
-				}
-
-				$my_post = array();
-
-				// check for post id in form input first before just hitting the db
-				if ( isset( $this->_req_data['post_id'] ) && ! empty( $this->_req_data['post_id'] )) {
-					$post_id = absint( $this->_req_data['post_id'] );
-				} else {
-					$sql = " SELECT * FROM " . EVENTS_DETAIL_TABLE;
-					$sql .= " WHERE id = '" . $event_id . "' ";
-					$wpdb->get_results($sql);
-					$post_id = $wpdb->last_result[0]->post_id;
-				}
-
-				if ($post_id > 0)
-					$my_post['ID'] = $post_id;
-
-				$my_post['post_title'] = esc_html($this->_req_data['event']);
-				$my_post['post_content'] = $post_content;
-				$my_post['post_status'] = 'publish';
-				$my_post['post_author'] = $this->_req_data['user'];
-				$my_post['post_category'] = $this->_req_data['post_category'];
-				//print_r ($my_post['post_category']);
-				$my_post['tags_input'] = $this->_req_data['post_tags'];
-				$my_post['post_type'] = $post_type;
-				//print_r($my_post);
-				// Insert the post into the database					
-					
-				if ($post_id > 0) {
-					$post_id = wp_update_post($my_post);
-					update_post_meta($post_id, 'event_id', $event_id);
-					update_post_meta($post_id, 'event_identifier', $event_identifier);
-					update_post_meta($post_id, 'slug', $event_slug);
-					update_post_meta($post_id, 'event_start_date', $start_date);
-					update_post_meta($post_id, 'event_end_date', $end_date);
-					update_post_meta($post_id, 'event_location', $event_location);
-					update_post_meta($post_id, 'virtual_url', $virtual_url);
-					update_post_meta($post_id, 'virtual_phone', $virtual_phone);
-					//
-					update_post_meta($post_id, 'event_address', $address);
-					update_post_meta($post_id, 'event_address2', $address2);
-					update_post_meta($post_id, 'event_city', $city);
-					update_post_meta($post_id, 'event_state', $state);
-					update_post_meta($post_id, 'event_country', $country);
-					update_post_meta($post_id, 'event_phone', $phone);
-					update_post_meta($post_id, 'venue_title', $venue_title);
-					update_post_meta($post_id, 'venue_url', $venue_url);
-					update_post_meta($post_id, 'venue_phone', $venue_phone);
-					update_post_meta($post_id, 'venue_image', $venue_image);
-					update_post_meta($post_id, 'event_externalURL', $externalURL);
-					update_post_meta($post_id, 'event_reg_limit', $reg_limit);
-					update_post_meta($post_id, 'event_start_time', time_to_24hr($start_time));
-					update_post_meta($post_id, 'event_end_time', time_to_24hr($end_time));
-					update_post_meta($post_id, 'event_registration_start', $registration_start);
-					update_post_meta($post_id, 'event_registration_end', $registration_end);
-					update_post_meta($post_id, 'event_registration_startT', $registration_startT);
-					update_post_meta($post_id, 'event_registration_endT', $registration_endT);
-					update_post_meta( $post_id, 'timezone_string', $timezone_string );
-				} else {
-					$post_id = wp_insert_post($my_post);
-					add_post_meta($post_id, 'event_id', $event_id);
-					add_post_meta($post_id, 'event_identifier', $event_identifier);
-					add_post_meta($post_id, 'event_start_date', $start_date);
-					add_post_meta($post_id, 'event_end_date', $end_date);
-					add_post_meta($post_id, 'event_location', $event_location);
-					add_post_meta($post_id, 'virtual_url', $virtual_url);
-					add_post_meta($post_id, 'virtual_phone', $virtual_phone);
-					//
-					add_post_meta($post_id, 'event_address', $address);
-					add_post_meta($post_id, 'event_address2', $address2);
-					add_post_meta($post_id, 'event_city', $city);
-					add_post_meta($post_id, 'event_state', $state);
-					add_post_meta($post_id, 'event_country', $country);
-					add_post_meta($post_id, 'event_phone', $phone);
-					add_post_meta($post_id, 'venue_title', $venue_title);
-					add_post_meta($post_id, 'venue_url', $venue_url);
-					add_post_meta($post_id, 'venue_phone', $venue_phone);
-					add_post_meta($post_id, 'venue_image', $venue_image);
-					add_post_meta($post_id, 'event_externalURL', $externalURL);
-					add_post_meta($post_id, 'event_reg_limit', $reg_limit);
-					add_post_meta($post_id, 'event_start_time', time_to_24hr($start_time));
-					add_post_meta($post_id, 'event_end_time', time_to_24hr($end_time));
-					add_post_meta($post_id, 'event_registration_start', $registration_start);
-					add_post_meta($post_id, 'event_registration_end', $registration_end);
-					add_post_meta($post_id, 'event_registration_startT', $registration_startT);
-					add_post_meta($post_id, 'event_registration_endT', $registration_endT);
-					//add_post_meta( $post_id, 'timezone_string', $timezone_string );
-				}
-
-				// Store the POST ID so it can be displayed on the edit page
-				$sql = array('post_id' => $post_id, 'post_type' => $post_type);
-				$sql_data = array('%d', '%s');
-				$update_id = array('id' => $event_id);
-				
-				if ( FALSE === $wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d')) )
-					$error = true;
-				
-			} else {
-			
-				// check for post id in form input first before just hitting the db
-				if ( isset( $this->_req_data['post_id'] ) && ! empty( $this->_req_data['post_id'] )) {
-					$post_id = absint( $this->_req_data['post_id'] );
-				} else {
-					$sql = "SELECT * FROM " . EVENTS_DETAIL_TABLE;
-					$sql .= " WHERE id = %d";
-					if ( $wpdb->get_results( $wpdb->prepare( $sql, $event_id ))) {
-						$post_id = $wpdb->last_result[0]->post_id;
-					}					
-				}
-
-				if ($wpdb->num_rows > 0 && !empty($this->_req_data['delete_post']) && $this->_req_data['delete_post'] == 'true') {
-					$sql = array('post_id' => '', 'post_type' => '');
-					$sql_data = array('%d', '%s');
-					$update_id = array('id' => $event_id);
-					$wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d'));
-					wp_delete_post($post_id, 'true');
-				}
-				
-			}
-		}
-
-		if (empty($error)) {	
-			
+		if ( empty( $error )) {			
 			// overwrite default success messages
 			EE_Error::overwrite_success();
-			//$edit_event_link = add_query_arg(array('action' => 'edit_event', 'event_id' => $last_event_id ), EVENTS_ADMIN_URL);
-			
 			$msg = sprintf( 
 					__( 'The event %s has been updated', 'event_espresso' ), 
 					'<a href=' . espresso_reg_url($event_id) . '>' . stripslashes_deep($this->_req_data['event']) . '</a>'
 			);
 			EE_Error::add_success( $msg );
-
-		} else { 		
-
+		} else { 
 			$msg = sprintf( 
 					__( 'An error occured and the event %s has not been updated in the database.', 'event_espresso' ), 
 					'<a href=' . espresso_reg_url($event_id) . '>' . stripslashes_deep($this->_req_data['event']) . '</a>' 
 			);
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			
-		}
-
-		/*
-		 * Added for seating chart addon
-		 */
-		if (isset($seating_chart_result) && $seating_chart_result === false) {
-			?>
-			<p><?php _e('Failed to associate new seating chart with this event. (Seats from current seating chart might have been used by some attendees)', 'event_espresso'); ?></p>
-			<?php
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );		
 		}
 
 		//Empty the event cache
