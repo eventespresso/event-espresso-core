@@ -482,8 +482,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$this->_generate_event_title_and_desc();
 		$this->_generate_publish_box_extra_content();
 		
-		$id = isset($this->_event->id) ? $this->_event->id : '';
-		$this->_set_publish_post_box_vars( 'event_id', $id, 'delete_event' );
+		$EVT_ID = isset($this->_event->id) ? $this->_event->id : '';
+		// add delete link, but only if on edit page
+		$delete_link = $view == 'edit' ? 'delete_event' : FALSE;
+		$this->_set_publish_post_box_vars( 'EVT_ID', $EVT_ID, $delete_link );
 
 		$this->display_admin_page_with_sidebar();
 
