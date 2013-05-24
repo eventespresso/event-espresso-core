@@ -25,6 +25,10 @@
 	margin-left: 2em;
 }
 
+.manual-venue { width: 33%; }
+.manual-venue input,
+.manual-venue textarea { width: 90%; }
+
 @media only screen and (max-width: 1425px) { #event-dates-and-times .dtm-inp { width:175px; } }
 @media only screen and (max-width: 1325px) { #event-dates-and-times .dtm-inp { width:150px; } }
 @media only screen and (max-width: 1225px) { #event-dates-and-times .dtm-inp { width:125px; } }
@@ -116,9 +120,9 @@
 .ticket-price-quick-edit-tbl .type-column { width:17.5%; height:2.5em; }
 .ticket-price-quick-edit-tbl .order-column { width:4%; height:2.5em; text-align:center; }
 .ticket-price-quick-edit-tbl .name-column { width:17.5%; height:2.5em; }
-.ticket-price-quick-edit-tbl .amount-column { width:100px; height:2.5em; text-align:right; }
+.ticket-price-quick-edit-tbl .amount-column { width:100px; height:2.5em; }
 .ticket-price-quick-edit-tbl .amount-column .cur-sign { display:inline-block; width:20px; margin-top:4px; }
-.ticket-price-quick-edit-tbl .amount-column input { width:50px; }
+.ticket-price-quick-edit-tbl .amount-column input { width:50px; text-align:right; }
 .ticket-price-quick-edit-tbl .amount-column .percent-sign { display:inline-block; width:20px; margin-top:4px; }
 .ticket-price-quick-edit-tbl .edit-column { width:55px; height:2.5em; vertical-align:middle; text-align:center; }
 .ticket-price-quick-edit-tbl .desc-column { height:2.5em; }
@@ -185,9 +189,9 @@
 	#event_editor_pricing .ticket-price-quick-edit-tbl .name-column { width:17.5%; height:2.5em; padding:0 .5em; }
 	#event_editor_pricing .ticket-price-quick-edit-tbl .name-column input { width: 125px !important; }	
 
-	#event_editor_pricing .ticket-price-quick-edit-column.amount-column { width:100px!important; height:2.5em; text-align:right; }
+	#event_editor_pricing .ticket-price-quick-edit-column.amount-column { width:100px!important; height:2.5em; }
 	#event_editor_pricing .ticket-price-quick-edit-tbl .amount-column .cur-sign { display:inline-block; width:20px; }
-	#event_editor_pricing .ticket-price-quick-edit-tbl .amount-column input { width:50px; }
+	#event_editor_pricing .ticket-price-quick-edit-tbl .amount-column input { width:50px; text-align:right; }
 	#event_editor_pricing .ticket-price-quick-edit-tbl .amount-column .percent-sign { display:inline-block; width:20px; }
 	#event_editor_pricing .ticket-price-quick-edit-tbl .edit-column { width:55px; height:2.5em; vertical-align:middle; text-align:center; }
 	#event_editor_pricing .ticket-price-quick-edit-tbl .desc-column { width:auto; height:2.5em; padding:0 .5em; }
