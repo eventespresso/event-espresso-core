@@ -292,13 +292,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					),
 					'list_table' => 'EE_Attendee_Contact_List_Table',
 					'metaboxes' => array()
-				),
-
-			'reports' => array(
-				'nav' => array(
-					'label' => __('Reports', 'event_espresso'),
-					'order' => 30
-					)
 				)
 				
 			);
