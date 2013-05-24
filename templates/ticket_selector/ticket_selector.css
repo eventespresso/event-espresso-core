@@ -131,7 +131,8 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 #message.error { border-color:#EB574D; }
 #message p { margin:0; }
 
-.ee-gmap-align-left { float: left; margin:0 1.5em 1em 0; }
+.ee-gmap-align-left { float: left; margin:2.5em 1.5em 1em 0; }
+.ee-gmap-align-center { margin:2em auto 1em; }
 .ee-gmap-align-right { float: right; margin:2.5em 1em 1em 1.5em; }
 
 .ee-gmap img,

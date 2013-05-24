@@ -532,14 +532,14 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			'ee_map_nav_display_single' => TRUE,
 			'ee_map_nav_size_single' => FALSE,
 			'ee_map_type_control_single' => 'default',
-			'ee_map_align_single' => 'right',
+			'ee_map_align_single' => 'center',
 			'ee_map_width' => 300,
 			'ee_map_height' => 185,
-			'ee_map_zoom' => 11,
+			'ee_map_zoom' => 12,
 			'ee_map_nav_display' => FALSE,
 			'ee_map_nav_size' => TRUE,
-			'ee_map_type_control' => 'default',
-			'ee_map_align' => 'right',
+			'ee_map_type_control' => 'dropdown',
+			'ee_map_align' => 'center',
 			'ee_display_map_no_shortcodes' => FALSE
 		);
 		$this->_template_args['map_settings'] = 
