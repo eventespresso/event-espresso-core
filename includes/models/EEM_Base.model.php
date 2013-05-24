@@ -1309,7 +1309,7 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	public function field_settings_for($fieldName){
 		$fieldSettings=$this->field_settings();
-		if(!array_key_exists($fieldName,$fieldSettings)){
+		if( ! array_key_exists($fieldName,$fieldSettings)){
 			throw new EE_Error(sprintf(__('There is no field/column %s on %s','event_espresso'),$fieldName,get_class($this)));
 		}
 		return $fieldSettings[$fieldName];

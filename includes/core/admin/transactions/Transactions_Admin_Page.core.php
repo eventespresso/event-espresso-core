@@ -897,10 +897,10 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					'PAY_method' => $payment['method'], 
 					'PAY_amount' => $amount,
 					'PAY_gateway' => $payment['gateway'],
-					'PAY_gateway_reponse' => $payment['gateway_response'],
+					'PAY_gateway_response' => $payment['gateway_response'],
 					'PAY_txn_id_chq_nmbr' => $payment['txn_id_chq_nmbr'],
 					'PAY_po_number' => $payment['po_number'], 
-					'PAY_extra_accounting' => $payment['accounting'], 
+					'PAY_extra_accntng' => $payment['accounting'], 
 					'PAY_via_admin' => true, 
 					'PAY_details' => $payment,
 					'PAY_ID' => $payment['PAY_ID']

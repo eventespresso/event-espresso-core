@@ -69,7 +69,7 @@ class EE_Base_Class{
 				$this->set_from_db($field_name,$field_value_from_db);
 			}
 		}else{
-			//the primary key  isn't in the constructor's first arg's array, so assume we're constructing a brand
+			//we're constructing a brand
 			//new instance of the model object. Generally, this means we'll need to do more field validation
 			foreach($fieldValues as $fieldName => $fieldValue){
 				$this->set($fieldName,$fieldValue,true);
