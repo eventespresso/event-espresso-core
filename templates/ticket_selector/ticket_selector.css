@@ -131,5 +131,8 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 #message.error { border-color:#EB574D; }
 #message p { margin:0; }
 
-.ee-gmaps img,
+.ee-gmap-align-left { float: left; margin:0 1.5em 1em 0; }
+.ee-gmap-align-right { float: right; margin:2.5em 1em 1em 1.5em; }
+
+.ee-gmap img,
 .espresso-paid-status-icon-img { box-shadow: none !important; box-radius: 0 !important;  }
