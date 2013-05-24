@@ -63,7 +63,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 
 	protected function _parser( $shortcode ) {
 		global $org_options;
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Formatter.helper.php';
+		require_once ( EE_HELPERS . 'EE_Formatter.helper.php' );
 
 		switch ( $shortcode ) {
 			
