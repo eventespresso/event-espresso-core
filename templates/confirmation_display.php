@@ -35,13 +35,16 @@ function espresso_display_confirmation_page($conf_page_data) {
 							<?php _e('Attendee Name:', 'event_espresso'); ?>
 						</th>
 						<td  valign="top">
-							<span class="event_espresso_value"><?php echo stripslashes_deep($conf_page_data['attendee_name']) ?> (<?php echo $conf_page_data['attendee_email'] ?>) <?php echo '<a href="' . home_url() . '/?page_id=' . $conf_page_data['event_page_id'] . '&amp;registration_id=' . $conf_page_data['registration_id'] . '&amp;id=' . $conf_page_data['attendee_id'] . '&amp;e_reg=register&amp;form_action=edit_attendee&amp;primary=' . $conf_page_data['attendee_id'] . '&amp;p_id=' . $conf_page_data['p_id'] . '&amp;event_id=' . $conf_page_data['event_id'] . '&amp;coupon_code=' . $conf_page_data['coupon_code'] . '&amp;groupon_code=' . $conf_page_data['groupon_code'] . '&amp;attendee_num=' . $attendee_num . '">' . __('Edit', 'event_espresso') . '</a>'; ?>
+							<span class="event_espresso_value"><?php echo stripslashes_deep($conf_page_data['attendee_name']) ?> (<?php echo $conf_page_data['attendee_email'] ?>) <?php echo '<a href="' . home_url() . '/?page_id=' . $conf_page_data['event_page_id'] . '&amp;registration_id=' . $conf_page_data['registration_id'] . '&amp;id=' . $conf_page_data['attendee_id'] . '&amp;e_reg=register&amp;form_action=edit_attendee&amp;primary=' . $conf_page_data['attendee_id'] . '&amp;p_id=' . $conf_page_data['p_id'] . '&amp;event_id=' . $conf_page_data['event_id'] . '&amp;attendee_num=' . $attendee_num . '">' . __('Edit', 'event_espresso') . '</a>'; ?>
 								<?php
 								//Create additional attendees
-								$sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE;
-								$sql .= " WHERE registration_id = '" . espresso_registration_id($conf_page_data['attendee_id']) . "' AND id != '" . $conf_page_data['attendee_id'] . "' ";
-								//echo $sql;
-								$x_attendees = $wpdb->get_results($sql, ARRAY_A);
+								$SQL = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE;
+								$SQL .= " WHERE registration_id = ";
+								$SQL .= "( SELECT registration_id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id = %d )";
+								$SQL .= " AND id != %d";
+								
+								$x_attendees = $wpdb->get_results( $wpdb->get_results( $SQL, $conf_page_data['attendee_id'], $conf_page_data['attendee_id'] ), ARRAY_A);
+								
 								if ($wpdb->num_rows > 0) {
 									foreach ($x_attendees as $x_attendee) {
 										$attendee_num++;
