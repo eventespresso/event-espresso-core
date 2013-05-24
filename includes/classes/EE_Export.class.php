@@ -74,7 +74,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 				$this->_req_data['action'] = $this->_req_data['action2'];
 			}
 		}
-
+		
+		$this->_req_data['export'] = isset( $this->_req_data['export'] ) ? $this->_req_data['export'] : '';
+		
 		switch ($this->_req_data['export']) {
 			case 'report':
 				switch ($this->_req_data['action']) {
@@ -110,6 +112,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 						$this->EE_CSV->_notices['errors'][] = 'An error occured! The requested export report could not be found.';
 						// add the output of the csv_admin_notices function to the admin_notices hook
 						add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
+						return FALSE;
 					break;
 					
 				}
@@ -146,7 +149,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 			EVENTS_EMAIL_TABLE,
 			EVENTS_LOCALE_TABLE,
 			EVENTS_LOCALE_REL_TABLE,
-			EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE,
 			EVENTS_PERSONNEL_TABLE,
 			EVENTS_PERSONNEL_REL_TABLE,
 			EVENTS_PRICES_TABLE,
@@ -255,8 +257,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	function export_attendees() {
 		$tables_to_export = array( 
 				EVENTS_ATTENDEE_TABLE,
-				EVENTS_ATTENDEE_COST_TABLE,
-				//EVENTS_ATTENDEE_META_TABLE
+				EVENTS_ATTENDEE_COST_TABLE
 			);
 																				
 		$table_data = $this->process_multi_table_export( $tables_to_export );
@@ -275,9 +276,29 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 *			@return void
 	 */	
 	function export_categories() {
+		// are any Event IDs set?
+		if ( isset( $this->_req_data['EVT_CAT_ID'] )) {
+			// do we have an array of IDs ?
+			if ( is_array( $this->_req_data['EVT_CAT_ID'] )) {
+				// generate an "IN (CSV)" where clause
+				$EVT_CAT_ID = implode( array_map( 'sanitize_text_field', $this->_req_data['EVT_CAT_ID'] ), ',' );
+				$filename = 'event-categories';
+				$EVT_CAT_ID = 'IN (' . $EVT_CAT_ID . ')';
+			} else {
+				// generate regular where = clause
+				$EVT_CAT_ID = absint( $this->_req_data['EVT_CAT_ID'] );
+				$filename = 'event-category#' . $EVT_CAT_ID;
+				$EVT_CAT_ID = '= ' . $EVT_CAT_ID;
+			}
+		} else {
+			// no IDs mena we will d/l the entire table
+			$EVT_CAT_ID = FALSE;
+			$filename = 'all-event-categories';
+		}
+		
 		$tables_to_export = array( 
-				EVENTS_CATEGORY_REL_TABLE,
-				EVENTS_CATEGORY_TABLE,
+				EVENTS_CATEGORY_REL_TABLE 	=> ' WHERE cat_id ' . $EVT_CAT_ID,
+				EVENTS_CATEGORY_TABLE	=> ' WHERE id ' . $EVT_CAT_ID,
 			);
 																				
 		$table_data = $this->process_multi_table_export( $tables_to_export );
