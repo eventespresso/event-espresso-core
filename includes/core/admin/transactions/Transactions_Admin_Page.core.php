@@ -101,25 +101,31 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_get_transaction_status_array();
 
 		$this->_page_routes = array(
+		
 				'default' => '_transactions_overview_list_table',
+				
 				'view_transaction' => '_transaction_details',
+				
 				'send_payment_reminder'	=> array(
 					'func' => '_send_payment_reminder',
 					'noheader' => TRUE
 					),
-				'reports' => '_transaction_reports',
+
 				'espresso_apply_payment' => array(
 				 	'func' => 'apply_payments_or_refunds',
 				 	'noheader' => TRUE
 				 	),
+					
 				'espresso_apply_refund'	=> array(
 					'func' => 'apply_payments_or_refunds',
 					'noheader' => TRUE
 					),
+					
 				'espresso_delete_payment' => array(
 					'func' => 'delete_payment',
 					'noheader' => TRUE
 					)
+					
 		);
 		
 	}
@@ -148,12 +154,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					'persistent' => FALSE
 					),
 				'metaboxes' => array('_transaction_details_metaboxes')
-				),
-			'reports' => array(
-				'nav' => array(
-					'label' => __('Reports', 'event_espresso'),
-					'order' => 20
-					)
 				)
 		);
 	}
@@ -1005,129 +1005,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 
 
-
-
-	/**
-	 * 		generates Business Reports regarding Transactions
-	*		@access protected
-	*		@return void
-	*/
-	protected function _transaction_reports() {
-	
-		$page_args = array();
-		
-		$page_args['admin_reports'][] = $this->_revenue_per_day_report( '-1 month' );  //  option: '-1 week', '-2 weeks' defaults to '-1 month'
-		$page_args['admin_reports'][] = $this->_revenue_per_event_report( '-1 month' ); //  option: '-1 week', '-2 weeks' defaults to '-1 month'
-//		$page_args['admin_reports'][] = 'chart1';
-		
-		$template_path = EE_CORE_ADMIN . 'admin_reports.template.php';
-		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $page_args, TRUE );
-		
-		
-		// the final template wrapper
-		$this->display_admin_page_with_no_sidebar();
-		
-	}
-
-
-
-
-
-
-	/**
-	 * 		generates Business Report showing Total Revenue per Day
-	*		@access private
-	*		@return void
-	*/
-	private function _revenue_per_day_report( $period = '-1 month' ) {
-	
-		$report_ID = 'txn-admin-revenue-per-day-report-dv';
-		$report_JS = 'espresso_txn_admin_revenue_per_day';
-		
-		wp_enqueue_script( $report_JS, TXN_ASSETS_URL . $report_JS . '_report.js', array('jqplot-all'), '1.0', TRUE);
-
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
-	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
-	    $TXN = EEM_Transaction::instance();
-	 	
-		if( $results = $TXN->get_revenue_per_day_report( $period ) ) {	
-			//printr( $results, '$registrations_per_day' );
-			$revenue = array();
-			$xmin = date( 'Y-m-d', strtotime( '+1 year' ));
-			$xmax = 0;
-			$ymax = 0;
-			foreach ( $results as $result ) {
-				$revenue[] = array( $result->txnDate, (float)$result->revenue );
-				$xmin = strtotime( $result->txnDate ) < strtotime( $xmin ) ? $result->txnDate : $xmin;
-				$xmax = strtotime( $result->txnDate ) > strtotime( $xmax ) ? $result->txnDate : $xmax;
-				//$ymax = $result->revenue > $ymax ? $result->revenue : $ymax;
-			}
-			
-			$xmin = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmin)) . ' -1 day' ));			
-			$xmax = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmax)) . ' +1 day' ));
-			// calculate # days between our min and max dates				
-			$span = floor( (strtotime($xmax) - strtotime($xmin)) / (60*60*24)) + 1;
-			
-			$report_params = array(
-				'title' 		=> 'Total Revenue per Day',
-				'id' 			=> $report_ID,
-				'revenue' => $revenue,												
-				'xmin' 		=> $xmin,
-				'xmax' 		=> $xmax,
-				//'ymax' 		=> ceil($ymax * 1.25),
-				'span' 		=> $span,
-				'width'		=> ceil(900 / $span)												
-			);
-			wp_localize_script( $report_JS, 'txnRevPerDay', $report_params );
-		}
-											
-		return $report_ID;
-	}
-
-
-
-
-
-
-	/**
-	 * 		generates Business Report showing total revenue per event
-	*		@access private
-	*		@return void
-	*/
-	private function _revenue_per_event_report( $period = '-1 month' ) {
-	
-		$report_ID = 'txn-admin-revenue-per-event-report-dv';
-		$report_JS = 'espresso_txn_admin_revenue_per_event';
-		
-		wp_enqueue_script( $report_JS, TXN_ASSETS_URL . $report_JS . '_report.js', array('jqplot-all'), '1.0', TRUE);
-
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
-	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
-	    $TXN = EEM_Transaction::instance();
-	 
-		if( $results = $TXN->get_revenue_per_event_report( $period ) ) {		
-			//printr( $results, '$registrations_per_event' );
-			$revenue = array();
-			foreach ( $results as $result ) {
-				$event_name = stripslashes( html_entity_decode( $result->event_name, ENT_QUOTES, 'UTF-8' ));
-				$event_name = wp_trim_words( $event_name, 5, '...' );				
-				$revenue[] = array( $event_name, (float)$result->revenue );
-			}	
-
-			$span = $period == 'week' ? 9 : 33;
-
-			$report_params = array(
-				'title' 		=> 'Total Revenue per Event',
-				'id' 			=> $report_ID,
-				'revenue'	=> $revenue,												
-				'span' 		=> $span,
-				'width'		=> ceil(900 / $span)								
-			);
-			wp_localize_script( $report_JS, 'revenuePerEvent', $report_params );		
-		}
-
-		return $report_ID;
-	}
 
 
 
