@@ -407,40 +407,6 @@ function espresso_dashboard_init() {
 
 
 
-function ee_update_questions_sequence() {
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-	global $wpdb;
-	//Update the questions when re-ordering
-	if (!empty($_POST['update_sequence'])) {
-		$rows = explode(",", $_POST['row_ids']);
-		for ($i = 0; $i < count($rows); $i++) {
-			$wpdb->query("UPDATE " . EVENTS_QUESTION_TABLE . " SET sequence=" . $i . " WHERE id='" . $rows[$i] . "'");
-		}
-		exit();
-	}
-}
-
-
-
-
-
-function ee_update_question_groups_sequence() {
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-	global $wpdb;
-	//Update the questions when re-ordering
-	if (!empty($_POST['update_sequence'])) {
-		$rows = explode(",", $_POST['row_ids']);
-		for ($i = 0; $i < count($rows); $i++) {
-			$wpdb->query("UPDATE " . EVENTS_QST_GROUP_TABLE . " SET group_order=" . $i . " WHERE id='" . $rows[$i] . "'");
-		}
-		exit();
-	}
-}
-
-
-
-
-
 function espresso_load_messages_init() {
 	$EEMSGS_init = new EE_messages_init();
 }
