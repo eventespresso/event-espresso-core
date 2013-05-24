@@ -512,10 +512,11 @@ if (!function_exists('get_number_of_attendees_reg_limit')) {
 }
 
 function espresso_registration_footer() {
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-	global $caffeinated, $org_options;
-	$url = (!isset($org_options['affiliate_id']) || $org_options['affiliate_id'] == '' || $org_options['affiliate_id'] == 0) ? 'http://eventespresso.com/' : 'https://www.e-junkie.com/ecom/gb.php?cl=113214&c=ib&aff=' . $org_options['affiliate_id'];
-	if (!$caffeinated || !empty($org_options['show_reg_footer'])) {
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');	
+	$url = apply_filters( 'FHEE__registration_footer__url', 'http://eventespresso.com/' );
+	$show_reg_footer = isset( $org_options['show_reg_footer'] ) ? $org_options['show_reg_footer'] : TRUE;
+	$show_reg_footer = apply_filters( 'FHEE__registration_footer__show_reg_footer', $show_reg_footer );
+	if ( $show_reg_footer ) {
 		return '<p style="font-size: 12px;"><a href="' . $url . '" title="Event Registration Powered by Event Espresso" target="_blank">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress" target="_blank">Event Espresso</a></p>';
 	}
 }
@@ -862,68 +863,6 @@ function escape_csv_val($val) {
 	return $val;
 }
 
-/*
-  Shows the personnel that are assigned to an event
-
-  Example usage in a template file
-  espresso_show_personnel($event_id , array('wrapper_start'=>'<ul style="event_staff">','wrapper_end'=>'</ul>','before'=>'<li>','after'=>'</li>', 'limit'=>1,'show_info'=>true) );
-
-  Parameters:
-  event_id - id of event
-  wrapper_start - adds html to the beginning of the output block
-  wrapper_end - adds html the end of the output block
-  before - adds html to the beginning of each persons details
-  after - adds html to the end of each persons details
-  staff_id - show a single person by id (useful for showing people not assigned to an event)
-  limit - how many people to show
-  show_info - shows the persons role and organization (if available) */
-
-if (!function_exists('espresso_show_personnel')) {
-
-	function espresso_show_personnel($event_id, $atts) {
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		global $caffeinated;
-		if ($caffeinated != true)
-			return;
-		global $wpdb;
-		extract($atts, EXTR_PREFIX_ALL, "v");
-		$v_staff_id = empty($v_staff_id) ? FALSE : $v_staff_id;
-		if (!$event_id && !$v_staff_id)
-			return;
-		$v_limit = $v_limit > 0 ? " LIMIT 0," . $v_limit . " " : '';
-		$sql = "SELECT s.id, s.name, s.role, s.meta ";
-		$sql .= " FROM " . EVENTS_PERSONNEL_TABLE . ' s ';
-		if ($v_staff_id > 0) {
-			$sql .= " WHERE s.id ='" . $v_staff_id . "' ";
-		} else {
-			$sql .= " JOIN " . EVENTS_PERSONNEL_REL_TABLE . " r ON r.person_id = s.id ";
-			$sql .= " WHERE r.event_id ='" . $event_id . "' ";
-		}
-		$sql .= $v_limit;
-		$event_personnel = $wpdb->get_results($sql);
-		$num_rows = $wpdb->num_rows;
-		if ($num_rows > 0) {
-			$html = '';
-			foreach ($event_personnel as $person) {
-				$person_name = $person->name;
-				$person_role = $person->role;
-
-				$meta = unserialize($person->meta);
-				$person_organization = $meta['organization'] != '' ? $meta['organization'] : '';
-				//$person_title = $meta['title']!=''? $meta['title']:'';
-				$add_dash = ($person_role != '' && $person_organization != '') ? ' - ' : '';
-				if ($v_show_info == true)
-					$person_info = ($person_role != '' || $person_organization != '') ? ' [' . $person_role . $add_dash . $person_organization . ']' : '';
-
-				$html .= $v_before . $person_name . $person_info . $v_after;
-			}
-		}
-		$v_wrapper_start = empty($v_wrapper_start) ? '' : $v_wrapper_start;
-		$v_wrapper_end = empty($v_wrapper_end) ? FALSE : $v_wrapper_end;
-		return $v_wrapper_start . $html . $v_wrapper_end;
-	}
-
-}
 
 
 
@@ -995,20 +934,6 @@ if (!function_exists('event_espresso_cleanup_multi_event_registration_id_group_d
 
 }
 
-//Function to clean up left out data from attendee cost table
-if (!function_exists('event_espresso_cleanup_attendee_cost_data')) {
-
-	/**
-	 * event_espresso_cleanup_attendee_cost_data()
-	 *
-	 * Usage: event_espresso_cleanup_attendee_cost_data()
-	 */
-//	function event_espresso_cleanup_attendee_cost_data() {
-//		global $wpdb;
-//		$wpdb->query(" delete eac from " . EVENTS_ATTENDEE_COST_TABLE . " eac left join " . EVENTS_ATTENDEE_TABLE . "  ea on eac.attendee_id = ea.id where ea.id is null ");
-//	}
-
-}
 
 function espresso_check_scripts() {
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
@@ -1025,84 +950,7 @@ function espresso_check_scripts() {
 	}
 }
 
-//These functions were moved here from admin.php on 08-30-2011 by Seth
-function espresso_edit_this($event_id) {
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-	global $caffeinated;
-	if ($caffeinated != true)
-		return;
-	$curauth = wp_get_current_user();
-	$user_id = $curauth->ID;
-	$user = new WP_User($user_id);
-	foreach ($user->roles as $role) {
-		//echo $role;
-		//Build the edit event link
-		$edit_link = '<a class="post-edit-link ui-priority-secondary ui-corner-all ui-state-default ui-state-hover ui-state-focus ui-state-active " href="' . site_url() . '/wp-admin/admin.php?page=events&action=edit&event_id=' . $event_id . '">' . __('Edit Event') . '</a>';
-		switch ($role) {
-			case 'administrator':
-			case 'espresso_event_admin':
-			case 'espresso_event_manager':
-			case 'espresso_group_admin':
-				//If user is an event manager, then show the edit link for their events
-				if (function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_eventmanager' && espresso_member_data('id') != espresso_is_my_event($event_id))
-					return;
-				return $edit_link;
-				break;
-		}
-	}
-}
 
-//Retrives the attendee count based on an attendee ids
-//function espresso_count_attendees_for_registration($attendee_id) {
-//	global $wpdb;
-//	$cnt = $wpdb->get_var("SELECT COUNT(1) as cnt FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . espresso_registration_id($attendee_id) . "' ORDER BY id ");
-//	if ($cnt == 1) {
-//		$cnt = $wpdb->get_var("SELECT quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . espresso_registration_id($attendee_id) . "' ORDER BY id ");
-//		if ($cnt == 0) {
-//			return 1;
-//		} elseif ($cnt > 0) {
-//			return $cnt;
-//		}
-//	}
-//	return $cnt;
-//}
-
-//function espresso_is_primary_attendee($attendee_id) {
-//	global $wpdb;
-//	$sql = "SELECT ea.id FROM " . EVENTS_ATTENDEE_TABLE . " ea ";
-//	$sql .= " WHERE ea.id = '" . $attendee_id . "' AND ea.is_primary='1' ";
-//	//echo $sql;
-//	$wpdb->get_results($sql);
-//	if ($wpdb->num_rows > 0) {
-//		return true;
-//	}
-//}
-
-/*function espresso_ticket_links($registration_id, $attendee_id) {
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-	global $wpdb;
-	$sql = "SELECT id, registration_id, fname, lname  FROM " . EVENTS_ATTENDEE_TABLE;
-	if (espresso_is_primary_attendee($attendee_id) != true) {
-		$sql .= " WHERE id = '" . $attendee_id . "' ";
-	} else {
-		$sql .= " WHERE registration_id = '" . $registration_id . "' ";
-	}
-	//echo $sql;
-	$attendees = $wpdb->get_results($sql);
-	$ticket_link = '';
-	if ($wpdb->num_rows > 0) {
-		$group = $wpdb->num_rows > 1 ? '<strong>' . sprintf(__('Tickets Purchased (%s):', 'event_espresso'), $wpdb->num_rows) . '</strong><br />' : '';
-		$break = '<br />';
-		foreach ($attendees as $attendee) {
-			$ticket_url = get_option('siteurl') . "/?download_ticket=true&amp;id=" . $attendee->id . "&amp;registration_id=" . $attendee->registration_id;
-			if (function_exists('espresso_ticket_launch')) {
-				$ticket_url = espresso_ticket_url($attendee->id, $attendee->registration_id);
-			}
-			$ticket_link .= '<a href="' . $ticket_url . '">' . __('Download/Print Ticket') . ' (' . $attendee->fname . ' ' . $attendee->lname . ')' . '</a>' . $break;
-		}
-		return '<p>' . $group . $ticket_link . '</p>';
-	}
-}*/
 
 function getCountriesArray($lang = "en") {
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '');

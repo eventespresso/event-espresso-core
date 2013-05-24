@@ -7,7 +7,7 @@ if (!function_exists('event_registration')) {
 
 	function event_details_page($single_event_id = NULL, $event_id_sc = 0) {
 
-		global $wpdb, $org_options, $caffeinated;
+		global $wpdb, $org_options;
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		$event_slug = (get_query_var('event_slug')) ? get_query_var('event_slug') : FALSE;
@@ -124,36 +124,6 @@ if (!function_exists('event_registration')) {
 
 				global $event_meta;
 				$event_meta = unserialize($event->event_meta);
-
-				//Venue information
-				if ( $caffeinated && isset( $org_options['use_venue_manager'] ) && $org_options['use_venue_manager'] ) {
-					$event_address = $event->venue_address;
-					$event_address2 = $event->venue_address2;
-					$event_city = $event->venue_city;
-					$event_state = $event->venue_state;
-					$event_zip = $event->venue_zip;
-					$event_country = $event->venue_country;
-
-					//Leaving these variables intact, just in case people wnat to use them
-					$venue_title = $event->venue_name;
-					$venue_address = $event->venue_address;
-					$venue_address2 = $event->venue_address2;
-					$venue_city = $event->venue_city;
-					$venue_state = $event->venue_state;
-					$venue_zip = $event->venue_zip;
-					$venue_country = $event->venue_country;
-					global $venue_meta;
-					$add_venue_meta = array(
-							'venue_title' => $event->venue_name,
-							'venue_address' => $event->venue_address,
-							'venue_address2' => $event->venue_address2,
-							'venue_city' => $event->venue_city,
-							'venue_state' => $event->venue_state,
-							'venue_country' => $event->venue_country,
-					);
-					$venue_meta = (isset($event->venue_meta) && $event->venue_meta != '') && (isset($add_venue_meta) && $add_venue_meta != '') ? array_merge(unserialize($event->venue_meta), $add_venue_meta) : '';
-					//print_r($venue_meta);
-				}
 
 				//The following variables are used to get information about your organization
 				if ( isset($org_options['map_settings']['ee_display_map_no_shortcodes']) && $org_options['map_settings']['ee_display_map_no_shortcodes']) {

@@ -183,7 +183,6 @@ function espresso_display_reg_page($data) {
 				//End display description
 				?>
 			</form>
-	<?php echo '<p class="register-link-footer">' . espresso_edit_this($data['event_id']) . '</p>' ?> 
 	</div>
 </div>
 <?php

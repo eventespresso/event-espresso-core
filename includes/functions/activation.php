@@ -1283,7 +1283,7 @@ function espresso_update_active_gateways() {
 
 function espresso_default_price_types() {
 
-	global $wpdb, $caffeinated;
+	global $wpdb;
 
 	if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_PRICE_TYPE . "'") == ESP_PRICE_TYPE) {
 
@@ -1309,7 +1309,7 @@ function espresso_default_price_types() {
 
 function espresso_default_prices() {
 
-	global $wpdb, $caffeinated;
+	global $wpdb;
 	
 	if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_PRICE_TABLE . "'") == ESP_PRICE_TABLE) {
 		

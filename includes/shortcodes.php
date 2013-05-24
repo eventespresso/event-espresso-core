@@ -662,170 +662,6 @@ add_shortcode('EVENT_LIST', 'display_event_list_sc');
 
 
 
-//function espresso_session_id_sc() {
-//	return event_espresso_session_id();
-//}
-//add_shortcode('SESSION_ID', 'espresso_session_id_sc');
-
-
-
-
-
-/**
-  Staff Details shortcode
-  http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/#staff_shortcode
-
-  Example:
-  [ESPRESSO_STAFF outside_wrapper="div" outside_wrapper_class="event_staff" inside_wrapper="p" inside_wrapper_class="event_person"]
-
-  Parameters:
-  id (The id of the staff member. The daefault is auto loaded of from the event.)
-  outside_wrapper_class
-  outside_wrapper
-  inside_wrapper_class
-  inside_wrapper
-  name_class
-  name_wrapper
-  image_class
-  show_image (true|false default true)
-  show_staff_titles (true|false default true)
-  show_staff_roles (true|false default true)
-  show_staff_details (true|false default true)
-  show_image (true|false default true)
-  show_description (true|false default true)
- * */
-if (!function_exists('espresso_staff_sc')) {
-	function espresso_staff_sc($atts) {
-
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-		global $wpdb, $caffeinated, $this_event_id;
-		if ($caffeinated != true)
-			return;
-
-		empty($atts) ? '' : extract($atts);
-
-		//Outside wrapper
-		$outside_wrapper_class = isset($outside_wrapper_class) ? 'class="' . $outside_wrapper_class . '"' : 'class="event_staff"';
-		$wrapper_start = isset($outside_wrapper) ? '<' . $outside_wrapper . ' ' . $outside_wrapper_class : '<div ' . $outside_wrapper_class;
-		$wrapper_end = isset($outside_wrapper) ? '</' . $outside_wrapper . '>' : '</div>';
-
-		//Persons title
-		$name_class = isset($name_class) ? 'class="' . $name_class . '"' : 'class="person_name"';
-		$name_wrapper_start = isset($name_wrapper) ? '<' . $name_wrapper . ' ' . $name_class . '>' : '<strong ' . $name_class . '>';
-		$name_wrapper_end = isset($name_wrapper) ? '</' . $name_wrapper . '>' : '</strong>';
-
-		//Image class
-		$image_class = isset($image_class) ? 'class="' . $image_class . '"' : 'class="staff_image"';
-		$image_wrapper_class = isset($image_wrapper_class) ? 'class="' . $image_wrapper_class . '"' : 'class="image_wrapper"';
-		$image_wrapper_start = isset($image_wrapper) ? '<' . $image_wrapper . ' ' . $image_wrapper_class : '<p ' . $image_wrapper_class . '>';
-		$image_wrapper_end = isset($image_wrapper) ? '</' . $image_wrapper . '>' : '</p>';
-
-		//Inside wrappers
-		$inside_wrapper_class = isset($inside_wrapper_class) ? 'class="' . $inside_wrapper_class . '"' : 'class="event_person"';
-		$inside_wrapper_before = isset($inside_wrapper) ? '<' . $inside_wrapper . ' ' . $inside_wrapper_class . '>' : '<p ' . $inside_wrapper_class . '>';
-		$inside_wrapper_after = isset($inside_wrapper) ? '</' . $inside_wrapper . '>' : '</p>';
-
-		//Show the persons title?
-		$show_staff_titles = isset($show_staff_titles) && $show_staff_titles == 'false' ? false : true;
-
-		//Show the persons role?
-		$show_staff_roles = isset($show_staff_roles) && $show_staff_roles == 'false' ? false : true;
-
-		//Show the persons details?
-		$show_staff_details = isset($show_staff_details) && $show_staff_details == 'false' ? false : true;
-
-		//Show image?
-		$show_image = (isset($show_image) && $show_image == 'false') ? false : true;
-
-		//Show the description?
-		$show_description = (isset($show_description) && $show_description == 'false') ? false : true;
-
-		//Find the event id
-		if (isset($event_id)) {
-			$event_id = $event_id; //Check to see if the event is used in the shortcode parameter
-		} elseif (isset($this_event_id)) {
-			$event_id = $this_event_id; //Check to see if the global event id is being used
-		} elseif (isset($_REQUEST['event_id'])) {
-			$event_id = $_REQUEST['event_id']; //If the first two are not being used, then get the event id from the url
-		} elseif (!isset($event_id) && !isset($id)) {
-			//_e('No event or staff id supplied!', 'event_espresso') ;
-			return;
-		}
-		$limit = (isset($limit) && $limit > 0) ? " LIMIT 0," . $limit . " " : '';
-		$sql = "SELECT s.id, s.name, s.role, s.meta ";
-		$sql .= " FROM " . EVENTS_PERSONNEL_TABLE . ' s ';
-		if (isset($id) && $id > 0) {
-			$sql .= " WHERE s.id ='" . $id . "' ";
-		} else {
-			$sql .= " JOIN " . EVENTS_PERSONNEL_REL_TABLE . " r ON r.person_id = s.id ";
-			$sql .= " WHERE r.event_id ='" . $event_id . "' ";
-		}
-		$sql .= $limit;
-		//echo $sql;
-		$event_personnel = $wpdb->get_results($sql);
-		$num_rows = $wpdb->num_rows;
-		$html = '';
-		if ($num_rows > 0) {
-			foreach ($event_personnel as $person) {
-				$person_id = $person->id;
-				$person_name = $person->name;
-				$person_role = $person->role;
-
-				$meta = unserialize($person->meta);
-
-				$html .= $wrapper_start . ' id="person_id_' . $person_id . '">';
-
-				//Build the persons name/title
-				$html .= $inside_wrapper_before;
-				if ($show_staff_roles != false) {
-					$person_title = $person_role != '' ? ' - ' . stripslashes_deep($person_role) : '';
-				}
-				$html .= $name_wrapper_start . stripslashes_deep($person_name) . $name_wrapper_end . $person_title;
-				$html .= $inside_wrapper_after;
-
-				//Build the image
-				if ($show_image != false) {
-					$html .= $meta['image'] != '' ? $image_wrapper_start . '<img id="staff_image_' . $person_id . '" ' . $image_class . ' src="' . stripslashes_deep($meta['image']) . '" />' . $image_wrapper_end : '';
-				}
-
-				//Build the description
-				if ($show_description != false) {
-					$html .= $meta['description'] != '' ? html_entity_decode(stripslashes_deep($meta['description'])) : '';
-				}
-
-				//Build the additional details
-				if ($show_staff_details != false) {
-					$html .= $inside_wrapper_before;
-					$html .= isset($meta['organization']) ? __('Company:', 'event_espresso') . ' ' . stripslashes_deep($meta['organization']) . '<br />' : '';
-					if ($show_staff_titles != false) {
-						$html .= isset($meta['title']) ? __('Title:', 'event_espresso') . ' ' . stripslashes_deep($meta['title']) . '<br />' : '';
-					}
-					$html .= isset($meta['industry']) ? __('Industry:', 'event_espresso') . ' ' . stripslashes_deep($meta['industry']) . '<br />' : '';
-					$html .= isset($meta['city']) ? __('City:', 'event_espresso') . ' ' . stripslashes_deep($meta['city']) . '<br />' : '';
-					$html .= isset($meta['country']) ? __('Country:', 'event_espresso') . ' ' . stripslashes_deep($meta['country']) . '<br />' : '';
-					$html .= isset($meta['website']) ? __('Website:', 'event_espresso') . ' <a href="' . stripslashes_deep($meta['website']) . '" target="_blank">' . stripslashes_deep($meta['website']) . '</a><br />' : '';
-					$html .= isset($meta['twitter']) ? __('Twitter:', 'event_espresso') . ' <a href="http://twitter.com/#!/' . stripslashes_deep($meta['twitter']) . '" target="_blank">@' . stripslashes_deep($meta['twitter']) . '</a><br />' : '';
-					$html .= isset($meta['phone']) ? __('Phone:', 'event_espresso') . ' ' . stripslashes_deep($meta['phone']) . '<br />' : '';
-					$html .= $inside_wrapper_after;
-				}
-
-
-				$html .= $wrapper_end;
-			}
-		}
-
-		ob_start();
-		echo wpautop($html);
-		$buffer = ob_get_contents();
-		ob_end_clean();
-		return $buffer;
-	}
-}
-add_shortcode('ESPRESSO_STAFF', 'espresso_staff_sc');
-
-
-
-
 
 /**
   Venue Details Shortcode
@@ -859,7 +695,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 	function espresso_venue_details_sc($atts) {
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-		global $wpdb, $this_event_id, $caffeinated, $espresso_reg_page;
+		global $wpdb, $this_event_id, $espresso_reg_page;
 
 		empty($atts) ? '' : extract($atts);
 
@@ -1007,18 +843,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 				}
 
 				$html .= $show_google_map_link ? '<div class="google-remote-map-link">' . $google_map_link . '</div>' : '';
-				//$html .= var_dump($meta);
-				//If the premium version is installed, then we can laod the map.
-				if ($caffeinated) {
-					if (!empty($meta['enable_for_maps'])) {
-						//Adding this check to make sure we are on a registration page. Otherwise it will break regular posts/pages that are loading the [ESPRESSO_VENUE] shortcode.
-						if ($espresso_reg_page) {
-							$venue_address_elements = ($venue->address != '' ? $venue->address . ',' : '') . ($venue->city != '' ? $venue->city . ',' : '') . ($venue->state != '' ? $venue->state . ',' : '') . ($venue->zip != '' ? $venue->zip . ',' : '') . ($venue->country != '' ? $venue->country . ',' : '');
-							$ee_gmap_location = $venue_address_elements;
-							$html .= ee_gmap_display($ee_gmap_location, $event_id);
-						}
-					}
-				}
+
 
 				//Build the additional details
 				if ($show_additional_details != false) {

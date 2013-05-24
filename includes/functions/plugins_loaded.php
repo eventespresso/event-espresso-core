@@ -358,55 +358,23 @@ add_action('activated_plugin', 'espresso_plugin_activation_errors');
 function espresso_init() {
 
 	//Globals used throughout the site
-	global $caffeinated, $is_UI_request, $espresso_content;
+	global $is_UI_request, $espresso_content;
 	// is this request for UI or backend 
 	$is_UI_request = ( ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' ) ? TRUE : FALSE;
 	if ( defined('DOING_AJAX') || ! $is_UI_request ) {
 		remove_action( 'shutdown', 'espresso_printr_session' );
 	}
-
 	do_action('AHEE_log', __FILE__, __FUNCTION__, 'is_UI_request = ' . $is_UI_request );
-
-	//Set the default time zone
-	//If the default time zone is set up in the WP Settings, then we will use that as the default.
-	if (get_option('timezone_string') != '') {
-		date_default_timezone_set(get_option('timezone_string'));
-	}
-
-	//Wordpress function for setting the locale.
-	//print get_locale();
-	//setlocale(LC_ALL, get_locale());
-	setlocale(LC_TIME, get_locale());
-
 	//Get language files
 	load_plugin_textdomain('event_espresso', false, dirname(plugin_basename(__FILE__)) . '/languages/');
 
 	//Core function files
-	$caffeinated = apply_filters( 'FHEE_systems_check', $caffeinated );
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . "functions/main.php");
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/time_date.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');
 
 	do_action('AHEE_pue_update');
 }
-
-
-
-
-
-/**
- * 		perform system check and load additional files
- *
- * 		@access public
- * 		@return void
- */
-function espresso_systems_check( ) {
-	if ( file_exists( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' )) {
-		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' );
-	}
-	return function_exists( 'espresso_system_check' ) ? espresso_system_check() : FALSE;
-}
-add_filter('FHEE_systems_check', 'espresso_systems_check');
 
 
 
@@ -573,6 +541,9 @@ function espresso_add_column_if_it_doesnt_exist($table_name,$column_name,$column
 	}
 	return true;
 }
+
+
+
 
 /**
  * Gets all the fields on teh database table. 

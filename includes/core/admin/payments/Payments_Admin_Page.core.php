@@ -132,7 +132,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	 * @return array an array of help tabs for the gateways.
 	 */
 	protected function _get_gateway_help_tabs() {
-		global $EE_Session, $caffeinated, $EEM_Gateways, $current_user;
+		global $EE_Session, $EEM_Gateways, $current_user;
 		$help_tabs = array();
 		if ( ! defined( 'ESPRESSO_GATEWAYS' )) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
@@ -153,9 +153,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		}
 
 		$default_gateways = array( 'Bank', 'Check', 'Invoice', 'Paypal_Standard' );
+		$default_gateways = apply_filters( 'FHEE_default_gateways', $default_gateways );
 
 		foreach ( $payment_settings as $gateway => $settings ) {
-			if ( $caffeinated || in_array( $gateway, $default_gateways) ) {
+			if ( in_array( $gateway, $default_gateways) ) {
 				$ht_content = isset( $gateway_instances[$gateway] ) ? $gateway_instances[$gateway]->get_help_tab_content() : FALSE;
 				if ( $ht_content ) {
 					$ht_ref = 'ee_' . $gateway . '_help';
@@ -174,7 +175,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _gateway_settings() {
-		global $EE_Session, $caffeinated, $EEM_Gateways, $current_user;
+		global $EE_Session, $EEM_Gateways, $current_user;
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
 		$EEM_Gateways = EEM_Gateways::instance();
@@ -203,10 +204,11 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$selected_gateway_name = null;
 		$gateways = array();
 		$default_gateways = array( 'Bank', 'Check', 'Invoice', 'Paypal_Standard' );
+		$default_gateways = apply_filters( 'FHEE_default_gateways', $default_gateways );
 		//let's assemble the array for the _tab_text_links helper
 		foreach ( $payment_settings as $gateway => $settings ) {
 
-			if (( $caffeinated || in_array( $gateway, $default_gateways ))){				
+			if (  in_array( $gateway, $default_gateways )){				
 				if(	isset($this->_req_data['activate_' . $gateway]) ||
 					isset($this->_req_data['deactivate_' . $gateway]) ||
 					isset($this->_req_data['update_' . $gateway])){

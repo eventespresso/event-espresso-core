@@ -45,18 +45,9 @@ function espresso_frontend_init() {
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'shortcodes.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/ical.php');
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/affiliate-handling.php');
-
-	//Registration forms
-	//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/form_build.php');
-
-	//Custom post type integration
-	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/custom_post_type.php') && !empty($org_options['template_settings']['use_custom_post_types'])) {
-		require(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/custom_post_type.php');
-	}
 	
-	add_action ( 'AHEE_regevent_default_action', 'display_all_events', 10, 1 );
-	add_action ( 'AHEE_event_registration', 'event_details_page', 10, 2 );
+	
+	
 
 
 	// Export iCal file
@@ -99,6 +90,7 @@ var_dump($reg_page_ids);*/
 			case 'event_page_id' :
 					$this_is_a_reg_page = TRUE;
 					add_action( 'wp', 'event_espresso_run', 100 );
+					add_action ( 'AHEE_event_registration', 'event_details_page', 10, 2 );
 					return TRUE;
 				break;
 			case 'notify_url' :
@@ -283,6 +275,7 @@ function event_espresso_run() {
 			} else {
 				do_action('AHEE_log', __FILE__, __FUNCTION__, ' e_reg = event_list'  );
 				require_once(espresso_get_event_list_template());
+				//add_action ( 'AHEE_regevent_default_action', 'display_all_events', 10, 1 );
 				do_action ( 'AHEE_regevent_default_action', $e_reg );
 			}
 
@@ -290,7 +283,7 @@ function event_espresso_run() {
 
 	$espresso_content =  ob_get_clean();
 	if ( espresso_events_on_frontpage() ) {
-		add_action( 'the_content', 'return_espresso_content' );
+		add_filter( 'the_content', 'return_espresso_content' );
 		remove_filter('template_redirect', 'redirect_canonical'); 
 	} else {
 		add_shortcode( 'ESPRESSO_EVENTS', 'return_espresso_content' );
@@ -317,7 +310,7 @@ function espresso_events_on_frontpage() {
 
 
 
-function return_espresso_content() {
+function return_espresso_content( $content ) {
 	global $espresso_content;
 	return $espresso_content;
 }
@@ -366,53 +359,10 @@ function espresso_export_invoice() {
 
 
 
-/*function espresso_export_ticket() {
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-	//Version 2.0
-	if (isset($_REQUEST['ticket_launch']) && $_REQUEST['ticket_launch'] == 'true') {
-		$reg_url_link = isset( $_REQUEST['_REG_ID'] ) ?  sanitize_key( $_REQUEST['_REG_ID'] ) : FALSE;
-		if ( $reg_url_link ) {
-			echo '<h4>$reg_url_link : ' . $reg_url_link . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-			echo espresso_ticket_launch();
-		}		
-	}
-	//End Version 2.0
-	//Deprecated version 1.0
-	//Export PDF Ticket
-	if (isset($_REQUEST['download_ticket']) && $_REQUEST['download_ticket'] == 'true') {
-		if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php")) {
-			require_once(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php");
-			espresso_ticket($_REQUEST['id'], $_REQUEST['registration_id']);
-		}
-	}
-	//End Deprecated version 1.0
-}*/
-
-
-
-
-
-
-function espresso_dashboard_init() {
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-	global $org_options, $caffeinated;
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/dashboard_widget.php');
-	wp_add_dashboard_widget('espresso_news_dashboard_widget', 'Event Espresso News', 'espresso_news_dashboard_widget_function');
-	if (!empty($org_options['espresso_dashboard_widget']) && $caffeinated) {
-		event_espresso_dashboard_widget();
-	}
-}
-
-
-
-
 
 function espresso_load_messages_init() {
 	$EEMSGS_init = new EE_messages_init();
 }
-
-
-
 
 
 
