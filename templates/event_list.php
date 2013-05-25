@@ -147,7 +147,7 @@ function event_espresso_get_event_details( $attributes = array()) {
 		$SQL .= $use_venues ? ' LEFT JOIN ' . EVENTS_VENUE_REL_TABLE . ' eventVenue ON eventVenue.event_id = eventDetails.id ' : '';
 	}
 	
-	$SQL .= ' JOIN ' . ESP_DATETIME . ' dateTime ON dateTime.EVT_ID = eventDetails.id ';
+	$SQL .= ' JOIN ' . ESP_DATETIME_TABLE . ' dateTime ON dateTime.EVT_ID = eventDetails.id ';
 
 	$SQL .= ' WHERE ';
 	// maybe get category info
@@ -344,18 +344,21 @@ function event_espresso_get_event_details( $attributes = array()) {
 		$location .= ! empty( $event_zip ) ? $event_zip . '<br />' : '';
 
 		//Google map link creation
-		$google_map_link = espresso_google_map_link(array(
-				'address' => $event_address,
-				'city' => $event_city,
-				'state' => $event_state,
-				'zip' => $event_zip,
-				'country' => $event_country,
-				'text' => 'Map and Directions',
-				'type' => 'text',
-				'css_id' => 'google-map-link-btn-' . $event_id,
-				'css_class' => 'google-map-link-btn ui-button ui-state-default ui-corner-all add-hover-fx',
-				'icon' => '<span class="ui-icon ui-icon-extlink"></span>'
-						));
+		require_once EE_HELPERS . 'EE_Maps.helper.php';
+		$atts = array(
+			'address' => $event_address,
+			'city' => $event_city,
+			'state' => $event_state,
+			'zip' => $event_zip,
+			'country' => $event_country,
+			'text' => 'Map and Directions',
+			'type' => 'text',
+			'css_id' => 'google-map-link-btn-' . $event_id,
+			'css_class' => 'google-map-link-btn ui-button ui-state-default ui-corner-all add-hover-fx',
+			'icon' => '<span class="ui-icon ui-icon-extlink"></span>'
+		);
+		$google_map_link = EE_Maps::google_map_link( $atts );
+						
 		$ee_gmap_location = $venue_address_elements;
 
 		//Create all meta vars
@@ -375,8 +378,8 @@ function event_espresso_get_event_details( $attributes = array()) {
 //				'registration_end' => $event->registration_end,
 				'is_active' => empty($event->is_active) ? '' : $event->is_active,
 				'event_country' => $event->country,
-//				'start_date' => event_date_display( $event->start_date ),
-//				'end_date' => event_date_display( $event->end_date ),
+//				'start_date' => EE_Formatter::event_date_display( $event->start_date ),
+//				'end_date' => EE_Formatter::event_date_display( $event->end_date ),
 //				'time' => empty($event->start_time) ? '' : $event->start_time, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 				'google_map_link' => $google_map_link,
 				'price' => empty($event->event_cost) ? '' : $event->event_cost,
