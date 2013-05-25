@@ -156,47 +156,17 @@ if (!function_exists('event_registration')) {
 
 				// display formatting
 				$location = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? '<br />' . $event_address2 : '') . ($event_city != '' ? '<br />' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? '<br />' . $event_zip : '') . ($event_country != '' ? '<br />' . $event_country : '');
-
+			
 				//Google map link creation
-				$google_map_link = espresso_google_map_link(array('address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country, 'text' => 'Map and Directions', 'type' => 'text'));
+				require_once EE_HELPERS . 'EE_Maps.helper.php';
+				$atts = array( 'address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country, 'text' => 'Map and Directions', 'type' => 'text' );
+				$google_map_link = EE_Maps::google_map_link( $atts );
 
-				$today = date("Y-m-d");
-				if (isset($event->timezone_string) && $event->timezone_string != '') {
-					$timezone_string = $event->timezone_string;
-				} else {
-					$timezone_string = get_option('timezone_string');
-					if (!isset($timezone_string) || $timezone_string == '') {
-						$timezone_string = 'America/New_York';
-					}
-				}
-
-				$t = time();
-				$today = date_at_timezone("Y-m-d H:i A", $timezone_string, $t);
-				//echo event_date_display($today, get_option('date_format'). ' ' .get_option('time_format')) . ' ' . $timezone_string;
-				//echo espresso_ddtimezone_simple();
 				$reg_limit = $event->reg_limit;
-				$additional_limit = $event->additional_limit;
-
-				//If the coupon code system is intalled then use it
-				if (function_exists('event_espresso_coupon_registration_page')) {
-					$use_coupon_code = $event->use_coupon_code;
-				} else {
-					$use_coupon_code = FALSE;
-				}
-
-				//If the groupon code addon is installed, then use it
-				if (function_exists('event_espresso_groupon_payment_page')) {
-					$use_groupon_code = $event->use_groupon_code;
-				} else {
-					$use_groupon_code = FALSE;
-				}
-
 				//Set a default value for additional limit
-				if ($additional_limit == '') {
-					$additional_limit = '5';
-				}
-
-				$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees'); //Get the number of attendees
+				$additional_limit = ! empty( $event->additional_limit ) ? $event->additional_limit : '5';
+				//Get the number of attendees
+				$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees'); 
 
 				//Create all meta vars
 				$more_meta = array(
@@ -216,13 +186,6 @@ if (!function_exists('event_registration')) {
 						'venue_country' => $venue_country,				
 						'event_status' => $event->event_status,
 						'is_active' => empty($event->is_active) ? '' : $event->is_active,
-//						'start_time' => empty($event->start_time) ? '' : $event->start_time, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-//						'registration_startT' => $event->registration_startT,
-//						'registration_start' => $event->registration_start,
-//						'registration_endT' => $event->registration_endT,
-//						'registration_end' => $event->registration_end,
-//						'start_date' => event_date_display( $event->start_date ),
-//						'end_date' => event_date_display( $event->end_date ),
 						'google_map_link' => $google_map_link,
 						'price' => empty($event->event_cost) ? '' : $event->event_cost,
 						'event_cost' => empty($event->event_cost) ? '' : $event->event_cost
@@ -302,8 +265,6 @@ if (!function_exists('event_registration')) {
 						$data['reg_start_date'] = $reg_start_date;
 						$data['display_reg_form'] = $display_reg_form;
 						$data['event'] = $event;
-						//$data['use_coupon_code'] = $use_coupon_code;
-						$data['use_groupon_code'] = $use_groupon_code;
 						$data['location'] = $location;
 						$data['org_options'] = $org_options;
 						$data['google_map_link'] = $google_map_link;
