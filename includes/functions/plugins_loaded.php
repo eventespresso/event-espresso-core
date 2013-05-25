@@ -596,10 +596,18 @@ function espresso_site_license() {
 		$api_key = isset($org_options['site_license_key']) ? $org_options['site_license_key'] : '';
 		$host_server_url = 'http://eventespresso.com'; //this needs to be the host server where plugin update engine is installed. Note, if you leave this blank then it is assumed the WordPress repo will be used and we'll just check there.
 
+		//Note: PUE uses a simple preg_match to determine what type is currently installed based on version number.  So it's important that you use a key for the version type that is unique and not found in another key.
+		//For example:
+		//$plugin_slug['premium']['p'] = 'some-premium-slug';
+		//$plugin_slug['prerelease']['pr'] = 'some-pre-release-slug';
+		//The above would not work because "p" is found in both keys for the version type. ( i.e 1.0.p vs 1.0.pr ) so doing something like:
+		//$plugin_slug['premium']['p'] = 'some-premium-slug';
+		//$plugin_slug['prerelease']['b'] = 'some-pre-release-slug';
+		//..WOULD work!
 		$plugin_slug = array(
 			'free' => array( 'l' => 'event-espresso-core-decaf' ),
 			'premium' => array( 'p' => 'event-espresso-core-caf' ),
-			'prerelease' => array( 'pr' => 'event-espresso-core-pr' )
+			'prerelease' => array( 'b' => 'event-espresso-core-pr' )
 			);
 
 
