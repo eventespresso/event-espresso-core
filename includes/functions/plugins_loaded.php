@@ -372,8 +372,6 @@ function espresso_init() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . "functions/main.php");
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/time_date.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');
-
-	do_action('AHEE_pue_update');
 }
 
 
@@ -584,6 +582,10 @@ function espresso_clear_output_buffer() {
 	ob_end_clean();
 }
 
+function espresso_do_pue_updates() {
+	do_action('AHEE_pue_update');
+}
+
 
 function espresso_site_license() {
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
@@ -592,7 +594,7 @@ function espresso_site_license() {
 	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'libraries/pue/pue-client.php')) { //include the file 
 		require(EVENT_ESPRESSO_PLUGINFULLPATH . 'libraries/pue/pue-client.php' );
 		$api_key = isset($org_options['site_license_key']) ? $org_options['site_license_key'] : '';
-		$host_server_url = 'http://eventespresso.com'; //this needs to be the host server where plugin update engine is installed. Note, if you leave this blank then it is assumed the WordPress repo will be used and we'll just check there.
+		$host_server_url = 'http://wp.dev/eventespresso'; //this needs to be the host server where plugin update engine is installed. Note, if you leave this blank then it is assumed the WordPress repo will be used and we'll just check there.
 
 		$plugin_slug = array(
 			'free' => array( 'l' => 'event-espresso-core-decaf' ),
@@ -610,7 +612,7 @@ function espresso_site_license() {
 			'option_key' => 'site_license_key', //this is what is used to reference the api_key in your plugin options.  PUE uses this to trigger updating your information message whenever this option_key is modified.
 			'options_page_slug' => 'event_espresso',
 			'plugin_basename' => plugin_basename(EVENT_ESPRESSO_PLUGINPATH),
-			'use_wp_update' => TRUE //if TRUE then you want FREE versions of the plugin to be updated from WP
+			'use_wp_update' => FALSE //if TRUE then you want FREE versions of the plugin to be updated from WP
 		);
 		$check_for_updates = new PluginUpdateEngineChecker($host_server_url, $plugin_slug, $options); //initiate the class and start the plugin update engine!
 	}

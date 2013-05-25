@@ -173,6 +173,7 @@ if ( is_admin() ) {
 	add_action('admin_bar_menu', 'espresso_toolbar_items', 100);
 	add_filter('plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2);
 	add_action( 'admin_enqueue_scripts', 'espresso_load_scripts_styles' );
+	add_action( 'plugins_loaded', 'espresso_do_pue_updates', 0 );
 	
 } else {
 	add_action('init', 'espresso_export_certificate', 30);

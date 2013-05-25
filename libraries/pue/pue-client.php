@@ -354,7 +354,7 @@ class PluginUpdateEngineChecker {
 			
 			//In case Cron is disabled or unreliable, we also manually trigger 
 			//the periodic checks while the user is browsing the Dashboard. 
-			add_action( 'plugins_loaded', array($this, 'hook_into_wp_update_api') );
+			add_action( 'init', array($this, 'hook_into_wp_update_api'), 0 );
 
 		} else {
 			//Periodic checks are disabled.
