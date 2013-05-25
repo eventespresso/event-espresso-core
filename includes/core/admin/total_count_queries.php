@@ -68,7 +68,7 @@ function espresso_total_events_today(){
 	$sql2 = "(";
 	if ( !empty($group)){
 		$sql2 .= "SELECT e.id FROM ". EVENTS_DETAIL_TABLE." e ";
-		$sql2 .= " JOIN " . ESP_DATETIME . " dtt ON dtt.EVT_ID = e.id ";
+		$sql2 .= " JOIN " . ESP_DATETIME_TABLE . " dtt ON dtt.EVT_ID = e.id ";
 		$sql2 .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
 		$sql2 .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
 		$sql2 .= " WHERE e.event_status != 'D'";
@@ -77,7 +77,7 @@ function espresso_total_events_today(){
 		$sql2 .= ") UNION (";
 	}
 	$sql2 .= "SELECT e.id FROM ". EVENTS_DETAIL_TABLE." e ";
-	$sql2 .= " JOIN " . ESP_DATETIME . " dtt ON dtt.EVT_ID = e.id ";
+	$sql2 .= " JOIN " . ESP_DATETIME_TABLE . " dtt ON dtt.EVT_ID = e.id ";
 	$sql2 .= " WHERE e.event_status != 'D'";
 	$sql2 .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime( date('Y-m-d') . $start ) . "' AND '" . strtotime( date('Y-m-d') . $end ) . "' ";
 
@@ -116,7 +116,7 @@ function espresso_total_events_this_month(){
 	$sql3 = "(";
 	if (!empty($group)){
 		$sql3 .= "SELECT e.id FROM ". EVENTS_DETAIL_TABLE." e ";
-		$sql3 .= " JOIN " . ESP_DATETIME . " dtt ON dtt.EVT_ID = e.id ";
+		$sql3 .= " JOIN " . ESP_DATETIME_TABLE . " dtt ON dtt.EVT_ID = e.id ";
 		$sql3 .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
 		$sql3 .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
 		$sql3 .= " WHERE event_status != 'D'";
@@ -126,7 +126,7 @@ function espresso_total_events_this_month(){
 		$sql3 .= ") UNION (";
 	}
 	$sql3 .= "SELECT e.id FROM ". EVENTS_DETAIL_TABLE." e ";
-	$sql3 .= " JOIN " . ESP_DATETIME . " dtt ON dtt.EVT_ID = e.id ";
+	$sql3 .= " JOIN " . ESP_DATETIME_TABLE . " dtt ON dtt.EVT_ID = e.id ";
 	$sql3 .= " WHERE event_status != 'D'";
 	$sql3 .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime($this_year_r . '-' . $this_month_r . '-01' . $start) . "' AND '" . strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end ) . "' ";
 
