@@ -114,7 +114,30 @@ class PluginUpdateEngineChecker {
 		$this->_use_wp_update = $this->_is_premium || $this->_is_prerelease ? FALSE : $options_verified['use_wp_update'];
 
 		//set hooks
+		$this->_check_for_forced_upgrade();
 		$this->installHooks();
+	}
+
+
+	/**
+	 * This checks to see if there is a forced upgrade option saved from a previous saved options page trigger.  If there is then we change the slug accordingly and setup for premium update
+	 * This function will also take care of deleting any previous force_update options IF our current installed plugin IS premium
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _check_for_forced_upgrade() {
+		//is this premium?  let's delete any saved options for free
+		if ( $this->_is_premium ) {
+			delete_option( 'pue_force_upgrade_' . $this->_incoming_slug['free'][key($this->_incoming_slug['free'])]);
+		} else {
+
+			$force_upgrade = get_option( 'pue_force_upgrade_' . $this->slug );
+			$this->_force_premium_upgrade = !empty($force_upgrade) ? TRUE : FALSE;
+			$this->_is_premium = !empty( $force_upgrade ) ? TRUE : FALSE;
+			$this->slug = !empty( $force_upgrade ) ? $force_upgrade : $this->slug;
+			$this->_use_wp_update = !empty( $force_upgrade ) ? FALSE : $this->_use_wp_update;
+		}
 	}
 
 
@@ -262,6 +285,7 @@ class PluginUpdateEngineChecker {
 		$premium_search_ref = is_array($slug) ? key($slug['premium']) : NULL;
 		//case insensitive search in version
 		$this->_is_premium = !empty( $premium_search_ref ) && preg_match( "/$premium_search_ref/i", $this->_installed_version ) ? TRUE : FALSE;
+
 
 		//wait... if slug is_string() then we'll assume this is a premium install by default
 		$this->_is_premium = !$this->_is_premium && !is_array( $slug ) ? TRUE : $this->_is_premium;
@@ -429,6 +453,7 @@ class PluginUpdateEngineChecker {
 				$has_triggered = $triggered && !$has_triggered ? TRUE : $has_triggered;
 			}	
 		}
+		
 		return $has_triggered;
 		
 	}
@@ -447,11 +472,12 @@ class PluginUpdateEngineChecker {
 			$free_key_match = '/FREE/i';
 
 			//if this condition matches then that means we've got a free active key in place (or a free version from wp WITHOUT an active key) and the user has entered a NON free API key which means they intend to check for premium access.
-			if ( !preg_match( $free_key_match, $this->_api_secret_key ) && !empty($this->_api_secret_key) && !$this->_is_premium && !$this->_is_prerelease ) {
+			if ( !preg_match( $free_key_match, $this->api_secret_key ) && !empty($this->api_secret_key) && !$this->_is_premium && !$this->_is_prerelease ) {
 				$this->_use_wp_update = FALSE;
 				$this->slug = $this->_incoming_slug['premium'][key($this->_incoming_slug['premium'])];
 				$this->_is_premium = TRUE;
 				$this->_force_premium_upgrade = TRUE;
+				update_option( 'pue_force_upgrade_' . $this->_incoming_slug['free'][key($this->_incoming_slug['free'])], $this->slug );
 			}
 
 			$this->checkForUpdates();
@@ -510,6 +536,7 @@ class PluginUpdateEngineChecker {
 			$options
 		);
 
+
 		//Try to parse the response
 		$pluginInfo = null;
 		if ( !is_wp_error($result) && isset($result['response']['code']) && ($result['response']['code'] == 200) && !empty($result['body']) ){
@@ -537,6 +564,8 @@ class PluginUpdateEngineChecker {
 		if ( $pluginInfo == null ){
 			return null;
 		}
+
+
 		//admin display for if the update check reveals that there is a new version but the API key isn't valid.  
 		if ( isset($pluginInfo->api_invalid) )  { //we have json_error returned let's display a message
 			$this->json_error = $pluginInfo; 
@@ -629,7 +658,7 @@ class PluginUpdateEngineChecker {
 				$msg = str_replace('%version%', $this->json_error->version, $msg);
 				$msg = sprintf( __('It appears you\'ve tried entering an api key to upgrade to the premium version of %s, however, the key does not appear to be valid.  This is the message received back from the server:', $this->lang_domain ), $this->pluginName ) . '</p><p>' . $msg;
 		} else {
-			$msg = __('Congratulations!  You have entered in a valid api key for the premium version of %s.  You can click the button below to upgrade to this version immediately.', $this->_lang_domain);
+			$msg = sprintf( __('Congratulations!  You have entered in a valid api key for the premium version of %s.  You can click the button below to upgrade to this version immediately.', $this->_lang_domain), $this->pluginName );
 		}
 
 		//todo add in upgrade button in here.
