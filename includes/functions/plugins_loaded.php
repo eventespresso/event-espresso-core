@@ -594,7 +594,7 @@ function espresso_site_license() {
 	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'libraries/pue/pue-client.php')) { //include the file 
 		require(EVENT_ESPRESSO_PLUGINFULLPATH . 'libraries/pue/pue-client.php' );
 		$api_key = isset($org_options['site_license_key']) ? $org_options['site_license_key'] : '';
-		$host_server_url = 'http://wp.dev/eventespresso'; //this needs to be the host server where plugin update engine is installed. Note, if you leave this blank then it is assumed the WordPress repo will be used and we'll just check there.
+		$host_server_url = 'http://eventespresso.com'; //this needs to be the host server where plugin update engine is installed. Note, if you leave this blank then it is assumed the WordPress repo will be used and we'll just check there.
 
 		$plugin_slug = array(
 			'free' => array( 'l' => 'event-espresso-core-decaf' ),
