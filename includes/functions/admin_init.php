@@ -301,15 +301,13 @@ function event_espresso_filter_plugin_actions($links, $file) {
 function espresso_toolbar_items($admin_bar) {
 
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-	$events_page = get_admin_url() . 'admin.php?page=espresso_events';
-	$registrations_page = get_admin_url() . 'admin.php?page=espresso_registrations';
 	$menu_class = 'espresso_menu_item_class';
 
 	//Top Level
 	$admin_bar->add_menu(array(
 			'id' => 'espresso-toolbar',
 			'title' => '<span class="ab-icon-espresso"></span><span class="ab-label">' . _x('Event Espresso', 'admin bar menu group label') . '</span>',
-			'href' => $events_page,
+			'href' => EVENTS_ADMIN_URL,
 			'meta' => array(
 					'title' => __('Event Espresso'),
 					'class' => $menu_class . 'first'
@@ -321,7 +319,7 @@ function espresso_toolbar_items($admin_bar) {
 			'id' => 'espresso-toolbar-events',
 			'parent' => 'espresso-toolbar',
 			'title' => 'Events',
-			'href' => $events_page,
+			'href' => EVENTS_ADMIN_URL,
 			'meta' => array(
 					'title' => __('Events'),
 					'target' => '',
@@ -334,7 +332,7 @@ function espresso_toolbar_items($admin_bar) {
 			'id' => 'espresso-toolbar-events-new',
 			'parent' => 'espresso-toolbar-events',
 			'title' => 'Add New',
-			'href' => $events_page . '&action=add_new_event',
+			'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'add_event' ), EVENTS_ADMIN_URL ),
 			'meta' => array(
 					'title' => __('Add New'),
 					'target' => '',
@@ -347,7 +345,7 @@ function espresso_toolbar_items($admin_bar) {
 			'id' => 'espresso-toolbar-events-view',
 			'parent' => 'espresso-toolbar-events',
 			'title' => 'View',
-			'href' => $events_page,
+			'href' => EVENTS_ADMIN_URL,
 			'meta' => array(
 					'title' => __('View'),
 					'target' => '',
@@ -360,7 +358,7 @@ function espresso_toolbar_items($admin_bar) {
 			'id' => 'espresso-toolbar-events-all',
 			'parent' => 'espresso-toolbar-events-view',
 			'title' => 'All',
-			'href' => $events_page,
+			'href' => EVENTS_ADMIN_URL,
 			'meta' => array(
 					'title' => __('All'),
 					'target' => '',
@@ -373,7 +371,7 @@ function espresso_toolbar_items($admin_bar) {
 			'id' => 'espresso-toolbar-events-today',
 			'parent' => 'espresso-toolbar-events-view',
 			'title' => 'Today',
-			'href' => $events_page . '&today=true',
+			'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today' ), EVENTS_ADMIN_URL ),
 			'meta' => array(
 					'title' => __('Today'),
 					'target' => '',
@@ -386,7 +384,7 @@ function espresso_toolbar_items($admin_bar) {
 			'id' => 'espresso-toolbar-events-month',
 			'parent' => 'espresso-toolbar-events-view',
 			'title' => 'This Month',
-			'href' => $events_page . '&this_month=true',
+			'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month' ), EVENTS_ADMIN_URL ),
 			'meta' => array(
 					'title' => __('This Month'),
 					'target' => '',
@@ -399,7 +397,7 @@ function espresso_toolbar_items($admin_bar) {
 			'id' => 'espresso-toolbar-registrations',
 			'parent' => 'espresso-toolbar',
 			'title' => 'Registrations',
-			'href' => $registrations_page,
+			'href' => REG_ADMIN_URL,
 			'meta' => array(
 					'title' => __('Registrations'),
 					'target' => '',
@@ -412,7 +410,7 @@ function espresso_toolbar_items($admin_bar) {
 			'id' => 'espresso-toolbar-registrations-today',
 			'parent' => 'espresso-toolbar-registrations',
 			'title' => 'Today',
-			'href' => $registrations_page . '&event_admin_reports=event_list_attendees&today_a=true',
+			'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today' ), REG_ADMIN_URL ),
 			'meta' => array(
 					'title' => __('Today'),
 					'target' => '',
@@ -422,25 +420,12 @@ function espresso_toolbar_items($admin_bar) {
 
 	//Registration Overview Today Completed
 	$admin_bar->add_menu(array(
-			'id' => 'espresso-toolbar-registrations-today-completed',
+			'id' => 'espresso-toolbar-registrations-today-approved',
 			'parent' => 'espresso-toolbar-registrations-today',
-			'title' => 'Completed',
-			'href' => $registrations_page . '&event_admin_reports=event_list_attendees&today_a=true&payment_status=Completed',
+			'title' => 'Approved',
+			'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', 'reg_status'=>'RAP' ), REG_ADMIN_URL ),
 			'meta' => array(
-					'title' => __('Completed'),
-					'target' => '',
-					'class' => $menu_class
-			),
-	));
-
-	//Registration Overview Today Incomplete
-	$admin_bar->add_menu(array(
-			'id' => 'espresso-toolbar-registrations-today-incomplete',
-			'parent' => 'espresso-toolbar-registrations-today',
-			'title' => 'Incomplete',
-			'href' => $registrations_page . '&event_admin_reports=event_list_attendees&today_a=true&payment_status=Incomplete',
-			'meta' => array(
-					'title' => __('Incomplete'),
+					'title' => __('Approved'),
 					'target' => '',
 					'class' => $menu_class
 			),
@@ -451,9 +436,35 @@ function espresso_toolbar_items($admin_bar) {
 			'id' => 'espresso-toolbar-registrations-today-pending',
 			'parent' => 'espresso-toolbar-registrations-today',
 			'title' => 'Pending',
-			'href' => $registrations_page . '&event_admin_reports=event_list_attendees&today_a=true&payment_status=Pending',
+			'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', 'reg_status'=>'RPN' ), REG_ADMIN_URL ),
 			'meta' => array(
 					'title' => __('Pending'),
+					'target' => '',
+					'class' => $menu_class
+			),
+	));
+
+	//Registration Overview Today Incomplete
+	$admin_bar->add_menu(array(
+			'id' => 'espresso-toolbar-registrations-today-not-approved',
+			'parent' => 'espresso-toolbar-registrations-today',
+			'title' => 'Not Approved',
+			'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', 'reg_status'=>'RNA' ), REG_ADMIN_URL ),
+			'meta' => array(
+					'title' => __('Not Approved'),
+					'target' => '',
+					'class' => $menu_class
+			),
+	));
+
+	//Registration Overview Today Incomplete
+	$admin_bar->add_menu(array(
+			'id' => 'espresso-toolbar-registrations-today-cancelled',
+			'parent' => 'espresso-toolbar-registrations-today',
+			'title' => 'Cancelled',
+			'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', 'reg_status'=>'RCN' ), REG_ADMIN_URL ),
+			'meta' => array(
+					'title' => __('Cancelled'),
 					'target' => '',
 					'class' => $menu_class
 			),
@@ -464,7 +475,7 @@ function espresso_toolbar_items($admin_bar) {
 			'id' => 'espresso-toolbar-registrations-month',
 			'parent' => 'espresso-toolbar-registrations',
 			'title' => 'This Month',
-			'href' => $registrations_page . '&event_admin_reports=event_list_attendees&this_month_a=true',
+			'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month' ), REG_ADMIN_URL ),
 			'meta' => array(
 					'title' => __('This Month'),
 					'target' => '',
@@ -472,27 +483,14 @@ function espresso_toolbar_items($admin_bar) {
 			),
 	));
 
-	//Registration Overview This Month Completed
+	//Registration Overview This Month Approved
 	$admin_bar->add_menu(array(
-			'id' => 'espresso-toolbar-registrations-month-completed',
+			'id' => 'espresso-toolbar-registrations-month-approved',
 			'parent' => 'espresso-toolbar-registrations-month',
-			'title' => 'Completed',
-			'href' => $registrations_page . '&event_admin_reports=event_list_attendees&this_month_a=true&payment_status=Completed',
+			'title' => 'Approved',
+			'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', 'reg_status'=>'RAP' ), REG_ADMIN_URL ),
 			'meta' => array(
-					'title' => __('Completed'),
-					'target' => '',
-					'class' => $menu_class
-			),
-	));
-
-	//Registration Overview This Month Incomplete
-	$admin_bar->add_menu(array(
-			'id' => 'espresso-toolbar-registrations-month-incomplete',
-			'parent' => 'espresso-toolbar-registrations-month',
-			'title' => 'Incomplete',
-			'href' => $registrations_page . '&event_admin_reports=event_list_attendees&this_month_a=true&payment_status=Incomplete',
-			'meta' => array(
-					'title' => __('Incomplete'),
+					'title' => __('Approved'),
 					'target' => '',
 					'class' => $menu_class
 			),
@@ -503,9 +501,35 @@ function espresso_toolbar_items($admin_bar) {
 			'id' => 'espresso-toolbar-registrations-month-pending',
 			'parent' => 'espresso-toolbar-registrations-month',
 			'title' => 'Pending',
-			'href' => $registrations_page . '&event_admin_reports=event_list_attendees&this_month_a=true&payment_status=Pending',
+			'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', 'reg_status'=>'RPN' ), REG_ADMIN_URL ),
 			'meta' => array(
 					'title' => __('Pending'),
+					'target' => '',
+					'class' => $menu_class
+			),
+	));
+	
+	//Registration Overview This Month Not Approved
+	$admin_bar->add_menu(array(
+			'id' => 'espresso-toolbar-registrations-month-not-approved',
+			'parent' => 'espresso-toolbar-registrations-month',
+			'title' => 'Not Approved',
+			'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', 'reg_status'=>'RNA' ), REG_ADMIN_URL ),
+			'meta' => array(
+					'title' => __('Not Approved'),
+					'target' => '',
+					'class' => $menu_class
+			),
+	));
+
+	//Registration Overview This Month Cancelled
+	$admin_bar->add_menu(array(
+			'id' => 'espresso-toolbar-registrations-month-cancelled',
+			'parent' => 'espresso-toolbar-registrations-month',
+			'title' => 'Cancelled',
+			'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', 'reg_status'=>'RCN' ), REG_ADMIN_URL ),
+			'meta' => array(
+					'title' => __('Cancelled'),
 					'target' => '',
 					'class' => $menu_class
 			),
