@@ -71,7 +71,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			'buttons' => array(
 				'add' => __('Add New Event', 'event_espresso'),
 				'edit' => __('Edit Event', 'event_espresso'),
-				'delete' => __('Delete Event', 'event_espresso')
+				'delete' => __('Move Event to Trash', 'event_espresso')
 			)
 		);
 	}
@@ -151,11 +151,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'func' => '_events_export',
 				'noheader' => true
 				),
-
-//			'export_payments' => array(
-//				'func' => '_payment_export',
-//				'noheader' => true
-//				),
 
 			'import' => '_import_events',
 			'import_events' => '_import_events',
@@ -484,7 +479,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		
 		$EVT_ID = isset($this->_event->id) ? $this->_event->id : '';
 		// add delete link, but only if on edit page
-		$delete_link = $view == 'edit' ? 'delete_event' : FALSE;
+		$delete_link = $view == 'edit' ? 'trash_event' : FALSE;
 		$this->_set_publish_post_box_vars( 'EVT_ID', $EVT_ID, $delete_link );
 
 		$this->display_admin_page_with_sidebar();
