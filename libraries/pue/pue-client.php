@@ -652,6 +652,13 @@ class PluginUpdateEngineChecker {
 	 * @return string html
 	 */
 	public function show_premium_upgrade() {
+		global $current_screen;
+		if ( empty( $current_screen ) )
+			set_current_screen();
+
+		//check if we're on the wp update page.  If so get out
+		if ( $current_screen->id == 'update' )
+			return;
 		//first any json errors?
 		if ( !empty( $this->json_error ) && isset($this->json_error->api_invalid) ) {
 				$msg = str_replace('%plugin_name%', $this->pluginName, $this->json_error->api_invalid_message);
