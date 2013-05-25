@@ -104,13 +104,12 @@ class PluginUpdateEngineChecker {
 		if ( !$verify_slug ) 
 			return; //get out because the slug isn't valid.  An admin notice should show.
 
-
 		$this->current_domain = str_replace('http://','',site_url());
 		$this->current_domain = urlencode(str_replace('https://','',$this->current_domain));
 		$this->optionName = 'external_updates-' . $this->slug;
 		$this->checkPeriod = (int) $options_verified['checkPeriod'];
 		$this->api_secret_key = trim( $options_verified['apikey'] );
-		$this->option_key = $options_verified['pue_site_license_key'];
+		$this->option_key = $options_verified['option_key'];
 		$this->options_page_slug = $options_verified['options_page_slug'];
 		$this->_use_wp_update = $this->_is_premium || $this->_is_prerelease ? FALSE : $options_verified['use_wp_update'];
 
@@ -181,6 +180,7 @@ class PluginUpdateEngineChecker {
 			$this->_display_errors('no_version_present');
 			return FALSE;
 		}
+		return TRUE;
 		
 	}
 
@@ -306,7 +306,7 @@ class PluginUpdateEngineChecker {
 		//download query flag
 		$this->download_query['pu_get_download'] = 1;
 		//include current version 
-		$this->download_query['pue_active_version'] = $this->_installed_version();
+		$this->download_query['pue_active_version'] = $this->_installed_version;
 		$this->download_query['site_domain'] = $this->current_domain;
 		
 		//the following is for install key inclusion (will apply later with PUE addons.)
@@ -342,6 +342,7 @@ class PluginUpdateEngineChecker {
 				
 		//Set up the periodic update checks
 		$cronHook = 'check_plugin_updates-' . $this->slug;
+
 		if ( $this->checkPeriod > 0 ){
 			
 			//Trigger the check via Cron
@@ -391,6 +392,7 @@ class PluginUpdateEngineChecker {
 		//possible update checks on an option page save that is setting the license key.
 		$triggered = $this->trigger_update_check();
 
+
 		//if we've got a forced premium upgrade then let's add an admin notice for this with a nice button to do the upgrade right away.  We'll also handle the display of any json errors in this admin_notice.
 		if ( $this->_force_premium_upgrade ) {
 			add_action('admin_notices', array($this, 'show_premium_upgrade') );
@@ -406,8 +408,7 @@ class PluginUpdateEngineChecker {
 
 
 		if ( !$this->_use_wp_update ) {
-			$this->json_error = get_option('pue_json_error_'.$this->slug);
-			
+			$this->json_error = get_option('pue_json_error_'.$this->slug);	
 			if ( !empty($this->json_error) && !$this->_force_premium_upgrade )
 				add_action('admin_notices', array($this, 'display_json_error'));
 		}
@@ -421,10 +422,11 @@ class PluginUpdateEngineChecker {
 		
 		$triggered = FALSE;
 		$has_triggered = FALSE;
+		
 		if ( !empty($_POST) && !empty( $this->option_key ) ) {
 			foreach ( $_POST as $key => $value ) {
 				$triggered = $this->maybe_trigger_update($value, $key, $this->option_key);
-				$has_triggered = $triggered && !$has_triggered ? TRUE : FALSE;
+				$has_triggered = $triggered && !$has_triggered ? TRUE : $has_triggered;
 			}	
 		}
 		return $has_triggered;
@@ -433,6 +435,7 @@ class PluginUpdateEngineChecker {
 
 	function maybe_trigger_update($value, $key, $site_key_search_string) {
 		if ( $key == $site_key_search_string || (is_array($value) && isset($value[$site_key_search_string]) ) ) {
+
 			//if $site_key_search_string exists but the actual key field is empty...let's reset the install key as well.
 			if ( $value == '' || ( is_array($value) && empty($value[$site_key_search_string] ) ) || $value != $this->api_secret_key || ( is_array($value) && $value[$site_key_search_string] != $api_secret_key ) )
 				delete_option($this->pue_install_key);
@@ -444,7 +447,7 @@ class PluginUpdateEngineChecker {
 			$free_key_match = '/FREE/i';
 
 			//if this condition matches then that means we've got a free active key in place (or a free version from wp WITHOUT an active key) and the user has entered a NON free API key which means they intend to check for premium access.
-			if ( !preg_match( $free_key_match, $this->_api_secret_key ) && !$this->_is_premium && !$this->_is_prerelease ) {
+			if ( !preg_match( $free_key_match, $this->_api_secret_key ) && !empty($this->_api_secret_key) && !$this->_is_premium && !$this->_is_prerelease ) {
 				$this->_use_wp_update = FALSE;
 				$this->slug = $this->_incoming_slug['premium'][key($this->_incoming_slug['premium'])];
 				$this->_is_premium = TRUE;
@@ -689,7 +692,7 @@ class PluginUpdateEngineChecker {
 		}
 		
 		$state->lastCheck = time();
-		$state->checkedVersion = $this->_installed_version();
+		$state->checkedVersion = $this->_installed_version;
 		update_option($this->optionName, $state); //Save before checking in case something goes wrong 
 		
 		$state->update = $this->requestUpdate();
