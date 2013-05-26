@@ -48,7 +48,7 @@ foreach($reg_page_ids as $id=>$reg_pad){
 	echo "link:".get_permalink($id);
 	echo " key:$id, value:$reg_pad <br>";
 }
-var_dump($reg_page_ids);*/
+126($reg_page_ids);*/
 	if ( isset( $reg_page_ids[ $page_id ] )) {
 		$current_ee_page = $page_id;
 		switch( $reg_page_ids[ $page_id ] ) {
@@ -123,7 +123,7 @@ function espresso_test_for_reg_page() {
 				}
 
 				// is the page slug for the critical page in the current request ?
-				if ( strpos( $_SERVER['REQUEST_URI'], $event_page_slug ) !== false) {
+				if ( !empty( $event_page_slug) && strpos( $_SERVER['REQUEST_URI'], $event_page_slug ) !== false) {
 					espresso_critical_pages( $critical_page_id, $event_page_slug );
 					break;
 				}
