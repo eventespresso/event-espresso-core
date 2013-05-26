@@ -98,7 +98,6 @@ class PluginUpdateEngineChecker {
 		if ( !$options_verified )
 			return; //get out because we don't have verified options (and the admin_notice should display);
 
-
 		$verify_slug = $this->_set_slug_and_slug_props($slug, $options_verified);
 
 		if ( !$verify_slug ) 
@@ -136,6 +135,8 @@ class PluginUpdateEngineChecker {
 			$this->_force_premium_upgrade = !empty($force_upgrade) ? TRUE : FALSE;
 			$this->_is_premium = !empty( $force_upgrade ) ? TRUE : FALSE;
 			$this->slug = !empty( $force_upgrade ) ? $force_upgrade : $this->slug;
+			$this->pue_install_key = 'pue_install_key_'.$this->slug;
+			$this->optionName = 'external_updates-' . $this->slug;
 			$this->_use_wp_update = !empty( $force_upgrade ) ? FALSE : $this->_use_wp_update;
 		}
 	}
@@ -199,6 +200,7 @@ class PluginUpdateEngineChecker {
 		}
 		
 		$this->_installed_version = $this->getInstalledVersion();
+		
 		if ( !$this->_installed_version ) {
 			$this->_display_errors('no_version_present');
 			return FALSE;
@@ -294,6 +296,7 @@ class PluginUpdateEngineChecker {
 		$pr_search_ref = is_array($slug) && isset( $slug['prerelease'] ) ? key( $slug['prerelease'] ) : NULL;
 		$this->_is_prerelease = !empty( $pr_search_ref ) && preg_match("/$pr_search_ref/i", $this->_installed_version ) ? TRUE : FALSE;
 
+
 		//set slug we use
 		$this->slug = $this->_is_premium && is_array( $slug ) ? $slug['premium'][key($slug['premium'])] : NULL;
 
@@ -302,7 +305,8 @@ class PluginUpdateEngineChecker {
 		if ( is_array( $slug ) ) {
 			//let's go through the conditions on what we use for the slug
 			$set_slug = $this->_is_premium ? $slug['premium'][key($slug['premium'])] : NULL;
-			$set_slug = empty( $set_slug ) && $this->_is_prerelease ? $slug['prerelease'][key($slug['prerelease'])] : $slug['free'][key($slug['free'])];
+			$set_slug = empty( $set_slug ) && $this->_is_prerelease ? $slug['prerelease'][key($slug['prerelease'])] : $set_slug;
+			$set_slug = empty( $set_slug ) ? $slug['free'][key($slug['free'])] : $set_slug;
 		} else {
 			//first verify that $slug is not empty!
 			if ( empty($slug ) ) {
@@ -332,6 +336,7 @@ class PluginUpdateEngineChecker {
 		//include current version 
 		$this->download_query['pue_active_version'] = $this->_installed_version;
 		$this->download_query['site_domain'] = $this->current_domain;
+
 		
 		//the following is for install key inclusion (will apply later with PUE addons.)
 		$this->install_key_arr = get_option($this->pue_install_key);
@@ -433,8 +438,12 @@ class PluginUpdateEngineChecker {
 
 		if ( !$this->_use_wp_update ) {
 			$this->json_error = get_option('pue_json_error_'.$this->slug);	
-			if ( !empty($this->json_error) && !$this->_force_premium_upgrade )
+			if ( !empty($this->json_error) && !$this->_force_premium_upgrade ) {
 				add_action('admin_notices', array($this, 'display_json_error'));
+			} else {
+				//no errors so let's get rid of any error option if present
+				delete_option( 'pue_verification_error_' . $this->pluginFile );
+			}
 		}
 	}
 
@@ -462,7 +471,7 @@ class PluginUpdateEngineChecker {
 		if ( $key == $site_key_search_string || (is_array($value) && isset($value[$site_key_search_string]) ) ) {
 
 			//if $site_key_search_string exists but the actual key field is empty...let's reset the install key as well.
-			if ( $value == '' || ( is_array($value) && empty($value[$site_key_search_string] ) ) || $value != $this->api_secret_key || ( is_array($value) && $value[$site_key_search_string] != $api_secret_key ) )
+			if ( $value == '' || ( is_array($value) && empty($value[$site_key_search_string] ) ) || $value != $this->api_secret_key || ( is_array($value) && $value[$site_key_search_string] != $this->api_secret_key ) )
 				delete_option($this->pue_install_key);
 			
 			$this->api_secret_key = $value;
@@ -477,6 +486,8 @@ class PluginUpdateEngineChecker {
 				$this->slug = $this->_incoming_slug['premium'][key($this->_incoming_slug['premium'])];
 				$this->_is_premium = TRUE;
 				$this->_force_premium_upgrade = TRUE;
+				$this->pue_install_key = 'pue_install_key_'.$this->slug;
+				$this->optionName = 'external_updates-' . $this->slug;
 				update_option( 'pue_force_upgrade_' . $this->_incoming_slug['free'][key($this->_incoming_slug['free'])], $this->slug );
 			}
 
@@ -615,6 +626,7 @@ class PluginUpdateEngineChecker {
 	function display_json_error() {
 		$pluginInfo = $this->json_error;
 		$update_dismissed = get_option($this->dismiss_upgrade);
+		$msg = '';
 		
 		$is_dismissed = !empty($update_dismissed) && in_array($pluginInfo->version, $update_dismissed) ? true : false;
 		
@@ -627,6 +639,10 @@ class PluginUpdateEngineChecker {
 				$msg = str_replace('%plugin_name%', $this->pluginName, $pluginInfo->api_invalid_message);
 				$msg = str_replace('%version%', $pluginInfo->version, $msg);
 			}
+
+			//let's add an option for plugin developers to display some sort of verification message on their options page.
+			update_option( 'pue_verification_error_' . $this->pluginFile, $msg );
+
 			//Dismiss code idea below is obtained from the Gravity Forms Plugin by rocketgenius.com
 			?>
 				<div class="updated" style="padding:15px; position:relative;" id="pu_dashboard_message"><?php echo $msg ?>
