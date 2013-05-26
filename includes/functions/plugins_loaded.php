@@ -593,6 +593,10 @@ function espresso_site_license() {
 // PUE Auto Upgrades stuff
 	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'libraries/pue/pue-client.php')) { //include the file 
 		require(EVENT_ESPRESSO_PLUGINFULLPATH . 'libraries/pue/pue-client.php' );
+		if ( empty( $org_options ) ) {
+			$org_options = get_user_meta( get_current_user_id(), 'events_organization_settings', true);
+		}
+
 		$api_key = isset($org_options['site_license_key']) ? $org_options['site_license_key'] : '';
 		$host_server_url = 'http://eventespresso.com'; //this needs to be the host server where plugin update engine is installed. Note, if you leave this blank then it is assumed the WordPress repo will be used and we'll just check there.
 
