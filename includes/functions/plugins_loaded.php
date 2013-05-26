@@ -1,6 +1,21 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
 /**
+ * 		loads files for managing exceptions, errors, and logging
+ *
+ * 		@access 	public
+ * 		@return 		void
+ */
+function espresso_error_handling() {
+	require_once( EVENT_ESPRESSO_INCLUDES_DIR . '/classes/EE_Exceptions.class.php');
+	require_once( EVENT_ESPRESSO_INCLUDES_DIR . '/classes/EE_Log.class.php' );
+}
+
+
+
+
+
+/**
  * 		Automagically load non-singleton class files - no need to include or require
  * 		ONLY works with class objects created via  "new"  ie: $object = new SomeClassName();
  *
@@ -23,7 +38,6 @@ function espresso_models_autoload($className) {
 		require_once( $filename );
 	}
 }
-
 
 function espresso_libraries_autoload($className) {
 	//let's setup an array of paths to check (for each subsystem)
@@ -134,23 +148,6 @@ function espresso_core_admin_autoload($className) {
 	}
 }
 
-function espresso_display_exception( $excptn ) {
-	echo '
-<style type="text/css">
-body { 
-	width:100%; height:100%; padding:1px; margin:0; background:#f8f8f8;
-}
-#error_msg {
-	width:60%; height:auto; padding:2em 4em; margin:4em auto; 
-	background:#fff; border:2px solid #D54E21; border-radius:3px;
-	color: #666; font-size:18px;
-}
-</style>';
-	echo '<div id="error_msg">';
-	echo 'Error : ' . $excptn->getMessage();
-	echo '</div>';
-	die();
-}
 
 
 
@@ -162,11 +159,12 @@ body {
  * 		@return void
  */
 function espresso_get_user_id() {
-	global $current_user, $espresso_wp_user;
-	$espresso_wp_user = 1;
-	$espresso_wp_user = apply_filters('FHEE_get_user_id', $espresso_wp_user);
+	global $espresso_wp_user;
+	$current_user = wp_get_current_user();
+	$espresso_wp_user = apply_filters( 'FHEE_get_user_id', $current_user->ID );
 	return $espresso_wp_user;
 }
+
 
 
 
@@ -202,8 +200,7 @@ function espresso_load_org_options() {
 			}
 		}
 	}
-		
-	require_once( EVENT_ESPRESSO_INCLUDES_DIR . '/classes/EE_Log.class.php' );
+
 	do_action('AHEE_debug_file');
 
 }
@@ -349,6 +346,8 @@ add_action('activated_plugin', 'espresso_plugin_activation_errors');
 
 
 
+
+
 /**
  * 		Event Espresso Initialization
  *
@@ -370,50 +369,7 @@ function espresso_init() {
 
 	//Core function files
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . "functions/main.php");
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/time_date.php');
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');
-}
 
-
-
-
-
-/**
- * 		Handles exporting of csv files
- *
- * 		@access public
- * 		@return void
- */
-function espresso_check_for_export() {
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-	if (isset($_REQUEST['export'])) {
-		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php')) {
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
-			$EE_Export = EE_Export::instance();
-			$EE_Export->export();
-		}
-	}
-}
-
-
-
-
-
-/**
- * 		Handles importing of csv files
- *
- * 		@access public
- * 		@return void
- */
-function espresso_check_for_import() {
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-	if (isset($_REQUEST['import'])) {
-		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php')) {
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php');
-			$EE_Import = EE_Import::instance();
-			$EE_Import->import();
-		}
-	}
 }
 
 

@@ -280,7 +280,17 @@ if (!function_exists('espresso_reg_form_sc')) {
 				$location = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? '<br />' . $event_address2 : '') . ($event_city != '' ? '<br />' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? '<br />' . $event_zip : '') . ($event_country != '' ? '<br />' . $event_country : '');
 
 				//Google map link creation
-				$google_map_link = espresso_google_map_link(array('address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country, 'text' => 'Map and Directions', 'type' => 'text'));
+				require_once EE_HELPERS . 'EE_Maps.helper.php';
+				$atts = array( 
+					'address' => $event_address,
+					'city' 		=> $event_city,
+					'state' 		=> $event_state,
+					'zip' 			=> $event_zip,
+					'country' => $event_country,
+					'text' 		=> 'Map and Directions',
+					'type' 		=> 'text'
+				);
+				$google_map_link = EE_Maps::google_map_link( $atts );
 
 				$reg_start_date = $event->registration_start;
 				$reg_end_date = $event->registration_end;
@@ -310,8 +320,8 @@ if (!function_exists('espresso_reg_form_sc')) {
 						'registration_end' => $event->registration_end,
 						'is_active' => $is_active,
 						'event_country' => $event_country,
-						'start_date' => event_date_display($start_date, get_option('date_format')),
-						'end_date' => event_date_display($end_date, get_option('date_format')),
+						'start_date' => EE_Formatter::event_date_display($start_date, get_option('date_format')),
+						'end_date' => EE_Formatter::event_date_display($end_date, get_option('date_format')),
 						'time' => $event->start_time,
 						'google_map_link' => $google_map_link,
 						'price' => $event->event_cost,
@@ -428,7 +438,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 									</span>
 									<?php
 								}
-								echo event_date_display($start_date, get_option('date_format'));
+								echo EE_Formatter::event_date_display($start_date, get_option('date_format'));
 
 								if ($end_date !== $start_date) {
 									echo '<br />';
@@ -436,18 +446,15 @@ if (!function_exists('espresso_reg_form_sc')) {
 									<span class="section-title">
 										<?php _e('End Date: ', 'event_espresso'); ?>
 									</span> <?php
-						echo event_date_display($end_date, get_option('date_format'));
+						echo EE_Formatter::event_date_display($end_date, get_option('date_format'));
 					}
 									?>
 							</p>
 
 							<?php
-							/*
-							 * * This section shows the registration form if it is an active event * *
-							 */
-							//echo $is_active['status'];//Show event status
+							// This section shows the registration form if it is an active event * *
 							if ($display_reg_form) {
-								?>
+/*								?>
 								<p class="event_time">
 									<?php
 									//This block of code is used to display the times of an event in either a dropdown or text format.
@@ -459,7 +466,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 									?>
 								</p>
 
-								<?php
+								<?php*/
 								//Show pricing in a dropdown or text depending on the number of prices added.
 								do_action('AHEE_price_select', $event_id, array('show_label' => true, 'label' => ''));
 
@@ -562,10 +569,27 @@ if (!function_exists('espresso_category_name_sc')) {
 	function espresso_category_name_sc($atts) {
 		global $wpdb, $org_options;
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		extract(shortcode_atts(array('event_id' => '0'), $atts));
-		$event_id = "{$event_id}";
-		$category_name = espresso_event_category_data($event_id);
-		return $category_name['category_name'];
+		extract( shortcode_atts( array( 'event_id' => '0', 'all_cats' => FALSE ), $atts ));
+		//$category_name = espresso_event_category_data($event_id);
+		$SQL = "SELECT c.category_name FROM " . EVENTS_DETAIL_TABLE . " e ";
+		$SQL .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
+		$SQL .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON  c.id = r.cat_id ";
+		$SQL .= " WHERE e.id = %d";
+
+		$wpdb->get_results( $wpdb->prepare( $SQL, $event_id ));
+		$num_rows = $wpdb->num_rows;
+
+		if ($num_rows > 0 && $all_cats == FALSE) {
+			return $wpdb->last_result[0]->category_name;
+		} elseif ($num_rows > 0) {
+			$category_name = '';
+			foreach ($wpdb->last_result as $result) {
+				$category_name .= $result->category_name . ' ';
+			}
+			return $category_name;
+		} else {
+			return '';
+		}
 	}
 }
 add_shortcode('CATEGORY_NAME', 'espresso_category_name_sc');
@@ -807,13 +831,18 @@ if (!function_exists('espresso_venue_details_sc')) {
 				$meta = unserialize($venue->meta);
 
 				//Google map link creation
-				$google_map_link = espresso_google_map_link(array('address' => $venue->address, 'city' => $venue->city, 'state' => $venue->state, 'zip' => $venue->zip, 'country' => $venue->country, 'text' => $map_link_text, 'type' => 'text'));
+				require_once EE_HELPERS . 'EE_Maps.helper.php';
+				$atts = array( 
+					'address' => $venue->address,
+					'city' 		=> $venue->city,
+					'state' 		=> $venue->state,
+					'zip' 			=> $venue->zip,
+					'country' => $venue->country,
+					'text' 		=> $map_link_text,
+					'type' 		=> 'text'
+				);
+				$google_map_link = EE_Maps::google_map_link( $atts );
 
-				//Google map image creation
-				//if ($show_map_image != false){
-				//	$map_w = isset($map_w) ? $map_w : 400;
-				//	$map_h = isset($map_h) ? $map_h : 400;
-				//	$google_map_image = espresso_google_map_link(array('id'=>$venue_id, 'map_image_class'=>$map_image_class, 'address' => $venue->address, 'city' => $venue->city, 'state' => $venue->state, 'zip' => $venue->zip, 'country' => $venue->country, 'text' => $map_link_text, 'type' => 'map', 'map_h'=>$map_h, 'map_w'=>$map_w));
 				//Build the venue title
 				if ($show_title != false) {
 					$html .= $venue->name != '' ? $title_wrapper_start . '>' . stripslashes_deep($venue->name) . $title_wrapper_end : '';
@@ -946,16 +975,17 @@ if (!function_exists('ee_show_meta_sc')) {
 			case 'venue':
 			case 'venue_meta':
 			default:
-				return ee_show_meta($venue_meta, $name);
+				return isset( $venue_meta[$name] ) ? $venue_meta[$name] : '';
 
 			case 'event':
 			case 'event_meta':
-				return ee_show_meta($event_meta, $name);
+				return isset( $event_meta[$name] ) ? $event_meta[$name] : '';
 
 			case 'all':
 			case 'all_meta':
 			default:
-				return ee_show_meta($all_meta, $name);
+				return isset( $all_meta[$name] ) ? $all_meta[$name] : '';
+
 		}
 	}
 }

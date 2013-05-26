@@ -395,57 +395,19 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			'display_short_description_in_event_list' => TRUE,
 			'display_address_in_event_list' => FALSE,
 			'display_address_in_regform' => TRUE,			
-			'use_custom_templates' => FALSE,		
 		);
+		
 		$this->_template_args['template_settings'] = 
 				isset( $org_options['template_settings'] ) && ! empty( $org_options['template_settings'] ) 
 				? array_merge( $default_template_settings, $org_options['template_settings'] )
 				: $default_template_settings;
-		
-		$this->_template_args['files'] = array(
-				'attendee_list.php', 
-				'event_list.php', 
-				'event_list_display.php', 
-				'event_post.php', 
-				'payment_page.php', 
-				'registration_page.php', 
-				'registration_page_display.php', 
-				'confirmation_display.php', 
-				'return_payment.php', 
-				'widget.php'
-		);
-		
-		$this->_template_args['custom_templates_exist'] = 
-				file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][0])
-				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][1])
-				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][2])
-				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][3])
-				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][4])
-				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][5])
-				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][6])
-				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][7])
-				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][8])
-				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][9])
-			? TRUE
-			: FALSE;
 		
 		$this->_set_add_edit_form_tags( 'update_template_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'template_settings.template.php', $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();	
 	}
-	
-	
-	/**
-	 * 	_process_theme_name
-	 *
-	 * @access 	private
-	 * @param 	string 	$themeroller_theme_path
-	 * @return	string
-	 */	
-	private function _process_theme_name( &$themeroller_theme_path, $key ) {
-		$this->_template_args['themeroller_themes'][] = array( 'id'  => basename( $themeroller_theme_path ), 'text' => ucwords( str_replace( array( '-', '_' ), ' ', basename( $themeroller_theme_path ))));
-	}
+
 
 
 
@@ -476,11 +438,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				 isset( $this->_req_data['display_address_in_regform'] ) 
 				? absint( $this->_req_data['display_address_in_regform'] ) 
 				: TRUE;
-	
-		$data['template_settings']['use_custom_templates'] =  
-				 isset( $this->_req_data['use_custom_templates'] ) 
-				? sanitize_text_field( $this->_req_data['use_custom_templates'] ) 
-				: FALSE;					
 		
 		$data = apply_filters('FHEE_template_settings_save', $data);
 		
@@ -490,30 +447,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		
 	}
 
-	
-	
-	/**
-	 * 	_copy_templates
-	 *
-	 * @access 	protected
-	 * @return	string
-	 */	
-	protected function _copy_templates() {
-		
-		add_action('admin_init', 'event_espresso_smartCopy');
-
-		if ( ! empty($_SESSION['event_espresso_themes_copied'])) {
-			
-			$data['template_settings']['use_custom_templates'] = TRUE;
-			$_SESSION['event_espresso_themes_copied'] = false;
-			
-			$what = 'Custom Templates';
-			$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
-			$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'template_settings' ) );
-			
-		}
-		
-	}
 
 
 

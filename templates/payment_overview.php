@@ -2,6 +2,7 @@
 
 function espresso_display_payment_overview_template($data) {
 	global $org_options;
+	require_once ( EE_HELPERS . 'EE_Formatter.helper.php' );
 	?>
 	<div class="espresso_payment_overview event-display-boxes ui-widget" >
 		<h3 class="section-heading display-box-heading ui-widget-header ui-corner-top">
@@ -42,7 +43,7 @@ function espresso_display_payment_overview_template($data) {
 								<label><?php _e('Payment Date:', 'event_espresso'); ?></label>
 							</td>
 							<td>
-								<?php echo event_date_display($data['payment_date']); ?>
+								<?php echo EE_Formatter::event_date_display($data['payment_date']); ?>
 							</td>
 						</tr>
 						<?php endif;?>
