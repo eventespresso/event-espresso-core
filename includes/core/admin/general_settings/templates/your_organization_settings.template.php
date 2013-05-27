@@ -14,7 +14,7 @@
 					</label>
 				</th>
 				<td>
-					<input name="site_license_key" id="site_license_key" size="10" class="regular-text" type="text" value="<?php echo isset($org_options['site_license_key']) && $org_options['site_license_key'] != '' ? stripslashes_deep($org_options['site_license_key']) : '0'; ?>" /><br/>
+					<input name="site_license_key" id="site_license_key" size="10" class="regular-text" type="text" value="<?php echo $site_license_key; ?>" /><?php echo $site_license_key_verified; ?><br/>
 					<p class="description">
 						<?php _e('Adding a valid Support License Key will enable automatic update notifications and backend updates for Event Espresso Core and any installed addons.'); ?>
 					</p>			
@@ -23,11 +23,12 @@
 
 		</tbody>
 	</table>
-	
+
 	<p class="ee-attention">
 		<?php _e('If this is a Development or Test site, <strong>DO NOT</strong> enter your Support License Key . Save it for the Live Production Site, otherwise you will unnecessarily run into issues with needing to have your Key reset.', 'event_espresso'); ?>
 	</p>		
 
+	
 	<h4 class="ee-admin-settings-hdr">
 		<?php _e('Contact Information', 'event_espresso'); ?>
 	</h4>
@@ -183,6 +184,39 @@
 						</p>
 						<?php
 					} ?>
+				</td>
+			</tr>
+
+		</tbody>
+	</table>
+
+	<h4 id="UXIP_settings" class="ee-admin-settings-hdr" style="width:300px;">
+		<?php _e('Event Espresso User eXperience Improvement Program', 'event_espresso'); ?>
+	</h4>
+	<p>
+		<?php echo espresso_data_collection_optin_text( FALSE ); ?>
+	</p>
+
+	<table class="form-table">
+		<tbody>
+
+			<tr>
+				<th>
+					<h4>
+						<?php _e('UXIP Settings', 'event_espresso'); ?>
+					</h4>
+				</th>
+				<td>
+					<label for="ueip_optin">
+						<?php _e('Yes! I\'m In:', 'event_espresso'); ?>
+					</label>
+					<?php 
+						$values=array(					
+						array('id'=>'yes','text'=> __('Yes','event_espresso')),
+						array('id'=>'no','text'=> __('No','event_espresso'))
+					);
+						echo EE_Form_Fields::select_input('ueip_optin', $values, !empty($ee_ueip_optin) ? $ee_ueip_optin : 'yes'); 
+					?>
 				</td>
 			</tr>
 

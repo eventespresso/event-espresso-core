@@ -119,10 +119,10 @@ class EE_Formatter {
 	 * @params string $format - format for the date
 	 */	
 	static public function event_date_display( $date, $format = '' ) {
-		$format = $format == '' ? get_option('date_format') : $format;
 		if ( empty( $date )) {
 			return '';
 		} else {
+			$format = $format == '' ? get_option('date_format') : $format;
 			return date_i18n( $format, strtotime( $date )); 
 		}
 	}

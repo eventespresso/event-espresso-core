@@ -1,45 +1,4 @@
-<?php global $caffeinated; ?>
 <div class="padding">
-	
-	<?php if ( $caffeinated ) : ?>
-	
-	<h4 class="ee-admin-settings-hdr">
-		<?php _e('Espresso Admin Managers', 'event_espresso'); ?>
-	</h4>
-
-	<table class="form-table">
-		<tbody>
-			<tr>
-				<th>
-					<label>
-						<?php _e('Use the Venue Manager?', 'event_espresso'); ?>
-					</label>
-				</th>
-				<td>
-					<?php echo EE_Form_Fields::select_input('use_venue_manager', $values, $use_venue_manager ); ?>
-					<p class="description">
-						<?php _e('Activates an additional Event Espresso admin page that allows you to manage multiple event venues and locations.', 'event_espresso'); ?>
-					</p>
-				</td>
-			</tr>
-			<tr>
-				<th>
-					<label>
-						<?php _e('Use the Staff Manager?', 'event_espresso'); ?>
-					</label>
-				</th>
-				<td>
-					<?php echo EE_Form_Fields::select_input('use_personnel_manager', $values, $use_personnel_manager ); ?>
-					<p class="description">
-						<?php _e('Activates an additional Event Espresso admin page that allows you to manage event staff and personnel.', 'event_espresso'); ?>
-					</p>
-				</td>
-			</tr>
-
-		</tbody>
-	</table>
-	
-	<?php endif; ?>
 
 	<h4 class="ee-admin-settings-hdr">
 		<?php _e('WordPress Dashboard', 'event_espresso'); ?>

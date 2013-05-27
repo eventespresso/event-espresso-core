@@ -3,6 +3,7 @@
 function espresso_pending_registration_approval($registration_id) {
 	global $wpdb, $org_options;
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+	require_once ( EE_HELPERS . 'EE_Formatter.helper.php' )
 	//Get the event information
 	$events = $wpdb->get_results("SELECT ed.* FROM " . EVENTS_DETAIL_TABLE . " ed
 					JOIN " . EVENTS_ATTENDEE_TABLE . " ea
@@ -20,7 +21,7 @@ function espresso_pending_registration_approval($registration_id) {
 		$send_mail = $event->send_mail;
 		$conf_mail = $event->conf_mail;
 		$email_id = $event->email_id;
-		$start_date = event_date_display($event->start_date);
+		$start_date = EE_Formatter::event_date_display($event->start_date);
 		$end_date = $event->end_date;
 		$virtual_url = $event->virtual_url;
 		$virtual_phone = $event->virtual_phone;
@@ -34,7 +35,9 @@ function espresso_pending_registration_approval($registration_id) {
 		$location_phone = $event->phone;
 		$require_pre_approval = $event->require_pre_approval;
 
-		$google_map_link = espresso_google_map_link(array('address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country));
+		require_once EE_HELPERS . 'EE_Maps.helper.php';
+		$atts = array( 'address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country );
+		$google_map_link = EE_Maps::google_map_link( $atts );
 	}
 
 	//Build links

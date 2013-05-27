@@ -1,4 +1,3 @@
-<?php global $caffeinated; ?>
 <div class="padding">
 	<table class="form-table">
 		<tbody>
@@ -48,33 +47,6 @@
 				</td>
 			</tr>
 
-		<?php if ( $caffeinated ) : ?>
-			<tr>
-				<th>
-					<label for="use_attendee_pre_approval">
-						<?php _e('Enable Attendee Pre-approval', 'event_espresso'); ?>
-					</label>
-				</th>
-				<td>
-					<p><?php echo EE_Form_Fields::select_input('use_attendee_pre_approval', $values, $use_attendee_pre_approval ); ?></p>
-					<p class="description">
-						<?php _e('Attendeess will be marked as pending approval, until an administrator manually changes their status to approved via the Registrations Admin page.', 'event_espresso'); ?>
-					</p>
-				</td>
-			</tr>
-		<?php endif; ?>
-
 		</tbody>
 	</table>
 </div>
-
-
-<?php
-
-//		$this->_template_args['expire_on_registration_end'] = isset( $org_options['expire_on_registration_end'] ) ? absint( $org_options['expire_on_registration_end'] ) : FALSE;
-//		$data['expire_on_registration_end'] = isset( $this->_req_data['expire_on_registration_end'] ) ? absint( $this->_req_data['expire_on_registration_end'] ) : FALSE;
-//
-//
-//		$data['use_attendee_pre_approval'] = isset( $this->_req_data['use_attendee_pre_approval'] ) ? absint( $this->_req_data['use_attendee_pre_approval'] ) : FALSE;
-//		$this->_template_args['use_attendee_pre_approval'] = isset( $org_options['use_attendee_pre_approval'] ) ? absint( $org_options['use_attendee_pre_approval'] ) : FALSE;
-?>

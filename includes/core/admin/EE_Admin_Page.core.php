@@ -1511,14 +1511,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	  		<?php
 	  		// Get RSS Feed(s)
 	  		@wp_widget_rss_output('http://eventespresso.com/feed/', array('show_date'=> 0,'items'    => 5));
-
-	  		/*echo '<h4 style="margin:0">' . __('From the Forums', 'event_espresso') . '</h4>';
-
-	  		if ($caffeinated == true){
-	  		@wp_widget_rss_output('http://eventespresso.com/forum/event-espresso-support/feed', array('show_date' => 0, 'items' => 4));
-	  		}else{
-	  		@wp_widget_rss_output('http://eventespresso.com/forum/event-espresso-public/feed', array('show_date' => 0, 'items' => 4));
-	  		}*/
 	  		?>
 	  	</div>
 	  </div>
@@ -1539,14 +1531,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 	private function _espresso_sponsors_post_box() {
-		function espresso_sponsors_post_box() {
-			$templatepath = EE_CORE_ADMIN . 'admin_general_metabox_contents_espresso_sponsors.template.php';
-			espresso_display_template( $templatepath );
-		}
-
-		global $caffeinated;
-		if ( !$caffeinated )
-			add_meta_box('espresso_sponsors_post_box', __('Sponsors', 'event_espresso'), 'espresso_sponsors_post_box', $this->_wp_page_slug, 'side');
+		do_action( 'AHEE__espresso_sponsors_post_box' );
 	}
 
 
@@ -2484,10 +2469,19 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$org_options = get_user_meta( $espresso_wp_user, 'events_organization_settings', TRUE );
 		// make sure everything is in arrays
 		$org_options = is_array( $org_options ) ? $org_options : array( $org_options );
-		$data = is_array( $data ) ? $data : array( $data );
+		$data = is_array( $data ) ? $data : (array) $data;
 		foreach ( $data as $key => $value ) {
 			$data[ $key ] = is_array( $value ) ? $value : addslashes( html_entity_decode( $value, ENT_QUOTES, 'UTF-8' ));
 		}
+
+		//remove any options that are NOT going to be saved with org_options.
+		if ( isset( $data['ee_ueip_optin'] ) ) {
+			$ee_ueip_optin = $data['ee_ueip_optin'];
+			unset( $data['ee_ueip_optin'] );
+			update_option( 'ee_ueip_optin', $ee_ueip_optin);
+			update_option( 'ee_ueip_has_notified', TRUE );
+		}
+
 		// overwrite existing org options with new data
 		$data = array_merge( $org_options, $data );
 		// and save it

@@ -147,7 +147,7 @@ function event_espresso_get_event_details( $attributes = array()) {
 		$SQL .= $use_venues ? ' LEFT JOIN ' . EVENTS_VENUE_REL_TABLE . ' eventVenue ON eventVenue.event_id = eventDetails.id ' : '';
 	}
 	
-	$SQL .= ' JOIN ' . ESP_DATETIME . ' dateTime ON dateTime.EVT_ID = eventDetails.id ';
+	$SQL .= ' JOIN ' . ESP_DATETIME_TABLE . ' dateTime ON dateTime.EVT_ID = eventDetails.id ';
 
 	$SQL .= ' WHERE ';
 	// maybe get category info
@@ -344,18 +344,21 @@ function event_espresso_get_event_details( $attributes = array()) {
 		$location .= ! empty( $event_zip ) ? $event_zip . '<br />' : '';
 
 		//Google map link creation
-		$google_map_link = espresso_google_map_link(array(
-				'address' => $event_address,
-				'city' => $event_city,
-				'state' => $event_state,
-				'zip' => $event_zip,
-				'country' => $event_country,
-				'text' => 'Map and Directions',
-				'type' => 'text',
-				'css_id' => 'google-map-link-btn-' . $event_id,
-				'css_class' => 'google-map-link-btn ui-button ui-state-default ui-corner-all add-hover-fx',
-				'icon' => '<span class="ui-icon ui-icon-extlink"></span>'
-						));
+		require_once EE_HELPERS . 'EE_Maps.helper.php';
+		$atts = array(
+			'address' => $event_address,
+			'city' => $event_city,
+			'state' => $event_state,
+			'zip' => $event_zip,
+			'country' => $event_country,
+			'text' => 'Map and Directions',
+			'type' => 'text',
+			'css_id' => 'google-map-link-btn-' . $event_id,
+			'css_class' => 'google-map-link-btn ui-button ui-state-default ui-corner-all add-hover-fx',
+			'icon' => '<span class="ui-icon ui-icon-extlink"></span>'
+		);
+		$google_map_link = EE_Maps::google_map_link( $atts );
+						
 		$ee_gmap_location = $venue_address_elements;
 
 		//Create all meta vars
@@ -364,8 +367,8 @@ function event_espresso_get_event_details( $attributes = array()) {
 				'event_desc' => $event_desc,
 				'event_address' => $event_address,
 				'event_address2' => $event_address2,
-				'event_city' => $event_state,
-				'event_state' => $event_name,
+				'event_city' => $event_city,
+				'event_state' => $event_state,
 				'event_zip' => $event_zip,
 				'event_status' => $event->event_status,
 //				'start_time' => empty($event->start_time) ? '' : $event->start_time, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -375,8 +378,8 @@ function event_espresso_get_event_details( $attributes = array()) {
 //				'registration_end' => $event->registration_end,
 				'is_active' => empty($event->is_active) ? '' : $event->is_active,
 				'event_country' => $event->country,
-//				'start_date' => event_date_display( $event->start_date ),
-//				'end_date' => event_date_display( $event->end_date ),
+//				'start_date' => EE_Formatter::event_date_display( $event->start_date ),
+//				'end_date' => EE_Formatter::event_date_display( $event->end_date ),
 //				'time' => empty($event->start_time) ? '' : $event->start_time, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 				'google_map_link' => $google_map_link,
 				'price' => empty($event->event_cost) ? '' : $event->event_cost,
@@ -387,14 +390,18 @@ function event_espresso_get_event_details( $attributes = array()) {
 
 		// EE gmaps needs it's own org_options array populated on a per page basis to enable common queries in gmaps api function
 		if (isset($org_options['map_settings']) && !empty($org_options['map_settings'])) {
+			$gmap_address = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? ' ' . $event_address2 : '') . ($event_city != '' ? ', ' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? ', ' . $event_zip : '') . ($event_country != '' ? ', ' . $event_country : '');
 			$ee_gmaps_opts = array(
-					'ee_map_width' => $org_options['map_settings']['ee_map_width'],
-					'ee_map_height' => $org_options['map_settings']['ee_map_height'],
-					'ee_map_zoom' => $org_options['map_settings']['ee_map_zoom'],
-					'ee_map_nav_display' => $org_options['map_settings']['ee_map_nav_display'],
-					'ee_map_nav_size' => $org_options['map_settings']['ee_map_nav_size'],
-					'ee_map_type_control' => $org_options['map_settings']['ee_map_type_control'],
-					'ee_map_align' => $org_options['map_settings']['ee_map_align']
+				'ee_map_width' => $org_options['map_settings']['ee_map_width'],
+				'ee_map_height' => $org_options['map_settings']['ee_map_height'],
+				'ee_map_zoom' => $org_options['map_settings']['ee_map_zoom'],
+				'ee_map_nav_display' => $org_options['map_settings']['ee_map_nav_display'],
+				'ee_map_nav_size' => $org_options['map_settings']['ee_map_nav_size'],
+				'ee_map_type_control' => $org_options['map_settings']['ee_map_type_control'],
+				'ee_map_align' => $org_options['map_settings']['ee_map_align'],
+				'ee_enable_for_gmap' => empty($event_meta['enable_for_gmap']) ? '' : $event_meta['enable_for_gmap'],
+				'location' => $gmap_address,
+				'event_id' => $event_id
 			);
 		}
 
@@ -402,7 +409,7 @@ function event_espresso_get_event_details( $attributes = array()) {
 		$google_map = '';
 		if (isset($event_meta['enable_for_gmap']) && $event_meta['enable_for_gmap']) {
 			if (function_exists('ee_gmap_display') && isset( $org_options['map_settings']['ee_display_map_no_shortcodes'] ) && $org_options['map_settings']['ee_display_map_no_shortcodes']) {
-				$google_map = ee_gmap_display($ee_gmap_location, $event_id);
+				$google_map = ee_gmap_display( $ee_gmaps_opts );
 			}
 		}
 

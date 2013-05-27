@@ -322,7 +322,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	public function related_settings_for($relationName){
 		$relatedModels=$this->relation_settings();
 		if(!array_key_exists($relationName,$relatedModels)){
-			throw new EE_Error(sprintf(__('Cannot get %s related to %s. There is no model relation of that type. There is, however, %s...','event_espresso'),$relationName,  $this->_getClassName(),implode(array_keys($relatedModels))));
+			throw new EE_Error(sprintf(__('Cannot get %s related to %s. There is no model relation of that type. There are, however, the following models: %s...','event_espresso'),$relationName,  $this->_getClassName(),implode( ' ', array_keys($relatedModels))));
 		}
 		return $relatedModels[$relationName];
 	}

@@ -81,5 +81,5 @@
 ?>
 	</form>
 	<?php if(isset($ee_style['event_espresso_form_wrapper_close'])) echo $ee_style['event_espresso_form_wrapper_close']; ?>
-	<?php echo '<p class="register-link-footer">' . espresso_edit_this($event_id) . '</p>' ?> </div>
+	 </div>
 </div>

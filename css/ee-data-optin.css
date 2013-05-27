@@ -1,0 +1,13 @@
+#espresso-data-collect-optin-container {
+    padding: 10px;
+}
+
+#espresso-data-collect-optin-container ul {
+    list-style: disc;
+    margin-left: 20px;
+}
+
+#espresso-data-collect-optin-container button.data-optin-button {
+    float: right;
+    margin-right: 8px;
+}

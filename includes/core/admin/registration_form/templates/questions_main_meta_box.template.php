@@ -219,28 +219,7 @@ $fields = $question->get_fields_settings();
 					</p>					
 				</td>
 			</tr>
-			
-			<tr>
-				<th>
-					<label for="QST_admin_only"><?php echo $fields['QST_admin_only']->nicename();?></label>
-				</th>
-				<td>
-					<?php 
-					$adminOnlyOptions=array(
-						array('text'=>'All Can See','id'=>0),
-						array('text'=>'Only Admins can See','id'=>1)
-					);
-					echo EE_Form_Fields::select_input('QST_admin_only' . $id, $adminOnlyOptions, $question->admin_only(), 'id="QST_admin_only' . $id . '"' . $disabled );
-					if ( ! empty( $disabled )) { ?>
-						<input type="hidden"  id="QST_admin_only" name="QST_admin_only" value="0"/>
-					<?php } ?>					
-					<br/>
-					<p class="description">
-						<?php _e("Only the administrator can see this field.",'event_espresso')?>
-					</p>
-				</td>
-			</tr>
-			
+					
 		</tbody>
 	</table>
 	
