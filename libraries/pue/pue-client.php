@@ -671,6 +671,10 @@ class PluginUpdateEngineChecker {
 		
 		if ($is_dismissed)
 			return;
+
+		//add in pue_verification_error option for when the api_key is blank
+		if ( empty( $this->api_secret_key ) ) 
+			update_option( 'pue_verificatin_error_' . $this->pluginFile, __('No API key is present', $this->lang_domain) );
 		
 		//only display messages if there is a new version of the plugin.  
 		if ( version_compare($pluginInfo->version, $this->_installed_version, '>') ) {
