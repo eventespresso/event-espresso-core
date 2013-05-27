@@ -113,7 +113,7 @@ function espresso_critical_pages( $page_id, $event_page_slug = FALSE ) {
 
 	if ( isset( $critical_page_ids[ $page_id ] )) {
 		$current_ee_page = $page_id;
-		echo '<h4>$current_ee_page : ' . $current_ee_page . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		//echo '<h4>$current_ee_page : ' . $current_ee_page . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		switch( $critical_page_ids[ $page_id ] ) {
 			case 'event_page_id' :
 					$this_is_a_reg_page = TRUE;
