@@ -1251,7 +1251,7 @@ class EE_Single_Page_Checkout {
 				// create array for query where statement
 				$where_cols_n_values = array('ATT_fname' => $ATT_fname, 'ATT_lname' => $ATT_lname, 'ATT_email' => $ATT_email);
 				// do we already have an existing record for this attendee ?
-				if ( $existing_attendee = $ATT->find_existing_attendee( $where_cols_n_values )) {
+				if ( $existing_attendee = apply_filters('FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee',$ATT->find_existing_attendee( $where_cols_n_values ),$line_item_id,$event,$att_nmbr,$attendee)) {
 					$ATT_ID = $existing_attendee->ID();
 					$att[$att_nmbr] = $existing_attendee;
 				} else {

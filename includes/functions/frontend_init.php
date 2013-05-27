@@ -19,15 +19,81 @@ function espresso_frontend_init() {
 		do_action('AHEE_load_reg_page_files');
 	}
 
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'shortcodes.php');
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/ical.php');
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'shortcodes.php');	
 
 	// Export iCal file
-	if (!empty($_REQUEST['iCal'])) {
+	if ( isset( $_REQUEST['iCal'] ) && ! empty( $_REQUEST['iCal'] )) {
 		espresso_ical();
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/ical.php');
 	}
 }
 
+
+
+
+
+function espresso_test_for_reg_page() {
+
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+	global $org_options, $current_ee_page, $this_is_a_reg_page;
+	
+	$this_is_a_reg_page = FALSE;
+	
+	// array of critical EE pages
+	$critical_page_ids = array(
+		'event_page_id' => $org_options['event_page_id'],
+		'return_url' => $org_options['return_url'],
+		'cancel_return' => $org_options['cancel_return'],
+		'notify_url' => $org_options['notify_url']
+	);
+
+	// check for page id in $request
+	$page_id = isset( $_GET['page_id'] ) ? absint( $_GET['page_id'] ) : FALSE; 
+	// no page_id in GET?
+	if ( ! $page_id ) {
+		// grab full url,  last segment = current page
+		$current_page = basename( espresso_get_current_full_url() );
+		$page_id =espresso_get_page_id_from_slug( $current_page );
+	} 
+	
+	if ( $page_id ) {
+		$this_is_a_reg_page = espresso_critical_pages( $page_id );
+	} else if ( get_option('show_on_front') == 'page' ) {
+		// first check if a page is being used for the frontpage && grab that page's id
+		$frontpage = get_option('page_on_front');
+		// is it a critical page ?
+		$this_is_a_reg_page = espresso_critical_pages( $frontpage );
+	} 
+	// either we've found an EE page, or we simply aren't on one
+	return $this_is_a_reg_page;
+}
+
+
+
+
+
+function espresso_get_current_full_url() {  
+	$current_URL = ! isset( $_SERVER['HTTPS'] ) || $_SERVER['HTTPS'] != 'on' ? 'http://' : 'https://';
+	if ( isset( $_SERVER['SERVER_PORT'] ) && $_SERVER['SERVER_PORT'] != '80' ) {
+		$current_URL .= $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'];		
+	} else {
+		$current_URL .= $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+	}
+	$current_URL = explode( '?', $current_URL );
+    return $current_URL[0];
+}
+
+
+
+
+
+function espresso_get_page_id_from_slug( $event_page_slug = FALSE ) {
+	// find post if it exists
+	$event_page = get_page_by_path( $event_page_slug );
+	// grab page_id if it's set
+	$page_id = isset( $event_page->ID ) ? absint( $event_page->ID ) : FALSE;
+	return $page_id;
+}
 
 
 
@@ -37,21 +103,18 @@ function espresso_critical_pages( $page_id, $event_page_slug = FALSE ) {
 
 	global $org_options, $current_ee_page, $this_is_a_reg_page;
 	
-	$reg_page_ids = array(
+	$critical_page_ids = array(
 			$org_options['event_page_id'] => 'event_page_id',
 			$org_options['notify_url'] => 'notify_url',
 			$org_options['return_url'] => 'return_url',
 			$org_options['cancel_return'] => 'cancel_return'
 	);
-/*echo "reg page ids:";
-foreach($reg_page_ids as $id=>$reg_pad){
-	echo "link:".get_permalink($id);
-	echo " key:$id, value:$reg_pad <br>";
-}
-126($reg_page_ids);*/
-	if ( isset( $reg_page_ids[ $page_id ] )) {
+	//printr( $critical_page_ids, '$critical_page_ids  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+	if ( isset( $critical_page_ids[ $page_id ] )) {
 		$current_ee_page = $page_id;
-		switch( $reg_page_ids[ $page_id ] ) {
+		//echo '<h4>$current_ee_page : ' . $current_ee_page . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		switch( $critical_page_ids[ $page_id ] ) {
 			case 'event_page_id' :
 					$this_is_a_reg_page = TRUE;
 					add_action( 'wp', 'event_espresso_run', 100 );
@@ -68,74 +131,13 @@ foreach($reg_page_ids as $id=>$reg_pad){
 					//add_action( 'wp', 'espresso_thank_you_page', 102 );
 					return TRUE;
 				break;
-		}		
+		}
+		
 	}
 	
 	return FALSE;
 
 }
-
-
-
-
-
-function espresso_test_for_reg_page() {
-
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-	global $org_options, $current_ee_page, $this_is_a_reg_page;
-	
-	$this_is_a_reg_page = FALSE;
-	
-	$critical_page_ids = array(
-		'event_page_id' => $org_options['event_page_id'],
-		'return_url' => $org_options['return_url'],
-		'cancel_return' => $org_options['cancel_return'],
-		'notify_url' => $org_options['notify_url']
-	);
-	
-	// first check if a page is being used for the frontpage
-	if ( get_option('show_on_front') == 'page' ) {
-		// grab that page's id
-		$frontpage = get_option('page_on_front');
-		// is it a critical page ?
-		$this_is_a_reg_page = espresso_critical_pages( $frontpage );
-	}
-	//  if this is not a critical page
-	if ( ! $this_is_a_reg_page ) {
-		// grab page_id if it's set
-		$page_id = isset( $_GET['page_id'] ) ? absint( $_GET['page_id'] ) : NULL; 
-		if ( ! empty( $page_id )) {
-			espresso_critical_pages( $page_id );
-		} else {
-			// loop thru our critical pages and gather further intel
-			foreach ( $critical_page_ids as $critical_page_id ) {
-				// get permalink for critical page
-				$link = get_permalink( $critical_page_id );
-				// if they have their home_url set in the WP settings
-				if ( $home = home_url() ) {
-					// then we can drill down to the exact page slug
-					$event_page_slug = trim( substr( $link, strlen( $home )), '/' );
-				} else {
-					// or determine strlen up to and including domain
-					$offset = strlen( $_SERVER['SERVER_NAME'] ) + strpos( $link, $_SERVER['SERVER_NAME'] );
-					// whatever's left is, or includes the page slug
-					$event_page_slug = substr( $link, $offset );	
-				}
-
-				// is the page slug for the critical page in the current request ?
-				if ( !empty( $event_page_slug) && strpos( $_SERVER['REQUEST_URI'], $event_page_slug ) !== false) {
-					espresso_critical_pages( $critical_page_id, $event_page_slug );
-					break;
-				}
-			}
-		}
-	}
-
-	return $this_is_a_reg_page;
-}
-
-
-
 
 
 
@@ -177,6 +179,7 @@ function event_espresso_run() {
 
 	// Get action type
 	$e_reg = isset($_REQUEST['e_reg']) ? sanitize_text_field( $_REQUEST['e_reg'] ) : '';
+	//echo '<h4>$e_reg : ' . $e_reg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
 	switch ($e_reg) {
 
@@ -216,7 +219,7 @@ function event_espresso_run() {
 			} else {
 				do_action('AHEE_log', __FILE__, __FUNCTION__, ' e_reg = event_list'  );
 				require_once(espresso_get_event_list_template());
-				//add_action ( 'AHEE_regevent_default_action', 'display_all_events', 10, 1 );
+				add_action ( 'AHEE_regevent_default_action', 'display_all_events', 10, 1 );
 				do_action ( 'AHEE_regevent_default_action', $e_reg );
 			}
 
