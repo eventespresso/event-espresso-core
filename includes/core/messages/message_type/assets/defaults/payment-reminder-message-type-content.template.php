@@ -44,7 +44,7 @@
                                         <li>Payment gateway: [PAYMENT_GATEWAY]</li>
                                         <li>Total Cost: [TOTAL_COST]</li>
                                         <li>Payment Made: [AMOUNT_PAID]</li>
-                                        <li>Total Oweing: [TOTAL_OWEING]</li>
+                                        <li>Total Oweing: [TOTAL_OWING]</li>
                                     </ol>
                                 </td>
                             </tr>
