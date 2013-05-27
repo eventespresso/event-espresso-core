@@ -233,6 +233,7 @@ function espresso_init_admin_pages() {
 		$Single_Page_Checkout = EE_Single_Page_Checkout::instance();	
 		define("ESPRESSO_REG_PAGE_FILES_LOADED", "true");
 	}
+	require_once( EE_CORE . 'admin/EE_Admin_Page_load.controller.php');
 
 	//this loads the controller for the admin pages which will setup routing etc
 	try {
