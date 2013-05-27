@@ -674,6 +674,8 @@ if (!function_exists('display_event_list_sc')) {
 	function display_event_list_sc($atts) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		ob_start();
+		require_once(espresso_get_event_list_template());
+		//add_action ( 'AHEE_regevent_default_action', 'display_all_events', 10, 1 );
 		event_espresso_get_event_details( $atts );
 		$buffer = ob_get_contents();
 		ob_end_clean();
