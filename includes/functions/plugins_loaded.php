@@ -162,6 +162,7 @@ function espresso_get_user_id() {
 	global $espresso_wp_user;
 	$current_user = wp_get_current_user();
 	$espresso_wp_user = apply_filters( 'FHEE_get_user_id', $current_user->ID );
+	$espresso_wp_user = absint( $espresso_wp_user ) ? absint( $espresso_wp_user ) : 1;
 	return $espresso_wp_user;
 }
 
@@ -438,7 +439,7 @@ function espresso_load_reg_page_files() {
 			case 'cancel_return' :
 				break;
 			
-			case 'notify_url' :
+			case 'notify_url' :				
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Transaction_Page.class.php');
 				EE_Transaction_Page::instance();	
 				break;
