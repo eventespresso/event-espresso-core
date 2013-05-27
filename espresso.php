@@ -138,20 +138,8 @@ define("EVENT_ESPRESSO_TEMPLATE_URL", $uploads['baseurl'] . '/espresso/templates
 define("EVENT_ESPRESSO_GATEWAY_DIR", $uploads['basedir'] . DS . 'espresso' . DS . 'gateways' . DS);
 define("EVENT_ESPRESSO_GATEWAY_URL", $uploads['baseurl'] .'/espresso/gateways/' );
 
-/**
- * The following are the WordPress actions for a typical request
- * in the order that they are executed along with the corresopnding
- * Event Espresso functions that are hooked to those actions
- *
- * For a complete list see:
- * http://codex.wordpress.org/Plugin_API/Action_Reference
- */
+
 require_once(dirname(__FILE__) . '/includes/functions/plugins_loaded.php');
-
-
-//autoloaders should run really early
-//espresso_autoload();
-
 
 add_action('plugins_loaded', 'espresso_error_handling', 1);
 add_action('plugins_loaded', 'espresso_autoload', 2);
@@ -159,11 +147,11 @@ add_action('plugins_loaded', 'espresso_get_user_id', 3);
 add_action('plugins_loaded', 'espresso_load_org_options', 4);
 add_action('plugins_loaded', 'espresso_EE_Session', 5);
 add_action('plugins_loaded', 'espresso_init', 25);
-add_action('plugins_loaded', 'espresso_load_init', 100);
 
 function espresso_load_init() {
 	require_once(dirname(__FILE__) . '/includes/functions/init.php');
 }
+add_action('plugins_loaded', 'espresso_load_init', 100);
 
 
 if ( is_admin() ) {
