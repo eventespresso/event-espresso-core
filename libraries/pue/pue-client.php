@@ -112,7 +112,7 @@ class PluginUpdateEngineChecker {
 		$this->option_key = $options_verified['option_key'];
 		$this->options_page_slug = $options_verified['options_page_slug'];
 		$this->_use_wp_update = $this->_is_premium || $this->_is_prerelease ? FALSE : $options_verified['use_wp_update'];
-		$this->extra_stats = $extra_stats;
+		$this->extra_stats = $options_verified['extra_stats'];
 
 		//set hooks
 		$this->_check_for_forced_upgrade();
