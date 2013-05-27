@@ -110,15 +110,6 @@ function espresso_classes_core_autoload($className) {
 
 
 
-	//now loop through assembled filenames and require as available
-	foreach ( $filenames as $filename ) {
-		if ( is_readable($filename) )
-			require_once( $filename );
-	}
-}
-
-
-
 
 
 /**
