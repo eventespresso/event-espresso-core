@@ -53,49 +53,18 @@ function espresso_test_for_reg_page() {
 	if ( ! $page_id ) {
 		// grab full url,  last segment = current page
 		$current_page = basename( espresso_get_current_full_url() );
-		echo '<h4>$current_page : ' . $current_page . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		$page_id =espresso_get_page_id_from_slug( $current_page );
 	} 
-	echo '<h4>$page_id : ' . $page_id . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 	
 	if ( $page_id ) {
 		$this_is_a_reg_page = espresso_critical_pages( $page_id );
 	} else if ( get_option('show_on_front') == 'page' ) {
 		// first check if a page is being used for the frontpage && grab that page's id
 		$frontpage = get_option('page_on_front');
-		echo '<h4>$frontpage : ' . $frontpage . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		// is it a critical page ?
 		$this_is_a_reg_page = espresso_critical_pages( $frontpage );
-	} else {
-		// loop thru our critical pages and gather further intel
-		foreach ( $critical_page_ids as $page_name => $critical_page_id ) {
-			// get permalink for critical page
-			$link = get_permalink( $critical_page_id );
-			echo '<h4>$link : ' . $link . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-			// if they have their home_url set in the WP settings
-			if ( $home = home_url() ) {
-				echo '<h4>$home : ' . $home . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-				// then we can drill down to the exact page slug
-				$event_page_slug = trim( substr( $link, strlen( $home )), '/' );
-			} else {
-				// or determine strlen up to and including domain
-				$offset = strlen( $_SERVER['SERVER_NAME'] ) + strpos( $link, $_SERVER['SERVER_NAME'] );
-				echo '<h4>$offset : ' . $offset . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-				// whatever's left is, or includes the page slug
-				$event_page_slug = substr( $link, $offset );	
-			}
-			echo '<h4>$event_page_slug : ' . $event_page_slug . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-			// is the page slug for the critical page in the current request ?
-			if (  ! empty( $event_page_slug ) && strpos( $_SERVER['REQUEST_URI'], $event_page_slug ) !== false) {
-				// try to grab page id - in case this didn't work before ?!?!?!
-				$page_id = espresso_get_page_id_from_slug( $event_page_slug );
-				echo '<h4>$page_id : ' . $page_id . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-				$this_is_a_reg_page = espresso_critical_pages( $page_id );
-				break;
-			} 
-		}
-	}
-	echo '<h4>$this_is_a_reg_page : ' . $this_is_a_reg_page . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+	} 
+	// either we've found an EE page, or we simply aren't on one
 	return $this_is_a_reg_page;
 }
 
@@ -134,18 +103,18 @@ function espresso_critical_pages( $page_id, $event_page_slug = FALSE ) {
 
 	global $org_options, $current_ee_page, $this_is_a_reg_page;
 	
-	$reg_page_ids = array(
+	$critical_page_ids = array(
 			$org_options['event_page_id'] => 'event_page_id',
 			$org_options['notify_url'] => 'notify_url',
 			$org_options['return_url'] => 'return_url',
 			$org_options['cancel_return'] => 'cancel_return'
 	);
-	printr( $reg_page_ids, '$reg_page_ids  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+	//printr( $critical_page_ids, '$critical_page_ids  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-	if ( isset( $reg_page_ids[ $page_id ] )) {
+	if ( isset( $critical_page_ids[ $page_id ] )) {
 		$current_ee_page = $page_id;
 		echo '<h4>$current_ee_page : ' . $current_ee_page . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		switch( $reg_page_ids[ $page_id ] ) {
+		switch( $critical_page_ids[ $page_id ] ) {
 			case 'event_page_id' :
 					$this_is_a_reg_page = TRUE;
 					add_action( 'wp', 'event_espresso_run', 100 );
