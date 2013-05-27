@@ -91,7 +91,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 
 
 	function column_ATT_ID($item) {
-		return $item->ID();
+		return '<div>' . $item->ID() . '</div>';
 	}
 
 

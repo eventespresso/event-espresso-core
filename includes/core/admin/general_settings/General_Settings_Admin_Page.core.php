@@ -319,7 +319,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_script('media-upload');
 		wp_enqueue_script('thickbox');
 		wp_register_script( 'organization_settings', GEN_SET_ASSETS_URL . 'your_organization_settings.js', array( 'jquery','media-upload','thickbox' ), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_style( 'organization-css', GEN_SET_ASSETS_URL . 'organization.css', array(), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_script( 'organization_settings' );	
+		wp_enqueue_style( 'organization-css' );
 		$confirm_image_delete = array( 'text' => __('Do you really want to delete this image? Please remember to save your settings to complete the removal.', 'event_espresso')); 
 		wp_localize_script( 'organization_settings', 'confirm_image_delete', $confirm_image_delete );
 
@@ -348,8 +350,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['cancel_return'] = isset( $org_options['cancel_return'] ) ? $org_options['cancel_return'] : NULL;
 		$this->_template_args['cancel_return_page'] = isset( $org_options['cancel_return'] ) ? get_page( $org_options['cancel_return'] ) : FALSE;
 		
-		$this->_template_args['espresso_url_rewrite_activated'] = isset( $org_options['espresso_url_rewrite_activated'] ) ? $org_options['espresso_url_rewrite_activated'] : TRUE;
-		
 		$this->_set_add_edit_form_tags( 'update_espresso_page_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'espresso_page_settings.template.php', $this->_template_args, TRUE );
@@ -364,9 +364,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data['return_url'] = isset( $this->_req_data['return_url'] ) ? absint( $this->_req_data['return_url'] ) : NULL;
 		$data['cancel_return'] = isset( $this->_req_data['cancel_return'] ) ? absint( $this->_req_data['cancel_return'] ) : NULL;
 		$data['notify_url'] = isset( $this->_req_data['notify_url'] ) ? absint( $this->_req_data['notify_url'] ) : NULL;
-		$data['espresso_url_rewrite_activated'] = isset( $this->_req_data['espresso_url_rewrite_activated'] ) ? absint( $this->_req_data['espresso_url_rewrite_activated'] ) : NULL;
-		// flush rewrite rules
-		$this->_add_espresso_rewrite_rules( $data['espresso_url_rewrite_activated'] );
 
 		$data = apply_filters('FHEE_page_settings_save', $data);
 		
@@ -381,26 +378,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 
 
-	private function _add_espresso_rewrite_rules( $use_pretty_permalinks = FALSE ) {
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-		global $wpdb, $org_options;
-
-		if (empty($org_options['event_page_id'])) {
-			return;
-		}
-
-		if ( $use_pretty_permalinks ) {
-			// create pretty permalinks
-			$SQL = 'SELECT post_name  FROM ' . $wpdb->prefix . 'posts WHERE ID = %d';
-			$reg_page_url_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $org_options['event_page_id'] ));
-			// rules for event slug pretty links
-			add_rewrite_rule( $reg_page_url_slug . '/([^/]+)/?$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top');
-			//add_rewrite_rule( $reg_page_url_slug . '/([^/]+)/?$', 'index.php?pagename=' . $reg_page_url_slug . '&e_reg=$matches[1]', 'top');
-		}
-		flush_rewrite_rules();
-		
-	}
 
 
 	/*************		Templates 		*************/
@@ -411,87 +389,25 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		global $org_options;
 		//$this->_template_args['org_options'] = $org_options;
 		$this->_template_args['values'] = $this->_yes_no_values;
-
-		// themeroller style directory
-		$path = file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/themeroller/index.php") ? EVENT_ESPRESSO_UPLOAD_DIR . '/themeroller/' : EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/css/themeroller/';
-		$themeroller_themes = glob( $path . '*', GLOB_ONLYDIR ); 
-		array_walk( $themeroller_themes, array( $this, '_process_theme_name' )); 
-		
-		$default_themeroller = array(
-			'themeroller_style' => 'smoothness'
-		);
-		$this->_template_args['themeroller'] = 
-				isset( $org_options['themeroller'] ) && ! empty( $org_options['themeroller'] ) 
-				? array_merge( $default_themeroller, $org_options['themeroller'] ) 
-				: $default_themeroller;
-		
+	
 		$default_template_settings = array(
 			'display_description_in_event_list' => FALSE,
 			'display_short_description_in_event_list' => TRUE,
 			'display_address_in_event_list' => FALSE,
 			'display_address_in_regform' => TRUE,			
-			'use_custom_post_types' => FALSE,			
-			'use_custom_templates' => FALSE,		
 		);
+		
 		$this->_template_args['template_settings'] = 
 				isset( $org_options['template_settings'] ) && ! empty( $org_options['template_settings'] ) 
 				? array_merge( $default_template_settings, $org_options['template_settings'] )
 				: $default_template_settings;
-		
-		$default_style_settings = array(
-			'enable_default_style' => TRUE,
-			'css_name' => ''
-		);
-		$this->_template_args['style_settings'] = 
-				isset( $org_options['style_settings'] ) && ! empty( $org_options['style_settings'] ) 
-				? array_merge( $default_style_settings, $org_options['style_settings'] )
-				: $default_style_settings;
-
-		$this->_template_args['files'] = array(
-				'attendee_list.php', 
-				'event_list.php', 
-				'event_list_display.php', 
-				'event_post.php', 
-				'payment_page.php', 
-				'registration_page.php', 
-				'registration_page_display.php', 
-				'confirmation_display.php', 
-				'return_payment.php', 
-				'widget.php'
-		);
-		
-		$this->_template_args['custom_templates_exist'] = 
-				file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][0])
-				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][1])
-				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][2])
-				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][3])
-				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][4])
-				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][5])
-				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][6])
-				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][7])
-				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][8])
-				|| file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $this->_template_args['files'][9])
-			? TRUE
-			: FALSE;
-		//$this->_template_args['custom_templates_exist'] = TRUE;
 		
 		$this->_set_add_edit_form_tags( 'update_template_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'template_settings.template.php', $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();	
 	}
-	
-	
-	/**
-	 * 	_process_theme_name
-	 *
-	 * @access 	private
-	 * @param 	string 	$themeroller_theme_path
-	 * @return	string
-	 */	
-	private function _process_theme_name( &$themeroller_theme_path, $key ) {
-		$this->_template_args['themeroller_themes'][] = array( 'id'  => basename( $themeroller_theme_path ), 'text' => ucwords( str_replace( array( '-', '_' ), ' ', basename( $themeroller_theme_path ))));
-	}
+
 
 
 
@@ -500,9 +416,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		global $wpdb, $org_options, $notices, $espresso_wp_user;
 
 		$data = array(
-			'template_settings' => array(),
-			'style_settings' => array(),
-			'themeroller' => array()
+			'template_settings' => array()
 		);
 
 		$data['template_settings']['display_description_in_event_list'] = 
@@ -524,32 +438,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				 isset( $this->_req_data['display_address_in_regform'] ) 
 				? absint( $this->_req_data['display_address_in_regform'] ) 
 				: TRUE;
-
-		$data['template_settings']['use_custom_post_types'] = 
-				 isset( $this->_req_data['use_custom_post_types'] ) 
-				? absint( $this->_req_data['use_custom_post_types'] ) 
-				: FALSE;
-
-		$data['style_settings']['enable_default_style'] = 
-				 isset( $this->_req_data['enable_default_style'] ) 
-				? absint( $this->_req_data['enable_default_style'] ) 
-				: TRUE;
-
-		$data['themeroller']['themeroller_style'] = 
-				 isset( $this->_req_data['themeroller_style'] ) 
-				? sanitize_text_field( $this->_req_data['themeroller_style'] ) 
-				: 'smoothness';
-
-		if ( isset($_FILES['css'] ) && is_uploaded_file( $_FILES['css']['tmp_name'] )) {
-			if ( copy( $_FILES['css']['tmp_name'], EVENT_ESPRESSO_UPLOAD_DIR . 'css/' . $_FILES['css']['name'] )) {
-				$data['style_settings']['css_name'] = sanitize_text_field( $_FILES['css']['name'] );
-			}
-		}
-		
-		$data['template_settings']['use_custom_templates'] =  
-				 isset( $this->_req_data['use_custom_templates'] ) 
-				? sanitize_text_field( $this->_req_data['use_custom_templates'] ) 
-				: FALSE;					
 		
 		$data = apply_filters('FHEE_template_settings_save', $data);
 		
@@ -559,30 +447,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		
 	}
 
-	
-	
-	/**
-	 * 	_copy_templates
-	 *
-	 * @access 	protected
-	 * @return	string
-	 */	
-	protected function _copy_templates() {
-		
-		add_action('admin_init', 'event_espresso_smartCopy');
-
-		if ( ! empty($_SESSION['event_espresso_themes_copied'])) {
-			
-			$data['template_settings']['use_custom_templates'] = TRUE;
-			$_SESSION['event_espresso_themes_copied'] = false;
-			
-			$what = 'Custom Templates';
-			$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
-			$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'template_settings' ) );
-			
-		}
-		
-	}
 
 
 
@@ -597,20 +461,20 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['values'] = $this->_yes_no_values;
 
 		$default_map_settings = array(
-			'ee_map_width_single' => 595,
-			'ee_map_height_single' => 368,
+			'ee_map_width_single' => 585,
+			'ee_map_height_single' => 362,
 			'ee_map_zoom_single' => 14,
 			'ee_map_nav_display_single' => TRUE,
 			'ee_map_nav_size_single' => FALSE,
 			'ee_map_type_control_single' => 'default',
-			'ee_map_align_single' => 'right',
+			'ee_map_align_single' => 'center',
 			'ee_map_width' => 300,
 			'ee_map_height' => 185,
-			'ee_map_zoom' => 11,
+			'ee_map_zoom' => 12,
 			'ee_map_nav_display' => FALSE,
 			'ee_map_nav_size' => TRUE,
-			'ee_map_type_control' => 'default',
-			'ee_map_align' => 'right',
+			'ee_map_type_control' => 'dropdown',
+			'ee_map_align' => 'center',
 			'ee_display_map_no_shortcodes' => FALSE
 		);
 		$this->_template_args['map_settings'] = 
@@ -657,12 +521,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 		$data['map_settings']['ee_map_type_control_single'] = 
 				 isset( $this->_req_data['ee_map_type_control_single'] ) 
-				? absint( $this->_req_data['ee_map_type_control_single'] ) 
+				? sanitize_text_field( $this->_req_data['ee_map_type_control_single'] ) 
 				: 'default';
 
 		$data['map_settings']['ee_map_align_single'] = 
 				 isset( $this->_req_data['ee_map_align_single'] ) 
-				? absint( $this->_req_data['ee_map_align_single'] ) 
+				? sanitize_text_field( $this->_req_data['ee_map_align_single'] ) 
 				: 'right';
 
 		$data['map_settings']['ee_map_width'] = 
@@ -692,12 +556,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 		$data['map_settings']['ee_map_type_control'] = 
 				 isset( $this->_req_data['ee_map_type_control'] ) 
-				? absint( $this->_req_data['ee_map_type_control'] ) 
+				? sanitize_text_field( $this->_req_data['ee_map_type_control'] ) 
 				: 'default';
 
 		$data['map_settings']['ee_map_align'] = 
 				 isset( $this->_req_data['ee_map_align'] ) 
-				? absint( $this->_req_data['ee_map_align'] ) 
+				? sanitize_text_field( $this->_req_data['ee_map_align'] ) 
 				: 'right';
 
 		$data['map_settings']['ee_display_map_no_shortcodes'] = 
@@ -721,6 +585,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	protected function _your_organization_settings() {
 	
 		global $org_options;
+		$this->_template_args['site_license_key'] = isset( $org_options['site_license_key'] ) ? $this->_display_nice( $org_options['site_license_key'] ) : '';
 		$this->_template_args['default_logo_url'] = isset( $org_options['default_logo_url'] ) ? $this->_display_nice( $org_options['default_logo_url'] ) : FALSE;
 		$this->_template_args['organization'] = isset( $org_options['organization'] ) ? $this->_display_nice( $org_options['organization'] ) : '';
 		$this->_template_args['organization_street1'] = isset( $org_options['organization_street1'] ) ? $this->_display_nice( $org_options['organization_street1'] ) : '';
@@ -730,11 +595,20 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['organization_zip'] = isset( $org_options['organization_zip'] ) ? $this->_display_nice( $org_options['organization_zip'] ) : '';
 		$this->_template_args['organization_country'] = isset( $org_options['organization_country'] ) ? $this->_display_nice( $org_options['organization_country'] ) : '';
 		$this->_template_args['currency_symbol'] = isset( $org_options['currency_symbol'] ) ? $this->_display_nice( $org_options['currency_symbol'] ) : '$';
-		$this->_template_args['contact_email'] = isset( $org_options['contact_email'] ) ? $this->_display_nice( $org_options['contact_email'] ) : '';		
+		$this->_template_args['contact_email'] = isset( $org_options['contact_email'] ) ? $this->_display_nice( $org_options['contact_email'] ) : '';
+
+		//PUE verification stuff
+		$plugin_basename = plugin_basename(EVENT_ESPRESSO_PLUGINPATH);
+		$verify_fail = get_option( 'pue_verification_error_' . $plugin_basename );
+		$this->_template_args['site_license_key_verified'] = !empty( $verify_fail ) ? '<span class"pue-sl-not-verified"></span>' : '<span class="pue-sl-verified"></span>';		
 		
 		$this->_set_add_edit_form_tags( 'update_your_organization_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'your_organization_settings.template.php', $this->_template_args, TRUE );
+
+
+		//UXIP settings
+		$this->_template_args['ee_ueip_optin'] = get_option( 'ee_ueip_optin' );
 		$this->display_admin_page_with_sidebar();	
 	}
 
@@ -750,6 +624,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data['organization_zip'] = isset( $this->_req_data['organization_zip'] ) ? sanitize_text_field( $this->_req_data['organization_zip'] ) : NULL;
 		$data['organization_country'] = isset( $this->_req_data['organization_country'] ) ? absint( $this->_req_data['organization_country'] ) : NULL;
 		$data['contact_email'] = isset( $this->_req_data['contact_email'] ) ? sanitize_email( $this->_req_data['contact_email'] ) : NULL;
+		$data['site_license_key'] = isset( $this->_req_data['site_license_key'] ) ? sanitize_text_field( $this->_req_data['site_license_key'] ) : NULL;
+		$data['ee_ueip_optin'] = isset( $this->_req_data['ueip_optin'] ) && !empty( $this->_req_data['ueip_optin'] ) ? $this->_req_data['ueip_optin'] : 'yes'; 
 
 		$data = apply_filters('FHEE_your_organization_settings_save', $data);	
 		

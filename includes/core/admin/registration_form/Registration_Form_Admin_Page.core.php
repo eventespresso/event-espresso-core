@@ -148,7 +148,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			'edit_question' => array(
 				'nav' => array(
 					'label' => __('Edit Question', 'event_espresso'),
-					'order' => 5,
+					'order' => 15,
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['question_id']) ? add_query_arg(array('question_id' => $this->_req_data['question_id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
@@ -190,17 +190,61 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 
+	public function load_scripts_styles_add_question() {
+		$this->load_scripts_styles_forms();
+		wp_register_script( 'espresso_registration_form_single', REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_enqueue_script( 'espresso_registration_form_single' );	
+	}
+	public function load_scripts_styles_edit_question() {
+		$this->load_scripts_styles_forms();
+		wp_register_script( 'espresso_registration_form_single', REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_enqueue_script( 'espresso_registration_form_single' );		
+	}
+
+
+
+
+	public function recaptcha_info_help_tab() {
+		$template = REGISTRATION_FORM_TEMPLATE_PATH . 'recaptcha_info_help_tab.template.php';
+		espresso_display_template($template, array());
+	}
+
+
+
+
+
+	public function load_scripts_styles_forms() {
+		//styles
+		wp_enqueue_style('jquery-ui-style');
+		//scripts
+		wp_enqueue_script('ee_admin_js');
+	}
+
+
+
+
+
+
 	protected function _set_list_table_views_default() {
 		$this->_views = array(
 			'all' => array(
 				'slug' => 'all',
 				'label' => __('All', 'event_espresso'),
 				'count' => 0,
+//				'bulk_action' => array(
+//					'trash_questions' => __('Trash', 'event_espresso'),
+//					)
+				),
+			'trash' => array(
+				'slug' => 'trash',
+				'label' => __('Trash', 'event_espresso'),
+				'count' => 0,
+//				'bulk_action' => array(
+//					'delete_questions' => __('Delete Permanently', 'event_espresso'),
+//					'restore_questions' => __('Restore', 'event_espresso'),
 				)
 		);
 	}
-
-
 
 	/**
 	 * This just previews the question groups tab that comes in caffeinated.
@@ -227,7 +271,10 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				$QSG_name = isset( $this->_req_data['QSG_name'] ) ? $this->_req_data['QSG_name'] : '' ;
 				$this->_req_data['QSG_identifier'] = strtolower( str_replace( ' ', '-', $QSG_name )) . '-' . uniqid();
 			}
-			$set_column_values[$fieldName]=array_key_exists($fieldName,$this->_req_data)?$this->_req_data[$fieldName]:null;
+			//only add a property to the array if it's not null (otherwise the model should just use the defautl value)
+			if(isset($this->_req_data[$fieldName])){
+				$set_column_values[$fieldName]=$this->_req_data[$fieldName];
+			}
 		}
 		return $set_column_values;//validation fo this data to be performed by the model before insertion.
 	}
@@ -367,10 +414,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				$success=1;
 				$ID=$new_id;
 			}else{
-				$success=0;
-				$ID=false;
+				$success = false;
 			}
-			$action_desc='created';
 		}else{
 			$ID=absint($this->_req_data['QST_ID']);
 			$pk=$this->_question_model->primary_key_name();
@@ -410,7 +455,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				}
 			}
 		}
-		$query_args=array('action'=>'edit_question','QST_ID'=>$ID);
+		$query_args=array('action'=>'edit_question','QST_ID'=>$question->ID());
 		$this->_redirect_after_action($success, $this->_question_model->item_name($success), $action_desc, $query_args);
 	}
 
@@ -523,9 +568,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 
-	protected function _trash_or_restore_question_groups($trash = TRUE) {
-		return $this->_trash_or_restore_items( $this->_question_group_model, $trash );
-	}
 
 
 

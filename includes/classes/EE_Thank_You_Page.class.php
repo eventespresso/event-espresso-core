@@ -55,13 +55,17 @@ class EE_Thank_You_Page{
 	protected function __construct(){
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		
-		add_action('init',array($this,'handle_thank_you_page'),30);
-		add_action( 'wp', array($this,'display_payment_overview'), 102 );
-		$this->load_classes();
 		
-		$transaction = $this->_TXN->get_transaction_from_reg_url_link($_GET['e_reg_url_link']);
-		//printr( $transaction, '$transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$this->_current_transaction = $transaction;
+		//only do thank you page stuff if we have a REG_url_link in the url
+		//otherwise, just leave the transaction page shortcode as-is
+		if(isset($_GET['e_reg_url_link'])){
+			add_action('init',array($this,'handle_thank_you_page'),30);
+			add_action( 'wp', array($this,'display_payment_overview'), 102 );
+			$this->load_classes();
+			$transaction = $this->_TXN->get_transaction_from_reg_url_link($_GET['e_reg_url_link']);
+			//printr( $transaction, '$transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			$this->_current_transaction = $transaction;
+		}
 	}
 	
 	protected function load_classes(){

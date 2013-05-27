@@ -573,6 +573,15 @@ class EE_Attendee extends EE_Base_Class{
 	public function get_most_recent_registration(){
 		return $this->get_first_related('Registration', array('order_by'=>array('REG_date'=>'DESC')));//null, 'REG_date', 'DESC', '=', 'OBJECT_K');
 	}
+	
+	/**
+	 * Gets the most recent registration for this attend at this event
+	 * @param int $event_id
+	 * @return EE_Registration
+	 */
+	public function get_most_recent_registration_for_event($event_id){
+		return $this->get_first_related('Registrations', array('EVT_ID'=>$event_id), 'REG_date', 'DESC', '=', 'OBJECT_K');
+	}
 
 	/**
 	 * returns any events attached to this attendee ($_Event property);

@@ -179,33 +179,32 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 		switch ( $orderby ) {
 			
 			case 'REG_ID':
-				$orderby = 'reg.REG_ID ';
+				$orderby = 'reg.REG_ID ' . $sort;
 				break;
 				
 			case 'STS_ID':
-				$orderby = 'reg.REG_status, reg.REG_date, reg.REG_count ';
+				$orderby = 'reg.REG_status ' . $sort . ', reg.REG_date DESC, reg.REG_count ASC ';
 				break;
 				
 			case 'ATT_lname':
-				$orderby = 'att.ATT_lname, reg.REG_date, reg.REG_count ';
+				$orderby = 'att.ATT_lname ' . $sort . ', reg.REG_date DESC, reg.REG_count ASC ';
 				break;
 				
 			case 'event_name':
-				$orderby = 'evt.event_name, att.ATT_lname, reg.REG_count ';
+				$orderby = 'evt.event_name ' . $sort . ', att.ATT_lname ASC, reg.REG_count ASC ';
 				break;
 				
 			case 'DTT_EVT_start':
-				$orderby = 'dtt.DTT_EVT_start, evt.event_name, att.ATT_lname, reg.REG_count ';
+				$orderby = 'dtt.DTT_EVT_start ' . $sort . ', evt.event_name, att.ATT_lname ASC, reg.REG_count ASC ';
 				break;
 				
 			default: //'REG_date'
-				$orderby = 'reg.REG_date, reg.REG_count ';
+				$orderby = 'reg.REG_date ' . $sort . ', reg.REG_count ASC ';
 		}
 
 		//let's setup limit
 		$limit = !empty($limit) ? 'LIMIT ' . implode(',', $limit) : '';
-		$SQL .= $output == 'COUNT' ? '' : " ORDER BY $orderby $sort $limit";
-
+		$SQL .= $output == 'COUNT' ? '' : " ORDER BY $orderby $limit";
 		
 		// retreive all attendees	
 		$attendees = $output == 'COUNT' ? $wpdb->get_var( $SQL ) : $wpdb->get_results( $SQL );

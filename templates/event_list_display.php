@@ -53,7 +53,7 @@
 			</p>
 
 			<?php
-			do_action('AHEE_inside_event_list_listing', $event);
+			do_action('AHEE_inside_event_list_listing', $event_id);
 			if ($can_register_for_event) {
 				if ($display_available_spaces) {
 					?>
@@ -95,6 +95,7 @@
 			} else {	// end if $can_register_for_event
 				echo $registration_closed_msg;
 			}
+			do_action('AHEE_end_event_list_listing',$event_id);
 			?>
 			<div class="clear"></div>
 		</div>
@@ -110,9 +111,8 @@
 			<div id="event_address-<?php echo $event_id ?>"  class="event-address-pg">
 				<h6><?php echo __('Address:', 'event_espresso'); ?></h6>
 				<?php echo $location; ?>
-				<?php echo $google_map_link; ?>
+				<?php echo $google_map_link; ?>				
 			</div>
-			<div class="clear"></div>
 			<?php echo $google_map; ?>
 			<div class="clear"></div>
 		<?php } ?>

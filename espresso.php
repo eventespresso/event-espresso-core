@@ -11,6 +11,7 @@
   Author: 				Seth Shoultes
   Author URI: 		http://www.eventespresso.com
   License: 				GPLv2
+  TextDomain: event_espresso
 
   Copyright (c) 2008-2011 Event Espresso  All Rights Reserved.
 
@@ -63,19 +64,29 @@ if ( ! defined( 'PS' )) {
 	define( 'PS', PATH_SEPARATOR );
 }
 
+$main_dir =dirname( __FILE__ );
 // add ESPRESSO directories to include_path
 set_include_path(
-	dirname( espresso_main_file() ) . DS . 'includes' . DS . 'core' . DS . PS .
-	dirname( espresso_main_file() ) . DS . 'includes' . DS . 'models' . DS . PS .
-	dirname( espresso_main_file() ) . DS . 'includes' . DS . 'classes' . DS . PS .
-	dirname( espresso_main_file() ) . DS . 'includes' . DS . 'functions' . DS . PS .
-	dirname( espresso_main_file() ) . DS . 'gateways' . DS . PS .
-	dirname( espresso_main_file() ) . DS . 'helpers' . DS . PS .
-	get_include_path()
+	get_include_path() . PS .
+	$main_dir . DS . 'includes' . DS . 'core' . DS . PS .
+	$main_dir . DS . 'includes' . DS . 'models' . DS . PS .
+	$main_dir . DS . 'includes' . DS . 'classes' . DS . PS .
+	$main_dir . DS . 'includes' . DS . 'functions' . DS . PS .
+	$main_dir . DS . 'gateways' . DS . PS .
+	$main_dir . DS . 'helpers' . DS
+	
 );
 
 
 // Define all plugin database tables
+
+define("ESP_PRICE_TABLE", $wpdb->prefix . "esp_price");
+define("ESP_PRICE_TYPE", $wpdb->prefix . "esp_price_type");
+define("ESP_COUNTRY_TABLE", $wpdb->prefix . "esp_country");
+define("ESP_DATETIME_TABLE", $wpdb->prefix . "esp_datetime");
+define("ESP_STATUS_TABLE", $wpdb->prefix . "esp_status");
+define("ESP_STATE", $wpdb->prefix . "esp_state");
+// legacy tables
 define("EVENTS_ANSWER_TABLE", $wpdb->prefix . "events_answer");
 define("EVENTS_ATTENDEE_TABLE", $wpdb->prefix . "events_attendee");
 define("EVENTS_ATTENDEE_COST_TABLE", $wpdb->prefix . "events_attendee_cost");
@@ -90,16 +101,10 @@ define("EVENTS_LOCALE_REL_TABLE", $wpdb->prefix . "events_locale_rel");
 define("EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE", $wpdb->prefix . "events_multi_event_registration_id_group");
 define("EVENTS_PERSONNEL_TABLE", $wpdb->prefix . "events_personnel");
 define("EVENTS_PERSONNEL_REL_TABLE", $wpdb->prefix . "events_personnel_rel");
-define("ESP_PRICE_TABLE", $wpdb->prefix . "esp_price");
-define("ESP_PRICE_TYPE", $wpdb->prefix . "esp_price_type");
-define("ESP_COUNTRY", $wpdb->prefix . "esp_country");
-define("ESP_DATETIME", $wpdb->prefix . "esp_datetime");
-define("ESP_STATUS_TABLE", $wpdb->prefix . "esp_status");
 define("EVENTS_QST_GROUP_TABLE", $wpdb->prefix . "events_qst_group");
 define("EVENTS_QST_GROUP_REL_TABLE", $wpdb->prefix . "events_qst_group_rel");
 define("EVENTS_QUESTION_TABLE", $wpdb->prefix . "events_question");
 define("EVENTS_START_END_TABLE", $wpdb->prefix . "events_start_end");
-define("ESP_STATE", $wpdb->prefix . "esp_state");
 define("EVENTS_VENUE_TABLE", $wpdb->prefix . "events_venue");
 define("EVENTS_VENUE_REL_TABLE", $wpdb->prefix . "events_venue_rel");
 // End table definitions
@@ -133,50 +138,48 @@ define("EVENT_ESPRESSO_TEMPLATE_URL", $uploads['baseurl'] . '/espresso/templates
 define("EVENT_ESPRESSO_GATEWAY_DIR", $uploads['basedir'] . DS . 'espresso' . DS . 'gateways' . DS);
 define("EVENT_ESPRESSO_GATEWAY_URL", $uploads['baseurl'] .'/espresso/gateways/' );
 
-/**
- * The following are the WordPress actions for a typical request
- * in the order that they are executed along with the corresopnding
- * Event Espresso functions that are hooked to those actions
- *
- * For a complete list see:
- * http://codex.wordpress.org/Plugin_API/Action_Reference
- */
-require_once(dirname(__FILE__) . '/includes/classes/EE_Exceptions.class.php');
+
 require_once(dirname(__FILE__) . '/includes/functions/plugins_loaded.php');
-require_once(dirname(__FILE__) . '/includes/functions/init.php');
-require_once(dirname(__FILE__) . '/includes/functions/wp_hooks.php');
 
-
-//autoloaders should run really early
-//espresso_autoload();
-
-
+add_action('plugins_loaded', 'espresso_error_handling', 1);
 add_action('plugins_loaded', 'espresso_autoload', 2);
 add_action('plugins_loaded', 'espresso_get_user_id', 3);
 add_action('plugins_loaded', 'espresso_load_org_options', 4);
 add_action('plugins_loaded', 'espresso_EE_Session', 5);
 add_action('plugins_loaded', 'espresso_init', 25);
-add_action('init', 'espresso_load_messages_init', 15);
-add_filter('query_vars', 'espresso_add_query_vars');
+
+function espresso_load_init() {
+	require_once(dirname(__FILE__) . '/includes/functions/init.php');
+}
+add_action('plugins_loaded', 'espresso_load_init', 100);
+
 
 if ( is_admin() ) {
+	
 	register_activation_hook(__FILE__, 'espresso_plugin_activation');
+	add_filter('plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2);
+	require_once(dirname(__FILE__) . '/includes/functions/admin_init.php');
 	add_action('plugins_loaded', 'espresso_check_for_export');
 	add_action('plugins_loaded', 'espresso_check_for_import');
 	add_action('admin_init', 'espresso_check_data_tables' );
+	add_action('init', 'espresso_verify_default_pages_exist' );
 	add_action('init', 'espresso_init_admin_pages', 100);
 	add_action( 'init', 'espresso_check_no_ticket_prices_array', 101 );
 	add_action('admin_bar_menu', 'espresso_toolbar_items', 100);
-	add_filter('plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2);
 	add_action( 'admin_enqueue_scripts', 'espresso_load_scripts_styles' );
+	add_action( 'plugins_loaded', 'espresso_do_pue_updates', 0 );
 	
 } else {
+	
+	require_once(dirname(__FILE__) . '/includes/functions/frontend_init.php');
+	add_action('init', 'espresso_load_jquery', 10);
+	add_action('init', 'espresso_load_messages_init', 15);
+	add_action('init', 'espresso_add_rewrite_rules');
 	add_action('init', 'espresso_export_certificate', 30);
 	add_action('init', 'espresso_export_invoice', 30);
 	//add_action('init', 'espresso_export_ticket', 30);
-
-	add_action('init', 'espresso_load_jquery', 10);
 	add_action('init', 'espresso_frontend_init', 25);
+	add_filter('query_vars', 'espresso_add_query_vars');
 	add_action('widgets_init', 'espresso_widget');
 	add_action('wp_head', 'espresso_info_header');
 	add_action('wp_enqueue_scripts', 'add_espresso_stylesheet', 20);
@@ -184,90 +187,7 @@ if ( is_admin() ) {
 
 }
 
-/** edit as neccessary
- *------------------------------------------------------------------------------
- * Frontend Action Order
- * -----------------------------------------------------------------------------
- * require_once: /includes/functions/plugins_loaded.php
- * require_once: /includes/functions/init.php
- * require_once: /includes/functions/wp_hooks.php
- *
- * plugins_loaded:
- *	1: espresso_define_tables_and_paths
- *	2: espresso_get_user_id
- *		FHEE_get_user_id:
- *	3: espresso_load_org_options
- *		require_once: classes/EE_Log.class.php
- *	4: espresso_EE_Session
- *		require_once: classes/EE_Session.class.php
- *	25: espresso_init
- * widgets_init:
- *	10: espresso_widget
- * init:
- *	10: espresso_load_jquery
- *	25: espresso_frontend_init
- *	30: espresso_export_certificate
- *	30: espresso_export_invoice
- *	30: espresso_export_ticket
- *	40: espresso_add_rewrite_rules
- *	41: espresso_flush_rewrite_rules
- * wp_head:
- *	10: espresso_info_header
- * wp_print_styles:
- *	20: add_espresso_stylesheet (file includes/functions/wp_hooks.php, line 33)
- * wp_footer:
- *	10: espresso_load_javascript_files
- * admin_bar_menu:
- *	100: espresso_toolbar_items
- * -----------------------------------------------------------------------------
- * Frontend Filters
- * -----------------------------------------------------------------------------
- * query_vars:
- *	10: espresso_add_query_vars
- * -----------------------------------------------------------------------------
- * Admin Action Order
- * -----------------------------------------------------------------------------
- * require_once: /includes/functions/plugins_loaded.php
- * require_once: /includes/functions/init.php
- * require_once: /includes/functions/wp_hooks.php
- *
- * register_activation_hook:
- *	espresso_plugin_activation
- *
- * plugins_loaded:
- *  1: espresso_define_tables_and_paths
- *	2: espresso_get_user_id
- *	3: espresso_load_org_options
- *	4: espresso_EE_Session
- *	10: espresso_check_for_export
- *	10: espresso_check_for_import
- *	25: espresso_init
- *
- * init:
- *	25: espresso_admin_init
- *			require_once /includes/admin-screens/admin.php
- *			require_once /includes/admin-screens/admin_screen.php
- *			require_once /includes/admin-screens/admin_menu.php
- *	25: espresso_load_admin_ajax_callbacks
- *	30: espresso_export_certificate
- *	30: espresso_export_invoice
- *	30: espresso_export_ticket
- *
- * admin_bar_menu:
- *	100: espresso_toolbar_items
- *
- *
- * -----------------------------------------------------------------------------
- * Admin Filters
- * -----------------------------------------------------------------------------
- * query_vars:
- *	10: espresso_add_query_vars
- * plugin_action_links:
- *	10: event_espresso_filter_plugin_actions
- *
- */
-//echo get_option('plugin_error');
-//delete_option('plugin_error');
+
 
 
 class EE_BASE {

@@ -510,7 +510,7 @@ class EE_Registration extends EE_Base_Class {
 		}
 		global $wpdb;
 		$SQL = 'SELECT event_name, slug FROM ' . $wpdb->prefix . 'events_detail WHERE id = %d';
-		return $wpdb->get_var( $wpdb->prepare( $SQL, $this->_EVT_ID ));
+		return stripslashes( trim( $wpdb->get_var( $wpdb->prepare( $SQL, $this->_EVT_ID ))));
 	}
 
 
@@ -527,7 +527,7 @@ class EE_Registration extends EE_Base_Class {
 		}
 
 		global $wpdb;
-		$SQL = "SELECT DTT_ID FROM " . ESP_DATETIME . " WHERE EVT_ID = %s";
+		$SQL = "SELECT DTT_ID FROM " . ESP_DATETIME_TABLE . " WHERE EVT_ID = %s";
 		return $wpdb->get_var( $wpdb->prepare( $SQL, $this->_EVT_ID ) );
 	}
 

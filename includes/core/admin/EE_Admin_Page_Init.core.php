@@ -339,16 +339,13 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		$path_to_file=apply_filters("filter_hooks_espresso_path_to_{$hook_suffix}",$path_to_file );//so if the file would be in EE_CORE_ADMIN/attendees/Attendee_Admin_Page.core.php, the filter would be filter_hooks_espresso_path_to_attendees_Attendee_Admin_Page
 
 		if ( is_readable( $path_to_file )) {					
-			/**
-			 * This is a place where EE plugins can hook in to make sure their own files are required in the appropriate place
-			 */
+			// This is a place where EE plugins can hook in to make sure their own files are required in the appropriate place
 			do_action( 'AHEE_before_initialize_admin_page' );
 			do_action( 'AHEE_before_initialize_admin_page_' . $this->menu_slug );
 			require_once( $path_to_file );
 			$a = new ReflectionClass( $admin_page );
 			$this->_loaded_page_object = $a->newInstance( $this->_routing );				
 		}
-
 		do_action( 'AHEE_after_initialize_admin_page' );
 		do_action( 'AHEE_after_initialize_admin_page_' . $this->menu_slug );
 	}

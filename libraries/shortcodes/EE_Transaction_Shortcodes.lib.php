@@ -48,7 +48,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[PAYMENT_STATUS]' => __('The payment status for the transaction', 'event_espresso'),
 			'[PAYMENT_GATEWAY]' => __('The payment gateway used for the transaction', 'event_espresso'),
 			'[AMOUNT_PAID]' => __('The amount paid with a payment', 'event_espresso'),
-			'[TOTAL_OWEING]' => __('The total oweing on a transaction', 'event_espresso')
+			'[TOTAL_OWING]' => __('The total oweing on a transaction', 'event_espresso')
 			);
 	}
 
@@ -100,11 +100,11 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				return $currency_symbol . number_format( $amount, 2);
 				break;
 
-			case "[TOTAL_OWEING]" :
+			case "[TOTAL_OWING]" :
 				global $org_options;
 				$currency_symbol = isset( $org_options['currency_symbol'] ) ? $org_options['currency_symbol'] : '';
-				$total_oweing = isset( $this->_data->txn ) && is_object($this->_data->txn) ? $this->_data->txn->remaining() : $this->_data->txn->total();
-				return $currency_symbol . number_format( $total_oweing, 2);
+				$total_owing = isset( $this->_data->txn ) && is_object($this->_data->txn) ? $this->_data->txn->remaining() : $this->_data->txn->total();
+				return $currency_symbol . number_format( $total_owing, 2);
 		}
 	}
 

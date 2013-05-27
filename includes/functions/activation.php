@@ -8,9 +8,7 @@
 //This fix for this problem:
 //The short and simple solution is to simply check the table exists and then drop the index manually before calling the dbDelta function.
 
-/* if ($wpdb->get_var("SHOW TABLES LIKE $table") == $table) {
-  $wpdb->query("ALTER TABLE $table DROP INDEX date");
-  } */ 
+
 
 //Credit: http://flav36rs.com/2010/04/02/wp-dbdelta-function-cannot-modify-unique-keys/
 //This fixes some tables that may have been named wrong in an earlier version of the plugin
@@ -393,7 +391,6 @@ function espresso_org_option_initialization( $missing_options = FALSE ) {
 				'show_reg_footer' => true,
 				'use_attendee_pre_approval' => false,
 				'time_reg_limit' => false,
-				'espresso_url_rewrite_activated' => false,
 				'template_settings' => array(
 						'use_custom_post_types' => false,
 						'display_address_in_regform' => false,
@@ -1286,7 +1283,7 @@ function espresso_update_active_gateways() {
 
 function espresso_default_price_types() {
 
-	global $wpdb, $caffeinated;
+	global $wpdb;
 
 	if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_PRICE_TYPE . "'") == ESP_PRICE_TYPE) {
 
@@ -1312,7 +1309,7 @@ function espresso_default_price_types() {
 
 function espresso_default_prices() {
 
-	global $wpdb, $caffeinated;
+	global $wpdb;
 	
 	if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_PRICE_TABLE . "'") == ESP_PRICE_TABLE) {
 		
@@ -1471,12 +1468,12 @@ function espresso_default_states() {
 function espresso_default_countries() {
 
 	global $wpdb;
-	if ( $wpdb->get_var( "SHOW TABLES LIKE '" . ESP_COUNTRY . "'") == ESP_COUNTRY ) {
+	if ( $wpdb->get_var( "SHOW TABLES LIKE '" . ESP_COUNTRY_TABLE . "'") == ESP_COUNTRY_TABLE ) {
 		
-		$SQL = "SELECT COUNT('CNT_ISO') FROM " . ESP_COUNTRY;
+		$SQL = "SELECT COUNT('CNT_ISO') FROM " . ESP_COUNTRY_TABLE;
 		$countries = $wpdb->get_var($SQL);
 		if ( ! $countries ) {
-			$SQL = "INSERT INTO " . ESP_COUNTRY . " 
+			$SQL = "INSERT INTO " . ESP_COUNTRY_TABLE . " 
 			(CNT_ISO, CNT_ISO3, RGN_ID, CNT_name, CNT_cur_code, CNT_cur_single, CNT_cur_plural, CNT_cur_sign, CNT_cur_sign_b4, CNT_cur_dec_plc, CNT_tel_code, CNT_is_EU, CNT_active) VALUES
 			('AD', 'AND', 0, 'Andorra', 'EUR', 'Euro', 'Euros', '&#8364;', 1, 2, '+376', 0, 0),
 			('AE', 'ARE', 0, 'United Arab Emirates', 'AED', 'Dirham', 'Dirhams', '&#1583;.&#1573;', 1, 2, '+971', 0, 0),

@@ -58,10 +58,7 @@
 
 	// Step 1 - "more options" link in the "Use Attendee #1's information for ALL attendees" box
 	$('#display-more-attendee-copy-options').on( 'click', function() {
-		if ( $('#mer-reg-page-copy-all-attendee-chk').prop('checked', true) ) {
-			$('#mer-reg-page-copy-all-attendee-chk').trigger('click');
-			//$('.mer-reg-page-copy-attendee-chk').trigger('click');
-		}
+		$('#mer-reg-page-copy-all-attendee-chk').prop('checked', false);
 	});
 
 
@@ -74,7 +71,6 @@
 			if ( $(this).prop('checked') != $('#mer-reg-page-copy-all-attendee-chk').prop('checked') ) {
 				$(this).trigger('click');
 			}
-			//$('.mer-reg-page-copy-attendee-chk').trigger('click');
 		});
 		var good_to_go = verify_all_questions_answered('#mer-registration-frm-1');
 		

@@ -64,8 +64,7 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 			'admin_label' => __('Admin Label', 'event_espresso'),
 			'type' => __('Type', 'event_espresso'),
 			'values' => __('Values', 'event_espresso'),
-			'required' => __('Required', 'event_espresso'),
-			'admin_only' => __('Admin Only', 'event_espresso')
+			'required' => __('Required', 'event_espresso')
 			);
 
 		$this->_sortable_columns = array(
@@ -155,10 +154,6 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 	}
 
 
-
-	public function column_admin_only(EE_Question $item) {
-		return $item->admin_only() ? 'Yes' : '';
-	}
 
 
 

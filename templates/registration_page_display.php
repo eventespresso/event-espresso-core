@@ -122,14 +122,17 @@ function espresso_display_reg_page($data) {
 				/* Display the address and google map link if available */
 				if ($data['location'] != '' && (isset($data['org_options']['template_settings']['display_address_in_regform']) && $data['org_options']['template_settings']['display_address_in_regform'])) {
 					?>
-					<p class="event_address" id="event_address-<?php echo $data['event_id'] ?>"><span class="section-title"><?php echo __('Address:', 'event_espresso'); ?></span> <br />
+					<p class="event_address" id="event_address-<?php echo $data['event_id'] ?>">
+						<span class="section-title"><?php echo __('Address:', 'event_espresso'); ?></span><br />
 						<span class="address-block"> <?php echo stripslashes_deep($data['location']); ?><br />
-							<span class="google-map-link"><?php echo $data['google_map_link']; ?></span></span> </p>
+							<span class="google-map-link"><?php echo $data['google_map_link']; ?></span>
+						</span> 
+					</p>
 					<?php
 				}
 
-				if ($data['show_ee_gmap_no_shortcode'] && $data['event_meta']['enable_for_gmap'] && isset($data['ee_gmap_location'])) {
-					echo ee_gmap_display($data['ee_gmap_location'], $data['event_id']);
+				if ( $data['show_google_map'] ) {
+					echo ee_gmap_display( $data['ee_gmaps_opts'] );
 				}
 
 				//Meta example
@@ -180,7 +183,6 @@ function espresso_display_reg_page($data) {
 				//End display description
 				?>
 			</form>
-	<?php echo '<p class="register-link-footer">' . espresso_edit_this($data['event_id']) . '</p>' ?> 
 	</div>
 </div>
 <?php

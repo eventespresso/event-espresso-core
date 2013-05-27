@@ -283,7 +283,17 @@ if (!function_exists('espresso_reg_form_sc')) {
 				$location = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? '<br />' . $event_address2 : '') . ($event_city != '' ? '<br />' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? '<br />' . $event_zip : '') . ($event_country != '' ? '<br />' . $event_country : '');
 
 				//Google map link creation
-				$google_map_link = espresso_google_map_link(array('address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country, 'text' => 'Map and Directions', 'type' => 'text'));
+				require_once EE_HELPERS . 'EE_Maps.helper.php';
+				$atts = array( 
+					'address' => $event_address,
+					'city' 		=> $event_city,
+					'state' 		=> $event_state,
+					'zip' 			=> $event_zip,
+					'country' => $event_country,
+					'text' 		=> 'Map and Directions',
+					'type' 		=> 'text'
+				);
+				$google_map_link = EE_Maps::google_map_link( $atts );
 
 				$reg_start_date = $event->registration_start;
 				$reg_end_date = $event->registration_end;
@@ -313,8 +323,8 @@ if (!function_exists('espresso_reg_form_sc')) {
 						'registration_end' => $event->registration_end,
 						'is_active' => $is_active,
 						'event_country' => $event_country,
-						'start_date' => event_date_display($start_date, get_option('date_format')),
-						'end_date' => event_date_display($end_date, get_option('date_format')),
+						'start_date' => EE_Formatter::event_date_display($start_date, get_option('date_format')),
+						'end_date' => EE_Formatter::event_date_display($end_date, get_option('date_format')),
 						'time' => $event->start_time,
 						'google_map_link' => $google_map_link,
 						'price' => $event->event_cost,
@@ -431,7 +441,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 									</span>
 									<?php
 								}
-								echo event_date_display($start_date, get_option('date_format'));
+								echo EE_Formatter::event_date_display($start_date, get_option('date_format'));
 
 								if ($end_date !== $start_date) {
 									echo '<br />';
@@ -439,18 +449,15 @@ if (!function_exists('espresso_reg_form_sc')) {
 									<span class="section-title">
 										<?php _e('End Date: ', 'event_espresso'); ?>
 									</span> <?php
-						echo event_date_display($end_date, get_option('date_format'));
+						echo EE_Formatter::event_date_display($end_date, get_option('date_format'));
 					}
 									?>
 							</p>
 
 							<?php
-							/*
-							 * * This section shows the registration form if it is an active event * *
-							 */
-							//echo $is_active['status'];//Show event status
+							// This section shows the registration form if it is an active event * *
 							if ($display_reg_form) {
-								?>
+/*								?>
 								<p class="event_time">
 									<?php
 									//This block of code is used to display the times of an event in either a dropdown or text format.
@@ -462,7 +469,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 									?>
 								</p>
 
-								<?php
+								<?php*/
 								//Show pricing in a dropdown or text depending on the number of prices added.
 								do_action('AHEE_price_select', $event_id, array('show_label' => true, 'label' => ''));
 
@@ -565,10 +572,27 @@ if (!function_exists('espresso_category_name_sc')) {
 	function espresso_category_name_sc($atts) {
 		global $wpdb, $org_options;
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		extract(shortcode_atts(array('event_id' => '0'), $atts));
-		$event_id = "{$event_id}";
-		$category_name = espresso_event_category_data($event_id);
-		return $category_name['category_name'];
+		extract( shortcode_atts( array( 'event_id' => '0', 'all_cats' => FALSE ), $atts ));
+		//$category_name = espresso_event_category_data($event_id);
+		$SQL = "SELECT c.category_name FROM " . EVENTS_DETAIL_TABLE . " e ";
+		$SQL .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
+		$SQL .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON  c.id = r.cat_id ";
+		$SQL .= " WHERE e.id = %d";
+
+		$wpdb->get_results( $wpdb->prepare( $SQL, $event_id ));
+		$num_rows = $wpdb->num_rows;
+
+		if ($num_rows > 0 && $all_cats == FALSE) {
+			return $wpdb->last_result[0]->category_name;
+		} elseif ($num_rows > 0) {
+			$category_name = '';
+			foreach ($wpdb->last_result as $result) {
+				$category_name .= $result->category_name . ' ';
+			}
+			return $category_name;
+		} else {
+			return '';
+		}
 	}
 }
 add_shortcode('CATEGORY_NAME', 'espresso_category_name_sc');
@@ -653,6 +677,8 @@ if (!function_exists('display_event_list_sc')) {
 	function display_event_list_sc($atts) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		ob_start();
+		require_once(espresso_get_event_list_template());
+		//add_action ( 'AHEE_regevent_default_action', 'display_all_events', 10, 1 );
 		event_espresso_get_event_details( $atts );
 		$buffer = ob_get_contents();
 		ob_end_clean();
@@ -661,170 +687,6 @@ if (!function_exists('display_event_list_sc')) {
 }
 add_shortcode('EVENT_LIST', 'display_event_list_sc');
 
-
-
-
-
-//function espresso_session_id_sc() {
-//	return event_espresso_session_id();
-//}
-//add_shortcode('SESSION_ID', 'espresso_session_id_sc');
-
-
-
-
-
-/**
-  Staff Details shortcode
-  http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/#staff_shortcode
-
-  Example:
-  [ESPRESSO_STAFF outside_wrapper="div" outside_wrapper_class="event_staff" inside_wrapper="p" inside_wrapper_class="event_person"]
-
-  Parameters:
-  id (The id of the staff member. The daefault is auto loaded of from the event.)
-  outside_wrapper_class
-  outside_wrapper
-  inside_wrapper_class
-  inside_wrapper
-  name_class
-  name_wrapper
-  image_class
-  show_image (true|false default true)
-  show_staff_titles (true|false default true)
-  show_staff_roles (true|false default true)
-  show_staff_details (true|false default true)
-  show_image (true|false default true)
-  show_description (true|false default true)
- * */
-if (!function_exists('espresso_staff_sc')) {
-	function espresso_staff_sc($atts) {
-
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-		global $wpdb, $caffeinated, $this_event_id;
-		if ($caffeinated != true)
-			return;
-
-		empty($atts) ? '' : extract($atts);
-
-		//Outside wrapper
-		$outside_wrapper_class = isset($outside_wrapper_class) ? 'class="' . $outside_wrapper_class . '"' : 'class="event_staff"';
-		$wrapper_start = isset($outside_wrapper) ? '<' . $outside_wrapper . ' ' . $outside_wrapper_class : '<div ' . $outside_wrapper_class;
-		$wrapper_end = isset($outside_wrapper) ? '</' . $outside_wrapper . '>' : '</div>';
-
-		//Persons title
-		$name_class = isset($name_class) ? 'class="' . $name_class . '"' : 'class="person_name"';
-		$name_wrapper_start = isset($name_wrapper) ? '<' . $name_wrapper . ' ' . $name_class . '>' : '<strong ' . $name_class . '>';
-		$name_wrapper_end = isset($name_wrapper) ? '</' . $name_wrapper . '>' : '</strong>';
-
-		//Image class
-		$image_class = isset($image_class) ? 'class="' . $image_class . '"' : 'class="staff_image"';
-		$image_wrapper_class = isset($image_wrapper_class) ? 'class="' . $image_wrapper_class . '"' : 'class="image_wrapper"';
-		$image_wrapper_start = isset($image_wrapper) ? '<' . $image_wrapper . ' ' . $image_wrapper_class : '<p ' . $image_wrapper_class . '>';
-		$image_wrapper_end = isset($image_wrapper) ? '</' . $image_wrapper . '>' : '</p>';
-
-		//Inside wrappers
-		$inside_wrapper_class = isset($inside_wrapper_class) ? 'class="' . $inside_wrapper_class . '"' : 'class="event_person"';
-		$inside_wrapper_before = isset($inside_wrapper) ? '<' . $inside_wrapper . ' ' . $inside_wrapper_class . '>' : '<p ' . $inside_wrapper_class . '>';
-		$inside_wrapper_after = isset($inside_wrapper) ? '</' . $inside_wrapper . '>' : '</p>';
-
-		//Show the persons title?
-		$show_staff_titles = isset($show_staff_titles) && $show_staff_titles == 'false' ? false : true;
-
-		//Show the persons role?
-		$show_staff_roles = isset($show_staff_roles) && $show_staff_roles == 'false' ? false : true;
-
-		//Show the persons details?
-		$show_staff_details = isset($show_staff_details) && $show_staff_details == 'false' ? false : true;
-
-		//Show image?
-		$show_image = (isset($show_image) && $show_image == 'false') ? false : true;
-
-		//Show the description?
-		$show_description = (isset($show_description) && $show_description == 'false') ? false : true;
-
-		//Find the event id
-		if (isset($event_id)) {
-			$event_id = $event_id; //Check to see if the event is used in the shortcode parameter
-		} elseif (isset($this_event_id)) {
-			$event_id = $this_event_id; //Check to see if the global event id is being used
-		} elseif (isset($_REQUEST['event_id'])) {
-			$event_id = $_REQUEST['event_id']; //If the first two are not being used, then get the event id from the url
-		} elseif (!isset($event_id) && !isset($id)) {
-			//_e('No event or staff id supplied!', 'event_espresso') ;
-			return;
-		}
-		$limit = (isset($limit) && $limit > 0) ? " LIMIT 0," . $limit . " " : '';
-		$sql = "SELECT s.id, s.name, s.role, s.meta ";
-		$sql .= " FROM " . EVENTS_PERSONNEL_TABLE . ' s ';
-		if (isset($id) && $id > 0) {
-			$sql .= " WHERE s.id ='" . $id . "' ";
-		} else {
-			$sql .= " JOIN " . EVENTS_PERSONNEL_REL_TABLE . " r ON r.person_id = s.id ";
-			$sql .= " WHERE r.event_id ='" . $event_id . "' ";
-		}
-		$sql .= $limit;
-		//echo $sql;
-		$event_personnel = $wpdb->get_results($sql);
-		$num_rows = $wpdb->num_rows;
-		$html = '';
-		if ($num_rows > 0) {
-			foreach ($event_personnel as $person) {
-				$person_id = $person->id;
-				$person_name = $person->name;
-				$person_role = $person->role;
-
-				$meta = unserialize($person->meta);
-
-				$html .= $wrapper_start . ' id="person_id_' . $person_id . '">';
-
-				//Build the persons name/title
-				$html .= $inside_wrapper_before;
-				if ($show_staff_roles != false) {
-					$person_title = $person_role != '' ? ' - ' . stripslashes_deep($person_role) : '';
-				}
-				$html .= $name_wrapper_start . stripslashes_deep($person_name) . $name_wrapper_end . $person_title;
-				$html .= $inside_wrapper_after;
-
-				//Build the image
-				if ($show_image != false) {
-					$html .= $meta['image'] != '' ? $image_wrapper_start . '<img id="staff_image_' . $person_id . '" ' . $image_class . ' src="' . stripslashes_deep($meta['image']) . '" />' . $image_wrapper_end : '';
-				}
-
-				//Build the description
-				if ($show_description != false) {
-					$html .= $meta['description'] != '' ? html_entity_decode(stripslashes_deep($meta['description'])) : '';
-				}
-
-				//Build the additional details
-				if ($show_staff_details != false) {
-					$html .= $inside_wrapper_before;
-					$html .= isset($meta['organization']) ? __('Company:', 'event_espresso') . ' ' . stripslashes_deep($meta['organization']) . '<br />' : '';
-					if ($show_staff_titles != false) {
-						$html .= isset($meta['title']) ? __('Title:', 'event_espresso') . ' ' . stripslashes_deep($meta['title']) . '<br />' : '';
-					}
-					$html .= isset($meta['industry']) ? __('Industry:', 'event_espresso') . ' ' . stripslashes_deep($meta['industry']) . '<br />' : '';
-					$html .= isset($meta['city']) ? __('City:', 'event_espresso') . ' ' . stripslashes_deep($meta['city']) . '<br />' : '';
-					$html .= isset($meta['country']) ? __('Country:', 'event_espresso') . ' ' . stripslashes_deep($meta['country']) . '<br />' : '';
-					$html .= isset($meta['website']) ? __('Website:', 'event_espresso') . ' <a href="' . stripslashes_deep($meta['website']) . '" target="_blank">' . stripslashes_deep($meta['website']) . '</a><br />' : '';
-					$html .= isset($meta['twitter']) ? __('Twitter:', 'event_espresso') . ' <a href="http://twitter.com/#!/' . stripslashes_deep($meta['twitter']) . '" target="_blank">@' . stripslashes_deep($meta['twitter']) . '</a><br />' : '';
-					$html .= isset($meta['phone']) ? __('Phone:', 'event_espresso') . ' ' . stripslashes_deep($meta['phone']) . '<br />' : '';
-					$html .= $inside_wrapper_after;
-				}
-
-
-				$html .= $wrapper_end;
-			}
-		}
-
-		ob_start();
-		echo wpautop($html);
-		$buffer = ob_get_contents();
-		ob_end_clean();
-		return $buffer;
-	}
-}
-add_shortcode('ESPRESSO_STAFF', 'espresso_staff_sc');
 
 
 
@@ -862,7 +724,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 	function espresso_venue_details_sc($atts) {
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-		global $wpdb, $this_event_id, $caffeinated, $espresso_reg_page;
+		global $wpdb, $this_event_id, $espresso_reg_page;
 
 		empty($atts) ? '' : extract($atts);
 
@@ -974,13 +836,18 @@ if (!function_exists('espresso_venue_details_sc')) {
 				$meta = unserialize($venue->meta);
 
 				//Google map link creation
-				$google_map_link = espresso_google_map_link(array('address' => $venue->address, 'city' => $venue->city, 'state' => $venue->state, 'zip' => $venue->zip, 'country' => $venue->country, 'text' => $map_link_text, 'type' => 'text'));
+				require_once EE_HELPERS . 'EE_Maps.helper.php';
+				$atts = array( 
+					'address' => $venue->address,
+					'city' 		=> $venue->city,
+					'state' 		=> $venue->state,
+					'zip' 			=> $venue->zip,
+					'country' => $venue->country,
+					'text' 		=> $map_link_text,
+					'type' 		=> 'text'
+				);
+				$google_map_link = EE_Maps::google_map_link( $atts );
 
-				//Google map image creation
-				//if ($show_map_image != false){
-				//	$map_w = isset($map_w) ? $map_w : 400;
-				//	$map_h = isset($map_h) ? $map_h : 400;
-				//	$google_map_image = espresso_google_map_link(array('id'=>$venue_id, 'map_image_class'=>$map_image_class, 'address' => $venue->address, 'city' => $venue->city, 'state' => $venue->state, 'zip' => $venue->zip, 'country' => $venue->country, 'text' => $map_link_text, 'type' => 'map', 'map_h'=>$map_h, 'map_w'=>$map_w));
 				//Build the venue title
 				if ($show_title != false) {
 					$html .= $venue->name != '' ? $title_wrapper_start . '>' . stripslashes_deep($venue->name) . $title_wrapper_end : '';
@@ -1010,18 +877,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 				}
 
 				$html .= $show_google_map_link ? '<div class="google-remote-map-link">' . $google_map_link . '</div>' : '';
-				//$html .= var_dump($meta);
-				//If the premium version is installed, then we can laod the map.
-				if ($caffeinated) {
-					if (!empty($meta['enable_for_maps'])) {
-						//Adding this check to make sure we are on a registration page. Otherwise it will break regular posts/pages that are loading the [ESPRESSO_VENUE] shortcode.
-						if ($espresso_reg_page) {
-							$venue_address_elements = ($venue->address != '' ? $venue->address . ',' : '') . ($venue->city != '' ? $venue->city . ',' : '') . ($venue->state != '' ? $venue->state . ',' : '') . ($venue->zip != '' ? $venue->zip . ',' : '') . ($venue->country != '' ? $venue->country . ',' : '');
-							$ee_gmap_location = $venue_address_elements;
-							$html .= ee_gmap_display($ee_gmap_location, $event_id);
-						}
-					}
-				}
+
 
 				//Build the additional details
 				if ($show_additional_details != false) {
@@ -1124,16 +980,17 @@ if (!function_exists('ee_show_meta_sc')) {
 			case 'venue':
 			case 'venue_meta':
 			default:
-				return ee_show_meta($venue_meta, $name);
+				return isset( $venue_meta[$name] ) ? $venue_meta[$name] : '';
 
 			case 'event':
 			case 'event_meta':
-				return ee_show_meta($event_meta, $name);
+				return isset( $event_meta[$name] ) ? $event_meta[$name] : '';
 
 			case 'all':
 			case 'all_meta':
 			default:
-				return ee_show_meta($all_meta, $name);
+				return isset( $all_meta[$name] ) ? $all_meta[$name] : '';
+
 		}
 	}
 }

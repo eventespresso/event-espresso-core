@@ -101,25 +101,31 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_get_transaction_status_array();
 
 		$this->_page_routes = array(
+		
 				'default' => '_transactions_overview_list_table',
+				
 				'view_transaction' => '_transaction_details',
+				
 				'send_payment_reminder'	=> array(
 					'func' => '_send_payment_reminder',
 					'noheader' => TRUE
 					),
-				'reports' => '_transaction_reports',
+
 				'espresso_apply_payment' => array(
 				 	'func' => 'apply_payments_or_refunds',
 				 	'noheader' => TRUE
 				 	),
+					
 				'espresso_apply_refund'	=> array(
 					'func' => 'apply_payments_or_refunds',
 					'noheader' => TRUE
 					),
+					
 				'espresso_delete_payment' => array(
 					'func' => 'delete_payment',
 					'noheader' => TRUE
 					)
+					
 		);
 		
 	}
@@ -148,12 +154,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					'persistent' => FALSE
 					),
 				'metaboxes' => array('_transaction_details_metaboxes')
-				),
-			'reports' => array(
-				'nav' => array(
-					'label' => __('Reports', 'event_espresso'),
-					'order' => 20
-					)
 				)
 		);
 	}
@@ -1009,7 +1009,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 
 
-	/**
+	/** todo add the below reports to TRANSACTIONS admin **/
+/**
 	 * 		generates Business Reports regarding Transactions
 	*		@access protected
 	*		@return void

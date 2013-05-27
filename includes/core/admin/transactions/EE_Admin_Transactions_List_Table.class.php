@@ -223,7 +223,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	*/ 
     function column_ATT_fname($item){
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'id'=>$item['ATT_ID'] ), REG_ADMIN_URL );
-		return '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . ucwords( $item['TXN_att_name'] ) . '</a>';
+		return '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . ucwords( stripslashes( htmlentities( $item['TXN_att_name'], ENT_QUOTES, 'UTF-8' ))) . '</a>';
 	}
 
 
@@ -246,7 +246,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
     function column_event_name($item){	
 		// page=espresso_events&action=edit_event&EVT_ID=2&edit_event_nonce=cf3a7e5b62
 		$edit_event_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$item['id'] ), EVENTS_ADMIN_URL );
-		$event_name = stripslashes( html_entity_decode( $item['event_name'], ENT_QUOTES, 'UTF-8' ));
+		$event_name = stripslashes( htmlentities( $item['event_name'], ENT_QUOTES, 'UTF-8' ));
 		return '<a href="' . $edit_event_url . '" title="' . sprintf( __( 'Edit Event: %s', 'event_espresso' ), $item['event_name'] ) .'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>'; 
 	}
 

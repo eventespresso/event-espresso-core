@@ -10,7 +10,7 @@ echo EE_Form_Fields::hidden_input('QST_system', $question->system_ID());
 echo EE_Form_Fields::hidden_input('QST_wp_user', $question->wp_user());
 echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 $QST_system = $question->system_ID();
-
+$fields = $question->get_fields_settings();
 ?>
 
 <div class="padding">
@@ -21,27 +21,33 @@ $QST_system = $question->system_ID();
 				if( in_array( $fieldName, array( 'QST_ID', 'QST_system','QST_wp_user','QST_deleted', 'QST_order' ))) {
 					continue;
 				}
-			?>
+
 			<tr>
 				<th>
 					<label for="<?php echo $fieldName?>"><?php echo $settings->get_nicename();?></label>
 				</th>
 				<td>
-					<?php 
-					switch($fieldName){
-						case 'QST_display_text':
-					?>
-					<input type="text" class="regular-text" id="<?php echo $fieldName?>" name="<?php echo $fieldName?>" value="<?php echo $question->display_text()?>"/>
+					<input type="text" class="regular-text" id="QST_display_text" name="QST_display_text" value="<?php echo $question->display_text()?>"/>
 					<br/>
 					<p class="description">
 						<?php _e("The actual question to display to registrants who are signing up for events",'event_espresso')?>
-					</p>					
-					<?php break;
-					
-						case 'QST_admin_label': 
+					</p>
+				</td>
+			</tr>
+			
+			<tr>
+				<th>
+					<label for="QST_admin_label"><?php echo $fields['QST_admin_label']->nicename();?></label>
+				</th>
+				<td>
+					<?php 
+						$disabled = ! empty( $QST_system ) ? ' disabled="disabled"' : '';
+						$id =  ! empty( $QST_system ) ? '_disabled' : '';
 					?>
-					<?php $disabled = ! empty( $QST_system ) ? ' disabled="disabled"' : ''; ?>
-					<input type="text" class="regular-text" id="<?php echo $fieldName?>" name="<?php echo $fieldName?>" value="<?php echo $question->admin_label()?>"<?php echo $disabled?>/>
+					<input type="text" class="regular-text" id="QST_admin_label<?php echo $id?>" name="QST_admin_label<?php echo $id?>" value="<?php echo $question->admin_label()?>"<?php echo $disabled?>/>
+					<?php if ( ! empty( $QST_system )) { ?>
+						<input type="hidden"  id="QST_admin_label" name="QST_admin_label" value="<?php echo $question->admin_label()?>"/>
+					<?php } ?>
 					<br/>
 					<p class="description">
 					<?php if ( ! empty( $QST_system )) { ?>
@@ -51,12 +57,21 @@ $QST_system = $question->system_ID();
 					<?php } ?>
 						<?php _e('An administrative label for this question to help you differentiate between two questions that may appear the same to registrants (but are for different events). For example: You could have two questions that simply ask the registrant to choose a "Size", then use this field to label one "T-shirt Size" and the other "Shoe Size".','event_espresso')?>
 					</p>					
-					<?php break;
-					
-						case 'QST_type':
-								$disabled = ! empty( $QST_system ) ? ' disabled="disabled"' : ''; 
-								echo EE_Form_fields::select_input( 'QST_type', $question_types, $question->type(), 'id="QST_type"' . $disabled );
-					?>
+				</td>
+			</tr>
+			
+			<tr>
+				<th>
+					<label for="QST_type"><?php echo $fields['QST_type']->nicename();?></label>
+				</th>
+				<td>
+					<?php 
+						$disabled = ! empty( $QST_system ) ? ' disabled="disabled"' : '';
+						$id =  ! empty( $QST_system ) ? '_disabled' : '';
+						echo EE_Form_fields::select_input( 'QST_type' . $id, $question_types, $question->type(), 'id="QST_type' . $id . '"' . $disabled );
+						if ( ! empty( $QST_system )) { ?>
+						<input type="hidden"  id="QST_type" name="QST_type" value="<?php echo $question->type()?>"/>
+					<?php } ?>
 					<br/>
 					<p class="description">
 						<?php 
@@ -170,48 +185,46 @@ $QST_system = $question->system_ID();
 					<p class="description">
 						<?php _e('Answer Options are the choices that you give people to select from for SINGLE, MULTIPLE or DROPDOWN questions. The Option Value is a simple key that will be saved to the database and the Answer Option Display Text is what the user will actually see in the form. For example, you may have a question for  "T-shirt Size" that has the Option Values of "S", "M", "L", and "XL" with the corresponding display text "Small", "Medium", "Large", and "Extra Large".','event_espresso')?>
 					</p>
-							
-					<?php break;
-					
-					case 'QST_required':
+				</td>
+			</tr>
+			
+			<tr>
+				<th>
+					<label for="QST_required"><?php echo $fields['QST_required']->nicename();?></label>
+				</th>
+				<td>
+					<?php 
 					$system_required = array( 'fname', 'lname', 'email' );
 					$disabled = in_array( $QST_system, $system_required ) ? ' disabled="disabled"' : ''; 
+					$id =  ! empty( $disabled ) ? '_disabled' : '';
 					$requiredOptions=array( 
 						array('text'=>'Optional','id'=>0), 
 						array('text'=>'Required','id'=>1)
 					);
-					echo EE_Form_Fields::select_input('QST_required', $requiredOptions, $question->required(), $disabled );?>
+					echo EE_Form_Fields::select_input('QST_required' . $id, $requiredOptions, $question->required(), 'id="QST_required' . $id . '"' . $disabled );
+					if ( ! empty( $disabled )) { ?>
+						<input type="hidden"  id="QST_required" name="QST_required" value="1"/>
+					<?php } ?>					
 					<br/>
 					<p class="description">
 						<?php _e("Whether registrants are required to answer this question.",'event_espress');?>
 					</p>					
-					<?php break;
-					
-					case 'QST_required_text':?>
-					<input type="text" class="regular-text" id="<?php echo $fieldName?>" name="<?php echo $fieldName?>" value="<?php echo $question->required_text()?>"/>
+				</td>
+			</tr>
+			
+			<tr>
+				<th>
+					<label for="QST_required_text"><?php echo $fields['QST_required_text']->nicename();?></label>
+				</th>
+				<td>
+					<input type="text" class="regular-text" id="QST_required_text" name="QST_required_text" value="<?php echo $question->required_text()?>"/>
 					<br/>
 					<p class="description">
 						<?php _e("Text to display when the registrant does not answer the question but is required to",'event_espresso');?>
 					</p>					
-					<?php break;
-					
-					case 'QST_admin_only':
-					$adminOnlyOptions=array(
-						array('text'=>'All Can See','id'=>0),
-						array('text'=>'Only Admins can See','id'=>1)
-					);
-					echo EE_Form_Fields::select_input('QST_admin_only',$adminOnlyOptions,$question->admin_only());?>
-					<br/>
-					<p class="description">
-						<?php _e("Only the administrator can see this field.",'event_espresso')?>
-					</p>					
-					<?php break;
-					
-					}?>
 				</td>
 			</tr>
-			
-			<?php }?>
+					
 		</tbody>
 	</table>
 	

@@ -116,7 +116,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			<hr />
 			<p><strong><?php _e('Helpful Links', 'event_espresso'); ?></strong></p>
 			<ul>
-				<li><a href="https://developer.paypal.com/devscr?cmd=_home" target="_blank"><?php _e('PayPal Sandbox Login', 'event_espresso'); ?></a></li>
+				<li><a href="https://developer.paypal.com/" target="_blank"><?php _e('PayPal Sandbox Login', 'event_espresso'); ?></a></li>
 				<li><a href="https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox" target="_blank"><?php _e('Sandbox Tutorial', 'event_espresso'); ?></a></li>
 				<li><a href="https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox_get_started" target="_blank"><?php _e('Getting Started with PayPal Sandbox', 'event_espresso'); ?></a></li>
 			</ul>
@@ -316,7 +316,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			<hr />
 			<p><strong><?php _e('Helpful Links', 'event_espresso'); ?></strong></p>
 			<ul>
-				<li><a href="https://developer.paypal.com/devscr?cmd=_home" target="_blank"><?php _e('PayPal Sandbox Login', 'event_espresso'); ?></a></li>
+				<li><a href="https://developer.paypal.com/" target="_blank"><?php _e('PayPal Sandbox Login', 'event_espresso'); ?></a></li>
 				<li><a href="https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox" target="_blank"><?php _e('Sandbox Tutorial', 'event_espresso'); ?></a></li>
 				<li><a href="https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox_get_started" target="_blank"><?php _e('Getting Started with PayPal Sandbox', 'event_espresso'); ?></a></li>
 			</ul>

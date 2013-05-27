@@ -152,7 +152,7 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 			'add_category' => array(
 				'nav' => array(
 					'label' => __('Add Category', 'event_espresso'),
-					'order' => 5,
+					'order' => 20,
 					'persistent' => false),
 				'metaboxes' => array('_publish_post_box'),
 				'help_tabs' => array(
@@ -166,7 +166,7 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 			'edit_category' => array(
 				'nav' => array(
 					'label' => __('Edit Category', 'event_espresso'),
-					'order' => 5,
+					'order' => 20,
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['EVT_CAT_ID']) ? add_query_arg(array('EVT_CAT_ID' => $this->_req_data['EVT_CAT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
@@ -623,7 +623,7 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 		if ( file_exists( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php') ) {
 			require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
-			$EE_Export = EE_Export::instance();
+			$EE_Export = EE_Export::instance( $this->_req_data );
 			$EE_Export->export();
 		}
 

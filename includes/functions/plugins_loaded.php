@@ -1,6 +1,21 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
 /**
+ * 		loads files for managing exceptions, errors, and logging
+ *
+ * 		@access 	public
+ * 		@return 		void
+ */
+function espresso_error_handling() {
+	require_once( EVENT_ESPRESSO_INCLUDES_DIR . '/classes/EE_Exceptions.class.php');
+	require_once( EVENT_ESPRESSO_INCLUDES_DIR . '/classes/EE_Log.class.php' );
+}
+
+
+
+
+
+/**
  * 		Automagically load non-singleton class files - no need to include or require
  * 		ONLY works with class objects created via  "new"  ie: $object = new SomeClassName();
  *
@@ -22,7 +37,6 @@ function espresso_models_autoload($className) {
 		require_once( $filename );
 	}
 }
-
 
 function espresso_libraries_autoload($className) {
 	//let's setup an array of paths to check (for each subsystem)
@@ -96,23 +110,13 @@ function espresso_classes_core_autoload($className) {
 
 
 
-function espresso_display_exception( $excptn ) {
-	echo '
-<style type="text/css">
-body { 
-	width:100%; height:100%; padding:1px; margin:0; background:#f8f8f8;
+	//now loop through assembled filenames and require as available
+	foreach ( $filenames as $filename ) {
+		if ( is_readable($filename) )
+			require_once( $filename );
+	}
 }
-#error_msg {
-	width:60%; height:auto; padding:2em 4em; margin:4em auto; 
-	background:#fff; border:2px solid #D54E21; border-radius:3px;
-	color: #666; font-size:18px;
-}
-</style>';
-	echo '<div id="error_msg">';
-	echo 'Error : ' . $excptn->getMessage();
-	echo '</div>';
-	die();
-}
+
 
 
 
@@ -124,11 +128,13 @@ body {
  * 		@return void
  */
 function espresso_get_user_id() {
-	global $current_user, $espresso_wp_user;
-	$espresso_wp_user = 1;
-	$espresso_wp_user = apply_filters('FHEE_get_user_id', $espresso_wp_user);
+	global $espresso_wp_user;
+	$current_user = wp_get_current_user();
+	$espresso_wp_user = apply_filters( 'FHEE_get_user_id', $current_user->ID );
+	$espresso_wp_user = absint( $espresso_wp_user ) ? absint( $espresso_wp_user ) : 1;
 	return $espresso_wp_user;
 }
+
 
 
 
@@ -151,8 +157,7 @@ function espresso_load_org_options() {
 		// list of critical org_options
 		$critical_org_options = array( 
 			'contact_email',
-			'currency_symbol',
-			'espresso_url_rewrite_activated'
+			'currency_symbol'
 		);
 		// cycle thru critical org_options
 		foreach ( $critical_org_options as $critical_org_option ) {
@@ -165,14 +170,9 @@ function espresso_load_org_options() {
 			}
 		}
 	}
-		
-	require_once( 'EE_Log.class.php' );
+
 	do_action('AHEE_debug_file');
-	$req_vars = '';
-	foreach ( $_REQUEST as $k => $v ){
-		$req_vars .= "\n" . $k . ' = ' . (is_array($v))?print_r($v,true):$v;
-	}
-	do_action('AHEE_log', '', '', '$_REQUEST = ' . $req_vars );	
+
 }
 
 
@@ -316,6 +316,8 @@ add_action('activated_plugin', 'espresso_plugin_activation_errors');
 
 
 
+
+
 /**
  * 		Event Espresso Initialization
  *
@@ -325,99 +327,19 @@ add_action('activated_plugin', 'espresso_plugin_activation_errors');
 function espresso_init() {
 
 	//Globals used throughout the site
-	global $caffeinated, $is_UI_request, $espresso_content;
+	global $is_UI_request, $espresso_content;
 	// is this request for UI or backend 
 	$is_UI_request = ( ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' ) ? TRUE : FALSE;
 	if ( defined('DOING_AJAX') || ! $is_UI_request ) {
 		remove_action( 'shutdown', 'espresso_printr_session' );
 	}
-
 	do_action('AHEE_log', __FILE__, __FUNCTION__, 'is_UI_request = ' . $is_UI_request );
-
-	//Set the default time zone
-	//If the default time zone is set up in the WP Settings, then we will use that as the default.
-	/*if (get_option('timezone_string') != '') {
-		date_default_timezone_set(get_option('timezone_string'));
-	}/**/
-
-	//Wordpress function for setting the locale.
-	//print get_locale();
-	//setlocale(LC_ALL, get_locale());
-	//setlocale(LC_TIME, get_locale());
-
 	//Get language files
 	load_plugin_textdomain('event_espresso', false, dirname(plugin_basename(__FILE__)) . '/languages/');
 
 	//Core function files
-	$caffeinated = apply_filters( 'FHEE_systems_check', $caffeinated );
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . "functions/main.php");
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/time_date.php');
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');	
 
-	do_action('AHEE_pue_update');
-}
-
-
-
-
-
-/**
- * 		perform system check and load additional files
- *
- * 		@access public
- * 		@return void
- */
-function espresso_systems_check( ) {
-	// ... why aren't we using EVENT_ESPRESSO_PLUGIN_FULL_URL?  because if we define that here then we have to do a check in espresso_define_tables_and_paths which would only be needed on plugin_activation.  So we'll just define this temporary variable.
-	$path = defined( 'EVENT_ESPRESSO_PLUGINFULLPATH' ) ? EVENT_ESPRESSO_PLUGINFULLPATH : plugin_dir_path( espresso_main_file() );
-
-	if ( file_exists( $path . 'caffeinated/init.php' )) {
-		require_once( $path . 'caffeinated/init.php' );
-	}
-	return function_exists( 'espresso_system_check' ) ? espresso_system_check() : FALSE;
-}
-add_filter('FHEE_systems_check', 'espresso_systems_check');
-
-
-
-
-
-/**
- * 		Handles exporting of csv files
- *
- * 		@access public
- * 		@return void
- */
-function espresso_check_for_export() {
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-	if (isset($_REQUEST['export'])) {
-		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php')) {
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
-			$EE_Export = EE_Export::instance();
-			$EE_Export->export();
-		}
-	}
-}
-
-
-
-
-
-/**
- * 		Handles importing of csv files
- *
- * 		@access public
- * 		@return void
- */
-function espresso_check_for_import() {
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-	if (isset($_REQUEST['import'])) {
-		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php')) {
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php');
-			$EE_Import = EE_Import::instance();
-			$EE_Import->import();
-		}
-	}
 }
 
 
@@ -485,7 +407,7 @@ function espresso_load_reg_page_files() {
 			case 'cancel_return' :
 				break;
 			
-			case 'notify_url' :
+			case 'notify_url' :				
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Transaction_Page.class.php');
 				EE_Transaction_Page::instance();	
 				break;
@@ -544,6 +466,9 @@ function espresso_add_column_if_it_doesnt_exist($table_name,$column_name,$column
 	return true;
 }
 
+
+
+
 /**
  * Gets all the fields on teh database table. 
  * @param string $table_name, wihtout prefixed $wpdb->prefix
@@ -585,17 +510,77 @@ function espresso_clear_output_buffer() {
 	ob_end_clean();
 }
 
+function espresso_do_pue_updates() {
+	do_action('AHEE_pue_update');
+}
 
 
 function espresso_site_license() {
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	global $org_options;
-// PUE Auto Upgrades stuff
+
+
+	$ueip_optin = get_option('ee_ueip_optin');
+	$ueip_has_notified = isset($_POST['ueip_optin']) ? TRUE : get_option('ee_ueip_has_notified');
+
+	//has optin been selected for datacollection?
+	$espresso_data_optin = !empty($ueip_optin) ? $ueip_optin : NULL;
+
+	if ( empty($ueip_has_notified) ) {
+		add_action('admin_notices', 'espresso_data_collection_optin_notice', 10 );
+		add_action('admin_enqueue_scripts', 'espresso_data_collection_enqueue_scripts', 10 );
+		add_action('wp_ajax_espresso_data_optin', 'espresso_data_optin_ajax_handler', 10 );
+		update_option('ee_ueip_optin', 'yes');
+		$espresso_data_optin = 'yes';
+	}
+
+	//let's prepare extra stats
+	$extra_stats = array();
+
+	//only collect extra stats if the plugin user has opted in.
+	if ( !empty($espresso_data_optin) && $espresso_data_optin == 'yes' ) {
+		//let's only setup extra data if transient has expired
+		if ( false === ( $transient = get_transient('ee_extra_data') ) ) {
+			//active gateways
+			$active_gateways = get_option('event_espresso_active_gateways');
+			if ( !empty($active_gateways ) ) {
+				foreach ( (array) $active_gateways as $gateway => $ignore ) {
+					$extra_stats[$gateway . '_gateway_active'] = 1;
+				}
+			}
+
+			//set transient
+			set_transient( 'ee_extra_data', $extra_stats, WEEK_IN_SECONDS );
+		}
+	}
+
+
+
+	// PUE Auto Upgrades stuff
 	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'libraries/pue/pue-client.php')) { //include the file 
 		require(EVENT_ESPRESSO_PLUGINFULLPATH . 'libraries/pue/pue-client.php' );
+		if ( empty( $org_options ) ) {
+			$org_options = get_user_meta( get_current_user_id(), 'events_organization_settings', true);
+		}
+
 		$api_key = isset($org_options['site_license_key']) ? $org_options['site_license_key'] : '';
-		$host_server_url = 'http://eventespresso.com'; //this needs to be the host server where plugin update engine is installed.
-		$plugin_slug = 'event-espresso-core-pr'; //this needs to be the slug of the plugin/addon that you want updated (and that pue-client.php is included with).  This slug should match what you've set as the value for plugin-slug when adding the plugin to the plugin list via plugin-update-engine on your server.
+		$host_server_url = 'http://eventespresso.com'; //this needs to be the host server where plugin update engine is installed. Note, if you leave this blank then it is assumed the WordPress repo will be used and we'll just check there.
+
+		//Note: PUE uses a simple preg_match to determine what type is currently installed based on version number.  So it's important that you use a key for the version type that is unique and not found in another key.
+		//For example:
+		//$plugin_slug['premium']['p'] = 'some-premium-slug';
+		//$plugin_slug['prerelease']['pr'] = 'some-pre-release-slug';
+		//The above would not work because "p" is found in both keys for the version type. ( i.e 1.0.p vs 1.0.pr ) so doing something like:
+		//$plugin_slug['premium']['p'] = 'some-premium-slug';
+		//$plugin_slug['prerelease']['b'] = 'some-pre-release-slug';
+		//..WOULD work!
+		$plugin_slug = array(
+			'free' => array( 'l' => 'event-espresso-core-decaf' ),
+			'premium' => array( 'p' => 'event-espresso-core-caf' ),
+			'prerelease' => array( 'b' => 'event-espresso-core-pr' )
+			);
+
+
 		//$options needs to be an array with the included keys as listed.
 		$options = array(
 		//	'optionName' => '', //(optional) - used as the reference for saving update information in the clients options table.  Will be automatically set if left blank.
@@ -603,9 +588,82 @@ function espresso_site_license() {
 			'lang_domain' => 'event_espresso', //(optional) - put here whatever reference you are using for the localization of your plugin (if it's localized).  That way strings in this file will be included in the translation for your plugin.
 			'checkPeriod' => '24', //(optional) - use this parameter to indicate how often you want the client's install to ping your server for update checks.  The integer indicates hours.  If you don't include this parameter it will default to 12 hours.
 			'option_key' => 'site_license_key', //this is what is used to reference the api_key in your plugin options.  PUE uses this to trigger updating your information message whenever this option_key is modified.
-			'options_page_slug' => 'event_espresso'
+			'options_page_slug' => 'event_espresso',
+			'plugin_basename' => plugin_basename(EVENT_ESPRESSO_PLUGINPATH),
+			'use_wp_update' => FALSE, //if TRUE then you want FREE versions of the plugin to be updated from WP
+			'extra_stats' => $extra_stats
 		);
 		$check_for_updates = new PluginUpdateEngineChecker($host_server_url, $plugin_slug, $options); //initiate the class and start the plugin update engine!
 	}
 }
 add_action('AHEE_pue_update', 'espresso_site_license');
+
+
+
+/**
+ * The purpose of this function is to display information about Event Espresso data collection and a optin selection for extra data collecting by users.
+ * @return string html.
+ */
+ function espresso_data_collection_optin_text( $extra = TRUE ) {
+	 echo '<h4>'.__('User eXperience Improvement Program (UXIP)', 'event_espresso').'</h4>';
+	 $settings_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'your_organization_settings'), admin_url( 'admin.php?page=espresso_general_settings') );
+	 $settings_url = $settings_url . '#UXIP_settings';
+	 echo sprintf( __('%sPlease help us make Event Espresso better and vote for your favorite features.%s With this version of Event Espresso a feature, called the %sUser eXperience Improvement Program (UXIP)%s, has been implemented to automatically send information to us about how you use our products and services, and support-related data. We use this information to improve our products and features, that you use most often, and to help track problems. Participation in the program is enabled by default, and the end results are software improvements to better meet the needs of our customers. The data we collect will never be sold, traded, or misused in any way. %sPlease see our %sPrivacy Policy%s for more information.', 'event_espresso'), '<em>', '</em><br />','<a href="http://eventespresso.com/about/user-experience-improvement-program-uxip/" target="_blank">','</a>','<br><br>','<a href="http://eventespresso.com/about/privacy-policy/" target="_blank">','</a>' );
+	 if ( $extra )
+	 	echo sprintf( __( 'You can choose to not be part of the solution and opt-out of this program by changing the %sEvent Espresso > General Settings > Your Organization > UXIP Settings%s within your WordPress Admin', 'event_espresso' ), '<a href="' . $settings_url . '">','</a>' );
+}
+
+function espresso_data_collection_optin_notice() {
+	$ueip_has_notified = get_option('ee_ueip_has_notified');
+	$settings_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'your_organization_settings'), admin_url( 'admin.php?page=espresso_general_settings') );
+	$settings_url = $settings_url . '#UXIP_settings';
+	?>
+	<div class="updated data-collect-optin" id="espresso-data-collect-optin-container">
+		<p><?php echo espresso_data_collection_optin_text(); ?></p>
+		<div id="data-collect-optin-options-container">
+			<span style="display: none" id="data-optin-nonce"><?php echo wp_create_nonce('ee-data-optin'); ?></span>
+			<?php
+			if ( empty($ueip_has_notified) ) {
+				echo '<a href="' . $settings_url . '">'.__('Opt-out now?', 'event_espresso').'</a>';
+			}
+			?>
+			<button class="button-secondary data-optin-button" value="no"><?php _e('Dismiss', 'event_espresso'); ?></button>
+			<!--<button class="button-primary data-optin-button" value="yes"><?php _e('Yes! I\'m In', 'event_espresso'); ?></button>-->
+			<div style="clear:both"></div>
+		</div>
+	</div>
+	<?php
+}
+
+
+	
+/**
+ * enqueue scripts/styles needed for data collection optin
+ * @return void
+ */
+function espresso_data_collection_enqueue_scripts() {
+	wp_register_script( 'ee-data-optin-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/ee-data-optin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+	wp_register_style( 'ee-data-optin-css', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ee-data-optin.css', array(), EVENT_ESPRESSO_VERSION );
+
+	wp_enqueue_script('ee-data-optin-js');
+	wp_enqueue_style('ee-data-optin-css');
+}
+
+
+/**
+ * This just handles the setting of the selected option for data optin via ajax
+ * @return void
+ */
+function espresso_data_optin_ajax_handler() {
+
+	//verify nonce
+	if ( isset($_POST['nonce']) && !wp_verify_nonce($_POST['nonce'], 'ee-data-optin') ) exit();
+
+	//made it here so let's save the selection
+	$ueip_optin = isset( $_POST['selection'] ) ? $_POST['selection'] : 'no';
+
+	//update_option('ee_ueip_optin', $ueip_optin);
+	update_option('ee_ueip_has_notified', 1);
+	exit();
+}
+

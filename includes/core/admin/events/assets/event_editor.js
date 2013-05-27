@@ -496,11 +496,16 @@ jQuery(document).ready(function($) {
 
 	$('#display-add-new-ticket-price').on( 'click', function(){
 		$('#edit_event_save_prices_btn').slideUp(500);
+		$('#event-price-XXXXXX').slideUp(500);
 		$('#new-ticket-price-PRC_name').addClass('required');
+		$('#quick-edit-ticket-price-PRC_order-XXXXXX').val('');
+		$('#quick-edit-ticket-price-PRC_name-XXXXXX').val('');
+		$('#quick-edit-ticket-price-PRC_amount-XXXXXX').val('');
 	});
 
 	$('#hide-add-new-ticket-price').on( 'click', function(){
 		$('#edit_event_save_prices_btn').delay(450).fadeIn(50);
+		$('#event-price-XXXXXX').delay(450).fadeIn(50);
 		$('#new-ticket-price-PRC_name').removeClass('required');
 	});
 	

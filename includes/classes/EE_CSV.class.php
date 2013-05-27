@@ -679,7 +679,7 @@
 	public function list_db_table_fields ( $table = FALSE ) {
 		
 		// no table name?? get outta here
-		if ( ! $table ) {
+		if ( ! $table || empty( $table )) {
 			return FALSE;
 		}
 		
@@ -688,8 +688,8 @@
 		
 		$headers = array();		
 	
-		$sql = "SHOW COLUMNS FROM " . $table;
-		$result = $wpdb->get_results($sql);
+		$SQL = 'SHOW COLUMNS FROM ' . $table;
+		$result = $wpdb->get_results( $SQL );
 		if ($wpdb->num_rows > 0) {
 			foreach ( $result as $column ) {
 				$headers[$column->Field] = $column->Field;
