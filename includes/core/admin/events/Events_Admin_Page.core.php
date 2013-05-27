@@ -458,12 +458,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 * @return void
 	 */
 	private function _generate_publish_box_extra_content() {
+		//load formatter helper
+  		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
 		// publish box
 		$publish_box_extra_args['reg_url'] = espresso_reg_url($this->_event->id, $this->_event->slug);
 		$publish_box_extra_args['event_id'] = $this->_event->id;
 		$publish_box_extra_args['event_preview_url'] = add_query_arg(array('action' => 'copy_event', 'event_id' => $this->_event->id), EVENTS_ADMIN_URL);
 		$publish_box_extra_args['event_name'] = $this->_event->event_name;
-		$publish_box_extra_args['event_start_date'] = event_date_display($this->_event->start_date);
+		$publish_box_extra_args['event_start_date'] = EE_Formatter::event_date_display($this->_event->start_date);
 		$publish_box_extra_args['event_status_display'] = $this->_event->status['display'];
 		$publish_box_extra_args['view_attendees_url'] = add_query_arg(array('action' => 'default', 'event_id' => $this->_event->id), REG_ADMIN_URL);
 		$publish_box_extra_args['attendees_reg_limit'] = get_number_of_attendees_reg_limit($this->_event->id, 'num_attendees_slash_reg_limit', $this->_event->reg_limit);
@@ -511,6 +513,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 */
 	private function _set_add_event_object() {
 		global $wpdb, $org_options, $caffeinated, $current_user;
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Maps.helper.php';
+
 		get_currentuserinfo();
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$this->_event = new stdClass();
@@ -536,7 +540,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$this->_event->virtual_url = '';
 		$this->_event->virtual_phone = '';
 		$this->_event->submitted = '';
-		$this->_event->google_map_link = espresso_google_map_link(array(
+		$this->_event->google_map_link = EE_Maps::google_map_link(array(
 			'address' => $this->_event->address,
 			'city' => $this->_event->city,
 			'state' => $this->_event->state,
@@ -581,6 +585,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 		global $wpdb, $org_options;
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
+		//load formatter helper
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Maps.helper.php';
+
 		//check if we have an event_id if not then lets setup defaults for adding an event.
 		if (!isset($this->_req_data['EVT_ID'])) {
 			$this->_set_add_event_object();
@@ -619,8 +627,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$this->_event->state = stripslashes_deep($this->_event->state);
 		$this->_event->zip = stripslashes_deep($this->_event->zip);
 		$this->_event->country = stripslashes_deep($this->_event->country);
-		$this->_event->submitted = $this->_event->submitted != '0000-00-00 00:00:00' ? ( empty($this->_event->submitted) ? '' : event_date_display($this->_event->submitted) ) : 'N/A';
-		$this->_event->google_map_link = espresso_google_map_link(array('address' => $this->_event->address, 'city' => $this->_event->city, 'state' => $this->_event->state, 'zip' => $this->_event->zip, 'country' => $this->_event->country));
+		$this->_event->submitted = $this->_event->submitted != '0000-00-00 00:00:00' ? ( empty($this->_event->submitted) ? '' : EE_Formatter::event_date_display($this->_event->submitted) ) : 'N/A';
+		$this->_event->google_map_link = EE_Maps::google_map_link(array('address' => $this->_event->address, 'city' => $this->_event->city, 'state' => $this->_event->state, 'zip' => $this->_event->zip, 'country' => $this->_event->country));
 		$this->_event->event_meta = unserialize($this->_event->event_meta);
 
 
