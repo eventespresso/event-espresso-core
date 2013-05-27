@@ -596,6 +596,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['organization_country'] = isset( $org_options['organization_country'] ) ? $this->_display_nice( $org_options['organization_country'] ) : '';
 		$this->_template_args['currency_symbol'] = isset( $org_options['currency_symbol'] ) ? $this->_display_nice( $org_options['currency_symbol'] ) : '$';
 		$this->_template_args['contact_email'] = isset( $org_options['contact_email'] ) ? $this->_display_nice( $org_options['contact_email'] ) : '';
+		//UXIP settings
+		$this->_template_args['ee_ueip_optin'] = get_option( 'ee_ueip_optin' );
 
 		//PUE verification stuff
 		$plugin_basename = plugin_basename(EVENT_ESPRESSO_PLUGINPATH);
@@ -606,9 +608,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'your_organization_settings.template.php', $this->_template_args, TRUE );
 
-
-		//UXIP settings
-		$this->_template_args['ee_ueip_optin'] = get_option( 'ee_ueip_optin' );
 		$this->display_admin_page_with_sidebar();	
 	}
 
