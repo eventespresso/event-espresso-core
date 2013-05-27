@@ -58,6 +58,7 @@ class PluginUpdateEngineChecker {
 	public $pue_install_key; //we'll customize this later so each plugin can have it's own install key!
 	public $slug; //will hold the slug that is being used to check for updates.
 	public $current_domain; //holds what the current domain is that is pinging for updates
+	public $extra_stats; //used to contain an array of key/value pairs that will be sent as extra stats.
 
 
 	private $_installed_version = ''; //this will just hold what installed version we have of the plugin right now.
@@ -111,6 +112,7 @@ class PluginUpdateEngineChecker {
 		$this->option_key = $options_verified['option_key'];
 		$this->options_page_slug = $options_verified['options_page_slug'];
 		$this->_use_wp_update = $this->_is_premium || $this->_is_prerelease ? FALSE : $options_verified['use_wp_update'];
+		$this->extra_stats = $extra_stats;
 
 		//set hooks
 		$this->_check_for_forced_upgrade();
@@ -160,6 +162,7 @@ class PluginUpdateEngineChecker {
 			'checkPeriod' => 12,
 			'option_key' => 'pue_site_license_key',
 			'use_wp_download' => FALSE,
+			'extra_stats' => array() //this is an array of key value pairs for extra stats being tracked.
 			);
 
 		//let's first make sure requireds are present
@@ -547,6 +550,7 @@ class PluginUpdateEngineChecker {
 			$options
 		);
 
+		$this->_send_extra_stats(); //we'll trigger an extra stats update here.
 
 		//Try to parse the response
 		$pluginInfo = null;
@@ -559,6 +563,41 @@ class PluginUpdateEngineChecker {
 		
 		return $pluginInfo;
 	}
+
+
+
+
+	private function _send_extra_stats() {
+		//first if we don't have a stats array then lets just get out.
+		if ( empty( $this->extra_stats) ) return;
+
+
+		//set up args sent in body
+		$body = array(
+			'extra_stats' => $this->extra_stats,
+			'user_api_key' => $this->api_secret_key,
+			'pue_stats_request' => 1,
+			'domain' => $this->current_domain,
+			'pue_plugin_slug' => $this->slug,
+			'pue_plugin_version' => $this->getInstalledVersion()
+			);
+
+		//setup up post args
+		$args = array(
+			'timeout' => 10,
+			'blocking' => TRUE,
+			'user-agent' => 'PUE-stats-carrier',
+			'body' => $body,
+			'blocking' => TRUE,
+			'sslverify' => FALSE
+			);
+
+		$resp = wp_remote_post($this->metadataUrl, $args);
+		
+	}
+
+
+
 	
 	/**
 	 * Retrieve the latest update (if any) from the configured API endpoint.

@@ -605,6 +605,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_set_add_edit_form_tags( 'update_your_organization_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'your_organization_settings.template.php', $this->_template_args, TRUE );
+
+
+		//UXIP settings
+		$this->_template_args['ee_ueip_optin'] = get_option( 'ee_ueip_optin' );
 		$this->display_admin_page_with_sidebar();	
 	}
 
@@ -621,6 +625,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data['organization_country'] = isset( $this->_req_data['organization_country'] ) ? absint( $this->_req_data['organization_country'] ) : NULL;
 		$data['contact_email'] = isset( $this->_req_data['contact_email'] ) ? sanitize_email( $this->_req_data['contact_email'] ) : NULL;
 		$data['site_license_key'] = isset( $this->_req_data['site_license_key'] ) ? sanitize_text_field( $this->_req_data['site_license_key'] ) : NULL;
+		$data['ee_ueip_optin'] = isset( $this->_req_data['ueip_optin'] ) && !empty( $this->_req_data['ueip_optin'] ) ? $this->_req_data['ueip_optin'] : 'yes'; 
 
 		$data = apply_filters('FHEE_your_organization_settings_save', $data);	
 		

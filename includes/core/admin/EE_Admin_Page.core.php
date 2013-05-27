@@ -2474,6 +2474,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$data[ $key ] = is_array( $value ) ? $value : addslashes( html_entity_decode( $value, ENT_QUOTES, 'UTF-8' ));
 		}
 
+		//remove any options that are NOT going to be saved with org_options.
+		if ( isset( $data['ee_ueip_optin'] ) ) {
+			$ee_ueip_optin = $data['ee_ueip_optin'];
+			unset( $data['ee_ueip_optin'] );
+			update_option( 'ee_ueip_optin', $ee_ueip_optin);
+			update_option( 'ee_ueip_has_notified', TRUE );
+		}
+
 		// overwrite existing org options with new data
 		$data = array_merge( $org_options, $data );
 		// and save it
