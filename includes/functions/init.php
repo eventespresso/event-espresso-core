@@ -90,7 +90,7 @@ function espresso_add_rewrite_rules( $to_flush_or_not_to_flush = FALSE ) {
 		if ( $to_flush_or_not_to_flush ) {
 			flush_rewrite_rules();
 		}
-	}
+	}	
 	
 }
 

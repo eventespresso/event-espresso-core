@@ -167,6 +167,7 @@ if ( is_admin() ) {
 	add_action( 'init', 'espresso_check_no_ticket_prices_array', 101 );
 	add_action('admin_bar_menu', 'espresso_toolbar_items', 100);
 	add_action( 'admin_enqueue_scripts', 'espresso_load_scripts_styles' );
+	add_action( 'plugins_loaded', 'espresso_do_pue_updates', 0 );
 	
 } else {
 	

@@ -319,7 +319,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_script('media-upload');
 		wp_enqueue_script('thickbox');
 		wp_register_script( 'organization_settings', GEN_SET_ASSETS_URL . 'your_organization_settings.js', array( 'jquery','media-upload','thickbox' ), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_style( 'organization-css', GEN_SET_ASSETS_URL . 'organization.css', array(), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_script( 'organization_settings' );	
+		wp_enqueue_style( 'organization-css' );
 		$confirm_image_delete = array( 'text' => __('Do you really want to delete this image? Please remember to save your settings to complete the removal.', 'event_espresso')); 
 		wp_localize_script( 'organization_settings', 'confirm_image_delete', $confirm_image_delete );
 
@@ -583,6 +585,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	protected function _your_organization_settings() {
 	
 		global $org_options;
+		$this->_template_args['site_license_key'] = isset( $org_options['site_license_key'] ) ? $this->_display_nice( $org_options['site_license_key'] ) : '';
 		$this->_template_args['default_logo_url'] = isset( $org_options['default_logo_url'] ) ? $this->_display_nice( $org_options['default_logo_url'] ) : FALSE;
 		$this->_template_args['organization'] = isset( $org_options['organization'] ) ? $this->_display_nice( $org_options['organization'] ) : '';
 		$this->_template_args['organization_street1'] = isset( $org_options['organization_street1'] ) ? $this->_display_nice( $org_options['organization_street1'] ) : '';
@@ -592,11 +595,20 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['organization_zip'] = isset( $org_options['organization_zip'] ) ? $this->_display_nice( $org_options['organization_zip'] ) : '';
 		$this->_template_args['organization_country'] = isset( $org_options['organization_country'] ) ? $this->_display_nice( $org_options['organization_country'] ) : '';
 		$this->_template_args['currency_symbol'] = isset( $org_options['currency_symbol'] ) ? $this->_display_nice( $org_options['currency_symbol'] ) : '$';
-		$this->_template_args['contact_email'] = isset( $org_options['contact_email'] ) ? $this->_display_nice( $org_options['contact_email'] ) : '';		
+		$this->_template_args['contact_email'] = isset( $org_options['contact_email'] ) ? $this->_display_nice( $org_options['contact_email'] ) : '';
+
+		//PUE verification stuff
+		$plugin_basename = plugin_basename(EVENT_ESPRESSO_PLUGINPATH);
+		$verify_fail = get_option( 'pue_verification_error_' . $plugin_basename );
+		$this->_template_args['site_license_key_verified'] = !empty( $verify_fail ) ? '<span class"pue-sl-not-verified"></span>' : '<span class="pue-sl-verified"></span>';		
 		
 		$this->_set_add_edit_form_tags( 'update_your_organization_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'your_organization_settings.template.php', $this->_template_args, TRUE );
+
+
+		//UXIP settings
+		$this->_template_args['ee_ueip_optin'] = get_option( 'ee_ueip_optin' );
 		$this->display_admin_page_with_sidebar();	
 	}
 
@@ -612,6 +624,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data['organization_zip'] = isset( $this->_req_data['organization_zip'] ) ? sanitize_text_field( $this->_req_data['organization_zip'] ) : NULL;
 		$data['organization_country'] = isset( $this->_req_data['organization_country'] ) ? absint( $this->_req_data['organization_country'] ) : NULL;
 		$data['contact_email'] = isset( $this->_req_data['contact_email'] ) ? sanitize_email( $this->_req_data['contact_email'] ) : NULL;
+		$data['site_license_key'] = isset( $this->_req_data['site_license_key'] ) ? sanitize_text_field( $this->_req_data['site_license_key'] ) : NULL;
+		$data['ee_ueip_optin'] = isset( $this->_req_data['ueip_optin'] ) && !empty( $this->_req_data['ueip_optin'] ) ? $this->_req_data['ueip_optin'] : 'yes'; 
 
 		$data = apply_filters('FHEE_your_organization_settings_save', $data);	
 		
