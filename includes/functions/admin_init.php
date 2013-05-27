@@ -176,6 +176,7 @@ function espresso_plugin_activation() {
 		espresso_get_user_id();
 		//include autoloaders
 		require_once(  EVENT_ESPRESSO_INCLUDES_DIR . 'functions/plugins_loaded.php');
+		require_once(  EVENT_ESPRESSO_INCLUDES_DIR . 'functions/init.php');
 		espresso_autoload();
 		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/activation.php');
 		espresso_check_data_tables();
