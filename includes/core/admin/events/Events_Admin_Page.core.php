@@ -678,6 +678,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
 		$DTM_MDL = EEM_Datetime::instance();
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_DTT_helper.helper.php';
 
 		global $times;
 		// grab event times
@@ -693,7 +694,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$template_args['org_options'] = $org_options;
 		$template_args['current_time_help_link'] = $this->_get_help_tab_link('current_time_info');
 		$template_args['current_date'] = date(get_option('date_format')) . ' ' . date(get_option('time_format'));
-		$template_args['event_timezone'] = eventespresso_ddtimezone($this->_event->id);
+		$template_args['event_timezone'] = EE_DTT_helper::ddtimezone($this->_event->id);
 		$template_args['use_event_timezones_template'] = apply_filters('FHEE_event_datetime_metabox_timezones_template', '', $template_args);
 		$template_args['template_args'] = $template_args;
 
