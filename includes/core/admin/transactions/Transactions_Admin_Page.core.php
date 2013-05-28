@@ -376,6 +376,10 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'images/invoice-1-16x16.png',
 				'desc' => __('Download Invoice for Transaction.', 'event_espresso')
 				),
+			'send_payment_reminder' => array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'images/payment-reminder-20x20.png',
+				'desc' => __('Send Payment Reminder', 'event_espresso')
+				),
 			'view_registration' => array(
 				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'images/edit.png',
 				'desc' => __('View Registration Details', 'event_espresso')
