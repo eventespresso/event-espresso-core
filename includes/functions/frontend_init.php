@@ -51,19 +51,28 @@ function espresso_test_for_reg_page() {
 	$page_id = isset( $_GET['page_id'] ) ? absint( $_GET['page_id'] ) : FALSE; 
 	// no page_id in GET?
 	if ( ! $page_id ) {
-		// grab full url,  last segment = current page
-		$current_page = basename( espresso_get_current_full_url() );
-		$page_id =espresso_get_page_id_from_slug( $current_page );
+		// create array from url segments, not including domain
+		$uri_segments = explode( '/', trim( esc_url_raw( $_SERVER['REQUEST_URI']),  '/' ));
+		// flip it so that we can work from the outer most segment in
+		array_reverse( $uri_segments );
+		foreach( $uri_segments as $uri_segment ) {
+			// can we get a page_id ?
+			if ( $page_id =espresso_get_page_id_from_slug( $uri_segment )) {
+				break;
+			}
+		}
 	} 
-	
+	//echo '<h4>$page_id : ' . $page_id . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 	if ( $page_id ) {
 		$this_is_a_reg_page = espresso_critical_pages( $page_id );
 	} else if ( get_option('show_on_front') == 'page' ) {
 		// first check if a page is being used for the frontpage && grab that page's id
 		$frontpage = get_option('page_on_front');
+		//echo '<h4>$frontpage : ' . $frontpage . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		// is it a critical page ?
 		$this_is_a_reg_page = espresso_critical_pages( $frontpage );
-	} 
+	}
+	//echo '<h4>$this_is_a_reg_page : ' . $this_is_a_reg_page . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 	// either we've found an EE page, or we simply aren't on one
 	return $this_is_a_reg_page;
 }
@@ -72,15 +81,20 @@ function espresso_test_for_reg_page() {
 
 
 
-function espresso_get_current_full_url() {  
+function espresso_get_current_full_url( $return_all = FALSE ) {  
 	$current_URL = ! isset( $_SERVER['HTTPS'] ) || $_SERVER['HTTPS'] != 'on' ? 'http://' : 'https://';
 	if ( isset( $_SERVER['SERVER_PORT'] ) && $_SERVER['SERVER_PORT'] != '80' ) {
 		$current_URL .= $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'];		
 	} else {
 		$current_URL .= $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
 	}
-	$current_URL = explode( '?', $current_URL );
-    return $current_URL[0];
+	$current_URL .= esc_url_raw( $current_URL );	
+	if ( $return_all ) {
+		return $current_URL;
+	} else {
+		$current_URL = explode( '?', $current_URL );	
+	    return $current_URL[0];		
+	}
 }
 
 
@@ -113,7 +127,6 @@ function espresso_critical_pages( $page_id, $event_page_slug = FALSE ) {
 
 	if ( isset( $critical_page_ids[ $page_id ] )) {
 		$current_ee_page = $page_id;
-		//echo '<h4>$current_ee_page : ' . $current_ee_page . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		switch( $critical_page_ids[ $page_id ] ) {
 			case 'event_page_id' :
 					$this_is_a_reg_page = TRUE;
@@ -161,8 +174,10 @@ function espresso_check_scripts() {
 	
 
 
-function event_espresso_run() {
+function event_espresso_run( $wp ) {
 
+	//printr( $wp, '$wp  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+	
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	do_action('AHEE_event_espresso_run_start');
 	// grab some globals
@@ -304,22 +319,6 @@ function eei18n_js_strings() {
 	// var translatedString = eei18n.string_key;
 }
 
-
-
-
-
-
-
-
-
-function espresso_add_query_vars($query_vars) {
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-	$query_vars[] = 'event_slug';
-	$query_vars[] = 'ee';
-	$query_vars[] = 'e_reg';
-	//printr( $query_vars );
-	return $query_vars;
-}
 
 
 
