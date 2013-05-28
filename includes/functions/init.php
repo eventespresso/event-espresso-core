@@ -66,11 +66,27 @@ function espresso_events_on_frontpage() {
 		// grab that page's id
 		$frontpage = get_option('page_on_front');
 		// compare to event_page_id
-		return  $frontpage == $org_options['event_page_id'] ? TRUE : FALSE;
+		return $frontpage == $org_options['event_page_id'] ? TRUE : FALSE;
 	}
 	return FALSE;
 }
 
+
+
+
+
+
+
+
+
+function espresso_add_query_vars($query_vars) {
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+	$query_vars[] = 'event_slug';
+	$query_vars[] = 'ee';
+	$query_vars[] = 'e_reg';
+	//printr( $query_vars, '$query_vars  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+	return $query_vars;
+}
 
 
 
@@ -88,19 +104,13 @@ function espresso_add_rewrite_rules( $to_flush_or_not_to_flush = FALSE ) {
 	if (empty($org_options['event_page_id'])) {
 		espresso_load_org_options();
 	}
-	$to_flush_or_not_to_flush = FALSE;
 	// create pretty permalinks
 	if ( get_option('permalink_structure') != '' ) {
 		// grab slug for event reg page
 		$SQL = 'SELECT post_name  FROM ' . $wpdb->prefix . 'posts WHERE ID = %d';
 		$reg_page_url_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $org_options['event_page_id'] ));
-		// first check if a page is being used for the frontpage
 		// rules for event slug pretty links
-		if ( espresso_events_on_frontpage() ) {
-			add_rewrite_rule( '([^/]+)/?$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top');
-		} else {
-			add_rewrite_rule( $reg_page_url_slug . '/([^/]+)/?$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top');
-		}
+		add_rewrite_rule( $reg_page_url_slug . '/([^/]+)/?$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top');
 		// whether tis nobler on the server to suffer the pings and errors of outrageous flushing
 		if ( $to_flush_or_not_to_flush ) {
 			flush_rewrite_rules();
