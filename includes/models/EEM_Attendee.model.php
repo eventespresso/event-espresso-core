@@ -251,8 +251,7 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 		}
 		// retreive a particular transaction
 		$where_cols_n_values = array( 'ATT_ID' => $ATT_ID );
-		if ( $attendee = $this->select_row_where ( $where_cols_n_values )) {
-			$attendee_array = $this->_create_objects( array( $attendee ));
+		if ( $attendee = $this->get_all( array($where_cols_n_values ) )) {
 			return array_shift( $attendee_array );
 		} else {
 			return FALSE;
@@ -276,9 +275,8 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 			return FALSE;
 		}
 
-		if ( $attendee = $this->select_row_where ( $where_cols_n_values )) {
-			$attendee_array = $this->_create_objects( array( $attendee ));
-			return array_shift( $attendee_array );
+		if ( $attendee = $this->get_all( array($where_cols_n_values ) ) ) {
+			return array_shift( $attendee );
 		} else {
 			return FALSE;
 		}
