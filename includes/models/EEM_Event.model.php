@@ -88,7 +88,7 @@ class EEM_Event  extends EEM_Base{
 		));
 		$this->_tables = array(
 			'Event_CPT'=>new EE_Primary_Table('posts','ID'),
-			'Event_Details'=> new EE_Secondary_Table('esp_event_details', 'EVTD_ID','EVT_ID',"Event_CPT.post_type='esp_event'")
+			'Event_Meta'=> new EE_Secondary_Table('esp_event_meta', 'EVTM_ID','EVT_ID',"Event_CPT.post_type='esp_event'")
 		);
 		
 		$this->_fields = array(
@@ -106,8 +106,8 @@ class EEM_Event  extends EEM_Base{
 				'EVT_order'=>new EE_Integer_Field('menu_order', __("Event Menu Order", "event_espresso"), false, 1),
 				'EVT_post_type'=>new EE_DB_Only_Text_Field('post_type', __("Event Post Type", "event_espresso"), false, 'esp_event')
 			),
-			'Event_Details'=>array(
-				'EVTD_ID'=> new EE_DB_Only_Int_Field('EVTD_ID', __('Event ID','event_espresso'), false),
+			'Event_Meta'=>array(
+				'EVTM_ID'=> new EE_DB_Only_Int_Field('EVTM_ID', __('Event Meta Row ID','event_espresso'), false),
 				'EVT_is_active'=>new EE_Boolean_Field('EVT_is_active', __("Event Active Flag", "event_espresso"), false, 1),
 				'EVT_display_desc'=>new EE_Boolean_Field('EVT_display_desc', __("Display Description Flag", "event_espresso"), false, 1),
 				'EVT_display_reg_form'=>new EE_Boolean_Field('EVT_display_reg_form', __("Display Registration Form Flag", "event_espresso"), false, 1),
