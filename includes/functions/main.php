@@ -13,12 +13,27 @@ function espresso_get_reg_page_full_url() {
 
 
 
+function espresso_get_event_reg_slug() {
+
+	static $event_reg_slug;
+	
+	if ( $event_reg_slug === NULL ) {
+		global $org_options;
+		if ( $event_reg_page = get_post( $org_options['event_page_id'] )) {
+			$event_reg_slug = $event_reg_page->post_name;
+		}	
+	}	
+	return $event_reg_slug;
+}
+
+
+
 function espresso_reg_url($event_id = FALSE, $event_slug = FALSE) {
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-	global $wpdb, $org_options;
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+	global $wpdb, $org_options, $events_on_frontpage;
 
 	$registration_url = rtrim(get_permalink($org_options['event_page_id']), '/');
+	$registration_url .= espresso_events_on_frontpage() ? '/' . espresso_get_event_reg_slug() : '';
 	$use_pretty_permalinks = get_option('permalink_structure') != '' ? TRUE : FALSE;
 
 	if (is_int($event_slug)) {
