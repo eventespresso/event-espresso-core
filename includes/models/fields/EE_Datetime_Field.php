@@ -3,8 +3,7 @@
 /**
  * Text_Fields is a base class for any fields which are have integer value. (Exception: foreign and private key fields. Wish PHP had multiple-inheritance for this...)
  */
-require_once('fields/EE_Integer_Field.php');
-class EE_Datetime_Field extends EE_Integer_Field{
+class EE_Datetime_Field extends EE_Model_Field_Base {
 	
 	/**
 	 * These properties hold the default formats for date and time.  Defaults are set via the constructor and can be overridden on class instantiation.  However they can also be overridden later by the set_format() method (and corresponding set_date_format, set_time_format methods);
@@ -48,6 +47,11 @@ class EE_Datetime_Field extends EE_Integer_Field{
 		$this->_pretty_date_format = empty($pretty_date_format) ? 'F j, Y' : $pretty_date_format;
 		$this->_pretty_time_format = empty( $pretty_time_format ) ? 'g:i a' : $pretty_time_format;
 		$this->_timezone = empty($timezone) ? get_option('timezone_string') : $timezone;
+	}
+
+
+	public function get_wpdb_data_type() {
+		return '%s';
 	}
 	
 
@@ -245,6 +249,31 @@ class EE_Datetime_Field extends EE_Integer_Field{
 	public function prepare_for_prety_echoing( $datetimevalue ) {
 		$format_string = $this->_get_date_time_output();
 		echo $this->_convert_to_timezone_from_utc_unix_timestamp( $datetimevalue, $format_string );
+	}
+
+
+
+
+	/**
+	 * This prepares the EE_DateTime value to be saved to the db as mysql timestamp (UTC +0 timezone).  When the datetime gets to this stage it should ALREADY be in UTC time
+	 * @param  int $datetimevalue unixtimestamp in UTC
+	 * @return string                mysql timestamp in UTC
+	 */
+	public function prepare_for_use_in_db( $datetimevalue ) {
+		return date( "Y-m-d H:i:s", $datetimevalue );
+	}
+
+
+
+
+
+	/**
+	 * This prepares the datetime for intenral usage as a unixtimestamp
+	 * @param  string $datetime_value mysql timestamp in UTC
+	 * @return int                 UnixTime in UTC
+	 */
+	public function prepare_for_set_from_db( $datetime_value ) {
+		return strtotime( $datetime_value );
 	}
 
 
