@@ -51,10 +51,12 @@ function espresso_test_for_reg_page() {
 	$page_id = isset( $_GET['page_id'] ) ? absint( $_GET['page_id'] ) : FALSE; 
 	// no page_id in GET?
 	if ( ! $page_id ) {
+		// grab request uri and explode it to remove query string
+		$request_uri = explode( '?', $_SERVER['REQUEST_URI'] );
 		// create array from url segments, not including domain
-		$uri_segments = explode( '/', trim( esc_url_raw( $_SERVER['REQUEST_URI']),  '/' ));
+		$uri_segments = explode( '/', trim( esc_url_raw( $request_uri[0] ),  '/' ));
 		// flip it so that we can work from the outer most segment in
-		array_reverse( $uri_segments );
+		$uri_segments = array_reverse( $uri_segments );
 		foreach( $uri_segments as $uri_segment ) {
 			// can we get a page_id ?
 			if ( $page_id =espresso_get_page_id_from_slug( $uri_segment )) {
