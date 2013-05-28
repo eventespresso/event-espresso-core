@@ -80,8 +80,8 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks {
  				$html = count( $QSGs ) > 10 ? '<div style="height:250px;overflow:auto;">' : '';
 				foreach ( $QSGs as $QSG ) {
 
-					$checked = ( in_array( $QSG->QSG_ID, $EQGs ) || $QSG->QSG_system_ID == 1 ) ? ' checked="checked"' : '';
-					$visibility = $QSG->QSG_system_ID == 1 ? ' style="visibility:hidden"' : '';
+					$checked = ( in_array( $QSG->QSG_ID, $EQGs ) || $QSG->QSG_system == 1 ) ? ' checked="checked"' : '';
+					$visibility = $QSG->QSG_system == 1 ? ' style="visibility:hidden"' : '';
 					$edit_link = $this->_adminpage_obj->add_query_args_and_nonce( array( 'action' => 'edit_question_group', 'QSG_ID' => $QSG->QSG_ID ), EE_FORMS_ADMIN_URL );
 					
 					$html .= '
