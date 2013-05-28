@@ -496,9 +496,28 @@ function events_data_tables_install() {
 					PRIMARY KEY  (DTT_ID),
 						KEY EVT_ID (EVT_ID),
 						KEY DTT_is_primary (DTT_is_primary)";
+	
+	
+	
 	event_espresso_run_install($table_name, $sql );
-
-
+	$table_name = 'esp_event_meta';
+	$sql = "
+		EVTM_ID INT NOT NULL AUTO_INCREMENT,
+		EVT_ID int(11) unsigned NOT NULL,
+		EVT_is_active TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 ,
+		EVT_display_desc TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 ,
+		EVT_display_reg_form TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 ,
+		EVT_visible_on datetime NOT NULL default '0000-00-00 00:00:00',
+		EVT_reg_limit INT UNSIGNED NULL DEFAULT 9999 ,
+		EVT_allow_multiple TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
+		EVT_additional_limit TINYINT UNSIGNED NULL ,
+		EVT_require_pre_approval TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
+		EVT_member_only TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
+		EVT_allow_overflow TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
+		EVT_timezone_string VARCHAR(45) NULL ,
+		EVT_external_URL VARCHAR(200) NULL ,
+		PRIMARY KEY  (EVTM_ID) ";
+	event_espresso_run_install($table_name,$sql, 'ENGINE=InnoDB');
 	
 	$table_name='esp_event_question_group';
 	$sql="EQG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,

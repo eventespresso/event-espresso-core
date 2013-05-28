@@ -3,7 +3,7 @@
 function espresso_pending_registration_approval($registration_id) {
 	global $wpdb, $org_options;
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-	require_once ( EE_HELPERS . 'EE_Formatter.helper.php' )
+	require_once ( EE_HELPERS . 'EE_Formatter.helper.php' );
 	//Get the event information
 	$events = $wpdb->get_results("SELECT ed.* FROM " . EVENTS_DETAIL_TABLE . " ed
 					JOIN " . EVENTS_ATTENDEE_TABLE . " ea

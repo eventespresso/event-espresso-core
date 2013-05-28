@@ -27,9 +27,9 @@ class EE_Enum_Field extends EE_Text_Field_Base{
 	function prepare_for_set($value_inputted_for_field_on_model_object) {
 		if($value_inputted_for_field_on_model_object!==null && !array_key_exists($value_inputted_for_field_on_model_object,$this->_allowed_enum_values)){
 			if(WP_DEBUG){
-			$msg = sprintf(__("System is assigning imcompatible value '%s' to field '%s'",'event_espresso'),$value_inputted_for_field_on_model_object,$this->_name);
-			$msg2 = sprintf(__("Allowed values for '%s' are %s",'event_espresso'),$fieldSettings->nicename(),$this->_allowed_enum_values);
-			throw new EE_Error("$msg||$msg2");
+				$msg = sprintf(__("System is assigning imcompatible value '%s' to field '%s'",'event_espresso'),$value_inputted_for_field_on_model_object,$this->_name);
+				$msg2 = sprintf(__("Allowed values for '%s' are %s",'event_espresso'),$fieldSettings->nicename(),$this->_allowed_enum_values);
+				throw new EE_Error("$msg||$msg2");
 			}else{
 				return $this->get_default_value();
 			}
