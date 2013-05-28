@@ -1901,7 +1901,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		// create TXN object
 		$transaction = EE_Transaction::new_instance(
 			array( 
-				'TXN_timestamp' => current_time(), 
+				'TXN_timestamp' => current_time('timestamp'), 
 				'TXN_total' => $grand_total, 
 				'TXN_paid' => 0, 
 				'STS_ID' => $txn_status, 
