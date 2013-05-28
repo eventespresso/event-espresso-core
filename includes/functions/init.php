@@ -104,8 +104,8 @@ function espresso_add_rewrite_rules( $to_flush_or_not_to_flush = FALSE ) {
 	if (empty($org_options['event_page_id'])) {
 		espresso_load_org_options();
 	}
-	// create pretty permalinks
-	if ( get_option('permalink_structure') != '' ) {
+	// create pretty permalinks - NOTE: $org_options['event_page_id'] might still be empty on clean db activation.
+	if ( get_option('permalink_structure') != '' && !empty( $org_options['event_page_id'] ) ) {
 		// grab slug for event reg page
 		$SQL = 'SELECT post_name  FROM ' . $wpdb->prefix . 'posts WHERE ID = %d';
 		$reg_page_url_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $org_options['event_page_id'] ));
