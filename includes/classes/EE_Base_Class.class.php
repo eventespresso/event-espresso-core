@@ -63,8 +63,7 @@ class EE_Base_Class{
 		
 		//if db model is instantiatiating
 		if( $bydb ){
-			//the primary key is in the constructor's first arg's array, so assume we're constructing from teh DB
-			//(otherwise: why would we already know the primary key's value, unless we fetched it from the DB?)
+			//client code has indicated these field values are from teh database
 			foreach($fieldValues as $field_name => $field_value_from_db){
 				$this->set_from_db($field_name,$field_value_from_db);
 			}
@@ -423,7 +422,7 @@ class EE_Base_Class{
 		}
 		//now get current attribute values
 		$save_cols_n_values = array();
-		foreach($this->get_model()->field_settings() as $fieldName=>$field_obj){
+		foreach($this->get_model()->field_settings(false) as $fieldName=>$field_obj){
 			$attributeName=$this->_get_private_attribute_name($fieldName);
 			$save_cols_n_values[$fieldName] = $this->$attributeName;
 	
@@ -477,7 +476,7 @@ class EE_Base_Class{
 	protected static function _check_for_object( $props_n_values, $classname ) {
 		$primary_id_ref = self::_get_primary_key_name( $classname );
 
-		if ( array_key_exists( $primary_id_ref, $props_n_values ) && !empty( $props_n_valuse[$primary_id_ref] ) ) {
+		if ( array_key_exists( $primary_id_ref, $props_n_values ) && !empty( $props_n_values[$primary_id_ref] ) ) {
 			$existing = self::_get_model($classname)->get_one_by_ID( $props_n_values[$primary_id_ref] );
 			if ( $existing ) {
 				foreach ( $props_n_values as $property => $field_value ) {

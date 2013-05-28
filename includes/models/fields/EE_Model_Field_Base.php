@@ -40,8 +40,16 @@ abstract class EE_Model_Field_Base{
 	function get_nicename(){
 		return $this->_nicename;
 	}
-	function get_nullable(){
+	function is_nullable(){
 		return $this->_nullable;
+	}
+	/**
+	 * returns whether this field is an auto-increment field or not. If it is, then
+	 * on insertion it can be null. However, on updates it must be present.
+	 * @return boolean
+	 */
+	function is_auto_increment(){
+		return false;
 	}
 	/**
 	 * The default value in the model object's value domain. See lengthy comment about

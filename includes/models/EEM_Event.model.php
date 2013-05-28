@@ -43,17 +43,83 @@ class EEM_Event  extends EEM_Base{
 		// EEM_Event object
 		return self::$_instance;
 	}
+	
+	/**
+	 * keys are the STS_IDs for events, values are translatable strings. It's nice having an 
+	 * array of ALL of the statuses, so we can know what statuses are valid, and which are not
+	 * @var array 
+	 */
+	private $_statuses = array();
+	
+	/**
+	 * @todo: we should describe each status here. Ie, when things should have
+	 * this status, what triggers it, and how it generally affects the rest of teh system
+	 */
+	const status_active = 'ACT';
+	const status_not_active = 'NAC';
+	const status_registration_not_open = 'NOP';
+	const status_registration_open='OPN';
+	const status_registration_closed = 'CLS';
+	const status_pending = 'PND';
+	const status_ongoing = 'ONG';
+	const status_secondary = 'SEC';
+	const status_draft = 'DRF';
+	const status_deleted = 'DEL';
+	const status_denied = 'DEN';
+	const status_expired = 'EXP';
 
 	protected function __construct(){
 		$this->singular_item = __('Event','event_espresso');
 		$this->plural_item = __('Events','event_espresso');
+		
+		$this->_statuses = apply_filters('FHEE_EEM_Event__construct__statuses',array(
+			EEM_Event::status_active =>  __("Active", "event_espresso"),
+			EEM_Event::status_not_active => __("Not Active", "event_espresso"),
+			EEM_Event::status_registration_not_open =>  __("Registration Not Open", "event_espresso"),
+			EEM_Event::status_registration_open =>  __("Registration Open", "event_espresso"),
+			EEM_Event::status_registration_closed =>  __("Registration Closed", "event_espresso"),
+			EEM_Event::status_pending =>  __("Pending", "event_espresso"),
+			EEM_Event::status_ongoing =>  __("Ongoing", "event_espresso"),
+			EEM_Event::status_secondary =>  __("Seconadry", "event_espresso"),
+			EEM_Event::status_draft =>  __("Draft", "event_espresso"),
+			EEM_Event::status_deleted =>  __("Deleted", "event_espresso"),
+			EEM_Event::status_denied =>  __("Denied", "event_espresso"),
+			EEM_Event::status_expired=>  __("Expired", "event_espresso")
+		));
 		$this->_tables = array(
-			'Event_Detail'=> new EE_Primary_Table('events_detail', 'DTT_ID')
+			'Event_CPT'=>new EE_Primary_Table('posts','ID'),
+			'Event_Details'=> new EE_Secondary_Table('esp_event_details', 'EVTD_ID','EVT_ID',"Event_CPT.post_type='esp_event'")
 		);
+		
 		$this->_fields = array(
-			'Event_Detail'=>array(
-				'EVT_ID'=> new EE_Primary_Key_Int_Field('id', __('Event ID','event_espresso'), false, 0),
-				//...
+			'Event_CPT'=>array(
+				'EVT_ID'=>new EE_Primary_Key_Int_Field('ID', __('Post ID for Event','event_espresso'), false),
+				'EVT_name'=>new EE_Plain_Text_Field('post_title', __('Event Name','event_espresso'), false, ''),
+				'EVT_desc'=>new EE_Simple_HTML_Field('post_content', __("Event Description", "event_espresso"), false, ''),
+				'EVT_slug'=>new EE_Slug_Field('post_name', __("Event Slug", "event_espresso"), false, ''),
+				'EVT_created'=>new EE_Datetime_Field('post_date', __("Date/Time Event Created", "event_espresso"), false, current_time('timestamp')),
+				'EVT_short_desc'=>new EE_Simple_HTML_Field('post_excerpt', __("Event Short Descripiton", "event_espresso"), false,''),
+				'EVT_status'=>new EE_Enum_Field('post_status', __("Event Status", "event_espresso"), false, EEM_Event::status_draft, array_keys($this->_statuses)),
+				'EVT_modified'=>new EE_Datetime_Field('post_modified', __("Dateim/Time Event Modified", "event_espresso"), true, current_time('timestamp')),
+				'EVT_wp_user'=>new EE_Integer_Field('post_author', __("Wordpress User ID", "event_espresso"), false,1),
+				'EVT_parent'=>new EE_Integer_Field('post_parent', __("Event Parent ID", "event_espresso"), true),
+				'EVT_order'=>new EE_Integer_Field('menu_order', __("Event Menu Order", "event_espresso"), false, 1),
+				'EVT_post_type'=>new EE_DB_Only_Text_Field('post_type', __("Event Post Type", "event_espresso"), false, 'esp_event')
+			),
+			'Event_Details'=>array(
+				'EVTD_ID'=> new EE_DB_Only_Int_Field('EVTD_ID', __('Event ID','event_espresso'), false),
+				'EVT_is_active'=>new EE_Boolean_Field('EVT_is_active', __("Event Active Flag", "event_espresso"), false, 1),
+				'EVT_display_desc'=>new EE_Boolean_Field('EVT_display_desc', __("Display Description Flag", "event_espresso"), false, 1),
+				'EVT_display_reg_form'=>new EE_Boolean_Field('EVT_display_reg_form', __("Display Registration Form Flag", "event_espresso"), false, 1),
+				'EVT_visible_on'=>new EE_Datetime_Field('EVT_visible_on', __("Event Visible Date", "event_espresso"), true, current_time('timestamp')),
+				'EVT_reg_limit'=>new EE_Integer_Field('EVT_reg_limit', __("Event Registration Limit", "event_espresso"), true, 999999),
+				'EVT_allow_multiple'=>new EE_Boolean_Field('EVT_allow_multiple', __("Allow Multiple Registrations on Same Transaction Flag", "event_espresso"), false, false),
+				'EVT_additional_limit'=>new EE_Integer_Field('EVT_additional_limit', __("Limit of Additional Registrations on Same Transaction", "event_espresso"), true),
+				'EVT_require_pre_approval'=>new EE_Boolean_Field('EVT_require_pre_approval', __("Event Requires Pre-Approval before Registration Complete", "event_espresso"), false, false),
+				'EVT_member_only'=>new EE_Boolean_Field('EVT_member_only', __("Member-Only Event Flag", "event_espresso"), false, false),
+				'EVT_allow_overflow'=>new EE_Boolean_Field('EVT_allow_overflow', __("Allow Overflow on Event", "event_espresso"), false, false),
+				'EVT_timezone_string'=>new EE_Plain_Text_Field('EVT_timezone_string', __("Timezone (name) for Event times", "event_espresso"), false),
+				'EVT_external_URL'=>new EE_Plain_Text_Field('EVT_external_URL', __("URL of Event Page if hosted elsewhere", "event_espresso"), true)
 			));
 		$this->_model_relations = array(
 			'Registration'=>new EE_Has_Many_Relation(),
@@ -63,7 +129,15 @@ class EEM_Event  extends EEM_Base{
 		);
 		parent::__construct();
 	}
-
+	
+	/**
+	 * Adds 'EVT_post_type'=>'esp_event' as a where condition on all applicable queries,
+	 * even ones ran by other models which use this one
+	 * @return array like EEM_base::get_all's $query_params[0] (where conditions)
+	 */
+	protected function _get_universal_where_params(){
+		return array('EVT_post_type'=>'esp_event');
+	}
 
 	/**
 	*		retrieve all active Questions and Groups for an Event via the Event's ID

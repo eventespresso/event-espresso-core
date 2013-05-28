@@ -56,7 +56,17 @@ abstract class EE_Model_Relation_Base{
 	
 	
 	protected function _left_join($other_table,$other_table_alias,$other_table_column,$this_table_alias,$this_table_join_column, $extra_join_sql = ''){
-		return " LEFT JOIN ".$other_table." AS ".$other_table_alias. " ON ".$other_table_alias.".".$other_table_column."=".$this_table_alias.".".$this_table_join_column." ".$extra_join_sql." ";
+		return " LEFT JOIN ".$other_table." AS ".$other_table_alias. " ON ".$other_table_alias.".".$other_table_column."=".$this_table_alias.".".$this_table_join_column." ".$extra_join_sql;
+	}
+	
+	/**
+	 * If an internal join needs to be done on this model to query from it, this method
+	 * returns that join SQL (including the "LEFT JOIN..."). If however, none is required
+	 * (ie, $model has only 1 table containing its data), then returns an empty string
+	 * @return string
+	 */
+	protected function _maybe_add_internal_join(EEM_Base $model){
+		return $model->_construct_internal_join_to_secondary_tables();	
 	}
 	/**
 	 * Gets the SQL string for performing the join between this model and the other model.

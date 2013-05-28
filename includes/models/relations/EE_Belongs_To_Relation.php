@@ -17,7 +17,7 @@ class EE_Belongs_To_Relation extends EE_Model_Relation_Base{
 		$this_table_alias = $this_table_fk_field->get_table_alias();
 		$other_table_alias = $other_table_pk_field->get_table_alias();
 		$other_table = $this->get_other_model()->get_table_for_alias($other_table_alias);		
-		return $this->_left_join($other_table, $other_table_alias, $other_table_pk_field->get_table_column(), $this_table_alias, $this_table_fk_field->get_table_column(), $this->_extra_join_conditions);
+		return $this->_left_join($other_table, $other_table_alias, $other_table_pk_field->get_table_column(), $this_table_alias, $this_table_fk_field->get_table_column(), $this->_extra_join_conditions) . $this->_maybe_add_internal_join($this->get_other_model());
 	}
 	/**
 	 * Sets this model object's foreign key to the other model object's primary key. Feel free to do this manually if you like.

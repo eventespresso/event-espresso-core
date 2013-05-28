@@ -135,7 +135,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 		foreach($this->_fields as $table_alis => $fields_for_table){
 			if(!array_key_exists($table_alias,$this->_tables)){
-				throw new EE_Error(sprintf(__("Table alias %s does not exist in EEMerimental_Base child's _tables array. Only tables defined are %s",'event_espresso'),$table_alias,implode(",",$this->_fields)));
+				throw new EE_Error(sprintf(__("Table alias %s does not exist in EEM_Base child's _tables array. Only tables defined are %s",'event_espresso'),$table_alias,implode(",",$this->_fields)));
 			}
 			foreach($fields_for_table as $field_name => $field_obj){
 				$field_obj->_construct_finalize($table_alis,$field_name);
@@ -666,6 +666,12 @@ abstract class EEM_Base extends EE_Base{
 	 * @throws EE_Error
 	 */
 	function insert($field_n_values, $values_already_prepared_by_model_object = false){
+//verify we have all teh required fields, and if a field is missing but not required, use the defautl value
+		foreach($this->field_settings(false) as $field_name => $field_obj){
+			if( ! in_array($field_name,array_keys($field_n_values)) && ! $field_obj->is_nullable() && ! $field_obj->is_auto_increment()){
+				throw new EE_Error(sprintf(__("Cannot insert new instance of %s if field '%s' is null. Fields supplied are %s", "event_espresso"),get_class($this),$field_name,implode(", ",array_keys($field_n_values))));
+			}
+		}
 		$main_table = $this->_get_main_table();
 		$new_id = $this->_insert_into_specific_table($main_table, $field_n_values, false, $values_already_prepared_by_model_object);
 		foreach($this->_get_other_tables() as $other_table){
@@ -695,16 +701,17 @@ abstract class EEM_Base extends EE_Base{
 		$format_for_insertion = array();
 		$fields_on_table = $this->_get_fields_for_table($table->get_table_alias());
 		foreach($fields_on_table as $field_name => $field_obj){
-			//first check if this is a primary key field. If so, that should be auto-incremented, not set during insertion
-			if($field_obj instanceof EE_Primary_Key_Int_Field){
+			//check if its an auto-incrementing column, in which case we should just leave it to do its autoincrement thing
+			if($field_obj->is_auto_increment()){
 				continue;
 			}
-			if(array_key_exists($field_name, $fields_n_values)){
-				//they have specified teh value for thi sfield, so use it
-				$insertion_col_n_values[$field_obj->get_table_column()] = $this->_prepare_value_for_use_in_db($fields_n_values[$field_name], $field_obj,$values_already_prepared_by_model_object); ;
-			}else{
+			if( ! isset( $fields_n_values[$field_name]) ||  $fields_n_values[$field_name] === null){
 				//they didnt include this field. so just use default
 				$insertion_col_n_values[$field_obj->get_table_column()] = $this->_prepare_value_for_use_in_db($field_obj->get_default_value(), $field_obj, true);
+			}else{
+				//they have specified teh value for thi sfield, so use it
+				$insertion_col_n_values[$field_obj->get_table_column()] = $this->_prepare_value_for_use_in_db($fields_n_values[$field_name], $field_obj,$values_already_prepared_by_model_object); ;
+			
 			}
 			$format_for_insertion[] = $field_obj->get_wpdb_data_type();
 		}
@@ -858,8 +865,12 @@ abstract class EEM_Base extends EE_Base{
 	function _create_model_query_info_carrier($query_params, $values_already_prepared_by_model_object = false){
 		$query_object = $this->_extract_related_models_from_query($query_params);
 		if(array_key_exists(0,$query_params)){
-			$query_object->set_where_sql( $this->_construct_where_clause($query_params[0], $values_already_prepared_by_model_object));
+			$where_query_params = $query_params[0];
+		}else{
+			$where_query_params = array();
 		}
+		$where_query_params = array_merge($where_query_params, $this->_get_universal_where_params_for_models_in_query($query_object));
+		$query_object->set_where_sql( $this->_construct_where_clause($where_query_params, $values_already_prepared_by_model_object));
 
 
 		//if this is a "on_join_limit" then we are limiting on on a specific table in a multi_table join.  So we need to setup a subquery and use that for the main join.  Note for now this only works on the primary table for the model.  So for instance, you could set the limit array like this:
@@ -929,6 +940,37 @@ abstract class EEM_Base extends EE_Base{
 		return $query_object;
 	}
 	
+	/**
+	 * Looks at all the models which are included in this query, and asks each
+	 * for their universal_where_params, and returns them in the same format as $query_params[0] (where),
+	 * so they can be merged
+	 * @param EE_Model_Query_Info_Carrier $query_info_carrier
+	 */
+	private function _get_universal_where_params_for_models_in_query(EE_Model_Query_Info_Carrier $query_info_carrier){
+		$universal_query_params = $this->_get_universal_where_params();
+		foreach($query_info_carrier->get_model_names_included() as $model_name){
+			$related_model = $this->get_related_model_obj($model_name);
+			$related_model_universal_where_params = $related_model->_get_universal_where_params();
+			//prepend the model's name onto where params from other models
+			$related_model_universal_where_params_prepended = array();
+			foreach($related_model_universal_where_params as $field_name => $value){
+				$related_model_universal_where_params_prepended[$model_name.".".$field_name] = $value;
+			}
+			$universal_query_params = array_merge($universal_query_params, $related_model_universal_where_params_prepended);
+		}
+		return $universal_query_params;
+	}
+	
+	/**
+	 * For overriding if you want to ALWAYS have a certain WHERE condition in all
+	 * queries relating to this model (eg, all selects, updates, and deletes (inserts dont'r eally apply)).
+	 * Use the same syntax as client code. Eg on the Event model, use array('Event.EVT_post_type'=>'esp_event'), 
+	 * NOT array('Event_CPT.post_type'=>'esp_event'). 
+	 * @return array
+	 */
+	protected function _get_universal_where_params(){
+		return array();
+	}
 	/**
 	 * Creates the string of SQL for the select part of a select query, everything behind SELECT and before FROM.
 	 * Eg, "Event.post_id, Event.post_name,Event_Detail.EVT_ID..."
@@ -1027,12 +1069,28 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	private function _construct_where_clause($where_params, $values_already_prepared_by_model_object = false){
 		$SQL = $this->_construct_condition_clause_recursive($where_params, ' AND ', $values_already_prepared_by_model_object);
-		return " WHERE ". $SQL;
+		if($SQL){
+			return " WHERE ". $SQL;
+		}else{
+			return '';
+		}
 	}
 	
+	/**
+	 * Just like the _construct_where_clause, except prepends 'HAVING' instead of 'WHERE',
+	 * and should be passed HAVING parameters, not HWERE parameters
+	 * @param type $having_params
+	 * @param type $values_already_prepared_by_model_object
+	 * @return string
+	 */
 	private function _construct_having_clause($having_params, $values_already_prepared_by_model_object = false){
 		$SQL = $this->_construct_condition_clause_recursive($having_params, ' AND ', $values_already_prepared_by_model_object);
-		return " HAVING ". $SQL;
+		if($SQL){
+			return " HAVING ". $SQL;
+		}else{
+			return '';
+		}
+		
 	}
 	
 	/**
@@ -1239,13 +1297,28 @@ abstract class EEM_Base extends EE_Base{
 		foreach($this->_tables as $table_obj){
 			if($table_obj instanceof EE_Primary_Table){
 				$SQL .= SP.$table_obj->get_table_name()." AS ".$table_obj->get_table_alias().SP;
-			}elseif($table_obj instanceof EE_Secondary_Table){
+			}
+		}
+		$SQL .=$this->_construct_internal_join_to_secondary_tables();
+		return $SQL;
+	}
+	
+	/**
+	 * Adds SQL for joining from the primary table to any secondary tables.
+	 * Eg if there are two secondary tables, esp_monkey and esp_monkey_tree, this would rturn SQL like
+	 * ' LEFT JOIN esp_monkey as Monkey ON Moneky.fk = Primary_table.pk LEFT JOIN esp_monkey_tree as Monkey_Tree 
+	 *  ON Monkey_Tree.fk = Primary_table.pk'
+	 * @return string
+	 */
+	function _construct_internal_join_to_secondary_tables(){
+		$SQL = '';
+		foreach($this->_tables as $table_obj){
+			if($table_obj instanceof EE_Secondary_Table){
 				$SQL .= SP.$table_obj->get_join_sql().SP;
 			}
 		}
 		return $SQL;
 	}
-	
 	
 	/**
 	 * Gets an array for storing all the data types on the next-to-be-executed-query. 
@@ -1308,7 +1381,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Model_Field
 	 */
 	public function field_settings_for($fieldName){
-		$fieldSettings=$this->field_settings();
+		$fieldSettings=$this->field_settings(true);
 		if( ! array_key_exists($fieldName,$fieldSettings)){
 			throw new EE_Error(sprintf(__('There is no field/column %s on %s','event_espresso'),$fieldName,get_class($this)));
 		}
@@ -1372,13 +1445,16 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Returns a flat array of all field son this model, instead of organizing them 
 	 * by table_alias as they are in the constructor. 
+	 * @param $include_db_only_fields flag indicating whether or not to include the db-only fields
 	 * @return EE_Model_Field_Base[] where the keys are the field's name
 	 */
-	public function field_settings(){
+	public function field_settings($include_db_only_fields = false){
 		$all_fields = array();
 		foreach($this->_fields as $table_alias => $fields_corresponding_to_table){
 			foreach($fields_corresponding_to_table as $field_name => $field_obj){
-				$all_fields[$field_name]=$field_obj;
+				if( !$field_obj->is_db_only_field() || ($include_db_only_fields && $field_obj->is_db_only_field())){
+					$all_fields[$field_name]=$field_obj;
+				}
 			}
 		}
 		return $all_fields;
