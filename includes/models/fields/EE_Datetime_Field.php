@@ -47,6 +47,13 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		$this->_pretty_date_format = empty($pretty_date_format) ? 'F j, Y' : $pretty_date_format;
 		$this->_pretty_time_format = empty( $pretty_time_format ) ? 'g:i a' : $pretty_time_format;
 		$this->_timezone = empty($timezone) ? get_option('timezone_string') : $timezone;
+
+		//if timezone is STILL empty then let's get the GMT offset and then set the timezone_string using our converter
+		if ( empty( $this->_timezone ) ) {
+			//let's get a the WordPress UTC offset
+			$offset = get_option('gmt_offset');
+			$this->_timezone = self::timezone_convert_to_string_from_offset( $offset );
+		}
 	}
 
 
@@ -403,11 +410,50 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return bool             Return True if Valid, False if Invalid
 	 */	
 	public static function validate_timezone( $timezone ) {
-		if ( in_array( $timezone, DateTimeZone::listIdentifiers() ) )
+
+		//dang it DateTimeZone::listIdentifiers() is unreliable so lets use timezone_abbreviations_list();
+		
+		$abbarray = timezone_abbreviations_list();
+		
+		$time_string = array();
+		foreach ( $abbarray as $abbr ) {
+			foreach ( $abbr as $city ) {
+				$time_string[] = $city['timezone_id'];
+			}
+		}
+
+		if ( in_array( $timezone, $time_string ) )
 			return TRUE;
 
 		else
 			throw new EE_Error( sprintf( __('The timezone given (%s), is invalid, please check with %sthis list%s for what valid timezones can be used', 'event_espresso'), $timezone, '<a href="http://www.php.net/manual/en/timezones.php">', '</a>' ) );
+	}
+
+
+
+
+
+	/**
+	 * all this method does is take an incoming GMT offset value ( e.g. "+1" or "-4" ) and returns a corresponding valid DateTimeZone() timezone_string.
+	 * @param  string $offset GMT offset
+	 * @return string         timezone_string (valid for DateTimeZone)
+	 */
+	public static function timezone_convert_to_string_from_offset( $offset ) {
+		//shamelessly taken from bottom comment at http://ca1.php.net/manual/en/function.timezone-name-from-abbr.php because timezone_name_from_abbr() did NOT work as expected - its not reliable
+		$offset *= 3600; // convert hour offset to seconds
+        $abbrarray = timezone_abbreviations_list();
+        foreach ($abbrarray as $abbr)
+        {
+                foreach ($abbr as $city)
+                {
+                        if ($city['offset'] == $offset)
+                        {
+                                return $city['timezone_id'];
+                        }
+                }
+        }
+
+        return FALSE;
 	}
 
 
