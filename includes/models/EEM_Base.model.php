@@ -33,6 +33,8 @@ abstract class EEM_Base extends EE_Base {
 	protected $singlular_item= NULL;
 	protected $plural_item = NULL;
 
+	protected $_timezone = NULL;
+
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
@@ -46,11 +48,101 @@ abstract class EEM_Base extends EE_Base {
 		if(isNull($this->plural_item)){
 			$this->plural_item = __('Items','event_espresso');
 		}
+
+		//for 4.0 $timezone will ALWAYS be the WordPress default timezone and we're ONLY going to implement the conversion to mysql datetime on save and retrieval from db.
+		$this->_timezone = $this->_get_timezone();
 		
 	}
 
 	function get_table_data_types() {
 		return $this->table_data_types;
+	}
+
+
+	protected function _get_timezone() {
+		$timezone = get_option('timezone_string');
+		//if timezone is STILL empty then let's get the GMT offset and then set the timezone_string using our converter
+		if ( empty( $this->_timezone ) ) {
+			//let's get a the WordPress UTC offset
+			$offset = get_option('gmt_offset');
+			$this->_timezone = self::timezone_convert_to_string_from_offset( $offset );
+		}
+	}
+
+
+
+	/**
+	 * all this method does is take an incoming GMT offset value ( e.g. "+1" or "-4" ) and returns a corresponding valid DateTimeZone() timezone_string.
+	 * @param  string $offset GMT offset
+	 * @return string         timezone_string (valid for DateTimeZone)
+	 */
+	public static function timezone_convert_to_string_from_offset( $offset ) {
+		//shamelessly taken from bottom comment at http://ca1.php.net/manual/en/function.timezone-name-from-abbr.php because timezone_name_from_abbr() did NOT work as expected - its not reliable
+		$offset *= 3600; // convert hour offset to seconds
+        $abbrarray = timezone_abbreviations_list();
+        foreach ($abbrarray as $abbr)
+        {
+                foreach ($abbr as $city)
+                {
+                        if ($city['offset'] == $offset)
+                        {
+                                return $city['timezone_id'];
+                        }
+                }
+        }
+
+        return FALSE;
+	}
+
+
+
+	protected function _prepare_dtt_for_db( $dttvalue ) {
+		$timestamp = is_numeric( $datetime ) ? $this->_convert_from_numeric_value_to_utc_unixtimestamp( $datetime ) : $this->_convert_from_string_value_to_utc_unixtimestamp( $datetime );
+		return $timestamp;
+	}
+
+
+	protected function _prepare_dtt_from_db( $dttvalue, $format = 'U' ) {
+		$date_obj = new DateTime( $dttvalue, 'UTC' );
+		if ( !$date_obj )
+			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
+		$date_obj->setTimezone( new DateTimeZone($this->_timezone) );
+
+		return $date_obj->format($format);
+	}
+
+
+
+
+	private function _convert_from_numeric_value_to_utc_unixtimestamp( $datetime ) {
+		$datetime = (int) $datetime;
+
+		date_default_timezone_set( $this->_timezone );
+		$datetime = date( 'Y-m-d H:i:s', $datetime );
+
+		//if we don't have a datetime at this point then something has gone wrong 
+		if ( !$datetime )
+			throw new EE_Error( __('Something went wrong with setting the date/time.  Likely, either there is an invalid timezone string or invalid timestamp being used.', 'event_espresso' ) );
+
+		//return to defautl for PHP
+		date_default_timezone_set('UTC');
+
+		//now that we have the string we can send this over to our string value conversion
+		return $datetime;
+	}
+
+
+
+	private function _convert_from_string_value_to_utc_unixtimestamp( $datestring ) {
+		//create a new datetime object using the given string and timezone
+		$date_obj = new DateTime( $datestring, $this->_timezone );
+
+		if ( !$date_obj )
+			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
+
+		$date_obj->setTimezone( new DateTimeZone('UTC') );
+		return $this->_date->format( 'Y-m-d H:i:s' );
+
 	}
 
 
