@@ -181,6 +181,9 @@ class EE_Event extends EE_Base_Class{
 	/**
 	 * Gets all the datetimes for this event, first the primary datetime, and
 	 * then ordered by date (earliest first)
+	 * @darren, we should probably UNSET timezone on the EEM_Datetime model
+	 * after running our query, so that this timezone isn't set for EVERY query
+	 * on EEM_Datetime for the rest of the requeset, no?
 	 * @return EE_Datetime[]
 	 */
 	public function datetimes(){
@@ -189,6 +192,128 @@ class EE_Event extends EE_Base_Class{
 	}
 	
 	
+	function additional_limit(){
+		return $this->get('EVT_additional_limit');
+	}
 	
-	
+	function allow_multiple(){
+		return $this->get('EVT_allow_multiple');
+	}
+	function allow_overflow(){
+		return $this->get('EVT_allow_overflow');
+	}
+	function created(){
+		return $this->get('EVT_created');
+	}
+	function description(){
+		return $this->get('EVT_desc');
+	}
+	function display_description(){
+		return $this->get('EVT_display_desc');
+	}
+	function display_reg_form(){
+		return $this->get('EVT_display_reg_form');
+	}
+	function external_url(){
+		return $this->get('EVT_external_url');
+	}
+	function is_active(){
+		return $this->get('EVT_is_active');
+	}
+	function member_only(){
+		return $this->get('EVT_member_only');
+	}
+	function modified(){
+		return $this->get('EVT_modified');
+	}
+	function name(){
+		return $this->get('EVT_name');
+	}
+	function order(){
+		return $this->get('EVT_order');
+	}
+	function parent(){
+		return $this->get('EVT_parent');
+	}
+	function reg_limit(){
+		return $this->get('EVT_reg_limit');
+	}
+	function require_pre_approval(){
+		return $this->get('EVT_require_pre_approval');
+	}
+	function short_description(){
+		return $this->get('EVT_short_desc');
+	}
+	function slug(){
+		return $this->get('EVT_slug');
+	}
+	function timezone_string(){
+		return $this->get('EVT_timezone_string');
+	}
+	function visible_on(){
+		return $this->get('EVT_visible_on');
+	}
+	function wp_user(){
+		return $this->get('EVT_wp_user');
+	}
+	function set_additional_limit($limit){
+		return $this->set('EVT_additional_limit',$limit);
+	}
+	function set_allow_multiple($allow_multiple) {
+		return $this->set('EVT_allow_multiple', $allow_multiple);
+	}
+	function set_created($created) {
+		return $this->set('EVT_created', $created);
+	}
+	function set_description($desc) {
+		return $this->set('EVT_desc', $desc);
+	}
+	function set_display_description($display_desc) {
+		return $this->set('EVT_display_desc', $display_desc);
+	}
+	function set_display_reg_form($display_reg_form) {
+		return $this->set('EVT_display_reg_form', $display_reg_form);
+	}
+	function set_external_url($external_url) {
+		return $this->set('EVT_external_url', $external_url);
+	}
+	function set_is_active($is_active) {
+		return $this->set('EVT_is_active', $is_active);
+	}
+	function set_member_only($member_only) {
+		return $this->set('EVT_member_only', $member_only);
+	}
+	function set_modified($modified) {
+		return $this->set('EVT_modified', $modified);
+	}
+	function set_name($name) {
+		return $this->set('EVT_name', $name);
+	}
+	function set_order($order) {
+		return $this->set('EVT_order', $order);
+	}
+	function set_parent($parent) {
+		return $this->set('EVT_parent', $parent);
+	}
+	function set_reg_limit($reg_limit) {
+		return $this->set('EVT_reg_limit', $reg_limit);
+	}
+	function set_require_pre_approval($require_pre_approval) {
+		return $this->set('EVT_require_pre_approval', $require_pre_approval);
+	}
+	function set_short_description($short_desc) {
+		return $this->set('EVT_short_desc', $short_desc);
+	}
+	function set_slug($slug) {
+		return $this->set('EVT_slug', $slug);
+	}
+	function set_timezone_string($timezone_string) {
+		return $this->set('EVT_timezone_string', $timezone_string);
+	}
+	function set_visible_on($visible_on) {
+		return $this->set('EVT_visible_on', $visible_on);
+	}
+	function set_wp_user($wp_user) {
+		return $this->set('EVT_wp_user', $wp_user);
+	}
 }
