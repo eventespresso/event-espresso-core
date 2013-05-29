@@ -33,7 +33,9 @@ abstract class EEM_Base extends EE_Base {
 	protected $singlular_item= NULL;
 	protected $plural_item = NULL;
 
+	 //just a hackish implementation to maintian db consistency for dtt fields between 4.0 and 4.1
 	protected $_timezone = NULL;
+	protected $_dtt_keys = array();
 
 	/**
 	 *		private constructor to prevent direct creation
@@ -51,8 +53,34 @@ abstract class EEM_Base extends EE_Base {
 
 		//for 4.0 $timezone will ALWAYS be the WordPress default timezone and we're ONLY going to implement the conversion to mysql datetime on save and retrieval from db.
 		$this->_timezone = $this->_get_timezone();
+
+		//hackish but handles DTT's
+		$this->_dtt_keys = array(
+			'PAY_timestamp'
+			);
 		
 	}
+
+
+	protected function _convert_cols_n_values_from_db( $cols_n_values ) {
+		//run conversion on dtt columns
+		foreach ( $cols_n_values as $key => $value ) {
+			if ( in_array( $key, $this->_dtt_keys ) )
+				$cols_n_values[$key] = $this->_prepare_dtt_from_db( $value );
+		}
+		return $cols_n_values;
+	}
+
+
+	protected function _convert_cols_n_values_for_db( $set_cols_n_values ) {
+		//run conversion on dtt columns
+		foreach ( $set_cols_n_values as $key => $value ) {
+			if ( in_array( $key, $this->_dtt_keys ) )
+				$set_cols_n_values[$key] = $this->_prepare_dtt_for_db( $value );
+		}
+		return $set_cols_n_values;
+	}
+
 
 	function get_table_data_types() {
 		return $this->table_data_types;
@@ -709,6 +737,9 @@ abstract class EEM_Base extends EE_Base {
 			}
 		}
 
+		//let's handle the conversion of DTT values first
+		$em_updata = $this->_convert_cols_n_values_for_db( $em_updata );
+
 		//echo printr( $em_updata, $em_table_name );
 
 		global $wpdb;
@@ -815,6 +846,9 @@ abstract class EEM_Base extends EE_Base {
 				return FALSE;
 			}
 		}
+
+		//let's handle the conversion of DTT values first
+		$em_updata = $this->_convert_cols_n_values_for_db( $em_updata );
 
 		global $wpdb;
 		//printr($em_updata, 'updata');

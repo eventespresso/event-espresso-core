@@ -540,12 +540,7 @@ class EEM_Datetime extends EEM_Base {
 	 */
 	public function insert ($set_column_values) {
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		//let's handle the conversion of DTT values first
-		foreach ( $set_column_values as $key => $value ) {
-			if ( in_array( $key, array('DTT_EVT_start', 'DTT_EVT_end', 'DTT_REG_start', 'DTT_REG_end' ) ) ) {
-				$set_column_values[$key] = $this->_prepare_dtt_for_db( $value );
-			}
-		}
+		
 		return $this->_insert( $this->table_name, $this->table_data_types, $set_column_values );
 	}
 
@@ -569,12 +564,7 @@ class EEM_Datetime extends EEM_Base {
 	public function update ($set_column_values, $where_cols_n_values) {
 		//$this->display_vars( __FUNCTION__, array( 'set_column_values' => $set_column_values, '$where_cols_n_values' => $where_cols_n_values ) );
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		//let's handle the conversion of DTT values first
-		foreach ( $set_column_values as $key => $value ) {
-			if ( in_array( $key, array('DTT_EVT_start', 'DTT_EVT_end', 'DTT_REG_start', 'DTT_REG_end' ) ) ) {
-				$set_column_values[$key] = $this->_prepare_dtt_for_db( $value );
-			}
-		}
+		
 		return $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );
 	}
 
