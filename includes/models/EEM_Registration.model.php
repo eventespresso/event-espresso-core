@@ -697,11 +697,13 @@ class EEM_Registration extends EEM_TempBase {
 
 		$registrations = $count ? $wpdb->get_var( $SQL ) : $wpdb->get_results( $SQL );
 
-		//dang it... results are just returned vanilla... we have to run conversions on them first
-		foreach( $registrations as $rkey => $registration ) {
-			foreach ( $registration as $key => $value ) {
-				if ( in_array($key, $this->dtt_keys ) ) {
-					$registrations[$rkey]->$key = $this->_prepare_dtt_from_db( $value );
+		if ( is_array($registrations ) ) {
+			//dang it... results are just returned vanilla... we have to run conversions on them first
+			foreach( $registrations as $rkey => $registration ) {
+				foreach ( $registration as $key => $value ) {
+					if ( in_array($key, $this->dtt_keys ) ) {
+						$registrations[$rkey]->$key = $this->_prepare_dtt_from_db( $value );
+					}
 				}
 			}
 		}
