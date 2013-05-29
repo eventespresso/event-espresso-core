@@ -114,6 +114,7 @@ abstract class EE_Base_Class {
 				case 'fullhtml':
 				case 'email':
 				case 'all_caps_key':
+				case 'text_or_numeric':
 					return stripslashes( $value );
 				case 'float':
 					return stripslashes( floatval($value));
@@ -212,6 +213,7 @@ abstract class EE_Base_Class {
 				$return=html_entity_decode( wp_strip_all_tags( "$value" ), ENT_QUOTES, 'UTF-8' );
 				break;
 			case 'simplehtml':
+			case 'text_or_numeric':
 				global $allowedtags;
 				$allowedtags['ol']=array();
 				$allowedtags['ul']=array();
@@ -297,6 +299,11 @@ abstract class EE_Base_Class {
 					$return= true;
 				}
 				break;
+			case 'text_or_numeric':
+				if(is_string($value) || is_numeric($value)){
+					$return= true;
+				}
+				break;
 			case 'float':
 				if(is_numeric($value)){
 					$return= true;
@@ -361,6 +368,7 @@ abstract class EE_Base_Class {
 				case 'fullhtml':
 				case 'email':
 				case 'all_caps_key':
+				case 'text_or_numeric':
 					echo stripslashes($value);
 					break;
 				case 'float':
