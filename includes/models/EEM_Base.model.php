@@ -56,7 +56,14 @@ abstract class EEM_Base extends EE_Base {
 
 		//hackish but handles DTT's
 		$this->_dtt_keys = array(
-			'PAY_timestamp'
+			'DTT_EVT_start',
+			'DTT_EVT_end',
+			'DTT_REG_start',
+			'DTT_REG_end',
+			'PAY_timestamp',
+			'PRC_start_date',
+			'PRC_end_date',
+			'REG_date'
 			);
 		
 	}
