@@ -57,16 +57,18 @@ class EEM_Datetime extends EEM_Base {
 		$this->plural_item = __('Datetimes','event_espresso');		
 		// array representation of the datetime table and the data types for each field
 		$this->table_data_types = array (
-			'DTT_ID' 					=> '%d',
-			'EVT_ID' 					=> '%d',
+			'DTT_ID' 			=> '%d',
+			'EVT_ID' 			=> '%d',
 			'DTT_is_primary' 	=> '%d',
-			'DTT_EVT_start' 		=> '%d',
-			'DTT_EVT_end' 		=> '%d',
-			'DTT_REG_start' 		=> '%d',
-			'DTT_REG_end' 		=> '%d',
-			'DTT_reg_limit' 		=> '%d',
+			'DTT_EVT_start' 	=> '%s',
+			'DTT_EVT_end' 		=> '%s',
+			'DTT_REG_start' 	=> '%s',
+			'DTT_REG_end' 		=> '%s',
+			'DTT_reg_limit' 	=> '%d',
 			'DTT_tckts_left'	=> '%d'
 		);
+
+
 
 		// uncomment these for example code samples of how to use them
 		//			self::how_to_use_insert();
@@ -129,16 +131,16 @@ class EEM_Datetime extends EEM_Base {
 
 			foreach ( $datetimes as $datetime ) {
 					$array_of_objects[ $datetime->DTT_ID ] = new EE_Datetime(
-																															$datetime->EVT_ID,
-																															$datetime->DTT_is_primary,
-																															$datetime->DTT_EVT_start,
-																															$datetime->DTT_EVT_end,
-																															$datetime->DTT_REG_start,
-																															$datetime->DTT_REG_end,
-																															/*$datetime->DTT_reg_limit,
-																															$datetime->DTT_tckts_left,*/
-																															$datetime->DTT_ID
-																													 	);
+						$datetime->EVT_ID,
+						$datetime->DTT_is_primary,
+						$this->_prepare_dtt_from_db($datetime->DTT_EVT_start),
+						$this->_prepare_dtt_from_db($datetime->DTT_EVT_end),
+						$this->_prepare_dtt_from_db($datetime->DTT_REG_start),
+						$this->_prepare_dtt_from_db($datetime->DTT_REG_end),
+						/*$datetime->DTT_reg_limit,
+						$datetime->DTT_tckts_left,*/
+						$datetime->DTT_ID
+				 	);
 			}
 			// sort dates from earliest to latest
 			uasort( $array_of_objects, array( $this, '_compare_order' ));	
@@ -179,10 +181,10 @@ class EEM_Datetime extends EEM_Base {
 			$date_time_obj = new EE_Datetime(
 					$datetime->EVT_ID,
 					$datetime->DTT_is_primary,
-					$datetime->DTT_EVT_start,
-					$datetime->DTT_EVT_end,
-					$datetime->DTT_REG_start,
-					$datetime->DTT_REG_end,
+					$this->_prepare_dtt_from_db($datetime->DTT_EVT_start),
+					$this->_prepare_dtt_from_db($datetime->DTT_EVT_end),
+					$this->_prepare_dtt_from_db($datetime->DTT_REG_start),
+					$this->_prepare_dtt_from_db($datetime->DTT_REG_end),
 					$datetime->DTT_ID
 				);
 			return $date_time_obj;
@@ -381,10 +383,10 @@ class EEM_Datetime extends EEM_Base {
 
 		foreach ( $DTMs as $DTM ) {
 
-			echo '<h4>EVT_ID : ' . $DTM->EVT_ID . '   - DTT_ID : ' . $DTM->DTT_ID . ' : date : ' . date( 'F j, Y g:i a', $DTM->DTT_start )  . '</h4>';
+			echo '<h4>EVT_ID : ' . $DTM->EVT_ID . '   - DTT_ID : ' . $DTM->DTT_ID . ' : date : ' . $this->_prepare_dtt_from_db( $DTM->DTT_start, 'F j, Y g:i a' )  . '</h4>';
 
 			if ( in_array( $DTM->DTT_ID, $end_dates )) {
-				$set_column_values = array( 'DTT_end' => $DTM->DTT_start  );
+				$set_column_values = array( 'DTT_end' => $this->_prepare_dtt_for_db($DTM->DTT_start)  );
 				$where_cols_n_values = array( 'DTT_ID' => $start_dates[ $DTM->DTT_ID ] );
 				if ( $results = $this->update ( $set_column_values, $where_cols_n_values )) {
 					echo '<h4>copy successful DTT_ID : ' . $DTM->DTT_ID . '</h4>';
@@ -538,6 +540,12 @@ class EEM_Datetime extends EEM_Base {
 	 */
 	public function insert ($set_column_values) {
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
+		//let's handle the conversion of DTT values first
+		foreach ( $set_column_values as $key => $value ) {
+			if ( in_array( $key, array('DTT_EVT_start', 'DTT_EVT_end', 'DTT_REG_start', 'DTT_REG_end' ) ) ) {
+				$set_column_values[$key] = $this->_prepare_dtt_for_db( $value );
+			}
+		}
 		return $this->_insert( $this->table_name, $this->table_data_types, $set_column_values );
 	}
 
@@ -561,6 +569,12 @@ class EEM_Datetime extends EEM_Base {
 	public function update ($set_column_values, $where_cols_n_values) {
 		//$this->display_vars( __FUNCTION__, array( 'set_column_values' => $set_column_values, '$where_cols_n_values' => $where_cols_n_values ) );
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
+		//let's handle the conversion of DTT values first
+		foreach ( $set_column_values as $key => $value ) {
+			if ( in_array( $key, array('DTT_EVT_start', 'DTT_EVT_end', 'DTT_REG_start', 'DTT_REG_end' ) ) ) {
+				$set_column_values[$key] = $this->_prepare_dtt_for_db( $value );
+			}
+		}
 		return $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );
 	}
 
