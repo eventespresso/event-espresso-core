@@ -1397,12 +1397,12 @@ abstract class EEM_Base extends EE_Base{
 	 * @throws EE_Error
 	 */
 	public function get_primary_key_field(){
-		$field = $this->get_a_field_of_type('EE_Primary_Key_Field_Base');
-		if(!$field){
-			throw new EE_Error(sprintf(__("There is no Primary Key defined on model %s",'event_espresso'),get_class($this)));
-		}else{
-			return $field;
+		foreach($this->field_settings(true) as $field_name=>$field_obj){
+			if($field_obj instanceof EE_Primary_Key_Field_Base && $field_obj->is_pk_for_model()){
+				return $field_obj;
+			}
 		}
+		throw new EE_Error(sprintf(__("There is no Primary Key defined on model %s",'event_espresso'),get_class($this)));
 	}
 	
 	/**

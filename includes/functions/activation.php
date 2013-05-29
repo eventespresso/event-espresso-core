@@ -740,7 +740,37 @@ function events_data_tables_install() {
 	event_espresso_run_install($table_name, $sql, 'ENGINE=InnoDB ');
 
 
+	
+	
+	$table_name = 'esp_status';
+	$sql = "STS_ID varchar(3) COLLATE utf8_bin NOT NULL,
+				  STS_code varchar(45) COLLATE utf8_bin NOT NULL,
+				  STS_type set('event','registration','transaction','payment','email') COLLATE utf8_bin NOT NULL,
+				  STS_can_edit tinyint(1) NOT NULL DEFAULT 0,
+				  STS_desc tinytext COLLATE utf8_bin,
+				  STS_open tinyint(1) NOT NULL DEFAULT 1,
+				  UNIQUE KEY STS_ID_UNIQUE (STS_ID),
+				  KEY STS_type (STS_type)";
+	event_espresso_run_install($table_name, $sql );
 
+
+
+	$table_name = 'esp_venue_meta';
+	$sql = "VNUM_ID int(11) NOT NULL AUTO_INCREMENT,
+		VNU_ID int(11) DEFAULT NULL,
+		VNU_address varchar(100) DEFAULT NULL,
+		VNU_address2 varchar(100) DEFAULT NULL,
+		VNU_city varchar(100) DEFAULT NULL,
+		STA_ID int(11) DEFAULT NULL,
+		CNT_ISO int(11) DEFAULT NULL,
+		VNU_zip varchar(45) DEFAULT NULL,
+		VNU_phone varchar(45) DEFAULT NULL,
+		VNU_capacity int(11) DEFAULT NULL,
+		PRIMARY KEY  (VNUM_ID),
+		KEY (STA_ID),
+		KEY (CNT_ISO)";
+	event_espresso_run_install($table_name, $sql, 'ENGINE=InnoDB ');
+	
 
 
 	$table_name = "events_detail";

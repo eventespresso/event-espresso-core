@@ -99,7 +99,7 @@ class EEM_Event  extends EEM_Base{
 				'EVT_slug'=>new EE_Slug_Field('post_name', __("Event Slug", "event_espresso"), false, ''),
 				'EVT_created'=>new EE_Datetime_Field('post_date', __("Date/Time Event Created", "event_espresso"), false, current_time('timestamp')),
 				'EVT_short_desc'=>new EE_Simple_HTML_Field('post_excerpt', __("Event Short Descripiton", "event_espresso"), false,''),
-				'EVT_status'=>new EE_Enum_Field('post_status', __("Event Status", "event_espresso"), false, EEM_Event::status_draft, array_keys($this->_statuses)),
+				'STS_ID'=>new EE_Enum_Field('post_status', __("Event Status", "event_espresso"), false, EEM_Event::status_draft, array_keys($this->_statuses)),//will be a foreign key once status model made
 				'EVT_modified'=>new EE_Datetime_Field('post_modified', __("Dateim/Time Event Modified", "event_espresso"), true, current_time('timestamp')),
 				'EVT_wp_user'=>new EE_Integer_Field('post_author', __("Wordpress User ID", "event_espresso"), false,1),
 				'EVT_parent'=>new EE_Integer_Field('post_parent', __("Event Parent ID", "event_espresso"), true),
@@ -107,7 +107,8 @@ class EEM_Event  extends EEM_Base{
 				'EVT_post_type'=>new EE_DB_Only_Text_Field('post_type', __("Event Post Type", "event_espresso"), false, 'esp_event')
 			),
 			'Event_Meta'=>array(
-				'EVTM_ID'=> new EE_DB_Only_Int_Field('EVTM_ID', __('Event Meta Row ID','event_espresso'), false),
+				'EVTM_ID'=> new EE_DB_Only_Float_Field('EVTM_ID', __('Event Meta Row ID','event_espresso'), false),
+				'EVT_ID_fk'=>new EE_DB_Only_Int_Field('EVT_ID', __("Foreign key to Event ID from Event Meta table", "event_espresso"), false),
 				'EVT_is_active'=>new EE_Boolean_Field('EVT_is_active', __("Event Active Flag", "event_espresso"), false, 1),
 				'EVT_display_desc'=>new EE_Boolean_Field('EVT_display_desc', __("Display Description Flag", "event_espresso"), false, 1),
 				'EVT_display_reg_form'=>new EE_Boolean_Field('EVT_display_reg_form', __("Display Registration Form Flag", "event_espresso"), false, 1),
