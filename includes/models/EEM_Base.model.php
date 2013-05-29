@@ -1398,7 +1398,7 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	public function get_primary_key_field(){
 		foreach($this->field_settings(true) as $field_name=>$field_obj){
-			if($field_obj instanceof EE_Primary_Key_Field_Base && $field_obj->is_pk_for_model()){
+			if($field_obj instanceof EE_Primary_Key_Field_Base){
 				return $field_obj;
 			}
 		}

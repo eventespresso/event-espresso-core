@@ -60,6 +60,14 @@ class EE_Base_Class{
 		$className=get_class($this);
 		do_action("AHEE__{$className}__construct",$this,$fieldValues);
 		$model=$this->get_model();
+		$model_fields = $model->field_settings(false);
+		// verify client code hasnt passed any invalid field names
+		foreach($fieldValues as $field_name=> $field_value){
+			if( ! array_key_exists($field_name,$model_fields)){
+				throw new EE_Error(sprintf(__("Invalid field (%s) passed to constructor of %s. Allowed fields are :%s", "event_espresso"),$field_name,get_class($this),implode(", ",array_keys($model_fields))));
+			}
+		}
+		
 		
 		//if db model is instantiatiating
 		if( $bydb ){
@@ -70,8 +78,8 @@ class EE_Base_Class{
 		}else{
 			//we're constructing a brand
 			//new instance of the model object. Generally, this means we'll need to do more field validation
-			foreach($fieldValues as $fieldName => $fieldValue){
-				$this->set($fieldName,$fieldValue,true);
+			foreach($model_fields as $fieldName => $field_obj){
+				$this->set($fieldName,isset($fieldValues[$fieldName]) ? $fieldValues[$fieldName] : null ,true);
 			}
 		}
 		//verify we have all the attributes required in teh model

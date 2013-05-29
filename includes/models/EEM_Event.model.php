@@ -126,7 +126,8 @@ class EEM_Event  extends EEM_Base{
 			'Registration'=>new EE_Has_Many_Relation(),
 			'Datetime'=>new EE_Has_Many_Relation(),
 			'Price'=>new EE_Has_Many_Relation(),
-			'Question_Group'=>new EE_HABTM_Relation('Event_Question_Group')
+			'Question_Group'=>new EE_HABTM_Relation('Event_Question_Group'),
+			'Venue'=>new EE_HABTM_Relation('Event_Venue')
 		);
 		parent::__construct();
 	}

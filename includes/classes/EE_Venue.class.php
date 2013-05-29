@@ -39,12 +39,22 @@ class EE_Venue extends EE_Base_Class {
 	protected $_VNU_phone;
 	protected $_VNU_capacity;
 
+	/**
+	 * 
+	 * @param type $props_n_values
+	 * @return EE_Venue
+	 */
 	public static function new_instance($props_n_values = array()) {
 		$classname = __CLASS__;
 		$has_object = parent::_check_for_object($props_n_values, $classname);
 		return $has_object ? $has_object : new self($props_n_values);
 	}
 
+	/**
+	 * 
+	 * @param type $props_n_values
+	 * @return EE_Venue
+	 */
 	public static function new_instance_from_db($props_n_values = array()) {
 		return new self($props_n_values, TRUE);
 	}
@@ -269,4 +279,13 @@ class EE_Venue extends EE_Base_Class {
 		return $this->set('VNU_zip', $zip);
 	}
 
+	/**
+	 * Gets all events happening at this venue. QUery parameters can be added to 
+	 * fetcha subset of those events.
+	 * @param array $query_params like EEM_Base::get_all's $query_params
+	 * @return EE_Event[]
+	 */
+	function events($query_params = array()){
+		return $this->get_many_related('Event', $query_params);
+	}
 }

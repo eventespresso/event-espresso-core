@@ -46,7 +46,11 @@ class EE_Event extends EE_Base_Class{
 	 */
 	protected $_Question_Group;
 	
-	
+	/**
+	 * related venues
+	 * @var EE_Venue[]
+	 */
+	protected $_Venue;
 	/**
 	 * ID of event (post id)
 	 * @var int 
@@ -166,6 +170,11 @@ class EE_Event extends EE_Base_Class{
 	 */
 	protected $_EVT_external_URL;
 
+	/**
+	 * 
+	 * @param type $props_n_values
+	 * @return EE_Event
+	 */
 	public static function new_instance( $props_n_values = array() ) {
 		$classname = __CLASS__;
 		$has_object = parent::_check_for_object( $props_n_values, $classname );
@@ -173,6 +182,11 @@ class EE_Event extends EE_Base_Class{
 	}
 
 
+	/**
+	 * 
+	 * @param type $props_n_values
+	 * @return EE_Event
+	 */
 	public static function new_instance_from_db ( $props_n_values = array() ) {
 		return new self( $props_n_values, TRUE );
 	}

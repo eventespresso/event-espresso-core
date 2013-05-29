@@ -528,6 +528,13 @@ function events_data_tables_install() {
 	event_espresso_run_install($table_name,$sql, 'ENGINE=InnoDB');
 
 
+	$table_name='esp_event_venue';
+	$sql="EVV_ID INT(11) NOT NULL AUTO_INCREMENT ,
+			EVT_ID INT(11) NOT NULL ,
+			VNU_ID INT(11) NOT NULL ,
+			PRIMARY KEY (EVN_ID)";
+	event_espresso_run_install($table_name,$sql, 'ENGINE=InnoDB');
+	
 
 	$table_name = 'esp_message_template';
 	$sql = "MTP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
