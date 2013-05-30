@@ -74,10 +74,11 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base{
 		//check if such a relationship already exists
 		 $join_model_fk_to_this_model = $this->get_join_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
 		 $join_model_fk_to_other_model = $this->get_join_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
-		 $existing_entry_in_join_table = $this->get_join_model()->get_one(array(
+		 $query_params = array(
 			 array(
 				 $join_model_fk_to_this_model->get_name() => $this_model_obj->ID(),
-				 $join_model_fk_to_other_model->get_name() => $other_model_obj->ID())));
+				 $join_model_fk_to_other_model->get_name() => $other_model_obj->ID()));
+		 $existing_entry_in_join_table = $this->get_join_model()->get_one($query_params);
 		//if there is already an entry in the join table, indicating a relationship, we're done
 		 //again, if you want more sophisticated logic or insertions (handling more columns than just 2 foreign keys to
 		 //the other tables, use the joining model directly!

@@ -1320,6 +1320,17 @@ abstract class EEM_Base extends EE_Base{
 		return $SQL;
 	}
 	
+	function _construct_internal_join_from_table_alias($table_alias_already_joined){
+		$SQL = '';
+		foreach($this->_tables as $table_alias => $table_obj){
+			if($table_alias == $table_alias_already_joined){
+				//dont join to this table, as it's the one we've specified has already been joined-to
+				continue;
+			}
+			
+		}
+	}
+	
 	/**
 	 * Gets an array for storing all the data types on the next-to-be-executed-query. 
 	 * This should be a growing array of keys being table-columns (eg 'EVT_ID' and 'Event.EVT_ID'), and values being their data type (eg, '%s', '%d', etc)
@@ -1383,7 +1394,7 @@ abstract class EEM_Base extends EE_Base{
 	public function field_settings_for($fieldName){
 		$fieldSettings=$this->field_settings(true);
 		if( ! array_key_exists($fieldName,$fieldSettings)){
-			throw new EE_Error(sprintf(__('There is no field/column %s on %s','event_espresso'),$fieldName,get_class($this)));
+			throw new EE_Error(sprintf(__("There is no field/column '%s' on '%s'",'event_espresso'),$fieldName,get_class($this)));
 		}
 		return $fieldSettings[$fieldName];
 	}

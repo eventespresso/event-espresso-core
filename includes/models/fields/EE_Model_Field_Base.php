@@ -35,7 +35,11 @@ abstract class EE_Model_Field_Base{
 		return $this->_table_column;
 	}
 	function get_name(){
-		return $this->_name;
+		if($this->_name){
+			return $this->_name;
+		}else{
+			throw new EE_Error(sprintf(__("Model field '%s' has no name set. Did you make a model and forget to call teh parent model constructor?", "event_espresso"),get_class($this)));
+		}
 	}
 	function get_nicename(){
 		return $this->_nicename;

@@ -288,4 +288,37 @@ class EE_Venue extends EE_Base_Class {
 	function events($query_params = array()){
 		return $this->get_many_related('Event', $query_params);
 	}
+	
+	/**
+	 * Gets the state for this venue
+	 * @return EE_State
+	 */
+	function state_obj(){
+		return $this->get_first_related('State');
+	}
+	/**
+	 * Gets the country of this venue
+	 * @return EE_Country
+	 */
+	function country_obj(){
+		return $this->get_first_related('Country');
+	}
+	
+	/**
+	 * Sets the state, given eitehr a state id or state object
+	 * @param EE_State/int $state_id_or_obj
+	 * @return EE_State
+	 */
+	function set_state_obj($state_id_or_obj){
+		return $this->_add_relation_to($state_id_or_obj, 'State');
+	}
+	
+	/**
+	 * Sets the coutnry on teh venue
+	 * @param EE_Country/string $country_id_or_obj
+	 * @return EE_Country
+	 */
+	function set_country_obj($country_id_or_obj){
+		return $this->_add_relation_to($country_id_or_obj, 'Country');
+	}
 }

@@ -34,7 +34,7 @@ class EEM_Event_Venue extends EEM_Base{
 		);
 		$this->_fields = array(
 			'Event_Venue'=>array(
-				'EVV_ID'=>new EE_Primary_Key_Int_Field('EQG_ID', __('Event to Venue Link ID','event_espresso'), false),
+				'EVV_ID'=>new EE_Primary_Key_Int_Field('EVV_ID', __('Event to Venue Link ID','event_espresso'), false),
 				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID','event_espresso'), false, 0, 'Event'),
 				'VNU_ID'=>new EE_Foreign_Key_Int_Field('VNU_ID', __('Venue ID','event_espresso'), false, 0, 'Venue')
 			)
@@ -43,5 +43,6 @@ class EEM_Event_Venue extends EEM_Base{
 			'Event'=>new EE_Belongs_To_Relation(),
 			'Venue'=>new EE_Belongs_To_Relation()
 		);
+		parent::__construct();
 	}
 }

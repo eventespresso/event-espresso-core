@@ -93,7 +93,7 @@ class EEM_Venue extends EEM_Base {
 				
 			));
 		$this->_model_relations = array(
-			'Event'=>new EE_HABTM_Relation(),
+			'Event'=>new EE_HABTM_Relation('Event_Venue'),
 			'State'=>new EE_Belongs_To_Relation(),
 			'Country'=>new EE_Belongs_To_Relation()
 		);

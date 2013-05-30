@@ -36,6 +36,12 @@ class EE_State extends EE_Base_Class{
 	 * @var EE_Country 
 	 */
 	protected $_Country;
+	
+	/**
+	 * Venues in this state
+	 * @var EE_Venue[]
+	 */
+	protected $_Venue;
 	public static function new_instance( $props_n_values = array() ) {
 		$classname = __CLASS__;
 		$has_object = parent::_check_for_object( $props_n_values, $classname );

@@ -44,5 +44,6 @@ class EEM_Event_Question_Group extends EEM_Base{
 			'Event'=>new EE_Belongs_To_Relation(),
 			'Question_Group'=>new EE_Belongs_To_Relation()
 		);
+		parent::__construct();
 	}
 }

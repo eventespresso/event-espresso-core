@@ -78,13 +78,13 @@ class EE_Model_Query_Info_Carrier extends EE_Base{
    
    /**
     * Merges info from the other EEM_Related_Model_Info_Carrier into this one.
-    * @param EE_Model_Query_Info_Carrier $other_join_sql_and_data_types_carrier
+    * @param EE_Model_Query_Info_Carrier $other_model_query_info_carrier
     */
-   public function merge( $other_join_sql_and_data_types_carrier ){
-	   if( $other_join_sql_and_data_types_carrier && ! $this->_have_already_included_one_of_these_models($other_join_sql_and_data_types_carrier->get_model_names_included())){
-		   $model_included_on_other_join_sql_and_data_types_carrier =  $other_join_sql_and_data_types_carrier->get_model_names_included();
+   public function merge( $other_model_query_info_carrier ){
+	   if( $other_model_query_info_carrier && ! $this->_have_already_included_one_of_these_models($other_model_query_info_carrier->get_model_names_included())){
+		   $model_included_on_other_join_sql_and_data_types_carrier =  $other_model_query_info_carrier->get_model_names_included();
 		   $this->_models_included = array_merge( $this->_models_included, $model_included_on_other_join_sql_and_data_types_carrier );
-			$this->_join_sql .= $other_join_sql_and_data_types_carrier->_join_sql;
+			$this->_join_sql .= $other_model_query_info_carrier->_join_sql;
 	   }
 	   //otherwise don't merge our data.
 	   //yes, this means that we must immediately merge any model data into our grand list
@@ -118,6 +118,11 @@ class EE_Model_Query_Info_Carrier extends EE_Base{
 	   return $this->_where_sql;
    }
 
+   /**
+    * Gets the SQL for joining the main model to other models involves in the query, which was set earlier on
+    * the EE_Model_Query_info_Carrier by calling set_main_model_join_sql()
+    * @return string
+    */
   public function get_main_model_join_sql() {
     return $this->_main_join_sql;
   }

@@ -535,13 +535,17 @@ class EE_Base_Class{
 
 
 	/**
-	 * If no model name is provided, gets the model classname (eg EEM_Attendee) for this model object.
 	 * If a model name is provided (eg Registration), gets the model classname for that model.
-	 * @return string
+	 * Also works if a model class's classname is provided (eg EE_Registration).
+	 * @return string like EEM_Attendee
 	 */
 	private static function _get_model_classname( $model_name = null){
-		$modelName=str_replace("EE_","EEM_",$model_name);
-		return $modelName;
+		if(strpos($model_name,"EE_")===0){
+			$model_classname=str_replace("EE_","EEM_",$model_name);
+		}else{
+			$model_classname = "EEM_".$model_name;
+		}
+		return $model_classname;
 	}
 	
 	/**
@@ -568,13 +572,14 @@ class EE_Base_Class{
 	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object
 	 * @param string $relationName eg 'Events','Question',etc.
 	 * an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specificy array('role-column-name'=>'role-id')
-	 * @return boolean success
+	 * @return EE_Base_Class the object the relation was added to
 	 */
 	public function _add_relation_to($otherObjectModelObjectOrID,$relationName){
-		$otherObjectModelObjectOrID = $this->ensure_related_thing_is_model_obj($otherObjectModelObjectOrID,$relationName);
-		$this->get_model()->add_relationship_to($this, $otherObjectModelObjectOrID, $relationName);
+		$otherObject = $this->ensure_related_thing_is_model_obj($otherObjectModelObjectOrID,$relationName);
+		$this->get_model()->add_relationship_to($this, $otherObject, $relationName);
 		
-		$this->cache( $relationName, $otherObjectModelObjectOrID );
+		$this->cache( $relationName, $otherObject );
+		return $otherObject;
 	}
 	
 	
@@ -584,12 +589,13 @@ class EE_Base_Class{
 	 * to a group of events, the $relationName should be 'Events', and should be a key in the EE Model's $_model_relations array
 	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object
 	 * @param string $relationName
-	 * @return boolean success
+	 * @return EE_Base_Class the relation was removed from
 	 */
 	public function _remove_relation_to($otherObjectModelObjectOrID,$relationName){
-		$otherObjectModelObjectOrID = $this->ensure_related_thing_is_model_obj($otherObjectModelObjectOrID, $relationName);
-		$this->get_model()->remove_relationship_to($this, $otherObjectModelObjectOrID, $relationName);
-		$this->clear_cache($relationName, $otherObjectModelObjectOrID);
+		$otherObject = $this->ensure_related_thing_is_model_obj($otherObjectModelObjectOrID, $relationName);
+		$this->get_model()->remove_relationship_to($this, $otherObject, $relationName);
+		$this->clear_cache($relationName, $otherObject);
+		return $otherObject;
 	}
 	
 	/**
