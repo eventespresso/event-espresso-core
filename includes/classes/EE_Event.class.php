@@ -330,4 +330,31 @@ class EE_Event extends EE_Base_Class{
 	function set_wp_user($wp_user) {
 		return $this->set('EVT_wp_user', $wp_user);
 	}
+	
+	/**
+	 * Adds a venue to this event
+	 * @param EE_Venue/int $venue_id_or_obj
+	 * @return EE_Venue
+	 */
+	function add_venue($venue_id_or_obj){
+		return $this->_add_relation_to($venue_id_or_obj, 'Venue');
+	}
+	
+	/**
+	 * Removes a venue from the event
+	 * @param EE_Venue/int $venue_id_or_obj
+	 * @return EE_Venue
+	 */
+	function remove_venue($venue_id_or_obj){
+		return $this->_remove_relation_to($venue_id_or_obj, 'Venue');
+	}
+	
+	/**
+	 * Gets all teh venues related ot the event. May provide additional $query_params if desired
+	 * @param array $query_params like EEM_Base::get_all's $query_params
+	 * @return EE_Venue[]
+	 */
+	function venues($query_params = array()){
+		return $this->get_many_related('Venue', $query_params);
+	}
 }

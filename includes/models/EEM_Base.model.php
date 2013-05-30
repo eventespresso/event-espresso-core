@@ -580,14 +580,8 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	function get_all_related($id_or_obj, $model_name, $query_params = null, $values_already_prepared_by_model_object = false){
 		$model_obj = $this->ensure_is_obj($id_or_obj);
-		//get that related model
-		$related_model = $this->get_related_model_obj($model_name);
-		//we're just going to use teh query params on the related model's normal get_all query,
-		//except add a condition to say to match the curren't mod
-		$this_model_name = $this->get_this_model_name();
-		$this_pk_field_name = $this->get_primary_key_field()->get_name();
-		$query_params[0][$this_model_name.".".$this_pk_field_name]=$model_obj->ID();
-		return $related_model->get_all($query_params, $values_already_prepared_by_model_object);
+		$relation_settings = $this->related_settings_for($model_name);
+		return $relation_settings->get_all_related($model_obj,$query_params,$values_already_prepared_by_model_object);
 	}
 	
 	/**
@@ -930,7 +924,7 @@ abstract class EEM_Base extends EE_Base{
 
 		//now, just verify they didnt pass anything wack
 		foreach($query_params as $query_key => $query_value){
-			if( ! in_array($query_key,$this->_allowed_query_params)){
+			if( ! in_array($query_key,$this->_allowed_query_params,true)){
 				throw new EE_Error(sprintf(__("You passed %s as a query parameter to %s, which is illegal!",'event_espresso'),$query_key,get_class($this)));
 			}
 		}
@@ -1431,7 +1425,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Gets a foreign key field pointing to model. 
 	 * @param string $model_name eg Event, Registration, not EEM_Event
-	 * @return EE_Foreign_Key_Field
+	 * @return EE_Foreign_Key_Field_Base
 	 * @throws EE_Error
 	 */
 	public function get_foreign_key_to($model_name){

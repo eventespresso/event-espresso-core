@@ -60,6 +60,27 @@ abstract class EE_Model_Relation_Base{
 	}
 	
 	/**
+	 * Gets all the model objects of type of other model related to $model_object,
+	 * according to this relation. This is the same code for EE_HABTM_Relation and EE_Has_Many_Relation.
+	 * For both of those child classes, $model_object must be saved so that it has an ID before querying,
+	 * otherwise an error will be thrown.
+	 * EE_Belongs_To_Relation doesn't need to be saved before querying.
+	 * @param EE_Base_Class $model_object 
+	 * @param array $query_params like EEM_Base::get_all's $query_params
+	 * @param boolean $values_already_prepared_by_model_object
+	 * @return EE_Base_Class[]
+	 */
+	public function get_all_related($model_object, $query_params = array(), $values_already_prepared_by_model_object = false){
+		$query_param_where_this_model_pk = $this->get_this_model()->get_this_model_name().".".$this->get_this_model()->get_primary_key_field()->get_name();
+		$model_object_id = $model_object->ID();
+		if( ! $model_object_id){
+			throw new EE_Error(sprintf(__("Sorry, we cant get the related %s model objects to %s model object before it has an ID. You can solve that by just saving it before trying to get its related model objects", "event_espresso"),$this->get_other_model()->get_this_model_name(),$this->get_this_model()->get_this_model_name()));
+		}
+		$query_params[0][$query_param_where_this_model_pk] = $model_object->ID();
+		return $this->get_other_model()->get_all($query_params, $values_already_prepared_by_model_object);
+	}
+	
+	/**
 	 * Gets the SQL string for performing the join between this model and the other model.
 	 * @return string of SQL, eg "LEFT JOIN table_name AS table_alias ON this_model_primary_table.pk = other_model_primary_table.fk" etc
 	 */

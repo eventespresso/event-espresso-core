@@ -23,6 +23,7 @@ function espresso_frontend_init() {
 //	$e->_remove_relation_to($v, 'Venue');
 //	echo "state id:".$v->state_ID();
 //	echo "state obj";var_dump($v->state_obj());
+//	var_dump($v->events());
 	global $espresso_reg_page;
 	if ( $espresso_reg_page = espresso_test_for_reg_page() ) {
 		do_action('AHEE_load_reg_page_files');
