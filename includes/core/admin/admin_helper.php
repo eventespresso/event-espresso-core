@@ -124,10 +124,7 @@ function event_espresso_empty_event_trash($event_id) {
 	
 	
 		/*	 * ********************* REMOVE AFTER DATA MIGRATION SCRIPTS WRITTEN ********************** */
-		//Remove the event times
-		$sql = 'DELETE FROM ' . EVENTS_START_END_TABLE . ' WHERE event_id = %d';
-		$wpdb->query($wpdb->prepare($sql, $event_id));
-	
+		
 		//Remove the event prices
 		$sql = 'DELETE FROM ' . EVENTS_PRICES_TABLE . ' WHERE event_id = %d';
 		$wpdb->query($wpdb->prepare($sql, $event_id));

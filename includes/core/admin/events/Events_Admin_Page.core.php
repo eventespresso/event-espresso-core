@@ -1843,21 +1843,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 			}
 		}
 
-		$event_times = $wpdb->get_results("SELECT * FROM ". EVENTS_START_END_TABLE ." WHERE event_id = '".$event_id."' ORDER BY id");
-		foreach ($event_times as $event_time){
-			if ($event_time->start_time != ''){
-
-				foreach (array($event_time->start_time) as $k=>$v){
-					if($v != '') {
-						$sql3="INSERT INTO ".EVENTS_START_END_TABLE." (event_id, start_time, end_time) VALUES ('".$new_id."', '".$v."', '".$event_time->end_time."')";
-						//echo "$sql3 <br>";
-						if ( FALSE === $wpdb->query($sql3)){
-							$error = true;
-						}
-					}
-				}
-			}
-		}
 		
 		$event_prices = $wpdb->get_results("SELECT * FROM ". EVENTS_PRICES_TABLE ." WHERE event_id = '".$event_id."' ORDER BY id");
 		foreach ($event_prices as $event_price){
