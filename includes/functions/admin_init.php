@@ -179,6 +179,10 @@ function espresso_plugin_activation() {
 		require_once(  EVENT_ESPRESSO_INCLUDES_DIR . 'functions/init.php');
 		espresso_autoload();
 		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/activation.php');
+
+		//make sure we have espresso_error_handling in place
+		espresso_error_handling();
+
 		espresso_check_data_tables();
 		espresso_initialize_system_questions();
 		event_espresso_create_upload_directories();
