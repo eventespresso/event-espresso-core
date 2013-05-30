@@ -751,7 +751,7 @@ abstract class EEM_Base extends EE_Base{
 	}
 	/**
 	 * Returns the main table on this model
-	 * @return EE_Main_Table
+	 * @return EE_Primary_Table
 	 * @throws EE_Error
 	 */
 	protected function _get_main_table(){
@@ -1292,43 +1292,41 @@ abstract class EEM_Base extends EE_Base{
 	 * @return string SQL 
 	 */
 	function _construct_internal_join(){
-		$SQL = '';
-//		$first = true;
-		foreach($this->_tables as $table_obj){
-			if($table_obj instanceof EE_Primary_Table){
-				$SQL .= SP.$table_obj->get_table_name()." AS ".$table_obj->get_table_alias().SP;
-			}
-		}
-		$SQL .=$this->_construct_internal_join_to_secondary_tables();
+		$SQL = $this->_get_main_table()->get_table_sql();
+		$SQL .= $this->_construct_internal_join_to_table_with_alias($this->_get_main_table()->get_table_alias());
 		return $SQL;
 	}
+
 	
 	/**
-	 * Adds SQL for joining from the primary table to any secondary tables.
-	 * Eg if there are two secondary tables, esp_monkey and esp_monkey_tree, this would rturn SQL like
-	 * ' LEFT JOIN esp_monkey as Monkey ON Moneky.fk = Primary_table.pk LEFT JOIN esp_monkey_tree as Monkey_Tree 
-	 *  ON Monkey_Tree.fk = Primary_table.pk'
+	 * Constructs the SQL for joining all the tables on this model.
+	 * Normally $alias should be the primary table's alias, but in cases where
+	 * we have already joined to a secondary table (eg, the secondary table has a foreign key and is joined before the primary table)
+	 * then we should provide that secondary table's alias.
+	 * Eg, with $alias being the primary table's alias, this will construct SQL like: 
+	 * " INNER JOIN wp_esp_secondary_table AS Secondary_Table ON Primary_Table.pk = Secondary_Table.fk".
+	 * With $alias being a secondary table's alias, this will construct SQL like:
+	 * " INNER JOIN wp_esp_primary_table AS Primary_Table ON Primary_Table.pk = Secondary_Table.fk".
+	 * 
+	 * @param string $alias table alias to join to (this table should already be in the FROM SQL clause)
 	 * @return string
 	 */
-	function _construct_internal_join_to_secondary_tables(){
+	function _construct_internal_join_to_table_with_alias($alias){
 		$SQL = '';
 		foreach($this->_tables as $table_obj){
-			if($table_obj instanceof EE_Secondary_Table){
-				$SQL .= SP.$table_obj->get_join_sql().SP;
-			}
+			if($table_obj instanceof EE_Secondary_Table){//table is secondary table
+				if($alias == $table_obj->get_table_alias()){
+					//so we're joining to this table, meaning the table is already in 
+					//the FROM statement, BUT the primary table isn't. So we want
+					//to add teh inverse join sql
+					$SQL .= $table_obj->get_inverse_join_sql();
+				}else{
+					//just add a regular JOIN to this table from the primary table
+					$SQL .= $table_obj->get_join_sql();
+				}
+			}//if it's a primary table, dont add any SQL. it should alredy be in the FROM statement
 		}
 		return $SQL;
-	}
-	
-	function _construct_internal_join_from_table_alias($table_alias_already_joined){
-		$SQL = '';
-		foreach($this->_tables as $table_alias => $table_obj){
-			if($table_alias == $table_alias_already_joined){
-				//dont join to this table, as it's the one we've specified has already been joined-to
-				continue;
-			}
-			
-		}
 	}
 	
 	/**

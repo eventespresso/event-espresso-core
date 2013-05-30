@@ -10,5 +10,12 @@ class EE_Primary_Table extends EE_Table_Base{
 	function __construct($table_name, $pk_column = null){
 		parent::__construct($table_name, $pk_column);
 	}
+	/**
+	 * Gets SQL for this table and assigning it an alias. Eg " wp_esp_attendee AS Attendee "
+	 * @return string
+	 */
+	function get_table_sql(){
+		return " ".$this->get_table_name()." AS ".$this->get_table_alias()." ";
+	}
 	
 }

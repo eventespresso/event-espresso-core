@@ -14,7 +14,7 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base{
 	}
 	/**
 	 * Gets the joining model's object
-	 * @return EEMerimental_Base
+	 * @return EEM_Base
 	 */
 	function get_join_model(){
 		return $this->_get_model($this->_joining_model_name);
@@ -36,7 +36,7 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base{
 		$join_table = $this->get_join_model()->get_table_for_alias($join_table_alias);	
 		
 		//phew! ok, we have all the info we need, now we can create the SQL join string
-		$SQL = $this->_left_join($join_table, $join_table_alias, $join_table_fk_field_to_this_table->get_table_column(), $this_table_alias, $this_table_pk_field->get_table_column()) . $this->_maybe_add_internal_join($this->get_join_model());
+		$SQL = $this->_left_join($join_table, $join_table_alias, $join_table_fk_field_to_this_table->get_table_column(), $this_table_alias, $this_table_pk_field->get_table_column()) . $this->get_join_model()->_construct_internal_join_to_table_with_alias($join_table_alias);
 				
 		return $SQL;
 	}
@@ -56,7 +56,7 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base{
 		$other_table_alias = $other_table_pk_field->get_table_alias();
 		$other_table = $this->get_other_model()->get_table_for_alias($other_table_alias);
 		
-		$SQL = $this->_left_join($other_table, $other_table_alias, $other_table_pk_field->get_table_column(), $join_table_alias, $join_table_fk_field_to_other_table->get_table_column(), $this->_extra_join_conditions) . $this->_maybe_add_internal_join($this->get_other_model());
+		$SQL = $this->_left_join($other_table, $other_table_alias, $other_table_pk_field->get_table_column(), $join_table_alias, $join_table_fk_field_to_other_table->get_table_column(), $this->_extra_join_conditions) . $this->get_other_model()->_construct_internal_join_to_table_with_alias($other_table_alias);
 		return $SQL;
 	}
 	

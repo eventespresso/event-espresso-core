@@ -60,15 +60,6 @@ abstract class EE_Model_Relation_Base{
 	}
 	
 	/**
-	 * If an internal join needs to be done on this model to query from it, this method
-	 * returns that join SQL (including the "LEFT JOIN..."). If however, none is required
-	 * (ie, $model has only 1 table containing its data), then returns an empty string
-	 * @return string
-	 */
-	protected function _maybe_add_internal_join(EEM_Base $model){
-		return $model->_construct_internal_join_to_secondary_tables();	
-	}
-	/**
 	 * Gets the SQL string for performing the join between this model and the other model.
 	 * @return string of SQL, eg "LEFT JOIN table_name AS table_alias ON this_model_primary_table.pk = other_model_primary_table.fk" etc
 	 */
