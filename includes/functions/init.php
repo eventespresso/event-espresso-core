@@ -133,3 +133,5 @@ function espresso_register_jquery_validate() {
 	// register jQuery Validate
 	wp_register_script('jquery-validate', $jquery_validate_url, array('jquery'), '1.11.1', TRUE);		
 }
+
+

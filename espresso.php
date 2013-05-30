@@ -150,8 +150,10 @@ add_action('plugins_loaded', 'espresso_init', 25);
 
 function espresso_load_init() {
 	require_once(dirname(__FILE__) . '/includes/functions/init.php');
+	require_once(dirname(__FILE__) . '/includes/functions/register_cpts.php');
 	add_action('init', 'espresso_load_messages_init', 15);
 	add_action('init', 'espresso_add_rewrite_rules');
+	add_action('init','espresso_register_cpts',30);
 	add_filter('query_vars', 'espresso_add_query_vars');	
 }
 add_action('plugins_loaded', 'espresso_load_init', 100);
