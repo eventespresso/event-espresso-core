@@ -75,7 +75,7 @@ class EE_Answer extends EE_Base_Class{
 	 * @param int $QST_ID question ID
 	 * @param string $ANS_value text representing the answer. Could be CSV'd
 	 */
-	public function __construct( $REG_ID=NULL, $QST_ID=NULL, $ANS_value='') {
+	public function __construct( $REG_ID = NULL, $QST_ID = NULL, $ANS_value = '', $ANS_ID = NULL ) {
 		//if the first parameter is an array, assume it's an array of key-value pairs for this object
 		if(is_array($REG_ID)){
 			parent::__construct($REG_ID);
