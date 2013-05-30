@@ -72,14 +72,14 @@ function espresso_total_events_today(){
 		$sql2 .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
 		$sql2 .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
 		$sql2 .= " WHERE e.event_status != 'D'";
-		$sql2 .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime( date('Y-m-d') . $start ) . "' AND '" . strtotime( date('Y-m-d') . $end ) . "' ";
+		$sql2 .= " AND dtt.DTT_EVT_start BETWEEN '" . date('Y-m-d') . $start . "' AND '" . date('Y-m-d') . $end . "' ";
 		$sql2 .= $group != '' ? " AND l.locale_id IN (" . $group . ") " : '';
 		$sql2 .= ") UNION (";
 	}
 	$sql2 .= "SELECT e.id FROM ". EVENTS_DETAIL_TABLE." e ";
 	$sql2 .= " JOIN " . ESP_DATETIME_TABLE . " dtt ON dtt.EVT_ID = e.id ";
 	$sql2 .= " WHERE e.event_status != 'D'";
-	$sql2 .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime( date('Y-m-d') . $start ) . "' AND '" . strtotime( date('Y-m-d') . $end ) . "' ";
+	$sql2 .= " AND dtt.DTT_EVT_start BETWEEN '" . date('Y-m-d') . $start . "' AND '" . date('Y-m-d') . $end . "' ";
 
 	if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_event_manager' || espresso_member_data('role')=='espresso_group_admin') ){
 		$sql2 .= " AND e.wp_user = '" . espresso_member_data('id') ."' ";
@@ -120,7 +120,7 @@ function espresso_total_events_this_month(){
 		$sql3 .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
 		$sql3 .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
 		$sql3 .= " WHERE event_status != 'D'";
-		$sql3 .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime($this_year_r . '-' . $this_month_r . '-01' . $start) . "' AND '" . strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end ) . "' ";
+		$sql3 .= " AND dtt.DTT_EVT_start BETWEEN '" . $this_year_r . '-' . $this_month_r . '-01' . $start . "' AND '" . $this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end . "' ";
 
 		$sql3 .= $group != '' ? " AND l.locale_id IN (" . $group . ") " : '';
 		$sql3 .= ") UNION (";
@@ -128,7 +128,7 @@ function espresso_total_events_this_month(){
 	$sql3 .= "SELECT e.id FROM ". EVENTS_DETAIL_TABLE." e ";
 	$sql3 .= " JOIN " . ESP_DATETIME_TABLE . " dtt ON dtt.EVT_ID = e.id ";
 	$sql3 .= " WHERE event_status != 'D'";
-	$sql3 .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime($this_year_r . '-' . $this_month_r . '-01' . $start) . "' AND '" . strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end ) . "' ";
+	$sql3 .= " AND dtt.DTT_EVT_start BETWEEN '" . $this_year_r . '-' . $this_month_r . '-01' . $start . "' AND '" . $this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end . "' ";
 
 	if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_event_manager' || espresso_member_data('role')=='espresso_group_admin') ){
 		$sql3 .= " AND wp_user = '" . espresso_member_data('id') ."' ";
@@ -202,8 +202,8 @@ function espresso_total_attendees_today(){
 
 	global $wpdb;
 	$curdate = date( 'Y-m-d' );
-	$start = strtotime( $curdate . ' 00:00:00' );
-	$end = strtotime( $curdate . ' 23:59:59' );
+	$start = $curdate . ' 00:00:00';
+	$end = $curdate . ' 23:59:59';
 
 	$asql2 = "(";
 	if (function_exists('espresso_member_data')&&espresso_member_data('role')=='espresso_group_admin'){
@@ -251,8 +251,8 @@ function espresso_total_attendees_this_month(){
 	$this_year_r = date('Y');
 	$this_month_r = date('m');
 	$days_this_month = date('t');
-	$start = strtotime( $this_year_r. '-' .$this_month_r . '-01 00:00:00' );
-	$end = strtotime( $this_year_r . '-' .$this_month_r. '-' . $days_this_month . ' 23:59:59' );
+	$start = $this_year_r. '-' .$this_month_r . '-01 00:00:00';
+	$end = $this_year_r . '-' .$this_month_r. '-' . $days_this_month . ' 23:59:59';
 
 	$asql3 = "(";
 

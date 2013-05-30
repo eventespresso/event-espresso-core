@@ -2977,14 +2977,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$sql .= isset($this->_req_data['category_id']) && $this->_req_data['category_id'] != '' ? " AND c.id = '" . $this->_req_data['category_id'] . "' " : '';
 
 		if ( isset($this->_req_data['month_range']) && $this->_req_data['month_range'] != '' ) {
-			$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime($year_r . '-' . $month_r . '-01') . "' AND '" . strtotime($year_r . '-' . $month_r . '-31') . "' ";
+			$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . $year_r . '-' . $month_r . '-01' . "' AND '" . $year_r . '-' . $month_r . '-31'. "' ";
 		} elseif (isset($this->_req_data['status']) && $this->_req_data['status'] == 'today') {
-			$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime(date('Y-m-d') . ' 0:00:00') . "' AND '" . strtotime(date('Y-m-d') . ' 23:59:59') . "' ";
+			$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . date('Y-m-d') . ' 0:00:00' . "' AND '" . date('Y-m-d') . ' 23:59:59' . "' ";
 		} elseif (isset($this->_req_data['status']) && $this->_req_data['status'] == 'month') {
 			$this_year_r = date('Y');
 			$this_month_r = date('m');
 			$days_this_month = date('t');
-			$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime($this_year_r . '-' . $this_month_r . '-01') . "' AND '" . strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month) . "' ";
+			$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . $this_year_r . '-' . $this_month_r . '-01' . "' AND '" . $this_year_r . '-' . $this_month_r . '-' . $days_this_month . "' ";
 		}
 
 		$sql .= !$count ? " GROUP BY e.id " . $orderby . $order . $limit : '';
