@@ -115,8 +115,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 			}
 		}
 
-		// get the current time with GMT offset taken into consideration
-		$this->_time = $this->_session_time();
+		// get the current time in UTC
+		$this->_time = time();
 
 		// are we using encryption?
 		if ( $this->_use_encryption ) {
@@ -694,7 +694,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		// generate the user time, taking the gmt offset into consideration
 		$time = mktime(gmdate("H", $now)+$offset, gmdate("i", $now), gmdate("s", $now), gmdate("m", $now), gmdate("d", $now), gmdate("Y", $now));
 
-		return $time;
+		return mktime(gmdate('H'), gmdate('i'), gmdate('s'), gmdate('m'), gmdate('d'), gmdate('Y') );
 	}
 
 
