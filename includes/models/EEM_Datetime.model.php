@@ -69,7 +69,6 @@ class EEM_Datetime extends EEM_Base {
 		);
 
 
-
 		// uncomment these for example code samples of how to use them
 		//			self::how_to_use_insert();
 		//			self::how_to_use_update();

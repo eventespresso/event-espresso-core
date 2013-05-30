@@ -53,23 +53,15 @@ abstract class EEM_Base extends EE_Base {
 
 		//for 4.0 $timezone will ALWAYS be the WordPress default timezone and we're ONLY going to implement the conversion to mysql datetime on save and retrieval from db.
 		$this->_timezone = $this->_get_timezone();
-
-		//hackish but handles DTT's
-		$this->_dtt_keys = array(
-			'DTT_EVT_start',
-			'DTT_EVT_end',
-			'DTT_REG_start',
-			'DTT_REG_end',
-			'PAY_timestamp',
-			'PRC_start_date',
-			'PRC_end_date',
-			'REG_date'
-			);
+		$this->_set_dtt_keys();
 		
 	}
 
 
 	protected function _convert_cols_n_values_from_db( $cols_n_values ) {
+		if ( empty ( $this->_dtt_keys) )
+			$this->_set_dtt_keys();
+
 		//run conversion on dtt columns
 		foreach ( $cols_n_values as $key => $value ) {
 			if ( in_array( $key, $this->_dtt_keys ) )
@@ -80,6 +72,8 @@ abstract class EEM_Base extends EE_Base {
 
 
 	protected function _convert_cols_n_values_for_db( $set_cols_n_values ) {
+		if ( empty ( $this->_dtt_keys) )
+			$this->_set_dtt_keys();
 		//run conversion on dtt columns
 		foreach ( $set_cols_n_values as $key => $value ) {
 			if ( in_array( $key, $this->_dtt_keys ) )
@@ -94,14 +88,33 @@ abstract class EEM_Base extends EE_Base {
 	}
 
 
+
+
+	protected function _set_dtt_keys() {
+		//hackish but handles DTT's
+		$this->_dtt_keys = array(
+			'DTT_EVT_start',
+			'DTT_EVT_end',
+			'DTT_REG_start',
+			'DTT_REG_end',
+			'PAY_timestamp',
+			'PRC_start_date',
+			'PRC_end_date',
+			'REG_date'
+			);
+	}
+
+
 	protected function _get_timezone() {
+
 		$timezone = get_option('timezone_string');
 		//if timezone is STILL empty then let's get the GMT offset and then set the timezone_string using our converter
 		if ( empty( $this->_timezone ) ) {
 			//let's get a the WordPress UTC offset
 			$offset = get_option('gmt_offset');
-			$this->_timezone = self::timezone_convert_to_string_from_offset( $offset );
+			$timezone = self::timezone_convert_to_string_from_offset( $offset );
 		}
+		return $timezone;
 	}
 
 
@@ -132,13 +145,16 @@ abstract class EEM_Base extends EE_Base {
 
 
 	protected function _prepare_dtt_for_db( $dttvalue ) {
-		$timestamp = is_numeric( $datetime ) ? $this->_convert_from_numeric_value_to_utc_unixtimestamp( $datetime ) : $this->_convert_from_string_value_to_utc_unixtimestamp( $datetime );
+		$timestamp = is_numeric( $dttvalue ) ? $this->_convert_from_numeric_value_to_utc_unixtimestamp( $dttvalue ) : $this->_convert_from_string_value_to_utc_unixtimestamp( $dttvalue );
 		return $timestamp;
 	}
 
 
 	protected function _prepare_dtt_from_db( $dttvalue, $format = 'U' ) {
-		$date_obj = new DateTime( $dttvalue, 'UTC' );
+		if ( empty( $this->_timezone ) )
+			$this->_timezone = $this->_get_timezone();
+
+		$date_obj = new DateTime( $dttvalue, new DateTimeZone('UTC') );
 		if ( !$date_obj )
 			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
 		$date_obj->setTimezone( new DateTimeZone($this->_timezone) );
@@ -152,31 +168,36 @@ abstract class EEM_Base extends EE_Base {
 	private function _convert_from_numeric_value_to_utc_unixtimestamp( $datetime ) {
 		$datetime = (int) $datetime;
 
-		date_default_timezone_set( $this->_timezone );
-		$datetime = date( 'Y-m-d H:i:s', $datetime );
+		if ( empty( $this->_timezone ) )
+			$this->_timezone = $this->_get_timezone();
+
+		$date_obj = new DateTime( date( 'Y-m-d H:i:s', $datetime ), new DateTimeZone( $this->_timezone) );
 
 		//if we don't have a datetime at this point then something has gone wrong 
 		if ( !$datetime )
 			throw new EE_Error( __('Something went wrong with setting the date/time.  Likely, either there is an invalid timezone string or invalid timestamp being used.', 'event_espresso' ) );
 
 		//return to defautl for PHP
-		date_default_timezone_set('UTC');
+		$date_obj->setTimezone( new DateTimeZone('UTC') );
 
 		//now that we have the string we can send this over to our string value conversion
-		return $datetime;
+		return $date_obj->format( 'Y-m-d H:i:s' );
 	}
 
 
 
 	private function _convert_from_string_value_to_utc_unixtimestamp( $datestring ) {
+		if ( empty( $this->_timezone ) )
+			$this->_timezone = $this->_get_timezone();
+
 		//create a new datetime object using the given string and timezone
-		$date_obj = new DateTime( $datestring, $this->_timezone );
+		$date_obj = new DateTime( $datestring, new DateTimeZone($this->_timezone) );
 
 		if ( !$date_obj )
 			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
 
 		$date_obj->setTimezone( new DateTimeZone('UTC') );
-		return $this->_date->format( 'Y-m-d H:i:s' );
+		return $date_obj->format( 'u' );
 
 	}
 
@@ -743,6 +764,7 @@ abstract class EEM_Base extends EE_Base {
 				return FALSE;
 			}
 		}
+
 
 		//let's handle the conversion of DTT values first
 		$em_updata = $this->_convert_cols_n_values_for_db( $em_updata );
