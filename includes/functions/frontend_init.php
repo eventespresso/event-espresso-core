@@ -13,6 +13,11 @@ function espresso_load_jquery() {
 function espresso_frontend_init() {
 
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );	
+//	require_once('EE_Answer.class.php');
+//	$a = EE_Answer::new_instance(array(
+//		'ANS_value'=>3
+//	));
+//	var_dump($a);
 //	require_once('EE_Event.class.php');
 //	require_once('EE_Venue.class.php');
 //	$e = EE_Event::new_instance(
