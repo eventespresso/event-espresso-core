@@ -73,8 +73,8 @@ class EEM_Price extends EEM_Base {
 				'PRC_reg_limit'			=> '%d',
 				'PRC_tckts_left'			=> '%d',
 				'PRC_use_dates'			=> '%d',
-				'PRC_start_date'			=> '%d',
-				'PRC_end_date'			=> '%d',
+				'PRC_start_date'			=> '%s',
+				'PRC_end_date'			=> '%s',
 				'PRC_is_active' 			=> '%d',
 				'PRC_overrides' 			=> '%d',
 				'PRC_order' 				=> '%d',
@@ -110,21 +110,21 @@ class EEM_Price extends EEM_Base {
 		foreach ($prices as $price) {
 
 			$array_of_objects[$price->PRC_ID] = new EE_Price(
-											$price->PRT_ID,
-											$price->EVT_ID,
-											$price->PRC_amount,
-											$price->PRC_name,
-											$price->PRC_desc,
-											$price->PRC_reg_limit,
-											$price->PRC_tckts_left,
-											$price->PRC_use_dates,
-											$price->PRC_start_date,
-											$price->PRC_end_date,
-											$price->PRC_is_active,
-											$price->PRC_overrides,
-											$price->PRC_order,
-											$price->PRC_deleted,
-											$price->PRC_ID
+				$price->PRT_ID,
+				$price->EVT_ID,
+				$price->PRC_amount,
+				$price->PRC_name,
+				$price->PRC_desc,
+				$price->PRC_reg_limit,
+				$price->PRC_tckts_left,
+				$price->PRC_use_dates,
+				$this->_prepare_dtt_from_db($price->PRC_start_date),
+				$this->_prepare_dtt_from_db($price->PRC_end_date),
+				$price->PRC_is_active,
+				$price->PRC_overrides,
+				$price->PRC_order,
+				$price->PRC_deleted,
+				$price->PRC_ID
 			);
 		}
 
@@ -276,8 +276,8 @@ class EEM_Price extends EEM_Base {
 				'prc.PRC_reg_limit' 		=> '%d',
 				'prc.PRC_tckts_left' 		=> '%d',
 				'prc.PRC_use_dates'		=> '%d',
-				'prc.PRC_start_date'		=> '%d',
-				'prc.PRC_end_date'		=> '%d',
+				'prc.PRC_start_date'		=> '%s',
+				'prc.PRC_end_date'		=> '%s',
 				'prc.PRC_is_active' 			=> '%d',
 				'prc.PRC_overrides' 		=> '%d',
 				'prc.PRC_order' 				=> '%d',

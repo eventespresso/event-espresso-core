@@ -41,6 +41,7 @@ abstract class EEM_TempBase extends EEM_Base{
 	 * @var EE_Model_Relation[] 
 	 */
 	protected $_related_models;
+
 	
 	/**
 	 * Important note for classes which override EEM_TempBase.
@@ -58,6 +59,7 @@ abstract class EEM_TempBase extends EEM_Base{
 		$this->_related_models=apply_filters("FHEE__{$className}__related_models",$this->_related_models);
 		$this->table_name=$this->_get_table_name();
 		$this->table_data_types=$this->_get_table_data_types();
+
 	}
 	/**
 	 * 
@@ -80,6 +82,10 @@ abstract class EEM_TempBase extends EEM_Base{
 		//get the required info to instantiate the class whcih relates to this model.
 		$className=$this->_getClassName();
 		$class=new ReflectionClass($className);
+
+		$cols_n_values = $this->_convert_cols_n_values_from_db( $cols_n_values );
+
+
 		//call the constructor of the EE_Base_Class, passing it an array of all the fields, except
 		//the ID, because we set that later
 		$classInstance=$class->newInstanceArgs(array($cols_n_values));

@@ -35,6 +35,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 	public function __construct( $admin_page ) {
 		parent::__construct($admin_page);
+		require_once( 'EE_DTT_Helper.helper.php' );
 	}
 
 	protected function _setup_data() {
@@ -204,6 +205,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	}
 
 
+	
+
+
 
 	
 	public function column_venue($item) {
@@ -214,14 +218,14 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_start_date($item) {
-		return date( 'D, M d, Y', $item->DTT_EVT_start );
+		return EE_DTT_Helper::prepare_dtt_from_db( $item->DTT_EVT_start, 'D, M d, Y' );
 	}
 
 
 
 
 	public function column_start_time($item) {
-		return date( get_option('time_format'), $item->DTT_EVT_start );
+		return EE_DTT_Helper::prepare_dtt_from_db( $item->DTT_EVT_start, get_option( 'time_format' ) );
 	}
 
 

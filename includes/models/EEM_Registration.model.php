@@ -80,7 +80,7 @@ class EEM_Registration extends EEM_TempBase {
 			'DTT_ID'=>new EE_Model_Field('Datetime ID','foreign_key',false,null,null,'Datetime'),
 			'PRC_ID'=>new EE_model_Field('Price ID','foreign_key',false,null,null,'Price'),
 			'STS_ID'=>new EE_Model_Field('Status ID', 'foreign_text_key', false, 'RNA', $this->_allowed_statuses, 'Status'),
-			'REG_date'=>new EE_Model_Field('Registration Date','int',false,0),
+			'REG_date'=>new EE_Model_Field('Registration Date','date',false,0),
 			'REG_final_price'=>new EE_Model_Field('Final Price', 'float', false, 0),
 			'REG_session'=>new EE_Model_Field('Session of Original Registration','plaintext',false),
 			'REG_code'=>new EE_Model_Field('Unique Registration Code', 'plaintext', true, ''),
@@ -457,6 +457,14 @@ class EEM_Registration extends EEM_TempBase {
 		$SQL .= ' ORDER BY REG_date';
 
 		if ( $registrations = $wpdb->get_results( $SQL )) {
+			//dang it... results are just returned vanilla... we have to run conversions on them first
+			foreach( $registrations as $rkey => $registration ) {
+				foreach ( $registration as $key => $value ) {
+					if ( in_array($key, $this->dtt_keys ) ) {
+						$registrations[$rkey]->$key = $this->_prepare_dtt_from_db( $value );
+					}
+				}
+			}
 			return $registrations;
 		} else {
 			return FALSE;
@@ -540,8 +548,11 @@ class EEM_Registration extends EEM_TempBase {
 				$year_r = $pieces[0];
 				$month_r = $pieces[1];
 
-				$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . strtotime( $month_r . ' 01 ' . $year_r . ' ' . $time_start ) . '" ';
-				$SQL .= 'AND "' . strtotime( $month_r . ' ' . date( 't', strtotime( $year_r . ' ' . $month_r )) . ' ' . $year_r . ' ' . $time_end )  . '"';
+				$REG_date_query_begin = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime( $month_r . ' 01 ' . $year_r . ' ' . $time_start ) ) );
+				$REG_date_query_end = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime( $month_r . ' ' . date( 't', strtotime( $year_r . ' ' . $month_r )) . ' ' . $year_r . ' ' . $time_end ) ) );
+
+				$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . $REQ_date_query_begin . '" ';
+				$SQL .= 'AND "' . $REG_date_query_end . '"';
 				$sql_clause = ' AND ';
 			}
 
@@ -552,13 +563,17 @@ class EEM_Registration extends EEM_TempBase {
 
 
 			if ( $today_a ) {
-				$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . strtotime($curdate . $time_start) . '" AND "' . strtotime($curdate . $time_end)  . '"';
+				$today_start = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime($curdate . $time_start ) ) );
+				$today_end = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime($curdate . $time_end ) ) );
+				$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . $today_start . '" AND "' . $today_end  . '"';
 				$sql_clause = ' AND ';
 			}
 
 			if ( $this_month_a ) {
-				$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . strtotime( $this_month_r . ' 01 ' . $this_year_r . ' ' . $time_start ) . '" ';
-				$SQL .= 'AND "' . strtotime( $this_month_r . ' ' . $days_this_month . ' ' . $this_year_r . ' ' . $time_end )  . '"';
+				$month_start = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime( $this_month_r . ' 01 ' . $this_year_r . ' ' . $time_start ) ) );
+				$month_end = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime( $this_month_r . ' ' . $days_this_month . ' ' . $this_year_r . ' ' . $time_end ) ) );
+				$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . $month_start . '" ';
+				$SQL .= 'AND "' . $month_end  . '"';
 				$sql_clause = ' AND ';
 			}
 
@@ -607,24 +622,38 @@ class EEM_Registration extends EEM_TempBase {
 		}
 
 		if ( $month_range ) {
-			$pieces = explode('-', $month_range, 3);
-			$year_r = $pieces[0];
-			$month_r = $pieces[1];
+				$pieces = explode('-', $month_range, 3);
+				$year_r = $pieces[0];
+				$month_r = $pieces[1];
 
-			$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . strtotime( $month_r . ' 01 ' . $year_r . ' ' . $time_start ) . '" ';
-			$SQL .= 'AND "' . strtotime( $month_r . ' ' . date( 't', strtotime( $year_r . ' ' . $month_r )) . ' ' . $year_r . ' ' . $time_end )  . '"';
-			$sql_clause = ' AND ';
-		}
+				$REG_date_query_begin = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime( $month_r . ' 01 ' . $year_r . ' ' . $time_start ) ) );
+				$REG_date_query_end = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime( $month_r . ' ' . date( 't', strtotime( $year_r . ' ' . $month_r )) . ' ' . $year_r . ' ' . $time_end ) ) );
 
-		if ( $today_a ) {
-			$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . strtotime($curdate . $time_start) . '" AND "' . strtotime($curdate . $time_end)  . '"';
-			$sql_clause = ' AND ';
-		}
+				$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . $REQ_date_query_begin . '" ';
+				$SQL .= 'AND "' . $REG_date_query_end . '"';
+				$sql_clause = ' AND ';
+			}
 
-		if ( $this_month_a ) {
-			$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . strtotime( $this_year_r . '-' . $this_month_r . '-01' . $time_start ) . '" AND "' . strtotime( $this_year_r . '-' . $this_month_r . '-' . $days_this_month . $time_end )  . '"';
-			$sql_clause = ' AND ';
-		}
+			if ( $EVT_ID ) {
+				$SQL .= $sql_clause .' reg.EVT_ID = "' . $EVT_ID  . '"';
+				$sql_clause = ' AND ';
+			}
+
+
+			if ( $today_a ) {
+				$today_start = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime($curdate . $time_start ) ) );
+				$today_end = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime($curdate . $time_end ) ) );
+				$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . $today_start . '" AND "' . $today_end  . '"';
+				$sql_clause = ' AND ';
+			}
+
+			if ( $this_month_a ) {
+				$month_start = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime( $this_month_r . ' 01 ' . $this_year_r . ' ' . $time_start ) ) );
+				$month_end = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime( $this_month_r . ' ' . $days_this_month . ' ' . $this_year_r . ' ' . $time_end ) ) );
+				$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . $month_start . '" ';
+				$SQL .= 'AND "' . $month_end  . '"';
+				$sql_clause = ' AND ';
+			}
 
 		if (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
 			$SQL .= $sql_clause . ' evt.wp_user = "' . espresso_member_data('id')  . '"';
@@ -668,6 +697,17 @@ class EEM_Registration extends EEM_TempBase {
 
 		$registrations = $count ? $wpdb->get_var( $SQL ) : $wpdb->get_results( $SQL );
 
+		if ( is_array($registrations ) ) {
+			//dang it... results are just returned vanilla... we have to run conversions on them first
+			foreach( $registrations as $rkey => $registration ) {
+				foreach ( $registration as $key => $value ) {
+					if ( in_array($key, $this->dtt_keys ) ) {
+						$registrations[$rkey]->$key = $this->_prepare_dtt_from_db( $value );
+					}
+				}
+			}
+		}
+
 		return $registrations;
 	}
 
@@ -697,6 +737,11 @@ class EEM_Registration extends EEM_TempBase {
 		$SQL .= ' WHERE reg.REG_ID = %d';
 
 		$attendee = $wpdb->get_row( $wpdb->prepare( $SQL, $REG_ID ));
+		foreach ( $attendee as $key => $value ) {
+			if ( in_array($key, $this->dtt_keys ) ) {
+				$attendee->$key = $this->_prepare_dtt_from_db( $value );
+			}
+		}
 		//printr( $attendee, 'attendee' ); die();
 		
 		return $attendee;
@@ -713,15 +758,16 @@ class EEM_Registration extends EEM_TempBase {
 	public function get_registrations_per_day_report( $period = '-1 month' ) {
 
 		global $wpdb;
-		$date_mod = strtotime( $period );
+		$date_mod = $this->_prepare_dtt_for_db( strtotime( $period ) );
 
-		$SQL = "SELECT DATE(FROM_UNIXTIME(reg.REG_date)) AS 'regDate', COUNT(REG_ID) AS total";
+
+		$SQL = "SELECT reg.REG_date AS 'regDate', COUNT(REG_ID) AS total";
 		$SQL .= ' FROM ' . $this->table_name . ' reg';
-		$SQL .= ' WHERE REG_date >= %d';
+		$SQL .= ' WHERE REG_date >= %s';
 		$SQL .= ' GROUP BY `regDate`';
 		$SQL .= ' ORDER BY REG_date DESC';
 		
-		return $wpdb->get_results( $wpdb->prepare( $SQL, $date_mod ));
+		$results = $wpdb->get_results( $wpdb->prepare( $SQL, $date_mod ));
 
 	}
 
@@ -736,7 +782,7 @@ class EEM_Registration extends EEM_TempBase {
 	public function get_registrations_per_event_report( $period = '-1 month' ) {
 
 		global $wpdb;
-		$date_mod = strtotime( $period );
+		$date_mod = $this->_strtotime( $period );
 
 		$SQL = "SELECT event_name, reg_limit, COUNT(REG_ID) AS total";
 		$SQL .= ' FROM ' . $this->table_name . ' reg';
@@ -796,7 +842,16 @@ class EEM_Registration extends EEM_TempBase {
 		if ( ! is_array( $attendees )) {
 			$attendees = array( $attendees );
 		}
-		//printr( $attendee, 'attendee' ); die();		
+		//printr( $attendee, 'attendee' ); die();
+		//dang it... results are just returned vanilla... we have to run conversions on them first
+		foreach( $attendees as $akey => $attendee ) {
+			foreach ( $attendee as $key => $value ) {
+				if ( in_array($key, $this->dtt_keys ) ) {
+					$attendees[$akey]->$key = $this->_prepare_dtt_from_db( $value );
+				}
+			}
+		}
+
 		return $attendees;
 		
 	}

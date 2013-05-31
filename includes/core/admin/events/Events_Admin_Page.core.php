@@ -1845,21 +1845,6 @@ class Events_Admin_Page extends EE_Admin_Page {
 			}
 		}
 
-		$event_times = $wpdb->get_results("SELECT * FROM ". EVENTS_START_END_TABLE ." WHERE event_id = '".$event_id."' ORDER BY id");
-		foreach ($event_times as $event_time){
-			if ($event_time->start_time != ''){
-
-				foreach (array($event_time->start_time) as $k=>$v){
-					if($v != '') {
-						$sql3="INSERT INTO ".EVENTS_START_END_TABLE." (event_id, start_time, end_time) VALUES ('".$new_id."', '".$v."', '".$event_time->end_time."')";
-						//echo "$sql3 <br>";
-						if ( FALSE === $wpdb->query($sql3)){
-							$error = true;
-						}
-					}
-				}
-			}
-		}
 		
 		$event_prices = $wpdb->get_results("SELECT * FROM ". EVENTS_PRICES_TABLE ." WHERE event_id = '".$event_id."' ORDER BY id");
 		foreach ($event_prices as $event_price){
@@ -2994,14 +2979,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$sql .= isset($this->_req_data['category_id']) && $this->_req_data['category_id'] != '' ? " AND c.id = '" . $this->_req_data['category_id'] . "' " : '';
 
 		if ( isset($this->_req_data['month_range']) && $this->_req_data['month_range'] != '' ) {
-			$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime($year_r . '-' . $month_r . '-01') . "' AND '" . strtotime($year_r . '-' . $month_r . '-31') . "' ";
+			$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . $year_r . '-' . $month_r . '-01' . "' AND '" . $year_r . '-' . $month_r . '-31'. "' ";
 		} elseif (isset($this->_req_data['status']) && $this->_req_data['status'] == 'today') {
-			$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime(date('Y-m-d') . ' 0:00:00') . "' AND '" . strtotime(date('Y-m-d') . ' 23:59:59') . "' ";
+			$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . date('Y-m-d') . ' 0:00:00' . "' AND '" . date('Y-m-d') . ' 23:59:59' . "' ";
 		} elseif (isset($this->_req_data['status']) && $this->_req_data['status'] == 'month') {
 			$this_year_r = date('Y');
 			$this_month_r = date('m');
 			$days_this_month = date('t');
-			$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime($this_year_r . '-' . $this_month_r . '-01') . "' AND '" . strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month) . "' ";
+			$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . $this_year_r . '-' . $this_month_r . '-01' . "' AND '" . $this_year_r . '-' . $this_month_r . '-' . $days_this_month . "' ";
 		}
 
 		$sql .= !$count ? " GROUP BY e.id " . $orderby . $order . $limit : '';
@@ -3028,7 +3013,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 	 */
 	public function espresso_event_months_dropdown($current_value = '') {
 		global $wpdb;
-		$SQL = "SELECT DTT_EVT_start as e_date FROM " . $wpdb->prefix . "esp_datetime GROUP BY YEAR(FROM_UNIXTIME(DTT_EVT_start)), MONTH(FROM_UNIXTIME(DTT_EVT_start))";
+		$SQL = "SELECT DTT_EVT_start as e_date FROM " . $wpdb->prefix . "esp_datetime GROUP BY YEAR(DTT_EVT_start), MONTH(DTT_EVT_start)";
 
 		$dates = $wpdb->get_results($SQL);
 
@@ -3129,14 +3114,14 @@ class Events_Admin_Page extends EE_Admin_Page {
 			$sql2 .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
 			$sql2 .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
 			$sql2 .= " WHERE e.event_status != 'D'";
-			$sql2 .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime( date('Y-m-d') . $start ) . "' AND '" . strtotime( date('Y-m-d') . $end ) . "' ";
+			$sql2 .= " AND dtt.DTT_EVT_start BETWEEN '" . date('Y-m-d') . $start . "' AND '" . date('Y-m-d') . $end . "' ";
 			$sql2 .= $group != '' ? " AND l.locale_id IN (" . $group . ") " : '';
 			$sql2 .= ") UNION (";
 		}
 		$sql2 .= "SELECT e.id FROM ". EVENTS_DETAIL_TABLE." e ";
 		$sql2 .= " JOIN " . ESP_DATETIME_TABLE . " dtt ON dtt.EVT_ID = e.id ";
 		$sql2 .= " WHERE e.event_status != 'D'";
-		$sql2 .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime( date('Y-m-d') . $start ) . "' AND '" . strtotime( date('Y-m-d') . $end ) . "' ";
+		$sql2 .= " AND dtt.DTT_EVT_start BETWEEN '" . date('Y-m-d') . $start . "' AND '" . date('Y-m-d') . $end . "' ";
 
 		if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_event_manager' || espresso_member_data('role')=='espresso_group_admin') ){
 			$sql2 .= " AND e.wp_user = '" . espresso_member_data('id') ."' ";
@@ -3178,7 +3163,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			$sql3 .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
 			$sql3 .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
 			$sql3 .= " WHERE event_status != 'D'";
-			$sql3 .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime($this_year_r . '-' . $this_month_r . '-01' . $start) . "' AND '" . strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end ) . "' ";
+			$sql3 .= " AND dtt.DTT_EVT_start BETWEEN '" . $this_year_r . '-' . $this_month_r . '-01' . $start . "' AND '" . $this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end . "' ";
 
 			$sql3 .= $group != '' ? " AND l.locale_id IN (" . $group . ") " : '';
 			$sql3 .= ") UNION (";
@@ -3186,7 +3171,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		$sql3 .= "SELECT e.id FROM ". EVENTS_DETAIL_TABLE." e ";
 		$sql3 .= " JOIN " . ESP_DATETIME_TABLE . " dtt ON dtt.EVT_ID = e.id ";
 		$sql3 .= " WHERE event_status != 'D'";
-		$sql3 .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime($this_year_r . '-' . $this_month_r . '-01' . $start) . "' AND '" . strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end ) . "' ";
+		$sql3 .= " AND dtt.DTT_EVT_start BETWEEN '" . $this_year_r . '-' . $this_month_r . '-01' . $start . "' AND '" . $this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end . "' ";
 
 		if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_event_manager' || espresso_member_data('role')=='espresso_group_admin') ){
 			$sql3 .= " AND wp_user = '" . espresso_member_data('id') ."' ";

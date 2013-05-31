@@ -159,7 +159,7 @@ function event_espresso_get_event_details( $attributes = array()) {
 
 	//$SQL .= $show_expired == 'false' ? ' AND (eventDetails.start_date >= "' . date('Y-m-d') . '" OR eventDetails.event_status = "O" OR eventDetails.registration_end >= "' . date('Y-m-d') . '")' : '';
 	
-	$SQL .= $show_expired == 'false' ? ' AND (( dateTime.DTT_EVT_start >= "' . time() . '" ) OR ( eventDetails.event_status = "O" OR ( dateTime.DTT_REG_end >= "' . time() . '" )))' : '';
+	$SQL .= $show_expired == 'false' ? ' AND (( dateTime.DTT_EVT_start >= "' . date('Y-m-d H:s:i') . '" ) OR ( eventDetails.event_status = "O" OR ( dateTime.DTT_REG_end >= "' . date('Y-m-d H:s:i') . '" )))' : '';
 	
 	
 	$SQL .= $show_secondary == 'false' ? " AND eventDetails.event_status != 'S'" : '';
@@ -189,6 +189,7 @@ function event_espresso_get_event_details( $attributes = array()) {
 		} else {
 			$events = $wpdb->get_results( $SQL );
 		}
+
 			
 		// save the newly created transient value
 

@@ -33,6 +33,10 @@ abstract class EEM_Base extends EE_Base {
 	protected $singlular_item= NULL;
 	protected $plural_item = NULL;
 
+	 //just a hackish implementation to maintian db consistency for dtt fields between 4.0 and 4.1
+	protected $_timezone = NULL;
+	protected $_dtt_keys = array();
+
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
@@ -46,11 +50,155 @@ abstract class EEM_Base extends EE_Base {
 		if(isNull($this->plural_item)){
 			$this->plural_item = __('Items','event_espresso');
 		}
+
+		//for 4.0 $timezone will ALWAYS be the WordPress default timezone and we're ONLY going to implement the conversion to mysql datetime on save and retrieval from db.
+		$this->_timezone = $this->_get_timezone();
+		$this->_set_dtt_keys();
 		
 	}
 
+
+	protected function _convert_cols_n_values_from_db( $cols_n_values ) {
+		if ( empty ( $this->_dtt_keys) )
+			$this->_set_dtt_keys();
+
+		//run conversion on dtt columns
+		foreach ( $cols_n_values as $key => $value ) {
+			if ( in_array( $key, $this->_dtt_keys ) )
+				$cols_n_values[$key] = $this->_prepare_dtt_from_db( $value );
+		}
+		return $cols_n_values;
+	}
+
+
+	protected function _convert_cols_n_values_for_db( $set_cols_n_values ) {
+		if ( empty ( $this->_dtt_keys) )
+			$this->_set_dtt_keys();
+		//run conversion on dtt columns
+		foreach ( $set_cols_n_values as $key => $value ) {
+			if ( in_array( $key, $this->_dtt_keys ) )
+				$set_cols_n_values[$key] = $this->_prepare_dtt_for_db( $value );
+		}
+		return $set_cols_n_values;
+	}
+
+
 	function get_table_data_types() {
 		return $this->table_data_types;
+	}
+
+
+
+
+	protected function _set_dtt_keys() {
+		//hackish but handles DTT's
+		$this->_dtt_keys = array(
+			'DTT_EVT_start',
+			'DTT_EVT_end',
+			'DTT_REG_start',
+			'DTT_REG_end',
+			'PAY_timestamp',
+			'PRC_start_date',
+			'PRC_end_date',
+			'REG_date'
+			);
+	}
+
+
+	protected function _get_timezone() {
+
+		$timezone = get_option('timezone_string');
+		//if timezone is STILL empty then let's get the GMT offset and then set the timezone_string using our converter
+		if ( empty( $this->_timezone ) ) {
+			//let's get a the WordPress UTC offset
+			$offset = get_option('gmt_offset');
+			$timezone = self::timezone_convert_to_string_from_offset( $offset );
+		}
+		return $timezone;
+	}
+
+
+
+	/**
+	 * all this method does is take an incoming GMT offset value ( e.g. "+1" or "-4" ) and returns a corresponding valid DateTimeZone() timezone_string.
+	 * @param  string $offset GMT offset
+	 * @return string         timezone_string (valid for DateTimeZone)
+	 */
+	public static function timezone_convert_to_string_from_offset( $offset ) {
+		//shamelessly taken from bottom comment at http://ca1.php.net/manual/en/function.timezone-name-from-abbr.php because timezone_name_from_abbr() did NOT work as expected - its not reliable
+		$offset *= 3600; // convert hour offset to seconds
+        $abbrarray = timezone_abbreviations_list();
+        foreach ($abbrarray as $abbr)
+        {
+                foreach ($abbr as $city)
+                {
+                        if ($city['offset'] == $offset)
+                        {
+                                return $city['timezone_id'];
+                        }
+                }
+        }
+
+        return FALSE;
+	}
+
+
+
+	protected function _prepare_dtt_for_db( $dttvalue ) {
+		$timestamp = is_numeric( $dttvalue ) ? $this->_convert_from_numeric_value_to_utc_unixtimestamp( $dttvalue ) : $this->_convert_from_string_value_to_utc_unixtimestamp( $dttvalue );
+		return $timestamp;
+	}
+
+
+	protected function _prepare_dtt_from_db( $dttvalue, $format = 'U' ) {
+		if ( empty( $this->_timezone ) )
+			$this->_timezone = $this->_get_timezone();
+
+		$date_obj = new DateTime( $dttvalue, new DateTimeZone('UTC') );
+		if ( !$date_obj )
+			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
+		$date_obj->setTimezone( new DateTimeZone($this->_timezone) );
+
+		return $date_obj->format($format);
+	}
+
+
+
+
+	private function _convert_from_numeric_value_to_utc_unixtimestamp( $datetime ) {
+		$datetime = (int) $datetime;
+
+		if ( empty( $this->_timezone ) )
+			$this->_timezone = $this->_get_timezone();
+
+		$date_obj = new DateTime( date( 'Y-m-d H:i:s', $datetime ), new DateTimeZone( $this->_timezone) );
+
+		//if we don't have a datetime at this point then something has gone wrong 
+		if ( !$datetime )
+			throw new EE_Error( __('Something went wrong with setting the date/time.  Likely, either there is an invalid timezone string or invalid timestamp being used.', 'event_espresso' ) );
+
+		//return to defautl for PHP
+		$date_obj->setTimezone( new DateTimeZone('UTC') );
+
+		//now that we have the string we can send this over to our string value conversion
+		return $date_obj->format( 'Y-m-d H:i:s' );
+	}
+
+
+
+	private function _convert_from_string_value_to_utc_unixtimestamp( $datestring ) {
+		if ( empty( $this->_timezone ) )
+			$this->_timezone = $this->_get_timezone();
+
+		//create a new datetime object using the given string and timezone
+		$date_obj = new DateTime( $datestring, new DateTimeZone($this->_timezone) );
+
+		if ( !$date_obj )
+			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
+
+		$date_obj->setTimezone( new DateTimeZone('UTC') );
+		return $date_obj->format( 'u' );
+
 	}
 
 
@@ -617,6 +765,10 @@ abstract class EEM_Base extends EE_Base {
 			}
 		}
 
+
+		//let's handle the conversion of DTT values first
+		$em_updata = $this->_convert_cols_n_values_for_db( $em_updata );
+
 		//echo printr( $em_updata, $em_table_name );
 
 		global $wpdb;
@@ -723,6 +875,9 @@ abstract class EEM_Base extends EE_Base {
 				return FALSE;
 			}
 		}
+
+		//let's handle the conversion of DTT values first
+		$em_updata = $this->_convert_cols_n_values_for_db( $em_updata );
 
 		global $wpdb;
 		//printr($em_updata, 'updata');

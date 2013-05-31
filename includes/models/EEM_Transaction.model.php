@@ -92,7 +92,7 @@ class EEM_Transaction extends EEM_TempBase {
 		);*/
 		$this->_fields_settings = array(
 			'TXN_ID' 			=> new EE_Model_Field('Transaction ID', 'primary_key', false),
-			'TXN_timestamp' 	=> new EE_Model_Field('Transaction Teimstamp', 'int', false,time()),
+			'TXN_timestamp' 	=> new EE_Model_Field('Transaction Teimstamp', 'date', false,current_time('mysql')),
 			'TXN_total' 		=> new EE_Model_Field('Total amount due for this transaction', 'float', true,0),
 			'TXN_paid' 			=> new EE_Model_Field('Total amoutn paid so far', 'float', false,0),
 			'STS_ID' 			=> new EE_Model_Field('Status of Transaction.','foreign_text_key',false,  EEM_Transaction::incomplete_status_code,null,'Status'),
@@ -297,6 +297,10 @@ class EEM_Transaction extends EEM_TempBase {
 		$start_date = min( $start_date, $end_date );
 		$end_date = max( $start_date, $end_date );
 
+		//NOW convert for db query 
+		$start_date = $this->_prepare_dtt_for_db( $start_date );
+		$end_date = $this->_prepare_dtt_for_db( $end_date );
+
 		global $wpdb;
 		
 		if ( $count ) {
@@ -309,8 +313,8 @@ class EEM_Transaction extends EEM_TempBase {
 		$SQL .= 'LEFT JOIN ' . $wpdb->prefix . 'esp_attendee att ON reg.ATT_ID = att.ATT_ID ';
 		$SQL .= 'JOIN ' . $wpdb->prefix . 'events_detail evt ON reg.EVT_ID = evt.id ';
 		$SQL .= 'RIGHT JOIN ' . $this->table_name . ' txn ON reg.TXN_ID = txn.TXN_ID ';
-		$SQL .= 'WHERE TXN_timestamp >= %d ';
-		$SQL .= 'AND TXN_timestamp <= %d ';
+		$SQL .= 'WHERE TXN_timestamp >= %s ';
+		$SQL .= 'AND TXN_timestamp <= %s ';
 		$SQL .= 'AND reg.REG_count = 1 ';
 
 		//setup orderby
@@ -336,6 +340,17 @@ class EEM_Transaction extends EEM_TempBase {
 		$transactions = $count ? $wpdb->get_var( $wpdb->prepare( $SQL, $start_date, $end_date ) ) : $wpdb->get_results( $wpdb->prepare( $SQL, $start_date, $end_date ), ARRAY_A );
 
 		if ( $transactions ) {
+
+			if ( is_array( $transactions ) ) {
+				//dang it... results are just returned vanilla... we have to run conversions on them first
+				foreach( $transactions as $tkey => $transaction ) {
+					foreach ( $transaction as $key => $value ) {
+						if ( in_array($key, $this->dtt_keys ) ) {
+							$transactions[$tkey]->$key = $this->_prepare_dtt_from_db( $value );
+						}
+					}
+				}
+			}
 			return $transactions;
 		} else {
 			return FALSE;
@@ -373,10 +388,20 @@ class EEM_Transaction extends EEM_TempBase {
 		$SQL .= 'AND reg.REG_count = 1 ';
 		$SQL .= 'ORDER BY TXN_timestamp DESC';
 
-		if ( $transaction = $wpdb->get_results( $wpdb->prepare( $SQL, $TXN_ID ))) {
+		if ( $transactions = $wpdb->get_results( $wpdb->prepare( $SQL, $TXN_ID ))) {
 //			echo $wpdb->last_query;
 //			echo printr( $payments );
-			return $transaction;
+			if ( is_array( $transactions ) ) {
+				//dang it... results are just returned vanilla... we have to run conversions on them first
+				foreach( $transactions as $tkey => $transaction ) {
+					foreach ( $transaction as $key => $value ) {
+						if ( in_array($key, $this->dtt_keys ) ) {
+							$transactions[$tkey]->$key = $this->_prepare_dtt_from_db( $value );
+						}
+					}
+				}
+			}
+			return $transactions;
 		} else {
 //			EE_Error::add_error( $wpdb->print_error(), __FILE__, __FUNCTION__, __LINE__ ); print_error echos immediately  >:()
 			return FALSE;
@@ -396,16 +421,31 @@ class EEM_Transaction extends EEM_TempBase {
 
 		global $wpdb;
 		$date_mod = strtotime( $period );
+		$date_mod = $this->_prepare_dtt_for_db( $date_mod );
 
-		$SQL = 'SELECT DATE(FROM_UNIXTIME(TXN_timestamp)) AS txnDate, SUM(TXN_paid) AS revenue';
+		$SQL = 'SELECT TXN_timestamp AS txnDate, SUM(TXN_paid) AS revenue';
 		$SQL .= ' FROM ' . $this->table_name;
-		$SQL .= ' WHERE TXN_timestamp >= %d';
+		$SQL .= ' WHERE TXN_timestamp >= %s';
 		$SQL .= ' GROUP BY `txnDate`';
 		$SQL .= ' ORDER BY TXN_timestamp DESC';
 
 		//echo '<h3>$SQL : ' . $SQL . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 
-		return $wpdb->get_results( $wpdb->prepare( $SQL, $date_mod ));
+		$transactions = $wpdb->get_results( $wpdb->prepare( $SQL, $date_mod ));
+
+		if ( is_array( $transactions ) ) {
+				//dang it... results are just returned vanilla... we have to run conversions on them first
+				foreach( $transactions as $tkey => $transaction ) {
+					foreach ( $transaction as $key => $value ) {
+						if ( $key == 'txnDate' ) {
+							$transactions[$tkey]->$key = $this->_prepare_dtt_from_db( $value );
+						}
+					}
+				}
+			}
+
+
+		return $transactions;
 
 	}
 
@@ -421,12 +461,13 @@ class EEM_Transaction extends EEM_TempBase {
 
 		global $wpdb;
 		$date_mod = strtotime( '-1 ' . $period );
+		$date_mod = $this->_prepare_dtt_for_db( $date_mod );
 
 		$SQL = 'SELECT event_name, SUM(TXN_paid) AS revenue';
 		$SQL .= ' FROM ' . $this->table_name . ' txn';
 		$SQL .= ' LEFT JOIN ' . $wpdb->prefix . 'esp_registration reg ON reg.TXN_ID = txn.TXN_ID';
 		$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID';
-		$SQL .= ' WHERE REG_date >= %d';
+		$SQL .= ' WHERE REG_date >= %s';
 		$SQL .= ' GROUP BY event_name';
 		$SQL .= ' ORDER BY event_name';
 		$SQL .= ' LIMIT 0, 24';

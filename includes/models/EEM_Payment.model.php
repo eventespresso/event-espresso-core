@@ -97,7 +97,7 @@ class EEM_Payment extends EEM_TempBase {
 			'PAY_ID'=>				new EE_Model_Field('Payment ID', 'primary_key', false),
 			'TXN_ID'=>				new EE_Model_Field('Tranaction ID related to payment', 'foreign_key', false, null, null, 'Transaction'),
 			'STS_ID'=>				new EE_Model_Field('Status of payment', 'foreign_text_key', false, EEM_Payment::status_id_failed,null,'Status'),
-			'PAY_timestamp'=>		new EE_Model_Field('Unix Timestamp of when Payment occured','date',false,time()),
+			'PAY_timestamp'=>		new EE_Model_Field('MySql Timestamp of when Payment occured','date',false,current_time('mysql')),
 			'PAY_method'=>			new EE_Model_Field('String stating method of payment', 'all_caps_key', true,'CART'),
 			'PAY_amount'=>			new EE_Model_Field('Amount this payment is for', 'float', false, 0),
 			'PAY_gateway'=>			new EE_Model_Field('Gateway name used for payment', 'plaintext', true, 'PayPal_Standard'),
@@ -381,11 +381,16 @@ class EEM_Payment extends EEM_TempBase {
 		$start_date = min( $start_date, $end_date );
 		$end_date = max( $start_date, $end_date );
 
+
+		//NOW convert for db query 
+		$start_date = $this->_prepare_dtt_for_db( $start_date );
+		$end_date = $this->_prepare_dtt_for_db( $end_date );
+
 		
 //echo '<h3>$start_date : ' . $start_date . '  <span style="margin:0 0 0 3em;font-size:12px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h3>';
 //echo '<h3>$end_date : ' . $end_date . '  <span style="margin:0 0 0 3em;font-size:12px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h3>';
 		
-		$SQL = 'SELECT * FROM '. $this->table_name .' WHERE PAY_timestamp >= %d AND PAY_timestamp <= %d  ORDER BY PAY_timestamp ASC';
+		$SQL = 'SELECT * FROM '. $this->table_name .' WHERE (PAY_timestamp BETWEEN %s AND %s) ORDER BY PAY_timestamp ASC';
 		global $wpdb;
 
 		if ( $payments = $wpdb->get_results( $wpdb->prepare( $SQL, $start_date, $end_date ))) {
