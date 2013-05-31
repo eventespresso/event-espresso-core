@@ -13,7 +13,6 @@ function espresso_load_jquery() {
 function espresso_frontend_init() {
 
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-	
 	global $espresso_reg_page;
 	if ( $espresso_reg_page = espresso_test_for_reg_page() ) {
 		do_action('AHEE_load_reg_page_files');
