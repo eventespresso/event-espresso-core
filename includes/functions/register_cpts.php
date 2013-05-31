@@ -47,15 +47,15 @@ class	EE_Register_CPTs{
 		'labels' => $labels,
 		'public' => true,
 		'publicly_queryable' => true,
-		'show_ui' => true, 
-		'show_in_menu' => true, 
+		'show_ui' => false, 
+		'show_in_menu' => false, 
 		'query_var' => true,
 		'rewrite' => array( 'slug' => sanitize_title($singular_name) ),
 		'capability_type' => 'post',
 		'has_archive' => true, 
 		'hierarchical' => true,
 		'menu_position' => null,
-		'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt' )
+		'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'revisions', 'comments' )
 	  ); 
 	  
 	  if($override_args){
