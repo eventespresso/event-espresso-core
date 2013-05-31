@@ -1,5 +1,6 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
+//todo ... I'm assuming at some point this will become moot and can be removed?
 function espresso_system_check() {
 	global $caffeinated;
 	$caffeinated = defined('EE_CAFFEINATED') ? EE_CAFFEINATED : TRUE;
