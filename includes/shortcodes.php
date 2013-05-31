@@ -926,7 +926,6 @@ if (!function_exists('espresso_venue_event_list_sc')) {
 			$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
 			$sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " vr ON e.id = vr.event_id ";
 			$sql .= " LEFT JOIN " . EVENTS_VENUE_TABLE . " ev ON vr.venue_id = ev.id  ";
-			$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
 			$sql .= " LEFT JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
 			$sql .= " WHERE e.event_status != 'D' AND e.is_active = true AND ev.id = '" . $id . "' ";
 

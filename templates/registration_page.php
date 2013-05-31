@@ -151,7 +151,7 @@ if (!function_exists('event_registration')) {
 							'event_id' => $event_id
 					);
 				}
-				$show_google_map = $event_meta['enable_for_gmap'] ? TRUE : FALSE;
+				$show_google_map = $show_ee_gmap_no_shortcode && $event_meta['enable_for_gmap'] ? TRUE : FALSE;
 
 
 				// display formatting

@@ -104,7 +104,6 @@ define("EVENTS_PERSONNEL_REL_TABLE", $wpdb->prefix . "events_personnel_rel");
 define("EVENTS_QST_GROUP_TABLE", $wpdb->prefix . "events_qst_group");
 define("EVENTS_QST_GROUP_REL_TABLE", $wpdb->prefix . "events_qst_group_rel");
 define("EVENTS_QUESTION_TABLE", $wpdb->prefix . "events_question");
-define("EVENTS_START_END_TABLE", $wpdb->prefix . "events_start_end");
 define("EVENTS_VENUE_TABLE", $wpdb->prefix . "events_venue");
 define("EVENTS_VENUE_REL_TABLE", $wpdb->prefix . "events_venue_rel");
 // End table definitions

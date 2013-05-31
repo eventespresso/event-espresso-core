@@ -124,10 +124,7 @@ function event_espresso_empty_event_trash($event_id) {
 	
 	
 		/*	 * ********************* REMOVE AFTER DATA MIGRATION SCRIPTS WRITTEN ********************** */
-		//Remove the event times
-		$sql = 'DELETE FROM ' . EVENTS_START_END_TABLE . ' WHERE event_id = %d';
-		$wpdb->query($wpdb->prepare($sql, $event_id));
-	
+		
 		//Remove the event prices
 		$sql = 'DELETE FROM ' . EVENTS_PRICES_TABLE . ' WHERE event_id = %d';
 		$wpdb->query($wpdb->prepare($sql, $event_id));
@@ -506,7 +503,7 @@ function espresso_attendees_by_month_dropdown($current_value = '') {
 		echo '<select name="month_range" class="wide">';
 		echo '<option value="">' . __('Select a Month/Year', 'event_espresso') . '</option>';
 		foreach ($dates as $row) {
-			$option_date =  date( 'M Y', $row["date"] );
+			$option_date =  date_i18n( 'M Y', strtotime($row["date"] ) );
 			echo '<option value="' . $option_date . '"';
 			echo $option_date == $current_value ? ' selected="selected=selected"' : '';
 			echo '>' . $option_date . '</option>' . "\n";
@@ -690,7 +687,7 @@ function espresso_event_months_dropdown( $current_value = FALSE ) {
 	$current_value = $current_value ? $current_value : 0;
 
 
-	$SQL = "SELECT DATE_FORMAT( FROM_UNIXTIME( REG_date ), '%Y') AS 'YR', DATE_FORMAT( FROM_UNIXTIME( REG_date ), '%M') AS 'MN' FROM {$wpdb->prefix}esp_registration reg LEFT JOIN {$wpdb->prefix}events_detail evt ON evt.id=reg.EVT_ID WHERE event_status != 'D' GROUP BY YR, MN";
+	$SQL = "SELECT DATE_FORMAT( REG_date, '%Y') AS 'YR', DATE_FORMAT( REG_date, '%M') AS 'MN' FROM {$wpdb->prefix}esp_registration reg LEFT JOIN {$wpdb->prefix}events_detail evt ON evt.id=reg.EVT_ID WHERE event_status != 'D' GROUP BY YR, MN";
 
 	if ( $dates = $wpdb->get_results( $SQL )) {
 

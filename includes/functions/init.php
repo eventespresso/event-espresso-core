@@ -63,6 +63,8 @@ function espresso_events_on_frontpage() {
 	// first check if a page is being used for the frontpage
 	if ( get_option('show_on_front') == 'page' ) {
 		global $org_options;
+		if ( empty($org_options) )
+			return; //get  out this is likely a fresh EE activation
 		// grab that page's id
 		$frontpage = get_option('page_on_front');
 		// compare to event_page_id
@@ -104,7 +106,12 @@ function espresso_add_rewrite_rules( $to_flush_or_not_to_flush = FALSE ) {
 	if (empty($org_options['event_page_id'])) {
 		espresso_load_org_options();
 	}
-	// create pretty permalinks - NOTE: $org_options['event_page_id'] might still be empty on clean db activation.
+
+	if ( empty($org_options['event_page_id'] ) ) {
+		return; //STILL EMPTY! probably a fresh install activation.
+	}
+
+	// create pretty permalinks
 	if ( get_option('permalink_structure') != '' && !empty( $org_options['event_page_id'] ) ) {
 		// grab slug for event reg page
 		$SQL = 'SELECT post_name  FROM ' . $wpdb->prefix . 'posts WHERE ID = %d';

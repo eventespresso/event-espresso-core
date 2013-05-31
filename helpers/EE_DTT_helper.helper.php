@@ -26,7 +26,71 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  */
+
+
+
+
 class EE_DTT_Helper {
+
+
+	/**
+	 * return the timezone set for the WP install
+	 * @return string valid timezone string for PHP DateTimeZone() class
+	 */
+	private static function _get_timezone() {
+		$timezone = get_option('timezone_string');
+		//if timezone is STILL empty then let's get the GMT offset and then set the timezone_string using our converter
+		if ( empty( $timezone ) ) {
+			//let's get a the WordPress UTC offset
+			$offset = get_option('gmt_offset');
+			$timezone = self::_timezone_convert_to_string_from_offset( $offset );
+		}
+		return $timezone;
+	}
+	
+
+
+
+
+	/**
+	 * all this method does is take an incoming GMT offset value ( e.g. "+1" or "-4" ) and returns a corresponding valid DateTimeZone() timezone_string.
+	 * @param  string $offset GMT offset
+	 * @return string         timezone_string (valid for DateTimeZone)
+	 */
+	private static function _timezone_convert_to_string_from_offset( $offset ) {
+		//shamelessly taken from bottom comment at http://ca1.php.net/manual/en/function.timezone-name-from-abbr.php because timezone_name_from_abbr() did NOT work as expected - its not reliable
+		$offset *= 3600; // convert hour offset to seconds
+        $abbrarray = timezone_abbreviations_list();
+        foreach ($abbrarray as $abbr)
+        {
+                foreach ($abbr as $city)
+                {
+                        if ($city['offset'] == $offset)
+                        {
+                                return $city['timezone_id'];
+                        }
+                }
+        }
+
+        return FALSE;
+	}
+
+
+
+	public function prepare_dtt_from_db( $dttvalue, $format = 'U' ) {
+		
+		$timezone = self::_get_timezone();
+
+		$date_obj = new DateTime( $dttvalue, new DateTimeZone('UTC') );
+		if ( !$date_obj )
+			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
+		$date_obj->setTimezone( new DateTimeZone($timezone) );
+
+		return $date_obj->format($format);
+	}
+
+
+
 
 
 	public static function ddtimezone($event_id = 0) {
