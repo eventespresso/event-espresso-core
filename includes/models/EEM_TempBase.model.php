@@ -161,6 +161,7 @@ abstract class EEM_TempBase extends EEM_Base{
 					$type='%f';
 					break;
 				case 'plaintext':
+				case 'text_or_numeric':
 				case 'simplehtml':
 				case 'fullhtml':
 				case 'all_caps_key':
@@ -519,11 +520,11 @@ abstract class EEM_TempBase extends EEM_Base{
 				if(!$thisModelObject->ID()){
 					$thisModelObject->save();
 				}
-				if(!($otherModelObjectOrID instanceof EE_TempBase)){
+				if(!($otherModelObjectOrID instanceof EE_Base_Class)){
 					$otherModelId=$otherModelObjectOrID;
 					$otherModelSettings=$this->related_settings_for($relationName);
 					$otherModelInstance=$otherModelSettings->model_instance();
-					$otherModelObject=$otherModelInstance->get_one_by_ID($otherModelId);
+					$otherModelObject=$otherModelInstance->get_one_by_ID( $otherModelId );
 				}else{
 					$otherModelObject=$otherModelObjectOrID;
 				}
@@ -794,7 +795,7 @@ class EE_Model_Field{
 	 * all the types of ModelFields which are allowed
 	 * @var type 
 	 */
-	private $_allowed_types=array('primary_key','primary_text_key','foreign_key','foreign_text_key','int','float','date', 'plaintext','simplehtml','fullhtml','email','all_caps_key', 'enum','bool','deleted_flag','serialized_text');
+	private $_allowed_types=array('primary_key','primary_text_key','foreign_key','foreign_text_key','int','float','date', 'plaintext','text_or_numeric','simplehtml','fullhtml','email','all_caps_key', 'enum','bool','deleted_flag','serialized_text');
 	
 	
 	
