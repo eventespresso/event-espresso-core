@@ -1053,7 +1053,8 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 
 	public function venue_metabox() {
-
+		
+		global $org_options;
 		$values = array(
 				array('id' => true, 'text' => __('Yes', 'event_espresso')),
 				array('id' => false, 'text' => __('No', 'event_espresso'))
@@ -1118,14 +1119,15 @@ class Events_Admin_Page extends EE_Admin_Page {
 							<?php _e('Google Map Link (for email):', 'event_espresso'); ?>
 							<?php echo $this->_event->google_map_link; ?> 
 						</p>
-						
+
+						<?php if( isset( $org_options['map_settings'] ) && isset( $org_options['map_settings']['use_google_maps'] ) && $org_options['map_settings']['use_google_maps'] ) { ?>
 						<p>
 							<label for="enable_for_gmap">
 								<?php _e('Display Google Map for this venue? ', 'event_espresso') ?>
 							</label>
 							<?php echo EE_Form_Fields::select_input('enable_for_gmap', $values, isset($this->_event->event_meta['enable_for_gmap']) ? $this->_event->event_meta['enable_for_gmap'] : '', 'id="enable_for_gmap"') ?> 
 						</p>
-
+						<?php } ?>
 					</fieldset>
 				</td>
 					
