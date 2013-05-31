@@ -821,9 +821,12 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		
 		global $EE_Session;
 		$session = $EE_Session->get_session_data();
+		if ( isset( $session['cart'] ) && is_array( $session['cart'] ) && ! empty( $session['cart'] )) {
+			array_merge( $this->cart, $session['cart'] );
+		}
 		
 		$cart_data = array(
-											'cart' => array_merge( $this->cart, $session['cart'] ),
+											'cart' => $this->cart,
 											'_events_in_cart' => $this->_events_in_cart,
 											'_cart_grand_total_qty' => $this->_cart_grand_total_qty,
 											'_cart_grand_total_amount' => $this->_cart_grand_total_amount
