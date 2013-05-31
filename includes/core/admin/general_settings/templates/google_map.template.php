@@ -1,5 +1,23 @@
 <div class="padding">
 
+	<table class="form-table">
+		<tbody>
+
+			<tr>
+				<th>
+					<label for="ee-display-map-no-shortcodes">
+						<?php _e('Activate Google Maps', 'event_espresso') ?>
+					</label>
+				</th>
+				<td>
+					<?php echo EE_Form_Fields::select_input('use_google_maps', $values, $map_settings['use_google_maps'], 'id="ee-display-map-no-shortcodes"'); ?>
+				</td>
+			</tr>
+
+		</tbody>
+	</table>
+
+
 	<h4 class="ee-admin-settings-hdr">
 		<?php _e('Reg Page Map Settings', 'event_espresso'); ?>
 		<?php echo EE_Template::get_help_tab_link('gmaps_info'); ?>
@@ -235,17 +253,6 @@
 						<?php _e(' Align Right', 'event_espresso') ?>
 					</label>
 
-				</td>
-			</tr>
-
-			<tr>
-				<th>
-					<label for="ee-display-map-no-shortcodes">
-						<?php _e('Use map in template files ( No Shortcodes )', 'event_espresso') ?>
-					</label>
-				</th>
-				<td>
-					<?php echo EE_Form_Fields::select_input('ee_display_map_no_shortcodes', $values, $map_settings['ee_display_map_no_shortcodes'], 'id="ee-display-map-no-shortcodes"'); ?>
 				</td>
 			</tr>
 
