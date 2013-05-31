@@ -18,6 +18,7 @@ abstract class EE_Base_Class {
 	public function __construct($fieldValues=null){
 		$className=get_class($this);
 		do_action("AHEE__{$className}__construct",$this,$fieldValues);
+		$fieldValues = apply_filters("FHEE_{$className}__construct__fieldValues",$fieldValues);
 		$model=$this->_get_model();
 		if($fieldValues!=null){
 			foreach($fieldValues as  $fieldName=>$fieldValue){

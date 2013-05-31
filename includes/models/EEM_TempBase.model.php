@@ -304,6 +304,9 @@ abstract class EEM_TempBase extends EEM_Base{
 	 */	
 	public function update ($set_column_values, $where_cols_n_values) {
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
+		$set_column_values = apply_filters('FHEE_'.get_class($this).'__update__column_values',$set_column_values,$where_cols_n_values);
+		$where_cols_n_values = apply_filters('FHEE_'.get_class($this).'__update__where_cols_n_values',$where_cols_n_values,$set_column_values);
+		do_action('AHEE_'.get_class($this).'__update__before',$set_column_values,$where_cols_n_values);
 		return $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );	
 	}
 	/**

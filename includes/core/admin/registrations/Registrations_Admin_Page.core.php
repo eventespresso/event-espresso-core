@@ -2364,7 +2364,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 						$this->_req_data['ATT_social'],
 						$this->_req_data['ATT_comments'],
 						$this->_req_data['ATT_notes'],
-						isset($this->_req_data['ATT_deleted']) ? $this->_req_data['ATT_deleted'] : 0
+						isset($this->_req_data['ATT_deleted']) ? $this->_req_data['ATT_deleted'] : 0,
+						isset($this->_req_data['ATT_ID']) ? $this->_req_data['ATT_ID'] : null
 				);
 		// is this a new Attendee ?
 		
@@ -2372,9 +2373,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			
 			$action_desc = __( 'created', 'event_espresso' );
 		} else {
-			if($this->_req_data['ATT_ID']){
-				$attendee->set('ATT_ID',$this->_req_data['ATT_ID']);
-			}
 			
 			$action_desc = __( 'updated', 'event_espresso' );
 		}
