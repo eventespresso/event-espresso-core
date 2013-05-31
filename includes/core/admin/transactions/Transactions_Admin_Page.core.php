@@ -658,17 +658,18 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$cart_items = $this->_session['cart']['REG']['items'];
 		$this->_template_args['items'] = array();
 		$this->_template_args['event_attendees'] = array();
+		//printr( $this->_session, '$this->_session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
 		if ( ! empty( $cart_items )) {
 			foreach ( $cart_items as $line_item_ID => $item ) {
 				$event_name_and_price_option = $item['name'] . ' - ' . $item['options']['price_desc'];
-				//printr( $item, '$item' );
+				//printr( $item, '$cart_item  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 				foreach ( $item['attendees'] as $att_nmbr => $attendee ) {
 					// check for attendee object
 					$attendee['att_obj'] = isset( $attendee['att_obj'] ) && is_object( $attendee['att_obj'] ) ? $attendee['att_obj'] : FALSE;
 					if ( ! $attendee['att_obj'] ) {
-						if ( isset( $attendee[1] ) && isset( $attendee[2] ) && isset( $attendee[3] )) {
-							$where_cols_n_values = array( 'ATT_fname' => $attendee[1], 'ATT_lname' => $attendee[2], 'ATT_email' => $attendee[3] );
+						if ( isset( $attendee['fname'] ) && isset( $attendee['lname'] ) && isset( $attendee['email'] )) {
+							$where_cols_n_values = array( 'ATT_fname' => $attendee['fname'], 'ATT_lname' => $attendee['lname'], 'ATT_email' => $attendee['email'] );
 						    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php' );
 						    $ATT_MDL = EEM_Attendee::instance();
 							$attendee['att_obj'] = $ATT_MDL->find_existing_attendee( $where_cols_n_values );
