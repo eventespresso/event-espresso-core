@@ -55,8 +55,14 @@ class EE_Registration_message_type extends EE_message_type {
 
 
 		if ( is_a( $this->_data, 'EE_Session' ) ) {
-			//for SPCO trigger
-			$return = $delay ? TRUE : FALSE;
+			//for SPCO trigger BUT we need to make sure that this isn't a FREE event.
+			$session = $this->_data->get_session_data();
+			$transaction = $session['transaction'];
+
+			//check grandtotal
+			$is_free = $transaction->total() > 0 ? FALSE : TRUE;
+			
+			$return = $delay && !$is_free ? TRUE : FALSE;
 		} else {
 			//gateway trigger.  We need to know if payment is complete.
 			$txn = $this->_data[0];
