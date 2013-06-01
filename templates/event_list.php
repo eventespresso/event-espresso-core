@@ -409,7 +409,7 @@ function event_espresso_get_event_details( $attributes = array()) {
 		//Google map
 		$google_map = '';
 		if (isset($event_meta['enable_for_gmap']) && $event_meta['enable_for_gmap']) {
-			if (function_exists('ee_gmap_display') && isset( $org_options['map_settings']['ee_display_map_no_shortcodes'] ) && $org_options['map_settings']['ee_display_map_no_shortcodes']) {
+			if (function_exists('ee_gmap_display') && isset( $org_options['map_settings']['use_google_maps'] ) && $org_options['map_settings']['use_google_maps']) {
 				$google_map = ee_gmap_display( $ee_gmaps_opts );
 			}
 		}

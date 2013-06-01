@@ -23,7 +23,7 @@
 						$reg = $attendee['reg_obj'];
 						$attendee['fname'] = isset( $attendee['fname'] ) ? $attendee['fname'] : $attendees[1]['fname'];
 						$attendee['lname'] = isset( $attendee['lname'] ) ? $attendee['lname'] : $attendees[1]['lname'];
-						$attendee['email'] = isset( $attendee['email'] ) ? $attendee['email'] : $attendees[1]['email'];						
+						$attendee['email'] = isset( $attendee['email'] ) ? $attendee['email'] : $attendees[1]['email'];
 					?>
 				<tr>
 					<td class="jst-left"><?php echo$att_nmbr;?></td>

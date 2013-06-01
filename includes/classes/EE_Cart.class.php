@@ -815,10 +815,15 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';		
 		//echo $this->session->pre_r($this->cart);
-		global $EE_Session;
-		
+
 		// take out the trash
 		$this->_clean_cart();
+		
+		global $EE_Session;
+		$session = $EE_Session->get_session_data();
+		if ( isset( $session['cart'] ) && is_array( $session['cart'] ) && ! empty( $session['cart'] )) {
+			array_merge( $this->cart, $session['cart'] );
+		}
 		
 		$cart_data = array(
 											'cart' => $this->cart,
@@ -828,7 +833,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 										);
 			
 		// add cart data to session so it can be saved to the db
-//		if ( $this->session->set_session_data( $cart_data, 'session_data' )) {
 		if ( $EE_Session->set_session_data( $cart_data, 'session_data' )) {
 			return TRUE;
 		} else {
@@ -852,14 +856,12 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		foreach ( $this->cart as $which_cart => $cart ) {
 		if ( isset( $cart['items'] ) && ! empty( $cart['items'] ) ) {
 				foreach ( $cart['items'] as $items ) {
-					foreach ( $items as $line_item_id => $item ) {
-					
+					foreach ( $items as $line_item_id => $item ) {					
 						// do both instances of the line item id match ???
-                                                if(!isset($item['line_item'])){
-                                                        $this->remove_from_cart( $which_cart, $line_item_id );
+						if(!isset($item['line_item'])){
+							$this->remove_from_cart( $which_cart, $line_item_id );
 							break;
-                                                }
-						elseif ( $line_item_id != $item['line_item'] ) {
+						} elseif ( $line_item_id != $item['line_item'] ) {
 							// delete
 							$this->remove_from_cart( $which_cart, $line_item_id );
 							break;

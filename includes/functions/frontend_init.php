@@ -13,22 +13,6 @@ function espresso_load_jquery() {
 function espresso_frontend_init() {
 
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );	
-//	require_once('EE_Answer.class.php');
-//	$a = EE_Answer::new_instance(array(
-//		'ANS_value'=>3
-//	));
-//	var_dump($a);
-//	require_once('EE_Event.class.php');
-//	require_once('EE_Venue.class.php');
-//	$e = EE_Event::new_instance(
-//			array('EVT_name'=>'Mnkey Time',
-//				'EVT_reg_limit'=>39));
-//	$v = EE_Venue::new_instance(array('VNU_name'=>'monkey tree','VNU_address'=>'middle of the forest','STA_ID'=>23));
-//	$e->_add_relation_to($v, 'Venue');
-//	$e->_remove_relation_to($v, 'Venue');
-//	echo "state id:".$v->state_ID();
-//	echo "state obj";var_dump($v->state_obj());
-//	var_dump($v->events());
 	global $espresso_reg_page;
 	if ( $espresso_reg_page = espresso_test_for_reg_page() ) {
 		do_action('AHEE_load_reg_page_files');

@@ -64,7 +64,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 			'PAY_amount'=>$transaction->total(), 
 			'PAY_gateway'=>$this->_gateway_name));
 		
-		do_action( 'action_hook_espresso__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
+		do_action( 'AHEE_EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
 		parent::thank_you_page_logic($transaction);
 		//check that there's still a transaction in the session.
 		//if there isn't, maybe we've cleared it (session ended with the thank you page)

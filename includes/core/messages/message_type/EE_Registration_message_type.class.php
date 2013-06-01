@@ -55,8 +55,15 @@ class EE_Registration_message_type extends EE_message_type {
 
 
 		if ( is_a( $this->_data, 'EE_Session' ) ) {
-			//for SPCO trigger
-			$return = $delay ? TRUE : FALSE;
+			//for SPCO trigger BUT we need to make sure that this isn't a FREE event.
+			$session = $this->_data->get_session_data();
+			$transaction = $session['transaction'];
+
+			//check grandtotal
+			$is_free = $transaction->total() > 0 ? FALSE : TRUE;
+			
+			$return = $delay && !$is_free ? TRUE : FALSE;
+			$this->_data_handler = $is_free ? 'EE_Session' : NULL;
 		} else {
 			//gateway trigger.  We need to know if payment is complete.
 			$txn = $this->_data[0];
@@ -87,7 +94,7 @@ class EE_Registration_message_type extends EE_message_type {
 		$message_settings = $this->get_existing_admin_settings( $this->_active_messenger->name );
 		$delay = isset($message_settings['email_before_payment']) && $message_settings['email_before_payment'] == 'yes' ? FALSE : TRUE; //default is TRUE (yes we want to delay)!
 
-		$this->_data_handler = $delay ? 'Gateways' : 'EE_Session';
+		$this->_data_handler = $delay && empty( $this->_data_handler ) ? 'Gateways' : 'EE_Session';
 	}
 
 

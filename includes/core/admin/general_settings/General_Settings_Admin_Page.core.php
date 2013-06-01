@@ -103,6 +103,11 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			'update_admin_option_settings' => array(
 				'func' => '_update_admin_option_settings',
 				'noheader' => TRUE,
+				),
+			'country_settings' => '_country_settings',
+			'update_country_settings' => array(
+				'func' => '_update_country_settings',
+				'noheader' => TRUE,
 				)
 			);
 	}
@@ -203,6 +208,13 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 						'callback' => 'affiliate_info_help_tab'
 						),
 					)
+				),
+			'country_settings' => array(
+				'nav' => array(
+					'label' => __('Countries'),
+					'order' => 70
+					),
+				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
 				)
 			);
 	}
@@ -461,6 +473,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['values'] = $this->_yes_no_values;
 
 		$default_map_settings = array(
+			'use_google_maps' => FALSE,
 			'ee_map_width_single' => 585,
 			'ee_map_height_single' => 362,
 			'ee_map_zoom_single' => 14,
@@ -474,8 +487,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			'ee_map_nav_display' => FALSE,
 			'ee_map_nav_size' => TRUE,
 			'ee_map_type_control' => 'dropdown',
-			'ee_map_align' => 'center',
-			'ee_display_map_no_shortcodes' => FALSE
+			'ee_map_align' => 'center'
 		);
 		$this->_template_args['map_settings'] = 
 				isset( $org_options['map_settings'] ) && ! empty( $org_options['map_settings'] ) 
@@ -493,6 +505,11 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data = array(
 			'map_settings' => array()
 		);
+
+		$data['map_settings']['use_google_maps'] = 
+				 isset( $this->_req_data['use_google_maps'] ) 
+				? absint( $this->_req_data['use_google_maps'] ) 
+				: FALSE;
 
 		$data['map_settings']['ee_map_width_single'] = 
 				 isset( $this->_req_data['ee_map_width_single'] ) 
@@ -564,11 +581,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				? sanitize_text_field( $this->_req_data['ee_map_align'] ) 
 				: 'right';
 
-		$data['map_settings']['ee_display_map_no_shortcodes'] = 
-				 isset( $this->_req_data['ee_display_map_no_shortcodes'] ) 
-				? absint( $this->_req_data['ee_display_map_no_shortcodes'] ) 
-				: FALSE;
-
 		$data = apply_filters('FHEE_google_map_settings_save', $data);	
 		
 		$what = 'Google Map Settings';
@@ -633,6 +645,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'your_organization_settings' ) );
 		
 	}
+
+
 	/*************		Admin Options 		*************/
 
 
@@ -679,6 +693,72 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$what = 'Admin Options';
 		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'admin_option_settings' ) );
+		
+	}
+
+
+
+
+
+	/*************		Countries 		*************/
+
+
+	protected function _country_settings() {
+	
+		global $org_options;
+		//load formatter helper
+		//require_once ( EE_HELPERS . 'EE_Formatter.helper.php' );
+		//load field generator helper
+		require_once ( EE_HELPERS . 'EE_Form_Fields.helper.php' );
+		
+		$this->_template_args['values'] = $this->_yes_no_values;
+		
+		$country = new EE_Question( array(
+					'QST_display_text'=> '',
+					'QST_system'=>'country'
+				)
+			);
+		$country->QST_input_name = 'CNT_ISO';
+		$country->ANS_value = '';
+		$this->_template_args['countries'] = EE_Form_Fields::generate_form_input( $country );
+		
+//		$this->_template_args['use_venue_manager'] = isset( $org_options['use_venue_manager'] ) ? absint( $org_options['use_venue_manager'] ) : FALSE;
+//		$this->_template_args['use_personnel_manager'] = isset( $org_options['use_personnel_manager'] ) ? absint( $org_options['use_personnel_manager'] ) : FALSE;
+//		$this->_template_args['espresso_dashboard_widget'] = isset( $org_options['espresso_dashboard_widget'] ) ? absint( $org_options['espresso_dashboard_widget'] ) : TRUE;
+//		$this->_template_args['events_in_dasboard'] = isset( $org_options['events_in_dasboard'] ) ? absint( $org_options['events_in_dasboard'] ) : 30;
+//		$this->_template_args['use_event_timezones'] = isset( $org_options['use_event_timezones'] ) ? absint( $org_options['use_event_timezones'] ) : FALSE;
+//		$this->_template_args['full_logging'] = isset( $org_options['full_logging'] ) ? absint( $org_options['full_logging'] ) : FALSE;
+//		$this->_template_args['remote_logging'] = isset( $org_options['remote_logging'] ) ? absint( $org_options['remote_logging'] ) : FALSE;
+//		$this->_template_args['remote_logging_url'] = isset( $org_options['remote_logging_url'] ) && ! empty( $org_options['remote_logging_url'] ) ? stripslashes( $org_options['remote_logging_url'] ) : '';
+//		$this->_template_args['show_reg_footer'] = isset( $org_options['show_reg_footer'] ) ? absint( $org_options['show_reg_footer'] ) : TRUE;
+//		$this->_template_args['affiliate_id'] = isset( $org_options['affiliate_id'] ) ? $this->_display_nice( $org_options['affiliate_id'] ) : '';
+		
+		$this->_set_add_edit_form_tags( 'update_country_settings' );
+		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
+		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'country_settings.template.php', $this->_template_args, TRUE );
+		$this->display_admin_page_with_sidebar();	
+	}
+
+	protected function _update_country_settings() {
+		
+		$data = array();
+
+//		$data['use_venue_manager'] = isset( $this->_req_data['use_venue_manager'] ) ? absint( $this->_req_data['use_venue_manager'] ) : FALSE;
+//		$data['use_personnel_manager'] = isset( $this->_req_data['use_personnel_manager'] ) ? absint( $this->_req_data['use_personnel_manager'] ) : FALSE;
+//		$data['espresso_dashboard_widget'] = isset( $this->_req_data['espresso_dashboard_widget'] ) ? absint( $this->_req_data['espresso_dashboard_widget'] ) : TRUE;
+//		$data['events_in_dasboard'] = isset( $this->_req_data['events_in_dasboard'] ) ? absint( $this->_req_data['events_in_dasboard'] ) : 30;
+//		$data['use_event_timezones'] = isset( $this->_req_data['use_event_timezones'] ) ? absint( $this->_req_data['use_event_timezones'] ) : FALSE;
+//		$data['full_logging'] = isset( $this->_req_data['full_logging'] ) ? absint( $this->_req_data['full_logging'] ) : FALSE;
+//		$data['remote_logging'] = isset( $this->_req_data['remote_logging'] ) ? absint( $this->_req_data['remote_logging'] ) : FALSE;
+//		$data['remote_logging_url'] = isset( $this->_req_data['remote_logging_url'] ) ? esc_url_raw( $this->_req_data['remote_logging_url'] ) : NULL;
+//		$data['show_reg_footer'] = isset( $this->_req_data['show_reg_footer'] ) ? absint( $this->_req_data['show_reg_footer'] ) : TRUE;
+//		$data['affiliate_id'] = isset( $this->_req_data['affiliate_id'] ) ? sanitize_text_field( $this->_req_data['affiliate_id'] ) : NULL;
+		
+		$data = apply_filters('FHEE_country_settings_save', $data);	
+		
+		$what = 'Countries';
+		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'country_settings' ) );
 		
 	}
 
