@@ -338,4 +338,3 @@ function espresso_require_template($template_file_name, $must_exist = true, $as_
 	event_espresso_require_file($template_file_name, EVENT_ESPRESSO_TEMPLATE_DIR, EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/', $must_exist, $as_require_once);
 }
 add_action('AHEE_require_template', 'espresso_require_template');
-
