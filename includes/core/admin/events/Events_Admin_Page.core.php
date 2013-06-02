@@ -27,7 +27,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
-class Events_Admin_Page extends EE_Admin_Page {
+class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	/**
 	 * _event
