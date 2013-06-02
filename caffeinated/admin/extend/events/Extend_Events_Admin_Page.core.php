@@ -65,8 +65,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		//partial route/config override
 		$this->_page_config['import_events']['metaboxes'] = $this->_default_espresso_metaboxes;
-		$this->_page_config['add_event']['metaboxes'][] = '_premium_event_editor_meta_boxes';
-		$this->_page_config['edit_event']['metaboxes'][] = '_premium_event_editor_meta_boxes';
+		$this->_page_config['create_event']['metaboxes'][] = '_premium_event_editor_meta_boxes';
+		$this->_page_config['edit']['metaboxes'][] = '_premium_event_editor_meta_boxes';
 		$this->_page_config['default_event_settings']['metaboxes'] = array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box') );
 
 		//add filters and actions
@@ -88,7 +88,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 
-	public function load_scripts_styles_edit_event() {
+	public function load_scripts_styles_edit() {
 		//styles
 		wp_enqueue_style('jquery-ui-style');
 		wp_enqueue_style('jquery-ui-style-datepicker-css');
