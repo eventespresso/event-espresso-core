@@ -132,7 +132,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @access protected
 	 * @return void
 	 */
-	protected function _extend_page_config() {
+	protected function _extend_page_config_for_cpt() {
 				
 		$this->_cpt_route = $this->_req_action == 'create_new' || $this->_req_action == 'edit' ? TRUE : FALSE;
 		add_action('FHEE_admin_load_page_dependencies', array( $this, 'modify_current_screen') );

@@ -427,6 +427,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( method_exists( $this, '_extend_page_config' ) )
 			$this->_extend_page_config();
 
+		//for CPT and other extended functionality. If there is an _extend_page_config_for_cpt then let's run that to modify all the various page configuration arrays.
+		if ( method_exists( $this, '_extend_page_config_for_cpt' ) )
+			$this->_extend_page_config_for_cpt();
+
 
 		//next route only if routing enabled
 		if ( $this->_routing && !defined('DOING_AJAX') ) {
