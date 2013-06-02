@@ -7,10 +7,10 @@ function espresso_register_cpts(){
 }
 class	EE_Register_CPTs{
 	function __construct(){
-		$this->register_CPT('esp_event', __("Event", "event_espresso"),  __("Events", "event_espresso"));
-		$this->register_CPT('esp_venue', __("Venue", "event_espresso"), __("Venues", "event_espresso"));
-		$this->register_CPT('esp_person',  __("Person", "event_espresso"),  __("Persons", "event_espresso"));
-		$this->register_CPT('esp_attendee',  __("Attendee", "event_espresso"),  __("Attendees", "event_espresso"),
+		$this->register_CPT('espresso_events', __("Event", "event_espresso"),  __("Events", "event_espresso"));
+		$this->register_CPT('espresso_venues', __("Venue", "event_espresso"), __("Venues", "event_espresso"));
+		$this->register_CPT('espresso_persons',  __("Person", "event_espresso"),  __("Persons", "event_espresso"));
+		$this->register_CPT('espresso_attendees',  __("Attendee", "event_espresso"),  __("Attendees", "event_espresso"),
 				array(
 					'public'=>'false',
 					'publicly_queryable'=>'false',
