@@ -56,7 +56,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'add' => __('Add New Event', 'event_espresso'),
 				'edit' => __('Edit Event', 'event_espresso'),
 				'delete' => __('Delete Event', 'event_espresso')
-			)
+			),
+			'editor_title' => __('Enter event title here')
 		);
 	}
 

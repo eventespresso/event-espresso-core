@@ -241,6 +241,19 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 	/**
+	 * This allows child classes to modify the default editor title that appears when people add a new or edit an existing CPT item.
+	 *
+	 * This uses the _labels property set by the child class via _define_page_props.  Just make sure you have a key in _labels property that equals 'editor_title' and the value can be whatever you want the default to be.
+	 * @param string $title The new title (or existing if there is no editor_title defined)
+	 */
+	public function add_custom_editor_default_title( $title ) {
+		return isset( $this->_labels['editor_title'] ) ? $this->_labels['editor_title'] : $title;
+	}
+
+
+
+
+	/**
 	 * overriding the parent route_admin_request method so we DON'T run the route twice on cpt core page loads (it's already run in modify_current_screen())
 	 * @return void
 	 */
@@ -390,6 +403,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		$this->_template_args['post'] = $post = get_default_post_to_edit( $this->page_slug, TRUE );
 		$this->_template_args['post_ID'] = $this->_template_args['post']->ID;
 		$template = WP_ADMIN_PATH . 'edit-form-advanced.php';
+
+		//modify the default editor title field with default title.
+		add_filter('enter_title_here', array( $this, 'add_custom_editor_default_title' ), 10 );
 
 		espresso_display_template( $template, $this->_template_args );
 	}
