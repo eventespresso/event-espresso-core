@@ -38,9 +38,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected $_event;
 
-	public function __construct($routing = TRUE) {
-		parent::__construct($routing);
-	}
 
 	protected function _init_page_props() {
 		$this->page_slug = EVENTS_PG_SLUG;
@@ -66,24 +63,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
 			'default' => '_events_overview_list_table',
-			'edit_event' => array(
-				'func' => '_event_details',
-				'args' => array('edit')
-			),
-			'add_event' => array(
-				'func' => '_event_details',
-				'args' => array('add')
-			),
-			'insert_event' => array(
-				'func' => '_insert_or_update_event',
-				'args' => array('new_event' => TRUE),
-				'noheader' => TRUE
-			),
-			'update_event' => array(
-				'func' => '_insert_or_update_event',
-				'args' => array('new_event' => FALSE),
-				'noheader' => true
-			),
+			//create, edit, insert, update are all handled by parent, the below will have to be modified as needed.
 			'copy_event' => array(
 				'func' => '_copy_events',
 				'noheader' => true
@@ -151,7 +131,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				),
 				'metaboxes' => $default_espresso_boxes
 			),
-			'add_event' => array(
+			'create_new' => array(
 				'nav' => array(
 					'label' => __('Add Event', 'event_espresso'),
 					'order' => 5,
@@ -169,7 +149,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					)
 				)
 			),
-			'edit_event' => array(
+			'edit' => array(
 				'nav' => array(
 					'label' => __('Edit Event', 'event_espresso'),
 					'order' => 5,
@@ -395,37 +375,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
-	/**
-	 * _event_details
-	 * Depending on the given argument, this will display the event_details page (add or edit)	
-	 * @access protected
-	 * @param  string $view add or edit
-	 * @return string     html for event_details page.
-	 */
-	protected function _event_details($view) {
 
-		//load formatter helper
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
-
-		//load field generator helper
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
-
-		//set _event property
-		$this->_set_event_object();
-
-		// form 
-		$route = $view == 'edit' ? 'update_event' : 'insert_event';
-		$this->_set_add_edit_form_tags($route);
-
-
-		$this->_generate_event_title_and_desc();
-		$this->_generate_publish_box_extra_content();
-
-		$id = isset($this->_event->id) ? $this->_event->id : '';
-		$this->_set_publish_post_box_vars('event_id', $id, 'delete_event');
-
-		$this->display_admin_page_with_sidebar();
-	}
 
 	/**
 	 * 	_generate_event_title_and_desc
@@ -452,6 +402,268 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_template_args['admin_page_content'] = espresso_display_template(EVENTS_TEMPLATE_PATH . 'event_title_and_desc.template.php', $title_and_desc_args, TRUE);
 	}
 
+
+
+	//TODO
+	
+	public function insert_update_cpt_item( $post_id, $post ) {
+
+		require_once( 'EE_Event.class.php' );
+
+		$event = EE_Event::new_instance( array(
+			'EVT_ID' => $post_id,
+			'EVT_is_active' => isset($post['EVT_is_active']) ? 1 : 0,
+			'EVT_display_desc' => isset( $post['EVT_display_desc'] ) ? 1 : 0,
+			'EVT_display_reg_form' => isset( $post['EVT_display_reg_form'] ) ? 1 : 0,
+			'EVT_reg_limit' => !empty( $post['EVT_reg_limit'] ) ? $post['EVT_reg_limit'] : NULL,
+			'EVT_allow_multiple' => isset( $post['EVT_allow_multiple'] ) ? 1 : 0,
+			'EVT_additional_limit' => !empty( $post['EVT_additional_limit'] ) ? $post['EVT_additional_limit'] : NULL,
+			'EVT_require_pre_approval' => isset( $post['EVT_require_pre_approval'] ) ? 1 : 0,
+			'EVT_member_only' => isset( $post['EVT_member_only'] ) ? 1 : 0,
+			'EVT_allow_overflow' => isset( $post['EVT_allow_overflow'] ) ? 1 : 0,
+			'EVT_timezone_string' => !empty( $post['EVT_timezone_string'] ) ? $post['EVT_timezone_string'] : NULL,
+			'EVT_external_URL' => !empty( $post['EVT_external_URL'] ) ? $post['EVT_external_URL'] : NULL
+			));
+
+		//update event
+		$success = $event->save();
+
+
+		//the following are default callbacks for event attachment updates that can be overridden by caffeinated functionality and/or addons.
+		$event_update_callbacks = apply_filters( 'FHEE_event_editor_venue_update', array( array($this, '_default_venue_update' ), array( $this, '_default_dtt_update' ), array( $this, '_default_prices_update') ) );
+
+		$att_success = TRUE;
+
+		foreach ( $event_update_callbacks as $e_callback ) {
+			$_succ = call_user_func_array( $e_callback, array( $event,  $this->_req_data ) );
+			$att_success = !$att_success ? $att_success : $_succ; //if ANY of these updates fail then we want the appropriate global error message
+		}
+
+		//any errors?
+		if ( $success && $att_success ) {
+			EE_Error::add_success( __('Event Details saved successfully', 'event_espresso' ) );
+		} else if ( $success && !$att_success ) {
+			EE_Error::add_error( __('Event Details saved successfully but something went wrong with saving attachments.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		} else {
+			EE_Error::add_error( __('Event Details did not save successfully.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		}
+	}
+
+	public function trash_cpt_item( $post_id ) {}
+	public function restore_cpt_item( $post_id ) {}
+	public function delete_cpt_item( $post_id ) {}
+
+	//END TODO
+	
+
+
+	
+	/**
+	 * Attach the venue to the Event
+	 * @param  object $evtobj Event Object to add the venue to
+	 * @param  array  $data   The request data from the form
+	 * @return bool           Success or fail.
+	 */
+	protected function _default_venue_update( $evtobj, $data ) {
+		require_once( 'EE_Venue.class.php' );
+		$v = EE_Venue::new_instance( array(
+				'VNU_ID' => isset( $data['VNU_ID'] ) ? $data['VNU_ID'] : NULL,
+				'VNU_name' => !empty( $data['VNU_name'] ) ? $data['VNU_name'] : NULL,
+				'VNU_desc' => !empty( $data['VNU_desc'] ) ? $data['VNU_desc'] : NULL,
+				'VNU_identifier' => !empty( $data['VNU_identifier'] ) ? $data['VNU_identifier'] : NULL,
+				'VNU_short_desc' => !empty( $data['VNU_short_desc'] ) ? $data['VNU_short_desc'] : NULL,
+				'VNU_address' => !empty( $data['VNU_address'] ) ? $data['VNU_address'] : NULL,
+				'VNU_address2' => !empty( $data['VNU_address2'] ) ? $data['VNU_address2'] : NULL,
+				'VNU_city' => !empty( $data['VNU_city'] ) ? $data['VNU_city'] : NULL,
+				'STA_ID' => !empty( $data['STA_ID'] ) ? $data['STA_ID'] : NULL,
+				'CNT_ISO' => !empty( $data['CNT_ISO'] ) ? $data['CNT_ISO'] : NULL,
+				'VNU_zip' => !empty( $data['VNU_zip'] ) ? $data['VNU_zip'] : NULL,
+				'VNU_phone' => !empty( $data['VNU_phone'] ) ? $data['VNU_phone'] : NULL,
+				'VNU_capacity' => !empty( $data['VNU_capacity'] ) ? $data['VNU_capacity'] : NULL,
+			));
+		return $evt_obj->_add_relation_to( $v, 'Venue' );
+	}
+
+
+
+
+
+
+	/**
+	 * Attach the Datetimes to the Event
+	 * @param  object $evtobj Event Object to add the datetime(s) to
+	 * @param  array  $data   The request data from the form
+	 * @return bool           success or fail
+	 */
+	protected function _default_dtt_update( $evtobj, $data ) {
+		$timezone = isset( $data['EVT_timezone_string'] ) ? $data['EVT_timezone_string'] : NULL;
+		$success = TRUE;
+
+		$q=1;
+		foreach ( $data['event_datetimes'] as $event_datetime ) {
+			$event_datetime['evt_end'] = ( isset($event_datetime['evt_end']) && $event_datetime['evt_end'] != '' ) ? $event_datetime['evt_end'] : $event_datetime['evt_start'];
+			$event_datetime['reg_end'] = ( isset($event_datetime['reg_end']) && $event_datetime['reg_end'] != '' ) ? $event_datetime['reg_end'] : $event_datetime['reg_start'];
+			$DTM = EE_Datetime::new_instance( array(
+					'DTT_EVT_start' => strtotime( $event_datetime['evt_start'] ),
+					'DTT_EVT_end' => strtotime($event_datetime['evt_end']),
+					'DTT_REG_start' => strtotime($event_datetime['reg_start']),
+					'DTT_REG_end' => strtotime($event_datetime['reg_end']),
+					'DTT_is_primary' => $q == 1 ? TRUE : FALSE,
+				),
+				$timezone);
+			$works = $evt_obj->_add_relation_to( $DTM, 'Datetime' );
+			$success = !$success ? $success : $works; //if ANY of these updates fail then we want the appropriate global error message
+		}
+
+		return $success;
+	}
+
+
+
+
+
+	/**
+	 * Attach the price(s) to the Event (note decaf only adds one price but we're adding the handling for multiple prices here)
+	 * @param  object $evtobj Event Object to add the price(s) to
+	 * @param  array  $data   The request data from the form
+	 * @return bool           success or fail.
+	 */
+	protected function _default_prices_update( $evtobj, $data ) {
+
+		$timezone = isset( $data['EVT_timezone_string'] ) ? $data['EVT_timezone_string'] : NULL;
+		$success = TRUE;
+
+
+		$ticket_prices_to_save = array();
+		$quick_edit_ticket_price = isset($data['quick_edit_ticket_price']) ? $data['quick_edit_ticket_price'] : array();
+//			echo printr( $quick_edit_ticket_price, '$quick_edit_ticket_price' );
+		if ( isset( $quick_edit_ticket_price['XXXXXX'] )) {
+			$new_quick_price = $quick_edit_ticket_price['XXXXXX'];
+			if ( isset( $new_quick_price['PRC_name'] ) && ! empty( $new_quick_price['PRC_name'] ) && isset( $new_quick_price['PRC_amount'] )) {
+				$ticket_prices_to_save[] = array(
+					'PRT_ID' => 2,
+					'PRT_is_global' => FALSE,
+					'PRC_overrides' => 0,
+					'PRC_deleted' => FALSE,
+					'PRC_order' => isset( $new_quick_price['PRC_order'] ) && $new_quick_price['PRC_order'] ? $new_quick_price['PRC_order'] : 0,
+					'PRC_name' => $new_quick_price['PRC_name'] ? $new_quick_price['PRC_name'] : NULL,
+					'PRC_desc' => NULL,
+					'PRC_amount' => $new_quick_price['PRC_amount'] ? $new_quick_price['PRC_amount'] : 0,
+					'PRC_use_dates' => FALSE,
+					'PRC_start_date' => NULL,
+					'PRC_end_date' => NULL,
+					'PRC_is_active' => TRUE			
+				);
+			}
+		}
+		
+		// grab list of edited ticket prices
+		if ($edited_ticket_price_IDs = isset($data['edited_ticket_price_IDs']) ? $data['edited_ticket_price_IDs'] : FALSE) {
+			// remove last comma
+			$edited_ticket_price_IDs = trim($edited_ticket_price_IDs, ',');
+			// create array of edited ticket prices
+			$edited_ticket_price_IDs = explode(',', $edited_ticket_price_IDs);
+			// flipper once
+			$edited_ticket_price_IDs = array_flip($edited_ticket_price_IDs);
+			// flipper twice - hey!?!?! where did all the duplicate entries go???
+			$edited_ticket_price_IDs = array_flip($edited_ticket_price_IDs);
+//				echo printr( $edited_ticket_price_IDs, '$edited_ticket_price_IDs' );
+			// grab existing ticket price data
+			if ($edited_ticket_prices = isset($data['edit_ticket_price']) ? $data['edit_ticket_price'] : FALSE) {
+//					echo printr( $edited_ticket_prices, '$edited_ticket_prices' );
+				// cycle thru list                    
+				foreach ($edited_ticket_prices as $PRC_ID => $edited_ticket_price) {
+//						echo printr( $edited_ticket_price, '$edited_ticket_price' );	
+					// add edited ticket prices to list of ticket prices to save
+					if (in_array($PRC_ID, $edited_ticket_price_IDs)) {
+//							echo printr( $quick_edit_ticket_price[$PRC_ID], '$quick_edit_ticket_price[$PRC_ID]' );
+						if ( isset( $quick_edit_ticket_price[$PRC_ID] ) && is_array( $quick_edit_ticket_price[$PRC_ID] )) {
+							$edited_ticket_price = array_merge( $edited_ticket_price, $quick_edit_ticket_price[$PRC_ID] );
+//								echo printr( $edited_ticket_price, '$edited_ticket_price' );	
+						}
+						$ticket_prices_to_save[$PRC_ID] = $edited_ticket_price;
+					}
+				}
+			}
+		}
+		
+//			echo printr( $ticket_prices_to_save, '$ticket_prices_to_save' );	
+
+		// add new tickets if any
+		if ($new_ticket_price = isset($data['new_ticket_price']) ? $data['new_ticket_price'] : array('PRC_name' => NULL)) {
+			if ( ! empty( $new_ticket_price['PRC_amount'] ) && ! empty( $new_ticket_price['PRC_name'] )) {
+				$ticket_prices_to_save[0] = $new_ticket_price;
+			} else if ( empty( $new_ticket_price['PRC_amount'] ) && ! empty( $new_ticket_price['PRC_name'] )) {
+				$msg = __( 'Event prices require an amount before they can be saved. Please make sure you enter an amount for the new event price before attempting to save it.', 'event_espresso' );
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );		
+			} else if ( ! empty( $new_ticket_price['PRC_amount'] ) && empty( $new_ticket_price['PRC_name'] )) {
+				$msg = __( 'Event prices require a name before they can be saved. Please make sure you enter a name for the new event price before attempting to save it.', 'event_espresso' );
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );		
+			}
+
+		}
+//		printr( $ticket_prices_to_save, '$ticket_prices_to_save  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+		// and now we actually save the ticket prices
+		if (!empty($ticket_prices_to_save)) {
+
+			//echo printr( $new_ticket_price, '$new_ticket_price' );
+			require_once('EE_Price.class.php');
+
+			global $current_user;
+			get_currentuserinfo();
+
+			foreach ($ticket_prices_to_save as $PRC_ID => $ticket_price) {
+
+
+				//determine whether this price overrides an existing global or not
+				$overrides = absint($ticket_price['PRT_is_global']) ? $PRC_ID : NULL;
+//echo '<br/><br/><h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+				// or whether it was already overriding a global from before
+				$overrides = $ticket_price['PRC_overrides'] ? absint($ticket_price['PRC_overrides']) : $overrides;
+//echo '<h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+
+				$PRC = EE_Price::new_instance( array(
+						'PRC_ID' => $PRC_ID,
+						'PRT_ID' => $ticket_price['PRT_ID'],
+						'PRC_amount' => preg_replace( '/[^0-9,.]/', '', $ticket_price['PRC_amount'] ),
+						'PRC_name' => $ticket_price['PRC_name'],
+						'PRC_desc' => $ticket_price['PRC_desc'],
+						'PRC_reg_limit' => isset( $ticket_price['PRC_reg_limit'] ) ? $ticket_price['PRC_reg_limit'] : NULL,
+						'PRC_use_dates' => $ticket_price['PRC_use_dates'] ? TRUE : FALSE,
+						'PRC_start_date' => $ticket_price['PRC_start_date'],
+						'PRC_end_date' => $ticket_price['PRC_end_date'],
+						'PRC_is_active' => $ticket_price['PRC_is_active'] ? TRUE : FALSE,
+						'PRC_overrides' => $overrides,
+						'PRC_order' => $ticket_price['PRT_ID'] < 3 ? 0 : $ticket_price['PRC_order'],
+						'PRC_deleted' => $ticket_price['PRC_deleted']
+					), 
+					$timezone );
+				
+				if ( $PRC->deleted()) {
+					$data['price_count']--;
+				} else {
+					$data['price_count']++;
+				}
+				
+				$works = $evt_obj->_add_relation_to( $PRC, 'Price' );
+				$success = !$success ? $success : $works; //if ANY of these updates fail then we want the appropriate global error message
+
+			}
+		}
+
+		if ( isset( $data['price_count'] ) && absint( $data['price_count'] ) < 1 ) {
+			$espresso_no_ticket_prices = get_option( 'espresso_no_ticket_prices', array() );
+			$espresso_no_ticket_prices[ $last_event_id ] = $event_name;
+			update_option( 'espresso_no_ticket_prices', $espresso_no_ticket_prices );
+		} 
+
+		return $success;
+	}
+
+
+
+
 	/**
 	 * 	_generate_publish_box_extra_content
 	 * 	@access private
@@ -475,6 +687,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		// load template
 		$this->_template_args['publish_box_extra_content'] = espresso_display_template(EVENTS_TEMPLATE_PATH . 'event_publish_box_extras.template.php', $publish_box_extra_args, TRUE);
 	}
+
+
+
 
 	/**
 	 * _set_event_object
@@ -504,141 +719,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		return $this->_event;
 	}
 
-	/**
-	 * _set_add_event_object
-	 * this sets the _event property for the event details screen when adding.
-	 *
-	 * @access private
-	 * @return void
-	 */
-	private function _set_add_event_object() {
-		global $wpdb, $org_options, $caffeinated, $current_user;
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Maps.helper.php';
 
-		get_currentuserinfo();
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		$this->_event = new stdClass();
-		$this->_event->is_new = TRUE;
-		$this->_event->id = 0;
-		$this->_event->event_name = '';
-		$this->_event->start_date = date('Y-m-d', time() + (60 * 60 * 24 * 30));
-		$this->_event->event_desc = '';
-		$this->_event->phone = '';
-		$this->_event->externalURL = '';
-		//$this->_event->early_disc = '';
-		//$this->_event->early_disc_date = '';
-		//$this->_event->early_disc_percentage = '';
-		$this->_event->event_identifier = '';
-
-		$this->_event->status = array('display' => 'OPEN');
-		$this->_event->address = '';
-		$this->_event->address2 = '';
-		$this->_event->city = '';
-		$this->_event->state = '';
-		$this->_event->zip = '';
-		$this->_event->country = '';
-		$this->_event->virtual_url = '';
-		$this->_event->virtual_phone = '';
-		$this->_event->submitted = '';
-		$this->_event->google_map_link = EE_Maps::google_map_link(array(
-			'address' => $this->_event->address,
-			'city' => $this->_event->city,
-			'state' => $this->_event->state,
-			'zip' => $this->_event->zip,
-			'country' => $this->_event->country));
-		$this->_event->event_meta = array(
-			'additional_attendee_reg_info' => 1,
-			'default_reg_status' => '',
-			//'add_attendee_question_groups' => array('1'),
-			'originally_submitted_by' => $current_user->ID);
-		$this->_event->wp_user = $current_user->ID;
-		$this->_event->reg_limit = '';
-		$this->_event->allow_multiple = false;
-		$this->_event->additional_limit = 0;
-		$this->_event->is_active = true;
-		$this->_event->event_status = 'A';
-		$this->_event->display_desc = true;
-		$this->_event->display_reg_form = true;
-		$this->_event->require_pre_approval = false;
-		$this->_event->member_only = false;
-		$this->_event->ticket_id = 0;
-		$this->_event->certificate_id = 0;
-		$this->_event->post_id = '';
-		$this->_event->slug = '';
-		$this->_event->venue_id = FALSE;
-		$this->_event->venue_title = '';
-		$this->_event->venue_url = '';
-		$this->_event->venue_phone = '';
-		$this->_event->venue_image = '';
-		$this->_event = apply_filters('FHEE_new_event_template', $this->_event);
-		$this->_event->page_url = get_permalink($org_options['event_page_id']);
-	}
-
-	/**
-	 * _set_edit_event_object
-	 * this sets the _event property for the event details screen when adding.
-	 *
-	 * @access private
-	 * @return void
-	 */
-	private function _set_edit_event_object() {
-		global $wpdb, $org_options;
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-
-		//load formatter helper
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Maps.helper.php';
-
-		//check if we have an event_id if not then lets setup defaults for adding an event.
-		if (!isset($this->_req_data['EVT_ID'])) {
-			$this->_set_add_event_object();
-			return;
-		}
-
-		$event_id = $this->_req_data['EVT_ID'];
-
-		$sql = "SELECT e.*, ev.id as venue_id
-		FROM " . EVENTS_DETAIL_TABLE . " e
-		LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " vr ON e.id = vr.event_id
-		LEFT JOIN " . EVENTS_VENUE_TABLE . " ev ON vr.venue_id = ev.id
-		WHERE e.id = %d";
-		$this->_event = $wpdb->get_row($wpdb->prepare($sql, $event_id), OBJECT);
-
-		if (empty($this->_event))
-			return;
-
-		// grab event times
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
-		$this->_event->start_date = EEM_Datetime::instance()->get_most_important_datetime_for_event($this->_event->id)->start_date();
-
-		//Debug
-		//echo "<pre>".print_r($event,true)."</pre>";
-		$this->_event->is_new = FALSE;
-		$this->_event->event_name = stripslashes_deep($this->_event->event_name);
-		$this->_event->event_desc = stripslashes_deep($this->_event->event_desc);
-		$this->_event->phone = stripslashes_deep($this->_event->phone);
-		$this->_event->externalURL = stripslashes_deep($this->_event->externalURL);
-		$this->_event->event_identifier = stripslashes_deep($this->_event->event_identifier);
-		$this->_event->status = array();
-		$this->_event->status = event_espresso_get_is_active($this->_event->id);
-		$this->_event->address = stripslashes_deep($this->_event->address);
-		$this->_event->address2 = stripslashes_deep($this->_event->address2);
-		$this->_event->city = stripslashes_deep($this->_event->city);
-		$this->_event->state = stripslashes_deep($this->_event->state);
-		$this->_event->zip = stripslashes_deep($this->_event->zip);
-		$this->_event->country = stripslashes_deep($this->_event->country);
-		$this->_event->submitted = $this->_event->submitted != '0000-00-00 00:00:00' ? ( empty($this->_event->submitted) ? '' : EE_Formatter::event_date_display($this->_event->submitted) ) : 'N/A';
-		$this->_event->google_map_link = EE_Maps::google_map_link(array('address' => $this->_event->address, 'city' => $this->_event->city, 'state' => $this->_event->state, 'zip' => $this->_event->zip, 'country' => $this->_event->country));
-		$this->_event->event_meta = unserialize($this->_event->event_meta);
-
-
-		if (isset($this->_event->event_meta['default_payment_status'])) {
-			$this->_event->event_meta['default_reg_status'] = $this->_event->event_meta['default_payment_status'];
-			unset($this->_event->event_meta['default_payment_status']);
-		}
-
-		$this->_event->page_url = get_permalink($org_options['event_page_id']);
-	}
 
 	/*	 * ************ */
 	/** METABOXES * */
@@ -1312,6 +1393,189 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 	}
 
+
+
+
+
+
+	
+	/**
+	 * BEGIN_DEPRECATED
+	 * THE BELOW WILL BE DEPRECATED BUT JUST LEAVING HERE FOR WHILE I IMPLEMENT THE CPT PAGE LOOK FOR END_DEPRECATED FOR THE END OF THIS BLOCK
+	 */
+
+	/**
+	 * _event_details
+	 * Depending on the given argument, this will display the event_details page (add or edit)	
+	 * @access protected
+	 * @param  string $view add or edit
+	 * @return string     html for event_details page.
+	 */
+	protected function _event_details($view) {
+
+		//load formatter helper
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
+
+		//load field generator helper
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
+
+		//set _event property
+		$this->_set_event_object();
+
+		// form 
+		$route = $view == 'edit' ? 'update_event' : 'insert_event';
+		$this->_set_add_edit_form_tags($route);
+
+
+		$this->_generate_event_title_and_desc();
+		$this->_generate_publish_box_extra_content();
+
+		$id = isset($this->_event->id) ? $this->_event->id : '';
+		$this->_set_publish_post_box_vars('event_id', $id, 'delete_event');
+
+		$this->display_admin_page_with_sidebar();
+	}
+
+	
+
+	/**
+	 * _set_add_event_object
+	 * this sets the _event property for the event details screen when adding.
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _set_add_event_object() {
+		global $wpdb, $org_options, $caffeinated, $current_user;
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Maps.helper.php';
+
+		get_currentuserinfo();
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		$this->_event = new stdClass();
+		$this->_event->is_new = TRUE;
+		$this->_event->id = 0;
+		$this->_event->event_name = '';
+		$this->_event->start_date = date('Y-m-d', time() + (60 * 60 * 24 * 30));
+		$this->_event->event_desc = '';
+		$this->_event->phone = '';
+		$this->_event->externalURL = '';
+		//$this->_event->early_disc = '';
+		//$this->_event->early_disc_date = '';
+		//$this->_event->early_disc_percentage = '';
+		$this->_event->event_identifier = '';
+
+		$this->_event->status = array('display' => 'OPEN');
+		$this->_event->address = '';
+		$this->_event->address2 = '';
+		$this->_event->city = '';
+		$this->_event->state = '';
+		$this->_event->zip = '';
+		$this->_event->country = '';
+		$this->_event->virtual_url = '';
+		$this->_event->virtual_phone = '';
+		$this->_event->submitted = '';
+		$this->_event->google_map_link = EE_Maps::google_map_link(array(
+			'address' => $this->_event->address,
+			'city' => $this->_event->city,
+			'state' => $this->_event->state,
+			'zip' => $this->_event->zip,
+			'country' => $this->_event->country));
+		$this->_event->event_meta = array(
+			'additional_attendee_reg_info' => 1,
+			'default_reg_status' => '',
+			//'add_attendee_question_groups' => array('1'),
+			'originally_submitted_by' => $current_user->ID);
+		$this->_event->wp_user = $current_user->ID;
+		$this->_event->reg_limit = '';
+		$this->_event->allow_multiple = false;
+		$this->_event->additional_limit = 0;
+		$this->_event->is_active = true;
+		$this->_event->event_status = 'A';
+		$this->_event->display_desc = true;
+		$this->_event->display_reg_form = true;
+		$this->_event->require_pre_approval = false;
+		$this->_event->member_only = false;
+		$this->_event->ticket_id = 0;
+		$this->_event->certificate_id = 0;
+		$this->_event->post_id = '';
+		$this->_event->slug = '';
+		$this->_event->venue_id = FALSE;
+		$this->_event->venue_title = '';
+		$this->_event->venue_url = '';
+		$this->_event->venue_phone = '';
+		$this->_event->venue_image = '';
+		$this->_event = apply_filters('FHEE_new_event_template', $this->_event);
+		$this->_event->page_url = get_permalink($org_options['event_page_id']);
+	}
+
+	/**
+	 * _set_edit_event_object
+	 * this sets the _event property for the event details screen when adding.
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _set_edit_event_object() {
+		global $wpdb, $org_options;
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+
+		//load formatter helper
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Maps.helper.php';
+
+		//check if we have an event_id if not then lets setup defaults for adding an event.
+		if (!isset($this->_req_data['EVT_ID'])) {
+			$this->_set_add_event_object();
+			return;
+		}
+
+		$event_id = $this->_req_data['EVT_ID'];
+
+		$sql = "SELECT e.*, ev.id as venue_id
+		FROM " . EVENTS_DETAIL_TABLE . " e
+		LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " vr ON e.id = vr.event_id
+		LEFT JOIN " . EVENTS_VENUE_TABLE . " ev ON vr.venue_id = ev.id
+		WHERE e.id = %d";
+		$this->_event = $wpdb->get_row($wpdb->prepare($sql, $event_id), OBJECT);
+
+		if (empty($this->_event))
+			return;
+
+		// grab event times
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
+		$this->_event->start_date = EEM_Datetime::instance()->get_most_important_datetime_for_event($this->_event->id)->start_date();
+
+		//Debug
+		//echo "<pre>".print_r($event,true)."</pre>";
+		$this->_event->is_new = FALSE;
+		$this->_event->event_name = stripslashes_deep($this->_event->event_name);
+		$this->_event->event_desc = stripslashes_deep($this->_event->event_desc);
+		$this->_event->phone = stripslashes_deep($this->_event->phone);
+		$this->_event->externalURL = stripslashes_deep($this->_event->externalURL);
+		$this->_event->event_identifier = stripslashes_deep($this->_event->event_identifier);
+		$this->_event->status = array();
+		$this->_event->status = event_espresso_get_is_active($this->_event->id);
+		$this->_event->address = stripslashes_deep($this->_event->address);
+		$this->_event->address2 = stripslashes_deep($this->_event->address2);
+		$this->_event->city = stripslashes_deep($this->_event->city);
+		$this->_event->state = stripslashes_deep($this->_event->state);
+		$this->_event->zip = stripslashes_deep($this->_event->zip);
+		$this->_event->country = stripslashes_deep($this->_event->country);
+		$this->_event->submitted = $this->_event->submitted != '0000-00-00 00:00:00' ? ( empty($this->_event->submitted) ? '' : EE_Formatter::event_date_display($this->_event->submitted) ) : 'N/A';
+		$this->_event->google_map_link = EE_Maps::google_map_link(array('address' => $this->_event->address, 'city' => $this->_event->city, 'state' => $this->_event->state, 'zip' => $this->_event->zip, 'country' => $this->_event->country));
+		$this->_event->event_meta = unserialize($this->_event->event_meta);
+
+
+		if (isset($this->_event->event_meta['default_payment_status'])) {
+			$this->_event->event_meta['default_reg_status'] = $this->_event->event_meta['default_payment_status'];
+			unset($this->_event->event_meta['default_payment_status']);
+		}
+
+		$this->_event->page_url = get_permalink($org_options['event_page_id']);
+	}
+
+	
+
 	public function venue_metabox() {
 		global $org_options, $caffeinated;
 		$values = array(
@@ -1751,7 +2015,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				espresso_display_template($templatepath, $template_args);
 			}
 
-			public function primary_questions_group_meta_box() {
+		public function primary_questions_group_meta_box() {
 				?>
 				<div class="inside">
 					<p><strong>
@@ -3596,148 +3860,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				return $event_id;
 			}
 
-			/**
-			 * 	_default_event_settings
-			 * 
-			 * 	This generates the Default Settings Tab
-			 * 
-			 * 	@return string html for the settings page
-			 */
-			protected function _default_event_settings() {
-
-				global $org_options;
-				$this->_template_args['values'] = $this->_yes_no_values;
-
-				$this->_template_args['org_options'] = isset($org_options['org_options']) ? maybe_unserialize($org_options['org_options']) : FALSE;
-				$this->_template_args['expire_on_registration_end'] = isset($org_options['expire_on_registration_end']) ? absint($org_options['expire_on_registration_end']) : FALSE;
-
-				$this->_template_args['reg_status_array'] = $this->_get_reg_status_array(array('RCN', 'RNA'));
-				$this->_template_args['default_reg_status'] = isset($org_options['default_reg_status']) ? sanitize_text_field($org_options['default_reg_status']) : 'RPN';
-				$this->_template_args['pending_counts_reg_limit'] = isset($org_options['pending_counts_reg_limit']) ? sanitize_text_field($org_options['pending_counts_reg_limit']) : TRUE;
-
-				$this->_template_args['use_attendee_pre_approval'] = isset($org_options['use_attendee_pre_approval']) ? absint($org_options['use_attendee_pre_approval']) : FALSE;
-
-				$this->_template_args['template_args'] = $this->_template_args;
-
-				$this->_set_add_edit_form_tags('update_default_event_settings');
-				$this->_set_publish_post_box_vars(NULL, FALSE, FALSE, NULL, FALSE);
-				$this->_template_args['admin_page_content'] = espresso_display_template(EVENTS_TEMPLATE_PATH . 'event_settings.template.php', $this->_template_args, TRUE);
-				$this->display_admin_page_with_sidebar();
-			}
-
-			/**
-			 * 		_update_default_event_settings
-			 * 		@access protected
-			 * 		@return array
-			 */
-			protected function _update_default_event_settings() {
-
-				$data = array();
-				$data['expire_on_registration_end'] = isset($this->_req_data['expire_on_registration_end']) ? absint($this->_req_data['expire_on_registration_end']) : FALSE;
-				$data['default_reg_status'] = isset($this->_req_data['default_reg_status']) ? sanitize_text_field($this->_req_data['default_reg_status']) : 'RPN';
-				$data['pending_counts_reg_limit'] = isset($this->_req_data['pending_counts_reg_limit']) ? absint($this->_req_data['pending_counts_reg_limit']) : TRUE;
-				$data['use_attendee_pre_approval'] = isset($this->_req_data['use_attendee_pre_approval']) ? absint($this->_req_data['use_attendee_pre_approval']) : TRUE;
-
-				$data = apply_filters('FHEE_default_event_settings_save', $data);
-
-				$what = 'Default Event Settings';
-				$success = $this->_update_organization_settings($what, $data, __FILE__, __FUNCTION__, __LINE__);
-				$this->_redirect_after_action($success, $what, 'updated', array('action' => 'default_event_settings'));
-			}
-
-			/**
-			 * 		get list of payment statuses
-			 * 		@access private
-			 * 		@param	array 	$exclude		array of STS_IDs to exclude from returned array
-			 * 		@return array
-			 */
-			private function _get_reg_status_array($exclude = array()) {
-
-				global $wpdb;
-				$SQL = 'SELECT STS_ID, STS_code FROM ' . $wpdb->prefix . 'esp_status WHERE STS_type = "registration"';
-				$results = $wpdb->get_results($SQL);
-
-				$reg_status = array();
-				foreach ($results as $status) {
-					if (!in_array($status->STS_ID, $exclude)) {
-						$reg_status[] = array('id' => $status->STS_ID, 'text' => ucwords(strtolower(str_replace('_', ' ', $status->STS_code))));
-					}
-				}
-				return $reg_status;
-			}
-
-			/**
-			 * _events_export
-			 * Will export all (or just the given event) to a Excel compatible file.
-			 * 
-			 * @access protected
-			 * @return file 
-			 */
-			protected function _events_export() {
-
-				//todo: I don't like doing this but it'll do until we modify EE_Export Class.
-				$new_request_args = array(
-					'export' => 'report',
-					'action' => 'all_event_data',
-					'event_id' => $this->_req_data['EVT_ID'],
-				);
-				$this->_req_data = array_merge($this->_req_data, $new_request_args);
-
-				if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php')) {
-					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
-					$EE_Export = EE_Export::instance($this->_req_data);
-					$EE_Export->export();
-				}
-			}
-
-			/**
-			 * _payment_export
-			 * Will export payments for events to an excel file (or for given events)
-			 * @return file?
-			 */
-			protected function _payment_export() {
-
-				//todo: I don't like doing this but it'll do until we modify EE_Export Class.
-				$new_request_args = array(
-					'export' => 'report',
-					'action' => 'payment',
-					'type' => 'csv',
-					'event_id' => $this->_req_data['EVT_ID'],
-				);
-				$this->_req_data = array_merge($this->_req_data, $new_request_args);
-				if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php')) {
-					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
-					$EE_Export = EE_Export::instance();
-					$EE_Export->export();
-				}
-			}
-
-			/**
-			 * _import_events
-			 * This handles displaying the screen and running imports for importing events.
-			 * 	
-			 * @return string html
-			 */
-			protected function _import_events() {
-
-				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php');
-
-				//first check if we've got an incoming import
-				if (isset($this->_req_data['import']) && $this->_req_data['import'] == 'csv') {
-					EE_Import::instance()->import();
-				}
-
-				$title = __('Import Events', 'event_espresso');
-				$intro = __('If you have a previously exported list of Event Details in a Comma Separated Value (CSV) file format, you can upload the file here: ', 'event_espresso');
-				$form_url = EVENTS_ADMIN_URL;
-				$action = 'import_events';
-				$type = 'csv';
-				$content = EE_Import::instance()->upload_form($title, $intro, $form_url, $action, $type);
-
-				$this->_admin_page_title .= $this->_get_action_link_or_button('add_event', 'add', array(), 'button add-new-h2');
-				$this->_template_args['admin_page_content'] = $content;
-				$this->display_admin_page_with_sidebar();
-			}
+		
 
 			/**
 			 * _get_events()
@@ -4009,6 +4132,151 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				}
 			}
 
+	/** END_DEPRECATED **/
+
+	/**
+	 * 	_default_event_settings
+	 * 
+	 * 	This generates the Default Settings Tab
+	 * 
+	 * 	@return string html for the settings page
+	 */
+	protected function _default_event_settings() {
+
+		global $org_options;
+		$this->_template_args['values'] = $this->_yes_no_values;
+
+		$this->_template_args['org_options'] = isset($org_options['org_options']) ? maybe_unserialize($org_options['org_options']) : FALSE;
+		$this->_template_args['expire_on_registration_end'] = isset($org_options['expire_on_registration_end']) ? absint($org_options['expire_on_registration_end']) : FALSE;
+
+		$this->_template_args['reg_status_array'] = $this->_get_reg_status_array(array('RCN', 'RNA'));
+		$this->_template_args['default_reg_status'] = isset($org_options['default_reg_status']) ? sanitize_text_field($org_options['default_reg_status']) : 'RPN';
+		$this->_template_args['pending_counts_reg_limit'] = isset($org_options['pending_counts_reg_limit']) ? sanitize_text_field($org_options['pending_counts_reg_limit']) : TRUE;
+
+		$this->_template_args['use_attendee_pre_approval'] = isset($org_options['use_attendee_pre_approval']) ? absint($org_options['use_attendee_pre_approval']) : FALSE;
+
+		$this->_template_args['template_args'] = $this->_template_args;
+
+		$this->_set_add_edit_form_tags('update_default_event_settings');
+		$this->_set_publish_post_box_vars(NULL, FALSE, FALSE, NULL, FALSE);
+		$this->_template_args['admin_page_content'] = espresso_display_template(EVENTS_TEMPLATE_PATH . 'event_settings.template.php', $this->_template_args, TRUE);
+		$this->display_admin_page_with_sidebar();
+	}
+
+	/**
+	 * 		_update_default_event_settings
+	 * 		@access protected
+	 * 		@return array
+	 */
+	protected function _update_default_event_settings() {
+
+		$data = array();
+		$data['expire_on_registration_end'] = isset($this->_req_data['expire_on_registration_end']) ? absint($this->_req_data['expire_on_registration_end']) : FALSE;
+		$data['default_reg_status'] = isset($this->_req_data['default_reg_status']) ? sanitize_text_field($this->_req_data['default_reg_status']) : 'RPN';
+		$data['pending_counts_reg_limit'] = isset($this->_req_data['pending_counts_reg_limit']) ? absint($this->_req_data['pending_counts_reg_limit']) : TRUE;
+		$data['use_attendee_pre_approval'] = isset($this->_req_data['use_attendee_pre_approval']) ? absint($this->_req_data['use_attendee_pre_approval']) : TRUE;
+
+		$data = apply_filters('FHEE_default_event_settings_save', $data);
+
+		$what = 'Default Event Settings';
+		$success = $this->_update_organization_settings($what, $data, __FILE__, __FUNCTION__, __LINE__);
+		$this->_redirect_after_action($success, $what, 'updated', array('action' => 'default_event_settings'));
+	}
+
+	/**
+	 * 		get list of payment statuses
+	 * 		@access private
+	 * 		@param	array 	$exclude		array of STS_IDs to exclude from returned array
+	 * 		@return array
+	 */
+	private function _get_reg_status_array($exclude = array()) {
+
+		global $wpdb;
+		$SQL = 'SELECT STS_ID, STS_code FROM ' . $wpdb->prefix . 'esp_status WHERE STS_type = "registration"';
+		$results = $wpdb->get_results($SQL);
+
+		$reg_status = array();
+		foreach ($results as $status) {
+			if (!in_array($status->STS_ID, $exclude)) {
+				$reg_status[] = array('id' => $status->STS_ID, 'text' => ucwords(strtolower(str_replace('_', ' ', $status->STS_code))));
+			}
 		}
+		return $reg_status;
+	}
+
+	/**
+	 * _events_export
+	 * Will export all (or just the given event) to a Excel compatible file.
+	 * 
+	 * @access protected
+	 * @return file 
+	 */
+	protected function _events_export() {
+
+		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
+		$new_request_args = array(
+			'export' => 'report',
+			'action' => 'all_event_data',
+			'event_id' => $this->_req_data['EVT_ID'],
+		);
+		$this->_req_data = array_merge($this->_req_data, $new_request_args);
+
+		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php')) {
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
+			$EE_Export = EE_Export::instance($this->_req_data);
+			$EE_Export->export();
+		}
+	}
+
+	/**
+	 * _payment_export
+	 * Will export payments for events to an excel file (or for given events)
+	 * @return file?
+	 */
+	protected function _payment_export() {
+
+		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
+		$new_request_args = array(
+			'export' => 'report',
+			'action' => 'payment',
+			'type' => 'csv',
+			'event_id' => $this->_req_data['EVT_ID'],
+		);
+		$this->_req_data = array_merge($this->_req_data, $new_request_args);
+		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php')) {
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
+			$EE_Export = EE_Export::instance();
+			$EE_Export->export();
+		}
+	}
+
+	/**
+	 * _import_events
+	 * This handles displaying the screen and running imports for importing events.
+	 * 	
+	 * @return string html
+	 */
+	protected function _import_events() {
+
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php');
+
+		//first check if we've got an incoming import
+		if (isset($this->_req_data['import']) && $this->_req_data['import'] == 'csv') {
+			EE_Import::instance()->import();
+		}
+
+		$title = __('Import Events', 'event_espresso');
+		$intro = __('If you have a previously exported list of Event Details in a Comma Separated Value (CSV) file format, you can upload the file here: ', 'event_espresso');
+		$form_url = EVENTS_ADMIN_URL;
+		$action = 'import_events';
+		$type = 'csv';
+		$content = EE_Import::instance()->upload_form($title, $intro, $form_url, $action, $type);
+
+		$this->_admin_page_title .= $this->_get_action_link_or_button('add_event', 'add', array(), 'button add-new-h2');
+		$this->_template_args['admin_page_content'] = $content;
+		$this->display_admin_page_with_sidebar();
+	}
+
+}
 
 		//end class Events_Admin_Page
