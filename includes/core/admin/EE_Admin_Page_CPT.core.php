@@ -210,11 +210,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		$post_type = isset( $this->_req_data['post_type'] ) ? $this->_req_data['post_type'] : FALSE;
 
 		if ( $post_type && $post_type == $this->page_slug ) {
-
-			if ( has_action('save_post', array( $this, 'insert_update_cpt_item') ) ) {
-				var_dump('yup');
-			}
-
 			//$post_id, $post
 			add_action('save_post', array( $this, 'insert_update_cpt_item'), 10, 2 );
 			//$post_id
