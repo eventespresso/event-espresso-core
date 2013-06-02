@@ -40,7 +40,7 @@ class Events_Admin_Page_Init extends EE_Admin_Page_CPT_Init {
 	}
 
 	protected function _set_init_properties() {
-		$this->label = __('Events Overview', 'event_espresso');
+		$this->label = __('Event Espresso - Event Details', 'event_espresso');
 		$this->menu_label = EVENTS_LABEL;
 		$this->menu_slug = 'espresso_events';
 	}
