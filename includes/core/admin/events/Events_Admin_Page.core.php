@@ -62,9 +62,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	}
 
 	protected function _set_page_routes() {
+		//load formatter helper
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
+
+		//load field generator helper
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
+
 		$this->_page_routes = array(
 			'default' => '_events_overview_list_table',
-			//create, edit, insert, update are all handled by parent, the below will have to be modified as needed.
 			'copy_event' => array(
 				'func' => '_copy_events',
 				'noheader' => true
@@ -256,15 +261,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * enqueuing scripts and styles specific to this view
 	 * @return void
 	 */
-	public function load_scripts_styles_add_event() {
-		$this->load_scripts_styles_edit_event();
+	public function load_scripts_styles_create_new() {
+		$this->load_scripts_styles_edit();
 	}
 
 	/**
 	 * enqueuing scripts and styles specific to this view
 	 * @return void 
 	 */
-	public function load_scripts_styles_edit_event() {
+	public function load_scripts_styles_edit() {
 		//styles
 		wp_enqueue_style('jquery-ui-style');
 		wp_enqueue_style('jquery-ui-style-datepicker-css');
@@ -372,7 +377,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _events_overview_list_table() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$this->_template_args['after_list_table'] = $this->_display_legend($this->_event_legend_items());
-		$this->_admin_page_title .= $this->_get_action_link_or_button('add_event', 'add', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->_get_action_link_or_button('create_new', 'add', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
@@ -409,21 +414,24 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	
 	public function insert_update_cpt_item( $post_id, $post ) {
 
+		if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE )
+			return $post_id; //get out because we don't have any data via autosave!
+
 		require_once( 'EE_Event.class.php' );
 
 		$event = EE_Event::new_instance( array(
 			'EVT_ID' => $post_id,
-			'EVT_is_active' => isset($post['EVT_is_active']) ? 1 : 0,
-			'EVT_display_desc' => isset( $post['EVT_display_desc'] ) ? 1 : 0,
-			'EVT_display_reg_form' => isset( $post['EVT_display_reg_form'] ) ? 1 : 0,
-			'EVT_reg_limit' => !empty( $post['EVT_reg_limit'] ) ? $post['EVT_reg_limit'] : NULL,
-			'EVT_allow_multiple' => isset( $post['EVT_allow_multiple'] ) ? 1 : 0,
-			'EVT_additional_limit' => !empty( $post['EVT_additional_limit'] ) ? $post['EVT_additional_limit'] : NULL,
-			'EVT_require_pre_approval' => isset( $post['EVT_require_pre_approval'] ) ? 1 : 0,
-			'EVT_member_only' => isset( $post['EVT_member_only'] ) ? 1 : 0,
-			'EVT_allow_overflow' => isset( $post['EVT_allow_overflow'] ) ? 1 : 0,
-			'EVT_timezone_string' => !empty( $post['EVT_timezone_string'] ) ? $post['EVT_timezone_string'] : NULL,
-			'EVT_external_URL' => !empty( $post['EVT_external_URL'] ) ? $post['EVT_external_URL'] : NULL
+			'EVT_is_active' => isset($this->_req_data['EVT_is_active']) ? 1 : 0,
+			'EVT_display_desc' => isset( $this->_req_data['EVT_display_desc'] ) ? 1 : 0,
+			'EVT_display_reg_form' => isset( $this->_req_data['EVT_display_reg_form'] ) ? 1 : 0,
+			'EVT_reg_limit' => !empty( $this->_req_data['EVT_reg_limit'] ) ? $this->_req_data['EVT_reg_limit'] : NULL,
+			'EVT_allow_multiple' => isset( $this->_req_data['EVT_allow_multiple'] ) ? 1 : 0,
+			'EVT_additional_limit' => !empty( $this->_req_data['EVT_additional_limit'] ) ? $this->_req_data['EVT_additional_limit'] : NULL,
+			'EVT_require_pre_approval' => isset( $this->_req_data['EVT_require_pre_approval'] ) ? 1 : 0,
+			'EVT_member_only' => isset( $this->_req_data['EVT_member_only'] ) ? 1 : 0,
+			'EVT_allow_overflow' => isset( $this->_req_data['EVT_allow_overflow'] ) ? 1 : 0,
+			'EVT_timezone_string' => !empty( $this->_req_data['EVT_timezone_string'] ) ? $this->_req_data['EVT_timezone_string'] : NULL,
+			'EVT_external_URL' => !empty( $this->_req_data['EVT_external_URL'] ) ? $this->_req_data['EVT_external_URL'] : NULL
 			));
 
 		//update event
@@ -482,7 +490,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'VNU_phone' => !empty( $data['VNU_phone'] ) ? $data['VNU_phone'] : NULL,
 				'VNU_capacity' => !empty( $data['VNU_capacity'] ) ? $data['VNU_capacity'] : NULL,
 			));
-		return $evt_obj->_add_relation_to( $v, 'Venue' );
+		return $evtobj->_add_relation_to( $v, 'Venue' );
 	}
 
 
@@ -512,7 +520,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'DTT_is_primary' => $q == 1 ? TRUE : FALSE,
 				),
 				$timezone);
-			$works = $evt_obj->_add_relation_to( $DTM, 'Datetime' );
+			$works = $evtobj->_add_relation_to( $DTM, 'Datetime' );
 			$success = !$success ? $success : $works; //if ANY of these updates fail then we want the appropriate global error message
 		}
 
@@ -647,7 +655,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					$data['price_count']++;
 				}
 				
-				$works = $evt_obj->_add_relation_to( $PRC, 'Price' );
+				$works = $evtobj->_add_relation_to( $PRC, 'Price' );
 				$success = !$success ? $success : $works; //if ANY of these updates fail then we want the appropriate global error message
 
 			}
@@ -735,14 +743,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_set_event_object();
 
-		add_meta_box('espresso_event_editor_date_time', __('Dates &amp; Times', 'event_espresso'), array($this, 'date_time_metabox'), $this->_current_screen->id, 'normal', 'high');
+		add_meta_box('espresso_event_editor_date_time', __('Dates &amp; Times', 'event_espresso'), array($this, 'date_time_metabox'), $this->page_slug, 'normal', 'high');
 
-		add_meta_box('espresso_event_editor_pricing', __('Event Pricing', 'event_espresso'), array($this, 'pricing_metabox'), $this->_current_screen->id, 'normal', 'core');
+		add_meta_box('espresso_event_editor_pricing', __('Event Pricing', 'event_espresso'), array($this, 'pricing_metabox'), $this->page_slug, 'normal', 'core');
 
-		add_meta_box('espresso_event_editor_event_options', __('Event Registration Options', 'event_espresso'), array($this, 'registration_options_meta_box'), $this->_current_screen->id, 'side', 'high');
+		add_meta_box('espresso_event_editor_event_options', __('Event Registration Options', 'event_espresso'), array($this, 'registration_options_meta_box'), $this->page_slug, 'side', 'default');
 
 		//todo this will become custom fields when Events are CPT's so not going to work on this one.
-		add_meta_box('espresso_event_editor_event_meta', __('Event Meta', 'event_espresso'), array($this, 'event_meta_metabox'), $this->_current_screen->id, 'advanced', 'high');
+		add_meta_box('espresso_event_editor_event_meta', __('Event Meta', 'event_espresso'), array($this, 'event_meta_metabox'), $this->page_slug, 'advanced', 'high');
 
 		//note if you're looking for other metaboxes in here, where a metabox has a related management page in the admin you will find it setup in the related management page's "_Hooks" file.  i.e. messages metabox is found in "espresso_events_Messages_Hooks.class.php".
 	}
@@ -1716,24 +1724,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		global $org_options, $caffeinated;
 		$this->_set_event_object();
 
-		if ($caffeinated) {
-			add_meta_box('espresso_event_editor_event_meta', __('Event Meta', 'event_espresso'), array($this, 'event_meta_metabox'), $this->_current_screen->id, 'advanced', 'high');
-		}
 
-		//add_meta_box('espresso_event_editor_event_post', __('Create a Post', 'event_espresso'), array( $this, 'event_post_metabox'), $this->_current_screen->id, 'advanced', 'core');
+		add_meta_box('espresso_event_editor_event_options', __('Event Registration Options', 'event_espresso'), array($this, 'registration_options_meta_box'), $this->page_slug, 'side', 'high');
 
-		add_meta_box('espresso_event_editor_event_options', __('Event Registration Options', 'event_espresso'), array($this, 'registration_options_meta_box'), $this->_current_screen->id, 'side', 'high');
+		add_meta_box('espresso_event_editor_additional_questions', __('Questions for Additional Attendees', 'event_espresso'), array($this, 'additional_attendees_question_groups_meta_box'), $this->page_slug, 'side', 'core');
 
-		add_meta_box('espresso_event_editor_additional_questions', __('Questions for Additional Attendees', 'event_espresso'), array($this, 'additional_attendees_question_groups_meta_box'), $this->_current_screen->id, 'side', 'core');
-
-		//add_meta_box('espresso_event_editor_promo_box', __('Event Promotions', 'event_espresso'), array( $this, 'promotions_meta_box' ), $this->_current_screen->id, 'side', 'core');
-		//add_meta_box('espresso_event_editor_featured_image_box', __('Featured Image', 'event_espresso'), array( $this, 'featured_image_meta_box' ), $this->_current_screen->id, 'side', 'default');
-//		if ($org_options['use_attendee_pre_approval']) {
-//			add_meta_box('espresso_event_editor_preapproval_box', __('Attendee Pre-Approval', 'event_espresso'), array( $this, 'preapproval_metabox' ), $this->_current_screen->id, 'side', 'default');
-//		}
-
+		//TODO this should be added by the personnel manager admin page.
 		if ($org_options['use_personnel_manager']) {
-			add_meta_box('espresso_event_editor_personnel_box', __('Event Staff / Speakers', 'event_espresso'), array($this, 'personnel_metabox'), $this->_current_screen->id, 'side', 'default');
+			add_meta_box('espresso_event_editor_personnel_box', __('Event Staff / Speakers', 'event_espresso'), array($this, 'personnel_metabox'), $this->page_slug, 'side', 'default');
 		}
 	}
 
