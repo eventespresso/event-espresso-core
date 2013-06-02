@@ -59,13 +59,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 
-	public function __construct( $routing = TRUE ) {
-		parent::__construct( $routing );
-	}
-
-
-
-
 
 
 	/**
