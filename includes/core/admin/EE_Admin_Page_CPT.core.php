@@ -182,7 +182,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		//modify the post_updated messages array
 		add_action('post_updated_messages', array( $this, 'post_update_messages' ), 10 );
-
 		
 	}
 
@@ -210,6 +209,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			add_action('untrashed_post', array( $this, 'restore_cpt_item'), 10 );
 			add_action('after_delete_post', array( $this, 'delete_cpt_item'), 10 );
 		}
+
 	}
 
 
@@ -229,6 +229,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		set_current_screen( $this->page_slug );
 		$this->_current_screen = get_current_screen();
 		$this->_current_screen->base = 'event-espresso'; 
+		$this->_add_help_tabs(); //we make sure we add any help tabs back in!
 		try {
 			$this->_route_admin_request();
 		} catch ( EE_Error $e ) {
