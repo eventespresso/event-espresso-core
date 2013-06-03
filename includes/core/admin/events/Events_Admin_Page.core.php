@@ -367,6 +367,22 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		return apply_filters('FHEE_event_legend_items', $items);
 	}
 
+
+
+
+	public function extra_permalink_field_buttons( $return, $id, $new_title, $new_slug ) {
+		//make sure this is only when editing
+		if ( !empty( $id ) ) {
+			$post = get_post( $id );
+			$return .= '<a class="button button-small" onclick="prompt(\'Shortcode:\', jQuery(\'#shortcode\').val()); return false;" href="#"  tabindex="-1">' . __('Shortcode', 'event_espresso') . '</a> ';
+			$return .= '<input id="shortcode" type="hidden" value="[SINGLEEVENT single_event_id=\'' . $post->post_name . '\']"">';
+		}
+		return $return;
+	}
+
+
+
+
 	/**
 	 * _events_overview_list_table
 	 * This contains the logic for showing the events_overview list
