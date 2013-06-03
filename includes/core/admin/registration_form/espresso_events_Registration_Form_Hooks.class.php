@@ -46,7 +46,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks {
 		$this->_name = 'registration_form';
 		$this->_metaboxes = array(
 			0 => array(
-				'page_route' => array( 'edit_event', 'add_event' ),
+				'page_route' => array( 'edit', 'create_new' ),
 				'func' => 'primary_questions',
 				'label' => __('Questions for Primary Attendee', 'event_espresso'),
 				'priority' => 'core',
