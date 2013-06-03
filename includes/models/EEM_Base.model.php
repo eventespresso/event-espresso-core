@@ -670,12 +670,6 @@ abstract class EEM_Base extends EE_Base{
 	 * @throws EE_Error
 	 */
 	function insert($field_n_values, $values_already_prepared_by_model_object = false){
-//verify we have all teh required fields, and if a field is missing but not required, use the defautl value
-		foreach($this->field_settings(false) as $field_name => $field_obj){
-			if( ! in_array($field_name,array_keys($field_n_values)) && ! $field_obj->is_nullable() && ! $field_obj->is_auto_increment()){
-				throw new EE_Error(sprintf(__("Cannot insert new instance of %s if field '%s' is null. Fields supplied are %s", "event_espresso"),get_class($this),$field_name,implode(", ",array_keys($field_n_values))));
-			}
-		}
 		$main_table = $this->_get_main_table();
 		$new_id = $this->_insert_into_specific_table($main_table, $field_n_values, false, $values_already_prepared_by_model_object);
 		foreach($this->_get_other_tables() as $other_table){
@@ -727,7 +721,7 @@ abstract class EEM_Base extends EE_Base{
 			$format_for_insertion[]='%d';//yes right now we're only allowing these foreign keys to be INTs
 		}
 		//insert the new entry
-		$result = $wpdb->insert($table->get_table_name(),$insertion_col_n_values,$format_for_insertion);
+		$result = $wpdb->insert($table->get_table_name(),$insertion_col_n_values,$format_for_insertion);		
 		if(!$result){
 			throw new EE_Error(sprintf(__("Error inserting values %s for columns %s, using data types %s, into table %s. Error was %s",'event_espresso'),
 					implode(",",$insertion_col_n_values),

@@ -532,6 +532,7 @@ function events_data_tables_install() {
 	$sql="EVV_ID INT(11) NOT NULL AUTO_INCREMENT ,
 			EVT_ID INT(11) NOT NULL ,
 			VNU_ID INT(11) NOT NULL ,
+			EVV_primary TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 			PRIMARY KEY (EVV_ID)";
 	event_espresso_run_install($table_name,$sql, 'ENGINE=InnoDB');
 	
