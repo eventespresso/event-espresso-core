@@ -181,6 +181,8 @@ class EE_Base_Class{
 	 * @return boolean success
 	 */
 	public function cache($relationName,$object_to_cache){
+		if ( empty( $object_to_cache ) ) return; //its entirely possible that there IS no related object yet in which case there is nothing to cache.
+		
 		$relationNameClassAttribute = $this->_get_private_attribute_name($relationName);
 		$relationship_to_model = $this->get_model()->related_settings_for($relationName);
 		if( ! $relationship_to_model){
