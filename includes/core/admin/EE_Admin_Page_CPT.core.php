@@ -185,6 +185,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		//add shortlink button to cpt edit screens.  We can do this as a universal thing BECAUSE, cpts use the same format for shortlinks as posts!
 		add_filter( 'get_shortlink', array( $this, 'add_shortlink_button_to_editor' ), 10, 4 );
+
+		if ( method_exists( $this, 'extra_permalink_field_buttons' ) )
+			add_filter('get_sample_peramlink_html', array( $this, 'extra_permalink_field_buttons' ), 10, 4 );
 		
 	}
 
