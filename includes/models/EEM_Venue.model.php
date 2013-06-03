@@ -62,7 +62,7 @@ class EEM_Venue extends EEM_Base {
 		));
 		$this->_tables = array(
 			'Venue_CPT'=> new EE_Primary_Table('posts', 'ID'),
-			'Venue_Meta'=>new EE_Secondary_Table('esp_venue_meta', 'VNUM_ID', 'VNU_ID', "Venue_CPT.post_type='esp_venue'")
+			'Venue_Meta'=>new EE_Secondary_Table('esp_venue_meta', 'VNUM_ID', 'VNU_ID', "Venue_CPT.post_type='espresso_venues'")
 		);
 		$this->_fields = array(
 			'Venue_CPT'=>array(
@@ -77,7 +77,7 @@ class EEM_Venue extends EEM_Base {
 				'VNU_wp_user'=>new EE_Integer_Field('post_author', __("Venue Creator", "event_espresso"), false, 1),
 				'VNU_parent'=>new EE_Integer_Field('post_parent', __("Venue Parent ID", "event_espresso"), true),
 				'VNU_order'=>new EE_Integer_Field('menu_order', __("Venue order", "event_espresso"), false, 1),
-				'VNU_post_type'=>new EE_DB_Only_Text_Field('post_type', __("Venue post type", "event_espresso"), false, 'esp_venue'),
+				'VNU_post_type'=>new EE_DB_Only_Text_Field('post_type', __("Venue post type", "event_espresso"), false, 'espresso_venues'),
 				),
 			'Venue_Meta'=>array(
 				'VNUM_ID'=>new EE_DB_Only_Int_Field('VNUM_ID', __("ID of Venue Meta Row", "event_espresso"), false),
