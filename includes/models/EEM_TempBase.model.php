@@ -891,6 +891,9 @@ class EE_Model_Field{
 	 * 
 	 *				all_caps_key (allows only capital-lettered keys)
 	 * 
+	 * 
+	 *				text_or_numeric accepts numbers or simple HTML text. Eg, the following are valid: "<a href='monkey'>monkey link</a>" and 32.
+	 * 
 	 *				serialized_text (an array that gets serialized into a string when setting and saving ot db, and unserialized when retrieved from db)
 	 * 
 	 *				enum (allows only a limited set of values. $allowedEnumValues MUST be set for this type)
