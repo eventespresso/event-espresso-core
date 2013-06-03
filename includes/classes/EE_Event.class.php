@@ -202,8 +202,14 @@ class EE_Event extends EE_Base_Class{
 	 */
 	public function datetimes(){
 		require_once('EEM_Datetime.model.php');
-		return EEM_Datetime::instance( $this->_timezone )->get_all_event_dates($this->ID);
+		return EEM_Datetime::instance( $this->_timezone )->get_all_event_dates($this->_EVT_ID);
 	}
+
+	public function primary_datetime() {
+		require_once('EEM_Datetime.model.php');
+		return EEM_Datetime::instance( $this->_timezone )->get_most_important_datetime_for_event( $this->_EVT_ID );
+	}
+
 	
 	
 	function additional_limit(){
@@ -356,5 +362,101 @@ class EE_Event extends EE_Base_Class{
 	 */
 	function venues($query_params = array()){
 		return $this->get_many_related('Venue', $query_params);
+	}
+
+
+
+	public function get_number_of_attendees_reg_limit( $type = 'NULL' ) {
+		
+		$reg_limit = $this->_EVT_reg_limit;
+		switch ($type) {
+
+			case 'available_spaces' :
+			case 'num_attendees' :
+			case 'number_available_spaces' :
+			case 'num_completed_slash_incomplete' :
+			case 'num_attendees_slash_reg_limit' :
+			case 'avail_spaces_slash_reg_limit' :		
+				$num_attendees = EEM_Registration::instance()->get_event_registration_count( $this->_EVT_ID );
+			case 'reg_limit' :
+			case 'available_spaces' :
+			case 'number_available_spaces' :
+			case 'avail_spaces_slash_reg_limit' :
+			case 'num_attendees_slash_reg_limit' :
+				$number_available_spaces = $reg_limit;
+				if ($reg_limit > $num_attendees) {
+					$number_available_spaces = $reg_limit - $num_attendees;
+				}
+			//break;
+
+			case 'num_incomplete' :
+			case 'num_completed_slash_incomplete' :
+				$num_incomplete = EEM_Registration::instance()->get_event_registration_count( $this->_EVT_ID, TRUE );
+			//break;
+		}
+
+		switch ($type) {
+			case 'number_available_spaces' :
+				return $number_available_spaces;
+				break;
+			case 'available_spaces' :
+				if ($reg_limit >= 999) {
+					$number_available_spaces = __('Unlimited', 'event_espresso');
+				}
+				return $number_available_spaces;
+				break;
+			case 'num_attendees' :
+				return $num_attendees;
+				break;
+			case 'all_attendees' :
+				$num_attendees = EEM_Attendee::instance()->count();
+				return $num_attendees;
+				break;
+			case 'reg_limit' :
+				return $reg_limit;
+				break;
+			case 'num_incomplete' :
+				return $num_incomplete;
+				break;
+			//todo the below types and queries need to be handled.
+			case 'num_completed' :
+				$num_completed = 0;
+				$a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND (payment_status='Completed' OR payment_status='Pending')  ";
+				$wpdb->get_results($a_sql);
+				if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
+					$num_completed = $wpdb->last_result[0]->quantity;
+				}
+				return $num_completed;
+				break;
+			case 'num_pending' :
+				$num_pending = 0;
+				$a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND  payment_status='Pending'";
+				$wpdb->get_results($a_sql);
+				if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
+					$num_pending = $wpdb->last_result[0]->quantity;
+				}
+				return $num_pending;
+				break;
+			case 'num_declined' :
+				$num_declined = 0;
+				$a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND  payment_status='Payment Declined'";
+				$wpdb->get_results($a_sql);
+				if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
+					$num_declined = $wpdb->last_result[0]->quantity;
+				}
+				return $num_declined;
+				break;
+			case 'num_completed_slash_incomplete' :
+				return '<font color="green">' . $num_attendees . '</font>/<font color="red">' . $num_incomplete . '</font>';
+				break;
+
+			case 'avail_spaces_slash_reg_limit' :
+				return $number_available_spaces . '/' . $reg_limit;
+				break;
+			case 'num_attendees_slash_reg_limit' :
+			default:
+				return $num_attendees . '/' . $reg_limit;
+				break;
+		}
 	}
 }

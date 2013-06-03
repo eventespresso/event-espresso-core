@@ -32,6 +32,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 	private $_event_status;
+	private $_dtt;
 
 	public function __construct( $admin_page ) {
 		parent::__construct($admin_page);
@@ -68,13 +69,13 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 		$this->_sortable_columns = array(
-			'id' => array( 'e.id' => true ),
-			'name' => array( 'e.event_name' => false ),
-			'venue' => array( 'v.name' => false ),
-			'start_date' => array('dtt.DTT_EVT_start' => false),
-			'start_time' => array('dtt.DTT_EVT_start' => false),
-			'reg_begins' => array('dtt.DTT_REG_start' => false),
-			'status' => array('e.event_status' => false)
+			'id' => array( 'EVT_ID' => true ),
+			'name' => array( 'EVT_name' => false ),
+			'venue' => array( 'VNU_name' => false ),
+			'start_date' => array('DTT_EVT_start' => false),
+			'start_time' => array('DTT_EVT_start' => false),
+			'reg_begins' => array('DTT_REG_start' => false),
+			'status' => array('EVT_status' => false)
 			);
 
 		$this->_hidden_columns = array();
@@ -119,8 +120,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_cb($item) {
+		$this->_dtt = $item->primary_datetime(); //set this for use in other columns
         return sprintf(
-            '<input type="checkbox" name="EVT_IDs[]" value="%s" />', $item->event_id
+            '<input type="checkbox" name="EVT_IDs[]" value="%s" />', $item->ID()
         );    
     }
 
@@ -134,7 +136,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_id($item) {
-		return $item->event_id;
+		return $item->ID();
 	}
 
 
@@ -146,41 +148,41 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 		$edit_query_args = array(
 				'action' => 'edit_event',
-				'EVT_ID' => $item->event_id
+				'EVT_ID' => $item->ID()
 			);
 		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EVENTS_ADMIN_URL );
 
 		$attendees_query_args = array(
 				'action' => 'default',
-				'event_id' => $item->event_id
+				'event_id' => $item->ID()
 			);
 		$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );
 
 		$export_query_args = array(
 				'action' => 'export_events',
-				'EVT_ID' => $item->event_id
+				'EVT_ID' => $item->ID()
 			);
 		$export_event_link = EE_Admin_Page::add_query_args_and_nonce( $export_query_args, EVENTS_ADMIN_URL );
 
 		$trash_event_query_args = array(
 				'action' => 'trash_event',
-				'EVT_ID' => $item->event_id
+				'EVT_ID' => $item->ID()
 			);
 		$trash_event_link = EE_Admin_Page::add_query_args_and_nonce( $trash_event_query_args, EVENTS_ADMIN_URL );
 
 		$restore_event_query_args = array(
 				'action' => 'restore_event',
-				'EVT_ID' => $item->event_id
+				'EVT_ID' => $item->ID()
 			);
 		$restore_event_link = EE_Admin_Page::add_query_args_and_nonce( $restore_event_query_args, EVENTS_ADMIN_URL );
 
 		$delete_event_query_args = array(
 				'action' => 'delete_event',
-				'EVT_ID' => $item->event_id
+				'EVT_ID' => $item->ID()
 			);
 		$delete_event_link = EE_Admin_Page::add_query_args_and_nonce( $delete_event_query_args, EVENTS_ADMIN_URL );
 
-		$view_link = espresso_reg_url( $item->event_id, $item->slug );
+		$view_link = espresso_reg_url( $item->ID(), $item->slug() );
 
 		$actions = array(
 			'view' => '<a href="' . $view_link . '" title="' . __('View Event', 'event_espresso') . '">' . __('View', 'event_espresso') . '</a>',
@@ -198,7 +200,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 					$actions['move to trash'] = '<a href="' . $trash_event_link . '" title="' . __('Trash Event', 'event_espresso') . '">' . __('Move to Trash', 'event_espresso') . '</a>';
 		}
 
-		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . stripslashes_deep($item->event_name) . '</a></strong>';
+		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . stripslashes_deep($item->name()) . '</a></strong>';
 		$content .= $this->row_actions($actions);
 		return $content;
 
@@ -211,45 +213,39 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 	
 	public function column_venue($item) {
-		return $item->venue_title;
+		$venue = $item->get_first_related( 'Venue' );
+		return !empty( $venue ) ? $venue->name() : __('No Venue has been created', 'event_espresso');
 	}
 
 
 
 
 	public function column_start_date($item) {
-		return EE_DTT_Helper::prepare_dtt_from_db( $item->DTT_EVT_start, 'D, M d, Y' );
+		return !empty( $this->_dtt ) ? $this->_dtt->start_date( 'D, M d, Y') : __('No Date was saved for this Event', 'event_espresso');
 	}
 
 
 
 
 	public function column_start_time($item) {
-		return EE_DTT_Helper::prepare_dtt_from_db( $item->DTT_EVT_start, get_option( 'time_format' ) );
+		return !empty( $this->_dtt ) ? $this->_dtt->start_time( get_option( 'time_format' ) ) : __('No Date was saved for this Event', 'event_espresso');
 	}
 
 
 
 
 	public function column_reg_begins($item) {
-		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php' );
-		$DTM = EEM_Datetime::instance();
-		// grab reg times
-		$reg_time = array_shift( $DTM->get_primary_reg_date_for_event( $item->event_id ));
-		$reg_start = $reg_time->reg_start();
-		$reg_end = $reg_time->reg_end();
-
-		$registration_start = isset($reg_start) ? $reg_start : '';
-		return date('D, M d, Y @ g:i a', $registration_start);
+		return !empty( $this->_dtt ) ? $this->_dtt->reg_start_date_and_time('D, M d, Y', 'g:i a') : __('No Date was saved for this Event', 'event_espresso');
 	}
 
 
 
 
 	public function column_status($item) {
-		$status = array();
-		$status = event_espresso_get_is_active($item->event_id);
-		return $status['display'] == 'OPEN' ? '<span style="color:green;"><b>' . $status['display'] . '</b></span>' : $status['display'];
+		/**$status = array();
+		$status = event_espresso_get_is_active($item->ID());
+		return $status['display'] == 'OPEN' ? '<span style="color:green;"><b>' . $status['display'] . '</b></span>' : $status['display'];*/
+		return 'TODO';
 	}
 
 
@@ -258,10 +254,10 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	public function column_attendees($item) {
 		$attendees_query_args = array(
 				'action' => 'default',
-				'event_id' => $item->event_id
+				'event_id' => $item->ID()
 			);
 		$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );	
-		$registered_attendees = get_number_of_attendees_reg_limit( $item->EVT_ID, 'num_attendees_slash_reg_limit', $item->reg_limit ); 
+		$registered_attendees = $item->get_number_of_attendees_reg_limit( 'num_attendees_slash_reg_limit' ); 
 		return '<a href="' . $attendees_link . '">' . $registered_attendees . '</a>';
 	}
 
@@ -275,32 +271,32 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 		$edit_query_args = array(
 				'action' => 'edit_event',
-				'event_id' => $item->event_id
+				'event_id' => $item->ID()
 			);
 
 		$trash_event_query_args = array(
 				'action' => 'trash_event',
-				'EVT_ID' => $item->event_id
+				'EVT_ID' => $item->ID()
 			);
 
 		$attendees_query_args = array(
 				'action' => 'default',
-				'event_id' => $item->event_id
+				'event_id' => $item->ID()
 			);
 
 		$reports_query_args = array(
 				'action' => 'reports',
-				'EVT_ID' => $item->event_id
+				'EVT_ID' => $item->ID()
 			);
 
 		$export_query_args = array(
 				'action' => 'export_events',
-				'EVT_ID' => $item->event_id
+				'EVT_ID' => $item->ID()
 			);
 
 
 		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EVENTS_ADMIN_URL );
-		$view_link = espresso_reg_url( $item->event_id, $item->slug );
+		$view_link = espresso_reg_url( $item->ID(), $item->slug() );
 		$trash_event_link = EE_Admin_Page::add_query_args_and_nonce( $trash_event_query_args, EVENTS_ADMIN_URL );
 		$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );
 		$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, REG_ADMIN_URL );
@@ -311,7 +307,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$actionlinks[] = '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '"><div class="edit_btn"></div></a>';
 		$actionlinks[] = '<a href="' . $attendees_link . '" title="' . __('View Attendees', 'event_espresso') . '"><div class="complete_btn"></div></a>';
 		$actionlinks[] = '<a href="' . $reports_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="reports_btn"></div></a>' . "\n\t";
-		$actionlinks[] = '<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=unique_id_info_' . $item->event_id  . '" title="' . __('Get Short URL/Shortcode', 'event_espresso') . '"><div class="shortcode_btn"></div></a>';
+		$actionlinks[] = '<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=unique_id_info_' . $item->ID()  . '" title="' . __('Get Short URL/Shortcode', 'event_espresso') . '"><div class="shortcode_btn"></div></a>';
 		$actionlinks[] = '<a href="#" onclick="window.location=\'' . $export_event_link . '\'" title="' . __('Export to Excel', 'event_espresso') . '"><div class="excel_exp_btn"></div></a>';
 		$actionlinks[] = '<a href="#" onclick="window.location=\'' . $export_event_link . '\'" title="' . __('Export to CSV', 'event_espresso') . '"><div class="csv_exp_btn"></div>
 			</a>';
@@ -325,8 +321,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$content .= implode( "\n\t", $actionlinks );
 		//todo: we need to put back in a email attendees link via the new messages system
 		$content .= "\n" . '</div>' . "\n";
-		$content .= '<div id="unique_id_info_' . $item->event_id . '" style="display:none">' . "\n\t";
-		$content .= sprintf( __('<h2>Short URL/Shortcode</h2><p>This is the short URL to this event:</p><p><span  class="updated fade">%s</span></p><p>This will show the registration form for this event just about anywhere. Copy and paste the following shortcode into any page or post.</p><p><span  class="updated fade">[SINGLEEVENT single_event_id="%s"]</span></p> <p class="red_text"> Do not use in place of the main events page that is set in the Organization Settings page.', 'event_espresso'), $view_link, stripslashes_deep($item->event_identifier) );
+		$content .= '<div id="unique_id_info_' . $item->ID() . '" style="display:none">' . "\n\t";
+		$content .= sprintf( __('<h2>Short URL/Shortcode</h2><p>This is the short URL to this event:</p><p><span  class="updated fade">%s</span></p><p>This will show the registration form for this event just about anywhere. Copy and paste the following shortcode into any page or post.</p><p><span  class="updated fade">[SINGLEEVENT single_event_id="%s"]</span></p> <p class="red_text"> Do not use in place of the main events page that is set in the Organization Settings page.', 'event_espresso'), $view_link, stripslashes_deep($item->slug()) );
 		$content .= "\n";
 		$content .= '</div>';
 //		$content = '<a href="' .  $view_link . '" title="' . __('View Event', 'event_espresso') . '" target="_blank">' . "\n\t";
@@ -334,7 +330,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 //		$content .= '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '"><div class="edit_btn"></div></a>' . "\n\t";
 //		$content .= '<a href="' . $attendees_link . '" title="' . __('View Attendees', 'event_espresso') . '"><div class="complete_btn"></div></a>' . "\n\t";
 //		$content .= '<a href="' . $reports_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="reports_btn"></div></a>' . "\n\t";
-//		$content .= '<a href="#" onclick="prompt(\'Shortcode:\', jQuery(\'#shortcode-' . $item->event_id . '\').val()); return false;" title="' . __('Get Short URL/Shortcode', 'event_espresso') . '"><div class="shortcode_btn"></div></a>' . "\n\t";
+//		$content .= '<a href="#" onclick="prompt(\'Shortcode:\', jQuery(\'#shortcode-' . $item->ID() . '\').val()); return false;" title="' . __('Get Short URL/Shortcode', 'event_espresso') . '"><div class="shortcode_btn"></div></a>' . "\n\t";
 //		$content .= '<a href="'.$export_event_link.'" title="' . __('Export to CSV', 'event_espresso') . '"><div class="csv_exp_btn"></div></a>' . "\n";
 //		$content .= '
 //		<a href="' . $trash_event_link . '" title="' . __('Trash Event', 'event_espresso') . '">
@@ -342,11 +338,11 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 //		</a>' . "\n\t";
 //		
 //		//todo: we need to put back in a email attendees link via the new messages system
-//		$content .= '<div id="unique_id_info_' . $item->event_id . '" style="display:none">' . "\n\t";
+//		$content .= '<div id="unique_id_info_' . $item->ID() . '" style="display:none">' . "\n\t";
 //		$content .= sprintf( __('<h2>Short URL/Shortcode</h2><p>This is the short URL to this event:</p><p><span  class="updated fade">%s</span></p><p>This will show the registration form for this event just about anywhere. Copy and paste the following shortcode into any page or post.</p><p><span  class="updated fade">[SINGLEEVENT single_event_id="%s"]</span></p> <p class="red_text"> Do not use in place of the main events page that is set in the Organization Settings page.', 'event_espresso'), $view_link, stripslashes_deep($item->event_identifier) );
 //		$content .= "\n";
 //		$content .= '</div>';
-//		$content .= '<input id="shortcode-' . $item->event_id . '" type="hidden" value="[SINGLEEVENT single_event_id='.stripslashes_deep($item->event_identifier).']">';	
+//		$content .= '<input id="shortcode-' . $item->ID() . '" type="hidden" value="[SINGLEEVENT single_event_id='.stripslashes_deep($item->event_identifier).']">';	
 		return $content;
 	}
 
