@@ -52,7 +52,7 @@ class EEM_Answer extends EEM_TempBase {
 				'ANS_ID'=>new EE_Model_Field('Answer ID', 'primary_key', false),
 				'REG_ID'=>new EE_Model_Field('Registration ID', 'foreign_key', false,0,null,'Registration'),
 				'QST_ID'=>new EE_Model_Field('Question ID', 'foreign_key', false,0,null,'Question'),
-				'ANS_value'=>new EE_Model_Field('Answer Value/Text', 'simplehtml', false,'')
+				'ANS_value'=>new EE_Model_Field('Answer Value/Text', 'text_or_numeric', false,'')
 			);
 		$this->_related_models=array(
 				'Registration'=>new EE_Model_Relation('belongsTo', 'Registration', 'REG_ID'),
