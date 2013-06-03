@@ -80,7 +80,7 @@ class EEM_Event  extends EEM_Base{
 			EEM_Event::status_registration_closed =>  __("Registration Closed", "event_espresso"),
 			EEM_Event::status_pending =>  __("Pending", "event_espresso"),
 			EEM_Event::status_ongoing =>  __("Ongoing", "event_espresso"),
-			EEM_Event::status_secondary =>  __("Seconadry", "event_espresso"),
+			EEM_Event::status_secondary =>  __("Secondary", "event_espresso"),
 			EEM_Event::status_draft =>  __("Draft", "event_espresso"),
 			EEM_Event::status_deleted =>  __("Deleted", "event_espresso"),
 			EEM_Event::status_denied =>  __("Denied", "event_espresso"),
