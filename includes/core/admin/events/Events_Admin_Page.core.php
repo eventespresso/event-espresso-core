@@ -749,8 +749,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		add_meta_box('espresso_event_editor_event_options', __('Event Registration Options', 'event_espresso'), array($this, 'registration_options_meta_box'), $this->page_slug, 'side', 'default');
 
-		//todo this will become custom fields when Events are CPT's so not going to work on this one.
-		add_meta_box('espresso_event_editor_event_meta', __('Event Meta', 'event_espresso'), array($this, 'event_meta_metabox'), $this->page_slug, 'advanced', 'high');
 
 		//note if you're looking for other metaboxes in here, where a metabox has a related management page in the admin you will find it setup in the related management page's "_Hooks" file.  i.e. messages metabox is found in "espresso_events_Messages_Hooks.class.php".
 	}
@@ -1713,27 +1711,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		<?php
 	}
 
-	/**
-	 * _premium_event_editor_meta_boxes
-	 * add all metaboxes related to the event_editor
-	 *
-	 * @access protected
-	 * @return void 
-	 */
-	protected function _premium_event_editor_meta_boxes() {
-		global $org_options, $caffeinated;
-		$this->_set_event_object();
-
-
-		add_meta_box('espresso_event_editor_event_options', __('Event Registration Options', 'event_espresso'), array($this, 'registration_options_meta_box'), $this->page_slug, 'side', 'high');
-
-		add_meta_box('espresso_event_editor_additional_questions', __('Questions for Additional Attendees', 'event_espresso'), array($this, 'additional_attendees_question_groups_meta_box'), $this->page_slug, 'side', 'core');
-
-		//TODO this should be added by the personnel manager admin page.
-		if ($org_options['use_personnel_manager']) {
-			add_meta_box('espresso_event_editor_personnel_box', __('Event Staff / Speakers', 'event_espresso'), array($this, 'personnel_metabox'), $this->page_slug, 'side', 'default');
-		}
-	}
+	
 
 	public function event_meta_metabox() {
 		global $wpdb, $org_options, $caffeinated;
