@@ -18,8 +18,9 @@ class	EE_Register_CPTs{
 	}
 	
 	/**
-	 * Registers a new custom post type. Sets default settings given only the 
-	 * @param string $post_type the actual post type name
+	 * Registers a new custom post type. Sets default settings given only the following params.
+	 *
+	 * @param string $post_type the actual post type name (VERY IMPORTANT: this much match what the slug is for admin pages related to this cpt.  Also any models must use this slug as well)
 	 * @param string $singular_name a pret-internationalized string for the singular name of the obejcts
 	 * @param string $plural_name a pre-internalized string for the plural name of the objects
 	 * @param array $override_args exactly like $args as described in http://codex.wordpress.org/Function_Reference/register_post_type
