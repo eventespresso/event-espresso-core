@@ -187,7 +187,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		add_filter( 'get_shortlink', array( $this, 'add_shortlink_button_to_editor' ), 10, 4 );
 
 		if ( method_exists( $this, 'extra_permalink_field_buttons' ) )
-			add_filter('get_sample_peramlink_html', array( $this, 'extra_permalink_field_buttons' ), 10, 4 );
+			add_filter('get_sample_permalink_html', array( $this, 'extra_permalink_field_buttons' ), 10, 4 );
 		
 	}
 
