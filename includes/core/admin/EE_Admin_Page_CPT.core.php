@@ -67,13 +67,13 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * Keep in mind also that "save_post" runs on EVERY post update to the database.  
 	 * ALSO very important.  When a post transitions from scheduled to published, the save_post action is fired but you will NOT have any _POST data containing any extra info you may have from other meta saves.  So MAKE sure that you handle this accordingly.
 	 *
-	 * @access public
+	 * @access protected
 	 * @abstract
 	 * @param  string $post_id The ID of the cpt that was saved (so you can link relationally)
 	 * @param  object $post    The post object of the cpt that was saved. 
 	 * @return void          
 	 */
-	abstract public function insert_update_cpt_item( $post_id, $post );
+	abstract protected function _insert_update_cpt_item( $post_id, $post );
 
 
 
@@ -209,13 +209,30 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		if ( $post_type && $post_type == $this->page_slug ) {
 			//$post_id, $post
-			add_action('save_post', array( $this, 'insert_update_cpt_item'), 10, 2 );
+			add_action('save_post', array( $this, 'insert_update'), 10, 2 );
 			//$post_id
 			add_action('trashed_post', array( $this, 'trash_cpt_item' ), 10 );
 			add_action('untrashed_post', array( $this, 'restore_cpt_item'), 10 );
 			add_action('after_delete_post', array( $this, 'delete_cpt_item'), 10 );
 		}
 
+	}
+
+
+
+
+	/**
+	 * This is a wrapper for the insert/update routes for cpt items so we can add things that are common to ALL insert/updates
+	 * @param  int    $post_id ID of post being updated
+	 * @param  object $post    Post object from WP
+	 * @return void          
+	 */
+	public function insert_update( $post_id, $post ) {
+		//check for autosave
+		if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE )
+			return $post_id; //get out because we don't have any data via autosave!
+
+		$this->_insert_update_cpt_item( $post_id, $post );
 	}
 
 

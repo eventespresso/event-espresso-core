@@ -425,11 +425,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	}
 
 
-
-	//TODO
 	
-	public function insert_update_cpt_item( $post_id, $post ) {
+	protected function _insert_update_cpt_item( $post_id, $post ) {
 
+		//todo move this into parent.
 		if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE )
 			return $post_id; //get out because we don't have any data via autosave!
 
