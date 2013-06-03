@@ -455,7 +455,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 		//the following are default callbacks for event attachment updates that can be overridden by caffeinated functionality and/or addons.
-		$event_update_callbacks = apply_filters( 'FHEE_event_editor_venue_update', array( array($this, '_default_venue_update' ), array( $this, '_default_dtt_update' ), array( $this, '_default_prices_update') ) );
+		$event_update_callbacks = apply_filters( 'FHEE_event_editor_update', array( array($this, '_default_venue_update' ), array( $this, '_default_dtt_update' ), array( $this, '_default_prices_update') ) );
 
 		$att_success = TRUE;
 
