@@ -182,6 +182,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		//modify the post_updated messages array
 		add_action('post_updated_messages', array( $this, 'post_update_messages' ), 10 );
+
+		//add shortlink button to cpt edit screens.  We can do this as a universal thing BECAUSE, cpts use the same format for shortlinks as posts!
+		add_filter( 'get_shortlink', array( $this, 'add_shortlink_button_to_editor' ), 10, 4 );
 		
 	}
 
@@ -248,6 +251,24 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	public function add_custom_editor_default_title( $title ) {
 		return isset( $this->_labels['editor_title'] ) ? $this->_labels['editor_title'] : $title;
+	}
+
+
+
+	/**
+	 * hooks into the wp_get_shortlink button and makes sure that the shortlink gets generated
+	 * @param string $shortlink   The already generated shortlink
+	 * @param int    $id          Post ID for this item
+	 * @param string $context     The context for the link
+	 * @param bool   $allow_slugs Whether to allow post slugs in the shortlink.
+	 */
+	public function add_shortlink_button_to_editor( $shortlink, $id, $context, $allow_slugs ) {
+		if ( !empty( $id ) && '' != get_option('permalink_structure') ) {
+			$post = get_post( $id );
+			if ( isset($post->post_type) && $this->page_slug == $post->post_type )
+			$shortlink = home_url('?p=' . $post->ID);
+		}
+		return $shortlink;
 	}
 
 
