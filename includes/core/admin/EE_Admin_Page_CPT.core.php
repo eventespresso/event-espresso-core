@@ -368,6 +368,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		}
 
 		$query_args = array_merge( array( 'message' => $message ), $query_args );
+
+		$this->_process_notices( $query_args, TRUE );
 		return self::add_query_args_and_nonce( $query_args, $admin_url );
 	}
 
@@ -418,6 +420,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			9 => sprintf( __('%1$s scheduled for: <strong>%2$s</strong>. <a target="_blank" href="%3$s">Preview %1$s</a>'), $this->_cpt_object->labels->singular_name, date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink($id) ) ),
 			10 => sprintf( __('%1$s draft updated. <a target="_blank" href="%s">Preview page</a>'), $this->_cpt_object->labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink($id) ) ) )
 			);
+
 		return $messages;
 	}
 

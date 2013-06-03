@@ -425,12 +425,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	}
 
 
+
+
+
 	
 	protected function _insert_update_cpt_item( $post_id, $post ) {
-
-		//todo move this into parent.
-		if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE )
-			return $post_id; //get out because we don't have any data via autosave!
 
 		require_once( 'EE_Event.class.php' );
 
@@ -464,9 +463,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		//any errors?
-		if ( $success && $att_success ) {
-			EE_Error::add_success( __('Event Details saved successfully', 'event_espresso' ) );
-		} else if ( $success && !$att_success ) {
+		if ( $success && !$att_success ) {
 			EE_Error::add_error( __('Event Details saved successfully but something went wrong with saving attachments.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		} else {
 			EE_Error::add_error( __('Event Details did not save successfully.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );

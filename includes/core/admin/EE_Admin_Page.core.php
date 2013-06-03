@@ -675,7 +675,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$error_msg =  sprintf( __( 'The given page route does not exist for the %s admin page.', 'event_espresso' ), $this->_admin_page_title );
 			// developer error msg
 			$error_msg .=  '||' . $error_msg . sprintf( __( ' Check the route you are using in your method (%s) and make sure it matches a route set in your "_page_routes" array property', 'event_espresso' ), $route );
-			throw new PRM_Error( $error_msg );
+			throw new EE_Error( $error_msg );
 		}
 	}
 
@@ -2167,6 +2167,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *	@param string 	$what 		- what the action was performed on
 	 *	@param string 	$action_desc 	- what was done ie: updated, deleted, etc
 	 *	@param int 		$query_args		- an array of query_args to be added to the URL to redirect to after the admin action is completed
+	 *	@param BOOL     $override_overwrite by default all EE_Error::success messages are overwritten, this allows you to override this so that they show.
 	 *	@access protected
 	 *	@return void
 	 */
@@ -2249,16 +2250,17 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * This method sets the $this->_template_args['notices'] attribute;
 	 * 
 	 * @param  array  $query_args any query args that need to be used for notice transient ('action')
+	 * @param bool    $skip_route_verify This is typically used when we are processing notices REALLY early and page_routes haven't been defined yet.
 	 * @return void
 	 */
-	protected function _process_notices( $query_args = array() ) {
+	protected function _process_notices( $query_args = array(), $skip_route_verify = FALSE ) {
 		
 		$this->_template_args['notices'] = EE_Error::get_notices();
 
 		//IF this isn't ajax we need to create a transient for the notices using the route.
 		if ( ! defined( 'DOING_AJAX' ) ) {
 			$route = isset( $query_args['action'] ) ? $query_args['action'] : 'default';
-			$this->_add_transient( $route, $this->_template_args['notices'], TRUE );
+			$this->_add_transient( $route, $this->_template_args['notices'], TRUE, $skip_route_verify );
 		}
 	}
 
@@ -2379,11 +2381,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @param route $route the route that should receive the transient
 	 * @param data $data  the data that gets sent
 	 * @param bool $notices If this is for notices then we use this to indicate so, otherwise its just a normal route transient.
+	 * @param bool $skip_route_verify Used to indicate we want to skip route verification.  This is usually ONLY used when we are adding a transient before page_routes have been defined.
+	 * @return void
 	 */
-	protected function _add_transient( $route, $data, $notices = FALSE ) {
+	protected function _add_transient( $route, $data, $notices = FALSE, $skip_route_verify = FALSE ) {
 		$user_id = get_current_user_id();
 		
-		$this->_verify_route($route);
+		if ( !$skip_route_verify )
+			$this->_verify_route($route);
 
 
 		//now let's set the string for what kind of transient we're setting
