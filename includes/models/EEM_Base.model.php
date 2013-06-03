@@ -822,7 +822,9 @@ abstract class EEM_Base extends EE_Base{
 	 * @param EE_Model_Query_Info_Carrier $model_query_info_carrier
 	 */
 	private function _extract_related_models_from_sub_params_array_keys($sub_query_params, EE_Model_Query_Info_Carrier $model_query_info_carrier){
+
 		if (!empty($sub_query_params)){
+			$sub_query_params = (array) $sub_query_params;
 			foreach($sub_query_params as $param => $possibly_array_of_params){
 				//$param could be simply 'EVT_ID', or it could be 'Registrations.REG_ID', or even 'Registrations.Transactions.Payments.PAY_amount'
 				$this->_extract_related_model_info_from_query_param( $param, $model_query_info_carrier);
