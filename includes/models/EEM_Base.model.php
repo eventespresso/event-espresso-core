@@ -901,17 +901,16 @@ abstract class EEM_Base extends EE_Base{
 				//assume it's an array of fields to order by
 				$order_array = array();
 				foreach($query_params['order_by'] as $field_name_to_order_by => $order){
+					$order = $order == 'asc' || $order == 'ASC' ? ' ASC' : ' DESC';
 					$field_to_order_by = $this->_deduce_field_from_query_param($field_name_to_order_by);
-					if($order == 'asc' || $order == 'ASC'){
-						$order = ' ASC ';
-					}else{
-						$order = ' DESC ';
-					}
 					$order_array[] = $field_to_order_by->get_qualified_column() . $order ;
 				}
 				$query_object->set_order_by_sql(" ORDER BY ".implode(",",$order_array));
 			}else{
-				$query_object->set_order_by_sql(" ORDER BY ".$query_params['order_by']);
+				$field_to_order_by = $this->_deduce_field_from_query_param( $query_params['order_by'] );
+				$order = isset( $query_params['order'] ) ? $query_params['order'] : 'DESC';
+				$order = $order == 'asc' || $order == 'ASC' ? 'ASC' : 'DESC';
+				$query_object->set_order_by_sql(" ORDER BY ".$field_to_order_by->get_qualified_column().SP.$order);
 			}
 		}
 		
@@ -926,7 +925,8 @@ abstract class EEM_Base extends EE_Base{
 				}
 				$query_object->set_group_by_sql(" GROUP BY ".implode(",",$group_by_array));
 			}else{
-				$query_object->set_group_by_sql(" GROUP BY ".$query_params['group_by']);
+				$field_obj = $this->field_settings_for( $query_params['group_by'] );
+				$query_object->set_group_by_sql(" GROUP BY ".$field_obj->get_qualified_column());
 			}
 		}
 		//set having
