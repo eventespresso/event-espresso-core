@@ -47,7 +47,7 @@ class espresso_events_Messages_Hooks extends EE_Admin_Hooks {
 				'page_route' => array('edit','create_event'),
 				'func' => 'messages_metabox',
 				'label' => __('Notifications', 'event_espresso'),
-				'priority' => 'core'
+				'priority' => 'high'
 				)
 			);
 		
