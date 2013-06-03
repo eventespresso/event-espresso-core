@@ -88,7 +88,7 @@ class EEM_Event  extends EEM_Base{
 		));
 		$this->_tables = array(
 			'Event_CPT'=>new EE_Primary_Table('posts','ID'),
-			'Event_Meta'=> new EE_Secondary_Table('esp_event_meta', 'EVTM_ID','EVT_ID',"Event_CPT.post_type='esp_event'")
+			'Event_Meta'=> new EE_Secondary_Table('esp_event_meta', 'EVTM_ID','EVT_ID',"Event_CPT.post_type='espresso_events'")
 		);
 		
 		$this->_fields = array(
@@ -104,7 +104,7 @@ class EEM_Event  extends EEM_Base{
 				'EVT_wp_user'=>new EE_Integer_Field('post_author', __("Wordpress User ID", "event_espresso"), false,1),
 				'EVT_parent'=>new EE_Integer_Field('post_parent', __("Event Parent ID", "event_espresso"), true),
 				'EVT_order'=>new EE_Integer_Field('menu_order', __("Event Menu Order", "event_espresso"), false, 1),
-				'EVT_post_type'=>new EE_DB_Only_Text_Field('post_type', __("Event Post Type", "event_espresso"), false, 'esp_event')
+				'EVT_post_type'=>new EE_DB_Only_Text_Field('post_type', __("Event Post Type", "event_espresso"), false, 'espresso_events')
 			),
 			'Event_Meta'=>array(
 				'EVTM_ID'=> new EE_DB_Only_Float_Field('EVTM_ID', __('Event Meta Row ID','event_espresso'), false),
@@ -138,7 +138,7 @@ class EEM_Event  extends EEM_Base{
 	 * @return array like EEM_base::get_all's $query_params[0] (where conditions)
 	 */
 	protected function _get_universal_where_params(){
-		return array('EVT_post_type'=>'esp_event');
+		return array('EVT_post_type'=>'espresso_events');
 	}
 
 	/**
