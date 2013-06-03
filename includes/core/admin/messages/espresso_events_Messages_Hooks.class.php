@@ -44,7 +44,7 @@ class espresso_events_Messages_Hooks extends EE_Admin_Hooks {
 			);
 		$this->_metaboxes = array(
 			0 => array(
-				'page_route' => array('edit_event','add_event'),
+				'page_route' => array('edit','create_event'),
 				'func' => 'messages_metabox',
 				'label' => __('Notifications', 'event_espresso'),
 				'priority' => 'core'
@@ -64,8 +64,8 @@ class espresso_events_Messages_Hooks extends EE_Admin_Hooks {
 					)
 				),
 			'enqueues' => array(
-				'events_msg_admin' => array('edit_event'),
-				'events_msg_admin_css' => array('edit_event')
+				'events_msg_admin' => array('edit'),
+				'events_msg_admin_css' => array('edit')
 				)
 			); /**/
 	}
@@ -76,8 +76,8 @@ class espresso_events_Messages_Hooks extends EE_Admin_Hooks {
 
 		//let's get the active messengers (b/c messenger objects have the active message templates)
 		//convert 'evt_id' to 'EVT_ID'
-		if ( isset( $this->_req_data['evt_id'] ) && !isset($this->_req_data['EVT_ID'] ) )
-			$this->_req_data['EVT_ID'] = $this->_req_data['evt_id'];
+		if ( isset( $this->_req_data['id'] ) )
+			$this->_req_data['EVT_ID'] = $this->_req_data['id'];
 
 		//set flag for whether we are adding or editing an event.
 		$add_event = !isset($this->_req_data['EVT_ID']) ? TRUE : FALSE;
