@@ -86,12 +86,22 @@ abstract class EEM_Base extends EE_Base{
 		'NOT_IN'=>'NOT IN',
 		'not_in'=>'NOT IN',
 		'NOT IN'=>'NOT IN',
-		'not in'=>'NOT IN');
+		'not in'=>'NOT IN',
+		'between' => 'BETWEEN',
+		'BETWEEN' => 'BETWEEN');
 	/**
 	 * operators that work like 'IN', accepting a comma-seperated list of values inside brackets. Eg '(1,2,3)'
 	 * @var array 
 	 */
 	protected $_in_style_operators = array('IN','NOT_IN');
+
+
+
+	/**
+	 * operators that work like 'BETWEEN'.  Typically used for datetime calcs, i.e. "BETWEEN '12-1-2011' AND '12-31-2012'"
+	 * @var array
+	 */
+	protected $_between_style_operators = array( 'BETWEEN' );
 	
 	/**
 	 * Allowed values for $query_params['order'] for ordering in queries
@@ -1179,6 +1189,12 @@ abstract class EEM_Base extends EE_Base{
 				$cleaned_value = $this->_construct_in_value($value, $field_obj, $values_already_prepared_by_model_object);
 				//note: $cleaned_value has already been run through $wpdb->prepare()
 				return $operator.SP.$cleaned_value;
+		} elseif( in_array( $operator, $this->_between_style_operators ) && is_array( $value ) ) {
+			//the value should be an array with count of two.
+			if ( count($value) !== 2 )
+				throw new EE_Error( sprintf( __("The '%s' operator must be used with an array of values and there must be exactly TWO values in that array.", 'event_espresso'), "BETWEEN" ) );
+			$cleaned_value = $this->_construct_between_value( $value, $field_obj, $values_already_prepared_by_model_object );
+			return $operator.SP.$cleaned_value;
 		}elseif( ! in_array($operator, $this->_in_style_operators) && ! is_array($value)){
 			global $wpdb;
 			return $wpdb->prepare($operator.SP.$field_obj->get_wpdb_data_type(), $this->_prepare_value_for_use_in_db($value, $field_obj, $values_already_prepared_by_model_object));
@@ -1188,6 +1204,20 @@ abstract class EEM_Base extends EE_Base{
 			throw new EE_Error(sprintf(__("Operator '%s' must be used with a single value, not an array. Eg 'Registration.REG_ID => array('%s',23))",'event_espresso'),$operator,$operator));
 		}
 	}
+
+
+
+
+	function _construct_between_value( $values, EE_Model_Field_Base $field_obj, $values_already_prepared_by_model_object = false ) {
+		global $wpdb;
+		foreach ( $values as $value ) {
+			$cleaned_values[] = $wpdb->prepare( $field_obj->get_wpdb_data_type(), $this->_prepare_value_for_use_in_db( $value, $field_obj, $values_already_prepared_by_model_object ) );
+		}
+		return "'" . $cleaned_values[0] . "' AND '" . $cleaned_values[1] . '"';
+	}
+
+
+
 	
 	/**
 	 * Takes an array or a comma-seperated list of $values and cleans them 
