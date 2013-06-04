@@ -57,7 +57,18 @@ class EE_Term extends EE_Base_Class{
 	 */
 	protected $_Term_Taxonomy;
 
-
+	/**
+	 * Sets some dynamic defaults
+	 * @param type $fieldValues
+	 * @param type $bydb
+	 * @param type $timezone
+	 */
+	protected function __construct($fieldValues=null, $bydb = FALSE, $timezone = NULL ){
+		if( ! isset($fieldValues['slug'])){
+			$fieldValues['slug'] = $fieldValues['name'];
+		}
+		parent::__construct($fieldValues,$bydb,$timezone);
+	}
 
 
 	public static function new_instance( $props_n_values = array() ) {

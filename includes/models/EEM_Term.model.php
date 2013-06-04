@@ -55,7 +55,7 @@ class EEM_Term extends EEM_Base {
 			'Term'=>array(
 				'term_id'=> new EE_Primary_Key_Int_Field('term_id', __('Term ID','event_espresso'), false),
 				'name'=>new EE_Plain_Text_Field('name',__('Term Name','event_espresso'),false, ''),
-				'slug'=>new EE_Integer_Field('slug', __('Term Slug','event_espresso'), false),
+				'slug'=>new EE_Slug_Field('slug', __('Term Slug','event_espresso'), false),
 				'term_group'=>new EE_Integer_Field('term_group', __("Term Group", "event_espresso"), false, 0)
 			));
 		$this->_model_relations = array(
