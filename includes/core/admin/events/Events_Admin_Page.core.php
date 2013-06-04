@@ -42,6 +42,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _init_page_props() {
 		$this->page_slug = EVENTS_PG_SLUG;
 		$this->page_label = EVENTS_LABEL;
+		$this->_cpt_model_name = 'EEM_Event';
 	}
 
 	protected function _ajax_hooks() {
@@ -737,7 +738,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return object
 	 */
 	public function get_event_object() {
-		return $this->_event;
+		return $this->_cpt_model_obj;
 	}
 
 

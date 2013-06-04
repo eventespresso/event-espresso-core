@@ -57,6 +57,12 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 
+	/**
+	 * If child classes set the name of their main model via the $_cpt_obj_model property, EE_Admin_Page_CPT will attempt to retrieve the related object model for the edit pages and assign it to _cpt_page_object.
+	 * @var boolean
+	 */
+	protected $_cpt_model_name = FALSE;
+	protected $_cpt_model_obj = FALSE;
 
 
 
@@ -167,6 +173,13 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 				) ),
 			$this->_page_config
 		);
+
+
+		if ( !empty( $this->_cpt_model_name ) && $this->_cpt_route && !empty( $this->_req_data['id'] ) ) {
+			require_once( $this->_cpt_model_name . '.model.php' );
+			$model = call_user_func( array( $this->_cpt_model_name, 'instance' ) );
+			$this->_cpt_model_obj = $model->get_one_by_id( $this->_req_data['id'] );
+		}
 
 		
 
