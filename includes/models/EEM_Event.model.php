@@ -33,13 +33,18 @@ class EEM_Event  extends EEM_Base{
 	 *		@access public
 	 *		@return EEM_Event instance
 	 */	
-	public static function instance(){
+	public static function instance( $timezone = NULL ){
 	
 		// check if instance of EEM_Event already exists
 		if ( self::$_instance === NULL ) {
 			// instantiate Espresso_model 
-			self::$_instance = new self();
+			self::$_instance = new self( $timezone );
 		}
+
+		//set timezone if we have in incoming string
+		if ( !empty( $timezone ) )
+			self::$_instance->set_timezone( $timezone );
+
 		// EEM_Event object
 		return self::$_instance;
 	}
@@ -68,7 +73,7 @@ class EEM_Event  extends EEM_Base{
 	const status_denied = 'DEN';
 	const status_expired = 'EXP';
 
-	protected function __construct(){
+	protected function __construct( $timezone ){
 		$this->singular_item = __('Event','event_espresso');
 		$this->plural_item = __('Events','event_espresso');
 		
@@ -100,7 +105,7 @@ class EEM_Event  extends EEM_Base{
 				'EVT_created'=>new EE_Datetime_Field('post_date', __("Date/Time Event Created", "event_espresso"), false, current_time('timestamp')),
 				'EVT_short_desc'=>new EE_Simple_HTML_Field('post_excerpt', __("Event Short Descripiton", "event_espresso"), false,''),
 				'STS_ID'=>new EE_Enum_Field('post_status', __("Event Status", "event_espresso"), false, EEM_Event::status_draft, array_keys($this->_statuses)),//will be a foreign key once status model made
-				'EVT_modified'=>new EE_Datetime_Field('post_modified', __("Dateim/Time Event Modified", "event_espresso"), true, current_time('timestamp')),
+				'EVT_modified'=>new EE_Datetime_Field('post_modified', __("Date/Time Event Modified", "event_espresso"), true, current_time('timestamp')),
 				'EVT_wp_user'=>new EE_Integer_Field('post_author', __("Wordpress User ID", "event_espresso"), false,1),
 				'EVT_parent'=>new EE_Integer_Field('post_parent', __("Event Parent ID", "event_espresso"), true),
 				'EVT_order'=>new EE_Integer_Field('menu_order', __("Event Menu Order", "event_espresso"), false, 1),
@@ -129,7 +134,7 @@ class EEM_Event  extends EEM_Base{
 			'Question_Group'=>new EE_HABTM_Relation('Event_Question_Group'),
 			'Venue'=>new EE_HABTM_Relation('Event_Venue')
 		);
-		parent::__construct();
+		parent::__construct( $timezone );
 	}
 	
 	/**

@@ -159,6 +159,22 @@ abstract class EEM_Base extends EE_Base{
 
 		$this->_timezone = $timezone;
 	}
+
+
+
+
+
+	/**
+	 * This sets the _timezone property after model object has been instantiated.
+	 * @param string $timezone valid PHP DateTimeZone timezone string
+	 */
+	public function _set_timezone( $timezone ) {
+		$this->_timezone = $timezone;
+	}
+
+
+
+
 	/**
 	 * Gets all the EE_Base_Class objects which match the $query_params, by querying the DB.
 	 * @param array $query_params array with the following array key indexes:

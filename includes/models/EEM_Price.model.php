@@ -44,6 +44,11 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 			// instantiate Price_model
 			self::$_instance = new self( $timezone );
 		}
+
+		//set timezone if we have in incoming string
+		if ( !empty( $timezone ) )
+			self::$_instance->set_timezone( $timezone );
+		
 		// EEM_Price object
 		return self::$_instance;
 	}

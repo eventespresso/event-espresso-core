@@ -154,6 +154,11 @@ class EEM_Registration extends EEM_Base {
 			// instantiate Espresso_model
 			self::$_instance = new self( $timezone );
 		}
+
+		//set timezone if we have in incoming string
+		if ( !empty( $timezone ) )
+			self::$_instance->set_timezone( $timezone );
+		
 		// Espresso_model object
 		return self::$_instance;
 	}
