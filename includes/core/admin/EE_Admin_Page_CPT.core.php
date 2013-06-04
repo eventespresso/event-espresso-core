@@ -201,6 +201,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		if ( method_exists( $this, 'extra_permalink_field_buttons' ) )
 			add_filter('get_sample_permalink_html', array( $this, 'extra_permalink_field_buttons' ), 10, 4 );
+
+		if ( method_exists( $this, 'extra_misc_actions_publish_box' ) )
+			add_filter('post_submitbox_misc_actions', array( $this, 'extra_misc_actions_publish_box' ), 10 );
 		
 	}
 

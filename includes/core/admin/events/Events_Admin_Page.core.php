@@ -399,33 +399,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	}
 
 
-
 	/**
-	 * 	_generate_event_title_and_desc
-	 * 	@access private
-	 * @return void
+	 * this allows for extra misc actions in the default WP publish box
+	 * @return string html to add
 	 */
-	private function _generate_event_title_and_desc() {
-		// title and desc content
-		$title_and_desc_args['event_name'] = $this->_event->event_name;
-		$title_and_desc_args['event_page_url'] = $this->_event->page_url;
-		$title_and_desc_args['event_slug'] = $this->_event->slug;
-		$title_and_desc_args['event_is_new'] = $this->_event->is_new;
-		$title_and_desc_args['event_identifier'] = $this->_event->event_identifier;
-		$title_and_desc_args['shortlink'] = add_query_arg(array('ee' => $this->_event->id), $this->_event->page_url);
-		// desc editor
-		$editor_args['event_desc'] = array(
-			'type' => 'wp_editor',
-			'value' => EE_Formatter::admin_format_content($this->_event->event_desc),
-			'class' => 'my_editor_custom'
-		);
-		$_wp_editor = $this->_generate_admin_form_fields($editor_args, 'array');
-		$title_and_desc_args['event_desc_editor'] = $_wp_editor['event_desc']['field'];
-		// load template
-		$this->_template_args['admin_page_content'] = espresso_display_template(EVENTS_TEMPLATE_PATH . 'event_title_and_desc.template.php', $title_and_desc_args, TRUE);
+	public function extra_misc_actions_publish_box() {
+		$this->_generate_publish_box_extra_content();
 	}
-
-
 
 
 
@@ -690,22 +670,18 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return void
 	 */
 	private function _generate_publish_box_extra_content() {
+
 		//load formatter helper
   		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
 		// publish box
-		$publish_box_extra_args['reg_url'] = espresso_reg_url($this->_event->id, $this->_event->slug);
-		$publish_box_extra_args['event_id'] = $this->_event->id;
-		$publish_box_extra_args['event_preview_url'] = add_query_arg(array('action' => 'copy_event', 'event_id' => $this->_event->id), EVENTS_ADMIN_URL);
-		$publish_box_extra_args['event_name'] = $this->_event->event_name;
-		$publish_box_extra_args['event_start_date'] = EE_Formatter::event_date_display($this->_event->start_date);
-		$publish_box_extra_args['event_status_display'] = $this->_event->status['display'];
-		$publish_box_extra_args['view_attendees_url'] = add_query_arg(array('action' => 'default', 'event_id' => $this->_event->id), REG_ADMIN_URL);
-		$publish_box_extra_args['attendees_reg_limit'] = get_number_of_attendees_reg_limit($this->_event->id, 'num_attendees_slash_reg_limit', $this->_event->reg_limit);
+		$publish_box_extra_args['event_status_display'] = 'TODO';
+		$publish_box_extra_args['view_attendees_url'] = add_query_arg(array('action' => 'default', 'event_id' => $this->_cpt_model_obj->ID() ), REG_ADMIN_URL);
+		$publish_box_extra_args['attendees_reg_limit'] = $this->_cpt_model_obj->get_number_of_attendees_reg_limit( 'num_attendees_slash_reg_limit' );
 		$publish_box_extra_args['misc_pub_section_class'] = apply_filters('FHEE_event_editor_email_attendees_class', 'misc-pub-section');
-		$publish_box_extra_args['email_attendees_url'] = add_query_arg(array('event_admin_reports' => 'event_newsletter', 'event_id' => $this->_event->id), 'admin.php?page=espresso_registrations');
-		$publish_box_extra_args['event_editor_overview_add'] = do_action('AHEE_event_editor_overview_add', $this->_event);
+		//$publish_box_extra_args['email_attendees_url'] = add_query_arg(array('event_admin_reports' => 'event_newsletter', 'event_id' => $this->_cpt_model_obj->id), 'admin.php?page=espresso_registrations');
+		$publish_box_extra_args['event_editor_overview_add'] = do_action('AHEE_cpt_model_obj_editor_overview_add', $this->_cpt_model_obj);
 		// load template
-		$this->_template_args['publish_box_extra_content'] = espresso_display_template(EVENTS_TEMPLATE_PATH . 'event_publish_box_extras.template.php', $publish_box_extra_args, TRUE);
+		espresso_display_template( EVENTS_TEMPLATE_PATH . 'event_publish_box_extras.template.php', $publish_box_extra_args );
 	}
 
 
@@ -735,7 +711,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _register_event_editor_meta_boxes() {
 
-		$this->_set_event_object();
 
 		add_meta_box('espresso_event_editor_date_time', __('Dates &amp; Times', 'event_espresso'), array($this, 'date_time_metabox'), $this->page_slug, 'normal', 'high');
 
