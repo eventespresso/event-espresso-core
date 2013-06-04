@@ -6,6 +6,7 @@ class EE_Event_Venue extends EE_Base_Class{
 	protected $_EVV_ID = null;
 	protected $_EVT_ID = null;
 	protected $_VNU_ID = null;
+	protected $_EVV_primary = null;
 	protected $_EQG_primary = null;
 	protected $_Event;
 	protected $_Venue;
