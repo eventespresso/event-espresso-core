@@ -1078,284 +1078,44 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	
 
-	public function event_meta_metabox() {
-		global $wpdb, $org_options, $caffeinated;
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+	
 
-		if ($caffeinated != true)
-			return;
+	public function registration_options_meta_box() {
 
-		$event_meta = $this->_event->event_meta;
-		?>
-		<div class="inside">
-			<?php
-			$good_meta = array();
-			$hiddenmeta = array("", "venue_id", "additional_attendee_reg_info", /* "add_attendee_question_groups", */ "date_submitted", "event_host_terms", "default_reg_status", "display_thumb_in_lists", "display_thumb_in_regpage", "display_thumb_in_calendar", "event_thumbnail_url", "originally_submitted_by", "enable_for_gmap", "orig_event_staff");
-			$meta_counter = 1;
+		global $org_options;
 
-			$default_event_meta = array();
-			$default_event_meta = apply_filters('FHEE_filter_default_event_meta', $default_event_meta);
-
-			$default_meta = $event_meta == '' ? $default_event_meta : array();
-			$event_meta = $event_meta == '' ? array() : $event_meta;
-			$event_meta = array_merge($event_meta, $default_meta);
-			//print_r( $event_meta );
-			$good_meta = $event_meta;
-			//print_r( $good_meta );
-			?>
-			<p>
-				<?php _e('Using Event Meta boxes', 'event_espresso'); ?>
-				<?php echo $this->_get_help_tab_link('event-meta-boxes'); ?>
-			<ul id="dynamicMetaInput">
-				<?php
-				if ($event_meta != '') {
-					foreach ($event_meta as $k => $v) {
-						?>
-						<?php
-						if (in_array($k, $hiddenmeta)) {
-							//echo "<input type='hidden' name='emeta[]' value='{$v}' />";
-							unset($good_meta[$k]);
-						} else {
-							?>
-							<li>
-								<label>
-									<?php _e('Key', 'event_espresso'); ?>
-								</label>
-								<select id="emeta[]" name="emeta[]">
-									<?php foreach ($good_meta as $k2 => $v2) { ?>
-										<option value="<?php echo $k2; ?>" <?php echo ($k2 == $k ? "SELECTED" : null); ?>><?php echo $k2; ?></option>
-									<?php } ?>
-								</select>
-								<label for="meta-value">
-									<?php _e('Value', 'event_espresso'); ?>
-								</label>
-								<input  size="20" type="text" value="<?php echo $v; ?>" name="emetad[]" id="emetad[]" />
-								<?php
-								echo '<img class="remove-item" title="' . __('Remove this meta box', 'event_espresso') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/remove.gif" alt="' . __('Remove Meta', 'event_espresso') . '" />';
-								?>
-							</li>
-							<?php
-							$meta_counter++;
-						}
-						?>
-						<li>
-							<label for="emeta-box">
-								<?php
-							}
-							echo __('Key', 'event_espresso');
-							?>
-						</label>
-						<input id="emeta-box" size="20" type="text" value="" name="emeta[]" >
-						<label for="emetaad[]">
-							<?php _e('Value', 'event_espresso'); ?>
-						</label>
-						<input size="20" type="text" value="" name="emetad[]" id="emetad[]">
-						<?php
-						echo '<img class="remove-item" title="' . __('Remove this meta box', 'event_espresso') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/remove.gif" alt="' . __('Remove Meta', 'event_espresso') . '" /></li>';
-					} else {
-						echo '<li><label for="emeta[]">' . __('Key', 'event_espresso');
-						?>
-						</label>
-						<input size="20" type="text" value="" name="emeta[]" id="emeta[]">
-						<?php _e('Value', 'event_espresso'); ?>
-						<input size="20" type="text" value="" name="emetad[]" id="emetad[]">
-						<?php
-						echo '<img class="remove-item" title="' . __('Remove this meta box', 'event_espresso') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/remove.gif" alt="' . __('Remove Meta', 'event_espresso') . '" />' . '</li>';
-						// $meta_counter++;
-					}
-					?>
-			</ul>
-			<p>
-				<input type="button" class="button" value="<?php _e('Add A Meta Box', 'event_espresso'); ?>" onClick="addMetaInput('dynamicMetaInput');">
-			</p>
-			<script type="text/javascript">
-				//Dynamic form fields
-				var meta_counter = <?php echo $meta_counter > 1 ? $meta_counter - 1 : $meta_counter++; ?>;
-				function addMetaInput(divName){
-					var next_counter = counter_staticm(meta_counter);
-					var newdiv = document.createElement('li');
-					newdiv.innerHTML = "<label><?php _e('Key', 'event_espresso'); ?></label> <input size='20' type='text' value='' name='emeta[]' id='emeta[]'> <label><?php _e('Value', 'event_espresso'); ?></label> <input size='20' type='text' value='' name='emetad[]' id='emetad[]'><?php echo ' <img class=\"remove-item\" title=\"' . __('Remove this meta box', 'event_espresso') . '\" onclick=\"this.parentNode.parentNode.removeChild(this.parentNode);\" src=\"' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/remove.gif\" alt=\"' . __('Remove Meta', 'event_espresso') . '\" />'; ?>";
-					document.getElementById(divName).appendChild(newdiv);
-					counter++;
-				}
-
-				function counter_staticm(meta_counter) {
-					if ( typeof counter_static.counter == 'undefined' ) {
-
-						counter_static.counter = meta_counter;
-					}
-					return ++counter_static.counter;
-				}
-			</script>
-		</div>
-		<?php
-	}
-
-	/**
-	 * function not called yet... this is leftovers from 3.1
-	 * @global type $espresso_manager
-	 * @global type $current_user
-	 * @return type
-	 */
-	public function event_post_metabox() {
-		$values = array(
+		$yes_no_values = array(
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
-			array('id' => false, 'text' => __('No', 'event_espresso')));
-		if (function_exists('espresso_member_data')) {
-			global $espresso_manager;
-			$is_admin = (espresso_member_data('role') == "administrator" || espresso_member_data('role') == 'espresso_event_admin') ? true : false;
-			if (!$espresso_manager['event_manager_create_post'] && !$is_admin) {
-				return;
-			}
-		}
-		?>
-		<div class="inside">
-			<?php
-			if (strlen($this->_event->post_id) > 1) {
-				$create_post = true; //If a post was created previously, default to yes on the update post.
-			} else {
-				$create_post = false; //If a post was NOT created previously, default to no so we do not create a post on accident.
-			}
-			global $current_user;
-			get_currentuserinfo();
-			?>
-			<table class="form-table">
-				<tbody>
-					<tr>
-						<th class="middle">
-							<label>
-								<?php echo __('Add/Update post for this event?', 'event_espresso') ?>
-							</label>
-						</th>
-						<td class="med">
-							<?php
-							echo EE_Form_Fields::select_input('create_post', $values, $create_post);
-							if (strlen($this->_event->post_id) > 1) {
-								echo '<p>' . __('If no, delete current post?', 'event_espresso');
-								?>
-								<input name="delete_post" type="checkbox" value="true" />
-							<?php } ?>
-							</p>
-							<input type="hidden" name="post_id" value="<?php if (isset($this->_event->post_id)) echo $this->_event->post_id; ?>">
-							<?php /* ?><p><?php _e('Category:', 'event_espresso'); ?> <?php wp_dropdown_categories(array('orderby'=> 'name','order' => 'ASC', 'selected' => $category, 'hide_empty' => 0 )); ?></p><?php */ ?>
-						<td>
-					</tr>
-					<tr>
-						<th class="middle">
+			array('id' => false, 'text' => __('No', 'event_espresso'))
+		);
+		$additional_attendee_reg_info_values = array(
+			array('id' => '1', 'text' => __('No info required', 'event_espresso')),
+			array('id' => '2', 'text' => __('Personal Information only', 'event_espresso')),
+			array('id' => '3', 'text' => __('Full registration information', 'event_espresso'))
+		);
+		$event_status_values = array(
+			array('id' => 'A', 'text' => __('Public', 'event_espresso')),
+			array('id' => 'S', 'text' => __('Waitlist', 'event_espresso')),
+			array('id' => 'O', 'text' => __('Ongoing', 'event_espresso')),
+			array('id' => 'R', 'text' => __('Draft', 'event_espresso')),
+			array('id' => 'D', 'text' => __('Deleted', 'event_espresso'))
+		);
+		$event_status_values = apply_filters('FHEE_event_status_values', $event_status_values);
 
-
-
-
-							?>
-				<p>
-					<label><?php _e('Event is Active', 'event_espresso'); ?></label>
-					<?php echo EE_Form_Fields::select_input('is_active', $yes_no_values, $this->_event->is_active); ?>
-				</p>
-
-				<p>
-					<label><?php _e('Event Status', 'event_espresso'); ?></label>
-					<?php echo EE_Form_Fields::select_input('new_event_status', $event_status_values, $this->_event->event_status, '', '', false); ?>
-				</p>
-
-				<p>
-					<label for="reg-limit">
-						<?php _e('Attendee Limit: ', 'event_espresso'); ?>
-					</label>
-					<input id="reg-limit" name="reg_limit"  size="10" type="text" value="<?php echo $this->_event->reg_limit; ?>" /><br />
-					<span>(<?php _e('leave blank for unlimited', 'event_espresso'); ?>)</span>
-				</p>
-
-				<p class="clearfix" style="clear: both;">
-					<label for="group-reg"><?php _e('Allow group registrations? ', 'event_espresso'); ?></label>
-					<?php echo EE_Form_Fields::select_input('allow_multiple', $yes_no_values, $this->_event->allow_multiple, 'id="group-reg"', '', false); ?>
-				</p>
-
-				<p>
-					<label for="max-registrants"><?php _e('Max Group Registrants: ', 'event_espresso'); ?></label>
-					<input type="text" id="max-registrants" name="additional_limit" value="<?php echo $this->_event->additional_limit; ?>" size="4" />
-				</p>
-
-				<p>
-					<label><?php _e('Additional Attendee Registration info?', 'event_espresso'); ?></label>
-					<?php echo EE_Form_Fields::select_input('additional_attendee_reg_info', $additional_attendee_reg_info_values, $this->_event->event_meta['additional_attendee_reg_info']); ?>
-				</p>
-
-				<?php if ($caffeinated && $org_options['use_attendee_pre_approval']) : ?>
-					<p>
-						<label><?php _e('Attendee pre-approval required?', 'event_espresso'); ?></label>
-						<?php
-						echo EE_Form_Fields::select_input("require_pre_approval", $yes_no_values, $this->_event->require_pre_approval);
-						?>
-					</p>
-				<?php endif; ?>
-
-				<p>
-					<label><?php _e('Default Payment Status', 'event_espresso'); ?></label>
-					<?php echo EE_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_event->event_meta['default_reg_status']); ?>
-				</p>
-
-				<p>
-					<label><?php _e('Display  Description', 'event_espresso'); ?></label>
-					<?php echo EE_Form_Fields::select_input('display_desc', $yes_no_values, $this->_event->display_desc); ?>
-				</p>
-
-				<p>
-					<label><?php _e('Display  Registration Form', 'event_espresso'); ?></label>
-					<?php echo EE_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_event->display_reg_form, '', '', false); ?>
-				</p>
-
-				<p>
-					<label><?php _e('Alternate Registration Page', 'event_espresso'); ?></label>
-					<input name="externalURL" size="20" type="text" value="<?php echo $this->_event->externalURL; ?>">
-				</p>
-
-				<?php /* <p>
-				  <label><?php _e('Alternate Email Address', 'event_espresso'); ?>
-				  <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=alt_email_info">
-				  <span class="question">[?]</span>
-				  </a>
-				  </label>
-				  <input name="alt_email" size="20" type="text" value="<?php echo $this->_event->alt_email; ?>">
-				  </p> /* */ ?>
-				<?php
-			}
-
-			public function registration_options_meta_box() {
-
-				global $org_options;
-
-				$yes_no_values = array(
-					array('id' => true, 'text' => __('Yes', 'event_espresso')),
-					array('id' => false, 'text' => __('No', 'event_espresso'))
-				);
-				$additional_attendee_reg_info_values = array(
-					array('id' => '1', 'text' => __('No info required', 'event_espresso')),
-					array('id' => '2', 'text' => __('Personal Information only', 'event_espresso')),
-					array('id' => '3', 'text' => __('Full registration information', 'event_espresso'))
-				);
-				$event_status_values = array(
-					array('id' => 'A', 'text' => __('Public', 'event_espresso')),
-					array('id' => 'S', 'text' => __('Waitlist', 'event_espresso')),
-					array('id' => 'O', 'text' => __('Ongoing', 'event_espresso')),
-					array('id' => 'R', 'text' => __('Draft', 'event_espresso')),
-					array('id' => 'D', 'text' => __('Deleted', 'event_espresso'))
-				);
-				$event_status_values = apply_filters('FHEE_event_status_values', $event_status_values);
-
-				$default_reg_status_values = $this->_get_reg_status_array(array('RCN', 'RNA'));
-				array_unshift($default_reg_status_values, array('id' => "", 'text' => __('No Change', 'event_espresso')));
-				$template_args['is_active_select'] = EE_Form_Fields::select_input('is_active', $yes_no_values, $this->_event->is_active);
-				$template_args['event_status_select'] = EE_Form_Fields::select_input('new_event_status', $event_status_values, $this->_event->event_status, '', '', false);
-				$template_args['_event'] = $this->_event;
-				$template_args['allow_group_reg_select'] = EE_Form_Fields::select_input('allow_multiple', $yes_no_values, $this->_event->allow_multiple, 'id="group-reg"', '', false);
-				$template_args['additional_attendee_select'] = EE_Form_Fields::select_input('additional_attendee_reg_info', $additional_attendee_reg_info_values, $this->_event->event_meta['additional_attendee_reg_info']);
-				$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $additional_attendee_reg_info_values, $event_status_values, $default_reg_status_values);
-				$template_args['default_payment_status'] = EE_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_event->event_meta['default_reg_status']);
-				$template_args['display_description'] = EE_Form_Fields::select_input('display_desc', $yes_no_values, $this->_event->display_desc);
-				$template_args['display_registration_form'] = EE_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_event->display_reg_form, '', '', false);
-				$templatepath = EVENTS_TEMPLATE_PATH . 'event_registration_options.template.php';
-				espresso_display_template($templatepath, $template_args);
-			}
+		$default_reg_status_values = $this->_get_reg_status_array(array('RCN', 'RNA'));
+		array_unshift($default_reg_status_values, array('id' => "", 'text' => __('No Change', 'event_espresso')));
+		$template_args['is_active_select'] = EE_Form_Fields::select_input('is_active', $yes_no_values, $this->_event->is_active);
+		$template_args['event_status_select'] = EE_Form_Fields::select_input('new_event_status', $event_status_values, $this->_event->event_status, '', '', false);
+		$template_args['_event'] = $this->_event;
+		$template_args['allow_group_reg_select'] = EE_Form_Fields::select_input('allow_multiple', $yes_no_values, $this->_event->allow_multiple, 'id="group-reg"', '', false);
+		$template_args['additional_attendee_select'] = EE_Form_Fields::select_input('additional_attendee_reg_info', $additional_attendee_reg_info_values, $this->_event->event_meta['additional_attendee_reg_info']);
+		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $additional_attendee_reg_info_values, $event_status_values, $default_reg_status_values);
+		$template_args['default_payment_status'] = EE_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_event->event_meta['default_reg_status']);
+		$template_args['display_description'] = EE_Form_Fields::select_input('display_desc', $yes_no_values, $this->_event->display_desc);
+		$template_args['display_registration_form'] = EE_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_event->display_reg_form, '', '', false);
+		$templatepath = EVENTS_TEMPLATE_PATH . 'event_registration_options.template.php';
+		espresso_display_template($templatepath, $template_args);
+	}
 
 		public function primary_questions_group_meta_box() {
 				?>
