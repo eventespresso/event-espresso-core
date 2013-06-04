@@ -84,7 +84,8 @@ class EEM_Event  extends EEM_Base{
 			EEM_Event::status_draft =>  __("Draft", "event_espresso"),
 			EEM_Event::status_deleted =>  __("Deleted", "event_espresso"),
 			EEM_Event::status_denied =>  __("Denied", "event_espresso"),
-			EEM_Event::status_expired=>  __("Expired", "event_espresso")
+			EEM_Event::status_expired=>  __("Expired", "event_espresso"),
+			'auto-draft'=>  __("Auto Draft", "event_espresso")
 		));
 		$this->_tables = array(
 			'Event_CPT'=>new EE_Primary_Table('posts','ID'),
@@ -99,7 +100,7 @@ class EEM_Event  extends EEM_Base{
 				'EVT_slug'=>new EE_Slug_Field('post_name', __("Event Slug", "event_espresso"), false, ''),
 				'EVT_created'=>new EE_Datetime_Field('post_date', __("Date/Time Event Created", "event_espresso"), false, current_time('timestamp')),
 				'EVT_short_desc'=>new EE_Simple_HTML_Field('post_excerpt', __("Event Short Descripiton", "event_espresso"), false,''),
-				'STS_ID'=>new EE_Enum_Field('post_status', __("Event Status", "event_espresso"), false, EEM_Event::status_draft, array_keys($this->_statuses)),//will be a foreign key once status model made
+				'STS_ID'=>new EE_Enum_Field('post_status', __("Event Status", "event_espresso"), false, EEM_Event::status_draft, $this->_statuses),//will be a foreign key once status model made
 				'EVT_modified'=>new EE_Datetime_Field('post_modified', __("Dateim/Time Event Modified", "event_espresso"), true, current_time('timestamp')),
 				'EVT_wp_user'=>new EE_Integer_Field('post_author', __("Wordpress User ID", "event_espresso"), false,1),
 				'EVT_parent'=>new EE_Integer_Field('post_parent', __("Event Parent ID", "event_espresso"), true),
@@ -129,16 +130,9 @@ class EEM_Event  extends EEM_Base{
 			'Question_Group'=>new EE_HABTM_Relation('Event_Question_Group'),
 			'Venue'=>new EE_HABTM_Relation('Event_Venue')
 		);
+		require_once('strategies/EE_Default_CPT_Where_Conditions.strategy.php');
+		$this->_default_where_conditions_strategy = new EE_Default_CPT_Where_Conditions('espresso_events');
 		parent::__construct();
-	}
-	
-	/**
-	 * Adds 'EVT_post_type'=>'esp_event' as a where condition on all applicable queries,
-	 * even ones ran by other models which use this one
-	 * @return array like EEM_base::get_all's $query_params[0] (where conditions)
-	 */
-	protected function _get_universal_where_params(){
-		return array('EVT_post_type'=>'espresso_events');
 	}
 
 	/**
