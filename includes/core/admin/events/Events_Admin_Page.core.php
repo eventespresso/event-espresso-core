@@ -725,6 +725,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	public function date_time_metabox() {
 		global $org_options;
 
+		$event_id = is_object( $this->_cpt_model_obj ) ? $this->_cpt_model_obj->ID() : NULL;
+		$timezone = is_object( $this->_cpt_model_obj ) ? $this->_cpt_model_obj->timezone_string() : NULL; 
+
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		//	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Ticket.model.php');
@@ -734,14 +737,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
-		$DTM_MDL = EEM_Datetime::instance();
+		$DTM_MDL = EEM_Datetime::instance( $timezone );
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_DTT_helper.helper.php';
 
 		global $times;
 		// grab event times
-		$times = $DTM_MDL->get_all_event_dates($this->_event->id);
+		$times = $DTM_MDL->get_all_event_dates($event_id);
 		// grab reg times
-		//$reg_times = $DTM_MDL->get_all_reg_dates($this->_event->id);
+		//$reg_times = $DTM_MDL->get_all_reg_dates($this->_cpt_model_obj->ID());
 
 		$template_args['datetime_IDs'] = array();
 		$template_args['event_date_help_link'] = $this->_get_help_tab_link('event_date_info');
@@ -751,7 +754,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['org_options'] = $org_options;
 		$template_args['current_time_help_link'] = $this->_get_help_tab_link('current_time_info');
 		$template_args['current_date'] = date(get_option('date_format')) . ' ' . date(get_option('time_format'));
-		$template_args['event_timezone'] = EE_DTT_helper::ddtimezone($this->_event->id);
+		$template_args['event_timezone'] = EE_DTT_helper::ddtimezone($this->$event_id);
 		$template_args['use_event_timezones_template'] = apply_filters('FHEE_event_datetime_metabox_timezones_template', '', $template_args);
 		$template_args['template_args'] = $template_args;
 
