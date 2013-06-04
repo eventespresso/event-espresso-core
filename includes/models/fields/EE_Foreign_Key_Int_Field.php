@@ -7,4 +7,7 @@ class EE_Foreign_Key_Int_Field extends EE_Foreign_Key_Field_Base{
 	function prepare_for_set($value_inputted_for_field_on_model_object) {
 		return absint($value_inputted_for_field_on_model_object);
 	}
+	function prepare_for_set_from_db($value_found_in_db_for_model_object) {
+		return intval($value_found_in_db_for_model_object);
+	}
 }

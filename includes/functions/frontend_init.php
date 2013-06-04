@@ -12,7 +12,13 @@ function espresso_load_jquery() {
 
 function espresso_frontend_init() {
 
-
+//echo "espresso forntnedinit";
+require_once('EEM_Term_Relationship.model.php');
+var_dump(EEM_Term_Relationship::instance()->get_all());
+require_once('EEM_Term_Taxonomy.model.php');
+var_dump(EEM_Term_Taxonomy::instance()->get_all());
+	require_once('EEM_Term.model.php');
+	var_dump(EEM_Term::instance()->get_all());
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );	
 	global $espresso_reg_page;
 	if ( $espresso_reg_page = espresso_test_for_reg_page() ) {

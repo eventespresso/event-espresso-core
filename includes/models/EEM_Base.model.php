@@ -1433,6 +1433,28 @@ abstract class EEM_Base extends EE_Base{
 		}
 		throw new EE_Error(sprintf(__("There is no Primary Key defined on model %s",'event_espresso'),get_class($this)));
 	}
+	/**
+	 * Flag indicating whether this model has a primary key or not
+	 * @var boolean
+	 */
+	protected $_has_primary_key_field=null;
+	/**
+	 * Returns whether or not not there is a primary key on this model.
+	 * Internally does some caching.
+	 * @return boolean
+	 */
+	public function has_primary_key_field(){
+		if($this->_has_primary_key_field === null){
+			try{
+				$this->get_primary_key_field();
+				$this->_has_primary_key_field = true;
+			}catch(EE_Error $e){
+				$this->_has_primary_key_field = false;
+			}
+		}
+		return $this->_has_primary_key_field;
+		
+	}
 	
 	/**
 	 * Finds the first field of type $field_class_name.
@@ -1456,9 +1478,12 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	public function get_foreign_key_to($model_name){
 		foreach($this->field_settings() as $field){			
-			if(is_subclass_of($field, 'EE_Foreign_Key_Field_Base')
-					&& $field->get_model_name_pointed_to() == $model_name){
-				return $field;
+			if(is_subclass_of($field, 'EE_Foreign_Key_Field_Base')){
+				if(is_array($field->get_model_name_pointed_to() && in_array($model_name,$field->get_model_name_pointed_to()))){
+					return $field;
+				}elseif( ! is_array($field->get_model_name_pointed_to()) && $field->get_model_name_pointed_to() == $model_name){
+					return $field;
+				}
 			}
 		}
 		throw new EE_Error(sprintf(__("There is no foreign key field pointing to model %s on model %s",'event_espresso'),$model_name,get_class($this)));
@@ -1494,7 +1519,7 @@ abstract class EEM_Base extends EE_Base{
 	* 
 	* 		@access		private
 	* 		@param		array		$attendees		
-	*		@return 	EE_Base_Class[]		array on success, FALSE on fail
+	*		@return 	EE_Base_Class[]		array keys are primary keys (if there is a primary key on the model. if not, numerically indexed)
 	*/	
 	protected function _create_objects( $rows = array() ) {
 		$this->_include_php_class();
@@ -1502,6 +1527,7 @@ abstract class EEM_Base extends EE_Base{
 		if(empty($rows)){
 			return array();
 		}
+		$count_if_model_has_no_primary_key = 0;
 		foreach ( $rows as $row ) {
 			if(empty($row)){//wp did its weird thing where it returns an array like array(0=>null), which is totally not helpful...
 				return array();
@@ -1512,7 +1538,7 @@ abstract class EEM_Base extends EE_Base{
 			$classInstance->set_timezone( $this->_timezone );
 
 			//make sure if there is any timezone setting present that we set the timezone for the object
-			$array_of_objects[$classInstance->ID()]=$classInstance;
+			$array_of_objects[$this->has_primary_key_field() ? $classInstance->ID() : $count_if_model_has_no_primary_key++]=$classInstance;
 			//also, for all the relations of type BelgonsTo, see if we can cache
 			//those related models
 			//(we could do this for other relations too, but if there are conditions
