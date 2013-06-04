@@ -171,11 +171,9 @@ abstract class EEM_Base extends EE_Base{
 		if( ! $this->_default_where_conditions_strategy){
 			//nothing was set during chidl consturctor, so set default
 			$this->_default_where_conditions_strategy = new EE_Default_Where_Conditions();
-		}elseif($this->_default_where_conditions_strategy instanceof EE_Default_Where_Conditions){
-			$this->_default_where_conditions_strategy->_finalize_construct($this);
-		}else{
-			throw new EE_Error(sprintf(__("Default Where Condition Strategy on model '%s' was not set properly. '%s' is not a EE_Default_where_conditions strategy", "event_espresso"),get_class($this),$this->_default_where_conditions_strategy));
 		}
+		$this->_default_where_conditions_strategy->_finalize_construct($this);
+		
 	}
 	/**
 	 * Gets all the EE_Base_Class objects which match the $query_params, by querying the DB.
