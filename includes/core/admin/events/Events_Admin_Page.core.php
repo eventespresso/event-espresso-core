@@ -796,18 +796,18 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			}						
 		}
 		
-		$table_class = apply_filters('filter_hook_espresso_pricing_table_class_filter', 'event_editor_pricing');
+		$table_class = apply_filters('FHEE_pricing_table_class_filter', 'event_editor_pricing');
 
 		$template_args['show_no_event_price_msg'] = $show_no_event_price_msg;
 		$template_args['no_price_message_error'] = $show_no_event_price_msg ? __('There are currently no Prices set for this Event. Please see the Event Pricing section for more details.', 'event_espresso') : '';
-		$template_args['no_price_message'] = $show_no_event_price_msg ? apply_filters('filter_hook_epsresso_show_no_event_price_msg', __('Please enter at lease one Event Price for this Event to ensure that this Event displays and functions properly.'), 'event_espresso') : ''; 
+		$template_args['no_price_message'] = $show_no_event_price_msg ? apply_filters('FHEE_show_no_event_price_msg', __('Please enter at lease one Event Price for this Event to ensure that this Event displays and functions properly.'), 'event_espresso') : ''; 
 		$template_args['PRT'] =  $row_args['PRT'] = $PRT;
 		$template_args['org_options'] = $row_args['org_options'] = $org_options;
 		$template_args['event'] = $row_args['event'] = $this->_cpt_model_obj;
 		$template_args['price_rows'] = array();
-
+		$row_template = apply_filters('FHEE_events_pricing_meta_box_row_template', EVENTS_TEMPLATE_PATH . 'edit_event_price_metabox_content_row.template.php');
 		if ( !empty( $all_prices ) ) :
-			$row_template = EVENTS_TEMPLATE_PATH . 'edit_event_price_metabox_content_row.template.php';
+			
 			foreach ( $all_prices as $price_type => $prices ) :
 				foreach ( $prices as $price ) :
 					if ( !$price->deleted() ) :
@@ -845,14 +845,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				endforeach;
 			endforeach;
 			else :
-				$row_template = EVENTS_TEMPLATE_PATH . 'quick_add_event_price_metabox_content_row.template.php';
 				$template_args['price_rows'][] = espresso_display_template($row_template, $row_args, TRUE);
 			endif;
 			$price_types = empty( $all_prices ) ? array(  array( 'id' => 2, 'text' => __('Event Price', 'event_espresso'), 'order' => 0 )) : $price_types;
 			$template_args['new_ticket_price_selector'] = EE_Form_Fields::select_input( 'new_ticket_price[PRT_ID]', $price_types, 2, 'id="new-ticket-price-type-ID"', 'add-new-ticket-price-input' );
 			$template_args['price_types'] = $price_types;
 
-			$main_template = EVENTS_TEMPLATE_PATH . 'event_price_metabox_content.template.php';
+			$main_template = apply_filters('FHEE_events_pricing_meta_box_main_template', EVENTS_TEMPLATE_PATH . 'event_price_metabox_content.template.php' );
 			espresso_display_template($main_template, $template_args);
 	}
 

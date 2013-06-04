@@ -43,7 +43,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 			);*/
 	
-		add_filter('espresso_hook_espresso_show_no_event_price_msg', array($this, 'no_price_message' ) );
+		add_filter('FHEE_show_no_event_price_msg', array($this, 'no_price_message' ), 10 );
+		add_filter('FHEE_events_pricing_meta_box_row_template', array( $this, 'new_price_row_template' ), 10 );
+		add_filter('FHEE_events_pricing_meta_box_main_template', array( $this, 'new_price_main_template'), 10 );
 
 	}
 
@@ -54,6 +56,18 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		//if we were going to remove the default metabox we'd add this.
 		//remove_meta_box( 'espresso_event_editor_pricing', $this->_adminpage_obj->get_current_screen()->id, 'normal' );
 		return;
+	}
+
+
+
+	public function new_price_row_template( $template ) {
+		return PRICING_TEMPLATE_PATH . 'edit_event_price_metabox_content_row.template.php';
+	}
+
+
+
+	public function new_price_main_template( $template ) {
+		return PRICING_TEMPLATE_PATH . 'event_price_metabox_content.template.php';
 	}
 
 
