@@ -32,6 +32,9 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowe
 class EE_Form_Fields {
 	
 	// used for system questions
+	private static $_states = array();
+	
+	// used for system questions
 	private static $_countries = array();
 
 	/**
@@ -440,37 +443,47 @@ class EE_Form_Fields {
 	/**
 	 * generate_form_input
  	 * 
-	 * @param array $question where keys are specific values. you need to inspect this function's code
+	 * @param object $QST EE_Question_Form_Input
 	 * to see exactly what keys are expected
 	 * @return string HTML
 	 */
-	static function generate_form_input( $question ) {
+	static function generate_form_input( EE_Question_Form_Input $QST ) {
 		
-		if ( isset($question['QST_admin_only']) && $question['QST_admin_only'] && ! is_admin() ) {
+		if ( isset( $QST->QST_admin_only) && $QST->QST_admin_only && ! is_admin() ) {
 			return;
 		}
 		
-		//printr( $question, '$question  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$question = self::_load_system_dropdowns( $question );
-		//printr( $question, '$question  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$display_text = isset( $question['QST_display_text'] ) ? $question['QST_display_text'] : FALSE;
-		$answer = isset( $question['ANS_value'] ) ? $question['ANS_value'] : '';
-		$input_name = isset( $question['QST_input_name'] ) ? $question['QST_input_name'] : FALSE;
-		$input_id = isset( $question['QST_input_id'] ) ? $question['QST_input_id'] : '';
-		$input_class = isset( $question['QST_input_class'] ) ? $question['QST_input_class'] : '';
-		$disabled = isset( $question['disabled'] ) ? $question['disabled'] : '';
-		$required_label = apply_filters( 'FHEE_required_form_input_label', '<em>*</em>' );
-		$required = isset( $question['QST_required'] ) && $question['QST_required'] ? array( 'label' => $required_label, 'class' => 'required', 'title' => $question['QST_required'] ) : array();
-		$label_class = 'espresso-form-input-lbl';		
-		$options = isset( $question['QST_options'] ) ? self::prep_answer_options( $question['QST_options'] ) : array();
-		$system_ID = isset( $question['QST_system'] ) ? $question['QST_system'] : NULL;
-		
-		switch ( $question['QST_type'] ){
-			
-			case 'TEXT' :
-					return self::text( $display_text, $answer, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID );
-				break;
+//		printr( $QST, '$QST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		$QST = self::_load_system_dropdowns( $QST );
+//		printr( $QST, '$QST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		$display_text = isset( $QST->get('QST_display_text') ) ? $QST->get('QST_display_text') : FALSE;
+//		$answer = isset( $QST->ANS_value ) ? $QST->ANS_value : '';
+//		$input_name = isset( $QST->QST_input_name ) ? $QST->QST_input_name : FALSE;
+//		$input_id = isset( $QST->QST_input_id ) ? $QST->QST_input_id : '';
+//		$input_class = isset( $QST->QST_input_class ) ? $QST->QST_input_class : '';
+//		$disabled = isset( $QST->disabled ) ? $QST->disabled : '';
+//		$required_label = apply_filters( 'FHEE_required_form_input_label', '<em>*</em>' );
+//		$required = isset( $QST->QST_required ) && $QST->QST_required ? array( 'label' => $required_label, 'class' => 'required', 'title' => $QST->QST_required ) : array();
+//		$label_class = 'espresso-form-input-lbl';		
+//		$options = isset( $QST->QST_options ) ? self::prep_answer_options( $QST->QST_options ) : array();
+//		$system_ID = isset( $QST->QST_system ) ? $QST->QST_system : NULL;
 
+		$display_text = $QST->get('QST_display_text');
+		$answer = $QST->get('ANS_value');
+		$input_name = $QST->get('QST_input_name');
+		$input_id = $QST->get('QST_input_id');
+		$input_class = $QST->get('QST_input_class');
+		$disabled = $QST->get('QST_disabled') ? ' disabled="disabled"' : '';
+		$required_label = apply_filters( 'FHEE_required_form_input_label', '<em>*</em>' );
+		$QST_required = $QST->get('QST_required'); 
+		$required = $QST_required ? array( 'label' => $required_label, 'class' => 'required', 'title' => $QST_required ) : array();
+		$label_class = 'espresso-form-input-lbl';
+		$QST_options = $QST->options(); 
+		$options = $QST_options ? self::prep_answer_options( $QST_options ) : array();
+		$system_ID = $QST->get('QST_system');
+		
+		switch ( $QST->get('QST_type') ){
+			
 			case 'TEXTAREA' :
 					return self::textarea( $display_text, $answer, $input_name, $input_id, $input_class, array(), $required, $label_class, $disabled, $system_ID );
 				break;
@@ -489,6 +502,11 @@ class EE_Form_Fields {
 
 			case 'DATE' :
 					return self::datepicker( $display_text, $answer, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID );
+				break;
+
+			case 'TEXT' :
+			default:
+					return self::text( $display_text, $answer, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID );
 				break;
 
 		}
@@ -583,7 +601,7 @@ class EE_Form_Fields {
 		$label_html = "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
 		$label_html = apply_filters( 'FHEE_form_field_label_html', $label_html );
 
-		$input_html = "\n\t\t\t" . '<textarea name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" rows="' . $dimensions['rows'] . '" cols="' . $dimensions['cols'] . '"  title="' . $required['msg'] . '" ' . $disabled . ' ' . $extra . '/>' . $answer . '</textarea>';
+		$input_html = "\n\t\t\t" . '<textarea name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" rows="' . $dimensions['rows'] . '" cols="' . $dimensions['cols'] . '"  title="' . $required['msg'] . '" ' . $disabled . ' ' . $extra . '>' . $answer . '</textarea>';
 		$input_html = apply_filters( 'FHEE_form_field_input_html', $input_html );
 		
 		return $label_html . $input_html;		
@@ -610,10 +628,12 @@ class EE_Form_Fields {
 	 * @return string HTML
 	 */
 	static function select( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE ) {
+				
 		// need these
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
 			return NULL;
 		}
+
 		// prep the answer
 		$answer = is_array( $answer ) ? self::prep_answer( array_shift( $answer )) : self::prep_answer( $answer );
 		// prep the required array
@@ -629,13 +649,14 @@ class EE_Form_Fields {
 		$label_html = "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
 		$label_html = apply_filters( 'FHEE_form_field_label_html', $label_html );
 		
-		$input_html = "\n\t\t\t" . '<select name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" title="' . $required['msg'] . '" ' . $disabled . ' ' . $extra . '/>';
+		$input_html = "\n\t\t\t" . '<select name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" title="' . $required['msg'] . '" ' . $disabled . ' ' . $extra . '>';
 		$selected = ( empty( $answer )) ? ' selected="selected"' : '';
 		$input_html .= "\n\t\t\t\t" . '<option value=""' . $selected . '>' . __(' - please select - ', 'event_espresso') . '</option>';
-
+		
+		//printr( $options, '$options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		foreach ( $options as $key => $value ) {
 			// if value is an array, then create option groups, else create regular ol' options
-			$input_html .= is_array( $value ) ? self::_generate_select_option_group( $key, $value, $answer ) : self::_generate_select_option( $key, $value, $answer );
+			$input_html .= is_array( $value ) ? self::_generate_select_option_group( $key, $value, $answer ) : self::_generate_select_option( $value->name(), $value->value(), $answer );
 		}
 
 		$input_html .= "\n\t\t\t" . '</select>';
@@ -660,8 +681,8 @@ class EE_Form_Fields {
 	 */
 	private static function _generate_select_option_group( $key, $value, $answer ){
 		$html = "\n\t\t\t\t" . '<optgroup label="' . self::prep_option_value( $key ) . '">';
-		foreach ( $value as $option ) {			
-			$html .= self::_generate_select_option( $option['QSO_name'], $option['QSO_value'], $answer );
+		foreach ( $value as $QSO ) {	
+			$html .= self::_generate_select_option( $QSO->name(), $QSO->value(), $answer );
 		}
 		$html .= "\n\t\t\t\t" . '</optgroup>';
 		return $html;
@@ -680,6 +701,7 @@ class EE_Form_Fields {
 			$value = self::prep_answer( $value );
 			$key = self::prep_answer( $key );
 			$selected = ( $answer == $key ) ? ' selected="selected"' : '';
+			//echo '<h4>' . $answer . ' = ' . $key . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 			return "\n\t\t\t\t" . '<option value="' . self::prep_option_value( $key ) . '"' . $selected . '> ' . $value . '&nbsp;&nbsp;&nbsp;</option>';					
 	}
 
@@ -711,30 +733,32 @@ class EE_Form_Fields {
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
-		$disabled = empty( $answer ) ? '' : $disabled;
+		$disabled = ! empty( $answer ) ? $disabled : '';
 		// ya gots ta have style man!!!
 		$rdio_class = is_admin() ? 'ee-admin-radio-lbl' : $label_class;		
-		$class = empty( $class ) ? 'espresso-radio-btn-inp' : $class;
-		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
+		$class = ! empty( $class ) ? $class : 'espresso-radio-btn-inp';
 		$extra = apply_filters( 'FHEE_additional_form_field_attributes', '' );
 		
 		$label_html = "\n\t\t\t" . '<label class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
 		$label_html = apply_filters( 'FHEE_form_field_label_html', $label_html );
 		
-		$input_html = "\n\t\t\t" . '<ul class="espresso-radio-btn-options-ul ' . $label_class . '">';
-		
-		foreach ( $options as $key => $value ) {
+		$input_html = "\n\t\t\t" . '<ul id="' . $id . '-ul" class="espresso-radio-btn-options-ul ' . $label_class . ' ' . $class . '-ul">';
 
-			$key = self::prep_option_value( $key );
-			$size = strlen( $value ) < 25 ? ' class="small-lbl"' : '';
-			$value = self::prep_answer( $value );
-			$checked = ( $key == $answer ) ? ' checked="checked"' : '';
+		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
+		$class .= ! empty( $required['class'] ) ? ' ' . $required['class'] : '';
+		
+		foreach ( $options as $OPT ) {
+			$key = self::prep_option_value( $OPT->name() );
+			$size = self::get_label_size_class( $OPT->value() );
+			
+			$value = self::prep_answer( $OPT->value() );
+			$checked = ( $key == $answer ) || ( empty( $key ) == empty( $answer )) ? ' checked="checked"' : '';
 			$opt = '-' . sanitize_key( $key );
 
 			$input_html .= "\n\t\t\t\t" . '<li' . $size . '>';
 			$input_html .= "\n\t\t\t\t\t" . '<label class="' . $rdio_class . ' espresso-radio-btn-lbl">';
 			$input_html .= $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';
-			$input_html .= "\n\t\t\t\t\t\t" . '<input type="radio" name="' . $name . '" id="' . $id . $opt . '" class="' . $class . ' ' . $required['class'] . '" value="' . $key . '" title="' . $required['msg'] . '" ' . $disabled . $checked . ' ' . $extra . '/>';
+			$input_html .= "\n\t\t\t\t\t\t" . '<input type="radio" name="' . $name . '" id="' . $id . $opt . '" class="' . $class . '" value="' . $key . '" title="' . $required['msg'] . '" ' . $disabled . $checked . ' ' . $extra . '/>';
 			$input_html .= ! $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';
  			$input_html .= "\n\t\t\t\t\t" . '</label>';
 			$input_html .= "\n\t\t\t\t" . '</li>';
@@ -786,27 +810,29 @@ class EE_Form_Fields {
 		// ya gots ta have style man!!!
 		$rdio_class = is_admin() ? 'ee-admin-radio-lbl' : $label_class;		
 		$class = empty( $class ) ? 'espresso-radio-btn-inp' : $class;
-		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
 		$extra = apply_filters( 'FHEE_additional_form_field_attributes', '' );
 		
 		$label_html = "\n\t\t\t" . '<label class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
 		$label_html = apply_filters( 'FHEE_form_field_label_html', $label_html );
 
-		$input_html = "\n\t\t\t" . '<ul class="espresso-checkbox-options-ul ' . $label_class . '">';
+		$input_html = "\n\t\t\t" . '<ul id="' . $id . '-ul" class="espresso-checkbox-options-ul ' . $label_class . ' ' . $class . '-ul">';
+
+		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
+		$class .= ! empty( $required['class'] ) ? ' ' . $required['class'] : '';
 		
-		foreach ( $options as $key => $value ) {
+		foreach ( $options as $OPT ) {
 
 			$checked = is_array( $answer ) && in_array( $value, $answer ) ? ' checked="checked"' : '';
 			
-			$key = self::prep_option_value( $key );
-			$size = strlen( $value ) < 25 ? ' class="small-lbl"' : '';
-			$value = self::prep_answer( $value );
+			$key = self::prep_option_value( $OPT->name() );
+			$size = self::get_label_size_class( $OPT->value() );
+			$value = self::prep_answer( $OPT->value() );
 			$opt = '-' . sanitize_key( $key );
 
 			$input_html .= "\n\t\t\t\t" . '<li' . $size . '>';
 			$input_html .= "\n\t\t\t\t\t" . '<label class="' . $rdio_class . ' espresso-checkbox-lbl">';
 			$input_html .= $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';
-			$input_html .= "\n\t\t\t\t\t\t" . '<input type="checkbox" name="' . $name . '" id="' . $id . $opt . '" class="' . $class . ' ' . $required['class'] . '" value="' . $key . '" title="' . $required['msg'] . '" ' . $disabled . $checked . ' ' . $extra . '/>';
+			$input_html .= "\n\t\t\t\t\t\t" . '<input type="checkbox" name="' . $name . '" id="' . $id . $opt . '" class="' . $class . '" value="' . $key . '" title="' . $required['msg'] . '" ' . $disabled . $checked . ' ' . $extra . '/>';
 			$input_html .= ! $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';
  			$input_html .= "\n\t\t\t\t\t" . '</label>';
 			$input_html .= "\n\t\t\t\t" . '</li>';
@@ -915,15 +941,19 @@ class EE_Form_Fields {
 
 	/**
 	 * 	prep_answer_options
-	 * @param array $option_values
+	 * @param array $QSOs  array of EE_Question_Option objects
 	 * @return array 
 	 */
-	static function prep_answer_options( $option_values = array() ){
+	static function prep_answer_options( $QSOs = array() ){
 		$options = array();
-		if ( is_array( $option_values ) && ! empty( $option_values )) {
-			foreach( $option_values as $option_value ) {
-				if ( ! $option_value['QSO_deleted'] ) {
-					$options[ $option_value['QSO_name'] ] = $option_value['QSO_value'];
+		if ( is_array( $QSOs ) && ! empty( $QSOs )) {
+			foreach( $QSOs as $QSO ) {
+				if ( ! $QSO->deleted() ) {
+					if ( $QSO->opt_group() ) {
+						$options[ $QSO->opt_group() ][] = $QSO;
+					} else {
+						$options[] = $QSO;
+					}					
 				}				
 			}	
 		}
@@ -958,6 +988,42 @@ class EE_Form_Fields {
 
 
 
+	/**
+	 * 	get_label_size_class
+	 * @param string 	$value
+	 * @return string 
+	 */
+	static function get_label_size_class( $value = FALSE ){
+			if ( $value === FALSE || $value == '' ) {
+				return ' class="medium-lbl"';
+			}
+			// determine length of option value
+			$val_size = strlen( $value );
+			switch( $val_size ){
+				case $val_size < 3 :
+					$size =  ' class="nano-lbl"';
+					break;
+				case $val_size < 6 :
+					$size =  ' class="micro-lbl"';
+					break;
+				case $val_size < 12 :
+					$size =  ' class="tiny-lbl"';
+					break;
+				case $val_size < 25 :
+					$size =  ' class="small-lbl"';
+					break;
+				case $val_size < 50 :
+					$size =  ' class="medium-lbl"';
+					break;				
+				default:
+					$size =  ' class="big-lbl"';
+					break;
+			}
+		return $size;
+	}
+
+
+
 
 
 
@@ -967,10 +1033,9 @@ class EE_Form_Fields {
 	 * 	get_countries
 	 * @return array 
 	 */
-	private static function get_countries(){
+	private static function get_active_countries(){
 		if ( empty( self::$_countries )) {
-			self::$_countries = EEM_Country::instance()->get_all_where( array( 'CNT_active' => TRUE ));
-			//printr( self::$_countries, 'self::$_countries  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			self::$_countries = EEM_Country::instance()->get_all_active_countries();
 		}
 		return self::$_countries;
 	}
@@ -978,238 +1043,146 @@ class EE_Form_Fields {
 
 
 	/**
-	 * 	load_system_dropdowns
-	 * @param array 	$options
+	 * 	get_countries
 	 * @return array 
 	 */
-	private static function _load_system_dropdowns( $question ){
-		
-		// make sure required is an array
-		switch ( $question['QST_system'] ) {
-			
-			case 'country' :
-			
-				if ( $countries = self::get_countries() ) {
-					$question['QST_type'] = 'DROPDOWN';
-					foreach ( $countries as $country ) {
-						$question['QST_options'][] = array (
-							'QSO_name' => $country->get( 'CNT_ISO' ),
-							'QSO_value' => $country->get( 'CNT_name' ),
-							'QSO_deleted' => FALSE
-						);				
-					}
-				}
-				
-			break;
-			
-			case 'state' :
-			
-				if ( $countries = self::get_countries() ) {
-					if ( $states = EEM_State::instance()->get_all_where( array( 'CNT_ISO' => array_keys( $countries ), 'STA_active' => 1 ), NULL, 'ASC', array( 'CNT_ISO' => 'IN', 'STA_active' => '=' ))) {
-						//printr( $states, '$states  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-						$question['QST_type'] = 'DROPDOWN';
-						// if multiple countries, we'll create option groups within the dropdown
-						if ( count( $countries ) > 1 ) {
-							// loop thru countries
-							foreach ( $countries as $CNT_ISO => $country ) {
-								// first gather states/provs
-								$state_options = array();
-								foreach ( $states as $STA_ID => $state ) {
-									// only adds states/provs for this country
-									if ( $state->get( 'CNT_ISO' ) == $CNT_ISO ) {
-										$state_options[ $state->get( 'STA_ID' ) ] = array (
-											'QSO_name' => $state->get( 'STA_ID' ),
-											'QSO_value' => $state->get( 'STA_name' ),
-											'QSO_deleted' => FALSE
-										);
-										// remove state from $states array so we don't have to loop over it again
-										unset( $states[ $STA_ID ] );						
-									}			
-								}	
-								// then create the option group for the country
-								$question['QST_options'][] = array (
-									'QSO_name' => $country->get( 'CNT_name' ),
-									'QSO_value' => $state_options,
-									'QSO_deleted' => FALSE
-								);															
-							}						
-						} else {
-							// just create options out of the states
-							foreach ( $states as $STA_ID => $state ) {
-								$question['QST_options'][] = array (
-									'QSO_name' => $state->get( 'STA_ID' ),
-									'QSO_value' => $state->get( 'STA_name' ),
-									'QSO_deleted' => FALSE
-								);				
-							}
-						}						
-					}
-				}
-				
-			break;
-			
+	private static function get_active_states(){
+		if ( empty( self::$_states )) {
+			self::$_states = EEM_State::instance()->get_all_states_of_active_countries();
+
 		}
-		//printr( $question, '$question  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		return $question;
+		return self::$_states;
 	}
 
 
 
+	/**
+	 * 	get_countries
+	 * @return array 
+	 */
+	private static function get_all_countries(){
+		if ( empty( self::$_all_countries )) {
+			self::$_countries = EEM_Country::instance()->get_all_countries();
+		}
+		return self::$_countries;
+	}
 
-/*			switch ( $question['QST_system'] ) {
-				
-				case 1:
-						$QST_values = array( 
-								'QST_display_text' => 'First Name',
-								'QST_admin_label' => 'First Name - System Question',
-								'QST_system' => 1,
-								'QST_type' => 'TEXT',
-								'QST_required' => 1,
-								'QST_required_text' => 'This field is required',
-								'QST_order' => 1,
-								'QST_admin_only' => 0,
-								'QST_wp_user' => 1,
-								'QST_deleted' => 0
-							);
-					break;
-					
-				case 2:
-						$QST_values = array( 
-								'QST_display_text' => 'Last Name',
-								'QST_admin_label' => 'Last Name - System Question',
-								'QST_system' => 2,
-								'QST_type' => 'TEXT',
-								'QST_required' => 1,
-								'QST_required_text' => 'This field is required',
-								'QST_order' => 2,
-								'QST_admin_only' => 0,
-								'QST_wp_user' => 1,
-								'QST_deleted' => 0
-							);
-					break;
-					
-				case 3:
-						$QST_values = array( 
-								'QST_display_text' => 'Email Address',
-								'QST_admin_label' => 'Email Address - System Question',
-								'QST_system' => 3,
-								'QST_type' => 'TEXT',
-								'QST_required' => 1,
-								'QST_required_text' => 'This field is required',
-								'QST_order' => 3,
-								'QST_admin_only' => 0,
-								'QST_wp_user' => 1,
-								'QST_deleted' => 0
-							);
-					break;
-					
-				case 4:
-						$QST_values = array( 
-								'QST_display_text' => 'Address',
-								'QST_admin_label' => 'Address - System Question',
-								'QST_system' => 4,
-								'QST_type' => 'TEXT',
-								'QST_required' => 0,
-								'QST_required_text' => 'This field is required',
-								'QST_order' => 4,
-								'QST_admin_only' => 0,
-								'QST_wp_user' => 1,
-								'QST_deleted' => 0
-							);
-					break;
-					
-				case 5:
-						$QST_values = array( 
-								'QST_display_text' => 'Address2',
-								'QST_admin_label' => 'FirAddress2 - System Question',
-								'QST_system' => 5,
-								'QST_type' => 'TEXT',
-								'QST_required' => 0,
-								'QST_required_text' => 'This field is required',
-								'QST_order' => 5,
-								'QST_admin_only' => 0,
-								'QST_wp_user' => 1,
-								'QST_deleted' => 0
-							);
-					break;
-					
-				case 6:
-						$QST_values = array( 
-								'QST_display_text' => 'City',
-								'QST_admin_label' => 'City - System Question',
-								'QST_system' => 6,
-								'QST_type' => 'TEXT',
-								'QST_required' => 0,
-								'QST_required_text' => 'This field is required',
-								'QST_order' => 6,
-								'QST_admin_only' => 0,
-								'QST_wp_user' => 1,
-								'QST_deleted' => 0
-							);
-					break;
-					
-				case 7:
-						$QST_values = array( 
-								'QST_display_text' => 'State / Province',
-								'QST_admin_label' => 'State / Province - System Question',
-								'QST_system' => 7,
-								'QST_type' => 'TEXT',
-								'QST_required' => 0,
-								'QST_required_text' => 'This field is required',
-								'QST_order' => 7,
-								'QST_admin_only' => 0,
-								'QST_wp_user' => 1,
-								'QST_deleted' => 0
-							);
-					break;
-					
-				case 8:
-						$QST_values = array( 
-								'QST_display_text' => 'Zip / Postal Code',
-								'QST_admin_label' => 'Zip / Postal Code - System Question',
-								'QST_system' => 8,
-								'QST_type' => 'TEXT',
-								'QST_required' => 0,
-								'QST_required_text' => 'This field is required',
-								'QST_order' => 8,
-								'QST_admin_only' => 0,
-								'QST_wp_user' => 1,
-								'QST_deleted' => 0
-							);
-					break;
-					
-				case 9 : 
-						$QST_values = array( 
-								'QST_display_text' => 'Country',
-								'QST_admin_label' => 'Country - System Question',
-								'QST_system' => 9,
-								'QST_type' => 'TEXT',
-								'QST_required' => 0,
-								'QST_required_text' => 'This field is required',
-								'QST_order' => 9,
-								'QST_admin_only' => 0,
-								'QST_wp_user' => 1,
-								'QST_deleted' => 0
-							);
-					break;
-					
-				case 10:
-						$QST_values = array( 
-								'QST_display_text' => 'Phone Number',
-								'QST_admin_label' => 'Phone Number - System Question',
-								'QST_system' => 10,
-								'QST_type' => 'TEXT',
-								'QST_required' => 0,
-								'QST_required_text' => 'This field is required',
-								'QST_order' => 10,
-								'QST_admin_only' => 0,
-								'QST_wp_user' => 1,
-								'QST_deleted' => 0
-							);
-					break;
-					
-			}		*/
 
+
+	/**
+	 * 	get_countries
+	 * @return array 
+	 */
+	private static function get_all_states(){
+		if ( empty( self::$_all_states )) {
+			self::$_states = EEM_State::instance()->get_all_states_of_active_countries();
+
+		}
+		return self::$_states;
+	}
+
+
+
+	/**
+	 * 	load_system_dropdowns
+	 * @param array 	$QST
+	 * @return array 
+	 */
+	private static function _load_system_dropdowns( $QST ){	
+		$QST_system = $QST->get('QST_system');
+		switch ( $QST_system ) {
+			case 'state' :
+				$QST = self::generate_state_dropdown( $QST );
+				break;			
+			case 'country' :
+				$QST = self::generate_country_dropdown( $QST );
+				break;			
+			case 'admin-state' :
+				$QST = self::generate_state_dropdown( $QST, TRUE );
+				break;			
+			case 'admin-country' :
+				$QST = self::generate_country_dropdown( $QST, TRUE );
+				break;			
+		}
+		//printr( $QST, '$QST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		return $QST;
+	}
+
+
+
+	/**
+	 * 	generate_state_dropdown
+	 * @param array 	$QST
+	 * @return array 
+	 */
+	public static function generate_state_dropdown( $QST, $get_all = FALSE ){
+		$countries = $get_all ? self::get_all_countries() : self::get_active_countries();
+		if ( $countries ) {	
+			$states = EEM_State::instance()->get_all_active_states_for_these_countries( $countries );
+			if ( $states ) {
+				//printr( $states, '$states  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+				$QST->set( 'QST_type', 'DROPDOWN' );
+				// if multiple countries, we'll create option groups within the dropdown
+				if ( count( $countries ) > 1 ) {
+					// loop thru countries
+					foreach ( $countries as $CNT_ISO => $country ) {
+						// first gather states/provs
+						$state_options = array();
+						foreach ( $states as $STA_ID => $state ) {
+							// only adds states/provs for this country
+							if ( $state->get( 'CNT_ISO' ) == $CNT_ISO ) {
+//								$state_options[ $state->get( 'STA_ID' ) ] = new EE_Question_Option( array (
+								$QSO = new EE_Question_Option( array (
+										'QSO_name' => $state->get( 'STA_ID' ),
+										'QSO_value' => $state->get( 'STA_name' ),
+										'QSO_opt_group' => $country->get( 'CNT_name' ),
+										'QST_ID' => $QST->get( 'QST_ID' ),
+										'QSO_deleted' => FALSE
+									));
+								$QST->add_temp_option( $QSO );
+								// remove state from $states array so we don't have to loop over it again
+								unset( $states[ $STA_ID ] );						
+							}			
+						}	
+					}						
+				} else {
+					// just create options out of the states			
+					$QSO = new EE_Question_Option( array (
+							'QSO_name' => $state->get( 'STA_ID' ),
+							'QSO_value' => $state->get( 'STA_name' ),
+							'QST_ID' => $QST->get( 'QST_ID' ),
+							'QSO_deleted' => FALSE
+						));
+					$QST->add_temp_option( $QSO );												
+				}						
+			}
+		}
+		return $QST;
+	}
+
+
+
+	/**
+	 * 	generate_country_dropdown
+	 * @param array 	$question
+	 * @return array 
+	 */
+	public static function generate_country_dropdown( $QST, $get_all = FALSE ){
+		$countries = $get_all ? self::get_all_countries() : self::get_active_countries();
+		if ( $countries ) {	
+			$QST->set( 'QST_type', 'DROPDOWN' );
+			foreach ( $countries as $country ) {	
+				$QSO = new EE_Question_Option( array (
+						'QSO_name' => $country->get( 'CNT_ISO' ),
+						'QSO_value' => $country->get( 'CNT_name' ),
+						'QST_ID' => $QST->get( 'QST_ID' ),
+						'QSO_deleted' => FALSE
+					));
+				$QST->add_temp_option( $QSO );												
+			}
+		}
+		return $QST;
+	}
 
 
 
