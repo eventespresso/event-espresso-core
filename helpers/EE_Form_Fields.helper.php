@@ -650,13 +650,17 @@ class EE_Form_Fields {
 		$label_html = apply_filters( 'FHEE_form_field_label_html', $label_html );
 		
 		$input_html = "\n\t\t\t" . '<select name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" title="' . $required['msg'] . '" ' . $disabled . ' ' . $extra . '>';
-		$selected = ( empty( $answer )) ? ' selected="selected"' : '';
-		$input_html .= "\n\t\t\t\t" . '<option value=""' . $selected . '>' . __(' - please select - ', 'event_espresso') . '</option>';
-		
+		// recursively count array elelments, to determine total number of options
+		$only_option = count( $options, 1 ) == 1 ? TRUE : FALSE;
+		if ( ! $only_option ) {
+			// if there is NO answer set and there are multiple options to choose from, then set the "please select" message as selected
+			$selected = ( empty( $answer )) ? ' selected="selected"' : '';
+			$input_html .= "\n\t\t\t\t" . '<option value=""' . $selected . '>' . __(' - please select - ', 'event_espresso') . '</option>';
+		}		
 		//printr( $options, '$options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		foreach ( $options as $key => $value ) {
 			// if value is an array, then create option groups, else create regular ol' options
-			$input_html .= is_array( $value ) ? self::_generate_select_option_group( $key, $value, $answer ) : self::_generate_select_option( $value->name(), $value->value(), $answer );
+			$input_html .= is_array( $value ) ? self::_generate_select_option_group( $key, $value, $answer ) : self::_generate_select_option( $value->name(), $value->value(), $answer, $only_option );
 		}
 
 		$input_html .= "\n\t\t\t" . '</select>';
@@ -674,15 +678,16 @@ class EE_Form_Fields {
 	 * 	if  $value for a select box is an array, then the key will be used as the optgroup label
 	 * 	and the value array will be looped thru and the elements sent to _generate_select_option
 	 * 
-	 * @param mixed $key
-	 * @param mixed $value
+	 * @param mixed $opt_group
+	 * @param mixed $QSOs
 	 * @param mixed $answer
 	 * @return string 
 	 */
-	private static function _generate_select_option_group( $key, $value, $answer ){
-		$html = "\n\t\t\t\t" . '<optgroup label="' . self::prep_option_value( $key ) . '">';
-		foreach ( $value as $QSO ) {	
-			$html .= self::_generate_select_option( $QSO->name(), $QSO->value(), $answer );
+	private static function _generate_select_option_group( $opt_group, $QSOs, $answer ){
+		$html = "\n\t\t\t\t" . '<optgroup label="' . self::prep_option_value( $opt_group ) . '">';
+		$only_option = count( $QSOs ) == 1 ? TRUE : FALSE;
+		foreach ( $QSOs as $QSO ) {	
+			$html .= self::_generate_select_option( $QSO->name(), $QSO->value(), $answer, $only_option );
 		}
 		$html .= "\n\t\t\t\t" . '</optgroup>';
 		return $html;
@@ -695,12 +700,13 @@ class EE_Form_Fields {
 	 * @param mixed $key
 	 * @param mixed $value
 	 * @param mixed $answer
+	 * @param int $only_option
 	 * @return string 
 	 */
-	private static function _generate_select_option( $key, $value, $answer ){
+	private static function _generate_select_option( $key, $value, $answer, $only_option = FALSE ){
 			$value = self::prep_answer( $value );
 			$key = self::prep_answer( $key );
-			$selected = ( $answer == $key ) ? ' selected="selected"' : '';
+			$selected = ( $answer == $key || $only_option ) ? ' selected="selected"' : '';
 			//echo '<h4>' . $answer . ' = ' . $key . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 			return "\n\t\t\t\t" . '<option value="' . self::prep_option_value( $key ) . '"' . $selected . '> ' . $value . '&nbsp;&nbsp;&nbsp;</option>';					
 	}
