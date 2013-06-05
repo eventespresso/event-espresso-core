@@ -77,7 +77,7 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
 			</p>
 			<?php
 			$QSGs = EEM_Event::instance()->get_all_question_groups();
-			$EQGs = EEM_Event::instance()->get_event_question_groups( $this->_event->id, TRUE );
+			$EQGs = EEM_Event::instance()->get_event_question_groups( $this->_event->ID(), TRUE );
 			$EQGs = is_array( $EQGs ) ? $EQGs : array();
 
 			if ( ! empty( $QSGs )) {

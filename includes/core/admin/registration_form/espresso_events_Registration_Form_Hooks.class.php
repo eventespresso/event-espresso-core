@@ -73,7 +73,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks {
 			</p>
 			<?php
 			$QSGs = EEM_Event::instance()->get_all_question_groups();
-			$EQGs = EEM_Event::instance()->get_event_question_groups( $this->_event->id );
+			$EQGs = EEM_Event::instance()->get_event_question_groups( $this->_event->ID() );
 			$EQGs = is_array( $EQGs ) ? $EQGs : array();
 
 			if ( ! empty( $QSGs )) {
