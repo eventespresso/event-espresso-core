@@ -416,17 +416,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$event = EE_Event::new_instance( array(
 			'EVT_ID' => $post_id,
-			'EVT_is_active' => isset($this->_req_data['EVT_is_active']) ? 1 : 0,
-			'EVT_display_desc' => isset( $this->_req_data['EVT_display_desc'] ) ? 1 : 0,
-			'EVT_display_reg_form' => isset( $this->_req_data['EVT_display_reg_form'] ) ? 1 : 0,
-			'EVT_reg_limit' => !empty( $this->_req_data['EVT_reg_limit'] ) ? $this->_req_data['EVT_reg_limit'] : NULL,
-			'EVT_allow_multiple' => isset( $this->_req_data['EVT_allow_multiple'] ) ? 1 : 0,
-			'EVT_additional_limit' => !empty( $this->_req_data['EVT_additional_limit'] ) ? $this->_req_data['EVT_additional_limit'] : NULL,
-			'EVT_require_pre_approval' => isset( $this->_req_data['EVT_require_pre_approval'] ) ? 1 : 0,
-			'EVT_member_only' => isset( $this->_req_data['EVT_member_only'] ) ? 1 : 0,
+			'EVT_is_active' => isset($this->_req_data['is_active']) ? 1 : 0,
+			'EVT_display_desc' => isset( $this->_req_data['display_desc'] ) ? 1 : 0,
+			'EVT_display_reg_form' => isset( $this->_req_data['display_reg_form'] ) ? 1 : 0,
+			'EVT_reg_limit' => !empty( $this->_req_data['reg_limit'] ) ? $this->_req_data['reg_limit'] : NULL,
+			'EVT_allow_multiple' => isset( $this->_req_data['allow_multiple'] ) ? 1 : 0,
+			'EVT_additional_limit' => !empty( $this->_req_data['additional_limit'] ) ? $this->_req_data['additional_limit'] : NULL,
+			'EVT_require_pre_approval' => isset( $this->_req_data['require_pre_approval'] ) ? 1 : 0,
+			'EVT_member_only' => isset( $this->_req_data['member_only'] ) ? 1 : 0,
 			'EVT_allow_overflow' => isset( $this->_req_data['EVT_allow_overflow'] ) ? 1 : 0,
-			'EVT_timezone_string' => !empty( $this->_req_data['EVT_timezone_string'] ) ? $this->_req_data['EVT_timezone_string'] : NULL,
-			'EVT_external_URL' => !empty( $this->_req_data['EVT_external_URL'] ) ? $this->_req_data['EVT_external_URL'] : NULL
+			'EVT_timezone_string' => !empty( $this->_req_data['timezone_string'] ) ? $this->_req_data['timezone_string'] : NULL,
+			'EVT_external_URL' => !empty( $this->_req_data['externalURL'] ) ? $this->_req_data['externalURL'] : NULL
 			));
 
 		//update event
@@ -1096,10 +1096,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['_event'] = $this->_cpt_model_obj;
 		$template_args['allow_group_reg_select'] = EE_Form_Fields::select_input('allow_multiple', $yes_no_values, $this->_cpt_model_obj->allow_multiple(), 'id="group-reg"', '', false);
 		$template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();
-		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $additional_attendee_reg_info_values, $event_status_values, $default_reg_status_values);
 		$template_args['default_registration_status'] = EE_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status());
 		$template_args['display_description'] = EE_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
 		$template_args['display_registration_form'] = EE_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
+		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $additional_attendee_reg_info_values, $event_status_values, $default_reg_status_values);
 		$templatepath = EVENTS_TEMPLATE_PATH . 'event_registration_options.template.php';
 		espresso_display_template($templatepath, $template_args);
 	}

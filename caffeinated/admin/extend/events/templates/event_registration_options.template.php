@@ -31,6 +31,11 @@
 	<?php echo $additional_attendee_select; ?>
 </p>
 
+<p>
+	<label><?php _e('Allow Overflow?', 'event_espresso'); ?></label>
+	<?php echo $allow_overflow; ?>
+</p>
+
 <?php echo $additional_registration_options; ?>
 
 <p>
@@ -51,6 +56,11 @@
 <p>
 	<label><?php _e('Alternate Registration Page', 'event_espresso'); ?></label>
 	<input name="externalURL" size="20" type="text" value="<?php echo $_event->external_url(); ?>">
+</p>
+
+<p>
+	<label><?php _e('Require Pre-approval', 'event_espresso'); ?></label>
+	<?php echo $require_pre_approval; ?>
 </p>
 
 <?php /*<p>
