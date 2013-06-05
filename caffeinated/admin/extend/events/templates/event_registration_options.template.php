@@ -4,6 +4,11 @@
 </p>
 
 <p>
+	<label><?php _e('Event Status', 'event_espresso'); ?></label>
+	<?php echo $event_status_select; ?>
+</p>
+
+<p>
 	<label for="reg-limit">
 		<?php _e('Attendee Limit: ', 'event_espresso'); ?>
 	</label>
@@ -21,6 +26,11 @@
 	<input type="text" id="max-registrants" name="additional_limit" value="<?php echo $_event->additional_limit(); ?>" size="4" />
 </p>
 
+<p>
+	<label><?php _e('Additional Attendee Registration info?', 'event_espresso'); ?></label>
+	<?php echo $additional_attendee_select; ?>
+</p>
+
 <?php echo $additional_registration_options; ?>
 
 <p>
@@ -29,12 +39,12 @@
 </p>
 
 <p>
-	<label><?php _e('Display Description', 'event_espresso'); ?></label>
+	<label><?php _e('Display  Description', 'event_espresso'); ?></label>
 	<?php echo $display_description; ?>
 </p>
 
 <p>
-	<label><?php _e('Display Registration Form', 'event_espresso'); ?></label>
+	<label><?php _e('Display  Registration Form', 'event_espresso'); ?></label>
 	<?php echo $display_registration_form; ?>
 </p>
 
@@ -42,3 +52,12 @@
 	<label><?php _e('Alternate Registration Page', 'event_espresso'); ?></label>
 	<input name="externalURL" size="20" type="text" value="<?php echo $_event->external_url(); ?>">
 </p>
+
+<?php /*<p>
+	<label><?php _e('Alternate Email Address', 'event_espresso'); ?>
+		<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=alt_email_info">
+			<span class="question">[?]</span>
+		</a>
+	</label>
+	<input name="alt_email" size="20" type="text" value="<?php echo $_event->alt_email; ?>">
+</p> /**/ ?>

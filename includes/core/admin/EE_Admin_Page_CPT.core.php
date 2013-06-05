@@ -175,13 +175,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		);
 
 
-		if ( !empty( $this->_cpt_model_name ) && $this->_cpt_route && !empty( $this->_req_data['id'] ) ) {
+		if ( !empty( $this->_cpt_model_name ) && $this->_cpt_route  && ( $this->_req_action == 'create_new' || $this->_req_action == 'edit'  ) ) {
 			require_once( $this->_cpt_model_name . '.model.php' );
 			$model = call_user_func( array( $this->_cpt_model_name, 'instance' ) );
-			$this->_cpt_model_obj = $model->get_one_by_id( $this->_req_data['id'] );
+			$this->_cpt_model_obj = !empty( $this->_req_data['id'] ) ? $model->get_one_by_ID( $this->_req_data['id'] ) : $model->create_default_object();
 		}
-
-		
 
 
 		//now let's do some automatic filters into the wp_system and we'll check to make sure the CHILD class automatically has the required methods in place.

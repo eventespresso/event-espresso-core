@@ -1088,31 +1088,18 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
-		$additional_attendee_reg_info_values = array(
-			array('id' => '1', 'text' => __('No info required', 'event_espresso')),
-			array('id' => '2', 'text' => __('Personal Information only', 'event_espresso')),
-			array('id' => '3', 'text' => __('Full registration information', 'event_espresso'))
-		);
-		$event_status_values = array(
-			array('id' => 'A', 'text' => __('Public', 'event_espresso')),
-			array('id' => 'S', 'text' => __('Waitlist', 'event_espresso')),
-			array('id' => 'O', 'text' => __('Ongoing', 'event_espresso')),
-			array('id' => 'R', 'text' => __('Draft', 'event_espresso')),
-			array('id' => 'D', 'text' => __('Deleted', 'event_espresso'))
-		);
-		$event_status_values = apply_filters('FHEE_event_status_values', $event_status_values);
-
-		$default_reg_status_values = $this->_get_reg_status_array(array('RCN', 'RNA'));
-		array_unshift($default_reg_status_values, array('id' => "", 'text' => __('No Change', 'event_espresso')));
-		$template_args['is_active_select'] = EE_Form_Fields::select_input('is_active', $yes_no_values, $this->_event->is_active);
-		$template_args['event_status_select'] = EE_Form_Fields::select_input('new_event_status', $event_status_values, $this->_event->event_status, '', '', false);
-		$template_args['_event'] = $this->_event;
-		$template_args['allow_group_reg_select'] = EE_Form_Fields::select_input('allow_multiple', $yes_no_values, $this->_event->allow_multiple, 'id="group-reg"', '', false);
-		$template_args['additional_attendee_select'] = EE_Form_Fields::select_input('additional_attendee_reg_info', $additional_attendee_reg_info_values, $this->_event->event_meta['additional_attendee_reg_info']);
+		$additional_attendee_reg_info_values = EEM_Event::additional_attendee_reg_info_array();
+		$event_status_values = EEM_Event::event_status_array();
+		$default_reg_status_values = EEM_Registration::reg_status_array();
+		
+		$template_args['is_active_select'] = EE_Form_Fields::select_input('is_active', $yes_no_values, $this->_cpt_model_obj->is_active());
+		$template_args['_event'] = $this->_cpt_model_obj;
+		$template_args['allow_group_reg_select'] = EE_Form_Fields::select_input('allow_multiple', $yes_no_values, $this->_cpt_model_obj->allow_multiple(), 'id="group-reg"', '', false);
+		$template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();
 		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $additional_attendee_reg_info_values, $event_status_values, $default_reg_status_values);
-		$template_args['default_payment_status'] = EE_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_event->event_meta['default_reg_status']);
-		$template_args['display_description'] = EE_Form_Fields::select_input('display_desc', $yes_no_values, $this->_event->display_desc);
-		$template_args['display_registration_form'] = EE_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_event->display_reg_form, '', '', false);
+		$template_args['default_registration_status'] = EE_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status());
+		$template_args['display_description'] = EE_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
+		$template_args['display_registration_form'] = EE_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
 		$templatepath = EVENTS_TEMPLATE_PATH . 'event_registration_options.template.php';
 		espresso_display_template($templatepath, $template_args);
 	}
