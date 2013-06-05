@@ -49,7 +49,7 @@ class EEM_Event  extends EEM_Base{
 	 * array of ALL of the statuses, so we can know what statuses are valid, and which are not
 	 * @var array 
 	 */
-	private $_statuses = array();
+	private static $_statuses = array();
 	
 	/**
 	 * @todo: we should describe each status here. Ie, when things should have
@@ -74,7 +74,7 @@ class EEM_Event  extends EEM_Base{
 	 * for additional attendees. Values are how to display them
 	 * @var array 
 	 */
-	private $_additional_attendee_reg_info_enum = array();
+	private static $_additional_attendee_reg_info_enum = array();
 	const additional_attendee_reg_info_none = 0;
 	const additional_attendee_reg_info_personal_info_only = 1;
 	const additional_attendee_reg_info_full = 2;
@@ -82,8 +82,8 @@ class EEM_Event  extends EEM_Base{
 		$this->singular_item = __('Event','event_espresso');
 		$this->plural_item = __('Events','event_espresso');
 		
-		$this->_statuses = $this->_get_event_status_array();
-		$this->_additional_attendee_reg_info_enum = $this->_get_additional_attendee_reg_info_array();
+		self::$_statuses = $this->_get_event_status_array();
+		self::$_additional_attendee_reg_info_enum = $this->_get_additional_attendee_reg_info_array();
 		
 		$this->_tables = array(
 			'Event_CPT'=>new EE_Primary_Table('posts','ID'),
@@ -100,7 +100,7 @@ class EEM_Event  extends EEM_Base{
 				'EVT_slug'=>new EE_Slug_Field('post_name', __("Event Slug", "event_espresso"), false, ''),
 				'EVT_created'=>new EE_Datetime_Field('post_date', __("Date/Time Event Created", "event_espresso"), false, current_time('timestamp')),
 				'EVT_short_desc'=>new EE_Simple_HTML_Field('post_excerpt', __("Event Short Descripiton", "event_espresso"), false,''),
-				'STS_ID'=>new EE_Enum_Field('post_status', __("Event Status", "event_espresso"), false, EEM_Event::status_draft, $this->_statuses),//will be a foreign key once status model made
+				'STS_ID'=>new EE_Enum_Field('post_status', __("Event Status", "event_espresso"), false, EEM_Event::status_draft, self::$_statuses),//will be a foreign key once status model made
 				'EVT_modified'=>new EE_Datetime_Field('post_modified', __("Dateim/Time Event Modified", "event_espresso"), true, current_time('timestamp')),
 				'EVT_wp_user'=>new EE_Integer_Field('post_author', __("Wordpress User ID", "event_espresso"), false,1),
 				'EVT_parent'=>new EE_Integer_Field('post_parent', __("Event Parent ID", "event_espresso"), true),
@@ -117,7 +117,7 @@ class EEM_Event  extends EEM_Base{
 				'EVT_reg_limit'=>new EE_Integer_Field('EVT_reg_limit', __("Event Registration Limit", "event_espresso"), true, 999999),
 				'EVT_allow_multiple'=>new EE_Boolean_Field('EVT_allow_multiple', __("Allow Multiple Registrations on Same Transaction Flag", "event_espresso"), false, false),
 				'EVT_additional_limit'=>new EE_Integer_Field('EVT_additional_limit', __("Limit of Additional Registrations on Same Transaction", "event_espresso"), true),
-				'EVT_additional_attendee_reg_info'=>new EE_Enum_Field('EVT_additional_attendee_reg_info', __("Info Requested for Additional Attendees?", "event_espresso"), true, EEM_Event::additional_attendee_reg_info_none, $this->_additional_attendee_reg_info_enum,true),
+				'EVT_additional_attendee_reg_info'=>new EE_Enum_Field('EVT_additional_attendee_reg_info', __("Info Requested for Additional Attendees?", "event_espresso"), true, EEM_Event::additional_attendee_reg_info_none, self::$_additional_attendee_reg_info_enum,true),
 				'EVT_default_registration_status'=>new EE_Enum_Field('EVT_default_registration_status', __("Default Registration Status on this Event", "event_espresso"), false, EEM_Registration::status_id_pending, EEM_Registration::reg_status_array(), false),
 				'EVT_require_pre_approval'=>new EE_Boolean_Field('EVT_require_pre_approval', __("Event Requires Pre-Approval before Registration Complete", "event_espresso"), false, false),
 				'EVT_member_only'=>new EE_Boolean_Field('EVT_member_only', __("Member-Only Event Flag", "event_espresso"), false, false),
@@ -548,7 +548,7 @@ class EEM_Event  extends EEM_Base{
 
 
 	public static function additional_attendee_reg_info_array() {
-		self::$_additional_attendee_reg_info_array = call_user_func( array( __CLASS__, '_get_additional_attendee_reg_info_array' ) );
+		self::$_additional_attendee_reg_info_enum = call_user_func( array( __CLASS__, '_get_additional_attendee_reg_info_array' ) );
 		return self::$_additional_attendee_reg_info_enum;
 	}
 
