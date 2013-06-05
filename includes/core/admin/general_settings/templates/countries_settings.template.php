@@ -1,0 +1,29 @@
+
+<div class="padding">
+
+	<h2 class="ee-admin-settings-hdr"><?php _e('Countries and States / Provinces', 'event_espresso'); ?></h2>
+	<table class="form-table">
+		<tbody>
+			<?php echo EE_Form_Fields::generate_form_input( $countries ); ?>
+		</tbody>
+	</table>
+	<br/>
+	<p class="description">
+		<?php echo "\t" . __('Select a country from the dropdown to view and/or edit it\'s settings.', 'event_espresso'); ?>
+	</p>
+	<br/>
+			
+	<div id="country-details-settings-dv">
+		<h2 class="ee-admin-settings-hdr"><?php _e('Country Details', 'event_espresso'); ?></h2>
+		<div id="country-details-dv"><?php  echo $country_details_settings; ?></div>
+	</div>
+	
+	<div id="country-states-settings-dv">
+		<h2 class="ee-admin-settings-hdr"><?php _e( 'States / Provinces', 'event_espresso' );?></h2>
+		<div id="country-states-dv"><?php  echo $country_states_settings; ?></div>
+	</div>
+	
+	<div class="clear"></div>
+	
+</div>
+
