@@ -1123,38 +1123,23 @@ class EE_Form_Fields {
 				//printr( $states, '$states  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 				$QST->set( 'QST_type', 'DROPDOWN' );
 				// if multiple countries, we'll create option groups within the dropdown
-				if ( count( $countries ) > 1 ) {
-					// loop thru countries
-					foreach ( $countries as $CNT_ISO => $country ) {
-						// first gather states/provs
-						$state_options = array();
-						foreach ( $states as $STA_ID => $state ) {
-							// only adds states/provs for this country
-							if ( $state->get( 'CNT_ISO' ) == $CNT_ISO ) {
-//								$state_options[ $state->get( 'STA_ID' ) ] = new EE_Question_Option( array (
-								$QSO = new EE_Question_Option( array (
-										'QSO_name' => $state->get( 'STA_ID' ),
-										'QSO_value' => $state->get( 'STA_name' ),
-										'QSO_opt_group' => $country->get( 'CNT_name' ),
-										'QST_ID' => $QST->get( 'QST_ID' ),
-										'QSO_deleted' => FALSE
-									));
-								$QST->add_temp_option( $QSO );
-								// remove state from $states array so we don't have to loop over it again
-								unset( $states[ $STA_ID ] );						
-							}			
-						}	
-					}						
-				} else {
-					// just create options out of the states			
-					$QSO = new EE_Question_Option( array (
-							'QSO_name' => $state->get( 'STA_ID' ),
-							'QSO_value' => $state->get( 'STA_name' ),
-							'QST_ID' => $QST->get( 'QST_ID' ),
-							'QSO_deleted' => FALSE
-						));
-					$QST->add_temp_option( $QSO );												
-				}						
+				foreach ( $countries as $CNT_ISO => $country ) {
+					foreach ( $states as $STA_ID => $state ) {
+						// only adds states/provs for this country
+						if ( $state->get( 'CNT_ISO' ) == $CNT_ISO ) {
+							$QSO = new EE_Question_Option( array (
+									'QSO_name' => $state->get( 'STA_ID' ),
+									'QSO_value' => $state->get( 'STA_name' ),
+									'QSO_opt_group' => $country->get( 'CNT_name' ),
+									'QST_ID' => $QST->get( 'QST_ID' ),
+									'QSO_deleted' => FALSE
+								));
+							$QST->add_temp_option( $QSO );
+							// remove state from $states array so we don't have to loop over it again
+							unset( $states[ $STA_ID ] );
+						}
+					}
+				}
 			}
 		}
 		return $QST;
