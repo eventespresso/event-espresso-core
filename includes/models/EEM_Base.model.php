@@ -1495,7 +1495,7 @@ abstract class EEM_Base extends EE_Base{
 	public function get_foreign_key_to($model_name){
 		foreach($this->field_settings() as $field){			
 			if(is_subclass_of($field, 'EE_Foreign_Key_Field_Base')){
-				if(is_array($field->get_model_name_pointed_to() && in_array($model_name,$field->get_model_name_pointed_to()))){
+				if(is_array($field->get_model_name_pointed_to()) && in_array($model_name,$field->get_model_name_pointed_to())){
 					return $field;
 				}elseif( ! is_array($field->get_model_name_pointed_to()) && $field->get_model_name_pointed_to() == $model_name){
 					return $field;

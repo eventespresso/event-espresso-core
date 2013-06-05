@@ -11,6 +11,12 @@ function espresso_load_jquery() {
 
 
 function espresso_frontend_init() {
+//	require_once('EEM_Event.model.php');
+//	var_dump(EEM_Event::instance()->get_all(array(
+//		array(
+//			'Term_Taxonomy.Term.slug'=>'uncategorized'
+//		)
+//	)));
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );	
 	global $espresso_reg_page;
 	if ( $espresso_reg_page = espresso_test_for_reg_page() ) {

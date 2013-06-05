@@ -51,6 +51,12 @@ class EE_Event extends EE_Base_Class{
 	 * @var EE_Venue[]
 	 */
 	protected $_Venue;
+	
+	/**
+	 * Related term-taxonomies (terms in context of a taxonomy).
+	 * @var EE_Term_Taxonomy[]
+	 */
+	protected $_Term_Taxonomy;
 	/**
 	 * ID of event (post id)
 	 * @var int 
