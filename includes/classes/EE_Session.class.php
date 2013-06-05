@@ -146,7 +146,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 //			}
 //		}
 		// once everything is all said and done,
-		add_action( 'shutdown', array( &$this, '_update_espresso_session' ), 100);
+		add_action( 'shutdown', array( &$this, '_update_espresso_session_on_shutdown' ), 100);
 
 	}
 
@@ -294,10 +294,12 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		if ( $session_data = get_transient( $this->_sid ) ) {
 
 			// un-encrypt the data
-			$session_data = $this->encryption->decrypt( $session_data );
+			if ( $this->_use_encryption ) {
+				$session_data = $this->encryption->decrypt( $session_data );
+			}
 
 			// unserialize
-			$this->_session_data = maybe_unserialize( $session_data );
+			$session_data = maybe_unserialize( $session_data );
 
 			// just a check to make sure the sesion array is indeed an array
 			if ( ! is_array( $session_data ) ) {
@@ -341,11 +343,24 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 
 	/**
+	 *		@_update_espresso_session_on_shutdown
+	 *		@access public
+	 *		@return TRUE on success, FALSE on fail
+	 */
+	public function _update_espresso_session_on_shutdown() {
+		$this->_update_espresso_session( FALSE, __CLASS__ . '->' . __FUNCTION__ . ' : ' . __LINE__ );
+	}
+
+
+
+
+
+	/**
 	 *		@update session data  prior to saving to the db
 	 *		@access public
 	 *		@return TRUE on success, FALSE on fail
 	 */
-	public function _update_espresso_session( $new_session = FALSE ) {
+	public function _update_espresso_session( $new_session = FALSE, $sent_from = '' ) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		$this->_session_data = isset( $this->_session_data ) && is_array( $this->_session_data ) && isset( $this->_session_data['id']) ? $this->_session_data : NULL;
@@ -403,8 +418,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 		// creating a new session does not require saving to the db just yet
 		if ( ! $new_session ) {
+			//printr( $session_data, '$session_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// ready? let's save
-			if ( $this->_save_session_to_db() ) {
+			if ( $this->_save_session_to_db( $sent_from ) ) {
 				return TRUE;
 			} else {
 				return FALSE;
@@ -443,11 +459,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *		  @access public
 	 *			@return string
 	 */
-	private function _save_session_to_db() {
+	private function _save_session_to_db( $sent_from = '' ) {
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
-//		echo printr( $this->_session_data, 'session_data' );
 
 		// first serialize all of our session data
 		$session_data = serialize( $this->_session_data );
@@ -616,20 +630,26 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *		  @access public
 	 *			@return TRUE on success, FALSE on fail
 	 */
-	public function reset_data( $data_to_reset = FALSE ) {
+	public function reset_data( $data_to_reset = array(), $reset_cart_totals = FALSE ) {
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
-		// nothing ??? go home!
-		if ( ! $data_to_reset ) {
-			$this->_notices['errors'][] = 'An error occured. No session data could be reset, because no session var name was provided.';
-			return FALSE;
-		}
+		$default_reset = array(
+			'cart',
+			'gateway_data', 
+			'transaction', 
+			'registration',
+			'primary_attendee',
+			'tax_totals',
+			'taxes',
+			'billing_info',
+			'txn_results',
+			'grand_total_price_object'
+		);
+		
 		// if $data_to_reset is not in an array, then put it in one
-		if ( ! is_array( $data_to_reset ) ) {
-			$data_to_reset = array ( $data_to_reset );
-		}
+		$data_to_reset =  ! is_array( $data_to_reset ) ? array ( $data_to_reset ) : $data_to_reset;
+		$data_to_reset =  array_merge( $default_reset, $data_to_reset );
 
 		// since $data_to_reset is an array, cycle through the values
 		foreach ( $data_to_reset as $reset ) {
@@ -657,6 +677,19 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 			}
 
 		} // end of foreach
+		
+		if ( $reset_cart_totals ) {
+			global $EE_Session;
+			$EE_Session->set_session_data(
+				array(
+							'_events_in_cart' => array(),
+							'_cart_grand_total_qty' => 0,
+							'_cart_grand_total_amount' => 0
+						),
+						'session_data'
+			);
+		}
+		
 		return $return_value;
 
 	}
