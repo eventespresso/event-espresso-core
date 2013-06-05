@@ -218,7 +218,6 @@ function espresso_load_org_options() {
  */
 function espresso_EE_Session() {
 	global $EE_Session;
-	//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Session.class.php');
 	require_once( EVENT_ESPRESSO_INCLUDES_DIR . '/classes/EE_Session.class.php' );
 	// instantiate !!!
 	$EE_Session = EE_Session::instance();
@@ -240,29 +239,7 @@ function espresso_EE_Session() {
 function espresso_clear_session( $class = '', $func = '' ) {
 	//echo '<h3>'. $class . ' -> ' . $func . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	global $EE_Session;
-	$EE_Session->reset_data( 
-			array(
-						'cart',
-						'gateway_data', 
-						'transaction', 
-						'registration',
-						'primary_attendee',
-						'tax_totals',
-						'taxes',
-						'billing_info',
-						'txn_results',
-						'grand_total_price_object'
-					));
-																
-	$EE_Session->set_session_data(
-			array(
-						'_events_in_cart' => array(),
-						'_cart_grand_total_qty' => 0,
-						'_cart_grand_total_amount' => 0
-					),
-					'session_data'
-	);
-
+	$EE_Session->reset_data( array(), TRUE );
 }
 add_action( 'AHEE_before_event_list', 'espresso_clear_session', 10, 2 );
 
@@ -283,12 +260,12 @@ function espresso_printr_session() {
 		echo '<pre style="height:auto;padding:1em;border:2px solid lightblue;">';
 		echo print_r( $EE_Session, TRUE );
 		$ee_list_hooks = isset( $_REQUEST['ee_list_hooks'] ) && ! empty( $_REQUEST['ee_list_hooks'] ) ? $_REQUEST['ee_list_hooks'] : FALSE;
-		list_hooked_functions();
+//		list_hooked_functions();
 		echo '</pre><br /><span style="font-size:10px;font-weight:normal;">';
 		echo __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 	}
 }
-//add_action( 'shutdown', 'espresso_printr_session' );
+add_action( 'shutdown', 'espresso_printr_session' );
 
 
 
