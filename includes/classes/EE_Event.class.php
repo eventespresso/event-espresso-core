@@ -302,6 +302,9 @@ class EE_Event extends EE_Base_Class{
 	function wp_user(){
 		return $this->get('EVT_wp_user');
 	}
+	function status() {
+		return $this->get('_STS_ID');
+	}
 	function set_additional_limit($limit){
 		return $this->set('EVT_additional_limit',$limit);
 	}
@@ -367,6 +370,9 @@ class EE_Event extends EE_Base_Class{
 	}
 	function set_default_registration_status( $default_registration_status ) {
 		return $this->set('EVT_default_registration_status', $default_registration_status );
+	}
+	function set_status( $sts_id ) {
+		return $this->set('_STS_ID', $sts_id );
 	}
 	
 	/**
