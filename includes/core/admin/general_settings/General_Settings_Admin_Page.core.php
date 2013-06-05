@@ -55,7 +55,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _ajax_hooks() {
-		//todo: all hooks for events ajax goes in here.
+		add_action('wp_ajax_espresso_display_country_settings', array( $this, 'display_country_settings'));
+		add_action('wp_ajax_espresso_display_country_states', array( $this, 'display_country_states'));
+		add_action('wp_ajax_espresso_delete_state', array( $this, 'delete_state'));
+		add_action('wp_ajax_espresso_add_new_state', array( $this, 'add_new_state'));
 	}
 
 
@@ -75,40 +78,69 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
+		
 			'default' => '_espresso_page_settings',
+
 			'update_espresso_page_settings' => array(
 				'func' => '_update_espresso_page_settings',
 				'noheader' => TRUE,
 				),
+
 			'template_settings' => '_template_settings',
+
 			'update_template_settings' => array(
 				'func' => '_update_template_settings',
 				'noheader' => TRUE,
 				),
+
 			'copy_templates' => array(
 				'func' => '_copy_templates',
 				'noheader' => TRUE,
 				),
+
 			'google_map_settings' => '_google_map_settings',
+
 			'update_google_map_settings' => array(
 				'func' => '_update_google_map_settings',
 				'noheader' => TRUE,
 				),
+
 			'your_organization_settings' => '_your_organization_settings',
+
 			'update_your_organization_settings' => array(
 				'func' => '_update_your_organization_settings',
 				'noheader' => TRUE,
 				),
+
 			'admin_option_settings' => '_admin_option_settings',
+
 			'update_admin_option_settings' => array(
 				'func' => '_update_admin_option_settings',
 				'noheader' => TRUE,
 				),
+
 			'country_settings' => '_country_settings',
+
 			'update_country_settings' => array(
 				'func' => '_update_country_settings',
 				'noheader' => TRUE,
+				),
+
+			'display_country_settings' => array(
+				'func' => 'display_country_settings',
+				'noheader' => TRUE,
+				),
+
+			'add_new_state' => array(
+				'func' => 'add_new_state',
+				'noheader' => TRUE,
+				),
+
+			'delete_state' => array(
+				'func' => 'delete_state',
+				'noheader' => TRUE,
 				)
+
 			);
 	}
 
@@ -337,6 +369,22 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$confirm_image_delete = array( 'text' => __('Do you really want to delete this image? Please remember to save your settings to complete the removal.', 'event_espresso')); 
 		wp_localize_script( 'organization_settings', 'confirm_image_delete', $confirm_image_delete );
 
+	}
+
+	public function load_scripts_styles_country_settings() {	
+		//scripts
+		wp_register_script( 'gen_settings_countries', GEN_SET_ASSETS_URL . 'gen_settings_countries.js', array( 'jquery' ), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_style( 'organization-css', GEN_SET_ASSETS_URL . 'organization.css', array(), EVENT_ESPRESSO_VERSION );
+		wp_enqueue_script( 'gen_settings_countries' );	
+		wp_enqueue_style( 'organization-css' );
+
+		global $eei18n_js_strings;
+		$eei18n_js_strings['invalid_server_response'] = __( 'An error occured! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
+		$eei18n_js_strings['error_occured'] = __(  'An error occured! Please refresh the page and try again.', 'event_espresso' );
+		$eei18n_js_strings['confirm_delete_state'] = __(  'Are you sure you want to delete this State / Province?', 'event_espresso' );
+		$protocol = isset( $_SERVER['HTTPS'] ) ? 'https://' : 'http://';
+		$eei18n_js_strings['ajax_url'] = admin_url( 'admin-ajax.php?page=espresso_general_settings' , $protocol );
+		wp_localize_script( 'gen_settings_countries', 'eei18n', $eei18n_js_strings );
 	}
 
 
@@ -704,6 +752,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _country_settings() {
 	
+		$CNT_ISO = isset( $org_options['organization_country'] ) ? $org_options['organization_country'] : 'US';
+		$CNT_ISO = isset( $this->_req_data['country'] ) ? strtoupper( sanitize_text_field( $this->_req_data['country'] )) : $CNT_ISO;
+
 		global $org_options;
 		//load formatter helper
 		//require_once ( EE_HELPERS . 'EE_Formatter.helper.php' );
@@ -711,54 +762,421 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		require_once ( EE_HELPERS . 'EE_Form_Fields.helper.php' );
 		
 		$this->_template_args['values'] = $this->_yes_no_values;
-		
-		$country = new EE_Question( array(
-					'QST_display_text'=> '',
-					'QST_system'=>'country'
+				
+		$this->_template_args['countries'] = new EE_Question_Form_Input(
+				new EE_Question( array(
+					'QST_display_text'=> __('Select Country', 'event_espresso'),
+					'QST_system'=>'admin-country'
+				)),
+				new EE_Answer( array( 'ANS_value' => $CNT_ISO )),
+				array( 
+					'input_id' => 'country',
+					'input_name' => 'country',
+					'input_prefix' => '',
+					'append_qstn_id' => FALSE
 				)
 			);
-		$country->QST_input_name = 'CNT_ISO';
-		$country->ANS_value = '';
-		$this->_template_args['countries'] = EE_Form_Fields::generate_form_input( $country );
 		
-//		$this->_template_args['use_venue_manager'] = isset( $org_options['use_venue_manager'] ) ? absint( $org_options['use_venue_manager'] ) : FALSE;
-//		$this->_template_args['use_personnel_manager'] = isset( $org_options['use_personnel_manager'] ) ? absint( $org_options['use_personnel_manager'] ) : FALSE;
-//		$this->_template_args['espresso_dashboard_widget'] = isset( $org_options['espresso_dashboard_widget'] ) ? absint( $org_options['espresso_dashboard_widget'] ) : TRUE;
-//		$this->_template_args['events_in_dasboard'] = isset( $org_options['events_in_dasboard'] ) ? absint( $org_options['events_in_dasboard'] ) : 30;
-//		$this->_template_args['use_event_timezones'] = isset( $org_options['use_event_timezones'] ) ? absint( $org_options['use_event_timezones'] ) : FALSE;
-//		$this->_template_args['full_logging'] = isset( $org_options['full_logging'] ) ? absint( $org_options['full_logging'] ) : FALSE;
-//		$this->_template_args['remote_logging'] = isset( $org_options['remote_logging'] ) ? absint( $org_options['remote_logging'] ) : FALSE;
-//		$this->_template_args['remote_logging_url'] = isset( $org_options['remote_logging_url'] ) && ! empty( $org_options['remote_logging_url'] ) ? stripslashes( $org_options['remote_logging_url'] ) : '';
-//		$this->_template_args['show_reg_footer'] = isset( $org_options['show_reg_footer'] ) ? absint( $org_options['show_reg_footer'] ) : TRUE;
-//		$this->_template_args['affiliate_id'] = isset( $org_options['affiliate_id'] ) ? $this->_display_nice( $org_options['affiliate_id'] ) : '';
-		
+		add_filter( 'FHEE_form_field_label_html', array( $this, 'country_form_field_label_wrap' ), 10, 1 );
+		add_filter( 'FHEE_form_field_input_html', array( $this, 'country_form_field_input__wrap' ), 10, 1 );
+		$this->_template_args['country_details_settings'] = $this->display_country_settings();
+		$this->_template_args['country_states_settings'] = $this->display_country_states();
+
 		$this->_set_add_edit_form_tags( 'update_country_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
-		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'country_settings.template.php', $this->_template_args, TRUE );
-		$this->display_admin_page_with_sidebar();	
+		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'countries_settings.template.php', $this->_template_args, TRUE );
+		$this->display_admin_page_with_sidebar();
 	}
 
-	protected function _update_country_settings() {
-		
-		$data = array();
+	
 
-//		$data['use_venue_manager'] = isset( $this->_req_data['use_venue_manager'] ) ? absint( $this->_req_data['use_venue_manager'] ) : FALSE;
-//		$data['use_personnel_manager'] = isset( $this->_req_data['use_personnel_manager'] ) ? absint( $this->_req_data['use_personnel_manager'] ) : FALSE;
-//		$data['espresso_dashboard_widget'] = isset( $this->_req_data['espresso_dashboard_widget'] ) ? absint( $this->_req_data['espresso_dashboard_widget'] ) : TRUE;
-//		$data['events_in_dasboard'] = isset( $this->_req_data['events_in_dasboard'] ) ? absint( $this->_req_data['events_in_dasboard'] ) : 30;
-//		$data['use_event_timezones'] = isset( $this->_req_data['use_event_timezones'] ) ? absint( $this->_req_data['use_event_timezones'] ) : FALSE;
-//		$data['full_logging'] = isset( $this->_req_data['full_logging'] ) ? absint( $this->_req_data['full_logging'] ) : FALSE;
-//		$data['remote_logging'] = isset( $this->_req_data['remote_logging'] ) ? absint( $this->_req_data['remote_logging'] ) : FALSE;
-//		$data['remote_logging_url'] = isset( $this->_req_data['remote_logging_url'] ) ? esc_url_raw( $this->_req_data['remote_logging_url'] ) : NULL;
-//		$data['show_reg_footer'] = isset( $this->_req_data['show_reg_footer'] ) ? absint( $this->_req_data['show_reg_footer'] ) : TRUE;
-//		$data['affiliate_id'] = isset( $this->_req_data['affiliate_id'] ) ? sanitize_text_field( $this->_req_data['affiliate_id'] ) : NULL;
+	/**
+	 * 		display_country_settings
+	 *
+	 * 		@access 	public
+	 * 		@param 	string 		$CNT_ISO
+	 * 		@return 		mixed		string | array
+	 */
+	public function display_country_settings( $CNT_ISO = FALSE ) {
 		
-		$data = apply_filters('FHEE_country_settings_save', $data);	
+		$CNT_ISO = isset( $this->_req_data['country'] ) ? strtoupper( sanitize_text_field( $this->_req_data['country'] )) : $CNT_ISO;
+		if ( ! $CNT_ISO ) {
+			return '';
+		}
+		// for ajax
+		if ( ! class_exists( 'EE_Form_Fields' )) {
+			require_once ( EE_HELPERS . 'EE_Form_Fields.helper.php' );
+		}
+		remove_all_filters( 'FHEE_form_field_label_html' );
+		remove_all_filters( 'FHEE_form_field_input_html' );
+		add_filter( 'FHEE_form_field_label_html', array( $this, 'country_form_field_label_wrap' ), 10, 1 );
+		add_filter( 'FHEE_form_field_input_html', array( $this, 'country_form_field_input__wrap' ), 10, 1 );
+		$country = EEM_Country::instance()->get_one_by_ID( $CNT_ISO );
+		$country_input_types = array(
+			'CNT_ISO' => array( 'type' => 'TEXT', 'class' => 'small-text' ), 
+			'CNT_ISO3' => array( 'type' => 'TEXT', 'class' => 'small-text' ), 
+			'RGN_ID' => array( 'type' => 'TEXT', 'class' => 'small-text' ), 
+			'CNT_name' => array( 'type' => 'TEXT', 'class' => 'regular-text' ), 
+			'CNT_cur_code' => array( 'type' => 'TEXT', 'class' => 'small-text' ), 
+			'CNT_cur_single' => array( 'type' => 'TEXT', 'class' => 'medium-text' ), 
+			'CNT_cur_plural' => array( 'type' => 'TEXT', 'class' => 'medium-text' ), 
+			'CNT_cur_sign' => array( 'type' => 'TEXT', 'class' => 'small-text' ), 
+			'CNT_cur_sign_b4' => array( 'type' => 'SINGLE', 'class' => '', 'options' => $this->_yes_no_values ), 
+			'CNT_cur_dec_plc' => array( 'type' => 'SINGLE', 'class' => '', 'options' => array( array( 'id' => 0, 'text' => '0' ), array( 'id' => 1, 'text' => '1' ), array( 'id' => 2, 'text' => '2' ), array( 'id' => 3, 'text' => '3' ))),
+			'CNT_cur_dec_mrk' => array( 'type' => 'SINGLE', 'class' => '', 'options' => array( array( 'id' => '.', 'text' => __('. (decimal)', 'event_espresso')), array( 'id' => ',', 'text' => __(', (comma)', 'event_espresso')))),
+			'CNT_cur_thsnds' => array( 'type' => 'SINGLE', 'class' => '', 'options' => array( array( 'id' => ',', 'text' => __(', (comma)', 'event_espresso')), array( 'id' => '.', 'text' => __('. (decimal)', 'event_espresso')))),
+			'CNT_tel_code' => array( 'type' => 'TEXT', 'class' => 'small-text' ), 
+			'CNT_is_EU' => array( 'type' => 'SINGLE', 'class' => '', 'options' => $this->_yes_no_values ), 
+			'CNT_active' => array( 'type' => 'SINGLE', 'class' => '', 'options' => $this->_yes_no_values )
+		);
+		$this->_template_args['inputs'] = $this->_generate_question_form_inputs_for_object( $country, $country_input_types );
+		$country_details_settings = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'country_details_settings.template.php', $this->_template_args, TRUE );
 		
-		$what = 'Countries';
-		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
-		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'country_settings' ) );
+		if ( defined( 'DOING_AJAX' )) {
+			$notices = EE_Error::get_notices( FALSE, FALSE, FALSE ); 
+			echo json_encode( array( 'return_data' => $country_details_settings, 'success' => $notices['success'], 'errors' => $notices['errors'] ));
+			die();
+		} else {
+			return $country_details_settings;
+		}
+
+	}
+
+
+
+
+	/**
+	 * 		display_country_states
+	 *
+	 * 		@access 	public
+	 * 		@param 	string 		$CNT_ISO
+	 * 		@return 		string
+	 */
+	public function display_country_states( $CNT_ISO = FALSE ) {
 		
+		$CNT_ISO = isset( $this->_req_data['country'] ) ? sanitize_text_field( $this->_req_data['country'] ) : $CNT_ISO;
+
+		if ( ! $CNT_ISO ) {
+			return '';
+		}
+		// for ajax
+		if ( ! class_exists( 'EE_Form_Fields' )) {
+			require_once ( EE_HELPERS . 'EE_Form_Fields.helper.php' );
+		}
+		remove_all_filters( 'FHEE_form_field_label_html' );
+		remove_all_filters( 'FHEE_form_field_input_html' );
+		add_filter( 'FHEE_form_field_label_html', array( $this, 'state_form_field_label_wrap' ), 10, 1 );
+		add_filter( 'FHEE_form_field_input_html', array( $this, 'state_form_field_input__wrap' ), 10, 1 );
+		$states = EEM_State::instance()->get_all_states_for_these_countries( array( $CNT_ISO => $CNT_ISO ));
+//			echo '<h4>$CNT_ISO : ' . $CNT_ISO . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//			global $wpdb;
+//			echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//			printr( $states, '$states  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		if ( $states ) {
+			foreach ( $states as $STA_ID => $state ) {
+				//STA_abbrev 	STA_name 	STA_active
+				$state_input_types = array(
+					'STA_abbrev' => array( 'type' => 'TEXT', 'input_name' => 'states[' . $STA_ID . ']', 'class' => 'small-text' ), 
+					'STA_name' => array( 'type' => 'TEXT', 'input_name' => 'states[' . $STA_ID . ']', 'class' => 'regular-text' ), 
+					'STA_active' => array( 'type' => 'SINGLE', 'input_name' => 'states[' . $STA_ID . ']', 'options' => $this->_yes_no_values )
+				);
+				$this->_template_args['states'][ $STA_ID ]['inputs'] = $this->_generate_question_form_inputs_for_object( $state, $state_input_types );
+				$query_args =  array( 'action' => 'delete_state', 'STA_ID' => $STA_ID, 'CNT_ISO' => $CNT_ISO );
+				$this->_template_args['states'][ $STA_ID ]['delete_state_url'] = EE_Admin_Page::add_query_args_and_nonce( $query_args, GEN_SET_ADMIN_URL );
+			}	
+		} else {
+			$this->_template_args['states'] = FALSE;
+		}
+//		printr( $this->_template_args['states'], 'XXXXXXX  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		$this->_template_args['add_new_state_url'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'add_new_state' ),  GEN_SET_ADMIN_URL );
+
+		$state_details_settings = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'state_details_settings.template.php', $this->_template_args, TRUE );
+		
+		if ( defined( 'DOING_AJAX' )) {
+			$notices = EE_Error::get_notices( FALSE, FALSE, FALSE ); 
+			echo json_encode( array( 'return_data' => $state_details_settings, 'success' => $notices['success'], 'errors' => $notices['errors'] ));
+			die();
+		} else {
+			return $state_details_settings;
+		}
+
+	}
+
+
+
+
+	/**
+	 * 		form_form_field_label_wrap
+	 *
+	 * 		@access 		public
+	 * 		@param 		string 		$label
+	 * 		@return 		string
+	 */
+	public function country_form_field_label_wrap( $label ) {
+		return '
+			<tr>
+				<th>
+					' . $label  . '
+				</th>';		
+	}
+
+
+
+
+	/**
+	 * 		form_form_field_input__wrap
+	 *
+	 * 		@access 		public
+	 * 		@param 		string 		$label
+	 * 		@return 		string
+	 */
+	public function country_form_field_input__wrap( $input ) {
+		return '
+				<td class="reg-admin-attendee-questions-input-td">
+					' . $input . ' 
+				</td>
+			</tr>';		
+	}
+
+
+
+
+	/**
+	 * 		form_form_field_label_wrap
+	 *
+	 * 		@access 		public
+	 * 		@param 		string 		$label
+	 * 		@return 		string
+	 */
+	public function state_form_field_label_wrap( $label ) {
+		return '';		
+	}
+
+
+
+
+	/**
+	 * 		form_form_field_input__wrap
+	 *
+	 * 		@access 		public
+	 * 		@param 		string 		$label
+	 * 		@return 		string
+	 */
+	public function state_form_field_input__wrap( $input ) {
+		return '
+				<td class="general-settings-country-state-input-td">
+					' . $input . ' 
+				</td>';		
+	}
+
+
+
+
+	/**
+	 * 		_generate_question_form_inputs_for_object
+	 *
+	 * 		@access 	protected
+	 * 		@param 	object 		$object
+	 * 		@param 	array 		$input_types
+	 * 		@return 		array
+	 */
+	protected function _generate_question_form_inputs_for_object( $object = FALSE, $input_types = array() ) {	
+		if ( ! is_object( $object )) {
+			return FALSE;
+		}
+		$inputs = array();
+		$fields = $object->get_fields_settings();
+		$pk = $object->_get_model()->primary_key_name();
+
+//		printr( $object, get_class( $object ) . '<br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $fields, '$fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $input_types, '$input_types  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		foreach ( $fields as $field_ID => $field ) {
+//			echo '<h4>$field_ID : ' . $field_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+			// get saved value for field
+			$value = $object->get( $field_ID );
+			// if no saved value, then use default
+			$value = ! empty( $value ) ? $value : $field->default_value();
+			//echo '<h4>$value : ' . $value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';		
+			// determine question type
+			$type = isset( $input_types[ $field_ID ] ) ? $input_types[ $field_ID ]['type'] : 'TEXT';
+			// input name
+			$input_name = isset( $input_types[ $field_ID ] ) && isset( $input_types[ $field_ID ]['input_name'] ) ? $input_types[ $field_ID ]['input_name'] . '[' . $field_ID . ']' : $field_ID;
+			// css class for input
+			$class = isset( $input_types[ $field_ID ]['class'] ) && ! empty( $input_types[ $field_ID ]['class'] ) ? ' ' . $input_types[ $field_ID ]['class'] : '';
+			// create EE_Question_Form_Input object
+			$QFI = new EE_Question_Form_Input(
+				new EE_Question( array(
+					'QST_display_text'=> $field->nicename(),
+					'QST_type' => $type
+				)),
+				new EE_Answer( array( 'ANS_value'=> $value )),
+				array( 
+					'input_id' => $field_ID . '-' . $object->ID(),
+					'input_name' => $input_name,
+					'input_class' => $field_ID . $class,
+					'input_prefix' => '',
+					'append_qstn_id' => FALSE
+				)
+			);
+
+			// does question type have options ?
+			if ( in_array( $type, array( 'DROPDOWN', 'SINGLE', 'MULTIPLE' )) && isset ( $input_types[ $field_ID ] ) && isset ( $input_types[ $field_ID ]['options'] )) {
+				foreach ( $input_types[ $field_ID ]['options'] as $option ) {
+					$option = stripslashes_deep( $option );
+					$option_id = ! empty( $option['id'] ) ? $option['id'] : 0;
+
+					$QSO = new EE_Question_Option( array (
+							'QSO_name' => (string)$option_id,
+							'QSO_value' => $option['text'],
+							'QST_ID' => $QFI->get( 'QST_ID' ),
+							'QSO_deleted' => FALSE
+						));
+					// all QST (and ANS) properties can be accessed indirectly thru QFI
+					$QFI->add_temp_option( $QSO );
+				}
+			}
+			// we don't want ppl manually changing primary keys cuz that would just lead to total craziness man
+			if ( $field_ID == $pk ) {
+				$QFI->set( 'QST_disabled', TRUE );
+			}
+			//printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			
+			$inputs[ $field_ID ] = $QFI;	
+	
+		}
+		return $inputs;
+	}
+
+
+
+
+	/**
+	 * 		add_new_state
+	 *
+	 * 		@access 	public
+	 * 		@return 		void
+	 */
+	public function add_new_state() {
+		
+		$success = TRUE;
+		
+		$CNT_ISO = isset( $this->_req_data['CNT_ISO'] ) ? strtoupper( sanitize_text_field( $this->_req_data['CNT_ISO'] )) : FALSE;
+		if ( ! $CNT_ISO ) {
+			EE_Error::add_error( __( 'An error occured. No Country ISO code or an invalid Country ISO code was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			$success = FALSE;
+		}
+		$STA_abbrev = isset( $this->_req_data['STA_abbrev'] ) ? strtoupper( sanitize_text_field( $this->_req_data['STA_abbrev'] )) : FALSE;		
+		if ( ! $STA_abbrev ) {
+			EE_Error::add_error( __( 'An error occured. No State ISO code or an invalid State ISO code was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			$success = FALSE;
+		}
+		$STA_name = isset( $this->_req_data['STA_name'] ) ? ucwords( strtolower( sanitize_text_field( $this->_req_data['STA_name'] ))) : FALSE;
+		if ( ! $STA_name ) {
+			EE_Error::add_error( __( 'An error occured. No State name or an invalid State name was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			$success = FALSE;
+		}
+		
+		if ( $success ) {
+			$cols_n_values = array(
+				'CNT_ISO' => $CNT_ISO,
+				'STA_abbrev' => $STA_abbrev,
+				'STA_name' => $STA_name,
+				'STA_active' => TRUE
+			);			
+			$success = EEM_State::instance()->insert ( $cols_n_values );			
+		}
+		
+		if ( defined( 'DOING_AJAX' )) {
+			$notices = EE_Error::get_notices( FALSE, FALSE, FALSE ); 
+			echo json_encode( array( 'return_data' => $CNT_ISO, 'success' => __( 'The State was added successfully.', 'event_espresso' ), 'errors' => $notices['errors'] ));
+			die();
+		} else {
+			$this->_redirect_after_action( $success, 'State', 'added', array( 'action' => 'country_settings' ) );
+		}
+	}
+
+
+
+	/**
+	 * 		delete_state
+	 *
+	 * 		@access 	public
+	 * 		@return 		void
+	 */
+	public function delete_state() {
+		$STA_ID = isset( $this->_req_data['STA_ID'] ) ? sanitize_text_field( $this->_req_data['STA_ID'] ) : FALSE;
+		if ( ! $STA_ID ) {
+			EE_Error::add_error( __( 'An error occured. No State ID or an invalid State ID was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}
+		$success = EEM_State::instance()->delete_by_ID( $STA_ID );
+		
+		if ( defined( 'DOING_AJAX' )) {
+			$notices = EE_Error::get_notices( FALSE, FALSE, FALSE ); 
+			echo json_encode( array( 'return_data' => true, 'success' => __( 'The State was deleted successfully.', 'event_espresso' ), 'errors' => $notices['errors'] ));
+			die();
+		} else {
+			$this->_redirect_after_action( $success, 'State', 'deleted', array( 'action' => 'country_settings' ) );
+		}
+	}
+
+
+
+
+	/**
+	 * 		_update_country_settings
+	 *
+	 * 		@access 	protected
+	 * 		@return 		void
+	 */
+	protected function _update_country_settings() {
+		// grab the country ISO code
+		$CNT_ISO = isset( $this->_req_data['country'] ) ? strtoupper( sanitize_text_field( $this->_req_data['country'] )) : FALSE;
+		if ( ! $CNT_ISO ) {
+			EE_Error::add_error( __( 'An error occured. No Country ISO code or an invalid Country ISO code was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}
+		$success = TRUE;
+		$cols_n_values = array();
+		$cols_n_values['CNT_ISO3'] = isset( $this->_req_data['CNT_ISO3'] ) ? strtoupper( sanitize_text_field( $this->_req_data['CNT_ISO3'] )) : FALSE;
+		$cols_n_values['RGN_ID'] = isset( $this->_req_data['RGN_ID'] ) ? absint( $this->_req_data['RGN_ID'] ) : NULL;
+		$cols_n_values['CNT_name'] = isset( $this->_req_data['CNT_name'] ) ? sanitize_text_field( $this->_req_data['CNT_name'] ) : NULL;
+		$cols_n_values['CNT_cur_code'] = isset( $this->_req_data['CNT_cur_code'] ) ? strtoupper( sanitize_text_field( $this->_req_data['CNT_cur_code'] )) : 'USD';
+		$cols_n_values['CNT_cur_single'] = isset( $this->_req_data['CNT_cur_single'] ) ? sanitize_text_field( $this->_req_data['CNT_cur_single'] ) : 'dollar';
+		$cols_n_values['CNT_cur_plural'] = isset( $this->_req_data['CNT_cur_plural'] ) ? sanitize_text_field( $this->_req_data['CNT_cur_plural'] ) : 'dollars';
+		$cols_n_values['CNT_cur_sign'] = isset( $this->_req_data['CNT_cur_sign'] ) ? sanitize_text_field( $this->_req_data['CNT_cur_sign'] ) : '$';
+		$cols_n_values['CNT_cur_sign_b4'] = isset( $this->_req_data['CNT_cur_sign_b4'] ) ? (bool)absint( $this->_req_data['CNT_cur_sign_b4'] ) : TRUE;
+		$cols_n_values['CNT_cur_dec_plc'] = isset( $this->_req_data['CNT_cur_dec_plc'] ) ? absint( $this->_req_data['CNT_cur_dec_plc'] ) : 2;
+		$cols_n_values['CNT_cur_dec_mrk'] = isset( $this->_req_data['CNT_cur_dec_mrk'] ) ? sanitize_text_field( $this->_req_data['CNT_cur_dec_mrk'] ) : '.';
+		$cols_n_values['CNT_cur_thsnds'] = isset( $this->_req_data['CNT_cur_thsnds'] ) ? sanitize_text_field( $this->_req_data['CNT_cur_thsnds'] ) : ',';
+		$cols_n_values['CNT_tel_code'] = isset( $this->_req_data['CNT_tel_code'] ) ? sanitize_text_field( $this->_req_data['CNT_tel_code'] ) : NULL;
+		$cols_n_values['CNT_is_EU'] = isset( $this->_req_data['CNT_is_EU'] ) ? (bool)absint( $this->_req_data['CNT_is_EU'] ) : FALSE;
+		$cols_n_values['CNT_active'] = isset( $this->_req_data['CNT_active'] ) ? (bool)absint( $this->_req_data['CNT_active'] ) : TRUE;
+		// allow filtering of country data
+		$cols_n_values = apply_filters( 'FHEE_general_settings_country_save', $cols_n_values );
+		// where values
+		$where_cols_n_values = array( 'CNT_ISO' => $CNT_ISO );
+		// run the update
+		$success = EEM_Country::instance()->update( $cols_n_values, $where_cols_n_values );
+		if ( isset( $this->_req_data['states'] ) && is_array( $this->_req_data['states'] ) && $success ) {
+			// allow filtering of states data
+			$states = apply_filters( 'FHEE_general_settings_states_save', $this->_req_data['states'] );
+			// loop thru state data ( looks like : states[75][STA_name] )
+			foreach( $states as $STA_ID => $state ) {
+				$cols_n_values = array(
+					'CNT_ISO' 		=> $CNT_ISO,
+					'STA_abbrev' => strtoupper( sanitize_text_field( $state['STA_abbrev'] )),
+					'STA_name' 	=> ucwords( strtolower( sanitize_text_field( $state['STA_name'] ))),
+					'STA_active' 	=> (bool)absint( $state['STA_active'] )
+				);
+				// where values
+				$where_cols_n_values = array( 'STA_ID' => $STA_ID );
+				// run the update
+				$success = EEM_State::instance()->update( $cols_n_values, $where_cols_n_values );
+			}
+		}
+		$this->_redirect_after_action( $success, 'Countries', 'updated', array( 'action' => 'country_settings', 'country' => $CNT_ISO ));
 	}
 
 
