@@ -1,7 +1,7 @@
 jQuery(document).ready(function($) {
 
 	//Logo uploader
-	$('#upload_image_button').click(function() {
+	$('#upload_image_button').on( 'click', function() {
 		formfield = $('#upload_image').attr('name');
 		tb_show('', 'media-upload.php?type=image&amp;TB_iframe=1');
 		return false;
@@ -16,7 +16,7 @@ jQuery(document).ready(function($) {
 	}
 	
 	// process the remove link in the metabox
-	$('#remove-image').click(function(){
+	$('#remove-image').on( 'click', function(){
 		var answer = confirm( confirm_image_delete.text );
 		if (answer){
 			$("#upload_image").val('');
