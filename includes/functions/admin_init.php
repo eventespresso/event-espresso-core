@@ -121,7 +121,7 @@ function espresso_check_data_tables() {
 	// if we don't need them, don't load them
 	$load_data_migration_scripts = FALSE;
 	// have we already performed some data migrations ?
-	if ( ! empty( $existing_data_migrations )) {	
+	if ( ! empty( $espresso_data_migrations ) && ! empty( $existing_data_migrations )) {	
 		// loop through all previous migrations
 		foreach ( $existing_data_migrations as $ver => $migrations ) {
 			// ensure that migrations is an array, then loop thru it
@@ -142,7 +142,7 @@ function espresso_check_data_tables() {
 	}
 
 	if ( $load_data_migration_scripts && ! empty( $scripts_to_run )) {
-		require_once( 'includes/functions/data_migration_scripts.php' );		
+		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/data_migration_scripts.php' );		
 		// run the appropriate migration script
 		foreach( $scripts_to_run as $migration_func ) {
 			if ( function_exists( $migration_func )) {
