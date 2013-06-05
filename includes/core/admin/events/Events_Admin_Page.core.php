@@ -1935,7 +1935,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		// enable event address for Gmaps
 		if (!empty($this->_req_data['venue_id'][0]) || !empty($this->_req_data['zip']) || !empty($this->_req_data['city']) || !empty($this->_req_data['state'])) {
-			$event_meta['enable_for_gmap'] = $this->_req_data['enable_for_gmap'];
+			$event_meta['enable_for_gmap'] = isset( $this->_req_data['enable_for_gmap'] ) ? $this->_req_data['enable_for_gmap'] : false;
 		} else {
 			$event_meta['enable_for_gmap'] = false;
 		}
