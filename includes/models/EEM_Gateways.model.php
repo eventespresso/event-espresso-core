@@ -796,6 +796,7 @@ Class EEM_Gateways {
 	 */
 	public function process_reg_step_3() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+
 		$return_page_url = $this->_get_return_page_url();
 		// free event?
 		if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
@@ -900,8 +901,7 @@ Class EEM_Gateways {
 	 */
 	public function thank_you_page_logic(EE_Transaction $transaction) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		if (!empty($this->_selected_gateway)
-						&& !empty($this->_gateway_instances[ $this->_selected_gateway ])) {
+		if ( ! empty( $this->_selected_gateway ) && ! empty( $this->_gateway_instances[ $this->_selected_gateway ] )) {
 			$this->_gateway_instances[ $this->_selected_gateway ]->thank_you_page_logic($transaction);
 		}
 		$this->check_for_completed_transaction($transaction);
