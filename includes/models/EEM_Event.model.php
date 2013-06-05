@@ -67,6 +67,7 @@ class EEM_Event  extends EEM_Base{
 	const status_deleted = 'DEL';
 	const status_denied = 'DEN';
 	const status_expired = 'EXP';
+
 	
 	/**
 	 * Keys are INTs used in the DB and in forms to indicate how much info is required
@@ -81,26 +82,9 @@ class EEM_Event  extends EEM_Base{
 		$this->singular_item = __('Event','event_espresso');
 		$this->plural_item = __('Events','event_espresso');
 		
-		$this->_statuses = apply_filters('FHEE_EEM_Event__construct__statuses',array(
-			EEM_Event::status_active =>  __("Active", "event_espresso"),
-			EEM_Event::status_not_active => __("Not Active", "event_espresso"),
-			EEM_Event::status_registration_not_open =>  __("Registration Not Open", "event_espresso"),
-			EEM_Event::status_registration_open =>  __("Registration Open", "event_espresso"),
-			EEM_Event::status_registration_closed =>  __("Registration Closed", "event_espresso"),
-			EEM_Event::status_pending =>  __("Pending", "event_espresso"),
-			EEM_Event::status_ongoing =>  __("Ongoing", "event_espresso"),
-			EEM_Event::status_secondary =>  __("Secondary", "event_espresso"),
-			EEM_Event::status_draft =>  __("Draft", "event_espresso"),
-			EEM_Event::status_deleted =>  __("Deleted", "event_espresso"),
-			EEM_Event::status_denied =>  __("Denied", "event_espresso"),
-			EEM_Event::status_expired=>  __("Expired", "event_espresso"),
-			'auto-draft'=>  __("Auto Draft", "event_espresso")
-		));
-		$this->_additional_attendee_reg_info_enum = array(
-			EEM_Event::additional_attendee_reg_info_none =>  __("None", "event_espresso"),
-			EEM_Event::additional_attendee_reg_info_personal_info_only => __("Personal Info Only", "event_espresso"),
-			EEM_Event::additional_attendee_reg_info_full =>  __("Full Registration Info", "event_espresso")
-		);
+		$this->_statuses = $this->_get_event_status_array();
+		$this->_additional_attendee_reg_info_enum = $this->_get_additional_attendee_reg_info_array();
+		
 		$this->_tables = array(
 			'Event_CPT'=>new EE_Primary_Table('posts','ID'),
 			'Event_Meta'=> new EE_Secondary_Table('esp_event_meta', 'EVTM_ID','EVT_ID',"Event_CPT.post_type='espresso_events'")
@@ -556,6 +540,47 @@ class EEM_Event  extends EEM_Base{
 	}
 
 
+
+	public static function event_status_array() {
+		self::$_statuses = call_user_func( array( __CLASS__, '_get_event_status_array' ) );
+		return self::$_statuses;
+	}
+
+
+	public static function additional_attendee_reg_info_array() {
+		self::$_additional_attendee_reg_info_array = call_user_func( array( __CLASS__, '_get_additional_attendee_reg_info_array' ) );
+		return self::$_additional_attendee_reg_info_enum;
+	}
+
+
+
+	private function _get_event_status_array() {
+		return apply_filters('FHEE_EEM_Event__construct__statuses',array(
+			EEM_Event::status_active =>  __("Active", "event_espresso"),
+			EEM_Event::status_not_active => __("Not Active", "event_espresso"),
+			EEM_Event::status_registration_not_open =>  __("Registration Not Open", "event_espresso"),
+			EEM_Event::status_registration_open =>  __("Registration Open", "event_espresso"),
+			EEM_Event::status_registration_closed =>  __("Registration Closed", "event_espresso"),
+			EEM_Event::status_pending =>  __("Pending", "event_espresso"),
+			EEM_Event::status_ongoing =>  __("Ongoing", "event_espresso"),
+			EEM_Event::status_secondary =>  __("Secondary", "event_espresso"),
+			EEM_Event::status_draft =>  __("Draft", "event_espresso"),
+			EEM_Event::status_deleted =>  __("Deleted", "event_espresso"),
+			EEM_Event::status_denied =>  __("Denied", "event_espresso"),
+			EEM_Event::status_expired=>  __("Expired", "event_espresso"),
+			'auto-draft'=>  __("Auto Draft", "event_espresso")
+		));
+	}
+
+
+
+	private function _get_additional_attendee_reg_info_array() {
+		return array(
+			EEM_Event::additional_attendee_reg_info_none =>  __("None", "event_espresso"),
+			EEM_Event::additional_attendee_reg_info_personal_info_only => __("Personal Info Only", "event_espresso"),
+			EEM_Event::additional_attendee_reg_info_full =>  __("Full Registration Info", "event_espresso")
+		);
+	}
 
 
 }
