@@ -345,7 +345,7 @@ class EEM_Transaction extends EEM_TempBase {
 				//dang it... results are just returned vanilla... we have to run conversions on them first
 				foreach( $transactions as $tkey => $transaction ) {
 					foreach ( $transaction as $key => $value ) {
-						if ( in_array($key, $this->dtt_keys ) ) {
+						if ( in_array($key, $this->_dtt_keys ) ) {
 							$transactions[$tkey]->$key = $this->_prepare_dtt_from_db( $value );
 						}
 					}
@@ -395,7 +395,7 @@ class EEM_Transaction extends EEM_TempBase {
 				//dang it... results are just returned vanilla... we have to run conversions on them first
 				foreach( $transactions as $tkey => $transaction ) {
 					foreach ( $transaction as $key => $value ) {
-						if ( in_array($key, $this->dtt_keys ) ) {
+						if ( in_array($key, $this->_dtt_keys ) ) {
 							$transactions[$tkey]->$key = $this->_prepare_dtt_from_db( $value );
 						}
 					}
