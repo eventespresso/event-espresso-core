@@ -460,7 +460,7 @@ class EEM_Registration extends EEM_TempBase {
 			//dang it... results are just returned vanilla... we have to run conversions on them first
 			foreach( $registrations as $rkey => $registration ) {
 				foreach ( $registration as $key => $value ) {
-					if ( in_array($key, $this->dtt_keys ) ) {
+					if ( in_array($key, $this->_dtt_keys ) ) {
 						$registrations[$rkey]->$key = $this->_prepare_dtt_from_db( $value );
 					}
 				}
@@ -738,7 +738,7 @@ class EEM_Registration extends EEM_TempBase {
 
 		$attendee = $wpdb->get_row( $wpdb->prepare( $SQL, $REG_ID ));
 		foreach ( $attendee as $key => $value ) {
-			if ( in_array($key, $this->dtt_keys ) ) {
+			if ( in_array($key, $this->_dtt_keys ) ) {
 				$attendee->$key = $this->_prepare_dtt_from_db( $value );
 			}
 		}
@@ -846,7 +846,7 @@ class EEM_Registration extends EEM_TempBase {
 		//dang it... results are just returned vanilla... we have to run conversions on them first
 		foreach( $attendees as $akey => $attendee ) {
 			foreach ( $attendee as $key => $value ) {
-				if ( in_array($key, $this->dtt_keys ) ) {
+				if ( in_array($key, $this->_dtt_keys ) ) {
 					$attendees[$akey]->$key = $this->_prepare_dtt_from_db( $value );
 				}
 			}
