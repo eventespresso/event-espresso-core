@@ -51,8 +51,9 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base {
 		
 		$this->_fields_settings=array(
 				'QSO_ID'=>new EE_Model_Field('Question Option ID', 'primary_key', false, null, null, null),
-				'QSO_name'=>new EE_Model_Field('Question Option Key Name', 'plaintext', false, '', null, null),
+				'QSO_name'=>new EE_Model_Field('Question Option Key Name', 'text_or_numeric', false, '', null, null),
 				'QSO_value'=>new EE_Model_Field('Question Option Display Value', 'simplehtml', false, '', null, null),
+				'QSO_opt_group'=>new EE_Model_Field('Question Option Opt Group', 'plaintext', TRUE, NULL, null, null),
 				'QST_ID'=>new EE_Model_Field('Related Question ID', 'foreign_key', false, null, null, 'Question'),
 				'QSO_deleted'=>new EE_Model_Field('Whether the option has been deleted', 'deleted_flag', false, false, null, null)
 			);
