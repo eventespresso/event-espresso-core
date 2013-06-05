@@ -1594,6 +1594,32 @@ abstract class EEM_Base extends EE_Base{
 		}
 		return $array_of_objects;	
 	}
+
+
+
+	/**
+	 * The purpose of this method is to allow us to create a model object that is not in the db that holds default values.  
+	 * A typical example of where this is used is when creating a new item and the initial load of a form.  We dont' necessarily want to test for if the object is present but just assume it is BUT load the defaults from the object (as set in the model_field!).
+	 * 
+	 * @return EE_Base_Class single EE_Base_Class object with default values for the properties.
+	 */
+	public function create_default_object() {
+		$this->_include_php_class();
+
+		$this_model_fields_and_values = array();
+		//setup the row using default values;
+		foreach ( $this->field_settings() as $field_name => $field_obj ) {
+			$this_model_fields_and_values[$field_name] = $field_obj->get_default_value();
+		}
+
+		$className = $this->_get_class_name();
+		$classInstance = call_user_func_array( array( $className, 'new_instance' ), array( $this_model_fields_and_values ) );
+
+		return $classInstance;
+	}
+
+
+
 	/**
 	 * takes care of including the PHP file with the corresponding .class file to this model.
 	 */
