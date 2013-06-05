@@ -70,7 +70,7 @@ class EEM_Country extends EEM_TempBase {
 				'CNT_cur_thsnds'		=>new EE_Model_Field( 'Currency Thousands Separator', 'plaintext', FALSE ),
 				'CNT_tel_code'			=>new EE_Model_Field( 'Country Telephone Code', 'plaintext', FALSE ),
 				'CNT_is_EU'				=>new EE_Model_Field( 'Country is Member of EU', 'plaintext', FALSE ),
-				'CNT_active'				=>new EE_Model_Field( 'Country Active Flag', 'plaintext', FALSE )
+				'CNT_active'				=>new EE_Model_Field( 'Country Active in Lists', 'plaintext', FALSE )
 			);
 		$this->_related_models=array(
 				'Region'=>new EE_Model_Relation('belongsTo', 'Region', 'RGN_ID')
