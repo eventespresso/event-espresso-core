@@ -261,7 +261,7 @@ class EE_Event extends EE_Base_Class{
 		return $this->get('EVT_display_reg_form');
 	}
 	function external_url(){
-		return $this->get('EVT_external_url');
+		return $this->get('EVT_external_URL');
 	}
 	function is_active(){
 		return $this->get('EVT_is_active');
