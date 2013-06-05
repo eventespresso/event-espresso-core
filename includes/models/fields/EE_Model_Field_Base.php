@@ -25,7 +25,7 @@ abstract class EE_Model_Field_Base{
 		$this->_default_value = $default_value;
 	}
 	function _construct_finalize($table_alias, $name){
-				$this->_table_alias = $table_alias;
+		$this->_table_alias = $table_alias;
 		$this->_name = $name;
 	}
 	function get_table_alias(){

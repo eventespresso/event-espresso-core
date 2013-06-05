@@ -72,7 +72,16 @@ class EEM_Event  extends EEM_Base{
 	const status_deleted = 'DEL';
 	const status_denied = 'DEN';
 	const status_expired = 'EXP';
-
+	
+	/**
+	 * Keys are INTs used in the DB and in forms to indicate how much info is required
+	 * for additional attendees. Values are how to display them
+	 * @var array 
+	 */
+	private $_additional_attendee_reg_info_enum = array();
+	const additional_attendee_reg_info_none = 0;
+	const additional_attendee_reg_info_personal_info_only = 1;
+	const additional_attendee_reg_info_full = 2;
 	protected function __construct( $timezone ){
 		$this->singular_item = __('Event','event_espresso');
 		$this->plural_item = __('Events','event_espresso');
@@ -89,12 +98,20 @@ class EEM_Event  extends EEM_Base{
 			EEM_Event::status_draft =>  __("Draft", "event_espresso"),
 			EEM_Event::status_deleted =>  __("Deleted", "event_espresso"),
 			EEM_Event::status_denied =>  __("Denied", "event_espresso"),
-			EEM_Event::status_expired=>  __("Expired", "event_espresso")
+			EEM_Event::status_expired=>  __("Expired", "event_espresso"),
+			'auto-draft'=>  __("Auto Draft", "event_espresso")
 		));
+		$this->_additional_attendee_reg_info_enum = array(
+			EEM_Event::additional_attendee_reg_info_none =>  __("None", "event_espresso"),
+			EEM_Event::additional_attendee_reg_info_personal_info_only => __("Personal Info Only", "event_espresso"),
+			EEM_Event::additional_attendee_reg_info_full =>  __("Full Registration Info", "event_espresso")
+		);
 		$this->_tables = array(
 			'Event_CPT'=>new EE_Primary_Table('posts','ID'),
 			'Event_Meta'=> new EE_Secondary_Table('esp_event_meta', 'EVTM_ID','EVT_ID',"Event_CPT.post_type='espresso_events'")
 		);
+		
+		
 		
 		$this->_fields = array(
 			'Event_CPT'=>array(
@@ -104,8 +121,8 @@ class EEM_Event  extends EEM_Base{
 				'EVT_slug'=>new EE_Slug_Field('post_name', __("Event Slug", "event_espresso"), false, ''),
 				'EVT_created'=>new EE_Datetime_Field('post_date', __("Date/Time Event Created", "event_espresso"), false, current_time('timestamp')),
 				'EVT_short_desc'=>new EE_Simple_HTML_Field('post_excerpt', __("Event Short Descripiton", "event_espresso"), false,''),
-				'STS_ID'=>new EE_Enum_Field('post_status', __("Event Status", "event_espresso"), false, EEM_Event::status_draft, array_keys($this->_statuses)),//will be a foreign key once status model made
-				'EVT_modified'=>new EE_Datetime_Field('post_modified', __("Date/Time Event Modified", "event_espresso"), true, current_time('timestamp')),
+				'STS_ID'=>new EE_Enum_Field('post_status', __("Event Status", "event_espresso"), false, EEM_Event::status_draft, $this->_statuses),//will be a foreign key once status model made
+				'EVT_modified'=>new EE_Datetime_Field('post_modified', __("Dateim/Time Event Modified", "event_espresso"), true, current_time('timestamp')),
 				'EVT_wp_user'=>new EE_Integer_Field('post_author', __("Wordpress User ID", "event_espresso"), false,1),
 				'EVT_parent'=>new EE_Integer_Field('post_parent', __("Event Parent ID", "event_espresso"), true),
 				'EVT_order'=>new EE_Integer_Field('menu_order', __("Event Menu Order", "event_espresso"), false, 1),
@@ -121,6 +138,8 @@ class EEM_Event  extends EEM_Base{
 				'EVT_reg_limit'=>new EE_Integer_Field('EVT_reg_limit', __("Event Registration Limit", "event_espresso"), true, 999999),
 				'EVT_allow_multiple'=>new EE_Boolean_Field('EVT_allow_multiple', __("Allow Multiple Registrations on Same Transaction Flag", "event_espresso"), false, false),
 				'EVT_additional_limit'=>new EE_Integer_Field('EVT_additional_limit', __("Limit of Additional Registrations on Same Transaction", "event_espresso"), true),
+				'EVT_additional_attendee_reg_info'=>new EE_Enum_Field('EVT_additional_attendee_reg_info', __("Info Requested for Additional Attendees?", "event_espresso"), true, EEM_Event::additional_attendee_reg_info_none, $this->_additional_attendee_reg_info_enum,true),
+				'EVT_default_registration_status'=>new EE_Enum_Field('EVT_default_payment_status', __("Default Payment Status on this Event", "event_espresso"), false, EEM_Registration::status_id_pending, EEM_Registration::reg_status_array(), false),
 				'EVT_require_pre_approval'=>new EE_Boolean_Field('EVT_require_pre_approval', __("Event Requires Pre-Approval before Registration Complete", "event_espresso"), false, false),
 				'EVT_member_only'=>new EE_Boolean_Field('EVT_member_only', __("Member-Only Event Flag", "event_espresso"), false, false),
 				'EVT_allow_overflow'=>new EE_Boolean_Field('EVT_allow_overflow', __("Allow Overflow on Event", "event_espresso"), false, false),
@@ -132,19 +151,15 @@ class EEM_Event  extends EEM_Base{
 			'Datetime'=>new EE_Has_Many_Relation(),
 			'Price'=>new EE_Has_Many_Relation(),
 			'Question_Group'=>new EE_HABTM_Relation('Event_Question_Group'),
-			'Venue'=>new EE_HABTM_Relation('Event_Venue')
+			'Venue'=>new EE_HABTM_Relation('Event_Venue'),
+			'Term_Taxonomy'=>new EE_HABTM_Relation('Term_Relationship')
 		);
+		require_once('strategies/EE_Default_CPT_Where_Conditions.strategy.php');
+		$this->_default_where_conditions_strategy = new EE_Default_CPT_Where_Conditions('espresso_events');
 		parent::__construct( $timezone );
 	}
 	
-	/**
-	 * Adds 'EVT_post_type'=>'esp_event' as a where condition on all applicable queries,
-	 * even ones ran by other models which use this one
-	 * @return array like EEM_base::get_all's $query_params[0] (where conditions)
-	 */
-	protected function _get_universal_where_params(){
-		return array('EVT_post_type'=>'espresso_events');
-	}
+	
 
 	/**
 	*		retrieve all active Questions and Groups for an Event via the Event's ID

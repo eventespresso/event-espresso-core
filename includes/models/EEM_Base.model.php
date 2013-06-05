@@ -22,17 +22,17 @@ $field_files = glob(dirname(__FILE__) . '/fields/*.php');
 $helper_files = glob(dirname(__FILE__) . '/helpers/*.php');
 $relation_files = glob(dirname(__FILE__) . '/relations/*.php');
 $files =  array_merge( array_merge($field_files, $relation_files), $helper_files) ;
-
+require_once('strategies/EE_Default_Where_Conditions.strategy.php');
 foreach ($files as $file){
     require_once($file);   
 }
 abstract class EEM_Base extends EE_Base{
-	var $singular_item = 'Item';
-	var $plural_item = 'Items';
+	protected $singular_item = 'Item';
+	protected $plural_item = 'Items';
 	/**
 	 * @var EE_Table[] $_tables  array of EE_Table objects for defining which tables comprise this model.
 	 */
-	var $_tables;
+	protected $_tables;
 	
 	
 	
@@ -42,12 +42,21 @@ abstract class EEM_Base extends EE_Base{
 	 * and the value is an array. Each of those sub-arrays have keys of field names (eg 'ATT_ID', which should also be variable names
 	 * on the model objects (eg, EE_Attendee), and the keys should be children of EE_Model_Field
 	 */
-	var $_fields;
+	protected $_fields;
 	/**
 	 *
 	 * @var EE_Model_Relation[] array of different kidns of relations
 	 */
-	var $_model_relations;
+	protected $_model_relations;
+	/**
+	 * Defautls strategy for getting where conditions on this model. This strategy is used to get default
+	 * where conditions which are added to get_all, update, and delete queries. They can be overriden
+	 * by setting the same columns as used in these queries in the query yourself.
+	 * @var EE_Default_Where_Conditions
+	 */
+	protected $_default_where_conditions_strategy;
+	
+	
 
 
 
@@ -158,6 +167,13 @@ abstract class EEM_Base extends EE_Base{
 		}
 
 		$this->_timezone = $timezone;
+		//finalize default where condition strategy, or set default
+		if( ! $this->_default_where_conditions_strategy){
+			//nothing was set during chidl consturctor, so set default
+			$this->_default_where_conditions_strategy = new EE_Default_Where_Conditions();
+		}
+		$this->_default_where_conditions_strategy->_finalize_construct($this);
+		
 	}
 
 
@@ -885,7 +901,7 @@ abstract class EEM_Base extends EE_Base{
 		}else{
 			$where_query_params = array();
 		}
-		$where_query_params = array_merge($where_query_params, $this->_get_universal_where_params_for_models_in_query($query_object));
+		$where_query_params = array_merge($where_query_params, $this->_get_default_where_conditions_for_models_in_query($query_object));
 		$query_object->set_where_sql( $this->_construct_where_clause($where_query_params, $values_already_prepared_by_model_object));
 
 
@@ -962,11 +978,11 @@ abstract class EEM_Base extends EE_Base{
 	 * so they can be merged
 	 * @param EE_Model_Query_Info_Carrier $query_info_carrier
 	 */
-	private function _get_universal_where_params_for_models_in_query(EE_Model_Query_Info_Carrier $query_info_carrier){
-		$universal_query_params = $this->_get_universal_where_params();
+	private function _get_default_where_conditions_for_models_in_query(EE_Model_Query_Info_Carrier $query_info_carrier){
+		$universal_query_params = $this->_get_default_where_conditions();
 		foreach($query_info_carrier->get_model_names_included() as $model_name){
 			$related_model = $this->get_related_model_obj($model_name);
-			$related_model_universal_where_params = $related_model->_get_universal_where_params();
+			$related_model_universal_where_params = $related_model->_get_default_where_conditions();
 			//prepend the model's name onto where params from other models
 			$related_model_universal_where_params_prepended = array();
 			foreach($related_model_universal_where_params as $field_name => $value){
@@ -978,14 +994,14 @@ abstract class EEM_Base extends EE_Base{
 	}
 	
 	/**
-	 * For overriding if you want to ALWAYS have a certain WHERE condition in all
-	 * queries relating to this model (eg, all selects, updates, and deletes (inserts dont'r eally apply)).
+	 * Uses the _default_where_conditions_strategy set during __construct() to get
+	 * default where conditions on all get_all, update, and delete queries done by this model.
 	 * Use the same syntax as client code. Eg on the Event model, use array('Event.EVT_post_type'=>'esp_event'), 
 	 * NOT array('Event_CPT.post_type'=>'esp_event'). 
 	 * @return array
 	 */
-	protected function _get_universal_where_params(){
-		return array();
+	private function _get_default_where_conditions(){
+		return $this->_default_where_conditions_strategy->get_default_where_conditions();
 	}
 	/**
 	 * Creates the string of SQL for the select part of a select query, everything behind SELECT and before FROM.
@@ -1449,6 +1465,28 @@ abstract class EEM_Base extends EE_Base{
 		}
 		throw new EE_Error(sprintf(__("There is no Primary Key defined on model %s",'event_espresso'),get_class($this)));
 	}
+	/**
+	 * Flag indicating whether this model has a primary key or not
+	 * @var boolean
+	 */
+	protected $_has_primary_key_field=null;
+	/**
+	 * Returns whether or not not there is a primary key on this model.
+	 * Internally does some caching.
+	 * @return boolean
+	 */
+	public function has_primary_key_field(){
+		if($this->_has_primary_key_field === null){
+			try{
+				$this->get_primary_key_field();
+				$this->_has_primary_key_field = true;
+			}catch(EE_Error $e){
+				$this->_has_primary_key_field = false;
+			}
+		}
+		return $this->_has_primary_key_field;
+		
+	}
 	
 	/**
 	 * Finds the first field of type $field_class_name.
@@ -1472,9 +1510,12 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	public function get_foreign_key_to($model_name){
 		foreach($this->field_settings() as $field){			
-			if(is_subclass_of($field, 'EE_Foreign_Key_Field_Base')
-					&& $field->get_model_name_pointed_to() == $model_name){
-				return $field;
+			if(is_subclass_of($field, 'EE_Foreign_Key_Field_Base')){
+				if(is_array($field->get_model_name_pointed_to()) && in_array($model_name,$field->get_model_name_pointed_to())){
+					return $field;
+				}elseif( ! is_array($field->get_model_name_pointed_to()) && $field->get_model_name_pointed_to() == $model_name){
+					return $field;
+				}
 			}
 		}
 		throw new EE_Error(sprintf(__("There is no foreign key field pointing to model %s on model %s",'event_espresso'),$model_name,get_class($this)));
@@ -1510,7 +1551,7 @@ abstract class EEM_Base extends EE_Base{
 	* 
 	* 		@access		private
 	* 		@param		array		$attendees		
-	*		@return 	EE_Base_Class[]		array on success, FALSE on fail
+	*		@return 	EE_Base_Class[]		array keys are primary keys (if there is a primary key on the model. if not, numerically indexed)
 	*/	
 	protected function _create_objects( $rows = array() ) {
 		$this->_include_php_class();
@@ -1518,6 +1559,7 @@ abstract class EEM_Base extends EE_Base{
 		if(empty($rows)){
 			return array();
 		}
+		$count_if_model_has_no_primary_key = 0;
 		foreach ( $rows as $row ) {
 			if(empty($row)){//wp did its weird thing where it returns an array like array(0=>null), which is totally not helpful...
 				return array();
@@ -1528,7 +1570,7 @@ abstract class EEM_Base extends EE_Base{
 			$classInstance->set_timezone( $this->_timezone );
 
 			//make sure if there is any timezone setting present that we set the timezone for the object
-			$array_of_objects[$classInstance->ID()]=$classInstance;
+			$array_of_objects[$this->has_primary_key_field() ? $classInstance->ID() : $count_if_model_has_no_primary_key++]=$classInstance;
 			//also, for all the relations of type BelgonsTo, see if we can cache
 			//those related models
 			//(we could do this for other relations too, but if there are conditions
