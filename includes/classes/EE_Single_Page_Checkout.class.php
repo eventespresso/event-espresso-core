@@ -1167,21 +1167,19 @@ class EE_Single_Page_Checkout {
 			}
 
 			$saved_registrations = self::save_registration_items( $reg_items, $transaction );
-			
-			//$updated_session=$EE_Session->get_session_data();
+			// regrab session data in case of additions made while saving reg items
+			$session = $EE_Session->get_session_data();
+			//printr( $session, '$session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );		
+
 			$transaction->set_txn_session_data( $session );
 			$transaction->save();
 			//remove the session from teh transaction befores saving it to teh session... otherwise we'll ahve a recursive relationship! bad!!
 			$transaction->set_txn_session_data(null);
 			//var_dump($EE_Session->get_session_data());
 			$EE_Session->set_session_data(array( 'registration' => $saved_registrations, 'transaction' => $transaction ), 'session_data');
-			$EE_Session->_update_espresso_session();
-			//var_dump($)
-			do_action('AHEE__EE_Single_Page_Checkout__process_registration_step_3__before_gateway', $this);
-			
+			//$EE_Session->_update_espresso_session( FALSE,  __CLASS__ . '->' . __FUNCTION__ . ' : ' . __LINE__ );
 
-//			printr( $EE_Session, '$EE_Session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 
-//			die();
+			do_action('AHEE__EE_Single_Page_Checkout__process_registration_step_3__before_gateway', $this);
 
 			// attempt to perform transaction via payment gateway
 			$response = $this->gateways->process_reg_step_3();
@@ -1191,9 +1189,8 @@ class EE_Single_Page_Checkout {
 		
 		do_action('AHEE__EE_Single_Page_Checkout__process_registration_step_3__end', $this);
 		
-		//$session = $EE_Session->get_session_data();
-		//printr( $session, '$session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 
-		//die();
+//		$EE_Session->_update_espresso_session( FALSE,  __CLASS__ . '->' . __FUNCTION__ . ' : ' . __LINE__ );
+
 		if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_3_ajax_response')) {
 			wp_safe_redirect($this->_return_page_url);
 			exit();
@@ -1322,6 +1319,9 @@ class EE_Single_Page_Checkout {
 
 				// add attendee object to attendee info in session
 				$session['cart']['REG']['items'][$line_item_id]['attendees'][$att_nmbr]['reg_obj'] = base64_encode( serialize( $saved_registrations[$line_item_id] ));
+				//printr( $session, '$session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+				
+				$EE_Session->set_session_data( $session['cart'] );
 
 				// add registration id to session for the primary attendee
 				if (isset($attendee['primary_attendee']) && $attendee['primary_attendee'] == 1) {
@@ -1330,8 +1330,7 @@ class EE_Single_Page_Checkout {
 					$EE_Session->set_session_data(array('primary_attendee' => $primary_attendee), 'session_data');
 				}
 				
-				$EE_Session->set_session_data( $session['cart'] );
-				// save attendee question answerss
+				// save attendee question answers
 				$exclude = array( 'price_paid', 'primary_attendee', 'att_obj', 'reg_obj', 'additional_attendee_reg_info' );
 //				printr( $reg_items, '$reg_items  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 				
@@ -1347,42 +1346,10 @@ class EE_Single_Page_Checkout {
 				}
 			}
 		}
+		
 		return $saved_registrations;
 	}
 
-
-
-
-
-	
-	/**
-	 * 		_process_attendee_questions
-	 *
-	 * 		@access 		private
-	 * 		@param 		string 		$success_msg
-	 * 		@return 		void
-	 */
-/*	private function _process_attendee_questions( $REG_ID, $line_item_id = FALSE, $att_nmbr = 1 ) {
-			
-		if ( empty( $line_item_id )) {
-			EE_Error::add_error( __( 'An error occured. Can not save attendee questions because no line item ID was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-			return false;
-		}
-			
-		global $EE_Session, $wpdb;
-
-		// grab session data
-		$session = $EE_Session->get_session_data();
-		$reg_items = $session['cart']['REG']['items'];
-		$exclude = array( 'price_paid', 'primary_attendee', 'att_obj', 'reg_obj' );
-		
-		foreach ( $reg_items[ $line_item_id ]['attendees'][ $att_nmbr ] as $QST_ID => $answer ) {
-			if ( ! in_array( $QST_ID, $exclude ) && ! empty( $answer )) {
-				EEM_Answer::instance()->insert( array( 'REG_ID' =>$REG_ID, 'QST_ID' =>$QST_ID, 'ANS_value' =>sanitize_text_field( $answer )));
-			}
-		}
-
-	}*/
 
 
 

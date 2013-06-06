@@ -121,7 +121,7 @@ function espresso_check_data_tables() {
 	// if we don't need them, don't load them
 	$load_data_migration_scripts = FALSE;
 	// have we already performed some data migrations ?
-	if ( ! empty( $existing_data_migrations )) {	
+	if ( ! empty( $espresso_data_migrations ) && ! empty( $existing_data_migrations )) {	
 		// loop through all previous migrations
 		foreach ( $existing_data_migrations as $ver => $migrations ) {
 			// ensure that migrations is an array, then loop thru it
@@ -142,7 +142,7 @@ function espresso_check_data_tables() {
 	}
 
 	if ( $load_data_migration_scripts && ! empty( $scripts_to_run )) {
-		require_once( 'includes/functions/data_migration_scripts.php' );		
+		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/data_migration_scripts.php' );		
 		// run the appropriate migration script
 		foreach( $scripts_to_run as $migration_func ) {
 			if ( function_exists( $migration_func )) {
@@ -168,36 +168,41 @@ function espresso_plugin_activation() {
 
 	} else {
 		
-		if ( file_exists( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' )) {
-			require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' );
-			espresso_caffeinated_activation();
-		}
 
-		espresso_get_user_id();
 		//include autoloaders
 		require_once(  EVENT_ESPRESSO_INCLUDES_DIR . 'functions/plugins_loaded.php');
 		require_once(  EVENT_ESPRESSO_INCLUDES_DIR . 'functions/init.php');
-		espresso_autoload();
 		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/activation.php');
 
 		//make sure we have espresso_error_handling in place
 		espresso_error_handling();
-
+		espresso_autoload();
+		espresso_get_user_id();
+		
+		espresso_org_option_initialization();
+		espresso_verify_default_pages_exist();
 		espresso_check_data_tables();
+		
 		espresso_initialize_system_questions();
 		event_espresso_create_upload_directories();
-		espresso_org_option_initialization();
-		espresso_fix_org_options();
 		espresso_update_active_gateways();
-		//espresso_default_prices();
+		
+		espresso_default_prices();
 		espresso_default_price_types();
 		espresso_default_status_codes();
-		espresso_delete_unused_db_tables();
+		
 		espresso_default_message_templates();
 		espresso_default_countries();
 		espresso_default_states();
+		
 		espresso_create_no_ticket_prices_array();
-		espresso_add_rewrite_rules( TRUE );			
+		espresso_add_rewrite_rules( TRUE );	
+		
+		if ( file_exists( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' )) {
+			require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' );
+			espresso_caffeinated_activation();
+		}
+		
 	}
 }
 
@@ -267,7 +272,7 @@ function espresso_check_no_ticket_prices_array() {
 		}
 		$no_ticket_prices_msg .= '<br/>' . __( 'click on the event name to go to the event editor and correct this issue.', 'event_espresso' );
 		EE_Error::add_error( $no_ticket_prices_msg, __FILE__, __FUNCTION__, __LINE__ );
-		add_action( 'admin_notices', 'espresso_display_admin_notice' );
+		//add_action( 'admin_notices', 'espresso_display_admin_notice' );
 		update_option( 'espresso_no_ticket_prices', $espresso_no_ticket_prices );
 	}
 }
@@ -279,6 +284,7 @@ function espresso_check_no_ticket_prices_array() {
 function espresso_display_admin_notice() {
 	echo EE_Error::get_notices();
 }
+
 
 
 

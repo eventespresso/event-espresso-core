@@ -114,17 +114,6 @@ class EEM_Event  extends EEM_TempBase{
 		
 		$QSGs = $QSTs = $QSOs = array();
 
-		$default_q_meta = array(
-				'att_nmbr' => 1,
-				'price_id' => '',
-				'date' => '',
-				'time' => '',
-				'input_name' => '',
-				'input_id' => '',
-				'input_class' => ''
-		);		
-		$q_meta = array_merge( $default_q_meta, $q_meta );
-
 		// set System Groups for the additional attendees
 		$system_ID = $q_meta['att_nmbr'] > 1 ? $q_meta['additional_attendee_reg_info'] : 0;
 		// get Question Groups		
@@ -330,7 +319,6 @@ class EEM_Event  extends EEM_TempBase{
 
 
 
-
 	/**
 	*		_get_question_target_db_column
 	* 
@@ -342,7 +330,7 @@ class EEM_Event  extends EEM_TempBase{
 	*/	
 	public function assemble_array_of_groups_questions_and_options( $QSGs = array(), $QSTs = array(), $QSOs = array(), $q_meta = array() ) {		
 
-		if ( empty( $QSGs ) || empty( $QSTs ) /*|| empty( $q_meta )*/) {
+		if ( empty( $QSGs ) || empty( $QSTs )) {
 			EE_Error::add_error( __( 'An error occured. Insufficient data was received to process question groups and questions.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
@@ -358,40 +346,43 @@ class EEM_Event  extends EEM_TempBase{
 					foreach ( $QSTs as $QST_ID => $QST ) {
 						if ( $QST->QSG_ID == $QSG_ID ) {
 							
-							$qst_name = $qstn_id = $QST->QST_system ? $QST->QST_system : $QST_ID;
-							$qst_name = isset( $QST->ANS_ID ) ? '[' . $qst_name . '][' . $QST->ANS_ID . ']' : '[' . $qst_name . ']';
-							$input_name = isset( $q_meta['input_name'] ) ? $q_meta['input_name']  : '';
-							$input_id = isset( $q_meta['input_id'] ) ? $q_meta['input_id'] : sanitize_key( $QST->QST_display_text );
-							$input_class = isset( $q_meta['input_class'] ) ? $q_meta['input_class'] : '';
+							//printr( $QST, '$QST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 							
-							//printr( $QST, '$QST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );	
-							$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ] = (array)$QST;
-							$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_input_name'] = 'qstn' . $input_name . $qst_name;
-							$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_input_id'] = $input_id . '-' . $qstn_id;
-							$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_input_class'] = $input_class;
-							$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_options'] = array();
-							// check for answer in $_GET in case we are reprocessing a form after an error
-							if ( isset( $q_meta['EVT_ID'] ) && isset( $q_meta['att_nmbr'] ) && isset( $q_meta['date'] ) && isset( $q_meta['time'] ) && isset( $q_meta['price_id'] )) {
-								$answer = isset( $_GET['qstn'][ $q_meta['EVT_ID'] ][ $q_meta['att_nmbr'] ][ $q_meta['date'] ][ $q_meta['time'] ][ $q_meta['price_id'] ][ $qstn_id ] ) ? $_GET['qstn'][ $q_meta['EVT_ID'] ][ $q_meta['att_nmbr'] ][ $q_meta['date'] ][ $q_meta['time'] ][ $q_meta['price_id'] ][ $qstn_id ] : '';
-								$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['ANS_value'] = $answer;
+							$args = array(							
+								'QST_ID' => $QST->QST_ID, 
+								'QST_display_text' => $QST->QST_display_text, 
+								'QST_admin_label' => $QST->QST_admin_label, 
+								'QST_system' => $QST->QST_system, 
+								'QST_type' => $QST->QST_type, 
+								'QST_required' => $QST->QST_required, 
+								'QST_required_text' => $QST->QST_required_text, 
+								'QST_order' => $QST->QST_order, 
+								'QST_admin_only' => $QST->QST_admin_only, 
+								'QST_wp_user' => $QST->QST_wp_user, 
+								'QST_deleted' => $QST->QST_deleted
+							);
+							if ( isset( $QST->ANS_ID )) {
+								$answer = new EE_Answer( $QST->REG_ID, $QST_ID, $QST->ANS_value, $QST->ANS_ID );
+							} else {
+								$answer = new EE_Answer( NULL, $QST_ID, NULL, NULL );
 							}
+							$QST = new EE_Question( $args );
 							
-							if ( $QST->QST_type == 'SINGLE' ||$QST->QST_type == 'MULTIPLE' ||$QST->QST_type == 'DROPDOWN' ) {
+							if ( $QST->type() == 'SINGLE' ||$QST->type() == 'MULTIPLE' ||$QST->type() == 'DROPDOWN' ) {
 								if ( is_array( $QSOs )) {
-									foreach ( $QSOs as $QSO_ID => $QSO ) {					
-										if ( $QSO->QST_ID == $QST_ID ) {
-											$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ]['QST_options'][ $QSO_ID ] = (array)$QSO;
+									foreach ( $QSOs as $QSO_ID => $QSO ) {
+										if ( $QSO->ID() == $QST_ID ) {
+											$QST->add_option( $QSO );
 										}
 									}
 								}
 							}
+							$questions[ $QSG_ID ]['QSG_questions'][ $QST_ID ] = new EE_Question_Form_Input(  $QST, $answer, $q_meta );
 						}
-					}				
-				}			
+					}
+				}
 			}
 		}
-
-		
 		return $questions;
 	}
 
@@ -412,52 +403,7 @@ class EEM_Event  extends EEM_TempBase{
 
 		if ( $QST->QST_system ) {
 			$qst_name = $QST->QST_system;
-/*			switch( $QST->QST_system ) {
-				
-				case 1 :
-						$qst_name = $QST->QST_ID . '-fname';
-					break;
-					
-				case 2 :
-						$qst_name = $QST->QST_ID . '-lname';
-					break;
-					
-				case 3 :
-						$qst_name = $QST->QST_ID . '-email';
-					break;
-					
-				case 4 :
-						$qst_name = $QST->QST_ID . '-address';
-					break;
-					
-				case 5 :
-						$qst_name = $QST->QST_ID . '-address2';
-					break;
-					
-				case  6  :
-						$qst_name = $QST->QST_ID . '-city';
-					break;
-					
-				case 7 :
-						$qst_name = $QST->QST_ID . '-state';
-					break;
-					
-				case 8 :
-						$qst_name = $QST->QST_ID . '-zip';
-					break;
-					
-				case 9 :
-						$qst_name = $QST->QST_ID . '-country';
-					break;
-					
-				case 10 :
-						$qst_name = $QST->QST_ID . '-phone-' . $QST->QST_ID;
-					break;
-				
-			}*/
-			
 		} else {
-			//$qst_name = $QST->QST_ID . '-' . str_replace( array( ' ', '-', '.' ), '_', strtolower( $QST->QST_display_text ));
 			$qst_name = $QST->QST_ID;
 		}
 		return $qst_name;

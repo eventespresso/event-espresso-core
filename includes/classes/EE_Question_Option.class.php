@@ -44,9 +44,17 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	 * Question Option Display Text
 	 * 
 	 * @access protected
-	 * @var int
+	 * @var string
 	 */
 	protected $_QSO_value=FALSE;
+	
+	/**
+	 * Question Option Opt Group Name
+	 * 
+	 * @access protected
+	 * @var string
+	 */
+	protected $_QSO_opt_group=NULL;
 	
 	/**
 	 * Question ID
@@ -109,6 +117,14 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 		return $this->set('QSO_value',$text);
 	}
 	/**
+	 * Sets the option's opt_group
+	 * @param string $text
+	 * @return bool success
+	 */
+	public function set_opt_group($text){
+		return $this->set('QSO_opt_group',$text);
+	}
+	/**
 	 * Sets the ID of the related questino
 	 * @param int $question_ID
 	 * @return bool success
@@ -131,6 +147,13 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	 */
 	public function value(){
 		return $this->get('QSO_value');
+	}
+	/**
+	 * Gets the option's opt_group
+	 * @return string
+	 */
+	public function opt_group(){
+		return $this->get('QSO_opt_group');
 	}
 
 	/**

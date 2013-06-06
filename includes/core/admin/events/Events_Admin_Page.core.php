@@ -1160,7 +1160,20 @@ class Events_Admin_Page extends EE_Admin_Page {
 			</tr>
 		</table>
 
-	</div>
+		<?php if( ! isset( $org_options['map_settings'] ) || ! isset( $org_options['map_settings']['use_google_maps'] ) || ! $org_options['map_settings']['use_google_maps'] ) { ?>
+		<p class="ee-notice">
+			<?php
+				echo sprintf( 
+					__('To display a Google Map for event venues, go to %sEvent Espresso General Settings%sGoogle Maps%s, and set "Activate Google Maps" to "Yes"', 'event_espresso' ),
+					'<b>',
+					'</b> &raquo; <b>',
+					'</b>'
+				); 
+			?>
+		</p>						
+		<?php } ?>
+						
+	</div> 
 		<?php
 	}
 
@@ -1935,7 +1948,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 
 		// enable event address for Gmaps
 		if (!empty($this->_req_data['venue_id'][0]) || !empty($this->_req_data['zip']) || !empty($this->_req_data['city']) || !empty($this->_req_data['state'])) {
-			$event_meta['enable_for_gmap'] = $this->_req_data['enable_for_gmap'];
+			$event_meta['enable_for_gmap'] = isset( $this->_req_data['enable_for_gmap'] ) ? $this->_req_data['enable_for_gmap'] : false;
 		} else {
 			$event_meta['enable_for_gmap'] = false;
 		}

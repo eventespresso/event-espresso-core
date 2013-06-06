@@ -161,6 +161,7 @@ if ( is_admin() ) {
 	require_once(dirname(__FILE__) . '/includes/functions/admin_init.php');
 	register_activation_hook(__FILE__, 'espresso_plugin_activation');
 	add_filter('plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2);	
+	add_action( 'plugins_loaded', 'espresso_do_pue_updates', 0 );
 	add_action('plugins_loaded', 'espresso_check_for_export');
 	add_action('plugins_loaded', 'espresso_check_for_import');
 	add_action('admin_init', 'espresso_check_data_tables' );
@@ -169,7 +170,7 @@ if ( is_admin() ) {
 	add_action( 'init', 'espresso_check_no_ticket_prices_array', 101 );
 	add_action('admin_bar_menu', 'espresso_toolbar_items', 100);
 	add_action( 'admin_enqueue_scripts', 'espresso_load_scripts_styles' );
-	add_action( 'plugins_loaded', 'espresso_do_pue_updates', 0 );
+	add_action( 'admin_notices', 'espresso_display_admin_notice' );
 	
 } else {
 	

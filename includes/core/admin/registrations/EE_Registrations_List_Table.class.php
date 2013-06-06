@@ -37,6 +37,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	function __construct( $admin_page ){
         parent::__construct($admin_page);
         $this->_status = $this->_admin_page->get_registration_status_array();
+		require_once ( EE_HELPERS . 'EE_DTT_Helper.helper.php' );
 	}
 
 
@@ -185,7 +186,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			<a href="'.$check_in_url.'" title="' . __( 'The Check In List allows you to easily toggle attendee check in status for this event', 'event_espresso' ) . '">' . __( 'View Attendee Check In List', 'event_espresso' ) . '</a>';
 		
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item->REG_ID ), REG_ADMIN_URL );	
-		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . date( 'D M j, Y  g:i a',	$item->REG_date ) . '</a>';	
+		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . EE_DTT_Helper::prepare_dtt_from_db( $item->REG_date, 'D M j, Y  g:i a' ) . '</a>';	
 
 		return sprintf('%1$s %2$s', $REG_date, $this->row_actions($actions) );		
 
@@ -222,7 +223,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * 		column_default
 	*/
    	function column_DTT_EVT_start($item){
-		return date( 'D M j, Y  g:i a',	$item->DTT_EVT_start );
+		return EE_DTT_Helper::prepare_dtt_from_db( $item->DTT_EVT_start, 'D M j, Y  g:i a' );
     }
 
 

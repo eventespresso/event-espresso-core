@@ -7,6 +7,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	public function __construct( $admin_page ) {
 		parent::__construct($admin_page);
         $this->_status = $this->_admin_page->get_registration_status_array();
+		require_once ( EE_HELPERS . 'EE_DTT_Helper.helper.php' );
 	}
 
 
@@ -154,7 +155,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 	function column_REG_date($item) {
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item->REG_ID ), REG_ADMIN_URL );	
-		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . date( 'D M j, Y  g:i a',	$item->REG_date ) . '</a>';	
+		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . EE_DTT_Helper::prepare_dtt_from_db( $item->REG_date, 'D M j, Y  g:i a' ) . '</a>';	
 		return $REG_date;	
 	}
 
