@@ -132,10 +132,10 @@ class EEM_Datetime extends EEM_Base {
 					$array_of_objects[ $datetime->DTT_ID ] = new EE_Datetime(
 						$datetime->EVT_ID,
 						$datetime->DTT_is_primary,
-						$this->_prepare_dtt_from_db($datetime->DTT_EVT_start),
-						$this->_prepare_dtt_from_db($datetime->DTT_EVT_end),
-						$this->_prepare_dtt_from_db($datetime->DTT_REG_start),
-						$this->_prepare_dtt_from_db($datetime->DTT_REG_end),
+						$this->_prepare_dtt_from_db( $datetime->DTT_EVT_start, 'Y-m-d g:i a' ),
+						$this->_prepare_dtt_from_db( $datetime->DTT_EVT_end, 'Y-m-d g:i a' ),
+						$this->_prepare_dtt_from_db( $datetime->DTT_REG_start, 'Y-m-d g:i a' ),
+						$this->_prepare_dtt_from_db( $datetime->DTT_REG_end, 'Y-m-d g:i a' ),
 						/*$datetime->DTT_reg_limit,
 						$datetime->DTT_tckts_left,*/
 						$datetime->DTT_ID
@@ -166,7 +166,7 @@ class EEM_Datetime extends EEM_Base {
 	 */
 	private function _get_date_time_by_dtt_id( $DTT_ID = FALSE ) {
 		if ( ! $DTT_ID ) {
-			$msg = __( 'No Event datetimescould be retrieved because no Date Time ID (DTT_ID) was received.', 'event_espresso');
+			$msg = __( 'No Event datetimes could be retrieved because no Date Time ID (DTT_ID) was received.', 'event_espresso');
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
@@ -180,10 +180,10 @@ class EEM_Datetime extends EEM_Base {
 			$date_time_obj = new EE_Datetime(
 					$datetime->EVT_ID,
 					$datetime->DTT_is_primary,
-					$this->_prepare_dtt_from_db($datetime->DTT_EVT_start),
-					$this->_prepare_dtt_from_db($datetime->DTT_EVT_end),
-					$this->_prepare_dtt_from_db($datetime->DTT_REG_start),
-					$this->_prepare_dtt_from_db($datetime->DTT_REG_end),
+					$this->_prepare_dtt_from_db( $datetime->DTT_EVT_start, 'Y-m-d g:i a' ),
+					$this->_prepare_dtt_from_db( $datetime->DTT_EVT_end, 'Y-m-d g:i a' ),
+					$this->_prepare_dtt_from_db( $datetime->DTT_REG_start, 'Y-m-d g:i a' ),
+					$this->_prepare_dtt_from_db( $datetime->DTT_REG_end, 'Y-m-d g:i a' ),
 					$datetime->DTT_ID
 				);
 			return $date_time_obj;
@@ -215,9 +215,9 @@ class EEM_Datetime extends EEM_Base {
 						NULL*/
 				)
 		);
-		$times[0]->set_start_time("8am");
+		$times[0]->set_start_time("9am");
 		$times[0]->set_end_time("5pm");
-		$times[0]->set_reg_start_time("8am");
+		$times[0]->set_reg_start_time("9am");
 		$times[0]->set_reg_end_time("5pm");
 		return $times;
 	}
@@ -369,7 +369,7 @@ class EEM_Datetime extends EEM_Base {
 
 
 
-	function convert_converted_event_datetimes() {
+/*	function convert_converted_event_datetimes() {
 
 		global $wpdb;
 
@@ -493,7 +493,7 @@ class EEM_Datetime extends EEM_Base {
 
 		echo EE_Error::get_notices();
 
-	}
+	}*/
 
 
 
