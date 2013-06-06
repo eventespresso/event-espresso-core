@@ -752,13 +752,14 @@ class EE_Form_Fields {
 
 		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
 		$class .= ! empty( $required['class'] ) ? ' ' . $required['class'] : '';
-		
+
 		foreach ( $options as $OPT ) {
 			$key = self::prep_option_value( $OPT->name() );
 			$size = self::get_label_size_class( $OPT->value() );
 			
 			$value = self::prep_answer( $OPT->value() );
-			$checked = ( $key == $answer ) || ( empty( $key ) == empty( $answer )) ? ' checked="checked"' : '';
+			$answer = is_numeric( $key ) && empty( $answer ) ? 0 : $answer;
+			$checked = (string)$key == (string)$answer ? ' checked="checked"' : '';
 			$opt = '-' . sanitize_key( $key );
 
 			$input_html .= "\n\t\t\t\t" . '<li' . $size . '>';
