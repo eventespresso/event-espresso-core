@@ -756,8 +756,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$CNT_ISO = isset( $this->_req_data['country'] ) ? strtoupper( sanitize_text_field( $this->_req_data['country'] )) : $CNT_ISO;
 
 		global $org_options;
-		//load formatter helper
-		//require_once ( EE_HELPERS . 'EE_Formatter.helper.php' );
 		//load field generator helper
 		require_once ( EE_HELPERS . 'EE_Form_Fields.helper.php' );
 		
@@ -765,10 +763,14 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				
 		$this->_template_args['countries'] = new EE_Question_Form_Input(
 				new EE_Question( array(
+					'QST_ID'=> 0,
 					'QST_display_text'=> __('Select Country', 'event_espresso'),
 					'QST_system'=>'admin-country'
 				)),
-				new EE_Answer( array( 'ANS_value' => $CNT_ISO )),
+				new EE_Answer( array( 
+					'ANS_ID' => 0, 
+					'ANS_value' => $CNT_ISO 
+				)),
 				array( 
 					'input_id' => 'country',
 					'input_name' => 'country',
@@ -812,28 +814,29 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		add_filter( 'FHEE_form_field_label_html', array( $this, 'country_form_field_label_wrap' ), 10, 1 );
 		add_filter( 'FHEE_form_field_input_html', array( $this, 'country_form_field_input__wrap' ), 10, 1 );
 		$country = EEM_Country::instance()->get_one_by_ID( $CNT_ISO );
+		//printr( $country, '$country  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$country_input_types = array(
-			'CNT_ISO' => array( 'type' => 'TEXT', 'class' => 'small-text' ), 
-			'CNT_ISO3' => array( 'type' => 'TEXT', 'class' => 'small-text' ), 
-			'RGN_ID' => array( 'type' => 'TEXT', 'class' => 'small-text' ), 
-			'CNT_name' => array( 'type' => 'TEXT', 'class' => 'regular-text' ), 
-			'CNT_cur_code' => array( 'type' => 'TEXT', 'class' => 'small-text' ), 
-			'CNT_cur_single' => array( 'type' => 'TEXT', 'class' => 'medium-text' ), 
-			'CNT_cur_plural' => array( 'type' => 'TEXT', 'class' => 'medium-text' ), 
-			'CNT_cur_sign' => array( 'type' => 'TEXT', 'class' => 'small-text' ), 
-			'CNT_cur_sign_b4' => array( 'type' => 'SINGLE', 'class' => '', 'options' => $this->_yes_no_values ), 
-			'CNT_cur_dec_plc' => array( 'type' => 'SINGLE', 'class' => '', 'options' => array( array( 'id' => 0, 'text' => '0' ), array( 'id' => 1, 'text' => '1' ), array( 'id' => 2, 'text' => '2' ), array( 'id' => 3, 'text' => '3' ))),
-			'CNT_cur_dec_mrk' => array( 'type' => 'SINGLE', 'class' => '', 'options' => array( array( 'id' => '.', 'text' => __('. (decimal)', 'event_espresso')), array( 'id' => ',', 'text' => __(', (comma)', 'event_espresso')))),
-			'CNT_cur_thsnds' => array( 'type' => 'SINGLE', 'class' => '', 'options' => array( array( 'id' => ',', 'text' => __(', (comma)', 'event_espresso')), array( 'id' => '.', 'text' => __('. (decimal)', 'event_espresso')))),
-			'CNT_tel_code' => array( 'type' => 'TEXT', 'class' => 'small-text' ), 
-			'CNT_is_EU' => array( 'type' => 'SINGLE', 'class' => '', 'options' => $this->_yes_no_values ), 
-			'CNT_active' => array( 'type' => 'SINGLE', 'class' => '', 'options' => $this->_yes_no_values )
+			'CNT_ISO' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
+			'CNT_ISO3' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
+			'RGN_ID' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
+			'CNT_name' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'regular-text' ),
+			'CNT_cur_code' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
+			'CNT_cur_single' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'medium-text' ),
+			'CNT_cur_plural' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'medium-text' ),
+			'CNT_cur_sign' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
+			'CNT_cur_sign_b4' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values ),
+			'CNT_cur_dec_plc' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => 0, 'text' => '0' ), array( 'id' => 1, 'text' => '1' ), array( 'id' => 2, 'text' => '2' ), array( 'id' => 3, 'text' => '3' ))),
+			'CNT_cur_dec_mrk' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => ',', 'text' => __(', (comma)', 'event_espresso')), array( 'id' => '.', 'text' => __('. (decimal)', 'event_espresso')))),
+			'CNT_cur_thsnds' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => ',', 'text' => __(', (comma)', 'event_espresso')), array( 'id' => '.', 'text' => __('. (decimal)', 'event_espresso')))),
+			'CNT_tel_code' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
+			'CNT_is_EU' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values ),
+			'CNT_active' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values )
 		);
 		$this->_template_args['inputs'] = $this->_generate_question_form_inputs_for_object( $country, $country_input_types );
 		$country_details_settings = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'country_details_settings.template.php', $this->_template_args, TRUE );
-		
+
 		if ( defined( 'DOING_AJAX' )) {
-			$notices = EE_Error::get_notices( FALSE, FALSE, FALSE ); 
+			$notices = EE_Error::get_notices( FALSE, FALSE, FALSE );
 			echo json_encode( array( 'return_data' => $country_details_settings, 'success' => $notices['success'], 'errors' => $notices['errors'] ));
 			die();
 		} else {
@@ -867,7 +870,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		remove_all_filters( 'FHEE_form_field_input_html' );
 		add_filter( 'FHEE_form_field_label_html', array( $this, 'state_form_field_label_wrap' ), 10, 1 );
 		add_filter( 'FHEE_form_field_input_html', array( $this, 'state_form_field_input__wrap' ), 10, 1 );
+		$states = FALSE;
 		$states = EEM_State::instance()->get_all_states_for_these_countries( array( $CNT_ISO => $CNT_ISO ));
+		
 //			echo '<h4>$CNT_ISO : ' . $CNT_ISO . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //			global $wpdb;
 //			echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
@@ -906,73 +911,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * 		form_form_field_label_wrap
-	 *
-	 * 		@access 		public
-	 * 		@param 		string 		$label
-	 * 		@return 		string
-	 */
-	public function country_form_field_label_wrap( $label ) {
-		return '
-			<tr>
-				<th>
-					' . $label  . '
-				</th>';		
-	}
-
-
-
-
-	/**
-	 * 		form_form_field_input__wrap
-	 *
-	 * 		@access 		public
-	 * 		@param 		string 		$label
-	 * 		@return 		string
-	 */
-	public function country_form_field_input__wrap( $input ) {
-		return '
-				<td class="reg-admin-attendee-questions-input-td">
-					' . $input . ' 
-				</td>
-			</tr>';		
-	}
-
-
-
-
-	/**
-	 * 		form_form_field_label_wrap
-	 *
-	 * 		@access 		public
-	 * 		@param 		string 		$label
-	 * 		@return 		string
-	 */
-	public function state_form_field_label_wrap( $label ) {
-		return '';		
-	}
-
-
-
-
-	/**
-	 * 		form_form_field_input__wrap
-	 *
-	 * 		@access 		public
-	 * 		@param 		string 		$label
-	 * 		@return 		string
-	 */
-	public function state_form_field_input__wrap( $input ) {
-		return '
-				<td class="general-settings-country-state-input-td">
-					' . $input . ' 
-				</td>';		
-	}
-
-
-
-
-	/**
 	 * 		_generate_question_form_inputs_for_object
 	 *
 	 * 		@access 	protected
@@ -997,7 +935,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			$value = $object->get( $field_ID );
 			// if no saved value, then use default
 			$value = ! empty( $value ) ? $value : $field->default_value();
-			//echo '<h4>$value : ' . $value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';		
+//			if ( $field_ID == 'CNT_active' ) 
+//			echo '<h4>$value : ' . $value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';	
 			// determine question type
 			$type = isset( $input_types[ $field_ID ] ) ? $input_types[ $field_ID ]['type'] : 'TEXT';
 			// input name
@@ -1007,11 +946,17 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			// create EE_Question_Form_Input object
 			$QFI = new EE_Question_Form_Input(
 				new EE_Question( array(
+					'QST_ID'=> 0,
 					'QST_display_text'=> $field->nicename(),
 					'QST_type' => $type
 				)),
-				new EE_Answer( array( 'ANS_value'=> $value )),
-				array( 
+				new EE_Answer( array( 
+					'ANS_ID'=> 0,
+					'QST_ID'=> 0,
+					'REG_ID'=> 0,
+					'ANS_value'=> $value
+				 )),
+				array(
 					'input_id' => $field_ID . '-' . $object->ID(),
 					'input_name' => $input_name,
 					'input_class' => $field_ID . $class,
@@ -1029,7 +974,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					$QSO = new EE_Question_Option( array (
 							'QSO_name' => (string)$option_id,
 							'QSO_value' => $option['text'],
-							'QST_ID' => $QFI->get( 'QST_ID' ),
+							//'QST_ID' => $QFI->get( 'QST_ID' ),
 							'QSO_deleted' => FALSE
 						));
 					// all QST (and ANS) properties can be accessed indirectly thru QFI
@@ -1043,6 +988,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			//printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			
 			$inputs[ $field_ID ] = $QFI;	
+			
+//			if ( $field_ID == 'CNT_active' ) {
+//				printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//			}
 	
 		}
 		return $inputs;
@@ -1131,6 +1080,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	 * 		@return 		void
 	 */
 	protected function _update_country_settings() {
+		//printr( $this->_req_data, '$this->_req_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// grab the country ISO code
 		$CNT_ISO = isset( $this->_req_data['country'] ) ? strtoupper( sanitize_text_field( $this->_req_data['country'] )) : FALSE;
 		if ( ! $CNT_ISO ) {
@@ -1139,26 +1089,30 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		}
 		$success = TRUE;
 		$cols_n_values = array();
-		$cols_n_values['CNT_ISO3'] = isset( $this->_req_data['CNT_ISO3'] ) ? strtoupper( sanitize_text_field( $this->_req_data['CNT_ISO3'] )) : FALSE;
-		$cols_n_values['RGN_ID'] = isset( $this->_req_data['RGN_ID'] ) ? absint( $this->_req_data['RGN_ID'] ) : NULL;
-		$cols_n_values['CNT_name'] = isset( $this->_req_data['CNT_name'] ) ? sanitize_text_field( $this->_req_data['CNT_name'] ) : NULL;
-		$cols_n_values['CNT_cur_code'] = isset( $this->_req_data['CNT_cur_code'] ) ? strtoupper( sanitize_text_field( $this->_req_data['CNT_cur_code'] )) : 'USD';
-		$cols_n_values['CNT_cur_single'] = isset( $this->_req_data['CNT_cur_single'] ) ? sanitize_text_field( $this->_req_data['CNT_cur_single'] ) : 'dollar';
-		$cols_n_values['CNT_cur_plural'] = isset( $this->_req_data['CNT_cur_plural'] ) ? sanitize_text_field( $this->_req_data['CNT_cur_plural'] ) : 'dollars';
-		$cols_n_values['CNT_cur_sign'] = isset( $this->_req_data['CNT_cur_sign'] ) ? sanitize_text_field( $this->_req_data['CNT_cur_sign'] ) : '$';
-		$cols_n_values['CNT_cur_sign_b4'] = isset( $this->_req_data['CNT_cur_sign_b4'] ) ? (bool)absint( $this->_req_data['CNT_cur_sign_b4'] ) : TRUE;
-		$cols_n_values['CNT_cur_dec_plc'] = isset( $this->_req_data['CNT_cur_dec_plc'] ) ? absint( $this->_req_data['CNT_cur_dec_plc'] ) : 2;
-		$cols_n_values['CNT_cur_dec_mrk'] = isset( $this->_req_data['CNT_cur_dec_mrk'] ) ? sanitize_text_field( $this->_req_data['CNT_cur_dec_mrk'] ) : '.';
-		$cols_n_values['CNT_cur_thsnds'] = isset( $this->_req_data['CNT_cur_thsnds'] ) ? sanitize_text_field( $this->_req_data['CNT_cur_thsnds'] ) : ',';
-		$cols_n_values['CNT_tel_code'] = isset( $this->_req_data['CNT_tel_code'] ) ? sanitize_text_field( $this->_req_data['CNT_tel_code'] ) : NULL;
-		$cols_n_values['CNT_is_EU'] = isset( $this->_req_data['CNT_is_EU'] ) ? (bool)absint( $this->_req_data['CNT_is_EU'] ) : FALSE;
-		$cols_n_values['CNT_active'] = isset( $this->_req_data['CNT_active'] ) ? (bool)absint( $this->_req_data['CNT_active'] ) : TRUE;
+		$cols_n_values['CNT_ISO3'] = isset( $this->_req_data['cntry'][$CNT_ISO]['CNT_ISO3'] ) ? strtoupper( sanitize_text_field( $this->_req_data['cntry'][$CNT_ISO]['CNT_ISO3'] )) : FALSE;
+		$cols_n_values['RGN_ID'] = isset( $this->_req_data['cntry'][$CNT_ISO]['RGN_ID'] ) ? absint( $this->_req_data['cntry'][$CNT_ISO]['RGN_ID'] ) : NULL;
+		$cols_n_values['CNT_name'] = isset( $this->_req_data['cntry'][$CNT_ISO]['CNT_name'] ) ? sanitize_text_field( $this->_req_data['cntry'][$CNT_ISO]['CNT_name'] ) : NULL;
+		$cols_n_values['CNT_cur_code'] = isset( $this->_req_data['cntry'][$CNT_ISO]['CNT_cur_code'] ) ? strtoupper( sanitize_text_field( $this->_req_data['cntry'][$CNT_ISO]['CNT_cur_code'] )) : 'USD';
+		$cols_n_values['CNT_cur_single'] = isset( $this->_req_data['cntry'][$CNT_ISO]['CNT_cur_single'] ) ? sanitize_text_field( $this->_req_data['cntry'][$CNT_ISO]['CNT_cur_single'] ) : 'dollar';
+		$cols_n_values['CNT_cur_plural'] = isset( $this->_req_data['cntry'][$CNT_ISO]['CNT_cur_plural'] ) ? sanitize_text_field( $this->_req_data['cntry'][$CNT_ISO]['CNT_cur_plural'] ) : 'dollars';
+		$cols_n_values['CNT_cur_sign'] = isset( $this->_req_data['cntry'][$CNT_ISO]['CNT_cur_sign'] ) ? sanitize_text_field( $this->_req_data['cntry'][$CNT_ISO]['CNT_cur_sign'] ) : '$';
+		$cols_n_values['CNT_cur_sign_b4'] = isset( $this->_req_data['cntry'][$CNT_ISO]['CNT_cur_sign_b4'] ) ? absint( $this->_req_data['cntry'][$CNT_ISO]['CNT_cur_sign_b4'] ) : TRUE;
+		$cols_n_values['CNT_cur_dec_plc'] = isset( $this->_req_data['cntry'][$CNT_ISO]['CNT_cur_dec_plc'] ) ? absint( $this->_req_data['cntry'][$CNT_ISO]['CNT_cur_dec_plc'] ) : 2;
+		$cols_n_values['CNT_cur_dec_mrk'] = isset( $this->_req_data['cntry'][$CNT_ISO]['CNT_cur_dec_mrk'] ) ? sanitize_text_field( $this->_req_data['cntry'][$CNT_ISO]['CNT_cur_dec_mrk'] ) : '.';
+		$cols_n_values['CNT_cur_thsnds'] = isset( $this->_req_data['cntry'][$CNT_ISO]['CNT_cur_thsnds'] ) ? sanitize_text_field( $this->_req_data['cntry'][$CNT_ISO]['CNT_cur_thsnds'] ) : ',';
+		$cols_n_values['CNT_tel_code'] = isset( $this->_req_data['cntry'][$CNT_ISO]['CNT_tel_code'] ) ? sanitize_text_field( $this->_req_data['cntry'][$CNT_ISO]['CNT_tel_code'] ) : NULL;
+		$cols_n_values['CNT_is_EU'] = isset( $this->_req_data['cntry'][$CNT_ISO]['CNT_is_EU'] ) ? absint( $this->_req_data['cntry'][$CNT_ISO]['CNT_is_EU'] ) : FALSE;
+		$cols_n_values['CNT_active'] = isset( $this->_req_data['cntry'][$CNT_ISO]['CNT_active'] ) ? absint( $this->_req_data['cntry'][$CNT_ISO]['CNT_active'] ) : FALSE;
 		// allow filtering of country data
 		$cols_n_values = apply_filters( 'FHEE_general_settings_country_save', $cols_n_values );
+		//printr( $cols_n_values, '$cols_n_values  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// where values
 		$where_cols_n_values = array( 'CNT_ISO' => $CNT_ISO );
 		// run the update
 		$success = EEM_Country::instance()->update( $cols_n_values, $where_cols_n_values );
+		//global $wpdb;
+		//echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		//echo '<h4>$success : ' . $success . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		if ( isset( $this->_req_data['states'] ) && is_array( $this->_req_data['states'] ) && $success ) {
 			// allow filtering of states data
 			$states = apply_filters( 'FHEE_general_settings_states_save', $this->_req_data['states'] );
@@ -1179,6 +1133,73 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_redirect_after_action( $success, 'Countries', 'updated', array( 'action' => 'country_settings', 'country' => $CNT_ISO ));
 	}
 
+
+
+
+
+	/**
+	 * 		form_form_field_label_wrap
+	 *
+	 * 		@access 		public
+	 * 		@param 		string 		$label
+	 * 		@return 		string
+	 */
+	public function country_form_field_label_wrap( $label ) {
+		return '
+			<tr>
+				<th>
+					' . $label  . '
+				</th>';		
+	}
+
+
+
+
+	/**
+	 * 		form_form_field_input__wrap
+	 *
+	 * 		@access 		public
+	 * 		@param 		string 		$label
+	 * 		@return 		string
+	 */
+	public function country_form_field_input__wrap( $input ) {
+		return '
+				<td class="reg-admin-attendee-questions-input-td">
+					' . $input . ' 
+				</td>
+			</tr>';		
+	}
+
+
+
+
+	/**
+	 * 		form_form_field_label_wrap
+	 *
+	 * 		@access 		public
+	 * 		@param 		string 		$label
+	 * 		@return 		string
+	 */
+	public function state_form_field_label_wrap( $label ) {
+		return '';		
+	}
+
+
+
+
+	/**
+	 * 		form_form_field_input__wrap
+	 *
+	 * 		@access 		public
+	 * 		@param 		string 		$label
+	 * 		@return 		string
+	 */
+	public function state_form_field_input__wrap( $input ) {
+		return '
+				<td class="general-settings-country-state-input-td">
+					' . $input . ' 
+				</td>';		
+	}
 
 
 
