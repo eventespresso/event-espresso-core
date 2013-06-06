@@ -523,7 +523,8 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			$primary_registrant = $transaction->primary_registration();
 			$primary_registration_code = !empty($primary_registrant) ? $primary_registrant->reg_code() : '';
 			
-			$payment = new EE_Payment($transaction->ID(), 
+			$payment = new EE_Payment(
+				$transaction->ID(), 
 				$status, 
 				$transaction->datetime(), 
 				sanitize_text_field($_POST['txn_type']), 
@@ -534,7 +535,8 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 				NULL,
 				$primary_registration_code, 
 				false, 
-				$_POST);
+				$_POST
+			);
 		
 		}
 		
