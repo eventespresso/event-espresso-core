@@ -91,10 +91,10 @@ abstract class EE_Base_Class {
 		if(array_key_exists($fieldName,$fieldSettings)){
 			$value=$this->$privateFieldName;
 			$thisFieldSettings=$fieldSettings[$fieldName];
-			if( $thisFieldSettings->nullable() && $value == null){
+			if( $thisFieldSettings->nullable() && $value === null){
 				return null;
-			}elseif(!$thisFieldSettings->nullable() && $value == null){
-				EE_Error::add_error( sprintf( __("Some data is missing||The field named %s on %s is null, but it shouldnt be. The complete object is:%s",'event_espresso'),$fieldName,get_class($this),  print_r($this, true)), __FILE__, __FUNCTION__, __LINE__ );
+			}elseif(!$thisFieldSettings->nullable() && $value === null){
+				//EE_Error::add_error( sprintf( __("Some data is missing||The field named %s on %s is null, but it shouldnt be. The complete object is:%s",'event_espresso'),$fieldName,get_class($this),  print_r($this, true)), __FILE__, __FUNCTION__, __LINE__ );
 				return null;
 			}
 			switch($thisFieldSettings->type()){
@@ -300,9 +300,7 @@ abstract class EE_Base_Class {
 				}
 				break;
 			case 'text_or_numeric':
-				if(is_string($value) || is_numeric($value)){
-					$return= true;
-				}
+				$return=true;
 				break;
 			case 'float':
 				if(is_numeric($value)){
