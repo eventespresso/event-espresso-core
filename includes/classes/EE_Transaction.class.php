@@ -556,7 +556,7 @@ class EE_Transaction extends EE_Base_Class{
 		if ( $format ) {
 			// set datetime format
 			$dt_frmt = $dt_frmt ? $dt_frmt : $this->dt_frmt;		
-			require_once ( EE_HELPERS . 'EE_DTT_Helper.helper' );
+			require_once ( EE_HELPERS . 'EE_DTT_Helper.helper.php' );
 			return  EE_DTT_Helper::prepare_dtt_from_db( $this->_TXN_timestamp, $dt_frmt );
 		} else {
 			return $this->_TXN_timestamp;

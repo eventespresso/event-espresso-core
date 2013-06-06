@@ -35,7 +35,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 
    		parent::__construct($admin_page);
    		$this->_status = $this->_admin_page->get_transaction_status_array();
-		require_once ( EE_HELPERS . 'EE_DTT_Helper.helper' );
+		require_once ( EE_HELPERS . 'EE_DTT_Helper.helper.php' );
    
 	}
 
