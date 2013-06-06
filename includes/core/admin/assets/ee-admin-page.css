@@ -48,9 +48,8 @@
 }
 
 .message-type-text {
-	margin-left: 5px;
-	margin-right: 5px;
-	padding: 5px;
+	margin: 0 .25em;
+	padding:.5em .75em;
 	-webkit-border-radius: 3px;
 	-webkit-appearance: none;
 	border-radius: 3px;
@@ -81,6 +80,10 @@
 
 .ee-attention {
     padding: 2em 1.5em; margin: 2em 0 1em;
+	background-color: #FFFFE0; border: 1px solid #E6DB55; border-radius: 3px;
+	text-shadow: 0px 1px #fff;
+}.ee-notice {
+    padding:.5em 1em; margin: 1em 0 2em;
 	background-color: #FFFFE0; border: 1px solid #E6DB55; border-radius: 3px;
 	text-shadow: 0px 1px #fff;
 }
