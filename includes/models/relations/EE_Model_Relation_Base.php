@@ -91,10 +91,12 @@ abstract class EE_Model_Relation_Base{
 	 * Adds a reltionships between the two model objects provided. Each type of relationship handles this differently (EE_Belongs_To is a 
 	 * slight exception, it should more accurately be called set_relation_to(...), as this relationship only allows this model to be related
 	 * to a signel other model of this type)
+	 * @return EE_Base_Class the EE_Base_Class which was added as a relation. (Convenient if you only pass an ID for $other_obj_or_id)
 	 */
 	abstract function add_relation_to($this_obj_or_id, $other_obj_or_id);
 	/**
 	 * Similar to 'add_relation_to(...)', performs the opposite action of removing the relationship between the two model objects
+	 * @return void
 	 */
 	abstract function remove_relation_to($this_obj_or_id, $other_obj_or_id);
 }

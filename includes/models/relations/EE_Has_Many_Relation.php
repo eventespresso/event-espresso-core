@@ -24,7 +24,7 @@ class EE_Has_Many_Relation extends EE_Model_Relation_Base{
 	 * Sets the other model object's foreign key to this model object's primary key. Feel free to do this manually if you like.
 	 * @param EE_Base_Class/int $this_obj_or_id
 	 * @param EE_Base_Class/int $other_obj_or_id
-	 * @return void
+	 * @return EE_Base_Class
 	 */
 	 function add_relation_to($this_obj_or_id, $other_obj_or_id ){
 		 $this_model_obj = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);
@@ -34,7 +34,7 @@ class EE_Has_Many_Relation extends EE_Model_Relation_Base{
 		 $fk_field_on_other_model = $this->get_other_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
 		 //set that field on the other model to this model's ID
 		 $other_model_obj->set($fk_field_on_other_model->get_name(), $this_model_obj->ID());
-		 $other_model_obj->save();
+		 return $other_model_obj->save();
 	 }
 	/**
 	 * Sets the other model object's foreign key to its default, instead of pointing to this model object

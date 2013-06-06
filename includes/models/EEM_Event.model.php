@@ -21,6 +21,9 @@
  *
  * ------------------------------------------------------------------------
  */
+
+define('EE_Event_Category_Taxonomy','espresso_event_category');
+
 class EEM_Event  extends EEM_Base{
 	//extends EEM_Base
 
@@ -45,28 +48,11 @@ class EEM_Event  extends EEM_Base{
 	}
 	
 	/**
-	 * keys are the STS_IDs for events, values are translatable strings. It's nice having an 
+	 * keys are the statuses for posts, values are translatable strings. It's nice having an 
 	 * array of ALL of the statuses, so we can know what statuses are valid, and which are not
 	 * @var array 
 	 */
 	private static $_statuses = array();
-	
-	/**
-	 * @todo: we should describe each status here. Ie, when things should have
-	 * this status, what triggers it, and how it generally affects the rest of teh system
-	 */
-	const status_active = 'ACT';
-	const status_not_active = 'NAC';
-	const status_registration_not_open = 'NOP';
-	const status_registration_open='OPN';
-	const status_registration_closed = 'CLS';
-	const status_pending = 'PND';
-	const status_ongoing = 'ONG';
-	const status_secondary = 'SEC';
-	const status_draft = 'DRF';
-	const status_deleted = 'DEL';
-	const status_denied = 'DEN';
-	const status_expired = 'EXP';
 
 	
 	/**
@@ -82,9 +68,13 @@ class EEM_Event  extends EEM_Base{
 		$this->singular_item = __('Event','event_espresso');
 		$this->plural_item = __('Events','event_espresso');
 		
-		self::$_statuses = $this->_get_event_status_array();
+		//set valid statuses to wordpress defaults. see http://codex.wordpress.org/Function_Reference/register_post_status
+		//for what the $args_object is
+		global $wp_post_statuses;
+		foreach($wp_post_statuses as $post_status => $args_object){
+			self::$_statuses[$post_status] = $args_object->label;
+		}
 		self::$_additional_attendee_reg_info_enum = $this->_get_additional_attendee_reg_info_array();
-		
 		$this->_tables = array(
 			'Event_CPT'=>new EE_Primary_Table('posts','ID'),
 			'Event_Meta'=> new EE_Secondary_Table('esp_event_meta', 'EVTM_ID','EVT_ID',"Event_CPT.post_type='espresso_events'")
@@ -100,7 +90,7 @@ class EEM_Event  extends EEM_Base{
 				'EVT_slug'=>new EE_Slug_Field('post_name', __("Event Slug", "event_espresso"), false, ''),
 				'EVT_created'=>new EE_Datetime_Field('post_date', __("Date/Time Event Created", "event_espresso"), false, current_time('timestamp')),
 				'EVT_short_desc'=>new EE_Simple_HTML_Field('post_excerpt', __("Event Short Descripiton", "event_espresso"), false,''),
-				'STS_ID'=>new EE_Enum_Field('post_status', __("Event Status", "event_espresso"), false, EEM_Event::status_draft, self::$_statuses),//will be a foreign key once status model made
+				'STS_ID'=>new EE_Enum_Field('post_status', __("Event Status", "event_espresso"), false, 'draft', self::$_statuses),
 				'EVT_modified'=>new EE_Datetime_Field('post_modified', __("Dateim/Time Event Modified", "event_espresso"), true, current_time('timestamp')),
 				'EVT_wp_user'=>new EE_Integer_Field('post_author', __("Wordpress User ID", "event_espresso"), false,1),
 				'EVT_parent'=>new EE_Integer_Field('post_parent', __("Event Parent ID", "event_espresso"), true),
@@ -136,6 +126,52 @@ class EEM_Event  extends EEM_Base{
 		require_once('strategies/EE_Default_CPT_Where_Conditions.strategy.php');
 		$this->_default_where_conditions_strategy = new EE_Default_CPT_Where_Conditions('espresso_events');
 		parent::__construct();
+	}
+	
+	/**
+	 * 
+	 * @param EE_Event $event
+	 * @param type $category_name
+	 * @param type $category_description
+	 * @return EE_Term_Taxonomy
+	 */
+	function add_event_category_to_event(EE_Event $event, $category_name, $category_description =''){
+		//create term
+		require_once('EEM_Term.model.php');
+		//first, check for a term by the same name or slug
+		$category_slug = sanitize_title($category_name);
+		$term = EEM_Term::instance()->get_one(array(array('OR'=>array('name'=>$category_name,'slug'=>$category_slug))));
+		if( ! $term ){
+			$term = EE_Term::new_instance(array(
+				'name'=>$category_name,
+				'slug'=>$category_slug
+			));
+			$term->save();
+		}
+		//make sure there's a term-taxonomy entry too
+		require_once('EEM_Term_Taxonomy.model.php');
+		$term_taxonomy = EEM_Term_Taxonomy::instance()->get_one(array(array('term_id'=>$term->ID(),'taxonomy'=>EE_Event_Category_Taxonomy)));
+		if( ! $term_taxonomy ){
+			$term_taxonomy = EE_Term_Taxonomy::new_instance(array(
+				'term_id'=>$term->ID(),
+				'taxonomy'=>EE_Event_Category_Taxonomy,
+				'description'=>$category_description
+			));
+			$term_taxonomy->save();
+		}
+		return $this->add_relationship_to($event, $term_taxonomy, 'Term_Taxonomy');
+	}
+	
+	/**
+	 * Removed the category specified by name as having a relation to this event
+	 * @param EE_Event $event
+	 * @param string $category_name name of the event category (term)
+	 * @return void
+	 */
+	function remove_event_category(EE_Event $event, $category_name){
+		//find the term_taxonomy by that name
+		$term_taxonomy = $this->get_first_related($event, 'Term_Taxonomy', array(array('Term.name'=>$category_name,'taxonomy'=>EE_Event_Category_Taxonomy)));
+		return $this->remove_relationship_to($event, $term_taxonomy, 'Term_Taxonomy');
 	}
 	
 	
