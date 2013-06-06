@@ -174,7 +174,7 @@ abstract class EEM_Base extends EE_Base {
 		$date_obj = new DateTime( date( 'Y-m-d H:i:s', $datetime ), new DateTimeZone( $this->_timezone) );
 
 		//if we don't have a datetime at this point then something has gone wrong 
-		if ( !$datetime )
+		if ( !$date_obj )
 			throw new EE_Error( __('Something went wrong with setting the date/time.  Likely, either there is an invalid timezone string or invalid timestamp being used.', 'event_espresso' ) );
 
 		//return to defautl for PHP
