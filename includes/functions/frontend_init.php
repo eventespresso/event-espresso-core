@@ -26,7 +26,8 @@ function espresso_frontend_init() {
 //	),'limit'=>23,'force_join'=>array('Venue','Term_Taxonomy.Term'),'group_by'=>array('Venue.VNU_ID','EVT_name'),
 //		'having'=>array('EVT_ID'=>array('IN',array(12,13,14))),
 //		'order_by'=>array('Registration.Answer.Question.QST_ID'=>'ASC')));
-//	$e = EE_Event::new_instance(array(
+//
+//		$e = EE_Event::new_instance(array(
 //		'EVT_name'=>'baboon party'
 //	));
 //	$e->save();

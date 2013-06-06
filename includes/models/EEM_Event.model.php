@@ -22,9 +22,9 @@
  * ------------------------------------------------------------------------
  */
 
-define('EE_Event_Category_Taxonomy','espresso_event_category');
 
-class EEM_Event  extends EEM_Base{
+require_once('EEM_CPT_Base.model.php');
+class EEM_Event  extends EEM_CPT_Base{
 	//extends EEM_Base
 
   	// private instance of the Event object
@@ -64,7 +64,7 @@ class EEM_Event  extends EEM_Base{
 	const additional_attendee_reg_info_none = 0;
 	const additional_attendee_reg_info_personal_info_only = 1;
 	const additional_attendee_reg_info_full = 2;
-	protected function __construct(){
+	protected function __construct($timezone = null){
 		$this->singular_item = __('Event','event_espresso');
 		$this->plural_item = __('Events','event_espresso');
 		
@@ -120,59 +120,14 @@ class EEM_Event  extends EEM_Base{
 			'Datetime'=>new EE_Has_Many_Relation(),
 			'Price'=>new EE_Has_Many_Relation(),
 			'Question_Group'=>new EE_HABTM_Relation('Event_Question_Group'),
-			'Venue'=>new EE_HABTM_Relation('Event_Venue'),
-			'Term_Taxonomy'=>new EE_HABTM_Relation('Term_Relationship')
+			'Venue'=>new EE_HABTM_Relation('Event_Venue')
 		);
 		require_once('strategies/EE_Default_CPT_Where_Conditions.strategy.php');
 		$this->_default_where_conditions_strategy = new EE_Default_CPT_Where_Conditions('espresso_events');
 		parent::__construct();
 	}
 	
-	/**
-	 * 
-	 * @param EE_Event $event
-	 * @param type $category_name
-	 * @param type $category_description
-	 * @return EE_Term_Taxonomy
-	 */
-	function add_event_category_to_event(EE_Event $event, $category_name, $category_description =''){
-		//create term
-		require_once('EEM_Term.model.php');
-		//first, check for a term by the same name or slug
-		$category_slug = sanitize_title($category_name);
-		$term = EEM_Term::instance()->get_one(array(array('OR'=>array('name'=>$category_name,'slug'=>$category_slug))));
-		if( ! $term ){
-			$term = EE_Term::new_instance(array(
-				'name'=>$category_name,
-				'slug'=>$category_slug
-			));
-			$term->save();
-		}
-		//make sure there's a term-taxonomy entry too
-		require_once('EEM_Term_Taxonomy.model.php');
-		$term_taxonomy = EEM_Term_Taxonomy::instance()->get_one(array(array('term_id'=>$term->ID(),'taxonomy'=>EE_Event_Category_Taxonomy)));
-		if( ! $term_taxonomy ){
-			$term_taxonomy = EE_Term_Taxonomy::new_instance(array(
-				'term_id'=>$term->ID(),
-				'taxonomy'=>EE_Event_Category_Taxonomy,
-				'description'=>$category_description
-			));
-			$term_taxonomy->save();
-		}
-		return $this->add_relationship_to($event, $term_taxonomy, 'Term_Taxonomy');
-	}
 	
-	/**
-	 * Removed the category specified by name as having a relation to this event
-	 * @param EE_Event $event
-	 * @param string $category_name name of the event category (term)
-	 * @return void
-	 */
-	function remove_event_category(EE_Event $event, $category_name){
-		//find the term_taxonomy by that name
-		$term_taxonomy = $this->get_first_related($event, 'Term_Taxonomy', array(array('Term.name'=>$category_name,'taxonomy'=>EE_Event_Category_Taxonomy)));
-		return $this->remove_relationship_to($event, $term_taxonomy, 'Term_Taxonomy');
-	}
 	
 	
 

@@ -21,7 +21,8 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Event extends EE_Base_Class{ 	
+require_once('EE_CPT_Base.class.php');
+class EE_Event extends EE_CPT_Base{ 	
 	/**
 	 * All registrations for this event
 	 * @var EE_Registration[] 
@@ -400,24 +401,5 @@ class EE_Event extends EE_Base_Class{
 	 */
 	function venues($query_params = array()){
 		return $this->get_many_related('Venue', $query_params);
-	}
-	
-	/**
-	 * Adds to the specified event category. If it category doesn't exist, creates it.
-	 * @param string $category_name
-	 * @param string $category_description
-	 * @return EE_Term_Taxonomy
-	 */
-	function add_event_category($category_name,$category_description){
-		return $this->get_model()->add_event_category_to_event($this,$category_name,$category_description);
-	}
-	
-	/**
-	 * Removes the event category by specified name from beign related ot this event
-	 * @param string $category_name
-	 * @return void
-	 */
-	function remove_event_category($category_name){
-		return $this->get_model()->remove_event_category($this,$category_name);
 	}
 }
