@@ -552,7 +552,7 @@ class EE_Transaction extends EE_Base_Class{
 	* 		@param 		string			$dt_frmt - defaults to 'F j, Y g:i a'
 	* 		@access		public
 	*/	
-	public function datetime( $format = FALSE, $dt_frmt = FALSE ) {
+	public function datetime( $format = TRUE, $dt_frmt = FALSE ) {
 		if ( $format ) {
 			// set datetime format
 			$dt_frmt = $dt_frmt ? $dt_frmt : $this->dt_frmt;		
