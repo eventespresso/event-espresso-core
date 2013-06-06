@@ -569,7 +569,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			return TRUE; 			
 		}
 		
-		require_once ( EE_HELPERS . 'EE_DTT_Helper.helper.php' );
+		require_once ( EE_HELPERS . 'EE_Datetimes.helper' );
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
 	    $REG = EEM_Registration::instance();
@@ -644,7 +644,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		//printr( $registrations, '$registrations  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
 		if ( $EVT_ID && isset( $registrations[0] ) && isset( $registrations[0]->event_name )) {
-			require_once ( EE_HELPERS . 'EE_DTT_Helper.helper.php' );
+			require_once ( EE_HELPERS . 'EE_Datetimes.helper' );
 			//printr( $registrations[0], '$registrations  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			$event_name = isset( $registrations[0]->event_name ) ? stripslashes( $registrations[0]->event_name ) : '';
 			$event_date = isset( $registrations[0]->DTT_EVT_start ) ? EE_DTT_Helper::prepare_dtt_from_db( $registrations[0]->DTT_EVT_start, 'l F j, Y,    g:i a' ) : '';
@@ -2012,7 +2012,7 @@ printr( $qstns, '$qstns  <br /><span style="font-size:10px;font-weight:normal;">
 		// start with an empty array
 		$attendees = array();
 		
-		require_once ( EE_HELPERS . 'EE_DTT_Helper.helper.php' );
+		require_once ( EE_HELPERS . 'EE_Datetimes.helper' );
 		require_once( REG_ADMIN . 'EE_Event_Registrations_List_Table.class.php' );
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
 		//$ATT_MDL = EEM_Attendee::instance();
