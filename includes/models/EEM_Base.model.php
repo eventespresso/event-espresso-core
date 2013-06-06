@@ -97,11 +97,12 @@ abstract class EEM_Base extends EE_Base {
 			'DTT_EVT_end',
 			'DTT_REG_start',
 			'DTT_REG_end',
+			'TXN_timestamp',
 			'PAY_timestamp',
 			'PRC_start_date',
 			'PRC_end_date',
 			'REG_date'
-			);
+		);
 	}
 
 
