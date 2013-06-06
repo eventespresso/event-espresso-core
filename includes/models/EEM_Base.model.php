@@ -123,13 +123,13 @@ abstract class EEM_Base extends EE_Base{
 	 * than regular field names. It is assumed that their values are an array of WHERE conditions
 	 * @var array
 	 */
-	protected $_special_where_param_keys = array('not', 'and', 'or', 'NOT', 'AND', 'OR');
+	private $_logic_query_param_keys = array('not', 'and', 'or', 'NOT', 'AND', 'OR');
 	/**
 	 * Allowed keys in $query_params arrays passed into queries. Note that 0 is meant to always be a 
 	 * 'where', but 'where' clauses are so common that we thought we'd omit it
 	 * @var array
 	 */
-	protected $_allowed_query_params = array(0, 'limit','order_by','order','group_by','having','force_join');
+	private $_allowed_query_params = array(0, 'limit','order_by','group_by','having','force_join');
 	/**
 	 * About all child constructors:
 	 * they should define the _tables, _fields and _model_relations arrays. 
@@ -227,14 +227,13 @@ abstract class EEM_Base extends EE_Base{
 	 *					|	which would becomes SQL "...ORDER BY TXN_timestamp..." and "...ORDER BY STS_ID ASC, REG_date DESC..." respectively.
 	 *					|	Like the 'where' conditions, these fields can be on related models. 
 	 *					|	Eg 'order_by'=>array('Registration.Tranaction.TXN_amount'=>'ASC') is perfectly valid from any model related to 'Registration' (like Event, Attendee, Price, Datetime, etc.)
-	 *		group_by	|	name of column to group by
+	 *		group_by	|	name of field to order by, or an array of fields. Eg either 'group_by'=>'VNU_ID', or 'group_by'=>array('EVT_name','Registration.Transaction.TXN_total')
 	 *		having		|	exactl like WHERE parameters array, except these conditions apply to the grouped results (whereas WHERE conditions apply to the pre-grouped results)
 	 *		force_join	|	forces a join with the models named. Should be an numerically-indexed array where values are models to be joined in the query.Eg
 	 *					|	array('Attendee','Payment','Datetime'). You may join with transient models using period, eg "Registration.Transaction.Payment".
 	 *					|	You will probably only want to do this in hopes of increasing efficiency, as related models which belongs to the current model 
 	 *					|	(ie, the current model has a foreign key to them, like how Registration belongs to Attendee) can be cached in order
 	 *					|	to avoid future queries
-	 * Possible future keys: 'having' for SQL having cluases, 'select' for limiting the queryset to a subset, 
 	 * @param boolean $values_already_prepared_by_model_object
 	 * Some full examples:
 	 * get 10 transactions which have Scottish attendees:
@@ -584,11 +583,11 @@ abstract class EEM_Base extends EE_Base{
 	 * @param EE_Base_Class/int $id_or_obj EE_base_Class or ID of other Model Object
 	 * @param string $relationName, key in EEMerimental_Base::_relations
 	 * an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specificy array('role-column-name'=>'role-id')
-	 * @return boolean of success
+	 * @return EE_Base_Class which was added as a relation. Object referred to by $other_model_id_or_obj
 	 */
 	public function add_relationship_to($id_or_obj,$other_model_id_or_obj, $relationName){
 		$relation_obj = $this->related_settings_for($relationName);
-		$relation_obj->add_relation_to($id_or_obj, $other_model_id_or_obj);
+		return $relation_obj->add_relation_to($id_or_obj, $other_model_id_or_obj);
 	}
 	
 	/**
@@ -825,19 +824,23 @@ abstract class EEM_Base extends EE_Base{
 	function _extract_related_models_from_query($query_params){
 		$query_info_carrier = new EE_Model_Query_Info_Carrier();
 		if(array_key_exists(0,$query_params)){
-			$this->_extract_related_models_from_sub_params_array_keys($query_params[0], $query_info_carrier);
+			$this->_extract_related_models_from_sub_params_array_keys($query_params[0], $query_info_carrier,0);
 		}
 		if(array_key_exists('group_by', $query_params)){
-			$this->_extract_related_model_info_from_query_param( $query_params['group_by'],$query_info_carrier);
+			if(is_array($query_params['group_by'])){
+				$this->_extract_related_models_from_sub_params_array_values($query_params['group_by'],$query_info_carrier,'group_by');
+			}else{
+				$this->_extract_related_model_info_from_query_param( $query_params['group_by'],$query_info_carrier,'group_by');
+			}
 		}
 		if(array_key_exists('having',$query_params)){
-			$this->_extract_related_models_from_sub_params_array_keys($query_params[0], $query_info_carrier);
+			$this->_extract_related_models_from_sub_params_array_keys($query_params[0], $query_info_carrier,'having');
 		}
 		if(array_key_exists('order_by', $query_params)){
-			$this->_extract_related_models_from_sub_params_array_keys($query_params['order_by'],$query_info_carrier);
+			$this->_extract_related_models_from_sub_params_array_keys($query_params['order_by'],$query_info_carrier,'order_by');
 		}
 		if(array_key_exists('force_join', $query_params)){
-			$this->_extract_related_models_from_sub_params_array_values($query_params['force_join'],$query_info_carrier);
+			$this->_extract_related_models_from_sub_params_array_values($query_params['force_join'],$query_info_carrier,'force_join');
 		}
 		return $query_info_carrier;
 	}
@@ -846,21 +849,27 @@ abstract class EEM_Base extends EE_Base{
 	 * For extracting related models from WHERE (0), HAVING (having), ORDER BY (order_by) or forced joins (forece_join)
 	 * @param array $sub_query_params like EEM_Base::get_all's $query_params[0] or $query_params['having'] 
 	 * @param EE_Model_Query_Info_Carrier $model_query_info_carrier
+	 * @param string $query_param_type one of $this->_allowed_query_params
 	 */
-	private function _extract_related_models_from_sub_params_array_keys($sub_query_params, EE_Model_Query_Info_Carrier $model_query_info_carrier){
+	private function _extract_related_models_from_sub_params_array_keys($sub_query_params, EE_Model_Query_Info_Carrier $model_query_info_carrier,$query_param_type){
 
 		if (!empty($sub_query_params)){
 			$sub_query_params = (array) $sub_query_params;
 			foreach($sub_query_params as $param => $possibly_array_of_params){
 				//$param could be simply 'EVT_ID', or it could be 'Registrations.REG_ID', or even 'Registrations.Transactions.Payments.PAY_amount'
-				$this->_extract_related_model_info_from_query_param( $param, $model_query_info_carrier);
+				$this->_extract_related_model_info_from_query_param( $param, $model_query_info_carrier,$query_param_type);
 				
 				//if $possibly_array_of_params is an array, try recursing into it, searching for keys which 
 				//indicate needed joins. Eg, array('NOT'=>array('Registration.TXN_ID'=>23)). In this case, we tried
 				//extracting models out of the 'NOT', which obviously wasn't successful, and then we recurse into the value
 				//of array('Registration.TXN_ID'=>23)
-				if( is_array($possibly_array_of_params)){
-					$this->_extract_related_models_from_sub_params_array_keys($possibly_array_of_params, $model_query_info_carrier);
+				if(in_array($param, $this->_logic_query_param_keys,true)){
+					if (! is_array($possibly_array_of_params)){
+						throw new EE_Error(sprintf(__("You used a special where query param %s, but the value isnt an array of where query params, it's just %s'. It should be an array, eg array('EVT_ID'=>23,'OR'=>array('Venue.VNU_ID'=>32,'Venue.VNU_name'=>'monkeyland'))", "event_espresso"),
+							$param,$possibly_array_of_params));
+					}else{
+						$this->_extract_related_models_from_sub_params_array_keys($possibly_array_of_params, $model_query_info_carrier,$query_param_type);
+					}
 				}
 			}
 		}
@@ -873,12 +882,13 @@ abstract class EEM_Base extends EE_Base{
 	 * models to join with. Eg an array like array('Attendee','Price.Price_Type');
 	 * @param array $sub_query_params like EEM_Base::get_all's $query_params[0] or $query_params['having'] 
 	 * @param EE_Model_Query_Info_Carrier $model_query_info_carrier
+	 * @param string $query_param_type one of $this->_allowed_query_params
 	 */
-	private function _extract_related_models_from_sub_params_array_values($sub_query_params, EE_Model_Query_Info_Carrier $model_query_info_carrier){
+	private function _extract_related_models_from_sub_params_array_values($sub_query_params, EE_Model_Query_Info_Carrier $model_query_info_carrier,$query_param_type){
 		if (!empty($sub_query_params)){
 			foreach($sub_query_params as $param){
 				//$param could be simply 'EVT_ID', or it could be 'Registrations.REG_ID', or even 'Registrations.Transactions.Payments.PAY_amount'
-				$this->_extract_related_model_info_from_query_param( $param, $model_query_info_carrier);
+				$this->_extract_related_model_info_from_query_param( $param, $model_query_info_carrier, $query_param_type);
 			}
 		}
 		return $model_query_info_carrier;
@@ -946,18 +956,18 @@ abstract class EEM_Base extends EE_Base{
 				//it's an array, so assume we'll be grouping by a bunch of stuff
 				$group_by_array = array();
 				foreach($query_params['group_by'] as $field_name_to_group_by){
-					$field_obj = $this->field_settings_for($field_name_to_group_by);
+					$field_obj = $this->_deduce_field_from_query_param($field_name_to_group_by);//$this->field_settings_for($field_name_to_group_by);
 					$group_by_array[] = $field_obj->get_qualified_column();
 				}
-				$query_object->set_group_by_sql(" GROUP BY ".implode(",",$group_by_array));
+				$query_object->set_group_by_sql(" GROUP BY ".implode(", ",$group_by_array));
 			}else{
-				$field_obj = $this->field_settings_for( $query_params['group_by'] );
+				$field_obj = $this->_deduce_field_from_query_param($query_params['group_by']);
 				$query_object->set_group_by_sql(" GROUP BY ".$field_obj->get_qualified_column());
 			}
 		}
 		//set having
 		if(array_key_exists('having',$query_params) && $query_params['having']){
-			throw new EE_Error("Having clause is not yet supported. It should be an easy add though");
+			$query_object->set_having_sql( $this->_construct_having_clause($query_params['having'], $values_already_prepared_by_model_object));
 		}
 
 		//now, just verify they didnt pass anything wack
@@ -1048,29 +1058,154 @@ abstract class EEM_Base extends EE_Base{
 	 * onto its related Transaction object to do the same. Returns an EE_Join_And_Data_Types object which contains the SQL
 	 * for joining, and the data types
 	 * @param string $query_param like Registration.Transaction.TXN_ID
+	 * @param boolean $look_for_field_names. if true (default), we're working with strings like 'Event.Venue.VNU_ID' or 'Registration.REG_ID'
+	 * @param boolean $allow_logic_query_params whether or not to allow logic_query_params like 'NOT','OR', or 'AND'
+	 * or 'PAY_ID'. Otherwise, we don't expect there to be a column name. We only want model names, eg 'Event.Venue' or 'Registration's
 	 * @return void only modifies the EEM_Related_Model_Info_Carrier passed into it
 	 */
-	function _extract_related_model_info_from_query_param($query_param, EE_Model_Query_Info_Carrier $passed_in_query_info){
-		foreach($this->_model_relations as $valid_related_model_name=>$relation_obj){
-			//check to see if the $query_param starts with $valid_related_model_name
-			//eg if 'Registration' is at the start of 'Registration.Transaction.TXN_ID'
-			//or failing that, maybe just 'Registration' or 'Registration.Transaction', in the case of 'force_join'
-			
-			if(strpos($query_param, $valid_related_model_name) !== 0){
-				//we couldn't find that model's name in teh query param,
-				//so try the next related model
-				continue;
-			}elseif(strpos($query_param, $valid_related_model_name.".") === 0){
-				//it is, so pop it off
-				$query_param = str_replace($valid_related_model_name.".","",$query_param);
-				//get that related model's join info and data types	
-			}elseif(strpos($query_param, $valid_related_model_name) === 0){
-				//if we can't find the related model's name and a period, 
-				//its probably a forece_join. Just remove the model's name form the query param
-				$query_param = str_replace($valid_related_model_name,"",$query_param);
+//	function _extract_related_model_info_from_query_param($query_param, EE_Model_Query_Info_Carrier $passed_in_query_info, $look_for_field_names = true, $allow_logic_query_params = true){
+//		//check if $query_param is simply a field on this model. in which case
+//		//we surely won't find a model name in it
+//		$this_model_fields = $this->field_settings(true);
+//		if(array_key_exists($query_param,$this_model_fields)){
+//			if($look_for_field_names){
+//				return;
+//			}else{
+//				throw new EE_Error(sprintf(__("Using a field name (%s) on model %s is not allowed on this query param", "event_espresso"),$query_param,get_class($this)));
+//			}
+//		}
+//		$could_still_be_an_invalid_query_param = true;
+//		foreach($this->_model_relations as $valid_related_model_name=>$relation_obj){
+//			//first, check if this query param is actually a logic param
+//			if(in_array($query_param, $this->_logic_query_param_keys)){
+//				if($allow_logic_query_params){
+//					return;
+//				}else{
+//					throw new EE_Error(sprintf(__("Logic query params (%s) are being used in the wrong quer params on model %s", "event_espresso"),implode(",",$this->_logic_query_param_keys),get_class($this)));
+//				}
+//			}else
+//			//check to see if the $query_param starts with $valid_related_model_name
+//			//eg if 'Registration' is at the start of 'Registration.Transaction.TXN_ID'
+//			//or failing that, maybe just 'Registration' or 'Registration.Transaction', in the case of 'force_join'	
+//			if(strpos($query_param, $valid_related_model_name.".") === 0){
+//				//it is, so pop it off
+//				$query_param = str_replace($valid_related_model_name.".","",$query_param);
+//				//get that related model's join info and data types	
+//			}elseif(strpos($query_param, $valid_related_model_name) === 0){
+//				//we can't find the related model's name and a period, 
+//				//this is expected if we're not lookign for a column name.
+//				//btu if we're looking for a column name, it's wrong
+//				if($look_for_field_names){
+//					throw new EE_Error(sprintf(__("You must provide a column name, but a query param ended in '%s' on model %s", "event_espresso"),$query_param,get_class($this)));
+//				}else{
+//					$query_param = str_replace($valid_related_model_name,"",$query_param);
+//				}
+//			}
+//			//we couldn't find that model's name in teh query param, and its not a logic query param...
+//			else{
+//				//check ot see if its a field name on the model we've evaluating right now...
+//				
+//				$other_model = $relation_obj->get_other_model();
+//				try{
+//					$field_on_other_model = $other_model->field_settings_for($query_param);
+//					//if we haven't thrown an exception so far, it's because $query_param
+//					//IS a field on the other model. 
+//					if($look_for_field_names){
+//						//so we surely won't find any more
+//						//model names on $query_param
+//						return;
+//					}else{
+//						//we aren't looking for field names though!
+//						throw new EE_Error(sprintf(__("Using a field name ('%s') isnt allowed for this query param on model %s", "event_espresso"),$query_param,get_class($this)));
+//					}
+//				}catch(EE_Error $e){
+//					//ok so $query_param ISN'T a field of this model...
+//					//it could be a field on a different model
+//				}
+//			}
+//			//ok, so $query_param could now be a model name, model name period field name, or jsut a field name
+//			$could_still_be_an_invalid_query_param = false;
+//			
+//			//recurse, passing along the growing $join_sql_and_data_types object
+//			$this->_add_join_to_model($valid_related_model_name, $passed_in_query_info);
+//			$related_model_obj = $this->get_related_model_obj($valid_related_model_name);
+//			$related_model_obj->_extract_related_model_info_from_query_param($query_param, $passed_in_query_info);
+//		}
+//		
+//		if( $could_still_be_an_invalid_query_param){
+//			throw new EE_Error(sprintf(__("It seems you passed an invalid query param. '%s' contains no related models, or field name on model '%s'. You coudl pass a special query param key like %s, or maybe a field like %s. Related models are %s. But certainly, %s is not valid.", "event_espresso"),
+//			$query_param,get_class($this),implode(",",$this->_logic_query_param_keys), implode(",",array_keys($this->field_settings())), implode(",",array_keys($this->relation_settings())),$query_param));
+//		}
+//			
+//	}
+	
+	private function _extract_related_model_info_from_query_param($query_param, EE_Model_Query_Info_Carrier $passed_in_query_info, $query_param_type, $original_query_param = null){
+		if($original_query_param == null){
+			$original_query_param = $query_param;
+		}
+		//remove *'s which are used for uniqueness of keys. see comments inside _construct_condition_clause_recursive 
+		// for more info on why we do that
+		$query_param = str_replace("*", "", $query_param);
+		$allow_logic_query_params = in_array($query_param_type,array('where','having'));
+		$allow_fields = in_array($query_param_type,array('where','having','order_by','group_by'));
+		//check to see if we have a field on this model
+		$this_model_fields = $this->field_settings(true);
+		if(array_key_exists($query_param,$this_model_fields)){
+			if($allow_fields){
+				return;
+			}else{
+				throw new EE_Error(sprintf(__("Using a field name (%s) on model %s is not allowed on this query param type '%s'. Original query param was %s", "event_espresso"),
+						$query_param,get_class($this),$query_param_type,$original_query_param));
 			}
-			
-			$related_model_obj = $this->get_related_model_obj($valid_related_model_name);
+		}
+		//check if this is a special logic query param
+		elseif(in_array($query_param, $this->_logic_query_param_keys)){
+			if($allow_logic_query_params){
+				return;
+			}else{
+				throw new EE_Error(sprintf(__("Logic query params (%s) are being used in the wrong quer params on model %s", "event_espresso"),implode(",",$this->_logic_query_param_keys),get_class($this)));
+			}
+		}	
+		//check if has a model name at the beginning 
+		//and
+		//check if it's a field on a related model
+		foreach($this->_model_relations as $valid_related_model_name=>$relation_obj){
+			if(strpos($query_param, $valid_related_model_name.".") === 0){
+				$this->_add_join_to_model($valid_related_model_name, $passed_in_query_info);
+				
+				$query_param = str_replace($valid_related_model_name.".","",$query_param);
+				if($query_param == ''){
+					//nothing left to $query_param
+					//we should actually end in a field name, not a model like this!
+					throw new EE_Error(sprintf(__("Query param '%s' (of type %s on model %s) shouldn't end on a period (.) ", "event_espresso"),
+							$query_param,$query_param_type,get_class($this),$valid_related_model_name));
+				}else{
+					$related_model_obj = $this->get_related_model_obj($valid_related_model_name);
+					return $related_model_obj->_extract_related_model_info_from_query_param($query_param, $passed_in_query_info, $query_param_type, $original_query_param);
+				}
+			}elseif($query_param == $valid_related_model_name){
+				$this->_add_join_to_model($valid_related_model_name, $passed_in_query_info);
+				return;
+			}
+		}
+		//ok so $query_param didn't start with a model name
+		//and we previously confirmed it wasn't a logic query param or field on the current model
+		//it's wack, that's what it is
+		throw new EE_Error(sprintf(__("There is no model named '%s' related to %s. Query param type is %s and original query param is %s", "event_espresso"),
+				$query_param,get_class($this),$query_param_type,$original_query_param));
+		
+	}
+	
+	/**
+	 * Privately used by _extract_related_model_info_from_query_param to add a join to $model_name 
+	 * and store it on $passed_in_query_info
+	 * @param string $model_name
+	 * @param EE_Model_Query_Info_Carrier $passed_in_query_info
+	 * @return void
+	 */
+	private function _add_join_to_model($model_name, EE_Model_Query_Info_Carrier $passed_in_query_info){
+		
+		$relation_obj = $this->related_settings_for($model_name);
 			//check if teh relation is HABTM, because then we're essentially doing two joins
 			//If so, join first to the JOIN table, and add its data types, and then continue as normal
 			if($relation_obj instanceof EE_HABTM_Relation){
@@ -1082,13 +1217,9 @@ abstract class EEM_Base extends EE_Base{
 			}
 			//now just join to the other table pointed to by the relation object, and add its data types
 			$new_query_info = new EE_Model_Query_Info_Carrier(
-					array($valid_related_model_name), 
+					array($model_name), 
 					$relation_obj->get_join_statement());
 			$passed_in_query_info->merge( $new_query_info  );
-
-			//recurse, passing along the growing $join_sql_and_data_types object
-			$related_model_obj->_extract_related_model_info_from_query_param($query_param, $passed_in_query_info);
-		}
 	}
 	
 	
@@ -1155,8 +1286,7 @@ abstract class EEM_Base extends EE_Base{
 	private function _construct_condition_clause_recursive($where_params, $glue = ' AND', $values_already_prepared_by_model_object = false){
 		$where_clauses=array();
 		foreach($where_params as $query_param => $op_and_value_or_sub_condition){
-			if(in_array($query_param,$this->_special_where_param_keys)){
-				//first off: remoev any *s from the query params name, as
+			//first off: remoev any *s from the query params name, as
 				//these are used to make the array keys unique,
 				//allowign for multiple conditions based on the same field.
 				//Eg, a valid $where_params array could look like 
@@ -1164,7 +1294,8 @@ abstract class EEM_Base extends EE_Base{
 				//		'PAY_timestamp*'=>array('<',$end_date),
 				//		'PAY_timestamp**'=>array('!=',$special_date))
 				//the query param is 'and',  'or', or 'not'
-				$query_param = str_replace("*",'',$query_param);
+			$query_param = str_replace("*",'',$query_param);
+			if(in_array($query_param,$this->_logic_query_param_keys)){
 				switch($query_param){
 					case 'not':
 					case 'NOT':
@@ -1748,7 +1879,7 @@ abstract class EEM_Base extends EE_Base{
 		}elseif(is_string($base_class_obj_or_id) && intval($base_class_obj_or_id)){//assume its a string representation of the object
 			$model_object = $this->get_one_by_ID(intval($base_class_obj_or_id));
 		}else{
-			throw new EE_Error(sprintf(__("'%s' is neither an object of type %s, nor an ID!",'event_espresso'),$base_class_obj_or_id,$this->_get_class_name()));
+			throw new EE_Error(sprintf(__("'%s' is neither an object of type %s, nor an ID! Its full valeu is '%s'",'event_espresso'),$base_class_obj_or_id,$this->_get_class_name(),print_r($base_class_obj_or_id,true)));
 		}
 		if( $model_object->ID() == NULL && $ensure_is_in_db){
 			$model_object->save();

@@ -61,7 +61,9 @@ class EEM_Term_Taxonomy extends EEM_Base {
 			));
 		$this->_model_relations = array(
 			'Term_Relationship'=>new EE_Has_Many_Relation(),
-			'Term'=>new EE_Belongs_To_Relation()
+			'Term'=>new EE_Belongs_To_Relation(),
+			'Event'=>new EE_HABTM_Relation('Term_Relationship'),
+			'Venue'=>new EE_HABTM_Relation('Term_Relationship')
 		);
 		
 		parent::__construct();

@@ -21,7 +21,8 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Event extends EE_Base_Class{ 	
+require_once('EE_CPT_Base.class.php');
+class EE_Event extends EE_CPT_Base{ 	
 	/**
 	 * All registrations for this event
 	 * @var EE_Registration[] 

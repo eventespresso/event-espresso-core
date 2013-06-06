@@ -21,7 +21,10 @@
  *
  * ------------------------------------------------------------------------
  */
-class EEM_Event  extends EEM_Base{
+
+
+require_once('EEM_CPT_Base.model.php');
+class EEM_Event  extends EEM_CPT_Base{
 	//extends EEM_Base
 
   	// private instance of the Event object
@@ -50,28 +53,11 @@ class EEM_Event  extends EEM_Base{
 	}
 	
 	/**
-	 * keys are the STS_IDs for events, values are translatable strings. It's nice having an 
+	 * keys are the statuses for posts, values are translatable strings. It's nice having an 
 	 * array of ALL of the statuses, so we can know what statuses are valid, and which are not
 	 * @var array 
 	 */
 	private static $_statuses = array();
-	
-	/**
-	 * @todo: we should describe each status here. Ie, when things should have
-	 * this status, what triggers it, and how it generally affects the rest of teh system
-	 */
-	const status_active = 'ACT';
-	const status_not_active = 'NAC';
-	const status_registration_not_open = 'NOP';
-	const status_registration_open='OPN';
-	const status_registration_closed = 'CLS';
-	const status_pending = 'PND';
-	const status_ongoing = 'ONG';
-	const status_secondary = 'SEC';
-	const status_draft = 'DRF';
-	const status_deleted = 'DEL';
-	const status_denied = 'DEN';
-	const status_expired = 'EXP';
 
 	
 	/**
@@ -83,13 +69,17 @@ class EEM_Event  extends EEM_Base{
 	const additional_attendee_reg_info_none = 0;
 	const additional_attendee_reg_info_personal_info_only = 1;
 	const additional_attendee_reg_info_full = 2;
-	protected function __construct( $timezone ){
+	protected function __construct($timezone = null){
 		$this->singular_item = __('Event','event_espresso');
 		$this->plural_item = __('Events','event_espresso');
 		
-		self::$_statuses = $this->_get_event_status_array();
+		//set valid statuses to wordpress defaults. see http://codex.wordpress.org/Function_Reference/register_post_status
+		//for what the $args_object is
+		global $wp_post_statuses;
+		foreach($wp_post_statuses as $post_status => $args_object){
+			self::$_statuses[$post_status] = $args_object->label;
+		}
 		self::$_additional_attendee_reg_info_enum = $this->_get_additional_attendee_reg_info_array();
-		
 		$this->_tables = array(
 			'Event_CPT'=>new EE_Primary_Table('posts','ID'),
 			'Event_Meta'=> new EE_Secondary_Table('esp_event_meta', 'EVTM_ID','EVT_ID',"Event_CPT.post_type='espresso_events'")
@@ -105,7 +95,7 @@ class EEM_Event  extends EEM_Base{
 				'EVT_slug'=>new EE_Slug_Field('post_name', __("Event Slug", "event_espresso"), false, ''),
 				'EVT_created'=>new EE_Datetime_Field('post_date', __("Date/Time Event Created", "event_espresso"), false, current_time('timestamp')),
 				'EVT_short_desc'=>new EE_Simple_HTML_Field('post_excerpt', __("Event Short Descripiton", "event_espresso"), false,''),
-				'STS_ID'=>new EE_Enum_Field('post_status', __("Event Status", "event_espresso"), false, EEM_Event::status_draft, self::$_statuses),//will be a foreign key once status model made
+				'STS_ID'=>new EE_Enum_Field('post_status', __("Event Status", "event_espresso"), false, 'draft', self::$_statuses),
 				'EVT_modified'=>new EE_Datetime_Field('post_modified', __("Dateim/Time Event Modified", "event_espresso"), true, current_time('timestamp')),
 				'EVT_wp_user'=>new EE_Integer_Field('post_author', __("Wordpress User ID", "event_espresso"), false,1),
 				'EVT_parent'=>new EE_Integer_Field('post_parent', __("Event Parent ID", "event_espresso"), true),
@@ -135,13 +125,14 @@ class EEM_Event  extends EEM_Base{
 			'Datetime'=>new EE_Has_Many_Relation(),
 			'Price'=>new EE_Has_Many_Relation(),
 			'Question_Group'=>new EE_HABTM_Relation('Event_Question_Group'),
-			'Venue'=>new EE_HABTM_Relation('Event_Venue'),
-			'Term_Taxonomy'=>new EE_HABTM_Relation('Term_Relationship')
+			'Venue'=>new EE_HABTM_Relation('Event_Venue')
 		);
 		require_once('strategies/EE_Default_CPT_Where_Conditions.strategy.php');
 		$this->_default_where_conditions_strategy = new EE_Default_CPT_Where_Conditions('espresso_events');
 		parent::__construct( $timezone );
 	}
+	
+	
 	
 	
 

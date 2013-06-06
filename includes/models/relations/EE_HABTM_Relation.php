@@ -66,7 +66,7 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base{
 	 * want to directly use the EEM_Event_Question_Group model to add the entry to the table and set those extra columns' values
 	 * @param EE_Base_Class/int $this_obj_or_id
 	 * @param EE_Base_Class/int $other_obj_or_id
-	 * @return void
+	 * @return EE_Base_Class
 	 */
 	 function add_relation_to($this_obj_or_id, $other_obj_or_id ){
 		 $this_model_obj = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);
@@ -89,6 +89,7 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base{
 						$join_model_fk_to_other_model->get_name() => $other_model_obj->ID()
 					));
 		}
+		return $other_model_obj;
 	 }
 	/**
 	 * Deletes any rows in the join table that have foreign keys matching the other model objects specified
