@@ -2135,7 +2135,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			if ( isset( $new_quick_price['PRC_name'] ) && ! empty( $new_quick_price['PRC_name'] ) && isset( $new_quick_price['PRC_amount'] )) {
 				$ticket_prices_to_save[] = array(
 					'PRT_ID' => 2,
-					'EVT_ID' => 4,
+					'EVT_ID' => $last_event_id,
 					'PRT_is_global' => FALSE,
 					'PRC_overrides' => 0,
 					'PRC_deleted' => FALSE,
@@ -2152,7 +2152,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		}
 		
 		// grab list of edited ticket prices
-		if ($edited_ticket_price_IDs = isset($this->_req_data['edited_ticket_price_IDs']) ? $this->_req_data['edited_ticket_price_IDs'] : FALSE) {
+/*		if ($edited_ticket_price_IDs = isset($this->_req_data['edited_ticket_price_IDs']) ? $this->_req_data['edited_ticket_price_IDs'] : FALSE) {
 			// remove last comma
 			$edited_ticket_price_IDs = trim($edited_ticket_price_IDs, ',');
 			// create array of edited ticket prices
@@ -2179,7 +2179,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 					}
 				}
 			}
-		}
+		}*/
 		
 //			echo printr( $ticket_prices_to_save, '$ticket_prices_to_save' );	
 
@@ -2578,7 +2578,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 			if ( isset( $new_quick_price['PRC_name'] ) && ! empty( $new_quick_price['PRC_name'] ) && isset( $new_quick_price['PRC_amount'] )) {
 				$ticket_prices_to_save[] = array(
 					'PRT_ID' => 2,
-					'EVT_ID' => 4,
+					'EVT_ID' => $event_id,
 					'PRT_is_global' => FALSE,
 					'PRC_overrides' => 0,
 					'PRC_deleted' => FALSE,
@@ -2595,7 +2595,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		}
 
 		// grab list of edited ticket prices
-		if ($edited_ticket_price_IDs = isset($this->_req_data['edited_ticket_price_IDs']) ? $this->_req_data['edited_ticket_price_IDs'] : FALSE) {
+		if ($edited_ticket_price_IDs = isset($this->_req_data['edited_ticket_price_IDs']) ? sanitize_text_field( $this->_req_data['edited_ticket_price_IDs'] ) : FALSE) {
 			// remove last comma
 			$edited_ticket_price_IDs = trim($edited_ticket_price_IDs, ',');
 			// create array of edited ticket prices
@@ -2604,9 +2604,28 @@ class Events_Admin_Page extends EE_Admin_Page {
 			$edited_ticket_price_IDs = array_flip($edited_ticket_price_IDs);
 			// flipper twice - hey!?!?! where did all the duplicate entries go???
 			$edited_ticket_price_IDs = array_flip($edited_ticket_price_IDs);
-			// echo printr( $edited_ticket_price_IDs, '$edited_ticket_price_IDs' );
+			//printr( $edited_ticket_price_IDs, '$edited_ticket_price_IDs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// grab existing ticket price data
-			if ( $edited_ticket_prices = isset($this->_req_data['edit_ticket_price']) ? $this->_req_data['edit_ticket_price'] : array() ) {
+			$edited_ticket_prices = isset($this->_req_data['edit_ticket_price']) ? $this->_req_data['edit_ticket_price'] : array();
+			if( empty( $edited_ticket_prices ) && ! empty( $quick_edit_ticket_price )) {
+				foreach ( $quick_edit_ticket_price as $PRC_ID => $quick_ticket_price ) {
+					$ticket_prices_to_save[ $PRC_ID ] = array(
+						'PRT_ID' => 2,
+						'EVT_ID' => $event_id,
+						'PRT_is_global' => FALSE,
+						'PRC_overrides' => 0,
+						'PRC_deleted' => FALSE,
+						'PRC_order' =>  isset( $quick_ticket_price['PRC_order'] ) && $quick_ticket_price['PRC_order'] ? array( 2 => $quick_ticket_price['PRC_order'] ) : array( 2 => 0 ),
+						'PRC_name' => $quick_ticket_price['PRC_name'] ? $quick_ticket_price['PRC_name'] : NULL,
+						'PRC_desc' => NULL,
+						'PRC_amount' => $quick_ticket_price['PRC_amount'] ? $quick_ticket_price['PRC_amount'] : 0,
+						'PRC_use_dates' => FALSE,
+						'PRC_start_date' => NULL,
+						'PRC_end_date' => NULL,
+						'PRC_is_active' => TRUE			
+					);					
+				}
+			} else {
 				// echo printr( $edited_ticket_prices, '$edited_ticket_prices' );
 				// cycle thru list                    
 				foreach ($edited_ticket_prices as $PRC_ID => $edited_ticket_price) {
@@ -2623,6 +2642,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 				}
 			}
 		}
+		
 		
 		//printr( $ticket_prices_to_save, '$ticket_prices_to_save  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
@@ -2645,7 +2665,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 		// and now we actually save the ticket prices
 		if (!empty($ticket_prices_to_save)) {
 
-			//echo printr( $new_ticket_price, '$new_ticket_price' );
+			//printr( $new_ticket_price, '$new_ticket_price  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			//printr( $ticket_prices_to_save, '$ticket_prices_to_save  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 			$PRC = EEM_Price::instance();
