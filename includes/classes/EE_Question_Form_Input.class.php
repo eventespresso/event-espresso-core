@@ -161,7 +161,8 @@ class EE_Question_Form_Input {
 	 */
 	private function _set_input_name( $qstn_id ) {
 		if ( ! empty( $qstn_id )) {
-			$qstn_id = isset( $this->_ANS->ANS_ID ) ? '[' . $qstn_id . '][' . $this->_ANS->ANS_ID . ']' : '[' . $qstn_id . ']';
+			$ANS_ID = $this->get( 'ANS_ID' );
+			$qstn_id = isset( $ANS_ID ) ? '[' . $qstn_id . '][' . $ANS_ID . ']' : '[' . $qstn_id . ']';
 		}
 		$this->QST_input_name = $this->_QST_meta['append_qstn_id'] && ! empty( $qstn_id ) ? $this->_QST_meta['input_prefix'] . $this->_QST_meta['input_name'] . $qstn_id : $this->_QST_meta['input_prefix'] . $this->_QST_meta['input_name'];
 	}
