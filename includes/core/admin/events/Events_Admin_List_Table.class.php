@@ -35,7 +35,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 	public function __construct( $admin_page ) {
 		parent::__construct($admin_page);
-		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Datetimes.helper' );
+		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_DTT_Helper.helper' );
 	}
 
 	protected function _setup_data() {
