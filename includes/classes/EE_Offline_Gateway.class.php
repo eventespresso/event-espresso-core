@@ -57,7 +57,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 			$transaction->save();
 		}
 		//createa hackey payment object, but dont save it
-		$payment = new EE_Payment($transaction->ID(), EEM_Payment::status_id_pending, current_time('timestamp'), array(), $transaction->total(), $this->_gateway_name, array(), null, null, null);
+		$payment = new EE_Payment($transaction->ID(), EEM_Payment::status_id_pending, current_time('mysql'), array(), $transaction->total(), $this->_gateway_name, array(), null, null, null);
 		
 		do_action( 'AHEE_EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
 		parent::thank_you_page_logic($transaction);

@@ -1919,7 +1919,7 @@ printr( $qstns, '$qstns  <br /><span style="font-size:10px;font-weight:normal;">
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Transaction.class.php' );
 		// create TXN object
 		$transaction = new EE_Transaction( 
-			time(), 
+			current_time('mysql'), 
 			$grand_total, 
 			0, 
 			$txn_status, 
