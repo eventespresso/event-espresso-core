@@ -1265,14 +1265,11 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		}
 		$success = TRUE;
 		global $wpdb;
-		printr( $qstns, '$qstns  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		// grab values for fname, lname, and email from qstns
-//		$QST_fname 	= isset( $qstns['fname'] ) && ! empty( $qstns['fname'] ) ? array_shift( array_values( $qstns['fname'] )) : FALSE;
-//		$QST_lname 	= isset( $qstns['lname'] ) && ! empty( $qstns['lname'] ) ? array_shift( array_values( $qstns['lname'] )) : FALSE;
-//		$QST_email 	= isset( $qstns['email'] ) && ! empty( $qstns['email'] ) ? array_shift( array_values( $qstns['email'] )) : FALSE;
-		$QST_fname 	= isset( $qstns['fname'] ) && ! empty( $qstns['fname'] ) ? $qstns['fname'] : FALSE;
-		$QST_lname 	= isset( $qstns['lname'] ) && ! empty( $qstns['lname'] ) ? $qstns['lname'] : FALSE;
-		$QST_email 	= isset( $qstns['email'] ) && ! empty( $qstns['email'] ) ? $qstns['email'] : FALSE;
+//		printr( $qstns, '$qstns  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		// grab values for fname, lname, and email from qstns, using  array_shift( array_values( )) grabs the value without removing it from the array
+		$QST_fname 	= isset( $qstns['fname'] ) && ! empty( $qstns['fname'] ) ? array_shift( array_values( $qstns['fname'] )) : FALSE;
+		$QST_lname 	= isset( $qstns['lname'] ) && ! empty( $qstns['lname'] ) ? array_shift( array_values( $qstns['lname'] )) : FALSE;
+		$QST_email 	= isset( $qstns['email'] ) && ! empty( $qstns['email'] ) ? array_shift( array_values( $qstns['email'] )) : FALSE;
 		$address_change = isset( $qstns['address'] ) ? TRUE : FALSE;
 		// check if fname, lname, and email were set (and possibly changed)
 		if (( $QST_fname && $QST_lname && $QST_email ) || $address_change ) {		
@@ -1287,20 +1284,14 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			if ( $QST_fname != $attendee->fname() || $QST_lname != $attendee->lname() || $QST_email != $attendee->email() || $address_change ) {
 				// we're either updating an already existing attendee or creating an entirely new attendee 
 				//so grab the rest of the details
-//				$QST_address 		= isset( $qstns['address'] ) && ! empty( $qstns['address'] ) ? array_shift( array_values( $qstns['address'] )) : NULL;
-//				$QST_address2 	= isset( $qstns['address2'] ) && ! empty( $qstns['address2'] ) ? array_shift( array_values( $qstns['address2'] )) : NULL;
-//				$QST_city 				= isset( $qstns['city'] ) && ! empty( $qstns['city'] ) ? array_shift( array_values( $qstns['city'] )) : NULL;
-//				$QST_state 			= isset( $qstns['state'] ) && ! empty( $qstns['state'] ) ? array_shift( array_values( $qstns['state'] )) : NULL;
-//				$QST_country 		= isset( $qstns['country'] ) && ! empty( $qstns['country'] ) ? array_shift( array_values( $qstns['country'] )) : NULL;
-//				$QST_zip 				= isset( $qstns['zip'] ) && ! empty( $qstns['zip'] ) ? array_shift( array_values( $qstns['zip'] )) : NULL;
-//				$QST_phone 		= isset( $qstns['phone'] ) && ! empty( $qstns['phone'] ) ? array_shift( array_values( $qstns['phone'] )) : NULL;	
-				$QST_address 		= isset( $qstns['address'] ) && ! empty( $qstns['address'] ) ? sanitize_text_field( $qstns['address'] ) : NULL;
-				$QST_address2 	= isset( $qstns['address2'] ) && ! empty( $qstns['address2'] ) ? sanitize_text_field( $qstns['address2'] ) : NULL;
-				$QST_city 				= isset( $qstns['city'] ) && ! empty( $qstns['city'] ) ? sanitize_text_field( $qstns['city'] ) : NULL;
-				$QST_state 			= isset( $qstns['state'] ) && ! empty( $qstns['state'] ) ? sanitize_text_field( $qstns['state'] ) : NULL;
-				$QST_country 		= isset( $qstns['country'] ) && ! empty( $qstns['country'] ) ? sanitize_text_field( $qstns['country'] ) : NULL;
-				$QST_zip 				= isset( $qstns['zip'] ) && ! empty( $qstns['zip'] ) ? sanitize_text_field( $qstns['zip'] ) : NULL;
-				$QST_phone 		= isset( $qstns['phone'] ) && ! empty( $qstns['phone'] ) ? sanitize_text_field( $qstns['phone'] ) : NULL;	
+				$QST_address 		= isset( $qstns['address'] ) && ! empty( $qstns['address'] ) ? array_shift( array_values( $qstns['address'] )) : NULL;
+				$QST_address2 	= isset( $qstns['address2'] ) && ! empty( $qstns['address2'] ) ? array_shift( array_values( $qstns['address2'] )) : NULL;
+				$QST_city 				= isset( $qstns['city'] ) && ! empty( $qstns['city'] ) ? array_shift( array_values( $qstns['city'] )) : NULL;
+				$QST_state 			= isset( $qstns['state'] ) && ! empty( $qstns['state'] ) ? array_shift( array_values( $qstns['state'] )) : NULL;
+				$QST_country 		= isset( $qstns['country'] ) && ! empty( $qstns['country'] ) ? array_shift( array_values( $qstns['country'] )) : NULL;
+				$QST_zip 				= isset( $qstns['zip'] ) && ! empty( $qstns['zip'] ) ? array_shift( array_values( $qstns['zip'] )) : NULL;
+				$QST_phone 		= isset( $qstns['phone'] ) && ! empty( $qstns['phone'] ) ? array_shift( array_values( $qstns['phone'] )) : NULL;	
+
 				// load attendee model
 				require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php' );
 				$ATT = EEM_Attendee::instance();
@@ -1369,7 +1360,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		}
 //		echo '<h1>$attendee->ID()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
 //		var_dump( $attendee->ID() );
-printr( $qstns, '$qstns  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//printr( $qstns, '$qstns  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// allow others to get in on this awesome fun   :D
 		do_action( 'AHEE_save_attendee_registration_form', $REG_ID, $qstns );
 		// loop thru questions... FINALLY!!!
