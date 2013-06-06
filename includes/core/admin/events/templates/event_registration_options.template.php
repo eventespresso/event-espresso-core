@@ -42,3 +42,8 @@
 	<label><?php _e('Alternate Registration Page', 'event_espresso'); ?></label>
 	<input name="externalURL" size="20" type="text" value="<?php echo $_event->external_url(); ?>">
 </p>
+
+<p>
+	<label><?php _e('Event Phone Number', 'event_espresso'); ?></label>
+	<input name="event_phone" size="20" type="text" value="<?php echo $_event->event_phone(); ?>">
+</p>

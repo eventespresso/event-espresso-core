@@ -162,6 +162,11 @@ class EE_Event extends EE_CPT_Base{
 	 */
 	protected $_EVT_member_only;
 	/**
+	 * Phone number for event.  Event managers can have a specific phone number attached to an event that users can call in to get more details.
+	 * @var string
+	 */
+	protected $_EVT_phone;
+	/**
 	 * flag indicating whether ot not to allow overflow registrants
 	 * @var boolean
 	 */
@@ -270,6 +275,9 @@ class EE_Event extends EE_CPT_Base{
 	function member_only(){
 		return $this->get('EVT_member_only');
 	}
+	function event_phone(){
+		return $this->get('EVT_phone');
+	}
 	function modified(){
 		return $this->get('EVT_modified');
 	}
@@ -338,6 +346,9 @@ class EE_Event extends EE_CPT_Base{
 	}
 	function set_member_only($member_only) {
 		return $this->set('EVT_member_only', $member_only);
+	}
+	function set_event_phone($event_phone) {
+		return $this->set('EVT_phone', $event_phone);
 	}
 	function set_modified($modified) {
 		return $this->set('EVT_modified', $modified);

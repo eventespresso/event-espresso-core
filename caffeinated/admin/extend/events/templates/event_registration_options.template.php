@@ -59,6 +59,11 @@
 </p>
 
 <p>
+	<label><?php _e('Event Phone Number', 'event_espresso'); ?></label>
+	<input name="event_phone" size="20" type="text" value="<?php echo $_event->event_phone(); ?>">
+</p>
+
+<p>
 	<label><?php _e('Require Pre-approval', 'event_espresso'); ?></label>
 	<?php echo $require_pre_approval; ?>
 </p>
