@@ -77,7 +77,14 @@ class EE_DTT_Helper {
 
 
 
-	public function prepare_dtt_from_db( $dttvalue, $format = 'U' ) {
+	public static function prepare_dtt_for_db( $dttvalue ) {
+		$timestamp = is_numeric( $dttvalue ) ? self::_convert_from_numeric_value_to_utc_unixtimestamp( $dttvalue ) : self::_convert_from_string_value_to_utc_unixtimestamp( $dttvalue );
+		return $timestamp;
+	}
+
+
+
+	public static function prepare_dtt_from_db( $dttvalue, $format = 'U' ) {
 		
 		$timezone = self::_get_timezone();
 
@@ -87,6 +94,43 @@ class EE_DTT_Helper {
 		$date_obj->setTimezone( new DateTimeZone($timezone) );
 
 		return $date_obj->format($format);
+	}
+
+
+
+
+	private static function _convert_from_numeric_value_to_utc_unixtimestamp( $datetime ) {
+		$datetime = (int) $datetime;
+
+		$timezone = self::_get_timezone();
+
+		$date_obj = new DateTime( date( 'Y-m-d H:i:s', $datetime ), new DateTimeZone( $timezone) );
+
+		//if we don't have a datetime at this point then something has gone wrong 
+		if ( !$date_obj )
+			throw new EE_Error( __('Something went wrong with setting the date/time.  Likely, either there is an invalid timezone string or invalid timestamp being used.', 'event_espresso' ) );
+
+		//return to defautl for PHP
+		$date_obj->setTimezone( new DateTimeZone('UTC') );
+
+		//now that we have the string we can send this over to our string value conversion
+		return $date_obj->format( 'Y-m-d H:i:s' );
+	}
+
+
+
+	private static function _convert_from_string_value_to_utc_unixtimestamp( $datestring ) {
+		$timezone = self::_get_timezone();
+
+		//create a new datetime object using the given string and timezone
+		$date_obj = new DateTime( $datestring, new DateTimeZone($timezone) );
+
+		if ( !$date_obj )
+			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
+
+		$date_obj->setTimezone( new DateTimeZone('UTC') );
+		return $date_obj->format( 'u' );
+
 	}
 
 
