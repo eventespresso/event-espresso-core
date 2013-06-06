@@ -175,10 +175,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		);
 
 
-		if ( !empty( $this->_cpt_model_name ) && $this->_cpt_route  && ( $this->_req_action == 'create_new' || $this->_req_action == 'edit'  ) ) {
-			require_once( $this->_cpt_model_name . '.model.php' );
-			$model = call_user_func( array( $this->_cpt_model_name, 'instance' ) );
-			$this->_cpt_model_obj = !empty( $this->_req_data['id'] ) ? $model->get_one_by_ID( $this->_req_data['id'] ) : $model->create_default_object();
+		if ( $this->_cpt_route  && ( $this->_req_action == 'create_new' || $this->_req_action == 'edit'  ) ) {
+			$id = isset( $this->_req_data['id'] ) ? $this->_req_data['id'] : NULL;
+			$this->_set_model_object( $id );
 		}
 
 
@@ -203,6 +202,27 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		if ( method_exists( $this, 'extra_misc_actions_publish_box' ) )
 			add_filter('post_submitbox_misc_actions', array( $this, 'extra_misc_actions_publish_box' ), 10 );
 		
+	}
+
+
+
+
+
+	/**
+	 * Sets the _cpt_model_object property using what has been set for the _cpt_model_name and a given id.
+	 *
+	 * @access protected
+	 * @param int $id The id to retrieve the model object for. If empty we set a default object.
+	 * @return void
+	 */
+	protected function _set_model_object( $id = NULL ) {
+
+		if ( empty( $this->_cpt_model_name ) || ( is_object( $this->_cpt_model_obj ) && $this->_cpt_model_obj->ID() == $id ) ) 
+			return; //get out we either don't have a model name OR the object has already been set and it has the same id as what has been sent.
+
+		require_once( $this->_cpt_model_name . '.model.php' );
+		$model = call_user_func( array( $this->_cpt_model_name, 'instance' ) );
+		$this->_cpt_model_obj = !empty( $id ) ? $model->get_one_by_ID( $id ) : $model->create_default_object();
 	}
 
 
