@@ -110,7 +110,7 @@ abstract class EEM_Base extends EE_Base {
 
 		$timezone = get_option('timezone_string');
 		//if timezone is STILL empty then let's get the GMT offset and then set the timezone_string using our converter
-		if ( empty( $this->_timezone ) ) {
+		if ( empty( $timezone )) {
 			//let's get a the WordPress UTC offset
 			$offset = get_option('gmt_offset');
 			$timezone = self::timezone_convert_to_string_from_offset( $offset );
@@ -152,12 +152,15 @@ abstract class EEM_Base extends EE_Base {
 
 
 	protected function _prepare_dtt_from_db( $dttvalue, $format = 'U' ) {
-		if ( empty( $this->_timezone ) )
+		
+		if ( empty( $this->_timezone )) {
 			$this->_timezone = $this->_get_timezone();
+		}			
 
 		$date_obj = new DateTime( $dttvalue, new DateTimeZone('UTC') );
-		if ( !$date_obj )
+		if ( !$date_obj ) {
 			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
+		}			
 		$date_obj->setTimezone( new DateTimeZone($this->_timezone) );
 
 		return $date_obj->format($format);
