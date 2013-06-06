@@ -154,7 +154,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	*/ 
     function column_TXN_timestamp($item){
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item['TXN_ID'] ), TXN_ADMIN_URL );
-		$txn_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details for TXN #', 'event_espresso' ) . $item['TXN_ID'] . '">' . date( 'D M j, Y,    g:i:s a',	$item['TXN_timestamp'] ) .  '</a>'; 
+		$txn_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details for TXN #', 'event_espresso' ) . $item['TXN_ID'] . '">' . EE_DTT_Helper::prepare_dtt_from_db( $item['TXN_timestamp'], 'D M j, Y  g:i:s a' ) .  '</a>'; 
 		return $txn_date;
 	}
 
