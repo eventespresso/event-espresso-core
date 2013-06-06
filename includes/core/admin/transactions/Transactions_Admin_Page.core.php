@@ -38,6 +38,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 * 		@return void
 	 */
 	public function __construct() {
+		require_once( EE_HELPERS . 'EE_DTT_Helper.helper.php' );
 		parent::__construct();
 	}
 
@@ -423,7 +424,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['txn_nmbr']['value'] = $this->_transaction->TXN_ID;
 		$this->_template_args['txn_nmbr']['label'] = __( 'Transaction Number', 'event_espresso' );
 		
-		$this->_template_args['txn_datetime']['value'] = date( 'l F j, Y,    g:i:s a', $this->_transaction->TXN_timestamp );
+		$this->_template_args['txn_datetime']['value'] = EE_DTT_Helper::prepare_dtt_from_db($this->_transaction->TXN_timestamp, 'l F j, Y,   g:i:s a' );
 		$this->_template_args['txn_datetime']['label'] = __( 'Date', 'event_espresso' );
 
 		$this->_template_args['txn_status']['value'] = self::$_txn_status[ $this->_transaction->STS_ID ];

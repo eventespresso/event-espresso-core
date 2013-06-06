@@ -1151,7 +1151,7 @@ class EE_Single_Page_Checkout {
 				$REG->delete(array('TXN_ID'=>$transaction->ID()));
 			}else{
 				$transaction = new EE_Transaction( 
-					time(), 
+					current_time('mysql'), 
 					$grand_total, 
 					0, 
 					$txn_status, 
@@ -1302,7 +1302,7 @@ class EE_Single_Page_Checkout {
 												$DTT_ID,
 												$PRC_ID,
 												$default_reg_status,
-												time(),
+												current_time('mysql'),
 												$price_paid,
 												$session['id'],
 												$new_reg_code,

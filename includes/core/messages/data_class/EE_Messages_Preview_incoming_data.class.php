@@ -271,7 +271,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 		//setup txn property
 		$this->txn = new EE_Transaction(
-			time(), //unix timestamp
+			current_time('mysql'), //unix timestamp
 			$grand_total, //txn_total
 			$grand_total, //txn_paid
 			'PAP', //sts_id
@@ -295,7 +295,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 					'DTT_ID' => $this->_events[$line_ref]['daytime_id'],
 					'PRC_ID' => $this->_events[$line_ref]['price_id'],
 					'STS_ID' => 'RAP',
-					'REG_date' => time(),
+					'REG_date' => current_time('mysql'),
 					'REG_final_price' => $this->_events[$line_ref]['price'],
 					'REG_session' => 'dummy_session_id',
 					'REG_code' => '1-dummy_generated_reg_code',
