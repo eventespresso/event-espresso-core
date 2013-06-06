@@ -69,6 +69,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//load field generator helper
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
 
+		//the model is used a lot so let's just require it.
+		require_once( $this->_cpt_model_name . '.model.php' );
+
 		$this->_page_routes = array(
 			'default' => '_events_overview_list_table',
 			'copy_event' => array(
@@ -77,22 +80,22 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			),
 			'trash_event' => array(
 				'func' => '_trash_or_restore_event',
-				'args' => array('event_status' => 'D'),
+				'args' => array('event_status' => EEM_Event::status_deleted),
 				'noheader' => true
 			),
 			'trash_events' => array(
 				'func' => '_trash_or_restore_events',
-				'args' => array('event_status' => 'D'),
+				'args' => array('event_status' => EEM_Event::status_deleted),
 				'noheader' => true
 			),
 			'restore_event' => array(
 				'func' => '_trash_or_restore_event',
-				'args' => array('event_status' => 'A'),
+				'args' => array('event_status' => EEM_Event::status_active),
 				'noheader' => true
 			),
 			'restore_events' => array(
 				'func' => '_trash_or_restore_events',
-				'args' => array('event_status' => 'A'),
+				'args' => array('event_status' => EEM_Event::status_active),
 				'noheader' => true
 			),
 			'delete_event' => array(
@@ -1169,6 +1172,29 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
+
+	//handling for WordPress CPT actions (trash, restore, delete)
+	public function trash_cpt_item( $post_id ) {
+		$this->_req_data['EVT_ID'] = $post_id;
+		$this->_trash_or_restore_event( EEM_Event::status_deleted, FALSE );
+	}
+
+
+
+
+	public function restore_cpt_item( $post_id ) {
+		$this->_req_data['EVT_ID'] = $post_id;
+		$this->_trash_or_restore_event( EEM_Event::status_active, FALSE );
+	}
+
+
+	public function delete_cpt_item( $post_id ) {
+		$this->_req_data['EVT_ID'] = $post_id;
+		$this->_delete_event( FALSE );
+	}
+
+
+
 	/**
 	 * _trash_or_restore_event
 	 *
@@ -1176,7 +1202,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @param  string $event_status 
 	 * @return void 
 	 */
-	protected function _trash_or_restore_event($event_status = 'D') {
+	protected function _trash_or_restore_event($event_status = EEM_Event::status_deleted, $redirect_after = TRUE ) {
 		//determine the event id and set to array.
 		$EVT_ID = isset($this->_req_data['EVT_ID']) ? absint($this->_req_data['EVT_ID']) : FALSE;
 		// loop thru events
@@ -1196,8 +1222,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$msg = __('An error occured. The event could not be moved to the trash because a valid event ID was not not supplied.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 		}
-		$action = $event_status == 'D' ? 'moved to the trash' : 'restored from the trash';
-		$this->_redirect_after_action($succes, 'Event', $action, array('action' => 'default'));
+		$action = $event_status == EEM_Event::status_deleted ? 'moved to the trash' : 'restored from the trash';
+
+		if ( $redirect_after )
+			$this->_redirect_after_action($succes, 'Event', $action, array('action' => 'default'));
 	}
 
 	/**
@@ -1207,7 +1235,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @param  string $event_status 
 	 * @return void 
 	 */
-	protected function _trash_or_restore_events($event_status = 'D') {
+	protected function _trash_or_restore_events($event_status = EEM_Event::status_deleted) {
 		// clean status
 		$event_status = strtoupper(sanitize_key($event_status));
 		// grab status
@@ -1233,7 +1261,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 		// in order to force a pluralized result message we need to send back a success status greater than 1
 		$succes = $succes ? 2 : FALSE;
-		$action = $event_status == 'D' ? 'moved to the trash' : 'restored from the trash';
+		$action = $event_status == EEM_Event::status_deleted ? 'moved to the trash' : 'restored from the trash';
 		$this->_redirect_after_action($succes, 'Events', $action, array('action' => 'default'));
 	}
 
@@ -1252,6 +1280,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
+
+		$this->_set_model_object( $EVT_ID );
+
 		// clean status
 		$event_status = strtoupper(sanitize_key($event_status));
 		// grab status
@@ -1260,15 +1291,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
-		// might need this
-		global $wpdb;
+		
 		// was event trashed or restored ?
 		switch ($event_status) {
-			case 'A' :
+			case EEM_Event::status_active :
 				$action = 'restored from the trash';
 				$hook = 'AHEE_event_restored_from_trash';
 				break;
-			case 'D' :
+			case EEM_Event::status_deleted :
 				$action = 'moved to the trash';
 				$hook = 'AHEE_event_moved_to_trash';
 				break;
@@ -1276,10 +1306,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				$action = 'updated';
 				$hook = FALSE;
 		}
-		$data_cols_and_vals = array('event_status' => $event_status);
-		$where_cols_and_vals = array('id' => $EVT_ID);
-		$updated = $wpdb->update(EVENTS_DETAIL_TABLE, $data_cols_and_vals, $where_cols_and_vals, array('%s'), array('%d'));
-		if ($updated === FALSE) {
+		//use class to change status
+		$this->_cpt_model_obj->set_status( $event_status );
+		$success = $this->_cpt_model_obj->save();
+		
+		if ($success === FALSE) {
 			$msg = sprintf(__('An error occured. The event could not be %s.', 'event_espresso'), $action);
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
@@ -1296,12 +1327,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @access protected
 	 * @return void 
 	 */
-	protected function _delete_event() {
+	protected function _delete_event( $redirect_after = TRUE ) {
 		//determine the event id and set to array.
-		$EVT_ID = isset($this->_req_data['EVT_ID']) ? absint($this->_req_data['EVT_ID']) : FALSE;
+		$EVT_ID = isset($this->_req_data['EVT_ID']) ? absint($this->_req_data['EVT_ID']) : NULL;
+		$EVT_ID = isset( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : NULL;
+
+
 		// loop thru events
 		if ($EVT_ID) {
-			$succes = $this->_permanently_delete_event($EVT_ID);
+			$success = $this->_permanently_delete_event( $EVT_ID );
 			// get list of events with no prices
 			$espresso_no_ticket_prices = get_option('espresso_no_ticket_prices', array());
 			// remove this event from the list of events with no prices
@@ -1310,11 +1344,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			}
 			update_option('espresso_no_ticket_prices', $espresso_no_ticket_prices);
 		} else {
-			$succes = FALSE;
+			$success = FALSE;
 			$msg = __('An error occured. An event could not be deleted because a valid event ID was not not supplied.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 		}
-		$this->_redirect_after_action($succes, 'Event', 'deleted', array('action' => 'default'));
+		if ( $redirect_after )
+			$this->_redirect_after_action($success, 'Event', 'deleted', array('action' => 'default'));
 	}
 
 	/**
@@ -1364,65 +1399,24 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
-		// might need this
-		global $wpdb;
-		// optimism YEAH
-		$succes = TRUE;
-		// first check for active registrations
-		$SQL = 'SELECT COUNT(REG_ID) FROM ' . $wpdb->prefix . "esp_registration WHERE EVT_ID = %d AND STS_ID NOT IN ( 'RCN', 'RNA' )";
-		$registrations = $wpdb->get_var($wpdb->prepare($SQL, $EVT_ID));
-
-		if ($registrations === FALSE || $registrations > 0) {
-			$msg = sprintf(__('Event ID # %d can not be permanently deleted because it has active registrations.', 'event_espresso'), $EVT_ID);
-			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-			return FALSE;
-		}
-		//delete datetimes
-		$SQL = 'DELETE FROM ' . $wpdb->prefix . 'esp_datetime WHERE EVT_ID = %d';
-		$deleted = $wpdb->query($wpdb->prepare($SQL, $EVT_ID));
-		$succes = $deleted !== FALSE ? $succes : FALSE;
-		//delete event_question_groups
-		$SQL = 'DELETE FROM ' . $wpdb->prefix . 'esp_event_question_group WHERE EVT_ID = %d';
-		$deleted = $wpdb->query($wpdb->prepare($SQL, $EVT_ID));
-		$succes = $deleted !== FALSE ? $succes : FALSE;
-		//delete message_template_groups
-		$SQL = 'DELETE FROM ' . $wpdb->prefix . 'esp_message_template_group WHERE EVT_ID = %d';
-		$deleted = $wpdb->query($wpdb->prepare($SQL, $EVT_ID));
-		$succes = $deleted !== FALSE ? $succes : FALSE;
-		//delete prices
-		$SQL = 'DELETE FROM ' . $wpdb->prefix . 'esp_price WHERE EVT_ID = %d';
-		$deleted = $wpdb->query($wpdb->prepare($SQL, $EVT_ID));
-		$succes = $deleted !== FALSE ? $succes : FALSE;
-		//delete events_categories
-		$SQL = 'DELETE FROM ' . $wpdb->prefix . 'events_category_rel WHERE event_id = %d';
-		$deleted = $wpdb->query($wpdb->prepare($SQL, $EVT_ID));
-		$succes = $deleted !== FALSE ? $succes : FALSE;
-		//delete events_personnel
-		$SQL = 'DELETE FROM ' . $wpdb->prefix . 'events_personnel_rel WHERE event_id = %d';
-		$deleted = $wpdb->query($wpdb->prepare($SQL, $EVT_ID));
-		$succes = $deleted !== FALSE ? $succes : FALSE;
-		//delete events_venues
-		$SQL = 'DELETE FROM ' . $wpdb->prefix . 'events_venue_rel WHERE event_id = %d';
-		$deleted = $wpdb->query($wpdb->prepare($SQL, $EVT_ID));
-		$succes = $deleted !== FALSE ? $succes : FALSE;
+		
+		
+		$this->_set_model_object( $EVT_ID );
+		$success = $this->delete();
 		// did it all go as planned ?
-		if ($succes) {
-			// since everything else deleted successfully, we can now safely delete the actual event
-			$SQL = 'DELETE FROM ' . EVENTS_DETAIL_TABLE . ' WHERE id = %d';
-			$deleted = $wpdb->query($wpdb->prepare($SQL, $EVT_ID));
-			if ($deleted === FALSE) {
-				$msg = sprintf(__('An error occured. Event ID # %d could not be deleted.', 'event_espresso'), $EVT_ID);
-				EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-				return FALSE;
-			}
+		if ($success) {
+			$msg = sprintf(__('Event ID # %d has been deleted.', 'event_espresso'), $EVT_ID);
+			EE_Error::add_success($msg);
 		} else {
-			$msg = sprintf(__('An error occured. Additional data in related DB tables could not be deleted, which prevented Event ID # %d from being deleted.', 'event_espresso'), $EVT_ID);
+			$msg = sprintf(__('An error occured. Event ID # %d could not be deleted.', 'event_espresso'), $EVT_ID);
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
 		do_action('AHEE_event_permanently_deleted');
 		return TRUE;
 	}
+
+
 
 	protected function _copy_events() {
 		$old_id = isset($this->_req_data['event_id']) ? $this->_req_data['event_id'] : null;
