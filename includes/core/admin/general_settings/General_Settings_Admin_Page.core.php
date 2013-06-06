@@ -752,6 +752,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _country_settings() {
 	
+		global $org_options;
 		$CNT_ISO = isset( $org_options['organization_country'] ) ? $org_options['organization_country'] : 'US';
 		$CNT_ISO = isset( $this->_req_data['country'] ) ? strtoupper( sanitize_text_field( $this->_req_data['country'] )) : $CNT_ISO;
 
