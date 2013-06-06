@@ -288,17 +288,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	}
 
 	//nothing needed for events with these methods.
-	public function admin_init() {
-		
-	}
+	public function admin_init() {}
+	public function admin_notices() {}
+	public function admin_footer_scripts() {}
 
-	public function admin_notices() {
-		
-	}
 
-	public function admin_footer_scripts() {
-		
-	}
+
 
 	protected function _set_list_table_views_default() {
 		$this->_views = array(
@@ -374,6 +369,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
+	
+	/**
+	 * Adds extra buttons to the WP CPT permalink field row. 
+	 *
+	 * Method is called from parent and is hooked into the wp 'get_sample_permalink_html' filter.
+	 * @param  string $return    the current html
+	 * @param  int    $id        the post id for the page
+	 * @param  string $new_title What the title is
+	 * @param  string $new_slug  what the slug is
+	 * @return string            The new html string for the permalink area
+	 */
 	public function extra_permalink_field_buttons( $return, $id, $new_title, $new_slug ) {
 		//make sure this is only when editing
 		if ( !empty( $id ) ) {
@@ -453,10 +459,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error( __('Event Details did not save successfully.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
-
-	public function trash_cpt_item( $post_id ) {}
-	public function restore_cpt_item( $post_id ) {}
-	public function delete_cpt_item( $post_id ) {}
 	
 
 
@@ -470,19 +472,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _default_venue_update( $evtobj, $data ) {
 		require_once( 'EE_Venue.class.php' );
 		$v = EE_Venue::new_instance( array(
-				'VNU_ID' => isset( $data['VNU_ID'] ) ? $data['VNU_ID'] : NULL,
-				'VNU_name' => !empty( $data['VNU_name'] ) ? $data['VNU_name'] : NULL,
-				'VNU_desc' => !empty( $data['VNU_desc'] ) ? $data['VNU_desc'] : NULL,
-				'VNU_identifier' => !empty( $data['VNU_identifier'] ) ? $data['VNU_identifier'] : NULL,
-				'VNU_short_desc' => !empty( $data['VNU_short_desc'] ) ? $data['VNU_short_desc'] : NULL,
-				'VNU_address' => !empty( $data['VNU_address'] ) ? $data['VNU_address'] : NULL,
-				'VNU_address2' => !empty( $data['VNU_address2'] ) ? $data['VNU_address2'] : NULL,
-				'VNU_city' => !empty( $data['VNU_city'] ) ? $data['VNU_city'] : NULL,
-				'STA_ID' => !empty( $data['STA_ID'] ) ? $data['STA_ID'] : NULL,
-				'CNT_ISO' => !empty( $data['CNT_ISO'] ) ? $data['CNT_ISO'] : NULL,
-				'VNU_zip' => !empty( $data['VNU_zip'] ) ? $data['VNU_zip'] : NULL,
-				'VNU_phone' => !empty( $data['VNU_phone'] ) ? $data['VNU_phone'] : NULL,
-				'VNU_capacity' => !empty( $data['VNU_capacity'] ) ? $data['VNU_capacity'] : NULL,
+				'VNU_ID' => isset( $data['venue_id'] ) ? $data['venue_id'] : NULL,
+				'VNU_name' => !empty( $data['venue_title'] ) ? $data['venue_title'] : NULL,
+				'VNU_desc' => !empty( $data['venue_description'] ) ? $data['venue_description'] : NULL,
+				'VNU_identifier' => !empty( $data['venue_identifier'] ) ? $data['venue_identifier'] : NULL,
+				'VNU_short_desc' => !empty( $data['venue_short_description'] ) ? $data['venue_short_description'] : NULL,
+				'VNU_address' => !empty( $data['address'] ) ? $data['address'] : NULL,
+				'VNU_address2' => !empty( $data['address2'] ) ? $data['address2'] : NULL,
+				'VNU_city' => !empty( $data['city'] ) ? $data['city'] : NULL,
+				'STA_ID' => !empty( $data['status'] ) ? $data['status'] : NULL,
+				'CNT_ISO' => !empty( $data['country'] ) ? $data['country'] : NULL,
+				'VNU_zip' => !empty( $data['zip'] ) ? $data['zip'] : NULL,
+				'VNU_phone' => !empty( $data['phone'] ) ? $data['phone'] : NULL,
+				'VNU_capacity' => !empty( $data['venue_capacity'] ) ? $data['venue_capacity'] : NULL,
 			));
 		return $evtobj->_add_relation_to( $v, 'Venue' );
 	}
@@ -721,6 +723,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		add_meta_box('espresso_event_editor_event_options', __('Event Registration Options', 'event_espresso'), array($this, 'registration_options_meta_box'), $this->page_slug, 'side', 'default');
 
+		add_meta_box('espresso_event_editor_venue', __('Venue Details', 'event_espresso'), array( $this, 'venue_metabox' ), $this->page_slug, 'normal', 'core');	
+
 
 		//note if you're looking for other metaboxes in here, where a metabox has a related management page in the admin you will find it setup in the related management page's "_Hooks" file.  i.e. messages metabox is found in "espresso_events_Messages_Hooks.class.php".
 	}
@@ -861,95 +865,32 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
+	public function registration_options_meta_box() {
 
+		global $org_options;
 
-	private function _espresso_venue_dd($current_value = 0) {
-		global $caffeinated;
-		if ($caffeinated != true)
-			return;
-		global $wpdb, $espresso_manager, $espresso_wp_user;
-
-		$WHERE = " WHERE ";
-		$sql = "SELECT ev.*, el.name AS locale FROM " . EVENTS_VENUE_TABLE . " ev ";
-		$sql .= " LEFT JOIN " . EVENTS_LOCALE_REL_TABLE . " lr ON lr.venue_id = ev.id ";
-		$sql .= " LEFT JOIN " . EVENTS_LOCALE_TABLE . " el ON el.id = lr.locale_id ";
-
-		if (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_group_admin' )) {
-			if ($espresso_manager['event_manager_venue']) {
-				//show only venues inside their assigned locales.
-				$group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
-				$group = unserialize($group);
-				$sql .= " $WHERE lr.locale_id IN (" . implode(",", $group) . ")";
-				$sql .= " OR ev.wp_user = " . $espresso_wp_user;
-				$WHERE = " AND ";
-			}
-		}
-		$sql .= " GROUP BY ev.id ORDER by name";
-
-		$venues = $wpdb->get_results($sql);
-		$num_rows = $wpdb->num_rows;
-
-		if ($num_rows > 0) {
-			$field = '<label>' . __('Select from Venue Manager list', 'event_espresso') . '</label>';
-			$field .= '<select name="venue_id[]" id="venue_id" class="chzn-select"  >\n';
-			$field .= '<option value="0">' . __('Select a Venue', 'event_espresso') . '</option>';
-			$div = "";
-			$help_div = "";
-			$i = 0;
-			foreach ($venues as $venue) {
-
-				$i++;
-				$selected = $venue->id == $current_value ? 'selected="selected"' : '';
-				if ($venue->locale != '') {
-					$field .= '<option rel="' . $i . '" ' . $selected . ' value="' . $venue->id . '">' . stripslashes_deep($venue->name) . ' (' . stripslashes_deep($venue->locale) . ') </option>\n';
-				} else if ($venue->city != '' && $venue->state != '') {
-					$field .= '<option rel="' . $i . '" ' . $selected . ' value="' . $venue->id . '">' . stripslashes_deep($venue->name) . ' (' . stripslashes_deep($venue->city) . ', ' . stripslashes_deep($venue->state) . ') </option>\n';
-				} else if ($venue->state != '') {
-					$field .= '<option rel="' . $i . '" ' . $selected . ' value="' . $venue->id . '">' . stripslashes_deep($venue->name) . ' (' . stripslashes_deep($venue->state) . ') </option>\n';
-				} else {
-					$field .= '<option rel="' . $i . '" ' . $selected . ' value="' . $venue->id . '">' . stripslashes_deep($venue->name) . ' </option>\n';
-				}
-
-				$hidden = "display:none;";
-				if ($selected)
-					$hidden = '';
-				$div .= "
-	<fieldset id='eebox_" . $i . "' class='eebox' style='" . $hidden . "'>
-		<ul class='address-view'>
-			<li>
-				<p><span>Address:</span> " . stripslashes($venue->address) . "<br/>
-				<span></span> " . stripslashes($venue->address2) . "<br/>
-				<span>City:</span> " . stripslashes($venue->city) . "<br/>
-				<span>State:</span> " . stripslashes($venue->state) . "<br/>
-				<span>Zip:</span> " . stripslashes($venue->zip) . "<br/>
-				<span>Country:</span> " . stripslashes($venue->country) . "<br/>
-				<span>Venue ID:</span> " . $venue->id . "<br/></p>
-				This venues shortcode <b class='highlight'>[ESPRESSO_VENUE id='" . $venue->id . "']</b><br/>";
-				$div .= '<a href="admin.php?page=espresso_venues&action=edit&id=' . $venue->id . '" target="_blank">' . __('Edit this venue', 'event_espresso') . '</a> | <a class="thickbox link" href="#TB_inline?height=300&width=400&inlineId=venue_info">Shortcode</a></li></ul>';
-				$div .= "</fieldset>";
-			}
-			$field .= "</select>";
-			ob_start();
-			?>
-			<script>
-				jQuery("#venue_id").change( function(){
-					var selected = jQuery("#venue_id option:selected");
-					var rel = selected.attr("rel");
-					jQuery(".eebox").hide();
-					jQuery("#eebox_"+rel).show();
-				});
-			</script>
-			<?php
-			$js = ob_get_contents();
-			ob_end_clean();
-			$html = '<table><tr><td>' . $field . '</td></tr><tr><td>' . $div . '</td></tr></table>' . $js;
-			return $html;
-		}
+		$yes_no_values = array(
+			array('id' => true, 'text' => __('Yes', 'event_espresso')),
+			array('id' => false, 'text' => __('No', 'event_espresso'))
+		);
+		$additional_attendee_reg_info_values = EEM_Event::additional_attendee_reg_info_array();
+		$event_status_values = EEM_Event::event_status_array();
+		$default_reg_status_values = EEM_Registration::reg_status_array();
+		
+		$template_args['is_active_select'] = EE_Form_Fields::select_input('is_active', $yes_no_values, $this->_cpt_model_obj->is_active());
+		$template_args['_event'] = $this->_cpt_model_obj;
+		$template_args['allow_group_reg_select'] = EE_Form_Fields::select_input('allow_multiple', $yes_no_values, $this->_cpt_model_obj->allow_multiple(), 'id="group-reg"', '', false);
+		$template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();
+		$template_args['default_registration_status'] = EE_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status());
+		$template_args['display_description'] = EE_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
+		$template_args['display_registration_form'] = EE_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
+		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $additional_attendee_reg_info_values, $event_status_values, $default_reg_status_values);
+		$templatepath = EVENTS_TEMPLATE_PATH . 'event_registration_options.template.php';
+		espresso_display_template($templatepath, $template_args);
 	}
 
 
 
-	
 
 	public function venue_metabox() {
 		global $org_options, $caffeinated;
@@ -1079,38 +1020,112 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		<?php
 	}
 
-	
-
-	
-
-	public function registration_options_meta_box() {
-
-		global $org_options;
-
-		$yes_no_values = array(
-			array('id' => true, 'text' => __('Yes', 'event_espresso')),
-			array('id' => false, 'text' => __('No', 'event_espresso'))
-		);
-		$additional_attendee_reg_info_values = EEM_Event::additional_attendee_reg_info_array();
-		$event_status_values = EEM_Event::event_status_array();
-		$default_reg_status_values = EEM_Registration::reg_status_array();
-		
-		$template_args['is_active_select'] = EE_Form_Fields::select_input('is_active', $yes_no_values, $this->_cpt_model_obj->is_active());
-		$template_args['_event'] = $this->_cpt_model_obj;
-		$template_args['allow_group_reg_select'] = EE_Form_Fields::select_input('allow_multiple', $yes_no_values, $this->_cpt_model_obj->allow_multiple(), 'id="group-reg"', '', false);
-		$template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();
-		$template_args['default_registration_status'] = EE_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status());
-		$template_args['display_description'] = EE_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
-		$template_args['display_registration_form'] = EE_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
-		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $additional_attendee_reg_info_values, $event_status_values, $default_reg_status_values);
-		$templatepath = EVENTS_TEMPLATE_PATH . 'event_registration_options.template.php';
-		espresso_display_template($templatepath, $template_args);
-	}
-
 		
 
 	/** end metaboxes * */
 	/*	 * **************** */
+
+
+
+
+
+	//TODO: this will be moved into EE_Venues eventually EXCEPT! We WILL have decaf option... so I better get cracking on that then.
+	//
+	private function _espresso_venue_dd($current_value = 0) {
+		global $caffeinated;
+		if ($caffeinated != true)
+			return;
+		global $wpdb, $espresso_manager, $espresso_wp_user;
+
+		$WHERE = " WHERE ";
+		$sql = "SELECT ev.*, el.name AS locale FROM " . EVENTS_VENUE_TABLE . " ev ";
+		$sql .= " LEFT JOIN " . EVENTS_LOCALE_REL_TABLE . " lr ON lr.venue_id = ev.id ";
+		$sql .= " LEFT JOIN " . EVENTS_LOCALE_TABLE . " el ON el.id = lr.locale_id ";
+
+		if (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_group_admin' )) {
+			if ($espresso_manager['event_manager_venue']) {
+				//show only venues inside their assigned locales.
+				$group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
+				$group = unserialize($group);
+				$sql .= " $WHERE lr.locale_id IN (" . implode(",", $group) . ")";
+				$sql .= " OR ev.wp_user = " . $espresso_wp_user;
+				$WHERE = " AND ";
+			}
+		}
+		$sql .= " GROUP BY ev.id ORDER by name";
+
+		$venues = $wpdb->get_results($sql);
+		$num_rows = $wpdb->num_rows;
+
+		if ($num_rows > 0) {
+			$field = '<label>' . __('Select from Venue Manager list', 'event_espresso') . '</label>';
+			$field .= '<select name="venue_id[]" id="venue_id" class="chzn-select"  >\n';
+			$field .= '<option value="0">' . __('Select a Venue', 'event_espresso') . '</option>';
+			$div = "";
+			$help_div = "";
+			$i = 0;
+			foreach ($venues as $venue) {
+
+				$i++;
+				$selected = $venue->id == $current_value ? 'selected="selected"' : '';
+				if ($venue->locale != '') {
+					$field .= '<option rel="' . $i . '" ' . $selected . ' value="' . $venue->id . '">' . stripslashes_deep($venue->name) . ' (' . stripslashes_deep($venue->locale) . ') </option>\n';
+				} else if ($venue->city != '' && $venue->state != '') {
+					$field .= '<option rel="' . $i . '" ' . $selected . ' value="' . $venue->id . '">' . stripslashes_deep($venue->name) . ' (' . stripslashes_deep($venue->city) . ', ' . stripslashes_deep($venue->state) . ') </option>\n';
+				} else if ($venue->state != '') {
+					$field .= '<option rel="' . $i . '" ' . $selected . ' value="' . $venue->id . '">' . stripslashes_deep($venue->name) . ' (' . stripslashes_deep($venue->state) . ') </option>\n';
+				} else {
+					$field .= '<option rel="' . $i . '" ' . $selected . ' value="' . $venue->id . '">' . stripslashes_deep($venue->name) . ' </option>\n';
+				}
+
+				$hidden = "display:none;";
+				if ($selected)
+					$hidden = '';
+				$div .= "
+	<fieldset id='eebox_" . $i . "' class='eebox' style='" . $hidden . "'>
+		<ul class='address-view'>
+			<li>
+				<p><span>Address:</span> " . stripslashes($venue->address) . "<br/>
+				<span></span> " . stripslashes($venue->address2) . "<br/>
+				<span>City:</span> " . stripslashes($venue->city) . "<br/>
+				<span>State:</span> " . stripslashes($venue->state) . "<br/>
+				<span>Zip:</span> " . stripslashes($venue->zip) . "<br/>
+				<span>Country:</span> " . stripslashes($venue->country) . "<br/>
+				<span>Venue ID:</span> " . $venue->id . "<br/></p>
+				This venues shortcode <b class='highlight'>[ESPRESSO_VENUE id='" . $venue->id . "']</b><br/>";
+				$div .= '<a href="admin.php?page=espresso_venues&action=edit&id=' . $venue->id . '" target="_blank">' . __('Edit this venue', 'event_espresso') . '</a> | <a class="thickbox link" href="#TB_inline?height=300&width=400&inlineId=venue_info">Shortcode</a></li></ul>';
+				$div .= "</fieldset>";
+			}
+			$field .= "</select>";
+			ob_start();
+			?>
+			<script>
+				jQuery("#venue_id").change( function(){
+					var selected = jQuery("#venue_id option:selected");
+					var rel = selected.attr("rel");
+					jQuery(".eebox").hide();
+					jQuery("#eebox_"+rel).show();
+				});
+			</script>
+			<?php
+			$js = ob_get_contents();
+			ob_end_clean();
+			$html = '<table><tr><td>' . $field . '</td></tr><tr><td>' . $div . '</td></tr></table>' . $js;
+			return $html;
+		}
+	}
+
+
+
+	
+
+	
+
+	
+
+	
+
+	
 
 
 
