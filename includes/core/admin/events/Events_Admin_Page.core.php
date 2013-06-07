@@ -955,9 +955,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		$where = array(
-				'STS_ID' => isset( $this->_req_data['event_status'] )  && $this->_req_data['event_status'] != '' ? $this->_req_data['event_status'] : 'D',
+				'STS_ID' => isset( $this->_req_data['event_status'] ) && $this->_req_data['event_status'] != '' ? $this->_req_data['event_status'] : 'publish',
 				//todo add event categories
-				'DTT_is_primary' => 1,
+				'Datetime.DTT_is_primary' => 1,
 		);
 
 		//date where conditions
@@ -974,7 +974,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$force_join = array('Venue', 'Datetime');
 
-		$events = $count ? $EEME->count( array( array($where), 'force_join' => $force_join, ), 'EVT_ID' ) : $EEME->get_all( array( array($where), 'force_join' => $force_join, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' ) );
+		$events = $count ? $EEME->count( array( $where, 'force_join' => $force_join, ), 'EVT_ID' ) : $EEME->get_all( array( $where, 'force_join' => $force_join, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' ) );
 
 		return $events;
 	}
