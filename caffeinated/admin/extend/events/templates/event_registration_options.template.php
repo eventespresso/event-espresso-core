@@ -4,11 +4,6 @@
 </p>
 
 <p>
-	<label><?php _e('Event Status', 'event_espresso'); ?></label>
-	<?php echo $event_status_select; ?>
-</p>
-
-<p>
 	<label for="reg-limit">
 		<?php _e('Attendee Limit: ', 'event_espresso'); ?>
 	</label>

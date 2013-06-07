@@ -1,11 +1,3 @@
-<div class="misc-pub-section">
-	<label for="post_status">
-		<?php _e('Current Status:', 'event_espresso'); ?>
-	</label>
-	<span id="post-status-display">
-		<?php echo $event_status_display; ?>
-	</span>
-</div>
 
 <div class="misc-pub-section" id="visibility">
 	<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/group.png" width="16" height="16" alt="<?php _e('View Attendees', 'event_espresso'); ?>" />

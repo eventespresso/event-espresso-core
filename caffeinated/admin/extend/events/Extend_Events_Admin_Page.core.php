@@ -138,7 +138,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	}
 
 
-	public function additional_registration_options( $html, $template_args, $yes_no_values, $additional_attendee_reg_info_values, $event_status_values, $default_reg_status_values ) {
+	public function additional_registration_options( $html, $template_args, $yes_no_values, $additional_attendee_reg_info_values, $default_reg_status_values ) {
 		global $org_options;
 		$template_args['use_attendee_pre_approval'] = $org_options['use_attendee_pre_approval'];
 		$template_args['attendee_pre_approval_required'] = $org_options['use_attendee_pre_approval'] ? EE_Form_Fields::select_input("require_pre_approval", $yes_no_values, $this->_event->require_pre_approval) : '';
@@ -226,11 +226,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
 		$additional_attendee_reg_info_values = EEM_Event::additional_attendee_reg_info_array();
-		$event_status_values = EEM_Event::event_status_array();
 		$default_reg_status_values = EEM_Registration::reg_status_array();
 		
 		$template_args['is_active_select'] = EE_Form_Fields::select_input('is_active', $yes_no_values, $this->_cpt_model_obj->is_active());
-		$template_args['event_status_select'] = $template_args['event_status_select'] = EE_Form_Fields::select_input('new_event_status', $event_status_values, $this->_cpt_model_obj->status(), '', '', false);
 		$template_args['_event'] = $this->_cpt_model_obj;
 		$template_args['allow_group_reg_select'] = EE_Form_Fields::select_input('allow_multiple', $yes_no_values, $this->_cpt_model_obj->allow_multiple(), 'id="group-reg"', '', false);
 		$template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();
@@ -240,7 +238,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$template_args['display_registration_form'] = EE_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
 		$template_args['allow_overflow'] = EE_Form_Fields::select_input('allow_overflow', $yes_no_values, $this->_cpt_model_obj->allow_overflow() );
 		$template_args['require_pre_approval'] = EE_Form_Fields::select_input('require_pre_approval', $yes_no_values, $this->_cpt_model_obj->require_pre_approval() );
-		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $additional_attendee_reg_info_values, $event_status_values, $default_reg_status_values);
+		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $additional_attendee_reg_info_values, $default_reg_status_values);
 		$templatepath = EVENTS_CAF_TEMPLATE_PATH . 'event_registration_options.template.php';
 		espresso_display_template($templatepath, $template_args);
 	}

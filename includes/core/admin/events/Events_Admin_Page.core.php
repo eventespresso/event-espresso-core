@@ -80,22 +80,22 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			),
 			'trash_event' => array(
 				'func' => '_trash_or_restore_event',
-				'args' => array('event_status' => EEM_Event::status_deleted),
+				'args' => array('event_status' => 'trash'),
 				'noheader' => true
 			),
 			'trash_events' => array(
 				'func' => '_trash_or_restore_events',
-				'args' => array('event_status' => EEM_Event::status_deleted),
+				'args' => array('event_status' => 'trash'),
 				'noheader' => true
 			),
 			'restore_event' => array(
 				'func' => '_trash_or_restore_event',
-				'args' => array('event_status' => EEM_Event::status_active),
+				'args' => array('event_status' => 'draft'),
 				'noheader' => true
 			),
 			'restore_events' => array(
 				'func' => '_trash_or_restore_events',
-				'args' => array('event_status' => EEM_Event::status_active),
+				'args' => array('event_status' => 'draft'),
 				'noheader' => true
 			),
 			'delete_event' => array(
@@ -684,7 +684,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//load formatter helper
   		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
 		// publish box
-		$publish_box_extra_args['event_status_display'] = 'TODO';
 		$publish_box_extra_args['view_attendees_url'] = add_query_arg(array('action' => 'default', 'event_id' => $this->_cpt_model_obj->ID() ), REG_ADMIN_URL);
 		$publish_box_extra_args['attendees_reg_limit'] = $this->_cpt_model_obj->get_number_of_attendees_reg_limit( 'num_attendees_slash_reg_limit' );
 		$publish_box_extra_args['misc_pub_section_class'] = apply_filters('FHEE_event_editor_email_attendees_class', 'misc-pub-section');
@@ -879,7 +878,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
 		$additional_attendee_reg_info_values = EEM_Event::additional_attendee_reg_info_array();
-		$event_status_values = EEM_Event::event_status_array();
 		$default_reg_status_values = EEM_Registration::reg_status_array();
 		
 		$template_args['is_active_select'] = EE_Form_Fields::select_input('is_active', $yes_no_values, $this->_cpt_model_obj->is_active());
@@ -889,7 +887,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['default_registration_status'] = EE_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status());
 		$template_args['display_description'] = EE_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
 		$template_args['display_registration_form'] = EE_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
-		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $additional_attendee_reg_info_values, $event_status_values, $default_reg_status_values);
+		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $additional_attendee_reg_info_values, $default_reg_status_values);
 		$templatepath = EVENTS_TEMPLATE_PATH . 'event_registration_options.template.php';
 		espresso_display_template($templatepath, $template_args);
 	}
@@ -987,7 +985,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	//handling for WordPress CPT actions (trash, restore, delete)
 	public function trash_cpt_item( $post_id ) {
 		$this->_req_data['EVT_ID'] = $post_id;
-		$this->_trash_or_restore_event( EEM_Event::status_deleted, FALSE );
+		$this->_trash_or_restore_event( 'trash', FALSE );
 	}
 
 
@@ -995,7 +993,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function restore_cpt_item( $post_id ) {
 		$this->_req_data['EVT_ID'] = $post_id;
-		$this->_trash_or_restore_event( EEM_Event::status_active, FALSE );
+		$this->_trash_or_restore_event( 'draft', FALSE );
 	}
 
 
@@ -1013,7 +1011,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @param  string $event_status 
 	 * @return void 
 	 */
-	protected function _trash_or_restore_event($event_status = EEM_Event::status_deleted, $redirect_after = TRUE ) {
+	protected function _trash_or_restore_event($event_status = 'trash', $redirect_after = TRUE ) {
 		//determine the event id and set to array.
 		$EVT_ID = isset($this->_req_data['EVT_ID']) ? absint($this->_req_data['EVT_ID']) : FALSE;
 		// loop thru events
@@ -1033,7 +1031,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$msg = __('An error occured. The event could not be moved to the trash because a valid event ID was not not supplied.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 		}
-		$action = $event_status == EEM_Event::status_deleted ? 'moved to the trash' : 'restored from the trash';
+		$action = $event_status == 'trash' ? 'moved to the trash' : 'restored from the trash';
 
 		if ( $redirect_after )
 			$this->_redirect_after_action($succes, 'Event', $action, array('action' => 'default'));
@@ -1046,7 +1044,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @param  string $event_status 
 	 * @return void 
 	 */
-	protected function _trash_or_restore_events($event_status = EEM_Event::status_deleted) {
+	protected function _trash_or_restore_events($event_status = 'trash') {
 		// clean status
 		$event_status = strtoupper(sanitize_key($event_status));
 		// grab status
@@ -1072,7 +1070,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 		// in order to force a pluralized result message we need to send back a success status greater than 1
 		$succes = $succes ? 2 : FALSE;
-		$action = $event_status == EEM_Event::status_deleted ? 'moved to the trash' : 'restored from the trash';
+		$action = $event_status == 'trash' ? 'moved to the trash' : 'restored from the trash';
 		$this->_redirect_after_action($succes, 'Events', $action, array('action' => 'default'));
 	}
 
@@ -1105,11 +1103,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		
 		// was event trashed or restored ?
 		switch ($event_status) {
-			case EEM_Event::status_active :
+			case 'draft' :
 				$action = 'restored from the trash';
 				$hook = 'AHEE_event_restored_from_trash';
 				break;
-			case EEM_Event::status_deleted :
+			case 'trash' :
 				$action = 'moved to the trash';
 				$hook = 'AHEE_event_moved_to_trash';
 				break;
@@ -2907,26 +2905,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_redirect_after_action($success, $what, 'updated', array('action' => 'default_event_settings'));
 	}
 
-	/**
-	 * 		get list of payment statuses
-	 * 		@access private
-	 * 		@param	array 	$exclude		array of STS_IDs to exclude from returned array
-	 * 		@return array
-	 */
-	private function _get_reg_status_array($exclude = array()) {
-
-		global $wpdb;
-		$SQL = 'SELECT STS_ID, STS_code FROM ' . $wpdb->prefix . 'esp_status WHERE STS_type = "registration"';
-		$results = $wpdb->get_results($SQL);
-
-		$reg_status = array();
-		foreach ($results as $status) {
-			if (!in_array($status->STS_ID, $exclude)) {
-				$reg_status[] = array('id' => $status->STS_ID, 'text' => ucwords(strtolower(str_replace('_', ' ', $status->STS_code))));
-			}
-		}
-		return $reg_status;
-	}
+	
 
 	/**
 	 * _events_export
@@ -3002,5 +2981,4 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	}
 
 }
-
-		//end class Events_Admin_Page
+//end class Events_Admin_Page
