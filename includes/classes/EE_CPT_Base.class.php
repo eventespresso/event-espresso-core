@@ -5,6 +5,15 @@
  */
 require_once('EE_Base_Class.class.php');
 class EE_CPT_Base extends EE_Base_Class{
+
+
+	/**
+	 * This is a property for holding cached feature images on CPT objects.  Cache's are set on the first "feature_image()" method call.  Each key in the array corresponds to the requested size.  
+	 * @var array
+	 */
+	protected $_feature_image = array();
+
+
 	/**
 	 * Adds to the specified event category. If it category doesn't exist, creates it.
 	 * @param string $category_name
@@ -24,4 +33,32 @@ class EE_CPT_Base extends EE_Base_Class{
 	function remove_event_category($category_name){
 		return $this->get_model()->remove_event_category($this,$category_name);
 	}
+
+
+
+	/**
+	 * This calls the equivalent model method for retrieving the feature image which in turn is a wrapper for WordPress' get_the_post_thumbnail() function.
+	 *
+	 * @link http://codex.wordpress.org/Function_Reference/get_the_post_thumbnail
+	 * @access protected
+	 * @param string|array $size (optional) Image size. Defaults to 'post-thumbnail' but can also be a 2-item array representing width and height in pixels (i.e. array(32,32) ).
+	 * @param string|array $attr Optional. Query string or array of attributes.
+	 * @return string HTML image element
+	 */
+	protected function _get_feature_image( $size, $attr ) {
+		//first let's see if we already have the _feature_image property set AND if it has a cached element on it FOR the given size
+		$attr_key = is_array( $attr ) ? implode( '_', $attr ) : $attr;
+		$cache_key = is_array( $size ) ? implode('_', $size ) . $attr_key : $size . $attr_key;
+		$this->_feature_image[$cache_key] = isset( $this->_feature_image[$cache_key] ) ? $this->_feature_image[$cache_key] : $this->get_model()->get_feature_image( $this->ID(), $size, $attr );
+		return $this->_feature_image[$cache_key];
+	}
+
+
+
+
+	public function feature_image( $size = 'thumbnail', $attr = '' ) {
+		return $this->_get_feature_image( $size, $attr );
+	}
+
+
 }

@@ -74,4 +74,21 @@ class EEM_CPT_Base extends EEM_Base{
 		$term_taxonomy = $this->get_first_related($cpt_model_objectevent, 'Term_Taxonomy', array(array('Term.name'=>$category_name,'taxonomy'=>EE_Event_Category_Taxonomy)));
 		return $this->remove_relationship_to($cpt_model_objectevent, $term_taxonomy, 'Term_Taxonomy');
 	}
+
+
+
+
+	/**
+	 * This is a wrapper for the WordPress get_the_post_thumbnail() function that returns the feature image for the given CPT ID.  It accepts the same params as what get_the_post_thumbnail() accepts.
+	 *
+	 * @link http://codex.wordpress.org/Function_Reference/get_the_post_thumbnail
+	 * @access public
+	 * @param int          $id the ID for the cpt we want the feature image for
+	 * @param string|array $size (optional) Image size. Defaults to 'post-thumbnail' but can also be a 2-item array representing width and height in pixels (i.e. array(32,32) ).
+	 * @param string|array $attr Optional. Query string or array of attributes.
+	 * @return string HTML image element
+	 */
+	public function get_feature_image( $id, $size = 'thumbnail', $attr = '' ) {
+		return get_the_post_thumbnail( $id, $size, $attr );
+	}
 }
