@@ -38,6 +38,11 @@ class EE_Venue extends EE_Base_Class {
 	protected $_VNU_zip;
 	protected $_VNU_phone;
 	protected $_VNU_capacity;
+	protected $_VNU_url;
+	protected $_VNU_virtual_phone;
+	protected $_VNU_virtual_url;
+	protected $_VNU_enable_for_gmap;
+	protected $_VNU_google_map_link;
 
 	/**
 	 * 
@@ -278,6 +283,65 @@ class EE_Venue extends EE_Base_Class {
 	function set_zip($zip) {
 		return $this->set('VNU_zip', $zip);
 	}
+
+
+	function venue_url() {
+		return $this->get('VNU_url');
+	}
+
+
+
+	function set_venue_url( $url ) {
+		return $this->set('VNU_url');
+	}
+
+
+	function virtual_phone() {
+		return $this->get('VNU_virtual_phone');
+	}
+
+
+	function set_virtual_phone( $phone ) {
+		return $this->set('VNU_virtual_phone');
+	}
+
+
+
+	function virtual_url() {
+		return $this->get('VNU_virtual_url');
+	}
+
+
+
+	function set_virtual_url( $url ) {
+		return $this->set('VNU_virtual_url');
+	}
+
+
+
+
+	function enable_for_gmap() {
+		return $this->get('VNU_enable_for_gmap');
+	}
+
+
+
+	function set_enable_for_gmap( $enable ) {
+		return $this->set('VNU_enable_for_gmap');
+	}
+
+
+	function google_map_link() {
+		return $this->get('VNU_google_map_link');
+	}
+
+
+
+	function set_google_map_link() {
+		return $this->set('VNU_google_map_link');
+	}
+
+
 
 	/**
 	 * Gets all events happening at this venue. QUery parameters can be added to 

@@ -89,7 +89,12 @@ class EEM_Venue extends EEM_Base {
 				'CNT_ISO'=>new EE_Foreign_Key_String_Field('CNT_ISO', __("Country Code", "event_espresso"), true, null, 'Country'),
 				'VNU_zip'=>new EE_Plain_Text_Field('VNU_zip', __("Venue Zip/Postal Code", "event_espresso"), true),
 				'VNU_phone'=>new EE_Plain_Text_Field('VNU_phone', __("Venue Phone", "event_espresso"), true),
-				'VNU_capacity'=>new EE_Integer_Field('VNU_capacity', __("Venue Capacity", "event_espresso"), true)
+				'VNU_capacity'=>new EE_Integer_Field('VNU_capacity', __("Venue Capacity", "event_espresso"), true),
+				'VNU_url'=>new EE_Plain_Text_Field('VNU_url', __('Venue Website', 'event_espresso'), true),
+				'VNU_virtual_phone'=>new EE_Plain_Text_Field('VNU_virtual_phone', __('Call in Number', 'event_espresso'), true),
+				'VNU_virtual_url'=>new EE_Plain_Text_Field('VNU_virtual_url', __('Virtual URL', 'event_espresso'), true ),
+				'VNU_google_map_link'=>new EE_Plain_Text_Field('VNU_google_map_link', __('Google Map Link', 'event_espresso'), true ),
+				'VNU_enable_for_gmap'=>new EE_Boolean_Field('VNU_enable_for_gmap', __('Show Google Map?', 'event_espresso'), false, false )
 				
 			));
 		$this->_model_relations = array(

@@ -512,6 +512,7 @@ function events_data_tables_install() {
 		EVT_allow_multiple TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
 		EVT_additional_attendee_reg_info TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
 		EVT_default_registration_status VARCHAR(3),
+		EVT_phone varchar(45) DEFAULT NULL
 		EVT_additional_limit TINYINT UNSIGNED NULL ,
 		EVT_require_pre_approval TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
 		EVT_member_only TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
@@ -776,6 +777,11 @@ function events_data_tables_install() {
 		VNU_zip varchar(45) DEFAULT NULL,
 		VNU_phone varchar(45) DEFAULT NULL,
 		VNU_capacity int(11) DEFAULT NULL,
+		VNU_url varchar(255) DEFAULT NULL,
+		VNU_virtual_phone varchar(45) DEFAULT NULL,
+		VNU_virtual_url varchar(255) DEFAULT NULL,
+		VNU_enable_for_gmap tinyint(1) DEFAULT '0',
+		VNU_google_map_link varchar(255) DEFAULT NULL,
 		PRIMARY KEY  (VNUM_ID),
 		KEY (STA_ID),
 		KEY (CNT_ISO)";

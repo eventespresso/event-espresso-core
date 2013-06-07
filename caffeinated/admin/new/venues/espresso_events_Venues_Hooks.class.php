@@ -54,137 +54,35 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 
 	public function venue_metabox() {
 		global $org_options;
-		$this->_event = $this->_adminpage_obj->get_event_object();
 		$values = array(
-				array('id' => true, 'text' => __('Yes', 'event_espresso')),
-				array('id' => false, 'text' => __('No', 'event_espresso'))
+			array('id' => true, 'text' => __('Yes', 'event_espresso')),
+			array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
-		?>
-		
-		<div class="inside">
-			<table class="form-table">
-				<tr>
-					<?php
-					if ( $org_options['use_venue_manager'] ) {
-						$ven_type = 'class="use-ven-manager"';
 
-						?>
-					<td valign="top" <?php echo $ven_type ?>><fieldset id="venue-manager">
-								<legend><?php echo __('Venue Information', 'event_espresso') ?></legend>
-								<?php if (! $this->_espresso_venue_dd()) : ?>
-									<p class="info">
-										<b><?php _e('You have not created any venues yet.', 'event_espresso'); ?></b>
-									</p>
-									<p><a href="admin.php?page=espresso_venues"><?php echo __('Add venues to the Venue Manager', 'event_espresso') ?></a></p>
-								<?php else: ?>
-									<?php echo $this->_espresso_venue_dd($this->_event->venue_id) ?>
-								<?php endif; ?>
-							</fieldset>
-						</td>
-						<?php
-					} else {
-						$ven_type = 'class="manual-venue"';
-						?>
-						<td valign="top" <?php echo $ven_type; ?>>
+		require_once( 'EEM_Venue.model.php' );
+		$evt_obj = $this->_adminpage_obj->get_event_obj();
 
-								<legend>
-									<?php _e('Venue Information', 'event_espresso'); ?>
-								</legend>
-								<p>
-									<label for="ven-title"><?php _e('Title:', 'event_espresso'); ?></label><br/>
-									<input size="20"id="ven-title" tabindex="106"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_title) ?>" name="venue_title" />
-								</p>
-								<p>
-									<label for="ven-website"><?php _e('Website:', 'event_espresso'); ?></label><br/>
-									<input size="20" id="ven-website" tabindex="107"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_url) ?>" name="venue_url" />
-								</p>
-								<p>
-									<label for="ven-phone"><?php _e('Phone:', 'event_espresso'); ?></label><br/>
-									<input size="20" id="ven-phone" tabindex="108"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_phone) ?>" name="venue_phone" />
-								</p>
-								<p>
-									<label for="ven-image"><?php _e('Image:', 'event_espresso'); ?></label><br/>
-									<input size="20" id="ven-image" tabindex="110"  type="text"  value="<?php echo stripslashes_deep($this->_event->venue_image) ?>" name="venue_image" />
-								</p>
-						</td>
-						<td valign="top" <?php echo $ven_type ?>>
-							<fieldset>
-								<legend><?php _e('Physical Location', 'event_espresso'); ?></legend>
-								<p>
-									<label for="phys-addr"><?php _e('Address:', 'event_espresso'); ?></label><br/>
-									<input size="20" id="phys-addr" tabindex="100"  type="text"  value="<?php echo $this->_event->address ?>" name="address" />
-								</p>
-								<p>
-									<label for="phys-addr-2"><?php _e('Address 2:', 'event_espresso'); ?></label><br/>
-									<input size="20" id="phys-addr-2" tabindex="101"  type="text"  value="<?php echo $this->_event->address2 ?>" name="address2" />
-								</p>
-								<p>
-									<label for="phys-city"><?php _e('City:', 'event_espresso'); ?></label><br/>
-									<input size="20" id="phys-city" tabindex="102"  type="text"  value="<?php echo $this->_event->city ?>" name="city" />
-								</p>
-								<p>
-									<label for="phys-state"><?php _e('State:', 'event_espresso'); ?></label><br/>
-									<input size="20" id="phys-state" tabindex="103"  type="text"  value="<?php echo $this->_event->state ?>" name="state" />
-								</p>
-								<p>
-									<label for="phys-country"><?php _e('Country:', 'event_espresso'); ?></label><br/>
-									<input size="20" id="phys-country" tabindex="105"  type="text"  value="<?php echo $this->_event->country ?>" name="country" />
-								</p>
-								<p>
-									<label for="zip-postal"><?php _e('Zip/Postal Code:', 'event_espresso'); ?></label><br/>
-									<input size="20" id="zip-postal"  tabindex="104"  type="text"  value="<?php echo $this->_event->zip ?>" name="zip" />
-								</p>
-									<br/>
-								<p>
-									<?php _e('Google Map Link (for email):', 'event_espresso'); ?>
-									<?php echo $this->_event->google_map_link; ?> 
-								</p>	
-									<br/>
-								<p>
-									<label for="enable_for_gmap">
-										<?php _e('Enable event address in Google Maps? ', 'event_espresso') ?>
-									</label>
-									<?php echo EE_Form_Fields::select_input('enable_for_gmap', $values, isset($this->_event->event_meta['enable_for_gmap']) ? $this->_event->event_meta['enable_for_gmap'] : '', 'id="enable_for_gmap"') ?> 
-								</p>
-
-							</fieldset>
-						</td>
-							<?php } ?>
-					<td valign="top" <?php echo $ven_type ?>>
-						<fieldset id="virt-location">
-							<legend>
-								<?php _e('Virtual Location', 'event_espresso'); ?>
-							</legend>
-							<p>
-								<label for="virt-phone" style="display:inline-block; width:100px;">
-									<?php _e('Phone:', 'event_espresso'); ?>
-								</label>
-								<input size="20" id="virt-phone" type="text" tabindex="111" value="<?php echo $this->_event->phone ?>" name="phone" />
-							</p>
-							<p>
-								<label for="url-event" style="display:inline-block; width:100px; vertical-align:top;">
-									<?php _e('URL of Event:', 'event_espresso'); ?>
-								</label>
-								<textarea id="url-event" cols="30" rows="4" tabindex="112"  name="virtual_url"><?php echo stripslashes_deep($this->_event->virtual_url) ?></textarea>
-							</p>
-							<p>
-								<label for="call-in-num" style="display:inline-block; width:100px;">
-									<?php _e('Call in Number:', 'event_espresso'); ?>
-								</label>
-								<input id="call-in-num" size="20" tabindex="113"  type="text"  value="<?php echo stripslashes_deep($this->_event->virtual_phone) ?>" name="virtual_phone" />
-							</p>
-						</fieldset>
-					</td>
-				</tr>
-			</table>
-
-		</div>
-		<?php
+		//first let's see if we have a venue already
+		$venues = $evt_obj->venues();
+		$venue = empty( $venues ) ? EEM_Venue::create_default_object() : NULL;
+		$template_args['_venues'] = $venues;
+		$template_args['_venue'] = $venue;
+		$template_args['venue_selection'] = $this->_espresso_venue_selector();
+		$template_args['org_options'] = $org_options;
+		$template_args['enable_for_gmap'] = EE_Form_Fields::select_input('enable_for_gmap', $values, $venue->enable_for_gmap(), 'id="enable_for_gmap"');
+		$template_path = empty( $venues ) ? VENUES_TEMPLATE_PATH . 'event_venues_metabox_content.template.php' : VENUES_TEMPLATE_PATH . 'event_venues_metabox_content_from_manager.template.php';
+		espresso_display_template( $template_path, $template_args );
 	}
 
 
 
-	private function _espresso_venue_dd($current_value = 0) {
+	//todo the below will generate the selector for the venues and will take an incoming array of venue objects and will generate some sort of interface for selecting venues.  The thing is, we need to work out some way of listing primary venues with their children (in the case of events that might be in multiple rooms) and have a way for users to select multiple venues for their event.  Much of the query code below will DISAPPEAR.
+	//
+	//for now we're just returning a reminder TODO
+
+	private function _espresso_venue_selector($venues) {
+		return '<strong>TODO:<strong> See <em>' . get_class( $this ) . '</em> class ("_espresso_venue_selector method") for instructions on work needing done here';
+
 		global $wpdb, $espresso_manager, $espresso_wp_user;
 
 		$WHERE = " WHERE ";
