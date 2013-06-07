@@ -40,11 +40,11 @@
 				</p>
 				<p>
 					<label for="phys-state"><?php _e('State:', 'event_espresso'); ?></label><br/>
-					<input size="20" id="phys-state" tabindex="103"  type="text"  value="<?php echo $_venue->state_obj()->name(); ?>" name="state" />
+					<?php echo $states_dropdown; ?>
 				</p>
 				<p>
 					<label for="phys-country"><?php _e('Country:', 'event_espresso'); ?></label><br/>
-					<input size="20" id="phys-country" tabindex="105"  type="text"  value="<?php echo $_venue->country_obj()->name(); ?>" name="country" />
+					<?php echo $countries_dropdown; ?>
 				</p>
 				<p>
 					<label for="zip-postal"><?php _e('Zip/Postal Code:', 'event_espresso'); ?></label><br/>

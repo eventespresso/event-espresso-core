@@ -905,12 +905,31 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
 
+		//states and countries model
+		require_once( 'EEM_State.model.php' );
+		require_once( 'EEM_Country.model.php');
+
+		$states = EEM_State::instance()->get_all_active_states();
+		$countries = EEM_Country::instance()->get_all_active_countries();
+
+		//prepare state/country arrays
+		foreach ( $states as $id => $obj ) {
+			$st_ary[$id] = $obj->name();
+		}
+
+		foreach ( $countries as $id => $obj ) {
+			$ctry_ary[$id] = $obj->name();
+		}
+
 		require_once( 'EEM_Venue.model.php' );
 		//first let's see if we have a venue already
-		$venue = $this->_cpt_model_obj->venues();
-		$venue = empty( $venue ) ? EEM_Venue::create_default_object() : array_shift( $venue );
+		$evnt_id = $this->_cpt_model_obj->ID();
+		$venue = !empty( $evnt_ID ) ? $this->_cpt_model_obj->venues() : NULL;
+		$venue = empty( $venue ) ? EEM_Venue::instance()->create_default_object() : array_shift( $venue );
 		$template_args['_venue'] = $venue;
 		$template_args['org_options'] = $org_options;
+		$template_args['states_dropdown'] = EE_Form_Fields::select_input('state', $st_ary, $venue->state_ID(), 'id="phys-state"');
+		$template_args['countries_dropdown'] = EE_Form_Fields::select_input('countries', $ctry_ary, $venue->country_ID(), 'id="phys-country"');
 		$template_args['enable_for_gmap'] = EE_Form_Fields::select_input('enable_for_gmap', $values, $venue->enable_for_gmap(), 'id="enable_for_gmap"');
 		$template_path = EVENTS_TEMPLATE_PATH . 'event_venues_metabox_content.template.php';
 		espresso_display_template( $template_path, $template_args );
