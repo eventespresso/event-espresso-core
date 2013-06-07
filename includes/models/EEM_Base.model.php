@@ -129,7 +129,7 @@ abstract class EEM_Base extends EE_Base{
 	 * 'where', but 'where' clauses are so common that we thought we'd omit it
 	 * @var array
 	 */
-	private $_allowed_query_params = array(0, 'limit','order_by','group_by','having','force_join');
+	private $_allowed_query_params = array(0, 'limit','order_by','group_by','having','force_join','order');
 	/**
 	 * About all child constructors:
 	 * they should define the _tables, _fields and _model_relations arrays. 
@@ -837,7 +837,10 @@ abstract class EEM_Base extends EE_Base{
 			$this->_extract_related_models_from_sub_params_array_keys($query_params[0], $query_info_carrier,'having');
 		}
 		if(array_key_exists('order_by', $query_params)){
-			$this->_extract_related_models_from_sub_params_array_keys($query_params['order_by'],$query_info_carrier,'order_by');
+			if ( is_array( $query_params['order_by'] ) )
+				$this->_extract_related_models_from_sub_params_array_keys($query_params['order_by'],$query_info_carrier,'order_by');
+			else
+				$this->_extract_related_model_info_from_query_param( $query_params['order_by'], $query_info_carrier,'order_by');
 		}
 		if(array_key_exists('force_join', $query_params)){
 			$this->_extract_related_models_from_sub_params_array_values($query_params['force_join'],$query_info_carrier,'force_join');
@@ -852,7 +855,6 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $query_param_type one of $this->_allowed_query_params
 	 */
 	private function _extract_related_models_from_sub_params_array_keys($sub_query_params, EE_Model_Query_Info_Carrier $model_query_info_carrier,$query_param_type){
-
 		if (!empty($sub_query_params)){
 			$sub_query_params = (array) $sub_query_params;
 			foreach($sub_query_params as $param => $possibly_array_of_params){
@@ -1147,7 +1149,7 @@ abstract class EEM_Base extends EE_Base{
 		// for more info on why we do that
 		$query_param = str_replace("*", "", $query_param);
 		$allow_logic_query_params = in_array($query_param_type,array('where','having'));
-		$allow_fields = in_array($query_param_type,array('where','having','order_by','group_by'));
+		$allow_fields = in_array($query_param_type,array('where','having','order_by','group_by','order'));
 		//check to see if we have a field on this model
 		$this_model_fields = $this->field_settings(true);
 		if(array_key_exists($query_param,$this_model_fields)){
@@ -1166,6 +1168,7 @@ abstract class EEM_Base extends EE_Base{
 				throw new EE_Error(sprintf(__("Logic query params (%s) are being used in the wrong quer params on model %s", "event_espresso"),implode(",",$this->_logic_query_param_keys),get_class($this)));
 			}
 		}	
+
 		//check if has a model name at the beginning 
 		//and
 		//check if it's a field on a related model
@@ -1188,6 +1191,8 @@ abstract class EEM_Base extends EE_Base{
 				return;
 			}
 		}
+
+
 		//ok so $query_param didn't start with a model name
 		//and we previously confirmed it wasn't a logic query param or field on the current model
 		//it's wack, that's what it is
