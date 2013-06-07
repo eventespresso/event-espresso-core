@@ -223,7 +223,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	 * 		column_ATT_fname
 	*/ 
     function column_ATT_fname($item){
-		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'id'=>$item['ATT_ID'] ), REG_ADMIN_URL );
+		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'ATT_ID'=>$item['ATT_ID'] ), REG_ADMIN_URL );
 		return '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . ucwords( stripslashes( htmlentities( $item['TXN_att_name'], ENT_QUOTES, 'UTF-8' ))) . '</a>';
 	}
 
