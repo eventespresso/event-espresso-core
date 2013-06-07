@@ -154,7 +154,7 @@ class EE_Thank_You_Page{
 			
 			//createa hackey payment object, but dont save it
 			$gateway_name = $txn_details['gateway'];
-			$payment = new EE_Payment($transaction->ID(), EEM_Payment::status_id_pending, current_time('timestamp'), array(), $transaction->total(), $gateway_name, array(), null, null, null);
+			$payment = new EE_Payment($transaction->ID(), EEM_Payment::status_id_pending, current_time('mysql'), array(), $transaction->total(), $gateway_name, array(), null, null, null);
 		
 			$gateway_content = EEM_Gateways::instance()->get_payment_overview_content($gateway_name,$payment);
 			//echo "gateway conten t $gateway_content";
