@@ -77,6 +77,11 @@ class EE_Country extends EE_Base_Class{
 	}
 
 
+	public function name() {
+		return $this->_CNT_name;
+	}
+
+
 }
 
 /* End of file EE_Country.class.php */
