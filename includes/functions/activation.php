@@ -512,7 +512,7 @@ function events_data_tables_install() {
 		EVT_allow_multiple TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
 		EVT_additional_attendee_reg_info TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
 		EVT_default_registration_status VARCHAR(3),
-		EVT_phone varchar(45) DEFAULT NULL
+		EVT_phone varchar(45) DEFAULT NULL,
 		EVT_additional_limit TINYINT UNSIGNED NULL ,
 		EVT_require_pre_approval TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
 		EVT_member_only TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
