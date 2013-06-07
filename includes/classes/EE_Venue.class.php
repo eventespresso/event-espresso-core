@@ -1,6 +1,6 @@
 <?php
 
-class EE_Venue extends EE_Base_Class {
+class EE_Venue extends EE_CPT_Base {
 
 	/**
 	 * Related events
@@ -43,6 +43,7 @@ class EE_Venue extends EE_Base_Class {
 	protected $_VNU_virtual_url;
 	protected $_VNU_enable_for_gmap;
 	protected $_VNU_google_map_link;
+	protected $_Term_Taxonomy;
 
 	/**
 	 * 
@@ -98,6 +99,11 @@ class EE_Venue extends EE_Base_Class {
 	 */
 	function set_state_ID($state) {
 		return $this->set('STA_ID', $state);
+	}
+
+
+	function country_ID() {
+		return $this->get('CNT_ISO');
 	}
 
 	/**

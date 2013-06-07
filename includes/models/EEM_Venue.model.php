@@ -23,7 +23,7 @@
  */
 require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 
-class EEM_Venue extends EEM_Base {
+class EEM_Venue extends EEM_CPT_Base {
 
   	// private instance of the Attendee object
 	private static $_instance = NULL;
