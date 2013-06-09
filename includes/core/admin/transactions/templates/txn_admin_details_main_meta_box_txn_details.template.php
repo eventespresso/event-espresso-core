@@ -18,11 +18,13 @@
 				</tr>
 			</thead>
 			<tbody>
-		<?php foreach ( $items as $item ) : ?>
+		<?php foreach ( $items as $item ) :
+			require_once( EE_HELPERS . 'EE_DTT_Helper.helper.php');
+		 ?>
 			<tr>
 				<td class="jst-left"><?php echo $item['line_item'];?></td>
 				<td class="jst-left"><?php echo $item['name'];?></td>
-				<td class="jst-left"><?php echo date( 'D M j, Y', $item['date'] ) . ',    ' . date( 'g:i a', $item['time'] );?></td>
+				<td class="jst-left"><?php echo $item['date'] . ' ' .  $item['time'];?></td>
 				<td class="jst-left"><?php echo stripslashes( $item['price_desc'] );?></td>
 				<td class="jst-rght"><?php echo $currency_sign . '&nbsp;' . number_format( $item['price'], 2 );?></td>
 				<td class="jst-rght"><?php echo $item['qty'];?></td>

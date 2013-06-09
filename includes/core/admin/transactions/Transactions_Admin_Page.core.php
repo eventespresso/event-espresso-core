@@ -520,12 +520,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 						if ( $key == 'options' ) {
 							$options = $value;
 							foreach ( $options as $opt => $option ) {
-								if ( $opt == 'date' ) {
-									$option = strtotime( $option );
-								} else if  ( $opt == 'time' ) {
-									$ampm = ( (float)$option > 11.59 ) ? (( (float)$option == 24.00 ) ? 'am' : 'pm' ) : 'am';
-									$option = strtotime( $option . ' ' . $ampm );
-								}
 								$this->_template_args['items'][ $item['name'] ][ $opt ] = $option;
 							}
 						} elseif ( $key == 'line_item' ) {
