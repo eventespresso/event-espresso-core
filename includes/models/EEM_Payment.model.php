@@ -258,6 +258,7 @@ class EEM_Payment extends EEM_TempBase {
 			return FALSE;
 		}
 		$transaction = $payment->transaction();
+		
 		// recalculate and set total paid, and how much is pending
 		if( $transaction->update_based_on_payments() ) {
 			$payment->clear_relation_cache('Transaction');

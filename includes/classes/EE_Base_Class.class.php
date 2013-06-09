@@ -119,7 +119,7 @@ abstract class EE_Base_Class {
 				case 'float':
 					return stripslashes( floatval($value));
 				case 'date':
-					return intval($value);
+					return $value;
 				case 'enum':
 					return stripslashes( $value );
 					break;
@@ -233,12 +233,8 @@ abstract class EE_Base_Class {
 				$return=floatval( preg_replace( "/^[^0-9\.]-/", "", preg_replace( "/,/", ".", $value ) ));
 				break;
 			case 'date':
-				//check if we've been given a string representing a time.
-				if(!is_numeric($value)){
-					//if so, try to convert it to unix timestamp
-					$value=strtotime($value);
-				}
-				$return = intval($value);
+				//the problem is this could be coming from the db model (in which case the datetime is already converted to a unixtimestamp in current timezone OR its coming from outside the model in which case it is expected to be the current timezone.  So if NUMERIC let's just leave it.  Otherwise we convert it TO numeric unixtimestamp.
+				$return = is_numeric($value) ? intval($value) : $this->_timestamp_conversion($value);
 				break;
 			case 'enum':
 				if($value!==null && !in_array($value,$fieldSettings->allowed_enum_values())){
@@ -263,6 +259,19 @@ abstract class EE_Base_Class {
 		}
 		return $return;
 	}
+
+
+
+	/**
+	 * Incoming datetime string in a timezone, convert TO a unixtimestamp for that timezone.  We're not doing strtotime cause it does some funky stuff if we're running it on a date in a certain timestamp
+	 * @param  string $value datetime string
+	 * @return int           unixtimestamp
+	 */
+	protected function _timestamp_conversion( $value ) {
+		require_once( EE_HELPERS . 'EE_DTT_Helper.helper.php');
+		return EE_DTT_Helper::convert_string_to_unixtimestamp( $value );
+	}
+
 	
 	/**
 	 * verifies that the specified field is of the correct type
@@ -374,14 +383,8 @@ abstract class EE_Base_Class {
 					break;
 				case 'date':
 					
-					$date_format = get_option('date_format');
-					$time_format = get_option('time_format');//time's good, but 
-					//it's in the server's local time which might confuse peopel
-					if ( empty( $value )) {
-						_e("Unknown",'event_espresso');
-					} else {
-						echo date_i18n( $date_format, strtotime( $value )); 
-					}
+					//this should be already set properly on the model object
+					echo $value;
 					break;
 				case 'enum':
 					echo stripslashes($value);

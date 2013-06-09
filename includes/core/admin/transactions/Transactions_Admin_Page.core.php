@@ -888,7 +888,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					break;
 
 			}
-			//savea  the new payment
+			//save  the new payment
 			$payment = new EE_Payment( 
 				$payment['TXN_ID'], 
 				$payment['status'],
