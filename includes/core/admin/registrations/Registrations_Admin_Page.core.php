@@ -546,6 +546,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _registrations_overview_list_table() {
+	
 		$EVT_ID = ( ! empty( $this->_req_data['event_id'] )) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		if ( $EVT_ID ) {
 			$this->_admin_page_title .= $this->_get_action_link_or_button( 'new_registration', 'add-registrant', array( 'event_id' => $EVT_ID ), 'button add-new-h2' );
@@ -576,9 +577,9 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 		$REG_ID = ( ! empty( $this->_req_data['_REG_ID'] )) ? absint( $this->_req_data['_REG_ID'] ) : FALSE;
 
-		if ( $this->_registration = $REG->get_registration_for_admin_page( $REG_ID ))
+		if ( $this->_registration = $REG->get_registration_for_admin_page( $REG_ID )) {
 			return TRUE;
-		else {
+		} else {
 			$error_msg = sprintf( __('An error occured and the details for Registration ID #%s could not be retreived.', 'event_espresso'), $REG_ID );
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			$this->_registration = NULL;
@@ -650,12 +651,12 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$event_date = isset( $registrations[0]->DTT_EVT_start ) ? EE_DTT_Helper::prepare_dtt_from_db( $registrations[0]->DTT_EVT_start, 'l F j, Y,    g:i a' ) : '';
 			// edit event link
 			if ( $event_name != '' ) {
-				$edit_event_url = self::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$EVT_ID ), EVENTS_ADMIN_URL );	
+				$edit_event_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$EVT_ID ), EVENTS_ADMIN_URL );	
 				$edit_event_lnk = '<a href="'.$edit_event_url.'" title="' . __( 'Edit ', 'event_espresso' ) . $event_name . '">' . __( 'Edit Event', 'event_espresso' ) . '</a>';	
 				$event_name .= ' <span class="admin-page-header-edit-lnk not-bold">' . $edit_event_lnk . '</span>' ;
 			}
 
-			$back_2_reg_url = self::add_query_args_and_nonce( array( 'action'=>'default' ), REG_ADMIN_URL );	
+			$back_2_reg_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default' ), REG_ADMIN_URL );	
 			$back_2_reg_lnk = '<a href="'.$back_2_reg_url.'" title="' . __( 'click to return to viewing all registrations ', 'event_espresso' ) . '">&laquo; ' . __( 'Back to All Registrations', 'event_espresso' ) . '</a>';	
 
 			$this->_template_args['before_admin_page_content'] = '
@@ -701,8 +702,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$this->_set_registration_object();
 
 		if ( is_object( $this->_registration )) {
-			
-			//printr( $this->_registration, '$this->_registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
 			$this->_session = maybe_unserialize( unserialize( $this->_registration->TXN_session_data ));
 
@@ -1278,8 +1277,15 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		    $REG = EEM_Registration::instance();
 			// get registration
 			$registration = $REG->get_one_by_ID( $REG_ID );
+			$registration->update();
 			// and then get this registration's attendee details
 			$attendee = $registration->attendee();
+			// if fname input doesn't exist, or it matches registration attendee info, then use attendee registration attendee info
+			$QST_fname = empty( $QST_fname ) || $QST_fname == $attendee->fname() ? $attendee->fname() : $QST_fname;
+			// if lname input doesn't exist, or it matches registration attendee info, then use attendee registration attendee info
+			$QST_lname = empty( $QST_lname ) || $QST_lname == $attendee->lname() ? $attendee->lname() : $QST_lname;
+			// if email input doesn't exist, or it matches registration attendee info, then use attendee registration attendee info
+			$QST_email = empty( $QST_email ) || $QST_email == $attendee->email() ? $attendee->email() : $QST_email;
 			// check if the critical attendee details were changed
 			if ( $QST_fname != $attendee->fname() || $QST_lname != $attendee->lname() || $QST_email != $attendee->email() || $address_change ) {
 				// we're either updating an already existing attendee or creating an entirely new attendee 
@@ -1349,18 +1355,15 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 						EE_Error::add_error( __('An error occured. An ID for the new attendee could not be retreived.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 					}					
 				}
+
 				if ( $attendee->ID() ) {
-//					echo '<h1>$attendee->ID()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
-//					var_dump( $attendee->ID() );
 					// now update the registration with the "new" attendee ID
 					$registration->set( 'ATT_ID', $attendee->ID() );
 					$registration->update();
 				}
 			}
 		}
-//		echo '<h1>$attendee->ID()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
-//		var_dump( $attendee->ID() );
-//printr( $qstns, '$qstns  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		
 		// allow others to get in on this awesome fun   :D
 		do_action( 'AHEE_save_attendee_registration_form', $REG_ID, $qstns );
 		// loop thru questions... FINALLY!!!
@@ -1395,6 +1398,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 	    $REG = EEM_Registration::instance();
 		$attendees = $REG->get_registrations_for_transaction( $this->_registration->TXN_ID, $this->_registration->REG_ID );
+//		printr( $attendees, '$attendees  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		$this->_template_args['attendees'] = array();
 		$this->_template_args['attendee_notice'] = '';
@@ -1404,21 +1408,22 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$this->_template_args['attendee_notice'] = EE_Error::get_notices();
 		} else {
 
-			$att_nmbr = 1;
+			//$att_nmbr = 1;
 			foreach ( $attendees as $attendee ) {
+				//printr( $attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			
-				$this->_template_args['attendees'][ $att_nmbr ]['fname'] = ( isset( $attendee->ATT_fname ) & ! empty( $attendee->ATT_fname ) ) ? $attendee->ATT_fname : '';
-				$this->_template_args['attendees'][ $att_nmbr ]['lname'] = ( isset( $attendee->ATT_lname ) & ! empty( $attendee->ATT_lname ) ) ? $attendee->ATT_lname : '';
-				$this->_template_args['attendees'][ $att_nmbr ]['email'] = ( isset( $attendee->ATT_email ) & ! empty( $attendee->ATT_email ) ) ? $attendee->ATT_email : '';
-				$this->_template_args['attendees'][ $att_nmbr ]['final_price'] = ( isset( $attendee->REG_final_price ) & ! empty( $attendee->REG_final_price ) ) ? $attendee->REG_final_price : '';
+				$this->_template_args['attendees'][ $attendee->REG_count ]['fname'] = ( isset( $attendee->ATT_fname ) & ! empty( $attendee->ATT_fname ) ) ? $attendee->ATT_fname : '';
+				$this->_template_args['attendees'][ $attendee->REG_count ]['lname'] = ( isset( $attendee->ATT_lname ) & ! empty( $attendee->ATT_lname ) ) ? $attendee->ATT_lname : '';
+				$this->_template_args['attendees'][ $attendee->REG_count ]['email'] = ( isset( $attendee->ATT_email ) & ! empty( $attendee->ATT_email ) ) ? $attendee->ATT_email : '';
+				$this->_template_args['attendees'][ $attendee->REG_count ]['final_price'] = ( isset( $attendee->REG_final_price ) & ! empty( $attendee->REG_final_price ) ) ? $attendee->REG_final_price : '';
 				
 				$address = array();
 				
 				if ( isset( $attendee->ATT_address ) && ( ! empty( $attendee->ATT_address ))) {
-					$address[] = $attendee->ATT_address;
+					$address[0] = $attendee->ATT_address;
 				}
 				if ( isset( $attendee->ATT_address2 ) && ( ! empty( $attendee->ATT_address2 ))) {
-					$address[] = $attendee->ATT_address2;
+					$address[0] .= ' ' . $attendee->ATT_address2;
 				}
 				if ( isset( $attendee->ATT_city ) && ( ! empty( $attendee->ATT_city ))) {
 					$address[] = $attendee->ATT_city;
@@ -1429,11 +1434,18 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				if ( isset( $attendee->ATT_zip ) && ( ! empty( $attendee->ATT_zip ))) {
 					$address[] = $attendee->ATT_zip;
 				}
-				$this->_template_args['attendees'][ $att_nmbr ]['address'] = implode( ', ', $address );
+				$this->_template_args['attendees'][ $attendee->REG_count ]['address'] = implode( ', ', $address );
 				
-				$this->_template_args['attendees'][ $att_nmbr ]['att_link'] = self::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'ATT_ID'=>$attendee->ATT_ID ), REG_ADMIN_URL );
+				$this->_template_args['attendees'][ $attendee->REG_count ]['ATT_link'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'ATT_ID'=>$attendee->ATT_ID ), REG_ADMIN_URL );
+				// link to registration
+				$this->_template_args['attendees'][ $attendee->REG_count ]['REG_link'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$attendee->REG_ID ), REG_ADMIN_URL );
+				$this->_template_args['attendees'][ $attendee->REG_count ]['REG_ID'] = $attendee->REG_ID;
+				// link to TXN
+				$this->_template_args['attendees'][ $attendee->REG_count ]['TXN_link'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$attendee->TXN_ID ), TXN_ADMIN_URL );
+				$this->_template_args['attendees'][ $attendee->REG_count ]['TXN_ID'] = $attendee->TXN_ID;
+				$this->_template_args['TXN_ID'] = $attendee->TXN_ID;
 				
-				$att_nmbr++;
+				//$att_nmbr++;
 			}
 
 			//printr( $attendees, '$attendees  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
@@ -1441,7 +1453,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$this->_template_args['event_name'] = stripslashes( $this->_registration->event_name );
 			$this->_template_args['currency_sign'] = $org_options['currency_symbol'];
 
-	//			$this->_template_args['registration_form_url'] = add_query_arg( array( 'action' => 'edit_registration', 'process' => 'attendees'  ), REG_ADMIN_URL );
+	//			$this->_template_args['registration_form_url'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'edit_registration', 'process' => 'attendees'  ), REG_ADMIN_URL );
 		}
 
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_attendees.template.php';
