@@ -509,7 +509,7 @@ class EEM_Registration extends EEM_TempBase {
 				$locales = FALSE;
 			}
 
-			$SQL .= $count ? "SELECT COUNT(reg.ATT_ID)" : "SELECT att.*, reg.*, dtt.*, reg.STS_ID REG_status, CONCAT(ATT_fname, ' ', ATT_lname) as REG_att_name, evt.id event_id, evt.event_name, evt.require_pre_approval, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.STS_ID AS txn_status, txn.TXN_details, txn.TXN_tax_data, txn.TXN_paid, PRC_amount, PRC_name";
+			$SQL .= $count ? "SELECT COUNT(reg.ATT_ID)" : "SELECT att.*, reg.*, dtt.*, reg.STS_ID REG_status, CONCAT(ATT_fname, ' ', ATT_lname) as REG_att_name, evt.id event_id, evt.event_name, evt.require_pre_approval, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.STS_ID AS txn_status, txn.TXN_details, txn.TXN_tax_data, txn.TXN_paid, PRC_amount, PRC_name, DATE_FORMAT(reg.REG_date, '%Y-%m-%d %H:%i:00') AS REGDATE";
 			$SQL .= ' FROM ' . $wpdb->prefix . 'esp_attendee att';
 			$SQL .= ' JOIN ' . $this->table_name . ' reg ON reg.ATT_ID = att.ATT_ID';
 			$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID ';
@@ -551,7 +551,7 @@ class EEM_Registration extends EEM_TempBase {
 				$REG_date_query_begin = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime( $month_r . ' 01 ' . $year_r . ' ' . $time_start ) ) );
 				$REG_date_query_end = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime( $month_r . ' ' . date( 't', strtotime( $year_r . ' ' . $month_r )) . ' ' . $year_r . ' ' . $time_end ) ) );
 
-				$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . $REQ_date_query_begin . '" ';
+				$SQL .= $sql_clause .' REGDATE BETWEEN "' . $REQ_date_query_begin . '" ';
 				$SQL .= 'AND "' . $REG_date_query_end . '"';
 				$sql_clause = ' AND ';
 			}
@@ -565,14 +565,14 @@ class EEM_Registration extends EEM_TempBase {
 			if ( $today_a ) {
 				$today_start = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime($curdate . $time_start ) ) );
 				$today_end = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime($curdate . $time_end ) ) );
-				$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . $today_start . '" AND "' . $today_end  . '"';
+				$SQL .= $sql_clause .' REGDATE BETWEEN "' . $today_start . '" AND "' . $today_end  . '"';
 				$sql_clause = ' AND ';
 			}
 
 			if ( $this_month_a ) {
 				$month_start = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime( $this_month_r . ' 01 ' . $this_year_r . ' ' . $time_start ) ) );
 				$month_end = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime( $this_month_r . ' ' . $days_this_month . ' ' . $this_year_r . ' ' . $time_end ) ) );
-				$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . $month_start . '" ';
+				$SQL .= $sql_clause .' REGDATE BETWEEN "' . $month_start . '" ';
 				$SQL .= 'AND "' . $month_end  . '"';
 				$sql_clause = ' AND ';
 			}
@@ -588,7 +588,7 @@ class EEM_Registration extends EEM_TempBase {
 
 		}
 
-		$SQL .= $count ? "SELECT COUNT(reg.ATT_ID)" : "SELECT att.*, reg.*, dtt.*, reg.STS_ID REG_status, evt.id event_id, evt.event_name, CONCAT(ATT_fname, ' ', ATT_lname) as REG_att_name, evt.require_pre_approval, txn.TXN_ID, TXN_timestamp, TXN_total, txn.STS_ID AS txn_status, TXN_details, TXN_tax_data, txn.TXN_paid, PRC_amount, PRC_name";
+		$SQL .= $count ? "SELECT COUNT(reg.ATT_ID)" : "SELECT att.*, reg.*, dtt.*, reg.STS_ID REG_status, evt.id event_id, evt.event_name, CONCAT(ATT_fname, ' ', ATT_lname) as REG_att_name, evt.require_pre_approval, txn.TXN_ID, TXN_timestamp, TXN_total, txn.STS_ID AS txn_status, TXN_details, TXN_tax_data, txn.TXN_paid, PRC_amount, PRC_name, DATE_FORMAT(reg.REG_date, '%Y-%m-%d %H:%i:00') AS REGDATE";
 		$SQL .= ' FROM ' . $wpdb->prefix . 'esp_attendee att';
 		$SQL .= ' LEFT JOIN ' . $this->table_name . ' reg ON reg.ATT_ID = att.ATT_ID';
 		$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID';
@@ -629,7 +629,7 @@ class EEM_Registration extends EEM_TempBase {
 				$REG_date_query_begin = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime( $month_r . ' 01 ' . $year_r . ' ' . $time_start ) ) );
 				$REG_date_query_end = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime( $month_r . ' ' . date( 't', strtotime( $year_r . ' ' . $month_r )) . ' ' . $year_r . ' ' . $time_end ) ) );
 
-				$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . $REQ_date_query_begin . '" ';
+				$SQL .= $sql_clause .' REGDATE BETWEEN "' . $REQ_date_query_begin . '" ';
 				$SQL .= 'AND "' . $REG_date_query_end . '"';
 				$sql_clause = ' AND ';
 			}
@@ -643,14 +643,14 @@ class EEM_Registration extends EEM_TempBase {
 			if ( $today_a ) {
 				$today_start = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime($curdate . $time_start ) ) );
 				$today_end = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime($curdate . $time_end ) ) );
-				$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . $today_start . '" AND "' . $today_end  . '"';
+				$SQL .= $sql_clause .' REGDATE BETWEEN "' . $today_start . '" AND "' . $today_end  . '"';
 				$sql_clause = ' AND ';
 			}
 
 			if ( $this_month_a ) {
 				$month_start = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime( $this_month_r . ' 01 ' . $this_year_r . ' ' . $time_start ) ) );
 				$month_end = $this->_prepare_dtt_for_db( date('Y-m-d H:s:i', strtotime( $this_month_r . ' ' . $days_this_month . ' ' . $this_year_r . ' ' . $time_end ) ) );
-				$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . $month_start . '" ';
+				$SQL .= $sql_clause .' REGDATE BETWEEN "' . $month_start . '" ';
 				$SQL .= 'AND "' . $month_end  . '"';
 				$sql_clause = ' AND ';
 			}
@@ -673,6 +673,7 @@ class EEM_Registration extends EEM_TempBase {
 				
 			case 'STS_ID':
 				$orderby = 'reg.REG_status ';
+				$order .= ', REGDATE DESC, reg.REG_count ASC ';
 				break;
 				
 			case 'ATT_lname':
@@ -681,6 +682,7 @@ class EEM_Registration extends EEM_TempBase {
 				
 			case 'event_name':
 				$orderby = 'evt.event_name ';
+				$order .= ', REGDATE DESC, reg.REG_count ASC ';
 				break;
 				
 			case 'DTT_EVT_start':
@@ -688,7 +690,8 @@ class EEM_Registration extends EEM_TempBase {
 				break;
 				
 			default: //'REG_date'
-				$orderby = 'reg.REG_date ';
+				$orderby = 'REGDATE ';
+				$order .= ', reg.REG_count ASC ';
 		}
 
 		//let's setup limit
@@ -696,6 +699,7 @@ class EEM_Registration extends EEM_TempBase {
 		$SQL .= $count ? ')' : ") ORDER BY $orderby $order $limit";
 
 		$registrations = $count ? $wpdb->get_var( $SQL ) : $wpdb->get_results( $SQL );
+		//echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
 		if ( is_array($registrations ) ) {
 			//dang it... results are just returned vanilla... we have to run conversions on them first
@@ -834,15 +838,16 @@ class EEM_Registration extends EEM_TempBase {
 		
 		if ( $REG_ID ) {
 			$SQL .= ' AND reg.REG_ID != %d';
-			$attendees = $wpdb->get_row( $wpdb->prepare( $SQL, $TXN_ID, $REG_ID ));
+			$attendees = $wpdb->get_results( $wpdb->prepare( $SQL, $TXN_ID, $REG_ID ));
 		} else {
-			$attendees = $wpdb->get_row( $wpdb->prepare( $SQL, $TXN_ID ));
+			$attendees = $wpdb->get_results( $wpdb->prepare( $SQL, $TXN_ID ));
 		}
+		//echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		
 		if ( ! is_array( $attendees )) {
 			$attendees = array( $attendees );
 		}
-		//printr( $attendee, 'attendee' ); die();
+		//printr( $attendees, '$attendees  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		//dang it... results are just returned vanilla... we have to run conversions on them first
 		foreach( $attendees as $akey => $attendee ) {
 			foreach ( $attendee as $key => $value ) {
