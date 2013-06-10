@@ -935,6 +935,14 @@ Class EEM_Gateways {
 		//throw new Exception("unfinished. This functino should check for a completed transaction .If completed, clear some session etc
 		require_once('EEM_Transaction.model.php');
 		if($transaction->status_ID() == EEM_Transaction::complete_status_code){
+			global $org_options;
+			$registrations = $transaction->registrations();
+			if ( is_array( $registrations )) {
+				foreach( $registrations as $registration ) {
+					$registration->set_status( $org_options['default_reg_status'] );
+					$registration->save();
+				}
+			}
 			$this->reset_session_data();
 		}
 	}
