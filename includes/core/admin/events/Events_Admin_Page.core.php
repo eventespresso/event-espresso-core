@@ -924,7 +924,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		require_once( 'EEM_Venue.model.php' );
 		//first let's see if we have a venue already
 		$evnt_id = $this->_cpt_model_obj->ID();
-		$venue = !empty( $evnt_ID ) ? $this->_cpt_model_obj->venues() : NULL;
+		$venue = !empty( $evnt_id ) ? $this->_cpt_model_obj->venues() : NULL;
 		$venue = empty( $venue ) ? EEM_Venue::instance()->create_default_object() : array_shift( $venue );
 		$template_args['_venue'] = $venue;
 		$template_args['org_options'] = $org_options;
