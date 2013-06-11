@@ -167,6 +167,13 @@ Class EEM_Gateways {
 		// on the settings page, scan and load all the gateways
 		if (is_admin() && !empty($_GET['page']) && $_GET['page'] == 'espresso_payment_settings') {
 			$this->_load_all_gateway_files();
+			//bandaid to cover flurry of success messages on first page load of gateway settings page
+			global $current_user;
+			$gateways_initialized = get_user_meta($current_user->ID,'ee_gateways_initialized');
+			if( ! $gateways_initialized){	
+				EE_Error::overwrite_success();
+				update_user_meta($current_user->ID, 'ee_gateways_initialized', true);
+			}
 		} else {
 			// if something went wrong, fail gracefully
 			if ( ! is_array($this->_active_gateways)) {	

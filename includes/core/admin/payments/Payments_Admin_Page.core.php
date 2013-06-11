@@ -31,6 +31,9 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	public function __construct() {
+		global $EEM_Gateways;
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
+		$EEM_Gateways = EEM_Gateways::instance();
 		parent::__construct();
 	}
 
@@ -134,11 +137,14 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	protected function _get_gateway_help_tabs() {
 		global $EE_Session, $EEM_Gateways, $current_user;
 		$help_tabs = array();
-		if ( ! defined( 'ESPRESSO_GATEWAYS' )) {
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
-			$EEM_Gateways = EEM_Gateways::instance();
-			$EEM_Gateways->set_active_gateways();
-		}
+//		if ( ! defined( 'ESPRESSO_GATEWAYS' )) {
+//			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
+//			global $mike_count;
+//			echo"getgatewayshelptabs ".++$mike_count;
+//			$EEM_Gateways = EEM_Gateways::instance();
+//			
+//			//$EEM_Gateways->set_active_gateways();
+//		}
 
 		$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
 		$gateway_instances = $EEM_Gateways->get_gateway_instances();
