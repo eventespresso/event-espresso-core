@@ -1285,11 +1285,11 @@ class EE_Single_Page_Checkout {
 				$new_reg_code = $transaction->ID() . '-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 ));				
 				$new_reg_code = apply_filters( 'FHEE_new_registration_code', $new_reg_code );
 				
-				if ( has_filter( 'FHEE_new_registration_code' ) ) {
-					$prev_reg_code = $new_reg_code;
-				} else {
-					$prev_reg_code = '%-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 )) . '%';
-				}					
+//				if ( has_filter( 'FHEE_new_registration_code' ) ) {
+//					$prev_reg_code = $new_reg_code;
+//				} else {
+//					$prev_reg_code = '%-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 )) . '%';
+//				}					
 
 				$default_reg_status = isset( $org_options['default_reg_status'] ) ? $org_options['default_reg_status'] : 'RPN';
 

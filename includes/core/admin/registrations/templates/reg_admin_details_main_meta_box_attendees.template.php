@@ -8,10 +8,14 @@
 		<table class="admin-primary-mbox-tbl">
 			<thead>
 				<tr>
-					<th class="jst-left"><?php _e( '#', 'event_espresso' );?></th>
+					<th class="jst-cntr"><?php _e( '#', 'event_espresso' );?></th>
+					<?php if ( $TXN_ID ) { ?>
+					<th class="jst-cntr"><?php _e( 'TXN ID', 'event_espresso' );?></th>						
+					<?php } ?>
+					<th class="jst-cntr"><?php _e( 'REG ID', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Event Name', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Attendee', 'event_espresso' );?></th>
-					<th class="jst-rght"><?php _e( 'Price Paid', 'event_espresso' );?></th>
+					<th class="jst-rght"><?php _e( 'Ticket Price', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Email', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Address', 'event_espresso' );?></th>
 					<!--<th class="jst-cntr"><?php _e( 'Actions', 'event_espresso' );?></th>-->
@@ -22,10 +26,22 @@
 			<?php foreach ( $attendees as $att_nmbr => $attendee ) : ?>
 
 				<tr>
-					<td class="jst-left"><?php echo$att_nmbr;?></td>
+					<td class="jst-rght"><?php echo$att_nmbr;?></td>
+					<?php if ( $TXN_ID ) { ?>
+					<td class="jst-rght">
+						<a href="<?php echo $attendee['TXN_link']; ?>" title="<?php _e( 'View transaction details for this registration', 'event_espresso' );?>">
+							<?php echo $attendee['TXN_ID'];?>
+						</a>
+					</td>
+					<?php } ?>
+					<td class="jst-rght">
+						<a href="<?php echo $attendee['REG_link']; ?>" title="<?php _e( 'View registration details for this attendee', 'event_espresso' );?>">
+							<?php echo $attendee['REG_ID'];?>
+						</a>
+					</td>
 					<td class="jst-left"><?php echo $event_name;?></td>
 					<td class="jst-left">
-						<a href="<?php echo $attendee['att_link']; ?>" title="<?php _e( 'View details for this attendee', 'event_espresso' );?>">
+						<a href="<?php echo $attendee['ATT_link']; ?>" title="<?php _e( 'View contact details for this attendee', 'event_espresso' );?>">
 							<?php echo $attendee['fname'] . ' ' . $attendee['lname'];?>
 						</a>
 					</td>

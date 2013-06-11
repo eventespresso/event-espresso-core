@@ -151,7 +151,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'nav' => array(
 					'label' => __('View Transaction', 'event_espresso'),
 					'order' => 5,
-					'url' => isset($this->_req_data['TXN_ID']) ? add_query_arg(array('TXN_ID' => $this->_req_data['TXN_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
+					'url' => isset($this->_req_data['TXN_ID']) ? EE_Admin_Page::add_query_args_and_nonce(array('TXN_ID' => $this->_req_data['TXN_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
 					'persistent' => FALSE
 					),
 				'metaboxes' => array('_transaction_details_metaboxes')
@@ -554,8 +554,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$this->_template_args['payments'] = FALSE;
 		}
 		
-		$this->_template_args['edit_payment_url'] = add_query_arg( array( 'action' => 'edit_payment'  ), TXN_ADMIN_URL );
-		$this->_template_args['delete_payment_url'] = add_query_arg( array( 'action' => 'delete_payment' ), TXN_ADMIN_URL );
+		$this->_template_args['edit_payment_url'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'edit_payment'  ), TXN_ADMIN_URL );
+		$this->_template_args['delete_payment_url'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'delete_payment' ), TXN_ADMIN_URL );
 
 		if ( isset( $this->_transaction->TXN_details['invoice_number'] )) {
 			$this->_template_args['txn_details']['invoice_number']['value'] = $this->_transaction->TXN_details['invoice_number'];
@@ -576,17 +576,47 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['txn_details']['user_agent']['class'] = 'large-text';
 
 
+//		$this->_get_payment_methods();
+//		$this->_get_active_gateways();
+		$this->_get_payment_status_array();
+		
+		$this->_template_args['transaction_form_url'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'edit_transaction', 'process' => 'transaction'  ), TXN_ADMIN_URL );
+		
+		add_action( 'admin_footer', array( $this, 'get_txn_apply_payment_form' ));
+		
+		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_main_meta_box_txn_details.template.php';
+		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
+
+	}
+
+
+
+
+
+	/**
+	 * 		get_txn_apply_payment_form
+	*		@access public
+	*		@return void
+	*/
+	public function get_txn_apply_payment_form() {
+
+	    $this->_set_transaction_object();
+
+		$this->_template_args['txn_nmbr']['value'] = $this->_transaction->TXN_ID;
+		$this->_template_args['txn_nmbr']['label'] = __( 'Transaction Number', 'event_espresso' );
+		$this->_template_args['REG_code'] = $this->_transaction->REG_code;
+
 		$this->_get_payment_methods();
 		$this->_get_active_gateways();
 		$this->_get_payment_status_array();
 		
-		$this->_template_args['transaction_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'transaction'  ), TXN_ADMIN_URL );
-		$this->_template_args['apply_payment_form_url'] = add_query_arg( array( 'page' => 'espresso_transactions', 'action' => 'espresso_apply_payment' ), WP_AJAX_URL );
-		$this->_template_args['delete_payment_form_url'] = add_query_arg( array( 'page' => 'espresso_transactions', 'action' => 'espresso_delete_payment' ), WP_AJAX_URL );
+		$this->_template_args['transaction_form_url'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'edit_transaction', 'process' => 'transaction'  ), TXN_ADMIN_URL );
+		$this->_template_args['apply_payment_form_url'] = EE_Admin_Page::add_query_args_and_nonce( array( 'page' => 'espresso_transactions', 'action' => 'espresso_apply_payment' ), WP_AJAX_URL );
+		$this->_template_args['delete_payment_form_url'] = EE_Admin_Page::add_query_args_and_nonce( array( 'page' => 'espresso_transactions', 'action' => 'espresso_delete_payment' ), WP_AJAX_URL );
 		
 		// 'espresso_delete_payment_nonce'
 		
-		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_main_meta_box_txn_details.template.php';
+		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_apply_payment.template.php';
 		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
 
 	}
@@ -643,11 +673,71 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*		@access private
 	*		@return void
 	*/
-	function _txn_attendees_meta_box(  $post, $metabox = array( 'args' => array()) ) {
+	function _txn_attendees_meta_box() {
 	
 		global $wpdb, $org_options;
+
+	    $REG = EEM_Registration::instance();
+		$attendees = $REG->get_registrations_for_transaction( $this->_transaction->TXN_ID );
+		//printr( $attendees, '$attendees  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+		$this->_template_args['attendees'] = array();
+		$this->_template_args['attendee_notice'] = '';
+
+		if ( empty( $attendees)  || ( is_array($attendees) && empty($attendees[0]) ) ) {
+			EE_Error::add_error( __('There are no attendees attached to this registration. Something may have gone wrong with the registration', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			$this->_template_args['attendee_notice'] = EE_Error::get_notices();
+		} else {
+
+			//$att_nmbr = 1;
+			foreach ( $attendees as $attendee ) {
+				//printr( $attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			
+				$this->_template_args['attendees'][ $attendee->REG_count ]['fname'] = ( isset( $attendee->ATT_fname ) & ! empty( $attendee->ATT_fname ) ) ? $attendee->ATT_fname : '';
+				$this->_template_args['attendees'][ $attendee->REG_count ]['lname'] = ( isset( $attendee->ATT_lname ) & ! empty( $attendee->ATT_lname ) ) ? $attendee->ATT_lname : '';
+				$this->_template_args['attendees'][ $attendee->REG_count ]['email'] = ( isset( $attendee->ATT_email ) & ! empty( $attendee->ATT_email ) ) ? $attendee->ATT_email : '';
+				$this->_template_args['attendees'][ $attendee->REG_count ]['final_price'] = ( isset( $attendee->REG_final_price ) & ! empty( $attendee->REG_final_price ) ) ? $attendee->REG_final_price : '';
+				
+				$address = array();
+				
+				if ( isset( $attendee->ATT_address ) && ( ! empty( $attendee->ATT_address ))) {
+					$address[0] = $attendee->ATT_address;
+				}
+				if ( isset( $attendee->ATT_address2 ) && ( ! empty( $attendee->ATT_address2 ))) {
+					$address[0] .= ' ' . $attendee->ATT_address2;
+				}
+				if ( isset( $attendee->ATT_city ) && ( ! empty( $attendee->ATT_city ))) {
+					$address[] = $attendee->ATT_city;
+				}
+				if ( isset( $attendee->ATT_state ) && ( ! empty( $attendee->ATT_state ))) {
+					$address[] = $attendee->ATT_state;
+				}
+				if ( isset( $attendee->ATT_zip ) && ( ! empty( $attendee->ATT_zip ))) {
+					$address[] = $attendee->ATT_zip;
+				}
+				$this->_template_args['attendees'][ $attendee->REG_count ]['address'] = implode( ', ', $address );
+				
+				$this->_template_args['attendees'][ $attendee->REG_count ]['ATT_link'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'ATT_ID'=>$attendee->ATT_ID ), REG_ADMIN_URL );
+				// link to registration
+				$this->_template_args['attendees'][ $attendee->REG_count ]['REG_link'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$attendee->REG_ID ), REG_ADMIN_URL );
+				$this->_template_args['attendees'][ $attendee->REG_count ]['REG_ID'] = $attendee->REG_ID;
+				// link to TXN
+				$this->_template_args['TXN_ID'] = FALSE;
+				
+				//$att_nmbr++;
+			}
+
+			//printr( $attendees, '$attendees  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
+
+			$this->_template_args['event_name'] = stripslashes( $this->_transaction->event_name );
+			$this->_template_args['currency_sign'] = $org_options['currency_symbol'];
+
+	//			$this->_template_args['registration_form_url'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'edit_registration', 'process' => 'attendees'  ), REG_ADMIN_URL );
+		}
 		
-		extract( $metabox['args'] );		
+/*		extract( $metabox['args'] );		
+		
+		printr( $metabox['args'], '$metabox  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
 		// process items in cart
 		$cart_items = $this->_session['cart']['REG']['items'];
@@ -658,7 +748,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		if ( ! empty( $cart_items )) {
 			foreach ( $cart_items as $line_item_ID => $item ) {
 				$event_name_and_price_option = $item['name'] . ' - ' . $item['options']['price_desc'];
-				//printr( $item, '$cart_item  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+				printr( $item, '$cart_item  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 				foreach ( $item['attendees'] as $att_nmbr => $attendee ) {
 					// check for attendee object
 					$attendee['att_obj'] = isset( $attendee['att_obj'] ) && is_object( $attendee['att_obj'] ) ? $attendee['att_obj'] : FALSE;
@@ -695,9 +785,10 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		//printr( $this->_template_args['event_attendees'], 'event_attendees' );
 
 		$this->_template_args['currency_sign'] = $org_options['currency_symbol'];
-		$this->_template_args['transaction_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'attendees'  ), TXN_ADMIN_URL );  
+		$this->_template_args['transaction_form_url'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'edit_transaction', 'process' => 'attendees'  ), TXN_ADMIN_URL );  */
 		
-		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_main_meta_box_attendees.template.php';
+//		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_main_meta_box_attendees.template.php';
+		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_attendees.template.php';
 		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
 
 	}
@@ -735,7 +826,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['prime_reg_comments'] = $this->_transaction->ATT_comments;
 		$this->_template_args['prime_reg_notes'] = $this->_transaction->ATT_notes;
 		
-		$this->_template_args['registrant_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'registrant'  ), TXN_ADMIN_URL );  
+		$this->_template_args['registrant_form_url'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'edit_transaction', 'process' => 'registrant'  ), TXN_ADMIN_URL );  
 
 		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_side_meta_box_registrant.template.php';
 		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
@@ -826,7 +917,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	
 		//printr( $this->_template_args, 'template_args' );
 		
-		$this->_template_args['billing_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'billing'  ), TXN_ADMIN_URL );  
+		$this->_template_args['billing_form_url'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'edit_transaction', 'process' => 'billing'  ), TXN_ADMIN_URL );  
 
 		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_side_meta_box_billing_info.template.php';
 		echo espresso_display_template( $template_path, $this->_template_args, TRUE );

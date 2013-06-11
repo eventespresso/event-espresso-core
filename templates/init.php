@@ -17,7 +17,7 @@ function espresso_display_template_error() {
  * the use of {@link locate_template()}. Allows for more generic template location
  * without the use of the other get_*_template() functions.
  *
- * @since 3.2
+ * @since 4.0
  *
  * @param string $type Filename without extension.
  * @param array $templates An optional list of template candidates
@@ -25,9 +25,10 @@ function espresso_display_template_error() {
  */
 function espresso_get_query_template( $type, $templates = array() ) {
 
-	if ( empty( $templates ) )
+	if ( empty( $templates )) {
 		$templates = array("{$type}.php");
-
+	}
+	// allow templates to be filtered
 	return apply_filters( "{$type}_template", espresso_locate_template( $templates ) );
 }
 
@@ -37,7 +38,7 @@ function espresso_get_query_template( $type, $templates = array() ) {
  * Searches in the EVENT_ESPRESSO_TEMPLATE_DIR before EVENT_ESPRESSO_PLUGINFULLPATH so that templates which
  * inherit from a parent theme can just overload one file.
  *
- * @since 3.2
+ * @since 4.0
  *
  * @param string|array $template_names Template file(s) to search for, in order.
  * @param bool $load If true the template file will be loaded if it is found.
@@ -46,12 +47,12 @@ function espresso_get_query_template( $type, $templates = array() ) {
  */
 function espresso_locate_template( $template_names ) {
 	global $org_options;
-	$located = '';
+	$located = FALSE;
 
 	foreach ( (array) $template_names as $template_name ) {
 		if ( !$template_name )
 			continue;
-		if ( file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $template_name) && $org_options['template_settings']['use_custom_templates']) {
+		if ( file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $template_name) && isset( $org_options['template_settings']['use_custom_templates'] ) && $org_options['template_settings']['use_custom_templates']) {
 			$located = EVENT_ESPRESSO_TEMPLATE_DIR . $template_name;
 			break;
 		} else if ( file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/' . $template_name) ) {
@@ -59,14 +60,13 @@ function espresso_locate_template( $template_names ) {
 			break;
 		}
 	}
-
 	return $located;
 }
 
 /**
  * Retrieve path of registration page template in current or parent template.
  *
- * @since 3.2
+ * @since 4.0
  *
  * @return string
  */
@@ -82,7 +82,7 @@ function espresso_get_registration_page_template() {
 /**
  * Retrieve path of registration display template in current or parent template.
  *
- * @since 3.2
+ * @since 4.0
  *
  * @return string
  */
@@ -98,7 +98,7 @@ function espresso_get_registration_display_template() {
 /**
  * Retrieve path of event list template in current or parent template.
  *
- * @since 3.2
+ * @since 4.0
  *
  * @return string
  */
@@ -114,7 +114,7 @@ function espresso_get_event_list_template() {
 /**
  * Retrieve path of event_list_display template in current or parent template.
  *
- * @since 3.2
+ * @since 4.0
  *
  * @return string
  */
@@ -130,7 +130,7 @@ function espresso_get_event_list_display_template() {
 /**
  * Retrieve path of attendee list template in current or parent template.
  *
- * @since 3.2
+ * @since 4.0
  *
  * @return string
  */
@@ -143,74 +143,12 @@ function espresso_get_attendee_list_template() {
 	return espresso_get_query_template( 'attendee_list', $templates );
 }
 
-/**
- * Retrieve path of shopping cart template in current or parent template.
- *
- * @since 3.2
- *
- * @return string
- */
-function espresso_get_shopping_cart_template() {
 
-	$templates = array();
-
-	$templates[] = 'shopping_cart.php';
-
-	return espresso_get_query_template( 'shopping_cart', $templates );
-}
-
-/**
- * Retrieve path of widget template in current or parent template.
- *
- * @since 3.2
- *
- * @return string
- */
-function espresso_get_widget_template() {
-
-	$templates = array();
-
-	$templates[] = 'widget.php';
-
-	return espresso_get_query_template( 'widget', $templates );
-}
-
-/**
- * Retrieve path of confirmation display template in current or parent template.
- *
- * @since 3.2
- *
- * @return string
- */
-function espresso_get_confirmation_display_template() {
-
-	$templates = array();
-
-	$templates[] = 'confirmation_display.php';
-
-	return espresso_get_query_template( 'confirmation_display', $templates );
-}
-
-/**
- * Retrieve path of payment page template in current or parent template.
- *
- * @since 3.2
- *
- * @return string
- */
-function espresso_get_payment_page_template() {
-
-	$templates = array();
-
-	$templates[] = 'payment_page.php';
-
-	return espresso_get_query_template( 'payment_page', $templates );
-}
 
 /**
  * Retrieve path of payment_overview template in current or parent template.
  *
- * @since 3.2
+ * @since 4.0
  *
  * @return string
  */
@@ -223,18 +161,15 @@ function espresso_get_payment_overview_template() {
 	return espresso_get_query_template( 'payment_overview', $templates );
 }
 
+
 /**
- * Retrieve path of return_payment template in current or parent template.
+ * Retrieve path of widget template in current or parent template.
  *
- * @since 3.2
+ * @since 4.0
  *
  * @return string
  */
-function espresso_get_return_payment_template() {
-
-	$templates = array();
-
-	$templates[] = 'return_payment.php';
-
-	return espresso_get_query_template( 'return_payment', $templates );
+function espresso_get_widget_template( $widget = FALSE ) {
+	$widget_name = array_shift( explode( '.', $widget )) . '_widget';
+	return espresso_get_query_template( $widget_name, array( $widget ));
 }

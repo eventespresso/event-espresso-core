@@ -78,7 +78,7 @@ class EEM_State extends EEM_TempBase {
 	*/	
 	public function get_all_states() {
 		if ( ! self::$_all_states ) {
-			self::$_all_states = $this->get_all( 'STA_name', 'ASC', array( 0,99999 ));
+			self::$_all_states = self::instance()->get_all( 'STA_name', 'ASC', array( 0,99999 ));
 		}
 		return self::$_all_states;
 	}
@@ -91,7 +91,7 @@ class EEM_State extends EEM_TempBase {
 	*/	
 	public function get_all_active_states() {
 		if ( ! self::$_active_states ) {
-			self::$_active_states =  $this->get_all_where( array( 'STA_active' => 1 ), 'STA_name', 'ASC', '=', array( 0,99999 ));
+			self::$_active_states =  self::instance()->get_all_where( array( 'STA_active' => 1 ), 'STA_name', 'ASC', '=', array( 0,99999 ));
 		}
 		return self::$_active_states;
 	}
@@ -104,7 +104,7 @@ class EEM_State extends EEM_TempBase {
 	 */
 	public function get_all_states_of_active_countries(){
 		if ( $countries = EEM_Country::instance()->get_all_active_countries() ) {
-			if ( $states = EEM_State::instance()->get_all_where( array( 'CNT_ISO' => array_keys( $countries ), 'STA_active' => 1 ), 'STA_name', 'ASC', array( 'CNT_ISO' => 'IN', 'STA_active' => '=' ))) {
+			if ( $states = self::instance()->get_all_where( array( 'CNT_ISO' => array_keys( $countries ), 'STA_active' => 1 ), 'STA_name', 'ASC', array( 'CNT_ISO' => 'IN', 'STA_active' => '=' ))) {
 				return $states;
 			}
 		}
@@ -120,7 +120,7 @@ class EEM_State extends EEM_TempBase {
 		if ( ! $countries ) {
 			return FALSE;
 		}
-		if ( $states = EEM_State::instance()->get_all_where( array( 'CNT_ISO' => array_keys( $countries ), 'STA_active' => 1 ), 'STA_name', 'ASC', array( 'CNT_ISO' => 'IN', 'STA_active' => '=' ))) {
+		if ( $states = self::instance()->get_all_where( array( 'CNT_ISO' => array_keys( $countries ), 'STA_active' => 1 ), 'STA_name', 'ASC', array( 'CNT_ISO' => 'IN', 'STA_active' => '=' ))) {
 			return $states;
 		}
 		return FALSE;
@@ -134,7 +134,7 @@ class EEM_State extends EEM_TempBase {
 		if ( ! $countries ) {
 			return FALSE;
 		}
-		if ( $states = EEM_State::instance()->get_all_where( array( 'CNT_ISO' => array_keys( $countries )), 'STA_name', 'ASC', array( 'CNT_ISO' => 'IN' ))) {
+		if ( $states = self::instance()->get_all_where( array( 'CNT_ISO' => array_keys( $countries )), 'STA_name', 'ASC', array( 'CNT_ISO' => 'IN' ))) {
 			return $states;
 		}
 		return FALSE;

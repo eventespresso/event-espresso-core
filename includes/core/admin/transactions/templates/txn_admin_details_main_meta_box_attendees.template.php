@@ -5,7 +5,8 @@
 		<table class="admin-primary-mbox-tbl">
 			<thead>
 				<tr>
-					<th class="jst-left"><?php _e( '#', 'event_espresso' );?></th>
+					<th class="jst-cntr"><?php _e( '#', 'event_espresso' );?></th>
+					<th class="jst-cntr"><?php _e( 'REG ID', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Event Name', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Attendee', 'event_espresso' );?></th>
 					<th class="jst-rght"><?php _e( 'Ticket Price', 'event_espresso' );?></th>
@@ -26,7 +27,13 @@
 						$attendee['email'] = isset( $attendee['email'] ) ? $attendee['email'] : $attendees[1]['email'];
 					?>
 				<tr>
-					<td class="jst-left"><?php echo$att_nmbr;?></td>
+					<td class="jst-rght"><?php echo$att_nmbr;?></td>
+					<td class="jst-rght">
+						<?php $att_link = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$reg->ID() ), REG_ADMIN_URL ); ?>
+						<a href="<?php echo $att_link; ?>" title="<?php _e( 'View registration details for this attendee', 'event_espresso' );?>">
+							<?php echo $reg->ID();?>
+						</a>					
+					</td>
 					<td class="jst-left"><?php echo stripslashes( $event );?></td>
 					<td class="jst-left">
 						<?php 
@@ -34,7 +41,7 @@
 						$attendee_name .= $att->lname() != '' ? ' ' . $att->lname() : ' ' . $attendee['lname'];
 						$att_link = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'ATT_ID'=>$att->ID() ), REG_ADMIN_URL ); 
 						?>
-						<a href="<?php echo $att_link; ?>" title="<?php _e( 'View details for this attendee', 'event_espresso' );?>">
+						<a href="<?php echo $att_link; ?>" title="<?php _e( 'View contact details for this attendee', 'event_espresso' );?>">
 							<?php echo $attendee_name;?>
 						</a>					
 					</td>

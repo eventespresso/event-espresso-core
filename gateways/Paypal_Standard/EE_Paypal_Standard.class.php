@@ -569,20 +569,21 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		
 		$this->ipnData=$_POST;
+		//printr( $_POST, '$_POST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$response_post_data=$_POST + array('cmd'=>'_notify-validate');
-		$result= wp_remote_post($this->_gatewayUrl, array('body' => $response_post_data, 'sslverify' => false, 'timeout' => 60));
-		//echo "eepaypstandard results:";print_r($result);
+		$paypal_results = wp_remote_post($this->_gatewayUrl, array('body' => $response_post_data, 'sslverify' => false, 'timeout' => 60));
+		//printr( $paypal_results, '$paypal_results  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
-		if (!is_wp_error($result) && array_key_exists('body',$result) && strcmp($result['body'], "VERIFIED") == 0) { 
+		if (!is_wp_error($paypal_results) && array_key_exists('body',$paypal_results) && strcmp($paypal_results['body'], "VERIFIED") == 0) { 
 			//echo "eepaypalstandard success!";
-			$this->ipnResponse = $result['body'];
+			$this->ipnResponse = $paypal_results['body'];
 			return true;
 		}else{
-			$this->lastError = "IPN Validation Failed . $this->_gatewayUrl with response:".print_r($result['body'],true);
-			//echo "eepaypalstandard error:".is_wp_error($result).", body equals VERIFIED:".(strcmp($result['body'], "VERIFIED") == 0);
-			$this->ipnResponse=$result['body'];
+			$this->lastError = "IPN Validation Failed . $this->_gatewayUrl with response:".print_r($paypal_results['body'],true);
+			//echo "eepaypalstandard error:".is_wp_error($paypal_results).", body equals VERIFIED:".(strcmp($paypal_results['body'], "VERIFIED") == 0);
+			$this->ipnResponse=$paypal_results['body'];
 			if($this->_debug_mode){
-				echo "error!".print_r($this->lastError,true);
+				echo "error! ".print_r( $this->lastError,true );
 			}
 			return false;
 		}

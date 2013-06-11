@@ -88,7 +88,7 @@ class EEM_Country extends EEM_TempBase {
 	*/	
 	public function get_all_countries() {
 		if ( ! self::$_all_countries ) {
-			self::$_all_countries = $this->get_all( NULL, 'ASC', array( 0,99999 ));
+			self::$_all_countries = self::instance()->get_all( NULL, 'ASC', array( 0,99999 ));
 		}
 		return self::$_all_countries;
 	}
@@ -101,7 +101,7 @@ class EEM_Country extends EEM_TempBase {
 	*/	
 	public function get_all_active_countries() {
 		if ( ! self::$_active_countries ) {
-			self::$_active_countries =  $this->get_all_where( array( 'CNT_active' => 1 ), NULL, 'ASC', '=', array( 0,99999 ));
+			self::$_active_countries =  self::instance()->get_all_where( array( 'CNT_active' => 1 ), NULL, 'ASC', '=', array( 0,99999 ));
 		}
 		return self::$_active_countries;
 	}

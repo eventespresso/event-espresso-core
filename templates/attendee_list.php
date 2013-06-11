@@ -37,66 +37,78 @@ li.attendee_details{
 
 //The following code displays your list of attendees.
 //The processing for this function is managed in the shortcodes.php file.
-if (!function_exists('event_espresso_show_attendess')) {
-	function event_espresso_show_attendess($sql,$show_gravatar,$paid_only, $sort=''){
-		//echo $sql;
+if ( ! function_exists( 'event_espresso_show_attendess' )) {
+	function event_espresso_show_attendess( $SQL, $show_gravatar, $paid_only, $sort='' ){
+
 		global $wpdb,$espresso_reg_page;
-		$events = $wpdb->get_results($sql);
+		// retrieve events
+		$events = $wpdb->get_results( $SQL, OBJECT_K );
+		// grab list of event IDs
+		$EVT_IDs = array_keys( $events );
+		// filter registrants based on REG status
+		$where_cols_n_values = $paid_only == 'true' ? array( 'STS_ID' => EEM_Registration::status_id_approved ) : array();
+		/// get all registrations for the above events
+		$registrations = EEM_Registration::instance()->get_all_registrations_for_events( $EVT_IDs, $where_cols_n_values );		
+		// couple of arrays for holding data
+		$ATT_IDs = array();
+		$event_attendees = array();
+		// now loop thru all of our registrations
+		foreach ( $registrations as $registration ) {
+			// grab the attendee ID
+			$ATT_ID = $registration->get( 'ATT_ID' );
+			// save that to a list
+			$ATT_IDs[] = $ATT_ID;
+			// also save to a list organized by event
+			$event_attendees[ $registration->get( 'EVT_ID' ) ][] = $ATT_ID;
+		}
+		// grab all of the attendee data for ALL of our registrations
+		$all_attendees = EEM_Attendee::instance()->get_attendees_in_list( $ATT_IDs );
+		// we're gonna need this
+		$states = EEM_State::get_all_states();
+		// now loop thru our events
 		foreach ($events as $event){
-			$event_id = $event->id;
-			$event_name = stripslashes_deep($event->event_name);
-			if (!$espresso_reg_page){
-				$event_desc = do_shortcode(stripslashes_deep($event->event_desc));
-			}
+			// grab sub-array of attendees for this event
+			$attendees = isset( $event_attendees[ $event->id ] ) ? $event_attendees[ $event->id ] : array() ;
+			// is there anybody out there ?
+			if ( ! empty( $attendees )) {
+				// we have attendees for this event so let's proceed
+				$event_name = stripslashes( $event->event_name );
+				$event_desc = ! $espresso_reg_page ? do_shortcode( stripslashes( $event->event_desc )) : '';
+				//This variable is only available using the espresso_event_status function which is loacted in the Custom Files Addon (http://eventespresso.com/download/plugins-and-addons/custom-files-addon/)
+				$event_status = function_exists('espresso_event_status') ? ' - ' . espresso_event_status( $event->id ) : '';
+	?>
 
-			//This variable is only available using the espresso_event_status function which is loacted in the Custom Files Addon (http://eventespresso.com/download/plugins-and-addons/custom-files-addon/)
-			$event_status = function_exists('espresso_event_status') ? ' - ' . espresso_event_status($event_id) : '';
-			//Example usage in the event title:
-			/*<h2><?php _e('Attendee Listing For: ','event_espresso'); ?><?php echo $event_name . ' - ' . $event_status?> </h2>*/
-?>
-
-<div class="event-display-boxes ui-widget">
-
-		<h2 class="event_title ui-widget-header ui-corner-top">
-	<?php _e('Attendee Listing For: ','event_espresso'); ?>
-	<?php echo $event_name . $event_status?></h2>
-
+	<div class="event-display-boxes ui-widget">
+		<h2 class="event_title ui-widget-header ui-corner-top"><?php echo __('Attendee Listing For: ','event_espresso') . $event_name . $event_status; ?></h2>
 		<div class="event-data-display ui-widget-content ui-corner-bottom">
-
-	<!--<?php echo wpautop($event_desc); ?>-->
 			<ol class="attendee_list">
-<?php
-	$a_sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "'";
-	$a_sql .= $paid_only == 'true'? " AND (payment_status='Completed' OR payment_status='Pending') ":'';
-	$a_sql .= $sort;
-	//echo $a_sql;
-	$attendees = $wpdb->get_results($a_sql);
-	foreach ($attendees as $attendee){
-		$id = $attendee->id;
-		$lname = $attendee->lname;
-		$fname = $attendee->fname;
-		$city = $attendee->city;
-		$state = $attendee->state;
-		$country = $attendee->state;
-		$email = $attendee->email;
-		$gravatar = $show_gravatar == 'true'? get_avatar( $email, $size = '100', $default = 'http://www.gravatar.com/avatar/' ) : '';
-		$city_state = $city != '' || $state != '' ? '<br />' . ($city != '' ? $city :'') . ($state != '' ? ', ' . $state :' ') :'';
+			<?php
+				foreach ( $attendees as $ATT_ID  ){
+					$attendee = $all_attendees[ $ATT_ID ];
+					$id = $attendee->ID();
+					$attendee_name = $attendee->full_name();
+					$city = $attendee->city();
+					$state = $attendee->state();
+					$country = $attendee->country_ISO();
+					$email = $attendee->email();
+					$gravatar = $show_gravatar == 'true'? get_avatar( $email, $size = '100', $default = 'http://www.gravatar.com/avatar/' ) : '';
+					$city_state = ! empty( $city ) || ! empty( $state ) ? ' &nbsp;<span class="small-text lt-grey-text">of</span>&nbsp; ' . $city : '';
+					$city_state .=   ! empty( $state ) ? ', ' . $state : '';
+					//These are example variables to show answers to questions
+					//$custom_question_1 = '<br />'.do_shortcode('[EE_ANSWER q="12" a="'.$id.'"]');
+					//$custom_question_2 = '<br />'.do_shortcode('[EE_ANSWER q="13" a="'.$id.'"]');
 
-		//These are example variables to show answers to questions
-		//$custom_question_1 = '<br />'.do_shortcode('[EE_ANSWER q="12" a="'.$id.'"]');
-		//$custom_question_2 = '<br />'.do_shortcode('[EE_ANSWER q="13" a="'.$id.'"]');
-
-?>
-				<li class="attendee_details"> <span class="espresso_attendee"><?php echo $gravatar ?><?php echo stripslashes_deep($fname . ' ' . $lname) . $city_state .'</p>'; ?> </span>
+	?>
+				<li class="attendee_details">
+					<span class="espresso_attendee"><?php echo $gravatar ?><?php echo '<b>' . $attendee_name . '</b>' . $city_state; ?> </span>
 					<div class="clear"></div>
 				</li>
-<?php
-	}
-?>
+	<?php } ?>
 			</ol>
+		</div>
 	</div>
-</div>
-<?php
+	<?php				
+			}
 		}
 	}
 }

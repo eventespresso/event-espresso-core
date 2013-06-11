@@ -77,7 +77,10 @@ class EE_DTT_Helper {
 
 
 
-	public static function prepare_dtt_for_db( $dttvalue ) {
+	public static function prepare_dtt_for_db( $dttvalue = FALSE ) {
+		if ( ! $dttvalue ) {
+			$dttvalue = time();
+		}
 		$timestamp = is_numeric( $dttvalue ) ? self::_convert_from_numeric_value_to_utc_mysqltimestamp( $dttvalue ) : self::_convert_from_string_value_to_utc_mysqltimestamp( $dttvalue );
 		return $timestamp;
 	}

@@ -602,7 +602,7 @@ class EE_Attendee extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function fname() {
-		return $this->_ATT_fname;
+		return stripslashes( $this->_ATT_fname );
 	}
 	
 	
@@ -625,7 +625,7 @@ class EE_Attendee extends EE_Base_Class{
 	 * @return string
 	 */
 	public function full_name(){
-		return stripslashes_deep($this->_ATT_fname . " " . $this->_ATT_lname);
+		return stripslashes($this->_ATT_fname . " " . $this->_ATT_lname);
 	}
 
 	
@@ -637,7 +637,7 @@ class EE_Attendee extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function lname() {
-		return $this->_ATT_lname;
+		return stripslashes( $this->_ATT_lname );
 	}
 
 
@@ -647,7 +647,7 @@ class EE_Attendee extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function address() {
-		return $this->_ATT_address;
+		return stripslashes( $this->_ATT_address );
 	}
 
 
@@ -657,7 +657,7 @@ class EE_Attendee extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function address2() {
-		return $this->_ATT_address2;
+		return stripslashes( $this->_ATT_address2 );
 	}
 
 
@@ -667,7 +667,7 @@ class EE_Attendee extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function city() {
-		return $this->_ATT_city;
+		return stripslashes( $this->_ATT_city );
 	}
 
 
@@ -683,11 +683,35 @@ class EE_Attendee extends EE_Base_Class{
 
 
 	/**
+	*		get Attendee State ? Province
+	* 		@access		public
+	*/	
+	public function state() {
+		$states = EEM_State::get_all_states();
+		$state = isset( $states[ $this->_STA_ID ] ) ? $states[ $this->_STA_ID ]->get( 'STA_name' ) : '';
+		return $state;
+	}
+
+
+
+	/**
 	*		get Attendee Country ISO Code
 	* 		@access		public
 	*/	
 	public function country_ISO() {
 		return $this->_CNT_ISO;
+	}
+
+
+
+	/**
+	*		get Attendee Country
+	* 		@access		public
+	*/	
+	public function country() {
+		$countries = EEM_Country::get_all_countries();
+		$country = isset( $countries[ $this->_CNT_ISO ] ) ? $countries[ $this->_CNT_ISO ]->get( 'CNT_name' ) : '';
+		return $country;
 	}
 
 

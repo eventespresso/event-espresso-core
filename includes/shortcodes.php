@@ -78,13 +78,17 @@ add_shortcode('EVENT_ESPRESSO_CATEGORY', 'show_event_category');
  * [LISTATTENDEES category_identifier="your_category_identifier"]
  */
 if (!function_exists('event_espresso_attendee_list')) {
-	function event_espresso_attendee_list($event_identifier = 'NULL', $category_identifier = 'NULL', $show_gravatar = 'false', $show_expired = 'false', $show_secondary = 'false', $show_deleted = 'false', $show_recurrence = 'true', $limit = '0', $paid_only = 'false', $sort_by = 'last name') {
+	function event_espresso_attendee_list($event_identifier = 'NULL', $category_identifier = 'NULL', $show_gravatar = 'false', $show_expired = 'false', $show_secondary = 'false', $show_deleted = 'false', $limit = '0', $paid_only = 'false', $sort_by = 'last name') {
+		
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-		$show_expired = $show_expired == 'false' ? " AND e.start_date >= '" . date('Y-m-d') . "' " : '';
+		require_once ( EE_HELPERS . 'EE_DTT_Helper.helper.php' );
+		
+		$show_expired = $show_expired == 'false' ? " AND dtt.DTT_EVT_start >= '" . EE_DTT_Helper::prepare_dtt_for_db() . "' " : '';
 		$show_secondary = $show_secondary == 'false' ? " AND e.event_status != 'S' " : '';
 		$show_deleted = $show_deleted == 'false' ? " AND e.event_status != 'D' " : '';
 		$sort = $sort_by == 'last name' ? " ORDER BY lname " : '';
 		$limit = $limit > 0 ? " LIMIT 0," . $limit . " " : '';
+		
 		if ($event_identifier != 'NULL') {
 			$type = 'event';
 		} else if ($category_identifier != 'NULL') {
@@ -97,6 +101,7 @@ if (!function_exists('event_espresso_attendee_list')) {
 	
 		if (!empty($type) && $type == 'event') {
 			$sql = "SELECT e.* FROM " . EVENTS_DETAIL_TABLE . " e ";
+			$sql .= 'JOIN ' . ESP_DATETIME_TABLE . ' dtt ON e.id = dtt.EVT_ID ';
 			$sql .= " WHERE e.is_active = true ";
 			$sql .= " AND e.event_identifier = '" . $event_identifier . "' ";
 			$sql .= $show_secondary;
@@ -108,6 +113,7 @@ if (!function_exists('event_espresso_attendee_list')) {
 			$sql = "SELECT e.* FROM " . EVENTS_CATEGORY_TABLE . " c ";
 			$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.cat_id = c.id ";
 			$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id = r.event_id ";
+			$sql .= 'JOIN ' . ESP_DATETIME_TABLE . ' dtt ON e.id = dtt.EVT_ID ';
 			$sql .= " WHERE c.category_identifier = '" . $category_identifier . "' ";
 			$sql .= " AND e.is_active = true ";
 			$sql .= $show_secondary;
@@ -117,6 +123,7 @@ if (!function_exists('event_espresso_attendee_list')) {
 			event_espresso_show_attendess($sql, $show_gravatar, $paid_only, $sort);
 		} else {
 			$sql = "SELECT e.* FROM " . EVENTS_DETAIL_TABLE . " e ";
+			$sql .= 'JOIN ' . ESP_DATETIME_TABLE . ' dtt ON e.id = dtt.EVT_ID ';
 			$sql .= " WHERE e.is_active=true ";
 			$sql .= $show_secondary;
 			$sql .= $show_expired;
@@ -133,14 +140,31 @@ if (!function_exists('event_espresso_attendee_list')) {
 
 if (!function_exists('event_espresso_list_attendees')) {
 	function event_espresso_list_attendees($atts) {
+		
 		//echo $atts;
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-		extract(shortcode_atts(array('event_identifier' => 'NULL', 'category_identifier' => 'NULL', 'event_category_id' => 'NULL', 'show_gravatar' => 'NULL', 'show_expired' => 'NULL', 'show_secondary' => 'NULL', 'show_deleted' => 'NULL', 'limit' => 'NULL', 'paid_only' => 'NULL'), $atts));
+		extract(
+			shortcode_atts(	
+				array(
+					'event_identifier' => 'NULL', 
+					'category_identifier' => 'NULL', 
+					'event_category_id' => 'NULL', 
+					'show_gravatar' => 'NULL', 
+					'show_expired' => 'NULL', 
+					'show_secondary' => 'NULL', 
+					'show_deleted' => 'NULL', 
+					'limit' => 'NULL', 
+					'paid_only' => 'NULL'
+				), 
+				$atts
+			)
+		);
+		// tell the plugin to load the required scripts
 		global $load_espresso_scripts;
-		$load_espresso_scripts = true; //This tells the plugin to load the required scripts
+		$load_espresso_scripts = true; 
+		
 		//get the event identifiers
 		$event_identifier = "{$event_identifier}";
-
 		$show_gravatar = "{$show_gravatar}";
 
 		//get the category identifiers
@@ -155,7 +179,7 @@ if (!function_exists('event_espresso_list_attendees')) {
 		$paid_only = "{$paid_only}";
 
 		ob_start();
-		event_espresso_attendee_list($event_identifier, $category_identifier, $show_gravatar, $show_expired, $show_secondary, $show_deleted, $limit, $paid_only);
+		event_espresso_attendee_list( $event_identifier, $category_identifier, $show_gravatar, $show_expired, $show_secondary, $show_deleted, $limit, $paid_only);
 		$buffer = ob_get_contents();
 		ob_end_clean();
 		return $buffer;
