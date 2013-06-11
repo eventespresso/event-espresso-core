@@ -10,7 +10,7 @@ class	EE_Register_CPTs{
 		$this->register_taxonomy('event_categories', __("Event Category", "event_espresso"), __("Event Categories", "event_espresso"), 
 				array(
 					'public'=>true));
-		$this->register_taxonomy('event_type', __("Event Type", "event_espresso"), __("Event Types", "event_espresso"), 
+		$this->register_taxonomy('event_types', __("Event Type", "event_espresso"), __("Event Types", "event_espresso"), 
 				array(
 					'public'=>true,
 					'hierarchical'=>false
