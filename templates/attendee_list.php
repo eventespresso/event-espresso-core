@@ -88,12 +88,12 @@ if ( ! function_exists( 'event_espresso_show_attendess' )) {
 					$id = $attendee->ID();
 					$attendee_name = $attendee->full_name();
 					$city = $attendee->city();
-					$state = $attendee->state_ID();
+					$state = $attendee->state();
 					$country = $attendee->country_ISO();
 					$email = $attendee->email();
 					$gravatar = $show_gravatar == 'true'? get_avatar( $email, $size = '100', $default = 'http://www.gravatar.com/avatar/' ) : '';
 					$city_state = ! empty( $city ) || ! empty( $state ) ? ' &nbsp;<span class="small-text lt-grey-text">of</span>&nbsp; ' . $city : '';
-					$city_state .=  isset( $states[ $state ] ) ? ', ' . $states[ $state ]->get( 'STA_name' ) : '';
+					$city_state .=   ! empty( $state ) ? ', ' . $state : '';
 					//These are example variables to show answers to questions
 					//$custom_question_1 = '<br />'.do_shortcode('[EE_ANSWER q="12" a="'.$id.'"]');
 					//$custom_question_2 = '<br />'.do_shortcode('[EE_ANSWER q="13" a="'.$id.'"]');
