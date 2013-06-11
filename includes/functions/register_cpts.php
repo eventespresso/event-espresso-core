@@ -7,15 +7,70 @@ function espresso_register_cpts(){
 }
 class	EE_Register_CPTs{
 	function __construct(){
-		$this->register_CPT('espresso_events', __("Event", "event_espresso"),  __("Events", "event_espresso"));
-		$this->register_CPT('espresso_venues', __("Venue", "event_espresso"), __("Venues", "event_espresso"));
+		$this->register_taxonomy('event_categories', __("Event Category", "event_espresso"), __("Event Categories", "event_espresso"), 
+				array(
+					'public'=>true));
+		$this->register_taxonomy('event_type', __("Event Type", "event_espresso"), __("Event Types", "event_espresso"), 
+				array(
+					'public'=>true,
+					'hierarchical'=>false
+					));
+		$this->register_CPT('espresso_events', __("Event", "event_espresso"),  __("Events", "event_espresso"),
+				array(
+					'taxonomies'=>array(
+						'event_categories',
+						'event_type'
+				)));
+		$this->register_CPT('espresso_venues', __("Venue", "event_espresso"), __("Venues", "event_espresso"),
+				array(
+					'taxonomies'=>array(
+						'event_categories'
+					)
+				));
 		$this->register_CPT('espresso_persons',  __("Person", "event_espresso"),  __("Persons", "event_espresso"));
 		$this->register_CPT('espresso_attendees',  __("Attendee", "event_espresso"),  __("Attendees", "event_espresso"),
 				array(
 					'public'=>'false',
 					'publicly_queryable'=>'false',
 					'hierarchical'=>'false'));
+		
+		
+		
 	}
+	/**
+	 * Registers a custom taxonomy. Should be called before registering custom post types,
+	 * otherwise you should link the taxonomy to the custom post type using 'register_taxonomy_for_object_type'.
+	 * 
+	 * @param string $taxonomy_name, eg 'books'
+	 * @param string $singular_name internationalized singular name
+	 * @param type $plural_name internationalized plural name
+	 * @param type $override_args like $args on http://codex.wordpress.org/Function_Reference/register_taxonomy
+	 */
+	function register_taxonomy($taxonomy_name, $singular_name, $plural_name, $override_args = array()){
+		
+		$args = array(
+		'hierarchical'      => true,
+		'labels'            => array(
+			'name'=>  $plural_name,
+			'singular_name'=>$singular_name
+		),
+		'show_ui'           => true,
+		'show_admin_column' => true,
+		'query_var'         => true,
+		//'rewrite'           => array( 'slug' => 'genre' ),
+	);
+		
+	  if($override_args){
+		  if(isset($override_args['labels'])){
+			  $labels = array_merge($args['labels'],$override_args['labels']);
+			  $args['labels'] = $labels;
+		  }
+		  $args = array_merge($args,$override_args);
+		  
+	  }
+		register_taxonomy($taxonomy_name,null, $args);
+	}
+	
 	
 	/**
 	 * Registers a new custom post type. Sets default settings given only the following params.
