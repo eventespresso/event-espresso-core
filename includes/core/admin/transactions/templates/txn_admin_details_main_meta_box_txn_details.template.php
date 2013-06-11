@@ -22,24 +22,24 @@
 			<tr>
 				<td class="jst-left"><?php echo $item['line_item'];?></td>
 				<td class="jst-left"><?php echo $item['name'];?></td>
-				<td class="jst-left"><?php echo $item['date'] . ' ' .  $item['time'];?></td>
+				<td class="no-break jst-left"><?php echo $item['date'] . ' ' .  $item['time'];?></td>
 				<td class="jst-left"><?php echo stripslashes( $item['price_desc'] );?></td>
 				<td class="jst-rght"><?php echo $currency_sign . '&nbsp;' . number_format( $item['price'], 2 );?></td>
 				<td class="jst-rght"><?php echo $item['qty'];?></td>
-				<td class="jst-rght"><?php echo $currency_sign . '&nbsp;' . number_format( $item['line_total'], 2 );?></td>
+				<td class="no-break jst-rght"><?php echo $currency_sign . '&nbsp;' . number_format( $item['line_total'], 2 );?></td>
 			</tr>
 		<?php endforeach; // $items?>
 		<?php if ( is_array($taxes) ) : ?>
 			<?php foreach ( $taxes as $tax ) : ?>
 				<tr class="admin-primary-mbox-taxes-tr">
 					<th class=" jst-rght" colspan="6"><?php echo $tax['name'];?></th>
-					<th class=" jst-rght"><?php echo $currency_sign . '&nbsp;' . number_format( $tax['amount'], 2 );?></th>
+					<th class="no-break jst-rght"><?php echo $currency_sign . '&nbsp;' . number_format( $tax['amount'], 2 );?></th>
 				</tr>
 			<?php endforeach; // $taxes?>
 		<?php endif; // $taxes?>
 				<tr class="admin-primary-mbox-total-tr">
 					<th class=" jst-rght" colspan="6"><?php _e( 'Transaction Total', 'event_espresso' );?></th>
-					<th class=" jst-rght"><?php echo $currency_sign;?>&nbsp;<span id="txn-admin-grand-total"><?php echo number_format( $grand_total, 2 );?></span></th>
+					<th class="no-break jst-rght"><?php echo $currency_sign;?>&nbsp;<span id="txn-admin-grand-total"><?php echo number_format( $grand_total, 2 );?></span></th>
 				</tr>
 			</tbody>	
 		</table>
@@ -109,18 +109,18 @@
 			<?php foreach ( $payments as $PAY_ID => $payment ) : ?>
 				<tr id="txn-admin-payment-tr-<?php echo $PAY_ID;?>">
 					<td class=" jst-cntr">
-						<ul class="txn-overview-actions-ul">
-							<li>
+<!--						<ul class="txn-overview-actions-ul">
+							<li>-->
 								<a class="txn-admin-payment-action-edit-lnk" title="<?php _e( 'Edit Payment', 'event_espresso' );?>" rel="<?php echo $PAY_ID;?>">
 									<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/edit.png" alt="" width="13" height="13" />
 								</a>
-							</li>
-							<li>
+<!--							</li>
+							<li>-->
 								<a class="txn-admin-payment-action-delete-lnk" title="<?php _e( 'Delete Payment', 'event_espresso' );?>" rel="<?php echo $PAY_ID;?>">
 									<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/trash-16x16.png" alt="" width="13" height="13" />
 								</a>
-							</li>
-						</ul>
+<!--							</li>
+						</ul>-->
 					</td>
 					<td class=" jst-rght">
 						<div id="payment-id-<?php echo $PAY_ID;?>"><?php echo $PAY_ID;?></div>
@@ -131,7 +131,7 @@
 							<div id="payment-STS_ID-<?php echo $PAY_ID;?>" class="hidden"><?php echo $payment->STS_ID();?></div>
 						</div>
 					</td>
-					<td class=" jst-left">
+					<td class="no-break jst-left">
 						<div id="payment-date-<?php echo $PAY_ID;?>" class="payment-date-dv"><?php echo $payment->timestamp('D M j, Y');?></div>
 					</td>
 					<td class=" jst-cntr">
@@ -155,7 +155,7 @@
 					<td class=" jst-left">
 						<div id="payment-accntng-<?php echo $PAY_ID;?>"><?php echo $payment->extra_accntng();?></div>
 					</td>	
-					<td class=" jst-rght">
+					<td class="no-break jst-rght">
 						<?php $payment_class = $payment->amount() > 0 ? 'txn-admin-payment-status-' . $payment->STS_ID() : 'txn-admin-payment-status-PDC'; ?>
 						<span class="<?php echo $payment_class;?>">
 							<?php echo $currency_sign; ?>&nbsp;
@@ -181,7 +181,7 @@
 				</tr>
 				<tr id="txn-admin-payments-total-tr" class="admin-primary-mbox-total-tr<?php echo $pay_totals_class;?>">
 					<th class=" jst-rght" colspan="10"><span id="payments-total-spn"><?php echo $overpaid . __( 'Payments Total', 'event_espresso' );?></span></th>
-					<th class=" jst-rght"><?php echo $currency_sign;?>&nbsp;<span id="txn-admin-payment-total"><?php echo number_format( $payment_total, 2 );?></span></th>
+					<th class="no-break jst-rght"><?php echo $currency_sign;?>&nbsp;<span id="txn-admin-payment-total"><?php echo number_format( $payment_total, 2 );?></span></th>
 				</tr>			
 		<?php else : ?>
 				<tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr">
@@ -191,7 +191,7 @@
 				</tr>
 				<tr id="txn-admin-payments-total-tr" class="admin-primary-mbox-total-tr hidden">
 					<th class=" jst-rght" colspan="10"><span id="payments-total-spn"><?php echo __( 'Payments Total', 'event_espresso' );?></span></th>
-					<th class=" jst-rght"><?php echo $currency_sign;?> <span id="txn-admin-payment-total"></span></th>
+					<th class="no-break jst-rght"><?php echo $currency_sign;?> <span id="txn-admin-payment-total"></span></th>
 				</tr>				
 		<?php endif; // $payments?>
 
