@@ -263,16 +263,6 @@ function return_espresso_content( $content ) {
 
 
 
-function espresso_widget() {
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-	espresso_require_template('init.php');
-	require(espresso_get_widget_template());
-	//The widget can be over-ridden with the custom files addon
-	register_widget('Event_Espresso_Widget');
-}
-
-
-
 function espresso_info_header() {
 	print( "<meta name='generator' content='Event Espresso Version " . EVENT_ESPRESSO_VERSION . "' />");
 }

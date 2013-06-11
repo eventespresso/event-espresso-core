@@ -151,7 +151,8 @@ function espresso_load_init() {
 	require_once(dirname(__FILE__) . '/includes/functions/init.php');
 	add_action('init', 'espresso_load_messages_init', 15);
 	add_action('init', 'espresso_add_rewrite_rules');
-	add_filter('query_vars', 'espresso_add_query_vars');	
+	add_filter('query_vars', 'espresso_add_query_vars');
+	add_action('widgets_init', 'espresso_widget');	
 }
 add_action('plugins_loaded', 'espresso_load_init', 100);
 
@@ -180,7 +181,6 @@ if ( is_admin() ) {
 	add_action('init', 'espresso_export_invoice', 30);
 	//add_action('init', 'espresso_export_ticket', 30);
 	add_action('init', 'espresso_frontend_init', 25);
-	add_action('widgets_init', 'espresso_widget');
 	add_action('wp_head', 'espresso_info_header');
 	add_action('wp_enqueue_scripts', 'add_espresso_stylesheet', 20);
 	add_action('wp_enqueue_scripts', 'eei18n_js_strings', 100 );

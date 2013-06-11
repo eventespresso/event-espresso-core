@@ -1,159 +1,30 @@
 <?php
 if (!class_exists('Event_Espresso_Widget')) {
 	class Event_Espresso_Widget extends WP_Widget {
+		
+
+
+
+
+
+		/**
+		 * 	update - runs after submitting admin form
+		 *
+		 *  @access public
+		 *  @param array $new_instance
+		 *  @param array $old_instance
+		 */
 		function Event_Espresso_Widget() {
-
-			/* Widget settings. */
-
-			$widget_options = array( 'classname' => 'events', 'description' => __('A widget to display your upcoming events.', 'events') );
-			/* Widget control settings. */
-
-			$control_options = array( 'width' => 300, 'height' => 350, 'id_base' => 'events-widget' );
-			/* Create the widget. */
-
-			$this->WP_Widget( 'events-widget', __('Event Espresso Widget', 'events'), $widget_options, $control_options );
-
+			$widget_options = array( 
+				'classname' => 'events', 
+				'description' => __('A widget for displaying your upcoming events.', 'events') 
+			);
+			$this->WP_Widget( 'events-widget', __('Upcoming Events', 'events'), $widget_options );
 		}
-		function widget($args, $instance ) {
-
-			extract( $args );
-
-			global $wpdb, $org_options;
-			require_once ( EE_HELPERS . 'EE_Formatter.helper.php' );
-			/* Our variables from the widget settings. */
-
-			$title = apply_filters('widget_title', $instance['title'] );
-
-			/* Before widget (defined by themes). */
-			echo $before_widget;
-
-			/* Display the widget title if one was input (before and after defined by themes). */
-			if ( $title )
-				echo $before_title . $title . $after_title;
-
-				if ($instance['category_name'] != ''){
-					$type = 'category';
-				}
-
-					$event_page_id =$org_options['event_page_id'];
-
-					$show_expired = $instance['show_expired'] == 'false' ? " AND (e.start_date >= '".date ( 'Y-m-d' )."' OR e.event_status = 'O' OR e.registration_end >= '".date ( 'Y-m-d' )."') " : '';
-					$show_secondary = $instance['show_secondary'] == 'false' ? " AND e.event_status != 'S' " : '';
-					$show_deleted = $instance['show_deleted'] == 'false' ? " AND e.event_status != 'D' " : '';
-					$limit = $instance['limit'] > 0 ? " LIMIT 0," . $instance['limit'] . " " : ' LIMIT 0,5 ';
-					//$order_by = $order_by != 'NULL'? " ORDER BY ". $order_by ." ASC " : " ORDER BY date(start_date), id ASC ";
-					$order_by = " ORDER BY date(start_date), id ASC ";
-
-					if ($type == 'category'){
-						$sql = "SELECT e.*, c.category_name, c.category_name, c.category_desc FROM " . EVENTS_CATEGORY_TABLE . " c ";
-						$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.cat_id = c.id ";
-						$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id = r.event_id ";
-						$sql .= " WHERE c.id = '" . $instance['category_name'] . "' ";
-						$sql .= " AND e.is_active = true ";
-					}else{
-						$sql = "SELECT e.* FROM " . EVENTS_DETAIL_TABLE . " e ";
-						$sql .= " WHERE e.is_active = true ";
-					}
-					$sql .= $show_expired;
-					$sql .= $show_secondary;
-					$sql .= $show_deleted;
-					$sql .= $order_by;
-					$sql .= $limit;
 
 
-					$events = $wpdb->get_results($sql);
 
-					//print_r($events);
-					//event_espresso_get_event_details($sql);
-						foreach ($events as $event) {
 
-							$event_id = $event->id;
-							$event_name = stripslashes_deep( $event->event_name );
-							$start_date = $event->start_date;
-							$category_name = $event->category_name !=''?$event->category_name:'';
-							$category_desc = $event->category_desc !=''?$event->category_desc:'';
-							$externalURL = $event->externalURL;
-							$ext_url = add_query_arg( array( 'page_id'=>$event_page_id, 'e_reg'=>'register', 'event_id'=>$event_id, 'name_of_event'=>$event_name ), home_url() );
-							$registration_url = $externalURL != '' ? $externalURL :  $ext_url;
-
-							if ( isset( $event->venue_city ) && $event->venue_city != '' )
-								$event_city = $event->venue_city . ', ';
-							elseif ( isset ( $event->city ) && $event->city != '')
-								$event_city = $event->city . ', ';
-							else
-								$event_city = '';
-
-							if ( isset ( $event->venue_state ) && $event->venue_state != '')
-								$event_state = $event->venue_state . ' - ';
-							elseif ( isset ( $event->state ) && $event->state != '')
-									$event_state = $event->state . ' - ';
-							else
-									$event_state = '';
-							
-							//Here we can create messages based on the event status
-							$status = event_espresso_get_is_active($event_id);
-							$status_display = ' - ' . $status['display_custom'];
-							$status_display_ongoing = $status['status'] == 'ONGOING'? ' - ' . $status['display_custom']:'';
-							$status_display_deleted = $status['status'] == 'DELETED'? ' - ' . $status['display_custom']:'';
-							$status_display_secondary = $status['status'] == 'SECONDARY'? ' - ' . $status['display_custom']:'';
-							$status_display_reg_closed = $status['status'] == 'REGISTRATION_CLOSED'? ' - ' . $status['display_custom']:'';
-							$status_display_not_open = $status['status'] == 'REGISTRATION_NOT_OPEN'? ' - ' . $status['display_custom']:'';
-							$status_display_open = $status['status'] == 'REGISTRATION_OPEN'? ' - ' . $status['display_custom']:'';
-
-							//You can also display a custom message. For example, this is a custom registration not open message:
-							$status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED'? ' - <span class="espresso_closed">'.__('Regsitration is Closed','event_espresso').'</span>':'';
-
-							if (!is_user_logged_in() && defined( 'EVENT_ESPRESSO_MEMBERS_DIR' ) && $member_only) {
-								//Display a message if the user is not logged in.
-								 //_e('Member Only Event. Please ','event_espresso') . event_espresso_user_login_link() . '.';
-							}else{
-								//Serve up the event list
-								//As of version 3.0.17 the event list details have been moved to event_list_display.php
-								switch ($status['status']){
-									case 'NOT_ACTIVE':
-									//Don't show the event if any of the above are true
-									break;
-
-									default:
-										?>
-							<li class="upcmng-evnt-wdgt-li-item">
-								<h6 class="upcmng-evnt-wdgt-hdr-link"><a href="<?php echo $registration_url;?>"><?php echo $event_name?></a></h6>
-								<span class="upcmng-evnt-wdgt-date"><?php echo $event_city . $event_state; ?><em><?php echo EE_Formatter::event_date_display($start_date)?></em></span>
-								<?php /* These are custom messages that can be displayed based on the event status. Just comment the one you want to use. */?>
-								<?php //echo $status_display; //Turn this on to display the overall status of the event. ?>
-								<?php //echo $status_display_ongoing; //Turn this on to display the ongoing message. ?>
-								<?php //echo $status_display_deleted; //Turn this on to display the deleted message. ?>
-								<?php //echo $status_display_secondary; //Turn this on to display the secondary message. ?>
-								<?php //echo $status_display_reg_closed; //Turn this on to display the secondary message. ?>
-								<?php //echo $status_display_not_open; //Turn this on to display the secondary message. ?>
-								<?php //echo $status_display_open; //Turn this on to display the secondary message. ?>
-								<?php //echo $status_display_custom_closed; //Turn this on to display the secondary message. ?>
-							</li>
-										<?php
-									break;
-									}
-								}
-							}
-			/* After widget (defined by themes). */
-			echo $after_widget;
-
-			}
-
-		/* Update the widget settings. */
-		function update( $new_instance, $old_instance ) {
-			$instance = $old_instance;
-
-			/* Strip tags for title and name to remove HTML (important for text inputs). */
-			$instance['title'] = strip_tags( $new_instance['title'] );
-			$instance['category_name'] = $new_instance['category_name'];
-			$instance['show_expired'] = $new_instance['show_expired'];
-			$instance['show_secondary'] = $new_instance['show_secondary'];
-			$instance['show_deleted'] = $new_instance['show_deleted'];
-			$instance['limit'] = $new_instance['limit'];
-
-			return $instance;
-
-		}
 
 		/**
 		 * Displays the widget settings controls on the widget panel.
@@ -163,43 +34,221 @@ if (!class_exists('Event_Espresso_Widget')) {
 		function form( $instance ) {
 
 			/* Set up some default widget settings. */
+			require_once( EE_CORE . 'admin/admin_helper.php' );
 
-			$defaults = array( 'title' => __('Upcoming Events', 'events'), 'category_name' => '', 'show_expired' => __('false', 'events'), 'show_secondary' => __('false', 'events'), 'show_deleted' => __('false', 'events') );
+			$defaults = array( 
+				'ee_wdgt_title' => __('Upcoming Events', 'events'),
+				'ee_wdgt_cat_name' => '',
+				'ee_wdgt_show_expired' => FALSE,
+				'ee_wdgt_limit' => 5,
+				'ee_wdgt_show_deleted' => FALSE,
+				'ee_wdgt_bg_color' => '#21759B'
+			);
 
 			$instance = wp_parse_args( (array) $instance, $defaults );
 
 			$values=array(
-				array('id'=>'false','text'=> __('No','event_espresso')),
-				array('id'=>'true','text'=> __('Yes','event_espresso')));
-				//select_input('allow_multiple', $values, $allow_multiple);
-			?>
+				array( 'id'=> TRUE, 'text'=> __('Yes','event_espresso')),
+				array( 'id'=>FALSE, 'text'=> __('No','event_espresso'))
+			);
 
-<!-- Widget Title: Text Input -->
+		?>
 
-<p>
-  <label for="<?php echo $this->get_field_id( 'title' ); ?>">
-    <?php _e('Title:', 'Upcoming Events'); ?>
-  </label>
-  <input id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo $instance['title']; ?>" size="20" type="text" />
-</p>
-<p> <label for="<?php echo $this->get_field_id( 'category_name' ); ?>">
-    <?php _e('Event Category:', 'event_espresso'); ?>
-  </label><br />
- <?php echo espresso_db_dropdown(id, category_name, EVENTS_CATEGORY_TABLE, id, $instance['category_name'], $strMethod="desc", $this->get_field_name( 'category_name' )) ?></p>
- <p>
-  <label for="<?php echo $this->get_field_id( 'limit' ); ?>">
-    <?php _e('Limit:', 'event_espresso'); ?>
-  </label>
-  <input id="<?php echo $this->get_field_id( 'limit' ); ?>" name="<?php echo $this->get_field_name( 'limit' ); ?>" value="<?php echo $instance['limit']; ?>" size="3" type="text" />
-</p>
-<p><strong><?php _e('Optional Settings:', 'event_espresso'); ?></strong></p>
- <p><?php _e('Show Expired Events?', 'event_espresso'); ?> <?php echo select_input($this->get_field_name( 'show_expired' ), $values, $instance['show_expired']);?></p>
- <p><?php _e('Show Secondary Events?', 'event_espresso'); ?> <?php echo select_input($this->get_field_name( 'show_secondary' ), $values, $instance['show_secondary']);?></p>
- <p><?php _e('Show Deleted Events?', 'event_espresso'); ?> <?php echo select_input($this->get_field_name( 'show_deleted' ), $values, $instance['show_deleted']);?></p>
 
-<?php
+		<p>
+		  <label for="<?php echo $this->get_field_id( 'ee_wdgt_title' ); ?>"><?php _e('Title:', 'Upcoming Events'); ?></label>
+		  <input id="<?php echo $this->get_field_id( 'ee_wdgt_title' ); ?>" name="<?php echo $this->get_field_name( 'ee_wdgt_title' ); ?>" value="<?php echo $instance['ee_wdgt_title']; ?>" type="text" />
+		</p>
+
+		<p> <label for="<?php echo $this->get_field_id( 'ee_wdgt_cat_name' ); ?>"><?php _e('Event Category:', 'event_espresso'); ?></label><br />
+		 <?php echo espresso_db_dropdown( 'id', 'category_name', EVENTS_CATEGORY_TABLE, 'id', $instance['ee_wdgt_cat_name'], $strMethod="desc", $this->get_field_name( 'ee_wdgt_cat_name' )) ?>		
+		</p>
+		
+		 <p>
+			<label for="<?php echo $this->get_field_id( 'ee_wdgt_limit' ); ?>"><?php _e('Limit:', 'event_espresso'); ?></label>
+			<input id="<?php echo $this->get_field_id( 'ee_wdgt_limit' ); ?>" name="<?php echo $this->get_field_name( 'ee_wdgt_limit' ); ?>" value="<?php echo $instance['ee_wdgt_limit']; ?>" size="3" type="text" />
+		</p>
+
+		<p><strong><?php _e('Optional Settings:', 'event_espresso'); ?></strong></p>
+		 <p><?php _e('Show Expired Events?', 'event_espresso'); ?> <?php echo select_input($this->get_field_name( 'ee_wdgt_show_expired' ), $values, $instance['ee_wdgt_show_expired']);?></p>
+		 <p><?php _e('Show Deleted Events?', 'event_espresso'); ?> <?php echo select_input($this->get_field_name( 'ee_wdgt_show_deleted' ), $values, $instance['ee_wdgt_show_deleted']);?></p>
+
+		 <p>
+			<label for="<?php echo $this->get_field_id( 'ee_wdgt_bg_color' ); ?>"><?php _e('Date Color:', 'event_espresso'); ?></label>
+			<input id="<?php echo $this->get_field_id( 'ee_wdgt_bg_color' ); ?>" name="<?php echo $this->get_field_name( 'ee_wdgt_bg_color' ); ?>" value="<?php echo $instance['ee_wdgt_bg_color']; ?>" size="12" type="text" />
+		</p>
+
+		<?php
 		}
 
-	}
 
+
+
+
+		/**
+		 * 	update - runs after submitting admin form
+		 *
+		 *  @access public
+		 *  @param array $new_instance
+		 *  @param array $old_instance
+		 */
+		function update( $new_instance, $old_instance ) {
+			$instance = $old_instance;
+			/* Strip tags for title and name to remove HTML (important for text inputs). */
+			$instance['ee_wdgt_title'] = strip_tags( $new_instance['ee_wdgt_title'] );
+			$instance['ee_wdgt_cat_name'] = $new_instance['ee_wdgt_cat_name'];
+			$instance['ee_wdgt_show_expired'] = $new_instance['ee_wdgt_show_expired'];
+			$instance['show_secondary'] = $new_instance['show_secondary'];
+			$instance['ee_wdgt_show_deleted'] = $new_instance['ee_wdgt_show_deleted'];
+			$instance['ee_wdgt_limit'] = $new_instance['ee_wdgt_limit'];
+			$instance['ee_wdgt_bg_color'] = $new_instance['ee_wdgt_bg_color'];
+			return $instance;
+		}
+
+
+
+
+
+		/**
+		 * 	widget - frontend display
+		 *
+		 *  @access public
+		 *  @param array $args
+		 *  @param array $instance
+		 */
+		function widget( $args, $instance ) {
+
+			// Our variables from the widget settings. 
+			extract( $args );
+			//printr( $args, '$args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//			printr( $instance, '$instance  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+			global $wpdb, $org_options;
+			require_once ( EE_HELPERS . 'EE_Formatter.helper.php' );
+			require_once ( EE_HELPERS . 'EE_DTT_Helper.helper.php' );
+			wp_register_style('espresso_widgets', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/css/espresso_widgets.css');
+			wp_enqueue_style('espresso_widgets');
+
+			$title = apply_filters('widget_title', $instance['ee_wdgt_title'] );
+			$bg_color = isset( $instance['ee_wdgt_bg_color'] ) ? sanitize_text_field( $instance['ee_wdgt_bg_color'] ) : FALSE;
+			$bg_color = $bg_color ? $bg_color : '';
+
+			// Before widget (defined by themes). 
+			echo $before_widget;
+
+			// Display the widget title if one was input (before and after defined by themes).
+			if ( $title ) {
+				echo $before_title . $title . $after_title;
+			}
+
+			$has_category = ! empty( $instance['ee_wdgt_cat_name'] ) ?TRUE : FALSE;
+			$event_page_id =$org_options['event_page_id'];
+			
+			$SQL = 'SELECT evt.*, dtt.* ';
+			$SQL .= $has_category ? ", cat.* " : '';
+			$SQL .= $has_category ? 'FROM ' . EVENTS_CATEGORY_TABLE . ' cat ' : '';
+			$SQL .= $has_category ? 'JOIN ' . EVENTS_CATEGORY_REL_TABLE . ' ect ON ect.cat_id = cat.id ' : '';
+			$SQL .= $has_category ? 'JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = ect.event_id ': 'FROM ' . EVENTS_DETAIL_TABLE . ' evt ';
+			$SQL .= 'JOIN ' . ESP_DATETIME_TABLE . ' dtt ON evt.id = dtt.EVT_ID ';
+			$SQL .= $has_category ? "WHERE cat.id = '" . $instance['ee_wdgt_cat_name'] . "' " : '';
+			$SQL .= $has_category ? 'AND ' : 'WHERE ';
+			$SQL .= 'evt.is_active = 1 ';
+			$SQL .= 'AND dtt.DTT_is_primary = 1 ';
+			// only show current events ?
+			$SQL .= ! $instance['ee_wdgt_show_expired'] ? "AND ( " : '';
+			$SQL .= ! $instance['ee_wdgt_show_expired'] ? "dtt.DTT_EVT_start >= '". EE_DTT_Helper::prepare_dtt_for_db() ."' " : '';
+			$SQL .= ! $instance['ee_wdgt_show_expired'] ? "OR evt.event_status = 'O' " : '';
+			$SQL .= ! $instance['ee_wdgt_show_expired'] ? "OR dtt.DTT_REG_end >= '". EE_DTT_Helper::prepare_dtt_for_db() ."' " : '';
+			$SQL .= ! $instance['ee_wdgt_show_expired'] ? " ) " : '';
+			
+			$SQL .= ! $instance['ee_wdgt_show_deleted'] ? " AND evt.event_status != 'D' " : '';
+			$SQL .= " ORDER BY dtt.DTT_EVT_start, evt.id ASC ";
+			$SQL .= $instance['ee_wdgt_limit'] > 0 ? " LIMIT 0," . $instance['ee_wdgt_limit'] . " " : ' LIMIT 0,5 ';
+
+			$events = $wpdb->get_results( $SQL );
+
+
+			echo '
+					<ul id="upcmng-evnt-wdgt-ul">';
+					
+			foreach ( $events as $event ) {
+
+				$event_id = $event->id;
+				$event_name = stripslashes_deep( $event->event_name );
+				$start_date = $event->DTT_EVT_start;
+				$category_name = isset( $event->category_name) ? $event->category_name : '';
+				$category_desc =  isset( $event->category_desc ) ? $event->category_desc : '';
+				$externalURL = $event->externalURL;
+				$ext_url = add_query_arg( array( 'page_id'=>$event_page_id, 'e_reg'=>'register', 'event_id'=>$event_id, 'name_of_event'=>$event_name ), home_url() );
+				$registration_url = $externalURL != '' ? $externalURL :  $ext_url;
+
+				$event_city = isset ( $event->city ) && $event->city != '' ? $event->city . ', ' : '';
+				$event_state = isset ( $event->state ) && $event->state != '' ? $event->state : '';
+				
+				//Here we can create messages based on the event status
+				$status = event_espresso_get_is_active($event_id);
+				$status_display = $status['display_custom'] . '<br />';
+				$status_display_ongoing = $status['status'] == 'ONGOING' ? $status['display_custom'] . '<br />' : '';
+				$status_display_deleted = $status['status'] == 'DELETED' ? $status['display_custom'] . '<br />' : '';
+				$status_display_secondary = $status['status'] == 'SECONDARY' ? $status['display_custom'] . '<br />' : '';
+				$status_display_reg_closed = $status['status'] == 'REGISTRATION_CLOSED' ? $status['display_custom'] . '<br />' : '';
+				$status_display_not_open = $status['status'] == 'REGISTRATION_NOT_OPEN' ? $status['display_custom'] . '<br />' : '';
+				$status_display_open = $status['status'] == 'REGISTRATION_OPEN' ? $status['display_custom'] . '<br />' : '';
+
+				//You can also display a custom message. For example, this is a custom registration not open message:
+				$status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED'? '<span class="espresso_closed">'.__('Regsitration is Closed','event_espresso').'</span>' . '<br />' : '';
+
+				if (!is_user_logged_in() && defined( 'EVENT_ESPRESSO_MEMBERS_DIR' ) && $member_only) {
+					//Display a message if the user is not logged in.
+					 //_e('Member Only Event. Please ','event_espresso') . event_espresso_user_login_link() . '.';
+				} else {
+					
+					switch ($status['status']){
+						case 'NOT_ACTIVE':
+						//Don't show the event if any of the above are true
+						break;
+
+						default:
+							?>
+						<li class="upcmng-evnt-wdgt-li">
+							<div class="upcmng-evnt-wdgt-date-dv">
+								<div class="upcmng-evnt-wdgt-date-day-dv" style="background-color:<?php echo $bg_color;?>; border-color:<?php echo $bg_color;?>">
+									<?php echo EE_Formatter::event_date_display( $start_date, 'M' )?>									
+								</div>
+								<div class="upcmng-evnt-wdgt-date-month-dv" style="border-color:<?php echo $bg_color;?>">
+									<?php echo EE_Formatter::event_date_display( $start_date, ' j' )?>
+								</div>
+							</div>
+							<div class="upcmng-evnt-wdgt-event-dv">
+								<h6 class="upcmng-evnt-wdgt-hdr-link">
+									<a href="<?php echo $registration_url;?>" style="color:<?php echo $bg_color;?>"><?php echo $event_name?></a>
+								</h6>
+								<p class="upcmng-evnt-wdgt-location"><?php echo $event_city . $event_state; ?></p>
+								<?php /* These are custom messages that can be displayed based on the event status. Just comment the one you want to use. */?>
+								<?php echo $status_display; //Turn this on to display the overall status of the event. ?>
+								<?php //echo $status_display_ongoing; //Turn this on to display the ongoing message. ?>
+								<?php //echo $status_display_deleted; //Turn this on to display the deleted message. ?>
+								<?php //echo $status_display_secondary; //Turn this on to display the secondary message. ?>
+								<?php //echo $status_display_reg_closed; //Turn this on to display the secondary message. ?>
+								<?php //echo $status_display_not_open; //Turn this on to display the secondary message. ?>
+								<?php //echo $status_display_open; //Turn this on to display the secondary message. ?>
+								<?php //echo $status_display_custom_closed; //Turn this on to display the secondary message. ?>
+							</div>
+							<br class="clear"/>
+						</li>
+							<?php
+						break;
+					}
+				}
+			}
+			
+			echo '
+					</ul>';
+				
+			echo $after_widget;
+			
+		}
+		
+		
+	}
 }

@@ -77,6 +77,17 @@ function espresso_events_on_frontpage() {
 
 
 
+function espresso_widget() {
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+	if ( file_exists( EVENT_ESPRESSO_TEMPLATE_DIR . 'widget.php' ) && isset( $org_options['template_settings']['use_custom_templates'] ) && $org_options['template_settings']['use_custom_templates'] ) {
+		require( EVENT_ESPRESSO_TEMPLATE_DIR . 'widget.php' );
+	} else if ( file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/widget.php' )) {
+		require( EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/widget.php' );
+	}
+	//The widget can be over-ridden with the custom files addon
+	register_widget('Event_Espresso_Widget');
+}
+
 
 
 
