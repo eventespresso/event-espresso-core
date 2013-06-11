@@ -203,6 +203,34 @@ class EEM_Registration extends EEM_TempBase {
 	}
 
 
+	/**
+	 * this retrieves all the registrations for a CSV list of events
+	 * @param  int $EVT_IDs the event id of the event we're retrieving registrations for
+	 * @return array         array of registration objects
+	 */
+	public function get_all_registrations_for_events( $EVT_IDs = array(), $where_cols_n_values = array(), $limit = FALSE ) {
+		$EVT_IDs = is_array( $EVT_IDs ) ? $EVT_IDs : array( $EVT_IDs );
+		//printr( $EVT_IDs, '$EVT_IDs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		array_walk( $EVT_IDs, 'absint' );
+		$where_cols_n_values = array_merge( array( 'EVT_ID' => $EVT_IDs ), $where_cols_n_values );
+		// retreive all $registrations
+		if ( ! empty ( $where_cols_n_values )) {
+			$registrations = $this->select_all_where ( $where_cols_n_values, 'REG_date', 'ASC', 'IN', $limit );
+			//global $wpdb;
+			//echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		} else {
+			return FALSE;
+		}
+
+		if ( $registrations ) {
+			return $this->_create_objects( $registrations );
+		} else {
+			return FALSE;
+		}		
+
+	}
+
+
 
 
 	/**
