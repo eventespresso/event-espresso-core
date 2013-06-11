@@ -337,6 +337,33 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 	}
 
 
+	/**
+	 * this retrieves all the attendees from a CSV list of IDs
+	 * @param  int $ATT_IDs the IDs of the attendees we're retrieving data for
+	 * @return array        array of attendee objects
+	 */
+	public function get_attendees_in_list( $ATT_IDs = array(), $where_cols_n_values = array(), $limit = FALSE ) {
+		$ATT_IDs = is_array( $ATT_IDs ) ? $ATT_IDs : array( $ATT_IDs );
+		//printr( $ATT_IDs, '$ATT_IDs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		array_walk( $ATT_IDs, 'absint' );
+		$where_cols_n_values = array_merge( array( 'ATT_ID' => $ATT_IDs ), $where_cols_n_values );
+		// retreive all $registrations
+		if ( ! empty ( $where_cols_n_values )) {
+			$registrations = $this->select_all_where ( $where_cols_n_values, 'ATT_lname', 'ASC', 'IN', $limit );
+			//global $wpdb;
+			//echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		} else {
+			return FALSE;
+		}
+
+		if ( $registrations ) {
+			return $this->_create_objects( $registrations );
+		} else {
+			return FALSE;
+		}		
+
+	}
+
 
 
 	/**
