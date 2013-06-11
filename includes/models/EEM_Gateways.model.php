@@ -317,13 +317,13 @@ Class EEM_Gateways {
 		$old_payment_settings[$gateway] = $new_gateway_settings;
 		$this->_payment_settings = $old_payment_settings;
 		if (update_user_meta($espresso_wp_user, 'payment_settings', $this->_payment_settings)) {
-
-			$msg = __('Payment Settings Updated!', 'event_espresso');
-			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
+//each gateway is already adding an almost identical update message, so this one is redundant
+//			$msg = __('Payment Settings Updated!', 'event_espresso');
+//			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return TRUE;
 		} else {
-			$msg = __('Payment Settings were not saved! ', 'event_espresso');
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+//			$msg = __('Payment Settings were not saved! ', 'event_espresso');
+//			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 	}
@@ -415,11 +415,11 @@ Class EEM_Gateways {
 			unset($this->_active_gateways[$gateway]);
 			global $espresso_wp_user;
 			if (update_user_meta($espresso_wp_user, 'active_gateways', $this->_active_gateways)) {
-				$msg =$gateway .  __('Gateway Deactivated!', 'event_espresso');
+				$msg =$gateway .  __(' Gateway Deactivated!', 'event_espresso');
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return TRUE;
 			} else {
-				$msg = $gateway . __('Gateway Not Deactivated! ', 'event_espresso');
+				$msg = $gateway . __(' Gateway Not Deactivated! ', 'event_espresso');
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return FALSE;
 			}
