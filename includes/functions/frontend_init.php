@@ -310,22 +310,3 @@ function eei18n_js_strings() {
 	// var translatedString = eei18n.string_key;
 }
 
-
-
-
-/**
- * event_espresso_require_template()
- *
- * @param mixed $template_file_name // Name of template file.
- * @param bool $must_exist		  // Error if neither file exist.
- * @param bool $as_require_once	 // True for require_once(), False for require()
- * @return void	// No return value. File already included.
- *
- * Usage: event_espresso_require_template('shopping_cart.php')
- */
-function espresso_require_template($template_file_name, $must_exist = true, $as_require_once = true) {
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-	event_espresso_require_file($template_file_name, EVENT_ESPRESSO_TEMPLATE_DIR, EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/', $must_exist, $as_require_once);
-}
-add_action('AHEE_require_template', 'espresso_require_template');
-

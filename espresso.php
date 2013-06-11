@@ -152,7 +152,7 @@ function espresso_load_init() {
 	add_action('init', 'espresso_load_messages_init', 15);
 	add_action('init', 'espresso_add_rewrite_rules');
 	add_filter('query_vars', 'espresso_add_query_vars');
-	add_action('widgets_init', 'espresso_widget');	
+	add_action('widgets_init', 'espresso_register_widgets');	
 }
 add_action('plugins_loaded', 'espresso_load_init', 100);
 

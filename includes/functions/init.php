@@ -77,15 +77,19 @@ function espresso_events_on_frontpage() {
 
 
 
-function espresso_widget() {
+function espresso_register_widgets() {
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-	if ( file_exists( EVENT_ESPRESSO_TEMPLATE_DIR . 'widget.php' ) && isset( $org_options['template_settings']['use_custom_templates'] ) && $org_options['template_settings']['use_custom_templates'] ) {
-		require( EVENT_ESPRESSO_TEMPLATE_DIR . 'widget.php' );
-	} else if ( file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/widget.php' )) {
-		require( EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/widget.php' );
+	espresso_require_template('init.php');
+	// array of widgets as Widget class name => template file name
+	$widgets = array(
+		'Espresso_Upcoming_Events_Widget' => 'upcoming_events.widget.php'
+	);
+	foreach ( $widgets as $widget_class => $widget_template ) {		
+		if ( $template = espresso_get_widget_template( $widget_template )) {
+			require_once( $template );
+			register_widget( $widget_class );
+		}		
 	}
-	//The widget can be over-ridden with the custom files addon
-	register_widget('Event_Espresso_Widget');
 }
 
 
@@ -151,3 +155,23 @@ function espresso_register_jquery_validate() {
 	// register jQuery Validate
 	wp_register_script('jquery-validate', $jquery_validate_url, array('jquery'), '1.11.1', TRUE);		
 }
+
+
+
+
+
+/**
+ * event_espresso_require_template()
+ *
+ * @param mixed $template_file_name // Name of template file.
+ * @param bool $must_exist		  // Error if neither file exist.
+ * @param bool $as_require_once	 // True for require_once(), False for require()
+ * @return void	// No return value. File already included.
+ *
+ * Usage: event_espresso_require_template('shopping_cart.php')
+ */
+function espresso_require_template($template_file_name, $must_exist = true, $as_require_once = true) {
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+	event_espresso_require_file($template_file_name, EVENT_ESPRESSO_TEMPLATE_DIR, EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/', $must_exist, $as_require_once);
+}
+add_action('AHEE_require_template', 'espresso_require_template');
