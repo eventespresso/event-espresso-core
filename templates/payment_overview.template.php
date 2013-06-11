@@ -49,7 +49,7 @@ EE_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 							<label><?php _e('Payment Date:', 'event_espresso'); ?></label>
 						</td>
 						<td>
-							<?php $payment->e('PAY_timestamp'); ?>
+							<?php echo $payment->timestamp('D M j, Y'); ?>
 						</td>
 					</tr>
 					<tr>
