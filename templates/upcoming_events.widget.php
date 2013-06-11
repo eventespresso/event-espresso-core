@@ -142,16 +142,14 @@ if (!class_exists('Espresso_Upcoming_Events_Widget')) {
 		 */
 		function widget( $args, $instance ) {
 
-			// Our variables from the widget settings. 
-			extract( $args );
-			//printr( $args, '$args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//			printr( $instance, '$instance  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
 			global $wpdb, $org_options;
 			require_once ( EE_HELPERS . 'EE_Formatter.helper.php' );
 			require_once ( EE_HELPERS . 'EE_DTT_Helper.helper.php' );
 			wp_register_style('espresso_widgets', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/css/espresso_widgets.css');
 			wp_enqueue_style('espresso_widgets');
+
+			// Our variables from the widget settings. 
+			extract( $args );
 
 			$title = apply_filters('widget_title', $instance['ee_wdgt_title'] );
 			$bg_color = isset( $instance['ee_wdgt_bg_color'] ) ? sanitize_text_field( $instance['ee_wdgt_bg_color'] ) : FALSE;
@@ -203,8 +201,7 @@ if (!class_exists('Espresso_Upcoming_Events_Widget')) {
 				$category_name = isset( $event->category_name) ? $event->category_name : '';
 				$category_desc =  isset( $event->category_desc ) ? $event->category_desc : '';
 				$externalURL = $event->externalURL;
-				$ext_url = add_query_arg( array( 'page_id'=>$event_page_id, 'e_reg'=>'register', 'event_id'=>$event_id, 'name_of_event'=>$event_name ), home_url() );
-				$registration_url = $externalURL != '' ? $externalURL :  $ext_url;
+				$registration_url = $externalURL != '' ? $externalURL :  espresso_reg_url( $event->id );
 
 				$event_city = isset ( $event->city ) && $event->city != '' ? $event->city . ', ' : '';
 				$event_state = isset ( $event->state ) && $event->state != '' ? $event->state : '';
