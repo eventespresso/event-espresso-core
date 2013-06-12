@@ -54,27 +54,6 @@ class EEM_Country extends EEM_Base {
 	protected function __construct(){
 		$this->singlular_item = __('Country','event_espresso');
 		$this->plural_item = __('Countries','event_espresso');
-		// CNT_ISO 	CNT_ISO3 	RGN_ID 	CNT_name 	CNT_cur_code 	CNT_cur_single 	CNT_cur_plural 	CNT_cur_sign 	CNT_cur_sign_b4 	CNT_cur_dec 	CNT_tel_code 	CNT_is_EU 	CNT_active
-//		$this->_fields_settings=array(
-//				'CNT_ISO'					=>new EE_Model_Field( 'Country ISO Code', 'primary_text_key', FALSE ),
-//				'CNT_ISO3'				=>new EE_Model_Field( 'Country ISO3 Code', 'plaintext', FALSE ),
-//				'RGN_ID'					=>new EE_Model_Field( 'Region ID', 'foreign_key', TRUE, NULL, NULL, 'Region' ),
-//				'CNT_name'				=>new EE_Model_Field( 'Country Name', 'plaintext', FALSE ),
-//				'CNT_cur_code'			=>new EE_Model_Field( 'Currency Code', 'plaintext', FALSE ),
-//				'CNT_cur_single'		=>new EE_Model_Field( 'Currency Name Singular', 'plaintext', FALSE ),
-//				'CNT_cur_plural'		=>new EE_Model_Field( 'Currency Name Plural', 'plaintext', FALSE ),
-//				'CNT_cur_sign'			=>new EE_Model_Field( 'Currency Sign', 'plaintext', FALSE ),
-//				'CNT_cur_sign_b4'	=>new EE_Model_Field( 'Currency Sign Before Number', 'plaintext', FALSE ),
-//				'CNT_cur_dec_plc'		=>new EE_Model_Field( 'Currency Decimal Places', 'plaintext', FALSE ),
-//				'CNT_cur_dec_mrk'	=>new EE_Model_Field( 'Currency Decimal Mark', 'plaintext', FALSE ),
-//				'CNT_cur_thsnds'		=>new EE_Model_Field( 'Currency Thousands Separator', 'plaintext', FALSE ),
-//				'CNT_tel_code'			=>new EE_Model_Field( 'Country Telephone Code', 'plaintext', FALSE ),
-//				'CNT_is_EU'				=>new EE_Model_Field( 'Country is Member of EU', 'plaintext', FALSE ),
-//				'CNT_active'				=>new EE_Model_Field( 'Country Active Flag', 'plaintext', FALSE )
-//			);
-//		$this->_related_models=array(
-//				'Region'=>new EE_Model_Relation('belongsTo', 'Region', 'RGN_ID')
-//			);
 		
 		
 		$this->_tables = array(
