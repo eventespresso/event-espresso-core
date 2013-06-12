@@ -167,6 +167,13 @@ Class EEM_Gateways {
 		// on the settings page, scan and load all the gateways
 		if (is_admin() && !empty($_GET['page']) && $_GET['page'] == 'espresso_payment_settings') {
 			$this->_load_all_gateway_files();
+			//bandaid to cover flurry of success messages on first page load of gateway settings page
+			global $current_user;
+			$gateways_initialized = get_user_meta($current_user->ID,'ee_gateways_initialized');
+			if( ! $gateways_initialized){	
+				EE_Error::overwrite_success();
+				update_user_meta($current_user->ID, 'ee_gateways_initialized', true);
+			}
 		} else {
 			// if something went wrong, fail gracefully
 			if ( ! is_array($this->_active_gateways)) {	
@@ -310,13 +317,13 @@ Class EEM_Gateways {
 		$old_payment_settings[$gateway] = $new_gateway_settings;
 		$this->_payment_settings = $old_payment_settings;
 		if (update_user_meta($espresso_wp_user, 'payment_settings', $this->_payment_settings)) {
-
-			$msg = __('Payment Settings Updated!', 'event_espresso');
-			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
+//each gateway is already adding an almost identical update message, so this one is redundant
+//			$msg = __('Payment Settings Updated!', 'event_espresso');
+//			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return TRUE;
 		} else {
-			$msg = __('Payment Settings were not saved! ', 'event_espresso');
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+//			$msg = __('Payment Settings were not saved! ', 'event_espresso');
+//			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 	}
@@ -408,11 +415,11 @@ Class EEM_Gateways {
 			unset($this->_active_gateways[$gateway]);
 			global $espresso_wp_user;
 			if (update_user_meta($espresso_wp_user, 'active_gateways', $this->_active_gateways)) {
-				$msg =$gateway .  __('Gateway Deactivated!', 'event_espresso');
+				$msg =$gateway .  __(' Gateway Deactivated!', 'event_espresso');
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return TRUE;
 			} else {
-				$msg = $gateway . __('Gateway Not Deactivated! ', 'event_espresso');
+				$msg = $gateway . __(' Gateway Not Deactivated! ', 'event_espresso');
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return FALSE;
 			}
