@@ -43,9 +43,7 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 .column-event_name {  }
 .column-actions { width:8%; }
 
-.txn-overview-free-event-spn {
-	display: block; text-align:center;
-}
+.txn-overview-free-event-spn { }
 
 .txn-overview-actions-ul { list-style:none; margin:0; }
 .txn-overview-actions-ul li { display: inline-block; float: left; margin:0; }

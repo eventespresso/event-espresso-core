@@ -180,7 +180,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 		if ( $item['TXN_total'] > 0 ) {
 			return '<span class="txn-pad-rght">' . $org_options['currency_symbol'] . ' ' . number_format( $item['TXN_total'], 2 ) . '</span>';	
 		} else {
-			return '<span class="txn-overview-free-event-spn">' . __( 'free', 'event_espresso' ) . '</span>';
+			return '<span class="txn-overview-free-event-spn txn-pad-rght">' . __( 'free', 'event_espresso' ) . '</span>';
 		}
 		
 	}
@@ -211,7 +211,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 			return '<span class="txn-overview-no-payment-spn txn-pad-rght">' . $org_options['currency_symbol'] . ' ' . number_format( $item['TXN_paid'], 2 ) . '</span>';
 			
 		} else {
-			return '<span class="txn-overview-free-event-spn">' . $org_options['currency_symbol'] . '0.00</span>';
+			return '<span class="txn-overview-free-event-spn txn-pad-rght">' . $org_options['currency_symbol'] . '0.00</span>';
 		}
 		
 	}
