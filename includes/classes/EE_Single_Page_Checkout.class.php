@@ -1279,7 +1279,6 @@ class EE_Single_Page_Checkout {
 				$DTT_ID = $event['options']['dtt_id'];
 				$PRC_ID = explode( ',', $event['options']['price_id'] );
 				$PRC_ID = $PRC_ID[0];
-				$price_paid = $attendee['price_paid'];
 
 				$session_snip =  substr( $session['id'], 0, 3 ) . substr( $session['id'], -3 );				
 				$new_reg_code = $transaction->ID() . '-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 ));				
@@ -1291,7 +1290,12 @@ class EE_Single_Page_Checkout {
 //					$prev_reg_code = '%-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 )) . '%';
 //				}					
 
-				$default_reg_status = isset( $org_options['default_reg_status'] ) ? $org_options['default_reg_status'] : 'RPN';
+				// set default REG status
+				$default_reg_status = isset( $org_options['default_reg_status'] ) ? $org_options['default_reg_status'] : EEM_Registration::status_id_pending;
+				// approve REG if event is free
+				$default_reg_status = (float)$attendee['price_paid'] > 0 ? $default_reg_status : EEM_Registration::status_id_approved;
+				// filter REG status
+				$default_reg_status = apply_filters( 'FHEE__SPCO__save_registration_items__default_reg_status', $default_reg_status );
 
 				// now create a new registration for the attendee
 				$reg_url_link=md5($new_reg_code);
@@ -1303,7 +1307,7 @@ class EE_Single_Page_Checkout {
 												$PRC_ID,
 												$default_reg_status,
 												current_time('mysql'),
-												$price_paid,
+												$attendee['price_paid'],
 												$session['id'],
 												$new_reg_code,
 												$reg_url_link,
@@ -1312,7 +1316,7 @@ class EE_Single_Page_Checkout {
 												FALSE,
 												FALSE
 						);
-				//printr( $reg[$line_item_id], '$reg[$line_item_id] ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' );die();
+						//printr( $saved_registrations[$line_item_id], '$saved_registrations[$line_item_id]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 				$reg_results = $saved_registrations[$line_item_id]->save();
 				$REG_ID = $saved_registrations[$line_item_id]->ID();
