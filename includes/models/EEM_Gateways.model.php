@@ -946,7 +946,9 @@ Class EEM_Gateways {
 			$registrations = $transaction->registrations();
 			if ( is_array( $registrations )) {
 				foreach( $registrations as $registration ) {
-					$registration->set_status( $org_options['default_reg_status'] );
+					// filter REG status
+					$reg_status = apply_filters( 'FHEE__EEM_Gateways__check_for_completed_transaction__reg_status', $org_options['default_reg_status'] );
+					$registration->set_status( $reg_status );
 					$registration->save();
 				}
 			}
