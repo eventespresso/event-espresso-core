@@ -217,8 +217,12 @@ jQuery(document).ready(function($) {
 
 
 	// delete a payment
-	$( '#txn-admin-payments-tbl' ).on( 'click', '.txn-admin-payment-action-delete-lnk', function() {
-
+	$( '#txn-admin-payments-tbl' ).on( 'click', '.txn-admin-payment-action-delete-lnk', function( event ) {
+		event.preventDefault();
+		event.stopPropagation();
+		if ( ! confirm( eei18n.confirm_delete_payment )) {
+			return;
+		}
 		$('#espresso-ajax').val(1);
 		var formURL = $('#txn-admin-delete-payment-form-url-inp').val();
 		var PAY_ID = $(this).attr('rel');
@@ -228,32 +232,32 @@ jQuery(document).ready(function($) {
 
 		
 		$.ajax({
-					type: "POST",
-					url:  formURL,
-					data: { ID : PAY_ID, espresso_ajax : 1, noheader : 'true' },
-					dataType: "json",
-					beforeSend: function() {
-						do_before_admin_page_ajax();
-					},
-					success: function(response){	
-						if ( response.return_data != undefined && response.return_data != false && response.return_data != null ) {
-							delBtn.closest('tr').remove();
-							process_delete_payment( response );
-						} else if ( response.errors ) {
-							show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper' );
-						} else {
-							response = new Object();
-							response.errors = eei18n.invalid_server_response;
-							show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', true );
-						}
-					},
-					error: function(response) {
-						if ( response.errors == undefined ) {
-							response.errors = eei18n.error_occured;
-						}
-						show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', true );
-					}
-			});
+			type: "POST",
+			url:  formURL,
+			data: { ID : PAY_ID, espresso_ajax : 1, noheader : 'true' },
+			dataType: "json",
+			beforeSend: function() {
+				do_before_admin_page_ajax();
+			},
+			success: function(response){	
+				if ( response.return_data != undefined && response.return_data != false && response.return_data != null ) {
+					delBtn.closest('tr').remove();
+					process_delete_payment( response );
+				} else if ( response.errors ) {
+					show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper' );
+				} else {
+					response = new Object();
+					response.errors = eei18n.invalid_server_response;
+					show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', true );
+				}
+			},
+			error: function(response) {
+				if ( response.errors == undefined ) {
+					response.errors = eei18n.error_occured;
+				}
+				show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', true );
+			}
+		});
 	});
 
 

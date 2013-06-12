@@ -258,6 +258,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		global $eei18n_js_strings;
 		$eei18n_js_strings['invalid_server_response'] = __( 'An error occured! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
 		$eei18n_js_strings['error_occured'] = __(  'An error occured! Please refresh the page and try again.', 'event_espresso' );
+		$eei18n_js_strings['confirm_delete_payment'] = __(  'Are you sure you want to delete this payment?.', 'event_espresso' );
 		$eei18n_js_strings['txn_status_array'] = self::$_txn_status;
 		$eei18n_js_strings['pay_status_array'] = self::$_pay_status;
 
