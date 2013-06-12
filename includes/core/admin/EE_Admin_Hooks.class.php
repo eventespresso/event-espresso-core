@@ -100,6 +100,23 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 
 	/**
+	 * This is an array of values that indicate any metaboxes we want removed from a given page route.  Usually this is used when caffeinated functionality is replacing decaffeinated functionality.  Use the following format for the array:
+	 * array(
+	 * 	0 => array(
+	 * 		'page_route' => 'string_for_page_route' //can be string or array of strings that match a page_route(s) that are in the class being connected with (i.e. 'edit', or 'create_new').
+	 * 		'id' => 'identifier_for_metabox', //what the id is of the metabox being removed
+	 * 		'context' => 'normal', //the context for the metabox being removed (has to match)
+	 * 		'screen' => 'screen_id', //(optional), if not included then this class will attempt to remove the metabox using the currently loaded screen object->id  however, there may be cases where you have to specify the id for the screen the metabox is on.
+	 * 	)
+	 * )
+	 * @var array
+	 */
+	protected $_remove_metaboxes;
+
+
+
+
+	/**
 	 * This parent class takes care of loading the scripts and styles if the child class has set the properties for them in the following format.  Note, the first array index ('register') is for defining all the registers.  The second array index is for indicating what routes each script/style loads on.
 	 * array(
 	 * 'registers' => array(
@@ -196,6 +213,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		add_action( 'admin_enqueue_scripts', array($this, 'enqueue_scripts_styles' ) );
 
 		add_action( 'admin_head', array($this, 'add_metaboxes') );
+		add_action( 'admin_head', array($this, 'remove_metaboxes') );
 	}
 
 
@@ -485,7 +503,14 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		if ( empty( $this->_metaboxes ) )
 			return; //get out we don't have any metaboxes to set for this connection
 
-		foreach ( $this->_metaboxes as $box ) {
+		$this->_handle_metabox_array( $this->_metaboxes );		
+
+	}
+
+
+
+	private function _handle_metabox_array( $boxes, $add = TRUE ) {
+		foreach ( $boxes as $box ) {
 			if ( !isset($box['page_route']) )
 				continue; //we dont' have a valid array
 
@@ -495,10 +520,28 @@ abstract class EE_Admin_Hooks extends EE_Base {
 			foreach ( $box['page_route'] as $route ) {
 				if ( $route != $this->_current_route )
 					continue; //get out we only add metaboxes for set route.
-				$this->_add_metabox($box);
+				if ( $add )
+					$this->_add_metabox($box);
+				else
+					$this->_remove_metabox($box);
 			}
-		}			
+		}
+	}
 
+
+
+	/**
+	 * Loop through the _remove_metaboxes property and remove metaboxes accordingly.
+	 *
+	 * @access public
+	 * @return void 
+	 */
+	public function remove_metaboxes() {
+
+		if ( empty( $this->_remove_metaboxes ) )
+			return; //get out there are no metaboxes to remove
+
+		$this->_handle_metabox_array( $this->_remove_metaboxes, FALSE );
 	}
 
 
@@ -519,7 +562,8 @@ abstract class EE_Admin_Hooks extends EE_Base {
 			'priority' => 'default',
 			'label' => $this->caller,
 			'context' => 'advanced',
-			'callback_args' => array()
+			'callback_args' => array(),
+			'page' => isset( $args['page'] ) ? $args['page'] : $current_screen->id
 			);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -534,6 +578,26 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		}
 
 		//everything checks out so lets add the metabox
-		add_meta_box( $id, $label, array( $this, $func ), $current_screen->id, $context, $priority, $callback_args);
+		add_meta_box( $id, $label, array( $this, $func ), $page, $context, $priority, $callback_args);
+	}
+
+
+
+	private function _remove_metabox( $args ) {
+		$current_screen = get_current_screen();
+		$func = isset( $args['func'] ) ? $args['func'] : 'some_invalid_callback';
+
+		//set defaults
+		$defaults = array(
+			'id' => isset( $args['id'] ) ? $args['id'] : $this->_current_route . '_' . $this->caller . '_' . $func . '_metabox',
+			'context' => 'default',
+			'screen' => isset( $args['screen'] ) ? $args['screen'] : $current_screen->id
+		);
+
+		$args = wp_parse_args( $args, $defaults );
+		extract( $args );
+
+		//everything checks out so lets remove the box!
+		remove_meta_box($id, $screen, $context);
 	}
 }
