@@ -40,15 +40,23 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 
 	protected function _set_hooks_properties() {
 		$this->_name = 'venues';
+		$this->_remove_metaboxes = array(
+			0 => array(
+				'page_route' => array( 'create_new', 'edit' ),
+				'id' => 'espresso_event_editor_venue',
+				'context' => 'normal'
+				)
+			);
 		$this->_metaboxes = array(
 			0 => array(
-				'page_route' => array('edit_event', 'add_event'),
+				'page_route' => array('edit', 'create_new'),
 				'func' => 'venue_metabox',
 				'label' => __('Venue Details', 'event_espresso'),
-				'priority' => 'core',
+				'priority' => 'high',
 				'context' => 'normal'
 				)
 		);/**/
+
 	}
 
 
@@ -60,17 +68,18 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 		);
 
 		require_once( 'EEM_Venue.model.php' );
-		$evt_obj = $this->_adminpage_obj->get_event_obj();
+		$evt_obj = $this->_adminpage_obj->get_event_object();
+		$evt_id = $evt_obj->ID();
 
 		//first let's see if we have a venue already
-		$venues = $evt_obj->venues();
-		$venue = empty( $venues ) ? EEM_Venue::create_default_object() : NULL;
+		$venues = !empty( $evt_id ) ? $evt_obj->venues() : NULL;
+		$venue = empty( $venues ) ? EEM_Venue::instance()->create_default_object() : NULL;
 		$template_args['_venues'] = $venues;
-		$template_args['_venue'] = $venue;
-		$template_args['venue_selection'] = $this->_espresso_venue_selector();
+		$template_args['_venue'] = !empty( $venues ) ? array_shift($venues) : $venue;
+		$template_args['venue_selection'] = $this->_espresso_venue_selector($venues);
 		$template_args['org_options'] = $org_options;
 		$template_args['enable_for_gmap'] = EE_Form_Fields::select_input('enable_for_gmap', $values, $venue->enable_for_gmap(), 'id="enable_for_gmap"');
-		$template_path = empty( $venues ) ? VENUES_TEMPLATE_PATH . 'event_venues_metabox_content.template.php' : VENUES_TEMPLATE_PATH . 'event_venues_metabox_content_from_manager.template.php';
+		$template_path = empty( $venues ) ? EE_VENUES_TEMPLATE_PATH . 'event_venues_metabox_content.template.php' : EE_VENUES_TEMPLATE_PATH . 'event_venues_metabox_content_from_manager.template.php';
 		espresso_display_template( $template_path, $template_args );
 	}
 
