@@ -5,6 +5,7 @@
 				<h4>
 					<?php _e('Venue Information', 'event_espresso'); ?>
 				</h4>
+				<input type="hidden" name="venue_id" value="<?php echo $_venue->ID(); ?>" />
 				<p>
 					<label for="ven-title"><?php _e('Title:', 'event_espresso'); ?></label><br/>
 					<input size="20"id="ven-title" tabindex="106"  type="text"  value="<?php echo $_venue->name() ?>" name="venue_title" />
@@ -15,7 +16,7 @@
 				</p>
 				<p>
 					<label for="ven-phone"><?php _e('Phone:', 'event_espresso'); ?></label><br/>
-					<input size="20" id="ven-phone" tabindex="108"  type="text"  value="<?php echo stripslashes_deep($_venue->phone()) ?>" name="venue_phone" />
+					<input size="20" id="ven-phone" tabindex="108"  type="text" name="venue_phone" value="<?php echo $_venue->phone(); ?>" />
 				</p>
 				<p>
 					<label for="ven-image"><?php _e('Image:', 'event_espresso'); ?></label><br/>
@@ -72,12 +73,6 @@
 				<h4>
 					<?php _e('Virtual Location', 'event_espresso'); ?>
 				</h4>
-				<p>
-					<label for="virt-phone" style="display:inline-block; width:100px;">
-						<?php _e('Phone:', 'event_espresso'); ?>
-					</label>
-					<input size="20" id="virt-phone" type="text" tabindex="111" value="<?php echo $_venue->phone(); ?>" name="venue_phone" />
-				</p>
 				<p>
 					<label for="url-event" style="display:inline-block; width:100px; vertical-align:top;">
 						<?php _e('URL of Event:', 'event_espresso'); ?>

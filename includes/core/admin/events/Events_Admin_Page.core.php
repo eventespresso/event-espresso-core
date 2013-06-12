@@ -472,7 +472,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _default_venue_update( $evtobj, $data ) {
 		require_once( 'EE_Venue.class.php' );
-		$v = EE_Venue::new_instance( array(
+		$venue_array = array(
 				'VNU_ID' => isset( $data['venue_id'] ) ? $data['venue_id'] : NULL,
 				'VNU_name' => !empty( $data['venue_title'] ) ? $data['venue_title'] : NULL,
 				'VNU_desc' => !empty( $data['venue_description'] ) ? $data['venue_description'] : NULL,
@@ -490,8 +490,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'VNU_virtual_phone' => !empty($data['virtual_phone']) ? $data['virtual_phone'] : NULL,
 				'VNU_virtual_url' => !empty( $data['virtual_url'] ) ? $data['virtual_url'] : NULL,
 				'VNU_enable_for_gmap' => isset( $data['enable_for_gmap'] ) ? 1 : 0
-			));
-		return $evtobj->_add_relation_to( $v, 'Venue' );
+			);
+		
+		$v = EE_Venue::new_instance( $venue_array );
+		$evtobj->_add_relation_to( $v, 'Venue' );
+
+		//if there is an event id then let's make sure we save any changed data.
+		if ( !empty( $data['venue_id'] ) )
+			$v->save();
 	}
 
 
