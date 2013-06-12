@@ -444,9 +444,11 @@ class EE_Registration extends EE_Base_Class {
 		$this->get_first_related('Transaction');
 		// if status is ANYTHING other than approved, OR if it IS approved AND the TXN is paid in full (or free)
 		if ( $STS_ID != EEM_Registration::status_id_approved || ( $STS_ID == EEM_Registration::status_id_approved && $this->_Transaction->is_completed() )) {
-			$this->_STS_ID = strtoupper( sanitize_key( $STS_ID ));
+			// set new status, after filtering
+			$this->_STS_ID = apply_filters( 'FHEE__EE_Registration__set_status__STS_ID', strtoupper( sanitize_key( $STS_ID )));
 			return TRUE;
 		} else {
+			// oops! can't approve registrations until they have been paid in full
 			$txn_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$this->_TXN_ID ), TXN_ADMIN_URL );
 			$txn_link = '
 			<a id="reg-admin-sts-error-txn-lnk" href="' . $txn_url . '" title="' . __( 'View transaction #', 'event_espresso' ) . $this->_TXN_ID . '">
@@ -870,7 +872,7 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public
 	*/	
 	public function price_paid() {
-		return $this->_REG_final_price;
+		return (float)$this->_REG_final_price;
 	}
 	
 	
