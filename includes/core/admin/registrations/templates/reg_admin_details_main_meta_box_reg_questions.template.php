@@ -1,5 +1,9 @@
 <div id="admin-primary-mbox-questions-dv" class="admin-primary-mbox-dv">
 	
+	<p class="ee-attention">
+		<?php _e( '<b>Please Note:</b><br/>Editing the primary personal information below (first name, last name, email address) for a registrant will result in a <strong>new</strong> record being created in the attendee contact details table, that will then be applied to <strong>this</strong> registration only. If you wish to simply correct a typo for this attendee, or update other personal details, then update the attendee record directly via the Contact List. Editing the primary personal information below creates a new attendee record because this allows for a way to differenetiate between multiple registrations that were originally created using one set of attendee details.', 'event_espresso' );?>
+	</p>
+
 	<form name="reg-admin-attendee-questions-frm" id="reg-admin-attendee-questions-frm" action="<?php echo REG_ADMIN_URL; ?>">
 		<?php wp_nonce_field( $reg_questions_form_action . '_nonce', $reg_questions_form_action . '_nonce' ); ?>
 		<input  type="hidden" name="page" value="<?php echo REG_PG_SLUG; ?>"/>
@@ -26,8 +30,5 @@
 
 	<br class="clear"/>
 	
-	<p class="ee-attention">
-		<?php _e( '<b>Please Note:</b><br/>Editing the primary personal information (first name, last name, email address) for a registrant will result in a new record being created in the attendee contact details table, that will then be applied to <strong>this</strong> registration only. If you wish to simply correct a typo for this attendee, or update other personal details, then update the attendee record directly via the Contact List.', 'event_espresso' );?>
-	</p>
 	
 </div>
