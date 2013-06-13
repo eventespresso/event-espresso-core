@@ -1007,9 +1007,15 @@ abstract class EEM_Base extends EE_Base{
 		foreach($query_info_carrier->get_model_names_included() as $model_name){
 			$related_model = $this->get_related_model_obj($model_name);
 			$related_model_universal_where_params = $related_model->_get_default_where_conditions();
-			//prepend the model's name onto where params from other models
+			//prepend the model's name onto where params from other models EXCEPT we need to make sure that if the query_param has a logic operator that we prepend the items INSIDE the logic operator array.
 			$related_model_universal_where_params_prepended = array();
 			foreach($related_model_universal_where_params as $field_name => $value){
+				if ( in_array( $field_name, $this->_logic_query_param_keys ) && is_array( $value ) ) {
+					foreach ( $value as $fn => $val ) {
+						$related_model_universal_where_params_prepended[$model_name.'.'.$fn] = $val;
+					}
+					continue;
+				}
 				$related_model_universal_where_params_prepended[$model_name.".".$field_name] = $value;
 			}
 			$universal_query_params = array_merge($universal_query_params, $related_model_universal_where_params_prepended);
