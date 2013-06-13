@@ -55,6 +55,15 @@ abstract class EEM_Base extends EE_Base{
 	 * @var EE_Default_Where_Conditions
 	 */
 	protected $_default_where_conditions_strategy;
+
+
+
+
+	/**
+	 * This is a flag typically set by updates so that we don't load the where strategy on updates because updates don't need it (particularly CPT models)
+	 * @var bool
+	 */
+	protected $_ignore_where_strategy = FALSE;
 	
 	
 
@@ -382,6 +391,8 @@ abstract class EEM_Base extends EE_Base{
 		//if there are more than 1 tables, we'll want to verify that each table for this model has an entry in the other tables
 		//and if the other tables don't have a row for each table-to-be-updated, we'll insert one with whatever values available in the current update query
 		if(count($tables) > 1){
+			//we want to make sure the default_where strategy is ignored
+			$this->_ignore_where_strategy = TRUE;
 			$wpdb_select_results = $this->_get_all_wpdb_results($query_params);
 			foreach($wpdb_select_results as $wpdb_result){
 				//get the model object's PK, as we'll want this if we need to insert a row into secondary tables
@@ -398,6 +409,8 @@ abstract class EEM_Base extends EE_Base{
 					}
 				}
 			}
+			//let's make sure default_where strategy is followed now
+			$this->_ignore_where_strategy = FALSE;
 		}
 		
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
@@ -1031,6 +1044,9 @@ abstract class EEM_Base extends EE_Base{
 	 * @return array
 	 */
 	private function _get_default_where_conditions(){
+		if ( $this->_ignore_where_strategy )
+			return array();
+
 		return $this->_default_where_conditions_strategy->get_default_where_conditions();
 	}
 	/**
