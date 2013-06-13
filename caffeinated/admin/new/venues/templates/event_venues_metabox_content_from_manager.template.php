@@ -4,7 +4,7 @@
 		<label><?php _e('Select from Venue Manager List', 'event_espresso'); ?></label>
 		<?php echo $venue_selector; ?>
 		<?php foreach ( $venues as $venue ) :
-			$selected = $evt_venue == $venue->ID() ? '' : ' style="display:none;"';
+			$selected = $evt_venue_id == $venue->ID() ? '' : ' style="display:none;"';
 			$edit_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'edit', 'id' => $venue->ID() ), EE_VENUES_ADMIN_URL );
 			?>
 			<fieldset id="eebox_<?php echo $venue->ID(); ?>" class="eebox"<?php echo $selected; ?>>
@@ -16,8 +16,8 @@
 							<span><?php _e('State:', 'event_espresso'); ?></span> "<?php echo $venue->state_obj()->name(); ?>"<br />
 							<span><?php _e('Country:', 'event_espresso'); ?></span> "<?php echo $venue->country_obj()->name(); ?>"<br />
 							<span><?php _e('Venue ID:', 'event_espresso'); ?></span> "<?php echo $venue->ID(); ?>"<br /></p>
-							<?php printf( __('This venue\'s shortcode %s[ESPRESSO_VENUE id="%d"]%s', 'event_espresso'), '<strong class="highlight">', $venue->ID(), '</strong>' ); ?><br />
-							<a href="<?php echo $edit_url; ?>" target="_blank"><?php _e('Edit this Venue', 'event_espresso'); ?></a> | <a class="thickbox link" href="#TB_inline?height=300&amp;width=400&amp;inlineID=venue_info"><?php _e('Shortcode', 'event_espresso'); ?></a>
+							<?php printf( __('This venue\'s shortcode: %s[ESPRESSO_VENUE id="%d"]%s', 'event_espresso'), '<strong class="highlight">', $venue->ID(), '</strong>' ); ?><br />
+							<a href="<?php echo $edit_url; ?>" target="_blank"><?php _e('Edit this Venue', 'event_espresso'); ?></a>
 					</li>	
 				</ul>
 			</fieldset>

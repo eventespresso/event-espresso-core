@@ -40,14 +40,14 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 
 	protected function _set_hooks_properties() {
 		$this->_name = 'venues';
-		/*$this->_remove_metaboxes = array(
+		$this->_remove_metaboxes = array(
 			0 => array(
 				'page_route' => array( 'create_new', 'edit' ),
 				'id' => 'espresso_event_editor_venue',
 				'context' => 'normal'
 				)
 			);/**/
-		/*$this->_metaboxes = array(
+		$this->_metaboxes = array(
 			0 => array(
 				'page_route' => array('edit', 'create_new'),
 				'func' => 'venue_metabox',
@@ -61,14 +61,22 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 			'registers' => array(
 				'ee_event_venues' => array(
 					'type' => 'js',
-					'url' => EE_VENUES_ASSETS_URL,
+					'url' => EE_VENUES_ASSETS_URL . 'ee-event-venues-admin.js',
 					'depends' => array('jquery')
+					),
+				'ee_event_venues_css' => array(
+					'type' => 'css',
+					'url' => EE_VENUES_ASSETS_URL . 'ee-event-venues-admin.css',
 					)
 				),
 			'enqueues' => array(
-				'ee_event_venues' => array('edit', 'create_new')
+				'ee_event_venues' => array('edit', 'create_new'),
+				'ee_event_venues_css' => array('edit', 'create_new')
 				)
 			);
+
+		//hook into the handler for saving venue
+		
 	}
 
 
@@ -86,6 +94,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 		//first let's see if we have a venue already
 		$evt_venues = !empty( $evt_id ) ? $evt_obj->venues() : array();
 		$evt_venue = !empty( $evt_venues ) ? array_shift( $evt_venues ) : NULL;
+		$evt_venue_id = !empty( $evt_venue ) ? $evt_venue->ID() : NULL;
 		//all venues!
 		$venues = EEM_Venue::instance()->get_all();
 
@@ -96,8 +105,8 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 		}
 
 		$template_args['venues'] = $venues;
-		$template_args['evt_venue'] = $evt_venue;
-		$template_args['venue_selector'] = EE_Form_Fields::select_input('venue_id[]', $ven_sel, $evt_venue, 'id="venue_id"' );
+		$template_args['evt_venue_id'] = $evt_venue_id;
+		$template_args['venue_selector'] = EE_Form_Fields::select_input('venue_id[]', $ven_sel, $evt_venue_id, 'id="venue_id"' );
 		$template_args['org_options'] = $org_options;
 		$template_args['enable_for_gmap'] = EE_Form_Fields::select_input('enable_for_gmap', $values, $venue->enable_for_gmap(), 'id="enable_for_gmap"');
 		$template_path = empty( $venues ) ? EE_VENUES_TEMPLATE_PATH . 'event_venues_metabox_content.template.php' : EE_VENUES_TEMPLATE_PATH . 'event_venues_metabox_content_from_manager.template.php';

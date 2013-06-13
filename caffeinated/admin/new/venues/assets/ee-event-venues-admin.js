@@ -1,7 +1,9 @@
 jQuery(document).ready(function($) {
-	$("#create_new_espresso_events_Venues_Hooks_venue_metabox_metabox").on('change', '#venue_id', function() {
-		var selected = $("#venue_id option:selected");
-		var v_id = selected.attr("id");
+	$(document).on('change', '#create_new_espresso_events_Venues_Hooks_venue_metabox_metabox #venue_id', function() {
+		var selected = $("option:selected", this);
+		console.log(selected);
+		var v_id = selected.val();
+		console.log(v_id);
 		$(".eebox").hide();
 		$("#eebox_"+v_id).show();
 	});

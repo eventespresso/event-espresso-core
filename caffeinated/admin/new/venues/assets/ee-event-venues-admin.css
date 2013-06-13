@@ -1,0 +1,27 @@
+.use-ven-manager {
+	width: 50%;
+	vertical-align: top;
+}
+.manual-venue {
+	width: 33.3%;
+}
+.use-ven-manager table {
+	width:99%;
+}
+.use-ven-manager textarea, .use-ven-manager input, .use-ven-manager .eebox ul, .use-ven-manager fieldset#venue-manager select, .use-ven-manager fieldset#venue-manager .eebox ul, .manual-venue #url-event, .manual-venue input {
+	width: 80%;
+}
+
+.use-ven-manager #venue-manager label {
+	margin: 5px 0;
+}
+.use-ven-manager .address-view p span {
+	display: inline-block;
+	font-weight: bold;
+	width: 6em;
+}
+
+.highlight {
+    padding-left: 2px;
+    margin-left: 0;
+}
