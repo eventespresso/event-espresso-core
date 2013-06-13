@@ -62,7 +62,7 @@ class EEM_Venue extends EEM_CPT_Base {
 		}
 		$this->_tables = array(
 			'Venue_CPT'=> new EE_Primary_Table('posts', 'ID'),
-			'Venue_Meta'=>new EE_Secondary_Table('esp_venue_meta', 'VNUM_ID', 'VNU_ID', "Venue_CPT.post_type='espresso_venues'")
+			'Venue_Meta'=>new EE_Secondary_Table('esp_venue_meta', 'VNUM_ID', 'VNU_ID')
 		);
 		$this->_fields = array(
 			'Venue_CPT'=>array(
@@ -103,7 +103,7 @@ class EEM_Venue extends EEM_CPT_Base {
 			'Country'=>new EE_Belongs_To_Relation()
 		);
 		require_once('strategies/EE_Default_CPT_Where_Conditions.strategy.php');
-		$this->_default_where_conditions_strategy = new EE_Default_CPT_Where_Conditions('espresso_venues');
+		$this->_default_where_conditions_strategy = new EE_Default_CPT_Where_Conditions('espresso_venues', 'VNUM_ID');
 		parent::__construct();
 	}
 }

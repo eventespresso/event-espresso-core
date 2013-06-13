@@ -82,7 +82,7 @@ class EEM_Event  extends EEM_CPT_Base{
 		self::$_additional_attendee_reg_info_enum = $this->_get_additional_attendee_reg_info_array();
 		$this->_tables = array(
 			'Event_CPT'=>new EE_Primary_Table('posts','ID'),
-			'Event_Meta'=> new EE_Secondary_Table('esp_event_meta', 'EVTM_ID','EVT_ID',"Event_CPT.post_type='espresso_events'")
+			'Event_Meta'=> new EE_Secondary_Table('esp_event_meta', 'EVTM_ID','EVT_ID')
 		);
 		
 		
@@ -129,7 +129,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			'Venue'=>new EE_HABTM_Relation('Event_Venue')
 		);
 		require_once('strategies/EE_Default_CPT_Where_Conditions.strategy.php');
-		$this->_default_where_conditions_strategy = new EE_Default_CPT_Where_Conditions('espresso_events');
+		$this->_default_where_conditions_strategy = new EE_Default_CPT_Where_Conditions('espresso_events', 'EVTM_ID');
 		parent::__construct( $timezone );
 	}
 	

@@ -6,8 +6,10 @@
 class EE_Default_CPT_Where_Conditions extends EE_Default_Where_Conditions{
 	
 	protected $_post_type;
-	function __construct($post_type){
+	protected $_meta_field;
+	function __construct($post_type, $meta_field_to_chk){
 		$this->_post_type = $post_type;
+		$this->_meta_field = $meta_field_to_chk;
 	}
 	/**
 	 * Gets the field with the specified column. Note, this function might not work
@@ -33,7 +35,8 @@ class EE_Default_CPT_Where_Conditions extends EE_Default_Where_Conditions{
 		$status_field = $this->_get_field_on_column('post_status');
 		
 		return array(
-			$post_type_field->get_name()=>$this->_post_type,
-			$status_field->get_name()=>array('!=','auto-draft'));
+			$status_field->get_name()=>array('!=','auto-draft'),
+			'OR' => array($post_type_field->get_name()=>$this->_post_type, $this->_meta_field => array( 'IS NOT NULL'))
+		);
 	}
 }
