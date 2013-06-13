@@ -91,4 +91,50 @@ class EEM_CPT_Base extends EEM_Base{
 	public function get_feature_image( $id, $size = 'thumbnail', $attr = '' ) {
 		return get_the_post_thumbnail( $id, $size, $attr );
 	}
+
+
+
+
+
+
+	/**
+	 * CPT overrides EEM_Base add_relationship_to to make sure that if the object being added has a post_type of 'revision' then we also add the related item to the parent item so we don't duplicate unneccesarily the related objects in the db.  This allows us to still keep specified relations between revisions but the latest revision and the parent will always have the same relation
+	 *
+	 * @access public
+	 * @param EE_Base_Class|int $id_or_obj             $thisModelObject
+	 * @param EE_Base_Class|int $other_model_id_or_obj $otherModelObject
+	 * @param string            $relationName          key in EEM_Base::_relations
+	 * @return EE_Base_class which was added as a relation. Object referred to by $other_model_id_or_obj
+	 */
+	public function add_relationship_to($id_or_obj,$other_model_id_or_obj, $relationName){
+
+		//in the case of cpt's we're always going to get the related model_object so we can verify whether it is a revision or not.
+		$thismodelobj = $this->ensure_is_obj( $id_or_obj );
+
+		//is this a revision?  if so let's add the relation to the parent cpt
+		if ( $thismodelobj->post_type() == 'revision' ) {
+			parent::add_relationship_to( $thismodelobj->parent(), $other_model_id_or_obj, $relationName );
+		}
+
+		//make sure we save THIS model relation
+		parent::add_relationship_to( $id_or_obj, $other_model_id_or_obj, $relationName);
+	}
+
+	/**
+	 * See notes on add_relationship_to above.  This method works similarily except for the obvious difference of removing a relationship.
+	 */
+	public function remove_relationship_to( $id_or_obj, $other_model_id_or_obj, $relationName ) {
+		$thismodelobj = $this->ensure_is_obj( $id_or_obj );
+
+		//is this a revision?  if so let's remove the relation from the parent cpt
+		if ( $thismodelobj->post_type() == 'revision' ) {
+			parent::remove_relationship_to( $thismodelobj->parent(), $other_model_id_or_obj, $relationName );
+		}
+
+		//make sure we save THIS model relation
+		parent::remove_relationship_to( $id_or_obj, $other_model_id_or_obj, $relationName);
+	}
+
+
+
 }
