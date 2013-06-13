@@ -430,10 +430,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	
 	protected function _insert_update_cpt_item( $post_id, $post ) {
 
-		require_once( 'EE_Event.class.php' );
+		$wheres = array( $this->_event_model->primary_key_name() => $post_id );
 
-		$event = EE_Event::new_instance( array(
-			'EVT_ID' => $post_id,
+		$event_values = array(
 			'EVT_is_active' => isset($this->_req_data['is_active']) ? 1 : 0,
 			'EVT_display_desc' => isset( $this->_req_data['display_desc'] ) ? 1 : 0,
 			'EVT_display_reg_form' => isset( $this->_req_data['display_reg_form'] ) ? 1 : 0,
@@ -446,10 +445,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'EVT_timezone_string' => !empty( $this->_req_data['timezone_string'] ) ? $this->_req_data['timezone_string'] : NULL,
 			'EVT_external_URL' => !empty( $this->_req_data['externalURL'] ) ? $this->_req_data['externalURL'] : NULL,
 			'EVT_phone' => !empty( $this->_req_data['event_phone'] ) ? $this->_req_data['event_phone'] : NULL
-			));
+			);
 
 		//update event
-		$success = $event->save();
+		$success = $this->_event_model->update( $event_values, array($wheres) );
+
+
+		//get event_object for other metaboxes... though it would seem to make sense to just use $this->_event_model->get_one_by_ID( $post_id ).. i have to setup where conditions to override the filters in the model that filter out autodraft and inherit statuses so we GET the inherit id!
+		$get_one_where = array( $this->_event_model->primary_key_name() => $post_id, 'STS_ID' => $post->post_status );
+		$event = $this->_event_model->get_one( array($get_one_where) );
 
 
 		//the following are default callbacks for event attachment updates that can be overridden by caffeinated functionality and/or addons.
