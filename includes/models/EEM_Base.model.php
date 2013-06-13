@@ -925,7 +925,7 @@ abstract class EEM_Base extends EE_Base{
 		}else{
 			$where_query_params = array();
 		}
-		$where_query_params = array_merge($where_query_params, $this->_get_default_where_conditions_for_models_in_query($query_object));
+		$where_query_params = array_merge($this->_get_default_where_conditions_for_models_in_query($query_object), $where_query_params );
 		$query_object->set_where_sql( $this->_construct_where_clause($where_query_params, $values_already_prepared_by_model_object));
 
 
