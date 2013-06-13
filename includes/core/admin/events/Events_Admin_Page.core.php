@@ -484,9 +484,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return bool           Success or fail.
 	 */
 	protected function _default_venue_update( $evtobj, $data ) {
-		require_once( 'EE_Venue.class.php' );
+		require_once( 'EEM_Venue.model.php' );
+		$venue_model = EEM_Venue::instance();
+		$rows_affected = NULL;
+		$venue_id = !empty( $data['venue_id'] ) ? $data['venue_id'] : NULL;
+
 		$venue_array = array(
-				'VNU_ID' => isset( $data['venue_id'] ) ? $data['venue_id'] : NULL,
+				'VNU_wp_user' => $evtobj->get('EVT_wp_user'), 
 				'VNU_name' => !empty( $data['venue_title'] ) ? $data['venue_title'] : NULL,
 				'VNU_desc' => !empty( $data['venue_description'] ) ? $data['venue_description'] : NULL,
 				'VNU_identifier' => !empty( $data['venue_identifier'] ) ? $data['venue_identifier'] : NULL,
@@ -494,23 +498,35 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'VNU_address' => !empty( $data['address'] ) ? $data['address'] : NULL,
 				'VNU_address2' => !empty( $data['address2'] ) ? $data['address2'] : NULL,
 				'VNU_city' => !empty( $data['city'] ) ? $data['city'] : NULL,
-				'STA_ID' => !empty( $data['status'] ) ? $data['status'] : NULL,
-				'CNT_ISO' => !empty( $data['country'] ) ? $data['country'] : NULL,
+				'STA_ID' => !empty( $data['state'] ) ? $data['state'] : NULL,
+				'CNT_ISO' => !empty( $data['countries'] ) ? $data['countries'] : NULL,
+				'STS_ID' => $evtobj->status(),
 				'VNU_zip' => !empty( $data['zip'] ) ? $data['zip'] : NULL,
 				'VNU_phone' => !empty( $data['venue_phone'] ) ? $data['venue_phone'] : NULL,
 				'VNU_capacity' => !empty( $data['venue_capacity'] ) ? $data['venue_capacity'] : NULL,
 				'VNU_url' => !empty($data['venue_url'] ) ? $data['venue_url'] : NULL,
 				'VNU_virtual_phone' => !empty($data['virtual_phone']) ? $data['virtual_phone'] : NULL,
 				'VNU_virtual_url' => !empty( $data['virtual_url'] ) ? $data['virtual_url'] : NULL,
-				'VNU_enable_for_gmap' => isset( $data['enable_for_gmap'] ) ? 1 : 0
+				'VNU_enable_for_gmap' => isset( $data['enable_for_gmap'] ) ? 1 : 0,
+				'STS_ID' => 'publish'
 			);
 		
-		$v = EE_Venue::new_instance( $venue_array );
-		$evtobj->_add_relation_to( $v, 'Venue' );
 
-		//if there is an event id then let's make sure we save any changed data.
-		if ( !empty( $data['venue_id'] ) )
-			$v->save();
+		//if we've got the venue_id then we're just updating the exiting venue so let's do that and then get out.
+		if ( !empty( $venue_id ) ) {
+			$update_where = array( $venue_model->primary_key_name() => $venue_id );
+			$rows_affected = $venue_model->update( $venue_array, array( $update_where ) );
+			return $rows_affected > 0 ? TRUE : FALSE;
+		} else {	
+			//if this is a revision then we are going to handle the initial insert/update and then the add_relation_to which will also automatically add the relation to the parent.  NOTE... we also have to allow for if users have turned OFF revisions!
+		
+			if ( $evtobj->post_type() == 'revision' || ! WP_POST_REVISIONS ) {
+				$venue_id = $venue_model->insert( $venue_array );
+				$evtobj->_add_relation_to( $venue_id, 'Venue' );
+				return !empty( $venue_id ) ? TRUE : FALSE;
+			}
+		}
+		return TRUE; //when we have the ancestor come in it's already been handled by the revision save.
 	}
 
 
