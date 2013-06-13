@@ -1139,6 +1139,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
 		$this->_template_args['att_questions'] = EE_Form_Fields::generate_question_groups_html( $question_groups );
 
+		$this->_template_args['contact_list_url'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'contact_list' ), REG_ADMIN_URL );
+
 		$this->_template_args['reg_questions_form_action'] = 'update_attendee_registration_form';
 		$this->_template_args['REG_ID'] = $this->_registration->REG_ID;
 
