@@ -516,6 +516,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		if ( !empty( $venue_id ) ) {
 			$update_where = array( $venue_model->primary_key_name() => $venue_id );
 			$rows_affected = $venue_model->update( $venue_array, array( $update_where ) );
+			//we've gotta make sure that the venue is always attached to a revision.. add_relation_to should take care of making sure that the relation is already present.
+			$evtobj->_add_relation_to( $venue_id, 'Venue' );
 			return $rows_affected > 0 ? TRUE : FALSE;
 		} else {	
 			//if this is a revision then we are going to handle the initial insert/update and then the add_relation_to which will also automatically add the relation to the parent.  NOTE... we also have to allow for if users have turned OFF revisions!
