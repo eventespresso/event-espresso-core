@@ -76,7 +76,22 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 			);
 
 		//hook into the handler for saving venue
+		add_filter( 'FHEE_event_editor_update', array( $this, 'modify_callbacks' ), 10 );
 		
+	}
+
+
+	public function modify_callbacks( $callbacks ) {
+		// first remove default venue callback
+		foreach ( $callbacks as $key => $callback ) {
+			if ( $callback[1] == '_default_venue_update' ) {
+				unset( $callbacks[$key] );
+			}
+		}
+
+		//now let's add the caf version
+		$callbacks[] = array( $this, 'caf_venue_update' );
+		return $callbacks;
 	}
 
 
@@ -106,11 +121,26 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 
 		$template_args['venues'] = $venues;
 		$template_args['evt_venue_id'] = $evt_venue_id;
-		$template_args['venue_selector'] = EE_Form_Fields::select_input('venue_id[]', $ven_sel, $evt_venue_id, 'id="venue_id"' );
+		$template_args['venue_selector'] = EE_Form_Fields::select_input('venue_id', $ven_sel, $evt_venue_id, 'id="venue_id"' );
 		$template_args['org_options'] = $org_options;
 		$template_args['enable_for_gmap'] = EE_Form_Fields::select_input('enable_for_gmap', $values, $venue->enable_for_gmap(), 'id="enable_for_gmap"');
 		$template_path = empty( $venues ) ? EE_VENUES_TEMPLATE_PATH . 'event_venues_metabox_content.template.php' : EE_VENUES_TEMPLATE_PATH . 'event_venues_metabox_content_from_manager.template.php';
 		espresso_display_template( $template_path, $template_args );
+	}
+
+
+	
+
+	public function caf_venue_update( $evtobj, $data ) {
+		require_once( 'EEM_Venue.model.php' );
+		$venue_id = !empty( $data['venue_id'] ) ? $data['venue_id'] : NULL;
+
+		if ( empty( $venue_id ) )
+			return TRUE; //no venue to attach
+
+		// this should take care of adding to revisions as well as main post object
+		$success = $evtobj->_add_relation_to( $venue_id, 'Venue' );
+		return !empty($success) ? TRUE : FALSE;
 	}
 
 
