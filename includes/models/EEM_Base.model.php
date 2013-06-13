@@ -97,7 +97,11 @@ abstract class EEM_Base extends EE_Base{
 		'NOT IN'=>'NOT IN',
 		'not in'=>'NOT IN',
 		'between' => 'BETWEEN',
-		'BETWEEN' => 'BETWEEN');
+		'BETWEEN' => 'BETWEEN',
+		'IS NOT NULL' => 'IS NOT NULL',
+		'is not null' => 'IS NOT NULL',
+		'IS NULL' => 'IS NULL',
+		'is null' => 'IS NULL');
 	/**
 	 * operators that work like 'IN', accepting a comma-seperated list of values inside brackets. Eg '(1,2,3)'
 	 * @var array 
@@ -111,6 +115,14 @@ abstract class EEM_Base extends EE_Base{
 	 * @var array
 	 */
 	protected $_between_style_operators = array( 'BETWEEN' );
+
+
+	/**
+	 * operators that are used for handling NUll and !NULL queries.  Typically used for when checking if a row exists on a join table. 
+	 * @var array
+	 */
+	protected $_null_style_operators = array( 'IS NOT NULL', 'IS NULL' );
+
 	
 	/**
 	 * Allowed values for $query_params['order'] for ordering in queries
@@ -1336,9 +1348,12 @@ abstract class EEM_Base extends EE_Base{
 	 * @return string
 	 */
 	private function _construct_op_and_value($op_and_value, EE_Model_Field_Base $field_obj, $values_already_prepared_by_model_object = false){
-		
-		//check if teh value is an array
-		if(is_array($op_and_value)){
+		if(is_array( $op_and_value ) && key($op_and_value) === 0 ){
+			//handle special operators that don't HAVE a value (such as "IS NOT NULL")
+			$operator = $op_and_value[0];
+			$value = NULL;
+			
+		}else if ( is_array($op_and_value) ) {
 			//assume first arg is an aray
 			$operator = $op_and_value[0];
 			$value = $op_and_value[1];
@@ -1359,6 +1374,8 @@ abstract class EEM_Base extends EE_Base{
 				throw new EE_Error( sprintf( __("The '%s' operator must be used with an array of values and there must be exactly TWO values in that array.", 'event_espresso'), "BETWEEN" ) );
 			$cleaned_value = $this->_construct_between_value( $value, $field_obj, $values_already_prepared_by_model_object );
 			return $operator.SP.$cleaned_value;
+		} else if( in_array( $operator, $this->_null_style_operators ) ) {
+			return $operator;
 		}elseif( ! in_array($operator, $this->_in_style_operators) && ! is_array($value)){
 			global $wpdb;
 			return $wpdb->prepare($operator.SP.$field_obj->get_wpdb_data_type(), $this->_prepare_value_for_use_in_db($value, $field_obj, $values_already_prepared_by_model_object));
