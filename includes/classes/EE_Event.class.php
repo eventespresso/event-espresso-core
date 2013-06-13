@@ -103,11 +103,7 @@ class EE_Event extends EE_CPT_Base{
 	 * @var int 
 	 */
 	protected $_EVT_wp_user;
-	/**
-	 * id of parent
-	 * @var int
-	 */
-	protected $_EVT_parent;
+	
 	/**
 	 * indicates order of event on a menu
 	 * @var int 
@@ -287,9 +283,7 @@ class EE_Event extends EE_CPT_Base{
 	function order(){
 		return $this->get('EVT_order');
 	}
-	function parent(){
-		return $this->get('EVT_parent');
-	}
+	
 	function reg_limit(){
 		return $this->get('EVT_reg_limit');
 	}
@@ -358,9 +352,6 @@ class EE_Event extends EE_CPT_Base{
 	}
 	function set_order($order) {
 		return $this->set('EVT_order', $order);
-	}
-	function set_parent($parent) {
-		return $this->set('EVT_parent', $parent);
 	}
 	function set_reg_limit($reg_limit) {
 		return $this->set('EVT_reg_limit', $reg_limit);

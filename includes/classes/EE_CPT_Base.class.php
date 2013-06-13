@@ -14,6 +14,22 @@ class EE_CPT_Base extends EE_Base_Class{
 	protected $_feature_image = array();
 
 
+
+	/**
+	 * This is a field common to ALL CPT model objects that indicates what post_type the model object is.  This is needed because there are times where the post type may equal "revision" because it is a revision of the main object.
+	 * @var string
+	 */
+	protected $_post_type = '';
+
+
+
+	/**
+	 * This is a field common to ALL CPT model objects that simply hold what the parent id is for this model object.  If empty then this model object is the top level ancestor of all children.
+	 * @var INT
+	 */
+	protected $_parent = 0;
+
+
 	/**
 	 * Adds to the specified event category. If it category doesn't exist, creates it.
 	 * @param string $category_name
@@ -32,6 +48,31 @@ class EE_CPT_Base extends EE_Base_Class{
 	 */
 	function remove_event_category($category_name){
 		return $this->get_model()->remove_event_category($this,$category_name);
+	}
+
+
+
+
+	/**
+	 * The main purpose of this method is to return the post type for the model object
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function post_type() {
+		return $this->_post_type;
+	}
+
+
+
+	/**
+	 * The main purpose of this method is to return the parent for the model object
+	 *
+	 * @access public
+	 * @return int
+	 */
+	public function parent() {
+		return $this->_parent;
 	}
 
 

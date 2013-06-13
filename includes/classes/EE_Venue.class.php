@@ -28,7 +28,6 @@ class EE_Venue extends EE_CPT_Base {
 	protected $_STS_ID;
 	protected $_VNU_modified;
 	protected $_VNU_wp_user;
-	protected $_VNU_parent;
 	protected $_VNU_order;
 	protected $_VNU_address;
 	protected $_VNU_address2;
@@ -232,19 +231,6 @@ class EE_Venue extends EE_CPT_Base {
 		return $this->set('VNU_order', $order);
 	}
 
-	/**
-	 * Gets parent
-	 */
-	function parent() {
-		return $this->get('VNU_parent');
-	}
-
-	/**
-	 * Sets parent
-	 */
-	function set_parent($parent) {
-		return $this->set('VNU_parent', $parent);
-	}
 
 	/**
 	 * Gets phone

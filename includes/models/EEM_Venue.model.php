@@ -75,9 +75,9 @@ class EEM_Venue extends EEM_CPT_Base {
 				'STS_ID'=>new EE_Enum_Field('post_status', __("Venue Status", "event_espresso"), false, 'draft', self::$_statuses),//will be a foreign key once status model made
 				'VNU_modified'=>new EE_Datetime_Field('post_modified', __("Venue Modified Date", "event_espresso"), true,current_time('timestamp')),
 				'VNU_wp_user'=>new EE_Integer_Field('post_author', __("Venue Creator", "event_espresso"), false, 1),
-				'VNU_parent'=>new EE_Integer_Field('post_parent', __("Venue Parent ID", "event_espresso"), true),
+				'parent'=>new EE_Integer_Field('post_parent', __("Venue Parent ID", "event_espresso"), true),
 				'VNU_order'=>new EE_Integer_Field('menu_order', __("Venue order", "event_espresso"), false, 1),
-				'VNU_post_type'=>new EE_DB_Only_Text_Field('post_type', __("Venue post type", "event_espresso"), false, 'espresso_venues'),
+				'post_type'=>new EE_Plain_Text_Field('post_type', __("Venue post type", "event_espresso"), false, 'espresso_venues'),
 				),
 			'Venue_Meta'=>array(
 				'VNUM_ID'=>new EE_DB_Only_Int_Field('VNUM_ID', __("ID of Venue Meta Row", "event_espresso"), false),

@@ -98,9 +98,9 @@ class EEM_Event  extends EEM_CPT_Base{
 				'STS_ID'=>new EE_Enum_Field('post_status', __("Event Status", "event_espresso"), false, 'draft', self::$_statuses),
 				'EVT_modified'=>new EE_Datetime_Field('post_modified', __("Dateim/Time Event Modified", "event_espresso"), true, current_time('timestamp')),
 				'EVT_wp_user'=>new EE_Integer_Field('post_author', __("Wordpress User ID", "event_espresso"), false,1),
-				'EVT_parent'=>new EE_Integer_Field('post_parent', __("Event Parent ID", "event_espresso"), true),
+				'parent'=>new EE_Integer_Field('post_parent', __("Event Parent ID", "event_espresso"), true),
 				'EVT_order'=>new EE_Integer_Field('menu_order', __("Event Menu Order", "event_espresso"), false, 1),
-				'EVT_post_type'=>new EE_DB_Only_Text_Field('post_type', __("Event Post Type", "event_espresso"), false, 'espresso_events')
+				'post_type'=>new EE_Plain_Text_Field('post_type', __("Event Post Type", "event_espresso"), false, 'espresso_events')
 			),
 			'Event_Meta'=>array(
 				'EVTM_ID'=> new EE_DB_Only_Float_Field('EVTM_ID', __('Event Meta Row ID','event_espresso'), false),
