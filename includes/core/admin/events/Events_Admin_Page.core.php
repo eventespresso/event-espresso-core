@@ -39,10 +39,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected $_event;
 
 
+	/**
+	 * This will hold the event model instance
+	 * @var object
+	 */
+	protected $_event_model;
+
+
 	protected function _init_page_props() {
+		require_once( 'EEM_Event.model.php' );
 		$this->page_slug = EVENTS_PG_SLUG;
 		$this->page_label = EVENTS_LABEL;
 		$this->_cpt_model_name = 'EEM_Event';
+		$this->_event_model = EEM_Event::instance();
 	}
 
 	protected function _ajax_hooks() {
