@@ -48,14 +48,13 @@ class EEM_Venue extends EEM_CPT_Base {
 	 * Statuses for venues
 	 * @var array
 	 */
-	protected static $_statuses = array();
+	private static $_statuses = array();
 	
 
 	protected function __construct(){
 		$this->singlular_item = __('Venue','event_espresso');
 		$this->plural_item = __('Venues','event_espresso');
 		
-		global $wp_post_statuses;
 		global $wp_post_statuses;
 		foreach($wp_post_statuses as $post_status => $args_object){
 			self::$_statuses[$post_status] = $args_object->label;
@@ -105,6 +104,19 @@ class EEM_Venue extends EEM_CPT_Base {
 		require_once('strategies/EE_Default_CPT_Where_Conditions.strategy.php');
 		$this->_default_where_conditions_strategy = new EE_Default_CPT_Where_Conditions('espresso_venues', 'VNUM_ID');
 		parent::__construct();
+	}
+
+
+	public static function venue_status_array() {
+		self::$_statuses = call_user_func( array( __CLASS__, '_get_venue_status_array' ) );
+		return self::$_statuses;
+	}
+
+
+	private function _get_venue_status_array() {
+		return apply_filters('FHEE_EEM_Venue__construct__statuses',array(
+			'auto-draft'=>  __("Auto Draft", "event_espresso")
+		));
 	}
 }
 // End of file EEM_Answer.model.php

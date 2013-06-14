@@ -553,18 +553,6 @@ class EEM_Event  extends EEM_CPT_Base{
 
 	private function _get_event_status_array() {
 		return apply_filters('FHEE_EEM_Event__construct__statuses',array(
-			EEM_Event::status_active =>  __("Active", "event_espresso"),
-			EEM_Event::status_not_active => __("Not Active", "event_espresso"),
-			EEM_Event::status_registration_not_open =>  __("Registration Not Open", "event_espresso"),
-			EEM_Event::status_registration_open =>  __("Registration Open", "event_espresso"),
-			EEM_Event::status_registration_closed =>  __("Registration Closed", "event_espresso"),
-			EEM_Event::status_pending =>  __("Pending", "event_espresso"),
-			EEM_Event::status_ongoing =>  __("Ongoing", "event_espresso"),
-			EEM_Event::status_secondary =>  __("Secondary", "event_espresso"),
-			EEM_Event::status_draft =>  __("Draft", "event_espresso"),
-			EEM_Event::status_deleted =>  __("Deleted", "event_espresso"),
-			EEM_Event::status_denied =>  __("Denied", "event_espresso"),
-			EEM_Event::status_expired=>  __("Expired", "event_espresso"),
 			'auto-draft'=>  __("Auto Draft", "event_espresso")
 		));
 	}
