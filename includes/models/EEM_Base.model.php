@@ -1370,7 +1370,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @return string
 	 */
 	private function _construct_op_and_value($op_and_value, EE_Model_Field_Base $field_obj, $values_already_prepared_by_model_object = false){
-		if(is_array( $op_and_value ) && key($op_and_value) === 0 ){
+		if(is_array( $op_and_value ) && preg_match( '/NULL/', $op_and_value[0]) ){
 			//handle special operators that don't HAVE a value (such as "IS NOT NULL")
 			$operator = $op_and_value[0];
 			$value = NULL;
