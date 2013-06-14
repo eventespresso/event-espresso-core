@@ -131,6 +131,43 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 
+	/**
+	 * overloading the EE_Admin_Page parent load_page_dependencies so we can get the cpt stuff added in appropriately
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function load_page_dependencies() {
+		parent::load_page_dependencies();
+
+		//before doing anything we need to make sure this runs ONLY when the loaded page matches the set page_slug
+		if ( $this->_req_data['page'] != $this->page_slug ) 
+			return;
+		$this->modify_current_screen;
+
+
+		//now let's do some automatic filters into the wp_system and we'll check to make sure the CHILD class automatically has the required methods in place.
+		
+		//the following filters are for setting all the redirects on DEFAULT WP custom post type actions	
+		//let's add a hidden input to the post-edit form so we know when we have to trigger our custom redirects!  Otherwise the redirects will happen on ALL post saves which wouldn't be good of course!
+		add_action('edit_form_after_title', array( $this, 'cpt_post_form_hidden_input') );
+
+		//inject our Admin page nav tabs...
+		add_action('post_edit_form_tag', array( $this, 'inject_nav_tabs' ) );
+
+		//modify the post_updated messages array
+		add_action('post_updated_messages', array( $this, 'post_update_messages' ), 10 );
+
+		//add shortlink button to cpt edit screens.  We can do this as a universal thing BECAUSE, cpts use the same format for shortlinks as posts!
+		add_filter( 'get_shortlink', array( $this, 'add_shortlink_button_to_editor' ), 10, 4 );
+
+		if ( method_exists( $this, 'extra_permalink_field_buttons' ) )
+			add_filter('get_sample_permalink_html', array( $this, 'extra_permalink_field_buttons' ), 10, 4 );
+
+		if ( method_exists( $this, 'extra_misc_actions_publish_box' ) )
+			add_filter('post_submitbox_misc_actions', array( $this, 'extra_misc_actions_publish_box' ), 10 );
+	}
+
 
 	/**
 	 * This takes care of setting up default routes and pages that utilize the core WP admin pages.  Child classes can override the defaults (in cases for adding metaboxes etc.) but take care that you include the defaults here otherwise your core WP admin pages for the cpt won't work!
@@ -183,28 +220,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			$id = isset( $this->_req_data['id'] ) ? $this->_req_data['id'] : NULL;
 			$this->_set_model_object( $id );
 		}
-
-
-		//now let's do some automatic filters into the wp_system and we'll check to make sure the CHILD class automatically has the required methods in place.
-		
-		//the following filters are for setting all the redirects on DEFAULT WP custom post type actions	
-		//let's add a hidden input to the post-edit form so we know when we have to trigger our custom redirects!  Otherwise the redirects will happen on ALL post saves which wouldn't be good of course!
-		add_action('edit_form_after_title', array( $this, 'cpt_post_form_hidden_input') );
-
-		//inject our Admin page nav tabs...
-		add_action('post_edit_form_tag', array( $this, 'inject_nav_tabs' ) );
-
-		//modify the post_updated messages array
-		add_action('post_updated_messages', array( $this, 'post_update_messages' ), 10 );
-
-		//add shortlink button to cpt edit screens.  We can do this as a universal thing BECAUSE, cpts use the same format for shortlinks as posts!
-		add_filter( 'get_shortlink', array( $this, 'add_shortlink_button_to_editor' ), 10, 4 );
-
-		if ( method_exists( $this, 'extra_permalink_field_buttons' ) )
-			add_filter('get_sample_permalink_html', array( $this, 'extra_permalink_field_buttons' ), 10, 4 );
-
-		if ( method_exists( $this, 'extra_misc_actions_publish_box' ) )
-			add_filter('post_submitbox_misc_actions', array( $this, 'extra_misc_actions_publish_box' ), 10 );
 		
 	}
 
