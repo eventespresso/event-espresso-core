@@ -126,7 +126,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return void
 	 */
 	protected function _before_page_setup() {
-		$this->_cpt_object = get_post_type_object( $this->page_slug );
+		$this->_cpt_object = get_post_type_object( $this->_req_data['page']);
 	}
 
 
@@ -139,6 +139,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return void
 	 */
 	protected function _extend_page_config_for_cpt() {
+
+		//before doing anything we need to make sure this runs ONLY when the loaded page matches the set page_slug
+		if ( $this->_req_data['page'] != $this->page_slug ) 
+			return;
 				
 		$this->_cpt_route = $this->_req_action == 'create_new' || $this->_req_action == 'edit' ? TRUE : FALSE;
 		add_action('FHEE_admin_load_page_dependencies', array( $this, 'modify_current_screen') );
@@ -148,7 +152,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			$msg = sprintf( __('This page has been set as being related to a registered custom post type, however, the custom post type object could not be retrieved because the slug for the page does NOT match the reference for the registered custome post type.  The slug used, "%s" must be what you use to register the associated custom post type'), $this->page_slug );
 			throw new EE_Error( $msg );
 		}
-
+		
 
 		$this->_page_routes = array_merge( array(
 			'create_new' => '_create_new_cpt_item',
