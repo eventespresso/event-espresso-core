@@ -195,6 +195,11 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 */
 	public function __construct( EE_Admin_Page $adminpage ) {
 		$this->_adminpage_obj = $adminpage;
+		$this->_req_data = array_merge($_GET, $_POST);
+
+		//first let's verify we're on the right page
+		if ( isset( $this->_req_data['page'] ) && $this->_adminpage_obj->page_slug != $this->_req_data['page'] )
+			return; //get out nothing more to be done here.
 
 		$this->_set_defaults();
 		$this->_set_hooks_properties();
@@ -304,7 +309,6 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	private function _set_defaults() {
 		$this->_ajax_func = $this->_init_func = $this->_metaboxes = $this->_scripts = $this->_styles = $this->_wp_action_filters_priority = array();
 		$this->_current_route = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : 'default';
-		$this->_req_data = array_merge($_GET, $_POST);
 		$this->caller = get_class($this);
 		$this->_extend = stripos($this->caller, 'Extend') ? TRUE : FALSE;
 	}
