@@ -562,7 +562,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		//set defaults
 		$defaults = array(
 			'func' => $func,
-			'id' => $this->_current_route . '_' . $this->caller . '_' . $func . '_metabox',
+			'id' => $this->caller . '_' . $func . '_metabox',
 			'priority' => 'default',
 			'label' => $this->caller,
 			'context' => 'advanced',
