@@ -20,15 +20,14 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * This contains the logic for setting up the Event Venue related admin pages.  Any methods without phpdoc comments have inline docs with parent class. 
  *
- * NOTE:  TODO: This is a straight conversion from the legacy 3.1 event venue related pages.  It is NOT optimized and will need modification to fully use the new system (and also will need adjusted when Event Venues model is setup)
  *
  * @package		Venues_Admin_Page
- * @subpackage	includes/core/admin/Venues_Admin_Page.core.php
+ * @subpackage	caffeinated/admin/new/Venues_Admin_Page.core.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
-class Venues_Admin_Page extends EE_Admin_Page {
+class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	/**
@@ -43,17 +42,22 @@ class Venues_Admin_Page extends EE_Admin_Page {
 
 
 
+	/**
+	 * This property will hold the venue model instance
+	 * @var object
+	 */
+	protected $_venue_model;
 
-	public function __construct( $routing = TRUE ) {
-		parent::__construct( $routing );
-	}
 
 
 
 
 	protected function _init_page_props() {
+		require_once( 'EEM_Venue.model.php' );
 		$this->page_slug = EE_VENUES_PG_SLUG;
 		$this->page_label = __('Event Venues', 'event_espresso');
+		$this->_cpt_model_name = 'EEM_Venue';
+		$this->_venue_model = EEM_Venue::instance();
 	}
 
 
@@ -76,7 +80,8 @@ class Venues_Admin_Page extends EE_Admin_Page {
 				'add' => __('Add New Venue', 'event_espresso'),
 				'edit' => __('Edit Venue', 'event_espresso'),
 				'delete' => __('Delete Venue', 'event_espresso')
-			)
+			),
+			'editor_title' => __('Enter Venue name here')
 		);
 	}
 
@@ -85,15 +90,34 @@ class Venues_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _set_page_routes() {
+
+		//load formatter helper
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
+
+		//load field generator helper
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
+
 		$this->_page_routes = array(
 			'default' => '_overview_list_table',
-			'edit_venue' => array(
-				'func' => '_venue_details',
-				'args' => array('edit')
+			'trash_venue' => array(
+				'func' => '_trash_or_restore_venue',
+				'args' => array( 'venue_status' => 'trash' ),
+				'noheader' => TRUE
 				),
-			'add_venue' => array(
-				'func' => '_venue_details',
-				'args' => array('add')
+			'trash_venues' => array(
+				'func' => '_trash_or_restore_venues',
+				'args' => array( 'venue_status' => 'trash' ),
+				'noheader' => TRUE
+				),
+			'restore_venue' => array(
+				'func' => '_trash_or_restore_venue',
+				'args' => array( 'venue_status' => 'draft' ),
+				'noheader' => TRUE
+				),
+			'restore_venues' => array(
+				'func' => '_trash_or_restore_venues',
+				'args' => array( 'venue_status' => 'draft' ),
+				'noheader' => TRUE
 				),
 			'delete_venues' => array(
 				'func' => '_delete_venues', 
@@ -102,18 +126,12 @@ class Venues_Admin_Page extends EE_Admin_Page {
 			'delete_venue' => array(
 				'func' => '_delete_venues', 
 				'noheader' => TRUE
-				),
-			'insert_venue' => array(
-				'func' => '_insert_or_update_venue',
-				'args' => array('new_venue' => TRUE),
-				'noheader' => TRUE
-				),
-			'update_venue' => array(
-				'func' => '_insert_or_update_venue',
-				'args' => array('new_venue' => FALSE),
-				'noheader' => TRUE
 				)
 		);
+
+		//let's add our extra venue fields AFTER the title field
+		//add_action( 'edit_form_after_title', array( $this, 'extra_venue_fields'), 10 );
+		////this has to be added in the cpt core otherwise it gets hooked into EVERY cpt admin page.
 	}
 
 
@@ -129,22 +147,13 @@ class Venues_Admin_Page extends EE_Admin_Page {
 				'list_table' => 'Venues_Admin_List_Table',
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box'),
 			),
-			'add_venue' => array(
-				'nav' => array(
-					'label' => __('Add Venue', 'event_espresso'),
-					'order' => 5,
-					'persistent' => FALSE
-				),
-				'metaboxes' => array('_publish_post_box')
-			),
-			'edit_venue' => array(
+			'edit' => array(
 				'nav' => array(
 					'label' => __('Edit Venue', 'event_espresso'),
 					'order' => 5,
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['id']) ? add_query_arg(array('id' => $this->_req_data['id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
-				),
-				'metaboxes' => array('_publish_post_box')
+				)
 			)
 		);
 	}
@@ -183,15 +192,15 @@ class Venues_Admin_Page extends EE_Admin_Page {
 
 
 
-	public function load_scripts_styles_add_venue() {
-		$this->load_scripts_styles_edit_venue();
+	public function load_scripts_styles_create_new() {
+		$this->load_scripts_styles_edit();
 	}
 
 
 
 
 
-	public function load_scripts_styles_edit_venue() {
+	public function load_scripts_styles_edit() {
 		//styles
 		wp_enqueue_style('jquery-ui-style');
 		wp_register_style( 'espresso_venues', EE_VENUES_ASSETS_URL . 'ee-venues-admin.css', array(), EVENT_ESPRESSO_VERSION );
@@ -202,7 +211,7 @@ class Venues_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_script('espresso_venue_admin');
 
 		global $eei18n_js_strings;
-		$eei18n_js_strings['required'] = __( 'This is a required filed. Please add a value in order to continue.', 'event_espresso' );
+		$eei18n_js_strings['required'] = __( 'This is a required field. Please add a value in order to continue.', 'event_espresso' );
 		wp_localize_script( 'espresso_venue_admin', 'eei18n', $eei18n_js_strings );
 
 	}
@@ -229,12 +238,22 @@ class Venues_Admin_Page extends EE_Admin_Page {
 
 	protected function _overview_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$this->_admin_page_title .= $this->_get_action_link_or_button('add_venue', 'add', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->_get_action_link_or_button('create_new', 'add', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
 
 
+	protected function _insert_update_cpt_item( $post_id, $post ) {}
+	public function trash_cpt_item( $post_id ) {}
+	public function restore_cpt_item( $post_id ) {}
+	public function delete_cpt_item( $post_id ) {}
 
+
+
+
+	public function extra_venue_fields() {
+		echo 'YUP WE CAN ADD EXTRA FIELDS HERE';
+	}
 
 	protected function _venue_details($view) {
 		//load formatter helper
