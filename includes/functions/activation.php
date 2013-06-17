@@ -773,7 +773,7 @@ function events_data_tables_install() {
 		VNU_address2 varchar(100) DEFAULT NULL,
 		VNU_city varchar(100) DEFAULT NULL,
 		STA_ID int(11) DEFAULT NULL,
-		CNT_ISO int(11) DEFAULT NULL,
+		CNT_ISO varchar(2) DEFAULT NULL,
 		VNU_zip varchar(45) DEFAULT NULL,
 		VNU_phone varchar(45) DEFAULT NULL,
 		VNU_capacity int(11) DEFAULT NULL,

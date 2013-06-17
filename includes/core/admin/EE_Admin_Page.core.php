@@ -1538,7 +1538,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 
 	private function _espresso_news_post_box() {
-		function espresso_news_post_box() {
+		
+		add_meta_box('espresso_news_post_box', __('New @ Event Espresso', 'event_espresso'), array( $this, 'espresso_news_post_box'), $this->_wp_page_slug, 'side');
+	}
+
+
+	public function espresso_news_post_box() {
 		?>
 	  <div class="padding">
 	  	<div class="infolinks">
@@ -1552,18 +1557,17 @@ abstract class EE_Admin_Page extends EE_BASE {
 	  	</div>
 	  </div>
 		<?php
-		}
-		add_meta_box('espresso_news_post_box', __('New @ Event Espresso', 'event_espresso'), 'espresso_news_post_box', $this->_wp_page_slug, 'side');
 	}
 
 
 	private function _espresso_links_post_box() {
-		function espresso_links_post_box() {
+		add_meta_box('espresso_links_post_box', __('Helpful Plugin Links', 'event_espresso'), array( $this, 'espresso_links_post_box'), $this->_wp_page_slug, 'side');
+	}
+
+	public function espresso_links_post_box() {
 		   $templatepath = EE_CORE_ADMIN_TEMPLATE . 'admin_general_metabox_contents_espresso_links.template.php';
 			espresso_display_template( $templatepath );	
 		}
-		add_meta_box('espresso_links_post_box', __('Helpful Plugin Links', 'event_espresso'), 'espresso_links_post_box', $this->_wp_page_slug, 'side');
-	}
 
 
 
@@ -2581,7 +2585,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * Returns an array to be used for EE_FOrm_Fields.helper.php's select_input as the $values argument.
 	 * @return array
 	 */
-	function get_yes_no_values(){
+	public function get_yes_no_values(){
 		return $this->_yes_no_values;
 	}
 

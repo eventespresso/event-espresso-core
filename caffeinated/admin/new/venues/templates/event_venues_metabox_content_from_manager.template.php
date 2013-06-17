@@ -1,16 +1,27 @@
 <table class="form-table">
 	<tr>
-		<td valign="top" class="use-ven-manager"><fieldset id="venue-manager">
-				<legend><?php echo __('Venue Information', 'event_espresso') ?></legend>
-				<?php if (!$this->_espresso_venue_dd()) : ?>
-					<p class="info">
-						<b><?php _e('You have not created any venues yet.', 'event_espresso'); ?></b>
-					</p>
-					<p><a href="admin.php?page=espresso_venues"><?php echo __('Add venues to the Venue Manager', 'event_espresso') ?></a></p>
-				<?php else: ?>
-					<?php echo $venue_selection; ?>
-				<?php endif; ?>
+		<td valign="top" class="use-ven-manager">
+		<label><?php _e('Select from Venue Manager List', 'event_espresso'); ?></label>
+		<?php echo $venue_selector; ?>
+		<?php foreach ( $venues as $venue ) :
+			$selected = $evt_venue_id == $venue->ID() ? '' : ' style="display:none;"';
+			$edit_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'edit', 'id' => $venue->ID() ), EE_VENUES_ADMIN_URL );
+			?>
+			<fieldset id="eebox_<?php echo $venue->ID(); ?>" class="eebox"<?php echo $selected; ?>>
+				<ul class="address-view">
+					<li>
+						<p><span><?php _e('Address:', 'event_espresso'); ?></span> "<?php echo $venue->address(); ?>"<br />
+							<span></span> "<?php echo $venue->address2(); ?>"<br />
+							<span><?php _e('City:', 'event_espresso'); ?></span> "<?php echo $venue->city(); ?>"<br />
+							<span><?php _e('State:', 'event_espresso'); ?></span> "<?php echo $venue->state_obj()->name(); ?>"<br />
+							<span><?php _e('Country:', 'event_espresso'); ?></span> "<?php echo $venue->country_obj()->name(); ?>"<br />
+							<span><?php _e('Venue ID:', 'event_espresso'); ?></span> "<?php echo $venue->ID(); ?>"<br /></p>
+							<?php printf( __('This venue\'s shortcode: %s[ESPRESSO_VENUE id="%d"]%s', 'event_espresso'), '<strong class="highlight">', $venue->ID(), '</strong>' ); ?><br />
+							<a href="<?php echo $edit_url; ?>" target="_blank"><?php _e('Edit this Venue', 'event_espresso'); ?></a>
+					</li>	
+				</ul>
 			</fieldset>
+		<?php endforeach; ?>
 		</td>
 	</tr>
 </table>

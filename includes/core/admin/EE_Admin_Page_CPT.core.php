@@ -126,10 +126,73 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return void
 	 */
 	protected function _before_page_setup() {
-		$this->_cpt_object = get_post_type_object( $this->page_slug );
+		$page = isset( $this->_req_data['page'] ) ? $this->_req_data['page'] : $this->page_slug;
+		$this->_cpt_object = get_post_type_object( $page );
 	}
 
 
+
+	/**
+	 * overloading the EE_Admin_Page parent load_page_dependencies so we can get the cpt stuff added in appropriately
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function load_page_dependencies() {
+		parent::load_page_dependencies();
+
+		//we only add stuff if this is a cpt_route!
+		if ( !$this->_cpt_route ) {
+			parent::load_page_dependencies();
+			return;
+		}
+
+
+		//now let's do some automatic filters into the wp_system and we'll check to make sure the CHILD class automatically has the required methods in place.
+		
+		//the following filters are for setting all the redirects on DEFAULT WP custom post type actions	
+		//let's add a hidden input to the post-edit form so we know when we have to trigger our custom redirects!  Otherwise the redirects will happen on ALL post saves which wouldn't be good of course!
+		add_action('edit_form_after_title', array( $this, 'cpt_post_form_hidden_input') );
+
+		//inject our Admin page nav tabs...
+		//let's make sure the nav tabs are set if they aren't already
+		//if ( empty( $this->_nav_tabs ) ) $this->_set_nav_tabs();
+		add_action('post_edit_form_tag', array( $this, 'inject_nav_tabs' ) );
+
+		//modify the post_updated messages array
+		add_action('post_updated_messages', array( $this, 'post_update_messages' ), 10 );
+
+		//add shortlink button to cpt edit screens.  We can do this as a universal thing BECAUSE, cpts use the same format for shortlinks as posts!
+		add_filter( 'get_shortlink', array( $this, 'add_shortlink_button_to_editor' ), 10, 4 );
+
+		//This basically allows us to change the title of the "publish" metabox area on CPT pages by setting a 'publishbox' value in the $_labels property array in the child class.
+		if ( !empty($this->_labels['publishbox'] ) ) {
+			remove_meta_box( 'submitdiv', __( 'Publish' ), 'post_submit_meta_box', $this->page_slug, 'side', 'core' );
+			add_meta_box( 'submitdiv', $this->_labels['publishbox'], 'post_submit_meta_box', $this->page_slug, 'side', 'core' );
+		}
+
+		//this is a filter that allows the addition of extra html after the permalink field on the wp post edit-form
+		if ( method_exists( $this, 'extra_permalink_field_buttons' ) )
+			add_filter('get_sample_permalink_html', array( $this, 'extra_permalink_field_buttons' ), 10, 4 );
+
+		//This allows adding additional information to the publish post submitbox on the wp post edit form
+		if ( method_exists( $this, 'extra_misc_actions_publish_box' ) )
+			add_action('post_submitbox_misc_actions', array( $this, 'extra_misc_actions_publish_box' ), 10 );
+
+		//This allows for adding additional stuff after the title field on the wp post edit form.  This is also before the wp_editor for post description field.
+		if ( method_exists( $this, 'edit_form_after_title' ) )
+			add_action('edit_form_after_title', array( $this, 'edit_form_after_title' ), 10 );
+
+		parent::load_page_dependencies();
+		$this->modify_current_screen();
+		//we route REALLY early.
+		try {
+			$this->_route_admin_request();
+		} catch ( EE_Error $e ) {
+			$e->get_error();
+		}
+		//$this->modify_current_screen;
+	}
 
 
 	/**
@@ -139,16 +202,20 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return void
 	 */
 	protected function _extend_page_config_for_cpt() {
+
+		//before doing anything we need to make sure this runs ONLY when the loaded page matches the set page_slug
+		if ( isset( $this->_req_data['page'] ) && $this->_req_data['page'] != $this->page_slug ) 
+			return;
 				
 		$this->_cpt_route = $this->_req_action == 'create_new' || $this->_req_action == 'edit' ? TRUE : FALSE;
-		add_action('FHEE_admin_load_page_dependencies', array( $this, 'modify_current_screen') );
+		//add_action('FHEE_admin_load_page_dependencies', array( $this, 'modify_current_screen') );
 
 
 		if ( empty( $this->_cpt_object ) ) {
 			$msg = sprintf( __('This page has been set as being related to a registered custom post type, however, the custom post type object could not be retrieved because the slug for the page does NOT match the reference for the registered custome post type.  The slug used, "%s" must be what you use to register the associated custom post type'), $this->page_slug );
 			throw new EE_Error( $msg );
 		}
-
+		
 
 		$this->_page_routes = array_merge( array(
 			'create_new' => '_create_new_cpt_item',
@@ -175,32 +242,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		);
 
 
+
 		if ( $this->_cpt_route  && ( $this->_req_action == 'create_new' || $this->_req_action == 'edit'  ) ) {
 			$id = isset( $this->_req_data['id'] ) ? $this->_req_data['id'] : NULL;
 			$this->_set_model_object( $id );
 		}
-
-
-		//now let's do some automatic filters into the wp_system and we'll check to make sure the CHILD class automatically has the required methods in place.
-		
-		//the following filters are for setting all the redirects on DEFAULT WP custom post type actions	
-		//let's add a hidden input to the post-edit form so we know when we have to trigger our custom redirects!  Otherwise the redirects will happen on ALL post saves which wouldn't be good of course!
-		add_action('edit_form_after_title', array( $this, 'cpt_post_form_hidden_input') );
-
-		//inject our Admin page nav tabs...
-		add_action('post_edit_form_tag', array( $this, 'inject_nav_tabs' ) );
-
-		//modify the post_updated messages array
-		add_action('post_updated_messages', array( $this, 'post_update_messages' ), 10 );
-
-		//add shortlink button to cpt edit screens.  We can do this as a universal thing BECAUSE, cpts use the same format for shortlinks as posts!
-		add_filter( 'get_shortlink', array( $this, 'add_shortlink_button_to_editor' ), 10, 4 );
-
-		if ( method_exists( $this, 'extra_permalink_field_buttons' ) )
-			add_filter('get_sample_permalink_html', array( $this, 'extra_permalink_field_buttons' ), 10, 4 );
-
-		if ( method_exists( $this, 'extra_misc_actions_publish_box' ) )
-			add_filter('post_submitbox_misc_actions', array( $this, 'extra_misc_actions_publish_box' ), 10 );
 		
 	}
 
@@ -283,15 +329,16 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		//ONLY do this if the current page_route IS a cpt route
 		if ( !$this->_cpt_route ) return;
 		//routeing things REALLY early b/c this is a cpt admin page
+		
 		set_current_screen( $this->page_slug );
 		$this->_current_screen = get_current_screen();
 		$this->_current_screen->base = 'event-espresso'; 
 		$this->_add_help_tabs(); //we make sure we add any help tabs back in!
-		try {
+		/*try {
 			$this->_route_admin_request();
 		} catch ( EE_Error $e ) {
 			$e->get_error();
-		}
+		}/**/
 	}
 
 
@@ -365,7 +412,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		//first let's see if we should even do a redirect
 		if ( !isset( $this->_req_data['ee_cpt_item_redirect_url'] ) )
 			return $location;
-
 
 		//shared query_args
 		$query_args = array( 'action' => 'edit', 'id' => $post_id );

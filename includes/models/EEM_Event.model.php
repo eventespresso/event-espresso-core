@@ -82,7 +82,7 @@ class EEM_Event  extends EEM_CPT_Base{
 		self::$_additional_attendee_reg_info_enum = $this->_get_additional_attendee_reg_info_array();
 		$this->_tables = array(
 			'Event_CPT'=>new EE_Primary_Table('posts','ID'),
-			'Event_Meta'=> new EE_Secondary_Table('esp_event_meta', 'EVTM_ID','EVT_ID',"Event_CPT.post_type='espresso_events'")
+			'Event_Meta'=> new EE_Secondary_Table('esp_event_meta', 'EVTM_ID','EVT_ID')
 		);
 		
 		
@@ -98,9 +98,9 @@ class EEM_Event  extends EEM_CPT_Base{
 				'STS_ID'=>new EE_Enum_Field('post_status', __("Event Status", "event_espresso"), false, 'draft', self::$_statuses),
 				'EVT_modified'=>new EE_Datetime_Field('post_modified', __("Dateim/Time Event Modified", "event_espresso"), true, current_time('timestamp')),
 				'EVT_wp_user'=>new EE_Integer_Field('post_author', __("Wordpress User ID", "event_espresso"), false,1),
-				'EVT_parent'=>new EE_Integer_Field('post_parent', __("Event Parent ID", "event_espresso"), true),
+				'parent'=>new EE_Integer_Field('post_parent', __("Event Parent ID", "event_espresso"), true),
 				'EVT_order'=>new EE_Integer_Field('menu_order', __("Event Menu Order", "event_espresso"), false, 1),
-				'EVT_post_type'=>new EE_DB_Only_Text_Field('post_type', __("Event Post Type", "event_espresso"), false, 'espresso_events')
+				'post_type'=>new EE_Plain_Text_Field('post_type', __("Event Post Type", "event_espresso"), false, 'espresso_events')
 			),
 			'Event_Meta'=>array(
 				'EVTM_ID'=> new EE_DB_Only_Float_Field('EVTM_ID', __('Event Meta Row ID','event_espresso'), false),
@@ -129,7 +129,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			'Venue'=>new EE_HABTM_Relation('Event_Venue')
 		);
 		require_once('strategies/EE_Default_CPT_Where_Conditions.strategy.php');
-		$this->_default_where_conditions_strategy = new EE_Default_CPT_Where_Conditions('espresso_events');
+		$this->_default_where_conditions_strategy = new EE_Default_CPT_Where_Conditions('espresso_events', 'EVTM_ID');
 		parent::__construct( $timezone );
 	}
 	
@@ -553,18 +553,6 @@ class EEM_Event  extends EEM_CPT_Base{
 
 	private function _get_event_status_array() {
 		return apply_filters('FHEE_EEM_Event__construct__statuses',array(
-			EEM_Event::status_active =>  __("Active", "event_espresso"),
-			EEM_Event::status_not_active => __("Not Active", "event_espresso"),
-			EEM_Event::status_registration_not_open =>  __("Registration Not Open", "event_espresso"),
-			EEM_Event::status_registration_open =>  __("Registration Open", "event_espresso"),
-			EEM_Event::status_registration_closed =>  __("Registration Closed", "event_espresso"),
-			EEM_Event::status_pending =>  __("Pending", "event_espresso"),
-			EEM_Event::status_ongoing =>  __("Ongoing", "event_espresso"),
-			EEM_Event::status_secondary =>  __("Secondary", "event_espresso"),
-			EEM_Event::status_draft =>  __("Draft", "event_espresso"),
-			EEM_Event::status_deleted =>  __("Deleted", "event_espresso"),
-			EEM_Event::status_denied =>  __("Denied", "event_espresso"),
-			EEM_Event::status_expired=>  __("Expired", "event_espresso"),
 			'auto-draft'=>  __("Auto Draft", "event_espresso")
 		));
 	}

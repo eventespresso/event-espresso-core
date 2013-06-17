@@ -18,17 +18,16 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * Venues_Admin_Page_Init
  *
- * This is the init for the EE Event Categories Admin Pages.  See EE_Admin_Page_Init for method inline docs. 
+ * This is the init for the EE Venue Admin Pages.  See EE_Admin_Page_CPT_Init (and EE_Admin_Page_Init) for method inline docs. 
  *
- * NOTE:  TODO: This is a straight conversion from the legacy 3.1 event venues related pages.  It is NOT optimized and will need modification to fully use the new system (and also will need adjusted when Event Venues model is setup)
  *
  * @package		Venues_Admin_Page_Init
- * @subpackage	includes/core/admin/Venues_Admin_Page_Init.core.php
+ * @subpackage	caffeinated/admin/new/Venues_Admin_Page_Init.core.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
-class Venues_Admin_Page_Init extends EE_Admin_Page_Init {
+class Venues_Admin_Page_Init extends EE_Admin_Page_CPT_Init {
 
 
 	public function __construct() {
@@ -36,6 +35,7 @@ class Venues_Admin_Page_Init extends EE_Admin_Page_Init {
 		define( 'EE_VENUES_PG_SLUG', 'espresso_venues' );	
 		define( 'EE_VENUES_ADMIN_URL', admin_url('admin.php?page=' . EE_VENUES_PG_SLUG ));
 		define( 'EE_VENUES_ASSETS_URL', EE_CORE_CAF_ADMIN_URL . 'new/venues/assets/');
+		define( 'EE_VENUES_TEMPLATE_PATH', EE_CORE_CAF_ADMIN . 'new/venues/templates/' );
 
 		parent::__construct();
 		$this->_folder_path = EE_CORE_CAF_ADMIN . 'new/' . $this->_folder_name . DS;

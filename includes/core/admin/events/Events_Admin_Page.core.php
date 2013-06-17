@@ -39,10 +39,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected $_event;
 
 
+	/**
+	 * This will hold the event model instance
+	 * @var object
+	 */
+	protected $_event_model;
+
+
 	protected function _init_page_props() {
+		require_once( 'EEM_Event.model.php' );
 		$this->page_slug = EVENTS_PG_SLUG;
 		$this->page_label = EVENTS_LABEL;
 		$this->_cpt_model_name = 'EEM_Event';
+		$this->_event_model = EEM_Event::instance();
 	}
 
 	protected function _ajax_hooks() {
@@ -58,7 +67,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'edit' => __('Edit Event', 'event_espresso'),
 				'delete' => __('Delete Event', 'event_espresso')
 			),
-			'editor_title' => __('Enter event title here')
+			'editor_title' => __('Enter event title here', 'event_espresso'),
+			'publishbox' => __('Save Event', 'event_espresso')
 		);
 	}
 
@@ -164,7 +174,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'label' => __('Edit Event', 'event_espresso'),
 					'order' => 5,
 					'persistent' => false,
-					'url' => isset($this->_req_data['EVT_ID']) ? add_query_arg(array('EVT_ID' => $this->_req_data['EVT_ID']), $this->_current_page_view_url) : $this->_admin_base_url
+					'url' => isset($this->_req_data['id']) ? add_query_arg(array('id' => $this->_req_data['id']), $this->_current_page_view_url) : $this->_admin_base_url
 				),
 				'metaboxes' => array('_publish_post_box', '_register_event_editor_meta_boxes'),
 				'help_tabs' => array(
@@ -421,10 +431,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	
 	protected function _insert_update_cpt_item( $post_id, $post ) {
 
-		require_once( 'EE_Event.class.php' );
+		$wheres = array( $this->_event_model->primary_key_name() => $post_id );
 
-		$event = EE_Event::new_instance( array(
-			'EVT_ID' => $post_id,
+		$event_values = array(
 			'EVT_is_active' => isset($this->_req_data['is_active']) ? 1 : 0,
 			'EVT_display_desc' => isset( $this->_req_data['display_desc'] ) ? 1 : 0,
 			'EVT_display_reg_form' => isset( $this->_req_data['display_reg_form'] ) ? 1 : 0,
@@ -437,10 +446,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'EVT_timezone_string' => !empty( $this->_req_data['timezone_string'] ) ? $this->_req_data['timezone_string'] : NULL,
 			'EVT_external_URL' => !empty( $this->_req_data['externalURL'] ) ? $this->_req_data['externalURL'] : NULL,
 			'EVT_phone' => !empty( $this->_req_data['event_phone'] ) ? $this->_req_data['event_phone'] : NULL
-			));
+			);
 
 		//update event
-		$success = $event->save();
+		$success = $this->_event_model->update( $event_values, array($wheres) );
+
+
+		//get event_object for other metaboxes... though it would seem to make sense to just use $this->_event_model->get_one_by_ID( $post_id ).. i have to setup where conditions to override the filters in the model that filter out autodraft and inherit statuses so we GET the inherit id!
+		$get_one_where = array( $this->_event_model->primary_key_name() => $post_id, 'STS_ID' => $post->post_status );
+		$event = $this->_event_model->get_one( array($get_one_where) );
 
 
 		//the following are default callbacks for event attachment updates that can be overridden by caffeinated functionality and/or addons.
@@ -456,7 +470,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//any errors?
 		if ( $success && !$att_success ) {
 			EE_Error::add_error( __('Event Details saved successfully but something went wrong with saving attachments.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-		} else {
+		} else if ( $success === FALSE ) {
 			EE_Error::add_error( __('Event Details did not save successfully.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
@@ -471,9 +485,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return bool           Success or fail.
 	 */
 	protected function _default_venue_update( $evtobj, $data ) {
-		require_once( 'EE_Venue.class.php' );
-		$v = EE_Venue::new_instance( array(
-				'VNU_ID' => isset( $data['venue_id'] ) ? $data['venue_id'] : NULL,
+		require_once( 'EEM_Venue.model.php' );
+		$venue_model = EEM_Venue::instance();
+		$rows_affected = NULL;
+		$venue_id = !empty( $data['venue_id'] ) ? $data['venue_id'] : NULL;
+
+		$venue_array = array(
+				'VNU_wp_user' => $evtobj->get('EVT_wp_user'), 
 				'VNU_name' => !empty( $data['venue_title'] ) ? $data['venue_title'] : NULL,
 				'VNU_desc' => !empty( $data['venue_description'] ) ? $data['venue_description'] : NULL,
 				'VNU_identifier' => !empty( $data['venue_identifier'] ) ? $data['venue_identifier'] : NULL,
@@ -481,17 +499,37 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'VNU_address' => !empty( $data['address'] ) ? $data['address'] : NULL,
 				'VNU_address2' => !empty( $data['address2'] ) ? $data['address2'] : NULL,
 				'VNU_city' => !empty( $data['city'] ) ? $data['city'] : NULL,
-				'STA_ID' => !empty( $data['status'] ) ? $data['status'] : NULL,
-				'CNT_ISO' => !empty( $data['country'] ) ? $data['country'] : NULL,
+				'STA_ID' => !empty( $data['state'] ) ? $data['state'] : NULL,
+				'CNT_ISO' => !empty( $data['countries'] ) ? $data['countries'] : NULL,
+				'STS_ID' => $evtobj->status(),
 				'VNU_zip' => !empty( $data['zip'] ) ? $data['zip'] : NULL,
 				'VNU_phone' => !empty( $data['venue_phone'] ) ? $data['venue_phone'] : NULL,
 				'VNU_capacity' => !empty( $data['venue_capacity'] ) ? $data['venue_capacity'] : NULL,
 				'VNU_url' => !empty($data['venue_url'] ) ? $data['venue_url'] : NULL,
 				'VNU_virtual_phone' => !empty($data['virtual_phone']) ? $data['virtual_phone'] : NULL,
 				'VNU_virtual_url' => !empty( $data['virtual_url'] ) ? $data['virtual_url'] : NULL,
-				'VNU_enable_for_gmap' => isset( $data['enable_for_gmap'] ) ? 1 : 0
-			));
-		return $evtobj->_add_relation_to( $v, 'Venue' );
+				'VNU_enable_for_gmap' => isset( $data['enable_for_gmap'] ) ? 1 : 0,
+				'STS_ID' => 'publish'
+			);
+		
+
+		//if we've got the venue_id then we're just updating the exiting venue so let's do that and then get out.
+		if ( !empty( $venue_id ) ) {
+			$update_where = array( $venue_model->primary_key_name() => $venue_id );
+			$rows_affected = $venue_model->update( $venue_array, array( $update_where ) );
+			//we've gotta make sure that the venue is always attached to a revision.. add_relation_to should take care of making sure that the relation is already present.
+			$evtobj->_add_relation_to( $venue_id, 'Venue' );
+			return $rows_affected > 0 ? TRUE : FALSE;
+		} else {	
+			//if this is a revision then we are going to handle the initial insert/update and then the add_relation_to which will also automatically add the relation to the parent.  NOTE... we also have to allow for if users have turned OFF revisions!
+		
+			if ( $evtobj->post_type() == 'revision' || ! WP_POST_REVISIONS ) {
+				$venue_id = $venue_model->insert( $venue_array );
+				$evtobj->_add_relation_to( $venue_id, 'Venue' );
+				return !empty( $venue_id ) ? TRUE : FALSE;
+			}
+		}
+		return TRUE; //when we have the ancestor come in it's already been handled by the revision save.
 	}
 
 
@@ -957,8 +995,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	public function get_events($per_page = 10, $current_page = 1, $count = FALSE) {
 		global $wpdb, $org_options;
 
-		require_once( 'EEM_Event.model.php' );
-		$EEME = EEM_Event::instance();
+		$EEME = $this->_event_model;
 
 
 
@@ -1039,21 +1076,21 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$event_status = strtoupper(sanitize_key($event_status));
 			// grab status
 			if (!empty($event_status)) {
-				$succes = $this->_change_event_status($EVT_ID, $event_status);
+				$success = $this->_change_event_status($EVT_ID, $event_status);
 			} else {
-				$succes = FALSE;
+				$success = FALSE;
 				$msg = __('An error occured. The event could not be moved to the trash because a valid event status was not not supplied.', 'event_espresso');
 				EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			}
 		} else {
-			$succes = FALSE;
+			$success = FALSE;
 			$msg = __('An error occured. The event could not be moved to the trash because a valid event ID was not not supplied.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 		}
 		$action = $event_status == 'trash' ? 'moved to the trash' : 'restored from the trash';
 
 		if ( $redirect_after )
-			$this->_redirect_after_action($succes, 'Event', $action, array('action' => 'default'));
+			$this->_redirect_after_action($success, 'Event', $action, array('action' => 'default'));
 	}
 
 	/**
@@ -1068,29 +1105,29 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$event_status = strtoupper(sanitize_key($event_status));
 		// grab status
 		if (!empty($event_status)) {
-			$succes = TRUE;
+			$success = TRUE;
 			//determine the event id and set to array.
 			$EVT_IDs = isset($this->_req_data['EVT_IDs']) ? (array) $this->_req_data['EVT_IDs'] : array();
 			// loop thru events
 			foreach ($EVT_IDs as $EVT_ID) {
 				if ($EVT_ID = absint($EVT_ID)) {
 					$results = $this->_change_event_status($EVT_ID, $event_status);
-					$succes = $results !== FALSE ? $succes : FALSE;
+					$success = $results !== FALSE ? $success : FALSE;
 				} else {
 					$msg = sprintf(__('An error occured. Event #%d could not be moved to the trash because a valid event ID was not not supplied.', 'event_espresso'), $EVT_ID);
 					EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-					$succes = FALSE;
+					$success = FALSE;
 				}
 			}
 		} else {
-			$succes = FALSE;
+			$success = FALSE;
 			$msg = __('An error occured. The event could not be moved to the trash because a valid event status was not not supplied.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 		}
 		// in order to force a pluralized result message we need to send back a success status greater than 1
-		$succes = $succes ? 2 : FALSE;
+		$success = $success ? 2 : FALSE;
 		$action = $event_status == 'trash' ? 'moved to the trash' : 'restored from the trash';
-		$this->_redirect_after_action($succes, 'Events', $action, array('action' => 'default'));
+		$this->_redirect_after_action($success, 'Events', $action, array('action' => 'default'));
 	}
 
 	/**
@@ -1230,7 +1267,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		
 		
 		$this->_set_model_object( $EVT_ID );
-		$success = $this->delete();
+		$success = $this->_cpt_model_obj->delete();
 		// did it all go as planned ?
 		if ($success) {
 			$msg = sprintf(__('Event ID # %d has been deleted.', 'event_espresso'), $EVT_ID);

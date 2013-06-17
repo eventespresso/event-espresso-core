@@ -48,21 +48,20 @@ class EEM_Venue extends EEM_CPT_Base {
 	 * Statuses for venues
 	 * @var array
 	 */
-	protected $_statuses = array();
+	private static $_statuses = array();
 	
-	const status_available = 'VAV';
-	const status_closed = 'VCL';
+
 	protected function __construct(){
 		$this->singlular_item = __('Venue','event_espresso');
 		$this->plural_item = __('Venues','event_espresso');
 		
-		$this->_statuses = apply_filters('FHEE_EEM_Venue__construct__statuses',array(
-		EEM_Venue::status_available => __("Available", "event_espresso"),
-		EEM_Venue::status_closed => __("Closed", "event_espresso")
-		));
+		global $wp_post_statuses;
+		foreach($wp_post_statuses as $post_status => $args_object){
+			self::$_statuses[$post_status] = $args_object->label;
+		}
 		$this->_tables = array(
 			'Venue_CPT'=> new EE_Primary_Table('posts', 'ID'),
-			'Venue_Meta'=>new EE_Secondary_Table('esp_venue_meta', 'VNUM_ID', 'VNU_ID', "Venue_CPT.post_type='espresso_venues'")
+			'Venue_Meta'=>new EE_Secondary_Table('esp_venue_meta', 'VNUM_ID', 'VNU_ID')
 		);
 		$this->_fields = array(
 			'Venue_CPT'=>array(
@@ -72,12 +71,12 @@ class EEM_Venue extends EEM_CPT_Base {
 				'VNU_identifier'=>new EE_Slug_Field('post_name', __("Venue Identifier", "event_espresso"), false,''),
 				'VNU_created'=>new EE_Datetime_Field('post_date', __("Date Venue Created", "event_espresso"), true,current_time('timestamp')),
 				'VNU_short_desc'=>new EE_Plain_Text_Field('post_excerpt', __("Short Description of Venue", "event_espresso"), true),
-				'STS_ID'=>new EE_Enum_Field('post_status', __("Venue Status", "event_espresso"), false, EEM_Venue::status_available, $this->_statuses),//will be a foreign key once status model made
+				'STS_ID'=>new EE_Enum_Field('post_status', __("Venue Status", "event_espresso"), false, 'draft', self::$_statuses),//will be a foreign key once status model made
 				'VNU_modified'=>new EE_Datetime_Field('post_modified', __("Venue Modified Date", "event_espresso"), true,current_time('timestamp')),
 				'VNU_wp_user'=>new EE_Integer_Field('post_author', __("Venue Creator", "event_espresso"), false, 1),
-				'VNU_parent'=>new EE_Integer_Field('post_parent', __("Venue Parent ID", "event_espresso"), true),
+				'parent'=>new EE_Integer_Field('post_parent', __("Venue Parent ID", "event_espresso"), true),
 				'VNU_order'=>new EE_Integer_Field('menu_order', __("Venue order", "event_espresso"), false, 1),
-				'VNU_post_type'=>new EE_DB_Only_Text_Field('post_type', __("Venue post type", "event_espresso"), false, 'espresso_venues'),
+				'post_type'=>new EE_Plain_Text_Field('post_type', __("Venue post type", "event_espresso"), false, 'espresso_venues'),
 				),
 			'Venue_Meta'=>array(
 				'VNUM_ID'=>new EE_DB_Only_Int_Field('VNUM_ID', __("ID of Venue Meta Row", "event_espresso"), false),
@@ -102,8 +101,22 @@ class EEM_Venue extends EEM_CPT_Base {
 			'State'=>new EE_Belongs_To_Relation(),
 			'Country'=>new EE_Belongs_To_Relation()
 		);
-		
+		require_once('strategies/EE_Default_CPT_Where_Conditions.strategy.php');
+		$this->_default_where_conditions_strategy = new EE_Default_CPT_Where_Conditions('espresso_venues', 'VNUM_ID');
 		parent::__construct();
+	}
+
+
+	public static function venue_status_array() {
+		self::$_statuses = call_user_func( array( __CLASS__, '_get_venue_status_array' ) );
+		return self::$_statuses;
+	}
+
+
+	private function _get_venue_status_array() {
+		return apply_filters('FHEE_EEM_Venue__construct__statuses',array(
+			'auto-draft'=>  __("Auto Draft", "event_espresso")
+		));
 	}
 }
 // End of file EEM_Answer.model.php

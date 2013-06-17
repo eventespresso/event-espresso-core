@@ -81,7 +81,7 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 
 
 
-	//not needed
+	//todo... add _venue_status in here (which we'll define a EE_Admin_CPT_List_Table for common properties)
 	protected function _get_table_filters() {
 		return array();
 	}
@@ -100,7 +100,7 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_cb($item) {
-		return sprintf( '<input type="checkbox" name="venue_id[]" value="%s" />', $item->id);
+		return sprintf( '<input type="checkbox" name="venue_id[]" value="%s" />', $item->ID());
 	}
 
 
@@ -111,19 +111,19 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_id($item) {
-		return $item->id;
+		return $item->ID();
 	}
 
 
 	public function column_name($item) {
 		$edit_query_args = array(
-			'action' => 'edit_venue',
-			'venue_id' => $item->id
+			'action' => 'edit',
+			'id' => $item->ID()
 		);
 
 		$delete_query_args = array(
 			'action' => 'delete_venue',
-			'venue_id' => $item->id
+			'id' => $item->ID()
 		);
 
 		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EE_VENUES_ADMIN_URL );
@@ -134,7 +134,7 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 			'delete' => '<a href="' . $delete_link . '" title="' . __('Delete Venue', 'event_espresso') . '">' . __('Delete', 'event_espresso') . '</a>'
 			);
 
-		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . stripslashes_deep($item->name) . '</a></strong>';
+		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . stripslashes_deep($item->name()) . '</a></strong>';
 		$content .= $this->row_actions($actions);
 		return $content;
 	}
@@ -142,25 +142,25 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_address($item) {
-		return $item->address;
+		return $item->address();
 	}
 
 
 
 	public function column_city($item) {
-		return $item->city;
+		return $item->city();
 	}
 
 
 
 	public function column_capacity($item) {
-		return $item->vnu_capacity;
+		return $item->capacity();
 	}
 
 
 
 	public function column_shortcode($item) {
-		$content = '[ESPRESSO_VENUE id=' . $item->id . ']';
+		$content = '[ESPRESSO_VENUE id=' . $item->ID() . ']';
 		return $content;
 	}
 

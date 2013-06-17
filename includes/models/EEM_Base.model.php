@@ -55,6 +55,15 @@ abstract class EEM_Base extends EE_Base{
 	 * @var EE_Default_Where_Conditions
 	 */
 	protected $_default_where_conditions_strategy;
+
+
+
+
+	/**
+	 * This is a flag typically set by updates so that we don't load the where strategy on updates because updates don't need it (particularly CPT models)
+	 * @var bool
+	 */
+	protected $_ignore_where_strategy = FALSE;
 	
 	
 
@@ -97,7 +106,11 @@ abstract class EEM_Base extends EE_Base{
 		'NOT IN'=>'NOT IN',
 		'not in'=>'NOT IN',
 		'between' => 'BETWEEN',
-		'BETWEEN' => 'BETWEEN');
+		'BETWEEN' => 'BETWEEN',
+		'IS NOT NULL' => 'IS NOT NULL',
+		'is not null' => 'IS NOT NULL',
+		'IS NULL' => 'IS NULL',
+		'is null' => 'IS NULL');
 	/**
 	 * operators that work like 'IN', accepting a comma-seperated list of values inside brackets. Eg '(1,2,3)'
 	 * @var array 
@@ -111,6 +124,14 @@ abstract class EEM_Base extends EE_Base{
 	 * @var array
 	 */
 	protected $_between_style_operators = array( 'BETWEEN' );
+
+
+	/**
+	 * operators that are used for handling NUll and !NULL queries.  Typically used for when checking if a row exists on a join table. 
+	 * @var array
+	 */
+	protected $_null_style_operators = array( 'IS NOT NULL', 'IS NULL' );
+
 	
 	/**
 	 * Allowed values for $query_params['order'] for ordering in queries
@@ -374,6 +395,8 @@ abstract class EEM_Base extends EE_Base{
 		//if there are more than 1 tables, we'll want to verify that each table for this model has an entry in the other tables
 		//and if the other tables don't have a row for each table-to-be-updated, we'll insert one with whatever values available in the current update query
 		if(count($tables) > 1){
+			//we want to make sure the default_where strategy is ignored
+			$this->_ignore_where_strategy = TRUE;
 			$wpdb_select_results = $this->_get_all_wpdb_results($query_params);
 			foreach($wpdb_select_results as $wpdb_result){
 				//get the model object's PK, as we'll want this if we need to insert a row into secondary tables
@@ -390,6 +413,8 @@ abstract class EEM_Base extends EE_Base{
 					}
 				}
 			}
+			//let's make sure default_where strategy is followed now
+			$this->_ignore_where_strategy = FALSE;
 		}
 		
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
@@ -917,7 +942,7 @@ abstract class EEM_Base extends EE_Base{
 		}else{
 			$where_query_params = array();
 		}
-		$where_query_params = array_merge($where_query_params, $this->_get_default_where_conditions_for_models_in_query($query_object));
+		$where_query_params = array_merge($this->_get_default_where_conditions_for_models_in_query($query_object), $where_query_params );
 		$query_object->set_where_sql( $this->_construct_where_clause($where_query_params, $values_already_prepared_by_model_object));
 
 
@@ -1033,9 +1058,15 @@ abstract class EEM_Base extends EE_Base{
 		foreach($query_info_carrier->get_model_names_included() as $model_name){
 			$related_model = $this->get_related_model_obj($model_name);
 			$related_model_universal_where_params = $related_model->_get_default_where_conditions();
-			//prepend the model's name onto where params from other models
+			//prepend the model's name onto where params from other models EXCEPT we need to make sure that if the query_param has a logic operator that we prepend the items INSIDE the logic operator array.
 			$related_model_universal_where_params_prepended = array();
 			foreach($related_model_universal_where_params as $field_name => $value){
+				if ( in_array( $field_name, $this->_logic_query_param_keys ) && is_array( $value ) ) {
+					foreach ( $value as $fn => $val ) {
+						$related_model_universal_where_params_prepended[$model_name.'.'.$fn] = $val;
+					}
+					continue;
+				}
 				$related_model_universal_where_params_prepended[$model_name.".".$field_name] = $value;
 			}
 			$universal_query_params = array_merge($universal_query_params, $related_model_universal_where_params_prepended);
@@ -1051,6 +1082,9 @@ abstract class EEM_Base extends EE_Base{
 	 * @return array
 	 */
 	private function _get_default_where_conditions(){
+		if ( $this->_ignore_where_strategy )
+			return array();
+
 		return $this->_default_where_conditions_strategy->get_default_where_conditions();
 	}
 	/**
@@ -1374,9 +1408,12 @@ abstract class EEM_Base extends EE_Base{
 	 * @return string
 	 */
 	private function _construct_op_and_value($op_and_value, EE_Model_Field_Base $field_obj, $values_already_prepared_by_model_object = false){
-		
-		//check if teh value is an array
-		if(is_array($op_and_value)){
+		if(is_array( $op_and_value ) && preg_match( '/NULL/', $op_and_value[0]) ){
+			//handle special operators that don't HAVE a value (such as "IS NOT NULL")
+			$operator = $op_and_value[0];
+			$value = NULL;
+			
+		}else if ( is_array($op_and_value) ) {
 			//assume first arg is an aray
 			$operator = $op_and_value[0];
 			$value = $op_and_value[1];
@@ -1397,6 +1434,8 @@ abstract class EEM_Base extends EE_Base{
 				throw new EE_Error( sprintf( __("The '%s' operator must be used with an array of values and there must be exactly TWO values in that array.", 'event_espresso'), "BETWEEN" ) );
 			$cleaned_value = $this->_construct_between_value( $value, $field_obj, $values_already_prepared_by_model_object );
 			return $operator.SP.$cleaned_value;
+		} else if( in_array( $operator, $this->_null_style_operators ) ) {
+			return $operator;
 		}elseif( ! in_array($operator, $this->_in_style_operators) && ! is_array($value)){
 			global $wpdb;
 			return $wpdb->prepare($operator.SP.$field_obj->get_wpdb_data_type(), $this->_prepare_value_for_use_in_db($value, $field_obj, $values_already_prepared_by_model_object));
