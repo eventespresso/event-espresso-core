@@ -413,7 +413,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		if ( !isset( $this->_req_data['ee_cpt_item_redirect_url'] ) )
 			return $location;
 
-
 		//shared query_args
 		$query_args = array( 'action' => 'edit', 'id' => $post_id );
 		$admin_url = $this->_req_data['ee_cpt_item_redirect_url'];

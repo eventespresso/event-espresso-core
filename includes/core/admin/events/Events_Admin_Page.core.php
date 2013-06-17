@@ -470,7 +470,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//any errors?
 		if ( $success && !$att_success ) {
 			EE_Error::add_error( __('Event Details saved successfully but something went wrong with saving attachments.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-		} else {
+		} else if ( $success === FALSE ) {
 			EE_Error::add_error( __('Event Details did not save successfully.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
@@ -995,8 +995,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	public function get_events($per_page = 10, $current_page = 1, $count = FALSE) {
 		global $wpdb, $org_options;
 
-		require_once( 'EEM_Event.model.php' );
-		$EEME = EEM_Event::instance();
+		$EEME = $this->_event_model;
 
 
 
@@ -1077,21 +1076,21 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$event_status = strtoupper(sanitize_key($event_status));
 			// grab status
 			if (!empty($event_status)) {
-				$succes = $this->_change_event_status($EVT_ID, $event_status);
+				$success = $this->_change_event_status($EVT_ID, $event_status);
 			} else {
-				$succes = FALSE;
+				$success = FALSE;
 				$msg = __('An error occured. The event could not be moved to the trash because a valid event status was not not supplied.', 'event_espresso');
 				EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			}
 		} else {
-			$succes = FALSE;
+			$success = FALSE;
 			$msg = __('An error occured. The event could not be moved to the trash because a valid event ID was not not supplied.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 		}
 		$action = $event_status == 'trash' ? 'moved to the trash' : 'restored from the trash';
 
 		if ( $redirect_after )
-			$this->_redirect_after_action($succes, 'Event', $action, array('action' => 'default'));
+			$this->_redirect_after_action($success, 'Event', $action, array('action' => 'default'));
 	}
 
 	/**
@@ -1106,29 +1105,29 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$event_status = strtoupper(sanitize_key($event_status));
 		// grab status
 		if (!empty($event_status)) {
-			$succes = TRUE;
+			$success = TRUE;
 			//determine the event id and set to array.
 			$EVT_IDs = isset($this->_req_data['EVT_IDs']) ? (array) $this->_req_data['EVT_IDs'] : array();
 			// loop thru events
 			foreach ($EVT_IDs as $EVT_ID) {
 				if ($EVT_ID = absint($EVT_ID)) {
 					$results = $this->_change_event_status($EVT_ID, $event_status);
-					$succes = $results !== FALSE ? $succes : FALSE;
+					$success = $results !== FALSE ? $success : FALSE;
 				} else {
 					$msg = sprintf(__('An error occured. Event #%d could not be moved to the trash because a valid event ID was not not supplied.', 'event_espresso'), $EVT_ID);
 					EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-					$succes = FALSE;
+					$success = FALSE;
 				}
 			}
 		} else {
-			$succes = FALSE;
+			$success = FALSE;
 			$msg = __('An error occured. The event could not be moved to the trash because a valid event status was not not supplied.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 		}
 		// in order to force a pluralized result message we need to send back a success status greater than 1
-		$succes = $succes ? 2 : FALSE;
+		$success = $success ? 2 : FALSE;
 		$action = $event_status == 'trash' ? 'moved to the trash' : 'restored from the trash';
-		$this->_redirect_after_action($succes, 'Events', $action, array('action' => 'default'));
+		$this->_redirect_after_action($success, 'Events', $action, array('action' => 'default'));
 	}
 
 	/**
@@ -1268,7 +1267,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		
 		
 		$this->_set_model_object( $EVT_ID );
-		$success = $this->delete();
+		$success = $this->_cpt_model_obj->delete();
 		// did it all go as planned ?
 		if ($success) {
 			$msg = sprintf(__('Event ID # %d has been deleted.', 'event_espresso'), $EVT_ID);
