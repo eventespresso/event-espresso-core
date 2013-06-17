@@ -81,7 +81,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'edit' => __('Edit Venue', 'event_espresso'),
 				'delete' => __('Delete Venue', 'event_espresso')
 			),
-			'editor_title' => __('Enter Venue name here')
+			'editor_title' => __('Enter Venue name here'),
+			'publishbox' => __('Save Venue', 'event_espresso')
 		);
 	}
 

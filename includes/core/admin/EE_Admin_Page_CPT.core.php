@@ -165,6 +165,12 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		//add shortlink button to cpt edit screens.  We can do this as a universal thing BECAUSE, cpts use the same format for shortlinks as posts!
 		add_filter( 'get_shortlink', array( $this, 'add_shortlink_button_to_editor' ), 10, 4 );
 
+		//This basically allows us to change the title of the "publish" metabox area on CPT pages by setting a 'publishbox' value in the $_labels property array in the child class.
+		if ( !empty($this->_labels['publishbox'] ) ) {
+			remove_meta_box( 'submitdiv', __( 'Publish' ), 'post_submit_meta_box', $this->page_slug, 'side', 'core' );
+			add_meta_box( 'submitdiv', $this->_labels['publishbox'], 'post_submit_meta_box', $this->page_slug, 'side', 'core' );
+		}
+
 		//this is a filter that allows the addition of extra html after the permalink field on the wp post edit-form
 		if ( method_exists( $this, 'extra_permalink_field_buttons' ) )
 			add_filter('get_sample_permalink_html', array( $this, 'extra_permalink_field_buttons' ), 10, 4 );
@@ -234,6 +240,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 				) ),
 			$this->_page_config
 		);
+
 
 
 		if ( $this->_cpt_route  && ( $this->_req_action == 'create_new' || $this->_req_action == 'edit'  ) ) {
