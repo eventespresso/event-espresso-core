@@ -165,11 +165,17 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		//add shortlink button to cpt edit screens.  We can do this as a universal thing BECAUSE, cpts use the same format for shortlinks as posts!
 		add_filter( 'get_shortlink', array( $this, 'add_shortlink_button_to_editor' ), 10, 4 );
 
+		//this is a filter that allows the addition of extra html after the permalink field on the wp post edit-form
 		if ( method_exists( $this, 'extra_permalink_field_buttons' ) )
 			add_filter('get_sample_permalink_html', array( $this, 'extra_permalink_field_buttons' ), 10, 4 );
 
+		//This allows adding additional information to the publish post submitbox on the wp post edit form
 		if ( method_exists( $this, 'extra_misc_actions_publish_box' ) )
-			add_filter('post_submitbox_misc_actions', array( $this, 'extra_misc_actions_publish_box' ), 10 );
+			add_action('post_submitbox_misc_actions', array( $this, 'extra_misc_actions_publish_box' ), 10 );
+
+		//This allows for adding additional stuff after the title field on the wp post edit form.  This is also before the wp_editor for post description field.
+		if ( method_exists( $this, 'edit_form_after_title' ) )
+			add_action('edit_form_after_title', array( $this, 'edit_form_after_title' ), 10 );
 
 		parent::load_page_dependencies();
 		$this->modify_current_screen();
