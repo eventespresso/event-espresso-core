@@ -128,10 +128,6 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'noheader' => TRUE
 				)
 		);
-
-		//let's add our extra venue fields AFTER the title field
-		//add_action( 'edit_form_after_title', array( $this, 'extra_venue_fields'), 10 );
-		////this has to be added in the cpt core otherwise it gets hooked into EVERY cpt admin page.
 	}
 
 
@@ -147,13 +143,22 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'list_table' => 'Venues_Admin_List_Table',
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box'),
 			),
+			'create_new' => array(
+				'nav' => array(
+					'label' => __('Add Venue', 'event_espresso'),
+					'order' => 5,
+					'persistent' => FALSE
+				),
+				'metaboxes' => array('_venue_editor_metaboxes')
+				),
 			'edit' => array(
 				'nav' => array(
 					'label' => __('Edit Venue', 'event_espresso'),
 					'order' => 5,
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['id']) ? add_query_arg(array('id' => $this->_req_data['id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
-				)
+				),
+				'metaboxes' => array('_venue_editor_metaboxes')
 			)
 		);
 	}
@@ -250,10 +255,79 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-
-	public function extra_venue_fields() {
-		echo 'YUP WE CAN ADD EXTRA FIELDS HERE';
+	public function extra_misc_actions_publish_box() {
+		$extra_rows = array(
+			'vnu_capacity' => $this->_cpt_model_obj->capacity(),
+			'vnu_url' => $this->_cpt_model_obj->venue_url(),
+			'vnu_phone' => $this->_cpt_model_obj->phone()
+			);
+		$template = EE_VENUES_TEMPLATE_PATH . 'venue_publish_box_extras.template.php';
+		espresso_display_template( $template, $extra_rows );
 	}
+
+
+
+	protected function _venue_editor_metaboxes() {
+
+		add_meta_box( 'espresso_venue_address_options', __('Physical Location', 'event_espresso'), array( $this, 'venue_address_metabox'), $this->page_slug, 'side', 'default' );
+		add_meta_box( 'espresso_venue_gmap_options', __('Google Map', 'event_espresso'), array( $this, 'venue_gmap_metabox'), $this->page_slug, 'side', 'default' );
+		add_meta_box( 'espresso_venue_virtual_loc_options', __('Virtual Location', 'event_espresso'), array( $this, 'venue_virtual_loc_metabox'), $this->page_slug, 'side', 'default' );
+
+	}
+
+
+
+	public function venue_gmap_metabox() {
+		global $org_options;
+		$template_args = array(
+			'vnu_enable_for_gmap' => EE_Form_Fields::select_input('vnu_enable_for_gmap', $this->get_yes_no_values(), $this->_cpt_model_obj->enable_for_gmap() ),
+			'vnu_google_map_link' => $this->_cpt_model_obj->google_map_link(),
+			'org_options' => $org_options
+			);
+		$template = EE_VENUES_TEMPLATE_PATH . 'venue_gmap_metabox_content.template.php';
+		espresso_display_template( $template, $template_args );
+	}
+
+
+
+	public function venue_address_metabox() {
+
+		//states and countries model
+		require_once( 'EEM_State.model.php' );
+		require_once( 'EEM_Country.model.php');
+
+		$states = EEM_State::instance()->get_all_active_states();
+		$countries = EEM_Country::instance()->get_all_active_countries();
+
+		//prepare state/country arrays
+		foreach ( $states as $id => $obj ) {
+			$st_ary[$id] = $obj->name();
+		}
+
+		foreach ( $countries as $id => $obj ) {
+			$ctry_ary[$id] = $obj->name();
+		}
+
+
+		$template_args = array(
+			'_venue' => $this->_cpt_model_obj,
+			'states_dropdown' => EE_Form_Fields::select_input('sta_id', $st_ary, $this->_cpt_model_obj->state_ID(), 'id="sat_id"'),
+			'countries_dropdown' => EE_Form_Fields::select_input('cnt_iso', $ctry_ary, $this->_cpt_model_obj->country_ID(), 'id="cnt_iso"')
+			);
+
+		$template = EE_VENUES_TEMPLATE_PATH . 'venue_address_metabox_content.template.php';
+		espresso_display_template( $template, $template_args );
+	}
+
+
+	public function venue_virtual_loc_metabox() {
+		$template_args = array(
+			'_venue' => $this->_cpt_model_obj
+			);
+		$template = EE_VENUES_TEMPLATE_PATH . 'venue_virtual_location_metabox_content.template.php';
+		espresso_display_template( $template, $template_args );
+	}
+
 
 	protected function _venue_details($view) {
 		//load formatter helper
