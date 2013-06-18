@@ -450,6 +450,19 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		//$this->_template_args['org_options'] = $org_options;
 		$this->_template_args['values'] = $this->_yes_no_values;
 	
+		// themeroller style directory
+		$path = file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/themeroller/index.php") ? EVENT_ESPRESSO_UPLOAD_DIR . '/themeroller/' : EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/css/themeroller/';
+		$themeroller_themes = glob( $path . '*', GLOB_ONLYDIR ); 
+		array_walk( $themeroller_themes, array( $this, '_process_theme_name' )); 
+		
+		$default_themeroller = array(
+			'themeroller_style' => 'smoothness'
+		);
+		$this->_template_args['themeroller'] = 
+				isset( $org_options['themeroller'] ) && ! empty( $org_options['themeroller'] ) 
+				? array_merge( $default_themeroller, $org_options['themeroller'] ) 
+				: $default_themeroller;
+		
 		$default_template_settings = array(
 			'display_description_in_event_list' => FALSE,
 			'display_short_description_in_event_list' => TRUE,
@@ -462,12 +475,32 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				? array_merge( $default_template_settings, $org_options['template_settings'] )
 				: $default_template_settings;
 		
+		$default_style_settings = array(
+			'enable_default_style' => TRUE,
+			'css_name' => ''
+		);
+		$this->_template_args['style_settings'] = 
+				isset( $org_options['style_settings'] ) && ! empty( $org_options['style_settings'] ) 
+				? array_merge( $default_style_settings, $org_options['style_settings'] )
+				: $default_style_settings;
+
 		$this->_set_add_edit_form_tags( 'update_template_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'template_settings.template.php', $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();	
 	}
-
+	
+	
+	/**
+	 * 	_process_theme_name
+	 *
+	 * @access 	private
+	 * @param 	string 	$themeroller_theme_path
+	 * @return	string
+	 */	
+	private function _process_theme_name( &$themeroller_theme_path, $key ) {
+		$this->_template_args['themeroller_themes'][] = array( 'id'  => basename( $themeroller_theme_path ), 'text' => ucwords( str_replace( array( '-', '_' ), ' ', basename( $themeroller_theme_path ))));
+	}
 
 
 
@@ -476,7 +509,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		global $wpdb, $org_options, $notices, $espresso_wp_user;
 
 		$data = array(
-			'template_settings' => array()
+			'template_settings' => array(),
+			'style_settings' => array(),
+			'themeroller' => array()
 		);
 
 		$data['template_settings']['display_description_in_event_list'] = 
@@ -499,6 +534,16 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				? absint( $this->_req_data['display_address_in_regform'] ) 
 				: TRUE;
 		
+		$data['style_settings']['enable_default_style'] = 
+				 isset( $this->_req_data['enable_default_style'] ) 
+				? absint( $this->_req_data['enable_default_style'] ) 
+				: TRUE;
+
+		$data['themeroller']['themeroller_style'] = 
+				 isset( $this->_req_data['themeroller_style'] ) 
+				? sanitize_text_field( $this->_req_data['themeroller_style'] ) 
+				: 'smoothness';
+
 		$data = apply_filters('FHEE_template_settings_save', $data);
 		
 		$what = 'Template Settings';
