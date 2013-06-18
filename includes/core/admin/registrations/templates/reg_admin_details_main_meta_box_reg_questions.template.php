@@ -39,5 +39,3 @@
 	
 </div>
 
-
-http://localhost/4.0-DEV/wp-admin/admin.php?page=espresso_registrations&action=contact_list&contact_list_nonce=5650d7b7f3
