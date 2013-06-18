@@ -156,7 +156,7 @@ class	EE_Register_CPTs{
 
 	function set_initial_event_categories() {
 		$term_details = array(
-			'uncategorized' => __('Uncategorized', 'event_espresso'), __('All uncategorized items', 'event_espresso')
+			'uncategorized' => array( __('Uncategorized', 'event_espresso'), __('All uncategorized items', 'event_espresso') )
 			);
 		$this->set_initial_terms( 'espresso_event_categories', $term_details );
 	}
@@ -251,7 +251,7 @@ class EE_Default_Term {
 	 */
 	public function __construct( $taxonomy, $term_slug, $cpt_slugs = array() ) {
 		$this->taxonomy = $taxonomy;
-		$this->cpt_slugs = (array) $cpt_slug;
+		$this->cpt_slugs = (array) $cpt_slugs;
 		$this->term_slug = $term_slug;
 	}
 
