@@ -938,7 +938,21 @@ abstract class EEM_Base extends EE_Base{
 		}else{
 			$where_query_params = array();
 		}
-		$where_query_params = array_merge($this->_get_default_where_conditions_for_models_in_query($query_object), $where_query_params );
+
+		//since its possible that _get_default_where_conditions might have some default_where_conditions inside a logic_query_param array. We need to loop through to do the replacements rather than a simple array_merge.
+		foreach ( $this->_get_default_where_conditions_for_models_in_query( $query_object ) as $key => $value ) {
+			//first check for logic query_param
+			//however if $where_query_params HAS the $fieldname as the key then that overrides the default wheres in the LOGIC param values so we DON'T set the logic query_param for that field.
+			if ( in_array( $key, $this->_logic_query_param_keys ) ) {
+				foreach ( (array) $value as $field_name => $field_value ) {
+					if ( !isset( $where_query_params[$field_name] ) )
+						$where_query_params[$key][$field_name] = !isset( $where_query_params[$key][$field_name] ) ? $field_value : $where_query_params[$key][$field_name];
+				}
+				continue;
+			}
+			$where_query_params[$key] = isset( $where_query_params[$key] ) ? $where_query_params[$key] : $value;
+		}
+
 		$query_object->set_where_sql( $this->_construct_where_clause($where_query_params, $values_already_prepared_by_model_object));
 
 
@@ -1016,7 +1030,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param EE_Model_Query_Info_Carrier $query_info_carrier
 	 */
 	private function _get_default_where_conditions_for_models_in_query(EE_Model_Query_Info_Carrier $query_info_carrier){
-		$universal_query_params = $this->_get_default_where_conditions();
+		$universal_query_params[get_class($this)] = $this->_get_default_where_conditions();
 		foreach($query_info_carrier->get_model_names_included() as $model_name){
 			$related_model = $this->get_related_model_obj($model_name);
 			$related_model_universal_where_params = $related_model->_get_default_where_conditions();
@@ -1025,15 +1039,29 @@ abstract class EEM_Base extends EE_Base{
 			foreach($related_model_universal_where_params as $field_name => $value){
 				if ( in_array( $field_name, $this->_logic_query_param_keys ) && is_array( $value ) ) {
 					foreach ( $value as $fn => $val ) {
-						$related_model_universal_where_params_prepended[$model_name.'.'.$fn] = $val;
+						$related_model_universal_where_params_prepended[$model_name][$field_name][$model_name.'.'.$fn] = $val;
 					}
 					continue;
 				}
-				$related_model_universal_where_params_prepended[$model_name.".".$field_name] = $value;
+				$related_model_universal_where_params_prepended[$model_name][$model_name.".".$field_name] = $value;
 			}
 			$universal_query_params = array_merge($universal_query_params, $related_model_universal_where_params_prepended);
 		}
-		return $universal_query_params;
+		//now let's shift everything so we only have values, not indexed by model name.  Note IF related models are using LOGIC_query_param_keys then we also have to group them all together in the values for that inner_array
+		$shifted_qp = array();
+		foreach ( $universal_query_params as $value ) {
+			//first check if $value has a key that is a logic_query_param_key and if it is then we check if that key is ALREADY set on $shifted_qp.  If it is we include in that array.
+			foreach ( $value as $k => $v ) {
+				if ( in_array($k, $this->_logic_query_param_keys ) && isset( $shifted_qp[$k] ) ) {
+					foreach ( $v as $inner_key => $inner_value ) {
+						$shifted_qp[$k][$inner_key] = $inner_value;
+					}
+					continue;
+				}
+				$shifted_qp[$k] = $v;
+			}
+		}
+		return $shifted_qp;
 	}
 	
 	/**
