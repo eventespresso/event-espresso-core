@@ -115,9 +115,10 @@
 						<label for="txn-admin-payment-accounting-inp" class="last"><?php _e( 'Notes / Extra Accounting', 'event_espresso' );?></label>
 						<input name="txn_admin_payment[accounting]" id="txn-admin-payment-accounting-inp" class="txn-admin-apply-payment-inp" type="text" value="<?php echo $REG_code; ?>"/>		<input type="hidden" id="txn-admin-reg-code-inp" value="<?php echo $REG_code; ?>"/>
 						<br/>
-						<p class="description"><?php _e( 'An extra field you may use for accounting purposes or simple notes.', 'event_espresso' );?></p><br/>
-						<label></label>
-						<p class="description"><?php _e( 'Defaults to the primary attendee\'s registration code.', 'event_espresso' );?></p>
+						<p class="description">
+							<?php _e( 'An extra field you may use for accounting purposes or simple notes.', 'event_espresso' );?><br/>
+							<?php _e( 'Defaults to the primary attendee\'s registration code.', 'event_espresso' );?>							
+						</p>
 					</div>			
 					<div class="clear"></div>
 	
