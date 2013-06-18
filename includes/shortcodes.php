@@ -101,7 +101,7 @@ if (!function_exists('event_espresso_attendee_list')) {
 	
 		if (!empty($type) && $type == 'event') {
 			$sql = "SELECT e.* FROM " . EVENTS_DETAIL_TABLE . " e ";
-			$sql .= 'JOIN ' . ESP_DATETIME_TABLE . ' dtt ON e.id = dtt.EVT_ID ';
+			$sql .= ! empty( $show_expired ) ? 'JOIN ' . ESP_DATETIME_TABLE . ' dtt ON e.id = dtt.EVT_ID ' : '';
 			$sql .= " WHERE e.is_active = true ";
 			$sql .= " AND e.event_identifier = '" . $event_identifier . "' ";
 			$sql .= $show_secondary;
@@ -113,9 +113,9 @@ if (!function_exists('event_espresso_attendee_list')) {
 			$sql = "SELECT e.* FROM " . EVENTS_CATEGORY_TABLE . " c ";
 			$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.cat_id = c.id ";
 			$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id = r.event_id ";
-			$sql .= 'JOIN ' . ESP_DATETIME_TABLE . ' dtt ON e.id = dtt.EVT_ID ';
-			$sql .= " WHERE c.category_identifier = '" . $category_identifier . "' ";
-			$sql .= " AND e.is_active = true ";
+			$sql .= ! empty( $show_expired ) ? 'JOIN ' . ESP_DATETIME_TABLE . ' dtt ON e.id = dtt.EVT_ID ' : '';
+			$sql .= " WHERE e.is_active = true ";
+			$sql .= " AND c.category_identifier = '" . $category_identifier . "' ";
 			$sql .= $show_secondary;
 			$sql .= $show_expired;
 			$sql .= $show_deleted;
@@ -123,8 +123,8 @@ if (!function_exists('event_espresso_attendee_list')) {
 			event_espresso_show_attendess($sql, $show_gravatar, $paid_only, $sort);
 		} else {
 			$sql = "SELECT e.* FROM " . EVENTS_DETAIL_TABLE . " e ";
-			$sql .= 'JOIN ' . ESP_DATETIME_TABLE . ' dtt ON e.id = dtt.EVT_ID ';
-			$sql .= " WHERE e.is_active=true ";
+			$sql .= ! empty( $show_expired ) ? 'JOIN ' . ESP_DATETIME_TABLE . ' dtt ON e.id = dtt.EVT_ID ' : '';
+			$sql .= " WHERE e.is_active = true ";
 			$sql .= $show_secondary;
 			$sql .= $show_expired;
 			$sql .= $show_deleted;
