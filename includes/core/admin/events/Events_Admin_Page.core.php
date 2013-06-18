@@ -580,7 +580,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$timezone = isset( $data['EVT_timezone_string'] ) ? $data['EVT_timezone_string'] : NULL;
 		$success = TRUE;
-
+		$data['price_count'] = 1;
 
 		$ticket_prices_to_save = array();
 		$quick_edit_ticket_price = isset($data['quick_edit_ticket_price']) ? $data['quick_edit_ticket_price'] : array();
@@ -702,7 +702,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		if ( isset( $data['price_count'] ) && absint( $data['price_count'] ) < 1 ) {
 			$espresso_no_ticket_prices = get_option( 'espresso_no_ticket_prices', array() );
-			$espresso_no_ticket_prices[ $last_event_id ] = $event_name;
+			$espresso_no_ticket_prices[ $evtobj->get('EVT_ID') ] = $evtobj->get('EVT_name');
 			update_option( 'espresso_no_ticket_prices', $espresso_no_ticket_prices );
 		} 
 
