@@ -274,9 +274,43 @@ function add_espresso_stylesheet() {
 
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
-	if ( ! isset( $_REQUEST['e_reg'] ) && ! is_admin() ) {
-		wp_register_style('ticket_selector', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/ticket_selector/ticket_selector.css');
-		wp_enqueue_style('ticket_selector');
+	//Load the ThemeRoller styles if enabled
+	if ( ! empty( $org_options['style_settings']['enable_default_style'] ) && $org_options['style_settings']['enable_default_style'] ) {
+
+		//Define the path to the ThemeRoller files
+		$themeroller_style_path = file_exists( EVENT_ESPRESSO_UPLOAD_DIR . 'themeroller/index.php' ) ? EVENT_ESPRESSO_UPLOAD_URL . 'themeroller/' : EVENT_ESPRESSO_PLUGINFULLURL . 'templates/css/themeroller/';
+
+		//Load custom style sheet if available
+		if ( ! empty( $org_options['style_settings']['css_name'] )) {
+			wp_register_style( 'espresso_custom_css', EVENT_ESPRESSO_UPLOAD_URL . 'css/' . $org_options['style_settings']['css_name'] );
+			wp_enqueue_style( 'espresso_custom_css' );
+		}
+
+		//Register the ThemeRoller styles
+		if ( ! empty($org_options['themeroller'] )) {
+
+			//Load the themeroller base style sheet
+			//If the themeroller-base.css is in the uploads folder, then we will use it instead of the one in the core
+			if ( file_exists( EVENT_ESPRESSO_UPLOAD_DIR . $themeroller_style_path . 'themeroller-base.css' )) {
+				wp_register_style( 'espresso_themeroller_base', $themeroller_style_path . 'themeroller-base.css' );
+			} else {
+				wp_register_style( 'espresso_themeroller_base', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/css/themeroller/themeroller-base.css' );
+			}
+			wp_enqueue_style( 'espresso_themeroller_base' );
+
+			//Load the smoothness style by default
+			if ( ! isset( $org_options['themeroller']['themeroller_style'] ) || empty( $org_options['themeroller']['themeroller_style'] )) {
+				$org_options['themeroller']['themeroller_style'] = 'smoothness';
+			}
+			//Load the selected themeroller style
+			wp_register_style( 'espresso_themeroller', $themeroller_style_path . $org_options['themeroller']['themeroller_style'] . '/style.css' );
+			wp_enqueue_style( 'espresso_themeroller');
+		}
+	}
+	
+	if ( ! isset( $_REQUEST['e_reg'] )) {
+		wp_register_style( 'ticket_selector', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/ticket_selector/ticket_selector.css' );
+		wp_enqueue_style( 'ticket_selector');
 	}
 		
 }
