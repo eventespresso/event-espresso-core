@@ -936,6 +936,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	public function apply_payments_or_refunds() {
 
 		$return_data = FALSE;
+		$errors = FALSE;
 
 		if ( isset( $this->_req_data['txn_admin_payment'] )) {
 		
@@ -999,14 +1000,13 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			if( ! $payment->save() ){
 				$msg = __( 'An error occured. The payment has not been processed succesfully.', 'event_espresso' );
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+				$errors = TRUE;
 			}
 			//update the transaction with this payment
-			if( $payment->apply_payment_to_transaction( TRUE ) ){
-				$msg =__('The payment has been processed succesfully.', 'event_espresso');
-				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			}else{
+			if ( ! $payment->apply_payment_to_transaction( TRUE )) {
 				$msg = __( 'An error occured. The payment was processed succesfully but the amount paid for the transaction was not updated.', 'event_espresso');
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+				$errors = TRUE;
 			}
 			
 			//prepare to render page
@@ -1029,14 +1029,21 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$return_data['extra_accntng'] = $payment->extra_accntng();
 
 			$this->_process_payment_notification( $payment );
-
+		
 		} else {
-			$msg = __( 'An error occured. The payment form data could not be loaded.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			
+			$msg = __( 'An error occured. The payment form data could not be loaded. Please refresh the page and try again', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			$errors = TRUE;	
 		}
 		
+		if ( ! $errors ) {
+			EE_Error::overwrite_success();
+			$msg =__('The payment has been processed succesfully.', 'event_espresso');
+			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );			
+		}
+
 		$notices = EE_Error::get_notices( FALSE, FALSE, FALSE ); 
-		
+
 		echo json_encode( array( 'return_data' => $return_data, 'success' => $notices['success'], 'errors' => $notices['errors'] ));
 		die();
 
