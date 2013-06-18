@@ -1,11 +1,11 @@
 jQuery(document).ready(function($) {
 
 	$.ajaxSetup ({ cache: false });
-
 	// clear firefox and safari cache
 	$(window).unload( function() {}); 
-	
-	
+	// hide attendee reg form notice
+	$('#reg-admin-attendee-reg-frm-warning-pg').hide();
+	// disable attendee reg form submit btn
 	$('#reg-admin-attendee-questions-submit').prop( 'disabled', true );
 	
 
@@ -56,11 +56,17 @@ jQuery(document).ready(function($) {
 	
 	$('#reg-admin-attendee-questions-frm').on( 'click', '.reg-admin-edit-attendee-question-lnk', function(e) {
 		e.preventDefault();
+		e.stopPropagation();
 		$(this).closest('table').find('.reg-admin-attendee-questions-input-td' ).each(function() {
 			$(this).removeClass('disabled-input');
 			$(this).find('input').prop( 'disabled', false ).addClass('editable-input');
 			$(this).find('select').prop( 'disabled', false ).addClass('editable-input');
 		});	
+	});
+	
+	$('#reg-admin-edit-attendee-question-lnk-1').on( 'click', function(e) {
+		e.preventDefault();
+		$('#reg-admin-attendee-reg-frm-warning-pg').fadeIn();
 	});
 	
 	$('#reg-admin-attendee-questions-frm').on( 'change', '.editable-input', function(e) {
