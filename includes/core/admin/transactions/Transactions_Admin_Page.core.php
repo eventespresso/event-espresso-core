@@ -371,8 +371,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	protected function _transaction_legend_items() {
 		$items = array(
 			'view_details' => array(
-				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'images/magnifier.png',
-				'desc' => __('View Transaction Details', 'event_espresso')
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'images/pencil-16x16.png',
+				'desc' => __('Edit Transaction Details', 'event_espresso')
 				),
 			'download_invoice' => array(
 				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'images/invoice-1-16x16.png',
@@ -383,7 +383,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'desc' => __('Send Payment Reminder', 'event_espresso')
 				),
 			'view_registration' => array(
-				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'images/edit.png',
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'images/group-reg-16x16.png',
 				'desc' => __('View Registration Details', 'event_espresso')
 				)
 		);

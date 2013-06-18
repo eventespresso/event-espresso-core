@@ -383,8 +383,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	        //Build row actions
 	        $view_lnk = '
 		<li>
-			<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="' . __( 'View Registration Details', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/magnifier.png">
+			<a href="'.$view_lnk_url.'" title="' . __( 'Edit Registration Details', 'event_espresso' ) . '">
+				<img width="16" height="16" alt="' . __( 'Edit Registration Details', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/pencil-16x16.png">
 			</a>
 		</li>';
 

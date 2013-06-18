@@ -518,8 +518,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				'desc' => __('This indicates that the Attendee is the Primary Attendee', 'event_espresso')
 				),
 			'view_details' => array(
-				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'/images/magnifier.png',
-				'desc' => __('View Registration Details', 'event_espresso')
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'/images/pencil-16x16.png',
+				'desc' => __('Edit Registration Details', 'event_espresso')
 				),
 			'edit_attendee' => array(
 				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'/images/user_edit.png',

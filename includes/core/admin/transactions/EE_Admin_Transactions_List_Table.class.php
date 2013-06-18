@@ -270,8 +270,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
         //Build row actions
         $view_lnk = '
 		<li>
-			<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="' . __( 'View Transaction Details', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/magnifier.png">
+			<a href="'.$view_lnk_url.'" title="' . __( 'Edit Transaction Details', 'event_espresso' ) . '">
+				<img width="16" height="16" alt="' . __( 'Edit Transaction Details', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/pencil-16x16.png">
 			</a>
 		</li>';
 		
@@ -282,24 +282,24 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 			</a>
 		</li>';
       
+	        $view_reg_lnk = '
+		<li>
+			<a href="'.$view_reg_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">
+				<img width="16" height="16" alt="' . __( 'View Registration Details', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/group-reg-16x16.png">
+			</a>
+		</li>';
+
 	       $send_pay_lnk = '
 		<li>
 			<a href="'.$send_pay_lnk_url.'" title="' . __( 'Send Payment Reminder', 'event_espresso' ) . '">
 				<img width="20" height="20" alt="' . __( 'Send Payment Reminder', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/payment-reminder-20x20.png">
 			</a>
 		</li>';
-		$send_pay_lnk = $item['STS_ID'] == 'TPN' ? $send_pay_lnk : '';
+			$send_pay_lnk = $item['STS_ID'] == 'TPN' ? $send_pay_lnk : '';
 		
-	        $view_reg_lnk = '
-		<li>
-			<a href="'.$view_reg_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">
-				<img width="13" height="13" alt="' . __( 'View Registration Details', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/edit.png">
-			</a>
-		</li>';
-
 			$actions = '
 		<ul class="txn-overview-actions-ul">' . 
-		$view_lnk . $dl_invoice_lnk . $send_pay_lnk . $view_reg_lnk . '
+		$view_lnk . $dl_invoice_lnk . $view_reg_lnk . $send_pay_lnk . '
 		</ul>';
 			
 			return $actions;
