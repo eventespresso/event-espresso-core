@@ -789,7 +789,7 @@ if (!function_exists('espresso_calendar')) {
 						var ee_monthNames = new Object();
 						ee_monthNames= [<?php echo stripslashes_deep($espresso_calendar['espresso_calendar_monthNames']); ?>];						
 						for ( i=0; i<12; i++ ) {
-							months[ ee_monthNames[i] ] = i+1;
+							ee_months[ ee_monthNames[i] ] = i+1;
 						}
 
 						var ee_monthYear = $('.fc-header-title h2').html();
@@ -848,7 +848,7 @@ if (!function_exists('espresso_calendar')) {
 								var ee_parentHeight = dayCnt.parents('tr').outerHeight();
 								//console.log( 'parentHeight = ' + parentHeight );
 								//dayCnt.parents('tr').css({ 'background' : 'pink' });
-								if( parentHeight < ee_newHeight ) {
+								if( ee_parentHeight < ee_newHeight ) {
 									ee_newHeight = ee_newHeight + 30;
 									dayCnt.parents('tr').height( ee_newHeight ).css({ 'height' : ee_newHeight + 'px' });
 								}
