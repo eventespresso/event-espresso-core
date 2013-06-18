@@ -377,8 +377,15 @@ function espresso_calendar_do_stuff($show_expired) {
 		//important! time must be in iso8601 format 2010-05-10T08:30!!
 		$eventArray['start'] = date("c", strtotime($event->start_date . ' ' . event_date_display($event->start_time, get_option('time_format'))));
 		$eventArray['end'] = date("c", strtotime($event->end_date . ' ' . event_date_display($event->end_time, get_option('time_format'))));
-		$eventArray['day'] = date("j", strtotime($event->end_date));
-		$eventArray['month'] = date("n", strtotime($event->end_date));
+		$tempTimestamp = strtotime($event->start_date);
+		$endTimestamp = strtotime($event->end_date);
+		$eventArray['month_day'] = "";
+		$secInDay = 60 * 60 * 24;
+		while ($tempTimestamp <= $endTimestamp) {
+			$eventArray['month_day'] = $eventArray['month_day'] . date("n-j ", $tempTimestamp);
+			$tempTimestamp += $secInDay;
+		}
+		$eventArray['month_day'] = rtrim($eventArray['month_day']);
 		if ($eventArray['end'] < date('Y-m-d')) {
 			$eventArray['expired'] = 'expired';
 		} else {
@@ -476,32 +483,32 @@ if (!function_exists('espresso_calendar')) {
 					 * http://arshaw.com/fullcalendar/docs/text/
 					 **/
 		<?php
-		//styles for color picker selection in the calendar settings > theme settings
+//styles for color picker selection in the calendar settings > theme settings
 		if ($espresso_calendar['espresso_use_pickers'] == true) {
 			?>  
-									eventColor: '<?php echo $espresso_calendar['ee_event_background'] ?>',
-									eventTextColor: '<?php echo $espresso_calendar['ee_event_text_color'] ?>',
+							eventColor: '<?php echo $espresso_calendar['ee_event_background'] ?>',
+							eventTextColor: '<?php echo $espresso_calendar['ee_event_text_color'] ?>',
 			<?php
 		}
 		?>
-								//month, basicWeek, basicDay, agendaWeek, agendaDay
-								defaultView: '<?php echo $cal_view ?>',
+					//month, basicWeek, basicDay, agendaWeek, agendaDay
+					defaultView: '<?php echo $cal_view ?>',
 
-								//Defines the buttons and title at the top of the calendar.
-								header: { //Settings: http://arshaw.com/fullcalendar/docs/display/header/
+					//Defines the buttons and title at the top of the calendar.
+					header: { //Settings: http://arshaw.com/fullcalendar/docs/display/header/
 		<?php echo stripslashes_deep($espresso_calendar['espresso_calendar_header']) ?>
-									},
+					},
 
-									/**
-									 * Theme Settings
-									 *
-									 * Once you enable theming with true, you still need to include the CSS file for the theme you want.
-									 * For example, if you just downloaded a theme from the jQuery UI Themeroller, you need to put a <link> tag in your page's <head>.
-									 **/
+					/**
+					 * Theme Settings
+					 *
+					 * Once you enable theming with true, you still need to include the CSS file for the theme you want.
+					 * For example, if you just downloaded a theme from the jQuery UI Themeroller, you need to put a <link> tag in your page's <head>.
+					 **/
 
-									//jQuery UI Themeroller
-									//Enables/disables use of jQuery UI theming.
-									//Settings: http://arshaw.com/fullcalendar/docs/display/theme/
+					//jQuery UI Themeroller
+					//Enables/disables use of jQuery UI theming.
+					//Settings: http://arshaw.com/fullcalendar/docs/display/theme/
 		<?php
 		if (function_exists('espresso_version')) {
 			if ((!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || (espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true)) {
@@ -510,118 +517,117 @@ if (!function_exists('espresso_calendar')) {
 		}
 		?>
 
-								//This option only applies to calendars that have jQuery UI theming enabled with the theme option.
-								/*buttonIcons:{ //Settings: http://arshaw.com/fullcalendar/docs/display/buttonIcons/
+					//This option only applies to calendars that have jQuery UI theming enabled with the theme option.
+					/*buttonIcons:{ //Settings: http://arshaw.com/fullcalendar/docs/display/buttonIcons/
 								prev: 'circle-triangle-w',
 								next: 'circle-triangle-e'
 							},*/
 
-								//The day that each week begins.
-								//The value must be a number that represents the day of the week.
-								//Sunday=0, Monday=1, Tuesday=2, etc.
-								firstDay:<?php echo $espresso_calendar['espresso_calendar_firstday']; ?>, //Settings: http://arshaw.com/fullcalendar/docs/display/firstDay/
+					//The day that each week begins.
+					//The value must be a number that represents the day of the week.
+					//Sunday=0, Monday=1, Tuesday=2, etc.
+					firstDay:<?php echo $espresso_calendar['espresso_calendar_firstday']; ?>, //Settings: http://arshaw.com/fullcalendar/docs/display/firstDay/
 
-								//Displays the calendar in right-to-left mode.
-								isRTL: false,
+					//Displays the calendar in right-to-left mode.
+					isRTL: false,
 
-								//Whether to include Saturday/Sunday columns in any of the calendar views.
-								weekends: <?php echo $espresso_calendar['espresso_calendar_weekends'] == '' ? 'false' : $espresso_calendar['espresso_calendar_weekends']; ?>,
+					//Whether to include Saturday/Sunday columns in any of the calendar views.
+					weekends: <?php echo $espresso_calendar['espresso_calendar_weekends'] == '' ? 'false' : $espresso_calendar['espresso_calendar_weekends']; ?>,
 
-								//Determines the number of weeks displayed in a month view. Also determines each week's height.
-								weekMode:'fixed', //Settings: http://arshaw.com/fullcalendar/docs/display/weekMode/
+					//Determines the number of weeks displayed in a month view. Also determines each week's height.
+					weekMode:'fixed', //Settings: http://arshaw.com/fullcalendar/docs/display/weekMode/
 
-								//Will make the entire calendar (including header) a pixel height.
-								height:<?php echo $espresso_calendar['espresso_calendar_height']; ?>, //Settings: http://arshaw.com/fullcalendar/docs/display/height/
+					//Will make the entire calendar (including header) a pixel height.
+					height:<?php echo $espresso_calendar['espresso_calendar_height']; ?>, //Settings: http://arshaw.com/fullcalendar/docs/display/height/
 
-								//Will make the calendar's content area a pixel height.
-								//contentHeight: 600, //Settings: http://arshaw.com/fullcalendar/docs/display/contentHeight/
+					//Will make the calendar's content area a pixel height.
+					//contentHeight: 600, //Settings: http://arshaw.com/fullcalendar/docs/display/contentHeight/
 
-								//Determines the width-to-height aspect ratio of the calendar.
-								//aspectRatio: 2, //Settings: http://arshaw.com/fullcalendar/docs/display/aspectRatio/
+					//Determines the width-to-height aspect ratio of the calendar.
+					//aspectRatio: 2, //Settings: http://arshaw.com/fullcalendar/docs/display/aspectRatio/
 
-								/**
-								 * Agenda Options
-								 * http://arshaw.com/fullcalendar/docs/agenda/
-								 * Note: These ptions that apply to the agendaWeek and agendaDay views, and have beft out intentionally.
-								 * Please refer to the URL above to add.manage your agenda views.
-								 **/
+					/**
+					 * Agenda Options
+					 * http://arshaw.com/fullcalendar/docs/agenda/
+					 * Note: These ptions that apply to the agendaWeek and agendaDay views, and have beft out intentionally.
+					 * Please refer to the URL above to add.manage your agenda views.
+					 **/
 
-								/**
-								 * Text/Time Customization Settings
-								 * http://arshaw.com/fullcalendar/docs/text/
-								 **/
+					/**
+					 * Text/Time Customization Settings
+					 * http://arshaw.com/fullcalendar/docs/text/
+					 **/
 
-								//Determines the time-text that will be displayed on each event.
-								timeFormat:{ //Settings: http://arshaw.com/fullcalendar/docs/text/timeFormat/
-									// for agendaWeek and agendaDay
-									agenda: 'h:mm{ - h:mm}', // 5:00 - 6:30
+					//Determines the time-text that will be displayed on each event.
+					timeFormat:{ //Settings: http://arshaw.com/fullcalendar/docs/text/timeFormat/
+						// for agendaWeek and agendaDay
+						agenda: 'h:mm{ - h:mm}', // 5:00 - 6:30
 
-									// for all other views
-									'': ''// 7p
-								},
+						// for all other views
+						'': ''// 7p
+					},
 
-								//Changes the colors of the events as seen here:
-								//http://code.google.com/p/fullcalendar/issues/detail?id=6&can=1&q=css&colspec=ID%20Type%20Status%20Milestone%20Summary%20Stars
-								eventRender: function( event, element) {
+					//Changes the colors of the events as seen here:
+					//http://code.google.com/p/fullcalendar/issues/detail?id=6&can=1&q=css&colspec=ID%20Type%20Status%20Milestone%20Summary%20Stars
+					eventRender: function( event, element) {
 
-									// set an event category class
-									//alert(event.className);
-									if(event.className){
-										element.find('a').addClass(event.className);
-									}
-									//This displays the title of the event when hovering
-									//element.attr('title', event.title + " - Event Times: " + event.start + event.end);
+						// set an event category class
+						//alert(event.className);
+						if(event.className){
+							element.find('a').addClass(event.className);
+						}
+						//This displays the title of the event when hovering
+						//element.attr('title', event.title + " - Event Times: " + event.start + event.end);
 
-									// if the user selects show in thickbox we add this element
-									//if(event.in_thickbox_url){
-									//element.after($('<div style="display: none;"><div id="event-thumb-detail-' + event.id+ '"><h2 class="tb-event-title">' + event.title + '</h2><p class="tb-event-start">Event start: ' + event.start + '</p><p class="tb-event-end">Event End: ' + event.end + '</p>' + event.description + '<p class="tb-reg-link"><a href="' + event.url + '"title="Go to registration page for this event">Register for this event</a></p></div></div>'));
-									//}
+						// if the user selects show in thickbox we add this element
+						//if(event.in_thickbox_url){
+						//element.after($('<div style="display: none;"><div id="event-thumb-detail-' + event.id+ '"><h2 class="tb-event-title">' + event.title + '</h2><p class="tb-event-start">Event start: ' + event.start + '</p><p class="tb-event-end">Event End: ' + event.end + '</p>' + event.description + '<p class="tb-reg-link"><a href="' + event.url + '"title="Go to registration page for this event">Register for this event</a></p></div></div>'));
+						//}
 
 		<?php
-		//Adds the themeroller styles to the links in the calendar
+//Adds the themeroller styles to the links in the calendar
 		if (function_exists('espresso_version')) {
 			if ((!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || (espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true)) {
 				?>
-													$('a.fc-event').addClass('themeroller ui-state-focus');
-													$('a.fc-event div').removeClass('fc-event-skin');
-													$('.fc-view').addClass('ui-widget-content');
-													$('.expired').removeClass('ui-state-focus').addClass('ui-state-default');
+										$('a.fc-event').addClass('themeroller ui-state-focus');
+										$('a.fc-event div').removeClass('fc-event-skin');
+										$('.fc-view').addClass('ui-widget-content');
+										$('.expired').removeClass('ui-state-focus').addClass('ui-state-default');
 				<?php
 			}
 		}
 		?>
-										var ee_month_day = event.month + '-' + event.day;
-										element.attr( 'rel', ee_month_day ).attr( 'id', 'EVT_ID-'+event.id );
+						element.attr( 'rel', event.month_day ).attr( 'id', 'EVT_ID-'+event.id );
 
 
-										if(event.event_img_thumb){
-											ee_total_images = parseInt( ee_total_images ) + 1;
-											element.addClass('event-has-thumb');							
-											element.find('.fc-event-title').after($('<span class="thumb-wrap"><img class="ee-event-thumb" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
-										}
-								
-										if( event.expired ) {
-											element.addClass('expired');
-										}
-								
+						if(event.event_img_thumb){
+							ee_total_images = parseInt( ee_total_images ) + 1;
+							element.addClass('event-has-thumb');							
+							element.find('.fc-event-title').after($('<span class="thumb-wrap"><img class="ee-event-thumb" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
+						}
+																		
+						if( event.expired ) {
+							element.addClass('expired');
+						}
+																		
 		<?php
 		if ($espresso_calendar['show_time'] == true) {
 			?>				
 								if ( event.startTime != '' && event.startTime != undefined ) {
 									event.startTime = '<span class="event-start-time">' + event.startTime + '</span>';
-											
-											
+																										
+																										
 									if ( event.startTime != false && event.endTime != '' && event.endTime != undefined ) {
 										event.endTime = '<span class="event-end-time">' + event.endTime + '</span>';
 									} else {
 										event.endTime = '';
 									}
-												
+																											
 									if ( event.startTime ) {
 										element.find('.fc-event-title').after($('<p class="time-display-block">' + event.startTime + ' - ' + event.endTime + '</p>'));
 									}
 								}
-											
+																										
 								if ( event.display_reg_form == 'Y') {
 									event.regButtonText = '<?php _e('Register Now', 'event_espresso'); ?>';
 								} else {
@@ -644,8 +650,8 @@ if (!function_exists('espresso_calendar')) {
 									},
 									position: {
 										/*at: 'top right',
-													adjust: {
-														x: 0, y: 30*/
+																		adjust: {
+																			x: 0, y: 30*/
 										my: '<?php echo isset($espresso_calendar['tooltips_pos']['my_1']) && !empty($espresso_calendar['tooltips_pos']['my_1']) ? $espresso_calendar['tooltips_pos']['my_1'] : 'bottom' ?> <?php echo isset($espresso_calendar['tooltips_pos']['my_2']) && !empty($espresso_calendar['tooltips_pos']['my_2']) ? $espresso_calendar['tooltips_pos']['my_2'] : 'center' ?>',  // Position my top left...
 										at: '<?php echo isset($espresso_calendar['tooltips_pos']['at_1']) && !empty($espresso_calendar['tooltips_pos']['at_1']) ? $espresso_calendar['tooltips_pos']['at_1'] : 'top' ?> <?php echo isset($espresso_calendar['tooltips_pos']['at_1']) && !empty($espresso_calendar['tooltips_pos']['at_1']) ? $espresso_calendar['tooltips_pos']['at_2'] : 'center' ?>', // at the bottom right of...
 									},
@@ -662,23 +668,24 @@ if (!function_exists('espresso_calendar')) {
 			if (function_exists('espresso_version')) {
 				if ((!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || (espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true)) {
 					?>
-																				classes: 'ui-tooltip-rounded ui-tooltip-light ui-tooltip-shadow', //Themeroller styles
+														classes: 'ui-tooltip-rounded ui-tooltip-light ui-tooltip-shadow', //Themeroller styles
 				<?php } else { ?>
-																		classes: 'ui-tooltip-rounded ui-tooltip-ee ui-tooltip-shadow', //Themeroller styles
-				<?php }
+													classes: 'ui-tooltip-rounded ui-tooltip-ee ui-tooltip-shadow', //Themeroller styles
+					<?php
+				}
 			}
 			?>
-																	/*
-																	 * The important part: style.widget property
+										/*
+										 * The important part: style.widget property
 
-																	 * This tells qTip to apply the ui-widget classes to
-																	 * the main, titlebar and content elements of the qTip.
-																	 * Otherwise they won't be applied and ThemeRoller styles
-																	 * won't effect this particular tooltip.
-																	 */
-																	widget: true
-																}
-															});
+										 * This tells qTip to apply the ui-widget classes to
+										 * the main, titlebar and content elements of the qTip.
+										 * Otherwise they won't be applied and ThemeRoller styles
+										 * won't effect this particular tooltip.
+										 */
+										widget: true
+									}
+								});
 			<?php
 		}
 		?>
@@ -702,8 +709,8 @@ if (!function_exists('espresso_calendar')) {
 								break;
 								}*/
 
-								 		
-										
+																		 		
+																				
 
 					},
 
@@ -748,14 +755,18 @@ if (!function_exists('espresso_calendar')) {
 					//Abbreviated names of days-of-week.
 					dayNamesShort: [<?php echo stripslashes_deep($espresso_calendar['espresso_calendar_dayNamesShort']); ?>/*'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'*/],
 
-					//Load the events into json srrsy
+					//Load the events into event object
 					events: <?php echo json_encode($events) ?>,
-							
+																	
 					viewDisplay: function(view) {
 						$('.ui-state-active').each( function() {
 							$(this).removeClass('ui-state-active');
 						});
 						$('.fc-today').addClass('ui-state-active').removeClass('ui-state-highlight');
+						if (view.name == "month") {
+							//view.renderEvents();
+							resizeForImages(view);
+						}
 					},
 
 					// if an event in the array has already happened, it is expired and we'll give it an 'expired' class
@@ -763,72 +774,79 @@ if (!function_exists('espresso_calendar')) {
 		  $('a.fc-event div').removeClass('fc-event-skin');
 		  $('a.fc-event').removeClass('ui-state-default').addClass('expired ui-state-focus');
 		  <?php } */ ?>
-									loading: function(bool) {
-										if (bool) $('#loading').show();
-										else $('#loading').hide();
-									}
+						loading: function(bool) {
+							if (bool) $('#loading').show();
+							else $('#loading').hide();
+						}
 
-													
-								});
+																							
+					});
 
-						
-								var ee_imgTimeout = ee_total_images * 50;
-						
-								setTimeout(  
-								function() {  
-								
-									// establish vars we need to resize calendar cells properly
-									var ee_day = 0;
-									var ee_month = 0;
-									var ee_thisMonth = 0;
-									var ee_thisYear = 0;
-									var ee_prevMonth = 0;
-									var ee_nextMonth = 0;
-									var ee_newTop = 0;
-
-									var ee_months = new Object();
-									var ee_monthNames = new Object();
-									ee_monthNames= [<?php echo stripslashes_deep($espresso_calendar['espresso_calendar_monthNames']); ?>];						
-									for ( i=0; i<12; i++ ) {
-										months[ ee_monthNames[i] ] = i+1;
-									}
-
-									var ee_monthYear = $('.fc-header-title h2').html();
-									var ee_monthYearArray = ee_monthYear.split(' ');
-									ee_thisMonth = ee_months[ ee_monthYearArray[0] ];
-									ee_thisYear = ee_monthYearArray[1];
-									ee_prevMonth = ee_thisMonth - 1;
-									ee_nextMonth =  ee_thisMonth +1;
-									//						console.log( 'prevMonth = ' + prevMonth + '\n' + 'nextMonth = ' + nextMonth );
-
-									$('.fc-view-month .fc-widget-content').each(function(index) {	
-										setMonth = ee_thisMonth;
-										if ( $(this).closest('tr').hasClass('fc-first') && $(this).hasClass('fc-other-month') ){
-											setMonth = ee_prevMonth;
-										} else if ( $(this).hasClass('fc-other-month') ){
-											setMonth = ee_nextMonth;
-										}
-										ee_setDay =$(this).find('.fc-day-number').html();
-										ee_setID = 'md-' + setMonth + '-' + ee_setDay;
-										//console.log( 'setID = ' + setID );
-										$(this).find('.fc-day-content > div').attr( 'id', ee_setID );
-									});
-								
-									$('.fc-event').each( function(index){ 						
-										// determine what month and day this event is on
-										ee_monthDay = $(this).attr( 'rel' );
-										//console.log( 'monthDay: ' + monthDay );
-										// find day container in calendar
-										dayCnt = $('#md-'+ee_monthDay);
-										dayCntHTML = dayCnt.html();
+					function resizeForImages(view) {
+						var ee_imgTimeout = ee_total_images * 50;
 																
+						setTimeout(  
+						function() {  
+																		
+							// establish vars we need to resize calendar cells properly
+							var ee_day = 0;
+							var ee_month = 0;
+							var ee_thisMonth = 0;
+							var ee_thisYear = 0;
+							var ee_prevMonth = 0;
+							var ee_nextMonth = 0;
+							var ee_newTop = 0;
+
+							var ee_months = new Object();
+							var ee_monthNames = new Object();
+							ee_monthNames= [<?php echo stripslashes_deep($espresso_calendar['espresso_calendar_monthNames']); ?>];						
+							for ( i=0; i<12; i++ ) {
+								ee_months[ ee_monthNames[i] ] = i+1;
+							}
+
+							var ee_monthYear = $('.fc-header-title h2').html();
+							var ee_monthYearArray = ee_monthYear.split(' ');
+							ee_thisMonth = ee_months[ ee_monthYearArray[0] ];
+							ee_thisYear = ee_monthYearArray[1];
+							ee_prevMonth = ee_thisMonth - 1;
+							ee_nextMonth =  ee_thisMonth +1;
+							// console.log( 'prevMonth = ' + prevMonth + '\n' + 'nextMonth = ' + nextMonth );
+
+							$('.fc-view-month td').each(function(index) {	
+								setMonth = ee_thisMonth;
+								if ( $(this).closest('tr').hasClass('fc-first') && $(this).hasClass('fc-other-month') ){
+									setMonth = ee_prevMonth;
+								} else if ( $(this).hasClass('fc-other-month') ){
+									setMonth = ee_nextMonth;
+								}
+								ee_setDay =$(this).find('.fc-day-number').html();
+								ee_setID = 'md-' + setMonth + '-' + ee_setDay;
+								//console.log( 'setID = ' + setID );
+								$(this).find('.fc-day-content > div').attr( 'id', ee_setID );
+							});
+																		
+							$('.fc-view-month .fc-event').each( function(index){
+								done = $(this).attr( 'done' );
+								if (done != undefined) {
+									$(this).attr( 'done', 'true' );
+									// determine what month and day this event is on
+									ee_monthDay = $(this).attr( 'rel' );
+									var monthDays = ee_monthDay.split(" ");
+									for (index = 0; index < monthDays.length; ++index) {
+										monthDay = monthDays[index];
+					                                 
+										// console.log( 'monthDay: ' + monthDay );
+										// find day container in calendar
+										dayCnt = $('#md-'+monthDay);
+										dayCntHTML = dayCnt.html();
+					
 										if ( dayCntHTML != null && dayCntHTML != undefined ) {
 											if ( dayCntHTML == '&nbsp;' ) {
 												dayCntHTML = '';
 												dayCnt.html( dayCntHTML );
 												dayCnt.css({ 'height' : 0 });
 											}
-
+					
 											// grab offset for dayCnt
 											dayCntPos = dayCnt.position();
 											//console.log( 'dayCntPos.top = ' + dayCntPos.top + '\n' + 'dayCntPos.left = ' + dayCntPos.left );
@@ -838,30 +856,32 @@ if (!function_exists('espresso_calendar')) {
 											}
 											dayCntHgt = dayCntHgt.replace( 'px', '' );
 											dayCntHgt = parseInt( dayCntHgt );
-											ee_newTop = dayCntPos.top + dayCntHgt;
+											newTop = dayCntPos.top + dayCntHgt;
 											//console.log( 'newTop = ' + newTop + ' = dayCntPos.top ( ' + dayCntPos.top + ' ) + dayCntHgt ( ' + dayCntHgt + ' )' );
-											$(this).css({ 'top' : ee_newTop });
+											$(this).css({ 'top' : newTop });
 											linkHeight = parseInt( $(this).find('.fc-event-inner').outerHeight() );
 											//console.log( 'linkHeight = ' + linkHeight );
-											ee_newHeight = dayCntHgt + linkHeight + 3;
-											dayCnt.height( ee_newHeight ).css({ 'height' : ee_newHeight + 'px' });
+											newHeight = dayCntHgt + linkHeight + 8;
+											dayCnt.height( newHeight ).css({ 'height' : newHeight + 'px' });
 											//console.log( 'newHeight = ' + newHeight );
-											var ee_parentHeight = dayCnt.parents('tr').outerHeight();
+											var parentHeight = dayCnt.parents('tr').outerHeight();
 											//console.log( 'parentHeight = ' + parentHeight );
 											//dayCnt.parents('tr').css({ 'background' : 'pink' });
-											if( parentHeight < ee_newHeight ) {
-												ee_newHeight = ee_newHeight + 30;
-												dayCnt.parents('tr').height( ee_newHeight ).css({ 'height' : ee_newHeight + 'px' });
+											if( parentHeight < newHeight ) {
+												newHeight = newHeight + 30;
+												dayCnt.parents('tr').height( newHeight ).css({ 'height' : newHeight + 'px' });
 											}
-									
 										}
-									});
-
-								},
-								ee_imgTimeout
-							);
-
+						
+									}										
+								}
 							});
+
+						},
+						ee_imgTimeout
+					);
+					}
+				});
 
 		</script>
 		<div id='espresso_calendar'></div>
@@ -972,18 +992,18 @@ class Espresso_Calendar_Widget extends WP_Widget {
 		?>
 		<p>
 			<label for="<?php echo $this->get_field_id('title'); ?>">
-		<?php _e('Title:', 'event_espresso'); ?>
+				<?php _e('Title:', 'event_espresso'); ?>
 			</label>
 			<input type="text" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" width="20" value="<?php echo $instance['title']; ?>" />
 		</p>
 		<p>
 			<label for="<?php echo $this->get_field_id('show_expired'); ?>">
-			<?php _e('Display Expired Events?', 'event_espresso'); ?>
+				<?php _e('Display Expired Events?', 'event_espresso'); ?>
 			</label>
-		<?php echo select_input($this->get_field_name('show_expired'), $values, $instance['show_expired']); ?> </p>
+			<?php echo select_input($this->get_field_name('show_expired'), $values, $instance['show_expired']); ?> </p>
 		<p>
 			<label for="<?php echo $this->get_field_id('category_id'); ?>">
-		<?php _e('Display Single Category?', 'event_espresso'); ?>
+				<?php _e('Display Single Category?', 'event_espresso'); ?>
 			</label>
 			<input type="text" id="<?php echo $this->get_field_id('category_id'); ?>" name="<?php echo $this->get_field_name('category_id'); ?>" width="20" value="<?php echo $instance['category_id']; ?>" />
 			<?php
@@ -995,7 +1015,7 @@ class Espresso_Calendar_Widget extends WP_Widget {
 		</p>
 		<p>
 			<label for="<?php echo $this->get_field_id('calendar_page'); ?>">
-			<?php _e('Calendar Page', 'event_espresso'); ?>
+				<?php _e('Calendar Page', 'event_espresso'); ?>
 			</label>
 			<input type="text" id="<?php echo $this->get_field_id('calendar_page'); ?>" name="<?php echo $this->get_field_name('calendar_page'); ?>" width="20" value="<?php echo $instance['calendar_page']; ?>" />
 			<?php
