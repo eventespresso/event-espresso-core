@@ -7,10 +7,10 @@ function espresso_register_cpts(){
 }
 class	EE_Register_CPTs{
 	function __construct(){
-		$this->register_taxonomy('event_categories', __("Event Category", "event_espresso"), __("Event Categories", "event_espresso"), 
+		$this->register_taxonomy('espresso_event_categories', __("Event Category", "event_espresso"), __("Event Categories", "event_espresso"), 
 				array(
 					'public'=>true));
-		$this->register_taxonomy('event_type', __("Event Type", "event_espresso"), __("Event Types", "event_espresso"), 
+		$this->register_taxonomy('espresso_event_type', __("Event Type", "event_espresso"), __("Event Types", "event_espresso"), 
 				array(
 					'public'=>true,
 					'hierarchical'=>false
@@ -18,13 +18,13 @@ class	EE_Register_CPTs{
 		$this->register_CPT('espresso_events', __("Event", "event_espresso"),  __("Events", "event_espresso"),
 				array(
 					'taxonomies'=>array(
-						'event_categories',
-						'event_type'
+						'espresso_event_categories',
+						'espresso_event_type'
 				)));
 		$this->register_CPT('espresso_venues', __("Venue", "event_espresso"), __("Venues", "event_espresso"),
 				array(
 					'taxonomies'=>array(
-						'event_categories'
+						'espresso_event_categories'
 					)
 				));
 		$this->register_CPT('espresso_persons',  __("Person", "event_espresso"),  __("Persons", "event_espresso"));
