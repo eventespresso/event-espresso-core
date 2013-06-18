@@ -27,6 +27,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	private $_reg_event;
 	private $_session;
 	private static $_reg_status;
+	private static $_reg_form_group_cntr = 0;
 
 
 
@@ -1178,11 +1179,12 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	 * 		@return 		string
 	 */
 	public function form_after_question_group( $output ) {
+		self::$_reg_form_group_cntr++;
 		return  '
 			<tr class="hide-if-no-js">
 				<th> </th>		
 				<td class="reg-admin-edit-attendee-question-td">
-					<a class="reg-admin-edit-attendee-question-lnk" href="#" title="' . __( 'click to edit attendee question', 'event_espresso' ) . '">
+					<a id="reg-admin-edit-attendee-question-lnk-' . self::$_reg_form_group_cntr . '" class="reg-admin-edit-attendee-question-lnk" href="#" title="' . __( 'click to edit attendee question', 'event_espresso' ) . '">
 						<span class="reg-admin-edit-question-group-spn">' . __( 'edit the above question group', 'event_espresso' ) . '</span>
 						<img width="16" height="16" alt="' . __( 'Edit Attendee Question', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/pencil-16x16.png">		
 					</a>
