@@ -2,6 +2,7 @@
 	<ul>
 			<li>[LISTATTENDEES]</li>
 			<li>[LISTATTENDEES limit="30"] //Number of events to show on the page</li>
+			<li>[LISTATTENDEES paid_only="true"] //Show approved and fully paid registrations only</li>
 			<li>[LISTATTENDEES show_expired="true"] //Show expired events</li>
 			<li>[LISTATTENDEES show_deleted="true"] //Show deleted events</li>
 			<li>[LISTATTENDEES show_secondary="true"] //Show secondary/backup events</li>

@@ -68,12 +68,12 @@ add_shortcode('EVENT_ESPRESSO_CATEGORY', 'show_event_category');
  * List of Attendees
  * Displays a lsit of attendees
  * [LISTATTENDEES]
+ * [LISTATTENDEES paid_only="true"] //Show approved and fully paid registrations only
  * [LISTATTENDEES limit="30"]
  * [LISTATTENDEES show_expired="false"]
  * [LISTATTENDEES show_deleted="false"]
  * [LISTATTENDEES show_secondary="false"]
  * [LISTATTENDEES show_gravatar="true"]
- * [LISTATTENDEES paid_only="true"]
  * [LISTATTENDEES event_identifier="your_event_identifier"]
  * [LISTATTENDEES category_identifier="your_category_identifier"]
  */

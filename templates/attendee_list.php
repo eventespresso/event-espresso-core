@@ -3,6 +3,7 @@
 //Show a list of attendees using a shortcode
 //[LISTATTENDEES]
 //[LISTATTENDEES limit="30"]
+//[LISTATTENDEES paid_only="true"] //Show approved and fully paid registrations only
 //[LISTATTENDEES show_expired="false"]
 //[LISTATTENDEES show_deleted="false"]
 //[LISTATTENDEES show_secondary="false"]
