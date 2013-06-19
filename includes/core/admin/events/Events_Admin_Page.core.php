@@ -547,6 +547,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$timezone = isset( $data['EVT_timezone_string'] ) ? $data['EVT_timezone_string'] : NULL;
 		$success = TRUE;
 
+		$q=1;
 		foreach ( $data['event_datetimes'] as $row => $event_datetime ) {
 			$event_datetime['evt_end'] = isset($event_datetime['evt_end']) && ! empty( $event_datetime['evt_end'] ) ? $event_datetime['evt_end'] : $event_datetime['evt_start'];
 			$event_datetime['reg_end'] = isset($event_datetime['reg_end']) && ! empty( $event_datetime['reg_end'] ) ? $event_datetime['reg_end'] : $event_datetime['reg_start'];
@@ -556,7 +557,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'DTT_EVT_end' => strtotime($event_datetime['evt_end']),
 					'DTT_REG_start' => strtotime($event_datetime['reg_start']),
 					'DTT_REG_end' => strtotime($event_datetime['reg_end']),
-					'DTT_is_primary' => $row == 1 ? TRUE : FALSE,
+						'DTT_is_primary' => $row == 1 ? TRUE : FALSE,
 				),
 				$timezone);
 			$works = $evtobj->_add_relation_to( $DTM, 'Datetime' );
@@ -579,8 +580,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$timezone = isset( $data['EVT_timezone_string'] ) ? $data['EVT_timezone_string'] : NULL;
 		$success = TRUE;
-		$data['price_count'] = 1;
 
+		$data['price_count'] = 1;
 		$ticket_prices_to_save = array();
 		$quick_edit_ticket_price = isset($data['quick_edit_ticket_price']) ? $data['quick_edit_ticket_price'] : array();
 //			echo printr( $quick_edit_ticket_price, '$quick_edit_ticket_price' );
@@ -1030,6 +1031,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$force_join = array('Venue', 'Datetime');
 
 		$events = $count ? $EEME->count( array( $where, 'force_join' => $force_join, ), 'EVT_ID' ) : $EEME->get_all( array( $where, 'force_join' => $force_join, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' ) );
+
 
 		return $events;
 	}
