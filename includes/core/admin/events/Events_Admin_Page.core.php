@@ -1028,10 +1028,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$where['DTT_EVT_start'] = array( 'BETWEEN', array( strtotime($this_year_r . '-' . $this_month_r . '-01'), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month) ) );
 		}
 
-		$force_join = array('Venue', 'Datetime');
-
-		$events = $count ? $EEME->count( array( $where, 'force_join' => $force_join, ), 'EVT_ID' ) : $EEME->get_all( array( $where, 'force_join' => $force_join, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' ) );
-
+		$events = $count ? $EEME->count( array( $where ), 'EVT_ID' ) : $EEME->get_all( array( $where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' ) );
 
 		return $events;
 	}
