@@ -19,6 +19,11 @@ class	EE_Register_CPTs{
 		$this->register_taxonomy('espresso_event_categories', __("Event Category", "event_espresso"), __("Event Categories", "event_espresso"), 
 				array(
 					'public'=>true));
+		$this->register_taxonomy('espresso_venue_categories', __("Venue Category", 'event_espresso'), __('Venue Categories', 'event_espresso'),
+				array(
+					'public' => true )
+				);
+
 		$this->register_taxonomy('espresso_event_type', __("Event Type", "event_espresso"), __("Event Types", "event_espresso"), 
 				array(
 					'public'=>true,
@@ -34,7 +39,7 @@ class	EE_Register_CPTs{
 		$this->register_CPT('espresso_venues', __("Venue", "event_espresso"), __("Venues", "event_espresso"),
 				array(
 					'taxonomies'=>array(
-						'espresso_event_categories'
+						'espresso_venue_categories'
 					)
 				));
 		$this->register_CPT('espresso_persons',  __("Person", "event_espresso"),  __("Persons", "event_espresso"));
@@ -48,13 +53,15 @@ class	EE_Register_CPTs{
 		//setup default terms in any of our taxonomies (but only if we're in admin).  Why not added via register_actvation_hook?  Because it's possible that in future iterations of EE we may add new defaults for specialized taxonomies (think event_types) and regsiter_activation_hook only reliably runs when a user manually activates the plugin.
 		if ( is_admin() ) {
 			$this->set_initial_event_categories();
+			$this->set_initial_venue_categories();
 			$this->set_initial_event_types();
 		}
 
 
 		//set default terms
-		$this->set_default_term( 'espresso_event_categories', 'uncategorized', array('espresso_events', 'espresso_venues' ) );
+		$this->set_default_term( 'espresso_event_categories', 'uncategorized', array('espresso_events') );
 		$this->set_default_term( 'espresso_event_type', 'multi_day', array('espresso_events' ) );
+		$this->set_default_term( 'espresso_venue_categories', 'uncategorized', array('espresso_venues') );
 
 
 		//hook into save_post so that we can make sure that the default terms get saved on publish of registered cpts IF they don't have a term for that taxonomy set.
@@ -159,7 +166,16 @@ class	EE_Register_CPTs{
 
 	function set_initial_event_categories() {
 		$term_details = array(
-			'uncategorized' => array( __('Uncategorized', 'event_espresso'), __('All uncategorized items', 'event_espresso') )
+			'uncategorized' => array( __('Uncategorized', 'event_espresso'), __('All uncategorized events', 'event_espresso') )
+			);
+		$this->set_initial_terms( 'espresso_event_categories', $term_details );
+	}
+
+
+
+	function set_initial_venue_categories() {
+		$term_details = array(
+			'uncategorized' => array( __('Uncategorized', 'event_espresso'), __('All uncategorized venues', 'event_espresso') )
 			);
 		$this->set_initial_terms( 'espresso_event_categories', $term_details );
 	}
