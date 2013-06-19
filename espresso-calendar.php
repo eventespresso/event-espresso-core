@@ -39,7 +39,7 @@ function ee_calendar_load_pue_update() {
 		require(EVENT_ESPRESSO_PLUGINFULLPATH . 'class/pue/pue-client.php' );
 		$api_key = $org_options['site_license_key'];
 		$host_server_url = 'http://eventespresso.com';
-		$plugin_slug = 'espresso-calendar-pr';
+		$plugin_slug = 'espresso-calendar';
 		$options = array(
 				'apikey' => $api_key,
 				'lang_domain' => 'event_espresso',
@@ -605,29 +605,29 @@ if (!function_exists('espresso_calendar')) {
 							element.addClass('event-has-thumb');							
 							element.find('.fc-event-title').after($('<span class="thumb-wrap"><img class="ee-event-thumb" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
 						}
-																		
+																				
 						if( event.expired ) {
 							element.addClass('expired');
 						}
-																		
+																				
 		<?php
 		if ($espresso_calendar['show_time'] == true) {
 			?>				
 								if ( event.startTime != '' && event.startTime != undefined ) {
 									event.startTime = '<span class="event-start-time">' + event.startTime + '</span>';
-																										
-																										
+																													
+																													
 									if ( event.startTime != false && event.endTime != '' && event.endTime != undefined ) {
 										event.endTime = '<span class="event-end-time">' + event.endTime + '</span>';
 									} else {
 										event.endTime = '';
 									}
-																											
+																														
 									if ( event.startTime ) {
 										element.find('.fc-event-title').after($('<p class="time-display-block">' + event.startTime + ' - ' + event.endTime + '</p>'));
 									}
 								}
-																										
+																													
 								if ( event.display_reg_form == 'Y') {
 									event.regButtonText = '<?php _e('Register Now', 'event_espresso'); ?>';
 								} else {
@@ -650,8 +650,8 @@ if (!function_exists('espresso_calendar')) {
 									},
 									position: {
 										/*at: 'top right',
-																		adjust: {
-																			x: 0, y: 30*/
+																			adjust: {
+																				x: 0, y: 30*/
 										my: '<?php echo isset($espresso_calendar['tooltips_pos']['my_1']) && !empty($espresso_calendar['tooltips_pos']['my_1']) ? $espresso_calendar['tooltips_pos']['my_1'] : 'bottom' ?> <?php echo isset($espresso_calendar['tooltips_pos']['my_2']) && !empty($espresso_calendar['tooltips_pos']['my_2']) ? $espresso_calendar['tooltips_pos']['my_2'] : 'center' ?>',  // Position my top left...
 										at: '<?php echo isset($espresso_calendar['tooltips_pos']['at_1']) && !empty($espresso_calendar['tooltips_pos']['at_1']) ? $espresso_calendar['tooltips_pos']['at_1'] : 'top' ?> <?php echo isset($espresso_calendar['tooltips_pos']['at_1']) && !empty($espresso_calendar['tooltips_pos']['at_1']) ? $espresso_calendar['tooltips_pos']['at_2'] : 'center' ?>', // at the bottom right of...
 									},
@@ -709,8 +709,8 @@ if (!function_exists('espresso_calendar')) {
 								break;
 								}*/
 
-																		 		
-																				
+																				 		
+																						
 
 					},
 
@@ -757,7 +757,7 @@ if (!function_exists('espresso_calendar')) {
 
 					//Load the events into event object
 					events: <?php echo json_encode($events) ?>,
-																	
+																			
 					viewDisplay: function(view) {
 						$('.ui-state-active').each( function() {
 							$(this).removeClass('ui-state-active');
@@ -779,15 +779,15 @@ if (!function_exists('espresso_calendar')) {
 							else $('#loading').hide();
 						}
 
-																							
+																									
 					});
 
 					function resizeForImages(view) {
 						var ee_imgTimeout = ee_total_images * 50;
-																
+																		
 						setTimeout(  
 						function() {  
-																		
+																				
 							// establish vars we need to resize calendar cells properly
 							var ee_day = 0;
 							var ee_month = 0;
@@ -824,7 +824,7 @@ if (!function_exists('espresso_calendar')) {
 								//console.log( 'setID = ' + setID );
 								$(this).find('.fc-day-content > div').attr( 'id', ee_setID );
 							});
-																		
+																				
 							$('.fc-view-month .fc-event').each( function(index){
 								done = $(this).attr( 'done' );
 								if (done != undefined) {
@@ -834,19 +834,19 @@ if (!function_exists('espresso_calendar')) {
 									var monthDays = ee_monthDay.split(" ");
 									for (index = 0; index < monthDays.length; ++index) {
 										monthDay = monthDays[index];
-					                                 
+							                                 
 										// console.log( 'monthDay: ' + monthDay );
 										// find day container in calendar
 										dayCnt = $('#md-'+monthDay);
 										dayCntHTML = dayCnt.html();
-					
+							
 										if ( dayCntHTML != null && dayCntHTML != undefined ) {
 											if ( dayCntHTML == '&nbsp;' ) {
 												dayCntHTML = '';
 												dayCnt.html( dayCntHTML );
 												dayCnt.css({ 'height' : 0 });
 											}
-					
+							
 											// grab offset for dayCnt
 											dayCntPos = dayCnt.position();
 											//console.log( 'dayCntPos.top = ' + dayCntPos.top + '\n' + 'dayCntPos.left = ' + dayCntPos.left );
@@ -856,24 +856,24 @@ if (!function_exists('espresso_calendar')) {
 											}
 											dayCntHgt = dayCntHgt.replace( 'px', '' );
 											dayCntHgt = parseInt( dayCntHgt );
-											newTop = dayCntPos.top + dayCntHgt;
+											ee_newTop = dayCntPos.top + dayCntHgt;
 											//console.log( 'newTop = ' + newTop + ' = dayCntPos.top ( ' + dayCntPos.top + ' ) + dayCntHgt ( ' + dayCntHgt + ' )' );
-											$(this).css({ 'top' : newTop });
+											$(this).css({ 'top' : ee_newTop });
 											linkHeight = parseInt( $(this).find('.fc-event-inner').outerHeight() );
 											//console.log( 'linkHeight = ' + linkHeight );
-											newHeight = dayCntHgt + linkHeight + 8;
-											dayCnt.height( newHeight ).css({ 'height' : newHeight + 'px' });
+											ee_newHeight = dayCntHgt + linkHeight + 8;
+											dayCnt.height( newHeight ).css({ 'height' : ee_newHeight + 'px' });
 											//console.log( 'newHeight = ' + newHeight );
-											var parentHeight = dayCnt.parents('tr').outerHeight();
+											var ee_parentHeight = dayCnt.parents('tr').outerHeight();
 											//console.log( 'parentHeight = ' + parentHeight );
 											//dayCnt.parents('tr').css({ 'background' : 'pink' });
-											if( parentHeight < newHeight ) {
-												newHeight = newHeight + 30;
-												dayCnt.parents('tr').height( newHeight ).css({ 'height' : newHeight + 'px' });
+											if( ee_parentHeight < ee_newHeight ) {
+												ee_newHeight = ee_newHeight + 30;
+												dayCnt.parents('tr').height( newHeight ).css({ 'height' : ee_newHeight + 'px' });
 											}
 										}
-						
-									}										
+								
+									}
 								}
 							});
 
