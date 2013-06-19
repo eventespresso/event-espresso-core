@@ -1030,7 +1030,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param EE_Model_Query_Info_Carrier $query_info_carrier
 	 */
 	private function _get_default_where_conditions_for_models_in_query(EE_Model_Query_Info_Carrier $query_info_carrier){
-		$universal_query_params[get_class($this)] = $this->_get_default_where_conditions();
+		/*$universal_query_params[get_class($this)] = $this->_get_default_where_conditions();
 		foreach($query_info_carrier->get_model_names_included() as $model_name){
 			$related_model = $this->get_related_model_obj($model_name);
 			$related_model_universal_where_params = $related_model->_get_default_where_conditions();
@@ -1061,7 +1061,8 @@ abstract class EEM_Base extends EE_Base{
 				$shifted_qp[$k] = $v;
 			}
 		}
-		return $shifted_qp;
+		return $shifted_qp;/**/
+		return $this->_get_default_where_conditions();
 	}
 	
 	/**
