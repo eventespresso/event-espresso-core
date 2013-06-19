@@ -826,9 +826,6 @@ if (!function_exists('espresso_calendar')) {
 							});
 																				
 							$('.fc-view-month .fc-event').each( function(index){
-								done = $(this).attr( 'done' );
-								if (done != undefined) {
-									$(this).attr( 'done', 'true' );
 									// determine what month and day this event is on
 									ee_monthDay = $(this).attr( 'rel' );
 									var monthDays = ee_monthDay.split(" ");
@@ -838,45 +835,49 @@ if (!function_exists('espresso_calendar')) {
 										// console.log( 'monthDay: ' + monthDay );
 										// find day container in calendar
 										dayCnt = $('#md-'+monthDay);
-										dayCntHTML = dayCnt.html();
-							
-										if ( dayCntHTML != null && dayCntHTML != undefined ) {
-											if ( dayCntHTML == '&nbsp;' ) {
-												dayCntHTML = '';
-												dayCnt.html( dayCntHTML );
-												dayCnt.css({ 'height' : 0 });
-											}
-							
-											// grab offset for dayCnt
-											dayCntPos = dayCnt.position();
-											//console.log( 'dayCntPos.top = ' + dayCntPos.top + '\n' + 'dayCntPos.left = ' + dayCntPos.left );
-											dayCntHgt = dayCnt.css( 'height' );
-											if ( dayCntHgt == undefined ){
-												dayCntHgt = '0px';
-											}
-											dayCntHgt = dayCntHgt.replace( 'px', '' );
-											dayCntHgt = parseInt( dayCntHgt );
-											ee_newTop = dayCntPos.top + dayCntHgt;
-											//console.log( 'newTop = ' + newTop + ' = dayCntPos.top ( ' + dayCntPos.top + ' ) + dayCntHgt ( ' + dayCntHgt + ' )' );
-											$(this).css({ 'top' : ee_newTop });
-											linkHeight = parseInt( $(this).find('.fc-event-inner').outerHeight() );
-											//console.log( 'linkHeight = ' + linkHeight );
-											ee_newHeight = dayCntHgt + linkHeight + 8;
-											dayCnt.height( newHeight ).css({ 'height' : ee_newHeight + 'px' });
-											//console.log( 'newHeight = ' + newHeight );
-											var ee_parentHeight = dayCnt.parents('tr').outerHeight();
-											//console.log( 'parentHeight = ' + parentHeight );
-											//dayCnt.parents('tr').css({ 'background' : 'pink' });
-											if( ee_parentHeight < ee_newHeight ) {
-												ee_newHeight = ee_newHeight + 30;
-												dayCnt.parents('tr').height( newHeight ).css({ 'height' : ee_newHeight + 'px' });
+										done = dayCnt.attr( 'done' );
+										if (done == undefined) {
+											dayCntHTML = dayCnt.html();
+
+											if ( dayCntHTML != null && dayCntHTML != undefined ) {
+												if ( dayCntHTML == '&nbsp;' ) {
+													dayCntHTML = '';
+													dayCnt.html( dayCntHTML );
+													dayCnt.css({ 'height' : 0 });
+												}
+
+												// grab offset for dayCnt
+												dayCntPos = dayCnt.position();
+												//console.log( 'dayCntPos.top = ' + dayCntPos.top + '\n' + 'dayCntPos.left = ' + dayCntPos.left );
+												dayCntHgt = dayCnt.css( 'height' );
+												if ( dayCntHgt == undefined ){
+													dayCntHgt = '0px';
+												}
+												dayCntHgt = dayCntHgt.replace( 'px', '' );
+												dayCntHgt = parseInt( dayCntHgt );
+												ee_newTop = dayCntPos.top + dayCntHgt;
+												//console.log( 'newTop = ' + newTop + ' = dayCntPos.top ( ' + dayCntPos.top + ' ) + dayCntHgt ( ' + dayCntHgt + ' )' );
+												$(this).css({ 'top' : ee_newTop });
+												linkHeight = parseInt( $(this).find('.fc-event-inner').outerHeight() );
+												//console.log( 'linkHeight = ' + linkHeight );
+												ee_newHeight = dayCntHgt + linkHeight + 8;
+												dayCnt.height( ee_newHeight ).css({ 'height' : ee_newHeight + 'px' });
+												//console.log( 'newHeight = ' + newHeight );
+												var ee_parentHeight = dayCnt.parents('tr').outerHeight();
+												//console.log( 'parentHeight = ' + parentHeight );
+												//dayCnt.parents('tr').css({ 'background' : 'pink' });
+												if( ee_parentHeight < ee_newHeight ) {
+													ee_newHeight = ee_newHeight + 30;
+													dayCnt.parents('tr').height( ee_newHeight ).css({ 'height' : ee_newHeight + 'px' });
+												}
 											}
 										}
 								
 									}
-								}
 							});
-
+							$('.fc-day-content div').each( function() {
+								$(this).attr( 'done', 'true' );
+							});
 						},
 						ee_imgTimeout
 					);
