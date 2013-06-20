@@ -1644,8 +1644,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		if ( $delete ) {
+			$delete = is_bool($delete) ? 'delete' : $delete; //make sure we have a default if just true is sent.
 			$delete_link_args = array( $name => $id );
-			$delete = $this->_get_action_link_or_button( $delete, $type = 'delete', $delete_link_args, $class='submitdelete deletion');
+			$delete = $this->_get_action_link_or_button( $delete, $delete, $delete_link_args, 'submitdelete deletion');
 		}
 		
 		$this->_template_args['publish_delete_link'] = $delete;

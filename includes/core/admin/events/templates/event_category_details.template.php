@@ -12,7 +12,12 @@
 					<?php _e('Unique ID', 'event_espresso'); ?>
 					<?php echo $unique_id_info_help_link; ?>
 				</label></th>
-			<td><input id="cat_id"  type="text" name="category_identifier" value="<?php echo $category->category_identifier;?>" /></td>
+			<td><input id="cat_id"  type="text" name="category_identifier" value="<?php echo $category->category_identifier;?>"<?php echo $disable; ?>/>
+				<?php if ( $disabled_message ) : ?>
+					<br />
+					<p class="small-text"><?php _e('This is a default category so you can edit the label and the description but not the slug', 'event_espresso'); ?></p>
+				<?php endif; ?>
+			</td>
 		</tr>
 		<tr>
 			<td colspan="2"><h4>

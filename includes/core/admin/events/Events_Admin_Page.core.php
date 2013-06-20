@@ -1792,7 +1792,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_set_category_object();
 		$id = !empty($this->_category->id) ? $this->_category->id : '';
 
-		$this->_set_publish_post_box_vars( 'category_id', $id, 'delete_category' );
+		$delete_action = $this->_category->category_identifier == 'uncategorized' ? FALSE : 'delete_category';
+
+		$this->_set_publish_post_box_vars( 'category_id', $id, $delete_action );
 
 		//take care of contents
 		$this->_template_args['admin_page_content'] = $this->_category_details_content();
@@ -1811,7 +1813,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args = array(
 			'category' => $this->_category,
 			'unique_id_info_help_link' => $this->_get_help_tab_link('unique_id_info'),
-			'category_desc_editor' =>  $_wp_editor['category_desc']['field']
+			'category_desc_editor' =>  $_wp_editor['category_desc']['field'],
+			'disable' => $this->_category->category_identifier == 'uncategorized' ? ' disabled' : '',
+			'disabled_message' => $this->_category->category_identifier == 'uncategorized' ? TRUE : FALSE
 			);
 		$template = EVENTS_TEMPLATE_PATH . 'event_category_details.template.php';
 		return espresso_display_template($template, $template_args, TRUE );
@@ -1862,9 +1866,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	private function _insert_category( $update = FALSE ) {
 		global $wpdb;
 		$cat_id = '';
-		$category_name= esc_html($this->_req_data['category_name']);
-		$category_identifier = ($this->_req_data['category_identifier'] == '') ? $category_identifier = sanitize_title_with_dashes($category_name.'-'.time()) : $category_identifier = sanitize_title_with_dashes($this->_req_data['category_identifier']);
-		$category_desc= esc_html($this->_req_data['category_desc']); 
+		$category_name= $this->_req_data['category_name'];
+		$category_identifier = $this->_req_data['category_identifier'];
+		$category_desc= $this->_req_data['category_desc']; 
 
 
 	
