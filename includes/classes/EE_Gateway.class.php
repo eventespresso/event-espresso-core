@@ -78,8 +78,8 @@ abstract class EE_Gateway {
 	abstract protected function _display_settings();
 	abstract public function espresso_display_payment_gateways();
 	
-	protected function __construct(EEM_Gateways &$model) {
-
+	protected function __construct() {
+		
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		//echo '<h4>$this->_gateway_name : ' . $this->_gateway_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
@@ -87,7 +87,7 @@ abstract class EE_Gateway {
 			define('GATEWAYS_ADMIN_URL', admin_url('admin.php?page=espresso_payment_settings'));
 		}
 
-		$this->_EEM_Gateways = $model;
+		$this->_EEM_Gateways = EEM_Gateways::instance();
 		require_once('EEM_Transaction.model.php');
 		require_once('EE_Transaction.class.php');
 		$this->_TXN = EEM_Transaction::instance();

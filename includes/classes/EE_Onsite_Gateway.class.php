@@ -12,11 +12,11 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 	
 	abstract public function espresso_reg_page_billing_inputs();
 
-	protected function __construct(EEM_Gateways &$model) {
+	protected function __construct() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		// this filter allows whatever function is processing the registration page to know what inputs to expect
 		//add_filter('FHEE_reg_page_billing_inputs', array(&$this, 'espresso_reg_page_billing_inputs'));
-		parent::__construct($model);
+		parent::__construct();
 	}
 	
 	protected function _set_default_properties() {

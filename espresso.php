@@ -72,6 +72,7 @@ set_include_path(
 	$main_dir . DS . 'includes' . DS . 'models' . DS . PS .
 	$main_dir . DS . 'includes' . DS . 'classes' . DS . PS .
 	$main_dir . DS . 'includes' . DS . 'functions' . DS . PS .
+		$main_dir . DS . 'includes' . DS . 'form_sections' . DS . PS .
 	$main_dir . DS . 'gateways' . DS . PS .
 	$main_dir . DS . 'helpers' . DS
 	

@@ -40,9 +40,9 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 		return $url;
 	}
 	
-	protected function __construct(EEM_Gateways &$model) {
+	protected function __construct() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		parent::__construct($model);
+		parent::__construct();
 	}
 	
 	/**

@@ -11,6 +11,10 @@ function espresso_load_jquery() {
 
 
 function espresso_frontend_init() {
+	require_once('EE_Sample_Form.form.php');
+	$form = new EE_Sample_Form();
+	echo "ehcoing form";
+	echo $form->display();
 //	require_once('EEM_Question_Group.model.php');
 //	var_dump(EEM_Question_Group::instance()->get_all(array('force_join'=>array('Question'),'limit'=>9)));
 //	require_once('EEM_Event.model.php');

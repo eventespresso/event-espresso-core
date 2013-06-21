@@ -28,16 +28,16 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 
 	private static $_instance = NULL;
 
-	public static function instance(EEM_Gateways &$model) {
+	public static function instance() {
 		// check if class object is instantiated
 		if (self::$_instance === NULL or !is_object(self::$_instance) or !is_a(self::$_instance, __CLASS__)) {
-			self::$_instance = new self($model);
+			self::$_instance = new self();
 			//echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		}
 		return self::$_instance;
 	}
 
-	protected function __construct(EEM_Gateways &$model) {
+	protected function __construct() {
 		$this->_gateway_name = 'Paypal_Standard';
 		$this->_button_base = 'paypal-logo.png';
 		$this->_path = str_replace('\\', '/', __FILE__);
@@ -45,7 +45,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$this->addField('rm', '2');		 // Return method = POST
 		$this->addField('cmd', '_xclick');
 		$this->_btn_img = file_exists( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway_name . '/lib/' . $this->_button_base : '';
-		parent::__construct($model);
+		parent::__construct();
 		if(!$this->_payment_settings['use_sandbox']){
 			$this->_gatewayUrl = 'https://www.paypal.com/cgi-bin/webscr';
 		}else{

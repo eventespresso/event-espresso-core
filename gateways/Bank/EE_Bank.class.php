@@ -28,21 +28,21 @@ Class EE_Bank extends EE_Offline_Gateway {
 
 	private static $_instance = NULL;
 
-	public static function instance(EEM_Gateways &$model) {
+	public static function instance() {
 		// check if class object is instantiated
 		if (self::$_instance === NULL or !is_object(self::$_instance) or !is_a(self::$_instance, __CLASS__)) {
-			self::$_instance = new self($model);
+			self::$_instance = new self();
 			//echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		}
 		return self::$_instance;
 	}
 
-	protected function __construct(EEM_Gateways &$model) {
+	protected function __construct() {
 		$this->_gateway_name = 'Bank';
 		$this->_button_base = 'bank-logo.png';
 		$this->_path = str_replace('\\', '/', __FILE__);
 		$this->_btn_img = is_readable( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/' . $this->_gateway_name . '/lib/' . $this->_button_base : '';
-		parent::__construct($model);
+		parent::__construct();
 	}
 
 	protected function _default_settings() {
