@@ -299,7 +299,7 @@ abstract class EEM_Base extends EE_Base{
 		$select_expressions = $columns_to_select ? $columns_to_select : $this->_construct_select_sql($model_query_info);
 		$SQL ="SELECT $select_expressions ".$this->_construct_2nd_half_of_select_query($model_query_info);
 		$results =  $wpdb->get_results($SQL, $output);
-		//echo "<br><br>sql:$SQL";
+		echo "<br><br>sql:$SQL";
 		
 		return $results;
 	}
@@ -956,6 +956,7 @@ abstract class EEM_Base extends EE_Base{
 			}
 			$where_query_params[$key] = isset( $where_query_params[$key] ) ? $where_query_params[$key] : $value;
 		}
+		echo "all where query params ";var_dump($where_query_params);
 
 		$query_object->set_where_sql( $this->_construct_where_clause($where_query_params, $values_already_prepared_by_model_object));
 

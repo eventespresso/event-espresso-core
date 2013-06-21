@@ -14,6 +14,7 @@ function espresso_frontend_init() {
 //	require_once('EEM_Question_Group.model.php');
 //	var_dump(EEM_Question_Group::instance()->get_all(array('force_join'=>array('Question'),'limit'=>9)));
 //	require_once('EEM_Event.model.php');
+//	EEM_Event::instance()->get_all(array(array('OR'=>array('EVT_ID'=>3))));
 //	require_once('EE_Event.class.php');
 //	EEM_Event::instance()->get_all(array(array(
 //		'EVT_ID'=>12,
