@@ -1246,9 +1246,7 @@ abstract class EEM_Base extends EE_Base{
 		if($original_query_param == null){
 			$original_query_param = $query_param;
 		}
-		//remove *'s which are used for uniqueness of keys. see comments inside _construct_condition_clause_recursive 
-		// for more info on why we do that
-		$query_param = str_replace("*", "", $query_param);
+		$query_param = $this->_remove_stars_and_anything_after_from_condition_query_param_key($query_param);//str_replace("*", "", $query_param);
 		$allow_logic_query_params = in_array($query_param_type,array('where','having'));
 		$allow_fields = in_array($query_param_type,array('where','having','order_by','group_by','order'));
 		//check to see if we have a field on this model
@@ -1392,15 +1390,7 @@ abstract class EEM_Base extends EE_Base{
 	private function _construct_condition_clause_recursive($where_params, $glue = ' AND', $values_already_prepared_by_model_object = false){
 		$where_clauses=array();
 		foreach($where_params as $query_param => $op_and_value_or_sub_condition){
-			//first off: remoev any *s from the query params name, as
-				//these are used to make the array keys unique,
-				//allowign for multiple conditions based on the same field.
-				//Eg, a valid $where_params array could look like 
-				//array('PAY_timestamp'=>array('>',$start_date),
-				//		'PAY_timestamp*'=>array('<',$end_date),
-				//		'PAY_timestamp**'=>array('!=',$special_date))
-				//the query param is 'and',  'or', or 'not'
-			$query_param = str_replace("*",'',$query_param);
+			$query_param = $this->_remove_stars_and_anything_after_from_condition_query_param_key($query_param);//str_replace("*",'',$query_param);
 			if(in_array($query_param,$this->_logic_query_param_keys)){
 				switch($query_param){
 					case 'not':
@@ -1428,6 +1418,24 @@ abstract class EEM_Base extends EE_Base{
 			$SQL = '';
 		}
 		return $SQL;
+	}
+	
+	/**
+	 * Removes the * and anything after it from the condition query param key. It is useful to add the * to condition query
+	 * param keys (eg, 'OR*', 'EVT_ID') in order for the array keys to still be unique, so that they don't get overwritten
+	 * Takes a string like 'Event.EVT_ID*', 'TXN_total**', 'OR*1st', and 'DTT_reg_start*foobar' to
+	 * 'Event.EVT_ID', 'TXN_total', 'OR', and 'DTT_reg_start', respectively.
+	 * @param string $condition_query_param_key
+	 * @return string
+	 */
+	private function _remove_stars_and_anything_after_from_condition_query_param_key($condition_query_param_key){
+		$pos_of_star = strpos($condition_query_param_key, '*');
+		if($pos_of_star === FALSE){
+			return $condition_query_param_key;
+		}else{
+			$condition_query_param_sans_star = substr($condition_query_param_key, 0, $pos_of_star);
+			return $condition_query_param_sans_star;
+		}
 	}
 	
 	/**
