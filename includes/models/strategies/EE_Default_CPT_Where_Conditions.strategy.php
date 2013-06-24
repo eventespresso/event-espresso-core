@@ -36,7 +36,7 @@ class EE_Default_CPT_Where_Conditions extends EE_Default_Where_Conditions{
 		
 		return array(
 			$status_field->get_name()=>array('!=','auto-draft'),
-			'OR' => array($post_type_field->get_name()=>$this->_post_type, $this->_meta_field => array( 'IS NOT NULL'))
+			'OR*'.$this->_post_type."-or-".$this->_meta_field."-query-clause" => array($post_type_field->get_name()=>$this->_post_type, $this->_meta_field => array( 'IS NOT NULL'))
 		);
 	}
 }
