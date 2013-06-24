@@ -198,7 +198,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		$this->_req_data = array_merge($_GET, $_POST);
 
 		//first let's verify we're on the right page
-		if ( isset( $this->_req_data['page'] ) && $this->_adminpage_obj->page_slug != $this->_req_data['page'] )
+		if ( !isset( $this->_req_data['page'] ) || ( isset( $this->_req_data['page'] ) && $this->_adminpage_obj->page_slug != $this->_req_data['page'] ) )
 			return; //get out nothing more to be done here.
 
 		$this->_set_defaults();
