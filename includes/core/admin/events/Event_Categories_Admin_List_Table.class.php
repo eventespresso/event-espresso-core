@@ -65,9 +65,9 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table {
 			);
 
 		$this->_sortable_columns = array(
-			'id' => array( 'id' => true ),
-			'name' => array( 'slug' => false ),
-			'count' => array( 'count' => false )
+			'id' => array( 'Term.term_id' => true ),
+			'name' => array( 'Term.slug' => false ),
+			'count' => array( 'term_count' => false )
 			);
 
 		$this->_hidden_columns = array();
@@ -97,7 +97,7 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_cb($item) {
-		return sprintf( '<input type="checkbox" name="EVT_CAT_ID[]" value="%s" />', $item->term_id);
+		return sprintf( '<input type="checkbox" name="EVT_CAT_ID[]" value="%s" />', $item->get('term_id') );
 	}
 
 
@@ -114,7 +114,7 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_id($item) {
-		return $item->term_id;
+		return $item->get('term_id');
 	}
 
 
@@ -125,12 +125,12 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table {
 	public function column_name($item) {
 		$edit_query_args = array(
 			'action' => 'edit_category',
-			'EVT_CAT_ID' => $item->term_id
+			'EVT_CAT_ID' => $item->get('term_id')
 		);
 
 		$delete_query_args = array(
 			'action' => 'delete_category',
-			'EVT_CAT_ID' => $item->term_id
+			'EVT_CAT_ID' => $item->get('term_id')
 		);
 
 		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EVENTS_ADMIN_URL );
@@ -140,10 +140,10 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table {
 			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Category', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
 			);
 
-		if ( $item->slug !== 'uncategorized' )
+		if ( $item->get_first_related('Term')->get('slug') !== 'uncategorized' )
 			$actions['delete'] = '<a href="' . $delete_link . '" title="' . __('Delete Category', 'event_espresso') . '">' . __('Delete', 'event_espresso') . '</a>';
 
-		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->name . '</a></strong>';
+		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->get_first_related('Term')->get('name') . '</a></strong>';
 		$content .= $this->row_actions($actions);
 		return $content;
 	}
@@ -152,7 +152,7 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_shortcode($item) {
-		$content = '[EVENT_ESPRESSO_CATEGORY event_category_id="' . stripslashes($item->slug) . '"]';
+		$content = '[EVENT_ESPRESSO_CATEGORY event_category_id="' . $item->get_first_related('Term')->get('slug') . '"]';
 		return $content;
 	}
 
@@ -162,10 +162,10 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table {
 	public function column_count( $item ) {
 		$e_args = array(
 			'action' => 'default',
-			'category' => $item->slug
+			'category' => $item->get_first_related('Term')->get('slug')
 			);
 		$e_link = EE_Admin_Page::add_query_args_and_nonce( $e_args, EVENTS_ADMIN_URL );
-		$content = '<a href="' . $e_link . '">' . $item->count . '</a>';
+		$content = '<a href="' . $e_link . '">' . $item->get('term_count') . '</a>';
 		return $content;
 	}
 }

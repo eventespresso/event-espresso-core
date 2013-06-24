@@ -1934,20 +1934,20 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	public function get_categories( $per_page = 10, $current_page = 1, $count = FALSE ) {
 		global $wpdb;
 
-		$offset = ($current_page-1)*$per_page; 
-		$limit = apply_filters('FHEE_category_list_limit', $count ? '' : ' LIMIT ' . $offset . ',' . $per_page, $offset, $per_page);
-		$orderby = apply_filters( 'FHEE_category_list_orderby', isset($this->_req_data['orderby']) ? " ORDER BY " . $this->_req_data['orderby'] : " ORDER BY c.category_name", $this->_req_data );
-		$order = apply_filters( 'FHEE_category_list_order', isset($this->_req_data['order']) ? " " . $this->_req_data['order'] : " DESC", $this->_req_data);
+		//testing term stuff
+		$orderby = isset( $this->_req_data['orderby'] ) ? $this->_req_data['orderby'] : 'Term.term_id';
+		$order = isset( $this->_req_data['order'] ) ? $this->_req_data['order'] : 'DESC';
+		$limit = ($current_page-1)*$per_page;
 
-		$args = array(
-			'orderby' => $orderby,
-			'order' => $order,
-			'fields' => $count ? 'count' : 'all',
-			'offset' => $count ? '' : $offset,
-			'hide_empty' => FALSE
+
+		$query_params = array(
+			0 => array( 'taxonomy' => 'espresso_event_categories' ),
+			'order_by' => array( $orderby => $order ),
+			'limit' => $limit . ',' . $per_page,
+			'force_join' => array('Term')
 			);
 
-		$categories = get_terms( array('espresso_event_categories'), $args );
+		$categories = $count ? EEM_Term_Taxonomy::instance()->count( $query_params, 'term_id' ) :EEM_Term_Taxonomy::instance()->get_all( $query_params );
 
 		return $categories;
 	}
