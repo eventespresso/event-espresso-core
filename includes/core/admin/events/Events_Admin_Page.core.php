@@ -47,7 +47,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	protected function _init_page_props() {
-		require_once( 'EEM_Event.model.php' );
+		require_once( EE_MODELS . 'EEM_Event.model.php' );
 		$this->page_slug = EVENTS_PG_SLUG;
 		$this->page_label = EVENTS_LABEL;
 		$this->_cpt_model_name = 'EEM_Event';
@@ -74,13 +74,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _set_page_routes() {
 		//load formatter helper
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
+		require_once EE_HELPERS . 'EE_Formatter.helper.php';
 
 		//load field generator helper
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
+		require_once EE_HELPERS . 'EE_Form_Fields.helper.php';
 
 		//the model is used a lot so let's just require it.
-		require_once( $this->_cpt_model_name . '.model.php' );
+		require_once( EE_MODELS . $this->_cpt_model_name . '.model.php' );
 
 		$this->_page_routes = array(
 			'default' => '_events_overview_list_table',
@@ -655,7 +655,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		if (!empty($ticket_prices_to_save)) {
 
 			//echo printr( $new_ticket_price, '$new_ticket_price' );
-			require_once('EE_Price.class.php');
+			require_once( EE_CLASSES . 'EE_Price.class.php');
 
 			global $current_user;
 			get_currentuserinfo();
@@ -719,7 +719,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	private function _generate_publish_box_extra_content() {
 
 		//load formatter helper
-  		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
+  		require_once EE_HELPERS . 'EE_Formatter.helper.php';
 		// publish box
 		$publish_box_extra_args['view_attendees_url'] = add_query_arg(array('action' => 'default', 'event_id' => $this->_cpt_model_obj->ID() ), REG_ADMIN_URL);
 		$publish_box_extra_args['attendees_reg_limit'] = $this->_cpt_model_obj->get_number_of_attendees_reg_limit( 'num_attendees_slash_reg_limit' );
@@ -778,15 +778,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
-		//	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Ticket.model.php');
+		//	require_once(EE_MODELS . 'EEM_Ticket.model.php');
 		//	$TKT_MDL = EEM_Ticket::instance();
 		//	
 		//	$all_event_tickets = $TKT_MDL->get_all_event_tickets( $event->id );
 
 
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
+		require_once(EE_MODELS . 'EEM_Datetime.model.php');
 		$DTM_MDL = EEM_Datetime::instance( $timezone );
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_DTT_helper.helper.php';
+		require_once EE_HELPERS . 'EE_DTT_helper.helper.php';
 
 		global $times;
 		// grab event times
@@ -816,10 +816,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$timezone = is_object( $this->_cpt_model_obj ) ? $this->_cpt_model_obj->timezone_string() : NULL; 
 		$event_id = is_object( $this->_cpt_model_obj ) ? $this->_cpt_model_obj->ID() : NULL;
 
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
 
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
+		require_once(EE_MODELS . 'EEM_Price.model.php');
 		$PRC = EEM_Price::instance();
 
 		$show_no_event_price_msg = FALSE;		
@@ -1379,7 +1379,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$sql2 = "(";
 		if (!empty($group)) {
 			$sql2 .= "SELECT e.id FROM " . EVENTS_DETAIL_TABLE . " e ";
-			$sql2 .= " JOIN " . ESP_DATETIME_TABLE . " dtt ON dtt.EVT_ID = e.id ";
+			$sql2 .= " JOIN " . EE_DATETIME_TABLE . " dtt ON dtt.EVT_ID = e.id ";
 			$sql2 .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
 			$sql2 .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
 			$sql2 .= " WHERE e.event_status != 'D'";
@@ -1388,7 +1388,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$sql2 .= ") UNION (";
 		}
 		$sql2 .= "SELECT e.id FROM " . EVENTS_DETAIL_TABLE . " e ";
-		$sql2 .= " JOIN " . ESP_DATETIME_TABLE . " dtt ON dtt.EVT_ID = e.id ";
+		$sql2 .= " JOIN " . EE_DATETIME_TABLE . " dtt ON dtt.EVT_ID = e.id ";
 		$sql2 .= " WHERE e.event_status != 'D'";
 		$sql2 .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime(date('Y-m-d') . $start) . "' AND '" . strtotime(date('Y-m-d') . $end) . "' ";
 
@@ -1423,7 +1423,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$sql3 = "(";
 		if (!empty($group)) {
 			$sql3 .= "SELECT e.id FROM " . EVENTS_DETAIL_TABLE . " e ";
-			$sql3 .= " JOIN " . ESP_DATETIME_TABLE . " dtt ON dtt.EVT_ID = e.id ";
+			$sql3 .= " JOIN " . EE_DATETIME_TABLE . " dtt ON dtt.EVT_ID = e.id ";
 			$sql3 .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
 			$sql3 .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
 			$sql3 .= " WHERE event_status != 'D'";
@@ -1433,7 +1433,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$sql3 .= ") UNION (";
 		}
 		$sql3 .= "SELECT e.id FROM " . EVENTS_DETAIL_TABLE . " e ";
-		$sql3 .= " JOIN " . ESP_DATETIME_TABLE . " dtt ON dtt.EVT_ID = e.id ";
+		$sql3 .= " JOIN " . EE_DATETIME_TABLE . " dtt ON dtt.EVT_ID = e.id ";
 		$sql3 .= " WHERE event_status != 'D'";
 		$sql3 .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime($this_year_r . '-' . $this_month_r . '-01' . $start) . "' AND '" . strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) . "' ";
 
@@ -1521,8 +1521,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		);
 		$this->_req_data = array_merge($this->_req_data, $new_request_args);
 
-		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php')) {
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
+		if (file_exists(EE_CLASSES . 'EE_Export.class.php')) {
+			require_once(EE_CLASSES . 'EE_Export.class.php');
 			$EE_Export = EE_Export::instance($this->_req_data);
 			$EE_Export->export();
 		}
@@ -1543,8 +1543,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'event_id' => $this->_req_data['EVT_ID'],
 		);
 		$this->_req_data = array_merge($this->_req_data, $new_request_args);
-		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php')) {
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
+		if (file_exists(EE_CLASSES . 'EE_Export.class.php')) {
+			require_once(EE_CLASSES . 'EE_Export.class.php');
 			$EE_Export = EE_Export::instance();
 			$EE_Export->export();
 		}
@@ -1558,7 +1558,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _import_events() {
 
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php');
+		require_once(EE_CLASSES . 'EE_Import.class.php');
 
 		//first check if we've got an incoming import
 		if (isset($this->_req_data['import']) && $this->_req_data['import'] == 'csv') {

@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-//require_once ( 'EE_Base_Class.class.php' );
+require_once ( EE_CLASSES . 'EE_Base_Class.class.php' );
 class EE_Registration extends EE_Base_Class {
 	
     /**
@@ -527,7 +527,7 @@ class EE_Registration extends EE_Base_Class {
 		}
 
 		global $wpdb;
-		$SQL = "SELECT DTT_ID FROM " . ESP_DATETIME_TABLE . " WHERE EVT_ID = %s";
+		$SQL = "SELECT DTT_ID FROM " . EE_DATETIME_TABLE . " WHERE EVT_ID = %s";
 		return $wpdb->get_var( $wpdb->prepare( $SQL, $this->_EVT_ID ) );
 	}
 
@@ -718,7 +718,7 @@ class EE_Registration extends EE_Base_Class {
 	 * @return string
 	 */
 	public function pretty_status(){
-		require_once('EEM_Registration.model.php');
+		require_once( EE_MODELS . 'EEM_Registration.model.php');
 		switch($this->status_ID()){
 			case EEM_Registration::status_id_approved:
 				return __("Approved",'event_espresso');

@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once('EE_Base_Class.class.php');
+require_once( EE_CLASSES . 'EE_Base_Class.class.php');
 class EE_Transaction extends EE_Base_Class{
 	
     /**
@@ -405,7 +405,7 @@ class EE_Transaction extends EE_Base_Class{
 	 * @return EE_Registration
 	 */
 	public function primary_registration( $return_obj = FALSE ){
-		require_once('EEM_Registration.model.php');
+		require_once( EE_MODELS . 'EEM_Registration.model.php');
 		$result = $this->get_first_related('Registration', array(array('REG_count'=>  EEM_Registration::PRIMARY_REGISTRANT_COUNT)));
 		return $result;//$return_obj ? array_shift($result) : $result;
 	}
@@ -427,7 +427,7 @@ class EE_Transaction extends EE_Base_Class{
 	 * @return EE_Payment[]
 	 */
 	public function approved_payments(){
-		require_once('EEM_Payment.model.php');
+		require_once( EE_MODELS . 'EEM_Payment.model.php');
 		return $this->get_many_related('Payment', array(array('STS_ID'=>  EEM_Payment::status_id_approved), 'order_by'=>array('PAY_timestamp' =>'DESC')));
 	}
 	

@@ -369,7 +369,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		 * //this code actually worked fine, except for some reason weird characters were showing up
 		 * //I tried encoding it in different formats etc etc and it never quite worked. Whatever
 		 * $registrations = $session_data['cart']['REG']['items'];
-		require_once('EEM_Attendee.model.php');
+		require_once( EE_MODELS . 'EEM_Attendee.model.php');
 		foreach ($registrations as $registration) {
 			foreach ($registration['attendees'] as $attendee) {
 				//echo "paypal standard, attendee<br>\r\n";

@@ -3,7 +3,7 @@
  * Base class for all models which are really custom post types,
  * as there is much funcitonality they share
  */
-require_once('EE_Base_Class.class.php');
+require_once( EE_CLASSES . 'EE_Base_Class.class.php');
 class EE_CPT_Base extends EE_Base_Class{
 
 

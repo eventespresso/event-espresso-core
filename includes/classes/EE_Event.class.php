@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once('EE_CPT_Base.class.php');
+require_once( EE_CLASSES . 'EE_CPT_Base.class.php');
 class EE_Event extends EE_CPT_Base{ 	
 	/**
 	 * All registrations for this event
@@ -229,12 +229,12 @@ class EE_Event extends EE_CPT_Base{
 	 * @return EE_Datetime[]
 	 */
 	public function datetimes(){
-		require_once('EEM_Datetime.model.php');
+		require_once( EE_MODELS . 'EEM_Datetime.model.php');
 		return EEM_Datetime::instance( $this->_timezone )->get_all_event_dates($this->_EVT_ID);
 	}
 
 	public function primary_datetime() {
-		require_once('EEM_Datetime.model.php');
+		require_once( EE_MODELS . 'EEM_Datetime.model.php');
 		return EEM_Datetime::instance( $this->_timezone )->get_most_important_datetime_for_event( $this->_EVT_ID );
 	}
 

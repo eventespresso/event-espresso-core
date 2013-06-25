@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( 'EE_Base_Class.class.php' );
+require_once ( EE_CLASSES . 'EE_Base_Class.class.php' );
 class EE_Term_Relationship extends EE_Base_Class{
 	
 	/**

@@ -284,9 +284,9 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 	protected function _category_details($view) {
 
 		//load formatter helper
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
+		require_once EE_HELPERS . 'EE_Formatter.helper.php';
 		//load field generator helper
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
+		require_once EE_HELPERS . 'EE_Form_Fields.helper.php';
 
 		$route = $view == 'edit' ? 'update_category' : 'insert_category';
 		$this->_set_add_edit_form_tags($route);
@@ -621,8 +621,8 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 		$this->_req_data = array_merge( $this->_req_data, $new_request_args );
 
-		if ( file_exists( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php') ) {
-			require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
+		if ( file_exists( EE_CLASSES . 'EE_Export.class.php') ) {
+			require_once( EE_CLASSES . 'EE_Export.class.php');
 			$EE_Export = EE_Export::instance( $this->_req_data );
 			$EE_Export->export();
 		}
@@ -635,7 +635,7 @@ class Event_Categories_Admin_Page extends EE_Admin_Page {
 
 	protected function _import_categories() {
 
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php');
+		require_once(EE_CLASSES . 'EE_Import.class.php');
 		//first check if we've got an incoming import
 		if (isset($this->_req_data['import'])) {
 			EE_Import::instance()->import();

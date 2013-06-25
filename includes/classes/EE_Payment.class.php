@@ -611,7 +611,7 @@ class EE_Payment extends EE_Base_Class{
 			$this->save();
 		}
 		// recalculate and set  total paid
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
+		require_once(EE_MODELS . 'EEM_Payment.model.php');
 		$PAY_MODEL = EEM_Payment::instance( $this->_timezone );
 		$success = $PAY_MODEL->update_payment_transaction( $this, 'processed' );
 		return $success;

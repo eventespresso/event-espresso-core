@@ -8,8 +8,8 @@ class Invoice {
 	private $invoice_settings;
 
 	public function __construct($url_link = 0) {
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
+		require_once ( EE_MODELS . 'EEM_Registration.model.php' );
+		require_once ( EE_MODELS . 'EEM_Transaction.model.php' );
 		$REG = EEM_Registration::instance();
 		$TXN = EEM_Transaction::instance();
 		if ( $this->registration = $REG->get_registration_for_reg_url_link( $url_link)) {
@@ -122,7 +122,7 @@ class Invoice {
 		$template_args['pdf_instructions'] = wpautop(stripslashes_deep(html_entity_decode($this->invoice_settings['pdf_instructions'], ENT_QUOTES)));
 
 		//require helpers
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
+		require_once EE_HELPERS . 'EE_Formatter.helper.php';
 		
 		//Get the HTML as an object
 		$template_header = espresso_display_template( dirname(__FILE__) . '/templates/invoice_header.template.php', $template_args, TRUE );
