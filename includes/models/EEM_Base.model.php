@@ -138,19 +138,15 @@ abstract class EEM_Base extends EE_Base{
 	 * 'where', but 'where' clauses are so common that we thought we'd omit it
 	 * @var array
 	 */
-	private $_allowed_query_params = array(0, 'limit','order_by','group_by','having','force_join','order');
+	private $_allowed_query_params = array(0, 'limit','order_by','group_by','having','force_join','order','on_join_limit');
 
 	/**
 	 * 	EE_Registry Object
 	 *	@var 	object	
 	 * 	@access 	protected
 	 */
-	protected $EE = NULL;
-
-
-
-
-
+	protected $EE = NULL;	
+	
 	/**
 	 * About all child constructors:
 	 * they should define the _tables, _fields and _model_relations arrays. 
@@ -258,6 +254,10 @@ abstract class EEM_Base extends EE_Base{
 	 *					|	which would becomes SQL "...ORDER BY TXN_timestamp..." and "...ORDER BY STS_ID ASC, REG_date DESC..." respectively.
 	 *					|	Like the 'where' conditions, these fields can be on related models. 
 	 *					|	Eg 'order_by'=>array('Registration.Tranaction.TXN_amount'=>'ASC') is perfectly valid from any model related to 'Registration' (like Event, Attendee, Price, Datetime, etc.)
+	 *		order		|	If 'order_by' is used and its value is a string (NOT an array), then 'order' specifies whether to order the field specified in 'order_by' in ascending or
+	 *					|	descending order. Acceptable values are 'ASC' or 'DESC'. If, 'order_by' isn't used, but 'order' is, then it is assumed you want to order by the primary key.
+	 *					|	Eg, EEM_Event::instance()->get_all(array('order_by'=>'Datetime.DTT_EVT_start','order'=>'ASC'); //(will join with the Datetime model's table(s) and order by its field DTT_EVT_start)
+	 *					|	or EEM_Registration::instance()->get_all(array('order'=>'ASC'));//will make SQL "SELECT * FROM wp_esp_registration ORDER BY REG_ID ASC"
 	 *		group_by	|	name of field to order by, or an array of fields. Eg either 'group_by'=>'VNU_ID', or 'group_by'=>array('EVT_name','Registration.Transaction.TXN_total')
 	 *		having		|	exactl like WHERE parameters array, except these conditions apply to the grouped results (whereas WHERE conditions apply to the pre-grouped results)
 	 *		force_join	|	forces a join with the models named. Should be an numerically-indexed array where values are models to be joined in the query.Eg
@@ -544,7 +544,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $field_to_count field on model to count by (not column name)
 	 * @param bool 	 $distinct if we want to only count the distinct values for the column then you can trigger that by the setting $distinct to TRUE;
 	 */
-	function count($query_params,$field_to_count = NULL, $distinct = FALSE){
+	function count($query_params =array(),$field_to_count = NULL, $distinct = FALSE){
 		global $wpdb;
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 		if($field_to_count){
@@ -962,6 +962,7 @@ abstract class EEM_Base extends EE_Base{
 			}
 			$where_query_params[$key] = isset( $where_query_params[$key] ) ? $where_query_params[$key] : $value;
 		}
+		//echo "all where query params ";var_dump($where_query_params);
 
 		$query_object->set_where_sql( $this->_construct_where_clause($where_query_params, $values_already_prepared_by_model_object));
 
@@ -985,20 +986,39 @@ abstract class EEM_Base extends EE_Base{
 		//set order by
 		if(array_key_exists('order_by',$query_params) && $query_params['order_by']){
 			if(is_array($query_params['order_by'])){
+				//if they're using 'order_by' as an array, they can't use 'order' (because 'order_by' must
+				//specify whether to ascend or descend on each field. Eg 'order_by'=>array('EVT_ID'=>'ASC'). So 
+				//including 'order' wouldn't make any sense if 'order_by' has already specified whihc way to order!
+				if(array_key_exists('order', $query_params)){
+					throw new EE_Error(sprintf(__("In querying %s, we are using query parameter 'order_by' as an array (keys:%s,values:%s), and so we can't use query parameter 'order' (value %s). You should just use the 'order_by' parameter ", "event_espresso"),
+							get_class($this),implode(", ",array_keys($query_params['order_by'])),implode(", ",$query_params['order_by']),$query_params['order']));
+				}
+				 $this->_extract_related_models_from_sub_params_array_keys($query_params['order_by'],$query_object,'order_by');
 				//assume it's an array of fields to order by
 				$order_array = array();
 				foreach($query_params['order_by'] as $field_name_to_order_by => $order){
-					$order = $order == 'asc' || $order == 'ASC' ? ' ASC' : ' DESC';
+					$order = $this->_extract_order($order);
 					$field_to_order_by = $this->_deduce_field_from_query_param($field_name_to_order_by);
-					$order_array[] = $field_to_order_by->get_qualified_column() . $order ;
+					$order_array[] = $field_to_order_by->get_qualified_column() .SP. $order ;
 				}
 				$query_object->set_order_by_sql(" ORDER BY ".implode(",",$order_array));
 			}else{
+				$this->_extract_related_model_info_from_query_param($query_params['order_by'],$query_object,'order',$query_params['order_by']);
 				$field_to_order_by = $this->_deduce_field_from_query_param( $query_params['order_by'] );
-				$order = isset( $query_params['order'] ) ? $query_params['order'] : 'DESC';
-				$order = $order == 'asc' || $order == 'ASC' ? 'ASC' : 'DESC';
+				if(isset($query_params['order'])){
+					$order = $this->_extract_order($query_params['order']);
+				}else{
+					$order = 'DESC';
+				}
 				$query_object->set_order_by_sql(" ORDER BY ".$field_to_order_by->get_qualified_column().SP.$order);
 			}
+		}
+		
+		//if 'order_by' wasn't set, maybe they are just using 'order' on its own?
+		if( ! array_key_exists('order_by',$query_params) && array_key_exists('order',$query_params)){
+			$pk_field = $this->get_primary_key_field();
+			$order = $this->_extract_order($query_params['order']);
+			$query_object->set_order_by_sql(" ORDER BY ".$pk_field->get_qualified_column().SP.$order);
 		}
 		
 		//set group by
@@ -1034,13 +1054,28 @@ abstract class EEM_Base extends EE_Base{
 	}
 	
 	/**
+	 * Verifies that $should_be_order_string is in $this->_allowed_order_values,
+	 * otherwise throws an exception
+	 * @param string $should_be_order_string
+	 * @return string either ASC, asc, DESC or desc
+	 * @throws EE_Error
+	 */
+	private function _extract_order($should_be_order_string){
+		if(in_array($should_be_order_string, $this->_allowed_order_values)){
+			return $should_be_order_string;
+		}else{
+			throw new EE_Error(sprintf(__("While performing a query on %s, tried to use %s as an order parameter. ", "event_espresso"),get_class($this),$should_be_order_string));
+		}
+	}
+	
+	/**
 	 * Looks at all the models which are included in this query, and asks each
 	 * for their universal_where_params, and returns them in the same format as $query_params[0] (where),
 	 * so they can be merged
 	 * @param EE_Model_Query_Info_Carrier $query_info_carrier
 	 */
 	private function _get_default_where_conditions_for_models_in_query(EE_Model_Query_Info_Carrier $query_info_carrier){
-		$universal_query_params[get_class($this)] = $this->_get_default_where_conditions();
+		/*$universal_query_params[get_class($this)] = $this->_get_default_where_conditions();
 		foreach($query_info_carrier->get_model_names_included() as $model_name){
 			$related_model = $this->get_related_model_obj($model_name);
 			$related_model_universal_where_params = $related_model->_get_default_where_conditions();
@@ -1071,7 +1106,8 @@ abstract class EEM_Base extends EE_Base{
 				$shifted_qp[$k] = $v;
 			}
 		}
-		return $shifted_qp;
+		return $shifted_qp;/**/
+		return $this->_get_default_where_conditions();
 	}
 	
 	/**
@@ -1217,9 +1253,7 @@ abstract class EEM_Base extends EE_Base{
 		if($original_query_param == null){
 			$original_query_param = $query_param;
 		}
-		//remove *'s which are used for uniqueness of keys. see comments inside _construct_condition_clause_recursive 
-		// for more info on why we do that
-		$query_param = str_replace("*", "", $query_param);
+		$query_param = $this->_remove_stars_and_anything_after_from_condition_query_param_key($query_param);//str_replace("*", "", $query_param);
 		$allow_logic_query_params = in_array($query_param_type,array('where','having'));
 		$allow_fields = in_array($query_param_type,array('where','having','order_by','group_by','order'));
 		//check to see if we have a field on this model
@@ -1363,15 +1397,7 @@ abstract class EEM_Base extends EE_Base{
 	private function _construct_condition_clause_recursive($where_params, $glue = ' AND', $values_already_prepared_by_model_object = false){
 		$where_clauses=array();
 		foreach($where_params as $query_param => $op_and_value_or_sub_condition){
-			//first off: remoev any *s from the query params name, as
-				//these are used to make the array keys unique,
-				//allowign for multiple conditions based on the same field.
-				//Eg, a valid $where_params array could look like 
-				//array('PAY_timestamp'=>array('>',$start_date),
-				//		'PAY_timestamp*'=>array('<',$end_date),
-				//		'PAY_timestamp**'=>array('!=',$special_date))
-				//the query param is 'and',  'or', or 'not'
-			$query_param = str_replace("*",'',$query_param);
+			$query_param = $this->_remove_stars_and_anything_after_from_condition_query_param_key($query_param);//str_replace("*",'',$query_param);
 			if(in_array($query_param,$this->_logic_query_param_keys)){
 				switch($query_param){
 					case 'not':
@@ -1399,6 +1425,24 @@ abstract class EEM_Base extends EE_Base{
 			$SQL = '';
 		}
 		return $SQL;
+	}
+	
+	/**
+	 * Removes the * and anything after it from the condition query param key. It is useful to add the * to condition query
+	 * param keys (eg, 'OR*', 'EVT_ID') in order for the array keys to still be unique, so that they don't get overwritten
+	 * Takes a string like 'Event.EVT_ID*', 'TXN_total**', 'OR*1st', and 'DTT_reg_start*foobar' to
+	 * 'Event.EVT_ID', 'TXN_total', 'OR', and 'DTT_reg_start', respectively.
+	 * @param string $condition_query_param_key
+	 * @return string
+	 */
+	private function _remove_stars_and_anything_after_from_condition_query_param_key($condition_query_param_key){
+		$pos_of_star = strpos($condition_query_param_key, '*');
+		if($pos_of_star === FALSE){
+			return $condition_query_param_key;
+		}else{
+			$condition_query_param_sans_star = substr($condition_query_param_key, 0, $pos_of_star);
+			return $condition_query_param_sans_star;
+		}
 	}
 	
 	/**

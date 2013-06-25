@@ -167,8 +167,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		//This basically allows us to change the title of the "publish" metabox area on CPT pages by setting a 'publishbox' value in the $_labels property array in the child class.
 		if ( !empty($this->_labels['publishbox'] ) ) {
+
+			$box_label = is_array( $this->_labels['publishbox'] ) ? $this->_labels['publishbox'][$this->_req_action] : $this->_labels['publishbox'];
+
 			remove_meta_box( 'submitdiv', __( 'Publish' ), 'post_submit_meta_box', $this->page_slug, 'side', 'core' );
-			add_meta_box( 'submitdiv', $this->_labels['publishbox'], 'post_submit_meta_box', $this->page_slug, 'side', 'core' );
+			add_meta_box( 'submitdiv', $box_label, 'post_submit_meta_box', $this->page_slug, 'side', 'core' );
 		}
 
 		//this is a filter that allows the addition of extra html after the permalink field on the wp post edit-form

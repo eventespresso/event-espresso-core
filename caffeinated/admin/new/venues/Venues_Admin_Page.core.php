@@ -43,6 +43,15 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	/**
+	 * This will hold the category object for category_details screen.
+	 * @var object
+	 */
+	protected $_category;
+
+
+
+
+	/**
 	 * This property will hold the venue model instance
 	 * @var object
 	 */
@@ -79,10 +88,18 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			'buttons' => array(
 				'add' => __('Add New Venue', 'event_espresso'),
 				'edit' => __('Edit Venue', 'event_espresso'),
-				'delete' => __('Delete Venue', 'event_espresso')
+				'delete' => __('Delete Venue', 'event_espresso'),
+				'add_category' => __('Add New Category', 'event_espresso'),
+				'edit_category' => __('Edit Category', 'event_espresso'),
+				'delete_category' => __('Delete Category', 'event_espresso')
 			),
 			'editor_title' => __('Enter Venue name here'),
-			'publishbox' => __('Save Venue', 'event_espresso')
+			'publishbox' => array( 
+				'create_new' => __('Save New Venue', 'event_espresso'),
+				'edit' => __('Update Venue', 'event_espresso'),
+				'add_category' => __('Save New Category', 'event_espresso'),
+				'edit_category' => __('Update Category', 'event_espresso')
+				)
 		);
 	}
 
@@ -127,6 +144,44 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			'delete_venue' => array(
 				'func' => '_delete_venue', 
 				'noheader' => TRUE
+				),
+			//venue category tab related
+			'add_category' => array(
+				'func' => '_category_details',
+				'args' => array('add'),
+				),
+			'edit_category' => array(
+				'func' => '_category_details',
+				'args' => array('edit')
+				),
+			'delete_categories' => array(
+				'func' => '_delete_categories', 
+				'noheader' => TRUE 
+				),
+
+			'delete_category' => array(
+				'func' => '_delete_categories', 
+				'noheader' => TRUE
+				),
+
+			'insert_category' => array(
+				'func' => '_insert_or_update_category',
+				'args' => array('new_category' => TRUE),
+				'noheader' => TRUE
+				),
+
+			'update_category' => array(
+				'func' => '_insert_or_update_category',
+				'args' => array('new_category' => FALSE),
+				'noheader' => TRUE
+				),
+			'export_categories' => array(
+				'func' => '_categories_export',
+				'noheader' => TRUE
+				),
+			'import_categories' => '_import_categories',
+			'category_list' => array(
+				'func' => '_category_list_table'
 				)
 		);
 	}
@@ -160,7 +215,44 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					'url' => isset($this->_req_data['id']) ? add_query_arg(array('id' => $this->_req_data['id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 				),
 				'metaboxes' => array('_venue_editor_metaboxes')
-			)
+			),
+			//event category stuff
+			'add_category' => array(
+				'nav' => array(
+					'label' => __('Add Category', 'event_espresso'),
+					'order' => 15,
+					'persistent' => false),
+				'metaboxes' => array('_publish_post_box'),
+				'help_tabs' => array(
+					'unique_id_help_tab' => array(
+						'title' => __('Unique ID', 'event_espresso'),
+						'callback' => 'unique_id_help_tab'
+						)
+					)
+				),
+			'edit_category' => array(
+				'nav' => array(
+					'label' => __('Edit Category', 'event_espresso'),
+					'order' => 15,
+					'persistent' => FALSE,
+					'url' => isset($this->_req_data['EVT_CAT_ID']) ? add_query_arg(array('EVT_CAT_ID' => $this->_req_data['EVT_CAT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
+					),
+				'metaboxes' => array('_publish_post_box'),
+				'help_tabs' => array(
+					'unique_id_help_tab' => array(
+						'title' => __('Unique ID', 'event_espresso'),
+						'callback' => 'unique_id_help_tab'
+						)
+					)
+				),
+			'category_list' => array(
+				'nav' => array(
+					'label' => __('Categories', 'event_espresso'),
+					'order' => 20
+					),
+				'list_table' => 'Venue_Categories_Admin_List_Table',
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				)
 		);
 	}
 
@@ -188,7 +280,6 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	//none of the below group are currently used for Event Venues
 	protected function _add_help_tabs() {}
 	protected function _add_feature_pointers() {}
-	public function load_scripts_styles() {}
 	public function admin_init() {}
 	public function admin_notices() {}
 	public function admin_footer_scripts() {}
@@ -200,6 +291,38 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function load_scripts_styles_create_new() {
 		$this->load_scripts_styles_edit();
+	}
+
+
+
+
+
+	public function load_scripts_styles() {
+		wp_register_style('ee-cat-admin', EVENTS_ASSETS_URL . 'ee-cat-admin.css', array(), EVENT_ESPRESSO_VERSION );
+		wp_enqueue_style('ee-cat-admin');
+	}
+
+
+
+	public function load_scripts_styles_add_category() {
+		$this->load_scripts_styles_edit_category();
+	}
+
+
+
+
+
+	public function load_scripts_styles_edit_category() {
+		//styles
+		//wp_enqueue_style('jquery-ui-style');
+
+		//scripts
+		wp_enqueue_script( 'ee_cat_admin_js', EVENTS_ASSETS_URL . 'ee-cat-admin.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );
+		
+		global $eei18n_js_strings;
+		$eei18n_js_strings['add_cat_name'] = __('Category Name is a required field. Please enter a value in order to continue.', 'event_espresso');
+		wp_localize_script( 'ee_cat_admin_js', 'eei18n', $eei18n_js_strings );
+
 	}
 
 
@@ -241,6 +364,26 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				)
 		);
 	}
+
+
+
+
+
+	protected function _set_list_table_views_category_list() {
+		$this->_views = array(
+			'all' => array(
+				'slug' => 'all',
+				'label' => __('All', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'delete_categories' => __('Delete Permanently', 'event_espresso'),
+					'export_categories' => __('Export Categories', 'event_espresso'),
+					)
+				)
+		);
+	}
+
+
 
 
 
@@ -347,8 +490,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			'VNU_address' => !empty( $this->_req_data['vnu_address'] ) ? $this->_req_data['vnu_address'] : NULL,
 			'VNU_address2' => !empty( $this->_req_data['vnu_address2'] ) ? $this->_req_data['vnu_address2'] : NULL,
 			'VNU_city' => !empty( $this->_req_data['vnu_city'] ) ? $this->_req_data['vnu_city'] : NULL,
-			'STA_ID' => !empty( $this->_req_data['STA_ID'] ) ? $this->_req_data['sta_id'] : NULL,
-			'CNT_ISO' => !empty( $this->_req_data['CNT_ISO'] ) ? $this->_req_data['cnt_iso'] : NULL,
+			'STA_ID' => !empty( $this->_req_data['sta_id'] ) ? $this->_req_data['sta_id'] : NULL,
+			'CNT_ISO' => !empty( $this->_req_data['cnt_iso'] ) ? $this->_req_data['cnt_iso'] : NULL,
 			'VNU_zip' => !empty( $this->_req_data['vnu_zip'] ) ? $this->_req_data['vnu_zip'] : NULL,
 			'VNU_phone' => !empty( $this->_req_data['vnu_phone'] ) ? $this->_req_data['vnu_phone'] : NULL,
 			'VNU_capacity' => !empty( $this->_req_data['vnu_capacity'] ) ? $this->_req_data['vnu_capacity'] : NULL,
@@ -671,5 +814,247 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		return $venues;
 
 	}
+
+
+
+
+	/** Venue Category Stuff **/
+
+	/**
+	 * set the _category property with the category object for the loaded page.
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _set_category_object() {
+		if ( isset( $this->_category->id ) && !empty( $this->_category->id ) )
+			return; //already have the category object so get out.
+
+		//set default category object
+		$this->_set_empty_category_object();
+		
+		//only set if we've got an id
+		if ( !isset($this->_req_data['VEN_CAT_ID'] ) ) {
+			return;
+		}
+
+		$category_id = absint($this->_req_data['VEN_CAT_ID']);
+		$term = get_term( $category_id, 'espresso_venue_categories' );
+
+
+		if ( !empty( $term ) ) {
+			$this->_category->category_name = $term->name;
+			$this->_category->category_identifier = $term->slug;
+			$this->_category->category_desc = $term->description;
+			$this->_category->id = $term->term_id;
+		}
+	}
+
+
+
+
+	private function _set_empty_category_object() {
+		$this->_category = new stdClass();
+		$this->_category->id = $this->_category->category_name = $this->_category->category_identifier = $this->_category->category_desc = '';
+	}
+
+
+
+	public function unique_id_help_tab() {
+		?>		
+			<h2><?php _e('Unique Category Identifier', 'event_espresso'); ?></h2>
+			<p><?php _e('This should be a unique identifier for the category. Example: "category1" (without qoutes.)', 'event_espresso'); ?></p>
+			<p><?php printf( __('The unique ID can also be used in individual pages using the %s shortcode', 'event_espresso'), '[EVENT_ESPRESSO_CATEGORY category_id="category_identifier"]' ); ?>.</p>		
+		<?php
+	}
+
+
+
+
+	protected function _category_list_table() {
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		$this->_admin_page_title .= $this->_get_action_link_or_button('add_category', 'add_category', array(), 'button add-new-h2');
+		$this->display_admin_list_table_page_with_sidebar();
+	}
+
+
+	protected function _category_details($view) {
+
+		//load formatter helper
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
+		//load field generator helper
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
+
+		$route = $view == 'edit' ? 'update_category' : 'insert_category';
+		$this->_set_add_edit_form_tags($route);
+
+		$this->_set_category_object();
+		$id = !empty($this->_category->id) ? $this->_category->id : '';
+
+		$delete_action = $this->_category->category_identifier == 'uncategorized' ? FALSE : 'delete_category';
+
+		$this->_set_publish_post_box_vars( 'category_id', $id, $delete_action );
+
+		//take care of contents
+		$this->_template_args['admin_page_content'] = $this->_category_details_content();
+		$this->display_admin_page_with_sidebar();
+	}
+
+
+
+	protected function _category_details_content() {
+		$editor_args['category_desc'] = array(
+			'type' => 'wp_editor',
+			'value' => EE_Formatter::admin_format_content($this->_category->category_desc),
+			'class' => 'my_editor_custom'
+		);
+		$_wp_editor = $this->_generate_admin_form_fields( $editor_args, 'array' );
+		$template_args = array(
+			'category' => $this->_category,
+			'unique_id_info_help_link' => $this->_get_help_tab_link('unique_id_info'),
+			'category_desc_editor' =>  $_wp_editor['category_desc']['field'],
+			'disable' => $this->_category->category_identifier == 'uncategorized' ? ' disabled' : '',
+			'disabled_message' => $this->_category->category_identifier == 'uncategorized' ? TRUE : FALSE
+			);
+		$template = EVENTS_TEMPLATE_PATH . 'event_category_details.template.php';
+		return espresso_display_template($template, $template_args, TRUE );
+	}
+
+
+	protected function _delete_categories() {
+		$cat_ids = isset( $this->_req_data['VEN_CAT_ID'] ) ? (array) $this->_req_data['VEN_CAT_ID'] : (array) $this->_req_data['category_id'];
+
+		foreach ( $cat_ids as $cat_id ) {
+			$this->_delete_category($cat_id);
+		}
+
+		//doesn't matter what page we're coming from... we're going to the same place after delete.
+		$query_args = array(
+			'action' => 'category_list'
+			);
+		$this->_redirect_after_action(0,'','',$query_args);
+
+	}
+
+
+
+
+
+	protected function _delete_category($cat_id) {
+		global $wpdb;
+		$cat_id = absint( $cat_id );
+		wp_delete_term( $cat_id, 'espresso_venue_categories' );
+	}
+
+
+
+	protected function _insert_or_update_category($new_category) {
+
+		$cat_id = $new_category ? $this->_insert_category() : $this->_insert_category( TRUE );
+		$success = 0; //we already have a success message so lets not send another.
+		$query_args = array(
+			'action' => 'edit_category', 
+			'VEN_CAT_ID' => $cat_id
+		);
+		$this->_redirect_after_action( $success, '','', $query_args );
+
+	}
+
+
+
+	private function _insert_category( $update = FALSE ) {
+		global $wpdb;
+		$cat_id = '';
+		$category_name= $this->_req_data['category_name'];
+		$category_identifier = $this->_req_data['category_identifier'];
+		$category_desc= $this->_req_data['category_desc']; 
+
+
+	
+		$term_args=array(
+			'category_name'=>$category_name, 
+			'slug'=>$category_identifier, 
+			'description'=>$category_desc,
+			//'parent'=>$espresso_wp_user //eventually this will be added.
+		);
+		
+		$insert_ids = $update ? wp_update_term( $category_name, 'espresso_venue_categories', $term_args ) :wp_insert_term( $category_name, 'espresso_venue_categories', $term_args );
+
+		if ( !is_array( $insert_ids ) ) {
+			$msg = __( 'An error occured and the category has not been saved to the database.', 'event_espresso', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+		} else {
+			$cat_id = $insert_ids['term_id'];
+			$msg = sprintf ( __('The category %s was successfuly created', 'event_espresso'), $category_name );
+			EE_Error::add_success( $msg );
+		}
+		
+		return $cat_id;
+	}
+
+
+	/**
+	 * TODO handle category exports()
+	 * @return file export
+	 */
+	protected function _categories_export() {
+
+		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
+		$new_request_args = array(
+			'export' => 'report',
+			'action' => 'categories',
+			'category_ids' => $this->_req_data['VEN_CAT_ID']
+			);
+
+		$this->_req_data = array_merge( $this->_req_data, $new_request_args );
+
+		if ( file_exists( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php') ) {
+			require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
+			$EE_Export = EE_Export::instance( $this->_req_data );
+			$EE_Export->export();
+		}
+
+	}
+
+
+
+
+
+	protected function _import_categories() {
+
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php');
+		EE_Import::instance()->import();
+
+	}
+
+
+
+
+	public function get_categories( $per_page = 10, $current_page = 1, $count = FALSE ) {
+		global $wpdb;
+
+		//testing term stuff
+		$orderby = isset( $this->_req_data['orderby'] ) ? $this->_req_data['orderby'] : 'Term.term_id';
+		$order = isset( $this->_req_data['order'] ) ? $this->_req_data['order'] : 'DESC';
+		$limit = ($current_page-1)*$per_page;
+
+
+		$query_params = array(
+			0 => array( 'taxonomy' => 'espresso_venue_categories' ),
+			'order_by' => array( $orderby => $order ),
+			'limit' => $limit . ',' . $per_page,
+			'force_join' => array('Term')
+			);
+
+		$categories = $count ? EEM_Term_Taxonomy::instance()->count( $query_params, 'term_id' ) :EEM_Term_Taxonomy::instance()->get_all( $query_params );
+
+		return $categories;
+	}
+
+
+	/* end category stuff */
+	/**************/
+
+
 	
 } //end Venues_Admin_Page class
