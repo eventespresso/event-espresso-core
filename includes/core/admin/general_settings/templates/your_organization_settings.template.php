@@ -194,7 +194,7 @@
 		<?php _e('Event Espresso User eXperience Improvement Program', 'event_espresso'); ?>
 	</h4>
 	<p>
-		<?php echo espresso_data_collection_optin_text( FALSE ); ?>
+		<?php echo EE_PUE::espresso_data_collection_optin_text( FALSE ); ?>
 	</p>
 
 	<table class="form-table">
