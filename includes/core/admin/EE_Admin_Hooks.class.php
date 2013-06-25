@@ -196,13 +196,12 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	public function __construct( EE_Admin_Page $adminpage ) {
 		$this->_adminpage_obj = $adminpage;
 		$this->_req_data = array_merge($_GET, $_POST);
+		$this->_set_defaults();
+		$this->_set_hooks_properties();
 
 		//first let's verify we're on the right page
 		if ( !isset( $this->_req_data['page'] ) || ( isset( $this->_req_data['page'] ) && $this->_adminpage_obj->page_slug != $this->_req_data['page'] ) )
 			return; //get out nothing more to be done here.
-
-		$this->_set_defaults();
-		$this->_set_hooks_properties();
 
 		//allow for extends to modify properties
 		if ( method_exists( $this, '_extend_properties' ) )
@@ -233,6 +232,8 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * $_name (required)
 	 *
 	 * Also in this method will be registered any scripts or styles loaded on the targeted page (as indicated in the _scripts/_styles properties)
+	 *
+	 * Also children should place in this method any filters/actions that have to happen really early on page load (just after admin_init) if they want to have them registered for handling early.
 	 *
 	 * @access protected
 	 * @abstract
