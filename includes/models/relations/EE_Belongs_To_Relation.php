@@ -4,7 +4,7 @@
  * The current model has the foreign key pointing to the other model. Eg, Registration belongs to Transaction 
  * (because Registration's TXN_ID field is on Registration, and points to teh Transaction's PK) 
  */
-require_once('relations/EE_Model_Relation_Base.php');
+require_once( EE_MODELS . 'relations/EE_Model_Relation_Base.php');
 
 class EE_Belongs_To_Relation extends EE_Model_Relation_Base {
 

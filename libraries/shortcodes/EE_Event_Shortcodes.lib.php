@@ -144,7 +144,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			return '';
 
 		//let's get the DTT Model and retrieve the Date Time object
-		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php' );
+		require_once( EE_MODELS . 'EEM_Datetime.model.php' );
 		$DTTM = EEM_Datetime::instance();
 		$DTT = $DTTM-> $this->get_one_by_ID( $this->_data['datytime_id'] );
 

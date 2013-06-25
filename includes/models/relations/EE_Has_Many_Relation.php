@@ -4,7 +4,7 @@
 /**
  * In this relation, the OTHER model ahs the foreign key pointing to this model
  */
-require_once('relations/EE_Model_Relation_Base.php');
+require_once( EE_MODELS . 'relations/EE_Model_Relation_Base.php');
 class EE_Has_Many_Relation extends EE_Model_Relation_Base{	
 	function __construct($extra_join_conditions = null){
 		parent::__construct($extra_join_conditions);

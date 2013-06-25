@@ -1,5 +1,5 @@
 <?php
-require_once('fields/EE_Text_Field_Base.php');
+require_once( EE_MODELS . 'fields/EE_Text_Field_Base.php' );
 class EE_Full_HTML_Field extends EE_Text_Field_Base{
 	function prepare_for_set($value_inputted_for_field_on_model_object) {
 		return htmlentities( $value_inputted_for_field_on_model_object, ENT_QUOTES, 'UTF-8' );

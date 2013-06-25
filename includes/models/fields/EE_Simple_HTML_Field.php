@@ -1,5 +1,5 @@
 <?php
-require_once('fields/EE_Text_Field_Base.php');
+require_once( EE_MODELS . 'fields/EE_Text_Field_Base.php' );
 class EE_Simple_HTML_Field extends EE_Text_Field_Base{
 	/**
 	 * removes all tags when setting
