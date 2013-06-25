@@ -539,8 +539,9 @@ class EE_Admin {
 	public function parse_post_content_on_save( $post_ID, $post ) {
 		
 		if ( $post->post_parent == 0 ) {
+			$show_on_front = get_option('show_on_front');
 			$update_post_shortcodes = FALSE;
-			$this->EE->CFG->post_shortcodes = isset( $this->EE->CFG->style_settings ) ? $this->EE->CFG->style_settings : array();
+			$this->EE->CFG->post_shortcodes = isset( $this->EE->CFG->post_shortcodes ) ? $this->EE->CFG->post_shortcodes : array();
 			// loop thru shortcodes
 			foreach ( $this->EE->shortcodes as $EES_Shortcode => $shortcode_dir ) {
 				// strip class prefix and convert to UPPERCASE
@@ -549,8 +550,10 @@ class EE_Admin {
 				if ( strpos( $post->post_content, $shortcode ) !== FALSE ) {
 					// map shortcode to post
 					$this->EE->CFG->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] =  $post_ID;
+					// and to frontpage in case it's displaying latest posts
+					$this->EE->CFG->post_shortcodes[ $show_on_front ][ $EES_Shortcode ] =  $post_ID;
 					$update_post_shortcodes = TRUE;
-				}
+				} 
 			}
 			
 			if ( $update_post_shortcodes ) {
