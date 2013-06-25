@@ -3,6 +3,11 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 
 
+function espresso_parse_site_url_for_ssl() {
+	return is_ssl() ? str_replace( 'https://', '', site_url() ) :  str_replace( 'http://', '', site_url() );
+}
+
+
 
 function espresso_get_reg_page_full_url() {
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
@@ -112,7 +117,7 @@ if (!function_exists('event_espresso_get_is_active')) {
 			$event_status = $event['event_status'];
 		}
 		
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
+		require_once(EE_MODELS . 'EEM_Datetime.model.php');
 		$DTM = EEM_Datetime::instance();
 		$datetimes = $DTM->get_all_event_dates($event_id);
 		$start = 10000000000;
@@ -424,6 +429,46 @@ if (!function_exists('event_espresso_require_file')) {
 
 
 
+
+/**
+ * 		Clear EE_Session data
+ *
+ * 		@access public
+ * 		@return void
+ */
+function espresso_clear_session( $class = '', $func = '' ) {
+	//echo '<h3>'. $class . ' -> ' . $func . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+	global $EE_Session;
+	$EE_Session->reset_data( 
+			array(
+						'cart',
+						'gateway_data', 
+						'transaction', 
+						'registration',
+						'primary_attendee',
+						'tax_totals',
+						'taxes',
+						'billing_info',
+						'txn_results',
+						'grand_total_price_object'
+					));
+																
+	$EE_Session->set_session_data(
+			array(
+						'_events_in_cart' => array(),
+						'_cart_grand_total_qty' => 0,
+						'_cart_grand_total_amount' => 0
+					),
+					'session_data'
+	);
+
+}
+add_action( 'AHEE_before_event_list', 'espresso_clear_session', 10, 2 );
+
+
+
+
+
 function getCountriesArray($lang = "en") {
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	//first code, country_id
@@ -713,38 +758,6 @@ function printCountriesSelector($name, $selected) {
 	echo "</select>";
 }
 
-/**
- * 		@ print_r an array
- * 		@ access public
- * 		@ return void
- */
-function printr( $var, $var_name = FALSE, $height = 'auto', $die = FALSE ) {
-	
-	if( ! $var_name ) {
-	
-		if ( is_object( $var )) {
-			$var_name = 'object';
-		} else if ( is_array( $var )) {
-			$var_name = 'array';
-		} else if ( is_numeric( $var )) {
-			$var_name = 'numeric';
-		} else {
-			$var_name = 'string';
-		}  
-		
-	}
-	$var_name = str_replace( array( '$', '_' ), array( '', ' ' ), $var_name );
-	$var_name = ucwords( $var_name );
-	
-	echo '<pre style="display:block; width:100%; height:' . $height . '; overflow:scroll; border:2px solid light-blue;">';
-	echo '<h3><b>' . $var_name . '</b></h3>';
-	echo print_r($var);
-	echo '</pre>';
-	
-	if( $die ) {
-		die();
-	}
-}
 
 
 /**
@@ -754,7 +767,7 @@ function printr( $var, $var_name = FALSE, $height = 'auto', $die = FALSE ) {
  */
 function espresso_display_template($path_to_file = FALSE, $template_args = FALSE, $return_string = FALSE) {
 	//require the template helper 
-	require_once(EVENT_ESPRESSO_PLUGINFULLPATH.'/helpers/EE_Template.helper.php');
+	require_once(EE_HELPERS . 'EE_Template.helper.php');
 	if ( $return_string )
 		return EE_Template::display_template( $path_to_file, $template_args, $return_string );
 	else
