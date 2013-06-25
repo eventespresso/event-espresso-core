@@ -59,8 +59,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 	public function __construct( $routing = TRUE ) {
-		require_once('EEM_Question.model.php');
-		require_once('EEM_Question_Group.model.php');
+		require_once( EE_MODELS . 'EEM_Question.model.php' );
+		require_once( EE_MODELS . 'EEM_Question_Group.model.php' );
 		$this->_question_model=  EEM_Question::instance();
 		$this->_question_group_model=EEM_Question_Group::instance();
 		parent::__construct( $routing );
@@ -407,7 +407,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$success=0;
 		$set_column_values=$this->_set_column_values_for($this->_question_model);
-		require_once('EE_Question.class.php');
+		require_once( EE_CLASSES . 'EE_Question.class.php');
 		if($new_question){
 			$new_id=$this->_question_model->insert($set_column_values);
 			if($new_id){
@@ -524,7 +524,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$success=0;
 		$set_column_values=$this->_set_column_values_for($this->_question_group_model);
-		require_once('EE_Question_Group.class.php');
+		require_once( EE_CLASSES . 'EE_Question_Group.class.php');
 		if($new_question_group){
 			$results=$this->_question_group_model->insert($set_column_values);
 			if($results){

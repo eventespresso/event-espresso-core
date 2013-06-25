@@ -179,7 +179,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 		if ( $exit && !$context ) return FALSE;
 
 		//todo: need to move require into registration hook but for now we'll require here.
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Parse_Shortcodes.helper.php';
+		require_once EE_HELPERS . 'EE_Parse_Shortcodes.helper.php';
 		//get shortcode_replace instance- set when _get_messages is called in child...
 		$this->_shortcode_replace = new EE_Parse_Shortcodes();
 		

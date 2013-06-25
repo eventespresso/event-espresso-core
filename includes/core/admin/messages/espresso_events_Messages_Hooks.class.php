@@ -112,7 +112,7 @@ class espresso_events_Messages_Hooks extends EE_Admin_Hooks {
 			}
 
 
-			require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Tabbed_Content.helper.php';
+			require_once EE_HELPERS . 'EE_Tabbed_Content.helper.php';
 			//we want this to be tabbed content so let's use the EE_Tabbed_Content::display helper.
 			$tabbed_content = EE_Tabbed_Content::display($tabs);
 			if ( is_wp_error($tabbed_content) ) {
