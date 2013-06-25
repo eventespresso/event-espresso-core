@@ -79,7 +79,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$running_total = 0;
 
 		//include Ticket Prices class for getting price obj for event.
-		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php' );
+		require_once( EE_MODELS . 'EEM_Price.model.php' );
 
 		//we'll actually use the generated line_item identifiers for our loop
 		foreach( $line_items as $key => $line_item ) {
@@ -190,7 +190,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$attendees = array();
 		$var_array = array('fname','lname','email','address','address2','city','staid','cntry','zip','phone','social','comments','notes','deleted','attid');
 
-		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php');
+		require_once( EE_CLASSES . 'EE_Attendee.class.php');
 		foreach ( $dummy_attendees as $dummy ) {
 			$att = array_combine( $var_array, $dummy );
 			extract($att);
@@ -235,7 +235,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 		$limit = !empty( $event_ids ) ? '' : apply_filters( 'FHEE_EE_Messages_Preview_incoming_data_get_some_events_limit', ' LIMIT 0,1' );
 
-		$SQL = "SELECT e.id AS ID, e.event_name AS name, e.event_meta AS meta, e.event_status AS status, e.require_pre_approval AS pre_approval, dtt.DTT_ID AS daytime_id FROM " . EVENTS_DETAIL_TABLE . " AS e LEFT JOIN " . ESP_DATETIME_TABLE . " AS dtt ON dtt.EVT_ID = e.id WHERE dtt.DTT_is_primary = '1' AND";
+		$SQL = "SELECT e.id AS ID, e.event_name AS name, e.event_meta AS meta, e.event_status AS status, e.require_pre_approval AS pre_approval, dtt.DTT_ID AS daytime_id FROM " . EVENTS_DETAIL_TABLE . " AS e LEFT JOIN " . EE_DATETIME_TABLE . " AS dtt ON dtt.EVT_ID = e.id WHERE dtt.DTT_is_primary = '1' AND";
 
 		$where = !empty( $event_ids ) ?  " e.id IN ('" . implode(",'", $event_ids ) . "')" : " e.is_active = '1'";
 
@@ -257,7 +257,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		
 
 		//okay we can now calculate the taxes and setup a "grand_total" we'll use in the dummy txn object
-		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Taxes.class.php' );
+		require_once( EE_CLASSES . 'EE_Taxes.class.php' );
 		$this->taxes = EE_Taxes::calculate_taxes( $this->_running_total );
 		$grand_total = apply_filters( 'espresso_filter_hook_grand_total_after_taxes', $this->_running_total );
 
