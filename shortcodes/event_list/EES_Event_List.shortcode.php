@@ -16,7 +16,7 @@
  * Event List
  *
  * @package			Event Espresso
- * @subpackage	modules/
+ * @subpackage	/shortcodes/
  * @author				Brent Christensen 
  *
  * ------------------------------------------------------------------------
@@ -34,16 +34,19 @@ class EES_Event_List  extends EES_Shortcode {
 	}
 
 	/**
-	 * 	set_hooks - for hooking into EE Core, other modules, etc
+	 * 	set_hooks - for hooking into EE Core, modules, etc
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
+//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+//		add_filter( 'FHEE_run_EE_wp', '__return_true' );
+//		add_filter( 'FHEE_load_EE_Session', '__return_true' );
 	}
 
 	/**
-	 * 	set_hooks_admin - for hooking into EE Admin Core, other modules, etc
+	 * 	set_hooks_admin - for hooking into EE Admin Core, modules, etc
 	 *
 	 *  @access 	public
 	 *  @return 	void
@@ -60,48 +63,33 @@ class EES_Event_List  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function init() {
-//		add_filter( 'FHEE_run_EE_wp', '__return_true' );
-//		add_filter( 'FHEE_load_EE_Session', '__return_true' );
-		add_action( 'wp_loaded', array( $this, 'wp_loaded' ));
-		add_action( 'wp', array( $this, 'wp' ));
-		add_filter( 'the_content', array( $this, 'the_content' ));
+		$this->ouput =  '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	}
 
 
 
 	/**
-	 * 	wp_loaded
-	 *
+	 * 	process_shortcode - EVENT_LIST - Returns a list of events
+	 * 
+	 * 	[EVENT_LIST]
+	 * 	[EVENT_LIST limit=1]
+	 * 	[EVENT_LIST css_class=my-custom-class]
+	 * 	[EVENT_LIST show_expired=true]
+	 * 	[EVENT_LIST show_deleted=true]
+	 * 	[EVENT_LIST show_secondary=true]
+	 * 	[EVENT_LIST show_recurrence=true]
+	 * 	[EVENT_LIST category_identifier=your_category_identifier]
+	 * 
 	 *  @access 	public
+	 *  @param		array 	$attributes
 	 *  @return 	void
 	 */
-	public function wp_loaded() {
-		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+	public function process_shortcode( $attributes ) {
+		//event_espresso_get_event_details( $attributes );
+		//return '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+		return $this->ouput;		
 	}
 
-
-
-	/**
-	 * 	wp
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function wp() {
-		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-	}
-
-
-
-	/**
-	 * 	the_content
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function the_content( $content ) {
-		return $content . '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-	}
 	
 	
 
