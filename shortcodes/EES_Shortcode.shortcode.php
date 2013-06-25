@@ -22,7 +22,7 @@
  * ------------------------------------------------------------------------
  */
 abstract class EES_Shortcode extends EE_Base { 
-
+	
 	/**
 	 * 	EE_Registry Object
 	 *	@var 	object	
@@ -62,13 +62,35 @@ abstract class EES_Shortcode extends EE_Base {
 	public abstract static function set_hooks_admin();
 
 	/**
-	 * 	init - initial module setup
-	 * 	this method is primarily used for activating resources in the EE_Front_Controller thru the use of filters
+	 * 	init - initial shortcode module setup called during wp hook
+	 * 	this method is primarily used for loading resourcesrequired by the shortcode
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
 	public abstract function init();
+
+	/**
+	 * 	process_shortcode
+	 * 	this method is the callback function for the actual shortcode, and is what runs when WP encounters the shortcode within the_content
+	 *
+	 *  @access 	public
+	 *  @param		array 	$attributes
+	 *  @return 	void
+	 */
+	public abstract function process_shortcode( $attributes );
+
+	/**
+	 * 	_add_shortcode
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	final public function _add_shortcode() {
+		// get classname, remove EES_prefix, and convert to UPPERCASE
+		$shortcode = strtoupper( str_replace( 'EES_', '', get_class( $this )));
+		add_shortcode( $shortcode, array( $this, 'process_shortcode' ));	
+	}
 	
 	/**
 	*	class constructor - can ONLY be instantiated by EE_Front_Controller
@@ -79,6 +101,7 @@ abstract class EES_Shortcode extends EE_Base {
 	*/
 	final public function __construct( EE_Registry $EE = NULL ) {
 		$this->EE = $EE;
+		add_action( 'init', array( $this, '_add_shortcode' ));
 	}
 	
 }
