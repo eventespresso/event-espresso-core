@@ -7,7 +7,7 @@
  * on EEM_Term_Taxonomy and EEM_Term_Relationship
  */
 define('EE_Event_Category_Taxonomy','espresso_event_category');
-require_once('EEM_Base.model.php');
+require_once( EE_MODELS . 'EEM_Base.model.php');
 class EEM_CPT_Base extends EEM_Base{
 	
 	/**
@@ -23,6 +23,15 @@ class EEM_CPT_Base extends EEM_Base{
 		$this->_model_relations['Term_Taxonomy'] =new EE_HABTM_Relation('Term_Relationship');
 		parent::__construct($timezone);
 	}
+
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public function define_table_name() { }
+
 	
 	/**
 	 * Adds an event category with the specified name and description to the specified
@@ -36,7 +45,7 @@ class EEM_CPT_Base extends EEM_Base{
 	 */
 	function add_event_category(EE_CPT_Base $cpt_model_object, $category_name, $category_description ='',$parent_term_taxonomy_id = null){
 		//create term
-		require_once('EEM_Term.model.php');
+		require_once( EE_MODELS . 'EEM_Term.model.php');
 		//first, check for a term by the same name or slug
 		$category_slug = sanitize_title($category_name);
 		$term = EEM_Term::instance()->get_one(array(array('OR'=>array('name'=>$category_name,'slug'=>$category_slug))));
@@ -48,7 +57,7 @@ class EEM_CPT_Base extends EEM_Base{
 			$term->save();
 		}
 		//make sure there's a term-taxonomy entry too
-		require_once('EEM_Term_Taxonomy.model.php');
+		require_once( EE_MODELS . 'EEM_Term_Taxonomy.model.php');
 		$term_taxonomy = EEM_Term_Taxonomy::instance()->get_one(array(array('term_id'=>$term->ID(),'taxonomy'=>EE_Event_Category_Taxonomy)));
 		if( ! $term_taxonomy ){
 			$term_taxonomy = EE_Term_Taxonomy::new_instance(array(

@@ -47,4 +47,17 @@ class EEM_Event_Venue extends EEM_Base{
 		);
 		parent::__construct();
 	}
+
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public function define_table_name() {
+		global $wpdb;
+		define( 'EE_EVENT_VENUE_TABLE', $wpdb->prefix . 'esp_event_venue' );
+	}
+
+
 }

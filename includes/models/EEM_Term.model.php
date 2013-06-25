@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+require_once ( EE_MODELS . 'EEM_Base.model.php' );
 
 class EEM_Term extends EEM_Base {
 
@@ -64,6 +64,16 @@ class EEM_Term extends EEM_Base {
 		
 		parent::__construct();
 	}
+
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public function define_table_name() { }
+
+
 }
 // End of file EEM_Answer.model.php
 // Location: /includes/models/EEM_Answer.model.php

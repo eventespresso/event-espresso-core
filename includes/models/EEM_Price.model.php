@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Soft_Delete_Base.model.php' );
+require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
 
 class EEM_Price extends EEM_Soft_Delete_Base {
 
@@ -63,29 +63,10 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 	 * 		@return void
 	 */
 	protected function __construct( $timezone ) {
-		require_once('EEM_Price_Type.model.php');
+		require_once( EE_MODELS . 'EEM_Price_Type.model.php');
 		$this->singlular_item = __('Price','event_espresso');
 		$this->plural_item = __('Prices','event_espresso');		
-		// array representation of the price table and the data types for each field
-//		$this->table_data_types = array(
-//				'PRC_ID'						=> '%d',
-//				'PRT_ID'						=> '%d',
-//				'EVT_ID'						=> '%d',
-//				'PRC_amount'				=> '%f',
-//				'PRC_name'				=> '%s',
-//				'PRC_desc'					=> '%s',
-//				'PRC_reg_limit'			=> '%d',
-//				'PRC_tckts_left'			=> '%d',
-//				'PRC_use_dates'			=> '%d',
-//				'PRC_start_date'			=> '%d',
-//				'PRC_end_date'			=> '%d',
-//				'PRC_is_active' 			=> '%d',
-//				'PRC_overrides' 			=> '%d',
-//				'PRC_order' 				=> '%d',
-//				'PRC_deleted' 			=> '%d'
-//		);
-		// load Price object class file
-//		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Price.class.php');
+
 		$this->_tables = array(
 			'Price'=>new EE_Primary_Table('esp_price','PRC_ID')
 		);
@@ -116,6 +97,16 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 		parent::__construct( $timezone );
 	}
 
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public function define_table_name() {
+		global $wpdb;
+		define( 'EE_PRICE_TABLE', $wpdb->prefix . 'esp_price' );
+	}
 
 
 	/**
@@ -313,7 +304,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 		}
 		$prices = array_merge( $event_prices, $global_prices);
 		//echo printr( $prices, 'prices');
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
 		
 		uasort( $prices, array( $this, '_sort_event_prices_by_type' ));
 		

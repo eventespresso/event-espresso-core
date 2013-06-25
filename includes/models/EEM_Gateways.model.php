@@ -35,6 +35,14 @@ Class EEM_Gateways {
 	private $_off_site_form = NULL;
 	private $_ajax = TRUE;
 
+	/**
+	 * 	EE_Registry Object
+	 *	@var 	object	
+	 * 	@access 	protected
+	 */
+	protected $EE = NULL;
+
+
 
 
 	/**
@@ -58,20 +66,35 @@ Class EEM_Gateways {
 	 * 		@return void
 	 */
 	private function __construct() {
+		
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		//activate resources
+		add_filter( 'FHEE_load_EE_Session', '__return_true' );
+		
 		//so client code can check for instatiation b4 including
 		define('ESPRESSO_GATEWAYS', TRUE);
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Gateway.class.php');
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Offline_Gateway.class.php');
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Offsite_Gateway.class.php');
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Onsite_Gateway.class.php');
-
+		require_once(EE_CLASSES . 'EE_Gateway.class.php');
+		require_once(EE_CLASSES . 'EE_Offline_Gateway.class.php');
+		require_once(EE_CLASSES . 'EE_Offsite_Gateway.class.php');
+		require_once(EE_CLASSES . 'EE_Onsite_Gateway.class.php');
+		
+		
+		$this->EE = EE_Registry::instance();
+		EE_System::instance()->load_EE_Session();
+		
 		$this->_load_session_gateway_data();
 		$this->_set_active_gateways();
 		$this->_load_payment_settings();
 		$this->_scan_and_load_all_gateways();
 	}
 
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public function define_table_name() { }
 
 
 	/**
@@ -82,8 +105,8 @@ Class EEM_Gateways {
 	 */
 	private function _load_session_gateway_data() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		global $EE_Session;
-		$this->_session_gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
+
+		$this->_session_gateway_data = $this->EE->EE_Session->get_session_data(FALSE, 'gateway_data');
 		if (!empty($this->_session_gateway_data['selected_gateway'])) {
 			$this->_selected_gateway = $this->_session_gateway_data['selected_gateway'];
 		}
@@ -122,12 +145,12 @@ Class EEM_Gateways {
 			$this->_active_gateways = $this->_session_gateway_data['active_gateways'];
 			
 		} else {
-			global $espresso_wp_user, $EE_Session;
+			global $espresso_wp_user;
 			$this->_active_gateways = get_user_meta($espresso_wp_user, 'active_gateways', TRUE);
 			if (!is_array($this->_active_gateways)) {
 				$this->_active_gateways = array();
 			}
-			$EE_Session->set_session_data(array('active_gateways' => $this->_active_gateways), 'gateway_data');
+			$this->EE->EE_Session->set_session_data(array('active_gateways' => $this->_active_gateways), 'gateway_data');
 		}
 	}
 
@@ -143,12 +166,12 @@ Class EEM_Gateways {
 //		if (!empty($this->_session_gateway_data['payment_settings'])) {
 //			$this->_payment_settings = $this->_session_gateway_data['payment_settings'];
 //		} else {
-			global $espresso_wp_user, $EE_Session;
+			global $espresso_wp_user;
 			$this->_payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', TRUE);
 			if (!is_array($this->_payment_settings)) {
 				$this->_payment_settings = array();
 			}
-			$EE_Session->set_session_data(array('payment_settings' => $this->_payment_settings), 'gateway_data');
+			$this->EE->EE_Session->set_session_data(array('payment_settings' => $this->_payment_settings), 'gateway_data');
 //		}
 
 		//echo printr( $this->_payment_settings, __CLASS__ . ' ->' . __FUNCTION__ . ' ( line #' .  __LINE__ . ' )' );
@@ -586,7 +609,6 @@ Class EEM_Gateways {
 	 */
 	private function _set_session_data() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		global $EE_Session;
 		
 		$session_data = array(
 						'selected_gateway' => $this->_selected_gateway,
@@ -595,7 +617,7 @@ Class EEM_Gateways {
 						'ajax' => $this->_ajax
 				);
 		// returns TRUE or FALSE
-		return $EE_Session->set_session_data( $session_data, 'gateway_data' );		
+		return $this->EE->EE_Session->set_session_data( $session_data, 'gateway_data' );		
 
 	}
 
@@ -639,7 +661,6 @@ Class EEM_Gateways {
 	public function reset_session_data() {
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		global $EE_Session;
 	
 		foreach ($this->_active_gateways as $gateway => $in_uploads) {
 			if (!empty($this->_gateway_instances[$gateway])) {
@@ -656,7 +677,7 @@ Class EEM_Gateways {
 		$this->_payment_settings = array();
 		$this->_active_gateways = array();
 		
-		$EE_Session->set_session_data(
+		$this->EE->EE_Session->set_session_data(
 				array(
 							'selected_gateway' => $this->_selected_gateway,
 							'hide_other_gateways' => $this->_hide_other_gateways,
@@ -808,8 +829,8 @@ Class EEM_Gateways {
 					'amount' => 0.00,
 					'method' => 'none'
 			);
-			global $EE_Session;
-			$EE_Session->set_session_data(array('txn_results' => $txn_results), 'session_data');
+
+			$this->EE->EE_Session->set_session_data(array('txn_results' => $txn_results), 'session_data');
 			$response = array(
 					'msg' => array('success'=>TRUE),
 					'forward_url' => $return_page_url
@@ -834,8 +855,8 @@ Class EEM_Gateways {
 	 */
 	private function _get_return_page_url() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		global $org_options,$EE_Session;
-		$session_data=$EE_Session->get_session_data();
+		global $org_options;
+		$session_data = $this->EE->EE_Session->get_session_data();
 		$a_current_registration=current($session_data['registration']);
 		
 		$return_page_id = $org_options['return_url'];
@@ -933,7 +954,7 @@ Class EEM_Gateways {
 	 */
 	public function check_for_completed_transaction(EE_Transaction $transaction){
 		//throw new Exception("unfinished. This functino should check for a completed transaction .If completed, clear some session etc
-		require_once('EEM_Transaction.model.php');
+		require_once( EE_MODELS . 'EEM_Transaction.model.php');
 		if($transaction->status_ID() == EEM_Transaction::complete_status_code){
 			$this->reset_session_data();
 		}

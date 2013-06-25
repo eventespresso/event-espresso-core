@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+require_once ( EE_MODELS . 'EEM_Base.model.php' );
 
 class EEM_Attendee extends EEM_Soft_Delete_Base {
 
@@ -55,26 +55,7 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 	protected function __construct() {	
 		$this->singlular_item = __('Attendee','event_espresso');
 		$this->plural_item = __('Attendees','event_espresso');
-		// load Attendee object class file
-//		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php');
-//		$this->_fields_settings=array('ATT_ID'=>new EE_Model_Field('Attendee ID', 'primary_key', false),
-//									'ATT_fname'=>new EE_Model_Field('First Name', 'plaintext', false),
-//									'ATT_lname'=>new EE_Model_Field('Last Name','plaintext',false),
-//									'ATT_address'=>new EE_Model_Field('Address1','plaintext',true),
-//									'ATT_address2'=>new EE_Model_Field('Address2','plaintext',true),
-//									'ATT_city'=>new EE_Model_Field('City','plaintext',true),
-//									'STA_ID'=>new EE_Model_Field('State ID','foreign_key',true,0,null,'State'),
-//									'CNT_ISO'=>new EE_Model_Field('Country Code','foreign_key',true,0,null,'Country'),
-//									'ATT_zip'=>new EE_Model_Field('Zip/Postal Code', 'plaintext', true, ''),
-//									'ATT_email'=>new EE_Model_Field('Email', 'email', false, ''),
-//									'ATT_phone'=>new EE_Model_Field('Phone', 'plaintext', true),
-//									'ATT_social'=>new EE_Model_Field('Social Media Details','serialized_text',true),
-//									'ATT_comments'=>new EE_Model_Field('Comments','simplehtml',true),
-//									'ATT_notes'=>new EE_Model_Field('Notes', 'simplehtml', true),
-//									'ATT_deleted'=>new EE_Model_Field('Deleted flag', 'deleted_flag', false,0),
-//			);
-//		$this->_related_models=array(
-//								'Registrations'=>new EE_Model_Relation('belongsTo', 'Registration', 'ATT_ID'));
+
 		$this->_tables = array(
 			'Attendee'=> new EE_Primary_Table('esp_attendee', 'ATT_ID')
 		);
@@ -95,9 +76,6 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 				'ATT_comments'=>new EE_Simple_HTML_Field('ATT_comments', __('Comments about Attendee','event_espresso'), true, ''),
 				'ATT_notes'=>new EE_Simple_HTML_Field('ATT_notes', __('Notes about Attendee','event_espresso'), true, ''),
 				'ATT_deleted'=>new EE_Trashed_Flag_Field('ATT_deleted', __('Whether the attendee has been deleted or not','event_espresso'), true, false),
-				
-				
-				
 			));
 		$this->_model_relations = array(
 			'Registration'=>new EE_Has_Many_Relation(),
@@ -105,6 +83,18 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 		parent::__construct();
 		
 	}
+
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public function define_table_name() {
+		global $wpdb;
+		define( 'EE_ATTENDEE_TABLE', $wpdb->prefix . 'esp_attendee' );
+	}
+
 
 	/**
 	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
@@ -325,7 +315,7 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 		$query_params[0] = array( 'ATT_ID' => $ATT_ID, 'STS_ID' => array('IN',array( 'RAP', 'RNA', 'RPN' )));
 		$query_params['order_by'] = array('REG_date' => 'ASC');
 		
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php');
+		require_once(EE_MODELS . 'EEM_Registration.model.php');
 		$REG_MDL = EEM_Registration::instance();
 		//check if the attendee is associated with any registrations
 //		if ( $registrations = $REG_MDL->get_all_registrations_for_attendee( $ATT_ID, $status_array )) {

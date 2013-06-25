@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+require_once ( EE_MODELS . 'EEM_Base.model.php' );
 class EEM_Payment extends EEM_Base {
 
   	// private instance of the Payment object
@@ -71,48 +71,10 @@ class EEM_Payment extends EEM_Base {
 	 *		@return void
 	 */	
 	protected function __construct( $timezone ) {	  
-		//global $wpdb;
-		// set table name
-		/*$this->table_name = $wpdb->prefix . 'esp_payment';
-		// set item names
-				
-		// array representation of the payment table and the data types for each field 
-		$this->table_data_types = array (	
-			'PAY_ID' 								=> '%d',
-			'TXN_ID' 								=> '%d',
-			'STS_ID' 								=> '%s',
-			'PAY_timestamp' 				=> '%d',
-			'PAY_method'					=> '%s',
-			'PAY_amount'						=> '%s',
-			'PAY_gateway'					=> '%s',
-			'PAY_gateway_response'	=> '%s',
-			'PAY_txn_id_chq_nmbr'		=> '%s',
-			'PAY_po_number'				=> '%s',
-			'PAY_extra_accntng'			=> '%s',
-			'PAY_via_admin'					=> '%d',
-			'PAY_details'						=> '%s'
-		);*/
+
 		$this->singlular_item = __('Payment','event_espresso');
 		$this->plural_item = __('Payments','event_espresso');
-//		$this->_fields_settings = array(
-//			'PAY_ID'=>				new EE_Model_Field('Payment ID', 'primary_key', false),
-//			'TXN_ID'=>				new EE_Model_Field('Tranaction ID related to payment', 'foreign_key', false, null, null, 'Transaction'),
-//			'STS_ID'=>				new EE_Model_Field('Status of payment', 'foreign_text_key', false, EEM_Payment::status_id_failed,null,'Status'),
-//			'PAY_timestamp'=>		new EE_Model_Field('Unix Timestamp of when Payment occured','date',false,time()),
-//			'PAY_method'=>			new EE_Model_Field('String stating method of payment', 'all_caps_key', true,'CART'),
-//			'PAY_amount'=>			new EE_Model_Field('Amount this payment is for', 'float', false, 0),
-//			'PAY_gateway'=>			new EE_Model_Field('Gateway name used for payment', 'plaintext', true, 'PayPal_Standard'),
-//			'PAY_gateway_response'=>new EE_Model_Field('Response text from gateway that users would want to see', 'simplehtml', true,''),
-//			'PAY_txn_id_chq_nmbr'=>	new EE_Model_Field('Unique ID for this payment in gateway, or cheque number', 'plaintext', true,''),
-//			'PAY_po_number'=>		new EE_Model_Field('Purhcase or Sales Order Number','plaintext',true,''),
-//			'PAY_extra_accntng'=>	new EE_Model_Field('Extra Accounting Info for Payment','simplehtml',true,''),
-//			'PAY_via_admin'=>		new EE_Model_Field('Whether this payment was made via the admin', 'bool', false,false),
-//			'PAY_details'=>			new EE_Model_Field('Full Response from Gateway concernign Payment', 'serialized_text', true,'')
-//		);
-//		$this->_related_models = array(
-//			'Transaction'=>			new EE_Model_Relation('belongsTo', 'Transaction', 'TXN_ID'),
-//			'Status'=>				new EE_Model_Relation('belongsTo', 'Status', 'STS_ID')
-//		);
+
 		$this->_tables = array(
 			'Payment'=>new EE_Primary_Table('esp_payment','PAY_ID')
 		);
@@ -136,12 +98,20 @@ class EEM_Payment extends EEM_Base {
 		$this->_model_relations = array(
 			'Transaction'=> new EE_Belongs_To_Relation()
 		);
-		
-		
-		// load Payment object class file
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Payment.class.php');
 		parent::__construct( $timezone );
 	}
+
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public function define_table_name() {
+		global $wpdb;
+		define( 'EE_PAYMENT_TABLE', $wpdb->prefix . 'esp_payment' );
+	}
+
 
 	/**
 	 *		This funtion is a singleton method used to instantiate the EEM_Payment object

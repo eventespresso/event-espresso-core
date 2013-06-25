@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Soft_Delete_Base.model.php' );
+require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
 
 class EEM_Question_Option extends EEM_Soft_Delete_Base {
 
@@ -77,6 +77,20 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base {
 		
 		parent::__construct();
 	}
+
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public function define_table_name() {
+		global $wpdb;
+		define( 'EE_QUESTION_OPTION_TABLE', $wpdb->prefix . 'esp_question_option' );
+	}
+
+
+
 }
 // End of file EEM_Question_Option.model.php
 // Location: /includes/models/EEM_Question_Option.model.php

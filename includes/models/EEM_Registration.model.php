@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+require_once ( EE_MODELS . 'EEM_Base.model.php' );
 
 
 class EEM_Registration extends EEM_Base {
@@ -76,7 +76,7 @@ class EEM_Registration extends EEM_Base {
 		$this->singular_item = __('Registration','event_espresso');
 		$this->plural_item = __('Registrations','event_espresso');
 		$this->_get_registration_status_array();
-//		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Registration.class.php');
+//		require_once(EE_CLASSES . 'EE_Registration.class.php');
 		$this->_allowed_statuses=apply_filters('FHEE__EEM_Registration__allowed_statuses', self::$_reg_status );
 //		$this->_fields_settings=array(
 //			'REG_ID'=>new EE_Model_Field('Registration ID','primary_key',false),
@@ -139,6 +139,19 @@ class EEM_Registration extends EEM_Base {
 		
 		parent::__construct( $timezone );
 	}
+
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public function define_table_name() {
+		global $wpdb;
+		define( 'EE_REGISTRATION_TABLE', $wpdb->prefix . 'esp_registration' );
+	}
+
+
 
 	/**
 	 *		This funtion is a singleton method used to instantiate the Espresso_model object

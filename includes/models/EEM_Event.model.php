@@ -23,7 +23,7 @@
  */
 
 
-require_once('EEM_CPT_Base.model.php');
+require_once( EE_MODELS . 'EEM_CPT_Base.model.php');
 class EEM_Event  extends EEM_CPT_Base{
 	//extends EEM_Base
 
@@ -132,7 +132,17 @@ class EEM_Event  extends EEM_CPT_Base{
 		$this->_default_where_conditions_strategy = new EE_Default_CPT_Where_Conditions('espresso_events', 'EVTM_ID');
 		parent::__construct( $timezone );
 	}
-	
+
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public function define_table_name() {
+		global $wpdb;
+		define( 'EE_EVENT_META_TABLE', $wpdb->prefix . 'esp_event_meta' );
+	}
 	
 	
 	

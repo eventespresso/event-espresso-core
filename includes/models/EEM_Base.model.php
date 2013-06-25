@@ -18,24 +18,24 @@
  */
 define('SP',' ');
 //require all field, relation, and helper files, because we'll want 90% of them on every request using EEM_Base anyways.
-$field_files = glob(dirname(__FILE__) . '/fields/*.php');
-$helper_files = glob(dirname(__FILE__) . '/helpers/*.php');
-$relation_files = glob(dirname(__FILE__) . '/relations/*.php');
+$field_files = glob( EE_MODELS . '/fields/*.php');
+$helper_files = glob( EE_MODELS . '/helpers/*.php');
+$relation_files = glob( EE_MODELS . '/relations/*.php');
 $files =  array_merge( array_merge($field_files, $relation_files), $helper_files) ;
-require_once('strategies/EE_Default_Where_Conditions.strategy.php');
-foreach ($files as $file){
-    require_once($file);   
+require_once( EE_MODELS . 'strategies/EE_Default_Where_Conditions.strategy.php' );
+foreach ( $files as $file ){
+    require_once( $file );   
 }
 abstract class EEM_Base extends EE_Base{
+	
 	protected $singular_item = 'Item';
 	protected $plural_item = 'Items';
+	
 	/**
 	 * @var EE_Table[] $_tables  array of EE_Table objects for defining which tables comprise this model.
 	 */
 	protected $_tables;
-	
-	
-	
+
 	/**
 	 *
 	 * @var array with two levels: top-leve has array keys which are database table aliases (ie, keys in _tables)
@@ -43,11 +43,13 @@ abstract class EEM_Base extends EE_Base{
 	 * on the model objects (eg, EE_Attendee), and the keys should be children of EE_Model_Field
 	 */
 	protected $_fields;
+
 	/**
 	 *
 	 * @var EE_Model_Relation[] array of different kidns of relations
 	 */
 	protected $_model_relations;
+
 	/**
 	 * Defautls strategy for getting where conditions on this model. This strategy is used to get default
 	 * where conditions which are added to get_all, update, and delete queries. They can be overriden
@@ -56,19 +58,11 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	protected $_default_where_conditions_strategy;
 
-
-
-
 	/**
 	 * This is a flag typically set by updates so that we don't load the where strategy on updates because updates don't need it (particularly CPT models)
 	 * @var bool
 	 */
 	protected $_ignore_where_strategy = FALSE;
-	
-	
-
-
-
 
 	/**
 	 * Timezone
@@ -77,10 +71,6 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	protected $_timezone;
 
-
-
-
-	
 	/**
 	 *	List of valid operators that can be used for querying.
 	 * The keys are all operators we'll accept, the values are the real SQL
@@ -111,13 +101,12 @@ abstract class EEM_Base extends EE_Base{
 		'is not null' => 'IS NOT NULL',
 		'IS NULL' => 'IS NULL',
 		'is null' => 'IS NULL');
+
 	/**
 	 * operators that work like 'IN', accepting a comma-seperated list of values inside brackets. Eg '(1,2,3)'
 	 * @var array 
 	 */
 	protected $_in_style_operators = array('IN','NOT_IN');
-
-
 
 	/**
 	 * operators that work like 'BETWEEN'.  Typically used for datetime calcs, i.e. "BETWEEN '12-1-2011' AND '12-31-2012'"
@@ -125,14 +114,12 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	protected $_between_style_operators = array( 'BETWEEN' );
 
-
 	/**
 	 * operators that are used for handling NUll and !NULL queries.  Typically used for when checking if a row exists on a join table. 
 	 * @var array
 	 */
 	protected $_null_style_operators = array( 'IS NOT NULL', 'IS NULL' );
 
-	
 	/**
 	 * Allowed values for $query_params['order'] for ordering in queries
 	 * @var array
@@ -145,12 +132,25 @@ abstract class EEM_Base extends EE_Base{
 	 * @var array
 	 */
 	private $_logic_query_param_keys = array('not', 'and', 'or', 'NOT', 'AND', 'OR');
+
 	/**
 	 * Allowed keys in $query_params arrays passed into queries. Note that 0 is meant to always be a 
 	 * 'where', but 'where' clauses are so common that we thought we'd omit it
 	 * @var array
 	 */
 	private $_allowed_query_params = array(0, 'limit','order_by','group_by','having','force_join','order');
+
+	/**
+	 * 	EE_Registry Object
+	 *	@var 	object	
+	 * 	@access 	protected
+	 */
+	protected $EE = NULL;
+
+
+
+
+
 	/**
 	 * About all child constructors:
 	 * they should define the _tables, _fields and _model_relations arrays. 
@@ -167,6 +167,8 @@ abstract class EEM_Base extends EE_Base{
 	 * do something similar.
 	 */
 	protected function __construct( $timezone = NULL ){
+		// load registry
+		$this->EE = EE_Registry::instance();
 		foreach($this->_tables as $table_alias => $table_obj){
 			$table_obj->_construct_finalize_with_alias($table_alias);
 			if($table_obj instanceof EE_Secondary_Table){
@@ -181,8 +183,7 @@ abstract class EEM_Base extends EE_Base{
 				$field_obj->_construct_finalize($table_alis,$field_name);
 			}
 		}
-				
-			
+
 		foreach($this->_model_relations as $model_name => $relation_obj){
 			$relation_obj->_construct_finalize_set_models($this->get_this_model_name(), $model_name);
 		}
@@ -197,6 +198,15 @@ abstract class EEM_Base extends EE_Base{
 		
 	}
 
+
+
+
+
+	/**
+	 * forces models to define their table name as a constant
+	 * @access public
+	 */
+	abstract public function define_table_name();
 
 
 

@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+require_once ( EE_MODELS . 'EEM_Base.model.php' );
 
 
 class EEM_Transaction extends EEM_Base {
@@ -128,11 +128,21 @@ class EEM_Transaction extends EEM_Base {
 			'Payment'=>new EE_Has_Many_Relation()
 		);
 		parent::__construct( $timezone );
-	
-		// uncomment these for example code samples of how to use them
-		//			self::how_to_use_insert();
-		//			self::how_to_use_update();
+
 	}
+
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public function define_table_name() {
+		global $wpdb;
+		define( 'EE_TRANSACTION_TABLE', $wpdb->prefix . 'esp_transaction' );
+	}
+
+
 
 	/**
 	 *		This funtion is a singleton method used to instantiate the Espresso_model object
@@ -383,7 +393,7 @@ class EEM_Transaction extends EEM_Base {
 	 */
 	public function update_based_on_payments($transaction_obj_or_id){
 		$transaction = $this->ensure_is_obj($transaction_obj_or_id);
-		require_once('EEM_Payment.model.php');
+		require_once( EE_MODELS . 'EEM_Payment.model.php');
 		$PAY = EEM_Payment::instance();
 		$total_paid = $PAY->recalculate_total_payments_for_transaction( $transaction->ID(),  EEM_Payment::status_id_approved );
 		//$total_pending = $PAY->recalculate_total_payments_for_transaction( $transaction->ID(),  EEM_Payment::status_id_pending );

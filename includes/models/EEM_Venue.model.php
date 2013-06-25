@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+require_once ( EE_MODELS . 'EEM_Base.model.php' );
 
 class EEM_Venue extends EEM_CPT_Base {
 
@@ -118,6 +118,16 @@ class EEM_Venue extends EEM_CPT_Base {
 			'auto-draft'=>  __("Auto Draft", "event_espresso")
 		));
 	}
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public function define_table_name() {
+		global $wpdb;
+		define( 'EE_VENUE_META_TABLE', $wpdb->prefix . 'esp_venue_meta' );
+	}	
 }
 // End of file EEM_Answer.model.php
 // Location: /includes/models/EEM_Answer.model.php

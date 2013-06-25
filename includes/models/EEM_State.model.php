@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+require_once ( EE_MODELS . 'EEM_Base.model.php' );
 
 class EEM_State extends EEM_Base {
 
@@ -83,7 +83,19 @@ class EEM_State extends EEM_Base {
 		parent::__construct();
 		
 	}
-	
+
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public function define_table_name() {
+		global $wpdb;
+		define( 'EE_STATE_TABLE', $wpdb->prefix . 'esp_state' );
+	}
+
+
 
 	/**
 	*		_get_states
