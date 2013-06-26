@@ -222,20 +222,27 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 	public function column_start_date($item) {
 		!empty( $this->_dtt ) ? $this->_dtt->e_start_date( 'D, M d, Y') : _e('No Date was saved for this Event', 'event_espresso');
+		//display in user's timezone?
+		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone('start_date', 'D, M d, Y', 'My Timezone: ' ) : '';
+
 	}
 
 
 
 
 	public function column_start_time($item) {
-		return !empty( $this->_dtt ) ? $this->_dtt->e_start_time( get_option( 'time_format' ) ) : _e('No Date was saved for this Event', 'event_espresso');
+		!empty( $this->_dtt ) ? $this->_dtt->e_start_time( get_option( 'time_format' ) ) : _e('No Date was saved for this Event', 'event_espresso');
+		//display in user's timezone?
+		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone('start_time', get_option('time_format'), 'My Timezone: ' ) : '';
 	}
 
 
 
 
 	public function column_reg_begins($item) {
-		return !empty( $this->_dtt ) ? $this->_dtt->e_reg_start_date_and_time('D, M d, Y', 'g:i a') : _e('No Date was saved for this Event', 'event_espresso');
+		!empty( $this->_dtt ) ? $this->_dtt->e_reg_start_date_and_time('D, M d, Y', 'g:i a') : _e('No Date was saved for this Event', 'event_espresso');
+		//display in user's timezone?
+		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone('reg_start_date_and_time', array('D, M d, Y', 'g:i a'), 'My Timezone: ' ) : '';
 	}
 
 

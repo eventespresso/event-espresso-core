@@ -809,6 +809,27 @@ class EE_Datetime extends EE_Base_Class{
 	*/	
 	public function tckts_left() {
 		return $this->_DTT_tckts_left;
+	}
+
+
+
+	/**
+	 * This will return a timestamp for the website timezone but ONLY when the current website timezone is different than the timezone set for the website.
+	 * @return string timestamp
+	 */
+	public function display_in_my_timezone( $callback, $args = NULL, $prepend = '', $append = '' ) {
+		$timezone = get_option('timezone_string');
+		if ( $timezone == $this->_timezone )
+			return '';
+		$original_timezone = $this->_timezone;
+		$this->set_timezone( $timezone );
+
+		if ( !method_exists( $this, $callback ) )
+			throw EE_Error(sprintf( __('The method named "%s" given as the callback param in "display_in_my_timezone" does not exist.  Please check your spelling', 'event_espresso'), $callback ) );
+		$args = (array) $args;
+		$return =  $prepend . call_user_func_array( array( $this, $callback ), $args ) . $append;
+		$this->set_timezone( $original_timezone );
+		return $return;
 	}		
 }
 
