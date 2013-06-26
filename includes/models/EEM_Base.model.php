@@ -187,7 +187,7 @@ abstract class EEM_Base extends EE_Base{
 			$relation_obj->_construct_finalize_set_models($this->get_this_model_name(), $model_name);
 		}
 
-		$this->_timezone = $timezone;
+		$this->set_timezone($timezone);
 		//finalize default where condition strategy, or set default
 		if( ! $this->_default_where_conditions_strategy){
 			//nothing was set during chidl consturctor, so set default
