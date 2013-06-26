@@ -179,13 +179,13 @@ class EE_Datetime extends EE_Base_Class{
 
 	public static function new_instance( $props_n_values = array(), $timezone = NULL ) {
 		$classname = __CLASS__;
-		$has_object = parent::_check_for_object( $props_n_values, $classname );
+		$has_object = parent::_check_for_object( $props_n_values, $classname, $timezone );
 		return $has_object ? $has_object : new self( $props_n_values, FALSE, $timezone );
 	}
 
 
-	public static function new_instance_from_db ( $props_n_values = array() ) {
-		return new self( $props_n_values, TRUE );
+	public static function new_instance_from_db ( $props_n_values = array(), $timezone = NULL ) {
+		return new self( $props_n_values, TRUE, $timezone );
 	}
 
 
