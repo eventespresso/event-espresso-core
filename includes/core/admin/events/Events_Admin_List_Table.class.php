@@ -221,21 +221,21 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_start_date($item) {
-		return !empty( $this->_dtt ) ? $this->_dtt->start_date( 'D, M d, Y') : __('No Date was saved for this Event', 'event_espresso');
+		!empty( $this->_dtt ) ? $this->_dtt->e_start_date( 'D, M d, Y') : _e('No Date was saved for this Event', 'event_espresso');
 	}
 
 
 
 
 	public function column_start_time($item) {
-		return !empty( $this->_dtt ) ? $this->_dtt->start_time( get_option( 'time_format' ) ) : __('No Date was saved for this Event', 'event_espresso');
+		return !empty( $this->_dtt ) ? $this->_dtt->e_start_time( get_option( 'time_format' ) ) : _e('No Date was saved for this Event', 'event_espresso');
 	}
 
 
 
 
 	public function column_reg_begins($item) {
-		return !empty( $this->_dtt ) ? $this->_dtt->reg_start_date_and_time('D, M d, Y', 'g:i a') : __('No Date was saved for this Event', 'event_espresso');
+		return !empty( $this->_dtt ) ? $this->_dtt->e_reg_start_date_and_time('D, M d, Y', 'g:i a') : _e('No Date was saved for this Event', 'event_espresso');
 	}
 
 
