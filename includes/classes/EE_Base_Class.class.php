@@ -233,7 +233,7 @@ class EE_Base_Class{
 	 * @param  string $propertyname the name of the property we're trying to retrieve
 	 * @return mixed                whatever the value for the property is we're retrieving
 	 */
-	protected function _get_cached_property( $propertyname ) {
+	protected function _get_cached_property( $propertyname, $pretty = FALSE ) {
 		//first make sure this property exists
 		if ( !property_exists( $this, $propertyname ) )
 			throw new EE_Error( sprintf( __('Trying to retrieve a non-existent property (%s).  Doublecheck the spelling please', 'event_espresso'), $propertyname ) );
@@ -245,7 +245,7 @@ class EE_Base_Class{
 		//otherwise let's return the property
 		$field_name = ltrim( $propertyname, '_' );
 		$field_obj = $this->get_model()->field_settings_for($field_name);
-		$value = $field_obj->prepare_for_get($this->$propertyname );
+		$value = $pretty ? $field_obj->prepare_for_pretty_echoing($this->$propertyname) : $field_obj->prepare_for_get($this->$propertyname );
 		$this->_set_cached_property( $propertyname, $value );
 		return $value;
 	}
@@ -272,7 +272,7 @@ class EE_Base_Class{
 	 */
 	protected function _clear_cached_property( $propertyname ) {
 		if ( isset( $this->_cached_properties[$propertyname] ) )
-			unset( $this->_cached_properteis[$propertyname] );
+			unset( $this->_cached_properties[$propertyname] );
 	}
 
 
@@ -403,9 +403,8 @@ class EE_Base_Class{
 	 * @return mixed
 	 */
 	public function get_pretty($field_name){
-		$field_value = $this->get($field_name);
-		$field_obj = $this->get_model()->field_settings_for($field_name);
-		return  $field_obj->prepare_for_pretty_echoing($field_value);
+		$privateAttributeName = $this->_get_private_attribute_name($field_name);
+		return  $this->_get_cached_property( $privateAttributeName, TRUE );
 	}
 	
 	/**
