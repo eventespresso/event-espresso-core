@@ -815,6 +815,14 @@ class EE_Datetime extends EE_Base_Class{
 
 	/**
 	 * This will return a timestamp for the website timezone but ONLY when the current website timezone is different than the timezone set for the website.
+	 *
+	 * NOTE, this currently only works well with methods that return values.  If you use it with methods that echo values the $_timestamp property may not get reset to its original value and that could lead to some unexpected results!
+	 *
+	 * @access public
+	 * @param string $callback must match a valid method in this class
+	 * @param mixed (array|string) $args This is the arguments that will be passed to the callback.
+	 * @param string $prepend You can include something to prepend on the timestamp
+	 * @param string $append You can include somethign to append on the timestamp
 	 * @return string timestamp
 	 */
 	public function display_in_my_timezone( $callback, $args = NULL, $prepend = '', $append = '' ) {
