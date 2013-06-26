@@ -207,6 +207,18 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	public function set_timezone( $timezone ) {
 		$this->_timezone = $timezone;
+
+		//note we need to loop through relations and set the timezone on those objects as well.
+		foreach ( $this->_model_relations as $relation ) {
+			$relation->set_timezone($timezone);
+		}
+
+		//and finally we do the same for any datetime fields
+		foreach ( $this->_fields as $field ) {
+			if ( $field instanceof EE_Datetime_field ) {
+				$field->set_timezone( $timezone );
+			}
+		}
 	}
 
 
@@ -1816,7 +1828,6 @@ abstract class EEM_Base extends EE_Base{
 				return array();
 			}
 			$classInstance=$this->instantiate_class_from_array_or_object($row);
-
 			//set the timezone on the instantiated objects
 			$classInstance->set_timezone( $this->_timezone );
 
@@ -2008,15 +2019,5 @@ abstract class EEM_Base extends EE_Base{
 	}
 	
 	
-	
-
-
-
-
-
-
-
-
-
 	
 }
