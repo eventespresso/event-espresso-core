@@ -730,7 +730,13 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data['contact_email'] = isset( $this->_req_data['contact_email'] ) ? sanitize_email( $this->_req_data['contact_email'] ) : NULL;
 		$data['site_license_key'] = isset( $this->_req_data['site_license_key'] ) ? sanitize_text_field( $this->_req_data['site_license_key'] ) : NULL;
 		$data['ee_ueip_optin'] = isset( $this->_req_data['ueip_optin'] ) && !empty( $this->_req_data['ueip_optin'] ) ? $this->_req_data['ueip_optin'] : 'yes'; 
-
+		
+		if ( $country = getCountryFullData( $data['organization_country'] )) {
+			if ( ! empty( $country['currency_symbol'] )) {
+				$data['currency_symbol'] = $country['currency_symbol'];
+			}
+		}
+		
 		$data = apply_filters('FHEE_your_organization_settings_save', $data);	
 		
 		$what = 'Your Organization Settings';
@@ -863,19 +869,19 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		//printr( $country, '$country  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$country_input_types = array(
 			'CNT_ISO' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
-			'CNT_ISO3' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
-			'RGN_ID' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
+//			'CNT_ISO3' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
+//			'RGN_ID' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
 			'CNT_name' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'regular-text' ),
-			'CNT_cur_code' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
-			'CNT_cur_single' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'medium-text' ),
-			'CNT_cur_plural' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'medium-text' ),
-			'CNT_cur_sign' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
-			'CNT_cur_sign_b4' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values ),
-			'CNT_cur_dec_plc' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => 0, 'text' => '0' ), array( 'id' => 1, 'text' => '1' ), array( 'id' => 2, 'text' => '2' ), array( 'id' => 3, 'text' => '3' ))),
-			'CNT_cur_dec_mrk' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => ',', 'text' => __(', (comma)', 'event_espresso')), array( 'id' => '.', 'text' => __('. (decimal)', 'event_espresso')))),
-			'CNT_cur_thsnds' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => ',', 'text' => __(', (comma)', 'event_espresso')), array( 'id' => '.', 'text' => __('. (decimal)', 'event_espresso')))),
-			'CNT_tel_code' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
-			'CNT_is_EU' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values ),
+//			'CNT_cur_code' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
+//			'CNT_cur_single' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'medium-text' ),
+//			'CNT_cur_plural' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'medium-text' ),
+//			'CNT_cur_sign' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
+//			'CNT_cur_sign_b4' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values ),
+//			'CNT_cur_dec_plc' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => 0, 'text' => '0' ), array( 'id' => 1, 'text' => '1' ), array( 'id' => 2, 'text' => '2' ), array( 'id' => 3, 'text' => '3' ))),
+//			'CNT_cur_dec_mrk' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => ',', 'text' => __(', (comma)', 'event_espresso')), array( 'id' => '.', 'text' => __('. (decimal)', 'event_espresso')))),
+//			'CNT_cur_thsnds' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => ',', 'text' => __(', (comma)', 'event_espresso')), array( 'id' => '.', 'text' => __('. (decimal)', 'event_espresso')))),
+//			'CNT_tel_code' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
+//			'CNT_is_EU' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values ),
 			'CNT_active' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values )
 		);
 		$this->_template_args['inputs'] = $this->_generate_question_form_inputs_for_object( $country, $country_input_types );
@@ -977,68 +983,69 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 //		printr( $input_types, '$input_types  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		foreach ( $fields as $field_ID => $field ) {
 //			echo '<h4>$field_ID : ' . $field_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-			// get saved value for field
-			$value = $object->get( $field_ID );
-			// if no saved value, then use default
-			$value = ! empty( $value ) ? $value : $field->default_value();
-//			if ( $field_ID == 'CNT_active' ) 
-//			echo '<h4>$value : ' . $value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';	
-			// determine question type
-			$type = isset( $input_types[ $field_ID ] ) ? $input_types[ $field_ID ]['type'] : 'TEXT';
-			// input name
-			$input_name = isset( $input_types[ $field_ID ] ) && isset( $input_types[ $field_ID ]['input_name'] ) ? $input_types[ $field_ID ]['input_name'] . '[' . $field_ID . ']' : $field_ID;
-			// css class for input
-			$class = isset( $input_types[ $field_ID ]['class'] ) && ! empty( $input_types[ $field_ID ]['class'] ) ? ' ' . $input_types[ $field_ID ]['class'] : '';
-			// create EE_Question_Form_Input object
-			$QFI = new EE_Question_Form_Input(
-				new EE_Question( array(
-					'QST_ID'=> 0,
-					'QST_display_text'=> $field->nicename(),
-					'QST_type' => $type
-				)),
-				new EE_Answer( array( 
-					'ANS_ID'=> 0,
-					'QST_ID'=> 0,
-					'REG_ID'=> 0,
-					'ANS_value'=> $value
-				 )),
-				array(
-					'input_id' => $field_ID . '-' . $object->ID(),
-					'input_name' => $input_name,
-					'input_class' => $field_ID . $class,
-					'input_prefix' => '',
-					'append_qstn_id' => FALSE
-				)
-			);
+			if ( isset( $input_types[ $field_ID ] )) {
+				// get saved value for field
+				$value = $object->get( $field_ID );
+				// if no saved value, then use default
+				$value = ! empty( $value ) ? $value : $field->default_value();
+	//			if ( $field_ID == 'CNT_active' ) 
+	//			echo '<h4>$value : ' . $value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';	
+				// determine question type
+				$type = isset( $input_types[ $field_ID ] ) ? $input_types[ $field_ID ]['type'] : 'TEXT';
+				// input name
+				$input_name = isset( $input_types[ $field_ID ] ) && isset( $input_types[ $field_ID ]['input_name'] ) ? $input_types[ $field_ID ]['input_name'] . '[' . $field_ID . ']' : $field_ID;
+				// css class for input
+				$class = isset( $input_types[ $field_ID ]['class'] ) && ! empty( $input_types[ $field_ID ]['class'] ) ? ' ' . $input_types[ $field_ID ]['class'] : '';
+				// create EE_Question_Form_Input object
+				$QFI = new EE_Question_Form_Input(
+					new EE_Question( array(
+						'QST_ID'=> 0,
+						'QST_display_text'=> $field->nicename(),
+						'QST_type' => $type
+					)),
+					new EE_Answer( array( 
+						'ANS_ID'=> 0,
+						'QST_ID'=> 0,
+						'REG_ID'=> 0,
+						'ANS_value'=> $value
+					 )),
+					array(
+						'input_id' => $field_ID . '-' . $object->ID(),
+						'input_name' => $input_name,
+						'input_class' => $field_ID . $class,
+						'input_prefix' => '',
+						'append_qstn_id' => FALSE
+					)
+				);
 
-			// does question type have options ?
-			if ( in_array( $type, array( 'DROPDOWN', 'SINGLE', 'MULTIPLE' )) && isset ( $input_types[ $field_ID ] ) && isset ( $input_types[ $field_ID ]['options'] )) {
-				foreach ( $input_types[ $field_ID ]['options'] as $option ) {
-					$option = stripslashes_deep( $option );
-					$option_id = ! empty( $option['id'] ) ? $option['id'] : 0;
+				// does question type have options ?
+				if ( in_array( $type, array( 'DROPDOWN', 'SINGLE', 'MULTIPLE' )) && isset ( $input_types[ $field_ID ] ) && isset ( $input_types[ $field_ID ]['options'] )) {
+					foreach ( $input_types[ $field_ID ]['options'] as $option ) {
+						$option = stripslashes_deep( $option );
+						$option_id = ! empty( $option['id'] ) ? $option['id'] : 0;
 
-					$QSO = new EE_Question_Option( array (
-							'QSO_name' => (string)$option_id,
-							'QSO_value' => $option['text'],
-							//'QST_ID' => $QFI->get( 'QST_ID' ),
-							'QSO_deleted' => FALSE
-						));
-					// all QST (and ANS) properties can be accessed indirectly thru QFI
-					$QFI->add_temp_option( $QSO );
+						$QSO = new EE_Question_Option( array (
+								'QSO_name' => (string)$option_id,
+								'QSO_value' => $option['text'],
+								//'QST_ID' => $QFI->get( 'QST_ID' ),
+								'QSO_deleted' => FALSE
+							));
+						// all QST (and ANS) properties can be accessed indirectly thru QFI
+						$QFI->add_temp_option( $QSO );
+					}
 				}
-			}
-			// we don't want ppl manually changing primary keys cuz that would just lead to total craziness man
-			if ( $field_ID == $pk ) {
-				$QFI->set( 'QST_disabled', TRUE );
-			}
-			//printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-			
-			$inputs[ $field_ID ] = $QFI;	
-			
-//			if ( $field_ID == 'CNT_active' ) {
-//				printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//			}
-	
+				// we don't want ppl manually changing primary keys cuz that would just lead to total craziness man
+				if ( $field_ID == $pk ) {
+					$QFI->set( 'QST_disabled', TRUE );
+				}
+				//printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+				
+				$inputs[ $field_ID ] = $QFI;	
+				
+	//			if ( $field_ID == 'CNT_active' ) {
+	//				printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+	//			}
+			}		
 		}
 		return $inputs;
 	}
