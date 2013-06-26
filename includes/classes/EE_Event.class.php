@@ -206,7 +206,11 @@ class EE_Event extends EE_CPT_Base{
 	public static function new_instance( $props_n_values = array() ) {
 		$classname = __CLASS__;
 		$has_object = parent::_check_for_object( $props_n_values, $classname );
-		return $has_object ? $has_object : new self( $props_n_values);
+		$obj = $has_object ? $has_object : new self( $props_n_values);
+
+		//we need to set the _timezone property to whatever is set in the db for the event initially.
+		$obj->set_timezone( $obj->timezone_string() );
+		return $obj;
 	}
 
 
@@ -216,7 +220,10 @@ class EE_Event extends EE_CPT_Base{
 	 * @return EE_Event
 	 */
 	public static function new_instance_from_db ( $props_n_values = array() ) {
-		return new self( $props_n_values, TRUE );
+		$obj = new self( $props_n_values, TRUE );
+		//we need to set the _timezone property to whatever is set in the db for the event initially.
+		$obj->set_timezone( $obj->timezone_string() );
+		return $obj;
 	}
 
 
