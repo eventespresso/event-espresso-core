@@ -284,7 +284,7 @@ class EE_Base_Class{
 	 * @return EE_Base_Class
 	 */
 	protected function ensure_related_thing_is_model_obj($object_or_id,$model_name){
-		$other_model_instance = self::_get_model_instance_with_name(self::_get_model_classname($model_name));
+		$other_model_instance = self::_get_model_instance_with_name(self::_get_model_classname($model_name), $this->_timezone);
 		$model_obj = $other_model_instance->ensure_is_obj($object_or_id);
 		return $model_obj;
 	}
@@ -451,7 +451,7 @@ class EE_Base_Class{
 		} else {
 			unset($save_cols_n_values[self::_get_primary_key_name( get_class( $this) )]);
 			
-			$results = $this->get_model()->insert ( $save_cols_n_values, true);
+			$results = $this->get_model()->insert( $save_cols_n_values, true);
 			if($results){//if successful, set the primary key
 				$this->set(self::_get_primary_key_name( get_class($this) ),$results);//for some reason the new ID is returned as part of an array,
 				//where teh only key is 'new-ID', and it's value is the new ID.
@@ -479,7 +479,7 @@ class EE_Base_Class{
 	 */
 	public function get_model() {
 		$modelName = self::_get_model_classname( get_class($this) );
-		return self::_get_model_instance_with_name($modelName);
+		return self::_get_model_instance_with_name($modelName, $this->_timezone );
 	}
 
 
@@ -491,11 +491,11 @@ class EE_Base_Class{
 	 * @param  string $classname      the classname of the child class
 	 * @return mixed (EE_Base_Class|bool)
 	 */
-	protected static function _check_for_object( $props_n_values, $classname ) {
+	protected static function _check_for_object( $props_n_values, $classname, $timezone = NULL ) {
 		$primary_id_ref = self::_get_primary_key_name( $classname );
 
 		if ( array_key_exists( $primary_id_ref, $props_n_values ) && !empty( $props_n_values[$primary_id_ref] ) ) {
-			$existing = self::_get_model($classname)->get_one_by_ID( $props_n_values[$primary_id_ref] );
+			$existing = self::_get_model( $classname, $timezone )->get_one_by_ID( $props_n_values[$primary_id_ref] );
 			if ( $existing ) {
 				foreach ( $props_n_values as $property => $field_value ) {
 					$existing->set( $property, $field_value );
@@ -518,10 +518,10 @@ class EE_Base_Class{
 	 * @access public now, as this is more convenient 
 	 * @return EEM_Base
 	 */
-	protected static function  _get_model( $classname ){
+	protected static function  _get_model( $classname, $timezone = NULL ){
 		//find model for this class
 		$modelName=self::_get_model_classname($classname);
-		return self::_get_model_instance_with_name($modelName);
+		return self::_get_model_instance_with_name($modelName, $timezone );
 	}
 
 
@@ -530,8 +530,9 @@ class EE_Base_Class{
 	 * Gets the model instance (eg instance of EEM_Attendee) given its classname (eg EE_Attendee)
 	 * @return EEM_Base
 	 */
-	protected static function _get_model_instance_with_name($model_classname){
+	protected static function _get_model_instance_with_name($model_classname, $timezone = NULL){
 		$model=call_user_func($model_classname."::instance");
+		$model->set_timezone( $timezone );
 		return $model;
 	}
 
