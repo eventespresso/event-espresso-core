@@ -362,10 +362,10 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 
 
 	private function _convert_from_numeric_value_to_utc_unixtimestamp( $datetime ) {
-		$datetime = (int) $datetime;
+		$datetime = date( 'Y-m-d H:i:s', (int) $datetime);
 
 		date_default_timezone_set( $this->_timezone );
-		$datetime = date( 'Y-m-d H:i:s', $datetime );
+		$datetime = strtotime($datetime);
 
 		//if we don't have a datetime at this point then something has gone wrong 
 		if ( !$datetime )
@@ -375,7 +375,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		date_default_timezone_set('UTC');
 
 		//now that we have the string we can send this over to our string value conversion
-		return $this->_convert_from_string_value_to_utc_unixtimestamp( $datetime );
+		return $datetime;
 	}
 
 
