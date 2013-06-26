@@ -618,7 +618,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return bool           Success or fail.
 	 */
 	protected function _default_venue_update( $evtobj, $data ) {
-		require_once( 'EEM_Venue.model.php' );
+		require_once( EE_MODELS . 'EEM_Venue.model.php' );
 		$venue_model = EEM_Venue::instance();
 		$rows_affected = NULL;
 		$venue_id = !empty( $data['venue_id'] ) ? $data['venue_id'] : NULL;
