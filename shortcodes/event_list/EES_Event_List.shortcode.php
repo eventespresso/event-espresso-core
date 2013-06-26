@@ -57,7 +57,8 @@ class EES_Event_List  extends EES_Shortcode {
 
 
 	/**
-	 * 	init - calls class constructor
+	 * 	init - initial shortcode module setup called during "wp" hook
+	 * 	this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
 	 *
 	 *  @access 	public
 	 *  @return 	void
