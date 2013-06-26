@@ -39,21 +39,25 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	private $_timezone = NULL;
 
 
+
+	/**
+	 * This holds whatever UTC offset for the blog (we automatically convert timezone strings into their related offsets for comparison purposes).
+	 * @var int
+	 */
+	private $_blog_offset = NULL;
+
+
 	
 	public function __construct( $table_column, $nicename, $nullable, $default_value, $timezone = NULL, $date_format = NULL, $time_format = NULL, $pretty_date_format = NULL, $pretty_time_format = NULL ){
 		parent::__construct($table_column, $nicename, $nullable, $default_value);
 		$this->_date_format = empty($date_format) ? 'Y-m-d' : $date_format;
 		$this->_time_format = empty($time_format) ? 'H:i:s' : $time_format;
+		
+		$this->set_timezone( $timezone );
+
+
 		$this->_pretty_date_format = empty($pretty_date_format) ? 'F j, Y' : $pretty_date_format;
 		$this->_pretty_time_format = empty( $pretty_time_format ) ? 'g:i a' : $pretty_time_format;
-		$this->_timezone = empty($timezone) ? get_option('timezone_string') : $timezone;
-
-		//if timezone is STILL empty then let's get the GMT offset and then set the timezone_string using our converter
-		if ( empty( $this->_timezone ) ) {
-			//let's get a the WordPress UTC offset
-			$offset = get_option('gmt_offset');
-			$this->_timezone = self::timezone_convert_to_string_from_offset( $offset );
-		}
 	}
 
 
@@ -86,6 +90,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return string    The final assembled format string.
 	 */
 	private function _get_date_time_output( $pretty = FALSE ) {
+
 		switch ( $this->_date_time_output ) {
 			case 'time' :
 				return $pretty ? $this->_pretty_time_format : $this->_time_format;
@@ -120,14 +125,25 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	/**
 	 * See $_timezone property for description of what the timezone property is for.  This SETS the timezone internally for being able to refernece what timezone we are running conversions on when converting TO the internal timezone (UTC Unix Timestamp) for the object OR when converting FROM the internal timezone (UTC Unix Timestamp).
 	 *
+	 * We also set some other properties in this method.
+	 *
 	 * @access public
 	 * @param string $timezone A valid timezone string as described by @link http://www.php.net/manual/en/timezones.php
 	 * @return void
 	 */
 	public function set_timezone( $timezone ) {
-		$timezone = empty( $timezone ) ? $this->_timezone : $timezone;
-		self::validate_timezone( $timezone ); //just running validation on the timezone.
-		$this->_timezone = $timezone;
+		$this->_timezone = empty( $timezone ) ? get_option('timezone_string') : $timezone;
+
+		//if timezone is STILL empty then let's get the GMT offset and then set the timezone_string using our converter
+		if ( empty( $this->_timezone ) ) {
+			//let's get a the WordPress UTC offset
+			$offset = get_option('gmt_offset');
+			$this->_blog_offset = $offset;
+			$this->_timezone = self::timezone_convert_to_string_from_offset( $offset );
+		}
+
+
+		self::validate_timezone( $this->_timezone ); //just running validation on the timezone.
 	}
 
 
@@ -253,9 +269,10 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 
 
 
-	public function prepare_for_prety_echoing( $datetimevalue ) {
-		$format_string = $this->_get_date_time_output();
-		echo $this->_convert_to_timezone_from_utc_unix_timestamp( $datetimevalue, $format_string );
+	public function prepare_for_pretty_echoing( $datetimevalue ) {
+		$timezone_string = $this->_display_timezone() ? '<span class="ee_dtt_timezone_string">(' . self::get_timezone_abbrev($this->_timezone) . ')</span>' : '';
+		$format_string = $this->_get_date_time_output( TRUE );
+		return $this->_convert_to_timezone_from_utc_unix_timestamp( $datetimevalue, $format_string ) . $timezone_string;
 	}
 
 
@@ -448,6 +465,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
                 {
                         if ($city['offset'] == $offset)
                         {
+
                                 return $city['timezone_id'];
                         }
                 }
@@ -459,6 +477,61 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 
 
 
+	/**
+	 * This method simply gets the offset for the given valid timezone string and returns it.
+	 * @param  string $tz valid timezone string
+	 * @return mixed (string|bool)     if conversion can happen then we return the offset, if not then we return FALSE (or EE_Error)
+	 */
+	public static function timezone_convert_to_offset_from_string( $tz ) {
+		$abbrarray = timezone_abbreviations_list();
+		$offset = NULL;
+		foreach ( $abbrarray as $abbr ) {
+			foreach ( $abbr as $city ) {
+				if ( $city['timezone_id'] == $tz ) {
+					$offset = $city['offset'];
+				}
+			}
+		}
+
+		//$offset will be in seconds so let's convert to hours and make sure its an int
+		$offset = !empty( $offset) ? (int) ( $offset/3600 ) : FALSE;
+
+		return $offset;
+	}
+
+
+
+
+
+
+
+	/**
+	 * All this method does is determine if we're going to display the timezone string or not on any output.
+	 *
+	 * To determine this we check if the set timezone offset is different than the blogs set timezone offset.  If so, then true.
+	 *
+	 * @param string $timezone_string A valid datetimezone string for comparison
+	 * @return bool true for yes false for no
+	 */
+	private function _display_timezone() {
+
+		//first let's do a comparison of timezone strings.  If they match then we can get out without any further calcs
+		$blog_string = get_option('timezone_string');
+		if ( $blog_string == $this->_timezone ) 
+			return FALSE;
+
+		//now we need to calc the offset for the timezone string so we can compare with the blog offset.
+		$this_offset = self::timezone_convert_to_offset_from_string( $this->_timezone );
+		$blog_offset = !empty( $this->_blog_offset ) ? $this->_blog_offset : self::timezone_convert_to_offset_from_string( $blog_string );
+
+		//now compare
+		if ( $blog_offset === $this_offset )
+			return FALSE;
+
+		return TRUE;
+
+	}
+
 
 
 	/**
@@ -468,6 +541,20 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 */
 	private function _set_date_obj( $datestring, $timezone ) {
 		$this->_date = new DateTime( $datestring, new DateTimeZone( $timezone ) );
+	}
+
+
+
+
+	/**
+	 * This will take an incoming timezone string and return the abbreviation for that timezone
+	 * @param  string $timezone Valid timezone String
+	 * @return string           abbreviation
+	 */
+	public static function get_timezone_abbrev( $timezone ) {
+		$dateTime = new DateTime();
+		$dateTime->setTimeZone( new DateTimeZone($timezone) );
+		return $dateTime->format('T');
 	}
 
 	
