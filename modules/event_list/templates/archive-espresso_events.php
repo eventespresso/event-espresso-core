@@ -40,25 +40,26 @@ $pagination_args = array(
 	'current' => max( 1, $paged ),
 	'total' => $events->max_num_pages
 );
-
+$evnt_cntr = 1;
 
 get_header();
 ?>
-	<h1  id="event-list-h1"><?php _e( 'Event List', 'event_espresso' ); ?></h1>
+	<h1  id="event-list-h1"><?php _e( 'Upcoming Events', 'event_espresso' ); ?></h1>
 
 	<div id="primary" >
-		<div id="content" role="main">
+		<div id="espresso-events-list-dv" role="main">
 				
 		<?php if ( $events->have_posts() ) { ?>
 			<?php while ( $events->have_posts() ) { $events->the_post(); ?>
 			
-			<article id="post-<?php $post->ID; ?>" <?php post_class(); ?>>
+			<article id="post-<?php the_ID(); ?>" <?php post_class( 'evnt-cntr-' . $evnt_cntr ); ?>>
 
 			<?php
 			//echo '<h3>$post</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $post, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 				if ( has_post_thumbnail( $post->ID )) {
 					if ( $img_ID = get_post_thumbnail_id( $post->ID )) {
-						if ( $featured_img = wp_get_attachment_image_src( $img_ID, 'single-post-thumbnail' )) {
+						$img_size = $evnt_cntr < 2 ? 'large' : 'medium';
+						if ( $featured_img = wp_get_attachment_image_src( $img_ID, $img_size )) {
 							$caption = esc_attr( get_post( get_post_thumbnail_id( $post->ID ))->post_excerpt );
 				?>
 				<div id="ee-event-img-dv-<?php echo $post->ID; ?>" class="ee-event-img-dv">
@@ -69,24 +70,27 @@ get_header();
 					}			
 				}				
 			?>
-			<div class="espresso-event-wrapper-dv">
+			<div class="espresso-event-wrapper-dv clear">
 				<header class="event-header">
 					<p><?php the_terms( $post->ID, 'espresso_event_categories' );// the_terms( $post->ID, 'category' ); /*echo date( 'D F j Y, h:i a', strtotime( $post->post_date ));*/ ?></p>
 					<h1 class="event-title"><?php the_title(); ?></h1>
 				</header>
 				<!-- .entry-header -->
-				<div class="event-content">
-					<?php the_content(); ?>
+				<div class="event-content clear">
+					<?php the_excerpt(); ?> 
 					<?php wp_link_pages( array( 'before' => '<div class="page-links">' . __( 'Pages:', 'twentytwelve' ), 'after' => '</div>' ) ); ?>
 				</div>
+				
 				<!-- .entry-content -->
-				<footer class="event-meta">
-					<?php edit_post_link( __( 'edit this event', 'twentytwelve' ), '<span class="edit-link">', '</span>' ); ?>
+				<footer class="event-meta clear">
+					<a class="ee-register-button-lnk button clear" href="<?php echo home_url( '/' ) . __( 'event', 'event_espresso' ) . '/' . $post->post_name; ?>" title=""><?php _e( 'Register Now', 'event_espresso' ); ?></a>
+					<?php edit_post_link( __( 'edit this event', 'twentytwelve' ), '<span class="edit-event-lnk small-txt clear">', '</span>' ); ?>
 				</footer>
 				<!-- .entry-meta -->
 			</div>
 
 			</article><!-- #post -->
+			<?php $evnt_cntr++; ?>
 			<?php } ?>
 
 			<?php twentytwelve_content_nav( 'nav-below' ); ?>
@@ -107,7 +111,8 @@ get_header();
 			</article><!-- #post-0 -->
 
 		<?php } // end have_posts() check ?>
-
+		
+			<div class="clear"></div>
 		</div><!-- #content -->
 	</div><!-- #primary -->
 
