@@ -53,10 +53,9 @@
 			echo '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 		}
 	}
-	if ( ! defined('DOING_AJAX') || ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' ) {
-		add_action( 'shutdown', 'espresso_printr_session' );
+	if ( ! defined('DOING_AJAX') || ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' || ! isset( $_REQUEST['TB_iframe'] )) {
+		//add_action( 'shutdown', 'espresso_printr_session' );
 	}
-
 
 
 	/**
