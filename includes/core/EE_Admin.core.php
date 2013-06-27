@@ -42,7 +42,7 @@ class EE_Admin {
 	 *@ access public
 	 *@ return class instance
 	 */	
-	public  function instance( EE_Registry $EE = NULL ) {
+	public static function instance( EE_Registry $EE = NULL ) {
 		// check if class object is instantiated
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! is_a( self::$_instance, __CLASS__ )) {
 			self::$_instance = new self( $EE );
@@ -545,23 +545,21 @@ class EE_Admin {
 			// loop thru shortcodes
 			foreach ( $this->EE->shortcodes as $EES_Shortcode => $shortcode_dir ) {
 				// strip class prefix and convert to UPPERCASE
-				$shortcode = strtoupper( str_replace( 'EES_', '', $EES_Shortcode ));
+				$shortcode = strtoupper( $EES_Shortcode );
+				//$shortcode = strtoupper( str_replace( 'EES_', '', $EES_Shortcode ));
 				// is the shortcode in the post_content ?
 				if ( strpos( $post->post_content, $shortcode ) !== FALSE ) {
 					// map shortcode to post
-					$this->EE->CFG->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] =  $post_ID;
+					$this->EE->CFG->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] = $post_ID;
 					// and to frontpage in case it's displaying latest posts
-					$this->EE->CFG->post_shortcodes[ $show_on_front ][ $EES_Shortcode ] =  $post_ID;
+					$this->EE->CFG->post_shortcodes[ $show_on_front ][ $EES_Shortcode ] = $post_ID;
 					$update_post_shortcodes = TRUE;
 				} 
 			}
+//			printr( $this->EE->CFG->post_shortcodes, '$this->EE->CFG->post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			
 			if ( $update_post_shortcodes ) {
-//				echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-//				printr( $post, '$post  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//				printr( $this->EE->CFG, '$this->EE->CFG  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//				add_action( 'shutdown', array( $this->EE->CFG, 'update_config' ));
-				$this->EE->CFG->update_config();
+				$this->EE->CFG->update_post_shortcodes();
 			}			
 		}
 		
