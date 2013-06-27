@@ -46,7 +46,7 @@ abstract class EED_Module extends EE_Base {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public abstract static function register_module();
+//	public abstract static function register_module();
 	
 	/**
 	 * 	set_hooks - for hooking into EE Core, other modules, etc
@@ -54,7 +54,7 @@ abstract class EED_Module extends EE_Base {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public abstract static function set_hooks();
+//	public abstract static function set_hooks();
 
 	/**
 	 * 	set_hooks_admin - for hooking into EE Admin Core, other modules, etc
@@ -62,7 +62,7 @@ abstract class EED_Module extends EE_Base {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public abstract static function set_hooks_admin();
+//	public abstract static function set_hooks_admin();
 
 	/**
 	 * 	init - initial module setup
@@ -72,6 +72,16 @@ abstract class EED_Module extends EE_Base {
 	 *  @return 	void
 	 */
 	public abstract function init();
+	
+	/**
+	*	instance - returns $this
+	*
+	*	@access public
+	*	@return 	void
+	*/
+	final public static function instance() {
+		return $this;
+	}
 	
 	/**
 	*	class constructor - can ONLY be instantiated by EE_Front_Controller

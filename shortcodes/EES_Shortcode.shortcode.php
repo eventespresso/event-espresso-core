@@ -43,7 +43,7 @@ abstract class EES_Shortcode extends EE_Base {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public abstract static function register_shortcode();
+//	public abstract static function register_shortcode();
 	
 	/**
 	 * 	set_hooks - for hooking into EE Core, other modules, etc
@@ -51,7 +51,7 @@ abstract class EES_Shortcode extends EE_Base {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public abstract static function set_hooks();
+//	public abstract static function set_hooks();
 
 	/**
 	 * 	set_hooks_admin - for hooking into EE Admin Core, other modules, etc
@@ -59,7 +59,7 @@ abstract class EES_Shortcode extends EE_Base {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public abstract static function set_hooks_admin();
+//	public abstract static function set_hooks_admin();
 
 	/**
 	 * 	init - initial shortcode module setup called during "wp" hook
@@ -93,9 +93,18 @@ abstract class EES_Shortcode extends EE_Base {
 	}
 	
 	/**
+	*	instance - returns $this
+	*
+	*	@access public
+	*	@return 	void
+	*/
+	final public static function instance() {
+		return $this;
+	}
+	
+	/**
 	*	class constructor - can ONLY be instantiated by EE_Front_Controller
 	*
-	*	@override default exception handling
 	*	@access public
 	*	@return 	void
 	*/
