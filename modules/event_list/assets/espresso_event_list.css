@@ -1,10 +1,11 @@
 	
+	#espresso-events-list-wrap-dv { padding:4em 0 0; }	
+	#espresso-events-list-dv { position: relative; padding: 0; margin: 0 auto; }	
 	#event-list-h1 {
-		position: relative; z-index:10; margin: 0 0 .5em;
+		position: relative; top:-2em; z-index:10; margin: 0 0 .5em;
 		font-size: 2em; font-weight: bold; color: #ccc;
 		text-shadow: 1px 1px 0px #fff;
 	}	
-	#espresso-events-list-dv { position: relative; padding: 0; margin: 0; }	
 	.espresso_events {
 		float: left; position: relative; width: 300px; height: auto; padding:0; margin: 10px;
 		background: #f8f8f8; background: rgba( 255, 255, 255, .05 ); box-shadow: 0px 0px 3px rgba( 0, 0, 0, .2 );
@@ -37,3 +38,4 @@
 	.bigger-txt { font-size:1.5em; letter-spacing:-1px; }
 	.huge-txt { font-size:2em; letter-spacing:-2px; }
 	.highlight-bg { padding:1em 20px; background:#ffffdd; border-radius:3px; }
+	.hidden { display:none; }
