@@ -27,16 +27,22 @@ class EE_Default_CPT_Where_Conditions extends EE_Default_Where_Conditions{
 	}
 	/**
 	 * Gets the where default where conditions for a custom post type model
+	 * @param string $model_relation_path. Eg, from Event to Payment, this should be "Registration.Transaction.Payment"
 	 * @return array like EEM_Base::get_all's $query_params's index [0] (where conditions)
 	 */
-	function get_default_where_conditions(){
+	function get_default_where_conditions($model_relation_chain = null){
+		//make sure there's a period at the end of $model_relation_chain
+		if($model_relation_chain != '' && $model_relation_chain[strlen($model_relation_chain)-1] !='.'){
+			$model_relation_chain=$model_relation_chain.".";
+		}
+		
 		//find post_type field
 		$post_type_field = $this->_get_field_on_column('post_type');
 		$status_field = $this->_get_field_on_column('post_status');
 		
 		return array(
-			$status_field->get_name()=>array('!=','auto-draft'),
-			'OR*'.$this->_post_type."-or-".$this->_meta_field."-query-clause" => array($post_type_field->get_name()=>$this->_post_type, $this->_meta_field => array( 'IS NOT NULL'))
+			$model_relation_chain.$status_field->get_name()=>array('!=','auto-draft'),
+			'OR*'.$this->_post_type."-or-".$this->_meta_field."-query-clause" => array($model_relation_chain.$post_type_field->get_name()=>$this->_post_type, $model_relation_chain.$this->_meta_field => array( 'IS NOT NULL'))
 		);
 	}
 }

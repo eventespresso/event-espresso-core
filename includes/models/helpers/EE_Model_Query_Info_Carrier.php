@@ -16,9 +16,12 @@ class EE_Model_Query_Info_Carrier extends EE_Base{
    private $_join_sql;
    /**
     *
-    * @var array numerically-indexed array stating all the models that have been included thus far,so we don't get duplicates
+    * @var array stating all the models that have been included thus far,so we don't get duplicates.
+    * Keys are model names (eg "Payment"), and values are the model relation chains to them from the queried model
+    * (eg, "Registration.Transaction.Payment")
     */
    private $_models_included;
+   
    /**
     * After we've acquired all the data types, we can create this sql.
     * @var string 
@@ -92,18 +95,23 @@ class EE_Model_Query_Info_Carrier extends EE_Base{
 	   //which is carrying info from two models WHERE one is already included but the other is NOT
 	  
    }
+   /**
+    * Checks whether or not we have already included all the models mentione din $model_names on the query info varrier
+    * @param array $model_names just like EE_MOdel_QUery_Info_Carrier::_models_included
+    * @return boolean
+    */
    protected function  _have_already_included_one_of_these_models($model_names){
-	   foreach($this->_models_included as $model_included){
-		   if(in_array($model_included, $model_names)){
+	   foreach($this->_models_included as $model_included=>$model_relation_path){
+		   if(array_key_exists($model_included, $model_names)){
 			   return true;
 		   }
 	   }
 	   return false;
    }
-   
-   protected function get_first_model_name_included(){
-	   return array_shift($this->_models_included);
-   }
+   /**
+    * Array keys are model names, values are "model relation paths". See EE_Model_Query_Info_Carrier::_models_included for details
+    * @return array like EE_Model_Query_Info_Carrier::_models_included
+    */
    public function get_model_names_included(){
 	   return $this->_models_included;
    }

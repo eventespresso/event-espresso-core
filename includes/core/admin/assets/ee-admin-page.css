@@ -507,3 +507,8 @@ label.error  { display: block; color: #FE2A00 !important; }
     padding-top: 10px;
     padding-left: 15px;
 }
+
+.ee_dtt_timezone_string {
+	font-size: .8em;
+	display: block;
+}

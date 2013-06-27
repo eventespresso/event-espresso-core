@@ -145,5 +145,19 @@ class EEM_CPT_Base extends EEM_Base{
 	}
 
 
+	/**
+	 * Especially used by chidlren of EEM_CPT_Base to figure out what values of post status are acceptable 
+	 * on their respective status fields
+	 * @global array $wp_post_statuses set in wp core for storing all the post stati
+	 * @return array
+	 */
+	public static function get_post_statuses(){
+		global $wp_post_statuses;
+		$statuses= array();
+		foreach($wp_post_statuses as $post_status => $args_object){
+			$statuses[$post_status] = $args_object->label;
+		}
+		return $statuses;
+	}
 
 }

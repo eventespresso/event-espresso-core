@@ -28,6 +28,12 @@ class EE_CPT_Base extends EE_Base_Class{
 	 * @var INT
 	 */
 	protected $_parent = 0;
+	
+	/**
+	 * Terms (in context of a particular taxonomy) which apply to this cpt
+	 * @var EE_Term_Taxonomy[]
+	 */
+	protected $_Term_Taxonomy;
 
 
 	/**

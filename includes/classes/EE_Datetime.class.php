@@ -179,13 +179,13 @@ class EE_Datetime extends EE_Base_Class{
 
 	public static function new_instance( $props_n_values = array(), $timezone = NULL ) {
 		$classname = __CLASS__;
-		$has_object = parent::_check_for_object( $props_n_values, $classname );
+		$has_object = parent::_check_for_object( $props_n_values, $classname, $timezone );
 		return $has_object ? $has_object : new self( $props_n_values, FALSE, $timezone );
 	}
 
 
-	public static function new_instance_from_db ( $props_n_values = array() ) {
-		return new self( $props_n_values, TRUE );
+	public static function new_instance_from_db ( $props_n_values = array(), $timezone = NULL ) {
+		return new self( $props_n_values, TRUE, $timezone );
 	}
 
 
@@ -458,15 +458,11 @@ class EE_Datetime extends EE_Base_Class{
 	* 		@param 		string 		$echo 		whether we echo or return (note echoing uses "pretty" formats, otherwise we use the standard formats)
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
-	private function _show_datetime( $date_or_time = NULL, $EVT_or_REG = 'EVT', $start_or_end = 'start', $dt_frmt = FALSE, $tm_format = FALSE, $echo = FALSE ) {
+	private function _show_datetime( $date_or_time = NULL, $EVT_or_REG = 'EVT', $start_or_end = 'start', $dt_frmt = FALSE, $tm_frmt = FALSE, $echo = FALSE ) {
+
+		$in_dt_frmt = !$dt_frmt ? $this->_dt_frmt : $dt_frmt;
+		$in_tm_frmt = !$tm_frmt ? $this->_tm_frmt : $tm_frmt;
 		
-		if ( ! $dt_frmt ){
-			$dt_frmt = $this->_dt_frmt;
-		}
-		
-		if ( ! $tm_format ){
-			$tm_format = $this->_tm_frmt;
-		}
 
 		$var_name = "_DTT_{$EVT_or_REG}_{$start_or_end}";
 		$field = $this->get_model()->field_settings_for(ltrim($var_name, '_'));
@@ -474,17 +470,17 @@ class EE_Datetime extends EE_Base_Class{
 		if ( $dt_frmt ) {
 			$this->_clear_cached_property( $var_name );
 			if ( $echo )
-				$field->set_pretty_date_format( $dt_frmt );
+				$field->set_pretty_date_format( $in_dt_frmt );
 			else 
-				$field->set_date_format( $dt_frmt );
+				$field->set_date_format( $in_dt_frmt );
 		}
 
-		if ( $tm_format ) {
+		if ( $tm_frmt ) {
 			$this->_clear_cached_property( $var_name );
 			if ( $echo )
-				$field->set_pretty_time_format( $tm_format );
+				$field->set_pretty_time_format( $in_tm_frmt );
 			else
-				$field->set_time_format( $tm_format );
+				$field->set_time_format( $in_tm_frmt );
 		}
 
 		//set timezone in field object
@@ -505,9 +501,9 @@ class EE_Datetime extends EE_Base_Class{
 				$field->set_date_time_output();
 		}
 
-		if ( $echo )
+		if ( $echo ) {
 			$this->e( ltrim( $var_name, '_' ) );
-		else
+		 } else
 			return $this->get( ltrim( $var_name, '_' ) );
 
 	}
@@ -813,6 +809,35 @@ class EE_Datetime extends EE_Base_Class{
 	*/	
 	public function tckts_left() {
 		return $this->_DTT_tckts_left;
+	}
+
+
+
+	/**
+	 * This will return a timestamp for the website timezone but ONLY when the current website timezone is different than the timezone set for the website.
+	 *
+	 * NOTE, this currently only works well with methods that return values.  If you use it with methods that echo values the $_timestamp property may not get reset to its original value and that could lead to some unexpected results!
+	 *
+	 * @access public
+	 * @param string $callback must match a valid method in this class
+	 * @param mixed (array|string) $args This is the arguments that will be passed to the callback.
+	 * @param string $prepend You can include something to prepend on the timestamp
+	 * @param string $append You can include somethign to append on the timestamp
+	 * @return string timestamp
+	 */
+	public function display_in_my_timezone( $callback, $args = NULL, $prepend = '', $append = '' ) {
+		$timezone = get_option('timezone_string');
+		if ( $timezone == $this->_timezone )
+			return '';
+		$original_timezone = $this->_timezone;
+		$this->set_timezone( $timezone );
+
+		if ( !method_exists( $this, $callback ) )
+			throw EE_Error(sprintf( __('The method named "%s" given as the callback param in "display_in_my_timezone" does not exist.  Please check your spelling', 'event_espresso'), $callback ) );
+		$args = (array) $args;
+		$return =  $prepend . call_user_func_array( array( $this, $callback ), $args ) . $append;
+		$this->set_timezone( $original_timezone );
+		return $return;
 	}		
 }
 

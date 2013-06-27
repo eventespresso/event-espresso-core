@@ -55,10 +55,7 @@ class EEM_Venue extends EEM_CPT_Base {
 		$this->singlular_item = __('Venue','event_espresso');
 		$this->plural_item = __('Venues','event_espresso');
 		
-		global $wp_post_statuses;
-		foreach($wp_post_statuses as $post_status => $args_object){
-			self::$_statuses[$post_status] = $args_object->label;
-		}
+		self::$_statuses = EEM_CPT_Base::get_post_statuses();
 		$this->_tables = array(
 			'Venue_CPT'=> new EE_Primary_Table('posts', 'ID'),
 			'Venue_Meta'=>new EE_Secondary_Table('esp_venue_meta', 'VNUM_ID', 'VNU_ID')

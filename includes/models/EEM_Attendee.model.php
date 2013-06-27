@@ -23,13 +23,14 @@
  */
 require_once ( EE_MODELS . 'EEM_Base.model.php' );
 
-class EEM_Attendee extends EEM_Soft_Delete_Base {
+class EEM_Attendee extends EEM_CPT_Base {
 
   	// private instance of the Attendee object
 	private static $_instance = NULL;
 	
 	/**
 	 * QST_ID and QST_systems that relate to attendee attributes.
+	 * NOTE: this will be deprecated if we remove system questions
 	 */
 	const fname_question_id=1;
 	const lname_question_id=2;
@@ -42,7 +43,11 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 	const zip_question_id=9;
 	const phone_question_id=10;
 
-	
+	/**
+	 * Statuses for attendees
+	 * @var array
+	 */
+	private static $_statuses = array();
 
 
 
@@ -55,31 +60,49 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 	protected function __construct() {	
 		$this->singlular_item = __('Attendee','event_espresso');
 		$this->plural_item = __('Attendees','event_espresso');
-
+		
+		self::$_statuses = EEM_CPT_Base::get_post_statuses();
+		
 		$this->_tables = array(
-			'Attendee'=> new EE_Primary_Table('esp_attendee', 'ATT_ID')
+			'Attendee_CPT'=> new EE_Primary_Table('posts', 'ID'),
+			'Attendee_Meta'=>new EE_Secondary_Table('esp_attendee_meta', 'ATTM_ID', 'ATT_ID')
 		);
 		$this->_fields = array(
-			'Attendee'=>array(
-				'ATT_ID'=> new EE_Primary_Key_Int_Field('ATT_ID', __('Attendee ID','event_espresso'), false, 0),
+			'Attendee_CPT'=>array(
+				'ATT_ID'=>new EE_Primary_Key_Int_Field('ID', __("Attendee ID", "event_espresso"), false),
+				'ATT_full_name'=>new EE_Plain_Text_Field('post_title', __("Attendee Full Name", "event_espresso"), false, __("Unknown", "event_espresso")),
+				'ATT_bio'=>new EE_Simple_HTML_Field('post_content', __("Attendee Biography", "event_espresso"), false, __("No Biography Provided", "event_espresso")),
+				'ATT_slug'=>new EE_Slug_Field('post_name', __("Attendee URL Slug", "event_espresso"), false),
+				'ATT_created'=>new EE_Datetime_Field('post_date', __("Time Attendee Created", "event_espresso"), false, current_time('timestamp')),
+				'ATT_short_bio'=>new EE_Simple_HTML_Field('post_excerpt', __("Attendee Short Biography", "event_espresso"), true, __("No Biography Provided", "event_espresso")),
+				'ATT_status'=>new EE_Enum_Field('post_status', __("Attendee Status", "event_espresso"), false, 'publish', self::$_statuses),
+				'ATT_modified'=>new EE_Datetime_Field('post_modified', __("Time Attendee Last Modified", "event_espresso"), true, current_time('timestamp')),
+				'ATT_author'=>new EE_Integer_Field('post_author', __("WP User that Created Attendee", "event_espresso"), false,0),
+				'ATT_parent'=>new EE_DB_Only_Int_Field('post_parent', __("Parent Attendee (unused)", "event_espresso"), true),
+				'post_type'=>new EE_DB_Only_Text_Field('post_type', __("Post Type of Attendee", "event_espresso"), false,'espresso_attendees')
+			),
+			'Attendee_Meta'=>array(
+				'ATTM_ID'=> new EE_DB_Only_Int_Field('ATTM_ID', __('Attendee Meta Row ID','event_espresso'), false),
+				'ATT_ID_fk'=>new EE_DB_Only_Int_Field('ATT_ID', __("Foreign Key to Attendee in Post Table", "event_espresso"), false),
 				'ATT_fname'=>new EE_Plain_Text_Field('ATT_fname', __('First Name','event_espresso'), true, ''),
 				'ATT_lname'=>new EE_Plain_Text_Field('ATT_lname', __('Last Name','event_espresso'), true, ''),
 				'ATT_address'=>new EE_Plain_Text_Field('ATT_address', __('Address Part 1','event_espresso'), true, ''),
 				'ATT_address2'=>new EE_Plain_Text_Field('ATT_address2', __('Address Part 2','event_espresso'), true, ''),
 				'ATT_city'=>new EE_Plain_Text_Field('ATT_city', __('City','event_espresso'), true, ''),
-				'STA_ID'=>new EE_Plain_Text_Field('STA_ID', __('State','event_espresso'), true, ''),
-				'CNT_ISO'=>new EE_Plain_Text_Field('CNT_ISO', __('Country','event_espresso'), true, ''),
+				'STA_ID'=>new EE_Foreign_Key_Int_Field('STA_ID', __('State','event_espresso'), true,0,'State'),
+				'CNT_ISO'=>new EE_Foreign_Key_String_Field('CNT_ISO', __('Country','event_espresso'), true,'','Country'),
 				'ATT_zip'=>new EE_Plain_Text_Field('ATT_zip', __('ZIP/Postal Code','event_espresso'), true, ''),
 				'ATT_email'=>new EE_Email_Field('ATT_email', __('Email Address','event_espresso'), true, ''),
 				'ATT_phone'=>new EE_Plain_Text_Field('ATT_phone', __('Phone','event_espresso'), true, ''),
-				'ATT_social'=>new EE_Serialized_Text_Field('ATT_social', __('Serialized array of social media info','event_espresso'), true, ''),
-				'ATT_comments'=>new EE_Simple_HTML_Field('ATT_comments', __('Comments about Attendee','event_espresso'), true, ''),
 				'ATT_notes'=>new EE_Simple_HTML_Field('ATT_notes', __('Notes about Attendee','event_espresso'), true, ''),
-				'ATT_deleted'=>new EE_Trashed_Flag_Field('ATT_deleted', __('Whether the attendee has been deleted or not','event_espresso'), true, false),
 			));
 		$this->_model_relations = array(
 			'Registration'=>new EE_Has_Many_Relation(),
+			'State'=>new EE_Belongs_To_Relation(),
+			'Country'=>new EE_Belongs_To_Relation()
 		);
+		require_once('strategies/EE_Default_CPT_Where_Conditions.strategy.php');
+		$this->_default_where_conditions_strategy = new EE_Default_CPT_Where_Conditions('espresso_attendees', 'ATTM_ID');
 		parent::__construct();
 		
 	}
