@@ -187,7 +187,7 @@ abstract class EEM_Base extends EE_Base{
 			$relation_obj->_construct_finalize_set_models($this->get_this_model_name(), $model_name);
 		}
 
-		$this->_timezone = $timezone;
+		$this->set_timezone($timezone);
 		//finalize default where condition strategy, or set default
 		if( ! $this->_default_where_conditions_strategy){
 			//nothing was set during chidl consturctor, so set default
@@ -207,6 +207,18 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	public function set_timezone( $timezone ) {
 		$this->_timezone = $timezone;
+
+		//note we need to loop through relations and set the timezone on those objects as well.
+		foreach ( $this->_model_relations as $relation ) {
+			$relation->set_timezone($timezone);
+		}
+
+		//and finally we do the same for any datetime fields
+		foreach ( $this->_fields as $field ) {
+			if ( $field instanceof EE_Datetime_field ) {
+				$field->set_timezone( $timezone );
+			}
+		}
 	}
 
 
@@ -1725,7 +1737,6 @@ abstract class EEM_Base extends EE_Base{
 				return array();
 			}
 			$classInstance=$this->instantiate_class_from_array_or_object($row);
-
 			//set the timezone on the instantiated objects
 			$classInstance->set_timezone( $this->_timezone );
 
@@ -1832,7 +1843,10 @@ abstract class EEM_Base extends EE_Base{
 		//get the required info to instantiate the class whcih relates to this model.
 		$className=$this->_get_class_name();
 
-		$classInstance = call_user_func_array( array( $className, 'new_instance_from_db' ), array( $this_model_fields_n_values, TRUE ) );
+		$classInstance = call_user_func_array( array( $className, 'new_instance_from_db' ), array( $this_model_fields_n_values, $this->_timezone ) );
+
+		//it is entirely possible that the instantiated class object has a set timezone_string db field and has set it's internal _timezone property accordingly (see new_instance_from_db in model objects particularly EE_Event for example).  In this case, we want to make sure the model object doesn't have its timezone string overwritten by any timezone property currently set here on the model so, we intentially override the model _timezone property with the model_object timezone property.
+		$this->set_timezone( $classInstance->get_timezone() );
 
 		return $classInstance;
 	}
@@ -1917,15 +1931,5 @@ abstract class EEM_Base extends EE_Base{
 	}
 	
 	
-	
-
-
-
-
-
-
-
-
-
 	
 }

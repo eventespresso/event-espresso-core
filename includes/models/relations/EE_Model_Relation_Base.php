@@ -23,6 +23,15 @@ abstract class EE_Model_Relation_Base{
 	 * @var string 
 	 */
 	protected $_extra_join_conditions;
+
+
+	/**
+	 * this is typically used when calling the relation models to make sure they inherit any set timezone from the initiating model.
+	 * @var string
+	 */
+	protected $_timezone = NULL;
+
+
 	function __construct($extra_join_conditions){
 		$this->_extra_join_conditions=$extra_join_conditions;
 	}
@@ -51,7 +60,17 @@ abstract class EE_Model_Relation_Base{
 	 */
 	protected function _get_model($model_name){
 		$modelInstance=call_user_func("EEM_".$model_name."::instance");
+		$modelInstance->set_timezone( $this->_timezone );
 		return $modelInstance;
+	}
+
+
+	/**
+	 * entirely possible that relations may be called from a model and we need to make sure those relations have their timezone set correctly. 
+	 * @param string $timezone timezone to set.
+	 */
+	public function set_timezone( $timezone ) {
+		$this->_timezone = $timezone;
 	}
 	
 	
@@ -94,6 +113,8 @@ abstract class EE_Model_Relation_Base{
 	 * @return EE_Base_Class the EE_Base_Class which was added as a relation. (Convenient if you only pass an ID for $other_obj_or_id)
 	 */
 	abstract function add_relation_to($this_obj_or_id, $other_obj_or_id);
+
+
 	/**
 	 * Similar to 'add_relation_to(...)', performs the opposite action of removing the relationship between the two model objects
 	 * @return void

@@ -52,6 +52,15 @@ class EE_Term_Taxonomy extends EE_Base_Class{
 	 * @var int
 	 */
 	protected $_parent;
+
+
+	/**
+	 * count of objects this term is attached to
+	 * @var int
+	 */
+	protected $_term_count;
+
+
 	/**
 	 * Join model between terms-in-context and posts
 	 * @access protected
@@ -68,6 +77,14 @@ class EE_Term_Taxonomy extends EE_Base_Class{
 	 * @var EE_Event
 	 */
 	protected $_Event;
+
+
+	/**
+	 * Venue related to this term_taxonomy via the term_relation model.
+	 * 
+	 * @var EE_Venue
+	 */
+	protected $_Venue;
 
 
 	public static function new_instance( $props_n_values = array() ) {

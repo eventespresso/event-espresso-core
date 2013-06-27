@@ -677,22 +677,22 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return bool           success or fail
 	 */
 	protected function _default_dtt_update( $evtobj, $data ) {
-		$timezone = isset( $data['EVT_timezone_string'] ) ? $data['EVT_timezone_string'] : NULL;
+		$timezone = isset( $data['timezone_string'] ) ? $data['timezone_string'] : NULL;
 		$success = TRUE;
 
-		$q=1;
 		foreach ( $data['event_datetimes'] as $row => $event_datetime ) {
 			$event_datetime['evt_end'] = isset($event_datetime['evt_end']) && ! empty( $event_datetime['evt_end'] ) ? $event_datetime['evt_end'] : $event_datetime['evt_start'];
 			$event_datetime['reg_end'] = isset($event_datetime['reg_end']) && ! empty( $event_datetime['reg_end'] ) ? $event_datetime['reg_end'] : $event_datetime['reg_start'];
 			$DTM = EE_Datetime::new_instance( array(
 					'DTT_ID' => isset( $event_datetime['ID'] ) ? absint( $event_datetime['ID'] ) : NULL,
-					'DTT_EVT_start' => strtotime( $event_datetime['evt_start'] ),
-					'DTT_EVT_end' => strtotime($event_datetime['evt_end']),
-					'DTT_REG_start' => strtotime($event_datetime['reg_start']),
-					'DTT_REG_end' => strtotime($event_datetime['reg_end']),
-						'DTT_is_primary' => $row == 1 ? TRUE : FALSE,
+					'DTT_EVT_start' => $event_datetime['evt_start'],
+					'DTT_EVT_end' => $event_datetime['evt_end'],
+					'DTT_REG_start' => $event_datetime['reg_start'],
+					'DTT_REG_end' => $event_datetime['reg_end'],
+					'DTT_is_primary' => $row == 1 ? TRUE : FALSE,
 				),
 				$timezone);
+
 			$works = $evtobj->_add_relation_to( $DTM, 'Datetime' );
 			$success = !$success ? $success : $works; //if ANY of these updates fail then we want the appropriate global error message
 		}
@@ -711,7 +711,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _default_prices_update( $evtobj, $data ) {
 
-		$timezone = isset( $data['EVT_timezone_string'] ) ? $data['EVT_timezone_string'] : NULL;
+		$timezone = isset( $data['timezone_string'] ) ? $data['timezone_string'] : NULL;
 		$success = TRUE;
 
 		$data['price_count'] = 1;
@@ -826,7 +826,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				} else {
 					$data['price_count']++;
 				}
-				
+
 				$works = $evtobj->_add_relation_to( $PRC, 'Price' );
 				$success = !$success ? $success : $works; //if ANY of these updates fail then we want the appropriate global error message
 
@@ -921,7 +921,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
 		$DTM_MDL = EEM_Datetime::instance( $timezone );
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_DTT_helper.helper.php';
-
 		global $times;
 		// grab event times
 		$times = $DTM_MDL->get_all_event_dates($event_id);
@@ -935,8 +934,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['add_additional_time'] = apply_filters('FHEE_event_datetime_metabox_add_additional_date_time_template', '', $template_args);
 		$template_args['org_options'] = $org_options;
 		$template_args['current_time_help_link'] = $this->_get_help_tab_link('current_time_info');
-		$template_args['current_date'] = date(get_option('date_format')) . ' ' . date(get_option('time_format'));
-		$template_args['event_timezone'] = EE_DTT_helper::ddtimezone($this->$event_id);
+		$template_args['current_date'] = EE_DTT_helper::date_time_for_timezone(time(), get_option('date_format') . ' ' . get_option('time_format'), $timezone);
+		$template_args['event_timezone'] = EE_DTT_helper::ddtimezone($timezone);
 		$template_args['use_event_timezones_template'] = apply_filters('FHEE_event_datetime_metabox_timezones_template', '', $template_args);
 		$template_args['template_args'] = $template_args;
 
@@ -1765,7 +1764,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		?>		
 			<h2><?php _e('Unique Category Identifier', 'event_espresso'); ?></h2>
 			<p><?php _e('This should be a unique identifier for the category. Example: "category1" (without qoutes.)', 'event_espresso'); ?></p>
-			<p><?php printf( __('The unique ID can also be used in individual pages using the %s shortcode', 'event_espresso'), '[EVENT_ESPRESSO_CATEGORY event_category_id="category_identifier"]' ); ?>.</p>		
+			<p><?php printf( __('The unique ID can also be used in individual pages using the %s shortcode', 'event_espresso'), '[EVENT_ESPRESSO_CATEGORY category_id="category_identifier"]' ); ?>.</p>		
 		<?php
 	}
 
@@ -1934,20 +1933,20 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	public function get_categories( $per_page = 10, $current_page = 1, $count = FALSE ) {
 		global $wpdb;
 
-		$offset = ($current_page-1)*$per_page; 
-		$limit = apply_filters('FHEE_category_list_limit', $count ? '' : ' LIMIT ' . $offset . ',' . $per_page, $offset, $per_page);
-		$orderby = apply_filters( 'FHEE_category_list_orderby', isset($this->_req_data['orderby']) ? " ORDER BY " . $this->_req_data['orderby'] : " ORDER BY c.category_name", $this->_req_data );
-		$order = apply_filters( 'FHEE_category_list_order', isset($this->_req_data['order']) ? " " . $this->_req_data['order'] : " DESC", $this->_req_data);
+		//testing term stuff
+		$orderby = isset( $this->_req_data['orderby'] ) ? $this->_req_data['orderby'] : 'Term.term_id';
+		$order = isset( $this->_req_data['order'] ) ? $this->_req_data['order'] : 'DESC';
+		$limit = ($current_page-1)*$per_page;
 
-		$args = array(
-			'orderby' => $orderby,
-			'order' => $order,
-			'fields' => $count ? 'count' : 'all',
-			'offset' => $count ? '' : $offset,
-			'hide_empty' => FALSE
+
+		$query_params = array(
+			0 => array( 'taxonomy' => 'espresso_event_categories' ),
+			'order_by' => array( $orderby => $order ),
+			'limit' => $limit . ',' . $per_page,
+			'force_join' => array('Term')
 			);
 
-		$categories = get_terms( array('espresso_event_categories'), $args );
+		$categories = $count ? EEM_Term_Taxonomy::instance()->count( $query_params, 'term_id' ) :EEM_Term_Taxonomy::instance()->get_all( $query_params );
 
 		return $categories;
 	}

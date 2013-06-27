@@ -136,6 +136,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 		require_once( 'EEM_Venue.model.php' );
 		$venue_id = !empty( $data['venue_id'] ) ? $data['venue_id'] : NULL;
 
+
 		//first let's check if the selected venue matches any existing venue attached to the event
 		$evt_venue = $evtobj->venues();
 		$evt_venue = !empty( $evt_venue ) ? array_shift( $evt_venue ) : NULL;
