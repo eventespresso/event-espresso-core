@@ -32,7 +32,7 @@ class EE_Config {
 	private static $_instance = NULL;
 
 
-
+	public $events_page = 'events';
 
 
 	/**
@@ -101,15 +101,16 @@ class EE_Config {
 			// list of critical settings
 			$critical_settings = array( 
 				'contact_email',
-				'currency_symbol'
+				'currency_symbol',
+				'events_page'
 			);
 			// cycle thru critical org_options
 			foreach ( $critical_settings as $critical_setting ) {
 				// make sure each one actually exists 
 				if ( ! isset( $config[ $critical_setting ] )) {
 					// reinitialize the org options
-					require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/activation.php');
-					espresso_org_option_initialization( TRUE );
+//					require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/activation.php');
+//					espresso_org_option_initialization( TRUE );
 					break;	
 				}
 			}
@@ -118,6 +119,7 @@ class EE_Config {
 		foreach ( $config as $key => $value ) {
 			$this->$key = $value;
 		}
+
 		do_action('AHEE_debug_file');
 	}
 
@@ -131,13 +133,41 @@ class EE_Config {
 	 */
 	public function update_config() {
 		$config = get_object_vars( $this );
+		//printr( $config, '$config  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$current_user_id = get_current_user_id();
 		$current_user_id = $current_user_id ? $current_user_id : 1;		
 		// grab org options based on current admin user
+		
 		if ( ! update_usermeta( $current_user_id, 'events_organization_settings', $config )) {
 			$msg = __( 'An error has occured. The Event Espresso Configuration Settings could not be update.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
+	}
+
+
+	/**
+	 * 	update_post_shortcodes
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function update_post_shortcodes() {
+		// cycle thru post_shortcodes
+		foreach( $this->post_shortcodes as $post_name => $shortcodes ){
+			// skip the posts page, because we want all shortcodes registered for it
+			if ( $post_name != 'posts' ) {
+				foreach( $shortcodes as $shortcode => $post_id ){
+					if ( $post = get_post( $post_id )) {
+						if ( $post->post_name == $post_name ) {
+							break;
+						}
+					}
+					unset( $this->post_shortcodes[ $post_name ] );
+				}
+			}
+		}
+		$this->update_config();
+//		add_action( 'shutdown', array( $this, 'update_config' ));
 	}
 
 	
