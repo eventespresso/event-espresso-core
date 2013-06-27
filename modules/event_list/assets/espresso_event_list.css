@@ -11,16 +11,15 @@
 		box-shadow: 0 1px 3px rgba(34,25,25,0.4); -moz-box-shadow: 0 1px 3px rgba(34,25,25,0.4); -webkit-box-shadow: 0 1px 3px rgba(34,25,25,0.4);
 		-webkit-transition: top 1s ease, left 1s ease; -moz-transition: top 1s ease, left 1s ease; -o-transition: top 1s ease, left 1s ease; -ms-transition: top 1s ease, left 1s ease;
 	}
-	.ee-event-img-dv { position: relative; width:100%; height:185px; min-height:185px; overflow: hidden; }
+	.ee-event-img-dv { position: relative; width:100%; height:185px; min-height:185px; overflow: hidden; margin:0 0 -4em; }
 	.ee-event-img { position: absolute; top: auto; left: auto; width:100%; height: auto; }	
-	.espresso-event-wrapper-dv {		
-		position: relative; top:; margin:-4em 1em 0; 
-		background:#fff; background: rgba(255, 255, 255, 0.9); 
-	}	
-	.espresso-event-wrapper-dv .event-header { padding:1em 1.5em 1em; text-shadow: 1px 1px 0px #fff; }	
+	.espresso-event-wrapper-dv { position: relative; background:#fff; background: rgba(255, 255, 255, 0.9); }	
+	.espresso-event-wrapper-dv.has-img { margin:0 1em; }	
+	.espresso-event-wrapper-dv .event-header { padding:1.1em 1.5em 1em; text-shadow: 1px 1px 0px #fff; }	
 	.espresso-event-wrapper-dv  .event-title { font-size:1.5em; margin: 0; line-height: 1em; }	
 	.espresso-event-wrapper-dv  .event-header p { margin:0 0 .5em; font-size: 1em; color: #999; }
-	.espresso-event-wrapper-dv  .event-content p { margin: 0 .5em 1em; font-size: 1.1em; color: #666; line-height: 1.5em;	}	
+	.espresso-event-wrapper-dv  .event-content p { margin: 0 1em 1em; font-size: 1.1em; color: #666; line-height: 1.5em;	}	
+	.espresso-event-wrapper-dv.has-img  .event-content p { margin: 0 .5em 1em; }	
 	.espresso-event-wrapper-dv  .event-meta { text-align: right; margin: 0 0 1em; }	
 	.ee-register-button-lnk {
 		display: inline-block; position: relative; padding: 1em 2em; margin: 1em;
@@ -29,7 +28,8 @@
 		font-weight: bold; font-size:16px; color:#fff; text-shadow:1px 1px 0px rgba(0,0,0,.5); text-decoration: none;
 	}
 	.ee-register-button-lnk:hover { background: #6CBA00; color:#fff; }
-	.ee-register-button-lnk:active { top:-1px; }	
+	.ee-register-button-lnk:active { top:-1px; }
+	.edit-event-lnk { margin:0 1em; }
 	.tiny-txt { font-size:.5em; letter-spacing:1px; }
 	.smaller-txt { font-size:.7em; letter-spacing:.6px; }
 	.small-txt { font-size:.85em; letter-spacing:.3px; }
