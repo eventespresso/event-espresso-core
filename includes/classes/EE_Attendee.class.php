@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Attendee extends EE_Base_Class{
+class EE_Attendee extends EE_CPT_Base{
 
 
     /**
@@ -34,7 +34,53 @@ class EE_Attendee extends EE_Base_Class{
     */
 	protected $_ATT_ID = FALSE;
 
+	/**
+	 * Full name of attendee
+	 * @var string
+	 */
+	protected $_ATT_full_name = NULL;
+	
+	/**
+	 * biography of attendee
+	 * @var string
+	 */
+	protected $_ATT_bio = NULL;
 
+	/**
+	 * slug url of attendee (usually automatically created)
+	 * @var string
+	 */
+	protected $_ATT_slug = NULL;
+	
+	/**
+	 * datetime of attendee creationg
+	 * @var string
+	 */
+	protected $_ATT_created = NULL;
+	
+	/**
+	 * short biography for excerpts
+	 * @var string
+	 */
+	protected $_ATT_short_bio = NULL;
+	
+	/**
+	 * Post type status of attendee
+	 * @var string
+	 */
+	protected $_ATT_status = NULL;
+	
+	/**
+	 * time attendee last modified
+	 * @var string
+	 */
+	protected $_ATT_modified = NULL;
+	
+	/**
+	 * ID of wordpress user who created attendee
+	 * @var int
+	 */
+	protected $_ATT_author = NULL;
     /**
     *	Attendee First Name
 	* 
@@ -130,24 +176,6 @@ class EE_Attendee extends EE_Base_Class{
 
 
     /**
-    *	Attendee Social Networking details - links, ID's, etc
-	* 
-	*	@access	protected
-    *	@var string	
-    */
-	protected $_ATT_social = NULL;
-
-
-    /**
-    *	Attendee Comments (from the attendee)
-	* 
-	*	@access	protected
-    *	@var string	
-    */
-	protected $_ATT_comments = NULL;
-
-
-    /**
     *	Attendee Notes (about the attendee)
 	* 
 	*	@access	protected
@@ -156,19 +184,25 @@ class EE_Attendee extends EE_Base_Class{
 	protected $_ATT_notes = NULL;
 
 
-    /**
-    *	Whether this Attendee has been moved to the trash
-	* 
-	*	@access	protected
-    *	@var boolean	
-    */
-	protected $_ATT_deleted = FALSE;
+    
 	
 	/**
 	 *
 	 * @var EE_Registration[]
 	 */
 	protected $_Registration=NULL;
+	
+	/**
+	 * related state
+	 * @var EE_State
+	 */
+	protected $_State;
+
+	/**
+	 * related country
+	 * @var EE_COuntry
+	 */
+	protected $_Country;
 
 
 
@@ -179,6 +213,24 @@ class EE_Attendee extends EE_Base_Class{
 	protected $_Event = array();
 
 
+	/**
+	 * Sets some dynamic defaults
+	 * @param array $fieldValues
+	 * @param type $bydb
+	 * @param type $timezone
+	 */
+	protected function __construct($fieldValues=null, $bydb = FALSE, $timezone = NULL ){
+		if( ! isset($fieldValues['ATT_slug'])){
+			$fieldValues['ATT_slug'] = sanitize_key(wp_generate_password(20));
+		}
+		if( ! isset($fieldValues['ATT_full_name'])){
+			$fieldValues['ATT_full_name'] = $fieldValues['ATT_fname']." ".$fieldValues['ATT_lname'];
+		}
+		if( ! isset($fieldValues['ATT_short_bio']) && isset($fieldValues['ATT_bio'])){
+			$fieldValues['ATT_short_bio'] = substr($fieldValues['ATT_bio'],0,50);
+		}
+		parent::__construct($fieldValues,$bydb,$timezone);
+	}
 
 
 	public static function new_instance( $props_n_values = array() ) {
@@ -474,6 +526,14 @@ class EE_Attendee extends EE_Base_Class{
 	public function state_ID() {
 		return $this->get('STA_ID');
 	}
+	
+	/**
+	 * Gets the state set to this attendee
+	 * @return EE_State
+	 */
+	public function state_obj(){
+		return $this->get_first_related('State');
+	}
 
 
 
@@ -485,6 +545,13 @@ class EE_Attendee extends EE_Base_Class{
 		return $this->get('CNT_ISO');
 	}
 
+	/**
+	 * Gets country set for this attendee
+	 * @return EE_Country
+	 */
+	public function country_obj(){
+		return $this->get_first_related('Country');
+	}
 
 
 	/**
@@ -588,19 +655,10 @@ class EE_Attendee extends EE_Base_Class{
 	 * @return array 
 	 */
 	public function events() {
-
 		if ( empty( $this->_Event ) ){
-			//first we'd have to get all the registrations for this attendee
-			$registrations = $this->get_registrations();
-
-			//now we have to loop through each registration and assemble an array of events
-			foreach ( $registrations as $reg ) {
-				$this->_Event[] = $reg->event();
-			}
-			
+			$events = EEM_Event::instance()->get_all(array(array('Registration.Attendee.ATT_ID'=>$this->get('ATT_ID'))));
+			$this->_Event = $events;
 		}
-
-
 		return $this->_Event;
 	}
 	

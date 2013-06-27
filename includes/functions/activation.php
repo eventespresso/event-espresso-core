@@ -438,26 +438,25 @@ function events_data_tables_install() {
 				PRIMARY KEY  (ANS_ID)";
 	event_espresso_run_install($table_name,$sql, 'ENGINE=InnoDB');
 	
-	$table_name = 'esp_attendee';
-	$sql = "ATT_ID int(10) unsigned NOT	NULL AUTO_INCREMENT,
-					ATT_fname varchar(45) NOT NULL,
-					ATT_lname varchar(45) NOT	NULL,
-					ATT_address varchar(45) DEFAULT	NULL,
-					ATT_address2 varchar(45) DEFAULT	NULL,
-					ATT_city varchar(45) DEFAULT	NULL,
-					STA_ID varchar(45) DEFAULT	NULL,
-					CNT_ISO varchar(45) DEFAULT	NULL,
-					ATT_zip varchar(12) DEFAULT	NULL,
-					ATT_email varchar(100) NOT NULL,
-					ATT_phone varchar(45) DEFAULT NULL,
-					ATT_social text,
-					ATT_comments mediumtext,
-					ATT_notes mediumtext,
-					ATT_deleted tinyint(1) unsigned NOT NULL DEFAULT '0',
-						PRIMARY KEY  (ATT_ID),
-							KEY ATT_fname (ATT_fname),
-							KEY ATT_lname (ATT_lname),
-							KEY ATT_email (ATT_email)";
+	$table_name = 'esp_attendee_meta';	
+	$sql = "
+			ATTM_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+			ATT_ID int(11) NOT NULL,
+			ATT_fname varchar(45) NOT NULL,
+			ATT_lname varchar(45) NOT NULL,
+			ATT_address varchar(45) DEFAULT NULL,
+			ATT_address2 varchar(45) DEFAULT NULL,
+			ATT_city varchar(45) DEFAULT NULL,
+			STA_ID int(11) DEFAULT NULL,
+			CNT_ISO varchar(3) DEFAULT NULL,
+			ATT_zip varchar(12) DEFAULT NULL,
+			ATT_email varchar(100) NOT NULL,
+			ATT_phone varchar(45) DEFAULT NULL,
+			ATT_notes mediumtext,
+			PRIMARY KEY  (ATTM_ID),
+			KEY ATT_fname (ATT_fname),
+			KEY ATT_lname (ATT_lname),
+			KEY ATT_email (ATT_email)";
 	event_espresso_run_install($table_name, $sql, 'ENGINE=InnoDB ');
 
 

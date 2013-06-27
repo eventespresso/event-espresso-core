@@ -53,11 +53,7 @@ class EE_Event extends EE_CPT_Base{
 	 */
 	protected $_Venue;
 	
-	/**
-	 * Related term-taxonomies (terms in context of a taxonomy).
-	 * @var EE_Term_Taxonomy[]
-	 */
-	protected $_Term_Taxonomy;
+	
 	/**
 	 * ID of event (post id)
 	 * @var int 

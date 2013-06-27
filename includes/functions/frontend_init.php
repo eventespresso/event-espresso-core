@@ -11,9 +11,21 @@ function espresso_load_jquery() {
 
 
 function espresso_frontend_init() {
+	
+	
+//	$att = EE_Attendee::new_instance(array('ATT_fname'=>'rodrigo','ATT_lname'=>'nelson','STA_ID'=>23));
+//	//$att->save();
+//	$attednees = EEM_Attendee::instance()->get_all(array(array('State.STA_ID'=>23)));
+//	foreach($attednees as $attendee){
+//		echo '$attendee';
+//		var_dump($attendee);
+//		$state = $attendee->state_obj();
+//		echo '$state';
+//		var_dump($state);
+//	}
 //	require_once('EEM_Question_Group.model.php');
 //	var_dump(EEM_Question_Group::instance()->get_all(array('force_join'=>array('Question'),'limit'=>9)));
-	require_once('EEM_Event.model.php');
+//	require_once('EEM_Event.model.php');
 //	EEM_Event::instance()->get_all(array(array('Venue.VNU_ID'=>12,'Registration.Transaction.Payment.PAY_ID'=>23)));
 //	EEM_EVent::instance()->get_all(array('order_by'=>array('Venue.VNU_ID'=>'asc')));
 //	EEM_Event::instance()->get_all(array(array('Registration.Transaction.TXN_ID'=>3)));
