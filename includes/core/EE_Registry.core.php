@@ -35,7 +35,7 @@ class EE_Registry {
 
    /**
      * array for storing library classes in
-     * @private _libraries
+     * @private LIB
      */
 	private $LIB = array();
 
@@ -127,7 +127,7 @@ class EE_Registry {
 	 *@ access public
 	 *@ return class instance
 	 */	
-	public  function instance() {
+	public static function instance() {
 		// check if class object is instantiated
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! is_a( self::$_instance, __CLASS__ )) {
 			self::$_instance = new self();
@@ -266,8 +266,8 @@ class EE_Registry {
 		// check if class has already been loaded, and return it if it has been	
 		if ( isset ( $this->{$class_name} )) {
 			return $this->{$class_name};
-		} else if ( isset ( $this->_libraries[ $class_name ] )) {
-			return $this->_libraries[ $class_name ];
+		} else if ( isset ( $this->LIB[ $class_name ] )) {
+			return $this->LIB[ $class_name ];
 		}
 		// don't give up! you gotta...
 		try {
@@ -311,10 +311,10 @@ class EE_Registry {
 			$reflector = new ReflectionClass( $class_name );
 			// are we passing $this (EE_Registry) to class ?)
 			if( $pass_REG ) {
-				// instantiate the class and add to the _libraries array for tracking
+				// instantiate the class and add to the LIB array for tracking
 				$class_obj = $reflector->isInstantiable() ? $reflector->newInstance( $this ) : call_user_func( array( $class_name, 'instance' ), $this );
 			} else {
-				// instantiate the class and add to the _libraries array for tracking
+				// instantiate the class and add to the LIB array for tracking
 				$class_obj = $reflector->isInstantiable() ? $reflector->newInstance() : call_user_func( array( $class_name, 'instance' ));
 			}
 
@@ -326,7 +326,7 @@ class EE_Registry {
 		if ( property_exists( $this, $class_name )) {
 			$this->{$class_name} = $class_obj;
 		} else {
-			$this->_libraries[ $class_name ] = $class_obj;
+			$this->LIB[ $class_name ] = $class_obj;
 		}
 
 		return $class_obj;
