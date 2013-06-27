@@ -202,7 +202,7 @@ abstract class EEM_Base extends EE_Base{
 	 * forces models to define their table name as a constant
 	 * @access public
 	 */
-	abstract public function define_table_name();
+//	abstract public static function define_table_name();
 
 
 

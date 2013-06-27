@@ -53,7 +53,7 @@ class EEM_Event_Question_Group extends EEM_Base{
 	 * defines  table name as a constant
 	 * @access public
 	 */
-	public function define_table_name() {
+	public static function define_table_name() {
 		global $wpdb;
 		define( 'EE_EVENT_QUESTION_GROUP_TABLE', $wpdb->prefix . 'esp_event_question_group' );
 	}

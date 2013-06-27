@@ -53,17 +53,7 @@ class EEM_State extends EEM_Base {
 	protected function __construct(){
 		$this->singlular_item = __('State','event_espresso');
 		$this->plural_item = __('States','event_espresso');
-		//STA_ID 	CNT_ISO 	STA_abbrev 	STA_name 	STA_active
-//		$this->_fields_settings=array(
-//				'STA_ID'			=>new EE_Model_Field( 'State ID', 'primary_key', FALSE ),
-//				'CNT_ISO'		=>new EE_Model_Field( 'Country ISO Code', 'foreign_text_key', FALSE, 1, NULL, 'Country' ),
-//				'STA_abbrev'	=>new EE_Model_Field( 'State Abbreviation', 'plaintext', FALSE ),
-//				'STA_name'	=>new EE_Model_Field( 'State Name', 'plaintext', FALSE ),
-//				'STA_active'	=>new EE_Model_Field( 'State Active Flag', 'plaintext', FALSE )
-//			);
-//		$this->_related_models=array(
-//				'Country'=>new EE_Model_Relation( 'belongsTo', 'Country', 'CNT_ISO' )
-//			);
+
 		$this->_tables = array(
 			'State'=> new EE_Primary_Table('esp_state', 'STA_ID')
 		);
@@ -90,7 +80,7 @@ class EEM_State extends EEM_Base {
 	 * defines  table name as a constant
 	 * @access public
 	 */
-	public function define_table_name() {
+	public static function define_table_name() {
 		global $wpdb;
 		define( 'EE_STATE_TABLE', $wpdb->prefix . 'esp_state' );
 	}

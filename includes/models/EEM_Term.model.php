@@ -71,7 +71,7 @@ class EEM_Term extends EEM_Base {
 	 * defines  table name as a constant
 	 * @access public
 	 */
-	public function define_table_name() { }
+	public static function define_table_name() { }
 
 
 }

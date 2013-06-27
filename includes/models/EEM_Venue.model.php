@@ -124,7 +124,7 @@ class EEM_Venue extends EEM_CPT_Base {
 	 * defines  table name as a constant
 	 * @access public
 	 */
-	public function define_table_name() {
+	public static function define_table_name() {
 		global $wpdb;
 		define( 'EE_VENUE_META_TABLE', $wpdb->prefix . 'esp_venue_meta' );
 	}	

@@ -103,7 +103,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	 * defines  table name as a constant
 	 * @access public
 	 */
-	public function define_table_name() {
+	public static function define_table_name() {
 		global $wpdb;
 		define( 'EE_QUESTION_TABLE', $wpdb->prefix . 'esp_question' );
 	}

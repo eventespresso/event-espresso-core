@@ -119,7 +119,7 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 	 * defines  table name as a constant
 	 * @access public
 	 */
-	public function define_table_name() {
+	public static function define_table_name() {
 		global $wpdb;
 		define( 'EE_PRICE_TYPE_TABLE', $wpdb->prefix . 'esp_price_type' );
 	}
