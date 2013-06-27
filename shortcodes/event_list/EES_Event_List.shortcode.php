@@ -64,7 +64,28 @@ class EES_Event_List  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function init() {
-		$this->ouput =  '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+		add_filter( 'FHEE_load_org_options', '__return_true' );
+		// parse_request
+		//add_filter( 'request', array( $this, 'filter_request' ));  
+		//$this->ouput =  '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+	}
+
+
+
+	/**
+	 * 	wp_loaded - should fire after shortcode, module, addon, or other plugin's default priority init phases have run
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function filter_request(  $req  ) {
+		//printr( $req, '$req  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+/*	    if ( isset( $req['pagename'] ) && $req['pagename'] == $this->EE->CFG->events_page ) {
+	 		unset( $req['pagename'] );
+	 		$req['post_type'] = 'espresso_events';
+		}  */     
+	    return $req;
 	}
 
 
