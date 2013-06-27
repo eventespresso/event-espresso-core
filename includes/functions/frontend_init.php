@@ -14,7 +14,10 @@ function espresso_frontend_init() {
 //	require_once('EEM_Question_Group.model.php');
 //	var_dump(EEM_Question_Group::instance()->get_all(array('force_join'=>array('Question'),'limit'=>9)));
 //	require_once('EEM_Event.model.php');
-//	EEM_Event::instance()->get_all(array(array('OR'=>array('EVT_ID'=>3))));
+//	EEM_Event::instance()->get_all(array(array('Venue.VNU_ID'=>12,'Registration.Transaction.Payment.PAY_ID'=>23)));
+//	EEM_EVent::instance()->get_all(array('order_by'=>array('Venue.VNU_ID'=>'asc')));
+//	EEM_Event::instance()->get_all(array(array('Registration.Transaction.TXN_ID'=>3)));
+//	EEM_Event::instance()->get_all(array(array('OR'=>array('EVT_ID'=>3,'Venue.VNU_name'=>'monkey_tree'))));
 //	require_once('EE_Event.class.php');
 //	EEM_Event::instance()->get_all(array(array(
 //		'EVT_ID'=>12,
