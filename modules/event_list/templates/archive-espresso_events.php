@@ -13,44 +13,15 @@
  * @subpackage Twenty_Twelve
  * @since Twenty Twelve 1.0
  */
-
-
-global $wp_query;
-
-//$orderby = isset( $_GET['orderby'] ) ? sanitize_key( $_GET['orderby'] ) : 'program_date';
-$posts_per_page = isset( $_GET['posts_per_page'] ) ? sanitize_key( $_GET['posts_per_page'] ) : 25;
-$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
-
-//wp_reset_query();
-$args = array(
-	'post_type' => 'espresso_events',
-	'post_status' => 'publish',		// future,draft
-//	'orderby' => $orderby,
-//	'order' => 'ASC',
-	'posts_per_page' => $posts_per_page,	
-	'paged' => $paged
-);
-
-$events = new WP_Query( $args );
-wp_reset_postdata();
-
-$pagination_args = array(
-	'base' => str_replace( 999999, '%#%', esc_url( get_pagenum_link( 999999 ) ) ),
-	'format' => '?paged=%#%',
-	'current' => max( 1, $paged ),
-	'total' => $events->max_num_pages
-);
-
-
 get_header();
 ?>
-	<h1  id="event-list-h1"><?php _e( 'Upcoming Events', 'event_espresso' ); ?></h1>
-
-	<div id="primary" >
-		<div id="espresso-events-list-dv" role="main">
+	<div id="espresso-events-list-wrap-dv" >
+		<div id="espresso-events-list-dv" class="hidden" role="main">
 				
-		<?php if ( $events->have_posts() ) { ?>
-			<?php while ( $events->have_posts() ) { $events->the_post(); ?>
+			<h1  id="event-list-h1"><?php _e( 'Upcoming Events', 'event_espresso' ); ?></h1>
+
+		<?php if ( have_posts() ) { ?>
+			<?php while ( have_posts() ) { the_post(); ?>
 			
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
@@ -59,8 +30,7 @@ get_header();
 				$wrap_class = '';
 				if ( has_post_thumbnail( $post->ID )) {
 					if ( $img_ID = get_post_thumbnail_id( $post->ID )) {
-						$img_size = $evnt_cntr < 2 ? 'large' : 'medium';
-						if ( $featured_img = wp_get_attachment_image_src( $img_ID, $img_size )) {
+						if ( $featured_img = wp_get_attachment_image_src( $img_ID, 'medium' )) {
 							$caption = esc_attr( get_post( get_post_thumbnail_id( $post->ID ))->post_excerpt );
 							$wrap_class = ' has-img';
 				?>
@@ -80,13 +50,13 @@ get_header();
 				<!-- .entry-header -->
 				<div class="event-content">
 					<?php the_excerpt(); ?> 
-					<?php wp_link_pages( array( 'before' => '<div class="page-links">' . __( 'Pages:', 'twentytwelve' ), 'after' => '</div>' ) ); ?>
+					<?php wp_link_pages( array( 'before' => '<div class="page-links">' . __( 'Pages:', 'event_espresso' ), 'after' => '</div>' ) ); ?>
 				</div>
 				
 				<!-- .entry-content -->
 				<footer class="event-meta">
-					<a class="ee-register-button-lnk button" href="<?php echo home_url( '/' ) . __( 'event', 'event_espresso' ) . '/' . $post->post_name; ?>" title=""><?php _e( 'Register Now', 'event_espresso' ); ?></a>
-					<?php edit_post_link( __( 'edit this event', 'twentytwelve' ), '<p class="edit-event-lnk small-txt clear">', '</p>' ); ?>
+					<a class="ee-register-button-lnk button" href="<?php the_permalink( $post->ID ); ?>" title=""><?php _e( 'Register Now', 'event_espresso' ); ?></a>
+					<?php edit_post_link( __( 'edit this event', 'event_espresso' ), '<p class="edit-event-lnk small-txt clear">', '</p>' ); ?>
 				</footer>
 				<!-- .entry-meta -->
 			</div>
@@ -95,18 +65,18 @@ get_header();
 
 			<?php } ?>
 
-			<?php twentytwelve_content_nav( 'nav-below' ); ?>
+			<?php //event_espresso_content_nav( 'nav-below' ); ?>
 
 		<?php } else { ?>
 
 			<article id="post-0" class="post no-results not-found">
 
 				<header class="entry-header">
-					<h1 class="entry-title"><?php _e( 'There are no upcoming Events', 'twentytwelve' ); ?></h1>
+					<h1 class="entry-title"><?php _e( 'There are no upcoming Events', 'event_espresso' ); ?></h1>
 				</header>
 
 				<div class="entry-content">
-					<p><?php _e( 'Perhaps searching will help find a related event.', 'twentytwelve' ); ?></p>
+					<p><?php _e( 'Perhaps searching will help find a related event.', 'event_espresso' ); ?></p>
 					<?php get_search_form(); ?>
 				</div><!-- .entry-content -->
 
@@ -116,6 +86,13 @@ get_header();
 		
 			<div class="clear"></div>
 		</div><!-- #content -->
+
+		<?php 
+		printr( $wp_query, '$wp_query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		 ?>
+
+		<div class="ee-pagination-dv"><?php  echo paginate_links( $pagination_args ); ?></div>
+			
 	</div><!-- #primary -->
 
 <?php get_footer(); ?>
