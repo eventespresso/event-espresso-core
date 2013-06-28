@@ -37,7 +37,7 @@ class EE_Registry {
      * array for storing library classes in
      * @private LIB
      */
-	private $LIB = array();
+	private $_LIB = array();
 
    /**
      * 	EE_Session Object
@@ -110,14 +110,7 @@ class EE_Registry {
 	 */	
 	private function __construct() {
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		// load EE_Config
-		$this->_load_configuration();
-		$this->REQ = new EE_Request_Handler();	
-		/*EE_Data_Mapper $data_mapper*/
-		// Get current page protocol
-		$protocol = isset( $_SERVER['HTTPS'] ) ? 'https://' : 'http://';
-		// Output admin-ajax.php URL with same protocol as current page
-		self::$i18n_js_strings['ajax_url'] = admin_url( 'admin-ajax.php', $protocol );	
+		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 11 );
 	}
 
 
@@ -135,6 +128,25 @@ class EE_Registry {
 		return self::$_instance;
 	}
 
+
+
+	/**
+	 * 	plugins_loaded
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function plugins_loaded() {
+		// load EE_Config
+		$this->_load_configuration();
+		// load EE_Request_Handler
+		$this->_get_request();
+		/*EE_Data_Mapper $data_mapper*/
+		// Get current page protocol
+		$protocol = isset( $_SERVER['HTTPS'] ) ? 'https://' : 'http://';
+		// Output admin-ajax.php URL with same protocol as current page
+		self::$i18n_js_strings['ajax_url'] = admin_url( 'admin-ajax.php', $protocol );	
+	}
 
 
 
@@ -160,13 +172,13 @@ class EE_Registry {
 
 
 	/**
-	 *	getter for data mapper object
+	 *	_get_request
 	 * 
-	 *	@return instantiated class object
+	 *	@return void
 	 */
-//	public function mapper () {
-//		return $this->mapper;
-//	}
+	private function _get_request() {
+		$this->REQ = new EE_Request_Handler( $this->CFG->post_shortcodes );	
+	}
 
 
 
@@ -259,19 +271,22 @@ class EE_Registry {
 	 */	
 	private function _load ( $file_path = FALSE, $class_prefix = 'EE_', $class_name = FALSE, $type = 'class', $pass_REG = FALSE ) {
 		// make sure $class name is lowercase
-		$class_name = strtoupper( trim( $class_prefix )) . ucwords( strtolower( trim( $class_name )));
-		$type = '.' . trim( $type, '.' );
+		//$class_name = strtoupper( trim( $class_prefix )) . ucwords( strtolower( trim( $class_name )));
+		$class_name = strtoupper( trim( $class_prefix )) . trim( $class_name );
 		$file_path = $file_path ? $file_path : EE_CLASSES;
-		$file_path = rtrim( $file_path, '/' ) . '/' . $class_name . $type . '.php';
+		$file_path = rtrim( $file_path, '/' ) . '/' . $class_name . '.' . trim( $type, '.' ) . '.php';
 		// check if class has already been loaded, and return it if it has been	
 		if ( isset ( $this->{$class_name} )) {
 			return $this->{$class_name};
-		} else if ( isset ( $this->LIB[ $class_name ] )) {
-			return $this->LIB[ $class_name ];
+		} else if ( isset ( $this->_LIB[ $class_name ] )) {
+			return $this->_LIB[ $class_name ];
 		}
+		
+//		echo '<h4>$class_name : ' . $class_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$file_path : ' . $file_path . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+
 		// don't give up! you gotta...
-		try {
-			
+		try {			
 			//does the file exist and can be read ?
 			if ( ! is_readable( $file_path )) {
 				// so sorry, can't find the file'
@@ -284,10 +299,10 @@ class EE_Registry {
 					)
 				);
 			}
-			// if the class isn't already declared somewhere, then get the file
+			// get the file
+			require_once( $file_path );
+			// if the class isn't already declared somewhere
 			if ( class_exists( $class_name, FALSE ) === FALSE ) {
-				require( $file_path );
-			} else {
 				// so sorry, not a class
 				throw new EE_Error( 
 					sprintf(
@@ -326,7 +341,7 @@ class EE_Registry {
 		if ( property_exists( $this, $class_name )) {
 			$this->{$class_name} = $class_obj;
 		} else {
-			$this->LIB[ $class_name ] = $class_obj;
+			$this->_LIB[ $class_name ] = $class_obj;
 		}
 
 		return $class_obj;
