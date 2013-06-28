@@ -30,6 +30,18 @@ class EE_Request_Handler {
 	private $_params = array();
 
 	/**
+	 * 	@var 	array	$_uri_array 	URL segments
+	 *  @access 	private
+	 */
+	private $_uri_segment_array = array();
+
+	/**
+	 * 	@var 	array 	$_is_espresso_page
+	 *  @access 	private
+	 */
+	private $_is_espresso_page = FALSE;
+
+	/**
 	 * 	@var 	array 	$_notice
 	 *  @access 	private
 	 */
@@ -43,8 +55,155 @@ class EE_Request_Handler {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function __construct() {
+	public function __construct( $post_shortcodes ) {
+		// grab request vars
 		$this->_params = $_REQUEST;
+		// verify $post_shortcodes
+		if ( empty( $post_shortcodes )) {
+			$msg = __( 'An error has occured. The post shortcodes array is empty. Please ensure that the EE System has been loaded before using this function.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return $msg;
+		}
+		$this->_test_for_espresso_page( $post_shortcodes );
+		// get current post name from URL
+		$this->set( 'post_name', $this->_get_current_post_name() );
+	}
+
+
+
+	/**
+	 * 		_get_current_full_url
+	 *
+	 * 		@access private
+	 * 		@return void
+	 */
+	private function _get_current_full_url( $return_all = FALSE ) {  
+		$current_URL = ! isset( $_SERVER['HTTPS'] ) || $_SERVER['HTTPS'] != 'on' ? 'http://' : 'https://';
+		if ( isset( $_SERVER['SERVER_PORT'] ) && $_SERVER['SERVER_PORT'] != '80' ) {
+			$current_URL .= $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'];		
+		} else {
+			$current_URL .= $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+		}
+		$current_URL = esc_url_raw( $current_URL );
+		if ( $return_all ) {
+			return $current_URL;
+		} else {
+			$current_URL = explode( '?', $current_URL );	
+		    return $current_URL[0];		
+		}
+	}
+
+
+
+	/**
+	 * 		_generate_uri_segment_aray
+	 *
+	 * 		@access private
+	 * 		@return void
+	 */
+	private function _generate_uri_segment_aray() {
+		// start with full url
+		$raw_uri = $this->_get_current_full_url();
+		// first strip home_url() from raw URL
+		$raw_uri = str_replace( home_url(), '', $raw_uri );
+		// create array from url segments, not including domain
+		$this->_uri_segment_array = explode( '/', trim( $raw_uri,  '/' ));
+	}
+
+
+
+	/**
+	 * 		_get_current_post
+	 *
+	 * 		@access private
+	 * 		@return void
+	 */
+	private function _get_current_post_id() {
+		// ensure _uri_segment_array is set
+		if ( empty( $this->_uri_segment_array )) {
+			$this->_generate_uri_segment_aray();
+		}
+		// flip it so that we can work from the outer most segment in
+		$uri_segments = array_reverse( $this->_uri_segment_array );
+		// cycle thru segments till we find a post
+		foreach( $uri_segments as $uri_segment ) {
+			// can we get a page_id ?
+			if ( $page_id = $this->_get_page_id_from_slug( $uri_segment )) {
+				break;
+			}
+		}
+		return $page_id;
+	}
+
+
+
+	/**
+	 * 		_get_page_id_from_slug
+	 *
+	 * 		@access private
+	 * 		@return void
+	 */
+	private function _get_current_post_name() {
+		// ensure _uri_segment_array is set
+		if ( empty( $this->_uri_segment_array )) {
+			$this->_generate_uri_segment_aray();
+		}
+		// return last segment of uri array
+		return $this->_uri_segment_array[ count( $this->_uri_segment_array ) - 1 ];
+	}
+
+
+	/**
+	 * 		_get_page_id_from_slug
+	 *
+	 * 		@access private
+	 * 		@return void
+	 */
+	private function _get_page_id_from_slug( $event_page_slug = FALSE ) {
+		// find post if it exists
+		$event_page = get_page_by_path( $event_page_slug );
+		// grab page_id if it's set
+		$page_id = isset( $event_page->ID ) ? absint( $event_page->ID ) : FALSE;
+		return $page_id;
+	}
+
+
+	/**
+	 * 		_test_for_espresso_page
+	 *
+	 * 		@access public
+	 * 		@return mixed
+	 */
+	public function _test_for_espresso_page( $post_shortcodes = array() ) {
+		$this->_is_espresso_page = FALSE;
+		// ensure _uri_segment_array is set
+		if ( empty( $this->_uri_segment_array )) {
+			$this->_generate_uri_segment_aray();
+		}
+		// load all pages using espresso shortcodes
+		$espresso_pages = array_keys( $post_shortcodes );
+		// make sure core pages are included
+		$espresso_pages = array_merge( array( 'events', 'event' ), $espresso_pages );
+		// cycle thru segments till we find a post
+		foreach( $this->_uri_segment_array as $uri_segment ) {
+			// can we get a page_id ?
+			if ( in_array( $uri_segment, $espresso_pages )) {
+				$this->_is_espresso_page = $uri_segment;
+				break;
+			}
+		}
+	}
+
+
+	
+	/**
+	 * 	is_espresso_page
+	 *
+	 *  @access 	public
+	 *  @return 	mixed
+	 */
+	public function is_espresso_page() {
+		return $this->_is_espresso_page;
 	}
 
 
@@ -59,6 +218,7 @@ class EE_Request_Handler {
 		$this->_params[ $key ] = $value;
 	}
 
+
 	
 	/**
 	 * 	getter
@@ -69,6 +229,8 @@ class EE_Request_Handler {
 	public function get( $key ) {
 		return isset( $this->_params[ $key ] ) ? $this->_params[ $key ] : NULL;
 	}
+
+
 	
 	/**
 	 * 	check if param exists
@@ -91,6 +253,7 @@ class EE_Request_Handler {
 	public function set_notice( $key, $value ) {
 		$this->_notice[ $key ] = $value;
 	}
+
 
 	
 	/**
