@@ -550,6 +550,13 @@ class EE_Registration extends EE_Base_Class {
 		return $event;
 	}
 
+	/**
+	 * Fetches teh event this registration is for
+	 * @return EE_Event
+	 */
+	public function event_obj(){
+		return $this->get_first_related('Event');
+	}
 
 
 	/**
@@ -712,6 +719,14 @@ class EE_Registration extends EE_Base_Class {
 		return $this->get('REG_final_price');
 	}
 	
+	/**
+	 * Gets the price paid in nice format with teh currency symbol
+	 * @return string
+	 */
+	public function pretty_price_paid(){
+		return $this->get_pretty('REG_final_price');
+	}
+	
 	
 	/**
 	 * Returns a nice version of the status for displaying to customers
@@ -791,6 +806,15 @@ class EE_Registration extends EE_Base_Class {
 	 */
 	public function answers($query_params = null){
 		return $this->get_many_related('Answer',$query_params);
+	}
+	
+	/**
+	 * Returns the registration date in the 'standard' string format
+	 * (function may be improved in the future to allow for different formats and timezones)
+	 * @return string
+	 */
+	public function reg_date(){
+		return $this->get('REG_date');
 	}
 }
 

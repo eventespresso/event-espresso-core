@@ -11,6 +11,10 @@ require_once('EEM_Base.model.php');
 class EEM_CPT_Base extends EEM_Base{
 	
 	/**
+	 * @var post_status_trashed the wp post statsu for trashed cpts
+	 */
+	const post_status_trashed = 'trash';
+	/**
 	 * Adds a relationship to Term_Taxonomy for each CPT_Base
 	 * @param type $timezone
 	 */

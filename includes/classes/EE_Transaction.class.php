@@ -298,6 +298,14 @@ class EE_Transaction extends EE_Base_Class{
 	public function paid() {
 		return $this->get('TXN_paid');
 	}
+	
+	/**
+	 * Gets the amount paid in a pretty string (formatted and with currency symbol)
+	 * @return string
+	 */
+	public function pretty_paid(){
+		return $this->get_pretty('TXN_paid');
+	}
 
 
 

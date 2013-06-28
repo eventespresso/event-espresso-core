@@ -253,8 +253,8 @@ abstract class EEM_Base extends EE_Base{
 	 *					|	Eg, you could rewrite the previous query as:
 	 *					|	array('PAY_timestamp'=>array('>',$start_date),'PAY_timestamp*'=>array('<',$end_date),'PAY_timestamp**'=>array('!=',$special_date))
 	 *					|	which will correctly generate SQL like "PAY_timestamp > 123412341 AND PAY_timestamp < 2354235235234 AND PAY_timestamp != 1241234123"
-	 *		limit		|	adds a limit to the query just like the SQL limit clause, so limits of "23", "25,50" are both valid would become 
-	 *					|	SQL "...LIMIT 23", "...LIMIT 25,50" respectively
+	 *		limit		|	adds a limit to the query just like the SQL limit clause, so limits of "23", "25,50", and array(23,42) are all valid would become 
+	 *					|	SQL "...LIMIT 23", "...LIMIT 25,50", and "...LIMIT 23,42" respectively
 	 *	 on_join_limit	|	allows the setting of a special select join with a internal limit so you can do paging on one-to-many multi-table-joins. Send an array in the following format array('on_join_limit' => array( 'table_alias', array(1,2) ) ).	
 	 *		order_by	|	name of a column to order by, or an array where keys are field names and values are either 'ASC' or 'DESC'. 'limit'=>array('STS_ID'=>'ASC','REG_date'=>'DESC'),
 	 *					|	which would becomes SQL "...ORDER BY TXN_timestamp..." and "...ORDER BY STS_ID ASC, REG_date DESC..." respectively.

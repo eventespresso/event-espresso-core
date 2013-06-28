@@ -1992,8 +1992,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	public function get_event_attendees( $per_page = 10, $count = FALSE, $trash = FALSE, $orderby = '' ) {  
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		// start with an empty array
-		$attendees = array();
 		
 		require_once( REG_ADMIN . 'EE_Event_Registrations_List_Table.class.php' );
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
@@ -2010,7 +2008,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				$orderby = 'REG_date';
 				break;
 			default :
-				$orderby = 'ATT_lname';
+				$orderby = 'Attendee.ATT_lname';
 //				$orderby = 'reg.REG_final_price';
 		}
 		
@@ -2022,34 +2020,60 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 		$offset = ($current_page-1)*$per_page;
 		$limit = array( $offset, $per_page );
+		$query_params = array(array());
+		if ($EVT_ID){
+			$query_params[0]['EVT_ID']=$EVT_ID;
+		}
+		if($CAT_ID){
+			throw new EE_Error("You specified a Cateogry Id for this query. Thats odd because we are now using terms and taxonomies. So did you mean the term taxonomy id o rthe term id?");
+		}
+		if($reg_status){
+			$query_params[0]['STS_ID']=$reg_status;
+		}
+		if($trash){
+			$query_params[0]['Attendee.ATT_status']=  EEM_CPT_Base::post_status_trashed;
+		}
+		$query_params['order_by'][$orderby] = $sort;
+		$query_params['limit'] = $limit;
+		$query_params['force_join'] = array('Attendee');//force join to attendee model so that it gets cached, because we're going to need the attendee for each registration
+		if($count){
+			$registrations = EEM_Registration::instance()->count($query_params);
+		}else{
+			$registrations = EEM_Registration::instance()->get_all($query_params);
 		
-		$output = $count ? 'COUNT' : 'OBJECT_K';
-		$all_attendees = EEM_Attendee::instance()->get_event_attendees( $EVT_ID, $CAT_ID, $reg_status, $trash, $orderby, $sort, $limit, $output );
-		if ( isset( $all_attendees[0] ) && isset( $all_attendees[0]->event_name )) {
-			//printr( $all_attendees[0], '$all_attendees[0]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-			// name
-			$event_name = isset( $all_attendees[0]->event_name ) ? stripslashes( $all_attendees[0]->event_name ) : '';
-			$event_date = isset( $all_attendees[0]->DTT_EVT_start ) ? date( 'l F j, Y,    g:i:s a', $all_attendees[0]->DTT_EVT_start ) : '';
-			// edit event link
-			if ( $event_name != '' ) {
-				$edit_event_url = self::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$EVT_ID ), EVENTS_ADMIN_URL );	
-				$edit_event_lnk = '<a href="'.$edit_event_url.'" title="' . __( 'Edit ', 'event_espresso' ) . $event_name . '">' . __( 'Edit Event', 'event_espresso' ) . '</a>';	
-				$event_name .= ' <span class="admin-page-header-edit-lnk not-bold">' . $edit_event_lnk . '</span>' ;
-			}
+		
+	//		$registrations = EEM_Registration::instance();
+	//		$all_attendees = EEM_Attendee::instance()->get_event_attendees( $EVT_ID, $CAT_ID, $reg_status, $trash, $orderby, $sort, $limit, $output );
+			if ( isset( $registrations[0] ) && $registrations[0] instanceof EE_Registration ) {
+				//printr( $all_attendees[0], '$all_attendees[0]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+				// name
+				$first_registration = $registrations[0];
+				$event_obj = $first_registration->event_obj();
+				if($event_obj){
+					$event_name = $first_registration->event_obj()->name();
+					$event_date = $first_registration->date_obj()->reg_start_date_and_time('l F j, Y,', ' g:i:s a');// isset( $registrations[0]->DTT_EVT_start ) ? date( 'l F j, Y,    g:i:s a', $registrations[0]->DTT_EVT_start ) : '';
+					// edit event link
+					if ( $event_name != '' ) {
+						$edit_event_url = self::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$EVT_ID ), EVENTS_ADMIN_URL );	
+						$edit_event_lnk = '<a href="'.$edit_event_url.'" title="' . __( 'Edit ', 'event_espresso' ) . $event_name . '">' . __( 'Edit Event', 'event_espresso' ) . '</a>';	
+						$event_name .= ' <span class="admin-page-header-edit-lnk not-bold">' . $edit_event_lnk . '</span>' ;
+					}
 
-			$back_2_reg_url = self::add_query_args_and_nonce( array( 'action'=>'default' ), REG_ADMIN_URL );	
-			$back_2_reg_lnk = '<a href="'.$back_2_reg_url.'" title="' . __( 'click to return to viewing all registrations ', 'event_espresso' ) . '">&laquo; ' . __( 'Back to All Registrations', 'event_espresso' ) . '</a>';	
-			
-			$this->_template_args['before_admin_page_content'] = '
-		<div id="admin-page-header">
-			<h1><span class="small-text not-bold">'.__( 'Event: ', 'event_espresso' ).'</span>'. $event_name .'</h1>
-			<h3><span class="small-text not-bold">'.__( 'Date: ', 'event_espresso' ). '</span>'. $event_date .'</h3>
-			<span class="admin-page-header-go-back-lnk not-bold">' . $back_2_reg_lnk . '</span>
-		</div>
-		';
+					$back_2_reg_url = self::add_query_args_and_nonce( array( 'action'=>'default' ), REG_ADMIN_URL );	
+					$back_2_reg_lnk = '<a href="'.$back_2_reg_url.'" title="' . __( 'click to return to viewing all registrations ', 'event_espresso' ) . '">&laquo; ' . __( 'Back to All Registrations', 'event_espresso' ) . '</a>';	
+
+					$this->_template_args['before_admin_page_content'] = '
+				<div id="admin-page-header">
+					<h1><span class="small-text not-bold">'.__( 'Event: ', 'event_espresso' ).'</span>'. $event_name .'</h1>
+					<h3><span class="small-text not-bold">'.__( 'Date: ', 'event_espresso' ). '</span>'. $event_date .'</h3>
+					<span class="admin-page-header-go-back-lnk not-bold">' . $back_2_reg_lnk . '</span>
+				</div>
+				';
+				}
+			}
 		}
 
-		return $all_attendees;
+		return $registrations;
 	}
 
 
