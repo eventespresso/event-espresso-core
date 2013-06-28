@@ -62,6 +62,7 @@ class EED_Event_List  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function init() {
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		define( 'EVENT_LIST_ASSETS_URL', plugin_dir_url( __FILE__ ) . 'assets' . DS );
 		define( 'EVENT_LIST_TEMPLATES_PATH', plugin_dir_path( __FILE__ ) . 'templates' . DS );
 		add_filter( 'FHEE_load_org_options', '__return_true' );
@@ -69,8 +70,6 @@ class EED_Event_List  extends EED_Module {
 //		add_filter( 'FHEE_run_EE_wp', '__return_true' );
 //		add_filter( 'FHEE_load_EE_Session', '__return_true' );
 //		add_action( 'wp_loaded', array( $this, 'wp_loaded' ));
-//		add_action( 'wp', array( $this, 'wp' ));
-//		add_filter( 'the_content', array( $this, 'the_content' ));
 		// parse_request
 		add_filter( 'request', array( $this, 'filter_request' )); 
 		remove_all_filters( 'excerpt_length' );
@@ -78,7 +77,7 @@ class EED_Event_List  extends EED_Module {
 		add_filter('excerpt_more', array( $this, 'excerpt_more' ), 10 );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
 		add_filter( 'template_include', array( $this, 'template_include' ), 1 );
-		//$this->ouput =  '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+		add_filter( 'the_content', array( $this, 'the_content' ));
 	}
 
 
@@ -90,25 +89,18 @@ class EED_Event_List  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function filter_request(  $req  ) {
-		//printr( $req, '$req  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $req, '$req  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	    if ( isset( $req['pagename'] ) && $req['pagename'] == $this->EE->CFG->events_page ) {
+			$req['post_type'] = 'espresso_events';
 	 		unset( $req['pagename'] );
-	 		$req['post_type'] = 'espresso_events';
-		}       
+			add_action( 'wp', array( $this, 'wp' ));
+		} else {
+			add_action( 'wp_loaded', array( $this, 'wp_loaded' ));
+		}
+		//printr( $req, '$req  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	    return $req;
 	}
 
-
-	/**
-	 * 	all_events
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function all_events() {
-		$this->ouput .= '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		$this->ouput .= '<h4>currency_symbol : ' . $this->EE->CFG->currency_symbol . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';		
-	}
 
 
 
@@ -119,7 +111,13 @@ class EED_Event_List  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function wp_loaded() {
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+		$EVTM = $this->EE->load_model( 'Event' );
+		//printr( $EVTM, '$EVTM  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		$events = $EVTM->get_all( array( array( 'STS_ID' => 'publish' )));
+//		printr( $events, '$events  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		$this->ouput .= '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+		$this->ouput .= '<h4>currency_symbol : ' . $this->EE->CFG->currency_symbol . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';		
 	}
 
 
@@ -130,8 +128,32 @@ class EED_Event_List  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function wp() {
+	public function wp( $wp_query ) {
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+		//printr( $wp_query, '$wp_query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+		$posts_per_page = isset( $_GET['posts_per_page'] ) ? sanitize_key( $_GET['posts_per_page'] ) : 24;
+		$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+
+		//set query args
+		$args = array(
+			'post_type' => 'espresso_events',
+			'post_status' => 'publish',		// future,draft
+			'posts_per_page' => $posts_per_page,	
+			'paged' => $paged
+		);
+
+		$wp_query->posts = new WP_Query( $args );
+		
+		// attempt to add extra data to $wp_query (doesn't work so far)
+		$wp_query->pagination_args = array(
+			'base' => str_replace( 999999, '%#%', esc_url( get_pagenum_link( 999999 ) ) ),
+			'format' => '?paged=%#%',
+			'current' => max( 1, $paged ),
+			'total' => $posts->max_num_pages
+		);
+//		printr( $wp_query, '$wp_query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
 	}
 
 
@@ -171,12 +193,12 @@ class EED_Event_List  extends EED_Module {
 				// first check uploads folder
 				if ( file_exists( EVENT_ESPRESSO_UPLOAD_DIR . 'templates/event_list.css' )) {
 					wp_register_style( 'espresso_event_list', EVENT_ESPRESSO_UPLOAD_URL . 'templates/espresso_event_list.css', array() );
-					wp_register_script( 'espresso_event_list', EVENT_ESPRESSO_UPLOAD_URL . 'templates/espresso_event_list.js', array( 'blocksit' ), '1.0', FALSE  );
+					wp_register_script( 'espresso_event_list', EVENT_ESPRESSO_UPLOAD_URL . 'templates/espresso_event_list.js', array( 'blocksit' ), '1.0', TRUE  );
 				} else {
 					wp_register_style( 'espresso_event_list', EVENT_LIST_ASSETS_URL . 'espresso_event_list.css', array() );
-					wp_register_script( 'espresso_event_list', EVENT_LIST_ASSETS_URL . 'espresso_event_list.js', array( 'blocksit' ), '1.0', FALSE );
+					wp_register_script( 'espresso_event_list', EVENT_LIST_ASSETS_URL . 'espresso_event_list.js', array( 'blocksit' ), '1.0', TRUE );
 				}
-				wp_register_script( 'blocksit', EVENT_LIST_ASSETS_URL . 'blocksit.min.js', array( 'jquery' ), '1.0', FALSE );
+				wp_register_script( 'blocksit', EVENT_LIST_ASSETS_URL . 'blocksit.min.js', array( 'jquery' ), '1.0', TRUE );
 				wp_enqueue_style( 'espresso_event_list' );
 				wp_enqueue_script( 'blocksit' );
 				wp_enqueue_script( 'espresso_event_list' );
