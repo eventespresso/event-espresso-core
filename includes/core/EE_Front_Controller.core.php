@@ -38,11 +38,11 @@ class EE_Front_Controller {
 	public $EE;
 
 	/**
-	 * 	EE_Request_Handler Object
-	 *	@var 	object		$REQ
+	 * static copy of registry that modules can use until they get instantiated
+	 *	@var 	object		$registry
 	 * 	@access 	public
 	 */
-	public $REQ;
+	public static $registry;
 
 	/**
 	 * 	_installed_shortcodes
@@ -72,22 +72,13 @@ class EE_Front_Controller {
 		$this->_load_system_files();
 		// path to espresso.php
 		$this->EE->main_file = $main_file;
-		// delay loading modules and such
-		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 25 );
+		// create static copy of EE for modules and shortcodes
+		 self::$registry = $this->EE;
 		// front or back ?
 		if ( is_admin() ) {
-			add_action( 'plugins_loaded', array( $this, 'load_admin' ), 50 );
+			add_action( 'plugins_loaded', array( $this, 'load_admin' ), 25 );
 		} else {
-			// sets up the current user
-			add_action( 'init', array( $this, 'init' ), 25 );
-			add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 25 );
-			// sets up the proper query arguments.
-			add_filter( 'request', array( $this, 'filter_request' ));  
-			add_action( 'parse_request', array( $this, 'parse_request' ), 25 );
-			add_action( 'wp', array( $this, 'wp' ), 25 );
-			add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 5 );
-			add_action('wp_head', array( $this, 'header_meta_tag' ), 25 );
-			add_filter( 'the_content', array( $this, 'the_content' ), 25, 1 );
+			add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 25 );
 		}
 	}
 
@@ -111,21 +102,41 @@ class EE_Front_Controller {
 
 
 	/**
+	 * 		get_static_registry
+	 *
+	 * 		@access 	public
+	 * 		@return 		void
+	 */
+	public static function get_static_registry() {
+		return self::$registry;
+	}
+
+
+
+	/**
 	 * 		plugins_loaded
 	 *
 	 * 		@access 	public
 	 * 		@return 		void
 	 */
 	public function plugins_loaded() {
-		// allow shortcodes to register with WP and to set hooks for the rest of the system
-		$this->_register_shortcodes();
-		// allow modules to set hooks for the rest of the system
-		$this->_register_modules();
-		// pass shortcodes and modules to registry
-		$this->EE->shortcodes = self::$_installed_shortcodes;
-		$this->EE->modules = self::$_installed_modules;
-		// get current post name from URL
-		$this->EE->REQ->set( 'post_name', $this->_parse_url_for_post_name() );
+		if ( $this->EE->REQ->is_espresso_page()) {
+			// allow shortcodes to register with WP and to set hooks for the rest of the system
+			$this->_register_shortcodes();
+			// allow modules to set hooks for the rest of the system
+			$this->_register_modules();
+			// pass shortcodes and modules to registry
+			$this->EE->shortcodes = self::$_installed_shortcodes;
+			$this->EE->modules = self::$_installed_modules;
+			add_action( 'init', array( $this, 'init' ), 25 );
+			add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 25 );
+			add_filter( 'request', array( $this, 'filter_request' ), 1 );  
+			add_action( 'parse_request', array( $this, 'parse_request' ), 25 );
+			add_action( 'wp', array( $this, 'wp' ), 25 );
+			add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 5 );
+			add_action('wp_head', array( $this, 'header_meta_tag' ), 25 );
+			add_filter( 'the_content', array( $this, 'the_content' ), 25, 1 );
+		}
 	}
 
 
@@ -215,21 +226,6 @@ class EE_Front_Controller {
 		}
 	}	
 
-
-
-	/**
-	 * 		_parse_url_for_post_name
-	 *
-	 * 		@access private
-	 * 		@return void
-	 */
-	private function _parse_url_for_post_name() {
-		$request_URI = esc_url_raw( $_SERVER['REQUEST_URI'] );
-		$request_URI = explode( '?', $request_URI );
-		$post_name = basename( $request_URI[0] );
-		$post_name = strpos( home_url(), $post_name ) == FALSE ? $post_name : '';
-		return $post_name;
-	}
 
 
 
@@ -482,6 +478,10 @@ class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function filter_request(  $req  ) {
+//		if ( $espresso_page = $this->EE->REQ->is_espresso_page() ) {
+//	 		$req['pagename'] = isset( $req['pagename'] ) && ! empty( $req['pagename'] ) ? $req['pagename'] : $espresso_page;
+//	 		$req['post_type'] = 'espresso_events';			
+//		}
 //		printr( $req, '$req  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	    return $req;
 	}
