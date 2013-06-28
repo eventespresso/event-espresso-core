@@ -215,7 +215,7 @@ abstract class EEM_Base extends EE_Base{
 
 		//and finally we do the same for any datetime fields
 		foreach ( $this->_fields as $field ) {
-			if ( $field instanceof EE_Datetime_field ) {
+			if ( $field instanceof EE_Datetime_Field ) {
 				$field->set_timezone( $timezone );
 			}
 		}
