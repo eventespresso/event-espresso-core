@@ -431,6 +431,13 @@ class EE_Registration extends EE_Base_Class {
 	public function set_price_paid( $REG_final_price = FALSE ) {		
 		$this->set('REG_final_price',$REG_final_price);
 	}
+	
+	/**
+	 * @return string of price, with correct decimal places and currency symbol
+	 */
+	public function pretty_price_paid(){
+		return $this->get_pretty('REG_final_price');
+	}
 
 
 
@@ -719,13 +726,7 @@ class EE_Registration extends EE_Base_Class {
 		return $this->get('REG_final_price');
 	}
 	
-	/**
-	 * Gets the price paid in nice format with teh currency symbol
-	 * @return string
-	 */
-	public function pretty_price_paid(){
-		return $this->get_pretty('REG_final_price');
-	}
+	
 	
 	
 	/**

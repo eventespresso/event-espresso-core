@@ -281,11 +281,19 @@ class EE_Transaction extends EE_Base_Class{
 	/**
 	*		get Transaction Total
 	* 		@access		public
+	 * @return float
 	*/	
 	public function total() {
 		return $this->get('TXN_total');
 	}
 
+	/**
+	 * 
+	 * @return string of transaction's total cost, with currency symbol and decimal
+	 */
+	public function pretty_total(){
+		return $this->get_pretty('TXN_total');
+	}
 
 
 
