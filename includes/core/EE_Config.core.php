@@ -33,6 +33,7 @@ class EE_Config {
 
 
 	public $events_page = 'events';
+	public $event_page = 'event';
 
 
 	/**
@@ -58,7 +59,11 @@ class EE_Config {
 	 */
 	private function __construct() {
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 10 );
+		// org options loading is turned OFF by default, but prior to the plugins_loaded hook, can be turned back on again via:  add_filter( 'FHEE_load_org_options', '__return_true' );
+		if ( apply_filters( 'FHEE_load_org_options', FALSE )) {
+			// get EE site settings
+			$this->_load_config();
+		}
 	}
 
 
@@ -71,11 +76,6 @@ class EE_Config {
 	 */
 	public function plugins_loaded() {
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		// org options loading is turned OFF by default, but prior to the plugins_loaded hook, can be turned back on again via:  add_filter( 'FHEE_load_org_options', '__return_true' );
-		if ( apply_filters( 'FHEE_load_org_options', FALSE )) {
-			// get EE site settings
-			$this->_load_config();
-		}
 	}
 
 
@@ -119,7 +119,6 @@ class EE_Config {
 		foreach ( $config as $key => $value ) {
 			$this->$key = $value;
 		}
-
 		do_action('AHEE_debug_file');
 	}
 
