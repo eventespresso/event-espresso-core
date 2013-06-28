@@ -40,11 +40,23 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 //		add_filter( 'FHEE_run_EE_wp', '__return_true' );
 //		add_filter( 'FHEE_load_EE_Session', '__return_true' );
-//		add_filter( 'FHEE__Front_Controller__initialize_shortcodes__post_shortcodes', array( 'EES_Espresso_Events', 'load_shortcodes' ), 10, 1 );
-		add_filter( 'AHEE__Front_Controller__process_request__modules', array( 'EES_Espresso_Events', 'load_modules' ), 10, 1 );
+		// grab copy of  request
+		$EE = EE_Front_Controller::get_static_registry();
+		// check current post name vs events page
+		if ( $EE->REQ->is_set( 'post_name' )) {
+			// post_name == events
+			if ( $EE->REQ->get( 'post_name' ) == $EE->CFG->events_page ) {
+				// load event list
+				add_filter( 'AHEE__Front_Controller__process_request__modules', array( 'EES_Espresso_Events', 'load_event_list' ), 10, 1 );
+			// post_name == event 
+			} else if ( $EE->REQ->get( 'post_name' )  == $EE->CFG->event_page ) {
+				// load event details page
+				add_filter( 'AHEE__Front_Controller__process_request__modules', array( 'EES_Espresso_Events', 'load_event_details' ), 10, 1 );
+			}
+		}
+
 	}
 
 	/**
@@ -63,18 +75,28 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 *  @return 	array
 	 */
 	public static function load_shortcodes( $shortcodes ) {
-		//$shortcodes['EES_Event_List'] = 'ESPRESSO_EVENTS';
 		return $shortcodes;
 	}
 
 	/**
-	 * 	filter_modules
+	 * 	load_event_list - filter_modules
 	 *
 	 *  @access 	public
 	 *  @return 	array
 	 */
-	public static function load_modules( $modules ) {
+	public static function load_event_list( $modules ) {
 		$modules[] = 'Event_List';
+		return $modules;
+	}
+
+	/**
+	 * 	load_event_list - filter_modules
+	 *
+	 *  @access 	public
+	 *  @return 	array
+	 */
+	public static function load_event_details( $modules ) {
+		$modules[] = 'Event_Details';
 		return $modules;
 	}
 
@@ -88,7 +110,6 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function init() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		$this->ouput =  '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	}
 
@@ -96,15 +117,6 @@ class EES_Espresso_Events  extends EES_Shortcode {
 
 	/**
 	 * 	process_shortcode - EVENT_LIST - Returns a list of events
-	 * 
-	 * 	[EVENT_LIST]
-	 * 	[EVENT_LIST limit=1]
-	 * 	[EVENT_LIST css_class=my-custom-class]
-	 * 	[EVENT_LIST show_expired=true]
-	 * 	[EVENT_LIST show_deleted=true]
-	 * 	[EVENT_LIST show_secondary=true]
-	 * 	[EVENT_LIST show_recurrence=true]
-	 * 	[EVENT_LIST category_identifier=your_category_identifier]
 	 * 
 	 *  @access 	public
 	 *  @param		array 	$attributes
