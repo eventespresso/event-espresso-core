@@ -1,8 +1,8 @@
 	
-	#espresso-events-list-wrap-dv { padding:4em 0 0; }	
+	#espresso-events-list-wrap-dv { padding:3.5em 0 0; }	
 	#espresso-events-list-dv { position: relative; padding: 0; margin: 0 auto; }	
 	#event-list-h1 {
-		position: relative; top:-2em; z-index:10; margin: 0 0 .5em;
+		position: relative; top:-1.5em; z-index:10; margin: 0 0 .5em;
 		font-size: 2em; font-weight: bold; color: #ccc;
 		text-shadow: 1px 1px 0px #fff;
 	}	
@@ -29,8 +29,42 @@
 		font-weight: bold; font-size:16px; color:#fff; text-shadow:1px 1px 0px rgba(0,0,0,.5); text-decoration: none;
 	}
 	.ee-register-button-lnk:hover { background: #6CBA00; color:#fff; }
-	.ee-register-button-lnk:active { top:-1px; }
+	.ee-register-button-lnk:active { top:1px; }
 	.edit-event-lnk { margin:0 1em; }
+	
+
+	.ee-pagination-dv {    
+	    height:1.25em; padding: 0;
+	}
+	.ee-pagination-dv .page-numbers { 
+		display: inline-block; padding:0 .5em; margin:0 0 0 .1em;
+		border:1px solid #eee; font-size:.8em; line-height:2em; color:#bcc1c6; 
+		border-radius:2px; -webkit-border-radius: 2px; -webkit-border-radius: 2px; -moz-border-radius: 2px;
+	}
+	.ee-pagination-dv .current,
+	.ee-pagination-dv .page-numbers.current:hover { border-color:#fff; color:#444; font-weight: bold; cursor: default; }
+	.ee-pagination-dv .page-numbers:hover { border-color:#d3cec9; color:#444; }
+
+	#ee-filters-btm-dv { margin:2em 20px 1em 0; }
+	.ee-filters-dv {
+		clear: both; padding:.5em 1em; margin:1em 20px 2em 0; background:#f5f2ef; 
+		-webkit-border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius:3px;
+		color:#444; font-size:.9em; line-height:1.25em; vertical-align: middle;
+	}
+	.ee-filters-dv a { color:#444; }
+	.ee-filters-dv a:hover { color:#0093D0; }
+	.ee-filters-dv span { color:#aa9d91; }
+
+	.ee-filters-dv select { 
+		margin:0; border:1px solid #d3cfcb;
+		border-radius:3px; -webkit-border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px;
+	}
+
+	
+	
+	
+	
+	
 	.tiny-txt { font-size:.5em; letter-spacing:1px; }
 	.smaller-txt { font-size:.7em; letter-spacing:.6px; }
 	.small-txt { font-size:.85em; letter-spacing:.3px; }
