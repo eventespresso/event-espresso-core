@@ -73,9 +73,9 @@ class EE_System {
 		$this->_load_logging();
 		// handy dandy object for holding shtuff
 		$this->_load_registry();
-		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 10 );
-		add_action( 'init', array( $this, 'init' ), 25 );
-		add_filter('query_vars', array( $this, 'add_query_vars' ), 25 );
+		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
+		add_action( 'init', array( $this, 'init' ), 5 );
+		add_filter('query_vars', array( $this, 'add_query_vars' ), 5 );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
 	}
 
@@ -425,7 +425,7 @@ class EE_System {
 			//espresso_load_org_options();
 			
 		}
-		$this->create_event_slug_rewrite_rule();
+		//$this->create_event_slug_rewrite_rule();
 
 	}
 
@@ -457,9 +457,9 @@ class EE_System {
 	 */
 	public function add_query_vars($query_vars) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		$query_vars[] = 'event_slug';
-		$query_vars[] = 'ee';
-		$query_vars[] = 'e_reg';
+//		$query_vars[] = 'event_slug';
+//		$query_vars[] = 'ee';
+//		$query_vars[] = 'e_reg';
 		//printr( $query_vars, '$query_vars  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		return $query_vars;
 	}
@@ -474,11 +474,11 @@ class EE_System {
 	 *  @return 	void
 	 */
 	private function create_event_slug_rewrite_rule( $to_flush_or_not_to_flush = FALSE ) {
-		global $wpdb;		
-		// grab slug for event reg page
-		$SQL = 'SELECT post_name  FROM ' . $wpdb->prefix . 'posts WHERE ID = %d';
-		$reg_page_url_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $this->EE->CFG->event_page_id ));
-		$this->_add_rewrite_rules( $reg_page_url_slug, 'event_slug', $to_flush_or_not_to_flush );
+//		global $wpdb;		
+//		// grab slug for event reg page
+//		$SQL = 'SELECT post_name  FROM ' . $wpdb->prefix . 'posts WHERE ID = %d';
+//		$reg_page_url_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $this->EE->CFG->events_page ));
+//		$this->_add_rewrite_rules( $reg_page_url_slug, 'event_slug', $to_flush_or_not_to_flush );
 	}
 
 
