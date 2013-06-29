@@ -151,6 +151,12 @@ abstract class EEM_Base extends EE_Base{
 	 * @var array
 	 */
 	private $_allowed_query_params = array(0, 'limit','order_by','group_by','having','force_join','order','on_join_limit');
+	
+	/**
+	 * Property which, when set, will have this model echo out the next X queries to the page for debugging.
+	 * @var int
+	 */
+	protected $_show_next_x_db_queries = 0;
 	/**
 	 * About all child constructors:
 	 * they should define the _tables, _fields and _model_relations arrays. 
@@ -311,8 +317,7 @@ abstract class EEM_Base extends EE_Base{
 		$select_expressions = $columns_to_select ? $columns_to_select : $this->_construct_select_sql($model_query_info);
 		$SQL ="SELECT $select_expressions ".$this->_construct_2nd_half_of_select_query($model_query_info);
 		$results =  $wpdb->get_results($SQL, $output);
-		//echo "<br><br>_get_all_wpdb_results sql:$SQL";
-		
+		$this->show_db_query_if_previously_requested($SQL);
 		return $results;
 	}
 	
@@ -609,6 +614,22 @@ abstract class EEM_Base extends EE_Base{
 				$model_query_info->get_order_by_sql().
 				$model_query_info->get_limit_sql();
 	}
+	
+	/**
+	 * Set to easily debug the next X queries ran from thsi model.
+	 * @param int $count
+	 */
+	function show_next_x_db_queries($count = 1){
+		$this->_show_next_x_db_queries = $count;
+	}
+	
+	function show_db_query_if_previously_requested($sql_query){
+		if($this->_show_next_x_db_queries > 0){
+			echo $sql_query;
+			$this->_show_next_x_db_queries--;
+		}
+	}
+	
 	/**
 	 * Adds a relationship of the correct type between $modelObject and $otherModelObject. 
 	 * There are the 3 cases:
@@ -1413,7 +1434,7 @@ abstract class EEM_Base extends EE_Base{
 		foreach ( $values as $value ) {
 			$cleaned_values[] = $wpdb->prepare( $field_obj->get_wpdb_data_type(), $this->_prepare_value_for_use_in_db( $value, $field_obj, $values_already_prepared_by_model_object ) );
 		}
-		return "'" . $cleaned_values[0] . "' AND '" . $cleaned_values[1] . '"';
+		return  $cleaned_values[0] . " AND " . $cleaned_values[1];
 	}
 
 
