@@ -599,7 +599,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$EVT_ID = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$CAT_ID = isset( $this->_req_data['category_id'] ) ? absint( $this->_req_data['category_id'] ) : FALSE;
 		$reg_status = isset( $this->_req_data['reg_status'] ) ? sanitize_text_field( $this->_req_data['reg_status'] ) : FALSE;
-		$month_range = isset( $this->_req_data['month_range'] ) ? sanitize_text_field( $this->_req_data['month_range'] ) : FALSE;
+		$month_range = isset( $this->_req_data['month_range'] ) ? sanitize_text_field( $this->_req_data['month_range'] ) : FALSE;//should be like 2013-april
 		$today_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'today' ? TRUE : FALSE;
 		$this_month_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'month' ? TRUE  : FALSE;
 		$start_date = FALSE;
@@ -644,6 +644,47 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		if($reg_status){
 			$query_params[0]['STS_ID'] = $reg_status;
 		}
+		
+		
+		
+		$this_year_r = date('Y', current_time('timestamp'));
+		
+		
+		$time_start = ' 00:00:00';
+		$time_end = ' 23:59:59';
+		
+		if($today_a){
+			$curdate = date('Y-m-d', current_time('timestamp'));
+			$query_params[0]['REG_date']= array('BETWEEN',
+				array(
+					strtotime($curdate . $time_start),
+					strtotime($curdate . $time_end)
+			));
+		}elseif($this_month_a){
+			$this_month_r = date('m', current_time('timestamp'));
+			$days_this_month = date( 't', current_time('timestamp') );
+			$query_params[0]['REG_date']= array('BETWEEN',
+				array(
+					strtotime( $this_month_r . ' 01 ' . $this_year_r . ' ' . $time_start ),
+					strtotime( $this_month_r . ' ' . $days_this_month . ' ' . $this_year_r . ' ' . $time_end ) 
+			));
+		}elseif($month_range){
+			$pieces = explode('-', $month_range, 3);
+			$year_r = $pieces[0];
+			$month_r = $pieces[1];
+			$query_params[0]['REG_date']= array('BETWEEN',
+				array(
+					$month_r . ' 01 ' . $this_year_r . ' ' . $time_start ,
+					$month_r . ' ' . date( 't', strtotime( $year_r . ' ' . $month_r )) . ' ' . $year_r . ' ' . $time_end 
+			));	
+		}elseif($start_date && $end_date){
+			throw new EE_Error("not yet supported");
+		}elseif($start_date){
+			throw new EE_Error("not yet supported");
+		}elseif($end_date){
+			throw new EE_Error("not yet supported");
+		}
+		
 		if($count){
 			return EEM_Registration::instance()->count($query_params);
 		}else{

@@ -687,7 +687,7 @@ function espresso_event_months_dropdown( $current_value = FALSE ) {
 	$current_value = $current_value ? $current_value : 0;
 
 
-	$SQL = "SELECT DATE_FORMAT( REG_date, '%Y') AS 'YR', DATE_FORMAT( REG_date, '%M') AS 'MN' FROM {$wpdb->prefix}esp_registration reg LEFT JOIN {$wpdb->prefix}events_detail evt ON evt.id=reg.EVT_ID WHERE event_status != 'D' GROUP BY YR, MN";
+	$SQL = "SELECT DATE_FORMAT( REG_date, '%Y') AS 'YR', DATE_FORMAT( REG_date, '%M') AS 'MN' FROM {$wpdb->prefix}esp_registration reg  GROUP BY YR, MN";//LEFT JOIN {$wpdb->prefix}events_detail evt ON evt.id=reg.EVT_ID WHERE event_status != 'D'
 
 	if ( $dates = $wpdb->get_results( $SQL )) {
 
