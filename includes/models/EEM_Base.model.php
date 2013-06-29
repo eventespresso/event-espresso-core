@@ -437,6 +437,7 @@ abstract class EEM_Base extends EE_Base{
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 		$SQL = "UPDATE ".$model_query_info->get_full_join_sql()." SET ".$this->_construct_update_sql($fields_n_values, $values_already_prepared_by_model_object).$model_query_info->get_where_sql();//note: doesn't use _construct_2nd_half_of_select_query() because doesn't accept LIMIT, ORDER BY, etc.
 		$rows_affected = $wpdb->query($SQL);
+		$this->show_db_query_if_previously_requested($SQL);
 		return $rows_affected;//how many supposedly got updated
 	}	
 	
@@ -483,6 +484,7 @@ abstract class EEM_Base extends EE_Base{
 
 	//		/echo "delete sql:$SQL";
 			$rows_deleted = $wpdb->query($SQL);
+			$this->show_db_query_if_previously_requested($SQL);
 			//$wpdb->print_error();
 		}else{
 			$rows_deleted = 0;
@@ -568,6 +570,7 @@ abstract class EEM_Base extends EE_Base{
 
 		$column_to_count = $distinct ? "DISTINCT (" . $column_to_count . " )" : $column_to_count;
 		$SQL ="SELECT COUNT(".$column_to_count.")" . $this->_construct_2nd_half_of_select_query($model_query_info);
+		$this->show_db_query_if_previously_requested($SQL);
 		return (int)$wpdb->get_var($SQL);
 	}
 	
@@ -591,6 +594,7 @@ abstract class EEM_Base extends EE_Base{
 		$column_to_count = $field_obj->get_qualified_column();
 
 		$SQL ="SELECT SUM(".$column_to_count.")" . $this->_construct_2nd_half_of_select_query($model_query_info);
+		$this->show_db_query_if_previously_requested($SQL);
 		$return_value = $wpdb->get_var($SQL);
 		if($field_obj->get_wpdb_data_type() == '%d' || $field_obj->get_wpdb_data_type() == '%s' ){
 			return (int)$return_value;
@@ -815,6 +819,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 		//insert the new entry
 		$result = $wpdb->insert($table->get_table_name(),$insertion_col_n_values,$format_for_insertion);		
+		$this->show_db_query_if_previously_requested($wpdb->last_query);
 		if(!$result){
 			throw new EE_Error(sprintf(__("Error inserting values %s for columns %s, using data types %s, into table %s. Error was %s",'event_espresso'),
 					implode(",",$insertion_col_n_values),
