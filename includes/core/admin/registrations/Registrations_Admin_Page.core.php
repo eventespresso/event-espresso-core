@@ -599,7 +599,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$EVT_ID = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$CAT_ID = isset( $this->_req_data['category_id'] ) ? absint( $this->_req_data['category_id'] ) : FALSE;
 		$reg_status = isset( $this->_req_data['reg_status'] ) ? sanitize_text_field( $this->_req_data['reg_status'] ) : FALSE;
-		$month_range = isset( $this->_req_data['month_range'] ) ? sanitize_text_field( $this->_req_data['month_range'] ) : FALSE;
+		$month_range = isset( $this->_req_data['month_range'] ) ? sanitize_text_field( $this->_req_data['month_range'] ) : FALSE;//should be like 2013-april
 		$today_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'today' ? TRUE : FALSE;
 		$this_month_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'month' ? TRUE  : FALSE;
 		$start_date = FALSE;
@@ -616,13 +616,13 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				$orderby = 'STS_ID';
 				break;
 			case 'ATT_fname':
-				$orderby = 'ATT_lname';
+				$orderby = 'Attendee.ATT_lname';
 				break;
 			case 'event_name':
-				$orderby = 'event_name';
+				$orderby = 'Event.EVT_name';
 				break;
 			case 'DTT_EVT_start':
-				$orderby = 'DTT_EVT_start';
+				$orderby = 'Datetime.DTT_EVT_start';
 				break;
 			default: //'REG_date'
 				$orderby = 'REG_date';
@@ -634,36 +634,92 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 		$offset = ($current_page-1)*$per_page;
 		$limit = array( $offset, $per_page );
-
-
-		$registrations = EEM_Registration::instance()->get_registrations_for_admin_page( $EVT_ID, $CAT_ID, $reg_status, $month_range, $today_a, $this_month_a, $start_date, $end_date, $orderby, $sort, $limit, $count );
-//		global $wpdb;
-//		echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		//printr( $registrations, '$registrations  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		
-		if ( $EVT_ID && isset( $registrations[0] ) && isset( $registrations[0]->event_name )) {
-			//printr( $registrations[0], '$registrations  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-			$event_name = isset( $registrations[0]->event_name ) ? stripslashes( $registrations[0]->event_name ) : '';
-			$event_date = isset( $registrations[0]->DTT_EVT_start ) ? date( 'l F j, Y,    g:i:s a', $registrations[0]->DTT_EVT_start ) : '';
-			// edit event link
-			if ( $event_name != '' ) {
-				$edit_event_url = self::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$EVT_ID ), EVENTS_ADMIN_URL );	
-				$edit_event_lnk = '<a href="'.$edit_event_url.'" title="' . __( 'Edit ', 'event_espresso' ) . $event_name . '">' . __( 'Edit Event', 'event_espresso' ) . '</a>';	
-				$event_name .= ' <span class="admin-page-header-edit-lnk not-bold">' . $edit_event_lnk . '</span>' ;
-			}
-
-			$back_2_reg_url = self::add_query_args_and_nonce( array( 'action'=>'default' ), REG_ADMIN_URL );	
-			$back_2_reg_lnk = '<a href="'.$back_2_reg_url.'" title="' . __( 'click to return to viewing all registrations ', 'event_espresso' ) . '">&laquo; ' . __( 'Back to All Registrations', 'event_espresso' ) . '</a>';	
-
-			$this->_template_args['before_admin_page_content'] = '
-		<div id="admin-page-header">
-			<h1><span class="small-text not-bold">'.__( 'Event: ', 'event_espresso' ).'</span>'. $event_name .'</h1>
-			<h3><span class="small-text not-bold">'.__( 'Date: ', 'event_espresso' ). '</span>'. $event_date .'</h3>
-			<span class="admin-page-header-go-back-lnk not-bold">' . $back_2_reg_lnk . '</span>
-		</div>
-		';
+		$query_params = array();
+		if($EVT_ID){
+			$query_params[0]['EVT_ID']=$EVT_ID;
 		}
-		return $registrations;
+		if($CAT_ID){
+			throw new EE_Error("not sure how to handle filtering event categories here");
+		}
+		if($reg_status){
+			$query_params[0]['STS_ID'] = $reg_status;
+		}
+		
+		
+		
+		$this_year_r = date('Y', current_time('timestamp'));
+		
+		
+		$time_start = ' 00:00:00';
+		$time_end = ' 23:59:59';
+		
+		if($today_a){
+			$curdate = date('Y-m-d', current_time('timestamp'));
+			$query_params[0]['REG_date']= array('BETWEEN',
+				array(
+					strtotime($curdate . $time_start),
+					strtotime($curdate . $time_end)
+			));
+		}elseif($this_month_a){
+			$this_month_r = date('m', current_time('timestamp'));
+			$days_this_month = date( 't', current_time('timestamp') );
+			$query_params[0]['REG_date']= array('BETWEEN',
+				array(
+					strtotime( $this_month_r . ' 01 ' . $this_year_r . ' ' . $time_start ),
+					strtotime( $this_month_r . ' ' . $days_this_month . ' ' . $this_year_r . ' ' . $time_end ) 
+			));
+		}elseif($month_range){
+			$pieces = explode('-', $month_range, 3);
+			$year_r = $pieces[0];
+			$month_r = $pieces[1];
+			$query_params[0]['REG_date']= array('BETWEEN',
+				array(
+					$month_r . ' 01 ' . $this_year_r . ' ' . $time_start ,
+					$month_r . ' ' . date( 't', strtotime( $year_r . ' ' . $month_r )) . ' ' . $year_r . ' ' . $time_end 
+			));	
+		}elseif($start_date && $end_date){
+			throw new EE_Error("not yet supported");
+		}elseif($start_date){
+			throw new EE_Error("not yet supported");
+		}elseif($end_date){
+			throw new EE_Error("not yet supported");
+		}
+		
+		if($count){
+			return EEM_Registration::instance()->count($query_params);
+		}else{
+			$registrations = EEM_Registration::instance()->get_all($query_params);
+	//		$registrations = EEM_Registration::instance()->get_registrations_for_admin_page( $EVT_ID, $CAT_ID, $reg_status, $month_range, $today_a, $this_month_a, $start_date, $end_date, $orderby, $sort, $limit, $count );
+	//		global $wpdb;
+	//		echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+			//printr( $registrations, '$registrations  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+			if ( $EVT_ID && isset( $registrations[0] ) && $registrations[0] instanceof EE_Registration &&  $registrations[0]->event_obj()) {
+				$first_registration = $registrations[0];
+				//printr( $registrations[0], '$registrations  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+				$event_name = $first_registration->event_obj()->name();
+				$event_date = $first_registration->date_obj()->start_date_and_time('l F j, Y,', 'g:i:s a');// isset( $registrations[0]->DTT_EVT_start ) ? date( 'l F j, Y,    g:i:s a', $registrations[0]->DTT_EVT_start ) : '';
+				// edit event link
+				if ( $event_name != '' ) {
+					$edit_event_url = self::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$EVT_ID ), EVENTS_ADMIN_URL );	
+					$edit_event_lnk = '<a href="'.$edit_event_url.'" title="' . __( 'Edit ', 'event_espresso' ) . $event_name . '">' . __( 'Edit Event', 'event_espresso' ) . '</a>';	
+					$event_name .= ' <span class="admin-page-header-edit-lnk not-bold">' . $edit_event_lnk . '</span>' ;
+				}
+
+				$back_2_reg_url = self::add_query_args_and_nonce( array( 'action'=>'default' ), REG_ADMIN_URL );	
+				$back_2_reg_lnk = '<a href="'.$back_2_reg_url.'" title="' . __( 'click to return to viewing all registrations ', 'event_espresso' ) . '">&laquo; ' . __( 'Back to All Registrations', 'event_espresso' ) . '</a>';	
+
+				$this->_template_args['before_admin_page_content'] = '
+			<div id="admin-page-header">
+				<h1><span class="small-text not-bold">'.__( 'Event: ', 'event_espresso' ).'</span>'. $event_name .'</h1>
+				<h3><span class="small-text not-bold">'.__( 'Date: ', 'event_espresso' ). '</span>'. $event_date .'</h3>
+				<span class="admin-page-header-go-back-lnk not-bold">' . $back_2_reg_lnk . '</span>
+			</div>
+			';
+
+			}
+			return $registrations;
+		}
 	}
 
 
@@ -1992,8 +2048,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	public function get_event_attendees( $per_page = 10, $count = FALSE, $trash = FALSE, $orderby = '' ) {  
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		// start with an empty array
-		$attendees = array();
 		
 		require_once( REG_ADMIN . 'EE_Event_Registrations_List_Table.class.php' );
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
@@ -2010,7 +2064,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				$orderby = 'REG_date';
 				break;
 			default :
-				$orderby = 'ATT_lname';
+				$orderby = 'Attendee.ATT_lname';
 //				$orderby = 'reg.REG_final_price';
 		}
 		
@@ -2022,34 +2076,60 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 		$offset = ($current_page-1)*$per_page;
 		$limit = array( $offset, $per_page );
+		$query_params = array(array());
+		if ($EVT_ID){
+			$query_params[0]['EVT_ID']=$EVT_ID;
+		}
+		if($CAT_ID){
+			throw new EE_Error("You specified a Cateogry Id for this query. Thats odd because we are now using terms and taxonomies. So did you mean the term taxonomy id o rthe term id?");
+		}
+		if($reg_status){
+			$query_params[0]['STS_ID']=$reg_status;
+		}
+		if($trash){
+			$query_params[0]['Attendee.ATT_status']=  EEM_CPT_Base::post_status_trashed;
+		}
+		$query_params['order_by'][$orderby] = $sort;
+		$query_params['limit'] = $limit;
+		$query_params['force_join'] = array('Attendee');//force join to attendee model so that it gets cached, because we're going to need the attendee for each registration
+		if($count){
+			$registrations = EEM_Registration::instance()->count($query_params);
+		}else{
+			$registrations = EEM_Registration::instance()->get_all($query_params);
 		
-		$output = $count ? 'COUNT' : 'OBJECT_K';
-		$all_attendees = EEM_Attendee::instance()->get_event_attendees( $EVT_ID, $CAT_ID, $reg_status, $trash, $orderby, $sort, $limit, $output );
-		if ( isset( $all_attendees[0] ) && isset( $all_attendees[0]->event_name )) {
-			//printr( $all_attendees[0], '$all_attendees[0]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-			// name
-			$event_name = isset( $all_attendees[0]->event_name ) ? stripslashes( $all_attendees[0]->event_name ) : '';
-			$event_date = isset( $all_attendees[0]->DTT_EVT_start ) ? date( 'l F j, Y,    g:i:s a', $all_attendees[0]->DTT_EVT_start ) : '';
-			// edit event link
-			if ( $event_name != '' ) {
-				$edit_event_url = self::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$EVT_ID ), EVENTS_ADMIN_URL );	
-				$edit_event_lnk = '<a href="'.$edit_event_url.'" title="' . __( 'Edit ', 'event_espresso' ) . $event_name . '">' . __( 'Edit Event', 'event_espresso' ) . '</a>';	
-				$event_name .= ' <span class="admin-page-header-edit-lnk not-bold">' . $edit_event_lnk . '</span>' ;
-			}
+		
+	//		$registrations = EEM_Registration::instance();
+	//		$all_attendees = EEM_Attendee::instance()->get_event_attendees( $EVT_ID, $CAT_ID, $reg_status, $trash, $orderby, $sort, $limit, $output );
+			if ( isset( $registrations[0] ) && $registrations[0] instanceof EE_Registration ) {
+				//printr( $all_attendees[0], '$all_attendees[0]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+				// name
+				$first_registration = $registrations[0];
+				$event_obj = $first_registration->event_obj();
+				if($event_obj){
+					$event_name = $first_registration->event_obj()->name();
+					$event_date = $first_registration->date_obj()->reg_start_date_and_time('l F j, Y,', ' g:i:s a');// isset( $registrations[0]->DTT_EVT_start ) ? date( 'l F j, Y,    g:i:s a', $registrations[0]->DTT_EVT_start ) : '';
+					// edit event link
+					if ( $event_name != '' ) {
+						$edit_event_url = self::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$EVT_ID ), EVENTS_ADMIN_URL );	
+						$edit_event_lnk = '<a href="'.$edit_event_url.'" title="' . __( 'Edit ', 'event_espresso' ) . $event_name . '">' . __( 'Edit Event', 'event_espresso' ) . '</a>';	
+						$event_name .= ' <span class="admin-page-header-edit-lnk not-bold">' . $edit_event_lnk . '</span>' ;
+					}
 
-			$back_2_reg_url = self::add_query_args_and_nonce( array( 'action'=>'default' ), REG_ADMIN_URL );	
-			$back_2_reg_lnk = '<a href="'.$back_2_reg_url.'" title="' . __( 'click to return to viewing all registrations ', 'event_espresso' ) . '">&laquo; ' . __( 'Back to All Registrations', 'event_espresso' ) . '</a>';	
-			
-			$this->_template_args['before_admin_page_content'] = '
-		<div id="admin-page-header">
-			<h1><span class="small-text not-bold">'.__( 'Event: ', 'event_espresso' ).'</span>'. $event_name .'</h1>
-			<h3><span class="small-text not-bold">'.__( 'Date: ', 'event_espresso' ). '</span>'. $event_date .'</h3>
-			<span class="admin-page-header-go-back-lnk not-bold">' . $back_2_reg_lnk . '</span>
-		</div>
-		';
+					$back_2_reg_url = self::add_query_args_and_nonce( array( 'action'=>'default' ), REG_ADMIN_URL );	
+					$back_2_reg_lnk = '<a href="'.$back_2_reg_url.'" title="' . __( 'click to return to viewing all registrations ', 'event_espresso' ) . '">&laquo; ' . __( 'Back to All Registrations', 'event_espresso' ) . '</a>';	
+
+					$this->_template_args['before_admin_page_content'] = '
+				<div id="admin-page-header">
+					<h1><span class="small-text not-bold">'.__( 'Event: ', 'event_espresso' ).'</span>'. $event_name .'</h1>
+					<h3><span class="small-text not-bold">'.__( 'Date: ', 'event_espresso' ). '</span>'. $event_date .'</h3>
+					<span class="admin-page-header-go-back-lnk not-bold">' . $back_2_reg_lnk . '</span>
+				</div>
+				';
+				}
+			}
 		}
 
-		return $all_attendees;
+		return $registrations;
 	}
 
 

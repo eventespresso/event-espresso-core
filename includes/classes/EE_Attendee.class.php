@@ -224,7 +224,8 @@ class EE_Attendee extends EE_CPT_Base{
 			$fieldValues['ATT_slug'] = sanitize_key(wp_generate_password(20));
 		}
 		if( ! isset($fieldValues['ATT_full_name'])){
-			$fieldValues['ATT_full_name'] = $fieldValues['ATT_fname']." ".$fieldValues['ATT_lname'];
+			$fieldValues['ATT_full_name'] = isset($fieldValues['ATT_fname']) ? $fieldValues['ATT_fname']." ":'' . 
+											isset($fieldValues['ATT_lname']) ? $fieldValues['ATT_lname']: '';
 		}
 		if( ! isset($fieldValues['ATT_short_bio']) && isset($fieldValues['ATT_bio'])){
 			$fieldValues['ATT_short_bio'] = substr($fieldValues['ATT_bio'],0,50);

@@ -151,6 +151,12 @@ abstract class EEM_Base extends EE_Base{
 	 * @var array
 	 */
 	private $_allowed_query_params = array(0, 'limit','order_by','group_by','having','force_join','order','on_join_limit');
+	
+	/**
+	 * Property which, when set, will have this model echo out the next X queries to the page for debugging.
+	 * @var int
+	 */
+	protected $_show_next_x_db_queries = 0;
 	/**
 	 * About all child constructors:
 	 * they should define the _tables, _fields and _model_relations arrays. 
@@ -253,8 +259,8 @@ abstract class EEM_Base extends EE_Base{
 	 *					|	Eg, you could rewrite the previous query as:
 	 *					|	array('PAY_timestamp'=>array('>',$start_date),'PAY_timestamp*'=>array('<',$end_date),'PAY_timestamp**'=>array('!=',$special_date))
 	 *					|	which will correctly generate SQL like "PAY_timestamp > 123412341 AND PAY_timestamp < 2354235235234 AND PAY_timestamp != 1241234123"
-	 *		limit		|	adds a limit to the query just like the SQL limit clause, so limits of "23", "25,50" are both valid would become 
-	 *					|	SQL "...LIMIT 23", "...LIMIT 25,50" respectively
+	 *		limit		|	adds a limit to the query just like the SQL limit clause, so limits of "23", "25,50", and array(23,42) are all valid would become 
+	 *					|	SQL "...LIMIT 23", "...LIMIT 25,50", and "...LIMIT 23,42" respectively
 	 *	 on_join_limit	|	allows the setting of a special select join with a internal limit so you can do paging on one-to-many multi-table-joins. Send an array in the following format array('on_join_limit' => array( 'table_alias', array(1,2) ) ).	
 	 *		order_by	|	name of a column to order by, or an array where keys are field names and values are either 'ASC' or 'DESC'. 'limit'=>array('STS_ID'=>'ASC','REG_date'=>'DESC'),
 	 *					|	which would becomes SQL "...ORDER BY TXN_timestamp..." and "...ORDER BY STS_ID ASC, REG_date DESC..." respectively.
@@ -311,8 +317,7 @@ abstract class EEM_Base extends EE_Base{
 		$select_expressions = $columns_to_select ? $columns_to_select : $this->_construct_select_sql($model_query_info);
 		$SQL ="SELECT $select_expressions ".$this->_construct_2nd_half_of_select_query($model_query_info);
 		$results =  $wpdb->get_results($SQL, $output);
-		//echo "<br><br>_get_all_wpdb_results sql:$SQL";
-		
+		$this->show_db_query_if_previously_requested($SQL);
 		return $results;
 	}
 	
@@ -432,6 +437,7 @@ abstract class EEM_Base extends EE_Base{
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 		$SQL = "UPDATE ".$model_query_info->get_full_join_sql()." SET ".$this->_construct_update_sql($fields_n_values, $values_already_prepared_by_model_object).$model_query_info->get_where_sql();//note: doesn't use _construct_2nd_half_of_select_query() because doesn't accept LIMIT, ORDER BY, etc.
 		$rows_affected = $wpdb->query($SQL);
+		$this->show_db_query_if_previously_requested($SQL);
 		return $rows_affected;//how many supposedly got updated
 	}	
 	
@@ -478,6 +484,7 @@ abstract class EEM_Base extends EE_Base{
 
 	//		/echo "delete sql:$SQL";
 			$rows_deleted = $wpdb->query($SQL);
+			$this->show_db_query_if_previously_requested($SQL);
 			//$wpdb->print_error();
 		}else{
 			$rows_deleted = 0;
@@ -563,6 +570,7 @@ abstract class EEM_Base extends EE_Base{
 
 		$column_to_count = $distinct ? "DISTINCT (" . $column_to_count . " )" : $column_to_count;
 		$SQL ="SELECT COUNT(".$column_to_count.")" . $this->_construct_2nd_half_of_select_query($model_query_info);
+		$this->show_db_query_if_previously_requested($SQL);
 		return (int)$wpdb->get_var($SQL);
 	}
 	
@@ -586,6 +594,7 @@ abstract class EEM_Base extends EE_Base{
 		$column_to_count = $field_obj->get_qualified_column();
 
 		$SQL ="SELECT SUM(".$column_to_count.")" . $this->_construct_2nd_half_of_select_query($model_query_info);
+		$this->show_db_query_if_previously_requested($SQL);
 		$return_value = $wpdb->get_var($SQL);
 		if($field_obj->get_wpdb_data_type() == '%d' || $field_obj->get_wpdb_data_type() == '%s' ){
 			return (int)$return_value;
@@ -609,6 +618,22 @@ abstract class EEM_Base extends EE_Base{
 				$model_query_info->get_order_by_sql().
 				$model_query_info->get_limit_sql();
 	}
+	
+	/**
+	 * Set to easily debug the next X queries ran from thsi model.
+	 * @param int $count
+	 */
+	function show_next_x_db_queries($count = 1){
+		$this->_show_next_x_db_queries = $count;
+	}
+	
+	function show_db_query_if_previously_requested($sql_query){
+		if($this->_show_next_x_db_queries > 0){
+			echo $sql_query;
+			$this->_show_next_x_db_queries--;
+		}
+	}
+	
 	/**
 	 * Adds a relationship of the correct type between $modelObject and $otherModelObject. 
 	 * There are the 3 cases:
@@ -794,6 +819,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 		//insert the new entry
 		$result = $wpdb->insert($table->get_table_name(),$insertion_col_n_values,$format_for_insertion);		
+		$this->show_db_query_if_previously_requested($wpdb->last_query);
 		if(!$result){
 			throw new EE_Error(sprintf(__("Error inserting values %s for columns %s, using data types %s, into table %s. Error was %s",'event_espresso'),
 					implode(",",$insertion_col_n_values),
@@ -1413,7 +1439,7 @@ abstract class EEM_Base extends EE_Base{
 		foreach ( $values as $value ) {
 			$cleaned_values[] = $wpdb->prepare( $field_obj->get_wpdb_data_type(), $this->_prepare_value_for_use_in_db( $value, $field_obj, $values_already_prepared_by_model_object ) );
 		}
-		return "'" . $cleaned_values[0] . "' AND '" . $cleaned_values[1] . '"';
+		return  $cleaned_values[0] . " AND " . $cleaned_values[1];
 	}
 
 
