@@ -37,6 +37,32 @@ class EE_Base_Class{
 
 
 
+
+	/**
+    *	date format
+	* 
+    *	pattern or format for displaying dates
+	* 
+	*	@access	protected
+    *	@var string	
+    */
+	protected $_dt_frmt = 'F j, Y';	
+	
+	
+	
+    /**
+    *	time format
+	* 
+    *	pattern or format for displaying time
+	* 
+	*	@access	protected
+    *	@var string	
+    */
+	protected $_tm_frmt = 'g:i a';
+
+
+
+
 	/**
 	 * This property is for holding a cached array of object properties indexed by property name as the key.
 	 * The purpose of this is for setting a cache on properties that may have calculated values after a prepare_for_get.  That way the cache can be checked first and the calculated property returned instead of having to recalculate.
@@ -406,6 +432,136 @@ class EE_Base_Class{
 		$privateAttributeName = $this->_get_private_attribute_name($field_name);
 		return  $this->_get_cached_property( $privateAttributeName, TRUE );
 	}
+
+
+
+	/**
+	 * This simply returns the datetime for the given field name
+	 * Note: this protected function is called by the wrapper get_date or get_time or get_datetime functions (and the equivalent e_date, e_time, e_datetime).
+	 *
+	 * @access protected
+	 * @param  string                $field_name  Field on the instantiated EE_Base_Class child object
+	 * @param  mixed(null|string) $date_format valid datetime format used for date (if empty then we just use the default on the field)
+	 * @param  mixed(null|string) $time_format Same as above except this is for time format
+	 * @param string $date_or_time if NULL then both are returned, otherwise "D" = only date and "T" = only time. 
+	 * @param  boolean $echo        Whether the dtt is echoing using pretty echoing or just returned using vanilla get
+	 * @return mixed               string on success, FALSE on fail, or EE_Error Exception is thrown if field is not a valid dtt field
+	 */
+	protected function _get_datetime( $field_name, $dt_frmt = NULL, $tm_frmt = NULL, $date_or_time = NULL, $echo = FALSE ) {
+		$in_dt_frmt = empty($dt_frmt) ? $this->_dt_frmt : $dt_frmt;
+		$in_tm_frmt = empty($tm_frmt) ? $this->_tm_frmt : $tm_frmt;
+
+		
+		//validate field for datetime and returns field settings if valid.
+		$field = $this->_get_dtt_field_settings( $field_name );
+		$var_name = $this->_get_private_attribute_name( $field_name );
+
+		if ( !empty($dt_frmt) ) {
+			$this->_clear_cached_property( $var_name );
+			if ( $echo )
+				$field->set_pretty_date_format( $in_dt_frmt );
+			else 
+				$field->set_date_format( $in_dt_frmt );
+		}
+
+		if ( !empty($tm_frmt) ) {
+			$this->_clear_cached_property( $var_name );
+			if ( $echo )
+				$field->set_pretty_time_format( $in_tm_frmt );
+			else
+				$field->set_time_format( $in_tm_frmt );
+		}
+
+		//set timezone in field object
+		$field->set_timezone( $this->_timezone );
+		
+		//set the output returned
+		switch ( $date_or_time ) {
+			
+			case 'D' :
+				$field->set_date_time_output('date');
+				break;
+			
+			case 'T' :
+				$field->set_date_time_output('time');
+				break;
+			
+			default :
+				$field->set_date_time_output();
+		}
+
+		if ( $echo ) {
+			$this->e( ltrim( $var_name, '_' ) );
+		 } else
+			return $this->get( ltrim( $var_name, '_' ) );
+	}
+
+
+	/**
+	 * below are wrapper functions for the various datetime outputs that can be obtained for JUST returning the date portion of a datetime value. (note the only difference between get_ and e_ is one returns the value and the other echoes the pretty value for dtt)
+	 * @param  string $field_name name of model object datetime field holding the value
+	 * @param  string $format     format for the date returned (if NULL we use default in dt_frmt property)
+	 * @return string            datetime value formatted
+	 */
+	public function get_date( $field_name, $format = NULL ) {
+		return $this->_get_datetime( $field_name, $format, NULL, 'D' );
+	}
+	public function e_date( $field_name, $format = NULL ) {
+		$this->_get_datetime( $field_name, $format, NULL, 'D', TRUE );
+	}
+
+
+	/**
+	 * below are wrapper functions for the various datetime outputs that can be obtained for JUST returning the time portion of a datetime value. (note the only difference between get_ and e_ is one returns the value and the other echoes the pretty value for dtt)
+	 * @param  string $field_name name of model object datetime field holding the value
+	 * @param  string $format     format for the time returned ( if NULL we use default in tm_frmt property)
+	 * @return string             datetime value formatted
+	 */
+	public function get_time( $field_name, $format = NULL ) {
+		return $this->_get_datetime( $field_name, NULL, $format, 'T' );
+	}
+	public function e_time( $field_name, $format = NULL ) {
+		$this->_get_datetime( $field_name, NULL, $format, 'T', TRUE );
+	}
+
+
+
+
+	/**
+	 * below are wrapper functions for the various datetime outputs that can be obtained for returning the date AND time portion of a datetime value. (note the only difference between get_ and e_ is one returns the value and the other echoes the pretty value for dtt)
+	 * @param  string $field_name name of model object datetime field holding the value
+	 * @param  string $dt_frmt    format for the date returned (if NULL we use default in dt_frmt property)
+	 * @param  string $tm_frmt    format for the time returned (if NULL we use default in tm_frmt property)
+	 * @return string             datetime value formatted
+	 */
+	public function get_datetime( $field_name, $dt_frmt = NULL, $tm_frmt = NULL ) {
+		return $this->_get_datetime( $field_name, $dt_frmt, $tm_frmt );
+	}
+	public function e_datetime( $field_name, $dt_frmt = NULL, $tm_frmt = NULL ) {
+		$this->_get_datetime( $field_name, $dt_frmt, $tm_frmt, NULL, TRUE);
+	}
+
+
+
+
+	/**
+	 * This method validates whether the given field name is a valid field on the model object as well as it is of a type EE_Datetime_Field.  On success there will be returned the field settings.  On fail an EE_Error exception is thrown.
+	 * @param  string $field_name The field name being checked
+	 * @return EE_Datetime_Field   
+	 */
+	protected function _get_dtt_field_settings( $field_name ) {
+		$field = $this->get_model()->field_settings_for($field_name);
+
+		//check if field is dtt
+		if ( $field instanceof EE_Datetime_Field ) {
+			return $field;
+		} else {
+			throw new EE_Error( sprintf( __('The field name "%s" has been requested for the EE_Base_Class datetime functions and it is not a valid EE_Datetime_Field.  Please check the spelling of the field and make sure it has been setup as a EE_Datetime_Field in the %s model constructor', 'event_espresso'), $field_name, self::_get_model_classname( get_class($this) ) ) );
+		}
+	}
+
+
+
 	
 	/**
 	 * Deletes this model object. That may mean just 'soft deleting' it though.
