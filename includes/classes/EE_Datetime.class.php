@@ -132,30 +132,6 @@ class EE_Datetime extends EE_Base_Class{
     *	@var int	
     */
 	protected $_DTT_tckts_left = NULL;	
-	
-	
-	
-    /**
-    *	date format
-	* 
-    *	pattern or format for displaying dates
-	* 
-	*	@access	protected
-    *	@var string	
-    */
-	protected $_dt_frmt = 'F j, Y';	
-	
-	
-	
-    /**
-    *	time format
-	* 
-    *	pattern or format for displaying time
-	* 
-	*	@access	protected
-    *	@var string	
-    */
-	protected $_tm_frmt = 'g:i a';
 
 
 
@@ -458,54 +434,10 @@ class EE_Datetime extends EE_Base_Class{
 	* 		@param 		string 		$echo 		whether we echo or return (note echoing uses "pretty" formats, otherwise we use the standard formats)
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
-	private function _show_datetime( $date_or_time = NULL, $EVT_or_REG = 'EVT', $start_or_end = 'start', $dt_frmt = FALSE, $tm_frmt = FALSE, $echo = FALSE ) {
-
-		$in_dt_frmt = !$dt_frmt ? $this->_dt_frmt : $dt_frmt;
-		$in_tm_frmt = !$tm_frmt ? $this->_tm_frmt : $tm_frmt;
-		
-
-		$var_name = "_DTT_{$EVT_or_REG}_{$start_or_end}";
-		$field = $this->get_model()->field_settings_for(ltrim($var_name, '_'));
-
-		if ( $dt_frmt ) {
-			$this->_clear_cached_property( $var_name );
-			if ( $echo )
-				$field->set_pretty_date_format( $in_dt_frmt );
-			else 
-				$field->set_date_format( $in_dt_frmt );
-		}
-
-		if ( $tm_frmt ) {
-			$this->_clear_cached_property( $var_name );
-			if ( $echo )
-				$field->set_pretty_time_format( $in_tm_frmt );
-			else
-				$field->set_time_format( $in_tm_frmt );
-		}
-
-		//set timezone in field object
-		$field->set_timezone( $this->_timezone );
-		
-		//set the output returned
-		switch ( $date_or_time ) {
-			
-			case 'D' :
-				$field->set_date_time_output('date');
-				break;
-			
-			case 'T' :
-				$field->set_date_time_output('time');
-				break;
-			
-			default :
-				$field->set_date_time_output();
-		}
-
-		if ( $echo ) {
-			$this->e( ltrim( $var_name, '_' ) );
-		 } else
-			return $this->get( ltrim( $var_name, '_' ) );
-
+	private function _show_datetime( $date_or_time = NULL, $EVT_or_REG = 'EVT', $start_or_end = 'start', $dt_frmt = NULL, $tm_frmt = NULL, $echo = FALSE ) {
+		$field_name = "DTT_{$EVT_or_REG}_{$start_or_end}";
+		$dtt = $this->_get_datetime( $field_name, $dt_frmt, $tm_frmt, $date_or_time, $echo );
+		if ( !$echo ) return $dtt;
 	}
 
 
@@ -518,13 +450,13 @@ class EE_Datetime extends EE_Base_Class{
 	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
-	public function start_date( $dt_frmt = FALSE ) {		
+	public function start_date( $dt_frmt = NULL ) {		
 		return $this->_show_datetime( 'D', 'EVT', 'start', $dt_frmt );
 	}
 
 
-	public function e_start_date( $dt_frmt = FALSE ) {
-		$this->_show_datetime( 'D', 'EVT', 'start', $dt_frmt, FALSE, TRUE );
+	public function e_start_date( $dt_frmt = NULL ) {
+		$this->_show_datetime( 'D', 'EVT', 'start', $dt_frmt, NULL, TRUE );
 	}
 
 
@@ -537,12 +469,12 @@ class EE_Datetime extends EE_Base_Class{
 	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
-	public function end_date( $dt_frmt = FALSE ) {		
+	public function end_date( $dt_frmt = NULL ) {		
 		return $this->_show_datetime( 'D', 'EVT', 'end', $dt_frmt );
 	}
 
-	public function e_end_date( $dt_frmt = FALSE ) {		
-		$this->_show_datetime( 'D', 'EVT', 'end', $dt_frmt, FALSE, TRUE );
+	public function e_end_date( $dt_frmt = NULL ) {		
+		$this->_show_datetime( 'D', 'EVT', 'end', $dt_frmt, NULL, TRUE );
 	}
 
 
@@ -554,12 +486,12 @@ class EE_Datetime extends EE_Base_Class{
 	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
-	public function start_time( $tm_format = FALSE ) {
-		return $this->_show_datetime( 'T', 'EVT', 'start', FALSE, $tm_format );
+	public function start_time( $tm_format = NULL ) {
+		return $this->_show_datetime( 'T', 'EVT', 'start', NULL, $tm_format );
 	}
 
-	public function e_start_time( $tm_format = FALSE ) {
-		$this->_show_datetime( 'T', 'EVT', 'start', FALSE, $tm_format, TRUE );
+	public function e_start_time( $tm_format = NULL ) {
+		$this->_show_datetime( 'T', 'EVT', 'start', NULL, $tm_format, TRUE );
 	}
 
 
@@ -571,12 +503,12 @@ class EE_Datetime extends EE_Base_Class{
 	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
-	public function end_time( $tm_format = FALSE ) {
-		return $this->_show_datetime( 'T', 'EVT', 'end', FALSE, $tm_format );
+	public function end_time( $tm_format = NULL ) {
+		return $this->_show_datetime( 'T', 'EVT', 'end', NULL, $tm_format );
 	}
 
-	public function e_end_time( $tm_format = FALSE ) {
-		$this->_show_datetime( 'T', 'EVT', 'end', FALSE, $tm_format, TRUE );
+	public function e_end_time( $tm_format = NULL ) {
+		$this->_show_datetime( 'T', 'EVT', 'end', NULL, $tm_format, TRUE );
 	}
 
 
@@ -590,11 +522,11 @@ class EE_Datetime extends EE_Base_Class{
 	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
-	public function start_date_and_time( $dt_frmt = FALSE, $tm_format = FALSE ) {
+	public function start_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
 		return $this->_show_datetime( '', 'EVT', 'start', $dt_frmt, $tm_format );
 	}
 
-	public function e_start_date_and_time( $dt_frmt = FALSE, $tm_format = FALSE ) {
+	public function e_start_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
 		$this->_show_datetime( '', 'EVT', 'start', $dt_frmt, $tm_format, TRUE);
 	}
 
@@ -627,12 +559,12 @@ class EE_Datetime extends EE_Base_Class{
 	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
-	public function reg_start_date( $dt_frmt = FALSE ) {		
+	public function reg_start_date( $dt_frmt = NULL ) {		
 		return $this->_show_datetime( 'D', 'REG', 'start', $dt_frmt );
 	}
 
-	public function e_reg_start_date( $dt_frmt = FALSE ) {		
-		$this->_show_datetime( 'D', 'REG', 'start', $dt_frmt, FALSE, TRUE );
+	public function e_reg_start_date( $dt_frmt = NULL ) {		
+		$this->_show_datetime( 'D', 'REG', 'start', $dt_frmt, NULL, TRUE );
 	}
 
 
@@ -645,12 +577,12 @@ class EE_Datetime extends EE_Base_Class{
 	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
-	public function reg_end_date( $dt_frmt = FALSE ) {		
+	public function reg_end_date( $dt_frmt = NULL ) {		
 		return $this->_show_datetime( 'D', 'REG', 'end', $dt_frmt );
 	}
 
-	public function e_reg_end_date( $dt_frmt = FALSE ) {		
-		$this->_show_datetime( 'D', 'REG', 'end', $dt_frmt, FALSE, TRUE );
+	public function e_reg_end_date( $dt_frmt = NULL ) {		
+		$this->_show_datetime( 'D', 'REG', 'end', $dt_frmt, NULL, TRUE );
 	}
 
 
@@ -664,12 +596,12 @@ class EE_Datetime extends EE_Base_Class{
 	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
-	public function reg_start_time( $tm_format = FALSE ) {
-		return $this->_show_datetime( 'T', 'REG', 'start', FALSE, $tm_format );
+	public function reg_start_time( $tm_format = NULL ) {
+		return $this->_show_datetime( 'T', 'REG', 'start', NULL, $tm_format );
 	}
 
-	public function e_reg_start_time( $tm_format = FALSE ) {
-		$this->_show_datetime( 'T', 'REG', 'start', FALSE, $tm_format, TRUE );
+	public function e_reg_start_time( $tm_format = NULL ) {
+		$this->_show_datetime( 'T', 'REG', 'start', NULL, $tm_format, TRUE );
 	}
 
 
@@ -683,12 +615,12 @@ class EE_Datetime extends EE_Base_Class{
 	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
-	public function reg_end_time( $tm_format = FALSE ) {
-		return $this->_show_datetime( 'T', 'REG', 'end', FALSE, $tm_format );
+	public function reg_end_time( $tm_format = NULL ) {
+		return $this->_show_datetime( 'T', 'REG', 'end', NULL, $tm_format );
 	}
 
-	public function e_reg_end_time( $tm_format = FALSE ) {
-		$this->_show_datetime( 'T', 'REG', 'end', FALSE, $tm_format, TRUE );
+	public function e_reg_end_time( $tm_format = NULL ) {
+		$this->_show_datetime( 'T', 'REG', 'end', NULL, $tm_format, TRUE );
 	}
 
 
@@ -703,11 +635,11 @@ class EE_Datetime extends EE_Base_Class{
 	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
-	public function reg_start_date_and_time( $dt_frmt = FALSE, $tm_format = FALSE ) {
+	public function reg_start_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
 		return $this->_show_datetime( '', 'REG', 'start', $dt_frmt, $tm_format );
 	}
 
-	public function e_reg_start_date_and_time( $dt_frmt = FALSE, $tm_format = FALSE ) {
+	public function e_reg_start_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
 		return $this->_show_datetime( '', 'REG', 'start', $dt_frmt, $tm_format, TRUE );
 	}
 
@@ -723,11 +655,11 @@ class EE_Datetime extends EE_Base_Class{
 	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
-	public function reg_end_date_and_time( $dt_frmt = FALSE, $tm_format = FALSE ) {
+	public function reg_end_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
 		return $this->_show_datetime( '', 'REG', 'end', $dt_frmt, $tm_format );
 	}
 
-	public function e_reg_end_date_and_time( $dt_frmt = FALSE, $tm_format = FALSE ) {
+	public function e_reg_end_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
 		$this->_show_datetime( '', 'REG', 'end', $dt_frmt, $tm_format, TRUE );
 	}
 
