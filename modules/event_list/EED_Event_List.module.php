@@ -72,6 +72,7 @@ class EED_Event_List  extends EED_Module {
 //		add_action( 'wp_loaded', array( $this, 'wp_loaded' ));
 		// parse_request
 		add_filter( 'request', array( $this, 'filter_request' )); 
+		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 10 );  
 		remove_all_filters( 'excerpt_length' );
 		add_filter( 'excerpt_length', array( $this, 'excerpt_length' ), 10 );
 		add_filter('excerpt_more', array( $this, 'excerpt_more' ), 10 );
@@ -90,17 +91,37 @@ class EED_Event_List  extends EED_Module {
 	 */
 	public function filter_request(  $req  ) {
 //		printr( $req, '$req  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-	    if ( isset( $req['pagename'] ) && $req['pagename'] == $this->EE->CFG->events_page ) {
-			$req['post_type'] = 'espresso_events';
-	 		unset( $req['pagename'] );
-			add_action( 'wp', array( $this, 'wp' ));
-		} else {
-			add_action( 'wp_loaded', array( $this, 'wp_loaded' ));
-		}
-		//printr( $req, '$req  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//	    if ( isset( $req['pagename'] ) && $req['pagename'] == $this->EE->CFG->events_page ) {
+//			$req['post_type'] = 'espresso_events';
+//	 		unset( $req['pagename'] );
+//			add_action( 'wp', array( $this, 'wp' ));
+//		} else {
+//			add_action( 'wp_loaded', array( $this, 'wp_loaded' ));
+//		}
+		printr( $req, '$req  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	    return $req;
 	}
 
+
+
+
+	/**
+	 * 	pre_get_posts
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function pre_get_posts(  $WP_Query  ) {
+		printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		// only filter the main query
+		if( ! $WP_Query->is_main_query() ) {
+			return;
+		}
+		if ( $WP_Query )
+		$posts_per_page = isset( $_GET['posts_per_page'] ) ? sanitize_key( $_GET['posts_per_page'] ) : 24;
+		$WP_Query->set( 'posts_per_page', $posts_per_page );
+		$WP_Query->set( 'posts_per_page', $posts_per_page );
+	}
 
 
 
@@ -132,7 +153,6 @@ class EED_Event_List  extends EED_Module {
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		//printr( $wp_query, '$wp_query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-		$posts_per_page = isset( $_GET['posts_per_page'] ) ? sanitize_key( $_GET['posts_per_page'] ) : 24;
 		$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 
 		//set query args
