@@ -38,8 +38,12 @@ function espresso_template_version() {
 	return '1.0';
 }
 // define versions
-define("EVENT_ESPRESSO_VERSION", espresso_version());
-define('EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION);
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
+	define("EVENT_ESPRESSO_VERSION", espresso_version());
+	define('EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION);	
+} else {
+	wp_die('Can not run multiple versions of Event Espresso.');
+}
 //used to be DIRECTORY_SEPERATOR, but that caused issues on windows
 if ( ! defined( 'DS' )) {
 	define( 'DS', '/' );
@@ -99,11 +103,17 @@ define("EVENTS_PERSONNEL_TABLE", $wpdb->prefix . "events_personnel");
 define("EVENTS_PERSONNEL_REL_TABLE", $wpdb->prefix . "events_personnel_rel");
 define("EVENTS_VENUE_TABLE", $wpdb->prefix . "events_venue");
 define("EVENTS_VENUE_REL_TABLE", $wpdb->prefix . "events_venue_rel");
-		
 
-// let's get it started
-require_once( EE_CORE . 'EE_Front_Controller.core.php' );
-new EE_Front_Controller( __FILE__ );
+// let's get it started		
+if ( is_admin() ) {
+	require_once( EE_CORE . 'EE_Admin.core.php' );
+	EE_Admin::instance( __FILE__ );
+} else {
+	require_once( EE_CORE . 'EE_Front_Controller.core.php' );
+	new EE_Front_Controller( __FILE__ );
+}
+
+
 
 function espresso_main_file() {
 	return __FILE__;
