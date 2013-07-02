@@ -254,7 +254,7 @@ class EEM_Message_Template extends EEM_Soft_Delete_Base {
 		// retrieve a particular template group (but only if active);
 		
 		$where_cols_n_values = array('GRP_ID' => $GRP_ID, 'MTP_is_active' => 1);
-		if ($tmplt = $this->get_all($where_cols_n_values)) {
+		if ($tmplt = $this->get_all(array($where_cols_n_values))) {
 			return $tmplt[$GRP_ID];
 		} else {
 			return FALSE;
