@@ -314,7 +314,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 */
 	private function _convert_to_timezone_from_utc_unix_timestamp( $dtvalue, $format ) {
 		$dtvalue = (int) $dtvalue;
-		$datetime = date( $format, $dtvalue );	
+		$datetime = date( 'Y-m-d g:i:s', $dtvalue );
 		$this->_set_date_obj( $datetime, 'UTC' );
 		$this->_date->setTimezone( new DateTimeZone( $this->_timezone ) );
 		
