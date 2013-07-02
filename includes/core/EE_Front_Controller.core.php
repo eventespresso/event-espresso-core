@@ -67,19 +67,31 @@ class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function __construct( $main_file ) {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 1 );
+		add_action( 'init', array( $this, 'init' ), 5 );
+		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 5 );
+		add_filter( 'request', array( $this, 'filter_request' ), 1 );  
+		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 1 );  
+		add_action( 'parse_request', array( $this, 'parse_request' ), 5 );
+		add_action( 'wp', array( $this, 'wp' ), 5 );
+		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 5 );
+		add_action('wp_head', array( $this, 'header_meta_tag' ), 5 );
+		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
+	}
+
+
+
+	/**
+	 * 		plugins_loaded
+	 *
+	 * 		@access 	public
+	 * 		@return 		void
+	 */
+	public function plugins_loaded() {
 		// registry, settings, autoloaders, and other config stuff
 		$this->_load_system_files();
-		// path to espresso.php
-		$this->EE->main_file = $main_file;
 		// create static copy of EE for modules and shortcodes
 		 self::$registry = $this->EE;
-		// front or back ?
-		if ( is_admin() ) {
-			add_action( 'plugins_loaded', array( $this, 'load_admin' ), 25 );
-		} else {
-			add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 25 );
-		}
 	}
 
 
@@ -113,14 +125,27 @@ class EE_Front_Controller {
 
 
 
+
+
+	/*********************************************** 		INIT ACTION HOOK		 ***********************************************/
+
+
+
+
+
 	/**
-	 * 		plugins_loaded
+	 * 	init - should fire after shortcode, module, addon, or other plugin's default priority init phases have run
 	 *
-	 * 		@access 	public
-	 * 		@return 		void
+	 *  @access 	public
+	 *  @return 	void
 	 */
-	public function plugins_loaded() {
-		if ( $this->EE->REQ->is_espresso_page()) {
+	public function init() {
+
+		//if ( $this->EE->REQ->is_espresso_page()) { }
+		// nothing gets loaded at this point unless other systems turn this hookpoint on by using:  add_filter( 'FHEE_run_EE_init', '__return_true' );
+//		if ( apply_filters( 'FHEE_run_EE_init', FALSE )) {
+//			echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+
 			// allow shortcodes to register with WP and to set hooks for the rest of the system
 			$this->_register_shortcodes();
 			// allow modules to set hooks for the rest of the system
@@ -128,29 +153,11 @@ class EE_Front_Controller {
 			// pass shortcodes and modules to registry
 			$this->EE->shortcodes = self::$_installed_shortcodes;
 			$this->EE->modules = self::$_installed_modules;
-			add_action( 'init', array( $this, 'init' ), 25 );
-			add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 25 );
-			add_filter( 'request', array( $this, 'filter_request' ), 1 );  
-			add_action( 'parse_request', array( $this, 'parse_request' ), 25 );
-			add_action( 'wp', array( $this, 'wp' ), 25 );
-			add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 5 );
-			add_action('wp_head', array( $this, 'header_meta_tag' ), 25 );
-			add_filter( 'the_content', array( $this, 'the_content' ), 25, 1 );
-		}
+
+//		} 
+		
 	}
 
-
-
-	/**
-	 * 		load_admin
-	 *
-	 * 		@access 	public
-	 * 		@return 		void
-	 */
-	public function load_admin() {
-		// load main admin controller
-		$this->EE->load_core( 'Admin', TRUE );
-	}
 
 
 
@@ -284,34 +291,35 @@ class EE_Front_Controller {
 
 
 
-	/*********************************************** 		INIT ACTION HOOK		 ***********************************************/
+
+	/*********************************************** 		WP_LOADED ACTION HOOK		 ***********************************************/
+
+
 
 
 
 	/**
-	 * 	init - should fire after shortcode, module, addon, or other plugin's default priority init phases have run
+	 * 	wp_loaded - should fire after shortcode, module, addon, or other plugin's default priority init phases have run
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function init() {
-		// nothing gets loaded at this point unless other systems turn this hookpoint on by using:  add_filter( 'FHEE_run_EE_init', '__return_true' );
-		if ( apply_filters( 'FHEE_run_EE_init', FALSE )) {
-			echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+	public function wp_loaded() {
+		
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 
-			// messages loading is turned OFF by default, but prior to the wp hook, can be turned back on again via: add_filter( 'FHEE_load_EE_messages', '__return_false' );
-			if ( apply_filters( 'FHEE_load_EE_messages', FALSE )) {
-				EE_messages_init::init();
-			}
+		// messages loading is turned OFF by default, but prior to the wp hook, can be turned back on again via: add_filter( 'FHEE_load_EE_messages', '__return_false' );
+		if ( apply_filters( 'FHEE_load_EE_messages', FALSE )) {
+			EE_messages_init::init();
+		}
 
-		} 
 		// process any content shortcodes
 		$this->_initialize_shortcodes();
 		// process request with module factory
 		$this->_process_request();		
-		
-	}
 
+
+	}
 
 
 
@@ -446,24 +454,6 @@ class EE_Front_Controller {
 
 
 
-	/*********************************************** 		WP_LOADED ACTION HOOK		 ***********************************************/
-
-
-
-	/**
-	 * 	wp_loaded - should fire after shortcode, module, addon, or other plugin's default priority init phases have run
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function wp_loaded() {
-		// nothing gets loaded at this point unless other systems turn this hookpoint on by using:  add_filter( 'FHEE_run_EE_wp_loaded', '__return_true' );
-		if ( apply_filters( 'FHEE_run_EE_wp_loaded', FALSE )) {
-//			define( 'EE_wp_loaded', TRUE );
-			echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-
-		}
-	}
 
 
 
@@ -490,14 +480,38 @@ class EE_Front_Controller {
 
 
 	/**
+	 * 	pre_get_posts
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function pre_get_posts(  $WP_Query  ) {
+//		printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+//$my_query = new WP_Query( array(
+//	'no_found_rows' => TRUE,
+//	'update_post_meta_cacge' => FALSE,
+//	'update_post_term_cacge' => FALSE
+//));
+//
+//is_main_query()
+//
+//
+//EE_Register_CPTs::get_espresso_taxonomies();
+//EE_Register_CPTs::get_espresso_CPTs();
+	}
+
+
+
+	/**
 	 * 	wp_loaded - should fire after shortcode, module, addon, or other plugin's default priority init phases have run
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function parse_request(  $wp  ) {
+	public function parse_request(  $WP_Query  ) {
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		//printr(  $wp , ' $wp   <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//printr(  $WP_Query , ' $WP_Query   <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	}
 
 
@@ -512,7 +526,7 @@ class EE_Front_Controller {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function wp() {
+	public function wp( $WP_Query ) {
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		// nothing gets loaded at this point unless other systems turn this hookpoint on by using:  add_filter( 'FHEE_run_EE_wp', '__return_true' );
 		if ( apply_filters( 'FHEE_run_EE_wp', FALSE )) {
@@ -521,14 +535,13 @@ class EE_Front_Controller {
 			if ( apply_filters( 'FHEE_load_shortcodes', FALSE )) {
 			}
 		}
-		global $wp_query ;
 //		printr( $wp_query , '$wp_query   <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$EVT_IDs = array();
-		if ( isset( $wp_query->posts )) {
-			foreach ( $wp_query->posts as $post ) {
-				$EVT_IDs[] = $post->ID;
-			}
-		}
+//		$EVT_IDs = array();
+//		if ( isset( $WP_Query->posts )) {
+//			foreach ( $WP_Query->posts as $post ) {
+//				$EVT_IDs[] = $post->ID;
+//			}
+//		}
 
 	}
 
