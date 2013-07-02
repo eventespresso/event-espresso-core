@@ -397,7 +397,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param array $query_params very much like EEMerimental_Base::get_all's $query_params
 	 * @param boolean $values_already_prepared_by_model_object is true, skips calling each field's prepare_for_set method (which converts values from what's expected
 	 * in client code into what's expected to be stored on each field. Eg, consider updating Question's QST_admin_label field is of type Simple_HTML. If you use this function to update
-	 * that field to $new_value = "<script>alert('I hack all');</script><b>boom baby</b>", then if you set $values_already_prepared_by_model_object to TRUE, 
+	 * that field to $new_value = (note replace 8's with appropriate opening and closing tags in the following example)"8script8alert('I hack all');8/script88b8boom baby8/b8", then if you set $values_already_prepared_by_model_object to TRUE, 
 	 * it is assumed that you've already called EE_Simple_HTML_Field->prepare_for_set($new_value), which removes the malicious javascript. However, if $values_already_prepared_by_model_object 
 	 * is left as FALSE, then EE_Simple_HTML_Field->preapre_for_set($new_value) will be called on it, and every other field, before insertion. We provide this parameter because
 	 * model objects perform their prepare_for_set function on all their values, and so don't need to be called again (and in many cases, shouldn't be called again. Eg: if we
