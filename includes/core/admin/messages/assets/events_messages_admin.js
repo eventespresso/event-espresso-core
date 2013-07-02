@@ -36,10 +36,8 @@ jQuery(document).ready(function($) {
 				url: ajaxurl,
 				data: queryobj,
 				success: function(response, status, xhr) {
-					console.log(response);
 					var ct = xhr.getResponseHeader("content-type") || "";
 					var resp = '', isjson = true;
-					console.log( ct );
 					if (ct.indexOf('html') > -1) {
 						/*console.log('html');
 						console.log('response');*/
@@ -60,7 +58,6 @@ jQuery(document).ready(function($) {
 						console.log(response);*/
 
 						resp = resp === '' ? response : resp;
-						console.log(resp);
 
 						if( typeof(resp.data) === 'undefined' ) resp.data = [];
 						if ( typeof(resp.data.where) === 'undefined' ) resp.data.where = 'dialog';
