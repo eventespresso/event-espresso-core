@@ -128,7 +128,8 @@ class EEM_Event  extends EEM_CPT_Base{
 			'Question_Group'=>new EE_HABTM_Relation('Event_Question_Group'),
 			'Venue'=>new EE_HABTM_Relation('Event_Venue')
 		);
-		require_once('strategies/EE_Default_CPT_Where_Conditions.strategy.php');
+		require_once( EE_CLASSES . 'EE_Event.class.php');
+		require_once( EE_MODELS . 'strategies/EE_Default_CPT_Where_Conditions.strategy.php');
 		$this->_default_where_conditions_strategy = new EE_Default_CPT_Where_Conditions('espresso_events', 'EVTM_ID');
 		parent::__construct( $timezone );
 	}

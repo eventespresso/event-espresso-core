@@ -93,6 +93,8 @@ class EEM_Message_Template extends EEM_Soft_Delete_Base {
 		);
 		$this->_model_relations = array();
 		parent::__construct();
+		require_once( EE_CLASSES . 'EE_Message_Template.class.php' );
+
 	}
 
 	/**
