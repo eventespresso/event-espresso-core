@@ -66,7 +66,9 @@ class EE_System {
 	private function __construct() {
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		// set autoloaders for core files, models, classes, and libraries
-		$this->_define_autoloaders();
+//		$this->_define_autoloaders();
+		// set autoloaders for core files, models, classes, and libraries
+		$this->_load_base_classes();
 		// load files for managing exceptions and errors
 		$this->_load_exception_handling();
 		// load EE_Log class
@@ -77,6 +79,23 @@ class EE_System {
 		add_action( 'init', array( $this, 'init' ), 5 );
 		add_filter('query_vars', array( $this, 'add_query_vars' ), 5 );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
+	}
+
+
+
+
+	/**
+	 * 		_load_base_classes
+	 *
+	 * 		@access 	private
+	 * 		@return 		void
+	 */
+	private function _load_base_classes() {
+		require_once( EE_CORE . 'EE_Base.core.php' );	
+		require_once( EE_CLASSES . 'EE_Base_Class.class.php' );	
+		require_once( EE_CLASSES . 'EE_CPT_Base.class.php' );	
+		require_once( EE_MODELS . 'EEM_Base.model.php' );	
+		require_once( EE_MODELS . 'EEM_CPT_Base.model.php' );	
 	}
 
 
@@ -95,7 +114,6 @@ class EE_System {
 		spl_autoload_register( array( $this, '_autoload_models' ));
 		spl_autoload_register( array( $this, '_autoload_classes' ));
 		spl_autoload_register( array( $this, '_autoload_libraries' ));
-		spl_autoload_register( array( $this, '_autoload_messages' ));
 	}
 
 	/**
@@ -129,8 +147,8 @@ class EE_System {
 	 * 		@return 		void
 	 */
 	private function _autoload_classes( $className ) {
-		if ( is_readable( EVENT_ESPRESSO_INCLUDES_DIR . '/classes/' . $className . '.class.php' ) ) {
-			require_once( EVENT_ESPRESSO_INCLUDES_DIR . '/classes/' . $className . '.class.php' );
+		if ( is_readable( EE_CLASSES . $className . '.class.php' ) ) {
+			require_once( EE_CLASSES . $className . '.class.php' );
 		}
 	}
 
@@ -165,44 +183,6 @@ class EE_System {
 		}
 	}
 
-	/**
-	 * 		_autoload_libraries
-	 *
-	 * 		@access 	private
-	 * 		@return 		void
-	 */
-	private function _autoload_messages( $className ) {
-
-		//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
-		$dir_ref = array(
-			'root' => array('core', 'class'),
-			'messages/' => 'core',
-			'messages/message_type/' => 'class',
-			'messages/messenger/' => 'class',
-			'messages/defaults/' => array('class', 'core'),
-			'messages/defaults/email/' => 'class',
-			'messages/data_class/' => array('core','class'),
-			'messages/validators/' => array('core', 'class'),
-			'messages/validators/email/' => 'class'
-			);
-
-		//assemble a list of filenames
-		foreach ( $dir_ref as $dir => $types ) {
-			if ( is_array($types) ) {
-				foreach ( $types as $type) {
-					$filenames[] = ( $dir == 'root' ) ? EE_CORE . $className . '.' . $type . '.php' : EE_CORE . $dir . $className . '.' . $type . '.php';
-				}
-			} else {
-				$filenames[] = ( $dir == 'root' ) ? EE_CORE . $className . '.' . $types . '.php' : EE_CORE . $dir . $className . '.' . $types . '.php';
-			}
-		}
-
-		//now loop through assembled filenames and require as available
-		foreach ( $filenames as $filename ) {
-			if ( is_readable($filename) )
-				require_once( $filename );
-		}
-	}
 
 
 
@@ -276,8 +256,6 @@ class EE_System {
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		// set names for db tables
 		$this->_define_database_tables();
-		// check for db changes
-		$this->_check_database_tables();		
 	}
 
 
@@ -311,95 +289,6 @@ class EE_System {
 
 
 	/**
-	* check_database_tables
-	* 
-	* ensures that the database has been updated to the current version
-	* and also ensures that all necessary data migration scripts have been applied
-	* in order to bring the content of the database up to snuff as well
-	* 
-	* @access private
-	* @since 3.1.28
-	* @return void
-	*/
-	private function _check_database_tables() {
-		if ( is_admin() ) {
-			// check if db has been updated, cuz autoupdates don't trigger database install script
-			$espresso_db_update = get_option( 'espresso_db_update' );
-			// chech that option is an array
-			if( ! is_array( $espresso_db_update )) {
-				// if option is FALSE, then it never existed
-				if ( $espresso_db_update === FALSE ) {
-					// make $espresso_db_update an array and save option with autoload OFF
-					$espresso_db_update =  array();
-					add_option( 'espresso_db_update', $espresso_db_update, '', 'no' );
-				} else {
-					// option is NOT FALSE but also is NOT an array, so make it an array and save it
-					$espresso_db_update =  array( $espresso_db_update );
-					update_option( 'espresso_db_update', $espresso_db_update );
-				}
-			}
-			
-			// if current EE version is NOT in list of db updates, then update the db
-			if ( ! in_array( EVENT_ESPRESSO_VERSION, $espresso_db_update )) {
-				require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
-				EEH_Activation::create_database_tables();
-			}	
-			
-			// grab list of any existing data migrations from db
-			if ( ! $existing_data_migrations = get_option( 'espresso_data_migrations' )) {
-				// or initialize as an empty array
-				$existing_data_migrations = array();
-				// and set WP option
-				add_option( 'espresso_data_migrations', array(), '', 'no' );
-			}
-
-			// array of all previous data migrations to date
-			// using the name of the callback function for the value
-			$espresso_data_migrations = array(
-			);
-			
-			// temp array to track scripts we need to run 
-			$scripts_to_run = array();
-			// for tracking script errors
-			$previous_script = '';
-			// if we don't need them, don't load them
-			$load_data_migration_scripts = FALSE;
-			// have we already performed some data migrations ?
-			if ( ! empty( $existing_data_migrations )) {	
-				// loop through all previous migrations
-				foreach ( $existing_data_migrations as $ver => $migrations ) {
-					// ensure that migrations is an array, then loop thru it
-					$migrations = is_array( $migrations ) ? $migrations : array( $migrations );
-					foreach ( $migrations as $migration_func => $errors_array ) {
-						// make sure they have been executed
-						if ( ! in_array( $migration_func, $espresso_data_migrations )) {		
-							// ok NOW load the scripts
-							$load_data_migration_scripts = TRUE;
-							$scripts_to_run[ $migration_func ] = $migration_func;
-						} 
-					}
-				}		
-				
-			} else {
-				$load_data_migration_scripts = TRUE;
-				$scripts_to_run = $espresso_data_migrations;
-			}
-
-			if ( $load_data_migration_scripts && ! empty( $scripts_to_run )) {
-				require_once( 'includes/functions/data_migration_scripts.php' );		
-				// run the appropriate migration script
-				foreach( $scripts_to_run as $migration_func ) {
-					if ( function_exists( $migration_func )) {
-						call_user_func( $migration_func );
-					}		
-				}
-			}
-		}
-	}
-
-
-
-	/**
 	 * 	init
 	 *
 	 *  @access 	public
@@ -409,9 +298,9 @@ class EE_System {
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 
 		//Globals used throughout the site
-		global $is_UI_request, $espresso_content;
-		// is this request for UI or backend 
-		$is_UI_request = ( ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' ) ? TRUE : FALSE;
+//		global $is_UI_request, $espresso_content;
+//		// is this request for UI or backend 
+//		$is_UI_request = ( ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' ) ? TRUE : FALSE;
 		// register Custom Post Types
 		$this->EE->load_core( 'Register_CPTs' );
 		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/main.php' );
@@ -421,10 +310,7 @@ class EE_System {
 			$this->load_EE_Session();
 		}
 
-		if ( empty( $this->EE->CFG->event_page_id )) {
-			//espresso_load_org_options();
-			
-		}
+
 		//$this->create_event_slug_rewrite_rule();
 
 	}
@@ -531,6 +417,7 @@ class EE_System {
 			wp_register_script('ee_error_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/EE_Error.js', array('jquery'), EVENT_ESPRESSO_VERSION, false);
 			wp_localize_script('ee_error_js','ee_settings',array('wp_debug'=>WP_DEBUG));
 			wp_enqueue_script('ee_error_js');
+			
 			// jquery_validate loading is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
 			if ( apply_filters( 'FHEE_load_jquery_validate', FALSE )) {
 				// load jQuery Validate script from CDN with local fallback
