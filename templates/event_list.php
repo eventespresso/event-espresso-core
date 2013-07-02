@@ -99,7 +99,7 @@ function event_espresso_get_event_details( $attributes = array()) {
 			$attributes[$key] = $default_attribute;
 		}
 	}*/
-	
+	$attributes = is_array( $attributes ) ? $attributes : array();
 	// let's just merge the arrays ( cuz the second one will overwrite the first for any dulplicate keys )
 	$attributes = array_merge( $default_attributes, $attributes );
 	// now extract shortcode attributes
