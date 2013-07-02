@@ -177,6 +177,7 @@ class EE_Registry {
 	 *	@return void
 	 */
 	private function _get_request() {
+		require_once( EE_CORE . 'EE_Request_Handler.core.php' );
 		$this->REQ = new EE_Request_Handler( $this->CFG->post_shortcodes );	
 	}
 
