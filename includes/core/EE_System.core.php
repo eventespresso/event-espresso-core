@@ -76,7 +76,7 @@ class EE_System {
 		// handy dandy object for holding shtuff
 		$this->_load_registry();
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
-		add_action( 'init', array( $this, 'init' ), 5 );
+		add_action( 'init', array( $this, 'init' ), 3 );
 		add_filter('query_vars', array( $this, 'add_query_vars' ), 5 );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
 	}
