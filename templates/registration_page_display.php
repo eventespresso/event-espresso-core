@@ -56,7 +56,7 @@ function espresso_display_reg_page($data) {
 								<strong>
 									<?php
 									_e('You will be able to register starting ', 'event_espresso');
-									echo event_espresso_no_format_date($data['reg_start_date'], 'F d, Y');
+									echo $reg_start_date;
 									?>
 								</strong>
 							</p>
