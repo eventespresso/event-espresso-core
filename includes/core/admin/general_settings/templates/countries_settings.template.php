@@ -9,7 +9,7 @@
 	</table>
 	<br/>
 	<p class="description">
-		<?php echo "\t" . __('Select a country from the dropdown to view and/or edit it\'s settings.', 'event_espresso'); ?>
+		<?php echo "\t" . __('Select a country from the dropdown to view and/or edit it\'s settings. These will be used for populating country and state/province dropdown select boxes on forms during the registration process.<br/> To change the currency symbol displayed on the site, please use the country selector in the <b>Contact Information</b> secton on the <b>Your Organization</b> tab.', 'event_espresso'); ?>
 	</p>
 	<br/>
 			
