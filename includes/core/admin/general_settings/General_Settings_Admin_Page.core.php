@@ -804,10 +804,11 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	protected function _country_settings() {
 	
 		global $org_options;
-		$CNT_ISO = isset( $org_options['organization_country'] ) ? $org_options['organization_country'] : 'US';
+		$CNT = isset( $org_options['organization_country'] ) ? $org_options['organization_country'] : 64;
+		$CNT = getCountryFullData( absint( $CNT ));
+		$CNT_ISO = isset( $CNT['id'] ) && $CNT['id'] != 0 && isset( $CNT['iso_code_2'] ) && ! empty( $CNT['iso_code_2'] ) ? $CNT['iso_code_2'] : 'US';
 		$CNT_ISO = isset( $this->_req_data['country'] ) ? strtoupper( sanitize_text_field( $this->_req_data['country'] )) : $CNT_ISO;
 
-		global $org_options;
 		//load field generator helper
 		require_once ( EE_HELPERS . 'EE_Form_Fields.helper.php' );
 		
