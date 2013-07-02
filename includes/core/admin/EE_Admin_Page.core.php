@@ -1975,23 +1975,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 			);
 
 
-		//note there may be cases where headers_sent() or there is an error but it was captured and already encoded in JSON OR we already have an encoded json_object. If so, let's check for that.
-		if ( is_object(json_decode( $json ) ) ) {
-			header( 'Content-Type: applpication/json' );
-			echo $json;
-			exit();
-		}
-
-		var_dump($json);
 		// make sure there are no php errors or headers_sent.  Then we can set correct json header.
-		if ( NULL === error_get_last() || ! headers_sent() ) {
+		if ( NULL === error_get_last() || ! headers_sent() )
 			header('Content-Type: application/json');
-			echo json_encode( $json );
-			exit();
-		}
 
-		//otherwise just echo
-		echo $json;
+		echo json_encode( $json );
 		exit();
 	}
 
