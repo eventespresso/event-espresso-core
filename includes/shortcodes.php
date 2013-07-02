@@ -695,7 +695,7 @@ add_shortcode('ATTENDEE_NUMBERS', 'espresso_attendees_data_sc');
  *
  */
 if (!function_exists('display_event_list_sc')) {
-	function display_event_list_sc($atts) {
+	function display_event_list_sc( $atts = array() ) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		ob_start();
 		require_once(espresso_get_event_list_template());
