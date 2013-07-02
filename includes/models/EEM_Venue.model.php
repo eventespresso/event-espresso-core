@@ -49,7 +49,7 @@ class EEM_Venue extends EEM_CPT_Base {
 	protected function __construct(){
 		$this->singlular_item = __('Venue','event_espresso');
 		$this->plural_item = __('Venues','event_espresso');
-		
+		$this->_statuses = $this->get_status_array();
 		$this->_tables = array(
 			'Venue_CPT'=> new EE_Primary_Table('posts', 'ID'),
 			'Venue_Meta'=>new EE_Secondary_Table('esp_venue_meta', 'VNUM_ID', 'VNU_ID')

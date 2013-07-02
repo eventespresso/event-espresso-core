@@ -67,6 +67,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	protected function __construct($timezone = null){
 		$this->singular_item = __('Event','event_espresso');
 		$this->plural_item = __('Events','event_espresso');
+		$this->_statuses = $this->get_status_array();
 		
 		
 		self::$_additional_attendee_reg_info_enum = $this->_get_additional_attendee_reg_info_array();

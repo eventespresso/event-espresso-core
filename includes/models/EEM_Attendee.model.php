@@ -54,7 +54,7 @@ class EEM_Attendee extends EEM_CPT_Base {
 	protected function __construct() {	
 		$this->singlular_item = __('Attendee','event_espresso');
 		$this->plural_item = __('Attendees','event_espresso');
-		
+		$this->_statuses = $this->get_status_array();
 		$this->_tables = array(
 			'Attendee_CPT'=> new EE_Primary_Table('posts', 'ID'),
 			'Attendee_Meta'=>new EE_Secondary_Table('esp_attendee_meta', 'ATTM_ID', 'ATT_ID')

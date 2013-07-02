@@ -36,7 +36,6 @@ class EEM_CPT_Base extends EEM_Base{
 		//with key equalling the subclassing model's model name (eg 'Event' or 'Venue'), and the value
 		//must also be new EE_HABTM_Relation('Term_Relationship');
 		$this->_model_relations['Term_Taxonomy'] =new EE_HABTM_Relation('Term_Relationship');
-		$this->_statuses = $this->get_status_array();
 		parent::__construct($timezone);
 	}
 	
@@ -174,7 +173,7 @@ class EEM_CPT_Base extends EEM_Base{
 	public function get_status_array() {
 		$statuses = self::get_post_statuses();
 		//first the global filter
-		$statuses = apply_filters( 'FHEE_EEM_CPT_Base__get_status_array', $this->_statuses );
+		$statuses = apply_filters( 'FHEE_EEM_CPT_Base__get_status_array', $statuses );
 		//now the class specific filter
 		$statuses = apply_filters( 'FHEE_EEM_' . get_class($this) . '__get_status_array', $statuses );
 		return $statuses;
