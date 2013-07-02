@@ -24,6 +24,20 @@
 class EE_Register_CPTs {
 
 	/**
+	 * $_CPTs
+	  *
+	 * @var array $_CPTs
+	 */
+	private $_CPTs = array();
+
+	/**
+	 * $_taxonomies
+	  *
+	 * @var array $_taxonomies
+	 */
+	private $_taxonomies = array();
+
+	/**
 	 * This property is used to hold an array of EE_default_term objects assigned to a custom post type when the post for that post type is published with no terms set for the taxonomy.
 	  *
 	 * @var array of EE_Default_Term objects
@@ -32,7 +46,82 @@ class EE_Register_CPTs {
 
 
 	function __construct(){
+		
+		// define taxonomies
+		$this->_taxonomies = array(
+			'espresso_event_categories' => array(
+				'singular_name' => __("Event Category", "event_espresso"),
+				'plural_name' => __("Event Categories", "event_espresso"),
+				'args' => array(
+					'public'=>true
+				)),
+			'espresso_venue_categories' => array(
+				'singular_name' => __("Venue Category", "event_espresso"),
+				'plural_name' => __("Venue Categories", "event_espresso"),
+				'args' => array(
+					'public'=>true
+				)),
+			'espresso_event_type' => array(
+				'singular_name' => __("Event Type", "event_espresso"),
+				'plural_name' => __("Event Types", "event_espresso"),
+				'args' => array(
+					'public'=>true,
+					'show_ui'=>false,
+					'hierarchical'=>false
+				))
+			);
+		
+		// define CPTs
+		$this->_CPTs = array(
+			'espresso_events' => array(
+				'singular_name' => __("Event", "event_espresso"),
+				'plural_name' => __("Events", "event_espresso"),
+				'singular_slug' => __("event", "event_espresso"),
+				'plural_slug' => __("events", "event_espresso"),
+				'args' => array(
+					'taxonomies'=> array(
+						'espresso_event_categories',
+						'espresso_event_type'
+				))),
+			'espresso_venues' => array(
+				'singular_name' => __("Venue", "event_espresso"),
+				'plural_name' => __("Venues", "event_espresso"),
+				'singular_slug' => __("venue", "event_espresso"),
+				'plural_slug' => __("venues", "event_espresso"),
+				'args' => array(
+					'taxonomies'=> array(
+						'espresso_venue_categories'
+				))),
+			'espresso_persons' => array(
+				'singular_name' => __("Person", "event_espresso"),
+				'plural_name' => __("People", "event_espresso"),
+				'singular_slug' => __("person", "event_espresso"),
+				'plural_slug' => __("people", "event_espresso"),
+				'args' => array()
+				),
+			'espresso_attendees' => array(
+				'singular_name' => __("Attendee", "event_espresso"),
+				'plural_name' => __("Attendees", "event_espresso"),
+				'singular_slug' => __("attendee", "event_espresso"),
+				'plural_slug' => __("attendees", "event_espresso"),
+				'args' => array(
+					'public'=>'false',
+					'publicly_queryable'=>'false',
+					'hierarchical'=>'false'
+				))
+			);
 
+		// register taxonomies
+		foreach ( $this->_taxonomies as $taxonomy =>  $tax ) {
+			$this->register_taxonomy( $taxonomy, $tax['singular_name'], $tax['plural_name'], $tax['args'] );
+		}
+		
+		// register CPTs
+		foreach ( $this->_CPTs as $CPT_name =>  $CPT ) {
+			$this->register_CPT( $CPT_name, $CPT['singular_name'], $CPT['plural_name'], $CPT['args'] );
+		}
+		
+		/*
 		$this->register_taxonomy('espresso_event_categories', __("Event Category", "event_espresso"), __("Event Categories", "event_espresso"), 
 				array(
 					'public'=>true));
@@ -64,7 +153,7 @@ class EE_Register_CPTs {
 				array(
 					'public'=>'false',
 					'publicly_queryable'=>'false',
-					'hierarchical'=>'false'));
+					'hierarchical'=>'false'));*/
 
 
 		//setup default terms in any of our taxonomies (but only if we're in admin).  Why not added via register_actvation_hook?  Because it's possible that in future iterations of EE we may add new defaults for specialized taxonomies (think event_types) and regsiter_activation_hook only reliably runs when a user manually activates the plugin.
@@ -270,6 +359,36 @@ class EE_Register_CPTs {
 			}
 		}
 	}
+
+
+
+
+	/**
+	 * 	get_espresso_taxonomies
+	 *
+	 *  @access 	public
+	 *  @return 	array
+	 */
+	public static function get_espresso_taxonomies() {
+		return $this->_taxonomies;
+	}	
+
+
+
+
+	/**
+	 * 	get_espresso_CPTs
+	 *
+	 *  @access 	public
+	 *  @return 	array
+	 */
+	public static function get_espresso_CPTs() {
+		return $this->_CPTs;
+	}	
+
+	
+	
+	
 
 }
 
