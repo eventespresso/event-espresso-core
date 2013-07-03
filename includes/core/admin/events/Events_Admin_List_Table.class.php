@@ -91,6 +91,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		//first month/year filters
 		$filters[] = $this->_admin_page->espresso_event_months_dropdown( isset($this->_req_data['month_range']) ? $this->_req_data['month_range'] : '' );
 
+		$filter[] = $this->_admin_page->active_status_dropdown( isset( $this->_req_data['active_status'] ) ? $this->_req_data['active_status'] : '' );
+
 		//category filter
 		$filters[] = espresso_category_dropdown( isset($this->_req_data['category_id']) ? $this->_req_data['category_id'] : '' );
 

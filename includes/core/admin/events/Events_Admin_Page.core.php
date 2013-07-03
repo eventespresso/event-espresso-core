@@ -1160,7 +1160,26 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$where['DTT_EVT_start'] = array( 'BETWEEN', array( strtotime($this_year_r . '-' . $this_month_r . '-01'), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month) ) );
 		}
 
-		$events = $count ? $EEME->count( array( $where ), 'EVT_ID' ) : $EEME->get_all( array( $where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' ) );
+		$query_params = array($where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' );
+
+		//let's first check if we have special requests coming in.
+		if ( isset( $this->_req_data['active_status'] ) ) {
+			switch ( $this->_req_data['active_status'] ) {
+				case 'not_active_yet' :
+					return $EEME->get_not_active_yet_events( $query_params, $count );
+					break;
+
+				case 'expired' :
+					return $EEME->get_expired_events( $query_params, $count );
+					break;
+
+				case 'active' :
+					return $EEME->get_active_events( $query_params, $count );
+					break;
+			}
+		}
+
+		$events = $count ? $EEME->count( array( $where ), 'EVT_ID' ) : $EEME->get_all( $query_params );
 
 		return $events;
 	}
@@ -1442,6 +1461,27 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			_e('No Results', 'event_espresso');
 		}
 	}
+
+
+
+
+
+	/**
+	 * returns a list of "active" statuses on the event
+	 * @param  string $current_value whatever the ucrrent active status is
+	 * @return string                html dropdown.
+	 */
+	public function  active_status_dropdown( $current_value = '' ) {
+		$select_name = 'active_status';
+		$values = array('none' => __('Show Active/Inactive', 'event_espresso'), 'active' => __('Active', 'event_epsresso'), 'not_active_yet' => __('Not Active Yet', 'event_espresso'), 'expired' => __('Expired', 'event_espresso') );
+		$id = 'id="espresso-active-status-dropdown-filter"';
+		$class = 'wide';
+		echo EE_Form_Fields::select_input( $select_name, $values, $current_value, $id, $class );
+	}
+
+
+
+
 
 	/**
 	 * get total number of events
