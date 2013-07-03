@@ -806,6 +806,27 @@ class EE_Base_Class{
 		}
 		return $related_model_object;
 	}
+
+
+
+	/**
+	 * Just a simple utility function children can use for checking if property (or properties) exists and thworing an EE_Error exception if they don't
+	 * @param  mixed (string|array) $properties properties to check
+	 * @return bool            				  TRUE if existing, throw EE_Error if not.
+	 */
+	protected function _property_exists( $properties ) {
+
+		foreach ( (array) $properties as $propertyname ) {
+			//first make sure this property exists
+			if ( !property_exists( $this, $propertyname ) )
+				throw new EE_Error( sprintf( __('Trying to retrieve a non-existent property (%s).  Doublecheck the spelling please', 'event_espresso'), $propertyname ) );
+		}
+
+		return TRUE;
+	}
+
+
+
 	
 	/**
 	 * Very handy general function to allow for plugins to extend any child of EE_Base_Class.
