@@ -770,7 +770,62 @@ class EE_Datetime extends EE_Base_Class{
 		$return =  $prepend . call_user_func_array( array( $this, $callback ), $args ) . $append;
 		$this->set_timezone( $original_timezone );
 		return $return;
-	}		
+	}
+
+
+	/**
+	 * This simply compares the internal dtt for the given string with NOW and determines if the date is upcoming or not.
+	 * @access public
+	 * @param string $what What datetime value we want info on (default is EVT)
+	 * @return boolean 
+	 */
+	public function is_upcoming( $what = 'EVT' ) {
+		$start = '_DTT_' . $what . '_start';
+		$this->_property_exists($start);
+		return ( $this->$start > time() );
+	}
+
+
+
+	/**
+	 * This simply compares the internal datetime for the given string with NOW and returns if the date is active (i.e. start and end time)
+	 * @param  string  $what What datetime value we want info on (default is EVT)
+	 * @return boolean       
+	 */
+	public function is_active( $what = 'EVT' ) {
+		$start = '_DTT_' . $what . '_start';
+		$end = '_DTT_' . $what . '_end';
+		$this->_property_exists( array( $start, $end ) );
+		return ( $this->$start < time() && $this->$end > time() );
+	}
+
+
+
+
+	/**
+	 * This simply compares the internal dtt for the given string with NOW and determines if the date is expired or not.
+	 * @param  string  $what what datetime value we want info on (default is EVT)
+	 * @return boolean       
+	 */
+	public function is_expired( $what = 'EVT' ) {
+		$end = '_DTT_' . $what . '_end';
+		$this->_property_exists( $end );
+		return ( $this->$end > time() );
+	}
+
+
+
+
+	/**
+	 * This returns the active status for whether an event is active, upcoming, or expired
+	 * @param  string $what what datetime value we want info on (default is EVT)
+	 * @return int       return value will be one of three ints: -1 = expired, 0 = upcoming, 1 = active.
+	 */
+	public function get_active_status( $what = 'EVT' ) {
+		if ( $this->is_expired( $what ) ) return -1;
+		if ( $this->is_upcoming( $what ) ) return 0;
+		if ( $this->is_active( $what ) ) return 1;
+	}
 }
 
 /* End of file EE_Datetime.class.php */

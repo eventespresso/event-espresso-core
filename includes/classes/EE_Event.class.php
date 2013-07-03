@@ -34,6 +34,16 @@ class EE_Event extends EE_CPT_Base{
 	 * @var EE_Datetime[] 
 	 */
 	protected $_Datetime;
+
+
+
+	/**
+	 * This is just used for caching the Primary Datetime for the Event on initial retreival
+	 * @var EE_Datetime
+	 */
+	protected $_Primary_Datetime;
+
+
 	
 	/**
 	 * All prices which apply to this event
@@ -237,8 +247,10 @@ class EE_Event extends EE_CPT_Base{
 	}
 
 	public function primary_datetime() {
+		if ( !empty ( $this->_Primary_Datetime ) ) return $this->_Primary_Datetime;
 		require_once('EEM_Datetime.model.php');
-		return EEM_Datetime::instance( $this->_timezone )->get_most_important_datetime_for_event( $this->_EVT_ID );
+		$this->_Primary_Datetime = EEM_Datetime::instance( $this->_timezone )->get_most_important_datetime_for_event( $this->_EVT_ID );
+		return $this->_Primary_Datetime;
 	}
 
 	
@@ -413,6 +425,40 @@ class EE_Event extends EE_CPT_Base{
 	function venues($query_params = array()){
 		return $this->get_many_related('Venue', $query_params);
 	}
+
+
+	/**
+	 * This simply compares the internal dates with NOW and determines if the event is upcoming or not.
+	 * @access public
+	 * @return boolean true yes, false no
+	 */
+	public function is_upcoming() {
+		$dtt = $this->primary_datetime();
+		return $dtt->is_upcoming();
+	}
+
+
+
+	public function is_active() {
+		$dtt = $this->primary_datetime();
+		return $dtt->is_active();
+	}
+
+
+
+	public function is_expired() {
+		$dtt = $this->primary_datetime();
+		return $dtt->is_expired();
+	}
+
+
+
+
+	public function get_active_status() {
+		$dtt = $this->_primary_datetime();
+		return $dtt->get_active_status();
+	}
+
 
 
 
