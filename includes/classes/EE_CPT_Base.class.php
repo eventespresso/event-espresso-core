@@ -28,6 +28,17 @@ class EE_CPT_Base extends EE_Base_Class{
 	 * @var INT
 	 */
 	protected $_parent = 0;
+
+
+
+	/**
+	 * Common status property for all CPT Base Class children that is equivalent to the wp "post_status" column
+	 * @var string
+	 */
+	protected $_status;
+
+
+
 	
 	/**
 	 * Terms (in context of a particular taxonomy) which apply to this cpt
@@ -79,6 +90,16 @@ class EE_CPT_Base extends EE_Base_Class{
 	 */
 	public function parent() {
 		return $this->_parent;
+	}
+
+
+
+	/**
+	 * return the _status property
+	 * @return string
+	 */
+	public function status() {
+		return $this->_status;
 	}
 
 

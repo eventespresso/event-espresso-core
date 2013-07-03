@@ -36,6 +36,11 @@ class EEM_CPT_Base extends EEM_Base{
 		//with key equalling the subclassing model's model name (eg 'Event' or 'Venue'), and the value
 		//must also be new EE_HABTM_Relation('Term_Relationship');
 		$this->_model_relations['Term_Taxonomy'] =new EE_HABTM_Relation('Term_Relationship');
+
+		//add  the common _status field to all CPT primary tables.
+		$primary_table_name = $this->_get_main_table()->get_table_name();
+		$this->_statuses = $this->get_status_array();
+		$this->_fields[$primary_table_name]['status'] = new EE_Enum_Field('post_status', __("Event Status", "event_espresso"), false, 'draft', $this->_statuses);
 		parent::__construct($timezone);
 	}
 	
