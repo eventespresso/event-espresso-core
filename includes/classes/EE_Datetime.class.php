@@ -823,8 +823,8 @@ class EE_Datetime extends EE_Base_Class{
 	 */
 	public function get_active_status( $what = 'EVT' ) {
 		if ( $this->is_expired( $what ) ) return -1;
-		if ( $this->is_upcoming( $what ) ) return 0;
-		if ( $this->is_active( $what ) ) return 1;
+		if ( $this->is_upcoming( $what ) ) return 1;
+		if ( $this->is_active( $what ) ) return 2;
 	}
 }
 
