@@ -11,6 +11,21 @@ require_once('EEM_Base.model.php');
 class EEM_CPT_Base extends EEM_Base{
 	
 	/**
+	 * @var post_status_trashed the wp post statsu for trashed cpts
+	 */
+	const post_status_trashed = 'trash';
+
+
+
+	/**
+	 * keys are the statuses for posts, values are translatable strings. It's nice having an 
+	 * array of ALL of the statuses, so we can know what statuses are valid, and which are not
+	 * @var array 
+	 */
+	protected $_statuses = array();
+
+
+	/**
 	 * Adds a relationship to Term_Taxonomy for each CPT_Base
 	 * @param type $timezone
 	 */
@@ -136,5 +151,32 @@ class EEM_CPT_Base extends EEM_Base{
 	}
 
 
+	/**
+	 * Just a handy way to get the list of post statuses currently registered with WP.
+	 * @global array $wp_post_statuses set in wp core for storing all the post stati
+	 * @return array
+	 */
+	public static function get_post_statuses(){
+		global $wp_post_statuses;
+		$statuses= array();
+		foreach($wp_post_statuses as $post_status => $args_object){
+			$statuses[$post_status] = $args_object->label;
+		}
+		return $statuses;
+	}
+
+
+	/**
+	 * public method that can be used to retrieve the protected status array on the instantiated cpt model
+	 * @return array array of statuses.
+	 */
+	public function get_status_array() {
+		$statuses = self::get_post_statuses();
+		//first the global filter
+		$statuses = apply_filters( 'FHEE_EEM_CPT_Base__get_status_array', $statuses );
+		//now the class specific filter
+		$statuses = apply_filters( 'FHEE_EEM_' . get_class($this) . '__get_status_array', $statuses );
+		return $statuses;
+	}
 
 }

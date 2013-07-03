@@ -4,27 +4,41 @@
  * For representing a single form input. Extends EE_Form_SEciton_Base because
  * it is a part of a form and shares a suprisingly large amount of functionality
  */
-require_once('base/EE_Form_Section_Base.form.php');
 abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	
-	
-	protected $_html_name;
-	protected $_html_label_id;
-	protected $_html_label_class;
-	protected $_html_label_style;
-	protected $_html_label_text;
-	
 	/**
-	 * Original value as submitted in the form, or set as the default.
-	 * Note: when initially setting from default, we still want to do some minimal sanitization. This is necessary
-	 * because we want to avoid storing somethign unsafe, like SQL.
+	 * the input's name attribute
 	 * @var string
 	 */
-	protected $_original_value;
+	protected $_html_name;
+	/**
+	 * id for the html label tag
+	 * @var string
+	 */
+	protected $_html_label_id;
+	/**
+	 * class for teh html label tag
+	 * @var string
+	 */
+	protected $_html_label_class;
+	/**
+	 * style for teh html label tag
+	 * @var string
+	 */
+	protected $_html_label_style;
+	/**
+	 * text to be placed in the html label
+	 * @var string
+	 */
+	protected $_html_label_text;
+	/**
+	 * the full html label. If used, all other html_label_* properties are invalid
+	 * @var string
+	 */
+	protected $_html_label;
+	
 	protected $_sanitized_value;
 	protected $_normalized_value;
-	
-	
 	
 	/**
 	 * Strategy used for displaying this field.
@@ -33,19 +47,71 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	 */
 	private $_display_strategy;
 	
-	public function __construct($options_array){
+	/**
+	 * Gets all the validation strategies used on this field
+	 * @var EE_Validation_Strategy_Base[]
+	 */
+	private $_validation_strategies;
+	
+	/**
+	 * The sanitization and normalization strategy for this field
+	 * @var EE_Sanitization_Strategy_Base
+	 */
+	private $_sanitization_strategy;
+	
+	public function __construct($options_array = array()){
+		if(isset($options_array['html_name'])){
+			$this->_html_name = $options_array['html_name'];
+		}
+		if(isset($options_array['html_label_id'])){
+			$this->_html_label_id = $options_array['html_label_id'];
+		}
+		if(isset($options_array['html_label_class'])){
+			$this->_html_label_class = $options_array['html_label_class'];
+		}
+		if(isset($options_array['html_label_style'])){
+			$this->_html_label_style = $options_array['html_label_style'];
+		}
+		if(isset($options_array['html_label_text'])){
+			$this->_html_label_text = $options_array['html_label_text'];
+		}
+		if(isset($options_array['html_label'])){
+			$this->_html_label = $options_array['html_label'];
+		}
+		if(isset($options_array['required']) && in_array($options_array['required'], array('true',true))){
+			$this->_add_validation_strategy(new EE_Required_Validation_Strategy());
+		}
 		
-	}
-	public function construct_finalize(EE_Form_Section_Proper $parent_form, $name){
-		$this->_parent_section = $parent_form;
-		$this->_name = $name;
-		if( ! $this->_html_id ){
-			$this->_html_id = $parent_form->html_id()."-".$name;
+		
+		
+		$this->_display_strategy->_construct_finalize($this);
+		foreach($this->_validation_strategies as $validation_strategy){
+			$validation_strategy->_construct_finalize($this);
 		}
-		if( ! $this->_html_name ){
-			$this->_html_name = $parent_form->html_name()."[$name]";
+		$this->_sanitization_strategy->_construct_finalize($this);
+		
+		parent::__construct($options_array);
+	}
+	
+	/**
+	 * Sets the html_name to its dfeautl value, if none was specified in teh constructor.
+	 * Calcuation involves using hte name and the parent's html_name
+	 */
+	protected function _set_default_html_name_if_empty(){
+		if( ! $this->_html_name){
+			if( $this->_parent_section && $this->_parent_section instanceof EE_Form_Section_Proper){
+				$this->_html_name = $this->_parent_section->name() . "[{$this->_name}]";
+			}else{
+				$this->_html_name = $this->_name;
+			}
 		}
 	}
+	
+	function _construct_finalize($parent_form_section, $name) {
+		parent::_construct_finalize($parent_form_section, $name);
+		$this->_set_default_html_name_if_empty();
+	}
+	
 	 /**
 	  * Returns the strategy for displaying this form input. If none is set, throws an exception.
 	  * @return EE_Display_Strategy_Base
@@ -65,7 +131,35 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	protected function _set_display_strategy(EE_Display_Strategy_Base $strategy){
 		$this->_display_strategy = $strategy;
 	}
-	public function display(){
+	
+	/**
+	 * Sets the sanitization strategy
+	 * @param EE_Sanitization_Strategy_Base $strategy
+	 */
+	protected function _set_sanitization_strategy(EE_Sanitization_Strategy_Base $strategy){
+		$this->_sanitization_strategy = $strategy;
+	}
+	
+	protected function _get_validation_strategies(){
+		if( ! $this->_validation_strategies){
+			throw new EE_Error(sprintf(__("Cannot get validation strategies for form input with name %s and id %s, because it has not been set in the constructor", "event_espresso"),$this->html_name(),$this->html_id()));
+		}else{
+			return $this->_validation_strategies;
+		}
+	}
+	/**
+	 * Adds this strategy to the field so it will be used in both JS validation and server-side validation
+	 * @param EE_Validation_Strategy_Base $validation_strategy
+	 * @return void
+	 */
+	protected function _add_validation_strategy(EE_Validation_Strategy_Base $validation_strategy){
+		$this->_validation_strategies[] = $validation_strategy;
+	}
+	/**
+	 * Gets the HTML, JS, and CSS necessary to display this field
+	 * @return string
+	 */
+	public function get_html(){
 		return $this->_get_display_strategy()->display();	
 	}
 	public function _validate($req_data) {
@@ -92,14 +186,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 		return $this->_html_label_text;
 	}
 	/**
-	 * returns the original value as submitted in the form, or set as the default.
-	 * @return string
-	 */
-	function original_value(){
-		return $this->_original_value;
-	}
-	/**
-	 * returns the value after it's been cleaned, but it's still a string
+	 * returns the value after it's been cleaned, but it's still a string.
+	 * Note, we do not store the exact original value sent in the user's request because
+	 * it may have malicious content, and we MIGHT want to store the form input in a transient or something...
+	 * in which case, we would have stored the malicious content to our database.
 	 * @return string
 	 */
 	function sanitized_value(){
@@ -112,5 +202,51 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	 */
 	function normalized_value(){
 		return $this->_normalized_value;
+	}
+	/**
+	 * When generating the JS for the jquery valiation rules like<br>
+	 * <code>$( "#myform" ).validate({
+		rules: {
+		  password: "required",
+		  password_again: {
+			equalTo: "#password"
+		  }
+		}
+	  });</code>
+		if this field had the name 'password_again', it should return 
+	 * <br><code>password_again: {
+			equalTo: "#password"
+		  }</code>
+	 * @return string
+	 */
+	function get_jquery_validation_rules(){
+		$jquery_validation_rules = array();
+		foreach($this->_get_validation_strategies() as $validation_strategy){
+			$jquery_validation_rules = array_merge($jquery_validation_rules, $validation_strategy->get_jquery_validation_rule_array());
+		}
+		if(! empty($jquery_validation_rules)){
+			
+			$jquery_validation__rules_lines = array();
+			foreach($jquery_validation_rules as $validation_method => $value){
+				$jquery_validation__rules_lines[] = "$validation_method : $value";
+			}
+			$jquery_validation_js = "\"{$this->html_name()}\" : {".implode(", ",$jquery_validation__rules_lines)."}";
+		}else{
+			$jquery_validation_js = '';
+		}
+		return $jquery_validation_js;
+	}
+	
+	/**
+	 * Gets the javascript for validating this input, besides the jQuery validation js
+	 * that goes inside the 'rules' parameter. Does not echo script opening and closing tags.
+	 * @return string
+	 */
+	function get_section_validation_js(){
+		$js = '';
+		foreach($this->_get_validation_strategies() as $validation_strategy){
+			$js.=$validation_strategy->get_validation_js();
+		}
+		return $js;
 	}
 }

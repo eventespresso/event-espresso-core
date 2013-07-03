@@ -14,8 +14,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
  * @return 		void			var type
  */
 function display_all_events() {
-
-	global $org_options;
 	// error logging
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	event_espresso_get_event_details(); //This function is located below

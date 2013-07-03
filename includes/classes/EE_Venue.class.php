@@ -42,7 +42,7 @@ class EE_Venue extends EE_CPT_Base {
 	protected $_VNU_virtual_url;
 	protected $_VNU_enable_for_gmap;
 	protected $_VNU_google_map_link;
-	protected $_Term_Taxonomy;
+	
 
 	/**
 	 * 

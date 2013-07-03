@@ -1572,14 +1572,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 	private function _espresso_sponsors_post_box() {
-		function espresso_sponsors_post_box() {
-			$templatepath = EE_CORE_ADMIN_TEMPLATE . 'admin_general_metabox_contents_espresso_sponsors.template.php';
-			espresso_display_template( $templatepath );
-		}
 
 		$show_sponsors = apply_filters('FHEE_show_sponsors_meta_box', TRUE );
 		if ( $show_sponsors )
-			add_meta_box('espresso_sponsors_post_box', __('Sponsors', 'event_espresso'), 'espresso_sponsors_post_box', $this->_wp_page_slug, 'side');
+			add_meta_box('espresso_sponsors_post_box', __('Sponsors', 'event_espresso'), array( $this, 'espresso_sponsors_post_box'), $this->_wp_page_slug, 'side');
+	}
+
+
+	public function espresso_sponsors_post_box() {
+		$templatepath = EE_CORE_ADMIN_TEMPLATE . 'admin_general_metabox_contents_espresso_sponsors.template.php';
+		espresso_display_template( $templatepath );
 	}
 
 
@@ -1587,10 +1589,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 	private function _publish_post_box() {
 		$meta_box_ref = 'espresso_' . $this->page_slug . '_editor_overview';
 
-		//if there is a array('label' => array('publishbox' => 'some title') ) present in the _page_config array then we'll use that for the metabox label.  Otherwise we'll just use publish
-		$label = isset( $this->_labels['publishbox'] ) ? $this->_labels['publishbox'] : __('Publish', 'event_espresso');
+		//if there is a array('label' => array('publishbox' => 'some title') ) present in the _page_config array then we'll use that for the metabox label.  Otherwise we'll just use publish (publishbox itself could be an array of labels indexed by routes)
+		if ( !empty( $this->_labels['publishbox'] ) ) {
+			$box_label = is_array( $this->_labels['publishbox'] ) ? $this->_labels['publishbox'][$this->_req_action] : $this->_labels['publishbox'];
+		} else {
+			$box_label = __('Publish', 'event_espresso');
+		}
 
-		add_meta_box( $meta_box_ref, $label, array( $this, 'editor_overview' ), $this->_current_screen_id, 'side', 'high' );
+		add_meta_box( $meta_box_ref, $box_label, array( $this, 'editor_overview' ), $this->_current_screen_id, 'side', 'high' );
 
 	}
 
@@ -1638,8 +1644,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		if ( $delete ) {
+			$delete = is_bool($delete) ? 'delete' : $delete; //make sure we have a default if just true is sent.
 			$delete_link_args = array( $name => $id );
-			$delete = $this->_get_action_link_or_button( $delete, $type = 'delete', $delete_link_args, $class='submitdelete deletion');
+			$delete = $this->_get_action_link_or_button( $delete, $delete, $delete_link_args, 'submitdelete deletion');
 		}
 		
 		$this->_template_args['publish_delete_link'] = $delete;

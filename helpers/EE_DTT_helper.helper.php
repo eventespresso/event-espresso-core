@@ -93,10 +93,8 @@ class EE_DTT_Helper {
 
 
 
-	public static function ddtimezone($event_id = 0) {
+	public static function ddtimezone($tz_event = '') {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-		global $wpdb;
-		$tz_event = $wpdb->get_var($wpdb->prepare("SELECT timezone_string FROM " . EVENTS_DETAIL_TABLE . " WHERE id = %s", $event_id ));
 
 		$timezone_format = _x('Y-m-d G:i:s', 'timezone date format');
 
@@ -175,6 +173,21 @@ class EE_DTT_Helper {
 				</span></p>
 			<?php
 		endif;
+	}
+
+
+
+	public static function date_time_for_timezone( $timestamp, $format, $timezone ) {
+		$timezone = empty( $timezone ) ? self::_get_timezone() : $timezone;
+
+		//set timezone
+		date_default_timezone_set( $timezone );
+
+		$date = date( $format, $timestamp );
+
+		//setback
+		date_default_timezone_set( 'UTC' );
+		return $date;
 	}
 
 

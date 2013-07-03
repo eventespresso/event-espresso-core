@@ -274,8 +274,8 @@ class EE_Registration extends EE_Base_Class {
 
 
 
-	public static function new_instance_from_db ( $props_n_values = array() ) {
-		return new self( $props_n_values, TRUE );
+	public static function new_instance_from_db ( $props_n_values = array(), $timezone = NULL ) {
+		return new self( $props_n_values, TRUE, $timezone );
 	}
 
 
@@ -431,6 +431,13 @@ class EE_Registration extends EE_Base_Class {
 	public function set_price_paid( $REG_final_price = FALSE ) {		
 		$this->set('REG_final_price',$REG_final_price);
 	}
+	
+	/**
+	 * @return string of price, with correct decimal places and currency symbol
+	 */
+	public function pretty_price_paid(){
+		return $this->get_pretty('REG_final_price');
+	}
 
 
 
@@ -550,6 +557,13 @@ class EE_Registration extends EE_Base_Class {
 		return $event;
 	}
 
+	/**
+	 * Fetches teh event this registration is for
+	 * @return EE_Event
+	 */
+	public function event_obj(){
+		return $this->get_first_related('Event');
+	}
 
 
 	/**
@@ -713,6 +727,8 @@ class EE_Registration extends EE_Base_Class {
 	}
 	
 	
+	
+	
 	/**
 	 * Returns a nice version of the status for displaying to customers
 	 * @return string
@@ -791,6 +807,15 @@ class EE_Registration extends EE_Base_Class {
 	 */
 	public function answers($query_params = null){
 		return $this->get_many_related('Answer',$query_params);
+	}
+	
+	/**
+	 * Returns the registration date in the 'standard' string format
+	 * (function may be improved in the future to allow for different formats and timezones)
+	 * @return string
+	 */
+	public function reg_date(){
+		return $this->get('REG_date');
 	}
 }
 

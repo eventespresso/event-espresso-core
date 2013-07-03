@@ -28,6 +28,7 @@ function espresso_autoload() {
 	spl_autoload_register('espresso_models_autoload');
 	spl_autoload_register('espresso_libraries_autoload');
 	spl_autoload_register('espresso_classes_autoload');
+	spl_autoload_register('espresso_form_sections_autoload');
 	spl_autoload_register('espresso_classes_core_autoload');	
 }
 
@@ -71,6 +72,50 @@ function espresso_classes_autoload($className) {
 	if ( is_readable($filename) ) {
 		require_once( $filename );
 	}
+}
+
+/**
+ * If the file exists, includes it and return true. If it doesn't, returns false.
+ * @param string $filepath
+ * @return boolean
+ */
+function espresso_require_if_it_exists($filepath){
+//	echo "<br>checking for $filepath";
+	if ( is_readable($filepath) ) {
+		require_once( $filepath );
+//		echo "<b>FOUND IT!</b>";
+		return true;
+	}else{
+		return false;
+	}
+}
+
+/**
+ * registered autoloader for finding form section stuff. Tries to intelligently find the class, instead of doing
+ * a brute force search. However, in order for that to work, established naming conventions must be followed.
+ * 
+ * @param string $className
+ * @return void
+ */
+function espresso_form_sections_autoload($className){
+	$form_sections_dir = EVENT_ESPRESSO_INCLUDES_DIR . 'form_sections/';
+	//intelligently infer where the file for the class should be located
+	if(strpos($className, 'Form_Section') !==FALSE){
+		if ( espresso_require_if_it_exists($form_sections_dir . 'base/'.$className.'.form.php') ) return;
+	}
+	if(strpos($className,'Input') !==FALSE){
+		if (espresso_require_if_it_exists($form_sections_dir . 'inputs/'.$className.'.input.php')) return;
+	}
+	if(strpos($className,'Strategy') !== FALSE){
+		if (espresso_require_if_it_exists($form_sections_dir . 'strategies/display/'.$className.'.strategy.php')) return;
+		if (espresso_require_if_it_exists($form_sections_dir . 'strategies/sanitization/'.$className.'.strategy.php')) return;
+		if (espresso_require_if_it_exists($form_sections_dir . 'strategies/validation/'.$className.'.strategy.php')) return;
+		if (espresso_require_if_it_exists($form_sections_dir . 'strategies/'.$className.'.strategy.php')) return;
+	}
+	if (espresso_require_if_it_exists($form_sections_dir . 'helpers/'.$className.'.error.php')) return;
+	if (espresso_require_if_it_exists($form_sections_dir . 'helpers/'.$className.'.php')) return;
+	if (espresso_require_if_it_exists($form_sections_dir . $className.'.form.php')) return;
+	
 }
 
 function espresso_classes_core_autoload($className) {

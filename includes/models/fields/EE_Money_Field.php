@@ -8,6 +8,7 @@ class EE_Money_Field extends EE_Float_Field_Base{
 		return '%f';
 	}
 	function prepare_for_pretty_echoing($value_on_field_to_be_outputted){
-		return "$".parent::prepare_for_get($value_on_field_to_be_outputted);
+		global $org_options;
+		return $org_options['currency_symbol'].parent::prepare_for_get($value_on_field_to_be_outputted);
 	}
 }

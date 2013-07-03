@@ -44,18 +44,16 @@ abstract class EE_Form_Section_Base{
 	 */
 	protected $_validation_errors;
 	
-	
-	/**
-	 * gets teh default name of this form section if none is specified
-	 * @return string
-	 */
-	protected function _set_default_name_if_empty(){
-		if( ! $this->_name ){
-			$classname = get_class($this);
-			$default_name = str_replace("EE_", "", $classname);
-			$this->_name =  $default_name;
-		}
+	function __construct($options_array = array()){
+		
 	}
+	protected function _construct_finalize($parent_form_section, $name){
+		$this->_parent_section = $parent_form_section;
+		$this->_name = $name;
+		$this->_set_default_html_id_if_empty();
+	}
+	
+	
 	
 	
 	/**
@@ -73,19 +71,7 @@ abstract class EE_Form_Section_Base{
 		}
 	}
 	
-	/**
-	 * Sets the html_name to its dfeautl value, if none was specified in teh constructor.
-	 * Calcuation involves using hte name and the parent's html_name
-	 */
-	protected function _set_default_html_name_if_empty(){
-		if( ! $this->_html_name){
-			if( $this->_parent_section && $this->_parent_section instanceof EE_Form_Section_Proper){
-				$this->_html_id = $this->_parent_section->html_id() . "[{$this->_name}]";
-			}else{
-				$this->_html_id = $this->_name;
-			}
-		}
-	}
+	
 	
 	/**
 	 * Errors on this form section. Note: EE_Form_Section_Proper
@@ -104,8 +90,8 @@ abstract class EE_Form_Section_Base{
 	 * @param array $_req_data
 	 */
 	public function handle_request($req_data){
-		$this->_validate($req_data);
 		$this->_sanitize($req_data);
+		$this->_validate($req_data);
 	}
 	
 	
@@ -124,7 +110,7 @@ abstract class EE_Form_Section_Base{
 	 * Returns the HTML, JS, and CSS necessary to display this form section on a page.
 	 * @return string
 	 */
-	abstract protected function display();
+	abstract protected function get_html();
 	
 	/**
 	 * Stores whether or not this form section (and possibly subsections) is valid.
@@ -149,4 +135,50 @@ abstract class EE_Form_Section_Base{
 	function html_style(){
 		return $this->_html_style;
 	}
+	/**
+	 * Gets the name of the form section. This is not the saem as the HTML name.
+	 * @return string
+	 */
+	function name(){
+		return $this->_name;
+	}
+	/**
+	 * Creates a validation error from the arguments provided, and adds it to the form section's list
+	 * of errors
+	 * @param string $message internationalized string describing the validation error
+	 * @param string $error_code a short key which can be used to uniquely identify the error
+	 * @param Exception $previous_exception if there was an exception that caused the error, that exception
+	 * @return void
+	 */
+	function add_validation_error($message, $error_code = null,$previous_exception = null){
+		$validation_error = new EE_Validation_Error($this, $message, $code, $previous_exception);
+		$this->_validation_errors[] = $validation_error;
+	}
+	
+	/**
+	 * When generating the JS for the jquery valiation rules like<br>
+	 * <code>$( "#myform" ).validate({
+		rules: {
+		  password: "required",
+		  password_again: {
+			equalTo: "#password"
+		  }
+		}
+	  });</code>
+		gets the sections like
+	 * <br><code>password: "required",
+	 		password_again: {
+			equalTo: "#password"
+		  }</code>
+	 * which correspond to fields in this form section.
+	 * @return string
+	 */
+	abstract function get_jquery_validation_rules();
+	
+	/**
+	 * Gets the javascript for validating this section/field. Does not output opening and closing
+	 * script tags. Does not output the jquery validation code.
+	 * @return string
+	 */
+	abstract function get_section_validation_js();
 }

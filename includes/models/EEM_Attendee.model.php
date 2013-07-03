@@ -21,15 +21,16 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_CPT_Base.model.php' );
 
-class EEM_Attendee extends EEM_Soft_Delete_Base {
+class EEM_Attendee extends EEM_CPT_Base {
 
   	// private instance of the Attendee object
 	private static $_instance = NULL;
 	
 	/**
 	 * QST_ID and QST_systems that relate to attendee attributes.
+	 * NOTE: this will be deprecated if we remove system questions
 	 */
 	const fname_question_id=1;
 	const lname_question_id=2;
@@ -42,8 +43,6 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 	const zip_question_id=9;
 	const phone_question_id=10;
 
-	
-
 
 
 	/**
@@ -55,53 +54,47 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 	protected function __construct() {	
 		$this->singlular_item = __('Attendee','event_espresso');
 		$this->plural_item = __('Attendees','event_espresso');
-		// load Attendee object class file
-//		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php');
-//		$this->_fields_settings=array('ATT_ID'=>new EE_Model_Field('Attendee ID', 'primary_key', false),
-//									'ATT_fname'=>new EE_Model_Field('First Name', 'plaintext', false),
-//									'ATT_lname'=>new EE_Model_Field('Last Name','plaintext',false),
-//									'ATT_address'=>new EE_Model_Field('Address1','plaintext',true),
-//									'ATT_address2'=>new EE_Model_Field('Address2','plaintext',true),
-//									'ATT_city'=>new EE_Model_Field('City','plaintext',true),
-//									'STA_ID'=>new EE_Model_Field('State ID','foreign_key',true,0,null,'State'),
-//									'CNT_ISO'=>new EE_Model_Field('Country Code','foreign_key',true,0,null,'Country'),
-//									'ATT_zip'=>new EE_Model_Field('Zip/Postal Code', 'plaintext', true, ''),
-//									'ATT_email'=>new EE_Model_Field('Email', 'email', false, ''),
-//									'ATT_phone'=>new EE_Model_Field('Phone', 'plaintext', true),
-//									'ATT_social'=>new EE_Model_Field('Social Media Details','serialized_text',true),
-//									'ATT_comments'=>new EE_Model_Field('Comments','simplehtml',true),
-//									'ATT_notes'=>new EE_Model_Field('Notes', 'simplehtml', true),
-//									'ATT_deleted'=>new EE_Model_Field('Deleted flag', 'deleted_flag', false,0),
-//			);
-//		$this->_related_models=array(
-//								'Registrations'=>new EE_Model_Relation('belongsTo', 'Registration', 'ATT_ID'));
+		$this->_statuses = $this->get_status_array();
 		$this->_tables = array(
-			'Attendee'=> new EE_Primary_Table('esp_attendee', 'ATT_ID')
+			'Attendee_CPT'=> new EE_Primary_Table('posts', 'ID'),
+			'Attendee_Meta'=>new EE_Secondary_Table('esp_attendee_meta', 'ATTM_ID', 'ATT_ID')
 		);
 		$this->_fields = array(
-			'Attendee'=>array(
-				'ATT_ID'=> new EE_Primary_Key_Int_Field('ATT_ID', __('Attendee ID','event_espresso'), false, 0),
+			'Attendee_CPT'=>array(
+				'ATT_ID'=>new EE_Primary_Key_Int_Field('ID', __("Attendee ID", "event_espresso"), false),
+				'ATT_full_name'=>new EE_Plain_Text_Field('post_title', __("Attendee Full Name", "event_espresso"), false, __("Unknown", "event_espresso")),
+				'ATT_bio'=>new EE_Simple_HTML_Field('post_content', __("Attendee Biography", "event_espresso"), false, __("No Biography Provided", "event_espresso")),
+				'ATT_slug'=>new EE_Slug_Field('post_name', __("Attendee URL Slug", "event_espresso"), false),
+				'ATT_created'=>new EE_Datetime_Field('post_date', __("Time Attendee Created", "event_espresso"), false, current_time('timestamp')),
+				'ATT_short_bio'=>new EE_Simple_HTML_Field('post_excerpt', __("Attendee Short Biography", "event_espresso"), true, __("No Biography Provided", "event_espresso")),
+				'ATT_status'=>new EE_Enum_Field('post_status', __("Attendee Status", "event_espresso"), false, 'publish', $this->_statuses),
+				'ATT_modified'=>new EE_Datetime_Field('post_modified', __("Time Attendee Last Modified", "event_espresso"), true, current_time('timestamp')),
+				'ATT_author'=>new EE_Integer_Field('post_author', __("WP User that Created Attendee", "event_espresso"), false,0),
+				'ATT_parent'=>new EE_DB_Only_Int_Field('post_parent', __("Parent Attendee (unused)", "event_espresso"), true),
+				'post_type'=>new EE_DB_Only_Text_Field('post_type', __("Post Type of Attendee", "event_espresso"), false,'espresso_attendees')
+			),
+			'Attendee_Meta'=>array(
+				'ATTM_ID'=> new EE_DB_Only_Int_Field('ATTM_ID', __('Attendee Meta Row ID','event_espresso'), false),
+				'ATT_ID_fk'=>new EE_DB_Only_Int_Field('ATT_ID', __("Foreign Key to Attendee in Post Table", "event_espresso"), false),
 				'ATT_fname'=>new EE_Plain_Text_Field('ATT_fname', __('First Name','event_espresso'), true, ''),
 				'ATT_lname'=>new EE_Plain_Text_Field('ATT_lname', __('Last Name','event_espresso'), true, ''),
 				'ATT_address'=>new EE_Plain_Text_Field('ATT_address', __('Address Part 1','event_espresso'), true, ''),
 				'ATT_address2'=>new EE_Plain_Text_Field('ATT_address2', __('Address Part 2','event_espresso'), true, ''),
 				'ATT_city'=>new EE_Plain_Text_Field('ATT_city', __('City','event_espresso'), true, ''),
-				'STA_ID'=>new EE_Plain_Text_Field('STA_ID', __('State','event_espresso'), true, ''),
-				'CNT_ISO'=>new EE_Plain_Text_Field('CNT_ISO', __('Country','event_espresso'), true, ''),
+				'STA_ID'=>new EE_Foreign_Key_Int_Field('STA_ID', __('State','event_espresso'), true,0,'State'),
+				'CNT_ISO'=>new EE_Foreign_Key_String_Field('CNT_ISO', __('Country','event_espresso'), true,'','Country'),
 				'ATT_zip'=>new EE_Plain_Text_Field('ATT_zip', __('ZIP/Postal Code','event_espresso'), true, ''),
 				'ATT_email'=>new EE_Email_Field('ATT_email', __('Email Address','event_espresso'), true, ''),
 				'ATT_phone'=>new EE_Plain_Text_Field('ATT_phone', __('Phone','event_espresso'), true, ''),
-				'ATT_social'=>new EE_Serialized_Text_Field('ATT_social', __('Serialized array of social media info','event_espresso'), true, ''),
-				'ATT_comments'=>new EE_Simple_HTML_Field('ATT_comments', __('Comments about Attendee','event_espresso'), true, ''),
 				'ATT_notes'=>new EE_Simple_HTML_Field('ATT_notes', __('Notes about Attendee','event_espresso'), true, ''),
-				'ATT_deleted'=>new EE_Trashed_Flag_Field('ATT_deleted', __('Whether the attendee has been deleted or not','event_espresso'), true, false),
-				
-				
-				
 			));
 		$this->_model_relations = array(
 			'Registration'=>new EE_Has_Many_Relation(),
+			'State'=>new EE_Belongs_To_Relation(),
+			'Country'=>new EE_Belongs_To_Relation()
 		);
+		require_once('strategies/EE_Default_CPT_Where_Conditions.strategy.php');
+		$this->_default_where_conditions_strategy = new EE_Default_CPT_Where_Conditions('espresso_attendees', 'ATTM_ID');
 		parent::__construct();
 		
 	}
@@ -122,102 +115,6 @@ class EEM_Attendee extends EEM_Soft_Delete_Base {
 		// EEM_Attendee object
 		return self::$_instance;
 	}
-
-	/**
-	 * retrieve all "in use" attendees (i.e. non trashed)
-	 * @param  int  			$EVT_ID 		event ID
-	 * @param  int  			$CAT_ID 		category ID
-	 * @param  string		$reg_status reg STS_ID
-	 * @param  boolean  $trashed 	whether to return list of active or deleted attendees
-	 * @param  string 		$orderby 	field to orderby
-	 * @param  string 	 	$sort    		field to sortby
-	 * @param  mixed	 	$limit   		if FALSE no limit other wise limit an array with offset and limit.
-	 * @param  string	 	$output  		WP data type to return OR 'COUNT' to return count.
-	 * @return mixed           				FALSE if no data, count or array of attendee objects.
-	 */
-	public function get_event_attendees( $EVT_ID = FALSE, $CAT_ID = FALSE, $reg_status = FALSE, $trashed = FALSE, $orderby = 'REG_date', $sort = 'DESC', $limit = FALSE, $output = 'OBJECT_K' ) {
-		
-		global $wpdb;
-			
-		$select = $output == 'COUNT' ? 'COUNT(reg.ATT_ID)' : 'att.ATT_ID, att.ATT_lname, CONCAT(att.ATT_fname, " ", att.ATT_lname) AS ATT_name, att.ATT_email, reg.REG_ID, reg.REG_code, reg.STS_ID AS REG_status, reg.REG_final_price, reg.REG_date, reg.REG_count, reg.REG_group_size, reg.REG_att_is_going, reg.REG_url_link, reg.REG_att_checked_in, dtt.DTT_EVT_start, evt.id AS EVT_ID, evt.event_name, evt.require_pre_approval, txn.TXN_ID, txn.TXN_total, txn.TXN_paid, txn.STS_ID AS txn_status, prc.PRC_name';
-
-		$SQL = 'SELECT ' . $select;  
-		$SQL .= ' FROM ' . $wpdb->prefix . 'esp_attendee att';
-		$SQL .= ' LEFT JOIN ' . $wpdb->prefix . 'esp_registration reg ON reg.ATT_ID = att.ATT_ID';
-		$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID';
-		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_transaction txn ON txn.TXN_ID = reg.TXN_ID';
-		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_price prc ON prc.PRC_ID = reg.PRC_ID';
-		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_datetime dtt ON dtt.DTT_ID = reg.DTT_ID';
-
-		if ( $CAT_ID ) {
-			$SQL .= ' JOIN ' . EVENTS_CATEGORY_REL_TABLE . ' ect ON ect.event_id = evt.id';
-			$SQL .= ' JOIN ' . EVENTS_CATEGORY_TABLE . ' cat ON  cat.id = ect.cat_id';
-		}
-
-		$sql_clause = ' WHERE ';
-
-		if ( $CAT_ID ) {
-			$SQL .= $sql_clause .'cat.id = "' . $CAT_ID . '"';
-			$sql_clause = ' AND ';
-		}
-
-		if ( $reg_status ) {
-			$SQL .= $sql_clause .'reg.STS_ID = "' . $reg_status  . '"';
-			$sql_clause = ' AND ';
-		}
-
-		if ( $EVT_ID ) {
-			$SQL .= $sql_clause .' reg.EVT_ID = "' . $EVT_ID  . '"';
-			$sql_clause = ' AND ';
-		}
-
-		$trashed = $trashed ? 1 : 0;
-		$SQL .= $sql_clause . ' att.ATT_deleted = ' . $trashed;
-		$SQL .= ' AND evt.event_status != "D" ';
-
-		//let's setup orderby
-		switch ( $orderby ) {
-			
-			case 'REG_ID':
-				$orderby = 'reg.REG_ID ' . $sort;
-				break;
-				
-			case 'STS_ID':
-				$orderby = 'reg.REG_status ' . $sort . ', reg.REG_date DESC, reg.REG_count ASC ';
-				break;
-				
-			case 'ATT_lname':
-				$orderby = 'att.ATT_lname ' . $sort . ', reg.REG_date DESC, reg.REG_count ASC ';
-				break;
-				
-			case 'event_name':
-				$orderby = 'evt.event_name ' . $sort . ', att.ATT_lname ASC, reg.REG_count ASC ';
-				break;
-				
-			case 'DTT_EVT_start':
-				$orderby = 'dtt.DTT_EVT_start ' . $sort . ', evt.event_name, att.ATT_lname ASC, reg.REG_count ASC ';
-				break;
-				
-			default: //'REG_date'
-				$orderby = 'reg.REG_date ' . $sort . ', reg.REG_count ASC ';
-		}
-
-		//let's setup limit
-		$limit = !empty($limit) ? 'LIMIT ' . implode(',', $limit) : '';
-		$SQL .= $output == 'COUNT' ? '' : " ORDER BY $orderby $limit";
-		
-		// retreive all attendees	
-		$attendees = $output == 'COUNT' ? $wpdb->get_var( $SQL ) : $wpdb->get_results( $SQL );
-
-		if ( empty($attendees) || $attendees === FALSE || is_wp_error($attendees) )
-			return FALSE;
-		
-//		printr( $attendees, '$attendees  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		return $attendees;
-		
-	}
-
 
 
 	/**

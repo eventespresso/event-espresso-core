@@ -40,6 +40,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	/**
+	 * This will hold the category object for category_details screen.
+	 * @var object
+	 */
+	protected $_category;
+
+
+	/**
 	 * This will hold the event model instance
 	 * @var object
 	 */
@@ -65,10 +72,18 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'buttons' => array(
 				'add' => __('Add New Event', 'event_espresso'),
 				'edit' => __('Edit Event', 'event_espresso'),
-				'delete' => __('Delete Event', 'event_espresso')
+				'delete' => __('Delete Event', 'event_espresso'),
+				'add_category' => __('Add New Category', 'event_espresso'),
+				'edit_category' => __('Edit Category', 'event_espresso'),
+				'delete_category' => __('Delete Category', 'event_espresso')
 			),
 			'editor_title' => __('Enter event title here', 'event_espresso'),
-			'publishbox' => __('Save Event', 'event_espresso')
+			'publishbox' => array( 
+				'create_new' => __('Save New Event', 'event_espresso'),
+				'edit' => __('Update Event', 'event_espresso'),
+				'add_category' => __('Save New Category', 'event_espresso'),
+				'edit_category' => __('Update Category', 'event_espresso')
+				)
 		);
 	}
 
@@ -128,6 +143,44 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'func' => '_update_default_event_settings',
 				'noheader' => TRUE,
 			),
+			//event category tab related
+			'add_category' => array(
+				'func' => '_category_details',
+				'args' => array('add'),
+				),
+			'edit_category' => array(
+				'func' => '_category_details',
+				'args' => array('edit')
+				),
+			'delete_categories' => array(
+				'func' => '_delete_categories', 
+				'noheader' => TRUE 
+				),
+
+			'delete_category' => array(
+				'func' => '_delete_categories', 
+				'noheader' => TRUE
+				),
+
+			'insert_category' => array(
+				'func' => '_insert_or_update_category',
+				'args' => array('new_category' => TRUE),
+				'noheader' => TRUE
+				),
+
+			'update_category' => array(
+				'func' => '_insert_or_update_category',
+				'args' => array('new_category' => FALSE),
+				'noheader' => TRUE
+				),
+			'export_categories' => array(
+				'func' => '_categories_export',
+				'noheader' => TRUE
+				),
+			'import_categories' => '_import_categories',
+			'category_list' => array(
+				'func' => '_category_list_table'
+				)
 		);
 	}
 
@@ -207,7 +260,44 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'callback' => 'default_payment_status_help_tab'
 					)
 				)
-			)
+			),
+			//event category stuff
+			'add_category' => array(
+				'nav' => array(
+					'label' => __('Add Category', 'event_espresso'),
+					'order' => 15,
+					'persistent' => false),
+				'metaboxes' => array('_publish_post_box'),
+				'help_tabs' => array(
+					'unique_id_help_tab' => array(
+						'title' => __('Unique ID', 'event_espresso'),
+						'callback' => 'unique_id_help_tab'
+						)
+					)
+				),
+			'edit_category' => array(
+				'nav' => array(
+					'label' => __('Edit Category', 'event_espresso'),
+					'order' => 15,
+					'persistent' => FALSE,
+					'url' => isset($this->_req_data['EVT_CAT_ID']) ? add_query_arg(array('EVT_CAT_ID' => $this->_req_data['EVT_CAT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
+					),
+				'metaboxes' => array('_publish_post_box'),
+				'help_tabs' => array(
+					'unique_id_help_tab' => array(
+						'title' => __('Unique ID', 'event_espresso'),
+						'callback' => 'unique_id_help_tab'
+						)
+					)
+				),
+			'category_list' => array(
+				'nav' => array(
+					'label' => __('Categories', 'event_espresso'),
+					'order' => 20
+					),
+				'list_table' => 'Event_Categories_Admin_List_Table',
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				),
 		);
 	}
 
@@ -264,7 +354,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	public function load_scripts_styles() {
 
 		wp_register_style('events-admin-css', EVENTS_ASSETS_URL . 'events-admin-page.css', array(), EVENT_ESPRESSO_VERSION);
+		wp_register_style('ee-cat-admin', EVENTS_ASSETS_URL . 'ee-cat-admin.css', array(), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_style('events-admin-css');
+		wp_enqueue_style('ee-cat-admin');
 		//todo note: we also need to load_scripts_styles per view (i.e. default/view_report/event_details
 		//registers for all views
 		//scripts
@@ -296,6 +388,47 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$eei18n_js_strings['image_confirm'] = __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso');
 		wp_localize_script('event_editor_js', 'eei18n', $eei18n_js_strings);
 	}
+
+
+
+	public function load_scripts_styles_add_category() {
+		$this->load_scripts_styles_edit_category();
+	}
+
+
+
+
+
+	public function load_scripts_styles_edit_category() {
+		//styles
+		//wp_enqueue_style('jquery-ui-style');
+
+		//scripts
+		wp_enqueue_script( 'ee_cat_admin_js', EVENTS_ASSETS_URL . 'ee-cat-admin.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );
+		
+		global $eei18n_js_strings;
+		$eei18n_js_strings['add_cat_name'] = __('Category Name is a required field. Please enter a value in order to continue.', 'event_espresso');
+		wp_localize_script( 'ee_cat_admin_js', 'eei18n', $eei18n_js_strings );
+
+	}
+
+
+
+	protected function _set_list_table_views_category_list() {
+		$this->_views = array(
+			'all' => array(
+				'slug' => 'all',
+				'label' => __('All', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'delete_categories' => __('Delete Permanently', 'event_espresso'),
+					'export_categories' => __('Export Categories', 'event_espresso'),
+					)
+				)
+		);
+	}
+
+
 
 	//nothing needed for events with these methods.
 	public function admin_init() {}
@@ -544,25 +677,25 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return bool           success or fail
 	 */
 	protected function _default_dtt_update( $evtobj, $data ) {
-		$timezone = isset( $data['EVT_timezone_string'] ) ? $data['EVT_timezone_string'] : NULL;
+		$timezone = isset( $data['timezone_string'] ) ? $data['timezone_string'] : NULL;
 		$success = TRUE;
 
-		$q=1;
-		foreach ( $data['event_datetimes'] as $event_datetime ) {
-			$event_datetime['evt_end'] = ( isset($event_datetime['evt_end']) && $event_datetime['evt_end'] != '' ) ? $event_datetime['evt_end'] : $event_datetime['evt_start'];
-			$event_datetime['reg_end'] = ( isset($event_datetime['reg_end']) && $event_datetime['reg_end'] != '' ) ? $event_datetime['reg_end'] : $event_datetime['reg_start'];
+		foreach ( $data['event_datetimes'] as $row => $event_datetime ) {
+			$event_datetime['evt_end'] = isset($event_datetime['evt_end']) && ! empty( $event_datetime['evt_end'] ) ? $event_datetime['evt_end'] : $event_datetime['evt_start'];
+			$event_datetime['reg_end'] = isset($event_datetime['reg_end']) && ! empty( $event_datetime['reg_end'] ) ? $event_datetime['reg_end'] : $event_datetime['reg_start'];
 			$DTM = EE_Datetime::new_instance( array(
-					'DTT_EVT_start' => strtotime( $event_datetime['evt_start'] ),
-					'DTT_EVT_end' => strtotime($event_datetime['evt_end']),
-					'DTT_REG_start' => strtotime($event_datetime['reg_start']),
-					'DTT_REG_end' => strtotime($event_datetime['reg_end']),
-					'DTT_is_primary' => $q == 1 ? TRUE : FALSE,
+					'DTT_ID' => isset( $event_datetime['ID'] ) ? absint( $event_datetime['ID'] ) : NULL,
+					'DTT_EVT_start' => $event_datetime['evt_start'],
+					'DTT_EVT_end' => $event_datetime['evt_end'],
+					'DTT_REG_start' => $event_datetime['reg_start'],
+					'DTT_REG_end' => $event_datetime['reg_end'],
+					'DTT_is_primary' => $row == 1 ? TRUE : FALSE,
 				),
 				$timezone);
+
 			$works = $evtobj->_add_relation_to( $DTM, 'Datetime' );
 			$success = !$success ? $success : $works; //if ANY of these updates fail then we want the appropriate global error message
 		}
-
 		return $success;
 	}
 
@@ -578,10 +711,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _default_prices_update( $evtobj, $data ) {
 
-		$timezone = isset( $data['EVT_timezone_string'] ) ? $data['EVT_timezone_string'] : NULL;
+		$timezone = isset( $data['timezone_string'] ) ? $data['timezone_string'] : NULL;
 		$success = TRUE;
 
-
+		$data['price_count'] = 1;
 		$ticket_prices_to_save = array();
 		$quick_edit_ticket_price = isset($data['quick_edit_ticket_price']) ? $data['quick_edit_ticket_price'] : array();
 //			echo printr( $quick_edit_ticket_price, '$quick_edit_ticket_price' );
@@ -693,7 +826,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				} else {
 					$data['price_count']++;
 				}
-				
+
 				$works = $evtobj->_add_relation_to( $PRC, 'Price' );
 				$success = !$success ? $success : $works; //if ANY of these updates fail then we want the appropriate global error message
 
@@ -702,7 +835,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		if ( isset( $data['price_count'] ) && absint( $data['price_count'] ) < 1 ) {
 			$espresso_no_ticket_prices = get_option( 'espresso_no_ticket_prices', array() );
-			$espresso_no_ticket_prices[ $last_event_id ] = $event_name;
+			$espresso_no_ticket_prices[ $evtobj->get('EVT_ID') ] = $evtobj->get('EVT_name');
 			update_option( 'espresso_no_ticket_prices', $espresso_no_ticket_prices );
 		} 
 
@@ -788,7 +921,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
 		$DTM_MDL = EEM_Datetime::instance( $timezone );
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_DTT_helper.helper.php';
-
 		global $times;
 		// grab event times
 		$times = $DTM_MDL->get_all_event_dates($event_id);
@@ -802,8 +934,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['add_additional_time'] = apply_filters('FHEE_event_datetime_metabox_add_additional_date_time_template', '', $template_args);
 		$template_args['org_options'] = $org_options;
 		$template_args['current_time_help_link'] = $this->_get_help_tab_link('current_time_info');
-		$template_args['current_date'] = date(get_option('date_format')) . ' ' . date(get_option('time_format'));
-		$template_args['event_timezone'] = EE_DTT_helper::ddtimezone($this->$event_id);
+		$template_args['current_date'] = EE_DTT_helper::date_time_for_timezone(time(), get_option('date_format') . ' ' . get_option('time_format'), $timezone);
+		$template_args['event_timezone'] = EE_DTT_helper::ddtimezone($timezone);
 		$template_args['use_event_timezones_template'] = apply_filters('FHEE_event_datetime_metabox_timezones_template', '', $template_args);
 		$template_args['template_args'] = $template_args;
 
@@ -865,9 +997,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						$row_args['inactive'] = ! $price->is_active() ? '<span class="inactice-price">'.__('inactive price - edit advanced settings to reactivate', 'event_espresso').'</span>' : FALSE;
 						if ( $price->use_dates() ){
 							$today = time();
-							if ( $today < $price->start_date( FALSE ) ){
+							if ( $today < $price->start() ){
 								$price_date_status = '<a title="'. __('This Event Price option is not yet active', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-pending-16x22.png" width="16" height="22" alt="'. __('This Event Price option is not yet active', 'event_espresso') . '" class="price-date-status-img"/></a>';					
-							} elseif ( $today > $price->start_date( FALSE ) && $today < $price->end_date( FALSE ) ) {
+							} elseif ( $today > $price->start() && $today < $price->end() ) {
 								$price_date_status = '<a title="'. __('This Event Price option is currently active', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-active-16x22.png" width="16" height="22" alt="'. __('This Event Price option is currently active', 'event_espresso') . '" class="price-date-status-img"/></a>';					
 							} else {
 								$price_date_status = '<a title="'. __('This Event Price option has expired', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-expired-16x22.png" width="16" height="22" alt="'. __('This Event Price option has expired', 'event_espresso') . '" class="price-date-status-img"/></a>';
@@ -1028,9 +1160,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$where['DTT_EVT_start'] = array( 'BETWEEN', array( strtotime($this_year_r . '-' . $this_month_r . '-01'), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month) ) );
 		}
 
-		$force_join = array('Venue', 'Datetime');
-
-		$events = $count ? $EEME->count( array( $where, 'force_join' => $force_join, ), 'EVT_ID' ) : $EEME->get_all( array( $where, 'force_join' => $force_join, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' ) );
+		$events = $count ? $EEME->count( array( $where ), 'EVT_ID' ) : $EEME->get_all( array( $where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' ) );
 
 		return $events;
 	}
@@ -1314,50 +1444,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	}
 
 	/**
-	 * get tal number of events
+	 * get total number of events
 	 *
 	 * @access public
 	 * @return int 
 	 */
 	public function total_events() {
 
-		global $wpdb;
-
-		//Dates
-		$curdate = date('Y-m-d');
-		$this_year_r = date('Y');
-		$this_month_r = date('m');
-		$days_this_month = date('t');
-
-		$group = '';
-		if (function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_group_admin') {
-			$group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
-			$group = unserialize($group);
-			if (!empty($group)) {
-				$group = implode(",", $group);
-			}
-		}
-
-		$sql1 = "(";
-		if ($group != '') {
-			$sql1 .= "SELECT e.id FROM " . EVENTS_DETAIL_TABLE . " e ";
-			$sql1 .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
-			$sql1 .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
-			$sql1 .= " WHERE event_status != 'D'";
-			$sql1 .=!empty($group) ? " AND l.locale_id IN (" . $group . ") " : '';
-			$sql1 .= ") UNION (";
-		}
-		$sql1 .= "SELECT e.id FROM " . EVENTS_DETAIL_TABLE . " e ";
-		$sql1 .= " WHERE event_status != 'D'";
-		if (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
-			$sql1 .= " AND wp_user = '" . espresso_member_data('id') . "' ";
-		}
-		$sql1 .= ")";
-		$total_events = 0;
-		if ($wpdb->query($sql1)) {
-			$total_events = $wpdb->num_rows;
-		}
-		return $total_events;
+		$count = EEM_Event::instance()->count( array( array('STS_ID' => array( '!=','trash') ) ), 'EVT_ID' );
+		return $count;
 	}
 
 	/**
@@ -1367,41 +1462,16 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return int 
 	 */
 	public function total_events_today() {
-		global $wpdb;
-
-		//Dates
-		$curdate = date('Y-m-d');
-		$this_year_r = date('Y');
-		$this_month_r = date('m');
-		$days_this_month = date('t');
 		$start = ' 00:00:00';
 		$end = ' 23:59:59';
 
-		$sql2 = "(";
-		if (!empty($group)) {
-			$sql2 .= "SELECT e.id FROM " . EVENTS_DETAIL_TABLE . " e ";
-			$sql2 .= " JOIN " . ESP_DATETIME_TABLE . " dtt ON dtt.EVT_ID = e.id ";
-			$sql2 .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
-			$sql2 .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
-			$sql2 .= " WHERE e.event_status != 'D'";
-			$sql2 .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime(date('Y-m-d') . $start) . "' AND '" . strtotime(date('Y-m-d') . $end) . "' ";
-			$sql2 .= $group != '' ? " AND l.locale_id IN (" . $group . ") " : '';
-			$sql2 .= ") UNION (";
-		}
-		$sql2 .= "SELECT e.id FROM " . EVENTS_DETAIL_TABLE . " e ";
-		$sql2 .= " JOIN " . ESP_DATETIME_TABLE . " dtt ON dtt.EVT_ID = e.id ";
-		$sql2 .= " WHERE e.event_status != 'D'";
-		$sql2 .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime(date('Y-m-d') . $start) . "' AND '" . strtotime(date('Y-m-d') . $end) . "' ";
+		$where = array(
+			'STS_ID' => array( '!=', 'trash' ),
+			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime(date('Y-m-d') . $start), strtotime(date('Y-m-d') . $end) ) )
+			);
 
-		if (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
-			$sql2 .= " AND e.wp_user = '" . espresso_member_data('id') . "' ";
-		}
-		$sql2 .= ")";
-		$total_events_today = 0;
-		if ($wpdb->query($sql2)) {
-			$total_events_today = $wpdb->num_rows;
-		}
-		return $total_events_today;
+		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID' );
+		return $count;
 	}
 
 	/**
@@ -1411,8 +1481,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return int 
 	 */
 	public function total_events_this_month() {
-		global $wpdb;
-
 		//Dates
 		$curdate = date('Y-m-d');
 		$this_year_r = date('Y');
@@ -1421,34 +1489,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$start = ' 00:00:00';
 		$end = ' 23:59:59';
 
-		$sql3 = "(";
-		if (!empty($group)) {
-			$sql3 .= "SELECT e.id FROM " . EVENTS_DETAIL_TABLE . " e ";
-			$sql3 .= " JOIN " . ESP_DATETIME_TABLE . " dtt ON dtt.EVT_ID = e.id ";
-			$sql3 .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
-			$sql3 .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
-			$sql3 .= " WHERE event_status != 'D'";
-			$sql3 .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime($this_year_r . '-' . $this_month_r . '-01' . $start) . "' AND '" . strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) . "' ";
+		$where = array(
+			'STS_ID' => array( '!=', 'trash' ),
+			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) )
+			);
 
-			$sql3 .= $group != '' ? " AND l.locale_id IN (" . $group . ") " : '';
-			$sql3 .= ") UNION (";
-		}
-		$sql3 .= "SELECT e.id FROM " . EVENTS_DETAIL_TABLE . " e ";
-		$sql3 .= " JOIN " . ESP_DATETIME_TABLE . " dtt ON dtt.EVT_ID = e.id ";
-		$sql3 .= " WHERE event_status != 'D'";
-		$sql3 .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime($this_year_r . '-' . $this_month_r . '-01' . $start) . "' AND '" . strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) . "' ";
-
-		if (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
-			$sql3 .= " AND wp_user = '" . espresso_member_data('id') . "' ";
-		}
-		$sql3 .= ")";
-		//echo $sql3;
-		$wpdb->query($sql3);
-		$total_events_this_month = 0;
-		if ($wpdb->query($sql3)) {
-			$total_events_this_month = $wpdb->num_rows;
-		}
-		return $total_events_this_month;
+		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID' );
+		return $count;
 	}
 
 
@@ -1573,10 +1620,257 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$type = 'csv';
 		$content = EE_Import::instance()->upload_form($title, $intro, $form_url, $action, $type);
 
-		$this->_admin_page_title .= $this->_get_action_link_or_button('add_event', 'add', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->_get_action_link_or_button('create_new', 'add', array(), 'button add-new-h2');
+
+		$title_cat = __( 'Import Event Categories', 'event_espresso' );
+		$intro_cat = __( 'If you have a previously exported list of Event Categories in a Comma Separated Value (CSV) file format, you can upload the file here: ', 'event_espresso' );
+		$form_url_cat = EVENTS_ADMIN_URL;
+		$action_cat = 'import_categories';
+		$type_cat = 'csv';
+		$content .= EE_Import::instance()->upload_form( $title_cat, $intro_cat, $form_url_cat, $action_cat, $type_cat );
+
 		$this->_template_args['admin_page_content'] = $content;
 		$this->display_admin_page_with_sidebar();
 	}
+
+
+
+	/** Event Category Stuff **/
+
+	/**
+	 * set the _category property with the category object for the loaded page.
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _set_category_object() {
+		if ( isset( $this->_category->id ) && !empty( $this->_category->id ) )
+			return; //already have the category object so get out.
+
+		//set default category object
+		$this->_set_empty_category_object();
+		
+		//only set if we've got an id
+		if ( !isset($this->_req_data['EVT_CAT_ID'] ) ) {
+			return;
+		}
+
+		$category_id = absint($this->_req_data['EVT_CAT_ID']);
+		$term = get_term( $category_id, 'espresso_event_categories' );
+
+
+		if ( !empty( $term ) ) {
+			$this->_category->category_name = $term->name;
+			$this->_category->category_identifier = $term->slug;
+			$this->_category->category_desc = $term->description;
+			$this->_category->id = $term->term_id;
+		}
+	}
+
+
+
+
+	private function _set_empty_category_object() {
+		$this->_category = new stdClass();
+		$this->_category->id = $this->_category->category_name = $this->_category->category_identifier = $this->_category->category_desc = '';
+	}
+
+
+
+	public function unique_id_help_tab() {
+		?>		
+			<h2><?php _e('Unique Category Identifier', 'event_espresso'); ?></h2>
+			<p><?php _e('This should be a unique identifier for the category. Example: "category1" (without qoutes.)', 'event_espresso'); ?></p>
+			<p><?php printf( __('The unique ID can also be used in individual pages using the %s shortcode', 'event_espresso'), '[EVENT_ESPRESSO_CATEGORY category_id="category_identifier"]' ); ?>.</p>		
+		<?php
+	}
+
+
+
+
+	protected function _category_list_table() {
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		$this->_admin_page_title .= $this->_get_action_link_or_button('add_category', 'add_category', array(), 'button add-new-h2');
+		$this->display_admin_list_table_page_with_sidebar();
+	}
+
+
+	protected function _category_details($view) {
+
+		//load formatter helper
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
+		//load field generator helper
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
+
+		$route = $view == 'edit' ? 'update_category' : 'insert_category';
+		$this->_set_add_edit_form_tags($route);
+
+		$this->_set_category_object();
+		$id = !empty($this->_category->id) ? $this->_category->id : '';
+
+		$delete_action = $this->_category->category_identifier == 'uncategorized' ? FALSE : 'delete_category';
+
+		$this->_set_publish_post_box_vars( 'category_id', $id, $delete_action );
+
+		//take care of contents
+		$this->_template_args['admin_page_content'] = $this->_category_details_content();
+		$this->display_admin_page_with_sidebar();
+	}
+
+
+
+	protected function _category_details_content() {
+		$editor_args['category_desc'] = array(
+			'type' => 'wp_editor',
+			'value' => EE_Formatter::admin_format_content($this->_category->category_desc),
+			'class' => 'my_editor_custom'
+		);
+		$_wp_editor = $this->_generate_admin_form_fields( $editor_args, 'array' );
+		$template_args = array(
+			'category' => $this->_category,
+			'unique_id_info_help_link' => $this->_get_help_tab_link('unique_id_info'),
+			'category_desc_editor' =>  $_wp_editor['category_desc']['field'],
+			'disable' => $this->_category->category_identifier == 'uncategorized' ? ' disabled' : '',
+			'disabled_message' => $this->_category->category_identifier == 'uncategorized' ? TRUE : FALSE
+			);
+		$template = EVENTS_TEMPLATE_PATH . 'event_category_details.template.php';
+		return espresso_display_template($template, $template_args, TRUE );
+	}
+
+
+	protected function _delete_categories() {
+		$cat_ids = isset( $this->_req_data['EVT_CAT_ID'] ) ? (array) $this->_req_data['EVT_CAT_ID'] : (array) $this->_req_data['category_id'];
+
+		foreach ( $cat_ids as $cat_id ) {
+			$this->_delete_category($cat_id);
+		}
+
+		//doesn't matter what page we're coming from... we're going to the same place after delete.
+		$query_args = array(
+			'action' => 'category_list'
+			);
+		$this->_redirect_after_action(0,'','',$query_args);
+
+	}
+
+
+
+
+
+	protected function _delete_category($cat_id) {
+		global $wpdb;
+		$cat_id = absint( $cat_id );
+		wp_delete_term( $cat_id, 'espresso_event_categories' );
+	}
+
+
+
+	protected function _insert_or_update_category($new_category) {
+
+		$cat_id = $new_category ? $this->_insert_category() : $this->_insert_category( TRUE );
+		$success = 0; //we already have a success message so lets not send another.
+		$query_args = array(
+			'action' => 'edit_category', 
+			'EVT_CAT_ID' => $cat_id
+		);
+		$this->_redirect_after_action( $success, '','', $query_args );
+
+	}
+
+
+
+	private function _insert_category( $update = FALSE ) {
+		global $wpdb;
+		$cat_id = '';
+		$category_name= $this->_req_data['category_name'];
+		$category_identifier = $this->_req_data['category_identifier'];
+		$category_desc= $this->_req_data['category_desc']; 
+
+
+	
+		$term_args=array(
+			'category_name'=>$category_name, 
+			'slug'=>$category_identifier, 
+			'description'=>$category_desc,
+			//'parent'=>$espresso_wp_user //eventually this will be added.
+		);
+		
+		$insert_ids = $update ? wp_update_term( $category_name, 'espresso_event_categories', $term_args ) :wp_insert_term( $category_name, 'espresso_event_categories', $term_args );
+
+		if ( !is_array( $insert_ids ) ) {
+			$msg = __( 'An error occured and the category has not been saved to the database.', 'event_espresso', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+		} else {
+			$cat_id = $insert_ids['term_id'];
+			$msg = sprintf ( __('The category %s was successfuly created', 'event_espresso'), $category_name );
+			EE_Error::add_success( $msg );
+		}
+		
+		return $cat_id;
+	}
+
+
+	/**
+	 * TODO handle category exports()
+	 * @return file export
+	 */
+	protected function _categories_export() {
+
+		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
+		$new_request_args = array(
+			'export' => 'report',
+			'action' => 'categories',
+			'category_ids' => $this->_req_data['EVT_CAT_ID']
+			);
+
+		$this->_req_data = array_merge( $this->_req_data, $new_request_args );
+
+		if ( file_exists( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php') ) {
+			require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
+			$EE_Export = EE_Export::instance( $this->_req_data );
+			$EE_Export->export();
+		}
+
+	}
+
+
+
+
+
+	protected function _import_categories() {
+
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php');
+		EE_Import::instance()->import();
+
+	}
+
+
+
+
+	public function get_categories( $per_page = 10, $current_page = 1, $count = FALSE ) {
+		global $wpdb;
+
+		//testing term stuff
+		$orderby = isset( $this->_req_data['orderby'] ) ? $this->_req_data['orderby'] : 'Term.term_id';
+		$order = isset( $this->_req_data['order'] ) ? $this->_req_data['order'] : 'DESC';
+		$limit = ($current_page-1)*$per_page;
+
+
+		$query_params = array(
+			0 => array( 'taxonomy' => 'espresso_event_categories' ),
+			'order_by' => array( $orderby => $order ),
+			'limit' => $limit . ',' . $per_page,
+			'force_join' => array('Term')
+			);
+
+		$categories = $count ? EEM_Term_Taxonomy::instance()->count( $query_params, 'term_id' ) :EEM_Term_Taxonomy::instance()->get_all( $query_params );
+
+		return $categories;
+	}
+
+
+	/* end category stuff */
+	/**************/
 
 }
 //end class Events_Admin_Page

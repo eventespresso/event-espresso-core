@@ -1,5 +1,4 @@
 <?php
-require_once('display_strategies/EE_Display_Strategy_Base.strategy.php');
 class EE_Text_Input_Display_Strategy extends EE_Display_Strategy_Base{
 	/**
 	 * 
@@ -10,7 +9,7 @@ class EE_Text_Input_Display_Strategy extends EE_Display_Strategy_Base{
 		return "<label id='{$input->html_label_id()}' class='{$input->html_label_class()}' style='{$input->html_label_style()}'>".
 				"{$input->html_label_text()}".
 				"</label>".
-				"<input type='text' id='{$input->html_id()}' class='{$input->html_class()}' style='{$input->html_style()}' value='{$input->original_value()}'/>";
+				"<input type='text' id='{$input->html_id()}' name='{$input->html_name()}' class='{$input->html_class()}' style='{$input->html_style()}' value='{$input->sanitized_value()}'/>";
 	}
 	
 }

@@ -37,6 +37,32 @@ class EE_Base_Class{
 
 
 
+
+	/**
+    *	date format
+	* 
+    *	pattern or format for displaying dates
+	* 
+	*	@access	protected
+    *	@var string	
+    */
+	protected $_dt_frmt = 'F j, Y';	
+	
+	
+	
+    /**
+    *	time format
+	* 
+    *	pattern or format for displaying time
+	* 
+	*	@access	protected
+    *	@var string	
+    */
+	protected $_tm_frmt = 'g:i a';
+
+
+
+
 	/**
 	 * This property is for holding a cached array of object properties indexed by property name as the key.
 	 * The purpose of this is for setting a cache on properties that may have calculated values after a prepare_for_get.  That way the cache can be checked first and the calculated property returned instead of having to recalculate.
@@ -233,7 +259,7 @@ class EE_Base_Class{
 	 * @param  string $propertyname the name of the property we're trying to retrieve
 	 * @return mixed                whatever the value for the property is we're retrieving
 	 */
-	protected function _get_cached_property( $propertyname ) {
+	protected function _get_cached_property( $propertyname, $pretty = FALSE ) {
 		//first make sure this property exists
 		if ( !property_exists( $this, $propertyname ) )
 			throw new EE_Error( sprintf( __('Trying to retrieve a non-existent property (%s).  Doublecheck the spelling please', 'event_espresso'), $propertyname ) );
@@ -245,7 +271,7 @@ class EE_Base_Class{
 		//otherwise let's return the property
 		$field_name = ltrim( $propertyname, '_' );
 		$field_obj = $this->get_model()->field_settings_for($field_name);
-		$value = $field_obj->prepare_for_get($this->$propertyname );
+		$value = $pretty ? $field_obj->prepare_for_pretty_echoing($this->$propertyname) : $field_obj->prepare_for_get($this->$propertyname );
 		$this->_set_cached_property( $propertyname, $value );
 		return $value;
 	}
@@ -272,7 +298,7 @@ class EE_Base_Class{
 	 */
 	protected function _clear_cached_property( $propertyname ) {
 		if ( isset( $this->_cached_properties[$propertyname] ) )
-			unset( $this->_cached_properteis[$propertyname] );
+			unset( $this->_cached_properties[$propertyname] );
 	}
 
 
@@ -284,7 +310,7 @@ class EE_Base_Class{
 	 * @return EE_Base_Class
 	 */
 	protected function ensure_related_thing_is_model_obj($object_or_id,$model_name){
-		$other_model_instance = self::_get_model_instance_with_name(self::_get_model_classname($model_name));
+		$other_model_instance = self::_get_model_instance_with_name(self::_get_model_classname($model_name), $this->_timezone);
 		$model_obj = $other_model_instance->ensure_is_obj($object_or_id);
 		return $model_obj;
 	}
@@ -403,10 +429,139 @@ class EE_Base_Class{
 	 * @return mixed
 	 */
 	public function get_pretty($field_name){
-		$field_value = $this->get($field_name);
-		$field_obj = $this->get_model()->field_settings_for($field_name);
-		return  $field_obj->prepare_for_pretty_echoing($field_value);
+		$privateAttributeName = $this->_get_private_attribute_name($field_name);
+		return  $this->_get_cached_property( $privateAttributeName, TRUE );
 	}
+
+
+
+	/**
+	 * This simply returns the datetime for the given field name
+	 * Note: this protected function is called by the wrapper get_date or get_time or get_datetime functions (and the equivalent e_date, e_time, e_datetime).
+	 *
+	 * @access protected
+	 * @param  string                $field_name  Field on the instantiated EE_Base_Class child object
+	 * @param  mixed(null|string) $date_format valid datetime format used for date (if empty then we just use the default on the field)
+	 * @param  mixed(null|string) $time_format Same as above except this is for time format
+	 * @param string $date_or_time if NULL then both are returned, otherwise "D" = only date and "T" = only time. 
+	 * @param  boolean $echo        Whether the dtt is echoing using pretty echoing or just returned using vanilla get
+	 * @return mixed               string on success, FALSE on fail, or EE_Error Exception is thrown if field is not a valid dtt field
+	 */
+	protected function _get_datetime( $field_name, $dt_frmt = NULL, $tm_frmt = NULL, $date_or_time = NULL, $echo = FALSE ) {
+		$in_dt_frmt = empty($dt_frmt) ? $this->_dt_frmt : $dt_frmt;
+		$in_tm_frmt = empty($tm_frmt) ? $this->_tm_frmt : $tm_frmt;
+
+		
+		//validate field for datetime and returns field settings if valid.
+		$field = $this->_get_dtt_field_settings( $field_name );
+		$var_name = $this->_get_private_attribute_name( $field_name );
+
+		if ( !empty($dt_frmt) ) {
+			$this->_clear_cached_property( $var_name );
+			if ( $echo )
+				$field->set_pretty_date_format( $in_dt_frmt );
+			else 
+				$field->set_date_format( $in_dt_frmt );
+		}
+
+		if ( !empty($tm_frmt) ) {
+			$this->_clear_cached_property( $var_name );
+			if ( $echo )
+				$field->set_pretty_time_format( $in_tm_frmt );
+			else
+				$field->set_time_format( $in_tm_frmt );
+		}
+
+		//set timezone in field object
+		$field->set_timezone( $this->_timezone );
+		
+		//set the output returned
+		switch ( $date_or_time ) {
+			
+			case 'D' :
+				$field->set_date_time_output('date');
+				break;
+			
+			case 'T' :
+				$field->set_date_time_output('time');
+				break;
+			
+			default :
+				$field->set_date_time_output();
+		}
+
+		if ( $echo ) {
+			$this->e( ltrim( $var_name, '_' ) );
+		 } else
+			return $this->get( ltrim( $var_name, '_' ) );
+	}
+
+
+	/**
+	 * below are wrapper functions for the various datetime outputs that can be obtained for JUST returning the date portion of a datetime value. (note the only difference between get_ and e_ is one returns the value and the other echoes the pretty value for dtt)
+	 * @param  string $field_name name of model object datetime field holding the value
+	 * @param  string $format     format for the date returned (if NULL we use default in dt_frmt property)
+	 * @return string            datetime value formatted
+	 */
+	public function get_date( $field_name, $format = NULL ) {
+		return $this->_get_datetime( $field_name, $format, NULL, 'D' );
+	}
+	public function e_date( $field_name, $format = NULL ) {
+		$this->_get_datetime( $field_name, $format, NULL, 'D', TRUE );
+	}
+
+
+	/**
+	 * below are wrapper functions for the various datetime outputs that can be obtained for JUST returning the time portion of a datetime value. (note the only difference between get_ and e_ is one returns the value and the other echoes the pretty value for dtt)
+	 * @param  string $field_name name of model object datetime field holding the value
+	 * @param  string $format     format for the time returned ( if NULL we use default in tm_frmt property)
+	 * @return string             datetime value formatted
+	 */
+	public function get_time( $field_name, $format = NULL ) {
+		return $this->_get_datetime( $field_name, NULL, $format, 'T' );
+	}
+	public function e_time( $field_name, $format = NULL ) {
+		$this->_get_datetime( $field_name, NULL, $format, 'T', TRUE );
+	}
+
+
+
+
+	/**
+	 * below are wrapper functions for the various datetime outputs that can be obtained for returning the date AND time portion of a datetime value. (note the only difference between get_ and e_ is one returns the value and the other echoes the pretty value for dtt)
+	 * @param  string $field_name name of model object datetime field holding the value
+	 * @param  string $dt_frmt    format for the date returned (if NULL we use default in dt_frmt property)
+	 * @param  string $tm_frmt    format for the time returned (if NULL we use default in tm_frmt property)
+	 * @return string             datetime value formatted
+	 */
+	public function get_datetime( $field_name, $dt_frmt = NULL, $tm_frmt = NULL ) {
+		return $this->_get_datetime( $field_name, $dt_frmt, $tm_frmt );
+	}
+	public function e_datetime( $field_name, $dt_frmt = NULL, $tm_frmt = NULL ) {
+		$this->_get_datetime( $field_name, $dt_frmt, $tm_frmt, NULL, TRUE);
+	}
+
+
+
+
+	/**
+	 * This method validates whether the given field name is a valid field on the model object as well as it is of a type EE_Datetime_Field.  On success there will be returned the field settings.  On fail an EE_Error exception is thrown.
+	 * @param  string $field_name The field name being checked
+	 * @return EE_Datetime_Field   
+	 */
+	protected function _get_dtt_field_settings( $field_name ) {
+		$field = $this->get_model()->field_settings_for($field_name);
+
+		//check if field is dtt
+		if ( $field instanceof EE_Datetime_Field ) {
+			return $field;
+		} else {
+			throw new EE_Error( sprintf( __('The field name "%s" has been requested for the EE_Base_Class datetime functions and it is not a valid EE_Datetime_Field.  Please check the spelling of the field and make sure it has been setup as a EE_Datetime_Field in the %s model constructor', 'event_espresso'), $field_name, self::_get_model_classname( get_class($this) ) ) );
+		}
+	}
+
+
+
 	
 	/**
 	 * Deletes this model object. That may mean just 'soft deleting' it though.
@@ -451,7 +606,7 @@ class EE_Base_Class{
 		} else {
 			unset($save_cols_n_values[self::_get_primary_key_name( get_class( $this) )]);
 			
-			$results = $this->get_model()->insert ( $save_cols_n_values, true);
+			$results = $this->get_model()->insert( $save_cols_n_values, true);
 			if($results){//if successful, set the primary key
 				$this->set(self::_get_primary_key_name( get_class($this) ),$results);//for some reason the new ID is returned as part of an array,
 				//where teh only key is 'new-ID', and it's value is the new ID.
@@ -479,7 +634,7 @@ class EE_Base_Class{
 	 */
 	public function get_model() {
 		$modelName = self::_get_model_classname( get_class($this) );
-		return self::_get_model_instance_with_name($modelName);
+		return self::_get_model_instance_with_name($modelName, $this->_timezone );
 	}
 
 
@@ -491,11 +646,11 @@ class EE_Base_Class{
 	 * @param  string $classname      the classname of the child class
 	 * @return mixed (EE_Base_Class|bool)
 	 */
-	protected static function _check_for_object( $props_n_values, $classname ) {
+	protected static function _check_for_object( $props_n_values, $classname, $timezone = NULL ) {
 		$primary_id_ref = self::_get_primary_key_name( $classname );
 
 		if ( array_key_exists( $primary_id_ref, $props_n_values ) && !empty( $props_n_values[$primary_id_ref] ) ) {
-			$existing = self::_get_model($classname)->get_one_by_ID( $props_n_values[$primary_id_ref] );
+			$existing = self::_get_model( $classname, $timezone )->get_one_by_ID( $props_n_values[$primary_id_ref] );
 			if ( $existing ) {
 				foreach ( $props_n_values as $property => $field_value ) {
 					$existing->set( $property, $field_value );
@@ -518,10 +673,10 @@ class EE_Base_Class{
 	 * @access public now, as this is more convenient 
 	 * @return EEM_Base
 	 */
-	protected static function  _get_model( $classname ){
+	protected static function  _get_model( $classname, $timezone = NULL ){
 		//find model for this class
 		$modelName=self::_get_model_classname($classname);
-		return self::_get_model_instance_with_name($modelName);
+		return self::_get_model_instance_with_name($modelName, $timezone );
 	}
 
 
@@ -530,8 +685,9 @@ class EE_Base_Class{
 	 * Gets the model instance (eg instance of EEM_Attendee) given its classname (eg EE_Attendee)
 	 * @return EEM_Base
 	 */
-	protected static function _get_model_instance_with_name($model_classname){
+	protected static function _get_model_instance_with_name($model_classname, $timezone = NULL){
 		$model=call_user_func($model_classname."::instance");
+		$model->set_timezone( $timezone );
 		return $model;
 	}
 

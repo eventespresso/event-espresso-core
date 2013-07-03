@@ -191,8 +191,8 @@ class EE_Price extends EE_Base_Class{
 
 
 
-	public static function new_instance_from_db ( $props_n_values = array() ) {
-		return new self( $props_n_values, TRUE );
+	public static function new_instance_from_db ( $props_n_values = array(), $timezone = NULL ) {
+		return new self( $props_n_values, TRUE, $timezone );
 	}
 
 
@@ -437,23 +437,41 @@ class EE_Price extends EE_Base_Class{
 
 	/**
 	*	get start date
+	*
+	* 	//note this ONLY returns the date (not the time)
+	* 
 	* @access		public
 	* @param 		string		$format 	defaults to 'Y-m-d'  
 	* @return 		string
 	*/
-	public function start_date( $format = 'Y-m-d' ) {
-		return $this->get('PRC_start_date');
+	public function start_date( $format = NULL ) {
+		return $this->get_date('PRC_start_date', $format);
 	}
 
 
 	/**
 	*	get end date
+	*
+	*   //note this ONLY returns the date (not the time)
+	* 
 	* @access		public
 	* @param 		string		$format 	defaults to 'Y-m-d'  
 	* @return 		string
 	*/
-	public function end_date( $format = 'Y-m-d' ) {
-		return $this->get('PRC_end_date');
+	public function end_date( $format = NULL  ) {
+		return $this->get_date('PRC_end_date', $format);
+	}
+
+
+
+	public function start() {
+		return $this->_PRC_start_date;
+	}
+
+
+
+	public function end() {
+		return $this->_PRC_end_date;
 	}
 
 
