@@ -1165,8 +1165,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//let's first check if we have special requests coming in.
 		if ( isset( $this->_req_data['active_status'] ) ) {
 			switch ( $this->_req_data['active_status'] ) {
-				case 'not_active_yet' :
-					return $EEME->get_not_active_yet_events( $query_params, $count );
+				case 'upcoming' :
+					return $EEME->get_upcoming_events( $query_params, $count );
 					break;
 
 				case 'expired' :
@@ -1473,7 +1473,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function  active_status_dropdown( $current_value = '' ) {
 		$select_name = 'active_status';
-		$values = array('none' => __('Show Active/Inactive', 'event_espresso'), 'active' => __('Active', 'event_epsresso'), 'not_active_yet' => __('Not Active Yet', 'event_espresso'), 'expired' => __('Expired', 'event_espresso') );
+		$values = array('none' => __('Show Active/Inactive', 'event_espresso'), 'active' => __('Active', 'event_epsresso'), 'upcoming' => __('Upcoming', 'event_espresso'), 'expired' => __('Expired', 'event_espresso') );
 		$id = 'id="espresso-active-status-dropdown-filter"';
 		$class = 'wide';
 		echo EE_Form_Fields::select_input( $select_name, $values, $current_value, $id, $class );

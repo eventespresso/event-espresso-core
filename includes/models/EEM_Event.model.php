@@ -583,7 +583,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	 * @param bool    $count whether to return the count or not (default FALSE)
 	 * @return array               EE_Event objects
 	 */
-	public function get_not_active_yet_events( $query_params, $count = FALSE ) {
+	public function get_upcoming_events( $query_params, $count = FALSE ) {
 		if ( array_key_exists( 0, $query_params ) ) {
 			$where_params = $query_params[0];
 			unset( $query_params[0] );
