@@ -115,7 +115,7 @@ abstract class EEM_Base extends EE_Base{
 	 * operators that work like 'IN', accepting a comma-seperated list of values inside brackets. Eg '(1,2,3)'
 	 * @var array 
 	 */
-	protected $_in_style_operators = array('IN','NOT_IN');
+	protected $_in_style_operators = array('IN','NOT_IN', 'in', 'not_in', 'NOT IN', 'not in');
 
 
 
