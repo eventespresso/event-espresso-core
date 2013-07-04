@@ -30,6 +30,7 @@ class EED_Event_List  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function register_module() {
+//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		EE_Front_Controller::register_module(  __CLASS__ , __FILE__ );
 	}
 
@@ -40,6 +41,7 @@ class EED_Event_List  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
+//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		add_filter( 'FHEE_run_EE_wp', '__return_true' );
 		add_filter( 'FHEE_load_EE_Session', '__return_true' );
 	}
@@ -70,8 +72,9 @@ class EED_Event_List  extends EED_Module {
 //		add_filter( 'FHEE_run_EE_wp', '__return_true' );
 //		add_filter( 'FHEE_load_EE_Session', '__return_true' );
 //		add_action( 'wp_loaded', array( $this, 'wp_loaded' ));
+		add_action( 'loop_start', array( $this, 'loop_start' ), 1 );
 		// parse_request
-		add_filter( 'request', array( $this, 'filter_request' )); 
+//		add_filter( 'request', array( $this, 'filter_request' )); 
 		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 10 );  
 		remove_all_filters( 'excerpt_length' );
 		add_filter( 'excerpt_length', array( $this, 'excerpt_length' ), 10 );
@@ -79,6 +82,22 @@ class EED_Event_List  extends EED_Module {
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
 		add_filter( 'template_include', array( $this, 'template_include' ), 1 );
 		add_filter( 'the_content', array( $this, 'the_content' ));
+
+	}
+
+
+				
+
+	/**
+	 * 	wp_loaded
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function wp_loaded() {
+//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+		$this->ouput .= '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+		$this->ouput .= '<h4>currency_symbol : ' . $this->EE->CFG->currency_symbol . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';		
 	}
 
 
@@ -91,14 +110,14 @@ class EED_Event_List  extends EED_Module {
 	 */
 	public function filter_request(  $req  ) {
 //		printr( $req, '$req  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//	    if ( isset( $req['pagename'] ) && $req['pagename'] == $this->EE->CFG->events_page ) {
-//			$req['post_type'] = 'espresso_events';
+//		$events_page = __('events', 'event_espresso');
+//	    if ( isset( $req['pagename'] ) && $req['pagename'] == $events_page ) {
 //	 		unset( $req['pagename'] );
-//			add_action( 'wp', array( $this, 'wp' ));
+////			add_action( 'loop_start', array( $this, 'loop_start' ), 1 );
+//			//printr( $req, '$req  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		} else {
 //			add_action( 'wp_loaded', array( $this, 'wp_loaded' ));
 //		}
-		printr( $req, '$req  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	    return $req;
 	}
 
@@ -112,34 +131,17 @@ class EED_Event_List  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function pre_get_posts(  $WP_Query  ) {
-		printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// only filter the main query
 		if( ! $WP_Query->is_main_query() ) {
 			return;
 		}
-		if ( $WP_Query )
+//		printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//if ( $WP_Query )
 		$posts_per_page = isset( $_GET['posts_per_page'] ) ? sanitize_key( $_GET['posts_per_page'] ) : 24;
 		$WP_Query->set( 'posts_per_page', $posts_per_page );
-		$WP_Query->set( 'posts_per_page', $posts_per_page );
+		//$WP_Query->set( 'posts_per_page', $posts_per_page );		
 	}
 
-
-
-	/**
-	 * 	wp_loaded
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function wp_loaded() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		$EVTM = $this->EE->load_model( 'Event' );
-		//printr( $EVTM, '$EVTM  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$events = $EVTM->get_all( array( array( 'STS_ID' => 'publish' )));
-//		printr( $events, '$events  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$this->ouput .= '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		$this->ouput .= '<h4>currency_symbol : ' . $this->EE->CFG->currency_symbol . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';		
-	}
 
 
 
@@ -149,29 +151,39 @@ class EED_Event_List  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function wp( $wp_query ) {
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		//printr( $wp_query, '$wp_query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+	public function loop_start( $WP_Query ) {
+//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+//		printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		$EVT_IDs = array();
+		if ( isset( $WP_Query->posts )) {
+			foreach( $WP_Query->posts as $event ) {
+				$EVT_IDs[] = $event->ID;
+			}
+//			printr( $EVT_IDs, '$EVT_IDs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-		$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+			// load datetimes model
+			$DTM = $this->EE->load_model( 'Datetime' );
+			if ( $datetimes = $DTM->get_all( array( array( 'EVT_ID' => array( 'IN', $EVT_IDs ))))) {
+//				printr( $datetimes, '$datetimes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+				foreach( $WP_Query->posts as $event ) {
+					$event->datetimes = array();
+					foreach ( $datetimes as $datetime ) {
+						if ( $event->ID == $datetime->get( 'EVT_ID' )) {
+							$event->datetimes[] = $datetime;
+						}
+					}
+				}
+			}
+		}
 
-		//set query args
-		$args = array(
-			'post_type' => 'espresso_events',
-			'post_status' => 'publish',		// future,draft
-			'posts_per_page' => $posts_per_page,	
-			'paged' => $paged
-		);
-
-		$wp_query->posts = new WP_Query( $args );
 		
 		// attempt to add extra data to $wp_query (doesn't work so far)
-		$wp_query->pagination_args = array(
-			'base' => str_replace( 999999, '%#%', esc_url( get_pagenum_link( 999999 ) ) ),
-			'format' => '?paged=%#%',
-			'current' => max( 1, $paged ),
-			'total' => $posts->max_num_pages
-		);
+//		$WP_Query->pagination_args = array(
+//			'base' => str_replace( 999999, '%#%', esc_url( get_pagenum_link( 999999 ) ) ),
+//			'format' => '?paged=%#%',
+//			'current' => max( 1, $paged ),
+//			'total' => $posts->max_num_pages
+//		);
 //		printr( $wp_query, '$wp_query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 	}
@@ -195,6 +207,20 @@ class EED_Event_List  extends EED_Module {
 	 */
 	public function excerpt_more( $more ) {
 		return '&hellip;';
+	}
+
+
+
+	/**
+	 * 	the_event_date
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function the_event_date() {
+		global $post;
+		$datetime = array_shift( $post->datetimes );
+		$datetime->e_start_date_and_time();
 	}
 
 
@@ -272,5 +298,10 @@ class EED_Event_List  extends EED_Module {
 
 
 }
+
+
+	function the_event_date() {
+		EED_Event_List::the_event_date();
+	}
 // End of file EED_Event_List.module.php
 // Location: /modules/event_list/EED_Event_List.module.php
