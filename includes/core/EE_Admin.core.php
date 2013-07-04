@@ -67,6 +67,7 @@ class EE_Admin {
      * class constructor
      */
 	protected function __construct(  $main_file  ) {
+		$this->main_file = $main_file;
 		// admin hooks
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 1 );
 		add_filter( 'plugin_action_links', array( $this, 'filter_plugin_actions' ), 10, 2 );
@@ -96,7 +97,7 @@ class EE_Admin {
 		// registry, settings, autoloaders, and other config stuff
 		$this->_load_system_files();
 		// path to espresso.php
-		$this->EE->main_file = $main_file;
+		$this->EE->main_file = $this->main_file;
 		// activate
 		register_activation_hook( EE_HELPERS . 'EEH_Activation.helper.php', array( 'EEH_Activation', 'plugin_activation' ));
 		// pew pew pew
