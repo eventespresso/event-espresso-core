@@ -819,7 +819,7 @@ class EE_Base_Class{
 	 */
 	public function is_set( $field_name ) {
 		$privateAttributeName = $this->_get_private_attribute_name( $field_name );
-		return property_exists( $this, $property$privateAttributeName ) ? TRUE : FALSE;
+		return property_exists( $this, $privateAttributeName ) ? TRUE : FALSE;
 	}
 
 
