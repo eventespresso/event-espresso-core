@@ -446,9 +446,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'count' => 0,
 				'bulk_action' => array(
 					'export_events' => __('Export Events', 'event_espresso'),
-					'restore_events' => __('Restore from Trash', 'event_espresso'),
 					'trash_events' => __('Move to Trash', 'event_espresso'),
-					'delete_events' => __('Delete Permanently', 'event_espresso'),
 //					'export_payments' => __('Export Payments', 'event_espresso')
 				)
 			),
@@ -458,9 +456,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'count' => 0,
 				'bulk_action' => array(
 					'export_events' => __('Export Events', 'event_espresso'),
-					'restore_events' => __('Restore from Trash', 'event_espresso'),
 					'trash_events' => __('Move to Trash', 'event_espresso'),
-					'delete_events' => __('Delete Permanently', 'event_espresso'),
 //					'export_payments' => __('Export Payments', 'event_espresso')
 				)
 			),
@@ -470,12 +466,29 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'count' => 0,
 				'bulk_action' => array(
 					'export_events' => __('Export Events', 'event_espresso'),
-					'restore_events' => __('Restore from Trash', 'event_espresso'),
 					'trash_events' => __('Move to Trash', 'event_espresso'),
-					'delete_events' => __('Delete Permanently', 'event_espresso'),
 //					'export_payments' => __('Export Payments', 'event_espresso')
 				)
-			)
+			),
+			'draft' => array(
+				'slug' => 'draft',
+				'label' => __('Draft', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'export_events' => __('Export Events', 'event_espresso'),
+					'trash_events' => __('Move to Trash', 'event_espresso'),
+					)
+			),
+			'trash' => array(
+				'slug' => 'trash',
+				'label' => __('Trash', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'export_events' => __('Export Events', 'event_espresso'),
+					'restore_events' => __('Restore from Trash', 'event_espresso'),
+					'delete_events' => __('Delete Permanently', 'event_espresso'),
+					)
+				)
 		);
 	}
 
@@ -1549,6 +1562,44 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$where = array(
 			'status' => array( '!=', 'trash' ),
 			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) )
+			);
+
+		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID' );
+		return $count;
+	}
+
+
+
+
+	
+	/**
+	 * get total number of draft events
+	 *
+	 * @access public
+	 * @return int
+	 */
+	public function total_events_draft() {
+		$where = array(
+			'status' => array( 'IN', array('draft', 'auto-draft' ) )
+			);
+
+		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID' );
+		return $count;
+	}
+
+
+
+
+
+	/**
+	 * get total number of trashed events
+	 *
+	 * @access public
+	 * @return int
+	 */
+	public function total_trashed_events() {
+		$where = array(
+			'status' => 'trash'
 			);
 
 		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID' );
