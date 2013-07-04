@@ -78,9 +78,13 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 		if(isset($options_array['html_label'])){
 			$this->_html_label = $options_array['html_label'];
 		}
+		if(isset($options_array['default'])){
+			$this->_sanitized_value = $options_array['default'];
+		}
 		if(isset($options_array['required']) && in_array($options_array['required'], array('true',true))){
 			$this->_add_validation_strategy(new EE_Required_Validation_Strategy());
 		}
+		
 		
 		
 		
