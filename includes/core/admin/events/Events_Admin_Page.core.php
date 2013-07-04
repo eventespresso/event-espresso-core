@@ -1049,8 +1049,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$additional_attendee_reg_info_values = EEM_Event::additional_attendee_reg_info_array();
 		$default_reg_status_values = EEM_Registration::reg_status_array();
 		
-		$template_args['is_active_select'] = EE_Form_Fields::select_input('is_active', $yes_no_values, $this->_cpt_model_obj->is_active());
+		//$template_args['is_active_select'] = EE_Form_Fields::select_input('is_active', $yes_no_values, $this->_cpt_model_obj->is_active());
 		$template_args['_event'] = $this->_cpt_model_obj;
+		$template_args['active_status'] = $this->_cpt_model_obj->pretty_active_status(FALSE);
 		$template_args['allow_group_reg_select'] = EE_Form_Fields::select_input('allow_multiple', $yes_no_values, $this->_cpt_model_obj->allow_multiple(), 'id="group-reg"', '', false);
 		$template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();
 		$template_args['default_registration_status'] = EE_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status());
