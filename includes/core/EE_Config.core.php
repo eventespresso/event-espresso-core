@@ -32,8 +32,8 @@ class EE_Config {
 	private static $_instance = NULL;
 
 
-	public $events_page = 'events';
-	public $event_page = 'event';
+//	public $events_page = 'events';
+//	public $event_page = 'event';
 
 
 	/**
@@ -119,6 +119,7 @@ class EE_Config {
 		foreach ( $config as $key => $value ) {
 			$this->$key = $value;
 		}
+//		$this->post_shortcodes = array();
 		do_action('AHEE_debug_file');
 	}
 
