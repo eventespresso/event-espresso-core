@@ -41,7 +41,7 @@ class EE_Template {
 	 */
 	public static function display_template($path_to_file = FALSE, $template_args = FALSE, $return_string = FALSE) {
 		//require the template validator for verifying variables are set according to how the template requires
-		require_once(EVENT_ESPRESSO_PLUGINFULLPATH.'/helpers/EE_Template_Validator.helper.php');
+		require_once(EE_HELPERS . 'EE_Template_Validator.helper.php');
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		// you gimme nuttin - YOU GET NUTTIN !!
 		if (!$path_to_file) {

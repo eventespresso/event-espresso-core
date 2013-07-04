@@ -96,9 +96,18 @@ abstract class EE_Admin_Page extends EE_BASE {
 	// yes / no array for admin form fields
 	protected $_yes_no_values = array();
 
-
 	//some default things shared by all child classes
 	protected $_default_espresso_metaboxes;
+
+	/**
+	 * 	EE_Registry Object
+	 *	@var 	object	
+	 * 	@access 	protected
+	 */
+	protected $EE = NULL;
+
+
+
 
 
 	/**
@@ -109,10 +118,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 		@return void
 	 */
 	public function __construct( $routing = TRUE ) {
+		
 		$this->_yes_no_values = array(
 			array('id' => TRUE, 'text' => __('Yes', 'event_espresso')),
 			array('id' => FALSE, 'text' => __('No', 'event_espresso'))
 		);
+
+		$this->EE = EE_Registry::instance();
 
 		//set the _req_data property.
 		$this->_req_data = array_merge( $_GET, $_POST );
@@ -1177,7 +1189,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//wp_register_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-datepicker.js', array('jquery-ui-core'), EVENT_ESPRESSO_VERSION, true );
 		wp_register_script('jquery-ui-timepicker-addon', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker'), EVENT_ESPRESSO_VERSION, true );
 		// register jQuery Validate - see /includes/functions/wp_hooks.php
-		espresso_register_jquery_validate();	
+		add_filter( 'FHEE_load_jquery_validate', '__return_true' );
 		//script for sorting tables
 		wp_register_script('espresso_ajax_table_sorting', EE_CORE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js", array('ee_admin_js', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
 		//script for parsing uri's
@@ -2084,7 +2096,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 	@uses EE_Form_Fields::get_form_fields_array (/helper/EE_Form_Fields.helper.php)
 	 */
 	protected function _generate_admin_form_fields( $input_vars = array(), $generator = 'string', $id = FALSE ) {
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
+		require_once EE_HELPERS . 'EE_Form_Fields.helper.php';
 		$content = $generator == 'string' ? EE_Form_Fields::get_form_fields($input_vars, $id) : EE_Form_Fields::get_form_fields_array($input_vars);
 		return $content;
 	}

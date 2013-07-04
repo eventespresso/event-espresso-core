@@ -1,5 +1,5 @@
 <?php
-require_once('fields/EE_Model_Field_Base.php');
+require_once( EE_MODELS . 'fields/EE_Model_Field_Base.php');
 abstract class EE_Foreign_Key_Field_Base extends EE_Model_Field_Base{
 	/**
 	 * Usually the name of a single model. However, as in teh case for custom post types,

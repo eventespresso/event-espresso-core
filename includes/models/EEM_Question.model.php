@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Soft_Delete_Base.model.php' );
+require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
 
 class EEM_Question extends EEM_Soft_Delete_Base {
 
@@ -69,29 +69,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 						'DROPDOWN'=>__('Dropdown','event_espresso'),
 						'MULTIPLE'=>__('Multiple Choice','event_espresso'),
 						'DATE'=>__('Date','event_espresso')));
-//		$this->_fields_settings=array(
-//				'QST_ID'=>new EE_Model_Field( __('Question ID','event_espresso'), 'primary_key', false, null, null, null),
-//				'QST_display_text'=>new EE_Model_Field( __('Question Text','event_espresso'), 'simplehtml', false, '', null, null),
-//				'QST_admin_label'=>new EE_Model_Field( __('Admin Label','event_espresso'), 'simplehtml', false, '', null, null),
-//				'QST_system_ID'=>new EE_Model_Field( __('System ID','event_espresso'), 'int', false, 0, null, null),
-//				'QST_type'=>new EE_Model_Field( __('Question Type','event_espresso'), 'enum', false, 'TEXT', $this->allowed_question_types(), null),
-//				'QST_required'=>new EE_Model_Field( __('Required','event_espresso'),'bool',false,false,null,null),
-//				'QST_required_text'=>new EE_Model_Field( __('Required Text','event_espresso'), 'simplehtml', true,  __('This field is required','event_espresso'), null, null),
-//				'QST_order'=>new EE_Model_Field( __('Order','event_espresso'), 'int', false, 0, null, null),
-//				'QST_admin_only'=>new EE_Model_Field( __('For Admins Only','event_espresso'),'bool',false,false,null,null),
-//				'QST_wp_user'=>new EE_Model_Field( __('WP User ID','event_espresso'), 'foreign_key', true, 1, null, 'WP_User'),
-//				'QST_deleted'=>new EE_Model_Field( __('Deleted','event_espresso'),'deleted_flag',false,false,null,null)
-//			);
-//		$this->_related_models=array(
-//				'Answers'=>new EE_Model_Relation('hasMany', 'Answer', 'QST_ID'),
-//				'Question_Groups'=>new EE_Model_Relation('hasAndBelongsToMany', 'Question_Group', 'QSG_ID','question_group_question',
-//						array(
-//							'QGQ_ID'=>new EE_Model_Field('Question Group-Question ID', 'primary_key', false, null, null, null),
-//							'QSG_ID'=>new EE_Model_Field('Foreign Key to Question Groups', 'foreign_key', false, null, null, 'Question_Group'),
-//							'QST_ID'=>new EE_Model_Field('Foreign Key to Questions','foreign_key',false,null,null,'Question'))
-//						),
-//				'Question_Options'=>new EE_Model_Relation('hasMany', 'Question_Option', 'QST_ID', null, null)
-//			);
+
 		$this->_tables = array(
 			'Question'=>new EE_Primary_Table('esp_question','QST_ID')
 		);
@@ -118,6 +96,18 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 		
 		parent::__construct();
 	}
+
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public static function define_table_name() {
+		global $wpdb;
+		define( 'EE_QUESTION_TABLE', $wpdb->prefix . 'esp_question' );
+	}
+
 	
 	/**
 	 * Gets an array for converting between QST_system and QST_IDs for system questions. Eg, if you want to know 

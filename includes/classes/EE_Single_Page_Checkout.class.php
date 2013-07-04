@@ -115,7 +115,7 @@ class EE_Single_Page_Checkout {
 		global $EE_Cart, $EEM_Gateways, $EE_Session;
 		
 		if (!defined('ESPRESSO_CART')) {
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Cart.class.php');
+			require_once(EE_CLASSES . 'EE_Cart.class.php');
 			// instantiate the class object
 			$EE_Cart = EE_Cart::instance();
 		}
@@ -124,14 +124,14 @@ class EE_Single_Page_Checkout {
 		
 		// load gateways
 		if (!defined('ESPRESSO_GATEWAYS')) {
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
+			require_once(EE_MODELS . 'EEM_Gateways.model.php');
 			$EEM_Gateways = EEM_Gateways::instance();
 		}
 		$this->gateways = $EEM_Gateways;
 		$this->gateways->set_ajax( $this->_ajax );
 		
 		//taxes
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Taxes.class.php' );
+		require_once ( EE_CLASSES . 'EE_Taxes.class.php' );
 		add_filter( 'espresso_filter_hook_calculate_taxes', array( 'EE_Taxes', 'calculate_taxes' ));
 
 	}
@@ -1126,8 +1126,8 @@ class EE_Single_Page_Checkout {
 			do_action('AHEE_begin_reg');
 
 			// load and instantiate models
-			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
-			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
+			require_once ( EE_MODELS . 'EEM_Registration.model.php' );
+			require_once ( EE_MODELS . 'EEM_Transaction.model.php' );
 			$REG = EEM_Registration::instance();
 			$TXN = EEM_Transaction::instance();
 
@@ -1141,7 +1141,7 @@ class EE_Single_Page_Checkout {
 				}
 			}
 			// start the transaction record
-			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Transaction.class.php' );
+			require_once ( EE_CLASSES . 'EE_Transaction.class.php' );
 			// totals over 0 initially get set to Incomlete, whereas Free Events get set to complete
 			$txn_status = $grand_total > 0 ? 'TIN' : 'TCM';
 			//check for existing transaction in the session
@@ -1231,8 +1231,8 @@ class EE_Single_Page_Checkout {
 		// grab session data
 		$session = $EE_Session->get_session_data();
 		// get some class would ya !
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Registration.class.php' );
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php' );
+		require_once ( EE_CLASSES . 'EE_Registration.class.php' );
+		require_once ( EE_MODELS . 'EEM_Attendee.model.php' );
 		$ATT = EEM_Attendee::instance();
 		$saved_registrations = array();
 		$reg_count = 0;

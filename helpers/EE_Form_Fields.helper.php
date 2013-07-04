@@ -348,7 +348,7 @@ class EE_Form_Fields {
 			$values=$converted_values;
 		}
 		//load formatter helper
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
+		require_once EE_HELPERS . 'EE_Formatter.helper.php';
 
 		$field = '<select name="' . EE_Formatter::ee_tep_output_string($name) . '"';
 		//Debug

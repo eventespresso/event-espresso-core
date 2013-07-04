@@ -33,171 +33,88 @@
 function espresso_version() {
 	return '4.1.dev';
 }
-
-
-define("EVENT_ESPRESSO_VERSION", espresso_version());
-define('EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION);
-
-
 //Returns the template version
 function espresso_template_version() {
 	return '1.0';
 }
-
-function espresso_main_file() {
-	static $main_file;
-	if (!$main_file) {
-		$main_file = __FILE__;
-	}
-	return $main_file;
+// define versions
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
+	define("EVENT_ESPRESSO_VERSION", espresso_version());
+	define('EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION);	
+} else {
+	wp_die('Can not run multiple versions of Event Espresso.');
 }
-
-global $wpdb, $eei18n_js_strings;
-$eei18n_js_strings = array();
-
-global $wpdb;
-
+//used to be DIRECTORY_SEPERATOR, but that caused issues on windows
 if ( ! defined( 'DS' )) {
-	define( 'DS', '/' );//used to be DIRECTORY_SEPERATOR, but that caused issues on windows
+	define( 'DS', '/' );
 }
 if ( ! defined( 'PS' )) {
 	define( 'PS', PATH_SEPARATOR );
 }
-
-$main_dir =dirname( __FILE__ );
-// add ESPRESSO directories to include_path
-set_include_path(
-	get_include_path() . PS .
-	$main_dir . DS . 'includes' . DS . 'core' . DS . PS .
-	$main_dir . DS . 'includes' . DS . 'models' . DS . PS .
-	$main_dir . DS . 'includes' . DS . 'classes' . DS . PS .
-	$main_dir . DS . 'includes' . DS . 'functions' . DS . PS .
-	$main_dir . DS . 'gateways' . DS . PS .
-	$main_dir . DS . 'helpers' . DS
-	
-);
-
-
-// Define all plugin database tables
-
-define("ESP_PRICE_TABLE", $wpdb->prefix . "esp_price");
-define("ESP_PRICE_TYPE", $wpdb->prefix . "esp_price_type");
-define("ESP_COUNTRY_TABLE", $wpdb->prefix . "esp_country");
-define("ESP_DATETIME_TABLE", $wpdb->prefix . "esp_datetime");
-define("ESP_STATUS_TABLE", $wpdb->prefix . "esp_status");
-define("ESP_STATE", $wpdb->prefix . "esp_state");
-// legacy tables
-define("EVENTS_ANSWER_TABLE", $wpdb->prefix . "events_answer");
-define("EVENTS_ATTENDEE_TABLE", $wpdb->prefix . "events_attendee");
-define("EVENTS_ATTENDEE_COST_TABLE", $wpdb->prefix . "events_attendee_cost");
-define("EVENTS_CATEGORY_TABLE", $wpdb->prefix . "events_category_detail");
-define("EVENTS_CATEGORY_REL_TABLE", $wpdb->prefix . "events_category_rel");
-define("EVENTS_DETAIL_TABLE", $wpdb->prefix . "events_detail");
-define("EVENTS_DISCOUNT_CODES_TABLE", $wpdb->prefix . "events_discount_codes");
-define("EVENTS_DISCOUNT_REL_TABLE", $wpdb->prefix . "events_discount_rel");
-define("EVENTS_EMAIL_TABLE", $wpdb->prefix . "events_email");
-define("EVENTS_LOCALE_TABLE", $wpdb->prefix . "events_locale");
-define("EVENTS_LOCALE_REL_TABLE", $wpdb->prefix . "events_locale_rel");
-define("EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE", $wpdb->prefix . "events_multi_event_registration_id_group");
-define("EVENTS_PERSONNEL_TABLE", $wpdb->prefix . "events_personnel");
-define("EVENTS_PERSONNEL_REL_TABLE", $wpdb->prefix . "events_personnel_rel");
-define("EVENTS_QST_GROUP_TABLE", $wpdb->prefix . "events_qst_group");
-define("EVENTS_QST_GROUP_REL_TABLE", $wpdb->prefix . "events_qst_group_rel");
-define("EVENTS_QUESTION_TABLE", $wpdb->prefix . "events_question");
-define("EVENTS_VENUE_TABLE", $wpdb->prefix . "events_venue");
-define("EVENTS_VENUE_REL_TABLE", $wpdb->prefix . "events_venue_rel");
-// End table definitions
-
-
-//Define the plugin directory and path
+// define the plugin directory and URL
 define("EVENT_ESPRESSO_PLUGINPATH", DS . plugin_basename(__FILE__) . DS);
 define("EVENT_ESPRESSO_PLUGINFULLPATH", plugin_dir_path(__FILE__));
 define("EVENT_ESPRESSO_PLUGINFULLURL", plugin_dir_url(__FILE__));
-
-//Define the includes directory
+//  includes and templates paths
 define("EVENT_ESPRESSO_INCLUDES_DIR", EVENT_ESPRESSO_PLUGINFULLPATH . 'includes' . DS );
 define("EVENT_ESPRESSO_TEMPLATES", EVENT_ESPRESSO_PLUGINFULLPATH . 'templates' . DS );
+// core system paths
 define( 'EE_CORE', EVENT_ESPRESSO_INCLUDES_DIR . 'core' . DS );
+define( 'EE_CLASSES', EVENT_ESPRESSO_INCLUDES_DIR . 'classes' . DS );
+define( 'EE_MODELS', EVENT_ESPRESSO_INCLUDES_DIR . 'models' . DS );
 define( 'EE_HELPERS', EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers' . DS );
-
-
-//Define directory structure for uploads
-//Create the paths
+define( 'EE_MODULES', EVENT_ESPRESSO_PLUGINFULLPATH . 'modules' . DS );
+define( 'EE_SHORTCODES', EVENT_ESPRESSO_PLUGINFULLPATH . 'shortcodes' . DS );
+// Define upload paths
 $uploads = wp_upload_dir();
-
-//Define the uploads directory and url
+//Define the uploads directory and URL
 define("EVENT_ESPRESSO_UPLOAD_DIR", $uploads['basedir'] . DS . 'espresso' . DS);
 define("EVENT_ESPRESSO_UPLOAD_URL", $uploads['baseurl'] . '/espresso/' );
-
-//Define the templates dirrectory and url
+//Define the templates dirrectory and URL
 define("EVENT_ESPRESSO_TEMPLATE_DIR", $uploads['basedir'] . DS . 'espresso' . DS . 'templates' . DS);
 define("EVENT_ESPRESSO_TEMPLATE_URL", $uploads['baseurl'] . '/espresso/templates/' );
-
-//Define the gateway directory and url
+//Define the gateway directory and URL
 define("EVENT_ESPRESSO_GATEWAY_DIR", $uploads['basedir'] . DS . 'espresso' . DS . 'gateways' . DS);
 define("EVENT_ESPRESSO_GATEWAY_URL", $uploads['baseurl'] .'/espresso/gateways/' );
-
-
-require_once(dirname(__FILE__) . '/includes/functions/plugins_loaded.php');
-
-add_action('plugins_loaded', 'espresso_error_handling', 1);
-add_action('plugins_loaded', 'espresso_autoload', 2);
-add_action('plugins_loaded', 'espresso_get_user_id', 3);
-add_action('plugins_loaded', 'espresso_load_org_options', 4);
-add_action('plugins_loaded', 'espresso_EE_Session', 5);
-add_action('plugins_loaded', 'espresso_init', 25);
-
-function espresso_load_init() {
-	require_once(dirname(__FILE__) . '/includes/functions/init.php');
-	require_once(dirname(__FILE__) . '/includes/functions/register_cpts.php');
-	add_action('init', 'espresso_load_messages_init', 15);
-	add_action('init', 'espresso_add_rewrite_rules');
-	add_action('init','espresso_register_cpts',30);
-	add_filter('query_vars', 'espresso_add_query_vars');	
+// add main ESPRESSO directories to include_path
+//set_include_path(
+//	get_include_path() . PS .
+//	EVENT_ESPRESSO_INCLUDES_DIR . 'core' . DS . PS .
+//	EVENT_ESPRESSO_INCLUDES_DIR . 'models' . DS . PS .
+//	EVENT_ESPRESSO_INCLUDES_DIR . 'classes' . DS . PS .
+//	EVENT_ESPRESSO_INCLUDES_DIR . 'functions' . DS . PS .
+//	EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . PS .
+//	EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers' . DS	
+//);
+//Get language files
+load_plugin_textdomain( 'event_espresso', FALSE, EVENT_ESPRESSO_PLUGINFULLPATH . '/languages/' );
+// load debuggin tools?
+if ( WP_DEBUG === TRUE ) {
+	require_once( EE_HELPERS . 'EE_Debug_Tools.helper.php' );
 }
-add_action('plugins_loaded', 'espresso_load_init', 100);
+global $wpdb;
+// DEPRECATED TABLES
+define("EVENTS_CATEGORY_TABLE", $wpdb->prefix . "events_category_detail");
+define("EVENTS_CATEGORY_REL_TABLE", $wpdb->prefix . "events_category_rel");
+define("EVENTS_DETAIL_TABLE", $wpdb->prefix . "events_detail");
+define("EVENTS_LOCALE_TABLE", $wpdb->prefix . "events_locale");
+define("EVENTS_LOCALE_REL_TABLE", $wpdb->prefix . "events_locale_rel");
+define("EVENTS_PERSONNEL_TABLE", $wpdb->prefix . "events_personnel");
+define("EVENTS_PERSONNEL_REL_TABLE", $wpdb->prefix . "events_personnel_rel");
+define("EVENTS_VENUE_TABLE", $wpdb->prefix . "events_venue");
+define("EVENTS_VENUE_REL_TABLE", $wpdb->prefix . "events_venue_rel");
 
-
+// let's get it started		
 if ( is_admin() ) {
-	
-	require_once(dirname(__FILE__) . '/includes/functions/admin_init.php');
-	register_activation_hook(__FILE__, 'espresso_plugin_activation');
-	add_filter('plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2);	
-	add_action('plugins_loaded', 'espresso_check_for_export');
-	add_action('plugins_loaded', 'espresso_check_for_import');
-	add_action('admin_init', 'espresso_check_data_tables' );
-	add_action('init', 'espresso_verify_default_pages_exist' );
-	add_action('init', 'espresso_init_admin_pages', 100);
-	add_action( 'init', 'espresso_check_no_ticket_prices_array', 101 );
-	add_action('admin_bar_menu', 'espresso_toolbar_items', 100);
-	add_action( 'admin_enqueue_scripts', 'espresso_load_scripts_styles' );
-	add_action( 'plugins_loaded', 'espresso_do_pue_updates', 0 );
-	
+	require_once( EE_CORE . 'EE_Admin.core.php' );
+	EE_Admin::instance( __FILE__ );
 } else {
-	
-	require_once(dirname(__FILE__) . '/includes/functions/frontend_init.php');
-	add_action('init', 'espresso_load_jquery', 10);
-	add_action('init', 'espresso_export_certificate', 30);
-	add_action('init', 'espresso_export_invoice', 30);
-	//add_action('init', 'espresso_export_ticket', 30);
-	add_action('init', 'espresso_frontend_init', 25);
-	add_action('widgets_init', 'espresso_widget');
-	add_action('wp_head', 'espresso_info_header');
-	add_action('wp_enqueue_scripts', 'add_espresso_stylesheet', 20);
-	add_action('wp_enqueue_scripts', 'eei18n_js_strings', 100 );
-
+	require_once( EE_CORE . 'EE_Front_Controller.core.php' );
+	new EE_Front_Controller( __FILE__ );
 }
 
 
 
-
-class EE_BASE {
-	/**
-	 *		@ override magic methods
-	 *		@ return void
-	 */	
-	public function __get($a) { return FALSE; }
-	public function __set($a,$b) { return FALSE; }
-	public function __unset($a) { return FALSE; }
-	public function __wakeup() { return FALSE; }	
+function espresso_main_file() {
+	return __FILE__;
 }

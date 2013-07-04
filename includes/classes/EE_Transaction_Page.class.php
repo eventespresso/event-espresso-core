@@ -56,13 +56,13 @@ class EE_Transaction_Page{
 	protected function load_classes(){
 		// load gateways
 		if (!defined('ESPRESSO_GATEWAYS')) {
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
+			require_once(EE_MODELS . 'EEM_Gateways.model.php');
 			$EEM_Gateways = EEM_Gateways::instance();
 		}
 		$this->_GATEWAYS = $EEM_Gateways;
 		$this->_GATEWAYS->set_ajax( $this->_ajax );
 		
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php');
+		require_once(EE_MODELS . 'EEM_Transaction.model.php');
 		$this->_TXN = EEM_Transaction::instance();
 	}
 	

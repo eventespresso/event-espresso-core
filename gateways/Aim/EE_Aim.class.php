@@ -203,7 +203,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 			$registrations = $session_data['cart']['REG']['items'];
 
 			$item_num = 1;
-			require_once('EEM_Attendee.model.php');
+			require_once( EE_MODELS . 'EEM_Attendee.model.php');
 			foreach ($registrations as $registration) {
 				foreach ($registration['attendees'] as $attendee) {			
 					$item_name = substr( $registration['name'], 0, 31 );

@@ -106,7 +106,7 @@ abstract class EE_Shortcodes extends EE_Base {
 	 */
 	protected function _set_shortcode_helper() {	
 		//shortcode helper
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Parse_Shortcodes.helper.php';
+		require_once EE_HELPERS . 'EE_Parse_Shortcodes.helper.php';
 		//get shortcode_replace instance- set when _get_messages is called in child...
 		$this->_shortcode_helper = new EE_Parse_Shortcodes();
 	}

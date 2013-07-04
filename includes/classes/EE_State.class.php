@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( 'EE_Base_Class.class.php' );
+require_once ( EE_CLASSES . 'EE_Base_Class.class.php' );
 class EE_State extends EE_Base_Class{
 
 	protected $_STA_ID;

@@ -16,7 +16,7 @@ $fields = $question->get_fields_settings();
 <div class="padding">
 	<table class="form-table">
 		<tbody>
-			<?php require_once('EEM_Question.model.php');
+			<?php require_once( EE_MODELS . 'EEM_Question.model.php');
 			foreach(EEM_Question::instance()->field_settings() as $fieldName=>$settings){
 				if( in_array( $fieldName, array( 'QST_ID', 'QST_system','QST_wp_user','QST_deleted', 'QST_order' ))) {
 					continue;

@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_CPT_Base.model.php' );
+require_once ( EE_MODELS . 'EEM_Base.model.php' );
 
 class EEM_Attendee extends EEM_CPT_Base {
 
@@ -96,6 +96,18 @@ class EEM_Attendee extends EEM_CPT_Base {
 		parent::__construct();
 		
 	}
+
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public static function define_table_name() {
+		global $wpdb;
+		define( 'EE_ATTENDEE_TABLE', $wpdb->prefix . 'esp_attendee' );
+	}
+
 
 	/**
 	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
@@ -220,7 +232,7 @@ class EEM_Attendee extends EEM_CPT_Base {
 		$query_params[0] = array( 'ATT_ID' => $ATT_ID, 'STS_ID' => array('IN',array( 'RAP', 'RNA', 'RPN' )));
 		$query_params['order_by'] = array('REG_date' => 'ASC');
 		
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php');
+		require_once(EE_MODELS . 'EEM_Registration.model.php');
 		$REG_MDL = EEM_Registration::instance();
 		//check if the attendee is associated with any registrations
 //		if ( $registrations = $REG_MDL->get_all_registrations_for_attendee( $ATT_ID, $status_array )) {

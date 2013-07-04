@@ -62,7 +62,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	protected function _init_page_props() {
-		require_once( 'EEM_Venue.model.php' );
+		require_once( EE_MODELS . 'EEM_Venue.model.php' );
 		$this->page_slug = EE_VENUES_PG_SLUG;
 		$this->page_label = __('Event Venues', 'event_espresso');
 		$this->_cpt_model_name = 'EEM_Venue';
@@ -110,10 +110,10 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _set_page_routes() {
 
 		//load formatter helper
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
+		require_once EE_HELPERS . 'EE_Formatter.helper.php';
 
 		//load field generator helper
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
+		require_once EE_HELPERS . 'EE_Form_Fields.helper.php';
 
 		$this->_page_routes = array(
 			'default' => '_overview_list_table',
@@ -433,8 +433,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	public function venue_address_metabox() {
 
 		//states and countries model
-		require_once( 'EEM_State.model.php' );
-		require_once( 'EEM_Country.model.php');
+		require_once( EE_MODELS . 'EEM_State.model.php' );
+		require_once( EE_MODELS . 'EEM_Country.model.php');
 
 		$states = EEM_State::instance()->get_all_active_states();
 		$countries = EEM_Country::instance()->get_all_active_countries();

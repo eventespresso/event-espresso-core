@@ -102,7 +102,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
 
-		require_once( 'EEM_Venue.model.php' );
+		require_once( EE_MODELS . 'EEM_Venue.model.php' );
 		$evt_obj = $this->_adminpage_obj->get_event_object();
 		$evt_id = $evt_obj->ID();
 

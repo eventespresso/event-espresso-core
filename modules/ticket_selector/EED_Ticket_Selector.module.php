@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Ticket_Selector extends EE_BASE {
+class EED_Ticket_Selector extends  EED_Module {
 
 	/**
 	* event that ticket selector is being generated for
@@ -44,38 +44,33 @@ class EE_Ticket_Selector extends EE_BASE {
 
 
 
-
-
-
 	/**
-	* 	@Constructor
-	* 	@access 	public
-	* 	@param	object 			$event  
-	* 	@param	boolean 		$added_by_admin  whether the registration is being added by an admin
-	* 	@return 	void
-	*/
-	public function __construct( $event = FALSE, $added_by_admin = FALSE ) {
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		
-		if ( ! $event ) {
-			$user_msg = __( 'An error has occured. No Event was not supplied.', 'event_espresso' );
-			$dev_msg = $user_msg . __( 'In order to generate a ticket selector, please ensure you are passing an event object to the EE_Ticket_Selector class constructor.', 'event_espresso' );
-			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );	
-			return FALSE;
-		}
-
-		if ( ! class_exists( 'EE_Ticket_Price' )) {
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Prices.class.php');
-		}		
-		
-		$this->_event = $event;
-		$this->_added_by_admin = $added_by_admin;
-		$this->load_tckt_slctr_js();
-		$this->_display_ticket_selector();
-
+	 * 	register_module - makes core aware of this module
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public static function register_module() {
+		EE_Front_Controller::register_module(  __CLASS__ , __FILE__ );
 	}
 
+	/**
+	 * 	set_hooks - for hooking into EE Core, other modules, etc
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public static function set_hooks() {
+	}
 
+	/**
+	 * 	set_hooks_admin - for hooking into EE Admin Core, other modules, etc
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public static function set_hooks_admin() {
+	}
 
 
 
@@ -87,7 +82,7 @@ class EE_Ticket_Selector extends EE_BASE {
 	* 	@param	boolean 		$added_by_admin  whether the registration is being added by an admin
 	* 	@return 	void	
 	*/
-	public static function init( $event = FALSE, $added_by_admin = FALSE ) {	
+	public function init( $event = FALSE, $added_by_admin = FALSE ) {	
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	
 		if ( ! $event ) {
@@ -96,8 +91,17 @@ class EE_Ticket_Selector extends EE_BASE {
 			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );	
 			return FALSE;
 		}
-	
-		new self( $event, $added_by_admin );
+
+		if ( ! class_exists( 'EE_Ticket_Price' )) {
+			//require_once(EE_CLASSES . 'EE_Ticket_Prices.class.php');
+			$this->EE->load_class( 'EE_Ticket_Prices', TRUE, TRUE );
+		}		
+		
+		$this->_event = $event;
+		$this->_added_by_admin = $added_by_admin;
+		add_action('wp_enqueue_scripts', array( $this, 'load_tckt_slctr_js' ), 10 );
+		$this->_display_ticket_selector();
+
 	}
 
 
@@ -658,7 +662,7 @@ class EE_Ticket_Selector extends EE_BASE {
 		}
 		// make sure cart is loaded
 		if (!defined('ESPRESSO_CART')) {
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Cart.class.php');
+			require_once(EE_CLASSES . 'EE_Cart.class.php');
 			$EE_Cart = EE_Cart::instance();
 		}
 
@@ -769,23 +773,16 @@ class EE_Ticket_Selector extends EE_BASE {
 	* 	@return 		void
 	*/
 	public function load_tckt_slctr_js() {
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		// add some style
+		wp_register_style('ticket_selector', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/ticket_selector/ticket_selector.css');
+		wp_enqueue_style('ticket_selector');
+		// make it dance
 		wp_register_script('ticket_selector', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/ticket_selector.js', array('jquery'), '', TRUE);
 		wp_enqueue_script('ticket_selector');
+		// loco grande 
+		wp_localize_script( 'ticket_selector', 'eei18n', EE_Registry::$i18n_js_strings );
 	}
 
-
-	/**
-	 * 		translate_js_strings
-	 *
-	 * 		@access 		public
-	 * 		@return 		void
-	 */
-	public function translate_js_strings() {
-		global $eei18n_js_strings;	
-
-	}
 
 
 

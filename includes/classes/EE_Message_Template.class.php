@@ -219,7 +219,7 @@ class EE_Message_Template {
 
 		//load Message Template Model file
 		//todo: why is this getting loaded here?
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
+		require_once(EE_MODELS . 'EEM_Message_Template.model.php');
 	}
 
 	public function set_message_type( $message_type = FALSE ) {

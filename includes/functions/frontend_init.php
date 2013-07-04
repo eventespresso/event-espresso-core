@@ -2,10 +2,6 @@
 do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 
-function espresso_load_jquery() {
-    wp_enqueue_script( 'jquery' );
-}
-
 
 
 
@@ -83,19 +79,15 @@ function espresso_frontend_init() {
 //	$e->save();
 //	$e->add_event_category('Baboob Party Time!!', 'all for the baoobn');
 //	$e->remove_event_category('Baboob Party Time!!');
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );	
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+	
 	global $espresso_reg_page;
 	if ( $espresso_reg_page = espresso_test_for_reg_page() ) {
 		do_action('AHEE_load_reg_page_files');
 	}
+			
 
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'shortcodes.php');	
 
-	// Export iCal file
-	if ( isset( $_REQUEST['iCal'] ) && ! empty( $_REQUEST['iCal'] )) {
-		espresso_ical();
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/ical.php');
-	}
 }
 
 
@@ -225,24 +217,6 @@ function espresso_critical_pages( $page_id, $event_page_slug = FALSE ) {
 }
 
 
-
-
-
-function espresso_check_scripts() {
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-	if (function_exists('wp_script_is')) {
-		if (!wp_script_is('jquery')) {
-			echo '<div class="event_espresso_error"><p><em>' . __('Jquery is not loaded!', 'event_espresso') . '</em><br />' . __('Event Espresso is unable to load Jquery do to a conflict with your theme or another plugin.', 'event_espresso') . '</p></div>';
-		}
-	}
-	if (!function_exists('wp_head')) {
-		echo '<div class="event_espresso_error"><p><em>' . __('Missing wp_head() Function', 'event_espresso') . '</em><br />' . __('The WordPress function wp_head() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.', 'event_espresso') . '</p></div>';
-	}
-	if (!function_exists('wp_footer')) {
-		echo '<div class="event_espresso_error"><p><em>' . __('Missing wp_footer() Function', 'event_espresso') . '</em><br />' . __('The WordPress function wp_footer() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.', 'event_espresso') . '</p></div>';
-	}
-}
-
 	
 
 
@@ -253,16 +227,10 @@ function event_espresso_run( $wp ) {
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 	do_action('AHEE_event_espresso_run_start');
 	// grab some globals
-	global $load_espresso_scripts, $espresso_content;
-
-	// tell the plugin to load the required scripts
-	$load_espresso_scripts = true;
+	global $espresso_content;
 
 	// begin output buffering
 	ob_start();
-
-	//Make sure scripts are loading
-	echo espresso_check_scripts();
 
 	// Get action type
 	$e_reg = isset($_REQUEST['e_reg']) ? sanitize_text_field( $_REQUEST['e_reg'] ) : '';
@@ -272,7 +240,7 @@ function event_espresso_run( $wp ) {
 
 		case 'process_ticket_selections' :
 			do_action('AHEE_log', __FILE__, __FUNCTION__, ' e_reg = process_ticket_selections'  );
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Selector.class.php');
+			require_once(EE_CLASSES . 'EE_Ticket_Selector.class.php');
 			EE_Ticket_Selector::process_ticket_selections();
 			break;
 
@@ -305,9 +273,12 @@ function event_espresso_run( $wp ) {
 				do_action ( 'AHEE_event_registration' );
 			} else {
 				do_action('AHEE_log', __FILE__, __FUNCTION__, ' e_reg = event_list'  );
-				require_once(espresso_get_event_list_template());
-				add_action ( 'AHEE_regevent_default_action', 'display_all_events', 10, 1 );
-				do_action ( 'AHEE_regevent_default_action', $e_reg );
+//				if ( file_exists( EE_MODULES . 'event_list' . DS . 'EED_Event_List.module.php' )) {
+//					require_once( EE_MODULES . 'event_list' . DS . 'EED_Event_List.module.php' );
+//				}				
+//				require_once(espresso_get_event_list_template());
+//				add_action ( 'AHEE_regevent_default_action', 'display_all_events', 10, 1 );
+//				do_action ( 'AHEE_regevent_default_action', $e_reg );
 			}
 
 	}
@@ -342,54 +313,6 @@ function espresso_widget() {
 	register_widget('Event_Espresso_Widget');
 }
 
-
-
-function espresso_info_header() {
-	print( "<meta name='generator' content='Event Espresso Version " . EVENT_ESPRESSO_VERSION . "' />");
-}
-
-
-
-function add_espresso_stylesheet() {
-	global $org_options;
-
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-
-	if ( ! isset( $_REQUEST['e_reg'] ) && ! is_admin() ) {
-		wp_register_style('ticket_selector', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/ticket_selector/ticket_selector.css');
-		wp_enqueue_style('ticket_selector');
-	}
-		
-}
-
-
-
-function espresso_load_javascript_files() {
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-	global $load_espresso_scripts;
-	if (!$load_espresso_scripts) {
-		return;
-	}
-	espresso_register_jquery_validate();
-}
-
-
-
-
-function eei18n_js_strings() {
-	global $eei18n_js_strings;
-	// Get current page protocol
-	$protocol = isset($_SERVER["HTTPS"]) ? 'https://' : 'http://';
-	// Output admin-ajax.php URL with same protocol as current page
-	$eei18n_js_strings['ajax_url'] = admin_url('admin-ajax.php', $protocol);
-	wp_localize_script( 'ticket_selector', 'eei18n', $eei18n_js_strings );
-	wp_localize_script( 'single_page_checkout', 'eei18n', $eei18n_js_strings );
-	// usage:  
-	// global $eei18n_js_strings;
-	// $eei18n_js_strings['string_key'] = __( 'string to translate.', 'event_espresso' );
-	// in js file:
-	// var translatedString = eei18n.string_key;
-}
 
 
 

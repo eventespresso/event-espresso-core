@@ -7,7 +7,7 @@
  * However, when inserting into the DB, it should be serialized.
  * Upon retrieval from the DB, it should be unserialized back into an array.
  */
-require_once('fields/EE_Text_Field_Base.php');
+require_once( EE_MODELS . 'fields/EE_Text_Field_Base.php' );
 class EE_Serialized_Text_Field extends EE_Text_Field_Base{
 	/**
 	 * Value SHOULD be an array, and we want to now convert it to a serialized string

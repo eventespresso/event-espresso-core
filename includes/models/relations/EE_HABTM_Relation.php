@@ -1,6 +1,6 @@
 <?php
 
-require_once('relations/EE_Model_Relation_Base.php');
+require_once( EE_MODELS . 'relations/EE_Model_Relation_Base.php');
 class EE_HABTM_Relation extends EE_Model_Relation_Base{
 	/**
 	 * Model whicih defines the relation between two other models. Eg, the EE_Event_Question_Group model,

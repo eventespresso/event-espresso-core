@@ -706,14 +706,16 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	protected function _country_settings() {
 	
 		global $org_options;
-		//load formatter helper
-		//require_once ( EE_HELPERS . 'EE_Formatter.helper.php' );
+		//load models
+//		require_once ( EE_MODELS . 'EEM_Question.model.php' );
+//		require_once ( EE_MODELS . 'EEM_Country.model.php' );
+//		require_once ( EE_MODELS . 'EEM_State.model.php' );
 		//load field generator helper
 		require_once ( EE_HELPERS . 'EE_Form_Fields.helper.php' );
 		
 		$this->_template_args['values'] = $this->_yes_no_values;
 		
-		$country = new EE_Question( array(
+		$country = EE_Question::new_instance( array(
 					'QST_display_text'=> '',
 					'QST_system'=>'country'
 				)

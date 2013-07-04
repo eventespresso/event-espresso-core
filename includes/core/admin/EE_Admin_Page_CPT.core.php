@@ -355,7 +355,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		if ( empty( $this->_cpt_model_name ) || ( is_object( $this->_cpt_model_obj ) && $this->_cpt_model_obj->ID() == $id ) ) 
 			return; //get out we either don't have a model name OR the object has already been set and it has the same id as what has been sent.
 
-		require_once( $this->_cpt_model_name . '.model.php' );
+		require_once( EE_MODELS . $this->_cpt_model_name . '.model.php' );
 		$model = call_user_func( array( $this->_cpt_model_name, 'instance' ) );
 		$this->_cpt_model_obj = !empty( $id ) ? $model->get_one_by_ID( $id ) : $model->create_default_object();
 	}

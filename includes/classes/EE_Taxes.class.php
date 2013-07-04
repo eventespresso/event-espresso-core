@@ -80,8 +80,8 @@ class EE_Taxes extends EE_BASE {
 
 		$this->_grand_total = $grand_total;
 
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+		require_once(EE_MODELS . 'EEM_Price.model.php');
+		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
 		
 		$this->_PRC_MDL = EEM_Price::instance();
 		$this->_PRT_MDL = EEM_Price_Type::instance();
@@ -181,7 +181,7 @@ class EE_Taxes extends EE_BASE {
 
 
 if ( ! class_exists( 'EE_Ticket_Price' )) {
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Prices.class.php');
+	require_once(EE_CLASSES . 'EE_Ticket_Prices.class.php');
 }
 		
 

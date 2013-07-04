@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once('EEM_Base.model.php');
+require_once( EE_MODELS . 'EEM_Base.model.php');
 class EEM_Soft_Delete_Base extends EEM_Base{
 	/**
 	 * Searches for field on this model of type 'deleted_flag'. if it is found,
@@ -255,4 +255,14 @@ class EEM_Soft_Delete_Base extends EEM_Base{
 			return FALSE;
 		}
 	}
+
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public static function define_table_name() { }
+	
+	
 }

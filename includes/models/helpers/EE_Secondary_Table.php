@@ -1,5 +1,5 @@
 <?php
-require_once('helpers/EE_Table_Base.php');
+require_once( EE_MODELS . 'helpers/EE_Table_Base.php');
 class EE_Secondary_Table extends EE_Table_Base{
 	protected $_extra_join_conditions;
 	

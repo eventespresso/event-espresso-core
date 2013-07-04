@@ -67,9 +67,9 @@ function event_espresso_get_event_details( $attributes = array()) {
 
 	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/gmap_display.helper.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/event_details.helper.php');
-	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Prices.class.php' );
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Selector.class.php');
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
+	require_once ( EE_CLASSES . 'EE_Ticket_Prices.class.php' );
+	require_once(EE_CLASSES . 'EE_Ticket_Selector.class.php');
+	require_once(EE_MODELS . 'EEM_Datetime.model.php');
 	$DTM_MDL = EEM_Datetime::instance();
 
 
@@ -145,7 +145,7 @@ function event_espresso_get_event_details( $attributes = array()) {
 		$SQL .= $use_venues ? ' LEFT JOIN ' . EVENTS_VENUE_REL_TABLE . ' eventVenue ON eventVenue.event_id = eventDetails.id ' : '';
 	}
 	
-	$SQL .= ' JOIN ' . ESP_DATETIME_TABLE . ' dateTime ON dateTime.EVT_ID = eventDetails.id ';
+	$SQL .= ' JOIN ' . EE_DATETIME_TABLE . ' dateTime ON dateTime.EVT_ID = eventDetails.id ';
 
 	$SQL .= ' WHERE ';
 	// maybe get category info

@@ -21,8 +21,8 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Datetime.class.php' );
+require_once ( EE_MODELS . 'EEM_Base.model.php' );
+require_once ( EE_CLASSES . 'EE_Datetime.class.php' );
 
 class EEM_Datetime extends EEM_Base {
 
@@ -56,18 +56,7 @@ class EEM_Datetime extends EEM_Base {
 		// set item names
 		$this->singlular_item = __('Datetime','event_espresso');
 		$this->plural_item = __('Datetimes','event_espresso');		
-		// array representation of the datetime table and the data types for each field
-//		$this->table_data_types = array (
-//			'DTT_ID' 					=> '%d',
-//			'EVT_ID' 					=> '%d',
-//			'DTT_is_primary' 	=> '%d',
-//			'DTT_EVT_start' 		=> '%d',
-//			'DTT_EVT_end' 		=> '%d',
-//			'DTT_REG_start' 		=> '%d',
-//			'DTT_REG_end' 		=> '%d',
-//			'DTT_reg_limit' 		=> '%d',
-//			'DTT_tckts_left'	=> '%d'
-//		);
+
 		$this->_tables = array(
 			'Datetime'=> new EE_Primary_Table('esp_datetime', 'DTT_ID')
 		);
@@ -91,6 +80,16 @@ class EEM_Datetime extends EEM_Base {
 		parent::__construct( $timezone );
 	}
 
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public static function define_table_name() {
+		global $wpdb;
+		define( 'EE_DATETIME_TABLE', $wpdb->prefix . 'esp_datetime' );
+	}
 
 
 
