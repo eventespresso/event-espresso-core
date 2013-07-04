@@ -810,6 +810,21 @@ class EE_Base_Class{
 
 
 	/**
+	 * is_set
+	 * Just a simple utility function children can use for checking if property exists
+	 *
+	 * @access  public
+	 * @param  string $field_name property to check
+	 * @return bool            				  TRUE if existing,FALSE if not.
+	 */
+	public function is_set( $field_name ) {
+		$privateAttributeName = $this->_get_private_attribute_name( $field_name );
+		return property_exists( $this, $property$privateAttributeName ) ? TRUE : FALSE;
+	}
+
+
+
+	/**
 	 * Just a simple utility function children can use for checking if property (or properties) exists and thworing an EE_Error exception if they don't
 	 * @param  mixed (string|array) $properties properties to check
 	 * @return bool            				  TRUE if existing, throw EE_Error if not.
