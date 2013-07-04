@@ -209,16 +209,18 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 		$this->_set_page_object();
 		$this->_init_hooks();
-
-		$this->_ajax_hooks();
 		$this->_load_custom_methods();
 		$this->_load_routed_hooks();
 
 		add_action( 'admin_enqueue_scripts', array($this, 'enqueue_scripts_styles' ) );
+		add_action( 'admin_enqueue_scripts', array($this, 'add_metaboxes'), 20 );
+		add_action( 'admin_enqueue_scripts', array($this, 'remove_metaboxes'), 15 );
 
-		add_action( 'admin_head', array($this, 'add_metaboxes') );
-		add_action( 'admin_head', array($this, 'remove_metaboxes') );
+		$this->_ajax_hooks();
+		
 	}
+
+
 
 
 

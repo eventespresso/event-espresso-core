@@ -139,11 +139,12 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return void
 	 */
 	public function load_page_dependencies() {
-		parent::load_page_dependencies();
 
 		//we only add stuff if this is a cpt_route!
-		if ( !$this->_cpt_route )
+		if ( !$this->_cpt_route ) {
+			parent::load_page_dependencies();
 			return;
+		}
 
 
 		//now let's do some automatic filters into the wp_system and we'll check to make sure the CHILD class automatically has the required methods in place.
@@ -184,15 +185,16 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		if ( method_exists( $this, 'edit_form_after_title' ) )
 			add_action('edit_form_after_title', array( $this, 'edit_form_after_title' ), 10 );
 
+
 		parent::load_page_dependencies();
 		$this->modify_current_screen();
+		add_action( 'admin_enqueue_scripts', array( $this, 'setup_autosave_hooks'), 30 );
 		//we route REALLY early.
 		try {
 			$this->_route_admin_request();
 		} catch ( EE_Error $e ) {
 			$e->get_error();
 		}
-		//$this->modify_current_screen;
 	}
 
 

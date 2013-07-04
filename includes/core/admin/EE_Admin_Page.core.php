@@ -550,7 +550,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_eei18n_js_strings' ), 102 );
 		
 
-		do_action('FHEE_admin_load_page_dependencies');
+		do_action('FHEE_admin_load_page_dependencies', $this->page_slug );
 		
 	}
 
