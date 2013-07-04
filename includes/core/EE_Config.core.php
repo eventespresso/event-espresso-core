@@ -89,6 +89,8 @@ class EE_Config {
 	 */
 	private function _load_config() {
 
+		$this->post_shortcodes = array();
+
 		$current_user_id = get_current_user_id();
 		$current_user_id = $current_user_id ? $current_user_id : 1;		
 		// grab org options based on current admin user
@@ -119,7 +121,7 @@ class EE_Config {
 		foreach ( $config as $key => $value ) {
 			$this->$key = $value;
 		}
-//		$this->post_shortcodes = array();
+
 		do_action('AHEE_debug_file');
 	}
 
