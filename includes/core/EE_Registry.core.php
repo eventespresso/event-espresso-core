@@ -118,7 +118,12 @@ class EE_Registry {
 	private function __construct() {
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		add_action( 'init', array( $this, 'init' ), 1 );
-		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 1 );
+		if ( is_admin() ) {
+			add_action( 'init', array( $this, 'wp_loaded' ), 4 );
+		} else {
+			add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 1 );
+		}
+		
 	}
 
 

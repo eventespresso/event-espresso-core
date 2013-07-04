@@ -33,10 +33,17 @@ class EE_CPT_Model_Query_Strategy extends EE_BASE {
 
 	/**
 	 * $CPT - the current page, if it utilizes CPTs
-	 *	@var 	object	
+	 *	@var 	array	
 	 * 	@access 	protected
 	 */
 	protected $CPT = NULL;
+
+	/**
+	 * $model_objects - array of objects instantiated via EE models
+	 *	@var 	array	
+	 * 	@access 	protected
+	 */
+	protected $model_objects = array();
 
 
 
@@ -89,6 +96,7 @@ class EE_CPT_Model_Query_Strategy extends EE_BASE {
 //					add_filter( 'posts_fields', array( $CPT_Model_Query_Strategy, 'posts_fields' ));
 //					add_filter( 'posts_join',	array( $CPT_Model_Query_Strategy, 'posts_join' ));
 					add_action( 'loop_start', array( $this, 'loop_start' ), 1 );
+					add_filter( 'get_' . $this->CPT['post_type'] . '_metadata', array( $this, 'get_EE_post_type_metadata' ), 1, 4 );
 
 				}				
 			}
@@ -105,10 +113,11 @@ class EE_CPT_Model_Query_Strategy extends EE_BASE {
 	 */
 	public function filter_request(  $req  ) {
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		if ( isset( $req['pagename'] ) && $req['pagename'] == $this->CPT['this_page']) {
-			unset( $req['pagename'] );
-		}		
+//		if ( isset( $req['pagename'] ) && $req['pagename'] == $this->CPT['this_page']) {
+//			unset( $req['pagename'] );
+//		}		
  		//$req['fields'] = 'ids';
+//		printr( $req, '$req  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	    return $req;
 	}
 
@@ -142,14 +151,30 @@ class EE_CPT_Model_Query_Strategy extends EE_BASE {
 	 */
 	public function loop_start( $WP_Query ) {
 		$EVT = $this->EE->load_model( 'Event' );
+//		printr( $EVT, '$EVT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$EVT_IDs = array();
 		foreach( $WP_Query->posts as $WP_Post ) {
 			$EVT_IDs[] = $WP_Post->ID;
 		}
-		$events = $EVT->get_all( array( 0 =>array( 'EVT_ID' => array( 'IN', $EVT_IDs )), 'force_join' =>array( 'Datetime', 'Price', 'Venue' )));
+//		$events = $EVT->get_all( array( 0 =>array( 'EVT_ID' => array( 'IN', $EVT_IDs ), 'DTT_is_primary' => 1 ), 'force_join' =>array( 'Datetime' )));
 //		printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		printr( $EVT_IDs, '$EVT_IDs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		printr( $events, '$events  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+	}
+
+
+
+
+	/**
+	 * 	get_EE_post_type_metadata
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function get_EE_post_type_metadata( $meta_value, $post_id, $meta_key, $single ) {
+
+
 
 	}
 

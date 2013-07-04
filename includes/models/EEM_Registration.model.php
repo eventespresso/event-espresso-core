@@ -22,6 +22,7 @@
  * ------------------------------------------------------------------------
  */
 require_once ( EE_MODELS . 'EEM_Base.model.php' );
+require_once ( EE_CLASSES . 'EE_Registration.class.php' );
 
 
 class EEM_Registration extends EEM_Base {
