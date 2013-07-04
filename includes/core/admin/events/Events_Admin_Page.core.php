@@ -1165,11 +1165,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			case 'today' :
 			case NULL :
 			case 'all' :
-				$where['status'] = array( 'NOT IN', array('trash', 'auto-draft') );
+				$where['status'] = array( 'NOT IN', array('trash') );
 				break;
 
 			case 'draft' :
-				$where['status'] = array( 'IN', array('draft', 'auto-draft' ) );
+				$where['status'] = array( 'IN', array('draft', 'auto-draft') );
 
 			default :
 				$where['status'] = $status;
