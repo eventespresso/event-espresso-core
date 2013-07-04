@@ -142,10 +142,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		parent::load_page_dependencies();
 
 		//we only add stuff if this is a cpt_route!
-		if ( !$this->_cpt_route ) {
-			parent::load_page_dependencies();
+		if ( !$this->_cpt_route )
 			return;
-		}
 
 
 		//now let's do some automatic filters into the wp_system and we'll check to make sure the CHILD class automatically has the required methods in place.

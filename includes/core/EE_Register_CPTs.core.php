@@ -246,7 +246,7 @@ class EE_Register_CPTs {
 		'has_archive' => true, 
 		'hierarchical' => true,
 		'menu_position' => null,
-		'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'revisions', 'comments' )
+		'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'comments' )
 	  ); 
 	  
 	  if($override_args){

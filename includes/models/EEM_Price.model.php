@@ -309,7 +309,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 		//echo printr( $prices, 'prices');
 		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
 		
-		uasort( $prices, array( $this, '_sort_event_prices_by_type' ));
+		//uasort( $prices, array( $this, '_sort_event_prices_by_type' ));
 		
 		if ( ! empty( $prices )) {
 			foreach ( $prices as $price ) {

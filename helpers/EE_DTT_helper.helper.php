@@ -178,6 +178,8 @@ class EE_DTT_Helper {
 
 
 	public static function date_time_for_timezone( $timestamp, $format, $timezone ) {
+		$timezone = empty( $timezone ) ? self::_get_timezone() : $timezone;
+
 		//set timezone
 		date_default_timezone_set( $timezone );
 

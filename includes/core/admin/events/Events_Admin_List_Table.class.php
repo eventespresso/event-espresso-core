@@ -31,7 +31,6 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 
 class Events_Admin_List_Table extends EE_Admin_List_Table {
 
-	private $_event_status;
 	private $_dtt;
 
 	public function __construct( $admin_page ) {
@@ -75,7 +74,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'start_date' => array('DTT_EVT_start' => false),
 			'start_time' => array('DTT_EVT_start' => false),
 			'reg_begins' => array('DTT_REG_start' => false),
-			'status' => array('EVT_status' => false)
+			'status' => array('Event.status' => false)
 			);
 
 		$this->_hidden_columns = array();
@@ -91,15 +90,17 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		//first month/year filters
 		$filters[] = $this->_admin_page->espresso_event_months_dropdown( isset($this->_req_data['month_range']) ? $this->_req_data['month_range'] : '' );
 
+
+		$status = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : NULL;
+
+		//active status dropdown
+		if ( $status !== 'draft' )
+			$filter[] = $this->_admin_page->active_status_dropdown( isset( $this->_req_data['active_status'] ) ? $this->_req_data['active_status'] : '' );
+
 		//category filter
 		$filters[] = espresso_category_dropdown( isset($this->_req_data['category_id']) ? $this->_req_data['category_id'] : '' );
-
-		//status dropdown
-		$status = array(array('id' => '', 'text' => __('Show Active/Inactive', 'event_espresso')), array('id' => 'A', 'text' => __('Active', 'event_espresso')), array('id' => 'IA', 'text' => __('Inactive', 'event_espresso')), array('id' => 'P', 'text' => __('Pending', 'event_espresso')), array('id' => 'R', 'text' => __('Draft', 'event_espresso')), array('id' => 'S', 'text' => __('Waitlist', 'event_espresso')), array('id' => 'O', 'text' => __('Ongoing', 'event_espresso')), array('id' => 'X', 'text' => __('Denied', 'event_espresso')), array('id' => 'D', 'text' => __('Deleted', 'event_espresso')));
 		
-		$this->_event_status = isset($this->_req_data['event_status']) ? $this->_req_data['event_status'] : '';
-
-		$filters[] = select_input( 'event_status', $status, $this->_event_status );
+		
 		return $filters;	
 	}
 
@@ -111,6 +112,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$this->_views['all']['count'] = $this->_admin_page->total_events();
 		$this->_views['today']['count'] = $this->_admin_page->total_events_today();
 		$this->_views['month']['count'] = $this->_admin_page->total_events_this_month();
+		$this->_views['draft']['count'] = $this->_admin_page->total_events_draft();
+		$this->_views['trash']['count'] = $this->_admin_page->total_trashed_events();
 	}
 
 
@@ -191,8 +194,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'export' => '<a href="' . $export_event_link . '" title="' . __('Export Event', 'event_espresso') . '">' . __('Export', 'event_espresso') . '</a>'
 			);
 			
-		switch ( $this->_event_status ) {
-			case 'D' :
+		switch ( $item->get( 'status' ) ) {
+			case 'trash' :
 					$actions['restore from trash'] = '<a href="' . $restore_event_link . '" title="' . __('Restore from Trash', 'event_espresso') . '">' . __('Restore from Trash', 'event_espresso') . '</a>';
 					$actions['delete permanently'] = '<a href="' . $delete_event_link . '" title="' . __('Delete Permanently', 'event_espresso') . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
 				break;

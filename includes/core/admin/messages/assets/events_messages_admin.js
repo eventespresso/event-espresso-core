@@ -36,22 +36,30 @@ jQuery(document).ready(function($) {
 				url: ajaxurl,
 				data: queryobj,
 				success: function(response, status, xhr) {
-					console.log(response);
 					var ct = xhr.getResponseHeader("content-type") || "";
-					console.log( ct );
+					var resp = '', isjson = true;
 					if (ct.indexOf('html') > -1) {
 						/*console.log('html');
 						console.log('response');*/
-						EE_messages_evt_helper.display_modal();
-						EE_messages_evt_helper.display_content(response, 'dialog', 'clear');
+						//last verification that we definitely DON'T have JSON (possibly via exceptions)
+						try {
+							resp = $.parseJSON(response);
+						} catch (e) {
+							EE_messages_evt_helper.display_modal();
+							EE_messages_evt_helper.display_content(response, 'dialog', 'clear');
+							isjson = FALSE;
+						}
+						
 					}
+					console.log( isjson );
 
-					if ( ct.indexOf('json') > -1 ) {
+					if ( ct.indexOf('json') > -1 || isjson ) {
 						/*console.log('json');
 						console.log(response);*/
-						var resp = response;
-						//wait a minute?  We didn't do .jsonParse?  Why not? because we used headers to make sure the script already KNOWS we're recieving json.
-				
+
+						resp = resp === '' ? response : resp;
+
+						if( typeof(resp.data) === 'undefined' ) resp.data = [];
 						if ( typeof(resp.data.where) === 'undefined' ) resp.data.where = 'dialog';
 						if ( typeof(resp.data.what) === 'undefined' ) resp.data.what = 'clear';
 
@@ -113,7 +121,7 @@ jQuery(document).ready(function($) {
 			if ( ( content === '' || typeof(content) === 'undefined' ) && type != 'notices' )
 				return;
 			
-			var main_container = type == 'content' ? $('.messages-tabs-content', '#edit_event_espresso_events_Messages_Hooks_messages_metabox_metabox') : $('.ee-notices', '#edit_event_espresso_events_Messages_Hooks_messages_metabox_metabox');
+			var main_container = type == 'content' ? $('.messages-tabs-content', '#espresso_events_Messages_Hooks_messages_metabox_metabox') : $('.ee-notices', '#espresso_events_Messages_Hooks_messages_metabox_metabox');
 			var dialog_container = type == 'content' ? $('.messages-change-edit-templates-content') : $('.ee-notices', '.messages-change-edit-templates-content');
 			var content_div = where == 'main' ? main_container : dialog_container;
 
@@ -130,7 +138,7 @@ jQuery(document).ready(function($) {
 	};
 
 
-	$('#edit_event_espresso_events_Messages_Hooks_messages_metabox_metabox').on('click', '.template_picker', function(e) {
+	$('#espresso_events_Messages_Hooks_messages_metabox_metabox').on('click', '.template_picker', function(e) {
 		e.preventDefault();
 		EE_messages_evt_helper.get_template_content(this);
 	});

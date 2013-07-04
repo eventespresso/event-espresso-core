@@ -111,7 +111,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 		$evt_venue = !empty( $evt_venues ) ? array_shift( $evt_venues ) : NULL;
 		$evt_venue_id = !empty( $evt_venue ) ? $evt_venue->ID() : NULL;
 		//all venues!
-		$wheres = array( 'STS_ID' => 'publish' );
+		$wheres = array( 'status' => 'publish' );
 		$venues = EEM_Venue::instance()->get_all(array($wheres));
 
 		$ven_sel[0] = __('Select a Venue', 'event_espresso');

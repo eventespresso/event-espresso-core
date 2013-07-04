@@ -34,6 +34,16 @@ class EE_Event extends EE_CPT_Base{
 	 * @var EE_Datetime[] 
 	 */
 	protected $_Datetime;
+
+
+
+	/**
+	 * This is just used for caching the Primary Datetime for the Event on initial retreival
+	 * @var EE_Datetime
+	 */
+	protected $_Primary_Datetime;
+
+
 	
 	/**
 	 * All prices which apply to this event
@@ -84,11 +94,7 @@ class EE_Event extends EE_CPT_Base{
 	 * @var string
 	 */
 	protected $_EVT_short_desc;
-	/**
-	 * Foreign key into status table
-	 * @var string
-	 */
-	protected $_STS_ID;
+
 	/**
 	 * time last modified
 	 * @var string
@@ -237,8 +243,10 @@ class EE_Event extends EE_CPT_Base{
 	}
 
 	public function primary_datetime() {
-		require_once( EE_MODELS . 'EEM_Datetime.model.php');
-		return EEM_Datetime::instance( $this->_timezone )->get_most_important_datetime_for_event( $this->_EVT_ID );
+		if ( !empty ( $this->_Primary_Datetime ) ) return $this->_Primary_Datetime;
+		require_once( EE_MODELS . 'EEM_Datetime.model.php' );
+		$this->_Primary_Datetime = EEM_Datetime::instance( $this->_timezone )->get_most_important_datetime_for_event( $this->_EVT_ID );
+		return $this->_Primary_Datetime;
 	}
 
 	
@@ -268,9 +276,11 @@ class EE_Event extends EE_CPT_Base{
 	function external_url(){
 		return $this->get('EVT_external_URL');
 	}
-	function is_active(){
-		return $this->get('EVT_is_active');
-	}
+	
+	//deactivating because I think its extreaneous (-DRE)
+	//function is_active(){
+		//return $this->get('EVT_is_active');
+	//}
 	function member_only(){
 		return $this->get('EVT_member_only');
 	}
@@ -313,9 +323,6 @@ class EE_Event extends EE_CPT_Base{
 	}
 	function wp_user(){
 		return $this->get('EVT_wp_user');
-	}
-	function status() {
-		return $this->get('STS_ID');
 	}
 	function set_additional_limit($limit){
 		return $this->set('EVT_additional_limit',$limit);
@@ -383,9 +390,6 @@ class EE_Event extends EE_CPT_Base{
 	function set_default_registration_status( $default_registration_status ) {
 		return $this->set('EVT_default_registration_status', $default_registration_status );
 	}
-	function set_status( $sts_id ) {
-		return $this->set('STS_ID', $sts_id );
-	}
 	
 	/**
 	 * Adds a venue to this event
@@ -413,6 +417,83 @@ class EE_Event extends EE_CPT_Base{
 	function venues($query_params = array()){
 		return $this->get_many_related('Venue', $query_params);
 	}
+
+
+	/**
+	 * This simply compares the internal dates with NOW and determines if the event is upcoming or not.
+	 * @access public
+	 * @return boolean true yes, false no
+	 */
+	public function is_upcoming() {
+		$dtt = $this->primary_datetime();
+		$upcoming = is_object($dtt) ? $dtt->is_upcoming() : FALSE;
+		return $upcoming && $this->_status = 'publish' ? TRUE : FALSE;
+	}
+
+
+
+	public function is_active() {
+		$dtt = $this->primary_datetime();
+		$active = is_object($dtt) ? $dtt->is_active() : FALSE;
+		return $active && $this->_status == 'publish' ? TRUE : FALSE;
+	}
+
+
+
+	public function is_expired() {
+		$dtt = $this->primary_datetime();
+		return  is_object( $dtt ) ? $dtt->is_expired() : FALSE;
+	}
+
+
+
+	public function is_inactive() {
+		$dtt = $this->primary_datetime();
+		$expired = is_object( $dtt ) ? $dtt->is_expired() : FALSE;
+		return $this->_status != 'publish' && !$expired ? TRUE : FALSE;
+	}
+
+
+
+
+	public function get_active_status() {
+		$dtt = $this->primary_datetime();
+		$status = is_object( $dtt ) ? $dtt->get_active_status() : FALSE;
+		return $status !== -1 && $this->_status != 'publish' ? 0 : $status;
+	}
+
+
+
+
+	public function pretty_active_status( $echo = TRUE ) {
+		$active_status = $this->get_active_status();
+		$status = FALSE; 
+
+		switch ( $active_status ) {
+			case -1 :
+				$status = __('Expired', 'event_espresso');
+				break;
+			case 0 :
+				$status = __('Inactive', 'event_espresso');
+				break;
+
+			case 1 :
+				$status = __('Upcoming', 'event_espresso');
+				break;
+
+			case 2 : 
+				$status = __('Active', 'event_espresso');
+				break;
+
+		}
+
+		if ( $echo ) {
+			echo $status;
+		} else {
+			return $status;
+		}
+	}
+
 
 
 

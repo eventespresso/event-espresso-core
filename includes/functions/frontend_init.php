@@ -7,7 +7,57 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 
 function espresso_frontend_init() {
-//	require_once( EE_MODELS . 'EEM_Event.model.php');
+//	$attendee = EE_Attendee::new_instance(array('ATT_fname'=>'mike'));
+//	$attendee->save();
+//	echo 'echodump of $attendee';
+//	var_dump($attendee);
+	
+//	$an_event = EEM_Event::instance()->get_one();
+//	echo 'echodump of $an_event';
+//	var_dump($an_event);
+//	$a_datetime = $an_event->get_first_related('Datetime');
+//	echo 'echodump of $a_datetime';
+//	var_dump($a_datetime);
+//	$a_price = EEM_Price::instance()->get_one(array(array('Price_Type.PBT_ID'=>  EEM_Price_Type::base_type_event_price)));//$an_event->get_first_related('Price', array(array('OR'=>array('Price_Type.PBT_ID'=>  EEM_Price_Type::base_type_event_price,'EVT_ID'=>0))));
+//	echo 'echodump of $a_price';
+//	var_dump($a_price);
+	
+//	$transaction = EE_Transaction::new_instance(array(
+//		'TXN_total'=>$a_price->amount()));
+//echo 'echodump of $transaction';
+//var_dump($transaction);
+//	$transaction->save();
+//	
+//	$reg = EE_Registration::new_instance(array(
+//		'ATT_ID'=>$attendee->ID(),
+//		'EVT_ID'=>$an_event->ID(),
+//		'DTT_ID'=>$a_datetime->ID(),
+//		'PRC_ID'=>$a_price->ID(),
+//		'STS_ID'=>EEM_Registration::status_id_approved,
+//		'REG_final_price'=>$a_price->amount(),
+//		));
+//	$reg->save();
+	
+	
+	
+//	var_dump(EEM_CPT_Base::get_post_statuses());
+//	$att = EE_Attendee::new_instance(array('ATT_fname'=>'rodrigo','ATT_lname'=>'nelson','STA_ID'=>23));
+//	//$att->save();
+//	$attednees = EEM_Attendee::instance()->get_all(array(array('State.STA_ID'=>23)));
+//	foreach($attednees as $attendee){
+//		echo '$attendee';
+//		var_dump($attendee);
+//		$state = $attendee->state_obj();
+//		echo '$state';
+//		var_dump($state);
+//	}
+//	require_once('EEM_Question_Group.model.php');
+//	var_dump(EEM_Question_Group::instance()->get_all(array('force_join'=>array('Question'),'limit'=>9)));
+//	require_once('EEM_Event.model.php');
+//	EEM_Event::instance()->get_all(array(array('Venue.VNU_ID'=>12,'Registration.Transaction.Payment.PAY_ID'=>23)));
+//	EEM_EVent::instance()->get_all(array('order_by'=>array('Venue.VNU_ID'=>'asc')));
+//	EEM_Event::instance()->get_all(array(array('Registration.Transaction.TXN_ID'=>3)));
+//	EEM_Event::instance()->get_all(array(array('OR'=>array('EVT_ID'=>3,'Venue.VNU_name'=>'monkey_tree'))));
 //	require_once('EE_Event.class.php');
 //	EEM_Event::instance()->get_all(array(array(
 //		'EVT_ID'=>12,

@@ -11,6 +11,21 @@ require_once( EE_MODELS . 'EEM_Base.model.php');
 class EEM_CPT_Base extends EEM_Base{
 	
 	/**
+	 * @var post_status_trashed the wp post statsu for trashed cpts
+	 */
+	const post_status_trashed = 'trash';
+
+
+
+	/**
+	 * keys are the statuses for posts, values are translatable strings. It's nice having an 
+	 * array of ALL of the statuses, so we can know what statuses are valid, and which are not
+	 * @var array 
+	 */
+	protected $_statuses = array();
+
+
+	/**
 	 * Adds a relationship to Term_Taxonomy for each CPT_Base
 	 * @param type $timezone
 	 */
@@ -21,6 +36,15 @@ class EEM_CPT_Base extends EEM_Base{
 		//with key equalling the subclassing model's model name (eg 'Event' or 'Venue'), and the value
 		//must also be new EE_HABTM_Relation('Term_Relationship');
 		$this->_model_relations['Term_Taxonomy'] =new EE_HABTM_Relation('Term_Relationship');
+
+		//add  the common _status field to all CPT primary tables.
+		foreach ( $this->_tables as $alias => $table_obj ) {
+			if ( $table_obj instanceof EE_Primary_Table )
+				$primary_table_name = $alias;
+		}
+
+		$this->_statuses = $this->get_status_array();
+		$this->_fields[$primary_table_name]['status'] = new EE_Enum_Field('post_status', __("Event Status", "event_espresso"), false, 'draft', $this->_statuses);
 		parent::__construct($timezone);
 	}
 
@@ -146,8 +170,7 @@ class EEM_CPT_Base extends EEM_Base{
 
 
 	/**
-	 * Especially used by chidlren of EEM_CPT_Base to figure out what values of post status are acceptable 
-	 * on their respective status fields
+	 * Just a handy way to get the list of post statuses currently registered with WP.
 	 * @global array $wp_post_statuses set in wp core for storing all the post stati
 	 * @return array
 	 */
@@ -157,6 +180,20 @@ class EEM_CPT_Base extends EEM_Base{
 		foreach($wp_post_statuses as $post_status => $args_object){
 			$statuses[$post_status] = $args_object->label;
 		}
+		return $statuses;
+	}
+
+
+	/**
+	 * public method that can be used to retrieve the protected status array on the instantiated cpt model
+	 * @return array array of statuses.
+	 */
+	public function get_status_array() {
+		$statuses = self::get_post_statuses();
+		//first the global filter
+		$statuses = apply_filters( 'FHEE_EEM_CPT_Base__get_status_array', $statuses );
+		//now the class specific filter
+		$statuses = apply_filters( 'FHEE_EEM_' . get_class($this) . '__get_status_array', $statuses );
 		return $statuses;
 	}
 
