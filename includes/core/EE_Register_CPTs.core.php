@@ -46,9 +46,52 @@ class EE_Register_CPTs {
 
 
 	function __construct(){
+				
+		// register taxonomies
+		$taxonomies = self::get_taxonomies();
+		foreach ( $taxonomies as $taxonomy =>  $tax ) {
+			$this->register_taxonomy( $taxonomy, $tax['singular_name'], $tax['plural_name'], $tax['args'] );
+		}
 		
+		// register CPTs
+		$CPTs = self::get_CPTs();
+		foreach ( $CPTs as $CPT_name =>  $CPT ) {
+			$this->register_CPT( $CPT_name, $CPT['singular_name'], $CPT['plural_name'], $CPT['args'] );
+		}
+
+
+		//setup default terms in any of our taxonomies (but only if we're in admin).  Why not added via register_actvation_hook?  Because it's possible that in future iterations of EE we may add new defaults for specialized taxonomies (think event_types) and regsiter_activation_hook only reliably runs when a user manually activates the plugin.
+		if ( is_admin() ) {
+			$this->set_initial_event_categories();
+			$this->set_initial_venue_categories();
+			$this->set_initial_event_types();
+		}
+
+
+		//set default terms
+		$this->set_default_term( 'espresso_event_categories', 'uncategorized', array('espresso_events') );
+		$this->set_default_term( 'espresso_event_type', 'multi_day', array('espresso_events' ) );
+		$this->set_default_term( 'espresso_venue_categories', 'uncategorized', array('espresso_venues') );
+
+
+		//hook into save_post so that we can make sure that the default terms get saved on publish of registered cpts IF they don't have a term for that taxonomy set.
+		add_action('save_post', array( $this, 'save_default_term' ), 100, 2 );
+		
+	}
+
+
+
+
+
+	/**
+	 * 	get_taxonomies
+	 *
+	 *  @access 	public
+	 *  @return 	array
+	 */
+	public static function get_taxonomies(){		
 		// define taxonomies
-		$this->_taxonomies = array(
+		return array(
 			'espresso_event_categories' => array(
 				'singular_name' => __("Event Category", "event_espresso"),
 				'plural_name' => __("Event Categories", "event_espresso"),
@@ -69,10 +112,22 @@ class EE_Register_CPTs {
 					'show_ui'=>false,
 					'hierarchical'=>false
 				))
-			);
-		
+			);		
+	}
+
+
+
+
+
+	/**
+	 * 	get_CPTs
+	 *
+	 *  @access 	public
+	 *  @return 	array
+	 */
+	public static function get_CPTs(){		
 		// define CPTs
-		$this->_CPTs = array(
+		return array(
 			'espresso_events' => array(
 				'singular_name' => __("Event", "event_espresso"),
 				'plural_name' => __("Events", "event_espresso"),
@@ -105,74 +160,12 @@ class EE_Register_CPTs {
 				'singular_slug' => __("attendee", "event_espresso"),
 				'plural_slug' => __("attendees", "event_espresso"),
 				'args' => array(
-					'public'=>'false',
-					'publicly_queryable'=>'false',
-					'hierarchical'=>'false'
+					'public'=> FALSE,
+					'publicly_queryable'=> FALSE,
+					'hierarchical'=> FALSE,
+					'has_archive' => FALSE
 				))
 			);
-
-		// register taxonomies
-		foreach ( $this->_taxonomies as $taxonomy =>  $tax ) {
-			$this->register_taxonomy( $taxonomy, $tax['singular_name'], $tax['plural_name'], $tax['args'] );
-		}
-		
-		// register CPTs
-		foreach ( $this->_CPTs as $CPT_name =>  $CPT ) {
-			$this->register_CPT( $CPT_name, $CPT['singular_name'], $CPT['plural_name'], $CPT['args'] );
-		}
-		
-		/*
-		$this->register_taxonomy('espresso_event_categories', __("Event Category", "event_espresso"), __("Event Categories", "event_espresso"), 
-				array(
-					'public'=>true));
-		$this->register_taxonomy('espresso_venue_categories', __("Venue Category", 'event_espresso'), __('Venue Categories', 'event_espresso'),
-				array(
-					'public' => true )
-				);
-
-		$this->register_taxonomy('espresso_event_type', __("Event Type", "event_espresso"), __("Event Types", "event_espresso"), 
-				array(
-					'public'=>true,
-					'show_ui'=>false,
-					'hierarchical'=>false
-					));
-		$this->register_CPT('espresso_events', __("Event", "event_espresso"),  __("Events", "event_espresso"),
-				array(
-					'taxonomies'=>array(
-						'espresso_event_categories',
-						'espresso_event_type'
-				)));
-		$this->register_CPT('espresso_venues', __("Venue", "event_espresso"), __("Venues", "event_espresso"),
-				array(
-					'taxonomies'=>array(
-						'espresso_venue_categories'
-					)
-				));
-		$this->register_CPT('espresso_persons',  __("Person", "event_espresso"),  __("Persons", "event_espresso"));
-		$this->register_CPT('espresso_attendees',  __("Attendee", "event_espresso"),  __("Attendees", "event_espresso"),
-				array(
-					'public'=>'false',
-					'publicly_queryable'=>'false',
-					'hierarchical'=>'false'));*/
-
-
-		//setup default terms in any of our taxonomies (but only if we're in admin).  Why not added via register_actvation_hook?  Because it's possible that in future iterations of EE we may add new defaults for specialized taxonomies (think event_types) and regsiter_activation_hook only reliably runs when a user manually activates the plugin.
-		if ( is_admin() ) {
-			$this->set_initial_event_categories();
-			$this->set_initial_venue_categories();
-			$this->set_initial_event_types();
-		}
-
-
-		//set default terms
-		$this->set_default_term( 'espresso_event_categories', 'uncategorized', array('espresso_events') );
-		$this->set_default_term( 'espresso_event_type', 'multi_day', array('espresso_events' ) );
-		$this->set_default_term( 'espresso_venue_categories', 'uncategorized', array('espresso_venues') );
-
-
-		//hook into save_post so that we can make sure that the default terms get saved on publish of registered cpts IF they don't have a term for that taxonomy set.
-		add_action('save_post', array( $this, 'save_default_term' ), 100, 2 );
-		
 	}
 
 
@@ -198,7 +191,7 @@ class EE_Register_CPTs {
 		),
 		'show_ui'           => true,
 		'show_admin_column' => true,
-		'query_var'         => true,
+		'query_var'         => true
 		//'rewrite'           => array( 'slug' => 'genre' ),
 	);
 		
@@ -248,7 +241,7 @@ class EE_Register_CPTs {
 		'show_ui' => false, 
 		'show_in_menu' => false, 
 		'query_var' => true,
-		'rewrite' => array( 'slug' => sanitize_title($singular_name) ),
+		'rewrite' => array( 'slug' => sanitize_title($plural_name) ),
 		'capability_type' => 'post',
 		'has_archive' => true, 
 		'hierarchical' => true,
@@ -359,32 +352,6 @@ class EE_Register_CPTs {
 			}
 		}
 	}
-
-
-
-
-	/**
-	 * 	get_espresso_taxonomies
-	 *
-	 *  @access 	public
-	 *  @return 	array
-	 */
-	public static function get_espresso_taxonomies() {
-		return $this->_taxonomies;
-	}	
-
-
-
-
-	/**
-	 * 	get_espresso_CPTs
-	 *
-	 *  @access 	public
-	 *  @return 	array
-	 */
-	public static function get_espresso_CPTs() {
-		return $this->_CPTs;
-	}	
 
 	
 	
