@@ -673,8 +673,17 @@ class EE_Admin {
 	 *  @return 	void
 	 */
 	public function parse_post_content_on_save( $post_ID, $post ) {
-		
-		if ( $post->post_parent == 0 ) {
+		// default post types
+		$post_types = array( 'post' => 0, 'page' => 1 );
+		// add CPTs
+		$CPTs = EE_Register_CPTs::get_CPTs();
+		$post_types = array_merge( $post_types, $CPTs );
+//		printr( $post_types, '$post_types  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+		// for default or CPT posts...
+		if ( isset( $post_types[ $post->post_type ] )) {
+//			echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+			// post on frontpage ?
 			$show_on_front = get_option('show_on_front');
 			$update_post_shortcodes = FALSE;
 			$this->EE->CFG->post_shortcodes = isset( $this->EE->CFG->post_shortcodes ) ? $this->EE->CFG->post_shortcodes : array();
@@ -692,7 +701,7 @@ class EE_Admin {
 					$update_post_shortcodes = TRUE;
 				} 
 			}
-//			printr( $this->EE->CFG->post_shortcodes, '$this->EE->CFG->post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			//printr( $this->EE->CFG->post_shortcodes, '$this->EE->CFG->post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			
 			if ( $update_post_shortcodes ) {
 				$this->EE->CFG->update_post_shortcodes();
