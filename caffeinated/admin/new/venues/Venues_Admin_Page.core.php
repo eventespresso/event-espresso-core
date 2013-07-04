@@ -506,7 +506,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$success = $this->_venue_model->update( $venue_values, array( $wheres ) );
 
 		//get venue_object for other metaboxes that might be added via the filter... though it would seem to make sense to just use $this->_venue_model->get_one_by_ID( $post_id ).. i have to setup where conditions to override the filters in the model that filter out autodraft and inherit statuses so we GET the inherit id!
-		$get_one_where = array( $this->_venue_model->primary_key_name() => $post_id, 'STS_ID' => $post->post_status  );
+		$get_one_where = array( $this->_venue_model->primary_key_name() => $post_id, 'status' => $post->post_status  );
 		$venue = $this->_venue_model->get_one( array( $get_one_where ) );
 
 		//notice we've applied a filter for venue metabox callbacks but we don't actually have any default venue metaboxes in use.  So this is just here for addons to more easily hook into venue saves.
@@ -805,7 +805,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$limit = array($offset, $per_page);
 
 		$where = array(
-			'STS_ID' => isset( $this->_req_data['venue_status'] ) && $this->_req_data['venue_status'] != '' ? $this->_req_data['venue_status'] : 'publish'
+			'status' => isset( $this->_req_data['venue_status'] ) && $this->_req_data['venue_status'] != '' ? $this->_req_data['venue_status'] : 'publish'
 			//todo add filter by category
 			);
 

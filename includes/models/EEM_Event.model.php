@@ -548,7 +548,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	 * Gets all events that are published and have event start time earlier than now and an event end time later than now
 	 *
 	 * @access public
-	 * @param  array  $query_params An array of query params to further filter on (note that STS_ID and DTT_EVT_start and DTT_EVT_end will be overridden)
+	 * @param  array  $query_params An array of query params to further filter on (note that status and DTT_EVT_start and DTT_EVT_end will be overridden)
 	 * @param bool    $count whether to return the count or not (default FALSE)
 	 * @return array 	EE_Event objects
 	 */
@@ -560,8 +560,8 @@ class EEM_Event  extends EEM_CPT_Base{
 			$where_params = array();
 		}
 		
-		//let's add specific query_params for active_events - keep in mind this will override any sent STS_ID in the query AND any date queries.
-		$where_params['STS_ID'] = 'publish';
+		//let's add specific query_params for active_events - keep in mind this will override any sent status in the query AND any date queries.
+		$where_params['status'] = 'publish';
 		$where_params['Datetime.DTT_EVT_start'] = array('>',  date('Y-m-d g:i:s', time() ) );
 		$where_params['Datetime.DTT_EVT_end'] = array('<', date('Y-m-d g:i:s', time() ) );
 		$query_params[0] = $where_params;
@@ -577,7 +577,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	 * get all events that are published and have an event start time later than now
 	 *
 	 * @access public
-	 * @param  array 	$query_params An array of query params to further filter on (Note that STS_ID and DTT_EVT_start will be overridden)
+	 * @param  array 	$query_params An array of query params to further filter on (Note that status and DTT_EVT_start will be overridden)
 	 * @param bool    $count whether to return the count or not (default FALSE)
 	 * @return array               EE_Event objects
 	 */
@@ -589,8 +589,8 @@ class EEM_Event  extends EEM_CPT_Base{
 			$where_params = array();
 		}
 		
-		//let's add specific query_params for active_events - keep in mind this will override any sent STS_ID in the query AND any date queries.
-		$where_params['STS_ID'] = 'publish';
+		//let's add specific query_params for active_events - keep in mind this will override any sent status in the query AND any date queries.
+		$where_params['status'] = 'publish';
 		$where_params['Datetime.DTT_EVT_start'] = array('>', date('Y-m-d g:i:s', time() ) );
 		$query_params[0] = $where_params;
 		return $count ? $this->count($query_params, 'EVT_ID') : $this->get_all( $query_params );
@@ -601,7 +601,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	 * Get all events that are either published and have an event end time that is less than now OR unpublished events.
 	 *
 	 * @access public
-	 * @param  array  $query_params An array of query params to further filter on (note that STS_ID and DTT_EVT_end will be overridden)
+	 * @param  array  $query_params An array of query params to further filter on (note that status and DTT_EVT_end will be overridden)
 	 * @param bool    $count whether to return the count or not (default FALSE)
 	 * @return array 	EE_Event objects
 	 */
@@ -613,10 +613,10 @@ class EEM_Event  extends EEM_CPT_Base{
 			$where_params = array();
 		}
 		
-		//let's add specific query_params for active_events - keep in mind this will override any sent STS_ID in the query AND any date queries.
-		if ( isset( $where_params['STS_ID'] ) )
-			unset( $where_params['STS_ID'] );
-		$where_params['OR'] = array( 'STS_ID' => array( '!=', 'publish' ), 'AND' => array('STS_ID' => 'publish', 'Datetime.DTT_EVT_end' => array( '<',  date('Y-m-d g:i:s', time() ) ) ) );
+		//let's add specific query_params for active_events - keep in mind this will override any sent status in the query AND any date queries.
+		if ( isset( $where_params['status'] ) )
+			unset( $where_params['status'] );
+		$where_params['OR'] = array( 'status' => array( '!=', 'publish' ), 'AND' => array('status' => 'publish', 'Datetime.DTT_EVT_end' => array( '<',  date('Y-m-d g:i:s', time() ) ) ) );
 		$query_params[0] = $where_params;
 		return $count ? $this->count($query_params, 'EVT_ID') : $this->get_all( $query_params );
 	}

@@ -99,9 +99,15 @@ class EE_CPT_Base extends EE_Base_Class{
 	 * @return string
 	 */
 	public function status() {
-		return $this->_status;
+		return $this->get('status');
 	}
 
+
+
+
+	public function set_status ( $status ) {
+		$this->set( 'status' );
+	}
 
 
 	/**

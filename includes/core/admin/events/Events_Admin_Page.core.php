@@ -586,7 +586,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 		//get event_object for other metaboxes... though it would seem to make sense to just use $this->_event_model->get_one_by_ID( $post_id ).. i have to setup where conditions to override the filters in the model that filter out autodraft and inherit statuses so we GET the inherit id!
-		$get_one_where = array( $this->_event_model->primary_key_name() => $post_id, 'STS_ID' => $post->post_status );
+		$get_one_where = array( $this->_event_model->primary_key_name() => $post_id, 'status' => $post->post_status );
 		$event = $this->_event_model->get_one( array($get_one_where) );
 
 
@@ -634,7 +634,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'VNU_city' => !empty( $data['city'] ) ? $data['city'] : NULL,
 				'STA_ID' => !empty( $data['state'] ) ? $data['state'] : NULL,
 				'CNT_ISO' => !empty( $data['countries'] ) ? $data['countries'] : NULL,
-				'STS_ID' => $evtobj->status(),
 				'VNU_zip' => !empty( $data['zip'] ) ? $data['zip'] : NULL,
 				'VNU_phone' => !empty( $data['venue_phone'] ) ? $data['venue_phone'] : NULL,
 				'VNU_capacity' => !empty( $data['venue_capacity'] ) ? $data['venue_capacity'] : NULL,
@@ -642,7 +641,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'VNU_virtual_phone' => !empty($data['virtual_phone']) ? $data['virtual_phone'] : NULL,
 				'VNU_virtual_url' => !empty( $data['virtual_url'] ) ? $data['virtual_url'] : NULL,
 				'VNU_enable_for_gmap' => isset( $data['enable_for_gmap'] ) ? 1 : 0,
-				'STS_ID' => 'publish'
+				'status' => 'publish'
 			);
 		
 
@@ -1143,10 +1142,27 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		$where = array(
-				'STS_ID' => isset( $this->_req_data['event_status'] ) && $this->_req_data['event_status'] != '' ? $this->_req_data['event_status'] : 'publish',
 				//todo add event categories
 				'Datetime.DTT_is_primary' => 1,
 		);
+
+		$status = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : NULL;
+		//determine what post_status our condition will have for the query.
+		switch ( $status ) {
+			case 'month' :
+			case 'today' :
+			case NULL :
+			case 'all' :
+				$where['status'] = array( 'NOT IN', array('trash', 'auto-draft') );
+				break;
+
+			case 'draft' :
+				$where['status'] = array( 'IN', array('draft', 'auto-draft' ) );
+
+			default :
+				$where['status'] = $status;
+		}
+		
 
 		//date where conditions
 		if (isset($this->_req_data['month_range']) && $this->_req_data['month_range'] != '') {
@@ -1491,7 +1507,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function total_events() {
 
-		$count = EEM_Event::instance()->count( array( array('STS_ID' => array( '!=','trash') ) ), 'EVT_ID' );
+		$count = EEM_Event::instance()->count( array( array('status' => array( 'NOT IN', array('trash') ) ) ), 'EVT_ID' );
 		return $count;
 	}
 
@@ -1506,7 +1522,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$end = ' 23:59:59';
 
 		$where = array(
-			'STS_ID' => array( '!=', 'trash' ),
+			'status' => array( '!=', 'trash' ),
 			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime(date('Y-m-d') . $start), strtotime(date('Y-m-d') . $end) ) )
 			);
 
@@ -1530,7 +1546,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$end = ' 23:59:59';
 
 		$where = array(
-			'STS_ID' => array( '!=', 'trash' ),
+			'status' => array( '!=', 'trash' ),
 			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) )
 			);
 

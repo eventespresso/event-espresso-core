@@ -94,11 +94,7 @@ class EE_Event extends EE_CPT_Base{
 	 * @var string
 	 */
 	protected $_EVT_short_desc;
-	/**
-	 * Foreign key into status table
-	 * @var string
-	 */
-	protected $_STS_ID;
+
 	/**
 	 * time last modified
 	 * @var string
@@ -328,9 +324,6 @@ class EE_Event extends EE_CPT_Base{
 	function wp_user(){
 		return $this->get('EVT_wp_user');
 	}
-	function status() {
-		return $this->get('STS_ID');
-	}
 	function set_additional_limit($limit){
 		return $this->set('EVT_additional_limit',$limit);
 	}
@@ -396,9 +389,6 @@ class EE_Event extends EE_CPT_Base{
 	}
 	function set_default_registration_status( $default_registration_status ) {
 		return $this->set('EVT_default_registration_status', $default_registration_status );
-	}
-	function set_status( $sts_id ) {
-		return $this->set('STS_ID', $sts_id );
 	}
 	
 	/**
