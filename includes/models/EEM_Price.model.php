@@ -95,6 +95,9 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 			'Registration'=>new EE_Has_Many_Relation()
 		);
 		parent::__construct( $timezone );
+		
+		require_once ( EE_CLASSES . 'EE_Price.class.php' );
+
 	}
 
 

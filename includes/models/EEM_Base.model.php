@@ -291,12 +291,14 @@ abstract class EEM_Base extends EE_Base{
 	 *			'Question.QST_display_text'=>'shirt size',
 	 *			'Registration.Event.EVT_ID'=>12),
 	 *		'order_by'=>array('ANS_value'=>'ASC')
-	 *		);
+	 *		));
 	 * 
-	 *				
+	 *	@param	array $query_params		
+	 *	@param	boolean $values_already_prepared_by_model_object		
+	 *	@param	constant $output
 	 */
-	function get_all($query_params = array(), $values_already_prepared_by_model_object = false){	
-		return $this->_create_objects($this->_get_all_wpdb_results($query_params, ARRAY_A, NULL, $values_already_prepared_by_model_object));
+	function get_all($query_params = array(), $values_already_prepared_by_model_object = false, $output = ARRAY_A ){	
+		return $this->_create_objects($this->_get_all_wpdb_results($query_params, $output, NULL, $values_already_prepared_by_model_object));
 	}
 	
 	

@@ -42,20 +42,7 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	public static function set_hooks() {
 //		add_filter( 'FHEE_run_EE_wp', '__return_true' );
 //		add_filter( 'FHEE_load_EE_Session', '__return_true' );
-		// grab copy of  request
-		$EE = EE_Front_Controller::get_static_registry();
-		// check current post name vs events page
-		if ( $EE->REQ->is_set( 'post_name' )) {
-			// post_name == events
-			if ( $EE->REQ->get( 'post_name' ) == $EE->CFG->events_page ) {
-				// load event list
-				add_filter( 'AHEE__Front_Controller__process_request__modules', array( 'EES_Espresso_Events', 'load_event_list' ), 10, 1 );
-			// post_name == event 
-			} else if ( $EE->REQ->get( 'post_name' )  == $EE->CFG->event_page ) {
-				// load event details page
-				add_filter( 'AHEE__Front_Controller__process_request__modules', array( 'EES_Espresso_Events', 'load_event_details' ), 10, 1 );
-			}
-		}
+//		add_action( 'wp', array( 'EES_Espresso_Events', 'process_request' ), 10 );
 
 	}
 
@@ -65,7 +52,8 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public static function set_hooks_admin() {
+	public static function process_request() {
+//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	}
 
 	/**
@@ -110,6 +98,24 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function init() {
+//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+		// grab copy of  request
+		$EE = EE_Front_Controller::get_static_registry();
+		// check current post name vs events page
+		if ( $EE->REQ->is_set( 'post_name' )) {
+			$events_page = __('events', 'event_espresso');
+			$event_details_page = __('event', 'event_espresso');
+			// post_name == events
+			if ( $EE->REQ->get( 'post_name' ) == $events_page ) {
+				// load event list
+				add_filter( 'AHEE__Front_Controller__process_request__modules', array( 'EES_Espresso_Events', 'load_event_list' ), 10, 1 );
+			// post_name == event 
+			} else if ( $EE->REQ->get( 'post_name' )  == $event_details_page ) {
+				// load event details page
+				add_filter( 'AHEE__Front_Controller__process_request__modules', array( 'EES_Espresso_Events', 'load_event_details' ), 10, 1 );
+			}
+		}
+		
 		$this->ouput =  '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	}
 

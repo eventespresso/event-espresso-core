@@ -38,14 +38,25 @@ class EE_Admin {
 	protected $EE = NULL;
 
 	/**
+	 * 	path to main espresso.php file
+	 *	@var 	$main_file
+	 * 	@access 	public
+	 */
+	public $main_file;
+
+
+
+
+
+	/**
 	 *@ singleton method used to instantiate class object
 	 *@ access public
 	 *@ return class instance
 	 */	
-	public static function instance( EE_Registry $EE = NULL ) {
+	public static function instance(  $main_file  ) {
 		// check if class object is instantiated
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! is_a( self::$_instance, __CLASS__ )) {
-			self::$_instance = new self( $EE );
+			self::$_instance = new self(  $main_file  );
 		}
 		return self::$_instance;
 	}
@@ -55,15 +66,9 @@ class EE_Admin {
    /**
      * class constructor
      */
-	protected function __construct( $EE ) {
-		$this->EE = $EE;
-		//first define global EE_Admin constants
-		$this->_define_all_constants();
-		// activate
-		register_activation_hook( EE_HELPERS . 'EEH_Activation.helper.php', array( 'EEH_Activation', 'plugin_activation' ));
-		// pew pew pew
-		$this->EE->load_core( 'PUE', TRUE );
+	protected function __construct(  $main_file  ) {
 		// admin hooks
+		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 1 );
 		add_filter( 'plugin_action_links', array( $this, 'filter_plugin_actions' ), 10, 2 );
 		add_action( 'init', array( $this, 'init' ), 100 );
 		add_action( 'admin_init', array( $this, 'admin_init' ), 100 );
@@ -77,6 +82,26 @@ class EE_Admin {
 		add_filter('admin_footer_text', array( $this, 'espresso_admin_footer' ));
 	}
 
+
+
+	/**
+	 * 		plugins_loaded
+	 *
+	 * 		@access 	public
+	 * 		@return 		void
+	 */
+	public function plugins_loaded() {
+		//first define global EE_Admin constants
+		$this->_define_all_constants();
+		// registry, settings, autoloaders, and other config stuff
+		$this->_load_system_files();
+		// path to espresso.php
+		$this->EE->main_file = $main_file;
+		// activate
+		register_activation_hook( EE_HELPERS . 'EEH_Activation.helper.php', array( 'EEH_Activation', 'plugin_activation' ));
+		// pew pew pew
+		$this->EE->load_core( 'PUE', TRUE );
+	}
 
 
 	/**
@@ -95,6 +120,22 @@ class EE_Admin {
 		define( 'JQPLOT_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/' );
 	}
 
+
+
+	/**
+	 * 		_load_system_files
+	 *
+	 * 		@access 	private
+	 * 		@return 		void
+	 */
+	private function _load_system_files() {
+		if ( is_readable( EE_CORE . 'EE_System.core.php' )) {
+			require_once( EE_CORE . 'EE_System.core.php' );
+			$this->EE = EE_System::instance()->get_registry();
+		} else {
+			wp_die( __( 'An error has occured. The EE_System files could not be loaded.', 'event_espresso' ));
+		}
+	}
 
 
 	/**
@@ -129,9 +170,104 @@ class EE_Admin {
 	* @return void
 	*/
 	public function init() {
+		// check for db changes
+		$this->_check_database_tables();
+		// bring out the pidgeons!!!
+		require_once( EE_CORE . 'messages' . DS . 'EE_messages_init.core.php' );
+		EE_messages_init::init();
 		// run the admin page factory
 		$this->EE_Admin_Page_Loader();
 //		espresso_verify_default_pages_exist();
+
+	}
+
+
+
+	/**
+	* check_database_tables
+	* 
+	* ensures that the database has been updated to the current version
+	* and also ensures that all necessary data migration scripts have been applied
+	* in order to bring the content of the database up to snuff as well
+	* 
+	* @access private
+	* @since 3.1.28
+	* @return void
+	*/
+	private function _check_database_tables() {
+		if ( is_admin() ) {
+			// check if db has been updated, cuz autoupdates don't trigger database install script
+			$espresso_db_update = get_option( 'espresso_db_update' );
+			// chech that option is an array
+			if( ! is_array( $espresso_db_update )) {
+				// if option is FALSE, then it never existed
+				if ( $espresso_db_update === FALSE ) {
+					// make $espresso_db_update an array and save option with autoload OFF
+					$espresso_db_update =  array();
+					add_option( 'espresso_db_update', $espresso_db_update, '', 'no' );
+				} else {
+					// option is NOT FALSE but also is NOT an array, so make it an array and save it
+					$espresso_db_update =  array( $espresso_db_update );
+					update_option( 'espresso_db_update', $espresso_db_update );
+				}
+			}
+			
+			// if current EE version is NOT in list of db updates, then update the db
+			if ( ! in_array( EVENT_ESPRESSO_VERSION, $espresso_db_update )) {
+				require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
+				EEH_Activation::create_database_tables();
+			}	
+			
+			// grab list of any existing data migrations from db
+			if ( ! $existing_data_migrations = get_option( 'espresso_data_migrations' )) {
+				// or initialize as an empty array
+				$existing_data_migrations = array();
+				// and set WP option
+				add_option( 'espresso_data_migrations', array(), '', 'no' );
+			}
+
+			// array of all previous data migrations to date
+			// using the name of the callback function for the value
+			$espresso_data_migrations = array(
+			);
+			
+			// temp array to track scripts we need to run 
+			$scripts_to_run = array();
+			// for tracking script errors
+			$previous_script = '';
+			// if we don't need them, don't load them
+			$load_data_migration_scripts = FALSE;
+			// have we already performed some data migrations ?
+			if ( ! empty( $existing_data_migrations )) {	
+				// loop through all previous migrations
+				foreach ( $existing_data_migrations as $ver => $migrations ) {
+					// ensure that migrations is an array, then loop thru it
+					$migrations = is_array( $migrations ) ? $migrations : array( $migrations );
+					foreach ( $migrations as $migration_func => $errors_array ) {
+						// make sure they have been executed
+						if ( ! in_array( $migration_func, $espresso_data_migrations )) {		
+							// ok NOW load the scripts
+							$load_data_migration_scripts = TRUE;
+							$scripts_to_run[ $migration_func ] = $migration_func;
+						} 
+					}
+				}		
+				
+			} else {
+				$load_data_migration_scripts = TRUE;
+				$scripts_to_run = $espresso_data_migrations;
+			}
+
+			if ( $load_data_migration_scripts && ! empty( $scripts_to_run )) {
+				require_once( 'includes/functions/data_migration_scripts.php' );		
+				// run the appropriate migration script
+				foreach( $scripts_to_run as $migration_func ) {
+					if ( function_exists( $migration_func )) {
+						call_user_func( $migration_func );
+					}		
+				}
+			}
+		}
 	}
 
 
@@ -537,8 +673,17 @@ class EE_Admin {
 	 *  @return 	void
 	 */
 	public function parse_post_content_on_save( $post_ID, $post ) {
-		
-		if ( $post->post_parent == 0 ) {
+		// default post types
+		$post_types = array( 'post' => 0, 'page' => 1 );
+		// add CPTs
+		$CPTs = EE_Register_CPTs::get_CPTs();
+		$post_types = array_merge( $post_types, $CPTs );
+//		printr( $post_types, '$post_types  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+		// for default or CPT posts...
+		if ( isset( $post_types[ $post->post_type ] )) {
+//			echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+			// post on frontpage ?
 			$show_on_front = get_option('show_on_front');
 			$update_post_shortcodes = FALSE;
 			$this->EE->CFG->post_shortcodes = isset( $this->EE->CFG->post_shortcodes ) ? $this->EE->CFG->post_shortcodes : array();
@@ -556,7 +701,7 @@ class EE_Admin {
 					$update_post_shortcodes = TRUE;
 				} 
 			}
-//			printr( $this->EE->CFG->post_shortcodes, '$this->EE->CFG->post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			//printr( $this->EE->CFG->post_shortcodes, '$this->EE->CFG->post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			
 			if ( $update_post_shortcodes ) {
 				$this->EE->CFG->update_post_shortcodes();

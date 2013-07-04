@@ -433,8 +433,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	public function venue_address_metabox() {
 
 		//states and countries model
-		require_once( 'EEM_State.model.php' );
-		require_once( 'EEM_Country.model.php');
+		require_once( EE_MODELS . 'EEM_State.model.php' );
+		require_once( EE_MODELS . 'EEM_Country.model.php');
 
 		$states = EEM_State::instance()->get_all_active_states();
 		$countries = EEM_Country::instance()->get_all_active_countries();
