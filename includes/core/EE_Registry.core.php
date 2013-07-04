@@ -68,6 +68,13 @@ class EE_Registry {
 	public $DMP = NULL;
 
 	/**
+	 * 	$CPTs
+	 * 	@access 	public
+	 *	@var 	array	$CPTs
+	 */
+	public $CPTs = array();
+
+	/**
 	 * 	$shortcodes
 	 * 	@access 	public
 	 *	@var 	array	$shortcodes
@@ -110,7 +117,8 @@ class EE_Registry {
 	 */	
 	private function __construct() {
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 11 );
+		add_action( 'init', array( $this, 'init' ), 1 );
+		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 1 );
 	}
 
 
@@ -131,16 +139,15 @@ class EE_Registry {
 
 
 	/**
-	 * 	plugins_loaded
+	 * 	init
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function plugins_loaded() {
+	public function init() {
+//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		// load EE_Config
 		$this->_load_configuration();
-		// load EE_Request_Handler
-		$this->_get_request();
 		/*EE_Data_Mapper $data_mapper*/
 		// Get current page protocol
 		$protocol = isset( $_SERVER['HTTPS'] ) ? 'https://' : 'http://';
@@ -172,6 +179,19 @@ class EE_Registry {
 
 
 	/**
+	 *	wp_loaded
+	 * 
+	 *	@return void
+	 */
+	public function wp_loaded() {
+//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+		// load EE_Request_Handler
+		$this->_get_request();
+	}
+
+
+
+	/**
 	 *	_get_request
 	 * 
 	 *	@return void
@@ -189,9 +209,9 @@ class EE_Registry {
 	 *	@param string $class_name - simple class name ie: session
 	 *	@return instantiated class object
 	 */	
-	public function load_core ( $class_name, $pass_REG = FALSE ) {
+	public function load_core ( $class_name, $pass_REG = FALSE, $autoinstantiate = TRUE ) {
 		// retreive instantiated class
-		return $this->_load( EE_CORE, 'EE_' , $class_name, 'core', $pass_REG );
+		return $this->_load( EE_CORE, 'EE_' , $class_name, 'core', $pass_REG, $autoinstantiate );
 	}
 
 
@@ -204,9 +224,9 @@ class EE_Registry {
 	 *	@param string $class_name - simple class name ie: attendee
 	 *	@return instantiated class object
 	 */
-	public function load_class ( $class_name, $pass_REG = FALSE ) {
+	public function load_class ( $class_name, $pass_REG = FALSE, $autoinstantiate = TRUE ) {
 		// retreive instantiated class
-		return $this->_load( EE_CLASSES, 'EE_' , $class_name, 'class', $pass_REG );
+		return $this->_load( EE_CLASSES, 'EE_' , $class_name, 'class', $pass_REG, $autoinstantiate );
 	}
 
 
@@ -217,9 +237,9 @@ class EE_Registry {
 	 *	@param string $class_name - simple class name ie: price
 	 *	@return instantiated class object
 	 */	
-	public function load_model ( $class_name, $pass_REG = FALSE ) {
+	public function load_model ( $class_name, $pass_REG = FALSE, $autoinstantiate = TRUE ) {
 		// retreive instantiated class
-		return $this->_load( EE_MODELS, 'EEM_' , $class_name, 'model', $pass_REG );
+		return $this->_load( EE_MODELS, 'EEM_' , $class_name, 'model', $pass_REG, $autoinstantiate );
 	}
 
 
@@ -232,9 +252,9 @@ class EE_Registry {
 	 *	@param string $class_name - simple class name ie: price
 	 *	@return instantiated class object
 	 */	
-	public function load_helper ( $class_name, $pass_REG = FALSE ) {
+	public function load_helper ( $class_name, $pass_REG = FALSE, $autoinstantiate = TRUE ) {
 		// retreive instantiated class
-		return $this->_load( EE_HELPERS, 'EE_', $class_name, 'helper', $pass_REG );
+		return $this->_load( EE_HELPERS, 'EE_', $class_name, 'helper', $pass_REG, $autoinstantiate );
 	}
 
 
@@ -248,12 +268,12 @@ class EE_Registry {
 	 *	@param string $type - file type - core? class? helper? model?
 	 *	@return instantiated class object
 	 */	
-	public function load_file ( $path_to_file, $class_name, $type = 'class', $pass_REG = FALSE ) {
+	public function load_file ( $path_to_file, $class_name, $type = 'class', $pass_REG = FALSE, $autoinstantiate = TRUE ) {
 		// set path to class file
 		$path_to_file = rtrim( $path_to_file, '/' ) . '/';
 		$type = trim( $type, '.' );
 		// retreive instantiated class
-		return $this->_load( $path_to_file, '', $class_name, $type  );
+		return $this->_load( $path_to_file, '', $class_name, $type, $pass_REG, $autoinstantiate );
 	}
 
 
@@ -270,7 +290,7 @@ class EE_Registry {
 	 *	@param boolean $pass_REG - whether to pass $this (EE_Registry) to the instantiated class
 	 *	@return instantiated class object
 	 */	
-	private function _load ( $file_path = FALSE, $class_prefix = 'EE_', $class_name = FALSE, $type = 'class', $pass_REG = FALSE ) {
+	private function _load ( $file_path = FALSE, $class_prefix = 'EE_', $class_name = FALSE, $type = 'class', $pass_REG = FALSE, $autoinstantiate = TRUE ) {
 		// make sure $class name is lowercase
 		//$class_name = strtoupper( trim( $class_prefix )) . ucwords( strtolower( trim( $class_name )));
 		$class_name = strtoupper( trim( $class_prefix )) . trim( $class_name );
@@ -318,8 +338,12 @@ class EE_Registry {
 		} catch ( EE_Error $e ) {
 			$e->get_error();
 		}
-
-			
+		
+		// if we just want to load the class file but not instantiate anything yet, then just return
+		if ( ! $autoinstantiate ) {
+			return TRUE;
+		}
+		
 		// don't give up! you gotta...
 		try {
 			
