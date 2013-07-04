@@ -25,7 +25,7 @@ class EE_Credit_Card_Validation_Strategy extends EE_Validation_Strategy_Base{
 	 */
 	private function verify_is_credit_card($card_number){
 		//Credit card: All major cards
-		$regex = '^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$';
+		$regex = '~^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$~';
 		if (preg_match($regex, $card_number) || empty($card_number)) {
 			return true;
 		}else{
