@@ -29,6 +29,34 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	}
 	
 	/**
+	 * After the form section is initially created, call this to sanitize the data in the submission
+	 * which relates to this form section, validate it, and set it as properties on the form.
+	 * @param array $req_data 
+	 */
+	public function receive_form_submission($req_data){
+		foreach($this->_subsections as $subsection){
+			$subsection->_sanitize($req_data);
+			$subsection->_validate();
+		}
+	}
+	/**
+	 * Checks if this form section itself is valid, and then checks its subsections
+	 * @return boolean
+	 */
+	public function is_valid() {
+		if( ! parent::is_valid()){
+			return false;
+		}
+		//ok so no errors general to this entire form section. so let's check the subsections
+		foreach($this->_subsections as $subsection){
+			if( ! $subsection->is_valid()){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
 	 * registers and enqueues the needed jquery
 	 * @return void
 	 */
@@ -75,7 +103,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	public function get_html(){
 		$content = "<div id='{$this->html_id()}' class='{$this->html_class()}' style='{$this->html_style()}'>";
 		foreach($this->_subsections as $subsection){
-			$content.=$subsection->get_html();
+			$content.= $subsection->get_html()."<br>";
 		}
 		$content.="</div>";
 		return $content;
@@ -125,8 +153,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	}
 	
 	/**
-	 * 
-	 * @param array $req_data
+	 * Sanitizes all the data and sets the sanitized value of each field
+	 * @param array $req_data like $_POST
 	 */
 	protected function _sanitize($req_data) {
 		foreach($this->_subsections as $subsection){
@@ -137,9 +165,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * 
 	 * @param type $req_data
 	 */
-	protected function _validate($req_data) {
+	protected function _validate() {
 		foreach($this->_subsections as $subsection){
-			$subsection->_validate($req_data);
+			$subsection->_validate();
 		}
 	}
 }

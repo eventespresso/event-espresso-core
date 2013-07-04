@@ -13,8 +13,14 @@ abstract class EE_Sanitization_Strategy_Base extends EE_Form_Input_Strategy_Base
 	 * @return string
 	 */
 	public function sanitize($raw_req_data){
-		$raw_req_data_for_this_field = isset($raw_req_data[$this->_input->html_name()]) ? $raw_req_data[$this->_input->html_name()] : null;
-		return $this->_sanitize($raw_req_data_for_this_field);
+//		$raw_req_data_for_this_field = isset($raw_req_data[$this->_input->html_name()]) ? $raw_req_data[$this->_input->html_name()] : null;
+//		
+//		echo "input name:".$this->_input->html_name();
+//		echo 'echodump of $raw_req_data';
+//		var_dump($raw_req_data);
+//		echo 'echodump of $raw_req_data_for_this_field';
+//		var_dump($raw_req_data_for_this_field);
+		return $this->_sanitize($this->_input->find_form_data_for_this_section($raw_req_data));
 	}
 	/**
 	 * implement this function to perform sanitization on the field.
@@ -26,7 +32,7 @@ abstract class EE_Sanitization_Strategy_Base extends EE_Form_Input_Strategy_Base
 	/**
 	 * uses the sanitized value on the field to get the normalized value, and return it.
 	 * Eg, if the input is meant to hold integers, and the field's sanitized value is '123', this should return 123.
-	 * If, however, the field's sanitized value is 'jabberwacky', this function should return 0, and also add a validation error
+	 * If, however, the field's sanitized value is 'jabberwacky', this function should throw a validation error
 	 * @return mixed
 	 */
 	abstract function normalize();

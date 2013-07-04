@@ -110,6 +110,11 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	function _construct_finalize($parent_form_section, $name) {
 		parent::_construct_finalize($parent_form_section, $name);
 		$this->_set_default_html_name_if_empty();
+		if( ! $this->_html_label ){
+			if( ! $this->_html_label_text){
+				$this->_html_label_text = $name;
+			}
+		}
 	}
 	
 	 /**
@@ -162,11 +167,40 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	public function get_html(){
 		return $this->_get_display_strategy()->display();	
 	}
-	public function _validate($req_data) {
-		return true;
+	/**
+	 * Validates the input's sanitized value (assumes _sanitize() has already been called)
+	 * and returns whether or not the form input's submitted value is value
+	 * @return boolean
+	 */
+	protected function _validate() {
+		$is_valid = true;
+		foreach($this->_validation_strategies as $validation_strategy){
+			$valid = $validation_strategy->validate();
+			if( ! $valid){
+				$is_valid = false;
+			}
+		}
+		return $is_valid;
 	}
-	public function _sanitize($req_data) {
-		return true;
+	
+	
+	/**
+	 * Picks out the form value that relates to this form input,
+	 * and stores it as the sanitized value on the form input, and sets the normalized value.
+	 * Returns whether or not any validation errors occurred
+	 * @param array $req_data like $_POST
+	 * @return boolean whether or not there was an error
+	 */
+	protected function _sanitize($req_data) {
+		try{
+			$this->_sanitized_value = $this->_sanitization_strategy->sanitize($req_data);
+			$this->_normalized_value = $this->_sanitization_strategy->normalize();
+		}catch(EE_Validation_Error $e){
+			$this->add_validation_error(
+					sprintf(__("Could not normalize data into proper data type. Submitted form data with name %s had value %s, which is not allowed for sanitization strategies of type %s", "event_espresso"),$this->html_name(),$req_data,get_class($this->_sanitization_strategy)),
+					'SANITIZATION_ERROR', 
+					$e);
+		}
 	}
 	
 	public function html_name(){

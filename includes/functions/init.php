@@ -138,7 +138,6 @@ function espresso_register_jquery_validate() {
 	// use CDN URL or local fallback ?
 	$jquery_validate_url = $test_url !== FALSE ? $jquery_validate_url : EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.validate.min.js';
 	// register jQuery Validate
-	echo "registering jquery validate with url: $jquery_validate_url";
 	wp_register_script('jquery-validate', $jquery_validate_url, array('jquery'), '1.11.1', TRUE);		
 }
 

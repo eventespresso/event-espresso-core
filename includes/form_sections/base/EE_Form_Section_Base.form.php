@@ -81,6 +81,21 @@ abstract class EE_Form_Section_Base{
 	public function get_validation_errors(){
 		return $this->_validation_errors;
 	}
+	/**
+	 * returns a ul html element with all the validation errors in it.
+	 * If we want this to be customizable, we may decide to create a strategy for displaying it.
+	 * @return string
+	 */
+	public function get_validation_error_string(){
+		$validation_error_messages = array();
+		if($this->get_validation_errors()){
+			foreach($this->get_validation_errors() as $validation_error){
+				$validation_error_messages[] =$validation_error->getMessage();
+			}
+		}
+		
+		return implode(", ",$validation_error_messages);
+	}
 	
 	/**
 	 * Usually $_POST or $_GET data submitted. Extracts the request data which is
@@ -96,13 +111,28 @@ abstract class EE_Form_Section_Base{
 	
 	
 	/**
-	 * Performs validation on this form section (and subsections)
+	 * Performs validation on this form section (and subsections). Should be called after _sanitize()
 	 * @param array $req_data
+	 * @return boolean of whether or not the form section is valid
 	 */
-	abstract protected function _validate($req_data);
+	abstract protected function _validate();
+	
+	/**
+	 * Checks if this field has any validation errors
+	 * @return boolean
+	 */
+	public function is_valid() {
+		if(count($this->_validation_errors)){
+			return false;
+		}else{
+			return true;
+		}
+	}
 	
 	/**
 	 * Sanitizes input for this form section
+	 * @param $req_data is the full request data like $_POST
+	 * @return boolean of whether a sanitization error occurred
 	 */
 	abstract protected function _sanitize($req_data);
 	
@@ -111,20 +141,6 @@ abstract class EE_Form_Section_Base{
 	 * @return string
 	 */
 	abstract protected function get_html();
-	
-	/**
-	 * Stores whether or not this form section (and possibly subsections) is valid.
-	 * @var boolean
-	 */
-	protected $_is_valid;
-	
-	/**
-	 * Returns whether or not the form section (and subsections) passed validation or not
-	 * @param type $req_data
-	 */
-	public function is_valid(){
-		return $this->_is_valid;
-	}
 	
 	public function html_id(){
 		return $this->_html_id;
@@ -151,7 +167,7 @@ abstract class EE_Form_Section_Base{
 	 * @return void
 	 */
 	function add_validation_error($message, $error_code = null,$previous_exception = null){
-		$validation_error = new EE_Validation_Error($this, $message, $code, $previous_exception);
+		$validation_error = new EE_Validation_Error($this, $message, $error_code, $previous_exception);
 		$this->_validation_errors[] = $validation_error;
 	}
 	
@@ -181,4 +197,19 @@ abstract class EE_Form_Section_Base{
 	 * @return string
 	 */
 	abstract function get_section_validation_js();
+	
+	/**
+	 * using this section's name and its parents, finds the value of the form data that corresponds to it.
+	 * For example, if this form section's name is my_form[subform][form_input_1], then it's value should be in $_REQUEST
+	 * at $_REQUEST['my_form']['subform']['form_input_1']. This function finds its value in the form.
+	 */
+	public function find_form_data_for_this_section($req_data){
+		if( $this->_parent_section ){
+			$array_of_parent = $this->_parent_section->find_form_data_for_this_section($req_data);
+		}else{
+			$array_of_parent = $req_data;
+		}
+		return $array_of_parent[$this->name()];
+	}
+	
 }
