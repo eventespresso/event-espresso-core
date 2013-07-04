@@ -67,7 +67,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$this->_page_config['import_events']['metaboxes'] = $this->_default_espresso_metaboxes;
 		$this->_page_config['create_event']['metaboxes'][] = '_premium_event_editor_meta_boxes';
 		$this->_page_config['edit']['metaboxes'][] = '_premium_event_editor_meta_boxes';
-		$this->_page_config['default_event_settings']['metaboxes'] = array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box') );
 
 		//add filters and actions
 		//modifying _views

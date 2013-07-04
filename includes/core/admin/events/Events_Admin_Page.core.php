@@ -210,7 +210,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 5,
 					'persistent' => false
 				),
-				'metaboxes' => array('_publish_post_box', '_register_event_editor_meta_boxes'),
+				'metaboxes' => array('_register_event_editor_meta_boxes'),
 				'help_tabs' => array(
 					'event_date_info' => array(
 						'title' => __('Event Date', 'event_espresso'),
@@ -229,7 +229,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'persistent' => false,
 					'url' => isset($this->_req_data['id']) ? add_query_arg(array('id' => $this->_req_data['id']), $this->_current_page_view_url) : $this->_admin_base_url
 				),
-				'metaboxes' => array('_publish_post_box', '_register_event_editor_meta_boxes'),
+				'metaboxes' => array('_register_event_editor_meta_boxes'),
 				'help_tabs' => array(
 					'event_date_info' => array(
 						'title' => __('Event Date', 'event_espresso'),
@@ -267,7 +267,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'label' => __('Add Category', 'event_espresso'),
 					'order' => 15,
 					'persistent' => false),
-				'metaboxes' => array('_publish_post_box'),
 				'help_tabs' => array(
 					'unique_id_help_tab' => array(
 						'title' => __('Unique ID', 'event_espresso'),
@@ -282,7 +281,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['EVT_CAT_ID']) ? add_query_arg(array('EVT_CAT_ID' => $this->_req_data['EVT_CAT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
-				'metaboxes' => array('_publish_post_box'),
 				'help_tabs' => array(
 					'unique_id_help_tab' => array(
 						'title' => __('Unique ID', 'event_espresso'),
