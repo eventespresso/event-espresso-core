@@ -4,6 +4,12 @@ class EE_Sample_Form extends EE_Form_Section_Proper{
 		$this->_subsections = array(
 			'name'=>new EE_Text_Input(array('required'=>true)),
 			'email'=>new EE_Email_Input(array('required'=>true)),
+			'shirt_size'=>new EE_Select_Input(array('s'=>  __("Small", "event_espresso"),'m'=>  __("Medium", "event_espresso"),'l'=>  __("Large", "event_espresso"))),
+			'month_normal'=>new EE_Month_Input(),
+			'month_leading_zero'=>new EE_Month_Input(true),
+			'year_2'=>new EE_Year_Input(false, 1, 1),
+			'year_4'=>new EE_Year_Input(),
+			'yes_no'=>new EE_Yes_No_Input(array('html_label_text'=>  __("Yes or No", "event_espresso"))),
 		);
 		parent::__construct();
 	}

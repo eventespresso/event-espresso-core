@@ -112,7 +112,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 		$this->_set_default_html_name_if_empty();
 		if( ! $this->_html_label ){
 			if( ! $this->_html_label_text){
-				$this->_html_label_text = $name;
+				$this->_html_label_text = ucwords( str_replace("_"," ",$name));
 			}
 		}
 	}

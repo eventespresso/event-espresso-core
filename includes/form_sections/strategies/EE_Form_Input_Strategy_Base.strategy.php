@@ -9,6 +9,10 @@ abstract class EE_Form_Input_Strategy_Base{
 	 * @var EE_Form_Input_Base
 	 */
 	protected $_input;
+	
+	function __construct(){
+		
+	}
 
 	/**
 	 * The form input on which this strategy is to perform

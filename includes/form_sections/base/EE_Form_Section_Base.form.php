@@ -209,7 +209,7 @@ abstract class EE_Form_Section_Base{
 		}else{
 			$array_of_parent = $req_data;
 		}
-		return $array_of_parent[$this->name()];
+		return isset($array_of_parent[$this->name()]) ? $array_of_parent[$this->name()] : null;
 	}
 	
 }

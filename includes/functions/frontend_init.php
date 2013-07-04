@@ -294,7 +294,7 @@ function return_espresso_content( $content ) {
 //			echo "ERRORS OCCURRED";
 //		}
 //	}
-//	echo " form <form method='post'>";
+//	echo "<form method='post'>";
 //	echo $form->get_html_and_js();
 //	echo "<input type='submit'></form>";
 	return $espresso_content;

@@ -120,7 +120,10 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 		$js.= "rules : {";
 		$jquery_validation_rules = array();
 		foreach($this->_subsections as $subsection){
-			$jquery_validation_rules[] = $subsection->get_jquery_validation_rules();
+			$subsection_validation_rules = $subsection->get_jquery_validation_rules();
+			if( $subsection_validation_rules ){
+				$jquery_validation_rules[]=$subsection_validation_rules;
+			}
 		}
 		$js.=implode(", ",$jquery_validation_rules);
 		$js.="}}); });";
