@@ -24,7 +24,7 @@ class EE_Email_Validation_Strategy extends EE_Validation_Strategy_Base{
 	*	Provide email address (raw input)
 	*	@return boolean of whether the email is valid or not
 	*/
-protected function _validate_email($email)
+private function _validate_email($email)
 {
    $isValid = true;
    $atIndex = strrpos($email, "@");

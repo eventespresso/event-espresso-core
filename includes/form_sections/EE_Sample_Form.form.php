@@ -10,6 +10,7 @@ class EE_Sample_Form extends EE_Form_Section_Proper{
 			'year_2'=>new EE_Year_Input(false, 1, 1),
 			'year_4'=>new EE_Year_Input(),
 			'yes_no'=>new EE_Yes_No_Input(array('html_label_text'=>  __("Yes or No", "event_espresso"))),
+			'credit_Card'=>new EE_Credit_Card_Input()
 		);
 		parent::__construct();
 	}
