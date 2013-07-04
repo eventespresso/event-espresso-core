@@ -15,15 +15,20 @@
  */
 get_header();
 ?>
-	<div id="espresso-events-list-wrap-dv" >
+	<div id="espresso-events-list-wrap-dv"><!--style="height: 20000px;"-->
 		<div id="espresso-events-list-dv" class="hidden" role="main">
 				
 			<h1  id="event-list-h1"><?php _e( 'Upcoming Events', 'event_espresso' ); ?></h1>
 
 		<?php if ( have_posts() ) { ?>
-			<?php while ( have_posts() ) { the_post(); ?>
+			<?php while ( have_posts() ) { the_post();?>
 			
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+
+				<div class="event-datetimes">
+					<h4><?php the_event_date(); ?></h4>
+				</div>				
+				<!-- .event-datetimes -->
 
 			<?php
 			//echo '<h3>$post</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $post, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';		
@@ -44,16 +49,15 @@ get_header();
 			?>
 			<div class="espresso-event-wrapper-dv<?php echo $wrap_class;?>">
 				<header class="event-header">
-					<p><?php the_terms( $post->ID, 'espresso_event_categories' );// the_terms( $post->ID, 'category' ); /*echo date( 'D F j Y, h:i a', strtotime( $post->post_date ));*/ ?></p>
+					<p><?php the_terms( $post->ID, 'espresso_event_categories' );// the_terms( $post->ID, 'category' );  ?></p>
 					<h1 class="event-title"><?php the_title(); ?></h1>
 				</header>
-				<!-- .entry-header -->
+				<!-- .event-header -->
 				<div class="event-content">
 					<?php the_excerpt(); ?> 
 					<?php wp_link_pages( array( 'before' => '<div class="page-links">' . __( 'Pages:', 'event_espresso' ), 'after' => '</div>' ) ); ?>
-				</div>
-				
-				<!-- .entry-content -->
+				</div>				
+				<!-- .event-content -->
 				<footer class="event-meta">
 					<a class="ee-register-button-lnk button" href="<?php the_permalink( $post->ID ); ?>" title=""><?php _e( 'Register Now', 'event_espresso' ); ?></a>
 					<?php edit_post_link( __( 'edit this event', 'event_espresso' ), '<p class="edit-event-lnk small-txt clear">', '</p>' ); ?>
@@ -71,14 +75,14 @@ get_header();
 
 			<article id="post-0" class="post no-results not-found">
 
-				<header class="entry-header">
-					<h1 class="entry-title"><?php _e( 'There are no upcoming Events', 'event_espresso' ); ?></h1>
+				<header class="event-header">
+					<h1 class="event-title"><?php _e( 'There are no upcoming Events', 'event_espresso' ); ?></h1>
 				</header>
 
-				<div class="entry-content">
+				<div class="event-content">
 					<p><?php _e( 'Perhaps searching will help find a related event.', 'event_espresso' ); ?></p>
 					<?php get_search_form(); ?>
-				</div><!-- .entry-content -->
+				</div><!-- .event-content -->
 
 			</article><!-- #post-0 -->
 
@@ -88,10 +92,10 @@ get_header();
 		</div><!-- #content -->
 
 		<?php 
-		printr( $wp_query, '$wp_query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $wp_query, '$wp_query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		 ?>
 
-		<div class="ee-pagination-dv"><?php  echo paginate_links( $pagination_args ); ?></div>
+		<div class="ee-pagination-dv"><?php  //echo paginate_links( $pagination_args ); ?></div>
 			
 	</div><!-- #primary -->
 
