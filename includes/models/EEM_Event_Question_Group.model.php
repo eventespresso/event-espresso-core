@@ -5,6 +5,8 @@
  * You'll need to use each's EE_Has_Many_Relation relation to this model. Eg, when querying for question groups which apply to primary attendees,
  * you'd do a query like EEM_Question_Group::instance()->get_all(array(array('Event_Question_Group.EQG_primary'=>1)));
  */
+require_once( EE_CLASSES . 'EE_Event_Question_Group.class.php');
+
 class EEM_Event_Question_Group extends EEM_Base{
 	// private instance of the Attendee object
 	private static $_instance = NULL;

@@ -22,6 +22,8 @@
  * ------------------------------------------------------------------------
  */
 require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
+require_once ( EE_CLASSES . 'EE_Price_Type.class.php' );
+
 
 class EEM_Price_Type extends EEM_Soft_Delete_Base {
 
