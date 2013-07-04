@@ -5,6 +5,8 @@ abstract class EE_Validation_Strategy_Base extends EE_Form_Input_Strategy_Base{
 	/**
 	 * Performs validation on the request data that corresponds to this field.
 	 * If validation fails, should call the $this->_input->add_validation_error, and return false.
+	 * Note: most validate() functions should allow $this->_input->sanitized_value() to be empty, 
+	 * as its the job of the EE_Required_Validation_STrategy to ensure that the field isn't empty.
 	 * @return boolean
 	 */
 	abstract function validate();

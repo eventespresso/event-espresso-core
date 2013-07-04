@@ -285,18 +285,18 @@ function event_espresso_run( $wp ) {
 function return_espresso_content( $content ) {
 	global $espresso_content;
 	
-//	$form = new EE_Sample_Form();
-//	if($_SERVER['REQUEST_METHOD'] == 'POST'){
-//		$form->receive_form_submission($_POST);
-//		if($form->is_valid()){
-//			echo "VALID FORM SUBMISSION!";
-//		}else{
-//			echo "ERRORS OCCURRED";
-//		}
-//	}
-//	echo "<form method='post'>";
-//	echo $form->get_html_and_js();
-//	echo "<input type='submit'></form>";
+	$form = new EE_Sample_Form();
+	if($_SERVER['REQUEST_METHOD'] == 'POST'){
+		$form->receive_form_submission($_POST);
+		if($form->is_valid()){
+			echo "VALID FORM SUBMISSION!";
+		}else{
+			echo "ERRORS OCCURRED";
+		}
+	}
+	echo "<form method='post'>";
+	echo $form->get_html_and_js();
+	echo "<input type='submit'></form>";
 	return $espresso_content;
 }
 

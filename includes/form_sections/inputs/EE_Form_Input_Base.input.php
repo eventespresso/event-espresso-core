@@ -89,8 +89,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 		
 		
 		$this->_display_strategy->_construct_finalize($this);
-		foreach($this->_validation_strategies as $validation_strategy){
-			$validation_strategy->_construct_finalize($this);
+		if($this->_validation_strategies){
+			foreach($this->_validation_strategies as $validation_strategy){
+				$validation_strategy->_construct_finalize($this);
+			}
 		}
 		$this->_sanitization_strategy->_construct_finalize($this);
 		
@@ -150,11 +152,12 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	}
 	
 	protected function _get_validation_strategies(){
-		if( ! $this->_validation_strategies){
-			throw new EE_Error(sprintf(__("Cannot get validation strategies for form input with name %s and id %s, because it has not been set in the constructor", "event_espresso"),$this->html_name(),$this->html_id()));
-		}else{
+		if(is_array($this->_validation_strategies)){
 			return $this->_validation_strategies;
+		}else{
+			return array();
 		}
+		
 	}
 	/**
 	 * Adds this strategy to the field so it will be used in both JS validation and server-side validation

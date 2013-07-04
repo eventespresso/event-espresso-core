@@ -127,6 +127,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 		}
 		$js.=implode(", ",$jquery_validation_rules);
 		$js.="}}); });";
+		$js.=$this->get_section_validation_js();
 		return $js;
 	}
 	/**

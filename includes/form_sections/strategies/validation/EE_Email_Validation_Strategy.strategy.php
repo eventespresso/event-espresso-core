@@ -6,7 +6,7 @@ class EE_Email_Validation_Strategy extends EE_Validation_Strategy_Base{
 	 * @return boolean
 	 */
 	function validate() {
-		if( ! $this->_input->sanitized_value() || ! $this->_validate_email($this->_input->sanitized_value())){
+		if( $this->_input->sanitized_value() && ! $this->_validate_email($this->_input->sanitized_value())){
 			$this->_input->add_validation_error(__("Please enter a valid email address", "event_espresso"), 'required');
 			return false;
 		}else{
