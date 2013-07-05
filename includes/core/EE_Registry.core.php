@@ -35,35 +35,35 @@ class EE_Registry {
 
    /**
      * array for storing library classes in
-     * @private LIB
+     * @public LIB
      */
-	private $_LIB = array();
+	public $LIB = array();
 
    /**
      * 	EE_Session Object
 	 * 	@access 	public
-	 *	@var 	object	
+	 *	@var 	EE_Session	 $EE_Session
      */
 	public $EE_Session = NULL;
 
    /**
      * 	EE_Config Object
 	 * 	@access 	public
-	 *	@var 	object	
+	 *	@var 	EE_Config		$CFG
      */
 	public $CFG = NULL;
 
 	/**
 	 * 	EE_Request_Handler Object
 	 * 	@access 	public
-	 *	@var 	object	
+	 *	@var 	EE_Request_Handler	$REQ
 	 */
 	public $REQ = NULL;
 
    /**
      * 	EE_Data_Mapper Object
 	 * 	@access 	public
-	 *	@var 	object	
+	 *	@var 	EE_Data_Mapper	$DMP
      */
 	public $DMP = NULL;
 
@@ -72,7 +72,7 @@ class EE_Registry {
 	 * 	@access 	public
 	 *	@var 	array	$CPTs
 	 */
-	public $CPTs = array();
+//	public $CPTs = array();
 
 	/**
 	 * 	$shortcodes
@@ -116,13 +116,8 @@ class EE_Registry {
 	 *@return void
 	 */	
 	private function __construct() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		add_action( 'init', array( $this, 'init' ), 1 );
-		if ( is_admin() ) {
-			add_action( 'init', array( $this, 'wp_loaded' ), 4 );
-		} else {
-			add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 1 );
-		}
+		
 		
 	}
 
@@ -150,61 +145,12 @@ class EE_Registry {
 	 *  @return 	void
 	 */
 	public function init() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		// load EE_Config
-		$this->_load_configuration();
-		/*EE_Data_Mapper $data_mapper*/
 		// Get current page protocol
 		$protocol = isset( $_SERVER['HTTPS'] ) ? 'https://' : 'http://';
 		// Output admin-ajax.php URL with same protocol as current page
 		self::$i18n_js_strings['ajax_url'] = admin_url( 'admin-ajax.php', $protocol );	
 	}
 
-
-
-	/**
-	 *	_load_configuration
-	 * 
-	 *@access private
-	 *@return void
-	 */
-	private function _load_configuration () {
-		// load org options
-		add_filter( 'FHEE_load_org_options', '__return_true' );
-		// does the EE_Config file exist ?
-		if ( is_readable( EE_CORE . 'EE_Config.core.php' )) {
-			require_once( EE_CORE . 'EE_Config.core.php' );
-			$this->CFG = EE_Config::instance();
-		} else {
-			$msg = __( 'An error has occured. The EE_Config.core.php file could not be loaded.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-		}
-	}
-
-
-
-	/**
-	 *	wp_loaded
-	 * 
-	 *	@return void
-	 */
-	public function wp_loaded() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		// load EE_Request_Handler
-		$this->_get_request();
-	}
-
-
-
-	/**
-	 *	_get_request
-	 * 
-	 *	@return void
-	 */
-	private function _get_request() {
-		require_once( EE_CORE . 'EE_Request_Handler.core.php' );
-		$this->REQ = new EE_Request_Handler( $this->CFG->post_shortcodes );	
-	}
 
 
 
@@ -301,11 +247,15 @@ class EE_Registry {
 		$class_name = strtoupper( trim( $class_prefix )) . trim( $class_name );
 		$file_path = $file_path ? $file_path : EE_CLASSES;
 		$file_path = rtrim( $file_path, '/' ) . '/' . $class_name . '.' . trim( $type, '.' ) . '.php';
-		// check if class has already been loaded, and return it if it has been	
-		if ( isset ( $this->{$class_name} )) {
+		// check if class has already been loaded, and return it if it has been
+		if ( $class_name == 'EE_Request_Handler' && ! is_null( $this->REQ )) {
+			return $this->CFG;
+		} else if ( $class_name == 'EE_Config' && ! is_null( $this->CFG )) {
+			return $this->CFG;
+		} else if ( isset ( $this->{$class_name} )) {
 			return $this->{$class_name};
-		} else if ( isset ( $this->_LIB[ $class_name ] )) {
-			return $this->_LIB[ $class_name ];
+		} else if ( isset ( $this->LIB[ $class_name ] )) {
+			return $this->LIB[ $class_name ];
 		}
 		
 //		echo '<h4>$class_name : ' . $class_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
@@ -368,10 +318,14 @@ class EE_Registry {
 		}
 			
 		// return newly instantiated class
-		if ( property_exists( $this, $class_name )) {
+		if ( $class_name == 'EE_Request_Handler' ) {
+			$this->REQ = $class_obj;
+		} else if ( $class_name == 'EE_Config' ) {
+			$this->CFG = $class_obj;
+		} else if ( property_exists( $this, $class_name )) {
 			$this->{$class_name} = $class_obj;
 		} else {
-			$this->_LIB[ $class_name ] = $class_obj;
+			$this->LIB[ $class_name ] = $class_obj;
 		}
 
 		return $class_obj;
