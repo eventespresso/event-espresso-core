@@ -313,8 +313,8 @@ class EE_Registry {
 				$class_obj = $reflector->isInstantiable() ? $reflector->newInstance() : call_user_func( array( $class_name, 'instance' ));
 			}
 
-		} catch ( Exception $e ) {
-			$e->getMessage();
+		} catch ( EE_Error $e ) {
+			$e->get_error();
 		}
 			
 		// return newly instantiated class
