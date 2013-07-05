@@ -59,7 +59,6 @@ class EE_Request_Handler {
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		// grab request vars
 		$this->_params = $_REQUEST;
-		$this->test_for_espresso_page();
 		// get current post name from URL
 		$this->set( 'post_name', $this->_get_current_post_name() );
 	}
