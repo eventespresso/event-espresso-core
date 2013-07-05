@@ -24,7 +24,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Registry {
+final class EE_Registry {
 
    /**
      * 	EE_Registry Object

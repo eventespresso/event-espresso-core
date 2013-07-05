@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Front_Controller {
+final class EE_Front_Controller {
 
 	/**
 	 * 	path to main espresso.php file
