@@ -83,31 +83,6 @@ class EE_Datetime extends EE_Base_Class{
 	protected $_DTT_EVT_end;
 	
 	
-	
-	
-	
-	
-    /**
-    *	REG Start Timestamp
-	* 
-	*	date / time
-	*  
-	*	@access	protected
-    *	@var int	
-    */
-	protected $_DTT_REG_start;
-	
-	
-	
-    /**
-    *	REG End Timestamp
-	* 
-	*	date / time
-	*  
-	*	@access	protected
-    *	@var int	
-    */
-	protected $_DTT_REG_end;
 		
 	
 	
