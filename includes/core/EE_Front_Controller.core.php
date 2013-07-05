@@ -140,6 +140,7 @@ class EE_Front_Controller {
 	 */
 	public function get_request() {
 		$this->EE->load_core( 'Request_Handler' );	
+		$this->EE->REQ->test_for_espresso_page();
 	}
 
 
