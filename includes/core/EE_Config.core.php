@@ -97,8 +97,8 @@ class EE_Config {
 		$config = get_user_meta( $current_user_id, 'events_organization_settings', TRUE );
 		// do settings for this user exist ?
 		if ( empty( $config )) {
-			require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/activation.php');
-			espresso_org_option_initialization();		
+			require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
+			EEH_Activation::org_option_initialization();		
 		} else {
 			// list of critical settings
 			$critical_settings = array( 
