@@ -33,7 +33,7 @@ class EE_System {
 
 	/**
 	 * 	EE_Registry Object
-	 *	@var 	object	
+	 *	@var 	EE_Registry	$EE	
 	 * 	@access 	protected
 	 */
 	protected $EE = NULL;
@@ -75,6 +75,7 @@ class EE_System {
 		$this->_load_logging();
 		// handy dandy object for holding shtuff
 		$this->_load_registry();
+		// hookpoints
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
 		add_action( 'init', array( $this, 'init' ), 3 );
 		add_filter('query_vars', array( $this, 'add_query_vars' ), 5 );
@@ -295,14 +296,11 @@ class EE_System {
 	 *  @return 	void
 	 */
 	public function init() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-
-		//Globals used throughout the site
-//		global $is_UI_request, $espresso_content;
-//		// is this request for UI or backend 
-//		$is_UI_request = ( ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' ) ? TRUE : FALSE;
+		// load EE_Config
+		$this->EE->load_core( 'Config' );
 		// register Custom Post Types
 		$this->EE->load_core( 'Register_CPTs' );
+		// load this for now until something better can be done with it
 		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/main.php' );
 
 		// session loading is turned OFF by default, but prior to the init hook, can be turned back on again via: add_filter( 'FHEE_load_EE_Session', '__return_true' );

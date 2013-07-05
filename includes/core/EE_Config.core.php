@@ -65,12 +65,8 @@ class EE_Config {
 	 *  @return 	void
 	 */
 	private function __construct() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		// org options loading is turned OFF by default, but prior to the plugins_loaded hook, can be turned back on again via:  add_filter( 'FHEE_load_org_options', '__return_true' );
-		if ( apply_filters( 'FHEE_load_org_options', FALSE )) {
-			// get EE site settings
-			$this->_load_config();
-		}
+		// get EE site settings
+		$this->_load_config();
 	}
 
 
