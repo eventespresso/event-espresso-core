@@ -58,8 +58,8 @@ class EE_Request_Handler {
 	public function __construct() {
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		// grab request vars
-		$this->_params = $_REQUEST;		
-		$this->_test_for_espresso_page();
+		$this->_params = $_REQUEST;
+		$this->test_for_espresso_page();
 		// get current post name from URL
 		$this->set( 'post_name', $this->_get_current_post_name() );
 	}
@@ -166,13 +166,12 @@ class EE_Request_Handler {
 
 
 	/**
-	 * 		_test_for_espresso_page
+	 * 		test_for_espresso_page
 	 *
 	 * 		@access public
 	 * 		@return mixed
 	 */
-	public function _test_for_espresso_page( /*$post_shortcodes = array()*/ ) {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+	public function test_for_espresso_page() {
 		$this->_is_espresso_page = FALSE;
 		// ensure _uri_segment_array is set
 		if ( empty( $this->_uri_segment_array )) {
