@@ -312,23 +312,23 @@ class EE_Registry {
 				// instantiate the class and add to the LIB array for tracking
 				$class_obj = $reflector->isInstantiable() ? $reflector->newInstance() : call_user_func( array( $class_name, 'instance' ));
 			}
+				
+			// return newly instantiated class
+			if ( $class_name == 'EE_Request_Handler' ) {
+				$this->REQ = $class_obj;
+			} else if ( $class_name == 'EE_Config' ) {
+				$this->CFG = $class_obj;
+			} else if ( property_exists( $this, $class_name )) {
+				$this->{$class_name} = $class_obj;
+			} else {
+				$this->LIB[ $class_name ] = $class_obj;
+			}
+
+			return $class_obj;
 
 		} catch ( Exception $e ) {
 			$e->getMessage();
 		}
-			
-		// return newly instantiated class
-		if ( $class_name == 'EE_Request_Handler' ) {
-			$this->REQ = $class_obj;
-		} else if ( $class_name == 'EE_Config' ) {
-			$this->CFG = $class_obj;
-		} else if ( property_exists( $this, $class_name )) {
-			$this->{$class_name} = $class_obj;
-		} else {
-			$this->LIB[ $class_name ] = $class_obj;
-		}
-
-		return $class_obj;
 		
 	}
 
