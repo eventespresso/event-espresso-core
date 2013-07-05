@@ -94,7 +94,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		
 		wp_enqueue_script('event_editor_js');
-		global $eei18n_js_strings;
 		$new_strings = array(
 			'image_confirm' => __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso'),
 			'event_starts_on' => __('Event Starts on', 'event_espresso'),
@@ -110,10 +109,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			'trash_img_alt' => __('trash', 'event_espresso')
 			);
 
-		$eei18n_js_strings = array_merge( $eei18n_js_strings, $new_strings);
+		EE_Registry::$i18n_js_strings = array_merge( EE_Registry::$i18n_js_strings, $new_strings);
 
 		wp_register_script('event_datetime_js', EVENTS_CAF_ASSETS_URL . 'js/ee_events_datetime.js', array('event_editor_js'), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_localize_script( 'event_datetime_js', 'eei18n', $eei18n_js_strings );
+		wp_localize_script( 'event_datetime_js', 'eei18n', EE_Registry::$i18n_js_strings );
 		wp_enqueue_script('event_datetime_js');
 	}
 

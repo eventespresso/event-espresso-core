@@ -708,7 +708,6 @@ class EE_Admin {
 				$this->EE->CFG->update_post_shortcodes();
 			}			
 		}
-		
 	}
 
 
