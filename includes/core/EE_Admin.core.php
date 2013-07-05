@@ -132,7 +132,7 @@ class EE_Admin {
 	private function _load_system_files() {
 		if ( is_readable( EE_CORE . 'EE_System.core.php' )) {
 			require_once( EE_CORE . 'EE_System.core.php' );
-			$this->EE = EE_System::instance()->get_registry();
+			$this->EE = EE_Registry::instance();
 		} else {
 			wp_die( __( 'An error has occured. The EE_System files could not be loaded.', 'event_espresso' ));
 		}
@@ -708,8 +708,6 @@ class EE_Admin {
 				$this->EE->CFG->update_post_shortcodes();
 			}			
 		}
-		
-		return $data;
 		
 	}
 
