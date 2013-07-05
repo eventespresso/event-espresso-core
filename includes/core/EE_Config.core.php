@@ -32,6 +32,13 @@ class EE_Config {
 	private static $_instance = NULL;
 
 
+	/**
+	 * holds the user_id for the current user
+	 * @var int
+	 */
+	public $wp_user;
+
+
 //	public $events_page = 'events';
 //	public $event_page = 'event';
 
@@ -90,9 +97,9 @@ class EE_Config {
 	private function _load_config() {
 
 		$this->post_shortcodes = array();
-
 		$current_user_id = get_current_user_id();
-		$current_user_id = $current_user_id ? $current_user_id : 1;		
+		$current_user_id = $current_user_id ? $current_user_id : 1;
+		$this->wp_user = $current_user_id;	
 		// grab org options based on current admin user
 		$config = get_user_meta( $current_user_id, 'events_organization_settings', TRUE );
 		// do settings for this user exist ?
