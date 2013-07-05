@@ -250,7 +250,7 @@ class EE_Datetime extends EE_Base_Class{
 		$field->set_timezone( $this->_timezone );
 		$attribute_field_name = $this->_get_private_attribute_name($field_name);
 		$this->$attribute_field_name = $field->prepare_for_set_with_new_date($date, $this->$attribute_field_name );
-		$this->_clear_cached_property( $attrivute_field_name );
+		$this->_clear_cached_property( $attribute_field_name );
 	}
 
 
