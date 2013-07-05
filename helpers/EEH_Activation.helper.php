@@ -593,7 +593,6 @@ class EEH_Activation {
 		$sql = "
 			EVTM_ID INT NOT NULL AUTO_INCREMENT,
 			EVT_ID int(11) unsigned NOT NULL,
-			EVT_is_active TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 ,
 			EVT_display_desc TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 ,
 			EVT_display_reg_form TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 ,
 			EVT_visible_on datetime NOT NULL default '0000-00-00 00:00:00',

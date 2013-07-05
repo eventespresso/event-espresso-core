@@ -112,11 +112,6 @@ class EE_Event extends EE_CPT_Base{
 	 */
 	protected $_EVT_order;
 	/**
-	 * flag indicating even tis active
-	 * @var boolean
-	 */
-	protected $_EVT_is_active;
-	/**
 	 * whether or not to display the event's description
 	 * @var boolean
 	 */
@@ -277,10 +272,6 @@ class EE_Event extends EE_CPT_Base{
 		return $this->get('EVT_external_URL');
 	}
 	
-	//deactivating because I think its extreaneous (-DRE)
-	//function is_active(){
-		//return $this->get('EVT_is_active');
-	//}
 	function member_only(){
 		return $this->get('EVT_member_only');
 	}
@@ -344,9 +335,6 @@ class EE_Event extends EE_CPT_Base{
 	}
 	function set_external_url($external_url) {
 		return $this->set('EVT_external_url', $external_url);
-	}
-	function set_is_active($is_active) {
-		return $this->set('EVT_is_active', $is_active);
 	}
 	function set_member_only($member_only) {
 		return $this->set('EVT_member_only', $member_only);
