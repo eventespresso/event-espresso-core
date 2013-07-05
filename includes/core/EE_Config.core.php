@@ -98,7 +98,7 @@ class EE_Config {
 		// do settings for this user exist ?
 		if ( empty( $config )) {
 			require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
-			EEH_Activation::org_option_initialization();		
+			$config = EEH_Activation::org_option_initialization();		
 		} else {
 			// list of critical settings
 			$critical_settings = array( 

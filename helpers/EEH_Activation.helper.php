@@ -500,8 +500,10 @@ class EEH_Activation {
 			
 			$new_org_options = array_merge( $default_org_options, $existing_org_options );
 			update_user_meta( $espresso_wp_user, 'events_organization_settings', $new_org_options );
+			return $new_org_options;
 		
 		}
+		return $existing_org_options;
 
 	}
 
