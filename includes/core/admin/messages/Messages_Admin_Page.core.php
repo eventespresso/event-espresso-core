@@ -432,9 +432,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	public function load_scripts_styles_edit_message_template() {
-		global $eei18n_js_strings;
+		;
 		$this->_set_shortcodes();
-		$eei18n_js_strings['confirm_default_reset'] = sprintf( __('Are you sure you want to reset the %s %s message templates?  Remember continuing will reset the templates for all contexts in this messenger and message type group.', 'event_espresso'), $this->_message_template->messenger_obj()->label['singular'], $this->_message_template->message_type_obj()->label['singular'] );
+		EE_Registry::$i18n_js_strings['confirm_default_reset'] = sprintf( __('Are you sure you want to reset the %s %s message templates?  Remember continuing will reset the templates for all contexts in this messenger and message type group.', 'event_espresso'), $this->_message_template->messenger_obj()->label['singular'], $this->_message_template->message_type_obj()->label['singular'] );
 
 
 		wp_register_script('ee_msgs_edit_js', EE_MSG_ASSETS_URL . 'ee_message_editor.js', array('jquery'), EVENT_ESPRESSO_VERSION );
@@ -442,7 +442,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_script('ee_admin_js');
 		wp_enqueue_script('ee_msgs_edit_js');
 
-		wp_localize_script( 'ee_msgs_edit_js', 'eei18n', $eei18n_js_strings );
+		wp_localize_script( 'ee_msgs_edit_js', 'eei18n', EE_Registry::$i18n_js_strings );
 	}
 
 

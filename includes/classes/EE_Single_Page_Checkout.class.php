@@ -158,13 +158,13 @@ class EE_Single_Page_Checkout {
 	 * 		@return 		void
 	 */
 	public function translate_js_strings() {
-		global $eei18n_js_strings;
-		$eei18n_js_strings['invalid_coupon'] = __('We\'re sorry but that coupon code does not appear to be vaild. If this is incorrect, please contact the site administrator.', 'event_espresso');
-		$eei18n_js_strings['required_field'] = __(' is a required field. Please enter a value for this field and all other required fields before preceeding.', 'event_espresso');
-		$eei18n_js_strings['reg_step_error'] = __('An error occured! This registration step could not be completed. Please refresh the page and try again.', 'event_espresso');
-		$eei18n_js_strings['answer_required_questions'] = __('You need to answer all required questions before you can proceed.', 'event_espresso');
-		$eei18n_js_strings['enter_valid_email'] = __('You must enter a valid email address.', 'event_espresso');
-		$eei18n_js_strings['valid_email_and_questions'] = __('You must enter a valid email address and answer all other required questions before you can proceed.', 'event_espresso');
+		;
+		EE_Registry::$i18n_js_strings['invalid_coupon'] = __('We\'re sorry but that coupon code does not appear to be vaild. If this is incorrect, please contact the site administrator.', 'event_espresso');
+		EE_Registry::$i18n_js_strings['required_field'] = __(' is a required field. Please enter a value for this field and all other required fields before preceeding.', 'event_espresso');
+		EE_Registry::$i18n_js_strings['reg_step_error'] = __('An error occured! This registration step could not be completed. Please refresh the page and try again.', 'event_espresso');
+		EE_Registry::$i18n_js_strings['answer_required_questions'] = __('You need to answer all required questions before you can proceed.', 'event_espresso');
+		EE_Registry::$i18n_js_strings['enter_valid_email'] = __('You must enter a valid email address.', 'event_espresso');
+		EE_Registry::$i18n_js_strings['valid_email_and_questions'] = __('You must enter a valid email address and answer all other required questions before you can proceed.', 'event_espresso');
 	}
 
 	/**

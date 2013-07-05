@@ -382,9 +382,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		wp_register_script('event_editor_js', EVENTS_ASSETS_URL . 'event_editor.js', array('ee_admin_js', 'jquery-ui-slider', 'jquery-ui-timepicker-addon', 'jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE);
 		wp_enqueue_script('event_editor_js');
 
-		global $eei18n_js_strings;
-		$eei18n_js_strings['image_confirm'] = __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso');
-		wp_localize_script('event_editor_js', 'eei18n', $eei18n_js_strings);
+		;
+		EE_Registry::$i18n_js_strings['image_confirm'] = __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso');
+		wp_localize_script('event_editor_js', 'eei18n', EE_Registry::$i18n_js_strings);
 	}
 
 
@@ -404,9 +404,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//scripts
 		wp_enqueue_script( 'ee_cat_admin_js', EVENTS_ASSETS_URL . 'ee-cat-admin.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );
 		
-		global $eei18n_js_strings;
-		$eei18n_js_strings['add_cat_name'] = __('Category Name is a required field. Please enter a value in order to continue.', 'event_espresso');
-		wp_localize_script( 'ee_cat_admin_js', 'eei18n', $eei18n_js_strings );
+		;
+		EE_Registry::$i18n_js_strings['add_cat_name'] = __('Category Name is a required field. Please enter a value in order to continue.', 'event_espresso');
+		wp_localize_script( 'ee_cat_admin_js', 'eei18n', EE_Registry::$i18n_js_strings );
 
 	}
 

@@ -28,6 +28,7 @@
  */
 abstract class EE_Admin_Page extends EE_BASE {
 
+
 	//set in _init_page_props()
 	public $page_slug;
 	public $page_label;
@@ -124,7 +125,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			array('id' => FALSE, 'text' => __('No', 'event_espresso'))
 		);
 
-		$this->EE = EE_Registry::instance();
+		$this->EE = EE_System::instance()->get_registry();
 
 		//set the _req_data property.
 		$this->_req_data = array_merge( $_GET, $_POST );
@@ -1227,9 +1228,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		//localizers (for passing variables to js as well)
-//		global $eei18n_js_strings;
-//		$eei18n_js_strings['image_confirm'] = __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso');
-//		wp_localize_script( 'event_editor_js', 'EE_EDIT_VARS', $eei18n_js_strings );
+//		;
+//		EE_Registry::$i18n_js_strings['image_confirm'] = __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso');
+//		wp_localize_script( 'event_editor_js', 'EE_EDIT_VARS', EE_Registry::$i18n_js_strings );
 
 
 		/** remove filters **/
@@ -1247,51 +1248,51 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*/	
 	public function admin_footer_scripts_eei18n_js_strings() {
 		
-		global $eei18n_js_strings;
-		$eei18n_js_strings['confirm_delete'] = __( 'Are you absolutely sure you want to delete this item?\nThis action will delete ALL DATA asscociated with this item!!!\nThis can NOT be undone!!!', 'event_espresso' );
+		;
+		EE_Registry::$i18n_js_strings['confirm_delete'] = __( 'Are you absolutely sure you want to delete this item?\nThis action will delete ALL DATA asscociated with this item!!!\nThis can NOT be undone!!!', 'event_espresso' );
 		
-		$eei18n_js_strings['January'] = __( 'January', 'event_espresso' );
-		$eei18n_js_strings['February'] = __( 'February', 'event_espresso' );
-		$eei18n_js_strings['March'] = __( 'March', 'event_espresso' );
-		$eei18n_js_strings['April'] = __( 'April', 'event_espresso' );
-		$eei18n_js_strings['May'] = __( 'May', 'event_espresso' );
-		$eei18n_js_strings['June'] = __( 'June', 'event_espresso' );
-		$eei18n_js_strings['July'] = __( 'July', 'event_espresso' );
-		$eei18n_js_strings['August'] = __( 'August', 'event_espresso' );
-		$eei18n_js_strings['September'] = __( 'September', 'event_espresso' );
-		$eei18n_js_strings['October'] = __( 'October', 'event_espresso' );
-		$eei18n_js_strings['November'] = __( 'November', 'event_espresso' );
-		$eei18n_js_strings['December'] = __( 'December', 'event_espresso' );
-		$eei18n_js_strings['Jan'] = __( 'Jan', 'event_espresso' );
-		$eei18n_js_strings['Feb'] = __( 'Feb', 'event_espresso' );
-		$eei18n_js_strings['Mar'] = __( 'Mar', 'event_espresso' );
-		$eei18n_js_strings['Apr'] = __( 'Apr', 'event_espresso' );
-		$eei18n_js_strings['May'] = __( 'May', 'event_espresso' );
-		$eei18n_js_strings['Jun'] = __( 'Jun', 'event_espresso' );
-		$eei18n_js_strings['Jul'] = __( 'Jul', 'event_espresso' );
-		$eei18n_js_strings['Aug'] = __( 'Aug', 'event_espresso' );
-		$eei18n_js_strings['Sep'] = __( 'Sep', 'event_espresso' );
-		$eei18n_js_strings['Oct'] = __( 'Oct', 'event_espresso' );
-		$eei18n_js_strings['Nov'] = __( 'Nov', 'event_espresso' );
-		$eei18n_js_strings['Dec'] = __( 'Dec', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['January'] = __( 'January', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['February'] = __( 'February', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['March'] = __( 'March', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['April'] = __( 'April', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['May'] = __( 'May', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['June'] = __( 'June', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['July'] = __( 'July', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['August'] = __( 'August', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['September'] = __( 'September', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['October'] = __( 'October', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['November'] = __( 'November', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['December'] = __( 'December', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Jan'] = __( 'Jan', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Feb'] = __( 'Feb', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Mar'] = __( 'Mar', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Apr'] = __( 'Apr', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['May'] = __( 'May', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Jun'] = __( 'Jun', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Jul'] = __( 'Jul', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Aug'] = __( 'Aug', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Sep'] = __( 'Sep', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Oct'] = __( 'Oct', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Nov'] = __( 'Nov', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Dec'] = __( 'Dec', 'event_espresso' );
 		
-		$eei18n_js_strings['Sunday'] = __( 'Sunday', 'event_espresso' );
-		$eei18n_js_strings['Monday'] = __( 'Monday', 'event_espresso' );
-		$eei18n_js_strings['Tuesday'] = __( 'Tuesday', 'event_espresso' );
-		$eei18n_js_strings['Wednesday'] = __( 'Wednesday', 'event_espresso' );
-		$eei18n_js_strings['Thursday'] = __( 'Thursday', 'event_espresso' );
-		$eei18n_js_strings['Friday'] = __( 'Friday', 'event_espresso' );
-		$eei18n_js_strings['Saturday'] = __( 'Saturday', 'event_espresso' );
-		$eei18n_js_strings['Sun'] = __( 'Sun', 'event_espresso' );
-		$eei18n_js_strings['Mon'] = __( 'Mon', 'event_espresso' );
-		$eei18n_js_strings['Tue'] = __( 'Tue', 'event_espresso' );
-		$eei18n_js_strings['Wed'] = __( 'Wed', 'event_espresso' );
-		$eei18n_js_strings['Thu'] = __( 'Thu', 'event_espresso' );
-		$eei18n_js_strings['Fri'] = __( 'Fri', 'event_espresso' );
-		$eei18n_js_strings['Sat'] = __( 'Sat', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Sunday'] = __( 'Sunday', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Monday'] = __( 'Monday', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Tuesday'] = __( 'Tuesday', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Wednesday'] = __( 'Wednesday', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Thursday'] = __( 'Thursday', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Friday'] = __( 'Friday', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Saturday'] = __( 'Saturday', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Sun'] = __( 'Sun', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Mon'] = __( 'Mon', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Tue'] = __( 'Tue', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Wed'] = __( 'Wed', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Thu'] = __( 'Thu', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Fri'] = __( 'Fri', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Sat'] = __( 'Sat', 'event_espresso' );
 		
-		wp_localize_script( 'ee_admin_js', 'eei18n', $eei18n_js_strings );
-		wp_localize_script( 'jquery-validate', 'eei18n', $eei18n_js_strings );
+		wp_localize_script( 'ee_admin_js', 'eei18n', EE_Registry::$i18n_js_strings );
+		wp_localize_script( 'jquery-validate', 'eei18n', EE_Registry::$i18n_js_strings );
 		
 	}
 

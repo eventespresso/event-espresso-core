@@ -319,9 +319,9 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		//scripts
 		wp_enqueue_script( 'ee_cat_admin_js', EVENTS_ASSETS_URL . 'ee-cat-admin.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );
 		
-		global $eei18n_js_strings;
-		$eei18n_js_strings['add_cat_name'] = __('Category Name is a required field. Please enter a value in order to continue.', 'event_espresso');
-		wp_localize_script( 'ee_cat_admin_js', 'eei18n', $eei18n_js_strings );
+		;
+		EE_Registry::$i18n_js_strings['add_cat_name'] = __('Category Name is a required field. Please enter a value in order to continue.', 'event_espresso');
+		wp_localize_script( 'ee_cat_admin_js', 'eei18n', EE_Registry::$i18n_js_strings );
 
 	}
 
@@ -339,9 +339,9 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		wp_register_script('espresso_venue_admin', EE_VENUES_ASSETS_URL . 'ee-venues-admin.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script('espresso_venue_admin');
 
-		global $eei18n_js_strings;
-		$eei18n_js_strings['required'] = __( 'This is a required field. Please add a value in order to continue.', 'event_espresso' );
-		wp_localize_script( 'espresso_venue_admin', 'eei18n', $eei18n_js_strings );
+		;
+		EE_Registry::$i18n_js_strings['required'] = __( 'This is a required field. Please add a value in order to continue.', 'event_espresso' );
+		wp_localize_script( 'espresso_venue_admin', 'eei18n', EE_Registry::$i18n_js_strings );
 
 	}
 

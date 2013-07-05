@@ -254,13 +254,13 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		wp_register_script('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.js', array('ee_admin_js', 'jquery-ui-datepicker', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
 		wp_enqueue_script('espresso_txn');	
 
-		global $eei18n_js_strings;
-		$eei18n_js_strings['invalid_server_response'] = __( 'An error occured! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
-		$eei18n_js_strings['error_occured'] = __(  'An error occured! Please refresh the page and try again.', 'event_espresso' );
-		$eei18n_js_strings['txn_status_array'] = self::$_txn_status;
-		$eei18n_js_strings['pay_status_array'] = self::$_pay_status;
+		;
+		EE_Registry::$i18n_js_strings['invalid_server_response'] = __( 'An error occured! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['error_occured'] = __(  'An error occured! Please refresh the page and try again.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['txn_status_array'] = self::$_txn_status;
+		EE_Registry::$i18n_js_strings['pay_status_array'] = self::$_pay_status;
 
-		wp_localize_script( 'espresso_txn', 'eei18n', $eei18n_js_strings );
+		wp_localize_script( 'espresso_txn', 'eei18n', EE_Registry::$i18n_js_strings );
 
 	}
 
