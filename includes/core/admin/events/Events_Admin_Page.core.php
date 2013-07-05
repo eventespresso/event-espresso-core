@@ -578,7 +578,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$wheres = array( $this->_event_model->primary_key_name() => $post_id );
 
 		$event_values = array(
-			'EVT_is_active' => isset($this->_req_data['is_active']) ? 1 : 0,
 			'EVT_display_desc' => isset( $this->_req_data['display_desc'] ) ? 1 : 0,
 			'EVT_display_reg_form' => isset( $this->_req_data['display_reg_form'] ) ? 1 : 0,
 			'EVT_reg_limit' => !empty( $this->_req_data['reg_limit'] ) ? $this->_req_data['reg_limit'] : NULL,
