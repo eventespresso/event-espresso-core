@@ -94,7 +94,7 @@ class EED_Ticket_Selector extends  EED_Module {
 
 		if ( ! class_exists( 'EE_Ticket_Price' )) {
 			//require_once(EE_CLASSES . 'EE_Ticket_Prices.class.php');
-			$this->EE->load_class( 'EE_Ticket_Prices', TRUE, TRUE );
+			$this->EE->load_class( 'EE_Ticket_Prices', FALSE, TRUE );
 		}		
 		
 		$this->_event = $event;

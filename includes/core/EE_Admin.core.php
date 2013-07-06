@@ -101,7 +101,7 @@ final class EE_Admin {
 		// path to espresso.php
 		$this->EE->main_file = $this->main_file;
 		// pew pew pew
-		$this->EE->load_core( 'PUE', TRUE );
+		$this->EE->load_core( 'PUE', FALSE, TRUE );
 	}
 
 

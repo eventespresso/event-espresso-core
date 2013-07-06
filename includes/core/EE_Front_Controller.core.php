@@ -163,7 +163,7 @@ final class EE_Front_Controller {
 			$this->EE->modules = self::$_installed_modules;
 			
 			//random debug code added by mike.
-//			$this->EE->load_class('Attendee',false,false);
+//			$this->EE->load_class('Attendee',false,false,false);
 //			$att = EE_Attendee::new_instance(array('ATT_lname'=>'nelson','ATT_ID'=>15));
 //			echo 'echodump of $att';
 //			var_dump($att);
@@ -174,7 +174,6 @@ final class EE_Front_Controller {
 //			echo 'echodump of $att2';
 //			var_dump($att2);
 
-//		} 
 		
 	}
 
@@ -316,7 +315,7 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function employ_CPT_Strategy() {
-		$this->EE->load_core( 'CPT_Strategy', TRUE );
+		$this->EE->load_core( 'CPT_Strategy', 'CPTs', TRUE );
 	}
 
 
