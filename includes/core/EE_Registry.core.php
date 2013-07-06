@@ -160,9 +160,10 @@ final class EE_Registry {
 	 *	@param string $class_name - simple class name ie: session
 	 *	@return instantiated class object
 	 */	
-	public function load_core ( $class_name, $pass_REG = FALSE, $autoinstantiate = TRUE ) {
+	public function load_core ( $class_name, $sub_path = FALSE, $pass_REG = FALSE, $autoinstantiate = TRUE ) {
+		$sub_path  = $sub_path ? rtrim( $sub_path, '/\\' ) . DS : '';
 		// retreive instantiated class
-		return $this->_load( EE_CORE, 'EE_' , $class_name, 'core', $pass_REG, $autoinstantiate );
+		return $this->_load( EE_CORE . $sub_path, 'EE_' , $class_name, 'core', $pass_REG, $autoinstantiate );
 	}
 
 
@@ -175,9 +176,10 @@ final class EE_Registry {
 	 *	@param string $class_name - simple class name ie: attendee
 	 *	@return instantiated class object
 	 */
-	public function load_class ( $class_name, $pass_REG = FALSE, $autoinstantiate = TRUE ) {
+	public function load_class ( $class_name, $sub_path = FALSE, $pass_REG = FALSE, $autoinstantiate = TRUE ) {
+		$sub_path  = $sub_path ? rtrim( $sub_path, '/\\' ) . DS : '';
 		// retreive instantiated class
-		return $this->_load( EE_CLASSES, 'EE_' , $class_name, 'class', $pass_REG, $autoinstantiate );
+		return $this->_load( EE_CLASSES . $sub_path, 'EE_' , $class_name, 'class', $pass_REG, $autoinstantiate );
 	}
 
 
@@ -188,9 +190,10 @@ final class EE_Registry {
 	 *	@param string $class_name - simple class name ie: price
 	 *	@return instantiated class object
 	 */	
-	public function load_model ( $class_name, $pass_REG = FALSE, $autoinstantiate = TRUE ) {
+	public function load_model ( $class_name, $sub_path = FALSE, $pass_REG = FALSE, $autoinstantiate = TRUE ) {
+		$sub_path  = $sub_path ? rtrim( $sub_path, '/\\' ) . DS : '';
 		// retreive instantiated class
-		return $this->_load( EE_MODELS, 'EEM_' , $class_name, 'model', $pass_REG, $autoinstantiate );
+		return $this->_load( EE_MODELS . $sub_path, 'EEM_' , $class_name, 'model', $pass_REG, $autoinstantiate );
 	}
 
 
@@ -203,9 +206,10 @@ final class EE_Registry {
 	 *	@param string $class_name - simple class name ie: price
 	 *	@return instantiated class object
 	 */	
-	public function load_helper ( $class_name, $pass_REG = FALSE, $autoinstantiate = TRUE ) {
+	public function load_helper ( $class_name, $sub_path = FALSE, $pass_REG = FALSE, $autoinstantiate = TRUE ) {
+		$sub_path  = $sub_path ? rtrim( $sub_path, '/\\' ) . DS : '';
 		// retreive instantiated class
-		return $this->_load( EE_HELPERS, 'EE_', $class_name, 'helper', $pass_REG, $autoinstantiate );
+		return $this->_load( EE_HELPERS . $sub_path, 'EE_', $class_name, 'helper', $pass_REG, $autoinstantiate );
 	}
 
 
@@ -221,8 +225,8 @@ final class EE_Registry {
 	 */	
 	public function load_file ( $path_to_file, $class_name, $type = 'class', $pass_REG = FALSE, $autoinstantiate = TRUE ) {
 		// set path to class file
-		$path_to_file = rtrim( $path_to_file, '/' ) . '/';
-		$type = trim( $type, '.' );
+		$path_to_file = rtrim( $path_to_file, '/\\' ) . DS;
+		$type = trim( $type, '. ' );
 		// retreive instantiated class
 		return $this->_load( $path_to_file, '', $class_name, $type, $pass_REG, $autoinstantiate );
 	}
@@ -242,11 +246,12 @@ final class EE_Registry {
 	 *	@return instantiated class object
 	 */	
 	private function _load ( $file_path = FALSE, $class_prefix = 'EE_', $class_name = FALSE, $type = 'class', $pass_REG = FALSE, $autoinstantiate = TRUE ) {
-		// make sure $class name is lowercase
-		//$class_name = strtoupper( trim( $class_prefix )) . ucwords( strtolower( trim( $class_name )));
+		// make sure $class name prefix is uppercase
 		$class_name = strtoupper( trim( $class_prefix )) . trim( $class_name );
-		$file_path = $file_path ? $file_path : EE_CLASSES;
-		$file_path = rtrim( $file_path, '/' ) . '/' . $class_name . '.' . trim( $type, '.' ) . '.php';
+		// convert all separators to proper DS, if no filepth, then use EE_CLASSES
+		$file_path = $file_path ? str_replace( '/\\', DS, $file_path ) : EE_CLASSES;
+		// build full file path
+		$file_path = rtrim( $file_path, '/\\' ) . DS . $class_name . '.' . trim( $type, '.' ) . '.php';
 		// check if class has already been loaded, and return it if it has been
 		if ( $class_name == 'EE_Request_Handler' && ! is_null( $this->REQ )) {
 			return $this->CFG;
