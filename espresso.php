@@ -37,6 +37,7 @@ function espresso_version() {
 function espresso_template_version() {
 	return '1.0';
 }
+
 // define versions
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
 	define("EVENT_ESPRESSO_VERSION", espresso_version());

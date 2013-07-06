@@ -233,7 +233,11 @@ class EE_Attendee extends EE_CPT_Base{
 		parent::__construct($fieldValues,$bydb,$timezone);
 	}
 
-
+	/**
+	 * 
+	 * @param type $props_n_values
+	 * @return EE_Attendee
+	 */
 	public static function new_instance( $props_n_values = array() ) {
 		$classname = __CLASS__;
 		$has_object = parent::_check_for_object( $props_n_values, $classname );
