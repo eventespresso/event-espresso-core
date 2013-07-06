@@ -32,7 +32,7 @@ class EE_Front_Controller {
 
 	/**
 	 * 	system registry
-	 *	@var 	object		$EE
+	 *	@var 	EE_Registry		$EE
 	 * 	@access 	public
 	 */
 	public $EE;
@@ -76,7 +76,7 @@ class EE_Front_Controller {
 		add_action( 'wp', array( $this, 'wp' ), 5 );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 5 );
 		add_action('wp_head', array( $this, 'header_meta_tag' ), 5 );
-		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
+		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );		
 	}
 
 
@@ -154,6 +154,18 @@ class EE_Front_Controller {
 			// pass shortcodes and modules to registry
 			$this->EE->shortcodes = self::$_installed_shortcodes;
 			$this->EE->modules = self::$_installed_modules;
+			
+			//random debug code added by mike.
+//			$this->EE->load_class('Attendee',false,false);
+//			$att = EE_Attendee::new_instance(array('ATT_lname'=>'nelson','ATT_ID'=>15));
+//			echo 'echodump of $att';
+//			var_dump($att);
+//			
+//			$att2 = EE_Attendee::new_instance(array('ATT_lname'=>'wilson'));
+//			$att2->set_city('moscow');
+//			$att2->set('ATT_ID',15);
+//			echo 'echodump of $att2';
+//			var_dump($att2);
 
 //		} 
 		

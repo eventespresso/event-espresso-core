@@ -131,7 +131,7 @@ class EE_Registry {
 	/**
 	 *@ singleton method used to instantiate class object
 	 *@ access public
-	 *@ return class instance
+	 *@ return EE_Registry instance
 	 */	
 	public static function instance() {
 		// check if class object is instantiated

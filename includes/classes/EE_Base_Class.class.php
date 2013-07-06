@@ -26,6 +26,14 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 class EE_Base_Class{
 
+	/**
+	 * This is an array of the original properties and values provided during construction
+	 * of this model object. (keys are model field names, values are their values).
+	 * This list is important to remember so that when we are merging data from the db, we know
+	 * which values to override and which to not override.
+	 * @var array
+	 */
+	private $_props_n_values_provided_in_consturctor = null;
 
 	/**
 	 * Timezone
@@ -125,6 +133,8 @@ class EE_Base_Class{
 			}
 		}
 		$this->_timezone = $timezone;
+		//remember what values were passed to this constructor
+		$this->_props_n_values_provided_in_consturctor = $fieldValues;
 	}
 
 
@@ -147,6 +157,35 @@ class EE_Base_Class{
 			 $this->$privateAttributeName = $field_obj->get_default_value();
 		 }else{
 			$this->$privateAttributeName = $holder_of_value; 
+		 }
+		 
+		 //if we're not in the constructor...
+		 //now check if what we set was a primary key
+//		 echo 'echodump of $this->_props_n_values_provided_in_consturctor';
+//		 var_dump($this->_props_n_values_provided_in_consturctor);
+//		 echo 'echodump of $field_name';
+//		 var_dump($field_name);
+//		 echo 'echodump of $this->_get_primary_key_name(get_class($this))';
+//		 var_dump($this->_get_primary_key_name(get_class($this)));
+		 if($this->_props_n_values_provided_in_consturctor &&
+				 $field_name == $this->_get_primary_key_name(get_class($this)) && 
+				 $field_value){
+			//if so, we want all this object's fields to be filled either with
+			 //what we've explictly set on this model
+			 //or what we have in the db
+			// echo "setting primary key!";
+			 $fields_on_model = $this->_get_model(get_class($this))->field_settings();
+			
+			 $obj_in_db = $this->_get_model(get_class($this))->get_one_by_ID($field_value);
+			 foreach($fields_on_model as $field_obj){
+				 if( ! array_key_exists($field_obj->get_name(), $this->_props_n_values_provided_in_consturctor)
+						&& $field_obj->get_name() != $field_name ){
+				 
+					$privateAttributeName=$this->_get_private_attribute_name($field_obj->get_name());
+					
+					$this->set($field_obj->get_name(),$obj_in_db->get($field_obj->get_name()));
+				 }
+			 }
 		 }
 
 		 //let's unset any cache for this field_name from the $_cached_properties property.
@@ -675,6 +714,9 @@ class EE_Base_Class{
 	 */
 	protected static function  _get_model( $classname, $timezone = NULL ){
 		//find model for this class
+		if( ! $classname ){
+			throw new EE_Error(sprintf(__("What were you thinking calling _get_model(%s)?? You need to specify the class name", "event_espresso"),$classname));
+		}
 		$modelName=self::_get_model_classname($classname);
 		return self::_get_model_instance_with_name($modelName, $timezone );
 	}
@@ -683,9 +725,13 @@ class EE_Base_Class{
 
 	/**
 	 * Gets the model instance (eg instance of EEM_Attendee) given its classname (eg EE_Attendee)
+	 * @param string $model_classname
 	 * @return EEM_Base
 	 */
 	protected static function _get_model_instance_with_name($model_classname, $timezone = NULL){
+		
+		$registry = EE_Registry::instance();
+		$registry->load_model(str_replace("EEM_",'',$model_classname));
 		$model=call_user_func($model_classname."::instance");
 		$model->set_timezone( $timezone );
 		return $model;
@@ -705,12 +751,16 @@ class EE_Base_Class{
 		}
 		return $model_classname;
 	}
+
 	
 	/**
 	 * returns the name of the primary key attribute
 	 * @return string
 	 */
 	protected static function _get_primary_key_name( $classname = NULL ){
+		if( ! $classname){
+			throw new EE_Error(sprintf(__("What were you thinking calling _get_primary_key_name(%s)", "event_espresso"),$classname));
+		}
 		return self::_get_model( $classname )->get_primary_key_field()->get_name();
 	}
 	/**
