@@ -397,7 +397,7 @@ final class EE_System {
 		// load EE_Config
 		$this->EE->load_core( 'Config' );
 		// register Custom Post Types
-		$this->EE->load_core( 'Register_CPTs' );
+		$this->EE->load_core( 'Register_CPTs', 'CPTs' );
 		// load this for now until something better can be done with it
 		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/main.php' );
 
