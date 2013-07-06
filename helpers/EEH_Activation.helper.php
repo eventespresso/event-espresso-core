@@ -41,9 +41,6 @@ class EEH_Activation {
 			<p style="font-size:1.4em; text-align:center;">
 				' . __( 'THERE ARE NO DATA MIGRATION SCRIPTS AVAILABLE YET FOR IMPORTING YOUR EXISTING DATA INTO EVENT ESPRESSO 4+.<br/><br/>If you wish to activate Event Espresso, please backup your existing data and remove the tables from the database, or utilize a fresh install of WordPress.<br/><br/><span style="font-size:.7em;">Please press the back button on your browser to return to the plugins page.</span>', 'event_espresso' ) . '
 			</p>');
-			
-			//espresso_fix_org_options();
-
 
 		} else {
 			
@@ -55,15 +52,15 @@ class EEH_Activation {
 			add_filter( 'FHEE_flush_rewrite_rules', '__return_true' );
 			// load core system files
 			require_once( EE_CORE . 'EE_System.core.php' );
-			EE_System::instance();
+			EE_System::instance( TRUE );
 			
 			if ( file_exists( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' )) {
 				require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' );
 				espresso_caffeinated_activation();
 			}
+
 			// not needed at the moment
 			//EEH_Activation::delete_unused_db_tables( $table_name );
-			
 			EEH_Activation::initialize_system_questions();
 			EEH_Activation::create_upload_directories();
 			EEH_Activation::org_option_initialization();
@@ -171,7 +168,6 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function initialize_system_questions() {
-		
 		// QUESTION GROUPS
 		global $wpdb;
 		$SQL = 'SELECT QSG_system FROM ' . $wpdb->prefix . 'esp_question_group WHERE QSG_system != 0';
@@ -190,7 +186,7 @@ class EEH_Activation {
 					
 					case 1:
 							$QSG_values = array( 
-									'QSG_name' => 'Personal Information',
+									'QSG_name' => __( 'Personal Information', 'event_espresso' ),
 									'QSG_identifier' => 'personal-information-' . time(),
 									'QSG_desc' => '',
 									'QSG_order' => 1,
@@ -203,7 +199,7 @@ class EEH_Activation {
 						
 					case 2:
 							$QSG_values = array( 
-									'QSG_name' => 'Address Information',
+									'QSG_name' => __( 'Address Information','event_espresso' ),
 									'QSG_identifier' => 'address-information-' . time(),
 									'QSG_desc' => '',
 									'QSG_order' => 2,
@@ -255,12 +251,12 @@ class EEH_Activation {
 					
 					case 'fname':
 							$QST_values = array( 
-									'QST_display_text' => 'First Name',
-									'QST_admin_label' => 'First Name - System Question',
+									'QST_display_text' => __( 'First Name', 'event_espresso' ),
+									'QST_admin_label' => __( 'First Name - System Question', 'event_espresso' ),
 									'QST_system' => 'fname',
 									'QST_type' => 'TEXT',
 									'QST_required' => 1,
-									'QST_required_text' => 'This field is required',
+									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 1,
 									'QST_admin_only' => 0,
 									'QST_wp_user' => 1,
@@ -270,12 +266,12 @@ class EEH_Activation {
 						
 					case 'lname':
 							$QST_values = array( 
-									'QST_display_text' => 'Last Name',
-									'QST_admin_label' => 'Last Name - System Question',
+									'QST_display_text' => __( 'Last Name', 'event_espresso' ),
+									'QST_admin_label' => __( 'Last Name - System Question', 'event_espresso' ),
 									'QST_system' => 'lname',
 									'QST_type' => 'TEXT',
 									'QST_required' => 1,
-									'QST_required_text' => 'This field is required',
+									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 2,
 									'QST_admin_only' => 0,
 									'QST_wp_user' => 1,
@@ -285,12 +281,12 @@ class EEH_Activation {
 						
 					case 'email':
 							$QST_values = array( 
-									'QST_display_text' => 'Email Address',
-									'QST_admin_label' => 'Email Address - System Question',
+									'QST_display_text' => __( 'Email Address', 'event_espresso' ),
+									'QST_admin_label' => __( 'Email Address - System Question', 'event_espresso' ),
 									'QST_system' => 'email',
 									'QST_type' => 'TEXT',
 									'QST_required' => 1,
-									'QST_required_text' => 'This field is required',
+									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 3,
 									'QST_admin_only' => 0,
 									'QST_wp_user' => 1,
@@ -300,12 +296,12 @@ class EEH_Activation {
 						
 					case 'address':
 							$QST_values = array( 
-									'QST_display_text' => 'Address',
-									'QST_admin_label' => 'Address - System Question',
+									'QST_display_text' => __( 'Address', 'event_espresso' ),
+									'QST_admin_label' => __( 'Address - System Question', 'event_espresso' ),
 									'QST_system' => 'address',
 									'QST_type' => 'TEXT',
 									'QST_required' => 0,
-									'QST_required_text' => 'This field is required',
+									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 4,
 									'QST_admin_only' => 0,
 									'QST_wp_user' => 1,
@@ -315,12 +311,12 @@ class EEH_Activation {
 						
 					case 'address2':
 							$QST_values = array( 
-									'QST_display_text' => 'Address2',
-									'QST_admin_label' => 'FirAddress2 - System Question',
+									'QST_display_text' => __( 'Address2', 'event_espresso' ),
+									'QST_admin_label' => __( 'FirAddress2 - System Question', 'event_espresso' ),
 									'QST_system' => 'address2',
 									'QST_type' => 'TEXT',
 									'QST_required' => 0,
-									'QST_required_text' => 'This field is required',
+									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 5,
 									'QST_admin_only' => 0,
 									'QST_wp_user' => 1,
@@ -330,12 +326,12 @@ class EEH_Activation {
 						
 					case 'city':
 							$QST_values = array( 
-									'QST_display_text' => 'City',
-									'QST_admin_label' => 'City - System Question',
+									'QST_display_text' => __( 'City', 'event_espresso' ),
+									'QST_admin_label' => __( 'City - System Question', 'event_espresso' ),
 									'QST_system' => 'city',
 									'QST_type' => 'TEXT',
 									'QST_required' => 0,
-									'QST_required_text' => 'This field is required',
+									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 6,
 									'QST_admin_only' => 0,
 									'QST_wp_user' => 1,
@@ -345,12 +341,12 @@ class EEH_Activation {
 						
 					case 'state':
 							$QST_values = array( 
-									'QST_display_text' => 'State / Province',
-									'QST_admin_label' => 'State / Province - System Question',
+									'QST_display_text' => __( 'State / Province', 'event_espresso' ),
+									'QST_admin_label' => __( 'State / Province - System Question', 'event_espresso' ),
 									'QST_system' => 'state',
 									'QST_type' => 'TEXT',
 									'QST_required' => 0,
-									'QST_required_text' => 'This field is required',
+									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 7,
 									'QST_admin_only' => 0,
 									'QST_wp_user' => 1,
@@ -360,12 +356,12 @@ class EEH_Activation {
 						
 					case 'country' : 
 							$QST_values = array( 
-									'QST_display_text' => 'Country',
-									'QST_admin_label' => 'Country - System Question',
+									'QST_display_text' => __( 'Country', 'event_espresso' ),
+									'QST_admin_label' => __( 'Country - System Question', 'event_espresso' ),
 									'QST_system' => 'country',
 									'QST_type' => 'TEXT',
 									'QST_required' => 0,
-									'QST_required_text' => 'This field is required',
+									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 8,
 									'QST_admin_only' => 0,
 									'QST_wp_user' => 1,
@@ -375,12 +371,12 @@ class EEH_Activation {
 						
 					case 'zip':
 							$QST_values = array( 
-									'QST_display_text' => 'Zip / Postal Code',
-									'QST_admin_label' => 'Zip / Postal Code - System Question',
+									'QST_display_text' => __( 'Zip / Postal Code', 'event_espresso' ),
+									'QST_admin_label' => __( 'Zip / Postal Code - System Question', 'event_espresso' ),
 									'QST_system' => 'zip',
 									'QST_type' => 'TEXT',
 									'QST_required' => 0,
-									'QST_required_text' => 'This field is required',
+									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 9,
 									'QST_admin_only' => 0,
 									'QST_wp_user' => 1,
@@ -390,12 +386,12 @@ class EEH_Activation {
 						
 					case 'phone':
 							$QST_values = array( 
-									'QST_display_text' => 'Phone Number',
-									'QST_admin_label' => 'Phone Number - System Question',
+									'QST_display_text' => __( 'Phone Number', 'event_espresso' ),
+									'QST_admin_label' => __( 'Phone Number - System Question', 'event_espresso' ),
 									'QST_system' => 'phone',
 									'QST_type' => 'TEXT',
 									'QST_required' => 0,
-									'QST_required_text' => 'This field is required',
+									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 10,
 									'QST_admin_only' => 0,
 									'QST_wp_user' => 1,
@@ -447,20 +443,24 @@ class EEH_Activation {
 			$default_org_options = array(
 					'organization' => get_bloginfo('name'),
 					'organization_street1' => '123 Onna Road',
-					'organization_street2' => '',
+					'organization_street2' => 'PO Box 123',
 					'organization_city' => 'Inna City',
 					'organization_state' => 'AZ',
-					'organization_country' => '64',
-					'organization_zip' => '84128',
-					'country_id' => '',
+					'organization_country' => 'US',
+					'organization_zip' => '12345',
 					'contact_email' => get_bloginfo('admin_email'),
 					'default_mail' => true,
-					'currency_symbol' => '$',
+					'currency_code' => 'USD', 	// currency code: USD, CAD, EUR
+					'currency_name' => __( 'Dollar', 'event_espresso' ), 	// Dollar
+					'currency_plural' => __( 'Dollar', 'event_espresso' ), 	// Dollars
+					'currency_sign' => '$', 	// currency sign: $
+					'currency_sign_b4' => TRUE, 	// currency sign before or after: $TRUE  or  FALSE$
+					'currency_dec_plc' => 2, 	// decimal places: 2 = 0.00  3 = 0.000
+					'currency_dec_mrk' => '.', 	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' - 0.01
+					'currency_thsnds' => ',', 	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' - 1.000					
 					'default_logo_url' => '',
 					'default_reg_status' => 'RPN',
 					'pending_counts_reg_limit' => TRUE,
-					'surcharge' => '0.00',
-					'surcharge_type' => 'flat_rate',
 					'events_in_dasboard' => '30',
 					'use_captcha' => false,
 					'expire_on_registration_end' => true,
@@ -470,9 +470,7 @@ class EEH_Activation {
 					'use_personnel_manager' => false,
 					'show_reg_footer' => true,
 					'use_attendee_pre_approval' => false,
-					'time_reg_limit' => false,
 					'template_settings' => array(
-							'use_custom_post_types' => false,
 							'display_address_in_regform' => false,
 							'display_short_description_in_event_list' => true,
 							'display_address_in_event_list' => false,
@@ -496,6 +494,7 @@ class EEH_Activation {
 							'ee_map_type_control' => 'default',
 							'ee_map_align' => ''
 					),
+					'post_shortcodes' => array()
 			);
 			
 			$new_org_options = array_merge( $default_org_options, $existing_org_options );
@@ -877,177 +876,13 @@ class EEH_Activation {
 			KEY (CNT_ISO)";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
 		
-
-
-		$table_name = "events_detail";
-		$sql = "id int(11) unsigned NOT NULL AUTO_INCREMENT,
-					event_code VARCHAR(26) DEFAULT '0',
-					event_name VARCHAR(100) DEFAULT NULL,
-					slug VARCHAR(100) DEFAULT NULL,				
-					is_active tinyint(1) NOT NULL DEFAULT '1',
-					event_status VARCHAR(1) DEFAULT 'A',
-					event_desc TEXT,
-					display_desc tinyint(1) DEFAULT 1,
-					display_reg_form tinyint(1) DEFAULT 1,
-					event_identifier VARCHAR(75) DEFAULT NULL,
-					visible_on VARCHAR(15) DEFAULT NULL,
-					reg_limit VARCHAR(25) DEFAULT '999999',
-					allow_multiple tinyint(1) NOT NULL DEFAULT '0',
-					additional_limit INT(10) DEFAULT '5',
-					category_id TEXT,
-					member_only tinyint(1) NOT NULL DEFAULT '0',
-					allow_overflow tinyint(1) NOT NULL DEFAULT '0',
-					overflow_event_id INT(10) DEFAULT '0',
-					require_pre_approval tinyint(1) NOT NULL DEFAULT '0',
-					post_id INT(11) DEFAULT NULL,
-					post_type VARCHAR(50) DEFAULT NULL,
-					externalURL VARCHAR(255) DEFAULT NULL,
-					item_groups LONGTEXT NULL DEFAULT NULL,
-					event_type VARCHAR(250) DEFAULT NULL,
-					event_meta LONGTEXT DEFAULT NULL,
-					wp_user int(22) DEFAULT '1',
-					timezone_string VARCHAR(250) DEFAULT NULL,
-					address TEXT,
-					address2 TEXT,
-					city VARCHAR(100) DEFAULT NULL,
-					state VARCHAR(100) DEFAULT NULL,
-					country VARCHAR(200) DEFAULT NULL,
-					zip VARCHAR(11) DEFAULT NULL,
-					phone VARCHAR(15) DEFAULT NULL,
-					venue_title VARCHAR(250) DEFAULT NULL,
-					venue_url VARCHAR(250) DEFAULT NULL,
-					venue_image TEXT,
-					venue_phone VARCHAR(15) DEFAULT NULL,
-					virtual_url VARCHAR(250) DEFAULT NULL,
-					virtual_phone VARCHAR(15) DEFAULT NULL,
-					likes int(22) DEFAULT NULL,
-					submitted datetime NOT NULL,
-					ticket_id int(22) DEFAULT '0',
-					certificate_id int(22) DEFAULT '0',
-					PRIMARY KEY  (id),
-					KEY slug (slug),
-					KEY event_code (event_code),
-					KEY wp_user (wp_user),
-					KEY event_name (event_name),
-					KEY city (city),
-					KEY state (state),
-					KEY reg_limit (reg_limit),
-					KEY event_status (event_status),
-					KEY submitted (submitted),
-					KEY likes (likes)";
-		EEH_Activation::create_table($table_name, $sql);
-
-
-
-		$table_name = "events_category_detail";
-		$sql = "id int(11) unsigned NOT NULL AUTO_INCREMENT,
-					category_name VARCHAR(100) DEFAULT NULL,
-					category_identifier VARCHAR(45) DEFAULT NULL,
-					category_desc TEXT,
-					display_desc VARCHAR(4) DEFAULT NULL,
-					wp_user int(22) DEFAULT '1',
-					UNIQUE KEY id (id),
-					KEY category_identifier (category_identifier),
-					KEY wp_user (wp_user)";
-		EEH_Activation::create_table($table_name, $sql);
-
-
-
-		$table_name = "events_category_rel";
-		$sql = "id int(11) NOT NULL AUTO_INCREMENT,
-					event_id int(11) DEFAULT NULL,
-					cat_id int(11) DEFAULT NULL,
-					PRIMARY KEY  (id),
-				  	KEY event_id (event_id)";
-		EEH_Activation::create_table($table_name, $sql);
-
-
-
-		$table_name = "events_venue";
-		$sql = "id int(11) unsigned NOT NULL AUTO_INCREMENT,
-					name VARCHAR(250) DEFAULT NULL,
-					identifier VARCHAR(26) DEFAULT '0',
-					address VARCHAR(250) DEFAULT NULL,
-					address2 VARCHAR(250) DEFAULT NULL,
-					city VARCHAR(250) DEFAULT NULL,
-					state VARCHAR(250) DEFAULT NULL,
-					zip VARCHAR(250) DEFAULT NULL,
-					country VARCHAR(250) DEFAULT NULL,
-					phone VARCHAR(250) DEFAULT NULL,
-					vnu_capacity mediumint(8) unsigned NOT NULL,
-					meta TEXT,
-					wp_user int(22) DEFAULT '1',
-					UNIQUE KEY id (id),
-				  	KEY identifier (identifier),
-					KEY wp_user (wp_user)";
-		EEH_Activation::create_table($table_name, $sql);
-
-
-
-		$table_name = "events_venue_rel";
-		$sql = "id int(11) NOT NULL AUTO_INCREMENT,
-					event_id int(11) DEFAULT NULL,
-					venue_id int(11) DEFAULT NULL,
-					PRIMARY KEY  (id),
-				  	KEY event_id (event_id)";
-		EEH_Activation::create_table($table_name, $sql);
-
-
-
-		$table_name = "events_locale";
-		$sql = "id int(11) unsigned NOT NULL AUTO_INCREMENT,
-				  name varchar(250) DEFAULT NULL,
-				  identifier varchar(26) DEFAULT '0',
-				  wp_user int(22) DEFAULT '1',
-				  UNIQUE KEY id (id),
-				  KEY identifier (identifier),
-				  KEY wp_user (wp_user)";
-		EEH_Activation::create_table($table_name, $sql);
-
-
-
-		$table_name = "events_locale_rel";
-		$sql = "id int(11) NOT NULL AUTO_INCREMENT,
-					venue_id int(11) DEFAULT NULL,
-					locale_id int(11) DEFAULT NULL,
-					PRIMARY KEY  (id),
-				  	KEY venue_id (venue_id)";
-		EEH_Activation::create_table($table_name, $sql);
-
-
-
-		$table_name = "events_personnel";
-		$sql = "id int(11) NOT NULL AUTO_INCREMENT,
-					name VARCHAR(250) DEFAULT NULL,
-					role VARCHAR(250) DEFAULT NULL,
-					identifier VARCHAR(26) DEFAULT '0',
-					email TEXT,
-					meta TEXT,
-					wp_user int(22) DEFAULT '1',
-					UNIQUE KEY id (id),
-				  	KEY identifier (identifier),
-				  	KEY wp_user (wp_user)";
-		EEH_Activation::create_table($table_name, $sql);
-
-
-
-		$table_name = "events_personnel_rel";
-		$sql = "id int(11) NOT NULL AUTO_INCREMENT,
-					event_id int(11) DEFAULT NULL,
-					person_id int(11) DEFAULT NULL,
-					PRIMARY KEY  (id),
-				  	KEY event_id (event_id),
-				  	KEY person_id (person_id)";
-		EEH_Activation::create_table($table_name, $sql);
-
-		
 		
 		// grab espresso_db_update option
 		$espresso_db_update = get_option( 'espresso_db_update', array() );
 		// make sure it's an array
 		$espresso_db_update = is_array( $espresso_db_update ) ? $espresso_db_update : array( $espresso_db_update );
 		// add current EE version to list
-		$espresso_db_update[] = EVENT_ESPRESSO_VERSION;
+		$espresso_db_update[ EVENT_ESPRESSO_VERSION ] = date( 'Y-m-d H:i:s' );
 		// resave
 		update_option( 'espresso_db_update', $espresso_db_update );
 		
@@ -1158,11 +993,13 @@ class EEH_Activation {
 	public static function insert_default_status_codes() {
 
 		global $wpdb;
+		$table = $wpdb->get_var("SHOW TABLES LIKE '" . ESP_STATUS_TABLE . "'");
 
-		if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_STATUS_TABLE . "'") == ESP_STATUS_TABLE) {
+		if ( $table == ESP_STATUS_TABLE) {
+
 			$SQL = "DELETE FROM " . ESP_STATUS_TABLE . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPN', 'RCN', 'RAP', 'RNA', 'TIN', 'TPN', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN' );";
 			$wpdb->query($SQL);
-			
+
 			$SQL = "INSERT INTO " . ESP_STATUS_TABLE . " 
 					(STS_ID, STS_code, STS_type, STS_can_edit, STS_desc, STS_open) VALUES
 					('ACT', 'ACTIVE', 'event', 0, NULL, 1),
@@ -1192,7 +1029,7 @@ class EEH_Activation {
 					('PDC', 'DECLINED', 'payment', 0, NULL, 0),
 					('EDR', 'DRAFT', 'email', 0, NULL, 0),
 					('ESN', 'SENT', 'email', 0, NULL, 1);";
-			$wpdb->query($SQL);		
+			$wpdb->query($SQL);	
 			
 		}
 		
