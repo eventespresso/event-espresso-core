@@ -729,10 +729,8 @@ class EE_Base_Class{
 	 * @return EEM_Base
 	 */
 	protected static function _get_model_instance_with_name($model_classname, $timezone = NULL){
-		
-		$registry = EE_Registry::instance();
-		$registry->load_model(str_replace("EEM_",'',$model_classname));
-		$model=call_user_func($model_classname."::instance");
+		$model_classname = str_replace( 'EEM_', '', $model_classname );
+		$model = EE_Registry::instance()->load_model( $model_classname );
 		$model->set_timezone( $timezone );
 		return $model;
 	}
