@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Request_Handler {
+final class EE_Request_Handler {
 
 	/**
 	 * 	@var 	array	$_params 	$_REQUEST paramaters

@@ -37,6 +37,7 @@ function espresso_version() {
 function espresso_template_version() {
 	return '1.0';
 }
+
 // define versions
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
 	define("EVENT_ESPRESSO_VERSION", espresso_version());
@@ -76,16 +77,7 @@ define("EVENT_ESPRESSO_TEMPLATE_URL", $uploads['baseurl'] . '/espresso/templates
 //Define the gateway directory and URL
 define("EVENT_ESPRESSO_GATEWAY_DIR", $uploads['basedir'] . DS . 'espresso' . DS . 'gateways' . DS);
 define("EVENT_ESPRESSO_GATEWAY_URL", $uploads['baseurl'] .'/espresso/gateways/' );
-// add main ESPRESSO directories to include_path
-//set_include_path(
-//	get_include_path() . PS .
-//	EVENT_ESPRESSO_INCLUDES_DIR . 'core' . DS . PS .
-//	EVENT_ESPRESSO_INCLUDES_DIR . 'models' . DS . PS .
-//	EVENT_ESPRESSO_INCLUDES_DIR . 'classes' . DS . PS .
-//	EVENT_ESPRESSO_INCLUDES_DIR . 'functions' . DS . PS .
-//	EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . PS .
-//	EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers' . DS	
-//);
+
 //Get language files
 load_plugin_textdomain( 'event_espresso', FALSE, EVENT_ESPRESSO_PLUGINFULLPATH . '/languages/' );
 // load debuggin tools?
@@ -114,7 +106,12 @@ if ( is_admin() ) {
 }
 
 
+//function espresso_main_file() {
+//	return __FILE__;
+//}
 
-function espresso_main_file() {
-	return __FILE__;
+function espresso_plugin_activation() {
+	require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
+	EEH_Activation::plugin_activation();
 }
+register_activation_hook( __FILE__, 'espresso_plugin_activation' );
