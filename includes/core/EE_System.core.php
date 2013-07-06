@@ -47,10 +47,10 @@ final class EE_System {
 	 *		@access public
 	 *		@return class instance
 	 */
-	public static function instance() {
+	public static function instance( $activation = FALSE ) {
 		// check if class object is instantiated, and instantiated properly
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! is_a( self::$_instance, __CLASS__ )) {
-			self::$_instance = new self();
+			self::$_instance = new self( $activation );
 		}
 		return self::$_instance;
 	}
@@ -63,7 +63,7 @@ final class EE_System {
 	 *  @access 	private
 	 *  @return 	void
 	 */
-	private function __construct() {
+	private function __construct( $activation ) {
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		// set autoloaders for core files, models, classes, and libraries
 //		$this->_define_autoloaders();
@@ -73,13 +73,19 @@ final class EE_System {
 		$this->_load_exception_handling();
 		// load EE_Log class
 		$this->_load_logging();
-		// handy dandy object for holding shtuff
-		$this->_load_registry();
-		// hookpoints
-		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
-		add_action( 'init', array( $this, 'init' ), 3 );
-		add_filter('query_vars', array( $this, 'add_query_vars' ), 5 );
-		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
+		if ( $activation ) {
+			// set names for db tables
+			$this->_define_database_tables();
+			$this->check_database_tables();
+		} else  {
+			// handy dandy object for holding shtuff
+			$this->_load_registry();
+			// hookpoints
+			add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
+			add_action( 'init', array( $this, 'init' ), 3 );
+			add_filter('query_vars', array( $this, 'add_query_vars' ), 5 );
+			add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );			
+		}
 	}
 
 
@@ -283,6 +289,98 @@ final class EE_System {
 				if ( class_exists( $model_class ) && method_exists( $model_class, 'define_table_name' )) {
 					$model_class::define_table_name();
 				}			
+			}
+		}
+		// because there's no model for the status table...
+		if ( ! defined( 'ESP_STATUS_TABLE' )) {
+			global $wpdb;
+			define( 'ESP_STATUS_TABLE', $wpdb->prefix . 'esp_status' );
+		}
+	}
+
+
+
+	/**
+	* check_database_tables
+	* 
+	* ensures that the database has been updated to the current version
+	* and also ensures that all necessary data migration scripts have been applied
+	* in order to bring the content of the database up to snuff as well
+	* 
+	* @access public
+	* @since 3.1.28
+	* @return void
+	*/
+	public function check_database_tables() {
+		// check if db has been updated, cuz autoupdates don't trigger database install script
+		$espresso_db_update = get_option( 'espresso_db_update' );
+		// chech that option is an array
+		if( ! is_array( $espresso_db_update )) {
+			// if option is FALSE, then it never existed
+			if ( $espresso_db_update === FALSE ) {
+				// make $espresso_db_update an array and save option with autoload OFF
+				$espresso_db_update =  array();
+				add_option( 'espresso_db_update', $espresso_db_update, '', 'no' );
+			} else {
+				// option is NOT FALSE but also is NOT an array, so make it an array and save it
+				$espresso_db_update =  array( $espresso_db_update );
+				update_option( 'espresso_db_update', $espresso_db_update );
+			}
+		}
+		
+		// if current EE version is NOT in list of db updates, then update the db
+		if ( ! isset( $espresso_db_update[ EVENT_ESPRESSO_VERSION ] )) {
+			require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
+			EEH_Activation::create_database_tables();
+		}	
+		
+		// grab list of any existing data migrations from db
+		if ( ! $existing_data_migrations = get_option( 'espresso_data_migrations' )) {
+			// or initialize as an empty array
+			$existing_data_migrations = array();
+			// and set WP option
+			add_option( 'espresso_data_migrations', array(), '', 'no' );
+		}
+
+		// array of all previous data migrations to date
+		// using the name of the callback function for the value
+		$espresso_data_migrations = array(
+		);
+		
+		// temp array to track scripts we need to run 
+		$scripts_to_run = array();
+		// for tracking script errors
+		$previous_script = '';
+		// if we don't need them, don't load them
+		$load_data_migration_scripts = FALSE;
+		// have we already performed some data migrations ?
+		if ( ! empty( $existing_data_migrations )) {	
+			// loop through all previous migrations
+			foreach ( $existing_data_migrations as $ver => $migrations ) {
+				// ensure that migrations is an array, then loop thru it
+				$migrations = is_array( $migrations ) ? $migrations : array( $migrations );
+				foreach ( $migrations as $migration_func => $errors_array ) {
+					// make sure they have been executed
+					if ( ! in_array( $migration_func, $espresso_data_migrations )) {		
+						// ok NOW load the scripts
+						$load_data_migration_scripts = TRUE;
+						$scripts_to_run[ $migration_func ] = $migration_func;
+					} 
+				}
+			}		
+			
+		} else {
+			$load_data_migration_scripts = TRUE;
+			$scripts_to_run = $espresso_data_migrations;
+		}
+
+		if ( $load_data_migration_scripts && ! empty( $scripts_to_run )) {
+			require_once( 'includes/functions/data_migration_scripts.php' );		
+			// run the appropriate migration script
+			foreach( $scripts_to_run as $migration_func ) {
+				if ( function_exists( $migration_func )) {
+					call_user_func( $migration_func );
+				}		
 			}
 		}
 	}
