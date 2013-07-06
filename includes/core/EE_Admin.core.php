@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Admin {
+final class EE_Admin {
 
    /**
      * 	EE_Admin Object
@@ -32,7 +32,7 @@ class EE_Admin {
 
 	/**
 	 * 	EE_Registry Object
-	 *	@var 	object	
+	 *	@var 	EE_Registry	$EE
 	 * 	@access 	protected
 	 */
 	protected $EE = NULL;
@@ -71,6 +71,8 @@ class EE_Admin {
 		// admin hooks
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 1 );
 		add_filter( 'plugin_action_links', array( $this, 'filter_plugin_actions' ), 10, 2 );
+		// load EE_Request_Handler early
+		add_action( 'init', array( $this, 'get_request' ), 4 );
 		add_action( 'init', array( $this, 'init' ), 100 );
 		add_action( 'admin_init', array( $this, 'admin_init' ), 100 );
 		add_action( 'wp_ajax_event_list_save_state', array( $this, 'event_list_save_state_callback' ));
@@ -160,6 +162,18 @@ class EE_Admin {
 			array_unshift( $links, $org_settings_link, $events_link );
 		}
 		return $links;
+	}
+
+
+
+	/**
+	 *	_get_request
+	 * 
+	 *	@access public
+	 *	@return void
+	 */
+	public function get_request() {
+		$this->EE->load_core( 'Request_Handler' );	
 	}
 
 
