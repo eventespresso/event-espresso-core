@@ -77,7 +77,9 @@ class EE_Data_Mapper {
 	final function __set($a,$b) {}
 	final function __isset($a) {}
 	final function __unset($a) {}
-	final function __sleep() {}
+	final function __sleep() {
+		return array();
+	}
 	final function __wakeup() {}
 	final function __toString() {}
 	final function __invoke() {}
