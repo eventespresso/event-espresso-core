@@ -26,6 +26,11 @@ require_once( EE_MODELS . 'strategies/EE_Default_Where_Conditions.strategy.php' 
 foreach ( $files as $file ){
     require_once( $file );   
 }
+//make sure EE_Registry is available
+require_once( EE_REGISTRY );
+
+
+
 abstract class EEM_Base extends EE_Base{
 	
 	protected $singular_item = 'Item';
