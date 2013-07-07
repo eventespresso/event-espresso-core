@@ -1475,8 +1475,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$dates = $wpdb->get_results($SQL);
 
+		echo '<select name="month_range" class="wide">';
+			
+
 		if ($wpdb->num_rows > 0) {
-			echo '<select name="month_range" class="wide">';
 			echo '<option value="">' . __('Select a Month/Year', 'event_espresso') . '</option>';
 			foreach ($dates as $row) {
 				$option_date = date_i18n('M Y', $row->e_date);
@@ -1484,10 +1486,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				echo $option_date == $current_value ? ' selected="selected=selected"' : '';
 				echo '>' . $option_date . '</option>' . "\n";
 			}
-			echo "</select>";
 		} else {
-			_e('No Results', 'event_espresso');
+			echo '<option value="">' . __('No Dates Yet', 'event_espresso') . '</option>';
 		}
+		echo "</select>";
 	}
 
 
