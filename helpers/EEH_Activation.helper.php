@@ -928,13 +928,13 @@ class EEH_Activation {
 
 		global $wpdb;
 
-		if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_PRICE_TYPE . "'") == ESP_PRICE_TYPE) {
+		if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_PRICE_TYPE_TABLE . "'") == ESP_PRICE_TYPE_TABLE) {
 
-			$SQL = 'SELECT COUNT(PRT_ID) FROM ' . ESP_PRICE_TYPE;
+			$SQL = 'SELECT COUNT(PRT_ID) FROM ' . ESP_PRICE_TYPE_TABLE;
 			$price_types_exist = $wpdb->get_var( $SQL );
 			
 			if ( ! $price_types_exist ) {
-				$SQL = "INSERT INTO " . ESP_PRICE_TYPE . " ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_is_global, PRT_order, PRT_deleted ) VALUES
+				$SQL = "INSERT INTO " . ESP_PRICE_TYPE_TABLE . " ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_is_global, PRT_order, PRT_deleted ) VALUES
 							(1, 'Default Event Price', 1, 0, 0, 1, 0, 1),
 							(2, 'Event Price', 1, 0, 0, 0, 0, 0),
 							(3, 'Member % Discount', 2, 1, 1, 0, 10, 0),
