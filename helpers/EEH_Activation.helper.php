@@ -1047,12 +1047,12 @@ class EEH_Activation {
 	public static function insert_default_states() {
 
 		global $wpdb;
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . ESP_STATE . "'") == ESP_STATE ) {
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . ESP_STATE_TABLE . "'") == ESP_STATE_TABLE ) {
 			
-			$SQL = "SELECT COUNT('STA_ID') FROM " . ESP_STATE;
+			$SQL = "SELECT COUNT('STA_ID') FROM " . ESP_STATE_TABLE;
 			$states = $wpdb->get_var($SQL);
 			if ( ! $states ) {
-				$SQL = "INSERT INTO " . ESP_STATE . " 
+				$SQL = "INSERT INTO " . ESP_STATE_TABLE . " 
 				(STA_ID, CNT_ISO, STA_abbrev, STA_name, STA_active) VALUES
 				(1, 'US', 'AK', 'Alaska', 1),
 				(2, 'US', 'AL', 'Alabama', 1),
