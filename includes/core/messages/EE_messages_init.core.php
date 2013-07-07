@@ -55,7 +55,7 @@ class EE_messages_init extends EE_Base {
 
 
 	public static function set_autoloaders() {
-		spl_autoload_register( array( self, '_autoload_messages' ));
+		spl_autoload_register( 'self::_autoload_messages' );
 	}
 
 
