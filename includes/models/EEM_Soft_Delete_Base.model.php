@@ -45,12 +45,13 @@ class EEM_Soft_Delete_Base extends EEM_Base{
 	 * NOTE get_all() calls get_all(), so get_all() is also filtered to only return undeleted model objects.
 	 * If you want all deleted and undeleted model objects, call get_all_deleted_and_undeleted()
 	 * @param array $query_params like EEM_Base::get_all
+	 * @param boolean $values_already_prepared_by_model_object, whether query parameters ahve already been ran through their respective field's _prepare_for_set()
 	 * @return EE_Base_Class
 	 */	
-	public function get_all($query_params = array()){
+	public function get_all($query_params = array(), $values_already_prepared_by_model_object = false){
 		$deletedFlagFieldName=$this->deleted_field_name();
 		$query_params[0][$deletedFlagFieldName]=false;
-		return parent::get_all($query_params);
+		return parent::get_all($query_params,$values_already_prepared_by_model_object);
 	}
 	
 	/**
@@ -112,12 +113,13 @@ class EEM_Soft_Delete_Base extends EEM_Base{
 	 * Sum all the undeleted items.
 	 * @param array $query_params like EEM_Base::get_all
 	 * @param string $field_to_sum
+	 * @param boolean $values_already_prepared_by_model_object whether parameters ahve already been ran through their respective field's _preapre_for_set function
 	 * @return int
 	 */
-	public function sum($query_params = null, $field_to_sum = null){
+	public function sum($query_params = null, $field_to_sum = null, $values_already_prepared_by_model_object = false){
 		$deletedFlagFieldName=$this->deleted_field_name();
 		$query_params[0][$deletedFlagFieldName]=false;
-		return parent::sum($query_params, $field_to_sum);
+		return parent::sum($query_params, $field_to_sum,$values_already_prepared_by_model_object );
 	}
 	
 	
