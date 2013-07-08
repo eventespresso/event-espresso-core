@@ -136,6 +136,17 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
+
+
+	/**
+	 * The order this dtt is displayed in lists
+	 * @var int
+	 */
+	protected $_DTT_order;
+
+
+
+
 	/**
 	 *
 	 * @var EE_Event
@@ -745,6 +756,16 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
+
+
+
+	
+	public function order() {
+		return $this->get('DTT_order');
+	}
+
+
+
 	/**
 	 * This will return a timestamp for the website timezone but ONLY when the current website timezone is different than the timezone set for the website.
 	 *
@@ -826,6 +847,8 @@ class EE_Datetime extends EE_Base_Class{
 		if ( $this->is_upcoming( $what ) ) return 1;
 		if ( $this->is_active( $what ) ) return 2;
 	}
+
+
 }
 
 /* End of file EE_Datetime.class.php */
