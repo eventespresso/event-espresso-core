@@ -490,6 +490,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		);
 	}
 
+
+
 	protected function _event_legend_items() {
 		$items = array(
 			'view_details' => array(
@@ -707,6 +709,43 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 		return $success;
 	}
+
+
+
+
+
+	/**
+	 * Add in our autosave ajax handlers
+	 * @return void 
+	 */
+	protected function _ee_autosave_create_new() {
+		$this->_ee_autosave_edit();
+	}
+
+
+
+
+
+	protected function _ee_autosave_edit() {
+		$postid = isset( $this->_req_data['post_ID'] ) ? $this->_req_data['post_ID'] : NULL;
+
+		//if no postid then get out cause we need it for stuff in here
+		if ( empty( $postid ) ) return;
+
+		//handle datetime saves
+		$items = array();
+
+		$get_one_where = array( $this->_event_model->primary_key_name() => $postid );
+		$event = $this->_event_model->get_one( array($get_one_where) );
+
+		//now let's get the attached datetimes from the most recent autosave
+		$dtts = $event->get_many_related('Datetime');
+		foreach( $dtts as $dtt ) {
+			$dtt_ids[] = $dtt->ID();
+		}
+		$this->_template_args['data']['items']['datetime_IDS'] = serialize( $dtt_ids );
+	}
+
 
 
 
