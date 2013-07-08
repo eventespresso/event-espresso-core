@@ -601,6 +601,36 @@ class EE_Base_Class{
 
 
 
+
+
+	
+	protected function _set_time_for( $time, $fieldname ) {
+		$this->_set_date_time( 'T', $time, $fieldname );
+	}
+
+
+
+
+	
+
+	protected function _set_date_for( $date, $fieldname ) {
+		$this->_set_date_time( 'D', $date, $fieldname );
+	}
+
+
+
+
+
+	private function _set_date_time( $what = 'T', $datetimevalue, $fieldname ) {
+		$field = $this->_get_dtt_field_settings( $fieldname );
+		$attribute_field_name = $this->_get_private_attribute_name($fieldname);
+		$field->set_timezone( $this->_timezone );
+		$this->$attribute_field_name = $what == 'T' ? $field->prepare_for_set_with_new_time($datetimevalue, $this->$attribute_field_name ) : $field->prepare_for_set_with_new_date( $datetimevalue, $this->$attribute_field_name );
+		$this->_clear_cached_property($attribute_field_name);
+	}
+
+
+
 	
 	/**
 	 * Deletes this model object. That may mean just 'soft deleting' it though.
