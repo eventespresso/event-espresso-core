@@ -29,8 +29,6 @@ jQuery(document).ajaxSend( function( e, x, a ) {
 jQuery(document).ajaxComplete( function( e, x, a ) {
 	var response = wpAjax.parseAjaxResponse(x.responseXML), postID, stayhere = true;
 	var successname = typeof( a.success.name ) !== 'undefined' ? a.success.name : false;
-	console.log(successname);
-	console.log(response);
 	if ( !response || typeof(response.responses) === 'undefined' ) {
 		stayhere = false;
 		response = typeof( x.responseText) !== 'undefined' ? x.responseText : false;
@@ -59,7 +57,6 @@ jQuery(document).ajaxComplete( function( e, x, a ) {
  */
 EE_do_cpt_autosave_extras = function( postid ) {
 	var postdata;
-	console.log(postid);
 	postdata = {
 		action: 'ee-autosave',
 		post_ID: postid,
@@ -103,8 +100,6 @@ function EE_after_autosave_extras(response, status, xhr) {
 		
 	if ( ct.indexOf('json') > -1 || isjson ) {
 		resp = resp === '' ? response : resp;
-		console.log('inhere');
-		console.log(resp);
 
 		//make sure that we're only handling EE_ajax responses
 		if ( typeof(resp.isEEajax) === 'undefined' )
