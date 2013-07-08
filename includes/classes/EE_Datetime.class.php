@@ -24,6 +24,23 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
  */
 class EE_Datetime extends EE_Base_Class{
 	
+	/**
+	 * constant used by get_active_status, indicates datetime has expired (event is over)
+	 */
+	const expired = -1;
+	/**
+	 * constant used in various places indicating that an event is INACTIVE (not yet ready to be published)
+	 */
+	const inactive = 0;
+	/**
+	 * constnats used by get_active_status, indicating datetime is still active (even isnt over, can be registered-for)
+	 */
+	const active = 2;
+	/**
+	 * constant used by get_active_status, indicating the datetime cannot be used for registrations yet, but has not expired
+	 */
+	const upcoming = 1;
+	
     /**
     *	Datetime ID
 	* 
@@ -843,9 +860,9 @@ class EE_Datetime extends EE_Base_Class{
 	 * @return int       return value will be one of three ints: -1 = expired, 0 = upcoming, 1 = active.
 	 */
 	public function get_active_status( $what = 'EVT' ) {
-		if ( $this->is_expired( $what ) ) return -1;
-		if ( $this->is_upcoming( $what ) ) return 1;
-		if ( $this->is_active( $what ) ) return 2;
+		if ( $this->is_expired( $what ) ) return EE_Datetime::expired;
+		if ( $this->is_upcoming( $what ) ) return EE_Datetime::upcoming;
+		if ( $this->is_active( $what ) ) return EE_Datetime::active;
 	}
 
 

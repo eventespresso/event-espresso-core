@@ -447,7 +447,7 @@ class EE_Event extends EE_CPT_Base{
 	public function get_active_status() {
 		$dtt = $this->primary_datetime();
 		$status = is_object( $dtt ) ? $dtt->get_active_status() : FALSE;
-		return $status !== -1 && $this->_status != 'publish' ? 0 : $status;
+		return $status !== EE_Datetime::expired && $this->_status != 'publish' ?EE_Datetime::inactive : $status;
 	}
 
 
@@ -458,18 +458,18 @@ class EE_Event extends EE_CPT_Base{
 		$status = FALSE; 
 
 		switch ( $active_status ) {
-			case -1 :
+			case EE_Datetime::expired :
 				$status = __('Expired', 'event_espresso');
 				break;
-			case 0 :
+			case EE_Datetime::inactive :
 				$status = __('Inactive', 'event_espresso');
 				break;
 
-			case 1 :
+			case EE_Datetime::upcoming :
 				$status = __('Upcoming', 'event_espresso');
 				break;
 
-			case 2 : 
+			case EE_Datetime::active : 
 				$status = __('Active', 'event_espresso');
 				break;
 
