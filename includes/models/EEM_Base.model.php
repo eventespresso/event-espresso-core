@@ -306,11 +306,11 @@ abstract class EEM_Base extends EE_Base{
 	 *		));
 	 * 
 	 *	@param	array $query_params		
-	 *	@param	boolean $values_already_prepared_by_model_object		
-	 *	@param	constant $output
+	 *	@param	boolean $values_already_prepared_by_model_object	
+	 * @return EE_Base_Class[]  *note that there is NO option to pass the output type. If you want results different from EE_Base_Class[], use _get_all_wpdb_results()and make it public again.
 	 */
-	function get_all($query_params = array(), $values_already_prepared_by_model_object = false, $output = ARRAY_A ){	
-		return $this->_create_objects($this->_get_all_wpdb_results($query_params, $output, NULL, $values_already_prepared_by_model_object));
+	function get_all($query_params = array(), $values_already_prepared_by_model_object = false ){	
+		return $this->_create_objects($this->_get_all_wpdb_results($query_params, ARRAY_A, NULL, $values_already_prepared_by_model_object));
 	}
 	
 	
@@ -1762,7 +1762,7 @@ abstract class EEM_Base extends EE_Base{
 	*		cycle though array of attendees and create objects out of each item
 	* 
 	* 		@access		private
-	* 		@param		array		$attendees		
+	* 		@param		array		$rows of results of $wpdb->get_results($query,ARRAY_A)		
 	*		@return 	EE_Base_Class[]		array keys are primary keys (if there is a primary key on the model. if not, numerically indexed)
 	*/	
 	protected function _create_objects( $rows = array() ) {
