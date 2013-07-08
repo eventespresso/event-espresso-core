@@ -1835,9 +1835,10 @@ abstract class EEM_Base extends EE_Base{
 	 * takes care of including the PHP file with the corresponding .class file to this model.
 	 */
 	private function _include_php_class(){
-		$className=$this->_get_class_name();
-		$filepath = $className.".class.php";
-		if(!class_exists($className)){
+		//$className=$this->_get_class_name();
+		//$filepath = $className.".class.php";
+		EE_Registry::instance()->load_model( $this->get_this_model_name() );
+		/*(if(!class_exists($className)){
 			if(file_exists($filepath)){
 				require_once($filepath);
 			}else{
@@ -1846,7 +1847,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 		if(!class_exists($className)){
 			throw new EE_Error(sprintf(__('There is class with name %s contained in file %s.class.php. You must create one','event_espresso'),$className,$className));
-		}
+		}*/
 	}
 	
 	/**
@@ -1882,7 +1883,7 @@ abstract class EEM_Base extends EE_Base{
 				
 		//get the required info to instantiate the class whcih relates to this model.
 		$className=$this->_get_class_name();
-
+		EE_REGISTRY::instance()->load_class($this->get_this_model_name(), false,false,false);
 		$classInstance = call_user_func_array( array( $className, 'new_instance_from_db' ), array( $this_model_fields_n_values, $this->_timezone ) );
 
 		//it is entirely possible that the instantiated class object has a set timezone_string db field and has set it's internal _timezone property accordingly (see new_instance_from_db in model objects particularly EE_Event for example).  In this case, we want to make sure the model object doesn't have its timezone string overwritten by any timezone property currently set here on the model so, we intentially override the model _timezone property with the model_object timezone property.
