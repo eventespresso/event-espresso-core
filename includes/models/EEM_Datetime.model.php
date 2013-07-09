@@ -28,20 +28,7 @@ class EEM_Datetime extends EEM_Base {
 
   	// private instance of the Event_datetime object
 	private static $_instance = NULL;
-
-	// all event datetimes
-	private $_event_DT = array();
-	// all registration datetimes
-	private $_reg_DT = array();
-	// all event start datetimes
-	private $_start_DT = array();
-	// all event end datetimes
-	private $_end_DT = array();
-
 	
-
-
-
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
@@ -50,10 +37,6 @@ class EEM_Datetime extends EEM_Base {
 	 *		@return void
 	 */
 	protected function __construct( $timezone ) {
-		global $wpdb;
-		// set table name
-//		$this->table_name = $wpdb->prefix . 'esp_datetime';
-		// set item names
 		$this->singlular_item = __('Datetime','event_espresso');
 		$this->plural_item = __('Datetimes','event_espresso');		
 
@@ -129,9 +112,7 @@ class EEM_Datetime extends EEM_Base {
 						'EVT_ID' => 0, 
 						'DTT_is_primary' => true, 
 						'DTT_EVT_start' => time('timestamp') + (60 * 60 * 24 * 30), 
-						'DTT_EVT_end' => time('timestamp') + (60 * 60 * 24 * 30), 
-						'DTT_REG_start' => time('timestamp'), 
-						'DTT_REG_end' => time('timestamp') + (60 * 60 * 24 * 30) 
+						'DTT_EVT_end' => time('timestamp') + (60 * 60 * 24 * 30)
 						/*NULL,
 						NULL*/
 					)
@@ -140,8 +121,6 @@ class EEM_Datetime extends EEM_Base {
 
 		$times[0]->set_start_time("8am");
 		$times[0]->set_end_time("5pm");
-		$times[0]->set_reg_start_time("8am");
-		$times[0]->set_reg_end_time("5pm");/**/
 		return $times;
 	}
 
@@ -201,15 +180,13 @@ class EEM_Datetime extends EEM_Base {
 	* 		@param		int 			$EVT_ID
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
-	public function get_all_reg_dates( $EVT_ID = FALSE ) {
-		if (empty($EVT_ID)) { // on add_new_event event_id gets set to 0
-			$reg_times = $this->create_new_blank_datetime();
-			$reg_times[0]->set_start_time("12:00:01AM");
-			$reg_times[0]->set_end_time("11:59:59PM");
-			return $reg_times;
-		}
-		return $this->get_datetimes_for_event_ordered_by_importance( $EVT_ID );
-	}
+//	public function get_all_reg_dates( $EVT_ID = FALSE ) {
+//		if (empty($EVT_ID)) { // on add_new_event event_id gets set to 0
+//			$reg_times = $this->create_new_blank_datetime();
+//			return $reg_times;
+//		}
+//		return $this->get_datetimes_for_event_ordered_by_importance( $EVT_ID );
+//	}
 
 
 
@@ -222,17 +199,18 @@ class EEM_Datetime extends EEM_Base {
 	* 		@param		int 			$EVT_ID
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
-	public function get_primary_reg_date_for_event( $EVT_ID = FALSE ) {
-		if (empty($EVT_ID)) { // on add_new_event event_id gets set to 0
-			return FALSE;
-		}
-		return $this->get_datetimes_for_event_ordered_by_importance( $EVT_ID, 1 );
-	}
+//	public function get_primary_reg_date_for_event( $EVT_ID = FALSE ) {
+//		if (empty($EVT_ID)) { // on add_new_event event_id gets set to 0
+//			return FALSE;
+//		}
+//		return $this->get_datetimes_for_event_ordered_by_importance( $EVT_ID, 1 );
+//	}
 
 
 	/**
 	 * @todo delete this
 	 * Any idea what this is for? It's not used anywhere. I guess it's for 3.1->4.0 conversion? mike, april 25th 2013
+	 * Yeah I still don't see what it's for. And am PRETTY CONFUSED by the arrays with random ints in it. mike, july 9th 2013
 	 * @global type $wpdb
 	 */
 	function convert_converted_event_datetimes() {

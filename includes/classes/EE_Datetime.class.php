@@ -565,79 +565,79 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
-	/**
-	*		get registration start time
-	* 
-	* 		@access		public	
-	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
-	*		@return 		mixed		string on success, FALSE on fail
-	*/	
-	public function reg_start_time( $tm_format = NULL ) {
-		return $this->_show_datetime( 'T', 'REG', 'start', NULL, $tm_format );
-	}
-
-	public function e_reg_start_time( $tm_format = NULL ) {
-		$this->_show_datetime( 'T', 'REG', 'start', NULL, $tm_format, TRUE );
-	}
-
-
-
-
-
-	/**
-	*		get registration end time
-	* 
-	* 		@access		public	
-	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
-	*		@return 		mixed		string on success, FALSE on fail
-	*/	
-	public function reg_end_time( $tm_format = NULL ) {
-		return $this->_show_datetime( 'T', 'REG', 'end', NULL, $tm_format );
-	}
-
-	public function e_reg_end_time( $tm_format = NULL ) {
-		$this->_show_datetime( 'T', 'REG', 'end', NULL, $tm_format, TRUE );
-	}
+//	/**
+//	*		get registration start time
+//	* 
+//	* 		@access		public	
+//	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
+//	*		@return 		mixed		string on success, FALSE on fail
+//	*/	
+//	public function reg_start_time( $tm_format = NULL ) {
+//		return $this->_show_datetime( 'T', 'REG', 'start', NULL, $tm_format );
+//	}
+//
+//	public function e_reg_start_time( $tm_format = NULL ) {
+//		$this->_show_datetime( 'T', 'REG', 'start', NULL, $tm_format, TRUE );
+//	}
 
 
 
 
 
-	/**
-	*		get registrationstart date and start time
-	* 
-	* 		@access		public	
-	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
-	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
-	*		@return 		mixed		string on success, FALSE on fail
-	*/	
-	public function reg_start_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
-		return $this->_show_datetime( '', 'REG', 'start', $dt_frmt, $tm_format );
-	}
-
-	public function e_reg_start_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
-		return $this->_show_datetime( '', 'REG', 'start', $dt_frmt, $tm_format, TRUE );
-	}
-
+//	/**
+//	*		get registration end time
+//	* 
+//	* 		@access		public	
+//	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
+//	*		@return 		mixed		string on success, FALSE on fail
+//	*/	
+//	public function reg_end_time( $tm_format = NULL ) {
+//		return $this->_show_datetime( 'T', 'REG', 'end', NULL, $tm_format );
+//	}
+//
+//	public function e_reg_end_time( $tm_format = NULL ) {
+//		$this->_show_datetime( 'T', 'REG', 'end', NULL, $tm_format, TRUE );
+//	}
 
 
 
 
-	/**
-	*		get registration end date and time
-	* 
-	* 		@access		public	
-	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
-	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
-	*		@return 		mixed		string on success, FALSE on fail
-	*/	
-	public function reg_end_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
-		return $this->_show_datetime( '', 'REG', 'end', $dt_frmt, $tm_format );
-	}
 
-	public function e_reg_end_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
-		$this->_show_datetime( '', 'REG', 'end', $dt_frmt, $tm_format, TRUE );
-	}
+//	/**
+//	*		get registrationstart date and start time
+//	* 
+//	* 		@access		public	
+//	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
+//	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
+//	*		@return 		mixed		string on success, FALSE on fail
+//	*/	
+//	public function reg_start_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
+//		return $this->_show_datetime( '', 'REG', 'start', $dt_frmt, $tm_format );
+//	}
+//
+//	public function e_reg_start_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
+//		return $this->_show_datetime( '', 'REG', 'start', $dt_frmt, $tm_format, TRUE );
+//	}
+
+
+
+
+//
+//	/**
+//	*		get registration end date and time
+//	* 
+//	* 		@access		public	
+//	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
+//	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
+//	*		@return 		mixed		string on success, FALSE on fail
+//	*/	
+//	public function reg_end_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
+//		return $this->_show_datetime( '', 'REG', 'end', $dt_frmt, $tm_format );
+//	}
+//
+//	public function e_reg_end_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
+//		$this->_show_datetime( '', 'REG', 'end', $dt_frmt, $tm_format, TRUE );
+//	}
 
 
 
@@ -668,28 +668,28 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
-	/**
-	*		get registration start timestamp
-	* 
-	* 		@access		public	
-	*		@return 		int
-	*/	
-	public function reg_start() {
-		return $this->_DTT_REG_start;
-	}
+//	/**
+//	*		get registration start timestamp
+//	* 
+//	* 		@access		public	
+//	*		@return 		int
+//	*/	
+//	public function reg_start() {
+//		return $this->_DTT_REG_start;
+//	}
 
 
 
 
-	/**
-	*		get registration end timestamp
-	* 
-	* 		@access		public	
-	*		@return 		int
-	*/	
-	public function reg_end() {
-		return $this->_DTT_REG_end;
-	}
+//	/**
+//	*		get registration end timestamp
+//	* 
+//	* 		@access		public	
+//	*		@return 		int
+//	*/	
+//	public function reg_end() {
+//		return $this->_DTT_REG_end;
+//	}
 
 
 
