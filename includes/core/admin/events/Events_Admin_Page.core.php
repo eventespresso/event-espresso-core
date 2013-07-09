@@ -691,6 +691,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$timezone = isset( $data['timezone_string'] ) ? $data['timezone_string'] : NULL;
 		$success = TRUE;
 
+
 		foreach ( $data['event_datetimes'] as $row => $event_datetime ) {
 			$event_datetime['evt_end'] = isset($event_datetime['evt_end']) && ! empty( $event_datetime['evt_end'] ) ? $event_datetime['evt_end'] : $event_datetime['evt_start'];
 			$event_datetime['reg_end'] = isset($event_datetime['reg_end']) && ! empty( $event_datetime['reg_end'] ) ? $event_datetime['reg_end'] : $event_datetime['reg_start'];
@@ -704,10 +705,21 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'DTT_order' => $row
 				),
 				$timezone);
+			
+			$DTT = $evtobj->_add_relation_to( $DTM, 'Datetime' );
+			$saved_dtts[] = $DTT->ID();
 
-			$works = $evtobj->_add_relation_to( $DTM, 'Datetime' );
-			$success = !$success ? $success : $works; //if ANY of these updates fail then we want the appropriate global error message
+			$success = !$success ? $success : $DTT; //if ANY of these updates fail then we want the appropriate global error message
 		}
+
+		//now we need to REMOVE any dtts that got deleted.
+		$old_datetimes = unserialize( $data['datetime_IDs'] );
+		$dtts_to_delete = array_diff( $old_datetimes, $saved_dtts );
+		foreach ( $dtts_to_delete as $id ) {
+			$id = absint( $id );
+			$evtobj->_remove_relation_to( $id, 'Datetime' );
+		}
+
 		return $success;
 	}
 
