@@ -539,21 +539,26 @@ class EE_Event extends EE_CPT_Base{
 		switch ( $active_status ) {
 			case EE_Datetime::expired :
 				$status = __('Expired', 'event_espresso');
+				$class = 'expired';
 				break;
 			case EE_Datetime::inactive :
 				$status = __('Inactive', 'event_espresso');
+				$class = 'inactive';
 				break;
 
 			case EE_Datetime::upcoming :
 				$status = __('Upcoming', 'event_espresso');
+				$class = 'upcoming';
 				break;
 
 			case EE_Datetime::active : 
 				$status = __('Active', 'event_espresso');
+				$class = 'active';
 				break;
 
 		}
 
+		$status = '<span class="ee-status ' . $class . '">' . $status . '</span>';
 		if ( $echo ) {
 			echo $status;
 		} else {
