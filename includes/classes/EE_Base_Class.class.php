@@ -33,7 +33,7 @@ class EE_Base_Class{
 	 * which values to override and which to not override.
 	 * @var array
 	 */
-	private $_props_n_values_provided_in_consturctor = null;
+	private $_props_n_values_provided_in_constructor = null;
 
 	/**
 	 * Timezone
@@ -134,7 +134,7 @@ class EE_Base_Class{
 		}
 		$this->_timezone = $timezone;
 		//remember what values were passed to this constructor
-		$this->_props_n_values_provided_in_consturctor = $fieldValues;
+		$this->_props_n_values_provided_in_constructor = $fieldValues;
 	}
 
 
@@ -167,7 +167,7 @@ class EE_Base_Class{
 //		 var_dump($field_name);
 //		 echo 'echodump of $this->_get_primary_key_name(get_class($this))';
 //		 var_dump($this->_get_primary_key_name(get_class($this)));
-		 if($this->_props_n_values_provided_in_consturctor &&
+		 if($this->_props_n_values_provided_in_constructor &&
 				 $field_name == $this->_get_primary_key_name(get_class($this)) && 
 				 $field_value){
 			//if so, we want all this object's fields to be filled either with
@@ -178,7 +178,7 @@ class EE_Base_Class{
 			
 			 $obj_in_db = $this->_get_model(get_class($this))->get_one_by_ID($field_value);
 			 foreach($fields_on_model as $field_obj){
-				 if( ! array_key_exists($field_obj->get_name(), $this->_props_n_values_provided_in_consturctor)
+				 if( ! array_key_exists($field_obj->get_name(), $this->_props_n_values_provided_in_constructor)
 						&& $field_obj->get_name() != $field_name ){
 				 
 					$privateAttributeName=$this->_get_private_attribute_name($field_obj->get_name());
