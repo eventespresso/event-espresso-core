@@ -1,7 +1,7 @@
 jQuery(document).ajaxSend( function( e, x, a ) {
 	var ee_autosave_data = {};
 
-	var successname = typeof( a.success.name ) !== 'undefined' ? a.success.name : false;
+	var successname = typeof( a.success ) !== 'undefined' && typeof( a.success.name ) !== 'undefined' ? a.success.name : false;
 
 	//console.log(dump(successname));
 	//make sure we're ONLY doing our injection on wp successcallbacks cause wp does other stuff too (and we don't want to inject on our OWN calls of course!!)
