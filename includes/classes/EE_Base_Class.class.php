@@ -640,17 +640,22 @@ class EE_Base_Class{
 	
 		}
 		//if the object already has an ID, update it. Otherwise, insert it
+		//also: change the assumption about values passed to the model NOT being prepare dby the model obejct. They have been
+		$old_assumption_concerning_value_preparation = $this->get_model()->get_assumption_concerning_values_already_prepared_by_model_object();
+		$this->get_model()->assume_values_already_prepared_by_model_object(true);
+			
 		if ( !empty( $save_cols_n_values[self::_get_primary_key_name( get_class($this) )] ) ){
-			$results = $this->get_model()->update ( $save_cols_n_values, array(array(self::_get_primary_key_name(get_class($this))=>$this->ID())), true );
+			$results = $this->get_model()->update ( $save_cols_n_values, array(array(self::_get_primary_key_name(get_class($this))=>$this->ID())) );
 		} else {
 			unset($save_cols_n_values[self::_get_primary_key_name( get_class( $this) )]);
-			
 			$results = $this->get_model()->insert( $save_cols_n_values, true);
 			if($results){//if successful, set the primary key
 				$this->set(self::_get_primary_key_name( get_class($this) ),$results);//for some reason the new ID is returned as part of an array,
 				//where teh only key is 'new-ID', and it's value is the new ID.
 			}
 		}
+		//restore the old assumption about values being prepared by the model obejct
+		$this->get_model()->assume_values_already_prepared_by_model_object($old_assumption_concerning_value_preparation);
 		
 		return $results;
 	}
