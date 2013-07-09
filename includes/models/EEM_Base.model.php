@@ -60,7 +60,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 *
-	 * @var EE_Model_Relation[] array of different kidns of relations
+	 * @var EE_Model_Relation_Base[] array of different kidns of relations
 	 */
 	protected $_model_relations;
 
@@ -512,6 +512,27 @@ abstract class EEM_Base extends EE_Base{
 		}
 		return $rows_deleted;//how many supposedly got updated
 	}
+	
+	/**
+	 * Checks all the relations that throw error messages when there are blcoking related objects
+	 * for related model objects. If there are any related model objects on those relations, 
+	 * adds an EE_Error, and return true
+	 * @param EE_Base_CLass|int $this_model_obj_or_id
+	 * @return boolean
+	 */
+	public function delete_is_blocked_by_related_models($this_model_obj_or_id){
+		$is_blocked = false;
+		foreach($this->_model_relations as $relation_name => $relation_obj){
+			if($relation_obj->block_delete_if_related_models_exist()){
+				$related_model_objects = $relation_obj->get_all_related($this_model_obj_or_id);
+				if($related_model_objects){
+					EE_Error::add_error($relation_obj->get_deletion_error_message(), __FILE__, __FUNCTION__, __LINE__);
+					$is_blocked = true;
+				}
+			}
+		}
+		return $is_blocked;
+	}
 
 
 
@@ -526,6 +547,12 @@ abstract class EEM_Base extends EE_Base{
 		$deletes = $query = array();
 		
 		foreach ( $objects_for_deletion as $deobj ) {
+			//before we mark this object for deletion, 
+			//make sure there's no related objects blocking its deletion
+			if( $this->delete_is_blocked_by_related_models($deobj[$primary_table->get_fully_qualified_pk_column()]) ){
+				continue;
+			}
+			
 			//primary table deletes
 			if ( isset( $deobj[$primary_table->get_fully_qualified_pk_column()] ) )
 				$deletes[$primary_table->get_fully_qualified_pk_column()][] = $deobj[$primary_table->get_fully_qualified_pk_column()];

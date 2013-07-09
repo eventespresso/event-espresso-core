@@ -8,9 +8,17 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base{
 	 * @var EEMerimental_Base
 	 */
 	private $_joining_model_name;
-	function __construct($joining_model_name,$extra_join_conditions =''){
+	
+	/**
+	 * Object representing the relationship between two models. HasAndBelongsToMany relations always use a join-table
+	 * (and an ee joining-model.) This knows how to join the models,
+	 * get related models across the relation, and add-and-remove the relationships.
+	 * @param boolean $block_deletes for this type of relation, we block by default for now. if there are related models across this relation, block (prevent and add an error) the deletion of this model
+	 * @param type $blocking_delete_error_message a customized error message on blocking deletes instead of the default
+	 */
+	function __construct($joining_model_name,$block_deletes = true, $blocking_delete_error_message =''){
 		$this->_joining_model_name = $joining_model_name;
-		parent::__construct($extra_join_conditions);
+		parent::__construct($block_deletes, $blocking_delete_error_message);
 	}
 	/**
 	 * Gets the joining model's object
@@ -56,7 +64,7 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base{
 		$other_table_alias = $other_table_pk_field->get_table_alias();
 		$other_table = $this->get_other_model()->get_table_for_alias($other_table_alias);
 		
-		$SQL = $this->_left_join($other_table, $other_table_alias, $other_table_pk_field->get_table_column(), $join_table_alias, $join_table_fk_field_to_other_table->get_table_column(), $this->_extra_join_conditions) . $this->get_other_model()->_construct_internal_join_to_table_with_alias($other_table_alias);
+		$SQL = $this->_left_join($other_table, $other_table_alias, $other_table_pk_field->get_table_column(), $join_table_alias, $join_table_fk_field_to_other_table->get_table_column()) . $this->get_other_model()->_construct_internal_join_to_table_with_alias($other_table_alias);
 		return $SQL;
 	}
 	
