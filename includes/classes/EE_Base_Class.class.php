@@ -601,6 +601,63 @@ class EE_Base_Class{
 
 
 
+
+	/**
+	 * NOTE ABOUT BELOW:
+	 * These convenience date and time setters are for setting date and time independently.  In other words you might want to change the time on a datetime_field but leave the date the same (or vice versa).
+	 *
+	 * IF on the other hand you want to set both date and time at the same time, you can just use the models default set($fieldname,$value) method and make sure you send the entire datetime value for setting.
+	 */
+
+	/**
+	 * sets the time on a datetime property
+	 *
+	 * @access protected
+	 * @param string $time      a valid time string for php datetime functions
+	 * @param string $fieldname the name of the field the time is being set on (must match a EE_Datetime_Field)
+	 */
+	protected function _set_time_for( $time, $fieldname ) {
+		$this->_set_date_time( 'T', $time, $fieldname );
+	}
+
+
+
+
+	
+	/**
+	 * sets the date on a datetime property
+	 *
+	 * @access protected
+	 * @param string $date      a valid date string for php datetime functions
+	 * @param string $fieldname the name of the field the date is being set on (must match a EE_Datetime_Field)
+	 */
+	protected function _set_date_for( $date, $fieldname ) {
+		$this->_set_date_time( 'D', $date, $fieldname );
+	}
+
+
+
+
+
+
+	/**
+	 * This takes care of setting a date or time independently on a given model object property. This method also verifies that the given fieldname matches a model object property and is for a EE_Datetime_Field field
+	 *
+	 * @access private
+	 * @param string $what          "T" for time, otherwise Date is assumed
+	 * @param string $datetimevalue A valid Date or Time string
+	 * @param string $fieldname     the name of the field the date OR time is being set on (must match a EE_Datetime_Field property)
+	 */
+	private function _set_date_time( $what = 'T', $datetimevalue, $fieldname ) {
+		$field = $this->_get_dtt_field_settings( $fieldname );
+		$attribute_field_name = $this->_get_private_attribute_name($fieldname);
+		$field->set_timezone( $this->_timezone );
+		$this->$attribute_field_name = $what == 'T' ? $field->prepare_for_set_with_new_time($datetimevalue, $this->$attribute_field_name ) : $field->prepare_for_set_with_new_date( $datetimevalue, $this->$attribute_field_name );
+		$this->_clear_cached_property($attribute_field_name);
+	}
+
+
+
 	
 	/**
 	 * Deletes this model object. That may mean just 'soft deleting' it though.

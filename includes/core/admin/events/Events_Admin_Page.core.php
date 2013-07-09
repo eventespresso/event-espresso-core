@@ -695,12 +695,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$event_datetime['evt_end'] = isset($event_datetime['evt_end']) && ! empty( $event_datetime['evt_end'] ) ? $event_datetime['evt_end'] : $event_datetime['evt_start'];
 			$event_datetime['reg_end'] = isset($event_datetime['reg_end']) && ! empty( $event_datetime['reg_end'] ) ? $event_datetime['reg_end'] : $event_datetime['reg_start'];
 			$DTM = EE_Datetime::new_instance( array(
-					'DTT_ID' => isset( $event_datetime['ID'] ) ? absint( $event_datetime['ID'] ) : NULL,
+					'DTT_ID' => isset( $event_datetime['ID'] ) && $event_datetime['ID'] !== '' ? absint( $event_datetime['ID'] ) : NULL,
 					'DTT_EVT_start' => $event_datetime['evt_start'],
 					'DTT_EVT_end' => $event_datetime['evt_end'],
 					'DTT_REG_start' => $event_datetime['reg_start'],
 					'DTT_REG_end' => $event_datetime['reg_end'],
 					'DTT_is_primary' => $row == 1 ? TRUE : FALSE,
+					'DTT_order' => $row
 				),
 				$timezone);
 
@@ -729,8 +730,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _ee_autosave_edit() {
 		$postid = isset( $this->_req_data['post_ID'] ) ? $this->_req_data['post_ID'] : NULL;
 
+
 		//if no postid then get out cause we need it for stuff in here
 		if ( empty( $postid ) ) return;
+
+		//now let's determine if we're going to use the autosave post or the current post_ID!
+		$autosave = wp_get_post_autosave( $postid );
+
+		$postid = $autosave ? $autosave->ID : $postid;
 
 		//handle datetime saves
 		$items = array();
@@ -740,8 +747,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		//now let's get the attached datetimes from the most recent autosave
 		$dtts = $event->get_many_related('Datetime');
+		$dtt_ids = array();
 		foreach( $dtts as $dtt ) {
 			$dtt_ids[] = $dtt->ID();
+			$order = $dtt->order();
+			$this->_template_args['data']['items']['ID-'.$order] = $dtt->ID();
 		}
 		$this->_template_args['data']['items']['datetime_IDS'] = serialize( $dtt_ids );
 	}

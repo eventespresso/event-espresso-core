@@ -26,10 +26,9 @@
 					<input id="event-start-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][evt_start]" type="text" class="dtm-es-picker dtm-inp" value="<?php $time->e_start_date_and_time(  'Y-m-d '  ); ?>"/>
 					<input name="event-start-row-<?php echo $row; ?>" type="hidden" value="<?php echo $row; ?>"/>
 					<?php /* <input id="event-start-max-date-<?php echo $row; ?>" type="hidden" value=""/> */ ?>
-					<?php if ($time->ID()) { ?>
-					<?php $datetime_IDs[$row] = $time->ID(); ?>
-					<input id="ID-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][ID]" type="hidden" value="<?php echo $time->ID(); ?>"/>
-					<?php } ?>						
+					<?php $ID = $time->ID() ? $time->ID() : ''; ?>
+					<?php $datetime_IDs[$row] = $ID; ?>
+					<input id="ID-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][ID]" type="hidden" value="<?php echo $ID; ?>"/>
 					<input id="is-primary-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][is_primary]" type="hidden" value="<?php echo $time->is_primary(); ?>" />
 				</td>
 

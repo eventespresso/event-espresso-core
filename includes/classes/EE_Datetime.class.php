@@ -153,6 +153,17 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
+
+
+	/**
+	 * The order this dtt is displayed in lists
+	 * @var int
+	 */
+	protected $_DTT_order;
+
+
+
+
 	/**
 	 *
 	 * @var EE_Event
@@ -242,34 +253,7 @@ class EE_Datetime extends EE_Base_Class{
 		$this->_set_time_for($time,'DTT_EVT_end');
 	}
 	
-	/**
-	 * Privately used to set the time on the specified field. IE, doesnt change the date part thats already set 
-	 * @param string $time representation of the time, eg 9am
-	 * @param string $field_name like DTT_EVT_end
-	 */
-	private function _set_time_for($time,$field_name){
-		$field = $this->get_model()->field_settings_for($field_name);
-		$attribute_field_name = $this->_get_private_attribute_name($field_name);
-		$field->set_timezone( $this->_timezone );
-		$this->$attribute_field_name = $field->prepare_for_set_with_new_time($time, $this->$attribute_field_name );
-		$this->_clear_cached_property($attribute_field_name);
-	}
 	
-	
-	
-	/**
-	 *  Privately used to set the date on the specified field. IE, doesn't change the time part thats already set
-	 * @param string $date repsentation of the date, eg 2013-03-12
-	 * @param string $field_name like DTT_REG_start
-	 */
-	private function _set_date_for($date,$field_name){
-		$field = $this->get_model()->field_settings_for($field_name);
-		$field->set_timezone( $this->_timezone );
-		$attribute_field_name = $this->_get_private_attribute_name($field_name);
-		$this->$attribute_field_name = $field->prepare_for_set_with_new_date($date, $this->$attribute_field_name );
-		$this->_clear_cached_property( $attribute_field_name );
-	}
-
 
 
 
@@ -762,6 +746,16 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
+
+
+
+	
+	public function order() {
+		return $this->get('DTT_order');
+	}
+
+
+
 	/**
 	 * This will return a timestamp for the website timezone but ONLY when the current website timezone is different than the timezone set for the website.
 	 *
@@ -843,6 +837,8 @@ class EE_Datetime extends EE_Base_Class{
 		if ( $this->is_upcoming( $what ) ) return EE_Datetime::upcoming;
 		if ( $this->is_active( $what ) ) return EE_Datetime::active;
 	}
+
+
 }
 
 /* End of file EE_Datetime.class.php */
