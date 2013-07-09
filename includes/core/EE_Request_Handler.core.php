@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Request_Handler {
+final class EE_Request_Handler {
 
 	/**
 	 * 	@var 	array	$_params 	$_REQUEST paramaters
@@ -34,12 +34,6 @@ class EE_Request_Handler {
 	 *  	@access 	private
 	 */
 	private $_uri_segment_array = array();
-
-	/**
-	 * 	@var 	array 	$_espresso_CPT_pages
-	 *  	@access 	private
-	 */
-	private $_espresso_CPT_pages = array();
 
 	/**
 	 * 	@var 	array 	$_is_espresso_page
@@ -61,52 +55,14 @@ class EE_Request_Handler {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function __construct( $post_shortcodes ) {
+	public function __construct() {
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		// grab request vars
 		$this->_params = $_REQUEST;
-		// verify $post_shortcodes
-//		if ( empty( $post_shortcodes )) {
-//			$msg = __( 'An error has occured. The post shortcodes array is empty. Please ensure that the EE System has been loaded before using this function.', 'event_espresso' );
-//			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-//			return $msg;
-//		}
-		$this->_set_espresso_CPT_pages();
-		$this->_test_for_espresso_page( $post_shortcodes );
 		// get current post name from URL
 		$this->set( 'post_name', $this->_get_current_post_name() );
 	}
 
-
-
-	/**
-	 * 	_set_espresso_CPT_pages - add CPT "slugs" to array of default espresso "pages"
-	 *
-	 * 	@access private
-	 * 	@return array
-	 */
-	private function _set_espresso_CPT_pages() {
-		// get CPT data
-		$CPTs = EE_Register_CPTs::get_CPTs();
-		//printr( $CPTs, '$CPTs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		if ( is_array( $CPTs )) {
-			foreach ( $CPTs as $CPT_type => $CPT ) {
-				$this->_espresso_CPT_pages[ $CPT['singular_slug'] ] = $CPT_type;
-				$this->_espresso_CPT_pages[ $CPT['plural_slug'] ] = $CPT_type;
-			}
-		}
-	}
-
-
-	/**
-	 * 	_get_espresso_CPT_pages 
-	 *
-	 * 	@access public
-	 * 	@return array
-	 */
-	public function get_espresso_CPT_pages() {
-		return $this->_espresso_CPT_pages;
-	}	
 
 
 
@@ -209,25 +165,24 @@ class EE_Request_Handler {
 
 
 	/**
-	 * 		_test_for_espresso_page
+	 * 		test_for_espresso_page
 	 *
 	 * 		@access public
 	 * 		@return mixed
 	 */
-	public function _test_for_espresso_page( $post_shortcodes = array() ) {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+	public function test_for_espresso_page() {
 		$this->_is_espresso_page = FALSE;
 		// ensure _uri_segment_array is set
 		if ( empty( $this->_uri_segment_array )) {
 			$this->_generate_uri_segment_aray();
 		}
-//		printr( $post_shortcodes, '$post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		// load espresso CPT endpoints
+		$espresso_CPT_endpoints = EE_Registry::instance()->LIB['EE_CPT_Strategy']->get_CPT_endpoints();
 		// load all pages using espresso shortcodes
-//		$espresso_pages = array_keys( $post_shortcodes );
-//		printr( $espresso_pages, '$espresso_pages  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		$post_shortcodes = EE_Config::instance()->post_shortcodes;
 		// make sure core pages are included 
-		$espresso_pages = array_merge( $this->_espresso_CPT_pages, $post_shortcodes );
-//		printr( $espresso_pages, '$espresso_pages  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		$espresso_pages = array_merge( $espresso_CPT_endpoints, $post_shortcodes );
+		//printr( $espresso_pages, '$espresso_pages  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// cycle thru segments till we find a post
 		foreach( $this->_uri_segment_array as $uri_segment ) {
 			// can we get a page_id ?

@@ -83,7 +83,7 @@ class EEM_State extends EEM_Base {
 	 */
 	public static function define_table_name() {
 		global $wpdb;
-		define( 'EE_STATE_TABLE', $wpdb->prefix . 'esp_state' );
+		define( 'ESP_STATE_TABLE', $wpdb->prefix . 'esp_state' );
 	}
 
 

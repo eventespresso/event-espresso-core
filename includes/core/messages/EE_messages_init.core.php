@@ -48,9 +48,14 @@ class EE_messages_init extends EE_Base {
 	}
 
 	public function __construct() {
-		spl_autoload_register( array( $this, '_autoload_messages' ));
 		$this->_do_actions();
 		$this->_do_filters();
+	}
+
+
+
+	public static function set_autoloaders() {
+		spl_autoload_register( 'self::_autoload_messages' );
 	}
 
 
@@ -62,7 +67,11 @@ class EE_messages_init extends EE_Base {
 	 * 		@access 	private
 	 * 		@return 		void
 	 */
-	private function _autoload_messages( $className ) {
+	private static function _autoload_messages( $className ) {
+		//let's just work with EE_ files!
+		if ( !preg_match( '/EE_/', $className ) )
+			return;
+
 		//let's setup an array of paths to check (for each subsystem)
 		$root = EE_CORE;		
 		//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
@@ -76,6 +85,7 @@ class EE_messages_init extends EE_Base {
 			'messages/validators/' => array('core', 'class'),
 			'messages/validators/email/' => 'class'
 		);
+
 		//assemble a list of filenames
 		foreach ( $dir_ref as $dir => $types ) {
 			if ( is_array( $types )) {
@@ -103,6 +113,7 @@ class EE_messages_init extends EE_Base {
 	 * @return void 
 	 */
 	private function _load_controller() {
+		self::set_autoloaders();
 		$this->_EEMSG = new EE_messages();
 	}
 

@@ -1984,7 +1984,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 			'success' => isset( $this->_template_args['success'] ) ? $this->_template_args['success'] : FALSE,
 			'notices' => EE_Error::get_notices(),
 			'content' => utf8_encode($this->_template_args['admin_page_content']),
-			'data' => array_merge( $data, array('template_args' => $this->_template_args ) )
+			'data' => array_merge( $data, array('template_args' => $this->_template_args ) ),
+			'isEEajax' => TRUE //special flag so any ajax.Success methods in js can identify this return package as a EEajax package.
 			);
 
 
@@ -2569,9 +2570,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return boolean
 	 */
 	protected function _update_organization_settings( $tab, $data, $file = '', $func = '', $line = '' ) {
-		global $espresso_wp_user;
 		// grab existing org options
-		$org_options = get_user_meta( $espresso_wp_user, 'events_organization_settings', TRUE );
+		$org_options = get_object_vars($this->EE->CFG);
 		// make sure everything is in arrays
 		$org_options = is_array( $org_options ) ? $org_options : array( $org_options );
 		$data = is_array( $data ) ? $data : (array) $data;
@@ -2589,8 +2589,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		// overwrite existing org options with new data
 		$data = array_merge( $org_options, $data );
+
 		// and save it
-		if ( ($data === $org_options) || update_user_meta( $espresso_wp_user, 'events_organization_settings', $data )) {
+		if ( ($data === $org_options) || update_user_meta( $this->EE->CFG->wp_user, 'events_organization_settings', $data )) {
 			EE_Error::add_success( sprintf( __('%s have been successfully updated.', 'event_espresso'), $tab ));
 			return TRUE;
 		} else {

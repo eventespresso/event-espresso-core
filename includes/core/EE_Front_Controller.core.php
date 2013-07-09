@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Front_Controller {
+final class EE_Front_Controller {
 
 	/**
 	 * 	path to main espresso.php file
@@ -32,14 +32,14 @@ class EE_Front_Controller {
 
 	/**
 	 * 	system registry
-	 *	@var 	object		$EE
+	 *	@var 	EE_Registry		$EE
 	 * 	@access 	public
 	 */
 	public $EE;
 
 	/**
 	 * static copy of registry that modules can use until they get instantiated
-	 *	@var 	object		$registry
+	 *	@var 	EE_Registry	$registry
 	 * 	@access 	public
 	 */
 	public static $registry;
@@ -69,14 +69,15 @@ class EE_Front_Controller {
 	public function __construct( $main_file ) {
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 1 );
 		add_action( 'init', array( $this, 'init' ), 5 );
+		// determine how to integrate WP_Query with the EE models
+		add_action( 'init', array( $this, 'employ_CPT_Strategy' ), 10 );
+		// load EE_Request_Handler
+		add_action( 'wp_loaded', array( $this, 'get_request' ), 1 );
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 5 );
-//		add_filter( 'request', array( $this, 'filter_request' ), 1 );  
-//		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 1 );  
-//		add_action( 'parse_request', array( $this, 'parse_request' ), 5 );
 		add_action( 'wp', array( $this, 'wp' ), 5 );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 5 );
 		add_action('wp_head', array( $this, 'header_meta_tag' ), 5 );
-		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
+		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );		
 	}
 
 
@@ -88,11 +89,8 @@ class EE_Front_Controller {
 	 * 		@return 		void
 	 */
 	public function plugins_loaded() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		// registry, settings, autoloaders, and other config stuff
 		$this->_load_system_files();
-		// create static copy of EE for modules and shortcodes
-		 self::$registry = $this->EE;
 	}
 
 
@@ -107,6 +105,8 @@ class EE_Front_Controller {
 		if ( is_readable( EE_CORE . 'EE_System.core.php' )) {
 			require_once( EE_CORE . 'EE_System.core.php' );
 			$this->EE = EE_System::instance()->get_registry();
+			// create static copy of EE for modules and shortcodes to access during their initial phases
+			 self::$registry = $this->EE;
 		} else {
 			wp_die( __( 'An error has occured. The EE_System files could not be loaded.', 'event_espresso' ));
 		}
@@ -132,6 +132,19 @@ class EE_Front_Controller {
 
 
 
+	/**
+	 *	_get_request
+	 * 
+	 *	@access public
+	 *	@return void
+	 */
+	public function get_request() {
+		$this->EE->load_core( 'Request_Handler' );	
+		$this->EE->REQ->test_for_espresso_page();
+	}
+
+
+
 
 
 	/**
@@ -141,12 +154,6 @@ class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init() {
-
-		//if ( $this->EE->REQ->is_espresso_page()) { }
-		// nothing gets loaded at this point unless other systems turn this hookpoint on by using:  add_filter( 'FHEE_run_EE_init', '__return_true' );
-//		if ( apply_filters( 'FHEE_run_EE_init', FALSE )) {
-//			echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-
 			// allow shortcodes to register with WP and to set hooks for the rest of the system
 			$this->_register_shortcodes();
 			// allow modules to set hooks for the rest of the system
@@ -154,8 +161,19 @@ class EE_Front_Controller {
 			// pass shortcodes and modules to registry
 			$this->EE->shortcodes = self::$_installed_shortcodes;
 			$this->EE->modules = self::$_installed_modules;
+			
+			//random debug code added by mike.
+//			$this->EE->load_class('Attendee',false,false,false);
+//			$att = EE_Attendee::new_instance(array('ATT_lname'=>'nelson','ATT_ID'=>15));
+//			echo 'echodump of $att';
+//			var_dump($att);
+//			
+//			$att2 = EE_Attendee::new_instance(array('ATT_lname'=>'wilson'));
+//			$att2->set_city('moscow');
+//			$att2->set('ATT_ID',15);
+//			echo 'echodump of $att2';
+//			var_dump($att2);
 
-//		} 
 		
 	}
 
@@ -169,7 +187,6 @@ class EE_Front_Controller {
 	 * 		@return void
 	 */
 	private function _register_shortcodes() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		// which set hooks ?
 		$hook_point = is_admin() ? 'set_hooks_admin' : 'set_hooks';
 		// load base class
@@ -214,7 +231,6 @@ class EE_Front_Controller {
 			add_action( 'wp_loaded', array( $shortcode, $hook_point ));
 			// add to list of installed shortcode modules
 			EE_Front_Controller::register_shortcode( $shortcode_class, $shortcode );
-			// END foreach ( $shortcode_dirs as $shortcode_dir ) {
 		}
 		// filter list of installed modules
 		self::$_installed_shortcodes = apply_filters( 'AHEE__Front_Controller__register_shortcodes__installed_shortcodes', self::$_installed_shortcodes );
@@ -245,7 +261,6 @@ class EE_Front_Controller {
 	 * 		@return void
 	 */
 	private function _register_modules() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		// which set hooks ?
 		$hook_point = is_admin() ? 'set_hooks_admin' : 'set_hooks';
 		// load base class
@@ -293,6 +308,18 @@ class EE_Front_Controller {
 
 
 
+	/**
+	 * 	employ_CPT_Strategy
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function employ_CPT_Strategy() {
+		$this->EE->load_core( 'CPT_Strategy', 'CPTs', TRUE );
+	}
+
+
+
 
 
 	/*********************************************** 		WP_LOADED ACTION HOOK		 ***********************************************/
@@ -308,15 +335,10 @@ class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function wp_loaded() {
-		
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-
 		// messages loading is turned OFF by default, but prior to the wp_loaded hook, can be turned back on again via: add_filter( 'FHEE_load_EE_messages', '__return_true' );
 		if ( apply_filters( 'FHEE_load_EE_messages', FALSE )) {
 			EE_messages_init::init();
 		}
-		// determine how to integrate WP_Query with the EE models
-		$this->_employ_CPT_Model_Query_Strategy();
 		// process any content shortcodes
 		$this->_initialize_shortcodes();
 		// process request with module factory
@@ -328,33 +350,18 @@ class EE_Front_Controller {
 
 
 	/**
-	 * 	_employ_CPT_Model_Query_Strategy
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	private function _employ_CPT_Model_Query_Strategy() {
-		$this->EE->load_core( 'CPT_Model_Query_Strategy', TRUE );
-	}
-
-
-
-	/**
 	 * 	_initialize_shortcodes - calls init method on shortcodes that have been determined to be in the_content for the requested page
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
 	private function _initialize_shortcodes() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		// global $post;
-		//printr( $this->EE->REQ, '$this->EE->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// make sure post_name is set on REQ
 		if ( $this->EE->REQ->is_set( 'post_name' )) {
 			// grab post_name from request
 			$current_post = $this->EE->REQ->get( 'post_name' );
+			// if it's not set, then check if frontpage is blog
 			$current_post = ! empty( $current_post ) ? $current_post : get_option('show_on_front');
-//			echo '<h4>$current_post : "' . $current_post . '"  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 			// make sure shortcodes are set
 			if ( isset( $this->EE->CFG->post_shortcodes )) {
 //				printr( $this->EE->CFG->post_shortcodes, '$this->EE->CFG->post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -490,7 +497,7 @@ class EE_Front_Controller {
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		if ( $espresso_page = $this->EE->REQ->is_espresso_page() ) {
 //			echo '<h1>is_espresso_page  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
-			$CPTs = $this->EE->REQ->get_espresso_CPT_pages();
+			$CPTs = $this->EE->REQ->get_espresso_CPT_endpoints();
 //			printr( $CPTs, '$CPTs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			if ( isset( $CPTs[ $espresso_page ] )) {
 //				echo '<h4>$espresso_page : ' . $espresso_page . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';

@@ -98,7 +98,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			$filter[] = $this->_admin_page->active_status_dropdown( isset( $this->_req_data['active_status'] ) ? $this->_req_data['active_status'] : '' );
 
 		//category filter
-		$filters[] = espresso_category_dropdown( isset($this->_req_data['category_id']) ? $this->_req_data['category_id'] : '' );
+		//$filters[] = espresso_category_dropdown( isset($this->_req_data['category_id']) ? $this->_req_data['category_id'] : '' );
 		
 		
 		return $filters;	
@@ -185,7 +185,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			);
 		$delete_event_link = EE_Admin_Page::add_query_args_and_nonce( $delete_event_query_args, EVENTS_ADMIN_URL );
 
-		$view_link = espresso_reg_url( $item->ID(), $item->slug() );
+		$view_link = get_permalink($item->ID());
 
 		$actions = array(
 			'view' => '<a href="' . $view_link . '" title="' . __('View Event', 'event_espresso') . '">' . __('View', 'event_espresso') . '</a>',
@@ -306,7 +306,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EVENTS_ADMIN_URL );
-		$view_link = espresso_reg_url( $item->ID(), $item->slug() );
+		$view_link = get_permalink($item->ID());
 		$trash_event_link = EE_Admin_Page::add_query_args_and_nonce( $trash_event_query_args, EVENTS_ADMIN_URL );
 		$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );
 		$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, REG_ADMIN_URL );

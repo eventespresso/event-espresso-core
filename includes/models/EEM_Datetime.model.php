@@ -38,7 +38,7 @@ class EEM_Datetime extends EEM_Base {
 	// all event end datetimes
 	private $_end_DT = array();
 
-
+	
 
 
 
@@ -68,7 +68,8 @@ class EEM_Datetime extends EEM_Base {
 				'DTT_EVT_start'=>new EE_Datetime_Field('DTT_EVT_start', __('Start time/date of Event','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'DTT_EVT_end'=>new EE_Datetime_Field('DTT_EVT_end', __('End time/date of Event','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'DTT_reg_limit'=>new EE_Integer_Field('DTT_reg_limit', __('Registration LImit for this time','event_espresso'), true, 999999),
-				'DTT_tckts_left'=>new EE_Integer_Field('DTT_tckts_left', __('Calculated Tickets Remaining','event_espresso'), true, 999999)
+				'DTT_tckts_left'=>new EE_Integer_Field('DTT_tckts_left', __('Calculated Tickets Remaining','event_espresso'), true, 999999),
+				'DTT_order' => new EE_Integer_Field('DTT_order', __('The order in which the Datetime is displayed', 'event_espresso'), false, 0)
 			));
 		$this->_model_relations = array(
 			'Registration'=>new EE_Has_Many_Relation(),

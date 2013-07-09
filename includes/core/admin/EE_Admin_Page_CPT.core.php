@@ -138,6 +138,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	protected function _before_page_setup() {
 		$page = isset( $this->_req_data['page'] ) ? $this->_req_data['page'] : $this->page_slug;
 		$this->_cpt_object = get_post_type_object( $page );
+
+		//setup autosave ajax hook
+		add_action('wp_ajax_ee-autosave', array( $this, 'do_extra_autosave_stuff' ), 10 );
 	}
 
 
@@ -278,6 +281,50 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		$this->_set_autosave_containers();
 		$this->_load_autosave_scripts_styles();
 		//add_action('admin_enqueue_scripts', array( $this, 'load_autosave_scripts_styles'), 10 );
+	}
+
+
+
+	/**
+	 * This is run on all WordPress autosaves AFTER the autosave is complete and sends along a $_POST object (available in $this->_req_data) containing:
+	 * post_ID of the saved post
+	 * autosavenonce for the saved post
+	 *
+	 * We'll do the check for the nonce in here, but then this method looks for two things:
+	 * 1. Execute a method (if exists) matching 'ee_autosave_' and appended with the given route. OR
+	 * 2. do_actions() for global or class specific actions that have been registered (for plugins/addons not in an EE_Admin_Page class.
+	 *
+	 *	PLEASE NOTE:
+	 *	Data will be returned using the _return_json() object and so the $_template_args property should be used to hold the $data array.  We're expecting the following things set in template args.
+	 *	1. $template_args['error'] = IF there is an error you can add the message in here.
+	 *	2. $template_args['data']['items'] = an array of items that are setup in key index pairs of 'where_values_go' => 'values_to_add'.  In other words, for the datetime metabox we'll have something like
+	 *	$this->_template_args['data']['items'] = array(
+	 *		'event-datetime-ids' => '1,2,3';
+	 *	);
+	 *	Keep in mind the following things:
+	 *	- "where" index is for the input with the id as that string.
+	 *	- "what" index is what will be used for the value of that input.
+	 *	
+	 * 
+	 * @return JSON object 
+	 */
+	public function do_extra_autosave_stuff() {
+		//first let's check for the autosave nonce (we'll use _verify_nonce )
+
+		$nonce = isset( $this->_req_data['autosavenonce'] ) ? $this->_req_data['autosavenonce'] : NULL;
+		$this->_verify_nonce( $nonce, 'autosave' );
+
+
+		//if we made it here then the nonce checked out.  Let's run our methods and actions
+		if ( method_exists( $this, '_ee_autosave_' . $this->_current_view ) ) {
+			call_user_func( array( $this, '_ee_autosave_' . $this->_current_view ) );
+		}
+
+		do_action('AHEE__EE_Admin_Page_CPT_core_do_extra_autosave_stuff', $this );
+		do_action('AHEE__EE_Admin_Page_CPT_core_do_extra_autosave_stuff_' . get_class( $this ), $this );
+
+		//now let's return json
+		$this->_return_json();		
 	}
 
 
@@ -492,6 +539,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	public function cpt_post_form_hidden_input() {
 		echo '<input type="hidden" name="ee_cpt_item_redirect_url" value="' . $this->_admin_base_url . '" />';
+
+		//we're also going to add the route value
+		echo '<input type="hidden" id="current_route" name="current_route" value="' . $this->_current_view . '" />';
 	}
 
 

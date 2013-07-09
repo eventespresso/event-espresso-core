@@ -51,6 +51,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @return void
 	 */
 	public function __construct( $routing = TRUE ) {
+		//make sure messages autoloader is running
+		require_once( EE_CORE . 'messages/EE_messages_init.core.php' );
+		EE_messages_init::set_autoloaders();
 		parent::__construct($routing);
 	}
 

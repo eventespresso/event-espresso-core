@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Config {
+final class EE_Config {
 
 
 	/**
@@ -30,6 +30,13 @@ class EE_Config {
 	 * 	@access 	private
 	 */
 	private static $_instance = NULL;
+
+
+	/**
+	 * holds the user_id for the current user
+	 * @var int
+	 */
+	public $wp_user;
 
 
 //	public $events_page = 'events';
@@ -58,12 +65,8 @@ class EE_Config {
 	 *  @return 	void
 	 */
 	private function __construct() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		// org options loading is turned OFF by default, but prior to the plugins_loaded hook, can be turned back on again via:  add_filter( 'FHEE_load_org_options', '__return_true' );
-		if ( apply_filters( 'FHEE_load_org_options', FALSE )) {
-			// get EE site settings
-			$this->_load_config();
-		}
+		// get EE site settings
+		$this->_load_config();
 	}
 
 
@@ -90,15 +93,15 @@ class EE_Config {
 	private function _load_config() {
 
 		$this->post_shortcodes = array();
-
 		$current_user_id = get_current_user_id();
-		$current_user_id = $current_user_id ? $current_user_id : 1;		
+		$current_user_id = $current_user_id ? $current_user_id : 1;
+		$this->wp_user = $current_user_id;	
 		// grab org options based on current admin user
 		$config = get_user_meta( $current_user_id, 'events_organization_settings', TRUE );
 		// do settings for this user exist ?
 		if ( empty( $config )) {
-			require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/activation.php');
-			espresso_org_option_initialization();		
+			require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
+			$config = EEH_Activation::org_option_initialization();		
 		} else {
 			// list of critical settings
 			$critical_settings = array( 

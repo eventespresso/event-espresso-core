@@ -5,7 +5,6 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	public function __construct( $admin_page ) {
-		throw new EE_Error("Mike deleted thie list table (file includes/core/admin/registrations/EE_Event_Regstrations_List_Table)...psyche its still here!");
 		parent::__construct($admin_page);
         $this->_status = $this->_admin_page->get_registration_status_array();
 	}

@@ -51,7 +51,6 @@ jQuery(document).ready(function($) {
 						}
 						
 					}
-					console.log( isjson );
 
 					if ( ct.indexOf('json') > -1 || isjson ) {
 						/*console.log('json');
