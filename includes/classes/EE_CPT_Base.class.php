@@ -106,7 +106,7 @@ class EE_CPT_Base extends EE_Base_Class{
 
 
 	public function set_status ( $status ) {
-		$this->set( 'status' );
+		$this->set( 'status', $status );
 	}
 
 
