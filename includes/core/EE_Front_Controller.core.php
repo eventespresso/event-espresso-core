@@ -713,15 +713,15 @@ final class EE_Front_Controller {
 		
 		
 		
-		$this->EE->load_model('Question',false,false,false);
-		$q1 = EEM_Question::instance()->get_one();
-		$groups =$q1->question_groups();
-		echo 'echodump of $groups';
-		var_dump($groups);
-		$result = $q1->delete();
-		echo 'echodump of $result';
-		var_dump($result);
-		var_dump(EE_Error::get_notices());
+//		$this->EE->load_model('Question',false,false,false);
+//		$q1 = EEM_Question::instance()->get_one();
+//		$groups =$q1->question_groups();
+//		echo 'echodump of $groups';
+//		var_dump($groups);
+//		$result = $q1->delete();
+//		echo 'echodump of $result';
+//		var_dump($result);
+//		var_dump(EE_Error::get_notices());
 		// nothing gets loaded at this point unless other systems turn this hookpoint on by using:  add_filter( 'FHEE_run_EE_the_content', '__return_true' );
 		if ( apply_filters( 'FHEE_run_EE_the_content', FALSE )) {
 			$the_content = EE_Error::get_notices() . $the_content;
