@@ -74,7 +74,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'start_date' => array('DTT_EVT_start' => false),
 			'start_time' => array('DTT_EVT_start' => false),
 			'reg_begins' => array('DTT_REG_start' => false),
-			'status' => array('Event.status' => false)
+			//'status' => array('Event.status' => false)
 			);
 
 		$this->_hidden_columns = array();
