@@ -1,7 +1,7 @@
 jQuery(document).ajaxSend( function( e, x, a ) {
 	var ee_autosave_data = {};
 
-	var successname = typeof( a.success ) !== 'undefined' && typeof( a.success.name ) !== 'undefined' ? a.success.name : false;
+	var successname = typeof a.success !== undefined && typeof a.success.name !== undefined ? a.success.name : false;
 
 	//console.log(dump(successname));
 	//make sure we're ONLY doing our injection on wp successcallbacks cause wp does other stuff too (and we don't want to inject on our OWN calls of course!!)
@@ -28,10 +28,10 @@ jQuery(document).ajaxSend( function( e, x, a ) {
  */
 jQuery(document).ajaxComplete( function( e, x, a ) {
 	var response = wpAjax.parseAjaxResponse(x.responseXML), postID, stayhere = true;
-	var successname = typeof( a.success.name ) !== 'undefined' ? a.success.name : false;
-	if ( !response || typeof(response.responses) === 'undefined' ) {
+	var successname = typeof a.success.name !== 'undefined' ? a.success.name : false;
+	if ( !response || typeof response.responses === 'undefined' ) {
 		stayhere = false;
-		response = typeof( x.responseText) !== 'undefined' ? x.responseText : false;
+		response = typeof x.responseText !== 'undefined' ? x.responseText : false;
 	}
 
 	
@@ -102,19 +102,19 @@ function EE_after_autosave_extras(response, status, xhr) {
 		resp = resp === '' ? response : resp;
 
 		//make sure that we're only handling EE_ajax responses
-		if ( typeof(resp.isEEajax) === 'undefined' )
+		if ( typeof resp.isEEajax === 'undefined' )
 			return;
 
-		if ( typeof(resp.data) === 'undefined' ) resp.data = [];
-		if ( typeof(resp.data.items) === 'undefined' ) resp.data.where = '#autosave-alert';
-		if ( typeof(resp.data.items) === 'undefined' ) resp.data.what = 'There was a problem with ee autosaves, likely have not setup the response correctly';
+		if ( typeof resp.data === 'undefined' ) resp.data = [];
+		if ( typeof resp.data.items === 'undefined' ) resp.data.where = '#autosave-alert';
+		if ( typeof resp.data.items === 'undefined' ) resp.data.what = 'There was a problem with ee autosaves, likely have not setup the response correctly';
 
 		if ( resp.error || resp.notices ) {
 			jQuery('#autosave-alert').remove();
-			var error = typeof(resp.notices) === 'undefined' || resp.notices === '' ? resp.error : resp.notices;
+			var error = typeof resp.notices === 'undefined' || resp.notices === '' ? resp.error : resp.notices;
 			jQuery('#titlediv').after('<div id="autosave-alert" class="error below-h2"><p>' + error + '</p></div>');
 		} else {
-			if  ( ( resp.data.items ) === 'undefined' )
+			if  ( typeof resp.data.items === 'undefined' )
 				jQuery(resp.where).val(resp.data.what);
 			else {
 				//loop through the items array and get the values to add
