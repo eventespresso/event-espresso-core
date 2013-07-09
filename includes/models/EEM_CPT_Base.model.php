@@ -43,8 +43,9 @@ class EEM_CPT_Base extends EEM_Base{
 				$primary_table_name = $alias;
 		}
 
-		$this->_statuses = $this->get_status_array();
-		$this->_fields[$primary_table_name]['status'] = new EE_Enum_Field('post_status', __("Event Status", "event_espresso"), false, 'draft', $this->_statuses);
+		//set default wp post statuses if child has not already set.
+		if ( !isset( $this->_fields[$primary_table_name]['status'] ) )
+			$this->_fields[$primary_table_name]['status'] = new EE_WP_Post_Status_Field('post_status', __("Event Status", "event_espresso"), false, 'draft');
 		parent::__construct($timezone);
 	}
 
