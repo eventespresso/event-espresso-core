@@ -821,7 +821,7 @@ class EE_Datetime extends EE_Base_Class{
 	public function is_expired( $what = 'EVT' ) {
 		$end = '_DTT_' . $what . '_end';
 		$this->_property_exists( $end );
-		return ( $this->$end > time() );
+		return ( $this->$end < time() );
 	}
 
 
