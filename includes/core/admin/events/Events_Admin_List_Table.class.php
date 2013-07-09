@@ -253,10 +253,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_status($item) {
-		/**$status = array();
-		$status = event_espresso_get_is_active($item->ID());
-		return $status['display'] == 'OPEN' ? '<span style="color:green;"><b>' . $status['display'] . '</b></span>' : $status['display'];*/
-		return 'TODO';
+		$item->pretty_active_status();
 	}
 
 
