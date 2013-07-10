@@ -64,18 +64,16 @@ final class EE_System {
 	 *  @return 	void
 	 */
 	private function __construct( $activation ) {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		// set autoloaders for core files, models, classes, and libraries
-//		$this->_define_autoloaders();
-		// set autoloaders for core files
+		// handy dandy object for holding shtuff
+		$this->_load_registry();
+		$this->_register_core_autoloaders();
+
 		if ( $activation ) {
+			$this->_register_model__and_class_autoloaders();
 			// set names for db tables
 			$this->_define_database_tables();
 			$this->check_database_tables();
 		} else  {
-			// handy dandy object for holding shtuff
-			$this->_load_registry();
-			$this->_register_core_autoloaders();
 			// hookpoints
 			add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
 			add_action( 'init', array( $this, 'init' ), 3 );
