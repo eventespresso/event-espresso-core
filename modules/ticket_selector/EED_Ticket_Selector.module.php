@@ -44,15 +44,6 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 
-	/**
-	 * 	register_module - makes core aware of this module
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function register_module() {
-		EE_Front_Controller::register_module(  __CLASS__ , __FILE__ );
-	}
 
 	/**
 	 * 	set_hooks - for hooking into EE Core, other modules, etc
@@ -82,7 +73,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@param	boolean 		$added_by_admin  whether the registration is being added by an admin
 	* 	@return 	void	
 	*/
-	public function init( $event = FALSE, $added_by_admin = FALSE ) {	
+	public function run( $event = FALSE, $added_by_admin = FALSE ) {	
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	
 		if ( ! $event ) {
