@@ -37,7 +37,7 @@ class EE_CPT_Event_Strategy {
 	 * 	@access 	protected
 	 */
 	protected $CPT = NULL;
-
+	
 
 
 	
@@ -47,10 +47,19 @@ class EE_CPT_Event_Strategy {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function __construct( EE_Registry $EE, $CPT ) {
+	public function __construct( $arguments ) {
+		extract( $arguments );
 		$this->EE = $EE;
 		$this->CPT = $CPT;
-		//printr( $this->CPT, '$this->CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		
+		if ( $this->EE->REQ->is_espresso_page() == 'events' && $this->EE->REQ->get( 'post_name' ) == 'events' ) {
+			$this->EE->REQ->set( 'ee', 'events' );
+		} else if ( $this->EE->REQ->is_espresso_page() == 'events' ) {
+			$this->EE->REQ->set( 'ee', 'event' );
+		}
+//		$this->EE->REQ->set( 'ee', $this->EE->REQ->is_espresso_page() );
+//		printr( $this->EE->REQ, '<br /><br />$this->EE->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
 		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 999 );
 		add_action( 'loop_start', array( $this, 'loop_start' ), 1 );
 	}
