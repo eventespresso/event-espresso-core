@@ -39,39 +39,15 @@ abstract class EED_Module extends EE_Base {
 	 * 	@access 	protected
 	 */
 	protected $ouput = '';
-	
-	/**
-	 * 	register_module - makes core aware of this module
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-//	public abstract static function register_module();
-	
-	/**
-	 * 	set_hooks - for hooking into EE Core, other modules, etc
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-//	public abstract static function set_hooks();
 
 	/**
-	 * 	set_hooks_admin - for hooking into EE Admin Core, other modules, etc
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-//	public abstract static function set_hooks_admin();
-
-	/**
-	 * 	init - initial module setup
+	 * 	run - initial module setup
 	 * 	this method is primarily used for activating resources in the EE_Front_Controller thru the use of filters
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public abstract function init();
+	public abstract function run();
 	
 	/**
 	*	instance - returns $this
@@ -90,8 +66,8 @@ abstract class EED_Module extends EE_Base {
 	*	@access public
 	*	@return 	void
 	*/
-	final public function __construct( EE_Registry $EE = NULL ) {
-		$this->EE = $EE;
+	final public function __construct() {
+		$this->EE = EE_Registry::instance();
 	}
 	
 }

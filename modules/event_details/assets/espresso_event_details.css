@@ -1,0 +1,43 @@
+	
+	#espresso-event-details-wrap-dv { width:65%; }	
+	#espresso-event-details-dv { position: relative; padding: 0; margin: 0 auto; }	
+	#event-details-h1 {
+		z-index:10; margin:.5em  0;
+		font-size: 3em; line-height:1em; font-weight: bold; color: #ccc;
+		text-shadow: 1px 1px 0px #fff;
+	}	
+	.espresso_events {
+		position: relative; width: 95%; height: auto; padding:0; margin: 2%;
+	}
+	.ee-event-img-dv { position: relative; width:100%; height:100%; overflow: hidden; margin:0 0 1em; }
+	.ee-event-img { width:100%; height: 100%; }	
+	.espresso-event-wrapper-dv { position: relative; }	
+	.espresso-event-wrapper-dv.has-img { margin:0 1em; }	
+/*	.espresso-event-wrapper-dv .event-header { padding:1.1em 1.5em 1em; text-shadow: 1px 1px 0px #fff; }	
+	.espresso-event-wrapper-dv  .event-title { font-size:1.5em; margin: 0; line-height: 1em; }	
+	.espresso-event-wrapper-dv  .event-header p { margin:0 0 .5em; font-size: 1em; color: #999; }*/
+	.espresso-event-wrapper-dv  .event-content p { margin: 0 0 1em; font-size: 1.1em; color: #666; line-height: 1.5em;	}	
+	.espresso-event-wrapper-dv  .event-meta { text-align: right; margin: 0 0 1em; }	
+	
+	.ee-register-button-lnk {
+		display: inline-block; position: relative; padding: 1em 2em; margin: 1em;
+		background: #7DBD29; border-radius: 3px; text-align: center;
+		border: 1px solid #6CBA00; border-top-color: #96E430; border-bottom-color: #5A861C; 
+		font-weight: bold; font-size:16px; color:#fff; text-shadow:1px 1px 0px rgba(0,0,0,.5); text-decoration: none;
+	}
+	.ee-register-button-lnk:hover { background: #6CBA00; color:#fff; }
+	.ee-register-button-lnk:visited { color:#fff; }
+	.ee-register-button-lnk:active { top:-1px; }
+	.edit-event-lnk { margin:0 1em; }
+	
+	.tiny-txt { font-size:.5em; letter-spacing:1px; }
+	.smaller-txt { font-size:.7em; letter-spacing:.6px; }
+	.small-txt { font-size:.85em; letter-spacing:.3px; }
+	.big-txt { font-size:1.2em; }
+	.bigger-txt { font-size:1.5em; letter-spacing:-1px; }
+	.huge-txt { font-size:2em; letter-spacing:-2px; }
+	
+	.highlight-bg { padding:1em 20px; background:#ffffdd; border-radius:3px; }
+	.hidden { display:none; }
+	.left { float: left; }
+	.right { float: right; }

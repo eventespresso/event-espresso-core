@@ -23,15 +23,6 @@
  */
 class EED_Event_Details  extends EED_Module {
 
-	/**
-	 * 	register_module - makes core aware of this module
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function register_module() {
-		EE_Front_Controller::register_module(  __CLASS__ , __FILE__ );
-	}
 
 	/**
 	 * 	set_hooks - for hooking into EE Core, other modules, etc
@@ -40,8 +31,12 @@ class EED_Event_Details  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
+		define( 'EVENT_DETAILS_ASSETS_URL', plugin_dir_url( __FILE__ ) . 'assets' . DS );
+		define( 'EVENT_DETAILS_TEMPLATES_PATH', plugin_dir_path( __FILE__ ) . 'templates' . DS );
 		add_filter( 'FHEE_run_EE_wp', '__return_true' );
 		add_filter( 'FHEE_load_EE_Session', '__return_true' );
+		EE_Config::register_route( 'event', 'Event_Details', 'run' );
+		EE_Config::register_view( 'event', 0, EVENT_DETAILS_TEMPLATES_PATH . 'single-espresso_events.template.php' );
 	}
 
 	/**
@@ -56,14 +51,12 @@ class EED_Event_Details  extends EED_Module {
 
 
 	/**
-	 * 	init - initial module setup
+	 * 	run - initial module setup
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function init() {
-		define( 'EVENT_DETAILS_ASSETS_URL', plugin_dir_url( __FILE__ ) . 'assets' . DS );
-		define( 'EVENT_DETAILS_TEMPLATES_PATH', plugin_dir_path( __FILE__ ) . 'templates' . DS );
+	public function run() {
 		add_filter( 'FHEE_load_org_options', '__return_true' );
 		add_filter( 'FHEE_load_css', '__return_true' );
 //		add_filter( 'FHEE_run_EE_wp', '__return_true' );
@@ -76,7 +69,7 @@ class EED_Event_Details  extends EED_Module {
 //		remove_all_filters( 'excerpt_length' );
 //		add_filter( 'excerpt_length', array( $this, 'excerpt_length' ), 10 );
 //		add_filter('excerpt_more', array( $this, 'excerpt_more' ), 10 );
-//		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
+		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
 //		add_filter( 'template_include', array( $this, 'template_include' ), 1 );
 		//$this->ouput =  '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	}
@@ -90,9 +83,7 @@ class EED_Event_Details  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function filter_request(  $req  ) {
-	    if ( isset( $req['pagename'] ) && $req['pagename'] == $this->EE->CFG->event_page ) {
-	 		$req['post_type'] = 'espresso_events';
-		}
+
 	    return $req;
 	}
 
@@ -165,18 +156,16 @@ class EED_Event_Details  extends EED_Module {
 
 		// get some style
 		if ( apply_filters( 'FHEE_enable_default_espresso_css', FALSE )) {
-			if ( is_archive() ) {
+			if ( is_single() ) {
 				// first check uploads folder
 				if ( file_exists( EVENT_ESPRESSO_UPLOAD_DIR . 'templates/event_details.css' )) {
 					wp_register_style( 'espresso_event_details', EVENT_ESPRESSO_UPLOAD_URL . 'templates/espresso_event_details.css', array() );
-					wp_register_script( 'espresso_event_details', EVENT_ESPRESSO_UPLOAD_URL . 'templates/espresso_event_details.js', array( 'blocksit' ), '1.0', FALSE  );
+					wp_register_script( 'espresso_event_details', EVENT_ESPRESSO_UPLOAD_URL . 'templates/espresso_event_details.js', array(), '1.0', FALSE  );
 				} else {
 					wp_register_style( 'espresso_event_details', EVENT_DETAILS_ASSETS_URL . 'espresso_event_details.css', array() );
-					wp_register_script( 'espresso_event_details', EVENT_DETAILS_ASSETS_URL . 'espresso_event_details.js', array( 'blocksit' ), '1.0', FALSE );
+					wp_register_script( 'espresso_event_details', EVENT_DETAILS_ASSETS_URL . 'espresso_event_details.js', array(), '1.0', FALSE );
 				}
-				wp_register_script( 'blocksit', EVENT_DETAILS_ASSETS_URL . 'blocksit.min.js', array( 'jquery' ), '1.0', FALSE );
 				wp_enqueue_style( 'espresso_event_details' );
-				wp_enqueue_script( 'blocksit' );
 				wp_enqueue_script( 'espresso_event_details' );
 			}
 		}

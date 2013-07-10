@@ -1,29 +1,33 @@
 <?php
 /**
- * Template Name: Event List
+ * Template Name: Event Details
  *
- * This is the most generic template file in a WordPress theme
- * and one of the two required files for a theme (the other being style.css).
- * It is used to display a page when nothing more specific matches a query.
- * For example, it puts together the home page when no home.php file exists.
+ * This is template will display a list of your events 
  *
- * Learn more: http://codex.wordpress.org/Template_Hierarchy
+ * Event Registration and Management Plugin for WordPress
  *
- * @package WordPress
- * @subpackage Twenty_Twelve
- * @since Twenty Twelve 1.0
+ * @ package		Event Espresso
+ * @ author			Seth Shoultes
+ * @ copyright	(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ link				http://www.eventespresso.com
+ * @ version		4+
  */
 get_header();
 ?>
-	<div id="espresso-events-list-wrap-dv"><!--style="height: 20000px;"-->
-		<div id="espresso-events-list-dv" class="hidden" role="main">
+<div class="maxwidth max-width row">
+	<div id="espresso-event-details-wrap-dv" class="site-content left">
+		<div id="espresso-event-details-dv" class="" role="main">
 				
-			<h1  id="event-list-h1"><?php _e( 'Upcoming Events', 'event_espresso' ); ?></h1>
-
 		<?php if ( have_posts() ) { ?>
 			<?php while ( have_posts() ) { the_post();?>
 			
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+				
+				<header class="event-header">
+					<p><?php the_terms( $post->ID, 'espresso_event_categories' ); ?></p>
+					<h1  id="event-details-h1"><?php the_title(); ?></h1>
+				</header>
 
 				<div class="event-datetimes">
 					<h4><?php the_event_date(); ?></h4>
@@ -35,7 +39,7 @@ get_header();
 				$wrap_class = '';
 				if ( has_post_thumbnail( $post->ID )) {
 					if ( $img_ID = get_post_thumbnail_id( $post->ID )) {
-						if ( $featured_img = wp_get_attachment_image_src( $img_ID, 'medium' )) {
+						if ( $featured_img = wp_get_attachment_image_src( $img_ID, 'large' )) {
 							$caption = esc_attr( get_post( get_post_thumbnail_id( $post->ID ))->post_excerpt );
 							$wrap_class = ' has-img';
 				?>
@@ -48,10 +52,6 @@ get_header();
 				}				
 			?>
 			<div class="espresso-event-wrapper-dv<?php echo $wrap_class;?>">
-				<header class="event-header">
-					<p><?php the_terms( $post->ID, 'espresso_event_categories' );// the_terms( $post->ID, 'category' );  ?></p>
-					<h1 class="event-title"><?php the_title(); ?></h1>
-				</header>
 				<!-- .event-header -->
 				<div class="event-content">
 					<?php the_excerpt(); ?> 
@@ -88,15 +88,15 @@ get_header();
 
 		<?php } // end have_posts() check ?>
 		
-			<div class="clear"></div>
 		</div><!-- #content -->
 
 		<?php 
 //		printr( $wp_query, '$wp_query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		 ?>
 
-		<div class="ee-pagination-dv"><?php  //echo paginate_links( $pagination_args ); ?></div>
 			
 	</div><!-- #primary -->
 
+	<?php get_sidebar(); ?>
+</div>
 <?php get_footer(); ?>
