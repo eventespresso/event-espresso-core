@@ -37,10 +37,8 @@ jQuery(document).ajaxComplete( function( e, x, a ) {
 		try {
 			resp = jQuery.parseJSON(response);
 		} catch (error) {
-			console.log(response);
 			//the only way I can think of right now to NOT print WP responses for created permalinks
 			if ( !response.match(/sample-permalink/) ) {
-				console.log('should not appear in here');
 				jQuery('#autosave-alert').remove();
 				jQuery('#titlediv').after('<div id="autosave-alert" class="error below-h2"><p>' + response + '</p></div>');
 				isjson = false;
