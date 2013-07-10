@@ -712,7 +712,7 @@ class EE_Registration extends EE_Base_Class {
 	 * @access public
 	 * @return EE_Datetime
 	 */
-	public function date_obj() {
+	public function date_obj() {		
 		return $this->get_first_related('Datetime');
 	}
 
