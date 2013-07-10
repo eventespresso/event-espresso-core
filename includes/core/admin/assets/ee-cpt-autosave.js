@@ -1,7 +1,7 @@
 jQuery(document).ajaxSend( function( e, x, a ) {
 	var ee_autosave_data = {};
 
-	var successname = typeof a.success !== undefined && typeof a.success.name !== undefined ? a.success.name : false;
+	var successname = typeof a.success.name !== 'undefined' ? a.success.name : false;
 
 	//console.log(dump(successname));
 	//make sure we're ONLY doing our injection on wp successcallbacks cause wp does other stuff too (and we don't want to inject on our OWN calls of course!!)
@@ -27,11 +27,24 @@ jQuery(document).ajaxSend( function( e, x, a ) {
  * @return {void}
  */
 jQuery(document).ajaxComplete( function( e, x, a ) {
+
 	var response = wpAjax.parseAjaxResponse(x.responseXML), postID, stayhere = true;
 	var successname = typeof a.success.name !== 'undefined' ? a.success.name : false;
 	if ( !response || typeof response.responses === 'undefined' ) {
 		stayhere = false;
 		response = typeof x.responseText !== 'undefined' ? x.responseText : false;
+		//last verification that we definitely DON'T have JSON (possibly via exceptions)
+		try {
+			resp = jQuery.parseJSON(response);
+		} catch (error) {
+			//the only way I can think of right now to NOT print WP responses for created permalinks
+			if ( !response.match(/sample-permalink/) ) {
+				jQuery('#autosave-alert').remove();
+				jQuery('#titlediv').after('<div id="autosave-alert" class="error below-h2"><p>' + response + '</p></div>');
+				isjson = false;
+				return;
+			}
+		}
 	}
 
 	
