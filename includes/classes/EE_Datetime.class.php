@@ -65,16 +65,6 @@ class EE_Datetime extends EE_Base_Class{
 	
 	
 	
-    /**
-    *	Primary Datetime (first)
-	* 
-	* 	foreign key
-	* 
-	*	@access	protected
-    *	@var int	
-    */
-	protected $_DTT_is_primary = NULL;
-	
 	
 	
     /**
@@ -155,18 +145,10 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
-	/**
-	 * The order this dtt is displayed in lists
-	 * @var int
-	 */
-	protected $_DTT_order;
-
-
-
 
 	/**
-	 *
-	 * @var EE_Event
+	 *	Related events
+	 * @var EE_Event[]
 	 */
 	protected $_Event;
 	
@@ -176,6 +158,14 @@ class EE_Datetime extends EE_Base_Class{
 	 * @var EE_Registration[]
 	 */
 	protected $_Registration;
+
+
+
+	/**
+	 * All Event Datetimes this event has
+	 * @var Event_Datetime[]
+	 */
+	protected $_Event_Datetime;
 
 	
 	
@@ -320,20 +310,6 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
-	/**
-	*		Set as primary date
-	* 
-	*		set the datetime as the primary datetime - please verify that all other datetimes are now set to false
-	* 
-	* 		@access		public		
-	*		@param		string		$primary 		True or False ?
-	*/	
-	public function set_primary( $primary ) {
-		$this->set('_DTT_is_primary', (bool) absint( $primary ) );
-	}
-
-
-
 
 
 	/**
@@ -387,14 +363,15 @@ class EE_Datetime extends EE_Base_Class{
 
 
 	/**
-	*		get the $EVT_ID for the event that this datetime belongs to
-	* 
-	* 		@access		public		
-	*		@return 		mixed		int on success, FALSE on fail
-	*/	
-	public function event_ID() {
-		if (isset($this->_EVT_ID)) {
-			return $this->_EVT_ID;
+	 * This helps to set the primary flag for this datetime (and given event) on the Event_Datetime join table.
+	 * @param int $EVT_ID The id of the event.
+	 */
+	public function set_primary( $EVT_ID ) {
+		$evt_dtt = EEM_Event_Datetime::instance()->get_one( array( array('DTT_ID' => $this->ID(), 'EVT_ID' => $EVT_ID)));
+		if ( !empty( $evt_dtt ) ) {
+			$evt_dtt->set('EVD_primary', TRUE);
+			$evt_dtt->save();
+			return TRUE;
 		} else {
 			return FALSE;
 		}
@@ -405,19 +382,56 @@ class EE_Datetime extends EE_Base_Class{
 
 
 	/**
-	*		whether this is the primary datetime for the event or registration
-	* 
-	* 		@access		public		
-	*		@return 		bool		bool on success, FALSE on fail
-	*/	
-	public function is_primary() {
-		$dtt_is_primary = $this->get('DTT_is_primary');
-		if ( is_bool( $dtt_is_primary ) ) {
-			return $dtt_is_primary ? TRUE : FALSE;
+	 * This helper sets the order for this datetime (and given event) on the Event_Datetime join table.
+	 * @param int  $EVT_ID The id of the event.
+	 * @param int  $order  The order for the datetime attached to this event.
+	 */
+	public function set_order( $EVT_ID, $order = 0 ) {
+		$evt_dtt = EEM_Event_Datetime::instance()->get_one( array( array('DTT_ID' => $this->ID(), 'EVT_ID' => $EVT_ID)));
+		if ( !empty( $evt_dtt ) ) {
+			$evt_dtt->set('EVD_order', $order);
+			$evt_dtt->save();
+			return TRUE;
 		} else {
-			return 'NOT SET';
+			return FALSE;
 		}
 	}
+
+
+
+
+	/**
+	 * This helper simply returns whether the event_datetime for the current datetime and the given event is a primary datetime
+	 * @param  int  $EVT_ID The id of the event
+	 * @return boolean          TRUE if is primary, FALSE if not.
+	 */
+	public function is_primary( $EVT_ID ) {
+		$evt_dtt = EEM_Event_Datetime::instance()->get_one( array( array('DTT_ID' => $this->ID(), 'EVT_ID' => $EVT_ID)));
+		if ( !empty( $evt_dtt ) ) {
+			return $evt_dtt->get('EVD_primary');
+		} else {
+			return FALSE;
+		}
+	}
+
+
+
+
+	/**
+	 * This helper simply returns the order for the datetime and given Event ID using the Event_Datetime join table
+	 * @param  int $EVT_ID The id of the event attached to this datetime
+	 * @return int         The order of the datetime for this event.
+	 */
+	public function order( $EVT_ID ) {
+		$evt_dtt = EEM_Event_Datetime::instance()->get_one( array( array('DTT_ID' => $this->ID(), 'EVT_ID' => $EVT_ID)));
+		if ( !empty( $evt_dtt ) ) {
+			return $evt_dtt->get('EVD_order');
+		} else {
+			return FALSE;
+		}
+	}
+
+
 
 
 
@@ -746,13 +760,6 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
-
-
-
-	
-	public function order() {
-		return $this->get('DTT_order');
-	}
 
 
 

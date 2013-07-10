@@ -575,18 +575,13 @@ class EEH_Activation {
 
 		$table_name = 'esp_datetime';
 		$sql = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-				  EVT_ID int(10) unsigned NOT NULL,
-				  DTT_is_primary tinyint(1) unsigned NOT NULL DEFAULT '0',
 				  DTT_EVT_start datetime NOT NULL default '0000-00-00 00:00:00',
 				  DTT_EVT_end datetime NOT NULL default '0000-00-00 00:00:00',
 				  DTT_REG_start datetime NOT NULL default '0000-00-00 00:00:00',
 				  DTT_REG_end datetime NOT NULL default '0000-00-00 00:00:00',
 				  DTT_reg_limit mediumint(8) unsigned DEFAULT NULL,
 				  DTT_tckts_left mediumint(8) unsigned DEFAULT NULL,
-				  DTT_order mediumint(3) unsigned DEFAULT 0,
-						PRIMARY KEY  (DTT_ID),
-							KEY EVT_ID (EVT_ID),
-							KEY DTT_is_primary (DTT_is_primary)";
+						PRIMARY KEY  (DTT_ID)";
 		
 		
 		
@@ -627,6 +622,17 @@ class EEH_Activation {
 				VNU_ID INT(11) NOT NULL ,
 				EVV_primary TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 				PRIMARY KEY (EVV_ID)";
+		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB');
+
+
+		$table_name='esp_event_datetime';
+		$sql="EVD_ID INT(11) NOT NULL AUTO_INCREMENT ,
+				EVT_ID INT(11) NOT NULL ,
+				DTT_ID INT(11) NOT NULL ,
+				EVD_primary TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+				EVD_order mediumint(3) unsigned DEFAULT 0,
+				PRIMARY KEY (EVD_ID),
+				KEY EVD_primary (EVD_primary)";
 		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB');
 		
 

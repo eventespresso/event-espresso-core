@@ -63,19 +63,17 @@ class EEM_Datetime extends EEM_Base {
 		$this->_fields = array(
 			'Datetime'=>array(
 				'DTT_ID'=> new EE_Primary_Key_Int_Field('DTT_ID', __('Datetime ID','event_espresso'), false, 0),
-				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID','event_espresso'), false, 0, 'Event'),
-				'DTT_is_primary'=>new EE_Boolean_Field('DTT_is_primary', __('Flag indicating Primary Event Time','event_espresso'), false, true),
 				'DTT_EVT_start'=>new EE_Datetime_Field('DTT_EVT_start', __('Start time/date of Event','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'DTT_EVT_end'=>new EE_Datetime_Field('DTT_EVT_end', __('End time/date of Event','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'DTT_REG_start'=>new EE_Datetime_Field('DTT_REG_start', __('Start time/date of Registration for Event','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'DTT_REG_end'=>new EE_Datetime_Field('DTT_REG_end', __('End time/date of Registration for Event','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'DTT_reg_limit'=>new EE_Integer_Field('DTT_reg_limit', __('Registration LImit for this time','event_espresso'), true, 999999),
-				'DTT_tckts_left'=>new EE_Integer_Field('DTT_tckts_left', __('Calculated Tickets Remaining','event_espresso'), true, 999999),
-				'DTT_order' => new EE_Integer_Field('DTT_order', __('The order in which the Datetime is displayed', 'event_espresso'), false, 0)
+				'DTT_tckts_left'=>new EE_Integer_Field('DTT_tckts_left', __('Calculated Tickets Remaining','event_espresso'), true, 999999)
 			));
 		$this->_model_relations = array(
 			'Registration'=>new EE_Has_Many_Relation(),
-			'Event'=>new EE_Belongs_To_Relation()
+			'Event'=>new EE_HABTM_Relation('Event_Datetime'),
+			'Event_Datetime'=> new EE_Has_Many_Relation()
 		);
 
 		parent::__construct( $timezone );
@@ -128,8 +126,6 @@ class EEM_Datetime extends EEM_Base {
 		$times = array( 
 				EE_Datetime::new_instance( 
 					array(
-						'EVT_ID' => 0, 
-						'DTT_is_primary' => true, 
 						'DTT_EVT_start' => time('timestamp') + (60 * 60 * 24 * 30), 
 						'DTT_EVT_end' => time('timestamp') + (60 * 60 * 24 * 30), 
 						'DTT_REG_start' => time('timestamp'), 
@@ -177,7 +173,7 @@ class EEM_Datetime extends EEM_Base {
 	public function get_datetimes_for_event_ordered_by_importance( $EVT_ID = FALSE, $limit = NULL){
 		return $this->get_all( array(array('Event.EVT_ID'=>$EVT_ID),
 			'limit'=>$limit,
-			'order_by'=>array('DTT_is_primary'=>'DESC','DTT_EVT_start'=>'ASC')));
+			'order_by'=>array('Event_Datetime.EVD_primary'=>'DESC','DTT_EVT_start'=>'ASC')));
 	}
 
 	/**

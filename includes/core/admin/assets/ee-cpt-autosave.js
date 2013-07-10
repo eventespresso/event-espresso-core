@@ -114,10 +114,6 @@ function EE_after_autosave_extras(response, status, xhr) {
 	if ( ct.indexOf('json') > -1 || isjson ) {
 		resp = resp === '' ? response : resp;
 
-		//make sure that we're only handling EE_ajax responses
-		if ( typeof resp.isEEajax === 'undefined' )
-			return;
-
 		if ( typeof resp.data === 'undefined' ) resp.data = [];
 		if ( typeof resp.data.items === 'undefined' ) resp.data.where = '#autosave-alert';
 		if ( typeof resp.data.items === 'undefined' ) resp.data.what = 'There was a problem with ee autosaves, likely have not setup the response correctly';

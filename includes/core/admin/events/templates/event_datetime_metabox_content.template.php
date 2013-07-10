@@ -29,7 +29,7 @@
 					<?php $ID = $time->ID() ? $time->ID() : ''; ?>
 					<?php $datetime_IDs[$row] = $ID; ?>
 					<input id="ID-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][ID]" type="hidden" value="<?php echo $ID; ?>"/>
-					<input id="is-primary-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][is_primary]" type="hidden" value="<?php echo $time->is_primary(); ?>" />
+					<input id="is-primary-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][is_primary]" type="hidden" value="<?php echo $time->is_primary($event_id); ?>" />
 				</td>
 
 				<td class="">
