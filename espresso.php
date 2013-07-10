@@ -31,7 +31,7 @@
  */
 //Returns the plugin version
 function espresso_version() {
-	return '4.1.dev';
+	return '4.1.001';
 }
 //Returns the template version
 function espresso_template_version() {
