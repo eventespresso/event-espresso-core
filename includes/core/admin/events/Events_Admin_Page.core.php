@@ -765,7 +765,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$dtt_ids = array();
 		foreach( $dtts as $dtt ) {
 			$dtt_ids[] = $dtt->ID();
-			$order = $dtt->order();
+			$order = $dtt->order($postid);
 			$this->_template_args['data']['items']['ID-'.$order] = $dtt->ID();
 		}
 		$this->_template_args['data']['items']['datetime_IDS'] = serialize( $dtt_ids );

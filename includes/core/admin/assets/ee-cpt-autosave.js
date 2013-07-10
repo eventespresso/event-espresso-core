@@ -37,8 +37,10 @@ jQuery(document).ajaxComplete( function( e, x, a ) {
 		try {
 			resp = jQuery.parseJSON(response);
 		} catch (error) {
+			console.log(response);
 			//the only way I can think of right now to NOT print WP responses for created permalinks
 			if ( !response.match(/sample-permalink/) ) {
+				console.log('should not appear in here');
 				jQuery('#autosave-alert').remove();
 				jQuery('#titlediv').after('<div id="autosave-alert" class="error below-h2"><p>' + response + '</p></div>');
 				isjson = false;
@@ -113,10 +115,6 @@ function EE_after_autosave_extras(response, status, xhr) {
 		
 	if ( ct.indexOf('json') > -1 || isjson ) {
 		resp = resp === '' ? response : resp;
-
-		//make sure that we're only handling EE_ajax responses
-		if ( typeof resp.isEEajax === 'undefined' )
-			return;
 
 		if ( typeof resp.data === 'undefined' ) resp.data = [];
 		if ( typeof resp.data.items === 'undefined' ) resp.data.where = '#autosave-alert';
