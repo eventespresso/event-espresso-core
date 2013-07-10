@@ -130,9 +130,9 @@ final class EE_Config {
 		$current_user_id = get_current_user_id();
 		$current_user_id = $current_user_id ? $current_user_id : 1;
 		// grab org options based on current admin user
-		$this->EE->CFG = (object) get_user_meta( $current_user_id, 'events_organization_settings', TRUE );
-		
-		if ( is_array( )) {
+		$this->EE->CFG = get_user_meta( $current_user_id, 'events_organization_settings', TRUE );
+		// force $this->EE->CFG into an object
+		if ( is_array( $this->EE->CFG )) {
 			$CFG = new stdClass();
 			foreach ( $this->EE->CFG as $k => $v ) {
 				$CFG->$k = $v;
