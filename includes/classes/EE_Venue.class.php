@@ -14,6 +14,13 @@ class EE_Venue extends EE_CPT_Base {
 	 */
 	protected $_State;
 
+
+	/**
+	 * join table object(s)
+	 * @var Event_Venue[]
+	 */
+	protected $_Event_Venue;
+
 	/**
 	 * related country
 	 * @var EE_COuntry

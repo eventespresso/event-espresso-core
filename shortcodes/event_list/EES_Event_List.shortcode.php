@@ -22,16 +22,6 @@
  * ------------------------------------------------------------------------
  */
 class EES_Event_List  extends EES_Shortcode {
-	
-	/**
-	 * 	register_shortcode - makes core aware of this shortcode
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function register_shortcode() {
-		EE_Front_Controller::register_shortcode(  __CLASS__ , __FILE__ );
-	}
 
 	/**
 	 * 	set_hooks - for hooking into EE Core, modules, etc
@@ -40,29 +30,27 @@ class EES_Event_List  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
-		add_filter( 'AHEE__Front_Controller__process_request__modules', array( 'EES_Espresso_Events', 'load_event_list' ), 10, 1 );
 	}
 
 	/**
-	 * 	load_event_list - filter_modules
-	 *
-	 *  @access 	public
-	 *  @return 	array
-	 */
-	public static function load_event_list( $modules ) {
-		$modules[] = 'Event_List';
-		return $modules;
-	}
-
-
-
-	/**
-	 * 	init - initial module setup
+	 * 	set_hooks_admin - for hooking into EE Admin Core, modules, etc
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function init() {
+	public static function set_hooks_admin() {
+	}
+
+
+
+	/**
+	 * 	run - initial module setup
+	 *
+	 *  @access 	public
+	 *	@param 	EE_Request_Handler	$REQ
+	 *  @return 	void
+	 */
+	public function run( EE_Request_Handler $REQ = NULL ) {
 	}
 
 

@@ -47,9 +47,9 @@ class EE_PUE {
 	 *	@access public
 	 *	@return void
 	 */	
-	public function __construct( EE_Registry $EE = NULL ) {
+	public function __construct() {
 		
-		$this->EE = $EE;
+		$this->EE = EE_Registry::instance();
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 //		global $org_options;
 

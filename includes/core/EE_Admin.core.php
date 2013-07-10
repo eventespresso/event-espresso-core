@@ -66,7 +66,7 @@ final class EE_Admin {
    /**
      * class constructor
      */
-	protected function __construct(  $main_file  ) {
+	protected function __construct( $main_file ) {
 		$this->main_file = $main_file;
 		// admin hooks
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 1 );
@@ -101,7 +101,7 @@ final class EE_Admin {
 		// path to espresso.php
 		$this->EE->main_file = $this->main_file;
 		// pew pew pew
-		$this->EE->load_core( 'PUE', FALSE, TRUE );
+		$this->EE->load_core( 'PUE' );
 	}
 
 
@@ -174,7 +174,9 @@ final class EE_Admin {
 	 *	@return void
 	 */
 	public function get_request() {
-		$this->EE->load_core( 'Request_Handler' );	
+		$this->EE->load_helper( 'URL' );	
+		$this->EE->load_core( 'CPT_Strategy' );
+		$this->EE->load_core( 'Request_Handler' );
 	}
 
 
@@ -617,10 +619,10 @@ final class EE_Admin {
 			// loop thru shortcodes
 			foreach ( $this->EE->shortcodes as $EES_Shortcode => $shortcode_dir ) {
 				// strip class prefix and convert to UPPERCASE
-				$shortcode = strtoupper( $EES_Shortcode );
+				$EES_Shortcode = strtoupper( $EES_Shortcode );
 				//$shortcode = strtoupper( str_replace( 'EES_', '', $EES_Shortcode ));
 				// is the shortcode in the post_content ?
-				if ( strpos( $post->post_content, $shortcode ) !== FALSE ) {
+				if ( strpos( $post->post_content, $EES_Shortcode ) !== FALSE ) {
 					// map shortcode to post
 					$this->EE->CFG->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] = $post_ID;
 					// and to frontpage in case it's displaying latest posts
@@ -631,7 +633,7 @@ final class EE_Admin {
 			//printr( $this->EE->CFG->post_shortcodes, '$this->EE->CFG->post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			
 			if ( $update_post_shortcodes ) {
-				$this->EE->CFG->update_post_shortcodes();
+				$this->EE->LIB['EE_Config']->update_post_shortcodes();
 			}			
 		}
 	}

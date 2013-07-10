@@ -24,6 +24,20 @@
 final class EE_Front_Controller {
 
 	/**
+	 * 	system registry
+	 *	@var 	EE_Registry		$EE
+	 * 	@access 	public
+	 */
+	private $EE;
+
+	/**
+	 * 	$_view_template
+	 *	@var 	string		$_view_template
+	 * 	@access 	public
+	 */
+	private $_view_template = NULL;
+
+	/**
 	 * 	path to main espresso.php file
 	 *	@var 	$main_file
 	 * 	@access 	public
@@ -31,32 +45,11 @@ final class EE_Front_Controller {
 	public $main_file;
 
 	/**
-	 * 	system registry
-	 *	@var 	EE_Registry		$EE
-	 * 	@access 	public
-	 */
-	public $EE;
-
-	/**
 	 * static copy of registry that modules can use until they get instantiated
 	 *	@var 	EE_Registry	$registry
 	 * 	@access 	public
 	 */
 	public static $registry;
-
-	/**
-	 * 	_installed_shortcodes
-	 *	@var 	array	$_installed_shortcodes
-	 * 	@access 	private
-	 */
-	private static $_installed_shortcodes = array();
-
-	/**
-	 * 	_installed_modules
-	 *	@var 	array	$_installed_modules
-	 * 	@access 	private
-	 */
-	private static $_installed_modules = array();
 
 
 
@@ -67,16 +60,23 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function __construct( $main_file ) {
+		// bootstrap
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 1 );
+		// early init
 		add_action( 'init', array( $this, 'init' ), 5 );
 		// determine how to integrate WP_Query with the EE models
 		add_action( 'init', array( $this, 'employ_CPT_Strategy' ), 10 );
 		// load EE_Request_Handler
-		add_action( 'wp_loaded', array( $this, 'get_request' ), 1 );
+		add_action( 'wp_loaded', array( $this, 'get_request' ), 2 );
+		// load other resources and begin to actually run shortcodes and modules
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 5 );
+		// before headers sent
 		add_action( 'wp', array( $this, 'wp' ), 5 );
+		// load css and js
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 5 );
+		// header
 		add_action('wp_head', array( $this, 'header_meta_tag' ), 5 );
+		// the content
 		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );		
 	}
 
@@ -139,8 +139,8 @@ final class EE_Front_Controller {
 	 *	@return void
 	 */
 	public function get_request() {
+		$this->EE->load_helper( 'URL' );	
 		$this->EE->load_core( 'Request_Handler' );	
-		$this->EE->REQ->test_for_espresso_page();
 	}
 
 
@@ -154,13 +154,6 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init() {
-			// allow shortcodes to register with WP and to set hooks for the rest of the system
-			$this->_register_shortcodes();
-			// allow modules to set hooks for the rest of the system
-			$this->_register_modules();
-			// pass shortcodes and modules to registry
-			$this->EE->shortcodes = self::$_installed_shortcodes;
-			$this->EE->modules = self::$_installed_modules;
 			
 			//random debug code added by mike.
 //			$this->EE->load_class('Attendee',false,false,false);
@@ -173,138 +166,8 @@ final class EE_Front_Controller {
 //			$att2->set('ATT_ID',15);
 //			echo 'echodump of $att2';
 //			var_dump($att2);
-
 		
 	}
-
-
-
-
-	/**
-	 * 		_register_shortcodes
-	 *
-	 * 		@access private
-	 * 		@return void
-	 */
-	private function _register_shortcodes() {
-		// which set hooks ?
-		$hook_point = is_admin() ? 'set_hooks_admin' : 'set_hooks';
-		// load base class
-		require_once( EE_SHORTCODES . 'EES_Shortcode.shortcode.php' );
-		// grab list of installed shortcodes
-		$shortcode_dirs = glob( EE_SHORTCODES . '*', GLOB_ONLYDIR );
-//		echo '<h4>EE_SHORTCODES : ' . EE_SHORTCODES . '*.shortcode.php' . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		printr( $shortcode_dirs, '$shortcode_dirs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		// cycle thru shortcode folders
-		foreach ( $shortcode_dirs as $shortcode_dir ) {
-			// grab and sanitize shortcode name
-			$shortcode_dir = sanitize_key( basename( $shortcode_dir ));
-			// create classname from shortcode directory name
-			$shortcode_class = 'EES_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $shortcode_dir )));
-			// does the shortcode exist ?
-			if ( ! file_exists( EE_SHORTCODES . $shortcode_dir . DS . $shortcode_class . '.shortcode.php' )) {
-				$msg = sprintf( __( 'An error has occured. The requested Event Espresso %s shortcode could not be loaded.', 'event_espresso' ), $shortcode_class );
-				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-				break;
-			}
-			// load the shortcode class file
-			require_once( EE_SHORTCODES . $shortcode_dir . DS . $shortcode_class . '.shortcode.php' );
-			// verfiy that class exists
-			if ( ! class_exists( $shortcode_class )) {
-				$msg = sprintf( __( 'An error has occured. The requested Event Espresso %s shortcode class does not exist.', 'event_espresso' ), $shortcode_class );
-				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-				add_filter( 'FHEE_run_EE_the_content', '__return_true' );
-				break;
-			}
-			// let's pause to reflect on this...
-			$sc_reflector = new ReflectionClass( $shortcode_class );
-			// ensure that class is actually a shortcode
-			if ( ! $sc_reflector->isSubclassOf( 'EES_Shortcode' )) {
-				$msg = sprintf( __( 'An error has occured. The requested Event Espresso %s shortcode is not of the class "EES_Shortcode".', 'event_espresso' ), $shortcode_class );
-				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-				add_filter( 'FHEE_run_EE_the_content', '__return_true' );
-				break;
-			}
-			// and pass the request object to the run method
-			$shortcode =$sc_reflector->newInstance( $this->EE );
-			// fire the shortcode class's set_hooks method during the wp_loaded hook, in case it needs to hook into other parts of the system
-			add_action( 'wp_loaded', array( $shortcode, $hook_point ));
-			// add to list of installed shortcode modules
-			EE_Front_Controller::register_shortcode( $shortcode_class, $shortcode );
-		}
-		// filter list of installed modules
-		self::$_installed_shortcodes = apply_filters( 'AHEE__Front_Controller__register_shortcodes__installed_shortcodes', self::$_installed_shortcodes );
-	}
-
-
-
-	/**
-	 * 	register_shortcode - makes core aware of this shortcode
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function register_shortcode( $shortcode_class = NULL, EES_Shortcode $shortcode = NULL ) {
-		if ( ! empty( $shortcode_class ) && ! empty( $shortcode )) {
-			$shortcode_class = str_replace( 'EES_', '', $shortcode_class );
-			self::$_installed_shortcodes[ $shortcode_class ] = $shortcode;
-		}
-	}	
-
-
-
-
-	/**
-	 * 		_register_modules
-	 *
-	 * 		@access private
-	 * 		@return void
-	 */
-	private function _register_modules() {
-		// which set hooks ?
-		$hook_point = is_admin() ? 'set_hooks_admin' : 'set_hooks';
-		// load base class
-		require_once( EE_MODULES . 'EED_Module.module.php' );
-		// grab list of installed modules
-		$module_dirs = glob( EE_MODULES . '*', GLOB_ONLYDIR );
-		// loop through folders
-		foreach ( $module_dirs as $module_dir ) {
-			// grab and sanitize module name
-			$module_dir = sanitize_key( basename( $module_dir ));
-			// create classname from module directory name
-			$module = 'EED_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $module_dir )));
-			// does the module exist ?
-			if ( $module_dir == 'moduletemplatecopy-this' ) {
-				break;
-			} else if ( ! file_exists( EE_MODULES . $module_dir . DS . $module . '.module.php' )) {
-				$msg = sprintf( __( 'An error has occured. The requested Event Espresso %s module could not be loaded.', 'event_espresso' ), $module );
-				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-				break;
-			}
-			// load the module class file
-			require_once( EE_MODULES . $module_dir . DS . $module . '.module.php' );
-			// fire the module class's set_hooks method during the  wp_loaded hook
-			add_action( 'wp_loaded', array( $module, $hook_point ));
-			// add to list of installed modules
-			EE_Front_Controller::register_module( $module_dir, EE_MODULES . $module_dir . DS . $module . '.module.php' );
-		}
-		// filter list of installed modules
-		self::$_installed_modules = apply_filters( 'AHEE__Front_Controller__register_modules__installed_modules', self::$_installed_modules );
-	}
-
-
-
-	/**
-	 * 	register_module - makes core aware of this module
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function register_module( $module = NULL, $module_dir = NULL ) {
-		if ( ! empty( $module ) && ! empty( $module_dir )) {
-			self::$_installed_modules[ $module ] = $module_dir;
-		}
-	}	
 
 
 
@@ -315,7 +178,7 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function employ_CPT_Strategy() {
-		$this->EE->load_core( 'CPT_Strategy', 'CPTs', TRUE );
+		$this->EE->load_core( 'CPT_Strategy' );
 	}
 
 
@@ -339,11 +202,11 @@ final class EE_Front_Controller {
 		if ( apply_filters( 'FHEE_load_EE_messages', FALSE )) {
 			EE_messages_init::init();
 		}
+
 		// process any content shortcodes
 		$this->_initialize_shortcodes();
 		// process request with module factory
-		$this->_process_request();		
-
+		$this->_process_request();
 
 	}
 
@@ -380,22 +243,26 @@ final class EE_Front_Controller {
 						foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
 							// verify shortcode is in list of registered shortcodes
 							if ( ! isset( $this->EE->shortcodes[ $shortcode_class ] )) {
-								$msg = sprintf( __( 'An error has occured. The requested Event Espresso %s shortcode is not of the proper class', 'event_espresso' ), $shortcode_class );
-								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-								add_filter( 'FHEE_run_EE_the_content', '__return_true' );
-								break;
-							}
-							// verfiy that class is a shortcode
-							if ( ! is_a( $this->EE->shortcodes[ $shortcode_class ], 'EES_Shortcode' )) {
-								$msg = sprintf( __( 'An error has occured. The requested Event Espresso %s shortcode is not of the proper class', 'event_espresso' ), $shortcode_class );
+								$msg = sprintf( __( 'An error has occured. The %s shortcode has not been properly registered', 'event_espresso' ), $shortcode_class );
 								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 								add_filter( 'FHEE_run_EE_the_content', '__return_true' );
 								break;
 							}
 							//is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
 							if ( isset( $this->EE->CFG->post_shortcodes[ $current_post ] ) || $term_exists ) {
-								// fire the shortcode class's init function, so that it can activate resources
-								$this->EE->shortcodes[ $shortcode_class ]->init();
+								// let's pause to reflect on this...
+								$sc_reflector = new ReflectionClass( 'EES_' . $shortcode_class );								
+								// ensure that class is actually a shortcode
+								if ( ! $sc_reflector->isSubclassOf( 'EES_Shortcode' )) {
+									$msg = sprintf( __( 'An error has occured. The requested %s shortcode is not of the class "EES_Shortcode".', 'event_espresso' ), $shortcode_class );
+									EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+									add_filter( 'FHEE_run_EE_the_content', '__return_true' );
+									break;
+								}
+								// and pass the request object to the run method
+								$shortcode =$sc_reflector->newInstance( $this->EE );
+								// fire the shortcode class's run method, so that it can activate resources
+								$shortcode->run( $this->EE->REQ );
 							}
 						}
 					}
@@ -409,176 +276,48 @@ final class EE_Front_Controller {
 
 
 	/**
-	 * 	_process_request - basically a module factory for instantiating modules
+	 * 	_process_request - basically a module factory for instantiating modules and selecting the final view template
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
 	private function _process_request() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		//filter modules
-		$modules = apply_filters( 'AHEE__Front_Controller__process_request__modules', array() );
-		// method used to initialize the module
-		$module_init = 'init';
-		// check request for module
-		if ( $this->EE->REQ->is_set( 'ee_module' )) {
-			// grab and sanitize module name
-			$modules[] = sanitize_key( $this->EE->REQ->get( 'ee_module' ));
+//		printr( $this->EE, '$this->EE  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		$Module_Request_Router = $this->EE->load_core( 'Module_Request_Router' );
+		// cycle thru module routes
+		while ( $module = $Module_Request_Router->get_routes() ) {
+//			printr( $module, '$module  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			// fire the module class's run method, so that it can activate resources
+			$module->run();
+			$this->_view_template = $Module_Request_Router->get_view();
 		}
-		//printr( $modules, '$modules  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		// cycle thru modules
-		foreach ( $modules as $module_dir ) {
-			// create classname from module directory name
-			$module_class = 'EED_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $module_dir )));
-			// does the module exist ?
-			if ( ! file_exists( EE_MODULES . $module_dir . DS . $module_class . '.module.php' )) {
-				$msg = sprintf( __( 'An error has occured. The requested Event Espresso %s module file could not be loaded.', 'event_espresso' ), $module_class );
-				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-				add_filter( 'FHEE_run_EE_the_content', '__return_true' );
-				return;
-			}
-			// load the module class file
-			require_once( EE_MODULES . $module_dir . DS . $module_class . '.module.php' );
-			// verfiy that class exists
-			if ( ! class_exists( $module_class )) {
-				$msg = sprintf( __( 'An error has occured. The requested Event Espresso %s class could not be found.', 'event_espresso' ), $module_class );
-				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-				add_filter( 'FHEE_run_EE_the_content', '__return_true' );
-				return;
-			}
-			// let's pause to reflect on this...
-			$mod_reflector = new ReflectionClass( $module_class );
-			// ensure that class is actually a module
-			if ( ! $mod_reflector->isSubclassOf( 'EED_Module' )) {
-				$msg = sprintf( __( 'An error has occured. The requested Event Espresso module is not of the class EED_Module.', 'event_espresso' ), $module_class );
-				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-				add_filter( 'FHEE_run_EE_the_content', '__return_true' );
-			}
-			// and pass the request object to the run method
-			$module =$mod_reflector->newInstance( $this->EE );
-			// fire the module class's init function, so that it can activate resources
-			$module->$module_init();
-			// check if module action is in request
-			if ( $this->EE->REQ->is_set( 'action' )) {
-				// grab the module action from the request
-				if ( $mod_action = $this->EE->REQ->get( 'action' )) {
-					// verify that the method exists
-					if ( ! method_exists( $module, $mod_action )) {
-						$msg = sprintf( __( 'An error has occured. The requested %s module action does not exist.', 'event_espresso' ), $module_class );
-						EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-						add_filter( 'FHEE_run_EE_the_content', '__return_true' );
-						return;
-					}
-					// now add a hook for whatever action is being called
-					add_action( 'wp', array( $module, $mod_action ));
-				}				
-			}
+		if ( ! empty( $this->_view_template )) {
+			add_filter( 'template_include', array( $this, 'template_include' ), 1 );
 		}
+		
 	}
 
 
 
 
+	/*********************************************** 		WP HOOK		 ***********************************************/
 
 
-
-
-	/*********************************************** 		PARSE_REQUEST ACTION HOOK		 ***********************************************/
-
-
-
-	/**
-	 * 	wp_loaded - should fire after shortcode, module, addon, or other plugin's default priority init phases have run
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-/*	public function filter_request(  $req  ) {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		if ( $espresso_page = $this->EE->REQ->is_espresso_page() ) {
-//			echo '<h1>is_espresso_page  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
-			$CPTs = $this->EE->REQ->get_espresso_CPT_endpoints();
-//			printr( $CPTs, '$CPTs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-			if ( isset( $CPTs[ $espresso_page ] )) {
-//				echo '<h4>$espresso_page : ' . $espresso_page . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		 		$req['pagename'] = isset( $req['pagename'] ) && ! empty( $req['pagename'] ) ? $req['pagename'] : $espresso_page;
-		 		$req['post_type'] = $CPTs[ $espresso_page ];			
-			}
-		}
-//		printr( $req, '$req  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-	    return $req;
-	}*/
 
 
 
 
 	/**
-	 * 	pre_get_posts
+	 * 	wp - basically last chance to do stuff before headers sent
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function pre_get_posts(  $WP_Query  ) {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-//		printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-//$my_query = new WP_Query( array(
-//	'no_found_rows' => TRUE,
-//	'update_post_meta_cacge' => FALSE,
-//	'update_post_term_cacge' => FALSE
-//));
-//
-//is_main_query()
-//
-//
-//EE_Register_CPTs::get_espresso_taxonomies();
-//EE_Register_CPTs::get_espresso_CPTs();
+	public function wp() {
 	}
 
 
 
-	/**
-	 * 	wp_loaded - should fire after shortcode, module, addon, or other plugin's default priority init phases have run
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function parse_request(  $WP_Query  ) {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-//		printr(  $WP_Query , ' $WP_Query   <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-	}
-
-
-
-	/*********************************************** 		WP ACTION HOOK		 ***********************************************/
-
-
-
-	/**
-	 * 	wp - should fire after shortcode, module, addon, or other plugin's default priority init phases have run
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function wp( $WP_Query ) {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		// nothing gets loaded at this point unless other systems turn this hookpoint on by using:  add_filter( 'FHEE_run_EE_wp', '__return_true' );
-		if ( apply_filters( 'FHEE_run_EE_wp', FALSE )) {
-			define( 'EE_wp', TRUE );
-			// shortcodes loading is turned OFF by default, but prior to the wp hook, can be turned back on again via: add_filter( 'FHEE_load_shortcodes', '__return_true' );
-			if ( apply_filters( 'FHEE_load_shortcodes', FALSE )) {
-			}
-		}
-//		printr( $wp_query , '$wp_query   <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		$EVT_IDs = array();
-//		if ( isset( $WP_Query->posts )) {
-//			foreach ( $WP_Query->posts as $post ) {
-//				$EVT_IDs[] = $post->ID;
-//			}
-//		}
-
-	}
 
 
 
@@ -798,6 +537,22 @@ final class EE_Front_Controller {
 
 	/*********************************************** 		UTILITIES		 ***********************************************/
 
+
+	/**
+	 * 	template_include
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function template_include( $template_path ) {
+		// check if the template file exists in the theme first
+		if ( ! empty( $this->_view_template ) && ! $template_path = locate_template( array( basename( $this->_view_template )))) {
+			// otherwise get it from 
+			$template_path = $this->_view_template;
+		}
+//		printr( $template_path, '<br /><br />$template_path  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		return $template_path;
+	}
 
 
 

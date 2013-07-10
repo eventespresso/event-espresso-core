@@ -23,15 +23,6 @@
  */
 class EED_MODULE_NAME  extends EED_Module {
 
-	/**
-	 * 	register_module - makes core aware of this module
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function register_module() {
-		EE_Front_Controller::register_module(  __CLASS__ , __FILE__ );
-	}
 
 	/**
 	 * 	set_hooks - for hooking into EE Core, other modules, etc
@@ -54,12 +45,12 @@ class EED_MODULE_NAME  extends EED_Module {
 
 
 	/**
-	 * 	init - initial module setup
+	 * 	run - initial module setup
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function init() {
+	public function run() {
 //		add_filter( 'FHEE_load_org_options', '__return_true' );
 //		add_filter( 'FHEE_run_EE_wp', '__return_true' );
 //		add_filter( 'FHEE_load_EE_Session', '__return_true' );

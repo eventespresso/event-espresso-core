@@ -23,6 +23,12 @@
  */
 class EE_CPT_Strategy extends EE_BASE {
 
+   /**
+     * 	EE_Registry Object
+     * 	@private _instance
+	 * 	@private 	protected
+     */
+	private static $_instance = NULL;
 
 	/**
 	 * 	EE_Registry Object
@@ -59,6 +65,20 @@ class EE_CPT_Strategy extends EE_BASE {
 
 
 
+	/**
+	 *@ singleton method used to instantiate class object
+	 *@ access public
+	 *@ return EE_Registry instance
+	 */	
+	public static function instance() {
+		// check if class object is instantiated
+		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! is_a( self::$_instance, __CLASS__ )) {
+			self::$_instance = new self();
+		}
+		return self::$_instance;
+	}
+
+
 	
 	/**
 	 * 	class constructor
@@ -66,9 +86,9 @@ class EE_CPT_Strategy extends EE_BASE {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function __construct( EE_Registry $EE ) {
+	private function __construct() {
 		// EE registry
-		$this->EE = $EE;
+		$this->EE = EE_Registry::instance();
 		// get CPT data
 		$this->_CPTs = EE_Register_CPTs::get_CPTs();
 		$this->_CPT_endpoints = $this->_set_CPT_endpoints();
@@ -117,6 +137,8 @@ class EE_CPT_Strategy extends EE_BASE {
 	public function apply_CPT_Strategy() {
 		// if current page is espresso page, then this is it's post name
 		if ( $espresso_page = $this->EE->REQ->is_espresso_page() ) {
+//			echo '<h4>$espresso_page : ' . $espresso_page . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//			printr( $this->_CPT_endpoints, '$this->_CPT_endpoints  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// but is this espresso page a CPT endpoint ?
 			if ( isset( $this->_CPT_endpoints[ $espresso_page ] )) {
 				
@@ -131,10 +153,9 @@ class EE_CPT_Strategy extends EE_BASE {
 					// is there a Meta Table for this CPT?
 					$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] ) ? $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] : FALSE;
 					// creates classname like:  EE_CPT_Event_Strategy
-					$CPT_Strategy_class_name = 'EE_CPT_' . $this->CPT['singular_name'] . '_Strategy';
-					 $this->EE->load_file ( EE_CORE . 'CPTs' . DS, $CPT_Strategy_class_name, 'core', FALSE, FALSE );
-					// instantiate
-					$CPT_Strategy = new $CPT_Strategy_class_name( $this->EE, $this->CPT );
+					$CPT_Strategy_class_name = 'CPT_' . $this->CPT['singular_name'] . '_Strategy';
+					// load and instantiate
+					 $CPT_Strategy = $this->EE->load_core ( $CPT_Strategy_class_name, array( 'EE' => $this->EE, 'CPT' =>$this->CPT ));
 //					printr( $CPT_Strategy, '$CPT_Strategy  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 					add_filter( 'posts_fields', array( $this, 'posts_fields' ));
 					add_filter( 'posts_join',	array( $this, 'posts_join' ));
@@ -204,7 +225,6 @@ class EE_CPT_Strategy extends EE_BASE {
  */
 class EE_CPT_Default_Strategy {
 
-
 	/**
 	 * 	EE_Registry Object
 	 *	@var 	EE_Registry	$EE	
@@ -225,16 +245,17 @@ class EE_CPT_Default_Strategy {
 	/**
 	 * 	class constructor
 	 *
-	 *  @access 	public
+	 *  @access 	private
 	 *  @return 	void
 	 */
-	public function __construct( EE_Registry $EE, $CPT ) {
+	private function __construct( EE_Registry $EE, $CPT ) {
 		$this->EE = $EE;
 		$this->CPT = $CPT;
 		//printr( $this->CPT, '$this->CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 999 );
 		add_action( 'loop_start', array( $this, 'loop_start' ), 1 );
 	}
+
 
 
 
@@ -272,7 +293,7 @@ class EE_CPT_Default_Strategy {
 //		foreach( $WP_Query->posts as $WP_Post ) {
 //			$EVT_IDs[] = $WP_Post->ID;
 //		}
-//		$events = $EVT->get_all( array( 0 =>array( 'EVT_ID' => array( 'IN', $EVT_IDs ), 'DTT_is_primary' => 1 ), 'force_join' =>array( 'Datetime' )));
+//		$events = $EVT->get_all( array( 0 =>array( 'EVT_ID' => array( 'IN', $EVT_IDs ), 'Event_Datetime.EVD_primary' => 1 ), 'force_join' =>array( 'Datetime' )));
 //		printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		printr( $EVT_IDs, '$EVT_IDs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		printr( $events, '$events  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );

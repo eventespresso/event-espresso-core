@@ -700,13 +700,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'DTT_EVT_start' => $event_datetime['evt_start'],
 					'DTT_EVT_end' => $event_datetime['evt_end'],
 					'DTT_REG_start' => $event_datetime['reg_start'],
-					'DTT_REG_end' => $event_datetime['reg_end'],
-					'DTT_is_primary' => $row == 1 ? TRUE : FALSE,
-					'DTT_order' => $row
+					'DTT_REG_end' => $event_datetime['reg_end']
 				),
 				$timezone);
 			
 			$DTT = $evtobj->_add_relation_to( $DTM, 'Datetime' );
+			if ( $row === 1 )
+				$DTT->set_primary( $evtobj->ID() );
+			$DTT->set_order( $evtobj->ID(), $row );
 			$saved_dtts[] = $DTT->ID();
 
 			$success = !$success ? $success : $DTT; //if ANY of these updates fail then we want the appropriate global error message
@@ -764,7 +765,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$dtt_ids = array();
 		foreach( $dtts as $dtt ) {
 			$dtt_ids[] = $dtt->ID();
-			$order = $dtt->order();
+			$order = $dtt->order($postid);
 			$this->_template_args['data']['items']['ID-'.$order] = $dtt->ID();
 		}
 		$this->_template_args['data']['items']['datetime_IDS'] = serialize( $dtt_ids );
@@ -1001,6 +1002,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//$reg_times = $DTM_MDL->get_all_reg_dates($this->_cpt_model_obj->ID());
 
 		$template_args['datetime_IDs'] = array();
+		$template_args['event_id'] = $event_id;
 		$template_args['event_date_help_link'] = $this->_get_help_tab_link('event_date_info');
 		$template_args['registration_date_help_link'] = $this->_get_help_tab_link('reg_date_info');
 		$template_args['times'] = $times;
@@ -1218,7 +1220,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$where = array(
 				//todo add event categories
-				'Datetime.DTT_is_primary' => 1,
+				'Event_Datetime.EVD_primary' => 1,
 		);
 
 		$status = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : NULL;
