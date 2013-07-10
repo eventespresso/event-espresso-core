@@ -125,6 +125,8 @@ final class EE_Registry {
 	 *@return void
 	 */	
 	private function __construct() {
+		// setup object for adding configuration settings to
+		$this->CFG = new StdClass();
 		add_action( 'init', array( $this, 'init' ), 1 );
 		spl_autoload_register( array( $this, 'espresso_autoloader' ));
 	}
@@ -142,8 +144,6 @@ final class EE_Registry {
 		$protocol = isset( $_SERVER['HTTPS'] ) ? 'https://' : 'http://';
 		// Output admin-ajax.php URL with same protocol as current page
 		self::$i18n_js_strings['ajax_url'] = admin_url( 'admin-ajax.php', $protocol );
-		// setup object for adding configuration settings to
-		$this->CFG = new StdClass();
 	}
 
 
