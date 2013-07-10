@@ -293,7 +293,7 @@ class EE_CPT_Default_Strategy {
 //		foreach( $WP_Query->posts as $WP_Post ) {
 //			$EVT_IDs[] = $WP_Post->ID;
 //		}
-//		$events = $EVT->get_all( array( 0 =>array( 'EVT_ID' => array( 'IN', $EVT_IDs ), 'Event_Datetime.EVD_primary' => 1 ), 'force_join' =>array( 'Datetime' )));
+//		$events = $EVT->get_all( array( 0 =>array( 'EVT_ID' => array( 'IN', $EVT_IDs ), 'DTT_primary' => 1 ), 'force_join' =>array( 'Datetime' )));
 //		printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		printr( $EVT_IDs, '$EVT_IDs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		printr( $events, '$events  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );

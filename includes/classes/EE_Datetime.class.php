@@ -142,6 +142,19 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
+	/**
+	 * if dtt is the primary one or not
+	 * @var boolean
+	 */
+	protected $_DTT_primary = null;
+	
+
+
+	/**
+	 * The order this event_datetime is displayed in lists
+	 * @var int
+	 */
+	protected $_DTT_order;
 
 
 
@@ -362,73 +375,24 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
-	/**
-	 * This helps to set the primary flag for this datetime (and given event) on the Event_Datetime join table.
-	 * @param int $EVT_ID The id of the event.
-	 */
-	public function set_primary( $EVT_ID ) {
-		$evt_dtt = EEM_Event_Datetime::instance()->get_one( array( array('DTT_ID' => $this->ID(), 'EVT_ID' => $EVT_ID)));
-		if ( !empty( $evt_dtt ) ) {
-			$evt_dtt->set('EVD_primary', TRUE);
-			$evt_dtt->save();
-			return TRUE;
-		} else {
-			return FALSE;
-		}
-	}
-
-
-
-
 
 	/**
-	 * This helper sets the order for this datetime (and given event) on the Event_Datetime join table.
-	 * @param int  $EVT_ID The id of the event.
-	 * @param int  $order  The order for the datetime attached to this event.
-	 */
-	public function set_order( $EVT_ID, $order = 0 ) {
-		$evt_dtt = EEM_Event_Datetime::instance()->get_one( array( array('DTT_ID' => $this->ID(), 'EVT_ID' => $EVT_ID)));
-		if ( !empty( $evt_dtt ) ) {
-			$evt_dtt->set('EVD_order', $order);
-			$evt_dtt->save();
-			return TRUE;
-		} else {
-			return FALSE;
-		}
-	}
-
-
-
-
-	/**
-	 * This helper simply returns whether the event_datetime for the current datetime and the given event is a primary datetime
-	 * @param  int  $EVT_ID The id of the event
+	 * This helper simply returns whether the event_datetime for the current datetime is a primary datetime
 	 * @return boolean          TRUE if is primary, FALSE if not.
 	 */
 	public function is_primary( $EVT_ID ) {
-		$evt_dtt = EEM_Event_Datetime::instance()->get_one( array( array('DTT_ID' => $this->ID(), 'EVT_ID' => $EVT_ID)));
-		if ( !empty( $evt_dtt ) ) {
-			return $evt_dtt->get('EVD_primary');
-		} else {
-			return FALSE;
-		}
+		return $this->get('DTT_primary');
 	}
 
 
 
 
 	/**
-	 * This helper simply returns the order for the datetime and given Event ID using the Event_Datetime join table
-	 * @param  int $EVT_ID The id of the event attached to this datetime
+	 * This helper simply returns the order for the datetime
 	 * @return int         The order of the datetime for this event.
 	 */
 	public function order( $EVT_ID ) {
-		$evt_dtt = EEM_Event_Datetime::instance()->get_one( array( array('DTT_ID' => $this->ID(), 'EVT_ID' => $EVT_ID)));
-		if ( !empty( $evt_dtt ) ) {
-			return $evt_dtt->get('EVD_order');
-		} else {
-			return FALSE;
-		}
+		return $this->get('DTT_order');
 	}
 
 

@@ -6,12 +6,6 @@ class EE_Event_Datetime extends EE_Base_Class{
 	protected $_EVD_ID = null;
 	protected $_EVT_ID = null;
 	protected $_DTT_ID = null;
-	protected $_EVD_primary = null;
-	/**
-	 * The order this event_datetime is displayed in lists
-	 * @var int
-	 */
-	protected $_EVD_order;
 	protected $_Event;
 	protected $_Datetime;
 

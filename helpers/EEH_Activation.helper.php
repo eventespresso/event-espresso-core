@@ -581,7 +581,10 @@ class EEH_Activation {
 				  DTT_REG_end datetime NOT NULL default '0000-00-00 00:00:00',
 				  DTT_reg_limit mediumint(8) unsigned DEFAULT NULL,
 				  DTT_tckts_left mediumint(8) unsigned DEFAULT NULL,
-						PRIMARY KEY  (DTT_ID)";
+				  DTT_primary TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+				  DTT_order mediumint(3) unsigned DEFAULT 0,
+						PRIMARY KEY  (DTT_ID),
+						KEY DTT_primary (DTT_primary)";
 		
 		
 		
@@ -629,10 +632,7 @@ class EEH_Activation {
 		$sql="EVD_ID INT(11) NOT NULL AUTO_INCREMENT ,
 				EVT_ID INT(11) NOT NULL ,
 				DTT_ID INT(11) NOT NULL ,
-				EVD_primary TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
-				EVD_order mediumint(3) unsigned DEFAULT 0,
-				PRIMARY KEY (EVD_ID),
-				KEY EVD_primary (EVD_primary)";
+				PRIMARY KEY (EVD_ID)";
 		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB');
 		
 

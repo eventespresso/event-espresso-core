@@ -9,7 +9,7 @@ class EEM_Event_Datetime extends EEM_Base{
 	private static $_instance = NULL;
 
 	/**
-	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
+	 *		This funtion is a singleton method used to instantiate the EEM_Event_Datetime object
 	 *
 	 *		@access public
 	 *		@return EEM_Question_Group instance
@@ -35,9 +35,8 @@ class EEM_Event_Datetime extends EEM_Base{
 			'Event_Datetime'=>array(
 				'EVD_ID'=>new EE_Primary_Key_Int_Field('EVD_ID', __('Event to Datetime Link ID','event_espresso'), false),
 				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID','event_espresso'), false, 0, 'Event'),
-				'DTT_ID'=>new EE_Foreign_Key_Int_Field('DTT_ID', __('Datetime ID','event_espresso'), false, 0, 'Datetime'),
-				'EVD_primary'=>new EE_Boolean_Field('EVD_primary', __("Flag indicating datetime is primary one for event", "event_espresso"), false,false),
-				'EVD_order' => new EE_Integer_Field('EVD_order', __('The order in which the Datetime is displayed', 'event_espresso'), false, 0)
+				'DTT_ID'=>new EE_Foreign_Key_Int_Field('DTT_ID', __('Datetime ID','event_espresso'), false, 0, 'Datetime')
+				
 				
 			)
 		);
