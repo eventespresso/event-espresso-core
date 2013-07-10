@@ -713,11 +713,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		//now we need to REMOVE any dtts that got deleted.
-		$old_datetimes = unserialize( $data['datetime_IDs'] );
-		$dtts_to_delete = array_diff( $old_datetimes, $saved_dtts );
-		foreach ( $dtts_to_delete as $id ) {
-			$id = absint( $id );
-			$evtobj->_remove_relation_to( $id, 'Datetime' );
+		$old_datetimes = maybe_unserialize( $data['datetime_IDs'] );
+		if ( is_array( $old_datetimes ) ) {
+			$dtts_to_delete = array_diff( $old_datetimes, $saved_dtts );
+			foreach ( $dtts_to_delete as $id ) {
+				$id = absint( $id );
+				$evtobj->_remove_relation_to( $id, 'Datetime' );
+			}
 		}
 
 		return $success;
