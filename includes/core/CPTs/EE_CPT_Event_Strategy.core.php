@@ -95,15 +95,45 @@ class EE_CPT_Event_Strategy {
 	 *  @return 	void
 	 */
 	public function loop_start( $WP_Query ) {
-		$EVT = $this->EE->load_model( 'Event' );
+		// array for storing Event IDs
 		$EVT_IDs = array();
-		foreach( $WP_Query->posts as $WP_Post ) {
-			$EVT_IDs[] = $WP_Post->ID;
-		}
-//		$events = $EVT->get_all( array( 0 =>array( 'EVT_ID' => array( 'IN', $EVT_IDs ), 'Event_Datetime.EVD_primary' => 1 ), 'force_join' =>array( 'Datetime' )));
+		// loop thru posts
+		if ( isset( $WP_Query->posts )) {
+			foreach( $WP_Query->posts as $event ) {
+				$EVT_IDs[] = $event->ID;
+			}
+//			printr( $EVT_IDs, '$EVT_IDs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+			// load models
+//			$EVT = $this->EE->load_model( 'Event' );
+//			$DTM = $this->EE->load_model( 'Datetime' );
+			$EVD = $this->EE->load_model( 'Event_Datetime' );
+			// grab datetimes for events
+			$event_datetimes = $EVD->get_all( array( array( 'EVT_ID' => array( 'IN', $EVT_IDs )), 'force_join' => array( 'Datetime' )));
+//			printr( $event_datetimes, '$event_datetimes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			$event_datetimes = is_array( $event_datetimes ) ? $event_datetimes : array();
+			// grab prices
+//			$prices = $DTM->get_all( array( array( 'Event_Price.EVT_ID' => array( 'IN', $EVT_IDs ))));
+			$prices = isset( $prices ) && is_array( $prices ) ? $prices : array();
+			// now loop thru posts
+			foreach( $WP_Query->posts as $EVT_ID => $event ) {
+				$WP_Query->posts[ $EVT_ID ]->datetimes = array();
+				$WP_Query->posts[ $EVT_ID ]->prices = array();
+				foreach ( $event_datetimes as $event_datetime ) {
+					if ( $event->ID == $event_datetime->get( 'EVT_ID' )) {
+						$WP_Query->posts[ $EVT_ID ]->datetimes[] = $event_datetime->get_first_related( 'Datetime' );
+					}
+				}
+				foreach ( $prices as $price ) {
+					if ( $event->ID == $price->get( 'EVT_ID' )) {
+						$WP_Query->posts[ $EVT_ID ]->prices[] = $price;
+					}
+				}
+			}
+		}		
+
 //		printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( $EVT_IDs, '$EVT_IDs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( $events, '$events  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
 
 	}
 
