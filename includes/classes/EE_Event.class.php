@@ -415,6 +415,11 @@ class EE_Event extends EE_CPT_Base{
 	public function is_upcoming() {
 		$upcoming = FALSE;
 
+		//first check if event id is present on this object
+		$evt_id = $this->ID();
+		if ( empty( $evt_id) )
+			return FALSE;
+
 		//first we determine if this event is published.  If it isn't then we return false right away.
 		if ( $this->_status != 'publish' ) return FALSE;
 
@@ -438,6 +443,11 @@ class EE_Event extends EE_CPT_Base{
 
 	public function is_active() {
 		$active = FALSE;
+
+		//first check if event id is present on this object
+		$evt_id = $this->ID();
+		if ( empty( $evt_id) )
+			return FALSE;
 
 		//first we determine if this event is published.  If it isn't then we return false right away.
 		if ( $this->_status != 'publish' ) return FALSE;
@@ -463,6 +473,11 @@ class EE_Event extends EE_CPT_Base{
 	public function is_expired() {
 		$expired = FALSE;
 
+		//first check if event id is present on this object
+		$evt_id = $this->ID();
+		if ( empty( $evt_id) )
+			return FALSE;
+
 		//first let's get all datetimes and loop through them 
 		$dtts = $this->get_many_related('Datetime', array( 'order_by' => array('DTT_EVT_start' => 'ASC' ) ) );
 		foreach ( $dtts as $dtt ) {
@@ -480,6 +495,11 @@ class EE_Event extends EE_CPT_Base{
 
 
 	public function is_inactive() {
+
+		//first check if event id is present on this object
+		$evt_id = $this->ID();
+		if ( empty( $evt_id) )
+			return TRUE;
 
 		//first let's determine if the status is "publish" if it is then it can be returned cause it is NOT inactive
 		if ( $this->_status == 'publish' ) return FALSE;
@@ -505,6 +525,11 @@ class EE_Event extends EE_CPT_Base{
 	 */
 	public function get_active_status() {
 		$status_array = array();
+
+		//first check if event id is present on this object
+		$evt_id = $this->ID();
+		if ( empty( $evt_id) )
+			return FALSE;
 
 		//first get all dtts ordered by date
 		$dtts = $this->get_many_related('Datetime', array( 'order_by' => array('DTT_EVT_start' => 'ASC' ) ) );
@@ -554,6 +579,11 @@ class EE_Event extends EE_CPT_Base{
 			case EE_Datetime::active : 
 				$status = __('Active', 'event_espresso');
 				$class = 'active';
+				break;
+
+			default :
+				$status = __('Inactive', 'event_espresso');
+				$class = 'inactive';
 				break;
 
 		}
