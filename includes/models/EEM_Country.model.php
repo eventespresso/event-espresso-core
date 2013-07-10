@@ -93,7 +93,7 @@ class EEM_Country extends EEM_Base {
 	 */
 	public static function define_table_name() {
 		global $wpdb;
-		define( 'EE_COUNTRY_TABLE', $wpdb->prefix . 'esp_country' );
+		define( 'ESP_COUNTRY_TABLE', $wpdb->prefix . 'esp_country' );
 	}
 
 

@@ -110,7 +110,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 	 */
 	public static function define_table_name() {
 		global $wpdb;
-		define( 'EE_PRICE_TABLE', $wpdb->prefix . 'esp_price' );
+		define( 'ESP_PRICE_TABLE', $wpdb->prefix . 'esp_price' );
 	}
 
 

@@ -66,6 +66,7 @@ define( 'EE_MODELS', EVENT_ESPRESSO_INCLUDES_DIR . 'models' . DS );
 define( 'EE_HELPERS', EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers' . DS );
 define( 'EE_MODULES', EVENT_ESPRESSO_PLUGINFULLPATH . 'modules' . DS );
 define( 'EE_SHORTCODES', EVENT_ESPRESSO_PLUGINFULLPATH . 'shortcodes' . DS );
+define( 'EE_REGISTRY', EE_CORE . 'EE_Registry.core.php');
 // Define upload paths
 $uploads = wp_upload_dir();
 //Define the uploads directory and URL

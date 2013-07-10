@@ -426,6 +426,41 @@ final class EE_Front_Controller {
 	 *  @return 	string
 	 */
 	public function the_content( $the_content ) {
+//		$this->EE->load_model('Attendee', false, false, false);
+//		$attendees = EEM_Attendee::instance()->get_all();
+//		echo 'echodump of $answers';
+//		var_dump($attendees);
+		
+		
+//		
+//		$this->EE->load_class('Attendee', false, false, false);
+//		$a1 = EE_Attendee::new_instance(array('ATT_fname'=>'mike','ATT_address'=>'monkey town'));
+//		$a1->save();
+//		
+//		$this->EE->load_class('Registration',false,false,false);
+//		$r1 = EE_Registration::new_instance(array('ATT_ID'=>$a1->ID(),'PRC_ID'=>1,'DTT_ID'=>1));
+//		$r1->save();
+//		
+//		$r_result = $r1->delete();
+//		echo 'echodump of registration $r_result';
+//		var_dump($r_result);
+//		$result = $a1->delete();
+//		
+//		echo 'echodump of attendee $result';
+//		var_dump($result);
+//		var_dump( EE_Error::get_notices());
+		
+		
+		
+//		$this->EE->load_model('Question',false,false,false);
+//		$q1 = EEM_Question::instance()->get_one();
+//		$groups =$q1->question_groups();
+//		echo 'echodump of $groups';
+//		var_dump($groups);
+//		$result = $q1->delete();
+//		echo 'echodump of $result';
+//		var_dump($result);
+//		var_dump(EE_Error::get_notices());
 		// nothing gets loaded at this point unless other systems turn this hookpoint on by using:  add_filter( 'FHEE_run_EE_the_content', '__return_true' );
 		if ( apply_filters( 'FHEE_run_EE_the_content', FALSE )) {
 			$the_content = EE_Error::get_notices() . $the_content;

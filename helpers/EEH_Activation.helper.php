@@ -583,6 +583,7 @@ class EEH_Activation {
 				  DTT_REG_end datetime NOT NULL default '0000-00-00 00:00:00',
 				  DTT_reg_limit mediumint(8) unsigned DEFAULT NULL,
 				  DTT_tckts_left mediumint(8) unsigned DEFAULT NULL,
+				  DTT_order mediumint(3) unsigned DEFAULT 0,
 						PRIMARY KEY  (DTT_ID),
 							KEY EVT_ID (EVT_ID),
 							KEY DTT_is_primary (DTT_is_primary)";
@@ -928,13 +929,13 @@ class EEH_Activation {
 
 		global $wpdb;
 
-		if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_PRICE_TYPE . "'") == ESP_PRICE_TYPE) {
+		if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_PRICE_TYPE_TABLE . "'") == ESP_PRICE_TYPE_TABLE) {
 
-			$SQL = 'SELECT COUNT(PRT_ID) FROM ' . ESP_PRICE_TYPE;
+			$SQL = 'SELECT COUNT(PRT_ID) FROM ' . ESP_PRICE_TYPE_TABLE;
 			$price_types_exist = $wpdb->get_var( $SQL );
 			
 			if ( ! $price_types_exist ) {
-				$SQL = "INSERT INTO " . ESP_PRICE_TYPE . " ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_is_global, PRT_order, PRT_deleted ) VALUES
+				$SQL = "INSERT INTO " . ESP_PRICE_TYPE_TABLE . " ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_is_global, PRT_order, PRT_deleted ) VALUES
 							(1, 'Default Event Price', 1, 0, 0, 1, 0, 1),
 							(2, 'Event Price', 1, 0, 0, 0, 0, 0),
 							(3, 'Member % Discount', 2, 1, 1, 0, 10, 0),
@@ -1047,12 +1048,12 @@ class EEH_Activation {
 	public static function insert_default_states() {
 
 		global $wpdb;
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . ESP_STATE . "'") == ESP_STATE ) {
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . ESP_STATE_TABLE . "'") == ESP_STATE_TABLE ) {
 			
-			$SQL = "SELECT COUNT('STA_ID') FROM " . ESP_STATE;
+			$SQL = "SELECT COUNT('STA_ID') FROM " . ESP_STATE_TABLE;
 			$states = $wpdb->get_var($SQL);
 			if ( ! $states ) {
-				$SQL = "INSERT INTO " . ESP_STATE . " 
+				$SQL = "INSERT INTO " . ESP_STATE_TABLE . " 
 				(STA_ID, CNT_ISO, STA_abbrev, STA_name, STA_active) VALUES
 				(1, 'US', 'AK', 'Alaska', 1),
 				(2, 'US', 'AL', 'Alabama', 1),

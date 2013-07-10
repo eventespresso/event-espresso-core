@@ -1984,7 +1984,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 			'success' => isset( $this->_template_args['success'] ) ? $this->_template_args['success'] : FALSE,
 			'notices' => EE_Error::get_notices(),
 			'content' => utf8_encode($this->_template_args['admin_page_content']),
-			'data' => array_merge( $data, array('template_args' => $this->_template_args ) )
+			'data' => array_merge( $data, array('template_args' => $this->_template_args ) ),
+			'isEEajax' => TRUE //special flag so any ajax.Success methods in js can identify this return package as a EEajax package.
 			);
 
 

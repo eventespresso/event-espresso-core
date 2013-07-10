@@ -490,6 +490,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		);
 	}
 
+
+
 	protected function _event_legend_items() {
 		$items = array(
 			'view_details' => array(
@@ -689,24 +691,85 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$timezone = isset( $data['timezone_string'] ) ? $data['timezone_string'] : NULL;
 		$success = TRUE;
 
+
 		foreach ( $data['event_datetimes'] as $row => $event_datetime ) {
 			$event_datetime['evt_end'] = isset($event_datetime['evt_end']) && ! empty( $event_datetime['evt_end'] ) ? $event_datetime['evt_end'] : $event_datetime['evt_start'];
 			$event_datetime['reg_end'] = isset($event_datetime['reg_end']) && ! empty( $event_datetime['reg_end'] ) ? $event_datetime['reg_end'] : $event_datetime['reg_start'];
 			$DTM = EE_Datetime::new_instance( array(
-					'DTT_ID' => isset( $event_datetime['ID'] ) ? absint( $event_datetime['ID'] ) : NULL,
+					'DTT_ID' => isset( $event_datetime['ID'] ) && $event_datetime['ID'] !== '' ? absint( $event_datetime['ID'] ) : NULL,
 					'DTT_EVT_start' => $event_datetime['evt_start'],
 					'DTT_EVT_end' => $event_datetime['evt_end'],
 					'DTT_REG_start' => $event_datetime['reg_start'],
 					'DTT_REG_end' => $event_datetime['reg_end'],
 					'DTT_is_primary' => $row == 1 ? TRUE : FALSE,
+					'DTT_order' => $row
 				),
 				$timezone);
+			
+			$DTT = $evtobj->_add_relation_to( $DTM, 'Datetime' );
+			$saved_dtts[] = $DTT->ID();
 
-			$works = $evtobj->_add_relation_to( $DTM, 'Datetime' );
-			$success = !$success ? $success : $works; //if ANY of these updates fail then we want the appropriate global error message
+			$success = !$success ? $success : $DTT; //if ANY of these updates fail then we want the appropriate global error message
 		}
+
+		//now we need to REMOVE any dtts that got deleted.
+		$old_datetimes = maybe_unserialize( $data['datetime_IDs'] );
+		if ( is_array( $old_datetimes ) ) {
+			$dtts_to_delete = array_diff( $old_datetimes, $saved_dtts );
+			foreach ( $dtts_to_delete as $id ) {
+				$id = absint( $id );
+				$evtobj->_remove_relation_to( $id, 'Datetime' );
+			}
+		}
+
 		return $success;
 	}
+
+
+
+
+
+	/**
+	 * Add in our autosave ajax handlers
+	 * @return void 
+	 */
+	protected function _ee_autosave_create_new() {
+		$this->_ee_autosave_edit();
+	}
+
+
+
+
+
+	protected function _ee_autosave_edit() {
+		$postid = isset( $this->_req_data['post_ID'] ) ? $this->_req_data['post_ID'] : NULL;
+
+
+		//if no postid then get out cause we need it for stuff in here
+		if ( empty( $postid ) ) return;
+
+		//now let's determine if we're going to use the autosave post or the current post_ID!
+		$autosave = wp_get_post_autosave( $postid );
+
+		$postid = $autosave ? $autosave->ID : $postid;
+
+		//handle datetime saves
+		$items = array();
+
+		$get_one_where = array( $this->_event_model->primary_key_name() => $postid );
+		$event = $this->_event_model->get_one( array($get_one_where) );
+
+		//now let's get the attached datetimes from the most recent autosave
+		$dtts = $event->get_many_related('Datetime');
+		$dtt_ids = array();
+		foreach( $dtts as $dtt ) {
+			$dtt_ids[] = $dtt->ID();
+			$order = $dtt->order();
+			$this->_template_args['data']['items']['ID-'.$order] = $dtt->ID();
+		}
+		$this->_template_args['data']['items']['datetime_IDS'] = serialize( $dtt_ids );
+	}
+
 
 
 
@@ -1250,7 +1313,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		// loop thru events
 		if ($EVT_ID) {
 			// clean status
-			$event_status = strtoupper(sanitize_key($event_status));
+			$event_status = sanitize_key($event_status);
 			// grab status
 			if (!empty($event_status)) {
 				$success = $this->_change_event_status($EVT_ID, $event_status);
@@ -1279,7 +1342,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _trash_or_restore_events($event_status = 'trash') {
 		// clean status
-		$event_status = strtoupper(sanitize_key($event_status));
+		$event_status = sanitize_key($event_status);
 		// grab status
 		if (!empty($event_status)) {
 			$success = TRUE;
@@ -1326,7 +1389,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_set_model_object( $EVT_ID );
 
 		// clean status
-		$event_status = strtoupper(sanitize_key($event_status));
+		$event_status = sanitize_key($event_status);
 		// grab status
 		if (empty($event_status)) {
 			$msg = __('An error occured. No Event Status or an invalid Event Status was received.', 'event_espresso');
@@ -1475,8 +1538,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$dates = $wpdb->get_results($SQL);
 
+		echo '<select name="month_range" class="wide">';
+			
+
 		if ($wpdb->num_rows > 0) {
-			echo '<select name="month_range" class="wide">';
 			echo '<option value="">' . __('Select a Month/Year', 'event_espresso') . '</option>';
 			foreach ($dates as $row) {
 				$option_date = date_i18n('M Y', $row->e_date);
@@ -1484,10 +1549,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				echo $option_date == $current_value ? ' selected="selected=selected"' : '';
 				echo '>' . $option_date . '</option>' . "\n";
 			}
-			echo "</select>";
 		} else {
-			_e('No Results', 'event_espresso');
+			echo '<option value="">' . __('No Dates Yet', 'event_espresso') . '</option>';
 		}
+		echo "</select>";
 	}
 
 

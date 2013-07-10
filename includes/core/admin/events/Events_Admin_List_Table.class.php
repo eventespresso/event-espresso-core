@@ -74,7 +74,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'start_date' => array('DTT_EVT_start' => false),
 			'start_time' => array('DTT_EVT_start' => false),
 			'reg_begins' => array('DTT_REG_start' => false),
-			'status' => array('Event.status' => false)
+			//'status' => array('Event.status' => false)
 			);
 
 		$this->_hidden_columns = array();
@@ -98,7 +98,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			$filter[] = $this->_admin_page->active_status_dropdown( isset( $this->_req_data['active_status'] ) ? $this->_req_data['active_status'] : '' );
 
 		//category filter
-		$filters[] = espresso_category_dropdown( isset($this->_req_data['category_id']) ? $this->_req_data['category_id'] : '' );
+		//$filters[] = espresso_category_dropdown( isset($this->_req_data['category_id']) ? $this->_req_data['category_id'] : '' );
 		
 		
 		return $filters;	
@@ -185,7 +185,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			);
 		$delete_event_link = EE_Admin_Page::add_query_args_and_nonce( $delete_event_query_args, EVENTS_ADMIN_URL );
 
-		$view_link = espresso_reg_url( $item->ID(), $item->slug() );
+		$view_link = get_permalink($item->ID());
 
 		$actions = array(
 			'view' => '<a href="' . $view_link . '" title="' . __('View Event', 'event_espresso') . '">' . __('View', 'event_espresso') . '</a>',
@@ -203,7 +203,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 					$actions['move to trash'] = '<a href="' . $trash_event_link . '" title="' . __('Trash Event', 'event_espresso') . '">' . __('Move to Trash', 'event_espresso') . '</a>';
 		}
 
-		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . stripslashes_deep($item->name()) . '</a></strong>';
+		$status = $item->status() !== 'publish' ? ' (' . $item->status() . ')' : '';
+		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->name() . '</a></strong>' . $status;
 		$content .= $this->row_actions($actions);
 		return $content;
 
@@ -252,10 +253,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_status($item) {
-		/**$status = array();
-		$status = event_espresso_get_is_active($item->ID());
-		return $status['display'] == 'OPEN' ? '<span style="color:green;"><b>' . $status['display'] . '</b></span>' : $status['display'];*/
-		return 'TODO';
+		$item->pretty_active_status();
 	}
 
 
@@ -306,7 +304,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EVENTS_ADMIN_URL );
-		$view_link = espresso_reg_url( $item->ID(), $item->slug() );
+		$view_link = get_permalink($item->ID());
 		$trash_event_link = EE_Admin_Page::add_query_args_and_nonce( $trash_event_query_args, EVENTS_ADMIN_URL );
 		$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );
 		$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, REG_ADMIN_URL );

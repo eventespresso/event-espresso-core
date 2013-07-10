@@ -33,7 +33,7 @@ class EE_Base_Class{
 	 * which values to override and which to not override.
 	 * @var array
 	 */
-	private $_props_n_values_provided_in_consturctor = null;
+	private $_props_n_values_provided_in_constructor = null;
 
 	/**
 	 * Timezone
@@ -134,7 +134,7 @@ class EE_Base_Class{
 		}
 		$this->_timezone = $timezone;
 		//remember what values were passed to this constructor
-		$this->_props_n_values_provided_in_consturctor = $fieldValues;
+		$this->_props_n_values_provided_in_constructor = $fieldValues;
 	}
 
 
@@ -167,7 +167,7 @@ class EE_Base_Class{
 //		 var_dump($field_name);
 //		 echo 'echodump of $this->_get_primary_key_name(get_class($this))';
 //		 var_dump($this->_get_primary_key_name(get_class($this)));
-		 if($this->_props_n_values_provided_in_consturctor &&
+		 if($this->_props_n_values_provided_in_constructor &&
 				 $field_name == $this->_get_primary_key_name(get_class($this)) && 
 				 $field_value){
 			//if so, we want all this object's fields to be filled either with
@@ -178,7 +178,7 @@ class EE_Base_Class{
 			
 			 $obj_in_db = $this->_get_model(get_class($this))->get_one_by_ID($field_value);
 			 foreach($fields_on_model as $field_obj){
-				 if( ! array_key_exists($field_obj->get_name(), $this->_props_n_values_provided_in_consturctor)
+				 if( ! array_key_exists($field_obj->get_name(), $this->_props_n_values_provided_in_constructor)
 						&& $field_obj->get_name() != $field_name ){
 				 
 					$privateAttributeName=$this->_get_private_attribute_name($field_obj->get_name());
@@ -601,6 +601,63 @@ class EE_Base_Class{
 
 
 
+
+	/**
+	 * NOTE ABOUT BELOW:
+	 * These convenience date and time setters are for setting date and time independently.  In other words you might want to change the time on a datetime_field but leave the date the same (or vice versa).
+	 *
+	 * IF on the other hand you want to set both date and time at the same time, you can just use the models default set($fieldname,$value) method and make sure you send the entire datetime value for setting.
+	 */
+
+	/**
+	 * sets the time on a datetime property
+	 *
+	 * @access protected
+	 * @param string $time      a valid time string for php datetime functions
+	 * @param string $fieldname the name of the field the time is being set on (must match a EE_Datetime_Field)
+	 */
+	protected function _set_time_for( $time, $fieldname ) {
+		$this->_set_date_time( 'T', $time, $fieldname );
+	}
+
+
+
+
+	
+	/**
+	 * sets the date on a datetime property
+	 *
+	 * @access protected
+	 * @param string $date      a valid date string for php datetime functions
+	 * @param string $fieldname the name of the field the date is being set on (must match a EE_Datetime_Field)
+	 */
+	protected function _set_date_for( $date, $fieldname ) {
+		$this->_set_date_time( 'D', $date, $fieldname );
+	}
+
+
+
+
+
+
+	/**
+	 * This takes care of setting a date or time independently on a given model object property. This method also verifies that the given fieldname matches a model object property and is for a EE_Datetime_Field field
+	 *
+	 * @access private
+	 * @param string $what          "T" for time, otherwise Date is assumed
+	 * @param string $datetimevalue A valid Date or Time string
+	 * @param string $fieldname     the name of the field the date OR time is being set on (must match a EE_Datetime_Field property)
+	 */
+	private function _set_date_time( $what = 'T', $datetimevalue, $fieldname ) {
+		$field = $this->_get_dtt_field_settings( $fieldname );
+		$attribute_field_name = $this->_get_private_attribute_name($fieldname);
+		$field->set_timezone( $this->_timezone );
+		$this->$attribute_field_name = $what == 'T' ? $field->prepare_for_set_with_new_time($datetimevalue, $this->$attribute_field_name ) : $field->prepare_for_set_with_new_date( $datetimevalue, $this->$attribute_field_name );
+		$this->_clear_cached_property($attribute_field_name);
+	}
+
+
+
 	
 	/**
 	 * Deletes this model object. That may mean just 'soft deleting' it though.
@@ -640,17 +697,22 @@ class EE_Base_Class{
 	
 		}
 		//if the object already has an ID, update it. Otherwise, insert it
+		//also: change the assumption about values passed to the model NOT being prepare dby the model obejct. They have been
+		$old_assumption_concerning_value_preparation = $this->get_model()->get_assumption_concerning_values_already_prepared_by_model_object();
+		$this->get_model()->assume_values_already_prepared_by_model_object(true);
+			
 		if ( !empty( $save_cols_n_values[self::_get_primary_key_name( get_class($this) )] ) ){
-			$results = $this->get_model()->update ( $save_cols_n_values, array(array(self::_get_primary_key_name(get_class($this))=>$this->ID())), true );
+			$results = $this->get_model()->update ( $save_cols_n_values, array(array(self::_get_primary_key_name(get_class($this))=>$this->ID())) );
 		} else {
 			unset($save_cols_n_values[self::_get_primary_key_name( get_class( $this) )]);
-			
 			$results = $this->get_model()->insert( $save_cols_n_values, true);
 			if($results){//if successful, set the primary key
 				$this->set(self::_get_primary_key_name( get_class($this) ),$results);//for some reason the new ID is returned as part of an array,
 				//where teh only key is 'new-ID', and it's value is the new ID.
 			}
 		}
+		//restore the old assumption about values being prepared by the model obejct
+		$this->get_model()->assume_values_already_prepared_by_model_object($old_assumption_concerning_value_preparation);
 		
 		return $results;
 	}

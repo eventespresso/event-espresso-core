@@ -28,6 +28,12 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class EE_MSG_Template {
 
 
+	private static function _set_autoloader() {
+		require_once( EE_CORE . 'messages/EE_messages_init.core.php' );
+		EE_messages_init::set_autoloaders();
+	}
+
+
 
 	/**
 	 * generate_new_templates
@@ -55,6 +61,8 @@ class EE_MSG_Template {
 		if ( empty($message_types) ) {
 			throw new EE_Error( __('We need at least one message type to generate templates!', 'event_espresso') );
 		}
+
+		self::_set_autoloader();
 
 
 		$MSG = new EE_messages();
@@ -86,6 +94,7 @@ class EE_MSG_Template {
 	 * @return bool                true = generated, false = hasn't been generated.
 	 */
 	public static function already_generated( $messenger, $message_type, $evt_id = NULL ) {
+		self::_set_autoloader();
 		$MTP = EEM_Message_Template::instance();
 
 
@@ -108,6 +117,7 @@ class EE_MSG_Template {
 	 * @return array array consisting of installed messenger objects and installed message type objects.
 	 */
 	public static function get_installed_message_objects($type = 'all') {
+		self::_set_autoloader();
 		//get all installed messengers and message_types
 		$EE_MSG = new EE_messages();
 		$installed_message_objects = $EE_MSG->get_installed($type);
