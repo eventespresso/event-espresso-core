@@ -88,7 +88,8 @@ class EEM_Venue extends EEM_CPT_Base {
 		$this->_model_relations = array(
 			'Event'=>new EE_HABTM_Relation('Event_Venue'),
 			'State'=>new EE_Belongs_To_Relation(),
-			'Country'=>new EE_Belongs_To_Relation()
+			'Country'=>new EE_Belongs_To_Relation(),
+			'Event_Venue'=>new EE_Has_Many_Relation()
 		);
 		require_once( EE_CLASSES . 'EE_Venue.class.php');
 		require_once( EE_MODELS . 'strategies/EE_Default_CPT_Where_Conditions.strategy.php');

@@ -1,15 +1,19 @@
 <?php
 /**
- * Required  by EEM_Event_Question_Group in case someone queries for all its model objects
+ * Required  by EEM_Event_Datetime_Group in case someone queries for all its model objects
  */
-class EE_Event_Venue extends EE_Base_Class{
-	protected $_EVV_ID = null;
+class EE_Event_Datetime extends EE_Base_Class{
+	protected $_EVD_ID = null;
 	protected $_EVT_ID = null;
-	protected $_VNU_ID = null;
-	protected $_EVV_primary = null;
-	protected $_EQG_primary = null;
+	protected $_DTT_ID = null;
+	protected $_EVD_primary = null;
+	/**
+	 * The order this event_datetime is displayed in lists
+	 * @var int
+	 */
+	protected $_EVD_order;
 	protected $_Event;
-	protected $_Venue;
+	protected $_Datetime;
 
 
 	public static function new_instance( $props_n_values = array() ) {
@@ -22,5 +26,4 @@ class EE_Event_Venue extends EE_Base_Class{
 	public static function new_instance_from_db ( $props_n_values = array() ) {
 		return new self( $props_n_values, TRUE );
 	}
-	
 }
