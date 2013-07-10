@@ -92,7 +92,7 @@ class EEM_Attendee extends EEM_CPT_Base {
 			'Country'=>new EE_Belongs_To_Relation()
 		);
 		require_once('strategies/EE_Default_CPT_Where_Conditions.strategy.php');
-		$this->_default_where_conditions_strategy = new EE_Default_CPT_Where_Conditions('espresso_attendees', 'ATTM_ID');
+		$this->_default_where_conditions_strategy = new EE_CPT_Where_Conditions('espresso_attendees', 'ATTM_ID');
 		parent::__construct();
 		
 	}
