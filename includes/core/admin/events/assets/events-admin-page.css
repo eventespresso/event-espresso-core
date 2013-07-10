@@ -205,4 +205,41 @@
 
 #espresso_event_editor_event_options .inside {
     text-align: left;
-}	
+}
+
+
+.ee-status {
+	display: block;
+   	padding: 3px 6px;
+   	-webkit-border-radius: 8px;
+   	-moz-border-radius: 8px;
+   	border-radius: 8px;
+   	color: white;
+   	font-size: 10px;
+   	/*font-family: Georgia, serif;*/
+   	text-decoration: none;
+   	font-weight: 400;
+   	width:50px;
+   	text-align: center;
+   }
+
+.inactive {
+	background-color: #b2b2b2;
+}
+
+.active {
+	background-color: #87c442;
+}
+
+.upcoming {
+	background-color: #e5ff00;
+	color: grey;
+}
+
+.expired {
+	background-color: red;
+}
+
+.inside .ee-status {
+	float: right;
+}

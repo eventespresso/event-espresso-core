@@ -74,7 +74,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'start_date' => array('DTT_EVT_start' => false),
 			'start_time' => array('DTT_EVT_start' => false),
 			'reg_begins' => array('DTT_REG_start' => false),
-			'status' => array('Event.status' => false)
+			//'status' => array('Event.status' => false)
 			);
 
 		$this->_hidden_columns = array();
@@ -203,7 +203,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 					$actions['move to trash'] = '<a href="' . $trash_event_link . '" title="' . __('Trash Event', 'event_espresso') . '">' . __('Move to Trash', 'event_espresso') . '</a>';
 		}
 
-		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . stripslashes_deep($item->name()) . '</a></strong>';
+		$status = $item->status() !== 'publish' ? ' (' . $item->status() . ')' : '';
+		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->name() . '</a></strong>' . $status;
 		$content .= $this->row_actions($actions);
 		return $content;
 
@@ -252,10 +253,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_status($item) {
-		/**$status = array();
-		$status = event_espresso_get_is_active($item->ID());
-		return $status['display'] == 'OPEN' ? '<span style="color:green;"><b>' . $status['display'] . '</b></span>' : $status['display'];*/
-		return 'TODO';
+		$item->pretty_active_status();
 	}
 
 

@@ -713,11 +713,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		//now we need to REMOVE any dtts that got deleted.
-		$old_datetimes = unserialize( $data['datetime_IDs'] );
-		$dtts_to_delete = array_diff( $old_datetimes, $saved_dtts );
-		foreach ( $dtts_to_delete as $id ) {
-			$id = absint( $id );
-			$evtobj->_remove_relation_to( $id, 'Datetime' );
+		$old_datetimes = maybe_unserialize( $data['datetime_IDs'] );
+		if ( is_array( $old_datetimes ) ) {
+			$dtts_to_delete = array_diff( $old_datetimes, $saved_dtts );
+			foreach ( $dtts_to_delete as $id ) {
+				$id = absint( $id );
+				$evtobj->_remove_relation_to( $id, 'Datetime' );
+			}
 		}
 
 		return $success;
@@ -1311,7 +1313,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		// loop thru events
 		if ($EVT_ID) {
 			// clean status
-			$event_status = strtoupper(sanitize_key($event_status));
+			$event_status = sanitize_key($event_status);
 			// grab status
 			if (!empty($event_status)) {
 				$success = $this->_change_event_status($EVT_ID, $event_status);
@@ -1340,7 +1342,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _trash_or_restore_events($event_status = 'trash') {
 		// clean status
-		$event_status = strtoupper(sanitize_key($event_status));
+		$event_status = sanitize_key($event_status);
 		// grab status
 		if (!empty($event_status)) {
 			$success = TRUE;
@@ -1387,7 +1389,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_set_model_object( $EVT_ID );
 
 		// clean status
-		$event_status = strtoupper(sanitize_key($event_status));
+		$event_status = sanitize_key($event_status);
 		// grab status
 		if (empty($event_status)) {
 			$msg = __('An error occured. No Event Status or an invalid Event Status was received.', 'event_espresso');
