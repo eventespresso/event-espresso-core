@@ -69,7 +69,7 @@ final class EE_System {
 		$this->_register_core_autoloaders();
 
 		if ( $activation ) {
-			$this->_register_model__and_class_autoloaders();
+			$this->_register_models_classes_forms_autoloaders();
 			// set names for db tables
 			$this->_define_database_tables();
 			$this->check_database_tables();
@@ -274,7 +274,7 @@ final class EE_System {
 	 *  @return 	void
 	 */
 	public function init() {
-		$this->_register_model__and_class_autoloaders();
+		$this->_register_models_classes_forms_autoloaders();
 		// load EE_Config
 		$this->EE->load_core( 'Config' );
 		// register Custom Post Types
@@ -300,13 +300,21 @@ final class EE_System {
 	 * 		@access private
 	 * 		@return void
 	 */
-	private function _register_model__and_class_autoloaders() {
+	private function _register_models_classes_forms_autoloaders() {
 		$this->_register_autoloaders_for_each_file_in_folder(EE_MODELS);
 		$this->_register_autoloaders_for_each_file_in_folder(EE_MODELS."/fields");
 		$this->_register_autoloaders_for_each_file_in_folder(EE_MODELS."/helpers");
 		$this->_register_autoloaders_for_each_file_in_folder(EE_MODELS."/relations");
 		$this->_register_autoloaders_for_each_file_in_folder(EE_MODELS."/strategies");
 		$this->_register_autoloaders_for_each_file_in_folder(EE_CLASSES);
+		$this->_register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS);
+		$this->_register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'/base');
+		$this->_register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'/helpers');
+		$this->_register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'/inputs');
+		$this->_register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'/strategies');
+		$this->_register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'/strategies/display');
+		$this->_register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'/strategies/sanitization');
+		$this->_register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'/strategies/validation');
 	}
 	
 	
@@ -451,7 +459,6 @@ final class EE_System {
 			wp_register_script('ee_error_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/EE_Error.js', array('jquery'), EVENT_ESPRESSO_VERSION, false);
 			wp_localize_script('ee_error_js','ee_settings',array('wp_debug'=>WP_DEBUG));
 			wp_enqueue_script('ee_error_js');
-			
 			// jquery_validate loading is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
 			if ( apply_filters( 'FHEE_load_jquery_validate', FALSE )) {
 				// load jQuery Validate script from CDN with local fallback
@@ -461,7 +468,9 @@ final class EE_System {
 				// use CDN URL or local fallback ?
 				$jquery_validate_url = $test_url !== FALSE ? $jquery_validate_url : EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.validate.min.js';
 				// register jQuery Validate
-				wp_register_script('jquery-validate', $jquery_validate_url, array('jquery'), '1.11.1', TRUE);			
+				wp_register_script('jquery-validate', $jquery_validate_url, array('jquery'), '1.11.1', TRUE);	
+				//I don't see why we would ahve gone through the trouble o fadding the filter FHEE_load_jquery_validate, but not enqueue it?
+				wp_enqueue_script('jquery-validate');
 			}
 			
 		}

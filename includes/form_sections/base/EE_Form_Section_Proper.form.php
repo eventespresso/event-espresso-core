@@ -62,8 +62,10 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 */
 	protected function _enqueue_jquery_validate_script(){
 		EE_Form_Section_Proper::$jquery_validate_enqueued = true;
-		espresso_register_jquery_validate();//function in includes/functions/frontend_init.php
-		wp_enqueue_script('jquery-validate');
+		//add this filter as indicated in EE_System::wp_enqueue_scripts()
+		add_filter( 'FHEE_load_jquery_validate', '__return_true' );
+//		espresso_register_jquery_validate();//function in includes/functions/frontend_init.php
+//		wp_enqueue_script('jquery-validate');
 	}
 	
 	/**
