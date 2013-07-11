@@ -69,7 +69,7 @@ final class EE_System {
 		$this->_register_core_autoloaders();
 
 		if ( $activation ) {
-			$this->_register_model__and_class_autoloaders();
+			$this->_register_model_and_class_autoloaders();
 			// set names for db tables
 			$this->_define_database_tables();
 			$this->check_database_tables();
@@ -274,7 +274,7 @@ final class EE_System {
 	 *  @return 	void
 	 */
 	public function init() {
-		$this->_register_model__and_class_autoloaders();
+		$this->_register_model_and_class_autoloaders();
 		// load EE_Config
 		$this->EE->load_core( 'Config' );
 		// register Custom Post Types
@@ -300,7 +300,7 @@ final class EE_System {
 	 * 		@access private
 	 * 		@return void
 	 */
-	private function _register_model__and_class_autoloaders() {
+	private function _register_model_and_class_autoloaders() {
 		
 		$models = glob( EE_MODELS . '*.model.php' );
 		foreach( $models as $model_path ) {
