@@ -124,8 +124,15 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 	  * @access protected
 	  * @return EE_Base_Class[]        
 	  */
-	 protected function _check_for_autosave( $model_object_or_id, $query_params, $values_already_prepared_by_model_object = false ) {
-	 	$autosave_relations =  parent::get_all_related( $model_object_or_id, $query_params, $values_already_prepared_by_model_object );
+	 protected function _do_autosave_get_all( $model_object_or_id, $query_params, $values_already_prepared_by_model_object = false ) {
+
+	 	//first we check if the post_id for the incoming query is for an autosave.  If it isn't that's what we want!
+	 	$model_object_id = $this->_get_model_object_id( $model_object_or_id );
+
+	 	$autosave = wp_get_post_autosave( $model_object_id );
+	 	$id_to_use = $autosave ? $autosave->ID : $model_object_id;
+
+	 	$autosave_relations =  parent::get_all_related( $id_to_use, $query_params, $values_already_prepared_by_model_object );
 	 	$parent_ids = array();
 	 	$return_objs = array();
 		
