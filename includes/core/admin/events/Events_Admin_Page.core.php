@@ -665,7 +665,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$evtobj->_add_relation_to( $venue_id, 'Venue' );
 			return $rows_affected > 0 ? TRUE : FALSE;
 		} else {	
-			//if this is a revision then we are going to handle the initial insert/update and then the add_relation_to which will also automatically add the relation to the parent.  NOTE... we also have to allow for if users have turned OFF revisions!
+			//if this is a revision then we are going to handle the initial insert/update and then the add_relation_to which will also automatically add the relation to the parent.  NOTE... we also have to allow for if users have turned OFF revisions! @todo: just a note that this is just plain wrong and will need to be revisited once we implement more fully revisions.  
 		
 			if ( $evtobj->post_type() == 'revision' || ! WP_POST_REVISIONS ) {
 				$venue_id = $venue_model->insert( $venue_array );
@@ -748,10 +748,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//if no postid then get out cause we need it for stuff in here
 		if ( empty( $postid ) ) return;
 
-		//now let's determine if we're going to use the autosave post or the current post_ID!
-		$autosave = wp_get_post_autosave( $postid );
-
-		$postid = $autosave ? $autosave->ID : $postid;
 
 		//handle datetime saves
 		$items = array();
