@@ -200,7 +200,7 @@ final class EE_Front_Controller {
 	public function wp_loaded() {
 		
 		//mike debug code
-		$form = new EE_Sample_Form();
+		//$form = new EE_Sample_Form();
 		
 		
 		// messages loading is turned OFF by default, but prior to the wp_loaded hook, can be turned back on again via: add_filter( 'FHEE_load_EE_messages', '__return_true' );
@@ -431,7 +431,7 @@ final class EE_Front_Controller {
 	 *  @return 	string
 	 */
 	public function the_content( $the_content ) {
-		?>
+		/*?>
 <form action='' method='post'>
 	<?php $form = new EE_Sample_Form();
 	if($_SERVER['REQUEST_METHOD'] == 'POST'){
@@ -440,7 +440,7 @@ final class EE_Front_Controller {
 	echo $form->get_html_and_js()?>
 	<input type='submit'>
 </form>
-<?php
+<?php */
 //		$this->EE->load_model('Attendee', false, false, false);
 //		EEM_Attendee::instance()->show_next_x_db_queries(1);
 //		$attendees = EEM_Attendee::instance()->get_all(array(array('Registration.Event.EVT_ID'=>1),'default_where_conditions'=>'all'));

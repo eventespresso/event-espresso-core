@@ -34,28 +34,4 @@ abstract class EE_Validation_Strategy_Base extends EE_Form_Input_Strategy_Base{
 	function get_jquery_validation_rule_array(){
 		return array();
 	}
-	
-	
-	/**
-	 * For generating JS for validation beyond the standard jquery validation rules. Eg, if you want to define your own
-	 * jquery validation method in your rules like so:
-	 * <br><code>
-	 $('validatorElement').validate({
-		rules : {
-			amount : { greaterThanZero : true }
-		}
-	});</code>
-	 * <br>
-	 * then in your get_validation_js() you would make it return
-	 * <br><code>
-	 jQuery.validator.addMethod("greaterThanZero", function(value, element) {
-		return this.optional(element) || (parseFloat(value) > 0);
-	}, "* Amount must be greater than zero");
-	 * </code>
-	 * Note: get_validatio_js() should NOT return the opening and closing script tags
-	 * @return string
-	 */
-	function get_validation_js(){
-		return '';
-	}
 }

@@ -456,7 +456,7 @@ final class EE_System {
 		if ( apply_filters( 'FHEE_load_EE_System_scripts', TRUE )) {
 
 			// js for error handling
-			wp_register_script('ee_error_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/EE_Error.js', array('jquery'), EVENT_ESPRESSO_VERSION, false);
+//			wp_register_script('ee_error_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/EE_Error.js', array('jquery'), EVENT_ESPRESSO_VERSION, false);
 			wp_localize_script('ee_error_js','ee_settings',array('wp_debug'=>WP_DEBUG));
 			wp_enqueue_script('ee_error_js');
 			// jquery_validate loading is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
@@ -470,7 +470,7 @@ final class EE_System {
 				// register jQuery Validate
 				wp_register_script('jquery-validate', $jquery_validate_url, array('jquery'), '1.11.1', TRUE);	
 				//I don't see why we would ahve gone through the trouble o fadding the filter FHEE_load_jquery_validate, but not enqueue it?
-				wp_enqueue_script('jquery-validate');
+				//wp_enqueue_script('jquery-validate');
 			}
 			
 		}

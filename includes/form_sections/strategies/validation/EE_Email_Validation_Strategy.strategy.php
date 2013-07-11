@@ -15,7 +15,7 @@ class EE_Email_Validation_Strategy extends EE_Validation_Strategy_Base{
 	}
 	
 	function get_jquery_validation_rule_array(){
-		return array('email'=>'true');
+		return array('email'=>true);
 	}
 	
 	

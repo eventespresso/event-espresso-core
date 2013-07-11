@@ -186,17 +186,12 @@ abstract class EE_Form_Section_Base{
 	 		password_again: {
 			equalTo: "#password"
 		  }</code>
-	 * which correspond to fields in this form section.
-	 * @return string
+	 * except we leave it as a PHP obejct, and leave wp_localize_script to 
+	 * turn it into a JSON object which can be used by the js
+	 * @return array
 	 */
 	abstract function get_jquery_validation_rules();
 	
-	/**
-	 * Gets the javascript for validating this section/field. Does not output opening and closing
-	 * script tags. Does not output the jquery validation code.
-	 * @return string
-	 */
-	abstract function get_section_validation_js();
 	
 	/**
 	 * using this section's name and its parents, finds the value of the form data that corresponds to it.

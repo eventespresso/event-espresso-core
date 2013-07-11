@@ -258,7 +258,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	 * <br><code>password_again: {
 			equalTo: "#password"
 		  }</code>
-	 * @return string
+	 * @return array
 	 */
 	function get_jquery_validation_rules(){
 		$jquery_validation_rules = array();
@@ -266,28 +266,11 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 			$jquery_validation_rules = array_merge($jquery_validation_rules, $validation_strategy->get_jquery_validation_rule_array());
 		}
 		if(! empty($jquery_validation_rules)){
-			
-			$jquery_validation__rules_lines = array();
-			foreach($jquery_validation_rules as $validation_method => $value){
-				$jquery_validation__rules_lines[] = "$validation_method : $value";
-			}
-			$jquery_validation_js = "\"{$this->html_name()}\" : {".implode(", ",$jquery_validation__rules_lines)."}";
+			$jquery_validation_js[$this->html_name()] = $jquery_validation_rules;
 		}else{
-			$jquery_validation_js = '';
+			return array();
 		}
 		return $jquery_validation_js;
 	}
 	
-	/**
-	 * Gets the javascript for validating this input, besides the jQuery validation js
-	 * that goes inside the 'rules' parameter. Does not echo script opening and closing tags.
-	 * @return string
-	 */
-	function get_section_validation_js(){
-		$js = '';
-		foreach($this->_get_validation_strategies() as $validation_strategy){
-			$js.=$validation_strategy->get_validation_js();
-		}
-		return $js;
-	}
 }

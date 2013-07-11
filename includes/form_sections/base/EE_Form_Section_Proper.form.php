@@ -1,6 +1,11 @@
 <?php
 /**
  * For containing info about a non-field form section, which contains other form sections/fields.
+ * Relies heavily on the script form_section_validation.js for client-side validation, mostly
+ * the php code just provides form_section_validation.js with teh variables to use.
+ * Important: in order for the JS to be loaded properly, you must construct a form section
+ * before the hook wp_enqueue_scripts is called (so that the form section can enqueue its needed scripts).
+ * However, you may output the form (usually by caling get_html_and_js) anywhere you like.
  */
 class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	/**
@@ -9,7 +14,6 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 */
 	protected $_subsections;
 	
-	protected static $jquery_validate_enqueued = false;
 	
 	/**
 	 * when constructing a proper form section, calls _construct_finalize on children
@@ -23,9 +27,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 		}
 		
 		parent::__construct($options_array);
-		if( ! EE_Form_Section_Proper::$jquery_validate_enqueued){
-			$this->_enqueue_jquery_validate_script();
-		}
+		
+		$this->_enqueue_jquery_validate_script();
 	}
 	
 	/**
@@ -57,15 +60,16 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	}
 	
 	/**
-	 * registers and enqueues the needed jquery
+	 * adds a filter so taht jquery validate gets enqueued in EE_System::wp_enqueue_scripts().
+	 * This must be done BEFORE wp_enqueue_scripts() gets called, which is on 
+	 * the wp_enqueue_scripts hook.
+	 * However, registering the form js and localizing it can happen when we 
+	 * actually output the form (which is preferred, seeing how teh form's fields
+	 * could change until it's actually outputted)
 	 * @return void
 	 */
 	protected function _enqueue_jquery_validate_script(){
-		EE_Form_Section_Proper::$jquery_validate_enqueued = true;
-		//add this filter as indicated in EE_System::wp_enqueue_scripts()
 		add_filter( 'FHEE_load_jquery_validate', '__return_true' );
-//		espresso_register_jquery_validate();//function in includes/functions/frontend_init.php
-//		wp_enqueue_script('jquery-validate');
 	}
 	
 	/**
@@ -90,12 +94,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * (as the form section doesn't know where you necessarily want to send the information to), and except for a submit button.
 	 */
 	public function get_html_and_js(){
-		$html_and_js = 
-			"<script>".
-			$this->get_validation_js().
-			"</script>";
-		$html_and_js.=$this->get_html();
-		return $html_and_js;
+		$this->_enqueue_and_localize_form_js();
+		return $this->get_html();
 	}
 	
 	/**
@@ -110,52 +110,44 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 		$content.="</div>";
 		return $content;
 	}
+	
 	/**
-	 * Gets javascript (no opening and closing tags though) for the jquery validation
-	 * and all other validation js for subsections
-	 * @return string
+	 * gets the variables used by form_section_validation.js.
+	 * This needs to be called AFTER we've called $this->_enqueue_jquery_validate_script,
+	 * but before the wordpress hook wp_loaded
 	 */
-	public function get_validation_js(){	
+	protected function _enqueue_and_localize_form_js(){
+		wp_enqueue_script('ee_form_section_validation', EVENT_ESPRESSO_PLUGINFULLURL.'/scripts/form_section_validation.js', array('jquery-validate'));
 		
-		$js = "
-		jQuery(document).ready(function(){jQuery('#{$this->html_id()}').closest('form').validate({";
-		$js.= "rules : {";
-		$jquery_validation_rules = array();
-		foreach($this->_subsections as $subsection){
-			$subsection_validation_rules = $subsection->get_jquery_validation_rules();
-			if( $subsection_validation_rules ){
-				$jquery_validation_rules[]=$subsection_validation_rules;
-			}
-		}
-		$js.=implode(", ",$jquery_validation_rules);
-		$js.="}}); });";
-		$js.=$this->get_section_validation_js();
-		return $js;
+		$validation_rules = $this->get_jquery_validation_rules();
+		$form_section_id = $this->html_id();
+		wp_localize_script('ee_form_section_validation','ee_form_section_vars',array(
+			'form_section_id'=>'#'.$form_section_id,
+			'validation_rules'=>$validation_rules,
+			'localized_error_messages'=>$this->_get_localied_error_messages()));
 	}
+	
 	/**
-	 * Gets the non-jquery-validation-rules js for validating the form section.
-	 * For a proper form section, that just means looping through its subsections
-	 * until we arrive at a field
-	 * @return string
+	 * Gets the hard-coded validation error messages to be used in the JS. The convention
+	 * is that the key here should be the same as the custom validation rule put in the JS file
+	 * @return array keys are custom validation rules, and values are internationalized strings
 	 */
-	public function get_section_validation_js(){
-		$js = '';
-		foreach($this->_subsections as $subsection){
-			$js.= $subsection->get_section_validation_js();
-		}
-		return $js;
+	private function _get_localied_error_messages(){
+		return array(
+			'validUrl'=>  __("This is not a valid absolute URL. Eg, http://mysite.com/monkey.jpg", "event_espresso")
+		);
 	}
 	
 	/**
 	 * Gets the JS to put inside the jquery validation rules for subsection of this form section. See parent function for more...
-	 * @return string
+	 * @return array
 	 */
 	function get_jquery_validation_rules(){
 		$jquery_validation_rules = array();
 		foreach($this->_subsections as $subsection){
-			$jquery_validation_rules[] = $subsection->get_jquery_validation_rules();
+			$jquery_validation_rules = array_merge($jquery_validation_rules,  $subsection->get_jquery_validation_rules());
 		}
-		return implode(", ",$jquery_validation_rules);
+		return $jquery_validation_rules;
 	}
 	
 	/**
