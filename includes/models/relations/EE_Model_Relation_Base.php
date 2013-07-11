@@ -102,6 +102,21 @@ abstract class EE_Model_Relation_Base{
 	 */
 	public function get_all_related($model_object_or_id, $query_params = array(), $values_already_prepared_by_model_object = false){
 		$query_param_where_this_model_pk = $this->get_this_model()->get_this_model_name().".".$this->get_this_model()->get_primary_key_field()->get_name();
+		$model_object_id = $this->_get_model_object_id( $model_object_or_id );
+		$query_params[0][$query_param_where_this_model_pk] = $model_object_id;
+		return $this->get_other_model()->get_all($query_params, $values_already_prepared_by_model_object);
+	}
+
+
+
+
+
+	/**
+	 * this just returns a model_object_id for incoming item that could be an object or id.
+	 * @param  EE_Base_Class|int $model_object_or_id model object or the primary key of this model
+	 * @return int                     
+	 */
+	protected function _get_model_object_id($model_object_or_id) {
 		if($model_object_or_id instanceof EE_Base_Class){
 			$model_object_id = $model_object_or_id->ID();
 		}else{
@@ -110,8 +125,7 @@ abstract class EE_Model_Relation_Base{
 		if( ! $model_object_id){
 			throw new EE_Error(sprintf(__("Sorry, we cant get the related %s model objects to %s model object before it has an ID. You can solve that by just saving it before trying to get its related model objects", "event_espresso"),$this->get_other_model()->get_this_model_name(),$this->get_this_model()->get_this_model_name()));
 		}
-		$query_params[0][$query_param_where_this_model_pk] = $model_object_id;
-		return $this->get_other_model()->get_all($query_params, $values_already_prepared_by_model_object);
+		return $model_object_id;
 	}
 	
 	/**
