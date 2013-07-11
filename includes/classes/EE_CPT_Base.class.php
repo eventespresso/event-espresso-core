@@ -134,5 +134,39 @@ class EE_CPT_Base extends EE_Base_Class{
 		return $this->_get_feature_image( $size, $attr );
 	}
 
+	
+	/**
+	 * Wrapper for get_post_meta, http://codex.wordpress.org/Function_Reference/get_post_meta
+	 * @param string $meta_key
+	 * @param boolean $single
+	 * @return mixed <ul><li>If only $id is set it will return all meta values in an associative array.</li>
+<li>If $single is set to false, or left blank, the function returns an array containing all values of the specified key.</li>
+<li>If $single is set to true, the function returns the first value of the specified key (not in an array</li></ul>
+	 */
+	public function get_post_meta($meta_key = null,$single = false){
+		return get_post_meta($this->ID(), $meta_key, $single);
 
+	}
+	
+	/**
+	 * Wrapper for update_post_meta, http://codex.wordpress.org/Function_Reference/update_post_meta
+	 * @param string $meta_key
+	 * @param mixed $meta_value
+	 * @param mixed $prev_value
+	 * @return mixed Returns meta_id if the meta doesn't exist, otherwise returns true on success and false on failure. NOTE: If the meta_value passed to this function is the same as the value that is already in the database, this function returns false.
+	 */
+	public function update_post_meta($meta_key, $meta_value, $prev_value = null){
+		return update_post_meta($this->ID(),$meta_key,$meta_value,$prev_value);
+	}
+	
+	/**
+	 * Wrapper for add_post_meta, http://codex.wordpress.org/Function_Reference/add_post_meta
+	 * @param type $meta_key
+	 * @param type $meta_value
+	 * @param type $unique. If postmeta for this $meta_key already exists, whether to add an additional item or not
+	 * @return boolean Boolean true, except if the $unique argument was set to true and a custom field with the given key already exists, in which case false is returned.
+	 */
+	public function add_post_meta($meta_key,$meta_value,$unique = false){
+		return add_post_meta($this->ID(),$meta_key,$meta_value,$unique);
+	}
 }
