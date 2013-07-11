@@ -93,7 +93,8 @@ class EE_CPT_Strategy extends EE_BASE {
 		$this->_CPTs = EE_Register_CPTs::get_CPTs();
 		$this->_CPT_endpoints = $this->_set_CPT_endpoints();
 		// load EE_Request_Handler
-		add_action( 'wp_loaded', array( $this, 'apply_CPT_Strategy' ), 2 );
+//		add_action( 'wp_loaded', array( $this, 'apply_CPT_Strategy' ), 2 );
+		add_action( 'parse_request', array( $this, 'apply_CPT_Strategy' ), 1 );
 	}
 
 
@@ -134,35 +135,31 @@ class EE_CPT_Strategy extends EE_BASE {
 	 * 	@access public
 	 * 	@return array
 	 */
-	public function apply_CPT_Strategy() {
-		// if current page is espresso page, then this is it's post name
-		if ( $espresso_page = $this->EE->REQ->is_espresso_page() ) {
-//			echo '<h4>$espresso_page : ' . $espresso_page . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//			printr( $this->_CPT_endpoints, '$this->_CPT_endpoints  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-			// but is this espresso page a CPT endpoint ?
-			if ( isset( $this->_CPT_endpoints[ $espresso_page ] )) {
-				
-				$this->CPT = $this->_CPTs[ $this->_CPT_endpoints[ $espresso_page ] ];
-				$this->CPT['post_type'] = $this->_CPT_endpoints[ $espresso_page ];
-				$this->CPT['requested_page'] = $espresso_page;
-//				printr( $this->CPT, '$this->CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-				if ( isset( $this->CPT['singular_name'] )) {
-					// get list of CPTS via CPT Model
-					$CPT_Model = 'EEM_' . $this->CPT['singular_name'];
-					$this->CPT['tables'] = $CPT_Model::instance()->get_tables();
-					// is there a Meta Table for this CPT?
-					$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] ) ? $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] : FALSE;
-					// creates classname like:  EE_CPT_Event_Strategy
-					$CPT_Strategy_class_name = 'CPT_' . $this->CPT['singular_name'] . '_Strategy';
-					// load and instantiate
-					 $CPT_Strategy = $this->EE->load_core ( $CPT_Strategy_class_name, array( 'EE' => $this->EE, 'CPT' =>$this->CPT ));
-//					printr( $CPT_Strategy, '$CPT_Strategy  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-					add_filter( 'posts_fields', array( $this, 'posts_fields' ));
-					add_filter( 'posts_join',	array( $this, 'posts_join' ));
-					add_filter( 'get_' . $this->CPT['post_type'] . '_metadata', array( $CPT_Strategy, 'get_EE_post_type_metadata' ), 1, 4 );
+	public function apply_CPT_Strategy( $WP_Object ) {
+//		printr( $WP_Object, '$WP_Object  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		// is current query for a CPT that matches an EE CPT ?
+		if ( isset( $WP_Object->query_vars['post_type'] ) && isset( $this->_CPTs[ $WP_Object->query_vars['post_type'] ] )) {
+			$this->CPT = $this->_CPTs[ $WP_Object->query_vars['post_type'] ];
+			$this->CPT['post_type'] = $WP_Object->query_vars['post_type'];
+			$this->CPT['espresso_page'] = $this->EE->REQ->is_espresso_page();
+			$this->CPT['post_name'] = $this->EE->REQ->get( 'post_name' );
+			//printr( $this->CPT, '$this->CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			if ( isset( $this->CPT['singular_name'] )) {
+				// get list of CPTS via CPT Model
+				$CPT_Model = 'EEM_' . $this->CPT['singular_name'];
+				$this->CPT['tables'] = $CPT_Model::instance()->get_tables();
+				// is there a Meta Table for this CPT?
+				$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] ) ? $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] : FALSE;
+				// creates classname like:  EE_CPT_Event_Strategy
+				$CPT_Strategy_class_name = 'CPT_' . $this->CPT['singular_name'] . '_Strategy';
+				// load and instantiate
+				 $CPT_Strategy = $this->EE->load_core ( $CPT_Strategy_class_name, array( 'EE' => $this->EE, 'CPT' =>$this->CPT ));
+//				printr( $CPT_Strategy, '$CPT_Strategy  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+				add_filter( 'posts_fields', array( $this, 'posts_fields' ));
+				add_filter( 'posts_join',	array( $this, 'posts_join' ));
+				add_filter( 'get_' . $this->CPT['post_type'] . '_metadata', array( $CPT_Strategy, 'get_EE_post_type_metadata' ), 1, 4 );
 
-				}				
-			}
+			}				
 		}
 	}
 
