@@ -131,14 +131,7 @@ final class EE_Config {
 		$current_user_id = $current_user_id ? $current_user_id : 1;
 		// grab org options based on current admin user
 		$this->EE->CFG = get_user_meta( $current_user_id, 'events_organization_settings', TRUE );
-		// force $this->EE->CFG into an object
-		if ( is_array( $this->EE->CFG )) {
-			$CFG = new stdClass();
-			foreach ( $this->EE->CFG as $k => $v ) {
-				$CFG->$k = $v;
-			}
-			$this->EE->CFG = $CFG;
-		}
+
 		// do settings for this user exist ?
 		if ( empty( $this->EE->CFG )) {
 			require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
