@@ -16,16 +16,16 @@
  * If your values are already in teh database values domain, you'll either way to convert them into the model object domain by creating model objects
  * from those raw db values (ie,using EEM_Base::_create_objects), or just use $wpdb directly.
  */
-define('SP',' ');
-//require all field, relation, and helper files, because we'll want 90% of them on every request using EEM_Base anyways.
-$field_files = glob( EE_MODELS . '/fields/*.php');
-$helper_files = glob( EE_MODELS . '/helpers/*.php');
-$relation_files = glob( EE_MODELS . '/relations/*.php');
-$files =  array_merge( array_merge($field_files, $relation_files), $helper_files) ;
-require_once( EE_MODELS . 'strategies/EE_Default_Where_Conditions.strategy.php' );
-foreach ( $files as $file ){
-    require_once( $file );   
-}
+//define('SP',' ');
+////require all field, relation, and helper files, because we'll want 90% of them on every request using EEM_Base anyways.
+//$field_files = glob( EE_MODELS . '/fields/*.php');
+//$helper_files = glob( EE_MODELS . '/helpers/*.php');
+//$relation_files = glob( EE_MODELS . '/relations/*.php');
+//$files =  array_merge( array_merge($field_files, $relation_files), $helper_files) ;
+//require_once( EE_MODELS . 'strategies/EE_Default_Where_Conditions.strategy.php' );
+//foreach ( $files as $file ){
+//    require_once( $file );   
+//}
 //make sure EE_Registry is available
 require_once( EE_REGISTRY );
 
