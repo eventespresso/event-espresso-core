@@ -1,12 +1,33 @@
-<?php
-
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
+ * Event Espresso
+ *
+ * Event Registration and Management Plugin for WordPress
+ *
+ * @ package			Event Espresso
+ * @ author				Seth Shoultes
+ * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ link					http://www.eventespresso.com
+ * @ version		 	4.0
+ *
+ * ------------------------------------------------------------------------
+ *
+ * EEM_Question_Group_Question
+ *
  * model for simple join relationship between Questions and Question Groups.
  * Client code will probably never need to use this, as you can easily query questions by question group
  * (and the inverse) using the HABTM relationship present on either; and there's no additional fields on this
  * model other than keys.
+ *
+ * @package			Event Espresso
+ * @subpackage	includes/models/
+ * @author				Michael Nelson
+ *
+ * ------------------------------------------------------------------------
  */
+require_once ( EE_MODELS . 'EEM_Base.model.php' );
+require_once( EE_CLASSES . 'EE_Question_Group_Question.class.php');
 class EEM_Question_Group_Question extends EEM_Base {
 
   	// private instance of the Attendee object
@@ -47,4 +68,17 @@ class EEM_Question_Group_Question extends EEM_Base {
 		);
 		parent::__construct();
 	}
+
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public static function define_table_name() {
+		global $wpdb;
+		define( 'EE_QUESTION_GROUP_QUESTION_TABLE', $wpdb->prefix . 'esp_question_group_question' );
+	}
+
+
 }

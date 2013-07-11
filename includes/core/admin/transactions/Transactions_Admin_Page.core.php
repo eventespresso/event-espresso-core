@@ -254,13 +254,13 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		wp_register_script('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.js', array('ee_admin_js', 'jquery-ui-datepicker', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
 		wp_enqueue_script('espresso_txn');	
 
-		global $eei18n_js_strings;
-		$eei18n_js_strings['invalid_server_response'] = __( 'An error occured! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
-		$eei18n_js_strings['error_occured'] = __(  'An error occured! Please refresh the page and try again.', 'event_espresso' );
-		$eei18n_js_strings['txn_status_array'] = self::$_txn_status;
-		$eei18n_js_strings['pay_status_array'] = self::$_pay_status;
+		;
+		EE_Registry::$i18n_js_strings['invalid_server_response'] = __( 'An error occured! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['error_occured'] = __(  'An error occured! Please refresh the page and try again.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['txn_status_array'] = self::$_txn_status;
+		EE_Registry::$i18n_js_strings['pay_status_array'] = self::$_pay_status;
 
-		wp_localize_script( 'espresso_txn', 'eei18n', $eei18n_js_strings );
+		wp_localize_script( 'espresso_txn', 'eei18n', EE_Registry::$i18n_js_strings );
 
 	}
 
@@ -312,7 +312,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		if ( is_object( $this->_transaction) )
 			return; //get out we've already set the object
 
-	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
+	    require_once ( EE_MODELS . 'EEM_Transaction.model.php' );
 	    $TXN = EEM_Transaction::instance();
 
 	    $TXN_ID = ( ! empty( $_REQUEST['TXN_ID'] )) ? absint( $_REQUEST['TXN_ID'] ) : FALSE;
@@ -531,7 +531,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$txn_status_class = 'status-' . $this->_transaction->STS_ID;
 		
 		// process payment details
-	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php' );
+	    require_once ( EE_MODELS . 'EEM_Payment.model.php' );
 	    $PAY = EEM_Payment::instance();
 		if ( ! $this->_template_args['payments'] = $PAY->get_payments_for_transaction( $this->_transaction->TXN_ID )) {
 			$this->_template_args['payments'] = FALSE;
@@ -647,7 +647,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					if ( ! $attendee['att_obj'] ) {
 						if ( isset( $attendee['fname'] ) && isset( $attendee['lname'] ) && isset( $attendee['email'] )) {
 							$where_fields_n_values = array( 'ATT_fname' => $attendee['fname'], 'ATT_lname' => $attendee['lname'], 'ATT_email' => $attendee['email'] );
-							require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php' );
+							require_once ( EE_MODELS . 'EEM_Attendee.model.php' );
 							$ATT_MDL = EEM_Attendee::instance();
 							if ( ! $attendee['att_obj'] = $ATT_MDL->get_one( array( $where_fields_n_values ) )) {
 							} else {
@@ -661,7 +661,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 						$attendee['reg_obj'] = isset( $attendee['reg_obj'] ) && is_object( $attendee['reg_obj'] ) ? $attendee['reg_obj'] : FALSE;		
 						if ( ! $attendee['reg_obj'] ) {
 							$where_fields_n_values = array( 'ATT_fname' => $attendee['fname'], 'ATT_lname' => $attendee['lname'], 'ATT_email' => $attendee['email'] );
-							require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
+							require_once ( EE_MODELS . 'EEM_Registration.model.php' );
 							$REG_MDL = EEM_Registration::instance();
 							if ( ! $attendee['reg_obj'] = $REG_MDL->get_registration_for_transaction_attendee( $TXN_ID, $attendee['att_obj']->ID(), $att_nmbr )) {
 								$attendee['reg_obj'] = EE_Registration::new_instance();
@@ -833,7 +833,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$payment = $this->_req_data['txn_admin_payment'];
 			//printr( $payment, '$payment' );
 
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Payment.class.php');
+			require_once(EE_CLASSES . 'EE_Payment.class.php');
 			
 			$payment['PAY_ID'] = $payment['PAY_ID'];
 			
@@ -999,7 +999,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 * @return mixed (int|array)           int = count || array of transaction objects
 	 */
 	public function get_transactions( $perpage, $count = FALSE ) {
-	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
+	    require_once ( EE_MODELS . 'EEM_Transaction.model.php' );
 	    $TXN = EEM_Transaction::instance();
 
 	    $start_date = isset( $this->_req_data['txn-filter-start-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-start-date'] ) : date( 'D M j, Y', strtotime( '-10 year' ));

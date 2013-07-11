@@ -23,7 +23,7 @@
  */
 
 
-require_once('EEM_CPT_Base.model.php');
+require_once( EE_MODELS . 'EEM_CPT_Base.model.php');
 class EEM_Event  extends EEM_CPT_Base{
 	//extends EEM_Base
 
@@ -67,7 +67,6 @@ class EEM_Event  extends EEM_CPT_Base{
 	protected function __construct($timezone = null){
 		$this->singular_item = __('Event','event_espresso');
 		$this->plural_item = __('Events','event_espresso');
-		$this->_statuses = $this->get_status_array();
 		
 		
 		self::$_additional_attendee_reg_info_enum = $this->_get_additional_attendee_reg_info_array();
@@ -86,7 +85,6 @@ class EEM_Event  extends EEM_CPT_Base{
 				'EVT_slug'=>new EE_Slug_Field('post_name', __("Event Slug", "event_espresso"), false, ''),
 				'EVT_created'=>new EE_Datetime_Field('post_date', __("Date/Time Event Created", "event_espresso"), false, current_time('timestamp')),
 				'EVT_short_desc'=>new EE_Simple_HTML_Field('post_excerpt', __("Event Short Descripiton", "event_espresso"), false,''),
-				'STS_ID'=>new EE_Enum_Field('post_status', __("Event Status", "event_espresso"), false, 'draft', $this->_statuses),
 				'EVT_modified'=>new EE_Datetime_Field('post_modified', __("Dateim/Time Event Modified", "event_espresso"), true, current_time('timestamp')),
 				'EVT_wp_user'=>new EE_Integer_Field('post_author', __("Wordpress User ID", "event_espresso"), false,1),
 				'parent'=>new EE_Integer_Field('post_parent', __("Event Parent ID", "event_espresso"), true),
@@ -96,7 +94,6 @@ class EEM_Event  extends EEM_CPT_Base{
 			'Event_Meta'=>array(
 				'EVTM_ID'=> new EE_DB_Only_Float_Field('EVTM_ID', __('Event Meta Row ID','event_espresso'), false),
 				'EVT_ID_fk'=>new EE_DB_Only_Int_Field('EVT_ID', __("Foreign key to Event ID from Event Meta table", "event_espresso"), false),
-				'EVT_is_active'=>new EE_Boolean_Field('EVT_is_active', __("Event Active Flag", "event_espresso"), false, 1),
 				'EVT_display_desc'=>new EE_Boolean_Field('EVT_display_desc', __("Display Description Flag", "event_espresso"), false, 1),
 				'EVT_display_reg_form'=>new EE_Boolean_Field('EVT_display_reg_form', __("Display Registration Form Flag", "event_espresso"), false, 1),
 				'EVT_visible_on'=>new EE_Datetime_Field('EVT_visible_on', __("Event Visible Date", "event_espresso"), true, current_time('timestamp')),
@@ -114,16 +111,28 @@ class EEM_Event  extends EEM_CPT_Base{
 			));
 		$this->_model_relations = array(
 			'Registration'=>new EE_Has_Many_Relation(),
-			'Datetime'=>new EE_Has_Many_Relation(),
+			'Datetime'=>new EE_HABTM_Relation('Event_Datetime'),
 			'Price'=>new EE_Has_Many_Relation(),
 			'Question_Group'=>new EE_HABTM_Relation('Event_Question_Group'),
-			'Venue'=>new EE_HABTM_Relation('Event_Venue')
+			'Venue'=>new EE_HABTM_Relation('Event_Venue'),
+			'Event_Datetime'=> new EE_Has_Many_Relation()
 		);
-		require_once('strategies/EE_Default_CPT_Where_Conditions.strategy.php');
-		$this->_default_where_conditions_strategy = new EE_Default_CPT_Where_Conditions('espresso_events', 'EVTM_ID');
+		require_once( EE_CLASSES . 'EE_Event.class.php');
+		require_once( EE_MODELS . 'strategies/EE_CPT_Where_Conditions.strategy.php');
+		$this->_default_where_conditions_strategy = new EE_CPT_Where_Conditions('espresso_events', 'EVTM_ID');
 		parent::__construct( $timezone );
 	}
-	
+
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public static function define_table_name() {
+		global $wpdb;
+		define( 'EE_EVENT_META_TABLE', $wpdb->prefix . 'esp_event_meta' );
+	}
 	
 	
 	
@@ -542,6 +551,85 @@ class EEM_Event  extends EEM_CPT_Base{
 			EEM_Event::additional_attendee_reg_info_personal_info_only => __("Personal Info Only", "event_espresso"),
 			EEM_Event::additional_attendee_reg_info_full =>  __("Full Registration Info", "event_espresso")
 		);
+	}
+
+
+
+	/**
+	 * Gets all events that are published and have event start time earlier than now and an event end time later than now
+	 *
+	 * @access public
+	 * @param  array  $query_params An array of query params to further filter on (note that status and DTT_EVT_start and DTT_EVT_end will be overridden)
+	 * @param bool    $count whether to return the count or not (default FALSE)
+	 * @return array 	EE_Event objects
+	 */
+	public function get_active_events( $query_params, $count = FALSE ) {
+		if ( array_key_exists( 0, $query_params ) ) {
+			$where_params = $query_params[0];
+			unset( $query_params[0] );
+		} else {
+			$where_params = array();
+		}
+		
+		//let's add specific query_params for active_events - keep in mind this will override any sent status in the query AND any date queries.
+		$where_params['status'] = 'publish';
+		$where_params['Datetime.DTT_EVT_start'] = array('>',  date('Y-m-d g:i:s', time() ) );
+		$where_params['Datetime.DTT_EVT_end'] = array('<', date('Y-m-d g:i:s', time() ) );
+		$query_params[0] = $where_params;
+		$events = $count ? $this->count($query_params, 'EVT_ID') : $this->get_all( $query_params );
+		return $events;
+	}
+
+
+
+
+
+	/**
+	 * get all events that are published and have an event start time later than now
+	 *
+	 * @access public
+	 * @param  array 	$query_params An array of query params to further filter on (Note that status and DTT_EVT_start will be overridden)
+	 * @param bool    $count whether to return the count or not (default FALSE)
+	 * @return array               EE_Event objects
+	 */
+	public function get_upcoming_events( $query_params, $count = FALSE ) {
+		if ( array_key_exists( 0, $query_params ) ) {
+			$where_params = $query_params[0];
+			unset( $query_params[0] );
+		} else {
+			$where_params = array();
+		}
+		
+		//let's add specific query_params for active_events - keep in mind this will override any sent status in the query AND any date queries.
+		$where_params['status'] = 'publish';
+		$where_params['Datetime.DTT_EVT_start'] = array('>', date('Y-m-d g:i:s', time() ) );
+		$query_params[0] = $where_params;
+		return $count ? $this->count($query_params, 'EVT_ID') : $this->get_all( $query_params );
+	}
+
+
+	/**
+	 * Get all events that are either published and have an event end time that is less than now OR unpublished events.
+	 *
+	 * @access public
+	 * @param  array  $query_params An array of query params to further filter on (note that status and DTT_EVT_end will be overridden)
+	 * @param bool    $count whether to return the count or not (default FALSE)
+	 * @return array 	EE_Event objects
+	 */
+	public function get_expired_events( $query_params, $count = FALSE ) {
+		if ( array_key_exists( 0, $query_params ) ) {
+			$where_params = $query_params[0];
+			unset( $query_params[0] );
+		} else {
+			$where_params = array();
+		}
+		
+		//let's add specific query_params for active_events - keep in mind this will override any sent status in the query AND any date queries.
+		if ( isset( $where_params['status'] ) )
+			unset( $where_params['status'] );
+		$where_params['OR'] = array( 'status' => array( '!=', 'publish' ), 'AND' => array('status' => 'publish', 'Datetime.DTT_EVT_end' => array( '<',  date('Y-m-d g:i:s', time() ) ) ) );
+		$query_params[0] = $where_params;
+		return $count ? $this->count($query_params, 'EVT_ID') : $this->get_all( $query_params );
 	}
 
 

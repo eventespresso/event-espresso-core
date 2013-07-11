@@ -37,10 +37,73 @@ class EE_messages_init extends EE_Base {
 	private $_EEMSG = NULL;
 
 
+	/**
+	 * 	init - calls class constructor
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public static function init() {
+		new EE_messages_init();
+	}
+
 	public function __construct() {
 		$this->_do_actions();
 		$this->_do_filters();
 	}
+
+
+
+	public static function set_autoloaders() {
+		spl_autoload_register( 'self::_autoload_messages' );
+	}
+
+
+
+
+	/**
+	 * 		_autoload_messages
+	 *
+	 * 		@access 	private
+	 * 		@return 		void
+	 */
+	private static function _autoload_messages( $className ) {
+		//let's just work with EE_ files!
+		if ( !preg_match( '/EE_/', $className ) )
+			return;
+
+		//let's setup an array of paths to check (for each subsystem)
+		$root = EE_CORE;		
+		//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
+		$dir_ref = array(
+			'messages/' => 'core',
+			'messages/message_type/' => 'class',
+			'messages/messenger/' => 'class',
+			'messages/defaults/' => array('class', 'core'),
+			'messages/defaults/email/' => 'class',
+			'messages/data_class/' => array('core','class'),
+			'messages/validators/' => array('core', 'class'),
+			'messages/validators/email/' => 'class'
+		);
+
+		//assemble a list of filenames
+		foreach ( $dir_ref as $dir => $types ) {
+			if ( is_array( $types )) {
+				foreach ( $types as $type ) {
+					$filenames[] = $root . $dir . $className . '.' . $type . '.php';
+				}
+			} else {
+				$filenames[] = $root . $dir . $className . '.' . $types . '.php';
+			}
+		}
+		//now loop through assembled filenames and require as available
+		foreach ( $filenames as $filename ) {
+			if ( is_readable( $filename )) {
+				require_once( $filename );
+			}				
+		}
+	}
+
 
 
 	/**
@@ -50,6 +113,7 @@ class EE_messages_init extends EE_Base {
 	 * @return void 
 	 */
 	private function _load_controller() {
+		self::set_autoloaders();
 		$this->_EEMSG = new EE_messages();
 	}
 

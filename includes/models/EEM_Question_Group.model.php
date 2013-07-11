@@ -21,8 +21,8 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Soft_Delete_Base.model.php' );
-
+require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
+require_once( EE_CLASSES . 'EE_Question_Group.class.php');
 class EEM_Question_Group extends EEM_Soft_Delete_Base {
 
   	// private instance of the Attendee object
@@ -48,26 +48,7 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base {
 	protected function __construct(){
 		$this->singular_item = __('Question Group','event_espresso');
 		$this->plural_item = __('Question Groups','event_espresso');
-//		$this->_fields_settings=array(
-//					'QSG_ID'=>new EE_Model_Field('Question Group ID', 'primary_key', false, null, null, null),
-//					'QSG_name'=>new EE_Model_Field('Question Gruop Name', 'plaintext', false, '', null, null),
-//					'QSG_identifier'=>new EE_Model_Field('Question Group identifier', 'plaintext', false, '', null, null),
-//					'QSG_desc'=>new EE_Model_Field('Question Group Description', 'simplehtml', false, '', null, null),
-//					'QSG_order'=>new EE_Model_Field('Question Order','int',false,0,null,null),
-//					'QSG_show_group_name'=>new EE_Model_Field('Show Question Group Name?', 'bool', false, true, null, null),
-//					'QSG_show_group_desc'=>new EE_Model_Field('Show Question Group Description?', 'bool', false, true, null, null),
-//					'QSG_system_ID'=>new EE_Model_Field('Is an internal-system Question Group', 'bool', false, false, null, null),
-//					'QSG_deleted'=>new EE_Model_Field('Is Question Group deleted?', 'deleted_flag', false, false, null, null)
-//				);
-//		$this->_related_models=array(
-//				'Questions'=>new EE_Model_Relation('hasAndBelongsToMany', 'Question', 'QST_ID','question_group_question',
-//						array(
-//							'QGQ_ID'=>new EE_Model_Field('Question Group-Question ID', 'primary_key', false, null, null, null),
-//							'QSG_ID'=>new EE_Model_Field('Foreign Key to Question Groups', 'foreign_key', false, null, null, 'Question_Group'),
-//							'QST_ID'=>new EE_Model_Field('Foreign Key to Questions','foreign_key',false,null,null,'Question')
-//						)
-//					)
-//				);
+
 		$this->_tables = array(
 			'Question_Group'=>new EE_Primary_Table('esp_question_group','QSG_ID')
 		);
@@ -91,6 +72,19 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base {
 		);
 		parent::__construct();
 	}
+
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public static function define_table_name() {
+		global $wpdb;
+		define( 'EE_QUESTION_GROUP_TABLE', $wpdb->prefix . 'esp_question_group' );
+	}
+
+
 }
 // End of file EEM_Question.model.php
 // Location: /includes/models/EEM_Question.model.php

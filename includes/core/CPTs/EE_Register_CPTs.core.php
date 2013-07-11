@@ -1,11 +1,41 @@
-<?php
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
- * Registers the custom post types
+ * Event Espresso
+ *
+ * Event Registration and Management Plugin for WordPress
+ *
+ * @ package			Event Espresso
+ * @ author			Seth Shoultes
+ * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ link					http://www.eventespresso.com
+ * @ version		 	4.0
+ *
+ * ------------------------------------------------------------------------
+ *
+ * Event List
+ *
+ * @package			Event Espresso
+ * @subpackage	includes/core/
+ * @author				Darren Ethier
+ *
+ * ------------------------------------------------------------------------
  */
-function espresso_register_cpts(){
-	new EE_Register_CPTs();
-}
-class	EE_Register_CPTs{
+class EE_Register_CPTs {
+
+	/**
+	 * $_CPTs
+	  *
+	 * @var array $_CPTs
+	 */
+	private $_CPTs = array();
+
+	/**
+	 * $_taxonomies
+	  *
+	 * @var array $_taxonomies
+	 */
+	private $_taxonomies = array();
 
 	/**
 	 * This property is used to hold an array of EE_default_term objects assigned to a custom post type when the post for that post type is published with no terms set for the taxonomy.
@@ -16,38 +46,18 @@ class	EE_Register_CPTs{
 
 
 	function __construct(){
-		$this->register_taxonomy('espresso_event_categories', __("Event Category", "event_espresso"), __("Event Categories", "event_espresso"), 
-				array(
-					'public'=>true));
-		$this->register_taxonomy('espresso_venue_categories', __("Venue Category", 'event_espresso'), __('Venue Categories', 'event_espresso'),
-				array(
-					'public' => true )
-				);
-
-		$this->register_taxonomy('espresso_event_type', __("Event Type", "event_espresso"), __("Event Types", "event_espresso"), 
-				array(
-					'public'=>true,
-					'show_ui'=>false,
-					'hierarchical'=>false
-					));
-		$this->register_CPT('espresso_events', __("Event", "event_espresso"),  __("Events", "event_espresso"),
-				array(
-					'taxonomies'=>array(
-						'espresso_event_categories',
-						'espresso_event_type'
-				)));
-		$this->register_CPT('espresso_venues', __("Venue", "event_espresso"), __("Venues", "event_espresso"),
-				array(
-					'taxonomies'=>array(
-						'espresso_venue_categories'
-					)
-				));
-		$this->register_CPT('espresso_persons',  __("Person", "event_espresso"),  __("Persons", "event_espresso"));
-		$this->register_CPT('espresso_attendees',  __("Attendee", "event_espresso"),  __("Attendees", "event_espresso"),
-				array(
-					'public'=>'false',
-					'publicly_queryable'=>'false',
-					'hierarchical'=>'false'));
+				
+		// register taxonomies
+		$taxonomies = self::get_taxonomies();
+		foreach ( $taxonomies as $taxonomy =>  $tax ) {
+			$this->register_taxonomy( $taxonomy, $tax['singular_name'], $tax['plural_name'], $tax['args'] );
+		}
+		
+		// register CPTs
+		$CPTs = self::get_CPTs();
+		foreach ( $CPTs as $CPT_name =>  $CPT ) {
+			$this->register_CPT( $CPT_name, $CPT['singular_name'], $CPT['plural_name'], $CPT['args'] );
+		}
 
 
 		//setup default terms in any of our taxonomies (but only if we're in admin).  Why not added via register_actvation_hook?  Because it's possible that in future iterations of EE we may add new defaults for specialized taxonomies (think event_types) and regsiter_activation_hook only reliably runs when a user manually activates the plugin.
@@ -74,6 +84,95 @@ class	EE_Register_CPTs{
 
 
 	/**
+	 * 	get_taxonomies
+	 *
+	 *  @access 	public
+	 *  @return 	array
+	 */
+	public static function get_taxonomies(){		
+		// define taxonomies
+		return array(
+			'espresso_event_categories' => array(
+				'singular_name' => __("Event Category", "event_espresso"),
+				'plural_name' => __("Event Categories", "event_espresso"),
+				'args' => array(
+					'public'=>true
+				)),
+			'espresso_venue_categories' => array(
+				'singular_name' => __("Venue Category", "event_espresso"),
+				'plural_name' => __("Venue Categories", "event_espresso"),
+				'args' => array(
+					'public'=>true
+				)),
+			'espresso_event_type' => array(
+				'singular_name' => __("Event Type", "event_espresso"),
+				'plural_name' => __("Event Types", "event_espresso"),
+				'args' => array(
+					'public'=>true,
+					'show_ui'=>false,
+					'hierarchical'=>false
+				))
+			);		
+	}
+
+
+
+
+
+	/**
+	 * 	get_CPTs
+	 *
+	 *  @access 	public
+	 *  @return 	array
+	 */
+	public static function get_CPTs(){		
+		// define CPTs
+		return array(
+			'espresso_events' => array(
+				'singular_name' => __("Event", "event_espresso"),
+				'plural_name' => __("Events", "event_espresso"),
+				'singular_slug' => __("event", "event_espresso"),
+				'plural_slug' => __("events", "event_espresso"),
+				'args' => array(
+					'taxonomies'=> array(
+						'espresso_event_categories',
+						'espresso_event_type'
+				))),
+			'espresso_venues' => array(
+				'singular_name' => __("Venue", "event_espresso"),
+				'plural_name' => __("Venues", "event_espresso"),
+				'singular_slug' => __("venue", "event_espresso"),
+				'plural_slug' => __("venues", "event_espresso"),
+				'args' => array(
+					'taxonomies'=> array(
+						'espresso_venue_categories'
+				))),
+			'espresso_persons' => array(
+				'singular_name' => __("Person", "event_espresso"),
+				'plural_name' => __("People", "event_espresso"),
+				'singular_slug' => __("person", "event_espresso"),
+				'plural_slug' => __("people", "event_espresso"),
+				'args' => array()
+				),
+			'espresso_attendees' => array(
+				'singular_name' => __("Attendee", "event_espresso"),
+				'plural_name' => __("Attendees", "event_espresso"),
+				'singular_slug' => __("attendee", "event_espresso"),
+				'plural_slug' => __("attendees", "event_espresso"),
+				'args' => array(
+					'public'=> FALSE,
+					'publicly_queryable'=> FALSE,
+					'hierarchical'=> FALSE,
+					'has_archive' => FALSE
+				))
+			);
+	}
+
+
+
+
+
+	/**
 	 * Registers a custom taxonomy. Should be called before registering custom post types,
 	 * otherwise you should link the taxonomy to the custom post type using 'register_taxonomy_for_object_type'.
 	 * 
@@ -92,7 +191,7 @@ class	EE_Register_CPTs{
 		),
 		'show_ui'           => true,
 		'show_admin_column' => true,
-		'query_var'         => true,
+		'query_var'         => true
 		//'rewrite'           => array( 'slug' => 'genre' ),
 	);
 		
@@ -142,7 +241,7 @@ class	EE_Register_CPTs{
 		'show_ui' => false, 
 		'show_in_menu' => false, 
 		'query_var' => true,
-		'rewrite' => array( 'slug' => sanitize_title($singular_name) ),
+		'rewrite' => array( 'slug' => sanitize_title($plural_name) ),
 		'capability_type' => 'post',
 		'has_archive' => true, 
 		'hierarchical' => true,
@@ -253,6 +352,10 @@ class	EE_Register_CPTs{
 			}
 		}
 	}
+
+	
+	
+	
 
 }
 

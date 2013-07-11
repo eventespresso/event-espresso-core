@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+require_once ( EE_MODELS . 'EEM_Base.model.php' );
 
 
 class EEM_Transaction extends EEM_Base {
@@ -75,38 +75,7 @@ class EEM_Transaction extends EEM_Base {
 	protected function __construct( $timezone ) {	
 		$this->singlular_item = __('Transaction','event_espresso');
 		$this->plural_item = __('Transactions','event_espresso');		
-		// set table name
-		/*$this->_get_main_table()->get_table_name() = $wpdb->prefix . 'esp_transaction';
-		// set item names
-		
-		// array representation of the transaction table and the data types for each field 
-		$this->table_data_types = array (	
-			'TXN_ID' 						=> '%d', 	
-			'TXN_timestamp' 		=> '%d', 	
-			'TXN_total' 					=> '%f', 	
-			'TXN_paid' 					=> '%f', 	
-			'STS_ID'						=> '%s', 	 	
-			'TXN_details'				=> '%s', 	 	
-			'TXN_session_data'		=> '%s',
-			'TXN_hash_salt'			=> '%s',
-			'TXN_tax_data'			=> '%s'	
-		);*/
-//		$this->_fields_settings = array(
-//			'TXN_ID' 			=> new EE_Model_Field('Transaction ID', 'primary_key', false),
-//			'TXN_timestamp' 	=> new EE_Model_Field('Transaction Teimstamp', 'int', false,time()),
-//			'TXN_total' 		=> new EE_Model_Field('Total amount due for this transaction', 'float', true,0),
-//			'TXN_paid' 			=> new EE_Model_Field('Total amoutn paid so far', 'float', false,0),
-//			'STS_ID' 			=> new EE_Model_Field('Status of Transaction.','foreign_text_key',false,  EEM_Transaction::incomplete_status_code,null,'Status'),
-//			'TXN_details' 		=> new EE_Model_Field('Serialized array of Transaction details as returned from the Payment Gateway', 'serialized_text', true, null),
-//			'TXN_tax_data' 		=> new EE_Model_Field('Serialized array of tax data', 'serialized_text', true, null),
-//			'TXN_session_data'	=> new EE_Model_Field('Serialized array of session data', 'serialized_text', true, null),
-//			'TXN_hash_salt' 	=> new EE_Model_Field('Payment Gateway hash salt value. Possibly deprecated.', 'plaintext', true,null)
-//		);
-//		$this->_related_models = array(
-//			'Payments' 		=> new EE_Model_Relation('hasMany', 'Payment', 'TXN_ID'),
-//			'Registrations' => new EE_Model_Relation('hasMany', 'Registration', 'TXN_ID'),
-//			//'Status' =>			new EE_Model_Relation('belongsTo','Status','STS_ID')
-//		);
+
 		$this->_tables = array(
 			'Transaction'=>new EE_Primary_Table('esp_transaction','TXN_ID')
 		);
@@ -128,11 +97,21 @@ class EEM_Transaction extends EEM_Base {
 			'Payment'=>new EE_Has_Many_Relation()
 		);
 		parent::__construct( $timezone );
-	
-		// uncomment these for example code samples of how to use them
-		//			self::how_to_use_insert();
-		//			self::how_to_use_update();
+
 	}
+
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public static function define_table_name() {
+		global $wpdb;
+		define( 'EE_TRANSACTION_TABLE', $wpdb->prefix . 'esp_transaction' );
+	}
+
+
 
 	/**
 	 *		This funtion is a singleton method used to instantiate the Espresso_model object
@@ -383,7 +362,7 @@ class EEM_Transaction extends EEM_Base {
 	 */
 	public function update_based_on_payments($transaction_obj_or_id){
 		$transaction = $this->ensure_is_obj($transaction_obj_or_id);
-		require_once('EEM_Payment.model.php');
+		require_once( EE_MODELS . 'EEM_Payment.model.php');
 		$PAY = EEM_Payment::instance();
 		$total_paid = $PAY->recalculate_total_payments_for_transaction( $transaction->ID(),  EEM_Payment::status_id_approved );
 		//$total_pending = $PAY->recalculate_total_payments_for_transaction( $transaction->ID(),  EEM_Payment::status_id_pending );

@@ -21,7 +21,9 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Soft_Delete_Base.model.php' );
+require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
+require_once( EE_CLASSES . 'EE_Question_Option.class.php');
+
 
 class EEM_Question_Option extends EEM_Soft_Delete_Base {
 
@@ -49,16 +51,6 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base {
 		$this->singular_item = __('Question Option','event_espresso');
 		$this->plural_item = __('Question Options','event_espresso');
 		
-//		$this->_fields_settings=array(
-//				'QSO_ID'=>new EE_Model_Field('Question Option ID', 'primary_key', false, null, null, null),
-//				'QSO_value'=>new EE_Model_Field('Question Option Key Value', 'plaintext', false, '', null, null),
-//				'QSO_value'=>new EE_Model_Field('Question Option Display Text', 'simplehtml', false, '', null, null),
-//				'QST_ID'=>new EE_Model_Field('Related Question ID', 'foreign_key', false, null, null, 'Question'),
-//				'QSO_deleted'=>new EE_Model_Field('Whether the option has been deleted', 'deleted_flag', false, false, null, null)
-//			);
-//		$this->_related_models=array(
-//				'Question'=>new EE_Model_Relation('belongsTo', 'Question', 'QST_ID')
-//			);
 		$this->_tables = array(
 			'Question_Option'=>new EE_Primary_Table('esp_question_option','QSG_ID')
 		);
@@ -77,6 +69,20 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base {
 		
 		parent::__construct();
 	}
+
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public static function define_table_name() {
+		global $wpdb;
+		define( 'EE_QUESTION_OPTION_TABLE', $wpdb->prefix . 'esp_question_option' );
+	}
+
+
+
 }
 // End of file EEM_Question_Option.model.php
 // Location: /includes/models/EEM_Question_Option.model.php

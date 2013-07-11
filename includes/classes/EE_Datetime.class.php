@@ -24,6 +24,23 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
  */
 class EE_Datetime extends EE_Base_Class{
 	
+	/**
+	 * constant used by get_active_status, indicates datetime has expired (event is over)
+	 */
+	const expired = -1;
+	/**
+	 * constant used in various places indicating that an event is INACTIVE (not yet ready to be published)
+	 */
+	const inactive = 0;
+	/**
+	 * constnats used by get_active_status, indicating datetime is still active (even isnt over, can be registered-for)
+	 */
+	const active = 2;
+	/**
+	 * constant used by get_active_status, indicating the datetime cannot be used for registrations yet, but has not expired
+	 */
+	const upcoming = 1;
+	
     /**
     *	Datetime ID
 	* 
@@ -47,16 +64,6 @@ class EE_Datetime extends EE_Base_Class{
 	protected $_EVT_ID;
 	
 	
-	
-    /**
-    *	Primary Datetime (first)
-	* 
-	* 	foreign key
-	* 
-	*	@access	protected
-    *	@var int	
-    */
-	protected $_DTT_is_primary = NULL;
 	
 	
 	
@@ -136,9 +143,12 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
+
+
+
 	/**
-	 *
-	 * @var EE_Event
+	 *	Related events
+	 * @var EE_Event[]
 	 */
 	protected $_Event;
 	
@@ -148,6 +158,14 @@ class EE_Datetime extends EE_Base_Class{
 	 * @var EE_Registration[]
 	 */
 	protected $_Registration;
+
+
+
+	/**
+	 * All Event Datetimes this event has
+	 * @var Event_Datetime[]
+	 */
+	protected $_Event_Datetime;
 
 	
 	
@@ -225,34 +243,7 @@ class EE_Datetime extends EE_Base_Class{
 		$this->_set_time_for($time,'DTT_EVT_end');
 	}
 	
-	/**
-	 * Privately used to set the time on the specified field. IE, doesnt change the date part thats already set 
-	 * @param string $time representation of the time, eg 9am
-	 * @param string $field_name like DTT_EVT_end
-	 */
-	private function _set_time_for($time,$field_name){
-		$field = $this->get_model()->field_settings_for($field_name);
-		$attribute_field_name = $this->_get_private_attribute_name($field_name);
-		$field->set_timezone( $this->_timezone );
-		$this->$attribute_field_name = $field->prepare_for_set_with_new_time($time, $this->$attribute_field_name );
-		$this->_clear_cached_property($attribute_field_name);
-	}
 	
-	
-	
-	/**
-	 *  Privately used to set the date on the specified field. IE, doesn't change the time part thats already set
-	 * @param string $date repsentation of the date, eg 2013-03-12
-	 * @param string $field_name like DTT_REG_start
-	 */
-	private function _set_date_for($date,$field_name){
-		$field = $this->get_model()->field_settings_for($field_name);
-		$field->set_timezone( $this->_timezone );
-		$attribute_field_name = $this->_get_private_attribute_name($field_name);
-		$this->$attribute_field_name = $field->prepare_for_set_with_new_date($date, $this->$attribute_field_name );
-		$this->_clear_cached_property( $attrivute_field_name );
-	}
-
 
 
 
@@ -319,20 +310,6 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
-	/**
-	*		Set as primary date
-	* 
-	*		set the datetime as the primary datetime - please verify that all other datetimes are now set to false
-	* 
-	* 		@access		public		
-	*		@param		string		$primary 		True or False ?
-	*/	
-	public function set_primary( $primary ) {
-		$this->set('_DTT_is_primary', (bool) absint( $primary ) );
-	}
-
-
-
 
 
 	/**
@@ -386,14 +363,15 @@ class EE_Datetime extends EE_Base_Class{
 
 
 	/**
-	*		get the $EVT_ID for the event that this datetime belongs to
-	* 
-	* 		@access		public		
-	*		@return 		mixed		int on success, FALSE on fail
-	*/	
-	public function event_ID() {
-		if (isset($this->_EVT_ID)) {
-			return $this->_EVT_ID;
+	 * This helps to set the primary flag for this datetime (and given event) on the Event_Datetime join table.
+	 * @param int $EVT_ID The id of the event.
+	 */
+	public function set_primary( $EVT_ID ) {
+		$evt_dtt = EEM_Event_Datetime::instance()->get_one( array( array('DTT_ID' => $this->ID(), 'EVT_ID' => $EVT_ID)));
+		if ( !empty( $evt_dtt ) ) {
+			$evt_dtt->set('EVD_primary', TRUE);
+			$evt_dtt->save();
+			return TRUE;
 		} else {
 			return FALSE;
 		}
@@ -404,19 +382,56 @@ class EE_Datetime extends EE_Base_Class{
 
 
 	/**
-	*		whether this is the primary datetime for the event or registration
-	* 
-	* 		@access		public		
-	*		@return 		bool		bool on success, FALSE on fail
-	*/	
-	public function is_primary() {
-		$dtt_is_primary = $this->get('DTT_is_primary');
-		if ( is_bool( $dtt_is_primary ) ) {
-			return $dtt_is_primary ? TRUE : FALSE;
+	 * This helper sets the order for this datetime (and given event) on the Event_Datetime join table.
+	 * @param int  $EVT_ID The id of the event.
+	 * @param int  $order  The order for the datetime attached to this event.
+	 */
+	public function set_order( $EVT_ID, $order = 0 ) {
+		$evt_dtt = EEM_Event_Datetime::instance()->get_one( array( array('DTT_ID' => $this->ID(), 'EVT_ID' => $EVT_ID)));
+		if ( !empty( $evt_dtt ) ) {
+			$evt_dtt->set('EVD_order', $order);
+			$evt_dtt->save();
+			return TRUE;
 		} else {
-			return 'NOT SET';
+			return FALSE;
 		}
 	}
+
+
+
+
+	/**
+	 * This helper simply returns whether the event_datetime for the current datetime and the given event is a primary datetime
+	 * @param  int  $EVT_ID The id of the event
+	 * @return boolean          TRUE if is primary, FALSE if not.
+	 */
+	public function is_primary( $EVT_ID ) {
+		$evt_dtt = EEM_Event_Datetime::instance()->get_one( array( array('DTT_ID' => $this->ID(), 'EVT_ID' => $EVT_ID)));
+		if ( !empty( $evt_dtt ) ) {
+			return $evt_dtt->get('EVD_primary');
+		} else {
+			return FALSE;
+		}
+	}
+
+
+
+
+	/**
+	 * This helper simply returns the order for the datetime and given Event ID using the Event_Datetime join table
+	 * @param  int $EVT_ID The id of the event attached to this datetime
+	 * @return int         The order of the datetime for this event.
+	 */
+	public function order( $EVT_ID ) {
+		$evt_dtt = EEM_Event_Datetime::instance()->get_one( array( array('DTT_ID' => $this->ID(), 'EVT_ID' => $EVT_ID)));
+		if ( !empty( $evt_dtt ) ) {
+			return $evt_dtt->get('EVD_order');
+		} else {
+			return FALSE;
+		}
+	}
+
+
 
 
 
@@ -745,6 +760,9 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
+
+
+
 	/**
 	 * This will return a timestamp for the website timezone but ONLY when the current website timezone is different than the timezone set for the website.
 	 *
@@ -770,7 +788,64 @@ class EE_Datetime extends EE_Base_Class{
 		$return =  $prepend . call_user_func_array( array( $this, $callback ), $args ) . $append;
 		$this->set_timezone( $original_timezone );
 		return $return;
-	}		
+	}
+
+
+	/**
+	 * This simply compares the internal dtt for the given string with NOW and determines if the date is upcoming or not.
+	 * @access public
+	 * @param string $what What datetime value we want info on (default is EVT)
+	 * @return boolean 
+	 */
+	public function is_upcoming( $what = 'EVT' ) {
+		$start = '_DTT_' . $what . '_start';
+		$this->_property_exists($start);
+		return ( $this->$start > time() );
+	}
+
+
+
+	/**
+	 * This simply compares the internal datetime for the given string with NOW and returns if the date is active (i.e. start and end time)
+	 * @param  string  $what What datetime value we want info on (default is EVT)
+	 * @return boolean       
+	 */
+	public function is_active( $what = 'EVT' ) {
+		$start = '_DTT_' . $what . '_start';
+		$end = '_DTT_' . $what . '_end';
+		$this->_property_exists( array( $start, $end ) );
+		return ( $this->$start < time() && $this->$end > time() );
+	}
+
+
+
+
+	/**
+	 * This simply compares the internal dtt for the given string with NOW and determines if the date is expired or not.
+	 * @param  string  $what what datetime value we want info on (default is EVT)
+	 * @return boolean       
+	 */
+	public function is_expired( $what = 'EVT' ) {
+		$end = '_DTT_' . $what . '_end';
+		$this->_property_exists( $end );
+		return ( $this->$end < time() );
+	}
+
+
+
+
+	/**
+	 * This returns the active status for whether an event is active, upcoming, or expired
+	 * @param  string $what what datetime value we want info on (default is EVT)
+	 * @return int       return value will be one of three ints: -1 = expired, 0 = upcoming, 1 = active.
+	 */
+	public function get_active_status( $what = 'EVT' ) {
+		if ( $this->is_expired( $what ) ) return EE_Datetime::expired;
+		if ( $this->is_upcoming( $what ) ) return EE_Datetime::upcoming;
+		if ( $this->is_active( $what ) ) return EE_Datetime::active;
+	}
+
+
 }
 
 /* End of file EE_Datetime.class.php */

@@ -104,7 +104,7 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 		$this->reg_objs = $this->txn->registrations();
 
 		//include Ticket Prices class for getting price obj for event.
-		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php' );
+		require_once( EE_MODELS . 'EEM_Price.model.php' );
 
 		//we'll actually use the generated line_item identifiers for our loop
 		foreach( $line_items as $key => $line_item ) {

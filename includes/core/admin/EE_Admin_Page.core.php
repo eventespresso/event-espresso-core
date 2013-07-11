@@ -28,6 +28,7 @@
  */
 abstract class EE_Admin_Page extends EE_BASE {
 
+
 	//set in _init_page_props()
 	public $page_slug;
 	public $page_label;
@@ -96,9 +97,18 @@ abstract class EE_Admin_Page extends EE_BASE {
 	// yes / no array for admin form fields
 	protected $_yes_no_values = array();
 
-
 	//some default things shared by all child classes
 	protected $_default_espresso_metaboxes;
+
+	/**
+	 * 	EE_Registry Object
+	 *	@var 	object	
+	 * 	@access 	protected
+	 */
+	protected $EE = NULL;
+
+
+
 
 
 	/**
@@ -109,10 +119,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 		@return void
 	 */
 	public function __construct( $routing = TRUE ) {
+		
 		$this->_yes_no_values = array(
 			array('id' => TRUE, 'text' => __('Yes', 'event_espresso')),
 			array('id' => FALSE, 'text' => __('No', 'event_espresso'))
 		);
+
+		$this->EE = EE_System::instance()->get_registry();
 
 		//set the _req_data property.
 		$this->_req_data = array_merge( $_GET, $_POST );
@@ -550,7 +563,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_eei18n_js_strings' ), 102 );
 		
 
-		do_action('FHEE_admin_load_page_dependencies');
+		do_action('FHEE_admin_load_page_dependencies', $this->page_slug );
 		
 	}
 
@@ -1177,7 +1190,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//wp_register_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-datepicker.js', array('jquery-ui-core'), EVENT_ESPRESSO_VERSION, true );
 		wp_register_script('jquery-ui-timepicker-addon', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker'), EVENT_ESPRESSO_VERSION, true );
 		// register jQuery Validate - see /includes/functions/wp_hooks.php
-		espresso_register_jquery_validate();	
+		add_filter( 'FHEE_load_jquery_validate', '__return_true' );
 		//script for sorting tables
 		wp_register_script('espresso_ajax_table_sorting', EE_CORE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js", array('ee_admin_js', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
 		//script for parsing uri's
@@ -1215,9 +1228,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		//localizers (for passing variables to js as well)
-//		global $eei18n_js_strings;
-//		$eei18n_js_strings['image_confirm'] = __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso');
-//		wp_localize_script( 'event_editor_js', 'EE_EDIT_VARS', $eei18n_js_strings );
+//		;
+//		EE_Registry::$i18n_js_strings['image_confirm'] = __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso');
+//		wp_localize_script( 'event_editor_js', 'EE_EDIT_VARS', EE_Registry::$i18n_js_strings );
 
 
 		/** remove filters **/
@@ -1235,51 +1248,51 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*/	
 	public function admin_footer_scripts_eei18n_js_strings() {
 		
-		global $eei18n_js_strings;
-		$eei18n_js_strings['confirm_delete'] = __( 'Are you absolutely sure you want to delete this item?\nThis action will delete ALL DATA asscociated with this item!!!\nThis can NOT be undone!!!', 'event_espresso' );
+		;
+		EE_Registry::$i18n_js_strings['confirm_delete'] = __( 'Are you absolutely sure you want to delete this item?\nThis action will delete ALL DATA asscociated with this item!!!\nThis can NOT be undone!!!', 'event_espresso' );
 		
-		$eei18n_js_strings['January'] = __( 'January', 'event_espresso' );
-		$eei18n_js_strings['February'] = __( 'February', 'event_espresso' );
-		$eei18n_js_strings['March'] = __( 'March', 'event_espresso' );
-		$eei18n_js_strings['April'] = __( 'April', 'event_espresso' );
-		$eei18n_js_strings['May'] = __( 'May', 'event_espresso' );
-		$eei18n_js_strings['June'] = __( 'June', 'event_espresso' );
-		$eei18n_js_strings['July'] = __( 'July', 'event_espresso' );
-		$eei18n_js_strings['August'] = __( 'August', 'event_espresso' );
-		$eei18n_js_strings['September'] = __( 'September', 'event_espresso' );
-		$eei18n_js_strings['October'] = __( 'October', 'event_espresso' );
-		$eei18n_js_strings['November'] = __( 'November', 'event_espresso' );
-		$eei18n_js_strings['December'] = __( 'December', 'event_espresso' );
-		$eei18n_js_strings['Jan'] = __( 'Jan', 'event_espresso' );
-		$eei18n_js_strings['Feb'] = __( 'Feb', 'event_espresso' );
-		$eei18n_js_strings['Mar'] = __( 'Mar', 'event_espresso' );
-		$eei18n_js_strings['Apr'] = __( 'Apr', 'event_espresso' );
-		$eei18n_js_strings['May'] = __( 'May', 'event_espresso' );
-		$eei18n_js_strings['Jun'] = __( 'Jun', 'event_espresso' );
-		$eei18n_js_strings['Jul'] = __( 'Jul', 'event_espresso' );
-		$eei18n_js_strings['Aug'] = __( 'Aug', 'event_espresso' );
-		$eei18n_js_strings['Sep'] = __( 'Sep', 'event_espresso' );
-		$eei18n_js_strings['Oct'] = __( 'Oct', 'event_espresso' );
-		$eei18n_js_strings['Nov'] = __( 'Nov', 'event_espresso' );
-		$eei18n_js_strings['Dec'] = __( 'Dec', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['January'] = __( 'January', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['February'] = __( 'February', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['March'] = __( 'March', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['April'] = __( 'April', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['May'] = __( 'May', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['June'] = __( 'June', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['July'] = __( 'July', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['August'] = __( 'August', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['September'] = __( 'September', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['October'] = __( 'October', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['November'] = __( 'November', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['December'] = __( 'December', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Jan'] = __( 'Jan', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Feb'] = __( 'Feb', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Mar'] = __( 'Mar', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Apr'] = __( 'Apr', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['May'] = __( 'May', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Jun'] = __( 'Jun', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Jul'] = __( 'Jul', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Aug'] = __( 'Aug', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Sep'] = __( 'Sep', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Oct'] = __( 'Oct', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Nov'] = __( 'Nov', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Dec'] = __( 'Dec', 'event_espresso' );
 		
-		$eei18n_js_strings['Sunday'] = __( 'Sunday', 'event_espresso' );
-		$eei18n_js_strings['Monday'] = __( 'Monday', 'event_espresso' );
-		$eei18n_js_strings['Tuesday'] = __( 'Tuesday', 'event_espresso' );
-		$eei18n_js_strings['Wednesday'] = __( 'Wednesday', 'event_espresso' );
-		$eei18n_js_strings['Thursday'] = __( 'Thursday', 'event_espresso' );
-		$eei18n_js_strings['Friday'] = __( 'Friday', 'event_espresso' );
-		$eei18n_js_strings['Saturday'] = __( 'Saturday', 'event_espresso' );
-		$eei18n_js_strings['Sun'] = __( 'Sun', 'event_espresso' );
-		$eei18n_js_strings['Mon'] = __( 'Mon', 'event_espresso' );
-		$eei18n_js_strings['Tue'] = __( 'Tue', 'event_espresso' );
-		$eei18n_js_strings['Wed'] = __( 'Wed', 'event_espresso' );
-		$eei18n_js_strings['Thu'] = __( 'Thu', 'event_espresso' );
-		$eei18n_js_strings['Fri'] = __( 'Fri', 'event_espresso' );
-		$eei18n_js_strings['Sat'] = __( 'Sat', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Sunday'] = __( 'Sunday', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Monday'] = __( 'Monday', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Tuesday'] = __( 'Tuesday', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Wednesday'] = __( 'Wednesday', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Thursday'] = __( 'Thursday', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Friday'] = __( 'Friday', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Saturday'] = __( 'Saturday', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Sun'] = __( 'Sun', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Mon'] = __( 'Mon', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Tue'] = __( 'Tue', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Wed'] = __( 'Wed', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Thu'] = __( 'Thu', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Fri'] = __( 'Fri', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['Sat'] = __( 'Sat', 'event_espresso' );
 		
-		wp_localize_script( 'ee_admin_js', 'eei18n', $eei18n_js_strings );
-		wp_localize_script( 'jquery-validate', 'eei18n', $eei18n_js_strings );
+		wp_localize_script( 'ee_admin_js', 'eei18n', EE_Registry::$i18n_js_strings );
+		wp_localize_script( 'jquery-validate', 'eei18n', EE_Registry::$i18n_js_strings );
 		
 	}
 
@@ -1971,7 +1984,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 			'success' => isset( $this->_template_args['success'] ) ? $this->_template_args['success'] : FALSE,
 			'notices' => EE_Error::get_notices(),
 			'content' => utf8_encode($this->_template_args['admin_page_content']),
-			'data' => array_merge( $data, array('template_args' => $this->_template_args ) )
+			'data' => array_merge( $data, array('template_args' => $this->_template_args ) ),
+			'isEEajax' => TRUE //special flag so any ajax.Success methods in js can identify this return package as a EEajax package.
 			);
 
 
@@ -2084,7 +2098,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 	@uses EE_Form_Fields::get_form_fields_array (/helper/EE_Form_Fields.helper.php)
 	 */
 	protected function _generate_admin_form_fields( $input_vars = array(), $generator = 'string', $id = FALSE ) {
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
+		require_once EE_HELPERS . 'EE_Form_Fields.helper.php';
 		$content = $generator == 'string' ? EE_Form_Fields::get_form_fields($input_vars, $id) : EE_Form_Fields::get_form_fields_array($input_vars);
 		return $content;
 	}
@@ -2556,9 +2570,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return boolean
 	 */
 	protected function _update_organization_settings( $tab, $data, $file = '', $func = '', $line = '' ) {
-		global $espresso_wp_user;
 		// grab existing org options
-		$org_options = get_user_meta( $espresso_wp_user, 'events_organization_settings', TRUE );
+		$org_options = get_object_vars($this->EE->CFG);
 		// make sure everything is in arrays
 		$org_options = is_array( $org_options ) ? $org_options : array( $org_options );
 		$data = is_array( $data ) ? $data : (array) $data;
@@ -2576,8 +2589,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		// overwrite existing org options with new data
 		$data = array_merge( $org_options, $data );
+
 		// and save it
-		if ( ($data === $org_options) || update_user_meta( $espresso_wp_user, 'events_organization_settings', $data )) {
+		if ( ($data === $org_options) || update_user_meta( $this->EE->CFG->wp_user, 'events_organization_settings', $data )) {
 			EE_Error::add_success( sprintf( __('%s have been successfully updated.', 'event_espresso'), $tab ));
 			return TRUE;
 		} else {

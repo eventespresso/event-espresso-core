@@ -1,5 +1,5 @@
 <?php
-require_once('fields/EE_Text_Field_Base.php');
+require_once( EE_MODELS . 'fields/EE_Text_Field_Base.php' );
 class EE_Slug_Field extends EE_Text_Field_Base{
 	/**
 	 * ensures string is usable in URLs

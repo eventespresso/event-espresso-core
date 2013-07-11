@@ -230,7 +230,7 @@ if (!function_exists('event_espresso_price_dropdown')) {
 		$option_name = !empty($option_name) ? $option_name : 'price_option';
 		$label = !empty($label) ? $label : __('Choose an Option: ', 'event_espresso');
 
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Event_Price.model.php');
+		require_once(EE_MODELS . 'EEM_Event_Price.model.php');
 		$EP = EEM_Event_Price::instance();
 		$prices = $EP->get_final_event_prices($event_id);
 		$html = '';

@@ -16,18 +16,17 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * EE_Admin_Page_load
+ * EE_Admin_Page_Loader
  *
  * This is a controller class used for initializing the Event Espresso Admin system
  *
- * @package		EE_Admin_Page_load
- * @subpackage	core/admin
+ * @package		EE_Admin_Page_Loader
+ * @subpackage	/core/
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
-
-class EE_Admin_Page_load {
+class EE_Admin_Page_Loader {
 
 	/**
 	 * _installed_pages
@@ -108,43 +107,15 @@ class EE_Admin_Page_load {
 	 */
 	public function __construct() {
 
-		//first define global EE_Admin constants
-		$this->_define_all_constants();
-
 		//define the default "groups" for the admin_pages
 		$this->_set_menu_groups();
-
-
 		//let's set default autoloaders.  Note that this just sets autoloaders for root admin files.
 		spl_autoload_register( array( $this, 'init_autoloaders') );
-
-
 		//let's do a scan and see what installed pages we have
 		$this->_get_installed_pages();
-
-
-
 		//set menus (has to be done on every load - we're not actually loading the page just setting the menus and where they point to).
-		add_action('admin_menu', array($this, 'set_menus') );
+		add_action('admin_menu', array( $this, 'set_menus' ));
 
-	}
-
-
-
-	/**
-	 * _define_all_constants
-	 * define constants that are set globally for all admin pages
-	 *
-	 * @access private
-	 * @return void
-	 */
-	private function _define_all_constants() {
-		define( 'EE_CORE_ADMIN', EE_CORE . 'admin' . DS );
-		define( 'EE_CORE_ADMIN_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'includes/core/admin/' );
-		define( 'EE_CORE_ADMIN_TEMPLATE', EE_CORE_ADMIN . 'templates' . DS );
-		define( 'WP_ADMIN_PATH', ABSPATH . 'wp-admin/' );
-		define( 'WP_AJAX_URL', get_bloginfo('url') . '/wp-admin/admin-ajax.php' );
-		define( 'JQPLOT_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/' );
 	}
 
 
@@ -167,7 +138,7 @@ class EE_Admin_Page_load {
 
 
 
-	
+
 
 	/**
 	 * _set_menu_groups
@@ -212,6 +183,7 @@ class EE_Admin_Page_load {
 
 		$this->_admin_menu_groups = apply_filters( 'FHEE_admin_menu_groups', $groups );
 	}
+
 
 
 
@@ -297,8 +269,6 @@ class EE_Admin_Page_load {
 
 
 
-
-
 	/**
 	 * _load_admin_page
 	 * Loads and instantiates page_init object for a single EE_admin page.
@@ -308,8 +278,7 @@ class EE_Admin_Page_load {
 	private function _load_admin_page( $page ) {
 		$classpage = str_replace('_', ' ', strtolower( $page ) );
 		$class_name = str_replace(' ', '_', ucwords($classpage) ) . '_Admin_Page_Init';
-		//echo '<h4>$class_name : ' . $class_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
- 		require_once( 'EE_Autoloader.helper.php' );
+ 		require_once( EE_HELPERS . 'EE_Autoloader.helper.php' );
  		EE_Autoloader::load_admin_core($page, $class_name);
 		if ( !class_exists($class_name )) {
 			$error_msg[] = sprintf( __('Something went wrong with loading the %s admin page.', 'event_espresso' ), $page);
@@ -319,8 +288,13 @@ class EE_Admin_Page_load {
 
 		$a = new ReflectionClass($class_name);
 		$p_obj = $a->newInstance();
+
 		return $p_obj;
 	}	
+
+
+
+
 
 	/**
 	 * set_menus
@@ -383,7 +357,7 @@ class EE_Admin_Page_load {
 
 
 
-	
+
 	/**
 	 * _prep_pages
 	 * sets the _prepped_installed_pages property
@@ -440,7 +414,6 @@ class EE_Admin_Page_load {
 
 		
 	}
-
 
 
 
@@ -528,6 +501,8 @@ class EE_Admin_Page_load {
 
 
 
+
+
 	/**
 	 * Initial autoloader registration
 	 * This just sets up the autoloader for the root admin files
@@ -537,12 +512,11 @@ class EE_Admin_Page_load {
 	public function init_autoloaders( $className ) {
 		$root = EE_CORE_ADMIN;
 		$dir_ref = array(
-			$root => array('core', 'controller', 'class')
+			$root => array('core', 'class') // 'controller', 
 			);
-		require_once( 'EE_Autoloader.helper.php' );
+		require_once( EE_HELPERS . 'EE_Autoloader.helper.php' );
 		EE_Autoloader::try_autoload($dir_ref, $className );
 	}
-
 
 
 
@@ -564,11 +538,9 @@ class EE_Admin_Page_load {
 			$dir_ref[$root . $pathinfo['dir'] . DS . $pathinfo['folder'] . DS] = array('core', 'class');
 		}
 
-		require_once( 'EE_Autoloader.helper.php' );
+		require_once( EE_HELPERS . 'EE_Autoloader.helper.php' );
 		EE_Autoloader::try_autoload($dir_ref, $className );
 	}
-
-
 
 
 
@@ -591,6 +563,9 @@ class EE_Admin_Page_load {
 	}
 
 
+
+
+
 	/**
 	 * _default_header_link
 	 * This is just a dummy method to use with header submenu items
@@ -601,4 +576,5 @@ class EE_Admin_Page_load {
 	}
 
 
-}// end class EE_Admin_Page_load
+}
+// end class EE_Admin_Page_Loader

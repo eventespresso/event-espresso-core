@@ -673,9 +673,5 @@ class EE_Error extends Exception {
 
 
 }
-
-
-
-
 /* End of file EE_Exceptions.class.php */
 /* Location: includes/classes/EE_Exceptions.class.php */	

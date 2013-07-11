@@ -69,8 +69,8 @@ class EE_Ticket_Prices extends EE_BASE {
 			return FALSE;
 		}
 
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+		require_once(EE_MODELS . 'EEM_Price.model.php');
+		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
 		
 		$this->_PRC_MDL = EEM_Price::instance();
 		$this->_PRT_MDL = EEM_Price_Type::instance();

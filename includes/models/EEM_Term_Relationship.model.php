@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+require_once ( EE_MODELS . 'EEM_Base.model.php' );
 
 class EEM_Term_Relationship extends EEM_Base {
 
@@ -53,18 +53,29 @@ class EEM_Term_Relationship extends EEM_Base {
 		);
 		$this->_fields = array(
 			'Term_Relationship'=>array(
-				'object_id'=> new EE_Foreign_Key_Int_Field('object_id', __('Object(Post) ID','event_espresso'), false,0,array('Event','Venue')),
+				'object_id'=> new EE_Foreign_Key_Int_Field('object_id', __('Object(Post) ID','event_espresso'), false,0,array('Event','Venue','Attendee')),
 				'term_taxonomy_id'=>new EE_Foreign_Key_Int_Field('term_taxonomy_id', __('Term (in context of a taxonomy) ID','event_espresso'), false, 0, 'Term_Taxonomy'),
 				'term_order'=>new EE_Integer_Field('term_order', __('Term Order','event_espresso'), false, 0)
 			));
 		$this->_model_relations = array(
 			'Event'=>new EE_Belongs_To_Relation(),
 			'Venue'=>new EE_Belongs_To_Relation(),
+			'Attendee'=>new EE_Belongs_To_Relation(),
 			'Term_Taxonomy'=>new EE_Belongs_To_Relation()
 		);
 		
 		parent::__construct();
 	}
+
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public static function define_table_name() { }
+
+
 }
 // End of file EEM_Answer.model.php
 // Location: /includes/models/EEM_Answer.model.php

@@ -26,6 +26,14 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 class EE_Base_Class{
 
+	/**
+	 * This is an array of the original properties and values provided during construction
+	 * of this model object. (keys are model field names, values are their values).
+	 * This list is important to remember so that when we are merging data from the db, we know
+	 * which values to override and which to not override.
+	 * @var array
+	 */
+	private $_props_n_values_provided_in_constructor = null;
 
 	/**
 	 * Timezone
@@ -125,6 +133,8 @@ class EE_Base_Class{
 			}
 		}
 		$this->_timezone = $timezone;
+		//remember what values were passed to this constructor
+		$this->_props_n_values_provided_in_constructor = $fieldValues;
 	}
 
 
@@ -148,10 +158,32 @@ class EE_Base_Class{
 		 }else{
 			$this->$privateAttributeName = $holder_of_value; 
 		 }
+		 
+		 //if we're not in the constructor...
+		 //now check if what we set was a primary key
+		 if($this->_props_n_values_provided_in_constructor && //note: props_n_values_provided_in_constructor is only set at the END of the constructor
+				 $field_name == $this->_get_primary_key_name(get_class($this)) && 
+				 $field_value){
+			//if so, we want all this object's fields to be filled either with
+			 //what we've explictly set on this model
+			 //or what we have in the db
+			// echo "setting primary key!";
+			 $fields_on_model = $this->_get_model(get_class($this))->field_settings();
+			
+			 $obj_in_db = $this->_get_model(get_class($this))->get_one_by_ID($field_value);
+			 foreach($fields_on_model as $field_obj){
+				 if( ! array_key_exists($field_obj->get_name(), $this->_props_n_values_provided_in_constructor)
+						&& $field_obj->get_name() != $field_name ){
+				 
+					$privateAttributeName=$this->_get_private_attribute_name($field_obj->get_name());
+					
+					$this->set($field_obj->get_name(),$obj_in_db->get($field_obj->get_name()));
+				 }
+			 }
+		 }
 
 		 //let's unset any cache for this field_name from the $_cached_properties property.
 		 $this->_clear_cached_property( $privateAttributeName );
-		 
 	}
 
 
@@ -562,6 +594,63 @@ class EE_Base_Class{
 
 
 
+
+	/**
+	 * NOTE ABOUT BELOW:
+	 * These convenience date and time setters are for setting date and time independently.  In other words you might want to change the time on a datetime_field but leave the date the same (or vice versa).
+	 *
+	 * IF on the other hand you want to set both date and time at the same time, you can just use the models default set($fieldname,$value) method and make sure you send the entire datetime value for setting.
+	 */
+
+	/**
+	 * sets the time on a datetime property
+	 *
+	 * @access protected
+	 * @param string $time      a valid time string for php datetime functions
+	 * @param string $fieldname the name of the field the time is being set on (must match a EE_Datetime_Field)
+	 */
+	protected function _set_time_for( $time, $fieldname ) {
+		$this->_set_date_time( 'T', $time, $fieldname );
+	}
+
+
+
+
+	
+	/**
+	 * sets the date on a datetime property
+	 *
+	 * @access protected
+	 * @param string $date      a valid date string for php datetime functions
+	 * @param string $fieldname the name of the field the date is being set on (must match a EE_Datetime_Field)
+	 */
+	protected function _set_date_for( $date, $fieldname ) {
+		$this->_set_date_time( 'D', $date, $fieldname );
+	}
+
+
+
+
+
+
+	/**
+	 * This takes care of setting a date or time independently on a given model object property. This method also verifies that the given fieldname matches a model object property and is for a EE_Datetime_Field field
+	 *
+	 * @access private
+	 * @param string $what          "T" for time, otherwise Date is assumed
+	 * @param string $datetimevalue A valid Date or Time string
+	 * @param string $fieldname     the name of the field the date OR time is being set on (must match a EE_Datetime_Field property)
+	 */
+	private function _set_date_time( $what = 'T', $datetimevalue, $fieldname ) {
+		$field = $this->_get_dtt_field_settings( $fieldname );
+		$attribute_field_name = $this->_get_private_attribute_name($fieldname);
+		$field->set_timezone( $this->_timezone );
+		$this->$attribute_field_name = $what == 'T' ? $field->prepare_for_set_with_new_time($datetimevalue, $this->$attribute_field_name ) : $field->prepare_for_set_with_new_date( $datetimevalue, $this->$attribute_field_name );
+		$this->_clear_cached_property($attribute_field_name);
+	}
+
+
+
 	
 	/**
 	 * Deletes this model object. That may mean just 'soft deleting' it though.
@@ -601,17 +690,22 @@ class EE_Base_Class{
 	
 		}
 		//if the object already has an ID, update it. Otherwise, insert it
+		//also: change the assumption about values passed to the model NOT being prepare dby the model obejct. They have been
+		$old_assumption_concerning_value_preparation = $this->get_model()->get_assumption_concerning_values_already_prepared_by_model_object();
+		$this->get_model()->assume_values_already_prepared_by_model_object(true);
+			
 		if ( !empty( $save_cols_n_values[self::_get_primary_key_name( get_class($this) )] ) ){
-			$results = $this->get_model()->update ( $save_cols_n_values, array(array(self::_get_primary_key_name(get_class($this))=>$this->ID())), true );
+			$results = $this->get_model()->update ( $save_cols_n_values, array(array(self::_get_primary_key_name(get_class($this))=>$this->ID()),'default_where_conditions'=>'other_models_only') );
 		} else {
 			unset($save_cols_n_values[self::_get_primary_key_name( get_class( $this) )]);
-			
 			$results = $this->get_model()->insert( $save_cols_n_values, true);
 			if($results){//if successful, set the primary key
 				$this->set(self::_get_primary_key_name( get_class($this) ),$results);//for some reason the new ID is returned as part of an array,
 				//where teh only key is 'new-ID', and it's value is the new ID.
 			}
 		}
+		//restore the old assumption about values being prepared by the model obejct
+		$this->get_model()->assume_values_already_prepared_by_model_object($old_assumption_concerning_value_preparation);
 		
 		return $results;
 	}
@@ -675,6 +769,9 @@ class EE_Base_Class{
 	 */
 	protected static function  _get_model( $classname, $timezone = NULL ){
 		//find model for this class
+		if( ! $classname ){
+			throw new EE_Error(sprintf(__("What were you thinking calling _get_model(%s)?? You need to specify the class name", "event_espresso"),$classname));
+		}
 		$modelName=self::_get_model_classname($classname);
 		return self::_get_model_instance_with_name($modelName, $timezone );
 	}
@@ -683,10 +780,12 @@ class EE_Base_Class{
 
 	/**
 	 * Gets the model instance (eg instance of EEM_Attendee) given its classname (eg EE_Attendee)
+	 * @param string $model_classname
 	 * @return EEM_Base
 	 */
 	protected static function _get_model_instance_with_name($model_classname, $timezone = NULL){
-		$model=call_user_func($model_classname."::instance");
+		$model_classname = str_replace( 'EEM_', '', $model_classname );
+		$model = EE_Registry::instance()->load_model( $model_classname );
 		$model->set_timezone( $timezone );
 		return $model;
 	}
@@ -705,12 +804,16 @@ class EE_Base_Class{
 		}
 		return $model_classname;
 	}
+
 	
 	/**
 	 * returns the name of the primary key attribute
 	 * @return string
 	 */
 	protected static function _get_primary_key_name( $classname = NULL ){
+		if( ! $classname){
+			throw new EE_Error(sprintf(__("What were you thinking calling _get_primary_key_name(%s)", "event_espresso"),$classname));
+		}
 		return self::_get_model( $classname )->get_primary_key_field()->get_name();
 	}
 	/**
@@ -806,6 +909,42 @@ class EE_Base_Class{
 		}
 		return $related_model_object;
 	}
+
+
+
+	/**
+	 * is_set
+	 * Just a simple utility function children can use for checking if property exists
+	 *
+	 * @access  public
+	 * @param  string $field_name property to check
+	 * @return bool            				  TRUE if existing,FALSE if not.
+	 */
+	public function is_set( $field_name ) {
+		$privateAttributeName = $this->_get_private_attribute_name( $field_name );
+		return property_exists( $this, $privateAttributeName ) ? TRUE : FALSE;
+	}
+
+
+
+	/**
+	 * Just a simple utility function children can use for checking if property (or properties) exists and thworing an EE_Error exception if they don't
+	 * @param  mixed (string|array) $properties properties to check
+	 * @return bool            				  TRUE if existing, throw EE_Error if not.
+	 */
+	protected function _property_exists( $properties ) {
+
+		foreach ( (array) $properties as $propertyname ) {
+			//first make sure this property exists
+			if ( !property_exists( $this, $propertyname ) )
+				throw new EE_Error( sprintf( __('Trying to retrieve a non-existent property (%s).  Doublecheck the spelling please', 'event_espresso'), $propertyname ) );
+		}
+
+		return TRUE;
+	}
+
+
+
 	
 	/**
 	 * Very handy general function to allow for plugins to extend any child of EE_Base_Class.

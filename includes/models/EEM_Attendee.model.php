@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_CPT_Base.model.php' );
+require_once ( EE_MODELS . 'EEM_Base.model.php' );
 
 class EEM_Attendee extends EEM_CPT_Base {
 
@@ -54,7 +54,6 @@ class EEM_Attendee extends EEM_CPT_Base {
 	protected function __construct() {	
 		$this->singlular_item = __('Attendee','event_espresso');
 		$this->plural_item = __('Attendees','event_espresso');
-		$this->_statuses = $this->get_status_array();
 		$this->_tables = array(
 			'Attendee_CPT'=> new EE_Primary_Table('posts', 'ID'),
 			'Attendee_Meta'=>new EE_Secondary_Table('esp_attendee_meta', 'ATTM_ID', 'ATT_ID')
@@ -67,7 +66,6 @@ class EEM_Attendee extends EEM_CPT_Base {
 				'ATT_slug'=>new EE_Slug_Field('post_name', __("Attendee URL Slug", "event_espresso"), false),
 				'ATT_created'=>new EE_Datetime_Field('post_date', __("Time Attendee Created", "event_espresso"), false, current_time('timestamp')),
 				'ATT_short_bio'=>new EE_Simple_HTML_Field('post_excerpt', __("Attendee Short Biography", "event_espresso"), true, __("No Biography Provided", "event_espresso")),
-				'ATT_status'=>new EE_Enum_Field('post_status', __("Attendee Status", "event_espresso"), false, 'publish', $this->_statuses),
 				'ATT_modified'=>new EE_Datetime_Field('post_modified', __("Time Attendee Last Modified", "event_espresso"), true, current_time('timestamp')),
 				'ATT_author'=>new EE_Integer_Field('post_author', __("WP User that Created Attendee", "event_espresso"), false,0),
 				'ATT_parent'=>new EE_DB_Only_Int_Field('post_parent', __("Parent Attendee (unused)", "event_espresso"), true),
@@ -93,11 +91,23 @@ class EEM_Attendee extends EEM_CPT_Base {
 			'State'=>new EE_Belongs_To_Relation(),
 			'Country'=>new EE_Belongs_To_Relation()
 		);
-		require_once('strategies/EE_Default_CPT_Where_Conditions.strategy.php');
-		$this->_default_where_conditions_strategy = new EE_Default_CPT_Where_Conditions('espresso_attendees', 'ATTM_ID');
+		require_once('strategies/EE_CPT_Where_Conditions.strategy.php');
+		$this->_default_where_conditions_strategy = new EE_CPT_Where_Conditions('espresso_attendees', 'ATTM_ID');
 		parent::__construct();
 		
 	}
+
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public static function define_table_name() {
+		global $wpdb;
+		define( 'EE_ATTENDEE_TABLE', $wpdb->prefix . 'esp_attendee' );
+	}
+
 
 	/**
 	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
@@ -213,35 +223,35 @@ class EEM_Attendee extends EEM_CPT_Base {
 	* 		@param		$ATT_ID		
 	*		@return 		mixed		array on success, FALSE on fail
 	*/	
-	public function delete_by_ID( $ATT_ID = FALSE ) {
-
-		if ( ! $ATT_ID ) {
-			return FALSE;
-		}
-		
-		$query_params[0] = array( 'ATT_ID' => $ATT_ID, 'STS_ID' => array('IN',array( 'RAP', 'RNA', 'RPN' )));
-		$query_params['order_by'] = array('REG_date' => 'ASC');
-		
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php');
-		$REG_MDL = EEM_Registration::instance();
-		//check if the attendee is associated with any registrations
-//		if ( $registrations = $REG_MDL->get_all_registrations_for_attendee( $ATT_ID, $status_array )) {
-		if ( $registrations = $REG_MDL->get_all($query_params)) {
-			$msg = __( 'The Attendee could not be deleted because there are existing Registrations associated with this Attendee.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		} 
+//	public function delete_by_ID( $ATT_ID = FALSE ) {
+//
+//		if ( ! $ATT_ID ) {
+//			return FALSE;
+//		}
+//		
+//		$query_params[0] = array( 'ATT_ID' => $ATT_ID, 'STS_ID' => array('IN',array( 'RAP', 'RNA', 'RPN' )));
+//		$query_params['order_by'] = array('REG_date' => 'ASC');
+//		
+//		require_once(EE_MODELS . 'EEM_Registration.model.php');
+//		$REG_MDL = EEM_Registration::instance();
+//		//check if the attendee is associated with any registrations
+////		if ( $registrations = $REG_MDL->get_all_registrations_for_attendee( $ATT_ID, $status_array )) {
+//		if ( $registrations = $REG_MDL->get_all($query_params)) {
+//			$msg = __( 'The Attendee could not be deleted because there are existing Registrations associated with this Attendee.', 'event_espresso' );
+//			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+//			return FALSE;
+//		} 
 				
 		// retreive a particular transaction
 //		$where_cols_n_values = array( 'ATT_ID' => $ATT_ID );
 //		if ( $attendee = $this->delete ( $where_cols_n_values )) {
-		if ( $this->delete_permanently_by_ID ( $ATT_ID )) {
-			return TRUE;
-		} else {
-			return FALSE;
-		}
-
-	}
+//		if ( $this->delete_by_ID ( $ATT_ID )) {
+//			return TRUE;
+//		} else {
+//			return FALSE;
+//		}
+//
+//	}
 
 
 

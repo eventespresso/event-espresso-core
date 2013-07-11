@@ -21,8 +21,8 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Datetime.class.php' );
+require_once ( EE_MODELS . 'EEM_Base.model.php' );
+require_once ( EE_CLASSES . 'EE_Datetime.class.php' );
 
 class EEM_Datetime extends EEM_Base {
 
@@ -38,7 +38,7 @@ class EEM_Datetime extends EEM_Base {
 	// all event end datetimes
 	private $_end_DT = array();
 
-
+	
 
 
 
@@ -56,26 +56,13 @@ class EEM_Datetime extends EEM_Base {
 		// set item names
 		$this->singlular_item = __('Datetime','event_espresso');
 		$this->plural_item = __('Datetimes','event_espresso');		
-		// array representation of the datetime table and the data types for each field
-//		$this->table_data_types = array (
-//			'DTT_ID' 					=> '%d',
-//			'EVT_ID' 					=> '%d',
-//			'DTT_is_primary' 	=> '%d',
-//			'DTT_EVT_start' 		=> '%d',
-//			'DTT_EVT_end' 		=> '%d',
-//			'DTT_REG_start' 		=> '%d',
-//			'DTT_REG_end' 		=> '%d',
-//			'DTT_reg_limit' 		=> '%d',
-//			'DTT_tckts_left'	=> '%d'
-//		);
+
 		$this->_tables = array(
 			'Datetime'=> new EE_Primary_Table('esp_datetime', 'DTT_ID')
 		);
 		$this->_fields = array(
 			'Datetime'=>array(
 				'DTT_ID'=> new EE_Primary_Key_Int_Field('DTT_ID', __('Datetime ID','event_espresso'), false, 0),
-				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID','event_espresso'), false, 0, 'Event'),
-				'DTT_is_primary'=>new EE_Boolean_Field('DTT_is_primary', __('Flag indicating Primary Event Time','event_espresso'), false, true),
 				'DTT_EVT_start'=>new EE_Datetime_Field('DTT_EVT_start', __('Start time/date of Event','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'DTT_EVT_end'=>new EE_Datetime_Field('DTT_EVT_end', __('End time/date of Event','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'DTT_REG_start'=>new EE_Datetime_Field('DTT_REG_start', __('Start time/date of Registration for Event','event_espresso'), false, current_time('timestamp'), $timezone ),
@@ -85,12 +72,23 @@ class EEM_Datetime extends EEM_Base {
 			));
 		$this->_model_relations = array(
 			'Registration'=>new EE_Has_Many_Relation(),
-			'Event'=>new EE_Belongs_To_Relation()
+			'Event'=>new EE_HABTM_Relation('Event_Datetime'),
+			'Event_Datetime'=> new EE_Has_Many_Relation()
 		);
 
 		parent::__construct( $timezone );
 	}
 
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public static function define_table_name() {
+		global $wpdb;
+		define( 'EE_DATETIME_TABLE', $wpdb->prefix . 'esp_datetime' );
+	}
 
 
 
@@ -128,8 +126,6 @@ class EEM_Datetime extends EEM_Base {
 		$times = array( 
 				EE_Datetime::new_instance( 
 					array(
-						'EVT_ID' => 0, 
-						'DTT_is_primary' => true, 
 						'DTT_EVT_start' => time('timestamp') + (60 * 60 * 24 * 30), 
 						'DTT_EVT_end' => time('timestamp') + (60 * 60 * 24 * 30), 
 						'DTT_REG_start' => time('timestamp'), 
@@ -177,7 +173,7 @@ class EEM_Datetime extends EEM_Base {
 	public function get_datetimes_for_event_ordered_by_importance( $EVT_ID = FALSE, $limit = NULL){
 		return $this->get_all( array(array('Event.EVT_ID'=>$EVT_ID),
 			'limit'=>$limit,
-			'order_by'=>array('DTT_is_primary'=>'DESC','DTT_EVT_start'=>'ASC')));
+			'order_by'=>array('Event_Datetime.EVD_primary'=>'DESC','DTT_EVT_start'=>'ASC')));
 	}
 
 	/**

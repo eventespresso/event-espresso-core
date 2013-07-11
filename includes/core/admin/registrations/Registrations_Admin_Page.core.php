@@ -372,9 +372,9 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_style('jquery-ui-style');
 		wp_enqueue_style('jquery-ui-style-datepicker-css');
 		//scripts
-		global $eei18n_js_strings;
-		$eei18n_js_strings['update_att_qstns'] = __( 'click "Update Attendee Questions" to save your changes', 'event_espresso' );
-		wp_localize_script( 'espresso_reg', 'eei18n', $eei18n_js_strings );
+		;
+		EE_Registry::$i18n_js_strings['update_att_qstns'] = __( 'click "Update Attendee Questions" to save your changes', 'event_espresso' );
+		wp_localize_script( 'espresso_reg', 'eei18n', EE_Registry::$i18n_js_strings );
 	}
 
 
@@ -569,7 +569,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			return TRUE; 			
 		}
 
-	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
+	    require_once ( EE_MODELS . 'EEM_Registration.model.php' );
 	    $REG = EEM_Registration::instance();
 
 		$REG_ID = ( ! empty( $this->_req_data['_REG_ID'] )) ? absint( $this->_req_data['_REG_ID'] ) : FALSE;
@@ -1190,7 +1190,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( $QSGs, $QSTs, $QSOs );
 		//printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
+		require_once EE_HELPERS . 'EE_Form_Fields.helper.php';
 		$this->_template_args['att_questions'] = EE_Form_Fields::generate_question_groups_html( $question_groups );
 
 		$this->_template_args['reg_questions_form_action'] = 'update_attendee_registration_form';
@@ -1325,7 +1325,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		// check if fname, lname, and email were set (and possibly changed)
 		if ( $QST_fname && $QST_lname && $QST_email ) {		
 			// load REG model
-		    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
+		    require_once ( EE_MODELS . 'EEM_Registration.model.php' );
 		    $REG = EEM_Registration::instance();
 			// get registration
 			$registration = $REG->get_one_by_ID( $REG_ID );
@@ -1343,7 +1343,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				$QST_zip 				= isset( $qstns['zip'] ) && ! empty( $qstns['zip'] ) ? array_shift( array_values( $qstns['zip'] )) : NULL;
 				$QST_phone 		= isset( $qstns['phone'] ) && ! empty( $qstns['phone'] ) ? array_shift( array_values( $qstns['phone'] )) : NULL;	
 				// load attendee model
-				require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php' );
+				require_once ( EE_MODELS . 'EEM_Attendee.model.php' );
 				$ATT = EEM_Attendee::instance();
 				// create array for query where statement
 				$where_cols_n_values = array('ATT_fname' => $QST_fname, 'ATT_lname' => $QST_lname, 'ATT_email' => $QST_email);
@@ -1712,10 +1712,10 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		}
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/event_details.helper.php');
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
+		require_once(EE_MODELS . 'EEM_Datetime.model.php');
 		$this->_reg_event->datetimes = EEM_Datetime::instance()->get_all_event_dates( $EVT_ID );
 
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Prices.class.php' );
+		require_once ( EE_CLASSES . 'EE_Ticket_Prices.class.php' );
 		$TKT_PRCs = new EE_Ticket_Prices( $EVT_ID );
 		$this->_reg_event->prices = $TKT_PRCs->get_all_final_event_prices();
 
@@ -1726,7 +1726,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['event'] = $this->_reg_event;
 		
 		// ticket selector
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Selector.class.php');
+		require_once(EE_CLASSES . 'EE_Ticket_Selector.class.php');
 		echo EE_Ticket_Selector::init( $this->_reg_event, TRUE ); 
 		echo '<br />';
 
@@ -1780,7 +1780,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( $QSGs, $QSTs, $QSOs );
 		//printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
+		require_once EE_HELPERS . 'EE_Form_Fields.helper.php';
 		echo EE_Form_Fields::generate_question_groups_html( $question_groups );
 
 	}
@@ -1848,7 +1848,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		}
 		
 		// process Ticket Option
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Ticket_Selector.class.php');
+		require_once(EE_CLASSES . 'EE_Ticket_Selector.class.php');
 		// get ticket option added to cart, which adds it to session, etc, etc
 		if ( ! EE_Ticket_Selector::process_ticket_selections( FALSE, TRUE )) {
 			$error_msg = __( 'An error occured. The ticket option could not be processed for the registration.', 'event_espresso' );
@@ -1862,7 +1862,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		}
 		
 		if ( ! defined( 'ESPRESSO_CART' )) {
-			require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Cart.class.php' );
+			require_once( EE_CLASSES . 'EE_Cart.class.php' );
 		}
 		// grab cart item
 		$cart = EE_Cart::instance()->whats_in_the_cart();
@@ -1877,7 +1877,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			
 		// load gateways
 		if ( ! defined( 'ESPRESSO_GATEWAYS' )) {
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
+			require_once(EE_MODELS . 'EEM_Gateways.model.php');
 		}
 		$EEM_Gateways = EEM_Gateways::instance();
 		
@@ -1944,7 +1944,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		//printr( $cart, '$cart  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			
 		// taxes ?
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Taxes.class.php' );
+		require_once ( EE_CLASSES . 'EE_Taxes.class.php' );
 		$taxes = EE_Taxes::calculate_taxes( $grand_total );
 		$grand_total = apply_filters( 'espresso_filter_hook_grand_total_after_taxes', $grand_total );
 		// totals over 0 initially get set to Incomlete, whereas Free Events get set to complete
@@ -1953,7 +1953,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		// grab session data
 		$session = $EE_Session->get_session_data();
 		// start the transaction record
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Transaction.class.php' );
+		require_once ( EE_CLASSES . 'EE_Transaction.class.php' );
 		// create TXN object
 		$transaction = EE_Transaction::new_instance(
 			array( 
@@ -2050,7 +2050,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		
 		require_once( REG_ADMIN . 'EE_Event_Registrations_List_Table.class.php' );
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
+		require_once(EE_MODELS . 'EEM_Attendee.model.php');
 		//$ATT_MDL = EEM_Attendee::instance();
 		
 		$EVT_ID = isset($this->_req_data['event_id']) ? absint( $this->_req_data['event_id'] ) : FALSE;
@@ -2164,7 +2164,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$attendees = array();
 		
 		require_once( REG_ADMIN . 'EE_Attendee_Contact_List_Table.class.php' );
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
+		require_once(EE_MODELS . 'EEM_Attendee.model.php');
 		$ATT_MDL = EEM_Attendee::instance();
 		
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
@@ -2335,7 +2335,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$title = $ATT_ID ? $title . ' # ' . $ATT_ID : $title;
 
 		// get attendees
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
+		require_once(EE_MODELS . 'EEM_Attendee.model.php');
 		$ATT_MDL = EEM_Attendee::instance();
 
 		if ( $ATT_ID ) {
@@ -2369,7 +2369,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					'QST_system'=>'country'
 				));
 		//get list of all registrations for this attendee
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php');
+		require_once(EE_MODELS . 'EEM_Registration.model.php');
 		$REG_MDL = EEM_Registration::instance();		
 		if ( $this->_template_args['registrations'] = $REG_MDL->get_all_registrations_for_attendee( $ATT_ID )) {
 			$this->_template_path = REG_TEMPLATE_PATH . 'attendee_registrations_main_meta_box.template.php';
@@ -2409,7 +2409,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
+		require_once(EE_MODELS . 'EEM_Attendee.model.php');
 		$ATT_MDL = EEM_Attendee::instance();
 		
 		//printr( $this->_req_data ); die();
@@ -2468,7 +2468,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
+		require_once(EE_MODELS . 'EEM_Attendee.model.php');
 		$ATT_MDL = EEM_Attendee::instance();
 	
 		$success = 1;
@@ -2514,7 +2514,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
+		require_once(EE_MODELS . 'EEM_Attendee.model.php');
 		$ATT_MDL = EEM_Attendee::instance();
 				
 		$success = 1;
@@ -2595,7 +2595,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		
 		wp_enqueue_script( $report_JS, REG_ASSETS_URL . $report_JS . '_report.js', array('jquery', 'jqplot'), EVENT_ESPRESSO_VERSION, TRUE);
 
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
+		require_once ( EE_MODELS . 'EEM_Registration.model.php' );
 	    $REG = EEM_Registration::instance();
 	 
 		if( $results = $REG->get_registrations_per_day_report( $period ) ) {		
@@ -2649,7 +2649,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		
 		wp_enqueue_script( $report_JS, REG_ASSETS_URL . $report_JS . '_report.js', array('jquery', 'jqplot'), '1.0', TRUE);
 
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
+		require_once ( EE_MODELS . 'EEM_Registration.model.php' );
 	    $REG = EEM_Registration::instance();
 	 
 		if( $results = $REG->get_registrations_per_event_report( $period ) ) {		

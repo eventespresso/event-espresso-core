@@ -68,6 +68,16 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 	/**
+	 * This will hold an array of autosave containers that will be used to obtain input values and hook into the WP autosave so we can save our inputs on the save_post hook!  Children classes should add to this array by using the _register_autosave_containers() method so that we don't override any other containers already registered.  Registration of containers should be done before load_page_dependencies() is run.
+	 * 
+	 * @var array()
+	 */
+	protected $_autosave_containers = array();
+
+
+
+
+	/**
 	 * This is hooked into the WordPress do_action('save_post') hook and runs after the custom post type has been saved.  Child classes are required to declare this method.  Typically you would use this to save any additional data.
 	 *
 	 * Keep in mind also that "save_post" runs on EVERY post update to the database.  
@@ -128,7 +138,72 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	protected function _before_page_setup() {
 		$page = isset( $this->_req_data['page'] ) ? $this->_req_data['page'] : $this->page_slug;
 		$this->_cpt_object = get_post_type_object( $page );
+
+		//setup autosave ajax hook
+		add_action('wp_ajax_ee-autosave', array( $this, 'do_extra_autosave_stuff' ), 10 );
 	}
+
+
+
+
+	/**
+	 * This method is used to register additional autosave containers to the _autosave_containers property. 
+	 *
+	 * @todo We should automate this at some point by creating a wrapper for add_post_metabox and in our wrapper we automatically register the id for the post metabox as a container.
+	 * @param  array $ids an array of ids for containers that hold form inputs we want autosave to pickup.  Typically you would send along the id of a metabox container.
+	 * @return void
+	 */
+	protected function _register_autosave_containers( $ids ) {
+		$this->_autosave_containers = array_merge( $this->_autosave_fields, (array) $ids );
+	}
+
+
+
+
+
+	/**
+	 * Something nifty.  We're going to loop through all the registered metaboxes and if the CALLBACK is an instance of EE_Admin_Page_CPT, then we'll add the id to our _autosave_containers array.
+	 */
+	protected function _set_autosave_containers() {
+		global $wp_meta_boxes;
+
+		$containers = array();
+
+		if ( empty( $wp_meta_boxes ) )
+			return;
+
+		$current_metaboxes = isset( $wp_meta_boxes[$this->page_slug] ) ? $wp_meta_boxes[$this->page_slug] : array();
+
+		foreach ( $current_metaboxes as $box_context ) {
+			foreach ( $box_context as $box_details ) {
+				foreach ( $box_details as $box ) {
+					if ( is_array( $box['callback'] ) && ( $box['callback'][0] instanceof EE_Admin_Page || $box['callback'][0] instanceof EE_Admin_Hooks ) ){
+						$containers[] = $box['id'];
+					}
+				}
+			}
+		}
+
+		$this->_autosave_containers = array_merge( $this->_autosave_containers, $containers );
+	}
+
+
+
+
+
+
+
+	protected function _load_autosave_scripts_styles() {
+		wp_register_script('cpt-autosave', EE_CORE_ADMIN_URL . 'assets/ee-cpt-autosave.js', array('ee-serialize-full-array'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_enqueue_script('cpt-autosave');
+
+		//filter _autosave_containers
+		$containers = apply_filters('FHEE__EE_Admin_Page_CPT_setup_autosave_js_containers', $this->_autosave_containers, $this );
+		$containers = apply_filters('FHEE__EE_Admin_Page_CPT_' . get_class($this) . '_setup_autosave_js_containers', $containers, $this );
+
+		wp_localize_script('cpt-autosave', 'EE_AUTOSAVE_IDS', $containers );
+	}
+
 
 
 
@@ -139,7 +214,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return void
 	 */
 	public function load_page_dependencies() {
-		parent::load_page_dependencies();
 
 		//we only add stuff if this is a cpt_route!
 		if ( !$this->_cpt_route ) {
@@ -186,16 +260,75 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		if ( method_exists( $this, 'edit_form_after_title' ) )
 			add_action('edit_form_after_title', array( $this, 'edit_form_after_title' ), 10 );
 
+
 		parent::load_page_dependencies();
 		$this->modify_current_screen();
+		add_action( 'admin_enqueue_scripts', array( $this, 'setup_autosave_hooks'), 30 );
 		//we route REALLY early.
 		try {
 			$this->_route_admin_request();
 		} catch ( EE_Error $e ) {
 			$e->get_error();
 		}
-		//$this->modify_current_screen;
 	}
+
+
+
+
+
+
+	public function setup_autosave_hooks() {
+		$this->_set_autosave_containers();
+		$this->_load_autosave_scripts_styles();
+		//add_action('admin_enqueue_scripts', array( $this, 'load_autosave_scripts_styles'), 10 );
+	}
+
+
+
+	/**
+	 * This is run on all WordPress autosaves AFTER the autosave is complete and sends along a $_POST object (available in $this->_req_data) containing:
+	 * post_ID of the saved post
+	 * autosavenonce for the saved post
+	 *
+	 * We'll do the check for the nonce in here, but then this method looks for two things:
+	 * 1. Execute a method (if exists) matching 'ee_autosave_' and appended with the given route. OR
+	 * 2. do_actions() for global or class specific actions that have been registered (for plugins/addons not in an EE_Admin_Page class.
+	 *
+	 *	PLEASE NOTE:
+	 *	Data will be returned using the _return_json() object and so the $_template_args property should be used to hold the $data array.  We're expecting the following things set in template args.
+	 *	1. $template_args['error'] = IF there is an error you can add the message in here.
+	 *	2. $template_args['data']['items'] = an array of items that are setup in key index pairs of 'where_values_go' => 'values_to_add'.  In other words, for the datetime metabox we'll have something like
+	 *	$this->_template_args['data']['items'] = array(
+	 *		'event-datetime-ids' => '1,2,3';
+	 *	);
+	 *	Keep in mind the following things:
+	 *	- "where" index is for the input with the id as that string.
+	 *	- "what" index is what will be used for the value of that input.
+	 *	
+	 * 
+	 * @return JSON object 
+	 */
+	public function do_extra_autosave_stuff() {
+		//first let's check for the autosave nonce (we'll use _verify_nonce )
+
+		$nonce = isset( $this->_req_data['autosavenonce'] ) ? $this->_req_data['autosavenonce'] : NULL;
+		$this->_verify_nonce( $nonce, 'autosave' );
+
+
+		//if we made it here then the nonce checked out.  Let's run our methods and actions
+		if ( method_exists( $this, '_ee_autosave_' . $this->_current_view ) ) {
+			call_user_func( array( $this, '_ee_autosave_' . $this->_current_view ) );
+		}
+
+		do_action('AHEE__EE_Admin_Page_CPT_core_do_extra_autosave_stuff', $this );
+		do_action('AHEE__EE_Admin_Page_CPT_core_do_extra_autosave_stuff_' . get_class( $this ), $this );
+
+		//now let's return json
+		$this->_return_json();		
+	}
+
+
+
 
 
 	/**
@@ -269,7 +402,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		if ( empty( $this->_cpt_model_name ) || ( is_object( $this->_cpt_model_obj ) && $this->_cpt_model_obj->ID() == $id ) ) 
 			return; //get out we either don't have a model name OR the object has already been set and it has the same id as what has been sent.
 
-		require_once( $this->_cpt_model_name . '.model.php' );
+		require_once( EE_MODELS . $this->_cpt_model_name . '.model.php' );
 		$model = call_user_func( array( $this->_cpt_model_name, 'instance' ) );
 		$this->_cpt_model_obj = !empty( $id ) ? $model->get_one_by_ID( $id ) : $model->create_default_object();
 	}
@@ -311,10 +444,16 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return void          
 	 */
 	public function insert_update( $post_id, $post ) {
-		//check for autosave
-		if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE )
-			return $post_id; //get out because we don't have any data via autosave!
+		//check for autosave and update our req_data property accordingly.
+		if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE && isset( $this->_req_data['ee_autosave_data'] ) ) {
+			foreach( (array) $this->_req_data['ee_autosave_data'] as $id => $values ) {
 
+				foreach ( (array) $values as $key => $value ) {
+					$this->_req_data[$key] = $value;
+				}
+			}
+			
+		}
 		$this->_insert_update_cpt_item( $post_id, $post );
 	}
 
@@ -400,6 +539,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	public function cpt_post_form_hidden_input() {
 		echo '<input type="hidden" name="ee_cpt_item_redirect_url" value="' . $this->_admin_base_url . '" />';
+
+		//we're also going to add the route value
+		echo '<input type="hidden" id="current_route" name="current_route" value="' . $this->_current_view . '" />';
 	}
 
 

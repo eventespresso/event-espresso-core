@@ -14,6 +14,13 @@ class EE_Venue extends EE_CPT_Base {
 	 */
 	protected $_State;
 
+
+	/**
+	 * join table object(s)
+	 * @var Event_Venue[]
+	 */
+	protected $_Event_Venue;
+
 	/**
 	 * related country
 	 * @var EE_COuntry
@@ -25,7 +32,6 @@ class EE_Venue extends EE_CPT_Base {
 	protected $_VNU_identifier;
 	protected $_VNU_created;
 	protected $_VNU_short_desc;
-	protected $_STS_ID;
 	protected $_VNU_modified;
 	protected $_VNU_wp_user;
 	protected $_VNU_order;
@@ -62,14 +68,6 @@ class EE_Venue extends EE_CPT_Base {
 	 */
 	public static function new_instance_from_db($props_n_values = array()) {
 		return new self($props_n_values, TRUE);
-	}
-
-	function status_ID() {
-		return $this->get('STA_ID');
-	}
-
-	function set_status_ID($status_ID) {
-		return $this->set('STA_ID', $status_ID);
 	}
 
 	/**

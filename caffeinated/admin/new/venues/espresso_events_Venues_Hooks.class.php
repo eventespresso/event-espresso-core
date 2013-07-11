@@ -102,7 +102,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
 
-		require_once( 'EEM_Venue.model.php' );
+		require_once( EE_MODELS . 'EEM_Venue.model.php' );
 		$evt_obj = $this->_adminpage_obj->get_event_object();
 		$evt_id = $evt_obj->ID();
 
@@ -111,7 +111,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 		$evt_venue = !empty( $evt_venues ) ? array_shift( $evt_venues ) : NULL;
 		$evt_venue_id = !empty( $evt_venue ) ? $evt_venue->ID() : NULL;
 		//all venues!
-		$wheres = array( 'STS_ID' => 'publish' );
+		$wheres = array( 'status' => 'publish' );
 		$venues = EEM_Venue::instance()->get_all(array($wheres));
 
 		$ven_sel[0] = __('Select a Venue', 'event_espresso');
@@ -133,7 +133,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 	
 
 	public function caf_venue_update( $evtobj, $data ) {
-		require_once( 'EEM_Venue.model.php' );
+		$this->EE->load_model('Venue');
 		$venue_id = !empty( $data['venue_id'] ) ? $data['venue_id'] : NULL;
 
 

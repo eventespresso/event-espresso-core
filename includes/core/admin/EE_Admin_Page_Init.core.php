@@ -82,7 +82,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 		//some global constants
 		if ( !defined('EE_FF_HELPER') )
-			define( 'EE_FF_HELPER', EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php');
+			define( 'EE_FF_HELPER', EE_HELPERS . 'EE_Form_Fields.helper.php');
 	}
 
 
@@ -364,7 +364,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		$dir_ref = array(
 			$this->_folder_path => array('core','class')
 			);
-		require_once( 'EE_Autoloader.helper.php' );
+		require_once( EE_HELPERS . 'EE_Autoloader.helper.php' );
 		EE_Autoloader::try_autoload($dir_ref, $className );
 	}
 

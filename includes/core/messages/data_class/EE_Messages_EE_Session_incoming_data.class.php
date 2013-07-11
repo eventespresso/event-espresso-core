@@ -67,7 +67,7 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 		//transaction stuff
 		if ( isset( $this->_data['transaction'] ) ) {
 			$this->txn = $this->_data['transaction'];
-			require_once EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php';
+			require_once EE_MODELS . 'EEM_Transaction.model.php';
 			$status_array = EEM_Transaction::instance()->status_array();
 			$this->txn_status = $status_array[$this->txn->status_ID()];
 		}
@@ -76,7 +76,7 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 		if ( isset( $this->_data['billing_info'] ) ) {
 			$this->billing_info = $this->_data['billing_info'];
 			// load gateways
-			require_once EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php';
+			require_once EE_MODELS . 'EEM_Gateways.model.php';
 			$gateways = EEM_Gateways::instance();
 
 			if ($this->billing_info == 'no payment required') {

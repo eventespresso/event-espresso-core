@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( 'EE_Soft_Delete_Base_Class.class.php' );
+require_once ( EE_CLASSES . 'EE_Soft_Delete_Base_Class.class.php' );
 class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	
 	/**

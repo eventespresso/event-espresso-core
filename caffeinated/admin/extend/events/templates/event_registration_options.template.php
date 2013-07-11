@@ -1,6 +1,6 @@
 <p>
-	<label><?php _e('Event is Active', 'event_espresso'); ?></label>
-	<?php echo $is_active_select ?>
+	<label><?php _e('Active Status: ', 'event_espresso'); ?></label>
+	<?php echo $active_status; ?>
 </p>
 
 <p>

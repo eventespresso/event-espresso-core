@@ -353,7 +353,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$event_pricing = array();
 		
 		require_once( PRICING_ADMIN . 'Prices_List_Table.class.php' );
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
+		require_once(EE_MODELS . 'EEM_Price.model.php');
 		//$PRC = EEM_Price::instance();
 		
 		$this->_req_data['orderby'] = empty($this->_req_data['orderby']) ? '' : $this->_req_data['orderby'];
@@ -414,7 +414,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$this->_admin_page_title = $PRC_ID ? $this->_admin_page_title . ' # ' . $PRC_ID : $this->_admin_page_title;
 		
 		// get prices
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
+		require_once(EE_MODELS . 'EEM_Price.model.php');
 		$PRC = EEM_Price::instance();
 
 		if ( $PRC_ID ) {
@@ -432,7 +432,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['price'] = $price;
 	
 		// get price types
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
 		$price_types = $PRT->get_all();
 		$price_type_names = array();
@@ -536,7 +536,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
+		require_once(EE_MODELS . 'EEM_Price.model.php');
 		$PRC = EEM_Price::instance();
 
 		// why be so pessimistic ???  : (
@@ -584,7 +584,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
+		require_once(EE_MODELS . 'EEM_Price.model.php');
 		$PRC = EEM_Price::instance();
 	
 		$success = 1;
@@ -629,7 +629,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
+		require_once(EE_MODELS . 'EEM_Price.model.php');
 		$PRC = EEM_Price::instance();
 		
 		$success = 1;
@@ -701,7 +701,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		// start with an empty array
 		
 		require_once( PRICING_ADMIN . 'Price_Types_List_Table.class.php' );
-		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php' );
+		require_once( EE_MODELS . 'EEM_Price_Type.model.php' );
 		
 		$this->_req_data['orderby'] = empty($this->_req_data['orderby']) ? '' : $this->_req_data['orderby'];
 		$order = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
@@ -754,7 +754,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		// add PRT_ID to title if editing 
 		$this->_admin_page_title = $PRT_ID ? $this->_admin_page_title . ' # ' . $PRT_ID : $this->_admin_page_title;
 		
-//		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+//		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
 	
 		if ( $PRT_ID ) {		
 			$price_type = EEM_Price_Type::instance()->get_one_by_ID( $PRT_ID );
@@ -917,7 +917,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
 
 		// why be so pessimistic ???  : (
@@ -961,7 +961,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
 	
 		$success = 1;
@@ -1015,7 +1015,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
 		
 		$success = 1;

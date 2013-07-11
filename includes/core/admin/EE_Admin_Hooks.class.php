@@ -187,6 +187,14 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 
 
+	/**
+	 * Holds EE_Registry object
+	 * @var EE_Registry
+	 */
+	protected $EE = NULL;
+
+
+
 
 
 	/**
@@ -194,6 +202,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * @param EE_Admin_Page $admin_page the calling admin_page_object
 	 */
 	public function __construct( EE_Admin_Page $adminpage ) {
+		$this->EE = EE_System::instance()->get_registry();	
 		$this->_adminpage_obj = $adminpage;
 		$this->_req_data = array_merge($_GET, $_POST);
 		$this->_set_defaults();
@@ -209,16 +218,18 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 		$this->_set_page_object();
 		$this->_init_hooks();
-
-		$this->_ajax_hooks();
 		$this->_load_custom_methods();
 		$this->_load_routed_hooks();
 
 		add_action( 'admin_enqueue_scripts', array($this, 'enqueue_scripts_styles' ) );
+		add_action( 'admin_enqueue_scripts', array($this, 'add_metaboxes'), 20 );
+		add_action( 'admin_enqueue_scripts', array($this, 'remove_metaboxes'), 15 );
 
-		add_action( 'admin_head', array($this, 'add_metaboxes') );
-		add_action( 'admin_head', array($this, 'remove_metaboxes') );
+		$this->_ajax_hooks();
+		
 	}
+
+
 
 
 

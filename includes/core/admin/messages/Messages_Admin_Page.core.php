@@ -51,6 +51,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @return void
 	 */
 	public function __construct( $routing = TRUE ) {
+		//make sure messages autoloader is running
+		require_once( EE_CORE . 'messages/EE_messages_init.core.php' );
+		EE_messages_init::set_autoloaders();
 		parent::__construct($routing);
 	}
 
@@ -93,7 +96,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$ref = ucwords( str_replace( '_' , ' ', $messenger) );
 			$ref = str_replace( ' ', '_', $ref );
 			$classname = 'EE_' . $ref . '_messenger';
-
+			require_once( EE_CORE . 'messages'. DS .'messenger' . DS . $classname . '.class.php' );
 			if ( !class_exists($classname) )
 				throw new EE_Error( sprintf( __('There is no messenger for the given classname (%s)', 'event_espresso'), $classname ) );
 
@@ -432,9 +435,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	public function load_scripts_styles_edit_message_template() {
-		global $eei18n_js_strings;
+		;
 		$this->_set_shortcodes();
-		$eei18n_js_strings['confirm_default_reset'] = sprintf( __('Are you sure you want to reset the %s %s message templates?  Remember continuing will reset the templates for all contexts in this messenger and message type group.', 'event_espresso'), $this->_message_template->messenger_obj()->label['singular'], $this->_message_template->message_type_obj()->label['singular'] );
+		EE_Registry::$i18n_js_strings['confirm_default_reset'] = sprintf( __('Are you sure you want to reset the %s %s message templates?  Remember continuing will reset the templates for all contexts in this messenger and message type group.', 'event_espresso'), $this->_message_template->messenger_obj()->label['singular'], $this->_message_template->message_type_obj()->label['singular'] );
 
 
 		wp_register_script('ee_msgs_edit_js', EE_MSG_ASSETS_URL . 'ee_message_editor.js', array('jquery'), EVENT_ESPRESSO_VERSION );
@@ -442,7 +445,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_script('ee_admin_js');
 		wp_enqueue_script('ee_msgs_edit_js');
 
-		wp_localize_script( 'ee_msgs_edit_js', 'eei18n', $eei18n_js_strings );
+		wp_localize_script( 'ee_msgs_edit_js', 'eei18n', EE_Registry::$i18n_js_strings );
 	}
 
 
@@ -547,7 +550,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		/** todo: is this even needed?
 		//require_once( EE_MSG_ADMIN . 'EE_Message_Template_List_Table.class.php' ); /**/
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
+		require_once(EE_MODELS . 'EEM_Message_Template.model.php');
 		$MTP = EEM_Message_Template::instance();
 		
 		$this->_req_data['orderby'] = empty($this->_req_data['orderby']) ? '' : $this->_req_data['orderby'];
@@ -1462,7 +1465,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$GRP_ID = isset( $this->_req_data['id'] ) && !empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
 
 		//let's get the message templates
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
+		require_once(EE_MODELS . 'EEM_Message_Template.model.php');
 		$MTP = EEM_Message_Template::instance();
 
 		if ( empty($GRP_ID) )
@@ -1604,7 +1607,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			}
 			$action_desc = 'created';
 		} else {
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
+			require_once(EE_MODELS . 'EEM_Message_Template.model.php');
 			$MTP = EEM_Message_Template::instance();
 
 			
@@ -1784,7 +1787,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _trash_or_restore_message_template($trash = TRUE, $all = FALSE ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
+		require_once(EE_MODELS . 'EEM_Message_Template.model.php');
 			$MTP = EEM_Message_Template::instance();
 
 		$success = 1;
@@ -1840,7 +1843,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _delete_message_template() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
+		require_once(EE_MODELS . 'EEM_Message_Template.model.php');
 			$MTP = EEM_Message_Template::instance();
 
 		$success = 1;
@@ -2427,7 +2430,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		} else {
 			//we're deactivating
 			
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
+			require_once(EE_MODELS . 'EEM_Message_Template.model.php');
 			$MTP = EEM_Message_Template::instance();
 
 			//first lets make sure that there are NO existing event templates for the given messenger.  If there ARE then we need to drop out with an error message, prevent deactivation and display warning.

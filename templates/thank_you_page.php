@@ -9,7 +9,7 @@ function espresso_thank_you_page() {
 	global $EE_Session, $EEM_Gateways, $espresso_content;
 	
 	if (!defined('ESPRESSO_GATEWAYS')) {
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
+		require_once(EE_MODELS . 'EEM_Gateways.model.php');
 	}
 	EEM_Gateways::instance()->thank_you_page();
 	$session_data = $EE_Session->get_session_data();

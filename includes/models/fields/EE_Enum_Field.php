@@ -1,5 +1,5 @@
 <?php
-require_once('fields/EE_Text_Field_Base.php');
+require_once( EE_MODELS . 'fields/EE_Text_Field_Base.php' );
 class EE_Enum_Field extends EE_Text_Field_Base{
 	var $_allowed_enum_values;
 	var $_store_in_db_as_int;

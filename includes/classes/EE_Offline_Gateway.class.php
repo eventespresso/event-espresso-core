@@ -93,7 +93,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 		/*$success = $txn_results['approved'];
 		do_action( 'AHEE_after_payment', $EE_Session, $success );
 		
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
+		require_once ( EE_MODELS . 'EEM_Transaction.model.php' );
 		$transaction = $session['transaction'];
 		
 		$transaction->set_paid($txn_results['amount']);

@@ -62,7 +62,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	protected function _init_page_props() {
-		require_once( 'EEM_Venue.model.php' );
+		require_once( EE_MODELS . 'EEM_Venue.model.php' );
 		$this->page_slug = EE_VENUES_PG_SLUG;
 		$this->page_label = __('Event Venues', 'event_espresso');
 		$this->_cpt_model_name = 'EEM_Venue';
@@ -110,10 +110,10 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _set_page_routes() {
 
 		//load formatter helper
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
+		require_once EE_HELPERS . 'EE_Formatter.helper.php';
 
 		//load field generator helper
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
+		require_once EE_HELPERS . 'EE_Form_Fields.helper.php';
 
 		$this->_page_routes = array(
 			'default' => '_overview_list_table',
@@ -319,9 +319,9 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		//scripts
 		wp_enqueue_script( 'ee_cat_admin_js', EVENTS_ASSETS_URL . 'ee-cat-admin.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );
 		
-		global $eei18n_js_strings;
-		$eei18n_js_strings['add_cat_name'] = __('Category Name is a required field. Please enter a value in order to continue.', 'event_espresso');
-		wp_localize_script( 'ee_cat_admin_js', 'eei18n', $eei18n_js_strings );
+		;
+		EE_Registry::$i18n_js_strings['add_cat_name'] = __('Category Name is a required field. Please enter a value in order to continue.', 'event_espresso');
+		wp_localize_script( 'ee_cat_admin_js', 'eei18n', EE_Registry::$i18n_js_strings );
 
 	}
 
@@ -339,9 +339,9 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		wp_register_script('espresso_venue_admin', EE_VENUES_ASSETS_URL . 'ee-venues-admin.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script('espresso_venue_admin');
 
-		global $eei18n_js_strings;
-		$eei18n_js_strings['required'] = __( 'This is a required field. Please add a value in order to continue.', 'event_espresso' );
-		wp_localize_script( 'espresso_venue_admin', 'eei18n', $eei18n_js_strings );
+		;
+		EE_Registry::$i18n_js_strings['required'] = __( 'This is a required field. Please add a value in order to continue.', 'event_espresso' );
+		wp_localize_script( 'espresso_venue_admin', 'eei18n', EE_Registry::$i18n_js_strings );
 
 	}
 
@@ -433,8 +433,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	public function venue_address_metabox() {
 
 		//states and countries model
-		require_once( 'EEM_State.model.php' );
-		require_once( 'EEM_Country.model.php');
+		require_once( EE_MODELS . 'EEM_State.model.php' );
+		require_once( EE_MODELS . 'EEM_Country.model.php');
 
 		$states = EEM_State::instance()->get_all_active_states();
 		$countries = EEM_Country::instance()->get_all_active_countries();
@@ -506,7 +506,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$success = $this->_venue_model->update( $venue_values, array( $wheres ) );
 
 		//get venue_object for other metaboxes that might be added via the filter... though it would seem to make sense to just use $this->_venue_model->get_one_by_ID( $post_id ).. i have to setup where conditions to override the filters in the model that filter out autodraft and inherit statuses so we GET the inherit id!
-		$get_one_where = array( $this->_venue_model->primary_key_name() => $post_id, 'STS_ID' => $post->post_status  );
+		$get_one_where = array( $this->_venue_model->primary_key_name() => $post_id, 'status' => $post->post_status  );
 		$venue = $this->_venue_model->get_one( array( $get_one_where ) );
 
 		//notice we've applied a filter for venue metabox callbacks but we don't actually have any default venue metaboxes in use.  So this is just here for addons to more easily hook into venue saves.
@@ -805,7 +805,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$limit = array($offset, $per_page);
 
 		$where = array(
-			'STS_ID' => isset( $this->_req_data['venue_status'] ) && $this->_req_data['venue_status'] != '' ? $this->_req_data['venue_status'] : 'publish'
+			'status' => isset( $this->_req_data['venue_status'] ) && $this->_req_data['venue_status'] != '' ? $this->_req_data['venue_status'] : 'publish'
 			//todo add filter by category
 			);
 

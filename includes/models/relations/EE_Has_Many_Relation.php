@@ -4,10 +4,19 @@
 /**
  * In this relation, the OTHER model ahs the foreign key pointing to this model
  */
-require_once('relations/EE_Model_Relation_Base.php');
+require_once( EE_MODELS . 'relations/EE_Model_Relation_Base.php');
 class EE_Has_Many_Relation extends EE_Model_Relation_Base{	
-	function __construct($extra_join_conditions = null){
-		parent::__construct($extra_join_conditions);
+	
+	/**
+	 * Object representing the relationship between two models. Has_Many_Relations are where the OTHER model has the foreign key
+	 * this model. IE, there can be many other model objects related to one of this model's objects (but NOT through a JOIN table,
+	 * which is the case for EE_HABTM_Relations). This knows how to join the models,
+	 * get related models across the relation, and add-and-remove the relationships.
+	 * @param boolean $block_deletes For this type of relation, we block by default. If there are related models across this relation, block (prevent and add an error) the deletion of this model
+	 * @param type $blocking_delete_error_message a customized error message on blocking deletes instead of the default
+	 */
+	function __construct($block_deletes = true, $blocking_delete_error_message = null){
+		parent::__construct($block_deletes, $blocking_delete_error_message);
 	}
 	function get_join_statement(){
 		//create the sql string like
@@ -18,7 +27,7 @@ class EE_Has_Many_Relation extends EE_Model_Relation_Base{
 		$fk_table_alias = $other_table_fk_field->get_table_alias();
 		$fk_table = $this->get_other_model()->get_table_for_alias($fk_table_alias);
 		
-		return $this->_left_join($fk_table, $fk_table_alias, $other_table_fk_field->get_table_column(), $pk_table_alias, $this_table_pk_field->get_table_column(), $this->_extra_join_conditions).$this->get_other_model()->_construct_internal_join_to_table_with_alias($fk_table_alias);
+		return $this->_left_join($fk_table, $fk_table_alias, $other_table_fk_field->get_table_column(), $pk_table_alias, $this_table_pk_field->get_table_column()).$this->get_other_model()->_construct_internal_join_to_table_with_alias($fk_table_alias);
 	}
 	/**
 	 * Sets the other model object's foreign key to this model object's primary key. Feel free to do this manually if you like.

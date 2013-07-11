@@ -1,5 +1,5 @@
 <?php
-require_once('fields/EE_Primary_Key_Field_Base.php');
+require_once( EE_MODELS . 'fields/EE_Primary_Key_Field_Base.php');
 class EE_Primary_Key_Int_Field extends EE_Primary_Key_Field_Base{
 	function get_wpdb_data_type(){
 		return '%d';

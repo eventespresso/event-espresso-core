@@ -28,7 +28,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Soft_Delete_Base.model.php' );
+require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
 
 class EEM_Message_Template extends EEM_Soft_Delete_Base {
 	//private instance of the EEM_Message_Template object
@@ -93,6 +93,8 @@ class EEM_Message_Template extends EEM_Soft_Delete_Base {
 		);
 		$this->_model_relations = array();
 		parent::__construct();
+		require_once( EE_CLASSES . 'EE_Message_Template.class.php' );
+
 	}
 
 	/**

@@ -57,7 +57,6 @@ class EE_Autoloader {
 				$filenames[] = $dir . $className . '.' . $types . '.php';
 			}
 		}
-
 		//now loop through assembled filenames and require as available
 		foreach ( $filenames as $filename ) {
 			if ( is_readable($filename) )
@@ -76,9 +75,9 @@ class EE_Autoloader {
 	 */
 	public static function load_admin_core( $folder, $className ) {
 		$classfile = $className . '.core.php';
-		$path = EE_CORE_ADMIN . $folder . DS . $classfile;
-		if ( is_readable( $path ) )
-			require_once( $path );
+		if ( is_readable( EE_CORE_ADMIN . $folder . DS . $classfile )) {
+			require_once( EE_CORE_ADMIN . $folder . DS . $classfile );
+		}			
 	}
 
 }

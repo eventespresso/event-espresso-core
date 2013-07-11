@@ -21,7 +21,9 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Soft_Delete_Base.model.php' );
+require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
+require_once ( EE_CLASSES . 'EE_Price_Type.class.php' );
+
 
 class EEM_Price_Type extends EEM_Soft_Delete_Base {
 
@@ -89,19 +91,7 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 			EEM_Price_Type::base_type_tax => __('Tax','event_espresso') );
 		$this->singlular_item = __('Price Type','event_espresso');
 		$this->plural_item = __('Price Types','event_espresso');		
-		// array representation of the price type table and the data types for each field
-//		$this->table_data_types = array(
-//				'PRT_ID' 					=> '%d',
-//				'PRT_name' 			=> '%s',
-//				'PBT_ID' 					=> '%d',
-//				'PRT_is_member' 	=> '%d',
-//				'PRT_is_discount' 	=> '%d',
-//				'PRT_is_tax' 			=> '%d',
-//				'PRT_is_percent' 	=> '%d',
-//				'PRT_is_global' 		=> '%d',
-//				'PRT_order' 			=> '%d',
-//				'PRT_deleted'			=> '%d'
-//		);
+
 		$this->_tables = array(
 			'Price_Type'=>new EE_Primary_Table('esp_price_type','PRT_ID')
 		);
@@ -122,10 +112,19 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 		);
 		
 		parent::__construct();
-		//$this->type = $this->get_all();
 
 	}
 
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public static function define_table_name() {
+		global $wpdb;
+		define( 'ESP_PRICE_TYPE_TABLE', $wpdb->prefix . 'esp_price_type' );
+	}
 
 
 

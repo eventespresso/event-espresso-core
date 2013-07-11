@@ -67,7 +67,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$this->_page_config['import_events']['metaboxes'] = $this->_default_espresso_metaboxes;
 		$this->_page_config['create_event']['metaboxes'][] = '_premium_event_editor_meta_boxes';
 		$this->_page_config['edit']['metaboxes'][] = '_premium_event_editor_meta_boxes';
-		$this->_page_config['default_event_settings']['metaboxes'] = array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box') );
 
 		//add filters and actions
 		//modifying _views
@@ -95,7 +94,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		
 		wp_enqueue_script('event_editor_js');
-		global $eei18n_js_strings;
 		$new_strings = array(
 			'image_confirm' => __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso'),
 			'event_starts_on' => __('Event Starts on', 'event_espresso'),
@@ -111,10 +109,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			'trash_img_alt' => __('trash', 'event_espresso')
 			);
 
-		$eei18n_js_strings = array_merge( $eei18n_js_strings, $new_strings);
+		EE_Registry::$i18n_js_strings = array_merge( EE_Registry::$i18n_js_strings, $new_strings);
 
 		wp_register_script('event_datetime_js', EVENTS_CAF_ASSETS_URL . 'js/ee_events_datetime.js', array('event_editor_js'), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_localize_script( 'event_datetime_js', 'eei18n', $eei18n_js_strings );
+		wp_localize_script( 'event_datetime_js', 'eei18n', EE_Registry::$i18n_js_strings );
 		wp_enqueue_script('event_datetime_js');
 	}
 
@@ -227,8 +225,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		);
 		$additional_attendee_reg_info_values = EEM_Event::additional_attendee_reg_info_array();
 		$default_reg_status_values = EEM_Registration::reg_status_array();
-		
-		$template_args['is_active_select'] = EE_Form_Fields::select_input('is_active', $yes_no_values, $this->_cpt_model_obj->is_active());
+		$template_args['active_status'] = $this->_cpt_model_obj->pretty_active_status(FALSE);
 		$template_args['_event'] = $this->_cpt_model_obj;
 		$template_args['allow_group_reg_select'] = EE_Form_Fields::select_input('allow_multiple', $yes_no_values, $this->_cpt_model_obj->allow_multiple(), 'id="group-reg"', '', false);
 		$template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();

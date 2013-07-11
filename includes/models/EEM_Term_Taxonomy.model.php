@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+require_once ( EE_MODELS . 'EEM_Base.model.php' );
 
 class EEM_Term_Taxonomy extends EEM_Base {
 
@@ -64,11 +64,22 @@ class EEM_Term_Taxonomy extends EEM_Base {
 			'Term_Relationship'=>new EE_Has_Many_Relation(),
 			'Term'=>new EE_Belongs_To_Relation(),
 			'Event'=>new EE_HABTM_Relation('Term_Relationship'),
-			'Venue'=>new EE_HABTM_Relation('Term_Relationship')
+			'Venue'=>new EE_HABTM_Relation('Term_Relationship'),
+			'Attendee'=>new EE_HABTM_Relation('Term_Relationship')
 		);
 		
 		parent::__construct();
 	}
+
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public static function define_table_name() { }
+
+
 }
 // End of file EEM_Answer.model.php
 // Location: /includes/models/EEM_Answer.model.php

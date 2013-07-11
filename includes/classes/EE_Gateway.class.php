@@ -91,11 +91,11 @@ abstract class EE_Gateway {
 		require_once('EEM_Transaction.model.php');
 		require_once('EE_Transaction.class.php');
 		$this->_TXN = EEM_Transaction::instance();
-		require_once('EEM_Payment.model.php');
-		require_once('EE_Payment.class.php');
+		require_once( EE_MODELS . 'EEM_Payment.model.php');
+		require_once( EE_CLASSES . 'EE_Payment.class.php');
 		$this->_PAY = EEM_Payment::instance();
-		require_once('EEM_Registration.model.php');
-		require_once('EE_Registration.class.php');
+		require_once( EE_MODELS . 'EEM_Registration.model.php');
+		require_once( EE_CLASSES . 'EE_Registration.class.php');
 		$this->_REG = EEM_Registration::instance();
 		$this->_set_default_properties();
 		$this->_handle_payment_settings();
@@ -107,8 +107,8 @@ abstract class EE_Gateway {
 		}
 
 		//load formatter helper and form fields helper
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
+		require_once EE_HELPERS . 'EE_Formatter.helper.php';
+		require_once EE_HELPERS . 'EE_Form_Fields.helper.php';
 	}
 	
 	public function process_reg_step_3(){
@@ -506,7 +506,7 @@ abstract class EE_Gateway {
 	/*public function thank_you_page() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		global $EE_Session;
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
+		require_once ( EE_MODELS . 'EEM_Transaction.model.php' );
 
 		$success_msg = FALSE;
 		$error_msg = FALSE;
@@ -562,7 +562,7 @@ abstract class EE_Gateway {
 		// did transaction require payment now ? later ? or was it free ?
 		if ( $transaction->total() > 0 ) {
 		
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
+			require_once(EE_MODELS . 'EEM_Payment.model.php');
 			EEM_Payment::instance();
 			$payment = new EE_Payment( 
 																	$transaction->ID(), 

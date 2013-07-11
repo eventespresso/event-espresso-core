@@ -21,7 +21,8 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+require_once ( EE_MODELS . 'EEM_Base.model.php' );
+require_once ( EE_CLASSES . 'EE_Registration.class.php' );
 
 
 class EEM_Registration extends EEM_Base {
@@ -76,34 +77,9 @@ class EEM_Registration extends EEM_Base {
 		$this->singular_item = __('Registration','event_espresso');
 		$this->plural_item = __('Registrations','event_espresso');
 		$this->_get_registration_status_array();
-//		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Registration.class.php');
+//		require_once(EE_CLASSES . 'EE_Registration.class.php');
 		$this->_allowed_statuses=apply_filters('FHEE__EEM_Registration__allowed_statuses', self::$_reg_status );
-//		$this->_fields_settings=array(
-//			'REG_ID'=>new EE_Model_Field('Registration ID','primary_key',false),
-//			'EVT_ID'=>new EE_Model_Field('Event ID','foreign_key',false,null,null,'Event'),
-//			'ATT_ID'=>new EE_Model_Field('Attendee ID', 'foreign_key', false,null,null,'Attendee'),
-//			'TXN_ID'=>new EE_Model_Field('Transaction ID', 'foreign_key', false, null, null, 'Transaction'),
-//			'DTT_ID'=>new EE_Model_Field('Datetime ID','foreign_key',false,null,null,'Datetime'),
-//			'PRC_ID'=>new EE_model_Field('Price ID','foreign_key',false,null,null,'Price'),
-//			'STS_ID'=>new EE_Model_Field('Status ID', 'foreign_text_key', false, 'RNA', $this->_allowed_statuses, 'Status'),
-//			'REG_date'=>new EE_Model_Field('Registration Date','int',false,0),
-//			'REG_final_price'=>new EE_Model_Field('Final Price', 'float', false, 0),
-//			'REG_session'=>new EE_Model_Field('Session of Original Registration','plaintext',false),
-//			'REG_code'=>new EE_Model_Field('Unique Registration Code', 'plaintext', true, ''),
-//			'REG_url_link'=>new EE_Model_Field('URL Link of Registration','plaintext',true,''),
-//			'REG_count'=>new EE_Model_Field('Flag indicating whether Registration is Unique','int',false,1),
-//			'REG_group_size'=>new EE_Model_Field('Flag indicating whether is part of a group registration', 'int', false, 1),
-//			'REG_att_is_going'=>new EE_Model_Field('Flag indicating if Person is going', 'bool', false, true),
-//			'REG_att_checked_in'=>new EE_Model_Field('Flag indicating whether attendee has checked in','bool',false,false)				
-//			);
-//		$this->_related_models=array(
-//								//'Event'=>new EE_Model_Relation('belongsTo', 'Event', 'EVT_ID'),//no such classes or model yet created
-//								'Attendee'=>new EE_Model_Relation('belongsTo', 'Attendee', 'ATT_ID'),
-//								'Transaction'=>new EE_Model_Relation('belongsTo', 'Transaction', 'TXN_ID'),
-//								'Datetime'=>new EE_Model_Relation('belongsTo', 'Datetime', 'DTT_ID'),
-//								'Price'=>new EE_Model_Relation('belongsTo', 'Price', 'PRC_ID'),
-//								'Status'=>new EE_Model_Relation('belongsTo', 'Status','STS_ID'),
-//								'Answers'=>new EE_Model_Relation('hasMany','Answer','REG_ID'));
+
 		$this->_tables = array(
 			'Registration'=>new EE_Primary_Table('esp_registration','REG_ID')
 		);
@@ -139,6 +115,19 @@ class EEM_Registration extends EEM_Base {
 		
 		parent::__construct( $timezone );
 	}
+
+
+
+	/**
+	 * defines  table name as a constant
+	 * @access public
+	 */
+	public static function define_table_name() {
+		global $wpdb;
+		define( 'EE_REGISTRATION_TABLE', $wpdb->prefix . 'esp_registration' );
+	}
+
+
 
 	/**
 	 *		This funtion is a singleton method used to instantiate the Espresso_model object
