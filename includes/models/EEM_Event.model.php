@@ -115,7 +115,6 @@ class EEM_Event  extends EEM_CPT_Base{
 			'Price'=>new EE_Has_Many_Relation(),
 			'Question_Group'=>new EE_HABTM_Relation('Event_Question_Group'),
 			'Venue'=>new EE_HABTM_Relation('Event_Venue'),
-			'Event_Datetime'=> new EE_Has_Many_Relation()
 		);
 		require_once( EE_CLASSES . 'EE_Event.class.php');
 		require_once( EE_MODELS . 'strategies/EE_Default_CPT_Where_Conditions.strategy.php');

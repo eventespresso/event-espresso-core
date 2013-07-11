@@ -26,7 +26,7 @@ require_once ( EE_CLASSES . 'EE_Datetime.class.php' );
 
 class EEM_Datetime extends EEM_Base {
 
-  	// private instance of the Event_datetime object
+  	// private instance of the EEM_Datetime object
 	private static $_instance = NULL;
 
 	// all event datetimes
@@ -63,6 +63,7 @@ class EEM_Datetime extends EEM_Base {
 		$this->_fields = array(
 			'Datetime'=>array(
 				'DTT_ID'=> new EE_Primary_Key_Int_Field('DTT_ID', __('Datetime ID','event_espresso'), false, 0),
+				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID','event_espresso'), false, 0, 'Event'),
 				'DTT_EVT_start'=>new EE_Datetime_Field('DTT_EVT_start', __('Start time/date of Event','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'DTT_EVT_end'=>new EE_Datetime_Field('DTT_EVT_end', __('End time/date of Event','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'DTT_REG_start'=>new EE_Datetime_Field('DTT_REG_start', __('Start time/date of Registration for Event','event_espresso'), false, current_time('timestamp'), $timezone ),
@@ -70,12 +71,12 @@ class EEM_Datetime extends EEM_Base {
 				'DTT_reg_limit'=>new EE_Integer_Field('DTT_reg_limit', __('Registration LImit for this time','event_espresso'), true, 999999),
 				'DTT_tckts_left'=>new EE_Integer_Field('DTT_tckts_left', __('Calculated Tickets Remaining','event_espresso'), true, 999999),
 				'DTT_primary'=>new EE_Boolean_Field('DTT_primary', __("Flag indicating datetime is primary one for event", "event_espresso"), false,false),
-				'DTT_order' => new EE_Integer_Field('DTT_order', __('The order in which the Datetime is displayed', 'event_espresso'), false, 0)
+				'DTT_order' => new EE_Integer_Field('DTT_order', __('The order in which the Datetime is displayed', 'event_espresso'), false, 0),
+				'DTT_parent' => new EE_Integer_Field('DTT_parent', __('Indicates what DTT_ID is the parent of this DTT_ID'), true, 0 )
 			));
 		$this->_model_relations = array(
 			'Registration'=>new EE_Has_Many_Relation(),
-			'Event'=>new EE_HABTM_Relation('Event_Datetime'),
-			'Event_Datetime'=> new EE_Has_Many_Relation()
+			'Event'=>new EE_Belongs_To_Relation(),
 		);
 
 		parent::__construct( $timezone );

@@ -159,6 +159,16 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
+
+	/**
+	 * This is the parent for the given DTT (will match another existing DTT_ID in the db).  This is so DTT's attached to revisions are relationally connected to the parent DTT.
+	 * @var int
+	 */
+	protected $_DTT_parent;
+
+
+
+
 	/**
 	 *	Related events
 	 * @var EE_Event[]
@@ -173,12 +183,6 @@ class EE_Datetime extends EE_Base_Class{
 	protected $_Registration;
 
 
-
-	/**
-	 * All Event Datetimes this event has
-	 * @var Event_Datetime[]
-	 */
-	protected $_Event_Datetime;
 
 	
 	
@@ -380,7 +384,7 @@ class EE_Datetime extends EE_Base_Class{
 	 * This helper simply returns whether the event_datetime for the current datetime is a primary datetime
 	 * @return boolean          TRUE if is primary, FALSE if not.
 	 */
-	public function is_primary( $EVT_ID ) {
+	public function is_primary() {
 		return $this->get('DTT_primary');
 	}
 
@@ -391,8 +395,19 @@ class EE_Datetime extends EE_Base_Class{
 	 * This helper simply returns the order for the datetime
 	 * @return int         The order of the datetime for this event.
 	 */
-	public function order( $EVT_ID ) {
+	public function order() {
 		return $this->get('DTT_order');
+	}
+
+
+
+
+	/**
+	 * This helper simply returns the parent id for the datetime
+	 * @return int
+	 */
+	public function parent() {
+		return $this->get('DTT_parent');
 	}
 
 
