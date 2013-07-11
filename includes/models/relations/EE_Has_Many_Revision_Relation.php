@@ -96,6 +96,60 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 
 
 
+
+	 /**
+	  * This is identical to EE_Model_Relation->get_all_related() except we're going handle special autosave conditions in here.
+	  * @param  EE_Base_Class|int  $model_object_or_id            
+	  * @param  array   $query_params                            like EEM_Base::get_all's $query_params
+	  * @param  boolean $values_already_prepared_by_model_object 
+	  * @return EE_Base_Class[]                                         
+	  */
+	 public function get_all_related( $model_object_or_id, $query_params = array(), $values_already_prepared_by_model_object = false ) {
+	 	
+	 	//if this is an autosave then we're going to get things differently
+	 	if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) {
+	 		return $this->_do_autosave_get_all($model_object_or_id, $query_params = array(), $values_already_prepared_by_model_object = false);
+	 	}
+
+	 	return parent::get_all_related( $model_object_or_id, $query_params, $values_already_prepared_by_model_object );
+	 }
+
+
+
+
+
+	 /**
+	  * If we're in the midst of an autosave then we're going to do things a bit differently than the usual get_all_related (commenting within).  For description of params see the get_all_related() comments
+	  *
+	  * @access protected
+	  * @return EE_Base_Class[]        
+	  */
+	 protected function _check_for_autosave( $model_object_or_id, $query_params, $values_already_prepared_by_model_object = false ) {
+	 	$autosave_relations =  parent::get_all_related( $model_object_or_id, $query_params, $values_already_prepared_by_model_object );
+	 	$parent_ids = array();
+	 	$return_objs = array();
+		
+		//k this is where things differ because NOW what we're going to do is get the PARENTS for the get all related (and we'll also start setting up the return_objs array containing related that DON'T have parent ids, for those that DON'T have parents to merge with our returned objects);
+		foreach ( $autosave_relations as $a_r ) {
+			if ( $pid = $a_r->parent() && !empty( $pid ) ) {
+				$parent_ids[] = $pid;
+			} else {
+				$return_objs[] = $a_r;
+			}
+		}
+
+		//now we setup the query to get all the parents
+		$query_param_where_this_model_pk = $this->get_this_model()->get_this_model_name().".".$this->get_this_model()->get_primary_key_field()->get_name();
+		$query_param[0][$query_param_where_this_model_pk] = array('IN', $parent_ids );
+		$parents = $this->get_other_model()->get_all($query_param);
+
+
+		//now merge parents with our current $return_objs and send back
+		return array_merge( $parents, $return_objs );
+	 }
+
+
+
 	 /**
 	 * Basically this method gets called to verify if the incoming object needs to be manipulated somewhat because it is a revision save.  If so, then we change things before sending back.  We also do verifications when this IS NOT an revision because we always need to make sure that the autosave/revision has parent recorded (which is sometime delayed if the object is created/saved first by the autosave)
 	 *
