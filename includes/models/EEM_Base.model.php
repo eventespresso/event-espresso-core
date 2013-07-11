@@ -454,6 +454,7 @@ abstract class EEM_Base extends EE_Base{
 			//let's make sure default_where strategy is followed now
 			$this->_ignore_where_strategy = FALSE;
 		}
+
 		
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 		$SQL = "UPDATE ".$model_query_info->get_full_join_sql()." SET ".$this->_construct_update_sql($fields_n_values).$model_query_info->get_where_sql();//note: doesn't use _construct_2nd_half_of_select_query() because doesn't accept LIMIT, ORDER BY, etc.
@@ -721,7 +722,7 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	public function remove_relationship_to($id_or_obj,  $other_model_id_or_obj, $relationName){
 		$relation_obj = $this->related_settings_for($relationName);
-		$relation_obj->remove_relation_to($id_or_obj, $other_model_id_or_obj);
+		return $relation_obj->remove_relation_to($id_or_obj, $other_model_id_or_obj);
 	}
 	
 	
@@ -1690,12 +1691,14 @@ abstract class EEM_Base extends EE_Base{
 		}
 		return $fieldSettings[$fieldName];
 	}
+
+
 	
 
 	
 	/**
-	 * gets the name of the field of type 'primary_key' from the fieldsSettings attribute.
-	 * Eg, on EE_Anwer that would be ANS_ID
+	 * gets the field object of type 'primary_key' from the fieldsSettings attribute.
+	 * Eg, on EE_Anwer that would be ANS_ID field object
 	 * @return EE_Model_Field_Base
 	 * @throws EE_Error
 	 */

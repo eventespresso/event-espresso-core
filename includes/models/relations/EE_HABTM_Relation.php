@@ -115,6 +115,6 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base{
 			 array(
 				 $join_model_fk_to_this_model->get_name() => $this_model_obj->ID(),
 				 $join_model_fk_to_other_model->get_name() => $other_model_obj->ID())));
-		
+		return $other_model_obj;
 	 }
 }

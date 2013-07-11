@@ -843,9 +843,7 @@ class EE_Base_Class{
 	 * @return EE_Base_Class the object the relation was added to
 	 */
 	public function _add_relation_to($otherObjectModelObjectOrID,$relationName){
-		$otherObject = $this->ensure_related_thing_is_model_obj($otherObjectModelObjectOrID,$relationName);
-		$this->get_model()->add_relationship_to($this, $otherObject, $relationName);
-		
+		$otherObject = $this->get_model()->add_relationship_to($this, $otherObjectModelObjectOrID, $relationName);
 		$this->cache( $relationName, $otherObject );
 		return $otherObject;
 	}
@@ -853,15 +851,14 @@ class EE_Base_Class{
 	
 	
 	/**
-	 * Removes a relationship to the psecified EE_Base_Class object, given the relationships' name. Eg, if the curren tmodel is related
+	 * Removes a relationship to the psecified EE_Base_Class object, given the relationships' name. Eg, if the currentmodel is related
 	 * to a group of events, the $relationName should be 'Events', and should be a key in the EE Model's $_model_relations array
 	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object
 	 * @param string $relationName
 	 * @return EE_Base_Class the relation was removed from
 	 */
 	public function _remove_relation_to($otherObjectModelObjectOrID,$relationName){
-		$otherObject = $this->ensure_related_thing_is_model_obj($otherObjectModelObjectOrID, $relationName);
-		$this->get_model()->remove_relationship_to($this, $otherObject, $relationName);
+		$otherObject = $this->get_model()->remove_relationship_to($this, $otherObject, $relationName);
 		$this->clear_cache($relationName, $otherObject);
 		return $otherObject;
 	}
