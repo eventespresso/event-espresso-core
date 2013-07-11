@@ -16,16 +16,16 @@
  * If your values are already in teh database values domain, you'll either way to convert them into the model object domain by creating model objects
  * from those raw db values (ie,using EEM_Base::_create_objects), or just use $wpdb directly.
  */
-define('SP',' ');
-//require all field, relation, and helper files, because we'll want 90% of them on every request using EEM_Base anyways.
-$field_files = glob( EE_MODELS . '/fields/*.php');
-$helper_files = glob( EE_MODELS . '/helpers/*.php');
-$relation_files = glob( EE_MODELS . '/relations/*.php');
-$files =  array_merge( array_merge($field_files, $relation_files), $helper_files) ;
-require_once( EE_MODELS . 'strategies/EE_Default_Where_Conditions.strategy.php' );
-foreach ( $files as $file ){
-    require_once( $file );   
-}
+//define('SP',' ');
+////require all field, relation, and helper files, because we'll want 90% of them on every request using EEM_Base anyways.
+//$field_files = glob( EE_MODELS . '/fields/*.php');
+//$helper_files = glob( EE_MODELS . '/helpers/*.php');
+//$relation_files = glob( EE_MODELS . '/relations/*.php');
+//$files =  array_merge( array_merge($field_files, $relation_files), $helper_files) ;
+//require_once( EE_MODELS . 'strategies/EE_Default_Where_Conditions.strategy.php' );
+//foreach ( $files as $file ){
+//    require_once( $file );   
+//}
 //make sure EE_Registry is available
 require_once( EE_REGISTRY );
 
@@ -152,7 +152,7 @@ abstract class EEM_Base extends EE_Base{
 	 * 'where', but 'where' clauses are so common that we thought we'd omit it
 	 * @var array
 	 */
-	private $_allowed_query_params = array(0, 'limit','order_by','group_by','having','force_join','order','on_join_limit');
+	private $_allowed_query_params = array(0, 'limit','order_by','group_by','having','force_join','order','on_join_limit','default_where_conditions');
 
 	
 	/**
@@ -298,6 +298,9 @@ abstract class EEM_Base extends EE_Base{
 	 *					|	You will probably only want to do this in hopes of increasing efficiency, as related models which belongs to the current model 
 	 *					|	(ie, the current model has a foreign key to them, like how Registration belongs to Attendee) can be cached in order
 	 *					|	to avoid future queries
+	 *default_where_conditions| can be set to 'none','other_models_only', or 'all'. set this to 'none' to disable all default where conditions. Eg, usually soft-deleted objects are filtered-out
+	 *					|	if you want to include them, set this query param to 'none'. If you want to ONLY disable THIS model's default where conditions
+	 *					|	set it to 'other_models_only'. If you want to use all default where conditions (default), set to 'all'.
 	 * Some full examples:
 	 * get 10 transactions which have Scottish attendees:
 	 * EEM_Transaction::instance()->get_all(array(
@@ -1029,7 +1032,12 @@ abstract class EEM_Base extends EE_Base{
 		}else{
 			$where_query_params = array();
 		}
-		$where_query_params = array_merge($this->_get_default_where_conditions_for_models_in_query($query_object), $where_query_params );
+		if(array_key_exists('default_where_conditions',$query_params)){
+			$use_default_where_conditions = $query_params['default_where_conditions'];
+		}else{
+			$use_default_where_conditions = 'all';
+		}
+		$where_query_params = array_merge($this->_get_default_where_conditions_for_models_in_query($query_object,$use_default_where_conditions), $where_query_params );
 		$query_object->set_where_sql( $this->_construct_where_clause($where_query_params));
 
 
@@ -1139,14 +1147,28 @@ abstract class EEM_Base extends EE_Base{
 	 * for their universal_where_params, and returns them in the same format as $query_params[0] (where),
 	 * so they can be merged
 	 * @param EE_Model_Query_Info_Carrier $query_info_carrier
+	 * @param string $use_default_where_conditions can be 'none','other_models_only', or 'all'.  'none' means NO default where conditions will be used AT ALL during this query.
+	 * 'other_models_only' means default where conditions from other models will be used, but not for this primary model. 'all', the default, means
+	 * default where conditions will apply as normal
+	 * @return array like $query_params[0], see EEM_Base::get_all for documentation
 	 */
-	private function _get_default_where_conditions_for_models_in_query(EE_Model_Query_Info_Carrier $query_info_carrier){
-		$universal_query_params = $this->_get_default_where_conditions();
+	private function _get_default_where_conditions_for_models_in_query(EE_Model_Query_Info_Carrier $query_info_carrier,$use_default_where_conditions = 'all'){
+		$allowed_used_default_where_conditions_values = array('all','other_models_only','none');
+		if( ! in_array($use_default_where_conditions,$allowed_used_default_where_conditions_values)){
+			throw new EE_Error(sprintf(__("You passed an invalid value to the query parameter 'default_where_conditions' of '%s'. Allowed values are %s", "event_espresso"),$use_default_where_conditions,implode(", ",$allowed_used_default_where_conditions_values)));
+		}
+		if($use_default_where_conditions == 'all' ){
+			$universal_query_params = $this->_get_default_where_conditions();
+		}else{
+			$universal_query_params = array();
+		}
 		
-		foreach($query_info_carrier->get_model_names_included() as $model_name =>$model_relation_path){
-			$related_model = $this->get_related_model_obj($model_name);
-			$related_model_universal_where_params = $related_model->_get_default_where_conditions($model_relation_path);
-			$universal_query_params = array_merge($universal_query_params, $related_model_universal_where_params);
+		if(in_array($use_default_where_conditions,array('all','other_models_only'))){
+			foreach($query_info_carrier->get_model_names_included() as $model_name =>$model_relation_path){
+				$related_model = $this->get_related_model_obj($model_name);
+				$related_model_universal_where_params = $related_model->_get_default_where_conditions($model_relation_path);
+				$universal_query_params = array_merge($universal_query_params, $related_model_universal_where_params);
+			}
 		}
 		return $universal_query_params;
 	}
