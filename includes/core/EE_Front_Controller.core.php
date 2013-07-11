@@ -192,7 +192,7 @@ final class EE_Front_Controller {
 
 
 	/**
-	 * 	wp_loaded - should fire after shortcode, module, addon, or other plugin's default priority init phases have run
+	 * 	wp_loaded - should fire after shortcode, module, addon, or other plugin's have been registered and their default priority init phases have run
 	 *
 	 *  @access 	public
 	 *  @return 	void
@@ -203,11 +203,30 @@ final class EE_Front_Controller {
 			EE_messages_init::init();
 		}
 
+	}
+
+
+
+
+
+	/*********************************************** 		WP HOOK		 ***********************************************/
+
+
+
+
+
+
+	/**
+	 * 	wp - basically last chance to do stuff before headers sent
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function wp() {
 		// process any content shortcodes
 		$this->_initialize_shortcodes();
 		// process request with module factory
-		$this->_process_request();
-
+		$this->_process_request();		
 	}
 
 
@@ -282,7 +301,6 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	private function _process_request() {
-//		printr( $this->EE, '$this->EE  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$Module_Request_Router = $this->EE->load_core( 'Module_Request_Router' );
 		// cycle thru module routes
 		while ( $module = $Module_Request_Router->get_routes() ) {
@@ -294,28 +312,10 @@ final class EE_Front_Controller {
 		if ( ! empty( $this->_view_template )) {
 			add_filter( 'template_include', array( $this, 'template_include' ), 1 );
 		}
-		
+//		printr( $this->EE, '$this->EE  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( EE_Config::instance(), 'EE_Config::instance()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
 	}
-
-
-
-
-	/*********************************************** 		WP HOOK		 ***********************************************/
-
-
-
-
-
-
-	/**
-	 * 	wp - basically last chance to do stuff before headers sent
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function wp() {
-	}
-
 
 
 
