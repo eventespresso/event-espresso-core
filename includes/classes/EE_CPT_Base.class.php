@@ -156,6 +156,9 @@ class EE_CPT_Base extends EE_Base_Class{
 	 * @return mixed Returns meta_id if the meta doesn't exist, otherwise returns true on success and false on failure. NOTE: If the meta_value passed to this function is the same as the value that is already in the database, this function returns false.
 	 */
 	public function update_post_meta($meta_key, $meta_value, $prev_value = null){
+		if(! $this->ID()){
+			throw new EE_Error(sprintf(__("You must save this custom post type before adding or updating a post meta field", "event_espresso")));
+		}
 		return update_post_meta($this->ID(),$meta_key,$meta_value,$prev_value);
 	}
 	
@@ -167,6 +170,9 @@ class EE_CPT_Base extends EE_Base_Class{
 	 * @return boolean Boolean true, except if the $unique argument was set to true and a custom field with the given key already exists, in which case false is returned.
 	 */
 	public function add_post_meta($meta_key,$meta_value,$unique = false){
+		if(! $this->ID()){
+			throw new EE_Error(sprintf(__("You must save this custom post type before adding or updating a post meta field", "event_espresso")));
+		}
 		return add_post_meta($this->ID(),$meta_key,$meta_value,$unique);
 	}
 }
