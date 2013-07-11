@@ -14,6 +14,7 @@
  * ------------------------------------------------------------------------
  *
  * EE_Module_Request_Router
+* 	This class handles module instantiation, forward chaining, and obtaining views for the Front Controller. Basically a Module Factory.
  *
  * @package			Event Espresso
  * @subpackage	/core/
@@ -59,7 +60,12 @@ final class EE_Module_Request_Router {
 
 
 	/**
-	 * 	setter
+	 * 	get_routes
+	* 
+	 * 	on the first call  to this method, it checks the EE_Request_Handler for a "route"
+	* 	on subsequent calls to this method, instead of checking the EE_Request_Handler for a route,
+	* 	it checks the previous routes array, and checks if the last called route has any forwarding routes registered for it
+	* 	( routes that eventually resolve to a valid module method, get added to the previous routes array )
 	 *
 	 *  @access 	public
 	 *  @return 	void
@@ -70,7 +76,8 @@ final class EE_Module_Request_Router {
 		// but is it really ???
 		if ( ! empty( self::$_previous_routes )) {
 			// get last run route
-			$previous_route = array_pop( array_values( self::$_previous_routes ));
+			$previous_routes = array_values( self::$_previous_routes );
+			$previous_route = array_pop( $previous_routes );
 		}
 		//  has another route already been run ?
 		if ( $previous_route ) {			
@@ -80,7 +87,10 @@ final class EE_Module_Request_Router {
 				//check for recursive forwarding
 				if ( isset( self::$_previous_routes[ $this->_current_route ] )) {
 					throw new EE_Error( 
-						sprintf( __('An error occured. The %s route has already been called, and therefore can not be forwarded to, because an infinite loop would be created and break the interweb.','event_espresso'),  $this->_current_route )
+						sprintf( 
+							__('An error occured. The %s route has already been called, and therefore can not be forwarded to, because an infinite loop would be created and break the interweb.','event_espresso'), 
+							$this->_current_route 
+						)
 					);
 				}
 			} catch ( EE_Error $e ) {
@@ -95,10 +105,26 @@ final class EE_Module_Request_Router {
 			// grab and sanitize module route
 			$this->_current_route = $this->EE->REQ->get( 'ee' );
 		}
+		//echo '<h4>$this->_current_route : ' . $this->_current_route . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		// sorry, but I can't read what you route !
 		if ( empty( $this->_current_route )) {
 			return NULL;
 		}
+		// determine module and method for route
+		$this->_resolve_route();
+	}
+
+
+
+	/**
+	 * 	_resolve_route
+	* 
+	 * 	this method simply takes a valid route, and resolves what module class method the route points to
+	 *
+	 *  @access 	private
+	 *  @return 	void
+	 */
+	private function _resolve_route() {		
 		// get module method that route has been mapped to 
 		$module_method = EE_Config::get_route( $this->_current_route );
 //		printr( $module_method, '$module_method  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -137,7 +163,7 @@ final class EE_Module_Request_Router {
 			return FALSE;
 		}
 		// instantiate module and call route method
-		if ( $module = $this->_route_factory( $module_name, $method )) {
+		if ( $module = $this->_module_route_factory( $module_name, $method )) {
 			// if module is successfully created, then add it to previous routes array
 			self::$_previous_routes[] = $this->_current_route;
 			return $module;
@@ -148,12 +174,14 @@ final class EE_Module_Request_Router {
 
 
 	/**
-	 * 	getter
+	 * 	_module_route_factory
+	* 
+	 * 	this method instantiates modules and calls the method that was defined when the route was registered
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	private function _route_factory( $module_name, $method ) {
+	private function _module_route_factory( $module_name, $method ) {
 		// let's pause to reflect on this...
 		$mod_reflector = new ReflectionClass( $module_name );
 		// ensure that class is actually a module
@@ -164,14 +192,14 @@ final class EE_Module_Request_Router {
 		}
 		// and pass the request object to the run method
 		$module = $mod_reflector->newInstance( $this->EE );
-		// now add a hook for whatever action is being called
-		add_action( 'wp_loaded', array( $module, $method ));
+		// now call whatever action the route was for
+		$module->$method;
 		return $module;
 	}
 
 
 	/**
-	 * 	getter
+	 * 	get_forward
 	 *
 	 *  @access 	public
 	 *  @return 	void
@@ -181,7 +209,7 @@ final class EE_Module_Request_Router {
 	}
 
 	/**
-	 * 	getter
+	 * 	get_view
 	 *
 	 *  @access 	public
 	 *  @return 	void
