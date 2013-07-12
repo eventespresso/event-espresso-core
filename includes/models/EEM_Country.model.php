@@ -21,9 +21,6 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EE_MODELS . 'EEM_Base.model.php' );
-require_once ( EE_CLASSES . 'EE_Country.class.php' );
-
 class EEM_Country extends EEM_Base {
 
   	// private instance of the Attendee object
@@ -63,10 +60,10 @@ class EEM_Country extends EEM_Base {
 		$this->_fields = array(
 			'Country'=>array(
 				'CNT_ISO'=> new EE_Primary_Key_String_Field('CNT_ISO', __('Country ISO Code','event_espresso'), false,''),
-				'CNT_ISO3'=>new EE_All_Caps_Text_Field_Base('CNT_ISO3', __('Country ISO3 Code','event_espresso'), false,''),
-				'RGN_ID'=>new EE_All_Caps_Text_Field_Base('RGN_ID', __('Region ID','event_espresso'), false,0),//should be a foreign key, but no region table exists yet
+				'CNT_ISO3'=>new EE_All_Caps_Text_Field('CNT_ISO3', __('Country ISO3 Code','event_espresso'), false,''),
+				'RGN_ID'=>new EE_All_Caps_Text_Field('RGN_ID', __('Region ID','event_espresso'), false,0),//should be a foreign key, but no region table exists yet
 				'CNT_name'=>new EE_Plain_Text_Field('CNT_name', __('Country Name','event_espresso'), false,''),
-				'CNT_cur_code'=>new EE_All_Caps_Text_Field_Base('CNT_cur_code', __('Country Currency Code','event_espresso'), false),
+				'CNT_cur_code'=>new EE_All_Caps_Text_Field('CNT_cur_code', __('Country Currency Code','event_espresso'), false),
 				'CNT_cur_single' => new EE_Plain_Text_Field('CNT_cur_single', __('Currency Name Singular','event_espresso'), false),
 				'CNT_cur_plural' => new EE_Plain_Text_Field('CNT_cur_plural', __('Currency Name Plural','event_espresso'), false),
 				'CNT_cur_sign' => new EE_Plain_Text_Field('CNT_cur_sign', __('Currency Sign','event_espresso'), false),

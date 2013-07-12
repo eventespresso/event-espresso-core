@@ -137,7 +137,7 @@ final class EE_Admin {
 			require_once( EE_CORE . 'EE_System.core.php' );
 			$this->EE = EE_System::instance()->get_registry();
 		} else {
-			wp_die( __( 'An error has occured. The EE_System files could not be loaded.', 'event_espresso' ));
+			wp_die( __( 'The EE_System files could not be loaded.', 'event_espresso' ));
 		}
 	}
 

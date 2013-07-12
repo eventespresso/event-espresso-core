@@ -91,7 +91,7 @@ final class EE_Config {
 		$this->_load_config();
 		$this->_register_shortcodes_and_modules();
 		//add_action( 'init', array( $this, 'init' ), 5 );
-		add_action( 'wp_loaded', array( $this, 'plugins_loaded' ), 3 );
+		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 3 );
 		
 	}
 
@@ -99,12 +99,12 @@ final class EE_Config {
 
 
 	/**
-	 * 	plugins_loaded
+	 * 	wp_loaded
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function plugins_loaded() {
+	public function wp_loaded() {
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 //		printr( $this->EE->CFG->post_shortcodes, '$this->EE->CFG->post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		printr( $this->EE->shortcodes, '$this->EE->shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -113,7 +113,7 @@ final class EE_Config {
 //		printr( EE_Config::$_module_forward_map, 'EE_Config::$_module_forward_map  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		printr( EE_Config::$_module_view_map, 'EE_Config::$_module_view_map  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		printr( $this->EE->REQ, '$this->EE->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
+//		printr( EE_Config::instance(), 'EE_Config::instance()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	}
 
 
@@ -166,17 +166,17 @@ final class EE_Config {
 		// set _module_view_map
 		EE_Config::$_module_view_map = isset( $this->EE->CFG->_module_view_map ) ? $this->EE->CFG->_module_view_map : array();
 		
-		$remove_from_config = array(
-			'_module_route_map',
-			'_module_forward_map',
-			'_module_view_map'
-		);
-		
-		foreach ( $remove_from_config as $setting ) {
-			if ( isset( $this->EE->CFG->$setting )) {
-				unset( $this->EE->CFG->$setting );
-			}
-		}
+//		$remove_from_config = array(
+//			'_module_route_map',
+//			'_module_forward_map',
+//			'_module_view_map'
+//		);
+//		
+//		foreach ( $remove_from_config as $setting ) {
+//			if ( isset( $this->EE->CFG->$setting )) {
+//				unset( $this->EE->CFG->$setting );
+//			}
+//		}
 		
 		do_action('AHEE_debug_file');
 	}
@@ -196,7 +196,7 @@ final class EE_Config {
 		$this->EE->CFG->_module_view_map = EE_Config::$_module_view_map;
 		// grab org options based on current admin user		
 		if ( ! update_usermeta( $this->EE->CFG->wp_user, 'events_organization_settings', $this->EE->CFG )) {
-			$msg = __( 'An error has occured. The Event Espresso Configuration Settings could not be updated.', 'event_espresso' );
+			$msg = __( 'The Event Espresso Configuration Settings could not be updated.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
@@ -289,7 +289,7 @@ final class EE_Config {
 		$shortcode_class = 'EES_' . $shortcode;
 		// does the shortcode exist ?
 		if ( ! is_readable( $shortcode_path . DS . $shortcode_class . $shortcode_ext )) {
-			$msg = sprintf( __( 'An error has occured. The requested %s shortcode file could not be found or is not readable due to file permissions.', 'event_espresso' ), $shortcode_class );
+			$msg = sprintf( __( 'The requested %s shortcode file could not be found or is not readable due to file permissions.', 'event_espresso' ), $shortcode_class );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
@@ -297,7 +297,7 @@ final class EE_Config {
 		require_once( $shortcode_path . DS . $shortcode_class . $shortcode_ext );
 		// verfiy that class exists
 		if ( ! class_exists( $shortcode_class )) {
-			$msg = sprintf( __( 'An error has occured. The requested %s shortcode class does not exist.', 'event_espresso' ), $shortcode_class );
+			$msg = sprintf( __( 'The requested %s shortcode class does not exist.', 'event_espresso' ), $shortcode_class );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
@@ -358,7 +358,7 @@ final class EE_Config {
 		$module_class = 'EED_' . $module;
 		// does the module exist ?
 		if ( ! is_readable( $module_path . DS . $module_class . $module_ext )) {
-			$msg = sprintf( __( 'An error has occured. The requested %s module file could not be found or is not readable due to file permissions.', 'event_espresso' ), $module );
+			$msg = sprintf( __( 'The requested %s module file could not be found or is not readable due to file permissions.', 'event_espresso' ), $module );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
@@ -366,7 +366,7 @@ final class EE_Config {
 		require_once( $module_path . DS . $module_class . $module_ext );
 		// verfiy that class exists
 		if ( ! class_exists( $module_class )) {
-			$msg = sprintf( __( 'An error has occured. The requested %s module class does not exist.', 'event_espresso' ), $module_class );
+			$msg = sprintf( __( 'The requested %s module class does not exist.', 'event_espresso' ), $module_class );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
@@ -393,17 +393,17 @@ final class EE_Config {
 	public static function register_route( $route = NULL, $module = NULL, $method_name = NULL ) {
 		$module = str_replace( 'EED_', '', $module );
 		if ( ! isset( EE_Registry::instance()->modules[ $module ] )) {
-			$msg = sprintf( __( 'An error has occured. The module %s has not been registered.', 'event_espresso' ), $module );
+			$msg = sprintf( __( 'The module %s has not been registered.', 'event_espresso' ), $module );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		if ( empty( $route )) {
-			$msg = sprintf( __( 'An error has occured. No route has been supplied.', 'event_espresso' ), $route );
+			$msg = sprintf( __( 'No route has been supplied.', 'event_espresso' ), $route );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		if ( ! method_exists ( 'EED_' . $module, $method_name )) {
-			$msg = sprintf( __( 'An error has occured. A valid class method for the %s route has not been supplied.', 'event_espresso' ), $route );
+			$msg = sprintf( __( 'A valid class method for the %s route has not been supplied.', 'event_espresso' ), $route );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
@@ -441,32 +441,33 @@ final class EE_Config {
 	 */
 	public static function register_forward( $route = NULL, $status = 0, $forward = NULL ) {
 		if ( ! isset( EE_Config::$_module_route_map[ $route ] ) ||  empty( $route )) {
-			$msg = sprintf( __( 'An error has occured. The module route %s for this forward has not been registered.', 'event_espresso' ), $route );
+			$msg = sprintf( __( 'The module route %s for this forward has not been registered.', 'event_espresso' ), $route );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		if ( empty( $forward )) {
-			$msg = sprintf( __( 'An error has occured. No forwarding route has been supplied.', 'event_espresso' ), $route );
+			$msg = sprintf( __( 'No forwarding route has been supplied.', 'event_espresso' ), $route );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		if ( is_array( $forward )) {
 			if ( ! isset( $forward[1] )) {
-				$msg = sprintf( __( 'An error has occured. A class method for the %s forwarding route has not been supplied.', 'event_espresso' ), $route );
+				$msg = sprintf( __( 'A class method for the %s forwarding route has not been supplied.', 'event_espresso' ), $route );
 				EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return FALSE;
 			}
 			if ( ! method_exists( $forward[0], $forward[1] )) {
-				$msg = sprintf( __( 'An error has occured. The class method %s for the %s forwarding route is in invalid.', 'event_espresso' ), $forward[1], $route );
+				$msg = sprintf( __( 'The class method %s for the %s forwarding route is in invalid.', 'event_espresso' ), $forward[1], $route );
 				EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return FALSE;
 			}
 		} else if ( ! function_exists( $forward )) {
-			$msg = sprintf( __( 'An error has occured. The function %s for the %s forwarding route is in invalid.', 'event_espresso' ), $forward, $route );
+			$msg = sprintf( __( 'The function %s for the %s forwarding route is in invalid.', 'event_espresso' ), $forward, $route );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		EE_Config::$_module_forward_map[ $route ][ absint( $status ) ] = $forward;
+//		printr( EE_Config::$_module_forward_map, 'EE_Config::$_module_forward_map  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	}
 
 
@@ -480,8 +481,8 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function get_forward( $route = NULL, $status = 0 ) {
-		if ( isset( EE_Config::$_module_route_map[ $route ][ $status ] )) {
-			return EE_Config::$_module_route_map[ $route ][ $status ];
+		if ( isset( EE_Config::$_module_forward_map[ $route ][ $status ] )) {
+			return EE_Config::$_module_forward_map[ $route ][ $status ];
 		}
 		return NULL;
 	}
@@ -499,12 +500,12 @@ final class EE_Config {
 	 */
 	public static function register_view( $route = NULL, $status = 0, $view = NULL ) {
 		if ( ! isset( EE_Config::$_module_route_map[ $route ] ) ||  empty( $route )) {
-			$msg = sprintf( __( 'An error has occured. The module route %s for this view has not been registered.', 'event_espresso' ), $route );
+			$msg = sprintf( __( 'The module route %s for this view has not been registered.', 'event_espresso' ), $route );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		if ( ! is_readable( $view )) {
-			$msg = sprintf( __( 'An error has occured. The %s view file could not be found or is not readable due to file permissions.', 'event_espresso' ), $view );
+			$msg = sprintf( __( 'The %s view file could not be found or is not readable due to file permissions.', 'event_espresso' ), $view );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
