@@ -97,8 +97,14 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 
 		
 		 //set that field on the other model to this model's ID
-		 $other_model_obj->set($fk_field_on_other_model->get_name(),null, true);
-		 $other_model_obj->save();
+		 if ( $this->_blocking_delete ) {
+		 	$other_model_obj->set($fk_field_on_other_model->get_name(),null,true);
+		 	$other_model_obj->save();
+		 } else {
+		 	$other_model_obj->delete();
+		 	$other_model_obj->set($fk_field_on_other_model->get_name(),null,true);
+		 	return $other_model_obj;
+		 }
 		 return $other_model_obj;
 	 }
 
@@ -202,16 +208,24 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 
 				if ( $has_parent_obj ) {
 					//this makes sure the update on the current obj happens to the revision's row NOT the parent row.
+					
 					$other_obj->set( $this->_parent_pk_relation_field, $other_obj->ID());
 					$other_obj->set($pk_on_related_model, $has_parent_obj->ID() );
 					$other_obj->set($this->_primary_cpt_field, $this_obj->ID());
-					$other_obj->save();
-					return array( $other_obj );
+
+					if ( !$remove_relation ) {
+						$other_obj->save();
+						return array( $other_obj ); 
+					} elseif ( $remove_relation && !$this->_blocking_delete) {
+						$other_obj->delete();
+						$other_obj->set($this->_parent_pk_relation_field, NULL, true);
+						return array($other_obj);
+					}
 			
 				} else {
 					$other_obj->set( $this->_parent_pk_relation_field, $other_obj->ID() );
 					$other_obj->set( $this->_primary_cpt_field, $this_obj->ID() );
-					$other_obj->set($pk_on_related_model, NULL ); //ensure we create a new row for the autosave with parent id the same as the incoming ID.
+					$other_obj->set($pk_on_related_model, NULL, true); //ensure we create a new row for the autosave with parent id the same as the incoming ID.
 					$other_obj->save(); //make sure we insert.
 					return array( $other_obj );
 				}
@@ -219,7 +233,7 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 
 			//var_dump('what makes it here');
 			//var_dump($other_obj);
-			//the final possible condition is that the incoming other_model obj has a NULL pk which means it just gets saved (which in turn creates it)
+			//the next possible condition is that the incoming other_model obj has a NULL pk which means it just gets saved (which in turn creates it)
 
 			//the last possible condition on a revision is that the incoming other_model object has a fk that == $this_obj pk which means we just return the $other obj and let it save as normal so we see the return at the bottom of this method.
 
