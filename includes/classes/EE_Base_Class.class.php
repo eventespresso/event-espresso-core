@@ -851,7 +851,7 @@ class EE_Base_Class{
 	 * @return EE_Base_Class the relation was removed from
 	 */
 	public function _remove_relation_to($otherObjectModelObjectOrID,$relationName){
-		$otherObject = $this->get_model()->remove_relationship_to($this, $otherObject, $relationName);
+		$otherObject = $this->get_model()->remove_relationship_to($this, $otherObjectModelObjectOrID, $relationName);
 		$this->clear_cache($relationName, $otherObject);
 		return $otherObject;
 	}
