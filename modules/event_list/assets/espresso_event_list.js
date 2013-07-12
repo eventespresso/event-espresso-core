@@ -6,19 +6,6 @@ jQuery(document).ready(function($) {
 	function espresso_resize_event_list() {
 		var winWidth = $('#espresso-events-list-wrap-dv').width();
 		var conWidth;
-//		if(winWidth < 640) {
-//			conWidth = 320;
-//			col = 1
-//		} else if(winWidth < 960) {
-//			conWidth = 640;
-//			col = 2;
-//		} else if(winWidth < 1280) {
-//			conWidth = 960;
-//			col = 3;
-//		} else {
-//			conWidth = 1280;
-//			col = 4;
-//		}
 		if(winWidth < 560) {
 			conWidth = 280;
 			col = 1
