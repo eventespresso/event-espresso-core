@@ -71,7 +71,7 @@ class EE_Error extends Exception {
 	* 	@access	private
     *	@var boolean	
 	*/
-	private static $_espresso_notices = array( 'success' => FALSE, 'errors' => FALSE );
+	private static $_espresso_notices = array( 'success' => FALSE, 'errors' => FALSE, 'attention' => FALSE );
 
 
 
@@ -372,7 +372,25 @@ class EE_Error extends Exception {
 	* 	@return 		void
 	*/
 	public static function add_success( $msg = NULL, $file = NULL, $func = NULL, $line = NULL ) {
-		self::_add_notice ( 'success', $msg );
+		self::_add_notice ( 'success', $msg, $file, $func, $line );
+	}
+
+
+
+
+
+	/**
+	* 	add attention message
+	*
+	*	@access public
+	* 	@param		string		$msg	the message to display to users or developers - adding a double pipe || (OR) creates separate messages for user || dev
+	* 	@param		string		$file		the file that the error occured in - just use __FILE__
+	* 	@param		string		$func	the function/method that the error occured in - just use __FUNCTION__
+	* 	@param		string		$line	the line number where the error occured - just use __LINE__
+	* 	@return 		void
+	*/
+	public static function add_attention( $msg = NULL, $file = NULL, $func = NULL, $line = NULL ) {
+		self::_add_notice ( 'attention', $msg, $file, $func, $line );
 	}
 
 
@@ -400,6 +418,7 @@ class EE_Error extends Exception {
 		$msg = WP_DEBUG ? $dev_msg : $user_msg;
 		// add notice if message exists
 		if ( ! empty( $msg )) {
+			add_filter( 'FHEE_load_css', '__return_true' );
 			self::$_espresso_notices[ $type ][] = $msg . $error_code;
 		}
 		
@@ -417,6 +436,20 @@ class EE_Error extends Exception {
 	*/
 	public static function overwrite_success() {
 		self::$_espresso_notices['success'] = FALSE;
+	}
+
+
+
+
+
+	/**
+	* 	in some case it may be necessary to overwrite the existing attention messages
+	*
+	*	@access public
+	* 	@return 		void
+	*/
+	public static function overwrite_attention() {
+		self::$_espresso_notices['attention'] = FALSE;
 	}
 
 
@@ -449,6 +482,7 @@ class EE_Error extends Exception {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		$success_messages = '';
+		$attention_messages = '';
 		$error_messages = '';
 
 		//printr( self::$_espresso_notices, 'espresso_notices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -457,54 +491,69 @@ class EE_Error extends Exception {
 		if (isset($_REQUEST['success']) && $_REQUEST['success'] != '') {
 			self::$_espresso_notices['success'][] = urldecode($_REQUEST['success']);
 		}
+		if (isset($_REQUEST['attention']) && $_REQUEST['attention'] != '') {
+			self::$_espresso_notices['attention'][] = urldecode($_REQUEST['attention']);
+		}
 		if (isset($_REQUEST['errors']) && $_REQUEST['errors'] != '') {
 			self::$_espresso_notices['errors'][] = urldecode($_REQUEST['errors']);
 		}
 
 		// check for success messages
-		//if ( isset( self::$_espresso_notices['success'] ) && is_array( self::$_espresso_notices['success'] ) && ! empty( self::$_espresso_notices['success'] )) {
-		if (self::$_espresso_notices['success']) {
-			// cycle through all of them
-			foreach (self::$_espresso_notices['success'] as $success) {
-				// compile them into one string of paragraphs
-				$success_messages .= $success . '<br />';
-			}
-			// remove last linebreak
-			$success_messages = substr($success_messages, 0, ( count($success_messages) - 7));
+		if ( self::$_espresso_notices['success'] ) {
+			// combine messages
+			$success_messages .= implode( self::$_espresso_notices['success'], '<br />' );
 			// possibly encode for url transmission
 			$success_messages = $url_encode ? urlencode($success_messages) : $success_messages;
 		}
 
+		// check for attention messages
+		if ( self::$_espresso_notices['attention'] ) {
+			// combine messages
+			$attention_messages .= implode( self::$_espresso_notices['attention'], '<br />' );
+			// possibly encode for url transmission
+			$attention_messages = $url_encode ? urlencode($attention_messages) : $attention_messages;
+		}
+
 		// check for error messages
-		//if ( isset( self::$_espresso_notices['errors'] ) && is_array( self::$_espresso_notices['errors'] ) && ! empty( self::$_espresso_notices['errors'] )) {
-		if (self::$_espresso_notices['errors']) {
-			// cycle through all of them
-			foreach (self::$_espresso_notices['errors'] as $error) {
-				// compile them into one string of paragraphs
-				$error_messages .= $error . '<br />';
-			}
-			// remove last linebreak
-			$error_messages = substr($error_messages, 0, ( count($error_messages) - 7));
+		if ( self::$_espresso_notices['errors'] ) {
+			$error_messages .= count( self::$_espresso_notices['errors'] ) > 1 ? __( 'The following errors have occured:<br />', 'event_espresso' ) : __( 'An error has occured. ', 'event_espresso' );
+			// combine messages
+			$error_messages .= implode( self::$_espresso_notices['errors'], '<br />' );
 			$error_messages = $url_encode ? urlencode($error_messages) : $error_messages;
 		}
 
 		if ($format_output) {
 
-			$notices = '';
+			$notices = '<div id="espresso-notices">';
+			
+			$css_id = is_admin() ? 'message' : 'espresso-notices-';
+			$close = is_admin() ? '' : '<a class="close-espresso-notice">&times;</a>';
 
 			if ($success_messages != '') {
+				$css_class = is_admin() ? 'updated fade' : 'success fade-away';
 				//showMessage( $success_messages );
-				$notices = '<div id="message" class="updated fade"><p>' . $success_messages . '</p></div>';
+				$notices .= '<div id="' . $css_id . 'success" class="espresso-notices ' . $css_class . '"><p>' . $success_messages . '</p>' . $close . '</div>';
 			}
 
-			if ($error_messages != '') {
+			if ($attention_messages != '') {
+				$css_class = is_admin() ? 'updated fade' : 'attention fade-away';
 				//showMessage( $error_messages, TRUE );
-				$notices .= '<div id="message" class="error fade fade-away"><p>' . $error_messages . '</p></div>';
+				$notices .= '<div id="' . $css_id . 'attention" class="espresso-notices ' . $css_class . '"><p>' . $attention_messages . '</p>' . $close . '</div>';
 			}
+			
+			if ($error_messages != '') {
+				$css_class = is_admin() ? 'error fade' : 'error fade-away';
+				//showMessage( $error_messages, TRUE );
+				$notices .= '<div id="' . $css_id . 'error" class="espresso-notices ' . $css_class . '"><p>' . $error_messages . '</p>' . $close . '</div>';
+			}
+			
+			$notices .= '</div>';
+			
 		} else {
 
 			$notices = array(
 					'success' => $success_messages,
+					'attention' => $attention_messages,
 					'errors' => $error_messages
 			);
 			
