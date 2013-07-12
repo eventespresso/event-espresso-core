@@ -153,20 +153,7 @@ final class EE_Front_Controller {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function init() {
-			
-			//random debug code added by mike.
-//			$this->EE->load_class('Attendee',false,false,false);
-//			$att = EE_Attendee::new_instance(array('ATT_lname'=>'nelson','ATT_ID'=>15));
-//			echo 'echodump of $att';
-//			var_dump($att);
-//			
-//			$att2 = EE_Attendee::new_instance(array('ATT_lname'=>'wilson'));
-//			$att2->set_city('moscow');
-//			$att2->set('ATT_ID',15);
-//			echo 'echodump of $att2';
-//			var_dump($att2);
-		
+	public function init() {		
 	}
 
 
