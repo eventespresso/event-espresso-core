@@ -155,7 +155,7 @@ final class EE_System {
 		foreach($filepaths as $filepath){
 			$class_to_filepath_map [ $this->_get_classname_from_filepath_with_standard_filename($filepath) ] = $filepath;
 		}
-		printr( $class_to_filepath_map, '$class_to_filepath_map  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//printr( $class_to_filepath_map, '$class_to_filepath_map  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		EE_Registry::register_autoloader($class_to_filepath_map);
 	}
 
