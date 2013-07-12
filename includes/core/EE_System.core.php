@@ -96,7 +96,7 @@ final class EE_System {
 			require_once( EE_CORE . 'EE_Registry.core.php' );
 			$this->EE = EE_Registry::instance();
 		} else {
-			$msg = __( 'An error has occured. The EE_Registry could not be loaded.', 'event_espresso' );
+			$msg = __( 'The EE_Registry could not be loaded.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
