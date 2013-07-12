@@ -499,11 +499,31 @@ class EEH_Activation {
 			
 			$new_org_options = array_merge( $default_org_options, $existing_org_options );
 			update_user_meta( $espresso_wp_user, 'events_organization_settings', $new_org_options );
-			return $new_org_options;
+			return self::initialize_config($new_org_options);
 		
 		}
-		return $existing_org_options;
+		return self::initialize_config($existing_org_options);
 
+	}
+
+
+
+	/**
+	 * This simply takes an array of org_options, converts them to an object and returns
+	 * @param  array $cfg_options array of org_options
+	 * @return stdClass
+	 */
+	public static function initialize_config( $cfg_options ) {
+		// force $this->EE->CFG into an object
+		if ( is_array( $cfg_options )) {
+			$CFG = new stdClass();
+			foreach ( $cfg_options as $k => $v ) {
+				$CFG->$k = $v;
+			}
+			return $CFG;
+		} else {
+			return array();
+		}
 	}
 
 

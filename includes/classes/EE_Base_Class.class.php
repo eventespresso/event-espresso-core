@@ -161,13 +161,7 @@ class EE_Base_Class{
 		 
 		 //if we're not in the constructor...
 		 //now check if what we set was a primary key
-//		 echo 'echodump of $this->_props_n_values_provided_in_consturctor';
-//		 var_dump($this->_props_n_values_provided_in_consturctor);
-//		 echo 'echodump of $field_name';
-//		 var_dump($field_name);
-//		 echo 'echodump of $this->_get_primary_key_name(get_class($this))';
-//		 var_dump($this->_get_primary_key_name(get_class($this)));
-		 if($this->_props_n_values_provided_in_constructor &&
+		 if($this->_props_n_values_provided_in_constructor && //note: props_n_values_provided_in_constructor is only set at the END of the constructor
 				 $field_name == $this->_get_primary_key_name(get_class($this)) && 
 				 $field_value){
 			//if so, we want all this object's fields to be filled either with
@@ -190,7 +184,6 @@ class EE_Base_Class{
 
 		 //let's unset any cache for this field_name from the $_cached_properties property.
 		 $this->_clear_cached_property( $privateAttributeName );
-		 
 	}
 
 
@@ -702,7 +695,7 @@ class EE_Base_Class{
 		$this->get_model()->assume_values_already_prepared_by_model_object(true);
 			
 		if ( !empty( $save_cols_n_values[self::_get_primary_key_name( get_class($this) )] ) ){
-			$results = $this->get_model()->update ( $save_cols_n_values, array(array(self::_get_primary_key_name(get_class($this))=>$this->ID())) );
+			$results = $this->get_model()->update ( $save_cols_n_values, array(array(self::_get_primary_key_name(get_class($this))=>$this->ID()),'default_where_conditions'=>'other_models_only') );
 		} else {
 			unset($save_cols_n_values[self::_get_primary_key_name( get_class( $this) )]);
 			$results = $this->get_model()->insert( $save_cols_n_values, true);

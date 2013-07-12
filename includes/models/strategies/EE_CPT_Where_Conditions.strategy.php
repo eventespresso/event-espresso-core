@@ -3,7 +3,7 @@
 /*
  * Strategy specifically for adding where conditions specific to CPT models.
  */
-class EE_Default_CPT_Where_Conditions extends EE_Default_Where_Conditions{
+class EE_CPT_Where_Conditions extends EE_Default_Where_Conditions{
 	
 	protected $_post_type;
 	protected $_meta_field;

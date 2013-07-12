@@ -52,6 +52,9 @@ if ( ! defined( 'DS' )) {
 if ( ! defined( 'PS' )) {
 	define( 'PS', PATH_SEPARATOR );
 }
+if( ! defined( 'SP' ) ){
+	define('SP',' ');
+}
 // define the plugin directory and URL
 define("EVENT_ESPRESSO_PLUGINPATH", DS . plugin_basename(__FILE__) . DS);
 define("EVENT_ESPRESSO_PLUGINFULLPATH", plugin_dir_path(__FILE__));
