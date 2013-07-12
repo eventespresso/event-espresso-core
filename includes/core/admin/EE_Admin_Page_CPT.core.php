@@ -314,6 +314,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		$nonce = isset( $this->_req_data['autosavenonce'] ) ? $this->_req_data['autosavenonce'] : NULL;
 		$this->_verify_nonce( $nonce, 'autosave' );
 
+		//make sure we define doing autosave (cause WP isn't triggering this we want to make sure we define it)
+		if ( !defined('DOING_AUTOSAVE') ) define('DOING_AUTOSAVE', true);
 
 		//if we made it here then the nonce checked out.  Let's run our methods and actions
 		if ( method_exists( $this, '_ee_autosave_' . $this->_current_view ) ) {
@@ -322,6 +324,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		do_action('AHEE__EE_Admin_Page_CPT_core_do_extra_autosave_stuff', $this );
 		do_action('AHEE__EE_Admin_Page_CPT_core_do_extra_autosave_stuff_' . get_class( $this ), $this );
+
 
 		//now let's return json
 		$this->_return_json();		
