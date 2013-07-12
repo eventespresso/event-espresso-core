@@ -59,6 +59,10 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 		 //handle possible revisions
 		 $other_model_obj = $this->_check_for_revision($this_model_obj, $other_model_obj);
 
+		 //if is array, then we've already done the add_relation so let's get out
+		if ( is_array( $other_model_obj ) )
+			return $other_model_obj[0];
+
 		 //find the field on th eother model which is a foreign key to this model
 		 $fk_field_on_other_model = $this->get_other_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
 		 //set that field on the other model to this model's ID
@@ -79,9 +83,13 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 	 function remove_relation_to($this_obj_or_id, $other_obj_or_id){
 	 	$this_model_obj = $this->get_this_model()->ensure_is_obj($this_obj_or_id);
 		$other_model_obj = $this->get_other_model()->ensure_is_obj($other_obj_or_id);
-
 		//handle possible revisions
 		$other_model_obj = $this->_check_for_revision( $this_model_obj, $other_model_obj, TRUE );
+
+
+		//if is array, then we've already done the add_relation so let's get out
+		if ( is_array( $other_model_obj ) )
+			return $other_model_obj[0];
 
 
 		 //find the field on th eother model which is a foreign key to this model
@@ -133,22 +141,35 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 	 	$id_to_use = $autosave ? $autosave->ID : $model_object_id;
 
 	 	$autosave_relations =  parent::get_all_related( $id_to_use, $query_params, $values_already_prepared_by_model_object );
-	 	$parent_ids = array();
+	 	$parent_ids = $parents = array();
 	 	$return_objs = array();
 		
 		//k this is where things differ because NOW what we're going to do is get the PARENTS for the get all related (and we'll also start setting up the return_objs array containing related that DON'T have parent ids, for those that DON'T have parents to merge with our returned objects);
 		foreach ( $autosave_relations as $a_r ) {
-			if ( $pid = $a_r->parent() && !empty( $pid ) ) {
+			$pid = $a_r->parent();
+			if ( !empty( $pid ) ) {
 				$parent_ids[] = $pid;
 			} else {
 				$return_objs[] = $a_r;
 			}
 		}
 
+		//we have to make sure we also include the ORIGINAL values
+		$originals = parent::get_all_related($model_object_or_id, $query_params, $values_already_prepared_by_model_object);
+
+		//merge $originals with $return_objs
+		if ( $originals ) {
+			$return_objs = array_merge($originals, $return_objs);
+		}
+
 		//now we setup the query to get all the parents
-		$query_param_where_this_model_pk = $this->get_this_model()->get_this_model_name().".".$this->get_this_model()->get_primary_key_field()->get_name();
-		$query_param[0][$query_param_where_this_model_pk] = array('IN', $parent_ids );
-		$parents = $this->get_other_model()->get_all($query_param);
+		if ( !empty( $parent_ids ) ) {
+			$query_param_where_this_model_pk = $this->get_this_model()->get_this_model_name().".".$this->get_this_model()->get_primary_key_field()->get_name();
+			$query_param[0][$query_param_where_this_model_pk] = array('IN', $parent_ids );
+			$parents = $this->get_other_model()->get_all($query_param);
+		}
+
+		//var_dump($parents);
 
 
 		//now merge parents with our current $return_objs and send back
@@ -166,17 +187,41 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 	 * @return EE_Base_Class. ($other_obj); 
 	 */
 	protected function _check_for_revision( $this_obj, $other_obj, $remove_relation = FALSE ) {
-		$pk_on_related_model = $this->get_other_model()->get_primary_key_field()->get_name;
+		$pk_on_related_model = $this->get_other_model()->get_primary_key_field()->get_name();
 		//now we need to determine if we're in a WP revision save cause if we are we need to do some special handling
 		if (  $this_obj->post_type() == 'revision' ) {
-			//let's do query on this objects model to see if the incoming pk value on the obj matches any parents in this objects table.
-			$has_parent_obj = $this->get_other_model()->get_one( array( $this->_parent_pk_relation_field_name => $other_obj->ID(), $this->_primary_cpt_field_name => $this_obj->ID() ) );
+			//first if $other_obj fk = this_obj pk then we know that this is a pk object, let's make sure there is a matching set for the autosave if there is then we save over it, if there isn't then we need to create a new one.
+			$parent_evt_id = $this_obj->parent();
+			/*var_dump($parent_evt_id);
+			var_dump($this_obj);
+			var_dump($other_obj);/**/
 
-			if ( $has_parent_object ) {
-				//this makes sure the update on the current obj happens to the revision's row NOT the parent row.
-				$other_obj->set($pk_on_related_model, $has_parent_obj->ID() );
-		
+			if ( !empty($parent_evt_id) && $parent_evt_id == $other_obj->get($this->_primary_cpt_field) ) {
+				//let's do query on this objects model to see if the incoming pk value on the obj matches any parents in this objects table.
+				$has_parent_obj = $this->get_other_model()->get_one( array( array( $this->_parent_pk_relation_field => $other_obj->ID(), $this->_primary_cpt_field => $this_obj->ID() ) ) );
+
+				if ( $has_parent_obj ) {
+					//this makes sure the update on the current obj happens to the revision's row NOT the parent row.
+					$other_obj->set( $this->_parent_pk_relation_field, $other_obj->ID());
+					$other_obj->set($pk_on_related_model, $has_parent_obj->ID() );
+					$other_obj->set($this->_primary_cpt_field, $this_obj->ID());
+					$other_obj->save();
+					return array( $other_obj );
+			
+				} else {
+					$other_obj->set( $this->_parent_pk_relation_field, $other_obj->ID() );
+					$other_obj->set( $this->_primary_cpt_field, $this_obj->ID() );
+					$other_obj->set($pk_on_related_model, NULL ); //ensure we create a new row for the autosave with parent id the same as the incoming ID.
+					$other_obj->save(); //make sure we insert.
+					return array( $other_obj );
+				}
 			}
+
+			//var_dump('what makes it here');
+			//var_dump($other_obj);
+			//the final possible condition is that the incoming other_model obj has a NULL pk which means it just gets saved (which in turn creates it)
+
+			//the last possible condition on a revision is that the incoming other_model object has a fk that == $this_obj pk which means we just return the $other obj and let it save as normal so we see the return at the bottom of this method.
 
 		} else {
 			
@@ -185,18 +230,20 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 				//okay this is is a normal update/save/remove so, let's make sure the other object is not a revision of the current object.
 				//the other object will likely NOT have the correct fk on it (which is the primary_cpt_field_mame) so we must retrieve from the db to get that first.
 				$existing_other_obj = $this->get_other_model()->get_one_by_ID($other_obj->ID());
-				$potential_revision_id = $other_obj->get($this->_primary_cpt_field_name);
+				$potential_revision_id = is_object($existing_other_obj) ? $existing_other_obj->get($this->_primary_cpt_field) : NULL;
 
 				if ( $parent_this_obj_id = wp_is_post_revision($potential_revision_id) ) {
 					//yes the OTHER object is linked to the revision of the parent, not the parent itself. That means we need to make the other_object an attachment of this_obj and then duplicate other_obj for the revision.
-					$other_obj->set($this->_primary_cpt_field_name, $this_obj->ID() );
+					$other_obj->set($this->_primary_cpt_field, $this_obj->ID() );
+					$other_obj->save();
 
 					//now create a new other_obj and fill with details from existing object
 					$new_obj = $other_obj;
-					$new_obj->set( $this->_primary_cpt_field_name, $potential_revision_id );
-					$new_obj->set( $this->_parent_pk_relation_field_name, $other_obj->ID() );
+					$new_obj->set( $this->_primary_cpt_field, $potential_revision_id );
+					$new_obj->set( $this->_parent_pk_relation_field, $other_obj->ID() );
 					$new_obj->set( $pk_on_related_model, NULL );
 					$new_obj->save();
+					return array( $new_obj );
 				}
 
 			}
