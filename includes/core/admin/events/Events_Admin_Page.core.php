@@ -705,8 +705,16 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'DTT_order' => $row
 				),
 				$timezone);
+
+			//we have to make sure we set the saved_id first (if it's not empty) because otherwise we could miss ids that are already attached to parents.
+			$dtt_id = $DTM->ID();
+
+			if ( !empty( $dtt_id ) )
+				$saved_dtts[] = $dtt_id;
 			
 			$DTT = $evtobj->_add_relation_to( $DTM, 'Datetime' );
+
+			//now we got to make sure we add the new DTT_ID to the $saved_dtts array  because it is possible there was a new one created for the autosave.
 			$saved_dtts[] = $DTT->ID();
 
 			$success = !$success ? $success : $DTT; //if ANY of these updates fail then we want the appropriate global error message
@@ -714,6 +722,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		//now we need to REMOVE any dtts that got deleted.
 		$old_datetimes = maybe_unserialize( $data['datetime_IDs'] );
+
+
 		if ( is_array( $old_datetimes ) ) {
 			$dtts_to_delete = array_diff( $old_datetimes, $saved_dtts );
 			foreach ( $dtts_to_delete as $id ) {
@@ -757,6 +767,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		//now let's get the attached datetimes from the most recent autosave
 		$dtts = $event->get_many_related('Datetime');
+
 		$dtt_ids = array();
 		foreach( $dtts as $dtt ) {
 			$dtt_ids[] = $dtt->ID();
