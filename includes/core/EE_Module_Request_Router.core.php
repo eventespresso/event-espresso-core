@@ -34,7 +34,7 @@ final class EE_Module_Request_Router {
 	 * 	@var 	string	$_current_route
 	 *  @access 	private
 	 */
-	private $_current_route = NULL;
+//	private $_current_route = NULL;
 
 	/**
 	 * 	EE_Registry Object
@@ -60,17 +60,16 @@ final class EE_Module_Request_Router {
 
 
 	/**
-	 * 	get_routes
+	 * 	get_route
 	* 
 	 * 	on the first call  to this method, it checks the EE_Request_Handler for a "route"
 	* 	on subsequent calls to this method, instead of checking the EE_Request_Handler for a route,
 	* 	it checks the previous routes array, and checks if the last called route has any forwarding routes registered for it
-	* 	( routes that eventually resolve to a valid module method, get added to the previous routes array )
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function get_routes() {
+	public function get_route() {
 		// assume this if first route being called
 		$previous_route = FALSE;
 		// but is it really ???
@@ -82,14 +81,14 @@ final class EE_Module_Request_Router {
 		//  has another route already been run ?
 		if ( $previous_route ) {			
 			// check if  forwarding has been set
-			$this->_current_route = $this->get_forward();
+			$current_route = $this->get_forward( $previous_route );
 			try {
 				//check for recursive forwarding
-				if ( isset( self::$_previous_routes[ $this->_current_route ] )) {
+				if ( isset( self::$_previous_routes[ $current_route ] )) {
 					throw new EE_Error( 
 						sprintf( 
 							__('An error occured. The %s route has already been called, and therefore can not be forwarded to, because an infinite loop would be created and break the interweb.','event_espresso'), 
-							$this->_current_route 
+							$current_route 
 						)
 					);
 				}
@@ -103,40 +102,42 @@ final class EE_Module_Request_Router {
 				return NULL;
 			}
 			// grab and sanitize module route
-			$this->_current_route = $this->EE->REQ->get( 'ee' );
+			$current_route = $this->EE->REQ->get( 'ee' );
 		}
-		//echo '<h4>$this->_current_route : ' . $this->_current_route . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		//echo '<h4>$current_route : ' . $current_route . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		// sorry, but I can't read what you route !
-		if ( empty( $this->_current_route )) {
+		if ( empty( $current_route )) {
 			return NULL;
 		}
-		// determine module and method for route
-		$this->_resolve_route();
+		//add route to previous routes array
+		self::$_previous_routes[] = $current_route;
+		return $current_route;
 	}
 
 
 
 	/**
-	 * 	_resolve_route
+	 * 	resolve_route
 	* 
 	 * 	this method simply takes a valid route, and resolves what module class method the route points to
 	 *
-	 *  @access 	private
-	 *  @return 	void
+	 *  @access 	public
+	 *  @param 	string		$current_route
+	 *  @return 	mixed		object | boolean
 	 */
-	private function _resolve_route() {		
+	public function resolve_route( $current_route ) {		
 		// get module method that route has been mapped to 
-		$module_method = EE_Config::get_route( $this->_current_route );
+		$module_method = EE_Config::get_route( $current_route );
 //		printr( $module_method, '$module_method  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// verify result was returned
 		if ( empty( $module_method )) {
-			$msg = sprintf( __( 'An error has occured. The requested route %s could not be mapped to any registered modules.', 'event_espresso' ), $this->_current_route );
+			$msg = sprintf( __( 'The requested route %s could not be mapped to any registered modules.', 'event_espresso' ), $current_route );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		// verfiy that result is an array
 		if ( ! is_array( $module_method )) {
-			$msg = sprintf( __( 'An error has occured. The %s  route has not been properly registered.', 'event_espresso' ), $this->_current_route );
+			$msg = sprintf( __( 'The %s  route has not been properly registered.', 'event_espresso' ), $current_route );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
@@ -144,7 +145,7 @@ final class EE_Module_Request_Router {
 		$module_name = $module_method[0];
 		// verfiy that a class method was registered properly
 		if ( ! isset( $module_method[1] )) {
-			$msg = sprintf( __( 'An error has occured. A class method for the %s  route has not been properly registered.', 'event_espresso' ), $this->_current_route );
+			$msg = sprintf( __( 'A class method for the %s  route has not been properly registered.', 'event_espresso' ), $current_route );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
@@ -152,20 +153,18 @@ final class EE_Module_Request_Router {
 		$method = $module_method[1];
 		// verfiy that class exists
 		if ( ! class_exists( $module_name )) {
-			$msg = sprintf( __( 'An error has occured. The requested %s class could not be found.', 'event_espresso' ), $module_name );
+			$msg = sprintf( __( 'The requested %s class could not be found.', 'event_espresso' ), $module_name );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		// verfiy that method exists
 		if ( ! method_exists( $module_name, $method )) {
-			$msg = sprintf( __( 'An error has occured. The class method %s for the %s route is in invalid.', 'event_espresso' ), $method, $this->_current_route );
+			$msg = sprintf( __( 'The class method %s for the %s route is in invalid.', 'event_espresso' ), $method, $current_route );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		// instantiate module and call route method
 		if ( $module = $this->_module_route_factory( $module_name, $method )) {
-			// if module is successfully created, then add it to previous routes array
-			self::$_previous_routes[] = $this->_current_route;
 			return $module;
 		}		
 		return FALSE;
@@ -186,14 +185,14 @@ final class EE_Module_Request_Router {
 		$mod_reflector = new ReflectionClass( $module_name );
 		// ensure that class is actually a module
 		if ( ! $mod_reflector->isSubclassOf( 'EED_Module' )) {
-			$msg = sprintf( __( 'An error has occured. The requested %s module is not of the class EED_Module.', 'event_espresso' ), $module_name );
+			$msg = sprintf( __( 'The requested %s module is not of the class EED_Module.', 'event_espresso' ), $module_name );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		// and pass the request object to the run method
 		$module = $mod_reflector->newInstance( $this->EE );
 		// now call whatever action the route was for
-		$module->$method;
+		call_user_func( array( $module, $method ));
 		return $module;
 	}
 
@@ -204,8 +203,8 @@ final class EE_Module_Request_Router {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function get_forward() {
-		return EE_Config::get_forward( $this->_current_route );
+	public function get_forward( $current_route ) {
+		return EE_Config::get_forward( $current_route );
 	}
 
 	/**
@@ -214,8 +213,8 @@ final class EE_Module_Request_Router {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function get_view() {
-		return EE_Config::get_view( $this->_current_route );
+	public function get_view( $current_route ) {
+		return EE_Config::get_view( $current_route );
 	}
 
 
