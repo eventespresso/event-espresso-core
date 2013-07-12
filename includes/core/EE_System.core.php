@@ -66,10 +66,10 @@ final class EE_System {
 	private function __construct( $activation ) {
 		// handy dandy object for holding shtuff
 		$this->_load_registry();
-		$this->_register_core_autoloaders();
+		$this->_register_custom_autoloaders();
 
 		if ( $activation ) {
-			$this->_register_model_and_class_autoloaders();
+			$this->_register_custom_autoloaders();
 			// set names for db tables
 			$this->_define_database_tables();
 			$this->check_database_tables();
@@ -109,14 +109,69 @@ final class EE_System {
 	 * 		@access private
 	 * 		@return void
 	 */
-	private function _register_core_autoloaders() {
-		
-		$classess = glob( EE_CORE . '*.core.php' );
-		foreach( $classess as $class_path ) {
-			$class_name = str_replace( '.core.php', '', basename( $class_path ));
-			EE_Registry::register_autoloader( array( $class_name => $class_path ));
+//	private function _register_custom_autoloaders() {
+//		
+//		$classess = glob( EE_CORE . '*.core.php' );
+//		foreach( $classess as $class_path ) {
+//			$class_name = str_replace( '.core.php', '', basename( $class_path ));
+//			EE_Registry::register_autoloader( array( $class_name => $class_path ));
+//		}		
+//	}
+
+
+
+	/**
+	 * 		register core, model and class 'autoloaders'
+	 *
+	 * 		@access private
+	 * 		@return void
+	 */
+	private function _register_custom_autoloaders() {
+		$this->_register_autoloaders_for_each_file_in_folder( EE_CORE );
+		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS );
+		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'fields' );
+		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'helpers' );
+		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'relations' );
+		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'strategies' );
+		$this->_register_autoloaders_for_each_file_in_folder( EE_CLASSES );
+	}
+	
+	
+	/**
+	 * Assumes all the files in this folder have the normal naming scheme (namely that their classname
+	 * is the file's name, plus ".whatever.php".) and adds each of them to the autoloader list.
+	 * If that's not the case, you'll need to improve this function or just use _get_classname_from_filepath_with_standard_filename() directly.
+	 * Yes this has to scan the directory for files, but it only does it once -- not on EACH
+	 * time the autoloader is used
+	 * @param string $folder name, with or without trailing /, doesn't matter
+	 * @return void
+	 */
+	private function _register_autoloaders_for_each_file_in_folder($folder){
+		// make sure last char is a /
+		$folder .= $folder[strlen($folder)-1] != DS ? DS : '';
+		$class_to_filepath_map = array();
+		//get all the files in that folder that end in php
+		$filepaths = glob( $folder.'*.php');
+		foreach($filepaths as $filepath){
+			$class_to_filepath_map [ $this->_get_classname_from_filepath_with_standard_filename($filepath) ] = $filepath;
 		}
-		
+		printr( $class_to_filepath_map, '$class_to_filepath_map  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		EE_Registry::register_autoloader($class_to_filepath_map);
+	}
+
+	/**
+	 * Given that the file in $filepath has the normal name, (ie, CLASSNAME.whatever.php),
+	 * extract that classname.
+	 * @param string $filepath
+	 * @return string
+	 */
+	private function _get_classname_from_filepath_with_standard_filename($filepath){
+		//extract file from path
+		$filename = basename( $filepath );
+		//now remove the first period and everything after
+		$pos_of_first_period = strpos( $filename,'.' );
+		$classname = substr($filename, 0, $pos_of_first_period);
+		return $classname;
 	}
 
 
@@ -274,7 +329,6 @@ final class EE_System {
 	 *  @return 	void
 	 */
 	public function init() {
-		$this->_register_model_and_class_autoloaders();
 		// load EE_Config
 		$this->EE->load_core( 'Config' );
 		// register Custom Post Types
@@ -290,64 +344,6 @@ final class EE_System {
 
 		//$this->create_event_slug_rewrite_rule();
 
-	}
-
-
-
-	/**
-	 * 		register model and class 'autoloaders'
-	 *
-	 * 		@access private
-	 * 		@return void
-	 */
-	private function _register_model_and_class_autoloaders() {
-		$this->_register_autoloaders_for_each_file_in_folder(EE_MODELS);
-		$this->_register_autoloaders_for_each_file_in_folder(EE_MODELS."/fields");
-		$this->_register_autoloaders_for_each_file_in_folder(EE_MODELS."/helpers");
-		$this->_register_autoloaders_for_each_file_in_folder(EE_MODELS."/relations");
-		$this->_register_autoloaders_for_each_file_in_folder(EE_MODELS."/strategies");
-		$this->_register_autoloaders_for_each_file_in_folder(EE_CLASSES);
-	}
-	
-	
-	/**
-	 * Assumes all the files in this folder have the normal naming scheme (namely that their classname
-	 * is the file's name, plus ".whatever.php".) and adds each of them to the autoloader list.
-	 * If that's not the case, you'll need to improve this function or just use _get_classname_from_filepath_with_standard_filename() directly.
-	 * Yes this has to scan the directory for files, but it only does it once -- not on EACH
-	 * time the autoloader is used
-	 * @param string $folder name, with or without trailing /, doesn't matter
-	 * @return void
-	 */
-	private function _register_autoloaders_for_each_file_in_folder($folder){
-		if($folder[strlen($folder)-1] != '/'){
-			$folder = $folder.'/';
-		}
-		$class_to_filepath_map = array();
-		//get all the files in that folder that end in php
-		$filepaths = glob( $folder.'*.php');
-		foreach($filepaths as $filepath){
-			$class_to_filepath_map [ $this->_get_classname_from_filepath_with_standard_filename($filepath) ] = $filepath;
-		}
-		EE_Registry::register_autoloader($class_to_filepath_map);
-	}
-
-	/**
-	 * Given that the file in $filepath has the normal name, (ie, CLASSNAME.whatever.php),
-	 * extract that classname.
-	 * @param string $filepath
-	 * @return string
-	 */
-	private function _get_classname_from_filepath_with_standard_filename($filepath){
-		//remove everything before the last /, if there is one
-		$pos_of_last_slash = strrpos($filepath,"/");
-		if($pos_of_last_slash !== FALSE){
-			$filename = substr($filepath,$pos_of_last_slash+1);
-		}
-		//now remove the first period and everything after
-		$pos_of_first_period = strpos($filename,".");
-		$classname = substr($filename, 0, $pos_of_first_period);
-		return $classname;
 	}
 
 
