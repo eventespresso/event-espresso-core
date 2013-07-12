@@ -1215,7 +1215,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$offset = ($current_page - 1) * $per_page;
 		$limit = $count ? '' : $offset . ',' . $per_page;
-		$orderby = isset($this->_req_data['orderby']) ? $this->_req_data['orderby'] : 'EVT_name';
+		$orderby = isset($this->_req_data['orderby']) ? $this->_req_data['orderby'] : 'EVT_ID';
 		$order = isset($this->_req_data['order']) ? $this->_req_data['order'] : "DESC";
 
 		if (isset($this->_req_data['month_range'])) {
