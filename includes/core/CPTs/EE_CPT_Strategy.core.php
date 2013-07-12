@@ -136,17 +136,22 @@ class EE_CPT_Strategy extends EE_BASE {
 	 * 	@return array
 	 */
 	public function apply_CPT_Strategy( $WP_Object ) {
-//		printr( $WP_Object, '$WP_Object  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// is current query for a CPT that matches an EE CPT ?
 		if ( isset( $WP_Object->query_vars['post_type'] ) && isset( $this->_CPTs[ $WP_Object->query_vars['post_type'] ] )) {
+			// grab details for the CPT the current query is for
 			$this->CPT = $this->_CPTs[ $WP_Object->query_vars['post_type'] ];
+			// set post type
 			$this->CPT['post_type'] = $WP_Object->query_vars['post_type'];
+			// the post or category or term that is triggering EE
 			$this->CPT['espresso_page'] = $this->EE->REQ->is_espresso_page();
+			// requested post name
 			$this->CPT['post_name'] = $this->EE->REQ->get( 'post_name' );
 			//printr( $this->CPT, '$this->CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			// make sure CPT name is set or things is gonna break
 			if ( isset( $this->CPT['singular_name'] )) {
-				// get list of CPTS via CPT Model
+				// CPT model name, ie: EEM_Event
 				$CPT_Model = 'EEM_' . $this->CPT['singular_name'];
+				// get CPT table data via CPT Model
 				$this->CPT['tables'] = $CPT_Model::instance()->get_tables();
 				// is there a Meta Table for this CPT?
 				$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] ) ? $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] : FALSE;
@@ -161,6 +166,7 @@ class EE_CPT_Strategy extends EE_BASE {
 
 			}				
 		}
+//		printr( $WP_Object, '$WP_Object  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	}
 
 
@@ -175,6 +181,7 @@ class EE_CPT_Strategy extends EE_BASE {
 		// does this CPT have a meta table ?
 		if ( isset( $this->CPT['meta_table'] )) {
 			global $wpdb;
+			// adds something like ", wp_esp_event_meta.* " to WP Query SELECT statement
 			$SQL .= ', ' . $this->CPT['meta_table']->get_table_name() . '.* ' ;
 		}
 		return $SQL;
@@ -192,7 +199,8 @@ class EE_CPT_Strategy extends EE_BASE {
 		// does this CPT have a meta table ?
 		if ( isset( $this->CPT['meta_table'] )) {
 			global $wpdb;
-			$SQL .= ' LEFT JOIN ' . $this->CPT['meta_table']->get_table_name() . ' ON (' . $this->CPT['meta_table']->get_table_name() . '.' . $this->CPT['meta_table']->get_fk_on_table() . ' = ' . $wpdb->posts . '.ID) ';
+			// adds something like " LEFT JOIN wp_esp_event_meta ON ( wp_esp_event_meta.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
+			$SQL .= ' LEFT JOIN ' . $this->CPT['meta_table']->get_table_name() . ' ON ( ' . $this->CPT['meta_table']->get_table_name() . '.' . $this->CPT['meta_table']->get_fk_on_table() . ' = ' . $wpdb->posts . '.ID ) ';
 		}
 		return $SQL;
 	}
