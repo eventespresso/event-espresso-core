@@ -15,6 +15,12 @@ class EE_Enum_Sanitization_Strategy extends EE_Sanitization_Strategy_Base{
 	 * @var string
 	 */
 	protected $_type_of_values;
+	
+	/**
+	 * allowed values for the $type_of_values constructor argument.
+	 * @var array
+	 */
+	private $_acceptable_types_of_values = array('string','int','integer','boolean','bool');
 	/**
 	 * 
 	 * @param array $enum_options Keys are values to be used in the system, values are internationalized strings to displaying
@@ -22,6 +28,11 @@ class EE_Enum_Sanitization_Strategy extends EE_Sanitization_Strategy_Base{
 	 */
 	public function __construct($enum_options, $type_of_values = 'string') {
 		$this->_enum_options = $enum_options;
+		if( ! in_array( $type_of_values,$this->_acceptable_types_of_values)){
+			throw new EE_Error(sprintf(__("You passed an invalid argument to EE_Enum_Sanitization_Strategy. Argument for type of values must be one of %s, you passed %s", "event_espresso"),implode(",",$this->_acceptable_types_of_values),$type_of_values));
+		}
+		$this->_type_of_values = $type_of_values;
+		
 		parent::__construct();
 	}
 	/**

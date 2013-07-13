@@ -151,7 +151,11 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 		$this->_sanitization_strategy = $strategy;
 	}
 	
-	protected function _get_validation_strategies(){
+	/**
+	 * Returns all teh validation strategies which apply to this field, numerically indexed
+	 * @return EE_Validation_Strategy_Base[]
+	 */
+	public function get_validation_strategies(){
 		if(is_array($this->_validation_strategies)){
 			return $this->_validation_strategies;
 		}else{
@@ -262,7 +266,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	 */
 	function get_jquery_validation_rules(){
 		$jquery_validation_rules = array();
-		foreach($this->_get_validation_strategies() as $validation_strategy){
+		foreach($this->get_validation_strategies() as $validation_strategy){
 			$jquery_validation_rules = array_merge($jquery_validation_rules, $validation_strategy->get_jquery_validation_rule_array());
 		}
 		if(! empty($jquery_validation_rules)){

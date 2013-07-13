@@ -469,6 +469,9 @@ final class EE_Front_Controller {
 	<?php $form = new EE_Sample_Form();
 	if($_SERVER['REQUEST_METHOD'] == 'POST'){
 		$form->receive_form_submission($_POST);
+		if($form->is_valid()){
+			echo "form submission successfully received!";
+		}
 	}
 	echo $form->get_html_and_js()?>
 	<input type='submit'>
