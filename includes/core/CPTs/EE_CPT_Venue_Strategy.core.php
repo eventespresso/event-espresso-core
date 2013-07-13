@@ -47,7 +47,8 @@ class EE_CPT_Venue_Strategy extends EE_CPT_Strategy {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function __construct( EE_Registry $EE, $CPT ) {
+	public function __construct( $arguments ) {
+		extract( $arguments );
 		$this->EE = $EE;
 		$this->CPT = $CPT;
 //		printr( $CPT, '$CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
