@@ -53,7 +53,7 @@ class EED_Invoice  extends EED_Module {
 		if ( is_readable( EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/Invoice/lib/Invoice.class.php' )) {
 			require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/Invoice/lib/Invoice.class.php' );
 		} else {
-			$msg = __( 'An error has occured. The Invoice.class.php file could not be loaded.', 'event_espresso' );
+			$msg = __( 'The Invoice.class.php file could not be loaded.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 //		add_filter( 'FHEE_load_org_options', '__return_true' );

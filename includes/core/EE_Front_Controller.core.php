@@ -77,7 +77,10 @@ final class EE_Front_Controller {
 		// header
 		add_action('wp_head', array( $this, 'header_meta_tag' ), 5 );
 		// the content
-		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );		
+		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
+		// display errors
+		add_action('wp_footer', array( $this, 'display_errors' ), 999 );
+
 	}
 
 
@@ -108,7 +111,7 @@ final class EE_Front_Controller {
 			// create static copy of EE for modules and shortcodes to access during their initial phases
 			 self::$registry = $this->EE;
 		} else {
-			wp_die( __( 'An error has occured. The EE_System files could not be loaded.', 'event_espresso' ));
+			wp_die( __( 'The EE_System files could not be loaded.', 'event_espresso' ));
 		}
 	}
 
@@ -166,6 +169,13 @@ final class EE_Front_Controller {
 //			$att2->set('ATT_ID',15);
 //			echo 'echodump of $att2';
 //			var_dump($att2);
+
+		// NOTICES TEST
+//		EE_Error::add_success('WOOT! This is a success message. Now we can dances!!!');
+//		EE_Error::add_error('This is an error message. It means you done bad bad things!!!');
+//		EE_Error::add_attention('This is an attention message. You should prolly read this... but... meh... do whatcha want!');
+//		EE_Error::add_error('Ermehgerd!!! MOAR ERRORS!!! Seff n Garf aw gonna be maaaaad at you!!!');
+
 		
 	}
 
@@ -192,7 +202,7 @@ final class EE_Front_Controller {
 
 
 	/**
-	 * 	wp_loaded - should fire after shortcode, module, addon, or other plugin's default priority init phases have run
+	 * 	wp_loaded - should fire after shortcode, module, addon, or other plugin's have been registered and their default priority init phases have run
 	 *
 	 *  @access 	public
 	 *  @return 	void
@@ -203,11 +213,30 @@ final class EE_Front_Controller {
 			EE_messages_init::init();
 		}
 
+	}
+
+
+
+
+
+	/*********************************************** 		WP HOOK		 ***********************************************/
+
+
+
+
+
+
+	/**
+	 * 	wp - basically last chance to do stuff before headers sent
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function wp() {
 		// process any content shortcodes
 		$this->_initialize_shortcodes();
 		// process request with module factory
-		$this->_process_request();
-
+		$this->_process_request();		
 	}
 
 
@@ -243,7 +272,7 @@ final class EE_Front_Controller {
 						foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
 							// verify shortcode is in list of registered shortcodes
 							if ( ! isset( $this->EE->shortcodes[ $shortcode_class ] )) {
-								$msg = sprintf( __( 'An error has occured. The %s shortcode has not been properly registered', 'event_espresso' ), $shortcode_class );
+								$msg = sprintf( __( 'The %s shortcode has not been properly registered', 'event_espresso' ), $shortcode_class );
 								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 								add_filter( 'FHEE_run_EE_the_content', '__return_true' );
 								break;
@@ -254,7 +283,7 @@ final class EE_Front_Controller {
 								$sc_reflector = new ReflectionClass( 'EES_' . $shortcode_class );								
 								// ensure that class is actually a shortcode
 								if ( ! $sc_reflector->isSubclassOf( 'EES_Shortcode' )) {
-									$msg = sprintf( __( 'An error has occured. The requested %s shortcode is not of the class "EES_Shortcode".', 'event_espresso' ), $shortcode_class );
+									$msg = sprintf( __( 'The requested %s shortcode is not of the class "EES_Shortcode".', 'event_espresso' ), $shortcode_class );
 									EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 									add_filter( 'FHEE_run_EE_the_content', '__return_true' );
 									break;
@@ -282,40 +311,22 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	private function _process_request() {
-//		printr( $this->EE, '$this->EE  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$Module_Request_Router = $this->EE->load_core( 'Module_Request_Router' );
 		// cycle thru module routes
-		while ( $module = $Module_Request_Router->get_routes() ) {
-//			printr( $module, '$module  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-			// fire the module class's run method, so that it can activate resources
-			$module->run();
-			$this->_view_template = $Module_Request_Router->get_view();
+		while ( $route = $Module_Request_Router->get_route() ) {
+			// determine module and method for route
+			$module = $Module_Request_Router->resolve_route( $route );
+			// get registered view for route
+			$this->_view_template = $Module_Request_Router->get_view( $route );
 		}
+		// if a view was registered for the last called route, then hook into template_include
 		if ( ! empty( $this->_view_template )) {
 			add_filter( 'template_include', array( $this, 'template_include' ), 1 );
 		}
-		
+//		printr( $this->EE, '$this->EE  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( EE_Config::instance(), 'EE_Config::instance()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
 	}
-
-
-
-
-	/*********************************************** 		WP HOOK		 ***********************************************/
-
-
-
-
-
-
-	/**
-	 * 	wp - basically last chance to do stuff before headers sent
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function wp() {
-	}
-
 
 
 
@@ -332,10 +343,10 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function wp_enqueue_scripts() {
-
+		
 		// css is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_css', '__return_true' );
 		if ( apply_filters( 'FHEE_load_css', FALSE )) {
-
+			
 			$this->EE->CFG->style_settings['enable_default_style'] = TRUE;
 			//Load the ThemeRoller styles if enabled
 			if ( isset( $this->EE->CFG->style_settings['enable_default_style'] ) && $this->EE->CFG->style_settings['enable_default_style'] ) {
@@ -375,6 +386,14 @@ final class EE_Front_Controller {
 					wp_register_style('espresso_themeroller', $themeroller_style_path . $this->EE->CFG->themeroller['themeroller_style'] . '/style.css');
 					wp_enqueue_style('espresso_themeroller');
 				}
+				
+				if ( file_exists( EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css' )) {
+					wp_register_style( 'espresso_default', EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css' );
+				} else {
+					wp_register_style( 'espresso_default', EVENT_ESPRESSO_PLUGINFULLURL . 'css/espresso_default.css' );
+				}
+				wp_enqueue_style('espresso_default');
+				
 			}
 
 		}
@@ -386,17 +405,31 @@ final class EE_Front_Controller {
 			// check if required scripts are loaded
 			if ( function_exists( 'wp_script_is' )) {
 				if ( ! wp_script_is( 'jquery' )) {
-					add_filter( 'the_content', array( $this, 'no_jquery' ), 100, 1 );
+					$msg = sprintf( 
+						__( '%sJquery is not loaded!%sEvent Espresso is unable to load Jquery do to a conflict with your theme or another plugin.', 'event_espresso' ),
+						'<em><br />',
+						'</em>'
+					);
+					EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				}
 			}
 			if ( ! function_exists( 'wp_head' )) {
-				add_filter( 'the_content', array( $this, 'no_wp_head' ), 100, 1 );
+				$msg = sprintf( 
+					__( '%sMissing wp_head() function.%sThe WordPress function wp_head() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.', 'event_espresso' ),
+					'<em><br />',
+					'</em>'
+				);
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
 			if ( ! function_exists( 'wp_footer' )) {
-				add_filter( 'the_content', array( $this, 'no_wp_footer' ), 100, 1 );
+				$msg = sprintf( 
+					__( '%sMissing wp_footer() function.%sThe WordPress function wp_footer() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.', 'event_espresso' ),
+					'<em><br />',
+					'</em>'
+				);
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
 		}
-
 
 	}
 
@@ -473,65 +506,11 @@ final class EE_Front_Controller {
 		
 		// nothing gets loaded at this point unless other systems turn this hookpoint on by using:  add_filter( 'FHEE_run_EE_the_content', '__return_true' );
 		if ( apply_filters( 'FHEE_run_EE_the_content', FALSE )) {
-			$the_content = EE_Error::get_notices() . $the_content;
 		}
+
 		return $the_content;
 	}
 
-
-	/**
-	 * 	no_jquery
-	 *
-	 *  @access 	public
-	 *  @return 	string
-	 */
-	public function no_jquery( $the_content ) {
-		ob_start();
-		?>
-			<div class="event_espresso_error">
-				<p>
-					<em><?php _e( 'Jquery is not loaded!', 'event_espresso' );?></em><br />
-					<?php _e( 'Event Espresso is unable to load Jquery do to a conflict with your theme or another plugin.', 'event_espresso' );?></p>
-			</div>
-		<?php
-		return ob_get_clean() . $the_content;
-	}
-
-	/**
-	 * 	script_check
-	 *
-	 *  @access 	public
-	 *  @return 	string
-	 */
-	public function no_wp_head( $the_content ) {
-		ob_start();
-		?>
-			<div class="event_espresso_error">
-				<p>
-					<em><?php _e( 'Missing wp_head() function.', 'event_espresso' );?></em><br />
-					<?php _e( 'The WordPress function wp_head() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.', 'event_espresso' );?></p>
-			</div>
-		<?php
-		return ob_get_clean() . $the_content;
-	}
-
-	/**
-	 * 	no_wp_footer
-	 *
-	 *  @access 	public
-	 *  @return 	string
-	 */
-	public function no_wp_footer( $the_content ) {
-		ob_start();
-		?>
-			<div class="event_espresso_error">
-				<p>
-					<em><?php _e( 'Missing wp_footer() function.', 'event_espresso' );?></em><br />
-					<?php _e( 'The WordPress function wp_footer() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.', 'event_espresso' );?></p>
-			</div>
-		<?php
-		return ob_get_clean() . $the_content;
-	}
 
 
 
@@ -553,6 +532,23 @@ final class EE_Front_Controller {
 //		printr( $template_path, '<br /><br />$template_path  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		return $template_path;
 	}
+
+
+
+	/*********************************************** 		UTILITIES		 ***********************************************/
+
+
+
+	/**
+	 * 	display_errors
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public function display_errors() {
+		echo EE_Error::get_notices();
+	}
+
 
 
 

@@ -51,11 +51,15 @@ class EE_CPT_Event_Strategy {
 		extract( $arguments );
 		$this->EE = $EE;
 		$this->CPT = $CPT;
-		
-		if ( $this->EE->REQ->is_espresso_page() == 'events' && $this->EE->REQ->get( 'post_name' ) == 'events' ) {
-			$this->EE->REQ->set( 'ee', 'events' );
-		} else if ( $this->EE->REQ->is_espresso_page() == 'events' ) {
-			$this->EE->REQ->set( 'ee', 'event' );
+//		echo '<h4>is_espresso_page : ' . $this->EE->REQ->is_espresso_page() . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>post_name : ' . $this->EE->REQ->get( 'post_name' )  . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		printr( $this->CPT, '$this->CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		if ( $this->CPT['espresso_page'] == $this->CPT['plural_slug'] && $this->CPT['post_name'] == $this->CPT['espresso_page'] ) {
+			// set "ee" to "events"
+			$this->EE->REQ->set( 'ee', $this->CPT['plural_slug'] );
+		} else if ( $this->CPT['espresso_page'] == $this->CPT['plural_slug'] ) {
+			// set "ee" to "event"
+			$this->EE->REQ->set( 'ee', $this->CPT['singular_slug'] );
 		}
 //		$this->EE->REQ->set( 'ee', $this->EE->REQ->is_espresso_page() );
 //		printr( $this->EE->REQ, '<br /><br />$this->EE->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -76,7 +80,7 @@ class EE_CPT_Event_Strategy {
 	 */
 	public function pre_get_posts(  $WP_Query  ) {
 		//printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		if ( ! $WP_Query->is_main_query() && ! $WP_Query->is_archive() ) {
+		if ( ! $WP_Query->is_main_query() ) {
 			return;
 		}
 //		$WP_Query->set( 'post_type', array( $this->CPT['post_type'] ));
@@ -95,15 +99,45 @@ class EE_CPT_Event_Strategy {
 	 *  @return 	void
 	 */
 	public function loop_start( $WP_Query ) {
-		$EVT = $this->EE->load_model( 'Event' );
+		// array for storing Event IDs
 		$EVT_IDs = array();
-		foreach( $WP_Query->posts as $WP_Post ) {
-			$EVT_IDs[] = $WP_Post->ID;
-		}
-//		$events = $EVT->get_all( array( 0 =>array( 'EVT_ID' => array( 'IN', $EVT_IDs ), 'DTT_primary' => 1 ), 'force_join' =>array( 'Datetime' )));
-//		printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( $EVT_IDs, '$EVT_IDs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( $events, '$events  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		// loop thru posts
+		if ( isset( $WP_Query->posts )) {
+			foreach( $WP_Query->posts as $event ) {
+				$EVT_IDs[] = $event->ID;
+			}
+//			printr( $EVT_IDs, '$EVT_IDs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+			// load models
+//			$EVT = $this->EE->load_model( 'Event' );
+//			$DTM = $this->EE->load_model( 'Datetime' );
+			$EVD = $this->EE->load_model( 'Event_Datetime' );
+			// grab datetimes for events
+			$event_datetimes = $EVD->get_all( array( array( 'EVT_ID' => array( 'IN', $EVT_IDs )), 'force_join' => array( 'Datetime' )));
+//			printr( $event_datetimes, '$event_datetimes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			$event_datetimes = is_array( $event_datetimes ) ? $event_datetimes : array();
+			// grab prices
+//			$prices = $DTM->get_all( array( array( 'Event_Price.EVT_ID' => array( 'IN', $EVT_IDs ))));
+			$prices = isset( $prices ) && is_array( $prices ) ? $prices : array();
+			// now loop thru posts
+			foreach( $WP_Query->posts as $EVT_ID => $event ) {
+				$WP_Query->posts[ $EVT_ID ]->datetimes = array();
+				$WP_Query->posts[ $EVT_ID ]->prices = array();
+				foreach ( $event_datetimes as $event_datetime ) {
+					if ( $event->ID == $event_datetime->get( 'EVT_ID' )) {
+						$WP_Query->posts[ $EVT_ID ]->datetimes[] = $event_datetime->get_first_related( 'Datetime' );
+					}
+				}
+				foreach ( $prices as $price ) {
+					if ( $event->ID == $price->get( 'EVT_ID' )) {
+						$WP_Query->posts[ $EVT_ID ]->prices[] = $price;
+					}
+				}
+			}
+		}		
+
+		//printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
 
 	}
 

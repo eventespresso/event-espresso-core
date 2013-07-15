@@ -6,17 +6,17 @@ jQuery(document).ready(function($) {
 	function espresso_resize_event_list() {
 		var winWidth = $('#espresso-events-list-wrap-dv').width();
 		var conWidth;
-		if(winWidth < 640) {
-			conWidth = 320;
+		if(winWidth < 560) {
+			conWidth = 280;
 			col = 1
-		} else if(winWidth < 960) {
-			conWidth = 640;
+		} else if(winWidth < 840) {
+			conWidth = 560;
 			col = 2;
-		} else if(winWidth < 1280) {
-			conWidth = 960;
+		} else if(winWidth < 1120) {
+			conWidth = 840;
 			col = 3;
 		} else {
-			conWidth = 1280;
+			conWidth = 1120;
 			col = 4;
 		}
 		//alert( 'conWidth = ' + conWidth + '\n' + 'currentWidth = ' + currentWidth );

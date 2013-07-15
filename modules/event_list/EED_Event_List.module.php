@@ -60,9 +60,9 @@ class EED_Event_List  extends EED_Module {
 //		add_filter( 'FHEE_run_EE_wp', '__return_true' );
 //		add_filter( 'FHEE_load_EE_Session', '__return_true' );
 //		add_action( 'wp_loaded', array( $this, 'wp_loaded' ));
-		add_action( 'wp', array( $this, 'wp' ));
-		add_action( 'loop_start', array( $this, 'loop_start' ), 1 );
+//		add_action( 'wp', array( $this, 'wp' ));
 		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 10 );  
+//		add_action( 'loop_start', array( $this, 'loop_start' ), 1 );
 		remove_all_filters( 'excerpt_length' );
 		add_filter( 'excerpt_length', array( $this, 'excerpt_length' ), 10 );
 		add_filter('excerpt_more', array( $this, 'excerpt_more' ), 10 );
@@ -133,30 +133,7 @@ class EED_Event_List  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function loop_start( $WP_Query ) {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-//		printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$EVT_IDs = array();
-		if ( isset( $WP_Query->posts )) {
-			foreach( $WP_Query->posts as $event ) {
-				$EVT_IDs[] = $event->ID;
-			}
-//			printr( $EVT_IDs, '$EVT_IDs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-			// load datetimes model
-			$DTM = $this->EE->load_model( 'Datetime' );
-			if ( $datetimes = $DTM->get_all( array( array( 'EVT_ID' => array( 'IN', $EVT_IDs ))))) {
-//				printr( $datetimes, '$datetimes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-				foreach( $WP_Query->posts as $event ) {
-					$event->datetimes = array();
-					foreach ( $datetimes as $datetime ) {
-						if ( $event->ID == $datetime->get( 'EVT_ID' )) {
-							$event->datetimes[] = $datetime;
-						}
-					}
-				}
-			}
-		}
-		
 
 		//printr( $this->EE->CFG, '$this->EE->CFG  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// attempt to add extra data to $wp_query (doesn't work so far)
@@ -201,7 +178,8 @@ class EED_Event_List  extends EED_Module {
 	 */
 	public static function the_event_date() {
 		global $post;
-		if ( isset( $post->datetimes ) && is_array( $post->datetimes )) {
+		//printr( $post, '$post  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		if ( isset( $post->datetimes ) && is_array( $post->datetimes ) && ! empty( $post->datetimes )) {
 			$datetime = array_shift( $post->datetimes );
 			$datetime->e_start_date_and_time();		
 		}
