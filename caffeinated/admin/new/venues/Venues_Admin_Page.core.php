@@ -474,6 +474,15 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
+	protected function _restore_cpt_item($post_id, $revision_id) {
+		$venue_obj = $this->_venue_model->get_one_by_ID($post_id);
+
+		//meta revision restore
+		$venue_obj->restore_revision($revision_id);
+	}
+
+
+
 
 
 
