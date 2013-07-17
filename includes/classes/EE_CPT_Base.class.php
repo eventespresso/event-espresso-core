@@ -134,6 +134,56 @@ class EE_CPT_Base extends EE_Base_Class{
 		return $this->_get_feature_image( $size, $attr );
 	}
 
+
+
+
+
+	/**
+	 * This is a method for restoring this_obj using details from the given $revision_id
+	 * @param  string|array $related_obj_name if included this will be used to restore for related obj if not included then we just do restore on the meta.  We will accept an array of related_obj_names for restoration here.
+	 * @param  int    $revision_id      ID of the revision we're gettting data from
+	 * @return void                   
+	 */
+	public function restore_revision( $revision_id, $related_obj_names = array() ) {
+		//get revision object
+		$revision_obj = $this->get_model()->get_one_by_ID($revision_id);
+
+		//no related_obj_name so we assume we're saving a revision on this object.
+		if ( empty( $related_obj_names ) ) {
+			$fields = $this->get_model()->get_meta_table_fields();
+
+			foreach( $fields as $field ) {
+				$this->set($field, $revision_obj->get($field) );
+			}
+
+			$this->save();
+		}
+
+		$related_obj_names = (array) $related_obj_name;
+
+		foreach ( $related_obj_names as $related_name ) {
+
+			//related_obj_name so we're saving a revision on an object related to this object
+			$related_objs = $this->get_many_related($related_name);
+			$revision_related_objs = $revision_obj->get_many_related($related_name);
+
+			//remove related objs from this object that are not in revision
+			//array_diff *should* work cause I think objects are indexed by ID?
+			$related_to_remove = array_diff( $related_objs, $revision_related_objs );
+			foreach ( $related_to_remove as $rr ) {
+				$this->_remove_relation_to( $rr, $related_name );
+			}
+
+			//add all related objs attached to revision to this object
+			foreach ( $revision_related_objs as $r_obj ) {
+				$this->_add_relation_to( $r_obj, $related_name );
+			}
+		}
+	}
+
+
+
+
 	
 	/**
 	 * Wrapper for get_post_meta, http://codex.wordpress.org/Function_Reference/get_post_meta
