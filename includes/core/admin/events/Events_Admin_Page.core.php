@@ -619,6 +619,23 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error( __('Event Details did not save successfully.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
+
+
+
+
+	/**
+	 * @see parent::restore_item()
+	 */
+	protected function _restore_cpt_item( $post_id, $revision_id ) {
+		//copy existing event meta to new post
+		$post_evt = $this->_event_model->get_one_by_ID($post_id);
+		
+		//meta revision restore
+		$post_evt->restore_revision($revision_id);
+
+		//related objs restore
+		$post_evt->restore_revision($revision_id, array('Venue', 'Datetime', 'Price', 'Question_Group') );
+	}
 	
 
 
