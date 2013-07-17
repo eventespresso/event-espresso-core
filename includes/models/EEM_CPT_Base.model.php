@@ -57,6 +57,34 @@ class EEM_CPT_Base extends EEM_Base{
 	 */
 	public static function define_table_name() { }
 
+
+
+
+	/**
+	 * This simply returns an array of the meta table fields (useful for when we just need to update those fields)
+	 * @param  bool $all triggers whether we include DB_Only fields or JUST non DB_Only fields.  Defaults to false (no dbonly fields)
+	 * @return array
+	 */
+	public function get_meta_table_fields( $all = FALSE ) {
+		$all_fields = $fields_to_return = array();
+		foreach ( $this->_tables as $alias => $table_obj ) {
+			if ( $table_obj instanceof EE_Secondary_Table )
+				$all_fields = array_merge( $this->_get_fields_for_table($alias), $all_fields );
+		}
+
+		if ( !$all ) {
+			foreach ( $fields as $name => $obj ) {
+				if ( $obj instanceof EE_DB_Only_Field_Base ) 
+					continue;
+				$fields_to_return[] = $name;
+			}
+		} else {
+			$fields_to_return = array_keys($all_fields);
+		}
+
+		return $fields_to_return;
+	}
+
 	
 	/**
 	 * Adds an event category with the specified name and description to the specified
