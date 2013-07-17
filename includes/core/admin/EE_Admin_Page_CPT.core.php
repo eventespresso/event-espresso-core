@@ -429,6 +429,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		if ( $post_type && $post_type == $this->page_slug ) {
 			//$post_id, $post
 			add_action('save_post', array( $this, 'insert_update'), 10, 2 );
+
+			//restores of revisions
+			add_action('wp_restore_post_revision', array($this, 'restore_revision'), 10, 2 );
 			//$post_id
 			add_action('trashed_post', array( $this, 'trash_cpt_item' ), 10 );
 			add_action('untrashed_post', array( $this, 'restore_cpt_item'), 10 );
@@ -459,6 +462,38 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		}
 		$this->_insert_update_cpt_item( $post_id, $post );
 	}
+
+
+
+
+
+
+
+	/**
+	 * This is a wrapper for the restore_cpt_revision route for cpt items so we can make sure that when a revision is triggered that we restore related items.  In order to work cpt classes MUST have a restore_cpt_revision method in them.  We also have our OWN action in here so addons can hook into the restore process easily.
+	 * @param  int    $post_id     ID of cpt item
+	 * @param  int    $revision_id ID of revision being restored
+	 * @return void 	            
+	 */
+	public function restore_revision( $post_id, $revision_id ) {
+		$post_id = $this->_restore_cpt_item( $post_id, $revision_id );
+		
+		//global action
+		do_action( 'AHEE_EE_Admin_Page_CPT__restore_revision', $post_id, $revision_id);
+
+		//class specific action so you can limit hooking into a specific page.
+		do_action( 'AHEE_EE_Admin_Page_CPT_' . get_class($this) . '__restore_revision', $post_id, $revision_id );
+	}
+
+
+
+	/**
+	 * @see restore_revision() for details
+	 * @param  int $post_id     ID of cpt item
+	 * @param  int $revision_id ID of revision for item
+	 * @return void              
+	 */
+	abstract protected function _restore_cpt_item( $post_id, $revision_id );
 
 
 
