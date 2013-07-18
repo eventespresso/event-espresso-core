@@ -13,7 +13,8 @@
  *
  * ------------------------------------------------------------------------
  *
- * Event List
+ * Event List 
+ * EVENT_LIST 
  *
  * @package			Event Espresso
  * @subpackage	/shortcodes/
@@ -47,10 +48,13 @@ class EES_Event_List  extends EES_Shortcode {
 	 * 	run - initial module setup
 	 *
 	 *  @access 	public
-	 *	@param 	EE_Request_Handler	$REQ
+	 *	@param 	EE_Request_Handler	$EE
 	 *  @return 	void
 	 */
-	public function run( EE_Request_Handler $REQ = NULL ) {
+	public function run( EE_Registry $EE = NULL ) {
+		$this->EE = $EE;
+		//add_filter( 'the_content', array( $this, 'the_content' ));
+		$this->EE->REQ->set( 'ee', 'event_list' );
 	}
 
 
@@ -63,7 +67,12 @@ class EES_Event_List  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function process_shortcode( $attributes ) {
-		return $this->ouput;		
+//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+//		// get attributes and merge  with defaults
+//		extract( shortcode_atts( array(
+//				'single_event_id' => __('No ID Supplied', 'event_espresso')
+//		), $attributes ));
+		return $this->EE->REQ->output;		
 	}	
 
 
