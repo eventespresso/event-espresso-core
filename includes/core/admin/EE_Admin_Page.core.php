@@ -989,7 +989,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_add_admin_page_overlay();
 
 		//if metaboxes are present we need to add the nonce field
-		if ( isset($this->_route_config['metaboxes']) || ( isset($this->_route_config['has_metaboxes']) && $this->_route_config['has_metaboxes'] ) || isset($this->_route_config['list_table']) ) {
+		if ( ( isset($this->_route_config['metaboxes']) || ( isset($this->_route_config['has_metaboxes']) && $this->_route_config['has_metaboxes'] ) || isset($this->_route_config['list_table']) ) ) {
 			wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false);
 			wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false);
 		}
@@ -1722,7 +1722,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@access private
 	*		@return string
 	*/		
-	private function _add_admin_page_ajax_loading_img() {
+	protected function _add_admin_page_ajax_loading_img() {
 		?>
 			<div id="espresso-admin-page-ajax-loading" class="hidden">
 				<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL; ?>images/ajax-loader-grey.gif" /><span><?php _e('loading...', 'event_espresso'); ?>'</span>
@@ -1739,7 +1739,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@access private
 	*		@return string
 	*/		
-	private function _add_admin_page_overlay() {
+	protected function _add_admin_page_overlay() {
 		?>
 		<div id="espresso-admin-page-overlay-dv" class=""></div>
 		<?php
