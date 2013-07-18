@@ -451,6 +451,22 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 
+
+	/**
+	 * admin_footer_scripts_global
+	 * Anything triggered by the 'admin_print_footer_scripts' WP hook should be put in here. This particular method will apply on ALL EE_Admin pages.
+	 *
+	 * @access public
+	 * @return void 
+	 */
+	public function admin_footer_scripts_global() {
+		$this->_add_admin_page_ajax_loading_img();
+		$this->_add_admin_page_overlay();
+	}	
+
+
+
+
 	/**
 	 * This is a wrapper for the insert/update routes for cpt items so we can add things that are common to ALL insert/updates
 	 * @param  int    $post_id ID of post being updated
@@ -588,7 +604,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		//we're also going to add the route value and the current page so we can direct autosave parsing correctly
 		echo '<input type="hidden" id="current_route" name="current_route" value="' . $this->_current_view . '" />';
-		echo '<input type="hidden" id="current_page" name="current_page" value="' . $this->page_slug . '" />';
+		//echo '<input type="hidden" id="current_page" name="current_page" value="' . $this->page_slug . '" />';
 	}
 
 
