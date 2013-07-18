@@ -616,6 +616,7 @@ final class EE_Admin {
 			$show_on_front = get_option('show_on_front');
 			$update_post_shortcodes = FALSE;
 			$this->EE->CFG->post_shortcodes = isset( $this->EE->CFG->post_shortcodes ) ? $this->EE->CFG->post_shortcodes : array();
+			$this->EE->CFG->post_shortcodes[ $post->post_name ] = array();
 			// loop thru shortcodes
 			foreach ( $this->EE->shortcodes as $EES_Shortcode => $shortcode_dir ) {
 				// strip class prefix and convert to UPPERCASE
@@ -630,7 +631,7 @@ final class EE_Admin {
 					$update_post_shortcodes = TRUE;
 				} 
 			}
-			//printr( $this->EE->CFG->post_shortcodes, '$this->EE->CFG->post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//			printr( $this->EE->CFG->post_shortcodes, '$this->EE->CFG->post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			
 			if ( $update_post_shortcodes ) {
 				$this->EE->LIB['EE_Config']->update_post_shortcodes();
