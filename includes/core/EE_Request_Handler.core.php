@@ -35,6 +35,13 @@ final class EE_Request_Handler {
 	 */
 	private $_notice = array();
 
+	/**
+	 * 	rendered output to be returned to WP
+	 *	@var 	string
+	 * 	@access 	public
+	 */
+	public $output = '';
+
 
 
 	
