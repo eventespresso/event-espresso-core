@@ -120,15 +120,15 @@ function EE_after_autosave_extras(response, status, xhr) {
 		if ( typeof resp.data.items === 'undefined' ) resp.data.what = '<div id="#autosave-alert" class="error below-h2"><p>There was a problem with ee autosaves, likely have not setup the response correctly</p></div>';
 
 
-		if ( resp.error || resp.notices ) {
+		if ( resp.error || ( resp.notices && !resp.success ) ) {
 			jQuery('#autosave-alert').remove();
 			var error = typeof resp.notices === 'undefined' || resp.notices === '' ? resp.error : resp.notices;
 			jQuery('#titlediv').after('<div id="autosave-alert" class="error below-h2"><p>' + error + '</p></div>');
 		} else {
-			if  ( typeof resp.data.items === 'undefined' ){
+			if  ( typeof resp.data.items === 'undefined' && !resp.success ){
 				jQuery('#autosave-alert').remove();
 				jQuery(resp.data.where).after(resp.data.what);
-			} else {
+			} else if ( !resp.success ) {
 				//loop through the items array and get the values to add
 				jQuery.each( resp.data.items, function(where, what) {
 					jQuery('#' + where).val(what);

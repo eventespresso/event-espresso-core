@@ -327,11 +327,12 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		//if we made it here then the nonce checked out.  Let's run our methods and actions
 		if ( method_exists( $this, '_ee_autosave_' . $this->_current_view ) ) {
 			call_user_func( array( $this, '_ee_autosave_' . $this->_current_view ) );
+		} else {
+			$this->_template_args['success'] = TRUE;
 		}
 
 		do_action('AHEE__EE_Admin_Page_CPT_core_do_extra_autosave_stuff', $this );
 		do_action('AHEE__EE_Admin_Page_CPT_core_do_extra_autosave_stuff_' . get_class( $this ), $this );
-
 
 		//now let's return json
 		$this->_return_json();		
