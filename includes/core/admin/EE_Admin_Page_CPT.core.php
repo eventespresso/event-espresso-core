@@ -136,11 +136,17 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return void
 	 */
 	protected function _before_page_setup() {
+
 		$page = isset( $this->_req_data['page'] ) ? $this->_req_data['page'] : $this->page_slug;
 		$this->_cpt_object = get_post_type_object( $page );
 
-		//setup autosave ajax hook
-		add_action('wp_ajax_ee-autosave', array( $this, 'do_extra_autosave_stuff' ), 10 );
+
+		//autosave... make sure its only for the correct page
+		if ( isset( $this->_req_data['current_page'] ) && $this->_req_data['current_page'] == $this->page_slug ) {
+			//setup autosave ajax hook
+			add_action('wp_ajax_ee-autosave', array( $this, 'do_extra_autosave_stuff' ), 10 );
+		}
+
 	}
 
 
@@ -309,10 +315,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return JSON object 
 	 */
 	public function do_extra_autosave_stuff() {
-		//first let's check for the autosave nonce (we'll use _verify_nonce )
 
+		//next let's check for the autosave nonce (we'll use _verify_nonce )		
 		$nonce = isset( $this->_req_data['autosavenonce'] ) ? $this->_req_data['autosavenonce'] : NULL;
 		$this->_verify_nonce( $nonce, 'autosave' );
+
 
 		//make sure we define doing autosave (cause WP isn't triggering this we want to make sure we define it)
 		if ( !defined('DOING_AUTOSAVE') ) define('DOING_AUTOSAVE', true);
@@ -578,8 +585,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	public function cpt_post_form_hidden_input() {
 		echo '<input type="hidden" name="ee_cpt_item_redirect_url" value="' . $this->_admin_base_url . '" />';
 
-		//we're also going to add the route value
+		//we're also going to add the route value and the current page so we can direct autosave parsing correctly
 		echo '<input type="hidden" id="current_route" name="current_route" value="' . $this->_current_view . '" />';
+		echo '<input type="hidden" id="current_page" name="current_page" value="' . $this->page_slug . '" />';
 	}
 
 

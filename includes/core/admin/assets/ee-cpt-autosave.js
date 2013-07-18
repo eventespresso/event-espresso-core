@@ -75,6 +75,7 @@ EE_do_cpt_autosave_extras = function( postid ) {
 		post_ID: postid,
 		autosavenonce: jQuery('#autosavenonce').val(),
 		route: jQuery('#current_route').val(),
+		current_page: jQuery('#current_page').val(),
 		iswpsave: true
 	};
 
