@@ -29,7 +29,7 @@ jQuery(document).ajaxSend( function( e, x, a ) {
 jQuery(document).ajaxComplete( function( e, x, a ) {
 
 	var response = wpAjax.parseAjaxResponse(x.responseXML), postID, stayhere = true;
-	var successname = typeof a.success.name !== 'undefined' ? a.success.name : false;
+	var successname = typeof a.success != 'undefined' && typeof a.success.name !== 'undefined' ? a.success.name : false;
 	if ( !response || typeof response.responses === 'undefined' ) {
 		stayhere = false;
 		response = typeof x.responseText !== 'undefined' ? x.responseText : false;
@@ -97,6 +97,7 @@ EE_do_cpt_autosave_extras = function( postid ) {
 function EE_after_autosave_extras(response, status, xhr) {
 	var ct = xhr.getResponseHeader("content-type") || "";
 	var resp= '', isjson = true;
+
 
 	if (ct.indexOf('html') > -1) {
 		/*console.log('html');
