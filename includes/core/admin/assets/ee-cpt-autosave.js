@@ -114,18 +114,20 @@ function EE_after_autosave_extras(response, status, xhr) {
 	if ( ct.indexOf('json') > -1 || isjson ) {
 		resp = resp === '' ? response : resp;
 
-		if ( typeof resp.data === 'undefined' ) resp.data = [];
-		if ( typeof resp.data.items === 'undefined' ) resp.data.where = '#autosave-alert';
-		if ( typeof resp.data.items === 'undefined' ) resp.data.what = 'There was a problem with ee autosaves, likely have not setup the response correctly';
+		if ( typeof resp.data === 'undefined' || resp === 0 ) resp = {'data':[]};
+		if ( typeof resp.data.items === 'undefined' ) resp.data.where = '#titlediv';
+		if ( typeof resp.data.items === 'undefined' ) resp.data.what = '<div id="#autosave-alert" class="error below-h2"><p>There was a problem with ee autosaves, likely have not setup the response correctly</p></div>';
+
 
 		if ( resp.error || resp.notices ) {
 			jQuery('#autosave-alert').remove();
 			var error = typeof resp.notices === 'undefined' || resp.notices === '' ? resp.error : resp.notices;
 			jQuery('#titlediv').after('<div id="autosave-alert" class="error below-h2"><p>' + error + '</p></div>');
 		} else {
-			if  ( typeof resp.data.items === 'undefined' )
-				jQuery(resp.where).val(resp.data.what);
-			else {
+			if  ( typeof resp.data.items === 'undefined' ){
+				jQuery('#autosave-alert').remove();
+				jQuery(resp.data.where).after(resp.data.what);
+			} else {
 				//loop through the items array and get the values to add
 				jQuery.each( resp.data.items, function(where, what) {
 					jQuery('#' + where).val(what);
