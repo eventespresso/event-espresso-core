@@ -766,7 +766,7 @@ class EEH_Activation {
 					QSG_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
 					QSG_show_group_name TINYINT(1) NOT NULL,
 					QSG_show_group_desc TINYINT(1) NOT NULL,
-					QSG_system VARCHAR(25) NULL,
+					QSG_system TINYINT NULL,
 					QSG_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 					PRIMARY KEY  (QSG_ID),
 					UNIQUE KEY QSG_identifier_UNIQUE (QSG_identifier ASC)';
