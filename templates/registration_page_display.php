@@ -132,6 +132,7 @@ function espresso_display_reg_page($data) {
 				}
 
 				if ( $data['show_google_map'] ) {
+					require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/gmap_display.helper.php');
 					echo ee_gmap_display( $data['ee_gmaps_opts'] );
 				}
 
