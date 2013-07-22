@@ -73,7 +73,7 @@ class EEM_CPT_Base extends EEM_Base{
 		}
 
 		if ( !$all ) {
-			foreach ( $fields as $name => $obj ) {
+			foreach ( $all_fields as $name => $obj ) {
 				if ( $obj instanceof EE_DB_Only_Field_Base ) 
 					continue;
 				$fields_to_return[] = $name;

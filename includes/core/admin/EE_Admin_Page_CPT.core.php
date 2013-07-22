@@ -480,6 +480,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return void          
 	 */
 	public function insert_update( $post_id, $post ) {
+
+		//make sure that if this is a revision action that we don't do any updates!
+		if ( isset( $this->_req_data['action'] ) && $this->_req_data['action'] == 'restore' )
+			return;
+
 		//check for autosave and update our req_data property accordingly.
 		if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE && isset( $this->_req_data['ee_autosave_data'] ) ) {
 			foreach( (array) $this->_req_data['ee_autosave_data'] as $id => $values ) {
