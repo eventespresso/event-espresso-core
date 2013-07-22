@@ -212,7 +212,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					'label' => __('Edit Venue', 'event_espresso'),
 					'order' => 5,
 					'persistent' => FALSE,
-					'url' => isset($this->_req_data['id']) ? add_query_arg(array('id' => $this->_req_data['id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
+					'url' => isset($this->_req_data['post']) ? add_query_arg(array('post' => $this->_req_data['post'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 				),
 				'metaboxes' => array('_venue_editor_metaboxes')
 			),

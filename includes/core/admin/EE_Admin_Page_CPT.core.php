@@ -397,7 +397,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 		if ( $this->_cpt_route  && ( $this->_req_action == 'create_new' || $this->_req_action == 'edit'  ) ) {
-			$id = isset( $this->_req_data['id'] ) ? $this->_req_data['id'] : NULL;
+			$id = isset( $this->_req_data['post'] ) ? $this->_req_data['post'] : NULL;
 			$this->_set_model_object( $id );
 		}
 		
@@ -705,7 +705,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	public function post_update_messages( $messages ) {
 		global $post;
-		$id = isset( $this->_req_data['id'] ) ? $this->_req_data['id'] : NULL;
+		$id = isset( $this->_req_data['post'] ) ? $this->_req_data['post'] : NULL;
 		$id = empty( $id ) && is_object( $post ) ? $post->ID : NULL;
 
 		$messages[$this->page_slug] = array(
@@ -769,7 +769,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */			
 	protected function _edit_cpt_item() {
 		global $post;
-		$post_id = isset( $this->_req_data['id'] ) ? $this->_req_data['id'] : NULL;
+		$post_id = isset( $this->_req_data['post'] ) ? $this->_req_data['post'] : NULL;
 		$post = !empty( $post_id ) ? get_post( $post_id, OBJECT, 'edit' ) : NULL;
 
 		if ( empty ( $post ) ) {

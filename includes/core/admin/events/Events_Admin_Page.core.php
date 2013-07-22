@@ -227,7 +227,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'label' => __('Edit Event', 'event_espresso'),
 					'order' => 5,
 					'persistent' => false,
-					'url' => isset($this->_req_data['id']) ? add_query_arg(array('id' => $this->_req_data['id']), $this->_current_page_view_url) : $this->_admin_base_url
+					'url' => isset($this->_req_data['post']) ? add_query_arg(array('post' => $this->_req_data['post']), $this->_current_page_view_url) : $this->_admin_base_url
 				),
 				'metaboxes' => array('_register_event_editor_meta_boxes'),
 				'help_tabs' => array(
@@ -1460,7 +1460,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _delete_event( $redirect_after = TRUE ) {
 		//determine the event id and set to array.
 		$EVT_ID = isset($this->_req_data['EVT_ID']) ? absint($this->_req_data['EVT_ID']) : NULL;
-		$EVT_ID = isset( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : NULL;
+		$EVT_ID = isset( $this->_req_data['post'] ) ? absint( $this->_req_data['post'] ) : NULL;
 
 
 		// loop thru events
