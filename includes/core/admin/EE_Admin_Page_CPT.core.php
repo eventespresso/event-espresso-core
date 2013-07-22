@@ -434,7 +434,15 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return void
 	 */
 	public function admin_init_global() {
-		add_filter('redirect_post_location', array( $this, 'cpt_post_location_redirect'), 10, 2 );
+
+		$post = isset( $this->_req_data['post'] ) ? get_post( $this->_req_data['post'] ) : NULL;
+
+		//its possible this is a new save so let's catch that instead
+		$post = isset( $this->_req_data['post_ID'] ) ? get_post( $this->_req_data['post_ID'] ) : $post;
+
+
+		if ( $post && $post->post_type == $this->page_slug )
+			add_filter('redirect_post_location', array( $this, 'cpt_post_location_redirect'), 10, 2 );
 
 		//NOTE we ONLY want to run these hooks if we're on the right class for the given post type.  Otherwise we could see some really freaky things happen!
 		//try to get post type from $_POST data
@@ -625,18 +633,19 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 	/**
 	 * This is the callback for the 'redirect_post_location' filter in wp-admin/post.php so that we can hijack the default redirect locations for wp custom post types that WE'RE using and send back to OUR routes.
+	/**
+	 * This is the callback for the 'redirect_post_location' filter in wp-admin/post.php so that we can hijack the default redirect locations for wp custom post types that WE'RE using and send back to OUR routes.  This should only be hooked in on the right route.
 	 * @param  string $location This is the incoming currently set redirect location
 	 * @param  string $post_id  This is the 'ID' value of the wp_posts table
 	 * @return string           the new location to redirect to
 	 */
 	public function cpt_post_location_redirect( $location, $post_id ) {
-		//first let's see if we should even do a redirect
-		if ( !isset( $this->_req_data['ee_cpt_item_redirect_url'] ) )
-			return $location;
+		//we DO have a match so let's setup the url
+	
 
 		//shared query_args
-		$query_args = array( 'action' => 'edit', 'id' => $post_id );
-		$admin_url = $this->_req_data['ee_cpt_item_redirect_url'];
+		$query_args = array( 'action' => 'edit', 'post' => $post_id );
+		$admin_url = $this->_admin_base_url;
 		$message = '';
 		$append = '';
 
