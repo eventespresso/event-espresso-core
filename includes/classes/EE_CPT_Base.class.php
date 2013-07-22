@@ -159,17 +159,20 @@ class EE_CPT_Base extends EE_Base_Class{
 			$this->save();
 		}
 
-		$related_obj_names = (array) $related_obj_name;
+		$related_obj_names = (array) $related_obj_names;
 
 		foreach ( $related_obj_names as $related_name ) {
 
 			//related_obj_name so we're saving a revision on an object related to this object
 			$related_objs = $this->get_many_related($related_name);
 			$revision_related_objs = $revision_obj->get_many_related($related_name);
+			
+			//load helper
+			EE_Registry::instance()->load_helper('Array');
 
 			//remove related objs from this object that are not in revision
 			//array_diff *should* work cause I think objects are indexed by ID?
-			$related_to_remove = array_diff( $related_objs, $revision_related_objs );
+			$related_to_remove = EEH_Array::object_array_diff( $related_objs, $revision_related_objs );
 			foreach ( $related_to_remove as $rr ) {
 				$this->_remove_relation_to( $rr, $related_name );
 			}
@@ -184,14 +187,16 @@ class EE_CPT_Base extends EE_Base_Class{
 
 
 
+
+
 	
 	/**
 	 * Wrapper for get_post_meta, http://codex.wordpress.org/Function_Reference/get_post_meta
 	 * @param string $meta_key
 	 * @param boolean $single
 	 * @return mixed <ul><li>If only $id is set it will return all meta values in an associative array.</li>
-<li>If $single is set to false, or left blank, the function returns an array containing all values of the specified key.</li>
-<li>If $single is set to true, the function returns the first value of the specified key (not in an array</li></ul>
+	 * <li>If $single is set to false, or left blank, the function returns an array containing all values of the specified key.</li>
+	 * <li>If $single is set to true, the function returns the first value of the specified key (not in an array</li></ul>
 	 */
 	public function get_post_meta($meta_key = null,$single = false){
 		return get_post_meta($this->ID(), $meta_key, $single);
