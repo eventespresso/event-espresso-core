@@ -444,6 +444,32 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		if ( $post && $post->post_type == $this->page_slug )
 			add_filter('redirect_post_location', array( $this, 'cpt_post_location_redirect'), 10, 2 );
 
+		//now let's filter redirect if we're on a revision page and the revision is for an event CPT.
+		$revision = isset( $this->_req_data['revision'] ) ? $this->_req_data['revision'] : NULL;
+
+		/**var_dump($this->_req_data);
+		exit();/**/
+		
+		if ( !empty( $revision ) ) {
+			$action = isset( $this->_req_data['action'] ) ? $this->_req_data['action'] : NULL;
+
+			//doing a restore?
+			if ( !empty( $action ) && $action == 'restore' ) {
+
+				//get post for revision
+				$rev_post = get_post( $revision );
+				$rev_parent = get_post( $rev_post->post_parent );
+
+				//only do our redirect filter AND our restore revision action if the post_type for the parent is one of our cpts.
+				if ( $rev_parent && $rev_parent->post_type == $this->page_slug ) {
+					add_filter('wp_redirect', array($this, 'revision_redirect'), 10, 2 );
+					//restores of revisions
+					add_action('wp_restore_post_revision', array($this, 'restore_revision'), 10, 2 );
+				}
+			}
+
+		}
+
 		//NOTE we ONLY want to run these hooks if we're on the right class for the given post type.  Otherwise we could see some really freaky things happen!
 		//try to get post type from $_POST data
 		$post_type = isset( $this->_req_data['post_type'] ) ? $this->_req_data['post_type'] : FALSE;
@@ -452,8 +478,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			//$post_id, $post
 			add_action('save_post', array( $this, 'insert_update'), 10, 2 );
 
-			//restores of revisions
-			add_action('wp_restore_post_revision', array($this, 'restore_revision'), 10, 2 );
 			//$post_id
 			add_action('trashed_post', array( $this, 'trash_cpt_item' ), 10 );
 			add_action('untrashed_post', array( $this, 'restore_cpt_item'), 10 );
@@ -632,7 +656,37 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 	/**
-	 * This is the callback for the 'redirect_post_location' filter in wp-admin/post.php so that we can hijack the default redirect locations for wp custom post types that WE'RE using and send back to OUR routes.
+	 * This allows us to redirect the location of revision restores when they happen so it goes to our CPT routes.
+	 * @param  string $location Original location url
+	 * @param  int    $status   Status for http header
+	 * @return string           new (or original) url to redirect to.
+	 */
+	public function revision_redirect( $location, $status ) {
+		//get revision
+		$rev_id = isset($this->_req_data['revision']) ? $this->_req_data['revision'] : NULL;
+
+		//can't do anything without revision so let's get out if not present
+		if ( empty( $rev_id ) )
+			return $location;
+
+		//get rev_post_data
+		$rev = get_post($rev_id);
+
+		$admin_url = $this->_admin_base_url;
+		$query_args = array(
+				'action' => 'edit',
+				'post' => $rev->post_parent,
+				'revision' => $rev_id,
+				'message' => 5
+			);
+
+		$this->_process_notices( $query_args, TRUE );
+		return self::add_query_args_and_nonce( $query_args, $admin_url );
+	}
+
+
+
+
 	/**
 	 * This is the callback for the 'redirect_post_location' filter in wp-admin/post.php so that we can hijack the default redirect locations for wp custom post types that WE'RE using and send back to OUR routes.  This should only be hooked in on the right route.
 	 * @param  string $location This is the incoming currently set redirect location
