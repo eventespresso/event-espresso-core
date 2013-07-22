@@ -140,9 +140,12 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		$page = isset( $this->_req_data['page'] ) ? $this->_req_data['page'] : $this->page_slug;
 		$this->_cpt_object = get_post_type_object( $page );
 
-
+		//get current page from autosave
+		$current_page = isset( $this->_req_data['ee_autosave_data']['ee-cpt-hidden-inputs']['current_page'] ) ? $this->_req_data['ee_autosave_data']['ee-cpt-hidden-inputs']['current_page'] : NULL;
+		$this->_current_page = isset( $this->_req_data['current_page'] ) ? $this->_req_data['current_page'] : $current_page;
+		
 		//autosave... make sure its only for the correct page
-		if ( isset( $this->_req_data['current_page'] ) && $this->_req_data['current_page'] == $this->page_slug ) {
+		if ( !empty($this->_current_page ) && $this->_current_page == $this->page_slug ) {
 			//setup autosave ajax hook
 			add_action('wp_ajax_ee-autosave', array( $this, 'do_extra_autosave_stuff' ), 10 );
 		}
@@ -191,6 +194,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		}
 
 		$this->_autosave_containers = array_merge( $this->_autosave_containers, $containers );
+
+		//add hidden inputs container
+		$this->_autosave_containers[] = 'ee-cpt-hidden-inputs';
 	}
 
 
@@ -603,8 +609,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		echo '<input type="hidden" name="ee_cpt_item_redirect_url" value="' . $this->_admin_base_url . '" />';
 
 		//we're also going to add the route value and the current page so we can direct autosave parsing correctly
+		echo '<div id="ee-cpt-hidden-inputs">';
 		echo '<input type="hidden" id="current_route" name="current_route" value="' . $this->_current_view . '" />';
-		//echo '<input type="hidden" id="current_page" name="current_page" value="' . $this->page_slug . '" />';
+		echo '<input type="hidden" id="current_page" name="current_page" value="' . $this->page_slug . '" />';
+		echo '</div>';
 	}
 
 
