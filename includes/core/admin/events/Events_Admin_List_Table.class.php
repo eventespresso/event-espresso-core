@@ -151,7 +151,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 		$edit_query_args = array(
 				'action' => 'edit',
-				'id' => $item->ID()
+				'post' => $item->ID()
 			);
 		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EVENTS_ADMIN_URL );
 
@@ -279,7 +279,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 		$edit_query_args = array(
 				'action' => 'edit',
-				'id' => $item->ID()
+				'post' => $item->ID()
 			);
 
 		$trash_event_query_args = array(
