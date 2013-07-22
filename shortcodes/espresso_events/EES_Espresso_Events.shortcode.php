@@ -67,10 +67,10 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 * 	this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
 	 *
 	 *  @access 	public
-	 *	@param 	EE_Request_Handler	$REQ
+	 *	@param 	EE_Registry $EE
 	 *  @return 	void
 	 */
-	public function run( EE_Request_Handler $REQ = NULL ) {
+	public function run( EE_Registry $EE = NULL ) {
 		
 		$this->ouput =  '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	}
@@ -86,7 +86,7 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 */
 	public function process_shortcode( $attributes ) {
 		//event_espresso_get_event_details( $attributes );
-		//return '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+		return '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		return $this->ouput;		
 	}
 

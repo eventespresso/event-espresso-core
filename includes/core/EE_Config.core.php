@@ -195,7 +195,7 @@ final class EE_Config {
 		$this->EE->CFG->_module_forward_map = EE_Config::$_module_forward_map;
 		$this->EE->CFG->_module_view_map = EE_Config::$_module_view_map;
 		// grab org options based on current admin user		
-		if ( ! update_usermeta( $this->EE->CFG->wp_user, 'events_organization_settings', $this->EE->CFG )) {
+		if ( ! update_user_meta( $this->EE->CFG->wp_user, 'events_organization_settings', $this->EE->CFG )) {
 			$msg = __( 'The Event Espresso Configuration Settings could not be updated.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
@@ -216,6 +216,7 @@ final class EE_Config {
 				foreach( $shortcodes as $shortcode => $post_id ){
 					if ( $post = get_post( $post_id )) {
 						if ( $post->post_name == $post_name ) {
+//							echo '<h4>$post_name : ' . $post_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 							break;
 						}
 					}

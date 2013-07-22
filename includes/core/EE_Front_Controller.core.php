@@ -291,7 +291,7 @@ final class EE_Front_Controller {
 								// and pass the request object to the run method
 								$shortcode =$sc_reflector->newInstance( $this->EE );
 								// fire the shortcode class's run method, so that it can activate resources
-								$shortcode->run( $this->EE->REQ );
+								$shortcode->run( $this->EE );
 							}
 						}
 					}
@@ -314,8 +314,10 @@ final class EE_Front_Controller {
 		$Module_Request_Router = $this->EE->load_core( 'Module_Request_Router' );
 		// cycle thru module routes
 		while ( $route = $Module_Request_Router->get_route() ) {
+//			echo '<h4>$route : ' . $route . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 			// determine module and method for route
 			$module = $Module_Request_Router->resolve_route( $route );
+//			printr( $module, '$module  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// get registered view for route
 			$this->_view_template = $Module_Request_Router->get_view( $route );
 		}
@@ -523,13 +525,12 @@ final class EE_Front_Controller {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function template_include( $template_path ) {
-		// check if the template file exists in the theme first
+	public function template_include( $template_path = NULL ) {
+		// check if the template file exists in the theme first by calling locate_template()
 		if ( ! empty( $this->_view_template ) && ! $template_path = locate_template( array( basename( $this->_view_template )))) {
 			// otherwise get it from 
 			$template_path = $this->_view_template;
 		}
-//		printr( $template_path, '<br /><br />$template_path  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		return $template_path;
 	}
 

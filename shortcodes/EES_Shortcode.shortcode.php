@@ -24,28 +24,21 @@
 abstract class EES_Shortcode extends EE_Base { 
 
 	/**
-	 * 	EE_Request_Handler Object
+	 * 	EE_Registry Object
 	 * 	@access 	public
-	 *	@var 	EE_Request_Handler	$REQ
+	 *	@var 	EE_Registry	$EE
 	 */
-	public $REQ = NULL;
-
-	/**
-	 * 	rendered output to be returned to WP
-	 *	@var 	string
-	 * 	@access 	protected
-	 */
-	protected $ouput = '';
+	public $EE = NULL;
 
 	/**
 	 * 	run - initial shortcode module setup called during "wp_loaded" hook - this shortcode is going to execute during this request !
 	 * 	this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
 	 *
 	 *  @access 	public
-	 *	@param 	EE_Request_Handler	$REQ
+	 *	@param 	EE_Registry	$EE
 	 *  @return 	void
 	 */
-	public abstract function run( EE_Request_Handler $REQ = NULL );
+	public abstract function run( EE_Registry $EE = NULL );
 
 	/**
 	 * 	process_shortcode
@@ -63,11 +56,8 @@ abstract class EES_Shortcode extends EE_Base {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	final public function _add_shortcode() {
-		// get classname, remove EES_prefix, and convert to UPPERCASE
-		$shortcode = strtoupper( str_replace( 'EES_', '', get_class( $this )));
-		add_shortcode( $shortcode, array( $this, 'process_shortcode' ));	
-	}
+//	final public function add_shortcode() {
+//	}
 	
 	/**
 	*	instance - returns $this
@@ -86,7 +76,11 @@ abstract class EES_Shortcode extends EE_Base {
 	*	@return 	void
 	*/
 	final public function __construct( ) {
-		add_action( 'init', array( $this, '_add_shortcode' ));
+		// get classname, remove EES_prefix, and convert to UPPERCASE
+		$classname = get_class( $this );
+		$shortcode = strtoupper( str_replace( 'EES_', '', get_class( $this ) ));
+		add_shortcode( $shortcode, array( $this, 'process_shortcode' ));	
+		
 	}
 	
 }
