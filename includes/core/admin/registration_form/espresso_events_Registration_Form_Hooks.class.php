@@ -85,6 +85,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks {
 
 	public function primary_questions($post_id, $post) {
 		$this->_event = $this->_adminpage_obj->get_event_object();
+		$event_id = $this->_event->ID();
 		?>
 		<div class="inside">
 			<p><strong>
@@ -98,7 +99,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks {
 			</p>
 			<?php
 			$QSGs = EEM_Event::instance()->get_all_question_groups();
-			$EQGs = $this->_event->get_many_related('Question_Group', array(array('Event_Question_Group.EQG_primary' => 1 )) );
+			$EQGs = !empty( $event_id ) ? $this->_event->get_many_related('Question_Group', array(array('Event_Question_Group.EQG_primary' => 1 )) ) : array();
 			$EQGids = array_keys($EQGs);
 			
 
