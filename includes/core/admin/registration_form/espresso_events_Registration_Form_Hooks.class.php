@@ -86,14 +86,15 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks {
 			</p>
 			<?php
 			$QSGs = EEM_Event::instance()->get_all_question_groups();
-			$EQGs = EEM_Event::instance()->get_event_question_groups( $this->_event->ID() );
-			$EQGs = is_array( $EQGs ) ? $EQGs : array();
+			$EQGs = $this->_event->get_many_related('Question_Group', array(array('Event_Question_Group.EQG_primary' => 1 )) );
+			$EQGids = array_keys($EQGs);
+			
 
 			if ( ! empty( $QSGs )) {
  				$html = count( $QSGs ) > 10 ? '<div style="height:250px;overflow:auto;">' : '';
 				foreach ( $QSGs as $QSG ) {
 
-					$checked = ( in_array( $QSG->QSG_ID, $EQGs ) || $QSG->QSG_system == 1 ) ? ' checked="checked"' : '';
+					$checked = ( in_array( $QSG->QSG_ID, $EQGids ) || $QSG->QSG_system == 1 ) ? ' checked="checked"' : '';
 					$visibility = $QSG->QSG_system == 1 ? ' style="visibility:hidden"' : '';
 					$edit_link = $this->_adminpage_obj->add_query_args_and_nonce( array( 'action' => 'edit_question_group', 'QSG_ID' => $QSG->QSG_ID ), EE_FORMS_ADMIN_URL );
 					
@@ -125,14 +126,15 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks {
 		$success = array();
 
 		//let's get all current question groups associated with this event.
-		$current_qgs = $evtobj->get_many_related('Question_Group');
+		$current_qgs = $evtobj->get_many_related('Question_Group', array(array('Event_Question_Group.EQG_primary' => 1) ));
 		$current_qgs = array_keys($current_qgs); //we just want the ids
 
 		//now let's get the groups selected in the editor and update (IF we have data)
 		if ( !empty( $question_groups ) ) {
 			foreach ( $question_groups as $id => $val ) {
 				//add to event
-				$qg = $evtobj->_add_relation_to( $id, 'Question_Group', array('EQG_primary' => 1) );
+				if ( $val )
+					$qg = $evtobj->_add_relation_to( $id, 'Question_Group', array('EQG_primary' => 1) );
 				$success[] = !empty($qg) ? 1 : 0;
 			}
 		}
