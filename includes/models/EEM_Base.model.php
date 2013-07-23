@@ -701,11 +701,12 @@ abstract class EEM_Base extends EE_Base{
 	 * @param EE_Base_Class/int $id_or_obj EE_base_Class or ID of other Model Object
 	 * @param string $relationName, key in EEMerimental_Base::_relations
 	 * an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specificy array('role-column-name'=>'role-id')
+	 * @param array   $where_query This allows you to enter further query params for the relation to for relation to methods that allow you to further specify extra columns to join by (such as HABTM).  Keep in mind that the only acceptable query_params is strict "col" => "value" pairs because these will be inserted in any new rows created as well.
 	 * @return EE_Base_Class which was added as a relation. Object referred to by $other_model_id_or_obj
 	 */
-	public function add_relationship_to($id_or_obj,$other_model_id_or_obj, $relationName){
+	public function add_relationship_to($id_or_obj,$other_model_id_or_obj, $relationName, $where_query = array()){
 		$relation_obj = $this->related_settings_for($relationName);
-		return $relation_obj->add_relation_to($id_or_obj, $other_model_id_or_obj);
+		return $relation_obj->add_relation_to($id_or_obj, $other_model_id_or_obj, $where_query);
 	}
 	
 	/**
@@ -722,10 +723,11 @@ abstract class EEM_Base extends EE_Base{
 	 * @param EE_Base_Class/int $other_model_id_or_obj EE_Base_Class or ID of other Model Object
 	 * @param string $relationName key in EEMerimental_Base::_relations
 	 * @return boolean of success
+	 * @param array   $where_query This allows you to enter further query params for the relation to for relation to methods that allow you to further specify extra columns to join by (such as HABTM).  Keep in mind that the only acceptable query_params is strict "col" => "value" pairs because these will be inserted in any new rows created as well.
 	 */
-	public function remove_relationship_to($id_or_obj,  $other_model_id_or_obj, $relationName){
+	public function remove_relationship_to($id_or_obj,  $other_model_id_or_obj, $relationName, $where_query= array() ){
 		$relation_obj = $this->related_settings_for($relationName);
-		return $relation_obj->remove_relation_to($id_or_obj, $other_model_id_or_obj);
+		return $relation_obj->remove_relation_to($id_or_obj, $other_model_id_or_obj, $where_query );
 	}
 	
 	

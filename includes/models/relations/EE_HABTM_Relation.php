@@ -74,28 +74,34 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base{
 	 * want to directly use the EEM_Event_Question_Group model to add the entry to the table and set those extra columns' values
 	 * @param EE_Base_Class/int $this_obj_or_id
 	 * @param EE_Base_Class/int $other_obj_or_id
+	 * @param array             $where_query col=>val pairs that are used as extra conditions for checking existing values and for setting new rows if no exact matches.
 	 * @return EE_Base_Class
 	 */
-	 function add_relation_to($this_obj_or_id, $other_obj_or_id ){
+	 function add_relation_to($this_obj_or_id, $other_obj_or_id, $where_query = array() ){
 		 $this_model_obj = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);
 		 $other_model_obj = $this->get_other_model()->ensure_is_obj($other_obj_or_id, true);
 		//check if such a relationship already exists
 		 $join_model_fk_to_this_model = $this->get_join_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
 		 $join_model_fk_to_other_model = $this->get_join_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
-		 $query_params = array(
-			 array(
+
+		 $cols_n_values =  array(
 				 $join_model_fk_to_this_model->get_name() => $this_model_obj->ID(),
-				 $join_model_fk_to_other_model->get_name() => $other_model_obj->ID()));
+				 $join_model_fk_to_other_model->get_name() => $other_model_obj->ID());
+
+		 //if $where_query exists lets add them to the query_params.
+		 if ( !empty( $where_query ) ) {
+		 	$cols_n_values = array_merge( $cols_n_values, $where_query );
+		 }
+
+		 $query_params = array( $cols_n_values );
+
+
 		 $existing_entry_in_join_table = $this->get_join_model()->get_one($query_params);
 		//if there is already an entry in the join table, indicating a relationship, we're done
 		 //again, if you want more sophisticated logic or insertions (handling more columns than just 2 foreign keys to
 		 //the other tables, use the joining model directly!
 		 if( ! $existing_entry_in_join_table ){
-			$this->get_join_model()->insert(
-					array(
-						$join_model_fk_to_this_model->get_name() => $this_model_obj->ID(),
-						$join_model_fk_to_other_model->get_name() => $other_model_obj->ID()
-					));
+			$this->get_join_model()->insert($cols_n_values);
 		}
 		return $other_model_obj;
 	 }
@@ -103,18 +109,25 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base{
 	 * Deletes any rows in the join table that have foreign keys matching the other model objects specified
 	 * @param EE_Base_Class/int $this_obj_or_id
 	 * @param EE_Base_Class/int $other_obj_or_id
+	 * * @param array           $where_query col=>val pairs that are used as extra conditions for checking existing values and for removing existing rows if exact matches exist.
 	 * @return void
 	 */
-	 function remove_relation_to($this_obj_or_id, $other_obj_or_id){
+	 function remove_relation_to($this_obj_or_id, $other_obj_or_id, $where_query = array() ){
 		  $this_model_obj = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);
 		 $other_model_obj = $this->get_other_model()->ensure_is_obj($other_obj_or_id, true);
 		//check if such a relationship already exists
 		 $join_model_fk_to_this_model = $this->get_join_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
 		 $join_model_fk_to_other_model = $this->get_join_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
-		 $existing_entry_in_join_table = $this->get_join_model()->delete(array(
-			 array(
+
+		 $cols_n_values =  array(
 				 $join_model_fk_to_this_model->get_name() => $this_model_obj->ID(),
-				 $join_model_fk_to_other_model->get_name() => $other_model_obj->ID())));
+				 $join_model_fk_to_other_model->get_name() => $other_model_obj->ID());
+
+		if ( !empty( $where_query) ) {
+			$cols_n_values = array_merge( $cols_n_values, $where_query );
+		}
+
+		 $existing_entry_in_join_table = $this->get_join_model()->delete( array($cols_n_values) );
 		return $other_model_obj;
 	 }
 }
