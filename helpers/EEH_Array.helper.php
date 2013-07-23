@@ -44,7 +44,7 @@ class EEH_Array extends EEH_Base {
 	 * @return array         an array of objects found in array 1 that aren't found in array 2.
 	 */
 	public static function object_array_diff( $array1, $array2 ) {
-		return array_udiff( $array1, $array2, 'self::_compare_objects' );
+		return array_udiff( $array1, $array2, array('self', '_compare_objects' ));
 	}
 
 
