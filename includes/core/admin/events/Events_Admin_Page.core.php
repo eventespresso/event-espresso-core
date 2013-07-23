@@ -1276,6 +1276,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$where['DTT_EVT_start'] = array( 'BETWEEN', array( strtotime($this_year_r . '-' . $this_month_r . '-01'), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month) ) );
 		}
 
+		$where['post_type'] = array( '!=', 'revision' );
+
 		$query_params = array($where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' );
 
 		//let's first check if we have special requests coming in.
