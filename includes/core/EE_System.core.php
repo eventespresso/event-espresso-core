@@ -222,7 +222,7 @@ final class EE_System {
 				require_once( $model );
 				// if classname was parsed correctly then call define_table_name() method
 				if ( class_exists( $model_class ) && method_exists( $model_class, 'define_table_name' )) {
-					$model_class::define_table_name();
+					call_user_func("$model_class::define_table_name");
 				}			
 			}
 		}

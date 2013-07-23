@@ -152,7 +152,8 @@ class EE_CPT_Strategy extends EE_BASE {
 				// CPT model name, ie: EEM_Event
 				$CPT_Model = 'EEM_' . $this->CPT['singular_name'];
 				// get CPT table data via CPT Model
-				$this->CPT['tables'] = $CPT_Model::instance()->get_tables();
+				$CPTM = call_user_func("$CPT_Model::instance");
+				$this->CPT['tables'] = $CPTM->get_tables();
 				// is there a Meta Table for this CPT?
 				$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] ) ? $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] : FALSE;
 				// creates classname like:  EE_CPT_Event_Strategy
