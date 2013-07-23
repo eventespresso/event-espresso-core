@@ -140,11 +140,12 @@ class EE_CPT_Base extends EE_Base_Class{
 
 	/**
 	 * This is a method for restoring this_obj using details from the given $revision_id
-	 * @param  string|array $related_obj_name if included this will be used to restore for related obj if not included then we just do restore on the meta.  We will accept an array of related_obj_names for restoration here.
+	 * @param  string|array $related_obj_names if included this will be used to restore for related obj if not included then we just do restore on the meta.  We will accept an array of related_obj_names for restoration here.
 	 * @param  int    $revision_id      ID of the revision we're gettting data from
+	 * @param array  $where_query You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the colums (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.  This array is INDEXED by RELATED OBJ NAME (so it corresponds with the obj_names sent);
 	 * @return void                   
 	 */
-	public function restore_revision( $revision_id, $related_obj_names = array() ) {
+	public function restore_revision( $revision_id, $related_obj_names = array(), $where_query = array() ) {
 		//get revision object
 		$revision_obj = $this->get_model()->get_one_by_ID($revision_id);
 
@@ -162,10 +163,14 @@ class EE_CPT_Base extends EE_Base_Class{
 		$related_obj_names = (array) $related_obj_names;
 
 		foreach ( $related_obj_names as $related_name ) {
-
 			//related_obj_name so we're saving a revision on an object related to this object
-			$related_objs = $this->get_many_related($related_name);
-			$revision_related_objs = $revision_obj->get_many_related($related_name);
+			
+			//do we have $where_query params for this related object?  If we do then we include that.
+			$cols_n_values = isset( $where_query[$related_name] ) ? $where_query[$related_name] : array();
+			$where_params = !empty($cols_n_values) ? array($cols_n_values) : array();
+
+			$related_objs = $this->get_many_related($related_name, $where_params);
+			$revision_related_objs = $revision_obj->get_many_related($related_name, $where_params);
 			
 			//load helper
 			EE_Registry::instance()->load_helper('Array');
@@ -174,12 +179,12 @@ class EE_CPT_Base extends EE_Base_Class{
 			//array_diff *should* work cause I think objects are indexed by ID?
 			$related_to_remove = EEH_Array::object_array_diff( $related_objs, $revision_related_objs );
 			foreach ( $related_to_remove as $rr ) {
-				$this->_remove_relation_to( $rr, $related_name );
+				$this->_remove_relation_to( $rr, $related_name, $cols_n_values );
 			}
 
 			//add all related objs attached to revision to this object
 			foreach ( $revision_related_objs as $r_obj ) {
-				$this->_add_relation_to( $r_obj, $related_name );
+				$this->_add_relation_to( $r_obj, $related_name, $cols_n_values );
 			}
 		}
 	}
