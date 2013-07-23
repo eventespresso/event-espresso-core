@@ -151,6 +151,16 @@ class EE_Price extends EE_Base_Class{
 	protected $_PRC_order = NULL;
 
 
+
+	/**
+	 * Order that this price is displayed
+	 * @var integer
+	 */
+	protected $_PRC_display_order = 0;
+
+
+
+
 	/**
 	*	Whether this Price has been moved to the trash
 	*
