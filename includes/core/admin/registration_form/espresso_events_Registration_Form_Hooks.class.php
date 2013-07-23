@@ -53,6 +53,19 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks {
 				'context' => 'side'
 				)
 		);
+
+		//hook into the handler for saving question groups
+		add_filter( 'FHEE_event_editor_update', array( $this, 'modify_callbacks'), 10 );
+	}
+
+
+
+
+
+	public function modify_callbacks( $callbacks ) {
+		//now let's add the question group callback
+		$callbacks[] = array( $this, 'primary_question_group_update' );
+		return $callbacks;
 	}
 
 
@@ -100,5 +113,40 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks {
 			?>
 		</div>
 		<?php
+	}
+
+
+
+
+
+	public function primary_question_group_update( $evtobj, $data ) {
+		$question_groups = !empty( $data['question_groups'] ) ? (array) $data['question_groups'] : array();
+		$added_qgs = array_keys($question_groups);
+		$success = array();
+
+		//let's get all current question groups associated with this event.
+		$current_qgs = $evtobj->get_many_related('Question_Group');
+		$current_qgs = array_keys($current_qgs); //we just want the ids
+
+		//now let's get the groups selected in the editor and update (IF we have data)
+		if ( !empty( $question_groups ) ) {
+			foreach ( $question_groups as $id => $val ) {
+				//add to event
+				$qg = $evtobj->_add_relation_to( $id, 'Question_Group', array('EQG_primary' => 1) );
+				$success[] = !empty($qg) ? 1 : 0;
+			}
+		}
+
+		//wait a minute... are there question groups missing in the saved groups that ARE with the current event?
+		$removed_qgs = array_diff( $current_qgs, $added_qgs );
+
+		foreach ( $removed_qgs as $qgid ) {
+			$qg = $evtobj->_remove_relation_to( $qgid, 'Question_Group', array('EQG_primary' => 1 ) );
+			$success[] = !empty($qg) ? 1 : 0;
+		}
+
+
+		return in_array(0, $success) ? FALSE : TRUE;
+
 	}
 } //end espresso_events_Registration_Form_Hooks

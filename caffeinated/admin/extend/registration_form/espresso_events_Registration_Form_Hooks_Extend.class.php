@@ -60,6 +60,13 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
 
 
 
+	public function modify_callbacks( $callbacks ) {
+		$callbacks = parent::modify_callbacks( $callbacks );
+		$callbacks[] = array( $this, 'additional_question_group_update' );
+		return $callbacks;
+	}
+
+
 
 
 	public function additional_questions( $post_id, $post ) {
@@ -104,5 +111,39 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
 			?>
 		</div>
 		<?php
+	}
+
+
+
+
+
+	public function additional_question_group_update( $evtobj, $data ) {
+		$question_groups = !empty( $data['add_attendee_question_groups'] ) ? (array) $data['add_attendee_question_groups'] : array();
+		$added_qgs = array_keys($question_groups);
+		$success = array();
+
+		//let's get all current question groups associated with this event.
+		$current_qgs = $evtobj->get_many_related('Question_Group');
+		$current_qgs = array_keys($current_qgs); //we just want the ids
+
+		//now let's get the groups selected in the editor and update (IF we have data)
+		if ( !empty( $question_groups ) ) {
+			foreach ( $question_groups as $id => $val ) {
+				//add to event
+				$qg = $evtobj->_add_relation_to( $id, 'Question_Group', array('EQG_primary' => 0) );
+				$success[] = !empty($qg) ? 1 : 0;
+			}
+		}
+
+		//wait a minute... are there question groups missing in the saved groups that ARE with the current event?
+		$removed_qgs = array_diff( $current_qgs, $added_qgs );
+
+		foreach ( $removed_qgs as $qgid ) {
+			$qg = $evtobj->_remove_relation_to( $qgid, 'Question_Group', array('EQG_primary' => 0 ) );
+			$success[] = !empty($qg) ? 1 : 0;
+		}
+
+
+		return in_array(0, $success) ? FALSE : TRUE;
 	}
 } //end class espresso_events_Registration_Form_Hooks_Extend
