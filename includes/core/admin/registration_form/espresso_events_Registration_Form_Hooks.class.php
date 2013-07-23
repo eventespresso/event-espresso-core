@@ -56,6 +56,9 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks {
 
 		//hook into the handler for saving question groups
 		add_filter( 'FHEE_event_editor_update', array( $this, 'modify_callbacks'), 10 );
+
+		//hook into revision restores (we're hooking into the global action because EE_Admin_Hooks classes are already restricted by page)
+		add_action( 'AHEE_EE_Admin_Page_CPT__restore_revision', array($this, 'restore_revision' ), 10, 2 );
 	}
 
 
@@ -66,6 +69,15 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks {
 		//now let's add the question group callback
 		$callbacks[] = array( $this, 'primary_question_group_update' );
 		return $callbacks;
+	}
+
+
+	public function restore_revision( $post_id, $revision_id ) {
+		$EVT_MDL = $this->EE->load_model('Event');
+		$post_evt = $EVT_MDL->get_one_by_ID( $post_id );
+		//restore revision for primary questions
+		$post_evt->restore_revision($revision_id, array('Question_Group'), array('Question_Group' => array('Event_Question_Group.EQG_primary' => 1 ) ) );
+		return $post_evt; //for any caffeinated functionality extending.		
 	}
 
 

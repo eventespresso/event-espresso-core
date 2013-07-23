@@ -68,6 +68,15 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
 
 
 
+	public function restore_revision( $post_id, $revision_id ) {
+		$post_evt = parent::restore_revision( $post_id, $revision_id );
+
+		//restore revision for additional questions
+		$post_evt->restore_revision( $revision_id, array('Question_Group'), array('Question_Group' => array('Event_Question_Group.EQG_primary' => 0 ) ) );
+	}
+
+
+
 
 	public function additional_questions( $post_id, $post ) {
 		$this->_event = $this->_adminpage_obj->get_event_object();

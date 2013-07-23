@@ -634,7 +634,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$post_evt->restore_revision($revision_id);
 
 		//related objs restore
-		$post_evt->restore_revision($revision_id, array('Venue', 'Datetime', 'Price', 'Question_Group') );
+		$post_evt->restore_revision($revision_id, array( 'Venue', 'Datetime', 'Price' ) );
 	}
 	
 
