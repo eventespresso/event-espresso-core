@@ -90,7 +90,13 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base{
 
 		 //if $where_query exists lets add them to the query_params.
 		 if ( !empty( $where_query ) ) {
-		 	$cols_n_values = array_merge( $cols_n_values, $where_query );
+		 	//make sure we strip any of the join model names from the $where_query cause we don't need that in here (why? because client code may have used the same conditionals for get_all_related which DOES need the join model name)
+		 	//make sure we strip THIS models name from the query param
+		 	foreach ( $where_query as $query_param => $val ) {
+				$query_param = str_replace($this->get_join_model()->get_this_model_name().".","", $query_param);
+				$parsed_query[$query_param] = $val;
+			}
+		 	$cols_n_values = array_merge( $cols_n_values, $parsed_query );
 		 }
 
 		 $query_params = array( $cols_n_values );
@@ -123,9 +129,16 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base{
 				 $join_model_fk_to_this_model->get_name() => $this_model_obj->ID(),
 				 $join_model_fk_to_other_model->get_name() => $other_model_obj->ID());
 
-		if ( !empty( $where_query) ) {
-			$cols_n_values = array_merge( $cols_n_values, $where_query );
-		}
+		//if $where_query exists lets add them to the query_params.
+		 if ( !empty( $where_query ) ) {
+		 	//make sure we strip any of the join model names from the $where_query cause we don't need that in here (why? because client code may have used the same conditionals for get_all_related which DOES need the join model name)
+		 	//make sure we strip THIS models name from the query param
+		 	foreach ( $where_query as $query_param => $val ) {
+				$query_param = str_replace($this->get_join_model()->get_this_model_name().".","", $query_param);
+				$parsed_query[$query_param] = $val;
+			}
+		 	$cols_n_values = array_merge( $cols_n_values, $parsed_query );
+		 }
 
 		 $existing_entry_in_join_table = $this->get_join_model()->delete( array($cols_n_values) );
 		return $other_model_obj;
