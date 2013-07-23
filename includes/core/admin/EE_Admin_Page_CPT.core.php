@@ -543,7 +543,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return void 	            
 	 */
 	public function restore_revision( $post_id, $revision_id ) {
-		$post_id = $this->_restore_cpt_item( $post_id, $revision_id );
+		$this->_restore_cpt_item( $post_id, $revision_id );
 		
 		//global action
 		do_action( 'AHEE_EE_Admin_Page_CPT__restore_revision', $post_id, $revision_id);
