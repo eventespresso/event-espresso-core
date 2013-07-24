@@ -24,16 +24,6 @@
 class EED_Invoice  extends EED_Module {
 
 	/**
-	 * 	register_module - makes core aware of this module
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function register_module() {
-		EE_Front_Controller::register_module(  __CLASS__ , __FILE__ );
-	}
-
-	/**
 	 * 	set_hooks - for hooking into EE Core, other modules, etc
 	 *
 	 *  @access 	public
@@ -54,16 +44,16 @@ class EED_Invoice  extends EED_Module {
 
 
 	/**
-	 * 	init - initial module setup
+	 * 	run - initial module setup
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function init() {
+	public function run() {
 		if ( is_readable( EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/Invoice/lib/Invoice.class.php' )) {
 			require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/Invoice/lib/Invoice.class.php' );
 		} else {
-			$msg = __( 'An error has occured. The Invoice.class.php file could not be loaded.', 'event_espresso' );
+			$msg = __( 'The Invoice.class.php file could not be loaded.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 //		add_filter( 'FHEE_load_org_options', '__return_true' );

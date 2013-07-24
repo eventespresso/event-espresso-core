@@ -28,30 +28,30 @@ final class EE_Registry {
 
    /**
      * 	EE_Registry Object
-     * 	@private _instance
-	 * 	@private 	protected
+     * 	@var EE_Registry $_instance
+	 * 	@access 	private 	
      */
 	private static $_instance = NULL;
 
    /**
+     * 	$_autoloaders 
+     * 	@var array $_autoloaders
+	 * 	@access 	private 	
+     */
+	private static $_autoloaders = array();
+
+   /**
+     * 	org_option settings
+	 * 	@access 	public
+	 *	@var 	StdClass		$CFG
+     */
+	public $CFG = NULL;
+
+    /**
      * array for storing library classes in
      * @public LIB
      */
 	public $LIB = array();
-
-   /**
-     * 	EE_Session Object
-	 * 	@access 	public
-	 *	@var 	EE_Session	 $EE_Session
-     */
-	public $EE_Session = NULL;
-
-   /**
-     * 	EE_Config Object
-	 * 	@access 	public
-	 *	@var 	EE_Config		$CFG
-     */
-	public $CFG = NULL;
 
 	/**
 	 * 	EE_Request_Handler Object
@@ -61,18 +61,11 @@ final class EE_Registry {
 	public $REQ = NULL;
 
    /**
-     * 	EE_Data_Mapper Object
+     * 	EE_Session Object
 	 * 	@access 	public
-	 *	@var 	EE_Data_Mapper	$DMP
+	 *	@var 	EE_Session	 $SSN
      */
-	public $DMP = NULL;
-
-	/**
-	 * 	$CPTs
-	 * 	@access 	public
-	 *	@var 	array	$CPTs
-	 */
-//	public $CPTs = array();
+	public $SSN = NULL;
 
 	/**
 	 * 	$shortcodes
@@ -106,20 +99,7 @@ final class EE_Registry {
      */
 	public $main_file;
 
-	
-	
 
-	/**
-	 *private constructor to prevent direct creation
-	 *@Constructor
-	 *@access private
-	 *@return void
-	 */	
-	private function __construct() {
-		add_action( 'init', array( $this, 'init' ), 1 );
-		
-		
-	}
 
 
 
@@ -134,6 +114,21 @@ final class EE_Registry {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
+	}	
+
+
+
+	/**
+	 *private constructor to prevent direct creation
+	 *@Constructor
+	 *@access private
+	 *@return void
+	 */	
+	private function __construct() {
+		// setup object for adding configuration settings to
+		$this->CFG = new StdClass();
+		add_action( 'init', array( $this, 'init' ), 1 );
+		spl_autoload_register( array( $this, 'espresso_autoloader' ));
 	}
 
 
@@ -148,22 +143,74 @@ final class EE_Registry {
 		// Get current page protocol
 		$protocol = isset( $_SERVER['HTTPS'] ) ? 'https://' : 'http://';
 		// Output admin-ajax.php URL with same protocol as current page
-		self::$i18n_js_strings['ajax_url'] = admin_url( 'admin-ajax.php', $protocol );	
+		self::$i18n_js_strings['ajax_url'] = admin_url( 'admin-ajax.php', $protocol );
 	}
 
+
+
+	/**
+	 * 		espresso_autoloader
+	 *
+	 * 	@access 	public
+	 *	@param string $class_name - simple class name ie: session
+	 * 	@return 		void
+	 */
+	public function espresso_autoloader( $className ) {
+		if ( isset( self::$_autoloaders[ $className ] ) && is_readable( self::$_autoloaders[ $className ] )) {
+			require_once( self::$_autoloaders[ $className ] );
+		} 
+	}
+
+
+
+	/**
+	 * 		register_autoloader
+	 *
+	 * 	@access 	public
+	 *	@param string $class_paths - array of key => value pairings between classnames and paths
+	 * 	@return 		void
+	 */
+	public static function register_autoloader( $class_paths = array() ) {
+		$class_paths = is_array( $class_paths ) ? $class_paths : array( $class_paths );
+		foreach ( $class_paths as $class => $path ) {
+			// don't give up! you gotta...
+			try {
+				// get some class
+				if ( empty( $class )) {					
+					throw new EE_Error ( __( 'An error occured. No Class name was specified while registering an autoloader.','event_espresso' ));					
+				}
+				// one day you will find the path young grasshopper 
+				if ( empty( $path )) {					
+					throw new EE_Error ( sprintf( __( 'An error occured. No path was specified while registering an autoloader for the %s class.','event_espresso' ), $class ));					
+				}
+				// is file readable ?
+				if ( ! is_readable( $path )) {
+					throw new EE_Error ( sprintf( __( 'An error occured. The file for the %s class could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s','event_espresso' ), $class, $path ));					
+				}				 
+			} catch ( EE_Error $e ) {
+				$e->get_error();
+			}
+			// add autoloader
+			self::$_autoloaders[ $class ] = $path;			
+		}
+	}
 
 
 
 	/**
 	 *	loads core classes - must be singletons
 	 * 
+	 * 	@access 	public
 	 *	@param string $class_name - simple class name ie: session
 	 *	@return instantiated class object
 	 */	
-	public function load_core ( $class_name, $sub_path = FALSE, $pass_REG = FALSE, $autoinstantiate = TRUE ) {
-		$sub_path  = $sub_path ? rtrim( $sub_path, '/\\' ) . DS : '';
+	public function load_core ( $class_name, $arguments = array() ) {
+		$paths = array(
+			EE_CORE,
+			EE_CORE . 'CPTs' . DS,
+		);
 		// retreive instantiated class
-		return $this->_load( EE_CORE . $sub_path, 'EE_' , $class_name, 'core', $pass_REG, $autoinstantiate );
+		return $this->_load( $paths, 'EE_' , $class_name, 'core', $arguments );
 	}
 
 
@@ -176,10 +223,9 @@ final class EE_Registry {
 	 *	@param string $class_name - simple class name ie: attendee
 	 *	@return instantiated class object
 	 */
-	public function load_class ( $class_name, $sub_path = FALSE, $pass_REG = FALSE, $autoinstantiate = TRUE ) {
-		$sub_path  = $sub_path ? rtrim( $sub_path, '/\\' ) . DS : '';
+	public function load_class ( $class_name, $arguments = array() ) {
 		// retreive instantiated class
-		return $this->_load( EE_CLASSES . $sub_path, 'EE_' , $class_name, 'class', $pass_REG, $autoinstantiate );
+		return $this->_load( EE_CLASSES, 'EE_' , $class_name, 'class', $arguments );
 	}
 
 
@@ -190,10 +236,9 @@ final class EE_Registry {
 	 *	@param string $class_name - simple class name ie: price
 	 *	@return instantiated class object
 	 */	
-	public function load_model ( $class_name, $sub_path = FALSE, $pass_REG = FALSE, $autoinstantiate = TRUE ) {
-		$sub_path  = $sub_path ? rtrim( $sub_path, '/\\' ) . DS : '';
+	public function load_model ( $class_name, $arguments = array() ) {
 		// retreive instantiated class
-		return $this->_load( EE_MODELS . $sub_path, 'EEM_' , $class_name, 'model', $pass_REG, $autoinstantiate );
+		return $this->_load( EE_MODELS, 'EEM_' , $class_name, 'model', $arguments );
 	}
 
 
@@ -206,10 +251,9 @@ final class EE_Registry {
 	 *	@param string $class_name - simple class name ie: price
 	 *	@return instantiated class object
 	 */	
-	public function load_helper ( $class_name, $sub_path = FALSE, $pass_REG = FALSE, $autoinstantiate = TRUE ) {
-		$sub_path  = $sub_path ? rtrim( $sub_path, '/\\' ) . DS : '';
+	public function load_helper ( $class_name, $arguments = array() ) {
 		// retreive instantiated class
-		return $this->_load( EE_HELPERS . $sub_path, 'EE_', $class_name, 'helper', $pass_REG, $autoinstantiate );
+		return $this->_load( EE_HELPERS, 'EEH_', $class_name, 'helper', $arguments );
 	}
 
 
@@ -223,12 +267,12 @@ final class EE_Registry {
 	 *	@param string $type - file type - core? class? helper? model?
 	 *	@return instantiated class object
 	 */	
-	public function load_file ( $path_to_file, $class_name, $type = 'class', $pass_REG = FALSE, $autoinstantiate = TRUE ) {
+	public function load_file ( $path_to_file, $class_name, $type = 'class', $arguments = array() ) {
 		// set path to class file
 		$path_to_file = rtrim( $path_to_file, '/\\' ) . DS;
 		$type = trim( $type, '. ' );
 		// retreive instantiated class
-		return $this->_load( $path_to_file, '', $class_name, $type, $pass_REG, $autoinstantiate );
+		return $this->_load( $path_to_file, '', $class_name, $type, $arguments );
 	}
 
 
@@ -242,46 +286,56 @@ final class EE_Registry {
 	 *	@param string $class_prefix - EE  or EEM or... ???
 	 *	@param string $class_name - $class name
 	 *	@param string $type - file type - core? class? helper? model?
-	 *	@param boolean $pass_REG - whether to pass $this (EE_Registry) to the instantiated class
+	 *	@param boolean $arguments - an array of arguments to pass to the class upon instantiation 
 	 *	@return instantiated class object
 	 */	
-	private function _load ( $file_path = FALSE, $class_prefix = 'EE_', $class_name = FALSE, $type = 'class', $pass_REG = FALSE, $autoinstantiate = TRUE ) {
+	private function _load ( $file_paths = array(), $class_prefix = 'EE_', $class_name = FALSE, $type = 'class', $arguments = array() ) {
 		// make sure $class name prefix is uppercase
 		$class_name = strtoupper( trim( $class_prefix )) . trim( $class_name );
-		// convert all separators to proper DS, if no filepth, then use EE_CLASSES
-		$file_path = $file_path ? str_replace( '/\\', DS, $file_path ) : EE_CLASSES;
-		// build full file path
-		$file_path = rtrim( $file_path, '/\\' ) . DS . $class_name . '.' . trim( $type, '.' ) . '.php';
 		// check if class has already been loaded, and return it if it has been
 		if ( $class_name == 'EE_Request_Handler' && ! is_null( $this->REQ )) {
-			return $this->CFG;
-		} else if ( $class_name == 'EE_Config' && ! is_null( $this->CFG )) {
-			return $this->CFG;
+			return $this->REQ;
 		} else if ( isset ( $this->{$class_name} )) {
 			return $this->{$class_name};
 		} else if ( isset ( $this->LIB[ $class_name ] )) {
 			return $this->LIB[ $class_name ];
+		}
+		// assume all paths lead nowhere
+		$path = FALSE;
+		// make sure $file_paths is an array
+		$file_paths = is_array( $file_paths ) ? $file_paths : array( $file_paths );
+		// cycle thru paths 
+		foreach ( $file_paths as $file_path ) {
+			// convert all separators to proper DS, if no filepth, then use EE_CLASSES
+			$file_path = $file_path ? str_replace( array( '/', '\\' ), DS, $file_path ) : EE_CLASSES;
+			// build full file path
+			$file_path = rtrim( $file_path, DS ) . DS . $class_name . '.' . trim( $type, '.' ) . '.php';
+			//does the file exist and can be read ?
+			if ( is_readable( $file_path )) {
+				$path = $file_path;
+				break;
+			}
 		}
 		
 //		echo '<h4>$class_name : ' . $class_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>$file_path : ' . $file_path . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
 		// don't give up! you gotta...
-		try {			
+		try {
 			//does the file exist and can be read ?
-			if ( ! is_readable( $file_path )) {
+			if ( ! $path ) {
 				// so sorry, can't find the file'
 				throw new EE_Error ( 
 					sprintf (
 						__('An error occured. The %s file %s could not be located or is not readable due to file permissions. Please ensure that the following filepath is correct: %s','event_espresso'), 
 						$type, 
 						$class_name, 
-						$file_path 
+						$file_paths[0] 
 					)
 				);
 			}
 			// get the file
-			require_once( $file_path );
+			require_once( $path );
 			// if the class isn't already declared somewhere
 			if ( class_exists( $class_name, FALSE ) === FALSE ) {
 				// so sorry, not a class
@@ -299,42 +353,32 @@ final class EE_Registry {
 			$e->get_error();
 		}
 		
-		// if we just want to load the class file but not instantiate anything yet, then just return
-		if ( ! $autoinstantiate ) {
-			return TRUE;
-		}
-		
 		// don't give up! you gotta...
-		try {
-			
+		try {			
 			// create reflection
 			$reflector = new ReflectionClass( $class_name );
-			// are we passing $this (EE_Registry) to class ?)
-			if( $pass_REG ) {
-				// instantiate the class and add to the LIB array for tracking
-				$class_obj = $reflector->isInstantiable() ? $reflector->newInstance( $this ) : call_user_func( array( $class_name, 'instance' ), $this );
-			} else {
-				// instantiate the class and add to the LIB array for tracking
-				$class_obj = $reflector->isInstantiable() ? $reflector->newInstance() : call_user_func( array( $class_name, 'instance' ));
+			// instantiate the class and add to the LIB array for tracking
+			if ( $reflector->isInstantiable() ) {
+				$class_obj =  $reflector->newInstance( $arguments );
+			} else if ( method_exists( $class_name, 'instance' )) {
+				$class_obj =  call_user_func( array( $class_name, 'instance' ), $arguments );
 			}
-
+			 
 		} catch ( EE_Error $e ) {
 			$e->get_error();
 		}
-			
-		// return newly instantiated class
-		if ( $class_name == 'EE_Request_Handler' ) {
-			$this->REQ = $class_obj;
-		} else if ( $class_name == 'EE_Config' ) {
-			$this->CFG = $class_obj;
-		} else if ( property_exists( $this, $class_name )) {
-			$this->{$class_name} = $class_obj;
-		} else {
-			$this->LIB[ $class_name ] = $class_obj;
-		}
-
-		return $class_obj;
 		
+		if ( isset( $class_obj )) {			
+			// return newly instantiated class
+			if ( $class_name == 'EE_Request_Handler' ) {
+				$this->REQ = $class_obj;
+			} else if ( property_exists( $this, $class_name )) {
+				$this->{$class_name} = $class_obj;
+			} else {
+				$this->LIB[ $class_name ] = $class_obj;
+			}
+			return $class_obj;
+		}		
 	}
 
 

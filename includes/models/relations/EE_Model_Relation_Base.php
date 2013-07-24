@@ -18,22 +18,33 @@ abstract class EE_Model_Relation_Base{
 	 * @var string eg Event, Question_Group, Registration
 	 */
 	private $_other_model_name;
-	/**
-	 * Any extra SQL that we'd like to add when joining to the other model. Eg " AND Event.post_type = 'monkey'"
-	 * @var string 
-	 */
-	protected $_extra_join_conditions;
-
 
 	/**
 	 * this is typically used when calling the relation models to make sure they inherit any set timezone from the initiating model.
 	 * @var string
 	 */
 	protected $_timezone = NULL;
+	
+	/**
+	 * If you try to delete "this_model", and there are related "other_models",
+	 * and this isn't null, then abandon the deletion and add this warning.
+	 * This effectively makes it impossiuble to delete "this_model" while there are
+	 * related "other_models" along this relation.
+	 * @var string (internationalized)
+	 */
+	protected $_blocking_delete_error_message;
+	
+	protected $_blocking_delete = false;
 
-
-	function __construct($extra_join_conditions){
-		$this->_extra_join_conditions=$extra_join_conditions;
+	/**
+	 * Object representing the relationship between two models. This knows how to join the models,
+	 * get related models across the relation, and add-and-remove the relationships.
+	 * @param boolean $block_deletes if there are related models across this relation, block (prevent and add an error) the deletion of this model
+	 * @param type $blocking_delete_error_message a customized error message on blocking deletes instead of the default
+	 */
+	function __construct($block_deletes, $blocking_delete_error_message){
+		$this->_blocking_delete = $block_deletes;
+		$this->_blocking_delete_error_message=$blocking_delete_error_message;
 	}
 	function _construct_finalize_set_models($this_model_name, $other_model_name){
 		$this->_this_model_name = $this_model_name;
@@ -84,19 +95,37 @@ abstract class EE_Model_Relation_Base{
 	 * For both of those child classes, $model_object must be saved so that it has an ID before querying,
 	 * otherwise an error will be thrown.
 	 * EE_Belongs_To_Relation doesn't need to be saved before querying.
-	 * @param EE_Base_Class $model_object 
+	 * @param EE_Base_Class|int $model_object_or_id or the primary key of this model
 	 * @param array $query_params like EEM_Base::get_all's $query_params
 	 * @param boolean $values_already_prepared_by_model_object
 	 * @return EE_Base_Class[]
 	 */
-	public function get_all_related($model_object, $query_params = array(), $values_already_prepared_by_model_object = false){
+	public function get_all_related($model_object_or_id, $query_params = array(), $values_already_prepared_by_model_object = false){
 		$query_param_where_this_model_pk = $this->get_this_model()->get_this_model_name().".".$this->get_this_model()->get_primary_key_field()->get_name();
-		$model_object_id = $model_object->ID();
+		$model_object_id = $this->_get_model_object_id( $model_object_or_id );
+		$query_params[0][$query_param_where_this_model_pk] = $model_object_id;
+		return $this->get_other_model()->get_all($query_params, $values_already_prepared_by_model_object);
+	}
+
+
+
+
+
+	/**
+	 * this just returns a model_object_id for incoming item that could be an object or id.
+	 * @param  EE_Base_Class|int $model_object_or_id model object or the primary key of this model
+	 * @return int                     
+	 */
+	protected function _get_model_object_id($model_object_or_id) {
+		if($model_object_or_id instanceof EE_Base_Class){
+			$model_object_id = $model_object_or_id->ID();
+		}else{
+			$model_object_id = $model_object_or_id;
+		}
 		if( ! $model_object_id){
 			throw new EE_Error(sprintf(__("Sorry, we cant get the related %s model objects to %s model object before it has an ID. You can solve that by just saving it before trying to get its related model objects", "event_espresso"),$this->get_other_model()->get_this_model_name(),$this->get_this_model()->get_this_model_name()));
 		}
-		$query_params[0][$query_param_where_this_model_pk] = $model_object->ID();
-		return $this->get_other_model()->get_all($query_params, $values_already_prepared_by_model_object);
+		return $model_object_id;
 	}
 	
 	/**
@@ -120,4 +149,26 @@ abstract class EE_Model_Relation_Base{
 	 * @return void
 	 */
 	abstract function remove_relation_to($this_obj_or_id, $other_obj_or_id);
+	
+	/**
+	 * If you aren't allowed to delete this model when there are related models across this
+	 * relation object, return true. Otherwise, if you can delete this model even though 
+	 * related objects exist, returns false.
+	 * @return boolean
+	 */
+	public function block_delete_if_related_models_exist(){
+		return $this->_blocking_delete;
+	}
+	/**
+	 * Gets the error message to show
+	 * @return string
+	 */
+	public function get_deletion_error_message(){
+		if($this->_blocking_delete_error_message){
+			return $this->_blocking_delete_error_message;
+		}else{
+			return sprintf(__('Cannot delete %1$s when there are related %2$s', "event_espresso"),$this->get_this_model()->item_name(2),$this->get_other_model()->item_name(2));
+		}
+		
+	}
 }

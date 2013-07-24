@@ -76,8 +76,8 @@ class espresso_events_Messages_Hooks extends EE_Admin_Hooks {
 
 		//let's get the active messengers (b/c messenger objects have the active message templates)
 		//convert 'evt_id' to 'EVT_ID'
-		if ( isset( $this->_req_data['id'] ) )
-			$this->_req_data['EVT_ID'] = $this->_req_data['id'];
+		if ( isset( $this->_req_data['post'] ) )
+			$this->_req_data['EVT_ID'] = $this->_req_data['post'];
 
 		//set flag for whether we are adding or editing an event.
 		$add_event = !isset($this->_req_data['EVT_ID']) ? TRUE : FALSE;

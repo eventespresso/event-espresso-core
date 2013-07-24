@@ -151,6 +151,16 @@ class EE_Price extends EE_Base_Class{
 	protected $_PRC_order = NULL;
 
 
+
+	/**
+	 * Order that this price is displayed
+	 * @var integer
+	 */
+	protected $_PRC_display_order = 1;
+
+
+
+
 	/**
 	*	Whether this Price has been moved to the trash
 	*
@@ -502,6 +512,18 @@ class EE_Price extends EE_Base_Class{
 	*/
 	public function order() {
 		return $this->get('PRC_order');
+	}
+
+
+
+
+	/**
+	 * get display order
+	 * @access public
+	 * @return int
+	 */
+	public function display_order() {
+		return $this->get('PRC_display_order');
 	}
 
 

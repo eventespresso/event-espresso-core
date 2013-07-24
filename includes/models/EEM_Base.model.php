@@ -16,16 +16,16 @@
  * If your values are already in teh database values domain, you'll either way to convert them into the model object domain by creating model objects
  * from those raw db values (ie,using EEM_Base::_create_objects), or just use $wpdb directly.
  */
-define('SP',' ');
-//require all field, relation, and helper files, because we'll want 90% of them on every request using EEM_Base anyways.
-$field_files = glob( EE_MODELS . '/fields/*.php');
-$helper_files = glob( EE_MODELS . '/helpers/*.php');
-$relation_files = glob( EE_MODELS . '/relations/*.php');
-$files =  array_merge( array_merge($field_files, $relation_files), $helper_files) ;
-require_once( EE_MODELS . 'strategies/EE_Default_Where_Conditions.strategy.php' );
-foreach ( $files as $file ){
-    require_once( $file );   
-}
+//define('SP',' ');
+////require all field, relation, and helper files, because we'll want 90% of them on every request using EEM_Base anyways.
+//$field_files = glob( EE_MODELS . '/fields/*.php');
+//$helper_files = glob( EE_MODELS . '/helpers/*.php');
+//$relation_files = glob( EE_MODELS . '/relations/*.php');
+//$files =  array_merge( array_merge($field_files, $relation_files), $helper_files) ;
+//require_once( EE_MODELS . 'strategies/EE_Default_Where_Conditions.strategy.php' );
+//foreach ( $files as $file ){
+//    require_once( $file );   
+//}
 //make sure EE_Registry is available
 require_once( EE_REGISTRY );
 
@@ -60,7 +60,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 *
-	 * @var EE_Model_Relation[] array of different kidns of relations
+	 * @var EE_Model_Relation_Base[] array of different kidns of relations
 	 */
 	protected $_model_relations;
 
@@ -152,7 +152,7 @@ abstract class EEM_Base extends EE_Base{
 	 * 'where', but 'where' clauses are so common that we thought we'd omit it
 	 * @var array
 	 */
-	private $_allowed_query_params = array(0, 'limit','order_by','group_by','having','force_join','order','on_join_limit');
+	private $_allowed_query_params = array(0, 'limit','order_by','group_by','having','force_join','order','on_join_limit','default_where_conditions');
 
 	
 	/**
@@ -298,6 +298,9 @@ abstract class EEM_Base extends EE_Base{
 	 *					|	You will probably only want to do this in hopes of increasing efficiency, as related models which belongs to the current model 
 	 *					|	(ie, the current model has a foreign key to them, like how Registration belongs to Attendee) can be cached in order
 	 *					|	to avoid future queries
+	 *default_where_conditions| can be set to 'none','other_models_only', or 'all'. set this to 'none' to disable all default where conditions. Eg, usually soft-deleted objects are filtered-out
+	 *					|	if you want to include them, set this query param to 'none'. If you want to ONLY disable THIS model's default where conditions
+	 *					|	set it to 'other_models_only'. If you want to use all default where conditions (default), set to 'all'.
 	 * Some full examples:
 	 * get 10 transactions which have Scottish attendees:
 	 * EEM_Transaction::instance()->get_all(array(
@@ -454,6 +457,7 @@ abstract class EEM_Base extends EE_Base{
 			//let's make sure default_where strategy is followed now
 			$this->_ignore_where_strategy = FALSE;
 		}
+
 		
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 		$SQL = "UPDATE ".$model_query_info->get_full_join_sql()." SET ".$this->_construct_update_sql($fields_n_values).$model_query_info->get_where_sql();//note: doesn't use _construct_2nd_half_of_select_query() because doesn't accept LIMIT, ORDER BY, etc.
@@ -512,6 +516,27 @@ abstract class EEM_Base extends EE_Base{
 		}
 		return $rows_deleted;//how many supposedly got updated
 	}
+	
+	/**
+	 * Checks all the relations that throw error messages when there are blcoking related objects
+	 * for related model objects. If there are any related model objects on those relations, 
+	 * adds an EE_Error, and return true
+	 * @param EE_Base_CLass|int $this_model_obj_or_id
+	 * @return boolean
+	 */
+	public function delete_is_blocked_by_related_models($this_model_obj_or_id){
+		$is_blocked = false;
+		foreach($this->_model_relations as $relation_name => $relation_obj){
+			if($relation_obj->block_delete_if_related_models_exist()){
+				$related_model_objects = $relation_obj->get_all_related($this_model_obj_or_id);
+				if($related_model_objects){
+					EE_Error::add_error($relation_obj->get_deletion_error_message(), __FILE__, __FUNCTION__, __LINE__);
+					$is_blocked = true;
+				}
+			}
+		}
+		return $is_blocked;
+	}
 
 
 
@@ -526,6 +551,12 @@ abstract class EEM_Base extends EE_Base{
 		$deletes = $query = array();
 		
 		foreach ( $objects_for_deletion as $deobj ) {
+			//before we mark this object for deletion, 
+			//make sure there's no related objects blocking its deletion
+			if( $this->delete_is_blocked_by_related_models($deobj[$primary_table->get_fully_qualified_pk_column()]) ){
+				continue;
+			}
+			
 			//primary table deletes
 			if ( isset( $deobj[$primary_table->get_fully_qualified_pk_column()] ) )
 				$deletes[$primary_table->get_fully_qualified_pk_column()][] = $deobj[$primary_table->get_fully_qualified_pk_column()];
@@ -670,11 +701,12 @@ abstract class EEM_Base extends EE_Base{
 	 * @param EE_Base_Class/int $id_or_obj EE_base_Class or ID of other Model Object
 	 * @param string $relationName, key in EEMerimental_Base::_relations
 	 * an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specificy array('role-column-name'=>'role-id')
+	 * @param array   $where_query This allows you to enter further query params for the relation to for relation to methods that allow you to further specify extra columns to join by (such as HABTM).  Keep in mind that the only acceptable query_params is strict "col" => "value" pairs because these will be inserted in any new rows created as well.
 	 * @return EE_Base_Class which was added as a relation. Object referred to by $other_model_id_or_obj
 	 */
-	public function add_relationship_to($id_or_obj,$other_model_id_or_obj, $relationName){
+	public function add_relationship_to($id_or_obj,$other_model_id_or_obj, $relationName, $where_query = array()){
 		$relation_obj = $this->related_settings_for($relationName);
-		return $relation_obj->add_relation_to($id_or_obj, $other_model_id_or_obj);
+		return $relation_obj->add_relation_to($id_or_obj, $other_model_id_or_obj, $where_query);
 	}
 	
 	/**
@@ -691,10 +723,11 @@ abstract class EEM_Base extends EE_Base{
 	 * @param EE_Base_Class/int $other_model_id_or_obj EE_Base_Class or ID of other Model Object
 	 * @param string $relationName key in EEMerimental_Base::_relations
 	 * @return boolean of success
+	 * @param array   $where_query This allows you to enter further query params for the relation to for relation to methods that allow you to further specify extra columns to join by (such as HABTM).  Keep in mind that the only acceptable query_params is strict "col" => "value" pairs because these will be inserted in any new rows created as well.
 	 */
-	public function remove_relationship_to($id_or_obj,  $other_model_id_or_obj, $relationName){
+	public function remove_relationship_to($id_or_obj,  $other_model_id_or_obj, $relationName, $where_query= array() ){
 		$relation_obj = $this->related_settings_for($relationName);
-		$relation_obj->remove_relation_to($id_or_obj, $other_model_id_or_obj);
+		return $relation_obj->remove_relation_to($id_or_obj, $other_model_id_or_obj, $where_query );
 	}
 	
 	
@@ -1001,7 +1034,12 @@ abstract class EEM_Base extends EE_Base{
 		}else{
 			$where_query_params = array();
 		}
-		$where_query_params = array_merge($this->_get_default_where_conditions_for_models_in_query($query_object), $where_query_params );
+		if(array_key_exists('default_where_conditions',$query_params)){
+			$use_default_where_conditions = $query_params['default_where_conditions'];
+		}else{
+			$use_default_where_conditions = 'all';
+		}
+		$where_query_params = array_merge($this->_get_default_where_conditions_for_models_in_query($query_object,$use_default_where_conditions), $where_query_params );
 		$query_object->set_where_sql( $this->_construct_where_clause($where_query_params));
 
 
@@ -1111,14 +1149,28 @@ abstract class EEM_Base extends EE_Base{
 	 * for their universal_where_params, and returns them in the same format as $query_params[0] (where),
 	 * so they can be merged
 	 * @param EE_Model_Query_Info_Carrier $query_info_carrier
+	 * @param string $use_default_where_conditions can be 'none','other_models_only', or 'all'.  'none' means NO default where conditions will be used AT ALL during this query.
+	 * 'other_models_only' means default where conditions from other models will be used, but not for this primary model. 'all', the default, means
+	 * default where conditions will apply as normal
+	 * @return array like $query_params[0], see EEM_Base::get_all for documentation
 	 */
-	private function _get_default_where_conditions_for_models_in_query(EE_Model_Query_Info_Carrier $query_info_carrier){
-		$universal_query_params = $this->_get_default_where_conditions();
+	private function _get_default_where_conditions_for_models_in_query(EE_Model_Query_Info_Carrier $query_info_carrier,$use_default_where_conditions = 'all'){
+		$allowed_used_default_where_conditions_values = array('all','other_models_only','none');
+		if( ! in_array($use_default_where_conditions,$allowed_used_default_where_conditions_values)){
+			throw new EE_Error(sprintf(__("You passed an invalid value to the query parameter 'default_where_conditions' of '%s'. Allowed values are %s", "event_espresso"),$use_default_where_conditions,implode(", ",$allowed_used_default_where_conditions_values)));
+		}
+		if($use_default_where_conditions == 'all' ){
+			$universal_query_params = $this->_get_default_where_conditions();
+		}else{
+			$universal_query_params = array();
+		}
 		
-		foreach($query_info_carrier->get_model_names_included() as $model_name =>$model_relation_path){
-			$related_model = $this->get_related_model_obj($model_name);
-			$related_model_universal_where_params = $related_model->_get_default_where_conditions($model_relation_path);
-			$universal_query_params = array_merge($universal_query_params, $related_model_universal_where_params);
+		if(in_array($use_default_where_conditions,array('all','other_models_only'))){
+			foreach($query_info_carrier->get_model_names_included() as $model_name =>$model_relation_path){
+				$related_model = $this->get_related_model_obj($model_name);
+				$related_model_universal_where_params = $related_model->_get_default_where_conditions($model_relation_path);
+				$universal_query_params = array_merge($universal_query_params, $related_model_universal_where_params);
+			}
 		}
 		return $universal_query_params;
 	}
@@ -1663,12 +1715,14 @@ abstract class EEM_Base extends EE_Base{
 		}
 		return $fieldSettings[$fieldName];
 	}
+
+
 	
 
 	
 	/**
-	 * gets the name of the field of type 'primary_key' from the fieldsSettings attribute.
-	 * Eg, on EE_Anwer that would be ANS_ID
+	 * gets the field object of type 'primary_key' from the fieldsSettings attribute.
+	 * Eg, on EE_Anwer that would be ANS_ID field object
 	 * @return EE_Model_Field_Base
 	 * @throws EE_Error
 	 */

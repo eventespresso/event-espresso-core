@@ -64,159 +64,21 @@ final class EE_System {
 	 *  @return 	void
 	 */
 	private function __construct( $activation ) {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		// set autoloaders for core files, models, classes, and libraries
-//		$this->_define_autoloaders();
-		// set autoloaders for core files, models, classes, and libraries
-		$this->_load_base_classes();
-		// load files for managing exceptions and errors
-		$this->_load_exception_handling();
-		// load EE_Log class
-		$this->_load_logging();
+		// handy dandy object for holding shtuff
+		$this->_load_registry();
+		$this->_register_custom_autoloaders();
+
 		if ( $activation ) {
+			$this->_register_custom_autoloaders();
 			// set names for db tables
 			$this->_define_database_tables();
 			$this->check_database_tables();
 		} else  {
-			// handy dandy object for holding shtuff
-			$this->_load_registry();
 			// hookpoints
 			add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
 			add_action( 'init', array( $this, 'init' ), 3 );
 			add_filter('query_vars', array( $this, 'add_query_vars' ), 5 );
 			add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );			
-		}
-	}
-
-
-
-
-	/**
-	 * 		_load_base_classes
-	 *
-	 * 		@access 	private
-	 * 		@return 		void
-	 */
-	private function _load_base_classes() {
-		require_once( EE_CORE . 'EE_Base.core.php' );	
-		require_once( EE_CLASSES . 'EE_Base_Class.class.php' );	
-		require_once( EE_CLASSES . 'EE_CPT_Base.class.php' );	
-		require_once( EE_MODELS . 'EEM_Base.model.php' );	
-		require_once( EE_MODELS . 'EEM_CPT_Base.model.php' );	
-	}
-
-
-
-
-	/**
-	 * 		Automagically load non-singleton class files - no need to include or require
-	 * 		ONLY works with class objects created via  "new"  ie: $object = new SomeClassName();
-	 *
-	 * 		@access 	private
-	* 		@param		$class		path and name of the class file to be loaded
-	 * 		@return 		void
-	 */
-	private function _define_autoloaders() {
-		spl_autoload_register( array( $this, '_autoload_core' ));
-		spl_autoload_register( array( $this, '_autoload_models' ));
-		spl_autoload_register( array( $this, '_autoload_classes' ));
-		spl_autoload_register( array( $this, '_autoload_libraries' ));
-	}
-
-	/**
-	 * 		_autoload_core
-	 *
-	 * 		@access 	private
-	 * 		@return 		void
-	 */
-	private function _autoload_core( $className ) {
-		if ( is_readable( EE_CORE . $className . '.core.php' )) {
-			require_once( EE_CORE . $className . '.core.php' );
-		} 
-	}
-
-	/**
-	 * 		_autoload_models
-	 *
-	 * 		@access 	private
-	 * 		@return 		void
-	 */
-	private function _autoload_models( $className ) {
-		if ( is_readable( EE_MODELS . '' . $className . '.model.php' ) ) {
-			require_once( EE_MODELS . '' . $className . '.model.php' );
-		}
-	}
-
-	/**
-	 * 		_autoload_classes
-	 *
-	 * 		@access 	private
-	 * 		@return 		void
-	 */
-	private function _autoload_classes( $className ) {
-		if ( is_readable( EE_CLASSES . $className . '.class.php' ) ) {
-			require_once( EE_CLASSES . $className . '.class.php' );
-		}
-	}
-
-	/**
-	 * 		_autoload_libraries
-	 *
-	 * 		@access 	private
-	 * 		@return 		void
-	 */
-	private function _autoload_libraries( $className ) {
-		//let's setup an array of paths to check (for each subsystem)
-		$root = EVENT_ESPRESSO_PLUGINFULLPATH . '/libraries/';		
-		//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
-		$dir_ref = array(
-			'root' => array('core', 'lib'),
-			'shortcodes/' => array('core', 'lib')
-			);
-		//assemble a list of filenames
-		foreach ( $dir_ref as $dir => $types ) {
-			if ( is_array($types) ) {
-				foreach ( $types as $type) {
-					$filenames[] = ( $dir == 'root' ) ? $root . $className . '.' . $type . '.php' : $root . $dir . $className . '.' . $type . '.php';
-				}
-			} else {
-				$filenames[] = ( $dir == 'root' ) ? $root . $className . '.' . $types . '.php' : $root . $dir . $className . '.' . $types . '.php';
-			}
-		}
-		//now loop through assembled filenames and require as available
-		foreach ( $filenames as $filename ) {
-			if ( is_readable($filename) )
-				require_once( $filename );
-		}
-	}
-
-
-
-
-	/**
-	 * 		_load_exception_handling - loads files for managing exceptions and errors
-	 *
-	 * 		@access 	private
-	 * 		@return 		void
-	 */
-	private function _load_exception_handling() {
-		require_once( EE_CORE . 'EE_Exceptions.core.php');
-	}
-
-
-
-	/**
-	 * 		_load_logging - loads system logging
-	 *
-	 * 		@access 	private
-	 * 		@return 		void
-	 */
-	private function _load_logging() {
-		if ( is_readable( EE_CORE . 'EE_Log.core.php' )) {
-			require_once( EE_CORE . 'EE_Log.core.php' );
-		} else {
-			$msg = __( 'An error has occured. The EE_Log could not be loaded.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
 
@@ -234,9 +96,82 @@ final class EE_System {
 			require_once( EE_CORE . 'EE_Registry.core.php' );
 			$this->EE = EE_Registry::instance();
 		} else {
-			$msg = __( 'An error has occured. The EE_Registry could not be loaded.', 'event_espresso' );
+			$msg = __( 'The EE_Registry could not be loaded.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
+	}
+
+
+
+	/**
+	 * 		load and instantiate EE_Session class
+	 *
+	 * 		@access private
+	 * 		@return void
+	 */
+//	private function _register_custom_autoloaders() {
+//		
+//		$classess = glob( EE_CORE . '*.core.php' );
+//		foreach( $classess as $class_path ) {
+//			$class_name = str_replace( '.core.php', '', basename( $class_path ));
+//			EE_Registry::register_autoloader( array( $class_name => $class_path ));
+//		}		
+//	}
+
+
+
+	/**
+	 * 		register core, model and class 'autoloaders'
+	 *
+	 * 		@access private
+	 * 		@return void
+	 */
+	private function _register_custom_autoloaders() {
+		$this->_register_autoloaders_for_each_file_in_folder( EE_CORE );
+		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS );
+		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'fields' );
+		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'helpers' );
+		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'relations' );
+		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'strategies' );
+		$this->_register_autoloaders_for_each_file_in_folder( EE_CLASSES );
+	}
+	
+	
+	/**
+	 * Assumes all the files in this folder have the normal naming scheme (namely that their classname
+	 * is the file's name, plus ".whatever.php".) and adds each of them to the autoloader list.
+	 * If that's not the case, you'll need to improve this function or just use _get_classname_from_filepath_with_standard_filename() directly.
+	 * Yes this has to scan the directory for files, but it only does it once -- not on EACH
+	 * time the autoloader is used
+	 * @param string $folder name, with or without trailing /, doesn't matter
+	 * @return void
+	 */
+	private function _register_autoloaders_for_each_file_in_folder($folder){
+		// make sure last char is a /
+		$folder .= $folder[strlen($folder)-1] != DS ? DS : '';
+		$class_to_filepath_map = array();
+		//get all the files in that folder that end in php
+		$filepaths = glob( $folder.'*.php');
+		foreach($filepaths as $filepath){
+			$class_to_filepath_map [ $this->_get_classname_from_filepath_with_standard_filename($filepath) ] = $filepath;
+		}
+		//printr( $class_to_filepath_map, '$class_to_filepath_map  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		EE_Registry::register_autoloader($class_to_filepath_map);
+	}
+
+	/**
+	 * Given that the file in $filepath has the normal name, (ie, CLASSNAME.whatever.php),
+	 * extract that classname.
+	 * @param string $filepath
+	 * @return string
+	 */
+	private function _get_classname_from_filepath_with_standard_filename($filepath){
+		//extract file from path
+		$filename = basename( $filepath );
+		//now remove the first period and everything after
+		$pos_of_first_period = strpos( $filename,'.' );
+		$classname = substr($filename, 0, $pos_of_first_period);
+		return $classname;
 	}
 
 
@@ -262,7 +197,7 @@ final class EE_System {
 	public function plugins_loaded() {
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		// set names for db tables
-		$this->_define_database_tables();
+//		$this->_define_database_tables();
 	}
 
 
@@ -287,7 +222,7 @@ final class EE_System {
 				require_once( $model );
 				// if classname was parsed correctly then call define_table_name() method
 				if ( class_exists( $model_class ) && method_exists( $model_class, 'define_table_name' )) {
-					$model_class::define_table_name();
+					call_user_func("$model_class::define_table_name");
 				}			
 			}
 		}
@@ -397,7 +332,7 @@ final class EE_System {
 		// load EE_Config
 		$this->EE->load_core( 'Config' );
 		// register Custom Post Types
-		$this->EE->load_core( 'Register_CPTs', 'CPTs' );
+		$this->EE->load_core( 'Register_CPTs' );
 		// load this for now until something better can be done with it
 		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/main.php' );
 
@@ -410,7 +345,6 @@ final class EE_System {
 		//$this->create_event_slug_rewrite_rule();
 
 	}
-
 
 
 	/**

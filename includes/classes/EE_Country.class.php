@@ -76,12 +76,44 @@ class EE_Country extends EE_Base_Class{
 		return $this->get_first_related('Region');
 	}
 
-
+	/**
+	 * Gets teh country name
+	 * @return string
+	 */
 	public function name() {
-		return $this->_CNT_name;
+		return $this->get('CNT_name');
 	}
-
-
+	
+	/**
+	 * gets teh country's currency code
+	 * @return string
+	 */
+	public function currency_code(){
+		return $this->get('CNT_cur_code');
+	}
+	/**
+	 * gets the country's currency sign/symbol
+	 * @return string
+	 */
+	public function currency_sign(){
+		return $this->get('CNT_cur_sign');
+	}
+	
+	/**
+	 * Currency name singular
+	 * @return string
+	 */
+	public function currency_name_single(){
+		return $this->get('CNT_cur_single');
+	}
+	
+	/**
+	 * CUrrency name plural
+	 * @return string
+	 */
+	public function currency_name_plural(){
+		return $this->get('CNT_cur_plural');
+	}
 }
 
 /* End of file EE_Country.class.php */

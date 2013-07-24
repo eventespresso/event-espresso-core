@@ -22,16 +22,6 @@
  * ------------------------------------------------------------------------
  */
 class EES_Espresso_Events  extends EES_Shortcode {
-	
-	/**
-	 * 	register_shortcode - makes core aware of this shortcode
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function register_shortcode() {
-		EE_Front_Controller::register_shortcode(  __CLASS__ , __FILE__ );
-	}
 
 	/**
 	 * 	set_hooks - for hooking into EE Core, modules, etc
@@ -40,10 +30,6 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
-//		add_filter( 'FHEE_run_EE_wp', '__return_true' );
-//		add_filter( 'FHEE_load_EE_Session', '__return_true' );
-//		add_action( 'wp', array( 'EES_Espresso_Events', 'process_request' ), 10 );
-
 	}
 
 	/**
@@ -52,8 +38,16 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 *  @access 	public
 	 *  @return 	void
 	 */
+	public static function set_hooks_admin() {
+	}
+
+	/**
+	 * 	process_request
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
 	public static function process_request() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	}
 
 	/**
@@ -66,55 +60,17 @@ class EES_Espresso_Events  extends EES_Shortcode {
 		return $shortcodes;
 	}
 
-	/**
-	 * 	load_event_list - filter_modules
-	 *
-	 *  @access 	public
-	 *  @return 	array
-	 */
-	public static function load_event_list( $modules ) {
-		$modules[] = 'Event_List';
-		return $modules;
-	}
-
-	/**
-	 * 	load_event_list - filter_modules
-	 *
-	 *  @access 	public
-	 *  @return 	array
-	 */
-	public static function load_event_details( $modules ) {
-		$modules[] = 'Event_Details';
-		return $modules;
-	}
-
 
 
 	/**
-	 * 	init - initial shortcode module setup called during "init" hook
+	 * 	run - initial shortcode module setup called during "wp_loaded" hook
 	 * 	this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
 	 *
 	 *  @access 	public
+	 *	@param 	EE_Registry $EE
 	 *  @return 	void
 	 */
-	public function init() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		// grab copy of  request
-		$EE = EE_Front_Controller::get_static_registry();
-		// check current post name vs events page
-		if ( $EE->REQ->is_set( 'post_name' )) {
-			$events_page = __('events', 'event_espresso');
-			$event_details_page = __('event', 'event_espresso');
-			// post_name == events
-			if ( $EE->REQ->get( 'post_name' ) == $events_page ) {
-				// load event list
-				add_filter( 'AHEE__Front_Controller__process_request__modules', array( 'EES_Espresso_Events', 'load_event_list' ), 10, 1 );
-			// post_name == event 
-			} else if ( $EE->REQ->get( 'post_name' )  == $event_details_page ) {
-				// load event details page
-				add_filter( 'AHEE__Front_Controller__process_request__modules', array( 'EES_Espresso_Events', 'load_event_details' ), 10, 1 );
-			}
-		}
+	public function run( EE_Registry $EE = NULL ) {
 		
 		$this->ouput =  '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	}
@@ -130,7 +86,7 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 */
 	public function process_shortcode( $attributes ) {
 		//event_espresso_get_event_details( $attributes );
-		//return '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+		return '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		return $this->ouput;		
 	}
 

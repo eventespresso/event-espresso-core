@@ -22,16 +22,6 @@
  * ------------------------------------------------------------------------
  */
 class EES_Espresso_Reg_Page  extends EES_Shortcode {
-	
-	/**
-	 * 	register_shortcode - makes core aware of this shortcode
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function register_shortcode() {
-		EE_Front_Controller::register_shortcode(  __CLASS__ , __FILE__ );
-	}
 
 	/**
 	 * 	set_hooks - for hooking into EE Core, modules, etc
@@ -40,9 +30,6 @@ class EES_Espresso_Reg_Page  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-//		add_filter( 'FHEE_run_EE_wp', '__return_true' );
-//		add_filter( 'FHEE_load_EE_Session', '__return_true' );
 	}
 
 	/**
@@ -57,13 +44,14 @@ class EES_Espresso_Reg_Page  extends EES_Shortcode {
 
 
 	/**
-	 * 	init - initial shortcode module setup called during "wp" hook
+	 * 	run - initial shortcode module setup called during "wp_loaded" hook
 	 * 	this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
 	 *
 	 *  @access 	public
+	 *	@param 	EE_Registry $EE
 	 *  @return 	void
 	 */
-	public function init() {
+	public function run( EE_Registry $EE = NULL ) {
 		$this->ouput =  '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	}
 

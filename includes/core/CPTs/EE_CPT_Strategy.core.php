@@ -23,6 +23,12 @@
  */
 class EE_CPT_Strategy extends EE_BASE {
 
+   /**
+     * 	EE_Registry Object
+     * 	@private _instance
+	 * 	@private 	protected
+     */
+	private static $_instance = NULL;
 
 	/**
 	 * 	EE_Registry Object
@@ -59,6 +65,20 @@ class EE_CPT_Strategy extends EE_BASE {
 
 
 
+	/**
+	 *@ singleton method used to instantiate class object
+	 *@ access public
+	 *@ return EE_Registry instance
+	 */	
+	public static function instance() {
+		// check if class object is instantiated
+		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! is_a( self::$_instance, __CLASS__ )) {
+			self::$_instance = new self();
+		}
+		return self::$_instance;
+	}
+
+
 	
 	/**
 	 * 	class constructor
@@ -66,14 +86,15 @@ class EE_CPT_Strategy extends EE_BASE {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function __construct( EE_Registry $EE ) {
+	private function __construct() {
 		// EE registry
-		$this->EE = $EE;
+		$this->EE = EE_Registry::instance();
 		// get CPT data
 		$this->_CPTs = EE_Register_CPTs::get_CPTs();
 		$this->_CPT_endpoints = $this->_set_CPT_endpoints();
 		// load EE_Request_Handler
-		add_action( 'wp_loaded', array( $this, 'apply_CPT_Strategy' ), 2 );
+//		add_action( 'wp_loaded', array( $this, 'apply_CPT_Strategy' ), 2 );
+		add_action( 'parse_request', array( $this, 'apply_CPT_Strategy' ), 1 );
 	}
 
 
@@ -114,35 +135,39 @@ class EE_CPT_Strategy extends EE_BASE {
 	 * 	@access public
 	 * 	@return array
 	 */
-	public function apply_CPT_Strategy() {
-		// if current page is espresso page, then this is it's post name
-		if ( $espresso_page = $this->EE->REQ->is_espresso_page() ) {
-			// but is this espresso page a CPT endpoint ?
-			if ( isset( $this->_CPT_endpoints[ $espresso_page ] )) {
-				
-				$this->CPT = $this->_CPTs[ $this->_CPT_endpoints[ $espresso_page ] ];
-				$this->CPT['post_type'] = $this->_CPT_endpoints[ $espresso_page ];
-				$this->CPT['requested_page'] = $espresso_page;
-//				printr( $this->CPT, '$this->CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-				if ( isset( $this->CPT['singular_name'] )) {
-					// get list of CPTS via CPT Model
-					$CPT_Model = 'EEM_' . $this->CPT['singular_name'];
-					$this->CPT['tables'] = $CPT_Model::instance()->get_tables();
-					// is there a Meta Table for this CPT?
-					$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] ) ? $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] : FALSE;
-					// creates classname like:  EE_CPT_Event_Strategy
-					$CPT_Strategy_class_name = 'EE_CPT_' . $this->CPT['singular_name'] . '_Strategy';
-					 $this->EE->load_file ( EE_CORE . 'CPTs' . DS, $CPT_Strategy_class_name, 'core', FALSE, FALSE );
-					// instantiate
-					$CPT_Strategy = new $CPT_Strategy_class_name( $this->EE, $this->CPT );
-//					printr( $CPT_Strategy, '$CPT_Strategy  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-					add_filter( 'posts_fields', array( $this, 'posts_fields' ));
-					add_filter( 'posts_join',	array( $this, 'posts_join' ));
-					add_filter( 'get_' . $this->CPT['post_type'] . '_metadata', array( $CPT_Strategy, 'get_EE_post_type_metadata' ), 1, 4 );
+	public function apply_CPT_Strategy( $WP_Object ) {
+		// is current query for a CPT that matches an EE CPT ?
+		if ( isset( $WP_Object->query_vars['post_type'] ) && isset( $this->_CPTs[ $WP_Object->query_vars['post_type'] ] )) {
+			// grab details for the CPT the current query is for
+			$this->CPT = $this->_CPTs[ $WP_Object->query_vars['post_type'] ];
+			// set post type
+			$this->CPT['post_type'] = $WP_Object->query_vars['post_type'];
+			// the post or category or term that is triggering EE
+			$this->CPT['espresso_page'] = $this->EE->REQ->is_espresso_page();
+			// requested post name
+			$this->CPT['post_name'] = $this->EE->REQ->get( 'post_name' );
+			//printr( $this->CPT, '$this->CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			// make sure CPT name is set or things is gonna break
+			if ( isset( $this->CPT['singular_name'] )) {
+				// CPT model name, ie: EEM_Event
+				$CPT_Model = 'EEM_' . $this->CPT['singular_name'];
+				// get CPT table data via CPT Model
+				$CPTM = call_user_func("$CPT_Model::instance");
+				$this->CPT['tables'] = $CPTM->get_tables();
+				// is there a Meta Table for this CPT?
+				$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] ) ? $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] : FALSE;
+				// creates classname like:  EE_CPT_Event_Strategy
+				$CPT_Strategy_class_name = 'CPT_' . $this->CPT['singular_name'] . '_Strategy';
+				// load and instantiate
+				 $CPT_Strategy = $this->EE->load_core ( $CPT_Strategy_class_name, array( 'EE' => $this->EE, 'CPT' =>$this->CPT ));
+//				printr( $CPT_Strategy, '$CPT_Strategy  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+				add_filter( 'posts_fields', array( $this, 'posts_fields' ));
+				add_filter( 'posts_join',	array( $this, 'posts_join' ));
+				add_filter( 'get_' . $this->CPT['post_type'] . '_metadata', array( $CPT_Strategy, 'get_EE_post_type_metadata' ), 1, 4 );
 
-				}				
-			}
+			}				
 		}
+//		printr( $WP_Object, '$WP_Object  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	}
 
 
@@ -157,6 +182,7 @@ class EE_CPT_Strategy extends EE_BASE {
 		// does this CPT have a meta table ?
 		if ( isset( $this->CPT['meta_table'] )) {
 			global $wpdb;
+			// adds something like ", wp_esp_event_meta.* " to WP Query SELECT statement
 			$SQL .= ', ' . $this->CPT['meta_table']->get_table_name() . '.* ' ;
 		}
 		return $SQL;
@@ -174,7 +200,8 @@ class EE_CPT_Strategy extends EE_BASE {
 		// does this CPT have a meta table ?
 		if ( isset( $this->CPT['meta_table'] )) {
 			global $wpdb;
-			$SQL .= ' LEFT JOIN ' . $this->CPT['meta_table']->get_table_name() . ' ON (' . $this->CPT['meta_table']->get_table_name() . '.' . $this->CPT['meta_table']->get_fk_on_table() . ' = ' . $wpdb->posts . '.ID) ';
+			// adds something like " LEFT JOIN wp_esp_event_meta ON ( wp_esp_event_meta.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
+			$SQL .= ' LEFT JOIN ' . $this->CPT['meta_table']->get_table_name() . ' ON ( ' . $this->CPT['meta_table']->get_table_name() . '.' . $this->CPT['meta_table']->get_fk_on_table() . ' = ' . $wpdb->posts . '.ID ) ';
 		}
 		return $SQL;
 	}
@@ -204,7 +231,6 @@ class EE_CPT_Strategy extends EE_BASE {
  */
 class EE_CPT_Default_Strategy {
 
-
 	/**
 	 * 	EE_Registry Object
 	 *	@var 	EE_Registry	$EE	
@@ -225,16 +251,17 @@ class EE_CPT_Default_Strategy {
 	/**
 	 * 	class constructor
 	 *
-	 *  @access 	public
+	 *  @access 	private
 	 *  @return 	void
 	 */
-	public function __construct( EE_Registry $EE, $CPT ) {
+	private function __construct( EE_Registry $EE, $CPT ) {
 		$this->EE = $EE;
 		$this->CPT = $CPT;
 		//printr( $this->CPT, '$this->CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 999 );
 		add_action( 'loop_start', array( $this, 'loop_start' ), 1 );
 	}
+
 
 
 
@@ -272,7 +299,7 @@ class EE_CPT_Default_Strategy {
 //		foreach( $WP_Query->posts as $WP_Post ) {
 //			$EVT_IDs[] = $WP_Post->ID;
 //		}
-//		$events = $EVT->get_all( array( 0 =>array( 'EVT_ID' => array( 'IN', $EVT_IDs ), 'DTT_is_primary' => 1 ), 'force_join' =>array( 'Datetime' )));
+//		$events = $EVT->get_all( array( 0 =>array( 'EVT_ID' => array( 'IN', $EVT_IDs ), 'DTT_primary' => 1 ), 'force_join' =>array( 'Datetime' )));
 //		printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		printr( $EVT_IDs, '$EVT_IDs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		printr( $events, '$events  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );

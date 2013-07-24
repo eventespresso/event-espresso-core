@@ -13,7 +13,8 @@
  *
  * ------------------------------------------------------------------------
  *
- * Event List
+ * Event List 
+ * EVENT_LIST 
  *
  * @package			Event Espresso
  * @subpackage	/shortcodes/
@@ -22,16 +23,6 @@
  * ------------------------------------------------------------------------
  */
 class EES_Event_List  extends EES_Shortcode {
-	
-	/**
-	 * 	register_shortcode - makes core aware of this shortcode
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function register_shortcode() {
-		EE_Front_Controller::register_shortcode(  __CLASS__ , __FILE__ );
-	}
 
 	/**
 	 * 	set_hooks - for hooking into EE Core, modules, etc
@@ -40,29 +31,30 @@ class EES_Event_List  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
-		add_filter( 'AHEE__Front_Controller__process_request__modules', array( 'EES_Espresso_Events', 'load_event_list' ), 10, 1 );
 	}
 
 	/**
-	 * 	load_event_list - filter_modules
-	 *
-	 *  @access 	public
-	 *  @return 	array
-	 */
-	public static function load_event_list( $modules ) {
-		$modules[] = 'Event_List';
-		return $modules;
-	}
-
-
-
-	/**
-	 * 	init - initial module setup
+	 * 	set_hooks_admin - for hooking into EE Admin Core, modules, etc
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function init() {
+	public static function set_hooks_admin() {
+	}
+
+
+
+	/**
+	 * 	run - initial module setup
+	 *
+	 *  @access 	public
+	 *	@param 	EE_Request_Handler	$EE
+	 *  @return 	void
+	 */
+	public function run( EE_Registry $EE = NULL ) {
+		$this->EE = $EE;
+		//add_filter( 'the_content', array( $this, 'the_content' ));
+		$this->EE->REQ->set( 'ee', 'event_list' );
 	}
 
 
@@ -75,7 +67,12 @@ class EES_Event_List  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function process_shortcode( $attributes ) {
-		return $this->ouput;		
+//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+//		// get attributes and merge  with defaults
+//		extract( shortcode_atts( array(
+//				'single_event_id' => __('No ID Supplied', 'event_espresso')
+//		), $attributes ));
+		return $this->EE->REQ->output;		
 	}	
 
 

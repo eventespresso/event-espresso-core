@@ -161,13 +161,7 @@ class EE_Base_Class{
 		 
 		 //if we're not in the constructor...
 		 //now check if what we set was a primary key
-//		 echo 'echodump of $this->_props_n_values_provided_in_consturctor';
-//		 var_dump($this->_props_n_values_provided_in_consturctor);
-//		 echo 'echodump of $field_name';
-//		 var_dump($field_name);
-//		 echo 'echodump of $this->_get_primary_key_name(get_class($this))';
-//		 var_dump($this->_get_primary_key_name(get_class($this)));
-		 if($this->_props_n_values_provided_in_constructor &&
+		 if($this->_props_n_values_provided_in_constructor && //note: props_n_values_provided_in_constructor is only set at the END of the constructor
 				 $field_name == $this->_get_primary_key_name(get_class($this)) && 
 				 $field_value){
 			//if so, we want all this object's fields to be filled either with
@@ -190,7 +184,6 @@ class EE_Base_Class{
 
 		 //let's unset any cache for this field_name from the $_cached_properties property.
 		 $this->_clear_cached_property( $privateAttributeName );
-		 
 	}
 
 
@@ -702,7 +695,7 @@ class EE_Base_Class{
 		$this->get_model()->assume_values_already_prepared_by_model_object(true);
 			
 		if ( !empty( $save_cols_n_values[self::_get_primary_key_name( get_class($this) )] ) ){
-			$results = $this->get_model()->update ( $save_cols_n_values, array(array(self::_get_primary_key_name(get_class($this))=>$this->ID())) );
+			$results = $this->get_model()->update ( $save_cols_n_values, array(array(self::_get_primary_key_name(get_class($this))=>$this->ID()),'default_where_conditions'=>'other_models_only') );
 		} else {
 			unset($save_cols_n_values[self::_get_primary_key_name( get_class( $this) )]);
 			$results = $this->get_model()->insert( $save_cols_n_values, true);
@@ -840,12 +833,11 @@ class EE_Base_Class{
 	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object
 	 * @param string $relationName eg 'Events','Question',etc.
 	 * an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specificy array('role-column-name'=>'role-id')
+	 * @param array  $where_query You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the colums (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
 	 * @return EE_Base_Class the object the relation was added to
 	 */
-	public function _add_relation_to($otherObjectModelObjectOrID,$relationName){
-		$otherObject = $this->ensure_related_thing_is_model_obj($otherObjectModelObjectOrID,$relationName);
-		$this->get_model()->add_relationship_to($this, $otherObject, $relationName);
-		
+	public function _add_relation_to($otherObjectModelObjectOrID,$relationName, $where_query = array()){
+		$otherObject = $this->get_model()->add_relationship_to($this, $otherObjectModelObjectOrID, $relationName, $where_query );
 		$this->cache( $relationName, $otherObject );
 		return $otherObject;
 	}
@@ -853,15 +845,15 @@ class EE_Base_Class{
 	
 	
 	/**
-	 * Removes a relationship to the psecified EE_Base_Class object, given the relationships' name. Eg, if the curren tmodel is related
+	 * Removes a relationship to the psecified EE_Base_Class object, given the relationships' name. Eg, if the currentmodel is related
 	 * to a group of events, the $relationName should be 'Events', and should be a key in the EE Model's $_model_relations array
 	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object
 	 * @param string $relationName
+	 * @param array  $where_query You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the colums (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
 	 * @return EE_Base_Class the relation was removed from
 	 */
-	public function _remove_relation_to($otherObjectModelObjectOrID,$relationName){
-		$otherObject = $this->ensure_related_thing_is_model_obj($otherObjectModelObjectOrID, $relationName);
-		$this->get_model()->remove_relationship_to($this, $otherObject, $relationName);
+	public function _remove_relation_to($otherObjectModelObjectOrID,$relationName, $where_query = array() ){
+		$otherObject = $this->get_model()->remove_relationship_to($this, $otherObjectModelObjectOrID, $relationName, $where_query );
 		$this->clear_cache($relationName, $otherObject);
 		return $otherObject;
 	}

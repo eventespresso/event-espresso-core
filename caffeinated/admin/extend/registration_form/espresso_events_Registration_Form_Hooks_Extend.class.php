@@ -60,10 +60,27 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
 
 
 
+	public function modify_callbacks( $callbacks ) {
+		$callbacks = parent::modify_callbacks( $callbacks );
+		$callbacks[] = array( $this, 'additional_question_group_update' );
+		return $callbacks;
+	}
+
+
+
+	public function restore_revision( $post_id, $revision_id ) {
+		$post_evt = parent::restore_revision( $post_id, $revision_id );
+
+		//restore revision for additional questions
+		$post_evt->restore_revision( $revision_id, array('Question_Group'), array('Question_Group' => array('Event_Question_Group.EQG_primary' => 0 ) ) );
+	}
+
+
 
 
 	public function additional_questions( $post_id, $post ) {
 		$this->_event = $this->_adminpage_obj->get_event_object();
+		$event_id = $this->_event->ID();
 		?>
 		<div class="inside">
 			<p><strong>
@@ -77,14 +94,14 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
 			</p>
 			<?php
 			$QSGs = EEM_Event::instance()->get_all_question_groups();
-			$EQGs = EEM_Event::instance()->get_event_question_groups( $this->_event->ID(), TRUE );
-			$EQGs = is_array( $EQGs ) ? $EQGs : array();
+			$EQGs = !empty( $event_id ) ? $this->_event->get_many_related('Question_Group', array(array('Event_Question_Group.EQG_primary' => 0 )) ) : array();
+			$EQGids = array_keys($EQGs);
 
 			if ( ! empty( $QSGs )) {
  				$html = count( $QSGs ) > 10 ? '<div style="height:250px;overflow:auto;">' : '';
 				foreach ( $QSGs as $QSG ) {
 
-					$checked = in_array( $QSG->QSG_ID, $EQGs ) || $QSG->QSG_system == 1 ? ' checked="checked" ' : '';
+					$checked = in_array( $QSG->QSG_ID, $EQGids ) || $QSG->QSG_system == 1 ? ' checked="checked" ' : '';
 					$visibility = $QSG->QSG_system == 1 ? ' style=" visibility:hidden"' : '';
 					$edit_link = $this->_adminpage_obj->add_query_args_and_nonce( array( 'action' => 'edit_question_group', 'QSG_ID' => $QSG->QSG_ID ), EE_FORMS_ADMIN_URL );
 
@@ -104,5 +121,40 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
 			?>
 		</div>
 		<?php
+	}
+
+
+
+
+
+	public function additional_question_group_update( $evtobj, $data ) {
+		$question_groups = !empty( $data['add_attendee_question_groups'] ) ? (array) $data['add_attendee_question_groups'] : array();
+		$added_qgs = array_keys($question_groups);
+		$success = array();
+
+		//let's get all current question groups associated with this event.
+		$current_qgs = $evtobj->get_many_related('Question_Group', array(array('Event_Question_Group.EQG_primary' => 0) ) );
+		$current_qgs = array_keys($current_qgs); //we just want the ids
+
+		//now let's get the groups selected in the editor and update (IF we have data)
+		if ( !empty( $question_groups ) ) {
+			foreach ( $question_groups as $id => $val ) {
+				//add to event
+				if ( $val )
+					$qg = $evtobj->_add_relation_to( $id, 'Question_Group', array('EQG_primary' => 0) );
+				$success[] = !empty($qg) ? 1 : 0;
+			}
+		}
+
+		//wait a minute... are there question groups missing in the saved groups that ARE with the current event?
+		$removed_qgs = array_diff( $current_qgs, $added_qgs );
+
+		foreach ( $removed_qgs as $qgid ) {
+			$qg = $evtobj->_remove_relation_to( $qgid, 'Question_Group', array('EQG_primary' => 0 ) );
+			$success[] = !empty($qg) ? 1 : 0;
+		}
+
+
+		return in_array(0, $success) ? FALSE : TRUE;
 	}
 } //end class espresso_events_Registration_Form_Hooks_Extend

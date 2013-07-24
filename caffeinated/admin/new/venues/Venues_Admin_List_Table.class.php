@@ -118,12 +118,12 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 	public function column_name($item) {
 		$edit_query_args = array(
 			'action' => 'edit',
-			'id' => $item->ID()
+			'post' => $item->ID()
 		);
 
 		$delete_query_args = array(
 			'action' => 'delete_venue',
-			'id' => $item->ID()
+			'post' => $item->ID()
 		);
 
 		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EE_VENUES_ADMIN_URL );

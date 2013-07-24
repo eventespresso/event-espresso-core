@@ -413,41 +413,145 @@ class EE_Event extends EE_CPT_Base{
 	 * @return boolean true yes, false no
 	 */
 	public function is_upcoming() {
-		$dtt = $this->primary_datetime();
-		$upcoming = is_object($dtt) ? $dtt->is_upcoming() : FALSE;
-		return $upcoming && $this->_status = 'publish' ? TRUE : FALSE;
+		$upcoming = FALSE;
+
+		//first check if event id is present on this object
+		$evt_id = $this->ID();
+		if ( empty( $evt_id) )
+			return FALSE;
+
+		//first we determine if this event is published.  If it isn't then we return false right away.
+		if ( $this->_status != 'publish' ) return FALSE;
+
+		//next let's get all datetimes and loop through them 
+		$dtts = $this->get_many_related('Datetime', array( 'order_by' => array('DTT_EVT_start' => 'ASC' ) ) );
+		foreach ( $dtts as $dtt ) {
+			//if this dtt is expired then we continue cause one of the other datetimes might be upcoming.
+			if ( $dtt->is_expired() ) continue;
+
+			//if this dtt is active then we return false.
+			if ( $dtt->is_active() ) return FALSE;
+
+			//otherwise let's check upcoming status
+			$upcoming = $dtt->is_upcoming();
+		}
+
+		return $upcoming;
 	}
 
 
 
 	public function is_active() {
-		$dtt = $this->primary_datetime();
-		$active = is_object($dtt) ? $dtt->is_active() : FALSE;
-		return $active && $this->_status == 'publish' ? TRUE : FALSE;
+		$active = FALSE;
+
+		//first check if event id is present on this object
+		$evt_id = $this->ID();
+		if ( empty( $evt_id) )
+			return FALSE;
+
+		//first we determine if this event is published.  If it isn't then we return false right away.
+		if ( $this->_status != 'publish' ) return FALSE;
+
+		//next let's get all datetimes and loop through them 
+		$dtts = $this->get_many_related('Datetime', array( 'order_by' => array('DTT_EVT_start' => 'ASC' ) ) );
+		foreach ( $dtts as $dtt ) {
+			//if this dtt is expired then we continue cause one of the other datetimes might be active.
+			if ( $dtt->is_expired() ) continue;
+
+			//if this dtt is upcoming then we return false.
+			if ( $dtt->is_upcoming() ) return FALSE;
+
+			//otherwise let's check active status
+			$active = $dtt->is_active();
+		}
+
+		return $active;
 	}
 
 
 
 	public function is_expired() {
-		$dtt = $this->primary_datetime();
-		return  is_object( $dtt ) ? $dtt->is_expired() : FALSE;
+		$expired = FALSE;
+
+		//first check if event id is present on this object
+		$evt_id = $this->ID();
+		if ( empty( $evt_id) )
+			return FALSE;
+
+		//first let's get all datetimes and loop through them 
+		$dtts = $this->get_many_related('Datetime', array( 'order_by' => array('DTT_EVT_start' => 'ASC' ) ) );
+		foreach ( $dtts as $dtt ) {
+
+			//if this dtt is upcoming or active then we return false.
+			if ( $dtt->is_upcoming() || $dtt->is_active() ) return FALSE;
+
+			//otherwise let's check active status
+			$expired = $dtt->is_expired();
+		}
+
+		return $expired;
 	}
 
 
 
 	public function is_inactive() {
-		$dtt = $this->primary_datetime();
-		$expired = is_object( $dtt ) ? $dtt->is_expired() : FALSE;
-		return $this->_status != 'publish' && !$expired ? TRUE : FALSE;
+
+		//first check if event id is present on this object
+		$evt_id = $this->ID();
+		if ( empty( $evt_id) )
+			return TRUE;
+
+		//first let's determine if the status is "publish" if it is then it can be returned cause it is NOT inactive
+		if ( $this->_status == 'publish' ) return FALSE;
+
+		//next let's get all datetimes and loop through them 
+		$dtts = $this->get_many_related('Datetime', array( 'order_by' => array('DTT_EVT_start' => 'ASC' ) ) );
+		foreach ( $dtts as $dtt ) {
+			//all we're checking for is expire status cause if its expired then that's what we use.
+			if ( $dtt->is_expired() ) return FALSE;
+		}
+
+		return TRUE;
 	}
 
 
 
-
+	/**
+	 * Get the logical active status in a heirarchal order for all the datetimes.
+	 *
+	 * Basically, we order the dtts by EVT_start_date.  Then first test on whether the event is published.  If its NOT published then we test for whether its expired or not.  IF it IS published then we test first on whether an event has any active dates.  If no active dates then we check for any upcoming dates.  If no upcoming dates then the event is considered expired.
+	 * 
+	 * @return int (based on EE_Datetime active contstants.
+	 */
 	public function get_active_status() {
-		$dtt = $this->primary_datetime();
-		$status = is_object( $dtt ) ? $dtt->get_active_status() : FALSE;
-		return $status !== EE_Datetime::expired && $this->_status != 'publish' ?EE_Datetime::inactive : $status;
+		$status_array = array();
+
+		//first check if event id is present on this object
+		$evt_id = $this->ID();
+		if ( empty( $evt_id) )
+			return FALSE;
+
+		//first get all dtts ordered by date
+		$dtts = $this->get_many_related('Datetime', array( 'order_by' => array('DTT_EVT_start' => 'ASC' ) ) );
+
+		//next loop through dtts and setup status array
+		foreach ( $dtts as $dtt ) {
+			$status_array[] = $dtt->get_active_status();
+		}
+
+		//now we can conditionally determine status
+		if ( $this->_status == 'publish' ) {
+			if ( in_array(EE_Datetime::active, $status_array ) )
+				return EE_Datetime::active;
+			if ( in_array(EE_Datetime::upcoming, $status_array ) )
+				return EE_Datetime::upcoming;
+			return EE_Datetime::expired;
+		} else {
+			if ( in_array( EE_Datetime::expired, $status_array) )
+				return EE_Datetime::expired;
+		}
+
+		return EE_Datetime::inactive;
 	}
 
 
@@ -460,21 +564,31 @@ class EE_Event extends EE_CPT_Base{
 		switch ( $active_status ) {
 			case EE_Datetime::expired :
 				$status = __('Expired', 'event_espresso');
+				$class = 'expired';
 				break;
 			case EE_Datetime::inactive :
 				$status = __('Inactive', 'event_espresso');
+				$class = 'inactive';
 				break;
 
 			case EE_Datetime::upcoming :
 				$status = __('Upcoming', 'event_espresso');
+				$class = 'upcoming';
 				break;
 
 			case EE_Datetime::active : 
 				$status = __('Active', 'event_espresso');
+				$class = 'active';
+				break;
+
+			default :
+				$status = __('Inactive', 'event_espresso');
+				$class = 'inactive';
 				break;
 
 		}
 
+		$status = '<span class="ee-status ' . $class . '">' . $status . '</span>';
 		if ( $echo ) {
 			echo $status;
 		} else {

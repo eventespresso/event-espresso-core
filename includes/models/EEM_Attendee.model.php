@@ -91,8 +91,8 @@ class EEM_Attendee extends EEM_CPT_Base {
 			'State'=>new EE_Belongs_To_Relation(),
 			'Country'=>new EE_Belongs_To_Relation()
 		);
-		require_once('strategies/EE_Default_CPT_Where_Conditions.strategy.php');
-		$this->_default_where_conditions_strategy = new EE_Default_CPT_Where_Conditions('espresso_attendees', 'ATTM_ID');
+		require_once('strategies/EE_CPT_Where_Conditions.strategy.php');
+		$this->_default_where_conditions_strategy = new EE_CPT_Where_Conditions('espresso_attendees', 'ATTM_ID');
 		parent::__construct();
 		
 	}
@@ -223,35 +223,35 @@ class EEM_Attendee extends EEM_CPT_Base {
 	* 		@param		$ATT_ID		
 	*		@return 		mixed		array on success, FALSE on fail
 	*/	
-	public function delete_by_ID( $ATT_ID = FALSE ) {
-
-		if ( ! $ATT_ID ) {
-			return FALSE;
-		}
-		
-		$query_params[0] = array( 'ATT_ID' => $ATT_ID, 'STS_ID' => array('IN',array( 'RAP', 'RNA', 'RPN' )));
-		$query_params['order_by'] = array('REG_date' => 'ASC');
-		
-		require_once(EE_MODELS . 'EEM_Registration.model.php');
-		$REG_MDL = EEM_Registration::instance();
-		//check if the attendee is associated with any registrations
-//		if ( $registrations = $REG_MDL->get_all_registrations_for_attendee( $ATT_ID, $status_array )) {
-		if ( $registrations = $REG_MDL->get_all($query_params)) {
-			$msg = __( 'The Attendee could not be deleted because there are existing Registrations associated with this Attendee.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		} 
+//	public function delete_by_ID( $ATT_ID = FALSE ) {
+//
+//		if ( ! $ATT_ID ) {
+//			return FALSE;
+//		}
+//		
+//		$query_params[0] = array( 'ATT_ID' => $ATT_ID, 'STS_ID' => array('IN',array( 'RAP', 'RNA', 'RPN' )));
+//		$query_params['order_by'] = array('REG_date' => 'ASC');
+//		
+//		require_once(EE_MODELS . 'EEM_Registration.model.php');
+//		$REG_MDL = EEM_Registration::instance();
+//		//check if the attendee is associated with any registrations
+////		if ( $registrations = $REG_MDL->get_all_registrations_for_attendee( $ATT_ID, $status_array )) {
+//		if ( $registrations = $REG_MDL->get_all($query_params)) {
+//			$msg = __( 'The Attendee could not be deleted because there are existing Registrations associated with this Attendee.', 'event_espresso' );
+//			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+//			return FALSE;
+//		} 
 				
 		// retreive a particular transaction
 //		$where_cols_n_values = array( 'ATT_ID' => $ATT_ID );
 //		if ( $attendee = $this->delete ( $where_cols_n_values )) {
-		if ( $this->delete_permanently_by_ID ( $ATT_ID )) {
-			return TRUE;
-		} else {
-			return FALSE;
-		}
-
-	}
+//		if ( $this->delete_by_ID ( $ATT_ID )) {
+//			return TRUE;
+//		} else {
+//			return FALSE;
+//		}
+//
+//	}
 
 
 

@@ -106,7 +106,7 @@ class EE_CPT_Base extends EE_Base_Class{
 
 
 	public function set_status ( $status ) {
-		$this->set( 'status' );
+		$this->set( 'status', $status );
 	}
 
 
@@ -135,4 +135,104 @@ class EE_CPT_Base extends EE_Base_Class{
 	}
 
 
+
+
+
+	/**
+	 * This is a method for restoring this_obj using details from the given $revision_id
+	 * @param  string|array $related_obj_names if included this will be used to restore for related obj if not included then we just do restore on the meta.  We will accept an array of related_obj_names for restoration here.
+	 * @param  int    $revision_id      ID of the revision we're gettting data from
+	 * @param array  $where_query You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the colums (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.  This array is INDEXED by RELATED OBJ NAME (so it corresponds with the obj_names sent);
+	 * @return void                   
+	 */
+	public function restore_revision( $revision_id, $related_obj_names = array(), $where_query = array() ) {
+		//get revision object
+		$revision_obj = $this->get_model()->get_one_by_ID($revision_id);
+
+		//no related_obj_name so we assume we're saving a revision on this object.
+		if ( empty( $related_obj_names ) ) {
+			$fields = $this->get_model()->get_meta_table_fields();
+
+			foreach( $fields as $field ) {
+				$this->set($field, $revision_obj->get($field) );
+			}
+
+			$this->save();
+		}
+
+		$related_obj_names = (array) $related_obj_names;
+
+		foreach ( $related_obj_names as $related_name ) {
+			//related_obj_name so we're saving a revision on an object related to this object
+			
+			//do we have $where_query params for this related object?  If we do then we include that.
+			$cols_n_values = isset( $where_query[$related_name] ) ? $where_query[$related_name] : array();
+			$where_params = !empty($cols_n_values) ? array($cols_n_values) : array();
+
+			$related_objs = $this->get_many_related($related_name, $where_params);
+			$revision_related_objs = $revision_obj->get_many_related($related_name, $where_params);
+			
+			//load helper
+			EE_Registry::instance()->load_helper('Array');
+
+			//remove related objs from this object that are not in revision
+			//array_diff *should* work cause I think objects are indexed by ID?
+			$related_to_remove = EEH_Array::object_array_diff( $related_objs, $revision_related_objs );
+			foreach ( $related_to_remove as $rr ) {
+				$this->_remove_relation_to( $rr, $related_name, $cols_n_values );
+			}
+
+			//add all related objs attached to revision to this object
+			foreach ( $revision_related_objs as $r_obj ) {
+				$this->_add_relation_to( $r_obj, $related_name, $cols_n_values );
+			}
+		}
+	}
+
+
+
+
+
+
+	
+	/**
+	 * Wrapper for get_post_meta, http://codex.wordpress.org/Function_Reference/get_post_meta
+	 * @param string $meta_key
+	 * @param boolean $single
+	 * @return mixed <ul><li>If only $id is set it will return all meta values in an associative array.</li>
+	 * <li>If $single is set to false, or left blank, the function returns an array containing all values of the specified key.</li>
+	 * <li>If $single is set to true, the function returns the first value of the specified key (not in an array</li></ul>
+	 */
+	public function get_post_meta($meta_key = null,$single = false){
+		return get_post_meta($this->ID(), $meta_key, $single);
+
+	}
+	
+	/**
+	 * Wrapper for update_post_meta, http://codex.wordpress.org/Function_Reference/update_post_meta
+	 * @param string $meta_key
+	 * @param mixed $meta_value
+	 * @param mixed $prev_value
+	 * @return mixed Returns meta_id if the meta doesn't exist, otherwise returns true on success and false on failure. NOTE: If the meta_value passed to this function is the same as the value that is already in the database, this function returns false.
+	 */
+	public function update_post_meta($meta_key, $meta_value, $prev_value = null){
+		if(! $this->ID()){
+			throw new EE_Error(sprintf(__("You must save this custom post type before adding or updating a post meta field", "event_espresso")));
+		}
+		return update_post_meta($this->ID(),$meta_key,$meta_value,$prev_value);
+	}
+	
+	/**
+	 * Wrapper for add_post_meta, http://codex.wordpress.org/Function_Reference/add_post_meta
+	 * @param type $meta_key
+	 * @param type $meta_value
+	 * @param type $unique. If postmeta for this $meta_key already exists, whether to add an additional item or not
+	 * @return boolean Boolean true, except if the $unique argument was set to true and a custom field with the given key already exists, in which case false is returned.
+	 */
+	public function add_post_meta($meta_key,$meta_value,$unique = false){
+		if(! $this->ID()){
+			throw new EE_Error(sprintf(__("You must save this custom post type before adding or updating a post meta field", "event_espresso")));
+		}
+		return add_post_meta($this->ID(),$meta_key,$meta_value,$unique);
+	}
 }

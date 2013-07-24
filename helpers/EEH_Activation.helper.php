@@ -499,11 +499,31 @@ class EEH_Activation {
 			
 			$new_org_options = array_merge( $default_org_options, $existing_org_options );
 			update_user_meta( $espresso_wp_user, 'events_organization_settings', $new_org_options );
-			return $new_org_options;
+			return self::initialize_config($new_org_options);
 		
 		}
-		return $existing_org_options;
+		return self::initialize_config($existing_org_options);
 
+	}
+
+
+
+	/**
+	 * This simply takes an array of org_options, converts them to an object and returns
+	 * @param  array $cfg_options array of org_options
+	 * @return stdClass
+	 */
+	public static function initialize_config( $cfg_options ) {
+		// force $this->EE->CFG into an object
+		if ( is_array( $cfg_options )) {
+			$CFG = new stdClass();
+			foreach ( $cfg_options as $k => $v ) {
+				$CFG->$k = $v;
+			}
+			return $CFG;
+		} else {
+			return array();
+		}
 	}
 
 
@@ -575,16 +595,17 @@ class EEH_Activation {
 
 		$table_name = 'esp_datetime';
 		$sql = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-				  EVT_ID int(10) unsigned NOT NULL,
-				  DTT_is_primary tinyint(1) unsigned NOT NULL DEFAULT '0',
+				  EVT_ID INT UNSIGNED NOT NULL ,
 				  DTT_EVT_start datetime NOT NULL default '0000-00-00 00:00:00',
 				  DTT_EVT_end datetime NOT NULL default '0000-00-00 00:00:00',
 				  DTT_reg_limit mediumint(8) unsigned DEFAULT NULL,
 				  DTT_tckts_left mediumint(8) unsigned DEFAULT NULL,
+				  DTT_primary TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 				  DTT_order mediumint(3) unsigned DEFAULT 0,
+				  DTT_parent int(10) unsigned DEFAULT 0,
 						PRIMARY KEY  (DTT_ID),
-							KEY EVT_ID (EVT_ID),
-							KEY DTT_is_primary (DTT_is_primary)";
+						KEY EVT_ID (EVT_ID),
+						KEY DTT_primary (DTT_primary)";
 		
 		
 		
@@ -626,6 +647,7 @@ class EEH_Activation {
 				EVV_primary TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 				PRIMARY KEY (EVV_ID)";
 		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB');
+
 		
 
 		$table_name = 'esp_message_template';
@@ -694,6 +716,7 @@ class EEH_Activation {
 					  PRC_overrides int(10) unsigned DEFAULT NULL,
 					  PRC_deleted tinyint(1) unsigned NOT NULL DEFAULT '0',
 					  PRC_order tinyint(3) unsigned NOT NULL DEFAULT '0',
+					  PRC_display_order tinyint(3) unsigned NOT NULL DEFAULT '0',
 					  PRIMARY KEY  (PRC_ID)";
 		EEH_Activation::create_table($table_name, $sql);
 
@@ -742,7 +765,7 @@ class EEH_Activation {
 					QSG_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
 					QSG_show_group_name TINYINT(1) NOT NULL,
 					QSG_show_group_desc TINYINT(1) NOT NULL,
-					QSG_system VARCHAR(25) NULL,
+					QSG_system TINYINT NULL,
 					QSG_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 					PRIMARY KEY  (QSG_ID),
 					UNIQUE KEY QSG_identifier_UNIQUE (QSG_identifier ASC)';
@@ -967,13 +990,13 @@ class EEH_Activation {
 			
 			if ( ! $prices_exist ) {
 				$SQL = "INSERT INTO " . ESP_PRICE_TABLE . "
-							(PRC_ID, PRT_ID, EVT_ID, PRC_amount, PRC_name, PRC_desc, PRC_use_dates, PRC_start_date, PRC_end_date, PRC_is_active, PRC_overrides, PRC_order, PRC_deleted ) VALUES
-							(1, 1, 0, '10.00', 'General Admission', 'Regular price for all Events. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 0, 0),
-							(2, 3, 0, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 10, 0),
-							(3, 4, 0, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price. Example content - delete if you want to',  1, NULL, NULL, 1, NULL, 20, 0),
-							(4, 5, 0, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 30, 0)
-							(5, 6, 0, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 40, 1),
-							(6, 7, 0, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 50, 1);";			
+							(PRC_ID, PRT_ID, EVT_ID, PRC_amount, PRC_name, PRC_desc, PRC_use_dates, PRC_start_date, PRC_end_date, PRC_is_active, PRC_overrides, PRC_order, PRC_deleted, PRC_display_order ) VALUES
+							(1, 1, 0, '10.00', 'General Admission', 'Regular price for all Events. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 0, 0, 0),
+							(2, 3, 0, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 10, 0, 1),
+							(3, 4, 0, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price. Example content - delete if you want to',  1, NULL, NULL, 1, NULL, 20, 0, 2),
+							(4, 5, 0, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 30, 0, 3),
+							(5, 6, 0, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 40, 1, 4),
+							(6, 7, 0, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 0, NULL, NULL, 1, NULL, 50, 1, 5);";			
 				$SQL = apply_filters( 'FHEE_default_prices_activation_sql', $SQL );
 				$wpdb->query($SQL);			
 			}

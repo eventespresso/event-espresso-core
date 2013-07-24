@@ -65,16 +65,6 @@ class EE_Datetime extends EE_Base_Class{
 	
 	
 	
-    /**
-    *	Primary Datetime (first)
-	* 
-	* 	foreign key
-	* 
-	*	@access	protected
-    *	@var int	
-    */
-	protected $_DTT_is_primary = NULL;
-	
 	
 	
     /**
@@ -127,11 +117,16 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
-
+	/**
+	 * if dtt is the primary one or not
+	 * @var boolean
+	 */
+	protected $_DTT_primary = null;
+	
 
 
 	/**
-	 * The order this dtt is displayed in lists
+	 * The order this event_datetime is displayed in lists
 	 * @var int
 	 */
 	protected $_DTT_order;
@@ -139,9 +134,19 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
+
 	/**
-	 *
-	 * @var EE_Event
+	 * This is the parent for the given DTT (will match another existing DTT_ID in the db).  This is so DTT's attached to revisions are relationally connected to the parent DTT.
+	 * @var int
+	 */
+	protected $_DTT_parent;
+
+
+
+
+	/**
+	 *	Related events
+	 * @var EE_Event[]
 	 */
 	protected $_Event;
 	
@@ -151,6 +156,8 @@ class EE_Datetime extends EE_Base_Class{
 	 * @var EE_Registration[]
 	 */
 	protected $_Registration;
+
+
 
 	
 	
@@ -295,20 +302,6 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
-	/**
-	*		Set as primary date
-	* 
-	*		set the datetime as the primary datetime - please verify that all other datetimes are now set to false
-	* 
-	* 		@access		public		
-	*		@param		string		$primary 		True or False ?
-	*/	
-	public function set_primary( $primary ) {
-		$this->set('_DTT_is_primary', (bool) absint( $primary ) );
-	}
-
-
-
 
 
 	/**
@@ -361,38 +354,38 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
-	/**
-	*		get the $EVT_ID for the event that this datetime belongs to
-	* 
-	* 		@access		public		
-	*		@return 		mixed		int on success, FALSE on fail
-	*/	
-	public function event_ID() {
-		if (isset($this->_EVT_ID)) {
-			return $this->_EVT_ID;
-		} else {
-			return FALSE;
-		}
-	}
-
-
-
-
 
 	/**
-	*		whether this is the primary datetime for the event or registration
-	* 
-	* 		@access		public		
-	*		@return 		bool		bool on success, FALSE on fail
-	*/	
+	 * This helper simply returns whether the event_datetime for the current datetime is a primary datetime
+	 * @return boolean          TRUE if is primary, FALSE if not.
+	 */
 	public function is_primary() {
-		$dtt_is_primary = $this->get('DTT_is_primary');
-		if ( is_bool( $dtt_is_primary ) ) {
-			return $dtt_is_primary ? TRUE : FALSE;
-		} else {
-			return 'NOT SET';
-		}
+		return $this->get('DTT_primary');
 	}
+
+
+
+
+	/**
+	 * This helper simply returns the order for the datetime
+	 * @return int         The order of the datetime for this event.
+	 */
+	public function order() {
+		return $this->get('DTT_order');
+	}
+
+
+
+
+	/**
+	 * This helper simply returns the parent id for the datetime
+	 * @return int
+	 */
+	public function parent() {
+		return $this->get('DTT_parent');
+	}
+
+
 
 
 
@@ -724,13 +717,6 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
-	
-	public function order() {
-		return $this->get('DTT_order');
-	}
-
-
-
 	/**
 	 * This will return a timestamp for the website timezone but ONLY when the current website timezone is different than the timezone set for the website.
 	 *
@@ -796,7 +782,7 @@ class EE_Datetime extends EE_Base_Class{
 	public function is_expired( $what = 'EVT' ) {
 		$end = '_DTT_' . $what . '_end';
 		$this->_property_exists( $end );
-		return ( $this->$end > time() );
+		return ( $this->$end < time() );
 	}
 
 

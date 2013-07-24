@@ -43,8 +43,9 @@ class EEM_CPT_Base extends EEM_Base{
 				$primary_table_name = $alias;
 		}
 
-		$this->_statuses = $this->get_status_array();
-		$this->_fields[$primary_table_name]['status'] = new EE_Enum_Field('post_status', __("Event Status", "event_espresso"), false, 'draft', $this->_statuses);
+		//set default wp post statuses if child has not already set.
+		if ( !isset( $this->_fields[$primary_table_name]['status'] ) )
+			$this->_fields[$primary_table_name]['status'] = new EE_WP_Post_Status_Field('post_status', __("Event Status", "event_espresso"), false, 'draft');
 		parent::__construct($timezone);
 	}
 
@@ -55,6 +56,34 @@ class EEM_CPT_Base extends EEM_Base{
 	 * @access public
 	 */
 	public static function define_table_name() { }
+
+
+
+
+	/**
+	 * This simply returns an array of the meta table fields (useful for when we just need to update those fields)
+	 * @param  bool $all triggers whether we include DB_Only fields or JUST non DB_Only fields.  Defaults to false (no dbonly fields)
+	 * @return array
+	 */
+	public function get_meta_table_fields( $all = FALSE ) {
+		$all_fields = $fields_to_return = array();
+		foreach ( $this->_tables as $alias => $table_obj ) {
+			if ( $table_obj instanceof EE_Secondary_Table )
+				$all_fields = array_merge( $this->_get_fields_for_table($alias), $all_fields );
+		}
+
+		if ( !$all ) {
+			foreach ( $all_fields as $name => $obj ) {
+				if ( $obj instanceof EE_DB_Only_Field_Base ) 
+					continue;
+				$fields_to_return[] = $name;
+			}
+		} else {
+			$fields_to_return = array_keys($all_fields);
+		}
+
+		return $fields_to_return;
+	}
 
 	
 	/**
@@ -131,45 +160,6 @@ class EEM_CPT_Base extends EEM_Base{
 
 
 	/**
-	 * CPT overrides EEM_Base add_relationship_to to make sure that if the object being added has a post_type of 'revision' then we also add the related item to the parent item so we don't duplicate unneccesarily the related objects in the db.  This allows us to still keep specified relations between revisions but the latest revision and the parent will always have the same relation
-	 *
-	 * @access public
-	 * @param EE_Base_Class|int $id_or_obj             $thisModelObject
-	 * @param EE_Base_Class|int $other_model_id_or_obj $otherModelObject
-	 * @param string            $relationName          key in EEM_Base::_relations
-	 * @return EE_Base_class which was added as a relation. Object referred to by $other_model_id_or_obj
-	 */
-	public function add_relationship_to($id_or_obj,$other_model_id_or_obj, $relationName){
-
-		//in the case of cpt's we're always going to get the related model_object so we can verify whether it is a revision or not.
-		$thismodelobj = $this->ensure_is_obj( $id_or_obj );
-
-		//is this a revision?  if so let's add the relation to the parent cpt
-		if ( $thismodelobj->post_type() == 'revision' ) {
-			parent::add_relationship_to( $thismodelobj->parent(), $other_model_id_or_obj, $relationName );
-		}
-
-		//make sure we save THIS model relation
-		parent::add_relationship_to( $id_or_obj, $other_model_id_or_obj, $relationName);
-	}
-
-	/**
-	 * See notes on add_relationship_to above.  This method works similarily except for the obvious difference of removing a relationship.
-	 */
-	public function remove_relationship_to( $id_or_obj, $other_model_id_or_obj, $relationName ) {
-		$thismodelobj = $this->ensure_is_obj( $id_or_obj );
-
-		//is this a revision?  if so let's remove the relation from the parent cpt
-		if ( $thismodelobj->post_type() == 'revision' ) {
-			parent::remove_relationship_to( $thismodelobj->parent(), $other_model_id_or_obj, $relationName );
-		}
-
-		//make sure we save THIS model relation
-		parent::remove_relationship_to( $id_or_obj, $other_model_id_or_obj, $relationName);
-	}
-
-
-	/**
 	 * Just a handy way to get the list of post statuses currently registered with WP.
 	 * @global array $wp_post_statuses set in wp core for storing all the post stati
 	 * @return array
@@ -197,4 +187,5 @@ class EEM_CPT_Base extends EEM_Base{
 		return $statuses;
 	}
 
+	
 }

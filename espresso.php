@@ -31,7 +31,7 @@
  */
 //Returns the plugin version
 function espresso_version() {
-	return '4.1.dev';
+	return '4.1.001';
 }
 //Returns the template version
 function espresso_template_version() {
@@ -51,6 +51,9 @@ if ( ! defined( 'DS' )) {
 }
 if ( ! defined( 'PS' )) {
 	define( 'PS', PATH_SEPARATOR );
+}
+if( ! defined( 'SP' ) ){
+	define('SP',' ');
 }
 // define the plugin directory and URL
 define("EVENT_ESPRESSO_PLUGINPATH", DS . plugin_basename(__FILE__) . DS);
