@@ -708,13 +708,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		foreach ( $data['event_datetimes'] as $row => $event_datetime ) {
 			$event_datetime['evt_end'] = isset($event_datetime['evt_end']) && ! empty( $event_datetime['evt_end'] ) ? $event_datetime['evt_end'] : $event_datetime['evt_start'];
-			$event_datetime['reg_end'] = isset($event_datetime['reg_end']) && ! empty( $event_datetime['reg_end'] ) ? $event_datetime['reg_end'] : $event_datetime['reg_start'];
 			$DTM = EE_Datetime::new_instance( array(
 					'DTT_ID' => isset( $event_datetime['ID'] ) && $event_datetime['ID'] !== '' ? absint( $event_datetime['ID'] ) : NULL,
 					'DTT_EVT_start' => $event_datetime['evt_start'],
 					'DTT_EVT_end' => $event_datetime['evt_end'],
-					'DTT_REG_start' => $event_datetime['reg_start'],
-					'DTT_REG_end' => $event_datetime['reg_end'],
 					'DTT_primary' => $row === 1 ? TRUE : FALSE,
 					'DTT_order' => $row
 				),

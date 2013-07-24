@@ -98,8 +98,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			'image_confirm' => __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso'),
 			'event_starts_on' => __('Event Starts on', 'event_espresso'),
 			'event_ends_on' => __('Event Ends on', 'event_espresso'),
-			'registration_starts_on' => __('Registration Starts on', 'event_espresso'),
-			'registration_ends_on' => __('Registration Ends on', 'event_espresso'),
 			'event_datetime_actions' => __('Actions', 'event_espresso'),
 			'event_clone_dt_msg' => __('Clone this Event Date and Time', 'event_espresso'),
 			'remove_event_dt_msg' => __('Remove this Event Time', 'event_espresso'),
