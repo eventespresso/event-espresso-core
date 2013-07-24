@@ -97,17 +97,9 @@ class EE_Price extends EE_Base_Class{
 	protected $_PRC_tckts_left = NULL; 				
 
 
-	/**
-	*	Whether to use dates to control when pricing starts and ends
-	*
-	*	@access	protected
-	*	@var boolean
-	*/
-	protected $_PRC_use_dates = NULL;
-
 
 	/**
-	*	If use dates is active, this is when this price becomes active
+	*	this is when this price becomes active
 	*
 	*	@access	protected
 	*	@var int
@@ -116,7 +108,7 @@ class EE_Price extends EE_Base_Class{
 
 
 	/**
-	*	If use dates is active, this is when this price becomes inactive
+	*	this is when this price becomes inactive
 	*
 	*	@access	protected
 	*	@var int
@@ -293,18 +285,6 @@ class EE_Price extends EE_Base_Class{
 
 
 
-	/**
-	*		Set use dates boolean flag
-	*
-	* 		@access		public
-	*		@param		boolean		$PRC_use_dates
-	*/
-	public function set_use_dates( $PRC_use_dates = NULL ) {
-		$this->set('PRC_use_dates',$PRC_use_dates);
-	}
-
-
-
 
 
 	/**
@@ -325,7 +305,7 @@ class EE_Price extends EE_Base_Class{
 	*		Set end date
 	*
 	* 		@access		public
-	*		@param		mixed		$PRC_use_dates
+	*		@param		mixed		$PRC_end_date
 	*/
 	public function set_end_date( $PRC_end_date = NULL ) {
 		$this->set('PRC_end_date',$PRC_end_date);
@@ -435,14 +415,6 @@ class EE_Price extends EE_Base_Class{
 	}
 
 
-	/**
-	*	get Price use_dates
-	* @access		public
-	* @return 		string
-	*/
-	public function use_dates() {
-		return $this->get('PRC_use_dates');
-	}
 
 
 	/**
