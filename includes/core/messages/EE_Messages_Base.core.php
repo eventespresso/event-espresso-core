@@ -207,7 +207,7 @@ abstract class EE_Messages_Base extends EE_Base {
 	 */
 	protected function _set_existing_admin_settings( $messenger = NULL ) {		
 		$active_messengers = get_option('ee_active_messengers', true);
-		$active_message_types = !empty( $messenger ) ? $active_messengers[$messenger]['settings'][$messenger . '-message_types'] : '';
+		$active_message_types = !empty( $messenger ) ? $active_messengers[$messenger]['settings'][$messenger . '-message_types'] : array();
 
 		$actives = $this->_messages_item_type == 'messenger' ? $active_messengers : $active_message_types;
 
