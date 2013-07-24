@@ -134,24 +134,6 @@
 						</td>
 					</tr>
 						 */ ?>			
-					
-					<tr valign="top" class="edit-ticket-price-use-dates-tbl-row">
-						<th><label><?php _e('Triggered by Date', 'event_espresso'); ?></label></th>
-						<td>
-							<?php $price_uses_dates = $price->use_dates();?>
-							<label class="edit-ticket-price-radio-lbl">
-								<?php $checked = $price_uses_dates == 1 ? ' checked="checked"' : '';?>
-								<input name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_use_dates]" class="edit-ticket-price-use-dates-yes edit-ticket-price-input etp-radio" type="radio" value="1"<?php echo $checked;?> style="margin-right:5px;"/>
-								<?php _e('Yes', 'event_espresso');?>
-							</label>
-							<label class="edit-ticket-price-radio-lbl">
-								<?php $checked = $price_uses_dates == 0 ? ' checked="checked"' : '';?>
-								<input name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_use_dates]" class="edit-ticket-price-use-dates-no edit-ticket-price-input etp-radio" type="radio" value="0"<?php echo $checked;?> style="margin-right:5px;"/>
-								<?php _e('No', 'event_espresso');?>
-							</label>
-							<p class="description"><?php _e( 'If set to "Yes", then you will be able to set the dates for when this price will become active / inactive.', 'event_espresso' ); ?></p>
-						</td>
-					</tr>
 
 					<tr valign="top">
 						<th>

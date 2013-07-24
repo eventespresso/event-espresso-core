@@ -85,21 +85,6 @@
 				</td>
 			</tr>
 		*/ ?>
-			
-			<tr valign="top">
-				<th><label><?php _e('Triggered by Date', 'event_espresso'); ?></label></th>
-				<td>
-					<label class="edit-ticket-price-radio-lbl">
-						<input class="add-new-ticket-price-input" type="radio" name="new_ticket_price[PRC_use_dates]" value="1" style="margin-right:5px;">
-						<?php _e('Yes', 'event_espresso');?>
-					</label>
-					<label class="edit-ticket-price-radio-lbl">
-						<input class="add-new-ticket-price-input" type="radio" name="new_ticket_price[PRC_use_dates]" value="0" style="margin-right:5px;" checked="checked" />
-						<?php _e('No', 'event_espresso');?>
-					</label>
-					<p class="description"><?php _e( 'If set to "Yes", then you will be able to set the dates for when this price will become active / inactive.', 'event_espresso' ); ?></p>
-				</td>
-			</tr>
 
 			<tr valign="top">
 				<th><label for="new_ticket_price[PRC_start_date]"><?php _e('Start Date', 'event_espresso'); ?></label></th>

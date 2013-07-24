@@ -506,7 +506,6 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				'PRC_amount' => floatval ($this->_req_data['PRC_amount']),
 				'PRC_name' => $this->_req_data['PRC_name'],
 				'PRC_desc' => htmlentities(wp_strip_all_tags($this->_req_data['PRC_desc']), ENT_QUOTES, 'UTF-8'),
-				'PRC_use_dates' => absint($this->_req_data['PRC_use_dates']),
 				'PRC_start_date' => NULL,
 				'PRC_end_date' => NULL,
 				'PRC_overrides' => NULL,

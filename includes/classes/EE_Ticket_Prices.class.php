@@ -169,7 +169,7 @@ class EE_Ticket_Prices extends EE_BASE {
 			// if members only, then check for login, OR let anybody in for non-member pricing
 			if (( $types[ $event_price->type() ]->is_member() && is_user_logged_in() ) || ! $types[ $event_price->type() ]->is_member() ) {
 				// if calendar controlled pricing, then check date, OR let anybody in for regular pricing ( setting FALSE in start_date and end_date methods returns timestamps )
-				if (( $event_price->use_dates() && ( $event_price->start_date( FALSE ) <= $today && $event_price->end_date( FALSE ) >= $today )) || ! $event_price->use_dates() ) {
+				if ( ( ( $event_price->start_date( FALSE ) <= $today && $event_price->end_date( FALSE ) >= $today )) || ! $event_price->use_dates() ) {
 					// separate ticket prices ( order = 0 ) from adjuestments ( order > 0 )
 					if ( $types[ $event_price->type() ]->order() == 0 ) {
 						$base_prices[ $event_price->ID() ] = new EE_Ticket_Price_Base( new EE_Price_Composite( $event_price, $types[ $event_price->type() ] ));					
@@ -794,9 +794,7 @@ class EE_Price_Composite {
 	public function tckts_left() {
 		return $this->_PRC->tckts_left();
 	}
-	public function use_dates() {
-		return $this->_PRC->use_dates();
-	}
+
 	public function start_date( $format = 'Y-m-d' ) {
 		return $this->_PRC->start_date( $format );
 	}

@@ -33,22 +33,6 @@
 				</td>
 			</tr>
 			<tr valign="top">
-				<th><label><?php _e('Triggered by Date', 'event_espresso'); ?></label></th>
-				<td>
-					<?php $yes_checked = $price->use_dates() ? ' checked="checked"' : ''; ?>
-					<label style="margin-right:15px;">
-						<input type="radio" name="PRC_use_dates" value="1"<?php echo $yes_checked;?> style="margin-right:5px;">
-						<?php _e('Yes', 'event_espresso');?>
-					</label>
-					<?php $no_checked = $price->use_dates() ? '' : ' checked="checked"'; ?>
-					<label style="margin-right:15px;">
-					<input type="radio" name="PRC_use_dates" value="0"<?php echo $no_checked;?> style="margin-right:5px;">
-					<?php _e('No', 'event_espresso');?>
-					</label>
-					<p class="description"><?php _e( sprintf( 'If set to "Yes", then when editing an Event in the %sEvent Editor%s you will be able to set the dates for when this price will become active / inactive.', '<a href="' .  admin_url( 'admin.php?page=espresso_events' ) . '" title="Go to the Events Overview List to choose an Event to edit">', '</a>' ), 'event_espresso'); ?></p>
-				</td>
-			</tr>
-			<tr valign="top">
 				<th><label><?php _e('Active', 'event_espresso'); ?></label></th>
 				<td>
 					<?php $yes_checked = $price->is_active() ? ' checked="checked"' : ''; ?>
