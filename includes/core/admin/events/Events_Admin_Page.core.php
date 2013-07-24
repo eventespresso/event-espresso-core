@@ -1079,8 +1079,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$table_class = apply_filters('FHEE_pricing_table_class_filter', 'event_editor_pricing');
 
 		$template_args['show_no_event_price_msg'] = $show_no_event_price_msg;
-		$template_args['no_price_message_error'] = $show_no_event_price_msg ? __('There are currently no Prices set for this Event. Please see the Event Pricing section for more details.', 'event_espresso') : '';
-		$template_args['no_price_message'] = $show_no_event_price_msg ? apply_filters('FHEE_show_no_event_price_msg', __('Please enter at lease one Event Price for this Event to ensure that this Event displays and functions properly.'), 'event_espresso') : ''; 
+		$template_args['no_price_message_error'] = $show_no_event_price_msg ?  apply_filters( 'FHEE__Events_Admin_Page__pricing_metabox_show_no_price_message_error', __('There is currently no Price set for this Event. Please see the Event Pricing section for more details.', 'event_espresso') ) : '';
+		$template_args['no_price_message'] = $show_no_event_price_msg ? apply_filters('FHEE_show_no_event_price_msg', __('Please enter a price for this Event to ensure that this Event displays and functions properly.'), 'event_espresso') : ''; 
 		$template_args['PRT'] =  $row_args['PRT'] = $PRT;
 		$template_args['org_options'] = $row_args['org_options'] = $org_options;
 		$template_args['event'] = $row_args['event'] = $this->_cpt_model_obj;
