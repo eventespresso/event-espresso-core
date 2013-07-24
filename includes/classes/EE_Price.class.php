@@ -154,6 +154,15 @@ class EE_Price extends EE_Base_Class{
 
 
 	/**
+	 * This is the parent for the given PRC (will match another existing PRC_ID in the db).  This is so PRC's attached to revisions are relationally connected to the parent PRC.
+	 * @var int
+	 */
+	protected $_PRC_parent;
+
+
+
+
+	/**
 	*	Whether this Price has been moved to the trash
 	*
 	*	@access	protected
