@@ -1185,11 +1185,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		);
 
 		//states and countries model
-		require_once( 'EEM_State.model.php' );
-		require_once( 'EEM_Country.model.php');
-
-		$states = EEM_State::instance()->get_all_active_states();
-		$countries = EEM_Country::instance()->get_all_active_countries();
+		$states = $this->EE->load_model('State')->get_all_active_states();
+		$countries = $this->EE->load_model('Country')->get_all_active_countries();
 
 		//prepare state/country arrays
 		foreach ( $states as $id => $obj ) {
@@ -1200,11 +1197,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$ctry_ary[$id] = $obj->name();
 		}
 
-		require_once( 'EEM_Venue.model.php' );
+		$VNM = $this->EE->load_model('Venue');
 		//first let's see if we have a venue already
 		$evnt_id = $this->_cpt_model_obj->ID();
 		$venue = !empty( $evnt_id ) ? $this->_cpt_model_obj->venues() : NULL;
-		$venue = empty( $venue ) ? EEM_Venue::instance()->create_default_object() : array_shift( $venue );
+		$venue = empty( $venue ) ? $VNM->create_default_object() : array_shift( $venue );
 		$template_args['_venue'] = $venue;
 		$template_args['org_options'] = $org_options;
 		$template_args['states_dropdown'] = EE_Form_Fields::select_input('state', $st_ary, $venue->state_ID(), 'id="phys-state"');
