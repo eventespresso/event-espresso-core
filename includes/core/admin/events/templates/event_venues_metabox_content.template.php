@@ -5,7 +5,7 @@
 				<h4>
 					<?php _e('Venue Information', 'event_espresso'); ?>
 				</h4>
-				<input type="hidden" name="venue_id" value="<?php echo $_venue->ID(); ?>" />
+				<input type="hidden" id="venue-id" name="venue_id" value="<?php echo $_venue->ID(); ?>" />
 				<p>
 					<label for="ven-title"><?php _e('Title:', 'event_espresso'); ?></label><br/>
 					<input size="20"id="ven-title" tabindex="106"  type="text"  value="<?php echo $_venue->name() ?>" name="venue_title" />

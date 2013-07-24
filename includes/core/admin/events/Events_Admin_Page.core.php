@@ -674,7 +674,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			);
 		
 
-		//if we've got the venue_id then we're just updating the exiting venue so let's do that and then get out.
+		//if we've got the venue_id then we're just updating the existing venue so let's do that and then get out.
 		if ( !empty( $venue_id ) ) {
 			$update_where = array( $venue_model->primary_key_name() => $venue_id );
 			$rows_affected = $venue_model->update( $venue_array, array( $update_where ) );
@@ -682,13 +682,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$evtobj->_add_relation_to( $venue_id, 'Venue' );
 			return $rows_affected > 0 ? TRUE : FALSE;
 		} else {	
-			//if this is a revision then we are going to handle the initial insert/update and then the add_relation_to which will also automatically add the relation to the parent.  NOTE... we also have to allow for if users have turned OFF revisions! @todo: just a note that this is just plain wrong and will need to be revisited once we implement more fully revisions.  
-		
-			if ( $evtobj->post_type() == 'revision' || ! WP_POST_REVISIONS ) {
-				$venue_id = $venue_model->insert( $venue_array );
-				$evtobj->_add_relation_to( $venue_id, 'Venue' );
-				return !empty( $venue_id ) ? TRUE : FALSE;
-			}
+			//we insert the venue
+			$venue_id = $venue_model->insert( $venue_array );
+			$evtobj->_add_relation_to( $venue_id, 'Venue' );
+			return !empty( $venue_id ) ? TRUE : FALSE;
 		}
 		return TRUE; //when we have the ancestor come in it's already been handled by the revision save.
 	}
@@ -792,6 +789,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$this->_template_args['data']['items']['ID-'.$order] = $dtt->ID();
 		}
 		$this->_template_args['data']['items']['datetime_IDS'] = serialize( $dtt_ids );
+
+		//handle DECAF venues
+		//we need to make sure that the venue_id gets updated in the form so that future autosaves will properly conntect that venue to the event.
+		if ( $do_venue_autosaves = apply_filters('FHEE__Events_Admin_Page__ee_autosave_edit_do_decaf_venue_save', TRUE ) ) {
+			$venue = $event->get_first_related('Venue');
+			$this->_template_args['data']['items']['venue-id'] = $venue->ID();
+		}
 	}
 
 
