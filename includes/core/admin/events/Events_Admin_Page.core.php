@@ -1060,6 +1060,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		if ( ! $all_prices = $PRC->get_all_event_prices_for_admin( $event_id )) {
 			$all_prices = array();
 		}
+
 		
 		if ( empty( $all_prices[1] ) && empty( $all_prices[2] )) {
 			$show_no_event_price_msg = TRUE;
@@ -1085,6 +1086,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['event'] = $row_args['event'] = $this->_cpt_model_obj;
 		$template_args['price_rows'] = array();
 		$row_template = apply_filters('FHEE_events_pricing_meta_box_row_template', EVENTS_TEMPLATE_PATH . 'edit_event_price_metabox_content_row.template.php');
+
 		if ( !empty( $all_prices ) ) :
 			
 			foreach ( $all_prices as $price_type => $prices ) :
@@ -1093,6 +1095,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						$row_args['disabled'] = ! $price->is_active() ? ' disabled="disabled"' : ''; 
 						$row_args['disabled_class'] = ! $price->is_active() ? ' input-disabled' : '';
 						$row_args['inactive'] = ! $price->is_active() ? '<span class="inactice-price">'.__('inactive price - edit advanced settings to reactivate', 'event_espresso').'</span>' : FALSE;
+						$row_args['is_percent'] = $price->ID() ? $price->type_obj()->is_percent() : FALSE;
 						if ( $price->use_dates() ){
 							$today = time();
 							if ( $today < $price->start() ){
@@ -1124,6 +1127,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				endforeach;
 			endforeach;
 			else :
+				$row_args['type_label'] = __('New Event Price', 'event_espresso');
+				$row_args['price'] = $PRC->create_default_object();
+				$row_args['disabled_class'] = '';
+				$row_args['disabled'] = '';
+				$row_args['is_percent'] = FALSE;
+				$row_args['inactive'] = FALSE;
+				$row_args['price_amount'] = '';
 				$template_args['price_rows'][] = espresso_display_template($row_template, $row_args, TRUE);
 			endif;
 			$price_types = empty( $all_prices ) ? array(  array( 'id' => 2, 'text' => __('Event Price', 'event_espresso'), 'order' => 0 )) : $price_types;
