@@ -89,7 +89,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 				'PRC_overrides'=>new EE_Integer_Field('PRC_overrides', 'Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )', true, 0),
 				'PRC_order'=>new EE_Integer_Field('PRC_order', 'Order of Application of Price (lower numbers apply first?)', false, 1),
 				'PRC_deleted'=>new EE_Trashed_Flag_Field('PRC_deleted', 'Flag Indicating if this has been deleted or not', false, false),
-				'PRC_display_order' => new EE_Integer_Field('PRC_display_order', 'Order of how prices are displayed', false, 0 )
+				'PRC_display_order' => new EE_Integer_Field('PRC_display_order', 'Order of how prices are displayed', false, 1 )
 			)
 		);
 		$this->_model_relations = array(

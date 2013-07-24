@@ -156,7 +156,7 @@ class EE_Price extends EE_Base_Class{
 	 * Order that this price is displayed
 	 * @var integer
 	 */
-	protected $_PRC_display_order = 0;
+	protected $_PRC_display_order = 1;
 
 
 
