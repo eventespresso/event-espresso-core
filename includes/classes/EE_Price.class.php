@@ -515,6 +515,18 @@ class EE_Price extends EE_Base_Class{
 	}
 
 
+
+
+	/**
+	 * get display order
+	 * @access public
+	 * @return int
+	 */
+	public function display_order() {
+		return $this->get('PRC_display_order');
+	}
+
+
 	/**
 	*	get deleted
 	* 	@access		public
