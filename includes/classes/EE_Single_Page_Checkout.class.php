@@ -1223,7 +1223,7 @@ class EE_Single_Page_Checkout {
 				return array();			
 		}
 
-		global $EE_Session;
+		global $EE_Session, $org_options;
 		// grab session data
 		$session = $EE_Session->get_session_data();
 		// get some class would ya !
