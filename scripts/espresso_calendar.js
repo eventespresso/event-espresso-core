@@ -1,11 +1,8 @@
 jQuery(document).ready(function($) {
-
-	var ee_total_images = 0;
-	
+	// fix this one boolean
 	if ( eeCAL.weekends == undefined || eeCAL.weekends == '' ) {
 		eeCAL.weekends = false;
 	}
-
 
 	$('#espresso_calendar').fullCalendar({
 		
@@ -23,7 +20,8 @@ jQuery(document).ready(function($) {
 		// Whether to include Saturday/Sunday columns in any of the calendar views.
 		weekends: eeCAL.weekends,
 		// Will make the entire calendar (including header) a pixel height.
-		height: eeCAL.espresso_calendar_height,
+//		height: eeCAL.espresso_calendar_height,
+		aspectRatio: 1.618,
 		// Triggered when the calendar loads and every time a different date-range is displayed.
 		viewDisplay: function(view) {
 	        $('.qtip-close .ui-icon').each( function() {
@@ -81,7 +79,34 @@ jQuery(document).ready(function($) {
 		//Abbreviated names of days-of-week.
 		dayNamesShort: eeCAL.dayNamesShort,
 				
+		//Load the events into json srrsy
+		events: function(start, end, callback) {
+			$.ajax({
+				url: eeCAL.ajax_url,
+				dataType: 'json',
+				data: {
+					action: 'get_calendar_events',
+					noheader : 'true',
+					start_date: Math.round(start.getTime() / 1000),
+					end_date: Math.round(end.getTime() / 1000)
+				},
+				success: function( response ) {
+//					console.log( 'success' );
+//					console.log( JSON.stringify( response, null, 4 ));
+					callback( response );
+				},
+				error: function(response) {
+//					console.log( 'error' );
+//					console.log( JSON.stringify( response, null, 4 ));
+					//callback(response);
+				},
+			});
+		},
+		// Triggered while an event is being rendered.
 		eventRender: function( event, element ) {
+			
+//			console.log( JSON.stringify( event.title, null, 4 ));
+//			console.log( JSON.stringify( element, null, 4 ));
 
 			if( event.event_img_thumb ){
 				element.find('.fc-event-title').after( event.event_img_thumb );
@@ -89,12 +114,6 @@ jQuery(document).ready(function($) {
 			
 			if( event.event_time ){
 				element.find('.fc-event-title').after( event.event_time );
-			}
-
-			if ( event.display_reg_form == 'Y') {
-				event.regButtonText = event.register_now;
-			} else {
-				event.regButtonText = event.view_details;
 			}
 
 			if ( eeCAL.show_tooltips ) {						
@@ -125,51 +144,35 @@ jQuery(document).ready(function($) {
 				//This displays the title of the event when hovering
 				element.attr( 'title', event.title + " - Event Times: " + event.event_time_no_tags );				
 			}
+			
+			// because Chrome and Safari don't seem to render the images until they're actually being displayed...
+			// the element will have a zero height for images will borks any dimensional calculations that occur for event positioning, resizing, etc
+			var thumb_height = element.find('.ee-event-thumb').height();
+			// so if the event is SUPPOSED to have an image, but the thumbnail height is ZERO!!! (events without thumbnails will have a thumb_height height of NULL)
+			if ( thumb_height == 0 ) {
+				// add 150 to the event height to compensate for the thumbnail
+				thumb_height = thumb_height +150;
+				// add set the element to the new height
+				element.height( thumb_height );
+			}
+
 
 		},
-
-		//Load the events into json srrsy
-		events: function(start, end, callback) {
-			$.ajax({
-				url: eeCAL.ajax_url,
-				dataType: 'json',
-				data: {
-					action: 'get_calendar_events',
-					noheader : 'true',
-					start_date: Math.round(start.getTime() / 1000),
-					end_date: Math.round(end.getTime() / 1000)
-				},
-				success: function( response ) {
-//					console.log( 'success' );
-//					console.log( JSON.stringify( response, null, 4 ));
-					callback( response );
-				},
-				error: function(response) {
-//					console.log( 'error' );
-//					console.log( JSON.stringify( response, null, 4 ));
-					//callback(response);
-				},
-			});
+		// Triggered after an event has been placed on the calendar in its final position.
+		eventAfterRender : function( event, element, view ) {
 		},
-		
-
-		loading: function(bool) {
-			if (bool) $('#ee-calendar-ajax-loader-img').show();
+		// Triggered when event fetching starts/stops.
+		loading: function( bool ) {
+			if ( bool ) $('#ee-calendar-ajax-loader-img').show();
 			else $('#ee-calendar-ajax-loader-img').hide();
-		}
-								
+		},
+
 	});
 
     $('.qtip-close .ui-icon').each( function() {
  		$(this).removeClass('ui-icon');
  		$(this).removeClass('ui-icon-close');
  	});	
-//	if ( eeCAL.theme ) {
-//		$('a.fc-event').addClass('themeroller ui-state-focus');
-//		$('a.fc-event div').removeClass('fc-event-skin');
-//		$('.fc-view').addClass('ui-widget-content');
-//		$('.expired').removeClass('ui-state-focus').addClass('ui-state-default');
-//	}
 
 
 });
