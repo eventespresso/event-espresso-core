@@ -87,9 +87,10 @@ class EE_Calendar {
 
 			add_action( 'wp', array( $this, 'calendar_init' ));
 			add_shortcode( 'ESPRESSO_CALENDAR', array( $this, 'espresso_calendar' ));
-			add_action( 'widgets_init', array( $this, 'widget_init' ));
 			
 		}
+
+		add_action( 'widgets_init', array( $this, 'widget_init' ));
 		
 	}
 
@@ -179,28 +180,21 @@ class EE_Calendar {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function espresso_calendar($atts) {
-
-		global $org_options, $ee_calendar_js_options, $event_category_id, $events;
+	public function espresso_calendar( $atts ) {
+		$atts = is_array( $atts ) ? $atts : array( $atts );
 		// set default attributes
-		$atts = shortcode_atts(array('event_category_id' => '', 'show_expired' => false, 'cal_view' => 'month'), $atts);
+		$atts = shortcode_atts( array( 'event_category_id' => '', 'show_expired' => false, 'cal_view' => 'month' ), $atts );
 		// loop thru atts and add to js options
 		foreach ( $atts as $att_name => $att_value ) {
-			$ee_calendar_js_options[$att_name] = $att_value;
+			if ( ! empty( $att_value )) {
+				$ee_calendar_js_options[$att_name] = $att_value;
+			}
 		}	
 		// loop thru calendar_options and add to js options
 		foreach ( $this->_calendar_options as $opt_name => $opt_value ) {
 			$ee_calendar_js_options[$opt_name] = is_array( $opt_value ) ? stripslashes_deep( $opt_value ) : stripslashes( $opt_value );
 		}	
-		
-		$ee_calendar_js_options['weekends'] = (bool)$ee_calendar_js_options['weekends'];
-		
-		// set other js options
-//		$ee_calendar_js_options['theme'] = function_exists( 'espresso_version' ) && ! empty( $org_options['style_settings']['enable_default_style'] ) && $org_options['style_settings']['enable_default_style'] == 'Y' ? TRUE : FALSE;
-
-//		$ee_calendar_js_options['description'] =__('Description', 'event_espresso');
-//		$ee_calendar_js_options['register_now'] =__('Register Now', 'event_espresso');
-//		$ee_calendar_js_options['view_details'] =__('View Details', 'event_espresso');
+		// i18n some strings
 		$ee_calendar_js_options['monthNames'] = array( 
 			__('January', 'event_espresso'),
 			__('February', 'event_espresso'),
@@ -250,9 +244,6 @@ class EE_Calendar {
 				__('Fri', 'event_espresso'),
 				__('Sat', 'event_espresso')
 			);
-		
-//		echo '<h3>$this->_calendar_options</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $this->_calendar_options, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
-//		echo '<h3>$ee_calendar_js_options</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $ee_calendar_js_options, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 
 		// Get current page protocol
 		$protocol = isset($_SERVER["HTTPS"]) ? 'https://' : 'http://';
@@ -356,6 +347,10 @@ class EE_Calendar {
 			$tooltip_at .= isset( $this->_calendar_options['tooltips_pos']['at_2'] ) && ! empty( $this->_calendar_options['tooltips_pos']['at_2']) ? ' ' . $this->_calendar_options['tooltips_pos']['at_2'] : ' center';
 		}
 		
+		$thumbnail_size_w = get_option( 'thumbnail_size_w' );
+		$thumbnail_size_h = get_option( 'thumbnail_size_h' );
+
+		
 		$events = array();
 		$cntr = 0;
 		foreach ( $events_data as $event ) {
@@ -441,9 +436,23 @@ class EE_Calendar {
 			$events[ $cntr ]['event_time_no_tags'] = wp_strip_all_tags( $events[ $cntr ]['event_time'] );
 
 			// Add thumb to eventArray
-			if ( isset( $this->_calendar_options['enable_calendar_thumbs'] ) && $this->_calendar_options['enable_calendar_thumbs'] ) {
-				if ( isset( $event_meta['event_thumbnail_url'] )) {
-					$events[ $cntr ]['event_img_thumb'] = '<span class="thumb-wrap"><img class="ee-event-thumb" src="' . $event_meta['event_thumbnail_url'] . '" alt="image of ' . $events[ $cntr ]['title'] . '" /></span>';
+			if ( isset( $this->_calendar_options['enable_calendar_thumbs'] ) && $this->_calendar_options['enable_calendar_thumbs'] && isset( $event_meta['event_thumbnail_url'] )) {
+				// get pathinfo
+				$pathinfo = pathinfo( $event_meta['event_thumbnail_url'] );
+				// get dirname
+				$dirname = $pathinfo['dirname'] . '/';
+				// now get filename without path or extension
+				$filename = $pathinfo['filename'];
+				// and extension
+				$ext = $pathinfo['extension'];
+				// generate thumbnail size string ie: -150x150
+				$thumbnail_size = '-' . $thumbnail_size_w . 'x' . $thumbnail_size_h;
+				$path_to_thumbnail = $dirname . $filename . $thumbnail_size . '.' . $ext;
+				// check if file exists
+				$test_url = @fopen( $path_to_thumbnail, 'r' );				
+				if ( $test_url !== FALSE ) { 
+					$events[ $cntr ]['event_img_thumb'] = '<span class="thumb-wrap"><img class="ee-event-thumb" src="' . $path_to_thumbnail . '" alt="image of ' . $events[ $cntr ]['title'] . '" /></span>';
+//					$events[ $cntr ]['title'] .= '<span class="thumb-wrap"><img class="ee-event-thumb" src="' . $path_to_thumbnail . '" alt="image of ' . $events[ $cntr ]['title'] . '" /></span>';
 					$events[ $cntr ]['className'] .= ' event-has-thumb';
 				}
 			}
