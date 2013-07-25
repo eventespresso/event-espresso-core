@@ -289,11 +289,11 @@ class EE_Calendar {
 //		echo '<h4>$start_date : ' . $start_date . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		$show_expired = isset( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : 'false';
 		
-		$throttle = '';
-		if (isset($this->_calendar_options['throttle']['enable']) && $this->_calendar_options['throttle']['enable'] == true) {
-			if ($this->_calendar_options['throttle']['amount'] > 1)
-				$throttle = 'LIMIT ' . $this->_calendar_options['throttle']['amount'];
-		}
+//		$throttle = '';
+//		if (isset($this->_calendar_options['throttle']['enable']) && $this->_calendar_options['throttle']['enable'] == true) {
+//			if ($this->_calendar_options['throttle']['amount'] > 1)
+//				$throttle = 'LIMIT ' . $this->_calendar_options['throttle']['amount'];
+//		}
 		
 		// set boolean for categories 
 		$use_categories = isset($this->_calendar_options['disable_categories']) && $this->_calendar_options['disable_categories'] == FALSE ? TRUE : FALSE;
@@ -322,7 +322,7 @@ class EE_Calendar {
 			$SQL .= " AND ( e.registration_start <= '$end_date' AND e.registration_end <= '$end_date' ) ";
 		}
 
-		$SQL .= " GROUP BY e.id ORDER BY e.start_date ASC " . $throttle;
+		$SQL .= " GROUP BY e.id ORDER BY e.start_date ASC "; // . $throttle;
 
 		// grab event data with event IDs as the array keys
 		$events_data = $wpdb->get_results( $wpdb->prepare( $SQL, $start_date, $end_date ), OBJECT_K );
