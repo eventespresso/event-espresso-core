@@ -654,18 +654,12 @@ class name '.event-has-thumb' is added to top level parent event */
 }
 
 
-#espresso_calendar .event-has-thumb .fc-event-title {
-	/*display: block; clear: left; width: auto;*/
+
+#espresso_calendar .thumb-wrap { 
+	display: block; max-width:150px; overflow: hidden;  padding: 3px 0 0; vertical-align: middle;
 }
-#espresso_calendar  span.thumb-wrap {
-	display: block; margin: 3px 0 0; vertical-align: middle;
-}
-#espresso_calendar .ee-event-thumb {
-	display: block; vertical-align: middle;
-}
-#espresso_calendar .thumb-wrap { max-height: 90px; overflow: hidden; }
 #espresso_calendar .thumb-wrap img { 
-	width: 100%; border-radius: 0; box-shadow: none;
+	width:100%; max-width:150px; border-radius: 0; box-shadow: none; vertical-align: middle;
 }
 #espresso_calendar .fc-view-agendaWeek  .thumb-wrap { max-height: 20px; overflow: hidden; }
 #espresso_calendar .fc-view-agendaDay .thumb-wrap { height: auto; }
