@@ -1412,7 +1412,7 @@ class Events_Admin_Page extends EE_Admin_Page {
 								<p class="info">
 									<b><?php _e('You have not created any venues yet.', 'event_espresso'); ?></b>
 								</p>
-								<p><a href="admin.php?page=espresso_venues"><?php echo __('Add venues to the Venue Manager', 'event_espresso') ?></a></p>
+								<p><a href="<?php echo EE_Admin_Page::add_query_args_and_nonce(array('page'=>'espresso_venues'),'admin.php')?>"><?php echo __('Add venues to the Venue Manager', 'event_espresso') ?></a></p>
 							<?php else: ?>
 								<?php echo $this->_espresso_venue_dd($this->_event->venue_id) ?>
 							<?php endif; ?>

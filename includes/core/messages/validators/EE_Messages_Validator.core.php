@@ -400,24 +400,20 @@ abstract class EE_Messages_Validator extends EE_Base {
 		foreach ( $emails as $email ) {
 			//trim whitespace
 			$email = trim($email);
-
-			//first just check if this is a straight email address and continue if is
-			if ( !$validate = is_email( $email ) ) {
-				$fail = TRUE;
+			//either its of type "bob@whatever.com", or its of type "fname lname <few@few.few>"
+			if(is_email($email)){
 				continue;
+			}else{
+				$matches = array();
+				$validate = preg_match( '/(.*)<(.+)>/', $email, $matches ) ? TRUE : FALSE;
+				if( $validate && is_email($matches[2])){
+					continue;
+				}else{
+					return false;
+				}
 			}
-	
-			//if false then we move to the next check.  Is this in the format "Foo <email@somethign.com)"?
-			$validate = preg_match( '/(.*)<(.+)>/', $value, $matches ) ? TRUE : FALSE;
-
-			//if FALSE here then we return because there is an invalid email.  Otherwise we do a final check on the email address.
-			if ( !$validate ) return FALSE;
-			
-			$validate = is_email($matches[2]);
-
-			if ( !$validate || ( empty( $matches[2] ) && $fail ) ) return FALSE;
 		}
-
+		
 		return $validate;
 
 	}
