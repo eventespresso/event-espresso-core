@@ -20,7 +20,7 @@ jQuery(document).ready(function($) {
 		// Whether to include Saturday/Sunday columns in any of the calendar views.
 		weekends: eeCAL.weekends,
 		// Will make the entire calendar (including header) a pixel height.
-//		height: eeCAL.espresso_calendar_height,
+		height: eeCAL.espresso_calendar_height,
 		aspectRatio: 1.618,
 		// Triggered when the calendar loads and every time a different date-range is displayed.
 		viewDisplay: function(view) {
